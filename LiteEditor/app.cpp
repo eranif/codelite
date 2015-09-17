@@ -65,7 +65,7 @@
 //////////////////////////////////////////////
 // Define the version string for this codelite
 //////////////////////////////////////////////
-extern wxChar* clGitRevision;
+extern wxString clGitRevision;
 wxString CODELITE_VERSION_STR = clGitRevision;
 
 #if defined(__WXMAC__) || defined(__WXGTK__)

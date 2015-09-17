@@ -28,15 +28,17 @@
 #include <wx/tokenzr.h>
 #include "webupdatethread.h"
 #include "procutils.h"
-//#include <curl/curl.h>
+#include "json_node.h"
 
-extern const wxChar* clGitRevision;
+extern wxString clGitRevision;
+extern int clVersionNumber;
 
 const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE = wxNewEventType();
 const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
 
 static const size_t DLBUFSIZE = 4096;
 
+#if 0
 static long version_string_to_number(const wxString& versionString)
 {
     wxString major = "0";
@@ -62,6 +64,42 @@ static long version_string_to_number(const wxString& versionString)
     nVersionNumber = (nMajor * 1000) + (nMinor * 100) + (nPatch * 10); // 5.1=>5100, 5.1.1=>5110
     return nVersionNumber;
 }
+#endif
+
+struct CodeLiteVersion {
+    wxString m_os;
+    wxString m_codename;
+    wxString m_arch;
+    wxString m_url;
+    int m_version;
+
+    CodeLiteVersion(const JSONElement& json)
+        : m_version(wxNOT_FOUND)
+    {
+        m_os = json.namedObject("os").toString();
+        m_codename = json.namedObject("codename").toString();
+        m_arch = json.namedObject("arch").toString();
+        m_url = json.namedObject("url").toString();
+        m_version = json.namedObject("version").toInt();
+    }
+
+    /**
+     * @brief return true of this codelite version object is newer than the provided input
+     */
+    bool IsNewer(const wxString& os, const wxString& codename, const wxString& arch) const
+    {
+        if((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
+            return (m_version > clVersionNumber);
+        }
+        return false;
+    }
+
+    const wxString& GetArch() const { return m_arch; }
+    const wxString& GetCodename() const { return m_codename; }
+    const wxString& GetOs() const { return m_os; }
+    const wxString& GetUrl() const { return m_url; }
+    int GetVersion() const { return m_version; }
+};
 
 WebUpdateJob::WebUpdateJob(wxEvtHandler* parent, bool userRequest)
     : Job(parent)
@@ -69,21 +107,17 @@ WebUpdateJob::WebUpdateJob(wxEvtHandler* parent, bool userRequest)
 {
 }
 
-WebUpdateJob::~WebUpdateJob()
-{
-}
+WebUpdateJob::~WebUpdateJob() {}
 
 void WebUpdateJob::Process(wxThread* thread)
 {
 #ifndef __WXMSW__
-
-    wxFileName fn(wxT("/tmp/codelite-packages-new.txt"));
+    wxFileName fn(wxT("/tmp/codelite-packages.json"));
     wxString command;
 #ifdef __WXMAC__
-    command << wxT("curl http://codelite.org/packages-new.txt  --output ") << fn.GetFullPath()
-            << wxT(" > /dev/null 2>&1");
+    command << wxT("curl http://codelite.org/packages.json  --output ") << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
 #else
-    command << "wget http://codelite.org/packages-new.txt --output-file=/dev/null -O " << fn.GetFullPath()
+    command << "wget http://codelite.org/packages.json --output-file=/dev/null -O " << fn.GetFullPath()
             << wxT(" > /dev/null 2>&1");
 #endif
     {
@@ -107,7 +141,7 @@ void WebUpdateJob::Process(wxThread* thread)
     }
 
 #else
-    wxURL url(wxT("http://codelite.org/packages-new.txt"));
+    wxURL url(wxT("http://codelite.org/packages.json"));
     if(url.GetError() == wxURL_NOERR) {
 
         wxInputStream* in_stream = url.GetInputStream();
@@ -161,62 +195,60 @@ size_t WebUpdateJob::WriteData(void* buffer, size_t size, size_t nmemb, void* ob
 
 void WebUpdateJob::ParseFile()
 {
-    wxString packageName(wxT("MSW"));
-#if defined(__WXGTK__)
-    packageName = wxT("GTK");
-#elif defined(__WXMAC__)
-    packageName = wxT("MAC");
-#endif
+    wxString os, arch, codename;
+    GetPlatformDetails(os, codename, arch);
 
-// diffrentiate between the 64bit and the 32bit packages
-#ifdef ON_64_BIT
-    packageName << wxT("_64");
-#endif
+    JSONRoot root(m_dataRead);
+    JSONElement platforms = root.toElement().namedObject("platforms");
 
-    wxArrayString lines = wxStringTokenize(m_dataRead, wxT("\n"));
-    for(size_t i = 0; i < lines.GetCount(); i++) {
-        wxString line = lines.Item(i);
-        line = line.Trim().Trim(false);
-        if(line.StartsWith(wxT("#"))) {
-            // comment line
-            continue;
-        }
-
-        // parse the line
-        wxArrayString tokens = wxStringTokenize(line, wxT("|"));
-        if(tokens.GetCount() > 3) {
-            // find the entry with our package name
-            if(tokens.Item(0).Trim().Trim(false) == packageName) {
-                wxString url = tokens.Item(2).Trim().Trim(false);
-                wxString rev = tokens.Item(1).Trim().Trim(false);
-                wxString releaseNotesUrl = tokens.Item(3).Trim().Trim(false);
-
-                // convert strings to long
-                wxString sCurRev(clGitRevision);
-                wxString sNewRev(rev);
-                long nCurrentVersion, nWebSiteVersion;
-
-                nCurrentVersion = version_string_to_number(sCurRev);
-                nWebSiteVersion = version_string_to_number(sNewRev);
-
-                if(nWebSiteVersion > nCurrentVersion) {
-
-                    // notify the user that a new version is available
-                    wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-                    e.SetClientData(new WebUpdateJobData(
-                        url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, false, m_userRequest));
-                    wxPostEvent(m_parent, e);
-
-                } else {
-
-                    // version is up to date, notify the main thread about it
-                    wxCommandEvent e(wxEVT_CMD_VERSION_UPTODATE);
-                    e.SetClientData(new WebUpdateJobData(
-                        url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, true, m_userRequest));
-                    wxPostEvent(m_parent, e);
-                }
-                break;
-            }
+    int count = platforms.arraySize();
+    for(int i = 0; i < count; ++i) {
+        CodeLiteVersion v(platforms.arrayItem(i));
+        if(v.IsNewer(os, codename, arch)) {
+            wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
+            e.SetClientData(
+                new WebUpdateJobData("http://codelite.org/support.php", v.GetUrl(), clGitRevision, "", false, true));
+            wxPostEvent(m_parent, e);
+            break;
         }
     }
+}
+
+void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString& arch) const
+{
+#ifdef __WXMSW__
+    os = "msw";
+    codename = "Windows";
+#ifdef _WIN64
+    arch = "x86_64";
+#else
+    arch = "i386";
+#endif
+#elif defined(__WXOSX__)
+    os = "osx";
+    arch = "x86_64";
+    codename = "10.8";
+#else
+    os = "linux";
+    wxFFile fp("/etc/issue", "rb");
+    wxString content;
+    if(fp.IsOpened()) {
+        fp.ReadAll(content, wxConvUTF8);
+        fp.Close();
+    }
+    // Test for common code names that we support on Linux
+    if(content.Contains("Ubuntu 14.04")) {
+        codename = "Ubuntu 14.04";
+    } else if(content.Contains("Debian GNU/Linux 8")) {
+        codename = "Debian GNU/Linux 8";
+    } else {
+        codename = "others";
+    }
+
+#if ON_64_BIT
+    arch = "x86_64";
+#else
+    arch = "i386";
+#endif
+#endif
 }

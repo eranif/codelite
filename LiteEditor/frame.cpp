@@ -145,7 +145,7 @@
 
 // from auto-generated file svninfo.cpp:
 extern wxString CODELITE_VERSION_STR;
-extern const wxChar* clGitRevision;
+extern wxString clGitRevision;
 
 static wxStopWatch gStopWatch;
 
@@ -4305,20 +4305,20 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
 
             m_codeliteDownloadPageURL = data->GetUrl();
             ButtonDetails btn;
-            btn.buttonLabel = _("Download Now!");
+            btn.buttonLabel = _("Download New Version");
             btn.commandId = XRCID("goto_codelite_download_url");
             btn.isDefault = true;
             btn.window = this;
 
             GetMainBook()->ShowMessage(
-                _("A new version of codelite is available"),
+                _("A new version of CodeLite is available"),
                 true,
                 PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/software_upgrade")),
                 btn);
 
         } else {
             if(!data->GetShowMessage()) {
-                wxLogMessage(wxString() << "Info: codelite is up-to-date (or newer), version used: "
+                wxLogMessage(wxString() << "Info: CodeLite is up-to-date (or newer), version used: "
                                         << data->GetCurVersion() << ", version on site: " << data->GetNewVersion());
             } else {
                 // User initiated the version check request

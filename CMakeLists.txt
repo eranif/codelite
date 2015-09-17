@@ -29,7 +29,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 #################################################################################################################################################################
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-include(FindLibClang)
 
 #############################################
 ## Defaults
@@ -44,6 +43,13 @@ if (CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3
     set( CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 else()
     set( CL_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}) # which seems to be the same, at least in this situation
+endif()
+
+include(FindLibClang)
+include(FindSqlite3)
+if(NOT SQLITE3_FOUND)
+    set(SQLITE3_INCLUDE_DIR ${CL_SRC_ROOT}/sqlite3)
+    set(SQLITE3_LIBRARY "-lsqlite3lib")
 endif()
 
 set( USE_CLANG 1 )
@@ -380,7 +386,7 @@ if ( MAKE_DEB )
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY     "optional")
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential, git, subversion, gdb, xterm, gcc, g++")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS      "libc6, libgtk2.0-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.5-dev, clang-format-3.5, liblldb-3.5-dev")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS      "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.5-dev, clang-format-3.5, liblldb-3.5-dev")
     set(CPACK_PACKAGE_DESCRIPTION_FILE    "${CL_SRC_ROOT}/DESC")
     set(CPACK_STRIP_FILES TRUE)
     INCLUDE(CPack)
@@ -478,7 +484,11 @@ if ( APPLE )
     add_definitions( -mmacosx-version-min=10.8 )
 endif()
 
-add_subdirectory(sqlite3)
+if(APPLE)
+    # On Linux, we use the distro's libsqlite3
+    add_subdirectory(sqlite3)
+endif()
+
 add_subdirectory(sdk/wxsqlite3)
 add_subdirectory(sdk/wxshapeframework)
 add_subdirectory(sdk/databaselayer)
@@ -549,11 +559,13 @@ add_subdirectory(WebTools)
 ##
 ## Setup the proper dependencies
 ##
-if ( USE_PCH )
-    add_dependencies(sqlite3lib ${CL_PCH_TARGET})
-endif ( USE_PCH )
+if(APPLE)
+    if ( USE_PCH )
+        add_dependencies(sqlite3lib ${CL_PCH_TARGET})
+    endif ( USE_PCH )
+    add_dependencies(wxsqlite3 sqlite3lib)
+endif()
 
-add_dependencies(wxsqlite3 sqlite3lib)
 add_dependencies(databaselayersqlite wxsqlite3)
 add_dependencies(wxshapeframework wxsqlite3)
 add_dependencies(libcodelite wxshapeframework databaselayersqlite wxsqlite3)

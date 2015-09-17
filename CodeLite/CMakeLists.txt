@@ -105,7 +105,7 @@ if (UNIX AND NOT APPLE )
                          ${LINKER_OPTIONS} 
                          ${wxWidgets_LIBRARIES} 
                          -L"${CL_LIBPATH}" 
-                         sqlite3lib 
+                         ${SQLITE3_LIBRARY}
                          wxsqlite3 
                          ${LIBSSH_LIB} 
                          ${ADDITIONAL_LIBRARIES})

@@ -778,9 +778,13 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser)
 {
     // check for single instance
     if(clConfig::Get().Read(kConfigSingleInstance, false)) {
-        const wxString name = wxString::Format(wxT("CodeLite-%s"), wxGetUserId().c_str());
-
-        m_singleInstance = new wxSingleInstanceChecker(name);
+        wxString name = wxString::Format(wxT("CodeLite-%s"), wxGetUserId().c_str());
+        
+        wxString path;
+#ifndef __WXMSW__
+        path = "/tmp";
+#endif
+        m_singleInstance = new wxSingleInstanceChecker(name, path);
         if(m_singleInstance->IsAnotherRunning()) {
             // prepare commands file for the running instance
             wxArrayString files;

@@ -24,14 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "precompiled_header.h"
+#include "autoversion.h"
 #include <wx/url.h>
 #include <wx/tokenzr.h>
 #include "webupdatethread.h"
 #include "procutils.h"
 #include "json_node.h"
-
-extern wxString clGitRevision;
-extern int clVersionNumber;
 
 const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE = wxNewEventType();
 const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
@@ -89,7 +87,7 @@ struct CodeLiteVersion {
     bool IsNewer(const wxString& os, const wxString& codename, const wxString& arch) const
     {
         if((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
-            return (m_version > clVersionNumber);
+            return (m_version > CODELITE_VERSION_NUMBER);
         }
         return false;
     }
@@ -207,7 +205,7 @@ void WebUpdateJob::ParseFile()
         if(v.IsNewer(os, codename, arch)) {
             wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
             e.SetClientData(
-                new WebUpdateJobData("http://codelite.org/support.php", v.GetUrl(), clGitRevision, "", false, true));
+                new WebUpdateJobData("http://codelite.org/support.php", v.GetUrl(), CODELITE_VERSION_STRING, "", false, true));
             wxPostEvent(m_parent, e);
             break;
         }

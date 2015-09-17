@@ -26,9 +26,6 @@
 #ifndef CL_GIT_REVISION
 #define CL_GIT_REVISION
 
-#include <wx/string.h>
-
-wxString clGitRevision = "8.2.5";
-int clVersionNumber = 825;
+#include "autoversion.h"
 
 #endif

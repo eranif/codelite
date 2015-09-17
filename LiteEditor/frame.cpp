@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "precompiled_header.h"
+#include "autoversion.h"
 #include "my_menu_bar.h"
 #include "bitmap_loader.h"
 #include <wx/wupdlock.h>
@@ -144,9 +145,6 @@
 //////////////////////////////////////////////////
 
 // from auto-generated file svninfo.cpp:
-extern wxString CODELITE_VERSION_STR;
-extern wxString clGitRevision;
-
 static wxStopWatch gStopWatch;
 
 // from iconsextra.cpp:
@@ -909,7 +907,7 @@ void clMainFrame::Initialize(bool loadLastSession)
 {
     // set the revision number in the frame title
     wxString title(_("CodeLite "));
-    title << clGitRevision;
+    title << CODELITE_VERSION_STRING;
 
     // initialize the environment variable configuration manager
     EnvironmentConfig::Instance()->Load();
@@ -2228,7 +2226,7 @@ void clMainFrame::OnFileExistUpdateUI(wxUpdateUIEvent& event)
 void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxString mainTitle;
-    mainTitle = CODELITE_VERSION_STR;
+    mainTitle = CODELITE_VERSION_STRING;
 
     AboutDlg dlg(this, mainTitle);
     dlg.SetInfo(mainTitle);

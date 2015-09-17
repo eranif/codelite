@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "precompiled_header.h"
+#include "autoversion.h"
 #include "cl_registry.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -65,8 +66,6 @@
 //////////////////////////////////////////////
 // Define the version string for this codelite
 //////////////////////////////////////////////
-extern wxString clGitRevision;
-wxString CODELITE_VERSION_STR = clGitRevision;
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 #include <sys/wait.h>
@@ -375,9 +374,9 @@ bool CodeLiteApp::OnInit()
     if(parser.Found(wxT("v"))) {
 // print version
 #ifdef __WXMSW__
-        ::wxMessageBox(wxString() << "CodeLite IDE v" << clGitRevision, "CodeLite");
+        ::wxMessageBox(wxString() << "CodeLite IDE v" << CODELITE_VERSION_STRING, "CodeLite");
 #else
-        wxPrintf("CodeLite IDE v%s\n", clGitRevision);
+        wxPrintf("CodeLite IDE v%s\n", CODELITE_VERSION_STRING);
 #endif
         return false;
     }
@@ -561,7 +560,8 @@ bool CodeLiteApp::OnInit()
     cfg->SetInstallDir(mgr->GetInstallDir());
 
     // Update codelite revision and Version
-    cfg->Init(clGitRevision, wxT("2.0.2"));
+    wxString strVersion = CODELITE_VERSION_STRING;
+    cfg->Init(strVersion, wxT("2.0.2"));
     if(!cfg->Load()) {
         CL_ERROR(wxT("Failed to load configuration file: %s/config/codelite.xml"), wxGetCwd().c_str());
         return false;
@@ -575,7 +575,7 @@ bool CodeLiteApp::OnInit()
         wxBitmap bitmap;
         wxString splashName(clStandardPaths::Get().GetDataDir() + wxT("/images/splashscreen.png"));
         if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-            wxString mainTitle = CODELITE_VERSION_STR;
+            wxString mainTitle = CODELITE_VERSION_STRING;
             clSplashScreen::g_splashScreen = new clSplashScreen(clSplashScreen::CreateSplashScreenBitmap(bitmap),
                                                                 wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
                                                                 -1,

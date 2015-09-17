@@ -243,7 +243,7 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
         codename = "others";
     }
 
-#if ON_64_BIT
+#if __LP64__
     arch = "x86_64";
 #else
     arch = "i386";

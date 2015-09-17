@@ -233,7 +233,7 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
     wxFFile fp("/etc/issue", "rb");
     wxString content;
     if(fp.IsOpened()) {
-        fp.ReadAll(content, wxConvUTF8);
+        fp.ReadAll(&content, wxConvUTF8);
         fp.Close();
     }
     // Test for common code names that we support on Linux

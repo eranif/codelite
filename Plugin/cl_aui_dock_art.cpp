@@ -98,6 +98,9 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
     textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 3.0);
     penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+#ifdef __WXOSX__
+    penColour = bgColour;
+#endif
 
     memDc.SetPen(penColour);
     memDc.SetBrush(bgColour);
@@ -147,8 +150,7 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 {
     wxColour penColour;
 #ifdef __WXMAC__
-    penColour = wxColour("rgb(102, 102, 102)");
-    
+    penColour = DrawingUtils::GetAUIPaneBGColour();
 #else
     penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
 #endif

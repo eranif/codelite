@@ -421,7 +421,7 @@ protected:
 public:
     wxStaticText* GetStaticText523() { return m_staticText523; }
     wxStaticBitmap* GetStaticBitmap521() { return m_staticBitmap521; }
-    DefaultWorkspacePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL|wxBORDER_STATIC);
+    DefaultWorkspacePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL|wxBORDER_NONE);
     virtual ~DefaultWorkspacePageBase();
 };
 

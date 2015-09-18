@@ -425,7 +425,7 @@ clTreeCtrlPanelBase::clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer151 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer151);
     
-    m_treeCtrl = new clFileViewerTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxBORDER_STATIC);
+    m_treeCtrl = new clFileViewerTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES);
     
     boxSizer151->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 0);
     
@@ -525,7 +525,7 @@ clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
     wxBoxSizer* boxSizer167 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer167);
     
-    m_panel169 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_STATIC);
+    m_panel169 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_NONE);
     m_panel169->SetBackgroundColour(wxColour(wxT("rgb(224,224,224)")));
     
     boxSizer167->Add(m_panel169, 1, wxALL|wxEXPAND, 0);
@@ -632,7 +632,7 @@ clImageViewerBase::clImageViewerBase(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* boxSizer194 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer194);
     
-    m_scrollWin196 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME|wxHSCROLL|wxVSCROLL);
+    m_scrollWin196 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_NONE|wxHSCROLL|wxVSCROLL);
     m_scrollWin196->SetScrollRate(5, 5);
     
     boxSizer194->Add(m_scrollWin196, 1, wxEXPAND, 2);

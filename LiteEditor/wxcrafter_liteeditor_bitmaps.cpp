@@ -2876,7 +2876,7 @@ static unsigned char xml_res_file_35[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,32,120,109,108,110,115,61,34,104,116,116,112,58,
-47,47,119,119,119,46,119,120,119,105,110,100,111,119,115,46,111,114,103,
+47,47,119,119,119,46,119,120,119,105,100,103,101,116,115,46,111,114,103,
 47,119,120,120,114,99,34,62,10,32,32,60,111,98,106,101,99,116,32,99,108,
 97,115,115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,
 34,84,111,111,108,80,105,110,34,62,119,120,99,114,97,102,116,101,114,95,
@@ -3139,6 +3139,6 @@ void wxC3F25InitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_target-200.png"), xml_res_file_32, xml_res_size_32, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_wx.png"), xml_res_file_33, xml_res_size_33, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._wxcrafter_resources_wxc-logo-16.png"), xml_res_file_34, xml_res_size_34, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_wxcrafter_liteeditor_bitmaps.xrc"), xml_res_file_35, xml_res_size_35, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_wxcrafter_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$_Users_eran_devl_codelite_LiteEditor_wxcrafter_liteeditor_bitmaps.xrc"), xml_res_file_35, xml_res_size_35, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$_Users_eran_devl_codelite_LiteEditor_wxcrafter_liteeditor_bitmaps.xrc"));
 }

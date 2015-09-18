@@ -56,7 +56,16 @@ class FindResultsTab : public OutputTabWindow
         std::list<int> indicators;
         typedef wxOrderedMap<wxString, History> Map_t;
     };
-
+    
+    enum eState {
+        kHeader,
+        kStartOfLine,
+        kFile,
+        kLineNumber,
+        kScope,
+        kMatch,
+    };
+    static eState m_curstate;
     History::Map_t m_history;
 
 protected:

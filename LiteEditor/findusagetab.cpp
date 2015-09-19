@@ -57,12 +57,13 @@ void FindUsageTab::OnStyleNeeded(wxStyledTextEvent& e)
 {
     wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(e.GetEventObject());
     if(!ctrl) return;
-    FindResultsTab::StyleText(ctrl, e);
+    FindResultsTab::StyleText(ctrl, e, true);
 }
 
 void FindUsageTab::Clear()
 {
     m_matches.clear();
+    FindResultsTab::ResetStyler();
     OutputTabWindow::Clear();
 }
 
@@ -129,7 +130,7 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
         m_matches[lineNumber] = *iter;
 
         // Format the message
-        wxString linenum = wxString::Format(wxT(" %5u "), (unsigned int)iter->getLineNumber() + 1);
+        wxString linenum = wxString::Format(wxT(" %5u: "), (unsigned int)iter->getLineNumber() + 1);
         wxString scopeName(wxT("<global>"));
         TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(iter->getFilename(), iter->getLineNumber());
         if(tag) {

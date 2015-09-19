@@ -533,7 +533,7 @@ void FindResultsTab::OnStyleNeeded(wxStyledTextEvent& e)
     StyleText(ctrl, e);
 }
 
-void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
+void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope)
 {
     int startPos = ctrl->GetEndStyled();
     int endPos = e.GetPosition();
@@ -544,6 +544,7 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
     size_t headerStyleLen = 0;
     size_t filenameStyleLen = 0;
     size_t lineNumberStyleLen = 0;
+    size_t scopeStyleLen = 0;
     size_t matchStyleLen = 0;
     size_t i = 0;
     for(; iter != text.end(); ++iter) {
@@ -572,6 +573,21 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
             if(ch == ':') {
                 ctrl->SetStyling(lineNumberStyleLen, LEX_FIF_LINE_NUMBER);
                 lineNumberStyleLen = 0;
+                if(hasSope) {
+                    // the scope showed by displayed after the line number
+                    m_curstate = kScope;
+                } else {
+                    // No scope, from hereon, match until EOF
+                    m_curstate = kMatch;
+                }
+            }
+            break;
+        case kScope:
+            ++scopeStyleLen;
+            if(ch == ']') {
+                // end of scope
+                ctrl->SetStyling(scopeStyleLen, LEX_FIF_SCOPE);
+                scopeStyleLen = 0;
                 m_curstate = kMatch;
             }
             break;
@@ -611,18 +627,18 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
         ctrl->SetStyling(headerStyleLen, LEX_FIF_HEADER);
         headerStyleLen = 0;
     }
-    
+
     if(filenameStyleLen) {
         ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 2 | wxSTC_FOLDLEVELHEADERFLAG);
         ctrl->SetStyling(filenameStyleLen, LEX_FIF_FILE);
         filenameStyleLen = 0;
     }
-    
+
     if(matchStyleLen) {
         ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
         matchStyleLen = 0;
     }
-    
+
     if(lineNumberStyleLen) {
         ctrl->SetStyling(lineNumberStyleLen, LEX_FIF_LINE_NUMBER);
         lineNumberStyleLen = 0;
@@ -701,6 +717,8 @@ void FindResultsTab::LoadSearch(const History& h)
 }
 
 void FindResultsTab::OnRecentSearchesUI(wxUpdateUIEvent& e) { e.Enable(!m_history.IsEmpty() && !m_searchInProgress); }
+
+void FindResultsTab::ResetStyler() { m_curstate = kStartOfLine; }
 
 /////////////////////////////////////////////////////////////////////////////////
 

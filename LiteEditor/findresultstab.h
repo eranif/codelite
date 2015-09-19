@@ -103,8 +103,9 @@ public:
     ~FindResultsTab();
 
     static void SetStyles(wxStyledTextCtrl* sci);
-    static void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e);
-
+    static void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope = false);
+    static void ResetStyler();
+    
     void NextMatch();
     void PrevMatch();
 };

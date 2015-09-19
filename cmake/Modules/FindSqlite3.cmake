@@ -3,7 +3,9 @@ if(UNIX AND NOT APPLE)
                  NAMES libsqlite3.so
                  HINTS
                  /usr/local/lib
-                 /usr/lib)
+                 /usr/lib
+                 /usr/lib/x86_64-linux-gnu
+                 )
                  
     find_path(SQLITE3_INCLUDE_DIR NAMES sqlite3.h
               HINTS 

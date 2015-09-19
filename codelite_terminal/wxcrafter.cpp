@@ -152,13 +152,6 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
          GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     this->Connect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
     m_stc->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
@@ -266,13 +259,6 @@ SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString
          GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_colourPickerFG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SettingsDlgBase::OnFGColour), NULL, this);
     m_colourPickerBG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SettingsDlgBase::OnBGColour), NULL, this);

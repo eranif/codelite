@@ -804,16 +804,15 @@ void LEditor::SetProperties()
         CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDLEFT);
         CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDRIGHT);
     }
-    
-    
+
 #ifdef __WXOSX__
     CmdKeyAssign(wxSTC_KEY_DOWN, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTEND);
     CmdKeyAssign(wxSTC_KEY_UP, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTSTART);
-    
+
     // OSX: wxSTC_SCMOD_CTRL => CMD key
     CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL, wxSTC_CMD_LINEEND);
     CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_CTRL, wxSTC_CMD_HOME);
-    
+
     // OSX: wxSTC_SCMOD_META => CONTROL key
     CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_META, wxSTC_CMD_WORDPARTLEFT);
     CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_META, wxSTC_CMD_WORDPARTRIGHT);
@@ -3090,7 +3089,7 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
             int wordEnd = WordEndPos(pos, true);
             wxString wordAtMouse = GetTextRange(wordStart, wordEnd);
             if(!wordAtMouse.IsEmpty()) {
-                //wxLogMessage("Event wxEVT_DBG_EXPR_TOOLTIP is fired for string: %s", wordAtMouse);
+                // wxLogMessage("Event wxEVT_DBG_EXPR_TOOLTIP is fired for string: %s", wordAtMouse);
                 clDebugEvent tipEvent(wxEVT_DBG_EXPR_TOOLTIP);
                 tipEvent.SetString(wordAtMouse);
                 if(EventNotifier::Get()->ProcessEvent(tipEvent)) {
@@ -3099,7 +3098,7 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
             }
         }
     }
-    
+
     if(dbgTipIsShown && !keyIsControl) {
 
         // If any key is pressed, but the CONTROL key hide the
@@ -5198,7 +5197,7 @@ void LEditor::QuickAddNext()
     }
 
     wxString findWhat = GetTextRange(start, end);
-    int where = this->FindText(end, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
+    int where = this->FindText(end, GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
     if(where != wxNOT_FOUND) {
         AddSelection(where, where + findWhat.length());
         CenterLineIfNeeded(LineFromPos(where));
@@ -5222,7 +5221,7 @@ void LEditor::QuickFindAll()
 
     int matches(0);
     int firstMatch(wxNOT_FOUND);
-    int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
+    int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
     while(where != wxNOT_FOUND) {
         if(matches == 0) {
             firstMatch = where;

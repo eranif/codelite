@@ -5,7 +5,7 @@
 #include "php_configuration_data.h"
 #include <wx/tokenzr.h>
 
-NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent)
+NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent, bool createProjectFromWorkspaceFolder)
     : NewPHPProjectWizardBase(parent)
     , m_nameModified(false)
 {
@@ -13,6 +13,10 @@ NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent)
     PHPConfigurationData conf;
     conf.Load();
     m_filePickerPhpExe->SetPath(conf.GetPhpExe());
+    if(createProjectFromWorkspaceFolder) {
+        m_radioBoxCreateMethod->SetSelection(1);
+        m_dirPickerPath->SetPath(PHPWorkspace::Get()->GetFilename().GetPath());
+    }
 }
 
 NewPHPProjectWizard::~NewPHPProjectWizard() {}

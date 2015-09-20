@@ -15,10 +15,11 @@ class NewPHPWorkspaceDlg : public NewPHPWorkspaceBaseDlg
 {
 public:
     /** Constructor */
-    NewPHPWorkspaceDlg( wxWindow* parent );
+    NewPHPWorkspaceDlg(wxWindow* parent);
     virtual ~NewPHPWorkspaceDlg();
     //// end generated class members
     wxString GetWorkspacePath() const;
+    bool IsCreateProject() const { return m_checkBoxAddProjectFromSources->IsChecked(); }
 
 protected:
     virtual void OnBrowse(wxCommandEvent& event);

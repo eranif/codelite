@@ -28,18 +28,19 @@
 #include "wx/msgdlg.h"
 #include "wx/dirdlg.h"
 #include "wx/filename.h"
+#include "cl_standard_paths.h"
 
 NewWorkspaceDlg::NewWorkspaceDlg(wxWindow* parent)
     : NewWorkspaceBase(parent)
 {
-    m_textCtrlWorkspacePath->SetValue(wxGetCwd());
+    m_textCtrlWorkspacePath->ChangeValue(clStandardPaths::Get().GetDocumentsDir());
     m_textCtrlWorkspaceName->SetFocus();
     CentreOnParent();
     SetName("NewWorkspaceDlg");
     WindowAttrManager::Load(this);
 }
 
-NewWorkspaceDlg::~NewWorkspaceDlg() {  }
+NewWorkspaceDlg::~NewWorkspaceDlg() {}
 
 void NewWorkspaceDlg::OnWorkspacePathUpdated(wxCommandEvent& event)
 {
@@ -72,7 +73,7 @@ void NewWorkspaceDlg::OnWorkspacePathUpdated(wxCommandEvent& event)
 
 void NewWorkspaceDlg::OnWorkspaceDirPicker(wxCommandEvent& event)
 {
-    const wxString& dir = wxDirSelector(_("Choose a folder:"));
+    const wxString& dir = ::wxDirSelector(_("Choose a folder:"), m_textCtrlWorkspacePath->GetValue());
     if(!dir.empty()) {
 
         static wxString INVALID_CHARS = " ,'()";
@@ -86,7 +87,7 @@ void NewWorkspaceDlg::OnWorkspaceDirPicker(wxCommandEvent& event)
                 return;
             }
         }
-        
+
         // Use SetValue to ensure that an TEXT_UPDATE event is fired
         m_textCtrlWorkspacePath->SetValue(dir);
     }
@@ -109,7 +110,4 @@ void NewWorkspaceDlg::OnButtonCreate(wxCommandEvent& event)
     }
     EndModal(wxID_OK);
 }
-void NewWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_textCtrlWorkspaceName->IsEmpty());
-}
+void NewWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlWorkspaceName->IsEmpty()); }

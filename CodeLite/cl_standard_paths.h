@@ -110,6 +110,14 @@ public:
      * @return 
      */
     wxString GetUserProjectTemplatesDir() const;
+    
+    /**
+     * @brief return the documents directory.
+     * Windows: C:\Users\name\Documents
+     * Unix: /home/name/Documents
+     * OSX: /Users/name/Documents
+     */
+    wxString GetDocumentsDir() const;
 };
 
 #endif // CLSTANDARDPATHS_H

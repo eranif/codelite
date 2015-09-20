@@ -1,8 +1,10 @@
 #include "NodeJSNewWorkspaceDlg.h"
+#include "cl_standard_paths.h"
 
 NodeJSNewWorkspaceDlg::NodeJSNewWorkspaceDlg(wxWindow* parent)
     : NodeJSNewWorkspaceDlgBase(parent)
 {
+    m_dirPickerFolder->SetPath(clStandardPaths::Get().GetDocumentsDir());
     CenterOnParent();
 }
 

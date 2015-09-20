@@ -149,3 +149,18 @@ wxString clStandardPaths::GetUserProjectTemplatesDir() const
 wxString clStandardPaths::GetExecutablePath() const { return wxStandardPaths::Get().GetExecutablePath(); }
 
 wxString clStandardPaths::GetTempDir() const { return wxStandardPaths::Get().GetTempDir(); }
+
+wxString clStandardPaths::GetDocumentsDir() const
+{
+    wxString path = wxStandardPaths::Get().GetDocumentsDir();
+#ifdef __WXGTK__
+    // On linux, according to the docs, GetDocumentsDir() return the home directory
+    // but what we really want is ~/Documents
+    wxFileName fp(path, "");
+    fp.AppendDir("Documents");
+    if(fp.DirExists()) {
+        return fp.GetPath();
+    }
+#endif
+    return path;
+}

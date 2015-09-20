@@ -10,7 +10,6 @@
 #include "quick_outline_dlg.h"
 #include <wx/app.h>
 #include <wx/filedlg.h>
-#include "new_workspace_selection_dlg.h"
 #include "new_php_workspace_dlg.h"
 #include "php_workspace.h"
 #include "php_workspace_view.h"
@@ -315,7 +314,7 @@ void PhpPlugin::OnNewWorkspace(clCommandEvent& e)
         NewPHPWorkspaceDlg newWspDlg(m_mgr->GetTheApp()->GetTopWindow());
         if(newWspDlg.ShowModal() == wxID_OK) {
             PHPWorkspace::Get()->Create(newWspDlg.GetWorkspacePath());
-            DoOpenWorkspace(newWspDlg.GetWorkspacePath());
+            DoOpenWorkspace(newWspDlg.GetWorkspacePath(), false /* create if missing */, newWspDlg.IsCreateProject());
         }
     }
 }
@@ -381,13 +380,13 @@ void PhpPlugin::OnOpenWorkspace(clCommandEvent& e)
     DoOpenWorkspace(workspaceFile.GetFullPath());
 }
 
-void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
+void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing, bool createProjectFromSources)
 {
     // notify codelite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
     eventClose.SetEventObject(FRAME);
     FRAME->GetEventHandler()->ProcessEvent(eventClose);
-
+ 
     // Open the PHP workspace
     if(!PHPWorkspace::Get()->Open(filename, createIfMissing)) {
         wxMessageBox(_("Failed to open workspace: corrupted workspace file"),
@@ -406,6 +405,18 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
 
     // Select the 'PHP' tab
     m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
+
+    if(createProjectFromSources) {
+        PHPConfigurationData conf;
+        PHPProject::CreateData cd;
+        conf.Load();
+        cd.importFilesUnderPath = true;
+        cd.name = PHPWorkspace::Get()->GetWorkspaceName();
+        cd.phpExe = conf.GetPhpExe();
+        cd.path = PHPWorkspace::Get()->GetFilename().GetPath();
+        cd.projectType = PHPProjectSettingsData::kRunAsCLI;
+        m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, cd);
+    }
 }
 
 void PhpPlugin::OnOpenResource(wxCommandEvent& e)

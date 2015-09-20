@@ -109,6 +109,7 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlPath->SetToolTip(_("The workspace path. This path must exist"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlPath->SetHint(wxT(""));
     #endif
@@ -122,21 +123,21 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     
     fgSizer1->Add(0, 0, 0, wxALL, 5);
     
-    m_checkBoxCreateInSeparateDir = new wxCheckBox(this, wxID_ANY, _("Create the workspace in a separate directory"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxCreateInSeparateDir->SetValue(true);
-    m_checkBoxCreateInSeparateDir->SetToolTip(_("When enabled, create the workspace in a sub directory"));
-    
-    fgSizer1->Add(m_checkBoxCreateInSeparateDir, 0, wxALL, 5);
-    
-    fgSizer1->Add(0, 0, 1, wxALL, 5);
-    
-    fgSizer1->Add(0, 0, 1, wxALL, 5);
-    
-    m_checkBoxAddProjectFromSources = new wxCheckBox(this, wxID_ANY, _("Also, create a project from the source files"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxAddProjectFromSources = new wxCheckBox(this, wxID_ANY, _("Create a project from the source files under the workspace path"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxAddProjectFromSources->SetValue(false);
     m_checkBoxAddProjectFromSources->SetToolTip(_("When checked, CodeLite will create a PHP project that contains all the source files located\nunder the workspace directory"));
     
     fgSizer1->Add(m_checkBoxAddProjectFromSources, 0, wxALL, 5);
+    
+    fgSizer1->Add(0, 0, 1, wxALL, 5);
+    
+    fgSizer1->Add(0, 0, 1, wxALL, 5);
+    
+    m_checkBoxCreateInSeparateDir = new wxCheckBox(this, wxID_ANY, _("Create the workspace in a separate directory"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxCreateInSeparateDir->SetValue(false);
+    m_checkBoxCreateInSeparateDir->SetToolTip(_("When enabled, create the workspace in a sub directory"));
+    
+    fgSizer1->Add(m_checkBoxCreateInSeparateDir, 0, wxALL, 5);
     
     bSizer3->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     

@@ -85,8 +85,8 @@ protected:
     wxStaticText* m_staticText3;
     wxTextCtrl* m_textCtrlPath;
     wxButton* m_button49;
-    wxCheckBox* m_checkBoxCreateInSeparateDir;
     wxCheckBox* m_checkBoxAddProjectFromSources;
+    wxCheckBox* m_checkBoxCreateInSeparateDir;
     wxTextCtrl* m_textCtrlPreview;
     wxStdDialogButtonSizer* m_stdBtnSizer685;
     wxButton* m_button687;
@@ -105,10 +105,10 @@ public:
     wxStaticText* GetStaticText3() { return m_staticText3; }
     wxTextCtrl* GetTextCtrlPath() { return m_textCtrlPath; }
     wxButton* GetButton49() { return m_button49; }
-    wxCheckBox* GetCheckBoxCreateInSeparateDir() { return m_checkBoxCreateInSeparateDir; }
     wxCheckBox* GetCheckBoxAddProjectFromSources() { return m_checkBoxAddProjectFromSources; }
+    wxCheckBox* GetCheckBoxCreateInSeparateDir() { return m_checkBoxCreateInSeparateDir; }
     wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
-    NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewPHPWorkspaceBaseDlg();
 };
 

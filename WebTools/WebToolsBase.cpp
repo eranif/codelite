@@ -509,7 +509,7 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
     
     flexGridSizer148->Add(m_staticText150, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_dirPickerFolder = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerFolder = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     m_dirPickerFolder->SetFocus();
     
     flexGridSizer148->Add(m_dirPickerFolder, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);

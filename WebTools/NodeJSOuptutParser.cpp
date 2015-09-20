@@ -15,7 +15,11 @@ NodeJSHandle NodeJSOuptutParser::ParseRef(const JSONElement& ref, std::map<int, 
     } else if(h.type == "number" || h.type == "boolean") {
         h.value = ref.namedObject("text").toString();
     } else if(h.type == "string") {
+        // Make this string repesentable in a single line
         h.value << "\"" << ref.namedObject("text").toString() << "\"";
+        h.value.Replace("\n", "\\n");
+        h.value.Replace("\t", "\\t");
+        h.value.Replace("\r", "\\r");
     } else if(h.type == "script" || h.type == "function") {
         h.value = ref.namedObject("name").toString();
     } else if(h.type == "null") {

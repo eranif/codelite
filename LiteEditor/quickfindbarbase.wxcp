@@ -17,7 +17,7 @@
    "border": 0,
    "gbSpan": ",",
    "gbPosition": ",",
-   "m_styles": ["wxTAB_TRAVERSAL", "wxTRANSPARENT_WINDOW", "wxBORDER_STATIC"],
+   "m_styles": ["wxTAB_TRAVERSAL", "wxTRANSPARENT_WINDOW"],
    "m_sizerFlags": [],
    "m_properties": [{
      "type": "string",

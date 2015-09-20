@@ -25,7 +25,7 @@ void NodeJSNewWorkspaceDlg::OnFolderSelected(wxFileDirPickerEvent& event)
 void NodeJSNewWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     wxFileName fn(m_staticTextPreview->GetLabel());
-    event.Enable(fn.IsOk());
+    event.Enable(fn.IsOk() && !m_textCtrllName->GetValue().IsEmpty());
 }
 
 void NodeJSNewWorkspaceDlg::OnTextUpdate(wxCommandEvent& event)

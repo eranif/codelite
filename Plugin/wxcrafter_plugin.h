@@ -218,6 +218,7 @@ protected:
     wxButton* m_button187;
 
 protected:
+    virtual void OnItemActivated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:

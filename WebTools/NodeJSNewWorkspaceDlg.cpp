@@ -36,22 +36,13 @@ void NodeJSNewWorkspaceDlg::OnTextUpdate(wxCommandEvent& event)
 
 void NodeJSNewWorkspaceDlg::UpdatePreview()
 {
-    if(m_choicebook199->GetSelection() == 0) {
-        // An empty new workspace
-        wxFileName fn(m_dirPickerFolder->GetPath(), m_textCtrllName->GetValue());
-        fn.SetExt("workspace");
-        if(m_checkBoxNewFolder->IsChecked() && !m_textCtrllName->GetValue().IsEmpty()) {
-            fn.AppendDir(m_textCtrllName->GetValue());
-        }
-        m_staticTextPreview->SetLabel(fn.GetFullPath());
-    } else {
-        // from an existing source files
-        wxFileName fn(m_dirPickerExistingDir->GetPath(), "");
-        fn.SetName(fn.GetDirs().Last());
-        fn.SetExt("workspace");
-        m_staticTextPreview->SetLabel(fn.GetFullPath());
+    // An empty new workspace
+    wxFileName fn(m_dirPickerFolder->GetPath(), m_textCtrllName->GetValue());
+    fn.SetExt("workspace");
+    if(m_checkBoxNewFolder->IsChecked() && !m_textCtrllName->GetValue().IsEmpty()) {
+        fn.AppendDir(m_textCtrllName->GetValue());
     }
-
+    m_staticTextPreview->SetLabel(fn.GetFullPath());
     GetSizer()->Layout();
 }
 

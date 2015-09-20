@@ -379,7 +379,7 @@ clGetTextFromUserBaseDialog::clGetTextFromUserBaseDialog(wxWindow* parent, wxWin
     
     m_stdBtnSizer137 = new wxStdDialogButtonSizer();
     
-    boxSizer135->Add(m_stdBtnSizer137, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer135->Add(m_stdBtnSizer137, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
     m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer137->AddButton(m_buttonCancel);
@@ -576,12 +576,13 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     
     wxArrayString m_listBoxArr;
     m_listBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,200), m_listBoxArr, wxLB_SINGLE);
+    m_listBox->SetFocus();
     
     boxSizer181->Add(m_listBox, 1, wxALL|wxEXPAND, 5);
     
     m_stdBtnSizer183 = new wxStdDialogButtonSizer();
     
-    boxSizer181->Add(m_stdBtnSizer183, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer181->Add(m_stdBtnSizer183, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
     m_button185 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button185->SetDefault();
@@ -609,12 +610,14 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
+    m_listBox->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(clSingleChoiceDialogBase::OnItemActivated), NULL, this);
     m_button185->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clSingleChoiceDialogBase::OnOKUI), NULL, this);
     
 }
 
 clSingleChoiceDialogBase::~clSingleChoiceDialogBase()
 {
+    m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(clSingleChoiceDialogBase::OnItemActivated), NULL, this);
     m_button185->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clSingleChoiceDialogBase::OnOKUI), NULL, this);
     
 }

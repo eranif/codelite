@@ -1,8 +1,10 @@
 #include "clSingleChoiceDialog.h"
+#include "globals.h"
 
 clSingleChoiceDialog::clSingleChoiceDialog(wxWindow* parent, const wxArrayString& options, int initialSelection)
     : clSingleChoiceDialogBase(parent)
 {
+    MSWSetNativeTheme(m_listBox);
     if(!options.IsEmpty()) {
         m_listBox->Append(options);
         if(initialSelection >= 0 && initialSelection < (int)options.size()) {
@@ -22,4 +24,9 @@ wxString clSingleChoiceDialog::GetSelection() const
         return m_listBox->GetStringSelection();
     }
     return "";
+}
+
+void clSingleChoiceDialog::OnItemActivated(wxCommandEvent& event)
+{
+    EndModal(wxID_OK);
 }

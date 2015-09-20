@@ -10,6 +10,7 @@ public:
     virtual ~clSingleChoiceDialog();
     wxString GetSelection() const;
 protected:
+    virtual void OnItemActivated(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
 #endif // CLSINGLECHOICEDIALOG_H

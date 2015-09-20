@@ -30,8 +30,6 @@
 #include <wx/dataview.h>
 #include "m_dataview126model.h"
 #include "Notebook.h"
-#include <wx/choicebk.h>
-#include <wx/statbox.h>
 #include <wx/bitmap.h>
 #include <map>
 #include <wx/icon.h>
@@ -171,17 +169,11 @@ public:
 class NodeJSNewWorkspaceDlgBase : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText215;
-    wxChoicebook* m_choicebook199;
-    wxPanel* m_panel201;
     wxStaticText* m_staticText150;
     wxDirPickerCtrl* m_dirPickerFolder;
     wxStaticText* m_staticText160;
     wxTextCtrl* m_textCtrllName;
     wxCheckBox* m_checkBoxNewFolder;
-    wxPanel* m_panel203;
-    wxStaticText* m_staticText223;
-    wxDirPickerCtrl* m_dirPickerExistingDir;
     wxStaticText* m_staticTextPreview;
     wxStdDialogButtonSizer* m_stdBtnSizer142;
     wxButton* m_button144;
@@ -191,21 +183,14 @@ protected:
     virtual void OnFolderSelected(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnTextUpdate(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckNewFolder(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnExistingFolderSelected(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText215() { return m_staticText215; }
     wxStaticText* GetStaticText150() { return m_staticText150; }
     wxDirPickerCtrl* GetDirPickerFolder() { return m_dirPickerFolder; }
     wxStaticText* GetStaticText160() { return m_staticText160; }
     wxTextCtrl* GetTextCtrllName() { return m_textCtrllName; }
     wxCheckBox* GetCheckBoxNewFolder() { return m_checkBoxNewFolder; }
-    wxPanel* GetPanel201() { return m_panel201; }
-    wxStaticText* GetStaticText223() { return m_staticText223; }
-    wxDirPickerCtrl* GetDirPickerExistingDir() { return m_dirPickerExistingDir; }
-    wxPanel* GetPanel203() { return m_panel203; }
-    wxChoicebook* GetChoicebook199() { return m_choicebook199; }
     wxStaticText* GetStaticTextPreview() { return m_staticTextPreview; }
     NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NodeJSNewWorkspaceDlgBase();

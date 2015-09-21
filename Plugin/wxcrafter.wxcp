@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 216,
+  "m_objCounter": 240,
   "m_includeFiles": ["codelite_exports.h"],
   "m_bitmapFunction": "wxC9D6CInitBitmapResources",
   "m_bitmapsFile": "wxcrafter_plugin_bitmaps.cpp",
@@ -2439,7 +2439,7 @@
              "border": 2,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
+             "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -2643,6 +2643,13 @@
                "m_functionNameAndSignature": "OnLeftStcPainted(wxStyledTextEvent& event)",
                "m_description": "Painting has just been done.\nUseful when you want to update some other widgets based on a change in Scintilla\nbut want to have the paint occur first to appear more responsive",
                "m_noBody": false
+              }, {
+               "m_eventName": "wxEVT_MOUSEWHEEL",
+               "m_eventClass": "wxMouseEvent",
+               "m_eventHandler": "wxMouseEventHandler",
+               "m_functionNameAndSignature": "OnMouseWheel(wxMouseEvent& event)",
+               "m_description": "Process a wxEVT_MOUSEWHEEL event",
+               "m_noBody": false
               }],
              "m_children": []
             }, {
@@ -2821,7 +2828,7 @@
              "border": 2,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
+             "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -3024,6 +3031,13 @@
                "m_eventHandler": "wxStyledTextEventHandler",
                "m_functionNameAndSignature": "OnRightStcPainted(wxStyledTextEvent& event)",
                "m_description": "Painting has just been done.\nUseful when you want to update some other widgets based on a change in Scintilla\nbut want to have the paint occur first to appear more responsive",
+               "m_noBody": false
+              }, {
+               "m_eventName": "wxEVT_MOUSEWHEEL",
+               "m_eventClass": "wxMouseEvent",
+               "m_eventHandler": "wxMouseEventHandler",
+               "m_functionNameAndSignature": "OnMouseWheel(wxMouseEvent& event)",
+               "m_description": "Process a wxEVT_MOUSEWHEEL event",
                "m_noBody": false
               }],
              "m_children": []
@@ -3335,7 +3349,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "-1,-1"
+         "m_value": "300,-1"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -3429,7 +3443,7 @@
       }, {
        "m_type": 4467,
        "proportion": 0,
-       "border": 5,
+       "border": 10,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": [],
@@ -3671,7 +3685,7 @@
        "border": 0,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_MULTIPLE", "wxTR_HIDE_ROOT", "wxTR_FULL_ROW_HIGHLIGHT", "wxTR_NO_LINES", "wxBORDER_STATIC"],
+       "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_MULTIPLE", "wxTR_HIDE_ROOT", "wxTR_FULL_ROW_HIGHLIGHT", "wxTR_NO_LINES"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -4250,7 +4264,7 @@
        "border": 0,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxTAB_TRAVERSAL", "wxBORDER_STATIC"],
+       "m_styles": ["wxTAB_TRAVERSAL", "wxBORDER_NONE"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -4650,7 +4664,7 @@
         }, {
          "type": "bool",
          "m_label": "Focused",
-         "m_value": false
+         "m_value": true
         }, {
          "type": "string",
          "m_label": "Class Name:",
@@ -4672,12 +4686,19 @@
          "m_label": "Selection:",
          "m_value": "-1"
         }],
-       "m_events": [],
+       "m_events": [{
+         "m_eventName": "wxEVT_COMMAND_LISTBOX_DOUBLECLICKED",
+         "m_eventClass": "wxCommandEvent",
+         "m_eventHandler": "wxCommandEventHandler",
+         "m_functionNameAndSignature": "OnItemActivated(wxCommandEvent& event)",
+         "m_description": "Process a wxEVT_COMMAND_LISTBOX_DOUBLECLICKED event, when the listbox is double-clicked.",
+         "m_noBody": false
+        }],
        "m_children": []
       }, {
        "m_type": 4467,
        "proportion": 0,
-       "border": 5,
+       "border": 10,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": [],
@@ -4926,7 +4947,7 @@
        "border": 2,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxBORDER_THEME", "wxHSCROLL", "wxVSCROLL"],
+       "m_styles": ["wxBORDER_NONE", "wxHSCROLL", "wxVSCROLL"],
        "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -5133,6 +5154,594 @@
           }]
         }]
       }]
+    }]
+  }, {
+   "m_type": 4484,
+   "proportion": 0,
+   "border": 5,
+   "gbSpan": "1,1",
+   "gbPosition": "0,0",
+   "m_styles": ["wxBORDER_SIMPLE"],
+   "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+   "m_properties": [{
+     "type": "string",
+     "m_label": "Size:",
+     "m_value": "-1,-1"
+    }, {
+     "type": "string",
+     "m_label": "Minimum Size:",
+     "m_value": "-1,-1"
+    }, {
+     "type": "string",
+     "m_label": "Name:",
+     "m_value": "clResizableTooltipBase"
+    }, {
+     "type": "multi-string",
+     "m_label": "Tooltip:",
+     "m_value": ""
+    }, {
+     "type": "colour",
+     "m_label": "Bg Colour:",
+     "colour": "<Default>"
+    }, {
+     "type": "colour",
+     "m_label": "Fg Colour:",
+     "colour": "<Default>"
+    }, {
+     "type": "font",
+     "m_label": "Font:",
+     "m_value": ""
+    }, {
+     "type": "bool",
+     "m_label": "Hidden",
+     "m_value": false
+    }, {
+     "type": "bool",
+     "m_label": "Disabled",
+     "m_value": false
+    }, {
+     "type": "bool",
+     "m_label": "Focused",
+     "m_value": false
+    }, {
+     "type": "string",
+     "m_label": "Class Name:",
+     "m_value": ""
+    }, {
+     "type": "string",
+     "m_label": "Include File:",
+     "m_value": ""
+    }, {
+     "type": "string",
+     "m_label": "Style:",
+     "m_value": ""
+    }, {
+     "type": "string",
+     "m_label": "Title:",
+     "m_value": ""
+    }, {
+     "type": "virtualFolderPicker",
+     "m_label": "Virtual Folder:",
+     "m_path": "plugin_sdk:GUI:Controls"
+    }, {
+     "type": "choice",
+     "m_label": "Centre:",
+     "m_selection": 1,
+     "m_options": ["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
+    }, {
+     "type": "string",
+     "m_label": "Inherited Class",
+     "m_value": "clResizableTooltip"
+    }, {
+     "type": "string",
+     "m_label": "File:",
+     "m_value": "clResizableTooltip"
+    }, {
+     "type": "string",
+     "m_label": "Class Decorator",
+     "m_value": "WXDLLIMPEXP_SDK"
+    }],
+   "m_events": [],
+   "m_children": [{
+     "m_type": 4401,
+     "proportion": 1,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Minimum Size:",
+       "m_value": "-1,-1"
+      }, {
+       "type": "string",
+       "m_label": "Name:",
+       "m_value": "boxSizer222"
+      }, {
+       "type": "string",
+       "m_label": "Style:",
+       "m_value": ""
+      }, {
+       "type": "choice",
+       "m_label": "Orientation:",
+       "m_selection": 0,
+       "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
+      }],
+     "m_events": [],
+     "m_children": [{
+       "m_type": 4408,
+       "proportion": 1,
+       "border": 0,
+       "gbSpan": "1,1",
+       "gbPosition": "0,0",
+       "m_styles": ["wxTAB_TRAVERSAL"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+       "m_properties": [{
+         "type": "winid",
+         "m_label": "ID:",
+         "m_winid": "wxID_ANY"
+        }, {
+         "type": "string",
+         "m_label": "Size:",
+         "m_value": "300,250"
+        }, {
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "300,250"
+        }, {
+         "type": "string",
+         "m_label": "Name:",
+         "m_value": "m_mainPanel"
+        }, {
+         "type": "multi-string",
+         "m_label": "Tooltip:",
+         "m_value": ""
+        }, {
+         "type": "colour",
+         "m_label": "Bg Colour:",
+         "colour": "Tooltip"
+        }, {
+         "type": "colour",
+         "m_label": "Fg Colour:",
+         "colour": "TooltipText"
+        }, {
+         "type": "font",
+         "m_label": "Font:",
+         "m_value": ""
+        }, {
+         "type": "bool",
+         "m_label": "Hidden",
+         "m_value": false
+        }, {
+         "type": "bool",
+         "m_label": "Disabled",
+         "m_value": false
+        }, {
+         "type": "bool",
+         "m_label": "Focused",
+         "m_value": false
+        }, {
+         "type": "string",
+         "m_label": "Class Name:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Include File:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Style:",
+         "m_value": ""
+        }],
+       "m_events": [],
+       "m_children": [{
+         "m_type": 4401,
+         "proportion": 1,
+         "border": 5,
+         "gbSpan": "1,1",
+         "gbPosition": "0,0",
+         "m_styles": [],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+         "m_properties": [{
+           "type": "string",
+           "m_label": "Minimum Size:",
+           "m_value": "-1,-1"
+          }, {
+           "type": "string",
+           "m_label": "Name:",
+           "m_value": "boxSizer230"
+          }, {
+           "type": "string",
+           "m_label": "Style:",
+           "m_value": ""
+          }, {
+           "type": "choice",
+           "m_label": "Orientation:",
+           "m_selection": 0,
+           "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
+          }],
+         "m_events": [],
+         "m_children": [{
+           "m_type": 4422,
+           "proportion": 1,
+           "border": 0,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": ["wxTR_DEFAULT_STYLE", "wxBORDER_NONE"],
+           "m_sizerFlags": ["wxEXPAND"],
+           "m_properties": [{
+             "type": "winid",
+             "m_label": "ID:",
+             "m_winid": "wxID_ANY"
+            }, {
+             "type": "string",
+             "m_label": "Size:",
+             "m_value": "-1,-1"
+            }, {
+             "type": "string",
+             "m_label": "Minimum Size:",
+             "m_value": "-1,-1"
+            }, {
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "m_treeCtrl"
+            }, {
+             "type": "multi-string",
+             "m_label": "Tooltip:",
+             "m_value": ""
+            }, {
+             "type": "colour",
+             "m_label": "Bg Colour:",
+             "colour": "Tooltip"
+            }, {
+             "type": "colour",
+             "m_label": "Fg Colour:",
+             "colour": "TooltipText"
+            }, {
+             "type": "font",
+             "m_label": "Font:",
+             "m_value": ""
+            }, {
+             "type": "bool",
+             "m_label": "Hidden",
+             "m_value": false
+            }, {
+             "type": "bool",
+             "m_label": "Disabled",
+             "m_value": false
+            }, {
+             "type": "bool",
+             "m_label": "Focused",
+             "m_value": false
+            }, {
+             "type": "string",
+             "m_label": "Class Name:",
+             "m_value": ""
+            }, {
+             "type": "string",
+             "m_label": "Include File:",
+             "m_value": ""
+            }, {
+             "type": "string",
+             "m_label": "Style:",
+             "m_value": ""
+            }],
+           "m_events": [{
+             "m_eventName": "wxEVT_COMMAND_TREE_ITEM_EXPANDING",
+             "m_eventClass": "wxTreeEvent",
+             "m_eventHandler": "wxTreeEventHandler",
+             "m_functionNameAndSignature": "OnItemExpanding(wxTreeEvent& event)",
+             "m_description": "The item is being expanded. This can be prevented by calling Veto().",
+             "m_noBody": false
+            }],
+           "m_children": []
+          }]
+        }]
+      }, {
+       "m_type": 4408,
+       "proportion": 0,
+       "border": 0,
+       "gbSpan": "1,1",
+       "gbPosition": "0,0",
+       "m_styles": ["wxTAB_TRAVERSAL"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+       "m_properties": [{
+         "type": "winid",
+         "m_label": "ID:",
+         "m_winid": "wxID_ANY"
+        }, {
+         "type": "string",
+         "m_label": "Size:",
+         "m_value": "-1,-1"
+        }, {
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
+         "type": "string",
+         "m_label": "Name:",
+         "m_value": "m_panelStatus"
+        }, {
+         "type": "multi-string",
+         "m_label": "Tooltip:",
+         "m_value": ""
+        }, {
+         "type": "colour",
+         "m_label": "Bg Colour:",
+         "colour": "Tooltip"
+        }, {
+         "type": "colour",
+         "m_label": "Fg Colour:",
+         "colour": "TooltipText"
+        }, {
+         "type": "font",
+         "m_label": "Font:",
+         "m_value": ""
+        }, {
+         "type": "bool",
+         "m_label": "Hidden",
+         "m_value": false
+        }, {
+         "type": "bool",
+         "m_label": "Disabled",
+         "m_value": false
+        }, {
+         "type": "bool",
+         "m_label": "Focused",
+         "m_value": false
+        }, {
+         "type": "string",
+         "m_label": "Class Name:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Include File:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Style:",
+         "m_value": ""
+        }],
+       "m_events": [{
+         "m_eventName": "wxEVT_ENTER_WINDOW",
+         "m_eventClass": "wxMouseEvent",
+         "m_eventHandler": "wxMouseEventHandler",
+         "m_functionNameAndSignature": "OnStatusEnterWindow(wxMouseEvent& event)",
+         "m_description": "Process a wxEVT_ENTER_WINDOW event",
+         "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_LEAVE_WINDOW",
+         "m_eventClass": "wxMouseEvent",
+         "m_eventHandler": "wxMouseEventHandler",
+         "m_functionNameAndSignature": "OnStatusLeaveWindow(wxMouseEvent& event)",
+         "m_description": "Process a wxEVT_LEAVE_WINDOW event.",
+         "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_MOTION",
+         "m_eventClass": "wxMouseEvent",
+         "m_eventHandler": "wxMouseEventHandler",
+         "m_functionNameAndSignature": "OnStatusBarMotion(wxMouseEvent& event)",
+         "m_description": "Process a wxEVT_MOTION event",
+         "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_LEFT_UP",
+         "m_eventClass": "wxMouseEvent",
+         "m_eventHandler": "wxMouseEventHandler",
+         "m_functionNameAndSignature": "OnStatusBarLeftUp(wxMouseEvent& event)",
+         "m_description": "Process a wxEVT_LEFT_UP event.",
+         "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_LEFT_DOWN",
+         "m_eventClass": "wxMouseEvent",
+         "m_eventHandler": "wxMouseEventHandler",
+         "m_functionNameAndSignature": "OnStatusBarLeftDown(wxMouseEvent& event)",
+         "m_description": "Process a wxEVT_LEFT_DOWN event. The handler of this event should normally call event.Skip() to allow the default processing to take place as otherwise the window under mouse wouldn't get the focus.",
+         "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_MOUSE_CAPTURE_LOST",
+         "m_eventClass": "wxMouseCaptureLostEvent",
+         "m_eventHandler": "wxMouseCaptureLostEventHandler",
+         "m_functionNameAndSignature": "OnCaptureLost(wxMouseCaptureLostEvent& event)",
+         "m_description": "A mouse capture lost event is sent to a window that had obtained mouse capture, which was subsequently lost due to an \"external\" event (for example, when a dialog box is shown or if another application captures the mouse)",
+         "m_noBody": false
+        }],
+       "m_children": [{
+         "m_type": 4401,
+         "proportion": 1,
+         "border": 5,
+         "gbSpan": "1,1",
+         "gbPosition": "0,0",
+         "m_styles": [],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+         "m_properties": [{
+           "type": "string",
+           "m_label": "Minimum Size:",
+           "m_value": "-1,-1"
+          }, {
+           "type": "string",
+           "m_label": "Name:",
+           "m_value": "boxSizer234"
+          }, {
+           "type": "string",
+           "m_label": "Style:",
+           "m_value": ""
+          }, {
+           "type": "choice",
+           "m_label": "Orientation:",
+           "m_selection": 1,
+           "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
+          }],
+         "m_events": [],
+         "m_children": [{
+           "m_type": 4454,
+           "proportion": 1,
+           "border": 5,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": [],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+           "m_properties": [{
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "Spacer238"
+            }, {
+             "type": "string",
+             "m_label": "Size:",
+             "m_value": "0,0"
+            }],
+           "m_events": [],
+           "m_children": []
+          }, {
+           "m_type": 4409,
+           "proportion": 0,
+           "border": 5,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": [],
+           "m_sizerFlags": ["wxALIGN_CENTER_VERTICAL"],
+           "m_properties": [{
+             "type": "winid",
+             "m_label": "ID:",
+             "m_winid": "wxID_ANY"
+            }, {
+             "type": "string",
+             "m_label": "Size:",
+             "m_value": "-1,-1"
+            }, {
+             "type": "string",
+             "m_label": "Minimum Size:",
+             "m_value": "-1,-1"
+            }, {
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "m_staticBitmap240"
+            }, {
+             "type": "multi-string",
+             "m_label": "Tooltip:",
+             "m_value": ""
+            }, {
+             "type": "colour",
+             "m_label": "Bg Colour:",
+             "colour": "Tooltip"
+            }, {
+             "type": "colour",
+             "m_label": "Fg Colour:",
+             "colour": "<Default>"
+            }, {
+             "type": "font",
+             "m_label": "Font:",
+             "m_value": ""
+            }, {
+             "type": "bool",
+             "m_label": "Hidden",
+             "m_value": false
+            }, {
+             "type": "bool",
+             "m_label": "Disabled",
+             "m_value": false
+            }, {
+             "type": "bool",
+             "m_label": "Focused",
+             "m_value": false
+            }, {
+             "type": "string",
+             "m_label": "Class Name:",
+             "m_value": ""
+            }, {
+             "type": "string",
+             "m_label": "Include File:",
+             "m_value": ""
+            }, {
+             "type": "string",
+             "m_label": "Style:",
+             "m_value": ""
+            }, {
+             "type": "bitmapPicker",
+             "m_label": "Bitmap File:",
+             "m_path": "../icons/resize.png"
+            }],
+           "m_events": [{
+             "m_eventName": "wxEVT_LEFT_DOWN",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusBarLeftDown(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_LEFT_DOWN event. The handler of this event should normally call event.Skip() to allow the default processing to take place as otherwise the window under mouse wouldn't get the focus.",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_LEFT_UP",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusBarLeftUp(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_LEFT_UP event.",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_MOTION",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusBarMotion(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_MOTION event",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_LEAVE_WINDOW",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusLeaveWindow(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_LEAVE_WINDOW event.",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_ENTER_WINDOW",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusEnterWindow(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_ENTER_WINDOW event",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_MOUSE_CAPTURE_LOST",
+             "m_eventClass": "wxMouseCaptureLostEvent",
+             "m_eventHandler": "wxMouseCaptureLostEventHandler",
+             "m_functionNameAndSignature": "OnCaptureLost(wxMouseCaptureLostEvent& event)",
+             "m_description": "A mouse capture lost event is sent to a window that had obtained mouse capture, which was subsequently lost due to an \"external\" event (for example, when a dialog box is shown or if another application captures the mouse)",
+             "m_noBody": false
+            }],
+           "m_children": []
+          }]
+        }]
+      }]
+    }, {
+     "m_type": 4483,
+     "proportion": 0,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": [],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Name:",
+       "m_value": "m_timerCheckMousePos"
+      }, {
+       "type": "integer",
+       "m_label": "Interval",
+       "m_value": 25
+      }, {
+       "type": "bool",
+       "m_label": "Start the timer",
+       "m_value": true
+      }, {
+       "type": "bool",
+       "m_label": "One Shot Timer",
+       "m_value": false
+      }],
+     "m_events": [{
+       "m_eventName": "wxEVT_TIMER",
+       "m_eventClass": "wxTimerEvent",
+       "m_eventHandler": "wxTimerEventHandler",
+       "m_functionNameAndSignature": "OnCheckMousePosition(wxTimerEvent& event)",
+       "m_description": "Process a timer event",
+       "m_noBody": false
+      }],
+     "m_children": []
     }]
   }]
 }

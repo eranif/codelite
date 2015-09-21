@@ -978,6 +978,7 @@ bool DbgCmdSetConditionHandler::ProcessOutput(const wxString& line)
 bool DbgCmdBreakList::ProcessOutput(const wxString& line)
 {
     wxString dbg_output(line);
+    dbg_output.Replace("bkpt=", "");
     std::vector<BreakpointInfo> li;
     GdbChildrenInfo info;
     gdbParseListChildren(dbg_output.mb_str(wxConvUTF8).data(), info);
@@ -1052,7 +1053,7 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
             if(iter->second.empty() == false) {
                 wxString bpId(iter->second.c_str(), wxConvUTF8);
                 wxRemoveQuotes(bpId);
-                breakpoint.debugger_id = wxAtoi(bpId);
+                bpId.ToCDouble(&breakpoint.debugger_id);
             }
         }
         li.push_back(breakpoint);

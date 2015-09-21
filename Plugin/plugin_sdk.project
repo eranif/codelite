@@ -311,6 +311,8 @@
       </VirtualDirectory>
       <File Name="clTreeCtrlPanelDefaultPage.h"/>
       <File Name="clTreeCtrlPanelDefaultPage.cpp"/>
+      <File Name="clResizableTooltip.h"/>
+      <File Name="clResizableTooltip.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>

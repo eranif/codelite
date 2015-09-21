@@ -31,6 +31,9 @@
 #include <wx/menu.h>
 #include <wx/wupdlock.h>
 #include "fileextmanager.h"
+#include "fileutils.h"
+#include "lexer_configuration.h"
+#include "ColoursAndFontsManager.h"
 
 const wxEventType wxEVT_SV_GOTO_DEFINITION = wxNewEventType();
 const wxEventType wxEVT_SV_GOTO_DECLARATION = wxNewEventType();
@@ -122,13 +125,16 @@ void OutlineTab::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
+    LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
+    LexerConf::Ptr_t cxxLexer = ColoursAndFontsManager::Get().GetLexer("c++");
     
-    if(editor && FileExtManager::IsCxxFile(editor->GetFileName())) {
+    // Use the lexer to determine if we can show outline
+    if(editor && cxxLexer && FileUtils::WildMatch(cxxLexer->GetFileSpec(), editor->GetFileName())) {
         m_tree->BuildTree(editor->GetFileName());
         m_simpleBook->SetSelection(OUTLINE_TAB_CXX);
         m_textCtrlSearch->Enable(true);
 
-    } else if(editor && FileExtManager::IsPHPFile(editor->GetFileName())) {
+    } else if(editor && phpLexer && FileUtils::WildMatch(phpLexer->GetFileSpec(), editor->GetFileName())) {
         m_treeCtrlPhp->BuildTree(editor->GetFileName());
         m_simpleBook->SetSelection(OUTLINE_TAB_PHP);
         m_textCtrlSearch->Enable(true);

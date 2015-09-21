@@ -125,9 +125,13 @@
         <File Name="NodeJSGetScriptHandler.cpp"/>
         <File Name="NodeJSEvaluateExprHandler.h"/>
         <File Name="NodeJSEvaluateExprHandler.cpp"/>
+        <File Name="NodeJSLookupHandler.h"/>
+        <File Name="NodeJSLookupHandler.cpp"/>
       </VirtualDirectory>
       <File Name="NodeJSDebuggerPane.h"/>
       <File Name="NodeJSDebuggerPane.cpp"/>
+      <File Name="NodeJSOuptutParser.h"/>
+      <File Name="NodeJSOuptutParser.cpp"/>
     </VirtualDirectory>
     <File Name="NodeJSWorkspaceUserConfiguration.h"/>
     <File Name="NodeJSWorkspaceUserConfiguration.cpp"/>
@@ -135,6 +139,9 @@
     <File Name="NodeJSEvents.cpp"/>
     <File Name="NodeJSNewWorkspaceDlg.h"/>
     <File Name="NodeJSNewWorkspaceDlg.cpp"/>
+    <File Name="NodeJSDebuggerTooltip.h"/>
+    <File Name="NodeJSDebuggerTooltip.cpp"/>
+    <File Name="NodeJS.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

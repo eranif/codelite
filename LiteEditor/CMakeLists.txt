@@ -16,7 +16,6 @@ include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/includ
 
 ## On UNIX we require GTK
 if (UNIX AND NOT APPLE)
-
     if (GTK_VERSION EQUAL 3)
         set(OLD_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}) # Cache the current value
         set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -100,8 +99,6 @@ if(NOT APPLE)
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite_fix_files DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite_kill_children DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite_xterm DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-        install(FILES ${CL_SRC_ROOT}/Runtime/clg++ DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-        install(FILES ${CL_SRC_ROOT}/Runtime/clgcc DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
     endif (UNIX)
 
     ## codelite icons
@@ -138,15 +135,7 @@ if(NOT APPLE)
         # Clear the icon cache if exists
         install(CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
     endif (  UNIX AND NOT APPLE )
-
-    install(
-        DIRECTORY ${CL_SRC_ROOT}/Runtime/plugins/resources
-        DESTINATION ${PLUGINS_DIR}
-        USE_SOURCE_PERMISSIONS
-        PATTERN ".svn" EXCLUDE
-        PATTERN ".git" EXCLUDE
-    ) 
-
+    
     install(
         DIRECTORY ${CL_SRC_ROOT}/Runtime/images 
                   ${CL_SRC_ROOT}/Runtime/gdb_printers 
@@ -154,6 +143,7 @@ if(NOT APPLE)
                   ${CL_SRC_ROOT}/Runtime/lexers 
                   ${CL_SRC_ROOT}/Runtime/templates 
                   ${CL_SRC_ROOT}/Runtime/rc
+                  ${CL_SRC_ROOT}/Runtime/plugins/resources
         DESTINATION ${CL_PREFIX}/share/codelite
         USE_SOURCE_PERMISSIONS
         PATTERN ".svn" EXCLUDE
@@ -170,6 +160,7 @@ if(NOT APPLE)
     if (UNIX AND CL_COPY_WX_LIBS) # If we're packaging with wx2.9
         # We need to deduce the location of the wx libs to be installed
         execute_process(COMMAND ${WX_TOOL} --libs OUTPUT_VARIABLE WX_LIBSOUTPUT OUTPUT_STRIP_TRAILING_WHITESPACE)
+        
         if (${WX_LIBSOUTPUT} MATCHES "^-L.+") # In recent, multi-architecture, distro versions it'll start with -L/foo/bar
             string(REGEX REPLACE "^-L([^ ;]+).*" "\\1" WX_LIBS_DIR ${WX_LIBSOUTPUT})
         else()
@@ -184,11 +175,13 @@ if(NOT APPLE)
         foreach(ITEM ${WX_LIBS_ALL_LIST})
             # We want to replace -l with lib. We also want to exclude imaginary libs called _all.so, which buggy wx-config scripts can invent
             if (${ITEM} MATCHES "-lwx_.+" AND NOT ${ITEM} MATCHES "-l.+_all.+")
-                string(REGEX REPLACE "^-l" "lib" LIBITEM ${ITEM})
-                list(APPEND WX_LIBS_ALL ${WX_LIBS_DIR}/${LIBITEM}.so*) # we need the terminal [.]so because the rpms contain both dynamic and static libs
+                string(REGEX REPLACE "^-l" "lib" LIBITEM ${ITEM}) 
+                # openSUSE have started to use libwx_gtk2u_xrc-suse.so instead of libwx_gtk2u_xrc-3.1, so chop off the end
+                string(REGEX REPLACE "-.+" "-" LIBITEMCUT ${LIBITEM})
+                list(APPEND WX_LIBS_ALL ${WX_LIBS_DIR}/${LIBITEMCUT}*.so*) # we need the terminal [.]so because the rpms contain both dynamic and static libs
             endif()
         endforeach()
-        
+
         file(GLOB wxfilepaths ${WX_LIBS_ALL})
         install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
     endif()

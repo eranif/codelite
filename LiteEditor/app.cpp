@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "precompiled_header.h"
+#include "autoversion.h"
 #include "cl_registry.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -57,6 +58,7 @@
 #include <wx/persist.h>
 #include "singleinstancethreadjob.h"
 #include "SocketAPI/clSocketClient.h"
+#include <wx/imagjpeg.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -64,8 +66,6 @@
 //////////////////////////////////////////////
 // Define the version string for this codelite
 //////////////////////////////////////////////
-extern wxChar* clGitRevision;
-wxString CODELITE_VERSION_STR = clGitRevision;
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 #include <sys/wait.h>
@@ -341,6 +341,7 @@ bool CodeLiteApp::OnInit()
     wxImage::AddHandler(new wxICOHandler);
     wxImage::AddHandler(new wxXPMHandler);
     wxImage::AddHandler(new wxGIFHandler);
+    wxImage::AddHandler(new wxJPEGHandler);
     InitXmlResource();
 
     wxLog::EnableLogging(false);
@@ -352,6 +353,11 @@ bool CodeLiteApp::OnInit()
     parser.SetCmdLine(wxAppBase::argc, wxAppBase::argv);
     if(parser.Parse() != 0) {
         return false;
+    }
+
+    wxString newDataDir(wxEmptyString);
+    if(parser.Found(wxT("d"), &newDataDir)) {
+        clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
 
     // check for single instance
@@ -368,9 +374,9 @@ bool CodeLiteApp::OnInit()
     if(parser.Found(wxT("v"))) {
 // print version
 #ifdef __WXMSW__
-        ::wxMessageBox(wxString() << "CodeLite IDE v" << clGitRevision, "CodeLite");
+        ::wxMessageBox(wxString() << "CodeLite IDE v" << CODELITE_VERSION_STRING, "CodeLite");
 #else
-        wxPrintf("CodeLite IDE v%s\n", clGitRevision);
+        wxPrintf("CodeLite IDE v%s\n", CODELITE_VERSION_STRING);
 #endif
         return false;
     }
@@ -400,11 +406,6 @@ bool CodeLiteApp::OnInit()
 #else
         wxLogDebug("Ignoring the Windows-only --basedir option as not running Windows");
 #endif
-    }
-
-    wxString newDataDir(wxEmptyString);
-    if(parser.Found(wxT("d"), &newDataDir)) {
-        clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
 
     // Set the log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging CodeLite
@@ -559,7 +560,8 @@ bool CodeLiteApp::OnInit()
     cfg->SetInstallDir(mgr->GetInstallDir());
 
     // Update codelite revision and Version
-    cfg->Init(clGitRevision, wxT("2.0.2"));
+    wxString strVersion = CODELITE_VERSION_STRING;
+    cfg->Init(strVersion, wxT("2.0.2"));
     if(!cfg->Load()) {
         CL_ERROR(wxT("Failed to load configuration file: %s/config/codelite.xml"), wxGetCwd().c_str());
         return false;
@@ -573,7 +575,7 @@ bool CodeLiteApp::OnInit()
         wxBitmap bitmap;
         wxString splashName(clStandardPaths::Get().GetDataDir() + wxT("/images/splashscreen.png"));
         if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-            wxString mainTitle = CODELITE_VERSION_STR;
+            wxString mainTitle = CODELITE_VERSION_STRING;
             clSplashScreen::g_splashScreen = new clSplashScreen(clSplashScreen::CreateSplashScreenBitmap(bitmap),
                                                                 wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
                                                                 -1,
@@ -776,9 +778,13 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser)
 {
     // check for single instance
     if(clConfig::Get().Read(kConfigSingleInstance, false)) {
-        const wxString name = wxString::Format(wxT("CodeLite-%s"), wxGetUserId().c_str());
-
-        m_singleInstance = new wxSingleInstanceChecker(name);
+        wxString name = wxString::Format(wxT("CodeLite-%s"), wxGetUserId().c_str());
+        
+        wxString path;
+#ifndef __WXMSW__
+        path = "/tmp";
+#endif
+        m_singleInstance = new wxSingleInstanceChecker(name, path);
         if(m_singleInstance->IsAnotherRunning()) {
             // prepare commands file for the running instance
             wxArrayString files;

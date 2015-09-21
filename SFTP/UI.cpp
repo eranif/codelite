@@ -191,8 +191,6 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer16->Add(m_treeListCtrl, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 2);
     
     m_treeListCtrl->AppendColumn(_("Name"), 400, wxALIGN_LEFT, wxCOL_RESIZABLE|wxCOL_SORTABLE);
-    m_treeListCtrl->AppendColumn(_("Type"), 100, wxALIGN_LEFT, wxCOL_RESIZABLE);
-    m_treeListCtrl->AppendColumn(_("Size"), 50, wxALIGN_LEFT, wxCOL_RESIZABLE);
     
     SetName(wxT("SFTPTreeViewBase"));
     SetSizeHints(-1,-1);
@@ -398,5 +396,78 @@ SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, 
 SFTPSettingsDialogBase::~SFTPSettingsDialogBase()
 {
     m_button87->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPSettingsDialogBase::OnOK), NULL, this);
+    
+}
+
+SFTPUploadDialogBase::SFTPUploadDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC32BEInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer102 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer102);
+    
+    m_staticText110 = new wxStaticText(this, wxID_ANY, _("Upload the files to this folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer102->Add(m_staticText110, 0, wxALL, 5);
+    
+    m_textCtrlRemoteFolder = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(400,-1), 0);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrlRemoteFolderFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrlRemoteFolderFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
+    wxFont m_textCtrlRemoteFolderFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_textCtrlRemoteFolderFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
+    m_textCtrlRemoteFolder->SetFont(m_textCtrlRemoteFolderFont);
+    m_textCtrlRemoteFolder->SetToolTip(_("Set the remote folder path"));
+    m_textCtrlRemoteFolder->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlRemoteFolder->SetHint(wxT(""));
+    #endif
+    
+    boxSizer102->Add(m_textCtrlRemoteFolder, 0, wxALL|wxEXPAND, 5);
+    
+    boxSizer102->Add(0, 0, 1, wxALL, 5);
+    
+    m_stdBtnSizer104 = new wxStdDialogButtonSizer();
+    
+    boxSizer102->Add(m_stdBtnSizer104, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer104->AddButton(m_buttonOK);
+    
+    m_button108 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer104->AddButton(m_button108);
+    m_stdBtnSizer104->Realize();
+    
+    SetName(wxT("SFTPUploadDialogBase"));
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPUploadDialogBase::OnOKUI), NULL, this);
+    
+}
+
+SFTPUploadDialogBase::~SFTPUploadDialogBase()
+{
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPUploadDialogBase::OnOKUI), NULL, this);
     
 }

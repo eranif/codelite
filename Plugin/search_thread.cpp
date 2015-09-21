@@ -117,6 +117,9 @@ void SearchThread::ProcessRequest(ThreadRequest* req)
     m_summary.SetElapsedTime(sw.Time());
 
     SearchData* sd = (SearchData*)req;
+    m_summary.SetFindWhat(sd->GetFindString());
+    m_summary.SetReplaceWith(sd->GetReplaceWith());
+    
     // Send search end event
     SendEvent(wxEVT_SEARCH_THREAD_SEARCHEND, sd->GetOwner());
 }

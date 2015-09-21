@@ -65,8 +65,8 @@ void testRegisterNames();
 int main(int argc, char **argv)
 {
     //testTokens();
-//    testChildrenParser();
-    testRegisterNames();
+    testChildrenParser();
+//  testRegisterNames();
     return 0;
 }
 

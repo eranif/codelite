@@ -20,7 +20,8 @@ if ( USE_PCH )
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
 endif ( USE_PCH )
-include_directories(./include ../../sqlite3)
+
+include_directories(./include ${SQLITE3_INCLUDE_DIR})
 
 if (UNIX AND NOT APPLE)
     set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
@@ -38,7 +39,7 @@ set(SRCS src/wxsqlite3.cpp)
 
 # Define the output
 add_library(wxsqlite3 SHARED ${SRCS})
-target_link_libraries(wxsqlite3 ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib)
+target_link_libraries(wxsqlite3 ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" ${SQLITE3_LIBRARY})
 
 if (NOT MINGW)
     if(APPLE)

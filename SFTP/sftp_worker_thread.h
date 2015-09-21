@@ -42,7 +42,7 @@ class SFTPThreadRequet : public ThreadRequest
     int m_direction;
 
 public:
-    enum { kUpload, kDownload, kConnect };
+    enum { kUpload, kDownload, kConnect, kDownloadAndOpenWithDefaultApp, kDownloadAndOpenContainingFolder };
 
 public:
     SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile);
@@ -63,6 +63,7 @@ public:
     const wxString& GetRemoteFile() const { return m_remoteFile; }
     const wxString& GetLocalFile() const { return m_localFile; }
     int GetDirection() const { return m_direction; }
+    void SetDirection(int d) { m_direction = d; }
     ThreadRequest* Clone() const;
 };
 

@@ -209,8 +209,20 @@ static unsigned char xml_res_file_7[] = {
 36,50,47,255,192,234,127,199,31,218,228,30,7,140,193,91,84,0,0,0,0,73,69,
 78,68,174,66,96,130};
 
-static size_t xml_res_size_8 = 577;
+static size_t xml_res_size_8 = 203;
 static unsigned char xml_res_file_8[] = {
+137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,
+0,31,243,255,97,0,0,0,6,98,75,71,68,0,255,0,255,0,255,160,189,167,147,0,
+0,0,9,112,72,89,115,0,0,18,116,0,0,18,116,1,222,102,31,120,0,0,0,7,116,
+73,77,69,7,223,9,15,5,4,24,11,4,233,196,0,0,0,88,73,68,65,84,56,203,229,
+146,49,14,192,48,8,3,173,254,255,91,188,5,130,152,248,128,59,117,201,66,
+137,212,102,136,71,15,150,238,100,224,172,144,164,169,82,68,248,116,87,
+103,32,51,49,220,97,170,88,26,136,8,152,25,134,251,38,230,182,131,153,185,
+237,96,102,254,222,65,197,92,58,168,152,75,7,21,243,255,63,120,147,27,79,
+4,165,19,44,104,199,124,0,0,0,0,73,69,78,68,174,66,96,130};
+
+static size_t xml_res_size_9 = 577;
+static unsigned char xml_res_file_9[] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,
 0,115,122,122,244,0,0,2,8,73,68,65,84,120,94,205,148,193,106,83,65,24,133,
 191,255,159,105,154,88,104,193,66,17,92,84,220,182,107,193,87,104,92,244,
@@ -240,8 +252,8 @@ static unsigned char xml_res_file_8[] = {
 143,128,159,192,156,219,192,47,83,42,59,92,177,195,125,179,0,0,0,0,73,69,
 78,68,174,66,96,130};
 
-static size_t xml_res_size_9 = 439;
-static unsigned char xml_res_file_9[] = {
+static size_t xml_res_size_10 = 439;
+static unsigned char xml_res_file_10[] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,
 0,115,122,122,244,0,0,1,126,73,68,65,84,120,94,237,150,77,74,28,65,20,128,
 191,87,245,202,153,65,140,11,93,8,129,65,92,206,1,220,8,57,128,237,194,
@@ -264,8 +276,8 @@ static unsigned char xml_res_file_9[] = {
 192,47,64,232,7,3,254,185,155,161,121,4,16,150,123,216,22,243,164,88,0,
 0,0,0,73,69,78,68,174,66,96,130};
 
-static size_t xml_res_size_10 = 494;
-static unsigned char xml_res_file_10[] = {
+static size_t xml_res_size_11 = 494;
+static unsigned char xml_res_file_11[] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,
 0,115,122,122,244,0,0,1,181,73,68,65,84,120,94,237,149,189,106,21,65,20,
 128,191,115,230,228,238,92,52,70,208,66,16,46,98,151,60,128,133,130,15,
@@ -291,12 +303,12 @@ static unsigned char xml_res_file_10[] = {
 65,12,192,23,64,152,6,7,126,135,155,211,230,47,168,249,205,110,240,4,114,
 254,0,0,0,0,73,69,78,68,174,66,96,130};
 
-static size_t xml_res_size_11 = 1429;
-static unsigned char xml_res_file_11[] = {
+static size_t xml_res_size_12 = 1528;
+static unsigned char xml_res_file_12[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,32,120,109,108,110,115,61,34,104,116,116,112,58,
-47,47,119,119,119,46,119,120,119,105,110,100,111,119,115,46,111,114,103,
+47,47,119,119,119,46,119,120,119,105,100,103,101,116,115,46,111,114,103,
 47,119,120,120,114,99,34,62,10,32,32,60,111,98,106,101,99,116,32,99,108,
 97,115,115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,
 34,100,105,102,102,45,99,111,112,121,45,102,105,108,101,45,108,101,102,
@@ -348,6 +360,11 @@ static unsigned char xml_res_file_11[] = {
 110,95,98,105,116,109,97,112,115,46,99,112,112,36,114,101,115,111,117,114,
 99,101,115,95,100,105,102,102,45,115,97,118,101,46,112,110,103,60,47,111,
 98,106,101,99,116,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,
+115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,114,
+101,115,105,122,101,34,62,119,120,99,114,97,102,116,101,114,95,112,108,
+117,103,105,110,95,98,105,116,109,97,112,115,46,99,112,112,36,46,46,95,
+105,99,111,110,115,95,114,101,115,105,122,101,46,112,110,103,60,47,111,
+98,106,101,99,116,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,
 115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,116,
 105,108,101,95,104,111,114,105,122,111,110,116,97,108,34,62,119,120,99,
 114,97,102,116,101,114,95,112,108,117,103,105,110,95,98,105,116,109,97,
@@ -388,9 +405,10 @@ void wxC9D6CInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-prev.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-refresh.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-save.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_horizontal.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_single.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_vertical.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$C__src_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"), xml_res_file_11, xml_res_size_11, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_plugin_bitmaps.cpp$C__src_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._icons_resize.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_horizontal.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_single.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_vertical.png"), xml_res_file_11, xml_res_size_11, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$_Users_eran_devl_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"), xml_res_file_12, xml_res_size_12, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_plugin_bitmaps.cpp$_Users_eran_devl_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"));
 }

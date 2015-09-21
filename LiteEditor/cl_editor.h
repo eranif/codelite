@@ -241,7 +241,13 @@ public:
     typedef std::vector<LEditor*> Vec_t;
 
     IManager* GetManager() { return m_mgr; }
-
+    
+    /**
+     * @brief are the CC annotations visible?
+     */
+    bool IsHasCCAnnotation() const { return m_hasCCAnnotation; }
+    void ClearCCAnnotations();
+    
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 
@@ -275,12 +281,12 @@ public:
      * @brief print the editor content using the printing framework
      */
     void Print();
-    
+
     /**
      * @brief setup the print page
      */
     void PageSetup();
-    
+
     /**
      * @brief split the current selection into multiple carets.
      * i.e. place a caret at the end of each line in the selection
@@ -945,6 +951,7 @@ private:
     void OnMotion(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
+    void OnMouseWheel(wxMouseEvent& event);
     void OnFocusLost(wxFocusEvent& event);
     void OnFocus(wxFocusEvent& event);
     void OnLeftDClick(wxStyledTextEvent& event);

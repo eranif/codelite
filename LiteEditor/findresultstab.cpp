@@ -47,6 +47,8 @@
 #include "attribute_style.h"
 #include <algorithm>
 #include "cl_aui_tool_stickness.h"
+#include "optionsconfig.h"
+#include "editor_config.h"
 
 // Custom styles
 #define LEX_FIF_DEFAULT 0
@@ -64,6 +66,8 @@ EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, FindResultsTab::OnSearchEnd
 EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, FindResultsTab::OnSearchCancel)
 EVT_UPDATE_UI(XRCID("hold_pane_open"), FindResultsTab::OnHoldOpenUpdateUI)
 END_EVENT_TABLE()
+
+FindResultsTab::eState FindResultsTab::m_curstate = FindResultsTab::kStartOfLine;
 
 FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name)
     : OutputTabWindow(parent, id, name)
@@ -173,10 +177,10 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
     sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
 #else
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
-    sci->MarkerSetBackground(7, lexer->IsDark() ? "YELLOW" : "#FF4500");
-    sci->MarkerSetForeground(7, lexer->IsDark() ? "YELLOW" : "#FF4500");
+    sci->MarkerSetBackground(7, lexer->IsDark() ? "#FFD700" : "#FF4500");
+    sci->MarkerSetForeground(7, lexer->IsDark() ? "#FFD700" : "#FF4500");
 
-    sci->IndicatorSetForeground(1, lexer->IsDark() ? "YELLOW" : "#FF4500");
+    sci->IndicatorSetForeground(1, lexer->IsDark() ? "#FFD700" : "#FF4500");
     sci->IndicatorSetStyle(1, wxSTC_INDIC_TEXTFORE);
 #endif
     sci->IndicatorSetUnder(1, true);
@@ -188,6 +192,13 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
     sci->SetMarginWidth(4, 0);
     sci->SetMarginSensitive(1, true);
     sci->HideSelection(true);
+
+    // Indentation
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    sci->SetUseTabs(options->GetIndentUsesTabs());
+    sci->SetTabWidth(options->GetIndentWidth());
+    sci->SetIndent(options->GetIndentWidth());
+
     sci->Refresh();
 }
 
@@ -203,6 +214,7 @@ void FindResultsTab::Clear()
     m_indicators.clear();
     m_searchTitle.clear();
     OutputTabWindow::Clear();
+    m_curstate = kStartOfLine;
 }
 
 void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
@@ -266,7 +278,7 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
         // delta += text.Length();
         // text.Trim();
 
-        wxString linenum = wxString::Format(wxT(" %5u "), iter->GetLineNumber());
+        wxString linenum = wxString::Format(wxT(" %5u: "), iter->GetLineNumber());
         SearchData* d = GetSearchData();
         // Print the scope name
         if(d->GetDisplayScope()) {
@@ -463,7 +475,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
             }
             if(!removed) {
                 editor->SetEnsureCaretIsVisible(
-                    position,
+                    position + resultLength,
                     true,
                     true); // The 3rd parameter sets a small delay, otherwise it fails for long folded files
                 int lineNumber = editor->LineFromPos(position);
@@ -521,67 +533,115 @@ void FindResultsTab::OnStyleNeeded(wxStyledTextEvent& e)
     StyleText(ctrl, e);
 }
 
-void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
+void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope)
 {
     int startPos = ctrl->GetEndStyled();
     int endPos = e.GetPosition();
     wxString text = ctrl->GetTextRange(startPos, endPos);
-
-    wxArrayString lines = ::wxStringTokenize(text, wxT("\r\n"), wxTOKEN_RET_DELIMS);
     ctrl->StartStyling(startPos, 0x1f); // text styling
 
-    int bytes_left = 0;
-    bool inMatchLine = false;
-    int offset = 0;
-    for(size_t i = 0; i < lines.GetCount(); ++i) {
-        wxString curline = lines.Item(i);
-        bytes_left = curline.length();
-        offset = 0;
-
-        if(curline.StartsWith("/")) {
-            ctrl->SetStyling(curline.Length(), LEX_FIF_MATCH_COMMENT);
-            bytes_left = 0;
-
-        } else if(curline.StartsWith(wxT(" "))) {
-            ctrl->SetStyling(6, LEX_FIF_LINE_NUMBER); // first 6 chars are the line number
-            bytes_left -= 6;
-            inMatchLine = true;
-            offset = 6;
-
-        } else if(curline.StartsWith("=")) {
-            ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos) + i, 1 | wxSTC_FOLDLEVELHEADERFLAG);
-            ctrl->SetStyling(curline.Length(), LEX_FIF_HEADER); // first 6 chars are the line number
-            bytes_left = 0;
-        } else if(curline == "\n") {
-            // empty line
-            ctrl->SetStyling(1, LEX_FIF_LINE_NUMBER); // first 6 chars are the line number
-            inMatchLine = true;
-            bytes_left = 0;
-        } else {
-            // File name
-            ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos) + i, 2 | wxSTC_FOLDLEVELHEADERFLAG);
-            ctrl->SetStyling(curline.Length(), LEX_FIF_FILE); // first 6 chars are the line number
-            bytes_left = 0;
-        }
-
-        // Check for scope
-        static wxRegEx reScopeName(" \\[[\\<\\>a-z0-9_:~ ]+\\] ", wxRE_DEFAULT | wxRE_ICASE);
-        size_t scopeStart = wxString::npos, scopeLen = 0;
-        if(offset == 6 && reScopeName.Matches(curline)) {
-            reScopeName.GetMatch(&scopeStart, &scopeLen);
-            if(scopeStart == 6) {
-                ctrl->SetStyling(scopeLen, LEX_FIF_SCOPE);
-                bytes_left -= scopeLen;
+    wxString::const_iterator iter = text.begin();
+    size_t headerStyleLen = 0;
+    size_t filenameStyleLen = 0;
+    size_t lineNumberStyleLen = 0;
+    size_t scopeStyleLen = 0;
+    size_t matchStyleLen = 0;
+    size_t i = 0;
+    for(; iter != text.end(); ++iter) {
+        const wxUniChar& ch = *iter;
+        switch(m_curstate) {
+        default:
+            break;
+        case kStartOfLine:
+            if(ch == '=') {
+                m_curstate = kHeader;
+                headerStyleLen = 1;
+            } else if(ch == ' ') {
+                // start of a line number
+                lineNumberStyleLen = 1;
+                m_curstate = kLineNumber;
+            } else if(ch == '\n') {
+                ctrl->SetStyling(1, LEX_FIF_DEFAULT);
+            } else {
+                // File name
+                filenameStyleLen = 1;
+                m_curstate = kFile;
             }
+            break;
+        case kLineNumber:
+            ++lineNumberStyleLen;
+            if(ch == ':') {
+                ctrl->SetStyling(lineNumberStyleLen, LEX_FIF_LINE_NUMBER);
+                lineNumberStyleLen = 0;
+                if(hasSope) {
+                    // the scope showed by displayed after the line number
+                    m_curstate = kScope;
+                } else {
+                    // No scope, from hereon, match until EOF
+                    m_curstate = kMatch;
+                }
+            }
+            break;
+        case kScope:
+            ++scopeStyleLen;
+            if(ch == ']') {
+                // end of scope
+                ctrl->SetStyling(scopeStyleLen, LEX_FIF_SCOPE);
+                scopeStyleLen = 0;
+                m_curstate = kMatch;
+            }
+            break;
+        case kMatch:
+            ++matchStyleLen;
+            if(ch == '\n') {
+                m_curstate = kStartOfLine;
+                ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
+                matchStyleLen = 0;
+            }
+            break;
+        case kFile:
+            ++filenameStyleLen;
+            if(ch == '\n') {
+                m_curstate = kStartOfLine;
+                ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 2 | wxSTC_FOLDLEVELHEADERFLAG);
+                ctrl->SetStyling(filenameStyleLen, LEX_FIF_FILE);
+                filenameStyleLen = 0;
+            }
+            break;
+        case kHeader:
+            ++headerStyleLen;
+            if(ch == '\n') {
+                m_curstate = kStartOfLine;
+                ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 1 | wxSTC_FOLDLEVELHEADERFLAG);
+                ctrl->SetStyling(headerStyleLen, LEX_FIF_HEADER);
+                headerStyleLen = 0;
+            }
+            break;
         }
+        ++i;
+    }
 
-        if(inMatchLine && bytes_left > 0) {
-            // The remainder of this line should be a hyper link
-            ctrl->SetStyling(bytes_left, LEX_FIF_MATCH);
+    // Left overs...
+    if(headerStyleLen) {
+        ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 1 | wxSTC_FOLDLEVELHEADERFLAG);
+        ctrl->SetStyling(headerStyleLen, LEX_FIF_HEADER);
+        headerStyleLen = 0;
+    }
 
-        } else if(bytes_left > 0) {
-            ctrl->SetStyling(bytes_left, LEX_FIF_DEFAULT);
-        }
+    if(filenameStyleLen) {
+        ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 2 | wxSTC_FOLDLEVELHEADERFLAG);
+        ctrl->SetStyling(filenameStyleLen, LEX_FIF_FILE);
+        filenameStyleLen = 0;
+    }
+
+    if(matchStyleLen) {
+        ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
+        matchStyleLen = 0;
+    }
+
+    if(lineNumberStyleLen) {
+        ctrl->SetStyling(lineNumberStyleLen, LEX_FIF_LINE_NUMBER);
+        lineNumberStyleLen = 0;
     }
 }
 
@@ -609,13 +669,13 @@ void FindResultsTab::OnRecentSearches(wxAuiToolBarEvent& e)
     menu.Append(9000, _("Clear History"));
 #ifdef __WXOSX__
     int sel = GetPopupMenuSelectionFromUser(menu);
-#else    
+#else
     int sel = GetPopupMenuSelectionFromUser(menu, e.GetItemRect().GetTopRight());
 #endif
     if(sel == wxID_NONE) return;
     if(sel == 9000) {
         m_history.Clear();
-        
+
     } else if(entries.count(sel)) {
         const History& h = entries.find(sel)->second;
         LoadSearch(h);
@@ -657,6 +717,8 @@ void FindResultsTab::LoadSearch(const History& h)
 }
 
 void FindResultsTab::OnRecentSearchesUI(wxUpdateUIEvent& e) { e.Enable(!m_history.IsEmpty() && !m_searchInProgress); }
+
+void FindResultsTab::ResetStyler() { m_curstate = kStartOfLine; }
 
 /////////////////////////////////////////////////////////////////////////////////
 

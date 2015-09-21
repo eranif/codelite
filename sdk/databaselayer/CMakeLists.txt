@@ -32,8 +32,11 @@ if ( APPLE )
     add_definitions(-fPIC)
 endif()
 
-
-FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp" "src/sqlite3/*.c")
+if(APPLE)
+    FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp" "src/sqlite3/*.c")
+else()
+    FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp")
+endif()
 
 if ( WITH_MYSQL )
     find_library(LIBMYSQLCLIENT NAMES mysql mysqlclient mariadb mariadbclient)

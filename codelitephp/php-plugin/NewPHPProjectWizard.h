@@ -9,7 +9,7 @@ class NewPHPProjectWizard : public NewPHPProjectWizardBase
     bool m_nameModified;
 
 public:
-    NewPHPProjectWizard(wxWindow* parent);
+    NewPHPProjectWizard(wxWindow* parent, bool createProjectFromWorkspaceFolder = false);
     virtual ~NewPHPProjectWizard();
 
     PHPProject::CreateData GetCreateData();

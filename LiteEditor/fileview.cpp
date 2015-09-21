@@ -610,7 +610,14 @@ void FileViewTree::DoItemActivated(wxTreeItemId& item, wxEvent& event)
     if(itemData->GetData().GetKind() == ProjectItem::TypeFile) {
 
         wxString filename = itemData->GetData().GetFile();
-        wxString project = itemData->GetData().Key().BeforeFirst(wxT(':'));
+        wxString key = itemData->GetData().Key();
+        wxString project;
+        if (key.GetChar(0) == ':') {
+            // All the entries I've tested have started with a : so exclude this one, otherwise the project is always ""
+            project = key.AfterFirst(':').BeforeFirst(wxT(':'));
+        } else {
+            project = key.BeforeFirst(wxT(':'));
+        }
 
         // Convert the file name to be in absolute path
         wxFileName fn(filename);
@@ -1584,6 +1591,10 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& parent, const wxString& 
 
     if(!ItemHasChildren(parent)) return wxTreeItemId();
 
+#if defined(__WXGTK__)
+	wxString realpathItem = CLRealPath(fileName);
+#endif
+
     wxTreeItemIdValue cookie;
     wxTreeItemId child = GetFirstChild(parent, cookie);
     while(child.IsOk()) {
@@ -1592,7 +1603,15 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& parent, const wxString& 
         fn.MakeAbsolute(projectPath);
         if(fn.GetFullPath().CmpNoCase(fileName) == 0) {
             return child;
-        }
+        } 
+#if defined(__WXGTK__)
+		  else { // Try again, dereferencing fn
+			wxString fdest = CLRealPath(fn.GetFullPath());
+			if(fdest.CmpNoCase(realpathItem) == 0) {
+				return child;
+			}
+		}
+#endif
 
         if(ItemHasChildren(child)) {
             wxTreeItemId res = FindItemByPath(child, projectPath, fileName);

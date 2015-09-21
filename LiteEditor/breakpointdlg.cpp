@@ -32,8 +32,8 @@
 #include "event_notifier.h"
 #include "breakpointslistctrl.h"
 
-BreakpointDlg::BreakpointDlg( wxWindow* parent )
-    : BreakpointTabBase( parent )
+BreakpointDlg::BreakpointDlg(wxWindow* parent)
+    : BreakpointTabBase(parent)
     , m_selectedItem(wxNOT_FOUND)
 {
     Initialize();
@@ -57,13 +57,13 @@ void BreakpointDlg::Initialize()
 
     int count = m_listCtrlBreakpoints->GetItemCount();
     bool hasitems = count > 0;
-    if (hasitems) {
+    if(hasitems) {
         // Select the first item if there's not already a selection
-        if (m_selectedItem == wxNOT_FOUND) {
+        if(m_selectedItem == wxNOT_FOUND) {
             m_selectedItem = 0;
         }
-        if (m_selectedItem >= count) {	// e.g. if the selection was the last item, then one is deleted
-            m_selectedItem = count-1;
+        if(m_selectedItem >= count) { // e.g. if the selection was the last item, then one is deleted
+            m_selectedItem = count - 1;
         }
         // Even if an item was previously selected, refreshing the pane means we need to reselect
         m_listCtrlBreakpoints->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
@@ -75,16 +75,16 @@ void BreakpointDlg::Initialize()
     // The 'Apply Pending' button is more complicated: it should be hidden,
     // unless there are pending bps to apply,and the debugger is running
     bool pending = ManagerST::Get()->GetBreakpointsMgr()->PendingBreakpointsExist();
-    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    m_buttonApplyPending->Show( pending && dbgr && dbgr->IsRunning() );
+    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    m_buttonApplyPending->Show(pending && dbgr && dbgr->IsRunning());
     Layout();
     // Enable DeleteAll if there are either bps or pending bps
     m_buttonDeleteAll->Enable(hasitems || pending);
 }
 
-void BreakpointDlg::OnDelete(wxCommandEvent &e)
+void BreakpointDlg::OnDelete(wxCommandEvent& e)
 {
-    if (m_selectedItem != wxNOT_FOUND) {
+    if(m_selectedItem != wxNOT_FOUND) {
         // Delete by this item's id, which was carefully stored in Initialize()
         int id = m_ids[m_selectedItem].GetBestId();
         ManagerST::Get()->GetBreakpointsMgr()->DelBreakpoint(id);
@@ -96,7 +96,7 @@ void BreakpointDlg::OnDelete(wxCommandEvent &e)
     Initialize(); // ReInitialise, as either a bp was deleted, or the data was corrupt
 }
 
-void BreakpointDlg::OnDeleteAll(wxCommandEvent &e)
+void BreakpointDlg::OnDeleteAll(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
@@ -104,12 +104,12 @@ void BreakpointDlg::OnDeleteAll(wxCommandEvent &e)
     Initialize();
 
     clMainFrame::Get()->GetStatusBar()->SetMessage(_("All Breakpoints deleted"));
-    
+
     wxCommandEvent evtDelAll(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED);
-    EventNotifier::Get()->AddPendingEvent( evtDelAll );
+    EventNotifier::Get()->AddPendingEvent(evtDelAll);
 }
 
-void BreakpointDlg::OnApplyPending(wxCommandEvent &e)
+void BreakpointDlg::OnApplyPending(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     ManagerST::Get()->GetBreakpointsMgr()->ApplyPendingBreakpoints();
@@ -118,25 +118,22 @@ void BreakpointDlg::OnApplyPending(wxCommandEvent &e)
     clMainFrame::Get()->GetStatusBar()->SetMessage(_("Pending Breakpoints reapplied"));
 }
 
-void BreakpointDlg::OnItemSelected(wxListEvent &e)
-{
-    m_selectedItem = e.m_itemIndex;
-}
+void BreakpointDlg::OnItemSelected(wxListEvent& e) { m_selectedItem = e.m_itemIndex; }
 
-void BreakpointDlg::OnItemDeselected(wxListEvent &e)
+void BreakpointDlg::OnItemDeselected(wxListEvent& e)
 {
     wxUnusedVar(e);
     m_selectedItem = wxNOT_FOUND;
 }
 
-void BreakpointDlg::OnItemActivated(wxListEvent &e)
+void BreakpointDlg::OnItemActivated(wxListEvent& e)
 {
     wxString file = GetColumnText(m_listCtrlBreakpoints, e.m_itemIndex, m_listCtrlBreakpoints->GetFileColumn());
     wxString line = GetColumnText(m_listCtrlBreakpoints, e.m_itemIndex, m_listCtrlBreakpoints->GetLinenoColumn());
     long line_number;
     line.ToLong(&line_number);
 
-    clMainFrame::Get()->GetMainBook()->OpenFile(file, wxEmptyString, line_number-1, wxNOT_FOUND, OF_AddJump, false);
+    clMainFrame::Get()->GetMainBook()->OpenFile(file, wxEmptyString, line_number - 1, wxNOT_FOUND, OF_AddJump, false);
 }
 
 void BreakpointDlg::OnItemRightClick(wxListEvent& e)
@@ -150,7 +147,7 @@ void BreakpointDlg::OnItemRightClick(wxListEvent& e)
 void BreakpointDlg::OnEdit(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if (m_selectedItem == wxNOT_FOUND) {
+    if(m_selectedItem == wxNOT_FOUND) {
         return;
     }
 
@@ -163,7 +160,7 @@ void BreakpointDlg::OnEdit(wxCommandEvent& e)
         m_selectedItem = wxNOT_FOUND;
     }
 
-    Initialize();	// Make any changes visible
+    Initialize(); // Make any changes visible
 }
 
 void BreakpointDlg::OnAdd(wxCommandEvent& e)
@@ -171,7 +168,7 @@ void BreakpointDlg::OnAdd(wxCommandEvent& e)
     wxUnusedVar(e);
 
     ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint();
-    Initialize();	// Make any changes visible
+    Initialize(); // Make any changes visible
 }
 
 void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
@@ -180,37 +177,37 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
     DeleteAllItems();
 
     std::vector<BreakpointInfo>::iterator iter = bps.begin();
-    for (; iter != bps.end(); ++iter) {
+    for(; iter != bps.end(); ++iter) {
         long item = AppendListCtrlRow(this);
 
         // Store the internal and external ids
-        struct bpd_IDs IDs(*iter);
+        bpd_IDs IDs(*iter);
         SetColumnText(this, item, col_id, IDs.GetIdAsString(), wxNOT_FOUND);
 
         wxString type;
-        if (iter->is_temp) {
+        if(iter->is_temp) {
             type = _("Temp. ");
         }
-        type += ((iter->bp_type==BP_type_watchpt) ? _("Watchpoint") : _("Breakpoint"));
+        type += ((iter->bp_type == BP_type_watchpt) ? _("Watchpoint") : _("Breakpoint"));
         SetColumnText(this, item, col_type, type, wxNOT_FOUND);
 
         wxString disabled;
-        if (!iter->is_enabled) {
+        if(!iter->is_enabled) {
             disabled = _("disabled");
         }
-        SetColumnText(this, item, col_enabled, disabled  );
-        SetColumnText(this, item, col_at,      iter->at  );
-        SetColumnText(this, item, col_what,    iter->what);
+        SetColumnText(this, item, col_enabled, disabled);
+        SetColumnText(this, item, col_at, iter->at);
+        SetColumnText(this, item, col_what, iter->what);
 
         // A breakpoint will have either a file/lineno or a function-name (e.g.main(), or a memory address)
         // A watchpoint will have watchpt_data (the variable it's watching). Display that in the 'Function' col
-        if ((iter->bp_type==BP_type_watchpt) && (!iter->watchpt_data.IsEmpty())) {
+        if((iter->bp_type == BP_type_watchpt) && (!iter->watchpt_data.IsEmpty())) {
             SetColumnText(this, item, col_functionname, iter->watchpt_data, wxNOT_FOUND);
 
-        } else if (!iter->function_name.IsEmpty()) {
+        } else if(!iter->function_name.IsEmpty()) {
             SetColumnText(this, item, col_functionname, iter->function_name, wxNOT_FOUND);
 
-        } else if (iter->memory_address.IsEmpty() == false) {
+        } else if(iter->memory_address.IsEmpty() == false) {
             wxString addr;
             addr << iter->memory_address;
             SetColumnText(this, item, col_memory, addr, wxNOT_FOUND);
@@ -220,25 +217,24 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
             wxString line;
             line << iter->lineno;
             SetColumnText(this, item, col_lineno, line, wxNOT_FOUND);
-
         }
 
         wxString ignore;
-        if (iter->ignore_number) {
+        if(iter->ignore_number) {
             ignore << iter->ignore_number;
         }
         SetColumnText(this, item, col_ignorecount, ignore, wxNOT_FOUND);
 
-        wxString extras;	// Extras are conditions, or a commandlist. If both (unlikely!) just show the condition
-        if (!iter->conditions.IsEmpty()) {
+        wxString extras; // Extras are conditions, or a commandlist. If both (unlikely!) just show the condition
+        if(!iter->conditions.IsEmpty()) {
             extras = iter->conditions;
-        } else if (!iter->commandlist.IsEmpty()) {
+        } else if(!iter->commandlist.IsEmpty()) {
             extras = iter->commandlist;
         }
-        if (!extras.IsEmpty()) {
+        if(!extras.IsEmpty()) {
             // We don't want to try to display massive commandlist spread over several lines...
             int index = extras.Find(wxT("\\n"));
-            if (index != wxNOT_FOUND) {
+            if(index != wxNOT_FOUND) {
                 extras = extras.Left(index) + wxT("...");
             }
             SetColumnText(this, item, col_extras, extras, wxNOT_FOUND);

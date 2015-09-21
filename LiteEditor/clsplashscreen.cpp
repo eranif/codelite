@@ -24,9 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "clsplashscreen.h"
+#include "autoversion.h"
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
-extern wxString CODELITE_VERSION_STR;
 
 clSplashScreen* clSplashScreen::g_splashScreen = NULL;
 bool clSplashScreen::g_destroyed = false;
@@ -74,7 +74,7 @@ wxBitmap clSplashScreen::CreateSplashScreenBitmap(const wxBitmap& origBmp)
     
     memDC.SetFont(font);
     wxString versionString;
-    versionString << "v" << CODELITE_VERSION_STR;
+    versionString << "v" << CODELITE_VERSION_STRING;
     wxSize textSize = memDC.GetTextExtent(versionString);
     wxCoord textx, texty;
     textx = (bmp.GetWidth() - textSize.GetWidth()) - 5;

@@ -56,7 +56,16 @@ class FindResultsTab : public OutputTabWindow
         std::list<int> indicators;
         typedef wxOrderedMap<wxString, History> Map_t;
     };
-
+    
+    enum eState {
+        kHeader,
+        kStartOfLine,
+        kFile,
+        kLineNumber,
+        kScope,
+        kMatch,
+    };
+    static eState m_curstate;
     History::Map_t m_history;
 
 protected:
@@ -94,8 +103,9 @@ public:
     ~FindResultsTab();
 
     static void SetStyles(wxStyledTextCtrl* sci);
-    static void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e);
-
+    static void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope = false);
+    static void ResetStyler();
+    
     void NextMatch();
     void PrevMatch();
 };

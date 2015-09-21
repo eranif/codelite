@@ -334,17 +334,15 @@ void clConfig::AddQuickFindSearchItem(const wxString& str)
     int where = items.Index(str);
     if(where != wxNOT_FOUND) {
         items.RemoveAt(where);
-        items.Insert(str, 0);
-
-    } else {
-        // remove overflow items if needed
-        if(items.GetCount() > 20) {
-            // remove last item
-            items.RemoveAt(items.GetCount() - 1);
-        }
-        items.Insert(str, 0);
     }
+    items.Insert(str, 0);
 
+    // Reudce to size to max of 20
+    while(items.size() > 20) {
+        items.RemoveAt(items.size() - 1);
+    }
+    
+    // Update the array
     quickFindBar.removeProperty("SearchHistory");
     quickFindBar.addProperty("SearchHistory", items);
     Save();
@@ -389,20 +387,25 @@ void clConfig::Write(const wxString& name, const wxArrayString& value)
 void clConfig::DoAddRecentItem(const wxString& propName, const wxString& filename)
 {
     wxArrayString recentItems = DoGetRecentItems(propName);
-    
+
     // Prepend the item
     if(recentItems.Index(filename) != wxNOT_FOUND) {
         recentItems.Remove(filename);
     }
     recentItems.Insert(filename, 0);
-    
+
+    // Make sure the list does not go over 15 items
+    while(recentItems.size() >= 15) {
+        recentItems.RemoveAt(recentItems.size() - 1);
+    }
+
     // Remove old node if exists
     JSONElement e = m_root->toElement();
     if(e.hasNamedObject(propName)) {
         e.removeProperty(propName);
     }
-    
-    // append new property 
+
+    // append new property
     e.addProperty(propName, recentItems);
 
     // update the cache
@@ -429,12 +432,12 @@ void clConfig::DoClearRecentItems(const wxString& propName)
 wxArrayString clConfig::DoGetRecentItems(const wxString& propName) const
 {
     wxArrayString recentItems;
-    
+
     // Try the cache first
     if(m_cacheRecentItems.count(propName)) {
         return m_cacheRecentItems.find(propName)->second;
     }
-    
+
     JSONElement e = m_root->toElement();
     if(e.hasNamedObject(propName)) {
         recentItems = e.namedObject(propName).toArrayString();

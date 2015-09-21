@@ -12,23 +12,22 @@ class MainFrame : public MainFrameBaseClass
     friend class MyCallback;
     friend class PtyCallback;
 
-    IProcess *      m_process;
-    PtyCallback     m_ptyCllback;
-    int             m_fromPos;
-    IProcess *      m_dummyProcess;
-    wxString        m_tty;
-    int             m_slave;
+    IProcess* m_process;
+    PtyCallback m_ptyCllback;
+    int m_fromPos;
+    IProcess* m_dummyProcess;
+    wxString m_tty;
+    int m_slave;
     TerminalOptions m_options;
-    bool            m_exitOnNextKey;
-    MyConfig        m_config;
-    wxString        m_outoutBuffer;
+    bool m_exitOnNextKey;
+    MyConfig m_config;
+    wxString m_outoutBuffer;
+
 protected:
     virtual void OnIdle(wxIdleEvent& event);
     virtual void OnSaveContentUI(wxUpdateUIEvent& event);
     virtual void OnSaveContent(wxCommandEvent& event);
     virtual void OnSettings(wxCommandEvent& event);
-    virtual void OnSignalInferiorUI(wxUpdateUIEvent& event);
-    virtual void OnSignalinferior(wxAuiToolBarEvent& event);
     virtual void OnClearViewUI(wxUpdateUIEvent& event);
     virtual void OnTerminateInfirior(wxCommandEvent& event);
     virtual void OnTerminateInfiriorUI(wxUpdateUIEvent& event);
@@ -36,11 +35,11 @@ protected:
     virtual void OnAddMarker(wxTimerEvent& event);
     virtual void OnStcUpdateUI(wxStyledTextEvent& event);
 
-    void OnSelectBgColour(wxCommandEvent &e);
-    void OnSelectFgColour(wxCommandEvent &e);
-    void OnSignal(wxCommandEvent &e);
+    void OnSelectBgColour(wxCommandEvent& e);
+    void OnSelectFgColour(wxCommandEvent& e);
+    void OnSignal(wxCommandEvent& e);
 
-    void DoExecuteCurrentLine(const wxString &command = wxEmptyString);
+    void DoExecuteCurrentLine(const wxString& command = wxEmptyString);
     wxString GetCurrentLine() const;
     void SetCartAtEnd();
     void AppendNewLine();
@@ -50,17 +49,18 @@ protected:
     void DoSetColour(const wxColour& colour, bool bgColour = false);
     void DoSetFont(wxFont font);
     void DoApplySettings();
-    void AppendOutputText(const wxString &text);
+    void AppendOutputText(const wxString& text);
     void FlushOutputBuffer();
-    
+
 public:
-    MainFrame(wxWindow* parent, const TerminalOptions &options, long style = wxDEFAULT_FRAME_STYLE);
+    MainFrame(wxWindow* parent, const TerminalOptions& options, long style = wxDEFAULT_FRAME_STYLE);
     virtual ~MainFrame();
 
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
 
-    const TerminalOptions& GetOptions() const {
+    const TerminalOptions& GetOptions() const
+    {
         return m_options;
     }
 

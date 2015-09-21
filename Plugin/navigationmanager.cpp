@@ -50,7 +50,7 @@ bool NavMgr::ValidLocation(const BrowseRecord& rec) const
 {
     // ATTN: lineno == 1 implies a file was just opened, but before the find-and-select has happened
     // TODO: don't allow records for non-source files (*.diff, *.i, etc)
-    return !rec.filename.IsEmpty() && rec.lineno > 1;
+    return (!rec.filename.IsEmpty()) && (rec.lineno > 1);
 }
 
 bool NavMgr::CanNext() const
@@ -77,7 +77,7 @@ void NavMgr::AddJump(const BrowseRecord &from, const BrowseRecord &to)
 {
     if (ValidLocation(from)) {
         // keep previous location only if it's not at position 0, and it is not equal to from
-        if (m_cur > 0 && !(m_jumps[m_cur].filename == from.filename && m_jumps[m_cur].lineno == from.lineno)) {
+        if ( (m_cur > 0) && (!( (m_jumps[m_cur].filename == from.filename) && (m_jumps[m_cur].lineno == from.lineno)))) {
             m_cur++;
         }
         m_jumps.resize(m_cur);
@@ -85,7 +85,7 @@ void NavMgr::AddJump(const BrowseRecord &from, const BrowseRecord &to)
     }
     if (ValidLocation(to)) {
         // only add if there's an actual jump
-        if (!m_jumps.empty() && !(m_jumps[m_cur].filename == to.filename && m_jumps[m_cur].lineno == to.lineno)) {
+        if ((!m_jumps.empty()) && (!( (m_jumps[m_cur].filename == to.filename) && (m_jumps[m_cur].lineno == to.lineno)))) {
             m_cur++;
             m_jumps.resize(m_cur);
             m_jumps.push_back(to);

@@ -10,6 +10,24 @@
 #include "NodeJSDebugger.h"
 #include "NoteJSWorkspace.h"
 #include "imanager.h"
+#include "NodeJSOuptutParser.h"
+
+class NodeJSLocalClientData : public wxClientData
+{
+    NodeJSHandle m_handle;
+    bool m_expanded;
+
+public:
+    NodeJSLocalClientData(const NodeJSHandle& h)
+        : m_handle(h)
+        , m_expanded(false)
+    {
+    }
+    void SetHandle(const NodeJSHandle& handle) { this->m_handle = handle; }
+    const NodeJSHandle& GetHandle() const { return m_handle; }
+    void SetExpanded(bool expanded) { this->m_expanded = expanded; }
+    bool IsExpanded() const { return m_expanded; }
+};
 
 NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     : NodeJSDebuggerPaneBase(parent)
@@ -18,8 +36,10 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
         wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeJSDebuggerPane::OnUpdateCallstack, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOCALS_LOOKUP, &NodeJSDebuggerPane::OnLookup, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeJSDebuggerPane::OnSessionStopped, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebuggerPane::OnFrameSelected, this);
     EventNotifier::Get()->Bind(
@@ -55,36 +75,19 @@ NodeJSDebuggerPane::~NodeJSDebuggerPane()
 
     ClearCallstack();
 }
+
+NodeJSHandle NodeJSDebuggerPane::ParseRef(const JSONElement& ref)
+{
+    NodeJSOuptutParser p;
+    return p.ParseRef(ref, m_handles);
+}
+
 void NodeJSDebuggerPane::ParseRefsArray(const JSONElement& refs)
 {
     int refsCount = refs.arraySize();
     for(int i = 0; i < refsCount; ++i) {
         JSONElement ref = refs.arrayItem(i);
-        int handleId = ref.namedObject("handle").toInt();
-        Handle h;
-        h.type = ref.namedObject("type").toString();
-        if(h.type == "undefined") {
-            h.value = "undefined";
-        } else if(h.type == "number" || h.type == "boolean") {
-            h.value = ref.namedObject("text").toString();
-        } else if(h.type == "string") {
-            h.value << "\"" << ref.namedObject("text").toString() << "\"";
-        } else if(h.type == "script" || h.type == "function") {
-            h.value = ref.namedObject("name").toString();
-        } else if(h.type == "null") {
-            h.value = "null";
-        } else if(h.type == "object") {
-            h.value = "{...}";
-            JSONElement props = ref.namedObject("properties");
-            int propsCount = props.arraySize();
-            for(int n = 0; n < propsCount; ++n) {
-                JSONElement prop = props.arrayItem(n);
-                wxString propName = prop.namedObject("name").toString();
-                int propId = prop.namedObject("ref").toInt();
-                h.properties.insert(std::make_pair(propId, propName));
-            }
-        }
-        m_handles.insert(std::make_pair(handleId, h));
+        ParseRef(ref);
     }
 }
 
@@ -92,7 +95,7 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
 {
     event.Skip();
     wxWindowUpdateLocker locker(m_dataviewLocals);
-    ClearCallstack();
+    Clear();
 
     JSONRoot root(event.GetString());
     JSONElement frames = root.toElement().namedObject("body").namedObject("frames");
@@ -145,8 +148,10 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
 void NodeJSDebuggerPane::OnLostControl(clDebugEvent& event)
 {
     event.Skip();
+#ifndef __WXGTK__
     m_dataviewLocals->Enable(false);
     m_dvListCtrlCallstack->Enable(false);
+#endif
 }
 
 void NodeJSDebuggerPane::OnConsoleLog(clDebugEvent& event)
@@ -189,33 +194,27 @@ void NodeJSDebuggerPane::ClearCallstack()
     m_dvListCtrlCallstack->Enable(true);
 }
 
-void NodeJSDebuggerPane::AddLocal(wxDataViewItem& parent, const wxString& name, int refId, int depth)
+wxDataViewItem NodeJSDebuggerPane::AddLocal(const wxDataViewItem& parent, const wxString& name, int refId)
 {
-    if(depth >= 20) {
-        // don't go into infinite recurse
-        return;
-    }
-
-    wxVector<wxVariant> cols;
-    cols.push_back(name);
-
     // extract the value
     if(m_handles.count(refId)) {
-        Handle h = m_handles.find(refId)->second;
+        wxVector<wxVariant> cols;
+        NodeJSHandle h = m_handles.find(refId)->second;
+        cols.push_back(name);
         cols.push_back(h.type);
         cols.push_back(h.value);
-        wxDataViewItem child = m_dataviewLocalsModel->AppendItem(parent, cols);
+        wxDataViewItem child = m_dataviewLocalsModel->AppendItem(parent, cols, new NodeJSLocalClientData(h));
 
         if(!h.properties.empty()) {
-            std::for_each(h.properties.begin(), h.properties.end(), [&](const std::pair<int, wxString>& p) {
-                AddLocal(child, p.second, p.first, depth + 1);
-            });
+            cols.clear();
+            cols.push_back("Loading...");
+            cols.push_back("?");
+            cols.push_back("?");
+            m_dataviewLocalsModel->AppendItem(child, cols);
         }
-    } else {
-        cols.push_back("");
-        cols.push_back("");
-        m_dataviewLocalsModel->AppendItem(parent, cols);
+        return child;
     }
+    return wxDataViewItem();
 }
 
 void NodeJSDebuggerPane::BuildArguments(const JSONElement& json)
@@ -230,8 +229,7 @@ void NodeJSDebuggerPane::BuildArguments(const JSONElement& json)
     int count = arr.arraySize();
     for(int i = 0; i < count; ++i) {
         JSONElement local = arr.arrayItem(i);
-        AddLocal(
-            locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt(), 0);
+        AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
     }
 
     if(m_dataviewLocalsModel->HasChildren(locals)) {
@@ -251,8 +249,7 @@ void NodeJSDebuggerPane::BuildLocals(const JSONElement& json)
     int count = arr.arraySize();
     for(int i = 0; i < count; ++i) {
         JSONElement local = arr.arrayItem(i);
-        AddLocal(
-            locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt(), 0);
+        AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
     }
 
     if(m_dataviewLocalsModel->HasChildren(locals)) {
@@ -367,7 +364,7 @@ void NodeJSDebuggerPane::OnExpressionEvaluated(clDebugEvent& event)
     event.Skip();
     wxString message;
     message << "eval(" << m_textCtrlExpression->GetValue() << "):\n" << event.GetString();
-    
+
     wxString currentText = m_consoleLog->GetValue();
     if(!currentText.EndsWith("\n")) {
         message.Prepend("\n");
@@ -377,7 +374,116 @@ void NodeJSDebuggerPane::OnExpressionEvaluated(clDebugEvent& event)
     }
     m_consoleLog->AppendText(message);
     m_consoleLog->ScrollToEnd();
-    
+
     // Restore the focus to the text control
     m_textCtrlExpression->CallAfter(&wxTextCtrl::SetFocus);
+}
+
+void NodeJSDebuggerPane::OnLocalExpanding(wxDataViewEvent& event)
+{
+    event.Skip();
+    CHECK_ITEM_RET(event.GetItem());
+    NodeJSLocalClientData* d =
+        dynamic_cast<NodeJSLocalClientData*>(m_dataviewLocalsModel->GetClientObject(event.GetItem()));
+
+    CHECK_PTR_RET(d);
+    if(d->IsExpanded()) {
+        // nothing to be done here
+        return;
+    }
+
+    wxDataViewItemArray children;
+    if(m_dataviewLocalsModel->GetChildren(event.GetItem(), children) != 1) return;
+
+    d->SetExpanded(true);
+
+    // Prepare list of refs that we don't have
+    std::map<int, wxString> unknownRefs;
+    std::map<int, wxString> knownRefs;
+    const NodeJSHandle& h = d->GetHandle();
+    std::for_each(h.properties.begin(), h.properties.end(), [&](const std::pair<int, wxString>& p) {
+        if(m_handles.count(p.first) == 0) {
+            unknownRefs.insert(p);
+        } else {
+            knownRefs.insert(p);
+        }
+    });
+    CallAfter(&NodeJSDebuggerPane::DoAddKnownRefs, knownRefs, event.GetItem());
+    CallAfter(&NodeJSDebuggerPane::DoAddUnKnownRefs, unknownRefs, event.GetItem());
+    // Delete the dummy node
+    CallAfter(&NodeJSDebuggerPane::DoDeleteLocalItemAfter, children.Item(0));
+}
+
+void NodeJSDebuggerPane::DoDeleteLocalItemAfter(const wxDataViewItem& item) { m_dataviewLocalsModel->DeleteItem(item); }
+
+void NodeJSDebuggerPane::DoAddKnownRefs(const std::map<int, wxString>& refs, const wxDataViewItem& parent)
+{
+    std::for_each(
+        refs.begin(), refs.end(), [&](const std::pair<int, wxString>& p) { AddLocal(parent, p.second, p.first); });
+}
+
+void NodeJSDebuggerPane::DoAddUnKnownRefs(const std::map<int, wxString>& refs, const wxDataViewItem& parent)
+{
+    if(!NodeJSWorkspace::Get()->GetDebugger()) return;
+
+    std::vector<int> handles;
+    std::for_each(refs.begin(), refs.end(), [&](const std::pair<int, wxString>& p) {
+        PendingLookupDV pl;
+        pl.parent = parent;
+        pl.name = p.second;
+        pl.refID = p.first;
+        m_pendingLookupRefs.push_back(pl);
+        handles.push_back(p.first);
+    });
+    NodeJSWorkspace::Get()->GetDebugger()->Lookup(handles, kNodeJSContextLocals);
+}
+
+void NodeJSDebuggerPane::OnSessionStopped(clDebugEvent& event)
+{
+    event.Skip();
+    Clear();
+}
+
+void NodeJSDebuggerPane::Clear()
+{
+    ClearCallstack();
+    m_dataviewLocalsModel->Clear();
+    m_pendingLookupRefs.clear();
+    m_handles.clear();
+}
+
+void NodeJSDebuggerPane::OnLookup(clDebugEvent& event)
+{
+    JSONRoot root(event.GetString());
+    JSONElement body = root.toElement().namedObject("body");
+    std::vector<PendingLookupDV> unresolved;
+
+    wxDataViewItem parent;
+    for(size_t i = 0; i < m_pendingLookupRefs.size(); ++i) {
+        const PendingLookupDV& pl = m_pendingLookupRefs.at(i);
+        if(!parent.IsOk()) {
+            parent = pl.parent;
+        }
+        wxString nameID;
+        nameID << pl.refID;
+
+        if(!body.hasNamedObject(nameID)) {
+            unresolved.push_back(pl);
+            continue;
+        }
+
+        // Parse and add this ref to the global m_handles map
+        JSONElement ref = body.namedObject(nameID);
+        NodeJSHandle h = ParseRef(ref);
+        h.name = pl.name;
+        if(!h.IsOk()) continue;
+
+        // Add the local
+        AddLocal(pl.parent, pl.name, pl.refID);
+    }
+
+    if(parent.IsOk() && m_dataviewLocalsModel->HasChildren(parent) && !m_dataviewLocals->IsExpanded(parent)) {
+        m_dataviewLocals->Expand(parent);
+    }
+    m_pendingLookupRefs.clear();
 }

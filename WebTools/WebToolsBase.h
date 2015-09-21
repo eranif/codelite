@@ -141,6 +141,7 @@ protected:
     wxDataViewListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
+    virtual void OnLocalExpanding(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnEvaluateExpression(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBreakpointSelected(wxDataViewEvent& event) { event.Skip(); }
@@ -168,10 +169,10 @@ public:
 class NodeJSNewWorkspaceDlgBase : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText150;
-    wxDirPickerCtrl* m_dirPickerFolder;
     wxStaticText* m_staticText160;
     wxTextCtrl* m_textCtrllName;
+    wxStaticText* m_staticText150;
+    wxDirPickerCtrl* m_dirPickerFolder;
     wxCheckBox* m_checkBoxNewFolder;
     wxStaticText* m_staticTextPreview;
     wxStdDialogButtonSizer* m_stdBtnSizer142;
@@ -179,16 +180,16 @@ protected:
     wxButton* m_button146;
 
 protected:
-    virtual void OnFolderSelected(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnTextUpdate(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFolderSelected(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnCheckNewFolder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText150() { return m_staticText150; }
-    wxDirPickerCtrl* GetDirPickerFolder() { return m_dirPickerFolder; }
     wxStaticText* GetStaticText160() { return m_staticText160; }
     wxTextCtrl* GetTextCtrllName() { return m_textCtrllName; }
+    wxStaticText* GetStaticText150() { return m_staticText150; }
+    wxDirPickerCtrl* GetDirPickerFolder() { return m_dirPickerFolder; }
     wxCheckBox* GetCheckBoxNewFolder() { return m_checkBoxNewFolder; }
     wxStaticText* GetStaticTextPreview() { return m_staticTextPreview; }
     NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

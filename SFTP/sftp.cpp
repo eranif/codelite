@@ -41,6 +41,7 @@
 #include <wx/log.h>
 #include "sftp_settings.h"
 #include "SFTPSettingsDialog.h"
+#include "fileutils.h"
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER = ::wxNewEventType();
@@ -329,6 +330,7 @@ void SFTP::DoSaveRemoteFile(const RemoteFileInfo& remoteFile)
 }
 
 void SFTP::FileDownloadedSuccessfully(const wxString& localFileName) { m_mgr->OpenFile(localFileName); }
+void SFTP::OpenWithDefaultApp(const wxString& localFileName) { ::wxLaunchDefaultApplication(localFileName); }
 
 void SFTP::AddRemoteFile(const RemoteFileInfo& remoteFile)
 {
@@ -433,3 +435,5 @@ void SFTP::OnReplaceInFiles(clFileSystemEvent& e)
         DoFileSaved(files.Item(i));
     }
 }
+
+void SFTP::OpenContainingFolder(const wxString& localFileName) { FileUtils::OpenFileExplorerAndSelect(localFileName); }

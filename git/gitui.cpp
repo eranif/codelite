@@ -362,7 +362,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_stcCommitMessage->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stcCommitMessage->StyleClearAll();
-    m_stcCommitMessage->SetWrapMode(0);
+    m_stcCommitMessage->SetWrapMode(1);
     m_stcCommitMessage->SetIndentationGuides(0);
     m_stcCommitMessage->SetKeyWords(0, wxT(""));
     m_stcCommitMessage->SetKeyWords(1, wxT(""));
@@ -508,7 +508,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     wxArrayString m_fileListBoxArr;
     m_fileListBox = new wxListBox(m_splitterPage200, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListBoxArr, 0);
     
-    boxSizer208->Add(m_fileListBox, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 2);
+    boxSizer208->Add(m_fileListBox, 1, wxALL|wxEXPAND, 2);
     
     m_splitterPage204 = new wxPanel(m_splitter196, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter196->SplitVertically(m_splitterPage200, m_splitterPage204, 0);
@@ -687,7 +687,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     m_staticText68 = new wxStaticText(m_splitterPageFiles, wxID_ANY, _("Modified files:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer62->Add(m_staticText68, 0, wxALL|wxALIGN_BOTTOM, 5);
+    boxSizer62->Add(m_staticText68, 0, wxALL, 5);
     
     wxArrayString m_fileListBoxArr;
     m_fileListBox = new wxListBox(m_splitterPageFiles, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListBoxArr, 0);
@@ -702,7 +702,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     m_staticText66 = new wxStaticText(m_splitterPageDiff, wxID_ANY, _("Diff:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer64->Add(m_staticText66, 0, wxALL|wxALIGN_BOTTOM, 5);
+    boxSizer64->Add(m_staticText66, 0, wxALL, 5);
     
     m_editor = new GitCommitEditor( m_splitterPageDiff );
     boxSizer64->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);

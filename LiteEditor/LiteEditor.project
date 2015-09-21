@@ -156,8 +156,6 @@
       <File Name="simpletablebase.cpp"/>
       <File Name="listctrlpanelbase.h"/>
       <File Name="listctrlpanelbase.cpp"/>
-      <File Name="listctrlpanel.h"/>
-      <File Name="listctrlpanel.cpp"/>
       <File Name="close_all_dlg.cpp"/>
       <File Name="close_all_dlg.h"/>
       <File Name="free_text_dialog.h"/>
@@ -280,6 +278,8 @@
       <File Name="FilesModifiedDlg.cpp"/>
       <File Name="NewThemeDialog.cpp"/>
       <File Name="NewThemeDialog.h"/>
+      <File Name="DebuggerCallstackView.cpp"/>
+      <File Name="DebuggerCallstackView.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>
@@ -640,6 +640,8 @@
       <File Name="../codelite_echo/CMakeLists.txt"/>
     </VirtualDirectory>
     <File Name="../TODO.TXT"/>
+    <File Name="../DESC"/>
+    <File Name="packages.json"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>
@@ -659,8 +661,6 @@
     <File Name="openwindowspanel.h"/>
     <File Name="openwindowspanelbase.cpp"/>
     <File Name="threadlistpanel.h"/>
-    <File Name="threadlistbasepanel.cpp"/>
-    <File Name="threadlistbasepanel.h"/>
     <File Name="threadlistpanel.cpp"/>
     <File Name="outputtabwindow.cpp"/>
     <File Name="outputtabwindow.h"/>
@@ -755,6 +755,7 @@
     <File Name="DebuggerDisassemblyTab.cpp"/>
     <File Name="memoryviewbase.wxcp"/>
     <File Name="../formbuilder/quickdebug.wxcp"/>
+    <File Name="ThreadListPanelBase.wxcp"/>
   </VirtualDirectory>
   <Options/>
   <Dependencies Name="UnixCodeLite">
@@ -897,6 +898,8 @@
       <File Name="CompilersFoundDlgBase.cpp"/>
       <File Name="CodeLiteUpgradeFrameBase.h"/>
       <File Name="CodeLiteUpgradeFrameBase.cpp"/>
+      <File Name="ThreadListPanelBase.h"/>
+      <File Name="ThreadListPanelBase.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -936,6 +939,7 @@
       <File Name="CodeLiteUpgradeFrame_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_comments_base_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_folding_liteeditor_bitmaps.cpp"/>
+      <File Name="ThreadListPanelBase_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -1554,6 +1558,7 @@ resources.cpp: resources.xrc
         <IncludePath Value="../Interfaces"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="__WXGTK__"/>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --libs std,stc --unicode=yes --debug=no);$(shell pkg-config --libs gtk+-2.0)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
@@ -1576,7 +1581,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="cmake">cmake -DCMAKE_BUILD_TYPE=Release  .. -DMAKE_DEB=1 -DCMAKE_EXPORT_COMPILE_COMMANDS=1 </Target>
+        <Target Name="cmake">cmake -DCMAKE_BUILD_TYPE=Release  .. -DMAKE_DEB=1 -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCOPY_WX_LIBS=1</Target>
         <RebuildCommand>make clean &amp;&amp; make -j4</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make -e -j 4</BuildCommand>
@@ -1590,7 +1595,8 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -1901,7 +1907,7 @@ resources.cpp: resources.xrc
         <Library Value="libclang64.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite-dbg.exe" CommandArguments="-b ." UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite-dbg.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>

@@ -53,11 +53,11 @@ public:
 
 protected:
     bool IsWorkspaceViewDetached();
-    void DoOpenWorkspace(const wxString& filename, bool createIfMissing = false);
+    void DoOpenWorkspace(const wxString& filename, bool createIfMissing = false, bool createProjectFromSources = false);
     void DoPlaceMenuBar(wxMenuBar* menuBar);
     void DoEnsureXDebugPanesVisible(const wxString& selectWindow = "");
     void DoSyncFileWithRemote(const wxFileName& localFile);
-    
+
 public:
     //--------------------------------------------
     // Abstract methods
@@ -107,8 +107,7 @@ public:
     void OnDebugEnded(XDebugEvent& e);
     void OnFileSysetmUpdated(clFileSystemEvent& event);
     void OnSaveSession(clCommandEvent& event);
-    void OnReplaceInFiles(clFileSystemEvent &e);
-    
+    void OnReplaceInFiles(clFileSystemEvent& e);
 };
 
 #endif // PHP

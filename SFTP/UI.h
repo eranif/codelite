@@ -164,4 +164,24 @@ public:
     virtual ~SFTPSettingsDialogBase();
 };
 
+
+class SFTPUploadDialogBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText110;
+    wxTextCtrl* m_textCtrlRemoteFolder;
+    wxStdDialogButtonSizer* m_stdBtnSizer104;
+    wxButton* m_buttonOK;
+    wxButton* m_button108;
+
+protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText110() { return m_staticText110; }
+    wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
+    SFTPUploadDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Upload Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~SFTPUploadDialogBase();
+};
+
 #endif

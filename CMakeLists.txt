@@ -29,7 +29,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 #################################################################################################################################################################
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-include(FindLibClang)
 
 #############################################
 ## Defaults
@@ -44,6 +43,13 @@ if (CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3
     set( CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 else()
     set( CL_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}) # which seems to be the same, at least in this situation
+endif()
+
+include(FindLibClang)
+include(FindSqlite3)
+if(NOT SQLITE3_FOUND)
+    set(SQLITE3_INCLUDE_DIR ${CL_SRC_ROOT}/sqlite3)
+    set(SQLITE3_LIBRARY "-lsqlite3lib")
 endif()
 
 set( USE_CLANG 1 )
@@ -281,6 +287,23 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 else ()
     message("-- Building in Release mode")
     set ( DEBUG_BUILD 0 )
+    set(CMAKE_INSTALL_DO_STRIP TRUE)
+    message("-- CMAKE_INSTALL_DO_STRIP is " ${CMAKE_INSTALL_DO_STRIP})
+    if(UNIX AND NOT APPLE)
+        ## Avoid hardening-no-relro wrarning messages from lintian
+        if(EXISTS "/usr/bin/dpkg-buildflags")
+            execute_process(COMMAND /usr/bin/dpkg-buildflags --get CFLAGS OUTPUT_VARIABLE EXTRA_CFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+            execute_process(COMMAND /usr/bin/dpkg-buildflags --get CPPFLAGS OUTPUT_VARIABLE EXTRA_CPPFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+            execute_process(COMMAND /usr/bin/dpkg-buildflags --get CXXFLAGS OUTPUT_VARIABLE EXTRA_CXXFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+            execute_process(COMMAND /usr/bin/dpkg-buildflags --get LDFLAGS OUTPUT_VARIABLE EXTRA_LDFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXXFLAGS}")
+            add_definitions(${EXTRA_CPPFLAGS})
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
+            set(LINKER_OPTIONS "${EXTRA_LDFLAGS}")
+            list(APPEND LINKER_OPTIONS "-s") ## strip binaries
+        endif()
+    endif()
+    
     set( CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_release.h")
     set( CL_PCH_TARGET "precompiled_header_release.h.gch")
     add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE) type=release clean )
@@ -357,13 +380,15 @@ if ( MAKE_DEB )
 
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "CodeLite")
-    set(CPACK_PACKAGE_VERSION             "8.3")
+    set(CPACK_PACKAGE_VERSION             "8.2.5")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>") #required
-    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "codelite IDE for C/C++/PHP")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++/PHP and Node.js IDE (Integrated Development Environment")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY     "optional")
-    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential, git, subversion, gdb, xterm")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS      "libgtk2.0-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.5-dev, clang-format-3.5, liblldb-3.5-dev")
+    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential, git, subversion, gdb, xterm, gcc, g++")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS      "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.5-dev, clang-format-3.5, liblldb-3.5-dev")
+    set(CPACK_PACKAGE_DESCRIPTION_FILE    "${CL_SRC_ROOT}/DESC")
+    set(CPACK_STRIP_FILES TRUE)
     INCLUDE(CPack)
 endif( MAKE_DEB )
 
@@ -440,7 +465,7 @@ endif(WITH_SFTP)
 if (UNIX AND NOT APPLE)
     SET(CMAKE_INSTALL_RPATH ${PLUGINS_DIR})
     SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    #SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif(UNIX AND NOT APPLE)
 
 if ( WITH_PCH )
@@ -459,7 +484,11 @@ if ( APPLE )
     add_definitions( -mmacosx-version-min=10.8 )
 endif()
 
-add_subdirectory(sqlite3)
+if(APPLE)
+    # On Linux, we use the distro's libsqlite3
+    add_subdirectory(sqlite3)
+endif()
+
 add_subdirectory(sdk/wxsqlite3)
 add_subdirectory(sdk/wxshapeframework)
 add_subdirectory(sdk/databaselayer)
@@ -530,11 +559,13 @@ add_subdirectory(WebTools)
 ##
 ## Setup the proper dependencies
 ##
-if ( USE_PCH )
-    add_dependencies(sqlite3lib ${CL_PCH_TARGET})
-endif ( USE_PCH )
+if(APPLE)
+    if ( USE_PCH )
+        add_dependencies(sqlite3lib ${CL_PCH_TARGET})
+    endif ( USE_PCH )
+    add_dependencies(wxsqlite3 sqlite3lib)
+endif()
 
-add_dependencies(wxsqlite3 sqlite3lib)
 add_dependencies(databaselayersqlite wxsqlite3)
 add_dependencies(wxshapeframework wxsqlite3)
 add_dependencies(libcodelite wxshapeframework databaselayersqlite wxsqlite3)

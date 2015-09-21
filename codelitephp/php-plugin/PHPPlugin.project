@@ -146,8 +146,6 @@
     <File Name="quick_outline_dlg.h"/>
     <File Name="php_file_layout_tree.h"/>
     <File Name="php_file_layout_tree.cpp"/>
-    <File Name="new_workspace_selection_dlg.cpp"/>
-    <File Name="new_workspace_selection_dlg.h"/>
     <File Name="new_php_workspace_dlg.cpp"/>
     <File Name="new_php_workspace_dlg.h"/>
     <File Name="php_workspace_view.cpp"/>

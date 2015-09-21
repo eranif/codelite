@@ -49,24 +49,6 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer11);
     
-    m_auibar17 = new wxAuiToolBar(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar17->SetToolBitmapSize(wxSize(16,16));
-    
-    boxSizer11->Add(m_auibar17, 0, wxEXPAND, 5);
-    
-    m_auibar17->AddTool(wxID_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, _("Clear view"), _("Clear view"), NULL);
-    
-    m_auibar17->AddTool(ID_KILL_INFIRIOR, _("Send inferior process signal"), wxXmlResource::Get()->LoadBitmap(wxT("signal")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Send inferior process signal"), NULL);
-    wxAuiToolBarItem* m_toolbarItemKillInfiriorProcess = m_auibar17->FindToolByIndex(m_auibar17->GetToolCount()-1);
-    if (m_toolbarItemKillInfiriorProcess) {
-        m_toolbarItemKillInfiriorProcess->SetHasDropDown(true);
-    }
-    
-    m_auibar17->AddTool(ID_SETTINGS, _("Settings..."), wxXmlResource::Get()->LoadBitmap(wxT("settings")), wxNullBitmap, wxITEM_NORMAL, _("Settings..."), _("Settings..."), NULL);
-    
-    m_auibar17->AddTool(wxID_SAVE, _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("save")), wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
-    m_auibar17->Realize();
-    
     m_stc = new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
@@ -116,99 +98,96 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
     
-    boxSizer11->Add(m_stc, 1, wxALL|wxEXPAND, 2);
+    boxSizer11->Add(m_stc, 1, wxALL|wxEXPAND, 0);
     
     m_menuBar = new wxMenuBar(0);
     this->SetMenuBar(m_menuBar);
     
-    m_name6 = new wxMenu();
-    m_menuBar->Append(m_name6, _("File"));
+    m_File = new wxMenu();
+    m_menuBar->Append(m_File, _("File"));
     
-    m_menuItem7 = new wxMenuItem(m_name6, wxID_EXIT, _("Exit\tAlt-X"), _("Quit"), wxITEM_NORMAL);
-    m_name6->Append(m_menuItem7);
+    m_menuItemSave = new wxMenuItem(m_File, wxID_SAVE, _("Save...\tCtrl-S"), wxT(""), wxITEM_NORMAL);
+    m_File->Append(m_menuItemSave);
     
-    m_name8 = new wxMenu();
-    m_menuBar->Append(m_name8, _("Help"));
+    m_menuItemClear = new wxMenuItem(m_File, wxID_CLEAR, _("Clear View\tCtrl-L"), wxT(""), wxITEM_NORMAL);
+    m_File->Append(m_menuItemClear);
     
-    m_menuItem9 = new wxMenuItem(m_name8, wxID_ABOUT, _("About..."), wxT(""), wxITEM_NORMAL);
-    m_name8->Append(m_menuItem9);
+    m_File->AppendSeparator();
+    
+    m_menuItemPreferences = new wxMenuItem(m_File, wxID_PREFERENCES, _("Preferences..."), wxT(""), wxITEM_NORMAL);
+    m_File->Append(m_menuItemPreferences);
+    
+    m_File->AppendSeparator();
+    
+    m_menuItem7 = new wxMenuItem(m_File, wxID_EXIT, _("Exit\tAlt-X"), _("Quit"), wxITEM_NORMAL);
+    m_File->Append(m_menuItem7);
+    
+    m_Signals = new wxMenu();
+    m_menuBar->Append(m_Signals, _("Signals"));
+    
+    m_menuItemINT = new wxMenuItem(m_Signals, ID_SIGINT, _("SIGINT"), wxT(""), wxITEM_NORMAL);
+    m_Signals->Append(m_menuItemINT);
+    
+    m_menuItemTERM = new wxMenuItem(m_Signals, ID_SIGTERM, _("SIGTERM"), wxT(""), wxITEM_NORMAL);
+    m_Signals->Append(m_menuItemTERM);
+    
+    m_menuItemKILL = new wxMenuItem(m_Signals, ID_SIGKILL, _("SIGKILL"), wxT(""), wxITEM_NORMAL);
+    m_Signals->Append(m_menuItemKILL);
+    
+    m_menuItemHUP = new wxMenuItem(m_Signals, ID_SIGHUP, _("SIGHUP"), wxT(""), wxITEM_NORMAL);
+    m_Signals->Append(m_menuItemHUP);
+    
+    m_Help = new wxMenu();
+    m_menuBar->Append(m_Help, _("Help"));
+    
+    m_menuItem9 = new wxMenuItem(m_Help, wxID_ABOUT, _("About..."), wxT(""), wxITEM_NORMAL);
+    m_Help->Append(m_menuItem9);
     
     m_timerMarker = new wxTimer;
     m_timerMarker->Start(50, false);
     
+    SetName(wxT("MainFrameBaseClass"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
-    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
-    this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnClearViewUI), NULL, this);
-    this->Connect(ID_KILL_INFIRIOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTerminateInfirior), NULL, this);
-    this->Connect(ID_KILL_INFIRIOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSignalInferiorUI), NULL, this);
-    this->Connect(ID_KILL_INFIRIOR, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::OnSignalinferior), NULL, this);
-    this->Connect(ID_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
-    this->Connect(wxID_SAVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSaveContent), NULL, this);
-    this->Connect(wxID_SAVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSaveContentUI), NULL, this);
     m_stc->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
+    this->Connect(m_menuItemClear->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
+    this->Connect(m_menuItemPreferences->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
     this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
+    this->Connect(m_menuItemINT->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSignal), NULL, this);
+    this->Connect(m_menuItemTERM->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSignal), NULL, this);
+    this->Connect(m_menuItemKILL->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSignal), NULL, this);
+    this->Connect(m_menuItemHUP->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSignal), NULL, this);
     this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     m_timerMarker->Connect(wxEVT_TIMER, wxTimerEventHandler(MainFrameBaseClass::OnAddMarker), NULL, this);
     
-    this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::ShowAuiToolMenu), NULL, this);
 }
 
 MainFrameBaseClass::~MainFrameBaseClass()
 {
     this->Disconnect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
-    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
-    this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnClearViewUI), NULL, this);
-    this->Disconnect(ID_KILL_INFIRIOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTerminateInfirior), NULL, this);
-    this->Disconnect(ID_KILL_INFIRIOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSignalInferiorUI), NULL, this);
-    this->Disconnect(ID_KILL_INFIRIOR, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::OnSignalinferior), NULL, this);
-    this->Disconnect(ID_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
-    this->Disconnect(wxID_SAVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSaveContent), NULL, this);
-    this->Disconnect(wxID_SAVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSaveContentUI), NULL, this);
     m_stc->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
+    this->Disconnect(m_menuItemClear->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
+    this->Disconnect(m_menuItemPreferences->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
     this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
+    this->Disconnect(m_menuItemINT->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSignal), NULL, this);
+    this->Disconnect(m_menuItemTERM->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSignal), NULL, this);
+    this->Disconnect(m_menuItemKILL->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSignal), NULL, this);
+    this->Disconnect(m_menuItemHUP->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSignal), NULL, this);
     this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     m_timerMarker->Disconnect(wxEVT_TIMER, wxTimerEventHandler(MainFrameBaseClass::OnAddMarker), NULL, this);
     
-    std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
-    for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
-        wxDELETE( menuIter->second );
-    }
-    m_dropdownMenus.clear();
-
     m_timerMarker->Stop();
     wxDELETE( m_timerMarker );
 
-    this->Disconnect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::ShowAuiToolMenu), NULL, this);
 }
 
-
-void MainFrameBaseClass::ShowAuiToolMenu(wxAuiToolBarEvent& event)
-{
-    event.Skip();
-    if (event.IsDropDownClicked()) {
-        wxAuiToolBar* toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
-        if (toolbar) {
-            wxAuiToolBarItem* item = toolbar->FindTool(event.GetId());
-            if (item) {
-                std::map<int, wxMenu*>::iterator iter = m_dropdownMenus.find(item->GetId());
-                if (iter != m_dropdownMenus.end()) {
-                    event.Skip(false);
-                    wxPoint pt = event.GetItemRect().GetBottomLeft();
-                    pt.y++;
-                    toolbar->PopupMenu(iter->second, pt);
-                }
-            }
-        }
-    }
-}
 SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
@@ -274,11 +253,12 @@ SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString
     
     boxSizer43->Add(m_button47, 0, wxALL, 5);
     
+    SetName(wxT("SettingsDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_colourPickerFG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SettingsDlgBase::OnFGColour), NULL, this);
     m_colourPickerBG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SettingsDlgBase::OnBGColour), NULL, this);

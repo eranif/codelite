@@ -21,7 +21,6 @@
 #include <wx/listbox.h>
 #include <wx/button.h>
 #include <wx/choice.h>
-#include <wx/statbox.h>
 #include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -36,6 +35,8 @@ protected:
     wxPanel* m_panelMainPanel;
     wxStaticText* m_staticText1;
     wxComboBox* m_findString;
+    wxStaticText* m_staticText102;
+    wxComboBox* m_replaceString;
     wxStaticText* m_staticText2;
     wxListBox* m_listPaths;
     wxButton* m_btnAddPath;
@@ -62,12 +63,15 @@ protected:
     virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindWhatUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnStop(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonClose(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
     wxComboBox* GetFindString() { return m_findString; }
+    wxStaticText* GetStaticText102() { return m_staticText102; }
+    wxComboBox* GetReplaceString() { return m_replaceString; }
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxListBox* GetListPaths() { return m_listPaths; }
     wxButton* GetBtnAddPath() { return m_btnAddPath; }

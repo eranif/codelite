@@ -2466,6 +2466,12 @@ void GitPlugin::OnCommandOutput(clCommandEvent& event)
     m_console->AddText(event.GetString());
     wxString processOutput = event.GetString();
     processOutput.MakeLower();
+    if(processOutput.Contains("username for")) {
+        wxString user = ::wxGetTextFromUser(event.GetString(), "Git");
+        if(!user.IsEmpty()) {
+            event.SetString(user);
+        }
+    }
     if(processOutput.Contains("password for")) {
         wxString pass = ::wxGetPasswordFromUser(event.GetString(), "Git");
         if(!pass.IsEmpty()) {

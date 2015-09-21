@@ -64,6 +64,8 @@ protected:
     wxPGProperty* m_pgProp16;
     wxPGProperty* m_pgPropWrapQuotes;
     wxPGProperty* m_pgPropWrapBrackets;
+    wxPGProperty* m_pgProp56;
+    wxPGProperty* m_pgPropZoomUsingCtrlScroll;
 
 protected:
     virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }

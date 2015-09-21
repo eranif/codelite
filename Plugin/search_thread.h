@@ -50,6 +50,7 @@ class WXDLLIMPEXP_SDK SearchData : public ThreadRequest
 {
     wxArrayString m_rootDirs;
     wxString m_findString;
+    wxString m_replaceWith;
     size_t m_flags;
     wxString m_validExt;
     wxArrayString m_files;
@@ -98,7 +99,7 @@ public:
         m_newTab = rhs.m_newTab;
         m_owner = rhs.m_owner;
         m_encoding = rhs.m_encoding.c_str();
-
+        m_replaceWith = rhs.m_replaceWith;
         m_files.clear();
 
         for(size_t i = 0; i < rhs.m_files.GetCount(); i++) {
@@ -147,6 +148,8 @@ public:
     bool GetSkipComments() const { return (m_flags & wxSD_SKIP_COMMENTS); }
     bool GetSkipStrings() const { return (m_flags & wxSD_SKIP_STRINGS); }
     bool GetColourComments() const { return (m_flags & wxSD_COLOUR_COMMENTS); }
+    const wxString& GetReplaceWith() const { return m_replaceWith; }
+    void SetReplaceWith(const wxString& replaceWith) { this->m_replaceWith = replaceWith; }
 };
 
 //------------------------------------------
@@ -249,6 +252,8 @@ class WXDLLIMPEXP_SDK SearchSummary : public wxObject
     int m_matchesFound;
     int m_elapsed;
     wxArrayString m_failedFiles;
+    wxString m_findWhat;
+    wxString m_replaceWith;
 
 public:
     SearchSummary()
@@ -270,9 +275,15 @@ public:
         m_matchesFound = rhs.m_matchesFound;
         m_elapsed = rhs.m_elapsed;
         m_failedFiles = rhs.m_failedFiles;
+        m_findWhat = rhs.m_findWhat;
+        m_replaceWith = rhs.m_replaceWith;
         return *this;
     }
 
+    void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat; }
+    void SetReplaceWith(const wxString& replaceWith) { this->m_replaceWith = replaceWith; }
+    const wxString& GetFindWhat() const { return m_findWhat; }
+    const wxString& GetReplaceWith() const { return m_replaceWith; }
     const wxArrayString& GetFailedFiles() const { return m_failedFiles; }
     wxArrayString& GetFailedFiles() { return m_failedFiles; }
 

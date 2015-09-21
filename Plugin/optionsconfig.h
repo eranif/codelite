@@ -64,6 +64,7 @@ public:
         Opt_WrapCmdWithDoubleQuotes = 0x02000000,
         Opt_FoldHighlightActiveBlock = 0x04000000,
         Opt_EnsureCaptionsVisible = 0x08000000,
+        Opt_DisableMouseCtrlZoom = 0x10000000,
     };
 
 protected:
@@ -164,7 +165,7 @@ public:
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
     void SetNonEditorTabsAtTop(bool b) { EnableOption(Opt_NonEditorTabsBottom, !b); }
     bool IsNonEditorTabsAtTop() const { return !HasOption(Opt_NonEditorTabsBottom); }
-    
+
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }
     void SetTrimOnlyModifiedLines(bool trimOnlyModifiedLines) { this->m_trimOnlyModifiedLines = trimOnlyModifiedLines; }
@@ -408,7 +409,8 @@ public:
 
     void MSWWrapCmdWithDoubleQuotes(bool b) { EnableOption(Opt_WrapCmdWithDoubleQuotes, b); }
     bool MSWIsWrapCmdWithDoubleQuotes() const { return true; }
-
+    bool IsMouseZoomEnabled() const { return !HasOption(Opt_DisableMouseCtrlZoom); }
+    void SetMouseZoomEnabled(bool b) { EnableOption(Opt_DisableMouseCtrlZoom, !b); }
     /**
      * Return an XML representation of this object
      * \return XML node

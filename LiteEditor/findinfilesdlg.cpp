@@ -56,7 +56,8 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     m_findString->Clear();
     m_findString->Append(m_data.GetFindStringArr());
     m_findString->SetValue(m_data.GetFindString());
-
+    m_replaceString->Append(m_data.GetReplaceStringArr());
+    m_replaceString->SetValue(m_data.GetReplaceString());
     m_fileTypes->SetSelection(0);
 
     m_matchCase->SetValue(m_data.GetFlags() & wxFRD_MATCHCASE);
@@ -103,6 +104,7 @@ FindInFilesDialog::~FindInFilesDialog()
     // Update the data
     m_data.SetFlags(GetSearchFlags());
     m_data.SetFindString(m_findString->GetValue());
+    m_data.SetReplaceString(m_replaceString->GetValue());
     m_data.SetEncoding(m_choiceEncoding->GetStringSelection());
     wxString value = m_fileTypes->GetValue();
     value.Trim().Trim(false);
@@ -199,12 +201,13 @@ SearchData FindInFilesDialog::DoGetSearchData()
 {
     SearchData data;
     wxString findStr(m_data.GetFindString());
-    if(m_findString->GetValue().IsEmpty() == false) {
+    if(!m_findString->GetValue().IsEmpty()) {
         findStr = m_findString->GetValue();
     }
 
     data.SetFindString(findStr);
-
+    data.SetReplaceWith(m_replaceString->GetValue());
+    
     m_data.SetFlags(GetSearchFlags());
     size_t flags = m_data.GetFlags();
 
@@ -414,4 +417,9 @@ void FindInFilesDialog::DoAddSearchPaths(const wxArrayString& paths)
     for(size_t i = 0; i < paths.size(); ++i) {
         DoAddSearchPath(paths.Item(i));
     }
+}
+void FindInFilesDialog::OnReplaceUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!m_findString->GetValue().IsEmpty() && !m_listPaths->IsEmpty() &&
+                 !m_replaceString->GetValue().IsEmpty());
 }

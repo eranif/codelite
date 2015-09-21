@@ -80,7 +80,7 @@
 #include "threadlistpanel.h"
 #include "memoryview.h"
 #include "attachdbgprocdlg.h"
-#include "listctrlpanel.h"
+#include "DebuggerCallstackView.h"
 #include "cl_editor.h"
 #include "custombuildrequest.h"
 #include "compile_request.h"
@@ -1392,11 +1392,11 @@ wxString Manager::GetProjectNameByFile(const wxString& fullPathFileName, bool ca
             wxString fdest = CLRealPath(f);
             if(fdest != f) {
                 if(caseSensitive) {
-                    if(f.Cmp(fullPathFileName) == 0 || f.Cmp(linkDestination) == 0) {
+                    if(fdest.Cmp(fullPathFileName) == 0 || fdest.Cmp(linkDestination) == 0) {
                         return proj->GetName();
                     }
                 } else {
-                    if(f.CmpNoCase(fullPathFileName) == 0 || f.CmpNoCase(linkDestination) == 0) {
+                    if(fdest.CmpNoCase(fullPathFileName) == 0 || fdest.CmpNoCase(linkDestination) == 0) {
                         return proj->GetName();
                     }
                 }
@@ -2447,7 +2447,9 @@ void Manager::UpdateFileLine(const wxString& filename, int lineno, bool repositi
         m_frameLineno = wxNOT_FOUND;
     }
 
-    if(repositionEditor) DbgMarkDebuggerLine(fileName, lineNumber);
+    if(repositionEditor) {
+        DbgMarkDebuggerLine(fileName, lineNumber);
+    }
 
     UpdateDebuggerPane();
 }
@@ -2487,7 +2489,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
             clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
         }
     }
-    
+
     switch(reason) {
     case DBG_RECV_SIGNAL_SIGTRAP:        // DebugBreak()
     case DBG_RECV_SIGNAL_EXC_BAD_ACCESS: // SIGSEGV on Mac
@@ -3719,4 +3721,20 @@ void Manager::OnCmdRestart(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     DoRestartCodeLite();
+}
+
+bool Manager::IsDebuggerViewVisible(const wxString& name)
+{
+    DebuggerPane* debuggerPane = clMainFrame::Get()->GetDebuggerPane();
+    if(debuggerPane) {
+        int sel = debuggerPane->GetNotebook()->GetSelection();
+        if(sel != wxNOT_FOUND) {
+            if(debuggerPane->GetNotebook()->GetPageText(sel) == name) {
+                return true;
+            }
+        }
+    }
+    
+    // Also test if the pane is detached
+    return IsPaneVisible(name);
 }

@@ -25,70 +25,140 @@
 #include "threadlistpanel.h"
 #include "globals.h"
 #include "manager.h"
+#include <wx/wupdlock.h>
 
-ThreadListPanel::ThreadListPanel( wxWindow* parent )
-    : ThreadListBasePanel( parent )
+class ThreadListClientData : public wxClientData
 {
-    InitList();
+    ThreadEntry m_threadEntry;
+
+public:
+    ThreadListClientData(const ThreadEntry& te) { m_threadEntry = te; }
+
+    virtual ~ThreadListClientData() {}
+    const ThreadEntry& GetThreadEntry() const { return m_threadEntry; }
+    ThreadEntry& GetThreadEntry() { return m_threadEntry; }
+};
+
+ThreadListPanel::ThreadListPanel(wxWindow* parent)
+    : ThreadListBasePanel(parent)
+{
 }
 
-void ThreadListPanel::OnItemActivated( wxListEvent& event )
+ThreadListPanel::~ThreadListPanel() {}
+
+void ThreadListPanel::OnItemActivated(wxDataViewEvent& event)
 {
-    long threadId(wxNOT_FOUND);
-    int index = event.m_itemIndex;
-    if(index != wxNOT_FOUND) {
-        wxString str_id = GetColumnText(m_list, index, 0);
-        str_id.ToLong(&threadId);
-        Manager *mgr = ManagerST::Get();
+    if(!event.GetItem().IsOk()) return;
+
+    wxVariant v;
+    long threadId;
+    m_dvListCtrl->GetValue(v, m_dvListCtrl->ItemToRow(event.GetItem()), 0);
+    wxString str_id = v.GetString();
+    if(str_id.ToCLong(&threadId)) {
+        Manager* mgr = ManagerST::Get();
         mgr->DbgSetThread(threadId);
     }
 }
 
-void ThreadListPanel::InitList()
+void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
 {
-    //add two columns to the list ctrl
-    m_list->InsertColumn(0, _("Thread ID"));
-    m_list->InsertColumn(1, _("Active"));
-    m_list->InsertColumn(2, _("Function"));
-    m_list->InsertColumn(3, _("File"));
-    m_list->InsertColumn(4, _("Line"));
-}
+    // Check if the new thread list is the same as the current one
+    if(IsTheSame(m_threads, threads)) {
+        // No need to repopulate the list, just set the active thread indicator
 
-void ThreadListPanel::PopulateList(const ThreadEntryArray &threads)
-{
-    m_list->Freeze();
-    m_list->DeleteAllItems();
-    for(ThreadEntryArray::size_type i=0; i< threads.size(); i++) {
-        ThreadEntry entry = threads.at(i);
+        // Loop over the table and set all threads to "NO"
+        for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+            ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
+            d->GetThreadEntry().active = false;
+            wxVariant v = "NO";
+            m_dvListCtrl->SetValue(v, i, 1);
+        }
 
-        long item;
-        wxListItem info;
+        // Replace the current thread stack with the new one
+        m_threads.clear();
+        m_threads.insert(m_threads.end(), threads.begin(), threads.end());
 
-        //insert new item (row)
-        info.SetColumn(0);
-        info.SetId(0);
-        item = m_list->InsertItem(info);
+        long threadID = wxNOT_FOUND;
+        for(size_t i = 0; i < m_threads.size(); ++i) {
+            if(m_threads.at(i).active) {
+                threadID = m_threads.at(i).dbgid;
+                break;
+            }
+        }
 
-        wxString str_id;
-        wxString str_active;
+        if(threadID != wxNOT_FOUND) {
+            // Update the new active thread
+            for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+                ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
+                if(d->GetThreadEntry().dbgid == threadID) {
+                    d->GetThreadEntry().active = true;
+                    wxVariant v = "YES";
+                    m_dvListCtrl->SetValue(v, i, 1);
+                }
+            }
+        }
 
-        str_id << entry.dbgid;
-        str_active =  entry.active ? _("Yes") : _("No");
+    } else {
+        wxWindowUpdateLocker locker(m_dvListCtrl);
+        Clear();
 
-        SetColumnText(m_list, item, 0, str_id);
-        SetColumnText(m_list, item, 1, str_active);
-        SetColumnText(m_list, item, 2, entry.function);
-        SetColumnText(m_list, item, 3, entry.file);
-        SetColumnText(m_list, item, 4, entry.line);
+        // Replace the thread list
+        m_threads.clear();
+        m_threads.insert(m_threads.end(), threads.begin(), threads.end());
+
+        int sel = wxNOT_FOUND;
+        if(m_threads.empty()) return;
+
+        for(int i = (int)(m_threads.size() - 1); i >= 0; --i) {
+            const ThreadEntry& entry = m_threads.at(i);
+
+            wxString str_id;
+            wxString str_active;
+
+            str_id << entry.dbgid;
+            str_active = entry.active ? "YES" : "NO";
+            if(entry.active) {
+                sel = i;
+            }
+
+            wxVector<wxVariant> cols;
+            cols.push_back(str_id);
+            cols.push_back(str_active);
+            cols.push_back(entry.function);
+            cols.push_back(entry.file);
+            cols.push_back(entry.line);
+            m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new ThreadListClientData(entry));
+        }
+
+        // Ensure that the active thread is visible
+        if(sel != wxNOT_FOUND) {
+            wxDataViewItem item = m_dvListCtrl->RowToItem(sel);
+            m_dvListCtrl->EnsureVisible(item, 0);
+        }
     }
-    
-    m_list->SetColumnWidth(2, wxLIST_AUTOSIZE);
-    m_list->SetColumnWidth(3, wxLIST_AUTOSIZE);
-    m_list->SetColumnWidth(4, wxLIST_AUTOSIZE);
-    m_list->Thaw();
 }
 
 void ThreadListPanel::Clear()
 {
-    m_list->DeleteAllItems();
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
+        delete d;
+    }
+    m_dvListCtrl->DeleteAllItems();
+}
+
+bool ThreadListPanel::IsTheSame(const ThreadEntryArray& threads1, const ThreadEntryArray& threads2)
+{
+    if(threads1.size() != threads2.size()) {
+        return false;
+    }
+
+    for(size_t i = 0; i < threads1.size(); ++i) {
+        const ThreadEntry& entry1 = threads1.at(i);
+        const ThreadEntry& entry2 = threads2.at(i);
+        if((entry1.file != entry2.file) || (entry1.function != entry2.function) || (entry1.line != entry2.line)) {
+            return false;
+        }
+    }
+    return true;
 }

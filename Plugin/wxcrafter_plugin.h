@@ -32,6 +32,8 @@
 #include <wx/listbox.h>
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
+#include <wx/popupwin.h>
+#include <wx/timer.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -43,9 +45,7 @@
 class WXDLLIMPEXP_SDK EditDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer2;
     wxStyledTextCtrl* m_stc10;
-    wxBoxSizer* boxSizer4;
     wxButton* m_button6;
     wxButton* m_button8;
 
@@ -74,7 +74,6 @@ public:
         ID_VIEW_VRTICAL = 1008,
     };
 protected:
-    wxBoxSizer* boxSizer13;
     wxRibbonBar* m_ribbonBar;
     wxRibbonPage* m_ribbonPage43;
     wxRibbonPanel* m_ribbonPanel47;
@@ -85,12 +84,10 @@ protected:
     wxRibbonButtonBar* m_ribbonButtonBar123;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageLeft;
-    wxBoxSizer* boxSizer111;
     wxFilePickerCtrl* m_filePickerLeft;
     wxStyledTextCtrl* m_stcLeft;
     wxStaticText* m_staticTextLeft;
     wxPanel* m_splitterPageRight;
-    wxBoxSizer* boxSizer113;
     wxFilePickerCtrl* m_filePickerRight;
     wxStyledTextCtrl* m_stcRight;
     wxStaticText* m_staticTextRight;
@@ -120,6 +117,7 @@ protected:
     virtual void OnSingleUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
     virtual void OnRightPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 
@@ -142,7 +140,6 @@ public:
 class WXDLLIMPEXP_SDK clGetTextFromUserBaseDialog : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer135;
     wxStaticText* m_staticTextCaption;
     wxTextCtrl* m_textCtrl;
     wxStdDialogButtonSizer* m_stdBtnSizer137;
@@ -162,7 +159,6 @@ public:
 class WXDLLIMPEXP_SDK clTreeCtrlPanelBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer151;
     clFileViewerTreeCtrl* m_treeCtrl;
 
 protected:
@@ -180,9 +176,7 @@ public:
 class NotebookNavigationDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer157;
     wxPanel* m_panel161;
-    wxBoxSizer* boxSizer163;
     wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
@@ -201,9 +195,7 @@ public:
 class clTreeCtrlPanelDefaultPageBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer167;
     wxPanel* m_panel169;
-    wxBoxSizer* boxSizer171;
     wxStaticText* m_staticText177;
 
 protected:
@@ -220,13 +212,13 @@ public:
 class clSingleChoiceDialogBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer181;
     wxListBox* m_listBox;
     wxStdDialogButtonSizer* m_stdBtnSizer183;
     wxButton* m_button185;
     wxButton* m_button187;
 
 protected:
+    virtual void OnItemActivated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
@@ -239,9 +231,7 @@ public:
 class WXDLLIMPEXP_SDK clImageViewerBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer194;
     wxScrolledWindow* m_scrollWin196;
-    wxBoxSizer* boxSizer198;
     wxStaticBitmap* m_staticBitmap;
 
 protected:
@@ -251,6 +241,36 @@ public:
     wxScrolledWindow* GetScrollWin196() { return m_scrollWin196; }
     clImageViewerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~clImageViewerBase();
+};
+
+
+class WXDLLIMPEXP_SDK clResizableTooltipBase : public wxPopupWindow
+{
+protected:
+    wxPanel* m_mainPanel;
+    wxTreeCtrl* m_treeCtrl;
+    wxPanel* m_panelStatus;
+    wxStaticBitmap* m_staticBitmap240;
+    wxTimer* m_timerCheckMousePos;
+
+protected:
+    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnStatusEnterWindow(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusLeaveWindow(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusBarMotion(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusBarLeftUp(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusBarLeftDown(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnCaptureLost(wxMouseCaptureLostEvent& event) { event.Skip(); }
+    virtual void OnCheckMousePosition(wxTimerEvent& event) { event.Skip(); }
+
+public:
+    wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    wxPanel* GetMainPanel() { return m_mainPanel; }
+    wxStaticBitmap* GetStaticBitmap240() { return m_staticBitmap240; }
+    wxPanel* GetPanelStatus() { return m_panelStatus; }
+    wxTimer* GetTimerCheckMousePos() { return m_timerCheckMousePos; }
+    clResizableTooltipBase(wxWindow* parent, long style = wxBORDER_SIMPLE);
+    virtual ~clResizableTooltipBase();
 };
 
 #endif

@@ -29,7 +29,7 @@
 #include <wx/tokenzr.h>
 #include "globals.h"
 
-CodeCompletionPage::CodeCompletionPage(wxWindow *parent, int type)
+CodeCompletionPage::CodeCompletionPage(wxWindow* parent, int type)
     : CodeCompletionBasePage(parent)
     , m_type(type)
     , m_ccChanged(false)
@@ -43,33 +43,25 @@ CodeCompletionPage::CodeCompletionPage(wxWindow *parent, int type)
         LocalWorkspaceST::Get()->GetParserPaths(includePaths, excludePaths);
         LocalWorkspaceST::Get()->GetParserMacros(macros);
 
-        m_textCtrlSearchPaths->SetValue( wxImplode(includePaths, wxT("\n")) );
-        m_textCtrlMacros->SetValue(macros );
-        
-        m_checkBoxCpp11->SetValue( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp11 );
-        m_checkBoxCpp14->SetValue( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp14 );
-        m_checkBoxSWTLW->SetValue( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW);
+        m_textCtrlSearchPaths->SetValue(wxImplode(includePaths, wxT("\n")));
+        m_textCtrlMacros->SetValue(macros);
+
+        m_checkBoxCpp11->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp11);
+        m_checkBoxCpp14->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp14);
+        m_checkBoxSWTLW->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW);
     }
 }
 
-CodeCompletionPage::~CodeCompletionPage()
-{
-}
+CodeCompletionPage::~CodeCompletionPage() {}
 
 wxArrayString CodeCompletionPage::GetIncludePaths() const
 {
     return wxStringTokenize(m_textCtrlSearchPaths->GetValue(), wxT("\n\r"), wxTOKEN_STRTOK);
 }
 
-wxString CodeCompletionPage::GetMacros() const
-{
-    return m_textCtrlMacros->GetValue();
-}
+wxString CodeCompletionPage::GetMacros() const { return m_textCtrlMacros->GetValue(); }
 
-wxString CodeCompletionPage::GetIncludePathsAsString() const
-{
-    return m_textCtrlSearchPaths->GetValue();
-}
+wxString CodeCompletionPage::GetIncludePathsAsString() const { return m_textCtrlSearchPaths->GetValue(); }
 
 void CodeCompletionPage::Save()
 {
@@ -78,10 +70,10 @@ void CodeCompletionPage::Save()
         LocalWorkspaceST::Get()->SetParserPaths(GetIncludePaths(), wxArrayString());
         LocalWorkspaceST::Get()->SetParserMacros(GetMacros());
 
-        if ( m_checkBoxCpp11->IsChecked() ) flags |= LocalWorkspace::EnableCpp11;
-        if ( m_checkBoxCpp14->IsChecked() ) flags |= LocalWorkspace::EnableCpp14;
-        if ( m_checkBoxSWTLW->IsChecked() ) flags |= LocalWorkspace::EnableSWTLW;
-        LocalWorkspaceST::Get()->SetParserFlags( flags );
+        if(m_checkBoxCpp11->IsChecked()) flags |= LocalWorkspace::EnableCpp11;
+        if(m_checkBoxCpp14->IsChecked()) flags |= LocalWorkspace::EnableCpp14;
+        if(m_checkBoxSWTLW->IsChecked()) flags |= LocalWorkspace::EnableSWTLW;
+        LocalWorkspaceST::Get()->SetParserFlags(flags);
         LocalWorkspaceST::Get()->Flush();
 
 #if HAS_LIBCLANG
@@ -93,8 +85,4 @@ void CodeCompletionPage::Save()
     }
 }
 
-void CodeCompletionPage::OnCCContentModified(wxCommandEvent& event)
-{
-    m_ccChanged = true;
-}
-
+void CodeCompletionPage::OnCCContentModified(wxCommandEvent& event) { m_ccChanged = true; }

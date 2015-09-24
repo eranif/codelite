@@ -161,7 +161,7 @@ bool clTernServer::PostCCRequest(IEditor* editor)
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
     req->jsonRequest = root.toElement().FormatRawString();
     req->filename = editor->GetFileName().GetFullPath();
-    req->isFunctionTip = false;
+    req->type = clTernWorkerThread::kCodeCompletion;
 
     // Create the worker thread and start the request
     m_workerThread = new clTernWorkerThread(this);
@@ -332,11 +332,17 @@ void clTernServer::OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply
     RecycleIfNeeded();
 
     m_entries.clear();
-    if(reply.isFunctionTip) {
+    switch(reply.requestType) {
+    case clTernWorkerThread::kFunctionTip:
         m_jsCCManager->OnFunctionTipReady(ProcessCalltip(reply.json), reply.filename);
-    } else {
+        break;
+    case clTernWorkerThread::kCodeCompletion:
         ProcessOutput(reply.json, m_entries);
         m_jsCCManager->OnCodeCompleteReady(m_entries, reply.filename);
+        break;
+    case clTernWorkerThread::kFindDefinition:
+        ProcessDefinitionOutput(reply.json);
+        break;
     }
 }
 
@@ -414,7 +420,7 @@ bool clTernServer::PostFunctionTipRequest(IEditor* editor, int pos)
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
     req->jsonRequest = root.toElement().FormatRawString();
     req->filename = editor->GetFileName().GetFullPath();
-    req->isFunctionTip = true;
+    req->type = clTernWorkerThread::kFunctionTip;
 
     // Create the worker thread and start the request
     m_workerThread = new clTernWorkerThread(this);
@@ -467,7 +473,41 @@ bool clTernServer::LocateNodeJS(wxFileName& nodeJS)
 #endif
 }
 
-void clTernServer::ClearFatalErrorFlag()
+void clTernServer::ClearFatalErrorFlag() { m_fatalError = false; }
+
+bool clTernServer::PostFindDefinitionRequest(IEditor* editor)
 {
-    m_fatalError = false;
+    // Sanity
+    if(m_workerThread) return false;        // another request is in progress
+    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+    ++m_recycleCount;
+
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+
+    // Prepare the request
+    JSONRoot root(cJSON_Object);
+    JSONElement query = JSONElement::createObject("query");
+    root.toElement().append(query);
+    query.addProperty("type", wxString("definition"));
+    query.addProperty("file", wxString("#0"));
+    query.append(CreateLocation(ctrl));
+
+    // Creae the files array
+    JSONElement files = CreateFilesArray(ctrl);
+    root.toElement().append(files);
+
+    clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
+    req->jsonRequest = root.toElement().FormatRawString();
+    req->filename = editor->GetFileName().GetFullPath();
+    req->type = clTernWorkerThread::kFindDefinition;
+
+    // Create the worker thread and start the request
+    m_workerThread = new clTernWorkerThread(this);
+    m_workerThread->Start();
+    m_workerThread->Add(req);
+    return true;
+}
+
+void clTernServer::ProcessDefinitionOutput(const wxString& output)
+{
 }

@@ -50,13 +50,8 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory)
 
 JSCodeCompletion::~JSCodeCompletion() { m_ternServer.Terminate(); }
 
-void JSCodeCompletion::CodeComplete(IEditor* editor)
+bool JSCodeCompletion::SanityCheck()
 {
-    if(!IsEnabled()) {
-        TriggerWordCompletion();
-        return;
-    }
-
 #ifdef __WXGTK__
     wxFileName nodeJS;
     if(!clTernServer::LocateNodeJS(nodeJS)) {
@@ -71,9 +66,20 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         WebToolsConfig conf;
         conf.Load().EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
         conf.Save();
-        return;
+        return false;
     }
 #endif
+    return true;
+}
+
+void JSCodeCompletion::CodeComplete(IEditor* editor)
+{
+    if(!IsEnabled()) {
+        TriggerWordCompletion();
+        return;
+    }
+
+    if(!SanityCheck()) return;
 
     // Sanity
     CHECK_PTR_RET(editor);
@@ -145,4 +151,20 @@ void JSCodeCompletion::TriggerWordCompletion()
     // trigger word completion
     wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
     wxTheApp->ProcessEvent(wordCompleteEvent);
+}
+
+void JSCodeCompletion::FindDefinition(IEditor* editor)
+{
+    if(!IsEnabled()) {
+        return;
+    }
+
+    if(!SanityCheck()) return;
+
+    // Sanity
+    CHECK_PTR_RET(editor);
+    
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    m_ccPos = ctrl->GetCurrentPos();
+    m_ternServer.PostFindDefinitionRequest(editor);
 }

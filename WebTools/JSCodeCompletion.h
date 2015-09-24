@@ -23,6 +23,9 @@ public:
      */
     void TriggerWordCompletion();
 
+protected:
+    bool SanityCheck();
+
 public:
     JSCodeCompletion(const wxString& workingDirectory);
     virtual ~JSCodeCompletion();
@@ -36,6 +39,11 @@ public:
      * @brief code complete the current expression
      */
     void CodeComplete(IEditor* editor);
+
+    /**
+     * @brief find definition of selected expression or the word under the caret
+     */
+    void FindDefinition(IEditor* editor);
 
     /**
      * @brief restart the tern server

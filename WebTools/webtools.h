@@ -39,6 +39,7 @@ protected:
     void OnThemeChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
     void OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event);
+    void OnFindSymbol(clCodeCompletionEvent& event);
     void ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply);
     void OnSettings(wxCommandEvent& event);
     void OnTimer(wxTimerEvent& event);

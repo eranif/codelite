@@ -38,6 +38,7 @@ protected:
     void PrintMessage(const wxString& message);
 
     void ProcessOutput(const wxString& output, wxCodeCompletionBoxEntry::Vec_t& entries);
+    void ProcessDefinitionOutput(const wxString& output);
     clCallTipPtr ProcessCalltip(const wxString& output);
 
     wxString PrepareDoc(const wxString& doc, const wxString& url);
@@ -68,6 +69,12 @@ public:
      * before the open brace
      */
     bool PostFunctionTipRequest(IEditor* editor, int pos);
+    
+    /**
+     * @brief locate a definition of expression under the caret
+     */
+    bool PostFindDefinitionRequest(IEditor* editor);
+    
     const wxCodeCompletionBoxEntry::Vec_t& GetEntries() const { return m_entries; }
 
     /**

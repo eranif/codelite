@@ -71,12 +71,20 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &WebTools::OnRefreshColours, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &WebTools::OnRefreshColours, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
+    // Code completion related events
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &WebTools::OnFindSymbol, this);
+    
+    // Workspace related events
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
+    
+    // Theme management
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
+    
+    // Debugger related
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
 
@@ -434,4 +442,14 @@ void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
 bool WebTools::IsCSSFile(IEditor* editor)
 {
     return (FileExtManager::GetType(editor->GetFileName().GetFullName()) == FileExtManager::TypeCSS);
+}
+
+void WebTools::OnFindSymbol(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
+        event.Skip(false);
+        m_jsCodeComplete->FindDefinition(editor);
+    }
 }

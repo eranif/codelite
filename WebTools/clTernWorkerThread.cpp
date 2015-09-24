@@ -84,7 +84,7 @@ void clTernWorkerThread::ProcessRequest(ThreadRequest* request)
         clTernWorkerThread::Reply reply;
         reply.json.swap(json);
         reply.filename.swap(r->filename);
-        reply.isFunctionTip = r->isFunctionTip;
+        reply.requestType = r->type;
 
         m_ternSerer->CallAfter(&clTernServer::OnTernWorkerThreadDone, reply);
 

@@ -19,6 +19,7 @@ public:
     void OnCodeCompleteReady(const wxCodeCompletionBoxEntry::Vec_t& entries, const wxString& filename);
     void OnFunctionTipReady(clCallTipPtr calltip, const wxString& filename);
     void OnDefinitionFound(const clTernDefinition& loc);
+    void OnGotoDefinition(wxCommandEvent& event);
     
     /**
      * @brief start code completion based on the word completion plugin
@@ -46,12 +47,17 @@ public:
      * @brief find definition of selected expression or the word under the caret
      */
     void FindDefinition(IEditor* editor);
-    
+
     /**
-     * @brief notify tern to clear the cache 
+     * @brief notify tern to clear the cache
      * @param editor
      */
     void ResetTern(IEditor* editor);
+
+    /**
+     * @brief add java script context menu entries
+     */
+    void AddContextMenu(wxMenu* menu, IEditor* editor);
 
     /**
      * @brief restart the tern server

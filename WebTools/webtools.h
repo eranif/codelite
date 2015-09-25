@@ -37,6 +37,7 @@ protected:
     void OnEditorChanged(wxCommandEvent& event);
     void DoRefreshColours(const wxString& filename);
     void OnFileLoaded(clCommandEvent& event);
+    void OnEditorContextMenu(clContextMenuEvent& event);
     void OnFileSaved(clCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);

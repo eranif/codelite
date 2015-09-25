@@ -33,6 +33,7 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory)
     , m_ccPos(wxNOT_FOUND)
     , m_workingDirectory(workingDirectory)
 {
+    wxTheApp->Bind(wxEVT_MENU, &JSCodeCompletion::OnGotoDefinition, this, XRCID("ID_MENU_JS_GOTO_DEFINITION"));
     wxFileName jsResources(clStandardPaths::Get().GetDataDir(), ZIP_NAME);
     if(jsResources.Exists()) {
 
@@ -48,7 +49,11 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory)
     }
 }
 
-JSCodeCompletion::~JSCodeCompletion() { m_ternServer.Terminate(); }
+JSCodeCompletion::~JSCodeCompletion()
+{
+    m_ternServer.Terminate();
+    wxTheApp->Unbind(wxEVT_MENU, &JSCodeCompletion::OnGotoDefinition, this, XRCID("ID_MENU_JS_GOTO_DEFINITION"));
+}
 
 bool JSCodeCompletion::SanityCheck()
 {
@@ -163,7 +168,7 @@ void JSCodeCompletion::FindDefinition(IEditor* editor)
 
     // Sanity
     CHECK_PTR_RET(editor);
-    
+
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
     m_ccPos = ctrl->GetCurrentPos();
     m_ternServer.PostFindDefinitionRequest(editor);
@@ -193,7 +198,20 @@ void JSCodeCompletion::ResetTern(IEditor* editor)
 
     // Sanity
     m_ccPos = wxNOT_FOUND;
-    
+
     // recycle tern
     m_ternServer.RecycleIfNeeded(true);
+}
+
+void JSCodeCompletion::AddContextMenu(wxMenu* menu, IEditor* editor) 
+{
+    wxUnusedVar(editor);
+    menu->PrependSeparator();
+    menu->Prepend(XRCID("ID_MENU_JS_GOTO_DEFINITION"), _("Find Definition"));
+}
+
+void JSCodeCompletion::OnGotoDefinition(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    FindDefinition(clGetManager()->GetActiveEditor());
 }

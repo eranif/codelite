@@ -14,6 +14,7 @@ public:
         kCodeCompletion,
         kFunctionTip,
         kFindDefinition,
+        kReparse,
     };
     
     struct Request : public ThreadRequest {

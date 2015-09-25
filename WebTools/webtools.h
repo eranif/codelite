@@ -35,7 +35,9 @@ protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnWorkspaceLoaded(wxCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
-    void OnRefreshColours(clCommandEvent& event);
+    void DoRefreshColours(const wxString& filename);
+    void OnFileLoaded(clCommandEvent& event);
+    void OnFileSaved(clCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
     void OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event);

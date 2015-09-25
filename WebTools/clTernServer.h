@@ -16,6 +16,27 @@ class JSCodeCompletion;
 class IProcess;
 class clTernWorkerThread;
 
+struct clTernDefinition {
+    wxString url;
+    wxString file;
+    int start;
+    int end;
+
+    clTernDefinition()
+        : start(wxNOT_FOUND)
+        , end(wxNOT_FOUND)
+    {
+    }
+    
+    /**
+     * @brief is this location defined on the web?
+     */
+    bool IsURL() const {
+        return !url.IsEmpty();
+    }
+    
+};
+
 class clTernServer : public wxEvtHandler
 {
     friend class clTernWorkerThread;
@@ -38,7 +59,7 @@ protected:
     void PrintMessage(const wxString& message);
 
     void ProcessOutput(const wxString& output, wxCodeCompletionBoxEntry::Vec_t& entries);
-    void ProcessDefinitionOutput(const wxString& output);
+    bool ProcessDefinitionOutput(const wxString& output, clTernDefinition& loc);
     clCallTipPtr ProcessCalltip(const wxString& output);
 
     wxString PrepareDoc(const wxString& doc, const wxString& url);
@@ -48,7 +69,7 @@ protected:
     void OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply);
     void OnError(const wxString& why);
     JSONElement CreateLocation(wxStyledTextCtrl* ctrl, int pos = wxNOT_FOUND);
-    JSONElement CreateFilesArray(wxStyledTextCtrl* ctrl);
+    JSONElement CreateFilesArray(IEditor *editor, bool forDelete = false);
 
 public:
     void RecycleIfNeeded(bool force = false);
@@ -69,7 +90,7 @@ public:
      * before the open brace
      */
     bool PostFunctionTipRequest(IEditor* editor, int pos);
-    
+
     /**
      * @brief locate a definition of expression under the caret
      */

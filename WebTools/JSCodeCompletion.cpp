@@ -168,3 +168,32 @@ void JSCodeCompletion::FindDefinition(IEditor* editor)
     m_ccPos = ctrl->GetCurrentPos();
     m_ternServer.PostFindDefinitionRequest(editor);
 }
+
+void JSCodeCompletion::OnDefinitionFound(const clTernDefinition& loc)
+{
+    if(loc.IsURL()) {
+        ::wxLaunchDefaultBrowser(loc.url);
+    } else {
+        IEditor* editor = clGetManager()->OpenFile(loc.file);
+        if(editor) {
+            editor->CenterLine(editor->LineFromPos(loc.start));
+            editor->GetCtrl()->SetSelection(loc.start, loc.end);
+        }
+    }
+}
+
+void JSCodeCompletion::ResetTern(IEditor* editor)
+{
+    wxUnusedVar(editor);
+    if(!IsEnabled()) {
+        return;
+    }
+
+    if(!SanityCheck()) return;
+
+    // Sanity
+    m_ccPos = wxNOT_FOUND;
+    
+    // recycle tern
+    m_ternServer.RecycleIfNeeded(true);
+}

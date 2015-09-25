@@ -19,6 +19,7 @@
 #include "imanager.h"
 #include "WebToolsConfig.h"
 #include <wx/msgdlg.h>
+#include <wx/menu.h>
 
 #ifdef __WXMSW__
 #define ZIP_NAME "javascript-win.zip"

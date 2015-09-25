@@ -159,13 +159,14 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
                                            projectPath.c_str());
                 removedChildren.push_back(child);
             }
-        } else if(child->GetName() == wxT("WorkspaceParserPaths")) {
+        } else if((child->GetName() == wxT("WorkspaceParserPaths")) || (child->GetName() == wxT("WorkspaceParserMacros"))) {
             wxString swtlw = wxEmptyString;
             swtlw = XmlUtils::ReadString(m_doc.GetRoot(), "SWTLW");
             if(swtlw.CmpNoCase("yes") == 0) {
                 LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() |
                                                         LocalWorkspace::EnableSWTLW);
                 SyncToLocalWorkspaceSTParserPaths();
+                SyncToLocalWorkspaceSTParserMacros();
             }
         }
         child = child->GetNext();
@@ -701,6 +702,7 @@ bool clCxxWorkspace::SaveXmlFile()
     if(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
         m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
         SyncFromLocalWorkspaceSTParserPaths();
+        SyncFromLocalWorkspaceSTParserMacros();
     }
 
     bool ok = m_doc.Save(m_fileName.GetFullPath());
@@ -768,6 +770,40 @@ void clCxxWorkspace::SyncFromLocalWorkspaceSTParserPaths()
     for(size_t i = 0; i < excludePaths.GetCount(); i++) {
         wxXmlNode* child = new wxXmlNode(workspaceInclPaths, wxXML_ELEMENT_NODE, wxT("Exclude"));
         child->AddProperty(wxT("Path"), excludePaths.Item(i));
+    }
+}
+
+void clCxxWorkspace::SyncToLocalWorkspaceSTParserMacros()
+{
+    wxString macros;
+    wxXmlNode* workspaceMacros = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserMacros"));
+    if(workspaceMacros) {
+        macros = workspaceMacros->GetNodeContent();
+        macros.Trim().Trim(false);
+        LocalWorkspaceST::Get()->SetParserMacros(macros);
+    }
+}
+
+void clCxxWorkspace::SyncFromLocalWorkspaceSTParserMacros()
+{
+    //
+    // Here we just get the parser macros from the LocalWorkspaceST and write it into the worspace project file.
+    //
+    wxXmlNode* workspaceMacros = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserMacros"));
+    if(workspaceMacros) {
+        m_doc.GetRoot()->RemoveChild(workspaceMacros);
+        delete workspaceMacros;
+    }
+
+    //
+    // Get workspace parse macros from local workspace file.
+    //
+    wxString macros;
+    LocalWorkspaceST::Get()->GetParserMacros(macros);
+    workspaceMacros = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("WorkspaceParserMacros"));
+    if(!macros.IsEmpty()) {
+        wxXmlNode* contentNode = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, macros);
+        workspaceMacros->AddChild(contentNode);
     }
 }
 
@@ -906,6 +942,20 @@ clCxxWorkspace* clCxxWorkspaceST::Get()
     if(gs_Workspace == NULL)
         gs_Workspace = new clCxxWorkspace;
     return gs_Workspace;
+}
+
+wxString clCxxWorkspace::GetParserMacros()
+{
+    if(!m_doc.IsOk())
+        return wxEmptyString;
+
+    wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserMacros"));
+    if(node) {
+        wxString nodeContent = node->GetNodeContent();
+        nodeContent.Trim().Trim(false);
+        return nodeContent;
+    }
+    return wxEmptyString;
 }
 
 wxString clCxxWorkspace::GetEnvironmentVariabels()

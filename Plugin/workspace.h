@@ -321,6 +321,14 @@ public:
     void AddProjectToBuildMatrix(ProjectPtr prj);
 
     //----------------------------------
+    // Workspace Parser Macros
+    //----------------------------------
+    /**
+     * @brief return the workspace environment variables
+     */
+    wxString GetParserMacros();
+
+    //----------------------------------
     // Workspace environment variables
     //----------------------------------
     /**
@@ -390,6 +398,8 @@ private:
 
     void SyncToLocalWorkspaceSTParserPaths();
     void SyncFromLocalWorkspaceSTParserPaths();
+    void SyncToLocalWorkspaceSTParserMacros();
+    void SyncFromLocalWorkspaceSTParserMacros();
 };
 
 class WXDLLIMPEXP_SDK clCxxWorkspaceST

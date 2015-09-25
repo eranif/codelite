@@ -583,6 +583,13 @@ bool CodeCompletionManager::GetDefinitionsAndSearchPaths(LEditor* editor,
 
     // includePaths.insert(includePaths.end(), compileIncludePaths.begin(), compileIncludePaths.end());
     definitions = proj->GetPreProcessors();
+
+    // get macros out of workspace
+    wxString strWorkspaceMacros = clCxxWorkspaceST::Get()->GetParserMacros();
+    wxArrayString workspaceMacros = wxStringTokenize(strWorkspaceMacros, wxT("\n\r"), wxTOKEN_STRTOK);
+    for(size_t i = 0; i < workspaceMacros.GetCount(); i++)
+        definitions.Add(workspaceMacros.Item(i).Trim().Trim(false).c_str());
+
     CL_DEBUG("CxxPreProcessor will use the following macros:");
     CL_DEBUG_ARR(definitions);
 

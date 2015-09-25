@@ -3,31 +3,31 @@
             "os": "msw",
             "codename": "Windows",
             "arch": "x86_64",
-            "version": 824,
+            "version": 825,
             "url": "http://codelite.org/LiteEditor/ReleaseNotesCodeLite83"
         }, {
             "os": "msw",
             "codename": "Windows",
             "arch": "i386",
-            "version": 824,
+            "version": 825,
             "url": "http://codelite.org/LiteEditor/ReleaseNotesCodeLite83"
         }, {
             "os": "osx",
             "codename": "10.8",
             "arch": "x86_64",
-            "version": 824,
+            "version": 825,
             "url": "http://codelite.org/LiteEditor/ReleaseNotesCodeLite83"
         }, {
             "os": "linux",
             "codename": "Debian GNU/Linux 8",
             "arch": "x86_64",
-            "version": 824,
+            "version": 825,
             "url": "http://codelite.org/LiteEditor/ReleaseNotesCodeLite83"
         }, {
             "os": "linux",
             "codename": "Ubuntu 14.04",
             "arch": "x86_64",
-            "version": 824,
+            "version": 825,
             "url": "http://codelite.org/LiteEditor/ReleaseNotesCodeLite83"
         }, {
             "os": "linux",

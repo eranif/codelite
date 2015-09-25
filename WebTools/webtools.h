@@ -35,10 +35,14 @@ protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnWorkspaceLoaded(wxCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
-    void OnRefreshColours(clCommandEvent& event);
+    void DoRefreshColours(const wxString& filename);
+    void OnFileLoaded(clCommandEvent& event);
+    void OnEditorContextMenu(clContextMenuEvent& event);
+    void OnFileSaved(clCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
     void OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event);
+    void OnFindSymbol(clCodeCompletionEvent& event);
     void ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply);
     void OnSettings(wxCommandEvent& event);
     void OnTimer(wxTimerEvent& event);

@@ -19,6 +19,7 @@
 #include "imanager.h"
 #include "WebToolsConfig.h"
 #include <wx/msgdlg.h>
+#include <wx/menu.h>
 
 #ifdef __WXMSW__
 #define ZIP_NAME "javascript-win.zip"
@@ -33,6 +34,7 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory)
     , m_ccPos(wxNOT_FOUND)
     , m_workingDirectory(workingDirectory)
 {
+    wxTheApp->Bind(wxEVT_MENU, &JSCodeCompletion::OnGotoDefinition, this, XRCID("ID_MENU_JS_GOTO_DEFINITION"));
     wxFileName jsResources(clStandardPaths::Get().GetDataDir(), ZIP_NAME);
     if(jsResources.Exists()) {
 
@@ -48,15 +50,14 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory)
     }
 }
 
-JSCodeCompletion::~JSCodeCompletion() { m_ternServer.Terminate(); }
-
-void JSCodeCompletion::CodeComplete(IEditor* editor)
+JSCodeCompletion::~JSCodeCompletion()
 {
-    if(!IsEnabled()) {
-        TriggerWordCompletion();
-        return;
-    }
+    m_ternServer.Terminate();
+    wxTheApp->Unbind(wxEVT_MENU, &JSCodeCompletion::OnGotoDefinition, this, XRCID("ID_MENU_JS_GOTO_DEFINITION"));
+}
 
+bool JSCodeCompletion::SanityCheck()
+{
 #ifdef __WXGTK__
     wxFileName nodeJS;
     if(!clTernServer::LocateNodeJS(nodeJS)) {
@@ -71,9 +72,20 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         WebToolsConfig conf;
         conf.Load().EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
         conf.Save();
-        return;
+        return false;
     }
 #endif
+    return true;
+}
+
+void JSCodeCompletion::CodeComplete(IEditor* editor)
+{
+    if(!IsEnabled()) {
+        TriggerWordCompletion();
+        return;
+    }
+
+    if(!SanityCheck()) return;
 
     // Sanity
     CHECK_PTR_RET(editor);
@@ -145,4 +157,62 @@ void JSCodeCompletion::TriggerWordCompletion()
     // trigger word completion
     wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
     wxTheApp->ProcessEvent(wordCompleteEvent);
+}
+
+void JSCodeCompletion::FindDefinition(IEditor* editor)
+{
+    if(!IsEnabled()) {
+        return;
+    }
+
+    if(!SanityCheck()) return;
+
+    // Sanity
+    CHECK_PTR_RET(editor);
+
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    m_ccPos = ctrl->GetCurrentPos();
+    m_ternServer.PostFindDefinitionRequest(editor);
+}
+
+void JSCodeCompletion::OnDefinitionFound(const clTernDefinition& loc)
+{
+    if(loc.IsURL()) {
+        ::wxLaunchDefaultBrowser(loc.url);
+    } else {
+        IEditor* editor = clGetManager()->OpenFile(loc.file);
+        if(editor) {
+            editor->CenterLine(editor->LineFromPos(loc.start));
+            editor->GetCtrl()->SetSelection(loc.start, loc.end);
+        }
+    }
+}
+
+void JSCodeCompletion::ResetTern(IEditor* editor)
+{
+    wxUnusedVar(editor);
+    if(!IsEnabled()) {
+        return;
+    }
+
+    if(!SanityCheck()) return;
+
+    // Sanity
+    m_ccPos = wxNOT_FOUND;
+
+    // recycle tern
+    m_ternServer.RecycleIfNeeded(true);
+}
+
+void JSCodeCompletion::AddContextMenu(wxMenu* menu, IEditor* editor) 
+{
+    wxUnusedVar(editor);
+    menu->PrependSeparator();
+    menu->Prepend(XRCID("ID_MENU_JS_GOTO_DEFINITION"), _("Find Definition"));
+}
+
+void JSCodeCompletion::OnGotoDefinition(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    FindDefinition(clGetManager()->GetActiveEditor());
 }

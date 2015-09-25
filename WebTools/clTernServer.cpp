@@ -17,6 +17,7 @@
 #include "ieditor.h"
 #include <wx/stc/stc.h>
 #include <wx/msgdlg.h>
+#include "NoteJSWorkspace.h"
 
 clTernServer::clTernServer(JSCodeCompletion* cc)
     : m_jsCCManager(cc)
@@ -49,6 +50,14 @@ void clTernServer::OnTernTerminated(clProcessEvent& event)
     if(m_goingDown || !m_jsCCManager->IsEnabled()) {
         return;
     }
+#if defined(__WXMSW__) && !defined(NDEBUG)
+    HANDLE hProcess = ::GetCurrentProcess();
+    DWORD handleCount;
+    ::GetProcessHandleCount(hProcess, &handleCount);
+    CL_DEBUG("Tern process termianted. Number of handles %d", (int)handleCount);
+    ::CloseHandle(hProcess);
+#endif
+
     PrintMessage("Tern server terminated, will restart it\n");
     Start(m_workingDirectory);
 }
@@ -155,13 +164,13 @@ bool clTernServer::PostCCRequest(IEditor* editor)
     query.addProperty("includeKeywords", true);
     query.addProperty("types", true);
 
-    JSONElement files = CreateFilesArray(ctrl);
+    JSONElement files = CreateFilesArray(editor);
     root.toElement().append(files);
 
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
     req->jsonRequest = root.toElement().FormatRawString();
     req->filename = editor->GetFileName().GetFullPath();
-    req->isFunctionTip = false;
+    req->type = clTernWorkerThread::kCodeCompletion;
 
     // Create the worker thread and start the request
     m_workerThread = new clTernWorkerThread(this);
@@ -332,11 +341,24 @@ void clTernServer::OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply
     RecycleIfNeeded();
 
     m_entries.clear();
-    if(reply.isFunctionTip) {
+    CL_DEBUG(reply.json);
+
+    switch(reply.requestType) {
+    case clTernWorkerThread::kFunctionTip:
         m_jsCCManager->OnFunctionTipReady(ProcessCalltip(reply.json), reply.filename);
-    } else {
+        break;
+    case clTernWorkerThread::kCodeCompletion:
         ProcessOutput(reply.json, m_entries);
         m_jsCCManager->OnCodeCompleteReady(m_entries, reply.filename);
+        break;
+    case clTernWorkerThread::kFindDefinition: {
+        clTernDefinition loc;
+        if(ProcessDefinitionOutput(reply.json, loc)) {
+            m_jsCCManager->OnDefinitionFound(loc);
+        }
+    } break;
+    case clTernWorkerThread::kReparse:
+        break;
     }
 }
 
@@ -408,13 +430,13 @@ bool clTernServer::PostFunctionTipRequest(IEditor* editor, int pos)
     query.append(CreateLocation(ctrl, pos));
 
     // Creae the files array
-    JSONElement files = CreateFilesArray(ctrl);
+    JSONElement files = CreateFilesArray(editor);
     root.toElement().append(files);
 
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
     req->jsonRequest = root.toElement().FormatRawString();
     req->filename = editor->GetFileName().GetFullPath();
-    req->isFunctionTip = true;
+    req->type = clTernWorkerThread::kFunctionTip;
 
     // Create the worker thread and start the request
     m_workerThread = new clTernWorkerThread(this);
@@ -423,17 +445,32 @@ bool clTernServer::PostFunctionTipRequest(IEditor* editor, int pos)
     return true;
 }
 
-JSONElement clTernServer::CreateFilesArray(wxStyledTextCtrl* ctrl)
+JSONElement clTernServer::CreateFilesArray(IEditor* editor, bool forDelete)
 {
-    const wxString fileContent = ctrl->GetText();
+    const wxString fileContent = editor->GetCtrl()->GetText();
     JSONElement files = JSONElement::createArray("files");
 
     JSONElement file = JSONElement::createObject();
     files.arrayAppend(file);
 
-    file.addProperty("type", wxString("full"));
-    file.addProperty("name", wxString("[doc]"));
-    file.addProperty("text", fileContent);
+    wxString filename;
+    if(NodeJSWorkspace::Get()->IsOpen()) {
+        wxFileName fn(editor->GetFileName());
+        fn.MakeRelativeTo(NodeJSWorkspace::Get()->GetFilename().GetPath());
+        filename = fn.GetFullPath();
+    } else {
+        filename = editor->GetFileName().GetFullName();
+    }
+
+    if(forDelete) {
+        file.addProperty("type", wxString("delete"));
+        file.addProperty("name", filename);
+
+    } else {
+        file.addProperty("type", wxString("full"));
+        file.addProperty("name", filename);
+        file.addProperty("text", fileContent);
+    }
     return files;
 }
 
@@ -467,7 +504,59 @@ bool clTernServer::LocateNodeJS(wxFileName& nodeJS)
 #endif
 }
 
-void clTernServer::ClearFatalErrorFlag()
+void clTernServer::ClearFatalErrorFlag() { m_fatalError = false; }
+
+bool clTernServer::PostFindDefinitionRequest(IEditor* editor)
 {
-    m_fatalError = false;
+    // Sanity
+    if(m_workerThread) return false;        // another request is in progress
+    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+    ++m_recycleCount;
+
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+
+    // Prepare the request
+    JSONRoot root(cJSON_Object);
+    JSONElement query = JSONElement::createObject("query");
+    root.toElement().append(query);
+    query.addProperty("type", wxString("definition"));
+    query.addProperty("file", wxString("#0"));
+    query.append(CreateLocation(ctrl));
+
+    // Creae the files array
+    JSONElement files = CreateFilesArray(editor);
+    root.toElement().append(files);
+
+    clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
+    req->jsonRequest = root.toElement().FormatRawString();
+    req->filename = editor->GetFileName().GetFullPath();
+    req->type = clTernWorkerThread::kFindDefinition;
+
+    // Create the worker thread and start the request
+    m_workerThread = new clTernWorkerThread(this);
+    m_workerThread->Start();
+    m_workerThread->Add(req);
+    return true;
+}
+
+bool clTernServer::ProcessDefinitionOutput(const wxString& output, clTernDefinition& loc)
+{
+    JSONRoot root(output);
+    JSONElement json = root.toElement();
+
+    if(json.hasNamedObject("file")) {
+        wxFileName fn(json.namedObject("file").toString());
+        if(NodeJSWorkspace::Get()->IsOpen()) {
+            fn.MakeAbsolute(NodeJSWorkspace::Get()->GetFilename().GetPath());
+        }
+        loc.file = fn.GetFullPath();
+        loc.start = json.namedObject("start").toInt();
+        loc.end = json.namedObject("end").toInt();
+        return true;
+
+    } else if(json.hasNamedObject("url")) {
+        loc.url = json.namedObject("url").toString();
+        return true;
+    }
+    return false;
 }

@@ -68,15 +68,27 @@ WebTools::WebTools(IManager* manager)
     m_jsColourThread->Create();
     m_jsColourThread->Run();
 
-    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &WebTools::OnRefreshColours, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &WebTools::OnRefreshColours, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &WebTools::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
+
+    // Context menu
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &WebTools::OnEditorContextMenu, this);
+
+    // Code completion related events
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &WebTools::OnFindSymbol, this);
+
+    // Workspace related events
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
+
+    // Theme management
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
+
+    // Debugger related
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
 
@@ -84,7 +96,7 @@ WebTools::WebTools(IManager* manager)
     m_jsCodeComplete.Reset(new JSCodeCompletion(""));
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
     m_cssCodeComplete.Reset(new CSSCodeCompletion());
-    
+
     // Connect the timer
     m_timer = new wxTimer(this);
     m_timer->Start(3000);
@@ -113,8 +125,9 @@ void WebTools::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void WebTools::UnPlug()
 {
-    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &WebTools::OnRefreshColours, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &WebTools::OnRefreshColours, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &WebTools::OnEditorContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &WebTools::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
@@ -139,11 +152,10 @@ void WebTools::UnPlug()
     m_jsCodeComplete.Reset(NULL);
 }
 
-void WebTools::OnRefreshColours(clCommandEvent& event)
+void WebTools::DoRefreshColours(const wxString& filename)
 {
-    event.Skip();
-    if(FileExtManager::GetType(event.GetFileName()) == FileExtManager::TypeJS) {
-        m_jsColourThread->QueueFile(event.GetFileName());
+    if(FileExtManager::GetType(filename) == FileExtManager::TypeJS) {
+        m_jsColourThread->QueueFile(filename);
     }
 }
 
@@ -434,4 +446,39 @@ void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
 bool WebTools::IsCSSFile(IEditor* editor)
 {
     return (FileExtManager::GetType(editor->GetFileName().GetFullName()) == FileExtManager::TypeCSS);
+}
+
+void WebTools::OnFindSymbol(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
+        event.Skip(false);
+        m_jsCodeComplete->FindDefinition(editor);
+    }
+}
+
+void WebTools::OnFileLoaded(clCommandEvent& event)
+{
+    event.Skip();
+    DoRefreshColours(event.GetFileName());
+}
+
+void WebTools::OnFileSaved(clCommandEvent& event)
+{
+    event.Skip();
+    DoRefreshColours(event.GetFileName());
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
+        m_jsCodeComplete->ResetTern(editor);
+    }
+}
+
+void WebTools::OnEditorContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
+        m_jsCodeComplete->AddContextMenu(event.GetMenu(), editor);
+    }
 }

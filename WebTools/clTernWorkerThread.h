@@ -8,19 +8,27 @@ class clTernWorkerThread : public WorkerThread
 {
     clTernServer* m_ternSerer;
     int m_port;
+
 public:
+    enum eRequestType {
+        kCodeCompletion,
+        kFunctionTip,
+        kFindDefinition,
+        kReparse,
+    };
+    
     struct Request : public ThreadRequest {
         char* jsonRequest;
         wxString filename;
-        bool isFunctionTip;
+        eRequestType type;
     };
-    
+
     struct Reply {
         wxString json;
         wxString filename;
-        bool isFunctionTip;
+        eRequestType requestType;
     };
-    
+
 public:
     clTernWorkerThread(clTernServer* ternServer);
     virtual ~clTernWorkerThread();

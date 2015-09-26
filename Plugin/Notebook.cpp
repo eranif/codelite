@@ -28,7 +28,7 @@ int clTabInfo::MAJOR_CURVE_WIDTH = 15;
 int clTabInfo::SMALL_CURVE_WIDTH = 4;
 // int clTabInfo::TAB_HEIGHT = 30;
 static int OVERLAP_WIDTH = 20;
-static int V_OVERLAP_WIDTH = 1;
+static int V_OVERLAP_WIDTH = 0;
 
 #if CL_BUILD
 #include "cl_command_event.h"
@@ -543,6 +543,9 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
     wxRect clientRect(GetClientRect());
     if((GetStyle() & kNotebook_ShowFileListButton) && !IsVerticalTabs()) {
         clientRect.SetWidth(clientRect.GetWidth() - 30);
+    } else if((GetStyle() & kNotebook_ShowFileListButton) && IsVerticalTabs()) {
+        // Vertical tabs
+        clientRect.SetHeight(clientRect.GetHeight() - 30);
     }
 
     for(size_t i = 0; i < tabs.size(); ++i) {
@@ -615,6 +618,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             m_chevronRect = wxRect(rect.GetBottomLeft(), wxSize(rect.GetWidth(), 20));
             if(GetStyle() & kNotebook_RightTabs) {
                 m_chevronRect.x += clTabInfo::BOTTOM_AREA_HEIGHT;
+            } else {
+                m_chevronRect.x -= 2;
             }
             m_chevronRect.SetWidth(m_chevronRect.GetWidth() - clTabInfo::BOTTOM_AREA_HEIGHT);
             rect.SetHeight(rect.GetHeight() + 16);
@@ -706,7 +711,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         if(activeTabInex != wxNOT_FOUND) {
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-            DoDrawBottomBox(activeTab, clientRect, gcdc, activeTabColours);
+            if(!(GetStyle() & kNotebook_VerticalButtons)) {
+                DoDrawBottomBox(activeTab, clientRect, gcdc, activeTabColours);
+            }
         }
 
         if((GetStyle() & kNotebook_ShowFileListButton)) {
@@ -715,9 +722,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
                 m_chevronRect.GetTopLeft().x + ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetWidth()) / 2);
             wxCoord chevronY =
                 m_chevronRect.GetTopLeft().y + ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetHeight()) / 2);
-            dc.SetPen(activeTabColours.tabAreaColour);
-            dc.SetBrush(activeTabColours.tabAreaColour);
-            dc.DrawRectangle(m_chevronRect);
+            //dc.SetPen(activeTabColours.tabAreaColour);
+            //dc.SetBrush(*wxTRANSPARENT_BRUSH);
+            //dc.DrawRectangle(m_chevronRect);
             dc.DrawBitmap(m_colours.chevronDown, chevronX, chevronY);
         }
 
@@ -730,13 +737,17 @@ void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 {
     int majorDimension = 5;
     if(IsVerticalTabs()) {
-        majorDimension = 3;
+        majorDimension = 0;
     }
 
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t tab = tabs.at(i);
         if(IsVerticalTabs()) {
-            tab->GetRect().SetX(GetStyle() & kNotebook_LeftTabs ? 1 : 0);
+            if(GetStyle() & kNotebook_VerticalButtons) {
+                tab->GetRect().SetX(0);
+            } else {
+                tab->GetRect().SetX(GetStyle() & kNotebook_LeftTabs ? 1 : 0);
+            }
             tab->GetRect().SetY(majorDimension);
             tab->GetRect().SetWidth(tab->GetWidth());
             tab->GetRect().SetHeight(tab->GetHeight());
@@ -766,6 +777,10 @@ void clTabCtrl::UpdateVisibleTabs()
     if(!IsVerticalTabs()) {
         while(!IsActiveTabVisible(m_visibleTabs)) {
             if(!ShiftRight(m_visibleTabs)) break;
+        }
+    } else {
+        while(!IsActiveTabVisible(m_visibleTabs)) {
+            if(!ShiftBottom(m_visibleTabs)) break;
         }
     }
 }
@@ -1671,6 +1686,24 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
 }
 
 bool clTabCtrl::IsVerticalTabs() const { return (m_style & kNotebook_RightTabs) || (m_style & kNotebook_LeftTabs); }
+
+bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
+{
+    // Move the first tab from the list and adjust the remainder
+    // of the tabs y coordiate
+    if(!tabs.empty()) {
+        clTabInfo::Ptr_t t = tabs.at(0);
+        int height = t->GetHeight();
+        tabs.erase(tabs.begin() + 0);
+
+        for(size_t i = 0; i < tabs.size(); ++i) {
+            clTabInfo::Ptr_t t = tabs.at(i);
+            t->GetRect().SetY(t->GetRect().y - height + V_OVERLAP_WIDTH);
+        }
+        return true;
+    }
+    return false;
+}
 
 // ----------------------------------------------------------------------
 // clTabHistory

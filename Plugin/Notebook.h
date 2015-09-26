@@ -57,6 +57,8 @@ enum NotebookStyle {
     kNotebook_RightTabs = (1 << 11),
     /// Place th tabs on the left
     kNotebook_LeftTabs = (1 << 12),
+    /// Vertical tabs as buttons
+    kNotebook_VerticalButtons = (1 << 13),
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
 };
@@ -254,6 +256,7 @@ protected:
     void
     DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabInfo::Colours& colours);
     bool ShiftRight(clTabInfo::Vec_t& tabs);
+    bool ShiftBottom(clTabInfo::Vec_t& tabs);
     bool IsActiveTabInList(const clTabInfo::Vec_t& tabs) const;
     bool IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const;
 

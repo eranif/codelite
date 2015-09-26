@@ -18,6 +18,9 @@
 #include <wx/radiobox.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -33,7 +36,10 @@ protected:
     wxRadioBox* m_radioBoxHint;
     wxCheckBox* m_checkBoxShowXButton;
     wxCheckBox* m_checkBoxEditorTabsFollowsTheme;
-    wxCheckBox* m_checkBoxPanesTabsAtBottom;
+    wxStaticText* m_staticText38;
+    wxChoice* m_choiceWorkspaceTabsOrientation;
+    wxStaticText* m_staticText42;
+    wxChoice* m_choiceOutputTabsOrientation;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
     wxPanel* m_panel14;
@@ -66,7 +72,10 @@ public:
     wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
     wxCheckBox* GetCheckBoxShowXButton() { return m_checkBoxShowXButton; }
     wxCheckBox* GetCheckBoxEditorTabsFollowsTheme() { return m_checkBoxEditorTabsFollowsTheme; }
-    wxCheckBox* GetCheckBoxPanesTabsAtBottom() { return m_checkBoxPanesTabsAtBottom; }
+    wxStaticText* GetStaticText38() { return m_staticText38; }
+    wxChoice* GetChoiceWorkspaceTabsOrientation() { return m_choiceWorkspaceTabsOrientation; }
+    wxStaticText* GetStaticText42() { return m_staticText42; }
+    wxChoice* GetChoiceOutputTabsOrientation() { return m_choiceOutputTabsOrientation; }
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
     wxPanel* GetPanel12() { return m_panel12; }

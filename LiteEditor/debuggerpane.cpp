@@ -91,7 +91,7 @@ void DebuggerPane::CreateGUIControls()
     SetSizer(mainSizer);
 
     long style = (kNotebook_Default | kNotebook_AllowDnD);
-    if(!EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop()) {
+    if(!EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection()) {
         style |= kNotebook_BottomTabs;
     }
     GeneralImages img;
@@ -253,7 +253,8 @@ void DebuggerPane::Clear()
 void DebuggerPane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
-    m_book->EnableStyle(kNotebook_BottomTabs, !EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop());
+    m_book->EnableStyle(kNotebook_BottomTabs,
+                        EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM);
 }
 
 //----------------------------------------------------------------

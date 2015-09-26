@@ -28,6 +28,7 @@ int clTabInfo::MAJOR_CURVE_WIDTH = 15;
 int clTabInfo::SMALL_CURVE_WIDTH = 4;
 // int clTabInfo::TAB_HEIGHT = 30;
 static int OVERLAP_WIDTH = 20;
+static int V_OVERLAP_WIDTH = 1;
 
 #if CL_BUILD
 #include "cl_command_event.h"
@@ -45,10 +46,16 @@ wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 
+#define IS_VERTICAL_TABS(style) ((style & kNotebook_RightTabs) || (style & kNotebook_LeftTabs))
+
 extern void Notebook_Init_Bitmaps();
 
-Notebook::Notebook(
-    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+Notebook::Notebook(wxWindow* parent,
+                   wxWindowID id,
+                   const wxPoint& pos,
+                   const wxSize& size,
+                   long style,
+                   const wxString& name)
     : wxPanel(parent, id, pos, size, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL, name)
 {
     static bool once = false;
@@ -100,16 +107,26 @@ void Notebook::SetStyle(size_t style)
     m_tabCtrl->SetStyle(style);
     GetSizer()->Detach(m_windows);
     GetSizer()->Detach(m_tabCtrl);
-    if(style & kNotebook_BottomTabs) {
-        GetSizer()->Add(m_windows, 1, wxEXPAND);
-        GetSizer()->Add(m_tabCtrl, 0, wxEXPAND);
+    wxSizer* sz = NULL;
+
+    // Replace the sizer
+    if(IsVerticalTabs()) {
+        sz = new wxBoxSizer(wxHORIZONTAL);
+    } else {
+        sz = new wxBoxSizer(wxVERTICAL);
+    }
+
+    if((style & kNotebook_BottomTabs) || (style & kNotebook_RightTabs)) {
+        sz->Add(m_windows, 1, wxEXPAND);
+        sz->Add(m_tabCtrl, 0, wxEXPAND);
 
     } else {
-        GetSizer()->Add(m_tabCtrl, 0, wxEXPAND);
-        GetSizer()->Add(m_windows, 1, wxEXPAND);
+        sz->Add(m_tabCtrl, 0, wxEXPAND);
+        sz->Add(m_windows, 1, wxEXPAND);
     }
-    GetSizer()->Layout();
-    Refresh();
+    SetSizer(sz);
+    Layout();
+    m_tabCtrl->Refresh();
 }
 
 wxWindow* Notebook::GetCurrentPage() const
@@ -131,6 +148,24 @@ void Notebook::EnableStyle(NotebookStyle style, bool enable)
         flags |= style;
     } else {
         flags &= ~style;
+    }
+    SetStyle(flags);
+}
+
+void Notebook::SetTabDirection(wxDirection d)
+{
+    size_t flags = GetStyle();
+    // Clear all direction styles
+    flags &= ~kNotebook_BottomTabs;
+    flags &= ~kNotebook_LeftTabs;
+    flags &= ~kNotebook_RightTabs;
+    
+    if(d == wxBOTTOM) {
+        flags |= kNotebook_BottomTabs;
+    } else if(d == wxRIGHT) {
+        flags |= kNotebook_RightTabs;
+    } else if(d == wxLEFT) {
+        flags |= kNotebook_LeftTabs;
     }
     SetStyle(flags);
 }
@@ -192,6 +227,9 @@ void clTabInfo::Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style)
             dc.SetBrush(bgColour);
             dc.DrawPolygon(6, points);
         }
+    } else if(IS_VERTICAL_TABS(style)) {
+        // Handled below...
+
     } else {
         // Default tabs (placed at the top)
         {
@@ -242,19 +280,57 @@ void clTabInfo::Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style)
             dc.DrawPolygon(6, points);
         }
     }
-    // Draw bitmap
-    if(m_bitmap.IsOk()) {
-        dc.DrawBitmap(m_bitmap, m_bmpX + m_rect.GetX(), m_bmpY);
-    }
 
     // Draw the text
-    dc.SetTextForeground(IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    dc.SetTextForeground(IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     dc.SetFont(font);
-    dc.DrawText(m_label, m_textX + m_rect.GetX(), m_textY);
+    if(IS_VERTICAL_TABS(style)) {
+        wxRect rotatedRect(0, 0, m_rect.GetHeight(), m_rect.GetWidth());
+        wxBitmap b(rotatedRect.GetSize());
+        wxMemoryDC tmpDC(b);
+        tmpDC.SetPen(bgColour);
+        tmpDC.SetBrush(bgColour);
+        tmpDC.DrawRectangle(rotatedRect);
+        tmpDC.SetFont(font);
+        tmpDC.SetTextForeground(IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
 
-    if(IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-        dc.DrawBitmap(colours.closeButton, m_bmpCloseX + m_rect.GetX(), m_bmpCloseY);
+        // Vertical tabs
+        // Draw bitmap
+        if(m_bitmap.IsOk()) {
+            tmpDC.DrawBitmap(m_bitmap, m_bmpY, m_bmpX);
+        }
+
+        tmpDC.DrawText(m_label, m_textY, m_textX);
+        if(IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
+            tmpDC.DrawBitmap(colours.closeButton, m_bmpCloseY, m_bmpCloseX);
+        }
+        tmpDC.SelectObject(wxNullBitmap);
+        wxImage img = b.ConvertToImage();
+        img = img.Rotate90((style & kNotebook_RightTabs));
+        b = wxBitmap(img);
+        dc.DrawBitmap(b, m_rect.GetTopLeft());
+
+        // Redraw the frame of the tab
+        dc.SetPen(penColour);
+        dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        dc.DrawRoundedRectangle(m_rect, 1);
+
+        wxRect innerRect = m_rect;
+        innerRect.Deflate(1);
+        dc.SetPen(IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
+        dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        dc.DrawRoundedRectangle(innerRect, 1);
+
+    } else {
+        // Draw bitmap
+        if(m_bitmap.IsOk()) {
+            dc.DrawBitmap(m_bitmap, m_bmpX + m_rect.GetX(), m_bmpY);
+        }
+        dc.DrawText(m_label, m_textX + m_rect.GetX(), m_textY);
+        if(IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
+            dc.DrawBitmap(colours.closeButton, m_bmpCloseX + m_rect.GetX(), m_bmpCloseY);
+        }
     }
 }
 
@@ -292,20 +368,25 @@ void clTabInfo::CalculateOffsets(size_t style)
     memDC.SetFont(font);
 
     wxSize sz = memDC.GetTextExtent(m_label);
-
     wxSize fixedHeight = memDC.GetTextExtent("Tp");
-    m_height = fixedHeight.GetHeight() + (4 * Y_SPACER);
-    
+    if(IS_VERTICAL_TABS(style)) {
+        m_height = fixedHeight.GetHeight() + (5 * Y_SPACER);
+    } else {
+        m_height = fixedHeight.GetHeight() + (4 * Y_SPACER);
+    }
+
 #ifdef __WXGTK__
     // On GTK, limit the tab height
     if(m_height >= 30) {
-        m_height = 30; 
+        m_height = 30;
     }
 #endif
 
     m_width = 0;
-    m_width += MAJOR_CURVE_WIDTH;
-    m_width += SMALL_CURVE_WIDTH;
+    if(!IS_VERTICAL_TABS(style)) {
+        m_width += MAJOR_CURVE_WIDTH;
+        m_width += SMALL_CURVE_WIDTH;
+    }
     m_width += X_SPACER;
 
     // bitmap
@@ -333,11 +414,27 @@ void clTabInfo::CalculateOffsets(size_t style)
     }
 
     m_width += X_SPACER;
-    m_width += SMALL_CURVE_WIDTH;
-    m_width += MAJOR_CURVE_WIDTH;
+    if(!IS_VERTICAL_TABS(style)) {
+        m_width += MAJOR_CURVE_WIDTH;
+        m_width += SMALL_CURVE_WIDTH;
+    }
 
     // Update the rect width
     m_rect.SetWidth(m_width);
+
+    if((style & kNotebook_RightTabs) || (style & kNotebook_LeftTabs)) {
+
+        // swap the x and y coordinates
+        wxSwap(m_height, m_width);
+        wxSwap(m_bmpCloseY, m_bmpCloseX);
+        wxSwap(m_bmpY, m_bmpX);
+        wxSwap(m_textX, m_textY);
+
+        m_rect.SetWidth(m_width);
+        m_rect.SetHeight(m_height);
+        m_rect.SetX(0);
+        m_rect.SetY(0);
+    }
 }
 
 void clTabInfo::SetBitmap(const wxBitmap& bitmap, size_t style)
@@ -378,15 +475,22 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
 
     wxSize sz = memDC.GetTextExtent("Tp");
     m_height = sz.GetHeight() + (4 * clTabInfo::Y_SPACER);
+    m_vTabsWidth = sz.GetHeight() + (5 * clTabInfo::Y_SPACER);
 #ifdef __WXGTK__
     // On GTK, limit the tab height
     if(m_height >= 30) {
-        m_height = 30; 
+        m_height = 30;
     }
 #endif
     SetDropTarget(new clTabCtrlDropTarget(this));
-    SetSizeHints(wxSize(-1, m_height));
-    SetSize(-1, m_height);
+    if(IsVerticalTabs()) {
+        SetSizeHints(wxSize(m_vTabsWidth, -1));
+        SetSize(m_vTabsWidth, -1);
+    } else {
+        SetSizeHints(wxSize(-1, m_height));
+        SetSize(-1, m_height);
+    }
+
     Bind(wxEVT_PAINT, &clTabCtrl::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &clTabCtrl::OnEraseBG, this);
     Bind(wxEVT_SIZE, &clTabCtrl::OnSize, this);
@@ -437,9 +541,10 @@ bool clTabCtrl::IsActiveTabInList(const clTabInfo::Vec_t& tabs) const
 bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 {
     wxRect clientRect(GetClientRect());
-    if(GetStyle() & kNotebook_ShowFileListButton) {
+    if((GetStyle() & kNotebook_ShowFileListButton) && !IsVerticalTabs()) {
         clientRect.SetWidth(clientRect.GetWidth() - 30);
     }
+
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
         if(t->IsActive() && clientRect.Intersects(t->GetRect())) return true;
@@ -499,11 +604,12 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     wxBufferedPaintDC dc(this);
     wxRect clientRect(GetClientRect());
     if(clientRect.width <= 3) return;
+    if(clientRect.height <= 3) return;
 
     m_chevronRect = wxRect();
     wxRect rect(GetClientRect());
 
-    if(GetStyle() & kNotebook_ShowFileListButton) {
+    if((GetStyle() & kNotebook_ShowFileListButton) && !IsVerticalTabs()) {
         // Reduce the length of the tabs bitmap by 16 pixels (we will draw there the drop down
         // button)
         rect.SetWidth(rect.GetWidth() - 16);
@@ -596,7 +702,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         // memDC.SelectObject(wxNullBitmap);
         // dc.DrawBitmap(bmpTabs, 0, 0);
 
-        if(GetStyle() & kNotebook_ShowFileListButton) {
+        if((GetStyle() & kNotebook_ShowFileListButton) && !IsVerticalTabs()) {
             // Draw the chevron
             wxCoord chevronX =
                 m_chevronRect.GetTopLeft().x + ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetWidth()) / 2);
@@ -615,29 +721,45 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 {
-    int xx = 5;
+    int majorDimension = 5;
+    if(IsVerticalTabs()) {
+        majorDimension = 3;
+    }
+
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t tab = tabs.at(i);
-        tab->GetRect().SetX(xx);
-        tab->GetRect().SetY(0);
-        tab->GetRect().SetWidth(tab->GetWidth());
-        tab->GetRect().SetHeight(tab->GetHeight());
-        xx += tab->GetWidth() - OVERLAP_WIDTH;
+        if(IsVerticalTabs()) {
+            tab->GetRect().SetX(0);
+            tab->GetRect().SetY(majorDimension);
+            tab->GetRect().SetWidth(tab->GetWidth());
+            tab->GetRect().SetHeight(tab->GetHeight());
+            majorDimension += tab->GetHeight() + V_OVERLAP_WIDTH;
+        } else {
+            tab->GetRect().SetX(majorDimension);
+            tab->GetRect().SetY(0);
+            tab->GetRect().SetWidth(tab->GetWidth());
+            tab->GetRect().SetHeight(tab->GetHeight());
+            majorDimension += tab->GetWidth() - OVERLAP_WIDTH;
+        }
     }
 }
 
 void clTabCtrl::UpdateVisibleTabs()
 {
     // don't update the list if we don't need to
-    if(IsActiveTabInList(m_visibleTabs) && IsActiveTabVisible(m_visibleTabs)) return;
+    if(!IsVerticalTabs()) {
+        if(IsActiveTabInList(m_visibleTabs) && IsActiveTabVisible(m_visibleTabs)) return;
+    }
 
     // set the physical coords for each tab (we do this for all the tabs)
     DoUpdateCoordiantes(m_tabs);
 
     // Start shifting right tabs until the active tab is visible
     m_visibleTabs = m_tabs;
-    while(!IsActiveTabVisible(m_visibleTabs)) {
-        if(!ShiftRight(m_visibleTabs)) break;
+    if(!IsVerticalTabs()) {
+        while(!IsActiveTabVisible(m_visibleTabs)) {
+            if(!ShiftRight(m_visibleTabs)) break;
+        }
     }
 }
 
@@ -705,7 +827,7 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
         static_cast<Notebook*>(GetParent())->DoChangeSelection(activeTab->GetWindow());
         activeTab->GetWindow()->CallAfter(&wxWindow::SetFocus);
     }
-    
+
     Refresh();
     return oldSelection;
 }
@@ -924,6 +1046,14 @@ void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit)
 void clTabCtrl::SetStyle(size_t style)
 {
     this->m_style = style;
+    if(IsVerticalTabs()) {
+        SetSizeHints(wxSize(m_vTabsWidth, -1));
+        SetSize(m_vTabsWidth, -1);
+    } else {
+        SetSizeHints(wxSize(-1, m_height));
+        SetSize(-1, m_height);
+    }
+
     if(style & kNotebook_DarkTabs) {
         m_colours.InitDarkColours();
     } else {
@@ -934,6 +1064,7 @@ void clTabCtrl::SetStyle(size_t style)
         m_tabs.at(i)->CalculateOffsets(GetStyle());
     }
     m_visibleTabs.clear();
+    Layout();
     Refresh();
 }
 
@@ -1009,11 +1140,15 @@ void clTabInfo::Colours::InitDarkColours()
 void clTabInfo::Colours::InitLightColours()
 {
     activeTabTextColour = "#444444";
-    activeTabBgColour = "#f0f0f0";
     activeTabPenColour = "#b9b9b9";
     activeTabInnerPenColour = "#ffffff";
 
     inactiveTabTextColour = "#444444";
+#ifdef __WXMSW__
+    activeTabBgColour = "#FBFBFB";
+#else
+    activeTabBgColour = "#f0f0f0";
+#endif
     inactiveTabBgColour = "#e5e5e5";
     inactiveTabPenColour = "#b9b9b9";
     inactiveTabInnerPenColour = "#ffffff";
@@ -1071,7 +1206,11 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
 
         for(; iter != m_visibleTabs.end(); ++iter) {
             // update the remainding tabs coordinates
-            (*iter)->GetRect().SetX((*iter)->GetRect().GetX() - tab->GetWidth() + OVERLAP_WIDTH);
+            if(IsVerticalTabs()) {
+                (*iter)->GetRect().SetY((*iter)->GetRect().GetY() - tab->GetHeight() + V_OVERLAP_WIDTH);
+            } else {
+                (*iter)->GetRect().SetX((*iter)->GetRect().GetX() - tab->GetWidth() + OVERLAP_WIDTH);
+            }
         }
     }
 
@@ -1398,7 +1537,68 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
                                 wxDC& dc,
                                 const clTabInfo::Colours& colours)
 {
-    if(GetStyle() & kNotebook_BottomTabs) {
+    if(GetStyle() & kNotebook_LeftTabs) {
+        // Draw 3 lines on the right
+        dc.SetPen(colours.activeTabPenColour);
+        dc.SetBrush(colours.activeTabBgColour);
+        wxPoint topLeft = clientRect.GetTopRight();
+        wxSize rectSize(clTabInfo::BOTTOM_AREA_HEIGHT + 2, clientRect.height);
+        topLeft.x -= clTabInfo::BOTTOM_AREA_HEIGHT;
+        wxRect bottomRect(topLeft, rectSize);
+
+        // We intentionally move the rect out of the client rect
+        // so the top and bottom lines will be drawn out of screen
+        bottomRect.y -= 1;
+        bottomRect.height += 2;
+        dc.DrawRectangle(bottomRect);
+
+        // Draw a line under the active tab
+        // that will erase the line drawn by the above rect
+        wxPoint from, to;
+        from = activeTab->GetRect().GetTopRight();
+        to = activeTab->GetRect().GetBottomRight();
+        from.x = bottomRect.GetTopLeft().x;
+        to.x = bottomRect.GetTopLeft().x;
+
+        dc.SetPen(colours.activeTabBgColour);
+        dc.DrawLine(from, to);
+#ifdef __WXOSX__
+        dc.DrawLine(from, to);
+        dc.DrawLine(from, to);
+        dc.DrawLine(from, to);
+#endif
+    } else if(GetStyle() & kNotebook_RightTabs) {
+        // Draw 3 lines on the right
+        dc.SetPen(colours.activeTabPenColour);
+        dc.SetBrush(colours.activeTabBgColour);
+        wxPoint topLeft = clientRect.GetTopLeft();
+        wxSize rectSize(clTabInfo::BOTTOM_AREA_HEIGHT + 2, clientRect.height);
+        wxRect bottomRect(topLeft, rectSize);
+
+        // We intentionally move the rect out of the client rect
+        // so the top and bottom lines will be drawn out of screen
+        bottomRect.y -= 1;
+        bottomRect.height += 2;
+        dc.DrawRectangle(bottomRect);
+
+        // Draw a line under the active tab
+        // that will erase the line drawn by the above rect
+        wxPoint from, to;
+        from = activeTab->GetRect().GetTopLeft();
+        to = activeTab->GetRect().GetBottomLeft();
+        from.x = bottomRect.GetTopRight().x;
+        to.x = bottomRect.GetTopRight().x;
+
+        dc.SetPen(colours.activeTabBgColour);
+        dc.DrawLine(from, to);
+#ifdef __WXOSX__
+        dc.DrawLine(from, to);
+        dc.DrawLine(from, to);
+        dc.DrawLine(from, to);
+#endif
+
+
+    } else if(GetStyle() & kNotebook_BottomTabs) {
         // Draw 3 lines at the top
         dc.SetPen(colours.activeTabPenColour);
         dc.SetBrush(colours.activeTabBgColour);
@@ -1463,6 +1663,8 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
 #endif
     }
 }
+
+bool clTabCtrl::IsVerticalTabs() const { return (m_style & kNotebook_RightTabs) || (m_style & kNotebook_LeftTabs); }
 
 // ----------------------------------------------------------------------
 // clTabHistory

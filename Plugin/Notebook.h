@@ -53,6 +53,10 @@ enum NotebookStyle {
     kNotebook_BottomTabs = (1 << 9),
     /// Enable colour customization events
     kNotebook_EnableColourCustomization = (1 << 10),
+    /// Place the tabs on the right
+    kNotebook_RightTabs = (1 << 11),
+    /// Place th tabs on the left
+    kNotebook_LeftTabs = (1 << 12),
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
 };
@@ -78,6 +82,7 @@ class WXDLLIMPEXP_SDK clTabInfo
     int m_bmpCloseY;
     int m_width;
     int m_height;
+    int m_vTabsWidth;
 
 public:
     class WXDLLIMPEXP_SDK Colours
@@ -129,7 +134,7 @@ public:
     static int BOTTOM_AREA_HEIGHT;
     static int MAJOR_CURVE_WIDTH;
     static int SMALL_CURVE_WIDTH;
-    //static int TAB_HEIGHT;
+    // static int TAB_HEIGHT;
 
 public:
     void CalculateOffsets(size_t style);
@@ -218,6 +223,7 @@ public:
 class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
 {
     int m_height;
+    int m_vTabsWidth;
     clTabInfo::Vec_t m_tabs;
     friend class Notebook;
     friend class clTabCtrlDropTarget;
@@ -275,7 +281,9 @@ protected:
 public:
     clTabCtrl(wxWindow* notebook, size_t style);
     virtual ~clTabCtrl();
-
+    
+    bool IsVerticalTabs() const;
+    
     void SetColours(const clTabInfo::Colours& colours) { this->m_colours = colours; }
     const clTabInfo::Colours& GetColours() const { return m_colours; }
 
@@ -305,6 +313,7 @@ public:
      * @brief update the selected tab. This function also fires an event
      */
     int SetSelection(size_t tabIdx);
+
     /**
      * @brief update the selected tab. This function does not fire an event
      */
@@ -352,7 +361,10 @@ class WXDLLIMPEXP_SDK Notebook : public wxPanel
 
 protected:
     void DoChangeSelection(wxWindow* page);
-
+    bool IsVerticalTabs() const {
+        return m_tabCtrl->IsVerticalTabs();
+    }
+    
 public:
     /**
      * Constructor
@@ -369,7 +381,12 @@ public:
      * styles OR-ed)
      */
     void SetStyle(size_t style);
-
+    
+    /**
+     * @brief set the tab direction
+     */
+    void SetTabDirection(wxDirection d);
+    
     /**
      * @brief return the book style
      */

@@ -123,12 +123,13 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_preferredLocale(wxT("en_US"))
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
-    , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift |
-                Opt_WrapBrackets |
+    , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift | Opt_WrapBrackets |
                 Opt_WrapQuotes |
                 Opt_AutoCompleteDoubleQuotes |
                 Opt_FoldHighlightActiveBlock |
                 Opt_WrapCmdWithDoubleQuotes)
+    , m_workspaceTabsDirection(wxLEFT)
+    , m_outputTabsDirection(wxUP)
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
@@ -226,6 +227,9 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
 
         long dontTrimCaretLine = EditorConfigST::Get()->GetInteger(wxT("DontTrimCaretLine"), 0);
         m_dontTrimCaretLine = (dontTrimCaretLine > 0);
+
+        m_outputTabsDirection = (wxDirection)XmlUtils::ReadLong(node, "OutputTabsDirection", (int)wxUP);
+        m_workspaceTabsDirection = (wxDirection)XmlUtils::ReadLong(node, "WorkspaceTabsDirection", (int)wxLEFT);
     }
 #ifdef __WXMSW__
     if(!(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */)) {
@@ -305,6 +309,8 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("m_useLocale"), BoolToString(m_useLocale));
     n->AddProperty(wxT("m_trimOnlyModifiedLines"), BoolToString(m_trimOnlyModifiedLines));
     n->AddProperty(wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+    n->AddProperty(wxT("OutputTabsDirection"), wxString() << (int)m_outputTabsDirection);
+    n->AddProperty(wxT("WorkspaceTabsDirection"), wxString() << (int)m_workspaceTabsDirection);
 
     wxString tmp;
     tmp << m_indentWidth;

@@ -56,7 +56,33 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
-    m_checkBoxPanesTabsAtBottom->SetValue(!options->IsNonEditorTabsAtTop());
+    switch(options->GetOutputTabsDirection()) {
+    case wxTOP:
+        m_choiceOutputTabsOrientation->SetSelection(0);
+        break;
+    case wxBOTTOM:
+        m_choiceOutputTabsOrientation->SetSelection(1);
+        break;
+    default:
+        break;
+    }
+    switch(options->GetWorkspaceTabsDirection()) {
+    case wxLEFT:
+        m_choiceWorkspaceTabsOrientation->SetSelection(0);
+        break;
+    case wxRIGHT:
+        m_choiceWorkspaceTabsOrientation->SetSelection(1);
+        break;
+    case wxTOP:
+        m_choiceWorkspaceTabsOrientation->SetSelection(2);
+        break;
+    case wxBOTTOM:
+        m_choiceWorkspaceTabsOrientation->SetSelection(3);
+        break;
+    default:
+        break;
+    }
+    
     m_checkBoxHideOutputPaneNotIfDebug->Connect(
         wxEVT_UPDATE_UI,
         wxUpdateUIEventHandler(EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI),
@@ -90,7 +116,32 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
     options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
-    options->SetNonEditorTabsAtTop(!m_checkBoxPanesTabsAtBottom->IsChecked());
+    switch(m_choiceOutputTabsOrientation->GetSelection()) {
+    case 0:
+        options->SetOutputTabsDirection(wxTOP);
+        break;
+    case 1:
+        options->SetOutputTabsDirection(wxBOTTOM);
+        break;
+    default:
+        break;
+    }
+    switch(m_choiceWorkspaceTabsOrientation->GetSelection()) {
+    case 0:
+        options->SetWorkspaceTabsDirection(wxLEFT);
+        break;
+    case 1:
+        options->SetWorkspaceTabsDirection(wxRIGHT);
+        break;
+    case 2:
+        options->SetWorkspaceTabsDirection(wxTOP);
+        break;
+    case 3:
+        options->SetWorkspaceTabsDirection(wxBOTTOM);
+        break;
+    default:
+        break;
+    }
     
     // Keep the quickreplacebar in sync
     clMainFrame::Get()->GetMainBook()->ShowQuickReplaceBar(m_checkBoxShowReplaceBar->IsChecked());

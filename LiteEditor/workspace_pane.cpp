@@ -83,13 +83,10 @@ void WorkspacePane::CreateGUIControls()
     SetSizer(mainSizer);
 
     // add notebook for tabs
-    long style = (kNotebook_Default | kNotebook_AllowDnD);
-    if(!EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop()) {
-        style |= kNotebook_BottomTabs;
-    }
-
+    long style = (kNotebook_Default | kNotebook_AllowDnD | kNotebook_LeftTabs);
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-
+    m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
+    
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -387,5 +384,5 @@ void WorkspacePane::SelectTab(const wxString& tabTitle)
 void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
-    m_book->EnableStyle(kNotebook_BottomTabs, !EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop());
+    m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
 }

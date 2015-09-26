@@ -70,11 +70,37 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     staticBoxSizer27->Add(m_checkBoxEditorTabsFollowsTheme, 0, wxALL, 5);
     
-    m_checkBoxPanesTabsAtBottom = new wxCheckBox(m_panel12, wxID_ANY, _("Non editor tabs are placed at the bottom"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxPanesTabsAtBottom->SetValue(true);
-    m_checkBoxPanesTabsAtBottom->SetToolTip(_("Non editor tabs are placed at the bottom"));
+    wxFlexGridSizer* flexGridSizer36 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer36->SetFlexibleDirection( wxBOTH );
+    flexGridSizer36->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
-    staticBoxSizer27->Add(m_checkBoxPanesTabsAtBottom, 0, wxALL, 5);
+    staticBoxSizer27->Add(flexGridSizer36, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText38 = new wxStaticText(m_panel12, wxID_ANY, _("Workspace Pane Tabs Orientation:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer36->Add(m_staticText38, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_choiceWorkspaceTabsOrientationArr;
+    m_choiceWorkspaceTabsOrientationArr.Add(wxT("LEFT"));
+    m_choiceWorkspaceTabsOrientationArr.Add(wxT("RIGHT"));
+    m_choiceWorkspaceTabsOrientationArr.Add(wxT("TOP"));
+    m_choiceWorkspaceTabsOrientationArr.Add(wxT("BOTTOM"));
+    m_choiceWorkspaceTabsOrientation = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceWorkspaceTabsOrientationArr, 0);
+    m_choiceWorkspaceTabsOrientation->SetSelection(0);
+    
+    flexGridSizer36->Add(m_choiceWorkspaceTabsOrientation, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticText42 = new wxStaticText(m_panel12, wxID_ANY, _("Output Pane Tabs Orientation:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer36->Add(m_staticText42, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_choiceOutputTabsOrientationArr;
+    m_choiceOutputTabsOrientationArr.Add(wxT("TOP"));
+    m_choiceOutputTabsOrientationArr.Add(wxT("BOTTOM"));
+    m_choiceOutputTabsOrientation = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceOutputTabsOrientationArr, 0);
+    m_choiceOutputTabsOrientation->SetSelection(0);
+    
+    flexGridSizer36->Add(m_choiceOutputTabsOrientation, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     wxBoxSizer* boxSizer25 = new wxBoxSizer(wxVERTICAL);
     
@@ -228,10 +254,9 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     SetName(wxT("EditorSettingsDockingWindowsBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_checkBoxEnsureCaptionsVisible->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnEnsureCaptionsVisibleUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfBuild->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);

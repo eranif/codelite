@@ -1798,7 +1798,12 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
     for(; iter != protos.end(); ++iter) {
         tags.push_back(iter->second);
     }
-
+    
+    // Sort the functions according to their line number (asc)
+    std::sort(tags.begin(), tags.end(), [&](TagEntryPtr a, TagEntryPtr b) {
+        return (a->GetLine() < b->GetLine());
+    });
+    
     wxString targetFile;
     FindSwappedFile(rCtrl.GetFileName(), targetFile);
 

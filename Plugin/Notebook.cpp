@@ -1645,7 +1645,9 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
         to = activeTab->GetRect().GetBottomRight();
         from.x = bottomRect.GetTopLeft().x;
         to.x = bottomRect.GetTopLeft().x;
-
+        from.y += 2;
+        to.y -= 2;
+        
         dc.SetPen(colours.activeTabBgColour);
         dc.DrawLine(from, to);
 #ifdef __WXOSX__
@@ -1674,7 +1676,9 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
         to = activeTab->GetRect().GetBottomLeft();
         from.x = bottomRect.GetTopRight().x;
         to.x = bottomRect.GetTopRight().x;
-
+        from.y += 2;
+        to.y -= 2;
+        
         dc.SetPen(colours.activeTabBgColour);
         dc.DrawLine(from, to);
 #ifdef __WXOSX__

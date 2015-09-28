@@ -29,12 +29,10 @@
 class OpenResourceDialogBase : public wxDialog
 {
 protected:
-    wxBoxSizer* mainSizer;
     wxTextCtrl* m_textCtrlResourceName;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<OpenResourceDialogModel> m_dataviewModel;
 
-    wxFlexGridSizer* fgSizer1;
     wxCheckBox* m_checkBoxFiles;
     wxCheckBox* m_checkBoxShowSymbols;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
@@ -57,7 +55,7 @@ public:
     wxDataViewCtrl* GetDataview() { return m_dataview; }
     wxCheckBox* GetCheckBoxFiles() { return m_checkBoxFiles; }
     wxCheckBox* GetCheckBoxShowSymbols() { return m_checkBoxShowSymbols; }
-    OpenResourceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Resource"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    OpenResourceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Resource"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~OpenResourceDialogBase();
 };
 

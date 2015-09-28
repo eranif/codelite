@@ -22,11 +22,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "600,400"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "400,300"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -164,7 +164,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": ""
+         "m_value": "-1,-1"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -272,7 +272,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "-1,-1"
+         "m_value": "300,200"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -573,7 +573,7 @@
           }, {
            "type": "string",
            "m_label": "Label:",
-           "m_value": "Show files"
+           "m_value": "Show &files"
           }, {
            "type": "bool",
            "m_label": "Value:",
@@ -655,7 +655,7 @@
           }, {
            "type": "string",
            "m_label": "Label:",
-           "m_value": "Show symbols"
+           "m_value": "Show &symbols"
           }, {
            "type": "bool",
            "m_label": "Value:",
@@ -674,7 +674,7 @@
       }, {
        "m_type": 4467,
        "proportion": 0,
-       "border": 5,
+       "border": 10,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": [],

@@ -357,7 +357,8 @@ void clTernServer::OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply
             m_jsCCManager->OnDefinitionFound(loc);
         }
     } break;
-    case clTernWorkerThread::kReparse:
+    case clTernWorkerThread::kReset:
+        CL_DEBUG("Tern reset:\n%s\n", reply.json);
         break;
     }
 }
@@ -559,4 +560,31 @@ bool clTernServer::ProcessDefinitionOutput(const wxString& output, clTernDefinit
         return true;
     }
     return false;
+}
+
+bool clTernServer::PostResetCommand(bool forgetFiles)
+{
+    // Sanity
+    if(m_workerThread) return false;        // another request is in progress
+    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+    ++m_recycleCount;
+
+    // Prepare the request
+    JSONRoot root(cJSON_Object);
+    JSONElement query = JSONElement::createObject("query");
+    root.toElement().append(query);
+    query.addProperty("type", wxString("reset"));
+    if(forgetFiles) {
+        query.addProperty("forgetFiles", true);
+    }
+
+    clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
+    req->jsonRequest = root.toElement().FormatRawString();
+    req->type = clTernWorkerThread::kReset;
+
+    // Create the worker thread and start the request
+    m_workerThread = new clTernWorkerThread(this);
+    m_workerThread->Start();
+    m_workerThread->Add(req);
+    return true;
 }

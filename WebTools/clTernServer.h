@@ -80,7 +80,12 @@ public:
     bool Start(const wxString& workingDirectory);
     void Terminate();
     void ClearFatalErrorFlag();
-
+    
+    /**
+     * @brief tell tern to reset the server
+     */
+    bool PostResetCommand(bool forgetFiles);
+    
     /**
      * @brief post a CC request at the current editor position
      */

@@ -201,7 +201,7 @@ void JSCodeCompletion::ResetTern(IEditor* editor)
     m_ccPos = wxNOT_FOUND;
 
     // recycle tern
-    m_ternServer.RecycleIfNeeded(true);
+    m_ternServer.PostResetCommand(true);
 }
 
 void JSCodeCompletion::AddContextMenu(wxMenu* menu, IEditor* editor) 

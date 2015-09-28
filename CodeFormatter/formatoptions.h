@@ -182,7 +182,7 @@ public:
     void SetClangFormatOptions(size_t clangFormatOptions) { this->m_clangFormatOptions = clangFormatOptions; }
     size_t GetClangFormatOptions() const { return m_clangFormatOptions; }
     size_t GetPHPFormatterOptions() const { return m_phpFormatOptions; }
-    size_t SetPHPFormatterOptions(size_t options) { m_phpFormatOptions = options; }
+    void SetPHPFormatterOptions(size_t options) { m_phpFormatOptions = options; }
     bool HasFlag(eCF_GeneralOptions flag) const { return m_generalFlags & flag; }
     void SetFlag(eCF_GeneralOptions flag, bool b) { b ? m_generalFlags |= flag : m_generalFlags &= ~flag; }
     void SetPHPCSFixerPhar(const wxString& PHPCSFixerPhar) { this->m_PHPCSFixerPhar = PHPCSFixerPhar; }

@@ -168,7 +168,7 @@ bool wxSFGridShape::InsertToGrid(int index, wxSFShapeBase *shape)
 
 wxSFShapeBase* wxSFGridShape::GetManagedShape(size_t index)
 {
-	if( (index >= 0) && (index < GetChildrenList().GetCount()) )
+	if(index < GetChildrenList().GetCount())
 	{
 		return (wxSFShapeBase*) GetChild( m_arrCells[index] );
 	}

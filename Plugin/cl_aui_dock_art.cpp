@@ -95,30 +95,29 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
         
 
         wxGCDC gdc;
+        wxDC* pDC = NULL;
         if(!DrawingUtils::GetGCDC(memDc, gdc)) {
-            wxFAIL_MSG("Failed to create wxGCDC");
-            return;
+            pDC = &memDc;
+        } else {
+            pDC = &gdc;
         }
-
+        
         // Prepare the colours
         wxColour bgColour, penColour, textColour;
         textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
         bgColour = "#dcdcdc"; // Same as the notebook background colour
         penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-#ifdef __WXOSX__
         penColour = bgColour;
-#endif
-
-        penColour = bgColour;
+        
         wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        gdc.SetFont(f);
-        gdc.SetPen(penColour);
-        gdc.SetBrush(bgColour);
-        gdc.DrawRectangle(tmpRect);
+        pDC->SetFont(f);
+        pDC->SetPen(penColour);
+        pDC->SetBrush(bgColour);
+        pDC->DrawRectangle(tmpRect);
 
-        gdc.SetPen(penColour);
-        gdc.SetBrush(*wxTRANSPARENT_BRUSH);
-        gdc.DrawRectangle(tmpRect);
+        pDC->SetPen(penColour);
+        pDC->SetBrush(*wxTRANSPARENT_BRUSH);
+        pDC->DrawRectangle(tmpRect);
 
         int caption_offset = 0;
         if(pane.icon.IsOk()) {
@@ -127,9 +126,9 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
         } else {
             caption_offset = 3;
         }
-        gdc.SetTextForeground(textColour);
+        pDC->SetTextForeground(textColour);
         wxCoord w, h;
-        gdc.GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
+        pDC->GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
 
         wxRect clip_rect = tmpRect;
         clip_rect.width -= 3; // text offset
@@ -140,9 +139,9 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
 
         wxString draw_text = wxAuiChopText(gdc, text, clip_rect.width);
 
-        wxSize textSize = gdc.GetTextExtent(draw_text);
-        gdc.SetTextForeground(textColour);
-        gdc.DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
+        wxSize textSize = pDC->GetTextExtent(draw_text);
+        pDC->SetTextForeground(textColour);
+        pDC->DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
         memDc.SelectObject(wxNullBitmap);
     }
     

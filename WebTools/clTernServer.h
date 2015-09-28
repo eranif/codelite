@@ -85,6 +85,10 @@ public:
      * @brief tell tern to reset the server
      */
     bool PostResetCommand(bool forgetFiles);
+    /**
+     * @brief reparse the current file
+     */
+    bool PostReparseCommand(IEditor *editor);
     
     /**
      * @brief post a CC request at the current editor position

@@ -71,10 +71,11 @@ void clTernWorkerThread::ProcessRequest(ThreadRequest* request)
         wxMemoryBuffer output;
         client->Read(output, 5);
 
-        // Stip the HTTP headers and send only the JSON reply back to the main thread
+        // Strip the HTTP headers and send only the JSON reply back to the main thread
         wxString str = wxString::From8BitData((const char*)output.GetData(), output.GetDataLen());
         int where = str.Find("\r\n\r\n");
         if(where == wxNOT_FOUND) {
+            CL_DEBUG("Tern invalid output:\n%s\n", str);
             m_ternSerer->CallAfter(&clTernServer::OnError, "Invalid output");
             return;
         }

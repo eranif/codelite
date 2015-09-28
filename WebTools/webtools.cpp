@@ -470,7 +470,8 @@ void WebTools::OnFileSaved(clCommandEvent& event)
     DoRefreshColours(event.GetFileName());
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
-        m_jsCodeComplete->ResetTern(editor);
+        //m_jsCodeComplete->ReparseFile(editor);
+        m_jsCodeComplete->ResetTern();
     }
 }
 

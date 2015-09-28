@@ -52,7 +52,12 @@ public:
      * @brief notify tern to clear the cache
      * @param editor
      */
-    void ResetTern(IEditor* editor);
+    void ResetTern();
+    
+    /**
+     * @brief reparse the file
+     */
+    void ReparseFile(IEditor* editor);
 
     /**
      * @brief add java script context menu entries

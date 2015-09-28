@@ -188,9 +188,8 @@ void JSCodeCompletion::OnDefinitionFound(const clTernDefinition& loc)
     }
 }
 
-void JSCodeCompletion::ResetTern(IEditor* editor)
+void JSCodeCompletion::ResetTern()
 {
-    wxUnusedVar(editor);
     if(!IsEnabled()) {
         return;
     }
@@ -201,7 +200,8 @@ void JSCodeCompletion::ResetTern(IEditor* editor)
     m_ccPos = wxNOT_FOUND;
 
     // recycle tern
-    m_ternServer.PostResetCommand(true);
+    //m_ternServer.PostResetCommand(true);
+    m_ternServer.RecycleIfNeeded(true);
 }
 
 void JSCodeCompletion::AddContextMenu(wxMenu* menu, IEditor* editor) 
@@ -215,4 +215,18 @@ void JSCodeCompletion::OnGotoDefinition(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     FindDefinition(clGetManager()->GetActiveEditor());
+}
+
+void JSCodeCompletion::ReparseFile(IEditor* editor)
+{
+    if(!IsEnabled()) {
+        return;
+    }
+    CHECK_PTR_RET(editor);
+    
+    if(!SanityCheck()) return;
+
+    // Sanity
+    m_ccPos = wxNOT_FOUND;
+    m_ternServer.PostReparseCommand(editor);
 }

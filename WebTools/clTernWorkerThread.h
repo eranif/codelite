@@ -15,6 +15,7 @@ public:
         kFunctionTip,
         kFindDefinition,
         kReset,
+        kReparse,
     };
     
     struct Request : public ThreadRequest {

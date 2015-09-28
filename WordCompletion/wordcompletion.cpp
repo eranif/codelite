@@ -9,6 +9,8 @@
 #include "cl_command_event.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "WordCompletionDictionary.h"
+#include "lexer_configuration.h"
+#include "ColoursAndFontsManager.h"
 
 static WordCompletionPlugin* thePlugin = NULL;
 
@@ -26,7 +28,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Word Completion"));
-    info.SetDescription(_("Suggest completion based on words typed in the editor"));
+    info.SetDescription(_("Suggest completion based on words typed in the editors"));
     info.SetVersion(wxT("v1.0"));
     return info;
 }
@@ -83,17 +85,16 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
 
     WordCompletionSettings settings;
     settings.Load();
-    
+
     // Enabled?
     if(!settings.IsEnabled()) return;
-    
+
     // Build the suggetsion list
     wxString suggestString;
     wxCodeCompletionBoxEntry::Vec_t entries;
     wxCodeCompletionBox::BmpVec_t bitmaps;
     bitmaps.push_back(m_images.Bitmap("m_bmpWord"));
 
-    
     // Filter (what the user has typed so far)
     wxStyledTextCtrl* stc = activeEditor->GetCtrl();
     int curPos = stc->GetCurrentPos();
@@ -108,11 +109,22 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     if(activeEditor->IsModified()) {
         wxStringSet_t unsavedBufferWords;
         WordCompletionThread::ParseBuffer(stc->GetText(), unsavedBufferWords);
-        
+
         // Merge the results
         words.insert(unsavedBufferWords.begin(), unsavedBufferWords.end());
     }
-    
+
+    // Get the editor keywords and add them
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(activeEditor->GetFileName().GetFullName());
+    if(lexer) {
+        wxString keywords;
+        for(size_t i = 0; i < wxSTC_KEYWORDSET_MAX; ++i) {
+            keywords << lexer->GetKeyWords(i) << " ";
+        }
+        wxArrayString langWords = ::wxStringTokenize(keywords, "\n\t \r", wxTOKEN_STRTOK);
+        words.insert(langWords.begin(), langWords.end());
+    }
+
     wxStringSet_t filterdSet;
     if(lcFilter.IsEmpty()) {
         filterdSet.swap(words);

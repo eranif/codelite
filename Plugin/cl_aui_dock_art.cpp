@@ -107,7 +107,7 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
         // Prepare the colours
         wxColour bgColour, penColour, textColour;
         textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-        bgColour = "#dcdcdc"; // Same as the notebook background colour
+        bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);; // Same as the notebook background colour
         penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
         penColour = bgColour;
         
@@ -167,7 +167,7 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 #else
     penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
 #endif
-    dc.SetPen(wxColour("#dcdcdc"));
+    dc.SetPen(DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(rect);
 }

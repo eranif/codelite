@@ -1697,6 +1697,10 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
             ga.action = gitListModified;
             m_gitActionQueue.push_back(ga);
         }
+        
+        // Reload files if needed
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
+        
     } else if(ga.action == gitCommitList) {
         GitCommitListDlg* dlg = new GitCommitListDlg(m_topWindow, m_repositoryDirectory, this);
         dlg->SetCommitList(m_commandOutput);

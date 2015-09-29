@@ -660,6 +660,7 @@ EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, clMainFrame::OnDestroyDetachedP
 END_EVENT_TABLE()
 
 clMainFrame* clMainFrame::m_theFrame = NULL;
+bool clMainFrame::m_initCompleted = false;
 
 clMainFrame::clMainFrame(wxWindow* pParent,
                          wxWindowID id,
@@ -4003,6 +4004,8 @@ void clMainFrame::CompleteInitialization()
     eventShowTabBar.SetInt(clConfig::Get().Read(kConfigShowTabBar, true));
     OnShowTabBar(eventShowTabBar);
     ShowOrHideCaptions();
+    
+    m_initCompleted = true;
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)

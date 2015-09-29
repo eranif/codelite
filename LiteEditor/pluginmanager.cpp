@@ -811,7 +811,13 @@ size_t PluginManager::GetAllTabs(clTab::Vec_t& tabs)
     return tabs.size();
 }
 
-clStatusBar* PluginManager::GetStatusBar() { return static_cast<clStatusBar*>(clMainFrame::Get()->GetStatusBar()); }
+clStatusBar* PluginManager::GetStatusBar()
+{
+    if(clMainFrame::m_initCompleted) {
+        return clMainFrame::Get()->GetStatusBar();
+    }
+    return NULL;
+}
 
 void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
 {

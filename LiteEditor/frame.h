@@ -121,6 +121,9 @@ class clMainFrame : public wxFrame
     // Printing
     wxPrintDialogData m_printDlgData;
 
+public:
+    static bool m_initCompleted;
+
 protected:
     bool IsEditorEvent(wxEvent& event);
     void DoCreateBuildDropDownMenu(wxMenu* menu);

@@ -4289,7 +4289,7 @@
         }, {
          "type": "colour",
          "m_label": "Bg Colour:",
-         "colour": "(224,224,224)"
+         "colour": "(220,220,220)"
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",

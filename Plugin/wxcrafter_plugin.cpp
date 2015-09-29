@@ -526,7 +526,7 @@ clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
     this->SetSizer(boxSizer167);
     
     m_panel169 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_NONE);
-    m_panel169->SetBackgroundColour(wxColour(wxT("rgb(224,224,224)")));
+    m_panel169->SetBackgroundColour(wxColour(wxT("rgb(220,220,220)")));
     
     boxSizer167->Add(m_panel169, 1, wxALL|wxEXPAND, 0);
     

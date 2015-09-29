@@ -1117,7 +1117,7 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
     
     boxSizer515->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
-    SetBackgroundColour(wxColour(wxT("rgb(224,224,224)")));
+    SetBackgroundColour(wxColour(wxT("rgb(220,220,220)")));
     SetName(wxT("DefaultWorkspacePageBase"));
     SetSizeHints(500,300);
     if (GetSizer()) {

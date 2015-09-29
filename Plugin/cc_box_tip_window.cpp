@@ -65,9 +65,10 @@ static void CCBoxTipWindow_ShrinkTip(wxString& str)
     }
     str.swap(tip);
     str.Trim().Trim(false);
-    
+
     // strip double empty lines
-    while(str.Replace("\n\n", "\n")) {}
+    while(str.Replace("\n\n", "\n")) {
+    }
 }
 
 CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
@@ -99,7 +100,7 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
             m_useLightColours = true;
         }
     }
-    
+
     m_tip = tip;
     m_numOfTips = numOfTips;
 
@@ -115,7 +116,7 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     wxMemoryDC dc(bmp);
 
     wxSize size;
-    
+
     m_codeFont = DrawingUtils::GetDefaultFixedFont();
     m_commentFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 
@@ -144,8 +145,8 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     int codeWidth = 0;
 
     // Use bold font for measurements
-    m_codeFont.SetWeight(wxFONTWEIGHT_BOLD);
-    m_commentFont.SetWeight(wxFONTWEIGHT_BOLD);
+    // m_codeFont.SetWeight(wxFONTWEIGHT_BOLD);
+    // m_commentFont.SetWeight(wxFONTWEIGHT_BOLD);
 
     if(!simpleTip) {
         dc.GetMultiLineTextExtent(codePart, &codeWidth, NULL, NULL, &m_codeFont);
@@ -239,19 +240,19 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {
     m_links.clear();
     wxBufferedPaintDC dc(this);
-    
+
     clColourPalette colors = DrawingUtils::GetColourPalette();
-    
+
     wxColour penColour = colors.penColour;
     wxColour brushColour = colors.bgColour;
     wxColour textColour = colors.textColour;
     wxColour linkColour("rgb(204, 153, 255)");
-    
+
     if(m_useLightColours) {
         // Use different colours to match the editor theme
         linkColour = wxColour("rgb(51, 153, 255)");
     }
-    
+
     dc.SetBrush(brushColour);
     dc.SetPen(wxPen(penColour, 1));
 
@@ -268,14 +269,16 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     wxString curtext;
     MarkupParser parser(m_tip);
     wxPoint pt(5, 5);
+    size_t max_width(0);
+    
     while(parser.Next()) {
         int type = parser.GetType();
         switch(type) {
         case LINK_URL: {
             // Found URL
             // Before we change the font, draw the buffer
-            DoPrintText(dc, curtext, pt);
-
+            DoPrintText(dc, curtext, pt, max_width);
+            
             curtext = parser.GetToken();
             wxString link_url = curtext;
 
@@ -284,8 +287,8 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             f.SetUnderlined(true);
             dc.SetFont(f);
             dc.SetTextForeground(linkColour);
-            wxRect url_rect = DoPrintText(dc, curtext, pt);
-
+            wxRect url_rect = DoPrintText(dc, curtext, pt, max_width);
+            
             // keep info about this URL
             CCBoxTipWindow::Links link_info;
             link_info.m_rect = url_rect;
@@ -301,7 +304,8 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         }
         case BOLD_START: {
             // Before we change the font, draw the buffer
-            DoPrintText(dc, curtext, pt);
+            DoPrintText(dc, curtext, pt, max_width);
+            
             wxFont f = dc.GetFont();
             f.SetWeight(wxFONTWEIGHT_BOLD);
             dc.SetFont(f);
@@ -310,8 +314,9 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         }
         case BOLD_END: {
             // Before we change the font, draw the buffer
-            DoPrintText(dc, curtext, pt);
-
+            DoPrintText(dc, curtext, pt, max_width);
+            
+            
             wxFont f = dc.GetFont();
             f.SetWeight(wxFONTWEIGHT_NORMAL);
             dc.SetFont(f);
@@ -320,7 +325,9 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         }
         case ITALIC_START: {
             // Before we change the font, draw the buffer
-            DoPrintText(dc, curtext, pt);
+            DoPrintText(dc, curtext, pt, max_width);
+            
+            
             wxFont f = dc.GetFont();
             f.SetStyle(wxFONTSTYLE_ITALIC);
             dc.SetFont(f);
@@ -328,8 +335,9 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         }
         case ITALIC_END: {
             // Before we change the font, draw the buffer
-            DoPrintText(dc, curtext, pt);
-
+            DoPrintText(dc, curtext, pt, max_width);
+            
+            
             wxFont f = dc.GetFont();
             f.SetStyle(wxFONTSTYLE_NORMAL);
             dc.SetFont(f);
@@ -337,20 +345,25 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         }
         case CODE_START: {
             // Before we change the font, draw the buffer
-            DoPrintText(dc, curtext, pt);
+            DoPrintText(dc, curtext, pt, max_width);
+            
+            
             dc.SetFont(m_codeFont);
             break;
         }
         case CODE_END: {
             // Before we change the font, draw the buffer
-            DoPrintText(dc, curtext, pt);
+            DoPrintText(dc, curtext, pt, max_width);
+            
+            
             dc.SetFont(m_commentFont);
             break;
         }
 
         case NEW_LINE: {
             // New line, print the content
-            DoPrintText(dc, curtext, pt);
+            DoPrintText(dc, curtext, pt, max_width);
+            
             pt.y += m_lineHeight;
 
             // reset the drawing point to the start of the next line
@@ -367,7 +380,9 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             break;
         }
         case COLOR_START: {
-            DoPrintText(dc, curtext, pt);
+            DoPrintText(dc, curtext, pt, max_width);
+            
+            
             wxString colorname = parser.GetToken();
             colorname = colorname.AfterFirst(wxT('"'));
             colorname = colorname.BeforeLast(wxT('"'));
@@ -375,7 +390,9 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             break;
         }
         case COLOR_END: {
-            DoPrintText(dc, curtext, pt);
+            DoPrintText(dc, curtext, pt, max_width);
+            
+            
             // restore default colour
             dc.SetTextForeground(textColour);
             break;
@@ -390,17 +407,27 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     }
 
     if(curtext.IsEmpty() == false) {
-        DoPrintText(dc, curtext, pt);
+        DoPrintText(dc, curtext, pt, max_width);
     }
+    
+    max_width += 5; // right side margin
+    SetSize(max_width, GetSize().y);
+    
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.SetPen(wxPen(penColour, 1));
+
+    rr = GetClientRect();
+    dc.DrawRectangle(rr);
 }
 
-wxRect CCBoxTipWindow::DoPrintText(wxDC& dc, wxString& text, wxPoint& pt)
+wxRect CCBoxTipWindow::DoPrintText(wxDC& dc, wxString& text, wxPoint& pt, size_t &maxWidth)
 {
     if(text.IsEmpty() == false) {
         wxSize sz = dc.GetTextExtent(text);
         wxRect rect(pt, sz);
         dc.DrawText(text, pt);
         pt.x += sz.x;
+        maxWidth = wxMax(maxWidth, pt.x);
         text.Clear();
         return rect;
     }

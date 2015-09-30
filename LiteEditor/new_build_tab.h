@@ -175,7 +175,7 @@ class NewBuildTab : public wxPanel
     std::map<int, BuildLineInfo*> m_viewData;
 
 protected:
-    void InitView();
+    void InitView(const wxString& theme = "");
     void CenterLineInView(int line);
     void DoCacheRegexes();
     BuildLineInfo* DoProcessLine(const wxString& line, bool isSummaryLine);

@@ -26,7 +26,7 @@
 #include "unixprocess_impl.h"
 #include "file_logger.h"
 
-#if defined(__WXMAC__)||defined(__WXGTK__)
+#if defined(__WXMAC__) || defined(__WXGTK__)
 
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
@@ -41,23 +41,23 @@
 
 #ifdef __WXGTK__
 #ifdef __FreeBSD__
-#    include <sys/ioctl.h>
-#    include <termios.h>
-#    include <libutil.h>
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <libutil.h>
 #else
-#    include <pty.h>
-#    include <utmp.h>
+#include <pty.h>
+#include <utmp.h>
 #endif
 #else
-#    include <util.h>
+#include <util.h>
 #endif
 
-static char  **argv = NULL;
-static int    argc = 0;
+static char** argv = NULL;
+static int argc = 0;
 
 // ----------------------------------------------
 #define ISBLANK(ch) ((ch) == ' ' || (ch) == '\t')
-#define BUFF_SIZE  1024*64
+#define BUFF_SIZE 1024 * 64
 
 /*  Routines imported from standard C runtime libraries. */
 
@@ -67,19 +67,18 @@ static int    argc = 0;
 #include <string.h>
 #include <stdlib.h>
 
-#else	/* !__STDC__ */
+#else /* !__STDC__ */
 
 #if !defined _WIN32 || defined __GNUC__
-extern char *memcpy ();		/* Copy memory region */
-extern int strlen ();		/* Count length of string */
-extern char *malloc ();		/* Standard memory allocater */
-extern char *realloc ();	/* Standard memory reallocator */
-extern void free ();		/* Free malloc'd memory */
-extern char *strdup ();		/* Duplicate a string */
+extern char* memcpy();  /* Copy memory region */
+extern int strlen();    /* Count length of string */
+extern char* malloc();  /* Standard memory allocater */
+extern char* realloc(); /* Standard memory reallocator */
+extern void free();     /* Free malloc'd memory */
+extern char* strdup();  /* Duplicate a string */
 #endif
 
-#endif	/* __STDC__ */
-
+#endif /* __STDC__ */
 
 #ifndef NULL
 #define NULL 0
@@ -89,82 +88,80 @@ extern char *strdup ();		/* Duplicate a string */
 #define EOS '\0'
 #endif
 
-#define INITIAL_MAXARGC 8	/* Number of args + NULL in initial argv */
+#define INITIAL_MAXARGC 8 /* Number of args + NULL in initial argv */
 
-static void freeargv (char **vector)
+static void freeargv(char** vector)
 {
-    register char **scan;
+    register char** scan;
 
-    if (vector != NULL) {
-        for (scan = vector; *scan != NULL; scan++) {
-            free (*scan);
+    if(vector != NULL) {
+        for(scan = vector; *scan != NULL; scan++) {
+            free(*scan);
         }
-        free (vector);
+        free(vector);
     }
 }
 
-char **
-dupargv (char **argv)
+char** dupargv(char** argv)
 {
     int argc;
-    char **copy;
+    char** copy;
 
-    if (argv == NULL)
-        return NULL;
+    if(argv == NULL) return NULL;
 
     /* the vector */
-    for (argc = 0; argv[argc] != NULL; argc++);
-    copy = (char **) malloc ((argc + 1) * sizeof (char *));
-    if (copy == NULL)
-        return NULL;
+    for(argc = 0; argv[argc] != NULL; argc++)
+        ;
+    copy = (char**)malloc((argc + 1) * sizeof(char*));
+    if(copy == NULL) return NULL;
 
     /* the strings */
-    for (argc = 0; argv[argc] != NULL; argc++) {
-        int len = strlen (argv[argc]);
-        copy[argc] = (char*)malloc (sizeof (char *) * (len + 1));
-        if (copy[argc] == NULL) {
-            freeargv (copy);
+    for(argc = 0; argv[argc] != NULL; argc++) {
+        int len = strlen(argv[argc]);
+        copy[argc] = (char*)malloc(sizeof(char*) * (len + 1));
+        if(copy[argc] == NULL) {
+            freeargv(copy);
             return NULL;
         }
-        strcpy (copy[argc], argv[argc]);
+        strcpy(copy[argc], argv[argc]);
     }
     copy[argc] = NULL;
     return copy;
 }
 
-char **buildargv (const char *input)
+char** buildargv(const char* input)
 {
-    char *arg;
-    char *copybuf;
+    char* arg;
+    char* copybuf;
     int squote = 0;
     int dquote = 0;
     int bsquote = 0;
     int argc = 0;
     int maxargc = 0;
-    char **argv = NULL;
-    char **nargv;
+    char** argv = NULL;
+    char** nargv;
 
-    if (input != NULL) {
-        copybuf = (char *) alloca (strlen (input) + 1);
+    if(input != NULL) {
+        copybuf = (char*)alloca(strlen(input) + 1);
         /* Is a do{}while to always execute the loop once.  Always return an
         argv, even for null strings.  See NOTES above, test case below. */
         do {
             /* Pick off argv[argc] */
-            while (ISBLANK (*input)) {
+            while(ISBLANK(*input)) {
                 input++;
             }
-            if ((maxargc == 0) || (argc >= (maxargc - 1))) {
+            if((maxargc == 0) || (argc >= (maxargc - 1))) {
                 /* argv needs initialization, or expansion */
-                if (argv == NULL) {
+                if(argv == NULL) {
                     maxargc = INITIAL_MAXARGC;
-                    nargv = (char **) malloc (maxargc * sizeof (char *));
+                    nargv = (char**)malloc(maxargc * sizeof(char*));
                 } else {
                     maxargc *= 2;
-                    nargv = (char **) realloc (argv, maxargc * sizeof (char *));
+                    nargv = (char**)realloc(argv, maxargc * sizeof(char*));
                 }
-                if (nargv == NULL) {
-                    if (argv != NULL) {
-                        freeargv (argv);
+                if(nargv == NULL) {
+                    if(argv != NULL) {
+                        freeargv(argv);
                         argv = NULL;
                     }
                     break;
@@ -174,31 +171,31 @@ char **buildargv (const char *input)
             }
             /* Begin scanning arg */
             arg = copybuf;
-            while (*input != EOS) {
-                if (ISBLANK (*input) && !squote && !dquote && !bsquote) {
+            while(*input != EOS) {
+                if(ISBLANK(*input) && !squote && !dquote && !bsquote) {
                     break;
                 } else {
-                    if (bsquote) {
+                    if(bsquote) {
                         bsquote = 0;
                         *arg++ = *input;
-                    } else if (*input == '\\') {
+                    } else if(*input == '\\') {
                         bsquote = 1;
-                    } else if (squote) {
-                        if (*input == '\'') {
+                    } else if(squote) {
+                        if(*input == '\'') {
                             squote = 0;
                         } else {
                             *arg++ = *input;
                         }
-                    } else if (dquote) {
-                        if (*input == '"') {
+                    } else if(dquote) {
+                        if(*input == '"') {
                             dquote = 0;
                         } else {
                             *arg++ = *input;
                         }
                     } else {
-                        if (*input == '\'') {
+                        if(*input == '\'') {
                             squote = 1;
-                        } else if (*input == '"') {
+                        } else if(*input == '"') {
                             dquote = 1;
                         } else {
                             *arg++ = *input;
@@ -208,36 +205,36 @@ char **buildargv (const char *input)
                 }
             }
             *arg = EOS;
-            argv[argc] = strdup (copybuf);
-            if (argv[argc] == NULL) {
-                freeargv (argv);
+            argv[argc] = strdup(copybuf);
+            if(argv[argc] == NULL) {
+                freeargv(argv);
                 argv = NULL;
                 break;
             }
             argc++;
             argv[argc] = NULL;
 
-            while (ISBLANK (*input)) {
+            while(ISBLANK(*input)) {
                 input++;
             }
-        } while (*input != EOS);
+        } while(*input != EOS);
     }
     return (argv);
 }
 
 //-----------------------------------------------------
 
-static void make_argv(const wxString &cmd)
+static void make_argv(const wxString& cmd)
 {
     if(argc) {
         freeargv(argv);
-        argc=0;
+        argc = 0;
     }
 
     argv = buildargv(cmd.mb_str(wxConvUTF8).data());
-    argc=0;
+    argc = 0;
 
-    for (char **targs = argv; *targs != NULL; targs++) {
+    for(char** targs = argv; *targs != NULL; targs++) {
         argc++;
     }
 }
@@ -245,17 +242,17 @@ static void make_argv(const wxString &cmd)
 #define BUFF_STATE_NORMAL 0
 #define BUFF_STATE_IN_ESC 1
 
-static void RemoveTerminalColoring(char *buffer)
+static void RemoveTerminalColoring(char* buffer)
 {
-    char *saved_buff = buffer;
-    char tmpbuf[BUFF_SIZE+1];
+    char* saved_buff = buffer;
+    char tmpbuf[BUFF_SIZE + 1];
     memset(tmpbuf, 0, sizeof(tmpbuf));
 
     short state = BUFF_STATE_NORMAL;
     size_t i(0);
 
-    while(*buffer != 0) {
-        switch (state) {
+    while((*buffer) != 0) {
+        switch(state) {
         case BUFF_STATE_NORMAL:
             if(*buffer == 0x1B) { // found ESC char
                 state = BUFF_STATE_IN_ESC;
@@ -277,25 +274,22 @@ static void RemoveTerminalColoring(char *buffer)
     memcpy(saved_buff, tmpbuf, strlen(tmpbuf));
 }
 
-UnixProcessImpl::UnixProcessImpl(wxEvtHandler *parent)
+UnixProcessImpl::UnixProcessImpl(wxEvtHandler* parent)
     : IProcess(parent)
-    , m_readHandle  (-1)
-    , m_writeHandle (-1)
-    , m_thr         (NULL)
+    , m_readHandle(-1)
+    , m_writeHandle(-1)
+    , m_thr(NULL)
 {
 }
 
-UnixProcessImpl::~UnixProcessImpl()
-{
-    Cleanup();
-}
+UnixProcessImpl::~UnixProcessImpl() { Cleanup(); }
 
 void UnixProcessImpl::Cleanup()
 {
     close(GetReadHandle());
     close(GetWriteHandle());
 
-    if ( m_thr ) {
+    if(m_thr) {
         // Stop the reader thread
         m_thr->Stop();
         delete m_thr;
@@ -310,45 +304,43 @@ void UnixProcessImpl::Cleanup()
     }
 }
 
-bool UnixProcessImpl::IsAlive()
-{
-    return kill(m_pid, 0) == 0;
-}
+bool UnixProcessImpl::IsAlive() { return kill(m_pid, 0) == 0; }
 
 bool UnixProcessImpl::Read(wxString& buff)
 {
-    fd_set  rs;
+    fd_set rs;
     timeval timeout;
 
     memset(&rs, 0, sizeof(rs));
     FD_SET(GetReadHandle(), &rs);
-    timeout.tv_sec  = 0;      // 0 seconds
-    timeout.tv_usec = 50000;  // 50 ms
+    timeout.tv_sec = 0;      // 0 seconds
+    timeout.tv_usec = 50000; // 50 ms
 
     int errCode(0);
     errno = 0;
-    
+
     buff.Clear();
-    int rc = select(GetReadHandle()+1, &rs, NULL, NULL, &timeout);
+    int rc = select(GetReadHandle() + 1, &rs, NULL, NULL, &timeout);
     errCode = errno;
-    if ( rc == 0 ) {
+    if(rc == 0) {
         // timeout
         return true;
 
-    } else if ( rc > 0 ) {
+    } else if(rc > 0) {
         // there is something to read
-        char buffer[BUFF_SIZE+1]; // our read buffer
+        char buffer[BUFF_SIZE + 1]; // our read buffer
         memset(buffer, 0, sizeof(buffer));
-        if(read(GetReadHandle(), buffer, sizeof(buffer)) > 0) {
-            buffer[BUFF_SIZE] = 0; // allways place a terminator
+        int bytesRead = read(GetReadHandle(), buffer, sizeof(buffer) - 1);
+        if(bytesRead > 0) {
+            buffer[bytesRead] = 0; // allways place a terminator
 
             // Remove coloring chars from the incomnig buffer
             // colors are marked with ESC and terminates with lower case 'm'
             RemoveTerminalColoring(buffer);
 
-            wxString convBuff = wxString(buffer, wxConvUTF8);
+            wxString convBuff = wxString(buffer, wxConvUTF8, (size_t)bytesRead);
             if(convBuff.IsEmpty()) {
-                convBuff = wxString::From8BitData(buffer);
+                convBuff = wxString::From8BitData(buffer, (size_t)bytesRead);
             }
 
             buff = convBuff;
@@ -358,7 +350,7 @@ bool UnixProcessImpl::Read(wxString& buff)
 
     } else {
 
-        if ( errCode == EINTR || errCode == EAGAIN ) {
+        if(errCode == EINTR || errCode == EAGAIN) {
             return true;
         }
 
@@ -376,12 +368,13 @@ bool UnixProcessImpl::Write(const wxString& buff)
     return bytes == (int)tmpbuf.length();
 }
 
-IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDirectory, IProcessCallback *cb)
+IProcess* UnixProcessImpl::Execute(
+    wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDirectory, IProcessCallback* cb)
 {
     wxUnusedVar(flags);
 
     make_argv(cmd);
-    if ( argc == 0 ) {
+    if(argc == 0) {
         return NULL;
     }
 
@@ -393,14 +386,14 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
     openpty(&master, &slave, NULL, NULL, NULL);
 
     int rc = fork();
-    if ( rc == 0 ) {
+    if(rc == 0) {
         login_tty(slave);
         close(master); // close the un-needed master end
 
         // at this point, slave is used as stdin/stdout/stderr
         // Child process
         if(workingDirectory.IsEmpty() == false) {
-            wxSetWorkingDirectory( workingDirectory );
+            wxSetWorkingDirectory(workingDirectory);
         }
 
         // execute the process
@@ -409,7 +402,7 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         // if we got here, we failed...
         exit(0);
 
-    } else if ( rc < 0 ) {
+    } else if(rc < 0) {
         // Error
 
         // restore the working directory
@@ -418,14 +411,12 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         return NULL;
 
     } else {
-        
+
         // Parent
         close(slave);
         freeargv(argv);
         argc = 0;
-        
-        
-        
+
         // disable ECHO
         struct termios termio;
         tcgetattr(master, &termio);
@@ -436,14 +427,14 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         // restore the working directory
         wxSetWorkingDirectory(curdir);
 
-        UnixProcessImpl *proc = new UnixProcessImpl(parent);
+        UnixProcessImpl* proc = new UnixProcessImpl(parent);
         proc->m_callback = cb;
-        proc->SetReadHandle  (master);
+        proc->SetReadHandle(master);
         proc->SetWriteHandler(master);
-        proc->SetPid( rc );
+        proc->SetPid(rc);
         proc->m_flags = flags; // Keep the creation flags
-        
-        if ( !(proc->m_flags & IProcessCreateSync) ) {
+
+        if(!(proc->m_flags & IProcessCreateSync)) {
             proc->StartReaderThread();
         }
         return proc;
@@ -454,8 +445,8 @@ void UnixProcessImpl::StartReaderThread()
 {
     // Launch the 'Reader' thread
     m_thr = new ProcessReaderThread();
-    m_thr->SetProcess( this );
-    m_thr->SetNotifyWindow( m_parent );
+    m_thr->SetProcess(this);
+    m_thr->SetNotifyWindow(m_parent);
     m_thr->Start();
 }
 
@@ -479,7 +470,7 @@ bool UnixProcessImpl::WriteToConsole(const wxString& buff)
 
 void UnixProcessImpl::Detach()
 {
-    if ( m_thr ) {
+    if(m_thr) {
         // Stop the reader thread
         m_thr->Stop();
         delete m_thr;

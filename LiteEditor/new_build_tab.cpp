@@ -543,12 +543,14 @@ void NewBuildTab::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     DoClear();
+    InitView();
 }
 
 void NewBuildTab::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     e.Skip();
     DoClear();
+    InitView();
 }
 
 void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
@@ -866,7 +868,7 @@ void NewBuildTab::OnStyleNeeded(wxStyledTextEvent& event)
 
     int curline = m_view->GetLineCount();
     curline -= 1; // The view always ends with a "\n", we don't count it as a line
-    wxArrayString lines = ::wxStringTokenize(text, "\n", wxTOKEN_RET_DELIMS);
+    wxArrayString lines = ::wxStringTokenize(text, wxT("\n"), wxTOKEN_RET_DELIMS);
 
     // the last line that we coloured
     curline -= lines.size();
@@ -900,9 +902,9 @@ void NewBuildTab::OnStyleNeeded(wxStyledTextEvent& event)
     }
 }
 
-void NewBuildTab::InitView()
+void NewBuildTab::InitView(const wxString& theme)
 {
-    LexerConf::Ptr_t lexText = ColoursAndFontsManager::Get().GetLexer("text");
+    LexerConf::Ptr_t lexText = ColoursAndFontsManager::Get().GetLexer("text", theme);
     lexText->Apply(m_view);
 
     m_view->SetUndoCollection(false);

@@ -330,17 +330,17 @@ bool UnixProcessImpl::Read(wxString& buff)
         // there is something to read
         char buffer[BUFF_SIZE + 1]; // our read buffer
         memset(buffer, 0, sizeof(buffer));
-        int bytesRead = read(GetReadHandle(), buffer, sizeof(buffer) - 1);
+        int bytesRead = read(GetReadHandle(), buffer, sizeof(buffer));
         if(bytesRead > 0) {
-            buffer[bytesRead] = 0; // allways place a terminator
+            buffer[BUFF_SIZE] = 0; // allways place a terminator
 
             // Remove coloring chars from the incomnig buffer
             // colors are marked with ESC and terminates with lower case 'm'
             RemoveTerminalColoring(buffer);
 
-            wxString convBuff = wxString(buffer, wxConvUTF8, (size_t)bytesRead);
+            wxString convBuff = wxString(buffer, wxConvUTF8);
             if(convBuff.IsEmpty()) {
-                convBuff = wxString::From8BitData(buffer, (size_t)bytesRead);
+                convBuff = wxString::From8BitData(buffer);
             }
 
             buff = convBuff;

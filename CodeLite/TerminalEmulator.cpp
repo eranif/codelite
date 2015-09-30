@@ -103,7 +103,7 @@ wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& t
     escapedString.Replace("\"", "\\\"");
     command << "/bin/bash -c \"" << escapedString;
     if(waitOnExit) {
-        command << " && echo 'Hit ENTER to continue' && read";
+        command << " ; echo 'Hit ENTER to continue' ; read";
     }
     command << "\"";
 
@@ -112,7 +112,7 @@ wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& t
     wxString escapedString = str;
     command << "cmd /C call title \"Node.js\" && " << escapedString;
     if(waitOnExit) {
-        command << " && echo \"\" && pause";
+        command << " && echo \"\" & pause";
     }
 #else
 // OSX

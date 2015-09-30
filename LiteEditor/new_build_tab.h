@@ -38,13 +38,20 @@
 #include <map>
 #include <wx/regex.h>
 #include "cl_command_event.h"
+#include <wx/stc/stc.h>
 
 class wxDataViewListCtrl;
 
 ///////////////////////////////
 // Holds the information about
 // a specific line
-enum LINE_SEVERITY { SV_NONE = 0, SV_WARNING = 1, SV_ERROR = 2, SV_SUCCESS = 3 };
+enum LINE_SEVERITY {
+    SV_NONE = 0,
+    SV_WARNING = 1,
+    SV_ERROR = 2,
+    SV_SUCCESS = 3,
+    SV_DIR_CHANGE = 4,
+};
 
 class BuildLineInfo
 {
@@ -136,7 +143,6 @@ struct CmpPatterns {
 };
 
 ///////////////////////////////////////////////////////////////////
-class MyTextRenderer;
 class LEditor;
 class NewBuildTab : public wxPanel
 {
@@ -147,12 +153,11 @@ class NewBuildTab : public wxPanel
     typedef std::list<BuildLineInfo*> BuildInfoList_t;
 
     wxString m_output;
-    wxDataViewListCtrl* m_listctrl;
+    wxStyledTextCtrl* m_view;
     CompilerPtr m_cmp;
     MapCmpPatterns_t m_cmpPatterns;
     int m_warnCount;
     int m_errorCount;
-    MyTextRenderer* m_textRenderer;
     BuildTabSettingsData m_buildTabSettings;
     bool m_buildInterrupted;
     bool m_autoHide;
@@ -167,8 +172,11 @@ class NewBuildTab : public wxPanel
     BuildInfoList_t::iterator m_curError;
     bool m_buildInProgress;
     wxString m_cygwinRoot;
+    std::map<int, BuildLineInfo*> m_viewData;
 
 protected:
+    void InitView();
+    void CenterLineInView(int line);
     void DoCacheRegexes();
     BuildLineInfo* DoProcessLine(const wxString& line, bool isSummaryLine);
     void DoProcessOutput(bool compilationEnded, bool isSummaryLine);
@@ -177,7 +185,7 @@ protected:
     void DoClear();
     void MarkEditor(LEditor* editor);
     void DoToggleWindow();
-    bool DoSelectAndOpen(const wxDataViewItem& item);
+    bool DoSelectAndOpen(int buildViewLine);
     wxFont DoGetFont() const;
 
 public:
@@ -188,7 +196,7 @@ public:
     bool GetBuildEndedSuccessfully() const { return m_errorCount == 0 && !m_buildInterrupted; }
     void SetBuildInterrupted(bool b) { m_buildInterrupted = b; }
 
-    bool IsEmpty() const { return m_listctrl->GetItemCount() == 0; }
+    bool IsEmpty() const { return m_view->IsEmpty(); }
 
     bool IsBuildInProgress() const { return m_buildInProgress; }
 
@@ -198,23 +206,21 @@ public:
     void AppendLine(const wxString& text);
 
 protected:
+    void OnThemeChanged(wxCommandEvent& event);
     void OnBuildStarted(clCommandEvent& e);
     void OnBuildEnded(clCommandEvent& e);
     void OnBuildAddLine(clCommandEvent& e);
-    void OnLineSelected(wxDataViewEvent& e);
     void OnWorkspaceClosed(wxCommandEvent& e);
     void OnWorkspaceLoaded(wxCommandEvent& e);
     void OnNextBuildError(wxCommandEvent& e);
     void OnNextBuildErrorUI(wxUpdateUIEvent& e);
     void OnMenu(wxContextMenuEvent& e);
-    void OnCopy(wxCommandEvent& e);
-    void OnCopyUI(wxUpdateUIEvent& e);
-    void OnCopySelection(wxCommandEvent& e);
-    void OnCopySelectionUI(wxUpdateUIEvent& e);
     void OnOpenInEditorUI(wxUpdateUIEvent& e);
     void OnOpenInEditor(wxCommandEvent& e);
     void OnClear(wxCommandEvent& e);
     void OnClearUI(wxUpdateUIEvent& e);
+    void OnStyleNeeded(wxStyledTextEvent& event);
+    void OnHotspotClicked(wxStyledTextEvent& event);
 };
 
 #endif // NEWBUILDTAB_H

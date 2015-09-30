@@ -77,11 +77,12 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     vertSizer->Add(horzSizer, 0, wxEXPAND | wxTOP | wxBOTTOM);
 
     // grab the base class scintilla and put our sizer in its place
-    wxSizer* mainSizer = m_hSizer;
+    wxSizer* mainSizer = m_vSizer;
     mainSizer->Detach(m_sci);
     vertSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
 
     m_tb->DeleteTool(XRCID("repeat_output"));
+    m_tb->DeleteTool(XRCID("recent_searches"));
     m_tb->Realize();
 
 #ifdef __WXMAC__

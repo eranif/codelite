@@ -168,9 +168,9 @@ void OutputTabWindow::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-    m_hSizer = new wxBoxSizer(wxHORIZONTAL);
+    m_vSizer = new wxBoxSizer(wxVERTICAL);
 
-// Create the default scintilla control
+    // Create the default scintilla control
 #ifdef __WXGTK__
     m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
 #else
@@ -184,12 +184,12 @@ void OutputTabWindow::CreateGUIControls()
     InitStyle(m_sci, wxSTC_LEX_CONTAINER, false);
 
     // Add the find bar
-    mainSizer->Add(m_hSizer, 1, wxEXPAND | wxALL, 0);
+    mainSizer->Add(m_vSizer, 1, wxEXPAND | wxALL, 0);
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
     // Create the toolbar
     m_tb = new wxAuiToolBar(
-        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_VERTICAL);
+        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
 
     m_tb->AddTool(XRCID("hold_pane_open"),
                   _("Keep open"),
@@ -223,16 +223,11 @@ void OutputTabWindow::CreateGUIControls()
 
     m_tb->Realize();
 
-#ifdef __WXMAC__
-    m_hSizer->Add(m_sci, 1, wxEXPAND);
-    m_hSizer->Add(m_tb, 0, wxEXPAND);
-#else
-    m_hSizer->Add(m_tb, 0, wxEXPAND);
-    m_hSizer->Add(m_sci, 1, wxEXPAND);
-#endif
+    m_vSizer->Add(m_tb, 0, wxEXPAND);
+    m_vSizer->Add(m_sci, 1, wxEXPAND);
 
     // Hide the find bar by default
-    m_hSizer->Layout();
+    m_vSizer->Layout();
 }
 
 void OutputTabWindow::Clear()

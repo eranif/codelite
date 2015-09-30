@@ -27,7 +27,7 @@
 #define BUILDTABTOPPANEL_H
 #include "cl_defs.h"
 
-#if CL_USE_NEW_BUILD_TAB
+#if 1
 
 #include "wxcrafter.h"
 

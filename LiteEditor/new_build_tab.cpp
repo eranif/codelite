@@ -100,7 +100,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     , m_buildInProgress(false)
 {
     m_curError = m_errorsAndWarningsList.end();
-    wxBoxSizer* bs = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bs = new wxBoxSizer(wxVERTICAL);
     SetSizer(bs);
 
     m_view = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
@@ -113,12 +113,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     bs->Add(m_view, 1, wxEXPAND | wxALL);
 
     BuildTabTopPanel* toolbox = new BuildTabTopPanel(this);
-
-#ifdef __WXMAC__
-    bs->Add(toolbox, 0, wxEXPAND);
-#else
     bs->Insert(0, toolbox, 0, wxEXPAND);
-#endif
 
     EventNotifier::Get()->Connect(
         wxEVT_SHELL_COMMAND_STARTED, clCommandEventHandler(NewBuildTab::OnBuildStarted), NULL, this);

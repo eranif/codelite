@@ -77,7 +77,7 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 
 
     // grab the base class scintilla and put our sizer in its place
-    wxSizer *mainSizer = m_hSizer;
+    wxSizer *mainSizer = m_vSizer;
     mainSizer->Detach(m_sci);
 
     m_vertSizer = new wxBoxSizer(wxVERTICAL);

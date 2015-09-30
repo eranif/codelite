@@ -43,7 +43,7 @@ protected:
     bool m_autoAppear;
     bool m_autoAppearErrors;
     bool m_errorsFirstLine;
-    wxBoxSizer* m_hSizer;
+    wxBoxSizer* m_vSizer;
     ThemeHandlerHelper* m_themeHelper;
 
     static void DefineMarker(wxStyledTextCtrl* sci, int marker, int markerType, wxColor fore, wxColor back);

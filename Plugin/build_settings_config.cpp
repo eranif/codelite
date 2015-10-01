@@ -35,6 +35,7 @@
 #include <wx/sstream.h>
 #include <globals.h>
 #include "ICompilerLocator.h"
+#include <algorithm>
 
 BuildSettingsConfig::BuildSettingsConfig()
 {

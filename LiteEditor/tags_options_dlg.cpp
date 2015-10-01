@@ -41,6 +41,7 @@
 #include <compiler.h>
 #include <ICompilerLocator.h>
 #include <wx/msgdlg.h>
+#include "clSingleChoiceDialog.h"
 
 //---------------------------------------------------------
 
@@ -124,10 +125,7 @@ TagsOptionsDlg::TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data)
     }
 }
 
-TagsOptionsDlg::~TagsOptionsDlg()
-{
-    
-}
+TagsOptionsDlg::~TagsOptionsDlg() {}
 
 void TagsOptionsDlg::OnButtonOK(wxCommandEvent& event)
 {
@@ -234,8 +232,7 @@ void TagsOptionsDlg::Parse()
 
     // Clear the PreProcessor table
     PPTable::Instance()->Clear();
-    for(size_t i = 0; i < fullpathsArr.size(); i++)
-        PPScan(fullpathsArr.Item(i), true);
+    for(size_t i = 0; i < fullpathsArr.size(); i++) PPScan(fullpathsArr.Item(i), true);
 
     // Open an editor and print out the results
     IEditor* editor = PluginManager::Get()->NewEditor();
@@ -286,15 +283,9 @@ void TagsOptionsDlg::OnAddSearchPath(wxCommandEvent& event)
     }
 }
 
-void TagsOptionsDlg::OnAutoShowWordAssitUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkWordAssist->IsChecked());
-}
+void TagsOptionsDlg::OnAutoShowWordAssitUI(wxUpdateUIEvent& event) { event.Enable(m_checkWordAssist->IsChecked()); }
 
-void TagsOptionsDlg::OnClangCCEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxEnableClangCC->IsChecked());
-}
+void TagsOptionsDlg::OnClangCCEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxEnableClangCC->IsChecked()); }
 
 void TagsOptionsDlg::OnClearClangCache(wxCommandEvent& event)
 {
@@ -343,17 +334,36 @@ void TagsOptionsDlg::OnSuggestCtags(wxCommandEvent& event)
 
 void TagsOptionsDlg::DoSuggest(wxTextCtrl* textCtrl)
 {
-#ifdef __WXMSW__
-    // Use MinGW compiler for Windows by default
-    CompilerPtr comp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_MINGW);
-#else
-    // Otherwise, use GCC
-    CompilerPtr comp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_GCC);
-#endif
-    wxArrayString paths;
-    if(comp) {
-        paths = comp->GetDefaultIncludePaths();
+    CompilerPtrVec_t allCompilers = BuildSettingsConfigST::Get()->GetAllCompilers();
+
+    // We only support auto retrieval of compilers from the GCC family
+    wxArrayString compilerNames;
+    std::for_each(allCompilers.begin(), allCompilers.end(), [&](CompilerPtr c) {
+        if(c->GetCompilerFamily() == COMPILER_FAMILY_CLANG || c->GetCompilerFamily() == COMPILER_FAMILY_MINGW ||
+           c->GetCompilerFamily() == COMPILER_FAMILY_GCC || c->GetCompilerFamily() == COMPILER_FAMILY_CYGWIN) {
+            compilerNames.Add(c->GetName());
+        }
+    });
+
+    wxString selection;
+    if(compilerNames.size() > 1) {
+        // we have more than one compiler defined, ask the user which one to use
+        clSingleChoiceDialog dlg(this, compilerNames, 0);
+        dlg.SetTitle(_("Select the compiler to use:"));
+        
+        if(dlg.ShowModal() != wxID_OK) return;
+        selection = dlg.GetSelection();
+    } else if(compilerNames.size() == 1) {
+        selection = compilerNames.Item(0);
     }
+
+    if(selection.IsEmpty()) return;
+
+    CompilerPtr comp = BuildSettingsConfigST::Get()->GetCompiler(selection);
+    CHECK_PTR_RET(comp);
+
+    wxArrayString paths;
+    paths = comp->GetDefaultIncludePaths();
 
     wxString suggestedPaths;
     for(size_t i = 0; i < paths.GetCount(); i++) {
@@ -375,13 +385,13 @@ void TagsOptionsDlg::OnColouringPropertyValueChanged(wxPropertyGridEvent& event)
 {
     // Enable the local variables colouring feature
     SetFlag(CC_COLOUR_VARS, m_pgPropColourLocalVariables->GetValue().GetBool());
-    
+
     // if any of the types is selected, enable this feature
-    size_t ccColourFlags (0);
+    size_t ccColourFlags(0);
     ccColourFlags = m_pgPropColourWorkspaceSymbols->GetValue().GetInteger();
     m_data.SetCcColourFlags(ccColourFlags);
     SetFlag(CC_COLOUR_WORKSPACE_TAGS, (ccColourFlags > 0));
-    
+
     // Enable pre processor tracking (must come after we set the flags above)
     SetColouringFlag(CC_COLOUR_MACRO_BLOCKS, m_pgPropTrackPreProcessors->GetValue().GetBool());
 }

@@ -34,7 +34,7 @@ CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t
     , m_enableOKButton(false)
 {
     wxArrayString compilers;
-    compilers = BuildSettingsConfigST::Get()->GetAllCompilers();
+    compilers = BuildSettingsConfigST::Get()->GetAllCompilersNames();
     compilers.Insert(SELECT_COMPILER, 0);
     
     wxStringSet_t::const_iterator iter = deletedCompilers.begin();

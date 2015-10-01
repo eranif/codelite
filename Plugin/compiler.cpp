@@ -36,6 +36,7 @@
 #include <wx/tokenzr.h>
 #include "file_logger.h"
 #include "CxxPreProcessor.h"
+#include "asyncprocess.h"
 
 Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
     : m_objectNameIdenticalToFileName(false)
@@ -638,39 +639,18 @@ void Compiler::AddDefaultGnuLinkerOptions()
 wxArrayString Compiler::GetDefaultIncludePaths()
 {
     wxArrayString defaultPaths;
-    if(GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
-        wxString ver = GetGCCVersion();
-        if(ver.IsEmpty()) {
-            return defaultPaths;
-        }
-        
-        const wxArrayString& macros = GetBuiltinMacros();
-        bool is64Bit = macros.Index("_WIN64=1") != wxNOT_FOUND;
-        
-        if(!is64Bit) {
-            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++"));
-            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++/mingw32"));
-            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++/backward"));
-            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include"));
-            defaultPaths.Add(GetIncludePath("include"));
-            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include-fixed"));
-        } else {
-            // for 64 bits, the include paths are a bit different
-            // G:\mingw64\x86_64-w64-mingw32\include\c++
-            // G:\mingw64\x86_64-w64-mingw32\include
-            // G:\mingw64\lib\gcc\x86_64-w64-mingw32\4.9.2\include
-            defaultPaths.Add(GetIncludePath("x86_64-w64-mingw32/include/c++"));
-            defaultPaths.Add(GetIncludePath("x86_64-w64-mingw32/include"));
-            defaultPaths.Add(GetIncludePath("include"));
-            defaultPaths.Add(GetIncludePath("lib/gcc/x86_64-w64-mingw32/" + ver + "/include"));
-            defaultPaths.Add(GetIncludePath("lib/gcc/x86_64-w64-mingw32/" + ver + "/include/c++"));
-            defaultPaths.Add(GetIncludePath("lib/gcc/x86_64-w64-mingw32/" + ver + "/include/c++/x86_64-w64-mingw32"));
-        }
-
-    } else if(GetCompilerFamily() == COMPILER_FAMILY_CLANG || GetCompilerFamily() == COMPILER_FAMILY_GCC) {
-#ifndef __WXMSW__
+    wxArrayString gccCompilers;
+    gccCompilers.Add(COMPILER_FAMILY_MINGW);
+    gccCompilers.Add(COMPILER_FAMILY_CLANG);
+    gccCompilers.Add(COMPILER_FAMILY_GCC);
+    
+    // Only add the cygwin 
+    if(::clIsCygwinEnvironment()) {
+        gccCompilers.Add(COMPILER_FAMILY_CYGWIN);
+    }
+    
+    if(gccCompilers.Index(GetCompilerFamily()) != wxNOT_FOUND) {
         defaultPaths = POSIXGetIncludePaths();
-#endif
     }
     return defaultPaths;
 }
@@ -704,9 +684,19 @@ wxString Compiler::GetIncludePath(const wxString& pathSuffix) const
 wxArrayString Compiler::POSIXGetIncludePaths() const
 {
     wxString command;
+#ifdef __WXMSW__
+    if(::clIsCygwinEnvironment()) {
+        command << GetTool("CXX") << " -v -x c++ /dev/null -fsyntax-only";
+    } else {
+        command << GetTool("CXX") << " -v -x c++ nul -fsyntax-only";
+    }
+#else
     command << GetTool("CXX") << " -v -x c++ /dev/null -fsyntax-only";
-
-    wxString outputStr = ::wxShellExec(command, wxEmptyString);
+#endif
+    
+    wxString outputStr;
+    IProcess::Ptr_t proc(::CreateSyncProcess(command));
+    proc->WaitForTerminate(outputStr);
 
     wxArrayString arr;
     wxArrayString outputArr = ::wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
@@ -731,10 +721,25 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
             // but it is harmless to use it under all OSs
             file.Replace(wxT("(framework directory)"), wxT(""));
             file.Trim().Trim(false);
+            
+            // Fix cygwin paths to use Windows native paths
+#ifdef __WXMSW__
+            if(GetCompilerFamily() == COMPILER_FAMILY_CYGWIN) {
+                const wxString& cygdriveRoot = GetInstallationPath();
+                
+                // For reasons beyond me, /usr/lib is mapped to /lib
+                if(file.StartsWith("/usr/lib")) {
+                    file.Replace("/usr/lib", "/lib");
+                }
+                file.Prepend(cygdriveRoot + "/");
+            }
+#endif
 
             wxFileName includePath(file, "");
             includePath.Normalize();
 
+            
+            
             arr.Add(includePath.GetPath());
         }
     }

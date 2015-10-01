@@ -91,8 +91,15 @@ public:
     /**
      * @brief return list of all compiler names
      */
-    wxArrayString GetAllCompilers() const;
-
+    wxArrayString GetAllCompilersNames() const;
+    
+    /**
+     * @brief return vector with all compilers defined
+     * @param family the compiler family. Leave empty to get list of 
+     * all compilers regardless their family
+     */
+    CompilerPtrVec_t GetAllCompilers(const wxString& family = "") const;
+    
     /**
      * @brief replace the current compilers list with a new one
      */

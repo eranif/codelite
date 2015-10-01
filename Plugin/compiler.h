@@ -31,6 +31,7 @@
 #include <map>
 #include <list>
 #include <wx/arrstr.h>
+#include <vector>
 
 /**
  * \ingroup LiteEditor
@@ -210,4 +211,6 @@ public:
 };
 
 typedef SmartPtr<Compiler> CompilerPtr;
+typedef std::vector<CompilerPtr> CompilerPtrVec_t;
+
 #endif // COMPILER_H

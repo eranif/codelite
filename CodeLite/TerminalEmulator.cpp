@@ -110,7 +110,7 @@ wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& t
 #elif defined(__WXMSW__)
     // Windows
     wxString escapedString = str;
-    command << "cmd /C call title \"Node.js\" && " << escapedString;
+    command << "cmd /C call title \"" << title << "\" && " << escapedString;
     if(waitOnExit) {
         command << " && echo \"\" & pause";
     }

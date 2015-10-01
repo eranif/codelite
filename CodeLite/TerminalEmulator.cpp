@@ -58,14 +58,16 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
 
 #elif defined(__WXGTK__)
     // Test for the common terminals on Linux
-    if(wxFileName::Exists("/usr/bin/gnome-terminal")) {
+    // gnome-terminal, konsole and lxterminal are all starting asychronously
+    // this means that "waitOnExit" has no effect here
+    if(wxFileName::Exists("/usr/bin/gnome-terminal") && !waitOnExit) {
         consoleCommand << "/usr/bin/gnome-terminal -t " << strTitle << " -x "
                        << PrepareCommand(command, strTitle, waitOnExit);
 
-    } else if(wxFileName::Exists("/usr/bin/konsole")) {
+    } else if(wxFileName::Exists("/usr/bin/konsole") && !waitOnExit) {
         consoleCommand << "/usr/bin/konsole -e " << PrepareCommand(command, strTitle, waitOnExit);
 
-    } else if(wxFileName::Exists("/usr/bin/lxterminal")) {
+    } else if(wxFileName::Exists("/usr/bin/lxterminal") && !waitOnExit) {
         consoleCommand << "/usr/bin/lxterminal -T " << strTitle << " -e "
                        << PrepareCommand(command, strTitle, waitOnExit);
 

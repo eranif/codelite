@@ -340,7 +340,9 @@ void TagsOptionsDlg::DoSuggest(wxTextCtrl* textCtrl)
     wxArrayString compilerNames;
     std::for_each(allCompilers.begin(), allCompilers.end(), [&](CompilerPtr c) {
         if(c->GetCompilerFamily() == COMPILER_FAMILY_CLANG || c->GetCompilerFamily() == COMPILER_FAMILY_MINGW ||
-           c->GetCompilerFamily() == COMPILER_FAMILY_GCC || c->GetCompilerFamily() == COMPILER_FAMILY_CYGWIN) {
+           c->GetCompilerFamily() == COMPILER_FAMILY_GCC) {
+            compilerNames.Add(c->GetName());
+        } else if(::clIsCygwinEnvironment() && c->GetCompilerFamily() == COMPILER_FAMILY_CYGWIN) {
             compilerNames.Add(c->GetName());
         }
     });
@@ -350,7 +352,7 @@ void TagsOptionsDlg::DoSuggest(wxTextCtrl* textCtrl)
         // we have more than one compiler defined, ask the user which one to use
         clSingleChoiceDialog dlg(this, compilerNames, 0);
         dlg.SetTitle(_("Select the compiler to use:"));
-        
+
         if(dlg.ShowModal() != wxID_OK) return;
         selection = dlg.GetSelection();
     } else if(compilerNames.size() == 1) {

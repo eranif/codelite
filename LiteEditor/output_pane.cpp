@@ -127,7 +127,7 @@ void OutputPane::CreateGUIControls()
     m_book->AddPage(
         m_showUsageTab, wxGetTranslation(SHOW_USAGE), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")));
 
-    m_outputWind = new ShellTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
+    m_outputWind = new OutputTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
     m_book->AddPage(
         m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));
 

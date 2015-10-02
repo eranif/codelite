@@ -6738,7 +6738,7 @@
         }, {
          "type": "string",
          "m_label": "Style:",
-         "m_value": "wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS"
+         "m_value": "wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS|wxTR_NO_LINES"
         }],
        "m_events": [{
          "m_eventName": "wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT",

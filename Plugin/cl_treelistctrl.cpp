@@ -3352,7 +3352,7 @@ void clTreeListMainWindow::PaintLevel (clTreeListItem *item, wxDC &dc,
                             GetColumn(m_main_column).GetWidth();
         wxDCClipper clipper(dc, x_maincol, y_top, clip_width, 10000);
 
-        if (!HasFlag(wxTR_NO_LINES)) { // connection lines
+        if (!HasFlag(wxTR_NO_LINES) && false) { // connection lines
 
             // draw the horizontal line here
             dc.SetPen(m_dottedPen);
@@ -3382,52 +3382,20 @@ void clTreeListMainWindow::PaintLevel (clTreeListItem *item, wxDC &dc,
                 int xx = x - m_btnWidth2 + MARGIN;
                 int yy = y_mid - m_btnHeight2;
                 dc.SetClippingRegion(xx, yy, m_btnWidth, m_btnHeight);
-                m_imageListButtons->Draw (image, dc, xx, yy, wxIMAGELIST_DRAW_TRANSPARENT);
+                m_imageListButtons->Draw(image, dc, xx, yy, wxIMAGELIST_DRAW_TRANSPARENT);
                 dc.DestroyClippingRegion();
 
             }else if (HasFlag (wxTR_TWIST_BUTTONS)) {
-
-                // draw the twisty button here
-                wxColour buttonColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-                wxColour buttonPenColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
-                dc.SetPen(buttonPenColour);
-                dc.SetBrush(buttonColour);
-                wxPoint button[3];
-                if (item->IsExpanded()) {
-                    button[0].x = x - (m_btnWidth2+1);
-                    button[0].y = y_mid - (m_btnHeight/3);
-                    button[1].x = x + (m_btnWidth2+1);
-                    button[1].y = button[0].y;
-                    button[2].x = x;
-                    button[2].y = button[0].y + (m_btnHeight2+1);
-                }else{
-                    button[0].x = x - (m_btnWidth/3);
-                    button[0].y = y_mid - (m_btnHeight2+1);
-                    button[1].x = button[0].x;
-                    button[1].y = y_mid + (m_btnHeight2+1);
-                    button[2].x = button[0].x + (m_btnWidth2+1);
-                    button[2].y = y_mid;
-                }
-                dc.DrawPolygon(3, button);
-
+                int xx = x - m_btnWidth2 + MARGIN;
+                int yy = y_mid - m_btnHeight2;
+                wxRect btnRect(xx, yy, m_btnWidth, m_btnHeight);
+                
+                wxRendererNative::GetDefault().DrawTreeItemButton(this, dc, btnRect, item->IsExpanded() ? wxCONTROL_EXPANDED : 0);
             }else{ // if (HasFlag(wxTR_HAS_BUTTONS))
 
-                // draw the plus sign here
-#if !wxCHECK_VERSION(2, 7, 0)
-                dc.SetPen(*wxGREY_PEN);
-                dc.SetBrush(*wxWHITE_BRUSH);
-                dc.DrawRectangle (x-m_btnWidth2, y_mid-m_btnHeight2, m_btnWidth, m_btnHeight);
-                dc.SetPen(*wxBLACK_PEN);
-                dc.DrawLine (x-(m_btnWidth2-2), y_mid, x+(m_btnWidth2-1), y_mid);
-                if (!item->IsExpanded()) { // change "-" to "+"
-                    dc.DrawLine (x, y_mid-(m_btnHeight2-2), x, y_mid+(m_btnHeight2-1));
-                }
-#else
                 wxRect rect (x-m_btnWidth2, y_mid-m_btnHeight2, m_btnWidth, m_btnHeight);
                 int flag = item->IsExpanded()? wxCONTROL_EXPANDED: 0;
                 wxRendererNative::GetDefault().DrawTreeItemButton (this, dc, rect, flag);
-#endif
-
             }
 
         }
@@ -3462,7 +3430,7 @@ void clTreeListMainWindow::PaintLevel (clTreeListItem *item, wxDC &dc,
 
             // draw vertical line
             wxDCClipper clipper(dc, x_maincol, y_top, clip_width, 10000);
-            if (!HasFlag (wxTR_NO_LINES)) {
+            if (!HasFlag (wxTR_NO_LINES) && false) {
                 x = item->GetX();
                 dc.DrawLine (x, oldY, x, y2);
                 oldY = y2;

@@ -740,7 +740,7 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_auibar31->AddTool(ID_SORT_LOCALS, _("Sort Items"), wxXmlResource::Get()->LoadBitmap(wxT("sort")), wxNullBitmap, wxITEM_NORMAL, _("Sort Items"), _("Sort Items"), NULL);
     m_auibar31->Realize();
     
-    m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS);
+    m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS|wxTR_NO_LINES);
     
     boxSizer29->Add(m_listTable, 1, wxALL|wxEXPAND, 2);
     

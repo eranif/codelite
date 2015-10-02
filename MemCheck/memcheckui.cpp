@@ -163,10 +163,10 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer221 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer221 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer221);
     
-    m_auibar223 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_VERTICAL);
+    m_auibar223 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar223->SetToolBitmapSize(wxSize(16,16));
     
     boxSizer221->Add(m_auibar223, 0, wxALL|wxEXPAND, 0);

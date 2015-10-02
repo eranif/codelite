@@ -51,13 +51,14 @@ class DbgCmdHandler;
 class DbgCmdCLIHandler;
 class IProcess;
 
-WX_DECLARE_STRING_HASH_MAP(DbgCmdHandler*, HandlersMap);
+
+typedef std::map<wxString, DbgCmdHandler*> HandlersMap_t;
 
 extern const wxEventType wxEVT_GDB_STOP_DEBUGGER;
 
 class DbgGdb : public wxEvtHandler, public IDebugger
 {
-    HandlersMap m_handlers;
+    HandlersMap_t m_handlers;
     long m_debuggeePid;
     ConsoleFinder m_consoleFinder;
     std::vector<BreakpointInfo> m_bpList;

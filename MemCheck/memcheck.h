@@ -14,8 +14,8 @@
 
 #include "memcheckui.h"
 #include "imemcheckprocessor.h"
+#include "TerminalEmulator.h"
 
-class IProcess;
 class AsyncExeCmd;
 class MemCheckOutputView;
 
@@ -55,7 +55,8 @@ public:
      * @brief return true if a test is currently running
      * @return
      */
-    bool IsRunning() const { return m_process != NULL; }
+//    bool IsRunning() const { return m_process != NULL; }
+    bool IsRunning() const { return m_terminal.IsRunning(); }
 
 protected:
     MemCheckIcons16 m_icons16;
@@ -63,7 +64,7 @@ protected:
 
     IMemCheckProcessor* m_memcheckProcessor;
     MemCheckSettings* m_settings;
-    IProcess* m_process;              ///< Test is run as external tool.
+	TerminalEmulator m_terminal;
     MemCheckOutputView* m_outputView; ///< Main plugin UI pane.
 
     void OnWorkspaceLoaded(wxCommandEvent& event);
@@ -110,8 +111,8 @@ protected:
      */
     void CheckProject(const wxString& projectName);
 
-    void OnProcessOutput(clProcessEvent& event);
-    void OnProcessTerminated(clProcessEvent& event);
+    void OnProcessOutput(clCommandEvent& event);
+    void OnProcessTerminated(clCommandEvent& event);
 
     /**
      * @brief Analyse can be made independent of CodeLite and log can be load from file.

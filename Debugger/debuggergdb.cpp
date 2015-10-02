@@ -169,18 +169,32 @@ void DbgGdb::RegisterHandler(const wxString& id, DbgCmdHandler* cmd) { m_handler
 
 DbgCmdHandler* DbgGdb::PopHandler(const wxString& id)
 {
-    HandlersMap::iterator it = m_handlers.find(id);
+    // Check if we got some gaps in the protocol
+    //    long nId;
+    //    id.ToCLong(&nId);
+    //    --nId;
+    //    wxString oldId = wxString::Format(wxT("%08d"), (int)nId);
+
+    HandlersMap_t::iterator it = m_handlers.find(id);
     if(it == m_handlers.end()) {
         return NULL;
     }
+
     DbgCmdHandler* cmd = it->second;
-    m_handlers.erase(it);
+    //    if(it != m_handlers.begin()) {
+    //        --it;
+    //        if(it->first != oldId) {
+    //            CL_WARNING("Request to process handler %s while handler %s is still in the queue!!", id, it->first);
+    //        }
+    //        ++it;
+    //    }
+    m_handlers.erase(id);
     return cmd;
 }
 
 void DbgGdb::EmptyQueue()
 {
-    HandlersMap::iterator iter = m_handlers.begin();
+    HandlersMap_t::iterator iter = m_handlers.begin();
     while(iter != m_handlers.end()) {
         delete iter->second;
         iter++;
@@ -260,6 +274,7 @@ bool DbgGdb::WriteCommand(const wxString& command, DbgCmdHandler* handler)
     cmd << id << command;
 
     if(!ExecuteCmd(cmd)) {
+        CL_WARNING("Failed to send command: %s", cmd);
         return false;
     }
     RegisterHandler(id, handler);
@@ -562,17 +577,20 @@ bool DbgGdb::QueryLocals() { return WriteCommand(wxT("-stack-list-variables 2"),
 
 bool DbgGdb::ExecuteCmd(const wxString& cmd)
 {
+    static wxLongLong commandsCounter = 0;
     if(m_gdbProcess) {
         if(m_info.enableDebugLog) {
-#if DBG_LOG
-            if(gfp.IsOpened()) {
-                gfp.Write(wxString::Format(wxT("DEBUG>>%s\n"), cmd.c_str()));
-                gfp.Flush();
-            }
-#else
-            m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
-#endif
+            CL_DEBUG("DEBUG>>%s", cmd);
+            m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd));
         }
+#ifdef __WXMSW__
+        // Ugly hack to fix bug https://github.com/eranif/codelite/issues/906
+        if(commandsCounter >= 50) {
+            ::wxMilliSleep(1);
+            commandsCounter = 0;
+        }
+#endif
+        ++commandsCounter;
         return m_gdbProcess->Write(cmd);
     }
     return false;
@@ -646,14 +664,8 @@ void DbgGdb::Poke()
             if(curline.IsEmpty() == false && !tmpline.StartsWith(wxT(">"))) {
                 wxString strdebug(wxT("DEBUG>>"));
                 strdebug << curline;
-#if DBG_LOG
-                if(gfp.IsOpened()) {
-                    gfp.Write(strdebug);
-                    gfp.Flush();
-                }
-#else
+                CL_DEBUG(strdebug);
                 m_observer->UpdateAddLine(strdebug);
-#endif
             }
         }
 
@@ -1144,6 +1156,7 @@ bool DbgGdb::EvaluateVariableObject(const wxString& name, int userReason)
 {
     wxString cmd;
     cmd << wxT("-var-evaluate-expression \"") << name << wxT("\"");
+    // CL_DEBUG("GDB>> %s", cmd);
     return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name, userReason));
 }
 
@@ -1235,10 +1248,10 @@ bool DbgGdb::SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat
 bool DbgGdb::UpdateVariableObject(const wxString& name, int userReason)
 {
     // FIXME: this seems to cause a mess in gdb output, disable it for now
-    
-    //wxString cmd;
-    //cmd << wxT("-var-update \"") << name << wxT("\" ");
-    //return WriteCommand(cmd, new DbgVarObjUpdate(m_observer, this, name, userReason));
+
+    // wxString cmd;
+    // cmd << wxT("-var-update \"") << name << wxT("\" ");
+    // return WriteCommand(cmd, new DbgVarObjUpdate(m_observer, this, name, userReason));
     return true;
 }
 

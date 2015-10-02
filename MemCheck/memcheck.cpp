@@ -42,7 +42,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     info.SetAuthor(wxT("pavel.iqx"));
     info.SetName(wxT("MemCheck"));
     info.SetDescription(_("MemCheck plugin detects memory leaks. Uses Valgrind (memcheck tool) as backend."));
-    info.SetVersion(wxT("0.4"));
+    info.SetVersion(wxT("0.5"));
     return info;
 }
 
@@ -51,10 +51,9 @@ extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERS
 MemCheckPlugin::MemCheckPlugin(IManager* manager)
     : IPlugin(manager)
     , m_memcheckProcessor(NULL)
-    , m_process(NULL)
 {
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &MemCheckPlugin::OnProcessTerminated, this);
+    m_terminal.Bind(wxEVT_TERMINAL_COMMAND_EXIT, &MemCheckPlugin::OnProcessTerminated, this);
+    m_terminal.Bind(wxEVT_TERMINAL_COMMAND_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);
     
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin constructor"));
     m_longName = _("Detects memory management problems. Uses Valgrind - memcheck skin.");
@@ -152,7 +151,6 @@ MemCheckPlugin::~MemCheckPlugin()
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin destroyed"));
     wxDELETE(m_memcheckProcessor);
     wxDELETE(m_settings);
-    wxDELETE(m_process);
 }
 
 clToolBar* MemCheckPlugin::CreateToolBar(wxWindow* parent)
@@ -332,9 +330,9 @@ void MemCheckPlugin::UnHookPopupMenu(wxMenu* menu, MenuType type)
 
 void MemCheckPlugin::UnPlug()
 {
-    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &MemCheckPlugin::OnProcessTerminated, this);
-
+    m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_EXIT, &MemCheckPlugin::OnProcessTerminated, this);
+    m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);
+    
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"),
                                    wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(MemCheckPlugin::OnCheckAtiveProject),
@@ -423,7 +421,7 @@ void MemCheckPlugin::OnWorkspaceClosed(wxCommandEvent& event)
 
 bool MemCheckPlugin::IsReady(wxUpdateUIEvent& event)
 {
-    bool ready = !m_mgr->IsBuildInProgress() && m_process == NULL;
+    bool ready = !m_mgr->IsBuildInProgress() && !m_terminal.IsRunning();
     int id = event.GetId();
     if(id == XRCID("memcheck_check_active_project")) {
         ready &= !m_mgr->GetWorkspace()->GetActiveProjectName().IsEmpty();
@@ -482,8 +480,12 @@ void MemCheckPlugin::OnCheckPopupEditor(wxCommandEvent& event)
 
 void MemCheckPlugin::CheckProject(const wxString& projectName)
 {
-    if(m_process)
-        return; // a process is already running
+    if( m_terminal.IsRunning() ) {
+        ::wxMessageBox(_("Another instance is already running. Please stop it before executing another one"),
+                        "CodeLite",
+                         wxICON_WARNING | wxCENTER | wxOK);
+        return;
+    }
 
     wxString errMsg;
     ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
@@ -502,7 +504,9 @@ void MemCheckPlugin::CheckProject(const wxString& projectName)
     m_mgr->AppendOutputTabText(kOutputTab_Output,
                                wxString() << "MemCheck command: " << m_memcheckProcessor->GetExecutionCommand(command)
                                           << "\n");
-    m_process = ::CreateAsyncProcess(this, m_memcheckProcessor->GetExecutionCommand(command));
+
+    wxString cmd = m_memcheckProcessor->GetExecutionCommand(command);
+    m_terminal.ExecuteConsole(cmd, "", true, wxString::Format("MemCheck: %s", projectName));
 }
 
 void MemCheckPlugin::OnImportLog(wxCommandEvent& event)
@@ -545,21 +549,16 @@ void MemCheckPlugin::OnMemCheckUI(wxUpdateUIEvent& event)
 
 void MemCheckPlugin::StopProcess()
 {
-    if(m_process) {
-        wxKill(m_process->GetPid(), wxSIGINT);
-        // m_process->Terminate();
-    }
+    if( m_terminal.IsRunning() ) m_terminal.Terminate();
 }
 
-void MemCheckPlugin::OnProcessOutput(clProcessEvent& event)
+void MemCheckPlugin::OnProcessOutput(clCommandEvent& event)
 {
-    m_mgr->AppendOutputTabText(kOutputTab_Output, event.GetOutput());
+    m_mgr->AppendOutputTabText(kOutputTab_Output, event.GetString());
 }
 
-void MemCheckPlugin::OnProcessTerminated(clProcessEvent& event)
+void MemCheckPlugin::OnProcessTerminated(clCommandEvent& event)
 {
-    wxDELETE(m_process);
-
     m_mgr->AppendOutputTabText(kOutputTab_Output, _("\n-- MemCheck process completed\n"));
     wxWindowDisabler disableAll;
     wxBusyInfo wait(wxT(BUSY_MESSAGE));
@@ -576,4 +575,7 @@ void MemCheckPlugin::OnStopProcess(wxCommandEvent& event)
     StopProcess();
 }
 
-void MemCheckPlugin::OnStopProcessUI(wxUpdateUIEvent& event) { event.Enable(IsRunning()); }
+void MemCheckPlugin::OnStopProcessUI(wxUpdateUIEvent& event)
+{
+    event.Enable(IsRunning());
+}

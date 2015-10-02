@@ -585,8 +585,8 @@ bool DbgGdb::ExecuteCmd(const wxString& cmd)
         }
 #ifdef __WXMSW__
         // Ugly hack to fix bug https://github.com/eranif/codelite/issues/906
-        if(commandsCounter >= 50) {
-            ::wxMilliSleep(1);
+        if(commandsCounter >= 10) {
+            ::wxMilliSleep(2);
             commandsCounter = 0;
         }
 #endif

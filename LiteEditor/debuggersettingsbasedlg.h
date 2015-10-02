@@ -260,6 +260,10 @@ public:
 
 class LocalsTableBase : public wxPanel
 {
+public:
+    enum {
+        ID_SORT_LOCALS = 7334,
+    };
 protected:
     wxAuiToolBar* m_auibar31;
     clTreeListCtrl* m_listTable;
@@ -271,6 +275,7 @@ protected:
     virtual void OnNewWatchUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDeleteWatch(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteWatchUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSortItems(wxCommandEvent& event) { event.Skip(); }
     virtual void OnListEditLabelBegin(wxTreeEvent& event) { event.Skip(); }
     virtual void OnListEditLabelEnd(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemRightClick(wxTreeEvent& event) { event.Skip(); }

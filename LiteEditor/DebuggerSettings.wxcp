@@ -1,14 +1,14 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 65,
+  "m_objCounter": 67,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafter6v4fW1InitBitmapResources",
   "m_bitmapsFile": "DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp",
   "m_GenerateCodeTypes": 6370085,
   "m_outputFileName": "debuggersettingsbasedlg",
-  "m_firstWindowId": 1000,
-  "m_useEnum": false,
+  "m_firstWindowId": 7333,
+  "m_useEnum": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -6496,26 +6496,6 @@
           }],
          "m_children": []
         }, {
-         "m_type": 4504,
-         "proportion": 0,
-         "border": 5,
-         "gbSpan": "1,1",
-         "gbPosition": "0,0",
-         "m_styles": [],
-         "m_sizerFlags": [],
-         "m_properties": [{
-           "type": "string",
-           "m_label": "Name:",
-           "m_value": "m_tbSeparator41"
-          }, {
-           "type": "choice",
-           "m_label": "Kind:",
-           "m_selection": 0,
-           "m_options": ["separator"]
-          }],
-         "m_events": [],
-         "m_children": []
-        }, {
          "m_type": 4462,
          "proportion": 0,
          "border": 5,
@@ -6639,6 +6619,61 @@
            "m_noBody": false
           }],
          "m_children": []
+        }, {
+         "m_type": 4462,
+         "proportion": 0,
+         "border": 5,
+         "gbSpan": "1,1",
+         "gbPosition": "0,0",
+         "m_styles": [],
+         "m_sizerFlags": [],
+         "m_properties": [{
+           "type": "winid",
+           "m_label": "ID:",
+           "m_winid": "ID_SORT_LOCALS"
+          }, {
+           "type": "string",
+           "m_label": "Name:",
+           "m_value": "m_toolbarItemSort"
+          }, {
+           "type": "string",
+           "m_label": "Label:",
+           "m_value": "Sort Items"
+          }, {
+           "type": "multi-string",
+           "m_label": "Tooltip:",
+           "m_value": "Sort Items"
+          }, {
+           "type": "string",
+           "m_label": "Help String:",
+           "m_value": "Sort Items"
+          }, {
+           "type": "bitmapPicker",
+           "m_label": "Bitmap File:",
+           "m_path": "res/sort.png"
+          }, {
+           "type": "filePicker",
+           "m_label": "Disabled-Bitmap File",
+           "m_path": ""
+          }, {
+           "type": "choice",
+           "m_label": "Kind:",
+           "m_selection": 0,
+           "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
+          }, {
+           "type": "bool",
+           "m_label": "Construct the Dropdown Menu:",
+           "m_value": true
+          }],
+         "m_events": [{
+           "m_eventName": "wxEVT_COMMAND_TOOL_CLICKED",
+           "m_eventClass": "wxCommandEvent",
+           "m_eventHandler": "wxCommandEventHandler",
+           "m_functionNameAndSignature": "OnSortItems(wxCommandEvent& event)",
+           "m_description": "Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+           "m_noBody": false
+          }],
+         "m_children": []
         }]
       }, {
        "m_type": 4422,
@@ -6703,7 +6738,7 @@
         }, {
          "type": "string",
          "m_label": "Style:",
-         "m_value": "wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS"
+         "m_value": "wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS"
         }],
        "m_events": [{
          "m_eventName": "wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT",

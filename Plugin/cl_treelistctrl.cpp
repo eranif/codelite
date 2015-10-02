@@ -3162,7 +3162,8 @@ void clTreeListMainWindow::PaintItem (clTreeListItem *item, wxDC& dc) {
     int off_h = HasFlag(wxTR_ROW_LINES) ? 1 : 0;
     int off_w = HasFlag(wxTR_COLUMN_LINES) ? 1 : 0;
     wxDCClipper clipper (dc, 0, item->GetY(), total_w, total_h); // only within line
-
+    wxPen darkPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+    
     int text_w = 0, text_h = 0;
     dc.GetTextExtent( item->GetText(GetMainColumn()).size() > 0
             ? item->GetText(GetMainColumn())
@@ -3182,18 +3183,12 @@ void clTreeListMainWindow::PaintItem (clTreeListItem *item, wxDC& dc) {
         if (item->IsSelected()) {
             if (! m_isDragging && m_hasFocus) {
                 dc.SetBrush (*m_hilightBrush);
-#ifndef __WXMAC__ // don't draw rect outline if we already have the background color
-                dc.SetPen (*wxBLACK_PEN);
-#endif // !__WXMAC__
             }else{
                 dc.SetBrush (*m_hilightUnfocusedBrush);
-#ifndef __WXMAC__ // don't draw rect outline if we already have the background color
-                dc.SetPen (*wxTRANSPARENT_PEN);
-#endif // !__WXMAC__
             }
             dc.SetTextForeground (colTextHilight);
         }else if (item == m_curItem) {
-            dc.SetPen (m_hasFocus? *wxBLACK_PEN: *wxTRANSPARENT_PEN);
+            dc.SetPen (m_hasFocus? darkPen: *wxTRANSPARENT_PEN);
         }else{
             dc.SetTextForeground (colText);
         }
@@ -3254,18 +3249,12 @@ void clTreeListMainWindow::PaintItem (clTreeListItem *item, wxDC& dc) {
                 if (item->IsSelected()) {
                     if (!m_isDragging && m_hasFocus) {
                         dc.SetBrush (*m_hilightBrush);
-#ifndef __WXMAC__ // don't draw rect outline if we already have the background color
-                        dc.SetPen (*wxBLACK_PEN);
-#endif // !__WXMAC__
                     }else{
                         dc.SetBrush (*m_hilightUnfocusedBrush);
-#ifndef __WXMAC__ // don't draw rect outline if we already have the background color
-                      dc.SetPen (*wxTRANSPARENT_PEN);
-#endif // !__WXMAC__
                     }
                     dc.SetTextForeground (colTextHilight);
                 }else if (item == m_curItem) {
-                    dc.SetPen (m_hasFocus? *wxBLACK_PEN: *wxTRANSPARENT_PEN);
+                    dc.SetPen (m_hasFocus? darkPen: *wxTRANSPARENT_PEN);
                 }else{
                     dc.SetTextForeground (colText);
                 }
@@ -3399,8 +3388,10 @@ void clTreeListMainWindow::PaintLevel (clTreeListItem *item, wxDC &dc,
             }else if (HasFlag (wxTR_TWIST_BUTTONS)) {
 
                 // draw the twisty button here
-                dc.SetPen(*wxBLACK_PEN);
-                dc.SetBrush(*m_hilightBrush);
+                wxColour buttonColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+                wxColour buttonPenColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
+                dc.SetPen(buttonPenColour);
+                dc.SetBrush(buttonColour);
                 wxPoint button[3];
                 if (item->IsExpanded()) {
                     button[0].x = x - (m_btnWidth2+1);

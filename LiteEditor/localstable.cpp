@@ -36,6 +36,7 @@
 #include "frame.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
+#include <algorithm>
 
 BEGIN_EVENT_TABLE(LocalsTable, DebuggerTreeListCtrlBase)
 EVT_MENU(XRCID("Change_Value"), LocalsTable::OnEditValue)
@@ -45,6 +46,7 @@ END_EVENT_TABLE()
 LocalsTable::LocalsTable(wxWindow* parent)
     : DebuggerTreeListCtrlBase(parent, wxID_ANY, false)
     , m_arrayAsCharPtr(false)
+    , m_sortAsc(true)
 {
     m_listTable->AddColumn(_("Name"), 150);
     m_listTable->AddColumn(_("Value"), 500);
@@ -263,8 +265,17 @@ void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved
     }
 }
 
-void LocalsTable::DoUpdateLocals(const LocalVariables& locals, size_t kind)
+void LocalsTable::DoUpdateLocals(const LocalVariables& localsUnSorted, size_t kind)
 {
+    LocalVariables locals = localsUnSorted;
+    std::sort(locals.begin(), locals.end(), [&](const LocalVariable& v1, const LocalVariable& v2) {
+        if(m_sortAsc) {
+            return v1.name.Lower().CmpNoCase(v2.name.Lower()) < 0;
+        } else {
+            return v1.name.Lower().CmpNoCase(v2.name.Lower()) >= 0;
+        }
+    });
+
     wxTreeItemId root = m_listTable->GetRootItem();
     if(!root.IsOk()) return;
 
@@ -466,4 +477,11 @@ void LocalsTable::OnStackSelected(clCommandEvent& event)
     if(dbgr && dbgr->IsRunning() && ManagerST::Get()->IsDebuggerViewVisible(DebuggerPane::LOCALS)) {
         dbgr->QueryLocals();
     }
+}
+
+void LocalsTable::OnSortItems(wxCommandEvent& event)
+{
+    // Change the sorting type and refresh the view
+    m_sortAsc = !m_sortAsc;
+    OnRefresh(event);
 }

@@ -88,6 +88,7 @@ private:
     bool m_withButtons;
 
 protected:
+    virtual void OnSortItems(wxCommandEvent& event);
     virtual void OnRefreshUI(wxUpdateUIEvent& event);
     virtual void OnDeleteWatch(wxCommandEvent& event);
     virtual void OnDeleteWatchUI(wxUpdateUIEvent& event);

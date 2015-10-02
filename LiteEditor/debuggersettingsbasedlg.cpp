@@ -55,10 +55,14 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     
     SetName(wxT("DebuggerSettingsBaseDlg"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -105,10 +109,9 @@ DbgPageStartupCmdsBase::DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id, 
     
     SetName(wxT("DbgPageStartupCmdsBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
 }
 
 DbgPageStartupCmdsBase::~DbgPageStartupCmdsBase()
@@ -161,10 +164,9 @@ PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id
     
     SetName(wxT("PreDefinedTypesPageBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_listCtrl1->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(PreDefinedTypesPageBase::OnItemActivated), NULL, this);
     m_listCtrl1->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(PreDefinedTypesPageBase::OnItemDeselected), NULL, this);
@@ -250,10 +252,14 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
     
     SetName(wxT("NewPreDefinedSetBaseDlg"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -411,10 +417,9 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     
     SetName(wxT("DbgPageGeneralBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPageGeneralBase::OnBrowse), NULL, this);
     
@@ -512,10 +517,9 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     SetName(wxT("DbgPageMiscBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_checkBoxDebugAssert->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(DbgPageMiscBase::OnDebugAssert), NULL, this);
     m_checkBoxDebugAssert->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL, this);
@@ -578,10 +582,9 @@ DbgPagePreDefTypesBase::DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id, 
     
     SetName(wxT("DbgPagePreDefTypesBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_buttonNewSet->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnNewSet), NULL, this);
     m_buttonDeleteSet->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnDeleteSet), NULL, this);
@@ -696,10 +699,9 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     
     SetName(wxT("DebuggerDisassemblyTabBase"));
     SetSizeHints(500,300);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_stc->Connect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(DebuggerDisassemblyTabBase::OnMarginClicked), NULL, this);
     
@@ -731,23 +733,22 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     m_auibar31->AddTool(wxID_REFRESH, _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("restart")), wxNullBitmap, wxITEM_NORMAL, _("Refresh"), _("Refresh"), NULL);
     
-    m_auibar31->AddSeparator();
-    
     m_auibar31->AddTool(wxID_NEW, _("New..."), wxXmlResource::Get()->LoadBitmap(wxT("add")), wxNullBitmap, wxITEM_NORMAL, _("New..."), _("New..."), NULL);
     
     m_auibar31->AddTool(wxID_DELETE, _("Delete"), wxXmlResource::Get()->LoadBitmap(wxT("delete-line")), wxNullBitmap, wxITEM_NORMAL, _("Delete"), _("Delete"), NULL);
+    
+    m_auibar31->AddTool(ID_SORT_LOCALS, _("Sort Items"), wxXmlResource::Get()->LoadBitmap(wxT("sort")), wxNullBitmap, wxITEM_NORMAL, _("Sort Items"), _("Sort Items"), NULL);
     m_auibar31->Realize();
     
-    m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS);
+    m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS);
     
     boxSizer29->Add(m_listTable, 1, wxALL|wxEXPAND, 2);
     
     SetName(wxT("LocalsTableBase"));
     SetSizeHints(500,300);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(wxID_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnRefresh), NULL, this);
     this->Connect(wxID_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnRefreshUI), NULL, this);
@@ -755,6 +756,7 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     this->Connect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnNewWatchUI), NULL, this);
     this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnDeleteWatch), NULL, this);
     this->Connect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnDeleteWatchUI), NULL, this);
+    this->Connect(ID_SORT_LOCALS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnSortItems), NULL, this);
     m_listTable->Connect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin), NULL, this);
     m_listTable->Connect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd), NULL, this);
     m_listTable->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(LocalsTableBase::OnItemRightClick), NULL, this);
@@ -771,6 +773,7 @@ LocalsTableBase::~LocalsTableBase()
     this->Disconnect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnNewWatchUI), NULL, this);
     this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnDeleteWatch), NULL, this);
     this->Disconnect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnDeleteWatchUI), NULL, this);
+    this->Disconnect(ID_SORT_LOCALS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnSortItems), NULL, this);
     m_listTable->Disconnect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin), NULL, this);
     m_listTable->Disconnect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd), NULL, this);
     m_listTable->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(LocalsTableBase::OnItemRightClick), NULL, this);

@@ -1683,6 +1683,7 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
 
 #if defined(__WXMAC__)
     FileUtils::OSXOpenDebuggerTerminalAndGetTTY(::wxGetCwd(), tty, pid);
+    realPts = tty;
 
 #elif defined(__WXMSW__)
     // Windows

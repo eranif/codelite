@@ -506,7 +506,7 @@ void WorkspaceTab::DoGoHome()
         wxTreeItemId sel = arr.Item(0);
         if(sel.IsOk() && m_fileView->ItemHasChildren(sel)) m_fileView->Expand(sel);
     }
-    ManagerST::Get()->ShowWorkspacePane(m_caption);
+    //ManagerST::Get()->ShowWorkspacePane(m_caption);
 }
 
 void WorkspaceTab::DoConfigChanged()

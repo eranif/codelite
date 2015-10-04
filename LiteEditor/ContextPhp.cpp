@@ -354,7 +354,9 @@ bool ContextPhp::IsAtLineComment() const
 
 bool ContextPhp::IsStringTriggerCodeComplete(const wxString& str) const
 {
-    int style = GetCtrl().GetStyleAt(GetCtrl().GetCurrentPos());
+    int curpos = GetCtrl().GetCurrentPos();
+    //curpos = GetCtrl().PositionBefore(curpos);
+    int style = GetCtrl().GetStyleAt(curpos);
     if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX)) {
         // When in JS section, trigger CC if str is a dot
         return str == ".";

@@ -161,6 +161,11 @@ void PHPSourceFile::Parse(int exitDepth)
             // Handle include files
             m_lookBackTokens.clear();
             break;
+        case kPHP_T_FOREACH:
+            // found "foreach" statement
+            OnForEach();
+            m_lookBackTokens.clear();
+            break;
         case kPHP_T_USE:
             // Found outer 'use' statement - construct the alias table
             if(Class()) {
@@ -1178,5 +1183,45 @@ void PHPSourceFile::ReadImplements(wxArrayString& impls)
             UngetToken(token);
             return;
         }
+    }
+}
+
+/*foreach (array_expression as $value)
+    statement
+foreach (array_expression as $key => $value)
+    statement*/
+void PHPSourceFile::OnForEach()
+{
+    // read until the "as" keyword
+    phpLexerToken token;
+    if(!ReadUntilFound(kPHP_T_AS, token)) return;
+
+    // Found the "as" key word and consumed it
+    if(!NextToken(token)) return;
+    
+    phpLexerToken peekToken;
+    if(!NextToken(peekToken)) return;
+    
+    // Ensure we got a variable
+    if(token.type != kPHP_T_VARIABLE) return;
+    
+    // Check to see if we are using the syntax of:
+    // foreach (array_expression as $key => $value)
+    if(peekToken.type == kPHP_T_DOUBLE_ARROW) {
+        if(!NextToken(token) || token.type != kPHP_T_VARIABLE) {
+            return;
+        }
+    } else {
+        UngetToken(peekToken);
+    }
+    
+    // Create a new variable
+    PHPEntityBase::Ptr_t var(new PHPEntityVariable());
+    var->SetFullName(token.text);
+    var->SetFilename(m_filename.GetFullPath());
+    var->SetLine(token.lineNumber);
+    
+    if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
+        CurrentScope()->AddChild(var);
     }
 }

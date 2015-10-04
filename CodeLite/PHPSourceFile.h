@@ -93,6 +93,11 @@ protected:
     void OnUseTrait();
     
     /**
+     * @brief found 'foreach' statement
+     */
+    void OnForEach();
+    
+    /**
      * @brief 'namespace' keyword found
      */
     void OnNamespace();

@@ -9,6 +9,7 @@
 #include "PHPSourceFile.h"
 #include "navigationmanager.h"
 #include "globals.h"
+#include "fileutils.h"
 
 #ifndef __WXMSW__
 #include <wx/imaglist.h>
@@ -134,25 +135,55 @@ void PHPOutlineTree::BuildTree(wxTreeItemId parentTreeItem, PHPEntityBase::Ptr_t
     }
 }
 
-void PHPOutlineTree::ItemSelected(const wxTreeItemId& item)
+void PHPOutlineTree::ItemSelected(const wxTreeItemId& item, bool focusEditor)
 {
     QItemData* itemData = dynamic_cast<QItemData*>(GetItemData(item));
     CHECK_PTR_RET(itemData);
 
     IEditor* editor = m_manager->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     // Define the pattern to search
-    
+
     editor->FindAndSelect(itemData->m_entry->GetShortName(),
                           itemData->m_entry->GetShortName(),
                           editor->PosFromLine(itemData->m_entry->GetLine()),
                           NavMgr::Get());
     // set the focus to the editor
-    CallAfter( &PHPOutlineTree::SetEditorActive, editor);
+    if(focusEditor) {
+        CallAfter(&PHPOutlineTree::SetEditorActive, editor);
+    }
 }
 
-void PHPOutlineTree::SetEditorActive(IEditor* editor)
+void PHPOutlineTree::SetEditorActive(IEditor* editor) { editor->SetActive(); }
+
+bool PHPOutlineTree::Select(const wxString& pattern)
 {
-    editor->SetActive();
+    wxTreeItemId item = DoFind(pattern, GetRootItem());
+    if(item.IsOk()) {
+        // select this item
+        EnsureVisible(item);
+        SelectItem(item);
+        return true;
+    }
+    return false;
+}
+
+wxTreeItemId PHPOutlineTree::DoFind(const wxString& pattern, const wxTreeItemId& parent)
+{
+    if((GetRootItem() != parent) && FileUtils::FuzzyMatch(pattern, GetItemText(parent))) {
+        return parent;
+    }
+    if(ItemHasChildren(parent)) {
+        wxTreeItemIdValue cookie;
+        wxTreeItemId child = GetFirstChild(parent, cookie);
+        while(child.IsOk()) {
+            wxTreeItemId match = DoFind(pattern, child);
+            if(match.IsOk()) {
+                return match;
+            }
+            child = GetNextChild(parent, cookie);
+        }
+    }
+    return wxTreeItemId();
 }

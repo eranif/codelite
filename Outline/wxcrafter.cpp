@@ -68,14 +68,14 @@ OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const 
     
     SetName(wxT("OutlineTabBaseClass"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutlineTabBaseClass::OnSearchSymbol), NULL, this);
     m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutlineTabBaseClass::OnSearchEnter), NULL, this);
     m_treeCtrlPhp->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(OutlineTabBaseClass::OnPhpItemSelected), NULL, this);
+    m_treeCtrlPhp->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(OutlineTabBaseClass::OnPhpItemActivated), NULL, this);
     
 }
 
@@ -84,5 +84,6 @@ OutlineTabBaseClass::~OutlineTabBaseClass()
     m_textCtrlSearch->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutlineTabBaseClass::OnSearchSymbol), NULL, this);
     m_textCtrlSearch->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutlineTabBaseClass::OnSearchEnter), NULL, this);
     m_treeCtrlPhp->Disconnect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(OutlineTabBaseClass::OnPhpItemSelected), NULL, this);
+    m_treeCtrlPhp->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(OutlineTabBaseClass::OnPhpItemActivated), NULL, this);
     
 }

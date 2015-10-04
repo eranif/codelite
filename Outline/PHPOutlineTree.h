@@ -15,7 +15,8 @@ protected:
     void BuildTree(wxTreeItemId parentTreeItem, PHPEntityBase::Ptr_t entity);
     int GetImageId(PHPEntityBase::Ptr_t entry);
     void SetEditorActive(IEditor* editor);
-    
+    wxTreeItemId DoFind(const wxString& pattern, const wxTreeItemId& parent);
+
 public:
     PHPOutlineTree(wxWindow* parent,
                    wxWindowID id = wxID_ANY,
@@ -29,7 +30,8 @@ public:
     void Clear();
     void SetManager(IManager* manager) { this->m_manager = manager; }
     IManager* GetManager() { return m_manager; }
-    void ItemSelected(const wxTreeItemId& item);
+    void ItemSelected(const wxTreeItemId& item, bool focusEditor);
+    bool Select(const wxString& pattern);
 };
 
 #endif // PHPOUTLINETREE_H

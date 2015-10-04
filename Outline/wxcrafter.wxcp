@@ -589,6 +589,13 @@
                "m_functionNameAndSignature": "OnPhpItemSelected(wxTreeEvent& event)",
                "m_description": "Selection has changed.",
                "m_noBody": false
+              }, {
+               "m_eventName": "wxEVT_COMMAND_TREE_ITEM_ACTIVATED",
+               "m_eventClass": "wxTreeEvent",
+               "m_eventHandler": "wxTreeEventHandler",
+               "m_functionNameAndSignature": "OnPhpItemActivated(wxTreeEvent& event)",
+               "m_description": "An item has been activated (e.g. double clicked).",
+               "m_noBody": false
               }],
              "m_children": []
             }]

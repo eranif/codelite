@@ -36,6 +36,7 @@ class svSymbolTree;
 class OutlineTab : public OutlineTabBaseClass
 {
 protected:
+    virtual void OnPhpItemActivated(wxTreeEvent& event);
     virtual void OnPhpItemSelected(wxTreeEvent& event);
     IManager* m_mgr;
     svSymbolTree* m_tree;

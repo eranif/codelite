@@ -106,18 +106,33 @@ OutlineTab::~OutlineTab()
 void OutlineTab::OnSearchSymbol(wxCommandEvent& event)
 {
     event.Skip();
-    wxString name = m_textCtrlSearch->GetValue();
-    name.Trim().Trim(false);
-    m_tree->SelectItemByName(name);
+    if(m_simpleBook->GetSelection() == OUTLINE_TAB_PHP) {
+        // PHP
+        m_treeCtrlPhp->Select(m_textCtrlSearch->GetValue());
+
+    } else {
+        // C++
+        wxString name = m_textCtrlSearch->GetValue();
+        name.Trim().Trim(false);
+        m_tree->SelectItemByName(name);
+    }
 }
 
 void OutlineTab::OnSearchEnter(wxCommandEvent& event)
 {
     event.Skip();
-    wxString name = m_textCtrlSearch->GetValue();
-    name.Trim().Trim(false);
-    if(name.IsEmpty() == false) {
-        m_tree->ActivateSelectedItem();
+    if(m_simpleBook->GetSelection() == OUTLINE_TAB_PHP) {
+        wxTreeItemId selection = m_treeCtrlPhp->GetSelection();
+        if(selection.IsOk()) {
+            m_treeCtrlPhp->ItemSelected(selection, true);
+        }
+        
+    } else {
+        wxString name = m_textCtrlSearch->GetValue();
+        name.Trim().Trim(false);
+        if(name.IsEmpty() == false) {
+            m_tree->ActivateSelectedItem();
+        }
     }
 }
 
@@ -127,7 +142,7 @@ void OutlineTab::OnActiveEditorChanged(wxCommandEvent& e)
     IEditor* editor = m_mgr->GetActiveEditor();
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
     LexerConf::Ptr_t cxxLexer = ColoursAndFontsManager::Get().GetLexer("c++");
-    
+
     // Use the lexer to determine if we can show outline
     if(editor && cxxLexer && FileUtils::WildMatch(cxxLexer->GetFileSpec(), editor->GetFileName())) {
         m_tree->BuildTree(editor->GetFileName());
@@ -180,7 +195,7 @@ void OutlineTab::OnFilesTagged(wxCommandEvent& e)
     e.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor) {
-        
+
         wxWindow* oldFocusedWindow = wxWindow::FindFocus();
         m_tree->BuildTree(editor->GetFileName());
         wxWindow* focusedWindow = wxWindow::FindFocus();
@@ -280,7 +295,7 @@ void OutlineTab::OnOpenFile(wxCommandEvent& e)
 void OutlineTab::OnPhpItemSelected(wxTreeEvent& event)
 {
     event.Skip();
-    m_treeCtrlPhp->ItemSelected(event.GetItem());
+    m_treeCtrlPhp->ItemSelected(event.GetItem(), false);
 }
 
 void OutlineTab::OnEditorSaved(clCommandEvent& event)
@@ -290,4 +305,9 @@ void OutlineTab::OnEditorSaved(clCommandEvent& event)
     if(FileExtManager::IsPHPFile(filename)) {
         m_treeCtrlPhp->BuildTree(filename);
     }
+}
+void OutlineTab::OnPhpItemActivated(wxTreeEvent& event)
+{
+    event.Skip();
+    m_treeCtrlPhp->ItemSelected(event.GetItem(), true);
 }

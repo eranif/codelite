@@ -40,6 +40,7 @@ protected:
     virtual void OnSearchSymbol(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSearchEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPhpItemSelected(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnPhpItemActivated(wxTreeEvent& event) { event.Skip(); }
 
 public:
     wxTextCtrl* GetTextCtrlSearch() { return m_textCtrlSearch; }

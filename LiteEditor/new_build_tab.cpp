@@ -109,7 +109,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     m_view->Bind(wxEVT_STC_STYLENEEDED, &NewBuildTab::OnStyleNeeded, this);
     m_view->Bind(wxEVT_STC_HOTSPOT_CLICK, &NewBuildTab::OnHotspotClicked, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &NewBuildTab::OnThemeChanged, this);
-    
+
     bs->Add(m_view, 1, wxEXPAND | wxALL);
 
     BuildTabTopPanel* toolbox = new BuildTabTopPanel(this);
@@ -755,17 +755,7 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine)
                 }
 
                 if(editor) {
-                    // We already got compiler markers set here, just goto the line
-                    clMainFrame::Get()->GetMainBook()->SelectPage(editor);
-
-                    // Convert the compiler column to scintilla's position
-                    if(bli->GetColumn() != wxNOT_FOUND) {
-                        editor->CenterLine(bli->GetLineNumber(), bli->GetColumn() - 1);
-                    } else {
-                        editor->CenterLine(bli->GetLineNumber());
-                    }
-
-                    SetActive(editor);
+                    DoCentreErrorLine(bli, editor);
                     return true;
                 }
             }
@@ -789,14 +779,7 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine)
                     lineNumber--;
                 }
 
-                // We already got compiler markers set here, just goto the line
-                clMainFrame::Get()->GetMainBook()->SelectPage(editor);
-                if(bli->GetColumn() != wxNOT_FOUND) {
-                    editor->CenterLine(bli->GetLineNumber(), bli->GetColumn() - 1);
-                } else {
-                    editor->CenterLine(bli->GetLineNumber());
-                }
-                SetActive(editor);
+                DoCentreErrorLine(bli, editor);
                 return true;
             }
         }
@@ -911,7 +894,7 @@ void NewBuildTab::InitView(const wxString& theme)
     m_view->EmptyUndoBuffer();
     m_view->HideSelection(true);
     m_view->SetEditable(false);
-    
+
     StyleProperty::Map_t& props = lexText->GetLexerProperties();
     const StyleProperty& defaultStyle = lexText->GetProperty(0);
 
@@ -952,6 +935,34 @@ void NewBuildTab::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip();
     InitView();
+}
+
+void NewBuildTab::DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor)
+{
+    // We already got compiler markers set here, just goto the line
+    clMainFrame::Get()->GetMainBook()->SelectPage(editor);
+    CHECK_PTR_RET(bli);
+
+    // Convert the compiler column to scintilla's position
+    if(bli->GetColumn() != wxNOT_FOUND) {
+        editor->CenterLine(bli->GetLineNumber(), bli->GetColumn() - 1);
+    } else {
+        editor->CenterLine(bli->GetLineNumber());
+    }
+    
+    // If the line in the build error tab is not visible, ensure it is
+    int firstVisibleLine = m_view->GetFirstVisibleLine();
+    int linesOnScreen = m_view->LinesOnScreen();
+    
+    // Our line is not visible
+    firstVisibleLine = bli->GetLineInBuildTab() - (linesOnScreen / 2);
+    if(firstVisibleLine < 0) {
+        firstVisibleLine = 0;
+    }
+    m_view->EnsureVisible(firstVisibleLine);
+    m_view->SetFirstVisibleLine(firstVisibleLine);
+
+    SetActive(editor);
 }
 
 ////////////////////////////////////////////

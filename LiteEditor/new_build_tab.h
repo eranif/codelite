@@ -187,6 +187,7 @@ protected:
     void DoToggleWindow();
     bool DoSelectAndOpen(int buildViewLine);
     wxFont DoGetFont() const;
+    void DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor);
 
 public:
     NewBuildTab(wxWindow* parent);

@@ -559,6 +559,10 @@ PHPProject::Ptr_t PHPWorkspace::GetProjectForFile(const wxFileName& filename) co
 
 bool PHPWorkspace::AddProject(const wxFileName& projectFile, wxString& errmsg)
 {
+    if(!CanCreateProjectAtPath(projectFile, true)) {
+        return false;
+    }
+        
     PHPProject::Ptr_t proj(new PHPProject());
     proj->Load(projectFile);
 

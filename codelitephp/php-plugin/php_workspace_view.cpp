@@ -1409,7 +1409,9 @@ void PHPWorkspaceView::OnAddExistingProject(wxCommandEvent& e)
         wxString projectToAdd = dlg.GetPath();
         wxString errmsg;
         if(!PHPWorkspace::Get()->AddProject(projectToAdd, errmsg)) {
-            ::wxMessageBox(errmsg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+            if(!errmsg.IsEmpty()) {
+                ::wxMessageBox(errmsg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+            }
             return;
         }
         LoadWorkspace();

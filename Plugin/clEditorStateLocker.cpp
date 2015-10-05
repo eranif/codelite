@@ -89,7 +89,7 @@ void clEditorStateLocker::ApplyFolds(wxStyledTextCtrl* ctrl, const clEditorState
         // If we cared enough, we could have saved a fold-level too, and/or the function name +/- the line's
         // displacement within the function. But for now...
         if(ctrl->GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
-            ctrl->ToggleFold(line);
+            ctrl->FoldLine(line, wxSTC_FOLDACTION_CONTRACT);
         }
     }
 }

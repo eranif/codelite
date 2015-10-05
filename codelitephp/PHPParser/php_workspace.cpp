@@ -19,6 +19,7 @@
 #include "php_strings.h"
 #include "php_configuration_data.h"
 #include "clWorkspaceManager.h"
+#include <algorithm>
 
 #ifndef __WXMSW__
 #include <errno.h>

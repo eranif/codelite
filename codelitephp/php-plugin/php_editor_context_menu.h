@@ -46,9 +46,6 @@ protected:
     void OnPopupClicked(wxCommandEvent& event);
 
     // Helpers
-    void DoCommentLine();
-    void DoCommentSelection();
-    void DoUncomment();
     void DoOpenPHPFile();
     void DoGotoBeginningOfScope();
     void DoGotoEndOfScope();

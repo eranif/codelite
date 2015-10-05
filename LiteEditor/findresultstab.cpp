@@ -666,14 +666,11 @@ void FindResultsTab::OnRecentSearches(wxAuiToolBarEvent& e)
     });
 
     menu.AppendSeparator();
-    menu.Append(9000, _("Clear History"));
-#ifdef __WXOSX__
-    int sel = GetPopupMenuSelectionFromUser(menu);
-#else
-    int sel = GetPopupMenuSelectionFromUser(menu, e.GetItemRect().GetTopRight());
-#endif
+    int clearHistory = ::wxNewId();
+    menu.Append(clearHistory, _("Clear History"));
+    int sel = GetPopupMenuSelectionFromUser(menu, e.GetItemRect().GetBottomLeft());
     if(sel == wxID_NONE) return;
-    if(sel == 9000) {
+    if(sel == clearHistory) {
         m_history.Clear();
 
     } else if(entries.count(sel)) {

@@ -15,10 +15,10 @@ class IWorkspace : public wxEvtHandler
 {
 protected:
     wxString m_workspaceType;
-    
+
 public:
     typedef std::list<IWorkspace*> List_t;
-    
+
 public:
     IWorkspace() {}
     virtual ~IWorkspace() {}
@@ -44,11 +44,31 @@ public:
      * @brief is this workspace support the project concept?
      */
     virtual bool IsProjectSupported() const = 0;
-    
+
     /**
      * @brief return the file masking for this workspace
      */
     virtual wxString GetFilesMask() const = 0;
+
+    /**
+     * @brief return the project name of a file.
+     * If the workspace does not support projects, return an empty string
+     * If the we could not match a project for the given filename, return empty string
+     */
+    virtual wxString GetProjectFromFile(const wxFileName& filename) const = 0;
+
+    /**
+     * @brief return a list of files for this workspace
+     * @param files [output] list of files in absolute path
+     */
+    virtual void GetWorkspaceFiles(wxArrayString& files) const = 0;
+    /**
+     * @brief return list of files belonged to the prokect. If the workspace does not support
+     * projects, do not modify 'files'
+     * @param projectName the project name
+     * @param files [output] list of files in absolute path
+     */
+    virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const = 0;
 };
 
 #endif // IWORKSPACE_H

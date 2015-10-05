@@ -452,7 +452,7 @@ void PhpPlugin::OnGetActiveProjectFiles(wxCommandEvent& e)
             wxString activeProjectName = PHPWorkspace::Get()->GetActiveProjectName();
             PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(activeProjectName);
             CHECK_PTR_RET(proj);
-            const wxArrayString& projfiles = proj->GetFiles();
+            const wxArrayString& projfiles = proj->GetFiles(NULL);
             pfiles->insert(pfiles->end(), projfiles.begin(), projfiles.end());
         }
     } else {

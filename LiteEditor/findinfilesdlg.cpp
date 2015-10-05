@@ -207,7 +207,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
 
     data.SetFindString(findStr);
     data.SetReplaceWith(m_replaceString->GetValue());
-    
+
     m_data.SetFlags(GetSearchFlags());
     size_t flags = m_data.GetFlags();
 
@@ -229,18 +229,39 @@ SearchData FindInFilesDialog::DoGetSearchData()
     wxArrayString searchWhere = m_listPaths->GetStrings();
     wxArrayString files;
     wxArrayString rootDirs;
+    
     for(size_t i = 0; i < searchWhere.GetCount(); ++i) {
         const wxString& rootDir = searchWhere.Item(i);
         // Check both translations and otherwise: the history may contain either
         if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) || (rootDir == SEARCH_IN_WORKSPACE)) {
-            ManagerST::Get()->GetWorkspaceFiles(files);
+            if(!clWorkspaceManager::Get().IsWorkspaceOpened()) continue;
+            clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
 
         } else if((rootDir == wxGetTranslation(SEARCH_IN_PROJECT)) || (rootDir == SEARCH_IN_PROJECT)) {
-            ManagerST::Get()->GetActiveProjectFiles(files);
+            if(!clWorkspaceManager::Get().IsWorkspaceOpened()) continue;
+            if(clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported()) {
+                // get the active project files
+                clWorkspaceManager::Get().GetWorkspace()->GetProjectFiles("", files);
+            } else {
+                // search the entire workspace
+                clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
+            }
 
         } else if((rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) ||
                   (rootDir == SEARCH_IN_CURR_FILE_PROJECT)) {
-            ManagerST::Get()->GetActiveFileProjectFiles(files);
+
+            if(!clWorkspaceManager::Get().IsWorkspaceOpened()) continue;
+            IEditor* editor = clGetManager()->GetActiveEditor();
+            if(!editor) continue;
+
+            if(clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported()) {
+                wxString projectName =
+                    clWorkspaceManager::Get().GetWorkspace()->GetProjectFromFile(editor->GetFileName());
+                clWorkspaceManager::Get().GetWorkspace()->GetProjectFiles(projectName, files);
+            } else {
+                // search the entire workspace
+                clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
+            }
 
         } else if((rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE)) || (rootDir == SEARCH_IN_CURRENT_FILE)) {
             LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
@@ -261,6 +282,18 @@ SearchData FindInFilesDialog::DoGetSearchData()
             rootDirs.Add(searchWhere.Item(i));
         }
     }
+
+    // Remove duplicates
+    wxStringSet_t filesSet;
+    wxArrayString uniqueFiles;
+    std::for_each(files.begin(), files.end(), [&](const wxString& file) {
+        if(filesSet.count(file) == 0) {
+            filesSet.insert(file);
+            uniqueFiles.Add(file);
+        }
+    });
+
+    files.swap(uniqueFiles);
 
     data.SetFiles(files);       // list of files
     data.SetRootDirs(rootDirs); // folders

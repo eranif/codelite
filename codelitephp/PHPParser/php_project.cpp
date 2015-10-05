@@ -41,6 +41,21 @@ wxArrayString& PHPProject::GetFiles(wxProgressDialog* progress)
     return m_files;
 }
 
+void PHPProject::GetFilesArray(wxArrayString& files) const
+{
+    if(!m_files.IsEmpty()) {
+        files.insert(files.end(), m_files.begin(), m_files.end());
+        return;
+    }
+
+    FilesCollector traverser(m_importFileSpec, m_excludeFolders, NULL);
+    wxDir dir(GetFilename().GetPath());
+    dir.Traverse(traverser);
+    wxArrayString& collectedFiles = traverser.GetFilesAndFolders();
+    files.insert(files.end(), collectedFiles.begin(), collectedFiles.end());
+    files.Sort();
+}
+
 void PHPProject::Create(const wxFileName& filename, const wxString& name)
 {
     m_filename = filename;
@@ -114,12 +129,11 @@ void PHPProject::FileRenamed(const wxString& oldname, const wxString& newname, b
     }
 }
 
-
 void PHPProject::SynchWithFileSystem()
 {
     m_files.Clear();
     // Call GetFiles so the m_files will get populated again
-    GetFiles();
+    GetFiles(NULL);
 }
 
 void PHPProject::FilesDeleted(const wxArrayString& files, bool notify)
@@ -127,13 +141,13 @@ void PHPProject::FilesDeleted(const wxArrayString& files, bool notify)
     if(files.IsEmpty()) return;
 
     // Normalize the folder name by using wxFileName
-    for(size_t i=0; i<files.GetCount(); ++i) {
+    for(size_t i = 0; i < files.GetCount(); ++i) {
         int where = m_files.Index(files.Item(i));
         if(where != wxNOT_FOUND) {
             m_files.RemoveAt(where);
         }
     }
-    
+
     if(notify) {
         clCommandEvent event(wxEVT_PROJ_FILE_REMOVED);
         event.SetStrings(files);
@@ -152,7 +166,7 @@ void PHPProject::FileAdded(const wxString& filename, bool notify)
         m_files.Add(filename);
         m_files.Sort();
     }
-    
+
     if(notify) {
         clCommandEvent event(wxEVT_PROJ_FILE_ADDED);
         wxArrayString files;

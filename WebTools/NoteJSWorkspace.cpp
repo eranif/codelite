@@ -16,6 +16,7 @@
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 #include "NodeJSNewWorkspaceDlg.h"
+#include <wx/dir.h>
 
 NodeJSWorkspace* NodeJSWorkspace::ms_workspace = NULL;
 
@@ -340,3 +341,21 @@ void NodeJSWorkspace::OnStopExecute(clExecuteEvent& event)
         m_terminal.Terminate();
     }
 }
+
+wxString NodeJSWorkspace::GetProjectFromFile(const wxFileName& filename) const
+{
+    // projects are not supported in NodeJS
+    return "";
+}
+void NodeJSWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString& files) const 
+{
+    wxUnusedVar(files);
+    wxUnusedVar(projectName);
+}
+
+void NodeJSWorkspace::GetWorkspaceFiles(wxArrayString& files) const 
+{
+    // Return all the files
+    wxDir::GetAllFiles(GetFilename().GetPath(), &files);
+}
+

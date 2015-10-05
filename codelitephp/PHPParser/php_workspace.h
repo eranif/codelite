@@ -41,11 +41,16 @@ protected:
     PHPExecutor m_executor;
     IManager* m_manager;
 
+    // IWorkspace API
 public:
+    virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const;
+    virtual void GetWorkspaceFiles(wxArrayString& files) const;
+    virtual wxString GetProjectFromFile(const wxFileName& filename) const;
     virtual wxString GetFilesMask() const;
     virtual bool IsBuildSupported() const;
     virtual bool IsProjectSupported() const;
 
+public:
     static PHPWorkspace* Get();
     static void Release();
     void SetPluginManager(IManager* manager) { this->m_manager = manager; }
@@ -180,7 +185,7 @@ public:
     /**
      * @brief same as above, but return the files in the form of an array
      */
-    void GetWorkspaceFiles(wxArrayString& workspaceFiles, wxProgressDialog* progress = NULL) const;
+    void GetWorkspaceFiles(wxArrayString& workspaceFiles, wxProgressDialog* progress) const;
     /**
      * @brief return the active project name
      */

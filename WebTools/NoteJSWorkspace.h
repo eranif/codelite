@@ -70,6 +70,9 @@ protected:
     NodeJSWorkspace(); // default ctor is private
 
 public:
+    virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const;
+    virtual void GetWorkspaceFiles(wxArrayString& files) const;
+    virtual wxString GetProjectFromFile(const wxFileName& filename) const;
     virtual wxString GetFilesMask() const;
     NodeJSWorkspace(bool dummy);
     virtual ~NodeJSWorkspace();

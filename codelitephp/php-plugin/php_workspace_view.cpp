@@ -1113,7 +1113,7 @@ void PHPWorkspaceView::OnSyncProjectWithFileSystem(wxCommandEvent& e)
 
 void PHPWorkspaceView::DoBuildProjectNode(const wxTreeItemId& projectItem, PHPProject::Ptr_t project)
 {
-    const wxArrayString& files = project->GetFiles();
+    const wxArrayString& files = project->GetFiles(NULL);
     for(size_t i = 0; i < files.GetCount(); ++i) {
         const wxString& filename = files.Item(i);
         wxFileName file(filename);

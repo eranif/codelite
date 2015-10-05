@@ -73,8 +73,13 @@ public:
     /**
      * @brief return a list of all project files (fullpath)
      */
-    wxArrayString& GetFiles(wxProgressDialog* progress = NULL);
-
+    wxArrayString& GetFiles(wxProgressDialog* progress);
+    
+    /**
+     * @brief return a list of all project files (fullpath)
+     */
+    void GetFilesArray(wxArrayString& files) const;
+    
     /**
      * @brief check if filename is part of this project
      * @param filename

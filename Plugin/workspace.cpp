@@ -159,7 +159,8 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
                                            projectPath.c_str());
                 removedChildren.push_back(child);
             }
-        } else if((child->GetName() == wxT("WorkspaceParserPaths")) || (child->GetName() == wxT("WorkspaceParserMacros"))) {
+        } else if((child->GetName() == wxT("WorkspaceParserPaths")) ||
+                  (child->GetName() == wxT("WorkspaceParserMacros"))) {
             wxString swtlw = wxEmptyString;
             swtlw = XmlUtils::ReadString(m_doc.GetRoot(), "SWTLW");
             if(swtlw.CmpNoCase("yes") == 0) {
@@ -198,10 +199,7 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
     return true;
 }
 
-BuildMatrixPtr clCxxWorkspace::GetBuildMatrix() const
-{
-    return m_buildMatrix;
-}
+BuildMatrixPtr clCxxWorkspace::GetBuildMatrix() const { return m_buildMatrix; }
 
 wxXmlNode* clCxxWorkspace::GetWorkspaceEditorOptions() const
 {
@@ -448,9 +446,9 @@ ProjectPtr clCxxWorkspace::FindProjectByName(const wxString& projName, wxString&
     return iter->second;
 }
 
-void clCxxWorkspace::GetProjectList(wxArrayString& list)
+void clCxxWorkspace::GetProjectList(wxArrayString& list) const
 {
-    std::map<wxString, ProjectPtr>::iterator iter = m_projects.begin();
+    std::map<wxString, ProjectPtr>::const_iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); iter++) {
         wxString name;
         name = iter->first;
@@ -637,8 +635,7 @@ wxString clCxxWorkspace::GetActiveProjectName() const
 
 void clCxxWorkspace::SetActiveProject(const wxString& name, bool active)
 {
-    if(!m_doc.IsOk())
-        return;
+    if(!m_doc.IsOk()) return;
 
     // update the xml file
     wxXmlNode* root = m_doc.GetRoot();
@@ -824,8 +821,7 @@ bool clCxxWorkspace::AddNewFile(const wxString& vdFullPath, const wxString& file
 
     // We should have at least 2 tokens:
     // project:virtual directory
-    if(tkz.CountTokens() < 2)
-        return false;
+    if(tkz.CountTokens() < 2) return false;
 
     wxString projName = tkz.GetNextToken();
     wxString fixedPath;
@@ -922,10 +918,7 @@ void clCxxWorkspace::ReloadWorkspace()
     }
 }
 
-time_t clCxxWorkspace::GetFileLastModifiedTime() const
-{
-    return GetFileModificationTime(GetWorkspaceFileName());
-}
+time_t clCxxWorkspace::GetFileLastModifiedTime() const { return GetFileModificationTime(GetWorkspaceFileName()); }
 
 // Singelton access
 static clCxxWorkspace* gs_Workspace = NULL;
@@ -939,15 +932,13 @@ void clCxxWorkspaceST::Free()
 
 clCxxWorkspace* clCxxWorkspaceST::Get()
 {
-    if(gs_Workspace == NULL)
-        gs_Workspace = new clCxxWorkspace;
+    if(gs_Workspace == NULL) gs_Workspace = new clCxxWorkspace;
     return gs_Workspace;
 }
 
 wxString clCxxWorkspace::GetParserMacros()
 {
-    if(!m_doc.IsOk())
-        return wxEmptyString;
+    if(!m_doc.IsOk()) return wxEmptyString;
 
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserMacros"));
     if(node) {
@@ -960,8 +951,7 @@ wxString clCxxWorkspace::GetParserMacros()
 
 wxString clCxxWorkspace::GetEnvironmentVariabels()
 {
-    if(!m_doc.IsOk())
-        return wxEmptyString;
+    if(!m_doc.IsOk()) return wxEmptyString;
 
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
     if(node) {
@@ -974,8 +964,7 @@ wxString clCxxWorkspace::GetEnvironmentVariabels()
 
 void clCxxWorkspace::SetEnvironmentVariabels(const wxString& envvars)
 {
-    if(!m_doc.IsOk())
-        return;
+    if(!m_doc.IsOk()) return;
 
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
     if(node) {
@@ -1004,10 +993,7 @@ wxArrayString clCxxWorkspace::GetAllProjectPaths()
     return projects;
 }
 
-bool clCxxWorkspace::IsOpen() const
-{
-    return m_doc.IsOk();
-}
+bool clCxxWorkspace::IsOpen() const { return m_doc.IsOk(); }
 
 bool clCxxWorkspace::IsVirtualDirectoryExists(const wxString& vdFullPath)
 {
@@ -1074,8 +1060,7 @@ wxFileName clCxxWorkspace::GetTagsFileName() const
 void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) const
 {
     BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
-    if(!matrix)
-        return;
+    if(!matrix) return;
 
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
     clCxxWorkspace::ProjectMap_t::const_iterator iter = m_projects.begin();
@@ -1089,10 +1074,7 @@ void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) co
     }
 }
 
-ProjectPtr clCxxWorkspace::GetActiveProject() const
-{
-    return GetProject(GetActiveProjectName());
-}
+ProjectPtr clCxxWorkspace::GetActiveProject() const { return GetProject(GetActiveProjectName()); }
 
 ProjectPtr clCxxWorkspace::GetProject(const wxString& name) const
 {
@@ -1178,14 +1160,8 @@ void clCxxWorkspace::RenameProject(const wxString& oldname, const wxString& newn
     EventNotifier::Get()->AddPendingEvent(event);
 }
 
-bool clCxxWorkspace::IsBuildSupported() const
-{
-    return true;
-}
-bool clCxxWorkspace::IsProjectSupported() const
-{
-    return true;
-}
+bool clCxxWorkspace::IsBuildSupported() const { return true; }
+bool clCxxWorkspace::IsProjectSupported() const { return true; }
 
 wxString clCxxWorkspace::GetFilesMask() const
 {
@@ -1198,4 +1174,39 @@ wxString clCxxWorkspace::GetFilesMask() const
         }
     }
     return findInFilesMask;
+}
+wxString clCxxWorkspace::GetProjectFromFile(const wxFileName& filename) const
+{
+    wxString filenameFP = filename.GetFullPath();
+    clCxxWorkspace::ProjectMap_t::const_iterator iter = m_projects.begin();
+    for(; iter != m_projects.end(); ++iter) {
+        wxStringSet_t allFiles;
+        iter->second->GetFiles(allFiles);
+        if(allFiles.count(filenameFP)) {
+            return iter->first;
+        }
+    }
+    return "";
+}
+void clCxxWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString& files) const
+{
+    ProjectPtr p = GetProject(projectName.IsEmpty() ? GetActiveProjectName() : projectName);
+    CHECK_PTR_RET(p);
+
+    wxStringSet_t setFiles;
+    p->GetFiles(setFiles);
+
+    // Convert the set wxArrayString
+    std::for_each(setFiles.begin(), setFiles.end(), [&](const wxString& file) { files.Add(file); });
+}
+
+void clCxxWorkspace::GetWorkspaceFiles(wxArrayString& files) const
+{
+    std::for_each(m_projects.begin(), m_projects.end(), [&](const clCxxWorkspace::ProjectMap_t::value_type& v) {
+        wxStringSet_t setFiles;
+        v.second->GetFiles(setFiles);
+
+        // Convert the set wxArrayString
+        std::for_each(setFiles.begin(), setFiles.end(), [&](const wxString& file) { files.Add(file); });
+    });
 }

@@ -18,8 +18,6 @@ clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
 
 clEditorStateLocker::~clEditorStateLocker()
 {
-    m_ctrl->SetFirstVisibleLine(m_firstVisibleLine);
-
     // restore the position.
     if(m_position > m_ctrl->GetLastPosition()) {
         m_position = m_ctrl->GetLastPosition();
@@ -42,6 +40,8 @@ clEditorStateLocker::~clEditorStateLocker()
     ApplyBookmarks();
     ApplyBreakpoints();
     ApplyFolds();
+    
+    m_ctrl->SetFirstVisibleLine(m_firstVisibleLine); // We must do this _after_ ApplyFolds() or the display may scroll down
 }
 
 void clEditorStateLocker::ApplyBookmarks() { ApplyBookmarks(m_ctrl, m_bookmarks); }

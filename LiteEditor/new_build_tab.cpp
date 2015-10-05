@@ -212,12 +212,12 @@ void NewBuildTab::OnBuildEnded(clCommandEvent& e)
     // 2 = to the end
     if(m_buildTabSettings.GetBuildPaneScrollDestination() == ScrollToFirstError && !m_errorsList.empty()) {
         BuildLineInfo* bli = m_errorsList.front();
-        DoSelectAndOpen(bli->GetLineInBuildTab());
+        DoSelectAndOpen(bli->GetLineInBuildTab(), true);
     }
 
     if(m_buildTabSettings.GetBuildPaneScrollDestination() == ScrollToFirstItem && !m_errorsAndWarningsList.empty()) {
         BuildLineInfo* bli = m_errorsAndWarningsList.front();
-        DoSelectAndOpen(bli->GetLineInBuildTab());
+        DoSelectAndOpen(bli->GetLineInBuildTab(), true);
     }
 
     if(m_buildTabSettings.GetBuildPaneScrollDestination() == ScrollToEnd) {
@@ -680,7 +680,7 @@ void NewBuildTab::OnNextBuildError(wxCommandEvent& e)
                 // get the wxDataViewItem
                 int line = (*m_curError)->GetLineInBuildTab();
                 if(IS_VALID_LINE(line)) {
-                    DoSelectAndOpen(line);
+                    DoSelectAndOpen(line, true);
                     ++m_curError;
                     return;
                 }
@@ -694,7 +694,7 @@ void NewBuildTab::OnNextBuildError(wxCommandEvent& e)
     } else {
         int line = (*m_curError)->GetLineInBuildTab();
         if(IS_VALID_LINE(line)) {
-            DoSelectAndOpen(line);
+            DoSelectAndOpen(line, true);
             ++m_curError;
         }
     }
@@ -705,7 +705,7 @@ void NewBuildTab::OnNextBuildErrorUI(wxUpdateUIEvent& e)
     e.Enable(!m_errorsAndWarningsList.empty() && !m_buildInProgress);
 }
 
-bool NewBuildTab::DoSelectAndOpen(int buildViewLine)
+bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
 {
     if(!m_viewData.count(buildViewLine)) {
         return false;
@@ -755,7 +755,7 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine)
                 }
 
                 if(editor) {
-                    DoCentreErrorLine(bli, editor);
+                    DoCentreErrorLine(bli, editor, centerLine);
                     return true;
                 }
             }
@@ -779,7 +779,7 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine)
                     lineNumber--;
                 }
 
-                DoCentreErrorLine(bli, editor);
+                DoCentreErrorLine(bli, editor, centerLine);
                 return true;
             }
         }
@@ -928,7 +928,7 @@ void NewBuildTab::OnHotspotClicked(wxStyledTextEvent& event)
 {
     long pos = event.GetPosition();
     int line = m_view->LineFromPosition(pos);
-    DoSelectAndOpen(line);
+    DoSelectAndOpen(line, false);
 }
 
 void NewBuildTab::OnThemeChanged(wxCommandEvent& event)
@@ -937,7 +937,7 @@ void NewBuildTab::OnThemeChanged(wxCommandEvent& event)
     InitView();
 }
 
-void NewBuildTab::DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor)
+void NewBuildTab::DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor, bool centerLine)
 {
     // We already got compiler markers set here, just goto the line
     clMainFrame::Get()->GetMainBook()->SelectPage(editor);
@@ -949,19 +949,20 @@ void NewBuildTab::DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor)
     } else {
         editor->CenterLine(bli->GetLineNumber());
     }
-    
-    // If the line in the build error tab is not visible, ensure it is
-    int firstVisibleLine = m_view->GetFirstVisibleLine();
-    int linesOnScreen = m_view->LinesOnScreen();
-    
-    // Our line is not visible
-    firstVisibleLine = bli->GetLineInBuildTab() - (linesOnScreen / 2);
-    if(firstVisibleLine < 0) {
-        firstVisibleLine = 0;
-    }
-    m_view->EnsureVisible(firstVisibleLine);
-    m_view->SetFirstVisibleLine(firstVisibleLine);
 
+    if(centerLine) {
+        // If the line in the build error tab is not visible, ensure it is
+        int firstVisibleLine = m_view->GetFirstVisibleLine();
+        int linesOnScreen = m_view->LinesOnScreen();
+
+        // Our line is not visible
+        firstVisibleLine = bli->GetLineInBuildTab() - (linesOnScreen / 2);
+        if(firstVisibleLine < 0) {
+            firstVisibleLine = 0;
+        }
+        m_view->EnsureVisible(firstVisibleLine);
+        m_view->SetFirstVisibleLine(firstVisibleLine);
+    }
     SetActive(editor);
 }
 

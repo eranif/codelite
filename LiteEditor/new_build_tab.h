@@ -185,9 +185,9 @@ protected:
     void DoClear();
     void MarkEditor(LEditor* editor);
     void DoToggleWindow();
-    bool DoSelectAndOpen(int buildViewLine);
+    bool DoSelectAndOpen(int buildViewLine, bool centerLine);
     wxFont DoGetFont() const;
-    void DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor);
+    void DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor, bool centerLine);
 
 public:
     NewBuildTab(wxWindow* parent);

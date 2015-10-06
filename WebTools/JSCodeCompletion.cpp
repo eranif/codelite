@@ -20,6 +20,7 @@
 #include "WebToolsConfig.h"
 #include <wx/msgdlg.h>
 #include <wx/menu.h>
+#include "navigationmanager.h"
 
 #ifdef __WXMSW__
 #define ZIP_NAME "javascript-win.zip"
@@ -180,10 +181,20 @@ void JSCodeCompletion::OnDefinitionFound(const clTernDefinition& loc)
     if(loc.IsURL()) {
         ::wxLaunchDefaultBrowser(loc.url);
     } else {
+        BrowseRecord from, to;
+        wxString pattern;
+        if(clGetManager()->GetActiveEditor()) {
+            pattern = clGetManager()->GetActiveEditor()->GetWordAtCaret();
+            from = clGetManager()->GetActiveEditor()->CreateBrowseRecord();
+        }
         IEditor* editor = clGetManager()->OpenFile(loc.file);
         if(editor) {
             editor->CenterLine(editor->LineFromPos(loc.start));
-            editor->GetCtrl()->SetSelection(loc.start, loc.end);
+            if(editor->FindAndSelect(pattern, pattern, loc.start, NULL)) {
+                to = editor->CreateBrowseRecord();
+                // Record this jump
+                clGetManager()->GetNavigationMgr()->AddJump(from, to);
+            }
         }
     }
 }

@@ -34,6 +34,7 @@
 #include <wx/filename.h>
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>
+#include "cl_config.h"
 
 class NewProjectDlgData : public SerializedObject
 {
@@ -265,7 +266,7 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
             m_projectData.m_srcProject = cd->getProject();
         }
     }
-
+    
     UpdateProjectPage();
 }
 
@@ -274,7 +275,10 @@ NewProjectWizard::~NewProjectWizard()
     // Keep the options
     NewProjectDlgData info;
     size_t flags(0);
-
+    
+    clConfig::Get().Write("CxxWizard/Compiler", m_choiceCompiler->GetStringSelection());
+    clConfig::Get().Write("CxxWizard/Debugger", m_choiceDebugger->GetStringSelection());
+    
     if(m_cbSeparateDir->IsChecked()) flags |= NewProjectDlgData::NpSeparateDirectory;
 
     info.SetFlags(flags);
@@ -327,7 +331,6 @@ void NewProjectWizard::UpdateProjectPage()
         wxString desc = m_projectData.m_srcProject->GetDescription();
         desc = desc.Trim().Trim(false);
         desc.Replace(wxT("\t"), wxT(" "));
-        // m_txtDescription->SetValue( desc );
 
         // select the correct compiler
         ProjectSettingsPtr settings = m_projectData.m_srcProject->GetSettings();
@@ -336,8 +339,26 @@ void NewProjectWizard::UpdateProjectPage()
             BuildConfigPtr buildConf = settings->GetFirstBuildConfiguration(ck);
             if(buildConf) {
                 m_choiceCompiler->SetStringSelection(buildConf->GetCompilerType());
-                m_choiceCompiler->SetStringSelection(buildConf->GetDebuggerType());
+                m_choiceDebugger->SetStringSelection(buildConf->GetDebuggerType());
             }
+        }
+    }
+    
+    // Restore previous selections
+    wxString lastCompiler = clConfig::Get().Read("CxxWizard/Compiler", wxString());
+    wxString lastDebugger = clConfig::Get().Read("CxxWizard/Debugger", wxString());
+    
+    if(!lastDebugger.IsEmpty()) {
+        int where = m_choiceDebugger->FindString(lastDebugger);
+        if(where != wxNOT_FOUND) {
+            m_choiceDebugger->SetSelection(where);
+        }
+    }
+    
+    if(!lastCompiler.IsEmpty()) {
+        int where = m_choiceCompiler->FindString(lastCompiler);
+        if(where != wxNOT_FOUND) {
+            m_choiceCompiler->SetSelection(where);
         }
     }
 }
@@ -488,40 +509,6 @@ void NewProjectWizard::OnPageChanging(wxWizardEvent& event)
                         return;
                     }
                 }
-            }
-        }
-
-        // Try to offer a sensible toolchain/debugger combination as default
-        if(!m_selectionMade) {
-            wxString defaultDebugger;
-            if(cd && cd->GetTemplate().Lower().Contains("php")) {
-                for(size_t n = 0; n < m_choiceCompiler->GetCount(); ++n) {
-                    if(m_choiceCompiler->GetString(n).Lower().Contains("php")) {
-                        m_choiceCompiler->SetSelection(n);
-                        break;
-                    }
-                }
-                defaultDebugger = "XDebug";
-
-            } else {
-                // If it's not a PHP project we can't be sure of anything except we don't want php tools; so select the
-                // first that isn't
-                for(size_t n = 0; n < m_choiceCompiler->GetCount(); ++n) {
-                    if(!m_choiceCompiler->GetString(n).Lower().Contains("php")) {
-                        m_choiceCompiler->SetSelection(n);
-                        break;
-                    }
-                }
-#if defined(__WXMAC__)
-                defaultDebugger = "LLDB Debugger";
-#else
-                defaultDebugger = "GNU gdb debugger";
-#endif
-            }
-
-            int index = m_choiceDebugger->FindString(defaultDebugger);
-            if(index != wxNOT_FOUND) {
-                m_choiceDebugger->SetSelection(index);
             }
         }
     }

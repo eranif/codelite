@@ -3214,7 +3214,7 @@ void ContextCpp::OnCodeCompleteFiles(clCodeCompletionEvent& event)
         // to do that, we temporary replace the word-chars of the wxSTC control to include
         // these chars, perform the selection and then restore the word chars
         wxString newWordChars = origWordChars;
-        newWordChars << "./";
+        newWordChars << "./-$";
         GetCtrl().SetWordChars(newWordChars);
         int startPos = GetCtrl().WordStartPos(GetCtrl().GetCurrentPos(), true);
         int endPos = GetCtrl().GetCurrentPos();

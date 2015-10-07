@@ -565,7 +565,7 @@ TEST_FUNC(test_trait_alias)
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
 
-    CHECK_SIZE(matches.size(), 2);
+    CHECK_SIZE(matches.size(), 5);
     return true;
 }
 

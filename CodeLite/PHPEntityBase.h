@@ -20,6 +20,7 @@ enum eEntityType {
     kEntityTypeClass = 2,
     kEntityTypeNamespace = 3,
     kEntityTypeKeyword = 4,
+    kEntityTypeFunctionAlias = 5,
 };
 
 // Variable flags

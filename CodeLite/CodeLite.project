@@ -333,6 +333,8 @@
     <File Name="PHPIndex.cpp"/>
     <File Name="PHPEntityKeyword.h"/>
     <File Name="PHPEntityKeyword.cpp"/>
+    <File Name="PHPEntityFunctionAlias.h"/>
+    <File Name="PHPEntityFunctionAlias.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="TerminalEmulatorUI.wxcp"/>

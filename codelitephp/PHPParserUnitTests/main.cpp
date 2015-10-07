@@ -552,7 +552,7 @@ TEST_FUNC(test_goto_def_with_trait)
 
 TEST_FUNC(test_trait_alias)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_goto_def_with_trait.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_trait_alias.php"));
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);

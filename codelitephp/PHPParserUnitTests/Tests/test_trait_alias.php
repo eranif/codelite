@@ -17,13 +17,6 @@ trait test_trait_alias_B {
     }
 }
 
-class Talker {
-    use test_trait_alias_A, test_trait_alias_B {
-        test_trait_alias_B::smallTalk insteadof test_trait_alias_A;
-        test_trait_alias_A::bigTalk insteadof test_trait_alias_B;
-    }
-}
-
 class Aliased_Talker {
     use test_trait_alias_A, test_trait_alias_B {
         test_trait_alias_B::smallTalk insteadof test_trait_alias_A;

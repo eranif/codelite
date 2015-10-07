@@ -14,7 +14,7 @@ wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
-static wxString PHP_SCHEMA_VERSION = "7.0.6";
+static wxString PHP_SCHEMA_VERSION = "9.0";
 
 //------------------------------------------------
 // Metadata table
@@ -79,6 +79,25 @@ const static wxString CREATE_FUNCTION_TABLE_SQL_IDX4 =
 const static wxString CREATE_FUNCTION_TABLE_SQL_IDX5 =
     "CREATE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_5 ON FUNCTION_TABLE(LINE_NUMBER)";
 
+//------------------------------------------------
+// Function Alias table
+//------------------------------------------------
+const static wxString CREATE_FUNCTION_ALIAS_TABLE_SQL =
+    "CREATE TABLE IF NOT EXISTS FUNCTION_ALIAS_TABLE(ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+    "SCOPE_ID INTEGER NOT NULL DEFAULT -1, "
+    "NAME TEXT, "         // no scope, just the function name
+    "REALNAME TEXT, "     // Fullname with scope
+    "SCOPE TEXT, "        // Usually, this means the namespace\class
+    "LINE_NUMBER INTEGER NOT NULL DEFAULT 0, "
+    "FILE_NAME TEXT )";
+
+const static wxString CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX1 =
+    "CREATE INDEX IF NOT EXISTS FUNCTION_ALIAS_TABLE_IDX_1 ON FUNCTION_ALIAS_TABLE(SCOPE_ID)";
+const static wxString CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX2 =
+    "CREATE INDEX IF NOT EXISTS FUNCTION_ALIAS_TABLE_IDX_2 ON FUNCTION_ALIAS_TABLE(NAME)";
+const static wxString CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX3 =
+    "CREATE INDEX IF NOT EXISTS FUNCTION_ALIAS_TABLE_IDX_3 ON FUNCTION_ALIAS_TABLE(REALNAME)";
+    
 //------------------------------------------------
 // Variables table
 //------------------------------------------------
@@ -217,6 +236,7 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate("drop table if exists SCHEMA_VERSION");
         m_db.ExecuteUpdate("drop table if exists SCOPE_TABLE");
         m_db.ExecuteUpdate("drop table if exists FUNCTION_TABLE");
+        m_db.ExecuteUpdate("drop table if exists FUNCTION_ALIAS_TABLE");
         m_db.ExecuteUpdate("drop table if exists VARIABLES_TABLE");
         m_db.ExecuteUpdate("drop table if exists FILES_TABLE");
     }
@@ -242,6 +262,12 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX3);
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX4);
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX5);
+
+        // function alias table
+        m_db.ExecuteUpdate(CREATE_FUNCTION_ALIAS_TABLE_SQL);
+        m_db.ExecuteUpdate(CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX1);
+        m_db.ExecuteUpdate(CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX2);
+        m_db.ExecuteUpdate(CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX3);
 
         // variables (function args, globals class members and consts)
         m_db.ExecuteUpdate(CREATE_VARIABLES_TABLE_SQL);

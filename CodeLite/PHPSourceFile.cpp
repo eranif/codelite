@@ -7,6 +7,7 @@
 #include <wx/arrstr.h>
 #include "PHPEntityClass.h"
 #include "PHPDocVisitor.h"
+#include "PHPEntityFunctionAlias.h"
 
 #define NEXT_TOKEN_BREAK_IF_NOT(t, action) \
     {                                      \
@@ -1239,11 +1240,14 @@ void PHPSourceFile::OnForEach()
 
 void PHPSourceFile::ParseUseTraitsBody()
 {
-    /*wxString fullname, alias, temp;
+    wxString fullname, alias, temp;
     phpLexerToken token;
     bool cont = true;
     while(cont && NextToken(token)) {
         switch(token.type) {
+        case '}': {
+            cont = false;
+        } break;
         case ',':
         case ';': {
             if(fullname.IsEmpty()) {
@@ -1270,22 +1274,32 @@ void PHPSourceFile::ParseUseTraitsBody()
                 if(!fullname.StartsWith("\\")) {
                     fullname.Prepend("\\");
                 }
-                m_aliases.insert(std::make_pair(alias, MakeIdentifierAbsolute(fullname)));
+                PHPEntityBase::Ptr_t funcAlias(new PHPEntityFunctionAlias());
+                funcAlias->Cast<PHPEntityFunctionAlias>()->SetRealname(MakeIdentifierAbsolute(fullname));
+                funcAlias->SetShortName(alias);
+                funcAlias->SetFilename(GetFilename());
+                funcAlias->SetLine(token.lineNumber);
+                CurrentScope()->AddChild(funcAlias);
             }
             temp.clear();
             fullname.clear();
             alias.clear();
-            if(token.type == ';') {
-                cont = false;
-            }
         } break;
         case kPHP_T_AS: {
             fullname.swap(temp);
             temp.clear();
         } break;
+        case kPHP_T_INSTEADOF: {
+            // For now, we are not interested in
+            // A insteadof b; statements, so just clear the collected data so far
+            fullname.clear();
+            temp.clear();
+            alias.clear();
+            if(!ConsumeUntil(';')) return;
+        } break;
         default:
             temp << token.text;
             break;
         }
-    }*/
+    }
 }

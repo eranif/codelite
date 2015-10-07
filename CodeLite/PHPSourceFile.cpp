@@ -1277,11 +1277,14 @@ void PHPSourceFile::ParseUseTraitsBody()
                 }
                 PHPEntityBase::Ptr_t funcAlias(new PHPEntityFunctionAlias());
                 funcAlias->Cast<PHPEntityFunctionAlias>()->SetRealname(MakeIdentifierAbsolute(fullname));
+                funcAlias->Cast<PHPEntityFunctionAlias>()->SetScope(CurrentScope()->GetFullName());
                 funcAlias->SetShortName(alias);
+                funcAlias->SetFullName(CurrentScope()->GetFullName() + "\\" + alias);
                 funcAlias->SetFilename(GetFilename());
                 funcAlias->SetLine(token.lineNumber);
                 CurrentScope()->AddChild(funcAlias);
             }
+
             temp.clear();
             fullname.clear();
             alias.clear();

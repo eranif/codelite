@@ -27,6 +27,7 @@
 #include "wxCodeCompletionBoxManager.h"
 #include "globals.h"
 #include "clSelectSymbolDialog.h"
+#include "PHPEntityFunctionAlias.h"
 
 ///////////////////////////////////////////////////////////////////
 
@@ -229,8 +230,14 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
         }
         t->SetReturnValue("");
 
-    } else if(entry->Is(kEntityTypeFunction)) {
-        PHPEntityFunction* func = entry->Cast<PHPEntityFunction>();
+    } else if(entry->Is(kEntityTypeFunction) || entry->Is(kEntityTypeFunctionAlias)) {
+        PHPEntityFunction* func = NULL;
+        if(entry->Is(kEntityTypeFunctionAlias)) {
+            func = entry->Cast<PHPEntityFunctionAlias>()->GetFunc()->Cast<PHPEntityFunction>();
+        } else {
+            func = entry->Cast<PHPEntityFunction>();
+        }
+
         if(func->HasFlag(kFunc_Private)) {
             t->SetAccess(wxT("private"));
         } else if(func->HasFlag(kFunc_Protected)) {
@@ -351,7 +358,7 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
                 DoOpenEditorForEntry(match);
 
             } else {
-                
+
                 // Convert the matches to clSelectSymbolDialogEntry::List_t
                 clSelectSymbolDialogEntry::List_t entries;
                 std::for_each(symbols.begin(), symbols.end(), [&](PHPEntityBase::Ptr_t entry) {
@@ -365,7 +372,7 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
                     m.help = tag->GetKind();
                     entries.push_back(m);
                 });
-                
+
                 // Show selection dialog
                 clSelectSymbolDialog dlg(EventNotifier::Get()->TopFrame(), entries);
                 if(dlg.ShowModal() != wxID_OK) return;
@@ -421,6 +428,10 @@ PHPLocation::Ptr_t PHPCodeCompletion::FindDefinition(IEditor* editor, int pos)
     if(IsPHPFile(editor)) {
         PHPEntityBase::Ptr_t resolved = GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
         if(resolved) {
+            if(resolved->Is(kEntityTypeFunctionAlias)) {
+                // use the internal function 
+                resolved = resolved->Cast<PHPEntityFunctionAlias>()->GetFunc();
+            }
             loc = new PHPLocation;
             loc->filename = resolved->GetFilename().GetFullPath();
             loc->linenumber = resolved->GetLine();
@@ -560,6 +571,10 @@ PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* edit
         if(resolved && resolved->Is(kEntityTypeFunction)) {
             // for a function, we need to load its children (function arguments)
             resolved->SetChildren(m_lookupTable.LoadFunctionArguments(resolved->GetDbId()));
+        } else if(resolved && resolved->Is(kEntityTypeFunctionAlias)) {
+            // for a function alias, we need to load the actual functions' children (function arguments)
+            PHPEntityBase::Ptr_t realFunc = resolved->Cast<PHPEntityFunctionAlias>()->GetFunc();
+            realFunc->SetChildren(m_lookupTable.LoadFunctionArguments(realFunc->GetDbId()));
         }
     }
     return resolved;

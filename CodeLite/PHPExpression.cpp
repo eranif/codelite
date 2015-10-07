@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <set>
 #include "PHPEntityNamespace.h"
+#include "PHPEntityFunctionAlias.h"
 
 PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText, bool functionCalltipExpr)
     : m_type(kNone)
@@ -248,6 +249,10 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
         } else {
             // load the children of the current token (optionally, filter by the text)
             currentToken = lookpTable.FindMemberOf(currentToken->GetDbId(), part.m_text);
+            if(currentToken && currentToken->Is(kEntityTypeFunctionAlias)) {
+                // If the member is a function-alias, use the actual function instead
+                currentToken = currentToken->Cast<PHPEntityFunctionAlias>()->GetFunc();
+            }
         }
 
         // If the current "part" of the expression ends with a scope resolving operator ("::") or

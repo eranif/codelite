@@ -313,10 +313,10 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                                wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
-            
+
             // Ensure that the temporary file is deleted once we are done with it
             FileUtils::Deleter fd(tmpfile);
-            
+
             ::WrapWithQuotes(tmpfile);
             command << fmtroptions.GetPhpFixerCommand() << " " << tmpfile;
             ::WrapInShell(command);
@@ -324,7 +324,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                 ::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
             CHECK_PTR_RET(phpFixer);
             phpFixer->WaitForTerminate(output);
-            
+
             output.clear();
             if(!FileUtils::ReadFileContent(tmpfile, output)) {
                 ::wxMessageBox(_("Can not format file using PHP-CS-Fixer:\nfailed to read temporary file content"),
@@ -332,7 +332,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                                wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
-            
+
             // Update the editor
             clEditorStateLocker lk(editor->GetCtrl());
             editor->GetCtrl()->BeginUndoAction();
@@ -798,12 +798,13 @@ bool CodeFormatter::BatchFormat(const std::vector<wxFileName>& files)
     FormatOptions options;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
 
-    if(options.GetEngine() == kFormatEngineAStyle) {
+    switch(options.GetEngine()) {
+    case kFormatEngineAStyle:
         return AStyleBatchFOrmat(files, options);
-
-    } else if(options.GetEngine() == kFormatEngineClangFormat) {
+    case kFormatEngineClangFormat:
         return ClangBatchFormat(files, options);
     }
+    return false;
 }
 
 bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const FormatOptions& options)

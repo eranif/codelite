@@ -477,11 +477,12 @@
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="full_retag_workspace">
-                <label>Retag Workspace ( Full )</label>
-                <help>Retag the workspace by dropping the old tags tables, and recreate them</help>
+                <label>Parse Workspace</label>
+                <help>Reparse the workspace</help>
             </object>
             <object class="wxMenuItem" name="retag_workspace">
-                <label>Retag Workspace ( Quick )</label>
+                <label>Parse Workspace - Incremental</label>
+                <help>Parse modified files only</help>
             </object>
         </object>
 

@@ -74,7 +74,8 @@ void SetActive(LEditor* editor)
 
 //////////////////////////////////////////////////////////////
 
-struct AnnotationInfo {
+struct AnnotationInfo
+{
     int line;
     LINE_SEVERITY severity;
     wxString text;
@@ -922,6 +923,14 @@ void NewBuildTab::InitView(const wxString& theme)
     } else {
         m_view->MarkerSetBackground(LEX_GCC_MARKER, wxColour(defaultStyle.GetBgColour()).ChangeLightness(90));
     }
+    
+    // Hide all margins
+    for(int i = 0; i <= wxSTC_MARGIN_RTEXT; ++i) {
+        m_view->SetMarginWidth(i, 0);
+    }
+    
+    // make the symbol margin 5 pixel width
+    m_view->SetMarginWidth(wxSTC_MARGIN_SYMBOL, 5);
 }
 
 void NewBuildTab::OnHotspotClicked(wxStyledTextEvent& event)

@@ -21,7 +21,7 @@ class Aliased_Talker {
     use test_trait_alias_A, test_trait_alias_B {
         test_trait_alias_B::smallTalk insteadof test_trait_alias_A;
         test_trait_alias_A::bigTalk insteadof test_trait_alias_B;
-        B::bigTalk as talk;
+        test_trait_alias_B::bigTalk as talk;
     }
 }
 

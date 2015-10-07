@@ -9,6 +9,7 @@
 #include "fileutils.h"
 #include <wx/stopwatch.h>
 #include <wx/log.h>
+#include "PHPEntityFunctionAlias.h"
 
 wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
@@ -97,7 +98,9 @@ const static wxString CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX2 =
     "CREATE INDEX IF NOT EXISTS FUNCTION_ALIAS_TABLE_IDX_2 ON FUNCTION_ALIAS_TABLE(NAME)";
 const static wxString CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX3 =
     "CREATE INDEX IF NOT EXISTS FUNCTION_ALIAS_TABLE_IDX_3 ON FUNCTION_ALIAS_TABLE(REALNAME)";
-    
+const static wxString CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX4 =
+    "CREATE UNIQUE INDEX IF NOT EXISTS FUNCTION_ALIAS_TABLE_IDX_4 ON FUNCTION_ALIAS_TABLE(NAME,REALNAME,SCOPE_ID)";
+
 //------------------------------------------------
 // Variables table
 //------------------------------------------------
@@ -268,6 +271,7 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate(CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX1);
         m_db.ExecuteUpdate(CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX2);
         m_db.ExecuteUpdate(CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX3);
+        m_db.ExecuteUpdate(CREATE_FUNCTION_ALIAS_TABLE_SQL_IDX4);
 
         // variables (function args, globals class members and consts)
         m_db.ExecuteUpdate(CREATE_VARIABLES_TABLE_SQL);
@@ -905,7 +909,38 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
                 }
             }
         }
+        
+        {
+            // load function aliases
+            wxString sql;
+            sql << "SELECT * from FUNCTION_ALIAS_TABLE WHERE SCOPE_ID=" << parentId << " AND ";
+            DoAddNameFilter(sql, nameHint, flags);
+            DoAddLimit(sql);
 
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+            while(res.NextRow()) {
+                PHPEntityBase::Ptr_t match(new PHPEntityFunctionAlias());
+                match->FromResultSet(res);
+                const wxString& realFuncName = match->Cast<PHPEntityFunctionAlias>()->GetRealname();
+                // Load the function pointed by this reference
+                PHPEntityBase::Ptr_t pFunc = FindFunction(realFuncName);
+                if(pFunc) {
+                    // update the short + fullname
+                    pFunc->SetShortName(match->GetShortName());
+                    
+                    // Update the fullname as well
+                    wxString fullname = pFunc->GetFullName();
+                    fullname = fullname.BeforeLast('\\');
+                    fullname << "\\" << pFunc->GetShortName();
+                    pFunc->SetFullName(fullname);
+                    
+                    // always return static functions
+                    matches.push_back(pFunc);
+                }
+            }
+        }
+        
         {
             // Add members from the variables table
             wxString sql;

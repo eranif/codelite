@@ -1092,6 +1092,7 @@ void PHPSourceFile::OnUseTrait()
             tempname.clear();
             // add the traits as list of 'extends'
             clas->Cast<PHPEntityClass>()->SetTraits(identifiers);
+            return;
         } break;
         case ';': {
             if(!tempname.IsEmpty()) {
@@ -1284,6 +1285,10 @@ void PHPSourceFile::ParseUseTraitsBody()
             temp.clear();
             fullname.clear();
             alias.clear();
+        } break;
+        case kPHP_T_PAAMAYIM_NEKUDOTAYIM: {
+            // Convert "::" into "\\"
+            temp << "\\";
         } break;
         case kPHP_T_AS: {
             fullname.swap(temp);

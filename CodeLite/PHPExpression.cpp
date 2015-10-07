@@ -331,12 +331,14 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 // Same as $this: replace it with the current class absolute path
                 if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
-
+                firstTokenType = kPHP_T_SELF;
+                
             } else if(token.type == kPHP_T_STATIC) {
                 // Same as $this: replace it with the current class absolute path
                 if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
-
+                firstTokenType = kPHP_T_STATIC;
+                
             } else if(token.type == kPHP_T_VARIABLE) {
                 // the expression being evaluated starts with a variable (e.g. $a->something()->)
                 // in this case, use the current scope ('scope') and replace it with the real type
@@ -423,11 +425,11 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 }
             }
 
-            if(m_parts.empty() && firstTokenType == kPHP_T_PARENT) {
+            if(m_parts.empty()) {
                 // If the first token before the simplication was 'parent'
                 // keyword, we need to carry this over
-                part.m_textType = kPHP_T_PARENT;
-            }
+                part.m_textType = firstTokenType;
+            } 
 
             part.m_operator = token.type;
             part.m_operatorText = token.text;
@@ -486,9 +488,9 @@ size_t PHPExpression::GetLookupFlags() const
         Part lastExpressionPart = m_parts.back();
         if(lastExpressionPart.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
             if(lastExpressionPart.m_textType == kPHP_T_SELF)
-                flags |= PHPLookupTable::kLookupFlags_SelfStaticMembers;
+                flags |= PHPLookupTable::kLookupFlags_Self;
             else
-                flags |= PHPLookupTable::kLookupFlags_StaticMembers;
+                flags |= PHPLookupTable::kLookupFlags_Static;
         }
     }
     return flags;

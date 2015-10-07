@@ -84,6 +84,8 @@
     <File Name="Tests/test_partial_namespace.php"/>
     <File Name="Tests/test_partial_namespace_helper.php"/>
     <File Name="Tests/test_cc_with_keywords.php"/>
+    <File Name="Tests/test_goto_def_with_trait.php"/>
+    <File Name="Tests/test_trait_alias.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

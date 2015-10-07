@@ -1081,6 +1081,17 @@ void PHPSourceFile::OnUseTrait()
             }
             tempname.clear();
         } break;
+        case '{': {
+            // we are looking at a case like:
+            // use A, B { ... }
+            if(!tempname.IsEmpty()) {
+                identifiers.Add(MakeIdentifierAbsolute(tempname));
+                ParseUseTraitsBody();
+            }
+            tempname.clear();
+            // add the traits as list of 'extends'
+            clas->Cast<PHPEntityClass>()->SetTraits(identifiers);
+        } break;
         case ';': {
             if(!tempname.IsEmpty()) {
                 identifiers.Add(MakeIdentifierAbsolute(tempname));
@@ -1198,13 +1209,13 @@ void PHPSourceFile::OnForEach()
 
     // Found the "as" key word and consumed it
     if(!NextToken(token)) return;
-    
+
     phpLexerToken peekToken;
     if(!NextToken(peekToken)) return;
-    
+
     // Ensure we got a variable
     if(token.type != kPHP_T_VARIABLE) return;
-    
+
     // Check to see if we are using the syntax of:
     // foreach (array_expression as $key => $value)
     if(peekToken.type == kPHP_T_DOUBLE_ARROW) {
@@ -1214,14 +1225,67 @@ void PHPSourceFile::OnForEach()
     } else {
         UngetToken(peekToken);
     }
-    
+
     // Create a new variable
     PHPEntityBase::Ptr_t var(new PHPEntityVariable());
     var->SetFullName(token.text);
     var->SetFilename(m_filename.GetFullPath());
     var->SetLine(token.lineNumber);
-    
+
     if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
         CurrentScope()->AddChild(var);
     }
+}
+
+void PHPSourceFile::ParseUseTraitsBody()
+{
+    /*wxString fullname, alias, temp;
+    phpLexerToken token;
+    bool cont = true;
+    while(cont && NextToken(token)) {
+        switch(token.type) {
+        case ',':
+        case ';': {
+            if(fullname.IsEmpty()) {
+                // no full name yet
+                fullname.swap(temp);
+
+            } else if(alias.IsEmpty()) {
+                alias.swap(temp);
+            }
+
+            if(alias.IsEmpty()) {
+                // no alias provided, use the last part of the fullname
+                alias = fullname.AfterLast('\\');
+            }
+
+            if(!fullname.IsEmpty() && !alias.IsEmpty()) {
+                // Use namespace is alway refered as fullpath namespace
+                // So writing:
+                // use Zend\Mvc\Controll\Action;
+                // is equal for writing:
+                // use \Zend\Mvc\Controll\Action;
+                // For simplicitiy, we change it to fully qualified path
+                // so parsing is easier
+                if(!fullname.StartsWith("\\")) {
+                    fullname.Prepend("\\");
+                }
+                m_aliases.insert(std::make_pair(alias, MakeIdentifierAbsolute(fullname)));
+            }
+            temp.clear();
+            fullname.clear();
+            alias.clear();
+            if(token.type == ';') {
+                cont = false;
+            }
+        } break;
+        case kPHP_T_AS: {
+            fullname.swap(temp);
+            temp.clear();
+        } break;
+        default:
+            temp << token.text;
+            break;
+        }
+    }*/
 }

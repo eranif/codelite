@@ -866,12 +866,16 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
             while(res.NextRow()) {
                 PHPEntityBase::Ptr_t match(new PHPEntityFunction());
                 match->FromResultSet(res);
-                bool isStatic = match->HasFlag(kFunc_Static);
-                if(isStatic & CollectingStatics(flags)) {
+                bool isStaticFunction = match->HasFlag(kFunc_Static);
+                if(isStaticFunction) {
+                    // always return static functions
                     matches.push_back(match);
 
-                } else if(!isStatic && !CollectingStatics(flags)) {
-                    matches.push_back(match);
+                } else {
+                    // Non static function.
+                    if(!(flags & kLookupFlags_Static)) {
+                        matches.push_back(match);
+                    }
                 }
             }
         }

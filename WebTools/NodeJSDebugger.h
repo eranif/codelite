@@ -35,6 +35,7 @@ protected:
     void OnDebugStepOut(clDebugEvent& event);
     void OnTooltip(clDebugEvent& event);
     void OnCanInteract(clDebugEvent& event);
+    void OnAttach(clDebugEvent& event);
 
     // CodeLite events
     void OnWorkspaceOpened(wxCommandEvent& event);

@@ -91,6 +91,7 @@ WebTools::WebTools(IManager* manager)
     // Debugger related
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     m_jsCodeComplete.Reset(new JSCodeCompletion(""));
@@ -106,6 +107,7 @@ WebTools::WebTools(IManager* manager)
 }
 
 WebTools::~WebTools() { NodeJSWorkspace::Free(); }
+
 
 clToolBar* WebTools::CreateToolBar(wxWindow* parent)
 {
@@ -138,7 +140,8 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
-
+    EventNotifier::Get()->Unbind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
+    
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentLine, this, XRCID("comment_line"));
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentSelection, this, XRCID("comment_selection"));
 
@@ -482,4 +485,10 @@ void WebTools::OnEditorContextMenu(clContextMenuEvent& event)
     if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
         m_jsCodeComplete->AddContextMenu(event.GetMenu(), editor);
     }
+}
+
+void WebTools::OnIsDebugger(clDebugEvent& event)
+{
+    event.Skip(); // always call skip
+    event.GetStrings().Add("NodeJS Debugger");
 }

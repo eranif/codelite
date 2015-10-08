@@ -50,6 +50,7 @@ protected:
     void OnCommentSelection(wxCommandEvent& e);
     void OnNodeJSDebuggerStarted(clDebugEvent& event);
     void OnNodeJSDebuggerStopped(clDebugEvent& event);
+    void OnIsDebugger(clDebugEvent& event);
 
 private:
     bool IsJavaScriptFile(const wxString& filename);

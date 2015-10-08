@@ -28,6 +28,8 @@
 #include "globals.h"
 #include "procutils.h"
 #include <algorithm>
+#include "fileutils.h"
+#include <wx/wupdlock.h>
 
 /// Ascending sorting function
 struct PIDSorter {
@@ -43,7 +45,6 @@ struct NameSorter {
 
 AttachDbgProcDlg::AttachDbgProcDlg(wxWindow* parent)
     : AttachDbgProcBaseDlg(parent)
-    , m_selectedItem(wxNOT_FOUND)
 {
     wxArrayString choices = DebuggerMgr::Get().GetAvailableDebuggers();
     m_choiceDebugger->Append(choices);
@@ -52,12 +53,9 @@ AttachDbgProcDlg::AttachDbgProcDlg(wxWindow* parent)
         m_choiceDebugger->SetSelection(0);
     }
 
-    m_listCtrlProcesses->InsertColumn(0, _("PID"));
-    m_listCtrlProcesses->InsertColumn(1, _("Name"));
-
     RefreshProcessesList(wxEmptyString);
     m_textCtrlFilter->SetFocus();
-    Centre();
+    CentreOnParent();
 
     SetName("AttachDbgProcDlg");
     WindowAttrManager::Load(this);
@@ -65,8 +63,8 @@ AttachDbgProcDlg::AttachDbgProcDlg(wxWindow* parent)
 
 void AttachDbgProcDlg::RefreshProcessesList(wxString filter, int colToSort)
 {
-    m_listCtrlProcesses->Freeze();
-    m_listCtrlProcesses->DeleteAllItems();
+    wxWindowUpdateLocker locker(m_dvListCtrl);
+    m_dvListCtrl->DeleteAllItems();
 
     filter.Trim().Trim(false);
 
@@ -74,81 +72,55 @@ void AttachDbgProcDlg::RefreshProcessesList(wxString filter, int colToSort)
     std::vector<ProcessEntry> proclist;
     ProcUtils::GetProcessList(proclist);
 
-    if(colToSort == 0) { // sort by PID
-        std::sort(proclist.begin(), proclist.end(), PIDSorter());
-
-    } else if(colToSort == 1) { // sort by name
-        std::sort(proclist.begin(), proclist.end(), NameSorter());
-    }
+    //    if(colToSort == 0) { // sort by PID
+    //        std::sort(proclist.begin(), proclist.end(), PIDSorter());
+    //
+    //    } else if(colToSort == 1) { // sort by name
+    //        std::sort(proclist.begin(), proclist.end(), NameSorter());
+    //    }
 
     filter.MakeLower();
-    for(size_t i = 0; i < proclist.size(); i++) {
+    for(size_t i = 0; i < proclist.size(); ++i) {
 
         // Use case in-sensitive match for the filter
         wxString entryName(proclist.at(i).name);
-        entryName.MakeLower();
 
         // Append only processes that matches the filter string
-        if(filter.IsEmpty() || entryName.Contains(filter)) {
-            long item = AppendListCtrlRow(m_listCtrlProcesses);
-            ProcessEntry entry = proclist.at(i);
-            wxString spid;
-            bool selfPid = (entry.pid == (long)wxGetProcessId());
-            spid << entry.pid;
-            SetColumnText(m_listCtrlProcesses, item, 0, spid);
-            SetColumnText(m_listCtrlProcesses, item, 1, entry.name);
-
-            if(selfPid) {
-                m_listCtrlProcesses->SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-            }
+        if(filter.IsEmpty() || FileUtils::FuzzyMatch(filter, entryName)) {
+            const ProcessEntry& entry = proclist.at(i);
+            if(entry.pid == (long)wxGetProcessId()) continue;
+            wxVector<wxVariant> cols;
+            cols.push_back(wxString() << entry.pid);
+            cols.push_back(entry.name);
+            m_dvListCtrl->AppendItem(cols);
         }
     }
-
-    m_listCtrlProcesses->SetColumnWidth(0, 100);
-    m_listCtrlProcesses->SetColumnWidth(1, 500);
-    m_listCtrlProcesses->Thaw();
 }
 
 wxString AttachDbgProcDlg::GetExeName() const
 {
-    if(m_selectedItem != wxNOT_FOUND) {
-        return GetColumnText(m_listCtrlProcesses, m_selectedItem, 1);
+    wxVariant v;
+    int sel = m_dvListCtrl->GetSelectedRow();
+    if(sel != wxNOT_FOUND) {
+        m_dvListCtrl->GetValue(v, sel, 1);
+        return v.GetString();
     }
     return wxEmptyString;
 }
 
 wxString AttachDbgProcDlg::GetProcessId() const
 {
-    if(m_selectedItem != wxNOT_FOUND) {
-        return GetColumnText(m_listCtrlProcesses, m_selectedItem, 0);
+    wxVariant v;
+    int sel = m_dvListCtrl->GetSelectedRow();
+    if(sel != wxNOT_FOUND) {
+        m_dvListCtrl->GetValue(v, sel, 0);
+        return v.GetString();
     }
     return wxEmptyString;
 }
 
-void AttachDbgProcDlg::OnSortColumn(wxListEvent& event)
-{
-    RefreshProcessesList(m_textCtrlFilter->GetValue(), event.m_col);
-}
 
-void AttachDbgProcDlg::OnItemActivated(wxListEvent& event)
-{
-    m_selectedItem = event.m_itemIndex;
-    EndModal(wxID_OK);
-}
-
-void AttachDbgProcDlg::OnItemDeselected(wxListEvent& event)
-{
-    m_selectedItem = wxNOT_FOUND;
-    wxUnusedVar(event);
-}
-
-void AttachDbgProcDlg::OnItemSelected(wxListEvent& event)
-{
-    m_selectedItem = event.m_itemIndex;
-    wxUnusedVar(event);
-}
-
-void AttachDbgProcDlg::OnBtnAttachUI(wxUpdateUIEvent& event) { event.Enable(m_selectedItem != wxNOT_FOUND); }
+void AttachDbgProcDlg::OnBtnAttachUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->GetSelectedRow() != wxNOT_FOUND); }
 
 AttachDbgProcDlg::~AttachDbgProcDlg() {}
 

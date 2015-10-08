@@ -11,6 +11,7 @@ CxxPreProcessorScanner::CxxPreProcessorScanner(const wxFileName& filename, size_
     , m_options(options)
 {
     m_scanner = ::LexerNew(m_filename, m_options);
+    wxASSERT(m_scanner);
 }
 
 CxxPreProcessorScanner::~CxxPreProcessorScanner()

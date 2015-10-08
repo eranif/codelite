@@ -213,7 +213,7 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer76->Add(m_staticText78, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_filePickerNodeJS = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerNodeJS = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     m_filePickerNodeJS->SetToolTip(_("Select Node.js executable"));
     m_filePickerNodeJS->SetFocus();
     
@@ -223,7 +223,7 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer76->Add(m_staticTextScript, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_filePickerScript = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerScript = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     m_filePickerScript->SetToolTip(_("Select the script to execute"));
     
     flexGridSizer76->Add(m_filePickerScript, 0, wxALL|wxEXPAND, 5);
@@ -284,7 +284,7 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     
     m_stdBtnSizer70 = new wxStdDialogButtonSizer();
     
-    boxSizer68->Add(m_stdBtnSizer70, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer68->Add(m_stdBtnSizer70, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOK->SetDefault();

@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 233,
+  "m_objCounter": 235,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCD9C6InitBitmapResources",
   "m_bitmapsFile": "WebToolsBase_webtools_bitmaps.cpp",
@@ -2145,7 +2145,7 @@
          "border": 5,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
+         "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
@@ -2299,7 +2299,7 @@
          "border": 5,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
+         "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
@@ -2732,7 +2732,7 @@
       }, {
        "m_type": 4467,
        "proportion": 0,
-       "border": 5,
+       "border": 10,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": [],

@@ -8,6 +8,7 @@ class NodeJSWorkspaceView : public clTreeCtrlPanel
 {
 protected:
     void OnContextMenu(clContextMenuEvent& event);
+    void OnContextMenuFile(clContextMenuEvent& event);
     void OnFolderDropped(clCommandEvent& event);
     void OnShowHiddenFiles(wxCommandEvent& event);
     void OnCloseWorkspace(wxCommandEvent& event);

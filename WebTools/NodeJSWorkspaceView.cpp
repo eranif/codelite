@@ -18,11 +18,13 @@ NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewN
     SetNewFileTemplate("Untitled.js", wxStrlen("Untitled"));
     SetViewName(viewName);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
 }
 
 NodeJSWorkspaceView::~NodeJSWorkspaceView()
 {
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
 }
 
 void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
@@ -142,4 +144,9 @@ void NodeJSWorkspaceView::OnCloseWorkspace(wxCommandEvent& event)
     wxCommandEvent eventCloseWorkspace(wxEVT_MENU, XRCID("close_workspace"));
     eventCloseWorkspace.SetEventObject(EventNotifier::Get()->TopFrame());
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(eventCloseWorkspace);
+}
+
+void NodeJSWorkspaceView::OnContextMenuFile(clContextMenuEvent& event)
+{
+    event.Skip();
 }

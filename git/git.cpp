@@ -2521,7 +2521,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
     GitCommitDlg dlg(m_topWindow);
     dlg.AppendDiff(diff);
     if(dlg.ShowModal() == wxID_OK) {
-        if(dlg.GetSelectedFiles().IsEmpty()) return;
+        if(dlg.GetSelectedFiles().IsEmpty() && !dlg.IsAmending()) return;
         wxString message = dlg.GetCommitMessage();
         if(!message.IsEmpty() || dlg.IsAmending()) {
 

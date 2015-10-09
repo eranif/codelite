@@ -27,23 +27,23 @@
 
 #include "plugindlgbase.h"
 
-/** Implementing PluginMgrDlgBase */
 class PluginMgrDlg : public PluginMgrDlgBase
 {
     wxArrayString m_initialDisabledPlugins;
+
 protected:
     virtual void OnCheckAll(wxCommandEvent& event);
     virtual void OnCheckAllUI(wxUpdateUIEvent& event);
     virtual void OnUncheckAll(wxCommandEvent& event);
     virtual void OnUncheckAllUI(wxUpdateUIEvent& event);
     void Initialize();
-    void OnItemSelected(wxCommandEvent &event);
-    void OnButtonOK(wxCommandEvent &event);
+    void OnItemSelected(wxCommandEvent& event);
+    void OnButtonOK(wxCommandEvent& event);
     void CreateInfoPage(unsigned int index);
 
 public:
     /** Constructor */
-    PluginMgrDlg( wxWindow* parent );
+    PluginMgrDlg(wxWindow* parent);
     virtual ~PluginMgrDlg();
 };
 

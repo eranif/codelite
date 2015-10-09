@@ -34,7 +34,6 @@ PluginMgrDlg::PluginMgrDlg(wxWindow* parent)
     this->Initialize();
     SetName("PluginMgrDlg");
     WindowAttrManager::Load(this);
-    this->PostSizeEvent();
 }
 
 PluginMgrDlg::~PluginMgrDlg() {}
@@ -168,8 +167,10 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
         content << wxT("</table><html><body>");
 
         m_htmlWinDesc->SetPage(content);
+        m_htmlWinDesc->Refresh();
     }
 }
+
 void PluginMgrDlg::OnCheckAll(wxCommandEvent& event)
 {
     for(size_t i = 0; i < m_checkListPluginsList->GetCount(); ++i) {

@@ -14,9 +14,6 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/splitter.h>
-#include <wx/panel.h>
-#include <wx/stattext.h>
 #include <wx/checklst.h>
 #include <wx/html/htmlwin.h>
 #include <wx/button.h>
@@ -30,17 +27,13 @@
 class PluginMgrDlgBase : public wxDialog
 {
 protected:
-    wxSplitterWindow* m_splitter2;
-    wxPanel* m_splitterPage6;
-    wxStaticText* m_staticText1;
     wxCheckListBox* m_checkListPluginsList;
-    wxPanel* m_splitterPage10;
-    wxStaticText* m_staticText2;
     wxHtmlWindow* m_htmlWinDesc;
     wxButton* m_button20;
     wxButton* m_button22;
-    wxButton* m_buttonOk;
-    wxButton* m_buttonCancel;
+    wxStdDialogButtonSizer* m_stdBtnSizer26;
+    wxButton* m_buttonOK;
+    wxButton* m_button30;
 
 protected:
     virtual void OnItemSelected(wxCommandEvent& event) { event.Skip(); }
@@ -51,17 +44,10 @@ protected:
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText1() { return m_staticText1; }
     wxCheckListBox* GetCheckListPluginsList() { return m_checkListPluginsList; }
-    wxPanel* GetSplitterPage6() { return m_splitterPage6; }
-    wxStaticText* GetStaticText2() { return m_staticText2; }
     wxHtmlWindow* GetHtmlWinDesc() { return m_htmlWinDesc; }
-    wxPanel* GetSplitterPage10() { return m_splitterPage10; }
-    wxSplitterWindow* GetSplitter2() { return m_splitter2; }
     wxButton* GetButton20() { return m_button20; }
     wxButton* GetButton22() { return m_button22; }
-    wxButton* GetButtonOk() { return m_buttonOk; }
-    wxButton* GetButtonCancel() { return m_buttonCancel; }
     PluginMgrDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Plugins"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PluginMgrDlgBase();
 };

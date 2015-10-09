@@ -361,7 +361,7 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     CHECK_COND_RET(cd->IsFolder());
 
     wxString filename =
-        ::clGetTextFromUser(_("New File"), _("Set the file name:"), m_newfileTemplate, m_newfileTemplateHighlightLen);
+        ::clGetTextFromUser(_("New File"), _("Set the file name:"), m_newfileTemplate);
     if(filename.IsEmpty()) return; // user cancelled
 
     wxFileName file(cd->GetPath(), filename);

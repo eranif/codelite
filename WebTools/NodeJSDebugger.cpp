@@ -24,6 +24,7 @@
 #include "NodeJSEvaluateExprHandler.h"
 #include "NodeJSLookupHandler.h"
 #include "NodeJSDebuggerTooltip.h"
+#include <signal.h>
 
 #define CHECK_RUNNING() \
     if(!IsConnected()) return

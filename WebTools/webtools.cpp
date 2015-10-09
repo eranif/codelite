@@ -490,5 +490,5 @@ void WebTools::OnEditorContextMenu(clContextMenuEvent& event)
 void WebTools::OnIsDebugger(clDebugEvent& event)
 {
     event.Skip(); // always call skip
-    event.GetStrings().Add("NodeJS Debugger");
+    //event.GetStrings().Add("NodeJS Debugger");
 }

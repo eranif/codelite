@@ -36,34 +36,6 @@ const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
 
 static const size_t DLBUFSIZE = 4096;
 
-#if 0
-static long version_string_to_number(const wxString& versionString)
-{
-    wxString major = "0";
-    wxString minor = "0";
-    wxString patch = "0";
-    wxArrayString a = ::wxStringTokenize(versionString, ".");
-    if(a.size() >= 1) {
-        major = a.Item(0);
-    }
-
-    if(a.size() >= 2) {
-        minor = a.Item(1);
-    }
-
-    if(a.size() >= 3) {
-        patch = a.Item(2);
-    }
-
-    long nMajor, nMinor, nPatch, nVersionNumber;
-    major.ToCLong(&nMajor);
-    minor.ToCLong(&nMinor);
-    patch.ToCLong(&nPatch);
-    nVersionNumber = (nMajor * 1000) + (nMinor * 100) + (nPatch * 10); // 5.1=>5100, 5.1.1=>5110
-    return nVersionNumber;
-}
-#endif
-
 struct CodeLiteVersion {
     wxString m_os;
     wxString m_codename;
@@ -203,12 +175,18 @@ void WebUpdateJob::ParseFile()
     for(int i = 0; i < count; ++i) {
         CodeLiteVersion v(platforms.arrayItem(i));
         if(v.IsNewer(os, codename, arch)) {
-            wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-            e.SetClientData(
+            wxCommandEvent event(wxEVT_CMD_NEW_VERSION_AVAILABLE);
+            event.SetClientData(
                 new WebUpdateJobData("http://codelite.org/support.php", v.GetUrl(), CODELITE_VERSION_STRING, "", false, true));
-            wxPostEvent(m_parent, e);
-            break;
+            m_parent->AddPendingEvent(event);
+            return;
         }
+    }
+    
+    if(m_userRequest) {
+        // If we got here, then the version is up to date
+        wxCommandEvent event(wxEVT_CMD_VERSION_UPTODATE);
+        m_parent->AddPendingEvent(event);
     }
 }
 
@@ -217,6 +195,10 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
 #ifdef __WXMSW__
     os = "msw";
     codename = "Windows";
+#ifndef NDEBUG
+    os << "-dbg";
+#endif
+
 #ifdef _WIN64
     arch = "x86_64";
 #else

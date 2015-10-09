@@ -65,6 +65,7 @@
 #include "clBootstrapWizard.h"
 #include "clWorkspaceManager.h"
 #include "clSingleChoiceDialog.h"
+#include <wx/richmsgdlg.h>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -3485,7 +3486,7 @@ void clMainFrame::CreateRecentlyOpenedWorkspacesMenu()
         wxMenu* submenu = item->GetSubMenu();
         if(submenu) {
             for(size_t i = files.GetCount(); i > 0; --i) {
-                hs.AddFileToHistory(files.Item(i-1));
+                hs.AddFileToHistory(files.Item(i - 1));
             }
             // set this menu as the recent file menu
             hs.SetBaseId(RecentWorkspaceSubMenuID + 1);
@@ -4004,7 +4005,7 @@ void clMainFrame::CompleteInitialization()
     eventShowTabBar.SetInt(clConfig::Get().Read(kConfigShowTabBar, true));
     OnShowTabBar(eventShowTabBar);
     ShowOrHideCaptions();
-    
+
     m_initCompleted = true;
 }
 
@@ -4300,33 +4301,24 @@ void clMainFrame::OnSingleInstanceRaise(clCommandEvent& e)
 
 void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
 {
-    WebUpdateJobData* data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
-    if(data) {
-        if(data->IsUpToDate() == false) {
-
-            m_codeliteDownloadPageURL = data->GetUrl();
-            ButtonDetails btn;
-            btn.buttonLabel = _("Download New Version");
-            btn.commandId = XRCID("goto_codelite_download_url");
-            btn.isDefault = true;
-            btn.window = this;
-
-            GetMainBook()->ShowMessage(
-                _("A new version of CodeLite is available"),
-                true,
-                PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/software_upgrade")),
-                btn);
-
-        } else {
-            if(!data->GetShowMessage()) {
-                wxLogMessage(wxString() << "Info: CodeLite is up-to-date (or newer), version used: "
-                                        << data->GetCurVersion() << ", version on site: " << data->GetNewVersion());
-            } else {
-                // User initiated the version check request
-                GetMainBook()->ShowMessage(_("CodeLite is up-to-date"));
+    if(e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE) {
+        // All is up to date
+        wxMessageBox(_("You already have the latest version of CodeLite"), "CodeLite", wxOK | wxCENTRE, this);
+    } else {
+        WebUpdateJobData* data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
+        if(data) {
+            if(data->IsUpToDate() == false) {
+                wxRichMessageDialog dlg(this,
+                                        _("A new version of CodeLite is available for download"),
+                                        "CodeLite",
+                                        wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTRE | wxICON_INFORMATION);
+                dlg.SetYesNoLabels(_("Download"), _("No"));
+                if(dlg.ShowModal() == wxID_YES) {
+                    ::wxLaunchDefaultBrowser(data->GetUrl());
+                }
             }
+            wxDELETE(data);
         }
-        delete data;
     }
 }
 

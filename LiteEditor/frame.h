@@ -541,6 +541,7 @@ protected:
     void OnViewPane(wxCommandEvent& event);
     void OnViewPaneUI(wxUpdateUIEvent& event);
     void OnDetachWorkspaceViewTab(wxCommandEvent& e);
+    void OnHideWorkspaceViewTab(wxCommandEvent& e);
     void OnDetachDebuggerViewTab(wxCommandEvent& e);
     void OnNewDetachedPane(wxCommandEvent& e);
     void OnDestroyDetachedPane(wxCommandEvent& e);

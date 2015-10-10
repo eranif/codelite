@@ -572,6 +572,7 @@ EVT_UPDATE_UI(wxID_BACKWARD, clMainFrame::OnBackwardForwardUI)
 // Workspace Pane tab context menu
 //-------------------------------------------------------
 EVT_MENU(XRCID("detach_wv_tab"), clMainFrame::OnDetachWorkspaceViewTab)
+EVT_MENU(XRCID("hide_wv_tab"), clMainFrame::OnHideWorkspaceViewTab)
 
 //-------------------------------------------------------
 // Debugger Pane tab context menu
@@ -1067,7 +1068,8 @@ void clMainFrame::CreateGUIControls(void)
     // Add the explorer pane
     m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
     m_mgr.AddPane(m_workspacePane,
-                  wxAuiPaneInfo().PinButton()
+                  wxAuiPaneInfo()
+                      .PinButton()
                       .CaptionVisible(true)
                       .MinimizeButton()
                       .MaximizeButton()
@@ -4337,6 +4339,16 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
     GetWorkspacePane()->GetNotebook()->RemovePage(sel);
     pane->SetChildNoReparent(page);
     wxUnusedVar(e);
+}
+
+void clMainFrame::OnHideWorkspaceViewTab(wxCommandEvent& e)
+{
+    size_t sel = GetWorkspacePane()->GetNotebook()->GetSelection();
+    wxString text = GetWorkspacePane()->GetNotebook()->GetPageText(sel);
+
+    clCommandEvent eventHide(wxEVT_SHOW_WORKSPACE_TAB);
+    eventHide.SetSelected(false).SetString(text);
+    EventNotifier::Get()->AddPendingEvent(eventHide);
 }
 
 void clMainFrame::OnNewDetachedPane(wxCommandEvent& e)

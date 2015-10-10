@@ -36,11 +36,9 @@ void NewPHPWorkspaceDlg::OnNameUpdated(wxCommandEvent& event)
 
 void NewPHPWorkspaceDlg::OnOK(wxCommandEvent& event)
 {
-    wxFileName fn(GetWorkspacePath());
-    wxLogNull noLog;
-    wxMkdir(fn.GetPath());
     EndModal(wxID_OK);
 }
+
 void NewPHPWorkspaceDlg::OnCheckMakeSeparateDir(wxCommandEvent& event)
 {
     m_textCtrlPreview->ChangeValue(GetWorkspacePath());

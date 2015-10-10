@@ -313,6 +313,14 @@ void PhpPlugin::OnNewWorkspace(clCommandEvent& e)
         // Create a PHP workspace
         NewPHPWorkspaceDlg newWspDlg(m_mgr->GetTheApp()->GetTopWindow());
         if(newWspDlg.ShowModal() == wxID_OK) {
+            // Ensure that the workspace path exists
+            wxFileName workspaceFile(newWspDlg.GetWorkspacePath());
+            if(!workspaceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL)) {
+                ::wxMessageBox(wxString::Format(_("Could not create workspace folder:\n%s"), workspaceFile.GetPath()),
+                               "CodeLite",
+                               wxICON_ERROR | wxOK | wxCENTER);
+                return;
+            }
             PHPWorkspace::Get()->Create(newWspDlg.GetWorkspacePath());
             DoOpenWorkspace(newWspDlg.GetWorkspacePath(), false /* create if missing */, newWspDlg.IsCreateProject());
         }
@@ -386,7 +394,7 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing, 
     wxCommandEvent eventClose(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
     eventClose.SetEventObject(FRAME);
     FRAME->GetEventHandler()->ProcessEvent(eventClose);
- 
+
     // Open the PHP workspace
     if(!PHPWorkspace::Get()->Open(filename, createIfMissing)) {
         wxMessageBox(_("Failed to open workspace: corrupted workspace file"),

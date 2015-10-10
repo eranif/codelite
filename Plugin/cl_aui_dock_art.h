@@ -38,7 +38,11 @@
 class WXDLLIMPEXP_SDK clAuiDockArt : public wxAuiDefaultDockArt
 {
     IManager *m_manager;
-
+    wxBitmap m_dockCloseBmp;
+    wxBitmap m_dockMoreBmp;
+    wxBitmap m_dockExpandeBmp;
+    wxBitmap m_dockMinimizeBmp;
+    
 public:
     clAuiDockArt(IManager *manager);
     virtual ~clAuiDockArt();

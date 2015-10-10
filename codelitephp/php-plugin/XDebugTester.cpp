@@ -52,7 +52,7 @@ bool XDebugTester::RunTest()
                 } else {
                     msg << "<font color=\"green\">Passed</font>";
                 }
-                m_results.insert(std::make_pair(wxString("xdebug.ide_key"),
+                m_results.insert(std::make_pair(wxString("xdebug.idekey"),
                                                 std::make_pair(rootElement.namedObject("_ideKey").toString(), msg)));
             }
             m_results.insert(std::make_pair(

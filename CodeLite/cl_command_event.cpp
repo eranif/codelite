@@ -50,6 +50,7 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     m_allowed = src.m_allowed;
     m_oldName = src.m_oldName;
     m_lineNumber = src.m_lineNumber;
+    m_selected = src.m_selected;
 
     // Copy wxCommandEvent members here
     m_eventType = src.m_eventType;

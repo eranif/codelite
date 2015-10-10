@@ -30,6 +30,12 @@
     <object class="wxBitmap" name="next-16">res/quickfindbar/next-16.png</object>
     <object class="wxBitmap" name="arrow-right-24">res/arrow-left-24.png</object>
     
+    <!-- aui dockablepane -->
+    <object class="wxBitmap" name="aui-close">res/aui-close.png</object>
+    <object class="wxBitmap" name="aui-more">res/aui-more.png</object>
+    <object class="wxBitmap" name="aui-expand">res/aui-expand.png</object>
+    <object class="wxBitmap" name="aui-minimize">res/aui-minimize.png</object>
+    
     <!--
         Toolbar bitmaps (24x24)
     -->

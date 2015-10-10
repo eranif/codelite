@@ -50,6 +50,7 @@ protected:
     bool m_answer;
     bool m_allowed;
     int m_lineNumber;
+    bool m_selected;
 
 public:
     clCommandEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -57,6 +58,13 @@ public:
     clCommandEvent& operator=(const clCommandEvent& src);
     virtual ~clCommandEvent();
 
+    clCommandEvent& SetSelected(bool selected)
+    {
+        this->m_selected = selected;
+        return *this;
+    }
+    bool IsSelected() const { return m_selected; }
+    
     // Veto management
     void Veto() { this->m_allowed = false; }
     void Allow() { this->m_allowed = true; }

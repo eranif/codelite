@@ -71,6 +71,7 @@ class CMakeSettingsManager;
 class CMakeProjectSettingsPanel;
 class CMakeProjectSettings;
 class CMakeGenerator;
+class CMakeHelpTab;
 
 /* ************************************************************************ */
 /* CLASSES                                                                  */
@@ -93,19 +94,15 @@ class CMakeGenerator;
 class CMakePlugin : public IPlugin
 {
 
-// Public Constants
+    // Public Constants
 public:
-
-
     /**
      * @brief Name of the output file - CMakeLists.txt
      */
     static const wxString CMAKELISTS_FILE;
 
-// Public Ctors & Dtors
+    // Public Ctors & Dtors
 public:
-
-
     /**
      * @brief Create plugin.
      *
@@ -113,56 +110,40 @@ public:
      */
     explicit CMakePlugin(IManager* manager);
 
-
     /**
      * @brief Destructor.
      */
     virtual ~CMakePlugin();
 
-
-// Public Accessors
+    // Public Accessors
 public:
-
-
     /**
      * @brief Returns a pointer to the manager object.
      *
      * @return
      */
-    IManager* GetManager() const {
-        return m_mgr;
-    }
-
+    IManager* GetManager() const { return m_mgr; }
 
     /**
      * @brief Returns CMake application pointer.
      *
      * @return
      */
-    CMake* GetCMake() const {
-        return m_cmake.get();
-    }
-
+    CMake* GetCMake() const { return m_cmake.get(); }
 
     /**
      * @brief Returns settings manager pointer.
      *
      * @return
      */
-    CMakeSettingsManager* GetSettingsManager() const {
-        return m_settingsManager.get();
-    }
-
+    CMakeSettingsManager* GetSettingsManager() const { return m_settingsManager.get(); }
 
     /**
      * @brief Returns CMake configuration.
      *
      * @return
      */
-    CMakeConfiguration* GetConfiguration() const {
-        return m_configuration.get();
-    }
-
+    CMakeConfiguration* GetConfiguration() const { return m_configuration.get(); }
 
     /**
      * @brief Returns directory where is workspace project stored.
@@ -170,7 +151,6 @@ public:
      * @return Path to workspace
      */
     wxFileName GetWorkspaceDirectory() const;
-
 
     /**
      * @brief Returns directory where is the given project stored.
@@ -181,16 +161,12 @@ public:
      */
     wxFileName GetProjectDirectory(const wxString& projectName) const;
 
-
     /**
      * @brief Returns seleted project.
      *
      * @return Pointer to project.
      */
-    ProjectPtr GetSelectedProject() const {
-        return m_mgr->GetSelectedProject();
-    }
-
+    ProjectPtr GetSelectedProject() const { return m_mgr->GetSelectedProject(); }
 
     /**
      * @brief Returns currently selected config for seleted project.
@@ -199,14 +175,12 @@ public:
      */
     wxString GetSelectedProjectConfig() const;
 
-
     /**
      * @brief Returns currently selected build config.
      *
      * @return
      */
     BuildConfigPtr GetSelectedBuildConfig() const;
-
 
     /**
      * @brief Returns settings for currently selected project.
@@ -215,14 +189,12 @@ public:
      */
     const CMakeProjectSettings* GetSelectedProjectSettings() const;
 
-
     /**
      * @brief Returns if currently selected project is enabled.
      *
      * @return
      */
     bool IsSeletedProjectEnabled() const;
-
 
     /**
      * @brief Returns a list of supported generators.
@@ -234,7 +206,6 @@ public:
      */
     wxArrayString GetSupportedGenerators() const;
 
-
     /**
      * @brief Check if Help pane is detached.
      *
@@ -242,11 +213,8 @@ public:
      */
     bool IsPaneDetached() const;
 
-
-// Public Operations
+    // Public Operations
 public:
-
-
     /**
      * @brief Creates a tool bar.
      *
@@ -256,14 +224,12 @@ public:
      */
     clToolBar* CreateToolBar(wxWindow* parent);
 
-
     /**
      * @brief Creates a menu for plugin.
      *
      * @param pluginsMenu
      */
     void CreatePluginMenu(wxMenu* pluginsMenu);
-
 
     /**
      * @brief Hook popup menu.
@@ -273,17 +239,13 @@ public:
      */
     void HookPopupMenu(wxMenu* menu, MenuType type);
 
-
     /**
      * @brief allow the plugins to hook a tab in the project settings
      *
      * @param notebook the parent
      * @param configName the associated configuration name
      */
-    void HookProjectSettingsTab(wxBookCtrlBase* notebook,
-                                const wxString& projectName,
-                                const wxString& configName);
-
+    void HookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName);
 
     /**
      * @brief Unhook any tab from the project settings dialog.
@@ -291,16 +253,12 @@ public:
      * @param notebook the parent
      * @param configName the associated configuration name
      */
-    void UnHookProjectSettingsTab(wxBookCtrlBase* notebook,
-                                  const wxString& projectName,
-                                  const wxString& configName);
-
+    void UnHookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName);
 
     /**
      * @brief Unplug plugin.
      */
     void UnPlug();
-
 
     /**
      * @brief Check if CMakeLists.txt exists in given directory.
@@ -311,7 +269,6 @@ public:
      */
     bool ExistsCMakeLists(wxFileName directory) const;
 
-
     /**
      * @brief Open CMakeLists.txt in given directory.
      *
@@ -319,18 +276,15 @@ public:
      */
     void OpenCMakeLists(wxFileName directory) const;
 
-
-// Public Events
+    // Public Events
 public:
-
-
+    void OnToggleHelpTab(clCommandEvent& event);
     /**
      * @brief On setting dialog.
      *
      * @param event
      */
     void OnSettings(wxCommandEvent& event);
-
 
     /**
      * @brief On project config saving.
@@ -339,14 +293,12 @@ public:
      */
     void OnSaveConfig(clProjectSettingsEvent& event);
 
-
     /**
      * @brief Returns clean command.
      *
      * @param event
      */
     void OnGetCleanCommand(clBuildEvent& event);
-
 
     /**
      * @brief Returns build command.
@@ -355,12 +307,10 @@ public:
      */
     void OnGetBuildCommand(clBuildEvent& event);
 
-
     /**
      * @brief Returns if custom makefile is generated.
      */
     void OnGetIsPluginMakefile(clBuildEvent& event);
-
 
     /**
      * @brief Generate custom makefile.
@@ -369,7 +319,6 @@ public:
      */
     void OnExportMakefile(clBuildEvent& event);
 
-
     /**
      * @brief On workspace is loaded.
      *
@@ -377,11 +326,8 @@ public:
      */
     void OnWorkspaceLoaded(wxCommandEvent& event);
 
-
-// Private Operations
+    // Private Operations
 private:
-
-
     /**
      * @brief Processes build event.
      *
@@ -390,11 +336,8 @@ private:
      */
     void ProcessBuildEvent(clBuildEvent& event, wxString param = "");
 
-
-// Private Data Members
+    // Private Data Members
 private:
-
-
     /// CMake configuration.
     wxScopedPtr<CMakeConfiguration> m_configuration;
 
@@ -407,6 +350,7 @@ private:
     /// Only one is enough
     CMakeProjectSettingsPanel* m_panel;
 
+    CMakeHelpTab* m_helpTab;
 };
 
 /* ************************************************************************ */

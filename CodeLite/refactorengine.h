@@ -43,12 +43,17 @@ class clProgressDlg;
 struct RefactorSource {
     wxString name;
     wxString scope;
-    bool     isClass;
+    bool isClass;
 
-    RefactorSource() : name(wxEmptyString), scope(wxEmptyString), isClass(false) {
+    RefactorSource()
+        : name(wxEmptyString)
+        , scope(wxEmptyString)
+        , isClass(false)
+    {
     }
 
-    void Reset() {
+    void Reset()
+    {
         name.clear();
         scope.clear();
         isClass = false;
@@ -62,43 +67,41 @@ class WXDLLIMPEXP_CL RefactoringEngine
 {
     std::list<CppToken> m_candidates;
     std::list<CppToken> m_possibleCandidates;
-    wxEvtHandler *      m_evtHandler;
-    RefactoringStorage  m_storage;
-    
+    wxEvtHandler* m_evtHandler;
+    RefactoringStorage m_storage;
+
 public:
     static RefactoringEngine* Instance();
-    
+
 protected:
-    clProgressDlg *CreateProgressDialog(const wxString &title, int maxValue);
-    void DoFindReferences(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files, bool onlyDefiniteMatches);
+    clProgressDlg* CreateProgressDialog(const wxString& title, int maxValue);
+    void DoFindReferences(const wxString& symname,
+                          const wxFileName& fn,
+                          int line,
+                          int pos,
+                          const wxFileList_t& files,
+                          bool onlyDefiniteMatches);
 
 private:
     RefactoringEngine();
     ~RefactoringEngine();
-    bool DoResolveWord(  TextStatesPtr states,
-                         const wxFileName& fn,
-                         int pos,
-                         int line,
-                         const wxString &word,
-                         RefactorSource *rs);
+    bool DoResolveWord(TextStatesPtr states,
+                       const wxFileName& fn,
+                       int pos,
+                       int line,
+                       const wxString& word,
+                       RefactorSource* rs);
 
 public:
-    void InitializeCache(const wxFileList_t& files) {
-        m_storage.InitializeCache(files);
-    }
+    void InitializeCache(const wxFileList_t& files) { m_storage.InitializeCache(files); }
     bool IsCacheInitialized() const;
-    void SetCandidates(const std::list<CppToken>& candidates) {
-        this->m_candidates = candidates;
-    }
-    void SetPossibleCandidates(const std::list<CppToken>& possibleCandidates) {
+    void SetCandidates(const std::list<CppToken>& candidates) { this->m_candidates = candidates; }
+    void SetPossibleCandidates(const std::list<CppToken>& possibleCandidates)
+    {
         this->m_possibleCandidates = possibleCandidates;
     }
-    const std::list<CppToken>& GetCandidates() const {
-        return m_candidates;
-    }
-    const std::list<CppToken>& GetPossibleCandidates() const {
-        return m_possibleCandidates;
-    }
+    const std::list<CppToken>& GetCandidates() const { return m_candidates; }
+    const std::list<CppToken>& GetPossibleCandidates() const { return m_possibleCandidates; }
     wxString GetExpression(int pos, TextStatesPtr states);
 
     void Clear();
@@ -119,7 +122,8 @@ public:
      * @param pos at that position
      * @param files perform the refactoring on these files
      */
-    void RenameGlobalSymbol(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files);
+    void
+    RenameGlobalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files);
 
     /**
      * @param rename local variable
@@ -128,7 +132,7 @@ public:
      * @param line the line where our symbol appears
      * @param pos the position of the symbol (this should be pointing to the *start* of the symbol)
      */
-    void RenameLocalSymbol (const wxString &symname, const wxFileName& fn, int line, int pos);
+    void RenameLocalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos);
 
     /**
      * @brief find usages of given symbol in a list of files
@@ -138,13 +142,18 @@ public:
      * @param pos the position of the symbol (this should be pointing to the *start* of the symbol)
      * @param files list of files to search in
      */
-    void FindReferences(const wxString &symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files);
+    void FindReferences(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files);
 
     /**
      * @brief given a location (file:line:pos) use the current location function signature
      * and return the propsed counter-part tag
      */
-    TagEntryPtr SyncSignature(const wxFileName& fn, int line, int pos, const wxString &word, const wxString &text, const wxString &expr);
+    TagEntryPtr SyncSignature(const wxFileName& fn,
+                              int line,
+                              int pos,
+                              const wxString& word,
+                              const wxString& text,
+                              const wxString& expr);
 };
 
 #endif // REFACTORENGINE_H

@@ -209,16 +209,19 @@ CMakePlugin::CMakePlugin(IManager* manager)
 
     // Create cmake application
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
-
+    
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
     cmakeImages images;
     const wxBitmap& bmp = images.Bitmap("cmake_16");
+    
     if(IsPaneDetached()) {
         DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, HELP_TAB_NAME, bmp, wxSize(200, 200));
-        cp->SetChildNoReparent(new CMakeHelpTab(cp, this));
-
+        m_helpTab = new CMakeHelpTab(cp, this);
+        cp->SetChildNoReparent(m_helpTab);
     } else {
-        book->AddPage(new CMakeHelpTab(book, this), HELP_TAB_NAME, false, bmp);
+        m_helpTab = new CMakeHelpTab(book, this);
+        book->AddPage(m_helpTab, HELP_TAB_NAME, false, bmp);
+        m_mgr->AddWorkspaceTab(HELP_TAB_NAME);
     }
 
     // Bind events
@@ -230,6 +233,7 @@ CMakePlugin::CMakePlugin(IManager* manager)
         wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(CMakePlugin::OnGetIsPluginMakefile), this);
     EventNotifier::Get()->Bind(wxEVT_PLUGIN_EXPORT_MAKEFILE, clBuildEventHandler(CMakePlugin::OnExportMakefile), this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(CMakePlugin::OnWorkspaceLoaded), this);
+    EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &CMakePlugin::OnToggleHelpTab, this);
 }
 
 /* ************************************************************************ */
@@ -467,6 +471,7 @@ void CMakePlugin::UnPlug()
     EventNotifier::Get()->Unbind(
         wxEVT_PLUGIN_EXPORT_MAKEFILE, clBuildEventHandler(CMakePlugin::OnExportMakefile), this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(CMakePlugin::OnWorkspaceLoaded), this);
+    EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &CMakePlugin::OnToggleHelpTab, this);
 }
 
 /* ************************************************************************ */
@@ -756,6 +761,26 @@ void CMakePlugin::ProcessBuildEvent(clBuildEvent& event, wxString param)
 
     // The build command is simple make call with different makefile
     event.SetCommand(cmd);
+}
+
+void CMakePlugin::OnToggleHelpTab(clCommandEvent& event)
+{
+    if(event.GetString() != HELP_TAB_NAME) {
+        event.Skip();
+        return;
+    }
+    
+    if(event.IsSelected()) {
+        // show it
+        cmakeImages images;
+        const wxBitmap& bmp = images.Bitmap("cmake_16");
+        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, m_helpTab, HELP_TAB_NAME, true, bmp);
+    } else {
+        int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(HELP_TAB_NAME);
+        if(where != wxNOT_FOUND) {
+            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+        }
+    }
 }
 
 /* ************************************************************************ */

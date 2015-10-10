@@ -35,13 +35,9 @@
 
 const wxEventType wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING = wxNewEventType();
 
-RefactoringEngine::RefactoringEngine()
-{
-}
+RefactoringEngine::RefactoringEngine() {}
 
-RefactoringEngine::~RefactoringEngine()
-{
-}
+RefactoringEngine::~RefactoringEngine() {}
 
 RefactoringEngine* RefactoringEngine::Instance()
 {
@@ -49,14 +45,17 @@ RefactoringEngine* RefactoringEngine::Instance()
     return &ms_instance;
 }
 
-
 void RefactoringEngine::Clear()
 {
     m_possibleCandidates.clear();
     m_candidates.clear();
 }
 
-void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files)
+void RefactoringEngine::RenameGlobalSymbol(const wxString& symname,
+                                           const wxFileName& fn,
+                                           int line,
+                                           int pos,
+                                           const wxFileList_t& files)
 {
     DoFindReferences(symname, fn, line, pos, files, false);
 }
@@ -71,14 +70,13 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 
     // get the current file states
     TextStatesPtr states = scanner.states();
-    if( !states ) {
+    if(!states) {
         return;
     }
 
-
     // get the local by scanning from the current function's
     TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(fn, line + 1);
-    if( !tag ) {
+    if(!tag) {
         return;
     }
 
@@ -86,11 +84,10 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
     int funcLine = tag->GetLine() - 1;
 
     // Convert the line number to offset
-    int from = states->LineToPos     (funcLine);
-    int to   = states->FunctionEndPos(from);
+    int from = states->LineToPos(funcLine);
+    int to = states->FunctionEndPos(from);
 
-    if(to == wxNOT_FOUND)
-        return;
+    if(to == wxNOT_FOUND) return;
 
     // search for matches in the given range
     CppTokensMap l;
@@ -98,22 +95,27 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 
     CppToken::List_t tokens;
     l.findTokens(symname, tokens);
-    if (tokens.empty())
-        return;
+    if(tokens.empty()) return;
 
     // Loop over the matches
-    // Incase we did manage to resolve the word, it means that it is NOT a local variable (DoResolveWord only wors for globals NOT for locals)
+    // Incase we did manage to resolve the word, it means that it is NOT a local variable (DoResolveWord only wors for
+    // globals NOT for locals)
     RefactorSource target;
     std::list<CppToken>::iterator iter = tokens.begin();
-    for (; iter != tokens.end(); iter++) {
-        wxFileName f( iter->getFilename() );
-        if (!DoResolveWord(states, wxFileName(iter->getFilename()), iter->getOffset(), line, symname, &target)) {
-            m_candidates.push_back( *iter );
+    for(; iter != tokens.end(); iter++) {
+        wxFileName f(iter->getFilename());
+        if(!DoResolveWord(states, wxFileName(iter->getFilename()), iter->getOffset(), line, symname, &target)) {
+            m_candidates.push_back(*iter);
         }
     }
 }
 
-bool RefactoringEngine::DoResolveWord(TextStatesPtr states, const wxFileName& fn, int pos, int line, const wxString &word, RefactorSource *rs)
+bool RefactoringEngine::DoResolveWord(TextStatesPtr states,
+                                      const wxFileName& fn,
+                                      int pos,
+                                      int line,
+                                      const wxString& word,
+                                      RefactorSource* rs)
 {
     std::vector<TagEntryPtr> tags;
 
@@ -121,35 +123,38 @@ bool RefactoringEngine::DoResolveWord(TextStatesPtr states, const wxFileName& fn
     wxString expr = GetExpression(pos, states);
 
     // sanity
-    if(states->text.length() < (size_t)pos + 1)
-        return false;
-
+    if(states->text.length() < (size_t)pos + 1) return false;
+    
+    // Hack:
+    // disable sqlite3.c
+    if(fn.GetFullName() == "sqlite3.c") return false;
+    
     // get the scope
     // Optimize the text for large files
     wxString text(states->text.substr(0, pos + 1));
 
     // we simply collect declarations & implementations
 
-    //try implemetation first
+    // try implemetation first
     bool found(false);
     TagsManagerST::Get()->FindImplDecl(fn, line, expr, word, text, tags, true, true);
-    if (tags.empty() == false) {
+    if(tags.empty() == false) {
         // try to see if we got a function and not class/struct
 
-        for (size_t i=0; i<tags.size(); i++) {
+        for(size_t i = 0; i < tags.size(); i++) {
             TagEntryPtr tag = tags.at(i);
             // find first non class/struct tag
-            if (tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
+            if(tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
 
                 // if there is no match, add it anyways
-                if (!found) {
-                    rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
+                if(!found) {
+                    rs->isClass = (tag->GetKind() == wxT("class") || tag->GetKind() == wxT("struct"));
                     rs->name = tag->GetName();
                     rs->scope = tag->GetScope();
                     found = true;
-                } else if (rs->scope == wxT("<global>") && rs->isClass == false) {
+                } else if(rs->scope == wxT("<global>") && rs->isClass == false) {
                     // give predecense to <global> variables
-                    rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
+                    rs->isClass = (tag->GetKind() == wxT("class") || tag->GetKind() == wxT("struct"));
                     rs->name = tag->GetName();
                     rs->scope = tag->GetScope();
                     found = true;
@@ -159,29 +164,28 @@ bool RefactoringEngine::DoResolveWord(TextStatesPtr states, const wxFileName& fn
         }
 
         // if no match was found, keep the first result but keep searching
-        if ( !found ) {
+        if(!found) {
 
             TagEntryPtr tag = tags.at(0);
-            rs->scope   = tag->GetScope();
-            rs->name    = tag->GetName();
+            rs->scope = tag->GetScope();
+            rs->name = tag->GetName();
             rs->isClass = tag->IsClass() || tag->IsStruct();
             found = true;
 
         } else {
             return true;
-
         }
     }
 
     // Ok, the "implementation" search did not yield definite results, try declaration
     tags.clear();
     TagsManagerST::Get()->FindImplDecl(fn, line, expr, word, text, tags, false, true);
-    if (tags.empty() == false) {
+    if(tags.empty() == false) {
         // try to see if we got a function and not class/struct
-        for (size_t i=0; i<tags.size(); i++) {
+        for(size_t i = 0; i < tags.size(); i++) {
             TagEntryPtr tag = tags.at(i);
             // find first non class/struct tag
-            if (tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
+            if(tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
                 rs->name = tag->GetName();
                 rs->scope = tag->GetScope();
                 return true;
@@ -189,11 +193,11 @@ bool RefactoringEngine::DoResolveWord(TextStatesPtr states, const wxFileName& fn
         }
 
         // if no match was found, keep the first result but keep searching
-        if ( !found ) {
+        if(!found) {
             TagEntryPtr tag = tags.at(0);
-            rs->scope    = tag->GetScope();
-            rs->name     = tag->GetName();
-            rs->isClass  = tag->IsClass() || tag->IsStruct();
+            rs->scope = tag->GetScope();
+            rs->name = tag->GetName();
+            rs->isClass = tag->IsClass() || tag->IsStruct();
         }
         return true;
     }
@@ -204,32 +208,32 @@ bool RefactoringEngine::DoResolveWord(TextStatesPtr states, const wxFileName& fn
 
 wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
 {
-    bool     cont(true);
-    int      depth(0);
-    bool     prevGt   (false);
+    bool cont(true);
+    int depth(0);
+    bool prevGt(false);
     wxString expression;
 
     states->SetPosition(pos);
-    while (cont && depth >= 0) {
+    while(cont && depth >= 0) {
         wxChar ch = states->Previous();
 
         // eof?
-        if (ch == 0) {
+        if(ch == 0) {
             break;
         }
 
-        switch (ch) {
+        switch(ch) {
         case wxT(';'):
             cont = false;
             break;
         case wxT('-'):
-            if (prevGt) {
+            if(prevGt) {
                 prevGt = false;
-                //if previous char was '>', we found an arrow so reduce the depth
-                //which was increased
+                // if previous char was '>', we found an arrow so reduce the depth
+                // which was increased
                 depth--;
             } else {
-                if (depth <= 0) {
+                if(depth <= 0) {
                     cont = false;
                 }
             }
@@ -240,7 +244,7 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
         case wxT('\t'):
         case wxT('\r'):
             prevGt = false;
-            if (depth <= 0) {
+            if(depth <= 0) {
                 cont = false;
             }
             break;
@@ -253,8 +257,8 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
         case wxT('['):
             depth--;
             prevGt = false;
-            if (depth < 0) {
-                //dont include this token
+            if(depth < 0) {
+                // dont include this token
                 cont = false;
             }
             break;
@@ -269,8 +273,8 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
         case wxT('%'):
         case wxT('?'):
             prevGt = false;
-            if (depth <= 0) {
-                //dont include this token
+            if(depth <= 0) {
+                // dont include this token
                 cont = false;
             }
             break;
@@ -281,8 +285,8 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
         case wxT('<'):
             prevGt = false;
             depth--;
-            if (depth < 0) {
-                //dont include this token
+            if(depth < 0) {
+                // dont include this token
                 cont = false;
             }
             break;
@@ -307,25 +311,34 @@ clProgressDlg* RefactoringEngine::CreateProgressDialog(const wxString& title, in
 {
     clProgressDlg* prgDlg = NULL;
     // Create a progress dialog
-    prgDlg = new clProgressDlg (NULL, title, wxT(""), maxValue);
+    prgDlg = new clProgressDlg(NULL, title, wxT(""), maxValue);
     return prgDlg;
 }
 
-void RefactoringEngine::FindReferences(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files)
+void RefactoringEngine::FindReferences(const wxString& symname,
+                                       const wxFileName& fn,
+                                       int line,
+                                       int pos,
+                                       const wxFileList_t& files)
 {
     DoFindReferences(symname, fn, line, pos, files, true);
 }
 
-void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files, bool onlyDefiniteMatches)
+void RefactoringEngine::DoFindReferences(const wxString& symname,
+                                         const wxFileName& fn,
+                                         int line,
+                                         int pos,
+                                         const wxFileList_t& files,
+                                         bool onlyDefiniteMatches)
 {
     // Clear previous results
     Clear();
-    
-    if ( ! m_storage.IsCacheReady() ) {
-        m_storage.InitializeCache( files );
+
+    if(!m_storage.IsCacheReady()) {
+        m_storage.InitializeCache(files);
         return;
     }
-    
+
     // Container for the results found in the 'files'
     CppTokensMap tokensMap;
 
@@ -334,27 +347,25 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 
     // get the current file states
     TextStatesPtr states = scanner.states();
-    if(!states)
-        return;
+    if(!states) return;
 
     // Attempt to understand the expression that the caret is currently located at (using line:pos:file)
     RefactorSource rs;
-    if(!DoResolveWord(states, fn, pos + symname.Len(), line, symname, &rs))
-        return;
+    if(!DoResolveWord(states, fn, pos + symname.Len(), line, symname, &rs)) return;
 
-    wxFileList_t modifiedFilesList = m_storage.FilterUpToDateFiles( files );
+    wxFileList_t modifiedFilesList = m_storage.FilterUpToDateFiles(files);
     clProgressDlg* prgDlg = NULL;
-    if ( !modifiedFilesList.empty() ) {
+    if(!modifiedFilesList.empty()) {
         prgDlg = CreateProgressDialog(_("Updating cache..."), files.size());
         // Search the provided input files for the symbol to rename and prepare
         // a CppTokensMap
-        for (size_t i=0; i<modifiedFilesList.size(); i++) {
+        for(size_t i = 0; i < modifiedFilesList.size(); i++) {
             wxFileName curfile = modifiedFilesList.at(i);
 
             wxString msg;
             msg << _("Caching file: ") << curfile.GetFullName();
             // update the progress bar
-            if (!prgDlg->Update(i, msg)) {
+            if(!prgDlg->Update(i, msg)) {
                 prgDlg->Destroy();
                 Clear();
                 return;
@@ -367,8 +378,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
             case FileExtManager::TypeSourceCpp: {
                 // load matches for a give symbol
                 m_storage.Match(symname, curfile.GetFullPath(), tokensMap);
-            }
-            break;
+            } break;
             default:
                 break;
             }
@@ -377,8 +387,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
     }
     // load all tokens, first we need to parse the workspace files...
     CppToken::List_t tokens = m_storage.GetTokens(symname, files);
-    if (tokens.empty())
-        return;
+    if(tokens.empty()) return;
 
     // sort the tokens
     tokens.sort();
@@ -388,16 +397,16 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
     int counter(0);
 
     TextStatesPtr statesPtr(NULL);
-    wxString      statesPtrFileName;
-    prgDlg = CreateProgressDialog(_("Stage 2/2: Parsing matches..."), (int) tokens.size());
+    wxString statesPtrFileName;
+    prgDlg = CreateProgressDialog(_("Stage 2/2: Parsing matches..."), (int)tokens.size());
 
-    for (; iter != tokens.end(); ++iter) {
+    for(; iter != tokens.end(); ++iter) {
 
         // TODO :: send an event here to report our progress
-        wxFileName f( iter->getFilename() );
-        wxString   msg;
+        wxFileName f(iter->getFilename());
+        wxString msg;
         msg << _("Parsing expression ") << counter << wxT("/") << tokens.size() << _(" in file: ") << f.GetFullName();
-        if ( !prgDlg->Update(counter, msg) ) {
+        if(!prgDlg->Update(counter, msg)) {
             // user clicked 'Cancel'
             Clear();
             prgDlg->Destroy();
@@ -408,41 +417,45 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
         // reset the result
         target.Reset();
 
-        if(!statesPtr || statesPtrFileName != iter->getFilename() ) {
+        if(!statesPtr || statesPtrFileName != iter->getFilename()) {
             // Create new statesPtr
             CppWordScanner sc(iter->getFilename());
-            statesPtr         = sc.states();
+            statesPtr = sc.states();
             statesPtrFileName = iter->getFilename();
         }
 
-        if(!statesPtr)
-            continue;
+        if(!statesPtr) continue;
 
-        if (DoResolveWord(statesPtr, wxFileName( iter->getFilename() ), iter->getOffset(), iter->getLineNumber(), symname, &target)) {
+        if(DoResolveWord(statesPtr,
+                         wxFileName(iter->getFilename()),
+                         iter->getOffset(),
+                         iter->getLineNumber(),
+                         symname,
+                         &target)) {
 
             // set the line number
             if(statesPtr->states.size() > iter->getOffset())
-                iter->setLineNumber( statesPtr->states[iter->getOffset()].lineNo );
+                iter->setLineNumber(statesPtr->states[iter->getOffset()].lineNo);
 
-            if (target.name == rs.name && target.scope == rs.scope) {
+            if(target.name == rs.name && target.scope == rs.scope) {
                 // full match
-                m_candidates.push_back( *iter );
+                m_candidates.push_back(*iter);
 
-            } else if (target.name == rs.scope && !rs.isClass) {
+            } else if(target.name == rs.scope && !rs.isClass) {
                 // source is function, and target is class
-                m_candidates.push_back( *iter );
+                m_candidates.push_back(*iter);
 
-            } else if (target.name == rs.name && rs.isClass) {
+            } else if(target.name == rs.name && rs.isClass) {
                 // source is class, and target is ctor
-                m_candidates.push_back( *iter );
+                m_candidates.push_back(*iter);
 
-            } else if (!onlyDefiniteMatches) {
+            } else if(!onlyDefiniteMatches) {
                 // add it to the possible match list
-                m_possibleCandidates.push_back( *iter );
+                m_possibleCandidates.push_back(*iter);
             }
-        } else if( !onlyDefiniteMatches) {
+        } else if(!onlyDefiniteMatches) {
             // resolved word failed, add it to the possible list
-            m_possibleCandidates.push_back( *iter );
+            m_possibleCandidates.push_back(*iter);
         }
     }
 
@@ -450,43 +463,39 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 }
 
 TagEntryPtr RefactoringEngine::SyncSignature(const wxFileName& fn,
-        int line,
-        int pos,
-        const wxString &word,
-        const wxString &text,
-        const wxString &expr)
+                                             int line,
+                                             int pos,
+                                             const wxString& word,
+                                             const wxString& text,
+                                             const wxString& expr)
 {
     TagEntryPtr func = TagsManagerST::Get()->FunctionFromFileLine(fn, line);
-    if(!func)
-        return NULL;
+    if(!func) return NULL;
 
     bool bIsImpl = (func->GetKind() == wxT("function"));
 
     // Found the counterpart
     std::vector<TagEntryPtr> tags;
     TagsManagerST::Get()->FindImplDecl(fn, line, expr, word, text, tags, !bIsImpl);
-    if(tags.size() != 1)
-        return NULL;
+    if(tags.size() != 1) return NULL;
 
     TagEntryPtr tag = tags.at(0);
-    if(tag->IsMethod() == false)
-        return NULL;
+    if(tag->IsMethod() == false) return NULL;
 
     wxString signature;
-    if (bIsImpl) {
+    if(bIsImpl) {
         // The "source" is an implementaion, which means that we need to prepare declaration signature
         // this could be tricky since we might lose the "default" values
-        signature = TagsManagerST::Get()->NormalizeFunctionSig(func->GetSignature(), Normalize_Func_Default_value|Normalize_Func_Name|Normalize_Func_Reverse_Macro);
+        signature = TagsManagerST::Get()->NormalizeFunctionSig(
+            func->GetSignature(), Normalize_Func_Default_value | Normalize_Func_Name | Normalize_Func_Reverse_Macro);
     } else {
         // Prepare an "implementation" signature
-        signature = TagsManagerST::Get()->NormalizeFunctionSig(func->GetSignature(), Normalize_Func_Name|Normalize_Func_Reverse_Macro);
+        signature = TagsManagerST::Get()->NormalizeFunctionSig(func->GetSignature(),
+                                                               Normalize_Func_Name | Normalize_Func_Reverse_Macro);
     }
 
     tag->SetSignature(signature);
     return tag;
 }
 
-bool RefactoringEngine::IsCacheInitialized() const
-{
-    return m_storage.IsCacheReady();
-}
+bool RefactoringEngine::IsCacheInitialized() const { return m_storage.IsCacheReady(); }

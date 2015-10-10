@@ -21,7 +21,7 @@ void PHPXDebugSetupWizard::OnPageChanging(wxWizardEvent& event)
         // build the text to copy
         wxString content;
         content << "xdebug.remote_enable=1\n";
-        content << "xdebug.ide_key=\"" << m_textCtrlKey->GetValue() << "\"\n";
+        content << "xdebug.idekey=\"" << m_textCtrlKey->GetValue() << "\"\n";
         content << "xdebug.remote_host=" << m_textCtrlIP->GetValue() << "\n";
         content << "xdebug.remote_port=" << m_textCtrlPort->GetValue() << "\n";
 

@@ -1067,7 +1067,7 @@ void clMainFrame::CreateGUIControls(void)
     // Add the explorer pane
     m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
     m_mgr.AddPane(m_workspacePane,
-                  wxAuiPaneInfo()
+                  wxAuiPaneInfo().PinButton()
                       .CaptionVisible(true)
                       .MinimizeButton()
                       .MaximizeButton()

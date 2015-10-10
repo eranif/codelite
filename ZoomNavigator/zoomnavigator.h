@@ -45,50 +45,51 @@ class ZoomNavUpdateTimer;
 
 class ZoomNavigator : public IPlugin
 {
-    IManager*          mgr;
-    wxPanel*           zoompane;
-    wxEvtHandler*      m_topWindow;
-    ZoomText*          m_text;
-    int                m_markerFirstLine;
-    int                m_markerLastLine;
-    bool               m_enabled;
-    clConfig         * m_config;
-    int                m_lastLine;
-    bool               m_startupCompleted;
-    wxString           m_curfile;
-    
+    IManager* mgr;
+    wxPanel* zoompane;
+    wxEvtHandler* m_topWindow;
+    ZoomText* m_text;
+    int m_markerFirstLine;
+    int m_markerLastLine;
+    bool m_enabled;
+    clConfig* m_config;
+    int m_lastLine;
+    bool m_startupCompleted;
+    wxString m_curfile;
+
 protected:
     void DoInitialize();
     bool IsZoomPaneDetached();
-    void PatchUpHighlights( const int first, const int last );
-    void SetEditorText( IEditor* editor );
-    void SetZoomTextScrollPosToMiddle( wxStyledTextCtrl* stc );
+    void PatchUpHighlights(const int first, const int last);
+    void SetEditorText(IEditor* editor);
+    void SetZoomTextScrollPosToMiddle(wxStyledTextCtrl* stc);
     void DoUpdate();
     void DoCleanup();
-    
+
 public:
-    ZoomNavigator(IManager *manager);
+    ZoomNavigator(IManager* manager);
     ~ZoomNavigator();
 
     //--------------------------------------------
-    //Abstract methods
+    // Abstract methods
     //--------------------------------------------
-    virtual clToolBar *CreateToolBar(wxWindow *parent);
-    virtual void CreatePluginMenu(wxMenu *pluginsMenu);
-    virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
+    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
+    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
+    virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
-    
+
     void OnIdle(wxIdleEvent& e);
-    
+
     void OnShowHideClick(wxCommandEvent& e);
-    void OnPreviewClicked(wxMouseEvent &e);
-    void OnSettings(wxCommandEvent &e);
-    void OnSettingsChanged(wxCommandEvent &e);
+    void OnPreviewClicked(wxMouseEvent& e);
+    void OnSettings(wxCommandEvent& e);
+    void OnSettingsChanged(wxCommandEvent& e);
     void OnFileSaved(clCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent &e);
-    void OnEnablePlugin(wxCommandEvent &e);
-    void OnInitDone(wxCommandEvent &e);
+    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnEnablePlugin(wxCommandEvent& e);
+    void OnInitDone(wxCommandEvent& e);
+    void OnToggleTab(clCommandEvent& event);
 };
 
-#endif //ZoomNavigator
+#endif // ZoomNavigator

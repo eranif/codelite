@@ -708,4 +708,16 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DND_FILE_DROPPED, clCommandEvent)
 // a codelite restart is required
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_RESTART_CODELITE, clCommandEvent);
 
+// Event: clCommandEvent 
+// Toggle workspace view tab. Use event.IsSelected() to test whether we should hide/show the tab
+// In anycase, you should not destroy the window, just hide it
+// The tab name is set in the event.GetString()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHOW_WORKSPACE_TAB, clCommandEvent);
+
+// Event: clCommandEvent 
+// Toggle output view tab. Use event.IsSelected() to test whether we should hide/show the tab
+// In anycase, you should not destroy the window, just hide it
+// The tab name is set in the event.GetString()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHOW_OUTPUT_TAB, clCommandEvent);
+
 #endif // CODELITE_EVENTS_H

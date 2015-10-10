@@ -108,6 +108,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
 
     EventNotifier::Get()->Connect(
         wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
     if(IsDbViewDetached()) {
         DockablePane* cp =
@@ -124,6 +125,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
         // else
         //	book->InsertPage(index, m_dbViewerPanel, svnCONSOLE_TEXT, false);
     }
+    m_mgr->AddWorkspaceTab(_("DbExplorer"));
 
     // configure autolayout algorithns
     wxSFAutoLayout layout;
@@ -146,43 +148,6 @@ clToolBar* DatabaseExplorer::CreateToolBar(wxWindow* parent)
 {
     // Create the toolbar to be used by the plugin
     clToolBar* tb(NULL);
-
-    /*
-            // You can use the below code a snippet:
-            // First, check that CodeLite allows plugin to register plugins
-            if (m_mgr->AllowToolbar()) {
-                    // Support both toolbars icon size
-                    int size = m_mgr->GetToolbarIconSize();
-
-                    // Allocate new toolbar, which will be freed later by CodeLite
-                    tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-
-                    // Set the toolbar size
-                    tb->SetToolBitmapSize(wxSize(size, size));
-
-                    // Add tools to the plugins toolbar. You must provide 2 sets of icons: 24x24 and 16x16
-                    if (size == 24) {
-                            tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"),
-       wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
-                            tb->AddTool(XRCID("new_class"), wxT("Create New Class"),
-       wxXmlResource::Get()->LoadBitmap(wxT("class24")), wxT("New Class..."));
-                            tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"),
-       wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project24")), wxT("New wxWidget Project"));
-                    } else {
-                            tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"),
-       wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("New Plugin Wizard..."));
-                            tb->AddTool(XRCID("new_class"), wxT("Create New Class"),
-       wxXmlResource::Get()->LoadBitmap(wxT("class16")), wxT("New Class..."));
-                            tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"),
-       wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project16")), wxT("New wxWidget Project"));
-                    }
-                    // And finally, we must call 'Realize()'
-                    tb->Realize();
-            }
-
-            // return the toolbar, it can be NULL if CodeLite does not allow plugins to register toolbars
-            // or in case the plugin simply does not require toolbar
-    */
     return tb;
 }
 
@@ -194,11 +159,6 @@ void DatabaseExplorer::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenuItem* item(NULL);
     item = new wxMenuItem(menu, XRCID("dbe_about"), _("About..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
-    // item = new wxMenuItem(menu, XRCID("new_class"), _("New Class Wizard..."), wxEmptyString, wxITEM_NORMAL);
-    // menu->Append(item);
-    // item = new wxMenuItem(menu, XRCID("new_wx_project"), _("New wxWidgets Project Wizard..."), wxEmptyString,
-    // wxITEM_NORMAL);
-    // menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("Database Explorer"), menu);
     m_mgr->GetTheApp()->Connect(
         XRCID("dbe_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DatabaseExplorer::OnAbout), NULL, this);
@@ -212,6 +172,9 @@ void DatabaseExplorer::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void DatabaseExplorer::UnPlug()
 {
+    EventNotifier::Get()->Disconnect(
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
     int index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_dbViewerPanel);
     if(index != wxNOT_FOUND) {
         m_mgr->GetWorkspacePaneNotebook()->RemovePage(index);
@@ -303,6 +266,24 @@ void DatabaseExplorer::DoOpenFile(const wxFileName& filename)
                 panel->LoadERD(filename.GetFullPath());
                 return;
             }
+        }
+    }
+}
+
+void DatabaseExplorer::OnToggleTab(clCommandEvent& event)
+{
+    if(event.GetString() != _("DbExplorer")) {
+        event.Skip();
+        return;
+    }
+
+    if(event.IsSelected()) {
+        // show it
+        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, m_dbViewerPanel, _("DbExplorer"), true);
+    } else {
+        int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("DbExplorer"));
+        if(where != wxNOT_FOUND) {
+            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
         }
     }
 }

@@ -37,27 +37,28 @@
 #include "dockablepane.h"
 #include "windowstack.h"
 #include "globals.h"
+#include "cl_command_event.h"
 
 class SymbolViewPlugin : public IPlugin
 {
 protected:
-    OutlineTab *m_view;
+    OutlineTab* m_view;
     bool IsPaneDetached();
     int DoFindTabIndex();
-    
+    void OnToggleTab(clCommandEvent& event);
+
 public:
     //--------------------------------------------
-    //Constructors/Destructors
+    // Constructors/Destructors
     //--------------------------------------------
-    SymbolViewPlugin(IManager *manager);
+    SymbolViewPlugin(IManager* manager);
     ~SymbolViewPlugin();
 
     //--------------------------------------------
-    //Abstract methods
+    // Abstract methods
     //--------------------------------------------
-    virtual clToolBar *CreateToolBar(wxWindow *parent);
-    virtual void CreatePluginMenu(wxMenu *pluginsMenu);
+    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void UnPlug();
 };
-#endif //Outline
-
+#endif // Outline

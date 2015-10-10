@@ -57,6 +57,7 @@
 #include "new_build_tab.h"
 #include "clKeyboardManager.h"
 #include "sessionmanager.h"
+#include "event_notifier.h"
 
 PluginManager* PluginManager::Get()
 {
@@ -67,6 +68,24 @@ PluginManager* PluginManager::Get()
 
 void PluginManager::UnLoad()
 {
+    // Before we unload the plugins, store the list of visible workspace tabs
+    {
+        wxArrayString visibleTabs;
+        for(size_t i = 0; i < GetWorkspacePaneNotebook()->GetPageCount(); ++i) {
+            visibleTabs.Add(GetWorkspacePaneNotebook()->GetPageText(i));
+        }
+        clConfig::Get().Write("VisibleWorkspaceTabs", visibleTabs);
+    }
+
+    // Now do the same for the output view
+    {
+        wxArrayString visibleTabs;
+        for(size_t i = 0; i < GetOutputPaneNotebook()->GetPageCount(); ++i) {
+            visibleTabs.Add(GetOutputPaneNotebook()->GetPageText(i));
+        }
+        clConfig::Get().Write("VisibleOutputTabs", visibleTabs);
+    }
+
     std::map<wxString, IPlugin*>::iterator plugIter = m_plugins.begin();
     for(; plugIter != m_plugins.end(); plugIter++) {
         IPlugin* plugin = plugIter->second;
@@ -296,6 +315,42 @@ void PluginManager::Load()
 
         // save the plugins data
         conf.WriteItem(&m_pluginsData);
+    }
+
+    // Now that all the plugins are loaded, load from the configuration file
+    // list of visible tabs
+    static wxArrayString DefaultArray;
+    if(DefaultArray.IsEmpty()) {
+        DefaultArray.Add("NOT-FOUND");
+    }
+    {
+        const wxArrayString& tabs = GetWorkspaceTabs();
+        wxArrayString visibleTabs = clConfig::Get().Read("VisibleWorkspaceTabs", DefaultArray);
+        if(!((visibleTabs.size() == 1) && (visibleTabs.Item(0) == "NOT-FOUND"))) {
+            for(size_t i = 0; i < tabs.size(); ++i) {
+                if(visibleTabs.Index(tabs.Item(i)) == wxNOT_FOUND) {
+                    // hidden tab - post an event
+                    clCommandEvent eventHide(wxEVT_SHOW_WORKSPACE_TAB);
+                    eventHide.SetSelected(false).SetString(tabs.Item(i));
+                    EventNotifier::Get()->AddPendingEvent(eventHide);
+                }
+            }
+        }
+    }
+
+    {
+        const wxArrayString& tabs = GetOutputTabs();
+        wxArrayString visibleTabs = clConfig::Get().Read("VisibleOutputTabs", DefaultArray);
+        if(!((visibleTabs.size() == 1) && (visibleTabs.Item(0) == "NOT-FOUND"))) {
+            for(size_t i = 0; i < tabs.size(); ++i) {
+                if(visibleTabs.Index(tabs.Item(i)) == wxNOT_FOUND) {
+                    // hidden tab - post an event
+                    clCommandEvent eventHide(wxEVT_SHOW_OUTPUT_TAB);
+                    eventHide.SetSelected(false).SetString(tabs.Item(i));
+                    EventNotifier::Get()->AddPendingEvent(eventHide);
+                }
+            }
+        }
     }
 }
 

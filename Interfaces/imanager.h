@@ -101,10 +101,41 @@ struct clTab {
  */
 class IManager
 {
+    wxArrayString m_workspaceTabs;
+    wxArrayString m_outputTabs;
+
 public:
     IManager() {}
     virtual ~IManager() {}
 
+    /**
+     * @brief return a list of all possible output tabs registered by the user
+     */
+    const wxArrayString& GetOutputTabs() const { return m_outputTabs; }
+    
+    /**
+     * @brief return a list of all possible workspace tabs
+     */
+    const wxArrayString& GetWorkspaceTabs() const { return m_workspaceTabs; }
+    
+    /**
+     * @brief register a workspace tab
+     */
+    void AddWorkspaceTab(const wxString& tabLabel) {
+        if(m_workspaceTabs.Index(tabLabel) == wxNOT_FOUND) {
+            m_workspaceTabs.Add(tabLabel);
+        }
+    }
+    
+    /**
+     * @brief register output pane tab
+     */
+    void AddOutputTab(const wxString& tabLabel) {
+        if(m_outputTabs.Index(tabLabel) == wxNOT_FOUND) {
+            m_outputTabs.Add(tabLabel);
+        }
+    }
+    
     /**
      * @brief show the output pane and if provided, select 'selectedWindow'
      * @param selectWindow tab within the 'Output Pane' to select, if empty don't change

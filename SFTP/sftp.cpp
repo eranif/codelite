@@ -115,14 +115,16 @@ SFTP::SFTP(IManager* manager)
 
     // API support
     EventNotifier::Get()->Bind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
-
+    EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &SFTP::OnToggleTab, this);
+    
     SFTPImages images;
     m_outputPane = new SFTPStatusPage(m_mgr->GetOutputPaneNotebook(), this);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPane, _("SFTP"), false, images.Bitmap("sftp_tab"));
 
     m_treeView = new SFTPTreeView(m_mgr->GetWorkspacePaneNotebook(), this);
     m_mgr->GetWorkspacePaneNotebook()->AddPage(m_treeView, _("SFTP"), false);
-
+    m_mgr->AddWorkspaceTab(_("SFTP"));
+    
     SFTPWorkerThread::Instance()->SetNotifyWindow(m_outputPane);
     SFTPWorkerThread::Instance()->SetSftpPlugin(this);
     SFTPWorkerThread::Instance()->Start();
@@ -134,6 +136,25 @@ SFTP::SFTP(IManager* manager)
 }
 
 SFTP::~SFTP() {}
+
+void SFTP::OnToggleTab(clCommandEvent& event)
+{
+    if(event.GetString() != _("SFTP")) {
+        event.Skip();
+        return;
+    }
+
+    if(event.IsSelected()) {
+        // show it
+        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, m_treeView, _("SFTP"), true);
+    } else {
+        int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("SFTP"));
+        if(where != wxNOT_FOUND) {
+            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+        }
+    }
+}
+
 
 clToolBar* SFTP::CreateToolBar(wxWindow* parent)
 {
@@ -193,19 +214,19 @@ void SFTP::UnPlug()
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); ++i) {
         if(m_outputPane == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
             m_mgr->GetOutputPaneNotebook()->RemovePage(i);
-            m_outputPane->Destroy();
             break;
         }
     }
+    m_outputPane->Destroy();
 
     for(size_t i = 0; i < m_mgr->GetWorkspacePaneNotebook()->GetPageCount(); ++i) {
         if(m_treeView == m_mgr->GetWorkspacePaneNotebook()->GetPage(i)) {
             m_mgr->GetWorkspacePaneNotebook()->RemovePage(i);
-            m_treeView->Destroy();
             break;
         }
     }
-
+    m_treeView->Destroy();
+    
     SFTPWorkerThread::Release();
     wxTheApp->Disconnect(
         wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), NULL, this);
@@ -235,6 +256,7 @@ void SFTP::UnPlug()
 
     EventNotifier::Get()->Unbind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
     EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
+    EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &SFTP::OnToggleTab, this);
 }
 
 void SFTP::OnAccountManager(wxCommandEvent& e)

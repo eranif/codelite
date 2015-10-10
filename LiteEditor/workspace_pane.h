@@ -30,6 +30,8 @@
 #include <wx/panel.h>
 #include <wx/timer.h>
 #include "clAuiCaptionEnabler.h"
+#include <map>
+#include <wx/bitmap.h>
 
 // Forward Declarations
 class FileViewTree;
@@ -58,11 +60,34 @@ private:
     clAuiCaptionEnabler m_captionEnabler;
 
 protected:
+    struct Tab {
+        wxString m_label;
+        wxWindow* m_window;
+        wxBitmap m_bmp;
+
+        Tab(const wxString& label, wxWindow* win, const wxBitmap& bmp = wxNullBitmap)
+            : m_label(label)
+            , m_window(win)
+            , m_bmp(bmp)
+        {
+        }
+
+        Tab()
+            : m_window(NULL)
+        {
+        }
+    };
+
+protected:
+    std::map<wxString, Tab> m_tabs;
+
+protected:
     void CreateGUIControls();
     void DoShowTab(bool show, const wxString& title);
     wxWindow* DoGetControlByName(const wxString& title);
     void OnInitDone(wxCommandEvent& event);
     void OnSettingsChanged(wxCommandEvent& event);
+    void OnToggleWorkspaceTab(clCommandEvent& event);
 
 public:
     WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr);

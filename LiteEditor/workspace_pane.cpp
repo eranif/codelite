@@ -50,6 +50,7 @@
 #include "codelite_events.h"
 #include "clWorkspaceView.h"
 #include <algorithm>
+#include "pluginmanager.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -67,12 +68,14 @@ WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiMan
     CreateGUIControls();
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &WorkspacePane::OnSettingsChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &WorkspacePane::OnToggleWorkspaceTab, this);
 }
 
 WorkspacePane::~WorkspacePane()
 {
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &WorkspacePane::OnSettingsChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &WorkspacePane::OnToggleWorkspaceTab, this);
 }
 
 #define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false
@@ -113,7 +116,10 @@ void WorkspacePane::CreateGUIControls()
 
     // Add the workspace tab
     wxString name;
-
+    
+    // the IManager instance
+    IManager* mgr = PluginManager::Get();
+    
     name = _("Workspace");
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
@@ -123,7 +129,9 @@ void WorkspacePane::CreateGUIControls()
         m_workspaceTab = new WorkspaceTab(m_book, name);
         m_book->AddPage(m_workspaceTab, name, true, wxNullBitmap);
     }
-
+    m_tabs.insert(std::make_pair(name, Tab(name, m_workspaceTab)));
+    mgr->AddWorkspaceTab(name);
+    
     // Add the explorer tab
     name = _("Explorer");
     if(IS_DETACHED(name)) {
@@ -134,7 +142,9 @@ void WorkspacePane::CreateGUIControls()
         m_explorer = new FileExplorer(m_book, name);
         m_book->AddPage(m_explorer, name, false);
     }
-
+    m_tabs.insert(std::make_pair(name, Tab(name, m_explorer)));
+    mgr->AddWorkspaceTab(name);
+    
     // Add the "File Explorer" view to the list of files managed by the workspace-view
     m_workspaceTab->GetView()->AddPage(m_explorer, _("File Explorer"), false);
 
@@ -149,6 +159,8 @@ void WorkspacePane::CreateGUIControls()
         m_openWindowsPane = new OpenWindowsPanel(m_book, name);
         m_book->AddPage(m_openWindowsPane, name, false);
     }
+    m_tabs.insert(std::make_pair(name, Tab(name, m_openWindowsPane)));
+    mgr->AddWorkspaceTab(name);
 #endif
 
     // Add the Tabgroups tab
@@ -161,7 +173,9 @@ void WorkspacePane::CreateGUIControls()
         m_TabgroupsPane = new TabgroupsPane(m_book, name);
         m_book->AddPage(m_TabgroupsPane, name, false);
     }
-
+    m_tabs.insert(std::make_pair(name, Tab(name, m_TabgroupsPane)));
+    mgr->AddWorkspaceTab(name);
+    
     if(m_book->GetPageCount() > 0) {
         m_book->SetSelection((size_t)0);
     }
@@ -385,4 +399,25 @@ void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
+}
+
+void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
+{
+    // Handle the core tabs
+    if(m_tabs.count(event.GetString()) == 0) {
+        event.Skip();
+        return;
+    }
+    
+    const Tab& t = m_tabs.find(event.GetString())->second;
+    if(event.IsSelected()) {
+        // Insert the page
+        GetNotebook()->InsertPage(0, t.m_window, t.m_label, true, t.m_bmp);
+    } else { 
+        // hide the tab
+        int where = GetNotebook()->GetPageIndex(t.m_label);
+        if(where != wxNOT_FOUND) {
+            GetNotebook()->RemovePage(where);
+        }
+    }
 }

@@ -368,6 +368,8 @@
       <File Name="clAuiMainNotebookTabArt.cpp"/>
       <File Name="clAuiCaptionEnabler.h"/>
       <File Name="clAuiCaptionEnabler.cpp"/>
+      <File Name="clDockingManager.h"/>
+      <File Name="clDockingManager.cpp"/>
     </VirtualDirectory>
     <File Name="cl_aui_tool_stickness.h"/>
     <File Name="cl_aui_tool_stickness.cpp"/>

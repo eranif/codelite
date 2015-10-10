@@ -54,7 +54,7 @@ protected:
     void OnOpenWithDBE(clCommandEvent& e);
     void DoOpenFile(const wxFileName& filename);
     void OnUpdateOpenWithDBE(wxUpdateUIEvent& e);
-
+    void OnToggleTab(clCommandEvent& event);
     static DbViewerPanel* m_dbViewerPanel;
 };
 

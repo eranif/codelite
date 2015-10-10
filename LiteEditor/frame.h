@@ -51,6 +51,7 @@
 #include <wx/splash.h>
 #include "clStatusBar.h"
 #include <wx/cmndata.h>
+#include "clDockingManager.h"
 
 // forward decls
 class clSingleInstanceThread;
@@ -84,7 +85,7 @@ class clMainFrame : public wxFrame
 {
     MainBook* m_mainBook;
     static clMainFrame* m_theFrame;
-    wxAuiManager m_mgr;
+    clDockingManager m_mgr;
     OutputPane* m_outputPane;
     WorkspacePane* m_workspacePane;
     wxArrayString m_files;

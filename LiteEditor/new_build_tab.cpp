@@ -930,7 +930,8 @@ void NewBuildTab::InitView(const wxString& theme)
     }
     
     // make the symbol margin 5 pixel width
-    m_view->SetMarginWidth(wxSTC_MARGIN_SYMBOL, 5);
+    m_view->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+    m_view->SetMarginWidth(0, 5);
 }
 
 void NewBuildTab::OnHotspotClicked(wxStyledTextEvent& event)

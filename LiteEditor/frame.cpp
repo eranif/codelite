@@ -326,16 +326,6 @@ EVT_UPDATE_UI(XRCID("show_nav_toolbar"), clMainFrame::OnShowNavBarUI)
 EVT_UPDATE_UI(viewAsSubMenuID, clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchUpdateUIEvent)
 
-EVT_MENU(XRCID("show_workspace_tab"), clMainFrame::OnViewShowWorkspaceTab)
-EVT_MENU(XRCID("show_explorer_tab"), clMainFrame::OnViewShowExplorerTab)
-EVT_MENU(XRCID("show_tabs_tab"), clMainFrame::OnViewShowTabs)
-EVT_MENU(XRCID("show_tabgroups_tab"), clMainFrame::OnViewShowTabgroups)
-
-EVT_UPDATE_UI(XRCID("show_workspace_tab"), clMainFrame::OnViewShowWorkspaceTabUI)
-EVT_UPDATE_UI(XRCID("show_explorer_tab"), clMainFrame::OnViewShowExplorerTabUI)
-EVT_UPDATE_UI(XRCID("show_tabs_tab"), clMainFrame::OnViewShowTabsUI)
-EVT_UPDATE_UI(XRCID("show_tabgroups_tab"), clMainFrame::OnViewShowTabgroupsUI)
-
 //-------------------------------------------------------
 // Search menu
 //-------------------------------------------------------
@@ -5607,54 +5597,7 @@ void clMainFrame::OnGrepWordUI(wxUpdateUIEvent& e)
 }
 
 void clMainFrame::OnPchCacheEnded(wxCommandEvent& e) { e.Skip(); }
-
 void clMainFrame::OnPchCacheStarted(wxCommandEvent& e) { e.Skip(); }
-
-////////////////// View -> Workspace View -> /////////////////////////////////////
-
-void clMainFrame::OnViewShowExplorerTab(wxCommandEvent& e)
-{
-    DoEnableWorkspaceViewFlag(e.IsChecked(), View_Show_Explorer_Tab);
-    GetWorkspacePane()->UpdateTabs();
-}
-
-void clMainFrame::OnViewShowExplorerTabUI(wxUpdateUIEvent& event)
-{
-    event.Check(GetWorkspacePane()->IsTabVisible(View_Show_Explorer_Tab));
-}
-
-void clMainFrame::OnViewShowTabgroups(wxCommandEvent& e)
-{
-    DoEnableWorkspaceViewFlag(e.IsChecked(), View_Show_Tabgroups_Tab);
-    GetWorkspacePane()->UpdateTabs();
-}
-
-void clMainFrame::OnViewShowTabgroupsUI(wxUpdateUIEvent& event)
-{
-    event.Check(GetWorkspacePane()->IsTabVisible(View_Show_Tabgroups_Tab));
-}
-
-void clMainFrame::OnViewShowTabs(wxCommandEvent& e)
-{
-    DoEnableWorkspaceViewFlag(e.IsChecked(), View_Show_Tabs_Tab);
-    GetWorkspacePane()->UpdateTabs();
-}
-
-void clMainFrame::OnViewShowTabsUI(wxUpdateUIEvent& event)
-{
-    event.Check(GetWorkspacePane()->IsTabVisible(View_Show_Tabs_Tab));
-}
-
-void clMainFrame::OnViewShowWorkspaceTab(wxCommandEvent& e)
-{
-    DoEnableWorkspaceViewFlag(e.IsChecked(), View_Show_Workspace_Tab);
-    GetWorkspacePane()->UpdateTabs();
-}
-
-void clMainFrame::OnViewShowWorkspaceTabUI(wxUpdateUIEvent& event)
-{
-    event.Check(GetWorkspacePane()->IsTabVisible(View_Show_Workspace_Tab));
-}
 
 ///////////////////// Helper methods /////////////////////////////
 
@@ -6195,10 +6138,11 @@ void clMainFrame::OnMarkEditorReadonlyUI(wxUpdateUIEvent& e)
 void clMainFrame::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     e.Skip();
-
-    // Ensure that the workspace view is visible
-    DoEnableWorkspaceViewFlag(true, View_Show_Workspace_Tab);
-    GetWorkspacePane()->UpdateTabs();
+    // If the workspace tab is visible, make it active
+    int where = GetWorkspacePane()->GetNotebook()->GetPageIndex(_("Workspace"));
+    if(where != wxNOT_FOUND) {
+        GetWorkspacePane()->GetNotebook()->SetSelection(where);
+    }
 }
 
 void clMainFrame::OnFileOpenFolder(wxCommandEvent& event)

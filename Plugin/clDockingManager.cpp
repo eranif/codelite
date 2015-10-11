@@ -6,6 +6,8 @@
 #include <map>
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "detachedpanesinfo.h"
+#include "editor_config.h"
 
 #define WORKSPACE_VIEW "Workspace View"
 #define OUTPUT_VIEW "Output View"
@@ -67,6 +69,9 @@ void clDockingManager::ShowOutputViewOpenTabMenu()
 
 wxString clDockingManager::ShowMenu(wxWindow* win, const wxArrayString& tabs, Notebook* book, bool& checked)
 {
+    DetachedPanesInfo dpi;
+    EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
+    
     std::map<int, wxString> tabsIds;
     wxMenu menu;
     for(size_t i = 0; i < tabs.size(); ++i) {
@@ -76,6 +81,9 @@ wxString clDockingManager::ShowMenu(wxWindow* win, const wxArrayString& tabs, No
         wxMenuItem* item = new wxMenuItem(&menu, tabId, label, "", wxITEM_CHECK);
         menu.Append(item);
         item->Check((book->GetPageIndex(label) != wxNOT_FOUND));
+        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) {
+            item->Enable(false);
+        }
     }
 
     int sel = win->GetPopupMenuSelectionFromUser(menu);

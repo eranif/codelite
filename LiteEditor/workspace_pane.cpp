@@ -179,7 +179,6 @@ void WorkspacePane::CreateGUIControls()
     if(m_book->GetPageCount() > 0) {
         m_book->SetSelection((size_t)0);
     }
-    UpdateTabs();
     m_mgr->Update();
 }
 
@@ -204,16 +203,6 @@ void WorkspacePane::UpdateProgress(int val)
     m_staticText->SetLabel(wxString::Format(_("Parsing workspace: %d%% completed"), val));
     m_parsingProgress->SetValue(val);
     m_parsingProgress->Update();
-}
-
-void WorkspacePane::UpdateTabs()
-{
-    long flags = EditorConfigST::Get()->GetInteger(wxT("view_workspace_view"), View_Show_Default);
-
-    DoShowTab(flags & View_Show_Workspace_Tab, _("Workspace"));
-    DoShowTab(flags & View_Show_Explorer_Tab, _("Explorer"));
-    DoShowTab(flags & View_Show_Tabs_Tab, _("Tabs"));
-    DoShowTab(flags & View_Show_Tabgroups_Tab, _("Tabgroups"));
 }
 
 typedef struct {

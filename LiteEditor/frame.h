@@ -393,16 +393,6 @@ protected:
     void OnPageSetup(wxCommandEvent& event);
     void OnRecentWorkspaceUI(wxUpdateUIEvent& e);
 
-    // View -> Workspace View -> ...
-    void OnViewShowWorkspaceTab(wxCommandEvent& e);
-    void OnViewShowWorkspaceTabUI(wxUpdateUIEvent& event);
-    void OnViewShowExplorerTab(wxCommandEvent& e);
-    void OnViewShowExplorerTabUI(wxUpdateUIEvent& event);
-    void OnViewShowTabs(wxCommandEvent& e);
-    void OnViewShowTabsUI(wxUpdateUIEvent& event);
-    void OnViewShowTabgroups(wxCommandEvent& e);
-    void OnViewShowTabgroupsUI(wxUpdateUIEvent& event);
-
     void OnViewOptions(wxCommandEvent& event);
     void OnToggleMainTBars(wxCommandEvent& event);
     void OnTogglePluginTBars(wxCommandEvent& event);

@@ -29,13 +29,13 @@
 #include "editorsettingscommentsdoxygenpanelbase.h"
 #include "treebooknodebase.h"
 
-/** Implementing EditorSettingsCommentsDoxygenPanelBase */
 class EditorSettingsCommentsDoxygenPanel : public EditorSettingsCommentsDoxygenPanelBase,
                                            public TreeBookNode<EditorSettingsCommentsDoxygenPanel>
 {
 public:
     EditorSettingsCommentsDoxygenPanel(wxWindow* parent);
     void Save(OptionsConfigPtr options);
+    void OnButtonClicked(wxCommandEvent& e);
 };
 
 #endif // __editorsettingscommentsdoxygenpanel__

@@ -43,20 +43,26 @@ EditorSettingsCommentsDoxygenPanelBase::EditorSettingsCommentsDoxygenPanelBase(w
     m_pgProp4 = m_pgMgrDoxy->Append(  new wxPropertyCategory( _("Templates") ) );
     m_pgProp4->SetHelpString(wxT(""));
     
-    m_pgPropDoxyClassPrefix = m_pgMgrDoxy->AppendIn( m_pgProp4,  new wxLongStringProperty( _("Class documentation template"), wxPG_LABEL, wxT("")) );
+    m_pgPropDoxyClassPrefix = m_pgMgrDoxy->AppendIn( m_pgProp4,  new wxStringProperty( _("Class documentation template"), wxPG_LABEL, wxT("")) );
     m_pgPropDoxyClassPrefix->SetHelpString(_("Set the template to use when generating documetation for a class (or C/C++ struct).\nThe following macros are available: $(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorkspaceName)"));
+    m_pgPropDoxyClassPrefix->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropDoxyFunctionPrefix = m_pgMgrDoxy->AppendIn( m_pgProp4,  new wxLongStringProperty( _("Function documentation template"), wxPG_LABEL, wxT("")) );
+    m_pgPropDoxyFunctionPrefix = m_pgMgrDoxy->AppendIn( m_pgProp4,  new wxStringProperty( _("Function documentation template"), wxPG_LABEL, wxT("")) );
     m_pgPropDoxyFunctionPrefix->SetHelpString(_("Set the template to use when generating documetation for a function\nThe following macros are available: $(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorkspaceName)"));
+    m_pgPropDoxyFunctionPrefix->SetEditor( wxT("TextCtrlAndButton") );
     
     SetName(wxT("EditorSettingsCommentsDoxygenPanelBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    // Connect events
+    m_pgMgrDoxy->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsCommentsDoxygenPanelBase::OnButtonClicked), NULL, this);
+    
 }
 
 EditorSettingsCommentsDoxygenPanelBase::~EditorSettingsCommentsDoxygenPanelBase()
 {
+    m_pgMgrDoxy->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsCommentsDoxygenPanelBase::OnButtonClicked), NULL, this);
+    
 }

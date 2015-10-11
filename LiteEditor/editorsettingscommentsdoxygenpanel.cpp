@@ -25,6 +25,9 @@
 
 #include "editorsettingscommentsdoxygenpanel.h"
 #include "commentconfigdata.h"
+#include "globals.h"
+#include "EditDlg.h"
+#include "macros.h"
 
 EditorSettingsCommentsDoxygenPanel::EditorSettingsCommentsDoxygenPanel(wxWindow* parent)
     : EditorSettingsCommentsDoxygenPanelBase(parent)
@@ -46,9 +49,18 @@ void EditorSettingsCommentsDoxygenPanel::Save(OptionsConfigPtr)
     wxString funcPattern = m_pgPropDoxyFunctionPrefix->GetValue().GetString();
     classPattern.Replace("\\n", "\n");
     funcPattern.Replace("\\n", "\n");
-    
+
     data.SetClassPattern(classPattern);
     data.SetFunctionPattern(funcPattern);
     data.SetAutoInsertAfterSlash2Stars(m_pgPropAutoGen->GetValue().GetBool());
     EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &data);
+}
+
+void EditorSettingsCommentsDoxygenPanel::OnButtonClicked(wxCommandEvent& e)
+{
+    CHECK_PTR_RET(m_pgMgrDoxy->GetSelection());
+    wxString str = ::clGetStringFromUser(m_pgMgrDoxy->GetSelection()->GetValueAsString());
+    if(!str.IsEmpty()) {
+        m_pgMgrDoxy->GetSelection()->SetValueFromString(str);
+    }
 }

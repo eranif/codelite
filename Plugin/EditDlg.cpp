@@ -27,13 +27,17 @@
 #include "lexer_configuration.h"
 #include "editor_config.h"
 #include "windowattrmanager.h"
+#include "ColoursAndFontsManager.h"
 
 EditDlg::EditDlg(wxWindow* parent, const wxString& text)
     : EditDlgBase(parent)
 {
-    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("text");
+    LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text", "Default");
     lex->Apply(m_stc10);
     m_stc10->SetText(text);
+    m_stc10->SetMultiPaste(true);
+    m_stc10->SetMultipleSelection(true);
+    m_stc10->SetAdditionalSelectionTyping(true);
     SetName("EditDlg");
     WindowAttrManager::Load(this);
 }

@@ -34,6 +34,7 @@ protected:
     wxPGProperty* m_pgPropDoxyFunctionPrefix;
 
 protected:
+    virtual void OnButtonClicked(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxPropertyGridManager* GetPgMgrDoxy() { return m_pgMgrDoxy; }

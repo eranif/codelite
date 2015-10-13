@@ -122,7 +122,7 @@ private:
     bool DoLoadDefaultSettings();
 
 public:
-    void Init(const wxChar* revision, const wxChar* version)
+    void Init(const wxString& revision, const wxString& version)
     {
         this->m_svnRevision = revision;
         this->m_version = version;

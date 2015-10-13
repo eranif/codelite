@@ -560,7 +560,7 @@ TEST_FUNC(test_trait_alias)
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    CHECK_STRING(resolved->GetFullName(), "\\Aliased_Talker");
+    CHECK_STRING(resolved->GetFullName().c_str(), "\\Aliased_Talker");
     
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);

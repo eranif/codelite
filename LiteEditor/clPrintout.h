@@ -20,7 +20,7 @@ protected:
 
 public:
     //! constructor
-    clPrintout(LEditor* edit, const wxChar* title = wxT(""));
+    clPrintout(LEditor* edit, const wxString& title = wxT(""));
 
     //! event handlers
     bool OnPrintPage(int page);

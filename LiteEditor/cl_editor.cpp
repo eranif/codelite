@@ -406,7 +406,14 @@ void LEditor::SetSyntaxHighlight(const wxString& lexerName)
 {
     ClearDocumentStyle();
     m_context = ContextManager::Get()->NewContext(this, lexerName);
-
+    
+    // Apply the lexer fonts and colours before we call
+    // "SetProperties". (SetProperties function needs the correct font for
+    // some of its settings)
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer(lexerName);
+    if(lexer) {
+        lexer->Apply(this);
+    }
     SetProperties();
 
     SetEOL();
@@ -592,12 +599,8 @@ void LEditor::SetProperties()
     // allow everything except for the folding symbols
     SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));
 
-// Line number margin
-#ifdef __WXMSW__
+    // Line number margin
     int pixelWidth = 4 + 5 * TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
-#else
-    int pixelWidth = 4 + 5 * 8;
-#endif
 
     // Show number margin according to settings.
     SetMarginWidth(NUMBER_MARGIN_ID, options->GetDisplayLineNumbers() ? pixelWidth : 0);

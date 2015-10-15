@@ -872,11 +872,6 @@
         <object class="wxMenuItem" name="delete_all_breakpoints">
             <label>Delete All Breakpoints</label>
         </object>
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-
-        <object class="wxMenuItem" name="retag_file">
-            <label>Re-Tag File</label>
-        </object>
     </object>
 
     <object class="wxMenu" name="editor_right_click_default">
@@ -1052,7 +1047,7 @@
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="retag_workspace">
-            <label>Retag Workspace</label>
+            <label>Parse Workspace - Incremental</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="close_workspace">

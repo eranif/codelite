@@ -41,6 +41,7 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
+wxDEFINE_EVENT(wxEVT_BOOK_TAB_RCLICK, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
@@ -559,6 +560,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_ERASE_BACKGROUND, &clTabCtrl::OnEraseBG, this);
     Bind(wxEVT_SIZE, &clTabCtrl::OnSize, this);
     Bind(wxEVT_LEFT_DOWN, &clTabCtrl::OnLeftDown, this);
+    Bind(wxEVT_RIGHT_UP, &clTabCtrl::OnRightUp, this);
     Bind(wxEVT_LEFT_UP, &clTabCtrl::OnLeftUp, this);
     Bind(wxEVT_MOTION, &clTabCtrl::OnMouseMotion, this);
     Bind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
@@ -626,6 +628,7 @@ clTabCtrl::~clTabCtrl()
     Unbind(wxEVT_ERASE_BACKGROUND, &clTabCtrl::OnEraseBG, this);
     Unbind(wxEVT_SIZE, &clTabCtrl::OnSize, this);
     Unbind(wxEVT_LEFT_DOWN, &clTabCtrl::OnLeftDown, this);
+    Unbind(wxEVT_RIGHT_UP, &clTabCtrl::OnRightUp, this);
     Unbind(wxEVT_LEFT_UP, &clTabCtrl::OnLeftUp, this);
     Unbind(wxEVT_MOTION, &clTabCtrl::OnMouseMotion, this);
     Unbind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
@@ -1230,11 +1233,11 @@ void clTabInfo::Colours::InitLightColours()
     activeTabInnerPenColour = "#ffffff";
 
     inactiveTabTextColour = "#444444";
-//#ifdef __WXMSW__
-//    activeTabBgColour = "#FBFBFB";
-//#else
+    //#ifdef __WXMSW__
+    //    activeTabBgColour = "#FBFBFB";
+    //#else
     activeTabBgColour = "#f0f0f0";
-//#endif
+    //#endif
     inactiveTabBgColour = "#e5e5e5";
     inactiveTabPenColour = "#b9b9b9";
     inactiveTabInnerPenColour = "#ffffff";
@@ -1647,7 +1650,7 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
         to.x = bottomRect.GetTopLeft().x;
         from.y += 2;
         to.y -= 2;
-        
+
         dc.SetPen(colours.activeTabBgColour);
         dc.DrawLine(from, to);
 #ifdef __WXOSX__
@@ -1678,7 +1681,7 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
         to.x = bottomRect.GetTopRight().x;
         from.y += 2;
         to.y -= 2;
-        
+
         dc.SetPen(colours.activeTabBgColour);
         dc.DrawLine(from, to);
 #ifdef __WXOSX__
@@ -1771,6 +1774,32 @@ bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
         return true;
     }
     return false;
+}
+
+void clTabCtrl::OnRightUp(wxMouseEvent& event)
+{
+    event.Skip();
+    if((GetStyle() & kNotebook_ShowFileListButton) && m_chevronRect.Contains(event.GetPosition())) {
+        return;
+    }
+    
+    int tabHit, realPos;
+    TestPoint(event.GetPosition(), realPos, tabHit);
+    
+    // Did we hit the active tab?
+    bool clickWasOnActiveTab = (GetSelection() == realPos);
+    if(clickWasOnActiveTab && m_contextMenu) {
+        // don't fire this event, we already got a context menu for the active tab
+        return;
+    }
+    
+    if(tabHit != wxNOT_FOUND) {
+        // Fire RCLICK event
+        wxBookCtrlEvent event(wxEVT_BOOK_TAB_RCLICK);
+        event.SetEventObject(GetParent());
+        event.SetSelection(realPos);
+        GetParent()->GetEventHandler()->AddPendingEvent(event);
+    }
 }
 
 // ----------------------------------------------------------------------

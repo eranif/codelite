@@ -406,7 +406,7 @@ void LEditor::SetSyntaxHighlight(const wxString& lexerName)
 {
     ClearDocumentStyle();
     m_context = ContextManager::Get()->NewContext(this, lexerName);
-    
+
     // Apply the lexer fonts and colours before we call
     // "SetProperties". (SetProperties function needs the correct font for
     // some of its settings)
@@ -2555,16 +2555,19 @@ void LEditor::DelMarker()
 {
     int nPos = GetCurrentPos();
     int nLine = LineFromPosition(nPos);
-    MarkerDelete(nLine, GetActiveBookmarkType());
+    for(int i=smt_FIRST_BMK_TYPE; i<smt_LAST_BMK_TYPE; ++i) {
+        MarkerDelete(nLine, i);
+    }
 }
 
 void LEditor::ToggleMarker()
 {
     // Add/Remove marker
-    if(!LineIsMarked(GetActiveBookmarkMask()))
+    if(!LineIsMarked(mmt_standard_bookmarks)) {
         AddMarker();
-    else
+    } else {
         DelMarker();
+    }
 }
 
 bool LEditor::LineIsMarked(enum marker_mask_type mask)
@@ -3275,7 +3278,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 
     // First, add/del bookmark
     menu.Append(XRCID("toggle_bookmark"),
-                LineIsMarked(GetActiveBookmarkMask()) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")));
+                LineIsMarked(mmt_standard_bookmarks) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")));
     menu.Append(XRCID("removeall_bookmarks"), _("Remove All Bookmarks"));
 
     BookmarkManager::Get().CreateBookmarksSubmenu(&menu);

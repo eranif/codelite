@@ -29,25 +29,44 @@
 #include "wx/dirdlg.h"
 #include "wx/filename.h"
 #include "cl_standard_paths.h"
+#include "cl_config.h"
 
 NewWorkspaceDlg::NewWorkspaceDlg(wxWindow* parent)
     : NewWorkspaceBase(parent)
 {
-    m_textCtrlWorkspacePath->ChangeValue(clStandardPaths::Get().GetDocumentsDir());
+    wxArrayString history;
+    history = clConfig::Get().Read("C++NewWorkspace/Paths", history);
+
+    m_comboBoxPath->SetValue(clStandardPaths::Get().GetDocumentsDir());
+    m_comboBoxPath->Append(history);
+
     m_textCtrlWorkspaceName->SetFocus();
     CentreOnParent();
     SetName("NewWorkspaceDlg");
     WindowAttrManager::Load(this);
 }
 
-NewWorkspaceDlg::~NewWorkspaceDlg() {}
+NewWorkspaceDlg::~NewWorkspaceDlg()
+{
+    // store the recent locations, we keep up to 20 locations
+    wxArrayString history = m_comboBoxPath->GetStrings();
+    history.Insert(m_comboBoxPath->GetValue(),
+                   0); // Place the current value at the top so we make sure it gets stored in the history
+    wxArrayString uniqueArr;
+    for(size_t i = 0; i < history.size(); ++i) {
+        if(uniqueArr.Index(history.Item(i)) == wxNOT_FOUND && (uniqueArr.size() < 20)) {
+            uniqueArr.Add(history.Item(i));
+        }
+    }
+    clConfig::Get().Write("C++NewWorkspace/Paths", uniqueArr);
+}
 
 void NewWorkspaceDlg::OnWorkspacePathUpdated(wxCommandEvent& event)
 {
     // update the static text control with the actual path
 
     wxString workspacePath;
-    workspacePath << m_textCtrlWorkspacePath->GetValue();
+    workspacePath << m_comboBoxPath->GetValue();
 
     workspacePath = workspacePath.Trim().Trim(false);
 
@@ -73,7 +92,7 @@ void NewWorkspaceDlg::OnWorkspacePathUpdated(wxCommandEvent& event)
 
 void NewWorkspaceDlg::OnWorkspaceDirPicker(wxCommandEvent& event)
 {
-    const wxString& dir = ::wxDirSelector(_("Choose a folder:"), m_textCtrlWorkspacePath->GetValue());
+    const wxString& dir = ::wxDirSelector(_("Choose a folder:"), m_comboBoxPath->GetValue());
     if(!dir.empty()) {
 
         static wxString INVALID_CHARS = " ,'()";
@@ -89,7 +108,7 @@ void NewWorkspaceDlg::OnWorkspaceDirPicker(wxCommandEvent& event)
         }
 
         // Use SetValue to ensure that an TEXT_UPDATE event is fired
-        m_textCtrlWorkspacePath->SetValue(dir);
+        m_comboBoxPath->SetValue(dir);
     }
 }
 

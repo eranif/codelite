@@ -17,6 +17,8 @@
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/combobox.h>
+#include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
@@ -34,7 +36,7 @@ protected:
     wxStaticText* m_staticText1;
     wxTextCtrl* m_textCtrlWorkspaceName;
     wxStaticText* m_staticText3;
-    wxTextCtrl* m_textCtrlWorkspacePath;
+    wxComboBox* m_comboBoxPath;
     wxButton* m_buttonWorkspaceDirPicker;
     wxStaticText* m_staticTextWorkspaceFileName;
     wxCheckBox* m_checkBoxCreateSeparateDir;
@@ -52,7 +54,7 @@ public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
     wxTextCtrl* GetTextCtrlWorkspaceName() { return m_textCtrlWorkspaceName; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
-    wxTextCtrl* GetTextCtrlWorkspacePath() { return m_textCtrlWorkspacePath; }
+    wxComboBox* GetComboBoxPath() { return m_comboBoxPath; }
     wxButton* GetButtonWorkspaceDirPicker() { return m_buttonWorkspaceDirPicker; }
     wxStaticText* GetStaticTextWorkspaceFileName() { return m_staticTextWorkspaceFileName; }
     wxCheckBox* GetCheckBoxCreateSeparateDir() { return m_checkBoxCreateSeparateDir; }

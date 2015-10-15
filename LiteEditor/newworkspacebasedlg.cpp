@@ -60,13 +60,13 @@ NewWorkspaceBase::NewWorkspaceBase(wxWindow* parent, wxWindowID id, const wxStri
     
     flexGridSizer9->Add(bSizer3, 0, wxEXPAND, 5);
     
-    m_textCtrlWorkspacePath = new wxTextCtrl(m_panelWorkspace, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    wxArrayString m_comboBoxPathArr;
+    m_comboBoxPath = new wxComboBox(m_panelWorkspace, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), m_comboBoxPathArr, 0);
     #if wxVERSION_NUMBER >= 3000
-    m_textCtrlWorkspacePath->SetHint(wxT(""));
+    m_comboBoxPath->SetHint(wxT(""));
     #endif
-    m_textCtrlWorkspacePath->AutoCompleteDirectories();
     
-    bSizer3->Add(m_textCtrlWorkspacePath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer3->Add(m_comboBoxPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_buttonWorkspaceDirPicker = new wxButton(m_panelWorkspace, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     m_buttonWorkspaceDirPicker->SetToolTip(_("Browse for folder"));
@@ -119,7 +119,6 @@ NewWorkspaceBase::NewWorkspaceBase(wxWindow* parent, wxWindowID id, const wxStri
 #endif
     // Connect events
     m_textCtrlWorkspaceName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
-    m_textCtrlWorkspacePath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
     m_buttonWorkspaceDirPicker->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspaceDirPicker), NULL, this);
     m_checkBoxCreateSeparateDir->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnButtonCreate), NULL, this);
@@ -130,7 +129,6 @@ NewWorkspaceBase::NewWorkspaceBase(wxWindow* parent, wxWindowID id, const wxStri
 NewWorkspaceBase::~NewWorkspaceBase()
 {
     m_textCtrlWorkspaceName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
-    m_textCtrlWorkspacePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
     m_buttonWorkspaceDirPicker->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspaceDirPicker), NULL, this);
     m_checkBoxCreateSeparateDir->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnButtonCreate), NULL, this);

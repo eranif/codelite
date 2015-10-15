@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 11,
+  "m_objCounter": 15,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCE428InitBitmapResources",
   "m_bitmapsFile": "new_workspace_dlg_liteeditor_bitmaps.cpp",
@@ -560,11 +560,11 @@
               }],
              "m_events": [],
              "m_children": [{
-               "m_type": 4406,
+               "m_type": 4410,
                "proportion": 1,
                "border": 5,
-               "gbSpan": ",",
-               "gbPosition": ",",
+               "gbSpan": "1,1",
+               "gbPosition": "0,0",
                "m_styles": [],
                "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
                "m_properties": [{
@@ -574,15 +574,15 @@
                 }, {
                  "type": "string",
                  "m_label": "Size:",
-                 "m_value": ""
+                 "m_value": "-1,-1"
                 }, {
                  "type": "string",
                  "m_label": "Minimum Size:",
-                 "m_value": ""
+                 "m_value": "-1,-1"
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "m_textCtrlWorkspacePath"
+                 "m_value": "m_comboBoxPath"
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
@@ -624,8 +624,8 @@
                  "m_label": "Style:",
                  "m_value": ""
                 }, {
-                 "type": "string",
-                 "m_label": "Value:",
+                 "type": "multi-string",
+                 "m_label": "ComboBox Choices:",
                  "m_value": ""
                 }, {
                  "type": "string",
@@ -633,25 +633,14 @@
                  "m_value": ""
                 }, {
                  "type": "string",
-                 "m_label": "Max Length:",
-                 "m_value": "0"
+                 "m_label": "Selection:",
+                 "m_value": "-1"
                 }, {
-                 "type": "bool",
-                 "m_label": "Auto Complete Directories:",
-                 "m_value": true
-                }, {
-                 "type": "bool",
-                 "m_label": "Auto Complete Files:",
-                 "m_value": false
+                 "type": "string",
+                 "m_label": "Value:",
+                 "m_value": ""
                 }],
-               "m_events": [{
-                 "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-                 "m_eventClass": "wxCommandEvent",
-                 "m_eventHandler": "wxCommandEventHandler",
-                 "m_functionNameAndSignature": "OnWorkspacePathUpdated(wxCommandEvent& event)",
-                 "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
-                 "m_noBody": false
-                }],
+               "m_events": [],
                "m_children": []
               }, {
                "m_type": 4400,

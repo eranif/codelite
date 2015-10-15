@@ -27,7 +27,6 @@
 class AdvancedDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* mainSizer;
     Notebook* m_notebook;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
     wxButton* m_buttonCancel;

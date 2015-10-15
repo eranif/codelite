@@ -58,23 +58,23 @@ AdvancedDlg::AdvancedDlg(wxWindow* parent,
     : AdvancedDlgBase(parent)
     , m_rightclickMenu(NULL)
 {
-    m_compilersMainPanel = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    //m_compilersMainPanel = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    //
+    //wxBoxSizer* bSizer5;
+    //bSizer5 = new wxBoxSizer(wxVERTICAL);
+    //
+    //wxBoxSizer* bSizer4;
+    //bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    //
+    //bSizer5->Add(bSizer4, 0, wxEXPAND, 5);
+    //
+    m_compilersPage = new CompilerMainPage(m_notebook);
+    //bSizer5->Add(m_compilersPage, 1, wxALL | wxEXPAND, 5);
 
-    wxBoxSizer* bSizer5;
-    bSizer5 = new wxBoxSizer(wxVERTICAL);
+    //m_compilersMainPanel->SetSizer(bSizer5);
+    //m_compilersMainPanel->Layout();
 
-    wxBoxSizer* bSizer4;
-    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
-
-    bSizer5->Add(bSizer4, 0, wxEXPAND, 5);
-
-    m_compilersPage = new CompilerMainPage(m_compilersMainPanel);
-    bSizer5->Add(m_compilersPage, 1, wxALL | wxEXPAND, 5);
-
-    m_compilersMainPanel->SetSizer(bSizer5);
-    // m_compilersMainPanel->Layout();
-
-    m_notebook->AddPage(m_compilersMainPanel, _("Compilers"), true);
+    m_notebook->AddPage(m_compilersPage, _("Compilers"), true);
     m_buildSettings = new BuildTabSetting(m_notebook);
     m_notebook->AddPage(m_buildSettings, _("Build Output Appearance"), false);
 

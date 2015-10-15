@@ -23,10 +23,10 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    bSizer23 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer23 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer23);
     
-    fgSizer7 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer7 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer7->SetFlexibleDirection( wxBOTH );
     fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer7->AddGrowableCol(1);
@@ -61,7 +61,7 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
     
     bSizer23->Add(m_staticline4, 0, wxALL|wxEXPAND, 5);
     
-    bSizer24 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer24 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer23->Add(bSizer24, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -76,10 +76,14 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
     
     SetName(wxT("CompilerOptionDlgBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -103,10 +107,10 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    bSizerError = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizerError = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizerError);
     
-    fgSizer41 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer41->SetFlexibleDirection( wxBOTH );
     fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer41->AddGrowableCol(1);
@@ -177,10 +181,14 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     
     SetName(wxT("CompilerPatternDlgBase"));
     SetSizeHints(500,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -209,10 +217,10 @@ NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    boxSizer73 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer73 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer73);
     
-    flexGridSizer82 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer82 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer82->SetFlexibleDirection( wxBOTH );
     flexGridSizer82->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer82->AddGrowableCol(1);
@@ -254,10 +262,14 @@ NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     SetName(wxT("NewCompilerDlgBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -286,7 +298,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    boxSizer114 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer114 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer114);
     
     m_button222 = new wxButton(this, wxID_ANY, _("Add Compilers"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -297,7 +309,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer114->Add(m_button222, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    boxSizer220 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer220 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer114->Add(boxSizer220, 1, wxEXPAND, 5);
     
@@ -306,7 +318,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer220->Add(m_listBoxCompilers, 0, wxALL|wxEXPAND, 5);
     
-    m_auiBook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxSize(450,300), wxAUI_NB_DEFAULT_STYLE|wxBK_DEFAULT);
+    m_auiBook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
     m_auiBook->SetName(wxT("m_auiBook"));
     
     boxSizer220->Add(m_auiBook, 1, wxALL|wxEXPAND, 5);
@@ -314,7 +326,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_panelTools = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelTools, _("Tools"), true);
     
-    boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     m_panelTools->SetSizer(boxSizer2);
     
     wxArrayString m_pgMgrToolsArr;
@@ -371,10 +383,10 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_panelPatterns = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelPatterns, _("Patterns"), false);
     
-    bSizer14 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer14 = new wxBoxSizer(wxVERTICAL);
     m_panelPatterns->SetSizer(bSizer14);
     
-    bSizerError = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizerError = new wxBoxSizer(wxVERTICAL);
     
     bSizer14->Add(bSizerError, 1, wxEXPAND, 5);
     
@@ -382,7 +394,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     bSizerError->Add(m_staticText161, 0, wxALL, 5);
     
-    bSizer25 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer25 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizerError->Add(bSizer25, 1, wxEXPAND, 5);
     
@@ -390,7 +402,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer25->Add(m_listErrPatterns, 1, wxALL|wxEXPAND, 5);
     
-    bSizer26 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer26 = new wxBoxSizer(wxVERTICAL);
     
     bSizer25->Add(bSizer26, 0, 0, 5);
     
@@ -409,7 +421,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer26->Add(m_btnUpdateErrPattern, 0, wxALL|wxEXPAND, 5);
     
-    bSizerWarnings = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizerWarnings = new wxBoxSizer(wxVERTICAL);
     
     bSizer14->Add(bSizerWarnings, 1, wxEXPAND, 5);
     
@@ -417,7 +429,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     bSizerWarnings->Add(m_staticText17, 0, wxALL, 5);
     
-    bSizer251 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer251 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizerWarnings->Add(bSizer251, 1, wxEXPAND, 5);
     
@@ -425,7 +437,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer251->Add(m_listWarnPatterns, 1, wxALL|wxEXPAND, 5);
     
-    bSizer261 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer261 = new wxBoxSizer(wxVERTICAL);
     
     bSizer251->Add(bSizer261, 0, 0, 5);
     
@@ -447,14 +459,14 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_panelComilerOptions = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelComilerOptions, _("Compiler Options"), false);
     
-    bSizer101 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer101 = new wxBoxSizer(wxVERTICAL);
     m_panelComilerOptions->SetSizer(bSizer101);
     
     m_staticText23_O = new wxStaticText(m_panelComilerOptions, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer101->Add(m_staticText23_O, 0, wxALL|wxEXPAND, 5);
     
-    bSizer12_CmpOptions = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer12_CmpOptions = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer101->Add(bSizer12_CmpOptions, 1, wxEXPAND, 5);
     
@@ -462,7 +474,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer12_CmpOptions->Add(m_listCompilerOptions, 1, wxALL|wxEXPAND, 5);
     
-    bSizer_1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer_1 = new wxBoxSizer(wxVERTICAL);
     
     bSizer12_CmpOptions->Add(bSizer_1, 0, wxEXPAND, 5);
     
@@ -478,14 +490,14 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_panelLinkerOptions = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelLinkerOptions, _("Linker Options"), false);
     
-    bSizer105 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer105 = new wxBoxSizer(wxVERTICAL);
     m_panelLinkerOptions->SetSizer(bSizer105);
     
     m_staticText23_L = new wxStaticText(m_panelLinkerOptions, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer105->Add(m_staticText23_L, 0, wxALL|wxEXPAND, 5);
     
-    bSizer123 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer123 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer105->Add(bSizer123, 1, wxEXPAND, 5);
     
@@ -493,7 +505,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer123->Add(m_listLinkerOptions, 1, wxALL|wxEXPAND, 5);
     
-    bSizer_2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer_2 = new wxBoxSizer(wxVERTICAL);
     
     bSizer123->Add(bSizer_2, 0, wxEXPAND, 5);
     
@@ -509,7 +521,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_panelCompilerSwitches = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelCompilerSwitches, _("Switches"), false);
     
-    mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     m_panelCompilerSwitches->SetSizer(mainSizer);
     
     m_staticText8 = new wxStaticText(m_panelCompilerSwitches, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -523,14 +535,14 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_panelFileTypes = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelFileTypes, _("File Types"), false);
     
-    bSizer10 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
     m_panelFileTypes->SetSizer(bSizer10);
     
     m_staticText23 = new wxStaticText(m_panelFileTypes, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer10->Add(m_staticText23, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    bSizer12 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer12 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer10->Add(bSizer12, 1, wxALL|wxEXPAND, 5);
     
@@ -538,7 +550,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer12->Add(m_listCtrlFileTypes, 1, wxALL|wxEXPAND, 5);
     
-    bSizer111 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer111 = new wxBoxSizer(wxVERTICAL);
     
     bSizer12->Add(bSizer111, 0, wxEXPAND, 5);
     
@@ -554,14 +566,14 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_panelAdvanced = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelAdvanced, _("Advanced"), false);
     
-    bSizer11 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panelAdvanced->SetSizer(bSizer11);
     
-    bSizer7 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
     
     bSizer11->Add(bSizer7, 0, wxALL|wxEXPAND, 5);
     
-    fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
+    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer3->AddGrowableCol(1);
@@ -689,10 +701,9 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     
     SetName(wxT("CompilerMainPageBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_button222->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddCompilers), NULL, this);
     m_listBoxCompilers->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);

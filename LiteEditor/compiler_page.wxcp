@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 237,
+  "m_objCounter": 239,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCAD0CInitBitmapResources",
   "m_bitmapsFile": "compiler_page_plugin_bitmaps.cpp",
@@ -2751,12 +2751,12 @@
           }],
          "m_children": []
         }, {
-         "m_type": 4456,
+         "m_type": 4442,
          "proportion": 1,
          "border": 5,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxAUI_NB_DEFAULT_STYLE", "wxBK_DEFAULT"],
+         "m_styles": ["wxBK_DEFAULT"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
@@ -2765,7 +2765,7 @@
           }, {
            "type": "string",
            "m_label": "Size:",
-           "m_value": "450,300"
+           "m_value": "-1,-1"
           }, {
            "type": "string",
            "m_label": "Minimum Size:",
@@ -2805,11 +2805,11 @@
           }, {
            "type": "string",
            "m_label": "Class Name:",
-           "m_value": "Notebook"
+           "m_value": ""
           }, {
            "type": "string",
            "m_label": "Include File:",
-           "m_value": "Notebook.h"
+           "m_value": ""
           }, {
            "type": "string",
            "m_label": "Style:",

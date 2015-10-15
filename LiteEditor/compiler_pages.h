@@ -22,8 +22,7 @@
 #include <wx/arrstr.h>
 #include <wx/panel.h>
 #include <wx/listbox.h>
-#include <wx/aui/auibook.h>
-#include "Notebook.h"
+#include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
@@ -40,14 +39,11 @@
 class CompilerOptionDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* bSizer23;
-    wxFlexGridSizer* fgSizer7;
     wxStaticText* m_staticText26;
     wxTextCtrl* m_textCtrl18;
     wxStaticText* m_staticText27;
     wxTextCtrl* m_textCtrl19;
     wxStaticLine* m_staticline4;
-    wxBoxSizer* bSizer24;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
 
@@ -69,8 +65,6 @@ public:
 class CompilerPatternDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* bSizerError;
-    wxFlexGridSizer* fgSizer41;
     wxStaticText* m_staticText5;
     wxTextCtrl* m_textPattern;
     wxStaticText* m_staticText6;
@@ -103,8 +97,6 @@ public:
 class NewCompilerDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer73;
-    wxFlexGridSizer* flexGridSizer82;
     wxStaticText* m_staticText84;
     wxTextCtrl* m_textCtrlCompilerName;
     wxStaticText* m_staticText88;
@@ -129,13 +121,10 @@ public:
 class CompilerMainPageBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer114;
     wxButton* m_button222;
-    wxBoxSizer* boxSizer220;
     wxListBox* m_listBoxCompilers;
-    Notebook* m_auiBook;
+    wxNotebook* m_auiBook;
     wxPanel* m_panelTools;
-    wxBoxSizer* boxSizer2;
     wxPropertyGridManager* m_pgMgrTools;
     wxPGProperty* m_pgProp94;
     wxPGProperty* m_pgPropCXX;
@@ -149,55 +138,35 @@ protected:
     wxPGProperty* m_pgPropMkdir;
     wxPGProperty* m_pgPropDebugger;
     wxPanel* m_panelPatterns;
-    wxBoxSizer* bSizer14;
-    wxBoxSizer* bSizerError;
     wxStaticText* m_staticText161;
-    wxBoxSizer* bSizer25;
     wxListCtrl* m_listErrPatterns;
-    wxBoxSizer* bSizer26;
     wxButton* m_btnAddErrPattern;
     wxButton* m_btnDelErrPattern;
     wxButton* m_btnUpdateErrPattern;
-    wxBoxSizer* bSizerWarnings;
     wxStaticText* m_staticText17;
-    wxBoxSizer* bSizer251;
     wxListCtrl* m_listWarnPatterns;
-    wxBoxSizer* bSizer261;
     wxButton* m_btnAddWarnPattern;
     wxButton* m_btnDelWarnPattern;
     wxButton* m_btnUpdateWarnPattern;
     wxPanel* m_panelComilerOptions;
-    wxBoxSizer* bSizer101;
     wxStaticText* m_staticText23_O;
-    wxBoxSizer* bSizer12_CmpOptions;
     wxListCtrl* m_listCompilerOptions;
-    wxBoxSizer* bSizer_1;
     wxButton* m_buttonCompilerOption;
     wxButton* m_buttonDeleteCompilerOption;
     wxPanel* m_panelLinkerOptions;
-    wxBoxSizer* bSizer105;
     wxStaticText* m_staticText23_L;
-    wxBoxSizer* bSizer123;
     wxListCtrl* m_listLinkerOptions;
-    wxBoxSizer* bSizer_2;
     wxButton* m_buttonLinkerOption;
     wxButton* m_buttonDeleteLinkerOption;
     wxPanel* m_panelCompilerSwitches;
-    wxBoxSizer* mainSizer;
     wxStaticText* m_staticText8;
     wxListCtrl* m_listSwitches;
     wxPanel* m_panelFileTypes;
-    wxBoxSizer* bSizer10;
     wxStaticText* m_staticText23;
-    wxBoxSizer* bSizer12;
     wxListCtrl* m_listCtrlFileTypes;
-    wxBoxSizer* bSizer111;
     wxButton* m_buttonNewFileType;
     wxButton* m_buttonDeleteFileType;
     wxPanel* m_panelAdvanced;
-    wxBoxSizer* bSizer11;
-    wxBoxSizer* bSizer7;
-    wxFlexGridSizer* fgSizer3;
     wxStaticText* m_staticText18;
     wxStaticText* m_staticText141;
     wxTextCtrl* m_textCtrlGlobalIncludePath;
@@ -305,7 +274,7 @@ public:
     wxCheckBox* GetCheckBoxObjectNameSameAsFileName() { return m_checkBoxObjectNameSameAsFileName; }
     wxCheckBox* GetCheckBoxReadObjectsFromFile() { return m_checkBoxReadObjectsFromFile; }
     wxPanel* GetPanelAdvanced() { return m_panelAdvanced; }
-    Notebook* GetAuiBook() { return m_auiBook; }
+    wxNotebook* GetAuiBook() { return m_auiBook; }
     CompilerMainPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~CompilerMainPageBase();
 };

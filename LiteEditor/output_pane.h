@@ -71,7 +71,27 @@ public:
     static const wxString TRACE_TAB;
     static const wxString SHOW_USAGE;
     static const wxString CLANG_TAB;
+    
+protected:
+    struct Tab {
+        wxString m_label;
+        wxWindow* m_window;
+        wxBitmap m_bmp;
 
+        Tab(const wxString& label, wxWindow* win, const wxBitmap& bmp = wxNullBitmap)
+            : m_label(label)
+            , m_window(win)
+            , m_bmp(bmp)
+        {
+        }
+
+        Tab()
+            : m_window(NULL)
+        {
+        }
+    };
+    std::map<wxString, Tab> m_tabs;
+    
 private:
     wxString m_caption;
     wxLog* m_logTargetOld;
@@ -102,7 +122,8 @@ protected:
     void OnBuildStarted(clBuildEvent& e);
     void OnBuildEnded(clBuildEvent& e);
     void OnSettingsChanged(wxCommandEvent& event);
-
+    void OnToggleTab(clCommandEvent& event);
+    
 public:
     /**
      * Constructor

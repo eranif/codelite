@@ -25,6 +25,7 @@
 #include "NodeJSLookupHandler.h"
 #include "NodeJSDebuggerTooltip.h"
 #include <signal.h>
+#include <algorithm>
 
 #define CHECK_RUNNING() \
     if(!IsConnected()) return
@@ -98,6 +99,11 @@ NodeJSDebugger::~NodeJSDebugger()
     // fire stop event (needed to reload the normal layout)
     clDebugEvent event(wxEVT_NODEJS_DEBUGGER_STOPPED);
     EventNotifier::Get()->AddPendingEvent(event);
+
+    // Clear all markers
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    std::for_each(editors.begin(), editors.end(), [&](IEditor* e) { e->DelAllCompilerMarkers(); });
 }
 
 void NodeJSDebugger::OnCanInteract(clDebugEvent& event)
@@ -327,7 +333,7 @@ void NodeJSDebugger::OnNodeTerminated(clCommandEvent& event)
 {
     wxUnusedVar(event);
     EventNotifier::Get()->TopFrame()->Raise();
-    
+
     // Restart the network thread
     wxBusyCursor bc;
     m_socket.Reset(NULL);
@@ -467,8 +473,9 @@ void NodeJSDebugger::ClearDebuggerMarker()
 {
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
-    std::for_each(
-        editors.begin(), editors.end(), [&](IEditor* editor) { editor->GetCtrl()->MarkerDeleteAll(smt_indicator); });
+    std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
+        editor->GetCtrl()->MarkerDeleteAll(smt_indicator);
+    });
 }
 
 void NodeJSDebugger::DoHighlightLine(const wxString& filename, int lineNo)
@@ -503,10 +510,14 @@ void NodeJSDebugger::OnHighlightLine(clDebugEvent& event)
     }
 }
 
-void NodeJSDebugger::ExceptionThrown()
+void NodeJSDebugger::ExceptionThrown(const NodeJSDebuggerException& exc)
 {
     // Switch to the 'Console' view
     clDebugEvent event(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN);
+    event.SetFileName(exc.script);
+    event.SetLineNumber(exc.line);
+    event.SetString(exc.message);
+    event.SetInt(exc.column);
     EventNotifier::Get()->AddPendingEvent(event);
 }
 
@@ -672,4 +683,3 @@ void NodeJSDebugger::OnAttach(clDebugEvent& event)
     m_socket->Connect("127.0.0.1", 5858);
 #endif
 }
-

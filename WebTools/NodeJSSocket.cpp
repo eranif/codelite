@@ -131,8 +131,16 @@ void NodeJSSocket::ProcessInputBuffer()
                         // breakpoint hit, notify we got control + request for backtrace
                         m_debugger->GotControl(true);
                     } else if(json.namedObject("event").toString() == "exception") {
+                        
+                        JSONElement body = json.namedObject("body");
+                        NodeJSDebuggerException exc;
+                        exc.message =  body.namedObject("exception").namedObject("text").toString();;
+                        exc.line = body.namedObject("sourceLine").toInt();
+                        exc.script = body.namedObject("script").namedObject("name").toString();
+                        exc.column = body.namedObject("sourceColumn").toInt();
+                        
                         // the vm execution stopped due to an exception
-                        m_debugger->ExceptionThrown();
+                        m_debugger->ExceptionThrown(exc);
                     }
                 } else {
                     m_debugger->SetCanInteract(false);

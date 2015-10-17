@@ -1,0 +1,18 @@
+#!/bin/bash
+cd build-release
+curdir=`pwd`
+builddir=`basename ${curdir}`
+if [ ${builddir} != "build-release" ]; then
+    echo "You must run this script from CodeLite root folder"
+    exit -1
+fi
+
+rm -fr *.deb
+git pull --rebase && cd ../wxcrafter && git pull --rebase && cd ../build-release
+cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+make -j4 && make package
+
+deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
+echo Uploading deb file ${deb_file}
+scp ${deb_file} root@codelite.org:/var/www/downloads/codelite/weekly/wip
+

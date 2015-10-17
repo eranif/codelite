@@ -641,7 +641,10 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
     wxArrayString files;
     files.swap(m_filesSelected);
     if(files.IsEmpty()) return;
-
+    
+    // Make the git console visible
+    m_mgr->ShowOutputPane("git");
+    
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
 
@@ -673,7 +676,10 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
     wxArrayString files;
     files.swap(m_filesSelected);
     if(files.IsEmpty()) return;
-
+    
+    // Make the git console visible
+    m_mgr->ShowOutputPane("git");
+    
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
 
@@ -707,7 +713,10 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
     wxArrayString files;
     files.swap(m_filesSelected);
     if(files.IsEmpty()) return;
-
+    
+    // Make the git console visible
+    m_mgr->ShowOutputPane("git");
+    
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
 

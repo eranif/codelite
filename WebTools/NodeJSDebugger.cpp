@@ -164,7 +164,7 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
 
     wxString command = dlg.GetCommand();
 
-    if(!m_node.ExecuteConsole(command, "", false, command)) {
+    if(!m_node.ExecuteConsole(command, "", true, command)) {
         ::wxMessageBox(_("Failed to start NodeJS application"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
         m_socket.Reset(NULL);
     }
@@ -327,6 +327,10 @@ void NodeJSDebugger::OnNodeTerminated(clCommandEvent& event)
 {
     wxUnusedVar(event);
     EventNotifier::Get()->TopFrame()->Raise();
+    
+    // Restart the network thread
+    wxBusyCursor bc;
+    m_socket.Reset(NULL);
 }
 
 void NodeJSDebugger::OnWorkspaceClosed(wxCommandEvent& event) { event.Skip(); }

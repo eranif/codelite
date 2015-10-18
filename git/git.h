@@ -49,6 +49,7 @@
 #include "cl_command_event.h"
 #include "gitui.h"
 #include <vector>
+#include "clTabTogglerHelper.h"
 
 class clCommandProcessor;
 class gitAction
@@ -161,6 +162,7 @@ class GitPlugin : public IPlugin
     wxArrayString m_filesSelected;
     wxString m_selectedFolder;
     clCommandProcessor* m_commandProcessor;
+    clTabTogglerHelper::Ptr_t m_tabToggler;
 
 private:
     void DoCreateTreeImages();
@@ -238,7 +240,6 @@ private:
     void OnGarbageColletion(wxCommandEvent& e);
     void OnOpenMSYSGit(wxCommandEvent& e);
     void OnActiveProjectChanged(clProjectSettingsEvent& event);
-    
 
 #if 0
     void OnBisectStart(wxCommandEvent& e);

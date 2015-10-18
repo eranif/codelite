@@ -33,6 +33,7 @@
 #include "remote_file_info.h"
 #include "clFileSystemEvent.h"
 #include "clSFTPEvent.h"
+#include "clTabTogglerHelper.h"
 
 class SFTPStatusPage;
 class SFTPTreeView;
@@ -44,6 +45,7 @@ class SFTP : public IPlugin
     SFTPStatusPage* m_outputPane;
     SFTPTreeView* m_treeView;
     RemoteFileInfo::Map_t m_remoteFiles;
+    clTabTogglerHelper::Ptr_t m_tabToggler;
 
 public:
     SFTP(IManager* manager);
@@ -55,7 +57,6 @@ public:
     void AddRemoteFile(const RemoteFileInfo& remoteFile);
 
 protected:
-    void OnToggleTab(clCommandEvent& event);
     void OnReplaceInFiles(clFileSystemEvent& e);
     void OnAccountManager(wxCommandEvent& e);
     void OnSettings(wxCommandEvent& e);

@@ -143,6 +143,8 @@ CppCheckPlugin::CppCheckPlugin(IManager* manager)
 
     //	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
     m_mgr->GetOutputPaneNotebook()->AddPage(m_view, _("CppCheck"), false, LoadBitmapFile(wxT("cppcheck.png")));
+    m_tabHelper.reset(new clTabTogglerHelper(_("CppCheck"), m_view, "", NULL));
+    m_tabHelper->SetOutputTabBmp(LoadBitmapFile(wxT("cppcheck.png")));
 }
 
 CppCheckPlugin::~CppCheckPlugin() {}
@@ -187,6 +189,7 @@ void CppCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void CppCheckPlugin::UnPlug()
 {
+    m_tabHelper.reset(NULL);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &CppCheckPlugin::OnCppCheckReadData, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &CppCheckPlugin::OnCppCheckTerminated, this);
 
@@ -229,17 +232,13 @@ void CppCheckPlugin::UnPlug()
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
         if(m_view == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
             m_mgr->GetOutputPaneNotebook()->RemovePage(i);
-            m_view->Destroy();
             break;
         }
     }
+    m_view->Destroy();
 
     // terminate the cppcheck daemon
-    if(m_cppcheckProcess) {
-        wxLogMessage(_("CppCheckPlugin: Terminating cppcheck daemon..."));
-        delete m_cppcheckProcess;
-        m_cppcheckProcess = NULL;
-    }
+    wxDELETE(m_cppcheckProcess);
 }
 
 wxMenu* CppCheckPlugin::CreateFileExplorerPopMenu()

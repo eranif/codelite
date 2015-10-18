@@ -29,6 +29,7 @@
 #include "plugin.h"
 #include "asyncprocess.h"
 #include "cppcheck_settings.h"
+#include "clTabTogglerHelper.h"
 
 class wxMenuItem;
 class CppCheckReportPage;
@@ -47,6 +48,7 @@ class CppCheckPlugin : public IPlugin
     size_t m_fileCount;
     CppCheckSettings m_settings;
     size_t m_fileProcessed;
+    clTabTogglerHelper::Ptr_t m_tabHelper;
 
 protected:
     wxString DoGetCommand(ProjectPtr proj);
@@ -119,12 +121,13 @@ protected:
      * @param e event
      */
     void OnSettingsItemProject(wxCommandEvent& e);
-    
+
     /**
      * @brief editor context menu is about to be shown.
      * Append our content if the active editor is a Cxx file
      */
-    void OnEditorContextMenu(clContextMenuEvent &event);
+    void OnEditorContextMenu(clContextMenuEvent& event);
+
 public:
     CppCheckPlugin(IManager* manager);
     ~CppCheckPlugin();

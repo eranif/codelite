@@ -102,7 +102,9 @@ UnitTestPP::UnitTestPP(IManager* manager)
                                             _("UnitTest++"),
                                             false,
                                             m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/unittest++/run_as_unittest"));
-
+    m_tabHelper.reset(new clTabTogglerHelper(_("UnitTest++"), m_outputPage, "", NULL));
+    m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/unittest++/run_as_unittest"));
+    
     m_longName = _("A Unit test plugin based on the UnitTest++ framework");
     m_shortName = wxT("UnitTestPP");
     m_topWindow = m_mgr->GetTheApp();
@@ -190,6 +192,7 @@ void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void UnitTestPP::UnPlug()
 {
+    m_tabHelper.reset(NULL);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &UnitTestPP::OnProcessRead, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &UnitTestPP::OnProcessTerminated, this);
 

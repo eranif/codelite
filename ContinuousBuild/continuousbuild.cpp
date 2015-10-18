@@ -78,7 +78,9 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
 
     // add our page to the output pane notebook
     m_mgr->GetOutputPaneNotebook()->AddPage(m_view, CONT_BUILD, false, LoadBitmapFile(wxT("compfile.png")));
-
+    m_tabHelper.reset(new clTabTogglerHelper(CONT_BUILD, m_view, "", NULL));
+    m_tabHelper->SetOutputTabBmp(LoadBitmapFile(wxT("compfile.png")));
+    
     m_topWin = m_mgr->GetTheApp();
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect(
@@ -108,14 +110,16 @@ void ContinuousBuild::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void ContinuousBuild::UnPlug()
 {
+    m_tabHelper.reset(NULL);
     // before this plugin is un-plugged we must remove the tab we added
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
         if(m_view == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
             m_mgr->GetOutputPaneNotebook()->RemovePage(i);
-            m_view->Destroy();
             break;
         }
     }
+    m_view->Destroy();
+    
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);

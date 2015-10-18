@@ -73,7 +73,7 @@ wxString clDockingManager::ShowMenu(wxWindow* win, const wxArrayString& tabs, No
     EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
     
     std::map<int, wxString> tabsIds;
-    wxMenu menu;
+    wxMenu menu(_("Toggle Tabs"));
     for(size_t i = 0; i < tabs.size(); ++i) {
         int tabId = ::wxNewId();
         const wxString& label = tabs.Item(i);

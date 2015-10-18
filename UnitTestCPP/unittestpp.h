@@ -31,6 +31,7 @@
 #include "project.h"
 #include <vector>
 #include "cl_command_event.h"
+#include "clTabTogglerHelper.h"
 
 class wxMenuItem;
 class IProcess;
@@ -42,7 +43,8 @@ class UnitTestPP : public IPlugin
     IProcess* m_proc;
     wxString m_output;
     UnitTestsPage* m_outputPage;
-
+    clTabTogglerHelper::Ptr_t m_tabHelper;
+    
 public:
     UnitTestPP(IManager* manager);
     ~UnitTestPP();

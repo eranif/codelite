@@ -349,7 +349,19 @@ void PHPSourceFile::OnFunction()
         }
 
     } else {
+        if(!NextToken(token)) return;
+        if(token.type == ':') {
+            // PHP 7 signature type
+            // function foobar(...) : RETURN_TYPE 
+            wxString returnValuetype = ReadType();
+            if(returnValuetype.IsEmpty()) return; // parse error
+            func->SetReturnValue(returnValuetype);
 
+        } else {
+            // untake the token and place it back on the "unget" list
+            UngetToken(token);
+        }
+        
         if(ReadUntilFound('{', token)) {
             // found the function body starting point
             if(IsParseFunctionBody()) {
@@ -605,6 +617,7 @@ wxString PHPSourceFile::ReadType()
     bool cont = true;
     wxString type;
     phpLexerToken token;
+    
     while(cont && NextToken(token)) {
         switch(token.type) {
         case kPHP_T_IDENTIFIER:
@@ -614,17 +627,15 @@ wxString PHPSourceFile::ReadType()
         case kPHP_T_NS_SEPARATOR:
             type << token.text;
             break;
-
-        // special cases that must always be handled
-        case '{':
-            cont = false;
-            break;
-        // end of special cases
         default:
+            // restore the token so next call to NextToken
+            // will pick it up again
+            UngetToken(token);
             cont = false;
             break;
         }
     }
+    
     type = MakeIdentifierAbsolute(type);
     return type;
 }

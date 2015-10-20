@@ -49,7 +49,7 @@ protected:
      * @param tokens [output]
      */
     bool ReadExpression(wxString& expression);
-
+    
     /**
      * @brief unget the token
      */

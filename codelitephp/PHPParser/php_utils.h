@@ -17,8 +17,6 @@ bool IsPHPFileByExt(const wxString& fileName);
 bool IsPHPSection(int styleAtPos );
 bool IsPHPCommentOrString(int styleAtPos);
 
-wxMemoryBuffer ReadFileContent(const wxString& filename);
-
 wxString GetResourceDirectory();
 
 #define FILE_SCHEME "file://"

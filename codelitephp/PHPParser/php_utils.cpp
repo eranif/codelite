@@ -73,27 +73,6 @@ bool IsPHPFileByExt(const wxString& filename)
     return false;
 }
 
-wxMemoryBuffer ReadFileContent(const wxString& filename)
-{
-    FILE* fp;
-    long len;
-    wxMemoryBuffer buffer;
-
-    fp = fopen(filename.mb_str(wxConvUTF8).data(), "rb");
-    if(!fp) {
-        return buffer;
-    }
-
-    // read the whole file
-    fseek(fp, 0, SEEK_END);                                   // go to end
-    len = ftell(fp);                                          // get position at end (length)
-    fseek(fp, 0, SEEK_SET);                                   // go to begining
-    char* pbuf = static_cast<char*>(buffer.GetWriteBuf(len)); // make sure the buffer is large enough
-
-    size_t bytes = fread(pbuf, sizeof(char), len, fp);
-    buffer.SetDataLen(bytes);
-    return buffer;
-}
 
 wxString GetResourceDirectory()
 {

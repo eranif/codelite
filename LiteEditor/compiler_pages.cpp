@@ -377,7 +377,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropMkdir->SetEditor( wxT("TextCtrlAndButton") );
     
     m_pgPropDebugger = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Gdb"), wxPG_LABEL, wxT("")) );
-    m_pgPropDebugger->SetHelpString(_("On various platform (e.g. Cygwin) it is recommended to use their own sepcial gdb executable rather than the global one\nYou can specify one here, or leave this empty to use the default"));
+    m_pgPropDebugger->SetHelpString(_("On various platform (e.g. Cygwin) it is recommended to use their own special gdb executable rather than the global one\nYou can specify one here, or leave this empty to use the default"));
     m_pgPropDebugger->SetEditor( wxT("TextCtrlAndButton") );
     m_pgMgrTools->GetGrid()->SetSplitterPosition(150, 0);
     m_panelPatterns = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);

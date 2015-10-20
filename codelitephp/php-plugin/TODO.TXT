@@ -1,10 +1,21 @@
 Code Completion / Code Generation
 =================================
 
+- PHP 7: support: function return types
+    
+    function foobar() : int {
+        return 1.0;
+    }
+    
+- PHP 7: support: function arguments type hints:
+    
+    function foobar(int $a, int $b) : int {
+        return $a + $b;
+    }
+    
 - code completion: better comment for ctor/dtor functions
 - code completion: add ctor function calltip... (its annoying!) NOTE: __constuct is not called by default. Only the child __construct should be called
 - When typing inside 'require{_once}' auto complete file names
-- code completion: add option to 'add include for ...'
 - SFTP: add a per file destination folder to allow overriding the global settings
 - Better parsing for functions' return value
 

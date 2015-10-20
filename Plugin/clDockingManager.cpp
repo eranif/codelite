@@ -60,7 +60,7 @@ void clDockingManager::ShowOutputViewOpenTabMenu()
 {
     bool show;
     wxString selection = ShowMenu(
-        GetPane(OUTPUT_VIEW).window, clGetManager()->GetWorkspaceTabs(), clGetManager()->GetOutputPaneNotebook(), show);
+        GetPane(OUTPUT_VIEW).window, clGetManager()->GetOutputTabs(), clGetManager()->GetOutputPaneNotebook(), show);
     CHECK_COND_RET(!selection.IsEmpty());
     clCommandEvent event(wxEVT_SHOW_OUTPUT_TAB);
     event.SetSelected(show).SetString(selection);
@@ -73,7 +73,7 @@ wxString clDockingManager::ShowMenu(wxWindow* win, const wxArrayString& tabs, No
     EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
     
     std::map<int, wxString> tabsIds;
-    wxMenu menu;
+    wxMenu menu(_("Toggle Tabs"));
     for(size_t i = 0; i < tabs.size(); ++i) {
         int tabId = ::wxNewId();
         const wxString& label = tabs.Item(i);
@@ -81,7 +81,9 @@ wxString clDockingManager::ShowMenu(wxWindow* win, const wxArrayString& tabs, No
         wxMenuItem* item = new wxMenuItem(&menu, tabId, label, "", wxITEM_CHECK);
         menu.Append(item);
         item->Check((book->GetPageIndex(label) != wxNOT_FOUND));
-        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) {
+        
+        // Output pane does not support "detach"
+        if((book != clGetManager()->GetOutputPaneNotebook()) && dpi.GetPanes().Index(label) != wxNOT_FOUND) {
             item->Enable(false);
         }
     }

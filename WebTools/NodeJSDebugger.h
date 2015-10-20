@@ -10,6 +10,19 @@
 #include "NodeJS.h"
 
 class NodeJSDebuggerTooltip;
+struct NodeJSDebuggerException {
+    wxString message;
+    wxString script;
+    int line;
+    int column;
+
+    NodeJSDebuggerException()
+        : line(wxNOT_FOUND)
+        , column(wxNOT_FOUND)
+    {
+    }
+};
+
 class NodeJSDebugger : public wxEvtHandler
 {
     NodeJSSocket::Ptr_t m_socket;
@@ -151,7 +164,7 @@ public:
     /**
      * @brief the execution in the VM has stopped due to an exception
      */
-    void ExceptionThrown();
+    void ExceptionThrown(const NodeJSDebuggerException& exc);
 };
 
 #endif // NODEJSDEBUGGER_H

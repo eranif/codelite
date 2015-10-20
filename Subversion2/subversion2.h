@@ -33,6 +33,7 @@
 #include "svnsettingsdata.h"
 #include "project.h"
 #include "cl_command_event.h"
+#include "clTabTogglerHelper.h"
 
 class SubversionView;
 class SvnConsole;
@@ -56,6 +57,7 @@ private:
     wxString m_selectedFolder; // In the explorer view
     wxFileName m_selectedFile; // In the explorer view
     wxBitmap m_svnBitmap;
+    clTabTogglerHelper::Ptr_t m_tabToggler;
     
 protected:
     void OnSettings(wxCommandEvent& event);
@@ -81,7 +83,6 @@ protected:
     void OnFileExplorerRevertItem(wxCommandEvent& event);
     void OnRevertToRevision(wxCommandEvent& event);
     void OnFileExplorerDiff(wxCommandEvent& event);
-    void OnPatch(wxCommandEvent& event);
     void OnLog(wxCommandEvent& event);
     void OnBlame(wxCommandEvent& event);
     void OnIgnoreFile(wxCommandEvent& event);
@@ -101,7 +102,7 @@ protected:
     void OnFileRemoved(clCommandEvent& event);
     void OnFolderContextMenu(clContextMenuEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
-
+        
     wxMenu* CreateFileExplorerPopMenu(bool isFile);
     bool IsSubversionViewDetached();
     wxMenu* CreateProjectPopMenu();

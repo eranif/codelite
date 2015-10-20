@@ -11,6 +11,9 @@
 #include "NoteJSWorkspace.h"
 #include "imanager.h"
 #include "NodeJSOuptutParser.h"
+#include <algorithm>
+#include "lexer_configuration.h"
+#include "bookmark_manager.h"
 
 class NodeJSLocalClientData : public wxClientData
 {
@@ -170,6 +173,9 @@ void NodeJSDebuggerPane::OnSessionStarted(clDebugEvent& event)
     if(lexer) {
         lexer->Apply(m_consoleLog);
     }
+    // Clear all markers
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
 }
 
 void NodeJSDebuggerPane::OnItemActivated(wxDataViewEvent& event)
@@ -262,7 +268,20 @@ void NodeJSDebuggerPane::OnExceptionThrown(clDebugEvent& event)
     event.Skip();
     ::wxMessageBox(_("An uncaught exception thrown!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
     NodeJSDebugger::Ptr_t debugger = NodeJSWorkspace::Get()->GetDebugger();
+
     if(!debugger) return;
+
+    wxFileName fn(event.GetFileName());
+    IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath());
+    if(editor) {
+        // Center the editor on the error line and add 
+        // - Error marker on the left margin
+        // - Annotation text below the errornous line
+        editor->CenterLine(event.GetLineNumber(), event.GetInt());
+        editor->GetCtrl()->AnnotationSetText(event.GetLineNumber(), event.GetString());
+        editor->GetCtrl()->AnnotationSetStyle(event.GetLineNumber(), ANNOTATION_STYLE_ERROR);
+        editor->GetCtrl()->MarkerAdd(event.GetLineNumber(), smt_error);
+    }
     debugger->Callstack();
 }
 
@@ -441,6 +460,11 @@ void NodeJSDebuggerPane::DoAddUnKnownRefs(const std::map<int, wxString>& refs, c
 void NodeJSDebuggerPane::OnSessionStopped(clDebugEvent& event)
 {
     event.Skip();
+    // Clear all markers
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    std::for_each(editors.begin(), editors.end(), [&](IEditor* e) { e->DelAllCompilerMarkers(); });
+
     Clear();
 }
 

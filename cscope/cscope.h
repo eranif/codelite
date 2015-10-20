@@ -30,6 +30,7 @@
 #include "vector"
 #include "cscopeentrydata.h"
 #include "cl_command_event.h"
+#include "clTabTogglerHelper.h"
 
 class CscopeTab;
 
@@ -37,6 +38,7 @@ class Cscope : public IPlugin
 {
     wxEvtHandler* m_topWindow;
     CscopeTab* m_cscopeWin;
+    clTabTogglerHelper::Ptr_t m_tabHelper;
 
 public:
     Cscope(IManager* manager);

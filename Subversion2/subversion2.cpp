@@ -364,6 +364,7 @@ void Subversion2::UnPlug()
 {
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &Subversion2::OnFolderContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &Subversion2::OnFileContextMenu, this);
+    m_tabToggler.reset(NULL);
     GetManager()->GetTheApp()->Disconnect(XRCID("subversion2_settings"),
                                           wxEVT_COMMAND_MENU_SELECTED,
                                           wxCommandEventHandler(Subversion2::OnSettings),
@@ -480,6 +481,8 @@ void Subversion2::DoInitialize()
         m_subversionView = new SubversionView(book, this);
         book->AddPage(m_subversionView, svnCONSOLE_TEXT, false, m_svnBitmap);
     }
+    m_tabToggler.reset(new clTabTogglerHelper(svnCONSOLE_TEXT, m_subversionView, "", NULL));
+    m_tabToggler->SetOutputTabBmp(m_svnBitmap);
 
     DoSetSSH();
     // We need to perform a dummy call to svn so it will create all the default

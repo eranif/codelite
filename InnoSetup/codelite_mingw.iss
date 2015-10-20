@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=9.0.1
+AppVersion=9.0.2
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-x86-9.0.1
+OutputBaseFilename=codelite-x86-9.0.2
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -50,7 +50,7 @@ Source: "{#WXWIN}\lib\gcc_dll\wxmsw310u_gcc_cl.dll"; DestDir: "{app}"; Flags: ig
 
 ; ---- Binaries needed by codelite
 Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion 
-Source: "{#CODELITE_ROOT}\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"
+Source: "{#CODELITE_ROOT}\Runtime\wx-config.exe"; DestDir: "{app}"
 Source: "{#CODELITE_ROOT}\Runtime\config\codelite.xml.default"; DestDir: "{app}\config";
 Source: "{#CODELITE_ROOT}\Runtime\config\plugins.xml.default"; DestDir: "{app}\config";
 Source: "{#CODELITE_ROOT}\Runtime\config\accelerators.conf.default"; DestDir: "{app}\config";

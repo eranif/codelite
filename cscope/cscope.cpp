@@ -85,7 +85,9 @@ Cscope::Cscope(IManager* manager)
     m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
     m_mgr->GetOutputPaneNotebook()->AddPage(
         m_cscopeWin, CSCOPE_NAME, false, wxXmlResource::Get()->LoadBitmap(wxT("cscope")));
-
+    m_tabHelper.reset(new clTabTogglerHelper(CSCOPE_NAME, m_cscopeWin, "", NULL));
+    m_tabHelper->SetOutputTabBmp(wxXmlResource::Get()->LoadBitmap(wxT("cscope")));
+    
     Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);
     Connect(wxEVT_CSCOPE_THREAD_UPDATE_STATUS, wxCommandEventHandler(Cscope::OnCScopeThreadUpdateStatus), NULL, this);
 
@@ -297,6 +299,7 @@ void Cscope::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void Cscope::UnPlug()
 {
+    m_tabHelper.reset(NULL);
     m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"),
                             wxEVT_UPDATE_UI,
                             wxUpdateUIEventHandler(Cscope::OnCscopeUI),

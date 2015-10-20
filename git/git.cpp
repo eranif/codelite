@@ -151,7 +151,6 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
-
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
 
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
@@ -181,7 +180,9 @@ GitPlugin::GitPlugin(IManager* manager)
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_console, _("git"), false, m_images.Bitmap("git"));
-
+    m_tabToggler.reset(new clTabTogglerHelper(_("git"), m_console, "", NULL));
+    m_tabToggler->SetOutputTabBmp(m_images.Bitmap("git"));
+    
     m_progressTimer.SetOwner(this);
 }
 /*******************************************************************************/
@@ -507,12 +508,7 @@ void GitPlugin::UnPlug()
                                wxCommandEventHandler(GitPlugin::OnGarbageColletion),
                                NULL,
                                this);
-#if 0
-    m_eventHandler->Disconnect( XRCID("git_bisect_start"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectStart ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_bisect_good"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectGood ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_bisect_bad"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectBad ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_bisect_reset"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectReset ), NULL, this );
-#endif
+
     /*SYSTEM*/
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
@@ -551,6 +547,7 @@ void GitPlugin::UnPlug()
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStashPop, this, XRCID("git_stash_pop_folder"));
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitPlugin::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitPlugin::OnProcessTerminated, this);
+    m_tabToggler.reset(NULL);
 }
 
 /*******************************************************************************/
@@ -641,7 +638,10 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
     wxArrayString files;
     files.swap(m_filesSelected);
     if(files.IsEmpty()) return;
-
+    
+    // Make the git console visible
+    m_mgr->ShowOutputPane("git");
+    
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
 
@@ -673,7 +673,10 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
     wxArrayString files;
     files.swap(m_filesSelected);
     if(files.IsEmpty()) return;
-
+    
+    // Make the git console visible
+    m_mgr->ShowOutputPane("git");
+    
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
 
@@ -707,7 +710,10 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
     wxArrayString files;
     files.swap(m_filesSelected);
     if(files.IsEmpty()) return;
-
+    
+    // Make the git console visible
+    m_mgr->ShowOutputPane("git");
+    
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
 

@@ -1096,6 +1096,7 @@ void clMainFrame::CreateGUIControls(void)
     wxAuiPaneInfo paneInfo;
     m_mgr.AddPane(m_outputPane,
                   paneInfo.CaptionVisible(true)
+                      .PinButton()
                       .Name(wxT("Output View"))
                       .Caption(wxT("Output View"))
                       .Bottom()

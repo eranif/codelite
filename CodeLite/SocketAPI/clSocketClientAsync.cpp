@@ -72,6 +72,11 @@ void* clSocketClientAsyncHelperThread::Entry()
         if(connected) {
             break;
         }
+
+        if(TestDestroy()) {
+            // We were requested to go down during connect phase
+            return NULL;
+        }
         ::wxMilliSleep(500);
     }
 

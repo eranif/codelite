@@ -291,6 +291,7 @@ horizontal_white [ ]|{h_tab}
 <PHP>"public"               {LEX_RETURN(kPHP_T_PUBLIC);}
 <PHP>"unset"                {LEX_RETURN(kPHP_T_UNSET);}
 <PHP>"=>"                   {LEX_RETURN(kPHP_T_DOUBLE_ARROW);}
+<PHP>"<=>"                  {LEX_RETURN(kPHP_T_SPACE_SHIP_OPERATPR);}
 <PHP>"list"                 {LEX_RETURN(kPHP_T_LIST);}
 <PHP>"array"                {LEX_RETURN(kPHP_T_ARRAY);}
 <PHP>"callable"             {LEX_RETURN(kPHP_T_CALLABLE);}

@@ -15,6 +15,7 @@
 #include "memcheckui.h"
 #include "imemcheckprocessor.h"
 #include "TerminalEmulator.h"
+#include "clTabTogglerHelper.h"
 
 class AsyncExeCmd;
 class MemCheckOutputView;
@@ -35,9 +36,15 @@ public:
     virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
 
-    MemCheckSettings* const GetSettings() { return m_settings; };
+    MemCheckSettings* const GetSettings()
+    {
+        return m_settings;
+    };
 
-    virtual IMemCheckProcessor* GetProcessor() { return m_memcheckProcessor; }
+    virtual IMemCheckProcessor* GetProcessor()
+    {
+        return m_memcheckProcessor;
+    }
 
     /**
      * @brief true if test is not runnging and GUI can respond, otherwise if test is runnign user can't listing errors
@@ -55,8 +62,11 @@ public:
      * @brief return true if a test is currently running
      * @return
      */
-//    bool IsRunning() const { return m_process != NULL; }
-    bool IsRunning() const { return m_terminal.IsRunning(); }
+    //    bool IsRunning() const { return m_process != NULL; }
+    bool IsRunning() const
+    {
+        return m_terminal.IsRunning();
+    }
 
 protected:
     MemCheckIcons16 m_icons16;
@@ -64,9 +74,11 @@ protected:
 
     IMemCheckProcessor* m_memcheckProcessor;
     MemCheckSettings* m_settings;
-	TerminalEmulator m_terminal;
+    TerminalEmulator m_terminal;
     MemCheckOutputView* m_outputView; ///< Main plugin UI pane.
+    clTabTogglerHelper::Ptr_t m_tabHelper;
 
+protected:
     void OnWorkspaceLoaded(wxCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
 
@@ -85,14 +97,14 @@ protected:
      * @param event
      */
     void OnCheckAtiveProject(wxCommandEvent& event);
-    
+
     /**
      * @brief stop the currently running process
      * @param event
      */
-    void OnStopProcess(wxCommandEvent &event);
-    
-    void OnStopProcessUI(wxUpdateUIEvent &event);
+    void OnStopProcess(wxCommandEvent& event);
+
+    void OnStopProcessUI(wxUpdateUIEvent& event);
     /**
      * @brief User wants test some project in workspace tree.
      * @param event

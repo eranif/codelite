@@ -87,6 +87,7 @@
     <File Name="Tests/test_goto_def_with_trait.php"/>
     <File Name="Tests/test_trait_alias.php"/>
     <File Name="Tests/test_php7_function_return_value.php"/>
+    <File Name="Tests/test_php7_function_arg_hinting.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

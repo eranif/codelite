@@ -609,6 +609,25 @@ TEST_FUNC(test_php7_function_return_value)
     return true;
 }
 
+TEST_FUNC(test_php7_function_arg_hinting)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_php7_function_arg_hinting.php"));
+    sourceFile.SetParseFunctionBody(false);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetFullName(), "\\test_php7_function_arg_hinting_type2");
+    
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+
+    CHECK_SIZE(matches.size(), 2);
+    return true;
+}
+
 /*TEST_FUNC(test_cc_with_keywords)
 {
     PHPSourceFile sourceFile(wxFileName("../Tests/test_cc_with_keywords.php"));

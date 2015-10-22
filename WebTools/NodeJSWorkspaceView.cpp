@@ -35,13 +35,20 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
 
         // Locate the "Close" menu entry
         int pos = wxNOT_FOUND;
+        int openShellPos = wxNOT_FOUND;
         wxMenuItem* closeItem = NULL;
+
         for(size_t i = 0; i < menu->GetMenuItemCount(); ++i) {
             wxMenuItem* mi = menu->FindItemByPosition(i);
-            if(mi && mi->GetId() == XRCID("tree_ctrl_close_folder")) {
+            if((pos == wxNOT_FOUND) && mi && (mi->GetId() == XRCID("tree_ctrl_close_folder"))) {
                 pos = i;
                 closeItem = mi;
-                break;
+            }
+
+            if((openShellPos == wxNOT_FOUND) && mi && (mi->GetId() == XRCID("tree_ctrl_open_shell_folder"))) {
+                openShellPos = i;
+                ++openShellPos; // insert after
+                ++openShellPos; // skip the separator
             }
         }
 
@@ -51,13 +58,32 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
             NodeJSWorkspaceConfiguration conf;
             showHiddenItem->Check(conf.Load(NodeJSWorkspace::Get()->GetFilename()).IsShowHiddenFiles());
             menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnShowHiddenFiles, this, XRCID("nodejs_show_hidden_files"));
-            
+
             menu->InsertSeparator(pos);
             menu->Insert(pos, XRCID("nodejs_close_workspace"), _("Close Workspace"));
             menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnCloseWorkspace, this, XRCID("nodejs_close_workspace"));
-            
+
             // Remove the 'close' menu item
             menu->Remove(closeItem);
+        }
+
+        // Add project related items
+        wxArrayString folders, files;
+        wxArrayTreeItemIds folderItems, fileItems;
+        GetSelections(folders, folderItems, files, fileItems);
+
+        if((openShellPos != wxNOT_FOUND) && (folderItems.size() == 1) && (fileItems.size() == 0)) {
+            // only a folder is selected, check to see if this is a project folder
+            // we do this by testing for the existence of the file package.json
+            // under the folder path
+            wxFileName packageJSON(folders.Item(0), "package.json");
+            if(packageJSON.FileExists()) {
+                // A project folder
+                menu->InsertSeparator(openShellPos);
+                menu->Insert(openShellPos, XRCID("nodejs_project_settings"), _("Settings..."));
+                menu->Insert(openShellPos, XRCID("nodejs_project_debug"), _("Debug..."));
+                menu->Insert(openShellPos, XRCID("nodejs_project_run"), _("Run..."));
+            }
         }
     }
 }
@@ -146,7 +172,4 @@ void NodeJSWorkspaceView::OnCloseWorkspace(wxCommandEvent& event)
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(eventCloseWorkspace);
 }
 
-void NodeJSWorkspaceView::OnContextMenuFile(clContextMenuEvent& event)
-{
-    event.Skip();
-}
+void NodeJSWorkspaceView::OnContextMenuFile(clContextMenuEvent& event) { event.Skip(); }

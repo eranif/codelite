@@ -352,7 +352,7 @@ void PHPSourceFile::OnFunction()
         if(!NextToken(token)) return;
         if(token.type == ':') {
             // PHP 7 signature type
-            // function foobar(...) : RETURN_TYPE 
+            // function foobar(...) : RETURN_TYPE
             wxString returnValuetype = ReadType();
             if(returnValuetype.IsEmpty()) return; // parse error
             func->SetReturnValue(returnValuetype);
@@ -361,7 +361,7 @@ void PHPSourceFile::OnFunction()
             // untake the token and place it back on the "unget" list
             UngetToken(token);
         }
-        
+
         if(ReadUntilFound('{', token)) {
             // found the function body starting point
             if(IsParseFunctionBody()) {
@@ -440,7 +440,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
         if(startingDepth == 0) return;
     }
 
-    // at this point the 'depth' is 1
+    // at this point the 'depth' is 1, as we already read the open brace
     int depth = 1;
     wxString typeHint;
     wxString defaultValue;
@@ -449,7 +449,12 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
     while(NextToken(token)) {
         switch(token.type) {
         case kPHP_T_VARIABLE:
-            var = new PHPEntityVariable();
+            if(!var) {
+                // var can be non null if we are parsing PHP-7 function arguments
+                // with type-hinting
+                var = new PHPEntityVariable();
+            }
+
             var->SetFullName(token.text);
             var->SetLine(token.lineNumber);
             var->SetFilename(m_filename);
@@ -495,6 +500,17 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
             defaultValue.Clear();
             collectingDefaultValue = false;
             break;
+        case kPHP_T_IDENTIFIER:
+            if(!var) {
+                // PHP-7 type hinting function arguments
+                var = new PHPEntityVariable();
+                UngetToken(token);
+                typeHint = ReadType();
+                if(!typeHint.IsEmpty()) {
+                    break;
+                }
+            }
+        // all "else" cases simply fall into the default case
         default:
             if(collectingDefaultValue) {
                 defaultValue << token.text;
@@ -617,7 +633,7 @@ wxString PHPSourceFile::ReadType()
     bool cont = true;
     wxString type;
     phpLexerToken token;
-    
+
     while(cont && NextToken(token)) {
         switch(token.type) {
         case kPHP_T_IDENTIFIER:
@@ -635,7 +651,7 @@ wxString PHPSourceFile::ReadType()
             break;
         }
     }
-    
+
     type = MakeIdentifierAbsolute(type);
     return type;
 }

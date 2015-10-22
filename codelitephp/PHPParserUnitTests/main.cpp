@@ -508,7 +508,7 @@ TEST_FUNC(test_simple_trait)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPEntityBase::Ptr_t tr = lookup.FindClass("\\test_simple_trait");
     CHECK_BOOL(tr);
     return true;
@@ -520,11 +520,11 @@ TEST_FUNC(test_use_trait)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
 
@@ -538,11 +538,11 @@ TEST_FUNC(test_goto_def_with_trait)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
 
@@ -556,12 +556,12 @@ TEST_FUNC(test_trait_alias)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_STRING(resolved->GetFullName().c_str(), "\\Aliased_Talker");
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
 
@@ -583,15 +583,29 @@ TEST_FUNC(test_partial_namespace)
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
 
     CHECK_SIZE(matches.size(), 1);
+    return true;
+}
+
+TEST_FUNC(test_php7_function_return_value)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_php7_function_return_value.php"));
+    sourceFile.SetParseFunctionBody(false);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetFullName(), "\\test_php7_function_return_value_class");
     return true;
 }
 
@@ -601,11 +615,11 @@ TEST_FUNC(test_partial_namespace)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
 //
@@ -617,10 +631,9 @@ TEST_FUNC(test_partial_namespace)
 // Main
 //======================-------------------------------------------------
 
-static const wxString PERFORMANCE_CODE = 
-"<?php\n"
-"$app = new \\Illuminate\\Foundation\\Application();\n"
-"$app->";
+static const wxString PERFORMANCE_CODE = "<?php\n"
+                                         "$app = new \\Illuminate\\Foundation\\Application();\n"
+                                         "$app->";
 
 int main(int argc, char** argv)
 {

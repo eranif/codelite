@@ -26,9 +26,9 @@
 #ifndef MYSQLDBADAPTER_H
 #define MYSQLDBADAPTER_H
 
-#ifdef DBL_USE_MYSQL
+//#ifdef DBL_USE_MYSQL
 #include <wx/dblayer/include/MysqlDatabaseLayer.h>
-#endif
+//#endif
 
 #include <wx/dblayer/include/DatabaseLayer.h>
 #include <wx/dynarray.h>

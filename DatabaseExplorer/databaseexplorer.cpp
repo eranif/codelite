@@ -32,19 +32,19 @@
 #include "wx/wxsf/AutoLayout.h"
 #include "event_notifier.h"
 
-#ifdef DBL_USE_MYSQL
+//#ifdef DBL_USE_MYSQL
 #include "MySqlDbAdapter.h"
-#endif
+//#endif
 
-#ifdef DBL_USE_SQLITE
+//#ifdef DBL_USE_SQLITE
 #include "SqliteDbAdapter.h"
-#endif
+//#endif
 
-#ifdef DBL_USE_POSTGRES
+//#ifdef DBL_USE_POSTGRES
 #include "PostgreSqlDbAdapter.h"
-#endif
+//#endif
 
-#define DBE_VERSION "0.5.2 Beta"
+#define DBE_VERSION "0.5.3 Beta"
 
 static DatabaseExplorer* thePlugin = NULL;
 
@@ -202,7 +202,7 @@ void DatabaseExplorer::OnAbout(wxCommandEvent& e)
     info.SetName(_("DatabaseExplorer"));
     info.SetVersion(version);
     info.SetDescription(desc);
-    info.SetCopyright(_("2011 - 2012 (C) Tomas Bata University, Zlin, Czech Republic"));
+    info.SetCopyright(_("2011 - 2015 (C) Tomas Bata University, Zlin, Czech Republic"));
     info.SetWebSite(_("http://www.fai.utb.cz"));
     info.AddDeveloper(wxT("Peter Janků"));
     info.AddDeveloper(wxT("Michal Bližňák"));
@@ -251,9 +251,9 @@ void DatabaseExplorer::DoOpenFile(const wxFileName& filename)
                 break;
 
             case IDbAdapter::atPOSTGRES:
-#ifdef DBL_USE_POSTGRES
+//#ifdef DBL_USE_POSTGRES
                 adapter = new PostgreSqlDbAdapter();
-#endif
+//#endif
                 break;
 
             default:

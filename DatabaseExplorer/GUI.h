@@ -136,18 +136,18 @@ public:
 class _AdapterSelectDlg : public wxDialog
 {
 protected:
-    wxButton* m_btnMySql;
     wxButton* m_btnSqlite;
+    wxButton* m_btnMySql;
     wxButton* m_button24;
 
 protected:
-    virtual void OnMysqlClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSqliteClick(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMysqlClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPostgresClick(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxButton* GetBtnMySql() { return m_btnMySql; }
     wxButton* GetBtnSqlite() { return m_btnSqlite; }
+    wxButton* GetBtnMySql() { return m_btnMySql; }
     wxButton* GetButton24() { return m_button24; }
     _AdapterSelectDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select dbAdapter"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~_AdapterSelectDlg();

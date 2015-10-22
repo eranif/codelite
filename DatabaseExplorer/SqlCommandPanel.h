@@ -31,9 +31,9 @@
 #include "GUI.h" // Base class: _SqlCommandPanel
 #include <wx/dblayer/include/DatabaseLayer.h>
 
-#ifdef DBL_USE_MYSQL
-#include <wx/dblayer/include/MysqlDatabaseLayer.h>
-#endif
+//#ifdef DBL_USE_MYSQL
+//#include <wx/dblayer/include/MysqlDatabaseLayer.h>
+//#endif
 
 #include <wx/dblayer/include/DatabaseErrorCodes.h>
 #include "IDbAdapter.h"

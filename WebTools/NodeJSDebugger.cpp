@@ -28,8 +28,7 @@
 #include <algorithm>
 
 #define CHECK_RUNNING() \
-    if(!IsConnected())  \
-    return
+    if(!IsConnected()) return
 
 NodeJSDebugger::NodeJSDebugger()
     : m_canInteract(false)
@@ -170,17 +169,7 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
     }
 
     wxString command = dlg.GetCommand();
-
-    if(!m_node.ExecuteConsole(command, "", true, command)) {
-        ::wxMessageBox(_("Failed to start NodeJS application"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
-        m_socket.Reset(NULL);
-    }
-
-    // already connected?
-    m_socket.Reset(new NodeJSSocket(this));
-    NodeJSWorkspaceUser userConf(NodeJSWorkspace::Get()->GetFilename().GetFullPath());
-    userConf.Load();
-    m_socket->Connect("127.0.0.1", userConf.GetDebuggerPort());
+    StartDebugger(command);
 }
 
 void NodeJSDebugger::OnDebugStepIn(clDebugEvent& event)
@@ -297,10 +286,7 @@ void NodeJSDebugger::OnVoid(clDebugEvent& event)
     wxUnusedVar(event);
 }
 
-bool NodeJSDebugger::IsConnected()
-{
-    return m_socket && m_socket->IsConnected();
-}
+bool NodeJSDebugger::IsConnected() { return m_socket && m_socket->IsConnected(); }
 
 void NodeJSDebugger::ConnectionEstablished()
 {
@@ -366,23 +352,15 @@ void NodeJSDebugger::OnNodeTerminated(clCommandEvent& event)
 #endif
 }
 
-void NodeJSDebugger::OnWorkspaceClosed(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void NodeJSDebugger::OnWorkspaceClosed(wxCommandEvent& event) { event.Skip(); }
 
-void NodeJSDebugger::OnWorkspaceOpened(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void NodeJSDebugger::OnWorkspaceOpened(wxCommandEvent& event) { event.Skip(); }
 
 void NodeJSDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 {
     // Sanity
-    if(!IsConnected())
-        return;
-    if(!bp.IsApplied())
-        return;
+    if(!IsConnected()) return;
+    if(!bp.IsApplied()) return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -399,8 +377,7 @@ void NodeJSDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 void NodeJSDebugger::SetBreakpoint(const NodeJSBreakpoint& bp)
 {
     // Sanity
-    if(!IsConnected())
-        return;
+    if(!IsConnected()) return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -420,8 +397,7 @@ void NodeJSDebugger::SetBreakpoint(const NodeJSBreakpoint& bp)
 void NodeJSDebugger::Continue()
 {
     // Sanity
-    if(!IsConnected())
-        return;
+    if(!IsConnected()) return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -435,8 +411,7 @@ void NodeJSDebugger::Continue()
 void NodeJSDebugger::SetBreakpoints()
 {
     // Sanity
-    if(!IsConnected())
-        return;
+    if(!IsConnected()) return;
     const NodeJSBreakpoint::List_t& bps = m_bptManager.GetBreakpoints();
     std::for_each(bps.begin(), bps.end(), [&](const NodeJSBreakpoint& bp) { SetBreakpoint(bp); });
 }
@@ -453,8 +428,7 @@ void NodeJSDebugger::GotControl(bool requestBacktrace)
 void NodeJSDebugger::Callstack()
 {
     // Sanity
-    if(!IsConnected())
-        return;
+    if(!IsConnected()) return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -468,8 +442,7 @@ void NodeJSDebugger::Callstack()
 void NodeJSDebugger::SelectFrame(int frameId)
 {
     // Sanity
-    if(!IsConnected())
-        return;
+    if(!IsConnected()) return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -571,8 +544,7 @@ void NodeJSDebugger::ConnectError(const wxString& errmsg)
 void NodeJSDebugger::BreakOnException(bool b)
 {
     // Sanity
-    if(!IsConnected())
-        return;
+    if(!IsConnected()) return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -591,8 +563,7 @@ void NodeJSDebugger::BreakOnException(bool b)
 void NodeJSDebugger::GetCurrentFrameSource(const wxString& filename, int line)
 {
     // Sanity
-    if(!IsConnected())
-        return;
+    if(!IsConnected()) return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -616,8 +587,7 @@ void NodeJSDebugger::OnEditorChanged(wxCommandEvent& event)
         // If the temp file does not match one of the editors, assume it was closed and delete
         // the temporary file
         IEditor::List_t::iterator iter = std::find_if(editors.begin(), editors.end(), [&](IEditor* editor) {
-            if(editor->GetFileName().GetFullPath() == filename)
-                return true;
+            if(editor->GetFileName().GetFullPath() == filename) return true;
             return false;
         });
         if(iter == editors.end()) {
@@ -724,4 +694,18 @@ void NodeJSDebugger::OnAttach(clDebugEvent& event)
     m_socket.Reset(new NodeJSSocket(this));
     m_socket->Connect("127.0.0.1", 5858);
 #endif
+}
+
+void NodeJSDebugger::StartDebugger(const wxString& command)
+{
+    if(!m_node.ExecuteConsole(command, "", true, command)) {
+        ::wxMessageBox(_("Failed to start NodeJS application"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
+        m_socket.Reset(NULL);
+    }
+
+    // already connected?
+    m_socket.Reset(new NodeJSSocket(this));
+    NodeJSWorkspaceUser userConf(NodeJSWorkspace::Get()->GetFilename().GetFullPath());
+    userConf.Load();
+    m_socket->Connect("127.0.0.1", userConf.GetDebuggerPort());
 }

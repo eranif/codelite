@@ -1,0 +1,49 @@
+#ifndef NODEJSPACKAGEJSON_H
+#define NODEJSPACKAGEJSON_H
+
+#include <wx/filename.h>
+
+class NodeJSPackageJSON
+{
+    wxFileName m_filename;
+    wxString m_name;
+    wxString m_version;
+    wxString m_description;
+    wxFileName m_script;
+    wxArrayString m_args;
+
+public:
+    NodeJSPackageJSON();
+    virtual ~NodeJSPackageJSON();
+    
+    /**
+     * @brief load the local package.json file stored under the .codelite folder
+     */
+    bool Load(const wxString& projectPath);
+    
+    /**
+     * @brief create the local package.json file under the .codelite folder
+     * baed on the project package.json file
+     */
+    bool Create(const wxString& projectPath);
+    
+    /**
+     * @brief save the settings
+     */
+    bool Save(const wxString& projectPath);
+    
+    void SetDescription(const wxString& description) { this->m_description = description; }
+    void SetName(const wxString& name) { this->m_name = name; }
+    void SetVersion(const wxString& version) { this->m_version = version; }
+    const wxString& GetDescription() const { return m_description; }
+    const wxString& GetName() const { return m_name; }
+    const wxString& GetVersion() const { return m_version; }
+    void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
+    const wxFileName& GetFilename() const { return m_filename; }
+    void SetScript(const wxFileName& script) { this->m_script = script; }
+    const wxFileName& GetScript() const { return m_script; }
+    void SetArgs(const wxArrayString& args) { this->m_args = args; }
+    const wxArrayString& GetArgs() const { return m_args; }
+};
+
+#endif // NODEJSPACKAGEJSON_H

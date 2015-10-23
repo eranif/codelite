@@ -65,13 +65,13 @@ protected:
     void OnDestroyTip(clCommandEvent& event);
 
 protected:
-    bool IsConnected();
     void DoHighlightLine(const wxString& filename, int lineNo);
     void DoDeleteTempFiles(const wxStringSet_t& files);
 
 public:
     NodeJSDebugger();
     virtual ~NodeJSDebugger();
+    bool IsConnected();
     void ShowTooltip(const wxString& expression, const wxString& jsonOutput);
 
     void AddTempFile(const wxString& filename) { m_tempFiles.insert(filename); }
@@ -85,7 +85,11 @@ public:
     //--------------------------------------------------
     // API
     //--------------------------------------------------
-
+    /**
+     * @brief start the debugger using the given command
+     */
+    void StartDebugger(const wxString& command);
+    
     /**
      * @brief delete breakpoint from NodeJS. This function does not updat the breakpoint manager
      * nor it does not update the UI

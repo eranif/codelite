@@ -21,7 +21,7 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
         m_staticTextDebuggerPort->Disable();
         m_textCtrlPort->Disable();
     }
-    
+
     m_stcCommandLineArguments->SetEOLMode(wxSTC_EOL_LF);
     wxFileName fnNodejs;
     wxString nodejs = clConfig::Get().Read("webtools/nodejs/debugger/executable", wxString());
@@ -44,6 +44,46 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
     m_filePickerScript->SetPath(script);
     m_textCtrlPort->ChangeValue(wxString() << userConf.GetDebuggerPort());
     m_stcCommandLineArguments->SetText(::wxJoin(userConf.GetCommandLineArgs(), '\n'));
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("javascript");
+    if(lexer) {
+        lexer->Apply(m_stcCommandLineArguments);
+    }
+    CenterOnParent();
+}
+
+NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent,
+                                     eDialogType type,
+                                     const wxFileName& script,
+                                     const wxArrayString& args)
+    : NodeJSDebuggerDlgBase(parent)
+    , m_type(type)
+{
+    if(m_type == kDebug) {
+        SetLabel(_("Debug script"));
+        m_staticTextScript->SetLabel(_("Script to debug:"));
+    } else {
+        SetLabel(_("Execute script"));
+        m_staticTextScript->SetLabel(_("Script to execute:"));
+        m_staticTextDebuggerPort->Disable();
+        m_textCtrlPort->Disable();
+    }
+
+    m_stcCommandLineArguments->SetEOLMode(wxSTC_EOL_LF);
+    wxFileName fnNodejs;
+    wxString nodejs = clConfig::Get().Read("webtools/nodejs/debugger/executable", wxString());
+    if(nodejs.IsEmpty()) {
+        if(clTernServer::LocateNodeJS(fnNodejs)) {
+            nodejs = fnNodejs.GetFullPath();
+        }
+    }
+
+    NodeJSWorkspaceUser userConf(NodeJSWorkspace::Get()->GetFilename().GetFullPath());
+    userConf.Load();
+
+    m_filePickerNodeJS->SetPath(nodejs);
+    m_filePickerScript->SetPath(script.GetFullPath());
+    m_textCtrlPort->ChangeValue(wxString() << userConf.GetDebuggerPort());
+    m_stcCommandLineArguments->SetText(::wxJoin(args, '\n'));
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("javascript");
     if(lexer) {
         lexer->Apply(m_stcCommandLineArguments);

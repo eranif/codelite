@@ -11,6 +11,10 @@
 #include "NodeJSWorkspaceConfiguration.h"
 #include "ieditor.h"
 #include <wx/wupdlock.h>
+#include <wx/msgdlg.h>
+#include "NodeJSPackageJSON.h"
+#include "NodeJSDebuggerDlg.h"
+#include "NodeJSDebugger.h"
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -30,7 +34,7 @@ NodeJSWorkspaceView::~NodeJSWorkspaceView()
 void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
-    if(event.GetEventObject() == this) {
+    if((event.GetEventObject() == this)) {
         wxMenu* menu = event.GetMenu();
 
         // Locate the "Close" menu entry
@@ -80,9 +84,14 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
             if(packageJSON.FileExists()) {
                 // A project folder
                 menu->InsertSeparator(openShellPos);
-                menu->Insert(openShellPos, XRCID("nodejs_project_settings"), _("Settings..."));
+                menu->Insert(openShellPos, XRCID("nodejs_project_settings"), _("Open package.json"));
                 menu->Insert(openShellPos, XRCID("nodejs_project_debug"), _("Debug..."));
                 menu->Insert(openShellPos, XRCID("nodejs_project_run"), _("Run..."));
+
+                menu->Bind(
+                    wxEVT_MENU, &NodeJSWorkspaceView::OnOpenPackageJsonFile, this, XRCID("nodejs_project_settings"));
+                menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnProjectDebug, this, XRCID("nodejs_project_debug"));
+                menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnProjectRun, this, XRCID("nodejs_project_run"));
             }
         }
     }
@@ -173,3 +182,74 @@ void NodeJSWorkspaceView::OnCloseWorkspace(wxCommandEvent& event)
 }
 
 void NodeJSWorkspaceView::OnContextMenuFile(clContextMenuEvent& event) { event.Skip(); }
+
+void NodeJSWorkspaceView::OnOpenPackageJsonFile(wxCommandEvent& event)
+{
+    wxString path;
+    wxTreeItemId item;
+    if(!GetSelectProjectPath(path, item)) return;
+
+    wxFileName packageJson(path, "package.json");
+    clGetManager()->OpenFile(packageJson.GetFullPath());
+}
+
+void NodeJSWorkspaceView::OnProjectDebug(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoExecuteProject(NodeJSDebuggerDlg::kDebug);
+}
+
+void NodeJSWorkspaceView::OnProjectRun(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoExecuteProject(NodeJSDebuggerDlg::kExecute);
+}
+
+bool NodeJSWorkspaceView::GetSelectProjectPath(wxString& path, wxTreeItemId& item)
+{
+    path.clear();
+    wxArrayString folders, files;
+    wxArrayTreeItemIds folderItems, fileItems;
+    GetSelections(folders, folderItems, files, fileItems);
+    if((folders.size() == 1) && (files.IsEmpty())) {
+        path = folders.Item(0);
+        item = folderItems.Item(0);
+        return true;
+    }
+    return false;
+}
+
+void NodeJSWorkspaceView::DoExecuteProject(NodeJSDebuggerDlg::eDialogType type)
+{
+    wxString path;
+    wxTreeItemId item;
+    if(!GetSelectProjectPath(path, item)) return;
+
+    NodeJSPackageJSON pj;
+    if(!pj.Load(path)) {
+        if(!pj.Create(path)) {
+            ::wxMessageBox(
+                _("Failed to load package.json file from path:\n") + path, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            return;
+        }
+    }
+
+    // Sanity
+
+    // No debugger?
+    if(!NodeJSWorkspace::Get()->GetDebugger()) return;
+    // Already running?
+    if(NodeJSWorkspace::Get()->GetDebugger()->IsConnected()) return;
+
+    NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), type, pj.GetScript(), pj.GetArgs());
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    // store the data for future use
+    pj.SetScript(dlg.GetScript());
+    pj.SetArgs(dlg.GetArgs());
+    pj.Save(path);
+
+    NodeJSWorkspace::Get()->GetDebugger()->StartDebugger(dlg.GetCommand());
+}

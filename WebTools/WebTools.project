@@ -142,6 +142,8 @@
     <File Name="NodeJSDebuggerTooltip.h"/>
     <File Name="NodeJSDebuggerTooltip.cpp"/>
     <File Name="NodeJS.h"/>
+    <File Name="NodeJSPackageJSON.h"/>
+    <File Name="NodeJSPackageJSON.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

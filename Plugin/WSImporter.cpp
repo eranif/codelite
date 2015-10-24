@@ -276,7 +276,7 @@ bool WSImporter::Import(wxString& errMsg)
                     proj->DeleteVirtualDir("src");
 
                     for(GenericProjectFilePtr file : project->files) {
-                        wxString vpath = GetVPath(file->name, file->vpath, project->createDefaultVirtualDir);
+                        wxString vpath = GetVPath(file->name, file->vpath);
 
                         wxString vDir = wxT("");
                         wxStringTokenizer vDirList(vpath, wxT(":"));
@@ -295,7 +295,7 @@ bool WSImporter::Import(wxString& errMsg)
                     for(GenericProjectCfgPtr cfg : project->cfgs) {
                         for(GenericProjectFilePtr excludeFile : cfg->excludeFiles) {
                             wxString vpath =
-                                GetVPath(excludeFile->name, excludeFile->vpath, project->createDefaultVirtualDir);
+                                GetVPath(excludeFile->name, excludeFile->vpath);
 
                             wxFileName excludeFileNameInfo(project->path + wxFileName::GetPathSeparator() +
                                                            excludeFile->name);
@@ -377,10 +377,10 @@ std::set<wxString> WSImporter::GetListEnvVarName(std::vector<wxString> elems)
     return list;
 }
 
-wxString WSImporter::GetVPath(const wxString& filename, const wxString& virtualPath, const bool& createDefaultVDir)
+wxString WSImporter::GetVPath(const wxString& filename, const wxString& virtualPath)
 {
     wxString vpath;
-    if(virtualPath.IsEmpty() && createDefaultVDir) {
+    if(virtualPath.IsEmpty()) {
         wxFileName fileInfo(filename);
         wxString ext = fileInfo.GetExt().Lower();
 

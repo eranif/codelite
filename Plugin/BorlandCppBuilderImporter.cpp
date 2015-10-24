@@ -47,7 +47,6 @@ GenericWorkspacePtr BorlandCppBuilderImporter::PerformImport()
     GenericProjectPtr genericProject = std::make_shared<GenericProject>();
     genericProject->name = wsInfo.GetName();
     genericProject->path = wsInfo.GetPath();
-    genericProject->createDefaultVirtualDir = true;
 
     GenericProjectCfgPtr genericProjectCfgDebug = std::make_shared<GenericProjectCfg>();
     GenericProjectCfgPtr genericProjectCfgRelease = std::make_shared<GenericProjectCfg>();

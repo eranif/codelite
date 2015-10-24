@@ -146,7 +146,6 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                     wxFileName projectInfo(genericProjectData[wxT("projectFullPath")]);
                     GenericProjectPtr genericProject = std::make_shared<GenericProject>();
                     genericProject->path = projectInfo.GetPath();
-                    genericProject->createDefaultVirtualDir = true;
 
                     wxStringTokenizer deps(genericProjectData[wxT("projectDeps")], wxT(";"));
 

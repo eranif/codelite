@@ -61,7 +61,6 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                     genericProject = std::make_shared<GenericProject>();
                     genericProject->name = projectName;
                     genericProject->path = wsInfo.GetPath();
-                    genericProject->createDefaultVirtualDir = true;
 
                     genericProjectCfgDebug = std::make_shared<GenericProjectCfg>();
                     genericProjectCfgRelease = std::make_shared<GenericProjectCfg>();

@@ -399,8 +399,11 @@ void NewBuildTab::DoCacheRegexes()
 
         for(iter = warnPatterns.begin(); iter != warnPatterns.end(); iter++) {
 
-            CmpPatternPtr compiledPatternPtr(new CmpPattern(
-                new wxRegEx(iter->pattern), iter->fileNameIndex, iter->lineNumberIndex, iter->columnIndex, SV_WARNING));
+            CmpPatternPtr compiledPatternPtr(new CmpPattern(new wxRegEx(iter->pattern, wxRE_ADVANCED | wxRE_ICASE),
+                                                            iter->fileNameIndex,
+                                                            iter->lineNumberIndex,
+                                                            iter->columnIndex,
+                                                            SV_WARNING));
             if(compiledPatternPtr->GetRegex()->IsValid()) {
                 cmpPatterns.warningPatterns.push_back(compiledPatternPtr);
             }

@@ -15,6 +15,7 @@
 #include "NodeJSPackageJSON.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSDebugger.h"
+#include "macros.h"
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -252,4 +253,45 @@ void NodeJSWorkspaceView::DoExecuteProject(NodeJSDebuggerDlg::eDialogType type)
     pj.Save(path);
 
     NodeJSWorkspace::Get()->GetDebugger()->StartDebugger(dlg.GetCommand());
+}
+
+void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
+{
+    // Call the parent function to do the actual expansion
+    clTreeCtrlPanel::OnItemExpanding(event);
+
+    // Loop over the children of the item and replace the icon for all projects
+    wxTreeItemId item = event.GetItem();
+    CHECK_ITEM_RET(item);
+
+    clTreeCtrlData* cd = GetItemData(item);
+    CHECK_PTR_RET(cd);
+    CHECK_COND_RET(cd->IsFolder());
+
+    int imageIndex = m_bmpLoader.GetMimeImageId(FileExtManager::TypeProject);
+    CHECK_COND_RET(imageIndex != wxNOT_FOUND);
+
+    {
+        // change the icon for the parent folder as well
+        wxFileName packageJSON(cd->GetPath(), "package.json");
+        if(packageJSON.FileExists()) {
+            GetTreeCtrl()->SetItemImage(item, imageIndex);
+            GetTreeCtrl()->SetItemImage(item, imageIndex, wxTreeItemIcon_Selected);
+        }
+    }
+
+    wxTreeItemIdValue cookie;
+    wxTreeItemId child = GetTreeCtrl()->GetFirstChild(item, cookie);
+    while(child.IsOk()) {
+        clTreeCtrlData* cd = GetItemData(child);
+        if(cd && cd->IsFolder()) {
+            wxFileName packageJSON(cd->GetPath(), "package.json");
+            if(packageJSON.FileExists()) {
+                // A project
+                GetTreeCtrl()->SetItemImage(child, imageIndex);
+                GetTreeCtrl()->SetItemImage(child, imageIndex, wxTreeItemIcon_Selected);
+            }
+        }
+        child = GetTreeCtrl()->GetNextChild(item, cookie);
+    }
 }

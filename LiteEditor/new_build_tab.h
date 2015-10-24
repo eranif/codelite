@@ -137,7 +137,8 @@ typedef SmartPtr<CmpPattern> CmpPatternPtr;
 
 //////////////////////////////////////////////////////////////////
 
-struct CmpPatterns {
+struct CmpPatterns
+{
     std::vector<CmpPatternPtr> errorsPatterns;
     std::vector<CmpPatternPtr> warningPatterns;
 };
@@ -173,6 +174,7 @@ class NewBuildTab : public wxPanel
     bool m_buildInProgress;
     wxString m_cygwinRoot;
     std::map<int, BuildLineInfo*> m_viewData;
+    int m_maxlineWidth;
 
 protected:
     void InitView(const wxString& theme = "");

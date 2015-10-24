@@ -99,6 +99,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     , m_skipWarnings(false)
     , m_buildpaneScrollTo(ScrollToFirstError)
     , m_buildInProgress(false)
+    , m_maxlineWidth(wxNOT_FOUND)
 {
     m_curError = m_errorsAndWarningsList.end();
     wxBoxSizer* bs = new wxBoxSizer(wxVERTICAL);
@@ -223,6 +224,10 @@ void NewBuildTab::OnBuildEnded(clCommandEvent& e)
 
     if(m_buildTabSettings.GetBuildPaneScrollDestination() == ScrollToEnd) {
         m_view->ScrollToEnd();
+    }
+
+    if((m_maxlineWidth != wxNOT_FOUND) && m_maxlineWidth) {
+        m_view->SetScrollWidth(m_maxlineWidth);
     }
 
     // notify the plugins that the build has ended
@@ -427,7 +432,7 @@ bool NewBuildTab::DoGetCompilerPatterns(const wxString& compilerName, CmpPattern
 void NewBuildTab::DoClear()
 {
     wxFont font = DoGetFont();
-
+    m_maxlineWidth = -1;
     m_buildInterrupted = false;
     m_directories.Clear();
     m_buildInfoPerFile.clear();
@@ -603,7 +608,18 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
 
         m_view->SetEditable(true);
         buildLine.Trim();
+        int curline = m_view->GetLineCount() - 1;
         m_view->AppendText(buildLine + "\n");
+
+        // get the newly added line width
+        int endPosition = m_view->GetLineEndPosition(curline); // get character position from begin
+        int beginPosition = m_view->PositionFromLine(curline); // and end of line
+
+        wxPoint beginPos = m_view->PointFromPosition(beginPosition);
+        wxPoint endPos = m_view->PointFromPosition(endPosition);
+
+        int curLen = endPos.x - beginPos.x;
+        m_maxlineWidth = wxMax(m_maxlineWidth, curLen);
         m_view->SetEditable(false);
 
         if(clConfig::Get().Read(kConfigBuildAutoScroll, true)) {

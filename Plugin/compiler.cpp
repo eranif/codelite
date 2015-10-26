@@ -227,7 +227,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         if(regexType == kRegexGNU) {
             AddPattern(eErrorPattern,
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal "
-                       "error)|(error)|(undefined reference))",
+                       "error)|(error)|(undefined reference)|([\\t ]*required from))",
                        1,
                        3,
                        4);

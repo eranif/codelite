@@ -161,3 +161,7 @@ select_previous|Search|Select Previous Occurrence|Ctrl-Shift-F3
 hide_status_bar|View|Show Status Bar|
 hide_tool_bar|View|Show ToolBar|
 minimal_view|View|Toggle Minimal View|
+unittestpp_new_simple_test|Plugins::UnitTest++|Create new test...|
+unittestpp_new_class_test|Plugins::UnitTest++|Create tests for class...|
+mark_project_as_ut|Plugins::UnitTest++|Mark this project as UnitTest++ project|
+run_unit_tests|Plugins::UnitTest++|Run Project as UnitTest++ and report|

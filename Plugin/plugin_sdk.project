@@ -383,6 +383,8 @@
     <File Name="clBootstrapWizard.cpp"/>
     <File Name="clWorkspaceView.h"/>
     <File Name="clWorkspaceView.cpp"/>
+    <File Name="clMouseCaptureLocker.h"/>
+    <File Name="clMouseCaptureLocker.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>

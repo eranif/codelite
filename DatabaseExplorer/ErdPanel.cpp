@@ -88,16 +88,11 @@ EVT_UPDATE_UI(XRCID("IDT_ERD_TABLE"), ErdPanel::OnToolUpdate)
 EVT_UPDATE_UI(XRCID("IDT_ERD_LINE"), ErdPanel::OnToolUpdate)
 EVT_UPDATE_UI(XRCID("IDT_ERD_VIEW"), ErdPanel::OnToolUpdate)
 
-EVT_UPDATE_UI(XRCID("IDT_ERD_COMMIT"), ErdPanel::OnCommitUpdate)
-
 END_EVENT_TABLE()
 
 ErdPanel::ErdPanel()
     : _ErdPanel(NULL)
 {
-    m_pErdTable = NULL;
-    m_pDbAdapter = NULL;
-    m_pConnections = NULL;
 }
 
 ErdPanel::ErdPanel(wxWindow* parent, IDbAdapter* dbAdapter, xsSerializable* pConnections)
@@ -479,12 +474,4 @@ bool ErdPanel::SaveERD(const wxString& path)
         return false;
 }
 
-void ErdPanel::OnSelectAll(wxCommandEvent& evt)
-{
-    m_pFrameCanvas->SelectAll();
-}
-
-void ErdPanel::OnCommitUpdate(wxUpdateUIEvent& event)
-{
-    event.Enable( (m_pDbAdapter != NULL) && m_pDbAdapter->IsConnected() );
-}
+void ErdPanel::OnSelectAll(wxCommandEvent& evt) { m_pFrameCanvas->SelectAll(); }

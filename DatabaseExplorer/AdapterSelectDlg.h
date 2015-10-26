@@ -32,17 +32,17 @@
 
 #include "../Interfaces/imanager.h"
 
-//#ifdef DBL_USE_MYSQL
+#ifdef DBL_USE_MYSQL
 #include "MySqlDbAdapter.h"
-//#endif
+#endif
 
-//#ifdef DBL_USE_SQLITE
+#ifdef DBL_USE_SQLITE
 #include "SqliteDbAdapter.h"
-//#endif
+#endif
 
-//#ifdef DBL_USE_POSTGRES
+#ifdef DBL_USE_POSTGRES
 #include "PostgreSqlDbAdapter.h"
-//#endif
+#endif
 
 class xsSerializable;
 class AdapterSelectDlg : public _AdapterSelectDlg {

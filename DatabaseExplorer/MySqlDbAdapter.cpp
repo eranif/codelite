@@ -37,7 +37,6 @@ MySqlDbAdapter::MySqlDbAdapter()
 	this->m_userName = wxT("");
 	this->m_password = wxT("");
 	this->m_adapterType = atMYSQL;
-    this->m_pDbLayer = NULL;
 }
 MySqlDbAdapter::MySqlDbAdapter(const wxString& serverName, const wxString& userName, const wxString& password)
 {
@@ -45,7 +44,6 @@ MySqlDbAdapter::MySqlDbAdapter(const wxString& serverName, const wxString& userN
 	this->m_userName = userName;
 	this->m_password = password;
 	this->m_adapterType = atMYSQL;
-    this->m_pDbLayer = NULL;
 }
 
 MySqlDbAdapter::~MySqlDbAdapter()
@@ -54,7 +52,7 @@ MySqlDbAdapter::~MySqlDbAdapter()
 
 void MySqlDbAdapter::CloseConnection()
 {
-	if( this->m_pDbLayer ) this->m_pDbLayer->Close();
+	this->m_pDbLayer->Close();
 }
 
 DatabaseLayerPtr MySqlDbAdapter::GetDatabaseLayer(const wxString& dbName)
@@ -64,21 +62,14 @@ DatabaseLayerPtr MySqlDbAdapter::GetDatabaseLayer(const wxString& dbName)
 #ifdef DBL_USE_MYSQL
 	if (!CanConnect())  return new MysqlDatabaseLayer();
 	dbLayer = new MysqlDatabaseLayer(this->m_serverName, wxT(""), this->m_userName, this->m_password);
-#else
-    dbLayer = new MysqlDatabaseLayer();
 #endif
-
-    this->m_pDbLayer = dbLayer;
 
 	return dbLayer;
 }
 
 bool MySqlDbAdapter::IsConnected()
 {
-    if( this->m_pDbLayer )
-        return this->m_pDbLayer->IsOpen();
-    else
-        return false;
+	return this->m_pDbLayer->IsOpen();
 }
 
 wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable)
@@ -87,6 +78,8 @@ wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable)
 	wxString str = wxT("");
 	if (dropTable) str = wxString::Format(wxT("SET FOREIGN_KEY_CHECKS = 0;\nDROP TABLE IF EXISTS `%s` ;\nSET FOREIGN_KEY_CHECKS = 1; \n"),tab->GetName().c_str());
 	str.append(wxString::Format(wxT("CREATE TABLE `%s` (\n"),tab->GetName().c_str()));
+
+
 
 	SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
 	while( node ) {

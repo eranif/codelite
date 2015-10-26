@@ -92,14 +92,10 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     
     SetName(wxT("_ImageExportDialog"));
     SetSizeHints(-1,-1);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
+    CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -137,9 +133,10 @@ _ThumbPane::_ThumbPane(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
     
     SetName(wxT("_ThumbPane"));
     SetSizeHints(500,300);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
+    CentreOnParent(wxBOTH);
 }
 
 _ThumbPane::~_ThumbPane()
@@ -265,9 +262,10 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     
     SetName(wxT("_SqlCommandPanel"));
     SetSizeHints(-1,-1);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnLoadClick), NULL, this);
     this->Connect(XRCID("IDC_DBE_SQL_SAVE"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
@@ -330,41 +328,44 @@ _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer9);
     
+    m_btnMySql = new wxButton(this, wxID_ANY, _("MySql"), wxDefaultPosition, wxSize(175,-1), 0);
+    
+    bSizer9->Add(m_btnMySql, 0, wxALL|wxEXPAND, 5);
+    
     m_btnSqlite = new wxButton(this, wxID_ANY, _("SQLite"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_btnSqlite->SetDefault();
     m_btnSqlite->SetFocus();
     
-    bSizer9->Add(m_btnSqlite, 1, wxALL|wxEXPAND, 5);
-    
-    m_btnMySql = new wxButton(this, wxID_ANY, _("MySql"), wxDefaultPosition, wxSize(175,-1), 0);
-    
-    bSizer9->Add(m_btnMySql, 1, wxALL|wxEXPAND, 5);
+    bSizer9->Add(m_btnSqlite, 0, wxALL|wxEXPAND, 5);
     
     m_button24 = new wxButton(this, wxID_ANY, _("PostgreSQL"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer9->Add(m_button24, 1, wxALL|wxEXPAND, 5);
+    bSizer9->Add(m_button24, 0, wxALL|wxEXPAND, 5);
     
     SetName(wxT("_AdapterSelectDlg"));
     SetSizeHints(-1,-1);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
-        CentreOnScreen(wxBOTH);
+        wxPersistenceManager::Get().Restore(this);
     }
+#endif
     // Connect events
-    m_btnSqlite->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnSqliteClick), NULL, this);
     m_btnMySql->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnMysqlClick), NULL, this);
+    m_btnSqlite->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnSqliteClick), NULL, this);
     m_button24->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnPostgresClick), NULL, this);
     
 }
 
 _AdapterSelectDlg::~_AdapterSelectDlg()
 {
-    m_btnSqlite->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnSqliteClick), NULL, this);
     m_btnMySql->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnMysqlClick), NULL, this);
+    m_btnSqlite->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnSqliteClick), NULL, this);
     m_button24->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnPostgresClick), NULL, this);
     
 }
@@ -393,9 +394,10 @@ _DbViewerPanel::_DbViewerPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     SetName(wxT("_DbViewerPanel"));
     SetSizeHints(200,100);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
+    CentreOnParent(wxBOTH);
     // Connect events
     m_treeDatabases->Connect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(_DbViewerPanel::OnDnDStart), NULL, this);
     m_treeDatabases->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(_DbViewerPanel::OnItemActivate), NULL, this);
@@ -635,14 +637,10 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     SetName(wxT("_DBSettingsDialog"));
     SetSizeHints(-1,-1);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
+    CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -714,9 +712,10 @@ _ErdPanel::_ErdPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     
     SetName(wxT("_ErdPanel"));
     SetSizeHints(640,480);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(_ErdPanel::OnMouseWheel), NULL, this);
     
@@ -845,14 +844,10 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     
     SetName(wxT("_CreateForeignKey"));
     SetSizeHints(-1,-1);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
+    CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -910,16 +905,12 @@ _LogDialog::_LogDialog(wxWindow* parent, wxWindowID id, const wxString& title, c
     bSizer13->Add(m_button18, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT, 5);
     
     SetName(wxT("_LogDialog"));
-    SetMinSize(wxSize(640,460));
+    SetMinSize( wxSize(640,460) );
     SetSizeHints(640,460);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
+    CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -1028,16 +1019,12 @@ _ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& ti
     fgSizer14->Add(m_btnOK, 0, wxALL|wxALIGN_RIGHT, 5);
     
     SetName(wxT("_ViewSettings"));
-    SetMinSize(wxSize(650,450));
+    SetMinSize( wxSize(650,450) );
     SetSizeHints(650,450);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
+    CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -1165,14 +1152,10 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     
     SetName(wxT("_ClassGenerateDialog"));
     SetSizeHints(-1,-1);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
+    CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -1260,16 +1243,12 @@ _CodePreviewDialog::_CodePreviewDialog(wxWindow* parent, wxWindowID id, const wx
     boxSizer10->Add(m_button14, 0, wxALL|wxALIGN_RIGHT, 5);
     
     SetName(wxT("_CodePreviewDialog"));
-    SetMinSize(wxSize(500,470));
+    SetMinSize( wxSize(500,470) );
     SetSizeHints(500,470);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
+    CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -1470,16 +1449,12 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     boxSizer49->Add(m_button53, 0, wxALL, 5);
     
     SetName(wxT("_TableSettings"));
-    SetMinSize(wxSize(600,-1));
+    SetMinSize( wxSize(600,-1) );
     SetSizeHints(600,700);
-    if (GetSizer()) {
+    if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
+    CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

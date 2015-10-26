@@ -110,7 +110,7 @@ wxArrayString* SQLiteDbAdapter::GetDbTypes() {
 }
 
 bool SQLiteDbAdapter::IsConnected() {
-	return CanConnect();
+	return false;
 }
 wxString SQLiteDbAdapter::GetDefaultSelect(const wxString& dbName, const wxString& tableName) {
 	return wxString::Format(wxT("SELECT * FROM '%s'.'%s' LIMIT 0, 100;"),dbName.c_str(),tableName.c_str());

@@ -96,7 +96,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
                       wxITEM_NORMAL,
                       _("Open ERD View"),
                       wxEmptyString,
-                      NULL)->SetHasDropDown(true);
+                      NULL);
     m_auibar->AddTool(XRCID("IDT_DBE_PREVIEW"),
                       _("Show ERD Thumbnail"),
                       bmpLoader->LoadBitmap(wxT("db-explorer/16/thumbnail")),
@@ -108,8 +108,6 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
 
     m_mgr->GetEditorPaneNotebook()->Bind(wxEVT_BOOK_PAGE_CHANGED, &DbViewerPanel::OnPageChanged, this);
     m_mgr->GetEditorPaneNotebook()->Bind(wxEVT_BOOK_PAGE_CLOSING, &DbViewerPanel::OnPageClosing, this);
-    
-    m_auibar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &DbViewerPanel::OnERDSelected, this, XRCID("IDT_DBE_ERD"));
 
     this->Connect(
         XRCID("IDT_DBE_CONNECT"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DbViewerPanel::OnConnectClick));
@@ -966,22 +964,5 @@ void DbViewerPanel::AddEditorPage(wxWindow* page, const wxString& name)
     } else {
         m_pThumbnail->SetCanvas(NULL);
         page->SetFocus();
-    }
-}
-
-void DbViewerPanel::OnERDSelected(wxAuiToolBarEvent& event)
-{
-    wxMenu menu;
-    menu.Append( XRCID("IDM_DBE_ERD_SQLITE"), _("SQLite") );
-    menu.Append( XRCID("IDM_DBE_ERD_MYSQL"), _("MySQL") );
-    menu.Append( XRCID("IDM_DBE_ERD_POSTGRESQL"), _("PostgreSQL") );
-    
-    int selection = GetPopupMenuSelectionFromUser( menu, event.GetItemRect().GetBottomLeft() );
-    if( selection == XRCID("IDM_DBE_ERD_SQLITE") ) {
-        m_mgr->AddEditorPage( new ErdPanel( m_pNotebook, new SQLiteDbAdapter(), m_pConnections ), _("SQLite ERD") );
-    } else if( selection == XRCID("IDM_DBE_ERD_MYSQL") ) {
-        m_mgr->AddEditorPage( new ErdPanel( m_pNotebook, new MySqlDbAdapter(), m_pConnections ), _("MySQL ERD") );
-    } else if( selection == XRCID("IDM_DBE_ERD_POSTGRESQL") ) {
-        m_mgr->AddEditorPage( new ErdPanel( m_pNotebook, new PostgreSqlDbAdapter(), m_pConnections ), _("PostgreSQL ERD") );
     }
 }

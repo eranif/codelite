@@ -36,7 +36,7 @@
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
-#define DEFAULT_FONT_SIZE 12
+#define DEFAULT_FONT_SIZE 10
 #elif defined(__WXMAC__)
 #define DEFAULT_FACE_NAME "monaco"
 #define DEFAULT_FONT_SIZE 14
@@ -283,6 +283,7 @@ static wxColor GetInactiveColor(const StyleProperty& defaultStyle)
 
 #define CL_LINE_MODIFIED_STYLE 200
 #define CL_LINE_SAVED_STYLE 201
+
 void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
     ctrl->SetLexer(GetLexerId());
@@ -298,10 +299,12 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // turn off PP tracking/updating by default
     ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
     ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-
-//#ifdef __WXOSX__
+    
+    if(GetName() == "scss") {
+        // Enable SCSS property (will tell the lexer to search for variables)
+        ctrl->SetProperty("lexer.css.scss.language", "1");
+    }
     ctrl->SetUseAntiAliasing(true);
-//#endif
 
     // Find the default style
     wxFont defaultFont;

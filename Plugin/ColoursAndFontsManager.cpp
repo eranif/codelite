@@ -740,7 +740,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".qml")) {
         lexer->SetFileSpec("*.js;*.javascript;*.qml;*.json");
     }
-
+    
+    // Hack5: all the remove *.scss from the css lexer (it now has its own lexer)
+    if(lexer->GetName() == "css" && lexer->GetFileSpec().Contains(".scss")) {
+        lexer->SetFileSpec("*.css");
+    }
+    
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }

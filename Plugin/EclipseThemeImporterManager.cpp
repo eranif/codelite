@@ -21,6 +21,7 @@
 #include "EclipseLuaThemeImporter.h"
 #include "EclipseScriptThemeImporter.h"
 #include "EclipseSQLThemeImporter.h"
+#include "EclipseSCSSThemeImporter.h"
 
 EclipseThemeImporterManager::EclipseThemeImporterManager()
 {
@@ -45,6 +46,7 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseLuaThemeImporter());
     m_importers.push_back(new EclipseScriptThemeImporter());
     m_importers.push_back(new EclipseSQLThemeImporter());
+    m_importers.push_back(new EclipseSCSSThemeImporter());
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}

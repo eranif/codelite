@@ -129,6 +129,8 @@
       <File Name="EclipseScriptThemeImporter.cpp"/>
       <File Name="EclipseSQLThemeImporter.h"/>
       <File Name="EclipseSQLThemeImporter.cpp"/>
+      <File Name="EclipseSCSSThemeImporter.h"/>
+      <File Name="EclipseSCSSThemeImporter.cpp"/>
     </VirtualDirectory>
     <File Name="clNotebookTheme.h"/>
     <File Name="clNotebookTheme.cpp"/>

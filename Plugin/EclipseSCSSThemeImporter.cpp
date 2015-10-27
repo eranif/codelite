@@ -1,9 +1,7 @@
-#include "EclipseCSSThemeImporter.h"
-#include "macros.h"
-#include <wx/stc/stc.h>
+#include "EclipseSCSSThemeImporter.h"
 #include "drawingutils.h"
 
-EclipseCSSThemeImporter::EclipseCSSThemeImporter()
+EclipseSCSSThemeImporter::EclipseSCSSThemeImporter()
 {
     SetKeywords0("color background-color background-image background-repeat background-attachment background-position "
                  "background font-family"
@@ -63,14 +61,16 @@ EclipseCSSThemeImporter::EclipseCSSThemeImporter()
                  "column-count column-rule column-gap column-rule-color column-rule-style column-rule-width       "
                  "resize opacity word-wrap ");
     SetKeywords4("first-letter first-line before after selection");
-    SetFileExtensions("*.css");
+    SetFileExtensions("*.scss");
 }
 
-EclipseCSSThemeImporter::~EclipseCSSThemeImporter() {}
-
-LexerConf::Ptr_t EclipseCSSThemeImporter::Import(const wxFileName& eclipseXmlFile)
+EclipseSCSSThemeImporter::~EclipseSCSSThemeImporter()
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "css", wxSTC_LEX_CSS);
+}
+
+LexerConf::Ptr_t EclipseSCSSThemeImporter::Import(const wxFileName& eclipseXmlFile)
+{
+    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "scss", wxSTC_LEX_CSS);
     CHECK_PTR_RET_NULL(lexer);
 
     // Set error colour

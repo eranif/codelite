@@ -95,6 +95,7 @@ struct GitCmd {
 
 class GitPlugin : public IPlugin
 {
+    friend class GitConsole;
     typedef std::map<int, int> IntMap_t;
     enum {
         gitNone = 0,

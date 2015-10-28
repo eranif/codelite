@@ -82,6 +82,7 @@ protected:
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnStopGitProcess(wxCommandEvent& event);
     void OnOpenFile(wxCommandEvent& e);
+    void OnCloseView(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent& e);
     void OnConfigurationChanged(wxCommandEvent& e);
     void OnEditorThemeChanged(wxCommandEvent& e);

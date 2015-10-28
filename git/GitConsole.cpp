@@ -269,10 +269,7 @@ GitConsole::~GitConsole()
            XRCID("git_pull"));
 }
 
-void GitConsole::OnClearGitLog(wxCommandEvent& event)
-{
-    m_stcLog->ClearAll();
-}
+void GitConsole::OnClearGitLog(wxCommandEvent& event) { m_stcLog->ClearAll(); }
 
 void GitConsole::OnStopGitProcess(wxCommandEvent& event)
 {
@@ -436,11 +433,11 @@ void GitConsole::OnContextMenu(wxDataViewEvent& event)
     menu.AppendSeparator();
     menu.Append(XRCID("git_console_add_file"), _("Add file"));
     menu.Append(XRCID("git_console_reset_file"), _("Reset file"));
-    menu.Connect(XRCID("git_console_open_file"),
-                 wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(GitConsole::OnOpenFile),
-                 NULL,
-                 this);
+    menu.AppendSeparator();
+    menu.Append(XRCID("git_console_close_view"), _("Close View"));
+
+    menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file"));
+    menu.Bind(wxEVT_MENU, &GitConsole::OnCloseView, this, XRCID("git_console_close_view"));
     m_dvFiles->PopupMenu(&menu);
 }
 
@@ -664,7 +661,7 @@ void GitConsole::UpdateProgress(unsigned long current, const wxString& message)
 {
     wxString trimmedMessage = message;
     m_gauge->SetValue(current);
-    //m_staticTextGauge->SetLabel(trimmedMessage.Trim().Trim(false));
+    // m_staticTextGauge->SetLabel(trimmedMessage.Trim().Trim(false));
 }
 
 bool GitConsole::IsProgressShown() const { return m_gauge->IsShown(); }
@@ -683,4 +680,13 @@ void GitConsole::OnStclogStcChange(wxStyledTextEvent& event)
 {
     event.Skip();
     ::clRecalculateSTCHScrollBar(m_stcLog);
+}
+
+void GitConsole::OnCloseView(wxCommandEvent& e)
+{
+    e.Skip();
+    
+    // Close the git view
+    m_git->OnWorkspaceClosed(e);
+    OnWorkspaceClosed(e);
 }

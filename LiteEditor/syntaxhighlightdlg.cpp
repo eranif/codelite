@@ -90,7 +90,12 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_colourPickerOutputPanesBgColour->SetColour(ColoursAndFontsManager::Get().GetGlobalBgColour());
     m_choiceGlobalTheme->Append(ColoursAndFontsManager::Get().GetAvailableThemesForLexer("c++"));
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
-
+    
+    // Set the current editor font to the default one
+    if(editor) {
+        m_fontPickerGlobal->SetSelectedFont(editor->StyleGetFont(0));
+    }
+    
     m_isModified = false;
     SetName("SyntaxHighlightDlg");
     WindowAttrManager::Load(this);

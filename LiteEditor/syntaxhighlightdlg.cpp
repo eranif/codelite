@@ -52,6 +52,7 @@
 #include "EclipseThemeImporterManager.h"
 #include <wx/busyinfo.h>
 #include <wx/utils.h>
+#include "cl_config.h"
 
 #define CXX_AND_JAVASCRIPT "c++"
 
@@ -90,12 +91,13 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_colourPickerOutputPanesBgColour->SetColour(ColoursAndFontsManager::Get().GetGlobalBgColour());
     m_choiceGlobalTheme->Append(ColoursAndFontsManager::Get().GetAvailableThemesForLexer("c++"));
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
-    
+
     // Set the current editor font to the default one
-    if(editor) {
-        m_fontPickerGlobal->SetSelectedFont(editor->StyleGetFont(0));
+    wxFont font = clConfig::Get().Read("GlobalThemeFont", wxNullFont);
+    if(font.IsOk()) {
+        m_fontPickerGlobal->SetSelectedFont(font);
     }
-    
+
     m_isModified = false;
     SetName("SyntaxHighlightDlg");
     WindowAttrManager::Load(this);
@@ -211,7 +213,14 @@ void SyntaxHighlightDlg::SaveChanges()
     m_isModified = false;
 }
 
-SyntaxHighlightDlg::~SyntaxHighlightDlg() {}
+SyntaxHighlightDlg::~SyntaxHighlightDlg()
+{
+    // Write the global font
+    wxFont font = m_fontPickerGlobal->GetSelectedFont();
+    if(font.IsOk()) {
+        clConfig::Get().Write("GlobalThemeFont", font);
+    }
+}
 
 void SyntaxHighlightDlg::OnColourChanged(wxColourPickerEvent& event)
 {

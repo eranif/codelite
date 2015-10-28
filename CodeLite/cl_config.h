@@ -149,7 +149,15 @@ public:
     // wxArrayString
     wxArrayString Read(const wxString& name, const wxArrayString& defaultValue);
     void Write(const wxString& name, const wxArrayString& value);
-
+    
+    // wxFont
+    wxFont Read(const wxString& name, const wxFont& defaultValue);
+    void Write(const wxString& name, const wxFont& value);
+    
+    // wxColour
+    wxColour Read(const wxString& name, const wxColour& defaultValue);
+    void Write(const wxString& name, const wxColour& value);
+    
     // Quick Find Bar history
     void AddQuickFindSearchItem(const wxString& str);
     void AddQuickFindReplaceItem(const wxString& str);

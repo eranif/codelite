@@ -341,7 +341,7 @@ void clConfig::AddQuickFindSearchItem(const wxString& str)
     while(items.size() > 20) {
         items.RemoveAt(items.size() - 1);
     }
-    
+
     // Update the array
     quickFindBar.removeProperty("SearchHistory");
     quickFindBar.addProperty("SearchHistory", items);
@@ -443,4 +443,52 @@ wxArrayString clConfig::DoGetRecentItems(const wxString& propName) const
         recentItems = e.namedObject(propName).toArrayString();
     }
     return recentItems;
+}
+
+wxFont clConfig::Read(const wxString& name, const wxFont& defaultValue)
+{
+    JSONElement general = GetGeneralSetting();
+    if(!general.hasNamedObject(name)) return defaultValue;
+
+    // Unserialize the font
+    wxFont font;
+    JSONElement f = general.namedObject(name);
+
+    font.SetPointSize(f.namedObject("pointSize").toInt());
+    font.SetFaceName(f.namedObject("face").toString());
+    font.SetWeight(f.namedObject("bold").toBool() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
+    font.SetStyle(f.namedObject("italic").toBool() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL);
+    return font;
+}
+
+void clConfig::Write(const wxString& name, const wxFont& value)
+{
+    JSONElement font = JSONElement::createObject(name);
+    font.addProperty("pointSize", value.GetPointSize());
+    font.addProperty("face", value.GetFaceName());
+    font.addProperty("bold", (value.GetWeight() == wxFONTWEIGHT_BOLD));
+    font.addProperty("italic", (value.GetStyle() == wxFONTSTYLE_ITALIC));
+
+    JSONElement general = GetGeneralSetting();
+    if(general.hasNamedObject(name)) {
+        general.removeProperty(name);
+    }
+    general.append(font);
+    Save();
+}
+
+wxColour clConfig::Read(const wxString& name, const wxColour& defaultValue)
+{
+    wxString strValue;
+    if(!Read(name, strValue)) return defaultValue;
+
+    wxColour col(strValue);
+    return col;
+}
+
+void clConfig::Write(const wxString& name, const wxColour& value)
+{
+    wxString strValue = value.GetAsString(wxC2S_HTML_SYNTAX);
+    Write(name, strValue);
+    Save();
 }

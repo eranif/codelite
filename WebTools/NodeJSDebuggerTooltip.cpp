@@ -1,4 +1,4 @@
-#include <algorithm> 
+#include <algorithm>
 #include "NodeJSDebuggerTooltip.h"
 #include "json_node.h"
 #include "NodeJSOuptutParser.h"
@@ -37,19 +37,19 @@ void NodeJSDebuggerTooltip::OnItemExpanding(wxTreeEvent& event)
     d->SetExpanded(true);
 
     // Prepare list of refs that we don't have
-    std::map<int, wxString> unknownRefs;
-    std::map<int, wxString> knownRefs;
+    std::vector<std::pair<int, wxString> > unknownRefs;
+    std::vector<std::pair<int, wxString> > knownRefs;
     const NodeJSHandle& h = d->GetHandle();
     std::for_each(h.properties.begin(), h.properties.end(), [&](const std::pair<int, wxString>& p) {
         if(m_handles.count(p.first) == 0) {
-            unknownRefs.insert(p);
+            unknownRefs.push_back(p);
         } else {
-            knownRefs.insert(p);
+            knownRefs.push_back(p);
         }
     });
     CallAfter(&NodeJSDebuggerTooltip::DoAddKnownRefs, knownRefs, event.GetItem());
     CallAfter(&NodeJSDebuggerTooltip::DoAddUnKnownRefs, unknownRefs, event.GetItem());
-    
+
     // Delete the dummy node
     m_treeCtrl->CallAfter(&wxTreeCtrl::DeleteChildren, event.GetItem());
 }
@@ -61,13 +61,13 @@ void NodeJSDebuggerTooltip::ShowTip(const wxString& jsonOutput)
 
     NodeJSOuptutParser p;
     NodeJSHandle h = p.ParseRef(body, m_handles);
-    
+
     wxString rootText;
     rootText << m_expression;
     if(!h.value.IsEmpty()) {
         rootText << " = " << h.value;
     }
-    
+
     wxTreeItemId rootItem = m_treeCtrl->AddRoot(rootText, -1, -1, new ClientData(h));
     if(!h.properties.empty()) {
         m_treeCtrl->AppendItem(rootItem, "Loading...");
@@ -77,13 +77,15 @@ void NodeJSDebuggerTooltip::ShowTip(const wxString& jsonOutput)
     clResizableTooltip::ShowTip();
 }
 
-void NodeJSDebuggerTooltip::DoAddKnownRefs(const std::map<int, wxString>& refs, const wxTreeItemId& parent)
+void NodeJSDebuggerTooltip::DoAddKnownRefs(const std::vector<std::pair<int, wxString> >& refs,
+                                           const wxTreeItemId& parent)
 {
     std::for_each(
         refs.begin(), refs.end(), [&](const std::pair<int, wxString>& p) { AddLocal(parent, p.second, p.first); });
 }
 
-void NodeJSDebuggerTooltip::DoAddUnKnownRefs(const std::map<int, wxString>& refs, const wxTreeItemId& parent)
+void NodeJSDebuggerTooltip::DoAddUnKnownRefs(const std::vector<std::pair<int, wxString> >& refs,
+                                             const wxTreeItemId& parent)
 {
     if(!NodeJSWorkspace::Get()->GetDebugger()) return;
 

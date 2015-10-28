@@ -30,8 +30,8 @@ protected:
     };
 
 protected:
-    void DoAddKnownRefs(const std::map<int, wxString>& refs, const wxTreeItemId& parent);
-    void DoAddUnKnownRefs(const std::map<int, wxString>& refs, const wxTreeItemId& parent);
+    void DoAddKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxTreeItemId& parent);
+    void DoAddUnKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxTreeItemId& parent);
     wxTreeItemId AddLocal(const wxTreeItemId& parent, const wxString& name, int refId);
 
 public:

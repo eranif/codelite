@@ -417,14 +417,14 @@ void NodeJSDebuggerPane::OnLocalExpanding(wxDataViewEvent& event)
     d->SetExpanded(true);
 
     // Prepare list of refs that we don't have
-    std::map<int, wxString> unknownRefs;
-    std::map<int, wxString> knownRefs;
+    std::vector<std::pair<int, wxString> > unknownRefs;
+    std::vector<std::pair<int, wxString> > knownRefs;
     const NodeJSHandle& h = d->GetHandle();
     std::for_each(h.properties.begin(), h.properties.end(), [&](const std::pair<int, wxString>& p) {
         if(m_handles.count(p.first) == 0) {
-            unknownRefs.insert(p);
+            unknownRefs.push_back(p);
         } else {
-            knownRefs.insert(p);
+            knownRefs.push_back(p);
         }
     });
     CallAfter(&NodeJSDebuggerPane::DoAddKnownRefs, knownRefs, event.GetItem());
@@ -435,13 +435,13 @@ void NodeJSDebuggerPane::OnLocalExpanding(wxDataViewEvent& event)
 
 void NodeJSDebuggerPane::DoDeleteLocalItemAfter(const wxDataViewItem& item) { m_dataviewLocalsModel->DeleteItem(item); }
 
-void NodeJSDebuggerPane::DoAddKnownRefs(const std::map<int, wxString>& refs, const wxDataViewItem& parent)
+void NodeJSDebuggerPane::DoAddKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxDataViewItem& parent)
 {
     std::for_each(
         refs.begin(), refs.end(), [&](const std::pair<int, wxString>& p) { AddLocal(parent, p.second, p.first); });
 }
 
-void NodeJSDebuggerPane::DoAddUnKnownRefs(const std::map<int, wxString>& refs, const wxDataViewItem& parent)
+void NodeJSDebuggerPane::DoAddUnKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxDataViewItem& parent)
 {
     if(!NodeJSWorkspace::Get()->GetDebugger()) return;
 

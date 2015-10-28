@@ -6,6 +6,7 @@
 #include "json_node.h"
 #include <wx/treebase.h>
 #include <wx/dataview.h>
+#include <vector>
 
 struct PendingLookupDV {
     wxDataViewItem parent;
@@ -24,7 +25,7 @@ struct NodeJSHandle {
     wxString name;
     wxString value;
     wxString type;
-    std::map<int, wxString> properties; // ref:name
+    std::vector<std::pair<int, wxString> > properties; // ref:name
     NodeJSHandle()
         : handleID(wxNOT_FOUND)
     {

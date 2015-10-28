@@ -43,7 +43,7 @@ NodeJSHandle NodeJSOuptutParser::ParseRef(const JSONElement& ref, std::map<int, 
             }
             
             int propId = prop.namedObject("ref").toInt();
-            h.properties.insert(std::make_pair(propId, propName));
+            h.properties.push_back(std::make_pair(propId, propName));
         }
     }
     handles.insert(std::make_pair(handleId, h));

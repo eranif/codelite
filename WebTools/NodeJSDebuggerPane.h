@@ -9,8 +9,7 @@
 
 class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
 {
-    struct FrameData
-    {
+    struct FrameData {
         int index;
         int line;
         wxString file;
@@ -38,8 +37,8 @@ protected:
     NodeJSHandle ParseRef(const JSONElement& ref);
     void DoOpenFile(const wxString& filename, int line);
     void DoDeleteLocalItemAfter(const wxDataViewItem& item);
-    void DoAddKnownRefs(const std::map<int, wxString>& refs, const wxDataViewItem& parent);
-    void DoAddUnKnownRefs(const std::map<int, wxString>& refs, const wxDataViewItem& parent);
+    void DoAddKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxDataViewItem& parent);
+    void DoAddUnKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxDataViewItem& parent);
     void Clear();
 
 protected:

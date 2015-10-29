@@ -25,6 +25,11 @@ NodeJSHandle NodeJSOuptutParser::ParseRef(const JSONElement& ref, std::map<int, 
     } else if(h.type == "null") {
         h.value = "null";
     } else if(h.type == "object") {
+        
+        if(ref.hasNamedObject("protoObject")) {
+           h.properties.push_back(std::make_pair(ref.namedObject("protoObject").namedObject("ref").toInt(), "prototype"));
+        }
+        
         if(ref.hasNamedObject("className") && ref.namedObject("className").toString() == "Array") {
             h.type = "Array"; 
             h.value = "[]";

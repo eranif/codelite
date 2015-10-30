@@ -5,18 +5,24 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(PCH)
 
+set(os "")
+
+if(APPLE)
+    set(os "osx")
+endif()
+
 if ( CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull )
     add_custom_target (
         ${CL_PCH_TARGET} ALL
         DEPENDS "${CL_PCH_FILE}"
-        COMMAND "$(MAKE)" type=debug
+        COMMAND "$(MAKE)" type=debug os=$(os)
         WORKING_DIRECTORY ${CL_SRC_ROOT}/PCH
      )
 else()
     add_custom_target (
         ${CL_PCH_TARGET} ALL
         DEPENDS "${CL_PCH_FILE}"
-        COMMAND "$(MAKE)" type=release
+        COMMAND "$(MAKE)" type=release os=$(os)
         WORKING_DIRECTORY ${CL_SRC_ROOT}/PCH
      )
 endif()

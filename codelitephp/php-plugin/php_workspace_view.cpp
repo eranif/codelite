@@ -313,7 +313,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 
                 clContextMenuEvent folderMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
                 folderMenuEvent.SetMenu(&menu);
-                folderMenuEvent.SetPath(wxFileName(data->GetFile()).GetPath());
+                folderMenuEvent.SetPath(data->GetFolderPath());
                 EventNotifier::Get()->ProcessEvent(folderMenuEvent);
                 
                 m_treeCtrlView->PopupMenu(&menu);

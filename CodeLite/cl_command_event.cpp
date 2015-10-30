@@ -272,6 +272,7 @@ clSourceFormatEvent& clSourceFormatEvent::operator=(const clSourceFormatEvent& s
 
 clContextMenuEvent::clContextMenuEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
+    , m_editor(NULL)
 {
 }
 clContextMenuEvent::clContextMenuEvent(const clContextMenuEvent& event) { *this = event; }

@@ -86,7 +86,12 @@ void WorkspacePane::CreateGUIControls()
     SetSizer(mainSizer);
 
     // add notebook for tabs
+#ifdef __WXOSX__
     long style = (kNotebook_Default | kNotebook_AllowDnD | kNotebook_LeftTabs);
+#else
+    long style = (kNotebook_Default | kNotebook_AllowDnD);
+#endif
+
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
     

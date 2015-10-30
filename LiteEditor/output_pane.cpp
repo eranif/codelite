@@ -89,9 +89,19 @@ void OutputPane::CreateGUIControls()
     if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxBOTTOM) {
         style |= kNotebook_BottomTabs;
     } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxLEFT) {
+
+#ifdef __WXOSX__
+        style &= ~(kNotebook_BottomTabs | kNotebook_LeftTabs | kNotebook_RightTabs);
+#else
         style |= kNotebook_LeftTabs;
+#endif
+
     } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxRIGHT) {
+#ifdef __WXOSX__
+        style |= kNotebook_BottomTabs;
+#else
         style |= kNotebook_RightTabs;
+#endif
     }
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -192,9 +202,9 @@ void OutputPane::CreateGUIControls()
     // Tasks panel
     m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));
     m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")));
-    m_tabs.insert(std::make_pair(
-        wxGetTranslation(TASKS),
-        Tab(wxGetTranslation(TASKS), m_taskPanel, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")))));
+    m_tabs.insert(
+        std::make_pair(wxGetTranslation(TASKS),
+                       Tab(wxGetTranslation(TASKS), m_taskPanel, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")))));
     mgr->AddOutputTab(wxGetTranslation(TASKS));
 
     SetMinSize(wxSize(200, 100));
@@ -212,7 +222,8 @@ void OutputPane::OnEditorFocus(wxCommandEvent& e)
             return;
         }
 
-        if(m_buildInProgress) return;
+        if(m_buildInProgress)
+            return;
 
         wxAuiPaneInfo& info = PluginManager::Get()->GetDockingManager()->GetPane(wxT("Output View"));
         DockablePaneMenuManager::HackHidePane(true, info, PluginManager::Get()->GetDockingManager());
@@ -240,7 +251,8 @@ void OutputPane::SaveTabOrder()
     clConfig::Get().SetOutputTabOrder(panes, m_book->GetSelection());
 }
 
-typedef struct {
+typedef struct
+{
     wxString text;
     wxWindow* win;
     wxBitmap bmp;
@@ -251,7 +263,8 @@ void OutputPane::ApplySavedTabOrder() const
 
     wxArrayString tabs;
     int index = -1;
-    if(!clConfig::Get().GetOutputTabOrder(tabs, index)) return;
+    if(!clConfig::Get().GetOutputTabOrder(tabs, index))
+        return;
 
     std::vector<tagTabInfo> vTempstore;
     for(size_t t = 0; t < tabs.GetCount(); ++t) {

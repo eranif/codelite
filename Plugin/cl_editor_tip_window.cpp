@@ -70,11 +70,9 @@ void clEditorTipWindow::OnEraseBg(wxEraseEvent& e)
 void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 {
     wxUnusedVar(e);
-    wxBufferedPaintDC dc(this);
-
-    wxGCDC gdc;
-    if(!DrawingUtils::GetGCDC(dc, gdc))
-        return;
+    wxAutoBufferedPaintDC dc(this);
+    PrepareDC(dc);
+    
     if(m_args.IsEmpty())
         return;
 
@@ -89,69 +87,69 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxRect rr = GetClientRect();
 
     // draw the background using the parent background colour
-    gdc.SetBrush(bgColour);
-    gdc.SetPen(penColour);
-    gdc.DrawRectangle(rr);
-    gdc.SetFont(m_font);
+    dc.SetBrush(bgColour);
+    dc.SetPen(penColour);
+    dc.DrawRectangle(rr);
+    dc.SetFont(m_font);
 
     // Highlight the text
-    gdc.SetTextForeground(textColour);
-    wxSize helperTextSize = gdc.GetTextExtent("Tp");
+    dc.SetTextForeground(textColour);
+    wxSize helperTextSize = dc.GetTextExtent("Tp");
 
     wxCoord x = TIP_SPACER;
     wxCoord y = 0;
 
     if(!m_header.IsEmpty()) {
         wxFont guiFont = m_font;
-        gdc.SetFont(guiFont);
-        wxSize headerSize = gdc.GetTextExtent(m_header);
+        dc.SetFont(guiFont);
+        wxSize headerSize = dc.GetTextExtent(m_header);
         wxPoint headerPt;
         headerPt.x = rr.GetWidth() - headerSize.x - TIP_SPACER;
         headerPt.y = 0;
-        gdc.SetTextForeground(textColour);
-        gdc.DrawText(m_header, headerPt);
+        dc.SetTextForeground(textColour);
+        dc.DrawText(m_header, headerPt);
         y += helperTextSize.y;
-        gdc.DrawLine(0, y, rr.GetWidth(), y);
+        dc.DrawLine(0, y, rr.GetWidth(), y);
     }
 
-    gdc.SetFont(m_font);
+    dc.SetFont(m_font);
     for(size_t i = 0; i < m_args.size(); ++i) {
         wxString line = m_args.Item(i);
         if((int)i == m_highlighIndex) {
             // wxFont f = m_font;
             // f.SetWeight(wxFONTWEIGHT_BOLD);
-            gdc.SetBrush(highlightBgColour);
-            gdc.SetPen(highlightBgColour);
-            gdc.SetTextForeground(highlightFgColour);
+            dc.SetBrush(highlightBgColour);
+            dc.SetPen(highlightBgColour);
+            dc.SetTextForeground(highlightFgColour);
             wxRect selectionRect(0, y, rr.GetWidth(), helperTextSize.y);
             selectionRect.Deflate(1);
-            gdc.DrawRectangle(selectionRect);
-            gdc.DrawText(line, x, y);
+            dc.DrawRectangle(selectionRect);
+            dc.DrawText(line, x, y);
 
         } else {
-            gdc.SetTextForeground(textColour);
-            gdc.DrawText(line, x, y);
+            dc.SetTextForeground(textColour);
+            dc.DrawText(line, x, y);
         }
         y += helperTextSize.y;
     }
 
     if(!m_footer.IsEmpty()) {
-        gdc.SetPen(penColour);
-        gdc.DrawLine(0, y, rr.GetWidth(), y);
+        dc.SetPen(penColour);
+        dc.DrawLine(0, y, rr.GetWidth(), y);
 
         // Draw the extra line ("1 OF N")
         m_footer.Clear();
         m_footer << (GetTip()->GetCurr() + 1) << " OF " << GetTip()->Count();
 
         wxFont guiFont = m_font;
-        gdc.SetFont(guiFont);
-        wxSize extraLineSize = gdc.GetTextExtent(m_footer);
+        dc.SetFont(guiFont);
+        wxSize extraLineSize = dc.GetTextExtent(m_footer);
 
         wxPoint extraLinePt;
         extraLinePt.x = rr.GetWidth() - extraLineSize.x - TIP_SPACER;
         extraLinePt.y = rr.GetHeight() - extraLineSize.y;
-        gdc.SetTextForeground(textColour);
-        gdc.DrawText(m_footer, extraLinePt);
+        dc.SetTextForeground(textColour);
+        dc.DrawText(m_footer, extraLinePt);
     }
 }
 

@@ -921,12 +921,16 @@ void clMainFrame::Initialize(bool loadLastSession)
         inf.SetFramePosition(wxPoint(30, 3));
     }
 
+#ifdef __WXOSX__
+    inf.SetFramePosition(wxPoint(30, 100));
+#endif
+
     wxSize frameSize(inf.GetFrameSize());
-    if(inf.GetFrameSize().x < 400 || inf.GetFrameSize().x > screenW) {
-        frameSize.SetWidth(400);
+    if(inf.GetFrameSize().x < 600 || inf.GetFrameSize().x > screenW) {
+        frameSize.SetWidth(600);
     }
-    if(inf.GetFrameSize().y < 400 || inf.GetFrameSize().y > screenH) {
-        frameSize.SetHeight(400);
+    if(inf.GetFrameSize().y < 800 || inf.GetFrameSize().y > screenH) {
+        frameSize.SetHeight(800);
     }
 
     inf.SetFrameSize(frameSize);

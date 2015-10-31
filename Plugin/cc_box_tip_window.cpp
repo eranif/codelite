@@ -245,7 +245,8 @@ void CCBoxTipWindow::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
 void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {
     m_links.clear();
-    wxBufferedPaintDC dc(this);
+    wxAutoBufferedPaintDC dc(this);
+    PrepareDC(dc);
     size_t maxWidth(0);
     DoDrawTip(dc, maxWidth);
 }

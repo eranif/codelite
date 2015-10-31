@@ -76,10 +76,16 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
         // valid rect
         wxCustomStatusBarArt::Ptr_t art = m_parent->GetArt();
         if(art->GetName() == m_parent->GetLastArtNameUsedForPaint()) {
+#ifdef __WXOSX__
+            m_parent->Refresh();
+            return;
+#endif
             // Make sure we draw only when the "art" objects are in sync with the field
             // and with the bar itself
             wxBitmap bmp(m_rect.GetSize());
             wxMemoryDC memDc;
+            m_parent->PrepareDC(memDc);
+
             memDc.SelectObject(bmp);
             wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
             font.SetPointSize(10);
@@ -112,6 +118,7 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
             memDc.SelectObject(wxNullBitmap);
             // bmp contains the field content, draw it
             wxClientDC dc(m_parent);
+            m_parent->PrepareDC(dc);
             dc.DrawBitmap(bmp, m_rect.GetTopLeft());
         }
     }
@@ -193,7 +200,7 @@ wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style
     , m_mainText(new wxCustomStatusBarFieldText(this, 0))
 {
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTextAlignment(wxALIGN_LEFT);
-    
+
     Bind(wxEVT_PAINT, &wxCustomStatusBar::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackround, this);
     Bind(wxEVT_LEFT_DOWN, &wxCustomStatusBar::OnLeftDown, this);
@@ -210,7 +217,9 @@ wxCustomStatusBar::~wxCustomStatusBar()
 
 void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 {
-    wxBufferedPaintDC dc(this);
+    wxAutoBufferedPaintDC dc(this);
+    PrepareDC(dc);
+
     wxRect rect = GetClientRect();
 
     // Remember which art name used for painting
@@ -251,7 +260,7 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     // Draw the main field
     //===----------------------
     // update the rect
-    
+
     wxRect mainRect(0, rect.y, offsetX, rect.height);
     dc.SetClippingRegion(mainRect);
     m_mainText->SetRect(mainRect);
@@ -262,7 +271,7 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     //===----------------------
     // Draw the fields
     //===----------------------
-    
+
     for(size_t i = 0; i < m_fields.size(); ++i) {
         // Prepare the rect
         wxRect fieldRect(offsetX, rect.y, m_fields.at(i)->GetWidth(), rect.height);
@@ -323,14 +332,11 @@ void wxCustomStatusBar::SetText(const wxString& message)
 {
     m_text = message;
     SetToolTip(message);
-    
+
     // Make sure we draw only when the "art" objects are in sync with the field
     // and with the bar itself
     wxRect mainRect = DoGetMainFieldRect();
-    wxBitmap bmp(mainRect.GetSize());
-    wxMemoryDC memDc;
-    memDc.SelectObject(bmp);
-    
+
     // update the rect
     m_mainText->SetRect(mainRect);
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetText(m_text);

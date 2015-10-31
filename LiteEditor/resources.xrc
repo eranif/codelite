@@ -70,4 +70,8 @@
     <object class="wxBitmap" name="cc-box-up">res/up-10.png</object>
     <object class="wxBitmap" name="cc-box-down">res/down-10.png</object>
     <object class="wxBitmap" name="code-tags">res/html.png</object>
+    
+    <!-- Hi Res images -->
+    <object class="wxBitmap" name="collapse@2x">res/collapse@2x.png</object>
+    
 </resource>

@@ -50,6 +50,7 @@ clEditorTipWindow::clEditorTipWindow(wxWindow* parent)
     : wxPanel(parent)
     , m_highlighIndex(0)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_font = DrawingUtils::GetDefaultFixedFont();
     Hide();
     EventNotifier::Get()->Connect(

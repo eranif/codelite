@@ -199,6 +199,7 @@ wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style
     , m_art(new wxCustomStatusBarArt("Dark"))
     , m_mainText(new wxCustomStatusBarFieldText(this, 0))
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTextAlignment(wxALIGN_LEFT);
 
     Bind(wxEVT_PAINT, &wxCustomStatusBar::OnPaint, this);

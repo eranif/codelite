@@ -37,6 +37,8 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_tipWindow(NULL)
     , m_flags(flags)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    
     m_ccFont = DrawingUtils::GetDefaultFixedFont();
     SetCursor(wxCURSOR_HAND);
 

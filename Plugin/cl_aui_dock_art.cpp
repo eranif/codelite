@@ -174,8 +174,6 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
             pDC = &gdc;
         }
 
-        window->PrepareDC(*pDC);
-
         // Prepare the colours
         wxColour bgColour, penColour, textColour;
         textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);

@@ -93,6 +93,7 @@ CCBoxTipWindow::~CCBoxTipWindow() {}
 
 void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool simpleTip)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     IEditor* editor = ::clGetManager()->GetActiveEditor();
     if(editor) {
         wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);

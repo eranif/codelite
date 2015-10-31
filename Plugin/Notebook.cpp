@@ -270,8 +270,6 @@ void clTabInfo::Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style)
         wxBitmap b(rotatedRect.GetSize());
 
         wxMemoryDC tmpDC(b);
-        dc.GetWindow()->PrepareDC(tmpDC);
-        
         tmpDC.SetPen(colours.tabAreaColour);
         tmpDC.SetBrush(colours.tabAreaColour);
         tmpDC.DrawRectangle(rotatedRect);
@@ -567,6 +565,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_closeButtonClickedIndex(wxNOT_FOUND)
     , m_contextMenu(NULL)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
     wxFont font = GetDrawingFont();

@@ -7875,9 +7875,23 @@ static unsigned char xml_res_file_45[] = {
 235,186,255,187,123,126,0,114,38,63,247,77,98,169,51,0,0,0,0,73,69,78,68,
 174,66,96,130};
 
-static size_t xml_res_size_46 = 0;
+static size_t xml_res_size_46 = 313;
 static unsigned char xml_res_file_46[] = {
-};
+137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,
+0,31,243,255,97,0,0,1,0,73,68,65,84,120,94,237,145,177,106,2,65,16,134,
+255,221,179,203,99,24,72,159,74,75,65,176,78,175,144,194,206,70,188,67,
+8,164,179,11,154,119,8,36,77,26,83,5,2,1,11,145,179,18,177,83,240,17,76,
+149,20,231,5,214,153,149,27,134,197,7,176,240,131,225,134,127,191,127,154,
+67,192,133,135,73,140,199,169,147,41,208,25,59,10,171,203,136,74,195,102,
+245,26,60,33,146,147,163,143,88,41,27,235,203,204,235,108,3,236,179,68,
+218,180,83,38,135,200,149,35,6,253,111,94,134,119,213,27,192,1,227,249,
+26,68,130,167,250,8,10,241,42,228,25,242,210,163,103,208,251,114,181,219,
+178,120,147,197,22,120,110,24,156,224,148,91,194,255,30,187,191,12,66,158,
+35,68,191,105,151,187,22,54,74,86,203,13,126,126,51,30,10,115,160,243,17,
+35,128,51,122,19,143,59,220,133,167,251,25,163,253,238,174,6,115,154,212,
+241,238,11,186,236,223,83,239,240,238,59,26,31,220,191,201,255,246,123,
+65,144,7,229,224,72,243,197,161,69,195,223,2,157,177,115,86,28,0,140,64,
+161,88,155,245,166,61,0,0,0,0,73,69,78,68,174,66,96,130};
 
 static size_t xml_res_size_47 = 722;
 static unsigned char xml_res_file_47[] = {
@@ -8232,6 +8246,6 @@ void InitXmlResource()
     XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_down-10.png"), xml_res_file_45, xml_res_size_45, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_html.png"), xml_res_file_46, xml_res_size_46, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_collapse@2x.png"), xml_res_file_47, xml_res_size_47, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$resources.xrc"), xml_res_file_48, xml_res_size_48, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/resources.cpp$resources.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$._resources.xrc"), xml_res_file_48, xml_res_size_48, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/resources.cpp$._resources.xrc"));
 }

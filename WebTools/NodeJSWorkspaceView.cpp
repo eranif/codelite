@@ -24,6 +24,7 @@ NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewN
     SetViewName(viewName);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
+    //m_keyboardHelper.reset(new clTreeKeyboardInput(GetTreeCtrl()));
 }
 
 NodeJSWorkspaceView::~NodeJSWorkspaceView()

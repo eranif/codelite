@@ -4,9 +4,13 @@
 #include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
 #include "NodeJSDebuggerDlg.h"
+#include "clTreeKeyboardInput.h"
 
 class NodeJSWorkspaceView : public clTreeCtrlPanel
 {
+protected:
+    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
+
 protected:
     void OnContextMenu(clContextMenuEvent& event);
     void OnContextMenuFile(clContextMenuEvent& event);

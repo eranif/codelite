@@ -315,6 +315,8 @@
       <File Name="clTreeCtrlPanelDefaultPage.cpp"/>
       <File Name="clResizableTooltip.h"/>
       <File Name="clResizableTooltip.cpp"/>
+      <File Name="clTreeKeyboardInput.h"/>
+      <File Name="clTreeKeyboardInput.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>

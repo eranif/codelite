@@ -91,7 +91,9 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     BitmapLoader* bl = m_mgr->GetStdIcons();
     wxImageList* imageList = bl->MakeStandardMimeImageList();
     m_treeCtrlView->AssignImageList(imageList);
-
+    
+    m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrlView));
+    
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);

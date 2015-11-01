@@ -1597,8 +1597,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -1844,7 +1843,7 @@ resources.cpp: resources.xrc
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="OSX_Release" CompilerType="" DebuggerType="" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="OSX_Release" CompilerType="clang( clang-700.1.76 )" DebuggerType="" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g -Wall" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
@@ -1865,7 +1864,7 @@ resources.cpp: resources.xrc
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="cmake">cmake .. -DCMAKE_BUILD_TYPE=Release</Target>
+        <Target Name="cmake">cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_PCH=1</Target>
         <Target Name="Install">make install</Target>
         <RebuildCommand>make clean &amp;&amp; make -j4</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>

@@ -30,6 +30,7 @@
 #include <imanager.h>
 #include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
+#include "clTreeKeyboardInput.h"
 
 class wxTreeCtrl;
 class clTreeCtrlPanel;
@@ -39,6 +40,7 @@ class FileExplorer : public wxPanel
 {
 private:
     clTreeCtrlPanel* m_view;
+    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     
     // FileExplorerTab *m_fileTree;
     wxString m_caption;

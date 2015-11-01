@@ -8,6 +8,7 @@
 #include "php_event.h"
 #include <cl_command_event.h>
 #include "wx_ordered_map.h"
+#include "clTreeKeyboardInput.h"
 
 class IManager;
 class ItemData;
@@ -19,6 +20,7 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
     wxOrderedMap<wxTreeItemId, bool> m_itemsToSort;
     std::map<wxString, wxTreeItemId> m_filesItems;
     std::map<wxString, wxTreeItemId> m_foldersItems;
+    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
 
 private:
     enum {

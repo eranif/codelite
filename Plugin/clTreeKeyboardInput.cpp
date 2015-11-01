@@ -32,7 +32,8 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
     event.Skip(false);
     wxChar ch = event.GetKeyCode();
     if(ch == WXK_UP || ch == WXK_DOWN || ch == WXK_LEFT || ch == WXK_RIGHT || ch == WXK_RETURN ||
-       ch == WXK_NUMPAD_ENTER || ch == WXK_NUMPAD_SUBTRACT || ch == WXK_NUMPAD_MULTIPLY) {
+       ch == WXK_NUMPAD_ENTER || ch == WXK_NUMPAD_SUBTRACT || ch == WXK_NUMPAD_MULTIPLY || ch == WXK_CONTROL ||
+       ch == WXK_COMMAND || ch == WXK_SHIFT) {
         event.Skip();
         return;
     }
@@ -75,7 +76,7 @@ void clTreeKeyboardInput::SelecteItem(const wxTreeItemId& item)
     m_tree->EnsureVisible(item);
     m_tree->SetFocusedItem(item);
     m_tree->SelectItem(item);
-    
+
     // Adjust the text box position and size
     DoShowTextBox();
 }

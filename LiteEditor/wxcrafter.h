@@ -447,4 +447,24 @@ public:
     virtual ~SelectDropTargetBaseDlg();
 };
 
+
+class LiteEditorHiResImages : public wxImageList
+{
+protected:
+    // Maintain a map of all bitmaps representd by their name
+    std::map<wxString, wxBitmap> m_bitmaps;
+
+
+protected:
+
+public:
+    LiteEditorHiResImages();
+    const wxBitmap& Bitmap(const wxString &name) const {
+        if ( !m_bitmaps.count(name) )
+            return wxNullBitmap;
+        return m_bitmaps.find(name)->second;
+    }
+    virtual ~LiteEditorHiResImages();
+};
+
 #endif

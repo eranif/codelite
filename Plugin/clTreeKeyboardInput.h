@@ -5,6 +5,8 @@
 #include "wx/event.h"
 #include <wx/sharedptr.h>
 #include <wx/treebase.h>
+#include <list>
+#include <vector>
 
 class wxTextCtrl;
 class wxTreeCtrl;
@@ -23,15 +25,22 @@ protected:
     wxTreeCtrl* m_tree;
     wxTextCtrl* m_text;
     eSearchFlags m_flags;
-
+    std::list<wxTreeItemId> m_items;
+    
 protected:
     void OnKeyDown(wxKeyEvent& event);
     void OnTextKeyDown(wxKeyEvent& event);
     void OnTextUpdated(wxCommandEvent& event);
+    void OnTextEnter(wxCommandEvent& event);
     void OnTreeFocus(wxFocusEvent& event);
-    
+
     void SelecteItem(const wxTreeItemId& item);
     bool CheckItemForMatch(const wxTreeItemId& item);
+    void SetTextFocus();
+    void GetChildren(const wxTreeItemId& from = wxTreeItemId());
+    void DoGetChildren(const wxTreeItemId& parent);
+    void Clear();
+    void DoShowTextBox();
     
 public:
     clTreeKeyboardInput(wxTreeCtrl* tree, eSearchFlags flags = kNone);

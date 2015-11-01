@@ -161,6 +161,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
 {
     Create(parent, id, pos, size, style);
     MSWSetNativeTheme(this);
+    m_keyboardHelper.reset(new clTreeKeyboardInput(this));
 
     // Initialise images map
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
@@ -195,6 +196,7 @@ FileViewTree::~FileViewTree()
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
     Unbind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
+    m_keyboardHelper.reset(NULL);
 }
 
 void FileViewTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -612,7 +614,7 @@ void FileViewTree::DoItemActivated(wxTreeItemId& item, wxEvent& event)
         wxString filename = itemData->GetData().GetFile();
         wxString key = itemData->GetData().Key();
         wxString project;
-        if (key.GetChar(0) == ':') {
+        if(key.GetChar(0) == ':') {
             // All the entries I've tested have started with a : so exclude this one, otherwise the project is always ""
             project = key.AfterFirst(':').BeforeFirst(wxT(':'));
         } else {
@@ -827,9 +829,8 @@ void FileViewTree::OnAddExistingItem(wxCommandEvent& WXUNUSED(event))
         return;
     }
 
-    const wxString ALL(
-        wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
-            wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
+    const wxString ALL(wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
+                       wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
 
     wxString vdPath = GetItemPath(item);
     wxString project, vd;
@@ -1002,8 +1003,8 @@ void FileViewTree::DoRemoveItems()
                         // Remove the file. Do not fire an event here, we will send a "bulk" event
                         // with a list of all files removed
                         wxString fullpathOfFileRemoved;
-                        if(ManagerST::Get()
-                               ->RemoveFile(data->GetData().GetFile(), path, fullpathOfFileRemoved, false)) {
+                        if(ManagerST::Get()->RemoveFile(
+                               data->GetData().GetFile(), path, fullpathOfFileRemoved, false)) {
                             filesRemoved.Add(fullpathOfFileRemoved);
                         }
 
@@ -1222,7 +1223,7 @@ int FileViewTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& 
 {
     // used for SortChildren, reroute to our sort routine
     FilewViewTreeItemData* a = (FilewViewTreeItemData*)GetItemData(item1),
-                           * b = (FilewViewTreeItemData*)GetItemData(item2);
+                           *b = (FilewViewTreeItemData*)GetItemData(item2);
     if(a && b) return OnCompareItems(a, b);
 
     return 0;
@@ -1592,7 +1593,7 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& parent, const wxString& 
     if(!ItemHasChildren(parent)) return wxTreeItemId();
 
 #if defined(__WXGTK__)
-	wxString realpathItem = CLRealPath(fileName);
+    wxString realpathItem = CLRealPath(fileName);
 #endif
 
     wxTreeItemIdValue cookie;
@@ -1603,14 +1604,14 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& parent, const wxString& 
         fn.MakeAbsolute(projectPath);
         if(fn.GetFullPath().CmpNoCase(fileName) == 0) {
             return child;
-        } 
+        }
 #if defined(__WXGTK__)
-		  else { // Try again, dereferencing fn
-			wxString fdest = CLRealPath(fn.GetFullPath());
-			if(fdest.CmpNoCase(realpathItem) == 0) {
-				return child;
-			}
-		}
+        else { // Try again, dereferencing fn
+            wxString fdest = CLRealPath(fn.GetFullPath());
+            if(fdest.CmpNoCase(realpathItem) == 0) {
+                return child;
+            }
+        }
 #endif
 
         if(ItemHasChildren(child)) {

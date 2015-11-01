@@ -30,10 +30,12 @@
 #include "pluginmanager.h"
 #include "imanager.h"
 #include "map"
+#include "clTreeKeyboardInput.h"
 
 class wxMenu;
 
-struct FileViewItem {
+struct FileViewItem
+{
     wxString virtualDir;
     wxString fullpath;
     wxString displayName;
@@ -42,9 +44,10 @@ struct FileViewItem {
 class FileViewTree : public wxTreeCtrl
 {
     DECLARE_DYNAMIC_CLASS()
-    
+
     std::map<void*, bool> m_itemsToSort;
     wxArrayTreeItemIds m_draggedItems;
+    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
 
 public:
     /**
@@ -124,13 +127,13 @@ public:
      * If a file is selected, we go up until we find the first project item
      */
     ProjectPtr GetSelectedProject() const;
-    
+
     /**
      * @brief public access to the "OnFolderDropped" function
      * @param event
      */
     void FolderDropped(const wxArrayString& folders);
-    
+
 protected:
     virtual void OnPopupMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);

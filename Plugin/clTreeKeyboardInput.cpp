@@ -5,9 +5,8 @@
 #include "fileutils.h"
 #include <algorithm>
 
-clTreeKeyboardInput::clTreeKeyboardInput(wxTreeCtrl* tree, eSearchFlags flags)
+clTreeKeyboardInput::clTreeKeyboardInput(wxTreeCtrl* tree)
     : m_tree(tree)
-    , m_flags(flags)
 {
     m_tree->Bind(wxEVT_KEY_DOWN, &clTreeKeyboardInput::OnKeyDown, this);
     m_text = new wxTextCtrl(m_tree, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);

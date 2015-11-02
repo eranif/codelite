@@ -16,15 +16,9 @@ class WXDLLIMPEXP_SDK clTreeKeyboardInput : public wxEvtHandler
 public:
     typedef wxSharedPtr<clTreeKeyboardInput> Ptr_t;
 
-    enum eSearchFlags {
-        kNone = 0,             // 0
-        kRecursive = (1 << 0), // 1
-    };
-
 protected:
     wxTreeCtrl* m_tree;
     wxTextCtrl* m_text;
-    eSearchFlags m_flags;
     std::list<wxTreeItemId> m_items;
     
 protected:
@@ -43,7 +37,7 @@ protected:
     void DoShowTextBox();
     
 public:
-    clTreeKeyboardInput(wxTreeCtrl* tree, eSearchFlags flags = kNone);
+    clTreeKeyboardInput(wxTreeCtrl* tree);
     virtual ~clTreeKeyboardInput();
 };
 

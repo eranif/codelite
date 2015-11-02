@@ -168,7 +168,6 @@ void clTreeKeyboardInput::GetChildren(const wxTreeItemId& from)
 
     if(from.IsOk()) {
         std::list<wxTreeItemId> items;
-        bool foundFirstItem = false;
         auto iter =
             std::find_if(m_items.begin(), m_items.end(), [&](const wxTreeItemId& item) { return item == from; });
         if(iter != m_items.end()) {

@@ -26,16 +26,8 @@ QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
-    m_textCtrl->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrl->SetHint(wxT(""));
-    #endif
-    
-    bSizer1->Add(m_textCtrl, 0, wxALL|wxEXPAND, 5);
-    
     m_treeCtrlLayout = new PHPFileLayoutTree(this);
-    bSizer1->Add(m_treeCtrlLayout, 1, wxALL|wxEXPAND, 5);
+    bSizer1->Add(m_treeCtrlLayout, 1, wxALL|wxEXPAND, 2);
     
     SetName(wxT("QuickOutlineDlgBase"));
     SetSizeHints(400,400);
@@ -54,19 +46,10 @@ QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const 
         wxPersistenceManager::Get().Restore(this);
     }
 #endif
-    // Connect events
-    m_textCtrl->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickOutlineDlgBase::OnKeyDown), NULL, this);
-    m_textCtrl->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickOutlineDlgBase::OnTextEntered), NULL, this);
-    m_textCtrl->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickOutlineDlgBase::OnEnter), NULL, this);
-    
 }
 
 QuickOutlineDlgBase::~QuickOutlineDlgBase()
 {
-    m_textCtrl->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickOutlineDlgBase::OnKeyDown), NULL, this);
-    m_textCtrl->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickOutlineDlgBase::OnTextEntered), NULL, this);
-    m_textCtrl->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickOutlineDlgBase::OnEnter), NULL, this);
-    
 }
 
 NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)

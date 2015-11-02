@@ -36,35 +36,22 @@ class CppSymbolTree : public SymbolTree
     std::stack<wxTreeItemId> m_itemsStack;
 
 public:
-
     CppSymbolTree();
 
     /// Nothing special here, just call our parent constructor
-    CppSymbolTree(wxWindow *parent, const wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
-
+    CppSymbolTree(wxWindow* parent,
+                  const wxWindowID id,
+                  const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxDefaultSize,
+                  long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
 
     /// destructor
-    virtual ~CppSymbolTree()
-    {};
-
-    //activate the selected item.
-    //If there is no selection, retun false,
-    //else try to open the file associated with the
-    //selected item
-    //return true on successfull operation false otherwise
-    bool ActivateSelectedItem();
-
-    //advance the selection to next item (if possible)
-    void AdvanceSelection(bool forward = true);
+    virtual ~CppSymbolTree(){};
 
 protected:
-    virtual void OnMouseDblClick(wxMouseEvent& event);
-    virtual void OnMouseRightUp(wxTreeEvent& event);
-    virtual void OnItemActivated(wxTreeEvent &event);
-    bool DoItemActivated(wxTreeItemId item, wxEvent &event, bool notify);
-    void FindAndSelect(LEditor *editor, wxString &pattern, const wxString &name);
-
-    wxTreeItemId TryGetPrevItem(wxTreeItemId item);
+    virtual void OnItemActivated(wxTreeEvent& event);
+    bool DoItemActivated(wxTreeItemId item, wxEvent& event, bool notify);
+    void FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name);
 
     DECLARE_DYNAMIC_CLASS(CppSymbolTree)
 };

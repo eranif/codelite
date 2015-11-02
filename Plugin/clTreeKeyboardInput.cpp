@@ -32,7 +32,7 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
     wxChar ch = event.GetKeyCode();
     if(ch == WXK_UP || ch == WXK_DOWN || ch == WXK_LEFT || ch == WXK_RIGHT || ch == WXK_RETURN ||
        ch == WXK_NUMPAD_ENTER || ch == WXK_NUMPAD_SUBTRACT || ch == WXK_NUMPAD_MULTIPLY || ch == WXK_CONTROL ||
-       ch == WXK_COMMAND || ch == WXK_SHIFT) {
+       ch == WXK_COMMAND || ch == WXK_SHIFT || ch == WXK_ESCAPE) {
         event.Skip();
         return;
     }
@@ -64,7 +64,7 @@ void clTreeKeyboardInput::OnTextKeyDown(wxKeyEvent& event)
             // exclude the first item from the list
             m_items.erase(m_items.begin());
         }
-        
+
         auto iter = m_items.begin();
         for(; iter != m_items.end(); ++iter) {
             wxString text = m_tree->GetItemText(*iter);
@@ -104,10 +104,15 @@ void clTreeKeyboardInput::OnTextUpdated(wxCommandEvent& event)
 
 void clTreeKeyboardInput::SelecteItem(const wxTreeItemId& item)
 {
-    m_tree->UnselectAll();
-    m_tree->EnsureVisible(item);
-    m_tree->SetFocusedItem(item);
-    m_tree->SelectItem(item);
+    if(m_tree->GetWindowStyleFlag() & wxTR_MULTIPLE) {
+        m_tree->UnselectAll();
+        m_tree->EnsureVisible(item);
+        m_tree->SetFocusedItem(item);
+        m_tree->SelectItem(item);
+    } else {
+        m_tree->EnsureVisible(item);
+        m_tree->SelectItem(item);
+    }
 
     // Adjust the text box position and size
     DoShowTextBox();

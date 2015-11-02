@@ -36,8 +36,6 @@
 #include <wx/wupdlock.h>
 #include "tokenizer.h"
 
-IMPLEMENT_DYNAMIC_CLASS(SymbolTree, wxTreeCtrl)
-
 SymbolTree::SymbolTree() { InitialiseSymbolMap(); }
 
 SymbolTree::SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -469,3 +467,5 @@ bool SymbolTree::Matches(const wxTreeItemId& item, const wxString& patter)
     }
     return false;
 }
+
+

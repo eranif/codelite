@@ -17,7 +17,7 @@ PHPQuickOutlineDlg::PHPQuickOutlineDlg(wxWindow* parent, IEditor* editor, IManag
 
     m_treeCtrlLayout->Connect(
         wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPQuickOutlineDlg::OnItemActivated), NULL, this);
-    m_textCtrl->SetFocus();
+    m_treeCtrlLayout->SetFocus();
     SetName("PHPQuickOutlineDlg");
     WindowAttrManager::Load(this);
 }
@@ -40,20 +40,7 @@ void PHPQuickOutlineDlg::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void PHPQuickOutlineDlg::OnTextEntered(wxCommandEvent& event)
-{
-    event.Skip();
-    wxString filter = m_textCtrl->GetValue();
-    m_treeCtrlLayout->FindWord(filter);
-}
-
 void PHPQuickOutlineDlg::OnItemActivated(wxTreeEvent& event) { DoItemSelected(event.GetItem()); }
-
-void PHPQuickOutlineDlg::OnEnter(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    DoItemSelected(m_treeCtrlLayout->GetSelection());
-}
 
 void PHPQuickOutlineDlg::DoItemSelected(const wxTreeItemId& item)
 {

@@ -113,7 +113,7 @@ public:
     /**
      * Destructor .
      */
-    virtual ~SymbolTree(void);
+    virtual ~SymbolTree();
 
     /**
      * Create tree, usually called after constructing SymbolTree with default constructor.
@@ -222,10 +222,5 @@ protected:
      * \param key node key
      */
     void UpdateGuiItem(TagEntry& data, const wxString& key);
-
-
-    DECLARE_DYNAMIC_CLASS(SymbolTree)
-    void OnItemActivated(wxTreeEvent &event);
-    void OnTimer(wxTimerEvent &event);
 };
 #endif // CODELITE_SYMBOL_TREE_H

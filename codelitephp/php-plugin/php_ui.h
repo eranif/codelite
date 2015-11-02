@@ -14,9 +14,9 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/textctrl.h>
 #include "php_file_layout_tree.h"
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/filepicker.h>
@@ -61,16 +61,11 @@
 class QuickOutlineDlgBase : public wxDialog
 {
 protected:
-    wxTextCtrl* m_textCtrl;
     PHPFileLayoutTree* m_treeCtrlLayout;
 
 protected:
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnTextEntered(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
     PHPFileLayoutTree* GetTreeCtrlLayout() { return m_treeCtrlLayout; }
     QuickOutlineDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxBORDER_SUNKEN);
     virtual ~QuickOutlineDlgBase();

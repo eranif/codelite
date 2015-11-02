@@ -57,6 +57,35 @@ void clTreeKeyboardInput::OnTextKeyDown(wxKeyEvent& event)
         event.Skip(false);
         Clear();
         m_tree->CallAfter(&wxTreeCtrl::SetFocus);
+    } else if(ch == WXK_DOWN) {
+        event.Skip(false);
+        // get the children list starting from the focused item
+        GetChildren(m_tree->GetFocusedItem());
+        if(!m_items.empty()) {
+            // exclude the first item from the list
+            m_items.erase(m_items.begin());
+        }
+        
+        auto iter = m_items.begin();
+        for(; iter != m_items.end(); ++iter) {
+            wxString text = m_tree->GetItemText(*iter);
+            if(FileUtils::FuzzyMatch(m_text->GetValue(), text)) {
+                CallAfter(&clTreeKeyboardInput::SelecteItem, (*iter));
+                return;
+            }
+        }
+    } else if(ch == WXK_UP) {
+        event.Skip(false);
+        // get all items "until" the focused item
+        GetChildren(wxTreeItemId(), m_tree->GetFocusedItem());
+        auto iter = m_items.rbegin();
+        for(; iter != m_items.rend(); ++iter) {
+            wxString text = m_tree->GetItemText(*iter);
+            if(FileUtils::FuzzyMatch(m_text->GetValue(), text)) {
+                CallAfter(&clTreeKeyboardInput::SelecteItem, (*iter));
+                return;
+            }
+        }
     }
 }
 
@@ -153,7 +182,7 @@ void clTreeKeyboardInput::OnTextEnter(wxCommandEvent& event)
     Clear();
 }
 
-void clTreeKeyboardInput::GetChildren(const wxTreeItemId& from)
+void clTreeKeyboardInput::GetChildren(const wxTreeItemId& from, const wxTreeItemId& until)
 {
     m_items.clear();
     wxTreeItemId startItem = m_tree->GetRootItem();
@@ -173,6 +202,15 @@ void clTreeKeyboardInput::GetChildren(const wxTreeItemId& from)
         if(iter != m_items.end()) {
             // we got a match
             items.insert(items.end(), iter, m_items.end());
+            m_items.swap(items);
+        }
+    } else if(until.IsOk()) {
+        std::list<wxTreeItemId> items;
+        auto iter =
+            std::find_if(m_items.begin(), m_items.end(), [&](const wxTreeItemId& item) { return item == until; });
+        if(iter != m_items.end()) {
+            // we got a match
+            items.insert(items.end(), m_items.begin(), iter);
             m_items.swap(items);
         }
     }

@@ -37,7 +37,7 @@ protected:
     void SelecteItem(const wxTreeItemId& item);
     bool CheckItemForMatch(const wxTreeItemId& item);
     void SetTextFocus();
-    void GetChildren(const wxTreeItemId& from = wxTreeItemId());
+    void GetChildren(const wxTreeItemId& from = wxTreeItemId(), const wxTreeItemId& until = wxTreeItemId());
     void DoGetChildren(const wxTreeItemId& parent);
     void Clear();
     void DoShowTextBox();

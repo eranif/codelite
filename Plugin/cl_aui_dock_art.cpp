@@ -129,8 +129,8 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
     dc.DrawRectangle(tmpRect);
 
     // Fill the caption to look like OSX caption
-    wxColour topColour("rgb(210,208,210)");
-    wxColour bottomColour("rgb(229,229,229)");
+    wxColour topColour("#d3d2d3");
+    wxColour bottomColour("#e8e8e8");
     dc.GradientFillLinear(tmpRect, topColour, bottomColour, wxNORTH);
     
     dc.SetPen(penColour);

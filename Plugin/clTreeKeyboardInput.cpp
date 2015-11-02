@@ -42,7 +42,10 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
         DoShowTextBox();
     }
 
-    m_text->EmulateKeyPress(event);
+    if(wxIsprint(ch)) {
+        m_text->ChangeValue(wxString() << ch);
+        m_text->SetInsertionPoint(m_text->GetLastPosition());
+    }
     CallAfter(&clTreeKeyboardInput::SetTextFocus);
 }
 
@@ -59,7 +62,8 @@ void clTreeKeyboardInput::OnTextKeyDown(wxKeyEvent& event)
 
 void clTreeKeyboardInput::OnTextUpdated(wxCommandEvent& event)
 {
-    GetChildren(m_tree->GetFocusedItem());
+    GetChildren();
+
     auto iter = m_items.begin();
     for(; iter != m_items.end(); ++iter) {
         wxString text = m_tree->GetItemText(*iter);
@@ -131,6 +135,7 @@ void clTreeKeyboardInput::SetTextFocus()
     m_text->SetFocus();
     // Remove the selection
     m_text->SelectNone();
+    m_tree->UnselectAll();
 }
 
 void clTreeKeyboardInput::OnTextEnter(wxCommandEvent& event)
@@ -204,5 +209,8 @@ void clTreeKeyboardInput::DoShowTextBox()
     m_text->Move(pt);
     if(!m_text->IsShown()) {
         m_text->Show();
+        m_text->ChangeValue("");
+        m_tree->UnselectAll();
+        m_items.clear();
     }
 }

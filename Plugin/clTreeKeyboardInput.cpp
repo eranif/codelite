@@ -244,10 +244,8 @@ void clTreeKeyboardInput::DoShowTextBox()
 {
     wxSize sz = m_text->GetSize();
     sz.x = m_tree->GetClientRect().GetWidth();
-    wxPoint pt = m_tree->GetClientRect().GetBottomLeft();
-    pt.y -= sz.GetHeight();
     m_text->SetSize(sz);
-    m_text->Move(pt);
+    m_text->Move(m_tree->GetClientRect().GetTopLeft());
     if(!m_text->IsShown()) {
         m_text->Show();
         m_text->ChangeValue("");

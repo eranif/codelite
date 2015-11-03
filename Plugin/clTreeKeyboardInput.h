@@ -20,14 +20,14 @@ protected:
     wxTreeCtrl* m_tree;
     wxTextCtrl* m_text;
     std::list<wxTreeItemId> m_items;
-    
+
 protected:
     void OnKeyDown(wxKeyEvent& event);
     void OnTextKeyDown(wxKeyEvent& event);
     void OnTextUpdated(wxCommandEvent& event);
     void OnTextEnter(wxCommandEvent& event);
     void OnTreeFocus(wxFocusEvent& event);
-
+    void OnTreeSize(wxSizeEvent& event);
     void SelecteItem(const wxTreeItemId& item);
     bool CheckItemForMatch(const wxTreeItemId& item);
     void SetTextFocus();
@@ -35,7 +35,7 @@ protected:
     void DoGetChildren(const wxTreeItemId& parent);
     void Clear();
     void DoShowTextBox();
-    
+
 public:
     clTreeKeyboardInput(wxTreeCtrl* tree);
     virtual ~clTreeKeyboardInput();

@@ -15,6 +15,7 @@ clTreeKeyboardInput::clTreeKeyboardInput(wxTreeCtrl* tree)
     m_text->Bind(wxEVT_COMMAND_TEXT_UPDATED, &clTreeKeyboardInput::OnTextUpdated, this);
     m_text->Bind(wxEVT_COMMAND_TEXT_ENTER, &clTreeKeyboardInput::OnTextEnter, this);
     m_tree->Bind(wxEVT_SET_FOCUS, &clTreeKeyboardInput::OnTreeFocus, this);
+    m_tree->Bind(wxEVT_SIZE, &clTreeKeyboardInput::OnTreeSize, this);
 }
 
 clTreeKeyboardInput::~clTreeKeyboardInput()
@@ -24,18 +25,21 @@ clTreeKeyboardInput::~clTreeKeyboardInput()
     m_text->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &clTreeKeyboardInput::OnTextUpdated, this);
     m_text->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clTreeKeyboardInput::OnTextEnter, this);
     m_tree->Unbind(wxEVT_SET_FOCUS, &clTreeKeyboardInput::OnTreeFocus, this);
+    m_tree->Unbind(wxEVT_SIZE, &clTreeKeyboardInput::OnTreeSize, this);
 }
 
 void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip(false);
-    
+
     wxChar ch = event.GetKeyCode();
-    if(event.GetModifiers() != wxMOD_NONE) {
+    if((event.GetModifiers() != wxMOD_NONE) || (ch == WXK_ESCAPE) || ch == WXK_UP || ch == WXK_DOWN || ch == WXK_LEFT ||
+       ch == WXK_RIGHT || ch == WXK_RETURN || ch == WXK_NUMPAD_ENTER || ch == WXK_NUMPAD_SUBTRACT ||
+       ch == WXK_NUMPAD_MULTIPLY || ch == WXK_CONTROL || ch == WXK_COMMAND || ch == WXK_SHIFT || ch == WXK_ESCAPE) {
         event.Skip();
         return;
     }
-    
+
     if(!m_text->IsShown()) {
         DoShowTextBox();
     }
@@ -240,13 +244,23 @@ void clTreeKeyboardInput::Clear()
 void clTreeKeyboardInput::DoShowTextBox()
 {
     wxSize sz = m_text->GetSize();
-    sz.x = m_tree->GetClientRect().GetWidth();
+    sz.x = (m_tree->GetClientRect().GetWidth() / 2);
     m_text->SetSize(sz);
-    m_text->Move(m_tree->GetClientRect().GetTopLeft());
+    wxPoint pt = m_tree->GetClientRect().GetTopLeft();
+    pt.x += sz.x;
+    m_text->Move(pt);
     if(!m_text->IsShown()) {
         m_text->Show();
         m_text->ChangeValue("");
         m_tree->UnselectAll();
         m_items.clear();
+    }
+}
+
+void clTreeKeyboardInput::OnTreeSize(wxSizeEvent& event)
+{
+    event.Skip();
+    if(m_text->IsShown()) {
+        DoShowTextBox(); // Adjust the box size and position
     }
 }

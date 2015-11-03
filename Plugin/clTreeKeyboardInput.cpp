@@ -29,22 +29,19 @@ clTreeKeyboardInput::~clTreeKeyboardInput()
 void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip(false);
+    
     wxChar ch = event.GetKeyCode();
-    if(ch == WXK_UP || ch == WXK_DOWN || ch == WXK_LEFT || ch == WXK_RIGHT || ch == WXK_RETURN ||
-       ch == WXK_NUMPAD_ENTER || ch == WXK_NUMPAD_SUBTRACT || ch == WXK_NUMPAD_MULTIPLY || ch == WXK_CONTROL ||
-       ch == WXK_COMMAND || ch == WXK_SHIFT || ch == WXK_ESCAPE) {
+    if(event.GetModifiers() != wxMOD_NONE) {
         event.Skip();
         return;
     }
-
+    
     if(!m_text->IsShown()) {
         DoShowTextBox();
     }
 
-    if(wxIsprint(ch)) {
-        m_text->ChangeValue(wxString() << ch);
-        m_text->SetInsertionPoint(m_text->GetLastPosition());
-    }
+    m_text->ChangeValue(wxString() << ch);
+    m_text->SetInsertionPoint(m_text->GetLastPosition());
     CallAfter(&clTreeKeyboardInput::SetTextFocus);
 }
 

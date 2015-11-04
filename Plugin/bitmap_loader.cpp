@@ -79,6 +79,7 @@ BitmapLoader::BitmapLoader()
         }
     }
 
+#if 0
     m_toolbarIconSize = EditorConfigST::Get()->GetOptions()->GetIconsSize();
     wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps.zip");
     if(fnNewZip.FileExists()) {
@@ -106,6 +107,7 @@ BitmapLoader::BitmapLoader()
             }
         }
     }
+#endif
 }
 
 const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name)

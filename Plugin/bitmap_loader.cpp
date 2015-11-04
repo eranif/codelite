@@ -32,6 +32,8 @@
 #include "optionsconfig.h"
 #include "cl_standard_paths.h"
 #include <algorithm>
+#include "clZipReader.h"
+#include <wx/dir.h>
 
 std::map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::map<wxString, wxString> BitmapLoader::m_manifest;
@@ -44,13 +46,7 @@ BitmapLoader::BitmapLoader()
 {
     wxString zipname;
     wxFileName fn;
-
-// Set the defaul icon set
-#ifdef __WXOSX__
-    zipname = "codelite-icons-dark.zip";
-#else
     zipname = "codelite-icons.zip";
-#endif
 
     if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm) {
         zipname = wxT("codelite-icons-fresh-farm.zip");
@@ -82,12 +78,49 @@ BitmapLoader::BitmapLoader()
             doLoadBitmaps();
         }
     }
+
+    m_toolbarIconSize = EditorConfigST::Get()->GetOptions()->GetIconsSize();
+    wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps.zip");
+    if(fnNewZip.FileExists()) {
+        clZipReader zip(fnNewZip);
+        wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
+        tmpFolder.AppendDir("codelite-bitmaps");
+        tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
+        // Extract all images into this folder
+        zip.Extract("*", tmpFolder.GetPath());
+
+        // Load all the files into wxBitmap
+        wxArrayString files;
+        wxDir::GetAllFiles(tmpFolder.GetPath(), &files, "*.png");
+        for(size_t i = 0; i < files.size(); ++i) {
+            wxFileName pngFile(files.Item(i));
+            if(pngFile.GetFullName().Contains("@2x")) {
+                // No need to load the hi-res images manually,
+                // this is done by wxWidgets
+                continue;
+            }
+            wxBitmap bmp;
+            if(bmp.LoadFile(pngFile.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+                m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
+            }
+        }
+    }
 }
 
 const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name)
 {
-    std::map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(name);
-    if(iter != m_toolbarsBitmaps.end()) return iter->second;
+    // try to load a new bitmap first
+    wxString newName;
+    newName << m_toolbarIconSize << "-" << name.AfterLast('/');
+    std::map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
+    if(iter != m_toolbarsBitmaps.end()) {
+        return iter->second;
+    }
+    iter = m_toolbarsBitmaps.find(name);
+    if(iter != m_toolbarsBitmaps.end()) {
+        return iter->second;
+    }
 
     return wxNullBitmap;
 }
@@ -189,7 +222,7 @@ int BitmapLoader::GetMimeImageId(const wxString& filename)
         wxImageList* il = MakeStandardMimeImageList();
         wxDELETE(il);
     }
-    
+
     FileExtManager::FileType type = FileExtManager::GetType(filename);
     std::map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
     if(iter == m_fileIndexMap.end()) {

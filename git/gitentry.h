@@ -39,7 +39,8 @@
 #include <map>
 #include "cl_config.h"
 
-struct GitLabelCommand {
+struct GitLabelCommand
+{
     GitLabelCommand() {}
 
     GitLabelCommand(const wxString& l, const wxString& c)
@@ -116,11 +117,12 @@ class GitEntry : public clConfigItem
     int m_gitCommitDlgHSashPos;
     int m_gitCommitDlgVSashPos;
     wxArrayString m_recentCommits;
-    
+
 public:
     enum { Git_Verbose_Log = 0x00000001, Git_Show_Terminal = 0x00000002, Git_Colour_Tree_View = 0x00000004 };
 
-    struct GitProperties {
+    struct GitProperties
+    {
         wxString global_username;
         wxString global_email;
         wxString local_username;
@@ -148,7 +150,7 @@ public:
     GitEntry& Load();
     wxArrayString& GetRecentCommit() { return m_recentCommits; }
     void AddRecentCommit(const wxString& commitMessage);
-    
+
     void SetGitCommitDlgHSashPos(int gitCommitDlgHSashPos) { this->m_gitCommitDlgHSashPos = gitCommitDlgHSashPos; }
     void SetGitCommitDlgVSashPos(int gitCommitDlgVSashPos) { this->m_gitCommitDlgVSashPos = gitCommitDlgVSashPos; }
     int GetGitCommitDlgHSashPos() const { return m_gitCommitDlgHSashPos; }
@@ -160,6 +162,8 @@ public:
     const JSONElement::wxStringMap_t& GetEntries() const { return m_entries; }
     size_t GetFlags() const { return m_flags; }
     void SetEntry(const wxString& workspace, const wxString& repo) { this->m_entries[workspace] = repo; }
+    void DeleteEntry(const wxString& workspace);
+
     GitCommandsEntriesMap_t GetCommandsMap() const { return m_commandsMap; }
     void SetTrackedFileColour(const wxColour& colour) { this->m_colourTrackedFile = colour; }
     void SetDiffFileColour(const wxColour& colour) { this->m_colourDiffFile = colour; }

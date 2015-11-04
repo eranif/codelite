@@ -182,7 +182,7 @@ GitPlugin::GitPlugin(IManager* manager)
     m_mgr->GetOutputPaneNotebook()->AddPage(m_console, _("git"), false, m_images.Bitmap("git"));
     m_tabToggler.reset(new clTabTogglerHelper(_("git"), m_console, "", NULL));
     m_tabToggler->SetOutputTabBmp(m_images.Bitmap("git"));
-    
+
     m_progressTimer.SetOwner(this);
 }
 /*******************************************************************************/
@@ -638,10 +638,10 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
     wxArrayString files;
     files.swap(m_filesSelected);
     if(files.IsEmpty()) return;
-    
+
     // Make the git console visible
     m_mgr->ShowOutputPane("git");
-    
+
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
 
@@ -673,10 +673,10 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
     wxArrayString files;
     files.swap(m_filesSelected);
     if(files.IsEmpty()) return;
-    
+
     // Make the git console visible
     m_mgr->ShowOutputPane("git");
-    
+
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
 
@@ -710,10 +710,10 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
     wxArrayString files;
     files.swap(m_filesSelected);
     if(files.IsEmpty()) return;
-    
+
     // Make the git console visible
     m_mgr->ShowOutputPane("git");
-    
+
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
 
@@ -1703,10 +1703,10 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
             ga.action = gitListModified;
             m_gitActionQueue.push_back(ga);
         }
-        
+
         // Reload files if needed
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
-        
+
     } else if(ga.action == gitCommitList) {
         GitCommitListDlg* dlg = new GitCommitListDlg(m_topWindow, m_repositoryDirectory, this);
         dlg->SetCommitList(m_commandOutput);
@@ -1993,27 +1993,8 @@ void GitPlugin::OnEnableGitRepoExists(wxUpdateUIEvent& e) { e.Enable(m_repositor
 void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
-#if 0
-    m_pluginToolbar->EnableTool(XRCID("git_bisect_start"),false);
-    m_pluginToolbar->EnableTool(XRCID("git_bisect_good"),false);
-    m_pluginToolbar->EnableTool(XRCID("git_bisect_bad"),false);
-    m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
-#endif
-
-    // store the GIT entry data
-    if(IsWorkspaceOpened()) {
-
-        clConfig conf("git.conf");
-        GitEntry data;
-        conf.ReadItem(&data);
-        data.SetEntry(GetWorkspaceName(), m_repositoryDirectory);
-        conf.WriteItem(&data);
-    }
-
-    // Clearn any saved data from the current workspace
-    // git commands etc
-    DoCleanup();
-    m_workspaceFilename.Clear();
+    StoreWorkspaceRepoDetails();
+    WorkspaceClosed();
 }
 
 void GitPlugin::DoCleanup()
@@ -2592,7 +2573,7 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& wo
     } else {
         return false;
     }
-    
+
     const wxString lcOutput = commandOutput.Lower();
     if(lcOutput.Contains("fatal:") || lcOutput.Contains("not a git repository")) {
         // prompt the user for the error
@@ -2643,4 +2624,25 @@ void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
     event.Skip();
     wxFileName projectFile(event.GetFileName());
     DoSetRepoPath(projectFile.GetPath(), false);
+}
+
+void GitPlugin::StoreWorkspaceRepoDetails()
+{
+    // store the GIT entry data
+    if(IsWorkspaceOpened()) {
+
+        clConfig conf("git.conf");
+        GitEntry data;
+        conf.ReadItem(&data);
+        data.SetEntry(GetWorkspaceName(), m_repositoryDirectory);
+        conf.WriteItem(&data);
+    }
+}
+
+void GitPlugin::WorkspaceClosed()
+{ 
+    // Clearn any saved data from the current workspace
+    // git commands etc
+    DoCleanup();
+    m_workspaceFilename.Clear();
 }

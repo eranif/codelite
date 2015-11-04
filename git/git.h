@@ -262,7 +262,10 @@ private:
 public:
     GitPlugin(IManager* manager);
     ~GitPlugin();
-
+    
+    void StoreWorkspaceRepoDetails();
+    void WorkspaceClosed();
+    
     GitConsole* GetConsole() { return m_console; }
     const wxString& GetRepositoryDirectory() const { return m_repositoryDirectory; }
     IProcess* GetProcess() { return m_process; }

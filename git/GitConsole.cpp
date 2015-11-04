@@ -685,8 +685,18 @@ void GitConsole::OnStclogStcChange(wxStyledTextEvent& event)
 void GitConsole::OnCloseView(wxCommandEvent& e)
 {
     e.Skip();
-    
+
+    // Write down that we don't want to set this git repo once this workspace
+    // is re-loaded
+    if(m_git->IsWorkspaceOpened()) {
+        clConfig conf("git.conf");
+        GitEntry entry;
+        if(conf.ReadItem(&entry)) {
+            entry.DeleteEntry(m_git->GetWorkspaceFileName().GetName());
+            conf.WriteItem(&entry);
+        }
+    }
     // Close the git view
-    m_git->OnWorkspaceClosed(e);
+    m_git->WorkspaceClosed();
     OnWorkspaceClosed(e);
 }

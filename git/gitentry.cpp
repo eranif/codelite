@@ -310,6 +310,13 @@ void GitEntry::AddRecentCommit(const wxString& commitMessage)
     }
 }
 
+void GitEntry::DeleteEntry(const wxString& workspace)
+{
+    if(m_entries.count(workspace)) {
+        m_entries.erase(workspace);
+    }
+}
+
 void GitCommandsEntries::FromJSON(const JSONElement& json)
 {
     m_commands.clear();

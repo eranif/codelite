@@ -110,9 +110,8 @@ void QuickOutlineDlg::OnItemSelected(wxCommandEvent& e)
 
 void QuickOutlineDlg::OnKeyDown(wxKeyEvent& e)
 {
+    e.Skip();
     if(e.GetKeyCode() == WXK_ESCAPE) {
         Close();
-    } else {
-        e.Skip();
     }
 }

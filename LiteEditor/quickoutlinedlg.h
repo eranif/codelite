@@ -46,10 +46,12 @@ protected:
     wxStaticLine* m_staticline1;
     CppSymbolTree* m_treeOutline;
     clTreeKeyboardInput::Ptr_t m_keyboard;
-    // DECLARE_EVENT_TABLE()
+
+protected:
     void OnCharHook(wxKeyEvent& e);
     void OnTextEntered(wxCommandEvent& e);
     void OnItemSelected(wxCommandEvent& e);
+    void OnKeyDown(wxKeyEvent& e);
 
 public:
     QuickOutlineDlg(wxWindow* parent,

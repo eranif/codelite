@@ -51,13 +51,8 @@ extern wxImageList* CreateSymbolTreeImages();
 // EVT_TEXT(wxID_ANY, QuickOutlineDlg::OnTextEntered)
 // END_EVENT_TABLE()
 
-QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent,
-                                 const wxString& fileName,
-                                 int id,
-                                 wxString title,
-                                 wxPoint pos,
-                                 wxSize size,
-                                 int style)
+QuickOutlineDlg::QuickOutlineDlg(
+    wxWindow* parent, const wxString& fileName, int id, wxString title, wxPoint pos, wxSize size, int style)
     : wxDialog(parent, id, title, pos, size, style | wxRESIZE_BORDER)
     , m_fileName(fileName)
 {
@@ -67,7 +62,7 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent,
     dialogSizer->Add(mainPanel, 1, wxEXPAND);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     mainPanel->SetSizer(mainSizer);
-    
+
 #ifdef __WXGTK__
     wxColour bgCol = DrawingUtils::GetPanelBgColour();
     wxColour fgCol = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
@@ -82,7 +77,7 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent,
     m_treeOutline =
         new CppSymbolTree(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE | wxNO_BORDER);
     m_keyboard.reset(new clTreeKeyboardInput(m_treeOutline));
-
+    m_treeOutline->Bind(wxEVT_KEY_DOWN, &QuickOutlineDlg::OnKeyDown, this);
     m_treeOutline->SetBackgroundColour(bgCol);
     m_treeOutline->SetForegroundColour(fgCol);
     m_treeOutline->SetSymbolsImages(CreateSymbolTreeImages());
@@ -101,10 +96,23 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent,
     CentreOnParent();
 }
 
-QuickOutlineDlg::~QuickOutlineDlg() { m_keyboard.reset(NULL); }
+QuickOutlineDlg::~QuickOutlineDlg()
+{
+    m_keyboard.reset(NULL);
+    m_treeOutline->Unbind(wxEVT_KEY_DOWN, &QuickOutlineDlg::OnKeyDown, this);
+}
 
 void QuickOutlineDlg::OnItemSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     Close();
+}
+
+void QuickOutlineDlg::OnKeyDown(wxKeyEvent& e)
+{
+    if(e.GetKeyCode() == WXK_ESCAPE) {
+        Close();
+    } else {
+        e.Skip();
+    }
 }

@@ -21,23 +21,22 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
         wxCFAD6InitBitmapResources();
         bBitmapLoaded = true;
     }
-    Create(parent, id, title, wxXmlResource::Get()->LoadBitmap(wxT("100_x_400_white")), pos, style);
+    Create(parent, id, title, wxNullBitmap, pos, style);
     
     m_wizardPageWelcome = new clBoostrapWizardPageWelcome(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageWelcome);
     
-    boxSizer79 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer79 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageWelcome->SetSizer(boxSizer79);
     
     m_banner81 = new wxBannerWindow(m_wizardPageWelcome, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner81->SetBitmap(wxNullBitmap);
     m_banner81->SetText(_("Welcome to the setup wizard"), _("This wizard will help you setup CodeLite to fit your coding style. Click Next to continue"));
-    m_banner81->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
-    m_banner81->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_banner81->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     
     boxSizer79->Add(m_banner81, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer105 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer105 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer79->Add(boxSizer105, 1, wxALL|wxEXPAND, 5);
     
@@ -52,18 +51,17 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_wizardPagePlugins = new clBoostrapWizardPagePlugins(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPagePlugins);
     
-    boxSizer89 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer89 = new wxBoxSizer(wxVERTICAL);
     m_wizardPagePlugins->SetSizer(boxSizer89);
     
     m_banner811 = new wxBannerWindow(m_wizardPagePlugins, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner811->SetBitmap(wxNullBitmap);
     m_banner811->SetText(_("Plugins"), _("By default CodeLite comes with many plugins. Here you can disable some if needed"));
-    m_banner811->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
-    m_banner811->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_banner811->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     
     boxSizer89->Add(m_banner811, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer93 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer93 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer89->Add(boxSizer93, 1, wxEXPAND, 5);
     
@@ -74,11 +72,12 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_dvListCtrlPlugins->AppendToggleColumn(_("X"), wxDATAVIEW_CELL_ACTIVATABLE, 30, wxALIGN_LEFT);
     m_dvListCtrlPlugins->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dvListCtrlPlugins->AppendTextColumn(_("Description"), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
-    boxSizer97 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer97 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer93->Add(boxSizer97, 0, wxEXPAND, 5);
     
     m_button99 = new wxButton(m_wizardPagePlugins, wxID_ANY, _("Check All"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button99->SetDefault();
     m_button99->SetToolTip(_("Check all plugins"));
     
     boxSizer97->Add(m_button99, 0, wxALL|wxEXPAND, 5);
@@ -96,14 +95,13 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_wizardPageCompilers = new clBoostrapWizardPageCompilers(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageCompilers);
     
-    boxSizer52 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer52 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageCompilers->SetSizer(boxSizer52);
     
     m_banner69 = new wxBannerWindow(m_wizardPageCompilers, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner69->SetBitmap(wxNullBitmap);
     m_banner69->SetText(_("Setup compilers"), _("Let CodeLite configure your installed compilers or help you install one"));
-    m_banner69->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
-    m_banner69->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_banner69->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     
     boxSizer52->Add(m_banner69, 0, wxALL|wxEXPAND, 5);
     
@@ -125,14 +123,13 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_wizardPageColoursAndFonts = new clBoostrapWizardPageColours(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageColoursAndFonts);
     
-    boxSizer12 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer12 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageColoursAndFonts->SetSizer(boxSizer12);
     
     m_banner71 = new wxBannerWindow(m_wizardPageColoursAndFonts, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner71->SetBitmap(wxNullBitmap);
     m_banner71->SetText(_("Customize colours"), _("Select the editor theme from the list below"));
-    m_banner71->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
-    m_banner71->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_banner71->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     
     boxSizer12->Add(m_banner71, 0, wxALL|wxEXPAND, 5);
     
@@ -199,14 +196,13 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     }
     GetPageAreaSizer()->Add(m_pages.at(0));
     
-    boxSizer30 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageWhitespace->SetSizer(boxSizer30);
     
     m_banner73 = new wxBannerWindow(m_wizardPageWhitespace, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner73->SetBitmap(wxNullBitmap);
     m_banner73->SetText(_("Whitespace & Indentation"), _("Should CodeLite use TABS or SPACES for indentation?"));
-    m_banner73->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
-    m_banner73->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_banner73->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     
     boxSizer30->Add(m_banner73, 0, wxALL|wxEXPAND, 5);
     
@@ -232,11 +228,15 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     boxSizer30->Add(0, 0, 1, wxALL, 5);
     
     SetName(wxT("clBoostrapWizardBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

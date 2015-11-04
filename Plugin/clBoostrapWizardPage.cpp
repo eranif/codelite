@@ -7,7 +7,7 @@ clBoostrapWizardPageWelcome::clBoostrapWizardPageWelcome(wxWizard* parent,
                                                          const wxBitmap& bitmap)
 {
     wxUnusedVar(bitmap);
-    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(0));
+    Create(parent, prev, next);
 }
 
 clBoostrapWizardPagePlugins::clBoostrapWizardPagePlugins(wxWizard* parent,
@@ -16,7 +16,7 @@ clBoostrapWizardPagePlugins::clBoostrapWizardPagePlugins(wxWizard* parent,
                                                          const wxBitmap& bitmap)
 {
     wxUnusedVar(bitmap);
-    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(1));
+    Create(parent, prev, next);
 }
 
 clBoostrapWizardPageCompilers::clBoostrapWizardPageCompilers(wxWizard* parent,
@@ -25,7 +25,7 @@ clBoostrapWizardPageCompilers::clBoostrapWizardPageCompilers(wxWizard* parent,
                                                              const wxBitmap& bitmap)
 {
     wxUnusedVar(bitmap);
-    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(2));
+    Create(parent, prev, next);
 }
 
 clBoostrapWizardPageColours::clBoostrapWizardPageColours(wxWizard* parent,
@@ -34,7 +34,7 @@ clBoostrapWizardPageColours::clBoostrapWizardPageColours(wxWizard* parent,
                                                          const wxBitmap& bitmap)
 {
     wxUnusedVar(bitmap);
-    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(3));
+    Create(parent, prev, next);
 }
 
 clBoostrapWizardPageWhitespace::clBoostrapWizardPageWhitespace(wxWizard* parent,
@@ -43,6 +43,5 @@ clBoostrapWizardPageWhitespace::clBoostrapWizardPageWhitespace(wxWizard* parent,
                                                                const wxBitmap& bitmap)
 {
     wxUnusedVar(bitmap);
-    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(4));
+    Create(parent, prev, next);
 }
-

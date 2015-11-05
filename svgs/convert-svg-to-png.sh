@@ -28,6 +28,6 @@ cd ../bitmaps
 ##
 ## Create a zip file named codelite-bitmaps.zip
 ##
-
+rm -f ../Runtime/codelite-bitmaps.zip
 zip ../Runtime/codelite-bitmaps.zip *.png
 

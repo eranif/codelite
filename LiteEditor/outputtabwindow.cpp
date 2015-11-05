@@ -190,7 +190,8 @@ void OutputTabWindow::CreateGUIControls()
     // Create the toolbar
     m_tb = new wxAuiToolBar(
         this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
-
+    m_tb->SetToolBitmapSize(wxSize(16, 16));
+    
     m_tb->AddTool(XRCID("hold_pane_open"),
                   _("Keep open"),
                   bmpLoader->LoadBitmap(wxT("output-pane/16/ToolPin")),

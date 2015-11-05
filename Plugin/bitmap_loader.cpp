@@ -34,6 +34,7 @@
 #include <algorithm>
 #include "clZipReader.h"
 #include <wx/dir.h>
+#include "file_logger.h"
 
 std::map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::map<wxString, wxString> BitmapLoader::m_manifest;
@@ -79,12 +80,15 @@ BitmapLoader::BitmapLoader()
         }
     }
 
-    m_toolbarIconSize = EditorConfigST::Get()->GetOptions()->GetIconsSize();
     wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps.zip");
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
         wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
         tmpFolder.AppendDir("codelite-bitmaps");
+        if(tmpFolder.DirExists()) {
+            tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE);
+        }
+        
         tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
         // Extract all images into this folder
@@ -102,6 +106,7 @@ BitmapLoader::BitmapLoader()
             }
             wxBitmap bmp;
             if(bmp.LoadFile(pngFile.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+                CL_DEBUG("Adding new image: %s", pngFile.GetName());
                 m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
             }
         }

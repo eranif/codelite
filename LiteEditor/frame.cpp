@@ -173,7 +173,7 @@ const wxEventType wxEVT_LOAD_SESSION = ::wxNewEventType();
 #define FACTOR_2 2.0
 #endif
 
-#ifdef __WXMAC__
+#if 0
 #define TB_SEPARATOR()
 #else
 #define TB_SEPARATOR() tb->AddSeparator()
@@ -1666,38 +1666,35 @@ void clMainFrame::CreateNativeToolbar24()
                 _("Reload"),
                 bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload"), 24),
                 _("Reload File"));
-    TB_SEPARATOR();
     tb->AddTool(XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save"), 24), _("Save"));
     //    tb->AddTool(XRCID("save_all"),
     //                _("Save All"),
     //                bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_all"), 24),
     //                _("Save All"));
-    TB_SEPARATOR();
     tb->AddTool(
         XRCID("close_file"), _("Close"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_close"), 24), _("Close File"));
     TB_SEPARATOR();
     tb->AddTool(wxID_CUT, _("Cut"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/cut"), 24), _("Cut"));
     tb->AddTool(wxID_COPY, _("Copy"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/copy"), 24), _("Copy"));
     tb->AddTool(wxID_PASTE, _("Paste"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/paste"), 24), _("Paste"));
-    TB_SEPARATOR();
     tb->AddTool(
         wxID_UNDO, _("Undo"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/undo"), 24), _("Undo"), wxITEM_DROPDOWN);
     tb->AddTool(
         wxID_REDO, _("Redo"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/redo"), 24), _("Redo"), wxITEM_DROPDOWN);
+    TB_SEPARATOR();
     tb->AddTool(wxID_BACKWARD, _("Backward"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/back"), 24), _("Backward"));
     tb->AddTool(wxID_FORWARD, _("Forward"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward"), 24), _("Forward"));
     TB_SEPARATOR();
+
+    //----------------------------------------------
+    // create the search toolbar
+    //----------------------------------------------
     tb->AddTool(XRCID("toggle_bookmark"),
                 _("Toggle Bookmark"),
                 bmpLoader.LoadBitmap(wxT("toolbars/24/standard/bookmark"), 24),
                 _("Toggle Bookmark"),
                 wxITEM_DROPDOWN);
     tb->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
-
-    //----------------------------------------------
-    // create the search toolbar
-    //----------------------------------------------
-    TB_SEPARATOR();
     tb->AddTool(wxID_FIND, _("Find"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/find"), 24), _("Find"));
     tb->AddTool(
         wxID_REPLACE, _("Replace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_and_replace"), 24), _("Replace"));
@@ -1705,12 +1702,10 @@ void clMainFrame::CreateNativeToolbar24()
                 _("Find In Files"),
                 bmpLoader.LoadBitmap(wxT("toolbars/24/search/find_in_files"), 24),
                 _("Find In Files"));
-    TB_SEPARATOR();
     tb->AddTool(XRCID("find_resource"),
                 _("Find Resource In Workspace"),
                 bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource"), 24),
                 _("Find Resource In Workspace"));
-    TB_SEPARATOR();
     tb->AddTool(XRCID("highlight_word"),
                 _("Highlight Word"),
                 bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word"), 24),
@@ -1765,12 +1760,10 @@ void clMainFrame::CreateNativeToolbar24()
                 _("Restart debugger"),
                 bmpLoader.LoadBitmap(wxT("toolbars/24/debugger_restart"), 24),
                 _("Restart debugger"));
-    TB_SEPARATOR();
     tb->AddTool(XRCID("show_cursor"),
                 _("Show Current Line"),
                 bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/show_current_line"), 24),
                 _("Show Current Line"));
-    TB_SEPARATOR();
     tb->AddTool(
         XRCID("dbg_stepin"), _("Step Into"), bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_in"), 24), _("Step In"));
     tb->AddTool(XRCID("dbg_next"), _("Next"), bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/next"), 24), _("Next"));

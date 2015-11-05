@@ -120,8 +120,12 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     newName << requestedSize << "-" << name.AfterLast('/');
     std::map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
     if(iter != m_toolbarsBitmaps.end()) {
-        return iter->second;
+        const wxBitmap& b = iter->second;
+        CL_DEBUG("Loaded HiRes image: %s", newName);
+        CL_DEBUG("Image Size: (%d,%d)", b.GetWidth(), b.GetHeight());
+        return b;
     }
+    
     iter = m_toolbarsBitmaps.find(name);
     if(iter != m_toolbarsBitmaps.end()) {
         return iter->second;

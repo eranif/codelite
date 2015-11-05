@@ -1751,7 +1751,7 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     ProjectPtr proj;
 
     {
-        EnvSetter env1(NULL, NULL, projectName);
+        EnvSetter env1(NULL, NULL, projectName, wxEmptyString);
         execLine = GetProjectExecutionCommand(projectName, wd, true);
         proj = GetProject(projectName);
     }
@@ -1772,7 +1772,12 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     // execute the program:
     //- no hiding the console
     //- no redirection of the stdin/out
-    EnvSetter env(NULL, NULL, projectName);
+    wxString configName;
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+    if(bldConf) {
+        configName = bldConf->GetName();
+    }
+    EnvSetter env(NULL, NULL, projectName, configName);
 
     // call it again here to get the actual exection line - we do it here since
     // the environment has been applied
@@ -2055,7 +2060,7 @@ void Manager::DbgStart(long attachPid)
     dbgr->SetDebuggerInformation(dinfo);
 
     // Apply the environment variables before starting
-    EnvSetter env(NULL, NULL, proj ? proj->GetName() : wxString());
+    EnvSetter env(NULL, NULL, proj ? proj->GetName() : wxString(), bldConf ? bldConf->GetName() : wxString());
 
     if(!bldConf && attachPid == wxNOT_FOUND) {
         wxString errmsg;

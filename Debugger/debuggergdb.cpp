@@ -205,7 +205,7 @@ void DbgGdb::EmptyQueue()
 bool DbgGdb::Start(const DebugSessionInfo& si)
 {
     // set the environment variables
-    EnvSetter env(m_env, NULL, m_debuggeeProjectName);
+    EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
 
     wxString dbgExeName;
     if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName)) {
@@ -1379,7 +1379,7 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
 bool DbgGdb::Attach(const DebugSessionInfo& si)
 {
     // set the environment variables
-    EnvSetter env(m_env, NULL, m_debuggeeProjectName);
+    EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
 
     wxString dbgExeName;
     if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName)) {

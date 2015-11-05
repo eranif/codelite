@@ -339,11 +339,16 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
         working_dir, m_mgr, (m_mgr->GetWorkspace() ? m_mgr->GetWorkspace()->GetActiveProjectName() : ""));
 
     wxString projectName;
+    wxString configName;
     if(clCxxWorkspaceST::Get()->IsOpen()) {
         projectName = clCxxWorkspaceST::Get()->GetActiveProjectName();
+        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+        if(bldConf) {
+            configName = bldConf->GetName();
+        }
     }
 
-    EnvSetter envGuard(m_mgr->GetEnv(), NULL, projectName);
+    EnvSetter envGuard(m_mgr->GetEnv(), NULL, projectName, configName);
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, working_dir);
     m_mgr->AppendOutputTabText(kOutputTab_Output, command + "\n");
 }

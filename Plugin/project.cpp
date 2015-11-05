@@ -1192,7 +1192,7 @@ wxArrayString Project::GetIncludePaths(bool clearCache)
     // for non custom projects, take the settings from the build configuration
     if(buildConf) {
         // Apply the environment
-        EnvSetter es(NULL, NULL, GetName());
+        EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
         if(clearCache) {
             s_backticks.clear();
@@ -1588,7 +1588,7 @@ wxString Project::GetCompileLineForCXXFile(const wxString& filenamePlaceholder, 
     commandLine << compilerExe << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o ";
 
     // Apply the environment
-    EnvSetter es(NULL, NULL, GetName());
+    EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
     // Clear the backticks cache
     s_backticks.clear();
@@ -1777,7 +1777,7 @@ wxArrayString Project::GetPreProcessors(bool clearCache)
     if(buildConf) {
 
         // Apply the environment
-        EnvSetter es(NULL, NULL, GetName());
+        EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
         if(clearCache) {
             s_backticks.clear();
@@ -1829,7 +1829,7 @@ wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool clearCache, bo
     if(buildConf && !buildConf->IsCustomBuild()) {
 
         // Apply the environment
-        EnvSetter es(NULL, NULL, GetName());
+        EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
         if(clearCache) {
             s_backticks.clear();

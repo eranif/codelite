@@ -114,7 +114,7 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in, bool applyEnviro
     return expandedValue;
 }
 
-void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &project)
+void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &project, const wxString &config)
 {
     // We lock the CS here and it will be released in UnApplyEnv
     // this is safe to call without Locker since the UnApplyEnv 
@@ -135,7 +135,7 @@ void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &pro
     ReadObject(wxT("Variables"), &vars);
 
     // get the active environment variables set
-    EnvMap variables = vars.GetVariables(wxEmptyString, true, project);
+    EnvMap variables = vars.GetVariables(wxEmptyString, true, project, config);
 
     // if we have an "override map" place all the entries from the override map
     // into the global map before applying the environment
@@ -246,7 +246,7 @@ wxArrayString EnvironmentConfig::GetActiveSetEnvNames(bool includeWorkspace, con
     
     wxArrayString envnames;
     // get the active environment variables set
-    EnvMap variables = vars.GetVariables(wxEmptyString, includeWorkspace, project);
+    EnvMap variables = vars.GetVariables(wxEmptyString, includeWorkspace, project, wxEmptyString);
     for(size_t i=0; i<variables.GetCount(); ++i) {
         wxString key, val;
         variables.Get(i, key, val);

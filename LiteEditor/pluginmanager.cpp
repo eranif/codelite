@@ -665,7 +665,7 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString& projectName,
                     // Expand the backticks into their value
                     wxArrayString outArr;
                     // Apply the environment before executing the command
-                    EnvSetter setter(EnvironmentConfig::Instance(), NULL, projectName);
+                    EnvSetter setter(EnvironmentConfig::Instance(), NULL, projectName, dependProjbldConf->GetName());
                     ProcUtils::SafeExecuteCommand(cmpOption, outArr);
                     wxString expandedValue;
                     for(size_t j = 0; j < outArr.size(); j++) {

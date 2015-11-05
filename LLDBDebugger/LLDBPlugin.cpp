@@ -348,7 +348,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
         }
 
         // Determine the executable to debug, working directory and arguments
-        EnvSetter env(NULL, NULL, pProject ? pProject->GetName() : wxString());
+        EnvSetter env(NULL, NULL, pProject ? pProject->GetName() : wxString(), bldConf->GetName());
         wxString exepath = bldConf->GetCommand();
         wxString args;
         wxString workingDirectory;

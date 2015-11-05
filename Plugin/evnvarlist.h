@@ -85,7 +85,7 @@ public:
 	 */
 	void   InsertVariable(const wxString &setName, const wxString &name, const wxString &value);
 
-	EnvMap GetVariables(const wxString &setName, bool includeWorkspaceEnvs, const wxString &projectName);
+	EnvMap GetVariables(const wxString &setName, bool includeWorkspaceEnvs, const wxString &projectName, const wxString &configName);
 	bool   IsSetExist  (const wxString &setName);
 
 public:

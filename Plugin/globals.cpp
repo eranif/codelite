@@ -1165,7 +1165,7 @@ wxString wxShellExec(const wxString& cmd, const wxString& projectName)
     WrapInShell(theCommand);
 
     wxArrayString dummy;
-    EnvSetter es(NULL, NULL, projectName);
+    EnvSetter es(NULL, NULL, projectName, wxEmptyString);
     theCommand = EnvironmentConfig::Instance()->ExpandVariables(theCommand, false);
     ProcUtils::SafeExecuteCommand(theCommand, dummy);
 

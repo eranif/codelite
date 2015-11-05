@@ -79,7 +79,6 @@ BitmapLoader::BitmapLoader()
         }
     }
 
-#if 0
     m_toolbarIconSize = EditorConfigST::Get()->GetOptions()->GetIconsSize();
     wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps.zip");
     if(fnNewZip.FileExists()) {
@@ -107,14 +106,13 @@ BitmapLoader::BitmapLoader()
             }
         }
     }
-#endif
 }
 
-const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name)
+const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize)
 {
     // try to load a new bitmap first
     wxString newName;
-    newName << m_toolbarIconSize << "-" << name.AfterLast('/');
+    newName << requestedSize << "-" << name.AfterLast('/');
     std::map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
     if(iter != m_toolbarsBitmaps.end()) {
         return iter->second;

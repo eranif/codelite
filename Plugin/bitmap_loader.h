@@ -86,7 +86,7 @@ protected:
     wxBitmap doLoadBitmap(const wxString& filepath);
 
 public:
-    const wxBitmap& LoadBitmap(const wxString& name);
+    const wxBitmap& LoadBitmap(const wxString& name, int requestedSize = 16);
 };
 
 #endif // BITMAP_LOADER_H

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="48"
+   height="48"
+   id="svg2474">
+  <defs
+     id="defs2476">
+    <linearGradient
+       id="linearGradient2264">
+      <stop
+         id="stop2266"
+         style="stop-color:#d7e866;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop2268"
+         style="stop-color:#8cab2a;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="18.037252"
+       y1="14.510567"
+       x2="18.037254"
+       y2="43.878166"
+       id="linearGradient3343"
+       xlink:href="#linearGradient2264"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.1475649,0,0,1.0200622,-3.9464861,0.2585135)" />
+    <linearGradient
+       id="linearGradient4222">
+      <stop
+         id="stop4224"
+         style="stop-color:white;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop4226"
+         style="stop-color:white;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="34.404026"
+       y1="14.660081"
+       x2="13.758683"
+       y2="46.874306"
+       id="linearGradient3339"
+       xlink:href="#linearGradient4222"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.9546996,0,0,0.9291748,0.8991824,2.1998054)" />
+  </defs>
+  <g
+     id="layer1">
+    <path
+       d="m 4.5035809,44.49642 0,-39.9928387 L 43.49642,24.500001 4.5035809,44.49642 z"
+       id="path3375"
+       style="fill:url(#linearGradient3343);fill-opacity:1;fill-rule:evenodd;stroke:#548820;stroke-width:1.00716186;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible" />
+    <path
+       d="M 5.4367615,42.691518 5.5,6.1685561 41.32399,24.500001 5.4367615,42.691518 z"
+       id="path2294"
+       style="opacity:0.41000001;fill:none;stroke:url(#linearGradient3339);stroke-width:1.00716186;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible" />
+  </g>
+</svg>

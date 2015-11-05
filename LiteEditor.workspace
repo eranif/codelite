@@ -144,7 +144,7 @@
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
@@ -324,7 +324,7 @@
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>

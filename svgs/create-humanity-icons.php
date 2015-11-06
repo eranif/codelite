@@ -61,6 +61,9 @@ $IN_FILES[] = new ImageFile("actions\\24\\go-jump-up.svg", "step_out.svg");
 $IN_FILES[] = new ImageFile("actions\\24\\go-down.svg", "next.svg");
 $IN_FILES[] = new ImageFile("actions\\24\\go-next.svg", "show_current_line.svg");
 
+// Others
+$IN_FILES[] = new ImageFile("actions\\24\\document-open-recent.svg", "history.svg");
+
 /** @var ImageFile */
 foreach($IN_FILES as $file) {
     $file->copy();

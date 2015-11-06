@@ -87,11 +87,11 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
 
     m_tb->AddTool(XRCID("stop_search"),
                   _("Stop current search"),
-                  loader.LoadBitmap(wxT("toolbars/16/build/stop")),
+                  loader.LoadBitmap("stop"),
                   _("Stop current search"));
     m_tb->AddTool(XRCID("recent_searches"),
                   _("Show Recent Searches"),
-                  loader.LoadBitmap(wxT("output-pane/16/history")),
+                  loader.LoadBitmap("history"),
                   _("Show Recent Searches"))->SetHasDropDown(true);
 
     Connect(XRCID("stop_search"),

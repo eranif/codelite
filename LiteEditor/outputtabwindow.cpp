@@ -170,7 +170,7 @@ void OutputTabWindow::CreateGUIControls()
 
     m_vSizer = new wxBoxSizer(wxVERTICAL);
 
-    // Create the default scintilla control
+// Create the default scintilla control
 #ifdef __WXGTK__
     m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
 #else
@@ -188,39 +188,28 @@ void OutputTabWindow::CreateGUIControls()
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
     // Create the toolbar
-    m_tb = new wxAuiToolBar(
-        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
+    m_tb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     m_tb->SetToolBitmapSize(wxSize(16, 16));
-    
+
     m_tb->AddTool(XRCID("hold_pane_open"),
                   _("Keep open"),
-                  bmpLoader->LoadBitmap(wxT("output-pane/16/ToolPin")),
+                  bmpLoader->LoadBitmap("ToolPin"),
                   _("Don't close this pane when an editor gets focus"),
                   wxITEM_CHECK);
 
     m_tb->AddTool(XRCID("scroll_on_output"),
                   _("Scroll on Output"),
-                  wxXmlResource::Get()->LoadBitmap(wxT("link_editor")),
+                  bmpLoader->LoadBitmap("link_editor"),
                   _("Scroll on Output"),
                   wxITEM_CHECK);
     m_tb->ToggleTool(XRCID("scroll_on_output"), m_outputScrolls);
 
-    m_tb->AddTool(XRCID("word_wrap_output"),
-                  _("Word Wrap"),
-                  wxXmlResource::Get()->LoadBitmap(wxT("word_wrap")),
-                  _("Word Wrap"),
-                  wxITEM_CHECK);
-
     m_tb->AddTool(
-        XRCID("clear_all_output"), _("Clear All"), bmpLoader->LoadBitmap(wxT("output-pane/16/clear")), _("Clear All"));
+        XRCID("word_wrap_output"), _("Word Wrap"), bmpLoader->LoadBitmap("word_wrap"), _("Word Wrap"), wxITEM_CHECK);
 
-    m_tb->AddTool(XRCID("collapse_all"),
-                  _("Fold All Results"),
-                  wxXmlResource::Get()->LoadBitmap(wxT("fold_airplane")),
-                  _("Fold All Results"));
-
-    m_tb->AddTool(
-        XRCID("repeat_output"), _("Repeat"), bmpLoader->LoadBitmap(wxT("output-pane/16/reload")), _("Repeat"));
+    m_tb->AddTool(XRCID("clear_all_output"), _("Clear All"), bmpLoader->LoadBitmap("clear"), _("Clear All"));
+    m_tb->AddTool(XRCID("collapse_all"), _("Fold All Results"), bmpLoader->LoadBitmap("fold"), _("Fold All Results"));
+    m_tb->AddTool(XRCID("repeat_output"), _("Repeat"), bmpLoader->LoadBitmap("debugger_restart"), _("Repeat"));
 
     m_tb->Realize();
 

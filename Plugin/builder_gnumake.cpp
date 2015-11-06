@@ -549,7 +549,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj,
     //----------------------------------------------------------
     EvnVarList vars;
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-    EnvMap varMap = vars.GetVariables(wxT(""), true, proj->GetName());
+    EnvMap varMap = vars.GetVariables(wxT(""), true, proj->GetName(), bldConf->GetName());
 
     text << wxT("##") << wxT("\n");
     text << wxT("## User defined environment variables") << wxT("\n");

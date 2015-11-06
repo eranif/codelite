@@ -57,7 +57,7 @@ class WXDLLIMPEXP_SDK EnvironmentConfig : public ConfigurationToolBase
     
 protected:
     wxString    DoExpandVariables(const wxString &in);
-    void        ApplyEnv(wxStringMap_t *overrideMap, const wxString &project);
+    void        ApplyEnv(wxStringMap_t *overrideMap, const wxString &project, const wxString &config);
     void        UnApplyEnv();
 
 public:
@@ -93,7 +93,7 @@ public:
         : m_env(EnvironmentConfig::Instance())
         , m_restoreOldValue(false) 
     {
-        m_env->ApplyEnv(om, wxEmptyString);
+        m_env->ApplyEnv(om, wxEmptyString, wxEmptyString);
     }
 
     EnvSetter(EnvironmentConfig *conf, wxStringMap_t *om = NULL) 
@@ -101,14 +101,14 @@ public:
         , m_restoreOldValue(false) 
     {
         wxUnusedVar(conf);
-        m_env->ApplyEnv(om, wxEmptyString);
+        m_env->ApplyEnv(om, wxEmptyString, wxEmptyString);
     }
-    EnvSetter(EnvironmentConfig *conf, wxStringMap_t *om, const wxString &project) 
+    EnvSetter(EnvironmentConfig *conf, wxStringMap_t *om, const wxString &project, const wxString &buildConfig) 
         : m_env(EnvironmentConfig::Instance())
         , m_restoreOldValue(false) 
     {
         wxUnusedVar(conf);
-        m_env->ApplyEnv(om, project);
+        m_env->ApplyEnv(om, project, buildConfig);
     }
     
     EnvSetter(const wxString &var, const wxString &value) 

@@ -230,7 +230,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
     // Fire it up
     EventNotifier::Get()->AddPendingEvent(event);
 
-    EnvSetter env(NULL, NULL, projectName);
+    EnvSetter env(NULL, NULL, projectName, bldConf->GetName());
     CL_DEBUG(wxString::Format(wxT("cmd:%s\n"), cmd.c_str()));
     if(!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this)) return;
 

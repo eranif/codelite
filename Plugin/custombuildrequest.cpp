@@ -218,7 +218,7 @@ void CustomBuildRequest::Process(IManager* manager)
     
     // Avoid Unicode chars coming from the compiler by setting LC_ALL to "C"
     om["LC_ALL"] = "C";
-    EnvSetter environment(env, &om, proj->GetName());
+    EnvSetter environment(env, &om, proj->GetName(), m_info.GetConfiguration());
 
     m_proc = CreateAsyncProcess(this, cmd);
     if(!m_proc) {

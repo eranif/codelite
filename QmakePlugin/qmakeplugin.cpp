@@ -597,7 +597,7 @@ void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
                            << generator.GetProFileName();
             wxStringMap_t om;
             om.insert(std::make_pair("QTDIR", qtdir));
-            EnvSetter envGuard(NULL, &om, project);
+            EnvSetter envGuard(NULL, &om, project, config);
             m_mgr->ClearOutputTab(kOutputTab_Build);
             m_mgr->AppendOutputTabText(kOutputTab_Build, wxString() << "-- " << qmake_exe_line << "\n");
             m_qmakeProcess =

@@ -151,7 +151,7 @@ void CleanRequest::Process(IManager* manager)
     }
 
     // apply environment settings
-    EnvSetter env(NULL, &om, proj->GetName());
+    EnvSetter env(NULL, &om, proj->GetName(), m_info.GetConfiguration());
     m_proc = CreateAsyncProcess(this, cmd);
     if(!m_proc) {
 

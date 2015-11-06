@@ -76,14 +76,14 @@ void EvnVarList::InsertVariable(const wxString& setName, const wxString& name, c
 
     DoGetSetVariablesStr(setName, actualSetName);
 
-    EnvMap set = GetVariables(actualSetName, false, wxT(""));
+    EnvMap set = GetVariables(actualSetName, false, wxEmptyString, wxEmptyString);
 	if ( !set.Contains(name) ) {
 		set.Put(name, value);
 	}
     m_envVarSets[actualSetName] = set.String();
 }
 
-EnvMap EvnVarList::GetVariables(const wxString& setName, bool includeWorkspaceEnvs, const wxString &projectName)
+EnvMap EvnVarList::GetVariables(const wxString& setName, bool includeWorkspaceEnvs, const wxString &projectName, const wxString &configName)
 {
     EnvMap   variables;
     wxString actualSetName;
@@ -97,7 +97,7 @@ EnvMap EvnVarList::GetVariables(const wxString& setName, bool includeWorkspaceEn
 
         if(projectName.IsEmpty() == false) {
             currentValueStr.Trim().Trim(false);
-            BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxT(""));
+            BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, configName);
             if(buildConf) {
                 currentValueStr << wxT("\n");
                 currentValueStr << buildConf->GetEnvvars();

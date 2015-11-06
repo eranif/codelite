@@ -196,7 +196,7 @@ void CompileRequest::Process(IManager* manager)
     // Avoid Unicode chars coming from the compiler by setting LC_ALL to "C"
     om["LC_ALL"] = "C";
     
-    EnvSetter envir(env, &om, proj->GetName());
+    EnvSetter envir(env, &om, proj->GetName(), m_info.GetConfiguration());
     m_proc = CreateAsyncProcess(this, cmd);
     if(!m_proc) {
         wxString message;

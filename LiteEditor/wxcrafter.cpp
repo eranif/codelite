@@ -54,7 +54,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     boxSizer43->Add(m_func, 0, wxALL|wxEXPAND, 5);
     
     SetName(wxT("NavBarControlBaseClass"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -89,23 +89,23 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     
     boxSizer47->Add(m_auibar48, 1, wxEXPAND, 5);
     
-    m_auibar48->AddTool(XRCID("stick_build_pane"), _("Keep pane open"), wxXmlResource::Get()->LoadBitmap(wxT("ToolPin")), wxNullBitmap, wxITEM_CHECK, _("Don't close this pane when an editor gets focus"), _("Don't close this pane when an editor gets focus"), NULL);
+    m_auibar48->AddTool(XRCID("stick_build_pane"), _("Keep pane open"), wxXmlResource::Get()->LoadBitmap(wxT("16-ToolPin")), wxNullBitmap, wxITEM_CHECK, _("Don't close this pane when an editor gets focus"), _("Don't close this pane when an editor gets focus"), NULL);
     
-    m_auibar48->AddTool(XRCID("build-auto-scroll"), _("Auto Scroll to Bottom"), wxXmlResource::Get()->LoadBitmap(wxT("auto-scroll")), wxNullBitmap, wxITEM_CHECK, _("When checked, make sure that the last line added\nis always visible"), _("When checked, make sure that the last line added\nis always visible"), NULL);
+    m_auibar48->AddTool(XRCID("build-auto-scroll"), _("Auto Scroll to Bottom"), wxXmlResource::Get()->LoadBitmap(wxT("16-link_editor")), wxNullBitmap, wxITEM_CHECK, _("When checked, make sure that the last line added\nis always visible"), _("When checked, make sure that the last line added\nis always visible"), NULL);
     
     m_auibar48->AddSeparator();
     
-    m_auibar48->AddTool(wxID_CLEAR, _("Clear Build Output"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Build Output"), _("Clear Build Output"), NULL);
+    m_auibar48->AddTool(wxID_CLEAR, _("Clear Build Output"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Build Output"), _("Clear Build Output"), NULL);
     
-    m_auibar48->AddTool(wxID_SAVEAS, _("Save Build Log..."), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), wxNullBitmap, wxITEM_NORMAL, _("Save Build Log..."), _("Save Build Log..."), NULL);
+    m_auibar48->AddTool(wxID_SAVEAS, _("Save Build Log..."), wxXmlResource::Get()->LoadBitmap(wxT("16-file_save")), wxNullBitmap, wxITEM_NORMAL, _("Save Build Log..."), _("Save Build Log..."), NULL);
     
-    m_auibar48->AddTool(wxID_COPY, _("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("edit-copy")), wxNullBitmap, wxITEM_NORMAL, _("Copy Build Output to Clipboard"), _("Copy Build Output to Clipboard"), NULL);
+    m_auibar48->AddTool(wxID_COPY, _("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("16-copy")), wxNullBitmap, wxITEM_NORMAL, _("Copy Build Output to Clipboard"), _("Copy Build Output to Clipboard"), NULL);
     
-    m_auibar48->AddTool(wxID_PASTE, _("Paste"), wxXmlResource::Get()->LoadBitmap(wxT("edit-paste")), wxNullBitmap, wxITEM_NORMAL, _("Paste Build Output into an Empty Editor"), _("Paste Build Output into an Empty Editor"), NULL);
+    m_auibar48->AddTool(wxID_PASTE, _("Paste"), wxXmlResource::Get()->LoadBitmap(wxT("16-paste")), wxNullBitmap, wxITEM_NORMAL, _("Paste Build Output into an Empty Editor"), _("Paste Build Output into an Empty Editor"), NULL);
     m_auibar48->Realize();
     
     SetName(wxT("BuildTabTopPanelBaseClass"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -234,19 +234,19 @@ NewProjImgList::NewProjImgList()
     {
         wxBitmap bmp;
         wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("tabClose"));
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("cmake"));
         icn.CopyFromBitmap( bmp );
         this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("tabClose"), bmp ) );
+        m_bitmaps.insert( std::make_pair(wxT("cmake"), bmp ) );
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("cmake"));
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("tabClose"));
         icn.CopyFromBitmap( bmp );
         this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("cmake"), bmp ) );
+        m_bitmaps.insert( std::make_pair(wxT("tabClose"), bmp ) );
     }
     
     {
@@ -339,7 +339,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     boxSizer119->Add(m_button123, 0, wxALL, 5);
     
     SetName(wxT("AddFunctionsImplBaseDlg"));
-    SetSizeHints(500,300);
+    SetSize(500,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -432,7 +432,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     boxSizer195->Add(0, 0, 0, wxALL|wxEXPAND, 5);
     
     SetName(wxT("WelcomePageBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -482,7 +482,7 @@ FileExplorerBase::FileExplorerBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer262->Add(m_genericDirCtrl, 1, wxALL|wxEXPAND, 2);
     
     SetName(wxT("FileExplorerBase"));
-    SetSizeHints(500,300);
+    SetSize(500,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -531,15 +531,15 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     boxSizer505->Add(m_auibar, 0, wxEXPAND, 5);
     
-    m_auibar->AddTool(ID_TOOL_COLLAPSE_ALL, _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
+    m_auibar->AddTool(ID_TOOL_COLLAPSE_ALL, _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("16-fold")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
     
-    m_auibar->AddTool(ID_TOOL_GOTO_ACTIVE_PROJECT, _("Goto Active Project"), wxXmlResource::Get()->LoadBitmap(wxT("home")), wxNullBitmap, wxITEM_NORMAL, _("Goto Active Project"), _("Goto Active Project"), NULL);
+    m_auibar->AddTool(ID_TOOL_GOTO_ACTIVE_PROJECT, _("Goto Active Project"), wxXmlResource::Get()->LoadBitmap(wxT("16-home")), wxNullBitmap, wxITEM_NORMAL, _("Goto Active Project"), _("Goto Active Project"), NULL);
     
-    m_auibar->AddTool(ID_TOOL_ACTIVE_PROJECT_SETTINGS, _("Project Settings"), wxXmlResource::Get()->LoadBitmap(wxT("gear")), wxNullBitmap, wxITEM_NORMAL, _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), NULL);
+    m_auibar->AddTool(ID_TOOL_ACTIVE_PROJECT_SETTINGS, _("Project Settings"), wxXmlResource::Get()->LoadBitmap(wxT("16-cog")), wxNullBitmap, wxITEM_NORMAL, _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), NULL);
     
     m_auibar->AddStretchSpacer(1);
     
-    m_auibar->AddTool(ID_TOOL_LINK_EDITOR, _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
+    m_auibar->AddTool(ID_TOOL_LINK_EDITOR, _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("16-link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
     m_auibar->Realize();
     
     m_splitter = new wxSplitterWindow(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
@@ -577,7 +577,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer505->Add(m_fileView, 1, wxALL|wxEXPAND, 2);
     
     SetName(wxT("WorkspaceTabBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -637,23 +637,23 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
     m_toolbar = this->CreateToolBar(wxTB_NOALIGN|wxTB_FLAT, wxID_ANY);
     m_toolbar->SetToolBitmapSize(wxSize(24,24));
     
-    m_toolbar->AddTool(XRCID("save_file"), _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("document-save-24")), wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
+    m_toolbar->AddTool(XRCID("save_file"), _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("24-file_save")), wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
     
-    m_toolbar->AddTool(wxID_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("document-close-24")), wxNullBitmap, wxITEM_NORMAL, _("Close"), _("Close"), NULL);
+    m_toolbar->AddTool(wxID_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("24-file_close")), wxNullBitmap, wxITEM_NORMAL, _("Close"), _("Close"), NULL);
     
-    m_toolbar->AddTool(XRCID("refresh_file"), _("Reload File"), wxXmlResource::Get()->LoadBitmap(wxT("document-revert-24")), wxNullBitmap, wxITEM_NORMAL, _("Reload File"), _("Reload File"), NULL);
+    m_toolbar->AddTool(XRCID("refresh_file"), _("Reload File"), wxXmlResource::Get()->LoadBitmap(wxT("24-file_reload")), wxNullBitmap, wxITEM_NORMAL, _("Reload File"), _("Reload File"), NULL);
     
-    m_toolbar->AddTool(wxID_FIND, _("Find"), wxXmlResource::Get()->LoadBitmap(wxT("edit-find-24")), wxNullBitmap, wxITEM_NORMAL, _("Find"), _("Find"), NULL);
+    m_toolbar->AddTool(wxID_FIND, _("Find"), wxXmlResource::Get()->LoadBitmap(wxT("24-find")), wxNullBitmap, wxITEM_NORMAL, _("Find"), _("Find"), NULL);
     
-    m_toolbar->AddTool(wxID_UNDO, _("Undo"), wxXmlResource::Get()->LoadBitmap(wxT("edit-undo-24")), wxNullBitmap, wxITEM_NORMAL, _("Undo"), wxT(""), NULL);
+    m_toolbar->AddTool(wxID_UNDO, _("Undo"), wxXmlResource::Get()->LoadBitmap(wxT("24-undo")), wxNullBitmap, wxITEM_NORMAL, _("Undo"), wxT(""), NULL);
     
-    m_toolbar->AddTool(wxID_REDO, _("Redo"), wxXmlResource::Get()->LoadBitmap(wxT("edit-redo-24")), wxNullBitmap, wxITEM_NORMAL, _("Redo"), wxT(""), NULL);
+    m_toolbar->AddTool(wxID_REDO, _("Redo"), wxXmlResource::Get()->LoadBitmap(wxT("24-redo")), wxNullBitmap, wxITEM_NORMAL, _("Redo"), wxT(""), NULL);
     
-    m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark-24")), wxNullBitmap, wxITEM_DROPDOWN, _("Toggle Bookmark"), _("Toggle Bookmark"), NULL);
+    m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("24-bookmark")), wxNullBitmap, wxITEM_DROPDOWN, _("Toggle Bookmark"), _("Toggle Bookmark"), NULL);
     m_toolbar->Realize();
     
     SetName(wxT("EditorFrameBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -770,7 +770,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer30->Add(m_textCtrlProjectPath, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_buttonBrowse = new wxButton(m_wizardPageDetails, wxID_ANY, _("Browse..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_buttonBrowse = new wxButton(m_wizardPageDetails, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
     m_buttonBrowse->SetToolTip(_("Browse for folder"));
     
     boxSizer30->Add(m_buttonBrowse, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -833,7 +833,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer412->Add(m_choiceDebugger, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     SetName(wxT("NewProjectWizardBase"));
-    SetSizeHints(500,400);
+    SetSize(500,400);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -904,9 +904,9 @@ ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wx
     m_checkBoxShowErrors->SetToolTip(_("Display Clang errors as text annotations inside the editor (i.e. as an inline messages)"));
     m_auibar->AddControl(m_checkBoxShowErrors);
     
-    m_auibar->AddTool(ID_TOOL_CLEAR_ALL, _("Clear Clang Cache"), wxXmlResource::Get()->LoadBitmap(wxT("clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear Clang Cache"), _("Clear Clang Cache"), NULL);
+    m_auibar->AddTool(ID_TOOL_CLEAR_ALL, _("Clear Clang Cache"), wxXmlResource::Get()->LoadBitmap(wxT("16-clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear Clang Cache"), _("Clear Clang Cache"), NULL);
     
-    m_auibar->AddTool(ID_TOOL_CLEAR_LOG, _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
+    m_auibar->AddTool(ID_TOOL_CLEAR_LOG, _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
     m_auibar->Realize();
     
     m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
@@ -948,7 +948,7 @@ ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer424->Add(m_stc, 1, wxALL|wxEXPAND, 2);
     
     SetName(wxT("ClangOutputTabBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -974,48 +974,6 @@ ClangOutputTabBase::~ClangOutputTabBase()
     this->Disconnect(ID_TOOL_CLEAR_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearCacheUI), NULL, this);
     this->Disconnect(ID_TOOL_CLEAR_LOG, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearText), NULL, this);
     this->Disconnect(ID_TOOL_CLEAR_LOG, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearTextUI), NULL, this);
-    
-}
-
-FileExplorerTabToolBarBase::FileExplorerTabToolBarBase(wxWindow *parent, wxWindowID id, const wxPoint &position, const wxSize &size, long style)
-    : wxAuiToolBar(parent, id, position, size, style)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxC3F25InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    SetToolBitmapSize(wxSize(16,16));
-    
-    this->AddTool(XRCID("collapse_all"), _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
-    
-    this->AddTool(XRCID("go_home"), _("Go Home"), wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxNullBitmap, wxITEM_NORMAL, _("Go Home"), _("Go Home"), NULL);
-    
-    this->AddTool(ID_TOOL_EXPLORER_BOOKMARKS, _("Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark")), wxNullBitmap, wxITEM_NORMAL, _("Bookmark Selected Folder"), _("Bookmark Selected Folder"), NULL);
-    wxAuiToolBarItem* m_toolbarItemBookmark = this->FindToolByIndex(this->GetToolCount()-1);
-    if (m_toolbarItemBookmark) {
-        m_toolbarItemBookmark->SetHasDropDown(true);
-    }
-    
-    this->AddTool(ID_TOOL_GOTO_FOLDER, _("GoTo"), wxXmlResource::Get()->LoadBitmap(wxT("goto")), wxNullBitmap, wxITEM_NORMAL, _("Goto Folder"), _("Goto Folder"), NULL);
-    
-    this->AddTool(ID_TOOL_FIND_IN_FILES, _("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find-in-files")), wxNullBitmap, wxITEM_NORMAL, _("Find In Files"), _("Find In Files"), NULL);
-    
-    this->AddStretchSpacer(1);
-    
-    this->AddTool(XRCID("link_editor"), _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
-    this->Realize();
-    
-    SetName(wxT("FileExplorerTabToolBarBase"));
-    // Connect events
-    this->Connect(ID_TOOL_FIND_IN_FILES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileExplorerTabToolBarBase::OnFindInFilesUI), NULL, this);
-    
-}
-
-FileExplorerTabToolBarBase::~FileExplorerTabToolBarBase()
-{
-    this->Disconnect(ID_TOOL_FIND_IN_FILES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileExplorerTabToolBarBase::OnFindInFilesUI), NULL, this);
     
 }
 
@@ -1065,7 +1023,7 @@ OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     m_stdBtnSizer473->Realize();
     
     SetName(wxT("OpenFolderDlgBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -1119,7 +1077,7 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
     
     SetBackgroundColour(wxColour(wxT("rgb(220,220,220)")));
     SetName(wxT("DefaultWorkspacePageBase"));
-    SetSizeHints(500,300);
+    SetSize(500,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -1168,7 +1126,7 @@ SelectDropTargetBaseDlg::SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id
     m_stdBtnSizer543->Realize();
     
     SetName(wxT("SelectDropTargetBaseDlg"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -1197,56 +1155,4 @@ SelectDropTargetBaseDlg::~SelectDropTargetBaseDlg()
     m_button547->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SelectDropTargetBaseDlg::OnOKUI), NULL, this);
     m_button547->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SelectDropTargetBaseDlg::OnOK), NULL, this);
     
-}
-
-LiteEditorHiResImages::LiteEditorHiResImages()
-    : wxImageList(16, 16, true)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxC3F25InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("collapse@2x"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("collapse@2x"), bmp ) );
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("home@2x"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("home@2x"), bmp ) );
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gear@2x"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gear@2x"), bmp ) );
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("link@2x"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("link@2x"), bmp ) );
-    }
-    
-}
-
-LiteEditorHiResImages::~LiteEditorHiResImages()
-{
 }

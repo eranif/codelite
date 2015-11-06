@@ -9,6 +9,7 @@
   "m_outputFileName": "wxcrafter",
   "m_firstWindowId": 8000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -744,7 +745,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/output-pane/16/ToolPin.png"
+           "m_path": "../bitmaps/16-ToolPin.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -799,7 +800,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/output-pane/16/auto-scroll.png"
+           "m_path": "../bitmaps/16-link_editor.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -881,7 +882,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons-fresh-farm/output-pane/16/clear.png"
+           "m_path": "../bitmaps/16-clear.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -943,7 +944,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons-fresh-farm/toolbars/16/standard/document-save.png"
+           "m_path": "../bitmaps/16-file_save.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -1005,7 +1006,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/toolbars/16/standard/edit-copy.png"
+           "m_path": "../bitmaps/16-copy.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -1067,7 +1068,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/toolbars/16/standard/edit-paste.png"
+           "m_path": "../bitmaps/16-paste.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -1150,7 +1151,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "res/gear.png"
+       "m_path": "../bitmaps/16-cog.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1169,7 +1170,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "res/qt.png"
+       "m_path": "../bitmaps/16-qt.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1188,7 +1189,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "res/wx.png"
+       "m_path": "../bitmaps/16-blocks.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1207,7 +1208,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "res/gtk.png"
+       "m_path": "../bitmaps/16-gtk.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1226,7 +1227,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "res/console.png"
+       "m_path": "../bitmaps/16-console.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1245,7 +1246,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "res/archive.png"
+       "m_path": "../bitmaps/16-archive.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1264,7 +1265,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "res/dll.png"
+       "m_path": "../bitmaps/16-dll.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1283,7 +1284,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "res/makefile.png"
+       "m_path": "../bitmaps/16-binary-file.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1302,26 +1303,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../wxcrafter/resources/wxc-logo-16.png"
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4482,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "tabClose"
-      }, {
-       "type": "filePicker",
-       "m_label": "Bitmap File:",
-       "m_path": "../icons/close.png"
+       "m_path": "../bitmaps/16-blocks.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1340,7 +1322,26 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../CMakePlugin/cmake-16.png"
+       "m_path": "../bitmaps/16-cmake.png"
+      }],
+     "m_events": [],
+     "m_children": []
+    }, {
+     "m_type": 4482,
+     "proportion": 0,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": [],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Name:",
+       "m_value": "tabClose"
+      }, {
+       "type": "filePicker",
+       "m_label": "Bitmap File:",
+       "m_path": "../bitmaps/16-file_close.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1359,7 +1360,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "res/clang.png"
+       "m_path": "../bitmaps/16-clang.png"
       }],
      "m_events": [],
      "m_children": []
@@ -1378,7 +1379,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../codelite-icons/toolbars/16/search/find-in-files.png"
+       "m_path": "../bitmaps/16-find_in_files.png"
       }],
      "m_events": [],
      "m_children": []
@@ -3885,7 +3886,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/collapse.png"
+                 "m_path": "../bitmaps/16-fold.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -3947,7 +3948,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/home.png"
+                 "m_path": "../bitmaps/16-home.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -4009,7 +4010,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/gear.png"
+                 "m_path": "../bitmaps/16-cog.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -4090,7 +4091,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/link.png"
+                 "m_path": "../bitmaps/16-link_editor.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -4958,7 +4959,7 @@
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
-         "m_path": "DetachedEditorImages/document-save-24.png"
+         "m_path": "../bitmaps/24-file_save.png"
         }, {
          "type": "filePicker",
          "m_label": "Disabled-Bitmap File",
@@ -5006,7 +5007,7 @@
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
-         "m_path": "DetachedEditorImages/document-close-24.png"
+         "m_path": "../bitmaps/24-file_close.png"
         }, {
          "type": "filePicker",
          "m_label": "Disabled-Bitmap File",
@@ -5068,7 +5069,7 @@
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
-         "m_path": "DetachedEditorImages/document-revert-24.png"
+         "m_path": "../bitmaps/24-file_reload.png"
         }, {
          "type": "filePicker",
          "m_label": "Disabled-Bitmap File",
@@ -5116,7 +5117,7 @@
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
-         "m_path": "DetachedEditorImages/edit-find-24.png"
+         "m_path": "../bitmaps/24-find.png"
         }, {
          "type": "filePicker",
          "m_label": "Disabled-Bitmap File",
@@ -5178,7 +5179,7 @@
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
-         "m_path": "DetachedEditorImages/edit-undo-24.png"
+         "m_path": "../bitmaps/24-undo.png"
         }, {
          "type": "filePicker",
          "m_label": "Disabled-Bitmap File",
@@ -5226,7 +5227,7 @@
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
-         "m_path": "DetachedEditorImages/edit-redo-24.png"
+         "m_path": "../bitmaps/24-redo.png"
         }, {
          "type": "filePicker",
          "m_label": "Disabled-Bitmap File",
@@ -5274,7 +5275,7 @@
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
-         "m_path": "DetachedEditorImages/bookmark-24.png"
+         "m_path": "../bitmaps/24-bookmark.png"
         }, {
          "type": "filePicker",
          "m_label": "Disabled-Bitmap File",
@@ -6400,7 +6401,7 @@
               }, {
                "type": "string",
                "m_label": "Label:",
-               "m_value": "Browse..."
+               "m_value": "..."
               }, {
                "type": "bool",
                "m_label": "Default Button",
@@ -7518,7 +7519,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/toolbars/16/build/clean.png"
+           "m_path": "../bitmaps/16-clean.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -7580,7 +7581,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/output-pane/16/clear.png"
+           "m_path": "../bitmaps/16-clear.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -7732,371 +7733,6 @@
        "m_events": [],
        "m_children": []
       }]
-    }]
-  }, {
-   "m_type": 4518,
-   "proportion": 0,
-   "border": 5,
-   "gbSpan": "1,1",
-   "gbPosition": "0,0",
-   "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
-   "m_sizerFlags": [],
-   "m_properties": [{
-     "type": "winid",
-     "m_label": "ID:",
-     "m_winid": "wxID_ANY"
-    }, {
-     "type": "string",
-     "m_label": "Name:",
-     "m_value": "FileExplorerTabToolBarBase"
-    }, {
-     "type": "string",
-     "m_label": "Size:",
-     "m_value": "-1,-1"
-    }, {
-     "type": "string",
-     "m_label": "Tooltip:",
-     "m_value": ""
-    }, {
-     "type": "string",
-     "m_label": "Inherited Class",
-     "m_value": "FileExplorerTabToolBar"
-    }, {
-     "type": "string",
-     "m_label": "File:",
-     "m_value": "FileExplorerTabToolBar"
-    }, {
-     "type": "string",
-     "m_label": "Class Decorator",
-     "m_value": ""
-    }, {
-     "type": "virtualFolderPicker",
-     "m_label": "Virtual Folder:",
-     "m_path": "CodeLiteIDE:Docking Windows"
-    }, {
-     "type": "string",
-     "m_label": "Bitmap Size:",
-     "m_value": "16,16"
-    }, {
-     "type": "string",
-     "m_label": "Margins:",
-     "m_value": "-1,-1"
-    }],
-   "m_events": [],
-   "m_children": [{
-     "m_type": 4462,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "winid",
-       "m_label": "ID:",
-       "m_winid": "XRCID(\"collapse_all\")"
-      }, {
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "m_toolbarItemCollaps"
-      }, {
-       "type": "string",
-       "m_label": "Label:",
-       "m_value": "Collapse All"
-      }, {
-       "type": "multi-string",
-       "m_label": "Tooltip:",
-       "m_value": "Collapse All"
-      }, {
-       "type": "string",
-       "m_label": "Help String:",
-       "m_value": "Collapse All"
-      }, {
-       "type": "bitmapPicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/collapse.png"
-      }, {
-       "type": "filePicker",
-       "m_label": "Disabled-Bitmap File",
-       "m_path": ""
-      }, {
-       "type": "choice",
-       "m_label": "Kind:",
-       "m_selection": 0,
-       "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
-      }, {
-       "type": "bool",
-       "m_label": "Construct the Dropdown Menu:",
-       "m_value": true
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4462,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "winid",
-       "m_label": "ID:",
-       "m_winid": "XRCID(\"go_home\")"
-      }, {
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "m_toolbarItemGoHome"
-      }, {
-       "type": "string",
-       "m_label": "Label:",
-       "m_value": "Go Home"
-      }, {
-       "type": "multi-string",
-       "m_label": "Tooltip:",
-       "m_value": "Go Home"
-      }, {
-       "type": "string",
-       "m_label": "Help String:",
-       "m_value": "Go Home"
-      }, {
-       "type": "bitmapPicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/gohome.png"
-      }, {
-       "type": "filePicker",
-       "m_label": "Disabled-Bitmap File",
-       "m_path": ""
-      }, {
-       "type": "choice",
-       "m_label": "Kind:",
-       "m_selection": 0,
-       "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
-      }, {
-       "type": "bool",
-       "m_label": "Construct the Dropdown Menu:",
-       "m_value": true
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4462,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "winid",
-       "m_label": "ID:",
-       "m_winid": "ID_TOOL_EXPLORER_BOOKMARKS"
-      }, {
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "m_toolbarItemBookmark"
-      }, {
-       "type": "string",
-       "m_label": "Label:",
-       "m_value": "Bookmark"
-      }, {
-       "type": "multi-string",
-       "m_label": "Tooltip:",
-       "m_value": "Bookmark Selected Folder"
-      }, {
-       "type": "string",
-       "m_label": "Help String:",
-       "m_value": "Bookmark Selected Folder"
-      }, {
-       "type": "bitmapPicker",
-       "m_label": "Bitmap File:",
-       "m_path": "../codelite-icons/toolbars/16/standard/bookmark.png"
-      }, {
-       "type": "filePicker",
-       "m_label": "Disabled-Bitmap File",
-       "m_path": ""
-      }, {
-       "type": "choice",
-       "m_label": "Kind:",
-       "m_selection": 4,
-       "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
-      }, {
-       "type": "bool",
-       "m_label": "Construct the Dropdown Menu:",
-       "m_value": false
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4462,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "winid",
-       "m_label": "ID:",
-       "m_winid": "ID_TOOL_GOTO_FOLDER"
-      }, {
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "m_toolbarItem467"
-      }, {
-       "type": "string",
-       "m_label": "Label:",
-       "m_value": "GoTo"
-      }, {
-       "type": "multi-string",
-       "m_label": "Tooltip:",
-       "m_value": "Goto Folder"
-      }, {
-       "type": "string",
-       "m_label": "Help String:",
-       "m_value": "Goto Folder"
-      }, {
-       "type": "bitmapPicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/goto.png"
-      }, {
-       "type": "filePicker",
-       "m_label": "Disabled-Bitmap File",
-       "m_path": ""
-      }, {
-       "type": "choice",
-       "m_label": "Kind:",
-       "m_selection": 0,
-       "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
-      }, {
-       "type": "bool",
-       "m_label": "Construct the Dropdown Menu:",
-       "m_value": true
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4462,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "winid",
-       "m_label": "ID:",
-       "m_winid": "ID_TOOL_FIND_IN_FILES"
-      }, {
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "m_toolbarItemFindInFiles"
-      }, {
-       "type": "string",
-       "m_label": "Label:",
-       "m_value": "Find In Files"
-      }, {
-       "type": "multi-string",
-       "m_label": "Tooltip:",
-       "m_value": "Find In Files"
-      }, {
-       "type": "string",
-       "m_label": "Help String:",
-       "m_value": "Find In Files"
-      }, {
-       "type": "bitmapPicker",
-       "m_label": "Bitmap File:",
-       "m_path": "../codelite-icons/toolbars/16/search/find-in-files.png"
-      }, {
-       "type": "filePicker",
-       "m_label": "Disabled-Bitmap File",
-       "m_path": ""
-      }, {
-       "type": "choice",
-       "m_label": "Kind:",
-       "m_selection": 0,
-       "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
-      }, {
-       "type": "bool",
-       "m_label": "Construct the Dropdown Menu:",
-       "m_value": true
-      }],
-     "m_events": [{
-       "m_eventName": "wxEVT_UPDATE_UI",
-       "m_eventClass": "wxUpdateUIEvent",
-       "m_eventHandler": "wxUpdateUIEventHandler",
-       "m_functionNameAndSignature": "OnFindInFilesUI(wxUpdateUIEvent& event)",
-       "m_description": "Process a wxEVT_UPDATE_UI event",
-       "m_noBody": false
-      }],
-     "m_children": []
-    }, {
-     "m_type": 4516,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "m_auitbarStretchSpace497"
-      }, {
-       "type": "string",
-       "m_label": "Proportion:",
-       "m_value": "1"
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4462,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "winid",
-       "m_label": "ID:",
-       "m_winid": "XRCID(\"link_editor\")"
-      }, {
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "m_toolbarItemLinkEditor"
-      }, {
-       "type": "string",
-       "m_label": "Label:",
-       "m_value": "Link Editor"
-      }, {
-       "type": "multi-string",
-       "m_label": "Tooltip:",
-       "m_value": "Link Editor"
-      }, {
-       "type": "string",
-       "m_label": "Help String:",
-       "m_value": "Link Editor"
-      }, {
-       "type": "bitmapPicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/link_editor.png"
-      }, {
-       "type": "filePicker",
-       "m_label": "Disabled-Bitmap File",
-       "m_path": ""
-      }, {
-       "type": "choice",
-       "m_label": "Kind:",
-       "m_selection": 1,
-       "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
-      }, {
-       "type": "bool",
-       "m_label": "Construct the Dropdown Menu:",
-       "m_value": true
-      }],
-     "m_events": [],
-     "m_children": []
     }]
   }, {
    "m_type": 4421,
@@ -9350,117 +8986,6 @@
          "m_children": []
         }]
       }]
-    }]
-  }, {
-   "m_type": 4481,
-   "proportion": 0,
-   "border": 5,
-   "gbSpan": "1,1",
-   "gbPosition": "0,0",
-   "m_styles": [],
-   "m_sizerFlags": [],
-   "m_properties": [{
-     "type": "string",
-     "m_label": "Name:",
-     "m_value": "LiteEditorHiResImages"
-    }, {
-     "type": "string",
-     "m_label": "File:",
-     "m_value": ""
-    }, {
-     "type": "virtualFolderPicker",
-     "m_label": "Virtual Folder:",
-     "m_path": "CodeLiteIDE:wxcrafter"
-    }, {
-     "type": "string",
-     "m_label": "Class Decorator",
-     "m_value": ""
-    }, {
-     "type": "integer",
-     "m_label": "Bitmap Size:",
-     "m_value": 16
-    }, {
-     "type": "bool",
-     "m_label": "Bitmap Mask",
-     "m_value": true
-    }],
-   "m_events": [],
-   "m_children": [{
-     "m_type": 4482,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "collapse@2x"
-      }, {
-       "type": "filePicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/collapse@2x.png"
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4482,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "home@2x"
-      }, {
-       "type": "filePicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/home@2x.png"
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4482,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "gear@2x"
-      }, {
-       "type": "filePicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/gear@2x.png"
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4482,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "link@2x"
-      }, {
-       "type": "filePicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/link@2x.png"
-      }],
-     "m_events": [],
-     "m_children": []
     }]
   }]
 }

@@ -37,7 +37,6 @@
 #include "frame.h"
 #include "FileExplorerTab.h"
 #include "file_logger.h"
-#include "FileExplorerTabToolBar.h"
 #include "cl_config.h"
 #include "OpenFolderDlg.h"
 #include "globals.h"

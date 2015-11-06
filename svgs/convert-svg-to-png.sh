@@ -3,7 +3,10 @@
 ## Convert SVG files into PNG 
 ## A CodeLite script
 
+
 files=`ls *.svg`
+rm -f ../bitmaps/*.png
+
 mkdir -p png
 for file in $files
 do

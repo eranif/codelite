@@ -63,6 +63,14 @@ $IN_FILES[] = new ImageFile("actions\\24\\go-next.svg", "show_current_line.svg")
 
 // Others
 $IN_FILES[] = new ImageFile("actions\\24\\document-open-recent.svg", "history.svg");
+$IN_FILES[] = new ImageFile("actions\\24\\document-properties.svg", "cog.svg");
+$IN_FILES[] = new ImageFile("actions\\24\\go-home.svg", "home.svg");
+$IN_FILES[] = new ImageFile("places\\24\\folder-remote.svg", "remote-folder.svg");
+$IN_FILES[] = new ImageFile("mimes\\16\\package-x-generic.svg", "archive.svg");
+$IN_FILES[] = new ImageFile("actions\\24\\system-run.svg", "executable.svg");
+$IN_FILES[] = new ImageFile("actions\\24\\system-run.svg", "dll.svg");
+$IN_FILES[] = new ImageFile("apps\\24\\utilities-terminal.svg", "console.svg");
+$IN_FILES[] = new ImageFile("mimes\\24\\multipart-encrypted.svg", "binary-file.svg");
 
 /** @var ImageFile */
 foreach($IN_FILES as $file) {

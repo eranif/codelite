@@ -467,7 +467,7 @@ void Subversion2::EnsureVisible()
 
 void Subversion2::DoInitialize()
 {
-    m_svnBitmap = GetManager()->GetStdIcons()->LoadBitmap(wxT("subversion/16/svn"));
+    m_svnBitmap = GetManager()->GetStdIcons()->LoadBitmap(wxT("subversion"));
 
     // create tab (possibly detached)
     Notebook* book = m_mgr->GetOutputPaneNotebook();

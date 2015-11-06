@@ -42,7 +42,8 @@ $IN_FILES[] = new ImageFile("actions\\24\\preview-file.svg", "find.svg");
 $IN_FILES[] = new ImageFile("actions\\24\\gtk-edit.svg", "find_and_replace.svg");
 $IN_FILES[] = new ImageFile("places\\24\\folder-saved-search.svg", "find_in_files.svg");
 $IN_FILES[] = new ImageFile("places\\24\\folder-documents.svg", "open_resource.svg");
-$IN_FILES[] = new ImageFile("apps\\24\\menu-editor.svg", "mark_word.svg");
+$IN_FILES[] = new ImageFile("categories\\24\\applications-graphics.svg", "mark_word.svg");
+
 
 // Build
 $IN_FILES[] = new ImageFile("mimes\\24\\text-x-install.svg", "build.svg");
@@ -71,6 +72,21 @@ $IN_FILES[] = new ImageFile("actions\\24\\system-run.svg", "executable.svg");
 $IN_FILES[] = new ImageFile("actions\\24\\system-run.svg", "dll.svg");
 $IN_FILES[] = new ImageFile("apps\\24\\utilities-terminal.svg", "console.svg");
 $IN_FILES[] = new ImageFile("mimes\\24\\multipart-encrypted.svg", "binary-file.svg");
+$IN_FILES[] = new ImageFile("apps\\24\\logviewer.svg", "log.svg");
+$IN_FILES[] = new ImageFile("apps\\24\\evolution-tasks.svg", "tasks.svg");
+$IN_FILES[] = new ImageFile("apps\\24\\gnome-session-switch.svg", "diff.svg");
+$IN_FILES[] = new ImageFile("status\\24\\locked.svg", "lock.svg");
+$IN_FILES[] = new ImageFile("actions\\24\\help-contents.svg", "help.svg");
+$IN_FILES[] = new ImageFile("actions\\24\\gtk-info.svg", "info.svg");
+$IN_FILES[] = new ImageFile("actions\\24\\dialog-apply.svg", "ok.svg");
+$IN_FILES[] = new ImageFile("actions\\24\\list-add.svg", "plus.svg");
+$IN_FILES[] = new ImageFile("actions\\24\\list-remove.svg", "minus.svg");
+$IN_FILES[] = new ImageFile("categories\\24\\applications-engineering.svg", "tools.svg");
+$IN_FILES[] = new ImageFile("status\\24\\network-offline.svg", "disconnected.svg");
+$IN_FILES[] = new ImageFile("status\\24\\network-transmit-receive.svg", "connected.svg");
+
+// Mime type
+$IN_FILES[] = new ImageFile("places\\24\\folder.svg", "folder.svg");
 
 /** @var ImageFile */
 foreach($IN_FILES as $file) {

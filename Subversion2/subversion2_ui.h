@@ -94,7 +94,7 @@ public:
     wxTextCtrl* GetTextCtrlComment() { return m_textCtrlComment; }
     wxButton* GetButton4() { return m_button4; }
     wxButton* GetButton5() { return m_button5; }
-    SvnCopyDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create Svn Tag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(575,315), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SvnCopyDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create Svn Tag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SvnCopyDialogBase();
 };
 

@@ -9,6 +9,7 @@
   "m_outputFileName": "sftp_ui",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -103,11 +104,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "ssh-16.png"
+     "m_path": "../bitmaps/16-remote-folder.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": "ssh-32.png"
+     "m_path": "../bitmaps/16-remote-folder@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -990,11 +991,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "ssh-16.png"
+     "m_path": "../bitmaps/16-remote-folder.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": "ssh-32.png"
+     "m_path": "../bitmaps/16-remote-folder@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -2204,7 +2205,7 @@
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
-         "m_path": "../codelite-icons/db-explorer/16/connect.png"
+         "m_path": "../bitmaps/16-connected.png"
         }, {
          "type": "choice",
          "m_label": "Direction",
@@ -2555,11 +2556,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-remote-folder.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-remote-folder@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -3134,7 +3135,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../git/icons/png/arrow-up.png"
+           "m_path": "../bitmaps/16-up.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -3196,7 +3197,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "ssh-16.png"
+           "m_path": "../bitmaps/16-folder-users.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -3877,11 +3878,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "../codelite_terminal/terminal-16.png"
+     "m_path": "../bitmaps/16-console.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": "../codelite_terminal/terminal-32.png"
+     "m_path": "../bitmaps/16-console@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -3988,7 +3989,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/output-pane/16/clear.png"
+           "m_path": "../bitmaps/16-clear.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",

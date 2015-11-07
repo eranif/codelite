@@ -26,13 +26,13 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("ssh-16"));
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-remote-folder"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("ssh-32"));
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-remote-folder@2x"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -40,10 +40,10 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     SetIcons( app_icons );
 
     
-    boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    boxSizer10 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer2->Add(boxSizer10, 1, wxALL|wxEXPAND, 5);
     
@@ -54,7 +54,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     m_dvListCtrlAccounts->AppendTextColumn(_("Account"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
     m_dvListCtrlAccounts->AppendTextColumn(_("Host"), wxDATAVIEW_CELL_INERT, 75, wxALIGN_LEFT);
     m_dvListCtrlAccounts->AppendTextColumn(_("User"), wxDATAVIEW_CELL_INERT, 75, wxALIGN_LEFT);
-    boxSizer15 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer15 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer10->Add(boxSizer15, 0, wxEXPAND, 5);
     
@@ -73,7 +73,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     
     boxSizer15->Add(m_buttonEdit, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -87,11 +87,15 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     boxSizer4->Add(m_button8, 0, wxALL, 5);
     
     SetName(wxT("SSHAccountManagerDlgBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -132,13 +136,13 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("ssh-16"));
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-remote-folder"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("ssh-32"));
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-remote-folder@2x"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -146,7 +150,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     SetIcons( app_icons );
 
     
-    boxSizer23 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer23 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer23);
     
     m_infobar = new wxInfoBar(this, wxID_ANY);
@@ -154,7 +158,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     boxSizer23->Add(m_infobar, 0, wxEXPAND, 5);
     
-    flexGridSizer31 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer31 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer31->SetFlexibleDirection( wxBOTH );
     flexGridSizer31->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer31->AddGrowableCol(1);
@@ -237,7 +241,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     m_button51 = new wxButton(this, wxID_ANY, _("Test Connection"), wxDefaultPosition, wxSize(-1,-1), 0);
     #if wxVERSION_NUMBER >= 2904
-    m_button51->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("connect")), wxLEFT);
+    m_button51->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("16-connected")), wxLEFT);
     m_button51->SetBitmapMargins(5,5);
     #endif
     
@@ -245,7 +249,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     boxSizer23->Add(0, 0, 1, wxALL, 5);
     
-    boxSizer29 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer29 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer23->Add(boxSizer29, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -259,11 +263,15 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     boxSizer29->Add(m_button25, 0, wxALL, 5);
     
     SetName(wxT("AddSSHAcountDlgBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -297,11 +305,27 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
         wxCE8CInitBitmapResources();
         bBitmapLoaded = true;
     }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-remote-folder"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-remote-folder@2x"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
     
-    boxSizer62 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer62 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer62);
     
-    gridBagSizer80 = new wxGridBagSizer(0, 0);
+    wxGridBagSizer* gridBagSizer80 = new wxGridBagSizer(0, 0);
     
     boxSizer62->Add(gridBagSizer80, 0, wxALL|wxEXPAND, 5);
     
@@ -336,9 +360,9 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer62->Add(m_toolbar, 0, wxALL|wxEXPAND, 5);
     
-    m_toolbar->AddTool(ID_CD_UP, _("Parent folder"), wxXmlResource::Get()->LoadBitmap(wxT("arrow-up")), wxNullBitmap, wxITEM_NORMAL, _("Parent folder"), _("Parent folder"), NULL);
+    m_toolbar->AddTool(ID_CD_UP, _("Parent folder"), wxXmlResource::Get()->LoadBitmap(wxT("16-up")), wxNullBitmap, wxITEM_NORMAL, _("Parent folder"), _("Parent folder"), NULL);
     
-    m_toolbar->AddTool(ID_SSH_ACCOUNT_MANAGER, _("Open SSH Account Manager..."), wxXmlResource::Get()->LoadBitmap(wxT("ssh-16")), wxNullBitmap, wxITEM_NORMAL, _("Open SSH Account Manager..."), _("Open SSH Account Manager..."), NULL);
+    m_toolbar->AddTool(ID_SSH_ACCOUNT_MANAGER, _("Open SSH Account Manager..."), wxXmlResource::Get()->LoadBitmap(wxT("16-folder-users")), wxNullBitmap, wxITEM_NORMAL, _("Open SSH Account Manager..."), _("Open SSH Account Manager..."), NULL);
     m_toolbar->Realize();
     
     m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(600,100), wxDV_ROW_LINES|wxDV_SINGLE);
@@ -352,7 +376,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Size"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
-    boxSizer94 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer62->Add(boxSizer94, 0, wxEXPAND|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 5);
     
@@ -364,7 +388,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer94->Add(m_textCtrlInlineSearch, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer62->Add(boxSizer57, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -378,11 +402,15 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     boxSizer57->Add(m_button61, 0, wxALL, 5);
     
     SetName(wxT("SFTPBrowserBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -437,13 +465,13 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxString
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("terminal-16"));
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-console"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("terminal-32"));
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-console@2x"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -451,7 +479,7 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxString
     SetIcons( app_icons );
 
     
-    boxSizer124 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer124);
     
     m_auibar135 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
@@ -459,14 +487,14 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxString
     
     boxSizer124->Add(m_auibar135, 0, wxEXPAND, 5);
     
-    m_auibar135->AddTool(wxID_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear"), _("Clear"), NULL);
+    m_auibar135->AddTool(wxID_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear"), _("Clear"), NULL);
     m_auibar135->Realize();
     
     m_panel126 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     boxSizer124->Add(m_panel126, 1, wxEXPAND, 5);
     
-    boxSizer116 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer116 = new wxBoxSizer(wxVERTICAL);
     m_panel126->SetSizer(boxSizer116);
     
     m_stcOutput = new wxStyledTextCtrl(m_panel126, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -525,11 +553,15 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxString
     boxSizer116->Add(m_textCtrl1, 0, wxALL|wxEXPAND, 2);
     
     SetName(wxT("SSHTerminalBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

@@ -264,17 +264,18 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
     AddImage(imageList->Add(LoadBitmap(wxT("mime/16/python"))), FileExtManager::TypePython);
     AddImage(imageList->Add(LoadBitmap(wxT("mime/16/css"))), FileExtManager::TypeCSS);
     AddImage(imageList->Add(LoadBitmap(wxT("mime/16/javascript"))), FileExtManager::TypeJS);
-    AddImage(imageList->Add(LoadBitmap(wxT("workspace/16/workspace"))), FileExtManager::TypeWorkspace);
+    AddImage(imageList->Add(LoadBitmap(wxT("cxx-workspace"))), FileExtManager::TypeWorkspace);
     AddImage(imageList->Add(LoadBitmap(wxT("workspace/16/workspace_php"))), FileExtManager::TypeWorkspacePHP);
-    AddImage(imageList->Add(LoadBitmap(wxT("workspace/16/project"))), FileExtManager::TypeProject);
-    AddImage(imageList->Add(LoadBitmap(wxT("mime/16/wxcp"))), FileExtManager::TypeWxCrafter);
+    AddImage(imageList->Add(LoadBitmap(wxT("project"))), FileExtManager::TypeProject);
+    AddImage(imageList->Add(LoadBitmap(wxT("blocks"))), FileExtManager::TypeWxCrafter);
     AddImage(imageList->Add(LoadBitmap(wxT("mime/16/xml"))), FileExtManager::TypeXRC);
     AddImage(imageList->Add(LoadBitmap(wxT("mime/16/res"))), FileExtManager::TypeResource);
     AddImage(imageList->Add(LoadBitmap(wxT("mime/16/sql"))), FileExtManager::TypeSQL);
-    AddImage(imageList->Add(LoadBitmap(wxT("mime/16/folder"))), FileExtManager::TypeFolder);
+    AddImage(imageList->Add(LoadBitmap(wxT("folder-yellow"))), FileExtManager::TypeFolder);
+    AddImage(imageList->Add(LoadBitmap(wxT("folder-yellow-opened"))), FileExtManager::TypeFolderExpanded);
     AddImage(imageList->Add(LoadBitmap(wxT("mime/16/asm"))), FileExtManager::TypeAsm);
-    AddImage(imageList->Add(LoadBitmap(wxT("mime/16/cmake"))), FileExtManager::TypeCMake);
-    AddImage(imageList->Add(LoadBitmap(wxT("mime/16/qmake"))), FileExtManager::TypeQMake);
+    AddImage(imageList->Add(LoadBitmap(wxT("cmake"))), FileExtManager::TypeCMake);
+    AddImage(imageList->Add(LoadBitmap(wxT("qt"))), FileExtManager::TypeQMake);
 
     std::for_each(
         m_userBitmaps.begin(), m_userBitmaps.end(), [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {

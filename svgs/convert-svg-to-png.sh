@@ -46,7 +46,7 @@ do
     filename="${file%.*}"
     
     ## 24x24 version
-    inkscape 24/file --without-gui --export-png=../bitmaps/24-${filename}.png --export-width=24 --export-height=24
+    inkscape 24/$file --without-gui --export-png=../bitmaps/24-${filename}.png --export-width=24 --export-height=24
     
     ## 24x24 version (hi-res)
     inkscape 24/$file --without-gui --export-png=../bitmaps/24-${filename}@2x.png --export-width=48 --export-height=48

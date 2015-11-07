@@ -152,6 +152,7 @@ static int PROJECT_IMG_IDX = wxNOT_FOUND;
 static int FOLDER_IMG_IDX = wxNOT_FOUND;
 static int WORKSPACE_IMG_IDX = wxNOT_FOUND;
 static int ACTIVE_PROJECT_IMG_IDX = wxNOT_FOUND;
+static int FOLDER_EXPAND_IMG_IDX = wxNOT_FOUND;
 
 FileViewTree::FileViewTree() {}
 
@@ -169,8 +170,9 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     // Prepare the standard mime-type image list
     wxImageList* images = bmpLoader->MakeStandardMimeImageList();
 
-    FOLDER_IMG_IDX = images->Add(bmpLoader->LoadBitmap(wxT("mime/16/folder")));
-    ACTIVE_PROJECT_IMG_IDX = images->Add(bmpLoader->LoadBitmap(wxT("workspace/16/project_active")));
+    FOLDER_EXPAND_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+    FOLDER_IMG_IDX = images->Add(bmpLoader->LoadBitmap(wxT("folder-yellow")));
+    ACTIVE_PROJECT_IMG_IDX = images->Add(bmpLoader->LoadBitmap(wxT("project")));
     WORKSPACE_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeWorkspace);
     PROJECT_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeProject);
 
@@ -345,7 +347,9 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
                                       projectIconIndex,                 // item image index
                                       projectIconIndex,                 // selected item image
                                       new FilewViewTreeItemData(node->GetData()));
-
+        if(node->GetData().GetKind() == ProjectItem::TypeVirtualDirectory) {
+            SetItemImage(hti, FOLDER_EXPAND_IMG_IDX, wxTreeItemIcon_Expanded);
+        }
         // FIXME ::
         // Use a more efficient way for checking if a file is 'Excluded' from the build
 
@@ -829,8 +833,9 @@ void FileViewTree::OnAddExistingItem(wxCommandEvent& WXUNUSED(event))
         return;
     }
 
-    const wxString ALL(wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
-                       wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
+    const wxString ALL(
+        wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
+            wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
 
     wxString vdPath = GetItemPath(item);
     wxString project, vd;
@@ -1003,8 +1008,8 @@ void FileViewTree::DoRemoveItems()
                         // Remove the file. Do not fire an event here, we will send a "bulk" event
                         // with a list of all files removed
                         wxString fullpathOfFileRemoved;
-                        if(ManagerST::Get()->RemoveFile(
-                               data->GetData().GetFile(), path, fullpathOfFileRemoved, false)) {
+                        if(ManagerST::Get()
+                               ->RemoveFile(data->GetData().GetFile(), path, fullpathOfFileRemoved, false)) {
                             filesRemoved.Add(fullpathOfFileRemoved);
                         }
 
@@ -1223,7 +1228,7 @@ int FileViewTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& 
 {
     // used for SortChildren, reroute to our sort routine
     FilewViewTreeItemData* a = (FilewViewTreeItemData*)GetItemData(item1),
-                           *b = (FilewViewTreeItemData*)GetItemData(item2);
+                           * b = (FilewViewTreeItemData*)GetItemData(item2);
     if(a && b) return OnCompareItems(a, b);
 
     return 0;

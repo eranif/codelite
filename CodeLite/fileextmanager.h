@@ -68,7 +68,8 @@ public:
         TypeXRC,
         TypeSQL,
         TypeFolder,
-        TypeProjectActive,
+        TypeFolderExpanded, // For UI purposes only
+        TypeProjectActive,  // For UI purposes only
         TypeWorkspacePHP,
         TypeWorkspaceNodeJS,
         TypeWorkspacePHPTags,
@@ -84,7 +85,7 @@ public:
         SmartPtr<wxRegEx> m_regex;
         wxString m_exactMatch;
         FileType m_fileType;
-        
+
         Matcher(const wxString& pattern, FileType fileType, bool regex = true)
             : m_fileType(fileType)
         {
@@ -94,8 +95,9 @@ public:
                 m_exactMatch = pattern;
             }
         }
-        
-        bool Matches(const wxString &in) const {
+
+        bool Matches(const wxString& in) const
+        {
             if(m_regex) {
                 return m_regex->Matches(in);
             } else {

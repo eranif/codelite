@@ -6,7 +6,7 @@
  "settings": {
   "m_runAs": 0,
   "m_phpExe": "D:\\Zend Server (x86)\\ZendServer\\bin\\php.exe",
-  "m_indexFile": "C:\\src\\codelite\\svgs\\create-humanity-icons.php",
+  "m_indexFile": "C:\\src\\codelite\\svgs\\convert-single-file.sh",
   "m_args": "",
   "m_workingDirectory": "",
   "m_projectURL": "",

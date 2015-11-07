@@ -1,94 +1,168 @@
 <?php
 
+/**
+ * A helper script that maps between Ubuntu Humanity 
+ * SVG files into CodeLite SVG files
+ */
+ 
+$FAILSAFE_DIR = "C:\\Users\\PC\\Desktop\\Humanity\\ColorsHumanity";
 $SOURCE_DIR = "C:\\Users\\PC\\Desktop\\Humanity\\ColorsHumanity";
 $TARGET_DIR = "C:\\src\\codelite\\svgs";
+
+$MISSING_FILES = array();
+
+@mkdir("{$TARGET_DIR}/16");
+@mkdir("{$TARGET_DIR}/24");
 
 class ImageFile {
     public $srcPath = "";
     public $targetPath = "";
     
     public function __construct($src, $target) {
-        global $TARGET_DIR, $SOURCE_DIR;
+        global $TARGET_DIR, $SOURCE_DIR, $FAILSAFE_DIR;
         $this->srcPath = "{$SOURCE_DIR}/{$src}";
+        if(!file_exists($this->srcPath)) {
+            $this->srcPath = "{$FAILSAFE_DIR}/{$src}";
+        }
         $this->targetPath = "{$TARGET_DIR}/{$target}";
     }
     
     /**
      * @brief copy source file to destination path
-     * @return  
      */
     public function copy() {
-        echo "Copying {$this->srcPath} -> {$this->targetPath}\n";
-        copy($this->srcPath, $this->targetPath);
+        global $MISSING_FILES;
+        echo "Copying {$this->srcPath} -> 16/{$this->targetPath}\n";
+        if(!file_exists($this->srcPath)) {
+            $MISSING_FILES[] = $this->srcPath;
+        } else {
+            copy($this->srcPath, $this->targetPath);
+        }
     }
 }
 
-// Tasks: evolution-tasks.svg
+// Unified size icons for both 16 and 24 
+// This is because there is no "16" version for these bitmaps
+$OnSizeIcons[] = new ImageFile("actions\\24\\edit-undo.svg", "undo.svg");
+$OnSizeIcons[] = new ImageFile("actions\\24\\edit-redo.svg", "redo.svg");
+$OnSizeIcons[] = new ImageFile("actions\\24\\preview-file.svg", "find.svg");
+$OnSizeIcons[] = new ImageFile("actions\\24\\system-run.svg", "execute.svg");
+$OnSizeIcons[] = new ImageFile("actions\\24\\go-jump.svg", "step_in.svg");
+$OnSizeIcons[] = new ImageFile("actions\\24\\go-jump-up.svg", "step_out.svg");
+$OnSizeIcons[] = new ImageFile("actions\\24\\document-open-recent.svg", "history.svg");
+$OnSizeIcons[] = new ImageFile("actions\\24\\system-run.svg", "executable.svg");
+$OnSizeIcons[] = new ImageFile("actions\\24\\system-run.svg", "dll.svg");
+$OnSizeIcons[] = new ImageFile("apps\\48\\utilities-terminal.svg", "console.svg");
+$OnSizeIcons[] = new ImageFile("mimes\\48\\multipart-encrypted.svg", "binary-file.svg");
+$OnSizeIcons[] = new ImageFile("apps\\24\\gnome-session-switch.svg", "diff.svg");
+$OnSizeIcons[] = new ImageFile("categories\\24\\applications-engineering.svg", "tools.svg");
+$OnSizeIcons[] = new ImageFile("status\\24\\network-offline.svg", "disconnected.svg");
+$OnSizeIcons[] = new ImageFile("status\\24\\network-transmit-receive.svg", "connected.svg");
+$OnSizeIcons[] = new ImageFile("apps\\24\\checkbox.svg", "checkbox.svg");
 
-$IN_FILES[] = new ImageFile("actions\\24\\document-new.svg", "file_new.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\document-open.svg", "file_open.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\document-revert.svg", "file_reload.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\document-save.svg", "file_save.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\window-close.svg", "file_close.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\edit-cut.svg", "cut.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\edit-copy.svg", "copy.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\edit-paste.svg", "paste.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\edit-undo.svg", "undo.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\edit-redo.svg", "redo.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\go-previous.svg", "back.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\go-next.svg", "forward.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\bookmark-new.svg", "bookmark.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\preview-file.svg", "find.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\gtk-edit.svg", "find_and_replace.svg");
-$IN_FILES[] = new ImageFile("places\\24\\folder-saved-search.svg", "find_in_files.svg");
-$IN_FILES[] = new ImageFile("places\\24\\folder-documents.svg", "open_resource.svg");
-$IN_FILES[] = new ImageFile("categories\\24\\applications-graphics.svg", "mark_word.svg");
+// 16x16 icons size
+$SmallIcons[] = new ImageFile("actions\\16\\document-new.svg", "16/file_new.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\document-open.svg", "16/file_open.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\document-revert.svg", "16/file_reload.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\document-save.svg", "16/file_save.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\window-close.svg", "16/file_close.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\edit-cut.svg", "16/cut.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\edit-copy.svg", "16/copy.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\edit-paste.svg", "16/paste.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\go-previous.svg", "16/back.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\go-next.svg", "16/forward.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\bookmark-new.svg", "16/bookmark.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\gtk-edit.svg", "16/find_and_replace.svg");
+$SmallIcons[] = new ImageFile("places\\16\\folder-saved-search.svg", "16/find_in_files.svg");
+$SmallIcons[] = new ImageFile("places\\16\\folder-documents.svg", "16/open_resource.svg");
+$SmallIcons[] = new ImageFile("categories\\16\\applications-graphics.svg", "16/mark_word.svg");
+$SmallIcons[] = new ImageFile("mimes\\16\\text-x-install.svg", "16/build.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\process-stop.svg", "16/stop.svg");
+$SmallIcons[] = new ImageFile("places\\16\\user-trash.svg", "16/clean.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\process-stop.svg", "16/execute_stop.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\media-playback-start.svg", "16/debugger_start.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\media-playback-stop.svg", "16/debugger_stop.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\media-playback-pause.svg", "16/interrupt.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\view-refresh.svg", "16/debugger_restart.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\go-down.svg", "16/next.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\go-next.svg", "16/show_current_line.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\document-properties.svg", "16/cog.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\go-home.svg", "16/home.svg");
+$SmallIcons[] = new ImageFile("places\\16\\folder-remote.svg", "16/remote-folder.svg");
+$SmallIcons[] = new ImageFile("mimes\\16\\package-x-generic.svg", "16/archive.svg");
+$SmallIcons[] = new ImageFile("mimes\\16\\text-x-generic.svg", "16/log.svg");
+$SmallIcons[] = new ImageFile("apps\\16\\evolution-tasks.svg", "16/tasks.svg");
+$SmallIcons[] = new ImageFile("status\\16\\locked.svg", "16/lock.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\help-contents.svg", "16/help.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\gtk-info.svg", "16/info.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\dialog-apply.svg", "16/ok.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\list-add.svg", "16/plus.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\list-remove.svg", "16/minus.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\go-down.svg", "16/down.svg");
+$SmallIcons[] = new ImageFile("actions\\16\\go-up.svg", "16/up.svg");
+$SmallIcons[] = new ImageFile("places\\16\\folder.svg", "16/folder.svg");
 
-
-// Build
-$IN_FILES[] = new ImageFile("mimes\\24\\text-x-install.svg", "build.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\process-stop.svg", "stop.svg");
-$IN_FILES[] = new ImageFile("places\\24\\user-trash.svg", "clean.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\system-run.svg", "execute.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\process-stop.svg", "execute_stop.svg");
-
-// Debugger
-$IN_FILES[] = new ImageFile("actions\\48\\media-playback-start.svg", "debugger_start.svg");
-$IN_FILES[] = new ImageFile("actions\\48\\media-playback-stop.svg", "debugger_stop.svg");
-$IN_FILES[] = new ImageFile("actions\\48\\media-playback-pause.svg", "interrupt.svg");
-$IN_FILES[] = new ImageFile("actions\\48\\view-refresh.svg", "debugger_restart.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\go-jump.svg", "step_in.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\go-jump-up.svg", "step_out.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\go-down.svg", "next.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\go-next.svg", "show_current_line.svg");
-
-// Others
-$IN_FILES[] = new ImageFile("actions\\24\\document-open-recent.svg", "history.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\document-properties.svg", "cog.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\go-home.svg", "home.svg");
-$IN_FILES[] = new ImageFile("places\\24\\folder-remote.svg", "remote-folder.svg");
-$IN_FILES[] = new ImageFile("mimes\\16\\package-x-generic.svg", "archive.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\system-run.svg", "executable.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\system-run.svg", "dll.svg");
-$IN_FILES[] = new ImageFile("apps\\24\\utilities-terminal.svg", "console.svg");
-$IN_FILES[] = new ImageFile("mimes\\24\\multipart-encrypted.svg", "binary-file.svg");
-$IN_FILES[] = new ImageFile("apps\\24\\logviewer.svg", "log.svg");
-$IN_FILES[] = new ImageFile("apps\\24\\evolution-tasks.svg", "tasks.svg");
-$IN_FILES[] = new ImageFile("apps\\24\\gnome-session-switch.svg", "diff.svg");
-$IN_FILES[] = new ImageFile("status\\24\\locked.svg", "lock.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\help-contents.svg", "help.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\gtk-info.svg", "info.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\dialog-apply.svg", "ok.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\list-add.svg", "plus.svg");
-$IN_FILES[] = new ImageFile("actions\\24\\list-remove.svg", "minus.svg");
-$IN_FILES[] = new ImageFile("categories\\24\\applications-engineering.svg", "tools.svg");
-$IN_FILES[] = new ImageFile("status\\24\\network-offline.svg", "disconnected.svg");
-$IN_FILES[] = new ImageFile("status\\24\\network-transmit-receive.svg", "connected.svg");
-
-// Mime type
-$IN_FILES[] = new ImageFile("places\\24\\folder.svg", "folder.svg");
+// 16x16 icons size
+$LargeIcons[] = new ImageFile("actions\\24\\document-new.svg", "24/file_new.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\document-open.svg", "24/file_open.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\document-revert.svg", "24/file_reload.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\document-save.svg", "24/file_save.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\window-close.svg", "24/file_close.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\edit-cut.svg", "24/cut.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\edit-copy.svg", "24/copy.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\edit-paste.svg", "24/paste.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\go-previous.svg", "24/back.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\go-next.svg", "24/forward.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\bookmark-new.svg", "24/bookmark.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\gtk-edit.svg", "24/find_and_replace.svg");
+$LargeIcons[] = new ImageFile("places\\24\\folder-saved-search.svg", "24/find_in_files.svg");
+$LargeIcons[] = new ImageFile("places\\24\\folder-documents.svg", "24/open_resource.svg");
+$LargeIcons[] = new ImageFile("categories\\24\\applications-graphics.svg", "24/mark_word.svg");
+$LargeIcons[] = new ImageFile("mimes\\24\\text-x-install.svg", "24/build.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\process-stop.svg", "24/stop.svg");
+$LargeIcons[] = new ImageFile("places\\24\\user-trash.svg", "24/clean.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\process-stop.svg", "24/execute_stop.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\media-playback-start.svg", "24/debugger_start.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\media-playback-stop.svg", "24/debugger_stop.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\media-playback-pause.svg", "24/interrupt.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\view-refresh.svg", "24/debugger_restart.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\go-down.svg", "24/next.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\go-next.svg", "24/show_current_line.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\document-properties.svg", "24/cog.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\go-home.svg", "24/home.svg");
+$LargeIcons[] = new ImageFile("places\\24\\folder-remote.svg", "24/remote-folder.svg");
+$LargeIcons[] = new ImageFile("mimes\\24\\package-x-generic.svg", "24/archive.svg");
+$LargeIcons[] = new ImageFile("mimes\\24\\text-x-generic.svg", "24/log.svg");
+$LargeIcons[] = new ImageFile("apps\\24\\evolution-tasks.svg", "24/tasks.svg");
+$LargeIcons[] = new ImageFile("status\\24\\locked.svg", "24/lock.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\help-contents.svg", "24/help.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\gtk-info.svg", "24/info.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\dialog-apply.svg", "24/ok.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\list-add.svg", "24/plus.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\list-remove.svg", "24/minus.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\go-down.svg", "24/down.svg");
+$LargeIcons[] = new ImageFile("actions\\24\\go-up.svg", "24/up.svg");
+$LargeIcons[] = new ImageFile("places\\24\\folder.svg", "24/folder.svg");
 
 /** @var ImageFile */
-foreach($IN_FILES as $file) {
+foreach($SmallIcons as $file) {
     $file->copy();
+}
+
+/** @var ImageFile */
+foreach($OnSizeIcons as $file) {
+    $file->copy();
+}
+
+/** @var ImageFile */
+foreach($LargeIcons as $file) {
+    $file->copy();
+}
+
+
+if(!empty($MISSING_FILES)) {
+    echo "Missing files:\n";
+    foreach($MISSING_FILES as $file) {
+        echo "{$file}\n";
+    }
 }

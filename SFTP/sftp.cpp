@@ -118,14 +118,14 @@ SFTP::SFTP(IManager* manager)
     
     SFTPImages images;
     m_outputPane = new SFTPStatusPage(m_mgr->GetOutputPaneNotebook(), this);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPane, _("SFTP"), false, images.Bitmap("sftp_tab"));
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPane, _("SFTP"), false, m_mgr->GetStdIcons()->LoadBitmap("remote-folder"));
     
     m_treeView = new SFTPTreeView(m_mgr->GetWorkspacePaneNotebook(), this);
     m_mgr->GetWorkspacePaneNotebook()->AddPage(m_treeView, _("SFTP"), false);
     
     // Create the helper for adding our tabs in the "more" menu
     m_tabToggler.reset(new clTabTogglerHelper(_("SFTP"), m_outputPane, _("SFTP"), m_treeView));
-    m_tabToggler->SetOutputTabBmp(images.Bitmap("sftp_tab"));
+    m_tabToggler->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("remote-folder"));
     
     SFTPWorkerThread::Instance()->SetNotifyWindow(m_outputPane);
     SFTPWorkerThread::Instance()->SetSftpPlugin(this);

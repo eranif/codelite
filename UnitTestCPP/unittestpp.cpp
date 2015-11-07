@@ -98,12 +98,10 @@ UnitTestPP::UnitTestPP(IManager* manager)
         wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(UnitTestPP::OnRunProject), NULL, this);
 
     m_outputPage = new UnitTestsPage(m_mgr->GetOutputPaneNotebook(), m_mgr);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPage,
-                                            _("UnitTest++"),
-                                            false,
-                                            m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/unittest++/run_as_unittest"));
+    m_mgr->GetOutputPaneNotebook()->AddPage(
+        m_outputPage, _("UnitTest++"), false, m_mgr->GetStdIcons()->LoadBitmap("ok"));
     m_tabHelper.reset(new clTabTogglerHelper(_("UnitTest++"), m_outputPage, "", NULL));
-    m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/unittest++/run_as_unittest"));
+    m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("ok"));
 
     m_longName = _("A Unit test plugin based on the UnitTest++ framework");
     m_shortName = wxT("UnitTestPP");
@@ -196,16 +194,16 @@ void UnitTestPP::UnPlug()
 
     // Connect the events to us
     wxTheApp->Disconnect(XRCID("run_unit_tests"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(UnitTestPP::OnRunUnitTests),
-                      NULL,
-                      (wxEvtHandler*)this);
-                      
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(UnitTestPP::OnRunUnitTests),
+                         NULL,
+                         (wxEvtHandler*)this);
+
     wxTheApp->Disconnect(XRCID("run_unit_tests"),
-                      wxEVT_UPDATE_UI,
-                      wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI),
-                      NULL,
-                      (wxEvtHandler*)this);
+                         wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI),
+                         NULL,
+                         (wxEvtHandler*)this);
 
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &UnitTestPP::OnProcessRead, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &UnitTestPP::OnProcessTerminated, this);

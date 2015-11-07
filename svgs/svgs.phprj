@@ -1,7 +1,7 @@
 {
  "m_name": "svgs",
  "m_isActive": true,
- "m_importFileSpec": "*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess",
+ "m_importFileSpec": "*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess;*.sh",
  "m_excludeFolders": ".git;.svn;.codelite;.clang",
  "settings": {
   "m_runAs": 0,

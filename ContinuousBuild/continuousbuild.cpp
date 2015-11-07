@@ -77,9 +77,9 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
     m_view = new ContinousBuildPane(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
     // add our page to the output pane notebook
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_view, CONT_BUILD, false, LoadBitmapFile(wxT("compfile.png")));
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_view, CONT_BUILD, false, m_mgr->GetStdIcons()->LoadBitmap("execute"));
     m_tabHelper.reset(new clTabTogglerHelper(CONT_BUILD, m_view, "", NULL));
-    m_tabHelper->SetOutputTabBmp(LoadBitmapFile(wxT("compfile.png")));
+    m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("execute"));
     
     m_topWin = m_mgr->GetTheApp();
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);

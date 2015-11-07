@@ -9,6 +9,7 @@
   "m_outputFileName": "gitui",
   "m_firstWindowId": 6000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": [{
     "m_includeFile": "#include \"gitCommitEditor.h\"",
     "m_allocationLine": "$name = new GitCommitEditor( $parent );",
@@ -109,11 +110,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "icons/png/git.png"
+     "m_path": "../bitmaps/16-git.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-git@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -2094,11 +2095,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "icons/png/git.png"
+     "m_path": "../bitmaps/16-git.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-git@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -2205,7 +2206,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../LiteEditor/res/16/select-all.png"
+           "m_path": "../bitmaps/16-ok.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -2361,7 +2362,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "wxART_DELETE,wxART_TOOLBAR,16"
+           "m_path": "../bitmaps/16-clear.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -3631,11 +3632,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "icons/png/git.png"
+     "m_path": "../bitmaps/16-git.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-git@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -5573,11 +5574,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "icons/png/git.png"
+     "m_path": "../bitmaps/16-git.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-git@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -6382,11 +6383,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "icons/png/git.png"
+     "m_path": "../bitmaps/16-git.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-git@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -7030,11 +7031,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "icons/png/git.png"
+     "m_path": "../bitmaps/16-git.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-git@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -7936,11 +7937,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "icons/png/git.png"
+     "m_path": "../bitmaps/16-git.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-git@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -8724,7 +8725,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons-fresh-farm/output-pane/16/clear.png"
+           "m_path": "../bitmaps/16-clear.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -8786,7 +8787,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons-fresh-farm/subversion/16/stop.png"
+           "m_path": "../bitmaps/16-stop.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -8896,7 +8897,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "icons/png/git-add-file.png"
+           "m_path": "../bitmaps/16-plus.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -8958,7 +8959,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "icons/png/git-reset.png"
+           "m_path": "../bitmaps/16-undo.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",

@@ -151,10 +151,10 @@ void OutputPane::CreateGUIControls()
 
     // Output tab
     m_outputWind = new OutputTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
-    m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("terminal")));
+    m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("console")));
     m_tabs.insert(
         std::make_pair(wxGetTranslation(OUTPUT_WIN),
-                       Tab(wxGetTranslation(OUTPUT_WIN), m_outputWind, bmpLoader->LoadBitmap(wxT("terminal")))));
+                       Tab(wxGetTranslation(OUTPUT_WIN), m_outputWind, bmpLoader->LoadBitmap(wxT("console")))));
     mgr->AddOutputTab(wxGetTranslation(OUTPUT_WIN));
 
 #if HAS_LIBCLANG

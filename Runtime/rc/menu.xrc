@@ -646,9 +646,7 @@
         <object class="wxMenu" name="settings_menu">
             <label>Settin&amp;gs</label>
             <style>wxMENU_TEAROFF</style>
-            <object class="wxMenuItem" name="wxID_PREFERENCES">
-                <label>Global &amp;Editor Preferences...</label>
-            </object>
+            <object class="wxMenuItem" name="wxID_PREFERENCES"/>
             <object class="wxMenuItem" name="syntax_highlight">
                 <label>Colours and &amp;Fonts...</label>
             </object>

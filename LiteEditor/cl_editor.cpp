@@ -163,6 +163,30 @@ bool LEditor::m_ccInitialized = false;
 wxPrintData* g_printData = NULL;
 wxPageSetupDialogData* g_pageSetupData = NULL;
 
+//---------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------
+
+class clWordCharslocker
+{
+    wxString m_wordChars;
+    wxStyledTextCtrl* m_ctrl;
+
+public:
+    clWordCharslocker(wxStyledTextCtrl* ctrl)
+        : m_ctrl(ctrl)
+    {
+        m_wordChars = ctrl->GetWordChars();
+        wxString wordChars = m_wordChars;
+        wordChars << ".-()@#$%^&*(!<>/.,[]:";
+        m_ctrl->SetWordChars(wordChars);
+    }
+
+    ~clWordCharslocker() { m_ctrl->SetWordChars(m_wordChars); }
+};
+
+//---------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------
+
 class clEditorDropTarget : public wxDropTarget
 {
     wxStyledTextCtrl* m_stc;
@@ -1507,8 +1531,9 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     if(buf.length() == 0 && !theText.IsEmpty()) {
         // something went wrong in the conversion process
         wxString errmsg;
-        errmsg << _("File text conversion failed!\nCheck your file font encoding from\nSettings | Global Editor "
-                    "Prefernces | Misc | Locale");
+        errmsg << _(
+            "File text conversion failed!\nCheck your file font encoding from\nSettings | Global Editor "
+            "Prefernces | Misc | Locale");
         wxMessageBox(errmsg, "CodeLite", wxOK | wxICON_ERROR | wxCENTER, wxTheApp->GetTopWindow());
         return false;
     }
@@ -2555,7 +2580,7 @@ void LEditor::DelMarker()
 {
     int nPos = GetCurrentPos();
     int nLine = LineFromPosition(nPos);
-    for(int i=smt_FIRST_BMK_TYPE; i<smt_LAST_BMK_TYPE; ++i) {
+    for(int i = smt_FIRST_BMK_TYPE; i < smt_LAST_BMK_TYPE; ++i) {
         MarkerDelete(nLine, i);
     }
 }
@@ -3373,9 +3398,8 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()
-            ->GetBreakpointsMgr()
-            ->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
+    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
+           GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -5203,6 +5227,7 @@ void LEditor::CommentBlockSelection(const wxString& commentBlockStart, const wxS
 
 void LEditor::QuickAddNext()
 {
+    clWordCharslocker wcl(this);
     if(!HasSelection()) return;
     int count = GetSelections();
     int start = GetSelectionNStart(count - 1);
@@ -5238,6 +5263,7 @@ void LEditor::QuickFindAll()
 
     int matches(0);
     int firstMatch(wxNOT_FOUND);
+    clWordCharslocker wcl(this);
     int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
     while(where != wxNOT_FOUND) {
         if(matches == 0) {
@@ -5339,7 +5365,8 @@ void LEditor::ClearCCAnnotations()
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------
-struct SelectorSorter {
+struct SelectorSorter
+{
     bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
 };
 

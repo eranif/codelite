@@ -64,6 +64,25 @@ clConfig::clConfig(const wxString& filename)
     } else {
         m_root = new JSONRoot(cJSON_Object);
     }
+
+    // Load the "Recent Items" cache
+    {
+        wxArrayString recentFiles;
+        JSONElement e = m_root->toElement();
+        if(e.hasNamedObject("RecentWorkspaces")) {
+            recentFiles = e.namedObject("RecentWorkspaces").toArrayString();
+            m_cacheRecentItems.insert(std::make_pair("RecentWorkspaces", recentFiles));
+        }
+    }
+    
+    {
+        wxArrayString recentFiles;
+        JSONElement e = m_root->toElement();
+        if(e.hasNamedObject("RecentFiles")) {
+            recentFiles = e.namedObject("RecentFiles").toArrayString();
+            m_cacheRecentItems.insert(std::make_pair("RecentFiles", recentFiles));
+        }
+    }
 }
 
 clConfig::~clConfig() { wxDELETE(m_root); }
@@ -392,12 +411,27 @@ void clConfig::DoAddRecentItem(const wxString& propName, const wxString& filenam
     if(recentItems.Index(filename) != wxNOT_FOUND) {
         recentItems.Remove(filename);
     }
+
+    if(!wxFileName(filename).FileExists()) {
+        // Don't add non existing file
+        return;
+    }
+
     recentItems.Insert(filename, 0);
 
     // Make sure the list does not go over 15 items
     while(recentItems.size() >= 15) {
         recentItems.RemoveAt(recentItems.size() - 1);
     }
+
+    // Remove non existing items
+    wxArrayString existingFiles;
+    for(size_t i = 0; i < recentItems.size(); ++i) {
+        if(wxFileName(recentItems.Item(i)).FileExists()) {
+            existingFiles.Add(recentItems.Item(i));
+        }
+    }
+    recentItems.swap(existingFiles);
 
     // Remove old node if exists
     JSONElement e = m_root->toElement();
@@ -412,6 +446,7 @@ void clConfig::DoAddRecentItem(const wxString& propName, const wxString& filenam
     if(m_cacheRecentItems.count(propName)) {
         m_cacheRecentItems.erase(propName);
     }
+
     m_cacheRecentItems.insert(std::make_pair(propName, recentItems));
     m_root->save(m_filename);
 }
@@ -435,12 +470,13 @@ wxArrayString clConfig::DoGetRecentItems(const wxString& propName) const
 
     // Try the cache first
     if(m_cacheRecentItems.count(propName)) {
-        return m_cacheRecentItems.find(propName)->second;
-    }
+        recentItems = m_cacheRecentItems.find(propName)->second;
 
-    JSONElement e = m_root->toElement();
-    if(e.hasNamedObject(propName)) {
-        recentItems = e.namedObject(propName).toArrayString();
+    } else {
+        JSONElement e = m_root->toElement();
+        if(e.hasNamedObject(propName)) {
+            recentItems = e.namedObject(propName).toArrayString();
+        }
     }
     return recentItems;
 }

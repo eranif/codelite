@@ -233,11 +233,11 @@ clToolBar* ExternalToolsPlugin::CreateToolBar(wxWindow* parent)
         toolbar->AddSeparator();
         toolbar->AddTool(XRCID("external_tools_settings"),
                          _("Configure external tools..."),
-                         m_mgr->GetStdIcons()->LoadBitmap("cog", size),
+                         m_mgr->GetStdIcons()->LoadBitmap("tools", size),
                          _("Configure external tools..."));
         toolbar->AddTool(XRCID("stop_external_tool"),
                          _("Stop external tool"),
-                         m_mgr->GetStdIcons()->LoadBitmap("tools", size),
+                         m_mgr->GetStdIcons()->LoadBitmap("stop", size),
                          _("Stop external tool"));
 
         DoAppendToolsToNativeToolbar(toolbar);

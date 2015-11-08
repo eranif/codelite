@@ -7555,7 +7555,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../bitmaps/16-merge.png"
+       "m_path": "../bitmaps/16-pull.png"
       }],
      "m_events": [],
      "m_children": []

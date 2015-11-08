@@ -144,36 +144,17 @@ clToolBar* SpellCheck::CreateToolBar(wxWindow* parent)
 {
     if(m_mgr->AllowToolbar()) {
         int size = m_mgr->GetToolbarIconSize();
-
         m_pToolbar = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
         m_pToolbar->SetToolBitmapSize(wxSize(size, size));
-
-        if(size == 24) {
-            SpellCheckerImages24 images;
-            m_pToolbar->AddTool(XRCID(s_doCheckID.ToUTF8()),
-                                _("Check spelling..."),
-                                images.Bitmap("spellChecker24"),
-                                _("Run spell-checker"));
-            m_pToolbar->AddTool(XRCID(s_contCheckID.ToUTF8()),
-                                _("Check continuous"),
-                                images.Bitmap("spellChecker24Cont"),
-                                _("Run continuous check"),
-                                wxITEM_CHECK);
-        } else {
-            SpellCheckerImages16 images;
-            m_pToolbar->AddTool(XRCID(s_doCheckID.ToUTF8()),
-                                _("Check spelling..."),
-                                images.Bitmap("spellChecker16"),
-                                _("Run spell-checker"));
-            m_pToolbar->AddTool(XRCID(s_contCheckID.ToUTF8()),
-                                _("Check continuous"),
-                                images.Bitmap("spellChecker16Cont"),
-                                _("Start continuous check"),
-                                wxITEM_CHECK);
-        }
-#if defined(__WXMAC__)
-        m_pToolbar->AddSeparator();
-#endif
+        m_pToolbar->AddTool(XRCID(s_doCheckID.ToUTF8()),
+                            _("Check spelling..."),
+                            m_mgr->GetStdIcons()->LoadBitmap("spellcheck", size),
+                            _("Run spell-checker"));
+        m_pToolbar->AddTool(XRCID(s_contCheckID.ToUTF8()),
+                            _("Check continuous"),
+                            m_mgr->GetStdIcons()->LoadBitmap("repeat", size),
+                            _("Run continuous check"),
+                            wxITEM_CHECK);
         m_pToolbar->Realize();
     }
     parent->Connect(XRCID(s_doCheckID.ToUTF8()),

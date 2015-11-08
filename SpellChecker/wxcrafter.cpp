@@ -121,11 +121,15 @@ SpellCheckerSettings_base::SpellCheckerSettings_base(wxWindow* parent, wxWindowI
     m_stdBtnSizer12->Realize();
     
     SetName(wxT("SpellCheckerSettings_base"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -232,11 +236,15 @@ CorrectSpellingDlg_base::CorrectSpellingDlg_base(wxWindow* parent, wxWindowID id
     bSizer12->Add(m_button3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     SetName(wxT("CorrectSpellingDlg_base"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -265,72 +273,4 @@ CorrectSpellingDlg_base::~CorrectSpellingDlg_base()
     m_button4->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CorrectSpellingDlg_base::OnAddClick), NULL, this);
     m_button5->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CorrectSpellingDlg_base::OnSuggestClick), NULL, this);
     
-}
-
-SpellCheckerImages16::SpellCheckerImages16()
-    : wxImageList(16, 16, true)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxC9A94InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("spellChecker16"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("spellChecker16"), bmp ) );
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("spellChecker16Cont"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("spellChecker16Cont"), bmp ) );
-    }
-    
-}
-
-SpellCheckerImages16::~SpellCheckerImages16()
-{
-}
-
-SpellCheckerImages24::SpellCheckerImages24()
-    : wxImageList(24, 24, true)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxC9A94InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("spellChecker24"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("spellChecker24"), bmp ) );
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("spellChecker24Cont"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("spellChecker24Cont"), bmp ) );
-    }
-    
-}
-
-SpellCheckerImages24::~SpellCheckerImages24()
-{
 }

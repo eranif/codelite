@@ -69,10 +69,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 Cscope::Cscope(IManager* manager)
     : IPlugin(manager)
@@ -87,7 +84,7 @@ Cscope::Cscope(IManager* manager)
         m_cscopeWin, CSCOPE_NAME, false, m_mgr->GetStdIcons()->LoadBitmap("cscope"));
     m_tabHelper.reset(new clTabTogglerHelper(CSCOPE_NAME, m_cscopeWin, "", NULL));
     m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("cscope"));
-    
+
     Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);
     Connect(wxEVT_CSCOPE_THREAD_UPDATE_STATUS, wxCommandEventHandler(Cscope::OnCScopeThreadUpdateStatus), NULL, this);
 
@@ -109,9 +106,7 @@ Cscope::Cscope(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Cscope::OnEditorContentMenu, this);
 }
 
-Cscope::~Cscope()
-{
-}
+Cscope::~Cscope() {}
 
 clToolBar* Cscope::CreateToolBar(wxWindow* parent)
 {
@@ -126,35 +121,19 @@ clToolBar* Cscope::CreateToolBar(wxWindow* parent)
         // Sample code that adds single button to the toolbar
         // and associates an image to it
         BitmapLoader* bitmapLoader = m_mgr->GetStdIcons();
-        if(size == 24) {
-            // use the large icons set
-            tb->AddTool(XRCID("cscope_find_symbol"),
-                        _("Find this C symbol"),
-                        bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/find_symbol")),
-                        _("Find this C symbol"));
-            tb->AddTool(XRCID("cscope_functions_calling_this_function"),
-                        _("Find functions calling this function"),
-                        bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/function_calling_this_function")),
-                        _("Find functions calling this function"));
-            tb->AddTool(XRCID("cscope_functions_called_by_this_function"),
-                        _("Find functions called by this function"),
-                        bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/functions_called_by_this_function")),
-                        _("Find functions called by this function"));
-        } else {
-            // 16
-            tb->AddTool(XRCID("cscope_find_symbol"),
-                        _("Find this C symbol"),
-                        bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/find_symbol")),
-                        _("Find this C symbol"));
-            tb->AddTool(XRCID("cscope_functions_calling_this_function"),
-                        _("Find functions calling this function"),
-                        bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/function_calling_this_function")),
-                        _("Find functions calling this function"));
-            tb->AddTool(XRCID("cscope_functions_called_by_this_function"),
-                        _("Find functions called by this function"),
-                        bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/functions_called_by_this_function")),
-                        _("Find functions called by this function"));
-        }
+        // use the large icons set
+        tb->AddTool(XRCID("cscope_find_symbol"),
+                    _("Find this C symbol"),
+                    bitmapLoader->LoadBitmap("find", size),
+                    _("Find this C symbol"));
+        tb->AddTool(XRCID("cscope_functions_calling_this_function"),
+                    _("Find functions calling this function"),
+                    bitmapLoader->LoadBitmap("step_in", size),
+                    _("Find functions calling this function"));
+        tb->AddTool(XRCID("cscope_functions_called_by_this_function"),
+                    _("Find functions called by this function"),
+                    bitmapLoader->LoadBitmap("step_out", size),
+                    _("Find functions called by this function"));
         tb->Realize();
     }
 
@@ -776,8 +755,7 @@ void Cscope::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& WXUNUSED(e))
 {
     wxString word = GetSearchPattern();
-    if(word.IsEmpty())
-        return;
+    if(word.IsEmpty()) return;
 
     DoFindSymbol(word);
 }

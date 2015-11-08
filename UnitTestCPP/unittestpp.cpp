@@ -125,19 +125,10 @@ clToolBar* UnitTestPP::CreateToolBar(wxWindow* parent)
         tb->SetToolBitmapSize(wxSize(size, size));
 
         BitmapLoader& bitmapLoader = *m_mgr->GetStdIcons();
-
-        if(size == 24) {
-            tb->AddTool(XRCID("run_unit_tests"),
-                        _("Run Unit tests..."),
-                        bitmapLoader.LoadBitmap(wxT("toolbars/24/unittest++/run_as_unittest")),
-                        _("Run project as unit test project..."));
-
-        } else {
-            tb->AddTool(XRCID("run_unit_tests"),
-                        _("Run Unit tests..."),
-                        bitmapLoader.LoadBitmap(wxT("toolbars/16/unittest++/run_as_unittest")),
-                        _("Run project as unit test project..."));
-        }
+        tb->AddTool(XRCID("run_unit_tests"),
+                    _("Run Unit tests..."),
+                    bitmapLoader.LoadBitmap("ok", size),
+                    _("Run project as unit test project..."));
         tb->Realize();
     }
     return tb;

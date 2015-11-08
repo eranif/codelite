@@ -22,10 +22,6 @@
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
-#include <wx/imaglist.h>
-#include <wx/bitmap.h>
-#include <map>
-#include <wx/icon.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -112,46 +108,6 @@ public:
     wxButton* GetButton3() { return m_button3; }
     CorrectSpellingDlg_base(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Misspelling found!"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CorrectSpellingDlg_base();
-};
-
-
-class SpellCheckerImages16 : public wxImageList
-{
-protected:
-    // Maintain a map of all bitmaps representd by their name
-    std::map<wxString, wxBitmap> m_bitmaps;
-
-
-protected:
-
-public:
-    SpellCheckerImages16();
-    const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name) )
-            return wxNullBitmap;
-        return m_bitmaps.find(name)->second;
-    }
-    virtual ~SpellCheckerImages16();
-};
-
-
-class SpellCheckerImages24 : public wxImageList
-{
-protected:
-    // Maintain a map of all bitmaps representd by their name
-    std::map<wxString, wxBitmap> m_bitmaps;
-
-
-protected:
-
-public:
-    SpellCheckerImages24();
-    const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name) )
-            return wxNullBitmap;
-        return m_bitmaps.find(name)->second;
-    }
-    virtual ~SpellCheckerImages24();
 };
 
 #endif

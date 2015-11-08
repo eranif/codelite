@@ -60,6 +60,7 @@ $OnSizeIcons[] = new ImageFile("status\\24\\network-offline.svg", "disconnected.
 $OnSizeIcons[] = new ImageFile("status\\24\\network-transmit-receive.svg", "connected.svg");
 $OnSizeIcons[] = new ImageFile("apps\\24\\checkbox.svg", "checkbox.svg");
 $OnSizeIcons[] = new ImageFile("places\\24\\folder-system.svg", "project.svg");
+$OnSizeIcons[] = new ImageFile("status\\24\\media-playlist-repeat.svg", "repeat.svg");
 
 // 16x16 icons size
 $SmallIcons[] = new ImageFile("actions\\16\\document-new.svg", "16/file_new.svg");
@@ -105,6 +106,7 @@ $SmallIcons[] = new ImageFile("actions\\16\\go-up.svg", "16/up.svg");
 $SmallIcons[] = new ImageFile("places\\16\\folder.svg", "16/folder.svg");
 $SmallIcons[] = new ImageFile("places\\16\\folder-publicshare.svg", "16/folder-users.svg");
 $SmallIcons[] = new ImageFile("places\\16\\user-home.svg", "16/cxx-workspace.svg");
+
 
 // 16x16 icons size
 $LargeIcons[] = new ImageFile("actions\\24\\document-new.svg", "24/file_new.svg");

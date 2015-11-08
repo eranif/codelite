@@ -165,36 +165,6 @@ clToolBar *CallGraph::CreateToolBar(wxWindow *parent)
 {
     //Create the toolbar to be used by the plugin
     clToolBar *tb(NULL);
-
-    // First, check that CodeLite allows plugin to register plugins
-    if (m_mgr->AllowToolbar()) {
-        // Support both toolbars icon size
-        int size = m_mgr->GetToolbarIconSize();
-
-        // Allocate new toolbar, which will be freed later by CodeLite
-        tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-
-        // Set the toolbar size
-        tb->SetToolBitmapSize(wxSize(size, size));
-
-        // Add tools to the plugins toolbar. You must provide 2 sets of icons: 24x24 and 16x16
-        BitmapLoader *bmpLoader = m_mgr->GetStdIcons();
-
-        if (size == 24) {
-            tb->AddTool(XRCID("cg_show_callgraph"),
-                        _("Show call graph"),
-                        bmpLoader->LoadBitmap(wxT("callgraph/24/cg")),
-                        _("Show call graph for selected/active project"),
-                        wxITEM_NORMAL);
-        } else {
-            tb->AddTool(XRCID("cg_show_callgraph"),
-                        _("Show call graph"),
-                        bmpLoader->LoadBitmap(wxT("callgraph/16/cg")),
-                        _("Show call graph for selected/active project"),
-                        wxITEM_NORMAL);
-        }
-        tb->Realize();
-    }
     return tb;
 }
 

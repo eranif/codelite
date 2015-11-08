@@ -46,10 +46,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 MemCheckPlugin::MemCheckPlugin(IManager* manager)
     : IPlugin(manager)
@@ -160,51 +157,7 @@ MemCheckPlugin::~MemCheckPlugin()
 
 clToolBar* MemCheckPlugin::CreateToolBar(wxWindow* parent)
 {
-    // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::CreateToolBar()"));
     clToolBar* tb(NULL);
-    if(m_mgr->AllowToolbar()) {
-        int size = m_mgr->GetToolbarIconSize();
-        tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-        tb->SetToolBitmapSize(wxSize(size, size));
-        if(size == 24) {
-            MemCheckIcons24 icons;
-            tb->AddTool(XRCID("memcheck_check_active_project"),
-                        _("Run MemCheck"),
-                        icons.Bitmap("memcheck_check_24"),
-                        _("Run MemCheck"),
-                        wxITEM_NORMAL);
-            tb->AddTool(MemCheckOutputViewBase::ID_TOOL_STOP_PROCESS,
-                        _("Stop Check"),
-                        icons.Bitmap("memcheck_stop_24"),
-                        _("Stop Check"),
-                        wxITEM_NORMAL);
-            tb->AddSeparator();
-            tb->AddTool(XRCID("memcheck_import"),
-                        _("Load MemCheck log from file."),
-                        icons.Bitmap("memcheck_import_24"),
-                        _("Load MemCheck log from file."),
-                        wxITEM_NORMAL);
-        } else {
-            MemCheckIcons16 icons;
-            tb->AddTool(XRCID("memcheck_check_active_project"),
-                        _("Run MemCheck"),
-                        icons.Bitmap("memcheck_check"),
-                        _("Run MemCheck"),
-                        wxITEM_NORMAL);
-            tb->AddTool(MemCheckOutputViewBase::ID_TOOL_STOP_PROCESS,
-                        _("Stop Check"),
-                        icons.Bitmap("memcheck_stop"),
-                        _("Stop Check"),
-                        wxITEM_NORMAL);
-            tb->AddSeparator();
-            tb->AddTool(XRCID("memcheck_import"),
-                        _("Load MemCheck log from file."),
-                        icons.Bitmap("memcheck_import"),
-                        _("Load MemCheck log from file."),
-                        wxITEM_NORMAL);
-        }
-        tb->Realize();
-    }
     return tb;
 }
 
@@ -474,8 +427,7 @@ void MemCheckPlugin::OnImportLog(wxCommandEvent& event)
                                 "",
                                 "xml files (*.xml)|*.xml|all files (*.*)|*.*",
                                 wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-    if(openFileDialog.ShowModal() == wxID_CANCEL)
-        return;
+    if(openFileDialog.ShowModal() == wxID_CANCEL) return;
 
     wxWindowDisabler disableAll;
     wxBusyInfo wait(wxT(BUSY_MESSAGE));
@@ -492,8 +444,7 @@ void MemCheckPlugin::OnSettings(wxCommandEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::OnSettings()"));
     MemCheckSettingsDialog dialog(m_mgr->GetTheApp()->GetTopWindow(), m_settings);
-    if(dialog.ShowModal() == wxID_OK)
-        ApplySettings();
+    if(dialog.ShowModal() == wxID_OK) ApplySettings();
 }
 
 void MemCheckPlugin::OnMemCheckUI(wxUpdateUIEvent& event)
@@ -504,8 +455,7 @@ void MemCheckPlugin::OnMemCheckUI(wxUpdateUIEvent& event)
 
 void MemCheckPlugin::StopProcess()
 {
-    if(m_terminal.IsRunning())
-        m_terminal.Terminate();
+    if(m_terminal.IsRunning()) m_terminal.Terminate();
 }
 
 void MemCheckPlugin::OnProcessOutput(clCommandEvent& event)
@@ -531,7 +481,4 @@ void MemCheckPlugin::OnStopProcess(wxCommandEvent& event)
     StopProcess();
 }
 
-void MemCheckPlugin::OnStopProcessUI(wxUpdateUIEvent& event)
-{
-    event.Enable(IsRunning());
-}
+void MemCheckPlugin::OnStopProcessUI(wxUpdateUIEvent& event) { event.Enable(IsRunning()); }

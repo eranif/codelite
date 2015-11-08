@@ -109,6 +109,7 @@ clToolBar* QMakePlugin::CreateToolBar(wxWindow* parent)
     // You can use the below code a snippet:
     // First, check that CodeLite allows plugin to register plugins
     if(m_mgr->AllowToolbar()) {
+
         // Support both toolbars icon size
         int size = m_mgr->GetToolbarIconSize();
 
@@ -117,34 +118,16 @@ clToolBar* QMakePlugin::CreateToolBar(wxWindow* parent)
 
         // Set the toolbar size
         tb->SetToolBitmapSize(wxSize(size, size));
-
-        // Add tools to the plugins toolbar. You must provide 2 sets of icons: 24x24 and 16x16
-        if(size == 24) {
-            tb->AddTool(XRCID("qmake_settings"),
-                        _("Configure qmake"),
-                        LoadBitmapFile(wxT("qt24_preferences.png")),
-                        _("Configure qmake"));
-            tb->AddTool(XRCID("new_qmake_project"),
-                        _("Create new qmake based project"),
-                        LoadBitmapFile(wxT("qt24_new.png")),
-                        _("Create new qmake based project"));
-        } else {
-            tb->AddTool(XRCID("qmake_settings"),
-                        _("Configure qmake"),
-                        LoadBitmapFile(wxT("qt16_preferences.png")),
-                        _("Configure qmake"));
-            tb->AddTool(XRCID("new_qmake_project"),
-                        _("Create new qmake based project"),
-                        LoadBitmapFile(wxT("qt16_new.png")),
-                        _("Create new qmake based project"));
-        }
+        tb->AddTool(XRCID("new_qmake_project"),
+                    _("Create new qmake based project"),
+                    m_mgr->GetStdIcons()->LoadBitmap("qt", size),
+                    _("Create new qmake based project"));
         // And finally, we must call 'Realize()'
         tb->Realize();
     }
 
     // return the toolbar, it can be NULL if CodeLite does not allow plugins to register toolbars
     // or in case the plugin simply does not require toolbar
-
     return tb;
 }
 

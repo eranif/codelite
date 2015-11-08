@@ -61,6 +61,7 @@ $OnSizeIcons[] = new ImageFile("status\\24\\network-transmit-receive.svg", "conn
 $OnSizeIcons[] = new ImageFile("apps\\24\\checkbox.svg", "checkbox.svg");
 $OnSizeIcons[] = new ImageFile("places\\24\\folder-system.svg", "project.svg");
 $OnSizeIcons[] = new ImageFile("status\\24\\media-playlist-repeat.svg", "repeat.svg");
+$OnSizeIcons[] = new ImageFile("categories\\24\\applications-utilities.svg", "tools.svg");
 
 // 16x16 icons size
 $SmallIcons[] = new ImageFile("actions\\16\\document-new.svg", "16/file_new.svg");

@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 689,
+  "m_objCounter": 690,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCF01InitBitmapResources",
   "m_bitmapsFile": "php_ui_php-plugin_bitmaps.cpp",
@@ -9,6 +9,7 @@
   "m_outputFileName": "php_ui",
   "m_firstWindowId": 8000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": [{
     "m_includeFile": "#include \"php_file_layout_tree.h\"",
     "m_allocationLine": "m_treeCtrlLayout = new PHPFileLayoutTree($parent);",
@@ -9589,7 +9590,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../resources/php-project-settings.png"
+           "m_path": "../../bitmaps/16-cog.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -9651,7 +9652,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../resources/cloud-copy.png"
+           "m_path": "../../bitmaps/16-remote-folder.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -9681,7 +9682,26 @@
            "m_description": "Process a wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN event",
            "m_noBody": false
           }],
-         "m_children": []
+         "m_children": [{
+           "m_type": 4458,
+           "proportion": 0,
+           "border": 5,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": [],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+           "m_properties": [{
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "m_menu690"
+            }, {
+             "type": "string",
+             "m_label": "Label:",
+             "m_value": "Menu"
+            }],
+           "m_events": [],
+           "m_children": []
+          }]
         }, {
          "m_type": 4462,
          "proportion": 0,
@@ -9713,7 +9733,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../../LiteEditor/res/collapse.png"
+           "m_path": "../../bitmaps/16-fold.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -11350,7 +11370,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../../codelite-icons/toolbars/16/standard/forward.png"
+       "m_path": "../../bitmaps/16-forward.png"
       }],
      "m_events": [],
      "m_children": []
@@ -11388,7 +11408,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../resources/console.png"
+       "m_path": "../../bitmaps/16-console.png"
       }],
      "m_events": [],
      "m_children": []
@@ -11407,7 +11427,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../resources/devil.png"
+       "m_path": "../../bitmaps/16-executable.png"
       }],
      "m_events": [],
      "m_children": []
@@ -11426,7 +11446,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../resources/elephant.png"
+       "m_path": "../../bitmaps/16-php-workspace.png"
       }],
      "m_events": [],
      "m_children": []
@@ -11464,7 +11484,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../resources/refresh.png"
+       "m_path": "../../bitmaps/16-debugger_restart.png"
       }],
      "m_events": [],
      "m_children": []
@@ -11483,7 +11503,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../resources/php-workspace.png"
+       "m_path": "../../bitmaps/16-php-workspace.png"
       }],
      "m_events": [],
      "m_children": []

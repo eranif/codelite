@@ -90,7 +90,6 @@ $SmallIcons[] = new ImageFile("actions\\16\\view-refresh.svg", "16/debugger_rest
 $SmallIcons[] = new ImageFile("actions\\16\\go-down.svg", "16/next.svg");
 $SmallIcons[] = new ImageFile("actions\\16\\go-next.svg", "16/show_current_line.svg");
 $SmallIcons[] = new ImageFile("actions\\16\\document-properties.svg", "16/cog.svg");
-$SmallIcons[] = new ImageFile("actions\\16\\go-home.svg", "16/home.svg");
 $SmallIcons[] = new ImageFile("places\\16\\folder-remote.svg", "16/remote-folder.svg");
 $SmallIcons[] = new ImageFile("mimes\\16\\package-x-generic.svg", "16/archive.svg");
 $SmallIcons[] = new ImageFile("mimes\\16\\text-x-generic.svg", "16/log.svg");
@@ -105,7 +104,7 @@ $SmallIcons[] = new ImageFile("actions\\16\\go-down.svg", "16/down.svg");
 $SmallIcons[] = new ImageFile("actions\\16\\go-up.svg", "16/up.svg");
 $SmallIcons[] = new ImageFile("places\\16\\folder.svg", "16/folder.svg");
 $SmallIcons[] = new ImageFile("places\\16\\folder-publicshare.svg", "16/folder-users.svg");
-$SmallIcons[] = new ImageFile("places\\16\\user-home.svg", "16/cxx-workspace.svg");
+$SmallIcons[] = new ImageFile("apps\\16\\system-file-manager.svg", "16/cxx-workspace.svg");
 
 
 // 16x16 icons size
@@ -135,7 +134,6 @@ $LargeIcons[] = new ImageFile("actions\\24\\view-refresh.svg", "24/debugger_rest
 $LargeIcons[] = new ImageFile("actions\\24\\go-down.svg", "24/next.svg");
 $LargeIcons[] = new ImageFile("actions\\24\\go-next.svg", "24/show_current_line.svg");
 $LargeIcons[] = new ImageFile("actions\\24\\document-properties.svg", "24/cog.svg");
-$LargeIcons[] = new ImageFile("actions\\24\\go-home.svg", "24/home.svg");
 $LargeIcons[] = new ImageFile("places\\24\\folder-remote.svg", "24/remote-folder.svg");
 $LargeIcons[] = new ImageFile("mimes\\24\\package-x-generic.svg", "24/archive.svg");
 $LargeIcons[] = new ImageFile("mimes\\24\\text-x-generic.svg", "24/log.svg");
@@ -152,6 +150,7 @@ $LargeIcons[] = new ImageFile("places\\24\\folder.svg", "24/folder.svg");
 $LargeIcons[] = new ImageFile("actions\\24\\edit-clear.svg", "24/clear.svg");
 $LargeIcons[] = new ImageFile("places\\24\\folder-publicshare.svg", "24/folder-users.svg");
 $LargeIcons[] = new ImageFile("places\\24\\user-home.svg", "24/cxx-workspace.svg");
+$LargeIcons[] = new ImageFile("apps\\24\\system-file-manager.svg", "24/cxx-workspace.svg");
 
 /** @var ImageFile */
 foreach($SmallIcons as $file) {

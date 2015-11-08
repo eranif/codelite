@@ -9,6 +9,7 @@
   "m_outputFileName": "",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -5519,7 +5520,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "nodejs.png"
+       "m_path": "../bitmaps/16-nodejs-workspace.png"
       }],
      "m_events": [],
      "m_children": []

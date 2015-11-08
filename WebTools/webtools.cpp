@@ -53,7 +53,7 @@ WebTools::WebTools(IManager* manager)
     , m_nodejsDebuggerPane(NULL)
     , m_hideToolBarOnDebugStop(false)
 {
-    m_longName = _("Support for JavScript, XML, HTML, CSS and other web development tools");
+    m_longName = _("Support for JavScript, XML, HTML, CSS/SCSS and other web development tools");
     m_shortName = wxT("WebTools");
 
     // Register our new workspace type

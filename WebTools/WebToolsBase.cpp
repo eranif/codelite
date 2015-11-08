@@ -136,7 +136,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     #endif
     
     SetName(wxT("WebToolsSettingsBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -295,7 +295,7 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     m_stdBtnSizer70->Realize();
     
     SetName(wxT("NodeJSDebuggerDlgBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -460,7 +460,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 250, wxALIGN_LEFT);
     
     SetName(wxT("NodeJSDebuggerPaneBase"));
-    SetSizeHints(500,250);
+    SetSize(500,250);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -550,7 +550,7 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
     m_stdBtnSizer142->Realize();
     
     SetName(wxT("NodeJSNewWorkspaceDlgBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

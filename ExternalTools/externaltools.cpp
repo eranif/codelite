@@ -223,10 +223,7 @@ clToolBar* ExternalToolsPlugin::CreateToolBar(wxWindow* parent)
         m_tb->Realize();
     } else {
         // Using native toolbar
-        wxFrame* frame = dynamic_cast<wxFrame*>(parent);
-        CHECK_PTR_RET_NULL(frame);
-
-        wxToolBar* toolbar = frame->GetToolBar();
+        wxToolBar* toolbar = EventNotifier::Get()->TopFrame()->GetToolBar();
         CHECK_PTR_RET_NULL(toolbar);
 
         // Add the static tools

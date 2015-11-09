@@ -87,13 +87,13 @@
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
 #undef EVT_STC_CALLTIP_CLICK
-#define EVT_STC_CALLTIP_CLICK(id, fn)                                                              \
-    DECLARE_EVENT_TABLE_ENTRY(                                                                     \
-        wxEVT_STC_CALLTIP_CLICK,                                                                   \
-        id,                                                                                        \
-        wxID_ANY,                                                                                  \
-        (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxStyledTextEventFunction, &fn), \
-        (wxObject*)NULL),
+#define EVT_STC_CALLTIP_CLICK(id, fn)                                            \
+    DECLARE_EVENT_TABLE_ENTRY(wxEVT_STC_CALLTIP_CLICK,                           \
+                              id,                                                \
+                              wxID_ANY,                                          \
+                              (wxObjectEventFunction)(wxEventFunction)           \
+                              wxStaticCastEvent(wxStyledTextEventFunction, &fn), \
+                              (wxObject*)NULL),
 #endif
 
 #define NUMBER_MARGIN_ID 0
@@ -1510,9 +1510,8 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     if(buf.length() == 0 && !theText.IsEmpty()) {
         // something went wrong in the conversion process
         wxString errmsg;
-        errmsg << _(
-            "File text conversion failed!\nCheck your file font encoding from\nSettings | Global Editor "
-            "Prefernces | Misc | Locale");
+        errmsg << _("File text conversion failed!\nCheck your file font encoding from\nSettings | Global Editor "
+                    "Prefernces | Misc | Locale");
         wxMessageBox(errmsg, "CodeLite", wxOK | wxICON_ERROR | wxCENTER, wxTheApp->GetTopWindow());
         return false;
     }
@@ -5212,8 +5211,7 @@ void LEditor::QuickAddNext()
         SetSelection(start, end);
         return;
     }
-    
-    
+
     int count = GetSelections();
     int start = GetSelectionNStart(count - 1);
     int end = GetSelectionNEnd(count - 1);
@@ -5248,7 +5246,7 @@ void LEditor::QuickFindAll()
 
     int matches(0);
     int firstMatch(wxNOT_FOUND);
-    //clWordCharslocker wcl(this);
+    // clWordCharslocker wcl(this);
     int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
     while(where != wxNOT_FOUND) {
         if(matches == 0) {
@@ -5261,8 +5259,7 @@ void LEditor::QuickFindAll()
             AddSelection(where, where + findWhat.length());
         }
         ++matches;
-        where = this->FindText(
-            where + findWhat.length(), GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
+        where = this->FindText(where + findWhat.length(), GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
     }
     wxString message;
     message << _("Found and selected ") << GetSelections() << _(" matches");

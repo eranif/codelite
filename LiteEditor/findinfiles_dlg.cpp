@@ -25,7 +25,13 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("find-in-files"));
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-find_in_files"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-find_in_files@2x"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -100,7 +106,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     m_btnAddPath = new wxButton(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     #if wxVERSION_NUMBER >= 2904
-    m_btnAddPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("fif-menu")), wxLEFT);
+    m_btnAddPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxLEFT);
     m_btnAddPath->SetBitmapMargins(2,2);
     #endif
     m_btnAddPath->SetToolTip(_("Add search path"));
@@ -109,7 +115,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     m_btnClearSelectedPath = new wxButton(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     #if wxVERSION_NUMBER >= 2904
-    m_btnClearSelectedPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("fif-clear")), wxLEFT);
+    m_btnClearSelectedPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("16-minus")), wxLEFT);
     m_btnClearSelectedPath->SetBitmapMargins(5,5);
     #endif
     m_btnClearSelectedPath->SetToolTip(_("Remove the selected path"));
@@ -211,11 +217,16 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     bSizer2->Add(m_cancel, 0, wxALL|wxEXPAND, 5);
     
     SetName(wxT("FindInFilesDialogBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetMinClientSize(wxSize(-1,300));
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

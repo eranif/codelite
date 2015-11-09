@@ -9,6 +9,7 @@
   "m_outputFileName": "findinfiles_dlg",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -26,7 +27,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "-1,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -103,11 +104,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "../codelite-icons/toolbars/16/search/find-in-files.png"
+     "m_path": "../bitmaps/16-find_in_files.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-find_in_files@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -910,7 +911,7 @@
                     }, {
                      "type": "bitmapPicker",
                      "m_label": "Bitmap File:",
-                     "m_path": "../icons/fif-menu.png"
+                     "m_path": "../bitmaps/16-plus.png"
                     }, {
                      "type": "choice",
                      "m_label": "Direction",
@@ -1005,7 +1006,7 @@
                     }, {
                      "type": "bitmapPicker",
                      "m_label": "Bitmap File:",
-                     "m_path": "../icons/fif-clear.png"
+                     "m_path": "../bitmaps/16-minus.png"
                     }, {
                      "type": "choice",
                      "m_label": "Direction",

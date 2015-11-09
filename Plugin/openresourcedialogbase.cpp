@@ -75,7 +75,8 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer2->Realize();
     
     SetName(wxT("OpenResourceDialogBase"));
-    SetSizeHints(-1,-1);
+    SetMinClientSize(wxSize(-1,300));
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

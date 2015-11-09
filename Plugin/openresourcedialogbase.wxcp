@@ -9,6 +9,7 @@
   "m_outputFileName": "",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -26,7 +27,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "-1,300"
     }, {
      "type": "string",
      "m_label": "Name:",

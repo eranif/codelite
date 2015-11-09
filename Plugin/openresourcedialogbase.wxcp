@@ -104,11 +104,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-open_resource.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-open_resource@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",

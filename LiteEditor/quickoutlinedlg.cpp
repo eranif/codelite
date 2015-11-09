@@ -83,20 +83,21 @@ QuickOutlineDlg::QuickOutlineDlg(
     m_treeOutline->SetSymbolsImages(CreateSymbolTreeImages());
 
     Connect(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED, wxCommandEventHandler(QuickOutlineDlg::OnItemSelected), NULL, this);
+    mainSizer->Add(m_treeOutline, 1, wxALL | wxEXPAND, 5);
+    
+    Layout();
+    SetName("QuickOutlineDlg");
+    
+    GetSizer()->Fit(this);
+    SetMinClientSize(GetClientSize());
+    
+    WindowAttrManager::Load(this);
+    CentreOnParent();
 
     // no hidden root
     m_treeOutline->BuildTree(m_fileName);
     m_treeOutline->ExpandAll();
     m_treeOutline->SetFocus();
-
-    mainSizer->Add(m_treeOutline, 1, wxALL | wxEXPAND, 5);
-    Layout();
-    SetName("QuickOutlineDlg");
-    GetSizer()->Fit(this);
-    SetMinClientSize(GetClientSize());
-    WindowAttrManager::Load(this);
-    CentreOnParent();
-
     // Fix bug on GTK3 and prevent the window to shrink
     // indefinitely
 }

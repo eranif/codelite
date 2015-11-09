@@ -22,6 +22,22 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
         wxCFB13InitBitmapResources();
         bBitmapLoaded = true;
     }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-open_resource"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-open_resource@2x"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
     
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
@@ -79,6 +95,7 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
+         SetMinClientSize(GetMinClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);

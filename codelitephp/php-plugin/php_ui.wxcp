@@ -5709,7 +5709,7 @@
                      "border": 5,
                      "gbSpan": ",",
                      "gbPosition": ",",
-                     "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
+                     "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
                      "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                      "m_properties": [{
                        "type": "winid",
@@ -5870,7 +5870,7 @@
                      "border": 5,
                      "gbSpan": "1,1",
                      "gbPosition": "0,0",
-                     "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
+                     "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
                      "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                      "m_properties": [{
                        "type": "winid",
@@ -6031,7 +6031,7 @@
                      "border": 5,
                      "gbSpan": ",",
                      "gbPosition": ",",
-                     "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
+                     "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
                      "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                      "m_properties": [{
                        "type": "winid",
@@ -6192,7 +6192,7 @@
                      "border": 5,
                      "gbSpan": ",",
                      "gbPosition": ",",
-                     "m_styles": ["wxDIRP_DEFAULT_STYLE", "wxDIRP_USE_TEXTCTRL"],
+                     "m_styles": ["wxDIRP_SMALL", "wxDIRP_DEFAULT_STYLE", "wxDIRP_USE_TEXTCTRL", "wxDIRP_DIR_MUST_EXIST"],
                      "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                      "m_properties": [{
                        "type": "winid",
@@ -9047,7 +9047,7 @@
          "border": 5,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxDIRP_DEFAULT_STYLE", "wxDIRP_USE_TEXTCTRL"],
+         "m_styles": ["wxDIRP_SMALL", "wxDIRP_DEFAULT_STYLE", "wxDIRP_USE_TEXTCTRL"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",

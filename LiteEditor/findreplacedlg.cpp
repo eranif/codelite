@@ -91,7 +91,7 @@ bool FindReplaceDialog::Create(wxWindow* parent,
     ConnectEvents();
 
     GetSizer()->Fit(this);
-    SetMinClientSize(GetMinClientSize());
+    SetMinClientSize(GetClientSize());
     CentreOnParent();
 
     m_findString->SetFocus();

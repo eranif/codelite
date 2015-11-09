@@ -9,6 +9,7 @@
   "m_outputFileName": "wxcrafter_plugin",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -3780,11 +3781,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "-1,-1"
+     "m_value": "400,200"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "400,200"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -3924,7 +3925,7 @@
      "m_children": [{
        "m_type": 4408,
        "proportion": 1,
-       "border": 5,
+       "border": 0,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": ["wxWANTS_CHARS", "wxTAB_TRAVERSAL"],
@@ -4029,7 +4030,7 @@
             }, {
              "type": "string",
              "m_label": "Size:",
-             "m_value": "400,300"
+             "m_value": "-1,-1"
             }, {
              "type": "string",
              "m_label": "Minimum Size:",

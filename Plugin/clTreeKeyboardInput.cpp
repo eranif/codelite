@@ -78,8 +78,9 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
     if(!m_text->IsShown()) {
         DoShowTextBox();
     }
-
-    m_text->ChangeValue(wxString() << ch);
+    
+    wxChar asChar = ch;
+    m_text->ChangeValue(wxString() << asChar);
     m_text->SetInsertionPoint(m_text->GetLastPosition());
     CallAfter(&clTreeKeyboardInput::SetTextFocus);
 }

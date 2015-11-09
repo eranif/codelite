@@ -92,12 +92,13 @@ QuickOutlineDlg::QuickOutlineDlg(
     mainSizer->Add(m_treeOutline, 1, wxALL | wxEXPAND, 5);
     Layout();
     SetName("QuickOutlineDlg");
+    GetSizer()->Fit(this);
+    SetMinClientSize(GetClientSize());
     WindowAttrManager::Load(this);
     CentreOnParent();
-    
-    // Fix bug on GTK3 and prevent the window to shrink 
+
+    // Fix bug on GTK3 and prevent the window to shrink
     // indefinitely
-    SetMinClientSize(wxSize(-1, 300));
 }
 
 QuickOutlineDlg::~QuickOutlineDlg()

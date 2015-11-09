@@ -77,7 +77,10 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
 
     m_textCtrlResourceName->SetFocus();
     SetLabel(_("Open resource..."));
-
+    
+    GetSizer()->Fit(this);
+    SetMinClientSize(GetClientSize());
+    
     SetName("OpenResourceDialog");
     WindowAttrManager::Load(this);
 

@@ -87,11 +87,8 @@ QuickOutlineDlg::QuickOutlineDlg(
     
     Layout();
     SetName("QuickOutlineDlg");
+    SetMinClientSize(wxSize(500,400));
     
-    GetSizer()->Fit(this);
-    SetMinClientSize(wxSize(500,300));
-    
-    WindowAttrManager::Load(this);
     CentreOnParent();
 
     // no hidden root

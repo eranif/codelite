@@ -78,11 +78,13 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_textCtrlResourceName->SetFocus();
     SetLabel(_("Open resource..."));
     
+    SetMinClientSize(wxSize(600, 400));
     GetSizer()->Fit(this);
-    SetMinClientSize(GetClientSize());
-    
+
+#ifndef __WXGTK__
     SetName("OpenResourceDialog");
     WindowAttrManager::Load(this);
+#endif
 
     // load all files from the workspace
     if(m_manager->IsWorkspaceOpen()) {

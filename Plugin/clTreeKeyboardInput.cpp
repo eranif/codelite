@@ -32,10 +32,44 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip(false);
 
-    wxChar ch = event.GetKeyCode();
-    if((event.GetModifiers() != wxMOD_NONE) || (ch == WXK_ESCAPE) || ch == WXK_UP || ch == WXK_DOWN || ch == WXK_LEFT ||
-       ch == WXK_RIGHT || ch == WXK_RETURN || ch == WXK_NUMPAD_ENTER || ch == WXK_NUMPAD_SUBTRACT ||
-       ch == WXK_NUMPAD_MULTIPLY || ch == WXK_CONTROL || ch == WXK_COMMAND || ch == WXK_SHIFT || ch == WXK_ESCAPE) {
+    int ch = event.GetKeyCode();
+    static std::set<int> ignoreKeys;
+    ignoreKeys.insert(WXK_UP);
+    ignoreKeys.insert(WXK_DOWN);
+    ignoreKeys.insert(WXK_LEFT);
+    ignoreKeys.insert(WXK_RIGHT);
+    ignoreKeys.insert(WXK_RETURN);
+    ignoreKeys.insert(WXK_NUMPAD_ENTER);
+    ignoreKeys.insert(WXK_NUMPAD_SUBTRACT);
+    ignoreKeys.insert(WXK_NUMPAD_MULTIPLY);
+    ignoreKeys.insert(WXK_CONTROL);
+    ignoreKeys.insert(WXK_COMMAND);
+    ignoreKeys.insert(WXK_SHIFT);
+    ignoreKeys.insert(WXK_ESCAPE);
+    ignoreKeys.insert(WXK_DELETE);
+    ignoreKeys.insert(WXK_END);
+    ignoreKeys.insert(WXK_INSERT);
+    ignoreKeys.insert(WXK_HOME);
+    ignoreKeys.insert(WXK_PAGEUP);
+    ignoreKeys.insert(WXK_PAGEDOWN);
+    ignoreKeys.insert(WXK_SCROLL);
+    ignoreKeys.insert(WXK_PRINT);
+    ignoreKeys.insert(WXK_PAUSE);
+    ignoreKeys.insert(WXK_NUMLOCK);
+
+    for(int i = WXK_NUMPAD_SPACE; i <= WXK_NUMPAD_DIVIDE; ++i) {
+        ignoreKeys.insert(i);
+    }
+    
+     for(int i = WXK_NUMPAD0; i <= WXK_NUMPAD9; ++i) {
+        ignoreKeys.insert(i);
+    }
+    
+    for(int i = WXK_F1; i <= WXK_F24; ++i) {
+        ignoreKeys.insert(i);
+    }
+    
+    if((event.GetModifiers() != wxMOD_NONE) || ignoreKeys.count(ch)) {
         event.Skip();
         return;
     }

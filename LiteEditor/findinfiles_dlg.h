@@ -91,7 +91,7 @@ public:
     wxButton* GetStop() { return m_stop; }
     wxButton* GetCancel() { return m_cancel; }
     wxPanel* GetPanelMainPanel() { return m_panelMainPanel; }
-    FindInFilesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find In Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    FindInFilesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find In Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~FindInFilesDialogBase();
 };
 

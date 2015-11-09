@@ -29,11 +29,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "400,400"
+     "m_value": "400,300"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": ""
+     "m_value": "400,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -171,11 +171,11 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": ""
+         "m_value": "400,300"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
-         "m_value": ""
+         "m_value": "400,300"
         }, {
          "type": "string",
          "m_label": "Name:",
@@ -241,7 +241,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": ""
+     "m_value": "500,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -2048,11 +2048,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "-1,-1"
+     "m_value": "400,300"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": ""
+     "m_value": "400,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -2559,11 +2559,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": ""
+     "m_value": "500,300"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": ""
+     "m_value": "500,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -2992,7 +2992,7 @@
                "border": 5,
                "gbSpan": ",",
                "gbPosition": ",",
-               "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_FILE_MUST_EXIST"],
+               "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL", "wxFLP_FILE_MUST_EXIST"],
                "m_sizerFlags": ["wxLEFT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
                "m_properties": [{
                  "type": "winid",
@@ -5023,11 +5023,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": ""
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": ""
+     "m_value": "600,500"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -8793,11 +8793,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "-1,-1"
+     "m_value": "400,200"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "400,200"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -12614,7 +12614,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "400,200"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -13782,7 +13782,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "500,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -16093,11 +16093,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "500,300"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "500,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -17780,7 +17780,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "500,300"
     }, {
      "type": "string",
      "m_label": "Name:",

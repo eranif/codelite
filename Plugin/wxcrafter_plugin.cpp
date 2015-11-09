@@ -80,10 +80,10 @@ EditDlgBase::EditDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
     boxSizer4->Add(m_button8, 0, wxALL, 5);
     
     SetName(wxT("EditDlgBase"));
-    SetSize(-1,-1);
+    SetMinClientSize(wxSize(300,300));
+    SetSize(300,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -281,7 +281,6 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     m_ribbonButtonBar49->Connect(wxID_REFRESH, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnRefreshDiff), NULL, this);
@@ -395,7 +394,6 @@ clGetTextFromUserBaseDialog::clGetTextFromUserBaseDialog(wxWindow* parent, wxWin
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -433,10 +431,9 @@ clTreeCtrlPanelBase::clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id, const 
     boxSizer151->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 0);
     
     SetName(wxT("clTreeCtrlPanelBase"));
-    SetSize(500,300);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(clTreeCtrlPanelBase::OnItemExpanding), NULL, this);
@@ -485,7 +482,6 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowI
     SetSize(400,200);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -555,7 +551,6 @@ clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
     SetSize(500,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     m_panel169->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(clTreeCtrlPanelDefaultPageBase::OnDefaultPageContextMenu), NULL, this);
@@ -600,10 +595,10 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     m_stdBtnSizer183->Realize();
     
     SetName(wxT("clSingleChoiceDialogBase"));
-    SetSize(-1,-1);
+    SetMinClientSize(wxSize(400,300));
+    SetSize(400,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -663,7 +658,6 @@ clImageViewerBase::clImageViewerBase(wxWindow* parent, wxWindowID id, const wxPo
     SetSize(500,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
 }
 
@@ -720,10 +714,10 @@ clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent,long style)
     m_timerCheckMousePos->Start(25, false);
     
     SetName(wxT("clResizableTooltipBase"));
-    SetSize(-1,-1);
+    SetMinClientSize(wxSize(300,200));
+    SetSize(300,200);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(clResizableTooltipBase::OnItemExpanding), NULL, this);

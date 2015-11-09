@@ -166,27 +166,6 @@ wxPageSetupDialogData* g_pageSetupData = NULL;
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 
-class clWordCharslocker
-{
-    wxString m_wordChars;
-    wxStyledTextCtrl* m_ctrl;
-
-public:
-    clWordCharslocker(wxStyledTextCtrl* ctrl)
-        : m_ctrl(ctrl)
-    {
-        m_wordChars = ctrl->GetWordChars();
-        wxString wordChars = m_wordChars;
-        wordChars << ".-()@#$%^&*(!<>/.,[]:";
-        m_ctrl->SetWordChars(wordChars);
-    }
-
-    ~clWordCharslocker() { m_ctrl->SetWordChars(m_wordChars); }
-};
-
-//---------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------
-
 class clEditorDropTarget : public wxDropTarget
 {
     wxStyledTextCtrl* m_stc;
@@ -5227,8 +5206,14 @@ void LEditor::CommentBlockSelection(const wxString& commentBlockStart, const wxS
 
 void LEditor::QuickAddNext()
 {
-    clWordCharslocker wcl(this);
-    if(!HasSelection()) return;
+    if(!HasSelection()) {
+        int start = WordStartPos(GetCurrentPos(), true);
+        int end = WordEndPos(GetCurrentPos(), true);
+        SetSelection(start, end);
+        return;
+    }
+    
+    
     int count = GetSelections();
     int start = GetSelectionNStart(count - 1);
     int end = GetSelectionNEnd(count - 1);
@@ -5239,7 +5224,7 @@ void LEditor::QuickAddNext()
     }
 
     wxString findWhat = GetTextRange(start, end);
-    int where = this->FindText(end, GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
+    int where = this->FindText(end, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
     if(where != wxNOT_FOUND) {
         AddSelection(where, where + findWhat.length());
         CenterLineIfNeeded(LineFromPos(where));
@@ -5263,8 +5248,8 @@ void LEditor::QuickFindAll()
 
     int matches(0);
     int firstMatch(wxNOT_FOUND);
-    clWordCharslocker wcl(this);
-    int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
+    //clWordCharslocker wcl(this);
+    int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
     while(where != wxNOT_FOUND) {
         if(matches == 0) {
             firstMatch = where;

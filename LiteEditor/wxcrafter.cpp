@@ -57,7 +57,6 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     m_scope->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnScope), NULL, this);
@@ -109,7 +108,6 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     this->Connect(XRCID("stick_build_pane"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnToolPinCommandToolClicked), NULL, this);
@@ -341,10 +339,10 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     boxSizer119->Add(m_button123, 0, wxALL, 5);
     
     SetName(wxT("AddFunctionsImplBaseDlg"));
-    SetSize(500,300);
+    SetMinClientSize(wxSize(500,300));
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -438,7 +436,6 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     this->Connect(wxEVT_SIZE, wxSizeEventHandler(WelcomePageBase::OnSize), NULL, this);
@@ -486,10 +483,9 @@ FileExplorerBase::FileExplorerBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer262->Add(m_genericDirCtrl, 1, wxALL|wxEXPAND, 2);
     
     SetName(wxT("FileExplorerBase"));
-    SetSize(500,300);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     m_genericDirCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(FileExplorerBase::OnItemActivated), NULL, this);
@@ -585,7 +581,6 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     this->Connect(ID_TOOL_COLLAPSE_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnCollapseAll), NULL, this);
@@ -633,7 +628,7 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(600,600), wxTAB_TRAVERSAL);
+    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     mainSizer->Add(m_mainPanel, 1, wxEXPAND, 5);
     
@@ -659,10 +654,10 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
     m_toolbar->Realize();
     
     SetName(wxT("EditorFrameBase"));
+    SetMinClientSize(wxSize(800,600));
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -717,7 +712,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer383->Add(m_banner386, 0, wxALL|wxEXPAND, 2);
     
-    m_dataviewTemplates = new wxDataViewCtrl(m_wizardPageTemplate, wxID_ANY, wxDefaultPosition, wxSize(500,300), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataviewTemplates = new wxDataViewCtrl(m_wizardPageTemplate, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     m_dataviewTemplates->SetFocus();
     
     m_dataviewTemplatesModel = new DVTemplatesModel;
@@ -840,10 +835,10 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer412->Add(m_choiceDebugger, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     SetName(wxT("NewProjectWizardBase"));
-    SetSize(500,400);
+    SetMinClientSize(wxSize(500,400));
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -959,7 +954,6 @@ ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wx
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     // Connect events
     m_checkBoxEnableClang->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnEnableClang), NULL, this);
@@ -1032,10 +1026,10 @@ OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     m_stdBtnSizer473->Realize();
     
     SetName(wxT("OpenFolderDlgBase"));
+    SetMinClientSize(wxSize(-1,100));
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -1090,7 +1084,6 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
     SetSize(500,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
 }
 
@@ -1137,10 +1130,10 @@ SelectDropTargetBaseDlg::SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id
     m_stdBtnSizer543->Realize();
     
     SetName(wxT("SelectDropTargetBaseDlg"));
-    SetSize(-1,-1);
+    SetMinClientSize(wxSize(400,400));
+    SetSize(400,400);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);

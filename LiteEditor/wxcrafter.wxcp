@@ -1395,11 +1395,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "500,300"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "500,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -3318,7 +3318,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "500,300"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -4662,7 +4662,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "800,600"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -4805,7 +4805,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "600,600"
+         "m_value": "-1,-1"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -5305,11 +5305,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "500,400"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "500,400"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -5627,7 +5627,7 @@
           }, {
            "type": "string",
            "m_label": "Size:",
-           "m_value": "500,300"
+           "m_value": "-1,-1"
           }, {
            "type": "string",
            "m_label": "Minimum Size:",
@@ -7749,7 +7749,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "-1,100"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -8517,11 +8517,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "-1,-1"
+     "m_value": "400,400"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "400,400"
     }, {
      "type": "string",
      "m_label": "Name:",

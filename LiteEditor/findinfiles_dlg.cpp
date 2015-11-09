@@ -217,11 +217,10 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     bSizer2->Add(m_cancel, 0, wxALL|wxEXPAND, 5);
     
     SetName(wxT("FindInFilesDialogBase"));
-    SetMinClientSize(wxSize(-1,300));
-    SetSize(-1,-1);
+    SetMinClientSize(wxSize(-1,400));
+    SetSize(-1,400);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);

@@ -33,6 +33,7 @@
 #include <wx/stattext.h>
 #include "macros.h"
 #include <algorithm>
+#include "windowattrmanager.h"
 
 DEFINE_EVENT_TYPE(wxEVT_FRD_FIND_NEXT)
 DEFINE_EVENT_TYPE(wxEVT_FRD_CLOSE)
@@ -89,10 +90,12 @@ bool FindReplaceDialog::Create(wxWindow* parent,
 
     CreateGUIControls();
     ConnectEvents();
-
-    GetSizer()->Fit(this);
-    SetMinClientSize(GetClientSize());
+    
     CentreOnParent();
+    SetName("FindAndReplaceDialog");
+    WindowAttrManager::Load(this);
+    GetSizer()->Fit(this);
+    SetMinClientSize(GetSize());
 
     m_findString->SetFocus();
     return true;

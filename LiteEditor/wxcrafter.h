@@ -148,7 +148,7 @@ public:
     wxButton* GetButton135() { return m_button135; }
     wxButton* GetButton121() { return m_button121; }
     wxButton* GetButton123() { return m_button123; }
-    AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add function implementation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add function implementation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AddFunctionsImplBaseDlg();
 };
 
@@ -204,7 +204,7 @@ protected:
 
 public:
     wxGenericDirCtrl* GetGenericDirCtrl() { return m_genericDirCtrl; }
-    FileExplorerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    FileExplorerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~FileExplorerBase();
 };
 
@@ -424,7 +424,7 @@ protected:
 public:
     wxBannerWindow* GetBanner() { return m_banner; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select View"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP);
+    SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select View"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,400), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP);
     virtual ~SelectDropTargetBaseDlg();
 };
 

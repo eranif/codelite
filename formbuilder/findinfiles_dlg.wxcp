@@ -23,11 +23,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "-1,-1"
+     "m_value": "-1,400"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,300"
+     "m_value": "-1,400"
     }, {
      "type": "string",
      "m_label": "Name:",

@@ -55,7 +55,7 @@ public:
     wxStyledTextCtrl* GetStc10() { return m_stc10; }
     wxButton* GetButton6() { return m_button6; }
     wxButton* GetButton8() { return m_button8; }
-    EditDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Text"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    EditDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Text"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~EditDlgBase();
 };
 
@@ -168,7 +168,7 @@ protected:
 
 public:
     clFileViewerTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
-    clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~clTreeCtrlPanelBase();
 };
 
@@ -223,7 +223,7 @@ protected:
 
 public:
     wxListBox* GetListBox() { return m_listBox; }
-    clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
+    clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~clSingleChoiceDialogBase();
 };
 

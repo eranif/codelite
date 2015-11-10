@@ -70,7 +70,7 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
             ignoreKeys.insert(i);
         }
     }
-    if((event.GetModifiers() != wxMOD_NONE) || ignoreKeys.count(ch)) {
+    if((event.GetModifiers() != wxMOD_NONE && event.GetModifiers() != wxMOD_SHIFT) || ignoreKeys.count(ch)) {
         event.Skip();
         return;
     }
@@ -78,9 +78,12 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
     if(!m_text->IsShown()) {
         DoShowTextBox();
     }
-    
-    wxChar asChar = ch;
-    m_text->ChangeValue(wxString() << asChar);
+
+    wxString chStr(event.GetUnicodeKey());
+    if(!event.ShiftDown()) {
+        chStr.MakeLower();
+    }
+    m_text->ChangeValue(chStr);
     m_text->SetInsertionPoint(m_text->GetLastPosition());
     CallAfter(&clTreeKeyboardInput::SetTextFocus);
 }

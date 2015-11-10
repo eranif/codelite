@@ -105,7 +105,9 @@ $SmallIcons[] = new ImageFile("actions\\16\\go-up.svg", "16/up.svg");
 $SmallIcons[] = new ImageFile("places\\16\\folder.svg", "16/folder.svg");
 $SmallIcons[] = new ImageFile("places\\16\\folder-publicshare.svg", "16/folder-users.svg");
 $SmallIcons[] = new ImageFile("apps\\16\\system-file-manager.svg", "16/cxx-workspace.svg");
-
+$SmallIcons[] = new ImageFile("places\\16\\folder-templates.svg", "16/folder-templates.svg");
+$SmallIcons[] = new ImageFile("status\\16\\dialog-warning.svg", "16/warning.svg");
+$SmallIcons[] = new ImageFile("status\\16\\dialog-error.svg", "16/error.svg");
 
 // 16x16 icons size
 $LargeIcons[] = new ImageFile("actions\\24\\document-new.svg", "24/file_new.svg");
@@ -151,6 +153,9 @@ $LargeIcons[] = new ImageFile("actions\\24\\edit-clear.svg", "24/clear.svg");
 $LargeIcons[] = new ImageFile("places\\24\\folder-publicshare.svg", "24/folder-users.svg");
 $LargeIcons[] = new ImageFile("places\\24\\user-home.svg", "24/cxx-workspace.svg");
 $LargeIcons[] = new ImageFile("apps\\24\\system-file-manager.svg", "24/cxx-workspace.svg");
+$LargeIcons[] = new ImageFile("places\\24\\folder-templates.svg", "24/folder-templates.svg");
+$LargeIcons[] = new ImageFile("status\\24\\dialog-warning.svg", "24/warning.svg");
+$LargeIcons[] = new ImageFile("status\\24\\dialog-error.svg", "24/error.svg");
 
 /** @var ImageFile */
 foreach($SmallIcons as $file) {

@@ -36,11 +36,10 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, 600, wxALIGN_LEFT);
     
     SetName(wxT("SFTPStatusPageBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SFTPStatusPageBase::OnContentMenu), NULL, this);
     
@@ -140,17 +139,20 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     boxSizer16->Add(m_auibar, 0, wxEXPAND, 5);
     
-    m_auibar->AddTool(ID_OPEN_ACCOUNT_MANAGER, _("Open account manager..."), wxXmlResource::Get()->LoadBitmap(wxT("ssh-16")), wxNullBitmap, wxITEM_NORMAL, _("Open account manager..."), _("Open account manager..."), NULL);
+    m_auibar->AddTool(ID_OPEN_ACCOUNT_MANAGER, _("Open account manager..."), wxXmlResource::Get()->LoadBitmap(wxT("16-folder-users")), wxNullBitmap, wxITEM_NORMAL, _("Open account manager..."), _("Open account manager..."), NULL);
     
-    m_auibar->AddTool(ID_SFTP_CONNECT, _("Disconnected. Click to connect"), wxXmlResource::Get()->LoadBitmap(wxT("disconnect")), wxNullBitmap, wxITEM_NORMAL, _("Disconnected. Click to connect"), _("Disconnected. Click to connect"), NULL);
+    m_auibar->AddTool(ID_SFTP_CONNECT, _("Disconnected. Click to connect"), wxXmlResource::Get()->LoadBitmap(wxT("16-disconnected")), wxNullBitmap, wxITEM_NORMAL, _("Disconnected. Click to connect"), _("Disconnected. Click to connect"), NULL);
     
-    m_auibar->AddTool(ID_ADD_BOOKMARK, _("Add Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark")), wxNullBitmap, wxITEM_NORMAL, _("Add Bookmark"), _("Select a folder from the tree view and add it as a bookmark"), NULL);
+    m_auibar->AddTool(ID_ADD_BOOKMARK, _("Add Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("16-bookmark")), wxNullBitmap, wxITEM_NORMAL, _("Add Bookmark"), _("Select a folder from the tree view and add it as a bookmark"), NULL);
     wxAuiToolBarItem* m_toolbarItemAddBookmark = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
     if (m_toolbarItemAddBookmark) {
         m_toolbarItemAddBookmark->SetHasDropDown(true);
+        m_menu115 = new wxMenu;
+        
+        m_dropdownMenus.insert(std::make_pair( m_toolbarItemAddBookmark->GetId(), m_menu115) );
     }
     
-    m_auibar->AddTool(ID_SSH_OPEN_TERMINAL, _("Open Terminal"), wxXmlResource::Get()->LoadBitmap(wxT("terminal")), wxNullBitmap, wxITEM_NORMAL, _("Open Terminal"), _("Open Terminal"), NULL);
+    m_auibar->AddTool(ID_SSH_OPEN_TERMINAL, _("Open Terminal"), wxXmlResource::Get()->LoadBitmap(wxT("16-console")), wxNullBitmap, wxITEM_NORMAL, _("Open Terminal"), _("Open Terminal"), NULL);
     wxAuiToolBarItem* m_toolbarItemTerminal = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
     if (m_toolbarItemTerminal) {
         m_toolbarItemTerminal->SetHasDropDown(true);
@@ -193,11 +195,10 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_treeListCtrl->AppendColumn(_("Name"), 400, wxALIGN_LEFT, wxCOL_RESIZABLE|wxCOL_SORTABLE);
     
     SetName(wxT("SFTPTreeViewBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(ID_OPEN_ACCOUNT_MANAGER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnOpenAccountManager), NULL, this);
     this->Connect(ID_SFTP_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnConnection), NULL, this);
@@ -310,11 +311,15 @@ SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowI
     m_stdBtnSizer58->Realize();
     
     SetName(wxT("SFTPManageBookmarkDlgBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -376,11 +381,15 @@ SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer85->Realize();
     
     SetName(wxT("SFTPSettingsDialogBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -449,11 +458,15 @@ SFTPUploadDialogBase::SFTPUploadDialogBase(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer104->Realize();
     
     SetName(wxT("SFTPUploadDialogBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

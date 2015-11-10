@@ -87,6 +87,7 @@ public:
 protected:
     wxAuiToolBar* m_auibar;
     std::map<int, wxMenu*> m_dropdownMenus;
+    wxMenu* m_menu115;
     wxMenu* m_menu96;
     wxMenuItem* m_menuItemCustomize;
     wxChoice* m_choiceAccount;

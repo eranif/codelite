@@ -41,7 +41,6 @@
 #include <wx/radiobox.h>
 #include <wx/infobar.h>
 #include <wx/dataview.h>
-#include <wx/statline.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -103,6 +102,8 @@ public:
 protected:
     wxAuiToolBar* m_auibar167;
     std::map<int, wxMenu*> m_dropdownMenus;
+    wxMenu* m_menu183;
+    wxMenu* m_menu184;
     wxSplitterWindow* m_splitter1;
     wxPanel* m_panel13;
     wxStyledTextCtrl* m_scintillaSQL;
@@ -441,7 +442,6 @@ protected:
     wxChoice* m_choiceRefCol;
     wxRadioBox* m_radioOnUpdate;
     wxRadioBox* m_radioOnDelete;
-    wxStaticLine* m_staticLine149;
     wxButton* m_button51;
     wxButton* m_button53;
 
@@ -489,10 +489,9 @@ public:
     wxRadioBox* GetRadioOnDelete() { return m_radioOnDelete; }
     wxPanel* GetSplitterPage35() { return m_splitterPage35; }
     wxSplitterWindow* GetSplitter27() { return m_splitter27; }
-    wxStaticLine* GetStaticLine149() { return m_staticLine149; }
     wxButton* GetButton51() { return m_button51; }
     wxButton* GetButton53() { return m_button53; }
-    _TableSettings(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600,700), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    _TableSettings(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~_TableSettings();
 };
 

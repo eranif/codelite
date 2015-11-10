@@ -67,7 +67,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
 
     m_auibar->AddTool(XRCID("IDT_DBE_CONNECT"),
                       _("Open connection"),
-                      bmpLoader->LoadBitmap(wxT("db-explorer/16/connect")),
+                      bmpLoader->LoadBitmap("plus"),
                       wxNullBitmap,
                       wxITEM_NORMAL,
                       _("Open new connection"),
@@ -75,7 +75,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
                       NULL);
     m_auibar->AddTool(XRCID("IDT_DBE_CLOSE_CONNECTION"),
                       _("tool"),
-                      bmpLoader->LoadBitmap(wxT("db-explorer/16/disconnect")),
+                      bmpLoader->LoadBitmap("minus"),
                       wxNullBitmap,
                       wxITEM_NORMAL,
                       _("Close selected connection"),
@@ -83,7 +83,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
                       NULL);
     m_auibar->AddTool(XRCID("IDT_DBE_REFRESH"),
                       _("tool"),
-                      bmpLoader->LoadBitmap(wxT("db-explorer/16/database_refresh")),
+                      bmpLoader->LoadBitmap("debugger_restart"),
                       wxNullBitmap,
                       wxITEM_NORMAL,
                       _("Refresh View"),
@@ -91,7 +91,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
                       NULL);
     m_auibar->AddTool(XRCID("IDT_DBE_ERD"),
                       _("ERD"),
-                      bmpLoader->LoadBitmap(wxT("db-explorer/16/table")),
+                      bmpLoader->LoadBitmap("folder-templates"),
                       wxNullBitmap,
                       wxITEM_NORMAL,
                       _("Open ERD View"),
@@ -99,7 +99,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
                       NULL)->SetHasDropDown(true);
     m_auibar->AddTool(XRCID("IDT_DBE_PREVIEW"),
                       _("Show ERD Thumbnail"),
-                      bmpLoader->LoadBitmap(wxT("db-explorer/16/thumbnail")),
+                      bmpLoader->LoadBitmap("find"),
                       _("Show ERD Thumbnail"),
                       wxITEM_CHECK);
     m_auibar->Realize();
@@ -108,7 +108,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
 
     m_mgr->GetEditorPaneNotebook()->Bind(wxEVT_BOOK_PAGE_CHANGED, &DbViewerPanel::OnPageChanged, this);
     m_mgr->GetEditorPaneNotebook()->Bind(wxEVT_BOOK_PAGE_CLOSING, &DbViewerPanel::OnPageClosing, this);
-    
+
     m_auibar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &DbViewerPanel::OnERDSelected, this, XRCID("IDT_DBE_ERD"));
 
     this->Connect(
@@ -972,16 +972,16 @@ void DbViewerPanel::AddEditorPage(wxWindow* page, const wxString& name)
 void DbViewerPanel::OnERDSelected(wxAuiToolBarEvent& event)
 {
     wxMenu menu;
-    menu.Append( XRCID("IDM_DBE_ERD_SQLITE"), _("SQLite") );
-    menu.Append( XRCID("IDM_DBE_ERD_MYSQL"), _("MySQL") );
-    menu.Append( XRCID("IDM_DBE_ERD_POSTGRESQL"), _("PostgreSQL") );
-    
-    int selection = GetPopupMenuSelectionFromUser( menu, event.GetItemRect().GetBottomLeft() );
-    if( selection == XRCID("IDM_DBE_ERD_SQLITE") ) {
-        m_mgr->AddEditorPage( new ErdPanel( m_pNotebook, new SQLiteDbAdapter(), m_pConnections ), _("SQLite ERD") );
-    } else if( selection == XRCID("IDM_DBE_ERD_MYSQL") ) {
-        m_mgr->AddEditorPage( new ErdPanel( m_pNotebook, new MySqlDbAdapter(), m_pConnections ), _("MySQL ERD") );
-    } else if( selection == XRCID("IDM_DBE_ERD_POSTGRESQL") ) {
-        m_mgr->AddEditorPage( new ErdPanel( m_pNotebook, new PostgreSqlDbAdapter(), m_pConnections ), _("PostgreSQL ERD") );
+    menu.Append(XRCID("IDM_DBE_ERD_SQLITE"), _("SQLite"));
+    menu.Append(XRCID("IDM_DBE_ERD_MYSQL"), _("MySQL"));
+    menu.Append(XRCID("IDM_DBE_ERD_POSTGRESQL"), _("PostgreSQL"));
+
+    int selection = GetPopupMenuSelectionFromUser(menu, event.GetItemRect().GetBottomLeft());
+    if(selection == XRCID("IDM_DBE_ERD_SQLITE")) {
+        m_mgr->AddEditorPage(new ErdPanel(m_pNotebook, new SQLiteDbAdapter(), m_pConnections), _("SQLite ERD"));
+    } else if(selection == XRCID("IDM_DBE_ERD_MYSQL")) {
+        m_mgr->AddEditorPage(new ErdPanel(m_pNotebook, new MySqlDbAdapter(), m_pConnections), _("MySQL ERD"));
+    } else if(selection == XRCID("IDM_DBE_ERD_POSTGRESQL")) {
+        m_mgr->AddEditorPage(new ErdPanel(m_pNotebook, new PostgreSqlDbAdapter(), m_pConnections), _("PostgreSQL ERD"));
     }
 }

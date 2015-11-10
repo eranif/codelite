@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 182,
+  "m_objCounter": 184,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterwyt5ghInitBitmapResources",
   "m_bitmapsFile": "GUI_databaseexplorer_bitmaps.cpp",
@@ -9,6 +9,7 @@
   "m_outputFileName": "GUI",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -1278,7 +1279,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/toolbars/16/standard/document-open.png"
+           "m_path": "../bitmaps/16-file_open.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -1333,7 +1334,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/toolbars/16/standard/document-save.png"
+           "m_path": "../bitmaps/16-file_save.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -1388,7 +1389,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/toolbars/16/build/execute.png"
+           "m_path": "../bitmaps/16-executable.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -1463,7 +1464,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/subversion/16/add.png"
+           "m_path": "../bitmaps/16-plus.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -1486,7 +1487,26 @@
            "m_description": "Process a wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN event",
            "m_noBody": false
           }],
-         "m_children": []
+         "m_children": [{
+           "m_type": 4458,
+           "proportion": 0,
+           "border": 5,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": [],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+           "m_properties": [{
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "m_menu183"
+            }, {
+             "type": "string",
+             "m_label": "Label:",
+             "m_value": "Menu"
+            }],
+           "m_events": [],
+           "m_children": []
+          }]
         }, {
          "m_type": 4462,
          "proportion": 0,
@@ -1518,7 +1538,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "res/history.png"
+           "m_path": "../bitmaps/16-history.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -1541,7 +1561,26 @@
            "m_description": "Process a wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN event",
            "m_noBody": false
           }],
-         "m_children": []
+         "m_children": [{
+           "m_type": 4458,
+           "proportion": 0,
+           "border": 5,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": [],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+           "m_properties": [{
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "m_menu184"
+            }, {
+             "type": "string",
+             "m_label": "Label:",
+             "m_value": "Menu"
+            }],
+           "m_events": [],
+           "m_children": []
+          }]
         }]
       }, {
        "m_type": 4447,
@@ -3266,7 +3305,7 @@
                "border": 5,
                "gbSpan": ",",
                "gbPosition": ",",
-               "m_styles": ["wxFLP_USE_TEXTCTRL", "wxFLP_OPEN"],
+               "m_styles": ["wxFLP_USE_TEXTCTRL", "wxFLP_SMALL", "wxFLP_OPEN"],
                "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
                "m_properties": [{
                  "type": "winid",
@@ -5932,7 +5971,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxAUI_TB_DEFAULT_STYLE"],
+       "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
        "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -10334,7 +10373,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "600,700"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -10982,7 +11021,7 @@
              "border": 5,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxAUI_TB_DEFAULT_STYLE"],
+             "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
              "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxTOP", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -11041,7 +11080,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/add.png"
+                 "m_path": "../bitmaps/16-plus.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -11096,7 +11135,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/delete.png"
+                 "m_path": "../bitmaps/16-minus.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -11178,7 +11217,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/move-up.png"
+                 "m_path": "../bitmaps/16-up.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -11240,7 +11279,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/move-down.png"
+                 "m_path": "../bitmaps/16-down.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -11750,7 +11789,7 @@
              "border": 5,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxAUI_TB_DEFAULT_STYLE"],
+             "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
              "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxTOP", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -11809,7 +11848,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/add.png"
+                 "m_path": "../bitmaps/16-plus.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -11864,7 +11903,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "res/delete.png"
+                 "m_path": "../bitmaps/16-minus.png"
                 }, {
                  "type": "filePicker",
                  "m_label": "Disabled-Bitmap File",
@@ -12826,73 +12865,6 @@
             }]
           }]
         }]
-      }, {
-       "m_type": 4418,
-       "proportion": 0,
-       "border": 5,
-       "gbSpan": "1,1",
-       "gbPosition": "0,0",
-       "m_styles": ["wxLI_HORIZONTAL"],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-       "m_properties": [{
-         "type": "winid",
-         "m_label": "ID:",
-         "m_winid": "wxID_ANY"
-        }, {
-         "type": "string",
-         "m_label": "Size:",
-         "m_value": "-1,-1"
-        }, {
-         "type": "string",
-         "m_label": "Minimum Size:",
-         "m_value": "-1,-1"
-        }, {
-         "type": "string",
-         "m_label": "Name:",
-         "m_value": "m_staticLine149"
-        }, {
-         "type": "multi-string",
-         "m_label": "Tooltip:",
-         "m_value": ""
-        }, {
-         "type": "colour",
-         "m_label": "Bg Colour:",
-         "colour": "<Default>"
-        }, {
-         "type": "colour",
-         "m_label": "Fg Colour:",
-         "colour": "<Default>"
-        }, {
-         "type": "font",
-         "m_label": "Font:",
-         "m_value": ""
-        }, {
-         "type": "bool",
-         "m_label": "Hidden",
-         "m_value": false
-        }, {
-         "type": "bool",
-         "m_label": "Disabled",
-         "m_value": false
-        }, {
-         "type": "bool",
-         "m_label": "Focused",
-         "m_value": false
-        }, {
-         "type": "string",
-         "m_label": "Class Name:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Include File:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Style:",
-         "m_value": ""
-        }],
-       "m_events": [],
-       "m_children": []
       }, {
        "m_type": 4401,
        "proportion": 0,

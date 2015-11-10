@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 114,
+  "m_objCounter": 115,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC32BEInitBitmapResources",
   "m_bitmapsFile": "UI_sftp_bitmaps.cpp",
@@ -9,6 +9,7 @@
   "m_outputFileName": "UI",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -402,7 +403,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "sftp_ok.png"
+       "m_path": "../bitmaps/16-ok.png"
       }],
      "m_events": [],
      "m_children": []
@@ -421,7 +422,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "sftp_error.png"
+       "m_path": "../bitmaps/16-error.png"
       }],
      "m_events": [],
      "m_children": []
@@ -440,7 +441,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "sftp_info.png"
+       "m_path": "../bitmaps/16-info.png"
       }],
      "m_events": [],
      "m_children": []
@@ -459,7 +460,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../Plugin/ssh-16.png"
+       "m_path": "../bitmaps/16-remote-folder.png"
       }],
      "m_events": [],
      "m_children": []
@@ -478,7 +479,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../codelite-icons/db-explorer/16/connect.png"
+       "m_path": "../bitmaps/16-connected.png"
       }],
      "m_events": [],
      "m_children": []
@@ -497,7 +498,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../codelite-icons/db-explorer/16/disconnect.png"
+       "m_path": "../bitmaps/16-disconnected.png"
       }],
      "m_events": [],
      "m_children": []
@@ -681,7 +682,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../Plugin/ssh-16.png"
+           "m_path": "../bitmaps/16-folder-users.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -736,7 +737,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/db-explorer/16/disconnect.png"
+           "m_path": "../bitmaps/16-disconnected.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -791,7 +792,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/toolbars/16/standard/bookmark.png"
+           "m_path": "../bitmaps/16-bookmark.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -821,7 +822,26 @@
            "m_description": "Process a wxEVT_UPDATE_UI event",
            "m_noBody": false
           }],
-         "m_children": []
+         "m_children": [{
+           "m_type": 4458,
+           "proportion": 0,
+           "border": 5,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": [],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+           "m_properties": [{
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "m_menu115"
+            }, {
+             "type": "string",
+             "m_label": "Label:",
+             "m_value": "Menu"
+            }],
+           "m_events": [],
+           "m_children": []
+          }]
         }, {
          "m_type": 4462,
          "proportion": 0,
@@ -853,7 +873,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../codelite-icons/output-pane/16/terminal.png"
+           "m_path": "../bitmaps/16-console.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",

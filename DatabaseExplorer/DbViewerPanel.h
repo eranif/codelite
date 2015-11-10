@@ -32,9 +32,9 @@
 // database
 #include <wx/dblayer/include/DatabaseLayer.h>
 
-#ifdef DBL_USE_MYSQL
-#include <wx/dblayer/include/MysqlDatabaseLayer.h>
-#endif
+//#ifdef DBL_USE_MYSQL
+//#include <wx/dblayer/include/MysqlDatabaseLayer.h>
+//#endif
 
 #include <wx/wxsf/wxShapeFramework.h>
 
@@ -56,7 +56,7 @@
 #include "view.h"
 #include "dumpclass.h"
 #include "IDbAdapter.h"
-#include "MySqlDbAdapter.h"
+//#include "MySqlDbAdapter.h"
 #include "dbitem.h"
 #include "LogDialog.h"
 #include "ClassGenerateDialog.h"
@@ -118,6 +118,8 @@ public:
 
     void OnPageClosing(wxBookCtrlEvent& event);
     void OnPageChanged(wxBookCtrlEvent& event);
+    
+    void OnERDSelected(wxAuiToolBarEvent& event);
 
     void OnPopupClick(wxCommandEvent &evt);
     void RefreshDbView();

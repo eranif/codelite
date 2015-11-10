@@ -35,6 +35,7 @@ PostgreSqlDbAdapter::PostgreSqlDbAdapter() {
 	this->m_userName = wxT("");
 	this->m_password = wxT("");
 	this->m_adapterType = atPOSTGRES;
+    this->m_pDbLayer = NULL;
 }
 PostgreSqlDbAdapter::PostgreSqlDbAdapter(const wxString& serverName,const int port,const wxString& defaultDb, const wxString& userName, const wxString& password) {
 	this->m_serverName = serverName;
@@ -43,32 +44,35 @@ PostgreSqlDbAdapter::PostgreSqlDbAdapter(const wxString& serverName,const int po
 	this->m_password = password;
 	this->m_defaultDb = defaultDb;
 	this->m_adapterType = atPOSTGRES;
+    this->m_pDbLayer = NULL;
 }
 
 PostgreSqlDbAdapter::~PostgreSqlDbAdapter() {
 }
 
 void PostgreSqlDbAdapter::CloseConnection() {
-	this->m_pDbLayer->Close();
+    if( this->m_pDbLayer ) this->m_pDbLayer->Close();
 }
 
 DatabaseLayerPtr PostgreSqlDbAdapter::GetDatabaseLayer(const wxString& dbName) {
 	DatabaseLayer* dbLayer = NULL;
-
 
 #ifdef DBL_USE_POSTGRES
 	if (!CanConnect())  return new PostgresDatabaseLayer();
 	if (m_port == 0) m_port = 5432;
 	if (!dbName.IsEmpty()) dbLayer = new PostgresDatabaseLayer(this->m_serverName,this->m_port, dbName, this->m_userName, this->m_password);
 	else dbLayer = new PostgresDatabaseLayer(this->m_serverName,this->m_port,this->m_defaultDb, this->m_userName, this->m_password);
-
 #endif
+    this->m_pDbLayer = dbLayer;
 
 	return dbLayer;
 }
 
 bool PostgreSqlDbAdapter::IsConnected() {
-	return this->m_pDbLayer->IsOpen();
+    if( this->m_pDbLayer )
+        return this->m_pDbLayer->IsOpen();
+    else
+        return false;
 }
 
 wxString PostgreSqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable) {

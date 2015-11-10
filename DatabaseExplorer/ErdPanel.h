@@ -116,6 +116,7 @@ protected:
     void OnAlignHTree(wxCommandEvent& WXUNUSED(event));
     void OnPageClosing(wxBookCtrlEvent& event);
     void OnSelectAll(wxCommandEvent& evt);
+    void OnCommitUpdate(wxUpdateUIEvent& event);
 
     DECLARE_EVENT_TABLE();
 };

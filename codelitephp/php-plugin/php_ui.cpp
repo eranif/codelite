@@ -1035,9 +1035,6 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     wxAuiToolBarItem* m_toolbarItemRemoteSave = m_auibar29->FindToolByIndex(m_auibar29->GetToolCount()-1);
     if (m_toolbarItemRemoteSave) {
         m_toolbarItemRemoteSave->SetHasDropDown(true);
-        m_menu690 = new wxMenu;
-        
-        m_dropdownMenus.insert(std::make_pair( m_toolbarItemRemoteSave->GetId(), m_menu690) );
     }
     
     m_auibar29->AddTool(ID_TOOL_COLLAPSE, _("Collapse"), wxXmlResource::Get()->LoadBitmap(wxT("16-fold")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
@@ -1276,12 +1273,12 @@ PHPImages::PHPImages()
     }
     
     {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowDisabled"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("m_bmpArrowDisabled"), bmp ) );
+//        wxBitmap bmp;
+//        wxIcon icn;
+//        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowDisabled"));
+//        icn.CopyFromBitmap( bmp );
+//        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("m_bmpArrowDisabled"), wxNullBitmap ) );
     }
     
     {

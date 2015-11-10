@@ -356,7 +356,6 @@ public:
 protected:
     wxAuiToolBar* m_auibar29;
     std::map<int, wxMenu*> m_dropdownMenus;
-    wxMenu* m_menu690;
     wxGauge* m_gaugeParseProgress;
     MyTreeView* m_treeCtrlView;
 

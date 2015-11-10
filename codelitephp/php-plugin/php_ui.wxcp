@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 690,
+  "m_objCounter": 692,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCF01InitBitmapResources",
   "m_bitmapsFile": "php_ui_php-plugin_bitmaps.cpp",
@@ -9682,26 +9682,7 @@
            "m_description": "Process a wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN event",
            "m_noBody": false
           }],
-         "m_children": [{
-           "m_type": 4458,
-           "proportion": 0,
-           "border": 5,
-           "gbSpan": "1,1",
-           "gbPosition": "0,0",
-           "m_styles": [],
-           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-           "m_properties": [{
-             "type": "string",
-             "m_label": "Name:",
-             "m_value": "m_menu690"
-            }, {
-             "type": "string",
-             "m_label": "Label:",
-             "m_value": "Menu"
-            }],
-           "m_events": [],
-           "m_children": []
-          }]
+         "m_children": []
         }, {
          "m_type": 4462,
          "proportion": 0,

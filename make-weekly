@@ -27,7 +27,7 @@ cd ../wxcrafter && git pull --rebase && cd ../build-release
 
 # Build and upload
 if [ ${os_name} == "Darwin" ]; then
-    cmake -DCMAKE_BUILD_TYPE=Release ..
+    cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
     make -j4
     tar cvfz codelite.app.tar.gz codelite.app/*
     scp codelite.app.tar.gz root@codelite.org:/var/www/downloads/codelite/weekly/wip

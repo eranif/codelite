@@ -54,6 +54,7 @@
 #include "attribute_style.h"
 #include "optionsconfig.h"
 #include "editor_config.h"
+#include "clSingleChoiceDialog.h"
 
 #define IS_VALID_LINE(lineNumber) ((lineNumber >= 0 && lineNumber < m_view->GetLineCount()))
 #ifdef __WXMSW__
@@ -730,8 +731,12 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
                 for(size_t i = 0; i < candidates.size(); ++i) {
                     fileArr.Add(candidates.at(i).GetFullPath());
                 }
-
-                wxString selection = wxGetSingleChoice(_("Select a file to open:"), _("Choose a file"), fileArr);
+                
+                clSingleChoiceDialog dlg(EventNotifier::Get()->TopFrame(), fileArr);
+                dlg.SetLabel(_("Select a file to open"));
+                dlg.ShowModal();
+                
+                wxString selection = dlg.GetSelection();
                 if(selection.IsEmpty()) return false;
 
                 fn = wxFileName(selection);

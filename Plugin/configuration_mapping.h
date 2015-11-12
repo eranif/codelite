@@ -62,9 +62,10 @@ private:
     wxString m_name;
     ConfigMappingList m_mappingList;
     bool m_isSelected;
+    wxString m_environmentVariables;
 
 public:
-    void RenameProject(const wxString &oldname, const wxString &newname);
+    void RenameProject(const wxString& oldname, const wxString& newname);
     WorkspaceConfiguration();
     WorkspaceConfiguration(wxXmlNode* node);
     WorkspaceConfiguration(const wxString& name, bool selected);
@@ -77,6 +78,11 @@ public:
     const ConfigMappingList& GetMapping() const { return m_mappingList; }
     void SetConfigMappingList(const ConfigMappingList& mapList) { m_mappingList = mapList; }
     void SetName(const wxString& name) { m_name = name; }
+    const wxString& GetEnvironmentVariables() const { return m_environmentVariables; }
+    void SetEnvironmentVariables(const wxString& environmentVariables)
+    {
+        this->m_environmentVariables = environmentVariables;
+    }
 };
 
 typedef SmartPtr<WorkspaceConfiguration> WorkspaceConfigurationPtr;
@@ -89,8 +95,8 @@ protected:
     WorkspaceConfigurationPtr FindConfiguration(const wxString& name) const;
 
 public:
-    void RenameProject(const wxString &oldname, const wxString &newname);
-    
+    void RenameProject(const wxString& oldname, const wxString& newname);
+
     BuildMatrix(wxXmlNode* node);
     virtual ~BuildMatrix();
     wxXmlNode* ToXml() const;

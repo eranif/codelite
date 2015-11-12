@@ -180,12 +180,15 @@ WorkspaceConfiguration::WorkspaceConfiguration(wxXmlNode* node)
                 wxString projName = XmlUtils::ReadString(child, wxT("Name"));
                 wxString conf = XmlUtils::ReadString(child, wxT("ConfigName"));
                 m_mappingList.push_back(ConfigMappingEntry(projName, conf));
+            } else if(child->GetName() == "Environment") {
+                m_environmentVariables = child->GetNodeContent();
             }
             child = child->GetNext();
         }
     } else {
         m_isSelected = false;
         m_name = wxEmptyString;
+        m_environmentVariables.Clear();
     }
 }
 
@@ -196,6 +199,10 @@ wxXmlNode* WorkspaceConfiguration::ToXml() const
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("WorkspaceConfiguration"));
     node->AddProperty(wxT("Name"), m_name);
     node->AddProperty(wxT("Selected"), BoolToString(m_isSelected));
+
+    wxXmlNode* env = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Environment");
+    XmlUtils::SetNodeContent(env, m_environmentVariables);
+    node->AddChild(env);
 
     WorkspaceConfiguration::ConfigMappingList::const_iterator iter = m_mappingList.begin();
     for(; iter != m_mappingList.end(); iter++) {

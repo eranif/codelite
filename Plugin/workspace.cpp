@@ -392,11 +392,8 @@ void clCxxWorkspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
     SetBuildMatrix(matrix);
 }
 
-bool clCxxWorkspace::CreateProject(const wxString& name,
-                                   const wxString& path,
-                                   const wxString& type,
-                                   bool addToBuildMatrix,
-                                   wxString& errMsg)
+bool clCxxWorkspace::CreateProject(
+    const wxString& name, const wxString& path, const wxString& type, bool addToBuildMatrix, wxString& errMsg)
 {
     if(!m_doc.IsOk()) {
         errMsg = wxT("No workspace open");
@@ -953,6 +950,15 @@ wxString clCxxWorkspace::GetEnvironmentVariabels()
 {
     if(!m_doc.IsOk()) return wxEmptyString;
 
+    // Use the environment variables set in the build matrix ("workspace configuration")
+    wxString env;
+    if(GetSelectedConfig()) {
+        env = GetSelectedConfig()->GetEnvironmentVariables();
+        if(!env.IsEmpty()) {
+            return env;
+        }
+    }
+
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
     if(node) {
         wxString nodeContent = node->GetNodeContent();
@@ -965,6 +971,12 @@ wxString clCxxWorkspace::GetEnvironmentVariabels()
 void clCxxWorkspace::SetEnvironmentVariabels(const wxString& envvars)
 {
     if(!m_doc.IsOk()) return;
+    if(GetSelectedConfig()) {
+        GetSelectedConfig()->SetEnvironmentVariables(envvars);
+        SetBuildMatrix(GetBuildMatrix()); // force an XML update
+        SaveXmlFile();
+        return;
+    }
 
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
     if(node) {
@@ -1209,4 +1221,11 @@ void clCxxWorkspace::GetWorkspaceFiles(wxArrayString& files) const
         // Convert the set wxArrayString
         std::for_each(setFiles.begin(), setFiles.end(), [&](const wxString& file) { files.Add(file); });
     });
+}
+
+WorkspaceConfigurationPtr clCxxWorkspace::GetSelectedConfig() const
+{
+    if(!GetBuildMatrix()) return NULL;
+    wxString buildConf = GetBuildMatrix()->GetSelectedConfigurationName();
+    return GetBuildMatrix()->GetConfigurationByName(buildConf);
 }

@@ -342,7 +342,12 @@ public:
      * will be kept in the workspace file (i.e. they are portable)
      */
     void SetEnvironmentVariabels(const wxString& envvars);
-
+    
+    /**
+     * @brief return the selected workspace configuration
+     */
+    WorkspaceConfigurationPtr GetSelectedConfig() const;
+    
     //----------------------------------
     // File modifications
     //----------------------------------

@@ -177,7 +177,7 @@ void ZoomText::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
     // sanity
-    if(!m_classes.IsEmpty() || !IsEmpty()) return;
+    if(!m_classes.IsEmpty() || IsEmpty()) return;
     
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(!editor) return;

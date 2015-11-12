@@ -41,14 +41,22 @@
 #include "znSettingsDlg.h"
 #include "event_notifier.h"
 #include "plugin.h"
+#include "macros.h"
+#include "globals.h"
+#include <wx/app.h>
 
-ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
-    : wxStyledTextCtrl( parent, id, pos, size, style |wxNO_BORDER, name )
+ZoomText::ZoomText(wxWindow* parent,
+                   wxWindowID id,
+                   const wxPoint& pos,
+                   const wxSize& size,
+                   long style,
+                   const wxString& name)
+    : wxStyledTextCtrl(parent, id, pos, size, style | wxNO_BORDER, name)
 {
-    SetEditable( false );
-    SetUseHorizontalScrollBar( false );
-    SetUseVerticalScrollBar( true );
-    HideSelection( true );
+    SetEditable(false);
+    SetUseHorizontalScrollBar(false);
+    SetUseVerticalScrollBar(true);
+    HideSelection(true);
 
     SetMarginWidth(1, 0);
     SetMarginWidth(2, 0);
@@ -56,56 +64,72 @@ ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
 
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    conf.ReadItem( &data );
-    
+    conf.ReadItem(&data);
+
     m_zoomFactor = data.GetZoomFactor();
     m_colour = data.GetHighlightColour();
     MarkerSetBackground(1, m_colour);
-    SetZoom( m_zoomFactor );
-    EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
+    SetZoom(m_zoomFactor);
+    EventNotifier::Get()->Connect(
+        wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
-    MarkerDefine(1, wxSTC_MARK_BACKGROUND, m_colour, m_colour );
+    MarkerDefine(1, wxSTC_MARK_BACKGROUND, m_colour, m_colour);
 
-#ifndef __WXMSW__    
+#ifndef __WXMSW__
     SetTwoPhaseDraw(false);
     SetBufferedDraw(false);
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 #endif
-
-#ifdef __WXMSW__    
-    MarkerSetAlpha(1, 50);
-#endif    
+    MarkerSetAlpha(1, 10);
+    wxTheApp->Bind(wxEVT_IDLE, &ZoomText::OnIdle, this);
 }
 
 ZoomText::~ZoomText()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
+    wxTheApp->Unbind(wxEVT_IDLE, &ZoomText::OnIdle, this);
 }
 
-void ZoomText::UpdateLexer(const wxString& filename)
+void ZoomText::UpdateLexer(IEditor* editor)
 {
-    m_filename = filename;
-    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(filename);
-    if ( !lexer ) {
+    if(!editor) {
+        editor = clGetManager()->GetActiveEditor();
+    }
+    if(!editor) {
+        DoClear();
+        return;
+    }
+
+    m_filename = editor->GetFileName().GetFullPath();
+    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(m_filename);
+    if(!lexer) {
         lexer = EditorConfigST::Get()->GetLexer("Text");
     }
-    lexer->Apply( this );
-    
-    SetZoom( m_zoomFactor );
-    SetEditable( false );
-    SetUseHorizontalScrollBar( false );
-    SetUseVerticalScrollBar( true );
-    HideSelection( true );
+    lexer->Apply(this, true);
+
+    if(lexer->IsDark()) {
+        MarkerSetAlpha(1, 10);
+    } else {
+        MarkerSetAlpha(1, 20);
+    }
+
+    SetZoom(m_zoomFactor);
+    SetEditable(false);
+    SetUseHorizontalScrollBar(false);
+    SetUseVerticalScrollBar(true);
+    HideSelection(true);
     MarkerSetBackground(1, m_colour);
 }
 
-void ZoomText::OnSettingsChanged(wxCommandEvent &e)
+void ZoomText::OnSettingsChanged(wxCommandEvent& e)
 {
     e.Skip();
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    if ( conf.ReadItem( &data ) ) {
+    if(conf.ReadItem(&data)) {
         m_zoomFactor = data.GetZoomFactor();
         m_colour = data.GetHighlightColour();
         MarkerSetBackground(1, m_colour);
@@ -116,16 +140,14 @@ void ZoomText::OnSettingsChanged(wxCommandEvent &e)
 
 void ZoomText::UpdateText(IEditor* editor)
 {
-    if ( !editor ) {
-        SetReadOnly( false );
-        SetText( "" );
-        SetReadOnly( true );
+    if(!editor) {
+        DoClear();
 
     } else {
-        SetReadOnly( false );
-        SetText( editor->GetEditorText() );
-        SetReadOnly( true );
-        SetCurrentPos( editor->GetCurrentPosition() );
+        SetReadOnly(false);
+        SetText(editor->GetEditorText());
+        SetReadOnly(true);
+        SetCurrentPos(editor->GetCurrentPosition());
     }
 }
 
@@ -133,15 +155,14 @@ void ZoomText::HighlightLines(int start, int end)
 {
     int nLineCount = end - start;
     int lastLine = LineFromPosition(GetLength());
-    if ( lastLine < end ) {
+    if(lastLine < end) {
         end = lastLine;
         start = end - nLineCount;
-        if ( start < 0 )
-            start = 0;
+        if(start < 0) start = 0;
     }
-        
+
     MarkerDeleteAll(1);
-    for(int i=start; i<=end; ++i) {
+    for(int i = start; i <= end; ++i) {
         MarkerAdd(i, 1);
     }
 }
@@ -149,7 +170,32 @@ void ZoomText::HighlightLines(int start, int end)
 void ZoomText::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    if(!m_filename.IsEmpty()) {
-        UpdateLexer(m_filename);
+    UpdateLexer(NULL);
+}
+
+void ZoomText::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    // sanity
+    if(!m_classes.IsEmpty() || !IsEmpty()) return;
+    
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(!editor) return;
+
+    if(m_classes.IsEmpty() && !editor->GetKeywordClasses().IsEmpty() &&
+       (editor->GetFileName().GetFullPath() == m_filename)) {
+        // Sync between the keywords
+        SetKeyWords(1, editor->GetKeywordClasses()); // classes
+        SetKeyWords(3, editor->GetKeywordLocals());  // locals
+        Colourise(0, GetLength());
     }
+}
+
+void ZoomText::DoClear()
+{
+    m_classes.clear();
+    m_locals.clear();
+    SetReadOnly(false);
+    SetText("");
+    SetReadOnly(true);
 }

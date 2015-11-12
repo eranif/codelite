@@ -232,6 +232,10 @@ protected:
     OptionsConfigPtr m_options;
     bool m_hasCCAnnotation;
     wxRichToolTip* m_richTooltip;
+    /// A space delimited list of all the classes in this editor
+    wxString m_keywordClasses;
+    /// A space delimited list of all the variables in this editor
+    wxString m_keywordLocals;
 
 public:
     static bool m_ccShowPrivateMembers;
@@ -241,13 +245,13 @@ public:
     typedef std::vector<LEditor*> Vec_t;
 
     IManager* GetManager() { return m_mgr; }
-    
+
     /**
      * @brief are the CC annotations visible?
      */
     bool IsHasCCAnnotation() const { return m_hasCCAnnotation; }
     void ClearCCAnnotations();
-    
+
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 
@@ -286,6 +290,11 @@ public:
      * @brief setup the print page
      */
     void PageSetup();
+
+    virtual const wxString& GetKeywordClasses() const { return m_keywordClasses; }
+    virtual const wxString& GetKeywordLocals() const { return m_keywordLocals; }
+    virtual void SetKeywordClasses(const wxString& keywordClasses) { this->m_keywordClasses = keywordClasses; }
+    virtual void SetKeywordLocals(const wxString& keywordLocals) { this->m_keywordLocals = keywordLocals; }
 
     /**
      * @brief split the current selection into multiple carets.

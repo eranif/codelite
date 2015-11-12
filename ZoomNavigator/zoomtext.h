@@ -38,22 +38,28 @@
 
 class ZoomText : public wxStyledTextCtrl
 {
-    int      m_zoomFactor;
+    int m_zoomFactor;
     wxColour m_colour;
     wxString m_filename;
-    
+    wxString m_classes;
+    wxString m_locals;
+
 protected:
-    void OnThemeChanged(wxCommandEvent &e);
+    void OnThemeChanged(wxCommandEvent& e);
+    void OnIdle(wxIdleEvent& event);
+    void DoClear();
     
 public:
-    ZoomText(wxWindow *parent, wxWindowID id=wxID_ANY,
+    ZoomText(wxWindow* parent,
+             wxWindowID id = wxID_ANY,
              const wxPoint& pos = wxDefaultPosition,
-             const wxSize& size = wxDefaultSize, long style = 0,
+             const wxSize& size = wxDefaultSize,
+             long style = 0,
              const wxString& name = wxSTCNameStr);
     virtual ~ZoomText();
-    void UpdateLexer(const wxString &filename);
-    void OnSettingsChanged(wxCommandEvent &e);
-    void UpdateText(IEditor* editort);
+    void UpdateLexer(IEditor* editor);
+    void OnSettingsChanged(wxCommandEvent& e);
+    void UpdateText(IEditor* editor);
     void HighlightLines(int start, int end);
 };
 

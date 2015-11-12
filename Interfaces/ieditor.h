@@ -76,19 +76,19 @@ public:
         }
         m_data.clear();
     }
-    
+
     /**
      * @brief toggle line comment
      * @param commentSymbol the comment symbol to insert (e.g. "//")
      * @param commentStyle the wxSTC line comment style (e.g. wxSTC_C_COMMENTLINE)
      */
     virtual void ToggleLineComment(const wxString& commentSymbol, int commentStyle) = 0;
-    
+
     /**
      * @brief block comment the selection
      */
     virtual void CommentBlockSelection(const wxString& commentBlockStart, const wxString& commentBlockEnd) = 0;
-    
+
     /**
      * @brief return true if the editor is modified
      */
@@ -320,8 +320,7 @@ public:
     /**
      * @brief Similar to the above but returns void, and is implemented asynchronously
      */
-    virtual void
-    FindAndSelectV(const wxString& pattern, const wxString& what, int pos = 0, NavMgr* navmgr = NULL) = 0;
+    virtual void FindAndSelectV(const wxString& pattern, const wxString& what, int pos = 0, NavMgr* navmgr = NULL) = 0;
 
     /**
      * @brief set a lexer to the editor
@@ -383,12 +382,12 @@ public:
      * @brief center the editor around line and optionally a column
      */
     virtual void CenterLine(int line, int col = wxNOT_FOUND) = 0;
-    
+
     /**
      * @brief center the editor around line, keeping any selection
      */
     virtual void CenterLinePreserveSelection(int line) = 0;
-    
+
     /**
      * @brief return a pointer to the underlying scintilla control
      */
@@ -447,12 +446,12 @@ public:
         }
         m_data.insert(std::make_pair(key, data));
     }
-    
+
     /**
      * @brief force a syntax highlight of 'langname' to the editor
      */
     virtual void SetSyntaxHighlight(const wxString& langname) = 0;
-    
+
     /**
      * @brief return the client data associated with this editor and identified by key
      * @param key
@@ -466,7 +465,7 @@ public:
         }
         return NULL;
     }
-    
+
     /**
      * @brief delete the client data associated with this editor and identified by 'key'
      * this method also delete the memory allocated by the data
@@ -480,6 +479,15 @@ public:
             m_data.erase(iter);
         }
     }
+
+    /**
+     * @brief return a string representing all the classes coloured by this editor
+     */
+    virtual const wxString& GetKeywordClasses() const = 0;
+    /**
+     * @brief return a string representing all the local variables coloured by this editor
+     */
+    virtual const wxString& GetKeywordLocals() const = 0;
 };
 
 #endif // IEDITOR_H

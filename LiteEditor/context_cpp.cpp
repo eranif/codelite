@@ -119,8 +119,7 @@ static bool IsHeader(const wxString& ext)
         return;                                        \
     }
 
-struct SFileSort
-{
+struct SFileSort {
     bool operator()(const wxFileName& one, const wxFileName& two)
     {
         return two.GetFullName().Cmp(one.GetFullName()) > 0;
@@ -797,8 +796,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<< CodeCompletion API - END
 //=============================================================================
 
-struct ContextCpp_ClientData : public wxClientData
-{
+struct ContextCpp_ClientData : public wxClientData {
     TagEntryPtr m_ptr;
 
     ContextCpp_ClientData(TagEntryPtr ptr) { m_ptr = ptr; }
@@ -874,14 +872,14 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
         e.bmp = wxCodeCompletionBox::GetBitmap(tag);
         e.name = tag->GetFullDisplayName();
         e.clientData = new ContextCpp_ClientData(tag);
-        
+
         wxString helpString;
         wxFileName fn(tag->GetFile());
         helpString << fn.GetFullName() << ":" << tag->GetLine();
         e.help = helpString;
         entries.push_back(e);
     });
-    
+
     clSelectSymbolDialog dlg(EventNotifier::Get()->TopFrame(), entries);
     if(dlg.ShowModal() != wxID_OK) {
         return NULL;
@@ -1798,12 +1796,10 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
     for(; iter != protos.end(); ++iter) {
         tags.push_back(iter->second);
     }
-    
+
     // Sort the functions according to their line number (asc)
-    std::sort(tags.begin(), tags.end(), [&](TagEntryPtr a, TagEntryPtr b) {
-        return (a->GetLine() < b->GetLine());
-    });
-    
+    std::sort(tags.begin(), tags.end(), [&](TagEntryPtr a, TagEntryPtr b) { return (a->GetLine() < b->GetLine()); });
+
     wxString targetFile;
     FindSwappedFile(rCtrl.GetFileName(), targetFile);
 
@@ -3160,32 +3156,35 @@ void ContextCpp::ColourContextTokens(const wxArrayString& workspaceTokens)
 {
     LEditor& ctrl = GetCtrl();
     size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
+
+    //------------------------------------------
+    // Classes
+    //------------------------------------------
+    wxString flatStrClasses, flatStrLocals;
     if(cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
-        wxString flatStr;
         for(size_t i = 0; i < workspaceTokens.GetCount(); i++) {
             // add only entries that does not appear in the variable list
             // if (varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
-            flatStr << workspaceTokens.Item(i) << wxT(" ");
+            flatStrClasses << workspaceTokens.Item(i) << wxT(" ");
         }
-        ctrl.SetKeyWords(1, flatStr);
-    } else {
-        ctrl.SetKeyWords(1, wxEmptyString);
     }
-    ctrl.SetKeyWords(3, wxEmptyString);
-
+    ctrl.SetKeyWords(1, flatStrClasses);
+    ctrl.SetKeywordClasses(flatStrClasses);
+    
+    //------------------------------------------
+    // Local variables
+    //------------------------------------------
     wxArrayString localTokens;
     TagsManagerST::Get()->GetVariables(ctrl.GetFileName(), localTokens);
 
     if(cc_flags & CC_COLOUR_VARS) {
         // convert it to space delimited string
-        wxString varFlatStr;
         for(size_t i = 0; i < localTokens.GetCount(); i++) {
-            varFlatStr << localTokens.Item(i) << wxT(" ");
+            flatStrLocals << localTokens.Item(i) << wxT(" ");
         }
-        ctrl.SetKeyWords(3, varFlatStr);
-    } else {
-        ctrl.SetKeyWords(3, wxEmptyString);
     }
+    ctrl.SetKeyWords(3, flatStrLocals);
+    ctrl.SetKeywordLocals(flatStrLocals);
 }
 
 wxMenu* ContextCpp::GetMenu()

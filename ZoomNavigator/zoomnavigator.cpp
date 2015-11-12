@@ -224,7 +224,7 @@ void ZoomNavigator::SetEditorText(IEditor* editor)
     m_text->UpdateText(editor);
     if(editor) {
         m_curfile = editor->GetFileName().GetFullPath();
-        m_text->UpdateLexer(m_curfile);
+        m_text->UpdateLexer(editor);
     }
 }
 
@@ -291,7 +291,7 @@ void ZoomNavigator::DoCleanup()
     SetEditorText(NULL);
     m_markerFirstLine = wxNOT_FOUND;
     m_markerLastLine = wxNOT_FOUND;
-    m_text->UpdateLexer("");
+    m_text->UpdateLexer(NULL);
 }
 
 void ZoomNavigator::OnSettings(wxCommandEvent& e)

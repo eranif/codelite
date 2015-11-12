@@ -87,13 +87,13 @@
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
 #undef EVT_STC_CALLTIP_CLICK
-#define EVT_STC_CALLTIP_CLICK(id, fn)                                            \
-    DECLARE_EVENT_TABLE_ENTRY(wxEVT_STC_CALLTIP_CLICK,                           \
-                              id,                                                \
-                              wxID_ANY,                                          \
-                              (wxObjectEventFunction)(wxEventFunction)           \
-                              wxStaticCastEvent(wxStyledTextEventFunction, &fn), \
-                              (wxObject*)NULL),
+#define EVT_STC_CALLTIP_CLICK(id, fn)                                                              \
+    DECLARE_EVENT_TABLE_ENTRY(                                                                     \
+        wxEVT_STC_CALLTIP_CLICK,                                                                   \
+        id,                                                                                        \
+        wxID_ANY,                                                                                  \
+        (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxStyledTextEventFunction, &fn), \
+        (wxObject*)NULL),
 #endif
 
 #define NUMBER_MARGIN_ID 0
@@ -3376,8 +3376,9 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
-           GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
+    if(!ManagerST::Get()
+            ->GetBreakpointsMgr()
+            ->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -3667,6 +3668,9 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent& event)
 
 void LEditor::UpdateColours()
 {
+    SetKeywordClasses("");
+    SetKeywordLocals("");
+
     if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS ||
        TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS ||
        TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_MACRO_BLOCKS) {
@@ -3674,9 +3678,9 @@ void LEditor::UpdateColours()
 
     } else {
         if(m_context->GetName() == wxT("C++")) {
-            SetKeyWords(1, wxEmptyString);
+            SetKeyWords(1, wxEmptyString); // Classes
             SetKeyWords(2, wxEmptyString);
-            SetKeyWords(3, wxEmptyString);
+            SetKeyWords(3, wxEmptyString); // Locals
             SetKeyWords(4, GetPreProcessorsWords());
         }
     }
@@ -5347,8 +5351,7 @@ void LEditor::ClearCCAnnotations()
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------
-struct SelectorSorter
-{
+struct SelectorSorter {
     bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
 };
 

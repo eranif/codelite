@@ -517,7 +517,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     
     // Indentation
     ctrl->SetUseTabs(options->GetIndentUsesTabs());
-    ctrl->SetTabWidth(options->GetIndentWidth());
+    ctrl->SetTabWidth(options->GetTabWidth());
     ctrl->SetIndent(options->GetIndentWidth());
 }
 

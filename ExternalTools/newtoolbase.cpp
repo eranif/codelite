@@ -72,7 +72,7 @@ NewToolBase::NewToolBase(wxWindow* parent, wxWindowID id, const wxString& title,
     
     fgSizer1->Add(m_textCtrlPath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_buttonBrowsePath = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonBrowsePath = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     
     fgSizer1->Add(m_buttonBrowsePath, 0, wxALIGN_CENTER_VERTICAL, 5);
     
@@ -89,7 +89,7 @@ NewToolBase::NewToolBase(wxWindow* parent, wxWindowID id, const wxString& title,
     
     fgSizer1->Add(m_textCtrlWd, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_buttonBrowseWd = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonBrowseWd = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     
     fgSizer1->Add(m_buttonBrowseWd, 0, wxALIGN_CENTER_VERTICAL, 5);
     
@@ -158,11 +158,16 @@ NewToolBase::NewToolBase(wxWindow* parent, wxWindowID id, const wxString& title,
     
     sbSizer2->Add(m_checkBoxSaveAllFilesBefore, 0, wxALL, 5);
     
+    m_checkBoxCaptureOutput = new wxCheckBox(this, wxID_ANY, _("Capture process output"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxCaptureOutput->SetValue(false);
+    
+    sbSizer2->Add(m_checkBoxCaptureOutput, 0, wxALL, 5);
+    
     bSizer1->Add(0, 0, 1, wxALL, 5);
     
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
     
-    bSizer1->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer1->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
     m_button4 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button4->SetDefault();
@@ -178,11 +183,15 @@ NewToolBase::NewToolBase(wxWindow* parent, wxWindowID id, const wxString& title,
     m_stdBtnSizer2->Realize();
     
     SetName(wxT("NewToolBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

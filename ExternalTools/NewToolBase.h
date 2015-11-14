@@ -50,6 +50,7 @@ protected:
     wxTextCtrl* m_textCtrlIcon16;
     wxButton* m_buttonBrowseIcon16;
     wxCheckBox* m_checkBoxSaveAllFilesBefore;
+    wxCheckBox* m_checkBoxCaptureOutput;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
     wxButton* m_button4;
     wxButton* m_button6;
@@ -85,6 +86,7 @@ public:
     wxTextCtrl* GetTextCtrlIcon16() { return m_textCtrlIcon16; }
     wxButton* GetButtonBrowseIcon16() { return m_buttonBrowseIcon16; }
     wxCheckBox* GetCheckBoxSaveAllFilesBefore() { return m_checkBoxSaveAllFilesBefore; }
+    wxCheckBox* GetCheckBoxCaptureOutput() { return m_checkBoxCaptureOutput; }
     NewToolBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("External Tool"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewToolBase();
 };

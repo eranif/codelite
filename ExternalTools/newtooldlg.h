@@ -57,6 +57,7 @@ public:
     wxString GetToolName() const { return m_textCtrlName->GetValue(); }
     wxString GetIcon16() const { return m_textCtrlIcon16->GetValue(); }
     wxString GetIcon24() const { return m_textCtrlIcon24->GetValue(); }
+    bool GetCaptureOutput() const { return m_checkBoxCaptureOutput->IsChecked(); }
     bool GetSaveAllFiles() const { return m_checkBoxSaveAllFilesBefore->IsChecked(); }
 };
 

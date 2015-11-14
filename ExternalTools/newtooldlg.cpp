@@ -37,8 +37,6 @@ NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
     : NewToolBase(parent)
     , m_mgr(mgr)
 {
-    // Don't use wxFB to load translated versions of these strings: the translations wouldn't be very sensible, and it
-    // might break things
     const wxString IdChoices[] = { wxT("external_tool_0"), wxT("external_tool_1"), wxT("external_tool_2"),
                                    wxT("external_tool_3"), wxT("external_tool_4"), wxT("external_tool_5"),
                                    wxT("external_tool_6"), wxT("external_tool_7"), wxT("external_tool_8"),
@@ -48,18 +46,19 @@ NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
     m_choiceId->Append(choices);
     m_choiceId->SetFocus();
     if(data) {
-        m_textCtrlArguments->SetValue(data->m_args);
+        m_textCtrlArguments->ChangeValue(data->m_args);
         m_choiceId->SetStringSelection(data->m_id);
-        m_textCtrlPath->SetValue(data->m_path);
-        m_textCtrlWd->SetValue(data->m_workingDirectory);
-        m_textCtrlIcon16->SetValue(data->m_icon16);
-        m_textCtrlIcon24->SetValue(data->m_icon24);
-        m_textCtrlName->SetValue(data->m_name);
+        m_textCtrlPath->ChangeValue(data->m_path);
+        m_textCtrlWd->ChangeValue(data->m_workingDirectory);
+        m_textCtrlIcon16->ChangeValue(data->m_icon16);
+        m_textCtrlIcon24->ChangeValue(data->m_icon24);
+        m_textCtrlName->ChangeValue(data->m_name);
+        m_checkBoxCaptureOutput->SetValue(data->m_captureOutput);
         m_checkBoxSaveAllFilesBefore->SetValue(data->m_saveAllFiles);
         m_choiceId->Enable(false);
     }
-    SetName("NewToolDlg");
-    WindowAttrManager::Load(this);
+    GetSizer()->Fit(this);
+    CentreOnParent();
 }
 
 void NewToolDlg::OnButtonBrowsePath(wxCommandEvent& event)
@@ -132,6 +131,5 @@ void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
 }
 
 NewToolDlg::~NewToolDlg() {}
-void NewToolDlg::OnIdSelected(wxCommandEvent& event)
-{
-}
+
+void NewToolDlg::OnIdSelected(wxCommandEvent& event) {}

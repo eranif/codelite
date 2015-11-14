@@ -50,25 +50,28 @@ ExternalToolBaseDlg::ExternalToolBaseDlg(wxWindow* parent, wxWindowID id, const 
     
     bSizer9->Add(m_buttonDelete, 0, wxALL, 5);
     
-    wxBoxSizer* bSizer7 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer2 = new wxStdDialogButtonSizer();
     
-    bSizer6->Add(bSizer7, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer6->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_buttonOk = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonOk->SetDefault();
+    m_button4 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button4->SetDefault();
+    m_stdBtnSizer2->AddButton(m_button4);
     
-    bSizer7->Add(m_buttonOk, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer7->Add(m_buttonCancel, 0, wxALL, 5);
+    m_button6 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer2->AddButton(m_button6);
+    m_stdBtnSizer2->Realize();
     
     SetName(wxT("ExternalToolBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -100,5 +103,87 @@ ExternalToolBaseDlg::~ExternalToolBaseDlg()
     m_buttonEdit->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolBaseDlg::OnButtonEditUI), NULL, this);
     m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ExternalToolBaseDlg::OnButtonDelete), NULL, this);
     m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolBaseDlg::OnButtonDeleteUI), NULL, this);
+    
+}
+
+ExternalToolsManagerBase::ExternalToolsManagerBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC403FInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer10);
+    
+    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer10->Add(boxSizer19, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrlTasks = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
+    
+    boxSizer19->Add(m_dvListCtrlTasks, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrlTasks->AppendIconTextColumn(_("PID"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
+    m_dvListCtrlTasks->AppendTextColumn(_("Command"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer21 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer19->Add(boxSizer21, 0, wxEXPAND, 5);
+    
+    m_buttonKill = new wxButton(this, wxID_STOP, _("Stop"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer21->Add(m_buttonKill, 0, wxALL, 5);
+    
+    m_buttonKillAll = new wxButton(this, wxID_ANY, _("Stop All"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer21->Add(m_buttonKillAll, 0, wxALL, 5);
+    
+    m_buttonRefresh = new wxButton(this, wxID_REFRESH, _("Refresh"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer21->Add(m_buttonRefresh, 0, wxALL, 5);
+    
+    boxSizer21->Add(0, 0, 1, wxALL, 5);
+    
+    m_button33 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer21->Add(m_button33, 0, wxALL, 5);
+    
+    SetName(wxT("ExternalToolsManagerBase"));
+    SetMinClientSize(wxSize(500,300));
+    SetSize(500,300);
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_buttonKill->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ExternalToolsManagerBase::OnKill), NULL, this);
+    m_buttonKill->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsManagerBase::OnKillUI), NULL, this);
+    m_buttonKillAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ExternalToolsManagerBase::OnKillAll), NULL, this);
+    m_buttonKillAll->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsManagerBase::OnKillAllUI), NULL, this);
+    m_buttonRefresh->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ExternalToolsManagerBase::OnRefresh), NULL, this);
+    
+}
+
+ExternalToolsManagerBase::~ExternalToolsManagerBase()
+{
+    m_buttonKill->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ExternalToolsManagerBase::OnKill), NULL, this);
+    m_buttonKill->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsManagerBase::OnKillUI), NULL, this);
+    m_buttonKillAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ExternalToolsManagerBase::OnKillAll), NULL, this);
+    m_buttonKillAll->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsManagerBase::OnKillAllUI), NULL, this);
+    m_buttonRefresh->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ExternalToolsManagerBase::OnRefresh), NULL, this);
     
 }

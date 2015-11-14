@@ -32,6 +32,8 @@
     <File Name="externaltoolsdata.cpp"/>
     <File Name="externaltoolsdata.h"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="ExternalToolsProcessManager.h"/>
+    <File Name="ExternalToolsProcessManager.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="UI">
@@ -41,6 +43,8 @@
     <File Name="externaltooldlg.h"/>
     <File Name="../formbuilder/external_tools.wxcp"/>
     <File Name="../formbuilder/NewToolBase.wxcp"/>
+    <File Name="ExternalToolsManager.h"/>
+    <File Name="ExternalToolsManager.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>

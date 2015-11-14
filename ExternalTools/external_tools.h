@@ -16,6 +16,7 @@
 #include <wx/sizer.h>
 #include <wx/listctrl.h>
 #include <wx/button.h>
+#include <wx/dataview.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -30,8 +31,9 @@ protected:
     wxButton* m_buttonNewTool;
     wxButton* m_buttonEdit;
     wxButton* m_buttonDelete;
-    wxButton* m_buttonOk;
-    wxButton* m_buttonCancel;
+    wxStdDialogButtonSizer* m_stdBtnSizer2;
+    wxButton* m_button4;
+    wxButton* m_button6;
 
 protected:
     virtual void OnItemActivated(wxListEvent& event) { event.Skip(); }
@@ -49,10 +51,35 @@ public:
     wxButton* GetButtonNewTool() { return m_buttonNewTool; }
     wxButton* GetButtonEdit() { return m_buttonEdit; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
-    wxButton* GetButtonOk() { return m_buttonOk; }
-    wxButton* GetButtonCancel() { return m_buttonCancel; }
-    ExternalToolBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("External Tools"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
+    ExternalToolBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("External Tools"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~ExternalToolBaseDlg();
+};
+
+
+class ExternalToolsManagerBase : public wxDialog
+{
+protected:
+    wxDataViewListCtrl* m_dvListCtrlTasks;
+    wxButton* m_buttonKill;
+    wxButton* m_buttonKillAll;
+    wxButton* m_buttonRefresh;
+    wxButton* m_button33;
+
+protected:
+    virtual void OnKill(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnKillUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnKillAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnKillAllUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    wxDataViewListCtrl* GetDvListCtrlTasks() { return m_dvListCtrlTasks; }
+    wxButton* GetButtonKill() { return m_buttonKill; }
+    wxButton* GetButtonKillAll() { return m_buttonKillAll; }
+    wxButton* GetButtonRefresh() { return m_buttonRefresh; }
+    wxButton* GetButton33() { return m_button33; }
+    ExternalToolsManagerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Tools"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~ExternalToolsManagerBase();
 };
 
 #endif

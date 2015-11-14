@@ -37,10 +37,11 @@ ExternalToolDlg::ExternalToolDlg(wxWindow* parent, IManager* mgr)
 {
     Initialize();
     m_listCtrlTools->SetFocus();
+    GetSizer()->Fit(this);
+    CentreOnParent();
 }
-ExternalToolDlg::~ExternalToolDlg()
-{
-}
+
+ExternalToolDlg::~ExternalToolDlg() {}
 
 void ExternalToolDlg::OnItemActivated(wxListEvent& event)
 {
@@ -67,7 +68,7 @@ void ExternalToolDlg::OnButtonNew(wxCommandEvent& event)
                       dlg.GetArguments(),
                       dlg.GetIcon16(),
                       dlg.GetIcon24(),
-                      true,
+                      dlg.GetCaptureOutput(),
                       dlg.GetSaveAllFiles());
     }
 }
@@ -156,7 +157,7 @@ void ExternalToolDlg::DoEditEntry(long item)
                       dlg.GetArguments(),
                       dlg.GetIcon16(),
                       dlg.GetIcon24(),
-                      true,
+                      dlg.GetCaptureOutput(),
                       dlg.GetSaveAllFiles());
     }
 }

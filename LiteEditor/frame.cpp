@@ -66,6 +66,7 @@
 #include "clWorkspaceManager.h"
 #include "clSingleChoiceDialog.h"
 #include <wx/richmsgdlg.h>
+#include "cl_aui_tool_stickness.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -769,6 +770,12 @@ clMainFrame::clMainFrame(wxWindow* pParent,
             NULL,
             this);
 
+    Connect(XRCID("save_file"),
+            wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN,
+            wxAuiToolBarEventHandler(clMainFrame::OnTBSave),
+            NULL,
+            this);
+
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
@@ -1316,13 +1323,9 @@ void clMainFrame::CreateToolbars24()
                 _("Reload"),
                 bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload"), 24),
                 _("Reload File"));
-    tb->AddSeparator();
     tb->AddTool(
         XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save"), 24), _("Save"));
-    //tb->AddTool(XRCID("save_all"),
-    //            _("Save All"),
-    //            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_all"), 24),
-    //            _("Save All"));
+    tb->SetToolDropDown(XRCID("save_file"), true);
     tb->AddSeparator();
     tb->AddTool(XRCID("close_file"),
                 _("Close"),
@@ -1539,6 +1542,7 @@ void clMainFrame::CreateNativeToolbar16()
                 _("Reload File"));
     tb->AddSeparator();
     tb->AddTool(XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save")), _("Save"));
+
     //    tb->AddTool(XRCID("save_all"),
     //                _("Save All"),
     //                bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save_all")),
@@ -1814,10 +1818,10 @@ void clMainFrame::CreateToolbars16()
     tb->AddTool(XRCID("new_file"), _("New"), bmpLoader.LoadBitmap(wxT("file_new")), _("New File"));
     tb->AddTool(XRCID("open_file"), _("Open"), bmpLoader.LoadBitmap(wxT("file_open")), _("Open File"));
     tb->AddTool(XRCID("refresh_file"), _("Reload"), bmpLoader.LoadBitmap(wxT("file_reload")), _("Reload File"));
-    tb->AddSeparator();
     tb->AddTool(XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("file_save")), _("Save"));
-    //tb->AddTool(XRCID("save_all"), _("Save All"), bmpLoader.LoadBitmap(wxT("file_save_all")), _("Save All"));
+    tb->SetToolDropDown(XRCID("save_file"), true);
     tb->AddSeparator();
+    
     tb->AddTool(XRCID("close_file"), _("Close"), bmpLoader.LoadBitmap(wxT("file_close")), _("Close File"));
     tb->AddSeparator();
     tb->AddTool(wxID_CUT, _("Cut"), bmpLoader.LoadBitmap(wxT("cut")), _("Cut"));
@@ -2070,6 +2074,26 @@ void clMainFrame::UpdateBuildTools() {}
 
 void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) { Close(); }
 
+void clMainFrame::OnTBSave(wxAuiToolBarEvent& event)
+{
+    if(event.IsDropDownClicked()) {
+        // Show menu with "Save All" option
+        wxMenu menu;
+        menu.Append(XRCID("save_all"), _("Save All"), _("Save All"), wxITEM_NORMAL);
+
+        wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
+        if(auibar) {
+            clAuiToolStickness ts(auibar, event.GetToolId());
+            wxRect rect = auibar->GetToolRect(event.GetId());
+            wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
+            pt = ScreenToClient(pt);
+            PopupMenu(&menu, pt);
+        }
+    } else {
+        OnSave(event);
+    }
+}
+
 void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
 {
     if(event.IsDropDownClicked()) {
@@ -2267,6 +2291,7 @@ void clMainFrame::LoadSession(const wxString& sessionName)
 
 void clMainFrame::OnSave(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
     if(editor) {
         editor->SaveFile();
@@ -5688,23 +5713,7 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event)
-{
-    CHECK_SHUTDOWN();
-    LEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if(editor) {
-        event.Enable(editor->IsModified());
-
-    } else {
-        wxWindow* page = GetMainBook()->GetCurrentPage();
-        if(page) {
-            event.Skip();
-
-        } else {
-            event.Enable(false);
-        }
-    }
-}
+void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event) { OnFileSaveAllUI(event); }
 
 void clMainFrame::OnActivateEditor(wxCommandEvent& e)
 {

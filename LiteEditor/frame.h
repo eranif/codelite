@@ -367,6 +367,7 @@ protected:
     void OnFileLoadTabGroup(wxCommandEvent& event);
     void OnNativeTBUnRedoDropdown(wxCommandEvent& event);
     void OnTBUnRedo(wxAuiToolBarEvent& event);
+    void OnTBSave(wxAuiToolBarEvent& event);
     void OnCompleteWord(wxCommandEvent& event);
     void OnCompleteWordRefreshList(wxCommandEvent& event);
     void OnFunctionCalltip(wxCommandEvent& event);

@@ -84,7 +84,7 @@ void OutputPane::CreateGUIControls()
 {
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
-
+    SetMinClientSize(wxSize(-1, 250));
     long style = (kNotebook_Default | kNotebook_AllowDnD);
     if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxBOTTOM) {
         style |= kNotebook_BottomTabs;

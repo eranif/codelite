@@ -183,7 +183,7 @@ clToolBar *WizardsPlugin::CreateToolBar(wxWindow *parent)
 //		int size = m_mgr->GetToolbarIconSize();
 //
 //
-//		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+//		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
 //		tb->SetToolBitmapSize(wxSize(size, size));
 //
 //		if (size == 24) {

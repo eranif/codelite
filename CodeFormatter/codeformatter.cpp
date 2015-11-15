@@ -154,7 +154,7 @@ clToolBar* CodeFormatter::CreateToolBar(wxWindow* parent)
         // support both toolbars icon size
         int size = m_mgr->GetToolbarIconSize();
 
-        tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+        tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
         tb->SetToolBitmapSize(wxSize(size, size));
 
         BitmapLoader* bmpLoader = m_mgr->GetStdIcons();

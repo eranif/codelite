@@ -78,7 +78,7 @@ clToolBar *CodeLiteDiff::CreateToolBar(wxWindow *parent)
         int size = m_mgr->GetToolbarIconSize();
 
         // Allocate new toolbar, which will be freed later by CodeLite
-        tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+        tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
 
         // Set the toolbar size
         tb->SetToolBitmapSize(wxSize(size, size));

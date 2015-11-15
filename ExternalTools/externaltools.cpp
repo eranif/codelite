@@ -118,7 +118,7 @@ clToolBar* ExternalToolsPlugin::CreateToolBar(wxWindow* parent)
 
     if(m_mgr->AllowToolbar()) {
 
-        m_tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+        m_tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
         m_tb->SetToolBitmapSize(wxSize(size, size));
         m_tb->AddTool(XRCID("external_tools_settings"),
                       _("Configure external tools..."),
@@ -130,9 +130,7 @@ clToolBar* ExternalToolsPlugin::CreateToolBar(wxWindow* parent)
                       m_mgr->GetStdIcons()->LoadBitmap("monitor", size),
                       _("Show Running Tools..."));
 
-#if USE_AUI_TOOLBAR
         m_tb->SetArtProvider(new CLMainAuiTBArt());
-#endif
         std::vector<ToolInfo> tools = inData.GetTools();
         std::sort(tools.begin(), tools.end(), DecSort());
 

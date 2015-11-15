@@ -144,7 +144,7 @@ clToolBar* SpellCheck::CreateToolBar(wxWindow* parent)
 {
     if(m_mgr->AllowToolbar()) {
         int size = m_mgr->GetToolbarIconSize();
-        m_pToolbar = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+        m_pToolbar = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
         m_pToolbar->SetToolBitmapSize(wxSize(size, size));
         m_pToolbar->AddTool(XRCID(s_doCheckID.ToUTF8()),
                             _("Check spelling..."),

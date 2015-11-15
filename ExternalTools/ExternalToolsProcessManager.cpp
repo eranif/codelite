@@ -18,11 +18,11 @@
  * @class MyProcess
  * @brief handler class for capturing non-redirected processes termination
  */
-class MyProcess : public wxProcess
+class ExtToolsMyProcess : public wxProcess
 {
 public:
-    MyProcess() {}
-    virtual ~MyProcess() {}
+    ExtToolsMyProcess() {}
+    virtual ~ExtToolsMyProcess() {}
     void OnTerminate(int pid, int status)
     {
         ToolsTaskManager::Instance()->ProcessTerminated(pid);
@@ -124,7 +124,7 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti)
         pid = proc->GetPid();
 
     } else {
-        pid = ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, new MyProcess());
+        pid = ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, new ExtToolsMyProcess());
     }
     
     if(pid > 0) {

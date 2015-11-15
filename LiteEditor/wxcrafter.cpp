@@ -401,31 +401,37 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     boxSizer195->Add(gridSizer235, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_cmdLnkBtnNewWorkspace = new wxCommandLinkButton(m_panel191, wxID_ANY, _("New Workspace"), _("Create a new workspace"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    m_cmdLnkBtnNewWorkspace->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT );
     m_cmdLnkBtnNewWorkspace->SetToolTip(_("Create a new workspace"));
     
     gridSizer235->Add(m_cmdLnkBtnNewWorkspace, 0, wxALL|wxEXPAND, 5);
     
     m_cmdLnkBtnNewProject = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Open Workspace"), _("Open an existing workspace"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    m_cmdLnkBtnNewProject->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT );
     m_cmdLnkBtnNewProject->SetToolTip(_("Click to create a new project.\nIf NO workspace is open, it will auto create a workspace before creating the project"));
     
     gridSizer235->Add(m_cmdLnkBtnNewProject, 0, wxALL|wxEXPAND, 5);
     
     m_cmdLnkBtnWorkspaces = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent workspaces"), _("Open a recently used workspace"), wxDefaultPosition, wxSize(-1,100), wxBU_LEFT);
+    m_cmdLnkBtnWorkspaces->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT );
     m_cmdLnkBtnWorkspaces->SetToolTip(_("Open a workspace from a list of recently opened workspaces"));
     
     gridSizer235->Add(m_cmdLnkBtnWorkspaces, 0, wxALL|wxEXPAND, 5);
     
     m_cmdLnkBtnFilesMenu = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent files"), _("Open a recently used file"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    m_cmdLnkBtnFilesMenu->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT );
     m_cmdLnkBtnFilesMenu->SetToolTip(_("Open a file from the revcently opened files"));
     
     gridSizer235->Add(m_cmdLnkBtnFilesMenu, 0, wxALL|wxEXPAND, 5);
     
     m_cmdLnkBtnForum = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Forums"), _("Visit codelite's forums"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    m_cmdLnkBtnForum->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT );
     m_cmdLnkBtnForum->SetToolTip(_("Click to open a web browser in CodeLite's forums"));
     
     gridSizer235->Add(m_cmdLnkBtnForum, 0, wxALL|wxEXPAND, 5);
     
     m_cmdLnkBtnWiki = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Wiki"), _("Search codelite's wiki pages"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    m_cmdLnkBtnWiki->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT );
     m_cmdLnkBtnWiki->SetToolTip(_("Click to open a web browser in CodeLite's wiki main documentation page"));
     
     gridSizer235->Add(m_cmdLnkBtnWiki, 0, wxALL|wxEXPAND, 5);

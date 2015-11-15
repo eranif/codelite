@@ -10,6 +10,9 @@
 #include <wx/utils.h>
 #include <wx/process.h>
 #include <wx/msgdlg.h>
+#ifndef __WXMSW__
+#include <signal.h>
+#endif
 
 /**
  * @class MyProcess

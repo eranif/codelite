@@ -90,6 +90,7 @@ TagsOptionsData::TagsOptionsData()
     m_languages.Add(wxT("C++"));
     m_tokens.Add(wxT("EXPORT"));
     m_tokens.Add(wxT("_GLIBCXX_NOEXCEPT"));
+    m_tokens.Add(wxT("_NOEXCEPT"));
     m_tokens.Add(wxT("WXDLLIMPEXP_CORE"));
     m_tokens.Add(wxT("WXDLLIMPEXP_BASE"));
     m_tokens.Add(wxT("WXDLLIMPEXP_XML"));
@@ -178,7 +179,6 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("_STD_END=}"));
     m_tokens.Add(wxT("__CLRCALL_OR_CDECL"));
     m_tokens.Add(wxT("_CRTIMP2_PURE"));
-    ;
     m_tokens.Add(wxT("_GLIBCXX_CONST"));
     m_tokens.Add(wxT("_GLIBCXX_CONSTEXPR"));
     m_tokens.Add(wxT("_GLIBCXX_NORETURN"));
@@ -188,6 +188,13 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("_GLIBCXX_DEPRECATED"));
     m_tokens.Add("LLDB_API");
     m_tokens.Add("PYTHON_API");
+    // libcpp macros
+    m_tokens.Add("_LIBCPP_TYPE_VIS_ONLY");
+    m_tokens.Add("_LIBCPP_CONSTEXPR");
+    m_tokens.Add("_LIBCPP_CONSTEXPR_AFTER_CXX11");
+    m_tokens.Add("_LIBCPP_INLINE_VISIBILITY");
+    m_tokens.Add("_LIBCPP_BEGIN_NAMESPACE_STD=namespace std{");
+    m_tokens.Add("_LIBCPP_END_NAMESPACE_STD=}");
 
     m_types.Add(wxT("std::vector::reference=_Tp"));
     m_types.Add(wxT("std::vector::const_reference=_Tp"));
@@ -422,8 +429,7 @@ JSONElement TagsOptionsData::ToJSON() const
 wxString TagsOptionsData::DoJoinArray(const wxArrayString& arr) const
 {
     wxString s;
-    for(size_t i = 0; i < arr.GetCount(); ++i)
-        s << arr.Item(i) << "\n";
+    for(size_t i = 0; i < arr.GetCount(); ++i) s << arr.Item(i) << "\n";
 
     if(s.IsEmpty() == false) s.RemoveLast();
 

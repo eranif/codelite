@@ -52,7 +52,7 @@ public:
      */
     void Stop(int pid);
 
-    const ExternalToolItemData::Map_t& GetTools() const { return m_tools; }
+    ExternalToolItemData::Map_t& GetTools();
 
 private:
     ToolsTaskManager();

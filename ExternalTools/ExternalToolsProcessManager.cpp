@@ -150,3 +150,19 @@ void ToolsTaskManager::Stop(int pid)
         ::wxKill(pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
     }
 }
+
+ExternalToolItemData::Map_t& ToolsTaskManager::GetTools()
+{
+#ifdef __WXOSX__
+    // Check that the processes are still alive before we continue
+    ExternalToolItemData::Map_t tools;
+    std::for_each(m_tools.begin(), m_tools.end(), [&](const std::pair<int, ExternalToolItemData> &p) {
+        if(kill(p.first, 0) == 0) {
+            // alive
+            tools.insert(p);
+        }
+    });
+    m_tools.swap(tools);
+#endif
+    return m_tools;
+}

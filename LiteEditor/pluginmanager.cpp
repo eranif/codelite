@@ -275,7 +275,7 @@ void PluginManager::Load()
                                                                     .RightDockable(true)
                                                                     .Caption(plugin->GetShortName())
                                                                     .ToolbarPane()
-                                                                    .Left()
+                                                                    .Right()
                                                                     .Row(0));
 
                 // Add menu entry at the 'View->Toolbars' menu for this toolbar

@@ -9,6 +9,7 @@
   "m_outputFileName": "abbreviationssettingsbase",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -306,7 +307,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "images/abb-add.png"
+           "m_path": "../bitmaps/16-plus.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -361,7 +362,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "images/abb-delete.png"
+           "m_path": "../bitmaps/16-minus.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -443,7 +444,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "images/abb-import.png"
+           "m_path": "../bitmaps/16-down.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -498,7 +499,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "images/abb-export.png"
+           "m_path": "../bitmaps/16-file_save.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",
@@ -1157,7 +1158,7 @@
       }, {
        "m_type": 4467,
        "proportion": 0,
-       "border": 5,
+       "border": 10,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": [],

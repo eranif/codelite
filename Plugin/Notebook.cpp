@@ -31,6 +31,7 @@ static int OVERLAP_WIDTH = 20;
 static int V_OVERLAP_WIDTH = 3;
 
 #if CL_BUILD
+#include "file_logger.h"
 #include "cl_command_event.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
@@ -653,11 +654,14 @@ clTabCtrl::~clTabCtrl()
 void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event)
 {
     if(GetStyle() & kNotebook_EnableNavigationEvent) {
-        if(event.ControlDown()) {
-            switch(event.GetKeyCode()) {
+        if(event.CmdDown()) {
+            switch(event.GetUnicodeKey()) {
             case WXK_TAB:
             case WXK_PAGEDOWN:
             case WXK_PAGEUP: {
+#if CL_BUILD
+                CL_DEBUG("Firing navigation event");
+#endif
                 // Fire the navigation event
                 wxBookCtrlEvent e(wxEVT_BOOK_NAVIGATING);
                 e.SetEventObject(GetParent());

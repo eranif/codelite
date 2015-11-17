@@ -8,6 +8,7 @@
 #include <map>
 #include <imanager.h>
 #include "bitmap_loader.h"
+#include "file_logger.h"
 
 struct TabData {
     wxString label;
@@ -92,13 +93,18 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     } else {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
     }
-    m_dvListCtrl->SetFocus();
+    
+    m_dvListCtrl->CallAfter(&wxDataViewCtrl::SetFocus);
+    SetMinClientSize(wxSize(500,300));
+    CentreOnParent();
+    
     wxTheApp->Bind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
     wxTheApp->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
 }
 
 NotebookNavigationDlg::~NotebookNavigationDlg()
 {
+    CL_DEBUG("NotebookNavigationDlg::~NotebookNavigationDlg");
     for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         TabData* d = (TabData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
         wxDELETE(d);
@@ -110,6 +116,7 @@ NotebookNavigationDlg::~NotebookNavigationDlg()
 
 void NotebookNavigationDlg::CloseDialog()
 {
+    CL_DEBUG("NotebookNavigationDlg::CloseDialog");
     wxDataViewItem selection = m_dvListCtrl->GetSelection();
     if(selection.IsOk()) {
         TabData* d = (TabData*)m_dvListCtrl->GetItemData(selection);
@@ -164,6 +171,7 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 
 void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
 {
+    CL_DEBUG("NotebookNavigationDlg::OnKeyUp");
     if(event.GetKeyCode() == WXK_CONTROL) {
         CloseDialog();
     } else {
@@ -173,5 +181,6 @@ void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
 void NotebookNavigationDlg::OnItemActivated(wxDataViewEvent& event)
 {
     event.Skip();
+    CL_DEBUG("NotebookNavigationDlg::OnItemActivated");
     CloseDialog();
 }

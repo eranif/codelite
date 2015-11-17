@@ -81,10 +81,8 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     SetMinClientSize(wxSize(600, 400));
     GetSizer()->Fit(this);
 
-#ifndef __WXGTK__
     SetName("OpenResourceDialog");
     WindowAttrManager::Load(this);
-#endif
 
     // load all files from the workspace
     if(m_manager->IsWorkspaceOpen()) {
@@ -123,6 +121,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     bool showSymbols = clConfig::Get().Read("OpenResourceDialog/ShowSymbols", true);
     m_checkBoxFiles->SetValue(showFiles);
     m_checkBoxShowSymbols->SetValue(showSymbols);
+    CentreOnParent();
 }
 
 OpenResourceDialog::~OpenResourceDialog()

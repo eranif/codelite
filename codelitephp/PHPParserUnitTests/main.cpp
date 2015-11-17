@@ -213,6 +213,19 @@ TEST_FUNC(test_class_members)
     return true;
 }
 
+TEST_FUNC(test_class_member_initialized)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_member_initialized.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_WXSTRING(resolved->GetShortName(), "MemberClass");
+    return true;
+}
+
 // test completing class members, but this time the class is defined inside a namespace
 TEST_FUNC(test_class_with_members_inside_namespace)
 {

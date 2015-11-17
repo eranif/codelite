@@ -41,7 +41,10 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     : FindInFilesDialogBase(parent, wxID_ANY)
 {
     m_data.SetName(dataName);
-
+    
+    GetSizer()->Fit(this);
+    SetMinClientSize(GetClientSize());
+    
     // Store the find-in-files data
     clConfig::Get().ReadItem(&m_data);
 
@@ -91,17 +94,11 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
 
     // Set the file mask
     DoSetFileMask();
-
-    GetSizer()->Fit(this);
-    SetMinClientSize(GetClientSize());
-    
-    CentreOnParent();
     SetName("FindInFilesDialog");
 
-#ifndef __WXGTK__
     // Load the last size and position, but not on GTK
     WindowAttrManager::Load(this);
-#endif
+    CentreOnParent();
 }
 
 FindInFilesDialog::~FindInFilesDialog()

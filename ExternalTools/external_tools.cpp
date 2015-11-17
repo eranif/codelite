@@ -31,6 +31,7 @@ ExternalToolBaseDlg::ExternalToolBaseDlg(wxWindow* parent, wxWindowID id, const 
     bSizer6->Add(bSizer8, 1, wxEXPAND, 5);
     
     m_listCtrlTools = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
+    m_listCtrlTools->SetFocus();
     
     bSizer8->Add(m_listCtrlTools, 1, wxALL|wxEXPAND, 5);
     
@@ -124,6 +125,7 @@ ExternalToolsManagerBase::ExternalToolsManagerBase(wxWindow* parent, wxWindowID 
     boxSizer10->Add(boxSizer19, 1, wxALL|wxEXPAND, 5);
     
     m_dvListCtrlTasks = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
+    m_dvListCtrlTasks->SetFocus();
     
     boxSizer19->Add(m_dvListCtrlTasks, 1, wxALL|wxEXPAND, 5);
     

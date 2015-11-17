@@ -119,16 +119,50 @@ void PHPSourceFile::Parse(int exitDepth)
                     // A variable
                     PHPEntityBase::Ptr_t member(new PHPEntityVariable());
                     member->SetFilename(m_filename.GetFullPath());
-                    PHPEntityVariable* var = member->Cast<PHPEntityVariable>();
-                    var->SetVisibility(visibility);
-                    var->SetFullName(token.text);
+                    member->Cast<PHPEntityVariable>()->SetVisibility(visibility);
+                    member->Cast<PHPEntityVariable>()->SetFullName(token.text);
                     size_t flags = LookBackForVariablesFlags();
-                    var->SetFlag(kVar_Member);
-                    var->SetFlag(kVar_Const, flags & kVar_Const);
-                    var->SetFlag(kVar_Static, flags & kVar_Static);
-                    var->SetLine(token.lineNumber);
+                    member->Cast<PHPEntityVariable>()->SetFlag(kVar_Member);
+                    member->Cast<PHPEntityVariable>()->SetFlag(kVar_Const, flags & kVar_Const);
+                    member->Cast<PHPEntityVariable>()->SetFlag(kVar_Static, flags & kVar_Static);
+                    member->Cast<PHPEntityVariable>()->SetLine(token.lineNumber);
                     CurrentScope()->AddChild(member);
-                    if(!ConsumeUntil(';')) return;
+
+                    // Handle member assignment
+                    // public $memberVar = new Something();
+                    // for such cases, assign $memberVar type of Something()
+                    phpLexerToken t;
+                    if(!NextToken(t)) {
+                        // EOF
+                        return;
+                    }
+
+                    if(t.type == '=') {
+                        // assignment
+                        wxString expr;
+                        if(!ReadExpression(expr)) {
+                            return;
+                        }
+
+                        // Optimize 'new ClassName(..)' expression
+                        if(expr.StartsWith("new")) {
+                            expr = expr.Mid(3);
+                            expr.Trim().Trim(false);
+                            expr = expr.BeforeFirst('(');
+                            expr.Trim().Trim(false);
+                            member->Cast<PHPEntityVariable>()->SetTypeHint(MakeIdentifierAbsolute(expr));
+
+                        } else {
+                            // keep the expression
+                            member->Cast<PHPEntityVariable>()->SetExpressionHint(expr);
+                        }
+
+                    } else {
+                        // restore the token
+                        UngetToken(t);
+                        if(!ConsumeUntil(';')) return;
+                    }
+
                 } else if(what == kPHP_T_FUNCTION) {
                     // A function...
                     OnFunction();
@@ -1001,9 +1035,6 @@ size_t PHPSourceFile::LookBackForVariablesFlags()
 
 void PHPSourceFile::OnVariable(const phpLexerToken& tok)
 {
-    phpLexerToken token;
-    // Read until we find the ';'
-    std::vector<phpLexerToken> tokens;
     PHPEntityBase::Ptr_t var(new PHPEntityVariable());
     var->SetFullName(tok.text);
     var->SetFilename(m_filename.GetFullPath());
@@ -1012,15 +1043,29 @@ void PHPSourceFile::OnVariable(const phpLexerToken& tok)
         CurrentScope()->AddChild(var);
     }
 
-    if(!NextToken(token)) return;
-
-    if(token.type != '=') {
+    if(!ReadVariableInitialization(var)) {
         m_lookBackTokens.clear();
         return;
     }
+}
+
+bool PHPSourceFile::ReadVariableInitialization(PHPEntityBase::Ptr_t var)
+{
+    phpLexerToken token;
+    if(!NextToken(token)) {
+        return false;
+    }
+
+    if(token.type != '=') {
+        // restore the token
+        UngetToken(token);
+        return false;
+    }
 
     wxString expr;
-    if(!ReadExpression(expr)) return; // EOF
+    if(!ReadExpression(expr)) {
+        return false; // EOF
+    }
 
     // Optimize 'new ClassName(..)' expression
     if(expr.StartsWith("new")) {

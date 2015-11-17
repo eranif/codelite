@@ -27,6 +27,12 @@ public:
 
 protected:
     /**
+     * @brief the lexer just read $something = ...
+     * read the "..." and create a variable hint from it
+     */
+    bool ReadVariableInitialization(PHPEntityBase::Ptr_t var);
+    
+    /**
      * @brief calls phpLexerNextToken. Use this call instead of the global phpLexerNextToken
      * since this function will handle all PHP comments found
      */

@@ -120,7 +120,7 @@ void NotebookNavigationDlg::CloseDialog()
 
 void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 {
-    if(event.GetKeyCode() == WXK_TAB && event.ControlDown() && event.ShiftDown()) {
+    if((event.GetUnicodeKey() == WXK_TAB) && (event.CmdDown() && event.ShiftDown())) {
         // Navigate Up
         wxDataViewItem item = m_dvListCtrl->GetSelection();
         if(item.IsOk()) {
@@ -139,7 +139,7 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
                 m_dvListCtrl->EnsureVisible(item);
             }
         }
-    } else if(event.GetKeyCode() == WXK_TAB && event.ControlDown()) {
+    } else if((event.GetUnicodeKey() == WXK_TAB) && event.CmdDown()) {
         // Navigate Down
         wxDataViewItem item = m_dvListCtrl->GetSelection();
         if(item.IsOk()) {

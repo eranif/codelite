@@ -113,6 +113,7 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
     info.SetWDs(ReturnWithStringPrepended(m_WD->GetStrings(), GetWorkingDirectory(), MAX_NO_ITEMS));
     info.SetStartCmds(GetStartupCmds());
     info.SetArguments(m_textCtrlArgs->GetValue());
+    info.SetAlternateDebuggerExec(m_textCtrlDebuggerExec->GetValue());
     EditorConfigST::Get()->WriteObject(wxT("QuickDebugDlg"), &info);
 
     

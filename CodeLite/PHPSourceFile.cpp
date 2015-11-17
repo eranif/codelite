@@ -1079,6 +1079,7 @@ bool PHPSourceFile::ReadVariableInitialization(PHPEntityBase::Ptr_t var)
         // keep the expression
         var->Cast<PHPEntityVariable>()->SetExpressionHint(expr);
     }
+    return true;
 }
 
 PHPEntityBase::List_t PHPSourceFile::GetAliases() const

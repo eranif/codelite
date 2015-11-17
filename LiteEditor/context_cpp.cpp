@@ -909,45 +909,16 @@ void ContextCpp::GotoDefinition()
 void ContextCpp::SwapFiles(const wxFileName& fileName)
 {
     CHECK_JS_RETURN_VOID();
-    wxFileName otherFile(fileName);
-    wxString ext = fileName.GetExt();
-    wxArrayString exts;
 
-    // replace the file extension
-    if(IsSource(ext)) {
-        // try to find a header file
-        exts.Add(wxT("h"));
-        exts.Add(wxT("hpp"));
-        exts.Add(wxT("hxx"));
-        exts.Add(wxT("hh"));
-        exts.Add(wxT("h++"));
-
-    } else {
-        // try to find a implementation file
-        exts.Add("cpp");
-        exts.Add("cxx");
-        exts.Add("c++");
-        exts.Add("cc");
-        exts.Add("c");
-        exts.Add("ipp");
-    }
-
-    // search in current directory first
-    wxArrayString file_options;
-    for(size_t i = 0; i < exts.GetCount(); i++) {
-        otherFile.SetExt(exts.Item(i));
-
-        if(otherFile.Exists()) {
-            file_options.Add(otherFile.GetFullPath());
-        }
-    }
+    wxStringSet_t file_options;
+    FindSwappedFile(fileName, file_options);
     wxString file_to_open;
-    if(file_options.GetCount() > 1) {
+    if(file_options.size() > 1) {
         // More than one option
-        file_to_open = ::wxGetSingleChoice(_("Multiple candidates found. Select a file to open:"),
-                                           _("Swap Header/Source Implementation"),
-                                           file_options,
-                                           0);
+        wxArrayString fileArr;
+        std::for_each(file_options.begin(), file_options.end(), [&](const wxString& s) { fileArr.Add(s); });
+        file_to_open = ::wxGetSingleChoice(
+            _("Multiple candidates found. Select a file to open:"), _("Swap Header/Source Implementation"), fileArr, 0);
 
         if(file_to_open.IsEmpty())
             // Cancel clicked
@@ -956,20 +927,19 @@ void ContextCpp::SwapFiles(const wxFileName& fileName)
         TryOpenFile(file_to_open, false);
         return;
 
-    } else {
-        if(TryOpenFile(file_to_open, false)) return;
-    }
+    } else if(!file_options.empty()) {
 
-    // if that failed, now look in entire workspace
-    for(size_t i = 0; i < exts.GetCount(); i++) {
-        otherFile.SetExt(exts.Item(i));
-
-        if(TryOpenFile(otherFile, true)) return;
+        file_to_open = *file_options.begin();
+        if(TryOpenFile(file_to_open, false)) {
+            return;
+        }
     }
 
     // We failed to locate matched file, offer the user to create one
     // check to see if user already provided an answer
-    otherFile.SetExt(exts.Item(0));
+    wxFileName otherFile = fileName;
+    otherFile.SetExt(FileExtManager::GetType(fileName.GetFullName()) == FileExtManager::TypeHeader ? "cpp" : "h");
+
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("No matched file was found, would you like to create one?"),
                                                           "CreateSwappedFile",
                                                           _("Create"),
@@ -981,25 +951,84 @@ void ContextCpp::SwapFiles(const wxFileName& fileName)
     }
 }
 
+bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
+{
+    CHECK_JS_RETURN_FALSE();
+
+    others.clear();
+    wxString ext = rhs.GetExt();
+    wxArrayString exts;
+
+    // replace the file extension
+    if(FileExtManager::GetType(rhs.GetFullName()) == FileExtManager::TypeSourceC ||
+       FileExtManager::GetType(rhs.GetFullName()) == FileExtManager::TypeSourceCpp) {
+        // try to find a header file
+        exts.Add("h");
+        exts.Add("hpp");
+        exts.Add("hxx");
+        exts.Add("h++");
+        exts.Add("hh");
+
+    } else {
+        // try to find a implementation file
+        exts.Add("cpp");
+        exts.Add("cxx");
+        exts.Add("cc");
+        exts.Add("c++");
+        exts.Add("c");
+        exts.Add("ipp");
+    }
+
+    // Try to locate a file in the same folder first
+    for(size_t i = 0; i < exts.size(); ++i) {
+        wxFileName otherFile = rhs;
+        otherFile.SetExt(exts.Item(i));
+        if(otherFile.FileExists()) {
+            others.insert(otherFile.GetFullPath());
+        }
+    }
+
+    // if we found a match on the same folder, don't bother continue searching
+    if(others.empty()) {
+        // Check the workspace
+        std::vector<wxFileName> files;
+        ManagerST::Get()->GetWorkspaceFiles(files, true);
+
+        for(size_t j = 0; j < exts.GetCount(); j++) {
+            wxFileName otherFile = rhs;
+            otherFile.SetExt(exts.Item(j));
+            if(otherFile.FileExists()) {
+                // we got a match
+                others.insert(otherFile.GetFullPath());
+            }
+        }
+    }
+    return !others.empty();
+}
+
 bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
 {
     CHECK_JS_RETURN_FALSE();
     wxFileName otherFile(rhs);
+
     wxString ext = rhs.GetExt();
     wxArrayString exts;
 
     // replace the file extension
     if(IsSource(ext)) {
         // try to find a header file
-        exts.Add(wxT("h"));
-        exts.Add(wxT("hpp"));
-        exts.Add(wxT("hxx"));
+        exts.Add("h");
+        exts.Add("hpp");
+        exts.Add("hxx");
+        exts.Add("h++");
+
     } else {
         // try to find a implementation file
-        exts.Add(wxT("cpp"));
-        exts.Add(wxT("cxx"));
-        exts.Add(wxT("cc"));
-        exts.Add(wxT("c"));
+        exts.Add("cpp");
+        exts.Add("cxx");
+        exts.Add("cc");
+        exts.Add("c++");
+        exts.Add("c");
     }
 
     std::vector<wxFileName> files;
@@ -1007,6 +1036,7 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
 
     for(size_t j = 0; j < exts.GetCount(); j++) {
         otherFile.SetExt(exts.Item(j));
+
         if(otherFile.FileExists()) {
             // we got a match
             lhs = otherFile.GetFullPath();
@@ -3170,7 +3200,7 @@ void ContextCpp::ColourContextTokens(const wxArrayString& workspaceTokens)
     }
     ctrl.SetKeyWords(1, flatStrClasses);
     ctrl.SetKeywordClasses(flatStrClasses);
-    
+
     //------------------------------------------
     // Local variables
     //------------------------------------------

@@ -31,6 +31,7 @@
 #include <map>
 #include "entry.h"
 #include "cl_command_event.h"
+#include "macros.h"
 
 class RefactorSource;
 
@@ -163,6 +164,7 @@ private:
      * \param lhs output
      * \return true if such sibling file exist, false otherwise
      */
+    bool FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others);
     bool FindSwappedFile(const wxFileName& rhs, wxString& lhs);
 
     /**

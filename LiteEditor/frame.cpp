@@ -1821,7 +1821,7 @@ void clMainFrame::CreateToolbars16()
     tb->AddTool(XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("file_save")), _("Save"));
     tb->SetToolDropDown(XRCID("save_file"), true);
     tb->AddSeparator();
-    
+
     tb->AddTool(XRCID("close_file"), _("Close"), bmpLoader.LoadBitmap(wxT("file_close")), _("Close File"));
     tb->AddSeparator();
     tb->AddTool(wxID_CUT, _("Cut"), bmpLoader.LoadBitmap(wxT("cut")), _("Cut"));
@@ -2236,6 +2236,14 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
+    // Prompt before exit
+    if(::PromptForYesNoDialogWithCheckbox(_("Closing CodeLite\nSave perspective and exit?"), "SaveAndExit") !=
+       wxID_YES) {
+        event.Veto();
+        event.Skip(false);
+        return;
+    }
+
     if(!SaveLayoutAndSession()) {
         event.Veto();
         event.Skip(false);
@@ -4673,12 +4681,12 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             DebuggerInformation dinfo;
             DebuggerMgr::Get().GetDebuggerInformation(dlg.GetDebuggerName(), dinfo);
             dinfo.breakAtWinMain = true;
-            
+
             // Allow the quick debug to replace the debugger executable
             if(!dlg.GetAlternateDebuggerExe().IsEmpty()) {
                 dinfo.path = dlg.GetAlternateDebuggerExe();
             }
-            
+
             // read the console command
             dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
 

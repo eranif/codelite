@@ -28,11 +28,10 @@
 
 #include "quickdebugbase.h"
 
-/** Implementing QuickDebugBase */
 class QuickDebugDlg : public QuickDebugBase
 {
 protected:
-    // Handlers for QuickDebugBase events.
+    virtual void OnSelectAlternateDebugger(wxCommandEvent& event);
     void OnButtonBrowseExe(wxCommandEvent& event);
     void OnButtonDebug(wxCommandEvent& event);
     void OnButtonCancel(wxCommandEvent& event);
@@ -40,7 +39,6 @@ protected:
     void Initialize();
 
 public:
-    /** Constructor */
     QuickDebugDlg(wxWindow* parent);
     virtual ~QuickDebugDlg();
     wxArrayString GetStartupCmds();
@@ -48,6 +46,7 @@ public:
     wxString GetDebuggerName();
     wxString GetWorkingDirectory();
     wxString GetArguments();
+    wxString GetAlternateDebuggerExe() const { return m_textCtrlDebuggerExec->GetValue(); }
 };
 
 #endif // __quickdebugdlg__

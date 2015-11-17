@@ -19,7 +19,6 @@
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
-#include <wx/panel.h>
 #include <wx/choice.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -39,10 +38,11 @@ protected:
     wxButton* m_buttonBrowseWD;
     wxStaticText* m_staticText4;
     wxTextCtrl* m_textCtrlArgs;
-    wxPanel* m_panel1;
     wxStaticText* m_staticText3;
     wxChoice* m_choiceDebuggers;
-    wxPanel* m_panel2;
+    wxStaticText* m_staticText12;
+    wxTextCtrl* m_textCtrlDebuggerExec;
+    wxButton* m_buttonBrowseDebugger;
     wxStaticText* m_staticText6;
     wxTextCtrl* m_textCtrlCmds;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
@@ -52,6 +52,7 @@ protected:
 protected:
     virtual void OnButtonBrowseExe(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonBrowseWD(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSelectAlternateDebugger(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonDebug(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
 
@@ -64,10 +65,11 @@ public:
     wxButton* GetButtonBrowseWD() { return m_buttonBrowseWD; }
     wxStaticText* GetStaticText4() { return m_staticText4; }
     wxTextCtrl* GetTextCtrlArgs() { return m_textCtrlArgs; }
-    wxPanel* GetPanel1() { return m_panel1; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
     wxChoice* GetChoiceDebuggers() { return m_choiceDebuggers; }
-    wxPanel* GetPanel2() { return m_panel2; }
+    wxStaticText* GetStaticText12() { return m_staticText12; }
+    wxTextCtrl* GetTextCtrlDebuggerExec() { return m_textCtrlDebuggerExec; }
+    wxButton* GetButtonBrowseDebugger() { return m_buttonBrowseDebugger; }
     wxStaticText* GetStaticText6() { return m_staticText6; }
     wxTextCtrl* GetTextCtrlCmds() { return m_textCtrlCmds; }
     QuickDebugBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Quick Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

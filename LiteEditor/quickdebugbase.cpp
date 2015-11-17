@@ -51,7 +51,8 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     fgSizer1->Add(m_ExeFilepath, 0, wxALL|wxEXPAND, 5);
     
-    m_buttonBrowseExe = new wxButton(this, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonBrowseExe = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
+    m_buttonBrowseExe->SetToolTip(_("Select executale to debug"));
     
     fgSizer1->Add(m_buttonBrowseExe, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -68,7 +69,8 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     fgSizer1->Add(m_WD, 0, wxALL|wxEXPAND, 5);
     
-    m_buttonBrowseWD = new wxButton(this, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonBrowseWD = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
+    m_buttonBrowseWD->SetToolTip(_("Browse for working directory"));
     
     fgSizer1->Add(m_buttonBrowseWD, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -83,9 +85,7 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     fgSizer1->Add(m_textCtrlArgs, 0, wxALL|wxEXPAND, 5);
     
-    m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    fgSizer1->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
+    fgSizer1->Add(0, 0, 1, wxALL, 5);
     
     m_staticText3 = new wxStaticText(this, wxID_ANY, _("Select debugger:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -96,9 +96,24 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     fgSizer1->Add(m_choiceDebuggers, 0, wxALL|wxEXPAND, 5);
     
-    m_panel2 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    fgSizer1->Add(0, 0, 1, wxALL, 5);
     
-    fgSizer1->Add(m_panel2, 1, wxALL|wxEXPAND, 5);
+    m_staticText12 = new wxStaticText(this, wxID_ANY, _("Alternate debugger executable:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer1->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlDebuggerExec = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlDebuggerExec->SetToolTip(_("Provide an alternate debugger executable to use.\nThis is currently only supported for GDB"));
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlDebuggerExec->SetHint(wxT(""));
+    #endif
+    
+    fgSizer1->Add(m_textCtrlDebuggerExec, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_buttonBrowseDebugger = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_buttonBrowseDebugger->SetToolTip(_("Select debugger executable"));
+    
+    fgSizer1->Add(m_buttonBrowseDebugger, 0, wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText6 = new wxStaticText(this, wxID_ANY, _("Startup commands:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -120,7 +135,7 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
     
-    bSizer1->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer1->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOK->SetDefault();
@@ -131,11 +146,16 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_stdBtnSizer2->Realize();
     
     SetName(wxT("QuickDebugBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetMinClientSize(wxSize(500,400));
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -146,6 +166,7 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     // Connect events
     m_buttonBrowseExe->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseExe), NULL, this);
     m_buttonBrowseWD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseWD), NULL, this);
+    m_buttonBrowseDebugger->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnSelectAlternateDebugger), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonDebug), NULL, this);
     m_buttonCancel1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonCancel), NULL, this);
     
@@ -155,6 +176,7 @@ QuickDebugBase::~QuickDebugBase()
 {
     m_buttonBrowseExe->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseExe), NULL, this);
     m_buttonBrowseWD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseWD), NULL, this);
+    m_buttonBrowseDebugger->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnSelectAlternateDebugger), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonDebug), NULL, this);
     m_buttonCancel1->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonCancel), NULL, this);
     

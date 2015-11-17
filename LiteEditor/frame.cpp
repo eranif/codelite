@@ -4673,7 +4673,12 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             DebuggerInformation dinfo;
             DebuggerMgr::Get().GetDebuggerInformation(dlg.GetDebuggerName(), dinfo);
             dinfo.breakAtWinMain = true;
-
+            
+            // Allow the quick debug to replace the debugger executable
+            if(!dlg.GetAlternateDebuggerExe().IsEmpty()) {
+                dinfo.path = dlg.GetAlternateDebuggerExe();
+            }
+            
             // read the console command
             dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
 

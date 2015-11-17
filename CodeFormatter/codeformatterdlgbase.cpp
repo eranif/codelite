@@ -281,7 +281,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     m_pgPropClangFormatExePath = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
     #if !defined(__WXOSX__) && !defined(_WIN64)
-    m_pgMgrClang->SetPropertyAttribute(m_pgPropClangFormatExePath, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropClangFormatExePath->SetAttribute(wxPG_FILE_WILDCARD, wxT(""));
     #endif // !defined(__WXOSX__) && !defined(_WIN64)
     m_pgPropClangFormatExePath->SetHelpString(_("Select the path to clang-format executable tool"));
     
@@ -654,11 +654,15 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_treebook->ExpandNode( 6, true );
     
     SetName(wxT("CodeFormatterBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

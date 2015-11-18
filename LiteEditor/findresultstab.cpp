@@ -104,6 +104,9 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
 
     EventNotifier::Get()->Connect(
         wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL, this);
+
+    // Use the same eventhandler for editor config changes too e.g. show/hide whitespace
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &FindResultsTab::OnThemeChanged, this);
 }
 
 FindResultsTab::~FindResultsTab()
@@ -133,8 +136,8 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
         sci->StyleSetFont(i, defaultFont);
     }
 
-    // Show the whitespace
-    sci->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
+    // Show/hide whitespace
+	sci->SetViewWhiteSpace(EditorConfigST::Get()->GetOptions()->GetShowWhitspaces());
     StyleProperty::Map_t& props = lexer->GetLexerProperties();
     // Set the whitespace colours
     sci->SetWhitespaceForeground(true, props[WHITE_SPACE_ATTR_ID].GetFgColour());

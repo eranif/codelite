@@ -491,7 +491,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer205->Add(m_searchCtrlFilter, 0, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrlCommitList = new wxDataViewListCtrl(m_splitterPage178, wxID_ANY, wxDefaultPosition, wxSize(500,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlCommitList = new wxDataViewListCtrl(m_splitterPage178, wxID_ANY, wxDefaultPosition, wxSize(500,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer205->Add(m_dvListCtrlCommitList, 1, wxALL|wxEXPAND, 2);
     
@@ -632,15 +632,6 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer218->Add(m_stcCommitMessage, 1, wxALL|wxEXPAND, 2);
     
-    m_stdBtnSizer290 = new wxStdDialogButtonSizer();
-    
-    bSizer17->Add(m_stdBtnSizer290, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_button292 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_button292->SetDefault();
-    m_stdBtnSizer290->AddButton(m_button292);
-    m_stdBtnSizer290->Realize();
-    
     SetName(wxT("GitCommitListDlgBase"));
     SetSize(-1,-1);
     if (GetSizer()) {
@@ -665,7 +656,6 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_dvListCtrlCommitList->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(GitCommitListDlgBase::OnSelectionChanged), NULL, this);
     m_dvListCtrlCommitList->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitCommitListDlgBase::OnContextMenu), NULL, this);
     m_fileListBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitListDlgBase::OnChangeFile), NULL, this);
-    m_button292->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnOK), NULL, this);
     
 }
 
@@ -677,7 +667,6 @@ GitCommitListDlgBase::~GitCommitListDlgBase()
     m_dvListCtrlCommitList->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(GitCommitListDlgBase::OnSelectionChanged), NULL, this);
     m_dvListCtrlCommitList->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitCommitListDlgBase::OnContextMenu), NULL, this);
     m_fileListBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitListDlgBase::OnChangeFile), NULL, this);
-    m_button292->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnOK), NULL, this);
     
 }
 

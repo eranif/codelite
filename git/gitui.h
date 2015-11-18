@@ -173,8 +173,6 @@ protected:
     wxPanel* m_splitterPage194;
     wxStaticText* m_staticText220;
     wxStyledTextCtrl* m_stcCommitMessage;
-    wxStdDialogButtonSizer* m_stdBtnSizer290;
-    wxButton* m_button292;
 
 protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
@@ -182,7 +180,6 @@ protected:
     virtual void OnSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxSearchCtrl* GetSearchCtrlFilter() { return m_searchCtrlFilter; }

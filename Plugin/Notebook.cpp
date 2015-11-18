@@ -654,7 +654,12 @@ clTabCtrl::~clTabCtrl()
 void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event)
 {
     if(GetStyle() & kNotebook_EnableNavigationEvent) {
-        if(event.CmdDown()) {
+#ifdef __WXOSX__
+        if(event.AltDown()) 
+#else
+        if(event.CmdDown()) 
+#endif
+        {
             switch(event.GetUnicodeKey()) {
             case WXK_TAB:
             case WXK_PAGEDOWN:

@@ -10,7 +10,8 @@
 #include "bitmap_loader.h"
 #include "file_logger.h"
 
-struct TabData {
+struct TabData
+{
     wxString label;
     wxBitmap bmp;
     wxFileName filename;
@@ -35,8 +36,11 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
 
     BitmapLoader::BitmapMap_t bmps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
 
+#ifdef __WXOSX__
+    wxBitmap saveBmp = wxNullBitmap;
+#else
     wxBitmap saveBmp = clGetManager()->GetStdIcons()->LoadBitmap("file_save");
-
+#endif
     std::map<void*, clTab> tabsInfoMap;
     for(size_t i = 0; i < allTabs.size(); ++i) {
         tabsInfoMap.insert(std::make_pair((void*)allTabs.at(i).window, allTabs.at(i)));
@@ -96,6 +100,11 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
                 }
             }
 
+#ifdef __WXOSX__
+            if(iter != tabsInfoMap.end() && iter->second.isModified) {
+                text.Prepend("*");
+            }
+#endif
             cols.push_back(::MakeIconText(text, d->bmp));
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr)d);
         }
@@ -109,6 +118,9 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
 
     m_dvListCtrl->CallAfter(&wxDataViewCtrl::SetFocus);
     SetMinClientSize(wxSize(500, 300));
+#ifdef __WXOSX__
+    SetSize(wxSize(500, 300));
+#endif
     CentreOnParent();
 
     wxTheApp->Bind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
@@ -140,7 +152,14 @@ void NotebookNavigationDlg::CloseDialog()
 
 void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 {
-    if((event.GetUnicodeKey() == WXK_TAB) && (event.CmdDown() && event.ShiftDown())) {
+    if((event.GetUnicodeKey() == WXK_TAB) && (
+#ifdef __WXOSX__
+                                                 event.AltDown()
+#else
+                                                 event.MetaDown()
+#endif
+                                                 &&
+                                                 event.ShiftDown())) {
         // Navigate Up
         wxDataViewItem item = m_dvListCtrl->GetSelection();
         if(item.IsOk()) {
@@ -159,7 +178,13 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
                 m_dvListCtrl->EnsureVisible(item);
             }
         }
-    } else if((event.GetUnicodeKey() == WXK_TAB) && event.CmdDown()) {
+    } else if((event.GetUnicodeKey() == WXK_TAB) &&
+#ifdef __WXOSX__
+              event.AltDown()
+#else
+              event.MetaDown()
+#endif
+              ) {
         // Navigate Down
         wxDataViewItem item = m_dvListCtrl->GetSelection();
         if(item.IsOk()) {
@@ -185,11 +210,19 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
 {
     CL_DEBUG("NotebookNavigationDlg::OnKeyUp");
+#ifdef __WXOSX__
+    if(event.GetKeyCode() == WXK_ALT) {
+        CloseDialog();
+    } else {
+        event.Skip();
+    }
+#else
     if(event.GetKeyCode() == WXK_CONTROL) {
         CloseDialog();
     } else {
         event.Skip();
     }
+#endif
 }
 void NotebookNavigationDlg::OnItemActivated(wxDataViewEvent& event)
 {

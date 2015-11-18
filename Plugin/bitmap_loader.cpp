@@ -93,7 +93,7 @@ BitmapLoader::BitmapLoader()
 
         // Extract all images into this folder
         zip.Extract("*", tmpFolder.GetPath());
-
+ 
         // Load all the files into wxBitmap
         wxArrayString files;
         wxDir::GetAllFiles(tmpFolder.GetPath(), &files, "*.png");

@@ -470,12 +470,13 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer163 = new wxBoxSizer(wxVERTICAL);
     m_panel161->SetSizer(boxSizer163);
     
-    m_dvListCtrl = new wxDataViewListCtrl(m_panel161, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE|wxWANTS_CHARS|wxTAB_TRAVERSAL|wxBORDER_STATIC);
+    m_dvListCtrl = new wxDataViewListCtrl(m_panel161, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxWANTS_CHARS|wxTAB_TRAVERSAL|wxBORDER_STATIC);
     m_dvListCtrl->SetFocus();
     
     boxSizer163->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 2);
     
-    m_dvListCtrl->AppendIconTextColumn(_("My Column"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrl->AppendBitmapColumn(_("Modified"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, 20, wxALIGN_CENTER);
+    m_dvListCtrl->AppendIconTextColumn(_("Text"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     
     SetName(wxT("NotebookNavigationDlgBase"));
     SetMinClientSize(wxSize(400,200));

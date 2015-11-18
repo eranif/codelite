@@ -352,18 +352,15 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
         t.bitmap = tabInfo->GetBitmap();
         t.text = tabInfo->GetLabel();
         t.window = tabInfo->GetWindow();
+        
+        LEditor* editor = dynamic_cast<LEditor*>(t.window);
+        if(editor) {
+            t.isFile = true;
+            t.isModified = editor->IsModified();
+            t.filename = editor->GetFileName();
+        }
         tabs.push_back(t);
     });
-
-    // Go over the tabs, and for each tab that represents a file
-    // populate the filename member
-    for(size_t i = 0; i < tabs.size(); ++i) {
-        LEditor* editor = dynamic_cast<LEditor*>(tabs.at(i).window);
-        if(editor) {
-            tabs.at(i).isFile = true;
-            tabs.at(i).filename = editor->GetFileName();
-        }
-    }
 }
 
 void MainBook::GetAllEditors(LEditor::Vec_t& editors, size_t flags)

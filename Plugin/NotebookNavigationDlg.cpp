@@ -35,6 +35,8 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
 
     BitmapLoader::BitmapMap_t bmps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
 
+    wxBitmap saveBmp = clGetManager()->GetStdIcons()->LoadBitmap("file_save");
+
     std::map<void*, clTab> tabsInfoMap;
     for(size_t i = 0; i < allTabs.size(); ++i) {
         tabsInfoMap.insert(std::make_pair((void*)allTabs.at(i).window, allTabs.at(i)));
@@ -55,10 +57,21 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
             d->index = index;
 
             // add extra info
+            wxVariant modifiedItem;
+            wxVariant nullBmp;
+            nullBmp << wxNullBitmap;
             std::map<void*, clTab>::iterator iter = tabsInfoMap.find(windows.Item(i));
             if(iter != tabsInfoMap.end()) {
                 d->isFile = iter->second.isFile;
                 d->filename = iter->second.filename;
+                if(iter->second.isModified) {
+                    modifiedItem << saveBmp;
+                    cols.push_back(modifiedItem);
+                } else {
+                    cols.push_back(nullBmp);
+                }
+            } else {
+                cols.push_back(nullBmp);
             }
 
             // Prepare the display item
@@ -93,11 +106,11 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     } else {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
     }
-    
+
     m_dvListCtrl->CallAfter(&wxDataViewCtrl::SetFocus);
-    SetMinClientSize(wxSize(500,300));
+    SetMinClientSize(wxSize(500, 300));
     CentreOnParent();
-    
+
     wxTheApp->Bind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
     wxTheApp->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
 }
@@ -137,7 +150,7 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
                 item = m_dvListCtrl->RowToItem(row);
                 m_dvListCtrl->Select(item);
                 m_dvListCtrl->EnsureVisible(item);
-                
+
             } else {
                 // Select the last item
                 row = m_dvListCtrl->GetItemCount() - 1;

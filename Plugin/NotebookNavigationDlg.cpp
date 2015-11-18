@@ -156,7 +156,7 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 #ifdef __WXOSX__
                                                  event.AltDown()
 #else
-                                                 event.MetaDown()
+                                                 event.CmdDown()
 #endif
                                                  &&
                                                  event.ShiftDown())) {
@@ -182,7 +182,7 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 #ifdef __WXOSX__
               event.AltDown()
 #else
-              event.MetaDown()
+              event.CmdDown()
 #endif
               ) {
         // Navigate Down

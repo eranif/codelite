@@ -59,6 +59,8 @@ set( BUILD_WXC 0 )
 set( CL_COPY_WX_LIBS 0 )
 set( WITH_SFTP 1 )
 
+set (CMAKE_CXX_FLAGS -Wno-deprecated-declarations) # Avoid very multiple warnings spam due to deprecated wx methods
+
 if ( UNIX )
     execute_process(COMMAND pwd OUTPUT_VARIABLE BUILD_DIRECTORY OUTPUT_STRIP_TRAILING_WHITESPACE)
 elseif(MINGW)

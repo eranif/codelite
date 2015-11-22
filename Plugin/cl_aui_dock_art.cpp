@@ -246,7 +246,7 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
     wxColour sashColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-#if 0
+#if 1
     if(clGetManager() && clGetManager()->GetStatusBar() && clGetManager()->GetStatusBar()->GetArt()) {
         sashColour = clGetManager()->GetStatusBar()->GetArt()->GetBgColour();
     }
@@ -254,6 +254,6 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(sashColour);
+    dc.SetBrush(DrawingUtils::GetStippleBrush());
     dc.DrawRectangle(rect);
 }

@@ -35,11 +35,11 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     
     m_auibar6->AddStretchSpacer(1);
     
-    m_auibar6->AddTool(ID_LINEUP, _("Move Up"), wxXmlResource::Get()->LoadBitmap(wxT("arrow-up")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line up"), _("Move the #include statement one line up"), NULL);
+    m_auibar6->AddTool(ID_LINEUP, _("Move Up"), wxXmlResource::Get()->LoadBitmap(wxT("16-up")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line up"), _("Move the #include statement one line up"), NULL);
     
-    m_auibar6->AddTool(ID_LINEDOWN, _("Move Down"), wxXmlResource::Get()->LoadBitmap(wxT("git-arrow-down")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line down"), _("Move the #include statement one line down"), NULL);
+    m_auibar6->AddTool(ID_LINEDOWN, _("Move Down"), wxXmlResource::Get()->LoadBitmap(wxT("16-down")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line down"), _("Move the #include statement one line down"), NULL);
     
-    m_auibar6->AddTool(wxID_CLEAR, _("Clear Cached Paths"), wxXmlResource::Get()->LoadBitmap(wxT("clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear Cached Paths"), _("Clear Cached Paths"), NULL);
+    m_auibar6->AddTool(wxID_CLEAR, _("Clear Cached Paths"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Cached Paths"), _("Clear Cached Paths"), NULL);
     m_auibar6->Realize();
     
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);

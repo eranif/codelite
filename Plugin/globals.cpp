@@ -1861,7 +1861,7 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
         d.ShowCheckBox(checkboxLabel);
         d.SetYesNoLabels(yesLabel, noLabel);
         res = d.ShowModal();
-        if(d.IsCheckBoxChecked()) {
+        if(d.IsCheckBoxChecked() && (res != wxID_CANCEL)) {
             // store the user result
             clConfig::Get().SetAnnoyingDlgAnswer(dlgId, res);
         }

@@ -110,7 +110,7 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
                 wxMenuItem* menuItem = new wxMenuItem(NULL, XRCID("nodejs_npm_init"), _("Run 'npm init' here"));
                 menu->Insert(openShellPos, menuItem);
                 menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("console"));
-                menu->Enable(XRCID("nodejs_npm_init"), hasNpm);
+                menu->Enable(XRCID("nodejs_npm_init"), hasNpm && !m_terminal.IsRunning());
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnNpmInit, this, XRCID("nodejs_npm_init"));
             }
         }
@@ -318,31 +318,24 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
 void NodeJSWorkspaceView::OnNpmInit(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
+    if(m_terminal.IsRunning()) return;
+    
     wxString path;
     wxTreeItemId item;
     if(!GetSelectProjectPath(path, item)) return;
 
     WebToolsConfig conf;
     conf.Load();
-
-    wxString command = conf.GetNpm();
+    
+#ifdef __WXOSX__
+    wxString command;
+    command << "cd \"" << path << "\" && " << conf.GetNpm() << " init";
+#else
+    wxString command;
+    command << conf.GetNpm();
     ::WrapWithQuotes(command);
+#endif
 
     command << " init";
-
-    // Wrap in a shell
-    ::WrapInShell(command);
-
-    // Apply the environment before continuing
-    EnvSetter es;
-
-    // Ensure that we return to the same working directory
-    DirSaver ds;
-
-    // Set the working directory to the select folder
-    ::wxSetWorkingDirectory(path);
-
-    // Launch the terminal
-    ::wxExecute(command);
+    m_terminal.ExecuteConsole(command, path, true, "npm init");
 }

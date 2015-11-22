@@ -8,6 +8,8 @@ class WebToolsConfig : public clConfigItem
     size_t m_jsFlags;
     size_t m_xmlFlags;
     size_t m_htmlFlags;
+    wxString m_nodejs;
+    wxString m_npm;
 
 public:
     virtual void FromJSON(const JSONElement& json);
@@ -60,6 +62,11 @@ public:
 
     bool HasHtmlFlag(eHtmlFlags flag) const { return HasFlag(m_htmlFlags, flag); }
     void EnableHtmlFlag(eHtmlFlags flag, bool b) { EnableFlag(m_htmlFlags, flag, b); }
+
+    void SetNodejs(const wxString& nodejs) { this->m_nodejs = nodejs; }
+    void SetNpm(const wxString& npm) { this->m_npm = npm; }
+    const wxString& GetNodejs() const { return m_nodejs; }
+    const wxString& GetNpm() const { return m_npm; }
     
     /**
      * @brief create tern project file content based on the settings

@@ -660,16 +660,15 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
     }
 
     // check to see if this file is a workspace file
-    AddIncludeFileDlg* dlg = new AddIncludeFileDlg(clMainFrame::Get(), choice, rCtrl.GetText(), FindLineToAddInclude());
-    if(dlg->ShowModal() == wxID_OK) {
+    AddIncludeFileDlg dlg(clMainFrame::Get(), choice, rCtrl.GetText(), FindLineToAddInclude());
+    if(dlg.ShowModal() == wxID_OK) {
         // add the line to the current document
-        wxString lineToAdd = dlg->GetLineToAdd();
-        int line = dlg->GetLine();
+        wxString lineToAdd = dlg.GetLineToAdd();
+        int line = dlg.GetLine();
 
         long pos = rCtrl.PositionFromLine(line);
         rCtrl.InsertText(pos, lineToAdd + rCtrl.GetEolString());
     }
-    dlg->Destroy();
 }
 
 bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wxString* fileNameUpToCaret)

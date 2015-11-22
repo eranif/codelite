@@ -3,6 +3,7 @@
 #include <wx/log.h>
 #include "processreaderthread.h"
 #include "macros.h"
+#include <algorithm>
 
 #ifndef __WXMSW__
 #include <signal.h>
@@ -13,6 +14,7 @@ wxDEFINE_EVENT(wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
 
 class MyProcess : public wxProcess
 {
+public:
     TerminalEmulator* m_parent;
 
 public:
@@ -20,14 +22,27 @@ public:
         : wxProcess(parent)
         , m_parent(parent)
     {
+        if(m_parent) {
+            m_parent->m_myProcesses.push_back(this);
+        }
     }
+
     virtual ~MyProcess() { m_parent = NULL; }
     void OnTerminate(int pid, int status)
     {
-        clCommandEvent terminateEvent(wxEVT_TERMINAL_COMMAND_EXIT);
-        m_parent->AddPendingEvent(terminateEvent);
-        m_parent->m_pid = wxNOT_FOUND;
-        delete this;
+        if(m_parent) {
+            clCommandEvent terminateEvent(wxEVT_TERMINAL_COMMAND_EXIT);
+            m_parent->AddPendingEvent(terminateEvent);
+            m_parent->m_pid = wxNOT_FOUND;
+
+            std::list<wxProcess*>::iterator iter = std::find_if(m_parent->m_myProcesses.begin(),
+                                                                m_parent->m_myProcesses.end(),
+                                                                [&](wxProcess* proc) { return proc == this; });
+            if(iter != m_parent->m_myProcesses.end()) {
+                m_parent->m_myProcesses.erase(iter);
+            }
+            delete this;
+        }
     }
 };
 
@@ -39,7 +54,15 @@ TerminalEmulator::TerminalEmulator()
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &TerminalEmulator::OnProcessTerminated, this);
 }
 
-TerminalEmulator::~TerminalEmulator() {}
+TerminalEmulator::~TerminalEmulator()
+{
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &TerminalEmulator::OnProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &TerminalEmulator::OnProcessTerminated, this);
+    std::for_each(m_myProcesses.begin(), m_myProcesses.end(), [&](wxProcess* proc) {
+        MyProcess* myproc = dynamic_cast<MyProcess*>(proc);
+        myproc->m_parent = NULL;
+    });
+}
 
 bool TerminalEmulator::ExecuteConsole(const wxString& command,
                                       const wxString& workingDirectory,

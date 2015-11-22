@@ -21,6 +21,7 @@ protected:
     void OnOpenPackageJsonFile(wxCommandEvent& event);
     void OnProjectDebug(wxCommandEvent& event);
     void OnProjectRun(wxCommandEvent& event);
+    void OnNpmInit(wxCommandEvent& event);
 
     void DoExecuteProject(NodeJSDebuggerDlg::eDialogType type);
     void OnItemExpanding(wxTreeEvent& event);

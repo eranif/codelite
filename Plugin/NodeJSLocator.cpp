@@ -1,6 +1,11 @@
 #include "NodeJSLocator.h"
 #include "cl_standard_paths.h"
 
+#ifdef __WXMSW__
+#include <wx/msw/registry.h>
+#include <wx/volume.h>
+#endif
+
 NodeJSLocator::NodeJSLocator() {}
 
 NodeJSLocator::~NodeJSLocator() {}
@@ -30,18 +35,44 @@ void NodeJSLocator::Locate()
     }
 
 #elif defined(__WXMSW__)
-    // Windows
+    // Registry paths are searched first
+    wxArrayString paths;
+
+    {
+        // HKEY_LOCAL_MACHINE\SOFTWARE\Node.js
+        wxRegKey regKeyNodeJS(wxRegKey::HKLM, "SOFTWARE\\Node.js");
+        wxString clInstallFolder;
+        if(regKeyNodeJS.Exists() && regKeyNodeJS.QueryValue("InstallPath", clInstallFolder) &&
+           wxDirExists(clInstallFolder)) {
+            paths.Add(clInstallFolder);
+        }
+    }
+
+    {
+        // HKEY_LOCAL_MACHINE\SOFTWARE\Node.js
+        wxRegKey regKeyNodeJS(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Node.js");
+        wxString clInstallFolder;
+        if(regKeyNodeJS.Exists() && regKeyNodeJS.QueryValue("InstallPath", clInstallFolder) &&
+           wxDirExists(clInstallFolder)) {
+            paths.Add(clInstallFolder);
+        }
+    }
+
+    // Add CodeLite installed Node.js
     wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "");
     fn.AppendDir("webtools");
     fn.AppendDir("js");
-    
-    // TODO: add path based on the registry entries
-    wxArrayString paths;
     paths.Add(fn.GetPath());
 
     wxFileName nodejs;
+    wxFileName npm;
     if(TryPaths(paths, "node.exe", nodejs)) {
         m_nodejs = nodejs.GetFullPath();
+    }
+
+    // npm is actually a batch script
+    if(TryPaths(paths, "npm.cmd", npm)) {
+        m_npm = npm.GetFullPath();
     }
 #endif
 }

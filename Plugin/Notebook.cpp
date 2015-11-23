@@ -855,8 +855,17 @@ void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 
 void clTabCtrl::UpdateVisibleTabs()
 {
+    // force list update if there's a gap that could be refilled
+    const wxRect client_rc(GetClientRect());
+    const wxRect vis_rc = m_visibleTabs.empty() ? wxRect{} : m_visibleTabs.back()->GetRect();
+    
+    const bool  vacancy = (client_rc.GetRight() > vis_rc.GetRight());
+    const bool  refillable = (m_tabs.size() > m_visibleTabs.size());
+    
+    const bool  force_f = vacancy && refillable;
+
     // don't update the list if we don't need to
-    if(!IsVerticalTabs()) {
+    if(!force_f && !IsVerticalTabs()) {
         if(IsActiveTabInList(m_visibleTabs) && IsActiveTabVisible(m_visibleTabs)) return;
     }
 

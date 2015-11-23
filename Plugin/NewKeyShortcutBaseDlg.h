@@ -30,23 +30,20 @@
 class WXDLLIMPEXP_SDK NewKeyShortcutBaseDlg : public wxDialog
 {
 protected:
-    wxBoxSizer* bSizer3;
     wxPanel* m_panel1;
-    wxBoxSizer* bSizer5;
-    wxFlexGridSizer* flexGridSizer8;
     wxStaticText* m_staticTextActionLabel;
     wxStaticText* m_staticTextAction;
     wxStaticText* m_staticText10;
     wxTextCtrl* m_textCtrl1;
     wxButton* m_buttonClear;
     wxStaticText* m_staticText12;
-    wxBoxSizer* bSizer6;
     wxCheckBox* m_checkBoxCtrl;
     wxCheckBox* m_checkBoxAlt;
     wxCheckBox* m_checkBoxShift;
-    wxBoxSizer* bSizer4;
-    wxButton* m_buttonOk;
-    wxButton* m_buttonCancel;
+    wxCheckBox* m_checkBoxRawControl;
+    wxStdDialogButtonSizer* m_stdBtnSizer22;
+    wxButton* m_button24;
+    wxButton* m_button26;
 
 protected:
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
@@ -63,10 +60,9 @@ public:
     wxCheckBox* GetCheckBoxCtrl() { return m_checkBoxCtrl; }
     wxCheckBox* GetCheckBoxAlt() { return m_checkBoxAlt; }
     wxCheckBox* GetCheckBoxShift() { return m_checkBoxShift; }
+    wxCheckBox* GetCheckBoxRawControl() { return m_checkBoxRawControl; }
     wxPanel* GetPanel1() { return m_panel1; }
-    wxButton* GetButtonOk() { return m_buttonOk; }
-    wxButton* GetButtonCancel() { return m_buttonCancel; }
-    NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Set New Key Accelerator"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Set New Key Accelerator"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~NewKeyShortcutBaseDlg();
 };
 

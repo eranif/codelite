@@ -108,11 +108,15 @@ NewKeyShortcutDlg::NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid)
     m_checkBoxCtrl->SetValue(ks.modifiers & kCtrl);
     m_checkBoxShift->SetValue(ks.modifiers & kShift);
 
-    m_textCtrl1->SetFocus();
+#ifdef __WXOSX__
+    m_checkBoxCtrl->SetLabel("Cmd");
+    m_checkBoxRawControl->SetValue(ks.modifiers & kRawCtrl);
+#else
+    m_checkBoxCtrl->SetLabel("Ctrl");
+    m_checkBoxRawControl->SetValue(false);
+    m_checkBoxRawControl->Hide();
+#endif
     CentreOnParent();
-    
-    SetName("NewKeyShortcutDlg");
-    WindowAttrManager::Load(this);
 }
 
 void NewKeyShortcutDlg::OnKeyDown(wxKeyEvent& event)
@@ -188,8 +192,11 @@ NewKeyShortcutDlg::KeyboardShortcut NewKeyShortcutDlg::FromString(const wxString
             ks.modifiers |= kCtrl;
 
         } else if(token == "ctrl") {
+#ifdef __WXOSX__
+            ks.modifiers |= kRawCtrl;
+#else
             ks.modifiers |= kCtrl;
-
+#endif
         } else {
             ks.key = tokens.Item(i);
         }
@@ -200,9 +207,14 @@ NewKeyShortcutDlg::KeyboardShortcut NewKeyShortcutDlg::FromString(const wxString
 wxString NewKeyShortcutDlg::GetAccel() const
 {
     wxString accel;
-    if(m_checkBoxCtrl->IsChecked()) accel << "Ctrl-";
-    if(m_checkBoxAlt->IsChecked()) accel << "Alt-";
-    if(m_checkBoxShift->IsChecked()) accel << "Shift-";
+    if(m_checkBoxRawControl->IsChecked())
+        accel << "Cmd-";
+    if(m_checkBoxCtrl->IsChecked())
+        accel << "Ctrl-";
+    if(m_checkBoxAlt->IsChecked())
+        accel << "Alt-";
+    if(m_checkBoxShift->IsChecked())
+        accel << "Shift-";
     accel << m_textCtrl1->GetValue();
     if(accel.EndsWith("-")) {
         accel.RemoveLast();
@@ -226,4 +238,6 @@ void NewKeyShortcutDlg::OnClearUI(wxUpdateUIEvent& event)
                  !m_textCtrl1->IsEmpty());
 }
 
-NewKeyShortcutDlg::~NewKeyShortcutDlg() {}
+NewKeyShortcutDlg::~NewKeyShortcutDlg()
+{
+}

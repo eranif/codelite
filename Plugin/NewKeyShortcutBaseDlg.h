@@ -40,7 +40,6 @@ protected:
     wxCheckBox* m_checkBoxCtrl;
     wxCheckBox* m_checkBoxAlt;
     wxCheckBox* m_checkBoxShift;
-    wxCheckBox* m_checkBoxRawControl;
     wxStdDialogButtonSizer* m_stdBtnSizer22;
     wxButton* m_button24;
     wxButton* m_button26;
@@ -60,7 +59,6 @@ public:
     wxCheckBox* GetCheckBoxCtrl() { return m_checkBoxCtrl; }
     wxCheckBox* GetCheckBoxAlt() { return m_checkBoxAlt; }
     wxCheckBox* GetCheckBoxShift() { return m_checkBoxShift; }
-    wxCheckBox* GetCheckBoxRawControl() { return m_checkBoxRawControl; }
     wxPanel* GetPanel1() { return m_panel1; }
     NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Set New Key Accelerator"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~NewKeyShortcutBaseDlg();

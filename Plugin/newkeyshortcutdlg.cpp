@@ -110,11 +110,8 @@ NewKeyShortcutDlg::NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid)
 
 #ifdef __WXOSX__
     m_checkBoxCtrl->SetLabel("Cmd");
-    m_checkBoxRawControl->SetValue(ks.modifiers & kRawCtrl);
 #else
     m_checkBoxCtrl->SetLabel("Ctrl");
-    m_checkBoxRawControl->SetValue(false);
-    m_checkBoxRawControl->Hide();
 #endif
     CentreOnParent();
 }
@@ -184,19 +181,10 @@ NewKeyShortcutDlg::KeyboardShortcut NewKeyShortcutDlg::FromString(const wxString
         token.MakeLower();
         if(token == "shift") {
             ks.modifiers |= kShift;
-
         } else if(token == "alt") {
             ks.modifiers |= kAlt;
-
-        } else if(token == "cmd") {
-            ks.modifiers |= kCtrl;
-
         } else if(token == "ctrl") {
-#ifdef __WXOSX__
-            ks.modifiers |= kRawCtrl;
-#else
             ks.modifiers |= kCtrl;
-#endif
         } else {
             ks.key = tokens.Item(i);
         }
@@ -207,8 +195,6 @@ NewKeyShortcutDlg::KeyboardShortcut NewKeyShortcutDlg::FromString(const wxString
 wxString NewKeyShortcutDlg::GetAccel() const
 {
     wxString accel;
-    if(m_checkBoxRawControl->IsChecked())
-        accel << "Cmd-";
     if(m_checkBoxCtrl->IsChecked())
         accel << "Ctrl-";
     if(m_checkBoxAlt->IsChecked())

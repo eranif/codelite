@@ -65,6 +65,10 @@
 #include <wx/utils.h>
 #include "clCommandProcessor.h"
 
+#ifdef __WXGTK__
+#   include <sys/wait.h>
+#endif
+
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...) m_console->AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)                                  \
@@ -1725,6 +1729,12 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     wxDELETE(m_process);
     m_commandOutput.Clear();
     m_gitActionQueue.pop_front();
+    
+#ifdef __WXGTK__
+    int statLoc;
+    ::waitpid(-1, &statLoc, WNOHANG);
+#endif
+
     ProcessGitActionQueue();
 }
 

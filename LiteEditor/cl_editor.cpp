@@ -626,9 +626,10 @@ void LEditor::SetProperties()
     // Determine the folding symbols colours
     wxColour foldFgColour = wxColor(0xff, 0xff, 0xff);
     wxColour foldBgColour = wxColor(0x80, 0x80, 0x80);
-
+    bool darkTheme = false;
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer(GetContext()->GetName());
     if(lexer && lexer->IsDark()) {
+        darkTheme = true;
         const StyleProperty& defaultProperty = lexer->GetProperty(0);
         if(!defaultProperty.IsNull()) {
             foldFgColour = wxColour(defaultProperty.GetBgColour()).ChangeLightness(130);
@@ -692,9 +693,19 @@ void LEditor::SetProperties()
         MarkerSetBackground(bmt, options->GetBookmarkBgColour(bmt - smt_FIRST_BMK_TYPE));
         MarkerSetForeground(bmt, options->GetBookmarkFgColour(bmt - smt_FIRST_BMK_TYPE));
     }
-
+    
+    // Breakpoints
+    for(size_t bmt = smt_FIRST_BP_TYPE; bmt <= smt_LAST_BP_TYPE; ++bmt) {
+        MarkerSetBackground(smt_breakpoint, "RED");
+        MarkerSetAlpha(smt_breakpoint, 30);
+    }
+    
     MarkerDefineBitmap(smt_breakpoint, wxBitmap(wxImage(stop_xpm)));
     MarkerDefineBitmap(smt_bp_disabled, wxBitmap(wxImage(BreakptDisabled)));
+    // Give disabled breakpoints a "grey" look
+    MarkerSetBackground(smt_bp_disabled, "GREY");
+    MarkerSetAlpha(smt_bp_disabled, 30);
+        
     MarkerDefineBitmap(smt_bp_cmdlist, wxBitmap(wxImage(BreakptCommandList)));
     MarkerDefineBitmap(smt_bp_cmdlist_disabled, wxBitmap(wxImage(BreakptCommandListDisabled)));
     MarkerDefineBitmap(smt_bp_ignored, wxBitmap(wxImage(BreakptIgnore)));

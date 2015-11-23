@@ -432,7 +432,7 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
     // set the icon for the default actions (build, clean and settings)
     wxBitmap bmpBuild = PluginManager::Get()->GetStdIcons()->LoadBitmap("toolbars/16/build/build");
     wxBitmap bmpClean = PluginManager::Get()->GetStdIcons()->LoadBitmap("toolbars/16/build/clean");
-    wxBitmap bmpSettings = wxXmlResource::Get()->LoadBitmap(wxT("configure"));
+    wxBitmap bmpSettings = PluginManager::Get()->GetStdIcons()->LoadBitmap("cog");
 
     menu->FindItem(XRCID("build_project"))->SetBitmap(bmpBuild);
     menu->FindItem(XRCID("clean_project"))->SetBitmap(bmpClean);
@@ -441,19 +441,6 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
     if(bldConf && bldConf->IsCustomBuild()) {
         wxMenuItem* item = NULL;
-#if 0
-        wxString toolName = bldConf->GetToolName();
-        if(toolName != wxT("None")) {
-            
-            // add the custom execution command
-            item = new wxMenuItem(menu, wxID_SEPARATOR);
-            menu->Prepend(item);
-            wxString menu_text(_("Run ") + toolName);
-
-            item = new wxMenuItem(menu, XRCID("generate_makefile"), menu_text, wxEmptyString, wxITEM_NORMAL);
-            menu->Prepend(item);
-        }
-#endif
         // append the custom build targets
         const BuildConfig::StringMap_t& targets = bldConf->GetCustomTargets();
         if(targets.empty() == false) {

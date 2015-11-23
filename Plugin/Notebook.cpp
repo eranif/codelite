@@ -621,15 +621,15 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 {
     wxRect clientRect(GetClientRect());
     if((GetStyle() & kNotebook_ShowFileListButton) && !IsVerticalTabs()) {
-        clientRect.SetWidth(clientRect.GetWidth() - 30);
+        
     } else if((GetStyle() & kNotebook_ShowFileListButton) && IsVerticalTabs()) {
         // Vertical tabs
-        clientRect.SetHeight(clientRect.GetHeight() - 30);
+        clientRect.Inflate(1, 1);
     }
 
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
-        if(t->IsActive() && clientRect.Intersects(t->GetRect())) return true;
+        if(t->IsActive() && clientRect.Contains(t->GetRect())) return true;
     }
     return false;
 }
@@ -855,8 +855,17 @@ void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 
 void clTabCtrl::UpdateVisibleTabs()
 {
+    // force list update if there's a gap that could be refilled
+    const wxRect client_rc(GetClientRect());
+    const wxRect vis_rc = m_visibleTabs.empty() ? wxRect{} : m_visibleTabs.back()->GetRect();
+    
+    const bool  vacancy = (client_rc.GetRight() > vis_rc.GetRight());
+    const bool  refillable = (m_tabs.size() > m_visibleTabs.size());
+    
+    const bool  force_f = vacancy && refillable;
+
     // don't update the list if we don't need to
-    if(!IsVerticalTabs()) {
+    if(!force_f && !IsVerticalTabs()) {
         if(IsActiveTabInList(m_visibleTabs) && IsActiveTabVisible(m_visibleTabs)) return;
     }
 

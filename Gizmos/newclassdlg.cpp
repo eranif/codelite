@@ -40,8 +40,8 @@
 #include "new_class_dlg_data.h"
 #include <wx/filename.h>
 
-NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
-    : NewClassBaseDlg( parent )
+NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
+    : NewClassBaseDlg(parent)
     , m_selectedItem(wxNOT_FOUND)
     , m_mgr(mgr)
 {
@@ -49,18 +49,17 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
     NewClassDlgData data;
     EditorConfigST::Get()->ReadObject(wxT("NewClassDlgData"), &data);
 
-    m_checkBoxCopyable->SetValue       ( data.GetFlags() & NewClassDlgData::NonCopyable);
-    m_checkBoxImplPureVirtual->SetValue( data.GetFlags() & NewClassDlgData::ImplAllPureVirtualFuncs);
-    m_checkBoxImplVirtual->SetValue    ( data.GetFlags() & NewClassDlgData::ImplAllVirtualFuncs);
-    m_checkBoxInline->SetValue         ( data.GetFlags() & NewClassDlgData::FileIniline);
-    m_checkBoxHpp->SetValue            ( data.GetFlags() & NewClassDlgData::HppHeader);
-    m_checkBoxSingleton->SetValue      ( data.GetFlags() & NewClassDlgData::Singleton);
-    m_checkBoxVirtualDtor->SetValue    ( data.GetFlags() & NewClassDlgData::VirtualDtor);
+    m_checkBoxCopyable->SetValue(data.GetFlags() & NewClassDlgData::NonCopyable);
+    m_checkBoxImplPureVirtual->SetValue(data.GetFlags() & NewClassDlgData::ImplAllPureVirtualFuncs);
+    m_checkBoxImplVirtual->SetValue(data.GetFlags() & NewClassDlgData::ImplAllVirtualFuncs);
+    m_checkBoxInline->SetValue(data.GetFlags() & NewClassDlgData::FileIniline);
+    m_checkBoxHpp->SetValue(data.GetFlags() & NewClassDlgData::HppHeader);
+    m_checkBoxSingleton->SetValue(data.GetFlags() & NewClassDlgData::Singleton);
+    m_checkBoxVirtualDtor->SetValue(data.GetFlags() & NewClassDlgData::VirtualDtor);
 
-    //set two columns to our list
+    // set two columns to our list
     m_listCtrl1->InsertColumn(0, _("Name"));
     m_listCtrl1->InsertColumn(1, _("Access"));
-
     m_listCtrl1->InsertColumn(2, _("File"));
 
     wxString vdPath;
@@ -72,18 +71,18 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
         }
     }
 
-    //set the class path to be the active project path
+    // set the class path to be the active project path
     wxString errMsg;
-    if (m_mgr->GetWorkspace()) {
+    if(m_mgr->GetWorkspace()) {
         wxString start_path;
-        if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
+        if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
             m_basePath = item.m_fileName.GetPath(wxPATH_GET_VOLUME);
 
         } else {
 
             wxString projname = m_mgr->GetWorkspace()->GetActiveProjectName();
             ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projname, errMsg);
-            if (proj) {
+            if(proj) {
                 m_basePath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME);
             }
         }
@@ -91,32 +90,24 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 
     DoUpdateGeneratedPath();
 
-    //m_textCtrlFileName->Enable( false );
     GetSizer()->Layout();
     m_textClassName->SetFocus();
-    
-    SetName("NewClassDlg");
-    WindowAttrManager::Load(this);
-    CentreOnParent();
-    
-    // override the default size
+
     GetSizer()->Fit(this);
+    CentreOnParent();
 }
 
-NewClassDlg::~NewClassDlg()
-{
-    
-}
+NewClassDlg::~NewClassDlg() {}
 
-void NewClassDlg::OnListItemActivated( wxListEvent& event )
+void NewClassDlg::OnListItemActivated(wxListEvent& event)
 {
     m_selectedItem = event.m_itemIndex;
-    //open the inheritance dialog
+    // open the inheritance dialog
     wxString parentName = GetColumnText(m_listCtrl1, m_selectedItem, 0);
     wxString access = GetColumnText(m_listCtrl1, m_selectedItem, 1);
-    NewIneritanceDlg *dlg = new NewIneritanceDlg(NULL, m_mgr, parentName, access);
-    if (dlg->ShowModal() == wxID_OK) {
-        //now set the text to this column
+    NewIneritanceDlg* dlg = new NewIneritanceDlg(NULL, m_mgr, parentName, access);
+    if(dlg->ShowModal() == wxID_OK) {
+        // now set the text to this column
         SetColumnText(m_listCtrl1, m_selectedItem, 0, dlg->GetParentName());
         SetColumnText(m_listCtrl1, m_selectedItem, 1, dlg->GetAccess());
 
@@ -127,17 +118,14 @@ void NewClassDlg::OnListItemActivated( wxListEvent& event )
     dlg->Destroy();
 }
 
-void NewClassDlg::OnListItemSelected( wxListEvent& event )
-{
-    m_selectedItem = event.m_itemIndex;
-}
+void NewClassDlg::OnListItemSelected(wxListEvent& event) { m_selectedItem = event.m_itemIndex; }
 
-void NewClassDlg::OnButtonAdd( wxCommandEvent& event )
+void NewClassDlg::OnButtonAdd(wxCommandEvent& event)
 {
-    NewIneritanceDlg *dlg = new NewIneritanceDlg(this, m_mgr);
-    if (dlg->ShowModal() == wxID_OK) {
-        //add new parent to our class
-        //now set the text to this column
+    NewIneritanceDlg* dlg = new NewIneritanceDlg(this, m_mgr);
+    if(dlg->ShowModal() == wxID_OK) {
+        // add new parent to our class
+        // now set the text to this column
         long item = AppendListCtrlRow(m_listCtrl1);
 
         SetColumnText(m_listCtrl1, item, 0, dlg->GetParentName());
@@ -150,74 +138,63 @@ void NewClassDlg::OnButtonAdd( wxCommandEvent& event )
     dlg->Destroy();
 }
 
-void NewClassDlg::OnListItemDeSelected(wxListEvent &e)
+void NewClassDlg::OnListItemDeSelected(wxListEvent& e)
 {
     wxUnusedVar(e);
     m_selectedItem = wxNOT_FOUND;
 }
 
-void NewClassDlg::OnButtonDelete( wxCommandEvent& event )
+void NewClassDlg::OnButtonDelete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_listCtrl1->DeleteItem(m_selectedItem);
     m_selectedItem = wxNOT_FOUND;
 }
 
-void NewClassDlg::OnButtonDeleteUI( wxUpdateUIEvent& event )
-{
-    event.Enable(m_selectedItem != wxNOT_FOUND);
-}
+void NewClassDlg::OnButtonDeleteUI(wxUpdateUIEvent& event) { event.Enable(m_selectedItem != wxNOT_FOUND); }
 
-void NewClassDlg::GetInheritance(std::vector< ClassParentInfo > &inheritVec)
+void NewClassDlg::GetInheritance(std::vector<ClassParentInfo>& inheritVec)
 {
     long item = -1;
-    for ( ;; ) {
+    for(;;) {
         item = m_listCtrl1->GetNextItem(item);
-        if ( item == -1 )
-            break;
+        if(item == -1) break;
 
         ClassParentInfo info;
-        info.name     = GetColumnText(m_listCtrl1, item, 0);
-        info.access   = GetColumnText(m_listCtrl1, item, 1);
+        info.name = GetColumnText(m_listCtrl1, item, 0);
+        info.access = GetColumnText(m_listCtrl1, item, 1);
         info.fileName = GetColumnText(m_listCtrl1, item, 2);
 
         inheritVec.push_back(info);
     }
 }
 
-void NewClassDlg::OnButtonOK(wxCommandEvent &e)
+void NewClassDlg::OnButtonOK(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if (!ValidateInput()) {
+    if(!ValidateInput()) {
         return;
     }
 
     // Save the check boxes ticked
     size_t flags(0);
 
-    if(m_checkBoxCopyable->IsChecked())
-        flags |= NewClassDlgData::NonCopyable;
+    if(m_checkBoxCopyable->IsChecked()) flags |= NewClassDlgData::NonCopyable;
 
-    if(m_checkBoxImplPureVirtual->IsChecked())
-        flags |= NewClassDlgData::ImplAllPureVirtualFuncs;
+    if(m_checkBoxImplPureVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllPureVirtualFuncs;
 
-    if(m_checkBoxImplVirtual->IsChecked())
-        flags |= NewClassDlgData::ImplAllVirtualFuncs;
+    if(m_checkBoxImplVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllVirtualFuncs;
 
-    if(m_checkBoxInline->IsChecked())
-        flags |= NewClassDlgData::FileIniline;
+    if(m_checkBoxInline->IsChecked()) flags |= NewClassDlgData::FileIniline;
 
-    if(m_checkBoxHpp->IsChecked())
-        flags |= NewClassDlgData::HppHeader;
+    if(m_checkBoxHpp->IsChecked()) flags |= NewClassDlgData::HppHeader;
 
-    if(m_checkBoxSingleton->IsChecked())
-        flags |= NewClassDlgData::Singleton;
+    if(m_checkBoxSingleton->IsChecked()) flags |= NewClassDlgData::Singleton;
 
-    if(m_checkBoxVirtualDtor->IsChecked())
-        flags |= NewClassDlgData::VirtualDtor;
+    if(m_checkBoxVirtualDtor->IsChecked()) flags |= NewClassDlgData::VirtualDtor;
 
     NewClassDlgData data;
-    data.SetFlags( flags );
+    data.SetFlags(flags);
     EditorConfigST::Get()->WriteObject(wxT("NewClassDlgData"), &data);
 
     EndModal(wxID_OK);
@@ -228,21 +205,21 @@ void NewClassDlg::OnButtonOK(wxCommandEvent &e)
  */
 bool NewClassDlg::ValidateInput()
 {
-    //validate the class name
-    if (!IsValidCppIndetifier( m_textClassName->GetValue() )) {
+    // validate the class name
+    if(!IsValidCppIndetifier(m_textClassName->GetValue())) {
         wxString msg;
         msg << wxT("'") << m_textClassName->GetValue() << _("' is not a valid C++ qualifier");
         wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
 
-    //validate the namespace
-    if (!m_textCtrlNamespace->GetValue().IsEmpty()) {
+    // validate the namespace
+    if(!m_textCtrlNamespace->GetValue().IsEmpty()) {
         wxArrayString namespacesList;
         this->GetNamespacesList(namespacesList);
-        //validate each namespace
-        for (unsigned int i = 0; i < namespacesList.Count(); i++) {
-            if (!IsValidCppIndetifier (namespacesList[i])) {
+        // validate each namespace
+        for(unsigned int i = 0; i < namespacesList.Count(); i++) {
+            if(!IsValidCppIndetifier(namespacesList[i])) {
                 wxString msg;
                 msg << wxT("'") << namespacesList[i] << _("' is not a valid C++ qualifier");
                 wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
@@ -251,9 +228,9 @@ bool NewClassDlg::ValidateInput()
         }
     }
 
-    //validate the path of the class
+    // validate the path of the class
     wxString path(m_textCtrlGenFilePath->GetValue());
-    if (!wxDir::Exists(path)) {
+    if(!wxDir::Exists(path)) {
         wxString msg;
         msg << wxT("'") << path << _("': directory does not exist");
         wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_WARNING);
@@ -261,66 +238,67 @@ bool NewClassDlg::ValidateInput()
     }
 
     if(GetClassFile().IsEmpty()) {
-        wxMessageBox(_("Empty file name"), _("CodeLite"), wxOK|wxICON_WARNING);
+        wxMessageBox(_("Empty file name"), _("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
 
     wxString cpp_file;
     cpp_file << GetClassPath() << wxFileName::GetPathSeparator() << GetClassFile() << wxT(".cpp");
-    if( wxFileName::FileExists(cpp_file) ) {
-        if(wxMessageBox(wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()), _("CodeLite"), wxYES_NO|wxICON_WARNING) == wxNO) {
+    if(wxFileName::FileExists(cpp_file)) {
+        if(wxMessageBox(
+               wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()),
+               _("CodeLite"),
+               wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
     wxString h_file;
     h_file << GetClassPath() << wxFileName::GetPathSeparator() << GetClassFile() << wxT(".h");
-    if( wxFileName::FileExists(h_file) ) {
-        if(wxMessageBox(wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()), _("CodeLite"), wxYES_NO|wxICON_WARNING) == wxNO) {
+    if(wxFileName::FileExists(h_file)) {
+        if(wxMessageBox(
+               wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()),
+               _("CodeLite"),
+               wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
 
     if(GetVirtualDirectoryPath().IsEmpty()) {
-        wxMessageBox(_("Please select a virtual directory"), _("CodeLite"), wxOK|wxICON_WARNING);
+        wxMessageBox(_("Please select a virtual directory"), _("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
     return true;
 }
 
-void NewClassDlg::GetNewClassInfo(NewClassInfo &info)
+void NewClassDlg::GetNewClassInfo(NewClassInfo& info)
 {
     info.name = this->GetClassName();
     this->GetNamespacesList(info.namespacesList);
     this->GetInheritance(info.parents);
-    if (this->IsInline()) {
+    if(this->IsInline()) {
         info.isInline = true;
         info.isSingleton = false;
     } else {
         info.isInline = false;
         info.isSingleton = this->IsSingleton();
     }
-    info.hppHeader          = this->HppHeader();
-    info.path               = this->GetClassPath().Trim().Trim(false);
-    info.isAssingable       = this->IsCopyableClass();
-    info.fileName           = wxFileName( GetClassFile() ).GetName(); // Ommit any suffix the user might have typed in
-    info.isVirtualDtor      = m_checkBoxVirtualDtor->IsChecked();
+    info.hppHeader = this->HppHeader();
+    info.path = this->GetClassPath().Trim().Trim(false);
+    info.isAssingable = this->IsCopyableClass();
+    info.fileName = wxFileName(GetClassFile()).GetName(); // Ommit any suffix the user might have typed in
+    info.isVirtualDtor = m_checkBoxVirtualDtor->IsChecked();
     info.implAllPureVirtual = m_checkBoxImplPureVirtual->IsChecked();
-    info.implAllVirtual     = m_checkBoxImplVirtual->IsChecked();
-    info.virtualDirectory   = m_textCtrlVD->GetValue().Trim().Trim(false);
-    info.blockGuard         = m_textCtrlBlockGuard->GetValue().Trim().Trim(false);
+    info.implAllVirtual = m_checkBoxImplVirtual->IsChecked();
+    info.usePragmaOnce = m_checkBoxPragmaOnce->IsChecked();
+    info.virtualDirectory = m_textCtrlVD->GetValue().Trim().Trim(false);
+    info.blockGuard = m_textCtrlBlockGuard->GetValue().Trim().Trim(false);
 }
 
-wxString NewClassDlg::GetClassFile()
-{
-    return m_textCtrlFileName->GetValue();
-}
+wxString NewClassDlg::GetClassFile() { return m_textCtrlFileName->GetValue(); }
 
-void NewClassDlg::OnTextEnter(wxCommandEvent &e)
-{
-    m_textCtrlFileName->ChangeValue( m_textClassName->GetValue() );
-}
+void NewClassDlg::OnTextEnter(wxCommandEvent& e) { m_textCtrlFileName->ChangeValue(m_textClassName->GetValue()); }
 
-void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent &e)
+void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent& e)
 {
     if(e.IsChecked()) {
         m_checkBoxImplPureVirtual->SetValue(true);
@@ -343,7 +321,8 @@ void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
     if(wxFileName::DirExists(m_textCtrlGenFilePath->GetValue())) {
         initPath = m_textCtrlGenFilePath->GetValue();
     }
-    wxString new_path = wxDirSelector(_("Select Generated Files Path:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+    wxString new_path =
+        wxDirSelector(_("Select Generated Files Path:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
     if(new_path.IsEmpty() == false) {
         m_textCtrlGenFilePath->ChangeValue(new_path);
     }
@@ -359,7 +338,7 @@ void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
     }
 }
 
-void NewClassDlg::OnBrowseNamespace(wxCommandEvent &e)
+void NewClassDlg::OnBrowseNamespace(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
@@ -369,7 +348,7 @@ void NewClassDlg::OnBrowseNamespace(wxCommandEvent &e)
     OpenResourceDialog dlg(this, m_mgr, "");
     if(dlg.ShowModal() == wxID_OK && dlg.GetSelection()) {
         wxString nameSpace;
-        if( dlg.GetSelection()->m_scope.IsEmpty() == false && dlg.GetSelection()->m_scope != wxT("<global>")) {
+        if(dlg.GetSelection()->m_scope.IsEmpty() == false && dlg.GetSelection()->m_scope != wxT("<global>")) {
             nameSpace << dlg.GetSelection()->m_scope << wxT("::");
         }
         nameSpace << dlg.GetSelection()->m_name;
@@ -382,49 +361,45 @@ void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray)
     wxString textNamespaces = this->GetClassNamespace();
     textNamespaces.Trim();
 
-    if (textNamespaces.IsEmpty())
-        return;
+    if(textNamespaces.IsEmpty()) return;
 
     int prevPos = 0;
-    size_t pos = textNamespaces.find (wxT("::"), prevPos);
+    size_t pos = textNamespaces.find(wxT("::"), prevPos);
 
-    while (pos != wxString::npos) {
-        wxString token = textNamespaces.Mid(prevPos, pos-prevPos);
+    while(pos != wxString::npos) {
+        wxString token = textNamespaces.Mid(prevPos, pos - prevPos);
 
-        namespacesArray.Add (token);
+        namespacesArray.Add(token);
 
-        prevPos = pos+2;
-        pos = textNamespaces.find (wxT("::"), prevPos);
+        prevPos = pos + 2;
+        pos = textNamespaces.find(wxT("::"), prevPos);
     }
 
     wxString lastToken = textNamespaces.Mid(prevPos);
-    namespacesArray.Add (lastToken);
+    namespacesArray.Add(lastToken);
 }
 
-void NewClassDlg::OnCheckInline(wxCommandEvent &e)
+void NewClassDlg::OnCheckInline(wxCommandEvent& e)
 {
     // Inline implementation conflict with singleton implementation
     // so disable the relative checkbox
-    if (e.IsChecked()) {
-        if (m_checkBoxSingleton->IsEnabled())
-            m_checkBoxSingleton->Enable (false);
+    if(e.IsChecked()) {
+        if(m_checkBoxSingleton->IsEnabled()) m_checkBoxSingleton->Enable(false);
     } else {
-        if (!m_checkBoxSingleton->IsEnabled())
-            m_checkBoxSingleton->Enable (true);
+        if(!m_checkBoxSingleton->IsEnabled()) m_checkBoxSingleton->Enable(true);
     }
 }
 
 wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
 {
-    if(str.IsEmpty())
-        return wxT("");
+    if(str.IsEmpty()) return wxT("");
 
     wxString output;
     bool lastWasLower(true);
 
-    for(int i=str.length()-1; i >= 0; --i) {
+    for(int i = str.length() - 1; i >= 0; --i) {
 
-        int cur  = (int)str[i];
+        int cur = (int)str[i];
         if(!isalpha(cur)) {
             output.Prepend((wxChar)cur);
             continue;
@@ -442,7 +417,8 @@ wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
     }
 
     // replace any double underscores with single one
-    while(output.Replace(wxT("__"), wxT("_"))) {}
+    while(output.Replace(wxT("__"), wxT("_"))) {
+    }
 
     // remove any underscore from the start of the word
     if(output.StartsWith(wxT("_"))) {
@@ -456,8 +432,8 @@ void NewClassDlg::DoUpdateGeneratedPath()
     wxString vdPath = m_textCtrlVD->GetValue();
 
     wxString project, vd, errMsg;
-    project = vdPath.BeforeFirst( wxT( ':' ) );
-    vd      = vdPath.AfterFirst(wxT(':'));
+    project = vdPath.BeforeFirst(wxT(':'));
+    vd = vdPath.AfterFirst(wxT(':'));
 
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
     if(proj) {
@@ -469,3 +445,4 @@ void NewClassDlg::OnOkUpdateUI(wxUpdateUIEvent& event)
 {
     event.Enable(!(GetClassFile().IsEmpty() || GetVirtualDirectoryPath().IsEmpty()));
 }
+void NewClassDlg::OnBlockGuardUI(wxUpdateUIEvent& event) { event.Enable(!m_checkBoxPragmaOnce->IsChecked()); }

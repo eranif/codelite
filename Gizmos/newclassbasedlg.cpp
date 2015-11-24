@@ -26,7 +26,7 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 4, 0, 0);
+    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
@@ -54,7 +54,19 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     
     fgSizer1->Add(m_staticText9, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    fgSizer1->Add(0, 0, 1, wxEXPAND, 5);
+    m_staticText37 = new wxStaticText(this, wxID_ANY, _("File name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer1->Add(m_staticText37, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlFileName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlFileName->SetToolTip(_("This is the base-name for the file(s) that will be generated. If the new class is called Foo, by default the files will be Foo.cpp and Foo.h. If you'd prefer different names, type the base-name here."));
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlFileName->SetHint(wxT(""));
+    #endif
+    
+    fgSizer1->Add(m_textCtrlFileName, 0, wxALL|wxEXPAND, 5);
+    
+    fgSizer1->Add(0, 0, 1, wxALL, 5);
     
     m_staticTextNamespace = new wxStaticText(this, wxID_ANY, _("Namespace:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -68,11 +80,9 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     
     fgSizer1->Add(m_textCtrlNamespace, 0, wxALL|wxEXPAND, 5);
     
-    m_buttonBrowseNamespaces = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonBrowseNamespaces = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     
     fgSizer1->Add(m_buttonBrowseNamespaces, 0, wxALL, 5);
-    
-    fgSizer1->Add(0, 0, 1, wxEXPAND, 5);
     
     m_staticText6 = new wxStaticText(this, wxID_ANY, _("Block Guard:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -88,8 +98,6 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     
     fgSizer1->Add(0, 0, 1, wxEXPAND, 5);
     
-    fgSizer1->Add(0, 0, 1, wxEXPAND, 5);
-    
     m_staticText4 = new wxStaticText(this, wxID_ANY, _("Select Virtual Directory:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer1->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
@@ -102,11 +110,9 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     
     fgSizer1->Add(m_textCtrlVD, 0, wxALL|wxEXPAND, 5);
     
-    m_buttonSelectVD = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonSelectVD = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     
     fgSizer1->Add(m_buttonSelectVD, 0, wxALL, 5);
-    
-    fgSizer1->Add(0, 0, 1, wxEXPAND, 5);
     
     m_staticText2 = new wxStaticText(this, wxID_ANY, _("Generated File(s) Path:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -120,40 +126,39 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     
     fgSizer1->Add(m_textCtrlGenFilePath, 1, wxALL|wxEXPAND, 5);
     
-    m_buttonBrowseFolder = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonBrowseFolder = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     
     fgSizer1->Add(m_buttonBrowseFolder, 0, wxALL, 5);
     
-    wxBoxSizer* bSizer8 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer1->Add(bSizer8, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText8 = new wxStaticText(this, wxID_ANY, _("Generated File:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText8 = new wxStaticText(this, wxID_ANY, _("More options:"), wxDefaultPosition, wxSize(-1, -1), 0);
     wxFont m_staticText8Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText8Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText8->SetFont(m_staticText8Font);
     
-    bSizer8->Add(m_staticText8, 0, wxALL, 5);
+    bSizer1->Add(m_staticText8, 0, wxALL, 5);
+    
+    wxFlexGridSizer* flexGridSizer35 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer35->SetFlexibleDirection( wxBOTH );
+    flexGridSizer35->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    
+    bSizer1->Add(flexGridSizer35, 0, wxALL|wxEXPAND, 5);
     
     m_checkBoxInline = new wxCheckBox(this, wxID_ANY, _("Inline class"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxInline->SetValue(false);
     m_checkBoxInline->SetToolTip(_("Put both the declaration and the implementation in the header file"));
     
-    bSizer8->Add(m_checkBoxInline, 0, wxALL, 5);
+    flexGridSizer35->Add(m_checkBoxInline, 0, wxALL, 5);
     
     m_checkBoxHpp = new wxCheckBox(this, wxID_ANY, _("Create .hpp instead of .h"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxHpp->SetValue(false);
     m_checkBoxHpp->SetToolTip(_("If checked, the generated header file will be foo.hpp instead of foo.h"));
     
-    bSizer8->Add(m_checkBoxHpp, 0, wxALL, 5);
+    flexGridSizer35->Add(m_checkBoxHpp, 0, wxALL, 5);
     
-    m_textCtrlFileName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_textCtrlFileName->SetToolTip(_("This is the base-name for the file(s) that will be generated. If the new class is called Foo, by default the files will be Foo.cpp and Foo.h. If you'd prefer different names, type the base-name here."));
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlFileName->SetHint(wxT(""));
-    #endif
+    m_checkBoxPragmaOnce = new wxCheckBox(this, wxID_ANY, _("Use #pragma once"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxPragmaOnce->SetValue(false);
     
-    bSizer8->Add(m_textCtrlFileName, 1, wxALL|wxEXPAND, 5);
+    flexGridSizer35->Add(m_checkBoxPragmaOnce, 0, wxALL, 5);
     
     m_collPane2 = new wxCollapsiblePane(this, wxID_ANY, _("Advanced"), wxDefaultPosition, wxSize(-1,-1), wxCP_DEFAULT_STYLE);
     
@@ -220,25 +225,28 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     
     fgSizer2->Add(m_checkBoxVirtualDtor, 0, wxALL, 5);
     
-    wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer30 = new wxStdDialogButtonSizer();
     
-    bSizer1->Add(buttonSizer, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer1->Add(m_stdBtnSizer30, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonOK->SetDefault();
+    m_button32 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer30->AddButton(m_button32);
     
-    buttonSizer->Add(m_buttonOK, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    buttonSizer->Add(m_buttonCancel, 0, wxALL, 5);
+    m_button34 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button34->SetDefault();
+    m_stdBtnSizer30->AddButton(m_button34);
+    m_stdBtnSizer30->Realize();
     
     SetName(wxT("NewClassBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -249,6 +257,8 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     // Connect events
     m_textClassName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewClassBaseDlg::OnTextEnter), NULL, this);
     m_buttonBrowseNamespaces->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseNamespace), NULL, this);
+    m_staticText6->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
+    m_textCtrlBlockGuard->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
     m_buttonSelectVD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseVD), NULL, this);
     m_buttonBrowseFolder->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseFolder), NULL, this);
     m_checkBoxInline->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnCheckInline), NULL, this);
@@ -259,8 +269,7 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     m_buttonDelInheritance->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonDelete), NULL, this);
     m_buttonDelInheritance->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnButtonDeleteUI), NULL, this);
     m_checkBoxImplVirtual->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnCheckImpleAllVirtualFunctions), NULL, this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonOK), NULL, this);
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnOkUpdateUI), NULL, this);
+    m_button34->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonOK), NULL, this);
     
 }
 
@@ -268,6 +277,8 @@ NewClassBaseDlg::~NewClassBaseDlg()
 {
     m_textClassName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewClassBaseDlg::OnTextEnter), NULL, this);
     m_buttonBrowseNamespaces->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseNamespace), NULL, this);
+    m_staticText6->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
+    m_textCtrlBlockGuard->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
     m_buttonSelectVD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseVD), NULL, this);
     m_buttonBrowseFolder->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseFolder), NULL, this);
     m_checkBoxInline->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnCheckInline), NULL, this);
@@ -278,8 +289,7 @@ NewClassBaseDlg::~NewClassBaseDlg()
     m_buttonDelInheritance->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonDelete), NULL, this);
     m_buttonDelInheritance->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnButtonDeleteUI), NULL, this);
     m_checkBoxImplVirtual->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnCheckImpleAllVirtualFunctions), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonOK), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnOkUpdateUI), NULL, this);
+    m_button34->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonOK), NULL, this);
     
 }
 
@@ -342,11 +352,15 @@ NewIneritanceBaseDlg::NewIneritanceBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer14->Realize();
     
     SetName(wxT("NewIneritanceBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

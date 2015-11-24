@@ -226,7 +226,7 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(DrawingUtils::GetAUIPaneBGColour());
+    dc.SetBrush(DrawingUtils::GetStippleBrush());
     dc.DrawRectangle(rect);
 }
 
@@ -245,12 +245,12 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    wxColour sashColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-#if 1
-    if(clGetManager() && clGetManager()->GetStatusBar() && clGetManager()->GetStatusBar()->GetArt()) {
-        sashColour = clGetManager()->GetStatusBar()->GetArt()->GetBgColour();
-    }
-#endif
+//     wxColour sashColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+// #if 1
+//     if(clGetManager() && clGetManager()->GetStatusBar() && clGetManager()->GetStatusBar()->GetArt()) {
+//         sashColour = clGetManager()->GetStatusBar()->GetArt()->GetBgColour();
+//     }
+// #endif
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);

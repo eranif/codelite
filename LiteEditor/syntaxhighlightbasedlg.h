@@ -27,6 +27,7 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/clrpicker.h>
+#include <wx/stc/stc.h>
 #include <wx/listbox.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
@@ -66,6 +67,8 @@ protected:
     wxColourPickerCtrl* m_colourPickerOutputPanesFgColour;
     wxStaticText* m_staticText911;
     wxColourPickerCtrl* m_colourPickerOutputPanesBgColour;
+    wxStaticText* m_staticText165;
+    wxStyledTextCtrl* m_stcPreview;
     wxPanel* m_panelSyntaxHighlight;
     wxListBox* m_listBox;
     wxPanel* m_panel25;
@@ -155,6 +158,8 @@ public:
     wxColourPickerCtrl* GetColourPickerOutputPanesFgColour() { return m_colourPickerOutputPanesFgColour; }
     wxStaticText* GetStaticText911() { return m_staticText911; }
     wxColourPickerCtrl* GetColourPickerOutputPanesBgColour() { return m_colourPickerOutputPanesBgColour; }
+    wxStaticText* GetStaticText165() { return m_staticText165; }
+    wxStyledTextCtrl* GetStcPreview() { return m_stcPreview; }
     wxPanel* GetPanelGlobalColours() { return m_panelGlobalColours; }
     wxListBox* GetListBox() { return m_listBox; }
     wxStaticText* GetStaticText70() { return m_staticText70; }

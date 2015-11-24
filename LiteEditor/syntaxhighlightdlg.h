@@ -75,7 +75,7 @@ protected:
     virtual void OnStyleWithinPreprocessor(wxCommandEvent& event);
     virtual void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event);
     virtual void OnText(wxCommandEvent& event);
-
+    
     // Handlers for SyntaxHighlightBaseDlg events.
     void OnButtonOK( wxCommandEvent& event );
     void OnButtonCancel( wxCommandEvent& event );
@@ -88,7 +88,9 @@ protected:
     void CreateLexerPage();
     StyleProperty::Map_t::iterator GetSelectedStyle();
     void EditKeyWords(int set);
-
+    
+    void DoUpdatePreview();
+    
 public:
     /** Constructor */
     SyntaxHighlightDlg( wxWindow* parent );

@@ -47,6 +47,8 @@ BEGIN_DECLARE_EVENT_TYPES()
 	DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SF, wxEVT_SF_SHAPE_MOUSE_LEAVE, 7787)
 	DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SF, wxEVT_SF_SHAPE_CHILD_DROP, 7788)
 	DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SF, wxEVT_SF_LINE_BEFORE_DONE, 7789)
+	DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SF, wxEVT_SF_LINE_HANDLE_ADD, 7790)
+	DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SF, wxEVT_SF_LINE_HANDLE_REMOVE, 7791)
 END_DECLARE_EVENT_TYPES()
 
 typedef void (wxEvtHandler::*wxSFShapeEventFunction)(wxSFShapeEvent&);
@@ -263,6 +265,24 @@ typedef void (wxEvtHandler::*wxSFShapeChildDropEventFunction)(wxSFShapeChildDrop
     DECLARE_EVENT_TABLE_ENTRY( \
         wxEVT_SF_LINE_BEFORE_DONE, id, wxID_ANY, \
         (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent( wxSFShapeEventFunction, &fn ), \
+        (wxObject *) NULL \
+    ),
+	
+/*! \brief Event table macro mapping event wxEVT_SF_LINE_HANDLE_ADD. This event occures
+ * when the shape's has added a new handle (sfsEMIT_EVENTS shape style must be in use). */
+#define EVT_SF_LINE_HANDLE_ADD(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( \
+        wxEVT_SF_LINE_HANDLE_ADD, id, wxID_ANY, \
+        (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent( wxSFShapeHandleEventFunction, &fn ), \
+        (wxObject *) NULL \
+    ),
+
+/*! \brief Event table macro mapping event wxEVT_SF_LINE_HANDLE_REMOVE. This event occures
+ * when the shape's has removed a new handle (sfsEMIT_EVENTS shape style must be in use). */
+#define EVT_SF_LINE_HANDLE_REMOVE(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( \
+        wxEVT_SF_LINE_HANDLE_REMOVE, id, wxID_ANY, \
+        (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent( wxSFShapeHandleEventFunction, &fn ), \
         (wxObject *) NULL \
     ),
 	

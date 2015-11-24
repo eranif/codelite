@@ -21,7 +21,6 @@
 #include <wx/arrimpl.cpp>
 #include <limits>
 
-using namespace std;
 using namespace wxXS;
 
 WX_DEFINE_EXPORTED_OBJARRAY(RealPointArray);
@@ -162,7 +161,7 @@ wxString xsDoublePropIO::ToString(const double& value)
 {
     wxString sVal;
 
-    if( wxIsNaN((long double)value) )
+    if( wxIsNaN(value) )
     {
         sVal = wxT("NAN");
     }
@@ -188,11 +187,11 @@ double xsDoublePropIO::FromString(const wxString& value)
 	{
 	    if( value == wxT("NAN") )
 	    {
-	        num = numeric_limits<double>::quiet_NaN();
+	        num = std::numeric_limits<double>::quiet_NaN();
 	    }
 	    else if( value == wxT("INF") )
 	    {
-	        num = numeric_limits<double>::infinity();
+	        num = std::numeric_limits<double>::infinity();
 	    }
 	    else
 	    {
@@ -244,11 +243,11 @@ float xsFloatPropIO::FromString(const wxString& value)
 	{
 	    if( value == wxT("NAN") )
 	    {
-	        num = numeric_limits<float>::quiet_NaN();
+	        num = std::numeric_limits<float>::quiet_NaN();
 	    }
 	    else if( value == wxT("INF") )
 	    {
-	        num = numeric_limits<float>::infinity();
+	        num = std::numeric_limits<float>::infinity();
 	    }
 	    else
 	    {

@@ -30,6 +30,7 @@ wxSFConnectionPoint::wxSFConnectionPoint()
 {
 	m_pParentShape = NULL;
 	m_nType = cpUNDEF;
+	m_nOrthoDir = sfdvCONNPOINT_ORTHODIR;
 	m_fMouseOver = false;
 	m_nRelPosition = sfdvCONNPOINT_RELPOS;
 	
@@ -42,6 +43,7 @@ wxSFConnectionPoint::wxSFConnectionPoint(wxSFShapeBase* parent, CPTYPE type)
 	
 	m_pParentShape = parent;
 	m_nType = type;
+	m_nOrthoDir = sfdvCONNPOINT_ORTHODIR;
 	m_fMouseOver = false;
 	m_nRelPosition = sfdvCONNPOINT_RELPOS;
 	
@@ -54,6 +56,7 @@ wxSFConnectionPoint::wxSFConnectionPoint(wxSFShapeBase* parent, const wxRealPoin
 	
 	m_pParentShape = parent;
 	m_nType = cpCUSTOM;
+	m_nOrthoDir = sfdvCONNPOINT_ORTHODIR;
 	m_fMouseOver = false;
 	m_nRelPosition = relpos;
 	
@@ -66,6 +69,7 @@ wxSFConnectionPoint::wxSFConnectionPoint(const wxSFConnectionPoint& obj) : xsSer
 {
 	m_pParentShape = NULL;
 	m_nType = obj.m_nType;
+	m_nOrthoDir = obj.m_nOrthoDir;
 	m_fMouseOver = obj.m_fMouseOver;
 	m_nRelPosition = obj.m_nRelPosition;
 	
@@ -75,6 +79,7 @@ wxSFConnectionPoint::wxSFConnectionPoint(const wxSFConnectionPoint& obj) : xsSer
 void wxSFConnectionPoint::MarkSerializableDataMembers()
 {
 	XS_SERIALIZE_INT( m_nType, wxT("connection_type") );
+	XS_SERIALIZE_INT_EX( m_nOrthoDir, wxT("ortho_direction"), sfdvCONNPOINT_ORTHODIR );
 	XS_SERIALIZE_EX( m_nRelPosition, wxT("relative_position"), sfdvCONNPOINT_RELPOS );
 }
 

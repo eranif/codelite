@@ -17,6 +17,7 @@
 #include "wx/wxsf/LineShape.h"
 #include "wx/wxsf/ShapeCanvas.h"
 #include "wx/wxsf/CommonFcn.h"
+#include "wx/wxsf/SFEvents.h"
 
 using namespace wxSFCommonFcn;
 
@@ -568,6 +569,8 @@ void wxSFLineShape::MoveBy(double x, double y)
 	}
 	
 	if( !m_lstChildItems.IsEmpty() ) Update();
+	
+	if( GetShapeManager() ) GetShapeManager()->SetModified( true );
 }
 
 void wxSFLineShape::CreateHandles()
@@ -675,15 +678,44 @@ void wxSFLineShape::OnLeftDoubleClick(const wxPoint& pos)
         if(pHandle && (pHandle->GetParentShape() == this))
         {
             if(pHandle->GetType() == wxSFShapeHandle::hndLINECTRL)
-                m_lstPoints.DeleteNode(m_lstPoints.Item(pHandle->GetId()));
+            {
+                if( this->ContainsStyle(sfsEMIT_EVENTS) )
+                {
+					wxSFShapeHandleEvent evt( wxEVT_SF_LINE_HANDLE_REMOVE, this->GetId() );
+                    evt.SetShape( this );
+                    evt.SetHandle( *pHandle );
+                    GetParentCanvas()->GetEventHandler()->ProcessEvent( evt );
+                }
+				
+				m_lstPoints.DeleteNode(m_lstPoints.Item(pHandle->GetId()));
+				
+				CreateHandles();
+				ShowHandles(true);
+            }
         }
         else
         {
             int nIndex = this->GetHitLinesegment(pos);
-            if( nIndex > -1 ) m_lstPoints.Insert(nIndex, new wxRealPoint(pos.x, pos.y));
+			if( nIndex > -1 )
+            {
+                m_lstPoints.Insert(nIndex, new wxRealPoint(pos.x, pos.y));
+				
+				CreateHandles();
+				ShowHandles(true);
+
+                if( this->ContainsStyle(sfsEMIT_EVENTS) )
+                {
+					pHandle = GetParentCanvas()->GetTopmostHandleAtPosition(pos);
+					if( pHandle ) 
+					{
+						wxSFShapeHandleEvent evt( wxEVT_SF_LINE_HANDLE_ADD, this->GetId() );
+						evt.SetShape( this );
+						evt.SetHandle( *pHandle );
+						GetParentCanvas()->GetEventHandler()->ProcessEvent( evt );
+					}
+                }
+            }
         }
-        CreateHandles();
-        ShowHandles(true);
     }
 }
 

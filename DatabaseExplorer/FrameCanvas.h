@@ -51,14 +51,14 @@ class FrameCanvas : public wxSFShapeCanvas {
 		FrameCanvas() {
 			;
 		}
-		FrameCanvas(wxSFDiagramManager* manager,IDbAdapter* dbAdapter, wxWindow* parent, wxPanel* parentPanel, wxWindowID id);
+		FrameCanvas(wxSFDiagramManager* manager,IDbAdapter* dbAdapter, wxPanel* parentPanel, wxWindowID id);
 		virtual ~FrameCanvas();
 		virtual void OnConnectionFinished(wxSFLineShape* connection);
 		virtual void OnKeyDown(wxKeyEvent& event);
 		virtual void OnRightDown(wxMouseEvent& event);
 		virtual void OnLeftDown(wxMouseEvent& event);
 		virtual void OnLeftDoubleClick(wxMouseEvent& event);
-		virtual bool OnPreConnectionFinished(wxSFLineShape* connection);
+		virtual PRECONNECTIONFINISHEDSTATE OnPreConnectionFinished(wxSFLineShape* connection);
 		virtual void OnDrop(wxCoord x, wxCoord y, wxDragResult def, const ShapeList& dropped);
 
 		virtual void OnPaste(const ShapeList& pasted);

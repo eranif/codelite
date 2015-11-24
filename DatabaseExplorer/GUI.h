@@ -264,14 +264,12 @@ class _ErdPanel : public wxPanel
 {
 protected:
     wxAuiToolBar* m_toolBarErd;
-    wxPanel* m_wxsfPanel;
 
 protected:
     virtual void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
 
 public:
     wxAuiToolBar* GetToolBarErd() { return m_toolBarErd; }
-    wxPanel* GetWxsfPanel() { return m_wxsfPanel; }
     _ErdPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(640,480), long style = wxTAB_TRAVERSAL);
     virtual ~_ErdPanel();
 };

@@ -53,6 +53,17 @@ void wxSFOrthoLineShape::DrawCompleteLine(wxDC& dc)
 
     size_t i;
 	wxRealPoint src, trg;
+	
+	wxSFConnectionPoint *cpSrc = NULL, *cpTrg = NULL;
+	
+	wxSFShapeBase* pShape = GetShapeManager()->FindShape(m_nSrcShapeId);
+	if( pShape ) {
+		cpSrc = pShape->GetNearestConnectionPoint( GetModSrcPoint() ); 
+	}
+	pShape = GetShapeManager()->FindShape(m_nTrgShapeId);
+	if( pShape ) {
+		cpTrg = pShape->GetNearestConnectionPoint( GetModTrgPoint() ); 
+	}
 
     switch(m_nMode)
     {
@@ -63,14 +74,14 @@ void wxSFOrthoLineShape::DrawCompleteLine(wxDC& dc)
             for(i = 0; i <= m_lstPoints.GetCount(); i++)
 			{
 				GetLineSegment( i, src, trg );
-				this->DrawLineSegment( dc, src, trg );
+				this->DrawLineSegment( dc, src, trg, GetUsedConnectionPoints( cpSrc, cpTrg, i ) );
 			}
 
             // draw target arrow
             if(m_pTrgArrow)
 			{
 				wxRealPoint asrc, atrg;
-				GetLastSubsegment( src, trg, asrc, atrg );
+				GetLastSubsegment( src, trg, asrc, atrg, GetUsedConnectionPoints( cpSrc, cpTrg, i - 1 ) );
 				m_pTrgArrow->Draw( asrc, atrg, dc );
 			}
 			
@@ -79,7 +90,7 @@ void wxSFOrthoLineShape::DrawCompleteLine(wxDC& dc)
 			{
 				wxRealPoint asrc, atrg;
 				GetLineSegment( 0, src, trg );
-				GetFirstSubsegment( src, trg, asrc, atrg );
+				GetFirstSubsegment( src, trg, asrc, atrg, GetUsedConnectionPoints( cpSrc, cpTrg, 0 ) );
 				m_pSrcArrow->Draw( atrg, asrc, dc );
 			}
         }
@@ -91,7 +102,7 @@ void wxSFOrthoLineShape::DrawCompleteLine(wxDC& dc)
             for(i = 0; i < m_lstPoints.GetCount(); i++)
 			{
 				GetLineSegment( i, src, trg );
-				this->DrawLineSegment( dc, src, trg );
+				this->DrawLineSegment( dc, src, trg, GetUsedConnectionPoints( cpSrc, cpTrg, i ) );
 			}
 
             // draw unfinished line segment if any (for interactive line creation)
@@ -99,7 +110,7 @@ void wxSFOrthoLineShape::DrawCompleteLine(wxDC& dc)
 			
 			if( i )
 			{
-				this->DrawLineSegment( dc, trg, Conv2RealPoint(m_nUnfinishedPoint) );
+				this->DrawLineSegment( dc, trg, Conv2RealPoint(m_nUnfinishedPoint), GetUsedConnectionPoints( cpSrc, cpTrg, i ) );
 			}
 			else
 			{
@@ -108,10 +119,10 @@ void wxSFOrthoLineShape::DrawCompleteLine(wxDC& dc)
 				{
 					if( pSrcShape->GetConnectionPoints().IsEmpty() )
 					{
-						this->DrawLineSegment( dc, pSrcShape->GetBorderPoint(pSrcShape->GetCenter(), Conv2RealPoint(m_nUnfinishedPoint)), Conv2RealPoint(m_nUnfinishedPoint) );
+						this->DrawLineSegment( dc, pSrcShape->GetBorderPoint(pSrcShape->GetCenter(), Conv2RealPoint(m_nUnfinishedPoint)), Conv2RealPoint(m_nUnfinishedPoint), GetUsedConnectionPoints( cpSrc, cpTrg, 0 ) );
 					}
 					else
-						this->DrawLineSegment( dc, GetModSrcPoint(), Conv2RealPoint(m_nUnfinishedPoint) );
+						this->DrawLineSegment( dc, GetModSrcPoint(), Conv2RealPoint(m_nUnfinishedPoint), GetUsedConnectionPoints( cpSrc, cpTrg, 0 ) );
 				}
 			}
 				
@@ -125,14 +136,14 @@ void wxSFOrthoLineShape::DrawCompleteLine(wxDC& dc)
             for(i = 1; i <= m_lstPoints.GetCount(); i++)
 			{
 				GetLineSegment( i, src, trg );
-				this->DrawLineSegment( dc, src, trg );
+				this->DrawLineSegment( dc, src, trg, GetUsedConnectionPoints( cpSrc, cpTrg, i ) );
 			}
 
             // draw linesegment being updated
 			GetLineSegment( 0, src, trg );
 			
             dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
-			this->DrawLineSegment( dc, Conv2RealPoint(m_nUnfinishedPoint), trg );
+			this->DrawLineSegment( dc, Conv2RealPoint(m_nUnfinishedPoint), trg, GetUsedConnectionPoints( cpSrc, cpTrg, 0 ) );
             dc.SetPen(wxNullPen);
         }
         break;
@@ -145,7 +156,7 @@ void wxSFOrthoLineShape::DrawCompleteLine(wxDC& dc)
 				for(i = 0; i < m_lstPoints.GetCount(); i++)
 				{
 					GetLineSegment( i, src, trg );
-					this->DrawLineSegment( dc, src, trg );
+					this->DrawLineSegment( dc, src, trg, GetUsedConnectionPoints( cpSrc, cpTrg, i ) );
 				}
 			}
 			else
@@ -153,7 +164,7 @@ void wxSFOrthoLineShape::DrawCompleteLine(wxDC& dc)
 			
             // draw linesegment being updated
             dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
-			this->DrawLineSegment( dc, trg, Conv2RealPoint(m_nUnfinishedPoint) );
+			this->DrawLineSegment( dc, trg, Conv2RealPoint(m_nUnfinishedPoint), GetUsedConnectionPoints( cpSrc, cpTrg, m_lstPoints.GetCount() ) );
             dc.SetPen(wxNullPen);
         }
         break;
@@ -167,6 +178,18 @@ int wxSFOrthoLineShape::GetHitLinesegment(const wxPoint& pos)
 
     wxRealPoint ptSrc, ptTrg, ptSSrc, ptSTrg;
     wxRect rctBB;
+	
+	wxSFConnectionPoint *cpSrc = NULL, *cpTrg = NULL;
+	
+	wxSFShapeBase* pShape = GetShapeManager()->FindShape(m_nSrcShapeId);
+	if( pShape ) {
+		cpSrc = pShape->GetNearestConnectionPoint( GetModSrcPoint() ); 
+	}
+	pShape = GetShapeManager()->FindShape(m_nTrgShapeId);
+	if( pShape ) {
+		cpTrg = pShape->GetNearestConnectionPoint( GetModTrgPoint() ); 
+	}
+
 
     // Get all polyline segments
 	for(size_t i = 0; i <= m_lstPoints.GetCount(); i++)
@@ -174,21 +197,21 @@ int wxSFOrthoLineShape::GetHitLinesegment(const wxPoint& pos)
 		GetLineSegment( i, ptSrc, ptTrg );
 		
 		// test first subsegment
-		GetFirstSubsegment( ptSrc, ptTrg, ptSSrc, ptSTrg );
+		GetFirstSubsegment( ptSrc, ptTrg, ptSSrc, ptSTrg, GetUsedConnectionPoints( cpSrc, cpTrg, i ) );
 		rctBB = wxRect(Conv2Point(ptSSrc), Conv2Point(ptSTrg));
 		rctBB.Inflate(5);
 		
 		if( rctBB.Contains(pos) ) return (int)i;
 		
 		// test middle subsegment
-		GetMiddleSubsegment( ptSrc, ptTrg, ptSSrc, ptSTrg );
+		GetMiddleSubsegment( ptSrc, ptTrg, ptSSrc, ptSTrg, GetUsedConnectionPoints( cpSrc, cpTrg, i ) );
 		rctBB = wxRect(Conv2Point(ptSSrc), Conv2Point(ptSTrg));
 		rctBB.Inflate(5);
 		
 		if( rctBB.Contains(pos) ) return (int)i;
 		
 		// test last subsegment
-		GetLastSubsegment( ptSrc, ptTrg, ptSSrc, ptSTrg );
+		GetLastSubsegment( ptSrc, ptTrg, ptSSrc, ptSTrg, GetUsedConnectionPoints( cpSrc, cpTrg, i ) );
 		rctBB = wxRect(Conv2Point(ptSSrc), Conv2Point(ptSTrg));
 		rctBB.Inflate(5);
 		
@@ -202,9 +225,9 @@ int wxSFOrthoLineShape::GetHitLinesegment(const wxPoint& pos)
 // protected functions
 //----------------------------------------------------------------------------------//
 
-void wxSFOrthoLineShape::DrawLineSegment(wxDC& dc, const wxRealPoint& src, const wxRealPoint& trg)
+void wxSFOrthoLineShape::DrawLineSegment(wxDC& dc, const wxRealPoint& src, const wxRealPoint& trg, const SEGMENTCPS& cps )
 {
-	double nDirection;
+	double nDirection = 0;
 	
 	if( (trg.x == src.x) || ( trg.y == src.y ) )
 	{
@@ -212,84 +235,179 @@ void wxSFOrthoLineShape::DrawLineSegment(wxDC& dc, const wxRealPoint& src, const
 		return;
 	}
 	else
-		nDirection = fabs( trg.y - src.y ) / fabs( trg.x - src.x );
+		//nDirection = fabs( trg.y - src.y ) / fabs( trg.x - src.x );
+		nDirection = GetSegmentDirection( src, trg, cps );
 	
-	wxRealPoint ptCenter( (src.x + trg.x)/2, (src.y + trg.y)/2 );
+	if( IsTwoSegment( cps ) ) {
 	
-	if( nDirection < 1 )
-	{
-		dc.DrawLine( src.x, src.y, ptCenter.x, src.y );
-		dc.DrawLine( ptCenter.x, src.y, ptCenter.x, trg.y );
-		dc.DrawLine( ptCenter.x, trg.y, trg.x, trg.y );
-	}
-	else
-	{
-		dc.DrawLine( src.x, src.y, src.x, ptCenter.y );
-		dc.DrawLine( src.x, ptCenter.y, trg.x, ptCenter.y );
-		dc.DrawLine( trg.x, ptCenter.y, trg.x, trg.y );
+		if( nDirection < 1 ) {
+			dc.DrawLine( src.x, src.y, trg.x, src.y );
+			dc.DrawLine( trg.x, src.y, trg.x, trg.y );
+			
+		} else {
+			dc.DrawLine( src.x, src.y, src.x, trg.y );
+			dc.DrawLine( src.x, trg.y, trg.x, trg.y );
+		}
+		
+	} else {
+		wxRealPoint ptCenter( (src.x + trg.x)/2, (src.y + trg.y)/2 );
+		
+		if( nDirection < 1 ) {
+			dc.DrawLine( src.x, src.y, ptCenter.x, src.y );
+			dc.DrawLine( ptCenter.x, src.y, ptCenter.x, trg.y );
+			dc.DrawLine( ptCenter.x, trg.y, trg.x, trg.y );
+			
+		} else {
+			dc.DrawLine( src.x, src.y, src.x, ptCenter.y );
+			dc.DrawLine( src.x, ptCenter.y, trg.x, ptCenter.y );
+			dc.DrawLine( trg.x, ptCenter.y, trg.x, trg.y );
+		}
 	}
 }
 
-void wxSFOrthoLineShape::GetFirstSubsegment(const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg)
+void wxSFOrthoLineShape::GetFirstSubsegment(const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg, const SEGMENTCPS& cps )
+{
+	double nDirection = GetSegmentDirection( src, trg, cps );
+	
+	if( IsTwoSegment( cps ) ) {
+		if( nDirection < 1 )
+		{
+			subsrc = src;
+			subtrg = wxRealPoint( trg.x, src.y );
+		}
+		else
+		{
+			subsrc = src;
+			subtrg = wxRealPoint( src.x, trg.y );
+		}		
+	} else {
+		wxRealPoint ptCenter( (src.x + trg.x)/2, (src.y + trg.y)/2 );
+		if( nDirection < 1 )
+		{
+			subsrc = src;
+			subtrg = wxRealPoint( ptCenter.x, src.y );
+		}
+		else
+		{
+			subsrc = src;
+			subtrg = wxRealPoint( src.x, ptCenter.y );
+		}
+	}
+}
+
+void wxSFOrthoLineShape::GetLastSubsegment(const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg, const SEGMENTCPS& cps )
+{
+	double nDirection = GetSegmentDirection( src, trg, cps);
+	
+	if( IsTwoSegment( cps ) ) {
+		if( nDirection < 1 )
+		{
+			subsrc = wxRealPoint( trg.x, src.y);
+			subtrg = trg;
+		}
+		else
+		{
+			subsrc = wxRealPoint( src.x, trg.y );
+			subtrg = trg;
+		}
+	} else {
+		wxRealPoint ptCenter( (src.x + trg.x)/2, (src.y + trg.y)/2 );
+		if( nDirection < 1 )
+		{
+			subsrc = wxRealPoint( ptCenter.x, trg.y );
+			subtrg = trg;
+		}
+		else
+		{
+			subsrc = wxRealPoint( trg.x, ptCenter.y );
+			subtrg = trg;
+		}
+	}
+}
+
+void wxSFOrthoLineShape::GetMiddleSubsegment(const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg, const SEGMENTCPS& cps )
+{
+	double nDirection = GetSegmentDirection( src, trg, cps );
+
+	if( IsTwoSegment( cps ) ) {
+		if( nDirection < 1 )
+		{
+			subsrc = src;
+			subtrg = wxRealPoint( trg.x, src.y );
+		}
+		else
+		{
+			subsrc = src;
+			subtrg = wxRealPoint( src.x, trg.y );
+		}			
+	} else {
+		wxRealPoint ptCenter( (src.x + trg.x)/2, (src.y + trg.y)/2 );
+		if( nDirection < 1 )
+		{
+			subsrc = wxRealPoint( ptCenter.x, src.y);
+			subtrg = wxRealPoint( ptCenter.x, trg.y );
+		}
+		else
+		{
+			subsrc = wxRealPoint( src.x, ptCenter.y );
+			subtrg = wxRealPoint( trg.x, ptCenter.y );
+		}
+	}
+}
+
+double wxSFOrthoLineShape::GetSegmentDirection(const wxRealPoint& src, const wxRealPoint& trg, const SEGMENTCPS& cps )
 {
 	double nDirection = 0;
 	
-	if( trg.x == src.x ) nDirection = 1;
-	else nDirection =  fabs( trg.y - src.y ) / fabs( trg.x - src.x );
+	if( trg.x == src.x )
+		nDirection = 1;
+		
+	else {
+		nDirection =  fabs( trg.y - src.y ) / fabs( trg.x - src.x );
+		
+		const wxSFConnectionPoint *cp = NULL;
+		if( cps.cpSrc && ! cps.cpTrg ) cp = cps.cpSrc;
+		else if( ! cps.cpSrc && cps.cpTrg ) cp = cps.cpTrg;
+		else if( cps.cpSrc && cps.cpTrg ) cp = cps.cpSrc;
 	
-	wxRealPoint ptCenter( (src.x + trg.x)/2, (src.y + trg.y)/2 );
+		if( cp ) {
+			switch( cp->GetOrthoDirection() ) {
+				case wxSFConnectionPoint::cpdVERTICAL:
+					nDirection = 1;
+					break;
+					
+				case wxSFConnectionPoint::cpdHORIZONTAL:
+					nDirection = 0;
+					break;
+					
+				default:
+					break;
+			}
+		}
+	}
 	
-	if( nDirection < 1 )
-	{
-		subsrc = src;
-		subtrg = wxRealPoint( ptCenter.x, src.y );
-	}
-	else
-	{
-		subsrc = src;
-		subtrg = wxRealPoint( src.x, ptCenter.y );
-	}
+	return nDirection;
 }
 
-void wxSFOrthoLineShape::GetLastSubsegment(const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg)
+wxSFOrthoLineShape::SEGMENTCPS wxSFOrthoLineShape::GetUsedConnectionPoints(const wxSFConnectionPoint* src, const wxSFConnectionPoint* trg, size_t i) const
 {
-	double nDirection = 0;
+	SEGMENTCPS cps = {NULL, NULL};
 	
-	if( trg.x == src.x ) nDirection = 1;
-	else nDirection =  fabs( trg.y - src.y ) / fabs( trg.x - src.x );
-	
-	wxRealPoint ptCenter( (src.x + trg.x)/2, (src.y + trg.y)/2 );
-	
-	if( nDirection < 1 )
-	{
-		subsrc = wxRealPoint( ptCenter.x, trg.y );
-		subtrg = trg;
+	if( m_lstPoints.IsEmpty() ) {
+		cps.cpSrc = src;
+		cps.cpTrg = trg;
+	} else if( i == 0 ) {
+		cps.cpSrc = src;
+		cps.cpTrg = NULL;
+	} else if( i == m_lstPoints.GetCount() ) {
+		cps.cpSrc = NULL;
+		cps.cpTrg = trg;
 	}
-	else
-	{
-		subsrc = wxRealPoint( trg.x, ptCenter.y );
-		subtrg = trg;
-	}
+	
+	return cps;
 }
 
-void wxSFOrthoLineShape::GetMiddleSubsegment(const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg)
+bool wxSFOrthoLineShape::IsTwoSegment(const SEGMENTCPS& cps)
 {
-	double nDirection = 0;
-	
-	if( trg.x == src.x ) nDirection = 1;
-	else nDirection =  fabs( trg.y - src.y ) / fabs( trg.x - src.x );
-	
-	wxRealPoint ptCenter( (src.x + trg.x)/2, (src.y + trg.y)/2 );
-	
-	if( nDirection < 1 )
-	{
-		subsrc = wxRealPoint( ptCenter.x, src.y);
-		subtrg = wxRealPoint( ptCenter.x, trg.y );
-	}
-	else
-	{
-		subsrc = wxRealPoint( src.x, ptCenter.y );
-		subtrg = wxRealPoint( trg.x, ptCenter.y );
-	}
+	return cps.cpSrc && cps.cpTrg && ( cps.cpSrc->GetOrthoDirection() != cps.cpTrg->GetOrthoDirection() );
 }
-

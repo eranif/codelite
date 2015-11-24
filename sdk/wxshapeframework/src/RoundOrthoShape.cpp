@@ -56,7 +56,7 @@ wxSFRoundOrthoLineShape::~wxSFRoundOrthoLineShape()
 // protected virtual functions
 //----------------------------------------------------------------------------------//
 
-void wxSFRoundOrthoLineShape::DrawLineSegment(wxDC& dc, const wxRealPoint& src, const wxRealPoint& trg)
+void wxSFRoundOrthoLineShape::DrawLineSegment(wxDC& dc, const wxRealPoint& src, const wxRealPoint& trg, const SEGMENTCPS& cps )
 {
 	if( (trg.x == src.x) || ( trg.y == src.y ) )
 	{
@@ -65,6 +65,7 @@ void wxSFRoundOrthoLineShape::DrawLineSegment(wxDC& dc, const wxRealPoint& src, 
 	}
 	
 	double nDx, nDy;
+	double nDirection = GetSegmentDirection( src, trg, cps );
 	int kx, ky, nR;
 	
 	nDx = trg.x - src.x;
@@ -76,49 +77,89 @@ void wxSFRoundOrthoLineShape::DrawLineSegment(wxDC& dc, const wxRealPoint& src, 
 	
 	dc.SetBrush( *wxTRANSPARENT_BRUSH );
 	
-	if( fabs(nDy) / fabs(nDx) < 1 )
-	{
-		nR = fabs(nDy * m_nMaxRadius/100) < m_nMaxRadius ? fabs(nDy * m_nMaxRadius/100) : m_nMaxRadius;
-		
-		dc.DrawLine( src.x, src.y, ptCenter.x - nR * kx, src.y );
-		dc.DrawLine( ptCenter.x, src.y - nR * ky, ptCenter.x, trg.y + nR * ky);
-		dc.DrawLine( ptCenter.x + nR * kx, trg.y, trg.x, trg.y );
-		
-		if( nR > 0 )
-		{
-			if( ( ky > 0 && kx > 0) || ( ky < 0 && kx < 0) )
-			{
-				dc.DrawArc( ptCenter.x - nR * kx, src.y, ptCenter.x, src.y - nR * ky, ptCenter.x - nR * kx, src.y - nR * ky );
-				dc.DrawArc( ptCenter.x + nR * kx, trg.y, ptCenter.x, trg.y + nR * ky, ptCenter.x + nR * kx, trg.y + nR * ky );
+	//if( fabs(nDy) / fabs(nDx) < 1 )
+	
+	if( IsTwoSegment( cps ) ) {
+		if( nDirection < 1 ) {
+			nR = fabs(nDy * m_nMaxRadius/100) < m_nMaxRadius ? fabs(nDy * m_nMaxRadius/100) : m_nMaxRadius;
+			
+			dc.DrawLine( src.x, src.y, trg.x - nR * kx, src.y );
+			dc.DrawLine( trg.x, src.y - nR * ky, trg.x, trg.y );
+			
+			if( nR > 0 ) {
+				if( ( ky > 0 && kx > 0) || ( ky < 0 && kx < 0) )
+				{
+					dc.DrawArc( trg.x - nR * kx, src.y, trg.x, src.y - nR * ky, trg.x - nR * kx, src.y - nR * ky );
+				}
+				else
+				{
+					dc.DrawArc( trg.x, src.y - nR * ky, trg.x - nR * kx, src.y, trg.x - nR * kx, src.y - nR * ky );
+				}				
 			}
-			else
-			{
-				dc.DrawArc( ptCenter.x, src.y - nR * ky, ptCenter.x - nR * kx, src.y, ptCenter.x - nR * kx, src.y - nR * ky );
-				dc.DrawArc( ptCenter.x, trg.y + nR * ky, ptCenter.x + nR * kx, trg.y, ptCenter.x + nR * kx, trg.y + nR * ky );
+			
+		} else {
+			nR = fabs(nDx * m_nMaxRadius/100) < m_nMaxRadius ? fabs(nDx * m_nMaxRadius/100) : m_nMaxRadius;
+			
+			dc.DrawLine( src.x, src.y, src.x, trg.y + nR * ky );
+			dc.DrawLine( src.x + nR * kx, trg.y, trg.x, trg.y );
+			
+			if( nR > 0 ) {
+				if( ( ky > 0 && kx > 0) || ( ky < 0 && kx < 0) )
+				{
+					dc.DrawArc( src.x + nR * kx, trg.y, src.x, trg.y + nR * ky, src.x + nR * kx, trg.y + nR * ky );
+				}
+				else
+				{
+					dc.DrawArc( src.x, trg.y + nR * ky, src.x + nR * kx, trg.y, src.x + nR * kx, trg.y + nR * ky );
+				}
 			}
 		}
-	}
-	else
-	{
-		nR = fabs(nDx * m_nMaxRadius/100) < m_nMaxRadius ? fabs(nDx * m_nMaxRadius/100) : m_nMaxRadius;
-
-		dc.DrawLine( src.x, src.y, src.x, ptCenter.y + nR * ky );
-		dc.DrawLine( src.x + nR * kx, ptCenter.y, trg.x - nR * kx, ptCenter.y );
-		dc.DrawLine( trg.x, ptCenter.y - nR * ky, trg.x, trg.y );
 		
-		if( nR > 0 )
+	} else {
+		if( nDirection < 1 )
 		{
-			if( ( ky > 0 && kx > 0) || ( ky < 0 && kx < 0) )
+			nR = fabs(nDy * m_nMaxRadius/100) < m_nMaxRadius ? fabs(nDy * m_nMaxRadius/100) : m_nMaxRadius;
+			
+			dc.DrawLine( src.x, src.y, ptCenter.x - nR * kx, src.y );
+			dc.DrawLine( ptCenter.x, src.y - nR * ky, ptCenter.x, trg.y + nR * ky);
+			dc.DrawLine( ptCenter.x + nR * kx, trg.y, trg.x, trg.y );
+			
+			if( nR > 0 )
 			{
-				dc.DrawArc( src.x + nR * kx, ptCenter.y, src.x, ptCenter.y + nR * ky, src.x + nR * kx, ptCenter.y + nR * ky );
-				dc.DrawArc( trg.x - nR * kx, ptCenter.y, trg.x, ptCenter.y - nR * ky, trg.x - nR * kx, ptCenter.y - nR * ky );
+				if( ( ky > 0 && kx > 0) || ( ky < 0 && kx < 0) )
+				{
+					dc.DrawArc( ptCenter.x - nR * kx, src.y, ptCenter.x, src.y - nR * ky, ptCenter.x - nR * kx, src.y - nR * ky );
+					dc.DrawArc( ptCenter.x + nR * kx, trg.y, ptCenter.x, trg.y + nR * ky, ptCenter.x + nR * kx, trg.y + nR * ky );
+				}
+				else
+				{
+					dc.DrawArc( ptCenter.x, src.y - nR * ky, ptCenter.x - nR * kx, src.y, ptCenter.x - nR * kx, src.y - nR * ky );
+					dc.DrawArc( ptCenter.x, trg.y + nR * ky, ptCenter.x + nR * kx, trg.y, ptCenter.x + nR * kx, trg.y + nR * ky );
+				}
 			}
-			else
+		}
+		else
+		{
+			nR = fabs(nDx * m_nMaxRadius/100) < m_nMaxRadius ? fabs(nDx * m_nMaxRadius/100) : m_nMaxRadius;
+
+			dc.DrawLine( src.x, src.y, src.x, ptCenter.y + nR * ky );
+			dc.DrawLine( src.x + nR * kx, ptCenter.y, trg.x - nR * kx, ptCenter.y );
+			dc.DrawLine( trg.x, ptCenter.y - nR * ky, trg.x, trg.y );
+			
+			if( nR > 0 )
 			{
-				dc.DrawArc( src.x, ptCenter.y + nR * ky, src.x + nR * kx, ptCenter.y, src.x + nR * kx, ptCenter.y + nR * ky );
-				dc.DrawArc( trg.x, ptCenter.y - nR * ky, trg.x - nR * kx, ptCenter.y, trg.x - nR * kx, ptCenter.y - nR * ky );
+				if( ( ky > 0 && kx > 0) || ( ky < 0 && kx < 0) )
+				{
+					dc.DrawArc( src.x + nR * kx, ptCenter.y, src.x, ptCenter.y + nR * ky, src.x + nR * kx, ptCenter.y + nR * ky );
+					dc.DrawArc( trg.x - nR * kx, ptCenter.y, trg.x, ptCenter.y - nR * ky, trg.x - nR * kx, ptCenter.y - nR * ky );
+				}
+				else
+				{
+					dc.DrawArc( src.x, ptCenter.y + nR * ky, src.x + nR * kx, ptCenter.y, src.x + nR * kx, ptCenter.y + nR * ky );
+					dc.DrawArc( trg.x, ptCenter.y - nR * ky, trg.x - nR * kx, ptCenter.y, trg.x - nR * kx, ptCenter.y - nR * ky );
+				}
 			}
-			}
+		}
 	}
 	
 	dc.SetBrush( wxNullBrush );

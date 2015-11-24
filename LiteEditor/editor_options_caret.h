@@ -30,22 +30,25 @@ protected:
     wxTextCtrl* m_spinCtrlBlinkPeriod;
     wxStaticText* m_staticText3;
     wxTextCtrl* m_spinCtrlCaretWidth;
+    wxCheckBox* m_checkBoxBlockCaret;
     wxCheckBox* m_checkBoxScrollBeyondLastLine;
-    wxCheckBox* m_checkBoxAdjustScrollbarSize;
-    wxCheckBox* m_checkBoxCaretOnVirtualSpace;
     wxCheckBox* m_checkBoxCaretUseCamelCase;
+    wxCheckBox* m_checkBoxCaretOnVirtualSpace;
+    wxCheckBox* m_checkBoxAdjustScrollbarSize;
 
 protected:
+    virtual void OnCaretWidthUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
     wxTextCtrl* GetSpinCtrlBlinkPeriod() { return m_spinCtrlBlinkPeriod; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
     wxTextCtrl* GetSpinCtrlCaretWidth() { return m_spinCtrlCaretWidth; }
+    wxCheckBox* GetCheckBoxBlockCaret() { return m_checkBoxBlockCaret; }
     wxCheckBox* GetCheckBoxScrollBeyondLastLine() { return m_checkBoxScrollBeyondLastLine; }
-    wxCheckBox* GetCheckBoxAdjustScrollbarSize() { return m_checkBoxAdjustScrollbarSize; }
-    wxCheckBox* GetCheckBoxCaretOnVirtualSpace() { return m_checkBoxCaretOnVirtualSpace; }
     wxCheckBox* GetCheckBoxCaretUseCamelCase() { return m_checkBoxCaretUseCamelCase; }
+    wxCheckBox* GetCheckBoxCaretOnVirtualSpace() { return m_checkBoxCaretOnVirtualSpace; }
+    wxCheckBox* GetCheckBoxAdjustScrollbarSize() { return m_checkBoxAdjustScrollbarSize; }
     EditorSettingsCaretBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsCaretBase();
 };

@@ -91,7 +91,7 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     m_sdbSizer2->Realize();
     
     SetName(wxT("_ImageExportDialog"));
-    SetSize(-1,-1);
+    SetSizeHints(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -136,7 +136,7 @@ _ThumbPane::_ThumbPane(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
     this->SetSizer(mainSizer);
     
     SetName(wxT("_ThumbPane"));
-    SetSize(500,300);
+    SetSizeHints(500,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -270,7 +270,7 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     bSizer24->Add(m_labelStatus, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     
     SetName(wxT("_SqlCommandPanel"));
-    SetSize(-1,-1);
+    SetSizeHints(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -351,7 +351,7 @@ _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxSt
     bSizer9->Add(m_button24, 1, wxALL|wxEXPAND, 5);
     
     SetName(wxT("_AdapterSelectDlg"));
-    SetSize(-1,-1);
+    SetSizeHints(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -398,7 +398,7 @@ _DbViewerPanel::_DbViewerPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
     bSizer28->Add(m_treeDatabases, 1, wxEXPAND, 5);
     
     SetName(wxT("_DbViewerPanel"));
-    SetSize(200,100);
+    SetSizeHints(200,100);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -640,7 +640,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     #endif
     
     SetName(wxT("_DBSettingsDialog"));
-    SetSize(-1,-1);
+    SetSizeHints(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -699,27 +699,16 @@ _ErdPanel::_ErdPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
         bBitmapLoaded = true;
     }
     
-    wxFlexGridSizer* fgSizer7 = new wxFlexGridSizer(0, 1, 0, 0);
-    fgSizer7->SetFlexibleDirection( wxBOTH );
-    fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer7->AddGrowableCol(0);
-    fgSizer7->AddGrowableRow(1);
-    this->SetSizer(fgSizer7);
+    wxBoxSizer* erdSizer = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(erdSizer);
     
     m_toolBarErd = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_toolBarErd->SetToolBitmapSize(wxSize(16,16));
     
-    fgSizer7->Add(m_toolBarErd, 0, wxEXPAND, 5);
-    
-    m_wxsfPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    fgSizer7->Add(m_wxsfPanel, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxBoxSizer* m_wxsfSizer = new wxBoxSizer(wxVERTICAL);
-    m_wxsfPanel->SetSizer(m_wxsfSizer);
+    erdSizer->Add(m_toolBarErd, 0, wxEXPAND, 5);
     
     SetName(wxT("_ErdPanel"));
-    SetSize(640,480);
+    SetSizeHints(640,480);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -850,7 +839,7 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     bSizer12->Add(m_btnOK, 1, wxALL|wxEXPAND, 5);
     
     SetName(wxT("_CreateForeignKey"));
-    SetSize(-1,-1);
+    SetSizeHints(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -916,8 +905,8 @@ _LogDialog::_LogDialog(wxWindow* parent, wxWindowID id, const wxString& title, c
     bSizer13->Add(m_button18, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT, 5);
     
     SetName(wxT("_LogDialog"));
-    SetMinClientSize(wxSize(640,460));
-    SetSize(640,460);
+    SetMinSize(wxSize(640,460));
+    SetSizeHints(640,460);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -1034,8 +1023,8 @@ _ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& ti
     fgSizer14->Add(m_btnOK, 0, wxALL|wxALIGN_RIGHT, 5);
     
     SetName(wxT("_ViewSettings"));
-    SetMinClientSize(wxSize(650,450));
-    SetSize(650,450);
+    SetMinSize(wxSize(650,450));
+    SetSizeHints(650,450);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -1170,7 +1159,7 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     bSizer20->Add(m_button25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     SetName(wxT("_ClassGenerateDialog"));
-    SetSize(-1,-1);
+    SetSizeHints(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -1266,8 +1255,8 @@ _CodePreviewDialog::_CodePreviewDialog(wxWindow* parent, wxWindowID id, const wx
     boxSizer10->Add(m_button14, 0, wxALL|wxALIGN_RIGHT, 5);
     
     SetName(wxT("_CodePreviewDialog"));
-    SetMinClientSize(wxSize(500,470));
-    SetSize(500,470);
+    SetMinSize(wxSize(500,470));
+    SetSizeHints(500,470);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -1472,8 +1461,8 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     boxSizer49->Add(m_button53, 0, wxALL, 5);
     
     SetName(wxT("_TableSettings"));
-    SetMinClientSize(wxSize(600,-1));
-    SetSize(-1,-1);
+    SetMinSize(wxSize(600,-1));
+    SetSizeHints(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

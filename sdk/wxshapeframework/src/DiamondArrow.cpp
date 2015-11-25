@@ -16,8 +16,8 @@
 
 #include "wx/wxsf/DiamondArrow.h"
 
-// arrow shape
-static const wxRealPoint arrow[4]={wxRealPoint(0,0), wxRealPoint(10,4), wxRealPoint(20,0), wxRealPoint(10,-4)};
+// diamond arrow shape
+static const wxRealPoint diamondArrow[4]={wxRealPoint(0,0), wxRealPoint(10,4), wxRealPoint(20,0), wxRealPoint(10,-4)};
 
 XS_IMPLEMENT_CLONABLE_CLASS(wxSFDiamondArrow, wxSFSolidArrow);
 
@@ -48,7 +48,7 @@ void wxSFDiamondArrow::Draw(const wxRealPoint &from, const wxRealPoint &to, wxDC
 {
 	wxPoint rarrow[4];
 	
-	TranslateArrow( rarrow, arrow, 4, from, to );
+	TranslateArrow( rarrow, diamondArrow, 4, from, to );
 
 	dc.SetPen(m_Pen);
     dc.SetBrush(m_Fill);

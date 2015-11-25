@@ -13,6 +13,7 @@
 
 #include <wx/dataobj.h>
 #include <wx/dnd.h>
+#include <wx/hashmap.h>
 
 #include <wx/wxsf/ShapeBase.h>
 #include <wx/wxsf/DiagramManager.h>
@@ -26,6 +27,8 @@
 #ifdef __WXMAC__ 
 #include <wx/printdlg.h> 
 #endif 
+
+WX_DECLARE_HASH_MAP( wxUIntPtr, wxRealPoint*, wxIntegerHash, wxIntegerEqual, PositionMap );
 
 /*! \brief XPM (mono-)bitmap which can be used in shape's shadow brush */
 extern const char* wxSFShadowBrush_xpm[];
@@ -208,6 +211,14 @@ public:
 		modeDND
 	};
 
+	/*! \brief Selection modes */
+	enum SELECTIONMODE
+	{
+		selectNORMAL,
+		selectADD,
+		selectREMOVE,
+	};
+
     /*! \brief Search mode flags for GetShapeAtPosition function */
 	enum SEARCHMODE
 	{
@@ -312,6 +323,16 @@ public:
 	    prnMAP_TO_DEVICE
 	};
 
+	enum PRECONNECTIONFINISHEDSTATE
+	{
+		/*! \brief Finish line connection. */
+		pfsOK,
+		/*! \brief Cancel line connection and abort the interactive connection. */
+		pfsFAILED_AND_CANCEL_LINE,
+		/*! \brief Cancel line connection and continue with the interactive connection. */
+		pfsFAILED_AND_CONTINUE_EDIT,
+	};
+
 	// public functions
 
     /*!
@@ -387,6 +408,24 @@ public:
      * \sa CreateConnection
      */
 	void StartInteractiveConnection(wxSFLineShape* shape, const wxPoint& pos, wxSF::ERRCODE *err = NULL);
+	 /*!
+     * \brief Start interactive connection creation from existing line object.
+     *
+     * This function switch the canvas to a mode in which a new shape connection
+     * can be created interactively (by mouse operations). Every connection must
+     * start and finish in some shape object or another connection. At the end of the
+     * process the OnConnectionFinished event handler is invoked so the user can
+     * set needed connection properties immediately.
+     *
+     * Function must be called from mouse event handler and the event must be passed
+     * to the function.
+     * \param shape Pointer to existing line shape object which will be used as a connection.
+	 * \param connectionPoint Initial connection point
+     * \param pos Position where to start
+	 * \param err Pointer to variable where operation result will be stored. Can be NULL.
+     * \sa CreateConnection
+     */
+	void StartInteractiveConnection(wxSFLineShape* shape, wxSFConnectionPoint* connectionPoint, const wxPoint& pos, wxSF::ERRCODE *err = NULL);
 	
     /*! \brief Abort interactive connection creation process */
 	void AbortInteractiveConnection();
@@ -494,10 +533,10 @@ public:
 	void PrintPreview(wxSFPrintout *preview, wxSFPrintout *printout = NULL);
 	/*! \brief Show page setup dialog for printing. */
 	void PageSetup();
-	#ifdef __WXMAC__
-	/*! \brief Show page margins setup dialog (available only for MAC). */
-	void PageMargins();
-	#endif
+	// #ifdef __WXMAC__
+	// /*! \brief Show page margins setup dialog (available only for MAC). */
+	// void PageMargins();
+	// #endif 
 
     /*!
      * \brief Convert device position to logical position.
@@ -517,6 +556,10 @@ public:
      */
 	wxPoint LP2DP(const wxPoint& pos) const;
 	wxRect LP2DP(const wxRect& rct) const;
+
+	/*!
+	*/
+	void UpdateShapeUnderCursorCache(const wxPoint& pos);
 
 	/*!
 	 * \brief Get shape under current mouse cursor position (fast implementation - use everywhere
@@ -822,11 +865,29 @@ public:
 	void ValidateSelection(ShapeList& selection);
 
 	/*!
-	 * \brief Function responsible for drawing of the canvas's content to given DC.
+	 * \brief Function responsible for drawing of the canvas's content to given DC. The default
+	 * implementation draws actual objects managed by assigned diagram manager.
 	 * \param dc Reference to device context where the shapes will be drawn to
-	 * \param fromPaint Set the argument to TRUE if the dc argument refers to the wxPaintDC instance
+	 * \param fromPaint Set the argument to TRUE if the dc argument refers to the wxPaintDC instance 
+	 * or derived classes (i.e. the function is called as a response to wxEVT_PAINT event)
 	 */
-	void DrawContent(wxDC& dc, bool fromPaint);
+	virtual void DrawContent(wxDC& dc, bool fromPaint);
+	/*!
+	 * \brief Function responsible for drawing of the canvas's background to given DC. The default
+	 * implementation draws canvas background and grid.
+	 * \param dc Reference to device context where the shapes will be drawn to
+	 * \param fromPaint Set the argument to TRUE if the dc argument refers to the wxPaintDC instance 
+	 * or derived classes (i.e. the function is called as a response to wxEVT_PAINT event)
+	 */
+	virtual void DrawBackground(wxDC& dc, bool fromPaint);
+	/*!
+	 * \brief Function responsible for drawing of the canvas's foreground to given DC. The default
+	 * do nothing.
+	 * \param dc Reference to device context where the shapes will be drawn to
+	 * \param fromPaint Set the argument to TRUE if the dc argument refers to the wxPaintDC instance 
+	 * or derived classes (i.e. the function is called as a response to wxEVT_PAINT event)
+	 */
+	virtual void DrawForeground(wxDC& dc, bool fromPaint);
 
     /*!
      * \brief Get reference to multiselection box
@@ -976,7 +1037,7 @@ public:
 	 * \return false if the generated event has been vetoed in this case,
 	 * the connection creation is cancelled
 	 */
-	virtual bool OnPreConnectionFinished(wxSFLineShape* connection);
+	virtual PRECONNECTIONFINISHEDSTATE OnPreConnectionFinished(wxSFLineShape* connection);
 
 	/*!
 	 * \brief Event handler called by the framework after any dragged shapes
@@ -1012,6 +1073,7 @@ protected:
 
 	// protected data members
 	MODE m_nWorkingMode;
+    SELECTIONMODE m_nSelectionMode;
 	wxSFCanvasSettings m_Settings;
 	static bool m_fEnableGC;
 
@@ -1021,6 +1083,8 @@ private:
 
 	// private data members
 
+	wxRealPoint m_selectionStart;
+    wxSFMultiSelRect m_shpSelection;
 	wxSFMultiSelRect m_shpMultiEdit;
 	static wxBitmap m_OutBMP;
 
@@ -1035,6 +1099,7 @@ private:
 	wxDataFormat m_formatShapes;
 
 	wxPoint m_nPrevMousePos;
+	PositionMap m_mapPrevPositions;
 	
 	wxRect m_nInvalidateRect;
 
@@ -1061,7 +1126,7 @@ private:
 	// private functions
 
 	/*! \brief Validate selection so the shapes in the given list can be processed by the clipboard functions */
-	void ValidateSelectionForClipboard(ShapeList& selection);
+	void ValidateSelectionForClipboard(ShapeList& selection, bool storeprevpos);
 	/*! \brief Append connections assigned to shapes in given list to this list as well */
 	void AppendAssignedConnections(wxSFShapeBase *shape, ShapeList& selection, bool childrenonly);
 	/*! \brief Initialize printing framework */
@@ -1074,6 +1139,11 @@ private:
 	void ClearTemporaries();
 	/*! \brief Assign give shape to parent at given location (if exists) */
 	void ReparentShape(wxSFShapeBase *shape, const wxPoint& parentpos);
+	
+	/*! \brief Store previous shape's position modified in ValidateSelectionForClipboard() function */
+	inline void StorePrevPosition(const wxSFShapeBase *shape);
+	/*! \brief Restore previously stored shapes' positions and clear the storage */
+	void RestorePrevPositions();
 
 	// private event handlers
 	/*!

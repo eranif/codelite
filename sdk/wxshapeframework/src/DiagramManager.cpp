@@ -26,7 +26,6 @@
 
 using namespace wxSFCommonFcn;
 
-// TODO: implement autolayout
 // TODO: implement better line X ellipse check
 
 WX_DEFINE_LIST(IDList);
@@ -35,21 +34,28 @@ XS_IMPLEMENT_CLONABLE_CLASS(wxSFDiagramManager, wxXmlSerializer);
 
 wxSFDiagramManager::wxSFDiagramManager()
 {
+	m_fIsModified = false;
     m_pShapeCanvas = NULL;
     m_lstIDPairs.DeleteContents(true);
 
-    m_sSFVersion =  wxT("1.12.1 beta");
+    m_sSFVersion =  wxT("1.15.1 beta");
 
     SetSerializerOwner(wxT("wxShapeFramework"));
     SetSerializerVersion(wxT("1.0"));
     SetSerializerRootName(wxT("chart"));
+	
+	m_arrAcceptedShapes.Add( wxT("All") );
+	m_arrAcceptedTopShapes.Add( wxT("All") );
 }
 
 wxSFDiagramManager::wxSFDiagramManager(const wxSFDiagramManager &obj)
 : wxXmlSerializer(obj)
 {
+	m_fIsModified = false;
 	m_pShapeCanvas = NULL;
 	m_sSFVersion = obj.m_sSFVersion;
+	m_arrAcceptedShapes = obj.m_arrAcceptedShapes;
+	m_arrAcceptedTopShapes = obj.m_arrAcceptedTopShapes;
 
     m_lstIDPairs.DeleteContents(true);
 }
@@ -103,10 +109,10 @@ wxSFShapeBase* wxSFDiagramManager::AddShape(wxClassInfo* shapeInfo, const wxPoin
             pShape = AddShape(pShape, (xsSerializable*)pParentShape, pos - Conv2Point( pParentShape->GetAbsolutePosition() ), sfINITIALIZE, saveState, err);
         }
         else
-            pShape = AddShape(pShape, GetRootItem(), pos, sfINITIALIZE, saveState, err);
+            pShape = AddShape(pShape, NULL, pos, sfINITIALIZE, saveState, err);
 
 
-		if( pParentShape )pParentShape->Update();
+		if( pParentShape ) pParentShape->Update();
 
         return pShape;
     }
@@ -132,12 +138,21 @@ wxSFShapeBase* wxSFDiagramManager::AddShape(wxSFShapeBase* shape, xsSerializable
                 shape->SetRelativePosition( Conv2RealPoint(pos) );
 
             // add parent shape to the data manager (serializer)
-            if(parent)
+            if( parent && parent != GetRootItem() )
             {
                 AddItem(parent, shape);
             }
             else
-                AddItem(GetRootItem(), shape);
+			{
+                if( IsTopShapeAccepted( shape->GetClassInfo()->GetClassName() ) ) AddItem(GetRootItem(), shape);
+				else
+				{
+					delete shape;
+					if( err ) *err = wxSF::errNOT_ACCEPTED;
+					
+					return NULL;
+				}
+			}
 
             // initialize added shape
 			if(initialize)
@@ -190,6 +205,8 @@ wxSFShapeBase* wxSFDiagramManager::AddShape(wxSFShapeBase* shape, xsSerializable
             }
 			
 			if( err ) *err = wxSF::errOK;
+			
+			m_fIsModified = true;
 		}
 		else
 		{
@@ -292,6 +309,8 @@ void wxSFDiagramManager::RemoveShape(wxSFShapeBase* shape, bool refresh)
         // remove the shape
 		RemoveItem(shape);
 		
+		m_fIsModified = true;
+		
         if( pParent ) pParent->Update();
 
 		if( refresh && m_pShapeCanvas ) m_pShapeCanvas->Refresh(false);
@@ -329,11 +348,13 @@ void wxSFDiagramManager::Clear()
 
 bool wxSFDiagramManager::SerializeToXml(const wxString& file, bool withroot)
 {
+	m_fIsModified = false;
     return wxXmlSerializer::SerializeToXml(file, withroot);
 }
 
 bool wxSFDiagramManager::SerializeToXml(wxOutputStream& outstream, bool withroot)
 {
+	m_fIsModified = false;
     return wxXmlSerializer::SerializeToXml(outstream, withroot);
 }
 
@@ -369,6 +390,7 @@ bool wxSFDiagramManager::DeserializeFromXml(wxInputStream& instream)
 		{
 			// read shape objects from XML recursively
 			DeserializeObjects(NULL, root);
+			m_fIsModified = false;
 			return true;
 		}
 		else
@@ -489,10 +511,27 @@ void wxSFDiagramManager::AcceptShape(const wxString& type)
         m_arrAcceptedShapes.Add(type);
     }
 }
+
 bool wxSFDiagramManager::IsShapeAccepted(const wxString& type)
 {
     if( m_arrAcceptedShapes.Index(type) != wxNOT_FOUND )return true;
     else if( m_arrAcceptedShapes.Index(wxT("All")) != wxNOT_FOUND )return true;
+    else
+        return false;
+}
+
+void wxSFDiagramManager::AcceptTopShape(const wxString& type)
+{
+    if(m_arrAcceptedTopShapes.Index(type) == wxNOT_FOUND)
+    {
+        m_arrAcceptedTopShapes.Add(type);
+    }
+}
+
+bool wxSFDiagramManager::IsTopShapeAccepted(const wxString& type)
+{
+    if( m_arrAcceptedTopShapes.Index(type) != wxNOT_FOUND )return true;
+    else if( m_arrAcceptedTopShapes.Index(wxT("All")) != wxNOT_FOUND )return true;
     else
         return false;
 }

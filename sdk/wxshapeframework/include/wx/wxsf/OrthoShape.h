@@ -21,6 +21,12 @@ class WXDLLIMPEXP_SF wxSFOrthoLineShape : public wxSFLineShape
 {
 public:
     XS_DECLARE_CLONABLE_CLASS(wxSFOrthoLineShape);
+	
+	/*! \brief Connection points used by the line segment */
+	typedef struct _SEGMENTCPS {
+		const wxSFConnectionPoint *cpSrc;
+		const wxSFConnectionPoint *cpTrg;
+	} SEGMENTCPS;
 
     /*! \brief Default constructor. */
     wxSFOrthoLineShape();
@@ -57,10 +63,11 @@ protected:
 	/**
 	 * \brief Draw one orthogonal line segment.
 	 * \param dc Device context
-	 * \param src Starting point of the ortho line segment.
-	 * \param trg Ending point of the ortho line segment.
+	 * \param src Starting point of the ortho line segment
+	 * \param trg Ending point of the ortho line segment
+	 * \param cps Connection points used by the line segment
 	 */
-	virtual void DrawLineSegment(wxDC& dc, const wxRealPoint& src, const wxRealPoint& trg);
+	virtual void DrawLineSegment(wxDC& dc, const wxRealPoint& src, const wxRealPoint& trg, const SEGMENTCPS& cps );
 
 	// protected functions
 	/**
@@ -69,24 +76,52 @@ protected:
 	 * \param trg Ending point of the ortho line segment
 	 * \param subsrc Starting point of the first part of ortho line segment
 	 * \param subtrg Ending point of the first part of ortho line segment
+	 * \param cps Connection points used by the line segment
 	 */
-	void GetFirstSubsegment( const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg );
+	void GetFirstSubsegment( const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg, const SEGMENTCPS& cps );
 	/**
 	 * \brief Get middle part of orthogonal line segment.
 	 * \param src Staring point of the ortho line segment
 	 * \param trg Ending point of the ortho line segment
 	 * \param subsrc Starting point of the second part of ortho line segment
 	 * \param subtrg Ending point of the second part of ortho line segment
+	 * \param cps Connection points used by the line segment
 	 */
-	void GetMiddleSubsegment( const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg );
+	void GetMiddleSubsegment( const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg, const SEGMENTCPS& cps );
 	/**
 	 * \brief Get last part of orthogonal line segment.
 	 * \param src Staring point of the ortho line segment
 	 * \param trg Ending point of the ortho line segment
 	 * \param subsrc Starting point of the third part of ortho line segment
 	 * \param subtrg Ending point of the third part of ortho line segment
+	 * \param cps Connection points used by the line segment
 	 */
-	void GetLastSubsegment( const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg );
+	void GetLastSubsegment( const wxRealPoint& src, const wxRealPoint& trg, wxRealPoint& subsrc, wxRealPoint& subtrg, const SEGMENTCPS& cps );
+	
+	/*!
+	 * \brief Get direction of the line segment.
+	 * \param src Staring point of the ortho line segment
+	 * \param trg Ending point of the ortho line segment
+	 * \param cps Connection points used by the line segment
+	 * \return Direction number
+	 */
+	double GetSegmentDirection(const wxRealPoint& src, const wxRealPoint& trg, const SEGMENTCPS& cps );
+	
+	/*!
+	 * \brief Determine which available connection points are used by given line segment.
+	 * \param src Potential source connection point (can be NULL)
+	 * \param trg Potential target connection point (can be NULL)
+	 * \param i Index of the line segment
+	 * \return Structure containing used connection points
+	 */
+	SEGMENTCPS GetUsedConnectionPoints( const wxSFConnectionPoint *src, const wxSFConnectionPoint *trg, size_t i) const;
+	
+	/*!
+	 * \brief Determine whether a line using give connection point should be drawn as two-segmented.
+	 * \param cps Used connection points
+	 * \return TRUE if the line should be just two-segmented
+	 */
+	bool IsTwoSegment( const SEGMENTCPS& cps);
 };
 
 #endif //_WXSFORTHOSHAPE_H

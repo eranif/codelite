@@ -66,8 +66,9 @@ protected:
 	 * \param dc Device context
 	 * \param src Starting point of the ortho line segment.
 	 * \param trg Ending point of the ortho line segment.
+	 * \param cps Connection points used by the line segment.
 	 */
-	virtual void DrawLineSegment(wxDC& dc, const wxRealPoint& src, const wxRealPoint& trg);
+	virtual void DrawLineSegment(wxDC& dc, const wxRealPoint& src, const wxRealPoint& trg, const SEGMENTCPS& cps );
 };
 
 #endif //_WXSFROUNDORTHOSHAPE_H

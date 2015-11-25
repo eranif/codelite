@@ -227,6 +227,7 @@ wxSize wxSFTextShape::GetTextExtent()
 			m_nLineHeight = (hd + e);
 			
             pGC->SetFont( wxNullFont, *wxBLACK );
+			delete pGC;
             #endif
         }
         else

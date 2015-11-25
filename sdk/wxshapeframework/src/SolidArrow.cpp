@@ -17,8 +17,8 @@
 #include "wx/wxsf/SolidArrow.h"
 #include "wx/wxsf/CommonFcn.h"
 
-// arrow shape
-static const wxRealPoint arrow[3]={wxRealPoint(0,0), wxRealPoint(10,4), wxRealPoint(10,-4)};
+// solid arrow shape
+static const wxRealPoint solidArrow[3]={wxRealPoint(0,0), wxRealPoint(10,4), wxRealPoint(10,-4)};
 
 using namespace wxSFCommonFcn;
 
@@ -69,7 +69,7 @@ void wxSFSolidArrow::Draw(const wxRealPoint &from, const wxRealPoint &to, wxDC& 
 {
 	wxPoint rarrow[3];
 	
-	TranslateArrow( rarrow, arrow, 3, from, to );
+	TranslateArrow( rarrow, solidArrow, 3, from, to );
 
 	dc.SetPen(m_Pen);
     dc.SetBrush(m_Fill);

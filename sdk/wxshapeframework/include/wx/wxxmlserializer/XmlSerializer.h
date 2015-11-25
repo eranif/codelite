@@ -747,10 +747,32 @@ public:
 	
 	// overloaded operators
     /*!
-     * \brief Add serializable object to the serializer's root.
+     * \brief Add serializable object to the serializer's root node.
      * \param obj Pointer to serializable object
+	 * \return Reference to the serializer
      */
-	void operator<< (xsSerializable *obj) { if( obj ) this->AddItem( (xsSerializable*)NULL, obj); }
+	wxXmlSerializer& operator<< (xsSerializable *obj) { 
+		if( obj ) this->AddItem( (xsSerializable*)NULL, obj);
+		return *this;
+	}
+	/*!
+     * \brief Add serializable objects stored in source serializable list to the serializer's root node.
+     * \param src Reference to source serializable list
+	 * \return Reference to the serializer
+     */
+	wxXmlSerializer& operator<< (SerializableList &src) { 
+		for( SerializableList::iterator it = src.begin(); it != src.end(); ++it ) 
+			this->AddItem( (xsSerializable*)NULL, *it); 
+		return *this;
+	}
+	/*!
+     * \brief Get all items managed by the serializer (note that the items will be stored in given
+	 * target list in a row regardless their original hierarchy).
+     * \param dest Reference to target serializable list
+     */
+	void operator>> (SerializableList &dest) {
+		this->GetItems(CLASSINFO(xsSerializable), dest);
+	}
 
 protected:
     // protected data members
@@ -972,7 +994,7 @@ public:
 	void FromString(const wxString& val)
 	{
 		xsPropertyIO *pIO = wxXmlSerializer::m_mapPropertyIOHandlers[m_sDataType];
-		if(pIO) return pIO->SetValueStr(this, val);
+		if(pIO) pIO->SetValueStr(this, val);
 	}
 	
 	/**

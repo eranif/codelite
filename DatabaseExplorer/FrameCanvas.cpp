@@ -31,8 +31,8 @@
 
 #include <wx/xrc/xmlres.h>
 
-FrameCanvas::FrameCanvas(wxSFDiagramManager* manager,IDbAdapter* dbAdapter, wxWindow* parent, wxPanel* parentPanel, wxWindowID id):
-	wxSFShapeCanvas(manager,parent,id, wxDefaultPosition, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxSTATIC_BORDER) {
+FrameCanvas::FrameCanvas(wxSFDiagramManager* manager,IDbAdapter* dbAdapter, wxPanel* parentPanel, wxWindowID id):
+	wxSFShapeCanvas(manager, parentPanel, id, wxDefaultPosition, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxSTATIC_BORDER) {
 	m_pParentPanel = (ErdPanel*) parentPanel;
 
 	m_pDbAdapter = dbAdapter;
@@ -403,7 +403,7 @@ wxString FrameCanvas::GetSqlScript() {
 	return retStr;
 }
 
-bool FrameCanvas::OnPreConnectionFinished(wxSFLineShape* connection) {
+wxSFShapeCanvas::PRECONNECTIONFINISHEDSTATE FrameCanvas::OnPreConnectionFinished(wxSFLineShape* connection) {
 	wxSFTextShape* pText = wxDynamicCast(GetShapeUnderCursor(), wxSFTextShape);
 	if (pText) {
 		m_dstCol = pText->GetText().substr(3);
@@ -418,7 +418,7 @@ bool FrameCanvas::OnPreConnectionFinished(wxSFLineShape* connection) {
 
 	m_pParentPanel->SetToolMode(ErdPanel::modeDESIGN);
 
-	return false;
+	return pfsFAILED_AND_CANCEL_LINE;
 }
 void FrameCanvas::OnPaste(const ShapeList& pasted)
 {

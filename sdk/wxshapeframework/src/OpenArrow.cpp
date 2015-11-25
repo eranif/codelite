@@ -17,8 +17,8 @@
 #include "wx/wxsf/OpenArrow.h"
 #include "wx/wxsf/CommonFcn.h"
 
-// arrow shape
-static const wxRealPoint arrow[3]={wxRealPoint(0,0), wxRealPoint(10,4), wxRealPoint(10,-4)};
+// open arrow shape
+static const wxRealPoint openArrow[3]={wxRealPoint(0,0), wxRealPoint(10,4), wxRealPoint(10,-4)};
 
 using namespace wxSFCommonFcn;
 
@@ -60,7 +60,7 @@ void wxSFOpenArrow::Draw(const wxRealPoint &from, const wxRealPoint &to, wxDC& d
 {
 	wxPoint rarrow[3];
 	
-	TranslateArrow( rarrow, arrow, 3, from, to );
+	TranslateArrow( rarrow, openArrow, 3, from, to );
 
 	dc.SetPen( m_Pen );
 	dc.DrawLine(rarrow[0], rarrow[1]);

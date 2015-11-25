@@ -170,6 +170,14 @@ public:
 		sfsPROPAGATE_DRAGGING = 4096,
 		/*! \brief Propagate selection to parent shape (it means this shape cannot be selected because its focus is redirected to its parent shape) */
 		sfsPROPAGATE_SELECTION = 8192,
+		/*! \brief Propagate interactive connection request to parent shape (it means this shape cannot be connected interactively because this feature is redirected to its parent shape) */
+		sfsPROPAGATE_INTERACTIVE_CONNECTION = 16384,
+		/*! \brief Do no resize the shape to fit its children automatically */
+		sfsNO_FIT_TO_CHILDREN = 32768,
+		/*! \brief Propagate hovering to parent. */
+		sfsPROPAGATE_HOVERING = 65536,
+		/*! \brief Propagate hovering to parent. */
+		sfsPROPAGATE_HIGHLIGHTING = 131072,
 		/*! \brief Default shape style */
 		sfsDEFAULT_SHAPE_STYLE = sfsPARENT_CHANGE | sfsPOSITION_CHANGE | sfsSIZE_CHANGE | sfsHOVERING | sfsHIGHLIGHTING | sfsSHOW_HANDLES | sfsALWAYS_INSIDE | sfsDELETE_USER_DATA
 	};
@@ -718,9 +726,10 @@ public:
 	 * \brief Assign connection point of given type to the shape.
 	 * \param type Connection point type
 	 * \param persistent TRUE if the connection point should be serialized
+	 * \return Pointer to the new connection point
 	 * \sa wxSFConnectionPoint::CPTYPE
 	 */
-	void AddConnectionPoint(wxSFConnectionPoint::CPTYPE type, bool persistent = true);
+	wxSFConnectionPoint* AddConnectionPoint(wxSFConnectionPoint::CPTYPE type, bool persistent = true);
 	/*!
 	 * \brief Assigned given connection point to the shape.
 	 * \param cp Pointer to connection point (shape will take the ownership)
@@ -732,8 +741,9 @@ public:
 	 * \param relpos Relative position in percentages
 	 * \param id Optional connection point ID
 	 * \param persistent TRUE if the connection point should be serialized
+	 * \return Pointer to the new connection point
 	 */
-	void AddConnectionPoint(const wxRealPoint& relpos, long id = -1, bool persistent = true);
+	wxSFConnectionPoint* AddConnectionPoint(const wxRealPoint& relpos, long id = -1, bool persistent = true);
 	/*!
 	 * \brief Remove connection point of given type from the shape (if pressent).
 	 * \param type Connection point type

@@ -85,6 +85,10 @@ void wxSFAutoLayout::Layout(ShapeList& shapes, const wxString& algname)
 	wxSFLayoutAlgorithm *pAlg = m_mapAlgorithms[ algname ];
 	if( pAlg )
 	{
+		ShapeList::compatibility_iterator it = shapes.GetFirst();
+		if( it && it->GetData() && it->GetData()->GetShapeManager() ) {
+			it->GetData()->GetShapeManager()->SetModified( true );
+		}
 		pAlg->DoLayout( shapes );
 	}
 }
@@ -114,6 +118,7 @@ void wxSFAutoLayout::Layout(wxSFDiagramManager& manager, const wxString& algname
 		pAlg->DoLayout( lstShapes );
 		
 		manager.MoveShapesFromNegatives();
+		manager.SetModified( true );
 		
 		if( manager.GetShapeCanvas() ) UpdateCanvas( manager.GetShapeCanvas() );
 	}

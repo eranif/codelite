@@ -38,7 +38,7 @@ project( "CodeLite" )
 ## Generate compile_commands.json file for code completion
 set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
 
-if( UNIX )
+if( UNIX AND NOT APPLE)
     set( CMAKE_LIBRARY_ARCHITECTURE x86_64-linux-gnu ) # add search path needed by (at least) libssh and gtk2 libraries
 endif()
 

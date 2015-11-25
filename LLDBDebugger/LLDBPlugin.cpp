@@ -66,7 +66,7 @@ static LLDBPlugin* thePlugin = NULL;
     }
 
 // Define the plugin entry point
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(thePlugin == 0) {
         thePlugin = new LLDBPlugin(manager);
@@ -74,7 +74,7 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo GetPluginInfo()
 {
     PluginInfo info;
     info.SetAuthor(wxT("eran"));
@@ -84,7 +84,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 LLDBPlugin::LLDBPlugin(IManager* manager)
     : IPlugin(manager)

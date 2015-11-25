@@ -16,7 +16,7 @@
 static HelpPlugin* thePlugin = NULL;
 
 // Define the plugin entry point
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(thePlugin == 0) {
         thePlugin = new HelpPlugin(manager);
@@ -24,7 +24,7 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo GetPluginInfo()
 {
     PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
@@ -34,7 +34,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 HelpPlugin::HelpPlugin(IManager* manager)
     : IPlugin(manager)
@@ -150,6 +150,8 @@ wxString HelpPlugin::DoBuildQueryString()
         break;
     case FileExtManager::TypeJava:
         language << settings.GetJavaDocset();
+        break;
+    default:
         break;
     }
 

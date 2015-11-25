@@ -55,6 +55,13 @@
 #define EXPORT
 #endif
 
+#if defined(__WXMSW__) || defined(__WXGTK__)
+#define CL_PLUGIN_API extern "C" EXPORT
+#else 
+// OSX
+#define CL_PLUGIN_API extern "C" EXPORT
+#endif
+
 class IManager;
 
 /**

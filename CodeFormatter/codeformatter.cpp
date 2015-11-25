@@ -50,7 +50,7 @@
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
-extern "C" EXPORT char* STDCALL AStyleMain(const char* pSourceIn,
+extern "C" char* STDCALL AStyleMain(const char* pSourceIn,
                                            const char* pOptions,
                                            void(STDCALL* fpError)(int, const char*),
                                            char*(STDCALL* fpAlloc)(unsigned long));
@@ -77,7 +77,7 @@ static CodeFormatter* theFormatter = NULL;
 
 // Allocate the code formatter on the heap, it will be freed by
 // the application
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(theFormatter == 0) {
         theFormatter = new CodeFormatter(manager);
@@ -85,7 +85,7 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
     return theFormatter;
 }
 
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo GetPluginInfo()
 {
     PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
@@ -95,7 +95,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 CodeFormatter::CodeFormatter(IManager* manager)
     : IPlugin(manager)

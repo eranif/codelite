@@ -556,7 +556,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "res/eclipse.png"
+           "m_path": "../bitmaps/16-eclipse.png"
           }, {
            "type": "filePicker",
            "m_label": "Disabled-Bitmap File",

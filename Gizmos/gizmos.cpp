@@ -182,17 +182,17 @@ clToolBar* WizardsPlugin::CreateToolBar(wxWindow* parent)
 //
 //		if (size == 24) {
 //			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."),
-//wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("Open Gizmos quick menu"));
+// wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("Open Gizmos quick menu"));
 //		} else {
 //			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."),
-//wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("Open Gizmos quick menu"));
+// wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("Open Gizmos quick menu"));
 //		}
 //
 //		// When using AUI, make this toolitem a dropdown button
 //#if USE_AUI_TOOLBAR
 //		tb->SetToolDropDown(XRCID("gizmos_options"), true);
 //		m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN,
-//wxAuiToolBarEventHandler(WizardsPlugin::OnGizmosAUI), NULL, (wxEvtHandler*)this);
+// wxAuiToolBarEventHandler(WizardsPlugin::OnGizmosAUI), NULL, (wxEvtHandler*)this);
 //#endif
 //		tb->Realize();
 //	}
@@ -471,7 +471,7 @@ void WizardsPlugin::DoCreateNewClass()
     dlg->Destroy();
 }
 
-void WizardsPlugin::CreateClass(const NewClassInfo& info)
+void WizardsPlugin::CreateClass(NewClassInfo& info)
 {
     // Start by finding the best choice for tabs/spaces.
     // Use the preference for the target VirtualDir, not the active project, in case the user perversely adds to an
@@ -494,7 +494,7 @@ void WizardsPlugin::CreateClass(const NewClassInfo& info)
         blockGuard.MakeUpper();
         blockGuard << (info.hppHeader ? wxT("_HPP") : wxT("_H"));
     }
-    
+
     wxString headerExt = (info.hppHeader ? wxT(".hpp") : wxT(".h"));
 
     wxString srcFile;
@@ -517,7 +517,7 @@ void WizardsPlugin::CreateClass(const NewClassInfo& info)
         header << wxT("#define ") << blockGuard << wxT("\n");
         header << wxT("\n");
     }
-    
+
     wxString closeMethod;
     if(info.isInline)
         closeMethod << wxT('\n') << separator << wxT("{\n") << separator << wxT("}\n");
@@ -528,12 +528,14 @@ void WizardsPlugin::CreateClass(const NewClassInfo& info)
     if(info.parents.empty() == false) {
         for(size_t i = 0; i < info.parents.size(); i++) {
 
-            ClassParentInfo pi = info.parents.at(i);
+            const ClassParentInfo& pi = info.parents.at(i);
 
             // Include the header name only (no paths)
             wxFileName includeFileName(pi.fileName);
-            header << wxT("#include \"") << includeFileName.GetFullName() << wxT("\" // Base class: ") << pi.name
-                   << wxT("\n");
+            if(!pi.fileName.IsEmpty()) {
+                header << wxT("#include \"") << includeFileName.GetFullName() << wxT("\" // Base class: ") << pi.name
+                       << wxT("\n");
+            }
         }
         header << wxT("\n");
     }
@@ -603,7 +605,7 @@ void WizardsPlugin::CreateClass(const NewClassInfo& info)
     for(unsigned int i = 0; i < info.namespacesList.Count(); i++) {
         header << wxT("}\n\n");
     }
-    
+
     if(!info.usePragmaOnce) {
         // Close the block guard
         header << wxT("#endif // ") << blockGuard << wxT("\n");
@@ -623,25 +625,35 @@ void WizardsPlugin::CreateClass(const NewClassInfo& info)
     // source file
     //----------------------------------------------------
     if(!info.isInline) {
-        cpp << wxT("#include \"") << info.fileName << headerExt << wxT("\"\n\n");
-
-        // Open namespace
+        wxString nsPrefix;
         if(!info.namespacesList.IsEmpty()) {
-            WriteNamespacesDeclaration(info.namespacesList, cpp);
+            for(size_t i = 0; i < info.namespacesList.size(); ++i) {
+                nsPrefix << info.namespacesList.Item(i) << "::";
+            }
         }
+
+        cpp << wxT("#include \"") << info.fileName << headerExt << wxT("\"\n");
 
         if(info.isSingleton) {
-            cpp << info.name << wxT("* ") << info.name << wxT("::ms_instance = 0;\n\n");
+            cpp << "#include <cstdlib> // NULL \n\n";
+            cpp << nsPrefix << info.name << wxT("* ") << nsPrefix << info.name << wxT("::ms_instance = NULL;\n\n");
+        } else {
+            cpp << "\n";
         }
+
         // ctor/dtor
-        cpp << info.name << wxT("::") << info.name << wxT("()\n");
+        cpp << nsPrefix << info.name << wxT("::") << info.name << wxT("()\n");
         cpp << wxT("{\n}\n\n");
-        cpp << info.name << wxT("::~") << info.name << wxT("()\n");
+        cpp << nsPrefix << info.name << wxT("::~") << info.name << wxT("()\n");
         cpp << wxT("{\n}\n\n");
+
+        // Prepend the ns to the class name (we do this after the ctor/dtor impl)
+        info.name.Prepend(nsPrefix);
+
         if(info.isSingleton) {
             cpp << info.name << wxT("* ") << info.name << wxT("::Instance()\n");
             cpp << wxT("{\n");
-            cpp << separator << wxT("if (ms_instance == 0) {\n");
+            cpp << separator << wxT("if (ms_instance == NULL) {\n");
             cpp << separator << separator << wxT("ms_instance = new ") << info.name << wxT("();\n");
             cpp << separator << wxT("}\n");
             cpp << separator << wxT("return ms_instance;\n");
@@ -652,21 +664,11 @@ void WizardsPlugin::CreateClass(const NewClassInfo& info)
             cpp << separator << wxT("if (ms_instance) {\n");
             cpp << separator << separator << wxT("delete ms_instance;\n");
             cpp << separator << wxT("}\n");
-            cpp << separator << wxT("ms_instance = 0;\n");
+            cpp << separator << wxT("ms_instance = NULL;\n");
             cpp << wxT("}\n\n");
         }
 
         cpp << DoGetVirtualFuncImpl(info);
-
-        // Close namespaces
-        if(info.namespacesList.Count()) {
-            cpp << wxT(
-                '\n'); // Thow in an initial \n to separate the first namespace '}' from the previous function's one
-        }
-
-        for(unsigned int i = 0; i < info.namespacesList.Count(); i++) {
-            cpp << wxT("}\n\n");
-        }
 
         file.Open(srcFile, wxT("w+b"));
         file.Write(cpp);

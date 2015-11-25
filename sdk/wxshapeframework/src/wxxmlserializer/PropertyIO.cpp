@@ -161,7 +161,7 @@ wxString xsDoublePropIO::ToString(const double& value)
 {
     wxString sVal;
 
-    if( wxIsNaN(value) )
+    if( std::isnan(value) )
     {
         sVal = wxT("NAN");
     }
@@ -218,7 +218,7 @@ XS_DEFINE_IO_HANDLER(float, xsFloatPropIO);
 wxString xsFloatPropIO::ToString(const float& value)
 {
     wxString sVal;
-    if( wxIsNaN(value) )
+    if( std::isnan(value) )
     {
         sVal = wxT("NAN");
     }

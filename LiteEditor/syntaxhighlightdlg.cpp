@@ -136,6 +136,7 @@ void SyntaxHighlightDlg::DoUpdatePreview()
     m_stcPreview->SetText(sampleText);
     m_stcPreview->HideSelection(true);
     m_stcPreview->SetEditable(false);
+    ::clRecalculateSTCHScrollBar(m_stcPreview);
 }
 
 void SyntaxHighlightDlg::OnButtonOK(wxCommandEvent& event)

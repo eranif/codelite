@@ -59,14 +59,14 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah, patched by Stefan Roesch"));
     info.SetName(CSCOPE_NAME);
     info.SetDescription(_("CScope Integration for CodeLite"));
     info.SetVersion(wxT("v1.1"));
-    return info;
+    return &info;
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }

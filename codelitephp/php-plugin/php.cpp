@@ -53,14 +53,14 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("The CodeLite Team"));
     info.SetName(wxT("PHP"));
     info.SetDescription(_("Enable PHP support for codelite IDE"));
     info.SetVersion(wxT("v1.0"));
-    return info;
+    return &info;
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }

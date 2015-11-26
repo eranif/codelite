@@ -64,15 +64,15 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
     return theGismos;
 }
 
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Wizards"));
     info.SetDescription(_("Wizards Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets "
                           "Wizard, new Plugin Wizard"));
     info.SetVersion(wxT("v1.1"));
-    return info;
+    return &info;
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }

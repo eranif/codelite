@@ -85,14 +85,14 @@ wxString wxbuildinfo()
     return wxbuild;
 }
 
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Václav Špruček, Michal Bližňák, Tomas Bata University in Zlin, www.fai.utb.cz"));
     info.SetName(wxT("CallGraph"));
     info.SetDescription(_("Create application call graph from profiling information provided by gprof tool."));
     info.SetVersion(wxT("v1.1.0"));
-    return info;
+    return &info;
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion()

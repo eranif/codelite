@@ -69,14 +69,14 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 // ------------------------------------------------------------
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Frank Lichtner"));
     info.SetName(wxT("SpellCheck"));
     info.SetDescription(_("CodeLite spell checker"));
     info.SetVersion(wxT("v1.6"));
-    return info;
+    return &info;
 }
 // ------------------------------------------------------------
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }

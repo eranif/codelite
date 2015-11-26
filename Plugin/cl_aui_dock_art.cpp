@@ -226,7 +226,7 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(DrawingUtils::GetStippleBrush());
+    dc.SetBrush(DrawingUtils::GetAUIPaneBGColour());
     dc.DrawRectangle(rect);
 }
 

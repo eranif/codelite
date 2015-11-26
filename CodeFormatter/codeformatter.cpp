@@ -85,14 +85,14 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
     return theFormatter;
 }
 
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Source Code Formatter"));
     info.SetDescription(_("Source Code Formatter (Supports C/C++/Obj-C/JavaScript/PHP files)"));
     info.SetVersion(wxT("v2.0"));
-    return info;
+    return &info;
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }

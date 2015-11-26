@@ -131,16 +131,16 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
  *
  * @return Plugin info.
  */
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
 
     info.SetAuthor(L"Jiří Fatka");
     info.SetName("CMakePlugin");
     info.SetDescription(_("CMake integration for CodeLite"));
     info.SetVersion("0.8");
 
-    return info;
+    return &info;
 }
 
 /* ************************************************************************ */

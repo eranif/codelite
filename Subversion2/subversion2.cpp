@@ -129,14 +129,14 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Subversion"));
     info.SetDescription(_("Subversion plugin for codelite2.0 based on the svn command line tool"));
     info.SetVersion(wxT("v2.0"));
-    return info;
+    return &info;
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }

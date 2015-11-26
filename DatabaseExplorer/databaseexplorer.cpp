@@ -86,14 +86,14 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
     info.SetName(_("DatabaseExplorer"));
     info.SetDescription(_("DatabaseExplorer for CodeLite"));
     info.SetVersion(DBE_VERSION);
-    return info;
+    return &info;
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }

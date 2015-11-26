@@ -85,14 +85,14 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 /*******************************************************************************/
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("René Kraus"));
     info.SetName(wxT("Git"));
     info.SetDescription(_("Simple GIT plugin"));
     info.SetVersion(wxT("v1.1.0"));
-    return info;
+    return &info;
 }
 /*******************************************************************************/
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }

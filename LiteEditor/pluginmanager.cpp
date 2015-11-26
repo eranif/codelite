@@ -225,9 +225,9 @@ void PluginManager::Load()
             }
 
             // Check if this dll can be loaded
-            PluginInfo pluginInfo = pfnGetPluginInfo();
+            PluginInfo* pluginInfo = pfnGetPluginInfo();
 
-            wxString pname = pluginInfo.GetName();
+            wxString pname = pluginInfo->GetName();
             pname.MakeLower().Trim().Trim(false);
 
             // Check the policy
@@ -238,11 +238,11 @@ void PluginManager::Load()
             }
 
             // Add the plugin information
-            m_pluginsData.AddPlugin(pluginInfo);
+            m_pluginsData.AddPlugin((*pluginInfo));
 
             // Can we load it?
-            if(!m_pluginsData.CanLoad(pluginInfo.GetName())) {
-                CL_WARNING(wxT("Plugin ") + pluginInfo.GetName() + wxT(" is not enabled"));
+            if(!m_pluginsData.CanLoad(pluginInfo->GetName())) {
+                CL_WARNING(wxT("Plugin ") + pluginInfo->GetName() + wxT(" is not enabled"));
                 continue;
             }
 
@@ -254,7 +254,7 @@ void PluginManager::Load()
                     CL_WARNING(dl->GetError());
                 }
 
-                m_pluginsData.DisablePlugin(pluginInfo.GetName());
+                m_pluginsData.DisablePlugin(pluginInfo->GetName());
                 continue;
             }
 

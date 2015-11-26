@@ -39,14 +39,14 @@ CL_PLUGIN_API IPlugin *CreatePlugin(IManager *manager)
     return thePlugin;
 }
 
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Diff Plugin"));
     info.SetDescription(_("CodeLite Diff Plugin"));
     info.SetVersion(wxT("v1.0"));
-    return info;
+    return &info;
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion()

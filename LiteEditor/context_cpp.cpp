@@ -119,7 +119,8 @@ static bool IsHeader(const wxString& ext)
         return;                                        \
     }
 
-struct SFileSort {
+struct SFileSort
+{
     bool operator()(const wxFileName& one, const wxFileName& two)
     {
         return two.GetFullName().Cmp(one.GetFullName()) > 0;
@@ -660,16 +661,15 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
     }
 
     // check to see if this file is a workspace file
-    AddIncludeFileDlg* dlg = new AddIncludeFileDlg(clMainFrame::Get(), choice, rCtrl.GetText(), FindLineToAddInclude());
-    if(dlg->ShowModal() == wxID_OK) {
+    AddIncludeFileDlg dlg(clMainFrame::Get(), choice, rCtrl.GetText(), FindLineToAddInclude());
+    if(dlg.ShowModal() == wxID_OK) {
         // add the line to the current document
-        wxString lineToAdd = dlg->GetLineToAdd();
-        int line = dlg->GetLine();
+        wxString lineToAdd = dlg.GetLineToAdd();
+        int line = dlg.GetLine();
 
         long pos = rCtrl.PositionFromLine(line);
         rCtrl.InsertText(pos, lineToAdd + rCtrl.GetEolString());
     }
-    dlg->Destroy();
 }
 
 bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wxString* fileNameUpToCaret)
@@ -796,7 +796,8 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<< CodeCompletion API - END
 //=============================================================================
 
-struct ContextCpp_ClientData : public wxClientData {
+struct ContextCpp_ClientData : public wxClientData
+{
     TagEntryPtr m_ptr;
 
     ContextCpp_ClientData(TagEntryPtr ptr) { m_ptr = ptr; }
@@ -957,49 +958,48 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
 
     others.clear();
     wxString ext = rhs.GetExt();
-    wxArrayString exts;
+    wxStringSet_t exts;
 
     // replace the file extension
     if(FileExtManager::GetType(rhs.GetFullName()) == FileExtManager::TypeSourceC ||
        FileExtManager::GetType(rhs.GetFullName()) == FileExtManager::TypeSourceCpp) {
         // try to find a header file
-        exts.Add("h");
-        exts.Add("hpp");
-        exts.Add("hxx");
-        exts.Add("h++");
-        exts.Add("hh");
+        exts.insert("h");
+        exts.insert("hpp");
+        exts.insert("hxx");
+        exts.insert("h++");
+        exts.insert("hh");
 
     } else {
         // try to find a implementation file
-        exts.Add("cpp");
-        exts.Add("cxx");
-        exts.Add("cc");
-        exts.Add("c++");
-        exts.Add("c");
-        exts.Add("ipp");
+        exts.insert("cpp");
+        exts.insert("cxx");
+        exts.insert("cc");
+        exts.insert("c++");
+        exts.insert("c");
+        exts.insert("ipp");
     }
 
     // Try to locate a file in the same folder first
-    for(size_t i = 0; i < exts.size(); ++i) {
+    std::for_each(exts.begin(), exts.end(), [&](const wxString& ext) {
         wxFileName otherFile = rhs;
-        otherFile.SetExt(exts.Item(i));
+        otherFile.SetExt(ext);
         if(otherFile.FileExists()) {
             others.insert(otherFile.GetFullPath());
         }
-    }
+    });
 
     // if we found a match on the same folder, don't bother continue searching
     if(others.empty()) {
-        // Check the workspace
+
+        // Get a list of workspace files
         std::vector<wxFileName> files;
         ManagerST::Get()->GetWorkspaceFiles(files, true);
 
-        for(size_t j = 0; j < exts.GetCount(); j++) {
-            wxFileName otherFile = rhs;
-            otherFile.SetExt(exts.Item(j));
-            if(otherFile.FileExists()) {
-                // we got a match
-                others.insert(otherFile.GetFullPath());
+        for(size_t i = 0; i < files.size(); ++i) {
+            const wxFileName& workspaceFile = files.at(i);
+            if((workspaceFile.GetName() == rhs.GetName()) && exts.count(workspaceFile.GetExt().Lower())) {
+                others.insert(workspaceFile.GetFullPath());
             }
         }
     }
@@ -2491,12 +2491,13 @@ void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryP
         cppWords = lexPtr->GetKeyWords(1);
 
     } else {
-        cppWords = "abstract boolean break byte case catch char class "
-                   "const continue debugger default delete do double else enum export extends "
-                   "final finally float for function goto if implements import in instanceof "
-                   "int interface long native new package private protected public "
-                   "return short static super switch synchronized this throw throws "
-                   "transient try typeof var void volatile while with";
+        cppWords =
+            "abstract boolean break byte case catch char class "
+            "const continue debugger default delete do double else enum export extends "
+            "final finally float for function goto if implements import in instanceof "
+            "int interface long native new package private protected public "
+            "return short static super switch synchronized this throw throws "
+            "transient try typeof var void volatile while with";
     }
 
     wxString s1(word);

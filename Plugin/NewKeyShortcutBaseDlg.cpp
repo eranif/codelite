@@ -24,17 +24,17 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    bSizer3 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer3);
     
     m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     bSizer3->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
     
-    bSizer5 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer5);
     
-    flexGridSizer8 = new wxFlexGridSizer(0, 3, 0, 0);
+    wxFlexGridSizer* flexGridSizer8 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer8->SetFlexibleDirection( wxBOTH );
     flexGridSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer8->AddGrowableCol(1);
@@ -57,6 +57,7 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     m_textCtrl1 = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER);
     m_textCtrl1->SetToolTip(_("Hit any keyboard key. Don't use the modifier keys (e.g. 'Shift') here, use the checkboxes below"));
+    m_textCtrl1->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrl1->SetHint(wxT(""));
     #endif
@@ -72,11 +73,11 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer8->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    bSizer6 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer6 = new wxBoxSizer(wxHORIZONTAL);
     
     flexGridSizer8->Add(bSizer6, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_checkBoxCtrl = new wxCheckBox(m_panel1, wxID_ANY, _("Ctrl/Cmd"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxCtrl = new wxCheckBox(m_panel1, wxID_ANY, _("Ctrl"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxCtrl->SetValue(false);
     
     bSizer6->Add(m_checkBoxCtrl, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
@@ -91,25 +92,28 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer6->Add(m_checkBoxShift, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer22 = new wxStdDialogButtonSizer();
     
-    bSizer3->Add(bSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer3->Add(m_stdBtnSizer22, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
-    m_buttonOk = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonOk->SetDefault();
+    m_button24 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button24->SetDefault();
+    m_stdBtnSizer22->AddButton(m_button24);
     
-    bSizer4->Add(m_buttonOk, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer4->Add(m_buttonCancel, 0, wxALL, 5);
+    m_button26 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer22->AddButton(m_button26);
+    m_stdBtnSizer22->Realize();
     
     SetName(wxT("NewKeyShortcutBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

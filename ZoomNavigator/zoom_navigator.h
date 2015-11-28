@@ -34,8 +34,11 @@ protected:
     wxColourPickerCtrl* m_colourPickerHighlightColour;
     wxStaticText* m_staticText22;
     wxSpinCtrl* m_spinCtrlZoomFactor;
-    wxButton* m_button6;
-    wxButton* m_button8;
+    wxStaticText* m_staticText26;
+    wxCheckBox* m_checkBoxUseVScrollbar;
+    wxStdDialogButtonSizer* m_stdBtnSizer30;
+    wxButton* m_button32;
+    wxButton* m_button34;
 
 protected:
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
@@ -46,9 +49,9 @@ public:
     wxColourPickerCtrl* GetColourPickerHighlightColour() { return m_colourPickerHighlightColour; }
     wxStaticText* GetStaticText22() { return m_staticText22; }
     wxSpinCtrl* GetSpinCtrlZoomFactor() { return m_spinCtrlZoomFactor; }
-    wxButton* GetButton6() { return m_button6; }
-    wxButton* GetButton8() { return m_button8; }
-    znSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("ZoomNavigator Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    wxStaticText* GetStaticText26() { return m_staticText26; }
+    wxCheckBox* GetCheckBoxUseVScrollbar() { return m_checkBoxUseVScrollbar; }
+    znSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("ZoomNavigator Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~znSettingsDlgBase();
 };
 

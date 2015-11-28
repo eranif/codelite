@@ -1,14 +1,17 @@
 #include "WebToolsConfig.h"
 #include "json_node.h"
+#include "NodeJSLocator.h"
 
 WebToolsConfig::WebToolsConfig()
     : clConfigItem("WebTools")
-    , m_jsFlags(kJSEnableCC | kJSLibraryBrowser | kJSLibraryEcma5 | kJSLibraryJQuery | kJSPluginAngular |
-                kJSPluginNode |
-                kJSPluginStrings)
+    , m_jsFlags(kJSEnableCC | kJSLibraryBrowser | kJSLibraryEcma5 | kJSLibraryEcma6 | kJSPluginStrings | kJSPluginNode)
     , m_xmlFlags(kXmlEnableCC)
     , m_htmlFlags(kHtmlEnableCC)
 {
+    NodeJSLocator locator;
+    locator.Locate();
+    m_nodejs = locator.GetNodejs();
+    m_npm = locator.GetNpm();
 }
 
 WebToolsConfig::~WebToolsConfig() {}
@@ -32,6 +35,8 @@ void WebToolsConfig::FromJSON(const JSONElement& json)
     m_jsFlags = json.namedObject("m_jsFlags").toSize_t(m_jsFlags);
     m_xmlFlags = json.namedObject("m_xmlFlags").toSize_t(m_xmlFlags);
     m_htmlFlags = json.namedObject("m_htmlFlags").toSize_t(m_htmlFlags);
+    m_nodejs = json.namedObject("m_nodejs").toString(m_nodejs);
+    m_npm = json.namedObject("m_npm").toString(m_npm);
 }
 
 JSONElement WebToolsConfig::ToJSON() const
@@ -40,6 +45,8 @@ JSONElement WebToolsConfig::ToJSON() const
     element.addProperty("m_jsFlags", m_jsFlags);
     element.addProperty("m_xmlFlags", m_xmlFlags);
     element.addProperty("m_htmlFlags", m_htmlFlags);
+    element.addProperty("m_nodejs", m_nodejs);
+    element.addProperty("m_npm", m_npm);
     return element;
 }
 
@@ -64,7 +71,7 @@ wxString WebToolsConfig::GetTernProjectFile() const
         JSONElement node = JSONElement::createObject("node");
         plugins.append(node);
     }
-    
+
     if(m_jsFlags & kJSPluginRequireJS) {
         JSONElement node = JSONElement::createObject("requirejs");
         plugins.append(node);

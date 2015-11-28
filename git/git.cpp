@@ -65,6 +65,10 @@
 #include <wx/utils.h>
 #include "clCommandProcessor.h"
 
+#ifdef __WXGTK__
+#   include <sys/wait.h>
+#endif
+
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...) m_console->AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)                                  \
@@ -73,7 +77,7 @@ static GitPlugin* thePlugin = NULL;
     }
 
 // Define the plugin entry point
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(thePlugin == 0) {
         thePlugin = new GitPlugin(manager);
@@ -81,17 +85,17 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 /*******************************************************************************/
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("René Kraus"));
     info.SetName(wxT("Git"));
     info.SetDescription(_("Simple GIT plugin"));
     info.SetVersion(wxT("v1.1.0"));
-    return info;
+    return &info;
 }
 /*******************************************************************************/
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 /*******************************************************************************/
 // Helper that returns the last-used selection for those git commands with several alternative options
@@ -1725,6 +1729,12 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     wxDELETE(m_process);
     m_commandOutput.Clear();
     m_gitActionQueue.pop_front();
+    
+#ifdef __WXGTK__
+    int statLoc;
+    ::waitpid(-1, &statLoc, WNOHANG);
+#endif
+
     ProcessGitActionQueue();
 }
 

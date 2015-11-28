@@ -284,12 +284,13 @@ void wxSFScaledDC::DoDrawPolyPolygon(int n, int count[], wxPoint points[], wxCoo
     else
     {
         int nTotalPoints = 0;
+		int i = 0;
 
-        for(int i = 0; i < n; i++)nTotalPoints += count[i];
+        for(i = 0; i < n; i++) nTotalPoints += count[i];
 
         wxPoint *updPoints = new wxPoint[nTotalPoints];
 
-        for(int i = 0; i < nTotalPoints; i++)
+        for(i = 0; i < nTotalPoints; i++)
         {
             updPoints[i].x = (int)((double)points[i].x*m_nScale);
             updPoints[i].y = (int)((double)points[i].y*m_nScale);

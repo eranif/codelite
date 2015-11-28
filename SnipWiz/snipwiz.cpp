@@ -69,7 +69,7 @@
 static SnipWiz* thePlugin = NULL;
 
 // Define the plugin entry point
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(thePlugin == 0) {
         thePlugin = new SnipWiz(manager);
@@ -78,17 +78,17 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
 }
 //------------------------------------------------------------
 
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Frank Lichtner"));
     info.SetName(plugName);
     info.SetDescription(_("A small tool to add expandable code snippets and template classes"));
     info.SetVersion(wxT("v1.0"));
-    return info;
+    return &info;
 }
 //------------------------------------------------------------
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 //------------------------------------------------------------
 // When creating new file, we default the EOL mode to

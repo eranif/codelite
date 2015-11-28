@@ -616,6 +616,9 @@ wxBrush DrawingUtils::GetStippleBrush()
 {
     wxMemoryDC memDC;
     wxColour bgColour = GetAUIPaneBGColour();
+    // if(clGetManager() && clGetManager()->GetStatusBar() && clGetManager()->GetStatusBar()->GetArt()) {
+    //     bgColour = clGetManager()->GetStatusBar()->GetArt()->GetBgColour();
+    // }
     wxBitmap bmpStipple(3, 3);
     wxColour lightPen = DrawingUtils::DarkColour(bgColour, 5.0);
     wxColour darkPen = DrawingUtils::LightColour(bgColour, 3.0);

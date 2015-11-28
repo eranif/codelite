@@ -29,7 +29,7 @@ znSettingsDlgBase::znSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     m_checkBoxEnableZN = new wxCheckBox(this, wxID_ANY, _("Enable ZoomNavigator"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxEnableZN->SetValue(true);
     
-    boxSizer2->Add(m_checkBoxEnableZN, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer2->Add(m_checkBoxEnableZN, 0, wxALL|wxALIGN_LEFT, 5);
     
     wxFlexGridSizer* flexGridSizer12 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer12->SetFlexibleDirection( wxBOTH );
@@ -58,27 +58,39 @@ znSettingsDlgBase::znSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     
     flexGridSizer12->Add(m_spinCtrlZoomFactor, 0, wxALL|wxEXPAND, 5);
     
+    m_staticText26 = new wxStaticText(this, wxID_ANY, _("Use vertical scrollbar:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer12->Add(m_staticText26, 0, wxALL|wxALIGN_RIGHT, 5);
+    
+    m_checkBoxUseVScrollbar = new wxCheckBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxUseVScrollbar->SetValue(false);
+    
+    flexGridSizer12->Add(m_checkBoxUseVScrollbar, 0, wxALL, 5);
+    
     boxSizer2->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer30 = new wxStdDialogButtonSizer();
     
-    boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer2->Add(m_stdBtnSizer30, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
-    m_button6 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button6->SetDefault();
+    m_button32 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button32->SetDefault();
+    m_stdBtnSizer30->AddButton(m_button32);
     
-    boxSizer4->Add(m_button6, 0, wxALL, 5);
-    
-    m_button8 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer4->Add(m_button8, 0, wxALL, 5);
+    m_button34 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer30->AddButton(m_button34);
+    m_stdBtnSizer30->Realize();
     
     SetName(wxT("znSettingsDlgBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -87,12 +99,12 @@ znSettingsDlgBase::znSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     }
 #endif
     // Connect events
-    m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(znSettingsDlgBase::OnOK), NULL, this);
+    m_button32->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(znSettingsDlgBase::OnOK), NULL, this);
     
 }
 
 znSettingsDlgBase::~znSettingsDlgBase()
 {
-    m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(znSettingsDlgBase::OnOK), NULL, this);
+    m_button32->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(znSettingsDlgBase::OnOK), NULL, this);
     
 }

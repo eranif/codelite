@@ -2,6 +2,7 @@
 #include "windowattrmanager.h"
 #include "WebToolsConfig.h"
 #include "globals.h"
+#include "NodeJSLocator.h"
 
 WebToolsSettings::WebToolsSettings(wxWindow* parent)
     : WebToolsSettingsBase(parent)
@@ -25,16 +26,19 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
         m_pgPropRequireJS->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginRequireJS));
         m_pgPropStrings->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginStrings));
         m_pgPropQML->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginQML));
-        
+
         // XML
         m_checkBoxEnableXmlCC->SetValue(config.HasXmlFlag(WebToolsConfig::kXmlEnableCC));
         // HTML
         m_checkBoxEnableHtmlCC->SetValue(config.HasHtmlFlag(WebToolsConfig::kHtmlEnableCC));
+        // NodeJS
+        m_filePickerNodeJS->SetPath(config.GetNodejs());
+        m_filePickerNpm->SetPath(config.GetNpm());
     }
 
-    CenterOnParent();
     SetName("WebToolsSettings");
     WindowAttrManager::Load(this);
+    CenterOnParent();
 }
 
 WebToolsSettings::~WebToolsSettings() {}
@@ -49,34 +53,59 @@ void WebToolsSettings::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_modified)
 
 void WebToolsSettings::OnOK(wxCommandEvent& event)
 {
+    DoSave();
     event.Skip();
-
-    // Save the settings
-    {
-        WebToolsConfig config;
-        config.Load();
-        // JS
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, m_checkBoxEnableJsCC->IsChecked());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging, m_pgPropLogging->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryBrowser, m_pgPropBrowser->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryChai, m_pgPropChai->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryEcma5, m_pgPropEcma5->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryEcma6, m_pgPropEcma6->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryJQuery, m_pgPropJQuery->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryUnderscore, m_pgPropUnderscore->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginAngular, m_pgPropAngular->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginNode, m_pgPropNode->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginRequireJS, m_pgPropRequireJS->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginStrings, m_pgPropStrings->GetValue().GetBool());
-        config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginQML, m_pgPropQML->GetValue().GetBool());
-        // XML
-        config.EnableXmlFlag(WebToolsConfig::kXmlEnableCC, m_checkBoxEnableXmlCC->IsChecked());
-        // HTML
-        config.EnableHtmlFlag(WebToolsConfig::kHtmlEnableCC, m_checkBoxEnableHtmlCC->IsChecked());
-        config.Save();
-    }
 }
-void WebToolsSettings::OnModified(wxCommandEvent& event)
+
+void WebToolsSettings::OnModified(wxCommandEvent& event) { m_modified = true; }
+void WebToolsSettings::OnSuggestNodeJSPaths(wxCommandEvent& event)
+{
+    NodeJSLocator locator;
+    locator.Locate();
+
+    m_filePickerNodeJS->SetPath(locator.GetNodejs());
+    m_filePickerNpm->SetPath(locator.GetNpm());
+    m_modified = true;
+}
+
+void WebToolsSettings::OnNodejsPath(wxFileDirPickerEvent& event)
 {
     m_modified = true;
+    event.Skip();
+}
+void WebToolsSettings::OnNpmPath(wxFileDirPickerEvent& event)
+{
+    m_modified = true;
+    event.Skip();
+}
+
+void WebToolsSettings::OnApply(wxCommandEvent& event) { DoSave(); }
+
+void WebToolsSettings::DoSave()
+{
+    WebToolsConfig config;
+    config.Load();
+    // JS
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, m_checkBoxEnableJsCC->IsChecked());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging, m_pgPropLogging->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryBrowser, m_pgPropBrowser->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryChai, m_pgPropChai->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryEcma5, m_pgPropEcma5->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryEcma6, m_pgPropEcma6->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryJQuery, m_pgPropJQuery->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryUnderscore, m_pgPropUnderscore->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginAngular, m_pgPropAngular->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginNode, m_pgPropNode->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginRequireJS, m_pgPropRequireJS->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginStrings, m_pgPropStrings->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginQML, m_pgPropQML->GetValue().GetBool());
+    // XML
+    config.EnableXmlFlag(WebToolsConfig::kXmlEnableCC, m_checkBoxEnableXmlCC->IsChecked());
+    // HTML
+    config.EnableHtmlFlag(WebToolsConfig::kHtmlEnableCC, m_checkBoxEnableHtmlCC->IsChecked());
+    // NodeJS
+    config.SetNodejs(m_filePickerNodeJS->GetPath());
+    config.SetNpm(m_filePickerNpm->GetPath());
+    config.Save();
+    m_modified = false;
 }

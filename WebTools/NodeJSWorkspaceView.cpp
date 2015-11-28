@@ -16,6 +16,10 @@
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSDebugger.h"
 #include "macros.h"
+#include "WebToolsConfig.h"
+#include "environmentconfig.h"
+#include "dirsaver.h"
+#include "bitmap_loader.h"
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -37,6 +41,8 @@ NodeJSWorkspaceView::~NodeJSWorkspaceView()
 void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
+    WebToolsConfig webToolsConf;
+    webToolsConf.Load();
     if((event.GetEventObject() == this)) {
         wxMenu* menu = event.GetMenu();
 
@@ -95,6 +101,17 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
                     wxEVT_MENU, &NodeJSWorkspaceView::OnOpenPackageJsonFile, this, XRCID("nodejs_project_settings"));
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnProjectDebug, this, XRCID("nodejs_project_debug"));
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnProjectRun, this, XRCID("nodejs_project_run"));
+            } else {
+                // Check to see if we got 'npm' detected on this machine
+                bool hasNpm = !webToolsConf.GetNpm().IsEmpty();
+
+                // Offer a "npm init" menu entry
+                menu->InsertSeparator(openShellPos);
+                wxMenuItem* menuItem = new wxMenuItem(NULL, XRCID("nodejs_npm_init"), _("Run 'npm init' here"));
+                menu->Insert(openShellPos, menuItem);
+                menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("console"));
+                menu->Enable(XRCID("nodejs_npm_init"), hasNpm && !m_terminal.IsRunning());
+                menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnNpmInit, this, XRCID("nodejs_npm_init"));
             }
         }
     }
@@ -296,4 +313,29 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
         }
         child = GetTreeCtrl()->GetNextChild(item, cookie);
     }
+}
+
+void NodeJSWorkspaceView::OnNpmInit(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(m_terminal.IsRunning()) return;
+    
+    wxString path;
+    wxTreeItemId item;
+    if(!GetSelectProjectPath(path, item)) return;
+
+    WebToolsConfig conf;
+    conf.Load();
+    
+#ifdef __WXOSX__
+    wxString command;
+    command << "cd \"" << path << "\" && " << conf.GetNpm() << " init";
+#else
+    wxString command;
+    command << conf.GetNpm();
+    ::WrapWithQuotes(command);
+#endif
+
+    command << " init";
+    m_terminal.ExecuteConsole(command, path, true, "npm init");
 }

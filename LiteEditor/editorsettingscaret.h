@@ -35,6 +35,8 @@ public:
     /** Constructor */
     EditorSettingsCaret( wxWindow* parent );
     void Save(OptionsConfigPtr options);
+protected:
+    virtual void OnCaretWidthUI(wxUpdateUIEvent& event);
 };
 
 #endif // __editorsettingscaret__

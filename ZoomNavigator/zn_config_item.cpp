@@ -30,18 +30,18 @@ znConfigItem::znConfigItem()
     , m_highlightColour("LIGHT GREY")
     , m_enabled(false)
     , m_zoomFactor(-10)
+    , m_useScrollbar(true)
 {
 }
 
-znConfigItem::~znConfigItem()
-{
-}
+znConfigItem::~znConfigItem() {}
 
 void znConfigItem::FromJSON(const JSONElement& json)
 {
     m_highlightColour = json.namedObject("m_highlightColour").toString();
-    m_enabled         = json.namedObject("m_enabled").toBool();
-    m_zoomFactor      = json.namedObject("m_zoomFactor").toInt(-10);
+    m_enabled = json.namedObject("m_enabled").toBool(m_enabled);
+    m_zoomFactor = json.namedObject("m_zoomFactor").toInt(m_zoomFactor);
+    m_useScrollbar = json.namedObject("m_useScrollbar").toBool(m_useScrollbar);
 }
 
 JSONElement znConfigItem::ToJSON() const
@@ -50,5 +50,6 @@ JSONElement znConfigItem::ToJSON() const
     element.addProperty("m_highlightColour", m_highlightColour);
     element.addProperty("m_enabled", m_enabled);
     element.addProperty("m_zoomFactor", m_zoomFactor);
+    element.addProperty("m_useScrollbar", m_useScrollbar);
     return element;
 }

@@ -50,6 +50,7 @@ EVT_MENU(XRCID("php_reload_workspace"), PHPWorkspaceView::OnReloadWorkspace)
 EVT_MENU(XRCID("php_set_project_active"), PHPWorkspaceView::OnSetProjectActive)
 EVT_MENU(XRCID("php_delete_project"), PHPWorkspaceView::OnDeleteProject)
 EVT_MENU(XRCID("php_new_folder"), PHPWorkspaceView::OnNewFolder)
+EVT_MENU(XRCID("php_rename_folder"), PHPWorkspaceView::OnRenameFolder)
 EVT_MENU(XRCID("php_new_class"), PHPWorkspaceView::OnNewClass)
 EVT_MENU(XRCID("php_new_file"), PHPWorkspaceView::OnNewFile)
 EVT_MENU(XRCID("php_delete_folder"), PHPWorkspaceView::OnDeleteFolder)
@@ -91,9 +92,9 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     BitmapLoader* bl = m_mgr->GetStdIcons();
     wxImageList* imageList = bl->MakeStandardMimeImageList();
     m_treeCtrlView->AssignImageList(imageList);
-    
+
     m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrlView));
-    
+
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
@@ -304,6 +305,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_new_folder"), _("New Folder..."));
                 menu.Append(XRCID("php_new_file"), _("New File..."));
                 menu.AppendSeparator();
+                menu.Append(XRCID("php_rename_folder"), _("Rename..."));
+                menu.AppendSeparator();
                 menu.Append(XRCID("php_remove_file"), _("Delete"));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_open_folder_in_explorer"), _("Open Containing Folder"));
@@ -312,12 +315,12 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
                 menuItem->SetBitmap(bmpFiF);
                 menu.Append(menuItem);
-                
+
                 clContextMenuEvent folderMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
                 folderMenuEvent.SetMenu(&menu);
                 folderMenuEvent.SetPath(data->GetFolderPath());
                 EventNotifier::Get()->ProcessEvent(folderMenuEvent);
-                
+
                 m_treeCtrlView->PopupMenu(&menu);
             } break;
             default:
@@ -663,7 +666,7 @@ void PHPWorkspaceView::OnRenameFile(wxCommandEvent& e)
 
     wxFileName oldFileName = data->GetFile();
 
-    wxString new_name = ::wxGetTextFromUser(_("New file name:"), _("Rename file"), oldFileName.GetFullName());
+    wxString new_name = ::clGetTextFromUser(_("New file name:"), _("Rename file"), oldFileName.GetFullName());
     if(new_name.IsEmpty()) return;
     if(new_name == oldFileName.GetFullName()) return;
 
@@ -1439,4 +1442,42 @@ void PHPWorkspaceView::OnWorkspaceLoaded(PHPEvent& event)
 {
     event.Skip();
     m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL); // Ensure that the PHP view is selected
+}
+
+void PHPWorkspaceView::OnRenameFolder(wxCommandEvent& e)
+{
+    wxArrayTreeItemIds items;
+    DoGetSelectedItems(items);
+    if(items.IsEmpty()) return;
+
+    wxTreeItemId item = items.Item(0);
+    CHECK_ITEM_RET(item);
+
+    ItemData* data = DoGetItemData(item);
+    CHECK_PTR_RET(data);
+    CHECK_ID_FOLDER(data);
+
+    // Get the project that owns this file
+    wxString project = DoGetSelectedProject();
+    if(project.IsEmpty()) return;
+
+    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProject(project);
+    CHECK_PTR_RET(pProject);
+
+    wxString new_name = ::clGetTextFromUser(_("Rename folder"), _("Folder name:"), data->GetFolderName());
+    if(new_name.IsEmpty()) return;
+    if(new_name == data->GetFolderName()) return;
+
+    wxFileName oldFolderPath(data->GetFolderPath(), "");
+    wxFileName newFolderPath(data->GetFolderPath(), "");
+
+    newFolderPath.RemoveLastDir();
+    newFolderPath.AppendDir(new_name);
+
+    // Rename the file on the file system
+    if(::wxRename(oldFolderPath.GetPath(), newFolderPath.GetPath()) == 0) {
+        pProject->SynchWithFileSystem();
+        pProject->Save();
+        ReloadWorkspace(true);
+    }
 }

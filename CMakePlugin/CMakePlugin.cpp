@@ -115,7 +115,7 @@ static const wxString HELP_TAB_NAME = _("CMake Help");
  *
  * @return CMake plugin instance.
  */
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(!g_plugin) {
         g_plugin = new CMakePlugin(manager);
@@ -131,16 +131,16 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
  *
  * @return Plugin info.
  */
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
 
     info.SetAuthor(L"Jiří Fatka");
     info.SetName("CMakePlugin");
     info.SetDescription(_("CMake integration for CodeLite"));
     info.SetVersion("0.8");
 
-    return info;
+    return &info;
 }
 
 /* ************************************************************************ */
@@ -150,7 +150,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
  *
  * @return Interface version.
  */
-extern "C" EXPORT int GetPluginInterfaceVersion()
+CL_PLUGIN_API int GetPluginInterfaceVersion()
 {
     return PLUGIN_INTERFACE_VERSION;
 }

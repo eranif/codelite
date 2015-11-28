@@ -21,9 +21,9 @@
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
-#include <wx/button.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
+#include <wx/button.h>
 #include <wx/textctrl.h>
 #include <wx/stc/stc.h>
 #include <wx/splitter.h>
@@ -65,15 +65,26 @@ protected:
     wxPGProperty* m_pgPropStrings;
     wxPGProperty* m_pgPropNode;
     wxPGProperty* m_pgPropRequireJS;
+    wxPanel* m_panel237;
+    wxStaticText* m_staticText243;
+    wxFilePickerCtrl* m_filePickerNodeJS;
+    wxStaticText* m_staticText247;
+    wxFilePickerCtrl* m_filePickerNpm;
+    wxButton* m_buttonSuugest;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_buttonCancel;
     wxButton* m_buttonOK;
+    wxButton* m_buttonApply;
 
 protected:
     virtual void OnModified(wxCommandEvent& event) { event.Skip(); }
     virtual void OnJSValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnNodejsPath(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnNpmPath(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnSuggestNodeJSPaths(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnApply(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxCheckBox* GetCheckBoxEnableJsCC() { return m_checkBoxEnableJsCC; }
@@ -82,6 +93,12 @@ public:
     wxPanel* GetPanel56() { return m_panel56; }
     wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
     wxPanel* GetPanel12() { return m_panel12; }
+    wxStaticText* GetStaticText243() { return m_staticText243; }
+    wxFilePickerCtrl* GetFilePickerNodeJS() { return m_filePickerNodeJS; }
+    wxStaticText* GetStaticText247() { return m_staticText247; }
+    wxFilePickerCtrl* GetFilePickerNpm() { return m_filePickerNpm; }
+    wxButton* GetButtonSuugest() { return m_buttonSuugest; }
+    wxPanel* GetPanel237() { return m_panel237; }
     wxNotebook* GetNotebook10() { return m_notebook10; }
     WebToolsSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("WebTools Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~WebToolsSettingsBase();

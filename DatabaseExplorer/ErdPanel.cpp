@@ -164,9 +164,8 @@ void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter)
     pInfo->SetAdapterType(m_pDbAdapter->GetAdapterType());
     m_diagramManager.SetRootItem(pInfo);
 
-    m_pFrameCanvas = new FrameCanvas(&m_diagramManager, dbAdapter, m_wxsfPanel, this, wxID_ANY);
-    m_wxsfPanel->GetSizer()->Add(m_pFrameCanvas, 1, wxEXPAND, 2);
-    m_wxsfPanel->Layout();
+    m_pFrameCanvas = new FrameCanvas(&m_diagramManager, dbAdapter, this, wxID_ANY);
+    GetSizer()->Add( m_pFrameCanvas, 1, wxEXPAND, 5 );
 
     m_nToolMode = modeDESIGN;
 
@@ -254,6 +253,10 @@ void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter)
     entries[3].Set(wxACCEL_CTRL, (int)'A', XRCID("IDT_SELECTALL"));
     wxAcceleratorTable accel(4, entries);
     SetAcceleratorTable(accel);
+    
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
 }
 
 void ErdPanel::OnTool(wxCommandEvent& event)

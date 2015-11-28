@@ -91,16 +91,6 @@ void DockablePane::OnPaint(wxPaintEvent& e)
     dc.DrawRectangle(GetClientSize());
 }
 
-void DockablePane::SetChild(wxWindow* child)
-{
-    m_child = child;
-    m_child->Reparent(this);
-
-    wxSizer* sz = GetSizer();
-    sz->Add(m_child, 1, wxEXPAND | wxALL, 2);
-    sz->Layout();
-}
-
 void DockablePane::SetChildNoReparent(wxWindow* child)
 {
     m_child = child;
@@ -108,6 +98,6 @@ void DockablePane::SetChildNoReparent(wxWindow* child)
     if(!m_child->IsShown()) {
         m_child->Show();
     }
-    sz->Add(m_child, 1, wxEXPAND | wxALL, 2);
+    sz->Add(m_child, 1, wxEXPAND | wxALL, 0);
     sz->Layout();
 }

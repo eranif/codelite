@@ -5,12 +5,14 @@
 #include "cl_command_event.h"
 #include "NodeJSDebuggerDlg.h"
 #include "clTreeKeyboardInput.h"
+#include "TerminalEmulator.h"
 
 class NodeJSWorkspaceView : public clTreeCtrlPanel
 {
 protected:
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
-
+    TerminalEmulator m_terminal;
+    
 protected:
     void OnContextMenu(clContextMenuEvent& event);
     void OnContextMenuFile(clContextMenuEvent& event);
@@ -21,6 +23,7 @@ protected:
     void OnOpenPackageJsonFile(wxCommandEvent& event);
     void OnProjectDebug(wxCommandEvent& event);
     void OnProjectRun(wxCommandEvent& event);
+    void OnNpmInit(wxCommandEvent& event);
 
     void DoExecuteProject(NodeJSDebuggerDlg::eDialogType type);
     void OnItemExpanding(wxTreeEvent& event);

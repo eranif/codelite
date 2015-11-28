@@ -56,6 +56,22 @@
 
 #define CXX_AND_JAVASCRIPT "c++"
 
+const wxString sampleText = "class Demo {\n"
+                            "private:\n"
+                            "    std::string m_str;\n"
+                            "    int m_integer;\n"
+                            "    \n"
+                            "public:\n"
+                            "    /**\n"
+                            "     * Creates a new demo.\n"
+                            "     * @param o The object\n"
+                            "     */\n"
+                            "    Demo(const Demo &other) {\n"
+                            "        m_str = other.m_str;\n"
+                            "        m_integer = other.m_integer;\n"
+                            "    }\n"
+                            "}";
+
 SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     : SyntaxHighlightBaseDlg(parent)
     , m_isModified(false)
@@ -97,10 +113,30 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     if(font.IsOk()) {
         m_fontPickerGlobal->SetSelectedFont(font);
     }
-
+    
+    DoUpdatePreview();
+    
     m_isModified = false;
     SetName("SyntaxHighlightDlg");
     WindowAttrManager::Load(this);
+    CentreOnParent();
+}
+
+void SyntaxHighlightDlg::DoUpdatePreview()
+{
+    // Populate the preview
+    LexerConf::Ptr_t previewLexer =
+        ColoursAndFontsManager::Get().GetLexer("c++", m_choiceGlobalTheme->GetStringSelection());
+    if(previewLexer) {
+        previewLexer->Apply(m_stcPreview, true);
+    }
+    m_stcPreview->SetKeyWords(1, "Demo std string");
+    m_stcPreview->SetKeyWords(3, "other");
+    m_stcPreview->SetEditable(true);
+    m_stcPreview->SetText(sampleText);
+    m_stcPreview->HideSelection(true);
+    m_stcPreview->SetEditable(false);
+    ::clRecalculateSTCHScrollBar(m_stcPreview);
 }
 
 void SyntaxHighlightDlg::OnButtonOK(wxCommandEvent& event)
@@ -680,10 +716,12 @@ void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
 {
     m_globalThemeChanged = true;
     m_isModified = true;
+    DoUpdatePreview();
 }
 
 void SyntaxHighlightDlg::OnGlobalFontSelected(wxFontPickerEvent& event)
 {
     m_isModified = true;
     ColoursAndFontsManager::Get().SetGlobalFont(event.GetFont());
+    DoUpdatePreview();
 }

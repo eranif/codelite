@@ -31,28 +31,29 @@
 class WXDLLIMPEXP_SDK NewKeyShortcutDlg : public NewKeyShortcutBaseDlg
 {
     MenuItemData m_mid;
-    enum {
-        kAlt   = 0x00000001,
-        kCtrl  = 0x00000002,
-        kShift = 0x00000004,
-    };
-    
-    struct KeyboardShortcut {
+    // On OSX, kCtrl => CMD and kRawCtrl => Actual Ctrl key
+    enum { kAlt = (1 << 0), kCtrl = (1 << 1), kShift = (1 << 2) };
+
+    struct KeyboardShortcut
+    {
         size_t modifiers;
         wxString key;
-        
-        KeyboardShortcut() : modifiers(0) {}
+
+        KeyboardShortcut()
+            : modifiers(0)
+        {
+        }
     };
-    
+
 protected:
     virtual void OnClear(wxCommandEvent& event);
     virtual void OnClearUI(wxUpdateUIEvent& event);
-    void OnKeyDown( wxKeyEvent& event );
-    wxString ToString(wxKeyEvent &e);
-    NewKeyShortcutDlg::KeyboardShortcut FromString( const wxString &accelString );
-    
+    void OnKeyDown(wxKeyEvent& event);
+    wxString ToString(wxKeyEvent& e);
+    NewKeyShortcutDlg::KeyboardShortcut FromString(const wxString& accelString);
+
 public:
-    NewKeyShortcutDlg( wxWindow* parent, const MenuItemData &mid );
+    NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid);
     virtual ~NewKeyShortcutDlg();
     wxString GetAccel() const;
 };

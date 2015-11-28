@@ -18,6 +18,7 @@
 #include <wx/stc/stc.h>
 #include <wx/msgdlg.h>
 #include "NoteJSWorkspace.h"
+#include "NodeJSLocator.h"
 
 clTernServer::clTernServer(JSCodeCompletion* cc)
     : m_jsCCManager(cc)
@@ -480,32 +481,24 @@ JSONElement clTernServer::CreateFilesArray(IEditor* editor, bool forDelete)
 
 bool clTernServer::LocateNodeJS(wxFileName& nodeJS)
 {
-#ifdef __WXGTK__
-    // Check that NodeJS is installed
-    wxFileName fn("/usr/bin", "nodejs");
-    if(!fn.FileExists()) {
-        fn.SetFullName("node"); // On OpenSUSE, nodejs is called 'node'
-        if(!fn.FileExists()) {
-            return false;
-        }
+    WebToolsConfig config;
+    config.Load();
+    
+    // If we got it in the settings, use it
+    if(wxFileName::FileExists(config.GetNodejs())) {
+        nodeJS = config.GetNodejs();
+        config.Save();
+        return true;
     }
-    nodeJS = fn;
-    return true;
-#elif defined(__WXMSW__)
-    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "");
-    fn.AppendDir("webtools");
-    fn.AppendDir("js");
-    fn.SetFullName("node.exe");
-    nodeJS = fn;
-    return true;
-#else // OSX
-    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "");
-    fn.AppendDir("webtools");
-    fn.AppendDir("js");
-    fn.SetFullName("node.osx");
-    nodeJS = fn;
-    return true;
-#endif
+    
+    // Auto detect 
+    NodeJSLocator locator;
+    locator.Locate();
+    if(!locator.GetNodejs().IsEmpty()) {
+        nodeJS = locator.GetNodejs();
+        return true;
+    }
+    return false;
 }
 
 void clTernServer::ClearFatalErrorFlag() { m_fatalError = false; }

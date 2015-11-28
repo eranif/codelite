@@ -107,7 +107,9 @@ void wxSFCanvasHistory::SaveCanvasState()
 		if(outstream.IsOk() && m_pParentCanvas && m_pParentCanvas->GetDiagramManager())
 		{
 			// serialize canvas to memory stream
+			bool fIsModified = m_pParentCanvas->GetDiagramManager()->IsModified();
 			m_pParentCanvas->GetDiagramManager()->SerializeToXml(outstream);
+			m_pParentCanvas->GetDiagramManager()->SetModified( fIsModified );
 
 			// delete all states newer than the current state
 			if( m_pCurrentCanvasState )
@@ -146,6 +148,7 @@ void wxSFCanvasHistory::RestoreOlderState()
 	if( m_pCurrentCanvasState )
 	{
 		m_pCurrentCanvasState->Restore(m_pParentCanvas);
+		m_pParentCanvas->GetDiagramManager()->SetModified( true );
 	}
 }
 
@@ -162,6 +165,7 @@ void wxSFCanvasHistory::RestoreNewerState()
 	if( m_pCurrentCanvasState )
 	{
 		m_pCurrentCanvasState->Restore(m_pParentCanvas);
+		m_pParentCanvas->GetDiagramManager()->SetModified( true );
 	}
 }
 

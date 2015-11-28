@@ -224,6 +224,35 @@ public:
 	 * \brief Get reference to shape acceptance list
 	 */
 	inline wxArrayString& GetAcceptedShapes() { return m_arrAcceptedShapes; }
+	
+    /*!
+     * \brief Add given shape type to list of accepted top shapes. The acceptance list contains class
+     * names of the shapes which can be inserted into this instance of shapes canvas as a shape without
+	 * any parent (i.e. shape placed directly onto the canvas).
+     * Note: Keyword 'All' behaves like any class name.
+     * \param type Class name of accepted shape object
+     * \sa IstopShapeAccepted
+     */
+	void AcceptTopShape(const wxString& type);
+    /*!
+     * \brief Tells whether the given shape type is accepted by this canvas instance as a top shape
+	 * (it means whether this shape can be inserted directly into it without any parent).
+     *
+     * The function is typically used by the framework for determination whether class type supplied
+     * by AddShape() function can be inserted direclty onto shape canvas.
+     * \param type Class name of examined shape object
+     * \return TRUE if the shape type is accepted, otherwise FALSE.
+     */
+	bool IsTopShapeAccepted(const wxString& type);
+	/*!
+	 * \brief Clear top shapes acceptance list
+	 * \sa AcceptShape
+	 */
+	inline void ClearAcceptedTopShapes() { m_arrAcceptedTopShapes.Clear(); }
+	/*!
+	 * \brief Get reference to top shapes acceptance list
+	 */
+	inline wxArrayString& GetAcceptedTopShapes() { return m_arrAcceptedTopShapes; }
 
     /*!
      * \brief Find shape with given ID.
@@ -294,7 +323,19 @@ public:
 	 * \sa wxSFShapeBase::CONNECTMODE
 	 */
 	void GetNeighbours(wxSFShapeBase* parent, ShapeList& neighbours, wxClassInfo* shapeInfo, wxSFShapeBase::CONNECTMODE condir, bool direct = true);
-
+	/*!
+	 * \brief Get information about managed diagram's modification.
+	 * 
+	 * The function returns TRUE if the diagram has been modified and its content
+	 * should be saved. The modification flag is cleared when the content is saved.
+	 * \return TRUE if managed diagram is modified, othwerwise FALSE.
+	 */
+	bool IsModified() {return m_fIsModified;}
+	/*!
+	 * \brief Set diagram's modification flag manually.
+	 * \param state State of diagram's modification flag.
+	 */
+	void SetModified(bool state) {m_fIsModified = state;}
 
     // public member data accessors
     /*!
@@ -313,6 +354,8 @@ protected:
     // protected data members
     /*! \brief List of accepted shape types */
     wxArrayString m_arrAcceptedShapes;
+	/*! \brief List of accepted top shape types */
+    wxArrayString m_arrAcceptedTopShapes;
 
     wxSFShapeCanvas* m_pShapeCanvas;
 
@@ -327,6 +370,8 @@ private:
 
 	/*! \brief wxSF version number */
 	wxString m_sSFVersion;
+	
+	bool m_fIsModified;
 
 	/*! \brief Update connection shapes after importing/dropping of new shapes */
 	void UpdateConnections();

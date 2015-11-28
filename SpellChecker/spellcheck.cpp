@@ -61,7 +61,7 @@ static SpellCheck* thePlugin = NULL;
 #define PARSE_TIME 500
 // ------------------------------------------------------------
 // Define the plugin entry point
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(thePlugin == 0) {
         thePlugin = new SpellCheck(manager);
@@ -69,17 +69,17 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 // ------------------------------------------------------------
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Frank Lichtner"));
     info.SetName(wxT("SpellCheck"));
     info.SetDescription(_("CodeLite spell checker"));
     info.SetVersion(wxT("v1.6"));
-    return info;
+    return &info;
 }
 // ------------------------------------------------------------
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 // ------------------------------------------------------------
 SpellCheck::SpellCheck(IManager* manager)
     : IPlugin(manager)

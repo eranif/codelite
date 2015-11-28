@@ -49,7 +49,7 @@ static ZoomNavigator* thePlugin = NULL;
 const wxString ZOOM_PANE_TITLE(_("Zoom Navigator"));
 
 // Define the plugin entry point
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(thePlugin == 0) {
         thePlugin = new ZoomNavigator(manager);
@@ -57,17 +57,17 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Brandon Captain"));
     info.SetName(wxT("ZoomNavigator"));
     info.SetDescription(_("A dockable pane that shows a zoomed-out view of your code."));
     info.SetVersion(wxT("v1.0"));
-    return info;
+    return &info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 ZoomNavigator::ZoomNavigator(IManager* manager)
     : IPlugin(manager)

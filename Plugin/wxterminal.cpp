@@ -29,6 +29,7 @@
 #include <wx/app.h>
 #include "processreaderthread.h"
 #include "drawingutils.h"
+#include "globals.h"
 
 #define OUTPUT_BUFFER_MAX_SIZE 1024 * 1024 /* 1MB of buffer */
 
@@ -62,13 +63,6 @@
 #include <util.h>
 #include "unixprocess_impl.h"
 #endif
-
-static wxString WrapInShell(const wxString& cmd)
-{
-    wxString shellCommand;
-    shellCommand << SHELL_PREFIX << SHELL_WRAPPER << cmd << SHELL_WRAPPER;
-    return shellCommand;
-}
 
 //-------------------------------------------------------------
 BEGIN_EVENT_TABLE(wxTerminal, wxTerminalBase)
@@ -256,7 +250,10 @@ void wxTerminal::DoProcessCommand(const wxString& command)
     cmd.Trim().Trim(false);
     wxString path;
     // Add the shell prefix
-    wxString cmdShell = WrapInShell(cmd);
+    ::WrapInShell(cmd);
+    wxString cmdShell;
+    cmdShell.swap(cmd);
+    
     // real command
     IProcess* cmdPrc = CreateAsyncProcess(this, cmdShell, IProcessCreateWithHiddenConsole, m_workingDir);
     if(cmdPrc) {

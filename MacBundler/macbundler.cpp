@@ -299,7 +299,7 @@ public:
 };
 
 // Define the plugin entry point
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(thePlugin == NULL) {
         thePlugin = new MacBundler(manager);
@@ -307,17 +307,17 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("Auria"));
     info.SetName(wxT("MacBundler"));
     info.SetDescription(wxT("MacBundler : manage OS X app bundles"));
     info.SetVersion(wxT("v0.1"));
-    return info;
+    return &info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 MacBundler::MacBundler(IManager* manager)
     : IPlugin(manager)

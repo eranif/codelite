@@ -831,4 +831,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="NodeJS">
+    <File Name="NodeJSLocator.h"/>
+    <File Name="NodeJSLocator.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

@@ -19,13 +19,15 @@ class WXDLLIMPEXP_SF wxSFShapeBase;
 // default values
 /*! \brief Default value of wxSFConnectionPoint::m_nRelPosition data member */
 #define sfdvCONNPOINT_RELPOS wxRealPoint(0, 0)
+/*! \brief Default value of wxSFConnectionPoint::m_nOrthoDir data member */
+#define sfdvCONNPOINT_ORTHODIR cpdUNDEF
 
 /*!
  * \brief Class encapsulating fixed connection point assignable to shapes. The assigned fixed connection
  * points are the only places where connected lines can start/end. 
  * \sa wxSFShapeBase::AddConnectionPoint()
  */
-class wxSFConnectionPoint : public xsSerializable
+class WXDLLIMPEXP_SF wxSFConnectionPoint : public xsSerializable
 {
 public:
 
@@ -47,6 +49,14 @@ public:
 		cpBOTTOMMIDDLE,
 		cpBOTTOMRIGHT,
 		cpCUSTOM
+	};
+	
+	/*! \brief Direction of orthogonal connection */
+	enum CPORTHODIR
+	{
+		cpdUNDEF,
+		cpdHORIZONTAL,
+		cpdVERTICAL
 	};
 	
 	/*!
@@ -81,6 +91,18 @@ public:
 	 * \return Connection point type
 	 */
 	inline CPTYPE GetType() const { return m_nType; }
+	/*!
+	 * \brief Set direction of orthogonal line's connection.
+	 * \param dir Required direction
+	 * \sa CPORTHODIR
+	 */
+	inline void SetOrthoDirection(const CPORTHODIR& dir) { this->m_nOrthoDir = dir; }
+	/*!
+	 * \brief Get direction of orthogonal line's connection.
+	 * \return Current direction
+	 * \sa CPORTHODIR
+	 */
+	inline const CPORTHODIR& GetOrthoDirection() const { return m_nOrthoDir; }
 	/*!
 	 * \brief Set parent shape.
 	 * \param parent Pointer to parent shape
@@ -147,6 +169,7 @@ private:
 	void MarkSerializableDataMembers();
 	
 	CPTYPE m_nType;
+	CPORTHODIR m_nOrthoDir;
 	wxSFShapeBase *m_pParentShape;
 	bool m_fMouseOver;
 	wxRealPoint m_nRelPosition;

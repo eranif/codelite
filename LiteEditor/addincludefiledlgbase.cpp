@@ -26,41 +26,28 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer7);
     
+    m_auibar6 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar6->SetToolBitmapSize(wxSize(16,16));
+    
+    bSizer7->Add(m_auibar6, 0, wxEXPAND, 5);
+    
+    m_auibar6->AddLabel(wxID_ANY, _("Edit the line too add:"), -1);
+    
+    m_auibar6->AddStretchSpacer(1);
+    
+    m_auibar6->AddTool(ID_LINEUP, _("Move Up"), wxXmlResource::Get()->LoadBitmap(wxT("16-up")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line up"), _("Move the #include statement one line up"), NULL);
+    
+    m_auibar6->AddTool(ID_LINEDOWN, _("Move Down"), wxXmlResource::Get()->LoadBitmap(wxT("16-down")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line down"), _("Move the #include statement one line down"), NULL);
+    
+    m_auibar6->AddTool(wxID_CLEAR, _("Clear Cached Paths"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Cached Paths"), _("Clear Cached Paths"), NULL);
+    m_auibar6->Realize();
+    
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer7->Add(m_mainPanel, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(bSizer9);
-    
-    wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer9->Add(bSizer12, 1, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* boxSizer15 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer12->Add(boxSizer15, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
-    
-    m_staticText14 = new wxStaticText(m_mainPanel, wxID_ANY, _("Edit the line to add:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    wxFont m_staticText14Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText14Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText14->SetFont(m_staticText14Font);
-    
-    boxSizer15->Add(m_staticText14, 0, wxALL|wxALIGN_LEFT, 5);
-    
-    boxSizer15->Add(0, 0, 1, wxALL, 5);
-    
-    m_auibar6 = new wxAuiToolBar(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar6->SetToolBitmapSize(wxSize(16,16));
-    
-    boxSizer15->Add(m_auibar6, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
-    
-    m_auibar6->AddTool(ID_LINEUP, _("Move Up"), wxXmlResource::Get()->LoadBitmap(wxT("arrow-up")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line up"), _("Move the #include statement one line up"), NULL);
-    
-    m_auibar6->AddTool(ID_LINEDOWN, _("Move Down"), wxXmlResource::Get()->LoadBitmap(wxT("git-arrow-down")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line down"), _("Move the #include statement one line down"), NULL);
-    
-    m_auibar6->AddTool(wxID_CLEAR, _("Clear Cached Paths"), wxXmlResource::Get()->LoadBitmap(wxT("clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear Cached Paths"), _("Clear Cached Paths"), NULL);
-    m_auibar6->Realize();
     
     m_textCtrlPreview = new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(400,300), 0);
     #ifdef __WXMSW__
@@ -72,6 +59,7 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     m_textCtrlPreviewFont.SetFamily(wxFONTFAMILY_TELETYPE);
     #endif
     m_textCtrlPreview->SetFont(m_textCtrlPreviewFont);
+    m_textCtrlPreview->SetFocus();
     // Configure the fold margin
     m_textCtrlPreview->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_textCtrlPreview->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -111,7 +99,7 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     m_textCtrlPreview->SetKeyWords(3, wxT(""));
     m_textCtrlPreview->SetKeyWords(4, wxT(""));
     
-    bSizer12->Add(m_textCtrlPreview, 1, wxLEFT|wxRIGHT|wxEXPAND, 5);
+    bSizer9->Add(m_textCtrlPreview, 1, wxLEFT|wxRIGHT|wxEXPAND, 5);
     
     wxFlexGridSizer* flexGridSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer4->SetFlexibleDirection( wxBOTH );
@@ -154,26 +142,29 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer4->Add(m_textCtrlFullPath, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer8 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer23 = new wxStdDialogButtonSizer();
     
-    bSizer7->Add(bSizer8, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer7->Add(m_stdBtnSizer23, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonOK->SetDefault();
+    m_button25 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button25->SetDefault();
+    m_stdBtnSizer23->AddButton(m_button25);
     
-    bSizer8->Add(m_buttonOK, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer8->Add(m_buttonCancel, 0, wxALL, 5);
+    m_button27 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer23->AddButton(m_button27);
+    m_stdBtnSizer23->Realize();
     
     SetName(wxT("AddIncludeFileDlgBase"));
-    SetMinSize( wxSize(250,-1) );
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetMinClientSize(wxSize(250,-1));
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -185,7 +176,7 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     this->Connect(ID_LINEUP, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonUp), NULL, this);
     this->Connect(ID_LINEDOWN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonDown), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnClearCachedPaths), NULL, this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonOK), NULL, this);
+    m_button25->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonOK), NULL, this);
     
 }
 
@@ -194,6 +185,6 @@ AddIncludeFileDlgBase::~AddIncludeFileDlgBase()
     this->Disconnect(ID_LINEUP, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonUp), NULL, this);
     this->Disconnect(ID_LINEDOWN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonDown), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnClearCachedPaths), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonOK), NULL, this);
+    m_button25->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonOK), NULL, this);
     
 }

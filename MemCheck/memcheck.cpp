@@ -28,7 +28,7 @@
 static MemCheckPlugin* thePlugin = NULL;
 
 // Define the plugin entry point
-extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(thePlugin == 0) {
         thePlugin = new MemCheckPlugin(manager);
@@ -36,17 +36,17 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
     return thePlugin;
 }
 
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("pavel.iqx"));
     info.SetName(wxT("MemCheck"));
     info.SetDescription(_("MemCheck plugin detects memory leaks. Uses Valgrind (memcheck tool) as backend."));
     info.SetVersion(wxT("0.5"));
-    return info;
+    return &info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 MemCheckPlugin::MemCheckPlugin(IManager* manager)
     : IPlugin(manager)

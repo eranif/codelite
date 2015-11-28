@@ -34,26 +34,30 @@ class Notebook;
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_CMD_NEW_DOCKPANE;
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_CMD_DELETE_DOCKPANE;
 
-class WXDLLIMPEXP_SDK DockablePane : public wxPanel {
-	wxWindow *m_child;
-	Notebook *m_book;
-	wxString  m_text;
-	wxBitmap  m_bmp;
-	bool      m_notifiedDestroyed;
+class WXDLLIMPEXP_SDK DockablePane : public wxPanel
+{
+    wxWindow* m_child;
+    Notebook* m_book;
+    wxString m_text;
+    wxBitmap m_bmp;
+    bool m_notifiedDestroyed;
 
-	void ClosePane(wxCommandEvent &e);
+    void ClosePane(wxCommandEvent& e);
 
-	void OnEraseBg(wxEraseEvent &e) { wxUnusedVar(e); }
-	void OnPaint(wxPaintEvent &e);
+    void OnEraseBg(wxEraseEvent& e) { wxUnusedVar(e); }
+    void OnPaint(wxPaintEvent& e);
 
-	DECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE();
 
 public:
-	DockablePane(wxWindow *parent, Notebook *book, const wxString &title, const wxBitmap &bmp = wxNullBitmap, wxSize size = wxDefaultSize);
-	virtual ~DockablePane();
-	wxString GetName() {return m_text;}
-    Notebook *GetBook() {return m_book;}
-	void      SetChild(wxWindow* child);
-	void      SetChildNoReparent(wxWindow* child);
+    DockablePane(wxWindow* parent,
+                 Notebook* book,
+                 const wxString& title,
+                 const wxBitmap& bmp = wxNullBitmap,
+                 wxSize size = wxDefaultSize);
+    virtual ~DockablePane();
+    wxString GetName() { return m_text; }
+    Notebook* GetBook() { return m_book; }
+    void SetChildNoReparent(wxWindow* child);
 };
 #endif // __dockablepane__

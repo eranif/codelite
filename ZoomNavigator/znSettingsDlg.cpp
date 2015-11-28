@@ -36,33 +36,32 @@ znSettingsDlg::znSettingsDlg(wxWindow* parent)
 {
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    if ( conf.ReadItem(&data) ) {
+    if(conf.ReadItem(&data)) {
         m_checkBoxEnableZN->SetValue(data.IsEnabled());
-        m_colourPickerHighlightColour->SetColour( wxColour( data.GetHighlightColour() ));
+        m_colourPickerHighlightColour->SetColour(wxColour(data.GetHighlightColour()));
+        m_checkBoxUseVScrollbar->SetValue(data.IsUseScrollbar());
     }
+    
     m_spinCtrlZoomFactor->SetValue(data.GetZoomFactor());
-    SetName("znSettingsDlg");
-    WindowAttrManager::Load(this);
+    GetSizer()->Fit(this);
+    CentreOnParent();
 }
 
-znSettingsDlg::~znSettingsDlg()
-{
-    
-}
+znSettingsDlg::~znSettingsDlg() {}
 
 void znSettingsDlg::OnOK(wxCommandEvent& event)
 {
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    data.SetEnabled( m_checkBoxEnableZN->IsChecked() );
-    data.SetHighlightColour( m_colourPickerHighlightColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX) );
-    
-    data.SetZoomFactor( m_spinCtrlZoomFactor->GetValue() );
-    conf.WriteItem( &data );
-    
+    data.SetEnabled(m_checkBoxEnableZN->IsChecked());
+    data.SetHighlightColour(m_colourPickerHighlightColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
+    data.SetUseScrollbar(m_checkBoxUseVScrollbar->IsChecked());
+    data.SetZoomFactor(m_spinCtrlZoomFactor->GetValue());
+    conf.WriteItem(&data);
+
     // notify thet the settings were changed
     wxCommandEvent evt(wxEVT_ZN_SETTINGS_UPDATED);
-    EventNotifier::Get()->AddPendingEvent( evt );
-    
+    EventNotifier::Get()->AddPendingEvent(evt);
+
     EndModal(wxID_OK);
 }

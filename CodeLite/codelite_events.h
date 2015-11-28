@@ -720,4 +720,18 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHOW_WORKSPACE_TAB, clCommandEven
 // The tab name is set in the event.GetString()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHOW_OUTPUT_TAB, clCommandEvent);
 
+// Event: clCommandEvent
+// Sent by CodeLite when the active editor is _not_ an IEditor instance
+// but something else (probably provided by the plugins)
+// and CodeLite has no way of telling if the "Save" icon should be enabled or not
+// In case the window in the question is modified and owned by the plugin, the plugin should:
+//     1. Call event.SetAnswer(true)
+//     2. Call event.Skip(false);
+//
+// In case the window in the question is not owned by the plugin, the plugin should:
+//     1. Call event.Skip();
+// 
+// Use: event.GetClientData() to get the pointer to the window page
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PAGE_MODIFIED_UPDATE_UI, clCommandEvent);
+
 #endif // CODELITE_EVENTS_H

@@ -55,6 +55,13 @@
 #define EXPORT
 #endif
 
+#if defined(__WXMSW__) || defined(__WXGTK__)
+#define CL_PLUGIN_API extern "C" EXPORT
+#else 
+// OSX
+#define CL_PLUGIN_API extern "C" EXPORT
+#endif
+
 class IManager;
 
 /**
@@ -203,6 +210,6 @@ public:
 
 // Every dll must contain at least this function
 typedef IPlugin* (*GET_PLUGIN_CREATE_FUNC)(IManager*);
-typedef PluginInfo (*GET_PLUGIN_INFO_FUNC)();
+typedef PluginInfo* (*GET_PLUGIN_INFO_FUNC)();
 typedef int (*GET_PLUGIN_INTERFACE_VERSION_FUNC)();
 #endif // PLUGIN_H

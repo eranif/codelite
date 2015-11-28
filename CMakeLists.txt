@@ -38,6 +38,10 @@ project( "CodeLite" )
 ## Generate compile_commands.json file for code completion
 set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
 
+if( UNIX AND NOT APPLE)
+    set( CMAKE_LIBRARY_ARCHITECTURE x86_64-linux-gnu ) # add search path needed by (at least) libssh and gtk2 libraries
+endif()
+
 set( CL_PREFIX "/usr" )
 if (CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3
     set( CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
@@ -383,7 +387,7 @@ if ( MAKE_DEB )
 
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "CodeLite")
-    set(CPACK_PACKAGE_VERSION             "9.0.4")
+    set(CPACK_PACKAGE_VERSION             "9.0.5")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++/PHP and Node.js IDE (Integrated Development Environment)")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")

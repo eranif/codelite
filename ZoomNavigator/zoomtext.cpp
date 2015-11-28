@@ -53,18 +53,19 @@ ZoomText::ZoomText(wxWindow* parent,
                    const wxString& name)
     : wxStyledTextCtrl(parent, id, pos, size, style | wxNO_BORDER, name)
 {
+    znConfigItem data;
+    clConfig conf("zoom-navigator.conf");
+    conf.ReadItem(&data);
+    
     SetEditable(false);
     SetUseHorizontalScrollBar(false);
-    SetUseVerticalScrollBar(true);
+    SetUseVerticalScrollBar(data.IsUseScrollbar());
     HideSelection(true);
 
     SetMarginWidth(1, 0);
     SetMarginWidth(2, 0);
     SetMarginWidth(3, 0);
 
-    znConfigItem data;
-    clConfig conf("zoom-navigator.conf");
-    conf.ReadItem(&data);
 
     m_zoomFactor = data.GetZoomFactor();
     m_colour = data.GetHighlightColour();
@@ -102,7 +103,11 @@ void ZoomText::UpdateLexer(IEditor* editor)
         DoClear();
         return;
     }
-
+    
+    znConfigItem data;
+    clConfig conf("zoom-navigator.conf");
+    conf.ReadItem(&data);
+    
     m_filename = editor->GetFileName().GetFullPath();
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(m_filename);
     if(!lexer) {
@@ -119,7 +124,7 @@ void ZoomText::UpdateLexer(IEditor* editor)
     SetZoom(m_zoomFactor);
     SetEditable(false);
     SetUseHorizontalScrollBar(false);
-    SetUseVerticalScrollBar(true);
+    SetUseVerticalScrollBar(data.IsUseScrollbar());
     HideSelection(true);
     MarkerSetBackground(1, m_colour);
 }

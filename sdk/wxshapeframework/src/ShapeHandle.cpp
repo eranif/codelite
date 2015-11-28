@@ -214,7 +214,7 @@ wxRect wxSFShapeHandle::GetHandleRect() const
 
 void wxSFShapeHandle::_OnBeginDrag(const wxPoint& pos)
 {
-	m_nPrevPos = m_nStartPos = pos;
+	m_nPrevPos = m_nStartPos = m_nCurrPos = pos;
 
 	if(m_pParentShape)m_pParentShape->OnBeginHandle(*this);
 }

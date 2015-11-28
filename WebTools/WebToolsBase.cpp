@@ -32,7 +32,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     boxSizer2->Add(m_notebook10, 1, wxALL|wxEXPAND, 5);
     
     m_panel56 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook10->AddPage(m_panel56, _("Code Completion"), false);
+    m_notebook10->AddPage(m_panel56, _("Code Completion"), true);
     
     wxBoxSizer* boxSizer58 = new wxBoxSizer(wxVERTICAL);
     m_panel56->SetSizer(boxSizer58);
@@ -114,9 +114,48 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropRequireJS = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("RequireJS"), wxPG_LABEL, 1) );
     m_pgPropRequireJS->SetHelpString(_("This plugin (\"requirejs\") teaches the server to understand RequireJS-style dependency management. It defines the global functions define and requirejs, and will do its best to resolve dependencies and give them their proper types"));
     
+    m_panel237 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook10->AddPage(m_panel237, _("Node.js"), false);
+    
+    wxBoxSizer* boxSizer239 = new wxBoxSizer(wxVERTICAL);
+    m_panel237->SetSizer(boxSizer239);
+    
+    wxFlexGridSizer* flexGridSizer241 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer241->SetFlexibleDirection( wxBOTH );
+    flexGridSizer241->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer241->AddGrowableCol(1);
+    
+    boxSizer239->Add(flexGridSizer241, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText243 = new wxStaticText(m_panel237, wxID_ANY, _("nodejs path:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer241->Add(m_staticText243, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_filePickerNodeJS = new wxFilePickerCtrl(m_panel237, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerNodeJS->SetToolTip(_("Set the path to Node.js executable"));
+    m_filePickerNodeJS->SetFocus();
+    
+    flexGridSizer241->Add(m_filePickerNodeJS, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText247 = new wxStaticText(m_panel237, wxID_ANY, _("npm path:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer241->Add(m_staticText247, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_filePickerNpm = new wxFilePickerCtrl(m_panel237, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerNpm->SetToolTip(_("Set the path to npm executable"));
+    
+    flexGridSizer241->Add(m_filePickerNpm, 0, wxALL|wxEXPAND, 5);
+    
+    flexGridSizer241->Add(0, 0, 1, wxALL, 5);
+    
+    m_buttonSuugest = new wxButton(m_panel237, wxID_ANY, _("Suggest..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonSuugest->SetToolTip(_("Auto detect Node.js & npm binaries"));
+    
+    flexGridSizer241->Add(m_buttonSuugest, 0, wxALL|wxEXPAND, 5);
+    
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     
-    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
     m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer4->AddButton(m_buttonCancel);
@@ -124,6 +163,9 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer4->AddButton(m_buttonOK);
+    
+    m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer4->AddButton(m_buttonApply);
     m_stdBtnSizer4->Realize();
     
     
@@ -136,6 +178,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     #endif
     
     SetName(wxT("WebToolsSettingsBase"));
+    SetMinClientSize(wxSize(400,300));
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
@@ -157,8 +200,13 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_checkBoxEnableXmlCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_checkBoxEnableHtmlCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WebToolsSettingsBase::OnJSValueChanged), NULL, this);
+    m_filePickerNodeJS->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNodejsPath), NULL, this);
+    m_filePickerNpm->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNpmPath), NULL, this);
+    m_buttonSuugest->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnOK), NULL, this);
+    m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnApply), NULL, this);
+    m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     
 }
 
@@ -168,8 +216,13 @@ WebToolsSettingsBase::~WebToolsSettingsBase()
     m_checkBoxEnableXmlCC->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_checkBoxEnableHtmlCC->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WebToolsSettingsBase::OnJSValueChanged), NULL, this);
+    m_filePickerNodeJS->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNodejsPath), NULL, this);
+    m_filePickerNpm->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNpmPath), NULL, this);
+    m_buttonSuugest->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnOK), NULL, this);
+    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnApply), NULL, this);
+    m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     
 }
 

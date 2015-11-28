@@ -41,9 +41,9 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     
     bSizer1->Add(m_auibar, 0, wxEXPAND, 5);
     
-    m_auibar->AddTool(wxID_NEW, _("New Theme..."), wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("New Theme..."), _("New Theme..."), NULL);
+    m_auibar->AddTool(wxID_NEW, _("New Theme..."), wxXmlResource::Get()->LoadBitmap(wxT("16-file_new")), wxNullBitmap, wxITEM_NORMAL, _("New Theme..."), _("New Theme..."), NULL);
     
-    m_auibar->AddTool(wxID_SAVE, _("Export"), wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Export syntax highlight settings to zip file"), _("Export syntax highlight settings to zip file"), NULL);
+    m_auibar->AddTool(wxID_SAVE, _("Export"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_save")), wxNullBitmap, wxITEM_NORMAL, _("Export syntax highlight settings to zip file"), _("Export syntax highlight settings to zip file"), NULL);
     wxAuiToolBarItem* m_toolbarItemSave = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
     if (m_toolbarItemSave) {
         m_toolbarItemSave->SetHasDropDown(true);
@@ -56,11 +56,11 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
         m_dropdownMenus.insert(std::make_pair( m_toolbarItemSave->GetId(), m_menu142) );
     }
     
-    m_auibar->AddTool(wxID_OPEN, _("Import settings from a zip archive"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Import settings from a zip archive"), _("Import settings from a zip archive"), NULL);
+    m_auibar->AddTool(wxID_OPEN, _("Import settings from a zip archive"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_open")), wxNullBitmap, wxITEM_NORMAL, _("Import settings from a zip archive"), _("Import settings from a zip archive"), NULL);
     
-    m_auibar->AddTool(wxID_REVERT, _("Revert to default settings"), wxXmlResource::Get()->LoadBitmap(wxT("document-revert")), wxNullBitmap, wxITEM_NORMAL, _("Revert to default settings"), _("Revert to default settings"), NULL);
+    m_auibar->AddTool(wxID_REVERT, _("Revert to default settings"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_reload")), wxNullBitmap, wxITEM_NORMAL, _("Revert to default settings"), _("Revert to default settings"), NULL);
     
-    m_auibar->AddTool(ID_TOOL_IMPORT_ECLIPSE_THEME, _("Import Eclipse Theme"), wxXmlResource::Get()->LoadBitmap(wxT("eclipse")), wxNullBitmap, wxITEM_NORMAL, _("Import Eclipse Theme"), _("Import Eclipse Theme"), NULL);
+    m_auibar->AddTool(ID_TOOL_IMPORT_ECLIPSE_THEME, _("Import Eclipse Theme"), wxXmlResource::Get()->LoadBitmap(wxT("16-eclipse")), wxNullBitmap, wxITEM_NORMAL, _("Import Eclipse Theme"), _("Import Eclipse Theme"), NULL);
     wxAuiToolBarItem* m_toolbarItem150 = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
     if (m_toolbarItem150) {
         m_toolbarItem150->SetHasDropDown(true);
@@ -127,6 +127,48 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_colourPickerOutputPanesBgColour->SetToolTip(_("This is where you can set the background colour for the Output View panes (where you can see the output from e.g. 'Build' or 'Debug') and terminal (where you see the trace output while debugging)"));
     
     fgSizer4->Add(m_colourPickerOutputPanesBgColour, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText165 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Preview:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer82->Add(m_staticText165, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_stcPreview = new wxStyledTextCtrl(m_panelGlobalColours, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_stcPreview->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcPreview->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcPreview->SetMarginSensitive(4, true);
+    m_stcPreview->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stcPreview->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcPreview->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcPreview->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcPreview->SetMarginWidth(2, 0);
+    m_stcPreview->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcPreview->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcPreview->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcPreview->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcPreview->SetMarginMask(3, 0);
+    m_stcPreview->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcPreview->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcPreview->StyleClearAll();
+    m_stcPreview->SetWrapMode(0);
+    m_stcPreview->SetIndentationGuides(0);
+    m_stcPreview->SetKeyWords(0, wxT(""));
+    m_stcPreview->SetKeyWords(1, wxT(""));
+    m_stcPreview->SetKeyWords(2, wxT(""));
+    m_stcPreview->SetKeyWords(3, wxT(""));
+    m_stcPreview->SetKeyWords(4, wxT(""));
+    
+    boxSizer82->Add(m_stcPreview, 1, wxALL|wxEXPAND, 5);
     
     m_panelSyntaxHighlight = new wxPanel(m_notebook76, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_panelSyntaxHighlight->SetToolTip(_("Customize your colours and font per language"));
@@ -384,11 +426,16 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     #endif
     
     SetName(wxT("SyntaxHighlightBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetMinClientSize(wxSize(-1,500));
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -575,11 +622,15 @@ NewThemeDialogBase::NewThemeDialogBase(wxWindow* parent, wxWindowID id, const wx
     m_stdBtnSizer117->Realize();
     
     SetName(wxT("NewThemeDialogBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

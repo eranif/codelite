@@ -5863,14 +5863,25 @@ void clMainFrame::OnCleanProjectOnly(wxCommandEvent& event)
 void clMainFrame::OnFileSaveAllUI(wxUpdateUIEvent& event)
 {
     bool hasModifiedEditor = false;
-    std::vector<LEditor*> editors;
-    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
-    for(size_t i = 0; i < editors.size(); ++i) {
-        if(editors.at(i)->IsModified()) {
+    clTab::Vec_t tabs;
+    GetMainBook()->GetAllTabs(tabs);
+    
+    for(size_t i=0; i<tabs.size(); ++i) {
+        if(tabs.at(i).isFile && tabs.at(i).isModified) {
             hasModifiedEditor = true;
             break;
+            
+        } else if(!tabs.at(i).isFile) {
+            // Send an event
+            clCommandEvent modifyEvent(wxEVT_PAGE_MODIFIED_UPDATE_UI);
+            modifyEvent.SetClientData(tabs.at(i).window);
+            if(EventNotifier::Get()->ProcessEvent(modifyEvent) && modifyEvent.IsAnswer()) {
+                hasModifiedEditor = true;
+                break;
+            }
         }
     }
+    
     event.Enable(hasModifiedEditor);
 }
 

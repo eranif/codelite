@@ -32,7 +32,7 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     
     m_staticText31 = new wxStaticText(this, wxID_ANY, _("New Symbol Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer4->Add(m_staticText31, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer4->Add(m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlNewName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_textCtrlNewName->SetFocus();
@@ -128,18 +128,22 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     m_buttonOk = new wxButton(this, wxID_OK, _("&Rename"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOk->SetDefault();
     
-    bSizer3->Add(m_buttonOk, 0, wxALL|wxALIGN_RIGHT, 5);
+    bSizer3->Add(m_buttonOk, 0, wxALL, 5);
     
     m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer3->Add(m_buttonCancel, 0, wxALL|wxALIGN_RIGHT, 5);
+    bSizer3->Add(m_buttonCancel, 0, wxALL, 5);
     
     SetName(wxT("RenameSymbolBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -221,10 +225,14 @@ SelectProjectsDlgBase::SelectProjectsDlgBase(wxWindow* parent, wxWindowID id, co
     
     SetName(wxT("SelectProjectsDlgBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

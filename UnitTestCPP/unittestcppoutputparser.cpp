@@ -23,51 +23,47 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-
 #include "unittestcppoutputparser.h"
 #include <wx/regex.h>
 #include "wx/log.h"
 #include <wx/crt.h>
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
+#include "compiler.h"
 WX_DEFINE_OBJARRAY(ErrorLineInfoArray);
 
-UnitTestCppOutputParser::~UnitTestCppOutputParser()
-{
-}
+UnitTestCppOutputParser::~UnitTestCppOutputParser() {}
 
 UnitTestCppOutputParser::UnitTestCppOutputParser(const wxArrayString& output)
     : m_output(output)
 {
-
 }
 
-void UnitTestCppOutputParser::Parse(TestSummary *summary)
+void UnitTestCppOutputParser::Parse(TestSummary* summary)
 {
-// define the regexes
-// group1: total number of tests
+    CompilerPtr compilerVC(new Compiler(NULL, Compiler::kRegexVC));
+    CompilerPtr compilerGcc(new Compiler(NULL, Compiler::kRegexGNU));
+
+    const Compiler::CmpListInfoPattern& gnuErrors = compilerGcc->GetErrPatterns();
+    const Compiler::CmpListInfoPattern& vcErrors = compilerVC->GetErrPatterns();
+
+    // define the regexes
+    // group1: total number of tests
     static wxRegEx reSuccess(wxT("Success: ([0-9]*) tests passed"));
 
-// main.cpp(82): error: Failure in Test4: false
-// test.cpp: 5: error: Failure in MyTestClass: t.value() == 99
-// group1: file name
-// group2: line number
-    static wxRegEx reError (wxT("(^[a-zA-Z:]{0,2}[a-zA-Z\\.0-9_/\\+\\-]+)\\(([0-9]+)\\): error:"));
-    static wxRegEx reError2(wxT("(^[a-zA-Z:]{0,2}[a-zA-Z\\.0-9_/\\+\\-]+): *([0-9]+): error:"));
-    
-// failure summary line:
-// FAILURE: 1 out of 6 tests failed (1 failures).
-// group1: number of failures
-// group2: total number of tests
+    // failure summary line:
+    // FAILURE: 1 out of 6 tests failed (1 failures).
+    // group1: number of failures
+    // group2: total number of tests
     static wxRegEx reErrorSummary(wxT("FAILURE: ([0-9]*) out of ([0-9]*) tests failed"));
 
-    for (size_t i=0; i<m_output.GetCount(); i++) {
+    for(size_t i = 0; i < m_output.GetCount(); i++) {
         wxString line = m_output.Item(i);
 
-        if (reSuccess.IsValid()) {
+        if(reSuccess.IsValid()) {
             // if the Summary line is in the format of: Success! ,,,
             // nothing is left to be checked
-            if (reSuccess.Matches(m_output.Item(i))) {
+            if(reSuccess.Matches(m_output.Item(i))) {
                 size_t len(0);
                 size_t start(0);
                 wxString match;
@@ -81,30 +77,60 @@ void UnitTestCppOutputParser::Parse(TestSummary *summary)
             }
         }
 
-        // test for error line
-        if ( reError.Matches(line) || reError2.Matches(line) ) {
-            
+        // Try the GNU pattern first
+        bool isAndErrorLine = false;
+        Compiler::CmpListInfoPattern::const_iterator iter = gnuErrors.begin();
+        for(; iter != gnuErrors.end(); ++iter) {
+            wxRegEx re(iter->pattern, wxRE_ADVANCED | wxRE_ICASE);
+            long nFileIndex = wxNOT_FOUND;
+            long nLineIndex = wxNOT_FOUND;
+            iter->fileNameIndex.ToCLong(&nFileIndex);
+            iter->lineNumberIndex.ToCLong(&nLineIndex);
             ErrorLineInfo info;
             wxString lineNumber, filename;
-            if ( reError.Matches(line) ) {
-                info.file = reError.GetMatch(line, 1);
-                info.line = reError.GetMatch(line, 2);
+            if(re.Matches(line)) {
+                // found an error
+                info.file = nFileIndex == wxNOT_FOUND ? "" : re.GetMatch(line, nFileIndex);
+                info.line = nLineIndex == wxNOT_FOUND ? "" : re.GetMatch(line, nLineIndex);
                 info.description = line;
                 summary->errorLines.Add(info);
                 summary->errorCount++;
-                
-            } else if ( reError2.Matches(line) ) {
-                info.file = reError2.GetMatch(line, 1);
-                info.line = reError2.GetMatch(line, 2);
-                info.description = line;
-                summary->errorLines.Add(info);
-                summary->errorCount++;
+                isAndErrorLine = true;
+                break;
             }
         }
 
+        if(!isAndErrorLine) {
+            iter = vcErrors.begin();
+            for(; iter != vcErrors.end(); ++iter) {
+                wxRegEx re(iter->pattern, wxRE_ADVANCED | wxRE_ICASE);
+                long nFileIndex = wxNOT_FOUND;
+                long nLineIndex = wxNOT_FOUND;
+                iter->fileNameIndex.ToCLong(&nFileIndex);
+                iter->lineNumberIndex.ToCLong(&nLineIndex);
+                ErrorLineInfo info;
+                wxString lineNumber, filename;
+                if(re.Matches(line)) {
+                    // found an error
+                    info.file = nFileIndex == wxNOT_FOUND ? "" : re.GetMatch(line, nFileIndex);
+                    info.line = nLineIndex == wxNOT_FOUND ? "" : re.GetMatch(line, nLineIndex);
+                    info.description = line;
+                    summary->errorLines.Add(info);
+                    summary->errorCount++;
+                    isAndErrorLine = true;
+                    break;
+                }
+            }
+        }
+
+        // if this line is an error line, continue
+        if(isAndErrorLine) {
+            continue;
+        }
+
         // test for error summary line
-        if (reErrorSummary.IsValid()) {
-            if (reErrorSummary.Matches(m_output.Item(i))) {
+        if(reErrorSummary.IsValid()) {
+            if(reErrorSummary.Matches(m_output.Item(i))) {
                 // increase the error count
                 size_t len(0);
                 size_t start(0);
@@ -131,10 +157,7 @@ TestSummary::TestSummary()
     errorLines.Clear();
 }
 
-TestSummary::~TestSummary()
-{
-    errorLines.Clear();
-}
+TestSummary::~TestSummary() { errorLines.Clear(); }
 
 void TestSummary::PrintSelf()
 {

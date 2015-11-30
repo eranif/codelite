@@ -30,10 +30,11 @@
 #include <vector>
 #include <wx/dynarray.h>
 
-struct ErrorLineInfo {
-	wxString line;
-	wxString file;
-	wxString description;
+struct ErrorLineInfo
+{
+    wxString line;
+    wxString file;
+    wxString description;
 };
 
 WX_DECLARE_OBJARRAY(ErrorLineInfo, ErrorLineInfoArray);
@@ -41,23 +42,24 @@ WX_DECLARE_OBJARRAY(ErrorLineInfo, ErrorLineInfoArray);
 class TestSummary
 {
 public:
-	int errorCount;
-	int totalTests;
-	ErrorLineInfoArray errorLines;
+    int errorCount;
+    int totalTests;
+    ErrorLineInfoArray errorLines;
 
-	TestSummary();
-	virtual ~TestSummary();
+    TestSummary();
+    virtual ~TestSummary();
 
-	void PrintSelf();
+    void PrintSelf();
 };
 
 class UnitTestCppOutputParser
 {
-	wxArrayString m_output;
-public:
-	UnitTestCppOutputParser(const wxArrayString &output);
-	~UnitTestCppOutputParser();
+    wxArrayString m_output;
 
-	void Parse(TestSummary *summary);
+public:
+    UnitTestCppOutputParser(const wxArrayString& output);
+    ~UnitTestCppOutputParser();
+
+    void Parse(TestSummary* summary);
 };
 #endif // __unittestcppoutputparser__

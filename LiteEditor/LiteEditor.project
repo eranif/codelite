@@ -509,6 +509,7 @@
     <File Name="wxcl_log_text_ctrl.cpp"/>
     <File Name="clInitializeDialog.h"/>
     <File Name="clInitializeDialog.cpp"/>
+    <File Name="autoversion.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>

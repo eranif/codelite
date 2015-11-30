@@ -267,7 +267,8 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
 
     // Build the TU file name
     wxFileName fnSourceFile(sourceFile);
-    pchfile << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator() << wxT(".clang");
+    pchfile << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator()
+            << wxT(".clang");
 
     {
         wxLogNull nl;
@@ -311,6 +312,9 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
             cclp.MakeAbsolute(cwd);
 
             CL_DEBUG(wxT("Loaded compilation flags: %s"), compilationLine.c_str());
+            if(!cclp.GetPchFile().IsEmpty()) {
+                args.Add("-include " + cclp.GetPchFile());
+            }
             args.insert(args.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
             args.insert(args.end(), cclp.GetMacrosWithPrefix().begin(), cclp.GetMacrosWithPrefix().end());
             args.Add(cclp.GetStandardWithPrefix());

@@ -407,8 +407,8 @@ if (USE_CLANG)
 
 if (APPLE)
   set( CLANG_INCLUDE "${CL_SRC_ROOT}/sdk/clang/include" )
-  set( CLANG_LIBRARY "-L${CL_SRC_ROOT}/sdk/clang/lib -lclang" )
-  set( CLANG_BINARY "${CL_SRC_ROOT}/sdk/clang/lib/libclang.dylib")
+  set( CLANG_LIBRARY "-L${CL_SRC_ROOT}/sdk/clang/lib -lclang.3.7" )
+  set( CLANG_BINARY "${CL_SRC_ROOT}/sdk/clang/lib/libclang.3.7.dylib")
 
 elseif (MINGW)
   find_package(LLVM)

@@ -218,7 +218,7 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
              ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
         
         ## Copy and fix libclang.dylib / liblldb
-        file(COPY ${CL_SRC_ROOT}/sdk/clang/lib/libclang.dylib 
+        file(COPY ${CL_SRC_ROOT}/sdk/clang/lib/libclang.3.7.dylib 
              DESTINATION 
              ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
 

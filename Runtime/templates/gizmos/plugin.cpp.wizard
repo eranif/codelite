@@ -4,25 +4,25 @@
 static $(PluginName)* thePlugin = NULL;
 
 // Define the plugin entry point
-extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
+CL_PLUGIN_API IPlugin *CreatePlugin(IManager *manager)
 {
-    if (thePlugin == 0) {
+    if (thePlugin == NULL) {
         thePlugin = new $(PluginName)(manager);
     }
     return thePlugin;
 }
 
-extern "C" EXPORT PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo GetPluginInfo()
 {
-    PluginInfo info;
+    static PluginInfo info;
     info.SetAuthor(wxT("$(UserName)"));
     info.SetName(wxT("$(PluginShortName)"));
     info.SetDescription(_("$(PluginLongName)"));
     info.SetVersion(wxT("v1.0"));
-    return info;
+    return &info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion()
+CL_PLUGIN_API int GetPluginInterfaceVersion()
 {
     return PLUGIN_INTERFACE_VERSION;
 }

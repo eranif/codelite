@@ -204,16 +204,13 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
         }
 
         if(!displayTip.IsEmpty() && hasErrors) {
-
             // Send back the error messages
             reply->errorMessage << "clang: " << displayTip;
             reply->errorMessage.RemoveLast();
             
-            if(reply->results->NumResults == 0) {
-                // Free the results
-                clang_disposeCodeCompleteResults(reply->results);
-                reply->results = NULL;
-            }
+            // Free the results
+            clang_disposeCodeCompleteResults(reply->results);
+            reply->results = NULL;
         }
 
         // Send the event

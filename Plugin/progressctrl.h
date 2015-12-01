@@ -55,8 +55,8 @@ public:
     const wxString& GetMsg() const { return m_msg; }
     void SetFillCol(const wxColour& col) { m_fillCol = col; }
 
-    DECLARE_EVENT_TABLE()
     void OnPaint(wxPaintEvent& e);
     void OnEraseBg(wxEraseEvent& e);
+    void OnSize(wxSizeEvent& event);
 };
 #endif // __progressctrl__

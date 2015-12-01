@@ -27,12 +27,6 @@
 #include <wx/dcbuffer.h>
 #include "drawingutils.h"
 
-BEGIN_EVENT_TABLE(ProgressCtrl, wxPanel)
-EVT_PAINT(ProgressCtrl::OnPaint)
-EVT_ERASE_BACKGROUND(ProgressCtrl::OnEraseBg)
-END_EVENT_TABLE()
-
-ProgressCtrl::~ProgressCtrl() {}
 
 ProgressCtrl::ProgressCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize&, long style)
     : wxPanel(parent, id, pos, wxSize(-1, 24), style)
@@ -40,6 +34,17 @@ ProgressCtrl::ProgressCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     , m_currValue(0)
     , m_fillCol(wxT("DARK GREEN"))
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    Bind(wxEVT_PAINT, &ProgressCtrl::OnPaint, this);
+    Bind(wxEVT_ERASE_BACKGROUND, &ProgressCtrl::OnEraseBg, this);
+    Bind(wxEVT_SIZE, &ProgressCtrl::OnSize, this);
+}
+
+ProgressCtrl::~ProgressCtrl()
+{
+    Unbind(wxEVT_PAINT, &ProgressCtrl::OnPaint, this);
+    Unbind(wxEVT_ERASE_BACKGROUND, &ProgressCtrl::OnEraseBg, this);
+    Unbind(wxEVT_SIZE, &ProgressCtrl::OnSize, this);
 }
 
 void ProgressCtrl::OnEraseBg(wxEraseEvent& e) { wxUnusedVar(e); }
@@ -47,7 +52,8 @@ void ProgressCtrl::OnEraseBg(wxEraseEvent& e) { wxUnusedVar(e); }
 void ProgressCtrl::OnPaint(wxPaintEvent& e)
 {
     wxUnusedVar(e);
-    wxBufferedPaintDC dc(this);
+    wxAutoBufferedPaintDC dc(this);
+    PrepareDC(dc);
 
     wxColour brushCol = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     dc.SetPen(brushCol);
@@ -55,7 +61,7 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
 
     dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
     wxRect rect = GetClientSize();
-    //wxRect client_rect = GetClientSize();
+    // wxRect client_rect = GetClientSize();
 
     // draw a bordered rectangle
     dc.DrawRectangle(rect);
@@ -76,20 +82,20 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
     dc.DrawRectangle(rr);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
-    //dc.SetPen(*wxWHITE_PEN);
-    //dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
-    //dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
+    // dc.SetPen(*wxWHITE_PEN);
+    // dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+    // dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
     //
-    //dc.DrawPoint(client_rect.GetBottomRight());
-    //rect.Deflate(1, 1);
+    // dc.DrawPoint(client_rect.GetBottomRight());
+    // rect.Deflate(1, 1);
     //
-    //dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    //dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
-    //dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
+    // dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    // dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+    // dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
     //
-    //dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-    //dc.DrawLine(rect.GetBottomLeft(), rect.GetTopLeft());
-    //dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
+    // dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+    // dc.DrawLine(rect.GetBottomLeft(), rect.GetTopLeft());
+    // dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
 
     // calculate the location to place the string
     wxCoord xx, yy;
@@ -117,5 +123,11 @@ void ProgressCtrl::Clear()
 {
     m_msg = wxEmptyString;
     m_currValue = 0;
+    Refresh();
+}
+
+void ProgressCtrl::OnSize(wxSizeEvent& event)
+{
+    event.Skip();
     Refresh();
 }

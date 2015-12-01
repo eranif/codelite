@@ -95,7 +95,7 @@ static bool isDarkColor(const wxColour& color)
 struct SDescendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
-        return rStart->GetName().Cmp(rEnd->GetName()) > 0;
+        return rStart->GetName().CmpNoCase(rEnd->GetName()) > 0;
     }
 };
 
@@ -103,7 +103,7 @@ struct SDescendingSort {
 struct SAscendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
-        return rEnd->GetName().Cmp(rStart->GetName()) > 0;
+        return rEnd->GetName().CmpNoCase(rStart->GetName()) > 0;
     }
 };
 
@@ -147,7 +147,7 @@ TagsManager::TagsManager()
     , m_encoding(wxFONTENCODING_DEFAULT)
 {
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &TagsManager::OnIndexerTerminated, this);
-    
+
     m_db = new TagsStorageSQLite();
     m_db->SetSingleSearchLimit(MAX_SEARCH_LIMIT);
 
@@ -641,7 +641,8 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName,
 
         std::vector<TagEntryPtr> tmpCandidates, tmpCandidates1;
         TagsByScopeAndName(scope, word, tmpCandidates);
-
+        DoFilterCtorDtorIfNeeded(tmpCandidates, oper);
+        
         wxString partialName(word);
         partialName.MakeLower();
 
@@ -750,14 +751,15 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName& fileName,
         filter.Add(wxT("member"));
         filter.Add(wxT("prototype"));
         PERF_BLOCK("TagsByScope") { TagsByScope(scope, filter, candidates, true); }
+        DoFilterCtorDtorIfNeeded(candidates, oper);
     }
 
     PERF_END();
-    
+
     std::vector<TagEntryPtr> noDupsVec;
     DoFilterDuplicatesBySignature(candidates, noDupsVec);
     noDupsVec.swap(candidates);
-    
+
     DoSortByVisibility(candidates);
     return candidates.empty() == false;
 }
@@ -1165,11 +1167,8 @@ void TagsManager::FilterDeclarations(const std::vector<TagEntryPtr>& src, std::v
     }
 }
 
-clCallTipPtr TagsManager::GetFunctionTip(const wxFileName& fileName,
-                                         int lineno,
-                                         const wxString& expr,
-                                         const wxString& text,
-                                         const wxString& word)
+clCallTipPtr TagsManager::GetFunctionTip(
+    const wxFileName& fileName, int lineno, const wxString& expr, const wxString& text, const wxString& word)
 {
     wxString path;
     wxString typeName, typeScope, tmp;
@@ -2739,11 +2738,8 @@ void TagsManager::ClearAllCaches()
     GetDatabase()->ClearCache();
 }
 
-CppToken TagsManager::FindLocalVariable(const wxFileName& fileName,
-                                        int pos,
-                                        int lineNumber,
-                                        const wxString& word,
-                                        const wxString& modifiedText)
+CppToken TagsManager::FindLocalVariable(
+    const wxFileName& fileName, int pos, int lineNumber, const wxString& word, const wxString& modifiedText)
 {
     // Load the file and get a state map + the text from the scanner
     TagEntryPtr tag(NULL);
@@ -3088,11 +3084,8 @@ void TagsManager::GetScopesByScopeName(const wxString& scopeName, wxArrayString&
     }
 }
 
-void TagsManager::InsertForwardDeclaration(const wxString& classname,
-                                           const wxString& fileContent,
-                                           wxString& lineToAdd,
-                                           int& line,
-                                           const wxString& impExpMacro)
+void TagsManager::InsertForwardDeclaration(
+    const wxString& classname, const wxString& fileContent, wxString& lineToAdd, int& line, const wxString& impExpMacro)
 {
     lineToAdd << "class ";
     if(!impExpMacro.IsEmpty()) {
@@ -3268,101 +3261,99 @@ void TagsManager::GetKeywordsTagsForLanguage(const wxString& filter, eLanguage l
 {
     wxString keywords;
     if(lang == kCxx) {
-        keywords =
-            wxT(" alignas"
-                " alignof"
-                " and"
-                " and_eq"
-                " asm"
-                " auto"
-                " bitand"
-                " bitor"
-                " bool"
-                " break"
-                " case"
-                " catch"
-                " char"
-                " char16_t"
-                " char32_t"
-                " class"
-                " compl"
-                " concept"
-                " const"
-                " constexpr"
-                " const_cast"
-                " continue"
-                " decltype"
-                " default"
-                " delete"
-                " do"
-                " double"
-                " dynamic_cast"
-                " else"
-                " enum"
-                " explicit"
-                " export"
-                " extern"
-                " false"
-                " float"
-                " for"
-                " friend"
-                " goto"
-                " if"
-                " inline"
-                " int"
-                " long"
-                " mutable"
-                " namespace"
-                " new"
-                " noexcept"
-                " not"
-                " not_eq"
-                " nullptr"
-                " operator"
-                " or"
-                " or_eq"
-                " private"
-                " protected"
-                " public"
-                " register"
-                " reinterpret_cast"
-                " requires"
-                " return"
-                " short"
-                " signed"
-                " sizeof"
-                " static"
-                " static_assert"
-                " static_cast"
-                " struct"
-                " switch"
-                " template"
-                " this"
-                " thread_local"
-                " throw"
-                " true"
-                " try"
-                " typedef"
-                " typeid"
-                " typename"
-                " union"
-                " unsigned"
-                " using"
-                " virtual"
-                " void"
-                " volatile"
-                " wchar_t"
-                " while"
-                " xor"
-                " xor_eq");
+        keywords = wxT(" alignas"
+                       " alignof"
+                       " and"
+                       " and_eq"
+                       " asm"
+                       " auto"
+                       " bitand"
+                       " bitor"
+                       " bool"
+                       " break"
+                       " case"
+                       " catch"
+                       " char"
+                       " char16_t"
+                       " char32_t"
+                       " class"
+                       " compl"
+                       " concept"
+                       " const"
+                       " constexpr"
+                       " const_cast"
+                       " continue"
+                       " decltype"
+                       " default"
+                       " delete"
+                       " do"
+                       " double"
+                       " dynamic_cast"
+                       " else"
+                       " enum"
+                       " explicit"
+                       " export"
+                       " extern"
+                       " false"
+                       " float"
+                       " for"
+                       " friend"
+                       " goto"
+                       " if"
+                       " inline"
+                       " int"
+                       " long"
+                       " mutable"
+                       " namespace"
+                       " new"
+                       " noexcept"
+                       " not"
+                       " not_eq"
+                       " nullptr"
+                       " operator"
+                       " or"
+                       " or_eq"
+                       " private"
+                       " protected"
+                       " public"
+                       " register"
+                       " reinterpret_cast"
+                       " requires"
+                       " return"
+                       " short"
+                       " signed"
+                       " sizeof"
+                       " static"
+                       " static_assert"
+                       " static_cast"
+                       " struct"
+                       " switch"
+                       " template"
+                       " this"
+                       " thread_local"
+                       " throw"
+                       " true"
+                       " try"
+                       " typedef"
+                       " typeid"
+                       " typename"
+                       " union"
+                       " unsigned"
+                       " using"
+                       " virtual"
+                       " void"
+                       " volatile"
+                       " wchar_t"
+                       " while"
+                       " xor"
+                       " xor_eq");
     } else if(lang == kJavaScript) {
-        keywords =
-            "abstract boolean break byte case catch char class "
-            "const continue debugger default delete do double else enum export extends "
-            "final finally float for function goto if implements import in instanceof "
-            "int interface long native new package private protected public "
-            "return short static super switch synchronized this throw throws "
-            "transient try typeof var void volatile while with";
+        keywords = "abstract boolean break byte case catch char class "
+                   "const continue debugger default delete do double else enum export extends "
+                   "final finally float for function goto if implements import in instanceof "
+                   "int interface long native new package private protected public "
+                   "return short static super switch synchronized this throw throws "
+                   "transient try typeof var void volatile while with";
     }
 
     std::set<wxString> uniqueWords;
@@ -3376,5 +3367,20 @@ void TagsManager::GetKeywordsTagsForLanguage(const wxString& filter, eLanguage l
             tag->SetKind(wxT("cpp_keyword"));
             tags.push_back(tag);
         }
+    }
+}
+
+void TagsManager::DoFilterCtorDtorIfNeeded(std::vector<TagEntryPtr>& tags, const wxString& oper)
+{
+    if((oper == "->") || (oper == ".")) {
+        // filter out the constructors / destructors
+        std::vector<TagEntryPtr> candidatesNoCtorDtor;
+        candidatesNoCtorDtor.reserve(tags.size());
+        std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr tag) {
+            if(!tag->IsConstructor() && !tag->IsDestructor()) {
+                candidatesNoCtorDtor.push_back(tag);
+            }
+        });
+        tags.swap(candidatesNoCtorDtor);
     }
 }

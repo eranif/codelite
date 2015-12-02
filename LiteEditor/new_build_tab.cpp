@@ -110,7 +110,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     // We dont really want to collect undo in the output tabs...
     InitView();
     Bind(wxEVT_IDLE, &NewBuildTab::OnIdle, this);
-    
+
     m_view->Bind(wxEVT_STC_HOTSPOT_CLICK, &NewBuildTab::OnHotspotClicked, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &NewBuildTab::OnThemeChanged, this);
 
@@ -133,16 +133,10 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(NewBuildTab::OnWorkspaceClosed), NULL, this);
 
-    wxTheApp->Connect(XRCID("next_build_error"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(NewBuildTab::OnNextBuildError),
-                      NULL,
-                      this);
-    wxTheApp->Connect(XRCID("next_build_error"),
-                      wxEVT_UPDATE_UI,
-                      wxUpdateUIEventHandler(NewBuildTab::OnNextBuildErrorUI),
-                      NULL,
-                      this);
+    wxTheApp->Connect(XRCID("next_build_error"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(NewBuildTab::OnNextBuildError), NULL, this);
+    wxTheApp->Connect(XRCID("next_build_error"), wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(NewBuildTab::OnNextBuildErrorUI), NULL, this);
 }
 
 NewBuildTab::~NewBuildTab()
@@ -156,16 +150,10 @@ NewBuildTab::~NewBuildTab()
         wxEVT_SHELL_COMMAND_ADDLINE, clCommandEventHandler(NewBuildTab::OnBuildAddLine), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_SHELL_COMMAND_PROCESS_ENDED, clCommandEventHandler(NewBuildTab::OnBuildEnded), NULL, this);
-    wxTheApp->Disconnect(XRCID("next_build_error"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(NewBuildTab::OnNextBuildError),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(XRCID("next_build_error"),
-                         wxEVT_UPDATE_UI,
-                         wxUpdateUIEventHandler(NewBuildTab::OnNextBuildErrorUI),
-                         NULL,
-                         this);
+    wxTheApp->Disconnect(XRCID("next_build_error"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(NewBuildTab::OnNextBuildError), NULL, this);
+    wxTheApp->Disconnect(XRCID("next_build_error"), wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(NewBuildTab::OnNextBuildErrorUI), NULL, this);
 }
 
 void NewBuildTab::OnBuildEnded(clCommandEvent& e)
@@ -284,7 +272,7 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
         ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN, true);
 
     } else if(m_showMe == BuildTabSettingsData::ShowOnEnd && m_autoHide &&
-              ManagerST::Get()->IsPaneVisible(opane->GetCaption()) && win == this) {
+        ManagerST::Get()->IsPaneVisible(opane->GetCaption()) && win == this) {
         // user prefers to see build/errors tabs only at end of unsuccessful build
         ManagerST::Get()->HidePane(opane->GetName());
     }
@@ -358,10 +346,7 @@ void NewBuildTab::DoCacheRegexes()
         for(iter = errPatterns.begin(); iter != errPatterns.end(); iter++) {
 
             CmpPatternPtr compiledPatternPtr(new CmpPattern(new wxRegEx(iter->pattern, wxRE_ADVANCED | wxRE_ICASE),
-                                                            iter->fileNameIndex,
-                                                            iter->lineNumberIndex,
-                                                            iter->columnIndex,
-                                                            SV_ERROR));
+                iter->fileNameIndex, iter->lineNumberIndex, iter->columnIndex, SV_ERROR));
             if(compiledPatternPtr->GetRegex()->IsValid()) {
                 cmpPatterns.errorsPatterns.push_back(compiledPatternPtr);
             }
@@ -370,10 +355,7 @@ void NewBuildTab::DoCacheRegexes()
         for(iter = warnPatterns.begin(); iter != warnPatterns.end(); iter++) {
 
             CmpPatternPtr compiledPatternPtr(new CmpPattern(new wxRegEx(iter->pattern, wxRE_ADVANCED | wxRE_ICASE),
-                                                            iter->fileNameIndex,
-                                                            iter->lineNumberIndex,
-                                                            iter->columnIndex,
-                                                            SV_WARNING));
+                iter->fileNameIndex, iter->lineNumberIndex, iter->columnIndex, SV_WARNING));
             if(compiledPatternPtr->GetRegex()->IsValid()) {
                 cmpPatterns.warningPatterns.push_back(compiledPatternPtr);
             }
@@ -615,7 +597,7 @@ void NewBuildTab::DoToggleWindow()
 {
     bool success = m_errorCount == 0 && (m_skipWarnings || m_warnCount == 0);
     bool viewing = ManagerST::Get()->IsPaneVisible(wxT("Output View")) &&
-                   (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() == this);
+        (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() == this);
     bool skipwarnings(false);
 
     if(!success) {
@@ -731,11 +713,11 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
                 for(size_t i = 0; i < candidates.size(); ++i) {
                     fileArr.Add(candidates.at(i).GetFullPath());
                 }
-                
+
                 clSingleChoiceDialog dlg(EventNotifier::Get()->TopFrame(), fileArr);
                 dlg.SetLabel(_("Select a file to open"));
-                dlg.ShowModal();
-                
+                if(dlg.ShowModal() != wxID_OK) return false;
+
                 wxString selection = dlg.GetSelection();
                 if(selection.IsEmpty()) return false;
 
@@ -974,11 +956,11 @@ void NewBuildTab::ColourOutput()
     // Loop over the lines and colour them
     int fromLine = (m_lastLineColoured == wxNOT_FOUND) ? 0 : m_lastLineColoured;
     int untilLine = (m_view->GetLineCount() - 1);
-    
+
     if(fromLine == untilLine) {
         return;
     }
-    
+
     for(int i = fromLine; (i < untilLine) && (untilLine >= fromLine); ++i) {
         int startPos = m_view->PositionFromLine(i);
         int lineEndPos = m_view->GetLineEndPosition(i);

@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 The CodeLite Team
-// file name            : CompilerLocatorMSVC12.h
+// file name            : CompilerLocatorMSVC14.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -28,13 +28,14 @@
 
 #include "CompilerLocatorMSVCBase.h" // Base class: CompilerLocatorMSVCBase
 
+// Visual C++ 14 (aka Visual Studio 2015)
 class CompilerLocatorMSVC14 : public CompilerLocatorMSVCBase
 {
 public:
     CompilerLocatorMSVC14();
     virtual ~CompilerLocatorMSVC14();
-    
+
     virtual bool Locate();
 };
 
-#endif // COMPILERLOCATORMSVC12_H
+#endif // COMPILERLOCATORMSVC14_H

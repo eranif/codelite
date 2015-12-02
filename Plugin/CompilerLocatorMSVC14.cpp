@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 The CodeLite Team
-// file name            : CompilerLocatorMSVC12.cpp
+// file name            : CompilerLocatorMSVC14.cpp
 //
 // -------------------------------------------------------------------------
 // A
@@ -26,39 +26,35 @@
 #include "CompilerLocatorMSVC14.h"
 #include <wx/filename.h>
 
-CompilerLocatorMSVC14::CompilerLocatorMSVC14()
-{
-}
+CompilerLocatorMSVC14::CompilerLocatorMSVC14() {}
 
-CompilerLocatorMSVC14::~CompilerLocatorMSVC14()
-{
-}
+CompilerLocatorMSVC14::~CompilerLocatorMSVC14() {}
 
 bool CompilerLocatorMSVC14::Locate()
 {
     m_compilers.clear();
-    
+
     // We locate it by searching for the environment variable
-    // %VS120COMNTOOLS%
+    // %VS140COMNTOOLS%
     wxString path = ::wxGetenv("VS140COMNTOOLS");
-    if ( path.IsEmpty() ) {
+    if(path.IsEmpty()) {
         return false;
     }
-    
+
     // We found the installation path
     // Go to 1 folder up
     wxFileName masterPath(path, "");
-    wxFileName binPath( masterPath );
+    wxFileName binPath(masterPath);
     binPath.RemoveLastDir();
     binPath.RemoveLastDir();
     binPath.AppendDir("VC");
     binPath.AppendDir("bin");
-    
+
     wxFileName cl(binPath.GetPath(), "cl.exe");
-    if ( !cl.FileExists() ) {
+    if(!cl.FileExists()) {
         return false;
     }
-    
+
     // Add the tools
     AddTools(masterPath.GetPath(), "Visual C++ 14");
     return true;

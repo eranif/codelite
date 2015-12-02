@@ -533,6 +533,8 @@
     <File Name="CompilerLocatorMSVC9.cpp"/>
     <File Name="CompilerLocatorCygwin.h"/>
     <File Name="CompilerLocatorCygwin.cpp"/>
+    <File Name="CompilerLocatorMSVC14.h"/>
+    <File Name="CompilerLocatorMSVC14.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Zip">
     <File Name="clZipReader.cpp"/>

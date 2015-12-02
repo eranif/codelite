@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 The CodeLite Team
-// file name            : CompilerLocatorMSVC12.cpp
+// file name            : CompilerLocatorMSVC14.cpp
 //
 // -------------------------------------------------------------------------
 // A
@@ -39,7 +39,7 @@ bool CompilerLocatorMSVC14::Locate()
     m_compilers.clear();
     
     // We locate it by searching for the environment variable
-    // %VS120COMNTOOLS%
+    // %VS140COMNTOOLS%
     wxString path = ::wxGetenv("VS140COMNTOOLS");
     if ( path.IsEmpty() ) {
         return false;

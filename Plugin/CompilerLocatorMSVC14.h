@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 The CodeLite Team
-// file name            : CompilerLocatorMSVC12.h
+// file name            : CompilerLocatorMSVC14.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -37,4 +37,4 @@ public:
     virtual bool Locate();
 };
 
-#endif // COMPILERLOCATORMSVC12_H
+#endif // COMPILERLOCATORMSVC14_H

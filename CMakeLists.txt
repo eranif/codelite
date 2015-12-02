@@ -504,7 +504,7 @@ add_subdirectory(Plugin)
 add_subdirectory(abbreviation)
 
 if ( NOT NO_CPP_PLUGINS )
-    add_subdirectory(CallGraph)
+    # add_subdirectory(CallGraph)
     add_subdirectory(ContinuousBuild)
     add_subdirectory(Debugger)
     add_subdirectory(Gizmos)

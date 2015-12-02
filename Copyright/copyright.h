@@ -22,39 +22,39 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __Copyright__
+#ifndef __Copyright__
 #define __Copyright__
 
 #include "plugin.h"
+#include "cl_command_event.h"
+
 class wxMenuItem;
 class Copyright : public IPlugin
 {
-	wxMenuItem* m_projectSepItem;
-	wxMenuItem* m_workspaceSepItem;
+    wxMenuItem* m_projectSepItem;
+    wxMenuItem* m_workspaceSepItem;
 
 protected:
-	bool Validate(wxString &content);
-	void MassUpdate(const std::vector<wxFileName> &filtered_files, const wxString &content);
+    bool Validate(wxString& content);
+    void MassUpdate(const std::vector<wxFileName>& filtered_files, const wxString& content);
 
 public:
-	Copyright(IManager *manager);
-	~Copyright();
+    Copyright(IManager* manager);
+    ~Copyright();
 
-	//--------------------------------------------
-	//Abstract methods
-	//--------------------------------------------
-	virtual clToolBar *CreateToolBar(wxWindow *parent);
-	virtual void CreatePluginMenu(wxMenu *pluginsMenu);
-	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-	virtual void UnPlug();
-	
-	//DECLARE_EVENT_TABLE()
-	// event handlers
-	void OnOptions(wxCommandEvent &e);
-	void OnInsertCopyrights(wxCommandEvent &e);
-	void OnBatchInsertCopyrights(wxCommandEvent &e);
-	void OnProjectInsertCopyrights(wxCommandEvent &e);
+    //--------------------------------------------
+    // Abstract methods
+    //--------------------------------------------
+    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
+    virtual void UnPlug();
+
+    // event handlers
+    void OnOptions(wxCommandEvent& e);
+    void OnInsertCopyrights(wxCommandEvent& e);
+    void OnBatchInsertCopyrights(wxCommandEvent& e);
+    void OnProjectInsertCopyrights(wxCommandEvent& e);
+    void OnEditorContextMenu(clContextMenuEvent& event);
 };
 
-#endif //Copyright
-
+#endif // Copyright

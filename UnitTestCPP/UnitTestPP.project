@@ -48,6 +48,7 @@
     <File Name="testclassdlg.cpp"/>
     <File Name="unittestspage.h"/>
     <File Name="unittestspage.cpp"/>
+    <File Name="NewClassTestBase.wxcp"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
@@ -60,6 +61,7 @@
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">
       <File Name="unittestreport_unittestcpp_bitmaps.cpp"/>
+      <File Name="NewClassTestBase_unittestcpp_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="unittestreport.h"/>

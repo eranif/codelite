@@ -44,13 +44,13 @@
 
 #include "copyrightsconfigdata.h"
 #include "globals.h"
+#include "event_notifier.h"
 
 static Copyright* thePlugin = NULL;
 
 // Internal events used by this plugin
 const wxEventType CR_copyrights_options = wxNewEventType();
 const wxEventType CR_insert_copyrights = wxNewEventType();
-const wxEventType CR_batch_insert_copyrights = wxNewEventType();
 const wxEventType CR_insert_prj_copyrights = wxNewEventType();
 
 // Define the plugin entry point
@@ -75,15 +75,12 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-// BEGIN_EVENT_TABLE(Copyright, IPlugin)
-// END_EVENT_TABLE()
 Copyright::Copyright(IManager* manager)
     : IPlugin(manager)
     , m_projectSepItem(NULL)
     , m_workspaceSepItem(NULL)
 {
-    m_longName =
-        _("Copyright Plugin - a small plugin that allows you to place copyright block on top of your source files");
+    m_longName = _("Copyright Plugin - Place copyright block on top of your source files");
     m_shortName = wxT("Copyright");
 }
 
@@ -91,7 +88,7 @@ Copyright::~Copyright() {}
 
 clToolBar* Copyright::CreateToolBar(wxWindow* parent)
 {
-    // we dont need a toolbar for this plugin
+    wxUnusedVar(parent);
     return NULL;
 }
 
@@ -101,76 +98,37 @@ void Copyright::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenuItem* item(NULL);
 
     item = new wxMenuItem(
-        menu, CR_insert_copyrights, _("Insert Copyright Block"), _("Insert Copyright Block"), wxITEM_NORMAL);
+        menu, XRCID("CR_insert_copyrights"), _("Insert Copyright Block"), _("Insert Copyright Block"), wxITEM_NORMAL);
     menu->Append(item);
 
     item = new wxMenuItem(menu,
-                          CR_batch_insert_copyrights,
+                          XRCID("CR_batch_insert_copyrights"),
                           _("Batch Insert of Copyright Block"),
                           _("Batch Insert of Copyright Block"),
                           wxITEM_NORMAL);
     menu->Append(item);
 
     menu->AppendSeparator();
-    item = new wxMenuItem(menu, CR_copyrights_options, _("Settings..."), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("CR_copyrights_options"), _("Settings..."), wxEmptyString, wxITEM_NORMAL);
 
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("Copyrights"), menu);
 
     // connect events
-    wxTheApp->Connect(
-        CR_copyrights_options, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions), NULL, this);
-    wxTheApp->Connect(CR_insert_copyrights,
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(Copyright::OnInsertCopyrights),
-                      NULL,
-                      this);
-    wxTheApp->Connect(CR_batch_insert_copyrights,
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(Copyright::OnInsertCopyrights),
-                      NULL,
-                      this);
-    wxTheApp->Connect(CR_insert_prj_copyrights,
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(Copyright::OnProjectInsertCopyrights),
-                      NULL,
-                      this);
-}
-
-void Copyright::HookPopupMenu(wxMenu* menu, MenuType type)
-{
-    if(type == MenuTypeEditor) {
-
-        if(!menu->FindItem(CR_insert_copyrights)) {
-            menu->Append(CR_insert_copyrights, _("Insert Copyright Block"), wxEmptyString);
-        }
-
-    } else if(type == MenuTypeFileExplorer) {
-
-    } else if(type == MenuTypeFileView_Workspace) {
-        // Workspace menu
-        if(!m_workspaceSepItem) {
-            m_workspaceSepItem = menu->PrependSeparator();
-        }
-
-        if(!menu->FindItem(CR_insert_copyrights)) {
-            menu->Prepend(CR_insert_copyrights, _("Batch Insert of Copyright Block"), wxEmptyString);
-        }
-
-    } else if(type == MenuTypeFileView_Project) {
-        if(!m_projectSepItem) {
-            m_projectSepItem = menu->PrependSeparator();
-        }
-
-        if(!menu->FindItem(CR_insert_prj_copyrights)) {
-            menu->Prepend(CR_insert_prj_copyrights, _("Insert Copyright Block"), wxEmptyString);
-        }
-    }
+    wxTheApp->Bind(wxEVT_MENU, &Copyright::OnOptions, this, XRCID("CR_copyrights_options"));
+    wxTheApp->Bind(wxEVT_MENU, &Copyright::OnInsertCopyrights, this, XRCID("CR_insert_copyrights"));
+    wxTheApp->Bind(wxEVT_MENU, &Copyright::OnBatchInsertCopyrights, this, XRCID("CR_batch_insert_copyrights"));
+    wxTheApp->Bind(wxEVT_MENU, &Copyright::OnProjectInsertCopyrights, this, XRCID("CR_insert_prj_copyrights"));
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Copyright::OnEditorContextMenu, this);
 }
 
 void Copyright::UnPlug()
 {
-    // TODO:: perform the unplug action for this plugin
+    wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnOptions, this, XRCID("CR_copyrights_options"));
+    wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnInsertCopyrights, this, XRCID("CR_insert_copyrights"));
+    wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnBatchInsertCopyrights, this, XRCID("CR_batch_insert_copyrights"));
+    wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnProjectInsertCopyrights, this, XRCID("CR_insert_prj_copyrights"));
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Copyright::OnEditorContextMenu, this);
 }
 
 void Copyright::OnInsertCopyrights(wxCommandEvent& e)
@@ -239,9 +197,8 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 void Copyright::OnOptions(wxCommandEvent& e)
 {
     // pop up the options dialog
-    CopyrightsOptionsDlg* dlg = new CopyrightsOptionsDlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr->GetConfigTool());
-    dlg->ShowModal();
-    dlg->Destroy();
+    CopyrightsOptionsDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr->GetConfigTool());
+    dlg.ShowModal();
 }
 
 void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
@@ -445,4 +402,10 @@ bool Copyright::Validate(wxString& content)
     }
     content.Replace(wxT("`"), wxT("'"));
     return true;
+}
+
+void Copyright::OnEditorContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    event.GetMenu()->Append(XRCID("CR_insert_copyrights"), _("Insert Copyrights Block"));
 }

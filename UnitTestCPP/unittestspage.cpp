@@ -31,39 +31,44 @@
 #include "event_notifier.h"
 #include "plugin.h"
 
-UnitTestsPage::UnitTestsPage(wxWindow* parent, IManager *mgr )
-    : UnitTestsBasePage( parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), 0 )
+class UTLineInfo : public wxClientData
+{
+public:
+    ErrorLineInfo m_info;
+
+public:
+    UTLineInfo(const ErrorLineInfo& info)
+        : m_info(info)
+    {
+    }
+    virtual ~UTLineInfo() {}
+};
+
+UnitTestsPage::UnitTestsPage(wxWindow* parent, IManager* mgr)
+    : UnitTestsBasePage(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), 0)
     , m_mgr(mgr)
 {
-    m_listCtrlErrors->InsertColumn(0, _("File"));
-    m_listCtrlErrors->InsertColumn(1, _("Line"));
-    m_listCtrlErrors->InsertColumn(2, _("Description"));
-    
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL, this);
 }
 
 UnitTestsPage::~UnitTestsPage()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL, this);
 }
 
-void UnitTestsPage::UpdateFailedBar(size_t amount, const wxString& msg)
-{
-    m_progressFailed->Update(amount, msg);
-}
+void UnitTestsPage::UpdateFailedBar(size_t amount, const wxString& msg) { m_progressFailed->Update(amount, msg); }
 
-void UnitTestsPage::UpdatePassedBar(size_t amount, const wxString& msg)
-{
-    m_progressPassed->Update(amount, msg);
-}
+void UnitTestsPage::UpdatePassedBar(size_t amount, const wxString& msg) { m_progressPassed->Update(amount, msg); }
 
-void UnitTestsPage::OnItemActivated(wxListEvent& e)
+void UnitTestsPage::OnItemActivated(wxDataViewEvent& e)
 {
-    wxString file = GetColumnText(m_listCtrlErrors, e.m_itemIndex, 0);
-    wxString line = GetColumnText(m_listCtrlErrors, e.m_itemIndex, 1);
+    CHECK_ITEM_RET(e.GetItem());
+    UTLineInfo* info = (UTLineInfo*)m_dvListCtrlErrors->GetItemData(e.GetItem());
 
-    long l;
-    line.ToLong(&l);
+    long lineNumber = wxNOT_FOUND;
+    info->m_info.line.ToCLong(&lineNumber);
 
     // convert the file to absolute path
     wxString err_msg, cwd;
@@ -74,18 +79,18 @@ void UnitTestsPage::OnItemActivated(wxListEvent& e)
         cwd = p->GetFileName().GetPath();
     }
 
-    wxFileName fn(file);
+    wxFileName fn(info->m_info.file);
     fn.MakeAbsolute(cwd);
-
-    m_mgr->OpenFile(fn.GetFullPath(), proj, l-1);
+    IEditor* editor = m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, (lineNumber - 1));
+    if(editor) {
+        editor->SetActive();
+    }
 }
 
 void UnitTestsPage::Initialize(TestSummary* summary)
 {
     Clear();
-#ifdef __WXDEBUG__
-    summary->PrintSelf();
-#endif
+
     m_progressPassed->SetMaxRange((size_t)summary->totalTests);
     m_progressFailed->SetMaxRange((size_t)summary->totalTests);
     m_progressFailed->SetFillCol(wxT("RED"));
@@ -102,23 +107,24 @@ void UnitTestsPage::Initialize(TestSummary* summary)
     msg.clear();
     msg << summary->totalTests - summary->errorCount;
     m_staticTextSuccessTestsNum->SetLabel(msg);
-    
-    for (size_t i=0; i<summary->errorLines.GetCount(); i++) {
-        ErrorLineInfo info = summary->errorLines.Item(i);
-        long row = AppendListCtrlRow(m_listCtrlErrors);
-        SetColumnText(m_listCtrlErrors, row, 0, info.file);
-        SetColumnText(m_listCtrlErrors, row, 1, info.line);
-        SetColumnText(m_listCtrlErrors, row, 2, info.description);
-    }
 
-    m_listCtrlErrors->SetColumnWidth(0, 200);
-    m_listCtrlErrors->SetColumnWidth(1, 100);
-    m_listCtrlErrors->SetColumnWidth(2, wxLIST_AUTOSIZE);
+    for(size_t i = 0; i < summary->errorLines.GetCount(); ++i) {
+        const ErrorLineInfo& info = summary->errorLines.Item(i);
+        wxVector<wxVariant> cols;
+        cols.push_back(info.file);
+        cols.push_back(info.line);
+        cols.push_back(info.description);
+        m_dvListCtrlErrors->AppendItem(cols, (wxUIntPtr) new UTLineInfo(info));
+    }
 }
 
 void UnitTestsPage::Clear()
 {
-    m_listCtrlErrors->DeleteAllItems();
+    for(int i = 0; i < m_dvListCtrlErrors->GetItemCount(); ++i) {
+        UTLineInfo* info = (UTLineInfo*)m_dvListCtrlErrors->GetItemData(m_dvListCtrlErrors->RowToItem(i));
+        wxDELETE(info);
+    }
+    m_dvListCtrlErrors->DeleteAllItems();
     m_progressFailed->Clear();
     m_progressPassed->Clear();
     m_staticTextFailTestsNum->SetLabel("");
@@ -129,5 +135,10 @@ void UnitTestsPage::Clear()
 void UnitTestsPage::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
+    Clear();
+}
+void UnitTestsPage::OnClearReport(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
     Clear();
 }

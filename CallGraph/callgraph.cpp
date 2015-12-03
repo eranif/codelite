@@ -53,14 +53,14 @@
 #define nil 0
 #endif
 
-#define myLog(...)  LogFn(wxString::Format(__VA_ARGS__))
+#define myLog(...) LogFn(wxString::Format(__VA_ARGS__))
 
 CallGraph* thePlugin = NULL;
 
-//Define the plugin entry point
-CL_PLUGIN_API IPlugin *CreatePlugin(IManager *manager)
+// Define the plugin entry point
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
+    if(thePlugin == 0) {
         thePlugin = new CallGraph(manager);
     }
     return thePlugin;
@@ -95,14 +95,11 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 
-CL_PLUGIN_API int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 //---- CTOR -------------------------------------------------------------------
 
-CallGraph::CallGraph(IManager *manager)
+CallGraph::CallGraph(IManager* manager)
     : IPlugin(manager)
 {
     // will be created on-demand
@@ -111,10 +108,16 @@ CallGraph::CallGraph(IManager *manager)
     m_longName = _("Create application call graph from profiling information provided by gprof tool.");
     m_shortName = wxT("CallGraph");
 
-    m_mgr->GetTheApp()->Connect( XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CallGraph::OnSettings ), NULL, this );
-    m_mgr->GetTheApp()->Connect( XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CallGraph::OnAbout ), NULL, this );
+    m_mgr->GetTheApp()->Connect(
+        XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnSettings), NULL, this);
+    m_mgr->GetTheApp()->Connect(
+        XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnAbout), NULL, this);
 
-    m_mgr->GetTheApp()->Connect( XRCID("cg_show_callgraph"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( CallGraph::OnShowCallGraph ), NULL, this );
+    m_mgr->GetTheApp()->Connect(XRCID("cg_show_callgraph"),
+                                wxEVT_COMMAND_TOOL_CLICKED,
+                                wxCommandEventHandler(CallGraph::OnShowCallGraph),
+                                NULL,
+                                this);
 
     // initialize paths for standard and stored paths for this plugin
     // GetDotPath();
@@ -125,31 +128,37 @@ CallGraph::CallGraph(IManager *manager)
 
 CallGraph::~CallGraph()
 {
-    m_mgr->GetTheApp()->Disconnect( XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CallGraph::OnSettings ), NULL, this );
-    m_mgr->GetTheApp()->Disconnect( XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( CallGraph::OnAbout ), NULL, this );
+    m_mgr->GetTheApp()->Disconnect(
+        XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnSettings), NULL, this);
+    m_mgr->GetTheApp()->Disconnect(
+        XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnAbout), NULL, this);
 
-    m_mgr->GetTheApp()->Disconnect( XRCID("cg_show_callgraph"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( CallGraph::OnShowCallGraph ), NULL, this );
+    m_mgr->GetTheApp()->Disconnect(XRCID("cg_show_callgraph"),
+                                   wxEVT_COMMAND_TOOL_CLICKED,
+                                   wxCommandEventHandler(CallGraph::OnShowCallGraph),
+                                   NULL,
+                                   this);
 
     wxDELETE(m_LogFile);
 }
 
 //-----------------------------------------------------------------------------
 
-void	CallGraph::LogFn(wxString s)
+void CallGraph::LogFn(wxString s)
 {
-    return;		// (log disabled)
+    return; // (log disabled)
 
     FileLogger::Get()->AddLogLine(wxString("> ") + s, FileLogger::Dbg);
 
     // on-demand log file creation
-    if (nil == m_LogFile) {
-        wxFileName  cfn(wxGetenv("HOME"), "callgraph.log");
+    if(nil == m_LogFile) {
+        wxFileName cfn(wxGetenv("HOME"), "callgraph.log");
         wxASSERT(cfn.IsOk());
 
         m_LogFile = new wxFileOutputStream(cfn.GetFullPath());
     }
 
-    wxTextOutputStream	  tos(*m_LogFile);
+    wxTextOutputStream tos(*m_LogFile);
 
     tos << s << "\n";
 
@@ -161,22 +170,24 @@ void	CallGraph::LogFn(wxString s)
 
 //-----------------------------------------------------------------------------
 
-clToolBar *CallGraph::CreateToolBar(wxWindow *parent)
+clToolBar* CallGraph::CreateToolBar(wxWindow* parent)
 {
-    //Create the toolbar to be used by the plugin
-    clToolBar *tb(NULL);
+    // Create the toolbar to be used by the plugin
+    clToolBar* tb(NULL);
     return tb;
 }
 
 //-----------------------------------------------------------------------------
-
-void CallGraph::CreatePluginMenu(wxMenu *pluginsMenu)
+void CallGraph::CreatePluginMenu(wxMenu* pluginsMenu)
 {
-
     // You can use the below code a snippet:
-    wxMenu *menu = new wxMenu();
-    wxMenuItem *item(NULL);
-    item = new wxMenuItem(menu, XRCID("cg_show_callgraph"), _("Show call graph"), _("Show call graph for selected/active project"), wxITEM_NORMAL);
+    wxMenu* menu = new wxMenu();
+    wxMenuItem* item(NULL);
+    item = new wxMenuItem(menu,
+                          XRCID("cg_show_callgraph"),
+                          _("Show call graph"),
+                          _("Show call graph for selected/active project"),
+                          wxITEM_NORMAL);
     menu->Append(item);
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("cg_settings"), _("Settings..."), wxEmptyString, wxITEM_NORMAL);
@@ -185,7 +196,6 @@ void CallGraph::CreatePluginMenu(wxMenu *pluginsMenu)
     menu->Append(item);
     //
     pluginsMenu->Append(wxID_ANY, wxT("Call Graph"), menu);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -193,9 +203,13 @@ void CallGraph::CreatePluginMenu(wxMenu *pluginsMenu)
 wxMenu* CallGraph::CreateProjectPopMenu()
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem *item(NULL);
+    wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(menu, XRCID("cg_show_callgraph"), _("Show call graph"), _("Show call graph for selected project"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cg_show_callgraph"),
+                          _("Show call graph"),
+                          _("Show call graph for selected project"),
+                          wxITEM_NORMAL);
     menu->Append(item);
 
     return menu;
@@ -203,60 +217,23 @@ wxMenu* CallGraph::CreateProjectPopMenu()
 
 //-----------------------------------------------------------------------------
 
-void CallGraph::HookPopupMenu(wxMenu *menu, MenuType type)
-{
-    if (type == MenuTypeEditor) {
-        //TODO::Append items for the editor context menu
-    } else if (type == MenuTypeFileExplorer) {
-        //TODO::Append items for the file explorer context menu
-    } else if (type == MenuTypeFileView_Workspace) {
-        //TODO::Append items for the file view / workspace context menu
-    } else if (type == MenuTypeFileView_Project) {
-        //TODO::Append items for the file view/Project context menu
-        if ( !menu->FindItem( XRCID("cg_show_callgraph_popup") ) ) {
-            menu->PrependSeparator();
-            menu->Prepend( XRCID("cg_show_callgraph_popup"), _("Call Graph"), CreateProjectPopMenu() );
-        }
-    } else if (type == MenuTypeFileView_Folder) {
-        //TODO::Append items for the file view/Virtual folder context menu
-    } else if (type == MenuTypeFileView_File) {
-        //TODO::Append items for the file view/file context menu
-    }
-}
-
-//-----------------------------------------------------------------------------
-
-/*void CallGraph::UnHookPopupMenu(wxMenu *menu, MenuType type)
-{
-	if (type == MenuTypeEditor) {
-		//TODO::Unhook items for the editor context menu
-	} else if (type == MenuTypeFileExplorer) {
-		//TODO::Unhook  items for the file explorer context menu
-	} else if (type == MenuTypeFileView_Workspace) {
-		//TODO::Unhook  items for the file view / workspace context menu
-	} else if (type == MenuTypeFileView_Project) {
-		//TODO::Unhook  items for the file view/Project context menu
-	} else if (type == MenuTypeFileView_Folder) {
-		//TODO::Unhook  items for the file view/Virtual folder context menu
-	} else if (type == MenuTypeFileView_File) {
-		//TODO::Unhook  items for the file view/file context menu
-	}
-}*/
-
 //-----------------------------------------------------------------------------
 
 void CallGraph::UnPlug()
 {
-    //TODO:: perform the unplug action for this plugin
+    // TODO:: perform the unplug action for this plugin
 }
 
 //---- About ------------------------------------------------------------------
 
 void CallGraph::OnAbout(wxCommandEvent& event)
 {
-    //wxString version = wxString::Format(DBE_VERSION);
+    // wxString version = wxString::Format(DBE_VERSION);
 
-    wxString desc = _("Create application call graph from profiling information provided by gprof tool.   \n\n"); // zapsat vice info - neco o aplikaci dot
+    wxString desc =
+        _("Create application call graph from profiling information provided by gprof tool.   \n\n"); // zapsat vice
+                                                                                                      // info - neco o
+                                                                                                      // aplikaci dot
     desc << wxbuildinfo() << wxT("\n\n");
 
     wxAboutDialogInfo info;
@@ -273,16 +250,16 @@ void CallGraph::OnAbout(wxCommandEvent& event)
 
 //---- Test wxProcess ---------------------------------------------------------
 
-wxString	CallGraph::LocateApp(const wxString &app_name)
+wxString CallGraph::LocateApp(const wxString& app_name)
 {
     // myLog("LocateApp(\"%s\")", app_name);
 
-    wxProcess	*proc = new wxProcess(wxPROCESS_REDIRECT);
+    wxProcess* proc = new wxProcess(wxPROCESS_REDIRECT);
 
-    wxString	cmd = "which " + app_name;
+    wxString cmd = "which " + app_name;
 
     // Q: HOW BIG IS INTERNAL BUFFER ???
-    int	err = wxExecute(cmd, wxEXEC_SYNC, proc);
+    int err = wxExecute(cmd, wxEXEC_SYNC, proc);
     // ignore -1 error due to CL signal handler overload
 
     /*int	pid = proc->GetPid();
@@ -291,16 +268,16 @@ wxString	CallGraph::LocateApp(const wxString &app_name)
     */
 
     // get process output
-    wxInputStream	*pis = proc->GetInputStream();
-    if (!pis || !pis->CanRead()) {
+    wxInputStream* pis = proc->GetInputStream();
+    if(!pis || !pis->CanRead()) {
         delete proc;
         return "<ERROR>";
     }
 
     // read from it
-    wxTextInputStream	tis(*pis);
+    wxTextInputStream tis(*pis);
 
-    wxString	out_str = tis.ReadLine();
+    wxString out_str = tis.ReadLine();
 
     delete proc;
 
@@ -319,7 +296,7 @@ wxString CallGraph::GetGprofPath()
 
     wxString gprofPath = confData.GetGprofPath();
 
-    if (!gprofPath.IsEmpty())	return gprofPath;
+    if(!gprofPath.IsEmpty()) return gprofPath;
 
 #ifdef __WXMSW__
     return wxEmptyString;
@@ -342,7 +319,7 @@ wxString CallGraph::GetDotPath()
 
     wxString dotPath = confData.GetDotPath();
 
-    if (!dotPath.IsEmpty()) return dotPath;
+    if(!dotPath.IsEmpty()) return dotPath;
 
 #ifdef __WXMSW__
     // dont annoy with messages on startup
@@ -365,30 +342,31 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 {
     // myLog("wxThread::IsMain(%d)", (int)wxThread::IsMain());
 
-    IConfigTool *config_tool = m_mgr->GetConfigTool();
+    IConfigTool* config_tool = m_mgr->GetConfigTool();
 
     config_tool->ReadObject(wxT("CallGraph"), &confData);
 
-    if (!wxFileExists(GetGprofPath()) || !wxFileExists(GetDotPath()))
-        return MessageBox(_T("Failed to locate required tools (gprof, dot). Please check the plugin settings."), wxICON_ERROR);
+    if(!wxFileExists(GetGprofPath()) || !wxFileExists(GetDotPath()))
+        return MessageBox(_T("Failed to locate required tools (gprof, dot). Please check the plugin settings."),
+                          wxICON_ERROR);
 
-    clCxxWorkspace   *ws = m_mgr->GetWorkspace();
-    if (!ws)		return MessageBox(_("Unable to get opened workspace."), wxICON_ERROR);
+    clCxxWorkspace* ws = m_mgr->GetWorkspace();
+    if(!ws) return MessageBox(_("Unable to get opened workspace."), wxICON_ERROR);
 
-    wxFileName  ws_cfn = ws->GetWorkspaceFileName();
+    wxFileName ws_cfn = ws->GetWorkspaceFileName();
 
     wxString projectName = ws->GetActiveProjectName();
 
-    BuildMatrixPtr	  mtx = ws->GetBuildMatrix();
-    if (!mtx)	   return MessageBox(_("Unable to get current build matrix."), wxICON_ERROR);
+    BuildMatrixPtr mtx = ws->GetBuildMatrix();
+    if(!mtx) return MessageBox(_("Unable to get current build matrix."), wxICON_ERROR);
 
-    wxString	build_config_name = mtx->GetSelectedConfigurationName();
+    wxString build_config_name = mtx->GetSelectedConfigurationName();
 
-    BuildConfigPtr	  bldConf = ws->GetProjBuildConf(projectName, build_config_name);
-    if (!bldConf)   return MessageBox(_("Unable to get opened workspace."), wxICON_ERROR);
+    BuildConfigPtr bldConf = ws->GetProjBuildConf(projectName, build_config_name);
+    if(!bldConf) return MessageBox(_("Unable to get opened workspace."), wxICON_ERROR);
 
-    wxString	projOutputFn = bldConf->GetOutputFileName();
-    wxString	projWorkingDir = bldConf->GetWorkingDirectory();
+    wxString projOutputFn = bldConf->GetOutputFileName();
+    wxString projWorkingDir = bldConf->GetWorkingDirectory();
 
     /*
     myLog("WorkspaceFileName = \"%s\"", ws_cfn.GetFullPath());
@@ -398,36 +376,35 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     myLog("projWorkingDir = \"%s\"", projWorkingDir);
     */
 
-    wxFileName  cfn(ws_cfn.GetPath(), projOutputFn);
+    wxFileName cfn(ws_cfn.GetPath(), projOutputFn);
     cfn.Normalize();
 
     // base path
-    const wxString	base_path = ws_cfn.GetPath();
+    const wxString base_path = ws_cfn.GetPath();
 
     // check source binary exists
-    wxString	bin_fpath = cfn.GetFullPath();
-    if (!cfn.Exists()) {
+    wxString bin_fpath = cfn.GetFullPath();
+    if(!cfn.Exists()) {
         bin_fpath = wxFileSelector("Please select the binary to analyze", base_path, "", "");
-        if (bin_fpath.IsEmpty())		return MessageBox("selected binary was canceled", wxICON_ERROR);
+        if(bin_fpath.IsEmpty()) return MessageBox("selected binary was canceled", wxICON_ERROR);
 
         cfn.Assign(bin_fpath, wxPATH_NATIVE);
     }
-    if (!cfn.IsFileExecutable())		return MessageBox("bin/exe isn't executable", wxICON_ERROR);
+    if(!cfn.IsFileExecutable()) return MessageBox("bin/exe isn't executable", wxICON_ERROR);
 
     // check 'gmon.out' file exists
-    wxFileName  gmon_cfn(base_path, GMON_FILENAME_OUT);
-    if (!gmon_cfn.Exists())
-        gmon_cfn.Normalize();
+    wxFileName gmon_cfn(base_path, GMON_FILENAME_OUT);
+    if(!gmon_cfn.Exists()) gmon_cfn.Normalize();
 
-    wxString	gmonfn = gmon_cfn.GetFullPath();
-    if (!gmon_cfn.Exists()) {
+    wxString gmonfn = gmon_cfn.GetFullPath();
+    if(!gmon_cfn.Exists()) {
         gmonfn = wxFileSelector("Please select the gprof file", gmon_cfn.GetPath(), "gmon", "out");
-        if (gmonfn.IsEmpty())		return MessageBox("selected gprof was canceled", wxICON_ERROR);
+        if(gmonfn.IsEmpty()) return MessageBox("selected gprof was canceled", wxICON_ERROR);
 
         gmon_cfn.Assign(gmonfn, wxPATH_NATIVE);
     }
 
-    wxString	bin, arg1, arg2;
+    wxString bin, arg1, arg2;
 
     bin = GetGprofPath();
     arg1 = bin_fpath;
@@ -437,17 +414,17 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
     // myLog("about to wxExecute(\"%s\")", cmdgprof);
 
-    wxProcess	*proc = new wxProcess(wxPROCESS_REDIRECT);
+    wxProcess* proc = new wxProcess(wxPROCESS_REDIRECT);
 
     // wxStopWatch	sw;
 
-    const int	err = ::wxExecute(cmdgprof, wxEXEC_SYNC, proc);
+    const int err = ::wxExecute(cmdgprof, wxEXEC_SYNC, proc);
     // on sync returns 0 (success), -1 (failure / "couldn't be started")
 
     // myLog("wxExecute() returned err %d, had pid %d", err, (int)proc->GetPid());
 
-    wxInputStream	   *process_is = proc->GetInputStream();
-    if (!process_is || !process_is->CanRead())
+    wxInputStream* process_is = proc->GetInputStream();
+    if(!process_is || !process_is->CanRead())
         return MessageBox(_("wxProcess::GetInputStream() can't be opened, aborting"), wxICON_ERROR);
 
     // start parsing and writing to dot language file
@@ -470,7 +447,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
     int suggestedThreshold = pgp.GetSuggestedNodeThreshold();
 
-    if (suggestedThreshold <= conf.GetTresholdNode()) {
+    if(suggestedThreshold <= conf.GetTresholdNode()) {
         suggestedThreshold = conf.GetTresholdNode();
 
         dotWriter.SetDotWriterFromDialogSettings(m_mgr);
@@ -484,7 +461,9 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
                                           conf.GetStripParams(),
                                           conf.GetHideNamespaces());
 
-        wxString	suggest_msg = wxString::Format(_("The CallGraph plugin has suggested node threshold %d to speed-up the call graph creation. You can alter it on the call graph panel."), suggestedThreshold);
+        wxString suggest_msg = wxString::Format(_("The CallGraph plugin has suggested node threshold %d to speed-up "
+                                                  "the call graph creation. You can alter it on the call graph panel."),
+                                                suggestedThreshold);
 
         MessageBox(suggest_msg, wxICON_INFORMATION);
     }
@@ -496,7 +475,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     cfn.AppendDir(CALLGRAPH_DIR);
     cfn.Normalize();
 
-    if (!cfn.DirExists())	   cfn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    if(!cfn.DirExists()) cfn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
     cfn.SetFullName(DOT_FILENAME_TXT);
     wxString dot_fn = cfn.GetFullPath();
@@ -507,7 +486,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     wxString output_png_fn = cfn.GetFullPath();
 
     // delete any existing PNG
-    if (wxFileExists(output_png_fn))	wxRemoveFile(output_png_fn);
+    if(wxFileExists(output_png_fn)) wxRemoveFile(output_png_fn);
 
     wxString cmddot_ln;
 
@@ -519,15 +498,18 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
     // myLog("dot done");
 
-    if (!wxFileExists(output_png_fn))
-        return MessageBox(_("Failed to open file CallGraph.png. Please check the project settings, rebuild the project and try again."), wxICON_INFORMATION);
+    if(!wxFileExists(output_png_fn))
+        return MessageBox(_("Failed to open file CallGraph.png. Please check the project settings, rebuild the project "
+                            "and try again."),
+                          wxICON_INFORMATION);
 
     // show image and create table in the editor tab page
-    uicallgraphpanel	*panel = new uicallgraphpanel(m_mgr->GetEditorPaneNotebook(), m_mgr, output_png_fn, base_path, suggestedThreshold, &(pgp.lines));
+    uicallgraphpanel* panel = new uicallgraphpanel(
+        m_mgr->GetEditorPaneNotebook(), m_mgr, output_png_fn, base_path, suggestedThreshold, &(pgp.lines));
 
-    wxString	tstamp = wxDateTime::Now().Format(wxT(" %Y-%m-%d %H:%M:%S"));
+    wxString tstamp = wxDateTime::Now().Format(wxT(" %Y-%m-%d %H:%M:%S"));
 
-    wxString	  title = wxT("Call graph for \"") + output_png_fn + wxT("\" " + tstamp);
+    wxString title = wxT("Call graph for \"") + output_png_fn + wxT("\" " + tstamp);
 
     m_mgr->AddEditorPage(panel, title);
 }
@@ -537,18 +519,18 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 void CallGraph::OnSettings(wxCommandEvent& event)
 {
     // open the settings dialog
-    wxWindow	*win = m_mgr->GetTheApp()->GetTopWindow();
+    wxWindow* win = m_mgr->GetTheApp()->GetTopWindow();
 
-    uisettingsdlg	   uisdlg(win, m_mgr);
+    uisettingsdlg uisdlg(win, m_mgr);
 
     uisdlg.ShowModal();
 }
 
 //---- Message Box (combo) ----------------------------------------------------
 
-void CallGraph::MessageBox(const wxString &msg, unsigned long icon_mask)
+void CallGraph::MessageBox(const wxString& msg, unsigned long icon_mask)
 {
-    wxWindow *win = m_mgr->GetTheApp()->GetTopWindow();
+    wxWindow* win = m_mgr->GetTheApp()->GetTopWindow();
 
     ::wxMessageBox(msg, wxT("CallGraph"), wxOK | icon_mask, win);
 }

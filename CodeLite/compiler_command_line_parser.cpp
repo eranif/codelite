@@ -44,56 +44,55 @@
 #endif
 
 #define ISBLANK(ch) ((ch) == ' ' || (ch) == '\t')
-#define INITIAL_MAXARGC 8	/* Number of args + NULL in initial argv */
+#define INITIAL_MAXARGC 8 /* Number of args + NULL in initial argv */
 
-static void freeargv (char **vector)
+static void freeargv(char** vector)
 {
-    register char **scan;
+    register char** scan;
 
-    if (vector != NULL) {
-        for (scan = vector; *scan != NULL; scan++) {
-            free (*scan);
+    if(vector != NULL) {
+        for(scan = vector; *scan != NULL; scan++) {
+            free(*scan);
         }
-        free (vector);
+        free(vector);
     }
 }
 
-
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
-char **buildargv (const char *input, int &argc)
+char** buildargv(const char* input, int& argc)
 {
-    char *arg;
-    char *copybuf;
+    char* arg;
+    char* copybuf;
     int squote = 0;
     int dquote = 0;
     int bsquote = 0;
     int maxargc = 0;
-    char **argv = NULL;
-    char **nargv;
+    char** argv = NULL;
+    char** nargv;
 
-    if (input != NULL) {
-        copybuf = (char *) alloca (strlen (input) + 1);
+    if(input != NULL) {
+        copybuf = (char*)alloca(strlen(input) + 1);
         /* Is a do{}while to always execute the loop once.  Always return an
         argv, even for null strings.  See NOTES above, test case below. */
         do {
             /* Pick off argv[argc] */
-            while (ISBLANK(*input)) {
+            while(ISBLANK(*input)) {
                 input++;
             }
-            if ((maxargc == 0) || (argc >= (maxargc - 1))) {
+            if((maxargc == 0) || (argc >= (maxargc - 1))) {
                 /* argv needs initialization, or expansion */
-                if (argv == NULL) {
+                if(argv == NULL) {
                     maxargc = INITIAL_MAXARGC;
-                    nargv = (char **) malloc (maxargc * sizeof (char *));
+                    nargv = (char**)malloc(maxargc * sizeof(char*));
                 } else {
                     maxargc *= 2;
-                    nargv = (char **) realloc (argv, maxargc * sizeof (char *));
+                    nargv = (char**)realloc(argv, maxargc * sizeof(char*));
                 }
-                if (nargv == NULL) {
-                    if (argv != NULL) {
-                        freeargv (argv);
+                if(nargv == NULL) {
+                    if(argv != NULL) {
+                        freeargv(argv);
                         argv = NULL;
                     }
                     break;
@@ -103,31 +102,31 @@ char **buildargv (const char *input, int &argc)
             }
             /* Begin scanning arg */
             arg = copybuf;
-            while (*input != EOS) {
-                if (ISBLANK (*input) && !squote && !dquote && !bsquote) {
+            while(*input != EOS) {
+                if(ISBLANK(*input) && !squote && !dquote && !bsquote) {
                     break;
                 } else {
-                    if (bsquote) {
+                    if(bsquote) {
                         bsquote = 0;
                         *arg++ = *input;
-                    } else if (*input == '\\') {
+                    } else if(*input == '\\') {
                         bsquote = 1;
-                    } else if (squote) {
-                        if (*input == '\'') {
+                    } else if(squote) {
+                        if(*input == '\'') {
                             squote = 0;
                         } else {
                             *arg++ = *input;
                         }
-                    } else if (dquote) {
-                        if (*input == '"') {
+                    } else if(dquote) {
+                        if(*input == '"') {
                             dquote = 0;
                         } else {
                             *arg++ = *input;
                         }
                     } else {
-                        if (*input == '\'') {
+                        if(*input == '\'') {
                             squote = 1;
-                        } else if (*input == '"') {
+                        } else if(*input == '"') {
                             dquote = 1;
                         } else {
                             *arg++ = *input;
@@ -137,19 +136,19 @@ char **buildargv (const char *input, int &argc)
                 }
             }
             *arg = EOS;
-            argv[argc] = strdup (copybuf);
-            if (argv[argc] == NULL) {
-                freeargv (argv);
+            argv[argc] = strdup(copybuf);
+            if(argv[argc] == NULL) {
+                freeargv(argv);
                 argv = NULL;
                 break;
             }
             argc++;
             argv[argc] = NULL;
 
-            while (ISBLANK (*input)) {
+            while(ISBLANK(*input)) {
                 input++;
             }
-        } while (*input != EOS);
+        } while(*input != EOS);
     }
     return (argv);
 }
@@ -180,31 +179,31 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
 
         m_argv = buildargv(c.mb_str(wxConvUTF8).data(), m_argc);
 
-        for(int i=0; i<m_argc; i++) {
+        for(int i = 0; i < m_argc; i++) {
             wxString opt = wxString(m_argv[i], wxConvUTF8);
             opt.Trim().Trim(false);
 
             wxString rest;
-            
-            if ( opt.StartsWith("@") && (opt.Contains("includes_C.rsp") || opt.Contains("includes_CXX.rsp") ) ) {
-                
+
+            if(opt.StartsWith("@") && (opt.Contains("includes_C.rsp") || opt.Contains("includes_CXX.rsp"))) {
+
                 // The include folders are inside the file - read the file and process its content
-                wxFileName fnIncludes( workingDirectory + "/" + opt.Mid(1) );
-                if ( fnIncludes.Exists() ) {
-                    AddIncludesFromFile( fnIncludes );
+                wxFileName fnIncludes(workingDirectory + "/" + opt.Mid(1));
+                if(fnIncludes.Exists()) {
+                    AddIncludesFromFile(fnIncludes);
                 }
 
-            } else if ( opt == "-isystem" && (i+1 < m_argc) ) {
-                
+            } else if(opt == "-isystem" && (i + 1 < m_argc)) {
+
                 // the next arg is the include folder
-                wxString include_path = m_argv[i+1];
+                wxString include_path = m_argv[i + 1];
                 include_path.Trim().Trim(false);
-                
-                m_includes.Add( include_path );
-                m_includesWithPrefix.Add( wxString() << "-I" << include_path );
+
+                m_includes.Add(include_path);
+                m_includesWithPrefix.Add(wxString() << "-I" << include_path);
                 ++i;
 
-            } else if( opt.StartsWith(wxT("-I"), &rest)) {
+            } else if(opt.StartsWith(wxT("-I"), &rest)) {
                 m_includes.Add(rest);
                 m_includesWithPrefix.Add(opt);
             }
@@ -214,11 +213,17 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 m_macrosWithPrefix.Add(opt);
             }
 
-            else if(opt.StartsWith(wxT("-include-path"), &rest)) {
-                m_includesWithPrefix.Add(opt);
-
+            else if(opt.StartsWith(wxT("-include-path "), &rest)) {
+                m_includesWithPrefix.Add(rest);
                 rest.Trim().Trim(false);
                 m_pchFile = rest;
+            }
+            
+            else if((opt == "-include") && (i + 1 < m_argc)) {
+                wxString include_path = m_argv[i + 1];
+                include_path.Trim().Trim(false);
+                m_pchFile = include_path;
+                ++i;
             }
 
             // Support for Apple's Framework include paths
@@ -235,11 +240,11 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 wxString stds = rest.AfterFirst(wxT('='));
                 stds.Trim().Trim(false);
 
-                if ( stds.IsEmpty() == false ) {
+                if(stds.IsEmpty() == false) {
                     m_standard = stds;
                 }
             } else {
-                m_otherOptions.Add( opt );
+                m_otherOptions.Add(opt);
             }
         }
     }
@@ -255,11 +260,11 @@ CompilerCommandLineParser::~CompilerCommandLineParser()
 wxString CompilerCommandLineParser::GetCompileLine() const
 {
     wxString s;
-    for(size_t i=0; i<m_includes.GetCount(); i++) {
+    for(size_t i = 0; i < m_includes.GetCount(); i++) {
         s << wxT("-I") << m_includes.Item(i) << wxT(" ");
     }
 
-    for(size_t i=0; i<m_macros.GetCount(); i++) {
+    for(size_t i = 0; i < m_macros.GetCount(); i++) {
         s << wxT("-D") << m_macros.Item(i) << wxT(" ");
     }
 
@@ -269,44 +274,44 @@ wxString CompilerCommandLineParser::GetCompileLine() const
 
 wxString CompilerCommandLineParser::GetStandardWithPrefix() const
 {
-    if(m_standard.IsEmpty())
-        return wxT("");
-        
+    if(m_standard.IsEmpty()) return wxT("");
+
     return wxT("-std=") + m_standard;
 }
 
-void CompilerCommandLineParser::MakeAbsolute(const wxString &path)
+void CompilerCommandLineParser::MakeAbsolute(const wxString& path)
 {
     wxArrayString incls;
-    for(size_t i=0; i<m_includes.GetCount(); ++i) {
+    for(size_t i = 0; i < m_includes.GetCount(); ++i) {
         wxFileName fn(m_includes.Item(i), wxT(""));
         fn.MakeAbsolute(path);
         incls.Add(fn.GetFullPath());
     }
-    
+
     m_includes.Clear();
     m_includes = incls;
-    
+
     m_includesWithPrefix.Clear();
-    for(size_t i=0; i<m_framworks.GetCount(); ++i) {
+    for(size_t i = 0; i < m_framworks.GetCount(); ++i) {
         m_includesWithPrefix.Add(wxT("-F") + m_framworks.Item(i));
     }
-    
-    for(size_t i=0; i<m_includes.GetCount(); ++i) {
+
+    for(size_t i = 0; i < m_includes.GetCount(); ++i) {
         m_includesWithPrefix.Add(wxT("-I") + m_includes.Item(i));
     }
 }
 
 void CompilerCommandLineParser::AddIncludesFromFile(const wxFileName& includeFile)
 {
-    wxFFile fp( includeFile.GetFullPath(), "rb" );
-    if ( fp.IsOpened() ) {
+    wxFFile fp(includeFile.GetFullPath(), "rb");
+    if(fp.IsOpened()) {
         wxString content;
-        fp.ReadAll( &content );
+        fp.ReadAll(&content);
         content.Replace("\n", " ");
-        CompilerCommandLineParser cclp( content );
+        CompilerCommandLineParser cclp(content);
         m_includes.insert(m_includes.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
-        m_includesWithPrefix.insert(m_includesWithPrefix.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
+        m_includesWithPrefix.insert(
+            m_includesWithPrefix.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
         fp.Close();
     }
 }

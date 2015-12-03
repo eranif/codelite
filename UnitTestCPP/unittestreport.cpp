@@ -26,10 +26,11 @@ UnitTestsBasePage::UnitTestsBasePage(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* bSizer8 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer8);
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(2, 2, 0, 0);
+    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 5, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer3->AddGrowableCol(1);
+    fgSizer3->AddGrowableCol(3);
     
     bSizer8->Add(fgSizer3, 0, wxEXPAND, 5);
     
@@ -38,14 +39,20 @@ UnitTestsBasePage::UnitTestsBasePage(wxWindow* parent, wxWindowID id, const wxPo
     fgSizer3->Add(m_staticText7, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_progressPassed = new ProgressCtrl(this);
-    fgSizer3->Add(m_progressPassed, 0, wxALL|wxEXPAND, 5);
+    fgSizer3->Add(m_progressPassed, 1, wxALL|wxEXPAND, 5);
     
     m_staticText8 = new wxStaticText(this, wxID_ANY, _("Failed:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer3->Add(m_staticText8, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_progressFailed = new ProgressCtrl(this);
-    fgSizer3->Add(m_progressFailed, 0, wxALL|wxEXPAND, 5);
+    fgSizer3->Add(m_progressFailed, 1, wxALL|wxEXPAND, 5);
+    
+    m_button4 = new wxButton(this, wxID_CLEAR, _("Clear"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button4->SetDefault();
+    m_button4->SetToolTip(_("Clear report..."));
+    
+    fgSizer3->Add(m_button4, 0, wxALL, 5);
     
     wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 6, 0, 0);
     fgSizer4->SetFlexibleDirection( wxBOTH );
@@ -89,23 +96,29 @@ UnitTestsBasePage::UnitTestsBasePage(wxWindow* parent, wxWindowID id, const wxPo
     
     fgSizer4->Add(m_staticTextSuccessTestsNum, 0, wxALL|wxALIGN_LEFT, 5);
     
-    m_listCtrlErrors = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_SINGLE_SEL|wxLC_REPORT);
+    m_dvListCtrlErrors = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlErrors->SetFocus();
     
-    bSizer8->Add(m_listCtrlErrors, 1, wxALL|wxEXPAND, 5);
+    bSizer8->Add(m_dvListCtrlErrors, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrlErrors->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlErrors->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlErrors->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     
     SetName(wxT("UnitTestsBasePage"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
-    m_listCtrlErrors->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(UnitTestsBasePage::OnItemActivated), NULL, this);
+    m_button4->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(UnitTestsBasePage::OnClearReport), NULL, this);
+    m_dvListCtrlErrors->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(UnitTestsBasePage::OnItemActivated), NULL, this);
     
 }
 
 UnitTestsBasePage::~UnitTestsBasePage()
 {
-    m_listCtrlErrors->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(UnitTestsBasePage::OnItemActivated), NULL, this);
+    m_button4->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(UnitTestsBasePage::OnClearReport), NULL, this);
+    m_dvListCtrlErrors->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(UnitTestsBasePage::OnItemActivated), NULL, this);
     
 }

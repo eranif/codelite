@@ -64,7 +64,7 @@ void WelcomePage::OnOpenWiki(wxCommandEvent& event)
 void WelcomePage::OnSize(wxSizeEvent& event)
 {
     event.Skip();
-    m_staticBitmap161->Refresh();
+    m_staticBitmap->Refresh();
 }
 
 void WelcomePage::OnShowFileseMenu(wxCommandEvent& event)

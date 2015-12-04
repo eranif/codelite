@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="512"
+   viewBox="0 0 511.99999 511.99999"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="codelite-logo.svg">
+  <title
+     id="title6123">CodeLite IDE Logo</title>
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="5336.323 : 295.21601 : 1"
+       inkscape:vp_y="0 : 1349.9368 : 0"
+       inkscape:vp_z="8654.6493 : 285.06658 : 1"
+       inkscape:persp3d-origin="5414.0285 : 141.52329 : 1"
+       id="perspective5760" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="247.759 : 337.28548 : 1"
+       inkscape:vp_y="0 : 1240.4163 : 0"
+       inkscape:vp_z="3820.7486 : 329.79721 : 1"
+       inkscape:persp3d-origin="774.88352 : 197.89961 : 1"
+       id="perspective5760-4" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.01"
+     inkscape:cx="140.79535"
+     inkscape:cy="252.01333"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:showpageshadow="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1028"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>CodeLite IDE Logo</dc:title>
+        <cc:license
+           rdf:resource="" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Eran Ifrah</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>(C) Eran Ifrah</dc:title>
+          </cc:Agent>
+        </dc:rights>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-540.36219)">
+    <rect
+       style="fill:#1190e6;fill-opacity:1;fill-rule:evenodd;stroke:#006dae;stroke-width:1.0878067;stroke-opacity:1"
+       id="rect5967-9"
+       width="239.78348"
+       height="249.75377"
+       x="1.6627154"
+       y="544.06445"
+       rx="10.470895"
+       ry="11.301076" />
+    <rect
+       style="fill:#ffff73;fill-opacity:1;fill-rule:evenodd;stroke:#bbbb34;stroke-width:1.08121622;stroke-opacity:1"
+       id="rect5967-9-7-5"
+       width="242.78017"
+       height="243.69106"
+       x="1.6792219"
+       y="807.90277"
+       rx="10.601754"
+       ry="11.026745" />
+    <rect
+       style="fill:#6eca60;fill-opacity:1;fill-rule:evenodd;stroke:#20a200;stroke-width:1.09863472;stroke-opacity:1"
+       id="rect5967-9-9"
+       width="250.68355"
+       height="243.67365"
+       x="259.54932"
+       y="807.9115"
+       rx="8.7575035"
+       ry="8.8207655" />
+  </g>
+</svg>

@@ -392,9 +392,9 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panel191->SetSizer(boxSizer195);
     
-    m_staticBitmap161 = new wxStaticBitmap(m_panel191, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("codelite-logo-no-bg")), wxDefaultPosition, wxSize(-1,-1), 0 );
+    m_staticBitmap = new wxStaticBitmap(m_panel191, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("256-codelite-logo")), wxDefaultPosition, wxSize(-1,-1), 0 );
     
-    boxSizer195->Add(m_staticBitmap161, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_TOP, 5);
+    boxSizer195->Add(m_staticBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     wxGridSizer* gridSizer235 = new wxGridSizer(3, 2, 0, 0);
     

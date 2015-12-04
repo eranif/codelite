@@ -977,21 +977,48 @@ clMainFrame* clMainFrame::Get() { return m_theFrame; }
 
 void clMainFrame::CreateGUIControls(void)
 {
-#ifdef __WXMSW__
-    SetIcon(wxICON(aaaaa));
-    wxWindowUpdateLocker locker(this);
-#else
-    wxImage img(cubes_xpm);
-    img.SetAlpha(cubes_alpha, true);
-    wxBitmap bmp(img);
-    wxIcon icon;
-    icon.CopyFromBitmap(bmp);
-    SetIcon(icon);
-#endif
+    BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("16-codelite-logo");
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("32-codelite-logo");
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("64-codelite-logo");
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("128-codelite-logo");
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("256-codelite-logo");
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    
+    SetIcons(app_icons);
 
 #if defined(__WXOSX__) && wxCHECK_VERSION(3, 1, 0)
     EnableFullScreenView();
 #endif
+
     // Instantiate the workspace manager
     // By calling its "Get" method
     clWorkspaceManager::Get();

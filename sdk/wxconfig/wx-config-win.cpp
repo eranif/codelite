@@ -76,10 +76,6 @@ protected:
 class BuildFileOptions : public Options
 {
 public:
-	BuildFileOptions()
-	{
-	}
-  
     BuildFileOptions(const std::string& filepath) {
         parse(filepath);
     }
@@ -887,13 +883,7 @@ public:
         std::string cfg_first = po["prefix"] + "/build/msw/config." + getName();
 
         /// config.* options
-        BuildFileOptions cfg;
-		std::ifstream config_xxx(cfg_first.c_str());
-		bool isCfgXXXOpen = config_xxx.is_open(); 
-		if(isCfgXXXOpen)
-		{
-			cfg.parse(cfg_first);
-		}
+        BuildFileOptions cfg(cfg_first);
 
         /// build.cfg options
         cfg.parse(po["wxcfgfile"]);
@@ -1040,11 +1030,7 @@ public:
 //----------------------------------------------------
 
         // ### Variables, Part 2: ###
-//        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
-
-		po["LIBDIRNAME"] =
-			po["prefix"] + "/lib/" + cfg["COMPILER"] + cfg["COMPILER_VERSION"] + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"]; 
-
+        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
 
         po["SETUPHDIR"]  = po["LIBDIRNAME"] + "/" + po["PORTNAME"] + po["WXUNIVNAME"];
         po["SETUPHDIR"] += po["WXUNICODEFLAG"] + po["WXDEBUGFLAG"];
@@ -1136,14 +1122,7 @@ public:
         std::string cfg_first = po["prefix"] + "/build/msw/config." + getName();
 
         /// config.* options
-        BuildFileOptions cfg;
-		std::ifstream config_xxx(cfg_first.c_str());
-		bool isCfgXXXOpen = config_xxx.is_open(); 
-		if(isCfgXXXOpen)
-		{
-			cfg.parse(cfg_first);
-		}
-
+        BuildFileOptions cfg(cfg_first);
 
         /// build.cfg options
         cfg.parse(po["wxcfgfile"]);
@@ -1362,11 +1341,7 @@ public:
 
 
         // ### Variables, Part 2: ###
-//        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
-
-		po["LIBDIRNAME"] =
-			po["prefix"] + "/lib/" + cfg["COMPILER"] + cfg["COMPILER_VERSION"] + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"]; /**** add this line ****/
-
+        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
 
         po["SETUPHDIR"]  = po["LIBDIRNAME"] + "/" + po["PORTNAME"] + po["WXUNIVNAME"];
         po["SETUPHDIR"] += po["WXUNICODEFLAG"] + po["WXDEBUGFLAG"];
@@ -1448,14 +1423,7 @@ public:
         std::string cfg_first = po["prefix"] + "/build/msw/config." + getName();
 
         /// config.* options
-        BuildFileOptions cfg;
-		std::ifstream config_xxx(cfg_first.c_str());
-		bool isCfgXXXOpen = config_xxx.is_open(); 
-		if(isCfgXXXOpen)
-		{
-			cfg.parse(cfg_first);
-		}
-
+        BuildFileOptions cfg(cfg_first);
 
         /// build.cfg options
         cfg.parse(po["wxcfgfile"]);
@@ -1690,11 +1658,7 @@ public:
 
 
         // ### Variables, Part 2: ###
-//        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + po["DIR_SUFFIX_CPU"] + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
-
-		po["LIBDIRNAME"] =
-			po["prefix"] + "/lib/" + cfg["COMPILER"] + cfg["COMPILER_VERSION"] + po["DIR_SUFFIX_CPU"] + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"]; /**** add this line ****/
-
+        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + po["DIR_SUFFIX_CPU"] + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
 
         po["SETUPHDIR"]  = po["LIBDIRNAME"] + "/" + po["PORTNAME"] + po["WXUNIVNAME"];
         po["SETUPHDIR"] += po["WXUNICODEFLAG"] + po["WXDEBUGFLAG"];
@@ -1769,14 +1733,7 @@ public:
         std::string cfg_first = po["prefix"] + "/build/msw/config." + getName();
 
         /// config.* options
-        BuildFileOptions cfg;
-		std::ifstream config_xxx(cfg_first.c_str());
-		bool isCfgXXXOpen = config_xxx.is_open(); 
-		if(isCfgXXXOpen)
-		{
-			cfg.parse(cfg_first);
-		}
-
+        BuildFileOptions cfg(cfg_first);
 
         /// build.cfg options
         cfg.parse(po["wxcfgfile"]);
@@ -1910,10 +1867,7 @@ public:
 
 
         // ### Variables, Part 2: ###
-//        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
-		po["LIBDIRNAME"] =
-			po["prefix"] + "/lib/" + cfg["COMPILER"] + cfg["COMPILER_VERSION"] + po["DIR_SUFFIX_CPU"] + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"]; /**** add this line ****/
-
+        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
 
         po["SETUPHDIR"]  = po["LIBDIRNAME"] + "/" + po["PORTNAME"] + po["WXUNIVNAME"];
         po["SETUPHDIR"] += po["WXUNICODEFLAG"] + po["WXDEBUGFLAG"];
@@ -2320,23 +2274,23 @@ void detectCompiler(Options& po, const CmdLineOptions& cl)
     // gcc_dll/mswud
     // vc_lib/msw
 
-    if (po["wxcfg"].find("gcc") != std::string::npos) {
+    if (po["wxcfg"].find("gcc_") != std::string::npos) {
         CompilerMinGW compiler;
         compiler.process(po, cl);
         return;
-    } else if (po["wxcfg"].find("dmc") != std::string::npos) {
+    } else if (po["wxcfg"].find("dmc_") != std::string::npos) {
         CompilerDMC compiler;
         compiler.process(po, cl);
         return;
-    } else if (po["wxcfg"].find("vc") != std::string::npos) {
+    } else if (po["wxcfg"].find("vc_") != std::string::npos) {
         CompilerVC compiler;
         compiler.process(po, cl);
         return;
-    } else if (po["wxcfg"].find("wat") != std::string::npos) {
+    } else if (po["wxcfg"].find("wat_") != std::string::npos) {
         CompilerWAT compiler;
         compiler.process(po, cl);
         return;
-    } else if (po["wxcfg"].find("bcc") != std::string::npos) {
+    } else if (po["wxcfg"].find("bcc_") != std::string::npos) {
         CompilerBCC compiler;
         compiler.process(po, cl);
         return;

@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="codelite-logo.svg">
+   sodipodi:docname="codelite-logo-no-shadow.svg">
   <title
      id="title6123">CodeLite IDE Logo</title>
   <defs
@@ -34,102 +34,6 @@
        inkscape:vp_z="3820.7486 : 329.79721 : 1"
        inkscape:persp3d-origin="774.88352 : 197.89961 : 1"
        id="perspective5760-4" />
-    <filter
-       style="color-interpolation-filters:sRGB;"
-       inkscape:label="Drop Shadow"
-       id="filter5478">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood5480" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite5482" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="3"
-         result="blur"
-         id="feGaussianBlur5484" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset5486" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="composite2"
-         id="feComposite5488" />
-    </filter>
-    <filter
-       style="color-interpolation-filters:sRGB;"
-       inkscape:label="Drop Shadow"
-       id="filter5490">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood5492" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite5494" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="3"
-         result="blur"
-         id="feGaussianBlur5496" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset5498" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="composite2"
-         id="feComposite5500" />
-    </filter>
-    <filter
-       style="color-interpolation-filters:sRGB;"
-       inkscape:label="Drop Shadow"
-       id="filter5502">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood5504" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite5506" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="3"
-         result="blur"
-         id="feGaussianBlur5508" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset5510" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="composite2"
-         id="feComposite5512" />
-    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -181,16 +85,16 @@
      id="layer1"
      transform="translate(0,-540.36219)">
     <rect
-       style="fill:#1190e6;fill-opacity:1;fill-rule:evenodd;stroke:#005790;stroke-width:1.08424127;stroke-opacity:1;filter:url(#filter5478)"
+       style="fill:#1190e6;fill-opacity:1;fill-rule:evenodd;stroke:#005790;stroke-width:1.08424127;stroke-opacity:1"
        id="rect5967-9"
        width="243.91577"
        height="243.91576"
        x="5.5421209"
-       y="548.9043"
+       y="552.9043"
        rx="10.651344"
        ry="11.036913" />
     <rect
-       style="fill:#ffff73;fill-opacity:1;fill-rule:evenodd;stroke:#b2b232;stroke-width:1.08424151;stroke-opacity:1;filter:url(#filter5490)"
+       style="fill:#ffff73;fill-opacity:1;fill-rule:evenodd;stroke:#b2b232;stroke-width:1.08424151;stroke-opacity:1"
        id="rect5967-9-7-5"
        width="243.91576"
        height="243.91576"
@@ -199,11 +103,11 @@
        rx="10.651344"
        ry="11.036912" />
     <rect
-       style="fill:#6eca60;fill-opacity:1;fill-rule:evenodd;stroke:#1f9c00;stroke-width:1.08424151;stroke-opacity:1;filter:url(#filter5502)"
+       style="fill:#6eca60;fill-opacity:1;fill-rule:evenodd;stroke:#1f9c00;stroke-width:1.08424151;stroke-opacity:1"
        id="rect5967-9-9"
        width="243.91576"
        height="243.91576"
-       x="259.54211"
+       x="255.54211"
        y="802.9043"
        rx="8.5210752"
        ry="8.8295288" />

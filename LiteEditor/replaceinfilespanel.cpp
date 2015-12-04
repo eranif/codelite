@@ -36,39 +36,34 @@
 #include "event_notifier.h"
 #include "macros.h"
 
-BEGIN_EVENT_TABLE(ReplaceInFilesPanel, FindResultsTab)
-EVT_BUTTON(XRCID("unmark_all"), ReplaceInFilesPanel::OnUnmarkAll)
-EVT_BUTTON(XRCID("mark_all"), ReplaceInFilesPanel::OnMarkAll)
-EVT_BUTTON(XRCID("replace"), ReplaceInFilesPanel::OnReplace)
-
-EVT_UPDATE_UI(XRCID("unmark_all"), ReplaceInFilesPanel::OnUnmarkAllUI)
-EVT_UPDATE_UI(XRCID("mark_all"), ReplaceInFilesPanel::OnMarkAllUI)
-EVT_UPDATE_UI(XRCID("replace"), ReplaceInFilesPanel::OnReplaceUI)
-EVT_UPDATE_UI(XRCID("replace_with_combo"), ReplaceInFilesPanel::OnReplaceWithComboUI)
-EVT_UPDATE_UI(XRCID("replace_with_label"), ReplaceInFilesPanel::OnReplaceWithComboUI)
-EVT_UPDATE_UI(XRCID("hold_pane_open"), ReplaceInFilesPanel::OnHoldOpenUpdateUI)
-END_EVENT_TABLE()
-
 ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxString& name)
     : FindResultsTab(parent, id, name)
 {
-
+    Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnHoldOpenUpdateUI, this, XRCID("hold_pane_open"));
     wxBoxSizer* horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    wxButton* unmark = new wxButton(this, XRCID("unmark_all"), _("&Unmark All"));
+    wxButton* unmark = new wxButton(this, wxID_ANY, _("&Unmark All"));
     horzSizer->Add(unmark, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
+    unmark->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnUnmarkAll, this);
+    unmark->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnUnmarkAllUI, this);
 
-    wxButton* mark = new wxButton(this, XRCID("mark_all"), _("Mark &All"));
+    wxButton* mark = new wxButton(this, wxID_ANY, _("Mark &All"));
     horzSizer->Add(mark, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
+    mark->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnMarkAll, this);
+    mark->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnMarkAllUI, this);
 
-    m_replaceWithText = new wxStaticText(this, XRCID("replace_with_label"), _("Replace With:"));
+    m_replaceWithText = new wxStaticText(this, wxID_ANY, _("Replace With:"));
     horzSizer->Add(m_replaceWithText, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT | wxLEFT, 5);
+    m_replaceWithText->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceWithComboUI, this);
 
-    m_replaceWith = new wxComboBox(this, XRCID("replace_with_combo"));
+    m_replaceWith = new wxComboBox(this, wxID_ANY);
     horzSizer->Add(m_replaceWith, 2, wxALIGN_CENTER_VERTICAL | wxRIGHT | wxLEFT, 5);
+    m_replaceWith->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceWithComboUI, this);
 
-    wxButton* repl = new wxButton(this, XRCID("replace"), _("&Replace Marked"));
+    wxButton* repl = new wxButton(this, wxID_ANY, _("&Replace Marked"));
     horzSizer->Add(repl, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
+    repl->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnReplace, this);
+    repl->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceUI, this);
 
     m_progress = new wxGauge(this, wxID_ANY, 1, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL);
     horzSizer->Add(m_progress, 1, wxALIGN_CENTER_VERTICAL | wxALL | wxGA_SMOOTH, 5);
@@ -102,15 +97,18 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 
 void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
 {
-    SearchData* data = (SearchData*)e.GetClientData();
-    FindResultsTab::OnSearchStart(e);
-
+    e.Skip();
     // set the "Replace With" field with the user value
+    SearchData* data = (SearchData*)e.GetClientData();
     m_replaceWith->ChangeValue(data->GetReplaceWith());
+
+    //
+    FindResultsTab::OnSearchStart(e);
 }
 
 void ReplaceInFilesPanel::OnSearchMatch(wxCommandEvent& e)
 {
+    e.Skip();
     FindResultsTab::OnSearchMatch(e);
     if(m_matchInfo.size() != 1 || !m_replaceWith->GetValue().IsEmpty()) return;
     m_replaceWith->SetValue(m_matchInfo.begin()->second.GetFindWhat());
@@ -119,6 +117,7 @@ void ReplaceInFilesPanel::OnSearchMatch(wxCommandEvent& e)
 
 void ReplaceInFilesPanel::OnSearchEnded(wxCommandEvent& e)
 {
+    e.Skip();
     SearchSummary* summary = (SearchSummary*)e.GetClientData();
     CHECK_PTR_RET(summary);
 
@@ -154,11 +153,12 @@ void ReplaceInFilesPanel::OnMarkAll(wxCommandEvent& e)
     }
 }
 
-void ReplaceInFilesPanel::OnMarkAllUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetLength() > 0); }
-
+void ReplaceInFilesPanel::OnMarkAllUI(wxUpdateUIEvent& e) { e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress); }
 void ReplaceInFilesPanel::OnUnmarkAll(wxCommandEvent& e) { m_sci->MarkerDeleteAll(0x7); }
-
-void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetLength() > 0); }
+void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e)
+{
+    e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress);
+}
 
 void ReplaceInFilesPanel::DoSaveResults(
     wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin, std::map<int, SearchResult>::iterator end)
@@ -403,7 +403,10 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 
 void ReplaceInFilesPanel::OnReplaceUI(wxUpdateUIEvent& e) { e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress); }
 
-void ReplaceInFilesPanel::OnReplaceWithComboUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetLength() > 0); }
+void ReplaceInFilesPanel::OnReplaceWithComboUI(wxUpdateUIEvent& e)
+{
+    e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress);
+}
 
 void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {

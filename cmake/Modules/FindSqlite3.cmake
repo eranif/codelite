@@ -5,6 +5,7 @@ if(UNIX AND NOT APPLE)
                  /usr/local/lib
                  /usr/lib
                  /usr/lib/x86_64-linux-gnu
+                 /usr/lib/i386-linux-gnu
                  )
                  
     find_path(SQLITE3_INCLUDE_DIR NAMES sqlite3.h

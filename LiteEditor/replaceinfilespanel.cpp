@@ -103,16 +103,10 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
 {
     SearchData* data = (SearchData*)e.GetClientData();
-    wxString label = data ? data->GetFindString() : wxT("");
-
     FindResultsTab::OnSearchStart(e);
 
-    // set the search string to be the 'replace with' string as well
-    if(label.IsEmpty() == false) {
-        m_replaceWith->SetValue(label);
-        m_replaceWith->SetSelection(-1, -1);
-        m_replaceWith->SetFocus();
-    }
+    // set the "Replace With" field with the user value
+    m_replaceWith->ChangeValue(data->GetReplaceWith());
 }
 
 void ReplaceInFilesPanel::OnSearchMatch(wxCommandEvent& e)
@@ -127,13 +121,13 @@ void ReplaceInFilesPanel::OnSearchEnded(wxCommandEvent& e)
 {
     SearchSummary* summary = (SearchSummary*)e.GetClientData();
     CHECK_PTR_RET(summary);
-    
+
     // set the "Replace With" field with the user value
     m_replaceWith->ChangeValue(summary->GetReplaceWith());
-    
+
     FindResultsTab::OnSearchEnded(e);
     OnMarkAll(e);
-    
+
     // Set the focus to the "Replace With" field
     m_replaceWith->CallAfter(&wxComboBox::SetFocus);
 }
@@ -166,18 +160,16 @@ void ReplaceInFilesPanel::OnUnmarkAll(wxCommandEvent& e) { m_sci->MarkerDeleteAl
 
 void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetLength() > 0); }
 
-void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci,
-                                        std::map<int, SearchResult>::iterator begin,
-                                        std::map<int, SearchResult>::iterator end)
+void ReplaceInFilesPanel::DoSaveResults(
+    wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin, std::map<int, SearchResult>::iterator end)
 {
     if(!sci || begin == end) return;
     bool ok = true;
     if(dynamic_cast<LEditor*>(sci) == NULL) {
         // it's a temp editor, check if we have any changes to save
         if(sci->GetModify() && !WriteFileWithBackup(begin->second.GetFileName(), sci->GetText(), false)) {
-            wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(),
-                         _("CodeLite - Replace"),
-                         wxICON_ERROR | wxOK);
+            wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(), _("CodeLite - Replace"),
+                wxICON_ERROR | wxOK);
             wxLogMessage(wxT("Replace: Failed to write file ") + begin->second.GetFileName());
             ok = false;
         }
@@ -379,11 +371,8 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         filesToSave.push_back(std::make_pair(wxFileName(*i), true));
     }
     if(!filesToSave.empty() &&
-       clMainFrame::Get()->GetMainBook()->UserSelectFiles(
-           filesToSave,
-           _("Save Modified Files"),
-           _("Some files are modified.\nChoose the files you would like to save."),
-           true)) {
+        clMainFrame::Get()->GetMainBook()->UserSelectFiles(filesToSave, _("Save Modified Files"),
+            _("Some files are modified.\nChoose the files you would like to save."), true)) {
         for(size_t i = 0; i < filesToSave.size(); i++) {
             if(filesToSave[i].second) {
                 LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(filesToSave[i].first.GetFullPath());
@@ -412,7 +401,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     }
 }
 
-void ReplaceInFilesPanel::OnReplaceUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetLength() > 0); }
+void ReplaceInFilesPanel::OnReplaceUI(wxUpdateUIEvent& e) { e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress); }
 
 void ReplaceInFilesPanel::OnReplaceWithComboUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetLength() > 0); }
 

@@ -34,9 +34,9 @@ class ReplaceInFilesPanel : public FindResultsTab
     wxStaticText* m_replaceWithText;
     wxArrayString m_filesModified;
     
-    void DoSaveResults(wxStyledTextCtrl* sci,
-                       std::map<int, SearchResult>::iterator begin,
-                       std::map<int, SearchResult>::iterator end);
+protected:
+    void DoSaveResults(
+        wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin, std::map<int, SearchResult>::iterator end);
 
     wxStyledTextCtrl* DoGetEditor(const wxString& fileName);
 

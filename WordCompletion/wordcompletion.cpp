@@ -93,7 +93,7 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     wxString suggestString;
     wxCodeCompletionBoxEntry::Vec_t entries;
     wxCodeCompletionBox::BmpVec_t bitmaps;
-    bitmaps.push_back(m_images.Bitmap("m_bmpWord"));
+    bitmaps.push_back(m_mgr->GetStdIcons()->LoadBitmap("word"));
 
     // Filter (what the user has typed so far)
     wxStyledTextCtrl* stc = activeEditor->GetCtrl();
@@ -147,13 +147,10 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
         entries.push_back(wxCodeCompletionBoxEntry::New(*iter, 0));
     }
 
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(activeEditor->GetCtrl(),
-                                                        entries,
-                                                        bitmaps,
-                                                        event.GetId() == XRCID("text_word_complete") ?
-                                                            wxCodeCompletionBox::kInsertSingleMatch :
-                                                            wxCodeCompletionBox::kNone,
-                                                        wxNOT_FOUND);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(activeEditor->GetCtrl(), entries, bitmaps,
+        event.GetId() == XRCID("text_word_complete") ? wxCodeCompletionBox::kInsertSingleMatch :
+                                                       wxCodeCompletionBox::kNone,
+        wxNOT_FOUND);
 }
 
 void WordCompletionPlugin::OnSettings(wxCommandEvent& event)

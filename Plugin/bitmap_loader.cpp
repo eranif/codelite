@@ -84,7 +84,14 @@ BitmapLoader::BitmapLoader()
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
         wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
-        tmpFolder.AppendDir("codelite-bitmaps");
+        
+        // Make sure we append the user name to the temporary user folder
+        // this way, multiple CodeLite instances from different users can extract the
+        // bitmaps to /tmp
+        wxString bitmapFolder = "codelite-bitmaps";
+        bitmapFolder << clGetUserName();
+        
+        tmpFolder.AppendDir(bitmapFolder);
         if(tmpFolder.DirExists()) {
             tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE);
         }

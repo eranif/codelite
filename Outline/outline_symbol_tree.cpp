@@ -33,6 +33,7 @@
 #include "macros.h"
 
 #include "outline_symbol_tree.h"
+#include <algorithm>
 //#include "manager.h"
 //#include "frame.h"
 #include "bitmap_loader.h"
@@ -50,26 +51,26 @@ const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED = wxNewEventType();
 //----------------------------------------------------------------
 wxImageList* svSymbolTree::CreateSymbolTreeImages()
 {
-    wxImageList *images = new wxImageList(16, 16, true);
+    wxImageList* images = new wxImageList(16, 16, true);
 
-    BitmapLoader *bmpLoader = new BitmapLoader();
-    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));               // 0
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));           // 1
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/globals")));             // 2
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));               // 3
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/struct")));              // 4
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));     // 5
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_protected")));  // 6
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));    // 7
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));       // 8
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));    // 9
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));      // 10
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));             // 11
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/macro")));               // 12
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enum")));                // 13
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));          // 14
-    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));               // 15
-    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));                 // 16
+    BitmapLoader* bmpLoader = new BitmapLoader();
+    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));              // 0
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));          // 1
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/globals")));            // 2
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));              // 3
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/struct")));             // 4
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));    // 5
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_protected"))); // 6
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));   // 7
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));      // 8
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));   // 9
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));     // 10
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));            // 11
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/macro")));              // 12
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enum")));               // 13
+    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));         // 14
+    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));              // 15
+    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));                // 16
     return images;
 }
 
@@ -78,7 +79,8 @@ svSymbolTree::svSymbolTree()
 {
 }
 
-svSymbolTree::svSymbolTree(wxWindow *parent, IManager* manager, const wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
+svSymbolTree::svSymbolTree(
+    wxWindow* parent, IManager* manager, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : SymbolTree(parent, id, pos, size, style)
     , m_uid(0)
 {
@@ -91,11 +93,11 @@ svSymbolTree::svSymbolTree(wxWindow *parent, IManager* manager, const wxWindowID
     MSWSetNativeTheme(this);
 }
 
-void svSymbolTree::OnMouseRightUp(wxTreeEvent &event)
+void svSymbolTree::OnMouseRightUp(wxTreeEvent& event)
 {
     event.Skip();
     wxTreeItemId item = event.GetItem();
-    if (item.IsOk()) {
+    if(item.IsOk()) {
         SelectItem(item, true);
         DoItemActivated(item, event, true);
     }
@@ -107,7 +109,7 @@ void svSymbolTree::OnMouseDblClick(wxMouseEvent& event)
     int flags = 0;
     wxTreeItemId where = HitTest(event.GetPosition(), flags);
 
-    if( where.IsOk() && (flags & wxTREE_HITTEST_ONITEMLABEL) ) {
+    if(where.IsOk() && (flags & wxTREE_HITTEST_ONITEMLABEL)) {
         SelectItem(where);
         DoItemActivated(where, event, true);
 
@@ -123,18 +125,17 @@ bool svSymbolTree::ActivateSelectedItem()
     return DoItemActivated(item, dummy, true);
 }
 
-bool svSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent &event, bool notify)
+bool svSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool notify)
 {
     //-----------------------------------------------------
     // Each tree items, keeps a private user data that
     // holds the key for searching the its corresponding
     // node in the m_tree data structure
     //-----------------------------------------------------
-    if (item.IsOk() == false)
-        return false;
+    if(item.IsOk() == false) return false;
 
     MyTreeItemData* itemData = static_cast<MyTreeItemData*>(GetItemData(item));
-    if ( !itemData ) {
+    if(!itemData) {
         event.Skip();
         return false;
     }
@@ -142,22 +143,22 @@ bool svSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent &event, bool notif
     wxString filename = itemData->GetFileName();
     wxString project = m_manager->GetWorkspace()->GetActiveProjectName();
     wxString pattern = itemData->GetPattern();
-    //int      lineno  = itemData->GetLine();
+    // int      lineno  = itemData->GetLine();
 
     /*
-    	// Open the file and set the cursor to line number
-    	if(clMainFrame::Get()->GetMainBook()->OpenFile(filename, project, lineno-1)) {
-    		// get the editor, and search for the pattern in the file
-    		LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    		if (editor) {
-    			FindAndSelect(editor, pattern, GetItemText(item));
-    		}
-    	}
+        // Open the file and set the cursor to line number
+        if(clMainFrame::Get()->GetMainBook()->OpenFile(filename, project, lineno-1)) {
+                // get the editor, and search for the pattern in the file
+                LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+                if (editor) {
+                        FindAndSelect(editor, pattern, GetItemText(item));
+                }
+        }
     */
     FindAndSelect(m_manager->GetActiveEditor(), pattern, GetItemText(item));
 
     // post an event that an item was activated
-    if ( notify ) {
+    if(notify) {
         wxCommandEvent e(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED);
         e.SetEventObject(this);
         wxPostEvent(GetEventHandler(), e);
@@ -165,9 +166,9 @@ bool svSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent &event, bool notif
     return true;
 }
 
-void svSymbolTree::OnItemActivated(wxTreeEvent &event)
+void svSymbolTree::OnItemActivated(wxTreeEvent& event)
 {
-    if (event.GetKeyCode() == WXK_RETURN) {
+    if(event.GetKeyCode() == WXK_RETURN) {
         wxTreeItemId item = GetSelection();
         DoItemActivated(item, event, true);
     } else {
@@ -178,41 +179,40 @@ void svSymbolTree::OnItemActivated(wxTreeEvent &event)
 void svSymbolTree::AdvanceSelection(bool forward)
 {
     wxTreeItemId item = GetSelection();
-    if (!item.IsOk()) {
+    if(!item.IsOk()) {
         return;
     }
 
     wxTreeItemId nextItem;
-    if (forward) {
-        //Item is visible, scroll to it to make sure GetNextVisible() wont
-        //fail
+    if(forward) {
+        // Item is visible, scroll to it to make sure GetNextVisible() wont
+        // fail
         ScrollTo(item);
         nextItem = GetNextVisible(item);
     } else {
         nextItem = TryGetPrevItem(item);
     }
 
-    if (nextItem.IsOk()) {
+    if(nextItem.IsOk()) {
         SelectItem(nextItem);
     }
 }
 
 wxTreeItemId svSymbolTree::TryGetPrevItem(wxTreeItemId item)
 {
-    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG(item.IsOk(), wxTreeItemId(), wxT("invalid tree item"));
 
     // find out the starting point
     wxTreeItemId prevItem = GetPrevSibling(item);
-    if ( !prevItem.IsOk() ) {
+    if(!prevItem.IsOk()) {
         prevItem = GetItemParent(item);
     }
 
     // from there we must be able to navigate until this item
-    while ( prevItem.IsOk() ) {
+    while(prevItem.IsOk()) {
         ScrollTo(prevItem);
         const wxTreeItemId nextItem = GetNextVisible(prevItem);
-        if ( !nextItem.IsOk() || nextItem == item )
-            return prevItem;
+        if(!nextItem.IsOk() || nextItem == item) return prevItem;
 
         prevItem = nextItem;
     }
@@ -224,8 +224,8 @@ void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxStr
 {
     // sanity
     CHECK_PTR_RET(editor);
-    
-    if( editor->FindAndSelect(pattern, name, 0 /* from pos */, m_manager->GetNavigationMgr()) == false ) {
+
+    if(editor->FindAndSelect(pattern, name, 0 /* from pos */, m_manager->GetNavigationMgr()) == false) {
         // Could not select, clear the selection
         editor->GetCtrl()->SetSelectionStart(wxNOT_FOUND);
         editor->GetCtrl()->SetSelectionEnd(wxNOT_FOUND);
@@ -239,31 +239,32 @@ void svSymbolTree::BuildTree(const wxFileName& fn)
 {
     TagEntryPtrVector_t newTags;
     ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
-    if ( !db ) {
+    if(!db) {
         return;
     }
-    
+
     db->SelectTagsByFile(fn.GetFullPath(), newTags);
-    if ( TagsManagerST::Get()->AreTheSame(newTags, m_currentTags) )
-        return;
-    
+    if(TagsManagerST::Get()->AreTheSame(newTags, m_currentTags)) return;
+
+    std::sort(
+        newTags.begin(), newTags.end(), [&](TagEntryPtr t1, TagEntryPtr t2) { return t1->GetLine() > t2->GetLine(); });
     wxWindowUpdateLocker locker(this);
     SymbolTree::BuildTree(fn, &newTags);
-    
+
     // Request from the parsing thread list of include files
     ++m_uid;
-    
-    ParseRequest *req = new ParseRequest(this);
+
+    ParseRequest* req = new ParseRequest(this);
     req->setFile(fn.GetFullPath());
     req->setType(ParseRequest::PR_PARSE_INCLUDE_STATEMENTS);
     req->_uid = m_uid; // Identifies this request
-    ParseThreadST::Get()->Add( req );
-    
+    ParseThreadST::Get()->Add(req);
+
     wxTreeItemId root = GetRootItem();
-    if( root.IsOk() && ItemHasChildren(root) ) {
+    if(root.IsOk() && ItemHasChildren(root)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = GetFirstChild(root, cookie);
-        while ( child.IsOk() ) {
+        while(child.IsOk()) {
             Expand(child);
             child = GetNextChild(root, cookie);
         }
@@ -274,39 +275,38 @@ wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileO
 {
     wxTreeItemId root = GetRootItem();
 
-    if(root.IsOk() == false)
-        return wxTreeItemId();
+    if(root.IsOk() == false) return wxTreeItemId();
 
-    if( root.IsOk() && ItemHasChildren(root) ) {
+    if(root.IsOk() && ItemHasChildren(root)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = GetFirstChild(root, cookie);
-        while ( child.IsOk() ) {
+        while(child.IsOk()) {
 
             // Dont add duplicate items
-            if ( GetItemText(child) == INCLUDE_FILES_NODE_TEXT) {
+            if(GetItemText(child) == INCLUDE_FILES_NODE_TEXT) {
                 Delete(child);
                 break;
             }
             child = GetNextChild(root, cookie);
         }
     }
-    
-    if( includes.empty() )
-        return wxTreeItemId();
+
+    if(includes.empty()) return wxTreeItemId();
 
     wxTreeItemId item;
     if(ItemHasChildren(root)) {
-        item = InsertItem(root, 0, INCLUDE_FILES_NODE_TEXT, 2, 2, new MyTreeItemData(INCLUDE_FILES_NODE_TEXT, wxEmptyString));
+        item = InsertItem(
+            root, 0, INCLUDE_FILES_NODE_TEXT, 2, 2, new MyTreeItemData(INCLUDE_FILES_NODE_TEXT, wxEmptyString));
 
     } else {
-        item = AppendItem(root, INCLUDE_FILES_NODE_TEXT, 2, 2, new MyTreeItemData(INCLUDE_FILES_NODE_TEXT, wxEmptyString));
-
+        item =
+            AppendItem(root, INCLUDE_FILES_NODE_TEXT, 2, 2, new MyTreeItemData(INCLUDE_FILES_NODE_TEXT, wxEmptyString));
     }
 
     fcFileOpener::List_t::const_iterator iter = includes.begin();
     for(; iter != includes.end(); ++iter) {
-        wxString displayName( *iter );
-        AppendItem(item, displayName, 16, 16, new MyTreeItemData(displayName, displayName) );
+        wxString displayName(*iter);
+        AppendItem(item, displayName, 16, 16, new MyTreeItemData(displayName, displayName));
     }
     return item;
 }
@@ -314,12 +314,10 @@ wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileO
 bool svSymbolTree::IsSelectedItemIncludeFile()
 {
     wxTreeItemId item = GetSelection();
-    if ( item.IsOk() == false || item == GetRootItem() )
-        return false;
+    if(item.IsOk() == false || item == GetRootItem()) return false;
 
     wxTreeItemId parent = GetItemParent(item);
-    if( parent.IsOk() == false || parent == GetRootItem())
-        return false;
+    if(parent.IsOk() == false || parent == GetRootItem()) return false;
 
     return GetItemText(parent) == INCLUDE_FILES_NODE_TEXT;
 }
@@ -328,8 +326,7 @@ wxString svSymbolTree::GetSelectedIncludeFile() const
 {
     wxString included_file;
     wxTreeItemId item = GetSelection();
-    if ( item.IsOk() == false || item == GetRootItem() )
-        return wxT("");
+    if(item.IsOk() == false || item == GetRootItem()) return wxT("");
 
     included_file = GetItemText(item);
     included_file.Replace(wxT("\""), wxT(""));
@@ -347,25 +344,21 @@ void svSymbolTree::Clear()
 void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
 {
     fcFileOpener::List_t* includes = (fcFileOpener::List_t*)e.GetClientData();
-    if ( includes ) {
-        if( m_uid == e.GetInt() ) {
+    if(includes) {
+        if(m_uid == e.GetInt()) {
             wxWindowUpdateLocker locker(this);
             wxTreeItemId item = DoAddIncludeFiles(m_fileName, *includes);
-            if( item.IsOk() ) {
-//                if(ItemHasChildren(item)) {
-//                    Expand(item);
-//                }
-                ScrollTo(item);
-            }
+            wxUnusedVar(item);
+            // if(item.IsOk()) {
+            //     //                if(ItemHasChildren(item)) {
+            //     //                    Expand(item);
+            //     //                }
+            //     ScrollTo(item);
+            // }
         }
         includes->clear();
         delete includes;
     }
 }
 
-void svSymbolTree::ClearCache()
-{
-    m_currentTags.clear();
-}
-
-
+void svSymbolTree::ClearCache() { m_currentTags.clear(); }

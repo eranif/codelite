@@ -63,9 +63,9 @@
      borderopacity="0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.8326772"
-     inkscape:cx="-315.3942"
-     inkscape:cy="235.64243"
+     inkscape:zoom="3.3307088"
+     inkscape:cx="161.10897"
+     inkscape:cy="115.10302"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -121,7 +121,7 @@
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.00003338px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#131f5a;fill-opacity:1;stroke:none;stroke-opacity:1" /></flowRegion><flowPara
          id="flowPara4160"
          style="font-weight:normal">f</flowPara></flowRoot>    <path
-       style="opacity:1;fill:#ff4f4f;fill-opacity:1;fill-rule:evenodd;stroke:#8b0000;stroke-width:5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4140)"
+       style="opacity:1;fill:#ff4f4f;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4140)"
        d="m 186.09576,1036.8687 c -16.08768,-2.0323 -29.81242,-13.6865 -34.28204,-29.1102 -1.26574,-4.3678 -1.64676,-7.1683 -1.63675,-12.03022 0.019,-9.20977 2.61589,-17.17771 7.9402,-24.36224 10.74163,-14.49455 29.24652,-20.28584 46.40967,-14.52436 5.74684,1.92915 10.83813,5.16047 15.54145,9.86379 6.37426,6.37426 10.21061,13.79979 11.62022,22.49175 2.14662,13.23658 -2.11277,26.41758 -11.60828,35.92258 -8.96941,8.9783 -21.53322,13.3218 -33.98447,11.7489 z"
        id="path4168"
        inkscape:connector-curvature="0" />
@@ -135,5 +135,12 @@
            height="43.234039"
            x="184.94562"
            y="47.035469" /></flowRegion><flowPara
-         id="flowPara4152"></flowPara></flowRoot>  </g>
+         id="flowPara4152" /></flowRoot>    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4153"
+       width="76.56028"
+       height="20.416075"
+       x="153.12056"
+       y="986.70734" />
+  </g>
 </svg>

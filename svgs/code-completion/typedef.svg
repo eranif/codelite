@@ -31,8 +31,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="-151.96878"
-     inkscape:cy="115.17719"
+     inkscape:cx="-265.10586"
+     inkscape:cy="109.16678"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -80,7 +80,7 @@
        xml:space="preserve"
        id="flowRoot4154"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.00003338px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#42413e;fill-opacity:1;stroke:#42413e;stroke-width:0.06649261;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       transform="matrix(15.897763,0,0,12.709307,-563.19523,243.09748)"><flowRegion
+       transform="matrix(15.897763,0,0,12.709307,-555.19523,243.09748)"><flowRegion
          id="flowRegion4156"><rect
            id="rect4158"
            width="54.447224"
@@ -89,5 +89,5 @@
            y="43.160858"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.00003338px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#42413e;fill-opacity:1;stroke:#42413e;stroke-width:0.06649261;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" /></flowRegion><flowPara
          id="flowPara4160"
-         style="font-weight:bold">t</flowPara></flowRoot>  </g>
+         style="font-weight:normal">t</flowPara></flowRoot>  </g>
 </svg>

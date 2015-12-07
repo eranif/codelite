@@ -729,6 +729,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
         lexer->SetFileSpec("*.java");
     }
+    
+    // Append *.sqlite to the SQL lexer if missing
+    if(lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.sqlite");
+    }
 
     // Hack2: since we now provide our own PHP and javaScript lexer, remove the PHP/JS extensions from
     // the HTML lexer

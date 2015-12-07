@@ -119,6 +119,7 @@ void FileExtManager::Init()
         m_map[wxT("xrc")] = TypeXRC;
 
         m_map[wxT("sql")] = TypeSQL;
+        m_map[wxT("sqlite")] = TypeSQL;
         m_map[wxT("phpwsp")] = TypeWorkspacePHP;
         m_map[wxT("phptags")] = TypeWorkspacePHPTags;
 

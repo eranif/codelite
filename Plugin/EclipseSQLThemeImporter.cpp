@@ -27,7 +27,7 @@ EclipseSQLThemeImporter::EclipseSQLThemeImporter()
                  "translation  treat trigger true  under union unique unknown  unnest update usage user using  value "
                  "values varchar variable varying view  when whenever where with without work write  year  zone index "
                  "exists replace");
-    SetFileExtensions("*.sql");
+    SetFileExtensions("*.sql;*.sqlite");
     m_langName = "sql";
 }
 

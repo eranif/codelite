@@ -206,7 +206,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
         lexer->SetFileSpec("*.java");
     }
-
+    
+    // Append *.sqlite to the SQL lexer if missing
+    if(lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.sqlite");
+    }
+    
     // Hack2: since we now provide our own PHP and javaScript lexer, remove the PHP/JS extensions from
     // the HTML lexer
     if(lexer->GetName() == "html" && (lexer->GetFileSpec().Contains(".php") || lexer->GetFileSpec().Contains("*.js"))) {

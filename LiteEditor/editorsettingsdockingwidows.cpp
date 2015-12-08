@@ -56,6 +56,16 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
+
+#ifdef __WXOSX__
+    {
+        wxArrayString tabOptionsArr;
+        tabOptionsArr.Add(wxT("TOP"));
+        tabOptionsArr.Add(wxT("BOTTOM"));
+        m_choiceOutputTabsOrientation->Clear();
+        m_choiceOutputTabsOrientation->Append(tabOptionsArr);
+    }
+#endif
     switch(options->GetOutputTabsDirection()) {
     case wxTOP:
         m_choiceOutputTabsOrientation->SetSelection(0);
@@ -66,6 +76,22 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     default:
         break;
     }
+    
+#ifdef __WXOSX__
+    // On OSX we dont support left-right (due to blurred images)
+    switch(options->GetWorkspaceTabsDirection()) {
+    case wxLEFT:
+    case wxTOP:
+        m_choiceWorkspaceTabsOrientation->SetSelection(0);
+        break;
+    case wxRIGHT:
+    case wxBOTTOM:
+        m_choiceWorkspaceTabsOrientation->SetSelection(1);
+        break;
+    default:
+        break;
+    }
+#else
     switch(options->GetWorkspaceTabsDirection()) {
     case wxLEFT:
         m_choiceWorkspaceTabsOrientation->SetSelection(0);
@@ -82,12 +108,10 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     default:
         break;
     }
-    
-    m_checkBoxHideOutputPaneNotIfDebug->Connect(
-        wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI),
-        NULL,
-        this);
+#endif
+
+    m_checkBoxHideOutputPaneNotIfDebug->Connect(wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI), NULL, this);
 }
 
 void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
@@ -142,7 +166,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     default:
         break;
     }
-    
+
     // Keep the quickreplacebar in sync
     clMainFrame::Get()->GetMainBook()->ShowQuickReplaceBar(m_checkBoxShowReplaceBar->IsChecked());
 }

@@ -11,24 +11,12 @@ inkscape $file --without-gui --export-png=../bitmaps/16-${filename}@2x.png --exp
 cp ../bitmaps/16-${filename}.png ../bitmaps/osx/icon.iconset/icon_16x16.png
 cp ../bitmaps/16-${filename}@2x.png ../bitmaps/osx/icon.iconset/icon_16x16@2x.png
 
-## 24x24 version
-inkscape $file --without-gui --export-png=../bitmaps/24-${filename}.png --export-width=24 --export-height=24
-inkscape $file --without-gui --export-png=../bitmaps/24-${filename}@2x.png --export-width=48 --export-height=48
-cp ../bitmaps/24-${filename}.png ../bitmaps/osx/icon.iconset/icon_24x24.png
-cp ../bitmaps/24-${filename}@2x.png ../bitmaps/osx/icon.iconset/icon_24x24@2x.png
-
 
 ## 32x32 version
 inkscape $file --without-gui --export-png=../bitmaps/32-${filename}.png --export-width=32 --export-height=32 
 inkscape $file --without-gui --export-png=../bitmaps/32-${filename}@2x.png --export-width=64 --export-height=64 
 cp ../bitmaps/32-${filename}.png ../bitmaps/osx/icon.iconset/icon_32x32.png
 cp ../bitmaps/32-${filename}@2x.png ../bitmaps/osx/icon.iconset/icon_32x32@2x.png
-
-## 64x64 version
-inkscape $file --without-gui --export-png=../bitmaps/64-${filename}.png --export-width=64 --export-height=64 
-inkscape $file --without-gui --export-png=../bitmaps/64-${filename}@2x.png --export-width=128 --export-height=128 
-cp ../bitmaps/64-${filename}.png ../bitmaps/osx/icon.iconset/icon_64x64.png
-cp ../bitmaps/64-${filename}@2x.png ../bitmaps/osx/icon.iconset/icon_64x64@2x.png
 
 ## 128x128 version
 inkscape $file --without-gui --export-png=../bitmaps/128-${filename}.png --export-width=128 --export-height=128 

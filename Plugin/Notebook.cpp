@@ -52,10 +52,6 @@ wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 
 extern void Notebook_Init_Bitmaps();
 
-static int GetBitmapWidth(const wxBitmap& bmp) { return bmp.GetWidth() / bmp.GetScaleFactor(); }
-
-static int GetBitmapHeight(const wxBitmap& bmp) { return bmp.GetHeight() / bmp.GetScaleFactor(); }
-
 Notebook::Notebook(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxPanel(parent, id, pos, size, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL, name)
@@ -473,8 +469,8 @@ void clTabInfo::CalculateOffsets(size_t style)
     if(m_bitmap.IsOk()) {
         m_bmpX = m_width;
         m_width += X_SPACER;
-        m_width += GetBitmapWidth(m_bitmap);
-        m_bmpY = ((m_height - GetBitmapHeight(m_bitmap)) / 2);
+        m_width += m_bitmap.GetScaledWidth();
+        m_bmpY = ((m_height - m_bitmap.GetScaledHeight()) / 2);
     }
 
     // Text
@@ -655,9 +651,9 @@ void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event)
 {
     if(GetStyle() & kNotebook_EnableNavigationEvent) {
 #ifdef __WXOSX__
-        if(event.AltDown()) 
+        if(event.AltDown())
 #else
-        if(event.CmdDown()) 
+        if(event.CmdDown())
 #endif
         {
             switch(event.GetUnicodeKey()) {
@@ -705,7 +701,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     if((GetStyle() & kNotebook_ShowFileListButton)) {
         if(IsVerticalTabs()) {
             rect.SetHeight(rect.GetHeight() - 16);
-            m_chevronRect = wxRect(rect.GetBottomLeft(), wxSize(rect.GetWidth(), 20));
+            m_chevronRect = wxRect(rect.GetTopLeft(), wxSize(rect.GetWidth(), 20));
             if(GetStyle() & kNotebook_RightTabs) {
                 m_chevronRect.x += clTabInfo::BOTTOM_AREA_HEIGHT;
             } else {
@@ -809,10 +805,10 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
-            wxCoord chevronX =
-                m_chevronRect.GetTopLeft().x + ((m_chevronRect.GetWidth() - GetBitmapWidth(m_colours.chevronDown)) / 2);
+            wxCoord chevronX = m_chevronRect.GetTopLeft().x +
+                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                               ((m_chevronRect.GetHeight() - GetBitmapHeight(m_colours.chevronDown)) / 2);
+                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -1645,10 +1641,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
-                                const wxRect& clientRect,
-                                wxDC& dc,
-                                const clTabInfo::Colours& colours)
+void clTabCtrl::DoDrawBottomBox(
+    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabInfo::Colours& colours)
 {
     if(GetStyle() & kNotebook_LeftTabs) {
         // Draw 3 lines on the right

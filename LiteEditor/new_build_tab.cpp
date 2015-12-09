@@ -216,10 +216,6 @@ void NewBuildTab::OnBuildEnded(clCommandEvent& e)
         m_view->ScrollToEnd();
     }
 
-    if((m_maxlineWidth != wxNOT_FOUND) && m_maxlineWidth) {
-        m_view->SetScrollWidth(m_maxlineWidth);
-    }
-
     // notify the plugins that the build has ended
     clBuildEvent buildEvent(wxEVT_BUILD_ENDED);
     buildEvent.SetErrorCount(m_errorCount);
@@ -567,8 +563,11 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
         wxPoint beginPos = m_view->PointFromPosition(beginPosition);
         wxPoint endPos = m_view->PointFromPosition(endPosition);
 
-        int curLen = endPos.x - beginPos.x;
+        int curLen = (endPos.x - beginPos.x) + 10;
         m_maxlineWidth = wxMax(m_maxlineWidth, curLen);
+        if(m_maxlineWidth > 0) {
+            m_view->SetScrollWidth(m_maxlineWidth);
+        }
         m_view->SetEditable(false);
 
         if(clConfig::Get().Read(kConfigBuildAutoScroll, true)) {

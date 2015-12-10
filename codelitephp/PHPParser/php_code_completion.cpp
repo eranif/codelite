@@ -70,19 +70,13 @@ PHPCodeCompletion::PHPCodeCompletion()
     EventNotifier::Get()->Connect(
         wxEVT_CC_CODE_COMPLETE, clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeComplete), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP,
-                                  clCodeCompletionEventHandler(PHPCodeCompletion::OnFunctionCallTip),
-                                  NULL,
-                                  this);
+        clCodeCompletionEventHandler(PHPCodeCompletion::OnFunctionCallTip), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD,
-                                  clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompleteLangKeywords),
-                                  NULL,
-                                  this);
+        clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompleteLangKeywords), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CC_TYPEINFO_TIP, clCodeCompletionEventHandler(PHPCodeCompletion::OnTypeinfoTip), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED,
-                                  clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompletionBoxDismissed),
-                                  NULL,
-                                  this);
+        clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompletionBoxDismissed), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CC_GENERATE_DOXY_BLOCK, clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
     EventNotifier::Get()->Connect(
@@ -105,19 +99,13 @@ PHPCodeCompletion::~PHPCodeCompletion()
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_CODE_COMPLETE, clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeComplete), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnFunctionCallTip),
-                                     NULL,
-                                     this);
+        clCodeCompletionEventHandler(PHPCodeCompletion::OnFunctionCallTip), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompleteLangKeywords),
-                                     NULL,
-                                     this);
+        clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompleteLangKeywords), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_TYPEINFO_TIP, clCodeCompletionEventHandler(PHPCodeCompletion::OnTypeinfoTip), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompletionBoxDismissed),
-                                     NULL,
-                                     this);
+        clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompletionBoxDismissed), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_FIND_SYMBOL, clCodeCompletionEventHandler(PHPCodeCompletion::OnFindSymbol), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -186,7 +174,7 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
     wxString name = entry->GetShortName();
 
     if(entry->Is(kEntityTypeVariable) && entry->Cast<PHPEntityVariable>()->IsMember() && name.StartsWith(wxT("$")) &&
-       !entry->Cast<PHPEntityVariable>()->IsStatic()) {
+        !entry->Cast<PHPEntityVariable>()->IsStatic()) {
         name.Remove(0, 1);
     } else if((entry->Is(kEntityTypeClass) || entry->Is(kEntityTypeNamespace)) && name.StartsWith("\\")) {
         name.Remove(0, 1);
@@ -282,17 +270,25 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
             } else {
                 // Perform the code completion here
                 PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
+                bool isExprStartsWithOpenTag = expr->IsExprStartsWithOpenTag();
                 PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
                 if(entity) {
                     // Suggets members for the resolved entity
                     PHPEntityBase::List_t matches;
                     expr->Suggest(entity, m_lookupTable, matches);
-                    if(!expr->GetFilter().IsEmpty() && expr->GetCount() == 0) {
+                    if(!expr->GetFilter().IsEmpty() && (expr->GetCount() == 0)) {
+
                         // Word completion
                         PHPEntityBase::List_t keywords = PhpKeywords(expr->GetFilter());
 
                         // Preprend the keywords
                         matches.insert(matches.end(), keywords.begin(), keywords.end());
+
+                        // Did user typed "<?ph" or "<?php" ??
+                        // If so, clear the matches
+                        if(isExprStartsWithOpenTag && (expr->GetFilter() == "ph" || expr->GetFilter() == "php")) {
+                            matches.clear();
+                        }
                     }
 
                     // Remove duplicates from the list
@@ -429,7 +425,7 @@ PHPLocation::Ptr_t PHPCodeCompletion::FindDefinition(IEditor* editor, int pos)
         PHPEntityBase::Ptr_t resolved = GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
         if(resolved) {
             if(resolved->Is(kEntityTypeFunctionAlias)) {
-                // use the internal function 
+                // use the internal function
                 resolved = resolved->Cast<PHPEntityFunctionAlias>()->GetFunc();
             }
             loc = new PHPLocation;
@@ -853,7 +849,7 @@ void PHPCodeCompletion::GetMembers(IEditor* editor, PHPEntityBase::List_t& membe
     for(; iter != children.end(); ++iter) {
         PHPEntityBase::Ptr_t child = *iter;
         if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember() &&
-           !child->Cast<PHPEntityVariable>()->IsConst() && !child->Cast<PHPEntityVariable>()->IsStatic()) {
+            !child->Cast<PHPEntityVariable>()->IsConst() && !child->Cast<PHPEntityVariable>()->IsStatic()) {
             // a member of a class
             members.push_back(child);
         }

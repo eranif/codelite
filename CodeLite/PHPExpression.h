@@ -66,6 +66,9 @@ protected:
                        // but will do no good to resolve the expression
     PHPSourceFile::Ptr_t m_sourceFile;
     bool m_functionCalltipExpr;
+    bool m_exprStartsWithOpenTag;
+
+protected:
     wxString DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sourceFile);
     /**
      * @brief make 'matches' a unique list by removing duplicates
@@ -77,10 +80,8 @@ protected:
     /**
      * @brief fix the return value full path
      */
-    bool FixReturnValueNamespace(PHPLookupTable& lookup,
-                                 PHPEntityBase::Ptr_t parent,
-                                 const wxString& classFullpath,
-                                 wxString& fixedpath);
+    bool FixReturnValueNamespace(
+        PHPLookupTable& lookup, PHPEntityBase::Ptr_t parent, const wxString& classFullpath, wxString& fixedpath);
 
 public:
     PHPExpression(const wxString& fulltext, const wxString& exprText = wxString(), bool functionCalltipExpr = false);
@@ -99,7 +100,12 @@ public:
      * @param matches [output]
      */
     void Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& lookup, PHPEntityBase::List_t& matches);
-
+    
+    /**
+     * @brief return true of the token before the expression is "<?"
+     */
+    bool IsExprStartsWithOpenTag() const { return m_exprStartsWithOpenTag; }
+    
     /**
      * @brief return the elements count in the expression.
      * For example:

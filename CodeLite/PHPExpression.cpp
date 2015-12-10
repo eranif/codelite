@@ -32,6 +32,7 @@ PHPExpression::~PHPExpression() {}
 
 phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 {
+    m_exprStartsWithOpenTag = false;
     // Extract the expression at the end of the input text
     std::stack<phpLexerToken::Vet_t> stack;
     phpLexerToken::Vet_t tokens;
@@ -46,7 +47,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         lastToken = token;
         switch(token.type) {
         case kPHP_T_OPEN_TAG:
-            // skip the open tag
+            if(current) current->push_back(token);
             break;
         // the following are tokens that once seen
         // we should start a new expression:
@@ -155,6 +156,12 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
     }
 
     if(current) {
+        if(current->at(0).type == kPHP_T_OPEN_TAG) {
+            if(current->at(0).text == "<?") {
+                m_exprStartsWithOpenTag = true;
+            }
+            current->erase(current->begin());
+        }
         result.swap(*current);
     }
     return result;
@@ -269,12 +276,12 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
                     // return the type hint
                     actualType = currentToken->Cast<PHPEntityVariable>()->GetTypeHint();
                 }
-                
+
                 wxString fixedpath;
                 if(!actualType.IsEmpty() && FixReturnValueNamespace(lookpTable, parentToken, actualType, fixedpath)) {
                     actualType.swap(fixedpath);
                 }
-                
+
                 if(!actualType.IsEmpty()) {
                     currentToken = lookpTable.FindScope(actualType);
                 }
@@ -337,13 +344,13 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
                 firstTokenType = kPHP_T_SELF;
-                
+
             } else if(token.type == kPHP_T_STATIC) {
                 // Same as $this: replace it with the current class absolute path
                 if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
                 firstTokenType = kPHP_T_STATIC;
-                
+
             } else if(token.type == kPHP_T_VARIABLE) {
                 // the expression being evaluated starts with a variable (e.g. $a->something()->)
                 // in this case, use the current scope ('scope') and replace it with the real type
@@ -434,7 +441,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 // If the first token before the simplication was 'parent'
                 // keyword, we need to carry this over
                 part.m_textType = firstTokenType;
-            } 
+            }
 
             part.m_operator = token.type;
             part.m_operatorText = token.text;
@@ -531,7 +538,7 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
             for(; iter != children.end(); ++iter) {
                 PHPEntityBase::Ptr_t child = *iter;
                 if(child->Is(kEntityTypeVariable) && child->GetShortName().Contains(GetFilter()) &&
-                   child->GetShortName() != GetFilter()) {
+                    child->GetShortName() != GetFilter()) {
                     matches.push_back(child);
                 }
             }
@@ -593,10 +600,8 @@ void PHPExpression::DoMakeUnique(PHPEntityBase::List_t& matches)
     matches.swap(uniqueList);
 }
 
-bool PHPExpression::FixReturnValueNamespace(PHPLookupTable& lookup,
-                                            PHPEntityBase::Ptr_t parent,
-                                            const wxString& classFullpath,
-                                            wxString& fixedpath)
+bool PHPExpression::FixReturnValueNamespace(
+    PHPLookupTable& lookup, PHPEntityBase::Ptr_t parent, const wxString& classFullpath, wxString& fixedpath)
 {
     if(!parent) return false;
     PHPEntityBase::Ptr_t pClass = lookup.FindClass(classFullpath);

@@ -231,7 +231,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-
+    
+    if(lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(4) + " <?php <? ", 4);
+    }
+    
     // Add wxcp file extension to the JavaScript lexer
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
@@ -758,6 +762,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
+    }
+    
+    if(lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(4) + " <?php <? ", 4);
     }
 
     // Add wxcp file extension to the JavaScript lexer

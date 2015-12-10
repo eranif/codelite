@@ -150,7 +150,7 @@ void XDebugManager::DoStartDebugger()
     PHPConfigurationData conf;
     conf.Load();
     if(!conf.HasFlag(PHPConfigurationData::kDontPromptForMissingFileMapping) &&
-       GetFileMapping(PHPWorkspace::Get()->GetActiveProject()).empty()) {
+        GetFileMapping(PHPWorkspace::Get()->GetActiveProject()).empty()) {
         // Issue a warning
         wxString message;
         message << _("This project has no file mapping defined. This may result in breakpoints not applied\n")
@@ -449,9 +449,8 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
         frame->Raise();
     }
 
-    CL_DEBUG("CodeLite: opening file %s:%d",
-             e.GetFileName(),
-             e.GetLineNumber() + 1); // The user sees the line number from 1 (while scintilla counts them from 0)
+    CL_DEBUG("CodeLite: opening file %s:%d", e.GetFileName(),
+        e.GetLineNumber() + 1); // The user sees the line number from 1 (while scintilla counts them from 0)
 
     // Mark the debugger line / file
     IEditor* editor = m_plugin->GetManager()->FindEditor(e.GetFileName());
@@ -734,10 +733,8 @@ void XDebugManager::OnCommThreadTerminated()
 
 void XDebugManager::XDebugNotConnecting()
 {
-    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
-                            _("XDebug did not connect in a timely manner"),
-                            "CodeLite",
-                            wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
+    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(), _("XDebug did not connect in a timely manner"),
+        "CodeLite", wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
     dlg.SetOKCancelLabels(_("Run XDebug Test"), _("OK"));
     if(dlg.ShowModal() == wxID_OK) {
         m_plugin->CallAfter(&PhpPlugin::RunXDebugDiagnostics);
@@ -750,7 +747,7 @@ void XDebugManager::OnShowTooltip(XDebugEvent& e)
     if(e.GetEvalReason() == XDebugEvalCmdHandler::kEvalForTooltip) {
         wxString tip, title;
         title << e.GetString();
-        
+
         if(!e.IsEvalSucceeded()) {
             tip << _("Error evaluating expression ");
         } else {

@@ -56,6 +56,7 @@ protected:
     EvalPane* m_xdebugEvalPane;
     bool m_showWelcomePage;
     PHPLint::Ptr_t m_lint;
+    bool m_toggleToolbar;
 
 public:
     enum {

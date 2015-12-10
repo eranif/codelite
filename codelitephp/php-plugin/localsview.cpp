@@ -4,15 +4,17 @@
 #include <event_notifier.h>
 #include <file_logger.h>
 #include "XDebugManager.h"
+#include "globals.h"
+#include "editor_config.h"
 
 LocalsView::LocalsView(wxWindow* parent)
     : LocalsViewBase(parent)
 {
     Hide();
-    LexerConf::Ptr_t lex =  EditorConfigST::Get()->GetLexer("php");
-    if ( lex ) {
-        m_dataview->SetFont( lex->GetFontForSyle(wxSTC_HPHP_DEFAULT) );
-    }
+    //     LexerConf::Ptr_t lex =  EditorConfigST::Get()->GetLexer("php");
+    //     if ( lex ) {
+    //         m_dataview->SetFont( lex->GetFontForSyle(wxSTC_HPHP_DEFAULT) );
+    //     }
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_LOCALS_UPDATED, &LocalsView::OnLocalsUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &LocalsView::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTED, &LocalsView::OnXDebugSessionStarted, this);
@@ -33,12 +35,12 @@ void LocalsView::OnLocalCollapsed(wxDataViewEvent& event)
     CHECK_ITEM_RET(event.GetItem());
     wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_dataviewModel->GetClientObject(event.GetItem()));
     CHECK_PTR_RET(cd);
-    if( m_localsExpandedItemsFullname.count( cd->GetData() ) ) {
-        m_localsExpandedItemsFullname.erase( cd->GetData() );
+    if(m_localsExpandedItemsFullname.count(cd->GetData())) {
+        m_localsExpandedItemsFullname.erase(cd->GetData());
     }
 }
 
-void LocalsView::OnXDebugSessionEnded(XDebugEvent &e)
+void LocalsView::OnXDebugSessionEnded(XDebugEvent& e)
 {
     e.Skip();
     CL_DEBUG("LocalsView::OnXDebugSessionEnded(): Debug sessions started - cleaning all locals view");
@@ -55,7 +57,7 @@ void LocalsView::OnLocalExpanded(wxDataViewEvent& event)
     CHECK_ITEM_RET(event.GetItem());
     wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_dataviewModel->GetClientObject(event.GetItem()));
     CHECK_PTR_RET(cd);
-    m_localsExpandedItemsFullname.insert( cd->GetData() );
+    m_localsExpandedItemsFullname.insert(cd->GetData());
 }
 
 void LocalsView::OnLocalsUpdated(XDebugEvent& e)
@@ -67,14 +69,14 @@ void LocalsView::OnLocalsUpdated(XDebugEvent& e)
     m_localsExpandedItems.Clear();
 
     const XVariable::List_t& vars = e.GetVariables();
-    AppendVariablesToTree( wxDataViewItem(NULL), vars );
+    AppendVariablesToTree(wxDataViewItem(NULL), vars);
 
     // Expand the items that were expanded before the view refresh
-    for(size_t i=0; i<m_localsExpandedItems.GetCount(); ++i) {
+    for(size_t i = 0; i < m_localsExpandedItems.GetCount(); ++i) {
         // Ensure it is visible
-        m_dataview->EnsureVisible( m_localsExpandedItems.Item(i) );
+        m_dataview->EnsureVisible(m_localsExpandedItems.Item(i));
         // Ensure its expanded
-        m_dataview->Expand( m_localsExpandedItems.Item(i) );
+        m_dataview->Expand(m_localsExpandedItems.Item(i));
     }
     m_localsExpandedItems.Clear();
 }
@@ -82,29 +84,29 @@ void LocalsView::OnLocalsUpdated(XDebugEvent& e)
 void LocalsView::AppendVariablesToTree(const wxDataViewItem& parent, const XVariable::List_t& children)
 {
     XVariable::List_t::const_iterator iter = children.begin();
-    for(; iter != children.end(); ++iter ) {
+    for(; iter != children.end(); ++iter) {
         const XVariable& var = *iter;
         wxVector<wxVariant> cols;
-        cols.push_back( var.name );
-        cols.push_back( var.type );
-        cols.push_back( var.classname );
-        cols.push_back( var.value );
-        wxDataViewItem item = m_dataviewModel->AppendItem(parent, cols, new wxStringClientData(var.fullname) );
+        cols.push_back(var.name);
+        cols.push_back(var.type);
+        cols.push_back(var.classname);
+        cols.push_back(var.value);
+        wxDataViewItem item = m_dataviewModel->AppendItem(parent, cols, new wxStringClientData(var.fullname));
 
-        if ( var.GetCreateFakeNode() ) {
+        if(var.GetCreateFakeNode()) {
             // create dummy node in the tree view so we can expand it later
             cols.clear();
-            cols.push_back( "<dummy>" );
-            cols.push_back( wxString() );
-            cols.push_back( wxString() );
-            cols.push_back( wxString() );
-            m_dataviewModel->AppendItem(item, cols, new wxStringClientData(var.fullname) );
+            cols.push_back("<dummy>");
+            cols.push_back(wxString());
+            cols.push_back(wxString());
+            cols.push_back(wxString());
+            m_dataviewModel->AppendItem(item, cols, new wxStringClientData(var.fullname));
 
-        } else if ( var.HasChildren() ) {
-            AppendVariablesToTree( item, var.children );
-            if ( m_localsExpandedItemsFullname.count(var.fullname) ) {
+        } else if(var.HasChildren()) {
+            AppendVariablesToTree(item, var.children);
+            if(m_localsExpandedItemsFullname.count(var.fullname)) {
                 // this item should be expanded
-                m_localsExpandedItems.Add( item );
+                m_localsExpandedItems.Add(item);
             }
         }
     }
@@ -124,30 +126,30 @@ void LocalsView::OnXDebugSessionStarted(XDebugEvent& e)
 void LocalsView::OnLocalExpanding(wxDataViewEvent& event)
 {
     event.Skip();
-    CHECK_ITEM_RET( event.GetItem() );
-    
+    CHECK_ITEM_RET(event.GetItem());
+
     wxDataViewItem item = event.GetItem();
     wxDataViewItemArray children;
-    if ( m_dataviewModel->GetChildren( item , children ) && children.GetCount() == 1 ) {
+    if(m_dataviewModel->GetChildren(item, children) && children.GetCount() == 1) {
         wxDataViewItem child = children.Item(0);
         wxVariant v;
         m_dataviewModel->GetValue(v, child, 0);
-        
-        if ( v.GetString() == "<dummy>" ) {
+
+        if(v.GetString() == "<dummy>") {
             // a dummy node has been found
             // Delete this node and request from XDebug to expand it
-            m_dataviewModel->SetValue( wxString("Loading..."), child, 0 );
-            wxString propertyName = DoGetItemClientData( event.GetItem() );
-            XDebugManager::Get().SendGetProperty( propertyName );
-            m_waitingExpand.insert( std::make_pair(propertyName, item) );
+            m_dataviewModel->SetValue(wxString("Loading..."), child, 0);
+            wxString propertyName = DoGetItemClientData(event.GetItem());
+            XDebugManager::Get().SendGetProperty(propertyName);
+            m_waitingExpand.insert(std::make_pair(propertyName, item));
         }
     }
 }
 
 wxString LocalsView::DoGetItemClientData(const wxDataViewItem& item) const
 {
-    wxStringClientData* scd = dynamic_cast<wxStringClientData*>(m_dataviewModel->GetClientObject( item ) );
-    if ( scd ) {
+    wxStringClientData* scd = dynamic_cast<wxStringClientData*>(m_dataviewModel->GetClientObject(item));
+    if(scd) {
         return scd->GetData();
     }
     return wxEmptyString;
@@ -157,34 +159,58 @@ void LocalsView::OnProperytGet(XDebugEvent& e)
 {
     e.Skip();
     // An item was evaluated using property_get
-    std::map<wxString, wxDataViewItem>::iterator iter = m_waitingExpand.find( e.GetEvaluted() );
-    if ( iter == m_waitingExpand.end() ) {
+    std::map<wxString, wxDataViewItem>::iterator iter = m_waitingExpand.find(e.GetEvaluted());
+    if(iter == m_waitingExpand.end()) {
         return;
     }
-    
+
     wxDataViewItem item = iter->second;
-    m_waitingExpand.erase( iter );
-    
+    m_waitingExpand.erase(iter);
+
     // Delete the fake node
     wxDataViewItemArray children;
-    m_dataviewModel->GetChildren( item, children );
-    if ( !children.IsEmpty() ) {
-        m_dataviewModel->DeleteItems( item, children );
+    m_dataviewModel->GetChildren(item, children);
+    if(!children.IsEmpty()) {
+        m_dataviewModel->DeleteItems(item, children);
     }
-    
+
     XVariable::List_t vars = e.GetVariables();
-    if ( vars.empty() ) 
-        return;
-    
+    if(vars.empty()) return;
+
     // Since we got here from property_get, XDebug will reply with the specific property (e.g. $myclass->secondClass)
     // and all its children. Howeverr, $myclass->secondClass already exist in the tree
-    // so we are only interested with its children. so we use here vars.begin()->children (vars is always list of size == 1)
+    // so we are only interested with its children. so we use here vars.begin()->children (vars is always list of size
+    // == 1)
     wxASSERT_MSG(vars.size() == 1, "property_get returned list of size != 1");
     XVariable::List_t childs;
     childs = vars.begin()->children;
 
-    if ( !childs.empty() ) {
-        AppendVariablesToTree( item, childs );
-        m_dataview->Expand( item );
+    if(!childs.empty()) {
+        AppendVariablesToTree(item, childs);
+        m_dataview->Expand(item);
     }
+}
+
+void LocalsView::OnLocalsMenu(wxDataViewEvent& event)
+{
+    wxMenu menu;
+    menu.Append(XRCID("php_locals_copy_value"), _("Copy Value"));
+
+    menu.Bind(wxEVT_MENU, &LocalsView::OnCopyValue, this, XRCID("php_locals_copy_value"));
+    m_dataview->PopupMenu(&menu);
+}
+
+void LocalsView::OnCopyValue(wxCommandEvent& event)
+{
+    wxVariant v;
+    wxDataViewItemArray items;
+    m_dataview->GetSelections(items);
+
+    wxString textToCopy;
+    for(size_t i = 0; i < items.size(); ++i) {
+        m_dataviewModel->GetValue(v, items.Item(i), 3);
+        textToCopy << v.GetString() << EditorConfigST::Get()->GetOptions()->GetEOLAsString();
+    }
+
+    ::CopyToClipboard(textToCopy);
 }

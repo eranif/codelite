@@ -62,8 +62,8 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
         wxArrayString tabOptionsArr;
         tabOptionsArr.Add(wxT("TOP"));
         tabOptionsArr.Add(wxT("BOTTOM"));
-        m_choiceOutputTabsOrientation->Clear();
-        m_choiceOutputTabsOrientation->Append(tabOptionsArr);
+        m_choiceWorkspaceTabsOrientation->Clear();
+        m_choiceWorkspaceTabsOrientation->Append(tabOptionsArr);
     }
 #endif
     switch(options->GetOutputTabsDirection()) {

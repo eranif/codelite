@@ -6,7 +6,7 @@ filename=codelite-logo
 mkdir -p ../bitmaps/osx/icon.iconset
 os_name=`uname -s`
 
-if [ "${os_name}" != "Darwin"]; then
+if [ "${os_name}" != "Darwin" ]; then
     ## 16x16 version
     inkscape $file --without-gui --export-png=../bitmaps/16-${filename}.png --export-width=16 --export-height=16 
     inkscape $file --without-gui --export-png=../bitmaps/16-${filename}@2x.png --export-width=32 --export-height=32 

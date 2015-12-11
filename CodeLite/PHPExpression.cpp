@@ -155,7 +155,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         }
     }
 
-    if(current) {
+    if(current && !current->empty()) {
         if(current->at(0).type == kPHP_T_OPEN_TAG) {
             if(current->at(0).text == "<?") {
                 m_exprStartsWithOpenTag = true;

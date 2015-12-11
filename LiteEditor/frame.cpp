@@ -4060,6 +4060,14 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
         // Some plugins want to hide some frames etc
         wxCommandEvent evtGotFocus(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS);
         EventNotifier::Get()->AddPendingEvent(evtGotFocus);
+        
+#ifdef __WXOSX__
+        // Set the focus back to the active editor
+        LEditor *activeEditor = dynamic_cast<LEditor*>(GetMainBook()->GetActiveEditor());
+        if(activeEditor) {
+            activeEditor->CallAfter(&LEditor::SetActive);
+        }
+#endif
 
     } else if(m_theFrame) {
 

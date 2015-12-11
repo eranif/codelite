@@ -185,11 +185,11 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_bitmapLoader = new BitmapLoader();
     GitImages m_images;
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
-    m_modifiedBmp = m_bitmapLoader->LoadBitmap("subversion/16/modified");
-    m_untrackedBmp = m_bitmapLoader->LoadBitmap("subversion/16/unversioned");
-    m_folderBmp = m_bitmapLoader->LoadBitmap("mime/16/folder");
-    m_newBmp = m_images.Bitmap("gitFileAdd");
-    m_deleteBmp = m_bitmapLoader->LoadBitmap("subversion/16/deleted");
+    m_modifiedBmp = m_bitmapLoader->LoadBitmap("warning");
+    m_untrackedBmp = m_bitmapLoader->LoadBitmap("info");
+    m_folderBmp = m_bitmapLoader->LoadBitmap("folder");
+    m_newBmp = m_bitmapLoader->LoadBitmap("plus");
+    m_deleteBmp = m_bitmapLoader->LoadBitmap("minus");
 
     EventNotifier::Get()->Connect(
         wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);

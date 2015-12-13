@@ -412,6 +412,9 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     if(!bldConf) return MessageBox(_("Unable to get opened workspace."), wxICON_ERROR);
 
     wxString projOutputFn = macro->Expand( bldConf->GetOutputFileName(), m_mgr, projectName, build_config_name );
+    #ifdef __WXMSW__
+    if( ! projOutputFn.Lower().EndsWith( wxT(".exe") ) ) projOutputFn += wxT(".exe");
+    #endif //__WXMSW__
 //    wxString projWorkingDir = macro->Expand( bldConf->GetWorkingDirectory(), m_mgr, projectName, build_config_name );
 
 //    myLog("WorkspaceFileName = \"%s\"", ws_cfn.GetFullPath());
@@ -425,7 +428,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     wxFileName cfn(projPath + wxFileName::GetPathSeparator() + projOutputFn);
     cfn.Normalize();
     
-//    myLog( cfn.GetFullPath() );
+    // myLog( cfn.GetFullPath() );
 
     // base path
     const wxString base_path = ws_cfn.GetPath();
@@ -545,7 +548,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
     // myLog("wxExecute(\"%s\")", cmddot_ln);
 
-    wxExecute(cmddot_ln, wxEXEC_SYNC);
+    wxExecute(cmddot_ln, wxEXEC_SYNC | wxEXEC_HIDE_CONSOLE);
 
     // myLog("dot done");
 

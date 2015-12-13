@@ -75,9 +75,7 @@ public:
 protected:
     virtual void OnMouseWheel(wxMouseEvent& event);
     virtual void OnSingleUI(wxUpdateUIEvent& event);
-    virtual void OnSingleView(wxRibbonButtonBarEvent& event);
-    virtual void OnCopyLeftToRightMenu(wxRibbonButtonBarEvent& event);
-    virtual void OnCopyRightToLeftMenu(wxRibbonButtonBarEvent& event);
+    virtual void OnSingleView(wxCommandEvent& event);
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event);
     virtual void OnRightPickerUI(wxUpdateUIEvent& event);
 
@@ -110,23 +108,23 @@ protected:
 
 protected:
     virtual void OnRefreshDiffUI(wxUpdateUIEvent& event);
-    virtual void OnHorizontal(wxRibbonButtonBarEvent& event);
+    virtual void OnHorizontal(wxCommandEvent& event);
     virtual void OnHorizontalUI(wxUpdateUIEvent& event);
-    virtual void OnVertical(wxRibbonButtonBarEvent& event);
+    virtual void OnVertical(wxCommandEvent& event);
     virtual void OnVerticalUI(wxUpdateUIEvent& event);
-    virtual void OnCopyFileFromRight(wxRibbonButtonBarEvent& event);
-    virtual void OnCopyFileLeftToRight(wxRibbonButtonBarEvent& event);
-    virtual void OnSaveChanges(wxRibbonButtonBarEvent& event);
+    virtual void OnCopyFileFromRight(wxCommandEvent& event);
+    virtual void OnCopyFileLeftToRight(wxCommandEvent& event);
+    virtual void OnSaveChanges(wxCommandEvent& event);
     virtual void OnSaveChangesUI(wxUpdateUIEvent& event);
-    virtual void OnCopyLeftToRight(wxRibbonButtonBarEvent& event);
-    virtual void OnCopyRightToLeft(wxRibbonButtonBarEvent& event);
+    virtual void OnCopyLeftToRight(wxCommandEvent& event);
+    virtual void OnCopyRightToLeft(wxCommandEvent& event);
     virtual void OnCopyLeftToRightUI(wxUpdateUIEvent& event);
     virtual void OnCopyRightToLeftUI(wxUpdateUIEvent& event);
     virtual void OnNextDiffUI(wxUpdateUIEvent& event);
     virtual void OnPrevDiffUI(wxUpdateUIEvent& event);
-    virtual void OnNextDiffSequence(wxRibbonButtonBarEvent& event);
-    virtual void OnPrevDiffSequence(wxRibbonButtonBarEvent& event);
-    virtual void OnRefreshDiff(wxRibbonButtonBarEvent& event);
+    virtual void OnNextDiffSequence(wxCommandEvent& event);
+    virtual void OnPrevDiffSequence(wxCommandEvent& event);
+    virtual void OnRefreshDiff(wxCommandEvent& event);
     virtual void OnLeftStcPainted(wxStyledTextEvent& event);
     virtual void OnRightStcPainted(wxStyledTextEvent& event);
     void OnPageClosing(wxNotifyEvent& event);
@@ -138,10 +136,10 @@ protected:
     void DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
     void DoCopyFileContent(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
     void DoGetPositionsToCopy(wxStyledTextCtrl* stc,
-                              int& startPos,
-                              int& endPos,
-                              int& placeHolderMarkerFirstLine,
-                              int& placeHolderMarkerLastLine);
+        int& startPos,
+        int& endPos,
+        int& placeHolderMarkerFirstLine,
+        int& placeHolderMarkerLastLine);
     void DoSave(wxStyledTextCtrl* stc, const wxFileName& fn);
 
     bool CanNextDiff();

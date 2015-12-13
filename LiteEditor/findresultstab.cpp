@@ -49,6 +49,7 @@
 #include "cl_aui_tool_stickness.h"
 #include "optionsconfig.h"
 #include "editor_config.h"
+#include "codelite_events.h"
 
 // Custom styles
 #define LEX_FIF_DEFAULT 0
@@ -77,28 +78,18 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
 
     BitmapLoader& loader = *(PluginManager::Get()->GetStdIcons());
 
-    wxTheApp->Connect(XRCID("find_in_files"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(FindResultsTab::OnFindInFiles),
-                      NULL,
-                      this);
+    wxTheApp->Connect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
     m_tb->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &FindResultsTab::OnRecentSearches, this, XRCID("recent_searches"));
     m_tb->Bind(wxEVT_UPDATE_UI, &FindResultsTab::OnRecentSearchesUI, this, XRCID("recent_searches"));
 
-    m_tb->AddTool(XRCID("stop_search"),
-                  _("Stop current search"),
-                  loader.LoadBitmap("stop"),
-                  _("Stop current search"));
-    m_tb->AddTool(XRCID("recent_searches"),
-                  _("Show Recent Searches"),
-                  loader.LoadBitmap("history"),
-                  _("Show Recent Searches"))->SetHasDropDown(true);
+    m_tb->AddTool(XRCID("stop_search"), _("Stop current search"), loader.LoadBitmap("stop"), _("Stop current search"));
+    m_tb->AddTool(XRCID("recent_searches"), _("Show Recent Searches"), loader.LoadBitmap("history"),
+            _("Show Recent Searches"))
+        ->SetHasDropDown(true);
 
-    Connect(XRCID("stop_search"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(FindResultsTab::OnStopSearch),
-            NULL,
-            this);
+    Connect(XRCID("stop_search"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnStopSearch),
+        NULL, this);
     Connect(XRCID("stop_search"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindResultsTab::OnStopSearchUI), NULL, this);
     m_tb->Realize();
 
@@ -113,11 +104,8 @@ FindResultsTab::~FindResultsTab()
 {
     EventNotifier::Get()->Connect(
         wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_in_files"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(FindResultsTab::OnFindInFiles),
-                         NULL,
-                         this);
+    wxTheApp->Disconnect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
 }
 
 void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
@@ -137,7 +125,7 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
     }
 
     // Show/hide whitespace
-	sci->SetViewWhiteSpace(EditorConfigST::Get()->GetOptions()->GetShowWhitspaces());
+    sci->SetViewWhiteSpace(EditorConfigST::Get()->GetOptions()->GetShowWhitspaces());
     StyleProperty::Map_t& props = lexer->GetLexerProperties();
     // Set the whitespace colours
     sci->SetWhitespaceForeground(true, props[WHITE_SPACE_ATTR_ID].GetFgColour());
@@ -226,8 +214,13 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
         ::wxMessageBox(_("The search thread is currently busy"), _("CodeLite"), wxICON_INFORMATION | wxOK);
         return;
     }
-
-    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame(), "FindInFilesData");
+    
+    // Fire the wxEVT_CMD_FIND_IN_FILES_SHOWING showing event
+    clCommandEvent fifDlgShowing(wxEVT_CMD_FIND_IN_FILES_SHOWING);
+    EventNotifier::Get()->ProcessEvent(fifDlgShowing);
+    
+    // Display the Find In Files dialog 
+    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame(), "FindInFilesData", fifDlgShowing.GetStrings());
     wxArrayString* paths = (wxArrayString*)e.GetClientData();
     if(paths) {
         dlg.SetSearchPaths(*paths);
@@ -463,7 +456,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
                 changePosition = changes.at(i);
                 changeLength = changes.at(i + 1);
                 if((changeLength < 0) && (changePosition - changeLength > position) &&
-                   (changePosition < position + resultLength)) {
+                    (changePosition < position + resultLength)) {
                     // It looks like the data corresponding to this search result has been deleted
                     // While it's possible that it's been cut, then (later in the changes) re-pasted
                     // so that the result still matches, it's more likely to have been replaced by different text
@@ -477,9 +470,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
                 }
             }
             if(!removed) {
-                editor->SetEnsureCaretIsVisible(
-                    position + resultLength,
-                    true,
+                editor->SetEnsureCaretIsVisible(position + resultLength, true,
                     true); // The 3rd parameter sets a small delay, otherwise it fails for long folded files
                 int lineNumber = editor->LineFromPos(position);
                 if(lineNumber) {

@@ -28,12 +28,14 @@
 #include "findinfiles_dlg.h"
 #include "findreplacedlg.h"
 #include "search_thread.h"
+#include "macros.h"
 
 class FindInFilesDialog : public FindInFilesDialogBase
 {
     FindReplaceData m_data;
     wxArrayString m_pluginFileMask;
-
+    wxStringSet_t m_nonPersistentSearchPaths;
+    
 protected:
     virtual void OnReplaceUI(wxUpdateUIEvent& event);
     virtual void OnClearSelectedPathUI(wxUpdateUIEvent& event);
@@ -48,11 +50,11 @@ protected:
     SearchData DoGetSearchData();
     void DoSaveOpenFiles();
     void DoSetFileMask();
-    
+
     // Append new search path, ensure singularity
     void DoAddSearchPath(const wxString& path);
     void DoAddSearchPaths(const wxArrayString& paths);
-    
+
     // Event Handlers
     virtual void OnClose(wxCloseEvent& event);
     virtual void OnAddPath(wxCommandEvent& event);
@@ -63,7 +65,7 @@ protected:
     size_t GetSearchFlags();
 
 public:
-    FindInFilesDialog(wxWindow* parent, const wxString& dataName);
+    FindInFilesDialog(wxWindow* parent, const wxString& dataName, const wxArrayString& additionalSearchPaths);
     virtual ~FindInFilesDialog();
     void SetSearchPaths(const wxArrayString& paths);
     FindReplaceData& GetData() { return m_data; }

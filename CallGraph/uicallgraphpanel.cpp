@@ -68,8 +68,6 @@ uicallgraphpanel::~uicallgraphpanel()
 
 void uicallgraphpanel::OnPaint(wxPaintEvent& event)
 {
-	// wxRect rectUpdate = m_scrolledWindow->GetUpdateRegion().GetBox();
-	// wxPoint ptVirt = m_scrolledWindow->CalcUnscrolledPosition(rectUpdate.GetTopLeft());
 	wxPoint ptVirt = m_scrolledWindow->CalcUnscrolledPosition( wxPoint(0, 0) );
 	// move from origin
 	ptVirt.x -= 20;
@@ -79,11 +77,6 @@ void uicallgraphpanel::OnPaint(wxPaintEvent& event)
     dc.SetDeviceOrigin( -ptVirt.x, -ptVirt.y );
     dc.Clear();
     dc.DrawBitmap( m_bmpScaled, 0, 0 );
-	/*wxMemoryDC memDC(m_bmpScaled);
-
-	dc.SetBrush( wxBrush( m_scrolledWindow->GetBackgroundColour() ) );
-	dc.Clear();
-	dc.Blit(rectUpdate.GetTopLeft(), rectUpdate.GetSize(), &memDC, ptVirt, wxCOPY);*/
 }
 
 void uicallgraphpanel::OnSaveCallGraph(wxCommandEvent& event)
@@ -188,13 +181,8 @@ void uicallgraphpanel::UpdateImage()
     if( m_bmpOrig.IsOk() ) {
         wxImage img = m_bmpOrig.ConvertToImage();
         if( img.IsOk() ) { 
-            //wxMessageBox( wxString::Format( "%d, %d, %f", m_bmpOrig.GetWidth(), m_bmpOrig.GetHeight(), m_scale ) );
-            img.Rescale( m_bmpOrig.GetWidth() * m_scale,
-                m_bmpOrig.GetHeight() * m_scale,
-                wxIMAGE_QUALITY_HIGH );
+            img.Rescale( m_bmpOrig.GetWidth() * m_scale, m_bmpOrig.GetHeight() * m_scale, wxIMAGE_QUALITY_HIGH );
             m_bmpScaled = wxBitmap( img );
-            
-            //wxMessageBox( wxString::Format( "%d, %d", m_bmpScaled.GetWidth(), m_bmpScaled.GetHeight() ) );
 
             int x = m_bmpScaled.GetWidth() + 30;
             int y = m_bmpScaled.GetHeight() + 30;

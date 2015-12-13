@@ -415,20 +415,15 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     #ifdef __WXMSW__
     if( ! projOutputFn.Lower().EndsWith( wxT(".exe") ) ) projOutputFn += wxT(".exe");
     #endif //__WXMSW__
-//    wxString projWorkingDir = macro->Expand( bldConf->GetWorkingDirectory(), m_mgr, projectName, build_config_name );
 
 //    myLog("WorkspaceFileName = \"%s\"", ws_cfn.GetFullPath());
 //    myLog("projectName \"%s\"", projectName);
 //    myLog("build_config_name = \"%s\"", build_config_name);
 //    myLog("projOutputFn = \"%s\"", projOutputFn);
-//    myLog("projWorkingDir = \"%s\"", projWorkingDir);
 //    myLog("projPath = \"%s\"", projPath);
 
-//    wxFileName cfn(ws_cfn.GetPath(), projOutputFn);
     wxFileName cfn(projPath + wxFileName::GetPathSeparator() + projOutputFn);
     cfn.Normalize();
-    
-    // myLog( cfn.GetFullPath() );
 
     // base path
     const wxString base_path = ws_cfn.GetPath();
@@ -444,11 +439,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     if(!cfn.IsFileExecutable()) return MessageBox("bin/exe isn't executable", wxICON_ERROR);
 
     // check 'gmon.out' file exists
-//    wxFileName gmon_cfn(base_path, GMON_FILENAME_OUT);
     wxFileName gmon_cfn( cfn.GetPath() + wxFileName::GetPathSeparator() + GMON_FILENAME_OUT);
     gmon_cfn.Normalize();
-    
-//    myLog( gmon_cfn.GetFullPath() );
 
     wxString gmonfn = gmon_cfn.GetFullPath();
     if(!gmon_cfn.Exists()) {

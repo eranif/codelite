@@ -1472,7 +1472,6 @@ void PHPWorkspaceView::OnFindInFilesShowing(clCommandEvent& e)
     CHECK_COND_RET(!paths.IsEmpty());
     
     // PHP workspace is opened and visible
-    e.Skip(false);
     wxArrayString &outPaths = e.GetStrings();
     outPaths.insert(outPaths.end(), paths.begin(), paths.end());
 }

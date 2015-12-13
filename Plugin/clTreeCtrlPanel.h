@@ -128,6 +128,7 @@ protected:
     // Make the event handler functions virtual
     // so any subclass could override them
     virtual void OnActiveEditorChanged(wxCommandEvent& event);
+    virtual void OnFindInFilesShowing(clCommandEvent& event);
     virtual void OnInitDone(wxCommandEvent& event);
     virtual void OnContextMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);

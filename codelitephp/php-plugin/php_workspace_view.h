@@ -70,6 +70,8 @@ protected:
     virtual void OnProjectSettings(wxCommandEvent& event);
     virtual void OnActiveProjectSettingsUI(wxUpdateUIEvent& event);
     void DoGetSelectedFiles(wxArrayString& files);
+    void DoGetSelectedFolders(wxArrayString &paths);
+    
     // Helpers
     void DoSortItems();
     wxTreeItemId DoAddFolder(const wxString& project, const wxString& path);
@@ -89,7 +91,7 @@ protected:
 #if USE_SFTP
     void DoOpenSSHAccountManager();
 #endif
-
+    
     /**
      * @brief construct the project in the tree view
      * @param projectItem
@@ -138,6 +140,7 @@ protected:
     void OnEditorChanged(wxCommandEvent& e);
     void OnFileRenamed(PHPEvent& e);
     void OnWorkspaceRenamed(PHPEvent& e);
+    void OnFindInFilesShowing(clCommandEvent& e);
     void OnToggleAutoUpload(wxCommandEvent& e);
 
     // Php parser events

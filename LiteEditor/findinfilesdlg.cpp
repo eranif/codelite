@@ -49,12 +49,7 @@ FindInFilesDialog::FindInFilesDialog(
 
     // Store the find-in-files data
     clConfig::Get().ReadItem(&m_data);
-
-    wxArrayString choices;
-    size_t count = m_data.GetSearchPaths().GetCount();
-    for(size_t i = 0; i < count; ++i) {
-        choices.Add(m_data.GetSearchPaths().Item(i));
-    }
+    wxArrayString paths = m_data.GetSearchPaths();
 
     wxStringSet_t persistentSearchPaths, d;
     persistentSearchPaths.insert(m_data.GetSearchPaths().begin(), m_data.GetSearchPaths().end());
@@ -66,7 +61,10 @@ FindInFilesDialog::FindInFilesDialog(
     m_nonPersistentSearchPaths.swap(d);
 
     // At this point, m_nonPersistentSearchPaths contains list of paths that we should not persist
-    DoAddSearchPaths(choices);
+    // Append them to the list of paths to search
+    std::for_each(m_nonPersistentSearchPaths.begin(), m_nonPersistentSearchPaths.end(),
+        [&](const wxString& path) { paths.Add(path); });
+    DoAddSearchPaths(paths);
 
     // Search for
     m_findString->Clear();

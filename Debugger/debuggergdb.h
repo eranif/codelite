@@ -51,7 +51,6 @@ class DbgCmdHandler;
 class DbgCmdCLIHandler;
 class IProcess;
 
-
 typedef std::map<wxString, DbgCmdHandler*> HandlersMap_t;
 
 extern const wxEventType wxEVT_GDB_STOP_DEBUGGER;
@@ -69,8 +68,12 @@ class DbgGdb : public wxEvtHandler, public IDebugger
     bool m_break_at_main;
     bool m_attachedMode;
     bool m_goingDown;
+    bool m_reverseDebugging;
+    wxStringSet_t m_reversableCommands;
 
 public:
+    virtual void EnableReverseDebugging(bool b);
+    virtual bool IsReverseDebuggingEnabled() const;
     int m_internalBpId;
 
 protected:

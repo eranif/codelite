@@ -298,12 +298,11 @@ public:
     bool operator==(const BreakpointInfo& BI)
     {
         return ((origin == BI.origin) && (what == BI.what) && (at == BI.at) && (file == BI.file) &&
-                (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address) &&
-                (bp_type == BI.bp_type) && (watchpt_data == BI.watchpt_data) && (is_enabled == BI.is_enabled) &&
-                (ignore_number == BI.ignore_number) && (conditions == BI.conditions) &&
-                (commandlist == BI.commandlist) && (is_temp == BI.is_temp) &&
-                (bp_type == BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) &&
-                (!function_name.IsEmpty() ? (regex == BI.regex) : true));
+            (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address) &&
+            (bp_type == BI.bp_type) && (watchpt_data == BI.watchpt_data) && (is_enabled == BI.is_enabled) &&
+            (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) &&
+            (is_temp == BI.is_temp) && (bp_type == BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) &&
+            (!function_name.IsEmpty() ? (regex == BI.regex) : true));
     }
 
     bool IsNull() const { return internal_id == wxNOT_FOUND && debugger_id == wxNOT_FOUND; }
@@ -707,6 +706,18 @@ public:
      * \return true on success, false otherwise
      */
     virtual bool Continue() = 0;
+
+    /**
+     * @brief for debuggers that support this, enable/disable the reverse debugging.
+     * If the debugger does not support this - return false, otherwise return true
+     */
+    virtual void EnableReverseDebugging(bool b) = 0;
+
+    /**
+     * @brief return true if reverse debugging is enabled
+     */
+    virtual bool IsReverseDebuggingEnabled() const = 0;
+
     /**
      * \brief step into method
      * \return true on success, false otherwise

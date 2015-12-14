@@ -649,6 +649,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_PROJECT, clContextMe
 // use event.GetFileName() to get the workspace file (if any). event.GetString() will return the workspace name
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_WORKSPACE, clContextMenuEvent);
 
+// A context menu for the active tab label header is about to be shown. You can get the active page 
+// by calling clGetManager()->GetActivePage()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_TAB_LABEL, clContextMenuEvent);
+
 // User modified the colours and font of the IDE
 // event type: clCommandEvent
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEvent);

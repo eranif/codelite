@@ -71,6 +71,7 @@ private:
     
     void OnMouseDClick(wxBookCtrlEvent& e);
     void OnTabDClicked(wxBookCtrlEvent& e);
+    void OnTabLabelContextMenu(wxBookCtrlEvent& e);
     void OnPageClosing(wxBookCtrlEvent& e);
     void OnPageClosed(wxBookCtrlEvent& e);
     void OnPageChanged(wxBookCtrlEvent& e);

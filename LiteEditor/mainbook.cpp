@@ -83,9 +83,6 @@ void MainBook::CreateGuiControls()
 
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-
-    wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
-    m_book->SetMenu(contextMenu);
     sz->Add(m_book, 1, wxEXPAND);
 
     m_quickFindBar = new QuickFindBar(this);
@@ -103,6 +100,7 @@ void MainBook::ConnectEvents()
     m_book->Bind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
     m_book->Bind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
     m_book->Bind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
+    m_book->Bind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
 
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(MainBook::OnWorkspaceLoaded), NULL, this);
@@ -131,6 +129,7 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
     m_book->Unbind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
     m_book->Unbind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
+    m_book->Unbind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
 
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
 
@@ -272,10 +271,7 @@ void MainBook::ClearFileHistory()
     clConfig::Get().ClearRecentFiles();
 }
 
-void MainBook::GetRecentlyOpenedFiles(wxArrayString& files)
-{
-    files = clConfig::Get().GetRecentFiles();
-}
+void MainBook::GetRecentlyOpenedFiles(wxArrayString& files) { files = clConfig::Get().GetRecentFiles(); }
 
 void MainBook::UpdateNavBar(LEditor* editor)
 {
@@ -352,7 +348,7 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
         t.bitmap = tabInfo->GetBitmap();
         t.text = tabInfo->GetLabel();
         t.window = tabInfo->GetWindow();
-        
+
         LEditor* editor = dynamic_cast<LEditor*>(t.window);
         if(editor) {
             t.isFile = true;
@@ -527,13 +523,13 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
         wxLogMessage(wxT("Failed to open: %s: No such file or directory"), fileName.GetFullPath().c_str());
         return NULL;
     }
-    
+
     if(FileExtManager::GetType(fileName.GetFullName()) == FileExtManager::TypeBmp) {
         // a bitmap file, open it using an image viewer
         DoOpenImageViewer(fileName);
         return NULL;
     }
-    
+
     wxString projName = projectName;
     if(projName.IsEmpty()) {
         // try to match a project name to the file. otherwise, CC may not work
@@ -1412,8 +1408,28 @@ void MainBook::OnTabDClicked(wxBookCtrlEvent& e)
 
 void MainBook::DoOpenImageViewer(const wxFileName& filename)
 {
-    clImageViewer *imageViewer = new clImageViewer(m_book, filename);
+    clImageViewer* imageViewer = new clImageViewer(m_book, filename);
     size_t pos = m_book->GetPageCount();
     m_book->AddPage(imageViewer, filename.GetFullName(), true);
     m_book->SetPageToolTip(pos, filename.GetFullPath());
+}
+
+void MainBook::OnTabLabelContextMenu(wxBookCtrlEvent& e)
+{
+    e.Skip();
+    wxWindow* tabCtrl = static_cast<wxWindow*>(e.GetEventObject());
+    if((e.GetSelection() == m_book->GetSelection()) && (tabCtrl->GetParent() == m_book)) {
+        // we only show context menu for the active tab
+        e.Skip(false);
+        wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
+
+        // Notify the plugins about the tab label context menu
+        clContextMenuEvent event(wxEVT_CONTEXT_MENU_TAB_LABEL);
+        event.SetMenu(contextMenu);
+        EventNotifier::Get()->ProcessEvent(event);
+
+        contextMenu = event.GetMenu();
+        tabCtrl->PopupMenu(contextMenu);
+        wxDELETE(contextMenu);
+    }
 }

@@ -70,10 +70,9 @@ class DbgGdb : public wxEvtHandler, public IDebugger
     bool m_goingDown;
     bool m_reverseDebugging;
     wxStringSet_t m_reversableCommands;
+    bool m_isRecording;
 
 public:
-    virtual void EnableReverseDebugging(bool b);
-    virtual bool IsReverseDebuggingEnabled() const;
     int m_internalBpId;
 
 protected:
@@ -106,6 +105,9 @@ public:
     bool IsGoingDown() const { return m_goingDown; }
 
     const std::vector<BreakpointInfo>& GetBpList() const { return m_bpList; }
+
+    void SetIsRecording(bool isRecording) { this->m_isRecording = isRecording; }
+    bool IsRecording() const { return m_isRecording; }
 
 public:
     DbgGdb();
@@ -156,6 +158,10 @@ public:
     virtual bool Jump(wxString filename, int line);
     virtual bool ListRegisters();
     virtual bool UpdateWatch(const wxString& name);
+    virtual void EnableReverseDebugging(bool b);
+    virtual void EnableRecording(bool b);
+    virtual bool IsReverseDebuggingEnabled() const;
+    
     /**
      * @brief restart the debugger (execute 'run')
      * @return true on success, false otherwise

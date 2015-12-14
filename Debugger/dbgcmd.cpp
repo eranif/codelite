@@ -1145,7 +1145,7 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
                     //	char ch = (char)v;
                     if(wxIsprint((wxChar)v) || (wxChar)v == ' ') {
                         if(v == 9) { // TAB
-                            v = 32; // SPACE
+                            v = 32;  // SPACE
                         }
 
                         hex << (wxChar)v;
@@ -1277,15 +1277,15 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
     child.gdbId = ExtractGdbChild(attr, wxT("name"));
     wxString numChilds = ExtractGdbChild(attr, wxT("numchild"));
     wxString dynamic = ExtractGdbChild(attr, wxT("dynamic"));
-    
+
     if(numChilds.IsEmpty() == false) {
         child.numChilds = wxAtoi(numChilds);
     }
-    
+
     if(child.numChilds == 0 && dynamic == "1") {
         child.numChilds = 1;
     }
-    
+
     child.varName = ExtractGdbChild(attr, wxT("exp"));
     if(child.varName.IsEmpty() || child.type == child.varName ||
        (child.varName == wxT("public") || child.varName == wxT("private") || child.varName == wxT("protected")) ||
@@ -1679,5 +1679,16 @@ bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
         EventNotifier::Get()->AddPendingEvent(event);
     }
     gdb_result_lex_clean();
+    return true;
+}
+
+bool DbgCmdRecordHandler::ProcessOutput(const wxString& line)
+{
+    // parse the line, in case we have an error, keep this breakpoint in the queue
+    if(line.StartsWith(wxT("^done"))) {
+        m_gdb->SetIsRecording(true);
+    } else if(line.StartsWith(wxT("^error"))) {
+        m_gdb->SetIsRecording(false);
+    }
     return true;
 }

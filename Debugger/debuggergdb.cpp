@@ -133,6 +133,7 @@ DbgGdb::DbgGdb()
     , m_attachedMode(false)
     , m_goingDown(false)
     , m_reverseDebugging(false)
+    , m_isRecording(false)
     , m_internalBpId(wxNOT_FOUND)
 {
 #ifdef __WXMSW__
@@ -244,9 +245,11 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
 #else
     bool needs_console = m_info.showTerminal;
 #endif
-    m_gdbProcess = CreateAsyncProcess(this, cmd,
-        // show console?
-        needs_console ? IProcessCreateConsole : IProcessCreateDefault, si.cwd);
+    m_gdbProcess = CreateAsyncProcess(this,
+                                      cmd,
+                                      // show console?
+                                      needs_console ? IProcessCreateConsole : IProcessCreateDefault,
+                                      si.cwd);
     if(!m_gdbProcess) {
         return false;
     }
@@ -316,6 +319,7 @@ bool DbgGdb::Run(const wxString& args, const wxString& comm)
 void DbgGdb::DoCleanup()
 {
     wxDELETE(m_gdbProcess);
+    SetIsRecording(false);
     m_reverseDebugging = false;
     m_goingDown = false;
     m_attachedMode = false;
@@ -622,7 +626,7 @@ bool DbgGdb::FilterMessage(const wxString& msg)
     }
 
     if(tmpmsg.Contains(wxT("mi_cmd_var_create: unable to create variable object")) ||
-        msg.Contains(wxT("mi_cmd_var_create: unable to create variable object"))) {
+       msg.Contains(wxT("mi_cmd_var_create: unable to create variable object"))) {
         return true;
     }
 
@@ -631,7 +635,7 @@ bool DbgGdb::FilterMessage(const wxString& msg)
     }
 
     if(tmpmsg.Contains(wxT("No symbol \"this\" in current context")) ||
-        msg.Contains(wxT("No symbol \"this\" in current context"))) {
+       msg.Contains(wxT("No symbol \"this\" in current context"))) {
         return true;
     }
 
@@ -1361,7 +1365,7 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
     if(/*filename.IsEmpty() || lineNumber == wxNOT_FOUND*/ true) {
         // Use the $pc
         if(!WriteCommand("-data-disassemble -s \"$pc -100\" -e \"$pc + 100\" -- 0",
-               new DbgCmdHandlerDisasseble(m_observer, this)))
+                         new DbgCmdHandlerDisasseble(m_observer, this)))
             return false;
 
     } else {
@@ -1370,13 +1374,13 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
         tmpfile.Replace("\\", "/"); // gdb does not like backslashes...
 
         if(!WriteCommand(wxString() << "-data-disassemble -f \"" << tmpfile << "\" -l " << lineNumber << " -n -1 -- 0",
-               new DbgCmdHandlerDisasseble(m_observer, this)))
+                         new DbgCmdHandlerDisasseble(m_observer, this)))
             return false;
     }
 
     // get the current instruction
-    if(!WriteCommand(
-           "-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0", new DbgCmdHandlerDisassebleCurLine(m_observer, this)))
+    if(!WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0",
+                     new DbgCmdHandlerDisassebleCurLine(m_observer, this)))
         return false;
 
     return true;
@@ -1434,5 +1438,18 @@ bool DbgGdb::ListRegisters()
 }
 
 void DbgGdb::EnableReverseDebugging(bool b) { m_reverseDebugging = b; }
+
+void DbgGdb::EnableRecording(bool b)
+{
+    if(b) {
+        WriteCommand("target record-full", new DbgCmdRecordHandler(m_observer, this));
+    } else {
+        WriteCommand("record stop", NULL);
+        
+        // If recording is OFF, disable the reverse-debugging switch
+        SetIsRecording(false);
+        m_reverseDebugging = false;
+    }
+}
 
 bool DbgGdb::IsReverseDebuggingEnabled() const { return m_reverseDebugging; }

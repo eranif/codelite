@@ -75,14 +75,16 @@ enum DisplayFormat { DBG_DF_NATURAL = 0, DBG_DF_HEXADECIMAL, DBG_DF_BINARY, DBG_
 //-------------------------------------------------------
 // Data structures used by the debugger
 //-------------------------------------------------------
-struct DebuggerInfo {
+struct DebuggerInfo
+{
     wxString name;
     wxString initFuncName;
     wxString version;
     wxString author;
 };
 
-struct StackEntry {
+struct StackEntry
+{
     wxString level;
     wxString address;
     wxString function;
@@ -91,7 +93,8 @@ struct StackEntry {
     bool active;
 };
 
-struct ThreadEntry {
+struct ThreadEntry
+{
     bool active;
     long dbgid;
     wxString file;
@@ -99,7 +102,8 @@ struct ThreadEntry {
     wxString function;
 };
 
-struct VariableObjChild {
+struct VariableObjChild
+{
     int numChilds;    // If this child has children (i.e. is this child a node or leaf)
     wxString varName; // the name of the variable object node
     wxString gdbId;   // A unique name given by gdb which holds this node information for further queries
@@ -113,7 +117,8 @@ struct VariableObjChild {
     }
 };
 
-struct VariableObject {
+struct VariableObject
+{
     bool isPtr;        // if this variable object is of type pointer
     bool isPtrPtr;     // if this variable object is of type pointer pointer
     wxString gdbId;    // GDB unique identifier for this variable object
@@ -129,7 +134,8 @@ struct VariableObject {
     }
 };
 
-struct LocalVariable {
+struct LocalVariable
+{
     wxString name;
     wxString value;
     wxString type;
@@ -143,12 +149,14 @@ struct LocalVariable {
     ~LocalVariable() {}
 };
 
-struct VariableObjectUpdateInfo {
+struct VariableObjectUpdateInfo
+{
     wxArrayString removeIds;
     wxArrayString refreshIds;
 };
 
-struct DisassembleEntry {
+struct DisassembleEntry
+{
 public:
     wxString m_address;
     wxString m_function;
@@ -156,7 +164,8 @@ public:
     wxString m_inst;
 };
 
-struct DbgRegister {
+struct DbgRegister
+{
     wxString reg_name;
     wxString reg_value;
 };
@@ -298,11 +307,12 @@ public:
     bool operator==(const BreakpointInfo& BI)
     {
         return ((origin == BI.origin) && (what == BI.what) && (at == BI.at) && (file == BI.file) &&
-            (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address) &&
-            (bp_type == BI.bp_type) && (watchpt_data == BI.watchpt_data) && (is_enabled == BI.is_enabled) &&
-            (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) &&
-            (is_temp == BI.is_temp) && (bp_type == BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) &&
-            (!function_name.IsEmpty() ? (regex == BI.regex) : true));
+                (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address) &&
+                (bp_type == BI.bp_type) && (watchpt_data == BI.watchpt_data) && (is_enabled == BI.is_enabled) &&
+                (ignore_number == BI.ignore_number) && (conditions == BI.conditions) &&
+                (commandlist == BI.commandlist) && (is_temp == BI.is_temp) &&
+                (bp_type == BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) &&
+                (!function_name.IsEmpty() ? (regex == BI.regex) : true));
     }
 
     bool IsNull() const { return internal_id == wxNOT_FOUND && debugger_id == wxNOT_FOUND; }
@@ -712,6 +722,16 @@ public:
      * If the debugger does not support this - return false, otherwise return true
      */
     virtual void EnableReverseDebugging(bool b) = 0;
+
+    /**
+     * @brief start / stop recording for reverse debugging
+     */
+    virtual void EnableRecording(bool b) = 0;
+
+    /**
+     * @brief is reverse debugging recording is enabled?
+     */
+    virtual bool IsRecording() const = 0;
 
     /**
      * @brief return true if reverse debugging is enabled

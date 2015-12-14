@@ -489,7 +489,9 @@ protected:
     void OnDebugManageBreakpointsUI(wxUpdateUIEvent& e);
     void OnDebugCmd(wxCommandEvent& e);
     void OnToggleReverseDebugging(wxCommandEvent& e);
+    void OnToggleReverseDebuggingRecording(wxCommandEvent& e);
     void OnToggleReverseDebuggingUI(wxUpdateUIEvent& e);
+    void OnToggleReverseDebuggingRecordingUI(wxUpdateUIEvent& e);
     void OnDebugCmdUI(wxUpdateUIEvent& e);
     void OnDebuggerSettings(wxCommandEvent& e);
     void OnLinkClicked(wxHtmlLinkEvent& e);

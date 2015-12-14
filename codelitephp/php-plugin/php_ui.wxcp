@@ -11380,25 +11380,6 @@
      "m_properties": [{
        "type": "string",
        "m_label": "Name:",
-       "m_value": "m_bmpArrowDisabled"
-      }, {
-       "type": "filePicker",
-       "m_label": "Bitmap File:",
-       "m_path": "../../codelite-icons/toolbars/16/standard/forward-disabled.png"
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4482,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
        "m_value": "m_bmpConsole"
       }, {
        "type": "filePicker",

@@ -1270,15 +1270,6 @@ PHPImages::PHPImages()
     {
         wxBitmap bmp;
         wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowDisabled"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("m_bmpArrowDisabled"), bmp ) );
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpConsole"));
         icn.CopyFromBitmap( bmp );
         this->Add( icn );

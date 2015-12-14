@@ -6237,9 +6237,9 @@ void clMainFrame::OnToggleReverseDebuggingRecording(wxCommandEvent& e)
 
 void clMainFrame::OnToggleReverseDebuggingRecordingUI(wxUpdateUIEvent& e)
 {
-    bool enable = clCxxWorkspaceST::Get()->IsOpen() &&
-                  (DebuggerMgr::Get().GetActiveDebugger() &&
-                   (DebuggerMgr::Get().GetActiveDebugger()->GetName() == "GNU gdb debugger"));
+    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    bool enable = clCxxWorkspaceST::Get()->IsOpen() && (dbgr && (dbgr->GetName() == "GNU gdb debugger") &&
+                                                        dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract());
     if(enable) {
         e.Enable(true);
         e.Check(DebuggerMgr::Get().GetActiveDebugger()->IsRecording());

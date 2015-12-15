@@ -35,6 +35,7 @@
 #include "art_metro.h"
 #include "DiffConfig.h"
 #include <wx/menu.h>
+#include <wx/filedlg.h>
 
 #define RED_MARKER 5
 #define GREEN_MARKER 6

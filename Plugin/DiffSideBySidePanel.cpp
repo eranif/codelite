@@ -58,14 +58,18 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     EventNotifier::Get()->Connect(
         wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
 
-    Connect(ID_COPY_LEFT_TO_RIGHT, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyLeft2Right));
-    Connect(ID_COPY_LEFT_TO_RIGHT_AND_MOVE, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyLeft2Right));
-    Connect(ID_COPY_RIGHT_TO_LEFT, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
-    Connect(ID_COPY_RIGHT_TO_LEFT_AND_MOVE, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
+    Connect(ID_COPY_LEFT_TO_RIGHT,
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyLeft2Right));
+    Connect(ID_COPY_LEFT_TO_RIGHT_AND_MOVE,
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyLeft2Right));
+    Connect(ID_COPY_RIGHT_TO_LEFT,
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
+    Connect(ID_COPY_RIGHT_TO_LEFT_AND_MOVE,
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
     CallAfter(&DiffSideBySidePanel::DoLayout);
 }
 
@@ -82,7 +86,7 @@ DiffSideBySidePanel::~DiffSideBySidePanel()
         m_config.SetLeftFile(m_textCtrlLeftFile->GetValue());
         m_config.SetRightFile(m_textCtrlRightFile->GetValue());
     }
-    
+
     // save the configuration
     m_config.Save();
 
@@ -95,15 +99,17 @@ void DiffSideBySidePanel::Diff()
     wxFileName fnLeft(m_textCtrlLeftFile->GetValue());
     wxFileName fnRIght(m_textCtrlRightFile->GetValue());
 
-    if(!fnLeft.Exists()) {
+    if(!fnLeft.Exists() && !m_textCtrlLeftFile->GetValue().IsEmpty()) {
         ::wxMessageBox(wxString() << _("Left Side File:\n") << fnLeft.GetFullPath() << _(" does not exist!"),
-            "CodeLite", wxICON_ERROR | wxCENTER | wxOK);
+                       "CodeLite",
+                       wxICON_ERROR | wxCENTER | wxOK);
         return;
     }
 
-    if(!fnRIght.Exists()) {
+    if(!fnRIght.Exists() && !m_textCtrlRightFile->GetValue().IsEmpty()) {
         ::wxMessageBox(wxString() << _("Right Side File:\n") << fnRIght.GetFullPath() << _(" does not exist!"),
-            "CodeLite", wxICON_ERROR | wxCENTER | wxOK);
+                       "CodeLite",
+                       wxICON_ERROR | wxCENTER | wxOK);
         return;
     }
 
@@ -115,8 +121,9 @@ void DiffSideBySidePanel::Diff()
 
     // Prepare the diff
     clDTL d;
-    d.Diff(m_textCtrlLeftFile->GetValue(), m_textCtrlRightFile->GetValue(),
-        m_config.IsSingleViewMode() ? clDTL::kOnePane : clDTL::kTwoPanes);
+    d.Diff(m_textCtrlLeftFile->GetValue(),
+           m_textCtrlRightFile->GetValue(),
+           m_config.IsSingleViewMode() ? clDTL::kOnePane : clDTL::kTwoPanes);
     const clDTL::LineInfoVec_t& resultLeft = d.GetResultLeft();
     const clDTL::LineInfoVec_t& resultRight = d.GetResultRight();
     m_sequences = d.GetSequences();
@@ -339,8 +346,8 @@ void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
     }
 }
 
-void DiffSideBySidePanel::SetFilesDetails(
-    const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile)
+void DiffSideBySidePanel::SetFilesDetails(const DiffSideBySidePanel::FileInfo& leftFile,
+                                          const DiffSideBySidePanel::FileInfo& rightFile)
 {
     // left file
     m_textCtrlLeftFile->ChangeValue(leftFile.filename.GetFullPath());
@@ -447,7 +454,7 @@ void DiffSideBySidePanel::OnCopyRightToLeftUI(wxUpdateUIEvent& event)
 
 void DiffSideBySidePanel::OnCopyLeftToRight(wxCommandEvent& event)
 {
-    bool moveToNext = m_config.GetFlags() & DiffConfig::kCopyLeftToRightAndMove;
+    bool moveToNext = /*m_config.GetFlags() & DiffConfig::kCopyLeftToRightAndMove*/ true;
     DoCopyCurrentSequence(m_stcLeft, m_stcRight);
     if(moveToNext && CanNextDiff()) {
         wxCommandEvent dummy;
@@ -457,7 +464,7 @@ void DiffSideBySidePanel::OnCopyLeftToRight(wxCommandEvent& event)
 
 void DiffSideBySidePanel::OnCopyRightToLeft(wxCommandEvent& event)
 {
-    bool moveToNext = m_config.GetFlags() & DiffConfig::kCopyRightToLeftAndMove;
+    bool moveToNext = /*m_config.GetFlags() & DiffConfig::kCopyRightToLeftAndMove*/ true;
     DoCopyCurrentSequence(m_stcRight, m_stcLeft);
     if(moveToNext && CanNextDiff()) {
         wxCommandEvent dummy;

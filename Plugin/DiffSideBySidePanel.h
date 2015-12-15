@@ -168,7 +168,12 @@ public:
      * @brief start a new empty diff
      */
     void DiffNew();
-
+    
+    /**
+     * @brief start a new diff for two input files
+     */
+    void DiffNew(const wxFileName& left, const wxFileName& right);
+    
     /**
      * @brief set the initial files to diff
      * Once set, you should call Diff() function

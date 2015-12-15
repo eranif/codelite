@@ -51,6 +51,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
     , m_flags(0)
 {
+    Hide();
     m_config.Load();
 
     EventNotifier::Get()->Connect(
@@ -69,13 +70,18 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
 
 DiffSideBySidePanel::~DiffSideBySidePanel()
 {
-    if(m_flags & kDeleteLeftOnExit) {
-        ::wxRemoveFile(m_filePickerLeft->GetPath());
+    if((m_flags & kDeleteLeftOnExit)) {
+        ::wxRemoveFile(m_textCtrlLeftFile->GetValue());
     }
-    if(m_flags & kDeleteRightOnExit) {
-        ::wxRemoveFile(m_filePickerRight->GetPath());
+    if((m_flags & kDeleteRightOnExit)) {
+        ::wxRemoveFile(m_textCtrlRightFile->GetValue());
     }
 
+    if((m_flags & kSavePaths)) {
+        m_config.SetLeftFile(m_textCtrlLeftFile->GetValue());
+        m_config.SetRightFile(m_textCtrlRightFile->GetValue());
+    }
+    
     // save the configuration
     m_config.Save();
 
@@ -85,8 +91,8 @@ DiffSideBySidePanel::~DiffSideBySidePanel()
 
 void DiffSideBySidePanel::Diff()
 {
-    wxFileName fnLeft(m_filePickerLeft->GetPath());
-    wxFileName fnRIght(m_filePickerRight->GetPath());
+    wxFileName fnLeft(m_textCtrlLeftFile->GetValue());
+    wxFileName fnRIght(m_textCtrlRightFile->GetValue());
 
     if(!fnLeft.Exists()) {
         ::wxMessageBox(wxString() << _("Left Side File:\n") << fnLeft.GetFullPath() << _(" does not exist!"),
@@ -108,7 +114,7 @@ void DiffSideBySidePanel::Diff()
 
     // Prepare the diff
     clDTL d;
-    d.Diff(m_filePickerLeft->GetPath(), m_filePickerRight->GetPath(),
+    d.Diff(m_textCtrlLeftFile->GetValue(), m_textCtrlRightFile->GetValue(),
         m_config.IsSingleViewMode() ? clDTL::kOnePane : clDTL::kTwoPanes);
     const clDTL::LineInfoVec_t& resultLeft = d.GetResultLeft();
     const clDTL::LineInfoVec_t& resultRight = d.GetResultRight();
@@ -188,8 +194,8 @@ void DiffSideBySidePanel::Diff()
 void DiffSideBySidePanel::PrepareViews()
 {
     // Prepare the views by selecting the proper syntax highlight
-    wxFileName fnLeft(m_filePickerLeft->GetPath());
-    wxFileName fnRight(m_filePickerRight->GetPath());
+    wxFileName fnLeft(m_textCtrlLeftFile->GetValue());
+    wxFileName fnRight(m_textCtrlRightFile->GetValue());
 
     bool useRightSideLexer = false;
     if(fnLeft.GetExt() == "svn-base") {
@@ -336,10 +342,10 @@ void DiffSideBySidePanel::SetFilesDetails(
     const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile)
 {
     // left file
-    m_filePickerLeft->SetPath(leftFile.filename.GetFullPath());
+    m_textCtrlLeftFile->ChangeValue(leftFile.filename.GetFullPath());
     m_staticTextLeft->SetLabel(leftFile.title);
 
-    m_filePickerRight->SetPath(rightFile.filename.GetFullPath());
+    m_textCtrlRightFile->ChangeValue(rightFile.filename.GetFullPath());
     m_staticTextRight->SetLabel(rightFile.title);
 
     m_flags = 0x0;
@@ -371,8 +377,7 @@ void DiffSideBySidePanel::OnRefreshDiff(wxCommandEvent& event)
 {
     if(m_stcLeft->IsModified() || m_stcRight->IsModified()) {
         wxStandardID res = ::PromptForYesNoDialogWithCheckbox(
-            _("Refreshing the view will lose all your changes\nDo you want to continue?"), "DiffRefreshViewDlg",
-            _("Refresh"), _("Don't refresh"));
+            _("Refreshing the view will lose all your changes\nDo you want to continue?"), "DiffRefreshViewDlg");
         if(res != wxID_YES) {
             return;
         }
@@ -552,8 +557,8 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
 
 void DiffSideBySidePanel::OnSaveChanges(wxCommandEvent& event)
 {
-    DoSave(m_stcLeft, m_filePickerLeft->GetPath());
-    DoSave(m_stcRight, m_filePickerRight->GetPath());
+    DoSave(m_stcLeft, m_textCtrlLeftFile->GetValue());
+    DoSave(m_stcRight, m_textCtrlRightFile->GetValue());
     Diff();
 }
 
@@ -574,15 +579,9 @@ bool DiffSideBySidePanel::CanPrevDiff()
     return !m_sequences.empty() && canPrev;
 }
 
-void DiffSideBySidePanel::OnCopyFileFromRight(wxCommandEvent& event)
-{
-    DoCopyFileContent(m_stcRight, m_stcLeft);
-}
+void DiffSideBySidePanel::OnCopyFileFromRight(wxCommandEvent& event) { DoCopyFileContent(m_stcRight, m_stcLeft); }
 
-void DiffSideBySidePanel::OnCopyFileLeftToRight(wxCommandEvent& event)
-{
-    DoCopyFileContent(m_stcLeft, m_stcRight);
-}
+void DiffSideBySidePanel::OnCopyFileLeftToRight(wxCommandEvent& event) { DoCopyFileContent(m_stcLeft, m_stcRight); }
 
 void DiffSideBySidePanel::DoCopyFileContent(wxStyledTextCtrl* from, wxStyledTextCtrl* to)
 {
@@ -637,10 +636,15 @@ void DiffSideBySidePanel::OnVerticalUI(wxUpdateUIEvent& event) { event.Check(m_c
 
 void DiffSideBySidePanel::DiffNew()
 {
-    m_flags = 0x0;
+    m_flags = kSavePaths; // store the paths on exit
     m_config.SetViewMode(DiffConfig::kViewVerticalSplit);
     m_splitter->Unsplit();
     m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight);
+
+    // Restore last used paths
+    m_config.Load();
+    m_textCtrlLeftFile->ChangeValue(m_config.GetLeftFile());
+    m_textCtrlRightFile->ChangeValue(m_config.GetRightFile());
 }
 
 void DiffSideBySidePanel::OnRefreshDiffUI(wxUpdateUIEvent& event) { wxUnusedVar(event); }
@@ -708,5 +712,22 @@ void DiffSideBySidePanel::OnMouseWheel(wxMouseEvent& event)
     if(::wxGetKeyState(WXK_CONTROL) && !EditorConfigST::Get()->GetOptions()->IsMouseZoomEnabled()) {
         event.Skip(false);
         return;
+    }
+}
+void DiffSideBySidePanel::OnBrowseLeftFile(wxCommandEvent& event)
+{
+    wxFileName path(m_textCtrlLeftFile->GetValue());
+    wxString file = ::wxFileSelector(_("Choose a file"), path.GetPath());
+    if(!file.IsEmpty()) {
+        m_textCtrlLeftFile->ChangeValue(file);
+    }
+}
+
+void DiffSideBySidePanel::OnBrowseRightFile(wxCommandEvent& event)
+{
+    wxFileName path(m_textCtrlRightFile->GetValue());
+    wxString file = ::wxFileSelector(_("Choose a file"), path.GetPath());
+    if(!file.IsEmpty()) {
+        m_textCtrlRightFile->ChangeValue(file);
     }
 }

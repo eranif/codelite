@@ -185,16 +185,25 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     boxSizer111->Add(boxSizer285, 0, wxEXPAND, 2);
     
-    m_filePickerLeft = new wxFilePickerCtrl(m_splitterPageLeft, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_textCtrlLeftFile = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlLeftFile->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlLeftFile->SetHint(wxT(""));
+    #endif
+    m_textCtrlLeftFile->AutoCompleteFileNames();
     
-    boxSizer285->Add(m_filePickerLeft, 1, wxALL, 2);
+    boxSizer285->Add(m_textCtrlLeftFile, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_button290 = new wxButton(m_splitterPageLeft, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_button290->SetToolTip(_("Choose a file"));
+    
+    boxSizer285->Add(m_button290, 0, wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticTextLeft = new wxStaticText(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(100,-1), wxALIGN_CENTRE|wxBORDER_THEME);
     
     boxSizer285->Add(m_staticTextLeft, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 2);
     
     m_stcLeft = new wxStyledTextCtrl(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
-    m_stcLeft->SetFocus();
     // Configure the fold margin
     m_stcLeft->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcLeft->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -242,9 +251,17 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     boxSizer113->Add(boxSizer286, 0, wxEXPAND, 2);
     
-    m_filePickerRight = new wxFilePickerCtrl(m_splitterPageRight, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_textCtrlRightFile = new wxTextCtrl(m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlRightFile->SetHint(wxT(""));
+    #endif
+    m_textCtrlRightFile->AutoCompleteFileNames();
     
-    boxSizer286->Add(m_filePickerRight, 1, wxALL, 2);
+    boxSizer286->Add(m_textCtrlRightFile, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_button294 = new wxButton(m_splitterPageRight, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    
+    boxSizer286->Add(m_button294, 0, wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticTextRight = new wxStaticText(m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(100,-1), wxALIGN_CENTRE|wxBORDER_THEME);
     
@@ -316,10 +333,14 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     this->Connect(m_vView->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanelBase::OnVertical), NULL, this);
     this->Connect(m_hView->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanelBase::OnHorizontal), NULL, this);
     this->Connect(m_hView->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnHorizontalUI), NULL, this);
-    m_filePickerLeft->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
+    m_textCtrlLeftFile->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
+    m_button290->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
+    m_button290->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseLeftFile), NULL, this);
     m_stcLeft->Connect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcPainted), NULL, this);
     m_stcLeft->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
-    m_filePickerRight->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
+    m_textCtrlRightFile->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
+    m_button294->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
+    m_button294->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseRightFile), NULL, this);
     m_stcRight->Connect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnRightStcPainted), NULL, this);
     m_stcRight->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
     
@@ -350,10 +371,14 @@ DiffSideBySidePanelBase::~DiffSideBySidePanelBase()
     this->Disconnect(m_vView->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanelBase::OnVertical), NULL, this);
     this->Disconnect(m_hView->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanelBase::OnHorizontal), NULL, this);
     this->Disconnect(m_hView->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnHorizontalUI), NULL, this);
-    m_filePickerLeft->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
+    m_textCtrlLeftFile->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
+    m_button290->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
+    m_button290->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseLeftFile), NULL, this);
     m_stcLeft->Disconnect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcPainted), NULL, this);
     m_stcLeft->Disconnect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
-    m_filePickerRight->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
+    m_textCtrlRightFile->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
+    m_button294->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
+    m_button294->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseRightFile), NULL, this);
     m_stcRight->Disconnect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnRightStcPainted), NULL, this);
     m_stcRight->Disconnect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
     

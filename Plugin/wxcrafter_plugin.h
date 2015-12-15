@@ -23,9 +23,8 @@
 #include <wx/menu.h>
 #include <wx/toolbar.h>
 #include <wx/splitter.h>
-#include <wx/filepicker.h>
-#include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/stattext.h>
 #include <wx/treectrl.h>
 #include "clFileViwerTreeCtrl.h"
 #include <wx/dataview.h>
@@ -90,11 +89,13 @@ protected:
     wxMenuItem* m_hView;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageLeft;
-    wxFilePickerCtrl* m_filePickerLeft;
+    wxTextCtrl* m_textCtrlLeftFile;
+    wxButton* m_button290;
     wxStaticText* m_staticTextLeft;
     wxStyledTextCtrl* m_stcLeft;
     wxPanel* m_splitterPageRight;
-    wxFilePickerCtrl* m_filePickerRight;
+    wxTextCtrl* m_textCtrlRightFile;
+    wxButton* m_button294;
     wxStaticText* m_staticTextRight;
     wxStyledTextCtrl* m_stcRight;
 
@@ -120,20 +121,24 @@ protected:
     virtual void OnHorizontal(wxCommandEvent& event) { event.Skip(); }
     virtual void OnHorizontalUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBrowseLeftFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
     virtual void OnRightPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBrowseRightFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
 
     virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
     wxAuiToolBar* GetAuibar242() { return m_auibar242; }
-    wxFilePickerCtrl* GetFilePickerLeft() { return m_filePickerLeft; }
+    wxTextCtrl* GetTextCtrlLeftFile() { return m_textCtrlLeftFile; }
+    wxButton* GetButton290() { return m_button290; }
     wxStaticText* GetStaticTextLeft() { return m_staticTextLeft; }
     wxStyledTextCtrl* GetStcLeft() { return m_stcLeft; }
     wxPanel* GetSplitterPageLeft() { return m_splitterPageLeft; }
-    wxFilePickerCtrl* GetFilePickerRight() { return m_filePickerRight; }
+    wxTextCtrl* GetTextCtrlRightFile() { return m_textCtrlRightFile; }
+    wxButton* GetButton294() { return m_button294; }
     wxStaticText* GetStaticTextRight() { return m_staticTextRight; }
     wxStyledTextCtrl* GetStcRight() { return m_stcRight; }
     wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }

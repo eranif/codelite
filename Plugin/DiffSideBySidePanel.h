@@ -70,9 +70,12 @@ public:
         kLeftReadOnly = (1 << 2),
         kRightReadOnly = (1 << 3),
         kOriginSourceControl = (1 << 4),
+        kSavePaths = (1 << 5),
     };
 
 protected:
+    virtual void OnBrowseLeftFile(wxCommandEvent& event);
+    virtual void OnBrowseRightFile(wxCommandEvent& event);
     virtual void OnMouseWheel(wxMouseEvent& event);
     virtual void OnSingleUI(wxUpdateUIEvent& event);
     virtual void OnSingleView(wxCommandEvent& event);

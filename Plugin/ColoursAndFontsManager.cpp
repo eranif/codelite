@@ -200,7 +200,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     wxString themeName = lexer->GetThemeName();
     themeName = themeName.Mid(0, 1).Capitalize() + themeName.Mid(1);
     lexer->SetThemeName(themeName);
-
+    
+    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
+    }
+    
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
@@ -728,6 +732,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     lexer->SetThemeName(themeName);
 
     CL_DEBUG("Loading lexer: %s [%s]", lexerName, lexer->GetName());
+    
+    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
+    }
+
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {

@@ -119,10 +119,6 @@ CallGraph::CallGraph(IManager* manager)
                                 wxCommandEventHandler(CallGraph::OnShowCallGraph),
                                 NULL,
                                 this);
-
-    // initialize paths for standard and stored paths for this plugin
-    // GetDotPath();
-    // GetGprofPath();
 }
 
 //---- DTOR -------------------------------------------------------------------
@@ -218,6 +214,46 @@ wxMenu* CallGraph::CreateProjectPopMenu()
 
 //-----------------------------------------------------------------------------
 
+void CallGraph::HookPopupMenu(wxMenu *menu, MenuType type)
+{
+    if (type == MenuTypeEditor) {
+        //TODO::Append items for the editor context menu
+    } else if (type == MenuTypeFileExplorer) {
+        //TODO::Append items for the file explorer context menu
+    } else if (type == MenuTypeFileView_Workspace) {
+        //TODO::Append items for the file view / workspace context menu
+    } else if (type == MenuTypeFileView_Project) {
+        //TODO::Append items for the file view/Project context menu
+        if ( !menu->FindItem( XRCID("cg_show_callgraph_popup") ) ) {
+            menu->PrependSeparator();
+            menu->Prepend( XRCID("cg_show_callgraph_popup"), _("Call Graph"), CreateProjectPopMenu() );
+        }
+    } else if (type == MenuTypeFileView_Folder) {
+        //TODO::Append items for the file view/Virtual folder context menu
+    } else if (type == MenuTypeFileView_File) {
+        //TODO::Append items for the file view/file context menu
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void CallGraph::UnHookPopupMenu(wxMenu *menu, MenuType type)
+{
+    if (type == MenuTypeEditor) {
+        //TODO::Unhook items for the editor context menu
+    } else if (type == MenuTypeFileExplorer) {
+        //TODO::Unhook  items for the file explorer context menu
+    } else if (type == MenuTypeFileView_Workspace) {
+        //TODO::Unhook  items for the file view / workspace context menu
+    } else if (type == MenuTypeFileView_Project) {
+        //TODO::Unhook  items for the file view/Project context menu
+    } else if (type == MenuTypeFileView_Folder) {
+        //TODO::Unhook  items for the file view/Virtual folder context menu
+    } else if (type == MenuTypeFileView_File) {
+        //TODO::Unhook  items for the file view/file context menu
+    }
+}
+
 //-----------------------------------------------------------------------------
 
 void CallGraph::UnPlug()
@@ -239,9 +275,9 @@ void CallGraph::OnAbout(wxCommandEvent& event)
 
     wxAboutDialogInfo info;
     info.SetName(_("Call Graph"));
-    info.SetVersion(_("v1.1.0"));
+    info.SetVersion(_("v1.1.1"));
     info.SetDescription(desc);
-    info.SetCopyright(_("2012 (C) Tomas Bata University, Zlin, Czech Republic"));
+    info.SetCopyright(_("2012 - 2015 (C) Tomas Bata University, Zlin, Czech Republic"));
     info.SetWebSite(_("http://www.fai.utb.cz"));
     info.AddDeveloper(wxT("Václav Špruček"));
     info.AddDeveloper(wxT("Michal Bližňák"));
@@ -253,38 +289,44 @@ void CallGraph::OnAbout(wxCommandEvent& event)
 
 wxString CallGraph::LocateApp(const wxString& app_name)
 {
-    // myLog("LocateApp(\"%s\")", app_name);
-
-    wxProcess* proc = new wxProcess(wxPROCESS_REDIRECT);
-
-    wxString cmd = "which " + app_name;
-
-    // Q: HOW BIG IS INTERNAL BUFFER ???
-    int err = wxExecute(cmd, wxEXEC_SYNC, proc);
-    // ignore -1 error due to CL signal handler overload
-
-    /*int	pid = proc->GetPid();
-
-    myLog("  wxExecute(\"%s\") returned err %d, had pid %d", cmd, err, pid);
-    */
-
-    // get process output
-    wxInputStream* pis = proc->GetInputStream();
-    if(!pis || !pis->CanRead()) {
-        delete proc;
-        return "<ERROR>";
-    }
-
-    // read from it
-    wxTextInputStream tis(*pis);
-
-    wxString out_str = tis.ReadLine();
-
-    delete proc;
-
-    // myLog("  returned \"%s\"", out_str);
-
-    return out_str;
+    wxArrayString out;
+    wxExecute( "which " + app_name, out );
+    if( out.GetCount() == 1 ) return out[0];
+    else
+        return "";
+    
+//    // myLog("LocateApp(\"%s\")", app_name);
+//
+//    wxProcess* proc = new wxProcess(wxPROCESS_REDIRECT);
+//
+//    wxString cmd = "which " + app_name;
+//
+//    // Q: HOW BIG IS INTERNAL BUFFER ???
+//    int err = wxExecute(cmd, wxEXEC_SYNC, proc);
+//    // ignore -1 error due to CL signal handler overload
+//
+//    /*int	pid = proc->GetPid();
+//
+//    myLog("  wxExecute(\"%s\") returned err %d, had pid %d", cmd, err, pid);
+//    */
+//
+//    // get process output
+//    wxInputStream* pis = proc->GetInputStream();
+//    if(!pis || !pis->CanRead()) {
+//        delete proc;
+//        return "<ERROR>";
+//    }
+//
+//    // read from it
+//    wxTextInputStream tis(*pis);
+//
+//    wxString out_str = tis.ReadLine();
+//
+//    delete proc;
+//
+//    // myLog("  returned \"%s\"", out_str);
+//
+//    return out_str;
 }
 
 //---- Get Gprof Path ---------------------------------------------------------
@@ -323,10 +365,8 @@ wxString CallGraph::GetDotPath()
     if(!dotPath.IsEmpty()) return dotPath;
 
 #ifdef __WXMSW__
-    // dont annoy with messages on startup
     return wxEmptyString;
 #else
-
     dotPath = LocateApp(DOT_FILENAME_EXE);
 #endif
 
@@ -344,6 +384,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     // myLog("wxThread::IsMain(%d)", (int)wxThread::IsMain());
 
     IConfigTool* config_tool = m_mgr->GetConfigTool();
+    MacroManager* macro = MacroManager::Instance();
+    wxASSERT(macro);
 
     config_tool->ReadObject(wxT("CallGraph"), &confData);
 
@@ -357,6 +399,10 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     wxFileName ws_cfn = ws->GetWorkspaceFileName();
 
     wxString projectName = ws->GetActiveProjectName();
+    
+    wxString errMsg;
+    ProjectPtr proj = ws->FindProjectByName( projectName, errMsg );
+    wxString projPath = proj->GetProjectPath();
 
     BuildMatrixPtr mtx = ws->GetBuildMatrix();
     if(!mtx) return MessageBox(_("Unable to get current build matrix."), wxICON_ERROR);
@@ -366,18 +412,18 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     BuildConfigPtr bldConf = ws->GetProjBuildConf(projectName, build_config_name);
     if(!bldConf) return MessageBox(_("Unable to get opened workspace."), wxICON_ERROR);
 
-    wxString projOutputFn = bldConf->GetOutputFileName();
-    wxString projWorkingDir = bldConf->GetWorkingDirectory();
+    wxString projOutputFn = macro->Expand( bldConf->GetOutputFileName(), m_mgr, projectName, build_config_name );
+    #ifdef __WXMSW__
+    if( ! projOutputFn.Lower().EndsWith( wxT(".exe") ) ) projOutputFn += wxT(".exe");
+    #endif //__WXMSW__
 
-    /*
-    myLog("WorkspaceFileName = \"%s\"", ws_cfn.GetFullPath());
-    myLog("projectName \"%s\"", projectName);
-    myLog("build_config_name = \"%s\"", build_config_name);
-    myLog("projOutputFn = \"%s\"", projOutputFn);
-    myLog("projWorkingDir = \"%s\"", projWorkingDir);
-    */
+//    myLog("WorkspaceFileName = \"%s\"", ws_cfn.GetFullPath());
+//    myLog("projectName \"%s\"", projectName);
+//    myLog("build_config_name = \"%s\"", build_config_name);
+//    myLog("projOutputFn = \"%s\"", projOutputFn);
+//    myLog("projPath = \"%s\"", projPath);
 
-    wxFileName cfn(ws_cfn.GetPath(), projOutputFn);
+    wxFileName cfn(projPath + wxFileName::GetPathSeparator() + projOutputFn);
     cfn.Normalize();
 
     // base path
@@ -394,8 +440,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     if(!cfn.IsFileExecutable()) return MessageBox("bin/exe isn't executable", wxICON_ERROR);
 
     // check 'gmon.out' file exists
-    wxFileName gmon_cfn(base_path, GMON_FILENAME_OUT);
-    if(!gmon_cfn.Exists()) gmon_cfn.Normalize();
+    wxFileName gmon_cfn( cfn.GetPath() + wxFileName::GetPathSeparator() + GMON_FILENAME_OUT);
+    gmon_cfn.Normalize();
 
     wxString gmonfn = gmon_cfn.GetFullPath();
     if(!gmon_cfn.Exists()) {
@@ -495,7 +541,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
     // myLog("wxExecute(\"%s\")", cmddot_ln);
 
-    wxExecute(cmddot_ln, wxEXEC_SYNC);
+    wxExecute(cmddot_ln, wxEXEC_SYNC | wxEXEC_HIDE_CONSOLE);
 
     // myLog("dot done");
 

@@ -107,8 +107,9 @@ void CodeLiteDiff::OnTabContextMenu(clContextMenuEvent& event)
     m_leftFile = activeEditor->GetFileName();
 
     // Edit the context menu
-    wxMenuItem* mi = event.GetMenu()->Append(XRCID("diff_compare_with"), _("Compare with..."), "", wxITEM_NORMAL);
+    wxMenuItem* mi = new wxMenuItem(event.GetMenu(), XRCID("diff_compare_with"), _("Compare with..."), "");
     mi->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("diff"));
+    event.GetMenu()->Append(mi);
     event.GetMenu()->Bind(wxEVT_MENU, &CodeLiteDiff::OnDiff, this, XRCID("diff_compare_with"));
 }
 

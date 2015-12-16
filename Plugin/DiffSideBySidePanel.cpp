@@ -637,6 +637,8 @@ void DiffSideBySidePanel::OnVerticalUI(wxUpdateUIEvent& event) { event.Check(m_c
 
 void DiffSideBySidePanel::DiffNew()
 {
+    m_staticTextLeft->Hide();
+    m_staticTextRight->Hide();
     m_flags = kSavePaths; // store the paths on exit
     m_config.SetViewMode(DiffConfig::kViewVerticalSplit);
     m_splitter->Unsplit();
@@ -662,6 +664,8 @@ void DiffSideBySidePanel::DiffNew(const wxFileName& left, const wxFileName& righ
         return;
     }
 
+    m_staticTextLeft->Hide();
+    m_staticTextRight->Hide();
     m_flags = kSavePaths; // store the paths on exit
     m_config.SetViewMode(DiffConfig::kViewVerticalSplit);
     m_splitter->Unsplit();
@@ -671,7 +675,7 @@ void DiffSideBySidePanel::DiffNew(const wxFileName& left, const wxFileName& righ
     m_config.Load();
     m_textCtrlLeftFile->ChangeValue(left.GetFullPath());
     m_textCtrlRightFile->ChangeValue(right.GetFullPath());
-    
+
     CallAfter(&DiffSideBySidePanel::Diff); // trigger a diff
 }
 

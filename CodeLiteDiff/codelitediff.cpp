@@ -28,6 +28,9 @@
 #include "DiffSideBySidePanel.h"
 #include "wx/menu.h"
 #include "clKeyboardManager.h"
+#include "macros.h"
+#include "event_notifier.h"
+#include "NewFileComparison.h"
 
 static CodeLiteDiff* thePlugin = NULL;
 
@@ -58,6 +61,8 @@ CodeLiteDiff::CodeLiteDiff(IManager* manager)
     m_longName = _("CodeLite Diff Plugin");
     m_shortName = wxT("Diff Plugin");
 
+    Bind(wxEVT_MENU, &CodeLiteDiff::OnDiff, this, XRCID("diff_compare_with"));
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_TAB_LABEL, &CodeLiteDiff::OnTabContextMenu, this);
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "diff_new_comparison", "Ctrl-Shift-C", "Plugins::Diff Tool::New File Comparison");
 }
@@ -79,11 +84,43 @@ void CodeLiteDiff::CreatePluginMenu(wxMenu* pluginsMenu)
     pluginsMenu->Append(wxID_ANY, _("Diff Tool"), menu);
 }
 
-void CodeLiteDiff::UnPlug() {}
+void CodeLiteDiff::UnPlug()
+{
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_TAB_LABEL, &CodeLiteDiff::OnTabContextMenu, this);
+    Unbind(wxEVT_MENU, &CodeLiteDiff::OnDiff, this, XRCID("diff_compare_with"));
+}
 
 void CodeLiteDiff::OnNewDiff(wxCommandEvent& e)
 {
     DiffSideBySidePanel* diff = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
     diff->DiffNew(); // Indicate that we want a clean diff, not from a source control
     m_mgr->AddPage(diff, _("Diff"), wxEmptyString, wxNullBitmap, true);
+}
+
+void CodeLiteDiff::OnTabContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    DoClear();
+    IEditor* activeEditor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(activeEditor);
+
+    m_leftFile = activeEditor->GetFileName();
+
+    // Edit the context menu
+    wxMenuItem* mi = event.GetMenu()->Append(XRCID("diff_compare_with"), _("Compare with..."), "", wxITEM_NORMAL);
+    mi->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("diff"));
+    event.GetMenu()->Bind(wxEVT_MENU, &CodeLiteDiff::OnDiff, this, XRCID("diff_compare_with"));
+}
+
+void CodeLiteDiff::DoClear() { m_leftFile.Clear(); }
+
+void CodeLiteDiff::OnDiff(wxCommandEvent& event)
+{
+    NewFileComparison dlg(EventNotifier::Get()->TopFrame(), m_leftFile);
+    if(dlg.ShowModal() == wxID_OK) {
+        wxString secondFile = dlg.GetTextCtrlFileName()->GetValue();
+        DiffSideBySidePanel* diff = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
+        diff->DiffNew(m_leftFile, secondFile);
+        m_mgr->AddPage(diff, _("Diff"), wxEmptyString, wxNullBitmap, true);
+    }
 }

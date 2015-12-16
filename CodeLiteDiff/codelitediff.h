@@ -27,11 +27,18 @@
 #define __CodeLiteDiff__
 
 #include "plugin.h"
+#include "cl_command_event.h"
+#include <wx/filename.h>
 
 class CodeLiteDiff : public IPlugin
 {
+    wxFileName m_leftFile;
+
 protected:
     void OnNewDiff(wxCommandEvent& e);
+    void OnTabContextMenu(clContextMenuEvent& event);
+    void OnDiff(wxCommandEvent& event);
+    void DoClear();
 
 public:
     CodeLiteDiff(IManager* manager);

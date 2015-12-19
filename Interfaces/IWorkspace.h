@@ -49,6 +49,11 @@ public:
     virtual ~IWorkspace() {}
 
     /**
+     * @brief return the project file
+     */
+    virtual wxFileName GetFileName() const = 0;
+    
+    /**
      * @brief set the workspace type
      * For example: "C++ Workspace", "PHP Workspace" etc
      */

@@ -139,7 +139,10 @@ public:
 
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
     const wxFileName& GetFilename() const { return m_filename; }
-
+    /**
+     * @brief as defined by IWorkspace
+     */
+    wxFileName GetFileName() const { return GetFilename(); }
     void SetFolders(const wxArrayString& folders) { this->m_folders = folders; }
     const wxArrayString& GetFolders() const { return m_folders; }
     wxArrayString& GetFolders() { return m_folders; }

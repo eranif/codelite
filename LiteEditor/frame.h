@@ -382,6 +382,7 @@ protected:
     void OnFileSaveAll(wxCommandEvent& event);
     void OnFileSaveTabGroup(wxCommandEvent& event);
     void OnFileExistUpdateUI(wxUpdateUIEvent& event);
+    void OnCopyFilePathRelativeToWorkspaceUI(wxUpdateUIEvent& event);
     void OnFileSaveAllUI(wxUpdateUIEvent& event);
     void OnCompleteWordUpdateUI(wxUpdateUIEvent& event);
     void OnFunctionCalltipUI(wxUpdateUIEvent& event);
@@ -442,6 +443,7 @@ protected:
     void OnImportMSVS(wxCommandEvent& e);
     void OnDebugAttach(wxCommandEvent& event);
     void OnCopyFilePath(wxCommandEvent& event);
+    void OnCopyFilePathRelativeToWorkspace(wxCommandEvent& event);
     void OnCopyFilePathOnly(wxCommandEvent& event);
     void OnCopyFileName(wxCommandEvent& event);
     void OnHighlightWord(wxCommandEvent& event);

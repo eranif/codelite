@@ -86,7 +86,7 @@ public:
      * @brief createa 'compile_commands' json object for the workspace projects (only the enabled ones)
      */
     void CreateCompileCommandsJSON(JSONElement& compile_commands) const;
-
+    wxFileName GetFileName() const { return GetWorkspaceFileName(); }
     void SetStartupDir(const wxString& startupDir) { this->m_startupDir = startupDir; }
     const wxString& GetStartupDir() const { return m_startupDir; }
 
@@ -168,11 +168,8 @@ public:
      * \returns
      * true on success false otherwise
      */
-    bool CreateProject(const wxString& name,
-                       const wxString& path,
-                       const wxString& type,
-                       bool addToBuildMatrix,
-                       wxString& errMsg);
+    bool CreateProject(
+        const wxString& name, const wxString& path, const wxString& type, bool addToBuildMatrix, wxString& errMsg);
 
     /**
      * @brief rename a project
@@ -342,12 +339,12 @@ public:
      * will be kept in the workspace file (i.e. they are portable)
      */
     void SetEnvironmentVariabels(const wxString& envvars);
-    
+
     /**
      * @brief return the selected workspace configuration
      */
     WorkspaceConfigurationPtr GetSelectedConfig() const;
-    
+
     //----------------------------------
     // File modifications
     //----------------------------------

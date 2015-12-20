@@ -165,11 +165,8 @@ void SymbolTree::BuildTree(const wxFileName& fileName, TagEntryPtrVector_t* tags
 
     // add three items here:
     // the globals node, the mcros and the prototype node
-    m_globalsNode = AppendItem(root,
-                               wxT("Global Functions and Variables"),
-                               2,
-                               2,
-                               new MyTreeItemData(wxT("Global Functions and Variables"), wxEmptyString));
+    m_globalsNode = AppendItem(root, wxT("Global Functions and Variables"), 2, 2,
+        new MyTreeItemData(wxT("Global Functions and Variables"), wxEmptyString));
     m_prototypesNode = AppendItem(
         root, wxT("Functions Prototypes"), 2, 2, new MyTreeItemData(wxT("Functions Prototypes"), wxEmptyString));
     m_macrosNode = AppendItem(root, wxT("Macros"), 2, 2, new MyTreeItemData(wxT("Macros"), wxEmptyString));
@@ -231,8 +228,8 @@ void SymbolTree::AddItem(TagNode* node)
     // We gather globals together under special node
     //-------------------------------------------------------------------------------
     if((nodeData.GetParent() == wxT("<global>")) && // parent is global scope
-       m_globalsKind.find(nodeData.GetKind()) !=
-           m_globalsKind.end()) { // the node kind is one of function, prototype or variable
+        m_globalsKind.find(nodeData.GetKind()) !=
+            m_globalsKind.end()) { // the node kind is one of function, prototype or variable
         if(nodeData.GetKind() == wxT("prototype"))
             parentHti = m_prototypesNode;
         else
@@ -255,11 +252,10 @@ void SymbolTree::AddItem(TagNode* node)
     }
 
     if(parentHti.IsOk()) {
-        hti = AppendItem(
-            parentHti,   // parent
-            displayName, // display name
-            iconIndex,   // item image index
-            iconIndex,   // selected item image
+        hti = AppendItem(parentHti, // parent
+            displayName,            // display name
+            iconIndex,              // item image index
+            iconIndex,              // selected item image
             new MyTreeItemData(node->GetData().GetFile(), node->GetData().GetPattern(), node->GetData().GetLine()));
         SetItemFont(hti, font);
         node->GetData().SetTreeItemId(hti);
@@ -294,16 +290,22 @@ void SymbolTree::SortTree(std::map<void*, bool>& nodes)
 int SymbolTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
 {
     // Get the items and compare their icons
-    int img1, img2;
-    img1 = GetItemImage(item1);
-    img2 = GetItemImage(item2);
-    if(img1 > img2)
-        return 1;
-    else if(img1 < img2)
-        return -1;
-    else {
-        // Items  has the same icons, compare text
-        return wxTreeCtrl::OnCompareItems(item1, item2);
+    MyTreeItemData* cd1 = dynamic_cast<MyTreeItemData*>(GetItemData(item1));
+    MyTreeItemData* cd2 = dynamic_cast<MyTreeItemData*>(GetItemData(item2));
+    if(!cd1 || !cd2) {
+        int img1, img2;
+        img1 = GetItemImage(item1);
+        img2 = GetItemImage(item2);
+        if(img1 > img2)
+            return 1;
+        else if(img1 < img2)
+            return -1;
+        else {
+            // Items  has the same icons, compare text
+            return wxTreeCtrl::OnCompareItems(item1, item2);
+        }
+    } else {
+        return cd1->GetLine() > cd2->GetLine();
     }
 }
 
@@ -467,5 +469,3 @@ bool SymbolTree::Matches(const wxTreeItemId& item, const wxString& patter)
     }
     return false;
 }
-
-

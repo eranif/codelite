@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// Copyright            : (C) 2015 The CodeLite Team
+// Copyright            : (C) 2015 Eran Ifrah
 // File name            : XDebugManager.h
 //
 // -------------------------------------------------------------------------
@@ -68,7 +68,7 @@ public:
     int GetPort() const;
     wxString GetHost() const;
     void CenterEditor(wxStyledTextCtrl* ctrl, int lineNo);
-    
+
     void SetConnected(bool connected);
     bool IsConnected() const { return m_connected; }
     void DoSocketWrite(const wxString& command);

@@ -1151,15 +1151,6 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer156->Add(boxSizer204, 1, wxEXPAND, 5);
     
     m_dvListCtrlBreakpoints = new wxDataViewListCtrl(m_panel142, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_dvListCtrlBreakpointsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_dvListCtrlBreakpointsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_dvListCtrlBreakpointsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_dvListCtrlBreakpointsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_dvListCtrlBreakpoints->SetFont(m_dvListCtrlBreakpointsFont);
     
     boxSizer204->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, 2);
     
@@ -1188,6 +1179,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     }
     // Connect events
     m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
+    m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackMenu), NULL, this);
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL, this);
     this->Connect(ID_DELETE_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPDebugPaneBase::OnDeleteBreakpoint), NULL, this);
     this->Connect(ID_DELETE_BREAKPOINTS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugPaneBase::OnDeleteBreakpointUI), NULL, this);
@@ -1199,6 +1191,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
 PHPDebugPaneBase::~PHPDebugPaneBase()
 {
     m_dvListCtrlStackTrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
+    m_dvListCtrlStackTrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackMenu), NULL, this);
     m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL, this);
     this->Disconnect(ID_DELETE_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPDebugPaneBase::OnDeleteBreakpoint), NULL, this);
     this->Disconnect(ID_DELETE_BREAKPOINTS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugPaneBase::OnDeleteBreakpointUI), NULL, this);
@@ -1220,7 +1213,7 @@ LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer236 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer236);
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,150), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,150), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_MULTIPLE);
     
     m_dataviewModel = new XDebugLocalsViewModel;
     m_dataviewModel->SetColCount( 4 );
@@ -1242,6 +1235,7 @@ LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED, wxDataViewEventHandler(LocalsViewBase::OnLocalCollapsed), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanded), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanding), NULL, this);
+    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(LocalsViewBase::OnLocalsMenu), NULL, this);
     
 }
 
@@ -1250,6 +1244,7 @@ LocalsViewBase::~LocalsViewBase()
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED, wxDataViewEventHandler(LocalsViewBase::OnLocalCollapsed), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanded), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanding), NULL, this);
+    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(LocalsViewBase::OnLocalsMenu), NULL, this);
     
 }
 
@@ -1270,15 +1265,6 @@ PHPImages::PHPImages()
         icn.CopyFromBitmap( bmp );
         this->Add( icn );
         m_bitmaps.insert( std::make_pair(wxT("m_bmpArrowActive"), bmp ) );
-    }
-    
-    {
-//        wxBitmap bmp;
-//        wxIcon icn;
-//        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowDisabled"));
-//        icn.CopyFromBitmap( bmp );
-//        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("m_bmpArrowDisabled"), wxNullBitmap ) );
     }
     
     {

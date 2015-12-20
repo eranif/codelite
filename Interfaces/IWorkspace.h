@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// Copyright            : (C) 2015 The CodeLite Team
+// Copyright            : (C) 2015 Eran Ifrah
 // File name            : IWorkspace.h
 //
 // -------------------------------------------------------------------------
@@ -48,6 +48,11 @@ public:
     IWorkspace() {}
     virtual ~IWorkspace() {}
 
+    /**
+     * @brief return the project file
+     */
+    virtual wxFileName GetFileName() const = 0;
+    
     /**
      * @brief set the workspace type
      * For example: "C++ Workspace", "PHP Workspace" etc

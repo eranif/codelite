@@ -58,7 +58,7 @@ void PluginMgrDlg::Initialize()
 
         int item = m_checkListPluginsList->Append(info.GetName());
         if(item != wxNOT_FOUND) {
-            m_checkListPluginsList->Check((unsigned int)item, plugins.CanLoad(info.GetName()));
+            m_checkListPluginsList->Check((unsigned int)item, plugins.CanLoad(info));
         }
     }
 
@@ -154,7 +154,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
         content.Replace(wxT("$(Status)"), _("Status:"));
 
         wxString status;
-        if(plugins.CanLoad(info.GetName())) {
+        if(plugins.CanLoad(info)) {
             status = wxT("<img src=\"$(InstallPath)/images/plugin_ok.png\" ></img>");
         } else {
             status = wxT("<img src=\"$(InstallPath)/images/plugin_not_ok.png\" > </img>");

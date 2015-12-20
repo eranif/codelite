@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2014 The CodeLite Team
+// copyright            : (C) 2014 Eran Ifrah
 // file name            : bitmap_loader.cpp
 //
 // -------------------------------------------------------------------------
@@ -84,16 +84,23 @@ BitmapLoader::BitmapLoader()
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
         wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
-        tmpFolder.AppendDir("codelite-bitmaps");
+
+        // Make sure we append the user name to the temporary user folder
+        // this way, multiple CodeLite instances from different users can extract the
+        // bitmaps to /tmp
+        wxString bitmapFolder = "codelite-bitmaps";
+        bitmapFolder << "." << clGetUserName();
+
+        tmpFolder.AppendDir(bitmapFolder);
         if(tmpFolder.DirExists()) {
             tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE);
         }
-        
+
         tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
         // Extract all images into this folder
         zip.Extract("*", tmpFolder.GetPath());
- 
+
         // Load all the files into wxBitmap
         wxArrayString files;
         wxDir::GetAllFiles(tmpFolder.GetPath(), &files, "*.png");
@@ -125,7 +132,7 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
         CL_DEBUG("Image Size: (%d,%d)", b.GetWidth(), b.GetHeight());
         return b;
     }
-    
+
     iter = m_toolbarsBitmaps.find(name);
     if(iter != m_toolbarsBitmaps.end()) {
         return iter->second;

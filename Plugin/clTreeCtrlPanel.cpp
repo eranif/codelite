@@ -37,7 +37,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
-
+    EventNotifier::Get()->Bind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &clTreeCtrlPanel::OnFindInFilesShowing, this);
     m_defaultView = new clTreeCtrlPanelDefaultPage(this);
     GetSizer()->Add(m_defaultView, 1, wxEXPAND);
     GetTreeCtrl()->Hide();
@@ -48,16 +48,17 @@ clTreeCtrlPanel::~clTreeCtrlPanel()
     Unbind(wxEVT_DND_FOLDER_DROPPED, &clTreeCtrlPanel::OnFolderDropped, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &clTreeCtrlPanel::OnFindInFilesShowing, this);
 }
 
 void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
 {
     wxTreeItemId item = event.GetItem();
     CHECK_ITEM_RET(item);
-    
+
     GetTreeCtrl()->SetFocusedItem(event.GetItem());
     GetTreeCtrl()->SelectItem(event.GetItem());
-    
+
     clTreeCtrlData* cd = GetItemData(item);
 
     if(cd && cd->IsFolder()) {
@@ -308,7 +309,7 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
     if(!parentData) {
         return wxTreeItemId();
     }
-    
+
     // Check the index before adding new folder
     if(parentData->GetIndex()) {
         wxTreeItemId cachedItem = parentData->GetIndex()->Find(displayName);
@@ -465,11 +466,12 @@ void clTreeCtrlPanel::SelectItem(const wxTreeItemId& item)
     }
 
     GetTreeCtrl()->SelectItem(item);
-    //GetTreeCtrl()->SetFocusedItem(item);
+    // GetTreeCtrl()->SetFocusedItem(item);
     GetTreeCtrl()->EnsureVisible(item);
 }
 
-struct FileOrFolder {
+struct FileOrFolder
+{
     wxTreeItemId item;
     bool folder;
     wxString path;
@@ -861,4 +863,17 @@ void clTreeCtrlPanel::OnOpenWithDefaultApplication(wxCommandEvent& event)
     for(size_t i = 0; i < files.size(); ++i) {
         ::wxLaunchDefaultApplication(files.Item(i));
     }
+}
+
+void clTreeCtrlPanel::OnFindInFilesShowing(clCommandEvent& event)
+{
+    event.Skip();
+    if(!IsShownOnScreen()) return;
+
+    wxArrayString folders, files;
+    GetSelections(folders, files);
+    
+    // Append the folders to the Find IN Files dialog search paths
+    wxArrayString& outPaths = event.GetStrings();
+    outPaths.insert(outPaths.end(), folders.begin(), folders.end());
 }

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// Copyright            : (C) 2015 The CodeLite Team
+// Copyright            : (C) 2015 Eran Ifrah
 // File name            : PHPDebugPane.h
 //
 // -------------------------------------------------------------------------
@@ -51,6 +51,7 @@ public:
     void SetTerminal(TerminalEmulator* terminal) { m_console->SetTerminal(terminal); }
 
 protected:
+    virtual void OnCallStackMenu(wxDataViewEvent& event);
     virtual void OnBreakpointItemActivated(wxDataViewEvent& event);
     XDebugBreakpoint GetBreakpoint(const wxDataViewItem& item) const;
 

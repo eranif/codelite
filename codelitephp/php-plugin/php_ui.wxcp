@@ -10265,6 +10265,13 @@
                "m_functionNameAndSignature": "OnCallStackItemActivated(wxDataViewEvent& event)",
                "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                "m_noBody": false
+              }, {
+               "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
+               "m_eventClass": "wxDataViewEvent",
+               "m_eventHandler": "wxDataViewEventHandler",
+               "m_functionNameAndSignature": "OnCallStackMenu(wxDataViewEvent& event)",
+               "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
+               "m_noBody": false
               }],
              "m_children": [{
                "m_type": 4472,
@@ -10596,7 +10603,7 @@
                 }, {
                  "type": "font",
                  "m_label": "Font:",
-                 "m_value": "wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
+                 "m_value": ""
                 }, {
                  "type": "bool",
                  "m_label": "Hidden",
@@ -11058,7 +11065,7 @@
        "border": 2,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
+       "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_MULTIPLE"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -11145,6 +11152,13 @@
          "m_eventHandler": "wxDataViewEventHandler",
          "m_functionNameAndSignature": "OnLocalExpanding(wxDataViewEvent& event)",
          "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING event",
+         "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
+         "m_eventClass": "wxDataViewEvent",
+         "m_eventHandler": "wxDataViewEventHandler",
+         "m_functionNameAndSignature": "OnLocalsMenu(wxDataViewEvent& event)",
+         "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
          "m_noBody": false
         }],
        "m_children": [{
@@ -11352,25 +11366,6 @@
        "type": "filePicker",
        "m_label": "Bitmap File:",
        "m_path": "../../bitmaps/16-forward.png"
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4482,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "m_bmpArrowDisabled"
-      }, {
-       "type": "filePicker",
-       "m_label": "Bitmap File:",
-       "m_path": "../../codelite-icons/toolbars/16/standard/forward-disabled.png"
       }],
      "m_events": [],
      "m_children": []

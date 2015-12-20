@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// Copyright            : (C) 2015 The CodeLite Team
+// Copyright            : (C) 2015 Eran Ifrah
 // File name            : clTreeCtrlPanel.h
 //
 // -------------------------------------------------------------------------
@@ -128,6 +128,7 @@ protected:
     // Make the event handler functions virtual
     // so any subclass could override them
     virtual void OnActiveEditorChanged(wxCommandEvent& event);
+    virtual void OnFindInFilesShowing(clCommandEvent& event);
     virtual void OnInitDone(wxCommandEvent& event);
     virtual void OnContextMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// Copyright            : (C) 2015 The CodeLite Team
+// Copyright            : (C) 2015 Eran Ifrah
 // File name            : php_workspace.h
 //
 // -------------------------------------------------------------------------
@@ -157,6 +157,11 @@ public:
      */
     const wxFileName& GetFilename() const { return m_workspaceFile; }
     /**
+     * @brief as defined in IWorkspace
+     */
+    wxFileName GetFileName() const { return GetFilename(); }
+
+    /**
      * @brief return the workspace name
      */
     wxString GetWorkspaceName() const { return m_workspaceFile.GetName(); }
@@ -224,9 +229,9 @@ public:
     // Project execution
     ////////////////////////////////////////////
     bool RunProject(bool debugging,
-                    const wxString& urlOrFilePath,
-                    const wxString& projectName = wxEmptyString,
-                    const wxString& xdebugSessionName = wxEmptyString);
+        const wxString& urlOrFilePath,
+        const wxString& projectName = wxEmptyString,
+        const wxString& xdebugSessionName = wxEmptyString);
     bool IsProjectRunning() const { return m_executor.IsRunning(); }
     void StopExecutedProgram() { m_executor.Stop(); }
 };

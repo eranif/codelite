@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2014 The CodeLite Team
+// copyright            : (C) 2014 Eran Ifrah
 // file name            : DiffConfig.h
 //
 // -------------------------------------------------------------------------
@@ -33,61 +33,68 @@ class WXDLLIMPEXP_SDK DiffConfig : public clConfigItem
 {
 public:
     enum {
-        kCopyLeftToRightAndMove = 0x00000001,
-        kCopyRightToLeftAndMove = 0x00000002,
+        kCopyLeftToRightAndMove = (1 << 0),
+        kCopyRightToLeftAndMove = (1 << 1),
     };
-    
+
     // View mode
     enum {
-        kViewModeDefault        = 0x00000000,
-        kViewSingle             = 0x00000001,
-        kViewVerticalSplit      = 0x00000002,
-        kViewHorizontalSplit    = 0x00000004,
-        kAllViewModes           = (kViewSingle|kViewVerticalSplit|kViewHorizontalSplit),
+        kViewModeDefault = 0,
+        kViewSingle = (1 << 0),
+        kViewVerticalSplit = (1 << 1),
+        kViewHorizontalSplit = (1 << 2),
+        kAllViewModes = (kViewSingle | kViewVerticalSplit | kViewHorizontalSplit),
     };
-    
+
 protected:
     size_t m_flags;
     size_t m_viewFlags;
-    
-public:
+    wxString m_leftFile;
+    wxString m_rightFile;
 
+public:
     DiffConfig();
     virtual ~DiffConfig();
 
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
-    
-    DiffConfig& SetViewMode(int mode) {
+
+    DiffConfig& SetViewMode(int mode)
+    {
         m_viewFlags &= ~kAllViewModes;
         m_viewFlags |= mode;
         return *this;
     }
-    
-    bool IsSplitVertical() const {
-        if (! (m_viewFlags & kAllViewModes) ) {
+
+    bool IsSplitVertical() const
+    {
+        if(!(m_viewFlags & kAllViewModes)) {
             // none of the modes is selected, select the default "Vertical"
             return true;
         }
         return m_viewFlags & kViewVerticalSplit;
     }
-    
-    bool IsSplitHorizontal() const {
-        return m_viewFlags & kViewHorizontalSplit;
+
+    bool IsSplitHorizontal() const { return m_viewFlags & kViewHorizontalSplit; }
+
+    bool IsSingleViewMode() const { return m_viewFlags & kViewSingle; }
+
+    void SetFlags(size_t flags) { this->m_flags = flags; }
+    size_t GetFlags() const { return m_flags; }
+
+    DiffConfig& SetLeftFile(const wxString& leftFile)
+    {
+        this->m_leftFile = leftFile;
+        return *this;
     }
-    
-    bool IsSingleViewMode() const {
-        return m_viewFlags & kViewSingle;
+    DiffConfig& SetRightFile(const wxString& rightFile)
+    {
+        this->m_rightFile = rightFile;
+        return *this;
     }
-    
-    void SetFlags(size_t flags) {
-        this->m_flags = flags;
-    }
-    size_t GetFlags() const {
-        return m_flags;
-    }
-    
+    const wxString& GetLeftFile() const { return m_leftFile; }
+    const wxString& GetRightFile() const { return m_rightFile; }
     DiffConfig& Load();
     void Save();
 };

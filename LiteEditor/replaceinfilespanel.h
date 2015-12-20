@@ -29,14 +29,15 @@
 
 class ReplaceInFilesPanel : public FindResultsTab
 {
+protected:
     wxComboBox* m_replaceWith;
     wxGauge* m_progress;
     wxStaticText* m_replaceWithText;
     wxArrayString m_filesModified;
-    
-    void DoSaveResults(wxStyledTextCtrl* sci,
-                       std::map<int, SearchResult>::iterator begin,
-                       std::map<int, SearchResult>::iterator end);
+
+protected:
+    void DoSaveResults(
+        wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin, std::map<int, SearchResult>::iterator end);
 
     wxStyledTextCtrl* DoGetEditor(const wxString& fileName);
 
@@ -55,7 +56,6 @@ class ReplaceInFilesPanel : public FindResultsTab
     virtual void OnReplaceUI(wxUpdateUIEvent& e);
     virtual void OnReplaceWithComboUI(wxUpdateUIEvent& e);
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-    DECLARE_EVENT_TABLE()
 
 public:
     ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString& name);

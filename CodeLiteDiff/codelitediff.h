@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2014 The CodeLite Team
+// copyright            : (C) 2014 Eran Ifrah
 // file name            : codelitediff.h
 //
 // -------------------------------------------------------------------------
@@ -27,27 +27,29 @@
 #define __CodeLiteDiff__
 
 #include "plugin.h"
+#include "cl_command_event.h"
+#include <wx/filename.h>
 
 class CodeLiteDiff : public IPlugin
 {
-    enum {
-        ID_TOOL_NEW_DIFF = 3970,
-    };
+    wxFileName m_leftFile;
+
 protected:
-    void OnNewDiff(wxCommandEvent &e);
-    
+    void OnNewDiff(wxCommandEvent& e);
+    void OnTabContextMenu(clContextMenuEvent& event);
+    void OnDiff(wxCommandEvent& event);
+    void DoClear();
+
 public:
-    CodeLiteDiff(IManager *manager);
+    CodeLiteDiff(IManager* manager);
     ~CodeLiteDiff();
 
     //--------------------------------------------
-    //Abstract methods
+    // Abstract methods
     //--------------------------------------------
-    virtual clToolBar *CreateToolBar(wxWindow *parent);
-    virtual void CreatePluginMenu(wxMenu *pluginsMenu);
-    virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
+    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void UnPlug();
 };
 
-#endif //CodeLiteDiff
+#endif // CodeLiteDiff

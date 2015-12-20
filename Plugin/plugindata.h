@@ -34,46 +34,47 @@
 
 class WXDLLIMPEXP_SDK PluginInfo
 {
-    wxString name;
-    wxString author;
-    wxString description;
-    wxString version;
+public:
+    enum eFlags {
+        kNone = 0,
+        kDisabledByDefault = (1 << 0),
+    };
+
+protected:
+    wxString m_name;
+    wxString m_author;
+    wxString m_description;
+    wxString m_version;
+    size_t m_flags;
 
 public:
     typedef std::map<wxString, PluginInfo> PluginMap_t;
 
 public:
     PluginInfo();
-    virtual ~PluginInfo();
+    ~PluginInfo();
 
 public:
-    //Setters
-    void SetAuthor(const wxString& author) {
-        this->author = author;
+    // Setters
+    void SetAuthor(const wxString& author) { this->m_author = author; }
+    void SetDescription(const wxString& description) { this->m_description = description; }
+    void SetName(const wxString& name) { this->m_name = name; }
+    void SetVersion(const wxString& version) { this->m_version = version; }
+    void EnableFlag(PluginInfo::eFlags flag, bool b)
+    {
+        if(b) {
+            m_flags |= flag;
+        } else {
+            m_flags &= ~flag;
+        }
     }
-    void SetDescription(const wxString& description) {
-        this->description = description;
-    }
-    void SetName(const wxString& name) {
-        this->name = name;
-    }
-    void SetVersion(const wxString& version) {
-        this->version = version;
-    }
+    bool HasFlag(PluginInfo::eFlags flag) const { return m_flags & flag; }
 
-    //Getters
-    const wxString& GetAuthor() const {
-        return author;
-    }
-    const wxString& GetDescription() const {
-        return description;
-    }
-    const wxString& GetName() const {
-        return name;
-    }
-    const wxString& GetVersion() const {
-        return version;
-    }
+    // Getters
+    const wxString& GetAuthor() const { return m_author; }
+    const wxString& GetDescription() const { return m_description; }
+    const wxString& GetName() const { return m_name; }
+    const wxString& GetVersion() const { return m_version; }
 
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement& json);
@@ -81,7 +82,7 @@ public:
 
 class WXDLLIMPEXP_SDK PluginInfoArray : public clConfigItem
 {
-    PluginInfo::PluginMap_t  m_plugins;
+    PluginInfo::PluginMap_t m_plugins;
     wxArrayString m_disabledPlugins;
 
 public:
@@ -89,19 +90,13 @@ public:
     virtual ~PluginInfoArray();
 
 public:
-    void SetPlugins(const PluginInfo::PluginMap_t& plugins) {
-        this->m_plugins = plugins;
-    }
-    const PluginInfo::PluginMap_t& GetPlugins() const {
-        return m_plugins;
-    }
+    void SetPlugins(const PluginInfo::PluginMap_t& plugins) { this->m_plugins = plugins; }
+    const PluginInfo::PluginMap_t& GetPlugins() const { return m_plugins; }
     void AddPlugin(const PluginInfo& plugin);
-    bool CanLoad(const wxString &plugin) const;
+    bool CanLoad(const PluginInfo& plugin) const;
     void DisablePugins(const wxArrayString& plugins);
     void DisablePlugin(const wxString& plugin);
-    const wxArrayString& GetDisabledPlugins() const {
-        return m_disabledPlugins;
-    }
+    const wxArrayString& GetDisabledPlugins() const { return m_disabledPlugins; }
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 };

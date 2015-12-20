@@ -572,14 +572,15 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 {
 
     if(GetUseCache()) {
+        CL_DEBUG1(wxT("Testing cache for: %s"), sql);
         if(m_cache.Get(sql, tags) == true) {
-            CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql.c_str());
+            CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql);
             return;
         }
     }
 
-    CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql.c_str());
-    // try the cache first
+    CL_DEBUG1(wxT("Entry not found in cache: %s"), sql);
+    CL_DEBUG1("Fetching from disk...");
     tags.reserve(500);
     try {
         wxSQLite3ResultSet ex_rs;
@@ -596,23 +597,25 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
-
+    CL_DEBUG1("Fetching from disk...done");
     if(GetUseCache()) {
+        CL_DEBUG1("Updating cache");
         m_cache.Store(sql, tags);
+        CL_DEBUG1("Updating cache...done");
     }
 }
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags, const wxArrayString& kinds)
 {
     if(GetUseCache()) {
+        CL_DEBUG1(wxT("Testing cache for: %s"), sql);
         if(m_cache.Get(sql, kinds, tags) == true) {
-            CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql.c_str());
+            CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql);
             return;
         }
     }
 
-    CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql.c_str());
-
+    CL_DEBUG1("Fetching from disk");
     try {
         wxSQLite3ResultSet ex_rs;
         ex_rs = Query(sql);
@@ -634,9 +637,11 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
-
+    CL_DEBUG1("Fetching from disk...done");
     if(GetUseCache()) {
+        CL_DEBUG1("updating cache");
         m_cache.Store(sql, kinds, tags);
+        CL_DEBUG1("updating cache...done");
     }
 }
 

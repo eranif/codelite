@@ -132,6 +132,8 @@ DbgGdb::DbgGdb()
     , m_break_at_main(false)
     , m_attachedMode(false)
     , m_goingDown(false)
+    , m_reverseDebugging(false)
+    , m_isRecording(false)
     , m_internalBpId(wxNOT_FOUND)
 {
 #ifdef __WXMSW__
@@ -148,6 +150,13 @@ DbgGdb::DbgGdb()
         wxLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
     }
 #endif
+
+    // List of commands which supports the "--reverse" switch
+    m_reversableCommands.insert("-exec-continue");
+    m_reversableCommands.insert("-exec-step");
+    m_reversableCommands.insert("-exec-finish");
+    m_reversableCommands.insert("-exec-next");
+    m_reversableCommands.insert("-exec-next-instruction");
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &DbgGdb::OnDataRead, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &DbgGdb::OnProcessEnd, this);
@@ -239,9 +248,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
     m_gdbProcess = CreateAsyncProcess(this,
                                       cmd,
                                       // show console?
-                                          needs_console ?
-                                          IProcessCreateConsole :
-                                          IProcessCreateDefault,
+                                      needs_console ? IProcessCreateConsole : IProcessCreateDefault,
                                       si.cwd);
     if(!m_gdbProcess) {
         return false;
@@ -272,6 +279,11 @@ bool DbgGdb::WriteCommand(const wxString& command, DbgCmdHandler* handler)
     wxString cmd;
     wxString id = MakeId();
     cmd << id << command;
+
+    // Support for reverse debugging
+    if(IsReverseDebuggingEnabled() && m_reversableCommands.count(command)) {
+        cmd << " --reverse";
+    }
 
     if(!ExecuteCmd(cmd)) {
         CL_WARNING("Failed to send command: %s", cmd);
@@ -306,11 +318,9 @@ bool DbgGdb::Run(const wxString& args, const wxString& comm)
 
 void DbgGdb::DoCleanup()
 {
-    if(m_gdbProcess) {
-        delete m_gdbProcess;
-        m_gdbProcess = NULL;
-    }
-
+    wxDELETE(m_gdbProcess);
+    SetIsRecording(false);
+    m_reverseDebugging = false;
     m_goingDown = false;
     m_attachedMode = false;
 
@@ -522,7 +532,7 @@ bool DbgGdb::SetCommands(const BreakpointInfo& bp)
     return WriteCommand(command, NULL);
 }
 
-bool DbgGdb::Continue() { return WriteCommand(wxT("-exec-continue"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
+bool DbgGdb::Continue() { return WriteCommand("-exec-continue", new DbgCmdHandlerAsyncCmd(m_observer, this)); }
 
 bool DbgGdb::StepIn() { return WriteCommand(wxT("-exec-step"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
 
@@ -1426,3 +1436,20 @@ bool DbgGdb::ListRegisters()
 {
     return WriteCommand("-data-list-register-names", new DbgCmdHandlerRegisterNames(m_observer, this));
 }
+
+void DbgGdb::EnableReverseDebugging(bool b) { m_reverseDebugging = b; }
+
+void DbgGdb::EnableRecording(bool b)
+{
+    if(b) {
+        WriteCommand("target record-full", new DbgCmdRecordHandler(m_observer, this));
+    } else {
+        WriteCommand("record stop", NULL);
+        
+        // If recording is OFF, disable the reverse-debugging switch
+        SetIsRecording(false);
+        m_reverseDebugging = false;
+    }
+}
+
+bool DbgGdb::IsReverseDebuggingEnabled() const { return m_reverseDebugging; }

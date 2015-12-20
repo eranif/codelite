@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2014 The CodeLite Team
+// copyright            : (C) 2014 Eran Ifrah
 // file name            : DiffConfig.cpp
 //
 // -------------------------------------------------------------------------
@@ -32,31 +32,30 @@ DiffConfig::DiffConfig()
 {
 }
 
-DiffConfig::~DiffConfig()
-{
-}
+DiffConfig::~DiffConfig() {}
 
 void DiffConfig::FromJSON(const JSONElement& json)
 {
-    m_flags     = json.namedObject("m_flags").toSize_t(0);
+    m_flags = json.namedObject("m_flags").toSize_t(0);
     m_viewFlags = json.namedObject("m_viewFlags").toSize_t(kViewVerticalSplit);
+    m_leftFile = json.namedObject("m_leftFile").toString();
+    m_rightFile = json.namedObject("m_rightFile").toString();
 }
 
 JSONElement DiffConfig::ToJSON() const
 {
     JSONElement element = JSONElement::createObject(GetName());
-    element.addProperty("m_flags",      m_flags);
-    element.addProperty("m_viewFlags",  m_viewFlags);
+    element.addProperty("m_flags", m_flags);
+    element.addProperty("m_viewFlags", m_viewFlags);
+    element.addProperty("m_leftFile", m_leftFile);
+    element.addProperty("m_rightFile", m_rightFile);
     return element;
 }
 
 DiffConfig& DiffConfig::Load()
 {
-    clConfig::Get().ReadItem( this );
+    clConfig::Get().ReadItem(this);
     return *this;
 }
 
-void DiffConfig::Save()
-{
-    clConfig::Get().WriteItem( this );
-}
+void DiffConfig::Save() { clConfig::Get().WriteItem(this); }

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2014 The CodeLite Team
+// copyright            : (C) 2014 Eran Ifrah
 // file name            : WelcomePage.cpp
 //
 // -------------------------------------------------------------------------
@@ -64,7 +64,7 @@ void WelcomePage::OnOpenWiki(wxCommandEvent& event)
 void WelcomePage::OnSize(wxSizeEvent& event)
 {
     event.Skip();
-    m_staticBitmap161->Refresh();
+    m_staticBitmap->Refresh();
 }
 
 void WelcomePage::OnShowFileseMenu(wxCommandEvent& event)

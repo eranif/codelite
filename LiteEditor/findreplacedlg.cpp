@@ -91,13 +91,12 @@ bool FindReplaceDialog::Create(wxWindow* parent,
     CreateGUIControls();
     ConnectEvents();
     
-    CentreOnParent();
     SetName("FindAndReplaceDialog");
     WindowAttrManager::Load(this);
     GetSizer()->Fit(this);
     SetMinClientSize(GetSize());
-
     m_findString->SetFocus();
+    CentreOnParent();
     return true;
 }
 

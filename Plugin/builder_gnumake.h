@@ -39,58 +39,68 @@ class WXDLLIMPEXP_SDK BuilderGnuMake : public Builder
 {
     size_t m_objectChunks;
     Project::FileInfoVector_t m_projectFilesMetadata;
-    
+
 public:
     BuilderGnuMake();
-    BuilderGnuMake(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions);
+    BuilderGnuMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
     virtual ~BuilderGnuMake();
 
     // Implement the Builder Interface
-    virtual bool     Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force, wxString &errMsg);
-    virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild);
-    virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild);
-    virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild);
-    virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild);
-    virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName);
-    virtual wxString GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg);
-    virtual wxString GetPORebuildCommand(const wxString &project, const wxString &confToBuild);
+    virtual bool Export(
+        const wxString& project, const wxString& confToBuild, bool isProjectOnly, bool force, wxString& errMsg);
+    virtual wxString GetBuildCommand(const wxString& project, const wxString& confToBuild);
+    virtual wxString GetCleanCommand(const wxString& project, const wxString& confToBuild);
+    virtual wxString GetPOBuildCommand(const wxString& project, const wxString& confToBuild);
+    virtual wxString GetPOCleanCommand(const wxString& project, const wxString& confToBuild);
+    virtual wxString GetSingleFileCmd(const wxString& project, const wxString& confToBuild, const wxString& fileName);
+    virtual wxString GetPreprocessFileCmd(
+        const wxString& project, const wxString& confToBuild, const wxString& fileName, wxString& errMsg);
+    virtual wxString GetPORebuildCommand(const wxString& project, const wxString& confToBuild);
 
 protected:
-    virtual void CreateListMacros(ProjectPtr proj, const wxString &confToBuild, wxString &text);
-    void CreateSrcList(ProjectPtr proj, const wxString &confToBuild, wxString &text);
-    void CreateObjectList(ProjectPtr proj, const wxString &confToBuild, wxString &text);
-    virtual void CreateLinkTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text, wxString &targetName, const wxString &projName, const wxArrayString &depsProj);
-    virtual void CreateFileTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
-    void CreateCleanTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
+    virtual void CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text);
+    void CreateSrcList(ProjectPtr proj, const wxString& confToBuild, wxString& text);
+    void CreateObjectList(ProjectPtr proj, const wxString& confToBuild, wxString& text);
+    virtual void CreateLinkTargets(const wxString& type,
+        BuildConfigPtr bldConf,
+        wxString& text,
+        wxString& targetName,
+        const wxString& projName,
+        const wxArrayString& depsProj);
+    virtual void CreateFileTargets(ProjectPtr proj, const wxString& confToBuild, wxString& text);
+    void CreateCleanTargets(ProjectPtr proj, const wxString& confToBuild, wxString& text);
     // Override default methods defined in the builder interface
-    virtual wxString GetBuildToolCommand(const wxString& project, const wxString& confToBuild, bool isCommandlineCommand) const;
-    
-    bool SendBuildEvent(int eventId, const wxString &projectName, const wxString &configurationName);
-    
+    virtual wxString GetBuildToolCommand(
+        const wxString& project, const wxString& confToBuild, bool isCommandlineCommand) const;
+
+    bool SendBuildEvent(int eventId, const wxString& projectName, const wxString& configurationName);
+
 private:
-    void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force, const wxArrayString &depsProj);
-    void CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString &text);
-    void CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString &targetName, wxString &text);
-    void CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text, const wxString &projName);
-    void CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text);
-    void CreatePostBuildEvents(BuildConfigPtr bldConf, wxString &text);
-    void CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxString &text);
-    void CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString &text);
-    void CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString &text);
+    void GenerateMakefile(ProjectPtr proj, const wxString& confToBuild, bool force, const wxArrayString& depsProj);
+    void CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text);
+    void CreateMakeDirsTarget(ProjectPtr proj, BuildConfigPtr bldConf, const wxString& targetName, wxString& text);
+    void CreateTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text, const wxString& projName);
+    void CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text);
+    void CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text);
+    void CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxString& text);
+    void CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString& text);
+    void CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString& text);
 
-    wxString GetCdCmd(const wxFileName &path1, const wxFileName &path2);
+    wxString GetCdCmd(const wxFileName& path1, const wxFileName& path2);
 
-    wxString ParseIncludePath(const wxString &paths, const wxString &projectName, const wxString &selConf);
-    wxString ParseLibPath(const wxString &paths, const wxString &projectName, const wxString &selConf);
-    wxString ParseLibs(const wxString &libs);
-    wxString ParsePreprocessor(const wxString &prep);
+    wxString ParseIncludePath(const wxString& paths, const wxString& projectName, const wxString& selConf);
+    wxString ParseLibPath(const wxString& paths, const wxString& projectName, const wxString& selConf);
+    wxString ParseLibs(const wxString& libs);
+    wxString ParsePreprocessor(const wxString& prep);
     bool HasPrebuildCommands(BuildConfigPtr bldConf) const;
     bool HasPostbuildCommands(BuildConfigPtr bldConf) const;
 
-    wxString GetProjectMakeCommand(const wxFileName &wspfile, const wxFileName& projectPath, ProjectPtr proj, const wxString &confToBuild);
-    wxString GetProjectMakeCommand(ProjectPtr proj, const wxString &confToBuild, const wxString &target, bool addCleanTarget, bool cleanOnly);
-    wxString DoGetCompilerMacro(const wxString &filename);
-    wxString DoGetTargetPrefix(const wxFileName &filename, const wxString &cwd, CompilerPtr cmp);
-    wxString DoGetMarkerFileDir(const wxString &projname, const wxString &projectPath = "");
+    wxString GetProjectMakeCommand(
+        const wxFileName& wspfile, const wxFileName& projectPath, ProjectPtr proj, const wxString& confToBuild);
+    wxString GetProjectMakeCommand(
+        ProjectPtr proj, const wxString& confToBuild, const wxString& target, bool addCleanTarget, bool cleanOnly);
+    wxString DoGetCompilerMacro(const wxString& filename);
+    wxString DoGetTargetPrefix(const wxFileName& filename, const wxString& cwd, CompilerPtr cmp);
+    wxString DoGetMarkerFileDir(const wxString& projname, const wxString& projectPath = "");
 };
 #endif // BUILDER_GNUMAKE_H

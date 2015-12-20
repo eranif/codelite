@@ -57,7 +57,7 @@ EditorSettingsCommentsBase::EditorSettingsCommentsBase(wxWindow* parent, wxWindo
     
     boxSizer4->Add(m_checkBoxContCComment, 0, wxALL, 5);
     
-    m_checkBoxContinueCppComment = new wxCheckBox(this, wxID_ANY, _("Hitting <ENTER> in a C++ style comment section automatically adds a'//' to the next line"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxContinueCppComment = new wxCheckBox(this, wxID_ANY, _("Hitting <ENTER> in a C++ style comment section automatically adds a '//' to the next line"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxContinueCppComment->SetValue(false);
     
     boxSizer4->Add(m_checkBoxContinueCppComment, 0, wxALL, 5);
@@ -80,7 +80,7 @@ EditorSettingsCommentsBase::EditorSettingsCommentsBase(wxWindow* parent, wxWindo
     bSizer2->Add(bSizer3, 0, wxALL|wxALIGN_LEFT, 5);
     
     m_staticText1 = new wxStaticText(this, wxID_ANY, _("Code navigation key:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_staticText1->SetToolTip(_("When using quick code navigation use this keys in combination with mouse click\nTo quickly go to implementation / declaration"));
+    m_staticText1->SetToolTip(_("When using quick code navigation use this keys in combination with mouse click\nTo quickly go to implementation/declaration.\nNote that at least one box must be ticked, or it would be triggered by every left-click."));
     
     bSizer3->Add(m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -89,7 +89,7 @@ EditorSettingsCommentsBase::EditorSettingsCommentsBase(wxWindow* parent, wxWindo
     bSizer3->Add(m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_checkBoxCtrl = new wxCheckBox(this, wxID_ANY, _("Ctrl"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxCtrl->SetValue(false);
+    m_checkBoxCtrl->SetValue(true);
     
     bSizer3->Add(m_checkBoxCtrl, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -100,10 +100,9 @@ EditorSettingsCommentsBase::EditorSettingsCommentsBase(wxWindow* parent, wxWindo
     
     SetName(wxT("EditorSettingsCommentsBase"));
     SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
 }
 
 EditorSettingsCommentsBase::~EditorSettingsCommentsBase()

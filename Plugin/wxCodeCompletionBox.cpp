@@ -143,7 +143,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 {
     // Paint the background colour
     wxAutoBufferedPaintDC dc(m_canvas);
-
+    
     // Invalidate all item rects before we draw them
     for(size_t i = 0; i < m_entries.size(); ++i) {
         m_entries.at(i)->m_itemRect = wxRect();
@@ -213,7 +213,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         wxCodeCompletionBoxEntry::Ptr_t entry = m_entries.at(i);
         if(entry->GetImgIndex() != wxNOT_FOUND && entry->GetImgIndex() < (int)m_bitmaps.size()) {
             const wxBitmap& bmp = m_bitmaps.at(entry->GetImgIndex());
-            wxCoord bmpY = ((singleLineHeight - bmp.GetHeight()) / 2) + itemRect.y;
+            wxCoord bmpY = ((singleLineHeight - bmp.GetScaledHeight()) / 2) + itemRect.y;
             dc.DrawBitmap(bmp, 2, bmpY);
         }
 

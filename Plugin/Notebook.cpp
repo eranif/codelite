@@ -42,19 +42,15 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
-wxDEFINE_EVENT(wxEVT_BOOK_TAB_RCLICK, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
+wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 
 #define IS_VERTICAL_TABS(style) ((style & kNotebook_RightTabs) || (style & kNotebook_LeftTabs))
 
 extern void Notebook_Init_Bitmaps();
-
-static int GetBitmapWidth(const wxBitmap& bmp) { return bmp.GetWidth() / bmp.GetScaleFactor(); }
-
-static int GetBitmapHeight(const wxBitmap& bmp) { return bmp.GetHeight() / bmp.GetScaleFactor(); }
 
 Notebook::Notebook(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
@@ -473,8 +469,8 @@ void clTabInfo::CalculateOffsets(size_t style)
     if(m_bitmap.IsOk()) {
         m_bmpX = m_width;
         m_width += X_SPACER;
-        m_width += GetBitmapWidth(m_bitmap);
-        m_bmpY = ((m_height - GetBitmapHeight(m_bitmap)) / 2);
+        m_width += m_bitmap.GetScaledWidth();
+        m_bmpY = ((m_height - m_bitmap.GetScaledHeight()) / 2);
     }
 
     // Text
@@ -655,9 +651,9 @@ void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event)
 {
     if(GetStyle() & kNotebook_EnableNavigationEvent) {
 #ifdef __WXOSX__
-        if(event.AltDown()) 
+        if(event.AltDown())
 #else
-        if(event.CmdDown()) 
+        if(event.CmdDown())
 #endif
         {
             switch(event.GetUnicodeKey()) {
@@ -705,7 +701,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     if((GetStyle() & kNotebook_ShowFileListButton)) {
         if(IsVerticalTabs()) {
             rect.SetHeight(rect.GetHeight() - 16);
-            m_chevronRect = wxRect(rect.GetBottomLeft(), wxSize(rect.GetWidth(), 20));
+            m_chevronRect = wxRect(rect.GetTopLeft(), wxSize(rect.GetWidth(), 20));
             if(GetStyle() & kNotebook_RightTabs) {
                 m_chevronRect.x += clTabInfo::BOTTOM_AREA_HEIGHT;
             } else {
@@ -809,10 +805,10 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
-            wxCoord chevronX =
-                m_chevronRect.GetTopLeft().x + ((m_chevronRect.GetWidth() - GetBitmapWidth(m_colours.chevronDown)) / 2);
+            wxCoord chevronX = m_chevronRect.GetTopLeft().x +
+                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                               ((m_chevronRect.GetHeight() - GetBitmapHeight(m_colours.chevronDown)) / 2);
+                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -1441,16 +1437,23 @@ void clTabCtrl::SetMenu(wxMenu* menu)
 void clTabCtrl::OnContextMenu(wxContextMenuEvent& event)
 {
     event.Skip();
-    if(!m_contextMenu) return;
 
     wxPoint pt = ::wxGetMousePosition();
     pt = ScreenToClient(pt);
     int realPos, tabHit;
     TestPoint(pt, realPos, tabHit);
 
-    if((realPos != wxNOT_FOUND) && (realPos == GetSelection())) {
+    if((realPos != wxNOT_FOUND)) {
         // Show context menu for active tabs only
-        PopupMenu(m_contextMenu);
+        if(m_contextMenu && (realPos == GetSelection())) {
+            PopupMenu(m_contextMenu);
+        } else {
+            // fire an event for the selected tab
+            wxBookCtrlEvent menuEvent(wxEVT_BOOK_TAB_CONTEXT_MENU);
+            menuEvent.SetEventObject(this);
+            menuEvent.SetSelection(realPos);
+            GetParent()->GetEventHandler()->ProcessEvent(menuEvent);
+        }
     }
 }
 
@@ -1800,31 +1803,7 @@ bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
     return false;
 }
 
-void clTabCtrl::OnRightUp(wxMouseEvent& event)
-{
-    event.Skip();
-    if((GetStyle() & kNotebook_ShowFileListButton) && m_chevronRect.Contains(event.GetPosition())) {
-        return;
-    }
-
-    int tabHit, realPos;
-    TestPoint(event.GetPosition(), realPos, tabHit);
-
-    // Did we hit the active tab?
-    bool clickWasOnActiveTab = (GetSelection() == realPos);
-    if(clickWasOnActiveTab && m_contextMenu) {
-        // don't fire this event, we already got a context menu for the active tab
-        return;
-    }
-
-    if(tabHit != wxNOT_FOUND) {
-        // Fire RCLICK event
-        wxBookCtrlEvent event(wxEVT_BOOK_TAB_RCLICK);
-        event.SetEventObject(GetParent());
-        event.SetSelection(realPos);
-        GetParent()->GetEventHandler()->AddPendingEvent(event);
-    }
-}
+void clTabCtrl::OnRightUp(wxMouseEvent& event) { event.Skip(); }
 
 // ----------------------------------------------------------------------
 // clTabHistory

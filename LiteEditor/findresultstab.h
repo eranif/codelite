@@ -43,6 +43,7 @@ typedef std::map<int, SearchResult> MatchInfo_t;
 
 class FindResultsTab : public OutputTabWindow
 {
+protected:
     SearchData m_searchData;
     wxString m_searchTitle;
     std::list<int> m_indicators;

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// Copyright            : (C) 2015 The CodeLite Team
+// Copyright            : (C) 2015 Eran Ifrah
 // File name            : localsview.h
 //
 // -------------------------------------------------------------------------
@@ -34,26 +34,27 @@
 class LocalsView : public LocalsViewBase
 {
     /// Set if items that are expanded in the current locals view
-    wxStringSet_t       m_localsExpandedItemsFullname;
+    wxStringSet_t m_localsExpandedItemsFullname;
     wxDataViewItemArray m_localsExpandedItems;
     std::map<wxString, wxDataViewItem> m_waitingExpand;
-    
-    
+
 public:
     LocalsView(wxWindow* parent);
     virtual ~LocalsView();
-    
+
 protected:
+    virtual void OnLocalsMenu(wxDataViewEvent& event);
     virtual void OnLocalExpanding(wxDataViewEvent& event);
     virtual void OnLocalCollapsed(wxDataViewEvent& event);
     virtual void OnLocalExpanded(wxDataViewEvent& event);
-    
+    void OnCopyValue(wxCommandEvent& event);
+
     wxString DoGetItemClientData(const wxDataViewItem& item) const;
-    
+
     void OnLocalsUpdated(XDebugEvent& e);
-    void OnXDebugSessionEnded(XDebugEvent &e);
-    void OnXDebugSessionStarted(XDebugEvent &e);
-    void OnProperytGet(XDebugEvent &e);
+    void OnXDebugSessionEnded(XDebugEvent& e);
+    void OnXDebugSessionStarted(XDebugEvent& e);
+    void OnProperytGet(XDebugEvent& e);
     void AppendVariablesToTree(const wxDataViewItem& parent, const XVariable::List_t& children);
 };
 #endif // LOCALSVIEW_H

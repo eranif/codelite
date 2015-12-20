@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// Copyright            : (C) 2015 The CodeLite Team
+// Copyright            : (C) 2015 Eran Ifrah
 // File name            : wordcompletion.h
 //
 // -------------------------------------------------------------------------
@@ -35,13 +35,12 @@
 class WordCompletionDictionary;
 class WordCompletionPlugin : public IPlugin
 {
-    WordCompletionImages m_images;
     WordCompletionDictionary* m_dictionary;
-    
+
 public:
     void OnWordComplete(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
-        
+
 public:
     WordCompletionPlugin(IManager* manager);
     ~WordCompletionPlugin();

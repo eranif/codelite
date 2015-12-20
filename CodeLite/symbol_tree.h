@@ -45,7 +45,7 @@ class WXDLLIMPEXP_CL MyTreeItemData : public wxTreeItemData
 private:
     wxString m_fileName;
     wxString m_pattern;
-    int      m_lineno;
+    int m_lineno;
 
 public:
     /**
@@ -54,18 +54,15 @@ public:
      * \param pattern search pattern for this item in the file
      */
     MyTreeItemData(const wxString& filename, const wxString& pattern, int lineno = wxNOT_FOUND)
-        : m_fileName(filename), m_pattern(pattern), m_lineno(lineno)
-    {}
+        : m_fileName(filename)
+        , m_pattern(pattern)
+        , m_lineno(lineno)
+    {
+    }
 
-    const wxString &GetFileName() const {
-        return m_fileName;
-    }
-    const wxString &GetPattern() const {
-        return m_pattern;
-    }
-    const int GetLine() const {
-        return m_lineno;
-    }
+    const wxString& GetFileName() const { return m_fileName; }
+    const wxString& GetPattern() const { return m_pattern; }
+    int GetLine() const { return m_lineno; }
 };
 
 /**
@@ -88,7 +85,7 @@ protected:
     std::map<wxString, void*> m_items;
     TagTreePtr m_tree;
     TagEntryPtrVector_t m_currentTags;
-    
+
 public:
     /**
      * Default cosntructor.
@@ -103,7 +100,11 @@ public:
      * \param size Window size
      * \param style Window style
      */
-    SymbolTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+    SymbolTree(wxWindow* parent,
+        const wxWindowID id,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize,
+        long style = 0);
 
     /**
      * @brief clear the tree content
@@ -123,14 +124,18 @@ public:
      * \param size Window size
      * \param style Window style
      */
-    virtual void Create(wxWindow *parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
+    virtual void Create(wxWindow* parent,
+        const wxWindowID id,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize,
+        long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
 
     /**
      * Construct a outline tree for fileName
      * possible return values:
-     * 
+     *
      */
-    virtual void BuildTree(const wxFileName &fileName, TagEntryPtrVector_t* tags = NULL);
+    virtual void BuildTree(const wxFileName& fileName, TagEntryPtrVector_t* tags = NULL);
 
     /**
      * User provided icons for the symbols tree.
@@ -151,36 +156,33 @@ public:
      * -# macro
      * -# enum
      *
-     * \note Due to ctags limitation, only 'function' is mentioned here, there is no function_protected, function_private, etc
+     * \note Due to ctags limitation, only 'function' is mentioned here, there is no function_protected,
+     * function_private, etc
      * since when coming to implementation (not prototypes!), all functions will receive 'public' icon.
      * \param images Image list (allocated on the heap), this class becomes the owner of this image list
      */
-    virtual void SetSymbolsImages(wxImageList *images) {
-        AssignImageList(images);
-    };
+    virtual void SetSymbolsImages(wxImageList* images) { AssignImageList(images); };
 
-    void AddSymbols(const std::vector<std::pair<wxString, TagEntry> > &items);
-    void DeleteSymbols(const std::vector<std::pair<wxString, TagEntry> > &items);
-    void UpdateSymbols(const std::vector<std::pair<wxString, TagEntry> > &items);
+    void AddSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
+    void DeleteSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
+    void UpdateSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
 
     /**
      * return the file name assocaited with this symbol tree
      */
-    const wxFileName &GetFilename() const {
-        return m_fileName;
-    }
+    const wxFileName& GetFilename() const { return m_fileName; }
 
     /**
      * \brief select item by its name and select it. If multiple matches
      * fits 'name' the first one is selected
      * \param name disply name of the item to be selected (can be partial name)
      */
-    void SelectItemByName(const wxString &name);
-    
+    void SelectItemByName(const wxString& name);
+
 protected:
     bool Matches(const wxTreeItemId& item, const wxString& patter);
 
-    void GetItemChildrenRecursive(wxTreeItemId& parent, std::map<void*, bool> &deletedMap);
+    void GetItemChildrenRecursive(wxTreeItemId& parent, std::map<void*, bool>& deletedMap);
 
     /**
      * Add an item to the gui tree.
@@ -194,7 +196,7 @@ protected:
      * \param access One of $public$, $private$, $protected$, or $wxEmptyString$
      * \return icon index
      */
-    int GetItemIconIndex(const wxString &kind, const wxString &access = wxEmptyString);
+    int GetItemIconIndex(const wxString& kind, const wxString& access = wxEmptyString);
 
     /**
      * Initialise the image: icon index map.
@@ -205,7 +207,7 @@ protected:
      * Sort the tree.
      * \param nodes Vector of nodes to sort
      */
-    void SortTree(std::map<void*, bool> & nodes);
+    void SortTree(std::map<void*, bool>& nodes);
 
     /**
      * Override this function in the derived class to change the sort order of the items in the tree control.

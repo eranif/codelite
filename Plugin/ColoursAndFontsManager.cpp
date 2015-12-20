@@ -200,13 +200,22 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     wxString themeName = lexer->GetThemeName();
     themeName = themeName.Mid(0, 1).Capitalize() + themeName.Mid(1);
     lexer->SetThemeName(themeName);
-
+    
+    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
+    }
+    
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
         lexer->SetFileSpec("*.java");
     }
-
+    
+    // Append *.sqlite to the SQL lexer if missing
+    if(lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.sqlite");
+    }
+    
     // Hack2: since we now provide our own PHP and javaScript lexer, remove the PHP/JS extensions from
     // the HTML lexer
     if(lexer->GetName() == "html" && (lexer->GetFileSpec().Contains(".php") || lexer->GetFileSpec().Contains("*.js"))) {
@@ -226,7 +235,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-
+    
+    if(lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(4) + " <?php <? ", 4);
+    }
+    
     // Add wxcp file extension to the JavaScript lexer
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
@@ -719,10 +732,20 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     lexer->SetThemeName(themeName);
 
     CL_DEBUG("Loading lexer: %s [%s]", lexerName, lexer->GetName());
+    
+    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
+    }
+
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
         lexer->SetFileSpec("*.java");
+    }
+    
+    // Append *.sqlite to the SQL lexer if missing
+    if(lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.sqlite");
     }
 
     // Hack2: since we now provide our own PHP and javaScript lexer, remove the PHP/JS extensions from
@@ -748,6 +771,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
+    }
+    
+    if(lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(4) + " <?php <? ", 4);
     }
 
     // Add wxcp file extension to the JavaScript lexer

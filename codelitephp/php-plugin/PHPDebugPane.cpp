@@ -23,7 +23,7 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_BREAKPOINTS_UPDATED, &PHPDebugPane::OnRefreshBreakpointsView, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PHPDebugPane::OnXDebugSessionEnded, this);
     m_console = new TerminalEmulatorUI(m_auiBook);
-    
+
     m_auiBook->AddPage(m_console, _("Console"), true);
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
     if(phpLexer) {
@@ -50,12 +50,12 @@ void PHPDebugPane::OnUpdateStackTrace(XDebugEvent& e)
         wxArrayString elements = ::wxStringTokenize(calls.Item(i), "|", wxTOKEN_RET_EMPTY);
         if(elements.GetCount() == 4) {
             wxVector<wxVariant> cols;
-            cols.push_back(::MakeIconText(elements.Item(0),
-                                          ((int)i == e.GetInt()) ? m_images.Bitmap("m_bmpArrowActive") :
-                                                                   m_images.Bitmap("m_bmpArrowDisabled"))); // Level
-            cols.push_back(elements.Item(1));                                                               // Where
-            cols.push_back(::URIToFileName(elements.Item(2)));                                              // File
-            cols.push_back(elements.Item(3));                                                               // Line
+            cols.push_back(
+                ::MakeIconText(elements.Item(0),
+                               ((int)i == e.GetInt()) ? m_images.Bitmap("m_bmpArrowActive") : wxNullBitmap)); // Level
+            cols.push_back(elements.Item(1));                                                                 // Where
+            cols.push_back(::URIToFileName(elements.Item(2)));                                                // File
+            cols.push_back(elements.Item(3));                                                                 // Line
             m_dvListCtrlStackTrace->AppendItem(cols);
         }
     }
@@ -138,11 +138,11 @@ XDebugBreakpoint PHPDebugPane::GetBreakpoint(const wxDataViewItem& item) const
 void PHPDebugPane::OnRefreshBreakpointsView(XDebugEvent& e)
 {
     e.Skip();
-    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("php");
-    if(lex) {
-        m_dvListCtrlBreakpoints->SetFont(lex->GetFontForSyle(wxSTC_HPHP_DEFAULT));
-        m_dvListCtrlStackTrace->SetFont(lex->GetFontForSyle(wxSTC_HPHP_DEFAULT));
-    }
+    // LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("php");
+    // if(lex) {
+    //     m_dvListCtrlBreakpoints->SetFont(lex->GetFontForSyle(wxSTC_HPHP_DEFAULT));
+    //     m_dvListCtrlStackTrace->SetFont(lex->GetFontForSyle(wxSTC_HPHP_DEFAULT));
+    // }
 
     // Load the breakpoints table
     m_dvListCtrlBreakpoints->DeleteAllItems();
@@ -200,4 +200,7 @@ void PHPDebugPane::OnXDebugSessionStarting(XDebugEvent& event)
     if(phpLexer) {
         phpLexer->Apply(m_console->GetTerminalOutputWindow());
     }
+}
+void PHPDebugPane::OnCallStackMenu(wxDataViewEvent& event)
+{
 }

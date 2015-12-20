@@ -26,7 +26,7 @@ static unsigned char xml_res_file_0[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,32,120,109,108,110,115,61,34,104,116,116,112,58,
-47,47,119,119,119,46,119,120,119,105,110,100,111,119,115,46,111,114,103,
+47,47,119,119,119,46,119,120,119,105,100,103,101,116,115,46,111,114,103,
 47,119,120,120,114,99,34,47,62,10};
 
 void wxCD0F0InitBitmapResources()
@@ -42,6 +42,6 @@ void wxCD0F0InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/editor_options_comments_base_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_editor_options_comments_base_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/editor_options_comments_base_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_editor_options_comments_base_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/editor_options_comments_base_liteeditor_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_LiteEditor_editor_options_comments_base_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/editor_options_comments_base_liteeditor_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_LiteEditor_editor_options_comments_base_liteeditor_bitmaps.xrc"));
 }

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2014 The CodeLite Team
+// copyright            : (C) 2014 Eran Ifrah
 // file name            : ps_build_events_page.cpp
 //
 // -------------------------------------------------------------------------
@@ -29,15 +29,14 @@
 #include "macros.h"
 #include "globals.h"
 
-PSBuildEventsPage::PSBuildEventsPage( wxWindow* parent, bool preEvents, ProjectSettingsDlg* dlg )
-    : PSBuildEventsBasePage( parent )
+PSBuildEventsPage::PSBuildEventsPage(wxWindow* parent, bool preEvents, ProjectSettingsDlg* dlg)
+    : PSBuildEventsBasePage(parent)
     , m_isPreEvents(preEvents)
     , m_dlg(dlg)
 {
-
 }
 
-void PSBuildEventsPage::OnCmdEvtVModified( wxCommandEvent& event )
+void PSBuildEventsPage::OnCmdEvtVModified(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_dlg->SetIsDirty(true);
@@ -61,7 +60,7 @@ void PSBuildEventsPage::Load(BuildConfigPtr buildConf)
     m_staticText11->SetLabel(text);
     BuildCommandList::const_iterator iter = buildCmds.begin();
     m_textCtrlBuildEvents->Clear();
-    for (; iter != buildCmds.end(); iter ++) {
+    for(; iter != buildCmds.end(); iter++) {
         wxString cmdText = iter->GetCommand();
         cmdText.Trim().Trim(false);
         if(iter->GetEnabled() == false && !cmdText.StartsWith(wxT("#"))) {
@@ -71,14 +70,15 @@ void PSBuildEventsPage::Load(BuildConfigPtr buildConf)
         m_textCtrlBuildEvents->AppendText(cmdText);
     }
 
-    m_textCtrlBuildEvents->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSBuildEventsPage::OnCmdEvtVModified ), NULL, this );
+    m_textCtrlBuildEvents->Connect(
+        wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSBuildEventsPage::OnCmdEvtVModified), NULL, this);
 }
 
 void PSBuildEventsPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
     BuildCommandList cmds;
     wxArrayString commands = ::SplitString(m_textCtrlBuildEvents->GetValue(), true);
-    for (size_t i=0; i<commands.GetCount(); i++) {
+    for(size_t i = 0; i < commands.GetCount(); i++) {
         wxString command = commands.Item(i).Trim().Trim(false);
         bool enabled = !command.StartsWith(wxT("#"));
         BuildCommand cmd(command, enabled);
@@ -93,11 +93,5 @@ void PSBuildEventsPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSe
     }
 }
 
-void PSBuildEventsPage::Clear()
-{
-    m_textCtrlBuildEvents->Clear();
-}
-void PSBuildEventsPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dlg->IsProjectEnabled());
-}
+void PSBuildEventsPage::Clear() { m_textCtrlBuildEvents->Clear(); }
+void PSBuildEventsPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }

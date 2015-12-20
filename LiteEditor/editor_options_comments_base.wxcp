@@ -566,7 +566,7 @@
             }, {
              "type": "string",
              "m_label": "Label:",
-             "m_value": "Hitting <ENTER> in a C++ style comment section automatically adds a'//' to the next line"
+             "m_value": "Hitting <ENTER> in a C++ style comment section automatically adds a '//' to the next line"
             }, {
              "type": "bool",
              "m_label": "Value:",
@@ -799,7 +799,7 @@
             }, {
              "type": "multi-string",
              "m_label": "Tooltip:",
-             "m_value": "When using quick code navigation use this keys in combination with mouse click\\nTo quickly go to implementation / declaration"
+             "m_value": "When using quick code navigation use this keys in combination with mouse click\\nTo quickly go to implementation/declaration.\\nNote that at least one box must be ticked, or it would be triggered by every left-click."
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",
@@ -993,7 +993,7 @@
             }, {
              "type": "bool",
              "m_label": "Value:",
-             "m_value": false
+             "m_value": true
             }],
            "m_events": [],
            "m_children": []

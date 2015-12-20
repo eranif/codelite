@@ -214,3 +214,15 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+*.o
+*.mk
+*.d
+*.dll
+Makefile
+*.a
+.*/*
+*/.*/*
+*.exe
+
+*.gch
+*.txt

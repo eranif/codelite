@@ -1272,7 +1272,7 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
 void clMainFrame::CreateToolbars24()
 {
     wxAuiPaneInfo info;
-    wxWindow* toolbar_parent(this);
+    wxWindow* toolbar_parent(m_mainPanel);
 
     //----------------------------------------------
     // create the standard toolbar
@@ -1593,7 +1593,7 @@ void clMainFrame::CreateToolbars16()
     //----------------------------------------------
     // create the standard toolbar
     //----------------------------------------------
-    wxWindow* toolbar_parent(this);
+    wxWindow* toolbar_parent(m_mainPanel);
 
     clToolBar* tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
     tb->SetArtProvider(new CLMainAuiTBArt());

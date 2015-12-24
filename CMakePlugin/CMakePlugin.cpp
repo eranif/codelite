@@ -323,6 +323,7 @@ wxArrayString CMakePlugin::GetSupportedGenerators() const
 #ifdef __WXMSW__
     // Windows supported generators
     generators.Add("MinGW Makefiles");
+	generators.Add("NMake Makefiles");
 #else
     // Linux / Mac supported generators
     generators.Add("Unix Makefiles");

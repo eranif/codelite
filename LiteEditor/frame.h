@@ -121,6 +121,7 @@ class clMainFrame : public wxFrame
 
     // Printing
     wxPrintDialogData m_printDlgData;
+    wxToolBar* m_mainToolBar;
 
 public:
     static bool m_initCompleted;
@@ -290,13 +291,12 @@ public:
 private:
     // make our frame's constructor private
     clMainFrame(wxWindow* pParent,
-                wxWindowID id,
-                const wxString& title,
-                const wxPoint& pos,
-                const wxSize& size,
-                long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU |
-                             wxRESIZE_BORDER |
-                             wxCLIP_CHILDREN);
+        wxWindowID id,
+        const wxString& title,
+        const wxPoint& pos,
+        const wxSize& size,
+        long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER |
+            wxCLIP_CHILDREN);
     wxString CreateWorkspaceTable();
     wxString CreateFilesTable();
     void StartTimer();
@@ -330,6 +330,8 @@ private:
     void CreateNativeToolbar16();
     void ToggleToolBars(bool all);
 
+    void SetToolBar(wxToolBar* tb);
+
     void ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event);
     void CreateRecentlyOpenedFilesMenu();
     void CreateWelcomePage();
@@ -346,6 +348,7 @@ private:
 public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
+    wxToolBar* GetMainToolBar() const { return m_mainToolBar; }
 
 protected:
     //----------------------------------------------------

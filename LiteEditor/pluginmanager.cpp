@@ -895,9 +895,9 @@ void PluginManager::ShowToolBar(bool show)
 }
 bool PluginManager::IsToolBarShown() const
 {
-    if(clMainFrame::Get()->GetToolBar()) {
+    if(clMainFrame::Get()->GetMainToolBar()) {
         // we have native toolbar
-        return clMainFrame::Get()->GetToolBar()->IsShown();
+        return clMainFrame::Get()->GetMainToolBar()->IsShown();
     }
     return false;
 }

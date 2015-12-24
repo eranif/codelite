@@ -296,13 +296,13 @@ bool WebTools::InsideJSComment(IEditor* editor)
     if(FileExtManager::IsJavascriptFile(editor->GetFileName())) {
         // Use the Cxx macros
         return styleAtCurPos == wxSTC_C_COMMENT || styleAtCurPos == wxSTC_C_COMMENTLINE ||
-               styleAtCurPos == wxSTC_C_COMMENTDOC || styleAtCurPos == wxSTC_C_COMMENTLINEDOC ||
-               styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORD || styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORDERROR ||
-               styleAtCurPos == wxSTC_C_PREPROCESSORCOMMENT;
+            styleAtCurPos == wxSTC_C_COMMENTDOC || styleAtCurPos == wxSTC_C_COMMENTLINEDOC ||
+            styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORD || styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORDERROR ||
+            styleAtCurPos == wxSTC_C_PREPROCESSORCOMMENT;
     } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return styleAtCurPos == wxSTC_HJ_COMMENT || styleAtCurPos == wxSTC_HJ_COMMENTLINE ||
-                   styleAtCurPos == wxSTC_HJ_COMMENTDOC;
+                styleAtCurPos == wxSTC_HJ_COMMENTDOC;
         }
     }
     return false;
@@ -315,12 +315,12 @@ bool WebTools::InsideJSString(IEditor* editor)
     if(FileExtManager::IsJavascriptFile(editor->GetFileName())) {
         // Use the Cxx macros
         return styleAtCurPos == wxSTC_C_STRING || styleAtCurPos == wxSTC_C_CHARACTER ||
-               styleAtCurPos == wxSTC_C_STRINGEOL || styleAtCurPos == wxSTC_C_STRINGRAW ||
-               styleAtCurPos == wxSTC_C_HASHQUOTEDSTRING;
+            styleAtCurPos == wxSTC_C_STRINGEOL || styleAtCurPos == wxSTC_C_STRINGRAW ||
+            styleAtCurPos == wxSTC_C_HASHQUOTEDSTRING;
     } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return styleAtCurPos == wxSTC_HJ_DOUBLESTRING || styleAtCurPos == wxSTC_HJ_SINGLESTRING ||
-                   styleAtCurPos == wxSTC_HJ_STRINGEOL;
+                styleAtCurPos == wxSTC_HJ_STRINGEOL;
         }
     }
     return false;
@@ -371,18 +371,18 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
     event.Skip();
     m_savePerspective = clGetManager()->GetDockingManager()->SavePerspective();
 
+    wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
     // Show the debugger pane
     if(!m_nodejsDebuggerPane) {
-        m_nodejsDebuggerPane = new NodeJSDebuggerPane(EventNotifier::Get()->TopFrame());
-        clGetManager()->GetDockingManager()->AddPane(m_nodejsDebuggerPane,
-                                                     wxAuiPaneInfo()
-                                                         .Layer(5)
-                                                         .Name("nodejs_debugger")
-                                                         .Caption("Node.js Debugger")
-                                                         .CloseButton(false)
-                                                         .MaximizeButton()
-                                                         .Bottom()
-                                                         .Position(0));
+        m_nodejsDebuggerPane = new NodeJSDebuggerPane(parent);
+        clGetManager()->GetDockingManager()->AddPane(m_nodejsDebuggerPane, wxAuiPaneInfo()
+                                                                               .Layer(5)
+                                                                               .Name("nodejs_debugger")
+                                                                               .Caption("Node.js Debugger")
+                                                                               .CloseButton(false)
+                                                                               .MaximizeButton()
+                                                                               .Bottom()
+                                                                               .Position(0));
     }
 
     wxString layout;

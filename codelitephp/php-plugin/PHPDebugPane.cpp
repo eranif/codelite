@@ -50,12 +50,11 @@ void PHPDebugPane::OnUpdateStackTrace(XDebugEvent& e)
         wxArrayString elements = ::wxStringTokenize(calls.Item(i), "|", wxTOKEN_RET_EMPTY);
         if(elements.GetCount() == 4) {
             wxVector<wxVariant> cols;
-            cols.push_back(
-                ::MakeIconText(elements.Item(0),
-                               ((int)i == e.GetInt()) ? m_images.Bitmap("m_bmpArrowActive") : wxNullBitmap)); // Level
-            cols.push_back(elements.Item(1));                                                                 // Where
-            cols.push_back(::URIToFileName(elements.Item(2)));                                                // File
-            cols.push_back(elements.Item(3));                                                                 // Line
+            cols.push_back(::MakeIconText(elements.Item(0),
+                ((int)i == e.GetInt()) ? m_images.Bitmap("m_bmpArrowActive") : wxNullBitmap)); // Level
+            cols.push_back(elements.Item(1));                                                  // Where
+            cols.push_back(::URIToFileName(elements.Item(2)));                                 // File
+            cols.push_back(elements.Item(3));                                                  // Line
             m_dvListCtrlStackTrace->AppendItem(cols);
         }
     }
@@ -201,6 +200,4 @@ void PHPDebugPane::OnXDebugSessionStarting(XDebugEvent& event)
         phpLexer->Apply(m_console->GetTerminalOutputWindow());
     }
 }
-void PHPDebugPane::OnCallStackMenu(wxDataViewEvent& event)
-{
-}
+void PHPDebugPane::OnCallStackMenu(wxDataViewEvent& event) {}

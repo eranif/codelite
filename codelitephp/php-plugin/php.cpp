@@ -771,7 +771,8 @@ void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)
 void PhpPlugin::FinalizeStartup()
 {
     // Create the debugger windows (hidden)
-    m_debuggerPane = new PHPDebugPane(EventNotifier::Get()->TopFrame());
+    wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
+    m_debuggerPane = new PHPDebugPane(parent);
     m_mgr->GetDockingManager()->AddPane(m_debuggerPane, wxAuiPaneInfo()
                                                             .Name("XDebug")
                                                             .Caption("Call Stack & Breakpoints")
@@ -781,11 +782,11 @@ void PhpPlugin::FinalizeStartup()
                                                             .Bottom()
                                                             .Position(3));
 
-    m_xdebugLocalsView = new LocalsView(EventNotifier::Get()->TopFrame());
+    m_xdebugLocalsView = new LocalsView(parent);
     m_mgr->GetDockingManager()->AddPane(m_xdebugLocalsView,
         wxAuiPaneInfo().Name("XDebugLocals").Caption("Locals").Hide().CloseButton().MaximizeButton().Bottom());
 
-    m_xdebugEvalPane = new EvalPane(EventNotifier::Get()->TopFrame());
+    m_xdebugEvalPane = new EvalPane(parent);
     m_mgr->GetDockingManager()->AddPane(m_xdebugEvalPane,
         wxAuiPaneInfo().Name("XDebugEval").Caption("PHP").Hide().CloseButton().MaximizeButton().Bottom().Position(2));
 

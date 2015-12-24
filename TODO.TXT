@@ -1,9 +1,3 @@
 * Git: add an option to open the commit in GitHub
 * Replace the CMake plugin with a custom build workspace type
 * Auto Save Plugin
-* Upgrade the 'Diff' plugin UI:
-    * Remove the ribbon bar and use wxAUI toolbar (takes less space)
-    * Remember the last paths used
-    * Allow quick-diff by right clicking a tab label and select 'compare with'
-    * Add keyboard shortcut for 'New Diff'
-

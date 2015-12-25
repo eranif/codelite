@@ -26,13 +26,16 @@
 #include "builder.h"
 #include "builder_gnumake.h"
 #include "builder_gnumake_onestep.h"
-
+#include "builder_NMake.h"
 
 BuildManager::BuildManager()
 {
 	// register all builders here
 	AddBuilder(new BuilderGnuMake());
 	AddBuilder(new BuilderGnuMakeOneStep());
+	bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
+	if (OS_WINDOWS)
+		AddBuilder(new BuilderNMake());
 }
 
 BuildManager::~BuildManager()

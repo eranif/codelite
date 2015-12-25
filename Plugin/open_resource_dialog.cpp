@@ -77,7 +77,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
 
     m_textCtrlResourceName->SetFocus();
     SetLabel(_("Open resource..."));
-    
+
     SetMinClientSize(wxSize(600, 400));
     GetSizer()->Fit(this);
 
@@ -225,21 +225,17 @@ void OpenResourceDialog::DoPopulateTags()
         if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype")) {
             fullname = wxString::Format(
                 wxT("%s::%s%s"), tag->GetScope().c_str(), tag->GetName().c_str(), tag->GetSignature().c_str());
-            item = DoAppendLine(tag->GetName(),
-                                fullname,
-                                (tag->GetKind() == wxT("function")),
-                                new OpenResourceDialogItemData(
+            item = DoAppendLine(tag->GetName(), fullname, (tag->GetKind() == wxT("function")),
+                new OpenResourceDialogItemData(
                                     tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
-                                DoGetTagImg(tag));
+                DoGetTagImg(tag));
         } else {
 
             fullname = wxString::Format(wxT("%s::%s"), tag->GetScope().c_str(), tag->GetName().c_str());
-            item = DoAppendLine(tag->GetName(),
-                                fullname,
-                                false,
-                                new OpenResourceDialogItemData(
+            item = DoAppendLine(tag->GetName(), fullname, false,
+                new OpenResourceDialogItemData(
                                     tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
-                                DoGetTagImg(tag));
+                DoGetTagImg(tag));
         }
 
         if((m_userFilters.GetCount() == 1) && (m_userFilters.Item(0).CmpNoCase(name) == 0) && !gotExactMatch) {
@@ -257,7 +253,9 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
     if(!m_userFilters.IsEmpty()) {
 
         std::multimap<wxString, wxString>::iterator iter = m_files.begin();
-        for(; iter != m_files.end(); iter++) {
+        const int maxFileSize = 100;
+        int counter = 0;
+        for(; (iter != m_files.end()) && (counter < maxFileSize); iter++) {
 
             if(!MatchesFilter(iter->second)) continue;
 
@@ -284,11 +282,9 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
             default:
                 break;
             }
-            DoAppendLine(fn.GetFullName(),
-                         fn.GetFullPath(),
-                         false,
-                         new OpenResourceDialogItemData(fn.GetFullPath(), -1, wxT(""), fn.GetFullName(), wxT("")),
-                         imgId);
+            DoAppendLine(fn.GetFullName(), fn.GetFullPath(), false,
+                new OpenResourceDialogItemData(fn.GetFullPath(), -1, wxT(""), fn.GetFullName(), wxT("")), imgId);
+            ++counter;
         }
     }
 }
@@ -323,7 +319,7 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
     if(m_dataviewModel->IsEmpty()) return;
 
     if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP ||
-       event.GetKeyCode() == WXK_NUMPAD_DOWN) {
+        event.GetKeyCode() == WXK_NUMPAD_DOWN) {
         event.Skip(false);
         bool down = (event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN);
         wxDataViewItemArray children;
@@ -372,10 +368,10 @@ void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
 }
 
 wxDataViewItem OpenResourceDialog::DoAppendLine(const wxString& name,
-                                                const wxString& fullname,
-                                                bool boldFont,
-                                                OpenResourceDialogItemData* clientData,
-                                                const wxBitmap& bmp)
+    const wxString& fullname,
+    bool boldFont,
+    OpenResourceDialogItemData* clientData,
+    const wxBitmap& bmp)
 {
     wxString prefix;
     clientData->m_impl = boldFont;
@@ -452,7 +448,7 @@ void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& ev
 void OpenResourceDialog::OnEnter(wxCommandEvent& event)
 {
     wxDataViewItem item = m_dataview->GetSelection();
-    
+
     if(item.IsOk()) {
         EndModal(wxID_OK);
     }

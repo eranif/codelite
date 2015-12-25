@@ -664,6 +664,7 @@ clMainFrame::clMainFrame(
     , m_workspaceRetagIsRequired(false)
     , m_bookmarksDropDownMenu(NULL)
     , m_singleInstanceThread(NULL)
+    , m_mainToolBar(NULL)
 {
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -934,8 +935,12 @@ void clMainFrame::Initialize(bool loadLastSession)
 
 clMainFrame* clMainFrame::Get() { return m_theFrame; }
 
-void clMainFrame::CreateGUIControls(void)
+void clMainFrame::CreateGUIControls()
 {
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    m_mainPanel = new wxPanel(this);
+    GetSizer()->Add(m_mainPanel, 1, wxEXPAND);
+    
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
     wxIconBundle app_icons;
     {
@@ -983,7 +988,7 @@ void clMainFrame::CreateGUIControls(void)
     clWorkspaceManager::Get();
 
     // tell wxAuiManager to manage this frame
-    m_mgr.SetManagedWindow(this);
+    m_mgr.SetManagedWindow(m_mainPanel);
     m_mgr.SetArtProvider(new clAuiDockArt(PluginManager::Get()));
     SetAUIManagerFlags();
 
@@ -1050,7 +1055,7 @@ void clMainFrame::CreateGUIControls(void)
         _("wxCrafter")); // One that would otherwise be untranslated; OT here, but it's a convenient place to put it
 
     // Add the explorer pane
-    m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
+    m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
     m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo()
                                        .PinButton()
                                        .CaptionVisible(true)
@@ -1066,7 +1071,7 @@ void clMainFrame::CreateGUIControls(void)
     RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
     // add the debugger locals tree, make it hidden by default
-    m_debuggerPane = new DebuggerPane(this, wxT("Debugger"), &m_mgr);
+    m_debuggerPane = new DebuggerPane(m_mainPanel, wxT("Debugger"), &m_mgr);
     m_mgr.AddPane(m_debuggerPane, wxAuiPaneInfo()
                                       .CaptionVisible(true)
                                       .Name(m_debuggerPane->GetCaption())
@@ -1080,11 +1085,11 @@ void clMainFrame::CreateGUIControls(void)
                                       .MaximizeButton());
     RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
-    m_mainBook = new MainBook(this);
+    m_mainBook = new MainBook(m_mainPanel);
     m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(false));
     CreateRecentlyOpenedFilesMenu();
 
-    m_outputPane = new OutputPane(this, wxT("Output View"));
+    m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
     wxAuiPaneInfo paneInfo;
     m_mgr.AddPane(m_outputPane, paneInfo.CaptionVisible(true)
                                     .PinButton()
@@ -1172,8 +1177,8 @@ void clMainFrame::CreateGUIControls(void)
     }
 
     // Connect the custom build target events range: !USE_AUI_TOOLBAR only
-    if(GetToolBar()) {
-        GetToolBar()->Connect(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, wxEVT_COMMAND_MENU_SELECTED,
+    if(GetMainToolBar()) {
+        GetMainToolBar()->Connect(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
     }
 
@@ -1203,8 +1208,8 @@ void clMainFrame::CreateGUIControls(void)
 
 void clMainFrame::DoShowToolbars(bool show)
 {
-    if(GetToolBar()) {
-        GetToolBar()->Show(show);
+    if(GetMainToolBar()) {
+        GetMainToolBar()->Show(show);
     } else {
         // AUI bars
         wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
@@ -1241,7 +1246,7 @@ void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
 void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
 {
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if(editor && GetToolBar()) {
+    if(editor && GetMainToolBar()) {
         bool undoing = event.GetId() == wxID_UNDO;
         wxMenu* menu = new wxMenu;
         editor->GetCommandsProcessor().DoPopulateUnRedoMenu(*menu, undoing);
@@ -1257,7 +1262,7 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
             menu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem),
                 &editor->GetCommandsProcessor());
         }
-        GetToolBar()->SetDropdownMenu(event.GetId(), menu);
+        GetMainToolBar()->SetDropdownMenu(event.GetId(), menu);
 
         event.Skip();
     }
@@ -1267,25 +1272,14 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
 void clMainFrame::CreateToolbars24()
 {
     wxAuiPaneInfo info;
-
-#if !USE_AUI_TOOLBAR
-    wxWindow* toolbar_parent(this);
-    if(PluginManager::Get()->AllowToolbar()) {
-        toolbar_parent = this;
-    }
-#else
-    wxWindow* toolbar_parent(this);
-#endif
+    wxWindow* toolbar_parent(m_mainPanel);
 
     //----------------------------------------------
     // create the standard toolbar
     //----------------------------------------------
     clToolBar* tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
     tb->SetToolBitmapSize(wxSize(24, 24));
-
-#if USE_AUI_TOOLBAR
     tb->SetArtProvider(new CLMainAuiTBArt());
-#endif
 
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
     tb->AddTool(XRCID("new_file"), _("New"), bmpLoader.LoadBitmap(wxT("file_new"), 24), _("New File"));
@@ -1311,27 +1305,21 @@ void clMainFrame::CreateToolbars24()
         _("Toggle Bookmark"));
     tb->SetToolDropDown(XRCID("toggle_bookmark"), true);
 
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb->Realize();
-        m_mgr.AddPane(tb, wxAuiPaneInfo()
-                              .Name(wxT("Standard Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Standard"))
-                              .ToolbarPane()
-                              .Top());
-    }
+    tb->Realize();
+    m_mgr.AddPane(tb, wxAuiPaneInfo()
+                          .Name(wxT("Standard Toolbar"))
+                          .LeftDockable(true)
+                          .RightDockable(true)
+                          .Caption(_("Standard"))
+                          .ToolbarPane()
+                          .Top());
     //----------------------------------------------
     // create the search toolbar
     //----------------------------------------------
-    if(PluginManager::Get()->AllowToolbar()) {
-        info = wxAuiPaneInfo();
-        tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-#if USE_AUI_TOOLBAR
-        tb->SetArtProvider(new CLMainAuiTBArt());
-#endif
-        tb->SetToolBitmapSize(wxSize(24, 24));
-    }
+    info = wxAuiPaneInfo();
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetToolBitmapSize(wxSize(24, 24));
 
     tb->AddTool(wxID_FIND, _("Find"), bmpLoader.LoadBitmap(wxT("find"), 24), _("Find"));
     tb->AddTool(wxID_REPLACE, _("Replace"), bmpLoader.LoadBitmap(wxT("find_and_replace"), 24), _("Replace"));
@@ -1346,25 +1334,19 @@ void clMainFrame::CreateToolbars24()
     tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
     tb->AddSeparator();
 
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb->Realize();
-        m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Search"))
-                              .ToolbarPane()
-                              .Top());
-    }
+    tb->Realize();
+    m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar"))
+                          .LeftDockable(true)
+                          .RightDockable(true)
+                          .Caption(_("Search"))
+                          .ToolbarPane()
+                          .Top());
     //----------------------------------------------
     // create the build toolbar
     //----------------------------------------------
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-#if USE_AUI_TOOLBAR
-        tb->SetArtProvider(new CLMainAuiTBArt());
-#endif
-        tb->SetToolBitmapSize(wxSize(24, 24));
-    }
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetToolBitmapSize(wxSize(24, 24));
 
     tb->AddTool(XRCID("build_active_project"), wxEmptyString, bmpLoader.LoadBitmap(wxT("build"), 24),
         _("Build Active Project"));
@@ -1380,27 +1362,17 @@ void clMainFrame::CreateToolbars24()
     tb->AddTool(XRCID("stop_executed_program"), wxEmptyString, bmpLoader.LoadBitmap(wxT("execute_stop"), 24),
         _("Stop Running Program"));
 
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb->Realize();
-        info = wxAuiPaneInfo();
-        m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Build"))
-                              .ToolbarPane()
-                              .Top());
-    }
+    tb->Realize();
+    info = wxAuiPaneInfo();
+    m_mgr.AddPane(tb,
+        info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Build")).ToolbarPane().Top());
 
     //----------------------------------------------
     // create the debugger toolbar
     //----------------------------------------------
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-#if USE_AUI_TOOLBAR
-        tb->SetArtProvider(new CLMainAuiTBArt());
-#endif
-        tb->SetToolBitmapSize(wxSize(24, 24));
-    }
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetToolBitmapSize(wxSize(24, 24));
 
     tb->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
         bmpLoader.LoadBitmap(wxT("debugger_start"), 24), _("Start or Continue debugger"));
@@ -1425,32 +1397,20 @@ void clMainFrame::CreateToolbars24()
 
     tb->Realize();
 
-    if(PluginManager::Get()->AllowToolbar()) {
-        info = wxAuiPaneInfo();
-        m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Debug"))
-                              .ToolbarPane()
-                              .Top());
+    info = wxAuiPaneInfo();
+    m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar"))
+                          .LeftDockable(true)
+                          .RightDockable(true)
+                          .Caption(_("Debug"))
+                          .ToolbarPane()
+                          .Top());
 
-        RegisterToolbar(XRCID("show_std_toolbar"), wxT("Standard Toolbar"));
-        RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
-        RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
-        RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
-    } else {
-#if !USE_AUI_TOOLBAR
-        SetToolBar(tb);
-#else
-        m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Main Toolbar"))
-                              .ToolbarPane()
-                              .Top());
-#endif
-    }
+    RegisterToolbar(XRCID("show_std_toolbar"), wxT("Standard Toolbar"));
+    RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
+    RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
+    RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
 }
+
 void clMainFrame::CreateNativeToolbar16()
 {
     //----------------------------------------------
@@ -1630,24 +1590,15 @@ void clMainFrame::CreateNativeToolbar24()
 
 void clMainFrame::CreateToolbars16()
 {
-//----------------------------------------------
-// create the standard toolbar
-//----------------------------------------------
-#if !USE_AUI_TOOLBAR
-    wxWindow* toolbar_parent(this);
-    if(PluginManager::Get()->AllowToolbar()) {
-        toolbar_parent = this;
-    }
-#else
-    wxWindow* toolbar_parent(this);
-#endif
+    //----------------------------------------------
+    // create the standard toolbar
+    //----------------------------------------------
+    wxWindow* toolbar_parent(m_mainPanel);
 
     clToolBar* tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-#if USE_AUI_TOOLBAR
     tb->SetArtProvider(new CLMainAuiTBArt());
-#endif
-    wxAuiPaneInfo info;
 
+    wxAuiPaneInfo info;
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
 
     tb->SetToolBitmapSize(wxSize(16, 16));
@@ -1675,29 +1626,23 @@ void clMainFrame::CreateToolbars16()
         XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("bookmark")), _("Toggle Bookmark"));
     tb->SetToolDropDown(XRCID("toggle_bookmark"), true);
 
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb->Realize();
-        m_mgr.AddPane(tb, wxAuiPaneInfo()
-                              .Name(wxT("Standard Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Standard"))
-                              .ToolbarPane()
-                              .Top());
-    }
+    tb->Realize();
+    m_mgr.AddPane(tb, wxAuiPaneInfo()
+                          .Name(wxT("Standard Toolbar"))
+                          .LeftDockable(true)
+                          .RightDockable(true)
+                          .Caption(_("Standard"))
+                          .ToolbarPane()
+                          .Top());
 
     //----------------------------------------------
     // create the search toolbar
     //----------------------------------------------
     info = wxAuiPaneInfo();
 
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-#if USE_AUI_TOOLBAR
-        tb->SetArtProvider(new CLMainAuiTBArt());
-#endif
-        tb->SetToolBitmapSize(wxSize(16, 16));
-    }
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetToolBitmapSize(wxSize(16, 16));
 
     tb->AddTool(wxID_FIND, _("Find"), bmpLoader.LoadBitmap(wxT("find")), _("Find"));
     tb->AddTool(wxID_REPLACE, _("Replace"), bmpLoader.LoadBitmap(wxT("find_and_replace")), _("Replace"));
@@ -1712,24 +1657,20 @@ void clMainFrame::CreateToolbars16()
     tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
     tb->AddSeparator();
 
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb->Realize();
-        m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Search"))
-                              .ToolbarPane()
-                              .Top());
+    tb->Realize();
+    m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar"))
+                          .LeftDockable(true)
+                          .RightDockable(true)
+                          .Caption(_("Search"))
+                          .ToolbarPane()
+                          .Top());
 
-        //----------------------------------------------
-        // create the build toolbar
-        //----------------------------------------------
-        tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-#if USE_AUI_TOOLBAR
-        tb->SetArtProvider(new CLMainAuiTBArt());
-#endif
-        tb->SetToolBitmapSize(wxSize(16, 16));
-    }
+    //----------------------------------------------
+    // create the build toolbar
+    //----------------------------------------------
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetToolBitmapSize(wxSize(16, 16));
 
     tb->AddTool(
         XRCID("build_active_project"), wxEmptyString, bmpLoader.LoadBitmap(wxT("build")), _("Build Active Project"));
@@ -1744,27 +1685,17 @@ void clMainFrame::CreateToolbars16()
     tb->AddTool(XRCID("stop_executed_program"), wxEmptyString, bmpLoader.LoadBitmap(wxT("execute_stop")),
         _("Stop Running Program"));
 
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb->Realize();
-        info = wxAuiPaneInfo();
-        m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Build"))
-                              .ToolbarPane()
-                              .Top());
-    }
+    tb->Realize();
+    info = wxAuiPaneInfo();
+    m_mgr.AddPane(tb,
+        info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Build")).ToolbarPane().Top());
 
     //----------------------------------------------
     // create the debugger toolbar
     //----------------------------------------------
-    if(PluginManager::Get()->AllowToolbar()) {
-        tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-#if USE_AUI_TOOLBAR
-        tb->SetArtProvider(new CLMainAuiTBArt());
-#endif
-        tb->SetToolBitmapSize(wxSize(16, 16));
-    }
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetToolBitmapSize(wxSize(16, 16));
 
     tb->AddTool(XRCID("start_debugger"), _("Start / Continue debugger"), bmpLoader.LoadBitmap(wxT("debugger_start")),
         _("Start / Continue debugger"));
@@ -1788,30 +1719,18 @@ void clMainFrame::CreateToolbars16()
         _("Start Reverse Debug Recording"), wxITEM_CHECK);
 
     tb->Realize();
-    if(PluginManager::Get()->AllowToolbar()) {
-        info = wxAuiPaneInfo();
-        m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Debug"))
-                              .ToolbarPane()
-                              .Top());
-        RegisterToolbar(XRCID("show_std_toolbar"), wxT("Standard Toolbar"));
-        RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
-        RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
-        RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
-    } else {
-#if !USE_AUI_TOOLBAR
-        SetToolBar(tb);
-#else
-        m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar"))
-                              .LeftDockable(true)
-                              .RightDockable(true)
-                              .Caption(_("Main Toolbar"))
-                              .ToolbarPane()
-                              .Top());
-#endif
-    }
+
+    info = wxAuiPaneInfo();
+    m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar"))
+                          .LeftDockable(true)
+                          .RightDockable(true)
+                          .Caption(_("Debug"))
+                          .ToolbarPane()
+                          .Top());
+    RegisterToolbar(XRCID("show_std_toolbar"), wxT("Standard Toolbar"));
+    RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
+    RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
+    RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
 }
 
 bool clMainFrame::StartSetupWizard()
@@ -5574,8 +5493,8 @@ void clMainFrame::OnUpdateCustomTargetsDropDownMenu(wxCommandEvent& e)
 
     wxMenu* buildDropDownMenu = new wxMenu;
     DoCreateBuildDropDownMenu(buildDropDownMenu);
-    if(GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project"))) {
-        GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
+    if(GetMainToolBar() && GetMainToolBar()->FindById(XRCID("build_active_project"))) {
+        GetMainToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
     }
 }
 
@@ -5612,8 +5531,8 @@ void clMainFrame::OnWorkspaceClosed(wxCommandEvent& e)
 
     // Reset the menu
     wxMenu* buildDropDownMenu = new wxMenu;
-    if(GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project"))) {
-        GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
+    if(GetMainToolBar() && GetMainToolBar()->FindById(XRCID("build_active_project"))) {
+        GetMainToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
     }
 }
 
@@ -5766,12 +5685,10 @@ void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetSta
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {
     // Hide the _native_ toolbar
-    if(GetToolBar()) {
+    if(GetMainToolBar()) {
         if(event.IsChecked()) {
-
-            // show the toolbar, we first delete the old one
-            GetToolBar()->Hide();
-            delete GetToolBar();
+            
+            SetToolBar(NULL);
 
             // Recreate the toolbar
             if(EditorConfigST::Get()->GetOptions()->GetIconsSize() == 24) {
@@ -5784,14 +5701,15 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
             if(clCxxWorkspaceST::Get()->IsOpen()) {
                 wxMenu* buildDropDownMenu = new wxMenu;
                 DoCreateBuildDropDownMenu(buildDropDownMenu);
-                if(GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project"))) {
-                    GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
+                if(GetMainToolBar() && GetMainToolBar()->FindById(XRCID("build_active_project"))) {
+                    GetMainToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
                 }
             }
 
         } else {
-            GetToolBar()->Hide();
-            GetToolBar()->Realize();
+            GetMainToolBar()->Hide();
+            GetMainToolBar()->Realize();
+            Layout();
         }
     } else {
         wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
@@ -5800,16 +5718,16 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
                 panes.Item(i).Show(event.IsChecked());
             }
         }
+        m_mgr.Update();
+        SendSizeEvent();
     }
-    m_mgr.Update();
-    SendSizeEvent();
     clConfig::Get().Write(kConfigShowToolBar, event.IsChecked());
 }
 
 void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event)
 {
-    if(GetToolBar()) {
-        event.Check(GetToolBar()->IsShown());
+    if(GetMainToolBar()) {
+        event.Check(GetMainToolBar()->IsShown());
     } else {
 
         bool atLeastOneTBIsVisible = false;
@@ -5959,7 +5877,7 @@ void clMainFrame::OnDebugStarted(clDebugEvent& event)
 {
     event.Skip();
     m_toggleToolBar = false;
-    if(GetToolBar() && !GetToolBar()->IsShown()) {
+    if(GetMainToolBar() && !GetMainToolBar()->IsShown()) {
         // We have a native toolbar which is not visible, show it during debug session
         clGetManager()->ShowToolBar();
         m_toggleToolBar = true;
@@ -5969,7 +5887,7 @@ void clMainFrame::OnDebugStarted(clDebugEvent& event)
 void clMainFrame::OnDebugEnded(clDebugEvent& event)
 {
     event.Skip();
-    if(m_toggleToolBar && GetToolBar()) {
+    if(m_toggleToolBar && GetMainToolBar()) {
         clGetManager()->ShowToolBar(false);
     }
     m_toggleToolBar = false;
@@ -6055,4 +5973,19 @@ void clMainFrame::OnCopyFilePathRelativeToWorkspace(wxCommandEvent& event)
 void clMainFrame::OnCopyFilePathRelativeToWorkspaceUI(wxUpdateUIEvent& event)
 {
     event.Enable(clWorkspaceManager::Get().IsWorkspaceOpened() && clGetManager()->GetActiveEditor());
+}
+
+void clMainFrame::SetToolBar(wxToolBar* tb)
+{
+    if(m_mainToolBar) {
+        GetSizer()->Detach(m_mainToolBar);
+        m_mainToolBar->Hide();
+        wxDELETE(m_mainToolBar);
+    }
+    m_mainToolBar = tb;
+    
+    if(m_mainToolBar) {
+        GetSizer()->Insert(0, m_mainToolBar, 0, wxEXPAND);
+        Layout();
+    }
 }

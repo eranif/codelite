@@ -230,26 +230,26 @@ void PluginManager::Load()
                 wxDELETE(dl);
                 continue;
             }
-            
+
             // If the plugin does not exist in the m_pluginsData, assume its the first time we see it
             bool firstTimeLoading = (m_pluginsData.GetPlugins().count(pluginInfo->GetName()) == 0);
-            
+
             // Add the plugin information
             m_pluginsData.AddPlugin((*pluginInfo));
-            
+
             if(firstTimeLoading && pluginInfo->HasFlag(PluginInfo::kDisabledByDefault)) {
                 m_pluginsData.DisablePlugin(pluginInfo->GetName());
                 wxDELETE(dl);
                 continue;
             }
-            
+
             // Can we load it?
             if(!m_pluginsData.CanLoad(*pluginInfo)) {
                 CL_WARNING(wxT("Plugin ") + pluginInfo->GetName() + wxT(" is not enabled"));
                 wxDELETE(dl);
                 continue;
             }
-            
+
             // try and load the plugin
             GET_PLUGIN_CREATE_FUNC pfn = (GET_PLUGIN_CREATE_FUNC)dl->GetSymbol(wxT("CreatePlugin"), &success);
             if(!success) {
@@ -268,7 +268,7 @@ void PluginManager::Load()
             m_plugins[plugin->GetShortName()] = plugin;
 
             // Load the toolbar
-            clToolBar* tb = plugin->CreateToolBar((wxWindow*)clMainFrame::Get());
+            clToolBar* tb = plugin->CreateToolBar(clMainFrame::Get()->GetDockingManager().GetManagedWindow());
             if(tb) {
                 // When using AUI toolbars, use our own custom art-provider
                 tb->SetArtProvider(new CLMainAuiTBArt());
@@ -290,7 +290,6 @@ void PluginManager::Load()
 
                     int id = wxNewId();
                     wxString text(plugin->GetShortName());
-                    text << _(" ToolBar");
                     wxMenuItem* newItem = new wxMenuItem(submenu, id, text, wxEmptyString, wxITEM_CHECK);
                     submenu->Append(newItem);
                     clMainFrame::Get()->RegisterToolbar(id, plugin->GetShortName());
@@ -895,9 +894,9 @@ void PluginManager::ShowToolBar(bool show)
 }
 bool PluginManager::IsToolBarShown() const
 {
-    if(clMainFrame::Get()->GetToolBar()) {
+    if(clMainFrame::Get()->GetMainToolBar()) {
         // we have native toolbar
-        return clMainFrame::Get()->GetToolBar()->IsShown();
+        return clMainFrame::Get()->GetMainToolBar()->IsShown();
     }
     return false;
 }

@@ -74,6 +74,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_eventsConnected(false)
     , m_optionsWindow(NULL)
     , m_regexType(kRegexNone)
+    , m_disableTextUpdateEvent(false)
 {
     m_bar = new wxFlatButtonBar(this, wxFlatButton::kThemeNormal, 0, 9);
 
@@ -230,25 +231,6 @@ void QuickFindBar::ToggleReplacebar()
     DoToggleReplacebar();
 }
 
-wchar_t* QuickFindBar::DoGetSearchStringPtr()
-{
-    wxString text = m_sci->GetText();
-    wchar_t* pinput(NULL);
-    if(m_lastText == text && m_lastTextPtr) {
-        pinput = m_lastTextPtr;
-
-    } else {
-        m_lastText = text;
-#if wxVERSION_NUMBER >= 2900
-        m_lastTextPtr = const_cast<wchar_t*>(m_lastText.c_str().AsWChar());
-#else
-        m_lastTextPtr = const_cast<wchar_t*>(m_lastText.c_str());
-#endif
-        pinput = m_lastTextPtr;
-    }
-    return pinput;
-}
-
 void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
 {
     if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty()) return;
@@ -261,51 +243,61 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
 
     wxString find = m_findWhat->GetValue();
     bool fwd = searchFlags & kSearchForward;
-    bool addSelection = searchFlags & kSearchMultiSelect;
-    bool incr = searchFlags & kSearchIncremental;
-
-    int start = -1, stop = -1;
-    m_sci->GetSelection(&start, &stop);
-
-    int offset, maxPos;
-    if(posToSearchFrom != wxNOT_FOUND) {
-        offset = posToSearchFrom;
-    } else {
-        offset = (!fwd || incr) ? start : stop;
-    }
-
-    fwd ? maxPos = m_sci->GetLength() : 0;
-
     int flags = DoGetSearchFlags();
-
-    int pos = m_sci->FindText(offset, maxPos, find, flags);
-    if(pos == wxNOT_FOUND) {
-        // Try again, wrap around
-        offset = fwd ? 0 : m_sci->GetLength();
-        pos = m_sci->FindText(offset, maxPos, find, flags);
-        if(pos == wxNOT_FOUND) {
-            m_findWhat->SetBackgroundColour(wxT("PINK"));
-            m_findWhat->Refresh();
-            return;
+    int curpos = m_sci->GetCurrentPos();
+    int start = wxNOT_FOUND;
+    int end = wxNOT_FOUND;
+    m_sci->GetSelection(&start, &end);
+    bool restoreSelection = false;
+    if((end != wxNOT_FOUND) && fwd) {
+        if(m_sci->FindText(start, end, find, flags) != wxNOT_FOUND) {
+            // Incase we searching forward and the current selection matches the search string
+            // Clear the selection and set the caret position to the end of the selection
+            m_sci->SetCurrentPos(end);
+            m_sci->SetSelectionEnd(end);
+            m_sci->SetSelectionStart(end);
+            restoreSelection = true;
         }
     }
 
-    m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    m_findWhat->Refresh();
-    if(addSelection && m_sci->GetSelections()) {
-        m_sci->AddSelection(pos, pos + find.length());
+    int pos = wxNOT_FOUND;
+    if(fwd) {
+        m_sci->SearchAnchor();
+        pos = m_sci->SearchNext(flags, find);
+        if(pos == wxNOT_FOUND) {
+            m_sci->SetCurrentPos(0);
+            pos = m_sci->SearchNext(flags, find);
+        }
     } else {
-        m_sci->ClearSelections();
-        m_sci->SetSelection(pos, pos + find.length());
+        m_sci->SearchAnchor();
+        pos = m_sci->SearchPrev(flags, find);
+        if(pos == wxNOT_FOUND) {
+            m_sci->SetCurrentPos(m_sci->GetLastPosition());
+            pos = m_sci->SearchPrev(flags, find);
+        }
     }
 
-    // Ensure that the found string is visible (i.e. its line isn't folded away)
-    // and that the user can see it without having to scroll
-    int line = m_sci->LineFromPosition(pos);
-    if(line >= 0) {
-        m_sci->EnsureVisible(line);
-        m_sci->EnsureCaretVisible();
+    if(pos == wxNOT_FOUND) {
+        // Restore the caret position
+        m_sci->SetCurrentPos(curpos);
+        // Restore the selection
+        if(restoreSelection) {
+            m_sci->SetSelectionStart(start);
+            m_sci->SetSelectionEnd(end);
+        }
+        return;
     }
+
+    int line = m_sci->LineFromPosition(m_sci->GetSelectionStart());
+    int linesOnScreen = m_sci->LinesOnScreen();
+    // To place our line in the middle, the first visible line should be
+    // the: line - (linesOnScreen / 2)
+    int firstVisibleLine = line - (linesOnScreen / 2);
+    if(firstVisibleLine < 0) {
+        firstVisibleLine = 0;
+    }
+    m_sci->EnsureVisible(firstVisibleLine);
+    m_sci->SetFirstVisibleLine(firstVisibleLine);
 }
 
 void QuickFindBar::OnHide(wxCommandEvent& e)
@@ -344,7 +336,9 @@ void QuickFindBar::OnPrev(wxCommandEvent& e)
 void QuickFindBar::OnText(wxCommandEvent& e)
 {
     e.Skip();
-    CallAfter(&QuickFindBar::DoSearch, kSearchForward | kSearchIncremental, -1);
+    if(!m_disableTextUpdateEvent) {
+        CallAfter(&QuickFindBar::DoSearch, kSearchForward | kSearchIncremental, -1);
+    }
 }
 
 void QuickFindBar::OnKeyDown(wxKeyEvent& e)
@@ -597,7 +591,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
 
     } else if(!findWhat.IsEmpty()) {
 
-        m_findWhat->SetValue(findWhat);
+        m_findWhat->ChangeValue(findWhat);
         m_findWhat->SelectAll();
         m_findWhat->SetFocus();
         PostCommandEvent(this, m_findWhat);
@@ -708,83 +702,11 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
     DoSearch(0);
 }
 
-void QuickFindBar::DoMarkAll(bool useIndicators)
+void QuickFindBar::DoMarkAll()
 {
-    if(!m_sci) return;
-
-    LEditor* editor = dynamic_cast<LEditor*>(m_sci);
-    if(!editor) return;
-
-    wxString findWhat = m_findWhat->GetValue();
-
-    if(findWhat.IsEmpty()) {
-        return;
-    }
-
-    // Save the caret position
-    long savedPos = m_sci->GetCurrentPos();
-    size_t flags = DoGetSearchFlags();
-
-    int pos(0);
-    int match_len(0);
-
-    // remove reverse search
-    flags &= ~wxSD_SEARCH_BACKWARD;
-    int offset(0);
-
-    wchar_t* pinput = DoGetSearchStringPtr();
-    if(!pinput) return;
-
-    int fixed_offset(0);
-
-    // Clear markers
-    editor->DelAllMarkers(smt_find_bookmark);
-
-    // set the active indicator to be 1
-    editor->SetIndicatorCurrent(1);
-
-    size_t count(0);
-    int firstMatchPos(wxNOT_FOUND);
-    while(StringFindReplacer::Search(pinput, offset, findWhat.wc_str(), flags, pos, match_len)) {
-        int matchStart = fixed_offset + pos;
-        int matchEnd = matchStart + match_len;
-        if(useIndicators) {
-            editor->MarkerAdd(editor->LineFromPosition(fixed_offset + pos), smt_find_bookmark);
-
-            // add indicator as well
-            editor->IndicatorFillRange(fixed_offset + pos, match_len);
-        } else {
-            // Use multiple selections
-            if(count) {
-                // we already have the main selection, add secondary selections
-                editor->AddSelection(matchStart, matchEnd);
-
-            } else {
-                // clear and set the first selection
-                editor->ClearSelections();
-                editor->SetSelection(matchStart, matchEnd);
-                firstMatchPos = matchStart;
-            }
-        }
-        ++count;
-        offset = pos + match_len;
-    }
-
-    // Restore the caret
-    if(useIndicators) {
-        editor->SetCurrentPos(savedPos);
-        editor->EnsureCaretVisible();
-    }
-
-    if(firstMatchPos != wxNOT_FOUND) {
-        editor->SetMainSelection(0);
-        editor->SetLineVisible(editor->LineFromPos(firstMatchPos));
-    }
-
-    if(!useIndicators) {
-        // Hide the bar
-        Show(false);
-    }
+    wxCommandEvent evt(wxEVT_MENU, XRCID("ID_QUICK_FIND_ALL"));
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evt);
+    Show(false);
 }
 
 void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)
@@ -994,17 +916,21 @@ void QuickFindBar::DoUpdateSearchHistory()
 {
     wxString findWhat = m_findWhat->GetValue();
     if(findWhat.IsEmpty()) return;
+    m_disableTextUpdateEvent = true;
     m_findWhat->Clear();
     m_findWhat->ChangeValue(findWhat);
     m_findWhat->Append(clConfig::Get().GetQuickFindSearchItems());
+    m_disableTextUpdateEvent = false;
 }
 
 void QuickFindBar::DoUpdateReplaceHistory()
 {
+    m_disableTextUpdateEvent = true;
     int where = m_replaceWith->FindString(m_replaceWith->GetValue());
     if(where == wxNOT_FOUND) {
         m_replaceWith->Insert(m_replaceWith->GetValue(), 0);
     }
+    m_disableTextUpdateEvent = false;
 }
 
 void QuickFindBar::OnButtonNext(wxFlatButtonEvent& e) { OnNext(e); }
@@ -1020,16 +946,7 @@ size_t QuickFindBar::DoGetSearchFlags()
     return m_flags;
 }
 
-void QuickFindBar::OnFindAll(wxFlatButtonEvent& e)
-{
-    wxUnusedVar(e);
-    if(!m_findWhat->GetValue().IsEmpty()) {
-        clConfig::Get().AddQuickFindSearchItem(m_findWhat->GetValue());
-        // Update the search history
-        DoUpdateSearchHistory();
-    }
-    DoMarkAll(false);
-}
+void QuickFindBar::OnFindAll(wxFlatButtonEvent& e) { DoMarkAll(); }
 
 void QuickFindBar::OnButtonReplace(wxFlatButtonEvent& e) { OnReplace(e); }
 

@@ -266,7 +266,7 @@ bool StringFindReplacer::Search(const wchar_t* input,
     int iSO = startOffset;
     bool isUTF8 = false;
     if(iSO) {
-        unsigned int utfLen = clUTF8Length(input, iSO);
+        int utfLen = clUTF8Length(input, iSO);
         isUTF8 = (utfLen != iSO);
     }
 

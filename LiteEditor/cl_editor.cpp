@@ -628,10 +628,8 @@ void LEditor::SetProperties()
     // Determine the folding symbols colours
     wxColour foldFgColour = wxColor(0xff, 0xff, 0xff);
     wxColour foldBgColour = wxColor(0x80, 0x80, 0x80);
-    bool darkTheme = false;
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer(GetContext()->GetName());
     if(lexer && lexer->IsDark()) {
-        darkTheme = true;
         const StyleProperty& defaultProperty = lexer->GetProperty(0);
         if(!defaultProperty.IsNull()) {
             foldFgColour = wxColour(defaultProperty.GetBgColour()).ChangeLightness(130);

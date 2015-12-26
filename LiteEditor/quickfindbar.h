@@ -60,7 +60,7 @@ protected:
     wxFlatButton* m_closeButton;
     wxMenu* m_regexOrWildMenu;
     eRegexType m_regexType;
-
+    bool m_disableTextUpdateEvent;
     friend class QuickFindBarOptionsMenu;
 
 public:
@@ -92,8 +92,7 @@ protected:
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
     void DoSearch(size_t searchFlags, int posToSearchFrom = wxNOT_FOUND);
     wxString DoGetSelectedText();
-    void DoMarkAll(bool useIndicators = true);
-    wchar_t* DoGetSearchStringPtr();
+    void DoMarkAll();
 
     // General events
     void OnUndo(wxCommandEvent& e);
@@ -107,9 +106,9 @@ protected:
     void OnHide(wxCommandEvent& e);
     void OnNext(wxCommandEvent& e);
     void OnPrev(wxCommandEvent& e);
+    void OnFindAll(wxFlatButtonEvent& e);
     void OnButtonNext(wxFlatButtonEvent& e);
     void OnButtonPrev(wxFlatButtonEvent& e);
-    void OnFindAll(wxFlatButtonEvent& e);
     void OnButtonNextUI(wxUpdateUIEvent& e);
     void OnButtonPrevUI(wxUpdateUIEvent& e);
     void OnText(wxCommandEvent& e);

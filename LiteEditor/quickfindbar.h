@@ -52,7 +52,7 @@ protected:
     wxComboBox* m_findWhat;
     wxComboBox* m_replaceWith;
     wxFlatButtonBar* m_bar;
-    
+
     wxFlatButton* m_caseSensitive;
     wxFlatButton* m_wholeWord;
     wxFlatButton* m_regexOrWildButton;
@@ -60,7 +60,7 @@ protected:
     wxFlatButton* m_closeButton;
     wxMenu* m_regexOrWildMenu;
     eRegexType m_regexType;
-    
+
     friend class QuickFindBarOptionsMenu;
 
 public:
@@ -87,7 +87,7 @@ private:
     void DoUpdateSearchHistory();
     void DoUpdateReplaceHistory();
     size_t DoGetSearchFlags();
-    
+
 protected:
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
     void DoSearch(size_t searchFlags, int posToSearchFrom = wxNOT_FOUND);
@@ -125,9 +125,8 @@ protected:
     void OnHighlightMatches(wxFlatButtonEvent& e);
     void OnHideBar(wxFlatButtonEvent& e);
     void OnRegularExpMenu(wxFlatButtonEvent& e);
-    void OnUseRegex(wxCommandEvent& e);
-    void OnNoRegex(wxCommandEvent& e);
-    void OnUseWildcards(wxCommandEvent& e);
+    void OnRegex(wxFlatButtonEvent& event);
+    void OnRegexUI(wxUpdateUIEvent& event);
     void OnHighlightMatchesUI(wxUpdateUIEvent& event);
     void OnQuickFindCommandEvent(wxCommandEvent& event);
     void OnReceivingFocus(wxFocusEvent& event);

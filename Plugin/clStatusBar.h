@@ -65,14 +65,14 @@ public:
     /**
      * @brief set a status bar message
      */
-    void SetMessage(const wxString& message);
-    
+    void SetMessage(const wxString& message, int secondsToLive = wxNOT_FOUND);
+
     /**
      * @brief set the whitespace information (Tabs vs Spaces)
      * @param whitespaceInfo
      */
     void SetWhitespaceInfo(const wxString& whitespaceInfo);
-    
+
     /**
      * @brief update the language field
      */

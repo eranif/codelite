@@ -37,6 +37,7 @@
 #include "cl_config.h"
 #include <wx/gdicmn.h>
 #include "wxFlatButtonBar.h"
+#include "globals.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -234,7 +235,9 @@ void QuickFindBar::ToggleReplacebar()
 void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
 {
     if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty()) return;
-
+    
+    clGetManager()->SetStatusMessage(wxEmptyString);
+    
     // Clear all search markers if desired
     if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
         m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
@@ -265,14 +268,23 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
         m_sci->SearchAnchor();
         pos = m_sci->SearchNext(flags, find);
         if(pos == wxNOT_FOUND) {
+            clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
             m_sci->SetCurrentPos(0);
+            m_sci->SetSelectionEnd(0);
+            m_sci->SetSelectionStart(0);
+            m_sci->SearchAnchor();
             pos = m_sci->SearchNext(flags, find);
         }
     } else {
         m_sci->SearchAnchor();
         pos = m_sci->SearchPrev(flags, find);
         if(pos == wxNOT_FOUND) {
-            m_sci->SetCurrentPos(m_sci->GetLastPosition());
+            clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
+            int lastPos = m_sci->GetLastPosition();
+            m_sci->SetCurrentPos(lastPos);
+            m_sci->SetSelectionEnd(lastPos);
+            m_sci->SetSelectionStart(lastPos);
+            m_sci->SearchAnchor();
             pos = m_sci->SearchPrev(flags, find);
         }
     }
@@ -280,11 +292,7 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
     if(pos == wxNOT_FOUND) {
         // Restore the caret position
         m_sci->SetCurrentPos(curpos);
-        // Restore the selection
-        if(restoreSelection) {
-            m_sci->SetSelectionStart(start);
-            m_sci->SetSelectionEnd(end);
-        }
+        m_sci->ClearSelections();
         return;
     }
 

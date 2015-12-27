@@ -410,7 +410,7 @@ public:
      * @param col the statusbar pane to use
      * @param seconds_to_live how many seconds to display it for; 0 == forever; -1 == use the default
      */
-    virtual void SetStatusMessage(const wxString& msg, int col, int seconds_to_live = wxID_ANY) = 0;
+    virtual void SetStatusMessage(const wxString& msg, int seconds_to_live = wxID_ANY) = 0;
 
     /**
      * @brief start processing commands from the queue
@@ -466,8 +466,6 @@ public:
      * @brief return the singleton object of the navigation manager
      */
     virtual NavMgr* GetNavigationMgr() = 0;
-
-    void SetStatusMessage(const wxString& msg) { SetStatusMessage(msg, 0); }
 
     /**
      * @brief close the named page in the mainbook

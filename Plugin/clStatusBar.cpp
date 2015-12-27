@@ -84,7 +84,7 @@ clStatusBar::~clStatusBar()
     Unbind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 }
 
-void clStatusBar::SetMessage(const wxString& message) { SetText(message); }
+void clStatusBar::SetMessage(const wxString& message, int secondsToLive) { SetText(message, secondsToLive); }
 
 void clStatusBar::OnPageChanged(wxCommandEvent& event)
 {

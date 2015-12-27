@@ -33,6 +33,7 @@
 #include "codelite_exports.h"
 #include "cl_command_event.h"
 #include "wxPNGAnimation.h"
+#include <wx/timer.h>
 
 class wxCustomStatusBar;
 class WXDLLIMPEXP_SDK wxCustomStatusBarArt
@@ -128,7 +129,7 @@ class WXDLLIMPEXP_SDK wxCustomStatusBarFieldText : public wxCustomStatusBarField
     wxString m_text;
     size_t m_width;
     wxAlignment m_textAlign;
-    
+
 public:
     wxCustomStatusBarFieldText(wxCustomStatusBar* parent, size_t width)
         : wxCustomStatusBarField(parent)
@@ -182,10 +183,8 @@ public:
     /**
      * @brief construct animation field.
      */
-    wxCustomStatusBarAnimationField(wxCustomStatusBar* parent,
-                                    const wxBitmap& sprite,
-                                    wxOrientation spriteOrientation,
-                                    const wxSize& animSize);
+    wxCustomStatusBarAnimationField(
+        wxCustomStatusBar* parent, const wxBitmap& sprite, wxOrientation spriteOrientation, const wxSize& animSize);
 
     virtual ~wxCustomStatusBarAnimationField();
     virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
@@ -223,7 +222,8 @@ class WXDLLIMPEXP_SDK wxCustomStatusBar : public wxStatusBar
     wxString m_text;
     wxString m_lastArtNameUsedForPaint;
     wxCustomStatusBarField::Ptr_t m_mainText;
-    
+    wxTimer* m_timer;
+
 protected:
     size_t DoGetFieldsWidth();
 
@@ -232,8 +232,9 @@ protected:
     void OnEraseBackround(wxEraseEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnMouseMotion(wxMouseEvent& event);
+    void OnTimer(wxTimerEvent& event);
     wxRect DoGetMainFieldRect();
-    
+
 public:
     /**
      * @brief animation control owned by 'field' was clicked
@@ -259,7 +260,7 @@ public:
     /**
      * @brief set text in the main status bar text area
      */
-    void SetText(const wxString& message);
+    void SetText(const wxString& message, int secondsToLive = wxNOT_FOUND);
     /**
      * @brief clear the main text
      */

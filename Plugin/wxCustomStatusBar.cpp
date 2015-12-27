@@ -127,10 +127,8 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
 //========================------------------------------------
 //========================------------------------------------
 
-wxCustomStatusBarAnimationField::wxCustomStatusBarAnimationField(wxCustomStatusBar* parent,
-                                                                 const wxBitmap& sprite,
-                                                                 wxOrientation spriteOrientation,
-                                                                 const wxSize& animSize)
+wxCustomStatusBarAnimationField::wxCustomStatusBarAnimationField(
+    wxCustomStatusBar* parent, const wxBitmap& sprite, wxOrientation spriteOrientation, const wxSize& animSize)
     : wxCustomStatusBarField(parent)
 {
     m_animation = new wxPNGAnimation(parent, sprite, spriteOrientation, animSize);
@@ -198,6 +196,7 @@ wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style
     : wxStatusBar(parent, id, style)
     , m_art(new wxCustomStatusBarArt("Dark"))
     , m_mainText(new wxCustomStatusBarFieldText(this, 0))
+    , m_timer(NULL)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTextAlignment(wxALIGN_LEFT);
@@ -206,10 +205,15 @@ wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style
     Bind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackround, this);
     Bind(wxEVT_LEFT_DOWN, &wxCustomStatusBar::OnLeftDown, this);
     Bind(wxEVT_MOTION, &wxCustomStatusBar::OnMouseMotion, this);
+    m_timer = new wxTimer(this);
+    Bind(wxEVT_TIMER, &wxCustomStatusBar::OnTimer, this, m_timer->GetId());
 }
 
 wxCustomStatusBar::~wxCustomStatusBar()
 {
+    m_timer->Stop();
+    wxDELETE(m_timer);
+
     Unbind(wxEVT_PAINT, &wxCustomStatusBar::OnPaint, this);
     Unbind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackround, this);
     Unbind(wxEVT_LEFT_DOWN, &wxCustomStatusBar::OnLeftDown, this);
@@ -304,6 +308,9 @@ void wxCustomStatusBar::RemoveField(size_t index)
 {
     if(index >= m_fields.size()) return;
     m_fields.erase(m_fields.begin() + index);
+    if(m_timer->IsRunning()) {
+        m_timer->Stop();
+    }
     Refresh();
 }
 
@@ -326,11 +333,19 @@ void wxCustomStatusBar::OnLeftDown(wxMouseEvent& event)
 void wxCustomStatusBar::ClearText()
 {
     m_text.Clear();
+    if(m_timer->IsRunning()) {
+        m_timer->Stop();
+    }
     Refresh();
 }
 
-void wxCustomStatusBar::SetText(const wxString& message)
+void wxCustomStatusBar::SetText(const wxString& message, int secondsToLive)
 {
+    // Stop any timer
+    if(m_timer->IsRunning()) {
+        m_timer->Stop();
+    }
+
     m_text = message;
     SetToolTip(message);
 
@@ -342,6 +357,10 @@ void wxCustomStatusBar::SetText(const wxString& message)
     m_mainText->SetRect(mainRect);
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetText(m_text);
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTooltip(m_text);
+
+    if(secondsToLive != wxNOT_FOUND) {
+        m_timer->Start(secondsToLive * 1000, true);
+    }
 }
 
 void wxCustomStatusBar::OnMouseMotion(wxMouseEvent& event)
@@ -394,5 +413,7 @@ wxRect wxCustomStatusBar::DoGetMainFieldRect()
     wxRect mainRect(0, rect.y, offsetX, rect.height);
     return mainRect;
 }
+
+void wxCustomStatusBar::OnTimer(wxTimerEvent& event) { SetText(""); }
 
 bool wxCustomStatusBarField::HitTest(const wxPoint& point) const { return m_rect.Contains(point); }

@@ -81,8 +81,8 @@ public:
     virtual wxTreeCtrl* GetTree(TreeType type);
     virtual Notebook* GetOutputPaneNotebook();
     virtual Notebook* GetWorkspacePaneNotebook();
-    virtual IEditor*
-    OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
+    virtual IEditor* OpenFile(
+        const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
     virtual IEditor* OpenFile(const BrowseRecord& rec);
     virtual wxString GetStartupDirectory() const;
     virtual void AddProject(const wxString& path);
@@ -108,7 +108,7 @@ public:
     virtual void FindAndSelect(const wxString& pattern, const wxString& name, int pos = 0);
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
     virtual bool AllowToolbar();
-    virtual void SetStatusMessage(const wxString& msg, int col, int seconds_to_live = wxID_ANY);
+    virtual void SetStatusMessage(const wxString& msg, int seconds_to_live = wxID_ANY);
     virtual void PushQueueCommand(const QueueCommand& cmd);
     virtual void ProcessCommandQueue();
     virtual void StopAndClearQueue();
@@ -121,10 +121,10 @@ public:
     virtual bool ClosePage(const wxFileName& filename);
     virtual wxWindow* FindPage(const wxString& text);
     virtual bool AddPage(wxWindow* win,
-                         const wxString& text,
-                         const wxString& tooltip = wxEmptyString,
-                         const wxBitmap& bmp = wxNullBitmap,
-                         bool selected = false);
+        const wxString& text,
+        const wxString& tooltip = wxEmptyString,
+        const wxBitmap& bmp = wxNullBitmap,
+        bool selected = false);
     virtual bool SelectPage(wxWindow* win);
     virtual NavMgr* GetNavigationMgr();
     virtual IEditor* NewEditor();
@@ -162,7 +162,7 @@ public:
     virtual clWorkspaceView* GetWorkspaceView();
     virtual bool IsToolBarShown() const;
     virtual void ShowToolBar(bool show = true);
-    
+
     //------------------------------------
     // End of IManager interface
     //------------------------------------
@@ -172,8 +172,8 @@ public:
 
     // (Un)Hook the project settings tab
     virtual void HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
-    virtual void
-    UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
+    virtual void UnHookProjectSettingsTab(
+        wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
 };
 
 #endif // PLUGINMANAGER_H

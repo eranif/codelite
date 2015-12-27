@@ -56,7 +56,7 @@ protected:
     wxFlatButton* m_caseSensitive;
     wxFlatButton* m_wholeWord;
     wxFlatButton* m_regexOrWildButton;
-    wxFlatButton* m_buttonReplace;
+    wxButton* m_buttonReplace;
     wxFlatButton* m_closeButton;
     wxMenu* m_regexOrWildMenu;
     eRegexType m_regexType;
@@ -106,15 +106,15 @@ protected:
     void OnHide(wxCommandEvent& e);
     void OnNext(wxCommandEvent& e);
     void OnPrev(wxCommandEvent& e);
-    void OnFindAll(wxFlatButtonEvent& e);
-    void OnButtonNext(wxFlatButtonEvent& e);
-    void OnButtonPrev(wxFlatButtonEvent& e);
+    void OnFindAll(wxCommandEvent& e);
+    void OnButtonNext(wxCommandEvent& e);
+    void OnButtonPrev(wxCommandEvent& e);
     void OnButtonNextUI(wxUpdateUIEvent& e);
     void OnButtonPrevUI(wxUpdateUIEvent& e);
     void OnText(wxCommandEvent& e);
     void OnKeyDown(wxKeyEvent& e);
     void OnFindMouseWheel(wxMouseEvent& e);
-    void OnButtonReplace(wxFlatButtonEvent& e);
+    void OnButtonReplace(wxCommandEvent& e);
     void OnButtonReplaceUI(wxUpdateUIEvent& e);
     void OnEnter(wxCommandEvent& e);
     void OnReplace(wxCommandEvent& e);

@@ -143,7 +143,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Find
     wxButton* btnNext = new wxButton(m_bar, wxID_ANY, _("Find"), wxDefaultPosition, wxSize(100, -1));
     m_bar->AddControl(btnNext, 0);
-
+    btnNext->SetDefault();
+    
     btnNext->Bind(wxEVT_BUTTON, &QuickFindBar::OnButtonNext, this);
     btnNext->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
     btnNext->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonNextUI, this);

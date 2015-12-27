@@ -90,7 +90,7 @@ bool QMakeProFileGenerator::Generate()
 	pro_file << wxT("##########################################\n");
 
 	// Generate the pro file content
-	pro_file << wxT("DESTDIR        = ") << p->GetFileName().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME) << wxT("\n");
+	pro_file << wxT("DESTDIR        = ") << p->GetFileName().GetPath(wxPATH_NO_SEPARATOR | wxPATH_GET_VOLUME) << wxT("\n");
 	SetVariables( pro_file, bldConf, settings);
 	SetFiles    ( pro_file, p );
 
@@ -182,15 +182,27 @@ void QMakeProFileGenerator::SetVariables(wxString& pro_file, BuildConfigPtr bldC
 	pro_file << wxT("INCLUDEPATH    = ") << includes << wxT("\n");
 
 	// Add the global include path
+	wxArrayString includes_list;
 	includes.Clear();
 	if(cmp) {
 		includes = cmp->GetGlobalIncludePath();
 		includes.Trim().Trim(false);
 		if(includes.IsEmpty() == false) {
-			includes.Replace(wxT(";"), wxT(" "));
-			pro_file << wxT("INCLUDEPATH   += ") << includes << wxT("\n");
+			// Get list of include paths
+			includes_list = wxStringTokenize(includes, ";", wxTOKEN_STRTOK);
+/*			includes.Replace(wxT(";"), wxT(" "));
+			pro_file << wxT("INCLUDEPATH   += ") << includes << wxT("\n");*/
 		}
 	}
+	
+	includes.Clear();
+	// Append modified values
+	includes << wxT("INCLUDEPATH   += ");
+	for (size_t i = 0; i < includes_list.GetCount(); ++i) {
+		includes << "\"" << includes_list.Item(i) << "\" ";
+	}
+	pro_file << includes << wxT("\n");
+	includes.Clear();
 
 	//--------------------------------------------
 	// Compiler options

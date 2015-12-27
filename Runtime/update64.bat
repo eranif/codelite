@@ -1,6 +1,6 @@
-@echo off
+@echo on
 
-set TARGET_DIR=%ProgramFiles%
+set TARGET_DIR=C:\ProgramFiles\cl
 set COPY_WXC_RESOURCES=0
 ::IF EXIST D:\software\NUL (set TARGET_DIR=D:\software)
 IF EXIST ..\wxcrafter\wxcrafter.accelerators (set COPY_WXC_RESOURCES=1)
@@ -36,9 +36,9 @@ IF EXIST PHP.zip ( copy PHP.zip "%TARGET_DIR%\CodeLite\" )
 IF EXIST ..\WebTools\javascript-win.zip ( copy ..\WebTools\javascript-win.zip "%TARGET_DIR%\CodeLite\" )
 
 if "%WXWIN%" == "" GOTO OTHERS
-xcopy %WXWIN%\lib\gcc_dll\wxmsw*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
-xcopy %WXWIN%\lib\gcc_dll\wxbase*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
-:: xcopy %WXWIN%\lib\gcc_dll\wxrc.exe "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy %WXWIN%\lib\gcc51_dll\wxmsw*u_*gcc_*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy %WXWIN%\lib\gcc51_dll\wxbase*u_*gcc_*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+:: xcopy %WXWIN%\lib\gcc*_dll\wxrc.exe "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 
 if "%COPY_WXC_RESOURCES%" == "1" (copy ..\wxcrafter\wxcrafter.accelerators  "%TARGET_DIR%\CodeLite\plugins\resources" )
 
@@ -61,7 +61,7 @@ copy patch.exe "%TARGET_DIR%\CodeLite\" /Y
 copy rm.exe "%TARGET_DIR%\CodeLite\" /Y
 copy astyle.sample "%TARGET_DIR%\CodeLite\" /Y
 copy pthreadGC2.dll "%TARGET_DIR%\CodeLite\" /Y
-copy ..\sdk\wxconfig\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
+copy wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
 
 :END
 

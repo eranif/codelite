@@ -341,6 +341,9 @@ CMakeGenerator::Generate(ProjectPtr project, bool topProject)
             lib_paths << ";" << compiler->GetGlobalLibPath();
         }
 
+		// to replace all instances of backslashes with forward slashes issue #1073
+		lib_paths.Replace("\\", "/");
+		lib_paths.Trim(false).Trim();
         // Get list of library paths
         wxArrayString lib_paths_list = wxStringTokenize(lib_paths, ";", wxTOKEN_STRTOK);
 

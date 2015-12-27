@@ -197,6 +197,8 @@
     <File Name="builder_gnumake.cpp"/>
     <File Name="builder_gnumake_onestep.h"/>
     <File Name="builder_gnumake_onestep.cpp"/>
+    <File Name="builder_NMake.h"/>
+    <File Name="builder_NMake.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="importer">
     <File Name="vcimporter.h"/>

@@ -22,96 +22,92 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "buildmanager.h"
+#include "buildmanager.h"
 #include "builder.h"
 #include "builder_gnumake.h"
 #include "builder_gnumake_onestep.h"
-
+#include "builder_NMake.h"
 
 BuildManager::BuildManager()
 {
-	// register all builders here
-	AddBuilder(new BuilderGnuMake());
-	AddBuilder(new BuilderGnuMakeOneStep());
+    // register all builders here
+    AddBuilder(new BuilderGnuMake());
+    AddBuilder(new BuilderGnuMakeOneStep());
+#ifdef __WXMSW__
+    AddBuilder(new BuilderNMake());
+#endif
 }
 
-BuildManager::~BuildManager()
-{
-	m_builders.clear();
-}
+BuildManager::~BuildManager() { m_builders.clear(); }
 
 void BuildManager::AddBuilder(BuilderPtr builder)
 {
-	if(!builder){
-		return;
-	}
+    if(!builder) {
+        return;
+    }
 
-	m_builders[builder->GetName()] = builder;
+    m_builders[builder->GetName()] = builder;
 }
 
-void BuildManager::RemoveBuilder(const wxString &name)
+void BuildManager::RemoveBuilder(const wxString& name)
 {
 
-	std::map<wxString, BuilderPtr>::iterator iter = m_builders.find(name);
-	if(iter != m_builders.end()){
-		m_builders.erase(iter);
-	}
+    std::map<wxString, BuilderPtr>::iterator iter = m_builders.find(name);
+    if(iter != m_builders.end()) {
+        m_builders.erase(iter);
+    }
 }
 
-void BuildManager::GetBuilders(std::list<wxString> &list)
+void BuildManager::GetBuilders(std::list<wxString>& list)
 {
-	std::map<wxString, BuilderPtr>::iterator iter = m_builders.begin();
-	for(; iter != m_builders.end(); iter++){
-		list.push_back(iter->second->GetName());
-	}
+    std::map<wxString, BuilderPtr>::iterator iter = m_builders.begin();
+    for(; iter != m_builders.end(); iter++) {
+        list.push_back(iter->second->GetName());
+    }
 }
 
-BuilderPtr BuildManager::GetBuilder(const wxString &name)
+BuilderPtr BuildManager::GetBuilder(const wxString& name)
 {
-	std::map<wxString, BuilderPtr>::iterator iter = m_builders.begin();
-	for(; iter != m_builders.end(); iter++){
-		if(iter->first == name){
-			return iter->second;
-		}
-	}
-	
-	// return the default builder
-	return m_builders.begin()->second;
+    std::map<wxString, BuilderPtr>::iterator iter = m_builders.begin();
+    for(; iter != m_builders.end(); iter++) {
+        if(iter->first == name) {
+            return iter->second;
+        }
+    }
+
+    // return the default builder
+    return m_builders.begin()->second;
 }
 
 BuilderPtr BuildManager::GetSelectedBuilder()
 {
-	// Gnu Makefile C/C++ is the default builder
-	BuilderPtr defaultBuilder = m_builders.begin()->second;
-	
-	std::list<wxString> builders;
-	GetBuilders(builders);
-	
-	std::list<wxString>::iterator iter = builders.begin();
-	for(; iter != builders.end(); iter++) {
-		
-		wxString builderName = *iter;
-		BuilderPtr builder = BuildManagerST::Get()->GetBuilder(builderName);
-		if(builder->IsActive())
-			return builder;
-		
-	}
-	
-	return defaultBuilder;
+    // Gnu Makefile C/C++ is the default builder
+    BuilderPtr defaultBuilder = m_builders.begin()->second;
+
+    std::list<wxString> builders;
+    GetBuilders(builders);
+
+    std::list<wxString>::iterator iter = builders.begin();
+    for(; iter != builders.end(); iter++) {
+
+        wxString builderName = *iter;
+        BuilderPtr builder = BuildManagerST::Get()->GetBuilder(builderName);
+        if(builder->IsActive()) return builder;
+    }
+
+    return defaultBuilder;
 }
 static BuildManager* gs_BuildManager = NULL;
 void BuildManagerST::Free()
 {
-	if(gs_BuildManager) {
-		delete gs_BuildManager;
-		gs_BuildManager = NULL;
-	}
+    if(gs_BuildManager) {
+        delete gs_BuildManager;
+        gs_BuildManager = NULL;
+    }
 }
 
 BuildManager* BuildManagerST::Get()
 {
-	if(gs_BuildManager == NULL)
-		gs_BuildManager = new BuildManager;
-	return gs_BuildManager;
+    if(gs_BuildManager == NULL) gs_BuildManager = new BuildManager;
+    return gs_BuildManager;
 }
-

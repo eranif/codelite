@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef BUILDMANAGER_H
+#ifndef BUILDMANAGER_H
 #define BUILDMANAGER_H
 
 #include <map>
@@ -32,7 +32,7 @@
 #include "codelite_exports.h"
 #include "builder.h"
 
-//class BuildManager;
+// class BuildManager;
 
 /**
  * \ingroup SDK
@@ -50,32 +50,32 @@
  * \author Eran
  *
  */
-class WXDLLIMPEXP_SDK BuildManager {
+class WXDLLIMPEXP_SDK BuildManager
+{
 
-	friend class BuildManagerST;
-	std::map<wxString, BuilderPtr> m_builders;
+    friend class BuildManagerST;
+    std::map<wxString, BuilderPtr> m_builders;
 
 public:
-	typedef std::map<wxString, BuilderPtr>::const_iterator ConstIterator;
+    typedef std::map<wxString, BuilderPtr>::const_iterator ConstIterator;
 
 private:
-	BuildManager();
-	virtual ~BuildManager();
+    BuildManager();
+    virtual ~BuildManager();
 
 public:
-	void AddBuilder(BuilderPtr builder);
-	void RemoveBuilder(const wxString &name);
-	void GetBuilders(std::list<wxString> &list);
-	BuilderPtr GetBuilder(const wxString &name);
-	BuilderPtr GetSelectedBuilder();
+    void AddBuilder(BuilderPtr builder);
+    void RemoveBuilder(const wxString& name);
+    void GetBuilders(std::list<wxString>& list);
+    BuilderPtr GetBuilder(const wxString& name);
+    BuilderPtr GetSelectedBuilder();
 };
 
 class WXDLLIMPEXP_SDK BuildManagerST
 {
 public:
-	static BuildManager* Get();
-	static void Free();
+    static BuildManager* Get();
+    static void Free();
 };
 
 #endif // BUILDMANAGER_H
-

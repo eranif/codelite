@@ -38,6 +38,7 @@
 #include <wx/gdicmn.h>
 #include "wxFlatButtonBar.h"
 #include "globals.h"
+#include "bookmark_manager.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -144,7 +145,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     wxButton* btnNext = new wxButton(m_bar, wxID_ANY, _("Find"), wxDefaultPosition, wxSize(100, -1));
     m_bar->AddControl(btnNext, 0);
     btnNext->SetDefault();
-    
+
     btnNext->Bind(wxEVT_BUTTON, &QuickFindBar::OnButtonNext, this);
     btnNext->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
     btnNext->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonNextUI, this);
@@ -181,10 +182,10 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_replaceWith->SetToolTip(_("Type the replacement string and hit ENTER to perform the replacement"));
     m_replaceWith->SetHint(_("Type any replacement string..."));
     m_bar->AddControl(m_replaceWith, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
-    
+
     m_buttonReplace = new wxButton(m_bar, wxID_ANY, _("Replace"), wxDefaultPosition, wxSize(100, -1));
     m_bar->AddControl(m_buttonReplace, 0);
-    
+
     m_buttonReplace->SetToolTip(_("Replace the current selection"));
     m_buttonReplace->Bind(wxEVT_BUTTON, &QuickFindBar::OnButtonReplace, this);
     m_buttonReplace->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonReplaceUI, this);
@@ -738,8 +739,37 @@ void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)
     bool checked = e.IsChecked();
     LEditor* editor = dynamic_cast<LEditor*>(m_sci);
     if(checked && editor) {
+        int flags = DoGetSearchFlags();
+        wxString findwhat = m_findWhat->GetValue();
+        if(!m_sci || m_sci->GetLength() == 0 || findwhat.IsEmpty()) return;
+
+        // Do we have at least one match?
+        if(m_sci->FindText(0, m_sci->GetLastPosition(), findwhat, flags) == wxNOT_FOUND) return;
+        m_sci->ClearSelections();
+        m_sci->SetCurrentPos(0);
+        m_sci->SetSelectionEnd(0);
+        m_sci->SetSelectionStart(0);
+        
         editor->SetFindBookmarksActive(true);
-        DoMarkAll();
+        editor->DelAllMarkers(smt_find_bookmark);
+
+        while(true) {
+            m_sci->SearchAnchor();
+            if(m_sci->SearchNext(flags, findwhat) != wxNOT_FOUND) {
+                int selStart, selEnd;
+                m_sci->GetSelection(&selStart, &selEnd);
+                m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+                m_sci->IndicatorFillRange(selStart, selEnd - selStart);
+                m_sci->MarkerAdd(m_sci->LineFromPosition(selStart), smt_find_bookmark);
+
+                // Clear the selection so the next 'SearchNext' will search forward
+                m_sci->SetCurrentPos(selEnd);
+                m_sci->SetSelectionEnd(selEnd);
+                m_sci->SetSelectionStart(selEnd);
+            } else {
+                break;
+            }
+        }
 
     } else {
         if(editor) {

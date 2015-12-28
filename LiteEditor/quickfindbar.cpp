@@ -108,12 +108,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_wholeWord->SetToolTip(_("Match a whole word"));
     m_wholeWord->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
 
-    // Regex or Wild card syntax?
-    m_regexOrWildMenu = new wxMenu;
-    m_regexOrWildMenu->Append(ID_MENU_NO_REGEX, _("None"), _("None"), wxITEM_CHECK);
-    m_regexOrWildMenu->Append(ID_MENU_REGEX, _("Regular expression"), _("Regular expression"), wxITEM_CHECK);
-    m_regexOrWildMenu->Append(ID_MENU_WILDCARD, _("Wildcard syntax"), _("Wildcard syntax"), wxITEM_CHECK);
-
     m_regexOrWildButton = m_bar->AddButton("", images.Bitmap("regex"), wxSize(24, -1));
     m_regexOrWildButton->SetTogglable(true);
     m_regexOrWildButton->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnRegex, this);
@@ -208,21 +202,12 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     wxTheApp->Connect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Connect(XRCID("find_previous"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QuickFindBar::OnFindPrevious),
-                      NULL,
-                      this);
-    wxTheApp->Connect(XRCID("find_next_at_caret"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
-                      NULL,
-                      this);
-    wxTheApp->Connect(XRCID("find_previous_at_caret"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
-                      NULL,
-                      this);
+    wxTheApp->Connect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
+    wxTheApp->Connect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
+    wxTheApp->Connect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
 
     EventNotifier::Get()->Connect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
@@ -312,17 +297,7 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
         m_sci->ClearSelections();
         return;
     }
-
-    int line = m_sci->LineFromPosition(m_sci->GetSelectionStart());
-    int linesOnScreen = m_sci->LinesOnScreen();
-    // To place our line in the middle, the first visible line should be
-    // the: line - (linesOnScreen / 2)
-    int firstVisibleLine = line - (linesOnScreen / 2);
-    if(firstVisibleLine < 0) {
-        firstVisibleLine = 0;
-    }
-    m_sci->EnsureVisible(firstVisibleLine);
-    m_sci->SetFirstVisibleLine(firstVisibleLine);
+    DoEnsureSelectionVisible();
 }
 
 void QuickFindBar::OnHide(wxCommandEvent& e)
@@ -384,7 +359,7 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 void QuickFindBar::OnUpdateUI(wxUpdateUIEvent& e)
 {
     e.Enable(ManagerST::Get()->IsShutdownInProgress() == false && m_sci && m_sci->GetLength() > 0 &&
-             !m_findWhat->GetValue().IsEmpty());
+        !m_findWhat->GetValue().IsEmpty());
 }
 
 void QuickFindBar::OnEnter(wxCommandEvent& e)
@@ -552,7 +527,7 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
 void QuickFindBar::OnReplaceUI(wxUpdateUIEvent& e)
 {
     e.Enable(ManagerST::Get()->IsShutdownInProgress() == false && m_sci && !m_sci->GetReadOnly() &&
-             m_sci->GetLength() > 0 && !m_findWhat->GetValue().IsEmpty());
+        m_sci->GetLength() > 0 && !m_findWhat->GetValue().IsEmpty());
 }
 
 void QuickFindBar::OnReplaceEnter(wxCommandEvent& e)
@@ -749,7 +724,7 @@ void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)
         m_sci->SetCurrentPos(0);
         m_sci->SetSelectionEnd(0);
         m_sci->SetSelectionStart(0);
-        
+
         editor->SetFindBookmarksActive(true);
         editor->DelAllMarkers(smt_find_bookmark);
 
@@ -838,21 +813,12 @@ QuickFindBar::~QuickFindBar()
 {
     wxTheApp->Disconnect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_previous"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QuickFindBar::OnFindPrevious),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(XRCID("find_next_at_caret"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(XRCID("find_previous_at_caret"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
-                         NULL,
-                         this);
+    wxTheApp->Disconnect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
+    wxTheApp->Disconnect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
+    wxTheApp->Disconnect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
 }
@@ -1023,3 +989,19 @@ void QuickFindBar::OnFindMouseWheel(wxMouseEvent& e)
 void QuickFindBar::OnRegex(wxFlatButtonEvent& event) { m_regexType = event.IsChecked() ? kRegexPosix : kRegexNone; }
 
 void QuickFindBar::OnRegexUI(wxUpdateUIEvent& event) { event.Check(m_regexType == kRegexPosix); }
+
+void QuickFindBar::DoEnsureSelectionVisible()
+{
+    int line = m_sci->LineFromPosition(m_sci->GetSelectionStart());
+    int linesOnScreen = m_sci->LinesOnScreen();
+    if(!((line > m_sci->GetFirstVisibleLine()) && (line < (m_sci->GetFirstVisibleLine() + linesOnScreen)))) {
+        // To place our line in the middle, the first visible line should be
+        // the: line - (linesOnScreen / 2)
+        int firstVisibleLine = line - (linesOnScreen / 2);
+        if(firstVisibleLine < 0) {
+            firstVisibleLine = 0;
+        }
+        m_sci->SetFirstVisibleLine(firstVisibleLine);
+    }
+    m_sci->EnsureVisible(line);
+}

@@ -58,7 +58,6 @@ protected:
     wxFlatButton* m_regexOrWildButton;
     wxButton* m_buttonReplace;
     wxFlatButton* m_closeButton;
-    wxMenu* m_regexOrWildMenu;
     eRegexType m_regexType;
     bool m_disableTextUpdateEvent;
     friend class QuickFindBarOptionsMenu;
@@ -101,7 +100,8 @@ protected:
     void OnPaste(wxCommandEvent& e);
     void OnSelectAll(wxCommandEvent& e);
     void OnEditUI(wxUpdateUIEvent& e);
-
+    void DoEnsureSelectionVisible();
+    
     // Control events
     void OnHide(wxCommandEvent& e);
     void OnNext(wxCommandEvent& e);
@@ -123,7 +123,6 @@ protected:
     void OnReplaceEnter(wxCommandEvent& e);
     void OnHighlightMatches(wxFlatButtonEvent& e);
     void OnHideBar(wxFlatButtonEvent& e);
-    void OnRegularExpMenu(wxFlatButtonEvent& e);
     void OnRegex(wxFlatButtonEvent& event);
     void OnRegexUI(wxUpdateUIEvent& event);
     void OnHighlightMatchesUI(wxUpdateUIEvent& event);

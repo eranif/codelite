@@ -182,7 +182,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     if(lexCpp) {
         lexCpp->Apply(m_stcLog);
     }
-    m_bitmapLoader = new BitmapLoader();
+    m_bitmapLoader = clGetManager()->GetStdIcons();
     GitImages m_images;
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
     m_modifiedBmp = m_bitmapLoader->LoadBitmap("warning");
@@ -255,7 +255,6 @@ GitConsole::~GitConsole()
     data.SetGitConsoleSashPos(m_splitter->GetSashPosition());
     conf.WriteItem(&data);
 
-    wxDELETE(m_bitmapLoader);
     EventNotifier::Get()->Disconnect(
         wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Disconnect(

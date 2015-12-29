@@ -436,6 +436,9 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
 
     wxString findwhat = m_findWhat->GetValue();
     if(findwhat.IsEmpty()) return;
+    
+    wxString findWhatSciVersion = findwhat;
+    DoFixRegexParen(findWhatSciVersion);
 
     if(m_sci->GetSelections() != 1) {
         DoSearch(kSearchIncremental);
@@ -449,12 +452,11 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
     m_sci->GetSelection(&selStart, &selEnd);
 
     // Ensure that the selection matches our search pattern
-    if(m_sci->FindText(selStart, selEnd, findwhat, DoGetSearchFlags()) == wxNOT_FOUND) {
+    if(m_sci->FindText(selStart, selEnd, findWhatSciVersion, DoGetSearchFlags()) == wxNOT_FOUND) {
         // we got a selection, but it does not match our search
         return;
     }
-
-    // Get the selection
+    
     wxString selectedText = m_sci->GetTextRange(selStart, selEnd);
 
 #ifndef __WXMAC__
@@ -476,8 +478,6 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
         if(!(searchFlags & wxSTC_FIND_MATCHCASE)) {
             re_flags |= wxRE_ICASE;
         }
-
-        DoFixRegexParen(findwhat);
 
         wxRegEx re(findwhat, re_flags);
         if(re.IsValid() && re.Matches(selectedText)) {

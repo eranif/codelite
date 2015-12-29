@@ -34,7 +34,7 @@ wxFlatButtonEvent& wxFlatButtonEvent::operator=(const wxFlatButtonEvent& src)
 //++++++++---------------------------------
 #define X_SPACER 5
 #define Y_SPACER 3
-#define BTN_RADIUS 0
+#define BTN_RADIUS 2
 
 wxFlatButton::wxFlatButton(wxWindow* parent,
                            const wxString& label,
@@ -193,6 +193,8 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
     wxAutoBufferedPaintDC paintDC(this);
+    PrepareDC(paintDC);
+    
     wxGCDC gdc;
     GetGCDC(paintDC, gdc);
 

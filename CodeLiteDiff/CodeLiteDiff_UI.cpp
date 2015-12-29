@@ -63,11 +63,11 @@ NewFileComparisonBase::NewFileComparisonBase(wxWindow* parent, wxWindowID id, co
     m_button22 = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
     m_button22->SetToolTip(_("Choose a file..."));
     
-    flexGridSizer23->Add(m_button22, 0, wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer23->Add(m_button22, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText33 = new wxStaticText(this, wxID_ANY, _("Opened files:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer6->Add(m_staticText33, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer6->Add(m_staticText33, 0, wxALL|wxALIGN_LEFT, 5);
     
     wxArrayString m_listBox16Arr;
     m_listBox16 = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBox16Arr, wxLB_SINGLE);

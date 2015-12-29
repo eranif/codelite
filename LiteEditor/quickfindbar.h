@@ -90,6 +90,7 @@ private:
 protected:
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
     void DoSearch(size_t searchFlags, int posToSearchFrom = wxNOT_FOUND);
+    void DoFixRegexParen(wxString& findwhat);
     wxString DoGetSelectedText();
     void DoMarkAll();
 

@@ -249,11 +249,17 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
     wxString find = m_findWhat->GetValue();
     bool fwd = searchFlags & kSearchForward;
     int flags = DoGetSearchFlags();
+    
+    // Since scintilla uses a non POSIX way of handling the paren
+    // fix them
+    if(flags & wxSTC_FIND_REGEXP) {
+        DoFixRegexParen(find);
+    }
+    
     int curpos = m_sci->GetCurrentPos();
     int start = wxNOT_FOUND;
     int end = wxNOT_FOUND;
     m_sci->GetSelection(&start, &end);
-    bool restoreSelection = false;
     if((end != wxNOT_FOUND) && fwd) {
         if(m_sci->FindText(start, end, find, flags) != wxNOT_FOUND) {
             // Incase we searching forward and the current selection matches the search string
@@ -261,7 +267,6 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
             m_sci->SetCurrentPos(end);
             m_sci->SetSelectionEnd(end);
             m_sci->SetSelectionStart(end);
-            restoreSelection = true;
         }
     }
 
@@ -429,99 +434,65 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
     wxUnusedVar(event);
     if(!m_sci) return;
 
-    // if there is no selection, invoke search
-    int nNumSelections = m_sci->GetSelections();
+    wxString findwhat = m_findWhat->GetValue();
+    if(findwhat.IsEmpty()) return;
+
+    if(m_sci->GetSelections() != 1) {
+        DoSearch(kSearchIncremental);
+        return;
+    }
+
+    // did we got a match?
+    if(m_sci->GetSelections() != 1) return;
+
+    int selStart, selEnd;
+    m_sci->GetSelection(&selStart, &selEnd);
+
+    // Ensure that the selection matches our search pattern
+    if(m_sci->FindText(selStart, selEnd, findwhat, DoGetSearchFlags()) == wxNOT_FOUND) {
+        // we got a selection, but it does not match our search
+        return;
+    }
+
+    // Get the selection
+    wxString selectedText = m_sci->GetTextRange(selStart, selEnd);
+
 #ifndef __WXMAC__
     int re_flags = wxRE_ADVANCED;
 #else
     int re_flags = wxRE_DEFAULT;
 #endif
 
-    bool caseSearch = m_flags & wxSD_MATCHCASE;
-    wxString selectionText;
-    if(nNumSelections == 1) {
-        selectionText = m_sci->GetSelectedText();
-
-    } else if(nNumSelections > 1) {
-        selectionText = DoGetSelectedText();
-    }
-
-    if(selectionText.IsEmpty()) return;
-
-    wxString find = m_findWhat->GetValue();
     wxString replaceWith = m_replaceWith->GetValue();
-
-    if(!caseSearch) {
-        selectionText.MakeLower();
-        find.MakeLower();
-    }
-
-    if(find.IsEmpty()) return;
-
     if(!replaceWith.IsEmpty()) {
         clConfig::Get().AddQuickFindReplaceItem(replaceWith);
         DoUpdateReplaceHistory();
     }
 
-    int nextSearchOffset = m_sci->GetSelectionStart() + replaceWith.Length();
+    size_t searchFlags = DoGetSearchFlags();
+    if(searchFlags & wxSTC_FIND_REGEXP) {
 
-    // do we got a match?
-    if((selectionText != find) && !(m_flags & wxSD_REGULAREXPRESSION)) {
-        size_t flags = kSearchForward | kSearchIncremental;
-        DoSearch(flags);
-
-    } else if(m_flags & wxSD_REGULAREXPRESSION) {
-        // regular expression search
-        wxString selectedText = selectionText;
-
-        // handle back references (\1 \2 etc)
-        if(m_sci && selectedText.IsEmpty() == false) {
-
-            // search was regular expression search
-            // handle any back references
-            caseSearch == false ? re_flags |= wxRE_ICASE : re_flags;
-            wxRegEx re(find, re_flags);
-            if(re.IsValid() && re.Matches(selectedText)) {
-                re.Replace(&selectedText, replaceWith);
-            }
-
-            m_sci->BeginUndoAction();
-            for(int i = 0; i < nNumSelections; ++i) {
-                int nStart = m_sci->GetSelectionNStart(i);
-                int nEnd = m_sci->GetSelectionNEnd(i);
-                if(nEnd > nStart) {
-                    m_sci->Replace(nStart, nEnd, selectedText);
-                }
-            }
-            m_sci->EndUndoAction();
-            m_sci->ClearSelections();
+        // Regular expresson search
+        if(!(searchFlags & wxSTC_FIND_MATCHCASE)) {
+            re_flags |= wxRE_ICASE;
         }
 
-        // and search again
-        if(nNumSelections == 1) {
-            size_t flags = kSearchForward | kSearchIncremental;
-            DoSearch(flags, nextSearchOffset);
+        DoFixRegexParen(findwhat);
+
+        wxRegEx re(findwhat, re_flags);
+        if(re.IsValid() && re.Matches(selectedText)) {
+            re.Replace(&selectedText, replaceWith);
+            // update the view
+            m_sci->Replace(selStart, selEnd, selectedText);
         }
 
     } else {
-
-        m_sci->BeginUndoAction();
-        for(int i = 0; i < nNumSelections; ++i) {
-            int nStart = m_sci->GetSelectionNStart(i);
-            int nEnd = m_sci->GetSelectionNEnd(i);
-            if(nEnd > nStart) {
-                m_sci->Replace(nStart, nEnd, replaceWith);
-            }
-        }
-        m_sci->EndUndoAction();
-        m_sci->ClearSelections();
-
-        // and search again
-        if(nNumSelections == 1) {
-            size_t flags = kSearchForward | kSearchIncremental;
-            DoSearch(flags, nextSearchOffset);
-        }
+        // Normal search and replace
+        m_sci->Replace(selStart, selEnd, selectedText);
     }
+
+    // Trigger another search
+    DoSearch(kSearchForward);
 }
 
 void QuickFindBar::OnReplaceUI(wxUpdateUIEvent& e)
@@ -1004,4 +975,20 @@ void QuickFindBar::DoEnsureSelectionVisible()
         m_sci->SetFirstVisibleLine(firstVisibleLine);
     }
     m_sci->EnsureVisible(line);
+}
+
+void QuickFindBar::DoFixRegexParen(wxString& findwhat)
+{
+    // Scintilla's REGEX group markers are \( and \)
+    // while wxRegEx is usig bare ( and ) and the escaped version for
+    // non regex manner
+    findwhat.Replace("\\(", "/<!@#$");
+    findwhat.Replace("\\)", "/>!@#$");
+    findwhat.Replace("(", "<!@#$");
+    findwhat.Replace(")", ">!@#$");
+
+    findwhat.Replace("/<!@#$", "(");
+    findwhat.Replace("/>!@#$", ")");
+    findwhat.Replace("<!@#$", "\\(");
+    findwhat.Replace(">!@#$", "\\)");
 }

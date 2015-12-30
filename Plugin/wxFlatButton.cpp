@@ -9,6 +9,7 @@
 
 static wxBitmap ConvertToDisabled(const wxBitmap& bmp)
 {
+#ifndef __WXMSW__
     // Convert the image to disabled
     // It seems that m_bitmap.ConvertToDisabled() looses the scale
     // factor, so use this kind of conversion
@@ -17,6 +18,9 @@ static wxBitmap ConvertToDisabled(const wxBitmap& bmp)
     // Keep the original m_bitmap scale factor
     wxBitmap disabledBmp = wxBitmap(img, -1, bmp.GetScaleFactor());
     return disabledBmp;
+#else
+    return bmp.ConvertToDisabled();
+#endif
 }
 
 wxDEFINE_EVENT(wxEVT_CMD_FLATBUTTON_CLICK, wxFlatButtonEvent);

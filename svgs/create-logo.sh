@@ -20,6 +20,10 @@ if [ "${os_name}" != "Darwin" ]; then
     cp ../bitmaps/32-${filename}.png ../bitmaps/osx/icon.iconset/icon_32x32.png
     cp ../bitmaps/32-${filename}@2x.png ../bitmaps/osx/icon.iconset/icon_32x32@2x.png
 
+    ## 64x64 version
+    inkscape $file --without-gui --export-png=../bitmaps/64-${filename}.png --export-width=64 --export-height=64 
+    inkscape $file --without-gui --export-png=../bitmaps/64-${filename}@2x.png --export-width=128 --export-height=128 
+
     ## 128x128 version
     inkscape $file --without-gui --export-png=../bitmaps/128-${filename}.png --export-width=128 --export-height=128 
     inkscape $file --without-gui --export-png=../bitmaps/128-${filename}@2x.png --export-width=256 --export-height=256 

@@ -25,7 +25,9 @@ wxFlatButton* wxFlatButtonBar::AddButton(const wxString& label, const wxBitmap& 
 
 void wxFlatButtonBar::OnPaint(wxPaintEvent& event)
 {
-    wxBufferedPaintDC dc(this);
+    wxAutoBufferedPaintDC dc(this);
+    PrepareDC(dc);
+    
     dc.SetBrush(GetBgColour());
     dc.SetPen(GetBgColour());
     dc.DrawRectangle(GetClientRect());

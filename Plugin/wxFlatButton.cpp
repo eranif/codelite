@@ -215,33 +215,13 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
 
     switch(m_state) {
     case kStateHover: {
-        if(!IsChecked()) {
-            // Hover
-            gdc.SetBrush(GetBgHoverColour());
-            gdc.SetPen(m_penHoverOuterColour);
-            gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
-
-            clientRect.Deflate(1);
-            gdc.SetBrush(*wxTRANSPARENT_BRUSH);
-            gdc.SetPen(m_penHoverColourInner);
-            gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
-            clientRect.Inflate(1);
-
-            // gdc.SetPen(m_penHoverColourInner);
-            // gdc.DrawLine(clientRect.GetBottomLeft(), clientRect.GetTopLeft());
-            // gdc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
-            //
-            // gdc.SetPen(m_penHoverOuterColour);
-            // gdc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
-            // gdc.DrawLine(clientRect.GetBottomRight(), clientRect.GetBottomLeft());
-        }
-        break;
-    }
-    case kStateNormal: {
         // do nothing
         gdc.SetBrush(GetBgColour());
         gdc.SetPen(GetPenNormalColour());
         gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
+        break;
+    }
+    case kStateNormal: {
         break;
     }
     case kStatePressed: {
@@ -249,17 +229,6 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
         gdc.SetBrush(GetBgPressedColour());
         gdc.SetPen(GetPenPressedColour());
         gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
-
-        // gdc.SetBrush(GetBgPressedColour());
-        // gdc.DrawRectangle(clientRect);
-        //
-        // gdc.SetPen(m_penHoverOuterColour);
-        // gdc.DrawLine(clientRect.GetBottomLeft(), clientRect.GetTopLeft());
-        // gdc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
-        //
-        // gdc.SetPen(m_penHoverColourInner);
-        // gdc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
-        // gdc.DrawLine(clientRect.GetBottomRight(), clientRect.GetBottomLeft());
         break;
     }
     }

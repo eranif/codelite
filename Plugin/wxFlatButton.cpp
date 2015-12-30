@@ -7,6 +7,18 @@
 // wxFlatButtonEvent
 //++++++++---------------------------------
 
+static wxBitmap ConvertToDisabled(const wxBitmap& bmp)
+{
+    // Convert the image to disabled
+    // It seems that m_bitmap.ConvertToDisabled() looses the scale
+    // factor, so use this kind of conversion
+    wxImage img = bmp.ConvertToImage();
+    img = img.ConvertToDisabled();
+    // Keep the original m_bitmap scale factor
+    wxBitmap disabledBmp = wxBitmap(img, -1, bmp.GetScaleFactor());
+    return disabledBmp;
+}
+
 wxDEFINE_EVENT(wxEVT_CMD_FLATBUTTON_CLICK, wxFlatButtonEvent);
 wxDEFINE_EVENT(wxEVT_CMD_FLATBUTTON_MENU_SHOWING, wxFlatButtonEvent);
 
@@ -84,7 +96,7 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         SetTextColour("rgb(248, 248, 242)");
         SetTextColourDisabled("rgb(109, 109, 109)");
         if(m_bmp.IsOk()) {
-            m_bmpDisabled = m_bmp.ConvertToDisabled(100);
+            m_bmpDisabled = ConvertToDisabled(m_bmp);
         }
 
     } else {
@@ -104,7 +116,7 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         SetTextColour("rgb(15, 15, 15)");
         SetTextColourDisabled(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
         if(m_bmp.IsOk()) {
-            m_bmpDisabled = m_bmp.ConvertToDisabled();
+            m_bmpDisabled = ConvertToDisabled(m_bmp);
         }
     }
 
@@ -214,7 +226,7 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
             gdc.SetPen(m_penHoverColourInner);
             gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
             clientRect.Inflate(1);
-            
+
             // gdc.SetPen(m_penHoverColourInner);
             // gdc.DrawLine(clientRect.GetBottomLeft(), clientRect.GetTopLeft());
             // gdc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());

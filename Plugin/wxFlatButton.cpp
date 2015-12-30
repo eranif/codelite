@@ -37,11 +37,11 @@ wxFlatButtonEvent& wxFlatButtonEvent::operator=(const wxFlatButtonEvent& src)
 #define BTN_RADIUS 2
 
 wxFlatButton::wxFlatButton(wxWindow* parent,
-                           const wxString& label,
-                           const wxFlatButton::eTheme theme,
-                           const wxBitmap& bmp,
-                           const wxSize& size,
-                           int style)
+    const wxString& label,
+    const wxFlatButton::eTheme theme,
+    const wxBitmap& bmp,
+    const wxSize& size,
+    int style)
     : wxFlatButtonBase(parent)
     , m_theme(theme)
     , m_state(kStateNormal)
@@ -120,8 +120,7 @@ wxFlatButton::~wxFlatButton() { wxDELETE(m_contextMenu); }
 
 void wxFlatButton::OnEnterWindow(wxMouseEvent& event)
 {
-    if(!IsEnabled())
-        return;
+    if(!IsEnabled()) return;
     if(!m_isChecked) {
         m_state = kStateHover;
         Refresh();
@@ -132,8 +131,7 @@ void wxFlatButton::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void wxFlatButton::OnLeaveWindow(wxMouseEvent& event)
 {
-    if(!IsEnabled())
-        return;
+    if(!IsEnabled()) return;
 
     if(!m_isChecked) {
         m_state = kStateNormal;
@@ -145,8 +143,7 @@ void wxFlatButton::OnLeftUp(wxMouseEvent& event) { DoActivate(); }
 
 void wxFlatButton::DoActivate()
 {
-    if(!IsEnabled())
-        return;
+    if(!IsEnabled()) return;
 
     wxFlatButtonEvent btnEvent(wxEVT_CMD_FLATBUTTON_CLICK);
     btnEvent.SetEventObject(this);
@@ -194,7 +191,7 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
     wxUnusedVar(event);
     wxAutoBufferedPaintDC paintDC(this);
     PrepareDC(paintDC);
-    
+
     wxGCDC gdc;
     GetGCDC(paintDC, gdc);
 
@@ -216,7 +213,8 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
             gdc.SetBrush(*wxTRANSPARENT_BRUSH);
             gdc.SetPen(m_penHoverColourInner);
             gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
-
+            clientRect.Inflate(1);
+            
             // gdc.SetPen(m_penHoverColourInner);
             // gdc.DrawLine(clientRect.GetBottomLeft(), clientRect.GetTopLeft());
             // gdc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
@@ -256,13 +254,40 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
 
     // Draw text
     gdc.SetFont(GetTextFont());
-    if(!IsEnabled()) {
-        gdc.SetTextForeground(GetTextColourDisabled());
-        gdc.DrawLabel(
-            m_text, m_bmpDisabled, clientRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL, m_accelIndex);
-    } else {
-        gdc.SetTextForeground(GetTextColour());
-        gdc.DrawLabel(m_text, m_bmp, clientRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL, m_accelIndex);
+    wxColour textColour = IsEnabled() ? GetTextColour() : GetTextColourDisabled();
+    wxBitmap bmp = IsEnabled() ? m_bmp : m_bmpDisabled;
+
+    wxCoord textX, textY;
+    wxCoord bmpX, bmpY;
+
+    wxCoord totalLen = 0;
+    const int spacer = 2;
+    if(bmp.IsOk()) {
+        // we got a bitmap
+        totalLen += bmp.GetScaledWidth();
+    }
+
+    int textHeight = 16; // default
+    wxSize textSize;
+    if(!m_text.IsEmpty()) {
+        textSize = gdc.GetTextExtent(m_text);
+        totalLen += spacer;
+        totalLen += textSize.x;
+    }
+
+    wxCoord offset = (clientRect.GetWidth() - totalLen) / 2;
+    bmpY = (clientRect.GetHeight() - bmp.GetScaledHeight()) / 2;
+    textY = (clientRect.GetHeight() - textSize.y) / 2;
+    if(bmp.IsOk()) {
+        gdc.DrawBitmap(bmp, offset, bmpY);
+        offset += bmp.GetScaledWidth();
+        offset += spacer;
+    }
+
+    if(!m_text.IsEmpty()) {
+        gdc.DrawText(m_text, offset, textY);
+        offset += textSize.x;
+        offset += spacer;
     }
 }
 

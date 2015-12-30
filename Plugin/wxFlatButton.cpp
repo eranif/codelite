@@ -242,8 +242,8 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
     wxColour textColour = IsEnabled() ? GetTextColour() : GetTextColourDisabled();
     wxBitmap bmp = IsEnabled() ? m_bmp : m_bmpDisabled;
 
-    wxCoord textX, textY;
-    wxCoord bmpX, bmpY;
+    wxCoord textY;
+    wxCoord bmpY;
 
     wxCoord totalLen = 0;
     const int spacer = 2;
@@ -252,7 +252,6 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
         totalLen += bmp.GetScaledWidth();
     }
 
-    int textHeight = 16; // default
     wxSize textSize;
     if(!m_text.IsEmpty()) {
         textSize = gdc.GetTextExtent(m_text);

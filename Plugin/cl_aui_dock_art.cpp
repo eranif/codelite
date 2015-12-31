@@ -245,7 +245,7 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-#ifdef __WXOSX__
+#if 1
     wxAuiDefaultDockArt::DrawSash(dc, window, orientation, rect);
 #else
     wxUnusedVar(window);

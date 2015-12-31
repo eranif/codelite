@@ -485,7 +485,8 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
         clConfig::Get().AddQuickFindReplaceItem(replaceWith);
         DoUpdateReplaceHistory();
     }
-
+    
+    size_t replacementLen = replaceWith.length();
     if(searchFlags & wxSTC_FIND_REGEXP) {
 
         // Regular expresson search
@@ -496,15 +497,25 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
         wxRegEx re(findwhat, re_flags);
         if(re.IsValid() && re.Matches(selectedText)) {
             re.Replace(&selectedText, replaceWith);
+            
+            // Keep the replacement length
+            replacementLen = selectedText.length();
+            
             // update the view
             m_sci->Replace(selStart, selEnd, selectedText);
+        } else {
+            return;
         }
 
     } else {
         // Normal search and replace
         m_sci->Replace(selStart, selEnd, replaceWith);
     }
-
+    
+    // Clear the selection
+    m_sci->ClearSelections();
+    m_sci->SetCurrentPos(selStart + replacementLen);
+    
     // Trigger another search
     DoSearch(kSearchForward);
 }

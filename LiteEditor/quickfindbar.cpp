@@ -301,9 +301,11 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
         // Restore the caret position
         m_sci->SetCurrentPos(curpos);
         m_sci->ClearSelections();
+        CallAfter(&QuickFindBar::DoSetCaretAtEndOfText);
         return;
     }
     DoEnsureSelectionVisible();
+    CallAfter(&QuickFindBar::DoSetCaretAtEndOfText);
 }
 
 void QuickFindBar::OnHide(wxCommandEvent& e)
@@ -485,7 +487,7 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
         clConfig::Get().AddQuickFindReplaceItem(replaceWith);
         DoUpdateReplaceHistory();
     }
-    
+
     size_t replacementLen = replaceWith.length();
     if(searchFlags & wxSTC_FIND_REGEXP) {
 
@@ -497,10 +499,10 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
         wxRegEx re(findwhat, re_flags);
         if(re.IsValid() && re.Matches(selectedText)) {
             re.Replace(&selectedText, replaceWith);
-            
+
             // Keep the replacement length
             replacementLen = selectedText.length();
-            
+
             // update the view
             m_sci->Replace(selStart, selEnd, selectedText);
         } else {
@@ -511,11 +513,11 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
         // Normal search and replace
         m_sci->Replace(selStart, selEnd, replaceWith);
     }
-    
+
     // Clear the selection
     m_sci->ClearSelections();
     m_sci->SetCurrentPos(selStart + replacementLen);
-    
+
     // Trigger another search
     DoSearch(kSearchForward);
 }
@@ -1017,3 +1019,5 @@ void QuickFindBar::DoFixRegexParen(wxString& findwhat)
     findwhat.Replace("<!@#$", "\\(");
     findwhat.Replace(">!@#$", "\\)");
 }
+
+void QuickFindBar::DoSetCaretAtEndOfText() { m_findWhat->SetInsertionPointEnd(); }

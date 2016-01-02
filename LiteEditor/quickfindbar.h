@@ -76,9 +76,7 @@ public:
     };
 
     enum {
-        kSearchForward = 0x00000001,
-        kSearchIncremental = 0x00000002,
-        kSearchMultiSelect = 0x00000004,
+        kSearchForward = (1 << 0),
     };
 
 private:
@@ -89,7 +87,7 @@ private:
 
 protected:
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
-    void DoSearch(size_t searchFlags, int posToSearchFrom = wxNOT_FOUND);
+    void DoSearch(size_t searchFlags);
     void DoSetCaretAtEndOfText();
     void DoFixRegexParen(wxString& findwhat);
     wxString DoGetSelectedText();
@@ -102,8 +100,8 @@ protected:
     void OnPaste(wxCommandEvent& e);
     void OnSelectAll(wxCommandEvent& e);
     void OnEditUI(wxUpdateUIEvent& e);
-    void DoEnsureSelectionVisible();
-    
+    void DoEnsureLineIsVisible(int line = wxNOT_FOUND);
+
     // Control events
     void OnHide(wxCommandEvent& e);
     void OnNext(wxCommandEvent& e);

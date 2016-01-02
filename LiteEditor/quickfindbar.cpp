@@ -235,7 +235,7 @@ void QuickFindBar::ToggleReplacebar()
     DoToggleReplacebar();
 }
 
-void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
+void QuickFindBar::DoSearch(size_t searchFlags)
 {
     if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty()) return;
 
@@ -304,7 +304,7 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
         CallAfter(&QuickFindBar::DoSetCaretAtEndOfText);
         return;
     }
-    DoEnsureSelectionVisible();
+    DoEnsureLineIsVisible();
     CallAfter(&QuickFindBar::DoSetCaretAtEndOfText);
 }
 
@@ -345,7 +345,7 @@ void QuickFindBar::OnText(wxCommandEvent& e)
 {
     e.Skip();
     if(!m_disableTextUpdateEvent) {
-        CallAfter(&QuickFindBar::DoSearch, kSearchForward | kSearchIncremental, -1);
+        CallAfter(&QuickFindBar::DoSearch, kSearchForward);
     }
 }
 
@@ -702,9 +702,69 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 
 void QuickFindBar::DoMarkAll()
 {
-    wxCommandEvent evt(wxEVT_MENU, XRCID("ID_QUICK_FIND_ALL"));
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evt);
+    if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty()) return;
+    clGetManager()->SetStatusMessage(wxEmptyString);
+
+    m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+    m_sci->IndicatorClearRange(0, m_sci->GetLength());
+
+    wxString find = m_findWhat->GetValue();
+    bool fwd = true;
+    int flags = DoGetSearchFlags();
+
+    // Since scintilla uses a non POSIX way of handling the regex paren
+    // fix them
+    if(flags & wxSTC_FIND_REGEXP) {
+        DoFixRegexParen(find);
+    }
+
+    // Ensure that we have at least one match before we continue
+    if(m_sci->FindText(0, m_sci->GetLastPosition(), find, flags) == wxNOT_FOUND) {
+        clGetManager()->SetStatusMessage(_("No match found"), 1);
+        return;
+    }
+
+    // We got at least one match
+    m_sci->SetCurrentPos(0);
+    m_sci->SetSelectionEnd(0);
+    m_sci->SetSelectionStart(0);
+
+    m_sci->ClearSelections();
+    m_sci->SearchAnchor();
+
+    std::vector<std::pair<int, int> > matches; // pair of matches selStart+selEnd
+    int pos = m_sci->SearchNext(flags, find);
+    while(pos != wxNOT_FOUND) {
+        std::pair<int, int> match;
+        m_sci->GetSelection(&match.first, &match.second);
+        m_sci->SetCurrentPos(match.second);
+        m_sci->SetSelectionStart(match.second);
+        m_sci->SetSelectionEnd(match.second);
+        m_sci->SearchAnchor();
+        pos = m_sci->SearchNext(flags, find);
+        matches.push_back(match);
+    }
+    
+    if(matches.empty()) {
+        clGetManager()->SetStatusMessage(_("No match found"), 1);
+        return;
+    }
+    
+    // add selections
+    m_sci->ClearSelections();
+    for(size_t i = 0; i < matches.size(); ++i) {
+        if(i == 0) {
+            m_sci->SetSelection(matches.at(i).first, matches.at(i).second);
+            m_sci->SetMainSelection(0);
+        } else {
+            m_sci->AddSelection(matches.at(i).first, matches.at(i).second);
+        }
+    }
     Show(false);
+    wxString message;
+    message << _("Found and selected ") << matches.size() << _(" matches");
+    clGetManager()->SetStatusMessage(_("No match found"), 1);
+    DoEnsureLineIsVisible(m_sci->LineFromPosition(matches.at(0).first));
 }
 
 void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)
@@ -988,9 +1048,11 @@ void QuickFindBar::OnRegex(wxFlatButtonEvent& event) { m_regexType = event.IsChe
 
 void QuickFindBar::OnRegexUI(wxUpdateUIEvent& event) { event.Check(m_regexType == kRegexPosix); }
 
-void QuickFindBar::DoEnsureSelectionVisible()
+void QuickFindBar::DoEnsureLineIsVisible(int line)
 {
-    int line = m_sci->LineFromPosition(m_sci->GetSelectionStart());
+    if(line == wxNOT_FOUND) {
+        line = m_sci->LineFromPosition(m_sci->GetSelectionStart());
+    }
     int linesOnScreen = m_sci->LinesOnScreen();
     if(!((line > m_sci->GetFirstVisibleLine()) && (line < (m_sci->GetFirstVisibleLine() + linesOnScreen)))) {
         // To place our line in the middle, the first visible line should be

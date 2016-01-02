@@ -763,7 +763,7 @@ void QuickFindBar::DoMarkAll()
     Show(false);
     wxString message;
     message << _("Found and selected ") << matches.size() << _(" matches");
-    clGetManager()->SetStatusMessage(_("No match found"), 1);
+    clGetManager()->SetStatusMessage(message, 2);
     DoEnsureLineIsVisible(m_sci->LineFromPosition(matches.at(0).first));
 }
 

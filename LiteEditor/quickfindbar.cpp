@@ -756,6 +756,7 @@ void QuickFindBar::DoMarkAll()
         if(i == 0) {
             m_sci->SetSelection(matches.at(i).first, matches.at(i).second);
             m_sci->SetMainSelection(0);
+            DoEnsureLineIsVisible(m_sci->LineFromPosition(matches.at(0).first));
         } else {
             m_sci->AddSelection(matches.at(i).first, matches.at(i).second);
         }
@@ -764,7 +765,7 @@ void QuickFindBar::DoMarkAll()
     wxString message;
     message << _("Found and selected ") << matches.size() << _(" matches");
     clGetManager()->SetStatusMessage(message, 2);
-    DoEnsureLineIsVisible(m_sci->LineFromPosition(matches.at(0).first));
+    m_sci->SetMainSelection(0);
 }
 
 void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)

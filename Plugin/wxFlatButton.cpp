@@ -9,7 +9,7 @@
 
 static wxBitmap ConvertToDisabled(const wxBitmap& bmp)
 {
-#ifndef __WXMSW__
+#if wxVERSION_NUMBER >= 3100 && !defined(__WXMSW__)
     // Convert the image to disabled
     // It seems that m_bitmap.ConvertToDisabled() looses the scale
     // factor, so use this kind of conversion

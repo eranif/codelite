@@ -1,4 +1,7 @@
 #include "clTabRenderer.h"
+#include <wx/xrc/xmlres.h>
+#include <wx/dcmemory.h>
+#include <wx/settings.h>
 #if CL_BUILD
 #include "drawingutils.h"
 #endif

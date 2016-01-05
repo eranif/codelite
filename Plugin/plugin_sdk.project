@@ -366,6 +366,8 @@
       <File Name="clTabRenderer.cpp"/>
       <File Name="clTabRendererCurved.h"/>
       <File Name="clTabRendererCurved.cpp"/>
+      <File Name="clTabRendererSquare.h"/>
+      <File Name="clTabRendererSquare.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wxAUI">
       <File Name="cl_aui_dock_art.h"/>

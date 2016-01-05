@@ -12,6 +12,7 @@
 #include <wx/dnd.h>
 #include <wx/regex.h>
 #include "clTabRendererCurved.h"
+#include "clTabRendererSquare.h"
 
 #if defined(WXUSINGDLL_CL) || defined(USE_SFTP) || defined(PLUGINS_DIR)
 #define CL_BUILD 1
@@ -193,7 +194,13 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_contextMenu(NULL)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
+#if 1
     m_art.reset(new clTabRendererCurved);
+#else
+    m_art.reset(new clTabRendererSquare);
+    OVERLAP_WIDTH = 1;
+    V_OVERLAP_WIDTH = 0;
+#endif
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

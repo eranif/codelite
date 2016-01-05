@@ -3,7 +3,7 @@
 
 #include "clTabRenderer.h"
 
-class clTabRendererCurved : public clTabRenderer
+class WXDLLIMPEXP_SDK clTabRendererCurved : public clTabRenderer
 {
 public:
     clTabRendererCurved();

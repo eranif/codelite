@@ -37,168 +37,7 @@
 #include "windowstack.h"
 #include <wx/dynarray.h>
 #include <wx/dnd.h>
-
-#ifdef WXDLLIMPEXP_SDK
-#undef WXDLLIMPEXP_SDK
-#endif
-
-#ifdef __WXMSW__
-#ifdef WXMAKINGDLL_SDK
-#define WXDLLIMPEXP_SDK __declspec(dllexport)
-#elif defined(WXUSINGDLL_SDK)
-#define WXDLLIMPEXP_SDK __declspec(dllimport)
-#else // not making nor using DLL
-#define WXDLLIMPEXP_SDK
-#endif
-#else
-#define WXDLLIMPEXP_SDK
-#endif
-
-enum NotebookStyle {
-    /// Use the built-in light tab colours
-    kNotebook_LightTabs = (1 << 0),
-    /// Use the built-in dark tab colours
-    kNotebook_DarkTabs = (1 << 1),
-    /// Allow tabs to move using DnD
-    kNotebook_AllowDnD = (1 << 2),
-    /// Draw X button on the active tab
-    kNotebook_CloseButtonOnActiveTab = (1 << 3),
-    /// Mouse middle click closes tab
-    kNotebook_MouseMiddleClickClosesTab = (1 << 4),
-    /// Show a drop down button for displaying all tabs list
-    kNotebook_ShowFileListButton = (1 << 5),
-    /// Mouse middle click on a tab fires an event
-    kNotebook_MouseMiddleClickFireEvent = (1 << 6),
-    /// Clicking the X button on the active button fires an event
-    /// instead of closing the tab (i.e. let the container a complete control)
-    kNotebook_CloseButtonOnActiveTabFireEvent = (1 << 7),
-    /// Fire navigation event for Ctrl-TAB et al
-    kNotebook_EnableNavigationEvent = (1 << 8),
-    /// Place tabs at the bottom
-    kNotebook_BottomTabs = (1 << 9),
-    /// Enable colour customization events
-    kNotebook_EnableColourCustomization = (1 << 10),
-    /// Place the tabs on the right
-    kNotebook_RightTabs = (1 << 11),
-    /// Place th tabs on the left
-    kNotebook_LeftTabs = (1 << 12),
-    /// Vertical tabs as buttons
-    kNotebook_VerticalButtons = (1 << 13),
-    /// Default notebook
-    kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
-};
-
-/**
- * @class clTabInfo
- * @author Eran Ifrah
- * @brief contains information (mainly for drawing purposes) about a single tab label
- */
-class WXDLLIMPEXP_SDK clTabInfo
-{
-    wxString m_label;
-    wxBitmap m_bitmap;
-    wxString m_tooltip;
-    wxWindow* m_window;
-    wxRect m_rect;
-    bool m_active;
-    int m_textX;
-    int m_textY;
-    int m_bmpX;
-    int m_bmpY;
-    int m_bmpCloseX;
-    int m_bmpCloseY;
-    int m_width;
-    int m_height;
-    int m_vTabsWidth;
-
-public:
-    class WXDLLIMPEXP_SDK Colours
-    {
-    public:
-        // Active tab colours
-        wxColour inactiveTabBgColour;
-        wxColour inactiveTabPenColour;
-        wxColour inactiveTabTextColour;
-        wxColour inactiveTabInnerPenColour;
-
-        // Inactive tab colours
-        wxColour activeTabTextColour;
-        wxColour activeTabBgColour;
-        wxColour activeTabPenColour;
-        wxColour activeTabInnerPenColour;
-
-        // the tab area colours
-        wxColour tabAreaColour;
-
-        // close button bitmaps (MUST be 12x12)
-        wxBitmap closeButton;
-
-        /// Chevron down arrow used as the button for showing tab list
-        wxBitmap chevronDown;
-
-        Colours();
-        virtual ~Colours() {}
-
-        /**
-         * @brief initialize the colours from base colour and text colour
-         */
-        void InitFromColours(const wxColour& baseColour, const wxColour& textColour);
-
-        /**
-         * @brief initialize the dark colours
-         */
-        virtual void InitDarkColours();
-        /**
-         * @brief initialize the light colours
-         */
-        virtual void InitLightColours();
-    };
-
-public:
-    // Geometry
-    static int Y_SPACER;
-    static int X_SPACER;
-    static int BOTTOM_AREA_HEIGHT;
-    static int MAJOR_CURVE_WIDTH;
-    static int SMALL_CURVE_WIDTH;
-    // static int TAB_HEIGHT;
-
-public:
-    void CalculateOffsets(size_t style);
-
-public:
-    typedef wxSharedPtr<clTabInfo> Ptr_t;
-    typedef std::vector<clTabInfo::Ptr_t> Vec_t;
-
-    clTabInfo();
-    clTabInfo(size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp = wxNullBitmap);
-    virtual ~clTabInfo() {}
-
-    bool IsValid() const { return m_window != NULL; }
-
-    /**
-     * @brief render the using the provided wxDC
-     */
-    void Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style);
-    void SetBitmap(const wxBitmap& bitmap, size_t style);
-    void SetLabel(const wxString& label, size_t style);
-    void SetActive(bool active, size_t style);
-    void SetRect(const wxRect& rect) { this->m_rect = rect; }
-    const wxBitmap& GetBitmap() const { return m_bitmap; }
-    const wxString& GetLabel() const { return m_label; }
-    const wxRect& GetRect() const { return m_rect; }
-    wxRect& GetRect() { return m_rect; }
-    wxWindow* GetWindow() { return m_window; }
-    wxWindow* GetWindow() const { return m_window; }
-    void SetWindow(wxWindow* window) { this->m_window = window; }
-    bool IsActive() const { return m_active; }
-    int GetBmpCloseX() const { return m_bmpCloseX; }
-    int GetBmpCloseY() const { return m_bmpCloseY; }
-    int GetHeight() const { return m_height; }
-    int GetWidth() const { return m_width; }
-    void SetTooltip(const wxString& tooltip) { this->m_tooltip = tooltip; }
-    const wxString& GetTooltip() const { return m_tooltip; }
-};
+#include "clTabRenderer.h"
 
 class Notebook;
 class wxMenu;
@@ -256,13 +95,14 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     friend class clTabCtrlDropTarget;
 
     size_t m_style;
-    clTabInfo::Colours m_colours;
+    clTabColours m_colours;
     clTabInfo::Vec_t m_visibleTabs;
     int m_closeButtonClickedIndex;
     wxMenu* m_contextMenu;
     wxRect m_chevronRect;
     clTabHistory::Ptr_t m_history;
-
+    clTabRenderer::Ptr_t m_art;
+    
     void DoChangeSelection(size_t index);
 
 protected:
@@ -280,7 +120,7 @@ protected:
     int DoGetPageIndex(wxWindow* win) const;
     int DoGetPageIndex(const wxString& label) const;
     void
-    DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabInfo::Colours& colours);
+    DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours);
     bool ShiftRight(clTabInfo::Vec_t& tabs);
     bool ShiftBottom(clTabInfo::Vec_t& tabs);
     bool IsActiveTabInList(const clTabInfo::Vec_t& tabs) const;
@@ -313,8 +153,8 @@ public:
     
     bool IsVerticalTabs() const;
     
-    void SetColours(const clTabInfo::Colours& colours) { this->m_colours = colours; }
-    const clTabInfo::Colours& GetColours() const { return m_colours; }
+    void SetColours(const clTabColours& colours) { this->m_colours = colours; }
+    const clTabColours& GetColours() const { return m_colours; }
 
     /**
      * @brief test if pt is on one of the visible tabs return its index
@@ -387,7 +227,7 @@ class WXDLLIMPEXP_SDK Notebook : public wxPanel
     WindowStack* m_windows;
     clTabCtrl* m_tabCtrl;
     friend class clTabCtrl;
-
+    
 protected:
     void DoChangeSelection(wxWindow* page);
     bool IsVerticalTabs() const {

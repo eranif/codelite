@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <wx/dnd.h>
 #include <wx/regex.h>
+#include "clTabRendererCurved.h"
 
 #if defined(WXUSINGDLL_CL) || defined(USE_SFTP) || defined(PLUGINS_DIR)
 #define CL_BUILD 1
@@ -48,8 +49,6 @@ wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 
-#define IS_VERTICAL_TABS(style) ((style & kNotebook_RightTabs) || (style & kNotebook_LeftTabs))
-
 extern void Notebook_Init_Bitmaps();
 
 Notebook::Notebook(
@@ -57,6 +56,7 @@ Notebook::Notebook(
     : wxPanel(parent, id, pos, size, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL, name)
 {
     static bool once = false;
+    
     if(!once) {
         // Add PNG and Bitmap handler
         wxImage::AddHandler(new wxPNGHandler);
@@ -67,7 +67,7 @@ Notebook::Notebook(
 
     m_tabCtrl = new clTabCtrl(this, style);
     m_windows = new WindowStack(this);
-
+    
     wxBoxSizer* sizer;
     if(IsVerticalTabs()) {
         sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -180,355 +180,6 @@ void Notebook::SetTabDirection(wxDirection d)
 }
 
 //----------------------------------------------------------
-// Tab label
-//----------------------------------------------------------
-void clTabInfo::Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style)
-{
-    const int TOP_SMALL_HEIGHT = 2;
-    wxColour bgColour(IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
-    wxColour penColour(IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    dc.SetTextForeground(IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
-    dc.SetFont(font);
-
-    if(style & kNotebook_BottomTabs) {
-        // Bottom tabs
-        {
-            wxPoint points[6];
-            points[0] = m_rect.GetTopLeft();
-
-            points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
-            points[1].y = m_rect.GetBottomLeft().y - TOP_SMALL_HEIGHT;
-
-            points[2].x = points[1].x + SMALL_CURVE_WIDTH;
-            points[2].y = points[1].y + TOP_SMALL_HEIGHT;
-
-            points[3].x = points[0].x + (m_rect.GetWidth() - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
-            points[3].y = points[2].y;
-
-            points[4].x = points[3].x + SMALL_CURVE_WIDTH;
-            points[4].y = points[1].y;
-
-            points[5] = m_rect.GetTopRight();
-
-            dc.SetPen(penColour);
-            dc.SetBrush(bgColour);
-            dc.DrawPolygon(6, points);
-        }
-        {
-            wxPoint points[6];
-            points[0] = m_rect.GetTopLeft();
-            points[0].x += 1;
-
-            points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
-            points[1].y = m_rect.GetBottomLeft().y - TOP_SMALL_HEIGHT - 1;
-
-            points[2].x = points[1].x + SMALL_CURVE_WIDTH;
-            points[2].y = points[1].y + TOP_SMALL_HEIGHT;
-
-            points[3].x = points[0].x + (m_rect.GetWidth() - 2 - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
-            points[3].y = points[2].y;
-
-            points[4].x = points[3].x + SMALL_CURVE_WIDTH;
-            points[4].y = points[1].y;
-
-            points[5] = m_rect.GetTopRight();
-            points[5].x -= 2;
-
-            dc.SetPen(IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
-            dc.SetBrush(bgColour);
-            dc.DrawPolygon(6, points);
-        }
-    } else if(IS_VERTICAL_TABS(style)) {
-
-        // Left side tabs
-        wxRect rotatedRect(0, 0, m_rect.GetHeight(), m_rect.GetWidth());
-        wxBitmap b(rotatedRect.GetSize());
-
-        wxMemoryDC tmpDC(b);
-        tmpDC.SetPen(colours.tabAreaColour);
-        tmpDC.SetBrush(colours.tabAreaColour);
-        tmpDC.DrawRectangle(rotatedRect);
-        tmpDC.SetFont(font);
-        tmpDC.SetTextForeground(IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
-
-        tmpDC.SetPen(penColour);
-        tmpDC.SetBrush(bgColour);
-        if(IsActive()) {
-            {
-                wxPoint points[6];
-                points[0] = rotatedRect.GetBottomLeft();
-
-                points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
-                points[1].y = rotatedRect.GetLeftTop().y + TOP_SMALL_HEIGHT;
-
-                points[2].x = points[1].x + SMALL_CURVE_WIDTH;
-                points[2].y = points[1].y - TOP_SMALL_HEIGHT;
-
-                points[3].x = points[0].x + (rotatedRect.GetWidth() - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
-                points[3].y = points[2].y;
-
-                points[4].x = points[3].x + SMALL_CURVE_WIDTH;
-                points[4].y = points[3].y + TOP_SMALL_HEIGHT;
-
-                points[5] = rotatedRect.GetBottomRight();
-
-                tmpDC.SetPen(penColour);
-                tmpDC.SetBrush(bgColour);
-                tmpDC.DrawPolygon(6, points);
-            }
-
-            {
-                wxPoint points[6];
-                points[0] = rotatedRect.GetBottomLeft();
-                points[0].x += 1;
-
-                points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
-                points[1].y = rotatedRect.GetLeftTop().y + TOP_SMALL_HEIGHT + 1;
-
-                points[2].x = points[1].x + SMALL_CURVE_WIDTH;
-                points[2].y = points[1].y - TOP_SMALL_HEIGHT;
-
-                points[3].x = points[0].x + (rotatedRect.GetWidth() - 2 - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
-                points[3].y = points[2].y;
-
-                points[4].x = points[3].x + SMALL_CURVE_WIDTH;
-                points[4].y = points[3].y + TOP_SMALL_HEIGHT;
-
-                points[5] = rotatedRect.GetBottomRight();
-                points[5].x -= 2;
-
-                tmpDC.SetPen(IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
-                tmpDC.SetBrush(bgColour);
-                tmpDC.DrawPolygon(6, points);
-            }
-        } else {
-            // Inactive tabs
-            wxDirection direction = wxNORTH;
-            wxPoint basePoint = ((style & kNotebook_LeftTabs) ? rotatedRect.GetLeftTop() : rotatedRect.GetRightTop());
-            {
-                wxPoint pt = basePoint;
-                pt.x -= 1;
-                wxRect gr(pt, wxSize(1, rotatedRect.GetHeight()));
-                tmpDC.SetPen(*wxTRANSPARENT_PEN);
-                tmpDC.GradientFillLinear(gr, colours.inactiveTabPenColour, bgColour, direction);
-            }
-            {
-                wxPoint pt = basePoint;
-                wxRect gr(pt, wxSize(1, rotatedRect.GetHeight()));
-                tmpDC.SetPen(*wxTRANSPARENT_PEN);
-                tmpDC.GradientFillLinear(gr, colours.inactiveTabInnerPenColour, bgColour, direction);
-            }
-            {
-                wxPoint pt = basePoint;
-                pt.x += 1;
-                wxRect gr(pt, wxSize(1, rotatedRect.GetHeight()));
-                tmpDC.SetPen(*wxTRANSPARENT_PEN);
-                tmpDC.GradientFillLinear(gr, colours.inactiveTabPenColour, bgColour, direction);
-            }
-        }
-
-        // Vertical tabs
-        // Draw bitmap
-        if(m_bitmap.IsOk()) {
-            tmpDC.DrawBitmap(m_bitmap, m_bmpY, m_bmpX);
-        }
-
-        tmpDC.DrawText(m_label, m_textY, m_textX);
-        if(IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-            tmpDC.DrawBitmap(colours.closeButton, m_bmpCloseY, m_bmpCloseX);
-        }
-        tmpDC.SelectObject(wxNullBitmap);
-        wxImage img = b.ConvertToImage();
-        img = img.Rotate90((style & kNotebook_RightTabs));
-        b = wxBitmap(img);
-        dc.DrawBitmap(b, m_rect.GetTopLeft());
-
-    } else {
-        // Default tabs (placed at the top)
-        {
-            wxPoint points[6];
-            points[0] = m_rect.GetBottomLeft();
-
-            points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
-            points[1].y = m_rect.GetLeftTop().y + TOP_SMALL_HEIGHT;
-
-            points[2].x = points[1].x + SMALL_CURVE_WIDTH;
-            points[2].y = points[1].y - TOP_SMALL_HEIGHT;
-
-            points[3].x = points[0].x + (m_rect.GetWidth() - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
-            points[3].y = points[2].y;
-
-            points[4].x = points[3].x + SMALL_CURVE_WIDTH;
-            points[4].y = points[3].y + TOP_SMALL_HEIGHT;
-
-            points[5] = m_rect.GetBottomRight();
-
-            dc.SetPen(penColour);
-            dc.SetBrush(bgColour);
-            dc.DrawPolygon(6, points);
-        }
-
-        {
-            wxPoint points[6];
-            points[0] = m_rect.GetBottomLeft();
-            points[0].x += 1;
-
-            points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
-            points[1].y = m_rect.GetLeftTop().y + TOP_SMALL_HEIGHT + 1;
-
-            points[2].x = points[1].x + SMALL_CURVE_WIDTH;
-            points[2].y = points[1].y - TOP_SMALL_HEIGHT;
-
-            points[3].x = points[0].x + (m_rect.GetWidth() - 2 - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
-            points[3].y = points[2].y;
-
-            points[4].x = points[3].x + SMALL_CURVE_WIDTH;
-            points[4].y = points[3].y + TOP_SMALL_HEIGHT;
-
-            points[5] = m_rect.GetBottomRight();
-            points[5].x -= 2;
-
-            dc.SetPen(IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
-            dc.SetBrush(bgColour);
-            dc.DrawPolygon(6, points);
-        }
-    }
-
-    if(!IS_VERTICAL_TABS(style)) {
-        // Draw bitmap
-        if(m_bitmap.IsOk()) {
-            dc.DrawBitmap(m_bitmap, m_bmpX + m_rect.GetX(), m_bmpY);
-        }
-        dc.DrawText(m_label, m_textX + m_rect.GetX(), m_textY);
-        if(IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-            dc.DrawBitmap(colours.closeButton, m_bmpCloseX + m_rect.GetX(), m_bmpCloseY);
-        }
-    }
-}
-
-clTabInfo::clTabInfo(size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp)
-    : m_label(text)
-    , m_bitmap(bmp)
-    , m_window(page)
-    , m_active(false)
-{
-    CalculateOffsets(style);
-}
-
-clTabInfo::clTabInfo()
-    : m_window(NULL)
-    , m_active(false)
-    , m_textX(wxNOT_FOUND)
-    , m_textY(wxNOT_FOUND)
-    , m_bmpX(wxNOT_FOUND)
-    , m_bmpY(wxNOT_FOUND)
-    , m_bmpCloseX(wxNOT_FOUND)
-    , m_bmpCloseY(wxNOT_FOUND)
-{
-
-    CalculateOffsets(0);
-}
-
-void clTabInfo::CalculateOffsets(size_t style)
-{
-    wxBitmap b(1, 1);
-    wxMemoryDC memDC(b);
-    m_bmpCloseX = wxNOT_FOUND;
-    m_bmpCloseY = wxNOT_FOUND;
-
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    memDC.SetFont(font);
-
-    wxSize sz = memDC.GetTextExtent(m_label);
-    wxSize fixedHeight = memDC.GetTextExtent("Tp");
-    if(IS_VERTICAL_TABS(style)) {
-        m_height = fixedHeight.GetHeight() + (5 * Y_SPACER);
-    } else {
-        m_height = fixedHeight.GetHeight() + (4 * Y_SPACER);
-    }
-
-#ifdef __WXGTK__
-    // On GTK, limit the tab height
-    if(m_height >= 30) {
-        m_height = 30;
-    }
-#endif
-
-    m_width = 0;
-    if(!IS_VERTICAL_TABS(style) || true) {
-        m_width += MAJOR_CURVE_WIDTH;
-        m_width += SMALL_CURVE_WIDTH;
-    }
-    m_width += X_SPACER;
-
-    // bitmap
-    m_bmpX = wxNOT_FOUND;
-    m_bmpY = wxNOT_FOUND;
-
-    if(m_bitmap.IsOk()) {
-        m_bmpX = m_width;
-        m_width += X_SPACER;
-        m_width += m_bitmap.GetScaledWidth();
-        m_bmpY = ((m_height - m_bitmap.GetScaledHeight()) / 2);
-    }
-
-    // Text
-    m_textX = m_width;
-    m_textY = ((m_height - sz.y) / 2);
-    m_width += sz.x;
-
-    // x button
-    if((style & kNotebook_CloseButtonOnActiveTab)) {
-        m_width += X_SPACER;
-        m_bmpCloseX = m_width;
-        m_bmpCloseY = ((m_height - 12) / 2);
-        m_width += 12; // X button is 10 pixels in size
-    }
-
-    m_width += X_SPACER;
-    if(!IS_VERTICAL_TABS(style) || true) {
-        m_width += MAJOR_CURVE_WIDTH;
-        m_width += SMALL_CURVE_WIDTH;
-    }
-
-    // Update the rect width
-    m_rect.SetWidth(m_width);
-
-    if((style & kNotebook_RightTabs) || (style & kNotebook_LeftTabs)) {
-
-        // swap the x and y coordinates
-        wxSwap(m_height, m_width);
-        wxSwap(m_bmpCloseY, m_bmpCloseX);
-        wxSwap(m_bmpY, m_bmpX);
-        wxSwap(m_textX, m_textY);
-
-        m_rect.SetWidth(m_width);
-        m_rect.SetHeight(m_height);
-        m_rect.SetX(0);
-        m_rect.SetY(0);
-    }
-}
-
-void clTabInfo::SetBitmap(const wxBitmap& bitmap, size_t style)
-{
-    this->m_bitmap = bitmap;
-    CalculateOffsets(style);
-}
-
-void clTabInfo::SetLabel(const wxString& label, size_t style)
-{
-    this->m_label = label;
-    CalculateOffsets(style);
-}
-
-void clTabInfo::SetActive(bool active, size_t style)
-{
-    this->m_active = active;
-    CalculateOffsets(style);
-}
-
-//----------------------------------------------------------
 // Notebook header
 //----------------------------------------------------------
 // -------------------------------------------------------------------------------
@@ -542,6 +193,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_contextMenu(NULL)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
+    m_art.reset(new clTabRendererCurved);
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -733,7 +385,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     // Draw the tab area background colours
     clTabInfo::Ptr_t active_tab = GetActiveTabInfo();
     wxColour tabAreaBgCol = m_colours.tabAreaColour;
-    clTabInfo::Colours activeTabColours = m_colours;
+    clTabColours activeTabColours = m_colours;
 
 #if CL_BUILD
     if(active_tab && (GetStyle() & kNotebook_EnableColourCustomization)) {
@@ -780,20 +432,22 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             clColourEvent colourEvent(wxEVT_COLOUR_TAB);
             colourEvent.SetPage(tab->GetWindow());
             if((GetStyle() & kNotebook_EnableColourCustomization) && EventNotifier::Get()->ProcessEvent(colourEvent)) {
-                clTabInfo::Colours colours;
+                clTabColours colours;
                 colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
-                tab->Draw(gcdc, colours, m_style);
+                m_art->Draw(gcdc, *tab.get(), colours, m_style);
             } else {
-                tab->Draw(gcdc, m_colours, m_style);
+                m_art->Draw(gcdc, *tab.get(), m_colours, m_style);
             }
+            
 #else
-            tab->Draw(gcdc, m_colours, m_style);
+            m_art->Draw(gcdc, *tab.get(), m_colours, m_style);
 #endif
         }
 
         // Redraw the active tab
         if(activeTabInex != wxNOT_FOUND) {
-            m_visibleTabs.at(activeTabInex)->Draw(gcdc, activeTabColours, m_style);
+            clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
+            m_art->Draw(gcdc, *activeTab.get(), activeTabColours, m_style);
         }
 
         if(activeTabInex != wxNOT_FOUND) {
@@ -806,9 +460,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -1185,88 +839,6 @@ wxWindow* clTabCtrl::GetPage(size_t index) const
 }
 
 bool clTabCtrl::IsIndexValid(size_t index) const { return (index < m_tabs.size()); }
-
-clTabInfo::Colours::Colours() { InitDarkColours(); }
-
-void clTabInfo::Colours::InitFromColours(const wxColour& baseColour, const wxColour& textColour)
-{
-#if CL_BUILD
-    if(DrawingUtils::IsDark(baseColour)) {
-        activeTabTextColour = "WHITE";
-        activeTabBgColour = baseColour;
-        activeTabPenColour = baseColour.ChangeLightness(80);
-        activeTabInnerPenColour = baseColour.ChangeLightness(120);
-
-        inactiveTabTextColour = "WHITE";
-        inactiveTabBgColour = baseColour.ChangeLightness(110);
-        inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
-        inactiveTabInnerPenColour = inactiveTabBgColour.ChangeLightness(120);
-
-        tabAreaColour = baseColour.ChangeLightness(130);
-        // 12x12 bitmap
-        closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
-        chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-grey");
-    } else {
-        activeTabTextColour = "BLACK";
-        activeTabBgColour = baseColour;
-        activeTabPenColour = baseColour.ChangeLightness(80);
-        activeTabInnerPenColour = "WHITE";
-
-        inactiveTabTextColour = "BLACK";
-        inactiveTabBgColour = baseColour.ChangeLightness(90);
-        inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
-        inactiveTabInnerPenColour = baseColour;
-
-        tabAreaColour = baseColour.ChangeLightness(130);
-        // 12x12 bitmap
-        closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");
-        chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");
-    }
-#else
-    wxUnusedVar(baseColour);
-    wxUnusedVar(textColour);
-#endif
-}
-
-void clTabInfo::Colours::InitDarkColours()
-{
-    activeTabTextColour = "WHITE";
-    activeTabBgColour = wxColour("#211e1e");
-    activeTabPenColour = wxColour("#0e0d0d");
-    activeTabInnerPenColour = wxColour("#343131");
-
-    inactiveTabTextColour = wxColour("rgb(200, 200, 200)");
-    inactiveTabBgColour = wxColour("#393838");
-    inactiveTabPenColour = wxColour("#100f0f");
-    inactiveTabInnerPenColour = wxColour("#535252");
-
-    tabAreaColour = wxColour("#131111").ChangeLightness(115);
-    // 12x12 bitmap
-    closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
-    chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-grey");
-}
-
-void clTabInfo::Colours::InitLightColours()
-{
-    activeTabTextColour = "#444444";
-    activeTabPenColour = "#b9b9b9";
-    activeTabInnerPenColour = "#ffffff";
-
-    inactiveTabTextColour = "#444444";
-    //#ifdef __WXMSW__
-    //    activeTabBgColour = "#FBFBFB";
-    //#else
-    activeTabBgColour = "#f0f0f0";
-    //#endif
-    inactiveTabBgColour = "#e5e5e5";
-    inactiveTabPenColour = "#b9b9b9";
-    inactiveTabInnerPenColour = "#ffffff";
-
-    tabAreaColour = "#dcdcdc"; // wxColour("rgb(64, 64, 64)");
-    // 12x12 bitmap
-    closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");
-    chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");
-}
 
 int clTabCtrl::FindPage(wxWindow* page) const
 {
@@ -1648,10 +1220,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
-                                const wxRect& clientRect,
-                                wxDC& dc,
-                                const clTabInfo::Colours& colours)
+void clTabCtrl::DoDrawBottomBox(
+    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
 {
     if(GetStyle() & kNotebook_LeftTabs) {
         // Draw 3 lines on the right

@@ -1,5 +1,7 @@
 #include "clTabRendererCurved.h"
 #include <wx/font.h>
+#include <wx/settings.h>
+#include <wx/dcmemory.h>
 
 clTabRendererCurved::clTabRendererCurved() {}
 

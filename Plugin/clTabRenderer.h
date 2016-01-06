@@ -21,6 +21,7 @@
 #include <wx/bitmap.h>
 #include <wx/dc.h>
 #include <wx/sharedptr.h>
+#include <vector>
 
 class clTabCtrl;
 enum NotebookStyle {

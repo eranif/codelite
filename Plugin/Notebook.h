@@ -102,7 +102,7 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     wxRect m_chevronRect;
     clTabHistory::Ptr_t m_history;
     clTabRenderer::Ptr_t m_art;
-    
+
     void DoChangeSelection(size_t index);
 
 protected:
@@ -119,8 +119,7 @@ protected:
     void OnContextMenu(wxContextMenuEvent& event);
     int DoGetPageIndex(wxWindow* win) const;
     int DoGetPageIndex(const wxString& label) const;
-    void
-    DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours);
+    void DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours);
     bool ShiftRight(clTabInfo::Vec_t& tabs);
     bool ShiftBottom(clTabInfo::Vec_t& tabs);
     bool IsActiveTabInList(const clTabInfo::Vec_t& tabs) const;
@@ -150,9 +149,22 @@ protected:
 public:
     clTabCtrl(wxWindow* notebook, size_t style);
     virtual ~clTabCtrl();
-    
+
+    /**
+     * @brief return the art class used by this tab control
+     */
+    clTabRenderer::Ptr_t GetArt() { return m_art; }
+    /**
+     * @brief replace the art used by this tab control
+     */
+    void SetArt(clTabRenderer::Ptr_t art)
+    {
+        m_art = art;
+        Refresh();
+    }
+
     bool IsVerticalTabs() const;
-    
+
     void SetColours(const clTabColours& colours) { this->m_colours = colours; }
     const clTabColours& GetColours() const { return m_colours; }
 
@@ -227,13 +239,11 @@ class WXDLLIMPEXP_SDK Notebook : public wxPanel
     WindowStack* m_windows;
     clTabCtrl* m_tabCtrl;
     friend class clTabCtrl;
-    
+
 protected:
     void DoChangeSelection(wxWindow* page);
-    bool IsVerticalTabs() const {
-        return m_tabCtrl->IsVerticalTabs();
-    }
-    
+    bool IsVerticalTabs() const { return m_tabCtrl->IsVerticalTabs(); }
+
 public:
     /**
      * Constructor
@@ -250,12 +260,12 @@ public:
      * styles OR-ed)
      */
     void SetStyle(size_t style);
-    
+
     /**
      * @brief set the tab direction
      */
     void SetTabDirection(wxDirection d);
-    
+
     /**
      * @brief return the book style
      */
@@ -279,11 +289,8 @@ public:
     /**
      * @brief insert page at a specified position
      */
-    bool InsertPage(size_t index,
-                    wxWindow* page,
-                    const wxString& label,
-                    bool selected = false,
-                    const wxBitmap& bmp = wxNullBitmap);
+    bool InsertPage(
+        size_t index, wxWindow* page, const wxString& label, bool selected = false, const wxBitmap& bmp = wxNullBitmap);
 
     /**
      * @brief return the currently selected page or null

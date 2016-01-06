@@ -22,6 +22,7 @@
 #include <wx/dc.h>
 #include <wx/sharedptr.h>
 
+class clTabCtrl;
 enum NotebookStyle {
     /// Use the built-in light tab colours
     kNotebook_LightTabs = (1 << 0),
@@ -109,6 +110,7 @@ public:
 class WXDLLIMPEXP_SDK clTabInfo
 {
 public:
+    clTabCtrl* m_tabCtrl;
     wxString m_label;
     wxBitmap m_bitmap;
     wxString m_tooltip;
@@ -126,23 +128,15 @@ public:
     int m_vTabsWidth;
 
 public:
-    // Geometry
-    static int Y_SPACER;
-    static int X_SPACER;
-    static int BOTTOM_AREA_HEIGHT;
-    static int MAJOR_CURVE_WIDTH;
-    static int SMALL_CURVE_WIDTH;
-    // static int TAB_HEIGHT;
-
-public:
     void CalculateOffsets(size_t style);
 
 public:
     typedef wxSharedPtr<clTabInfo> Ptr_t;
     typedef std::vector<clTabInfo::Ptr_t> Vec_t;
 
-    clTabInfo();
-    clTabInfo(size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp = wxNullBitmap);
+    clTabInfo(clTabCtrl* tabCtrl);
+    clTabInfo(
+        clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp = wxNullBitmap);
     virtual ~clTabInfo() {}
 
     bool IsValid() const { return m_window != NULL; }
@@ -171,11 +165,30 @@ class WXDLLIMPEXP_SDK clTabRenderer
 public:
     typedef wxSharedPtr<clTabRenderer> Ptr_t;
 
-public:
-    clTabRenderer() {}
-    virtual ~clTabRenderer() {}
+    // Geometry
+    int bottomAreaHeight;     // BOTTOM_AREA_HEIGHT = 3;
+    int majorCurveWidth;      // MAJOR_CURVE_WIDTH = 15;
+    int smallCurveWidth;      // SMALL_CURVE_WIDTH = 4;
+    int overlapWidth;         // OVERLAP_WIDTH = 20;
+    int verticalOverlapWidth; // V_OVERLAP_WIDTH = 3;
+    int xSpacer;
+    int ySpacer;
 
+public:
+    clTabRenderer()
+        : bottomAreaHeight(0)
+        , majorCurveWidth(0)
+        , smallCurveWidth(0)
+        , overlapWidth(0)
+        , verticalOverlapWidth(0)
+        , xSpacer(5)
+        , ySpacer(3)
+    {
+    }
+    virtual ~clTabRenderer() {}
     virtual void Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style) = 0;
+    virtual void DrawBottomRect(
+        clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours, size_t style) = 0;
 };
 
 #endif // CLTABRENDERER_H

@@ -54,6 +54,10 @@ enum NotebookStyle {
     kNotebook_LeftTabs = (1 << 12),
     /// Vertical tabs as buttons
     kNotebook_VerticalButtons = (1 << 13),
+    
+    /// Underline the active tab with a 2 pixel line
+    kNotebook_UnderlineActiveTab = (1 << 14),
+
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
 };
@@ -84,7 +88,10 @@ public:
 
     /// Chevron down arrow used as the button for showing tab list
     wxBitmap chevronDown;
-
+    
+    /// Marker colour
+    wxColour markerColour;
+    
     clTabColours();
     virtual ~clTabColours() {}
 

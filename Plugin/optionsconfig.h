@@ -65,7 +65,8 @@ public:
         Opt_FoldHighlightActiveBlock = 0x04000000,
         Opt_EnsureCaptionsVisible = 0x08000000,
         Opt_DisableMouseCtrlZoom = 0x10000000,
-        Opt_UseBlockCaret = 0x20000000,
+        Opt_UseBlockCaret =   0x20000000,
+        Opt_TabStyleMinimal = 0x40000000,
     };
 
 protected:

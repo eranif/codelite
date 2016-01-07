@@ -58,23 +58,24 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     boxSizer32->Add(staticBoxSizer27, 0, wxALL|wxEXPAND, 5);
     
-    m_checkBoxShowXButton = new wxCheckBox(m_panel12, wxID_ANY, _("Show close button on active tab"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxShowXButton->SetValue(true);
-    m_checkBoxShowXButton->SetToolTip(_("Show close button on active tab"));
-    
-    staticBoxSizer27->Add(m_checkBoxShowXButton, 0, wxALL, 5);
-    
-    m_checkBoxEditorTabsFollowsTheme = new wxCheckBox(m_panel12, wxID_ANY, _("The editor tabs matches to the editor colour theme"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxEditorTabsFollowsTheme->SetValue(true);
-    m_checkBoxEditorTabsFollowsTheme->SetToolTip(_("The editor tabs matches to the editor colour theme"));
-    
-    staticBoxSizer27->Add(m_checkBoxEditorTabsFollowsTheme, 0, wxALL, 5);
-    
     wxFlexGridSizer* flexGridSizer36 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer36->SetFlexibleDirection( wxBOTH );
     flexGridSizer36->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer36->AddGrowableCol(1);
     
     staticBoxSizer27->Add(flexGridSizer36, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText46 = new wxStaticText(m_panel12, wxID_ANY, _("Tab Style:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer36->Add(m_staticText46, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_choiceTabStyleArr;
+    m_choiceTabStyleArr.Add(wxT("DEFAULT"));
+    m_choiceTabStyleArr.Add(wxT("MINIMAL"));
+    m_choiceTabStyle = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceTabStyleArr, 0);
+    m_choiceTabStyle->SetSelection(0);
+    
+    flexGridSizer36->Add(m_choiceTabStyle, 0, wxALL|wxEXPAND, 5);
     
     m_staticText38 = new wxStaticText(m_panel12, wxID_ANY, _("Workspace Pane Tabs Orientation:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -88,7 +89,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_choiceWorkspaceTabsOrientation = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceWorkspaceTabsOrientationArr, 0);
     m_choiceWorkspaceTabsOrientation->SetSelection(0);
     
-    flexGridSizer36->Add(m_choiceWorkspaceTabsOrientation, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer36->Add(m_choiceWorkspaceTabsOrientation, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText42 = new wxStaticText(m_panel12, wxID_ANY, _("Output Pane Tabs Orientation:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -100,7 +101,19 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_choiceOutputTabsOrientation = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceOutputTabsOrientationArr, 0);
     m_choiceOutputTabsOrientation->SetSelection(0);
     
-    flexGridSizer36->Add(m_choiceOutputTabsOrientation, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer36->Add(m_choiceOutputTabsOrientation, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_checkBoxShowXButton = new wxCheckBox(m_panel12, wxID_ANY, _("Show close button on active tab"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxShowXButton->SetValue(true);
+    m_checkBoxShowXButton->SetToolTip(_("Show close button on active tab"));
+    
+    staticBoxSizer27->Add(m_checkBoxShowXButton, 0, wxALL, 5);
+    
+    m_checkBoxEditorTabsFollowsTheme = new wxCheckBox(m_panel12, wxID_ANY, _("The editor tabs matches to the editor colour theme"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEditorTabsFollowsTheme->SetValue(true);
+    m_checkBoxEditorTabsFollowsTheme->SetToolTip(_("The editor tabs matches to the editor colour theme"));
+    
+    staticBoxSizer27->Add(m_checkBoxEditorTabsFollowsTheme, 0, wxALL, 5);
     
     wxBoxSizer* boxSizer25 = new wxBoxSizer(wxVERTICAL);
     
@@ -253,7 +266,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     boxSizer21->Add(m_checkBoxShowDebugOnRun, 0, wxALL, 5);
     
     SetName(wxT("EditorSettingsDockingWindowsBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

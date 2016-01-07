@@ -180,32 +180,11 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_contextMenu(NULL)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    m_art.reset(new clTabRendererCurved);
+    m_art.reset(new clTabRendererCurved); // Default art
 
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memDC(bmp);
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    memDC.SetFont(font);
+    DoSetBestSize();
 
-    wxSize sz = memDC.GetTextExtent("Tp");
-
-    m_height = sz.GetHeight() + (4 * GetArt()->ySpacer);
-    m_vTabsWidth = sz.GetHeight() + (5 * GetArt()->ySpacer);
-#ifdef __WXGTK__
-    // On GTK, limit the tab height
-    if(m_height >= 30) {
-        m_height = 30;
-    }
-#endif
     SetDropTarget(new clTabCtrlDropTarget(this));
-    if(IsVerticalTabs()) {
-        SetSizeHints(wxSize(m_vTabsWidth, -1));
-        SetSize(m_vTabsWidth, -1);
-    } else {
-        SetSizeHints(wxSize(-1, m_height));
-        SetSize(-1, m_height);
-    }
-
     Bind(wxEVT_PAINT, &clTabCtrl::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &clTabCtrl::OnEraseBG, this);
     Bind(wxEVT_SIZE, &clTabCtrl::OnSize, this);
@@ -226,6 +205,32 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     }
     // The history object
     m_history.reset(new clTabHistory());
+}
+
+void clTabCtrl::DoSetBestSize()
+{
+    wxBitmap bmp(1, 1);
+    wxMemoryDC memDC(bmp);
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    memDC.SetFont(font);
+
+    wxSize sz = memDC.GetTextExtent("Tp");
+
+    m_height = sz.GetHeight() + (4 * GetArt()->ySpacer);
+    m_vTabsWidth = sz.GetHeight() + (5 * GetArt()->ySpacer);
+#ifdef __WXGTK__
+    // On GTK, limit the tab height
+    if(m_height >= 30) {
+        m_height = 30;
+    }
+#endif
+    if(IsVerticalTabs()) {
+        SetSizeHints(wxSize(m_vTabsWidth, -1));
+        SetSize(m_vTabsWidth, -1);
+    } else {
+        SetSizeHints(wxSize(-1, m_height));
+        SetSize(-1, m_height);
+    }
 }
 
 bool clTabCtrl::ShiftRight(clTabInfo::Vec_t& tabs)
@@ -449,9 +454,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -1209,8 +1214,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void
-clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
+void clTabCtrl::DoDrawBottomBox(
+    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
 {
     GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
 }

@@ -56,7 +56,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
-
+    m_choiceTabStyle->SetSelection(options->GetOptions() & OptionsConfig::Opt_TabStyleMinimal ? 1 : 0);
 #ifdef __WXOSX__
     {
         wxArrayString tabOptionsArr;
@@ -76,7 +76,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     default:
         break;
     }
-    
+
 #ifdef __WXOSX__
     // On OSX we dont support left-right (due to blurred images)
     switch(options->GetWorkspaceTabsDirection()) {
@@ -140,6 +140,8 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
     options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
+    options->EnableOption(OptionsConfig::Opt_TabStyleMinimal, (m_choiceTabStyle->GetSelection() == 1));
+    
     switch(m_choiceOutputTabsOrientation->GetSelection()) {
     case 0:
         options->SetOutputTabsDirection(wxTOP);

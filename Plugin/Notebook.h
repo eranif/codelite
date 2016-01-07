@@ -135,7 +135,12 @@ protected:
      * @param offset reset the 0 based index from m_tabs
      */
     void UpdateVisibleTabs();
-
+    
+    /**
+     * @brief calculate and set the tab ctrl size
+     */
+    void DoSetBestSize();
+    
     clTabInfo::Ptr_t GetTabInfo(size_t index);
     clTabInfo::Ptr_t GetTabInfo(size_t index) const;
     clTabInfo::Ptr_t GetTabInfo(wxWindow* page);
@@ -160,6 +165,7 @@ public:
     void SetArt(clTabRenderer::Ptr_t art)
     {
         m_art = art;
+        DoSetBestSize();
         Refresh();
     }
 
@@ -249,11 +255,16 @@ public:
      * Constructor
      */
     Notebook(wxWindow* parent,
-             wxWindowID id = wxID_ANY,
-             const wxPoint& pos = wxDefaultPosition,
-             const wxSize& size = wxDefaultSize,
-             long style = 0,
-             const wxString& name = wxEmptyString);
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize,
+        long style = 0,
+        const wxString& name = wxEmptyString);
+    
+    /**
+     * @brief update the notebook art class and refresh
+     */
+    void SetArt(clTabRenderer::Ptr_t art) { m_tabCtrl->SetArt(art); }
 
     /**
      * @brief set the notebook style. The style bits are kNotebook_* (you can set several

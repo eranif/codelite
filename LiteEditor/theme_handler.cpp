@@ -34,6 +34,7 @@
 #include <wx/listctrl.h>
 #include <wx/aui/framemanager.h>
 #include "cl_aui_tb_are.h"
+#include "globals.h"
 
 #ifdef __WXMAC__
 #include <wx/srchctrl.h>
@@ -112,7 +113,7 @@ void ThemeHandler::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxCo
     } else
 #endif
         if(dynamic_cast<wxTreeCtrl*>(win) || dynamic_cast<wxListBox*>(win) || dynamic_cast<wxDataViewCtrl*>(win) ||
-           dynamic_cast<wxTextCtrl*>(win) || dynamic_cast<wxListCtrl*>(win)) {
+            dynamic_cast<wxTextCtrl*>(win) || dynamic_cast<wxListCtrl*>(win)) {
         win->SetBackgroundColour(bg);
         win->SetForegroundColour(fg);
         win->Refresh();
@@ -156,6 +157,9 @@ void ThemeHandler::OnInitDone(wxCommandEvent& e)
         }
     }
     aui.Update();
+    m_helper.reset(new ThemeHandlerHelper(clMainFrame::Get()));
+    // Fire "wxEVT_EDITOR_SETTINGS_CHANGED" to ensure that the notebook appearance is in sync with the settings
+    PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
 }
 
 void ThemeHandler::DoUpdateAuiToolBars(wxWindow* win)

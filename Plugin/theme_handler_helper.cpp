@@ -32,6 +32,9 @@
 #include <wx/dataview.h>
 #include <wx/textctrl.h>
 #include <wx/html/htmlwin.h>
+#include "Notebook.h"
+#include "clTabRendererSquare.h"
+#include "clTabRendererCurved.h"
 
 class wxDataViewCtrl;
 class wxTextCtrl;
@@ -40,12 +43,18 @@ class wxListBox;
 ThemeHandlerHelper::ThemeHandlerHelper(wxWindow* win)
     : m_window(win)
 {
-    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnPreferencesUpdated), NULL, this);
 }
 
 ThemeHandlerHelper::~ThemeHandlerHelper()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnPreferencesUpdated), NULL, this);
 }
 
 void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
@@ -53,35 +62,32 @@ void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
     e.Skip();
     wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
     wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    
-    if ( !bgColour.IsOk() || !fgColour.IsOk() ) {
+
+    if(!bgColour.IsOk() || !fgColour.IsOk()) {
         return;
     }
-    
+
     DoUpdateColours(m_window, bgColour, fgColour);
 }
 
 void ThemeHandlerHelper::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg)
 {
     // wxTextCtrl needs some extra special handling
-    if ( dynamic_cast<wxTextCtrl*>(win) ) {
+    if(dynamic_cast<wxTextCtrl*>(win)) {
         wxTextCtrl* txtCtrl = dynamic_cast<wxTextCtrl*>(win);
         wxTextAttr attr = txtCtrl->GetDefaultStyle();
-        attr.SetBackgroundColour( bg );
-        attr.SetTextColour( fg );
-        txtCtrl->SetDefaultStyle( attr );
+        attr.SetBackgroundColour(bg);
+        attr.SetTextColour(fg);
+        txtCtrl->SetDefaultStyle(attr);
     }
-    
+
     // Generic handling
-    if ( dynamic_cast<wxTreeCtrl*>(win)     || 
-         dynamic_cast<wxListBox*>(win)      || 
-         dynamic_cast<wxDataViewCtrl*>(win) || 
-         dynamic_cast<wxTextCtrl*>(win)     /*||
-         dynamic_cast<wxHtmlWindow*>(win) */
-        )
-    {
-        win->SetBackgroundColour( bg );
-        win->SetForegroundColour( fg );
+    if(dynamic_cast<wxTreeCtrl*>(win) || dynamic_cast<wxListBox*>(win) || dynamic_cast<wxDataViewCtrl*>(win) ||
+        dynamic_cast<wxTextCtrl*>(win) /*||
+    dynamic_cast<wxHtmlWindow*>(win) */
+        ) {
+        win->SetBackgroundColour(bg);
+        win->SetForegroundColour(fg);
         win->Refresh();
     }
 
@@ -91,4 +97,31 @@ void ThemeHandlerHelper::DoUpdateColours(wxWindow* win, const wxColour& bg, cons
         this->DoUpdateColours(pclChild, bg, fg);
         pclNode = pclNode->GetNext();
     }
+}
+
+void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
+{
+    // wxTextCtrl needs some extra special handling
+    if(dynamic_cast<Notebook*>(win)) {
+        Notebook* book = dynamic_cast<Notebook*>(win);
+        if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
+            clTabRenderer::Ptr_t art(new clTabRendererSquare);
+            book->SetArt(art);
+        } else {
+            clTabRenderer::Ptr_t art(new clTabRendererCurved);
+            book->SetArt(art);
+        }
+    }
+    wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
+    while(pclNode) {
+        wxWindow* pclChild = pclNode->GetData();
+        this->DoUpdateNotebookStyle(pclChild);
+        pclNode = pclNode->GetNext();
+    }
+}
+
+void ThemeHandlerHelper::OnPreferencesUpdated(wxCommandEvent& e)
+{
+    e.Skip();
+    DoUpdateNotebookStyle(m_window);
 }

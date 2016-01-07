@@ -1,6 +1,7 @@
 #include "clTabRendererSquare.h"
 #include <wx/settings.h>
 #include <wx/font.h>
+#include "drawingutils.h"
 
 clTabRendererSquare::clTabRendererSquare()
 {
@@ -21,8 +22,14 @@ clTabRendererSquare::~clTabRendererSquare() {}
 
 void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style)
 {
+    wxColour inactiveTabPenColour = colours.inactiveTabPenColour; 
+    if(DrawingUtils::IsDark(colours.activeTabBgColour)) {
+        // dark theme
+        inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(105);
+    }
+    
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
-    wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
+    wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : inactiveTabPenColour);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     dc.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     dc.SetFont(font);

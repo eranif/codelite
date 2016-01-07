@@ -103,7 +103,8 @@ void OutputPane::CreateGUIControls()
         style |= kNotebook_RightTabs;
 #endif
     }
-
+    style |= kNotebook_UnderlineActiveTab;
+    
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();

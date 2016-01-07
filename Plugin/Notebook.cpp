@@ -150,7 +150,7 @@ void Notebook::SetTabDirection(wxDirection d)
     flags &= ~kNotebook_BottomTabs;
     flags &= ~kNotebook_LeftTabs;
     flags &= ~kNotebook_RightTabs;
-#ifdef __WXOSX__
+#if 0
     if(d == wxBOTTOM || d == wxRIGHT) {
         flags |= kNotebook_BottomTabs;
     }

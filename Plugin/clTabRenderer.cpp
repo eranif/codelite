@@ -76,6 +76,9 @@ void clTabColours::InitLightColours()
     activeTabPenColour = "#b9b9b9";
     activeTabInnerPenColour = "#ffffff";
 
+
+    //    dc.GradientFillLinear( rect , wxColour( 0xCC,0xCC,0xCC ), wxColour( 0xA8,0xA8,0xA8 ) , wxSOUTH );
+    //    dc.SetPen( wxPen( wxColour( 0x51,0x51,0x51 ) ) );
     inactiveTabTextColour = "#444444";
     //#ifdef __WXMSW__
     //    activeTabBgColour = "#FBFBFB";
@@ -88,6 +91,8 @@ void clTabColours::InitLightColours()
 
     tabAreaColour = "#dcdcdc"; // wxColour("rgb(64, 64, 64)");
     markerColour = wxColour("rgb(105, 193, 240)");
+    
+    inactiveTabBgColour = tabAreaColour;
     
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");

@@ -57,7 +57,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
     m_choiceTabStyle->SetSelection(options->GetOptions() & OptionsConfig::Opt_TabStyleMinimal ? 1 : 0);
-#ifdef __WXOSX__
+#if 0
     {
         wxArrayString tabOptionsArr;
         tabOptionsArr.Add(wxT("TOP"));
@@ -77,7 +77,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
         break;
     }
 
-#ifdef __WXOSX__
+#if 0
     // On OSX we dont support left-right (due to blurred images)
     switch(options->GetWorkspaceTabsDirection()) {
     case wxLEFT:

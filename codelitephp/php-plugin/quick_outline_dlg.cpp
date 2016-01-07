@@ -18,25 +18,22 @@ PHPQuickOutlineDlg::PHPQuickOutlineDlg(wxWindow* parent, IEditor* editor, IManag
     m_treeCtrlLayout->Connect(
         wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPQuickOutlineDlg::OnItemActivated), NULL, this);
     m_treeCtrlLayout->SetFocus();
+    m_treeCtrlLayout->Bind(wxEVT_KEY_DOWN, &PHPQuickOutlineDlg::OnKeyDown, this);
     SetName("PHPQuickOutlineDlg");
     WindowAttrManager::Load(this);
 }
 
-PHPQuickOutlineDlg::~PHPQuickOutlineDlg() {}
+PHPQuickOutlineDlg::~PHPQuickOutlineDlg()
+{
+    m_treeCtrlLayout->Unbind(wxEVT_KEY_DOWN, &PHPQuickOutlineDlg::OnKeyDown, this);
+}
 
 void PHPQuickOutlineDlg::OnKeyDown(wxKeyEvent& event)
 {
-    if(event.GetKeyCode() == WXK_ESCAPE)
+    event.Skip();
+    if(event.GetKeyCode() == WXK_ESCAPE) {
+        event.Skip(false);
         Close();
-
-    else if(event.GetKeyCode() == WXK_DOWN) {
-        m_treeCtrlLayout->AdvanceSelection(true);
-
-    } else if(event.GetKeyCode() == WXK_UP) {
-        m_treeCtrlLayout->AdvanceSelection(false);
-
-    } else {
-        event.Skip();
     }
 }
 
@@ -47,9 +44,8 @@ void PHPQuickOutlineDlg::DoItemSelected(const wxTreeItemId& item)
     if(item.IsOk()) {
         QItemData* data = dynamic_cast<QItemData*>(m_treeCtrlLayout->GetItemData(item));
         if(data && data->m_entry) {
-            DoSelectMatch(data->m_entry->GetFilename().GetFullPath(),
-                          data->m_entry->GetLine() - 1,
-                          data->m_entry->GetShortName());
+            DoSelectMatch(data->m_entry->GetFilename().GetFullPath(), data->m_entry->GetLine() - 1,
+                data->m_entry->GetShortName());
             Close();
         }
     }

@@ -191,7 +191,10 @@ void clTabInfo::CalculateOffsets(size_t style)
         wxSwap(m_bmpCloseY, m_bmpCloseX);
         wxSwap(m_bmpY, m_bmpX);
         wxSwap(m_textX, m_textY);
-
+        
+        m_width = m_tabCtrl->GetSize().GetWidth();
+        m_textX += 1;
+        
         m_rect.SetWidth(m_width);
         m_rect.SetHeight(m_height);
         m_rect.SetX(0);

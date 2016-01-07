@@ -4,7 +4,11 @@
 
 clTabRendererSquare::clTabRendererSquare()
 {
+#ifdef __WXGTK__
+    bottomAreaHeight = 0;
+#else
     bottomAreaHeight = 3;
+#endif
     majorCurveWidth = 0;
     smallCurveWidth = 0;
     overlapWidth = 2;

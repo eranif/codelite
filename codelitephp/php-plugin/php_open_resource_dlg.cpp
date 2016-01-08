@@ -9,6 +9,7 @@
 #include <macros.h>
 #include "PHPLookupTable.h"
 #include <wx/tokenzr.h>
+#include "FilesCollector.h"
 
 static int TIMER_ID = 5647;
 static wxBitmap CLASS_IMG_ID = wxNullBitmap;
@@ -51,6 +52,11 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     std::set<wxString>::iterator iter = files.begin();
     for(; iter != files.end(); iter++) {
         wxFileName fn((*iter));
+        if(fn.GetFullName() == FOLDER_MARKER) {
+            // fake item
+            continue; 
+        }
+        
         ResourceItem fileItem;
         fileItem.displayName = fn.GetFullName();
         fileItem.filename = fn;

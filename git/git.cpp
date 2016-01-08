@@ -183,7 +183,7 @@ GitPlugin::GitPlugin(IManager* manager)
 
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_console, _("git"), false, m_mgr->GetStdIcons()->LoadBitmap("git"));
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_console, _("Git"), false, m_mgr->GetStdIcons()->LoadBitmap("git"));
     m_tabToggler.reset(new clTabTogglerHelper(_("git"), m_console, "", NULL));
     m_tabToggler->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("git"));
 

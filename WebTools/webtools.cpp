@@ -39,7 +39,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     static PluginInfo info;
     info.SetAuthor(wxT("eran"));
     info.SetName(wxT("WebTools"));
-    info.SetDescription(_("Support for JavScript, HTML and other web development tools"));
+    info.SetDescription(_("Support for JavaScript, CSS/SCSS, HTML, XML and other web development tools"));
     info.SetVersion(wxT("v1.0"));
     return &info;
 }
@@ -53,7 +53,7 @@ WebTools::WebTools(IManager* manager)
     , m_nodejsDebuggerPane(NULL)
     , m_hideToolBarOnDebugStop(false)
 {
-    m_longName = _("Support for JavScript, XML, HTML, CSS/SCSS and other web development tools");
+    m_longName = _("Support for JavaScript, CSS/SCSS, HTML, XML and other web development tools");
     m_shortName = wxT("WebTools");
 
     // Register our new workspace type

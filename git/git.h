@@ -96,6 +96,8 @@ struct GitCmd {
 class GitPlugin : public IPlugin
 {
     friend class GitConsole;
+    friend class GitCommitListDlg;
+    
     typedef std::map<int, int> IntMap_t;
     enum {
         gitNone = 0,
@@ -265,6 +267,13 @@ public:
     
     void StoreWorkspaceRepoDetails();
     void WorkspaceClosed();
+    
+    /**
+     * @brief fetch the next 100 commits (skip 'skip' first commits)
+     * and show them in the commit list dialog
+     * @param skip number of first commits to skip
+     */
+    void FetchNextCommits(int skip);
     
     GitConsole* GetConsole() { return m_console; }
     const wxString& GetRepositoryDirectory() const { return m_repositoryDirectory; }

@@ -159,6 +159,8 @@ protected:
     wxSplitterWindow* m_splitter174;
     wxPanel* m_splitterPage178;
     wxSearchCtrl* m_searchCtrlFilter;
+    wxButton* m_button347;
+    wxButton* m_buttonNext;
     wxDataViewListCtrl* m_dvListCtrlCommitList;
     wxPanel* m_splitterPage182;
     wxSplitterWindow* m_splitter186;
@@ -177,12 +179,17 @@ protected:
 protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
     virtual void OnSearchCommitList(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPrevious(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPreviousUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnNext(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxSearchCtrl* GetSearchCtrlFilter() { return m_searchCtrlFilter; }
+    wxButton* GetButton347() { return m_button347; }
+    wxButton* GetButtonNext() { return m_buttonNext; }
     wxDataViewListCtrl* GetDvListCtrlCommitList() { return m_dvListCtrlCommitList; }
     wxPanel* GetSplitterPage178() { return m_splitterPage178; }
     wxStaticText* GetStaticText210() { return m_staticText210; }

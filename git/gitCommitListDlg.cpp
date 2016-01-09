@@ -105,6 +105,8 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
     wxUnusedVar(event);
     wxDELETE(m_process);
 
+    m_stcCommitMessage->SetEditable(true);
+    m_stcDiff->SetEditable(true);
     m_stcCommitMessage->ClearAll();
     m_fileListBox->Clear();
     m_diffMap.clear();
@@ -136,17 +138,18 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
     for(std::map<wxString, wxString>::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
     }
-    m_stcDiff->SetReadOnly(false);
+
     m_stcDiff->ClearAll();
 
     if(m_diffMap.size() != 0) {
         std::map<wxString, wxString>::iterator it = m_diffMap.begin();
         m_stcDiff->SetText((*it).second);
         m_fileListBox->Select(0);
-        m_stcDiff->SetReadOnly(true);
     }
 
+    m_stcDiff->SetEditable(false);
     m_commandOutput.Clear();
+    m_stcCommitMessage->SetEditable(false);
 }
 /*******************************************************************************/
 void GitCommitListDlg::OnProcessOutput(clProcessEvent& event) { m_commandOutput.Append(event.GetOutput()); }
@@ -206,9 +209,16 @@ void GitCommitListDlg::OnOK(wxCommandEvent& event) { Destroy(); }
 
 void GitCommitListDlg::DoLoadCommits(const wxString& filter)
 {
+    m_stcDiff->SetEditable(true);
+    m_stcCommitMessage->SetEditable(true);
+
     m_dvListCtrlCommitList->DeleteAllItems();
     m_stcCommitMessage->ClearAll();
     m_fileListBox->Clear();
+    m_stcDiff->ClearAll();
+
+    m_stcCommitMessage->SetEditable(false);
+    m_stcDiff->SetEditable(false);
 
     // hash @ subject @ author-name @ date
     wxArrayString gitList = wxStringTokenize(m_commitList, wxT("\n"), wxTOKEN_STRTOK);
@@ -252,8 +262,13 @@ bool GitCommitListDlg::IsMatchFilter(const wxArrayString& filters, const wxArray
 }
 void GitCommitListDlg::OnNext(wxCommandEvent& event)
 {
-    m_git->FetchNextCommits(m_skip);
     m_skip += 100;
+    // Check the cache first
+    if(m_history.count(m_skip)) {
+        SetCommitList(m_history.find(m_skip)->second);
+    } else {
+        m_git->FetchNextCommits(m_skip);
+    }
 }
 
 void GitCommitListDlg::OnPrevious(wxCommandEvent& event)

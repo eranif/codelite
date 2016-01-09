@@ -226,8 +226,10 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         long dontTrimCaretLine = EditorConfigST::Get()->GetInteger(wxT("DontTrimCaretLine"), 0);
         m_dontTrimCaretLine = (dontTrimCaretLine > 0);
 
-        m_outputTabsDirection = (wxDirection)XmlUtils::ReadLong(node, "OutputTabsDirection", (int)wxUP);
-        m_workspaceTabsDirection = (wxDirection)XmlUtils::ReadLong(node, "WorkspaceTabsDirection", (int)wxLEFT);
+        m_outputTabsDirection =
+            (wxDirection)XmlUtils::ReadLong(node, "OutputTabsDirection", (int)m_outputTabsDirection);
+        m_workspaceTabsDirection =
+            (wxDirection)XmlUtils::ReadLong(node, "WorkspaceTabsDirection", (int)m_workspaceTabsDirection);
     }
 #ifdef __WXMSW__
     if(!(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */)) {

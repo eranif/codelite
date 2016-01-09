@@ -24,6 +24,7 @@
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
+#include "editor_config.h"
 #endif
 
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
@@ -180,8 +181,15 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_contextMenu(NULL)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
+#if CL_BUILD
+    if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
+        m_art.reset(new clTabRendererSquare);
+    } else {
+        m_art.reset(new clTabRendererCurved);
+    }
+#else
     m_art.reset(new clTabRendererCurved); // Default art
-
+#endif
     DoSetBestSize();
 
     SetDropTarget(new clTabCtrlDropTarget(this));

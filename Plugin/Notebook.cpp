@@ -478,7 +478,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 {
-    int majorDimension = 5;
+    int majorDimension = GetArt()->majorCurveWidth ? 5 : 0;
     if(IsVerticalTabs()) {
         majorDimension = 0;
     }

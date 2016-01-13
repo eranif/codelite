@@ -130,7 +130,8 @@ protected:
     bool IsEditorEvent(wxEvent& event);
     void DoCreateBuildDropDownMenu(wxMenu* menu);
     void DoShowToolbars(bool show);
-
+    void InitializeLogo();
+    
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
@@ -306,7 +307,7 @@ private:
      * Construct all the GUI controls of the main frame. this function is called
      * at construction time
      */
-    void CreateGUIControls(void);
+    void CreateGUIControls();
     /**
      * \brief update the path & name of the build tool
      * on windows, try to locate make, followed by mingw32-make

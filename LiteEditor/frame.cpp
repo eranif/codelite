@@ -940,44 +940,8 @@ void clMainFrame::CreateGUIControls()
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_mainPanel = new wxPanel(this);
     GetSizer()->Add(m_mainPanel, 1, wxEXPAND);
-    
+    InitializeLogo();
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
-    wxIconBundle app_icons;
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("16-codelite-logo");
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("32-codelite-logo");
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("64-codelite-logo");
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("128-codelite-logo");
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("256-codelite-logo");
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-
-    SetIcons(app_icons);
 
 #if defined(__WXOSX__) && wxCHECK_VERSION(3, 1, 0)
     EnableFullScreenView();
@@ -5687,7 +5651,7 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
     // Hide the _native_ toolbar
     if(GetMainToolBar()) {
         if(event.IsChecked()) {
-            
+
             SetToolBar(NULL);
 
             // Recreate the toolbar
@@ -5983,9 +5947,58 @@ void clMainFrame::SetToolBar(wxToolBar* tb)
         wxDELETE(m_mainToolBar);
     }
     m_mainToolBar = tb;
-    
+
     if(m_mainToolBar) {
         GetSizer()->Insert(0, m_mainToolBar, 0, wxEXPAND);
         Layout();
     }
+}
+
+void clMainFrame::InitializeLogo()
+{
+    BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
+
+    wxString baseLogoName = "-codelite-logo";
+#ifdef __WXGTK__
+    if(getuid() == 0) {
+        // ROOT_INFO_LUID
+        baseLogoName = "-codelite-logo-root";
+    }
+#endif
+
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("16" + baseLogoName);
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon(icn);
+    }
+
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("32" + baseLogoName);
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon(icn);
+    }
+
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("64" + baseLogoName);
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon(icn);
+    }
+
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("128" + baseLogoName);
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon(icn);
+    }
+    {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap("256" + baseLogoName);
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon(icn);
+    }
+    SetIcons(app_icons);
 }

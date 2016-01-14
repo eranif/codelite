@@ -57,6 +57,7 @@ protected:
     wxFlatButton* m_wholeWord;
     wxFlatButton* m_regexOrWildButton;
     wxButton* m_buttonReplace;
+    wxButton* m_buttonReplaceAll;
     wxFlatButton* m_closeButton;
     eRegexType m_regexType;
     bool m_disableTextUpdateEvent;
@@ -91,8 +92,8 @@ protected:
     void DoSetCaretAtEndOfText();
     void DoFixRegexParen(wxString& findwhat);
     wxString DoGetSelectedText();
-    void DoMarkAll();
-
+    void DoSelectAll(bool addMarkers);
+    
     // General events
     void OnUndo(wxCommandEvent& e);
     void OnRedo(wxCommandEvent& e);
@@ -115,6 +116,7 @@ protected:
     void OnKeyDown(wxKeyEvent& e);
     void OnFindMouseWheel(wxMouseEvent& e);
     void OnButtonReplace(wxCommandEvent& e);
+    void OnButtonReplaceAll(wxCommandEvent& e);
     void OnButtonReplaceUI(wxUpdateUIEvent& e);
     void OnEnter(wxCommandEvent& e);
     void OnReplace(wxCommandEvent& e);

@@ -151,10 +151,10 @@ void clTabRendererSquare::DrawBottomRect(
             }
         } else {
             // top tabs
-            // dc.SetPen(pen);
-            // p1.x += 1;
-            // p2.x -= 1;
-            // DRAW_LINE(p1, p2);
+            dc.SetPen(pen);
+            p1.x += 1;
+            p2.x -= 1;
+            DRAW_LINE(p1, p2);
 
             // draw the marker at the bottom of the tabs
             p1 = activeTab->GetRect().GetBottomLeft();

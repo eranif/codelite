@@ -189,7 +189,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_buttonReplace->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonReplaceUI, this);
     m_buttonReplace->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
 
-    m_buttonReplaceAll->Bind(wxEVT_BUTTON, &QuickFindBar::OnButtonReplaceAll, this);
+    m_buttonReplaceAll->Bind(wxEVT_BUTTON, &QuickFindBar::OnReplaceAll, this);
     m_buttonReplaceAll->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonReplaceUI, this);
     m_buttonReplaceAll->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
 
@@ -1096,7 +1096,7 @@ void QuickFindBar::DoFixRegexParen(wxString& findwhat)
 
 void QuickFindBar::DoSetCaretAtEndOfText() { m_findWhat->SetInsertionPointEnd(); }
 
-void QuickFindBar::OnButtonReplaceAll(wxCommandEvent& e)
+void QuickFindBar::OnReplaceAll(wxCommandEvent& e)
 {
     if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty()) return;
     clGetManager()->SetStatusMessage(wxEmptyString);
@@ -1112,7 +1112,7 @@ void QuickFindBar::OnButtonReplaceAll(wxCommandEvent& e)
 
     // Ensure that we have at least one match before we continue
     if(m_sci->FindText(0, m_sci->GetLastPosition(), findwhat, searchFlags) == wxNOT_FOUND) {
-        clGetManager()->SetStatusMessage(_("No match found"), 1);
+        clGetManager()->SetStatusMessage(_("No match found"), 2);
         return;
     }
     
@@ -1171,8 +1171,10 @@ void QuickFindBar::OnButtonReplaceAll(wxCommandEvent& e)
         }
 
         // Move to the next match
-        m_sci->ClearSelections();
-        m_sci->SetCurrentPos(selStart + replacementLen);
+        int newpos = selStart + replacementLen;
+        m_sci->SetCurrentPos(newpos);
+        m_sci->SetSelectionStart(newpos);
+        m_sci->SetSelectionEnd(newpos);
         m_sci->SearchAnchor();
         pos = m_sci->SearchNext(searchFlags, findwhat);
         ++matchesCount;
@@ -1180,16 +1182,16 @@ void QuickFindBar::OnButtonReplaceAll(wxCommandEvent& e)
     m_sci->EndUndoAction();
     
     if(!matchesCount) {
-        clGetManager()->SetStatusMessage(_("No match found"), 1);
+        clGetManager()->SetStatusMessage(_("No match found"), 2);
         return;
     }
 
     // add selections
     m_sci->ClearSelections();
+    m_sci->SetCurrentPos(curpos);
     DoEnsureLineIsVisible(m_sci->LineFromPosition(curpos));
 
-    Show(false);
     wxString message;
     message << _("Found and replaced ") << matchesCount << _(" matches");
-    clGetManager()->SetStatusMessage(message, 2);
+    clGetManager()->SetStatusMessage(message, 5);
 }

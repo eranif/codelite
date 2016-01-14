@@ -116,7 +116,7 @@ protected:
     void OnKeyDown(wxKeyEvent& e);
     void OnFindMouseWheel(wxMouseEvent& e);
     void OnButtonReplace(wxCommandEvent& e);
-    void OnButtonReplaceAll(wxCommandEvent& e);
+    void OnReplaceAll(wxCommandEvent& e);
     void OnButtonReplaceUI(wxUpdateUIEvent& e);
     void OnEnter(wxCommandEvent& e);
     void OnReplace(wxCommandEvent& e);

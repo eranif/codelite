@@ -54,7 +54,7 @@ protected:
     virtual void OnUpdateUI(wxUpdateUIEvent& e);
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
-    
+
     DECLARE_EVENT_TABLE()
 
 public:
@@ -62,7 +62,7 @@ public:
     virtual ~ShellTab();
 };
 
-class OutputTab : public ShellTab 
+class OutputTab : public ShellTab
 {
 public:
     OutputTab(wxWindow* parent, wxWindowID id, const wxString& name);
@@ -76,30 +76,14 @@ protected:
     void OnStopProc(wxCommandEvent& e);
     void OnUpdateUI(wxUpdateUIEvent& e);
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-
-public:
-    DebugTab(wxWindow* parent, wxWindowID id, const wxString& name);
-    virtual ~DebugTab();
-
-    void AppendLine(const wxString& line);
-};
-
-class DebugTabPanel : public wxPanel
-{
-private:
-protected:
-    wxCheckBox* m_checkBoxEnableLog;
-
-    // Virtual event handlers, overide them in your derived class
     virtual void OnEnableDbgLog(wxCommandEvent& event);
     virtual void OnEnableDbgLogUI(wxUpdateUIEvent& event);
 
 public:
-    DebugTabPanel(wxWindow* parent,
-                  wxWindowID id = wxID_ANY,
-                  const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxSize(500, 300),
-                  long style = wxTAB_TRAVERSAL);
-    ~DebugTabPanel();
+    DebugTab(wxWindow* parent, wxWindowID id, const wxString& name);
+    virtual ~DebugTab();
+    wxAuiToolBar* GetToolBar() { return m_tb; }
+    void AppendLine(const wxString& line);
 };
+
 #endif // SHELLTAB_H

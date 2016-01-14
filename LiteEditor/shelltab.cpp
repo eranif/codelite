@@ -216,7 +216,16 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
         m_sci->StyleSetForeground(wxSTC_STYLE_LINENUMBER, wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     }
 
-    m_vertSizer->Prepend(new DebugTabPanel(this), 0, wxEXPAND);
+    m_tb->DeleteTool(XRCID("collapse_all"));
+    m_tb->DeleteTool(XRCID("repeat_output"));
+
+    wxCheckBox* cb = new wxCheckBox(m_tb, wxID_ANY, _("Enable debugger full logging"));
+    m_tb->AddControl(cb);
+    m_tb->Realize();
+
+    cb->Bind(wxEVT_CHECKBOX, &DebugTab::OnEnableDbgLog, this);
+    cb->Bind(wxEVT_UPDATE_UI, &DebugTab::OnEnableDbgLogUI, this);
+
     m_autoAppear = false;
     Connect(XRCID("hold_pane_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebugTab::OnHoldOpenUpdateUI), NULL, this);
 }
@@ -268,39 +277,7 @@ void DebugTab::OnUpdateUI(wxUpdateUIEvent& e)
     e.Enable(dbgr && dbgr->IsRunning());
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-DebugTabPanel::DebugTabPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
-{
-    wxBoxSizer* bSizer1;
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
-
-    m_checkBoxEnableLog =
-        new wxCheckBox(this, wxID_ANY, _("Enable debugger full logging"), wxDefaultPosition, wxDefaultSize, 0);
-    bSizer1->Add(m_checkBoxEnableLog, 0, wxALL | wxEXPAND, 0);
-
-    this->SetSizer(bSizer1);
-    this->Layout();
-    // The next line is needed in >=wx2.9 to prevent this panel taking up most of its containing sizer :/
-    SetMinSize(m_checkBoxEnableLog->GetSize());
-
-    // Connect Events
-    m_checkBoxEnableLog->Connect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(DebugTabPanel::OnEnableDbgLog), NULL, this);
-    m_checkBoxEnableLog->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebugTabPanel::OnEnableDbgLogUI), NULL, this);
-}
-
-DebugTabPanel::~DebugTabPanel()
-{
-    // Disconnect Events
-    m_checkBoxEnableLog->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(DebugTabPanel::OnEnableDbgLog), NULL, this);
-    m_checkBoxEnableLog->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebugTabPanel::OnEnableDbgLogUI), NULL, this);
-}
-
-void DebugTabPanel::OnEnableDbgLog(wxCommandEvent& event)
+void DebugTab::OnEnableDbgLog(wxCommandEvent& event)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(dbgr) {
@@ -312,7 +289,7 @@ void DebugTabPanel::OnEnableDbgLog(wxCommandEvent& event)
     }
 }
 
-void DebugTabPanel::OnEnableDbgLogUI(wxUpdateUIEvent& event)
+void DebugTab::OnEnableDbgLogUI(wxUpdateUIEvent& event)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(dbgr) {
@@ -320,6 +297,9 @@ void DebugTabPanel::OnEnableDbgLogUI(wxUpdateUIEvent& event)
         event.Check(info.enableDebugLog);
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 void ShellTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
     int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
@@ -368,6 +348,4 @@ OutputTab::OutputTab(wxWindow* parent, wxWindowID id, const wxString& name)
     GetSizer()->Layout();
 }
 
-OutputTab::~OutputTab()
-{
-}
+OutputTab::~OutputTab() {}

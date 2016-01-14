@@ -1188,6 +1188,8 @@ void QuickFindBar::OnReplaceAll(wxCommandEvent& e)
 
     // add selections
     m_sci->ClearSelections();
+    m_sci->SetSelectionStart(curpos);
+    m_sci->SetSelectionEnd(curpos);
     m_sci->SetCurrentPos(curpos);
     DoEnsureLineIsVisible(m_sci->LineFromPosition(curpos));
 

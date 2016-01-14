@@ -3137,7 +3137,7 @@ void clMainFrame::CreateRecentlyOpenedFilesMenu()
     if(item && menu) {
         wxMenu* submenu = item->GetSubMenu();
         if(submenu) {
-            for(size_t i = 0; i < files.GetCount(); i++) {
+            for(size_t i = files.GetCount(); i > 0; --i) {
                 hs.AddFileToHistory(files.Item(i));
             }
             // set this menu as the recent file menu

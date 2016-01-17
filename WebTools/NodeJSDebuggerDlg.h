@@ -47,6 +47,7 @@ public:
         return wxStringTokenize(m_stcCommandLineArguments->GetText(), "\n", wxTOKEN_STRTOK);
     }
     wxString GetScript() const { return m_filePickerScript->GetPath(); }
+    wxString GetWorkingDirectory() const { return m_dirPickerWorkingDirectory->GetPath(); }
 
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);

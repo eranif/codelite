@@ -168,8 +168,7 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
         return;
     }
 
-    wxString command = dlg.GetCommand();
-    StartDebugger(command);
+    StartDebugger(dlg.GetCommand(), dlg.GetWorkingDirectory());
 }
 
 void NodeJSDebugger::OnDebugStepIn(clDebugEvent& event)
@@ -696,9 +695,9 @@ void NodeJSDebugger::OnAttach(clDebugEvent& event)
 #endif
 }
 
-void NodeJSDebugger::StartDebugger(const wxString& command)
+void NodeJSDebugger::StartDebugger(const wxString& command, const wxString& workingDirectory)
 {
-    if(!m_node.ExecuteConsole(command, "", true, command)) {
+    if(!m_node.ExecuteConsole(command, workingDirectory, true, command)) {
         ::wxMessageBox(_("Failed to start NodeJS application"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
         m_socket.Reset(NULL);
     }

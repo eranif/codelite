@@ -43,6 +43,8 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
     m_filePickerNodeJS->SetPath(nodejs);
     m_filePickerScript->SetPath(script);
     m_textCtrlPort->ChangeValue(wxString() << userConf.GetDebuggerPort());
+    m_dirPickerWorkingDirectory->SetPath(userConf.GetWorkingDirectory());
+    
     m_stcCommandLineArguments->SetText(::wxJoin(userConf.GetCommandLineArgs(), '\n'));
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("javascript");
     if(lexer) {
@@ -84,6 +86,8 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent,
     m_filePickerScript->SetPath(script.GetFullPath());
     m_textCtrlPort->ChangeValue(wxString() << userConf.GetDebuggerPort());
     m_stcCommandLineArguments->SetText(::wxJoin(args, '\n'));
+    m_dirPickerWorkingDirectory->SetPath(userConf.GetWorkingDirectory());
+    
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("javascript");
     if(lexer) {
         lexer->Apply(m_stcCommandLineArguments);
@@ -103,6 +107,7 @@ NodeJSDebuggerDlg::~NodeJSDebuggerDlg()
     userConf.SetDebuggerPort(nPort);
     wxArrayString commandLineArgs = ::wxStringTokenize(m_stcCommandLineArguments->GetText(), "\n", wxTOKEN_STRTOK);
     userConf.SetCommandLineArgs(commandLineArgs);
+    userConf.SetWorkingDirectory(m_dirPickerWorkingDirectory->GetPath());
     userConf.Save();
 }
 

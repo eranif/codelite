@@ -4,6 +4,7 @@
 #include "processreaderthread.h"
 #include "macros.h"
 #include <algorithm>
+#include "dirsaver.h"
 
 #ifndef __WXMSW__
 #include <signal.h>
@@ -114,6 +115,13 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
 
     // Create the process as group leader, this way we make sure that killing it
     // will also kill all the children processes
+    DirSaver ds;
+    if(!workingDirectory.IsEmpty()) {
+        wxSetWorkingDirectory(workingDirectory);
+        wxLogMessage("Working directory is now: " + ::wxGetCwd());
+    }
+    
+    wxLogMessage(consoleCommand);
     m_pid = ::wxExecute(consoleCommand, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, new MyProcess(this));
     return (m_pid != 0);
 }

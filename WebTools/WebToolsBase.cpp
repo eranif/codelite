@@ -281,6 +281,14 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer76->Add(m_filePickerScript, 0, wxALL|wxEXPAND, 5);
     
+    m_staticText257 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer76->Add(m_staticText257, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_dirPickerWorkingDirectory = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    
+    flexGridSizer76->Add(m_dirPickerWorkingDirectory, 0, wxALL|wxEXPAND, 5);
+    
     m_staticTextDebuggerPort = new wxStaticText(this, wxID_ANY, _("Debugger port:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer76->Add(m_staticTextDebuggerPort, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);

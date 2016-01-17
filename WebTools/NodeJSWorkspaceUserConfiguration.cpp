@@ -32,6 +32,7 @@ NodeJSWorkspaceUser& NodeJSWorkspaceUser::Load()
     m_debuggerHost = element.namedObject("m_debuggerHost").toString(m_debuggerHost);
     m_scriptToExecute = element.namedObject("m_scriptToExecute").toString(m_scriptToExecute);
     m_commandLineArgs = element.namedObject("m_commandLineArgs").toArrayString();
+    m_workingDirectory = element.namedObject("m_workingDirectory").toString();
 
     m_breakpoints.clear();
     JSONElement bpArr = element.namedObject("m_breakpoints");
@@ -53,6 +54,7 @@ NodeJSWorkspaceUser& NodeJSWorkspaceUser::Save()
     json.addProperty("m_debuggerHost", m_debuggerHost);
     json.addProperty("m_scriptToExecute", m_scriptToExecute);
     json.addProperty("m_commandLineArgs", m_commandLineArgs);
+    json.addProperty("m_workingDirectory", m_workingDirectory);
     JSONElement bpArr = JSONElement::createArray("m_breakpoints");
     json.append(bpArr);
 

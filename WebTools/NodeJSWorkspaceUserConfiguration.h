@@ -38,6 +38,7 @@ class NodeJSWorkspaceUser
     int m_debuggerPort;
     wxString m_debuggerHost;
     wxArrayString m_commandLineArgs;
+    wxString m_workingDirectory;
 
 protected:
     wxFileName GetFileName() const;
@@ -84,6 +85,12 @@ public:
     int GetDebuggerPort() const { return m_debuggerPort; }
     const wxString& GetScriptToExecute() const { return m_scriptToExecute; }
     const wxString& GetWorkspacePath() const { return m_workspacePath; }
+    NodeJSWorkspaceUser& SetWorkingDirectory(const wxString& workingDirectory)
+    {
+        this->m_workingDirectory = workingDirectory;
+        return *this;
+    }
+    const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 };
 
 #endif // NODEJSWORKSPACEUSERCONFIGURATION_H

@@ -35,7 +35,8 @@
 #include "NodeJS.h"
 
 class NodeJSDebuggerTooltip;
-struct NodeJSDebuggerException {
+struct NodeJSDebuggerException
+{
     wxString message;
     wxString script;
     int line;
@@ -113,8 +114,8 @@ public:
     /**
      * @brief start the debugger using the given command
      */
-    void StartDebugger(const wxString& command);
-    
+    void StartDebugger(const wxString& command, const wxString& workingDirectory);
+
     /**
      * @brief delete breakpoint from NodeJS. This function does not updat the breakpoint manager
      * nor it does not update the UI

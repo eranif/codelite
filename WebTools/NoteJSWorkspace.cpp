@@ -309,7 +309,7 @@ void NodeJSWorkspace::OnExecute(clExecuteEvent& event)
             return;
         }
         wxString cmd = dlg.GetCommand();
-        m_terminal.ExecuteConsole(cmd, "", true, cmd);
+        m_terminal.ExecuteConsole(cmd, dlg.GetWorkingDirectory(), true, cmd);
     }
 }
 
@@ -347,15 +347,14 @@ wxString NodeJSWorkspace::GetProjectFromFile(const wxFileName& filename) const
     // projects are not supported in NodeJS
     return "";
 }
-void NodeJSWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString& files) const 
+void NodeJSWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString& files) const
 {
     wxUnusedVar(files);
     wxUnusedVar(projectName);
 }
 
-void NodeJSWorkspace::GetWorkspaceFiles(wxArrayString& files) const 
+void NodeJSWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
     // Return all the files
     wxDir::GetAllFiles(GetFilename().GetPath(), &files);
 }
-

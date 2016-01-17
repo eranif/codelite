@@ -211,12 +211,21 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     wxTheApp->Connect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Connect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
-    wxTheApp->Connect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
-    wxTheApp->Connect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
+    wxTheApp->Connect(XRCID("find_previous"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(QuickFindBar::OnFindPrevious),
+                      NULL,
+                      this);
+    wxTheApp->Connect(XRCID("find_next_at_caret"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
+                      NULL,
+                      this);
+    wxTheApp->Connect(XRCID("find_previous_at_caret"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
+                      NULL,
+                      this);
 
     EventNotifier::Get()->Connect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
@@ -251,7 +260,7 @@ void QuickFindBar::DoSearch(size_t searchFlags)
 
     // Clear all search markers if desired
     if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
-        m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+        m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
     }
 
@@ -321,6 +330,7 @@ void QuickFindBar::OnHide(wxCommandEvent& e)
     // Kill any "...continued from start" statusbar message
     clMainFrame::Get()->GetStatusBar()->SetMessage(wxEmptyString);
 
+    // Clear all
     Show(false);
     e.Skip();
 }
@@ -375,7 +385,7 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 void QuickFindBar::OnUpdateUI(wxUpdateUIEvent& e)
 {
     e.Enable(ManagerST::Get()->IsShutdownInProgress() == false && m_sci && m_sci->GetLength() > 0 &&
-        !m_findWhat->GetValue().IsEmpty());
+             !m_findWhat->GetValue().IsEmpty());
 }
 
 void QuickFindBar::OnEnter(wxCommandEvent& e)
@@ -476,8 +486,9 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
 
     // Ensure that the selection matches our search pattern
     size_t searchFlags = DoGetSearchFlags();
-    if(m_sci->FindText(selStart, selEnd, searchFlags & wxSTC_FIND_REGEXP ? findWhatSciVersion : findwhat,
-           searchFlags) == wxNOT_FOUND) {
+    if(m_sci->FindText(
+           selStart, selEnd, searchFlags & wxSTC_FIND_REGEXP ? findWhatSciVersion : findwhat, searchFlags) ==
+       wxNOT_FOUND) {
         // we got a selection, but it does not match our search
         return;
     }
@@ -533,7 +544,7 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
 void QuickFindBar::OnReplaceUI(wxUpdateUIEvent& e)
 {
     e.Enable(ManagerST::Get()->IsShutdownInProgress() == false && m_sci && !m_sci->GetReadOnly() &&
-        m_sci->GetLength() > 0 && !m_findWhat->GetValue().IsEmpty());
+             m_sci->GetLength() > 0 && !m_findWhat->GetValue().IsEmpty());
 }
 
 void QuickFindBar::OnReplaceEnter(wxCommandEvent& e)
@@ -579,7 +590,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
 
         if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
-            m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+            m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
             m_sci->IndicatorClearRange(0, m_sci->GetLength());
         }
     }
@@ -715,7 +726,7 @@ void QuickFindBar::DoSelectAll(bool addMarkers)
     clGetManager()->SetStatusMessage(wxEmptyString);
 
     if(addMarkers) {
-        m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+        m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
     }
 
@@ -798,12 +809,15 @@ void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)
         editor->SetFindBookmarksActive(true);
         editor->DelAllMarkers(smt_find_bookmark);
 
+        m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+        m_sci->IndicatorClearRange(0, m_sci->GetLength());
+
         while(true) {
             m_sci->SearchAnchor();
             if(m_sci->SearchNext(flags, findwhat) != wxNOT_FOUND) {
                 int selStart, selEnd;
                 m_sci->GetSelection(&selStart, &selEnd);
-                m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+                m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
                 m_sci->IndicatorFillRange(selStart, selEnd - selStart);
                 m_sci->MarkerAdd(m_sci->LineFromPosition(selStart), smt_find_bookmark);
 
@@ -817,10 +831,16 @@ void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)
         }
 
     } else {
-        if(editor) {
-            editor->DelAllMarkers(smt_find_bookmark);
-            editor->SetFindBookmarksActive(false);
-        }
+        editor->SetFindBookmarksActive(false);
+        editor->DelAllMarkers(smt_find_bookmark);
+        
+        IEditor::List_t editors;
+        clGetManager()->GetAllEditors(editors);
+        std::for_each(editors.begin(), editors.end(), [&](IEditor* pEditor) {
+            pEditor->GetCtrl()->MarkerDeleteAll(smt_find_bookmark);
+            pEditor->GetCtrl()->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
+            pEditor->GetCtrl()->IndicatorClearRange(0, pEditor->GetCtrl()->GetLength());
+        });
     }
 
     clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
@@ -883,12 +903,21 @@ QuickFindBar::~QuickFindBar()
 {
     wxTheApp->Disconnect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
+    wxTheApp->Disconnect(XRCID("find_previous"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(QuickFindBar::OnFindPrevious),
+                         NULL,
+                         this);
+    wxTheApp->Disconnect(XRCID("find_next_at_caret"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
+                         NULL,
+                         this);
+    wxTheApp->Disconnect(XRCID("find_previous_at_caret"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
+                         NULL,
+                         this);
     EventNotifier::Get()->Disconnect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
 }
@@ -1115,9 +1144,9 @@ void QuickFindBar::OnReplaceAll(wxCommandEvent& e)
         clGetManager()->SetStatusMessage(_("No match found"), 2);
         return;
     }
-    
+
     int curpos = m_sci->GetCurrentPos();
-    
+
     // We got at least one match
     m_sci->SetCurrentPos(0);
     m_sci->SetSelectionEnd(0);
@@ -1130,13 +1159,13 @@ void QuickFindBar::OnReplaceAll(wxCommandEvent& e)
 #else
     int re_flags = wxRE_DEFAULT;
 #endif
-    
+
     wxString replaceWith = m_replaceWith->GetValue();
     if(!replaceWith.IsEmpty()) {
         clConfig::Get().AddQuickFindReplaceItem(replaceWith);
         DoUpdateReplaceHistory();
     }
-    
+
     m_sci->BeginUndoAction();
     int pos = m_sci->SearchNext(searchFlags, findwhat);
     size_t matchesCount = 0;
@@ -1180,7 +1209,7 @@ void QuickFindBar::OnReplaceAll(wxCommandEvent& e)
         ++matchesCount;
     }
     m_sci->EndUndoAction();
-    
+
     if(!matchesCount) {
         clGetManager()->SetStatusMessage(_("No match found"), 2);
         return;

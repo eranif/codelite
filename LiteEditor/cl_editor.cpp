@@ -793,7 +793,15 @@ void LEditor::SetProperties()
     if(alpha != wxNOT_FOUND) {
         IndicatorSetAlpha(MARKER_WORD_HIGHLIGHT, alpha);
     }
-
+    
+    IndicatorSetUnder(MARKER_FIND_BAR_WORD_HIGHLIGHT, true);
+    IndicatorSetStyle(MARKER_FIND_BAR_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
+    bool isDarkTheme = (lexer && lexer->IsDark());
+    IndicatorSetForeground(MARKER_FIND_BAR_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
+    if(alpha != wxNOT_FOUND) {
+        IndicatorSetAlpha(MARKER_FIND_BAR_WORD_HIGHLIGHT, alpha);
+    }
+    
     IndicatorSetStyle(HYPERLINK_INDICATOR, wxSTC_INDIC_PLAIN);
     IndicatorSetStyle(MATCH_INDICATOR, wxSTC_INDIC_BOX);
     IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
@@ -2629,6 +2637,9 @@ void LEditor::DelAllMarkers(int which_type)
     IndicatorClearRange(0, GetLength());
 
     SetIndicatorCurrent(DEBUGGER_INDICATOR);
+    IndicatorClearRange(0, GetLength());
+    
+    SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
     IndicatorClearRange(0, GetLength());
 }
 

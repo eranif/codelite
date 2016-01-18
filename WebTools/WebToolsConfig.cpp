@@ -2,6 +2,8 @@
 #include "json_node.h"
 #include "NodeJSLocator.h"
 #include <set>
+#include <algorithm>
+#include <vector>
 
 WebToolsConfig::WebToolsConfig()
     : clConfigItem("WebTools")

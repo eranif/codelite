@@ -111,6 +111,12 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropNode = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("Node.js"), wxPG_LABEL, 1) );
     m_pgPropNode->SetHelpString(_("Provides variables that are part of the node environment, such as process and require, and hooks up require to try and find the dependencies that are being loaded, and assign them the correct types. It also includes types for the built-in modules that node.js provides (\"fs\", \"http\", etc)"));
     
+    m_pgPropNodeExpress = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("Node Express"), wxPG_LABEL, 1) );
+    m_pgPropNodeExpress->SetHelpString(_("A Tern plugin adding support for express web application framework for node. http://expressjs.com/"));
+    
+    m_pgPropWebPack = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("WebPack"), wxPG_LABEL, 1) );
+    m_pgPropWebPack->SetHelpString(_("Support WebPack"));
+    
     m_pgPropRequireJS = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("RequireJS"), wxPG_LABEL, 1) );
     m_pgPropRequireJS->SetHelpString(_("This plugin (\"requirejs\") teaches the server to understand RequireJS-style dependency management. It defines the global functions define and requirejs, and will do its best to resolve dependencies and give them their proper types"));
     

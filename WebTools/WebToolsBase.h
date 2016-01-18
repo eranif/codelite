@@ -64,6 +64,8 @@ protected:
     wxPGProperty* m_pgPropAngular;
     wxPGProperty* m_pgPropStrings;
     wxPGProperty* m_pgPropNode;
+    wxPGProperty* m_pgPropNodeExpress;
+    wxPGProperty* m_pgPropWebPack;
     wxPGProperty* m_pgPropRequireJS;
     wxPanel* m_panel237;
     wxStaticText* m_staticText243;

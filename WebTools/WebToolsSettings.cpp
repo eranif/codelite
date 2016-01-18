@@ -26,6 +26,8 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
         m_pgPropRequireJS->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginRequireJS));
         m_pgPropStrings->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginStrings));
         m_pgPropQML->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginQML));
+        m_pgPropNodeExpress->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSNodeExpress));
+        m_pgPropWebPack->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSWebPack));
 
         // XML
         m_checkBoxEnableXmlCC->SetValue(config.HasXmlFlag(WebToolsConfig::kXmlEnableCC));
@@ -85,6 +87,7 @@ void WebToolsSettings::DoSave()
 {
     WebToolsConfig config;
     config.Load();
+    
     // JS
     config.EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, m_checkBoxEnableJsCC->IsChecked());
     config.EnableJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging, m_pgPropLogging->GetValue().GetBool());
@@ -99,10 +102,15 @@ void WebToolsSettings::DoSave()
     config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginRequireJS, m_pgPropRequireJS->GetValue().GetBool());
     config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginStrings, m_pgPropStrings->GetValue().GetBool());
     config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginQML, m_pgPropQML->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSNodeExpress, m_pgPropNodeExpress->GetValue().GetBool());
+    config.EnableJavaScriptFlag(WebToolsConfig::kJSWebPack, m_pgPropWebPack->GetValue().GetBool());
+    
     // XML
     config.EnableXmlFlag(WebToolsConfig::kXmlEnableCC, m_checkBoxEnableXmlCC->IsChecked());
+    
     // HTML
     config.EnableHtmlFlag(WebToolsConfig::kHtmlEnableCC, m_checkBoxEnableHtmlCC->IsChecked());
+    
     // NodeJS
     config.SetNodejs(m_filePickerNodeJS->GetPath());
     config.SetNpm(m_filePickerNpm->GetPath());

@@ -54,7 +54,8 @@ public:
         kJSPluginAngular = (1 << 10),
         kJSPluginQML = (1 << 11),
         kJSPluginRequireJS = (1 << 12),
-
+        kJSWebPack = (1 << 13),
+        kJSNodeExpress = (1 << 14),
     };
 
     enum eHtmlFlags {

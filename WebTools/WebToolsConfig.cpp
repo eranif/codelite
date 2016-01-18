@@ -1,6 +1,7 @@
 #include "WebToolsConfig.h"
 #include "json_node.h"
 #include "NodeJSLocator.h"
+#include <set>
 
 WebToolsConfig::WebToolsConfig()
     : clConfigItem("WebTools")
@@ -67,25 +68,46 @@ wxString WebToolsConfig::GetTernProjectFile() const
     JSONElement plugins = JSONElement::createObject("plugins");
     root.toElement().append(plugins);
 
+    std::vector<wxString> pluginsToLoad;
+
+    // basic plugins that should always get loaded
+    pluginsToLoad.push_back("commonjs");
+    pluginsToLoad.push_back("modules");
+
     if(m_jsFlags & kJSPluginNode) {
-        JSONElement node = JSONElement::createObject("node");
-        plugins.append(node);
+        pluginsToLoad.push_back("node_resolve");
+        pluginsToLoad.push_back("node");
     }
 
     if(m_jsFlags & kJSPluginRequireJS) {
-        JSONElement node = JSONElement::createObject("requirejs");
-        plugins.append(node);
+        pluginsToLoad.push_back("requirejs");
     }
 
     if(m_jsFlags & kJSPluginStrings) {
-        JSONElement complete_strings = JSONElement::createObject("complete_strings");
-        plugins.append(complete_strings);
+        pluginsToLoad.push_back("complete_strings");
     }
 
     if(m_jsFlags & kJSPluginAngular) {
-        JSONElement angular = JSONElement::createObject("angular");
-        plugins.append(angular);
+        pluginsToLoad.push_back("angular");
     }
 
+    if(m_jsFlags & kJSWebPack) {
+        pluginsToLoad.push_back("webpack");
+    }
+
+    if(m_jsFlags & kJSNodeExpress) {
+        pluginsToLoad.push_back("node_resolve");
+        pluginsToLoad.push_back("node");
+        pluginsToLoad.push_back("node-express");
+    }
+
+    std::set<wxString> uniquePlugins;
+    std::for_each(pluginsToLoad.begin(), pluginsToLoad.end(), [&](const wxString& name) {
+        if(uniquePlugins.count(name) == 0) {
+            uniquePlugins.insert(name);
+            JSONElement node = JSONElement::createObject(name);
+            plugins.append(node);
+        }
+    });
     return root.toElement().format();
 }

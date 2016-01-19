@@ -172,6 +172,24 @@ TEST_FUNC(test_word_completion)
     return true;
 }
 
+// test word completion of a local variable (or anything) after a 
+// casting
+TEST_FUNC(test_word_completion_after_casting)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_after_casting.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    
+    CHECK_BOOL(resolved);
+    CHECK_BOOL(resolved->GetShortName().IsEmpty());
+    CHECK_WXSTRING(resolved->GetFullName(), "\\");
+    CHECK_WXSTRING(expr.GetFilter(), "$test_word_complet");
+    return true;
+}
+
 // test word completion when inside a namespace
 // namespace bla;
 // part_w + CTRL+SPACE

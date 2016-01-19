@@ -106,6 +106,13 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case kPHP_T_REQUIRE:
         case kPHP_T_REQUIRE_ONCE:
         case kPHP_T_USE:
+        case kPHP_T_INT_CAST:
+        case kPHP_T_DOUBLE_CAST:
+        case kPHP_T_STRING_CAST:
+        case kPHP_T_OBJECT_CAST:
+        case kPHP_T_ARRAY_CAST:
+        case kPHP_T_BOOL_CAST:
+        case kPHP_T_UNSET_CAST:
         case '.':
         case ';':
         case '{':
@@ -539,7 +546,7 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
             for(; iter != children.end(); ++iter) {
                 PHPEntityBase::Ptr_t child = *iter;
                 if(child->Is(kEntityTypeVariable) && child->GetShortName().Contains(GetFilter()) &&
-                    child->GetShortName() != GetFilter()) {
+                   child->GetShortName() != GetFilter()) {
                     matches.push_back(child);
                 }
             }
@@ -601,8 +608,10 @@ void PHPExpression::DoMakeUnique(PHPEntityBase::List_t& matches)
     matches.swap(uniqueList);
 }
 
-bool PHPExpression::FixReturnValueNamespace(
-    PHPLookupTable& lookup, PHPEntityBase::Ptr_t parent, const wxString& classFullpath, wxString& fixedpath)
+bool PHPExpression::FixReturnValueNamespace(PHPLookupTable& lookup,
+                                            PHPEntityBase::Ptr_t parent,
+                                            const wxString& classFullpath,
+                                            wxString& fixedpath)
 {
     if(!parent) return false;
     PHPEntityBase::Ptr_t pClass = lookup.FindClass(classFullpath);

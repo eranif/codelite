@@ -89,6 +89,7 @@
     <File Name="Tests/test_php7_function_return_value.php"/>
     <File Name="Tests/test_php7_function_arg_hinting.php"/>
     <File Name="Tests/test_class_member_initialized.php"/>
+    <File Name="Tests/test_word_completion_after_casting.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

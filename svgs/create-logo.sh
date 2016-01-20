@@ -7,6 +7,7 @@ mkdir -p ../bitmaps/osx/icon.iconset
 os_name=`uname -s`
 
 if [ "${os_name}" != "Darwin" ]; then
+    file=codelite-logo-low-res.svg
     ## 16x16 version
     inkscape $file --without-gui --export-png=../bitmaps/16-${filename}.png --export-width=16 --export-height=16 
     inkscape $file --without-gui --export-png=../bitmaps/16-${filename}@2x.png --export-width=32 --export-height=32 
@@ -23,7 +24,10 @@ if [ "${os_name}" != "Darwin" ]; then
     ## 64x64 version
     inkscape $file --without-gui --export-png=../bitmaps/64-${filename}.png --export-width=64 --export-height=64 
     inkscape $file --without-gui --export-png=../bitmaps/64-${filename}@2x.png --export-width=128 --export-height=128 
-
+    
+    ## Use the hi-res image from hereon
+    
+    file=codelite-logo.svg
     ## 128x128 version
     inkscape $file --without-gui --export-png=../bitmaps/128-${filename}.png --export-width=128 --export-height=128 
     inkscape $file --without-gui --export-png=../bitmaps/128-${filename}@2x.png --export-width=256 --export-height=256 

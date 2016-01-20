@@ -14,7 +14,7 @@
    viewBox="0 0 511.99999 511.99999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="codelite-logo-root.svg">
   <title
      id="title6123">CodeLite IDE Logo</title>
@@ -203,7 +203,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.92075429"
-     inkscape:cx="-21.098133"
+     inkscape:cx="-18.926001"
      inkscape:cy="286.31364"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -212,8 +212,8 @@
      inkscape:showpageshadow="false"
      inkscape:window-width="1677"
      inkscape:window-height="898"
-     inkscape:window-x="48"
-     inkscape:window-y="23"
+     inkscape:window-x="1952"
+     inkscape:window-y="74"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -273,40 +273,44 @@
        y="801.87305"
        rx="10.043559"
        ry="10.043559" />
-    <path
-       style="fill:#7f8c8d;filter:url(#filter4459)"
-       inkscape:connector-curvature="0"
-       id="path6"
-       d="m 121.32792,616.65774 0,189.97667 c 0,79.79021 63.90012,151.98134 158.33409,189.97667 94.43748,-37.99533 158.33408,-110.18646 158.33408,-189.97667 l 0,-189.97667 -316.66817,0 z" />
-    <path
-       style="fill:#bdc3c7"
-       inkscape:connector-curvature="0"
-       id="path8"
-       d="m 121.32792,597.66008 0,189.97667 c 0,79.7902 63.90012,151.98133 158.33409,189.97667 94.43748,-37.99534 158.33408,-110.18647 158.33408,-189.97667 l 0,-189.97667 -316.66817,0 z" />
-    <path
-       style="fill:#95a5a6"
-       inkscape:connector-curvature="0"
-       id="path10"
-       d="m 121.32792,597.66008 0,189.97667 c 0,79.7902 63.90012,151.98133 158.33409,189.97667 l 0,-379.95334 -158.33409,0 z" />
-    <path
-       style="fill:#ecf0f1"
-       inkscape:connector-curvature="0"
-       id="path12"
-       d="m 156.51328,635.65541 0,151.98134 c 0,64.59206 49.70106,121.58507 123.14873,151.98133 73.44942,-30.39626 123.14873,-87.38927 123.14873,-151.98133 l 0,-151.98134 -246.29746,0 z" />
-    <path
-       style="fill:#2980b9"
-       inkscape:connector-curvature="0"
-       id="path14"
-       d="m 156.51328,787.63675 c 0,64.59206 49.70106,121.58507 123.14873,151.98133 l 0,-151.98133 -123.14873,0 z" />
-    <path
-       inkscape:connector-curvature="0"
-       id="rect16"
-       d="m 279.66201,635.65541 123.14873,0 0,151.98133 -123.14873,0 z"
-       style="fill:#3498db" />
-    <path
-       inkscape:connector-curvature="0"
-       id="rect18"
-       d="m 156.51328,635.65541 123.14873,0 0,151.98133 -123.14873,0 z"
-       style="fill:#bdc3c7" />
+    <g
+       transform="matrix(15.058522,0,0,14.032793,83.754824,-13819.372)"
+       id="g4">
+      <path
+         style="fill:#95a5a6"
+         inkscape:connector-curvature="0"
+         d="m 3,1031.4 v 10 c 0,4.2 3.6322,8 9,10 5.368,-2 9,-5.8 9,-10 v -10 H 3 z"
+         id="path6" />
+      <path
+         style="fill:#ecf0f1"
+         inkscape:connector-curvature="0"
+         d="m 3,1030.4 v 10 c 0,4.2 3.6322,8 9,10 5.368,-2 9,-5.8 9,-10 v -10 H 3 z"
+         id="path8" />
+      <path
+         style="fill:#bdc3c7"
+         inkscape:connector-curvature="0"
+         d="m 3,1030.4 v 10 c 0,4.2 3.6322,8 9,10 v -20 H 3 z"
+         id="path10" />
+      <path
+         style="fill:#c0392b"
+         inkscape:connector-curvature="0"
+         d="m 5,1032.4 v 8 c 0,3.4 2.8251,6.4 7,8 4.175,-1.6 7,-4.6 7,-8 v -8 H 5 z"
+         id="path12" />
+      <path
+         style="fill:#e74c3c"
+         inkscape:connector-curvature="0"
+         d="m 12,1032.4 v 16 c 4.175,-1.6 7,-4.6 7,-8 v -8 h -7 z"
+         id="path14" />
+      <path
+         style="fill:#c0392b"
+         inkscape:connector-curvature="0"
+         d="m 9.1562,1036.5 -1.4062,1.4 2.844,2.9 -2.844,2.8 1.4062,1.4 2.8438,-2.8 2.844,2.8 1.406,-1.4 -2.844,-2.8 2.844,-2.8 -1.438,-1.5 -2.812,2.9 -2.8438,-2.9 z"
+         id="path16" />
+      <path
+         style="fill:#ecf0f1"
+         inkscape:connector-curvature="0"
+         d="m 9.1562,1035.5 -1.4062,1.4 2.844,2.9 -2.844,2.8 1.4062,1.4 2.8438,-2.8 2.844,2.8 1.406,-1.4 -2.844,-2.8 2.844,-2.8 -1.438,-1.5 -2.812,2.9 -2.8438,-2.9 z"
+         id="path18" />
+    </g>
   </g>
 </svg>

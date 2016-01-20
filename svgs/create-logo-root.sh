@@ -9,6 +9,10 @@ if [ "${os_name}" != "Darwin" ]; then
     file=codelite-logo-low-res-root.svg
     inkscape $file --without-gui --export-png=../bitmaps/16-${filename}.png --export-width=16 --export-height=16 
     inkscape $file --without-gui --export-png=../bitmaps/16-${filename}@2x.png --export-width=32 --export-height=32 
+    
+    ## 24x24 version, not needed for OSX
+    inkscape $file --without-gui --export-png=../bitmaps/24-${filename}.png --export-width=24 --export-height=24
+    inkscape $file --without-gui --export-png=../bitmaps/24-${filename}@2x.png --export-width=48 --export-height=48 
 
     ## 32x32 version
     inkscape $file --without-gui --export-png=../bitmaps/32-${filename}.png --export-width=32 --export-height=32 

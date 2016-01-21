@@ -318,11 +318,9 @@ void QuickFindBar::DoSearch(size_t searchFlags)
         // Restore the caret position
         m_sci->SetCurrentPos(curpos);
         m_sci->ClearSelections();
-        CallAfter(&QuickFindBar::DoSetCaretAtEndOfText);
         return;
     }
     DoEnsureLineIsVisible();
-    CallAfter(&QuickFindBar::DoSetCaretAtEndOfText);
 }
 
 void QuickFindBar::OnHide(wxCommandEvent& e)
@@ -404,6 +402,9 @@ void QuickFindBar::OnEnter(wxCommandEvent& e)
     } else {
         OnNext(e);
     }
+    // Without this call, the caret is placed at the start of the searched
+    // text, this at least places the caret at the end
+    CallAfter(&QuickFindBar::DoSetCaretAtEndOfText);
 }
 
 void QuickFindBar::OnCopy(wxCommandEvent& e)

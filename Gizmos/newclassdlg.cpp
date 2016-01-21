@@ -56,6 +56,7 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     m_checkBoxHpp->SetValue(data.GetFlags() & NewClassDlgData::HppHeader);
     m_checkBoxSingleton->SetValue(data.GetFlags() & NewClassDlgData::Singleton);
     m_checkBoxVirtualDtor->SetValue(data.GetFlags() & NewClassDlgData::VirtualDtor);
+    m_checkBoxPragmaOnce->SetValue(data.GetFlags() & NewClassDlgData::UsePragma);
 
     // set two columns to our list
     m_listCtrl1->InsertColumn(0, _("Name"));
@@ -97,7 +98,7 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     CentreOnParent();
 }
 
-NewClassDlg::~NewClassDlg() {}
+NewClassDlg::~NewClassDlg() { DoSaveOptions(); }
 
 void NewClassDlg::OnListItemActivated(wxListEvent& event)
 {
@@ -175,28 +176,7 @@ void NewClassDlg::OnButtonOK(wxCommandEvent& e)
     if(!ValidateInput()) {
         return;
     }
-
-    // Save the check boxes ticked
-    size_t flags(0);
-
-    if(m_checkBoxCopyable->IsChecked()) flags |= NewClassDlgData::NonCopyable;
-
-    if(m_checkBoxImplPureVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllPureVirtualFuncs;
-
-    if(m_checkBoxImplVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllVirtualFuncs;
-
-    if(m_checkBoxInline->IsChecked()) flags |= NewClassDlgData::FileIniline;
-
-    if(m_checkBoxHpp->IsChecked()) flags |= NewClassDlgData::HppHeader;
-
-    if(m_checkBoxSingleton->IsChecked()) flags |= NewClassDlgData::Singleton;
-
-    if(m_checkBoxVirtualDtor->IsChecked()) flags |= NewClassDlgData::VirtualDtor;
-
-    NewClassDlgData data;
-    data.SetFlags(flags);
-    EditorConfigST::Get()->WriteObject(wxT("NewClassDlgData"), &data);
-
+    DoSaveOptions();
     EndModal(wxID_OK);
 }
 
@@ -247,8 +227,7 @@ bool NewClassDlg::ValidateInput()
     if(wxFileName::FileExists(cpp_file)) {
         if(wxMessageBox(
                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()),
-               _("CodeLite"),
-               wxYES_NO | wxICON_WARNING) == wxNO) {
+               _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
@@ -257,8 +236,7 @@ bool NewClassDlg::ValidateInput()
     if(wxFileName::FileExists(h_file)) {
         if(wxMessageBox(
                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()),
-               _("CodeLite"),
-               wxYES_NO | wxICON_WARNING) == wxNO) {
+               _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
@@ -446,3 +424,22 @@ void NewClassDlg::OnOkUpdateUI(wxUpdateUIEvent& event)
     event.Enable(!(GetClassFile().IsEmpty() || GetVirtualDirectoryPath().IsEmpty()));
 }
 void NewClassDlg::OnBlockGuardUI(wxUpdateUIEvent& event) { event.Enable(!m_checkBoxPragmaOnce->IsChecked()); }
+
+void NewClassDlg::DoSaveOptions()
+{
+    // Save the check boxes ticked
+    size_t flags(0);
+
+    if(m_checkBoxCopyable->IsChecked()) flags |= NewClassDlgData::NonCopyable;
+    if(m_checkBoxImplPureVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllPureVirtualFuncs;
+    if(m_checkBoxImplVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllVirtualFuncs;
+    if(m_checkBoxInline->IsChecked()) flags |= NewClassDlgData::FileIniline;
+    if(m_checkBoxHpp->IsChecked()) flags |= NewClassDlgData::HppHeader;
+    if(m_checkBoxSingleton->IsChecked()) flags |= NewClassDlgData::Singleton;
+    if(m_checkBoxVirtualDtor->IsChecked()) flags |= NewClassDlgData::VirtualDtor;
+    if(m_checkBoxPragmaOnce->IsChecked()) flags |= NewClassDlgData::UsePragma;
+
+    NewClassDlgData data;
+    data.SetFlags(flags);
+    EditorConfigST::Get()->WriteObject(wxT("NewClassDlgData"), &data);
+}

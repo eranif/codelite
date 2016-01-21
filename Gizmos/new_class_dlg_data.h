@@ -30,33 +30,31 @@
 
 class NewClassDlgData : public SerializedObject
 {
-	size_t m_flags;
-public:
-	enum {
-		Singleton               = 0x00000001,
-		NonCopyable             = 0x00000002,
-		VirtualDtor             = 0x00000004,
-		ImplAllVirtualFuncs     = 0x00000008,
-		ImplAllPureVirtualFuncs = 0x00000010,
-		FileIniline             = 0x00000020,
-		UseUnderscores          = 0x00000040,
-		HppHeader               = 0x00000080
-	};
-	
-public:
-	NewClassDlgData();
-	virtual ~NewClassDlgData();
+    size_t m_flags;
 
 public:
-	virtual void DeSerialize(Archive& arch);
-	virtual void Serialize(Archive& arch);
+    enum {
+        Singleton = (1 << 0),
+        NonCopyable = (1 << 1),
+        VirtualDtor = (1 << 2),
+        ImplAllVirtualFuncs = (1 << 3),
+        ImplAllPureVirtualFuncs = (1 << 4),
+        FileIniline = (1 << 5),
+        UseUnderscores = (1 << 6),
+        HppHeader = (1 << 7),
+        UsePragma = (1 << 8)
+    };
 
-	void SetFlags(const size_t& flags) {
-		this->m_flags = flags;
-	}
-	const size_t& GetFlags() const {
-		return m_flags;
-	}
+public:
+    NewClassDlgData();
+    virtual ~NewClassDlgData();
+
+public:
+    virtual void DeSerialize(Archive& arch);
+    virtual void Serialize(Archive& arch);
+
+    void SetFlags(const size_t& flags) { this->m_flags = flags; }
+    const size_t& GetFlags() const { return m_flags; }
 };
 
 #endif // NEWCLASSDLGDATA_H

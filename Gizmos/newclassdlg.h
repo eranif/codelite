@@ -96,7 +96,8 @@ protected:
 
     wxString doSpliteByCaptilization(const wxString& str);
     void DoUpdateGeneratedPath();
-
+    void DoSaveOptions();
+    
 public:
     /** Constructor */
     NewClassDlg(wxWindow* parent, IManager* mgr);

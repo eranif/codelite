@@ -188,8 +188,8 @@ EVT_IDLE(clMainFrame::OnIdle)
 EVT_ACTIVATE(clMainFrame::OnAppActivated)
 EVT_CLOSE(clMainFrame::OnClose)
 EVT_TIMER(FrameTimerId, clMainFrame::OnTimer)
-//	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
-//	EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
+//  EVT_AUI_RENDER(Frame::OnAuiManagerRender)
+//  EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
 
 //---------------------------------------------------
 // File menu
@@ -233,6 +233,7 @@ EVT_MENU(XRCID("delete_line"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("delete_line_end"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("delete_line_start"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("copy_line"), clMainFrame::DispatchCommandEvent)
+EVT_MENU(XRCID("cut_line"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("transpose_lines"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("trim_trailing"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("to_upper"), clMainFrame::DispatchCommandEvent)
@@ -261,6 +262,7 @@ EVT_UPDATE_UI(XRCID("delete_line"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("delete_line_end"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("delete_line_start"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("copy_line"), clMainFrame::OnFileExistUpdateUI)
+EVT_UPDATE_UI(XRCID("cut_line"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("transpose_lines"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("trim_trailing"), clMainFrame::DispatchUpdateUIEvent)
 EVT_UPDATE_UI(XRCID("to_upper"), clMainFrame::DispatchUpdateUIEvent)
@@ -3262,7 +3264,7 @@ void clMainFrame::CreateWelcomePage()
     content.Replace(wxT("$(FilesTable)"), filesTable);
 
     //replace the HTML colours with platfroms correct colours
-    wxColour active_caption 	= wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+    wxColour active_caption     = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
     wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
     active_caption = DrawingUtils::LightColour(active_caption, 11.0);

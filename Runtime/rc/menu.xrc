@@ -134,6 +134,9 @@
                 <object class="wxMenuItem" name="copy_line">
                      <label>Copy Line</label>
                  </object>                 
+		 <object class="wxMenuItem" name="cut_line">
+                     <label>Cut Line</label>
+                 </object>                 
                 <object class="wxMenuItem" name="transpose_lines">
                      <label>&amp;Transpose Lines</label>
                  </object>

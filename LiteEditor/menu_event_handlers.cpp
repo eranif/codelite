@@ -37,14 +37,14 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 {
     wxUnusedVar(event);
     LEditor *editor = (LEditor*)owner;
-    
+
     OptionsConfigPtr options = editor->GetOptions();
     if (event.GetId() == wxID_COPY) {
         editor->CopyAllowLine();
 
     } else if (event.GetId() == wxID_CUT) {
         editor->Cut();
-        
+
     } else if (event.GetId() == wxID_PASTE) {
         editor->Paste();
 
@@ -85,6 +85,9 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     } else if (event.GetId() == XRCID("copy_line")) {
         editor->LineCopy();
 
+    } else if (event.GetId() == XRCID("cut_line")) {
+        editor->LineCut();
+
     } else if (event.GetId() == XRCID("trim_trailing")) {
         editor->TrimText(true, false);
 
@@ -109,7 +112,7 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
                 ||  (editor->LineFromPos(editor->GetSelectionStart() == editor->LineFromPos(editor->GetSelectionEnd())))) {
             // No selection (or only a trivial 1-line one)
             if (curline != lastline) {
-                editor->LineDown();              
+                editor->LineDown();
                 editor->LineTranspose();
             }
 
@@ -218,7 +221,7 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
 
         } else if(event.GetId() == XRCID("ID_QUICK_ADD_NEXT")) {
             editor->QuickAddNext();
-            
+
         } else if(event.GetId() == XRCID("ID_QUICK_FIND_ALL")) {
             editor->QuickFindAll();
         }
@@ -451,11 +454,11 @@ void DebuggerMenuHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &e
     }
 
     if (event.GetId() == XRCID("delete_all_breakpoints")) {
-        
+
         // First let the plugins do this thing
         clDebugEvent event(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS);
         EventNotifier::Get()->AddPendingEvent( event );
-        
+
         // Now clear the manager
         ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
     }

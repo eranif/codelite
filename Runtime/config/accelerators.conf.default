@@ -18,7 +18,8 @@ wxID_DUPLICATE|Edit|Duplicate Selection / Line|Ctrl-D
 delete_line_end|Edit|Delete to Line End|
 delete_line_start|Edit|Delete to Line Start|
 delete_line|Edit|Delete Line|Ctrl-L
-copy_line|Edit|Copy Line|Ctrl-Shift-C
+copy_line|Edit|Copy Line|
+cut_line|Edit|Cut Line|
 to_lower|Edit|Make Lowercase|Ctrl-U
 to_upper|Edit|Make Uppercase|Ctrl-Shift-U
 insert_doxy_comment|Edit|Insert Comment Block|Ctrl-Shift-D

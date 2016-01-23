@@ -12887,9 +12887,6 @@ msgstr ""
 msgid "Delete to Line &Start"
 msgstr ""
 
-msgid "Copy Line"
-msgstr ""
-
 #: Runtime/rc/menu.xrc:135
 msgid "&Transpose Lines"
 msgstr ""

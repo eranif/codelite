@@ -188,8 +188,8 @@ EVT_IDLE(clMainFrame::OnIdle)
 EVT_ACTIVATE(clMainFrame::OnAppActivated)
 EVT_CLOSE(clMainFrame::OnClose)
 EVT_TIMER(FrameTimerId, clMainFrame::OnTimer)
-//  EVT_AUI_RENDER(Frame::OnAuiManagerRender)
-//  EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
+//	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
+//	EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
 
 //---------------------------------------------------
 // File menu
@@ -3264,7 +3264,7 @@ void clMainFrame::CreateWelcomePage()
     content.Replace(wxT("$(FilesTable)"), filesTable);
 
     //replace the HTML colours with platfroms correct colours
-    wxColour active_caption     = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+    wxColour active_caption 	= wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
     wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
     active_caption = DrawingUtils::LightColour(active_caption, 11.0);

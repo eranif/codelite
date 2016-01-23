@@ -82,6 +82,12 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     } else if (event.GetId() == XRCID("delete_line")) {
         editor->LineDelete();
 
+    } else if (event.GetId() == XRCID("copy_line")) {
+        editor->LineCopy();
+
+    } else if (event.GetId() == XRCID("cut_line")) {
+        editor->LineCut();
+
     } else if (event.GetId() == XRCID("trim_trailing")) {
         editor->TrimText(true, false);
 

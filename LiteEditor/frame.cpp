@@ -3142,7 +3142,7 @@ void clMainFrame::CreateRecentlyOpenedFilesMenu()
         wxMenu* submenu = item->GetSubMenu();
         if(submenu) {
             for(size_t i = files.GetCount(); i > 0; --i) {
-                hs.AddFileToHistory(files.Item(i-1));
+                hs.AddFileToHistory(files.Item(i - 1));
             }
             // set this menu as the recent file menu
             hs.SetBaseId(RecentFilesSubMenuID + 1);
@@ -4301,16 +4301,19 @@ void clMainFrame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
 {
     // get the file path
+    wxString filepath;
     LEditor* editor = GetMainBook()->GetActiveEditor();
     if(editor) {
-        wxString filepath = editor->GetFileName().GetPath();
-        DirSaver ds;
-        wxSetWorkingDirectory(filepath);
-
-        // Apply the environment variabels before opening the shell
-        EnvSetter setter;
-        FileUtils::OpenTerminal(filepath);
+        filepath = editor->GetFileName().GetPath();
     }
+
+    if(filepath.IsEmpty()) return;
+    DirSaver ds;
+    wxSetWorkingDirectory(filepath);
+
+    // Apply the environment variabels before opening the shell
+    EnvSetter setter;
+    FileUtils::OpenTerminal(filepath);
 }
 
 void clMainFrame::ShowWelcomePage()

@@ -1097,8 +1097,16 @@
             <label>Open in CodeLite</label>
         </object>
         <object class="wxMenuItem" name="open_with_default_application">
-            <label>Open With &amp;Default Application</label>
+            <label>Open with &amp;Default Application</label>
         </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="cxx_fileview_open_shell_from_filepath">
+            <label>Open Shell</label>
+        </object>
+        <object class="wxMenuItem" name="cxx_fileview_open_file_explorer">
+            <label>Open Containing Folder</label>
+        </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="compile_item">
             <label>Compile</label>
         </object>

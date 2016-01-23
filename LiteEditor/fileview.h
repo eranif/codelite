@@ -173,6 +173,8 @@ protected:
     virtual void OnReconcileProject(wxCommandEvent& e);
     virtual void OnRenameItem(wxCommandEvent& e);
     virtual void OnCompileItem(wxCommandEvent& e);
+    virtual void OnOpenShellFromFilePath(wxCommandEvent& e);
+    virtual void OnOpenFileExplorerFromFilePath(wxCommandEvent& e);
     virtual void OnExcludeFromBuild(wxCommandEvent& e);
     virtual void OnPreprocessItem(wxCommandEvent& e);
     virtual void SortTree();

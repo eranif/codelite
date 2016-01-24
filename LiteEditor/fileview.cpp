@@ -1064,7 +1064,7 @@ void FileViewTree::DoRemoveVirtualFolder(wxTreeItemId& item)
 {
     wxString name = GetItemText(item);
     wxString message(wxT("'") + name + wxT("'"));
-    message << _(" and all its content will be removed from the project.");
+    message << _(" and all its contents will be removed from the project.");
 
     if(wxMessageBox(message, _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxYES) {
         wxString path = GetItemPath(item);

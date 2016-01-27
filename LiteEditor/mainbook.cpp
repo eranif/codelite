@@ -1162,6 +1162,7 @@ void MainBook::DoUpdateNotebookTheme()
 }
 
 wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }
+int MainBook::GetCurrentPageIndex() { return m_book->GetSelection(); }
 
 void MainBook::OnClosePage(wxBookCtrlEvent& e)
 {

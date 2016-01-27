@@ -131,7 +131,7 @@ protected:
     void DoCreateBuildDropDownMenu(wxMenu* menu);
     void DoShowToolbars(bool show);
     void InitializeLogo();
-    
+
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
@@ -559,6 +559,9 @@ protected:
     void OnSyntaxHighlight(wxCommandEvent& e);
     void OnShowWhitespaceUI(wxUpdateUIEvent& e);
     void OnShowWhitespace(wxCommandEvent& e);
+    void OnNextTab(wxCommandEvent& e);
+    void OnPrevTab(wxCommandEvent& e);
+    void OnNextPrevTab_UI(wxUpdateUIEvent& e);
     void OnShowFullScreen(wxCommandEvent& e);
     void OnFindResourceXXX(wxCommandEvent& e);
     void OnShowActiveProjectSettings(wxCommandEvent& e);
@@ -584,6 +587,7 @@ protected:
     void OnSettingsChanged(wxCommandEvent& e);
     void OnEditMenuOpened(wxMenuEvent& e);
     void OnProjectRenamed(clCommandEvent& event);
+
     DECLARE_EVENT_TABLE()
 };
 

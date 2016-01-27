@@ -30,12 +30,12 @@ if [ ${os_name} == "Darwin" ]; then
     cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
     make -j4 && make install
     tar cvfz codelite.app.tar.gz codelite.app/*
-    scp codelite.app.tar.gz root@codelite.org:/var/www/downloads/codelite/weekly/wip
+    scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
 else
     cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
     make -j4 && make package
     deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
     echo Uploading deb file ${deb_file}
-    scp ${deb_file} root@codelite.org:/var/www/downloads/codelite/weekly/wip
+    scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
 fi
 

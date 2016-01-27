@@ -63,7 +63,8 @@ void clTabColours::InitDarkColours()
     inactiveTabInnerPenColour = wxColour("#535252");
 
     tabAreaColour = wxColour("#131111").ChangeLightness(115);
-    markerColour = wxColour("rgb(255, 128, 0)");
+    // markerColour = wxColour("rgb(255, 128, 0)");
+    markerColour = wxColour("rgb(105, 193, 240)");
     
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");

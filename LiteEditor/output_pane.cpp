@@ -103,7 +103,7 @@ void OutputPane::CreateGUIControls()
         style |= kNotebook_RightTabs;
 #endif
     }
-    style |= kNotebook_UnderlineActiveTab;
+    //style |= kNotebook_UnderlineActiveTab;
     
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 

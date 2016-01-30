@@ -198,7 +198,13 @@ if(NOT APPLE)
         if (${WX_LIBSOUTPUT} MATCHES "^-L.+") # In recent, multi-architecture, distro versions it'll start with -L/foo/bar
             string(REGEX REPLACE "^-L([^ ;]+).*" "\\1" WX_LIBS_DIR ${WX_LIBSOUTPUT})
         else()
-            set(WX_LIBS_DIR "/usr/lib") # ${WX_LIBS_DIR} will be empty for older, non multi-architecture, distro versions that still use /usr/lib
+			# In recent fedoras, which do things with wx-config that might politely be described as 'strange,  wx-config doesn't emit -L/usr/lib64
+			find_file( USRLIBSIXTYFOUR "libwx_baseu-3.1.so" "/usr/lib64" )
+			if ( NOT USRLIBSIXTYFOUR MATCHES ".*NOTFOUND" )
+				set(WX_LIBS_DIR "/usr/lib64")
+			else()
+				set(WX_LIBS_DIR "/usr/lib") # ${WX_LIBS_DIR} will be empty for older, non multi-architecture, distro versions that still use /usr/lib
+			endif()
         endif()
         message("-- wxlibsdir is: ${WX_LIBS_DIR}")
 

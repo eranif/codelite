@@ -37,12 +37,8 @@ project( "CodeLite" )
 
 ## Generate compile_commands.json file for code completion
 set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
-
-if( UNIX AND NOT APPLE)
-    set( CMAKE_LIBRARY_ARCHITECTURE x86_64-linux-gnu ) # add search path needed by (at least) libssh and gtk2 libraries
-endif()
-
 set( CL_PREFIX "/usr" )
+
 if (CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3
     set( CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 else()

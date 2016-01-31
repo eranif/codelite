@@ -30,6 +30,7 @@
 #include "wx/ffile.h"
 #include "editor_config.h"
 #include "wx_xml_compatibility.h"
+#include "globals.h"
 
 ConfigTool::ConfigTool()
     : m_fileName(wxEmptyString)
@@ -64,7 +65,7 @@ bool ConfigTool::WriteObject(const wxString &name, SerializedObject *obj)
 
     if(!XmlUtils::StaticWriteObject(m_doc.GetRoot(), name, obj))
         return false;
-    return m_doc.Save(m_fileName);
+    return ::SaveXmlToFile(&m_doc, m_fileName);
 }
 
 bool ConfigTool::ReadObject(const wxString &name, SerializedObject *obj)

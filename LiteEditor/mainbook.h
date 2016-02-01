@@ -53,7 +53,7 @@ private:
     bool m_isWorkspaceReloading;
     bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
     FilesModifiedDlg* m_filesModifiedDlg;
-    
+
 public:
     enum {
         kGetAll_Default = 0x00000000,         // booked editors only
@@ -68,7 +68,7 @@ private:
     void ConnectEvents();
     void DoUpdateNotebookTheme();
     void DoOpenImageViewer(const wxFileName& filename);
-    
+
     void OnMouseDClick(wxBookCtrlEvent& e);
     void OnTabDClicked(wxBookCtrlEvent& e);
     void OnTabLabelContextMenu(wxBookCtrlEvent& e);
@@ -145,6 +145,7 @@ public:
     bool CloseEditor(const wxString& fileName) { return ClosePage(FindEditor(fileName)); }
 
     wxWindow* GetCurrentPage();
+    int GetCurrentPageIndex();
     wxWindow* GetPage(size_t page);
     size_t GetPageCount() const;
     wxWindow* FindPage(const wxString& text);

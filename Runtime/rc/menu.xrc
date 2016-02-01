@@ -63,7 +63,7 @@
             <object class="wxMenuItem" name="wxID_CLOSE_ALL">
                 <label>Close All</label>
             </object>
-            
+
             <object class="wxMenuItem" name="file_close_workspace">
                 <label>Close Workspace</label>
             </object>
@@ -133,10 +133,10 @@
                  </object>
                 <object class="wxMenuItem" name="copy_line">
                      <label>Copy Line</label>
-                 </object>                 
-		 <object class="wxMenuItem" name="cut_line">
+                 </object>
+         <object class="wxMenuItem" name="cut_line">
                      <label>Cut Line</label>
-                 </object>                 
+                 </object>
                 <object class="wxMenuItem" name="transpose_lines">
                      <label>&amp;Transpose Lines</label>
                  </object>
@@ -248,6 +248,13 @@
                 </object>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="next_tab">
+                <label>Next tab</label>
+            </object>
+            <object class="wxMenuItem" name="prev_tab">
+                <label>Previous tab</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="full_screen">
                 <label>Full Screen...</label>
             </object>
@@ -326,9 +333,9 @@
         <object class="wxMenu" name="search_menu">
             <label>&amp;Search</label>
             <style>wxMENU_TEAROFF</style>
-            
+
             <!-- Find and Replace -->
-            
+
             <object class="wxMenu" name="wxID_ANY">
                 <label>Find and Replace</label>
                 <object class="wxMenuItem" name="wxID_FIND">
@@ -357,7 +364,7 @@
                     <label>Quick Find All</label>
                 </object>
             </object>
-            
+
             <!-- Find In Files -->
             <object class="wxMenu" name="wxID_ANY">
                 <label>Find In Files</label>
@@ -371,8 +378,8 @@
                     <label>Go to Previous 'Find In File' Match</label>
                 </object>
             </object>
-            
-            
+
+
             <!-- GOTO -->
             <object class="wxMenu" name="wxID_ANY">
                 <label>Go To</label>
@@ -386,7 +393,7 @@
                     <label>&amp;Go To Line...</label>
                 </object>
             </object>
-            
+
             <!-- bookmarks -->
             <object class="wxMenu" name="wxID_ANY">
                 <label>Bookmarks</label>
@@ -425,7 +432,7 @@
             <object class="wxMenuItem" name="goto_definition">
                 <label>Find &amp;Symbol</label>
             </object>
-            
+
             <!-- An ID range for bookmark types. 15 is overkill, but future-proof... -->
             <ids-range name="BookmarkTypes" size="15" />
         </object>
@@ -712,7 +719,7 @@
             <label>Save</label>
         </object>
     </object>
-    
+
     <object class="wxMenu" name="editor_tab_right_click">
         <object class="wxMenuItem" name="close_file">
             <label>Close</label>
@@ -754,7 +761,7 @@
             <object class="wxMenuItem" name="copy_file_relative_path_to_workspace">
                 <label>Copy Path Relative to Workspace</label>
             </object>
-        </object>    
+        </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="ID_DETACH_EDITOR">
             <label>Detach Editor</label>
@@ -908,7 +915,7 @@
         </object>
     </object>
     <!-- File Tree -->
-    
+
     <!-- Workspace View Context menu where there is no
          workspace opened -->
     <object class="wxMenu" name="file_view_empty">
@@ -919,7 +926,7 @@
             <label>Switch to workspace...</label>
         </object>
     </object>
-    
+
     <!-- Folder Menu -->
     <object class="wxMenu" name="file_tree_folder">
         <label>Project</label>
@@ -956,7 +963,7 @@
             <label>Build Order...</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        
+
         <object class="wxMenuItem" name="build_project">
             <label>Build</label>
         </object>
@@ -967,7 +974,7 @@
         <object class="wxMenuItem" name="clean_project">
             <label>Clean</label>
         </object>
-        
+
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="stop_build">
             <label>Stop Build</label>
@@ -997,7 +1004,7 @@
         <object class="wxMenuItem" name="set_as_active">
             <label>Set As Active (double click)</label>
         </object>
-        
+
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
         <object class="wxMenuItem" name="export_makefile">

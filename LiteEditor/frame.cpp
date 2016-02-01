@@ -188,8 +188,8 @@ EVT_IDLE(clMainFrame::OnIdle)
 EVT_ACTIVATE(clMainFrame::OnAppActivated)
 EVT_CLOSE(clMainFrame::OnClose)
 EVT_TIMER(FrameTimerId, clMainFrame::OnTimer)
-//	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
-//	EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
+//  EVT_AUI_RENDER(Frame::OnAuiManagerRender)
+//  EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
 
 //---------------------------------------------------
 // File menu
@@ -294,6 +294,8 @@ EVT_MENU(XRCID("whitepsace_invisible"), clMainFrame::OnShowWhitespace)
 EVT_MENU(XRCID("whitepsace_always"), clMainFrame::OnShowWhitespace)
 EVT_MENU(XRCID("whitespace_visiable_after_indent"), clMainFrame::OnShowWhitespace)
 EVT_MENU(XRCID("whitespace_indent_only"), clMainFrame::OnShowWhitespace)
+EVT_MENU(XRCID("next_tab"), clMainFrame::OnNextTab)
+EVT_MENU(XRCID("prev_tab"), clMainFrame::OnPrevTab)
 EVT_MENU(XRCID("full_screen"), clMainFrame::OnShowFullScreen)
 EVT_MENU(XRCID("view_welcome_page"), clMainFrame::OnShowWelcomePage)
 EVT_MENU(XRCID("view_welcome_page_at_startup"), clMainFrame::OnLoadWelcomePage)
@@ -315,6 +317,8 @@ EVT_UPDATE_UI(XRCID("fold_all"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("fold_all_in_selection"), clMainFrame::DispatchUpdateUIEvent)
 EVT_UPDATE_UI(XRCID("fold_topmost_in_selection"), clMainFrame::DispatchUpdateUIEvent)
 EVT_UPDATE_UI(XRCID("display_eol"), clMainFrame::OnViewDisplayEOL_UI)
+EVT_UPDATE_UI(XRCID("next_tab"), clMainFrame::OnNextPrevTab_UI)
+EVT_UPDATE_UI(XRCID("prev_tab"), clMainFrame::OnNextPrevTab_UI)
 EVT_UPDATE_UI(XRCID("whitepsace_invisible"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("whitepsace_always"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("whitespace_visiable_after_indent"), clMainFrame::OnShowWhitespaceUI)
@@ -3276,7 +3280,7 @@ void clMainFrame::CreateWelcomePage()
     content.Replace(wxT("$(FilesTable)"), filesTable);
 
     //replace the HTML colours with platfroms correct colours
-    wxColour active_caption 	= wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+    wxColour active_caption     = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
     wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
     active_caption = DrawingUtils::LightColour(active_caption, 11.0);
@@ -4598,6 +4602,50 @@ void clMainFrame::OnShowWhitespace(wxCommandEvent& e)
 
     // save the settings
     EditorConfigST::Get()->SetOptions(options);
+}
+
+void clMainFrame::OnNextTab(wxCommandEvent& e)
+{
+    int idx = GetMainBook()->GetCurrentPageIndex();
+
+    if (idx != wxNOT_FOUND) {
+        clTab::Vec_t tabs;
+        GetMainBook()->GetAllTabs(tabs);
+
+        idx = (idx + 1) % tabs.size();
+        GetMainBook()->SelectPage(GetMainBook()->GetPage(idx));
+    }
+}
+
+void clMainFrame::OnPrevTab(wxCommandEvent& e)
+{
+    int idx = GetMainBook()->GetCurrentPageIndex();
+
+    if (idx != wxNOT_FOUND) {
+        idx--;
+
+        if (idx < 0) {
+            clTab::Vec_t tabs;
+            GetMainBook()->GetAllTabs(tabs);
+
+            idx = tabs.size() - 1;
+        }
+
+        GetMainBook()->SelectPage(GetMainBook()->GetPage(idx));
+    }
+}
+
+void clMainFrame::OnNextPrevTab_UI(wxUpdateUIEvent& e)
+{
+    CHECK_SHUTDOWN();
+    LEditor* editor = GetMainBook()->GetActiveEditor();
+    bool hasEditor = editor ? true : false;
+    if(!hasEditor) {
+        e.Enable(false);
+        return;
+    }
+
+    e.Enable(true);
 }
 
 void clMainFrame::OnIncrementalSearch(wxCommandEvent& event)

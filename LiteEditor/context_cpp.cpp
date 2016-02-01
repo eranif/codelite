@@ -2664,12 +2664,14 @@ int ContextCpp::GetHyperlinkRange(int pos, int& start, int& end)
 
 void ContextCpp::GoHyperlink(int start, int end, int type, bool alt)
 {
+    (void) alt;
+
     if(type == XRCID("open_include_file")) {
         m_selectedWord = GetCtrl().GetTextRange(start, end);
         DoOpenWorkspaceFile();
     } else {
         if(type == XRCID("find_tag")) {
-            wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, alt ? XRCID("find_impl") : XRCID("find_decl"));
+            wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_impl"));
             clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
         }
     }

@@ -216,9 +216,9 @@ if(NOT APPLE)
             # We want to replace -l with lib. We also want to exclude imaginary libs called _all.so, which buggy wx-config scripts can invent
             if (${ITEM} MATCHES "-lwx_.+" AND NOT ${ITEM} MATCHES "-l.+_all.+")
                 string(REGEX REPLACE "^-l" "lib" LIBITEM ${ITEM}) 
-                # openSUSE have started to use libwx_gtk2u_xrc-suse.so instead of libwx_gtk2u_xrc-3.1, so chop off the end
-                string(REGEX REPLACE "-.+" "-" LIBITEMCUT ${LIBITEM})
-                list(APPEND WX_LIBS_ALL ${WX_LIBS_DIR}/${LIBITEMCUT}*.so*) # we need the terminal [.]so because the rpms contain both dynamic and static libs
+                # openSUSE have started to use libwx_gtk2u_xrc-suse.so instead of libwx_gtk2u_xrc-3.1, so allow for extra text there
+                string(REGEX REPLACE "(libwx_[a-z0-9_]+-)(.+)" "\\1*\\2" LIBITEMADJ ${LIBITEM})
+                list(APPEND WX_LIBS_ALL ${WX_LIBS_DIR}/${LIBITEMADJ}*.so*) # we need the terminal [.]so because the rpms contain both dynamic and static libs
             endif()
         endforeach()
 

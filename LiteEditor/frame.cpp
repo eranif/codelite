@@ -775,6 +775,18 @@ clMainFrame::clMainFrame(
         "selection_to_multi_caret", "Ctrl-Shift-L", _("Edit::Split selection into multiple carets"));
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "incremental_replace", "", _("Search::Toggle the Quick-Replace Bar"));
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "copy_file_relative_path_to_workspace", "Ctrl-Alt-Shift-C", "Edit::Copy Path Relative to Clipboard");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "copy_file_name", "", "Edit::Copy Path to Clipboard");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "copy_file_path", "", "Edit::Copy Full Path to Clipboard");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "copy_file_name_only", "", "Edit::Copy File Name to Clipboard");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "open_shell_from_filepath", "Ctrl-Shift-T", "Search::Open Shell From File Path");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "open_file_explorer", "Ctrl-Alt-Shift-T", "Search::Open Containing Folder");
 }
 
 clMainFrame::~clMainFrame(void)

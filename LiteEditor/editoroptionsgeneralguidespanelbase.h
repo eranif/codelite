@@ -91,6 +91,8 @@ protected:
     wxPGProperty* m_pgPropWrapBrackets;
     wxPGProperty* m_pgProp56;
     wxPGProperty* m_pgPropZoomUsingCtrlScroll;
+    wxPGProperty* m_pgProp565;
+    wxPGProperty* m_pgPropCommentsIndented;
 
 protected:
     virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }

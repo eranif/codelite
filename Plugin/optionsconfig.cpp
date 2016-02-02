@@ -128,6 +128,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
           Opt_TabStyleMinimal)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
+    , m_indentedComments(false)
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
@@ -214,6 +215,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_options = XmlUtils::ReadLong(node, wxT("m_options"), m_options);
         m_debuggerMarkerLine = XmlUtils::ReadString(
             node, wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+        m_indentedComments = XmlUtils::ReadBool(node, wxT("IndentedComments"), m_indentedComments);
 
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include
         // "editor_config.h" too
@@ -311,6 +313,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
     n->AddProperty(wxT("OutputTabsDirection"), wxString() << (int)m_outputTabsDirection);
     n->AddProperty(wxT("WorkspaceTabsDirection"), wxString() << (int)m_workspaceTabsDirection);
+    n->AddProperty(wxT("IndentedComments"), BoolToString(m_indentedComments));
 
     wxString tmp;
     tmp << m_indentWidth;

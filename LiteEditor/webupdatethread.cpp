@@ -36,7 +36,8 @@ const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
 
 static const size_t DLBUFSIZE = 4096;
 
-struct CodeLiteVersion {
+struct CodeLiteVersion
+{
     wxString m_os;
     wxString m_codename;
     wxString m_arch;
@@ -58,8 +59,13 @@ struct CodeLiteVersion {
      */
     bool IsNewer(const wxString& os, const wxString& codename, const wxString& arch) const
     {
+        wxString strVersionNumer = CODELITE_VERSION_STRING;
+        strVersionNumer.Replace(".", "");
+        long nVersionNumber = -1;
+        strVersionNumer.ToCLong(&nVersionNumber);
+
         if((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
-            return (m_version > CODELITE_VERSION_NUMBER);
+            return (m_version > nVersionNumber);
         }
         return false;
     }
@@ -176,13 +182,13 @@ void WebUpdateJob::ParseFile()
         CodeLiteVersion v(platforms.arrayItem(i));
         if(v.IsNewer(os, codename, arch)) {
             wxCommandEvent event(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-            event.SetClientData(
-                new WebUpdateJobData("http://codelite.org/support.php", v.GetUrl(), CODELITE_VERSION_STRING, "", false, true));
+            event.SetClientData(new WebUpdateJobData(
+                "http://codelite.org/support.php", v.GetUrl(), CODELITE_VERSION_STRING, "", false, true));
             m_parent->AddPendingEvent(event);
             return;
         }
     }
-    
+
     if(m_userRequest) {
         // If we got here, then the version is up to date
         wxCommandEvent event(wxEVT_CMD_VERSION_UPTODATE);

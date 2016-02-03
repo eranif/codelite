@@ -1,41 +1,87 @@
 #!/bin/bash
-cd build-release
-curdir=`pwd`
-builddir=`basename ${curdir}`
-if [ ${builddir} != "build-release" ]; then
-    echo "You must run this script from CodeLite root folder"
-    exit -1
-fi
 
 # Clear old installers
 os_name=`uname -s`
-if [ ${os_name} == "Darwin" ]; then
-    echo rm -f codelite.app.tar.gz
-    rm -f codelite.app.tar.gz
+
+if [ ${os_name} = "CYGWIN_NT-6.1" ]; then
+    echo Building CodeLite for Windows...
+    # Windows
+    cd /cygdrive/c/src/codelite
+    
+    export PATH=/cygdrive/c/Program\ Files/CodeLite:/cygdrive/d/software/Inno\ Setup\ 5/:$PATH
+    export WXCFG=gcc_dll/mswu
+    export WXWIN=D:/src/wxWidgets
+
+    # Initiate the build
+    cmd /c "C:\Program Files/CodeLite/codelite-make.exe"        \
+        --workspace=LiteEditor.workspace                        \
+        --project=CodeLiteIDE --config=Win_x64_Release --execute
+    
+    # Build wxCrafter
+    echo Building wxCrafter for Windows...
+    cd /cygdrive/c/src/codelite/wxcrafter
+    
+    # Initiate the build
+    cmd /c "C:\Program Files/CodeLite/codelite-make.exe"       \
+        --workspace=wxcrafter.workspace                        \
+        --project=wxcrafter --config=Win_x64_Release --execute
+    
+    # Build wxCrafter
+    echo Building Utils for Windows...
+    cd /cygdrive/c/src/codelite/codelite_utils
+    
+    # Initiate the build
+    cmd /c "C:\Program Files/CodeLite/codelite-make.exe"        \
+        --workspace=codelite_utils.workspace                    \
+        --project=build_all --config=Win_x64_Release --execute
+    
+    # Package
+    rm -f output/*.exe
+    cd /cygdrive/c/src/codelite/InnoSetup
+    iscc codelite64_mingw.iss
+    
+    cd output
+    scp *.exe root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+    
 else
-    echo rm -fr *.deb
-    rm -fr *.deb
+    cd build-release
+    curdir=`pwd`
+    builddir=`basename ${curdir}`
+    if [ ${builddir} != "build-release" ]; then
+        echo "You must run this script from CodeLite root folder"
+        exit -1
+    fi
+
+    # Clear old installers
+    os_name=`uname -s`
+    if [ ${os_name} == "Darwin" ]; then
+        echo rm -f codelite.app.tar.gz
+        rm -f codelite.app.tar.gz
+    else
+        echo rm -fr *.deb
+        rm -fr *.deb
+    fi
+
+    # Update our source tree
+    git pull --rebase 
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+
+    cd ../wxcrafter && git pull --rebase && cd ../build-release
+
+    # Build and upload
+    if [ ${os_name} == "Darwin" ]; then
+        cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
+        make -j4 && make install
+        tar cvfz codelite.app.tar.gz codelite.app/*
+        scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+    else
+        cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+        make -j4 && make package
+        deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
+        echo Uploading deb file ${deb_file}
+        scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+    fi
+
 fi
-
-# Update our source tree
-git pull --rebase 
-if [ $? -ne 0 ]; then
-    exit $?
-fi
-
-cd ../wxcrafter && git pull --rebase && cd ../build-release
-
-# Build and upload
-if [ ${os_name} == "Darwin" ]; then
-    cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
-    make -j4 && make install
-    tar cvfz codelite.app.tar.gz codelite.app/*
-    scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
-else
-    cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
-    make -j4 && make package
-    deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
-    echo Uploading deb file ${deb_file}
-    scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
-fi
-

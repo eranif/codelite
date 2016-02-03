@@ -22,6 +22,31 @@
   <VirtualDirectory Name="src">
     <File Name="dummy.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug">
+    <Project Name="autorev"/>
+    <Project Name="codelite_indexer"/>
+    <Project Name="codelite_launcher"/>
+    <Project Name="le_exec"/>
+    <Project Name="wx-config"/>
+    <Project Name="makedir"/>
+    <Project Name="codelite_clang"/>
+    <Project Name="codelite_make"/>
+    <Project Name="codelitegcc"/>
+  </Dependencies>
+  <Dependencies Name="Release">
+    <Project Name="autorev"/>
+    <Project Name="codelite_launcher"/>
+    <Project Name="codelite_indexer"/>
+    <Project Name="le_exec"/>
+    <Project Name="makedir"/>
+    <Project Name="wx-config"/>
+    <Project Name="codelite_clang"/>
+    <Project Name="codelitegcc"/>
+    <Project Name="codelite_make"/>
+    <Project Name="codelite_terminal"/>
+    <Project Name="codelite_echo"/>
+    <Project Name="codelite_cppcheck"/>
+  </Dependencies>
   <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -63,7 +88,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -101,7 +126,45 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -109,29 +172,16 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug">
-    <Project Name="autorev"/>
-    <Project Name="codelite_indexer"/>
-    <Project Name="codelite_launcher"/>
-    <Project Name="le_exec"/>
-    <Project Name="wx-config"/>
-    <Project Name="makedir"/>
-    <Project Name="codelite_clang"/>
-    <Project Name="codelite_make"/>
-    <Project Name="codelitegcc"/>
-  </Dependencies>
-  <Dependencies Name="Release">
-    <Project Name="autorev"/>
-    <Project Name="codelite_launcher"/>
-    <Project Name="codelite_indexer"/>
-    <Project Name="le_exec"/>
-    <Project Name="makedir"/>
-    <Project Name="wx-config"/>
-    <Project Name="codelite_clang"/>
-    <Project Name="codelitegcc"/>
-    <Project Name="codelite_make"/>
-    <Project Name="codelite_terminal"/>
-    <Project Name="codelite_echo"/>
+  <Dependencies Name="Win_x64_Release">
     <Project Name="codelite_cppcheck"/>
+    <Project Name="codelite_echo"/>
+    <Project Name="codelite_indexer"/>
+    <Project Name="codelite_make"/>
+    <Project Name="codelite_launcher"/>
+    <Project Name="codelite_terminal"/>
+    <Project Name="codelitegcc"/>
+    <Project Name="le_exec"/>
+    <Project Name="makedir"/>
+    <Project Name="wx-config"/>
   </Dependencies>
 </CodeLite_Project>

@@ -33,7 +33,7 @@
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment/>
-      <Project Name="build_all" ConfigName="Release"/>
+      <Project Name="build_all" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_indexer" ConfigName="Win_x64_Release"/>

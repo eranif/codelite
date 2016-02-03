@@ -287,4 +287,15 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="codelite_echo"/>
+    <Project Name="codelite_indexer"/>
+    <Project Name="codelite_launcher"/>
+    <Project Name="codelite_make"/>
+    <Project Name="codelite_terminal"/>
+    <Project Name="codelitegcc"/>
+    <Project Name="le_exec"/>
+    <Project Name="makedir"/>
+    <Project Name="wx-config"/>
+  </Dependencies>
 </CodeLite_Project>

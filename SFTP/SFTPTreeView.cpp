@@ -65,7 +65,8 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
     , m_plugin(plugin)
 {
-    wxImageList* il = m_bmpLoader.MakeStandardMimeImageList();
+    m_bmpLoader = clGetManager()->GetStdIcons();
+    wxImageList* il = m_bmpLoader->MakeStandardMimeImageList();
     m_treeListCtrl->AssignImageList(il);
 
     SFTPSettings settings;
@@ -156,7 +157,7 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
 
     wxTreeListItem root = m_treeListCtrl->AppendItem(m_treeListCtrl->GetRootItem(),
                                                      initialFolder,
-                                                     m_bmpLoader.GetMimeImageId(FileExtManager::TypeFolder),
+                                                     m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder),
                                                      wxNOT_FOUND,
                                                      cd);
 
@@ -276,14 +277,14 @@ bool SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
         // determine the icon index
         int imgIdx = wxNOT_FOUND;
         if(attr->IsFolder()) {
-            imgIdx = m_bmpLoader.GetMimeImageId(FileExtManager::TypeFolder);
+            imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder);
 
         } else {
-            imgIdx = m_bmpLoader.GetMimeImageId(attr->GetName());
+            imgIdx = m_bmpLoader->GetMimeImageId(attr->GetName());
         }
 
         if(imgIdx == wxNOT_FOUND) {
-            imgIdx = m_bmpLoader.GetMimeImageId(FileExtManager::TypeText);
+            imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeText);
         }
 
         wxString path;
@@ -508,7 +509,7 @@ wxTreeListItem SFTPTreeView::DoAddFile(const wxTreeListItem& parent, const wxStr
         wxTreeListItem child = m_treeListCtrl->AppendItem(
             parent,
             newFile->GetFullName(),
-            m_bmpLoader.GetMimeImageId(FileExtManager::GetType(path, FileExtManager::TypeText)),
+            m_bmpLoader->GetMimeImageId(FileExtManager::GetType(path, FileExtManager::TypeText)),
             wxNOT_FOUND,
             newFile);
 
@@ -532,7 +533,7 @@ wxTreeListItem SFTPTreeView::DoAddFolder(const wxTreeListItem& parent, const wxS
         newCd->SetInitialized(false);
 
         wxTreeListItem child = m_treeListCtrl->AppendItem(
-            parent, newCd->GetFullName(), m_bmpLoader.GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, newCd);
+            parent, newCd->GetFullName(), m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, newCd);
 
         m_treeListCtrl->AppendItem(child, "<dummy>");
         m_treeListCtrl->SetSortColumn(0);
@@ -921,7 +922,6 @@ void SFTPTreeView::OnFileDropped(clCommandEvent& event)
             parenItem = items.at(0);
         }
     }
-
 
     SFTPUploadDialog dlg(EventNotifier::Get()->TopFrame());
     dlg.GetTextCtrlRemoteFolder()->ChangeValue(defaultPath);

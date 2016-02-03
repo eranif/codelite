@@ -39,6 +39,7 @@
 #include <wx/regex.h>
 #include <wx/busyinfo.h>
 #include <algorithm>
+#include "imanager.h"
 
 // ---------------------------------------------------------
 
@@ -145,12 +146,11 @@ ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projn
     , m_projname(projname)
     , m_projectModified(false)
 {
-    BitmapLoader bl;
-    m_bitmaps = bl.MakeStandardMimeMap();
+    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
 
     m_dvListCtrl1Unassigned->Bind(
         wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(ReconcileProjectDlg::OnDVLCContextMenu), this);
-    
+
     SetName("ReconcileProjectDlg");
     WindowAttrManager::Load(this);
 }
@@ -701,7 +701,7 @@ ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, con
 {
     m_listCtrlRegexes->AppendColumn("Regex");
     m_listCtrlRegexes->AppendColumn("Virtual Directory");
-    
+
     SetName("ReconcileProjectFiletypesDlg");
     WindowAttrManager::Load(this);
 }
@@ -897,7 +897,8 @@ void ReconcileByRegexDlg::OnTextEnter(wxCommandEvent& event)
 
 void ReconcileByRegexDlg::OnVDBrowse(wxCommandEvent& WXUNUSED(event))
 {
-    VirtualDirectorySelectorDlg selector(this, clCxxWorkspaceST::Get(), m_textCtrlVirtualFolder->GetValue(), m_projname);
+    VirtualDirectorySelectorDlg selector(
+        this, clCxxWorkspaceST::Get(), m_textCtrlVirtualFolder->GetValue(), m_projname);
     if(selector.ShowModal() == wxID_OK) {
         m_textCtrlVirtualFolder->ChangeValue(selector.GetVirtualDirectoryPath());
     }

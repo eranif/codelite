@@ -30,6 +30,8 @@
 #include "bitmap_loader.h"
 #include "wx/rawbmp.h"
 #include "drawingutils.h"
+#include "globals.h"
+#include "imanager.h"
 
 wxBitmap OverlayTool::ms_bmpOK;
 wxBitmap OverlayTool::ms_bmpConflict;
@@ -37,43 +39,41 @@ wxBitmap OverlayTool::ms_bmpModified;
 
 OverlayTool::OverlayTool()
 {
-    BitmapLoader bl;
-    ms_bmpOK       = bl.LoadBitmap("overlay/16/ok");
-    ms_bmpModified = bl.LoadBitmap("overlay/16/modified");
-    ms_bmpConflict = bl.LoadBitmap("overlay/16/conflicted");
-} 
-
-OverlayTool::~OverlayTool()
-{
+    BitmapLoader* bl = clGetManager()->GetStdIcons();
+    ms_bmpOK = bl->LoadBitmap("overlay/16/ok");
+    ms_bmpModified = bl->LoadBitmap("overlay/16/modified");
+    ms_bmpConflict = bl->LoadBitmap("overlay/16/conflicted");
 }
+
+OverlayTool::~OverlayTool() {}
 
 wxBitmap OverlayTool::DoAddBitmap(const wxBitmap& bmp, const wxColour& colour) const
 {
     wxMemoryDC dcMem;
     wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     wxBitmap bitmap(16, 16, 32);
-    
+
     dcMem.SelectObject(bitmap);
     // Draw white background
-    dcMem.SetPen( wxPen(col) );
-    dcMem.SetBrush( wxBrush(col) );
+    dcMem.SetPen(wxPen(col));
+    dcMem.SetBrush(wxBrush(col));
     dcMem.DrawRectangle(wxPoint(0, 0), wxSize(16, 16));
     // Draw the base icon
-    
+
     dcMem.DrawBitmap(bmp.ConvertToDisabled(), wxPoint(0, 0), true);
-    
+
     wxColour c2 = DrawingUtils::LightColour(colour, 3.0);
     dcMem.GradientFillLinear(wxRect(wxPoint(0, 1), wxSize(2, 14)), colour, c2, wxSOUTH);
-    
+
     //// Draw a small 2 pixel vertical line
-    //wxBitmap coverBmp(16, 16, 32);
+    // wxBitmap coverBmp(16, 16, 32);
     //{
     //    wxAlphaPixelData pixData(coverBmp);
     //
     //    // Set the fill pixels
     //    int red   = colour.Red();
     //    int green = colour.Green();
-    //    int blue  = colour.Blue(); 
+    //    int blue  = colour.Blue();
     //    wxAlphaPixelData::Iterator p(pixData);
     //    for (int y=0; y<16; y++) {
     //        p.MoveTo(pixData, 0, y);
@@ -87,7 +87,7 @@ wxBitmap OverlayTool::DoAddBitmap(const wxBitmap& bmp, const wxColour& colour) c
     //    }
     //}
     //
-    //dcMem.DrawBitmap(coverBmp, wxPoint(0, 0));
+    // dcMem.DrawBitmap(coverBmp, wxPoint(0, 0));
     dcMem.SelectObject(wxNullBitmap);
 
     return bitmap;
@@ -101,7 +101,7 @@ OverlayTool& OverlayTool::Get()
 
 wxBitmap OverlayTool::CreateBitmap(const wxBitmap& orig, OverlayTool::BmpType type) const
 {
-    switch( type ) {
+    switch(type) {
     case Bmp_Conflict:
         return DoAddBitmap(orig, "RED");
     case Bmp_OK:
@@ -112,4 +112,3 @@ wxBitmap OverlayTool::CreateBitmap(const wxBitmap& orig, OverlayTool::BmpType ty
         return orig;
     }
 }
-

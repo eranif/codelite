@@ -42,7 +42,8 @@ EVT_MENU(XRCID("wxID_CLOSE_SELECTED"), OpenWindowsPanel::OnCloseSelectedFiles)
 EVT_MENU(XRCID("wxID_SAVE_SELECTED"), OpenWindowsPanel::OnSaveSelectedFiles)
 END_EVENT_TABLE()
 
-struct TabSorter {
+struct TabSorter
+{
     bool operator()(const clTab& t1, const clTab& t2)
     {
         wxString file1, file2;
@@ -61,7 +62,8 @@ struct TabSorter {
     }
 };
 
-struct TabClientData : public wxClientData {
+struct TabClientData : public wxClientData
+{
     clTab tab;
     bool isModified;
     TabClientData() {}
@@ -82,8 +84,7 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     , m_workspaceClosing(false)
     , m_workspaceOpened(false)
 {
-    BitmapLoader bmpLoader;
-    m_bitmaps = bmpLoader.MakeStandardMimeMap();
+    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
 
     clConfig cfg;
     m_auibar->ToggleTool(XRCID("TabsSortTool"), cfg.Read(kConfigTabsPaneSortAlphabetically, true));
@@ -500,4 +501,3 @@ void OpenWindowsPanel::OnWorkspaceClosing(wxCommandEvent& event)
     Clear();
     m_workspaceClosing = true;
 }
-

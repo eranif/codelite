@@ -37,7 +37,7 @@ class clTreeCtrlPanelDefaultPage;
 class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
 {
 protected:
-    BitmapLoader m_bmpLoader;
+    BitmapLoader* m_bmpLoader;
     clConfig* m_config;
     wxString m_viewName;
     clTreeCtrlPanelDefaultPage* m_defaultView;

@@ -41,7 +41,7 @@ typedef std::vector<MyClientData*> MyClientDataVect_t;
 class SFTPTreeView : public SFTPTreeViewBase
 {
     clSFTP::Ptr_t m_sftp;
-    BitmapLoader m_bmpLoader;
+    BitmapLoader* m_bmpLoader;
     SSHAccountInfo m_account;
     SFTP* m_plugin;
     wxString m_commandOutput;

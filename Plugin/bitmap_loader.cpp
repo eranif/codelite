@@ -45,79 +45,7 @@ BitmapLoader::~BitmapLoader() {}
 BitmapLoader::BitmapLoader()
     : m_bMapPopulated(false)
 {
-    wxString zipname;
-    wxFileName fn;
-    zipname = "codelite-icons.zip";
-
-    if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm) {
-        zipname = wxT("codelite-icons-fresh-farm.zip");
-
-    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark) {
-        zipname = wxT("codelite-icons-dark.zip");
-
-    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic) {
-        zipname = wxT("codelite-icons.zip");
-    }
-
-// Under linux, take into account the --prefix
-#ifdef __WXGTK__
-    wxString bitmapPath = wxString(INSTALL_DIR, wxConvUTF8);
-    fn = wxFileName(bitmapPath, zipname);
-#else
-#ifdef USE_POSIX_LAYOUT
-    wxString bitmapPath(clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR));
-    fn = wxFileName(bitmapPath, zipname);
-#else
-    fn = wxFileName(clStandardPaths::Get().GetDataDir(), zipname);
-#endif
-#endif
-
-    if(m_manifest.empty() || m_toolbarsBitmaps.empty()) {
-        m_zipPath = fn;
-        if(m_zipPath.FileExists()) {
-            doLoadManifest();
-            doLoadBitmaps();
-        }
-    }
-
-    wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps.zip");
-    if(fnNewZip.FileExists()) {
-        clZipReader zip(fnNewZip);
-        wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
-
-        // Make sure we append the user name to the temporary user folder
-        // this way, multiple CodeLite instances from different users can extract the
-        // bitmaps to /tmp
-        wxString bitmapFolder = "codelite-bitmaps";
-        bitmapFolder << "." << clGetUserName();
-
-        tmpFolder.AppendDir(bitmapFolder);
-        if(tmpFolder.DirExists()) {
-            tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE);
-        }
-
-        tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-
-        // Extract all images into this folder
-        zip.Extract("*", tmpFolder.GetPath());
-
-        // Load all the files into wxBitmap
-        wxArrayString files;
-        wxDir::GetAllFiles(tmpFolder.GetPath(), &files, "*.png");
-        for(size_t i = 0; i < files.size(); ++i) {
-            wxFileName pngFile(files.Item(i));
-            if(pngFile.GetFullName().Contains("@2x")) {
-                // No need to load the hi-res images manually,
-                // this is done by wxWidgets
-                continue;
-            }
-            wxBitmap bmp;
-            if(bmp.LoadFile(pngFile.GetFullPath(), wxBITMAP_TYPE_PNG)) {
-                CL_DEBUG("Adding new image: %s", pngFile.GetName());
-                m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
-            }
-        }
-    }
+    initialize();
 }
 
 const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize)
@@ -356,4 +284,81 @@ void BitmapLoader::RegisterImage(FileExtManager::FileType type, const wxBitmap& 
         m_userBitmaps.erase(iter);
     }
     m_userBitmaps.insert(std::make_pair(type, bmp));
+}
+
+void BitmapLoader::initialize()
+{
+    wxString zipname;
+    wxFileName fn;
+    zipname = "codelite-icons.zip";
+
+    if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm) {
+        zipname = wxT("codelite-icons-fresh-farm.zip");
+
+    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark) {
+        zipname = wxT("codelite-icons-dark.zip");
+
+    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic) {
+        zipname = wxT("codelite-icons.zip");
+    }
+
+// Under linux, take into account the --prefix
+#ifdef __WXGTK__
+    wxString bitmapPath = wxString(INSTALL_DIR, wxConvUTF8);
+    fn = wxFileName(bitmapPath, zipname);
+#else
+#ifdef USE_POSIX_LAYOUT
+    wxString bitmapPath(clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR));
+    fn = wxFileName(bitmapPath, zipname);
+#else
+    fn = wxFileName(clStandardPaths::Get().GetDataDir(), zipname);
+#endif
+#endif
+
+    if(m_manifest.empty() || m_toolbarsBitmaps.empty()) {
+        m_zipPath = fn;
+        if(m_zipPath.FileExists()) {
+            doLoadManifest();
+            doLoadBitmaps();
+        }
+    }
+
+    wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps.zip");
+    if(fnNewZip.FileExists()) {
+        clZipReader zip(fnNewZip);
+        wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
+
+        // Make sure we append the user name to the temporary user folder
+        // this way, multiple CodeLite instances from different users can extract the
+        // bitmaps to /tmp
+        wxString bitmapFolder = "codelite-bitmaps";
+        bitmapFolder << "." << clGetUserName();
+
+        tmpFolder.AppendDir(bitmapFolder);
+        if(tmpFolder.DirExists()) {
+            tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE);
+        }
+
+        tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
+        // Extract all images into this folder
+        zip.Extract("*", tmpFolder.GetPath());
+
+        // Load all the files into wxBitmap
+        wxArrayString files;
+        wxDir::GetAllFiles(tmpFolder.GetPath(), &files, "*.png");
+        for(size_t i = 0; i < files.size(); ++i) {
+            wxFileName pngFile(files.Item(i));
+            if(pngFile.GetFullName().Contains("@2x")) {
+                // No need to load the hi-res images manually,
+                // this is done by wxWidgets
+                continue;
+            }
+            wxBitmap bmp;
+            if(bmp.LoadFile(pngFile.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+                CL_DEBUG("Adding new image: %s", pngFile.GetName());
+                m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
+            }
+        }
+    }
 }

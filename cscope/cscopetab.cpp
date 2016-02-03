@@ -45,8 +45,7 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
     , m_table(NULL)
     , m_mgr(mgr)
 {
-    BitmapLoader bl;
-    m_bitmaps = bl.MakeStandardMimeMap();
+    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
 
     CScopeConfData data;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);

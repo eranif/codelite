@@ -33,6 +33,8 @@
 #include "fileextmanager.h"
 #include "my_sftp_tree_model.h"
 #include "SSHAccountManagerDlg.h"
+#include "globals.h"
+#include "imanager.h"
 
 // ================================================================================
 // ================================================================================
@@ -82,8 +84,7 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
 
     SetLabel(title);
 
-    BitmapLoader bl;
-    m_bitmaps = bl.MakeStandardMimeMap();
+    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
 
     SFTPSettings settings;
     settings.Load();

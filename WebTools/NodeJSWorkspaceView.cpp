@@ -287,7 +287,7 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
     CHECK_PTR_RET(cd);
     CHECK_COND_RET(cd->IsFolder());
 
-    int imageIndex = m_bmpLoader.GetMimeImageId(FileExtManager::TypeProject);
+    int imageIndex = m_bmpLoader->GetMimeImageId(FileExtManager::TypeProject);
     CHECK_COND_RET(imageIndex != wxNOT_FOUND);
 
     {

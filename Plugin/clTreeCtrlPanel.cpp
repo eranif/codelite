@@ -28,12 +28,14 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     , m_options(kShowHiddenFiles | kShowHiddenFolders)
 {
     ::MSWSetNativeTheme(GetTreeCtrl());
+    m_bmpLoader = clGetManager()->GetStdIcons();
+    
     // Allow DnD
     SetDropTarget(new clFileOrFolderDropTarget(this));
     GetTreeCtrl()->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &clTreeCtrlPanel::OnFolderDropped, this);
     GetTreeCtrl()->AddRoot(_("Folders"), wxNOT_FOUND, wxNOT_FOUND, new clTreeCtrlData(clTreeCtrlData::kRoot));
-    GetTreeCtrl()->AssignImageList(m_bmpLoader.MakeStandardMimeImageList());
+    GetTreeCtrl()->AssignImageList(m_bmpLoader->MakeStandardMimeImageList());
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
@@ -274,9 +276,9 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
     clTreeCtrlData* cd = new clTreeCtrlData(clTreeCtrlData::kFile);
     cd->SetPath(filename.GetFullPath());
 
-    int imgIdx = m_bmpLoader.GetMimeImageId(filename.GetFullName());
+    int imgIdx = m_bmpLoader->GetMimeImageId(filename.GetFullName());
     if(imgIdx == wxNOT_FOUND) {
-        imgIdx = m_bmpLoader.GetMimeImageId(FileExtManager::TypeText);
+        imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeText);
     }
     wxTreeItemId fileItem = GetTreeCtrl()->AppendItem(parent, filename.GetFullName(), imgIdx, imgIdx, cd);
     // Add this entry to the index
@@ -323,7 +325,7 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
     clTreeCtrlData* cd = new clTreeCtrlData(clTreeCtrlData::kFolder);
     cd->SetPath(path);
 
-    int imgIdx = m_bmpLoader.GetMimeImageId(FileExtManager::TypeFolder);
+    int imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder);
     wxTreeItemId itemFolder = GetTreeCtrl()->AppendItem(parent, displayName, imgIdx, imgIdx, cd);
 
     // Add this entry to the index

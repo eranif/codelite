@@ -34,6 +34,8 @@
 
 #include "outline_symbol_tree.h"
 #include <algorithm>
+#include "imanager.h"
+
 //#include "manager.h"
 //#include "frame.h"
 #include "bitmap_loader.h"
@@ -53,7 +55,7 @@ wxImageList* svSymbolTree::CreateSymbolTreeImages()
 {
     wxImageList* images = new wxImageList(16, 16, true);
 
-    BitmapLoader* bmpLoader = new BitmapLoader();
+    BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
     images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));              // 0
     images->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));          // 1
     images->Add(bmpLoader->LoadBitmap(wxT("cc/16/globals")));            // 2

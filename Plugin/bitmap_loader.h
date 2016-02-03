@@ -52,10 +52,13 @@ protected:
     void AddImage(int index, FileExtManager::FileType type);
     wxIcon GetIcon(const wxBitmap& bmp) const;
 
-public:
+private:
     BitmapLoader();
     ~BitmapLoader();
-
+    
+public:
+    static BitmapLoader* Create() { return new BitmapLoader(); }
+    
     /**
      * @brief register a user defined image to a given file type
      */
@@ -84,7 +87,10 @@ protected:
     void doLoadManifest();
     void doLoadBitmaps();
     wxBitmap doLoadBitmap(const wxString& filepath);
-
+    
+private:
+    void initialize();
+    
 public:
     const wxBitmap& LoadBitmap(const wxString& name, int requestedSize = 16);
 };

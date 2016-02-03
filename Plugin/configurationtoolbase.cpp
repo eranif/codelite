@@ -56,7 +56,7 @@ bool ConfigurationToolBase::Load(const wxString& fileName)
             file.Close();
         }
     }
-    return ::SaveXmlToFile(&m_doc, m_fileName);
+    return m_doc.Load(m_fileName);
 }
 
 bool ConfigurationToolBase::WriteObject(const wxString& name, SerializedObject* obj)

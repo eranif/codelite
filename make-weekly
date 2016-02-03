@@ -36,13 +36,18 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ]; then
         --project=build_all --config=Win_x64_Release --execute
     
     # Package
-    rm -f output/*.exe
     cd /cygdrive/c/src/codelite/InnoSetup
+    rm -f output/*.exe
+    
+    # Compile
     iscc codelite64_mingw.iss
     
+    # upload the binaries
     cd output
     scp *.exe root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
     
+    # update the owner
+    ssh root@codelite.org 'chown -R www-data:www-data /var/www/html/downloads/codelite/weekly/wip'
 else
     cd build-release
     curdir=`pwd`
@@ -83,5 +88,4 @@ else
         echo Uploading deb file ${deb_file}
         scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
     fi
-
 fi

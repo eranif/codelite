@@ -39,6 +39,7 @@
 #include "wx/tokenzr.h"
 #include <algorithm>
 #include "file_logger.h"
+#include "globals.h"
 
 #ifdef __WXMSW__
 #include "windows.h"
@@ -380,7 +381,6 @@ bool DbgGdb::Break(const BreakpointInfo& bp)
 
     // by default, use full paths for the file name when setting breakpoints
     wxString tmpfileName(fn.GetFullPath());
-    ;
     if(m_info.useRelativeFilePaths) {
         // user set the option to use relative paths (file name w/o the full path)
         tmpfileName = fn.GetFullName();
@@ -445,7 +445,8 @@ bool DbgGdb::Break(const BreakpointInfo& bp)
     } else if(bp.bp_type != BP_type_watchpt) {
         // Function and Lineno locations can/should be prepended by a filename (but see later)
         if(!tmpfileName.IsEmpty() && bp.lineno > 0) {
-            breakWhere << wxT("\"\\\"") << tmpfileName << wxT(":") << bp.lineno << wxT("\\\"\"");
+            ::WrapWithQuotes(tmpfileName);
+            breakWhere << tmpfileName << wxT(":") << bp.lineno;
         } else if(!bp.function_name.IsEmpty()) {
             if(bp.regex) {
                 // update the command

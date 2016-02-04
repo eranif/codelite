@@ -9,6 +9,8 @@
   "m_outputFileName": "newworkspacebasedlg",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -640,7 +642,14 @@
                  "m_label": "Value:",
                  "m_value": ""
                 }],
-               "m_events": [],
+               "m_events": [{
+                 "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
+                 "m_eventClass": "wxCommandEvent",
+                 "m_eventHandler": "wxCommandEventHandler",
+                 "m_functionNameAndSignature": "OnWorkspacePathUpdated(wxCommandEvent& event)",
+                 "m_description": "Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes.",
+                 "m_noBody": false
+                }],
                "m_children": []
               }, {
                "m_type": 4400,
@@ -713,7 +722,7 @@
                 }, {
                  "type": "bool",
                  "m_label": "Default Button",
-                 "m_value": false
+                 "m_value": true
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",

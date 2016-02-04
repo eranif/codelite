@@ -51,7 +51,7 @@ NewWorkspaceDlg::~NewWorkspaceDlg()
     // store the recent locations, we keep up to 20 locations
     wxArrayString history = m_comboBoxPath->GetStrings();
     history.Insert(m_comboBoxPath->GetValue(),
-                   0); // Place the current value at the top so we make sure it gets stored in the history
+        0); // Place the current value at the top so we make sure it gets stored in the history
     wxArrayString uniqueArr;
     for(size_t i = 0; i < history.size(); ++i) {
         if(uniqueArr.Index(history.Item(i)) == wxNOT_FOUND && (uniqueArr.size() < 20)) {
@@ -99,9 +99,7 @@ void NewWorkspaceDlg::OnWorkspaceDirPicker(wxCommandEvent& event)
         if(dir.find_first_of(INVALID_CHARS) != wxString::npos) {
             int answer = ::wxMessageBox(wxString() << _("The selected project path '") << dir
                                                    << _("'\nContains some invalid characters\nContinue anyways?"),
-                                        "CodeLite",
-                                        wxYES_NO | wxCANCEL | wxICON_WARNING,
-                                        this);
+                "CodeLite", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
             if(answer != wxYES) {
                 return;
             }

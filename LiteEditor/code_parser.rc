@@ -40,29 +40,29 @@ FILEFLAGS        0x0L  // final version
 FILEOS           VOS_NT_WINDOWS32
 FILETYPE         VFT_APP
 FILESUBTYPE      VFT2_UNKNOWN { // not used
-	BLOCK "StringFileInfo"
-	{
-		BLOCK "040904E4" // Lang=US English, CharSet=Windows Multilingual
-		{
-			VALUE "Comments",         "Licensed under GPL2."
-			VALUE "CompanyName",      "Eran Ifrah"
-			VALUE "Developer",        "Eran Ifrah"
-			VALUE "FileDescription",  "CodeLite, an Open Source cross platform C,C++,PHP and Node.js IDE"
-			VALUE "FileVersion",      "9.1.0"
-			VALUE "InternalName",     "CodeLite"
-			VALUE "LegalCopyright",   "Copyright (C) 2007-2015 Eran Ifrah"
-			VALUE "LegalTrademarks",  "All rights reserved."
-			VALUE "OriginalFilename", "codelite.exe"
-			VALUE "PrivateBuild",     ""
-			VALUE "ProductName",      "CodeLite"
-			VALUE "ProductVersion",   "9.1.0"
-			VALUE "SpecialBuild",     ""
-			VALUE "Support",          "http://forums.codelite.org"
-			VALUE "Users",            "Unlimited."
-		} // BLOCK "040904E4"
-	} // BLOCK "StringFileInfo"
-	BLOCK "VarFileInfo"
-	{
-		VALUE "Translation", 0x409, 1252 // 1252 = 0x04E4
-	} // BLOCK "VarFileInfo"
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "040904E4" // Lang=US English, CharSet=Windows Multilingual
+        {
+            VALUE "Comments",         "Licensed under GPL2."
+            VALUE "CompanyName",      "Eran Ifrah"
+            VALUE "Developer",        "Eran Ifrah"
+            VALUE "FileDescription",  "CodeLite, an Open Source cross platform C,C++,PHP and Node.js IDE"
+            VALUE "FileVersion",      "9.1.0"
+            VALUE "InternalName",     "CodeLite"
+            VALUE "LegalCopyright",   "Copyright (C) 2007-2016 Eran Ifrah"
+            VALUE "LegalTrademarks",  "All rights reserved."
+            VALUE "OriginalFilename", "codelite.exe"
+            VALUE "PrivateBuild",     ""
+            VALUE "ProductName",      "CodeLite"
+            VALUE "ProductVersion",   "9.1.0"
+            VALUE "SpecialBuild",     ""
+            VALUE "Support",          "http://forums.codelite.org"
+            VALUE "Users",            "Unlimited."
+        } // BLOCK "040904E4"
+    } // BLOCK "StringFileInfo"
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x409, 1252 // 1252 = 0x04E4
+    } // BLOCK "VarFileInfo"
 }

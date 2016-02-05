@@ -27,8 +27,6 @@
 #include <map>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
 #include <wx/splitter.h>
 #include <wx/checklst.h>
 #include <wx/stc/stc.h>
@@ -106,11 +104,11 @@ class GitCommitDlgBase : public wxDialog
 {
 public:
     enum {
-        ID_TOGGLE_CHECKALL = 6001,
+        ID_GIT_COMMIT_HISTORY = 6001,
+        ID_TOGGLE_CHECKALL = 6002,
     };
 protected:
     wxAuiToolBar* m_auibar;
-    wxChoice* m_choiceRecentCommits;
     wxSplitterWindow* m_splitterMain;
     wxPanel* m_panel3;
     wxSplitterWindow* m_splitterInner;
@@ -128,14 +126,14 @@ protected:
 
 protected:
     virtual void OnToggleCheckAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRecentCommitSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCommitHistory(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClearGitCommitHistory(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearGitCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxChoice* GetChoiceRecentCommits() { return m_choiceRecentCommits; }
     wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxCheckListBox* GetListBox() { return m_listBox; }
     wxPanel* GetPanel1() { return m_panel1; }

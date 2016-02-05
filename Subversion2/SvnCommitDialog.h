@@ -44,7 +44,6 @@ class SvnCommitDialog : public SvnCommitDialogBaseClass
 
 public:
     static wxString NormalizeMessage(const wxString& message);
-    void OnChoiceMessage(wxCommandEvent& e);
 
 public:
     SvnCommitDialog(wxWindow* parent, Subversion2* plugin);
@@ -59,6 +58,8 @@ public:
     wxArrayString GetPaths();
 
 protected:
+    virtual void OnShowCommitHistory(wxCommandEvent& event);
+    virtual void OnShowCommitHistoryUI(wxUpdateUIEvent& event);
     void DoShowDiff(int selection);
 
 protected:

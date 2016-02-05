@@ -26,6 +26,14 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
     
+    m_auibar76 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_HORZ_TEXT);
+    m_auibar76->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer1->Add(m_auibar76, 0, wxEXPAND, 5);
+    
+    m_auibar76->AddTool(ID_SHOW_COMMIT_HISTORY, _("Commit History"), wxXmlResource::Get()->LoadBitmap(wxT("16-history")), wxNullBitmap, wxITEM_NORMAL, _("Show Commit History"), _("Show Commit History"), NULL);
+    m_auibar76->Realize();
+    
     wxFlexGridSizer* flexGridSizer5 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer5->SetFlexibleDirection( wxBOTH );
     flexGridSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -183,15 +191,6 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     
     boxSizer60->Add(m_stcMessage, 1, wxALL|wxEXPAND, 2);
     
-    wxStaticBoxSizer* statixBoxSizer24 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Recent commit messages:")), wxVERTICAL);
-    
-    boxSizer1->Add(statixBoxSizer24, 0, wxALL|wxEXPAND, 5);
-    
-    wxArrayString m_choiceMessagesArr;
-    m_choiceMessages = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceMessagesArr, 0);
-    
-    statixBoxSizer24->Add(m_choiceMessages, 0, wxALL|wxEXPAND, 5);
-    
     m_stdBtnSizer66 = new wxStdDialogButtonSizer();
     
     boxSizer1->Add(m_stdBtnSizer66, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -205,11 +204,15 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     m_stdBtnSizer66->Realize();
     
     SetName(wxT("SvnCommitDialogBaseClass"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -218,15 +221,17 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
+    this->Connect(ID_SHOW_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnShowCommitHistory), NULL, this);
+    this->Connect(ID_SHOW_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnCommitDialogBaseClass::OnShowCommitHistoryUI), NULL, this);
     m_checkListFiles->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnFileSelected), NULL, this);
-    m_choiceMessages->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnChoiceMessage), NULL, this);
     
 }
 
 SvnCommitDialogBaseClass::~SvnCommitDialogBaseClass()
 {
+    this->Disconnect(ID_SHOW_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnShowCommitHistory), NULL, this);
+    this->Disconnect(ID_SHOW_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnCommitDialogBaseClass::OnShowCommitHistoryUI), NULL, this);
     m_checkListFiles->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnFileSelected), NULL, this);
-    m_choiceMessages->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnChoiceMessage), NULL, this);
     
 }
 
@@ -307,11 +312,15 @@ SvnSyncDialogBaseClass::SvnSyncDialogBaseClass(wxWindow* parent, wxWindowID id, 
     boxSizer27->Add(m_button29, 0, wxALL, 5);
     
     SetName(wxT("SvnSyncDialogBaseClass"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

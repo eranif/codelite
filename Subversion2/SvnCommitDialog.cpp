@@ -34,6 +34,7 @@
 #include "asyncprocess.h"
 #include "lexer_configuration.h"
 #include "editor_config.h"
+#include "clSingleChoiceDialog.h"
 
 class CommitMessageStringData : public wxClientData
 {
@@ -71,12 +72,6 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
 
     m_checkListFiles->Disable();
     m_panel1->Disable();
-    wxArrayString lastMessages, previews;
-    m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
-
-    for(size_t i = 0; i < previews.GetCount(); i++) {
-        m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
-    }
 
     SetName("SvnCommitDialog");
     WindowAttrManager::Load(this);
@@ -91,11 +86,8 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     }
 }
 
-SvnCommitDialog::SvnCommitDialog(wxWindow* parent,
-                                 const wxArrayString& paths,
-                                 const wxString& url,
-                                 Subversion2* plugin,
-                                 const wxString& repoPath)
+SvnCommitDialog::SvnCommitDialog(
+    wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin, const wxString& repoPath)
     : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
     , m_url(url)
@@ -113,13 +105,6 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent,
     for(size_t i = 0; i < paths.GetCount(); i++) {
         int index = m_checkListFiles->Append(paths.Item(i));
         m_checkListFiles->Check((unsigned int)index);
-    }
-
-    wxArrayString lastMessages, previews;
-    m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
-
-    for(size_t i = 0; i < previews.GetCount(); i++) {
-        m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
     }
 
     if(!paths.IsEmpty()) {
@@ -260,17 +245,6 @@ wxArrayString SvnCommitDialog::GetPaths()
     return paths;
 }
 
-void SvnCommitDialog::OnChoiceMessage(wxCommandEvent& e)
-{
-    int idx = e.GetSelection();
-    if(idx == wxNOT_FOUND) return;
-
-    CommitMessageStringData* data = (CommitMessageStringData*)m_choiceMessages->GetClientObject(idx);
-    if(data) {
-        m_stcMessage->SetText(data->GetData());
-    }
-}
-
 void SvnCommitDialog::OnFileSelected(wxCommandEvent& event) { DoShowDiff(event.GetSelection()); }
 
 void SvnCommitDialog::OnProcessOutput(clProcessEvent& e) { m_output << e.GetOutput(); }
@@ -310,4 +284,20 @@ void SvnCommitDialog::DoShowDiff(int selection)
     m_currentFile = filename;
     m_output.Clear();
     m_process = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, m_repoPath);
+}
+void SvnCommitDialog::OnShowCommitHistory(wxCommandEvent& event)
+{
+    wxArrayString lastMessages, previews;
+    m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
+    clSingleChoiceDialog dlg(this, lastMessages);
+    dlg.SetLabel(_("Choose a commit"));
+    if(dlg.ShowModal() != wxID_OK) return;
+    m_stcMessage->SetText(dlg.GetSelection());
+}
+
+void SvnCommitDialog::OnShowCommitHistoryUI(wxUpdateUIEvent& event)
+{
+    wxArrayString lastMessages, previews;
+    m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
+    event.Enable(!lastMessages.IsEmpty());
 }

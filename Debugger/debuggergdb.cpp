@@ -445,8 +445,8 @@ bool DbgGdb::Break(const BreakpointInfo& bp)
     } else if(bp.bp_type != BP_type_watchpt) {
         // Function and Lineno locations can/should be prepended by a filename (but see later)
         if(!tmpfileName.IsEmpty() && bp.lineno > 0) {
-            ::WrapWithQuotes(tmpfileName);
             breakWhere << tmpfileName << wxT(":") << bp.lineno;
+            breakWhere.Prepend("\"").Append("\"");
         } else if(!bp.function_name.IsEmpty()) {
             if(bp.regex) {
                 // update the command

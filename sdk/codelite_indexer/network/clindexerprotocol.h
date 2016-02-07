@@ -52,7 +52,7 @@ public:
 	 */
 	static bool SendReply    (clNamedPipe *conn, clIndexerReply   &reply);
 	/**
-	 * @brief read request from the named pipe. If any error occured, return false and abort the connection
+	 * @brief read request from the named pipe. If any error occurred, return false and abort the connection
 	 * @param conn [input] named pipe to use for reading the request
 	 * @param req [output] holds the received request. Should be used only if this function
 	 *        returns true

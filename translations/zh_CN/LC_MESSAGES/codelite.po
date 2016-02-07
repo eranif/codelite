@@ -94,7 +94,7 @@ msgstr "默认生成器："
 
 #: CMakePlugin/CMakePluginUi.cpp:52
 msgid ""
-"You can specify default generator for all projects (if is not overrided by "
+"You can specify default generator for all projects (if is not overridden by "
 "project settings). If generator is not selected the CMake uses platform's "
 "default."
 msgstr ""
@@ -1430,7 +1430,7 @@ msgid "Break PHP Arrays vertically"
 msgstr "垂直打断 PHP 数组"
 
 #: CodeFormatter/codeformatterdlgbase.cpp:448
-msgid "Break after string concatentation operator (\".\")"
+msgid "Break after string concatenation operator (\".\")"
 msgstr "打断字符串后连接运算符(\".\")"
 
 #: CodeFormatter/codeformatterdlgbase.cpp:457
@@ -5661,7 +5661,7 @@ msgstr "mkdir"
 #: LiteEditor/compiler_pages.cpp:376
 msgid ""
 "Set the 'mkdir' for your OS.\n"
-"Leave it empty to use the defualt for your OS"
+"Leave it empty to use the default for your OS"
 msgstr ""
 "为您的系统设置“mkdir”。\n"
 "留空就表示在您的系统中使用默认设置"
@@ -6941,7 +6941,7 @@ msgstr "类文档模板"
 
 #: LiteEditor/editorsettingscommentsdoxygenpanelbase.cpp:47
 msgid ""
-"Set the template to use when generating documetation for a class (or C/C++ "
+"Set the template to use when generating documentation for a class (or C/C++ "
 "struct).\n"
 "The following macros are available: $(CurrentFileName), $(CurrentFilePath), "
 "$(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), "
@@ -6958,7 +6958,7 @@ msgstr "函数文档模板"
 
 #: LiteEditor/editorsettingscommentsdoxygenpanelbase.cpp:51
 msgid ""
-"Set the template to use when generating documetation for a function\n"
+"Set the template to use when generating documentation for a function\n"
 "The following macros are available: $(CurrentFileName), $(CurrentFilePath), "
 "$(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), "
 "$(ProjectName), $(WorkspaceName)"
@@ -7238,7 +7238,7 @@ msgstr "高亮显示折叠块"
 
 #: LiteEditor/editorsettingsfoldingbase.cpp:74
 msgid ""
-"Allows to enable/disable the highlight folding block when it is selected. (i."
+"Allows enabling/disabling the highlight folding block when it is selected. (i."
 "e. block that contains the caret)"
 msgstr "当被选中时允许启用/禁用高亮折叠块。(即块包含插入符号)"
 
@@ -9815,7 +9815,7 @@ msgid "Use regular expression"
 msgstr "启用正则表达式"
 
 #: LiteEditor/quickfindbar.cpp:130
-msgid "Highlight Occurences"
+msgid "Highlight Occurrences"
 msgstr "高亮匹配"
 
 #: LiteEditor/quickfindbar.cpp:139
@@ -12108,7 +12108,7 @@ msgid "New Virtual Folder Name:"
 msgstr "新的虚拟文件夹名称："
 
 #: Plugin/VirtualDirectorySelectorDlg.cpp:339
-msgid "Error occured while creating virtual folder:\n"
+msgid "Error occurred while creating virtual folder:\n"
 msgstr "创建虚拟文件夹错误：\n"
 
 #: Plugin/WSImporterDlgs.cpp:33 codelitephp/php-plugin/php_ui.cpp:1746
@@ -15922,7 +15922,7 @@ msgid "Insert Expansion"
 msgstr "插入扩展字段"
 
 #: abbreviation/abbreviation.cpp:225
-msgid "Plugins::Abbreviations::Show abbrevations completion box"
+msgid "Plugins::Abbreviations::Show abbreviations completion box"
 msgstr "插件::缩略语表::显示缩写补全框"
 
 #: abbreviation/abbreviationssettingsbase.cpp:31
@@ -18428,7 +18428,7 @@ msgstr "开始处理；"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:111
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:415
-msgid "Commiting transaction"
+msgid "Committing transaction"
 msgstr "提交事务中"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:112

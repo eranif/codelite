@@ -1075,7 +1075,7 @@ void BuilderGnuMake::CreateTargets(
         markRebuilt = false;
     }
 
-    // If a link occured, mark this project as "rebuilt" so the parent project will
+    // If a link occurred, mark this project as "rebuilt" so the parent project will
     // know that a re-link is required
     if(bldConf->IsLinkerRequired() && markRebuilt) {
         text << wxT("\t@$(MakeDirCommand) \"") << DoGetMarkerFileDir(wxEmptyString) << wxT("\"\n");

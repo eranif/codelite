@@ -122,7 +122,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     btnMarker->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnHighlightMatches, this);
     btnMarker->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnHighlightMatchesUI, this);
     btnMarker->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
-    btnMarker->SetToolTip(_("Highlight Occurences"));
+    btnMarker->SetToolTip(_("Highlight Occurrences"));
 
     //=======----------------------
     // Find what:

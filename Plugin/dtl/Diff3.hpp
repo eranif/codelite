@@ -119,7 +119,7 @@ namespace dtl {
                     return true;
                 } else {                              // A != B != C
                     S = merge_();
-                    if (isConflict()) {               // conflict occured
+                    if (isConflict()) {               // conflict occurred
                         return false;
                     }
                 }

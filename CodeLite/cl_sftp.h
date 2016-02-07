@@ -109,7 +109,7 @@ public:
      * @param folder
      * @param foldersOnly
      * @param filter filter out files that do not match the filter
-     * @throw clException incase an error occured
+     * @throw clException incase an error occurred
      */
     SFTPAttribute::List_t List(const wxString &folder, size_t flags, const wxString &filter = "") throw (clException);
 

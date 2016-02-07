@@ -154,7 +154,7 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
             wxString projectPath = child->GetPropVal(wxT("Path"), wxEmptyString);
 
             if(!DoAddProject(projectPath, errMsg)) {
-                tmperr << wxString::Format(wxT("Error occured while loading project: \"%s\"\nCodeLite has removed the "
+                tmperr << wxString::Format(wxT("Error occurred while loading project: \"%s\"\nCodeLite has removed the "
                                                "faulty project from the workspace\n"),
                                            projectPath.c_str());
                 removedChildren.push_back(child);

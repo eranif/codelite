@@ -337,7 +337,7 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
     wxString errmsg;
     if(!clCxxWorkspaceST::Get()->CreateVirtualDirectory(curpath, errmsg, true)) {
         wxMessageBox(
-            _("Error occured while creating virtual folder:\n") + errmsg, "codelite", wxOK | wxICON_WARNING | wxCENTER);
+            _("Error occurred while creating virtual folder:\n") + errmsg, "codelite", wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
 

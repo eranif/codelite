@@ -112,7 +112,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
         } else {
 
-            CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"),
+            CL_DEBUG(wxT("An error occurred during reparsing of the TU for file %s. TU: %p"),
                      task->GetFileName().c_str(),
                      (void*)TU);
 
@@ -461,7 +461,7 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
             return TU;
 
         } else {
-            CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"),
+            CL_DEBUG(wxT("An error occurred during reparsing of the TU for file %s. TU: %p"),
                      task->GetFileName().c_str(),
                      (void*)TU);
 

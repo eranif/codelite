@@ -82,7 +82,7 @@ void* XDebugComThread::Entry()
                 // Wait for the reply
                 std::string reply;
                 if ( !DoReadReply( reply, client ) ) {
-                    // AN error occured - close session
+                    // AN error occurred - close session
                     break;
                 }
 

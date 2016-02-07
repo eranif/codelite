@@ -77,7 +77,7 @@ bool eQueueImpl<T>::get(T& item, long timeout)
 				return true;
 			}
 		default:
-			// timeout or other error occured here
+			// timeout or other error occurred here
 			return false;
 		}
 	}

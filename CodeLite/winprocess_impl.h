@@ -54,7 +54,7 @@ public:
 
     /**
      * @brief read data from stdout, if no data is available, return
-     * if timeout occured, return with true.
+     * if timeout occurred, return with true.
      * @param buff check the buffer when true is returned
      * @return return true on success or timeout, flase otherwise, incase of false the reader thread will terminate
      */

@@ -129,7 +129,7 @@ int clSocketBase::SelectRead(long seconds) throw(clSocketException)
         return kTimeout;
 
     } else if(rc < 0) {
-        // an error occured
+        // an error occurred
         throw clSocketException("SelectRead failed: " + error());
 
     } else {
@@ -337,7 +337,7 @@ int clSocketBase::SelectWriteMS(long milliSeconds) throw(clSocketException)
         return kTimeout;
 
     } else if(rc < 0) {
-        // an error occured
+        // an error occurred
         throw clSocketException("SelectWriteMS failed: " + error());
 
     } else {
@@ -368,7 +368,7 @@ int clSocketBase::SelectWrite(long seconds) throw(clSocketException)
         return kTimeout;
 
     } else if(rc < 0) {
-        // an error occured
+        // an error occurred
         throw clSocketException("SelectRead failed: " + error());
 
     } else {
@@ -400,7 +400,7 @@ int clSocketBase::SelectReadMS(long milliSeconds) throw(clSocketException)
         return kTimeout;
 
     } else if(rc < 0) {
-        // an error occured
+        // an error occurred
         throw clSocketException("SelectRead failed: " + error());
 
     } else {

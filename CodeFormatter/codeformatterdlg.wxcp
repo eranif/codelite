@@ -3636,7 +3636,7 @@
                           }, {
                            "type": "multi-string",
                            "m_label": "Choices:",
-                           "m_value": "Break before class;Break before function;Break before 'while';Break before 'foreach';'else' doesn't break;Break after 'heredoc' statement;Break PHP Arrays vertically;Break after string concatentation operator (\".\")"
+                           "m_value": "Break before class;Break before function;Break before 'while';Break before 'foreach';'else' doesn't break;Break after 'heredoc' statement;Break PHP Arrays vertically;Break after string concatenation operator (\".\")"
                           }, {
                            "type": "multi-string",
                            "m_label": "Array Integer Values",

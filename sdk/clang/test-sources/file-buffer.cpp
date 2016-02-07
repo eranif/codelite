@@ -157,7 +157,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
                 CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
 
             } else {
-                CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"), task->GetFileName().c_str(), (void*)TU);
+                CL_DEBUG(wxT("An error occurred during reparsing of the TU for file %s. TU: %p"), task->GetFileName().c_str(), (void*)TU);
 
                 // The only thing that left to be done here, is to dispose the TU
                 clang_disposeTranslationUnit(TU);
@@ -184,7 +184,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
         } else {
             
-            CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"), task->GetFileName().c_str(), (void*)TU);
+            CL_DEBUG(wxT("An error occurred during reparsing of the TU for file %s. TU: %p"), task->GetFileName().c_str(), (void*)TU);
 
             // The only thing that left to be done here, is to dispose the TU
             clang_disposeTranslationUnit(TU);

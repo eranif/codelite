@@ -44,11 +44,11 @@ EditorSettingsCommentsDoxygenPanelBase::EditorSettingsCommentsDoxygenPanelBase(w
     m_pgProp4->SetHelpString(wxT(""));
     
     m_pgPropDoxyClassPrefix = m_pgMgrDoxy->AppendIn( m_pgProp4,  new wxStringProperty( _("Class documentation template"), wxPG_LABEL, wxT("")) );
-    m_pgPropDoxyClassPrefix->SetHelpString(_("Set the template to use when generating documetation for a class (or C/C++ struct).\nThe following macros are available: $(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorkspaceName)"));
+    m_pgPropDoxyClassPrefix->SetHelpString(_("Set the template to use when generating documentation for a class (or C/C++ struct).\nThe following macros are available: $(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorkspaceName)"));
     m_pgPropDoxyClassPrefix->SetEditor( wxT("TextCtrlAndButton") );
     
     m_pgPropDoxyFunctionPrefix = m_pgMgrDoxy->AppendIn( m_pgProp4,  new wxStringProperty( _("Function documentation template"), wxPG_LABEL, wxT("")) );
-    m_pgPropDoxyFunctionPrefix->SetHelpString(_("Set the template to use when generating documetation for a function\nThe following macros are available: $(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorkspaceName)"));
+    m_pgPropDoxyFunctionPrefix->SetHelpString(_("Set the template to use when generating documentation for a function\nThe following macros are available: $(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorkspaceName)"));
     m_pgPropDoxyFunctionPrefix->SetEditor( wxT("TextCtrlAndButton") );
     
     SetName(wxT("EditorSettingsCommentsDoxygenPanelBase"));

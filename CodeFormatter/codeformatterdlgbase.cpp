@@ -445,7 +445,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrPhpArr.Add(_("'else' doesn't break"));
     m_pgMgrPhpArr.Add(_("Break after 'heredoc' statement"));
     m_pgMgrPhpArr.Add(_("Break PHP Arrays vertically"));
-    m_pgMgrPhpArr.Add(_("Break after string concatentation operator (\".\")"));
+    m_pgMgrPhpArr.Add(_("Break after string concatenation operator (\".\")"));
     m_pgMgrPhpIntArr.Add(kPFF_BreakBeforeClass);
     m_pgMgrPhpIntArr.Add(kPFF_BreakBeforeFunction);
     m_pgMgrPhpIntArr.Add(kPFF_BreakBeforeWhile);

@@ -132,7 +132,7 @@ void* LLDBNetworkListenerThread::Entry()
                 }
             }
         } catch(clSocketException& e) {
-            CL_WARNING("Seems like we lost conneciton to codelite-lldb (probably crashed): %s", e.what().c_str());
+            CL_WARNING("Seems like we lost connection to codelite-lldb (probably crashed): %s", e.what().c_str());
             LLDBEvent event(wxEVT_LLDB_CRASHED);
             m_owner->AddPendingEvent(event);
 

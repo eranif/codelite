@@ -237,7 +237,7 @@ static optionDescription LongOptionDescription [] = {
  {1,"  --language-force=language"},
  {1,"       Force all files to be interpreted using specified language."},
  {1,"  --languages=[+|-]list"},
- {1,"       Restrict files scanned for tags to those mapped to langauges"},
+ {1,"       Restrict files scanned for tags to those mapped to languages"},
  {1,"       specified in the comma-separated 'list'. The list can contain any"},
  {1,"       built-in or user-defined language [all]."},
  {1,"  --license"},

@@ -367,7 +367,7 @@ class mysqli  {
 	 *       List of connections to check for outstanding results that can be read.
 	 *      </p>
 	 * @param error array <p>
-	 *      List of connections on which an error occured, for example, query
+	 *      List of connections on which an error occurred, for example, query
 	 *      failure or lost connection.
 	 *      </p>
 	 * @param reject array <p>

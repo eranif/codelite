@@ -582,7 +582,7 @@ public:
 	*/
     bool Eof();
 
-	/** Returns true when the wxSerialize is in OK condition. This means no error occured. Errors that can occur are
+	/** Returns true when the wxSerialize is in OK condition. This means no error occurred. Errors that can occur are
 	    for example:
 	        - The underlying stream reports that it is not OK (not able to write, not able to read)
 	        - Reading an unexpected type of variable (e.g. expecting int and reading back string)
@@ -723,7 +723,7 @@ public:
         wxSerialize a(stream);
 
         // without the a.IsOk() it will work too, but serializing will
-        // go on writing to dev/null without aborting when an error occured.
+        // go on writing to dev/null without aborting when an error occurred.
 
         if(a.IsOk())
         {
@@ -750,7 +750,7 @@ public:
         wxSerialize a(stream);
 
         // without the a.IsOk() it will work too, but serializing will
-        // go on without aborting when an error occured.
+        // go on without aborting when an error occurred.
 
         if(a.IsOk())
         {

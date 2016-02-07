@@ -451,7 +451,7 @@
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
-           "m_value": "You can specify default generator for all projects (if is not overrided by project settings). If generator is not selected the CMake uses platform's default."
+           "m_value": "You can specify default generator for all projects (if is not overridden by project settings). If generator is not selected the CMake uses platform's default."
           }, {
            "type": "colour",
            "m_label": "Bg Colour:",

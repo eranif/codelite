@@ -153,29 +153,7 @@ void CppCheckReportPage::AppendLine(const wxString& line)
 //    return wxSTC_LEX_GCC_DEFAULT;
 //}
 //
-void CppCheckReportPage::OnOpenFile(wxStyledTextEvent& e)
-{
-    static wxRegEx gccPattern(wxT("^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)(:)([a-zA-Z ]*)"));
-    static int fileIndex = 1;
-    static int lineIndex = 3;
-
-    wxString txt = m_stc->GetLine(m_stc->LineFromPosition(e.GetPosition()));
-
-    if(gccPattern.Matches(txt)) {
-        wxString file = gccPattern.GetMatch(txt, fileIndex);
-        wxString lineNumber = gccPattern.GetMatch(txt, lineIndex);
-
-        if(file.IsEmpty() == false) {
-            long n(0);
-            lineNumber.ToLong(&n);
-
-            // Zero based line number
-            if(n)
-                n--;
-            m_mgr->OpenFile(file, wxEmptyString, n);
-        }
-    }
-}
+void CppCheckReportPage::OnOpenFile(wxStyledTextEvent& e) { DoOpenLine(m_stc->LineFromPosition(e.GetPosition())); }
 
 size_t CppCheckReportPage::GetErrorCount() const { return sErrorCount; }
 
@@ -220,6 +198,7 @@ bool CppCheckReportPage::FindPrevMarker(bool gotoMatch)
     m_stc->SetFirstVisibleLine(nFoundLine);
     m_stc->MarkerDeleteAll(CPPCHECK_ERROR_MARKER_CURRENT);
     m_stc->MarkerAdd(nFoundLine, CPPCHECK_ERROR_MARKER_CURRENT);
+    DoOpenLine(nFoundLine);
     return true;
 }
 
@@ -242,6 +221,7 @@ bool CppCheckReportPage::FindNextMarker(bool gotoMatch)
     m_stc->SetFirstVisibleLine(nFoundLine);
     m_stc->MarkerDeleteAll(CPPCHECK_ERROR_MARKER_CURRENT);
     m_stc->MarkerAdd(nFoundLine, CPPCHECK_ERROR_MARKER_CURRENT);
+    DoOpenLine(nFoundLine);
     return true;
 }
 
@@ -255,7 +235,7 @@ void CppCheckReportPage::DoInitStyle()
     m_stc->MarkerDefine(CPPCHECK_ERROR_MARKER, wxSTC_MARK_ARROW, *wxRED, *wxRED);
     m_stc->MarkerDefine(CPPCHECK_ERROR_MARKER_CURRENT, wxSTC_MARK_BACKGROUND, "PINK", "PINK");
     m_stc->MarkerSetAlpha(CPPCHECK_ERROR_MARKER_CURRENT, 70);
-    
+
     LexerConf::Ptr_t config = EditorConfigST::Get()->GetLexer("text");
     if(config) {
         config->Apply(m_stc, true);
@@ -300,3 +280,26 @@ void CppCheckReportPage::OnUp(wxCommandEvent& event)
 void CppCheckReportPage::OnDownUI(wxUpdateUIEvent& event) { event.Enable(FindNextMarker(false)); }
 void CppCheckReportPage::OnUpUI(wxUpdateUIEvent& event) { event.Enable(FindPrevMarker(false)); }
 void CppCheckReportPage::GotoFirstError() { FindNextMarker(true); }
+
+void CppCheckReportPage::DoOpenLine(int outputLine)
+{
+    static wxRegEx gccPattern(wxT("^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)(:)([a-zA-Z ]*)"));
+    static int fileIndex = 1;
+    static int lineIndex = 3;
+
+    wxString txt = m_stc->GetLine(outputLine);
+
+    if(gccPattern.Matches(txt)) {
+        wxString file = gccPattern.GetMatch(txt, fileIndex);
+        wxString lineNumber = gccPattern.GetMatch(txt, lineIndex);
+
+        if(file.IsEmpty() == false) {
+            long n(0);
+            lineNumber.ToCLong(&n);
+
+            // Zero based line number
+            if(n) n--;
+            m_mgr->OpenFile(file, wxEmptyString, n);
+        }
+    }
+}

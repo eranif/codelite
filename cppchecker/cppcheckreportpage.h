@@ -68,7 +68,8 @@ protected:
     void DoInitStyle();
     bool FindNextMarker(bool gotoMatch = true);
     bool FindPrevMarker(bool gotoMatch = true);
-
+    void DoOpenLine(int outputLine);
+    
 public:
     /** Constructor */
     CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheckPlugin* plugin);

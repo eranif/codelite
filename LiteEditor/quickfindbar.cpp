@@ -320,6 +320,8 @@ void QuickFindBar::DoSearch(size_t searchFlags)
         m_sci->ClearSelections();
         return;
     }
+    
+    
     DoEnsureLineIsVisible();
 }
 
@@ -1106,6 +1108,18 @@ void QuickFindBar::DoEnsureLineIsVisible(int line)
         m_sci->SetFirstVisibleLine(firstVisibleLine);
     }
     m_sci->EnsureVisible(line);
+    m_sci->ScrollToColumn(0);
+    int xScrollPosBefore = m_sci->GetScrollPos(wxHORIZONTAL);
+    m_sci->EnsureCaretVisible();
+    int xScrollPosAfter = m_sci->GetScrollPos(wxHORIZONTAL);
+    if(xScrollPosBefore != xScrollPosAfter) {
+        // EnsureCaretVisible scrolled the page
+        // scroll it a bit more
+        int scrollToPos = m_sci->GetSelectionStart();
+        if(scrollToPos != wxNOT_FOUND) {
+            m_sci->ScrollToColumn(m_sci->GetColumn(scrollToPos));
+        }
+    }
 }
 
 void QuickFindBar::DoFixRegexParen(wxString& findwhat)

@@ -274,20 +274,11 @@ void FileViewTree::SortTree()
 
 wxTreeItemId FileViewTree::GetSingleSelection()
 {
-#if wxVERSION_NUMBER > 2900
-    return GetFocusedItem();
-#else
-    if(HasFlag(wxTR_MULTIPLE)) {
-        wxTreeItemId invalid;
-        wxArrayTreeItemIds arr;
-        size_t count = GetMultiSelection(arr);
-        return (count > 0) ? arr.Item(0) : invalid;
-
-    } else {
-        // Single selection tree
-        return GetSelection();
+    wxArrayTreeItemIds arr;
+    if(GetSelections(arr)) {
+        return arr.Item(0);
     }
-#endif
+    return wxTreeItemId();
 }
 
 int FileViewTree::GetIconIndex(const ProjectItem& item)
@@ -433,14 +424,17 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
 {
     wxMenu* menu = wxXmlResource::Get()->LoadMenu(wxT("file_tree_project"));
     // set the icon for the default actions (build, clean and settings)
-    wxBitmap bmpBuild = PluginManager::Get()->GetStdIcons()->LoadBitmap("toolbars/16/build/build");
-    wxBitmap bmpClean = PluginManager::Get()->GetStdIcons()->LoadBitmap("toolbars/16/build/clean");
-    wxBitmap bmpSettings = PluginManager::Get()->GetStdIcons()->LoadBitmap("cog");
-
+    BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
+    wxBitmap bmpBuild = bmpLoader->LoadBitmap("toolbars/16/build/build");
+    wxBitmap bmpClean = bmpLoader->LoadBitmap("toolbars/16/build/clean");
+    wxBitmap bmpSettings = bmpLoader->LoadBitmap("cog");
+    wxBitmap bmpSort = bmpLoader->LoadBitmap("sort");
+    
     menu->FindItem(XRCID("build_project"))->SetBitmap(bmpBuild);
     menu->FindItem(XRCID("clean_project"))->SetBitmap(bmpClean);
     menu->FindItem(XRCID("project_properties"))->SetBitmap(bmpSettings);
-
+    menu->FindItem(XRCID("build_order"))->SetBitmap(bmpSort);
+    
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
     if(bldConf && bldConf->IsCustomBuild()) {
         wxMenuItem* item = NULL;

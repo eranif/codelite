@@ -100,7 +100,7 @@
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -284,8 +284,9 @@
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
-      <Environment/>
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+      <Environment>WXWIN=D:\src\wxWidgets
+WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>

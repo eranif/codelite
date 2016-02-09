@@ -34,14 +34,12 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /// Class DependenciesDlg
 ///////////////////////////////////////////////////////////////////////////////
 class DependenciesDlg : public wxDialog
 {
 private:
-
 protected:
     wxChoicebook* m_book;
     wxStaticLine* m_staticline1;
@@ -50,11 +48,19 @@ protected:
     wxString m_projectName;
 
     void Init();
-    virtual void OnButtonOK(wxCommandEvent &event);
-    virtual void OnButtonCancel(wxCommandEvent &event);
+    void DoSelectProject();
+    
+    virtual void OnButtonOK(wxCommandEvent& event);
+    virtual void OnButtonCancel(wxCommandEvent& event);
 
 public:
-    DependenciesDlg( wxWindow* parent, const wxString &projectName, int id = wxID_ANY, wxString title = _("Build Order"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 700,450 ), int style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+    DependenciesDlg(wxWindow* parent,
+        const wxString& projectName,
+        int id = wxID_ANY,
+        wxString title = _("Build Order"),
+        wxPoint pos = wxDefaultPosition,
+        wxSize size = wxSize(700, 450),
+        int style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~DependenciesDlg();
 };
 

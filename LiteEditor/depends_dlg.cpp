@@ -32,13 +32,8 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-DependenciesDlg::DependenciesDlg(wxWindow* parent,
-                                 const wxString& projectName,
-                                 int id,
-                                 wxString title,
-                                 wxPoint pos,
-                                 wxSize size,
-                                 int style)
+DependenciesDlg::DependenciesDlg(
+    wxWindow* parent, const wxString& projectName, int id, wxString title, wxPoint pos, wxSize size, int style)
     : wxDialog(parent, id, title, pos, size, style)
     , m_projectName(projectName)
 {
@@ -82,11 +77,11 @@ void DependenciesDlg::Init()
     // fill the pages of the choice book
     wxArrayString projects;
     ManagerST::Get()->GetProjectList(projects);
-    wxString activeProj = ManagerST::Get()->GetActiveProjectName();
     for(size_t i = 0; i < projects.GetCount(); i++) {
-        m_book->AddPage(
-            new DependenciesPage(m_book, projects.Item(i)), projects.Item(i), m_projectName == projects.Item(i));
+        m_book->AddPage(new DependenciesPage(m_book, projects.Item(i)), projects.Item(i), false);
     }
+
+    CallAfter(&DependenciesDlg::DoSelectProject);
 
     // connect events
     ConnectButton(m_buttonOK, DependenciesDlg::OnButtonOK);
@@ -109,4 +104,14 @@ void DependenciesDlg::OnButtonCancel(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     EndModal(wxID_CANCEL);
+}
+
+void DependenciesDlg::DoSelectProject()
+{
+    wxArrayString projects;
+    ManagerST::Get()->GetProjectList(projects);
+    int sel = projects.Index(m_projectName);
+    if(sel != wxNOT_FOUND) {
+        m_book->ChangeSelection(sel);
+    }
 }

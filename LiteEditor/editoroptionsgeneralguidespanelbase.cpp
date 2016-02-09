@@ -154,6 +154,12 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     m_pgPropZoomUsingCtrlScroll = m_pgMgrEdit->AppendIn( m_pgProp56,  new wxBoolProperty( _("Enable mouse zoom"), wxPG_LABEL, 1) );
     m_pgPropZoomUsingCtrlScroll->SetHelpString(_("When holding Ctrl/CMD + scrolling with the mouse zoom the text"));
     
+    m_pgProp565 = m_pgMgrEdit->Append(  new wxPropertyCategory( _("Comments") ) );
+    m_pgProp565->SetHelpString(wxT(""));
+    
+    m_pgPropCommentsIndented = m_pgMgrEdit->AppendIn( m_pgProp565,  new wxBoolProperty( _("Indented line comments"), wxPG_LABEL, 0) );
+    m_pgPropCommentsIndented->SetHelpString(_("Indent line comments (C++-style comments) according to the indentation of the selected fragmant of the text"));
+    
     SetName(wxT("EditorOptionsGeneralEditBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {

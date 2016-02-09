@@ -14,6 +14,7 @@ EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent)
     m_pgPropWrapBrackets->SetValue(options->IsWrapSelectionBrackets());
     m_pgPropWrapQuotes->SetValue(options->IsWrapSelectionWithQuotes());
     m_pgPropZoomUsingCtrlScroll->SetValue(options->IsMouseZoomEnabled());
+    m_pgPropCommentsIndented->SetValue(options->GetIndentedComments());
 }
 
 EditorOptionsGeneralEdit::~EditorOptionsGeneralEdit()
@@ -33,4 +34,5 @@ void EditorOptionsGeneralEdit::Save(OptionsConfigPtr options)
     options->SetWrapSelectionBrackets(m_pgPropWrapBrackets->GetValue().GetBool());
     options->SetWrapSelectionWithQuotes(m_pgPropWrapQuotes->GetValue().GetBool());
     options->SetMouseZoomEnabled(m_pgPropZoomUsingCtrlScroll->GetValue().GetBool());
+    options->SetIndentedComments(m_pgPropCommentsIndented->GetValue().GetBool());
 }

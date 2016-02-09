@@ -914,6 +914,10 @@ private:
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
     void DoUpdateOptions();
     int GetFirstSingleLineCommentPos(int from, int commentStyle);
+    /**
+     * @brief return number of whitespace characters in the beginning of the line
+     */
+    int GetNumberFirstSpacesInLine(int line);
 
     void FillBPtoMarkerArray();
     BPtoMarker GetMarkerForBreakpt(enum BreakpointType bp_type);

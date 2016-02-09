@@ -714,7 +714,7 @@
             }, {
              "type": "multi-string",
              "m_label": "Tooltip:",
-             "m_value": "Allows to enable/disable the highlight folding block when it is selected. (i.e. block that contains the caret)"
+             "m_value": "Allows enabling/disabling the highlight folding block when it is selected. (i.e. block that contains the caret)"
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",

@@ -49,7 +49,7 @@ CMakeSettingsDialogBase::CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id
     
     wxArrayString m_choiceDefaultGeneratorArr;
     m_choiceDefaultGenerator = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceDefaultGeneratorArr, 0);
-    m_choiceDefaultGenerator->SetToolTip(_("You can specify default generator for all projects (if is not overrided by project settings). If generator is not selected the CMake uses platform's default."));
+    m_choiceDefaultGenerator->SetToolTip(_("You can specify default generator for all projects (if is not overridden by project settings). If generator is not selected the CMake uses platform's default."));
     
     flexGridSizer->Add(m_choiceDefaultGenerator, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     

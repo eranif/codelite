@@ -1388,7 +1388,7 @@ void clTreeListHeaderWindow::OnMouse(wxMouseEvent& event)
         // end of the current column
         int xpos = 0;
 
-        // find the column where this event occured
+        // find the column where this event occurred
         int countCol = GetColumnCount();
         for(int column = 0; column < countCol; column++) {
             if(!IsColumnShown(column)) continue; // do next if not shown

@@ -222,7 +222,7 @@ void AbbreviationPlugin::InitDefaults()
         m_config.WriteItem(&jsonData);
     }
     clKeyboardManager::Get()->AddGlobalAccelerator(
-        "abbrev_insert", "Ctrl-Alt-SPACE", _("Plugins::Abbreviations::Show abbrevations completion box"));
+        "abbrev_insert", "Ctrl-Alt-SPACE", _("Plugins::Abbreviations::Show abbreviations completion box"));
 }
 
 bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)

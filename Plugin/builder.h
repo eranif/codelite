@@ -65,7 +65,7 @@ public:
 
     // ================ API ==========================
     // The below API as default implementation, but can be
-    // overrided in the derived class
+    // overridden in the derived class
     // ================ API ==========================
 
     /**

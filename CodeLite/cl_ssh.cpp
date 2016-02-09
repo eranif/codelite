@@ -183,7 +183,7 @@ bool clSSH::AuthenticateServer(wxString& message) throw(clException)
 
     default:
     case SSH_SERVER_ERROR:
-        throw clException(wxString() << "An error occured: " << ssh_get_error(m_session));
+        throw clException(wxString() << "An error occurred: " << ssh_get_error(m_session));
     }
     return false;
 }

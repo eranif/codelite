@@ -203,7 +203,7 @@ void SvnCheckoutHandler::Process(const wxString& output)
 void SvnBlameHandler::Process(const wxString& output)
 {
     if(output.StartsWith(wxT("svn:"))) {
-        // error occured
+        // error occurred
         GetPlugin()->GetConsole()->AppendText(output);
         GetPlugin()->GetConsole()->AppendText(wxT("--------\n"));
         return;
@@ -218,7 +218,7 @@ void SvnBlameHandler::Process(const wxString& output)
 void SvnRepoListHandler::Process(const wxString& output)
 {
     if(output.StartsWith(wxT("svn:"))) {
-        // error occured
+        // error occurred
         GetPlugin()->GetConsole()->AppendText(output);
         GetPlugin()->GetConsole()->AppendText(wxT("--------\n"));
         return;

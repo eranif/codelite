@@ -2709,7 +2709,7 @@ void clMainFrame::OnBuildEnded(clCommandEvent& event)
 
     if(m_buildAndRun) {
         // If the build process was part of a 'Build and Run' command, check whether an erros
-        // occured during build process, if non, launch the output
+        // occurred during build process, if non, launch the output
         m_buildAndRun = false;
         if(ManagerST::Get()->IsBuildEndedSuccessfully() ||
             wxMessageBox(_("Build ended with errors. Continue?"), _("Confirm"), wxYES_NO | wxICON_QUESTION, this) ==

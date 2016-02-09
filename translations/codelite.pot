@@ -90,7 +90,7 @@ msgstr ""
 
 #: CMakePlugin/CMakePluginUi.cpp:52
 msgid ""
-"You can specify default generator for all projects (if is not overrided by "
+"You can specify default generator for all projects (if is not overridden by "
 "project settings). If generator is not selected the CMake uses platform's "
 "default."
 msgstr ""
@@ -1383,7 +1383,7 @@ msgid "Break PHP Arrays vertically"
 msgstr ""
 
 #: CodeFormatter/codeformatterdlgbase.cpp:448
-msgid "Break after string concatentation operator (\".\")"
+msgid "Break after string concatenation operator (\".\")"
 msgstr ""
 
 #: CodeFormatter/codeformatterdlgbase.cpp:457
@@ -5484,7 +5484,7 @@ msgstr ""
 #: LiteEditor/compiler_pages.cpp:376
 msgid ""
 "Set the 'mkdir' for your OS.\n"
-"Leave it empty to use the defualt for your OS"
+"Leave it empty to use the default for your OS"
 msgstr ""
 
 #: LiteEditor/compiler_pages.cpp:379
@@ -6706,7 +6706,7 @@ msgstr ""
 
 #: LiteEditor/editorsettingscommentsdoxygenpanelbase.cpp:47
 msgid ""
-"Set the template to use when generating documetation for a class (or C/C++ "
+"Set the template to use when generating documentation for a class (or C/C++ "
 "struct).\n"
 "The following macros are available: $(CurrentFileName), $(CurrentFilePath), "
 "$(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), "
@@ -6719,7 +6719,7 @@ msgstr ""
 
 #: LiteEditor/editorsettingscommentsdoxygenpanelbase.cpp:51
 msgid ""
-"Set the template to use when generating documetation for a function\n"
+"Set the template to use when generating documentation for a function\n"
 "The following macros are available: $(CurrentFileName), $(CurrentFilePath), "
 "$(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), "
 "$(ProjectName), $(WorkspaceName)"
@@ -6982,7 +6982,7 @@ msgstr ""
 
 #: LiteEditor/editorsettingsfoldingbase.cpp:74
 msgid ""
-"Allows to enable/disable the highlight folding block when it is selected. (i."
+"Allows enabling/disabling the highlight folding block when it is selected. (i."
 "e. block that contains the caret)"
 msgstr ""
 
@@ -9465,7 +9465,7 @@ msgid "Use regular expression"
 msgstr ""
 
 #: LiteEditor/quickfindbar.cpp:130
-msgid "Highlight Occurences"
+msgid "Highlight Occurrences"
 msgstr ""
 
 #: LiteEditor/quickfindbar.cpp:139
@@ -11675,7 +11675,7 @@ msgid "New Virtual Folder Name:"
 msgstr ""
 
 #: Plugin/VirtualDirectorySelectorDlg.cpp:339
-msgid "Error occured while creating virtual folder:\n"
+msgid "Error occurred while creating virtual folder:\n"
 msgstr ""
 
 #: Plugin/WSImporterDlgs.cpp:33 codelitephp/php-plugin/php_ui.cpp:1746
@@ -15423,7 +15423,7 @@ msgid "Insert Expansion"
 msgstr ""
 
 #: abbreviation/abbreviation.cpp:225
-msgid "Plugins::Abbreviations::Show abbrevations completion box"
+msgid "Plugins::Abbreviations::Show abbreviations completion box"
 msgstr ""
 
 #: abbreviation/abbreviationssettingsbase.cpp:31
@@ -17815,7 +17815,7 @@ msgstr ""
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:111
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:415
-msgid "Commiting transaction"
+msgid "Committing transaction"
 msgstr ""
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:112

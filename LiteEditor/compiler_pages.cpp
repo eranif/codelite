@@ -373,7 +373,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropMAKE->SetEditor( wxT("TextCtrlAndButton") );
     
     m_pgPropMkdir = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("mkdir"), wxPG_LABEL, wxT("")) );
-    m_pgPropMkdir->SetHelpString(_("Set the 'mkdir' for your OS.\nLeave it empty to use the defualt for your OS"));
+    m_pgPropMkdir->SetHelpString(_("Set the 'mkdir' for your OS.\nLeave it empty to use the default for your OS"));
     m_pgPropMkdir->SetEditor( wxT("TextCtrlAndButton") );
     
     m_pgPropDebugger = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Gdb"), wxPG_LABEL, wxT("")) );

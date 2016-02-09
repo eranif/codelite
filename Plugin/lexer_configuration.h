@@ -203,7 +203,7 @@ public:
 
     /**
      * @brief return the font for a given style id
-     * @return return wxNullFont if error occured or could locate the style
+     * @return return wxNullFont if error occurred or could locate the style
      */
     wxFont GetFontForSyle(int styleId) const;
 };

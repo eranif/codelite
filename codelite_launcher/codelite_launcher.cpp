@@ -56,7 +56,7 @@ bool Process(wxCmdLineParser& parser)
 //				return true;
 //			}
 //			if (killError == wxKILL_ERROR) {
-//				wxPrintf(wxT("An Error occured attempting to close parent.exe, the helper will now attempt to forcefully close %s\n"), exe_name.c_str());
+//				wxPrintf(wxT("An Error occurred attempting to close parent.exe, the helper will now attempt to forcefully close %s\n"), exe_name.c_str());
 //				int killError2 = wxProcess::Kill(process_id, wxSIGKILL);
 //				if (killError2) {
 //					wxPrintf(wxT("The Helper could not close %s\n"), exe_name.c_str());

@@ -268,7 +268,7 @@ msgstr "začátek transakcí:"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:111
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:415
-msgid "Commiting transaction"
+msgid "Committing transaction"
 msgstr "Potvrzení transakce"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:112

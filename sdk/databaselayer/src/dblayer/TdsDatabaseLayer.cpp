@@ -412,7 +412,7 @@ void TdsDatabaseLayer::BeginTransaction()
 
 void TdsDatabaseLayer::Commit()
 {
-  wxLogDebug(_("Commiting transaction"));
+  wxLogDebug(_("Committing transaction"));
   RunQuery(_("commit transaction;"), false);
 }
 

@@ -71,7 +71,7 @@ EditorSettingsFoldingBase::EditorSettingsFoldingBase(wxWindow* parent, wxWindowI
     
     m_checkBoxHighlightFolding = new wxCheckBox(this, wxID_ANY, _("Highlight Active Fold Block"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxHighlightFolding->SetValue(false);
-    m_checkBoxHighlightFolding->SetToolTip(_("Allows to enable/disable the highlight folding block when it is selected. (i.e. block that contains the caret)"));
+    m_checkBoxHighlightFolding->SetToolTip(_("Allows enabling/disabling the highlight folding block when it is selected. (i.e. block that contains the caret)"));
     
     fgSizer1->Add(m_checkBoxHighlightFolding, 0, wxALL, 5);
     

@@ -3616,7 +3616,7 @@
                     }, {
                      "type": "multi-string",
                      "m_label": "Tooltip:",
-                     "m_value": "Set the 'mkdir' for your OS.\\nLeave it empty to use the defualt for your OS"
+                     "m_value": "Set the 'mkdir' for your OS.\\nLeave it empty to use the default for your OS"
                     }, {
                      "type": "colour",
                      "m_label": "Bg Colour:",

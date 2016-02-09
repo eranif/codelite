@@ -223,7 +223,7 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
         }
 
     } catch(DatabaseLayerException& e) {
-        ::wxMessageBox(wxString() << "Error occured while opening SQL panel: " << e.GetErrorMessage(),
+        ::wxMessageBox(wxString() << "Error occurred while opening SQL panel: " << e.GetErrorMessage(),
                        "Database Explorer",
                        wxOK | wxICON_ERROR | wxCENTER);
     }

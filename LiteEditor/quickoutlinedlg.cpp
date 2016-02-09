@@ -94,9 +94,7 @@ QuickOutlineDlg::QuickOutlineDlg(
     m_treeOutline->ExpandAll();
     m_treeOutline->CallAfter(&CppSymbolTree::SetFocus);
 
-#ifndef __WXGTK__
     WindowAttrManager::Load(this);
-#endif
     CentreOnParent();
 }
 

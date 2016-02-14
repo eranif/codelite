@@ -41,11 +41,12 @@
 #include "plugin.h"
 #include "cl_command_event.h"
 #include "ICompilerLocator.h"
+#include <wx/regex.h>
+#include "macromanager.h"
+#include "globals.h"
 
-CompileRequest::CompileRequest(const QueueCommand& buildInfo,
-                               const wxString& fileName,
-                               bool runPremakeOnly,
-                               bool preprocessOnly)
+CompileRequest::CompileRequest(
+    const QueueCommand& buildInfo, const wxString& fileName, bool runPremakeOnly, bool preprocessOnly)
     : ShellCommand(buildInfo)
     , m_fileName(fileName)
     , m_premakeOnly(runPremakeOnly)
@@ -77,13 +78,36 @@ void CompileRequest::Process(IManager* manager)
     }
 
     wxString pname(proj->GetName());
+    BuildConfigPtr buildConfig = proj->GetBuildConfiguration(m_info.GetConfiguration());
+    if(buildConfig) {
+        // Check for environment variables
+        // Environment variable has the format of $(VAR_NAME)
+        static wxRegEx reEnvironmentVar("\\$\\(([a-z0-9_]+)\\)", wxRE_ICASE | wxRE_ADVANCED);
+        wxString includePaths = buildConfig->GetIncludePath();
+        includePaths = MacroManager::Instance()->Expand(includePaths, clGetManager(), pname, m_info.GetConfiguration());
+        if(reEnvironmentVar.IsValid()) {
+            while(true) {
+                if(reEnvironmentVar.Matches(includePaths)) {
+                    size_t start, len;
+                    if(reEnvironmentVar.GetMatch(&start, &len, 1)) {
+                        wxString envVarName = includePaths.Mid(start, len);
+                        includePaths = includePaths.Mid(start + len);
+                        wxUnusedVar(envVarName);
+                        continue;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
     // BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
     BuilderPtr builder = bm->GetSelectedBuilder();
     if(m_fileName.IsEmpty() == false) {
         // we got a complie request of a single file
         cmd = m_preprocessOnly ?
-                  builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg) :
-                  builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
+            builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg) :
+            builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
     } else if(m_info.GetProjectOnly()) {
 
         switch(m_info.GetKind()) {
@@ -139,7 +163,7 @@ void CompileRequest::Process(IManager* manager)
             wxFileName cxx(scxx);
             wxString pathvar;
             pathvar << cxx.GetPath() << clPATH_SEPARATOR;
-            
+
             // If we have an additional path, add it as well
             if(!cmp->GetPathVariable().IsEmpty()) {
                 pathvar << cmp->GetPathVariable() << clPATH_SEPARATOR;
@@ -192,10 +216,10 @@ void CompileRequest::Process(IManager* manager)
         }
         AppendLine(text);
     }
-    
+
     // Avoid Unicode chars coming from the compiler by setting LC_ALL to "C"
     om["LC_ALL"] = "C";
-    
+
     EnvSetter envir(env, &om, proj->GetName(), m_info.GetConfiguration());
     m_proc = CreateAsyncProcess(this, cmd);
     if(!m_proc) {

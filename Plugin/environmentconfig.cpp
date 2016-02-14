@@ -32,6 +32,7 @@
 #include <wx/log.h>
 #include "macromanager.h"
 #include "file_logger.h"
+#include <algorithm>
 
 const wxString __NO_SUCH_ENV__ = wxT("__NO_SUCH_ENV__");
 
@@ -44,13 +45,11 @@ EnvironmentConfig::EnvironmentConfig()
 {
 }
 
-EnvironmentConfig::~EnvironmentConfig()
-{
-}
+EnvironmentConfig::~EnvironmentConfig() {}
 
 EnvironmentConfig* EnvironmentConfig::Instance()
 {
-    if (ms_instance == 0) {
+    if(ms_instance == 0) {
         ms_instance = new EnvironmentConfig();
     }
     return ms_instance;
@@ -58,23 +57,20 @@ EnvironmentConfig* EnvironmentConfig::Instance()
 
 void EnvironmentConfig::Release()
 {
-    if (ms_instance) {
+    if(ms_instance) {
         delete ms_instance;
     }
     ms_instance = 0;
 }
 
-wxString EnvironmentConfig::GetRootName()
-{
-    return wxT("EnvironmentVariables");
-}
+wxString EnvironmentConfig::GetRootName() { return wxT("EnvironmentVariables"); }
 
 bool EnvironmentConfig::Load()
 {
-    bool loaded = ConfigurationToolBase::Load( wxT("config/environment_variables.xml") );
+    bool loaded = ConfigurationToolBase::Load(wxT("config/environment_variables.xml"));
     if(loaded) {
         // make sure that we are using the new format
-        wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("ArchiveObject"));
+        wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("ArchiveObject"));
         if(node) {
             node = XmlUtils::FindFirstByTagName(node, wxT("StringMap"));
             if(node) {
@@ -84,10 +80,10 @@ bool EnvironmentConfig::Load()
                 std::map<wxString, wxString> envSets;
                 wxString content;
 
-                wxXmlNode *child = node->GetChildren();
+                wxXmlNode* child = node->GetChildren();
                 while(child) {
                     if(child->GetName() == wxT("MapEntry")) {
-                        wxString key = child->GetPropVal(wxT("Key"),   wxT(""));
+                        wxString key = child->GetPropVal(wxT("Key"), wxT(""));
                         wxString val = child->GetPropVal(wxT("Value"), wxT(""));
                         content << key << wxT("=") << val << wxT("\n");
                     }
@@ -102,9 +98,9 @@ bool EnvironmentConfig::Load()
     return loaded;
 }
 
-wxString EnvironmentConfig::ExpandVariables(const wxString &in, bool applyEnvironment)
+wxString EnvironmentConfig::ExpandVariables(const wxString& in, bool applyEnvironment)
 {
-    EnvSetter *env = NULL;
+    EnvSetter* env = NULL;
     if(applyEnvironment) {
         env = new EnvSetter();
     }
@@ -114,23 +110,23 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in, bool applyEnviro
     return expandedValue;
 }
 
-void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &project, const wxString &config)
+void EnvironmentConfig::ApplyEnv(wxStringMap_t* overrideMap, const wxString& project, const wxString& config)
 {
     // We lock the CS here and it will be released in UnApplyEnv
-    // this is safe to call without Locker since the UnApplyEnv 
-    // will always be called after ApplyEnv (ApplyEnv and UnApplyEnv are 
+    // this is safe to call without Locker since the UnApplyEnv
+    // will always be called after ApplyEnv (ApplyEnv and UnApplyEnv are
     // protected functions that can only be called from EnvSetter class
     // which always call UnApplyEnv in its destructor)
     m_cs.Enter();
     ++m_envApplied;
-    
-    if ( m_envApplied > 1 ) {
-        //CL_DEBUG("Thread-%d: Applying environment variables... (not needed)", (int)wxThread::GetCurrentId());
+
+    if(m_envApplied > 1) {
+        // CL_DEBUG("Thread-%d: Applying environment variables... (not needed)", (int)wxThread::GetCurrentId());
         return;
     }
 
-    //CL_DEBUG("Thread-%d: Applying environment variables...", (int)wxThread::GetCurrentId());
-    //read the environments variables
+    // CL_DEBUG("Thread-%d: Applying environment variables...", (int)wxThread::GetCurrentId());
+    // read the environments variables
     EvnVarList vars;
     ReadObject(wxT("Variables"), &vars);
 
@@ -147,14 +143,14 @@ void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &pro
     }
 
     m_envSnapshot.clear();
-    for (size_t i=0; i<variables.GetCount(); i++) {
+    for(size_t i = 0; i < variables.GetCount(); i++) {
 
         wxString key, val;
         variables.Get(i, key, val);
 
-        //keep old value before changing it
+        // keep old value before changing it
         wxString oldVal(wxEmptyString);
-        if( wxGetEnv(key, &oldVal) == false ) {
+        if(wxGetEnv(key, &oldVal) == false) {
             oldVal = __NO_SUCH_ENV__;
         }
 
@@ -164,14 +160,14 @@ void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &pro
         // PATH=$(PATH);\New\Path
         // PATH=$(PATH);\Another\New\Path
         // If we replace the value, PATH will contain the original PATH + \New\Path
-        if ( m_envSnapshot.count( key ) == 0 ) {
-            m_envSnapshot.insert( std::make_pair( key, oldVal ) );
+        if(m_envSnapshot.count(key) == 0) {
+            m_envSnapshot.insert(std::make_pair(key, oldVal));
         }
 
         // Incase this line contains other environment variables, expand them before setting this environment variable
         wxString newVal = DoExpandVariables(val);
 
-        //set the new value
+        // set the new value
         wxSetEnv(key, newVal);
     }
 }
@@ -179,14 +175,14 @@ void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &pro
 void EnvironmentConfig::UnApplyEnv()
 {
     --m_envApplied;
-    if ( m_envApplied == 0 ) {
-        //CL_DEBUG("Thread-%d: Un-Applying environment variables", (int)wxThread::GetCurrentId());
-        //loop over the old values and restore them
+    if(m_envApplied == 0) {
+        // CL_DEBUG("Thread-%d: Un-Applying environment variables", (int)wxThread::GetCurrentId());
+        // loop over the old values and restore them
         wxStringMap_t::iterator iter = m_envSnapshot.begin();
-        for ( ; iter != m_envSnapshot.end(); iter++ ) {
+        for(; iter != m_envSnapshot.end(); iter++) {
             wxString key = iter->first;
             wxString value = iter->second;
-            if ( value == __NO_SUCH_ENV__ ) {
+            if(value == __NO_SUCH_ENV__) {
                 // Remove the environment completely
                 ::wxUnsetEnv(key);
             } else {
@@ -206,10 +202,7 @@ EvnVarList EnvironmentConfig::GetSettings()
     return vars;
 }
 
-void EnvironmentConfig::SetSettings(EvnVarList &vars)
-{
-    WriteObject(wxT("Variables"), &vars);
-}
+void EnvironmentConfig::SetSettings(EvnVarList& vars) { WriteObject(wxT("Variables"), &vars); }
 
 wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
 {
@@ -217,40 +210,50 @@ wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
     wxString varName, text;
 
     DollarEscaper de(result);
-    while ( MacroManager::Instance()->FindVariable(result, varName, text) ) {
+    wxStringMap_t unresolvedVars;
+    int counter(0);
+    while(MacroManager::Instance()->FindVariable(result, varName, text)) {
 
         wxString replacement;
         if(varName == wxT("MAKE")) {
-            //ignore this variable, since it is probably was passed here
-            //by the makefile generator
+            // ignore this variable, since it is probably was passed here
+            // by the makefile generator
             replacement = wxT("___MAKE___");
 
         } else {
 
-            //search for an environment with this name
-            wxGetEnv(varName, &replacement);
+            // search for an environment with this name
+            if(!wxGetEnv(varName, &replacement)) {
+                replacement << "__unresolved__var__" << ++counter;
+                unresolvedVars.insert(std::make_pair(replacement, text));
+            }
         }
         result.Replace(text, replacement);
     }
 
-    //restore the ___MAKE___ back to $(MAKE)
+    // restore the ___MAKE___ back to $(MAKE)
     result.Replace(wxT("___MAKE___"), wxT("$(MAKE)"));
+
+    // and restore all those unresolved variables
+    std::for_each(unresolvedVars.begin(), unresolvedVars.end(), [&](const std::pair<wxString, wxString>& p) {
+       result.Replace(p.first, p.second);
+    });
     return result;
 }
 
 wxArrayString EnvironmentConfig::GetActiveSetEnvNames(bool includeWorkspace, const wxString& project)
 {
-    //read the environments variables
+    // read the environments variables
     EvnVarList vars;
     ReadObject(wxT("Variables"), &vars);
-    
+
     wxArrayString envnames;
     // get the active environment variables set
     EnvMap variables = vars.GetVariables(wxEmptyString, includeWorkspace, project, wxEmptyString);
-    for(size_t i=0; i<variables.GetCount(); ++i) {
+    for(size_t i = 0; i < variables.GetCount(); ++i) {
         wxString key, val;
         variables.Get(i, key, val);
-        envnames.Add( key );
+        envnames.Add(key);
     }
     return envnames;
 }

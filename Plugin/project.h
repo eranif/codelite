@@ -278,7 +278,13 @@ public:
     // default constructor
     Project();
     virtual ~Project();
-
+    
+    /**
+     * @brief return list of macros used in the configuration which could not be resolved
+     * by CodeLite
+     */
+    void GetUnresolvedMacros(const wxString& configName, wxArrayString& vars) const;
+    
     /**
      * \return project name
      */
@@ -654,7 +660,7 @@ public:
      * @param configName configuration name. If non provided, returns the build configuration
      * that matches the current workspace configuration
      */
-    BuildConfigPtr GetBuildConfiguration(const wxString& configName = "");
+    BuildConfigPtr GetBuildConfiguration(const wxString& configName = "") const;
     
     /**
      * @brief clear the backtick expansion info

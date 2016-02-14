@@ -44,9 +44,12 @@
 #include <wx/regex.h>
 #include "macromanager.h"
 #include "globals.h"
+#include <wx/msgdlg.h>
 
-CompileRequest::CompileRequest(
-    const QueueCommand& buildInfo, const wxString& fileName, bool runPremakeOnly, bool preprocessOnly)
+CompileRequest::CompileRequest(const QueueCommand& buildInfo,
+                               const wxString& fileName,
+                               bool runPremakeOnly,
+                               bool preprocessOnly)
     : ShellCommand(buildInfo)
     , m_fileName(fileName)
     , m_premakeOnly(runPremakeOnly)
@@ -78,26 +81,25 @@ void CompileRequest::Process(IManager* manager)
     }
 
     wxString pname(proj->GetName());
-    BuildConfigPtr buildConfig = proj->GetBuildConfiguration(m_info.GetConfiguration());
-    if(buildConfig) {
-        // Check for environment variables
-        // Environment variable has the format of $(VAR_NAME)
-        static wxRegEx reEnvironmentVar("\\$\\(([a-z0-9_]+)\\)", wxRE_ICASE | wxRE_ADVANCED);
-        wxString includePaths = buildConfig->GetIncludePath();
-        includePaths = MacroManager::Instance()->Expand(includePaths, clGetManager(), pname, m_info.GetConfiguration());
-        if(reEnvironmentVar.IsValid()) {
-            while(true) {
-                if(reEnvironmentVar.Matches(includePaths)) {
-                    size_t start, len;
-                    if(reEnvironmentVar.GetMatch(&start, &len, 1)) {
-                        wxString envVarName = includePaths.Mid(start, len);
-                        includePaths = includePaths.Mid(start + len);
-                        wxUnusedVar(envVarName);
-                        continue;
-                    }
-                }
-                break;
-            }
+    wxArrayString unresolvedVars;
+    proj->GetUnresolvedMacros(m_info.GetConfiguration(), unresolvedVars);
+    if(!unresolvedVars.IsEmpty()) {
+        // We can't continue
+        wxString msg;
+        msg << _("The following environment variables are used in the project, but are not defined:\n");
+        for(size_t i = 0; i < unresolvedVars.size(); ++i) {
+            msg << unresolvedVars.Item(i) << "\n";
+        }
+        msg << _("Build anyway?");
+        wxStandardID res = ::PromptForYesNoDialogWithCheckbox(msg,
+                                                              "UnresolvedMacros",
+                                                              _("Yes"),
+                                                              _("No"),
+                                                              _("Remember my answer and don't ask me again"),
+                                                              wxYES_NO | wxICON_WARNING | wxYES_DEFAULT);
+        if(res != wxID_YES) {
+            ::wxMessageBox(_("Build Cancelled!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            return;
         }
     }
 
@@ -106,8 +108,8 @@ void CompileRequest::Process(IManager* manager)
     if(m_fileName.IsEmpty() == false) {
         // we got a complie request of a single file
         cmd = m_preprocessOnly ?
-            builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg) :
-            builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
+                  builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg) :
+                  builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
     } else if(m_info.GetProjectOnly()) {
 
         switch(m_info.GetKind()) {

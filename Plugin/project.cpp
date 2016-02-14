@@ -45,6 +45,8 @@
 #include "compiler_command_line_parser.h"
 #include <algorithm>
 #include "wxArrayStringAppender.h"
+#include <wx/regex.h>
+#include "macromanager.h"
 
 const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");
@@ -76,11 +78,11 @@ Project::~Project()
 bool Project::Create(const wxString& name, const wxString& description, const wxString& path, const wxString& projType)
 {
     m_vdCache.clear();
-    
+
     m_fileName = wxFileName(path, name);
     m_fileName.SetExt("project");
     m_fileName.MakeAbsolute();
-    
+
     // Ensure that the target folder exists
     m_fileName.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_projectPath = m_fileName.GetPath();
@@ -94,7 +96,7 @@ bool Project::Create(const wxString& name, const wxString& description, const wx
     m_doc.GetRoot()->AddChild(descNode);
 
     // Create the default virtual directories
-    wxXmlNode* srcNode = NULL, * headNode = NULL;
+    wxXmlNode* srcNode = NULL, *headNode = NULL;
 
     srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
     srcNode->AddProperty(wxT("Name"), wxT("src"));
@@ -436,8 +438,7 @@ wxString Project::GetFiles(bool absPath)
     GetFiles(files, absPath);
 
     wxString temp;
-    for(size_t i = 0; i < files.size(); i++)
-        temp << wxT("\"") << files.at(i).GetFullPath() << wxT("\" ");
+    for(size_t i = 0; i < files.size(); i++) temp << wxT("\"") << files.at(i).GetFullPath() << wxT("\" ");
 
     if(temp.IsEmpty() == false) temp.RemoveLast();
 
@@ -1699,7 +1700,7 @@ void Project::CreateCompileCommandsJSON(JSONElement& compile_commands)
     }
 }
 
-BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName)
+BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName) const
 {
     BuildMatrixPtr matrix = GetWorkspace()->GetBuildMatrix();
     if(!matrix) {
@@ -1892,14 +1893,38 @@ void Project::ProjectRenamed(const wxString& oldname, const wxString& newname)
         }
         node = node->GetNext();
     }
-    
+
     if(GetName() == oldname) {
         // Update the name
         XmlUtils::UpdateProperty(m_doc.GetRoot(), "Name", newname);
     }
 }
 
-void Project::ClearBacktickCache()
+void Project::ClearBacktickCache() { s_backticks.clear(); }
+
+void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& vars) const
 {
-    s_backticks.clear();
+    vars.clear();
+    BuildConfigPtr buildConfig = GetBuildConfiguration(configName);
+    if(buildConfig) {
+        // Check for environment variables
+        // Environment variable has the format of $(VAR_NAME)
+        static wxRegEx reEnvironmentVar("\\$\\(([a-z0-9_]+)\\)", wxRE_ICASE | wxRE_ADVANCED);
+        wxString includePaths = buildConfig->GetIncludePath();
+        includePaths = MacroManager::Instance()->Expand(includePaths, clGetManager(), GetName(), configName);
+        if(reEnvironmentVar.IsValid()) {
+            while(true) {
+                if(reEnvironmentVar.Matches(includePaths)) {
+                    size_t start, len;
+                    if(reEnvironmentVar.GetMatch(&start, &len, 1)) {
+                        wxString envVarName = includePaths.Mid(start, len);
+                        includePaths = includePaths.Mid(start + len);
+                        vars.Add(envVarName);
+                        continue;
+                    }
+                }
+                break;
+            }
+        }
+    }
 }

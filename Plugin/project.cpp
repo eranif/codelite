@@ -1910,15 +1910,33 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
         // Check for environment variables
         // Environment variable has the format of $(VAR_NAME)
         static wxRegEx reEnvironmentVar("\\$\\(([a-z0-9_]+)\\)", wxRE_ICASE | wxRE_ADVANCED);
+
         wxString includePaths = buildConfig->GetIncludePath();
-        includePaths = MacroManager::Instance()->Expand(includePaths, clGetManager(), GetName(), configName);
+        wxString libPaths = buildConfig->GetLibPath();
         if(reEnvironmentVar.IsValid()) {
+            // Check the include paths
+            includePaths = MacroManager::Instance()->Expand(includePaths, clGetManager(), GetName(), configName);
             while(true) {
                 if(reEnvironmentVar.Matches(includePaths)) {
                     size_t start, len;
                     if(reEnvironmentVar.GetMatch(&start, &len, 1)) {
                         wxString envVarName = includePaths.Mid(start, len);
                         includePaths = includePaths.Mid(start + len);
+                        vars.Add(envVarName);
+                        continue;
+                    }
+                }
+                break;
+            }
+            
+            // Check the include lib paths
+            libPaths = MacroManager::Instance()->Expand(libPaths, clGetManager(), GetName(), configName);
+            while(true) {
+                if(reEnvironmentVar.Matches(libPaths)) {
+                    size_t start, len;
+                    if(reEnvironmentVar.GetMatch(&start, &len, 1)) {
+                        wxString envVarName = libPaths.Mid(start, len);
+                        libPaths = includePaths.Mid(start + len);
                         vars.Add(envVarName);
                         continue;
                     }

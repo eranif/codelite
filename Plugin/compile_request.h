@@ -28,32 +28,32 @@
 #include "shell_command.h"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK CompileRequest : public ShellCommand {
-	wxString m_fileName;
-	bool     m_premakeOnly;
-    bool     m_preprocessOnly;
+class WXDLLIMPEXP_SDK CompileRequest : public ShellCommand
+{
+    wxString m_fileName;
+    bool m_premakeOnly;
+    bool m_preprocessOnly;
 
 public:
-	/**
-	 * Construct a compilation request. The compiler thread will build the selected project and all
-	 * its dependencies as appeard in the build order dialog
-	 * \param projectName the selected project to build
-	 * \param configurationName the workspace selected configuration
-	 */
-	CompileRequest( const QueueCommand &buildInfo,
-					const wxString &fileName = wxEmptyString,
-					bool runPremakeOnly = false,
-                    bool preprocessOnly = false
-					);
+    /**
+     * Construct a compilation request. The compiler thread will build the selected project and all
+     * its dependencies as appeard in the build order dialog
+     * \param projectName the selected project to build
+     * \param configurationName the workspace selected configuration
+     */
+    CompileRequest(const QueueCommand& buildInfo,
+        const wxString& fileName = wxEmptyString,
+        bool runPremakeOnly = false,
+        bool preprocessOnly = false);
 
-	///dtor
-	virtual ~CompileRequest();
+    /// dtor
+    virtual ~CompileRequest();
 
-	//process the request
-	virtual void Process(IManager *manager = NULL);
+    // process the request
+    virtual void Process(IManager* manager = NULL);
 
-	//setters/getters
-	const wxString &GetProjectName() const { return m_info.GetProject(); }
+    // setters/getters
+    const wxString& GetProjectName() const { return m_info.GetProject(); }
 };
 
 #endif // COMPILE_REQUEST_H

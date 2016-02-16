@@ -37,23 +37,21 @@ class WXDLLIMPEXP_SDK CustomBuildRequest : public ShellCommand
 protected:
     /**
      * @brief if the build includes post or pre builds we need to wrap
-     * the command with a script that prepend / append the user commands 
-     * @return true if the command was modified but this function, false (i.e. there are no 
+     * the command with a script that prepend / append the user commands
+     * @return true if the command was modified but this function, false (i.e. there are no
      * post/pre build events) otherwise
      */
-    bool DoUpdateCommand(IManager *manager, wxString &cmd, ProjectPtr proj, BuildConfigPtr bldConf, bool isClean);
+    bool DoUpdateCommand(IManager* manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf, bool isClean);
 
 public:
-    CustomBuildRequest(const QueueCommand &buildInfo, const wxString &fileName);
+    CustomBuildRequest(const QueueCommand& buildInfo, const wxString& fileName);
     virtual ~CustomBuildRequest();
 
 public:
-    //process the request
-    virtual void Process(IManager *manager = NULL);
+    // process the request
+    virtual void Process(IManager* manager = NULL);
 
-    //setters/getters
-    const wxString &GetProjectName() const {
-        return m_info.GetProject();
-    }
+    // setters/getters
+    const wxString& GetProjectName() const { return m_info.GetProject(); }
 };
 #endif // __custombuildrequest__

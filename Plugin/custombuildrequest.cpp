@@ -91,8 +91,7 @@ void CustomBuildRequest::Process(IManager* manager)
     BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
     if(!bldConf) {
         wxLogMessage(wxString::Format(wxT("Failed to find build configuration for project '%s' and configuration '%s'"),
-                                      m_info.GetProject().c_str(),
-                                      m_info.GetConfiguration().c_str()));
+            m_info.GetProject().c_str(), m_info.GetConfiguration().c_str()));
         return;
     }
 
@@ -146,13 +145,12 @@ void CustomBuildRequest::Process(IManager* manager)
     wxString wd = bldConf->GetCustomBuildWorkingDir();
     wd.Trim().Trim(false);
 
-    wxString filename;
-    if(manager->GetActiveEditor()) {
+    wxString filename = m_fileName;
+    if(filename.IsEmpty() && manager->GetActiveEditor()) {
         filename = manager->GetActiveEditor()->GetFileName().GetFullPath();
     }
 
     if(wd.IsEmpty()) {
-
         // use the project path
         wd = proj->GetFileName().GetPath();
 
@@ -215,7 +213,7 @@ void CustomBuildRequest::Process(IManager* manager)
     text << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]----------\n");
 
     AppendLine(text);
-    
+
     // Avoid Unicode chars coming from the compiler by setting LC_ALL to "C"
     om["LC_ALL"] = "C";
     EnvSetter environment(env, &om, proj->GetName(), m_info.GetConfiguration());
@@ -229,11 +227,8 @@ void CustomBuildRequest::Process(IManager* manager)
     }
 }
 
-bool CustomBuildRequest::DoUpdateCommand(IManager* manager,
-                                         wxString& cmd,
-                                         ProjectPtr proj,
-                                         BuildConfigPtr bldConf,
-                                         bool isClean)
+bool CustomBuildRequest::DoUpdateCommand(
+    IManager* manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf, bool isClean)
 {
     BuildCommandList preBuildCmds, postBuildCmds;
     wxArrayString pre, post;

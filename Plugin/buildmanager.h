@@ -32,15 +32,10 @@
 #include "codelite_exports.h"
 #include "builder.h"
 
-// class BuildManager;
-
 /**
  * \ingroup SDK
  * The build manager class which contains all the builders currently
  * available to the editor
- *
- * Each and every call to this class is protected by a critical section to make this
- * class safe when used inside the compiler thread
  *
  * \version 1.0
  * first version
@@ -50,7 +45,7 @@
  * \author Eran
  *
  */
-class WXDLLIMPEXP_SDK BuildManager
+class WXDLLIMPEXP_SDK BuildManager : public wxEvtHandler
 {
 
     friend class BuildManagerST;

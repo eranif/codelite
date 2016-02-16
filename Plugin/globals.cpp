@@ -553,6 +553,7 @@ wxString DoExpandAllVariables(const wxString& expression,
         wxString ffullpath(fn.GetFullPath());
         ffullpath.Replace(wxT("\\"), wxT("/"));
         output.Replace(wxT("$(CurrentFileFullPath)"), ffullpath);
+        output.Replace(wxT("$(CurrentFileFullName)"), fn.GetFullName());
     }
 
     // exapnd common macros

@@ -374,6 +374,7 @@ void ContextPhp::OnSciUpdateUI(wxStyledTextEvent& event)
     // Clear the current selection
     ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
     ctrl.IndicatorClearRange(0, ctrl.GetLength());
+    ctrl.Refresh();
 }
 
 void ContextPhp::RemoveMenuDynamicContent(wxMenu* menu) {}

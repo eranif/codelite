@@ -114,6 +114,7 @@ NewKeyShortcutDlg::NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid)
     m_checkBoxCtrl->SetLabel("Ctrl");
 #endif
     CentreOnParent();
+    GetSizer()->Fit(this);
 }
 
 void NewKeyShortcutDlg::OnKeyDown(wxKeyEvent& event)

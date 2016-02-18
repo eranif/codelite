@@ -71,6 +71,7 @@ public:
     virtual void SetActive();
     virtual bool IsAtBlockComment() const;
     virtual bool IsAtLineComment() const;
+    void ProcessIdleActions();
     
 };
 

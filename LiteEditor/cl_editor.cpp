@@ -4985,7 +4985,6 @@ void LEditor::DoWrapPrevSelectionWithChars(wxChar first, wxChar last)
 void LEditor::OnTimer(wxTimerEvent& event)
 {
     event.Skip();
-
     m_timerHighlightMarkers->Start(100, true);
     if(!HasFocus()) return;
 
@@ -5028,6 +5027,7 @@ void LEditor::OnTimer(wxTimerEvent& event)
             CL_DEBUG1("highlight_word is OFF");
         }
     }
+    GetContext()->ProcessIdleActions();
 }
 
 void LEditor::SplitSelection()

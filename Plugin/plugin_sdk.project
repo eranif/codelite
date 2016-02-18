@@ -143,6 +143,8 @@
       <File Name="clSTCLineKeeper.h"/>
       <File Name="clEditorWordCharsLocker.h"/>
       <File Name="clEditorWordCharsLocker.cpp"/>
+      <File Name="clEditorColouriseLocker.h"/>
+      <File Name="clEditorColouriseLocker.cpp"/>
     </VirtualDirectory>
     <File Name="CMakeLists.txt"/>
     <File Name="clWorkspaceManager.h"/>

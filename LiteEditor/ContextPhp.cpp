@@ -28,6 +28,7 @@
 #include "editor_config.h"
 #include "cl_editor_tip_window.h"
 #include "clEditorWordCharsLocker.h"
+#include "clEditorColouriseLocker.h"
 
 ContextPhp::ContextPhp(LEditor* editor)
     : ContextBase(editor)
@@ -234,12 +235,12 @@ bool ContextPhp::IsCommentOrString(long pos)
 {
     int style = GetCtrl().GetStyleAt(pos);
     return IsComment(pos) || style == wxSTC_H_DOUBLESTRING || style == wxSTC_H_SINGLESTRING ||
-           style == wxSTC_H_SGML_DOUBLESTRING || style == wxSTC_H_SGML_SIMPLESTRING || style == wxSTC_HJ_DOUBLESTRING ||
-           style == wxSTC_HJ_SINGLESTRING || style == wxSTC_HJ_STRINGEOL || style == wxSTC_HJA_DOUBLESTRING ||
-           style == wxSTC_HJA_SINGLESTRING || style == wxSTC_HJA_STRINGEOL || style == wxSTC_HB_STRING ||
-           style == wxSTC_HBA_STRING || style == wxSTC_HBA_STRINGEOL || style == wxSTC_HP_STRING ||
-           style == wxSTC_HPA_STRING || style == wxSTC_HPA_CHARACTER || style == wxSTC_HPHP_HSTRING ||
-           style == wxSTC_HPHP_SIMPLESTRING;
+        style == wxSTC_H_SGML_DOUBLESTRING || style == wxSTC_H_SGML_SIMPLESTRING || style == wxSTC_HJ_DOUBLESTRING ||
+        style == wxSTC_HJ_SINGLESTRING || style == wxSTC_HJ_STRINGEOL || style == wxSTC_HJA_DOUBLESTRING ||
+        style == wxSTC_HJA_SINGLESTRING || style == wxSTC_HJA_STRINGEOL || style == wxSTC_HB_STRING ||
+        style == wxSTC_HBA_STRING || style == wxSTC_HBA_STRINGEOL || style == wxSTC_HP_STRING ||
+        style == wxSTC_HPA_STRING || style == wxSTC_HPA_CHARACTER || style == wxSTC_HPHP_HSTRING ||
+        style == wxSTC_HPHP_SIMPLESTRING;
 }
 
 bool ContextPhp::IsDefaultContext() const { return false; }
@@ -270,9 +271,111 @@ void ContextPhp::OnSciUpdateUI(wxStyledTextEvent& event)
     if(ctrl.GetFunctionTip()->IsActive()) {
         ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
     }
+}
 
+void ContextPhp::RemoveMenuDynamicContent(wxMenu* menu) {}
+
+void ContextPhp::RetagFile() {}
+
+void ContextPhp::SemicolonShift()
+{
+    int foundPos(wxNOT_FOUND);
+    int semiColonPos(wxNOT_FOUND);
+    LEditor& ctrl = GetCtrl();
+    if(ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
+
+        // test to see if we are inside a 'for' statement
+        long openBracePos(wxNOT_FOUND);
+        int posWordBeforeOpenBrace(wxNOT_FOUND);
+
+        if(ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
+            ctrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
+            if(posWordBeforeOpenBrace != wxNOT_FOUND) {
+                wxString word = ctrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
+
+                // At the current pos, we got a ';'
+                // at semiColonPos we got ;
+                // switch
+                ctrl.DeleteBack();
+                ctrl.SetCurrentPos(semiColonPos);
+                ctrl.InsertText(semiColonPos, wxT(";"));
+                ctrl.SetCaretAt(semiColonPos + 1);
+                ctrl.GetFunctionTip()->Deactivate();
+            }
+        }
+    }
+}
+
+void ContextPhp::SetActive() {}
+
+bool ContextPhp::IsComment(long pos)
+{
+    int style = GetCtrl().GetStyleAt(pos);
+    return style == wxSTC_H_COMMENT || style == wxSTC_H_XCCOMMENT || style == wxSTC_H_SGML_COMMENT ||
+        style == wxSTC_HJ_COMMENT || style == wxSTC_HJ_COMMENTLINE || style == wxSTC_HJ_COMMENTDOC ||
+        style == wxSTC_HJA_COMMENT || style == wxSTC_HJA_COMMENTLINE || style == wxSTC_HJA_COMMENTDOC ||
+        style == wxSTC_HB_COMMENTLINE || style == wxSTC_HBA_COMMENTLINE || style == wxSTC_HP_COMMENTLINE ||
+        style == wxSTC_HPA_COMMENTLINE || style == wxSTC_HPHP_COMMENT || style == wxSTC_HPHP_COMMENTLINE;
+}
+
+#define IS_BETWEEN(style, x, y) (style >= x && style <= y)
+
+int ContextPhp::GetActiveKeywordSet() const
+{
+    // HTML 0,
+    // JS 1,
+    // Python 3
+    // PHP 4
+    int style = GetCtrl().GetStyleAt(GetCtrl().GetCurrentPos());
+    if(IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_SGML_BLOCK_DEFAULT))
+        return 0;
+    else if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX))
+        return 1;
+    else if(IS_BETWEEN(style, wxSTC_HPHP_DEFAULT, wxSTC_HPHP_OPERATOR) || style == wxSTC_HPHP_COMPLEX_VARIABLE)
+        return 4;
+    else if(IS_BETWEEN(style, wxSTC_HP_START, wxSTC_HP_IDENTIFIER) ||
+        IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER))
+        return 3;
+    return wxNOT_FOUND;
+}
+
+bool ContextPhp::IsAtBlockComment() const
+{
+    int curpos = GetCtrl().GetCurrentPos();
+    int cur_style = GetCtrl().GetStyleAt(curpos);
+    return cur_style == wxSTC_HPHP_COMMENT;
+}
+
+bool ContextPhp::IsAtLineComment() const
+{
+    int curpos = GetCtrl().GetCurrentPos();
+    int cur_style = GetCtrl().GetStyleAt(curpos);
+    return cur_style == wxSTC_HPHP_COMMENTLINE;
+}
+
+bool ContextPhp::IsStringTriggerCodeComplete(const wxString& str) const
+{
+    int curpos = GetCtrl().GetCurrentPos();
+    // curpos = GetCtrl().PositionBefore(curpos);
+    int style = GetCtrl().GetStyleAt(curpos);
+    if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX)) {
+        // When in JS section, trigger CC if str is a dot
+        return str == ".";
+
+    } else if(IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_ENTITY)) {
+        return str == "</" || str == "<";
+
+    } else {
+        return (m_completionTriggerStrings.count(str) > 0);
+    }
+}
+
+void ContextPhp::ProcessIdleActions()
+{
     // Update the word chars
+    LEditor& ctrl = GetCtrl();
     clEditorWordCharsLocker locker(ctrl.GetCtrl(), ctrl.GetWordChars() + "</");
+    clEditorColouriseLocker colouriseLocker(ctrl.GetCtrl());
 
     // Highlight matching tags
     int startPos = ctrl.WordStartPos(ctrl.GetCurrentPosition(), true);
@@ -374,102 +477,4 @@ void ContextPhp::OnSciUpdateUI(wxStyledTextEvent& event)
     // Clear the current selection
     ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
     ctrl.IndicatorClearRange(0, ctrl.GetLength());
-    ctrl.Refresh();
-}
-
-void ContextPhp::RemoveMenuDynamicContent(wxMenu* menu) {}
-
-void ContextPhp::RetagFile() {}
-
-void ContextPhp::SemicolonShift()
-{
-    int foundPos(wxNOT_FOUND);
-    int semiColonPos(wxNOT_FOUND);
-    LEditor& ctrl = GetCtrl();
-    if(ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
-
-        // test to see if we are inside a 'for' statement
-        long openBracePos(wxNOT_FOUND);
-        int posWordBeforeOpenBrace(wxNOT_FOUND);
-
-        if(ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
-            ctrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
-            if(posWordBeforeOpenBrace != wxNOT_FOUND) {
-                wxString word = ctrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
-
-                // At the current pos, we got a ';'
-                // at semiColonPos we got ;
-                // switch
-                ctrl.DeleteBack();
-                ctrl.SetCurrentPos(semiColonPos);
-                ctrl.InsertText(semiColonPos, wxT(";"));
-                ctrl.SetCaretAt(semiColonPos + 1);
-                ctrl.GetFunctionTip()->Deactivate();
-            }
-        }
-    }
-}
-
-void ContextPhp::SetActive() {}
-
-bool ContextPhp::IsComment(long pos)
-{
-    int style = GetCtrl().GetStyleAt(pos);
-    return style == wxSTC_H_COMMENT || style == wxSTC_H_XCCOMMENT || style == wxSTC_H_SGML_COMMENT ||
-           style == wxSTC_HJ_COMMENT || style == wxSTC_HJ_COMMENTLINE || style == wxSTC_HJ_COMMENTDOC ||
-           style == wxSTC_HJA_COMMENT || style == wxSTC_HJA_COMMENTLINE || style == wxSTC_HJA_COMMENTDOC ||
-           style == wxSTC_HB_COMMENTLINE || style == wxSTC_HBA_COMMENTLINE || style == wxSTC_HP_COMMENTLINE ||
-           style == wxSTC_HPA_COMMENTLINE || style == wxSTC_HPHP_COMMENT || style == wxSTC_HPHP_COMMENTLINE;
-}
-
-#define IS_BETWEEN(style, x, y) (style >= x && style <= y)
-
-int ContextPhp::GetActiveKeywordSet() const
-{
-    // HTML 0,
-    // JS 1,
-    // Python 3
-    // PHP 4
-    int style = GetCtrl().GetStyleAt(GetCtrl().GetCurrentPos());
-    if(IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_SGML_BLOCK_DEFAULT))
-        return 0;
-    else if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX))
-        return 1;
-    else if(IS_BETWEEN(style, wxSTC_HPHP_DEFAULT, wxSTC_HPHP_OPERATOR) || style == wxSTC_HPHP_COMPLEX_VARIABLE)
-        return 4;
-    else if(IS_BETWEEN(style, wxSTC_HP_START, wxSTC_HP_IDENTIFIER) ||
-            IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER))
-        return 3;
-    return wxNOT_FOUND;
-}
-
-bool ContextPhp::IsAtBlockComment() const
-{
-    int curpos = GetCtrl().GetCurrentPos();
-    int cur_style = GetCtrl().GetStyleAt(curpos);
-    return cur_style == wxSTC_HPHP_COMMENT;
-}
-
-bool ContextPhp::IsAtLineComment() const
-{
-    int curpos = GetCtrl().GetCurrentPos();
-    int cur_style = GetCtrl().GetStyleAt(curpos);
-    return cur_style == wxSTC_HPHP_COMMENTLINE;
-}
-
-bool ContextPhp::IsStringTriggerCodeComplete(const wxString& str) const
-{
-    int curpos = GetCtrl().GetCurrentPos();
-    // curpos = GetCtrl().PositionBefore(curpos);
-    int style = GetCtrl().GetStyleAt(curpos);
-    if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX)) {
-        // When in JS section, trigger CC if str is a dot
-        return str == ".";
-
-    } else if(IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_ENTITY)) {
-        return str == "</" || str == "<";
-
-    } else {
-        return (m_completionTriggerStrings.count(str) > 0);
-    }
 }

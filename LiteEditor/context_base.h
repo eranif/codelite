@@ -199,6 +199,11 @@ public:
     virtual void ColourContextTokens( const wxArrayString& workspaceTokens ) {
         wxUnusedVar(workspaceTokens);
     }
+    
+    /**
+     * @brief process any idle actions by the context
+     */
+    virtual void ProcessIdleActions() {}
 };
 
 typedef SmartPtr<ContextBase> ContextBasePtr;

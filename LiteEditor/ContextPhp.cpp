@@ -27,6 +27,7 @@
 #include "cl_editor.h"
 #include "editor_config.h"
 #include "cl_editor_tip_window.h"
+#include "clEditorWordCharsLocker.h"
 
 ContextPhp::ContextPhp(LEditor* editor)
     : ContextBase(editor)
@@ -73,7 +74,7 @@ void ContextPhp::AutoIndent(const wxChar& nChar)
 {
     LEditor& rCtrl = GetCtrl();
     int curpos = rCtrl.GetCurrentPos();
-    
+
     if(rCtrl.GetDisableSmartIndent()) {
         return;
     }
@@ -96,7 +97,6 @@ void ContextPhp::AutoIndent(const wxChar& nChar)
         return;
     }
 
-    
     if(IsCommentOrString(curpos) && nChar == wxT('\n')) {
         AutoAddComment();
         return;
@@ -234,12 +234,12 @@ bool ContextPhp::IsCommentOrString(long pos)
 {
     int style = GetCtrl().GetStyleAt(pos);
     return IsComment(pos) || style == wxSTC_H_DOUBLESTRING || style == wxSTC_H_SINGLESTRING ||
-           style == wxSTC_H_SGML_DOUBLESTRING || style == wxSTC_H_SGML_SIMPLESTRING || style == wxSTC_HJ_DOUBLESTRING ||
-           style == wxSTC_HJ_SINGLESTRING || style == wxSTC_HJ_STRINGEOL || style == wxSTC_HJA_DOUBLESTRING ||
-           style == wxSTC_HJA_SINGLESTRING || style == wxSTC_HJA_STRINGEOL || style == wxSTC_HB_STRING ||
-           style == wxSTC_HBA_STRING || style == wxSTC_HBA_STRINGEOL || style == wxSTC_HP_STRING ||
-           style == wxSTC_HPA_STRING || style == wxSTC_HPA_CHARACTER || style == wxSTC_HPHP_HSTRING ||
-           style == wxSTC_HPHP_SIMPLESTRING;
+        style == wxSTC_H_SGML_DOUBLESTRING || style == wxSTC_H_SGML_SIMPLESTRING || style == wxSTC_HJ_DOUBLESTRING ||
+        style == wxSTC_HJ_SINGLESTRING || style == wxSTC_HJ_STRINGEOL || style == wxSTC_HJA_DOUBLESTRING ||
+        style == wxSTC_HJA_SINGLESTRING || style == wxSTC_HJA_STRINGEOL || style == wxSTC_HB_STRING ||
+        style == wxSTC_HBA_STRING || style == wxSTC_HBA_STRINGEOL || style == wxSTC_HP_STRING ||
+        style == wxSTC_HPA_STRING || style == wxSTC_HPA_CHARACTER || style == wxSTC_HPHP_HSTRING ||
+        style == wxSTC_HPHP_SIMPLESTRING;
 }
 
 bool ContextPhp::IsDefaultContext() const { return false; }
@@ -270,6 +270,17 @@ void ContextPhp::OnSciUpdateUI(wxStyledTextEvent& event)
     if(ctrl.GetFunctionTip()->IsActive()) {
         ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
     }
+
+    // Update the word chars
+    clEditorWordCharsLocker locker(ctrl.GetCtrl(), ctrl.GetWordChars() + "</>");
+
+    // Highlight matching tags
+    int startPos = ctrl.WordStartPos(ctrl.GetCurrentPosition(), true);
+    int endPos = ctrl.WordEndPos(ctrl.GetCurrentPosition(), true);
+    if((startPos == wxNOT_FOUND) || (endPos == wxNOT_FOUND)) return;
+
+    wxString word = ctrl.GetTextRange(startPos, endPos);
+    if(word.IsEmpty()) return;
 }
 
 void ContextPhp::RemoveMenuDynamicContent(wxMenu* menu) {}
@@ -311,10 +322,10 @@ bool ContextPhp::IsComment(long pos)
 {
     int style = GetCtrl().GetStyleAt(pos);
     return style == wxSTC_H_COMMENT || style == wxSTC_H_XCCOMMENT || style == wxSTC_H_SGML_COMMENT ||
-           style == wxSTC_HJ_COMMENT || style == wxSTC_HJ_COMMENTLINE || style == wxSTC_HJ_COMMENTDOC ||
-           style == wxSTC_HJA_COMMENT || style == wxSTC_HJA_COMMENTLINE || style == wxSTC_HJA_COMMENTDOC ||
-           style == wxSTC_HB_COMMENTLINE || style == wxSTC_HBA_COMMENTLINE || style == wxSTC_HP_COMMENTLINE ||
-           style == wxSTC_HPA_COMMENTLINE || style == wxSTC_HPHP_COMMENT || style == wxSTC_HPHP_COMMENTLINE;
+        style == wxSTC_HJ_COMMENT || style == wxSTC_HJ_COMMENTLINE || style == wxSTC_HJ_COMMENTDOC ||
+        style == wxSTC_HJA_COMMENT || style == wxSTC_HJA_COMMENTLINE || style == wxSTC_HJA_COMMENTDOC ||
+        style == wxSTC_HB_COMMENTLINE || style == wxSTC_HBA_COMMENTLINE || style == wxSTC_HP_COMMENTLINE ||
+        style == wxSTC_HPA_COMMENTLINE || style == wxSTC_HPHP_COMMENT || style == wxSTC_HPHP_COMMENTLINE;
 }
 
 #define IS_BETWEEN(style, x, y) (style >= x && style <= y)
@@ -333,7 +344,7 @@ int ContextPhp::GetActiveKeywordSet() const
     else if(IS_BETWEEN(style, wxSTC_HPHP_DEFAULT, wxSTC_HPHP_OPERATOR) || style == wxSTC_HPHP_COMPLEX_VARIABLE)
         return 4;
     else if(IS_BETWEEN(style, wxSTC_HP_START, wxSTC_HP_IDENTIFIER) ||
-            IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER))
+        IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER))
         return 3;
     return wxNOT_FOUND;
 }
@@ -355,7 +366,7 @@ bool ContextPhp::IsAtLineComment() const
 bool ContextPhp::IsStringTriggerCodeComplete(const wxString& str) const
 {
     int curpos = GetCtrl().GetCurrentPos();
-    //curpos = GetCtrl().PositionBefore(curpos);
+    // curpos = GetCtrl().PositionBefore(curpos);
     int style = GetCtrl().GetStyleAt(curpos);
     if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX)) {
         // When in JS section, trigger CC if str is a dot

@@ -54,6 +54,7 @@
 #define USER_INDICATOR 3
 #define HYPERLINK_INDICATOR 4
 #define MARKER_FIND_BAR_WORD_HIGHLIGHT 5
+#define MARKER_CONTEXT_WORD_HIGHLIGHT 6
 
 class wxRichToolTip;
 class CCBoxTipWindow;

@@ -34,7 +34,7 @@ public:
     ContextPhp();
     ContextPhp(LEditor *Editor);
     virtual ~ContextPhp();
-
+    
 public:
     bool IsStringTriggerCodeComplete(const wxString& str) const;
     virtual int GetActiveKeywordSet() const;

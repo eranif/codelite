@@ -195,10 +195,10 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
     if(IsCommentOrString(GetCtrl().GetCurrentPos())) {
         return;
     }
-    
+
     const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
     if(options.GetFlags() & CC_WORD_ASSIST) {
-        // Try to call code completion 
+        // Try to call code completion
         clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
         ccEvt.SetEditor(&GetCtrl());
         ccEvt.SetPosition(GetCtrl().GetCurrentPos());
@@ -320,4 +320,34 @@ bool ContextBase::IsStringTriggerCodeComplete(const wxString& str) const
     } else {
         return (m_completionTriggerStrings.count(str) > 0);
     }
+}
+
+int ContextBase::FindNext(const wxString& what, int& pos)
+{
+    wxStyledTextCtrl* ctrl = GetCtrl().GetCtrl();
+    int startpos = ctrl->PositionFromLine(ctrl->GetFirstVisibleLine());
+    int lastLine = ctrl->GetFirstVisibleLine() + ctrl->LinesOnScreen();
+    int endpos = ctrl->GetLineEndPosition(lastLine);
+
+    if((pos < startpos) || (pos > endpos)) return wxNOT_FOUND;
+    int where = ctrl->FindText(pos, endpos, what);
+    if(where != wxNOT_FOUND) {
+        pos = where + what.length();
+    }
+    return where;
+}
+
+int ContextBase::FindPrev(const wxString& what, int& pos)
+{
+    wxStyledTextCtrl* ctrl = GetCtrl().GetCtrl();
+    int startpos = ctrl->PositionFromLine(ctrl->GetFirstVisibleLine());
+    int lastLine = ctrl->GetFirstVisibleLine() + ctrl->LinesOnScreen();
+    int endpos = ctrl->GetLineEndPosition(lastLine);
+
+    if((pos < startpos) || (pos > endpos)) return wxNOT_FOUND;
+    int where = ctrl->FindText(pos, startpos, what);
+    if(where != wxNOT_FOUND) {
+        pos = where;
+    }
+    return where;
 }

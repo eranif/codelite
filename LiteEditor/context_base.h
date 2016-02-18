@@ -66,6 +66,17 @@ protected:
     void PrependMenuItem(wxMenu* menu, const wxString &text, wxObjectEventFunction func, int eventId = -1);
     void PrependMenuItem(wxMenu* menu, const wxString &text, int id);
     void PrependMenuItemSeparator(wxMenu* menu);
+    
+    /**
+     * @brief search for the next 'what' in the editor
+     * this function only searches through the visible lines
+     */
+    int FindNext(const wxString& what, int &pos);
+    /**
+     * @brief search for the next 'what' in the editor
+     * this function only searches through the visible lines
+     */
+    int FindPrev(const wxString& what, int &pos);
 
 public:
     

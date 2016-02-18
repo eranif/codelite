@@ -234,12 +234,12 @@ bool ContextPhp::IsCommentOrString(long pos)
 {
     int style = GetCtrl().GetStyleAt(pos);
     return IsComment(pos) || style == wxSTC_H_DOUBLESTRING || style == wxSTC_H_SINGLESTRING ||
-        style == wxSTC_H_SGML_DOUBLESTRING || style == wxSTC_H_SGML_SIMPLESTRING || style == wxSTC_HJ_DOUBLESTRING ||
-        style == wxSTC_HJ_SINGLESTRING || style == wxSTC_HJ_STRINGEOL || style == wxSTC_HJA_DOUBLESTRING ||
-        style == wxSTC_HJA_SINGLESTRING || style == wxSTC_HJA_STRINGEOL || style == wxSTC_HB_STRING ||
-        style == wxSTC_HBA_STRING || style == wxSTC_HBA_STRINGEOL || style == wxSTC_HP_STRING ||
-        style == wxSTC_HPA_STRING || style == wxSTC_HPA_CHARACTER || style == wxSTC_HPHP_HSTRING ||
-        style == wxSTC_HPHP_SIMPLESTRING;
+           style == wxSTC_H_SGML_DOUBLESTRING || style == wxSTC_H_SGML_SIMPLESTRING || style == wxSTC_HJ_DOUBLESTRING ||
+           style == wxSTC_HJ_SINGLESTRING || style == wxSTC_HJ_STRINGEOL || style == wxSTC_HJA_DOUBLESTRING ||
+           style == wxSTC_HJA_SINGLESTRING || style == wxSTC_HJA_STRINGEOL || style == wxSTC_HB_STRING ||
+           style == wxSTC_HBA_STRING || style == wxSTC_HBA_STRINGEOL || style == wxSTC_HP_STRING ||
+           style == wxSTC_HPA_STRING || style == wxSTC_HPA_CHARACTER || style == wxSTC_HPHP_HSTRING ||
+           style == wxSTC_HPHP_SIMPLESTRING;
 }
 
 bool ContextPhp::IsDefaultContext() const { return false; }
@@ -272,15 +272,108 @@ void ContextPhp::OnSciUpdateUI(wxStyledTextEvent& event)
     }
 
     // Update the word chars
-    clEditorWordCharsLocker locker(ctrl.GetCtrl(), ctrl.GetWordChars() + "</>");
+    clEditorWordCharsLocker locker(ctrl.GetCtrl(), ctrl.GetWordChars() + "</");
 
     // Highlight matching tags
     int startPos = ctrl.WordStartPos(ctrl.GetCurrentPosition(), true);
     int endPos = ctrl.WordEndPos(ctrl.GetCurrentPosition(), true);
-    if((startPos == wxNOT_FOUND) || (endPos == wxNOT_FOUND)) return;
+    if((startPos == wxNOT_FOUND) || (endPos == wxNOT_FOUND)) {
+        ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+        ctrl.IndicatorClearRange(0, ctrl.GetLength());
+        return;
+    }
+    if(ctrl.SafeGetChar(endPos) == (int)'>') {
+        endPos++;
+    }
 
     wxString word = ctrl.GetTextRange(startPos, endPos);
-    if(word.IsEmpty()) return;
+    if(word.IsEmpty()) {
+        ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+        ctrl.IndicatorClearRange(0, ctrl.GetLength());
+        return;
+    }
+
+    static wxRegEx reOpenHtmlTag("<(\\w+)", wxRE_ADVANCED);
+    static wxRegEx reCloseHtmlTag("</(\\w+)>", wxRE_ADVANCED);
+
+    wxString searchWhat;
+    wxString closeTag;
+    wxString openTag;
+
+    if(reOpenHtmlTag.Matches(word)) {
+        searchWhat = reOpenHtmlTag.GetMatch(word, 1);
+        closeTag << "</" << searchWhat << ">";
+        openTag << "<" << searchWhat;
+
+        int pos = endPos;
+        int depth = 0;
+        int where = FindNext(searchWhat, pos);
+
+        while(where != wxNOT_FOUND) {
+            int startPos2 = ctrl.WordStartPos(where, true);
+            int endPos2 = ctrl.WordEndPos(where, true);
+            if(ctrl.SafeGetChar(endPos2) == (int)'>') {
+                endPos2++;
+            }
+            word = ctrl.GetTextRange(startPos2, endPos2);
+
+            if((closeTag == word) && (depth == 0)) {
+                // We got the closing brace
+                ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+                ctrl.IndicatorClearRange(0, ctrl.GetLength());
+
+                // Set the new markers
+                ctrl.IndicatorFillRange(startPos, endPos - startPos);
+                ctrl.IndicatorFillRange(startPos2, endPos2 - startPos2);
+                return;
+
+            } else if(closeTag == word) {
+                --depth;
+            } else if(word.StartsWith(openTag)) {
+                depth++;
+            }
+            where = FindNext(searchWhat, pos);
+        }
+
+    } else if(reCloseHtmlTag.Matches(word)) {
+        searchWhat = reCloseHtmlTag.GetMatch(word, 1);
+        closeTag << "</" << searchWhat << ">";
+        openTag << "<" << searchWhat;
+
+        int pos = startPos;
+        int depth = 0;
+        int where = FindPrev(searchWhat, pos);
+
+        while(where != wxNOT_FOUND) {
+            int startPos2 = ctrl.WordStartPos(where, true);
+            int endPos2 = ctrl.WordEndPos(where, true);
+            if(ctrl.SafeGetChar(endPos2) == (int)'>') {
+                endPos2++;
+            }
+            word = ctrl.GetTextRange(startPos2, endPos2);
+
+            if(word.StartsWith(openTag) && (depth == 0)) {
+                // We got the closing brace
+                ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+                ctrl.IndicatorClearRange(0, ctrl.GetLength());
+
+                // Set the new markers
+                ctrl.IndicatorFillRange(startPos, endPos - startPos);
+                ctrl.IndicatorFillRange(startPos2, endPos2 - startPos2);
+                return;
+
+            } else if(closeTag == word) {
+                ++depth;
+            } else if(word.StartsWith(openTag)) {
+                --depth;
+            }
+            where = FindPrev(searchWhat, pos);
+        }
+    }
+
+    // Clear the current selection
+    ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+    ctrl.IndicatorClearRange(0, ctrl.GetLength());
 }
 
 void ContextPhp::RemoveMenuDynamicContent(wxMenu* menu) {}
@@ -322,10 +415,10 @@ bool ContextPhp::IsComment(long pos)
 {
     int style = GetCtrl().GetStyleAt(pos);
     return style == wxSTC_H_COMMENT || style == wxSTC_H_XCCOMMENT || style == wxSTC_H_SGML_COMMENT ||
-        style == wxSTC_HJ_COMMENT || style == wxSTC_HJ_COMMENTLINE || style == wxSTC_HJ_COMMENTDOC ||
-        style == wxSTC_HJA_COMMENT || style == wxSTC_HJA_COMMENTLINE || style == wxSTC_HJA_COMMENTDOC ||
-        style == wxSTC_HB_COMMENTLINE || style == wxSTC_HBA_COMMENTLINE || style == wxSTC_HP_COMMENTLINE ||
-        style == wxSTC_HPA_COMMENTLINE || style == wxSTC_HPHP_COMMENT || style == wxSTC_HPHP_COMMENTLINE;
+           style == wxSTC_HJ_COMMENT || style == wxSTC_HJ_COMMENTLINE || style == wxSTC_HJ_COMMENTDOC ||
+           style == wxSTC_HJA_COMMENT || style == wxSTC_HJA_COMMENTLINE || style == wxSTC_HJA_COMMENTDOC ||
+           style == wxSTC_HB_COMMENTLINE || style == wxSTC_HBA_COMMENTLINE || style == wxSTC_HP_COMMENTLINE ||
+           style == wxSTC_HPA_COMMENTLINE || style == wxSTC_HPHP_COMMENT || style == wxSTC_HPHP_COMMENTLINE;
 }
 
 #define IS_BETWEEN(style, x, y) (style >= x && style <= y)
@@ -344,7 +437,7 @@ int ContextPhp::GetActiveKeywordSet() const
     else if(IS_BETWEEN(style, wxSTC_HPHP_DEFAULT, wxSTC_HPHP_OPERATOR) || style == wxSTC_HPHP_COMPLEX_VARIABLE)
         return 4;
     else if(IS_BETWEEN(style, wxSTC_HP_START, wxSTC_HP_IDENTIFIER) ||
-        IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER))
+            IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER))
         return 3;
     return wxNOT_FOUND;
 }

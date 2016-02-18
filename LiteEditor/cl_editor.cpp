@@ -802,6 +802,13 @@ void LEditor::SetProperties()
         IndicatorSetAlpha(MARKER_FIND_BAR_WORD_HIGHLIGHT, alpha);
     }
 
+    IndicatorSetUnder(MARKER_CONTEXT_WORD_HIGHLIGHT, true);
+    IndicatorSetStyle(MARKER_CONTEXT_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
+    IndicatorSetForeground(MARKER_CONTEXT_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
+    if(alpha != wxNOT_FOUND) {
+        IndicatorSetAlpha(MARKER_CONTEXT_WORD_HIGHLIGHT, alpha);
+    }
+
     IndicatorSetStyle(HYPERLINK_INDICATOR, wxSTC_INDIC_PLAIN);
     IndicatorSetStyle(MATCH_INDICATOR, wxSTC_INDIC_BOX);
     IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
@@ -3251,7 +3258,11 @@ void LEditor::OnLeftDown(wxMouseEvent& event)
 {
     HighlightWord(false);
     wxDELETE(m_richTooltip);
-
+    
+    // Clear context word highlight
+    SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+    IndicatorClearRange(0, GetLength());
+ 
     // hide completion box
     DoCancelCalltip();
     GetFunctionTip()->Deactivate();

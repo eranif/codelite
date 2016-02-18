@@ -39,11 +39,9 @@ class FilesCollector : public wxDirTraverser
     wxArrayString m_filesAndFolders;
     wxProgressDialog* m_progress;
     wxStringSet_t m_excludeFolders;
-    
+
 public:
-    FilesCollector(const wxString& filespec,
-                   const wxString& excludeFolders = "",
-                   wxProgressDialog* progress = NULL);
+    FilesCollector(const wxString& filespec, const wxString& excludeFolders = "", wxProgressDialog* progress = NULL);
     virtual ~FilesCollector();
 
     const wxArrayString& GetFilesAndFolders() const { return m_filesAndFolders; }

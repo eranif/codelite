@@ -366,3 +366,22 @@ bool FileUtils::IsHidden(const wxString& filename)
 {
     return IsHidden(filename);
 }
+
+bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
+{
+    if(masks.Index("*") != wxNOT_FOUND) {
+        // If one of the masks is plain "*" - we match everything
+        return true;
+    }
+    
+    wxString lcFilename = filename.Lower();
+    for(size_t i = 0; i < masks.size(); ++i) {
+        const wxString& pattern = masks.Item(i);
+        if((!pattern.Contains("*") && lcFilename == pattern) ||
+           (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+            // use exact match
+            return true;
+        }
+    }
+    return false;
+}

@@ -82,8 +82,8 @@ public:
      * @param password the password
      * @param port ssh port
      */
-    static void
-    OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password, int port = 22);
+    static void OpenSSHTerminal(
+        const wxString& sshClient, const wxString& connectString, const wxString& password, int port = 22);
 
     /**
      * @brief OSX only: open Terminal and return its TTY
@@ -102,6 +102,11 @@ public:
     static bool WildMatch(const wxString& mask, const wxFileName& filename);
 
     /**
+     * @brief file masking search
+     */
+    static bool WildMatch(const wxArrayString& masks, const wxString& filename);
+
+    /**
      * @brief return true if needle exists in the haystack. Supports fuzzy search
      * @param needle the pattern to search
      * @param haystack the string to search on
@@ -117,7 +122,7 @@ public:
      * @brief encode URI using percent encoding
      */
     static wxString EncodeURI(const wxString& uri);
-    
+
     /**
      * @brief is the file or folder a hidden file?
      */

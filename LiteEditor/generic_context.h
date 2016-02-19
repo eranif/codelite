@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : generic_context.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : generic_context.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #ifndef CONTEXT_GENERIC_H
@@ -42,23 +42,26 @@ class LEditor;
  *
  *
  */
-class ContextGeneric : public ContextBase 
+class ContextGeneric : public ContextBase
 {
 public:
-	//---------------------------------------
-	// ctors-dtor
-	//---------------------------------------
-	ContextGeneric(LEditor *container, const wxString &name);
-	ContextGeneric() : ContextBase(wxT("Text")) {};
-	ContextGeneric(const wxString &name) : ContextBase(name) {};
+    //---------------------------------------
+    // ctors-dtor
+    //---------------------------------------
+    ContextGeneric(LEditor* container, const wxString& name);
+    ContextGeneric()
+        : ContextBase(wxT("Text")){};
+    ContextGeneric(const wxString& name)
+        : ContextBase(name){};
 
-	virtual ~ContextGeneric();
-	virtual ContextBase *NewInstance(LEditor *container);
+    virtual ~ContextGeneric();
+    virtual ContextBase* NewInstance(LEditor* container);
 
-	//---------------------------------------
-	// Operations
-	//---------------------------------------
-	virtual void ApplySettings();
+    //---------------------------------------
+    // Operations
+    //---------------------------------------
+    virtual void ApplySettings();
+    
+    void ProcessIdleActions();
 };
 #endif // CONTEXT_GENERIC_H
-

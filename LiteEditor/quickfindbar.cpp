@@ -734,7 +734,6 @@ void QuickFindBar::DoSelectAll(bool addMarkers)
     }
 
     wxString find = m_findWhat->GetValue();
-    bool fwd = true;
     int flags = DoGetSearchFlags();
 
     // Since scintilla uses a non POSIX way of handling the regex paren

@@ -27,11 +27,9 @@
 #include "cl_editor.h"
 #include "editor_config.h"
 #include "cl_editor_tip_window.h"
-#include "clEditorWordCharsLocker.h"
-#include "clEditorColouriseLocker.h"
 
 ContextPhp::ContextPhp(LEditor* editor)
-    : ContextBase(editor)
+    : ContextGeneric(editor, "php")
 {
     editor->SetWordChars(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$"));
     m_completionTriggerStrings.insert("\\");
@@ -41,7 +39,7 @@ ContextPhp::ContextPhp(LEditor* editor)
 }
 
 ContextPhp::ContextPhp()
-    : ContextBase(wxT("php"))
+    : ContextGeneric(wxT("php"))
 {
 }
 
@@ -370,111 +368,4 @@ bool ContextPhp::IsStringTriggerCodeComplete(const wxString& str) const
     }
 }
 
-void ContextPhp::ProcessIdleActions()
-{
-    // Update the word chars
-    LEditor& ctrl = GetCtrl();
-    clEditorWordCharsLocker locker(ctrl.GetCtrl(), ctrl.GetWordChars() + "</");
-    clEditorColouriseLocker colouriseLocker(ctrl.GetCtrl());
-
-    // Highlight matching tags
-    int startPos = ctrl.WordStartPos(ctrl.GetCurrentPosition(), true);
-    int endPos = ctrl.WordEndPos(ctrl.GetCurrentPosition(), true);
-    if((startPos == wxNOT_FOUND) || (endPos == wxNOT_FOUND)) {
-        ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
-        ctrl.IndicatorClearRange(0, ctrl.GetLength());
-        return;
-    }
-    if(ctrl.SafeGetChar(endPos) == (int)'>') {
-        endPos++;
-    }
-
-    wxString word = ctrl.GetTextRange(startPos, endPos);
-    if(word.IsEmpty()) {
-        ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
-        ctrl.IndicatorClearRange(0, ctrl.GetLength());
-        return;
-    }
-
-    static wxRegEx reOpenHtmlTag("<(\\w+)", wxRE_ADVANCED);
-    static wxRegEx reCloseHtmlTag("</(\\w+)>", wxRE_ADVANCED);
-
-    wxString searchWhat;
-    wxString closeTag;
-    wxString openTag;
-
-    if(reOpenHtmlTag.Matches(word)) {
-        searchWhat = reOpenHtmlTag.GetMatch(word, 1);
-        closeTag << "</" << searchWhat << ">";
-        openTag << "<" << searchWhat;
-
-        int pos = endPos;
-        int depth = 0;
-        int where = FindNext(searchWhat, pos);
-
-        while(where != wxNOT_FOUND) {
-            int startPos2 = ctrl.WordStartPos(where, true);
-            int endPos2 = ctrl.WordEndPos(where, true);
-            if(ctrl.SafeGetChar(endPos2) == (int)'>') {
-                endPos2++;
-            }
-            word = ctrl.GetTextRange(startPos2, endPos2);
-
-            if((closeTag == word) && (depth == 0)) {
-                // We got the closing brace
-                ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
-                ctrl.IndicatorClearRange(0, ctrl.GetLength());
-
-                // Set the new markers
-                ctrl.IndicatorFillRange(startPos, endPos - startPos);
-                ctrl.IndicatorFillRange(startPos2, endPos2 - startPos2);
-                return;
-
-            } else if(closeTag == word) {
-                --depth;
-            } else if(word.StartsWith(openTag)) {
-                depth++;
-            }
-            where = FindNext(searchWhat, pos);
-        }
-
-    } else if(reCloseHtmlTag.Matches(word)) {
-        searchWhat = reCloseHtmlTag.GetMatch(word, 1);
-        closeTag << "</" << searchWhat << ">";
-        openTag << "<" << searchWhat;
-
-        int pos = startPos;
-        int depth = 0;
-        int where = FindPrev(searchWhat, pos);
-
-        while(where != wxNOT_FOUND) {
-            int startPos2 = ctrl.WordStartPos(where, true);
-            int endPos2 = ctrl.WordEndPos(where, true);
-            if(ctrl.SafeGetChar(endPos2) == (int)'>') {
-                endPos2++;
-            }
-            word = ctrl.GetTextRange(startPos2, endPos2);
-
-            if(word.StartsWith(openTag) && (depth == 0)) {
-                // We got the closing brace
-                ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
-                ctrl.IndicatorClearRange(0, ctrl.GetLength());
-
-                // Set the new markers
-                ctrl.IndicatorFillRange(startPos, endPos - startPos);
-                ctrl.IndicatorFillRange(startPos2, endPos2 - startPos2);
-                return;
-
-            } else if(closeTag == word) {
-                ++depth;
-            } else if(word.StartsWith(openTag)) {
-                --depth;
-            }
-            where = FindPrev(searchWhat, pos);
-        }
-    }
-
-    // Clear the current selection
-    ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
-    ctrl.IndicatorClearRange(0, ctrl.GetLength());
-}
+void ContextPhp::ProcessIdleActions() { ContextGeneric::ProcessIdleActions(); }

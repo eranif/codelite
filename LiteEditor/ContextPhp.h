@@ -26,9 +26,9 @@
 #ifndef CONTEXTPHP_H
 #define CONTEXTPHP_H
 
-#include "context_base.h" // Base class: ContextBase
+#include "generic_context.h"
 
-class ContextPhp : public ContextBase
+class ContextPhp : public ContextGeneric
 {
 public:
     ContextPhp();

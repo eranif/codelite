@@ -25,39 +25,36 @@
 #include "generic_context.h"
 #include "editor_config.h"
 #include "cl_editor.h"
+#include "clEditorWordCharsLocker.h"
+#include "clEditorColouriseLocker.h"
 
-ContextGeneric::ContextGeneric(LEditor *container, const wxString &name)
+ContextGeneric::ContextGeneric(LEditor* container, const wxString& name)
     : ContextBase(container)
 {
     SetName(name);
     ApplySettings();
 }
 
-ContextGeneric::~ContextGeneric()
-{
-}
+ContextGeneric::~ContextGeneric() {}
 
-ContextBase *ContextGeneric::NewInstance(LEditor *container)
-{
-    return new ContextGeneric(container, GetName());
-}
+ContextBase* ContextGeneric::NewInstance(LEditor* container) { return new ContextGeneric(container, GetName()); }
 
 void ContextGeneric::ApplySettings()
 {
     LexerConf::Ptr_t lexPtr;
-    if (EditorConfigST::Get()->IsOk()) {
+    if(EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }
-    LEditor &rCtrl = GetCtrl();
-    if (lexPtr) {
+    LEditor& rCtrl = GetCtrl();
+    if(lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
-        for (int i = 0; i <= 4; ++i) {
+        for(int i = 0; i <= 4; ++i) {
             wxString keyWords = lexPtr->GetKeyWords(i);
             keyWords.Replace(wxT("\n"), wxT(" "));
             keyWords.Replace(wxT("\r"), wxT(" "));
             rCtrl.SetKeyWords(i, keyWords);
         }
-        
+
         if(lexPtr->GetName() == "css") {
             // set the word characters for the CSS lexer
             GetCtrl().SetWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-@");
@@ -66,4 +63,137 @@ void ContextGeneric::ApplySettings()
         rCtrl.SetLexer(wxSTC_LEX_NULL);
     }
     DoApplySettings(lexPtr);
+}
+
+void ContextGeneric::ProcessIdleActions()
+{
+    LEditor& ctrl = GetCtrl();
+    if((ctrl.GetLexerId() == wxSTC_LEX_XML) || (ctrl.GetLexerId() == wxSTC_LEX_PHPSCRIPT) ||
+        (ctrl.GetLexerId() == wxSTC_LEX_HTML)) {
+        // XML lexer, highlight XML tags
+        // Update the word chars
+        static const wxString wordChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-</";
+        clEditorWordCharsLocker wordLocker(ctrl.GetCtrl(), wordChars);
+        clEditorColouriseLocker colouriseLocker(ctrl.GetCtrl());
+
+        // Highlight matching tags
+        int startPos, endPos;
+        wxString word = wordLocker.GetWordAtPos(ctrl.GetCurrentPosition(), startPos, endPos);
+        if(word.IsEmpty()) {
+            ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+            ctrl.IndicatorClearRange(0, ctrl.GetLength());
+            return;
+        }
+        
+        // Make sure that the word ends with '<'
+        if(ctrl.SafeGetChar(endPos) == (int)'>') {
+            word += ">";
+            ++endPos;
+        }
+        
+        // Make sure that the word starts with '<'
+        int openBrace = word.Find('<');
+        if(openBrace == wxNOT_FOUND) {
+            ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+            ctrl.IndicatorClearRange(0, ctrl.GetLength());
+            return;
+        }
+        
+        word = word.Mid(openBrace);
+        startPos += openBrace;
+        
+        static wxRegEx reOpenHtmlTag("<(\\w+)", wxRE_ADVANCED);
+        static wxRegEx reCloseHtmlTag("</(\\w+)>", wxRE_ADVANCED);
+
+        wxString searchWhat;
+        wxString closeTag;
+        wxString openTag;
+
+        if(reOpenHtmlTag.Matches(word)) {
+            searchWhat = reOpenHtmlTag.GetMatch(word, 1);
+            closeTag << "</" << searchWhat << ">";
+            openTag << "<" << searchWhat;
+
+            int pos = endPos;
+            int depth = 0;
+            int where = FindNext(searchWhat, pos);
+
+            while(where != wxNOT_FOUND) {
+                int startPos2, endPos2;
+                word = wordLocker.GetWordAtPos(where, startPos2, endPos2);
+                if(ctrl.SafeGetChar(endPos2) == (int)'>') {
+                    word += ">";
+                    ++endPos2;
+                }
+                
+                openBrace = word.Find('<');
+                if(openBrace != wxNOT_FOUND) {
+                    word = word.Mid(openBrace);
+                    startPos2 += openBrace;
+                }
+                
+                if((closeTag == word) && (depth == 0)) {
+                    // We got the closing brace
+                    ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+                    ctrl.IndicatorClearRange(0, ctrl.GetLength());
+
+                    // Set the new markers
+                    ctrl.IndicatorFillRange(startPos, endPos - startPos);
+                    ctrl.IndicatorFillRange(startPos2, endPos2 - startPos2);
+                    return;
+
+                } else if(closeTag == word) {
+                    --depth;
+                } else if(word.StartsWith(openTag)) {
+                    depth++;
+                }
+                where = FindNext(searchWhat, pos);
+            }
+
+        } else if(reCloseHtmlTag.Matches(word)) {
+            searchWhat = reCloseHtmlTag.GetMatch(word, 1);
+            closeTag << "</" << searchWhat << ">";
+            openTag << "<" << searchWhat;
+
+            int pos = startPos;
+            int depth = 0;
+            int where = FindPrev(searchWhat, pos);
+
+            while(where != wxNOT_FOUND) {
+                int startPos2, endPos2;
+                word = wordLocker.GetWordAtPos(where, startPos2, endPos2);
+                if(ctrl.SafeGetChar(endPos2) == (int)'>') {
+                    word += ">";
+                    ++endPos2;
+                }
+                
+                openBrace = word.Find('<');
+                if(openBrace != wxNOT_FOUND) {
+                    word = word.Mid(openBrace);
+                    startPos2 += openBrace;
+                }
+                
+                if(word.StartsWith(openTag) && (depth == 0)) {
+                    // We got the closing brace
+                    ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+                    ctrl.IndicatorClearRange(0, ctrl.GetLength());
+
+                    // Set the new markers
+                    ctrl.IndicatorFillRange(startPos, endPos - startPos);
+                    ctrl.IndicatorFillRange(startPos2, endPos2 - startPos2);
+                    return;
+
+                } else if(closeTag == word) {
+                    ++depth;
+                } else if(word.StartsWith(openTag)) {
+                    --depth;
+                }
+                where = FindPrev(searchWhat, pos);
+            }
+        }
+
+        // Clear the current selection
+        ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
+        ctrl.IndicatorClearRange(0, ctrl.GetLength());
+    }
 }

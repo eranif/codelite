@@ -1,41 +1,55 @@
 #include "clEditorWordCharsLocker.h"
 #include <algorithm>
 
-clEditorWordCharsLocker::clEditorWordCharsLocker(wxStyledTextCtrl* stc, const wxString& wordChars)
+clEditorXmlHelper::clEditorXmlHelper(wxStyledTextCtrl* stc)
     : m_stc(stc)
-    , m_wordChars(wordChars)
 {
-    std::for_each(m_wordChars.begin(), m_wordChars.end(), [&](const wxChar& ch) { m_chars.insert((int)ch); });
+    static const wxString wordChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-";
+    std::for_each(wordChars.begin(), wordChars.end(), [&](const wxChar& ch) { m_chars.insert((int)ch); });
 }
 
-clEditorWordCharsLocker::~clEditorWordCharsLocker() {}
+clEditorXmlHelper::~clEditorXmlHelper()
+{
+}
 
-wxString clEditorWordCharsLocker::GetWordAtPos(int pos, int& startPos, int& endPos) const
+wxString clEditorXmlHelper::GetXmlTagAt(int pos, int& startPos, int& endPos) const
 {
     startPos = wxNOT_FOUND;
     endPos = wxNOT_FOUND;
-    if(pos > m_stc->GetLastPosition() || pos < 0) return "";
+    if(pos > m_stc->GetLastPosition() || pos < 0)
+        return "";
 
-    if(pos > 0) {
-        startPos = pos;
-        int tmppos = startPos - 1;
-        while(tmppos >= 0) {
-            char ch = m_stc->GetCharAt(tmppos);
-            if(m_chars.count((int)ch)) {
-                startPos = tmppos;
-                --tmppos;
-                continue;
-            }
-            break;
+    // going backward
+    startPos = pos;
+    int tmppos = startPos - 1;
+    while(tmppos >= 0) {
+        char ch = GetCharAt(tmppos);
+        if(m_chars.count((int)ch)) {
+            startPos = tmppos;
+            --tmppos;
+            continue;
         }
-    } else {
-        startPos = 0;
+        break;
+    }
+
+    // Did we get anything?
+    if(startPos != pos) {
+        if((GetCharAt(startPos - 1) == (int)'/') && (GetCharAt(startPos - 2) == (int)'<')) {
+            // a closing XML tag
+            startPos -= 2;
+        } else if(GetCharAt(startPos - 1) == (int)'<') {
+            // an opening tag
+            startPos -= 1;
+        } else {
+            // Not an XML tag
+            return "";
+        }
     }
 
     endPos = pos;
     int lastPos = m_stc->GetLastPosition();
     while(endPos < lastPos) {
-        char ch = m_stc->GetCharAt(endPos);
+        char ch = GetCharAt(endPos);
         if(m_chars.count((int)ch)) {
             ++endPos;
             continue;
@@ -43,5 +57,23 @@ wxString clEditorWordCharsLocker::GetWordAtPos(int pos, int& startPos, int& endP
         break;
     }
 
+    // Did we get anything?
+    if(endPos != pos) {
+        if((GetCharAt(endPos + 1) == (int)'>')) {
+            // a closing XML tag
+            endPos += 1;
+        } else if((GetCharAt(endPos + 1) != (int)' ') && (GetCharAt(endPos + 1) != (int)'\t')) {
+            // a tag can end in only 2 ways:
+            // with '>' or with space | tab, this tag does not end with either
+            return "";
+        }
+    }
     return m_stc->GetTextRange(startPos, endPos);
+}
+
+int clEditorXmlHelper::GetCharAt(int pos) const
+{
+    if(pos < 0 || pos > m_stc->GetLastPosition())
+        return 0;
+    return m_stc->GetCharAt(pos);
 }

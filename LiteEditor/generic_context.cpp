@@ -72,35 +72,17 @@ void ContextGeneric::ProcessIdleActions()
         (ctrl.GetLexerId() == wxSTC_LEX_HTML)) {
         // XML lexer, highlight XML tags
         // Update the word chars
-        static const wxString wordChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-</";
-        clEditorWordCharsLocker wordLocker(ctrl.GetCtrl(), wordChars);
+        clEditorXmlHelper xmlHelper(ctrl.GetCtrl());
         clEditorColouriseLocker colouriseLocker(ctrl.GetCtrl());
 
         // Highlight matching tags
         int startPos, endPos;
-        wxString word = wordLocker.GetWordAtPos(ctrl.GetCurrentPosition(), startPos, endPos);
+        wxString word = xmlHelper.GetXmlTagAt(ctrl.GetCurrentPosition(), startPos, endPos);
         if(word.IsEmpty()) {
             ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
             ctrl.IndicatorClearRange(0, ctrl.GetLength());
             return;
         }
-        
-        // Make sure that the word ends with '<'
-        if(ctrl.SafeGetChar(endPos) == (int)'>') {
-            word += ">";
-            ++endPos;
-        }
-        
-        // Make sure that the word starts with '<'
-        int openBrace = word.Find('<');
-        if(openBrace == wxNOT_FOUND) {
-            ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
-            ctrl.IndicatorClearRange(0, ctrl.GetLength());
-            return;
-        }
-        
-        word = word.Mid(openBrace);
-        startPos += openBrace;
         
         static wxRegEx reOpenHtmlTag("<(\\w+)", wxRE_ADVANCED);
         static wxRegEx reCloseHtmlTag("</(\\w+)>", wxRE_ADVANCED);
@@ -120,18 +102,7 @@ void ContextGeneric::ProcessIdleActions()
 
             while(where != wxNOT_FOUND) {
                 int startPos2, endPos2;
-                word = wordLocker.GetWordAtPos(where, startPos2, endPos2);
-                if(ctrl.SafeGetChar(endPos2) == (int)'>') {
-                    word += ">";
-                    ++endPos2;
-                }
-                
-                openBrace = word.Find('<');
-                if(openBrace != wxNOT_FOUND) {
-                    word = word.Mid(openBrace);
-                    startPos2 += openBrace;
-                }
-                
+                word = xmlHelper.GetXmlTagAt(where, startPos2, endPos2);
                 if((closeTag == word) && (depth == 0)) {
                     // We got the closing brace
                     ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
@@ -161,18 +132,7 @@ void ContextGeneric::ProcessIdleActions()
 
             while(where != wxNOT_FOUND) {
                 int startPos2, endPos2;
-                word = wordLocker.GetWordAtPos(where, startPos2, endPos2);
-                if(ctrl.SafeGetChar(endPos2) == (int)'>') {
-                    word += ">";
-                    ++endPos2;
-                }
-                
-                openBrace = word.Find('<');
-                if(openBrace != wxNOT_FOUND) {
-                    word = word.Mid(openBrace);
-                    startPos2 += openBrace;
-                }
-                
+                word = xmlHelper.GetXmlTagAt(where, startPos2, endPos2);                
                 if(word.StartsWith(openTag) && (depth == 0)) {
                     // We got the closing brace
                     ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);

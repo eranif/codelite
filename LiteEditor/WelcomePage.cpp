@@ -122,6 +122,13 @@ WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayStri
             filename = filename.AfterFirst('@');
         }
         filename.Trim().Trim(false);
+        
+        // Ensure that the file exists...
+        if(!wxFileName(filename).Exists()) {
+            // Don't show non existing files in the menu
+            continue;
+        }
+        
         FileExtManager::FileType type = FileExtManager::GetType(filename);
         if(bmps.count(type)) {
             bmp = bmps[type];

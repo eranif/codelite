@@ -73,6 +73,7 @@ protected:
 
     bool IsWorkspaceOpened() const { return m_workspaceFile.IsOk(); }
     void DoSaveRemoteFile(const RemoteFileInfo& remoteFile);
+    bool IsPaneDetached(const wxString& name) const;
 
     // API calls
     void OnSaveFile(clSFTPEvent& e);

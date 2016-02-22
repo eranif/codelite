@@ -763,9 +763,6 @@ clMainFrame::clMainFrame(
     Connect(wxID_REDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo), NULL,
         this);
 
-    Connect(XRCID("save_file"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBSave),
-        NULL, this);
-
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
@@ -781,12 +778,9 @@ clMainFrame::clMainFrame(
         "incremental_replace", "", _("Search::Toggle the Quick-Replace Bar"));
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "copy_file_relative_path_to_workspace", "Ctrl-Alt-Shift-C", "Edit::Copy Path Relative to Clipboard");
-    clKeyboardManager::Get()->AddGlobalAccelerator(
-        "copy_file_name", "", "Edit::Copy Path to Clipboard");
-    clKeyboardManager::Get()->AddGlobalAccelerator(
-        "copy_file_path", "", "Edit::Copy Full Path to Clipboard");
-    clKeyboardManager::Get()->AddGlobalAccelerator(
-        "copy_file_name_only", "", "Edit::Copy File Name to Clipboard");
+    clKeyboardManager::Get()->AddGlobalAccelerator("copy_file_name", "", "Edit::Copy Path to Clipboard");
+    clKeyboardManager::Get()->AddGlobalAccelerator("copy_file_path", "", "Edit::Copy Full Path to Clipboard");
+    clKeyboardManager::Get()->AddGlobalAccelerator("copy_file_name_only", "", "Edit::Copy File Name to Clipboard");
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "open_shell_from_filepath", "Ctrl-Shift-T", "Search::Open Shell From File Path");
     clKeyboardManager::Get()->AddGlobalAccelerator(
@@ -1270,7 +1264,7 @@ void clMainFrame::CreateToolbars24()
     tb->AddTool(XRCID("open_file"), _("Open"), bmpLoader.LoadBitmap(wxT("file_open"), 24), _("Open File"));
     tb->AddTool(XRCID("refresh_file"), _("Reload"), bmpLoader.LoadBitmap(wxT("file_reload"), 24), _("Reload File"));
     tb->AddTool(XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("file_save"), 24), _("Save"));
-    tb->SetToolDropDown(XRCID("save_file"), true);
+    tb->AddTool(XRCID("save_all"), _("Save All"), bmpLoader.LoadBitmap(wxT("file_save_all"), 24), _("Save All"));
     tb->AddSeparator();
     tb->AddTool(XRCID("close_file"), _("Close"), bmpLoader.LoadBitmap(wxT("file_close"), 24), _("Close File"));
     tb->AddSeparator();
@@ -1409,6 +1403,7 @@ void clMainFrame::CreateNativeToolbar16()
     tb->AddTool(XRCID("refresh_file"), _("Reload"), bmpLoader.LoadBitmap(wxT("file_reload")), _("Reload File"));
     tb->AddSeparator();
     tb->AddTool(XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("file_save")), _("Save"));
+    tb->AddTool(XRCID("save_all"), _("Save All"), bmpLoader.LoadBitmap(wxT("file_save_all")), _("Save All"));
     tb->AddSeparator();
     tb->AddTool(XRCID("close_file"), _("Close"), bmpLoader.LoadBitmap(wxT("file_close")), _("Close File"));
     tb->AddSeparator();
@@ -1501,6 +1496,7 @@ void clMainFrame::CreateNativeToolbar24()
     tb->AddTool(XRCID("open_file"), _("Open"), bmpLoader.LoadBitmap(wxT("file_open"), 24), _("Open File"));
     tb->AddTool(XRCID("refresh_file"), _("Reload"), bmpLoader.LoadBitmap(wxT("file_reload"), 24), _("Reload File"));
     tb->AddTool(XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("file_save"), 24), _("Save"));
+    tb->AddTool(XRCID("save_all"), _("Save All"), bmpLoader.LoadBitmap(wxT("file_save_all"), 24), _("Save All"));
     tb->AddTool(XRCID("close_file"), _("Close"), bmpLoader.LoadBitmap(wxT("file_close"), 24), _("Close File"));
     tb->AddSeparator();
     tb->AddTool(wxID_CUT, _("Cut"), bmpLoader.LoadBitmap(wxT("cut"), 24), _("Cut"));
@@ -1590,7 +1586,7 @@ void clMainFrame::CreateToolbars16()
     tb->AddTool(XRCID("open_file"), _("Open"), bmpLoader.LoadBitmap(wxT("file_open")), _("Open File"));
     tb->AddTool(XRCID("refresh_file"), _("Reload"), bmpLoader.LoadBitmap(wxT("file_reload")), _("Reload File"));
     tb->AddTool(XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("file_save")), _("Save"));
-    tb->SetToolDropDown(XRCID("save_file"), true);
+    tb->AddTool(XRCID("save_all"), _("Save All"), bmpLoader.LoadBitmap(wxT("file_save_all")), _("Save All"));
     tb->AddSeparator();
 
     tb->AddTool(XRCID("close_file"), _("Close"), bmpLoader.LoadBitmap(wxT("file_close")), _("Close File"));
@@ -1786,26 +1782,6 @@ void clMainFrame::Bootstrap()
 void clMainFrame::UpdateBuildTools() {}
 
 void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) { Close(); }
-
-void clMainFrame::OnTBSave(wxAuiToolBarEvent& event)
-{
-    if(event.IsDropDownClicked()) {
-        // Show menu with "Save All" option
-        wxMenu menu;
-        menu.Append(XRCID("save_all"), _("Save All"), _("Save All"), wxITEM_NORMAL);
-
-        wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
-        if(auibar) {
-            clAuiToolStickness ts(auibar, event.GetToolId());
-            wxRect rect = auibar->GetToolRect(event.GetId());
-            wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
-            pt = ScreenToClient(pt);
-            PopupMenu(&menu, pt);
-        }
-    } else {
-        OnSave(event);
-    }
-}
 
 void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
 {
@@ -4608,7 +4584,7 @@ void clMainFrame::OnNextTab(wxCommandEvent& e)
 {
     int idx = GetMainBook()->GetCurrentPageIndex();
 
-    if (idx != wxNOT_FOUND) {
+    if(idx != wxNOT_FOUND) {
         clTab::Vec_t tabs;
         GetMainBook()->GetAllTabs(tabs);
 
@@ -4621,10 +4597,10 @@ void clMainFrame::OnPrevTab(wxCommandEvent& e)
 {
     int idx = GetMainBook()->GetCurrentPageIndex();
 
-    if (idx != wxNOT_FOUND) {
+    if(idx != wxNOT_FOUND) {
         idx--;
 
-        if (idx < 0) {
+        if(idx < 0) {
             clTab::Vec_t tabs;
             GetMainBook()->GetAllTabs(tabs);
 

@@ -61,47 +61,42 @@
 #include "LogDialog.h"
 #include "ClassGenerateDialog.h"
 
-WX_DECLARE_HASH_MAP( wxString, wxTreeItemId, wxStringHash, wxStringEqual, TableHashMap );
+WX_DECLARE_HASH_MAP(wxString, wxTreeItemId, wxStringHash, wxStringEqual, TableHashMap);
 
 class MainBook;
 /*! \brief Main application panel. It show database tree and can open special editors. */
 class DbViewerPanel : public _DbViewerPanel
 {
 protected:
+    virtual void OnContextMenu(wxTreeEvent& event);
+    
+private:
     xsSerializable* m_pConnections;
-    IDbAdapter*     m_pDbAdapter;
-    wxWindow*       m_pGlobalParent;
-    wxString        m_server;
-    wxTreeItemId    m_selectedID;
-    wxWindow*       m_pNotebook;
-    IManager*       m_mgr;
-    TableHashMap    m_hashTables;
-    Database*       m_pEditedDatabase;
-    DbConnection*   m_pEditedConnection;
-    wxSFThumbnail*  m_pThumbnail;
-    wxArrayString   m_pagesAdded;
-    wxWindow* 		m_pPrevPanel;
-    bool			m_SuppressUpdate;
+    IDbAdapter* m_pDbAdapter;
+    wxWindow* m_pGlobalParent;
+    wxString m_server;
+    wxTreeItemId m_selectedID;
+    wxWindow* m_pNotebook;
+    IManager* m_mgr;
+    TableHashMap m_hashTables;
+    Database* m_pEditedDatabase;
+    DbConnection* m_pEditedConnection;
+    wxSFThumbnail* m_pThumbnail;
+    wxArrayString m_pagesAdded;
+    wxWindow* m_pPrevPanel;
+    bool m_SuppressUpdate;
     ThemeHandlerHelper* m_themeHelper;
 
 public:
-    DbViewerPanel(wxWindow *parent, wxWindow* notebook, IManager* pManager);
+    DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pManager);
     virtual ~DbViewerPanel();
-    void SetDbAdapter(IDbAdapter *dbAdapter) {
-        m_pDbAdapter = dbAdapter;
-    }
+    void SetDbAdapter(IDbAdapter* dbAdapter) { m_pDbAdapter = dbAdapter; }
 
-    void AddDbConnection(DbConnection* pDbCon) {
-        m_pConnections->AddChild(pDbCon);
-    }
+    void AddDbConnection(DbConnection* pDbCon) { m_pConnections->AddChild(pDbCon); }
 
-    void SetServer(wxString& server) {
-        m_server = server;
-    }
+    void SetServer(wxString& server) { m_server = server; }
 
-    void SetThumbnail(wxSFShapeCanvas *canvas) {
-        m_pThumbnail->SetCanvas( canvas );
-    }
+    void SetThumbnail(wxSFShapeCanvas* canvas) { m_pThumbnail->SetCanvas(canvas); }
 
     virtual void OnConnectClick(wxCommandEvent& event);
     virtual void OnConnectUI(wxUpdateUIEvent& event);
@@ -114,29 +109,25 @@ public:
     virtual void OnItemRightClick(wxTreeEvent& event);
     virtual void OnToolCloseClick(wxCommandEvent& event);
     virtual void OnToolCloseUI(wxUpdateUIEvent& event);
-    virtual void OnShowThumbnail(wxCommandEvent &e);
+    virtual void OnShowThumbnail(wxCommandEvent& e);
 
     void OnPageClosing(wxBookCtrlEvent& event);
     void OnPageChanged(wxBookCtrlEvent& event);
-    
+
     void OnERDSelected(wxAuiToolBarEvent& event);
 
-    void OnPopupClick(wxCommandEvent &evt);
+    void OnPopupClick(wxCommandEvent& evt);
     void RefreshDbView();
-    static void InitStyledTextCtrl(wxStyledTextCtrl *sci);
+    static void InitStyledTextCtrl(wxStyledTextCtrl* sci);
 
 protected:
-
-    enum PanelType {
-        Sql,
-        Erd
-    };
+    enum PanelType { Sql, Erd };
     bool ImportDb(const wxString& sqlFile, Database* pDb);
     wxString CreatePanelName(Table* t, PanelType type);
     wxString CreatePanelName(View* v, PanelType type);
     wxString CreatePanelName(Database* d, PanelType type);
-    bool     DoSelectPage(const wxString &page);
-    void 	 AddEditorPage(wxWindow* page, const wxString& name);
+    bool DoSelectPage(const wxString& page);
+    void AddEditorPage(wxWindow* page, const wxString& name);
 };
 
 #endif // DBEXPLORERPANEL_H

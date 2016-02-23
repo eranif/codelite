@@ -29,12 +29,8 @@
 #include <wx/stc/stc.h>
 #include <wx/fontmap.h>
 
-EditorSettingsLocal::EditorSettingsLocal(OptionsConfigPtr hrOptions,
-                                         wxXmlNode* nde,
-                                         enum prefsLevel level /*=pLevel_dunno*/,
-                                         wxWindow* parent /*=NULL*/,
-                                         wxWindowID id /*=wxID_ANY*/,
-                                         const wxString& title /*=wxT("Local Preferences")*/)
+EditorSettingsLocal::EditorSettingsLocal(OptionsConfigPtr hrOptions, wxXmlNode* nde, enum prefsLevel level,
+    wxWindow* parent, wxWindowID id, const wxString& title)
     : LocalEditorSettingsbase(parent, id, title)
     , higherOptions(hrOptions)
     , node(nde)
@@ -53,9 +49,10 @@ EditorSettingsLocal::EditorSettingsLocal(OptionsConfigPtr hrOptions,
     DisplayHigherValues(higherOptions); // Sets the 'global'? defaults, and the enabling checkboxes to disabling
     DisplayLocalValues(
         localOptions); // Sets any previous 'local' prefs, and the corresponding enabling-checkboxes to enabling
-    
+
     SetName("EditorSettingsLocal");
     WindowAttrManager::Load(this);
+    GetSizer()->Fit(this);
 }
 
 EditorSettingsLocal::~EditorSettingsLocal() {}
@@ -78,10 +75,8 @@ void EditorSettingsLocal::DisplayHigherValues(const OptionsConfigPtr options)
     m_checkBoxDisplayFoldMargin->SetValue(options->GetDisplayFoldMargin());
     m_displayBookmarkMargin->SetValue(options->GetDisplayBookmarkMargin());
 
-    const wxString WhitespaceStyle[] = { wxTRANSLATE("Invisible"),
-                                         wxTRANSLATE("Visible always"),
-                                         wxTRANSLATE("Visible after indentation"),
-                                         wxTRANSLATE("Indentation only") };
+    const wxString WhitespaceStyle[] = { wxTRANSLATE("Invisible"), wxTRANSLATE("Visible always"),
+        wxTRANSLATE("Visible after indentation"), wxTRANSLATE("Indentation only") };
     wxString currentWhitespace;
     switch(options->GetShowWhitspaces()) {
     case wxSTC_WS_VISIBLEALWAYS:

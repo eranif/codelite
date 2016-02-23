@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": "../LiteEditor/",
-  "m_objCounter": 21,
+  "m_objCounter": 23,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC2ED4InitBitmapResources",
   "m_bitmapsFile": "editorsettingslocalbase_formbuilder_bitmaps.cpp",
@@ -9,6 +9,8 @@
   "m_outputFileName": "editorsettingslocalbase",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -22,7 +24,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": ""
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -150,82 +152,7 @@
       }],
      "m_events": [],
      "m_children": [{
-       "m_type": 4405,
-       "proportion": 0,
-       "border": 10,
-       "gbSpan": ",",
-       "gbPosition": ",",
-       "m_styles": [],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
-       "m_properties": [{
-         "type": "winid",
-         "m_label": "ID:",
-         "m_winid": "wxID_ANY"
-        }, {
-         "type": "string",
-         "m_label": "Size:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Minimum Size:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Name:",
-         "m_value": "m_staticText"
-        }, {
-         "type": "multi-string",
-         "m_label": "Tooltip:",
-         "m_value": ""
-        }, {
-         "type": "colour",
-         "m_label": "Bg Colour:",
-         "colour": "<Default>"
-        }, {
-         "type": "colour",
-         "m_label": "Fg Colour:",
-         "colour": "<Default>"
-        }, {
-         "type": "font",
-         "m_label": "Font:",
-         "m_value": "wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
-        }, {
-         "type": "bool",
-         "m_label": "Hidden",
-         "m_value": false
-        }, {
-         "type": "bool",
-         "m_label": "Disabled",
-         "m_value": false
-        }, {
-         "type": "bool",
-         "m_label": "Focused",
-         "m_value": false
-        }, {
-         "type": "string",
-         "m_label": "Class Name:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Include File:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Style:",
-         "m_value": ""
-        }, {
-         "type": "multi-string",
-         "m_label": "Label:",
-         "m_value": "Untick one or more checkboxes to set any local preferences, "
-        }, {
-         "type": "string",
-         "m_label": "Wrap:",
-         "m_value": "-1"
-        }],
-       "m_events": [],
-       "m_children": []
-      }, {
-       "m_type": 4446,
+       "m_type": 4442,
        "proportion": 1,
        "border": 5,
        "gbSpan": "1,1",
@@ -247,7 +174,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_treebook1"
+         "m_value": "m_notebook23"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -3506,7 +3433,7 @@
        "gbSpan": ",",
        "gbPosition": ",",
        "m_styles": [],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
+       "m_sizerFlags": ["wxALIGN_CENTER_HORIZONTAL"],
        "m_properties": [{
          "type": "string",
          "m_label": "Minimum Size:",
@@ -3529,7 +3456,7 @@
        "m_children": [{
          "m_type": 4467,
          "proportion": 0,
-         "border": 5,
+         "border": 10,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
          "m_styles": [],

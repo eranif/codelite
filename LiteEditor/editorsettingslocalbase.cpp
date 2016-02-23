@@ -26,24 +26,17 @@ LocalEditorSettingsbase::LocalEditorSettingsbase(wxWindow* parent, wxWindowID id
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_staticText = new wxStaticText(this, wxID_ANY, _("Untick one or more checkboxes to set any local preferences,"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticTextFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticTextFont.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText->SetFont(m_staticTextFont);
+    m_notebook23 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook23->SetName(wxT("m_notebook23"));
+    wxImageList* m_notebook23_il = new wxImageList(16, 16);
+    m_notebook23->AssignImageList(m_notebook23_il);
     
-    mainSizer->Add(m_staticText, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    mainSizer->Add(m_notebook23, 1, wxALL|wxEXPAND, 5);
     
-    m_treebook1 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
-    m_treebook1->SetName(wxT("m_treebook1"));
-    wxImageList* m_treebook1_il = new wxImageList(16, 16);
-    m_treebook1->AssignImageList(m_treebook1_il);
-    
-    mainSizer->Add(m_treebook1, 1, wxALL|wxEXPAND, 5);
-    
-    m_panel2 = new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel2 = new wxPanel(m_notebook23, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     int m_panel2ImgIndex;
-    m_panel2ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("indent")));
-    m_treebook1->AddPage(m_panel2, _("Indentation"), true, m_panel2ImgIndex);
+    m_panel2ImgIndex = m_notebook23_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("indent")));
+    m_notebook23->AddPage(m_panel2, _("Indentation"), true, m_panel2ImgIndex);
     
     wxBoxSizer* boxSizer3 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(boxSizer3);
@@ -108,10 +101,10 @@ LocalEditorSettingsbase::LocalEditorSettingsbase(wxWindow* parent, wxWindowID id
     
     bSizer6->Add(m_indentWidth, 0, wxALL|wxEXPAND, 5);
     
-    m_panel3 = new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel3 = new wxPanel(m_notebook23, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     int m_panel3ImgIndex;
-    m_panel3ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("margins")));
-    m_treebook1->AddPage(m_panel3, _("Margins"), false, m_panel3ImgIndex);
+    m_panel3ImgIndex = m_notebook23_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("margins")));
+    m_notebook23->AddPage(m_panel3, _("Margins"), false, m_panel3ImgIndex);
     
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     m_panel3->SetSizer(boxSizer2);
@@ -166,10 +159,10 @@ LocalEditorSettingsbase::LocalEditorSettingsbase(wxWindow* parent, wxWindowID id
     
     fgSizer21->Add(m_displayLineNumbers, 0, wxALL, 5);
     
-    m_panel4 = new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel4 = new wxPanel(m_notebook23, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     int m_panel4ImgIndex;
-    m_panel4ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("misc")));
-    m_treebook1->AddPage(m_panel4, _("Misc"), false, m_panel4ImgIndex);
+    m_panel4ImgIndex = m_notebook23_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("misc")));
+    m_notebook23->AddPage(m_panel4, _("Misc"), false, m_panel4ImgIndex);
     
     wxBoxSizer* boxSizer5 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(boxSizer5);
@@ -276,11 +269,11 @@ LocalEditorSettingsbase::LocalEditorSettingsbase(wxWindow* parent, wxWindowID id
     
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
-    mainSizer->Add(bSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    mainSizer->Add(bSizer4, 0, wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_stdBtnSizer17 = new wxStdDialogButtonSizer();
     
-    bSizer4->Add(m_stdBtnSizer17, 0, wxALL, 5);
+    bSizer4->Add(m_stdBtnSizer17, 0, wxALL, 10);
     
     m_button19 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button19->SetDefault();
@@ -292,22 +285,23 @@ LocalEditorSettingsbase::LocalEditorSettingsbase(wxWindow* parent, wxWindowID id
     
     
     #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_treebook1)){
-        wxPersistenceManager::Get().RegisterAndRestore(m_treebook1);
+    if(!wxPersistenceManager::Get().Find(m_notebook23)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook23);
     } else {
-        wxPersistenceManager::Get().Restore(m_treebook1);
+        wxPersistenceManager::Get().Restore(m_notebook23);
     }
     #endif
-    m_treebook1->ExpandNode( 0, true );
-    m_treebook1->ExpandNode( 1, true );
-    m_treebook1->ExpandNode( 2, true );
     
     SetName(wxT("LocalEditorSettingsbase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

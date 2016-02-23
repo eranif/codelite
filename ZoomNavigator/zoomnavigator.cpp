@@ -116,7 +116,7 @@ void ZoomNavigator::UnPlug()
                             NULL,
                             this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &ZoomNavigator::OnToggleTab, this);
-    
+
     // Remove the tab if it's actually docked in the workspace pane
     int index(wxNOT_FOUND);
     index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(zoompane);
@@ -155,8 +155,8 @@ void ZoomNavigator::DoInitialize()
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
     if(IsZoomPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(
+            book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, false, wxNullBitmap, wxSize(200, 200));
         zoompane = new wxPanel(cp);
         cp->SetChildNoReparent(zoompane);
 
@@ -165,7 +165,7 @@ void ZoomNavigator::DoInitialize()
         book->AddPage(zoompane, ZOOM_PANE_TITLE, false);
     }
     m_mgr->AddWorkspaceTab(ZOOM_PANE_TITLE);
-    
+
     m_text = new ZoomText(zoompane);
     m_text->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(ZoomNavigator::OnPreviewClicked), NULL, this);
     m_text->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(ZoomNavigator::OnPreviewClicked), NULL, this);

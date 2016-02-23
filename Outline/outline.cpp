@@ -91,7 +91,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
     if(IsPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("Outline"), wxNullBitmap, wxSize(200, 200));
+            new DockablePane(book->GetParent()->GetParent(), book, _("Outline"), false, wxNullBitmap, wxSize(200, 200));
         m_view = new OutlineTab(cp, m_mgr);
         cp->SetChildNoReparent(m_view);
 

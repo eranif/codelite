@@ -94,8 +94,8 @@ void DebuggerPane::CreateGUIControls()
     if(!EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection()) {
         style |= kNotebook_BottomTabs;
     }
-    //style |= kNotebook_UnderlineActiveTab;
-    
+    // style |= kNotebook_UnderlineActiveTab;
+
     GeneralImages img;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
@@ -117,7 +117,7 @@ void DebuggerPane::CreateGUIControls()
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("locals_view"));
     // Add the 'Locals View'
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_localsTable = new LocalsTable(cp);
         cp->SetChildNoReparent(m_localsTable);
 
@@ -130,7 +130,7 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(WATCHES);
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("watches"));
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_watchesTable = new WatchesTable(cp);
         cp->SetChildNoReparent(m_watchesTable);
 
@@ -143,7 +143,7 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(ASCII_VIEWER);
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("text_view"));
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_asciiViewer = new DebuggerAsciiViewer(cp);
         cp->SetChildNoReparent(m_asciiViewer);
 
@@ -156,7 +156,7 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(FRAMES);
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("frames"));
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_frameList = new DebuggerCallstackView(cp);
         cp->SetChildNoReparent(m_frameList);
 
@@ -169,7 +169,7 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(BREAKPOINTS);
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("breakpoint"));
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_breakpoints = new BreakpointDlg(cp);
         cp->SetChildNoReparent(m_breakpoints);
 
@@ -182,7 +182,7 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(THREADS);
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("threads"));
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_threads = new ThreadListPanel(cp);
         cp->SetChildNoReparent(m_threads);
 
@@ -195,7 +195,7 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(MEMORY);
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("memory_view"));
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_memory = new MemoryView(cp);
         cp->SetChildNoReparent(m_memory);
 
@@ -208,7 +208,7 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(DEBUGGER_OUTPUT);
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab"));
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_outputDebug = new DebugTab(cp, wxID_ANY, wxGetTranslation(DEBUGGER_OUTPUT));
         cp->SetChildNoReparent(m_outputDebug);
 
@@ -221,7 +221,7 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(DISASSEMBLY);
     bmp = img.Bitmap("dbgAsm");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name,false, bmp, wxSize(200, 200));
         m_disassemble = new DebuggerDisassemblyTab(cp, wxGetTranslation(DISASSEMBLY));
         cp->SetChildNoReparent(m_disassemble);
 

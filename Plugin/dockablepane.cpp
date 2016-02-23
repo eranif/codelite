@@ -30,6 +30,8 @@
 #include "Notebook.h"
 #include <wx/sizer.h>
 #include "dockablepane.h"
+#include "imanager.h"
+#include "globals.h"
 
 const wxEventType wxEVT_CMD_NEW_DOCKPANE = XRCID("new_dockpane");
 const wxEventType wxEVT_CMD_DELETE_DOCKPANE = XRCID("delete_dockpane");
@@ -39,7 +41,8 @@ EVT_ERASE_BACKGROUND(DockablePane::OnEraseBg)
 EVT_PAINT(DockablePane::OnPaint)
 END_EVENT_TABLE()
 
-DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& title, const wxBitmap& bmp, wxSize size)
+DockablePane::DockablePane(
+    wxWindow* parent, Notebook* book, const wxString& title, bool initialFloat, const wxBitmap& bmp, wxSize size)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     , m_child(NULL)
     , m_book(book)
@@ -51,7 +54,14 @@ DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& tit
     SetSizer(sz);
 
     Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DockablePane::ClosePane));
-
+    wxAuiPaneInfo info;
+    info.Name(title).Caption(title);
+    if(initialFloat) {
+        info.Float();
+    }
+    clGetManager()->GetDockingManager()->AddPane(this, info);
+    clGetManager()->GetDockingManager()->Update();
+    
     wxCommandEvent event(wxEVT_CMD_NEW_DOCKPANE);
     event.SetClientData(this);
     parent->GetEventHandler()->AddPendingEvent(event);

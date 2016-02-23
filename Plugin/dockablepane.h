@@ -53,6 +53,7 @@ public:
     DockablePane(wxWindow* parent,
                  Notebook* book,
                  const wxString& title,
+                 bool initialFloat = true,
                  const wxBitmap& bmp = wxNullBitmap,
                  wxSize size = wxDefaultSize);
     virtual ~DockablePane();

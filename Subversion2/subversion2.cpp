@@ -473,8 +473,8 @@ void Subversion2::DoInitialize()
     Notebook* book = m_mgr->GetOutputPaneNotebook();
     if(IsSubversionViewDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, svnCONSOLE_TEXT, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(
+            book->GetParent()->GetParent(), book, svnCONSOLE_TEXT, false, wxNullBitmap, wxSize(200, 200));
         m_subversionView = new SubversionView(cp, this);
         cp->SetChildNoReparent(m_subversionView);
     } else {

@@ -93,12 +93,21 @@ SFTP::SFTP(IManager* manager)
     wxTheApp->Connect(
         wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), NULL, this);
     wxTheApp->Connect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
-    wxTheApp->Connect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_MENU,
-        wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
-    wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, wxEVT_MENU,
-        wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring), NULL, this);
-    wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI), NULL, this);
+    wxTheApp->Connect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING,
+                      wxEVT_MENU,
+                      wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring),
+                      NULL,
+                      this);
+    wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
+                      wxEVT_MENU,
+                      wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring),
+                      NULL,
+                      this);
+    wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
+                      wxEVT_UPDATE_UI,
+                      wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI),
+                      NULL,
+                      this);
 
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
@@ -116,7 +125,7 @@ SFTP::SFTP(IManager* manager)
     if(IsPaneDetached(_("SFTP"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP"), wxNullBitmap, wxSize(200, 200));
+            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP"), false, wxNullBitmap, wxSize(200, 200));
         m_treeView = new SFTPTreeView(cp, this);
         cp->SetChildNoReparent(m_treeView);
 
@@ -129,8 +138,8 @@ SFTP::SFTP(IManager* manager)
     book = m_mgr->GetOutputPaneNotebook();
     if(IsPaneDetached(_("SFTP Log"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP Log"), wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(
+            book->GetParent()->GetParent(), book, _("SFTP Log"), false, wxNullBitmap, wxSize(200, 200));
         m_outputPane = new SFTPStatusPage(cp, this);
         cp->SetChildNoReparent(m_outputPane);
 
@@ -162,8 +171,11 @@ void SFTP::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(menu, wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, _("Open SSH Account Manager"),
-        _("Open SSH Account Manager"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER,
+                          _("Open SSH Account Manager"),
+                          _("Open SSH Account Manager"),
+                          wxITEM_NORMAL);
     menu->Append(item);
     menu->AppendSeparator();
     item = new wxMenuItem(menu, wxEVT_SFTP_SETTINGS, _("Settings..."), _("Settings..."), wxITEM_NORMAL);
@@ -230,12 +242,21 @@ void SFTP::UnPlug()
     wxTheApp->Disconnect(
         wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), NULL, this);
     wxTheApp->Disconnect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
-    wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_MENU,
-        wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
-    wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, wxEVT_MENU,
-        wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring), NULL, this);
-    wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI), NULL, this);
+    wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING,
+                         wxEVT_MENU,
+                         wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring),
+                         NULL,
+                         this);
+    wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
+                         wxEVT_MENU,
+                         wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring),
+                         NULL,
+                         this);
+    wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
+                         wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI),
+                         NULL,
+                         this);
 
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);

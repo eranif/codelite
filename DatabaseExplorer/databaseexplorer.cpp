@@ -111,8 +111,8 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
     if(IsDbViewDetached()) {
-        DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("DbExplorer"), wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(
+            book->GetParent()->GetParent(), book, _("DbExplorer"), false, wxNullBitmap, wxSize(200, 200));
         m_dbViewerPanel = new DbViewerPanel(cp, editorBook, m_mgr);
         cp->SetChildNoReparent(m_dbViewerPanel);
 
@@ -251,9 +251,9 @@ void DatabaseExplorer::DoOpenFile(const wxFileName& filename)
                 break;
 
             case IDbAdapter::atPOSTGRES:
-//#ifdef DBL_USE_POSTGRES
+                //#ifdef DBL_USE_POSTGRES
                 adapter = new PostgreSqlDbAdapter();
-//#endif
+                //#endif
                 break;
 
             default:

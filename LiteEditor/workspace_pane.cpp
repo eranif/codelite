@@ -85,17 +85,17 @@ void WorkspacePane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-    // add notebook for tabs
+// add notebook for tabs
 #ifdef __WXOSX__
     long style = (kNotebook_Default | kNotebook_AllowDnD | kNotebook_LeftTabs);
 #else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
 #endif
     // style |= kNotebook_UnderlineActiveTab;
-    
+
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
-    
+
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -122,13 +122,13 @@ void WorkspacePane::CreateGUIControls()
 
     // Add the workspace tab
     wxString name;
-    
+
     // the IManager instance
     IManager* mgr = PluginManager::Get();
-    
+
     name = _("Workspace");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNullBitmap, wxSize(200, 200));
         m_workspaceTab = new WorkspaceTab(cp, name);
         cp->SetChildNoReparent(m_workspaceTab);
     } else {
@@ -137,11 +137,11 @@ void WorkspacePane::CreateGUIControls()
     }
     m_tabs.insert(std::make_pair(name, Tab(name, m_workspaceTab)));
     mgr->AddWorkspaceTab(name);
-    
+
     // Add the explorer tab
     name = _("Explorer");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNullBitmap, wxSize(200, 200));
         m_explorer = new FileExplorer(cp, name);
         cp->SetChildNoReparent(m_explorer);
     } else {
@@ -150,7 +150,7 @@ void WorkspacePane::CreateGUIControls()
     }
     m_tabs.insert(std::make_pair(name, Tab(name, m_explorer)));
     mgr->AddWorkspaceTab(name);
-    
+
     // Add the "File Explorer" view to the list of files managed by the workspace-view
     m_workspaceTab->GetView()->AddPage(m_explorer, _("File Explorer"), false);
 
@@ -158,7 +158,7 @@ void WorkspacePane::CreateGUIControls()
 #ifndef __WXOSX__
     name = _("Tabs");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNullBitmap, wxSize(200, 200));
         m_openWindowsPane = new OpenWindowsPanel(cp, name);
         cp->SetChildNoReparent(m_openWindowsPane);
     } else {
@@ -172,7 +172,7 @@ void WorkspacePane::CreateGUIControls()
     // Add the Tabgroups tab
     name = _("Tabgroups");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNullBitmap, wxSize(200, 200));
         m_TabgroupsPane = new TabgroupsPane(cp, name);
         cp->SetChildNoReparent(m_TabgroupsPane);
     } else {
@@ -181,7 +181,7 @@ void WorkspacePane::CreateGUIControls()
     }
     m_tabs.insert(std::make_pair(name, Tab(name, m_TabgroupsPane)));
     mgr->AddWorkspaceTab(name);
-    
+
     if(m_book->GetPageCount() > 0) {
         m_book->SetSelection((size_t)0);
     }
@@ -211,7 +211,8 @@ void WorkspacePane::UpdateProgress(int val)
     m_parsingProgress->Update();
 }
 
-typedef struct {
+typedef struct
+{
     wxString text;
     wxWindow* win;
     wxBitmap bmp;
@@ -403,12 +404,12 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
         event.Skip();
         return;
     }
-    
+
     const Tab& t = m_tabs.find(event.GetString())->second;
     if(event.IsSelected()) {
         // Insert the page
         GetNotebook()->InsertPage(0, t.m_window, t.m_label, true, t.m_bmp);
-    } else { 
+    } else {
         // hide the tab
         int where = GetNotebook()->GetPageIndex(t.m_label);
         if(where != wxNOT_FOUND) {

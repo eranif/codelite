@@ -54,6 +54,7 @@ class PluginManager : public IManager
     BitmapLoader* m_bmpLoader;
     std::set<MenuType> m_menusToBeHooked;
     std::map<wxString, wxString> m_backticks;
+    wxAuiManager* m_dockingManager;
 
 private:
     PluginManager();
@@ -70,7 +71,8 @@ public:
      * \brief return a map of all loaded plugins
      */
     const PluginInfoArray& GetPluginsInfo() const { return m_pluginsData; }
-
+    void SetDockingManager(wxAuiManager* dockingManager) { this->m_dockingManager = dockingManager; }
+    
     //------------------------------------
     // Implementation of IManager interface
     //------------------------------------
@@ -81,8 +83,8 @@ public:
     virtual wxTreeCtrl* GetTree(TreeType type);
     virtual Notebook* GetOutputPaneNotebook();
     virtual Notebook* GetWorkspacePaneNotebook();
-    virtual IEditor* OpenFile(
-        const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
+    virtual IEditor*
+    OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
     virtual IEditor* OpenFile(const BrowseRecord& rec);
     virtual wxString GetStartupDirectory() const;
     virtual void AddProject(const wxString& path);
@@ -121,10 +123,10 @@ public:
     virtual bool ClosePage(const wxFileName& filename);
     virtual wxWindow* FindPage(const wxString& text);
     virtual bool AddPage(wxWindow* win,
-        const wxString& text,
-        const wxString& tooltip = wxEmptyString,
-        const wxBitmap& bmp = wxNullBitmap,
-        bool selected = false);
+                         const wxString& text,
+                         const wxString& tooltip = wxEmptyString,
+                         const wxBitmap& bmp = wxNullBitmap,
+                         bool selected = false);
     virtual bool SelectPage(wxWindow* win);
     virtual NavMgr* GetNavigationMgr();
     virtual IEditor* NewEditor();
@@ -172,8 +174,8 @@ public:
 
     // (Un)Hook the project settings tab
     virtual void HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
-    virtual void UnHookProjectSettingsTab(
-        wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
+    virtual void
+    UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
 };
 
 #endif // PLUGINMANAGER_H

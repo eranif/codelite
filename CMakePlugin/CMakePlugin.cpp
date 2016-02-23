@@ -150,10 +150,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
  *
  * @return Interface version.
  */
-CL_PLUGIN_API int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 /* ************************************************************************ */
 
@@ -209,13 +206,14 @@ CMakePlugin::CMakePlugin(IManager* manager)
 
     // Create cmake application
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
-    
+
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
     cmakeImages images;
     const wxBitmap& bmp = images.Bitmap("cmake_16");
-    
+
     if(IsPaneDetached()) {
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, HELP_TAB_NAME, bmp, wxSize(200, 200));
+        DockablePane* cp =
+            new DockablePane(book->GetParent()->GetParent(), book, HELP_TAB_NAME, false, bmp, wxSize(200, 200));
         m_helpTab = new CMakeHelpTab(cp, this);
         cp->SetChildNoReparent(m_helpTab);
     } else {
@@ -538,17 +536,11 @@ void CMakePlugin::OnSaveConfig(clProjectSettingsEvent& event)
 
 /* ************************************************************************ */
 
-void CMakePlugin::OnGetCleanCommand(clBuildEvent& event)
-{
-    ProcessBuildEvent(event, "clean");
-}
+void CMakePlugin::OnGetCleanCommand(clBuildEvent& event) { ProcessBuildEvent(event, "clean"); }
 
 /* ************************************************************************ */
 
-void CMakePlugin::OnGetBuildCommand(clBuildEvent& event)
-{
-    ProcessBuildEvent(event);
-}
+void CMakePlugin::OnGetBuildCommand(clBuildEvent& event) { ProcessBuildEvent(event); }
 
 /* ************************************************************************ */
 
@@ -769,7 +761,7 @@ void CMakePlugin::OnToggleHelpTab(clCommandEvent& event)
         event.Skip();
         return;
     }
-    
+
     if(event.IsSelected()) {
         // show it
         cmakeImages images;

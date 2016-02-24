@@ -19,14 +19,75 @@
 clKeyboardManager::clKeyboardManager()
 {
     EventNotifier::Get()->Connect(
-        wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnCodeLiteStarupDone), NULL, this);
+        wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnStartupCompleted), NULL, this);
+
+    // A-Z
+    for(size_t i = 65; i < 91; ++i) {
+        char asciiCode = (char)i;
+        m_keyCodes.insert(wxString() << asciiCode);
+    }
+
+    // 0-9
+    for(size_t i = 48; i < 58; ++i) {
+        char asciiCode = (char)i;
+        m_keyCodes.insert(wxString() << asciiCode);
+    }
+
+    // Special chars
+    m_keyCodes.insert("`");
+    m_keyCodes.insert("-");
+    m_keyCodes.insert("=");
+    m_keyCodes.insert("BACK");
+    m_keyCodes.insert("TAB");
+    m_keyCodes.insert("[");
+    m_keyCodes.insert("]");
+    m_keyCodes.insert("ENTER");
+    m_keyCodes.insert("CAPITAL");
+    m_keyCodes.insert(";");
+    m_keyCodes.insert("'");
+    m_keyCodes.insert("\\");
+    m_keyCodes.insert(",");
+    m_keyCodes.insert(".");
+    m_keyCodes.insert("/");
+    m_keyCodes.insert("SPACE");
+    m_keyCodes.insert("INS");
+    m_keyCodes.insert("HOME");
+    m_keyCodes.insert("PGUP");
+    m_keyCodes.insert("PGDN");
+    m_keyCodes.insert("DEL");
+    m_keyCodes.insert("END");
+    m_keyCodes.insert("UP");
+    m_keyCodes.insert("DOWN");
+    m_keyCodes.insert("RIGHT");
+    m_keyCodes.insert("LEFT");
+    m_keyCodes.insert("F1");
+    m_keyCodes.insert("F2");
+    m_keyCodes.insert("F3");
+    m_keyCodes.insert("F4");
+    m_keyCodes.insert("F5");
+    m_keyCodes.insert("F6");
+    m_keyCodes.insert("F7");
+    m_keyCodes.insert("F8");
+    m_keyCodes.insert("F9");
+    m_keyCodes.insert("F10");
+    m_keyCodes.insert("F11");
+    m_keyCodes.insert("F12");
+
+    // There can be the following options:
+    // Ctrl-Alt-Shift
+    // Ctrl-Alt
+    // Ctrl-Shift
+    // Ctrl
+    // Alt-Shift
+    // Alt
+    // Shift
 }
 
 clKeyboardManager::~clKeyboardManager()
 {
     Save();
     EventNotifier::Get()->Disconnect(
-        wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnCodeLiteStarupDone), NULL, this);
+        wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnStartupCompleted), NULL, this);
 }
 
 static clKeyboardManager* m_mgr = NULL;
@@ -102,8 +163,7 @@ void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& acce
 
     // Update menus. If a match is found remove it from the 'accel' table
     wxMenuBar* menuBar = frame->GetMenuBar();
-    if(!menuBar)
-        return;
+    if(!menuBar) return;
     for(size_t i = 0; i < menuBar->GetMenuCount(); ++i) {
         wxMenu* menu = menuBar->GetMenu(i);
         DoUpdateMenu(menu, accels, table);
@@ -167,13 +227,11 @@ void clKeyboardManager::Initialize()
 
             // Apply the old settings to the menus
             wxString content;
-            if(!FileUtils::ReadFileContent(fnFileToLoad, content))
-                return;
+            if(!FileUtils::ReadFileContent(fnFileToLoad, content)) return;
             wxArrayString lines = ::wxStringTokenize(content, "\r\n", wxTOKEN_STRTOK);
             for(size_t i = 0; i < lines.GetCount(); ++i) {
                 wxArrayString parts = ::wxStringTokenize(lines.Item(i), "|", wxTOKEN_RET_EMPTY);
-                if(parts.GetCount() < 3)
-                    continue;
+                if(parts.GetCount() < 3) continue;
                 MenuItemData binding;
                 binding.resourceID = parts.Item(0);
                 binding.parentMenu = parts.Item(1);
@@ -233,7 +291,7 @@ void clKeyboardManager::Update(wxFrame* frame)
 {
     // Since we keep the accelerators with their original resource ID in the form of string
     // we need to convert the map into a different integer with integer as the resource ID
-    
+
     // Note that we place the items from the m_menuTable first and then we add the globals
     // this is because menu entries takes precedence over global accelerators
     MenuItemDataMap_t accels = m_menuTable;
@@ -241,7 +299,7 @@ void clKeyboardManager::Update(wxFrame* frame)
 
     MenuItemDataIntMap_t intAccels;
     DoConvertToIntMap(accels, intAccels);
-    
+
     if(!frame) {
         // update all frames
         wxFrame* topFrame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
@@ -272,10 +330,10 @@ int clKeyboardManager::PopupNewKeyboardShortcutDlg(wxWindow* parent, MenuItemDat
 bool clKeyboardManager::Exists(const wxString& accel) const
 {
     if(accel.IsEmpty()) return false;
-    
+
     MenuItemDataMap_t accels;
     GetAllAccelerators(accels);
-    
+
     MenuItemDataMap_t::const_iterator iter = accels.begin();
     for(; iter != accels.end(); ++iter) {
         if(iter->second.accel == accel) {
@@ -285,9 +343,8 @@ bool clKeyboardManager::Exists(const wxString& accel) const
     return false;
 }
 
-void clKeyboardManager::AddGlobalAccelerator(const wxString& resourceID,
-                                             const wxString& keyboardShortcut,
-                                             const wxString& description)
+void clKeyboardManager::AddGlobalAccelerator(
+    const wxString& resourceID, const wxString& keyboardShortcut, const wxString& description)
 {
     MenuItemData mid;
     mid.action = description;
@@ -318,7 +375,7 @@ void clKeyboardManager::RestoreDefaults()
     Initialize();
 }
 
-void clKeyboardManager::OnCodeLiteStarupDone(wxCommandEvent& event)
+void clKeyboardManager::OnStartupCompleted(wxCommandEvent& event)
 {
     event.Skip();
     this->Initialize();
@@ -331,4 +388,52 @@ void clKeyboardManager::DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuI
     for(; iter != strMap.end(); ++iter) {
         intMap.insert(std::make_pair(wxXmlResource::GetXRCID(iter->second.resourceID), iter->second));
     }
+}
+
+void clKeyboardShortcut::Clear()
+{
+    m_ctrl = false;
+    m_alt = false;
+    m_shift = false;
+    m_keyCode.Clear();
+}
+
+void clKeyboardShortcut::FromString(const wxString& accelString)
+{
+    Clear();
+    wxArrayString tokens = ::wxStringTokenize(accelString, "-+", wxTOKEN_STRTOK);
+    for(size_t i = 0; i < tokens.GetCount(); ++i) {
+        wxString token = tokens.Item(i);
+        token.MakeLower();
+        if(token == "shift") {
+            m_shift = true;
+        } else if(token == "alt") {
+            m_alt = true;
+        } else if(token == "ctrl") {
+            m_ctrl = true;
+        } else {
+            m_keyCode = tokens.Item(i);
+        }
+    }
+}
+
+wxString clKeyboardShortcut::ToString() const
+{
+    // An accelerator must contain a key code
+    if(m_keyCode.IsEmpty()) {
+        return "";
+    }
+
+    wxString str;
+    if(m_ctrl) {
+        str << "Ctrl-";
+    }
+    if(m_alt) {
+        str << "Alt-";
+    }
+    if(m_shift) {
+        str << "Shift-";
+    }
+    str << m_keyCode;
+    return str;
 }

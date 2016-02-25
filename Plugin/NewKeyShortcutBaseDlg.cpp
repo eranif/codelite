@@ -89,11 +89,6 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer6->Add(m_checkBoxShift, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_checkBoxRawControl = new wxCheckBox(m_panel1, wxID_ANY, _("Ctrl"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxRawControl->SetValue(false);
-    
-    bSizer6->Add(m_checkBoxRawControl, 0, wxALL, 5);
-    
     wxBoxSizer* boxSizer34 = new wxBoxSizer(wxVERTICAL);
     
     bSizer5->Add(boxSizer34, 0, wxALL|wxEXPAND, 5);

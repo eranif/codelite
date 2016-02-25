@@ -44,7 +44,6 @@ protected:
     wxCheckBox* m_checkBoxCtrl;
     wxCheckBox* m_checkBoxAlt;
     wxCheckBox* m_checkBoxShift;
-    wxCheckBox* m_checkBoxRawControl;
     wxButton* m_buttonClear;
     wxButton* m_button30;
     wxStaticLine* m_staticLine39;
@@ -67,7 +66,6 @@ public:
     wxCheckBox* GetCheckBoxCtrl() { return m_checkBoxCtrl; }
     wxCheckBox* GetCheckBoxAlt() { return m_checkBoxAlt; }
     wxCheckBox* GetCheckBoxShift() { return m_checkBoxShift; }
-    wxCheckBox* GetCheckBoxRawControl() { return m_checkBoxRawControl; }
     wxButton* GetButtonClear() { return m_buttonClear; }
     wxButton* GetButton30() { return m_button30; }
     wxStaticLine* GetStaticLine39() { return m_staticLine39; }

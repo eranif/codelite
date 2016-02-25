@@ -4178,7 +4178,7 @@
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
-         "m_value": ""
+         "m_value": "Filter the results.\\nHit ENTER to apply the filter"
         }, {
          "type": "colour",
          "m_label": "Bg Colour:",
@@ -4243,7 +4243,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxDV_NO_HEADER", "wxDV_HORIZ_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
+       "m_styles": ["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_SINGLE"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",

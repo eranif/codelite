@@ -638,13 +638,14 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     this->SetSizer(boxSizer181);
     
     m_searchCtrl = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_searchCtrl->SetToolTip(_("Filter the results.\nHit ENTER to apply the filter"));
     m_searchCtrl->SetFocus();
     m_searchCtrl->ShowSearchButton(true);
     m_searchCtrl->ShowCancelButton(false);
     
     boxSizer181->Add(m_searchCtrl, 0, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer181->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 5);
     

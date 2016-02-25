@@ -250,7 +250,7 @@ void GotoHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     }
 
     wxString msg;
-    msg.Printf(_("Go to line number (1 - %d):"), editor->GetLineCount());
+    msg.Printf(_("Go to line number (1 - %i):"), editor->GetLineCount());
 
     while ( 1 ) {
         wxTextEntryDialog dlg(editor, msg, _("Go To Line"));
@@ -268,7 +268,7 @@ void GotoHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 
             if (line > editor->GetLineCount()) {
                 wxString err;
-                err.Printf(_("Please insert a line number in the range of (1 - %ld)"), editor->GetLineCount());
+                err.Printf(_("Please insert a line number in the range of (1 - %i)"), editor->GetLineCount());
                 wxMessageBox (err, _("Go To Line"), wxOK | wxICON_INFORMATION);
                 continue;
             }

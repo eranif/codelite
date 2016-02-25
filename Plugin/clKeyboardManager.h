@@ -71,12 +71,12 @@ struct WXDLLIMPEXP_SDK clKeyboardShortcut {
         , m_shift(false)
     {
     }
-    
+
     /**
      * @brief clear this accelerator
      */
     void Clear();
-    
+
     /**
      * @brief construct this object from string representation
      * e.g.: Ctrl-Alt-1
@@ -86,7 +86,7 @@ struct WXDLLIMPEXP_SDK clKeyboardShortcut {
      * @brief return a string representation of this accelerator
      */
     wxString ToString() const;
-    
+
     typedef std::vector<clKeyboardShortcut> Vec_t;
 };
 
@@ -97,7 +97,7 @@ private:
     MenuItemDataMap_t m_menuTable;
     MenuItemDataMap_t m_globalTable;
     wxStringSet_t m_keyCodes;
-    clKeyboardShortcut::Vec_t m_allShorcuts;
+    wxStringSet_t m_allShorcuts;
 
 protected:
     /**
@@ -117,6 +117,11 @@ protected:
 public:
     static void Release();
     static clKeyboardManager* Get();
+
+    /**
+     * @brief return an array of all unassigned keyboard shortcuts
+     */
+    wxArrayString GetAllUnasignedKeyboardShortcuts() const;
 
     /**
      * @brief show a 'Add keyboard shortcut' dialog

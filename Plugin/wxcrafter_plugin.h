@@ -28,7 +28,7 @@
 #include <wx/treectrl.h>
 #include "clFileViwerTreeCtrl.h"
 #include <wx/dataview.h>
-#include <wx/listbox.h>
+#include <wx/srchctrl.h>
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
 #include <wx/popupwin.h>
@@ -223,18 +223,21 @@ public:
 class clSingleChoiceDialogBase : public wxDialog
 {
 protected:
-    wxListBox* m_listBox;
+    wxSearchCtrl* m_searchCtrl;
+    wxDataViewListCtrl* m_dvListCtrl;
     wxStdDialogButtonSizer* m_stdBtnSizer183;
     wxButton* m_button185;
     wxButton* m_button187;
 
 protected:
-    virtual void OnItemActivated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFilter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxListBox* GetListBox() { return m_listBox; }
-    clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxDEFAULT_DIALOG_STYLE);
+    wxSearchCtrl* GetSearchCtrl() { return m_searchCtrl; }
+    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~clSingleChoiceDialogBase();
 };
 

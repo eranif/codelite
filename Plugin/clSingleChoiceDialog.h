@@ -30,11 +30,19 @@
 
 class WXDLLIMPEXP_SDK clSingleChoiceDialog : public clSingleChoiceDialogBase
 {
+    wxArrayString m_options;
+
 public:
     clSingleChoiceDialog(wxWindow* parent, const wxArrayString& options, int initialSelection = 0);
     virtual ~clSingleChoiceDialog();
     wxString GetSelection() const;
+
 protected:
+    void DoInitialise();
+
+protected:
+    virtual void OnFilter(wxCommandEvent& event);
+    virtual void OnActivated(wxDataViewEvent& event);
     virtual void OnItemActivated(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };

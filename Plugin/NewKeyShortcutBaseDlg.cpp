@@ -31,10 +31,14 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer3->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
-    m_panel1->SetSizer(bSizer5);
+    wxBoxSizer* boxSizer37 = new wxBoxSizer(wxVERTICAL);
+    m_panel1->SetSizer(boxSizer37);
     
-    wxFlexGridSizer* flexGridSizer8 = new wxFlexGridSizer(0, 3, 0, 0);
+    wxBoxSizer* bSizer5 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer37->Add(bSizer5, 0, 0, 0);
+    
+    wxFlexGridSizer* flexGridSizer8 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer8->SetFlexibleDirection( wxBOTH );
     flexGridSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer8->AddGrowableCol(1);
@@ -49,8 +53,6 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer8->Add(m_staticTextAction, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    flexGridSizer8->Add(0, 0, 1, wxALL, 5);
-    
     m_staticText10 = new wxStaticText(m_panel1, wxID_ANY, _("Key:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer8->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
@@ -63,11 +65,6 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     #endif
     
     flexGridSizer8->Add(m_textCtrl1, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonClear = new wxButton(m_panel1, wxID_CLEAR, _("&Clear"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_buttonClear->SetToolTip(_("Clear the keyboard shortcut"));
-    
-    flexGridSizer8->Add(m_buttonClear, 0, wxALL, 5);
     
     m_staticText12 = new wxStaticText(m_panel1, wxID_ANY, _("Modifiers:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -91,6 +88,29 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     m_checkBoxShift->SetValue(false);
     
     bSizer6->Add(m_checkBoxShift, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_checkBoxRawControl = new wxCheckBox(m_panel1, wxID_ANY, _("Ctrl"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxRawControl->SetValue(false);
+    
+    bSizer6->Add(m_checkBoxRawControl, 0, wxALL, 5);
+    
+    wxBoxSizer* boxSizer34 = new wxBoxSizer(wxVERTICAL);
+    
+    bSizer5->Add(boxSizer34, 0, wxALL|wxEXPAND, 5);
+    
+    m_buttonClear = new wxButton(m_panel1, wxID_CLEAR, _("&Clear"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonClear->SetToolTip(_("Clear the keyboard shortcut"));
+    
+    boxSizer34->Add(m_buttonClear, 0, wxALL, 5);
+    
+    m_button30 = new wxButton(m_panel1, ID_SUGGEST, _("Suggest..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button30->SetToolTip(_("Show list of all un-assigned keyboard shortcuts"));
+    
+    boxSizer34->Add(m_button30, 0, wxALL, 5);
+    
+    m_staticLine39 = new wxStaticLine(m_panel1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_HORIZONTAL);
+    
+    boxSizer37->Add(m_staticLine39, 0, wxALL|wxEXPAND, 5);
     
     m_stdBtnSizer22 = new wxStdDialogButtonSizer();
     
@@ -125,6 +145,7 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     m_textCtrl1->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewKeyShortcutBaseDlg::OnKeyDown), NULL, this);
     m_buttonClear->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewKeyShortcutBaseDlg::OnClear), NULL, this);
     m_buttonClear->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewKeyShortcutBaseDlg::OnClearUI), NULL, this);
+    m_button30->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewKeyShortcutBaseDlg::OnSuggest), NULL, this);
     
 }
 
@@ -133,5 +154,6 @@ NewKeyShortcutBaseDlg::~NewKeyShortcutBaseDlg()
     m_textCtrl1->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewKeyShortcutBaseDlg::OnKeyDown), NULL, this);
     m_buttonClear->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewKeyShortcutBaseDlg::OnClear), NULL, this);
     m_buttonClear->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewKeyShortcutBaseDlg::OnClearUI), NULL, this);
+    m_button30->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewKeyShortcutBaseDlg::OnSuggest), NULL, this);
     
 }

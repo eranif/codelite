@@ -15,6 +15,7 @@
 #include "file_logger.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
+#include <algorithm>
 
 clKeyboardManager::clKeyboardManager()
 {
@@ -36,6 +37,7 @@ clKeyboardManager::clKeyboardManager()
     // Special chars
     m_keyCodes.insert("`");
     m_keyCodes.insert("-");
+    m_keyCodes.insert("*");
     m_keyCodes.insert("=");
     m_keyCodes.insert("BACK");
     m_keyCodes.insert("TAB");
@@ -43,6 +45,8 @@ clKeyboardManager::clKeyboardManager()
     m_keyCodes.insert("]");
     m_keyCodes.insert("ENTER");
     m_keyCodes.insert("CAPITAL");
+    m_keyCodes.insert("SCROLL_LOCK");
+    m_keyCodes.insert("PASUE");
     m_keyCodes.insert(";");
     m_keyCodes.insert("'");
     m_keyCodes.insert("\\");
@@ -81,6 +85,15 @@ clKeyboardManager::clKeyboardManager()
     // Alt-Shift
     // Alt
     // Shift
+    std::for_each(m_keyCodes.begin(), m_keyCodes.end(), [&](const wxString& keyCode) {
+        m_allShorcuts.insert("Ctrl-Alt-Shift-" + keyCode);
+        m_allShorcuts.insert("Ctrl-Alt-" + keyCode);
+        m_allShorcuts.insert("Ctrl-Shift-" + keyCode);
+        m_allShorcuts.insert("Ctrl-" + keyCode);
+        m_allShorcuts.insert("Alt-Shift-" + keyCode);
+        m_allShorcuts.insert("Alt-" + keyCode);
+        m_allShorcuts.insert("Shift-" + keyCode);
+    });
 }
 
 clKeyboardManager::~clKeyboardManager()
@@ -388,6 +401,25 @@ void clKeyboardManager::DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuI
     for(; iter != strMap.end(); ++iter) {
         intMap.insert(std::make_pair(wxXmlResource::GetXRCID(iter->second.resourceID), iter->second));
     }
+}
+
+wxArrayString clKeyboardManager::GetAllUnasignedKeyboardShortcuts() const
+{
+    MenuItemDataMap_t accels;
+    GetAllAccelerators(accels);
+
+    wxStringSet_t usedShortcuts;
+    std::for_each(accels.begin(), accels.end(), [&](const std::pair<wxString, MenuItemData>& p) {
+        if(!p.second.accel.IsEmpty()) {
+            usedShortcuts.insert(p.second.accel);
+        }
+    });
+
+    // Remove all duplicate entries
+    wxArrayString allUnasigned;
+    std::set_difference(m_allShorcuts.begin(), m_allShorcuts.end(), usedShortcuts.begin(), usedShortcuts.end(),
+        std::back_inserter(allUnasigned));
+    return allUnasigned;
 }
 
 void clKeyboardShortcut::Clear()

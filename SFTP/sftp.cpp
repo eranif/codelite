@@ -139,13 +139,13 @@ SFTP::SFTP(IManager* manager)
     if(IsPaneDetached(_("SFTP Log"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp = new DockablePane(
-            book->GetParent()->GetParent(), book, _("SFTP Log"), false, wxNullBitmap, wxSize(200, 200));
+            book->GetParent()->GetParent(), book, _("SFTP Log"), false, images.Bitmap("sftp_tab"), wxSize(200, 200));
         m_outputPane = new SFTPStatusPage(cp, this);
         cp->SetChildNoReparent(m_outputPane);
 
     } else {
         m_outputPane = new SFTPStatusPage(book, this);
-        book->AddPage(m_outputPane, _("SFTP Log"), false);
+        book->AddPage(m_outputPane, _("SFTP Log"), false, images.Bitmap("sftp_tab"));
     }
 
     // Create the helper for adding our tabs in the "more" menu

@@ -46,12 +46,15 @@ class WXDLLIMPEXP_SDK NewKeyShortcutDlg : public NewKeyShortcutBaseDlg
     };
 
 protected:
+    virtual void OnSuggest(wxCommandEvent& event);
     virtual void OnClear(wxCommandEvent& event);
     virtual void OnClearUI(wxUpdateUIEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     wxString ToString(wxKeyEvent& e);
     NewKeyShortcutDlg::KeyboardShortcut FromString(const wxString& accelString);
-
+    
+    void Initialise(const wxString& accel);
+    
 public:
     NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid);
     virtual ~NewKeyShortcutDlg();

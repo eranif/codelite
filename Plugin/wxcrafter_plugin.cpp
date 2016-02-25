@@ -637,12 +637,18 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     wxBoxSizer* boxSizer181 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer181);
     
-    wxArrayString m_listBoxArr;
-    m_listBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,200), m_listBoxArr, wxLB_SINGLE);
-    m_listBox->SetFocus();
+    m_searchCtrl = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_searchCtrl->SetFocus();
+    m_searchCtrl->ShowSearchButton(true);
+    m_searchCtrl->ShowCancelButton(false);
     
-    boxSizer181->Add(m_listBox, 1, wxALL|wxEXPAND, 5);
+    boxSizer181->Add(m_searchCtrl, 0, wxALL|wxEXPAND, 5);
     
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer181->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrl->AppendTextColumn(_("My Column"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     m_stdBtnSizer183 = new wxStdDialogButtonSizer();
     
     boxSizer181->Add(m_stdBtnSizer183, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
@@ -674,14 +680,16 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
-    m_listBox->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(clSingleChoiceDialogBase::OnItemActivated), NULL, this);
+    m_searchCtrl->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clSingleChoiceDialogBase::OnFilter), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(clSingleChoiceDialogBase::OnActivated), NULL, this);
     m_button185->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clSingleChoiceDialogBase::OnOKUI), NULL, this);
     
 }
 
 clSingleChoiceDialogBase::~clSingleChoiceDialogBase()
 {
-    m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(clSingleChoiceDialogBase::OnItemActivated), NULL, this);
+    m_searchCtrl->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clSingleChoiceDialogBase::OnFilter), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(clSingleChoiceDialogBase::OnActivated), NULL, this);
     m_button185->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clSingleChoiceDialogBase::OnOKUI), NULL, this);
     
 }

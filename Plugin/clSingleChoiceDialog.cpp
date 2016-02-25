@@ -25,9 +25,8 @@ wxString clSingleChoiceDialog::GetSelection() const
 {
     wxDataViewItem item = m_dvListCtrl->GetSelection();
     if(item.IsOk()) {
-        wxVariant v;
-        m_dvListCtrl->GetValue(v, m_dvListCtrl->ItemToRow(item), 0);
-        return v.GetString();
+        wxStringClientData* cd = (wxStringClientData*)m_dvListCtrl->GetItemData(item);
+        return cd->GetData();
     }
     return "";
 }
@@ -42,13 +41,20 @@ void clSingleChoiceDialog::OnFilter(wxCommandEvent& event)
 
 void clSingleChoiceDialog::DoInitialise()
 {
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxStringClientData* cd = (wxStringClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
+        wxDELETE(cd);
+    }
     m_dvListCtrl->DeleteAllItems();
+
     wxString filter = m_searchCtrl->GetValue();
     for(size_t i = 0; i < m_options.size(); ++i) {
         if(FileUtils::FuzzyMatch(filter, m_options.Item(i))) {
             wxVector<wxVariant> cols;
-            cols.push_back(m_options.Item(i));
-            m_dvListCtrl->AppendItem(cols);
+            wxString displayString = m_options.Item(i).BeforeFirst('\n');
+            displayString.Trim().Trim(false);
+            cols.push_back(displayString);
+            m_dvListCtrl->AppendItem(cols, (wxUIntPtr)(new wxStringClientData(m_options.Item(i))));
         }
     }
 }

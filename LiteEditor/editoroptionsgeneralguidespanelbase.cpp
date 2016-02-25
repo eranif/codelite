@@ -158,7 +158,7 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     m_pgProp565->SetHelpString(wxT(""));
     
     m_pgPropCommentsIndented = m_pgMgrEdit->AppendIn( m_pgProp565,  new wxBoolProperty( _("Indented line comments"), wxPG_LABEL, 0) );
-    m_pgPropCommentsIndented->SetHelpString(_("Indent line comments (C++-style comments) according to the indentation of the selected fragmant of the text"));
+    m_pgPropCommentsIndented->SetHelpString(_("Indent line comments (C++-style comments) according to the indentation of the selected fragment of the text"));
     
     SetName(wxT("EditorOptionsGeneralEditBase"));
     SetSizeHints(500,300);

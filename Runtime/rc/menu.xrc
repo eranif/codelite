@@ -48,6 +48,10 @@
                 <label>Save tabs as group</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="duplicate_tab">
+                <label>Duplicate Tab...</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="wxID_PAGE_SETUP">
                 <label>Page Setup...</label>
             </object>
@@ -134,7 +138,7 @@
                 <object class="wxMenuItem" name="copy_line">
                      <label>Copy Line</label>
                  </object>
-         <object class="wxMenuItem" name="cut_line">
+                <object class="wxMenuItem" name="cut_line">
                      <label>Cut Line</label>
                  </object>
                 <object class="wxMenuItem" name="transpose_lines">
@@ -732,6 +736,10 @@
         </object>
         <object class="wxMenuItem" name="close_tabs_to_the_right">
             <label>Close Tabs To The Right</label>
+        </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="duplicate_tab">
+            <label>Duplicate Tab...</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="mark_readonly">

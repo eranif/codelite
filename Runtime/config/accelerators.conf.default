@@ -2,6 +2,7 @@ new_file|File|New File|Ctrl-N
 open_file|File|Open File...|Ctrl-O
 refresh_file|File|Reload File|Ctrl-R
 save_file|File|Save File|Ctrl-S
+duplicate_tab|File|Duplicate Tab|
 save_file_as|File|Save As...|Ctrl-Shift-S
 save_all|File|Save all files|
 close_file|File|Close|Ctrl-W

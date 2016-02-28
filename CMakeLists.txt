@@ -62,6 +62,15 @@ set( WITH_SFTP 1 )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # Avoid very multiple warnings spam due to deprecated wx methods
 
 if ( UNIX )
+	# Configure CCache if available
+	find_program(CCACHE_FOUND ccache)
+	if (CCACHE_FOUND)
+		set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+		set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+	endif(CCACHE_FOUND)
+endif(UNIX)
+
+if ( UNIX )
     execute_process(COMMAND pwd OUTPUT_VARIABLE BUILD_DIRECTORY OUTPUT_STRIP_TRAILING_WHITESPACE)
 elseif(MINGW)
     set ( BUILD_DIRECTORY ${CMAKE_BINARY_DIR} )

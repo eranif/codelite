@@ -55,9 +55,9 @@ OptionsDlg2::OptionsDlg2(wxWindow* parent)
     , restartRquired(false)
 {
     Initialize();
-    CenterOnParent();
     SetName("OptionsDlg2");
     WindowAttrManager::Load(this);
+    CenterOnParent();
     MSWSetNativeTheme(m_treeBook->GetTreeCtrl());
     GetSizer()->Layout();
 }

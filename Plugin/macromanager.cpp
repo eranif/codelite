@@ -129,7 +129,10 @@ wxString MacroManager::Expand(const wxString& expression,
 
     if(manager) {
         expandedString.Replace(wxT("$(CodeLitePath)"), manager->GetInstallDirectory());
-        expandedString = manager->GetEnv()->ExpandVariables(expandedString, true);
+        
+        // Apply the environment and expand the variables
+        EnvSetter es(NULL, NULL, project, confToBuild);
+        expandedString = manager->GetEnv()->ExpandVariables(expandedString, false);
     }
     return expandedString;
 }

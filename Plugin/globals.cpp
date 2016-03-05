@@ -1667,6 +1667,17 @@ static bool search_process_by_command(const wxString& name, wxString& tty, long&
 
 void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid)
 {
+    static wxString SLEEP_COMMAND_BASE("");
+
+    // We can't rely on the terminal's string being "sleep" here:
+    // konsole's is the full path e.g. "/bin/sleep", which would never be found
+    if (SLEEP_COMMAND_BASE.empty()) {
+        ProcUtils::Locate("sleep", SLEEP_COMMAND_BASE);
+    }
+    if (SLEEP_COMMAND_BASE.empty()) {
+        SLEEP_COMMAND_BASE = "sleep"; // Sensible default, which might even work
+    }
+
     pid = wxNOT_FOUND;
     tty.Clear();
     realPts.Clear();
@@ -1689,8 +1700,9 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     wxString secondsToSleep;
 
     secondsToSleep << (85765 + randomSeed);
+    
     wxString SLEEP_COMMAND;
-    SLEEP_COMMAND << "sleep " << secondsToSleep;
+    SLEEP_COMMAND << SLEEP_COMMAND_BASE <<" " << secondsToSleep;
 
     wxString consoleCommand = TERMINAL_CMD;
     consoleCommand.Replace("$(CMD)", SLEEP_COMMAND);

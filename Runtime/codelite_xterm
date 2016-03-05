@@ -1,14 +1,16 @@
 #!/bin/bash 
 
-## A wrapper script around the xterm utility 
-## which allows codelite to export LD_LIBRARY_PATH into the exterm
-## shell
+## A wrapper script around the xterm (or other terminal) utility 
+## which allows codelite to export LD_LIBRARY_PATH into the terminal shell
 
-# Force xterm to provide at least a scrollbar, and 1000 lines of scrollback,
-# in case the user hasn't set any preferences of his own in ~/.Xresources
-terminal="xterm -sb -sl 1000"
+terminal="x-terminal-emulator"
+if [ "$program_title" = "xterm" ]; then
+	# Force xterm to provide at least a scrollbar, and 1000 lines of scrollback,
+	# in case the user hasn't set any preferences of his own in ~/.Xresources
+	terminal="xterm -sb -sl 1000"
+fi
+
 program_title=$1
-
 if [ "$program_title" = "" ]; then
 	if [ "${LD_LIBRARY_PATH}" = "" ]; then
 		## LD_LIBRARY_PATH is not defined OR empty

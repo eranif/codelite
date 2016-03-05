@@ -28,6 +28,8 @@
 #include "globals.h"
 #include "clSelectSymbolDialog.h"
 #include "PHPEntityFunctionAlias.h"
+#include "tags_options_data.h"
+#include "cl_config.h"
 
 ///////////////////////////////////////////////////////////////////
 
@@ -261,6 +263,13 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor && IsPHPFile(editor)) {
             e.Skip(false);
+            
+            // Update the settings
+            TagsOptionsData d;
+            clConfig ccConfig("code-completion.conf");
+            ccConfig.ReadItem(&d);
+            m_lookupTable.SetSizeLimit(d.GetCcNumberOfDisplayItems());
+            
             // Check if the code completion was triggered due to user
             // typing '(', in this case, call OnFunctionCallTip()
             wxChar charAtPos = editor->GetCharAtPos(editor->GetCurrentPosition() - 1);

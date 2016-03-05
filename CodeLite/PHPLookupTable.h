@@ -157,6 +157,7 @@ public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
 
+    void SetSizeLimit(size_t sizeLimit) {this->m_sizeLimit = sizeLimit;}
     /**
      * @brief return the entity at a given file/line
      */

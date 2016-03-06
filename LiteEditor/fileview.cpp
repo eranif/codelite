@@ -422,19 +422,9 @@ void FileViewTree::ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData)
 
 void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
 {
-    wxMenu* menu = wxXmlResource::Get()->LoadMenu(wxT("file_tree_project"));
-    // set the icon for the default actions (build, clean and settings)
-    BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
-    wxBitmap bmpBuild = bmpLoader->LoadBitmap("toolbars/16/build/build");
-    wxBitmap bmpClean = bmpLoader->LoadBitmap("toolbars/16/build/clean");
-    wxBitmap bmpSettings = bmpLoader->LoadBitmap("cog");
-    wxBitmap bmpSort = bmpLoader->LoadBitmap("sort");
-    
-    menu->FindItem(XRCID("build_project"))->SetBitmap(bmpBuild);
-    menu->FindItem(XRCID("clean_project"))->SetBitmap(bmpClean);
-    menu->FindItem(XRCID("project_properties"))->SetBitmap(bmpSettings);
-    menu->FindItem(XRCID("build_order"))->SetBitmap(bmpSort);
-    
+    wxMenu menu;
+    DoCreateProjectContextMenu(menu);
+
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
     if(bldConf && bldConf->IsCustomBuild()) {
         wxMenuItem* item = NULL;
@@ -456,7 +446,7 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
 
             // iterator over the menu items and search for 'Project Only' target
             // this is the position that we want to place our custom targets menu
-            wxMenuItemList items = menu->GetMenuItems();
+            wxMenuItemList items = menu.GetMenuItems();
             wxMenuItemList::iterator liter = items.begin();
             size_t position(0);
             for(; liter != items.end(); liter++) {
@@ -466,22 +456,28 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
                 }
                 position++;
             }
-            menu->Insert(position, XRCID("custom_targets"), gsCustomTargetsMenu, customTargetsMenu);
+            menu.Insert(position, XRCID("custom_targets"), gsCustomTargetsMenu, customTargetsMenu);
         }
     }
 
     if(!ManagerST::Get()->IsBuildInProgress()) {
         // Let the plugins alter it
+        wxMenu* pluginsMenu = new wxMenu;
         clContextMenuEvent event(wxEVT_CONTEXT_MENU_PROJECT);
-        event.SetMenu(menu);
+        event.SetMenu(pluginsMenu);
         EventNotifier::Get()->ProcessEvent(event);
 
         // Use the old system
-        PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileView_Project);
+        PluginManager::Get()->HookPopupMenu(pluginsMenu, MenuTypeFileView_Project);
+        if(pluginsMenu->GetMenuItemCount()) {
+            // we got something from the plugins
+            menu.PrependSeparator();
+            menu.Prepend(wxID_ANY, _("Plugins..."), pluginsMenu);
+        } else {
+            wxDELETE(pluginsMenu);
+        }
     }
-
-    PopupMenu(menu);
-    wxDELETE(menu);
+    PopupMenu(&menu);
 }
 
 void FileViewTree::ShowWorkspaceContextMenu()
@@ -1018,8 +1014,9 @@ void FileViewTree::DoRemoveItems()
                             AlsoDeleteFromDisc) {
                             AlsoDeleteFromDisc = ApplyToEachFileDeletion; // If we're here, ApplyToAll means delete all
 
-                            wxString message(_("An error occurred during file removal. Maybe it has been already "
-                                               "deleted or you don't have the necessary permissions"));
+                            wxString message(
+                                _("An error occurred during file removal. Maybe it has been already "
+                                  "deleted or you don't have the necessary permissions"));
                             if(wxDirExists(name)) {
                                 if(!wxRmdir(name)) {
                                     wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
@@ -1657,11 +1654,8 @@ void FileViewTree::OnImportDirectory(wxCommandEvent& e)
     DoImportFolder(proj, dlg.GetBaseDir(), all_files, filespec, extlessFiles);
 }
 
-void FileViewTree::DoImportFolder(ProjectPtr proj,
-    const wxString& baseDir,
-    const wxArrayString& all_files,
-    const wxString& filespec,
-    bool extlessFiles)
+void FileViewTree::DoImportFolder(ProjectPtr proj, const wxString& baseDir, const wxArrayString& all_files,
+    const wxString& filespec, bool extlessFiles)
 {
     wxStringTokenizer tok(filespec, wxT(";"));
     wxStringSet_t specMap;
@@ -2540,6 +2534,11 @@ void FileViewTree::OnOpenShellFromFilePath(wxCommandEvent& e)
         if(data->GetData().GetKind() == ProjectItem::TypeFile) {
             wxFileName fn(data->GetData().GetFile());
             FileUtils::OpenTerminal(fn.GetPath());
+        } else if(data->GetData().GetKind() == ProjectItem::TypeProject) {
+            ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(data->GetData().GetDisplayName());
+            if(p) {
+                FileUtils::OpenTerminal(p->GetFileName().GetPath());
+            }
         }
     }
 }
@@ -2553,6 +2552,89 @@ void FileViewTree::OnOpenFileExplorerFromFilePath(wxCommandEvent& e)
         if(data->GetData().GetKind() == ProjectItem::TypeFile) {
             wxFileName fn(data->GetData().GetFile());
             FileUtils::OpenFileExplorerAndSelect(fn.GetFullPath());
+        } else if(data->GetData().GetKind() == ProjectItem::TypeProject) {
+            ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(data->GetData().GetDisplayName());
+            if(p) {
+                FileUtils::OpenFileExplorerAndSelect(p->GetFileName());
+            }
         }
     }
+}
+
+void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu)
+{
+    wxMenuItem* item(NULL);
+    BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
+    wxBitmap bmpBuild = bmpLoader->LoadBitmap("toolbars/16/build/build");
+    wxBitmap bmpClean = bmpLoader->LoadBitmap("toolbars/16/build/clean");
+    wxBitmap bmpSettings = bmpLoader->LoadBitmap("cog");
+    wxBitmap bmpSort = bmpLoader->LoadBitmap("sort");
+    wxBitmap bmpFolder = bmpLoader->LoadBitmap("folder-yellow");
+    wxBitmap bmpConsole = bmpLoader->LoadBitmap("console");
+
+    item = new wxMenuItem(&menu, XRCID("build_project"), _("Build"), _("Build project"));
+    item->SetBitmap(bmpBuild);
+    menu.Append(item);
+
+    item = new wxMenuItem(&menu, XRCID("rebuild_project"), _("Rebuild"), _("Rebuild project"));
+    menu.Append(item);
+
+    item = new wxMenuItem(&menu, XRCID("clean_project"), _("Clean"), _("Clean project"));
+    item->SetBitmap(bmpClean);
+    menu.Append(item);
+
+    menu.AppendSeparator();
+
+
+    item = new wxMenuItem(&menu, XRCID("stop_build"), _("Stop Build"), _("Stop Build"));
+    menu.Append(item);
+
+    menu.AppendSeparator();
+
+    
+    wxMenu* projectOnly = new wxMenu();
+    projectOnly->Append(XRCID("build_project_only"), _("Build"));
+    projectOnly->Append(XRCID("clean_project_only"), _("Clean"));
+    projectOnly->Append(XRCID("rebuild_project_only"), _("Rebuild"));
+    menu.Append(wxID_ANY, _("Project Only"), projectOnly);
+    menu.AppendSeparator();
+    
+    item = new wxMenuItem(&menu, XRCID("build_order"), _("Build Order..."), _("Build Order..."));
+    item->SetBitmap(bmpSort);
+    menu.Append(item);
+    menu.AppendSeparator();
+    
+    item = new wxMenuItem(
+        &menu, XRCID("cxx_fileview_open_file_explorer"), _("Open Containing Folder"), _("Open Containing Folder"));
+    item->SetBitmap(bmpFolder);
+    menu.Append(item);
+
+    item = new wxMenuItem(&menu, XRCID("cxx_fileview_open_shell_from_filepath"), _("Open Shell"), _("Open Shell"));
+    item->SetBitmap(bmpConsole);
+    menu.Append(item);
+
+    menu.AppendSeparator();
+    menu.Append(XRCID("set_as_active"), _("Make Active (double click)"));
+    menu.AppendSeparator();
+
+    menu.Append(XRCID("import_directory"), _("Import Files From Directory..."));
+    menu.Append(XRCID("reconcile_project"), _("Reconcile Project..."));
+    menu.AppendSeparator();
+
+    menu.Append(XRCID("new_virtual_folder"), _("New Virtual Folder"));
+    menu.AppendSeparator();
+
+    menu.Append(XRCID("remove_project"), _("Remove Project"));
+    menu.AppendSeparator();
+    menu.Append(XRCID("rename_project"), _("Rename Project"));
+    menu.AppendSeparator();
+
+    menu.Append(XRCID("save_as_template"), _("Save As Template..."));
+    menu.AppendSeparator();
+    menu.Append(XRCID("local_project_prefs"), _("Project Editor Preferences..."));
+
+    menu.AppendSeparator();
+    item = new wxMenuItem(&menu, XRCID("project_properties"), _("Settings..."), _("Settings..."));
+    item->SetBitmap(bmpSettings);
+    menu.Append(item);
 }

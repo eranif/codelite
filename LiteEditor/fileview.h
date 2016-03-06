@@ -34,8 +34,7 @@
 
 class wxMenu;
 
-struct FileViewItem
-{
+struct FileViewItem {
     wxString virtualDir;
     wxString fullpath;
     wxString displayName;
@@ -48,6 +47,9 @@ class FileViewTree : public wxTreeCtrl
     std::map<void*, bool> m_itemsToSort;
     wxArrayTreeItemIds m_draggedItems;
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
+
+protected:
+    void DoCreateProjectContextMenu(wxMenu& menu);
 
 public:
     /**
@@ -63,11 +65,8 @@ public:
      * @param size Window size
      * @param style Window style
      */
-    FileViewTree(wxWindow* parent,
-                 const wxWindowID id,
-                 const wxPoint& pos = wxDefaultPosition,
-                 const wxSize& size = wxDefaultSize,
-                 long style = wxBORDER_NONE);
+    FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize, long style = wxBORDER_NONE);
 
     /**
      * Destructor .
@@ -82,11 +81,8 @@ public:
      * @param size Window size
      * @param style Window style
      */
-    virtual void Create(wxWindow* parent,
-                        const wxWindowID id,
-                        const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxDefaultSize,
-                        long style = 0);
+    virtual void Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize, long style = 0);
 
     // Build the actual tree from the workspace
     void BuildTree();
@@ -215,11 +211,8 @@ private:
     void DoRemoveItems();
     void DoItemActivated(wxTreeItemId& item, wxEvent& event);
     void DoAddItem(ProjectPtr proj, const FileViewItem& item);
-    void DoImportFolder(ProjectPtr proj,
-                        const wxString& baseDir,
-                        const wxArrayString& all_files,
-                        const wxString& filespec,
-                        bool extlessFiles);
+    void DoImportFolder(ProjectPtr proj, const wxString& baseDir, const wxArrayString& all_files,
+        const wxString& filespec, bool extlessFiles);
 
     wxTreeItemId DoGetItemByText(const wxTreeItemId& parent, const wxString& text);
 

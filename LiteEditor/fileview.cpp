@@ -2537,6 +2537,8 @@ void FileViewTree::OnOpenShellFromFilePath(wxCommandEvent& e)
         } else if(data->GetData().GetKind() == ProjectItem::TypeProject) {
             ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(data->GetData().GetDisplayName());
             if(p) {
+                // Apply the environment before launching the terminal
+                EnvSetter env(p);
                 FileUtils::OpenTerminal(p->GetFileName().GetPath());
             }
         }
@@ -2585,25 +2587,23 @@ void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu)
 
     menu.AppendSeparator();
 
-
     item = new wxMenuItem(&menu, XRCID("stop_build"), _("Stop Build"), _("Stop Build"));
     menu.Append(item);
 
     menu.AppendSeparator();
 
-    
     wxMenu* projectOnly = new wxMenu();
     projectOnly->Append(XRCID("build_project_only"), _("Build"));
     projectOnly->Append(XRCID("clean_project_only"), _("Clean"));
     projectOnly->Append(XRCID("rebuild_project_only"), _("Rebuild"));
     menu.Append(wxID_ANY, _("Project Only"), projectOnly);
     menu.AppendSeparator();
-    
+
     item = new wxMenuItem(&menu, XRCID("build_order"), _("Build Order..."), _("Build Order..."));
     item->SetBitmap(bmpSort);
     menu.Append(item);
     menu.AppendSeparator();
-    
+
     item = new wxMenuItem(
         &menu, XRCID("cxx_fileview_open_file_explorer"), _("Open Containing Folder"), _("Open Containing Folder"));
     item->SetBitmap(bmpFolder);

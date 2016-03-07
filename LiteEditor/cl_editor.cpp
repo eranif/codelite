@@ -1369,12 +1369,13 @@ bool LEditor::SaveFile()
     return true;
 }
 
-bool LEditor::SaveFileAs(const wxString& newname)
+bool LEditor::SaveFileAs(const wxString& newname, const wxString& savePath)
 {
     // Prompt the user for a new file name
     const wxString ALL(wxT("All Files (*)|*"));
-    wxFileDialog dlg(this, _("Save As"), m_fileName.GetPath(), newname.IsEmpty() ? m_fileName.GetFullName() : newname,
-        ALL, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition);
+    wxFileDialog dlg(this, _("Save As"), savePath.IsEmpty() ? m_fileName.GetPath() : savePath,
+        newname.IsEmpty() ? m_fileName.GetFullName() : newname, ALL, wxFD_SAVE | wxFD_OVERWRITE_PROMPT,
+        wxDefaultPosition);
 
     if(dlg.ShowModal() == wxID_OK) {
         // get the path
@@ -2235,9 +2236,7 @@ bool LEditor::FindAndSelect(const wxString& _pattern, const wxString& name)
     return DoFindAndSelect(_pattern, name, 0, NavMgr::Get());
 }
 
-void LEditor::FindAndSelectV(const wxString& _pattern,
-    const wxString& name,
-    int pos /*=0*/,
+void LEditor::FindAndSelectV(const wxString& _pattern, const wxString& name, int pos /*=0*/,
     NavMgr* WXUNUSED(unused)) // Similar but returns void, so can be async
 {
     // Use CallAfter() here. With wxGTK-3.1 (perhaps due to its scintilla update) if the file wasn't already loaded,
@@ -3368,9 +3367,7 @@ void LEditor::OnEditBreakpoint()
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
-void LEditor::AddBreakpoint(int lineno /*= -1*/,
-    const wxString& conditions /*=wxT("")*/,
-    const bool is_temp /*=false*/,
+void LEditor::AddBreakpoint(int lineno /*= -1*/, const wxString& conditions /*=wxT("")*/, const bool is_temp /*=false*/,
     const bool is_disabled /*=false*/)
 {
     if(lineno == -1) {

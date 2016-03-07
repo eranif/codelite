@@ -6056,7 +6056,8 @@ void clMainFrame::OnDuplicateTab(wxCommandEvent& event)
         IEditor* newEditor = clGetManager()->NewEditor();
         if(newEditor) {
             newEditor->GetCtrl()->SetText(currentFile->GetCtrl()->GetText());
-            newEditor->SaveAs(currentFile->GetFileName().GetFullName());
+            // Open the 'Save As' dialog, with some sensible defaults
+            newEditor->SaveAs(currentFile->GetFileName().GetFullName(), currentFile->GetFileName().GetPath());
         }
     }
 }

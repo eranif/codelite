@@ -281,7 +281,7 @@ public:
 
     // Save content of the editor to a given file (Save As...)
     // this function prompts the user for selecting file name
-    bool SaveFileAs(const wxString& newname = wxEmptyString);
+    bool SaveFileAs(const wxString& newname = wxEmptyString, const wxString& savePath = wxEmptyString);
 
     /**
      * @brief print the editor content using the printing framework
@@ -525,8 +525,7 @@ public:
      * Toggles *all* folds within the selection, not just the outer one of each function
      */
     void ToggleAllFoldsInSelection();
-    void DoRecursivelyExpandFolds(bool expand,
-        int startline,
+    void DoRecursivelyExpandFolds(bool expand, int startline,
         int endline); // Helper function for ToggleAllFoldsInSelection()
                       /**
                        *  Find the topmost fold level within the selection, and toggle all selected folds of that level
@@ -563,9 +562,7 @@ public:
     bool FindAndSelect();
     bool FindAndSelect(const FindReplaceData& data);
     bool FindAndSelect(const wxString& pattern, const wxString& name);
-    void FindAndSelectV(const wxString& pattern,
-        const wxString& name,
-        int pos = 0,
+    void FindAndSelectV(const wxString& pattern, const wxString& name, int pos = 0,
         NavMgr* unused = NULL); // The same but returns void, so usable with CallAfter()
     void DoFindAndSelectV(const wxArrayString& strings, int pos); // Called with CallAfter()
 
@@ -651,9 +648,7 @@ public:
      * Add a breakpoint at the current line & file
      * Optionally make it temporary, disabled or conditional
      */
-    void AddBreakpoint(int lineno = -1,
-        const wxString& conditions = wxT(""),
-        const bool is_temp = false,
+    void AddBreakpoint(int lineno = -1, const wxString& conditions = wxT(""), const bool is_temp = false,
         const bool is_disabled = false);
 
     /**
@@ -786,7 +781,10 @@ public:
     virtual int GetLength() { return wxStyledTextCtrl::GetLength(); }
     virtual bool IsModified() { return wxStyledTextCtrl::GetModify(); }
     virtual bool Save() { return SaveFile(); }
-    virtual bool SaveAs(const wxString& defaultName = wxEmptyString) { return SaveFileAs(defaultName); }
+    virtual bool SaveAs(const wxString& defaultName = wxEmptyString, const wxString& savePath = wxEmptyString)
+    {
+        return SaveFileAs(defaultName, savePath);
+    }
     virtual int GetEOL() { return wxStyledTextCtrl::GetEOLMode(); }
     virtual int GetCurrentLine();
     virtual void ReplaceSelection(const wxString& text);

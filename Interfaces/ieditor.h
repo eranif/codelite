@@ -143,7 +143,7 @@ public:
     /**
      * @brief save the current editor with a different name
      */
-    virtual bool SaveAs(const wxString& defaultName = wxEmptyString) = 0;
+    virtual bool SaveAs(const wxString& defaultName = wxEmptyString, const wxString& savePath = wxEmptyString) = 0;
     
     /**
      * \brief return the current position of the caret

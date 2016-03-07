@@ -388,7 +388,8 @@ void OpenResourceDialog::OnTimer(wxTimerEvent& event)
 
     m_needRefresh = false;
 
-    // special condition, if there is only 1 item in the resource window highlight it
+    // If there is only 1 item in the resource window then highlight it.
+    // This allows the user to hit ENTER immediately after to open the item, nice shortcut.
     {
         wxDataViewItemArray children;
         m_dataviewModel->GetChildren(wxDataViewItem(0), children);

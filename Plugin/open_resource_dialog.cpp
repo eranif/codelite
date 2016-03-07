@@ -348,6 +348,17 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
         // Set the focus back to the text control
         m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
     }
+
+    // special condition when there is only one item, allow the user to access it quickly with ENTER
+    wxDataViewItemArray children;
+    m_dataviewModel->GetChildren(wxDataViewItem(0), children);
+            
+    if(event.GetKeyCode() == WXK_RETURN && children.size() == 1) {
+        DoSelectItem(children.Item(0));
+
+        wxCommandEvent e;
+        OnOK(e);
+    }
 }
 
 void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }

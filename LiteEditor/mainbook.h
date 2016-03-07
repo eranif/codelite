@@ -183,6 +183,7 @@ public:
     bool ClosePage(const wxString& text);
 
     bool ClosePage(wxWindow* win);
+    bool ClosePage(IEditor* editor, bool prompt);
     bool CloseAllButThis(wxWindow* win);
     bool CloseAll(bool cancellable);
 

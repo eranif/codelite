@@ -321,7 +321,7 @@ public:
     /**
      * @brief Deletes the specified page and the associated window
      */
-    bool DeletePage(size_t page);
+    bool DeletePage(size_t page, bool notify = true);
 
     /**
      * @brief Deletes all pages

@@ -6057,7 +6057,10 @@ void clMainFrame::OnDuplicateTab(wxCommandEvent& event)
         if(newEditor) {
             newEditor->GetCtrl()->SetText(currentFile->GetCtrl()->GetText());
             // Open the 'Save As' dialog, with some sensible defaults
-            newEditor->SaveAs(currentFile->GetFileName().GetFullName(), currentFile->GetFileName().GetPath());
+            if(!newEditor->SaveAs(currentFile->GetFileName().GetFullName(), currentFile->GetFileName().GetPath())) {
+                // If the "Save As" failed for any reason, remove the current editor
+                clGetManager()->CloseEditor(newEditor, false);
+            }
         }
     }
 }

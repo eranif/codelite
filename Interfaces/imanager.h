@@ -183,8 +183,8 @@ public:
      * @param lineno if lineno is not wxNOT_FOUD, the caret will placed on this line number
      * @return true if file opened
      */
-    virtual IEditor*
-    OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
+    virtual IEditor* OpenFile(
+        const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
 
     /**
      * @brief Open file using browsing record
@@ -480,6 +480,13 @@ public:
     virtual bool ClosePage(const wxFileName& filename) = 0;
 
     /**
+     * @brief close 'editor' from the notebook
+     * @param editor editor to close
+     * @param prompt if set to 'true' prompt if editor is modified, otherwise, close withotu prompting
+     */
+    virtual bool CloseEditor(IEditor* editor, bool prompt = true) = 0;
+
+    /**
      * @brief return named window in mainbook
      */
     virtual wxWindow* FindPage(const wxString& text) = 0;
@@ -487,11 +494,8 @@ public:
     /**
      * @brief add a page to the mainbook
      */
-    virtual bool AddPage(wxWindow* win,
-                         const wxString& text,
-                         const wxString& tooltip = wxEmptyString,
-                         const wxBitmap& bmp = wxNullBitmap,
-                         bool selected = false) = 0;
+    virtual bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString,
+        const wxBitmap& bmp = wxNullBitmap, bool selected = false) = 0;
 
     /**
      * @brief select a window in mainbook

@@ -213,9 +213,7 @@ void PluginManager::Load()
             if(interface_version != PLUGIN_INTERFACE_VERSION) {
                 CL_WARNING(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface "
                                                 "version is '%d', CodeLite interface version is '%d'"),
-                                            fileName.c_str(),
-                                            interface_version,
-                                            PLUGIN_INTERFACE_VERSION));
+                    fileName.c_str(), interface_version, PLUGIN_INTERFACE_VERSION));
                 wxDELETE(dl);
                 continue;
             }
@@ -275,15 +273,14 @@ void PluginManager::Load()
             if(tb) {
                 // When using AUI toolbars, use our own custom art-provider
                 tb->SetArtProvider(new CLMainAuiTBArt());
-                clMainFrame::Get()->GetDockingManager().AddPane(tb,
-                                                                wxAuiPaneInfo()
-                                                                    .Name(plugin->GetShortName())
-                                                                    .LeftDockable(true)
-                                                                    .RightDockable(true)
-                                                                    .Caption(plugin->GetShortName())
-                                                                    .ToolbarPane()
-                                                                    .Bottom()
-                                                                    .Row(0));
+                clMainFrame::Get()->GetDockingManager().AddPane(tb, wxAuiPaneInfo()
+                                                                        .Name(plugin->GetShortName())
+                                                                        .LeftDockable(true)
+                                                                        .RightDockable(true)
+                                                                        .Caption(plugin->GetShortName())
+                                                                        .ToolbarPane()
+                                                                        .Bottom()
+                                                                        .Row(0));
 
                 // Add menu entry at the 'View->Toolbars' menu for this toolbar
                 wxMenuItem* item = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("toolbars_menu"));
@@ -339,7 +336,7 @@ void PluginManager::Load()
         if(!((visibleTabs.size() == 1) && (visibleTabs.Item(0) == "NOT-FOUND"))) {
             for(size_t i = 0; i < tabs.size(); ++i) {
                 if((visibleTabs.Index(tabs.Item(i)) == wxNOT_FOUND) &&
-                   (detachedPanes.Index(tabs.Item(i)) == wxNOT_FOUND)) {
+                    (detachedPanes.Index(tabs.Item(i)) == wxNOT_FOUND)) {
                     // hidden tab - post an event
                     clCommandEvent eventHide(wxEVT_SHOW_WORKSPACE_TAB);
                     eventHide.SetSelected(false).SetString(tabs.Item(i));
@@ -356,7 +353,7 @@ void PluginManager::Load()
         if(!((visibleTabs.size() == 1) && (visibleTabs.Item(0) == "NOT-FOUND"))) {
             for(size_t i = 0; i < tabs.size(); ++i) {
                 if((visibleTabs.Index(tabs.Item(i)) == wxNOT_FOUND) &&
-                   (detachedPanes.Index(tabs.Item(i)) == wxNOT_FOUND)) {
+                    (detachedPanes.Index(tabs.Item(i)) == wxNOT_FOUND)) {
                     // hidden tab - post an event
                     clCommandEvent eventHide(wxEVT_SHOW_OUTPUT_TAB);
                     eventHide.SetSelected(false).SetString(tabs.Item(i));
@@ -445,8 +442,8 @@ bool PluginManager::AddFilesToVirtualFolder(const wxString& vdFullPath, wxArrayS
 
 bool PluginManager::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths)
 {
-    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(vdFullPath,
-                                                                                                      paths);
+    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(
+        vdFullPath, paths);
 }
 
 void PluginManager::RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files)
@@ -584,8 +581,8 @@ bool PluginManager::ClosePage(const wxFileName& filename)
 
 wxWindow* PluginManager::FindPage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->FindPage(text); }
 
-bool
-PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected)
+bool PluginManager::AddPage(
+    wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected)
 {
     return clMainFrame::Get()->GetMainBook()->AddPage(win, text, tooltip, bmp, selected);
 }
@@ -596,8 +593,8 @@ IEditor* PluginManager::OpenFile(const BrowseRecord& rec) { return clMainFrame::
 
 NavMgr* PluginManager::GetNavigationMgr() { return NavMgr::Get(); }
 
-void
-PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
+void PluginManager::HookProjectSettingsTab(
+    wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
     for(; iter != m_plugins.end(); iter++) {
@@ -605,8 +602,8 @@ PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& proj
     }
 }
 
-void
-PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
+void PluginManager::UnHookProjectSettingsTab(
+    wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
     for(; iter != m_plugins.end(); iter++) {
@@ -903,6 +900,7 @@ void PluginManager::ShowToolBar(bool show)
     event.SetEventObject(clMainFrame::Get());
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 }
+
 bool PluginManager::IsToolBarShown() const
 {
     if(clMainFrame::Get()->GetMainToolBar()) {
@@ -910,4 +908,9 @@ bool PluginManager::IsToolBarShown() const
         return clMainFrame::Get()->GetMainToolBar()->IsShown();
     }
     return false;
+}
+
+bool PluginManager::CloseEditor(IEditor* editor, bool prompt)
+{
+    return clMainFrame::Get()->GetMainBook()->ClosePage(editor, prompt);
 }

@@ -46,6 +46,7 @@
 #include "clFileOrFolderDropTarget.h"
 #include "NotebookNavigationDlg.h"
 #include "clImageViewer.h"
+#include "ieditor.h"
 
 MainBook::MainBook(wxWindow* parent)
     : wxPanel(parent)
@@ -1424,4 +1425,12 @@ void MainBook::OnTabLabelContextMenu(wxBookCtrlEvent& e)
         tabCtrl->PopupMenu(contextMenu);
         wxDELETE(contextMenu);
     }
+}
+
+bool MainBook::ClosePage(IEditor* editor, bool prompt)
+{
+    wxWindow* page = dynamic_cast<wxWindow*>(editor->GetCtrl());
+    if(!page) return false;
+    int pos = m_book->GetPageIndex(page);
+    return (pos != wxNOT_FOUND) && (m_book->DeletePage(pos, false));
 }

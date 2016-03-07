@@ -49,7 +49,7 @@ class FileViewTree : public wxTreeCtrl
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
 
 protected:
-    void DoCreateProjectContextMenu(wxMenu& menu);
+    void DoCreateProjectContextMenu(wxMenu& menu, const wxString& projectName);
 
 public:
     /**

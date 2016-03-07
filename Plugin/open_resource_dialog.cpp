@@ -348,19 +348,6 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
         // Set the focus back to the text control
         m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
     }
-
-    // special condition when there is only one item, allow the user to access it quickly with ENTER
-    if(event.GetKeyCode() == WXK_RETURN) {
-        wxDataViewItemArray children;
-        m_dataviewModel->GetChildren(wxDataViewItem(0), children);
-
-        if (children.size() == 1) {
-            DoSelectItem(children.Item(0));
-
-            wxCommandEvent e;
-            OnOK(e);
-        }
-    }
 }
 
 void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
@@ -400,6 +387,16 @@ void OpenResourceDialog::OnTimer(wxTimerEvent& event)
     if(m_needRefresh) DoPopulateList();
 
     m_needRefresh = false;
+
+    // special condition, if there is only 1 item in the resource window highlight it
+    {
+        wxDataViewItemArray children;
+        m_dataviewModel->GetChildren(wxDataViewItem(0), children);
+
+        if (children.size() == 1) {
+            DoSelectItem(children.Item(0));
+        }
+    }    
 }
 
 wxBitmap OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)

@@ -1705,8 +1705,23 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     SLEEP_COMMAND << SLEEP_COMMAND_BASE <<" " << secondsToSleep;
 
     wxString consoleCommand = TERMINAL_CMD;
+
+    wxString separate;
+#ifdef __WXGTK__
+    wxString grepcommand("grep 'x-terminal-emulator\\|konsole' "); grepcommand << consoleCommand.BeforeFirst('\'');
+    wxString CCcontents = ProcUtils::SafeExecuteCommand(grepcommand);
+    if (CCcontents.Contains("konsole") ||
+            (CCcontents.Contains("x-terminal-emulator") && CLRealPath(ProcUtils::SafeExecuteCommand("which x-terminal-emulator").Trim()).Contains("konsole"))) {
+        // konsole hangs when the debugger stops and we kill the contained 'sleep' instance, warning that 'sleep' has crashed.
+        // So we have to kill it manually. However by default konsole opens new instances of itself as threads of existing ones.
+        // That means that killing one 'instance' kills them all. The fix is to add --separate to the launch command.
+        separate = " '--separate'";
+    }
+#endif
+
     consoleCommand.Replace("$(CMD)", SLEEP_COMMAND);
     consoleCommand.Replace("$(TITLE)", title);
+    consoleCommand << separate;
     ::wxExecute(consoleCommand);
 
     // Let it start ... (wait for it up to 5 seconds)

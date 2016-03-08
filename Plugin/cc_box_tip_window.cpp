@@ -355,6 +355,9 @@ void CCBoxTipWindow::DoDrawTip(wxDC& dc, size_t& max_width)
     dc.SetPen(wxPen(penColour, 1));
 
     wxRect rr = GetClientRect();
+#ifdef __WXOSX__
+    rr.Inflate(1, 1);
+#endif
     dc.DrawRectangle(rr);
 
     // Draw left-right arrows

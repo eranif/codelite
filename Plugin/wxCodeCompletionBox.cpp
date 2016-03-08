@@ -164,6 +164,9 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     // Draw the entire box with single solid colour
     dc.SetBrush(m_useLightColours ? m_bgColour : m_lightBorder);
     dc.SetPen(m_penColour);
+#ifdef __WXOSX__
+    rect.Inflate(1, 1);
+#endif
     dc.DrawRectangle(rect);
 
     // Shrink the rectangle by 2 to provide a 2 pixle

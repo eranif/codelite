@@ -515,7 +515,8 @@ wxString DoExpandAllVariables(const wxString& expression,
 
             if(bldConf) {
                 output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
-
+                output.Replace("$(OutputFile)", bldConf->GetOutputFileName());
+                
                 // the IntermediateDirectory variable is special, since it can contains
                 // other variables in it.
                 wxString id(bldConf->GetIntermediateDirectory());

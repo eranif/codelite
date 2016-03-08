@@ -45,9 +45,7 @@ MacrosDlg::MacrosDlg(wxWindow* parent, int content, ProjectPtr project, IEditor*
     , m_editor(editor)
 {
     Initialize();
-    m_buttonOk->SetFocus();
-    GetSizer()->SetMinSize(700, 400);
-    GetSizer()->Fit(this);
+    CenterOnParent();
 }
 
 void MacrosDlg::OnItemRightClick(wxListEvent& event)

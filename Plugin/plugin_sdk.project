@@ -455,6 +455,7 @@
       <File Name="WSImporterDlgs_plugin_bitmaps.cpp"/>
       <File Name="clSelectSymbolDialogBase_plugin_bitmaps.cpp"/>
       <File Name="nameanddescdlg_plugin_bitmaps.cpp"/>
+      <File Name="MacrosBaseDlg_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
@@ -482,6 +483,7 @@
     <File Name="clBoostrapWizardBase.wxcp"/>
     <File Name="WSImporterDlgs.wxcp"/>
     <File Name="clSelectSymbolDialogBase.wxcp"/>
+    <File Name="MacrosBaseDlg.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="sftp_ui">
     <File Name="AddSSHAcountDlg.cpp"/>

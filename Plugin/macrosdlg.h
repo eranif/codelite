@@ -40,31 +40,27 @@ class IEditor;
 /** Implementing MacrosBaseDlg */
 class WXDLLIMPEXP_SDK MacrosDlg : public MacrosBaseDlg
 {
-	long m_item;
-	int m_content;
-	ProjectPtr m_project;
-	IEditor *m_editor;
+    long m_item;
+    int m_content;
+    ProjectPtr m_project;
+    IEditor* m_editor;
 
 public:
-	enum {
-		MacrosProject,
-		MacrosCompiler,
-		MacrosExternalTools
-	};
+    enum { MacrosProject, MacrosCompiler, MacrosExternalTools };
 
 protected:
-	// Handlers for MacrosBaseDlg events.
-	void OnItemRightClick( wxListEvent& event );
-	void OnCopy(wxCommandEvent &e);
-	void Initialize();
-	void AddMacro(const wxString &name, const wxString &desc);
+    // Handlers for MacrosBaseDlg events.
+    void OnItemRightClick(wxListEvent& event);
+    void OnCopy(wxCommandEvent& e);
+    void Initialize();
+    void AddMacro(const wxString& name, const wxString& desc);
 
-	DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 
 public:
-	/** Constructor */
-	MacrosDlg( wxWindow* parent, int content, ProjectPtr project, IEditor *editor );
-	virtual ~MacrosDlg();
+    /** Constructor */
+    MacrosDlg(wxWindow* parent, int content, ProjectPtr project, IEditor* editor);
+    virtual ~MacrosDlg();
 };
 
 #endif // __macrosdlg__

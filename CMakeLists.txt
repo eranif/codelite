@@ -34,6 +34,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 ## Defaults
 #############################################
 project( "CodeLite" )
+if(APPLE)
+  execute_process(COMMAND make type=release os=osx clean WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/PCH)
+  execute_process(COMMAND make type=release os=osx WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/PCH)
+endif()
 
 ## Generate compile_commands.json file for code completion
 set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )

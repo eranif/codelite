@@ -99,6 +99,7 @@ void MacrosDlg::Initialize()
         AddMacro(wxT("$(ProjectFilesAbs)"),
                  _("A space delimited string containing all of the project files in an absolute path"));
         AddMacro(wxT("`expression`"), _("backticks: evaluates the expression inside the backticks into a string"));
+        AddMacro(wxT("$(OutputFile)"), _("The output file"));
         break;
 
     case MacrosCompiler:
@@ -127,8 +128,9 @@ void MacrosDlg::Initialize()
         AddMacro(wxT("$(OutputSwitch)"), _("The output switch (e.g. -o)"));
         AddMacro(wxT("$(LibraryPathSwitch)"), _("Library switch (e.g. -L)"));
         AddMacro(wxT("$(PreprocessorSwitch)"), _("Preprocessor switch (e.g. -D)"));
-        AddMacro(wxT("$(Preprocessors)"), _("Expands to all preprocessors set in the project setting where each entry "
-                                            "is prefixed with $(PreprocessorSwitch)"));
+        AddMacro(wxT("$(Preprocessors)"),
+                 _("Expands to all preprocessors set in the project setting where each entry "
+                   "is prefixed with $(PreprocessorSwitch)"));
         AddMacro(wxT("$(ArchiveOutputSwitch)"), _("Archive switch, usually not needed (VC compiler sets it to /OUT:"));
         AddMacro(wxT("$(PreprocessOnlySwitch)"), _("The compiler preprocess-only switch (e.g. -E)"));
         AddMacro(wxT("$(LinkOptions)"), _("The linker options as set in the project settings"));
@@ -137,7 +139,8 @@ void MacrosDlg::Initialize()
         AddMacro(wxT("$(Libs)"), _("List of libraries to link with. Each library is prefixed with $(LibrarySwitch)"));
         AddMacro(wxT("$(LibPath)"),
                  _("List of library paths to link with. Each library is prefixed with $(LibraryPathSwitch)"));
-        AddMacro(wxT("$(OutputFile)"), _("The output file"));
+        AddMacro(wxT("$(ProjectOutputFile)"), _("The output file"));
+        AddMacro(wxT("$(OutputFile)"), _("The output file, same as $(ProjectOutputFile)"));
         break;
     }
 

@@ -67,6 +67,8 @@ wxString MacroManager::Expand(const wxString& expression,
             if(bldConf) {
                 bool isCustom = bldConf->IsCustomBuild();
                 expandedString.Replace(wxT("$(ProjectOutputFile)"), bldConf->GetOutputFileName());
+                // An alias
+                expandedString.Replace(wxT("$(OutputFile)"), bldConf->GetOutputFileName());
 
                 // When custom build project, use the working directory set in the
                 // custom build tab, otherwise use the project file's path
@@ -129,7 +131,7 @@ wxString MacroManager::Expand(const wxString& expression,
 
     if(manager) {
         expandedString.Replace(wxT("$(CodeLitePath)"), manager->GetInstallDirectory());
-        
+
         // Apply the environment and expand the variables
         EnvSetter es(NULL, NULL, project, confToBuild);
         expandedString = manager->GetEnv()->ExpandVariables(expandedString, false);

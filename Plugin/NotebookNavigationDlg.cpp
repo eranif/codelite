@@ -124,6 +124,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
 
     m_dvListCtrl->Bind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
     m_dvListCtrl->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
+    m_dvListCtrl->SetFocus();
 }
 
 NotebookNavigationDlg::~NotebookNavigationDlg()
@@ -150,13 +151,13 @@ void NotebookNavigationDlg::CloseDialog()
 void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 {
 #ifdef __WXOSX__
-    if(event.GetUnicodeKey() == WXK_ESCAPE) {
+    if(event.GetKeyCode() == WXK_ESCAPE) {
         CallAfter(&NotebookNavigationDlg::CloseDialog);
     } else {
         event.Skip();
     }
 #else
-    if((event.GetUnicodeKey() == WXK_TAB) && (event.CmdDown() && event.ShiftDown())) {
+    if((event.GetKeyCode() == WXK_TAB) && (event.CmdDown() && event.ShiftDown())) {
         // Navigate Up
         wxDataViewItem item = m_dvListCtrl->GetSelection();
         if(item.IsOk()) {
@@ -175,7 +176,7 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
                 m_dvListCtrl->EnsureVisible(item);
             }
         }
-    } else if((event.GetUnicodeKey() == WXK_TAB) && event.CmdDown()) {
+    } else if((event.GetKeyCode() == WXK_TAB) && event.CmdDown()) {
         // Navigate Down
         wxDataViewItem item = m_dvListCtrl->GetSelection();
         if(item.IsOk()) {

@@ -39,6 +39,7 @@
 #include "wxFlatButtonBar.h"
 #include "globals.h"
 #include "bookmark_manager.h"
+#include "clBitmapOverlayCtrl.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 

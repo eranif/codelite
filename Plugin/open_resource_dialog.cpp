@@ -387,6 +387,17 @@ void OpenResourceDialog::OnTimer(wxTimerEvent& event)
     if(m_needRefresh) DoPopulateList();
 
     m_needRefresh = false;
+
+    // If there is only 1 item in the resource window then highlight it.
+    // This allows the user to hit ENTER immediately after to open the item, nice shortcut.
+    {
+        wxDataViewItemArray children;
+        m_dataviewModel->GetChildren(wxDataViewItem(0), children);
+
+        if (children.size() == 1) {
+            DoSelectItem(children.Item(0));
+        }
+    }    
 }
 
 wxBitmap OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)

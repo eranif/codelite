@@ -31,8 +31,30 @@
 #include <wx/combobox.h>
 #include "wxFlatButtonBar.h"
 
+
 class QuickFindBarOptionsMenu;
 class wxStyledTextCtrl;
+
+class clNoMatchBitmap : public wxPanel
+{
+    wxBitmap m_warningBmp;
+    bool m_visible;
+
+protected:
+    void OnPaint(wxPaintEvent& event);
+    void OnEraseBg(wxEraseEvent& event) { wxUnusedVar(event); }
+
+public:
+    clNoMatchBitmap(wxWindow* parent);
+    virtual ~clNoMatchBitmap();
+
+    void SetVisible(bool visible) { this->m_visible = visible; }
+    bool IsVisible() const { return m_visible; }
+
+    void SetWarningBmp(const wxBitmap& warningBmp) { this->m_warningBmp = warningBmp; }
+    const wxBitmap& GetWarningBmp() const { return m_warningBmp; }
+};
+
 class QuickFindBar : public QuickFindBarBase
 {
 public:
@@ -59,6 +81,7 @@ protected:
     wxButton* m_buttonReplace;
     wxButton* m_buttonReplaceAll;
     wxFlatButton* m_closeButton;
+    clNoMatchBitmap* m_noMatchBmp;
     eRegexType m_regexType;
     bool m_disableTextUpdateEvent;
     friend class QuickFindBarOptionsMenu;
@@ -93,7 +116,7 @@ protected:
     void DoFixRegexParen(wxString& findwhat);
     wxString DoGetSelectedText();
     void DoSelectAll(bool addMarkers);
-    
+
     // General events
     void OnUndo(wxCommandEvent& e);
     void OnRedo(wxCommandEvent& e);

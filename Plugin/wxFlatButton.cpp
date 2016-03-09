@@ -2,6 +2,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
+#include "drawingutils.h"
 
 //++++++++---------------------------------
 // wxFlatButtonEvent
@@ -391,7 +392,7 @@ wxColour wxFlatButton::GetBarBgColour(wxFlatButton::eTheme theme)
     if(theme == wxFlatButton::kThemeDark) {
         return wxColour("rgb(87, 87, 87)");
     } else {
-        return wxColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        return wxColour(DrawingUtils::GetPanelBgColour());
     }
 }
 

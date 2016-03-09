@@ -41,6 +41,10 @@
 #include "bookmark_manager.h"
 #include "clBitmapOverlayCtrl.h"
 #include "clBitmapOverlayCtrl.h"
+#include "drawingutils.h"
+#include <wx/dcbuffer.h>
+#include "imanager.h"
+#include "bitmap_loader.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -80,7 +84,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_regexType(kRegexNone)
     , m_disableTextUpdateEvent(false)
 {
-    m_bar = new wxFlatButtonBar(this, wxFlatButton::kThemeNormal, 0, 9);
+    m_bar = new wxFlatButtonBar(this, wxFlatButton::kThemeNormal, 0, 10);
 
     //-------------------------------------------------------------
     // Find / Replace bar
@@ -88,7 +92,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // [x][A]["][*][/][..............][find][find prev][find all]
     // [-][-][-][-][-][..............][replace][replace all]
     //-------------------------------------------------------------
-    m_bar->SetExpandableColumn(5);
+    m_bar->SetExpandableColumn(6);
     GetSizer()->Add(m_bar, 1, wxEXPAND | wxALL, 2);
 
     // Add the 'close' button
@@ -126,6 +130,9 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     btnMarker->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
     btnMarker->SetToolTip(_("Highlight Occurrences"));
 
+    m_noMatchBmp = new clNoMatchBitmap(m_bar);
+    m_bar->AddControl(m_noMatchBmp);
+
     //=======----------------------
     // Find what:
     //=======----------------------
@@ -142,7 +149,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     wxButton* btnNext = new wxButton(m_bar, wxID_ANY, _("Find"), wxDefaultPosition, wxSize(100, -1));
     m_bar->AddControl(btnNext, 0);
     btnNext->SetDefault();
-    
+
     btnNext->Bind(wxEVT_BUTTON, &QuickFindBar::OnButtonNext, this);
     btnNext->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
     btnNext->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonNextUI, this);
@@ -171,6 +178,9 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_bar->AddSpacer(0);
     m_bar->AddSpacer(0);
     m_bar->AddSpacer(0);
+    m_bar->AddSpacer(0);
+
+    // This spacer is for alinging with the "no match" bitmap
     m_bar->AddSpacer(0);
 
     wxArrayString m_replaceWithArr;
@@ -257,7 +267,8 @@ void QuickFindBar::ToggleReplacebar()
 void QuickFindBar::DoSearch(size_t searchFlags)
 {
     if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty()) return;
-
+    m_noMatchBmp->SetVisible(false);
+    m_noMatchBmp->Refresh();
     clGetManager()->SetStatusMessage(wxEmptyString);
 
     // Clear all search markers if desired
@@ -317,13 +328,14 @@ void QuickFindBar::DoSearch(size_t searchFlags)
     }
 
     if(pos == wxNOT_FOUND) {
+        m_noMatchBmp->SetVisible(true);
+        m_noMatchBmp->Refresh();
         // Restore the caret position
         m_sci->SetCurrentPos(curpos);
         m_sci->ClearSelections();
         return;
     }
-    
-    
+
     DoEnsureLineIsVisible();
 }
 
@@ -837,7 +849,7 @@ void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)
     } else {
         editor->SetFindBookmarksActive(false);
         editor->DelAllMarkers(smt_find_bookmark);
-        
+
         IEditor::List_t editors;
         clGetManager()->GetAllEditors(editors);
         std::for_each(editors.begin(), editors.end(), [&](IEditor* pEditor) {
@@ -1241,4 +1253,38 @@ void QuickFindBar::OnReplaceAll(wxCommandEvent& e)
     wxString message;
     message << _("Found and replaced ") << matchesCount << _(" matches");
     clGetManager()->SetStatusMessage(message, 5);
+}
+
+clNoMatchBitmap::clNoMatchBitmap(wxWindow* parent)
+    : wxPanel(parent)
+    , m_visible(false)
+{
+    m_warningBmp = clGetManager()->GetStdIcons()->LoadBitmap("warning");
+    SetSize(m_warningBmp.GetSize());
+    SetSizeHints(m_warningBmp.GetSize());
+    Bind(wxEVT_PAINT, &clNoMatchBitmap::OnPaint, this);
+    Bind(wxEVT_ERASE_BACKGROUND, &clNoMatchBitmap::OnEraseBg, this);
+}
+
+clNoMatchBitmap::~clNoMatchBitmap()
+{
+    Unbind(wxEVT_PAINT, &clNoMatchBitmap::OnPaint, this);
+    Unbind(wxEVT_ERASE_BACKGROUND, &clNoMatchBitmap::OnEraseBg, this);
+}
+
+void clNoMatchBitmap::OnPaint(wxPaintEvent& event)
+{
+    wxUnusedVar(event);
+    wxBufferedPaintDC dc(this);
+    wxColour bgColour = DrawingUtils::GetPanelBgColour();
+    wxRect rr = GetClientRect();
+    dc.SetBrush(bgColour);
+    dc.SetPen(bgColour);
+    dc.DrawRectangle(rr);
+
+    if(IsVisible()) {
+        wxCoord xx = (rr.GetWidth() - m_warningBmp.GetScaledWidth()) / 2;
+        wxCoord yy = (rr.GetHeight() - m_warningBmp.GetScaledHeight()) / 2;
+        dc.DrawBitmap(m_warningBmp, xx, yy);
+    }
 }

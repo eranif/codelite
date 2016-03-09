@@ -12,10 +12,10 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
   <Settings Type="Static Library">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
-      <Compiler Required="yes" Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --debug=yes --unicode=yes)">
+      <Compiler Required="yes" Options="-g;-O0;-Wall;$(shell wx-config --cxxflags   --unicode=yes)">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes)"/>
+      <Linker Required="yes" Options="$(shell wx-config   --libs --unicode=yes)"/>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>

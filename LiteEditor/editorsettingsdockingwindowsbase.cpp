@@ -141,12 +141,6 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     boxSizer20->Add(m_checkBoxFindBarAtBottom, 0, wxALL|wxEXPAND, 5);
     
-    m_checkBoxShowReplaceBar = new wxCheckBox(m_panel14, wxID_ANY, _("Also show the 'Replace' section of the Find bar"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxShowReplaceBar->SetValue(false);
-    m_checkBoxShowReplaceBar->SetToolTip(_("When ticked, extra 'replace' fields will be added. You can also Show/Hide these using a keyboard shortcut."));
-    
-    boxSizer20->Add(m_checkBoxShowReplaceBar, 0, wxALL|wxEXPAND, 5);
-    
     m_checkBoxDontFoldSearchResults = new wxCheckBox(m_panel14, wxID_ANY, _("Don't automatically fold Search results"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxDontFoldSearchResults->SetValue(false);
     m_checkBoxDontFoldSearchResults->SetToolTip(_("By default, all but the first results of 'Search' are automatically folded; you have to click on each subsequent file to see its contained matches. Tick this box to prevent this.\nYou can still fold and unfold results with the button in the output pane toolbar."));

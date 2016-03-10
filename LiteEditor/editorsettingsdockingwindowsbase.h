@@ -46,7 +46,6 @@ protected:
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
     wxPanel* m_panel14;
     wxCheckBox* m_checkBoxFindBarAtBottom;
-    wxCheckBox* m_checkBoxShowReplaceBar;
     wxCheckBox* m_checkBoxDontFoldSearchResults;
     wxPanel* m_panel16;
     wxCheckBox* m_checkBoxHideOutputPaneOnClick;
@@ -84,7 +83,6 @@ public:
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
     wxPanel* GetPanel12() { return m_panel12; }
     wxCheckBox* GetCheckBoxFindBarAtBottom() { return m_checkBoxFindBarAtBottom; }
-    wxCheckBox* GetCheckBoxShowReplaceBar() { return m_checkBoxShowReplaceBar; }
     wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }
     wxPanel* GetPanel14() { return m_panel14; }
     wxCheckBox* GetCheckBoxHideOutputPaneOnClick() { return m_checkBoxHideOutputPaneOnClick; }

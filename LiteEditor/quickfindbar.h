@@ -84,6 +84,7 @@ protected:
     clNoMatchBitmap* m_noMatchBmp;
     eRegexType m_regexType;
     bool m_replaceInSelection;
+    bool m_disableTextUpdateEvent;
     friend class QuickFindBarOptionsMenu;
 
 public:

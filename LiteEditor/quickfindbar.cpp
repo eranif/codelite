@@ -83,6 +83,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_optionsWindow(NULL)
     , m_regexType(kRegexNone)
     , m_replaceInSelection(false)
+    , m_disableTextUpdateEvent(false)
 {
     m_bar = new wxFlatButtonBar(this, wxFlatButton::kThemeNormal, 0, 10);
 
@@ -376,7 +377,7 @@ void QuickFindBar::OnPrev(wxCommandEvent& e)
 void QuickFindBar::OnText(wxCommandEvent& e)
 {
     e.Skip();
-    if(!m_replaceInSelection) {
+    if(!m_replaceInSelection && !m_disableTextUpdateEvent) {
         CallAfter(&QuickFindBar::DoSearch, kSearchForward);
     }
 }
@@ -1050,17 +1051,21 @@ void QuickFindBar::DoUpdateSearchHistory()
 {
     wxString findWhat = m_findWhat->GetValue();
     if(findWhat.IsEmpty()) return;
+    m_disableTextUpdateEvent = true;
     m_findWhat->Clear();
     m_findWhat->ChangeValue(findWhat);
     m_findWhat->Append(clConfig::Get().GetQuickFindSearchItems());
+    m_disableTextUpdateEvent = false;
 }
 
 void QuickFindBar::DoUpdateReplaceHistory()
 {
+    m_disableTextUpdateEvent = true;
     int where = m_replaceWith->FindString(m_replaceWith->GetValue());
     if(where == wxNOT_FOUND) {
         m_replaceWith->Insert(m_replaceWith->GetValue(), 0);
     }
+    m_disableTextUpdateEvent = false;
 }
 
 void QuickFindBar::OnButtonNext(wxCommandEvent& e) { OnNext(e); }

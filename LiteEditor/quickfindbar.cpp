@@ -45,6 +45,7 @@
 #include <wx/dcbuffer.h>
 #include "imanager.h"
 #include "bitmap_loader.h"
+#include <wx/wupdlock.h>
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -587,6 +588,10 @@ bool QuickFindBar::Show(const wxString& findWhat, bool replaceBar)
 
 bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool replaceBar)
 {
+#ifdef __WXMSW__
+    wxWindowUpdateLocker locker(this);
+#endif
+    
     bool res = wxPanel::Show(s);
 
     if(s && !m_eventsConnected) {

@@ -31,7 +31,6 @@
 #include <wx/combobox.h>
 #include "wxFlatButtonBar.h"
 
-
 class QuickFindBarOptionsMenu;
 class wxStyledTextCtrl;
 
@@ -81,9 +80,10 @@ protected:
     wxButton* m_buttonReplace;
     wxButton* m_buttonReplaceAll;
     wxFlatButton* m_closeButton;
+    wxFlatButton* m_replaceInSelectionButton;
     clNoMatchBitmap* m_noMatchBmp;
     eRegexType m_regexType;
-    bool m_disableTextUpdateEvent;
+    bool m_replaceInSelection;
     friend class QuickFindBarOptionsMenu;
 
 public:
@@ -108,6 +108,7 @@ private:
     void DoUpdateSearchHistory();
     void DoUpdateReplaceHistory();
     size_t DoGetSearchFlags();
+    void DoReplaceAll(bool selectionOnly);
 
 protected:
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
@@ -141,16 +142,18 @@ protected:
     void OnButtonReplace(wxCommandEvent& e);
     void OnReplaceAll(wxCommandEvent& e);
     void OnButtonReplaceUI(wxUpdateUIEvent& e);
+    void OnButtonReplaceAllUI(wxUpdateUIEvent& e);
     void OnEnter(wxCommandEvent& e);
     void OnReplace(wxCommandEvent& e);
     void OnUpdateUI(wxUpdateUIEvent& e);
-    void OnReplaceUI(wxUpdateUIEvent& e);
     void OnReplaceEnter(wxCommandEvent& e);
     void OnHighlightMatches(wxFlatButtonEvent& e);
+    void OnReplaceInSelection(wxFlatButtonEvent& e);
     void OnHideBar(wxFlatButtonEvent& e);
     void OnRegex(wxFlatButtonEvent& event);
     void OnRegexUI(wxUpdateUIEvent& event);
     void OnHighlightMatchesUI(wxUpdateUIEvent& event);
+    void OnReplaceInSelectionUI(wxUpdateUIEvent& event);
     void OnQuickFindCommandEvent(wxCommandEvent& event);
     void OnReceivingFocus(wxFocusEvent& event);
     void OnReleaseEditor(wxCommandEvent& e);
@@ -161,8 +164,7 @@ protected:
     void OnFindPreviousCaret(wxCommandEvent& e);
 
 protected:
-    bool DoShow(bool s, const wxString& findWhat);
-    void DoToggleReplacebar();
+    bool DoShow(bool s, const wxString& findWhat, bool replaceBar);
     wxStyledTextCtrl* DoCheckPlugins();
 
 public:
@@ -170,10 +172,9 @@ public:
     virtual ~QuickFindBar();
     int GetCloseButtonId();
     bool ShowForPlugins();
-    bool Show(bool s = true);
-    bool Show(const wxString& findWhat);
+    bool Show(bool s = true, bool replaceBar = false);
+    bool Show(const wxString& findWhat, bool replaceBar = false);
     void ShowReplacebar(bool show);
-    void ToggleReplacebar();
     wxStyledTextCtrl* GetEditor() { return m_sci; }
     void SetEditor(wxStyledTextCtrl* sci);
 };

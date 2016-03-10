@@ -335,7 +335,7 @@ EVT_UPDATE_UI_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::Dispatch
 // Search menu
 //-------------------------------------------------------
 EVT_MENU(wxID_FIND, clMainFrame::DispatchCommandEvent)
-EVT_MENU(wxID_REPLACE, clMainFrame::DispatchCommandEvent)
+EVT_MENU(wxID_REPLACE, clMainFrame::OnIncrementalReplace)
 EVT_MENU(XRCID("find_resource"), clMainFrame::OnFindResourceXXX)
 EVT_MENU(XRCID("incremental_search"), clMainFrame::OnIncrementalSearch)
 EVT_MENU(XRCID("incremental_replace"), clMainFrame::OnIncrementalReplace)
@@ -4631,13 +4631,13 @@ void clMainFrame::OnNextPrevTab_UI(wxUpdateUIEvent& e)
 void clMainFrame::OnIncrementalSearch(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    GetMainBook()->ShowQuickBar(true);
+    GetMainBook()->ShowQuickBar(true, false);
 }
 
 void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    GetMainBook()->ToggleQuickReplaceBar();
+    GetMainBook()->ShowQuickBar(true, true);
 }
 
 void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)

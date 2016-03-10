@@ -2560,6 +2560,7 @@ void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu, const wxString& proj
     
     item = new wxMenuItem(&menu, XRCID("stop_build"), _("Stop Build"), _("Stop Build"));
     menu.Append(item);
+    menu.AppendSeparator();
     
     wxMenu* projectOnly = new wxMenu();
     projectOnly->Append(XRCID("build_project_only"), _("Build"));

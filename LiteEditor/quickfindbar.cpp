@@ -1158,8 +1158,8 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
 
     // We got at least one match
     m_sci->SetCurrentPos(from);
-    m_sci->SetSelectionEnd(0);
-    m_sci->SetSelectionStart(0);
+    m_sci->SetSelectionEnd(from);
+    m_sci->SetSelectionStart(from);
 
     m_sci->ClearSelections();
     m_sci->SearchAnchor();

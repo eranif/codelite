@@ -373,7 +373,13 @@ void QuickFindBar::OnPrev(wxCommandEvent& e)
     DoSearch(flags);
 }
 
-void QuickFindBar::OnText(wxCommandEvent& e) { e.Skip(); }
+void QuickFindBar::OnText(wxCommandEvent& e)
+{
+    e.Skip();
+    if(!m_replaceInSelection) {
+        CallAfter(&QuickFindBar::DoSearch, kSearchForward);
+    }
+}
 
 void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 {
@@ -1228,7 +1234,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
                 m_sci->Replace(selStart, selEnd, replaceWith);
             }
             newpos = selStart + replacementLen;
-            
+
             // Extend the range (or shrink it) depending on the replacement
             if(selectionOnly) {
                 int matchFoundLen = selEnd - selStart;
@@ -1271,7 +1277,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     wxString message;
     message << _("Found and replaced ") << matchesCount << _(" matches");
     clGetManager()->SetStatusMessage(message, 5);
-    
+
     // If needed, restore the selection
     if(selectionOnly) {
         m_sci->SetCurrentPos(from);

@@ -288,6 +288,9 @@ void ContextBase::AutoAddComment()
                             where += match.length();
                             int caretPos = startPos + where;
                             rCtrl.SetCaretAt(caretPos);
+                            
+                            // Remove the @brief as its non standard in the PHP world
+                            rCtrl.DeleteRange(caretPos - match.length(), match.length());
                         }
                     }
                     rCtrl.EndUndoAction();

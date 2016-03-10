@@ -510,6 +510,8 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
                     where += match.length();
                     int caretPos = lineStartPos + where;
                     editor->SetCaretAt(caretPos);
+                    // Remove the @brief as its non standard in the PHP world
+                    editor->GetCtrl()->DeleteRange(caretPos - match.length(), match.length());
                 }
             }
             editor->GetCtrl()->EndUndoAction();

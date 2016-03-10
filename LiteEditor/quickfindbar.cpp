@@ -229,12 +229,21 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     wxTheApp->Connect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Connect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
-    wxTheApp->Connect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
-    wxTheApp->Connect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
+    wxTheApp->Connect(XRCID("find_previous"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(QuickFindBar::OnFindPrevious),
+                      NULL,
+                      this);
+    wxTheApp->Connect(XRCID("find_next_at_caret"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
+                      NULL,
+                      this);
+    wxTheApp->Connect(XRCID("find_previous_at_caret"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
+                      NULL,
+                      this);
 
     EventNotifier::Get()->Connect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
@@ -384,7 +393,7 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 void QuickFindBar::OnUpdateUI(wxUpdateUIEvent& e)
 {
     e.Enable(ManagerST::Get()->IsShutdownInProgress() == false && m_sci && m_sci->GetLength() > 0 &&
-        !m_findWhat->GetValue().IsEmpty());
+             !m_findWhat->GetValue().IsEmpty());
 }
 
 void QuickFindBar::OnEnter(wxCommandEvent& e)
@@ -488,8 +497,9 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
 
     // Ensure that the selection matches our search pattern
     size_t searchFlags = DoGetSearchFlags();
-    if(m_sci->FindText(selStart, selEnd, searchFlags & wxSTC_FIND_REGEXP ? findWhatSciVersion : findwhat,
-           searchFlags) == wxNOT_FOUND) {
+    if(m_sci->FindText(
+           selStart, selEnd, searchFlags & wxSTC_FIND_REGEXP ? findWhatSciVersion : findwhat, searchFlags) ==
+       wxNOT_FOUND) {
         // we got a selection, but it does not match our search
         return;
     }
@@ -893,12 +903,21 @@ QuickFindBar::~QuickFindBar()
 {
     wxTheApp->Disconnect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
+    wxTheApp->Disconnect(XRCID("find_previous"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(QuickFindBar::OnFindPrevious),
+                         NULL,
+                         this);
+    wxTheApp->Disconnect(XRCID("find_next_at_caret"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
+                         NULL,
+                         this);
+    wxTheApp->Disconnect(XRCID("find_previous_at_caret"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
+                         NULL,
+                         this);
     EventNotifier::Get()->Disconnect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
 }
@@ -1157,9 +1176,9 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     int curpos = m_sci->GetCurrentPos();
 
     // We got at least one match
-    m_sci->SetCurrentPos(from);
-    m_sci->SetSelectionEnd(from);
-    m_sci->SetSelectionStart(from);
+    m_sci->SetCurrentPos(0);
+    m_sci->SetSelectionEnd(0);
+    m_sci->SetSelectionStart(0);
 
     m_sci->ClearSelections();
     m_sci->SearchAnchor();
@@ -1179,48 +1198,60 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     int pos = m_sci->SearchNext(searchFlags, findwhat);
     size_t matchesCount = 0;
     while(pos != wxNOT_FOUND) {
-        int selStart, selEnd;
-        m_sci->GetSelection(&selStart, &selEnd);
-        wxString selectedText = m_sci->GetSelectedText();
+        int selStart, selEnd, newpos;
         size_t replacementLen = replaceWith.length();
-        if(searchFlags & wxSTC_FIND_REGEXP) {
+        m_sci->GetSelection(&selStart, &selEnd);
+        if(!selectionOnly || ((pos >= from) && (pos < to))) {
+            wxString selectedText = m_sci->GetSelectedText();
+            if(searchFlags & wxSTC_FIND_REGEXP) {
 
-            // Regular expresson search
-            if(!(searchFlags & wxSTC_FIND_MATCHCASE)) {
-                re_flags |= wxRE_ICASE;
-            }
+                // Regular expresson search
+                if(!(searchFlags & wxSTC_FIND_MATCHCASE)) {
+                    re_flags |= wxRE_ICASE;
+                }
 
-            wxRegEx re(findwhat, re_flags);
-            if(re.IsValid() && re.Matches(selectedText)) {
-                re.Replace(&selectedText, replaceWith);
+                wxRegEx re(findwhat, re_flags);
+                if(re.IsValid() && re.Matches(selectedText)) {
+                    re.Replace(&selectedText, replaceWith);
 
-                // Keep the replacement length
-                replacementLen = selectedText.length();
+                    // Keep the replacement length
+                    replacementLen = selectedText.length();
 
-                // update the view
-                m_sci->Replace(selStart, selEnd, selectedText);
+                    // update the view
+                    m_sci->Replace(selStart, selEnd, selectedText);
+                } else {
+                    return;
+                }
+
             } else {
-                return;
+                // Normal search and replace
+                m_sci->Replace(selStart, selEnd, replaceWith);
             }
-
+            newpos = selStart + replacementLen;
+            
+            // Extend the range (or shrink it) depending on the replacement
+            if(selectionOnly) {
+                int matchFoundLen = selEnd - selStart;
+                to += (replacementLen - matchFoundLen);
+            }
         } else {
-            // Normal search and replace
-            m_sci->Replace(selStart, selEnd, replaceWith);
+            // the match is not in the selection range
+            newpos = pos + replacementLen;
+            // Move to the next match
+            m_sci->SetCurrentPos(newpos);
+            m_sci->SetSelectionStart(newpos);
+            m_sci->SetSelectionEnd(newpos);
+            m_sci->SearchAnchor();
+            pos = m_sci->SearchNext(searchFlags, findwhat);
+            continue;
         }
 
         // Move to the next match
-        int newpos = selStart + replacementLen;
         m_sci->SetCurrentPos(newpos);
         m_sci->SetSelectionStart(newpos);
         m_sci->SetSelectionEnd(newpos);
         m_sci->SearchAnchor();
         pos = m_sci->SearchNext(searchFlags, findwhat);
-
-        // When replacing in "Selected Text" don't count matches
-        // that are out of range
-        if(selectionOnly && (pos > to)) {
-            break;
-        }
         ++matchesCount;
     }
     m_sci->EndUndoAction();
@@ -1240,6 +1271,13 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     wxString message;
     message << _("Found and replaced ") << matchesCount << _(" matches");
     clGetManager()->SetStatusMessage(message, 5);
+    
+    // If needed, restore the selection
+    if(selectionOnly) {
+        m_sci->SetCurrentPos(from);
+        m_sci->SetSelectionStart(from);
+        m_sci->SetSelectionEnd(to);
+    }
 }
 
 void QuickFindBar::OnReplaceInSelection(wxFlatButtonEvent& e) { m_replaceInSelection = e.IsChecked(); }

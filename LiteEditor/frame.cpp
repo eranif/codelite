@@ -6081,8 +6081,12 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
     clConfig::Get().Write(kConfigShowToolBar, !minimalView);
     clConfig::Get().Write(kConfigShowStatusBar, !minimalView);
     clConfig::Get().Write("MinimalView", !minimalView); // for next time
-    EditorConfigST::Get()->GetOptions()->SetShowDockingWindowCaption(!minimalView);
-
+    
+    // Update the captiosn settings
+    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+    opts->SetShowDockingWindowCaption(!minimalView);
+    EditorConfigST::Get()->SetOptions(opts);
+    
     m_mgr.Update();
     PostSizeEvent();
 }

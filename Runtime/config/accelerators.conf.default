@@ -63,6 +63,7 @@ show_search_toolbar|View::Toolbars|Search ToolBar|
 show_build_toolbar|View::Toolbars|Build ToolBar|
 show_debug_toolbar|View::Toolbars|Debug ToolBar|
 toggle_panes|View|Toggle All Panes|Ctrl-M
+distraction_free_mode|View|Toggle Minimal View|Ctrl-F11
 find_in_files|Search::Find In Files|Find In Files...|Ctrl-Shift-F
 wxID_FIND|Search::Find and Replace|Find...|Ctrl-F
 ID_QUICK_ADD_NEXT|Search::Find and Replace|Quick Add Next|Ctrl-K

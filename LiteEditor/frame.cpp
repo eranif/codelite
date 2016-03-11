@@ -67,6 +67,7 @@
 #include "clSingleChoiceDialog.h"
 #include <wx/richmsgdlg.h>
 #include "cl_aui_tool_stickness.h"
+#include "clMainFrameHelper.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -305,6 +306,8 @@ EVT_MENU(XRCID("show_nav_toolbar"), clMainFrame::OnShowNavBar)
 EVT_MENU(XRCID("toogle_main_toolbars"), clMainFrame::OnToggleMainTBars)
 EVT_MENU(XRCID("toogle_plugin_toolbars"), clMainFrame::OnTogglePluginTBars)
 EVT_MENU(XRCID("toggle_panes"), clMainFrame::OnTogglePanes)
+EVT_MENU(XRCID("distraction_free_mode"), clMainFrame::OnToggleMinimalView)
+EVT_UPDATE_UI(XRCID("distraction_free_mode"), clMainFrame::OnToggleMinimalViewUI)
 EVT_MENU(XRCID("hide_status_bar"), clMainFrame::OnShowStatusBar)
 EVT_UPDATE_UI(XRCID("hide_status_bar"), clMainFrame::OnShowStatusBarUI)
 EVT_MENU(XRCID("hide_tool_bar"), clMainFrame::OnShowToolbar)
@@ -692,6 +695,8 @@ clMainFrame::clMainFrame(
     long value = EditorConfigST::Get()->GetInteger(wxT("highlight_word"), 0);
     m_highlightWord = (bool)value;
 
+    // Initialize the frame helper
+    m_frameHelper.Reset(new clMainFrameHelper(this, &m_mgr));
     CreateGUIControls();
 
     ManagerST::Get();              // Dummy call
@@ -1189,17 +1194,44 @@ void clMainFrame::CreateGUIControls()
     GetWorkspacePane()->SendSizeEvent(wxSEND_EVENT_POST);
 }
 
-void clMainFrame::DoShowToolbars(bool show)
+void clMainFrame::DoShowToolbars(bool show, bool update)
 {
+    // Hide the _native_ toolbar
     if(GetMainToolBar()) {
-        GetMainToolBar()->Show(show);
+        if(show) {
+            SetToolBar(NULL);
+            // Recreate the toolbar
+            if(EditorConfigST::Get()->GetOptions()->GetIconsSize() == 24) {
+                CreateNativeToolbar24();
+            } else {
+                CreateNativeToolbar16();
+            }
+
+            // Update the build drop down menu
+            if(clCxxWorkspaceST::Get()->IsOpen()) {
+                wxMenu* buildDropDownMenu = new wxMenu;
+                DoCreateBuildDropDownMenu(buildDropDownMenu);
+                if(GetMainToolBar() && GetMainToolBar()->FindById(XRCID("build_active_project"))) {
+                    GetMainToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
+                }
+            }
+
+        } else {
+            GetMainToolBar()->Hide();
+            GetMainToolBar()->Realize();
+            Layout();
+        }
     } else {
-        // AUI bars
         wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
         for(size_t i = 0; i < panes.GetCount(); ++i) {
             if(panes.Item(i).IsOk() && panes.Item(i).IsToolbar()) {
                 panes.Item(i).Show(show);
             }
+        }
+
+        if(update) {
+            m_mgr.Update();
+            SendSizeEvent();
         }
     }
 }
@@ -5689,89 +5721,21 @@ void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
     clConfig::Get().Write(kConfigShowStatusBar, event.IsChecked());
 }
 
-void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetStatusBar()->IsShown()); }
+void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(m_frameHelper->IsStatusBarVisible()); }
 
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {
-    // Hide the _native_ toolbar
-    if(GetMainToolBar()) {
-        if(event.IsChecked()) {
-
-            SetToolBar(NULL);
-
-            // Recreate the toolbar
-            if(EditorConfigST::Get()->GetOptions()->GetIconsSize() == 24) {
-                CreateNativeToolbar24();
-            } else {
-                CreateNativeToolbar16();
-            }
-
-            // Update the build drop down menu
-            if(clCxxWorkspaceST::Get()->IsOpen()) {
-                wxMenu* buildDropDownMenu = new wxMenu;
-                DoCreateBuildDropDownMenu(buildDropDownMenu);
-                if(GetMainToolBar() && GetMainToolBar()->FindById(XRCID("build_active_project"))) {
-                    GetMainToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
-                }
-            }
-
-        } else {
-            GetMainToolBar()->Hide();
-            GetMainToolBar()->Realize();
-            Layout();
-        }
-    } else {
-        wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
-        for(size_t i = 0; i < panes.GetCount(); ++i) {
-            if(panes.Item(i).IsOk() && panes.Item(i).IsToolbar()) {
-                panes.Item(i).Show(event.IsChecked());
-            }
-        }
-        m_mgr.Update();
-        SendSizeEvent();
-    }
+    DoShowToolbars(event.IsChecked());
     clConfig::Get().Write(kConfigShowToolBar, event.IsChecked());
 }
 
-void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event)
-{
-    if(GetMainToolBar()) {
-        event.Check(GetMainToolBar()->IsShown());
-    } else {
-
-        bool atLeastOneTBIsVisible = false;
-        wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
-        for(size_t i = 0; i < panes.GetCount(); ++i) {
-            if(panes.Item(i).IsOk() && panes.Item(i).IsToolbar() && panes.Item(i).IsShown()) {
-                atLeastOneTBIsVisible = true;
-                break;
-            }
-        }
-        event.Check(atLeastOneTBIsVisible);
-    }
-}
+void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event) { event.Check(m_frameHelper->IsToolbarShown()); }
 
 void clMainFrame::ShowOrHideCaptions()
 {
     // load the current state
     bool showCaptions = EditorConfigST::Get()->GetOptions()->IsShowDockingWindowCaption();
-
-    if(!showCaptions) {
-        wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
-        for(size_t i = 0; i < panes.GetCount(); ++i) {
-            if(panes.Item(i).IsOk() && !panes.Item(i).IsToolbar()) {
-                panes.Item(i).CaptionVisible(false);
-            }
-        }
-    } else {
-        wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
-        for(size_t i = 0; i < panes.GetCount(); ++i) {
-            // Editor is the center pane - don't add it a caption
-            if(panes.Item(i).IsOk() && !panes.Item(i).IsToolbar() && panes.Item(i).name != "Editor") {
-                panes.Item(i).CaptionVisible(true);
-            }
-        }
-    }
+    DoShowCaptions(showCaptions);
     m_mgr.Update();
     PostSizeEvent();
 }
@@ -6063,4 +6027,67 @@ void clMainFrame::OnDuplicateTab(wxCommandEvent& event)
             }
         }
     }
+}
+
+void clMainFrame::DoShowCaptions(bool show)
+{
+    if(!show) {
+        wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
+        for(size_t i = 0; i < panes.GetCount(); ++i) {
+            if(panes.Item(i).IsOk() && !panes.Item(i).IsToolbar()) {
+                panes.Item(i).CaptionVisible(false);
+            }
+        }
+    } else {
+        wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
+        for(size_t i = 0; i < panes.GetCount(); ++i) {
+            // Editor is the center pane - don't add it a caption
+            if(panes.Item(i).IsOk() && !panes.Item(i).IsToolbar() && panes.Item(i).name != "Editor") {
+                panes.Item(i).CaptionVisible(true);
+            }
+        }
+    }
+}
+
+void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
+{
+    // Hide the toolbars + captions
+    // Hide the _native_ toolbar
+    bool minimalView = clConfig::Get().Read("MinimalView", true);
+    if(minimalView) {
+        if(m_frameHelper->IsToolbarShown()) {
+            // Hide the toolbar
+            DoShowToolbars(false, false);
+        }
+        if(m_frameHelper->IsCaptionsVisible()) {
+            DoShowCaptions(false);
+        }
+        if(m_frameHelper->IsStatusBarVisible()) {
+            GetStatusBar()->Show(false);
+        }
+    } else {
+        if(!m_frameHelper->IsToolbarShown()) {
+            DoShowToolbars(true, false);
+        }
+        if(!m_frameHelper->IsCaptionsVisible()) {
+            DoShowCaptions(true);
+        }
+        if(!m_frameHelper->IsStatusBarVisible()) {
+            GetStatusBar()->Show(true);
+        }
+    }
+
+    // Update the various configurations
+    clConfig::Get().Write(kConfigShowToolBar, !minimalView);
+    clConfig::Get().Write(kConfigShowStatusBar, !minimalView);
+    clConfig::Get().Write("MinimalView", !minimalView); // for next time
+    EditorConfigST::Get()->GetOptions()->SetShowDockingWindowCaption(!minimalView);
+
+    m_mgr.Update();
+    PostSizeEvent();
+}
+
+void clMainFrame::OnToggleMinimalViewUI(wxUpdateUIEvent& event)
+{
+    event.Check(clConfig::Get().Read("MinimalView", false));
 }

@@ -52,6 +52,7 @@
 #include "clStatusBar.h"
 #include <wx/cmndata.h>
 #include "clDockingManager.h"
+#include "clMainFrameHelper.h"
 
 // forward decls
 class clSingleInstanceThread;
@@ -122,14 +123,15 @@ class clMainFrame : public wxFrame
     // Printing
     wxPrintDialogData m_printDlgData;
     wxToolBar* m_mainToolBar;
-
+    clMainFrameHelper::Ptr_t m_frameHelper;
+    
 public:
     static bool m_initCompleted;
 
 protected:
     bool IsEditorEvent(wxEvent& event);
     void DoCreateBuildDropDownMenu(wxMenu* menu);
-    void DoShowToolbars(bool show);
+    void DoShowToolbars(bool show, bool update = true);
     void InitializeLogo();
 
 public:
@@ -345,7 +347,9 @@ private:
      * @return true if a restart is needed
      */
     bool StartSetupWizard();
-
+    
+    void DoShowCaptions(bool show);
+    
 public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
@@ -403,6 +407,8 @@ protected:
     void OnToggleMainTBars(wxCommandEvent& event);
     void OnTogglePluginTBars(wxCommandEvent& event);
     void OnTogglePanes(wxCommandEvent& event);
+    void OnToggleMinimalView(wxCommandEvent& event);
+    void OnToggleMinimalViewUI(wxUpdateUIEvent& event);
     void OnShowStatusBar(wxCommandEvent& event);
     void OnShowStatusBarUI(wxUpdateUIEvent& event);
     void OnShowToolbar(wxCommandEvent& event);

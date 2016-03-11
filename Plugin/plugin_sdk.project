@@ -403,6 +403,8 @@
     <File Name="clWorkspaceView.cpp"/>
     <File Name="clMouseCaptureLocker.h"/>
     <File Name="clMouseCaptureLocker.cpp"/>
+    <File Name="clMainFrameHelper.h"/>
+    <File Name="clMainFrameHelper.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>

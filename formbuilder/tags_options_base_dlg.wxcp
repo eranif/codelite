@@ -9,6 +9,8 @@
   "m_outputFileName": "tags_options_base_dlg",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -4317,7 +4319,7 @@
                      "border": 5,
                      "gbSpan": ",",
                      "gbPosition": ",",
-                     "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_PROCESS_ENTER", "wxTE_MULTILINE", "wxTE_DONTWRAP"],
+                     "m_styles": ["wxTE_RICH2", "wxTE_MULTILINE", "wxTE_DONTWRAP"],
                      "m_sizerFlags": ["wxEXPAND"],
                      "m_properties": [{
                        "type": "winid",

@@ -323,6 +323,10 @@
             <object class="wxMenuItem" name="toggle_panes">
                 <label>&amp;Toggle All Panes</label>
             </object>
+            <object class="wxMenuItem" name="distraction_free_mode">
+                <label>Toggle Minimal View</label>
+                <checkable>1</checkable>
+            </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="hide_status_bar">
                 <label>Show Status Bar</label>

@@ -6089,5 +6089,6 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
 
 void clMainFrame::OnToggleMinimalViewUI(wxUpdateUIEvent& event)
 {
-    event.Check(clConfig::Get().Read("MinimalView", false));
+    bool inMinimalView = clConfig::Get().Read("MinimalView", false);
+    event.Check(!inMinimalView);
 }

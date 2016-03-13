@@ -126,25 +126,17 @@ public:
     clInternalEventHandler()
     {
         EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS,
-                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0),
-                                      NULL,
-                                      this);
+            wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
         EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS,
-                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1),
-                                      NULL,
-                                      this);
+            wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
     }
 
     virtual ~clInternalEventHandler()
     {
         EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS,
-                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0),
-                                         NULL,
-                                         this);
+            wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
         EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS,
-                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1),
-                                         NULL,
-                                         this);
+            wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
     }
 
     /**
@@ -188,11 +180,8 @@ clInternalEventHandler clEventHandlerHelper;
 // Internal handler to handle queuing requests... end
 // --------------------------------------------------------
 
-static wxString DoExpandAllVariables(const wxString& expression,
-                                     clCxxWorkspace* workspace,
-                                     const wxString& projectName,
-                                     const wxString& confToBuild,
-                                     const wxString& fileName);
+static wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
+    const wxString& confToBuild, const wxString& fileName);
 
 #ifdef __WXMAC__
 #include <mach-o/dyld.h>
@@ -224,8 +213,7 @@ static wxString MacGetInstallPath()
 #include <dirent.h>
 #endif
 
-struct ProjListCompartor
-{
+struct ProjListCompartor {
     bool operator()(const ProjectPtr p1, const ProjectPtr p2) const { return p1->GetName() > p2->GetName(); }
 };
 
@@ -445,11 +433,8 @@ wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* e
 }
 
 // This functions accepts expression and expand all variables in it
-wxString ExpandAllVariables(const wxString& expression,
-                            clCxxWorkspace* workspace,
-                            const wxString& projectName,
-                            const wxString& selConf,
-                            const wxString& fileName)
+wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
+    const wxString& selConf, const wxString& fileName)
 {
     // add support for backticks commands
     wxString tmpExp;
@@ -498,11 +483,8 @@ wxString ExpandAllVariables(const wxString& expression,
     return DoExpandAllVariables(tmpExp, workspace, projectName, selConf, fileName);
 }
 
-wxString DoExpandAllVariables(const wxString& expression,
-                              clCxxWorkspace* workspace,
-                              const wxString& projectName,
-                              const wxString& confToBuild,
-                              const wxString& fileName)
+wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
+    const wxString& confToBuild, const wxString& fileName)
 {
     wxString errMsg;
     wxString output(expression);
@@ -522,10 +504,8 @@ wxString DoExpandAllVariables(const wxString& expression,
                 project_name.Replace(wxT(" "), wxT("_"));
 
                 BuildConfigPtr bldConf = workspace->GetProjBuildConf(proj->GetName(), confToBuild);
-                output.Replace(wxT("$(ProjectPath)"),
-                               proj->GetFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
-                output.Replace(wxT("$(WorkspacePath)"),
-                               workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
+                output.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath());
+                output.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath());
                 output.Replace(wxT("$(ProjectName)"), project_name);
 
                 if(bldConf) {
@@ -537,10 +517,8 @@ wxString DoExpandAllVariables(const wxString& expression,
                     wxString id(bldConf->GetIntermediateDirectory());
 
                     // Substitute all macros from $(IntermediateDirectory)
-                    id.Replace(wxT("$(ProjectPath)"),
-                               proj->GetFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
-                    id.Replace(wxT("$(WorkspacePath)"),
-                               workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
+                    id.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath());
+                    id.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath());
                     id.Replace(wxT("$(ProjectName)"), project_name);
                     id.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 
@@ -874,8 +852,8 @@ wxString clGetUserName()
     return (squashedname.IsEmpty() ? wxString(wxT("someone")) : squashedname);
 }
 
-static void
-DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list, bool loadDefaults = true)
+static void DoReadProjectTemplatesFromFolder(
+    const wxString& folder, std::list<ProjectPtr>& list, bool loadDefaults = true)
 {
     // read all files under this directory
     wxArrayString files;
@@ -1009,10 +987,8 @@ bool IsCppKeyword(const wxString& word)
     return words.count(word) != 0;
 }
 
-bool ExtractFileFromZip(const wxString& zipPath,
-                        const wxString& filename,
-                        const wxString& targetDir,
-                        wxString& targetFileName)
+bool ExtractFileFromZip(
+    const wxString& zipPath, const wxString& filename, const wxString& targetDir, wxString& targetFileName)
 {
     wxZipEntry* entry(NULL);
     wxFFileInputStream in(zipPath);
@@ -1050,8 +1026,8 @@ void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
 #endif
 }
 
-void
-StringManager::AddStrings(size_t size, const wxString* strings, const wxString& current, wxControlWithItems* control)
+void StringManager::AddStrings(
+    size_t size, const wxString* strings, const wxString& current, wxControlWithItems* control)
 {
     m_size = size;
     m_unlocalisedStringArray = wxArrayString(size, strings);
@@ -1306,10 +1282,10 @@ wxFontEncoding BOM::Encoding(const char* buff)
     wxFontEncoding encoding = wxFONTENCODING_SYSTEM; /* -1 */
 
     static const char UTF32be[] = { 0x00, 0x00, (char)0xfe, (char)0xff };
-    static const char UTF32le[] = {(char)0xff, (char)0xfe, 0x00, 0x00 };
-    static const char UTF16be[] = {(char)0xfe, (char)0xff };
-    static const char UTF16le[] = {(char)0xff, (char)0xfe };
-    static const char UTF8[] = {(char)0xef, (char)0xbb, (char)0xbf };
+    static const char UTF32le[] = { (char)0xff, (char)0xfe, 0x00, 0x00 };
+    static const char UTF16be[] = { (char)0xfe, (char)0xff };
+    static const char UTF16le[] = { (char)0xff, (char)0xfe };
+    static const char UTF8[] = { (char)0xef, (char)0xbb, (char)0xbf };
 
     if(memcmp(buff, UTF32be, sizeof(UTF32be)) == 0) {
         encoding = wxFONTENCODING_UTF32BE;
@@ -1731,8 +1707,8 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     grepcommand << consoleCommand.BeforeFirst('\'');
     wxString CCcontents = ProcUtils::SafeExecuteCommand(grepcommand);
     if(CCcontents.Contains("konsole") ||
-       (CCcontents.Contains("x-terminal-emulator") &&
-        CLRealPath(ProcUtils::SafeExecuteCommand("which x-terminal-emulator").Trim()).Contains("konsole"))) {
+        (CCcontents.Contains("x-terminal-emulator") &&
+            CLRealPath(ProcUtils::SafeExecuteCommand("which x-terminal-emulator").Trim()).Contains("konsole"))) {
         // konsole hangs when the debugger stops and we kill the contained 'sleep' instance, warning that 'sleep' has
         // crashed.
         // So we have to kill it manually. However by default konsole opens new instances of itself as threads of
@@ -1885,13 +1861,8 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
     return execLine;
 }
 
-wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
-                                              const wxString& dlgId,
-                                              const wxString& yesLabel,
-                                              const wxString& noLabel,
-                                              const wxString& checkboxLabel,
-                                              long style,
-                                              bool checkboxInitialValue)
+wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& dlgId, const wxString& yesLabel,
+    const wxString& noLabel, const wxString& checkboxLabel, long style, bool checkboxInitialValue)
 {
     int res = clConfig::Get().GetAnnoyingDlgAnswer(dlgId, wxNOT_FOUND);
     if(res == wxNOT_FOUND) {
@@ -1960,9 +1931,9 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
         // Comment?
         int style = ctrl->GetStyleAt(position);
         if(style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
-           style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
-           style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
-           style == wxSTC_C_CHARACTER) {
+            style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
+            style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
+            style == wxSTC_C_CHARACTER) {
             continue;
         }
 

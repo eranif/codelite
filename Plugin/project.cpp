@@ -96,7 +96,7 @@ bool Project::Create(const wxString& name, const wxString& description, const wx
     m_doc.GetRoot()->AddChild(descNode);
 
     // Create the default virtual directories
-    wxXmlNode* srcNode = NULL, *headNode = NULL;
+    wxXmlNode *srcNode = NULL, *headNode = NULL;
 
     srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
     srcNode->AddProperty(wxT("Name"), wxT("src"));
@@ -932,8 +932,8 @@ void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, Visu
     }
 }
 
-TreeNode<wxString, VisualWorkspaceNode>*
-Project::GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode>* workspace)
+TreeNode<wxString, VisualWorkspaceNode>* Project::GetVirtualDirectories(
+    TreeNode<wxString, VisualWorkspaceNode>* workspace)
 {
     VisualWorkspaceNode data;
     data.name = GetName();
@@ -1212,7 +1212,9 @@ wxArrayString Project::GetIncludePaths(bool clearCache)
                 fn = wxFileName(GetFileName().GetPath(), wxT(""));
 
             } else {
-                fn = projectIncludePathsArr.Item(i);
+                wxString includePath = projectIncludePathsArr.Item(i);
+                includePath = MacroManager::Instance()->Expand(includePath, NULL, GetName(), buildConf->GetName());
+                fn = includePath;
                 if(fn.IsRelative()) {
                     fn.MakeAbsolute(GetFileName().GetPath());
                 }
@@ -1298,11 +1300,8 @@ void Project::ClearAllVirtDirs()
 
 wxString Project::GetProjectIconName() const { return m_doc.GetRoot()->GetPropVal(wxT("IconIndex"), "gear16"); }
 
-void Project::GetReconciliationData(wxString& toplevelDir,
-                                    wxString& extensions,
-                                    wxArrayString& ignoreFiles,
-                                    wxArrayString& excludePaths,
-                                    wxArrayString& regexes)
+void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& ignoreFiles,
+    wxArrayString& excludePaths, wxArrayString& regexes)
 {
     if(!m_doc.IsOk()) {
         return;
@@ -1340,11 +1339,8 @@ void Project::GetReconciliationData(wxString& toplevelDir,
     }
 }
 
-void Project::SetReconciliationData(const wxString& toplevelDir,
-                                    const wxString& extensions,
-                                    const wxArrayString& ignoreFiles,
-                                    const wxArrayString& excludePaths,
-                                    wxArrayString& regexes)
+void Project::SetReconciliationData(const wxString& toplevelDir, const wxString& extensions,
+    const wxArrayString& ignoreFiles, const wxArrayString& excludePaths, wxArrayString& regexes)
 {
     if(!m_doc.IsOk()) {
         return;
@@ -1533,8 +1529,8 @@ wxArrayString Project::GetExcludeConfigForFile(const wxString& filename, const w
     return configs;
 }
 
-void
-Project::SetExcludeConfigForFile(const wxString& filename, const wxString& virtualDirPath, const wxArrayString& configs)
+void Project::SetExcludeConfigForFile(
+    const wxString& filename, const wxString& virtualDirPath, const wxArrayString& configs)
 {
     wxXmlNode* vdNode = GetVirtualDir(virtualDirPath);
     if(!vdNode) {
@@ -1928,7 +1924,7 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
                 }
                 break;
             }
-            
+
             // Check the include lib paths
             libPaths = MacroManager::Instance()->Expand(libPaths, clGetManager(), GetName(), configName);
             while(true) {

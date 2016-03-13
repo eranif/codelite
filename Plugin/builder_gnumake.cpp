@@ -966,12 +966,8 @@ void BuilderGnuMake::CreateListMacros(ProjectPtr proj, const wxString& confToBui
     CreateObjectList(proj, confToBuild, text);
 }
 
-void BuilderGnuMake::CreateLinkTargets(const wxString& type,
-    BuildConfigPtr bldConf,
-    wxString& text,
-    wxString& targetName,
-    const wxString& projName,
-    const wxArrayString& depsProj)
+void BuilderGnuMake::CreateLinkTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text,
+    wxString& targetName, const wxString& projName, const wxArrayString& depsProj)
 {
     // incase project is type exe or dll, force link
     // this is to workaround bug in the generated makefiles
@@ -1200,36 +1196,43 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
     // Expand the build macros into the generated makefile
     wxString projectName = proj->GetName();
-    text << wxT("ProjectName            :=") << projectName << wxT("\n");
-    text << wxT("ConfigurationName      :=") << name << wxT("\n");
-    text << wxT("WorkspacePath          := \"") << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath()
-         << wxT("\"\n");
-    text << wxT("ProjectPath            := \"") << proj->GetFileName().GetPath() << wxT("\"\n");
-    text << wxT("IntermediateDirectory  :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
-    text << wxT("OutDir                 := $(IntermediateDirectory)\n");
-    text << wxT("CurrentFileName        :=\n"); // TODO:: Need implementation
-    text << wxT("CurrentFilePath        :=\n"); // TODO:: Need implementation
-    text << wxT("CurrentFileFullPath    :=\n"); // TODO:: Need implementation
-    text << wxT("User                   :=") << wxGetUserName() << wxT("\n");
-    text << wxT("Date                   :=") << wxDateTime::Now().FormatDate() << wxT("\n");
-    text << wxT("CodeLitePath           :=\"") << clCxxWorkspaceST::Get()->GetStartupDir() << wxT("\"\n");
-    text << wxT("LinkerName             :=") << cmp->GetTool(wxT("LinkerName")) << wxT("\n");
-    text << wxT("SharedObjectLinkerName :=") << cmp->GetTool(wxT("SharedObjectLinkerName")) << wxT("\n");
-    text << wxT("ObjectSuffix           :=") << cmp->GetObjectSuffix() << wxT("\n");
-    text << wxT("DependSuffix           :=") << cmp->GetDependSuffix() << wxT("\n");
-    text << wxT("PreprocessSuffix       :=") << cmp->GetPreprocessSuffix() << wxT("\n");
-    text << wxT("DebugSwitch            :=") << cmp->GetSwitch(wxT("Debug")) << wxT("\n");
-    text << wxT("IncludeSwitch          :=") << cmp->GetSwitch(wxT("Include")) << wxT("\n");
-    text << wxT("LibrarySwitch          :=") << cmp->GetSwitch(wxT("Library")) << wxT("\n");
-    text << wxT("OutputSwitch           :=") << cmp->GetSwitch(wxT("Output")) << wxT("\n");
-    text << wxT("LibraryPathSwitch      :=") << cmp->GetSwitch(wxT("LibraryPath")) << wxT("\n");
-    text << wxT("PreprocessorSwitch     :=") << cmp->GetSwitch(wxT("Preprocessor")) << wxT("\n");
-    text << wxT("SourceSwitch           :=") << cmp->GetSwitch(wxT("Source")) << wxT("\n");
-    text << wxT("OutputFile             :=") << outputFile << wxT("\n");
-    text << wxT("Preprocessors          :=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
-    text << wxT("ObjectSwitch           :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
-    text << wxT("ArchiveOutputSwitch    :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
-    text << wxT("PreprocessOnlySwitch   :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
+    wxString projectpath, workspacepath, startupdir;
+    workspacepath = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();
+    projectpath = proj->GetFileName().GetPath();
+    startupdir = clCxxWorkspaceST::Get()->GetStartupDir();
+    workspacepath.Replace("\\", "/");
+    projectpath.Replace("\\", "/");
+    startupdir.Replace("\\", "/");
+
+    text << "ProjectName            :=" << projectName << "\n";
+    text << "ConfigurationName      :=" << name << "\n";
+    text << "WorkspacePath          :=" << ::WrapWithQuotes(workspacepath) << "\n";
+    text << "ProjectPath            :=" << ::WrapWithQuotes(projectpath) << "\n";
+    text << "IntermediateDirectory  :=" << bldConf->GetIntermediateDirectory() << "\n";
+    text << "OutDir                 := $(IntermediateDirectory)\n";
+    text << "CurrentFileName        :=\n"; // TODO:: Need implementation
+    text << "CurrentFilePath        :=\n"; // TODO:: Need implementation
+    text << "CurrentFileFullPath    :=\n"; // TODO:: Need implementation
+    text << "User                   :=" << wxGetUserName() << "\n";
+    text << "Date                   :=" << wxDateTime::Now().FormatDate() << "\n";
+    text << "CodeLitePath           :=" << ::WrapWithQuotes(startupdir) << "\n";
+    text << "LinkerName             :=" << cmp->GetTool("LinkerName") << "\n";
+    text << "SharedObjectLinkerName :=" << cmp->GetTool("SharedObjectLinkerName") << "\n";
+    text << "ObjectSuffix           :=" << cmp->GetObjectSuffix() << "\n";
+    text << "DependSuffix           :=" << cmp->GetDependSuffix() << "\n";
+    text << "PreprocessSuffix       :=" << cmp->GetPreprocessSuffix() << "\n";
+    text << "DebugSwitch            :=" << cmp->GetSwitch("Debug") << "\n";
+    text << "IncludeSwitch          :=" << cmp->GetSwitch("Include") << "\n";
+    text << "LibrarySwitch          :=" << cmp->GetSwitch("Library") << "\n";
+    text << "OutputSwitch           :=" << cmp->GetSwitch("Output") << "\n";
+    text << "LibraryPathSwitch      :=" << cmp->GetSwitch("LibraryPath") << "\n";
+    text << "PreprocessorSwitch     :=" << cmp->GetSwitch("Preprocessor") << "\n";
+    text << "SourceSwitch           :=" << cmp->GetSwitch("Source") << "\n";
+    text << "OutputFile             :=" << outputFile << "\n";
+    text << "Preprocessors          :=" << ParsePreprocessor(bldConf->GetPreprocessor()) << "\n";
+    text << "ObjectSwitch           :=" << cmp->GetSwitch("Object") << "\n";
+    text << "ArchiveOutputSwitch    :=" << cmp->GetSwitch("ArchiveOutput") << "\n";
+    text << "PreprocessOnlySwitch   :=" << cmp->GetSwitch("PreprocessOnly") << "\n";
 
     wxFileName fnObjectsFileName(objectsFileName);
     fnObjectsFileName.MakeRelativeTo(proj->GetFileName().GetPath());
@@ -1821,7 +1824,7 @@ wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxS
     // remove cwd from filename
     int start = wxFileName(cwd).GetDirCount();
 
-    for(size_t i=start+1; i < filename.GetDirCount(); i++) {
+    for(size_t i = start + 1; i < filename.GetDirCount(); i++) {
         lastDir = dirs.Item(i);
 
         // Handle special directory paths

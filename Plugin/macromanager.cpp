@@ -30,6 +30,7 @@
 #include "workspace.h"
 #include "imanager.h"
 #include <wx/regex.h>
+#include "globals.h"
 
 MacroManager::MacroManager() {}
 
@@ -41,13 +42,15 @@ MacroManager* MacroManager::Instance()
     return &ms_instance;
 }
 
-wxString MacroManager::Expand(const wxString& expression,
-                              IManager* manager,
-                              const wxString& project,
-                              const wxString& confToBuild)
+wxString MacroManager::Expand(
+    const wxString& expression, IManager* manager, const wxString& project, const wxString& confToBuild)
 {
     wxString expandedString(expression);
     clCxxWorkspace* workspace = clCxxWorkspaceST::Get();
+
+    if(!manager) {
+        manager = clGetManager();
+    }
 
     size_t retries = 0;
     wxString dummyname, dummfullname;
@@ -81,11 +84,8 @@ wxString MacroManager::Expand(const wxString& expression,
 
                 expandedString.Replace(wxT("$(ProjectWorkingDirectory)"), prjBuildWd);
                 expandedString.Replace(wxT("$(ProjectRunWorkingDirectory)"), prjRunWd);
-                expandedString.Replace(wxT("$(ProjectPath)"),
-                                       proj->GetFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
-                expandedString.Replace(
-                    wxT("$(WorkspacePath)"),
-                    workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
+                expandedString.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath());
+                expandedString.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath());
                 expandedString.Replace(wxT("$(ProjectName)"), project_name);
 
                 if(bldConf) {
@@ -144,10 +144,8 @@ wxString MacroManager::Expand(const wxString& expression,
     return expandedString;
 }
 
-wxString MacroManager::Replace(const wxString& inString,
-                               const wxString& variableName,
-                               const wxString& replaceWith,
-                               bool bIgnoreCase)
+wxString MacroManager::Replace(
+    const wxString& inString, const wxString& variableName, const wxString& replaceWith, bool bIgnoreCase)
 {
     size_t flags = wxRE_DEFAULT;
     if(bIgnoreCase) flags |= wxRE_ICASE;

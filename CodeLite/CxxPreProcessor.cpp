@@ -19,7 +19,7 @@ void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
         scanner = new CxxPreProcessorScanner(filename, m_options);
         // Remove the option so recursive scanner won't get it
         m_options &= ~kLexerOpt_DontCollectMacrosDefinedInThisFile;
-        if(scanner) {
+        if(scanner && !scanner->IsNull()) {
             scanner->Parse(this);
         }
     } catch(CxxLexerException& e) {

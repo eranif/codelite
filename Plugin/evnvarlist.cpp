@@ -26,6 +26,7 @@
 #include <wx/tokenzr.h>
 #include <wx/log.h>
 #include "workspace.h"
+#include "macromanager.h"
 
 EvnVarList::EvnVarList()
     : m_activeSet(wxT("Default"))
@@ -119,6 +120,9 @@ EnvMap EvnVarList::GetVariables(
 
         wxString varname = entry.BeforeFirst(wxT('='));
         wxString varvalue = entry.AfterFirst(wxT('='));
+
+        // Expand macros (which are not environment variables)
+        varvalue = MacroManager::Instance()->ExpandNoEnv(varvalue, projectName, configName);
         variables.Put(varname, varvalue);
     }
     return variables;

@@ -45,6 +45,102 @@ MacroManager* MacroManager::Instance()
 wxString MacroManager::Expand(
     const wxString& expression, IManager* manager, const wxString& project, const wxString& confToBuild)
 {
+    return DoExpand(expression, manager, project, true, confToBuild);
+}
+
+wxString MacroManager::Replace(
+    const wxString& inString, const wxString& variableName, const wxString& replaceWith, bool bIgnoreCase)
+{
+    size_t flags = wxRE_DEFAULT;
+    if(bIgnoreCase) flags |= wxRE_ICASE;
+
+    wxString strRe1;
+    wxString strRe2;
+    wxString strRe3;
+    wxString strRe4;
+
+    strRe1 << wxT("\\$\\((") << variableName << wxT(")\\)");
+    strRe2 << wxT("\\$\\{(") << variableName << wxT(")\\}");
+    strRe3 << wxT("\\$(") << variableName << wxT(")");
+    strRe4 << wxT("%(") << variableName << wxT(")%");
+
+    wxRegEx reOne(strRe1, flags);   // $(variable)
+    wxRegEx reTwo(strRe2, flags);   // ${variable}
+    wxRegEx reThree(strRe3, flags); // $variable
+    wxRegEx reFour(strRe4, flags);  // %variable%
+
+    wxString result = inString;
+    if(reOne.Matches(result)) {
+        reOne.ReplaceAll(&result, replaceWith);
+    }
+
+    if(reTwo.Matches(result)) {
+        reTwo.ReplaceAll(&result, replaceWith);
+    }
+
+    if(reThree.Matches(result)) {
+        reThree.ReplaceAll(&result, replaceWith);
+    }
+
+    if(reFour.Matches(result)) {
+        reFour.ReplaceAll(&result, replaceWith);
+    }
+    return result;
+}
+
+bool MacroManager::FindVariable(const wxString& inString, wxString& name, wxString& fullname)
+{
+    size_t flags = wxRE_DEFAULT | wxRE_ICASE;
+
+    wxString strRe1;
+    wxString strRe2;
+    wxString strRe3;
+    wxString strRe4;
+
+    strRe1 << wxT("\\$\\((") << wxT("[a-z_0-9]+") << wxT(")\\)");
+    strRe2 << wxT("\\$\\{(") << wxT("[a-z_0-9]+") << wxT(")\\}");
+    strRe3 << wxT("\\$(") << wxT("[a-z_0-9]+") << wxT(")");
+    strRe4 << wxT("%(") << wxT("[a-z_0-9]+") << wxT(")%");
+
+    static wxRegEx reOne(strRe1, flags);   // $(variable)
+    static wxRegEx reTwo(strRe2, flags);   // ${variable}
+    static wxRegEx reThree(strRe3, flags); // $variable
+    static wxRegEx reFour(strRe4, flags);  // %variable%
+
+    if(reOne.Matches(inString)) {
+        name = reOne.GetMatch(inString, 1);
+        fullname = reOne.GetMatch(inString);
+        return true;
+    }
+
+    if(reTwo.Matches(inString)) {
+        name = reTwo.GetMatch(inString, 1);
+        fullname = reTwo.GetMatch(inString);
+        return true;
+    }
+
+    if(reThree.Matches(inString)) {
+        name = reThree.GetMatch(inString, 1);
+        fullname = reThree.GetMatch(inString);
+        return true;
+    }
+
+    if(reFour.Matches(inString)) {
+        name = reFour.GetMatch(inString, 1);
+        fullname = reFour.GetMatch(inString);
+        return true;
+    }
+    return false;
+}
+
+wxString MacroManager::ExpandNoEnv(const wxString& expression, const wxString& project, const wxString& confToBuild)
+{
+    return DoExpand(expression, NULL, project, false, confToBuild);
+}
+
+wxString MacroManager::DoExpand(
+    const wxString& expression, IManager* manager, const wxString& project, bool applyEnv, const wxString& confToBuild)
+{
     wxString expandedString(expression);
     clCxxWorkspace* workspace = clCxxWorkspaceST::Get();
 
@@ -133,7 +229,7 @@ wxString MacroManager::Expand(
         expandedString.Replace(wxT("$(User)"), wxGetUserName());
         expandedString.Replace(wxT("$(Date)"), now.FormatDate());
 
-        if(manager) {
+        if(manager && applyEnv) {
             expandedString.Replace(wxT("$(CodeLitePath)"), manager->GetInstallDirectory());
 
             // Apply the environment and expand the variables
@@ -142,89 +238,4 @@ wxString MacroManager::Expand(
         }
     }
     return expandedString;
-}
-
-wxString MacroManager::Replace(
-    const wxString& inString, const wxString& variableName, const wxString& replaceWith, bool bIgnoreCase)
-{
-    size_t flags = wxRE_DEFAULT;
-    if(bIgnoreCase) flags |= wxRE_ICASE;
-
-    wxString strRe1;
-    wxString strRe2;
-    wxString strRe3;
-    wxString strRe4;
-
-    strRe1 << wxT("\\$\\((") << variableName << wxT(")\\)");
-    strRe2 << wxT("\\$\\{(") << variableName << wxT(")\\}");
-    strRe3 << wxT("\\$(") << variableName << wxT(")");
-    strRe4 << wxT("%(") << variableName << wxT(")%");
-
-    wxRegEx reOne(strRe1, flags);   // $(variable)
-    wxRegEx reTwo(strRe2, flags);   // ${variable}
-    wxRegEx reThree(strRe3, flags); // $variable
-    wxRegEx reFour(strRe4, flags);  // %variable%
-
-    wxString result = inString;
-    if(reOne.Matches(result)) {
-        reOne.ReplaceAll(&result, replaceWith);
-    }
-
-    if(reTwo.Matches(result)) {
-        reTwo.ReplaceAll(&result, replaceWith);
-    }
-
-    if(reThree.Matches(result)) {
-        reThree.ReplaceAll(&result, replaceWith);
-    }
-
-    if(reFour.Matches(result)) {
-        reFour.ReplaceAll(&result, replaceWith);
-    }
-    return result;
-}
-
-bool MacroManager::FindVariable(const wxString& inString, wxString& name, wxString& fullname)
-{
-    size_t flags = wxRE_DEFAULT | wxRE_ICASE;
-
-    wxString strRe1;
-    wxString strRe2;
-    wxString strRe3;
-    wxString strRe4;
-
-    strRe1 << wxT("\\$\\((") << wxT("[a-z_0-9]+") << wxT(")\\)");
-    strRe2 << wxT("\\$\\{(") << wxT("[a-z_0-9]+") << wxT(")\\}");
-    strRe3 << wxT("\\$(") << wxT("[a-z_0-9]+") << wxT(")");
-    strRe4 << wxT("%(") << wxT("[a-z_0-9]+") << wxT(")%");
-
-    static wxRegEx reOne(strRe1, flags);   // $(variable)
-    static wxRegEx reTwo(strRe2, flags);   // ${variable}
-    static wxRegEx reThree(strRe3, flags); // $variable
-    static wxRegEx reFour(strRe4, flags);  // %variable%
-
-    if(reOne.Matches(inString)) {
-        name = reOne.GetMatch(inString, 1);
-        fullname = reOne.GetMatch(inString);
-        return true;
-    }
-
-    if(reTwo.Matches(inString)) {
-        name = reTwo.GetMatch(inString, 1);
-        fullname = reTwo.GetMatch(inString);
-        return true;
-    }
-
-    if(reThree.Matches(inString)) {
-        name = reThree.GetMatch(inString, 1);
-        fullname = reThree.GetMatch(inString);
-        return true;
-    }
-
-    if(reFour.Matches(inString)) {
-        name = reFour.GetMatch(inString, 1);
-        fullname = reFour.GetMatch(inString);
-        return true;
-    }
-    return false;
 }

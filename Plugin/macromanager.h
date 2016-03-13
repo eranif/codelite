@@ -39,6 +39,9 @@ private:
     MacroManager();
     virtual ~MacroManager();
 
+    wxString DoExpand(const wxString& expression, IManager* manager, const wxString& project, bool applyEnv,
+        const wxString& confToBuild = wxEmptyString);
+
 public:
     /*
      * The following macro will be expanded into their real values:
@@ -62,10 +65,14 @@ public:
      * $(ProjectOutputFile)
      * $(Selection)
      */
-    wxString Expand(const wxString& expression,
-                    IManager* manager,
-                    const wxString& project,
-                    const wxString& confToBuild = wxEmptyString);
+    wxString Expand(const wxString& expression, IManager* manager, const wxString& project,
+        const wxString& confToBuild = wxEmptyString);
+
+    /**
+     * @brief same as above, but don't apply environment variables
+     */
+    wxString ExpandNoEnv(
+        const wxString& expression, const wxString& project, const wxString& confToBuild = wxEmptyString);
 
     /**
      * @brief search for variableName and replace all its occurance with 'replaceWith'
@@ -75,10 +82,8 @@ public:
      * $(variableName)
      * %variableName%
      */
-    wxString Replace(const wxString& inString,
-                     const wxString& variableName,
-                     const wxString& replaceWith,
-                     bool bIgnoreCase = false);
+    wxString Replace(
+        const wxString& inString, const wxString& variableName, const wxString& replaceWith, bool bIgnoreCase = false);
 
     /**
      * @brief search for variable in the inString.

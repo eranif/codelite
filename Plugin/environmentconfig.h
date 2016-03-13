@@ -112,6 +112,19 @@ public:
         m_env->ApplyEnv(NULL, projname, buildConfName);
     }
 
+    EnvSetter(Project* proj)
+        : m_env(EnvironmentConfig::Instance())
+        , m_restoreOldValue(false)
+    {
+        wxString projname = proj->GetName();
+        wxString buildConfName;
+        BuildConfigPtr buildConf = proj->GetBuildConfiguration();
+        if(buildConf) {
+            buildConfName = buildConf->GetName();
+        }
+        m_env->ApplyEnv(NULL, projname, buildConfName);
+    }
+
     EnvSetter(EnvironmentConfig* conf, wxStringMap_t* om = NULL)
         : m_env(EnvironmentConfig::Instance())
         , m_restoreOldValue(false)

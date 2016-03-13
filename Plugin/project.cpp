@@ -1193,8 +1193,8 @@ wxArrayString Project::GetIncludePaths(bool clearCache)
     // for non custom projects, take the settings from the build configuration
     if(buildConf) {
         // Apply the environment
-        EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
-
+        EnvSetter es(this);
+        
         if(clearCache) {
             s_backticks.clear();
         }

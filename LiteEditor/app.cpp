@@ -516,7 +516,7 @@ bool CodeLiteApp::OnInit()
     // Make sure we have an instance if the keyboard manager allocated before we create the main frame class
     // (the keyboard manager needs to connect to the main frame events)
     clKeyboardManager::Get();
-
+    PluginManager::Get();
     ManagerST::Get()->SetOriginalCwd(wxGetCwd());
     ::wxSetWorkingDirectory(homeDir);
     // Load all of the XRC files that will be used. You can put everything

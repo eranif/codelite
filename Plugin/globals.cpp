@@ -2138,3 +2138,33 @@ IManager* clGetManager()
 }
 
 void clSetManager(IManager* manager) { s_pluginManager = manager; }
+
+#define BUFF_STATE_NORMAL 0
+#define BUFF_STATE_IN_ESC 1
+
+void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
+{
+    modbuffer.Clear();
+    short state = BUFF_STATE_NORMAL;
+    wxString::const_iterator iter = buffer.begin();
+    for(; iter != buffer.end(); ++iter) {
+        wxChar ch = *iter;
+        if(ch == 7) continue; // BELL
+
+        switch(state) {
+        case BUFF_STATE_NORMAL:
+            if(ch == 0x1B) { // found ESC char
+                state = BUFF_STATE_IN_ESC;
+
+            } else {
+                modbuffer << ch;
+            }
+            break;
+        case BUFF_STATE_IN_ESC:
+            if(ch == 'm') { // end of color sequence
+                state = BUFF_STATE_NORMAL;
+            }
+            break;
+        }
+    }
+}

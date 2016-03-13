@@ -249,9 +249,14 @@ void OutputTabWindow::AppendText(const wxString& text)
             m_sci->SetCurrentPos(m_sci->GetLength());
             m_sci->EnsureCaretVisible();
         }
-
+        
+        
+        // Strip any terminal escape chars from the buffer
+        wxString modText;
+        ::clStripTerminalColouring(text, modText);
+        
         // add the text
-        m_sci->InsertText(m_sci->GetLength(), text);
+        m_sci->InsertText(m_sci->GetLength(), modText);
 
         if(m_outputScrolls) {
             // the next 4 lines make sure that the caret is at last line

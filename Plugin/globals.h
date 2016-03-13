@@ -191,11 +191,8 @@ WXDLLIMPEXP_SDK wxString ExpandVariables(
  * \param fileName file name, to help expand the $(CurrentFile) macro family
  * \return an expanded string. If a macro is unknown it is replaced by empty string
  */
-WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression,
-    clCxxWorkspace* workspace,
-    const wxString& projectName,
-    const wxString& selConf,
-    const wxString& fileName);
+WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace,
+    const wxString& projectName, const wxString& selConf, const wxString& fileName);
 
 /**
  * \brief copy entire directory content (recursievly) from source to target
@@ -443,13 +440,10 @@ WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& 
  * @param checkboxInitialValue
  * @return wxRichMessageDialog::ShowModal() return value
  */
-WXDLLIMPEXP_SDK wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
-    const wxString& dlgId,
-    const wxString& yesLabel = _("Yes"),
-    const wxString& noLabel = _("No"),
+WXDLLIMPEXP_SDK wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& dlgId,
+    const wxString& yesLabel = _("Yes"), const wxString& noLabel = _("No"),
     const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
-    long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT,
-    bool checkboxInitialValue = false);
+    long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT, bool checkboxInitialValue = false);
 
 /**
  * @brief wrap string with quotes if needed
@@ -504,11 +498,8 @@ WXDLLIMPEXP_SDK void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid);
  */
 WXDLLIMPEXP_SDK void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl);
 
-WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title,
-    const wxString& message,
-    const wxString& initialValue = "",
-    int charsToSelect = wxNOT_FOUND,
-    wxWindow* parent = NULL);
+WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title, const wxString& message,
+    const wxString& initialValue = "", int charsToSelect = wxNOT_FOUND, wxWindow* parent = NULL);
 /**
  * @brief return the instance to the plugin manager. A convinience method
  */
@@ -518,5 +509,10 @@ WXDLLIMPEXP_SDK IManager* clGetManager();
  * @param manager
  */
 WXDLLIMPEXP_SDK void clSetManager(IManager* manager);
+
+/**
+ * @brief remove terminal colours from buffer
+ */
+WXDLLIMPEXP_SDK void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer);
 
 #endif // GLOBALS_H

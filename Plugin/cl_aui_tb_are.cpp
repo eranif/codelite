@@ -64,13 +64,24 @@ CLMainAuiTBArt::~CLMainAuiTBArt()
 
 void CLMainAuiTBArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
+#ifdef __WXMSW__
+    wxAuiDefaultToolBarArt::DrawPlainBackground(dc, wnd, rect);
+#else
     wxUnusedVar(wnd);
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.SetBrush(DrawingUtils::GetAUIPaneBGColour());
     dc.DrawRectangle(rect);
+#endif
 }
 
-void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) { DrawPlainBackground(dc, wnd, rect); }
+void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
+{
+#ifdef __WXMSW__
+    wxAuiDefaultToolBarArt::DrawBackground(dc, wnd, rect);
+#else
+    DrawPlainBackground(dc, wnd, rect);
+#endif
+}
 
 void CLMainAuiTBArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect)
 {

@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resource xmlns="http://www.wxwidgets.org/wxxrc"/>
+<resource xmlns="http://www.wxwidgets.org/wxxrc">
+  <!-- Handler Generation is ON -->
+</resource>

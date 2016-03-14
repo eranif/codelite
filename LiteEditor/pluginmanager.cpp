@@ -279,8 +279,8 @@ void PluginManager::Load()
                                                                         .RightDockable(true)
                                                                         .Caption(plugin->GetShortName())
                                                                         .ToolbarPane()
-                                                                        .Bottom()
-                                                                        .Row(0));
+                                                                        .Top()
+                                                                        .Position(999));
 
                 // Add menu entry at the 'View->Toolbars' menu for this toolbar
                 wxMenuItem* item = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("toolbars_menu"));

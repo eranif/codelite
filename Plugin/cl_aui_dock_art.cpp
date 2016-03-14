@@ -102,8 +102,8 @@ void clAuiDockArt::DrawPaneButton(
     }
 }
 
-void
-clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
+void clAuiDockArt::DrawCaption(
+    wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
 {
     wxRect tmpRect(wxPoint(0, 0), rect.GetSize());
 
@@ -132,11 +132,11 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
     wxColour topColour("#d3d2d3");
     wxColour bottomColour("#e8e8e8");
     dc.GradientFillLinear(tmpRect, topColour, bottomColour, wxNORTH);
-    
+
     dc.SetPen(penColour);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(tmpRect);
-    
+
     int caption_offset = 0;
     if(pane.icon.IsOk()) {
         DrawIcon(dc, tmpRect, pane);
@@ -157,7 +157,7 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
 
     wxString draw_text = wxAuiChopText(dc, text, clip_rect.width);
     wxSize textSize = dc.GetTextExtent(draw_text);
-    
+
     dc.SetTextForeground(textColour);
     dc.DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
 #else
@@ -223,11 +223,15 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
+#ifdef __WXMSW__
+    wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
+#else
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.SetBrush(DrawingUtils::GetAUIPaneBGColour());
     dc.DrawRectangle(rect);
+#endif
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)

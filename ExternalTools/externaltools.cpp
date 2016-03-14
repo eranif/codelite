@@ -90,19 +90,14 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
 
     for(int i = 0; i < MAX_TOOLS; i++) {
         wxString winid = wxString::Format(wxT("external_tool_%d"), i);
-        topWin->Connect(wxXmlResource::GetXRCID(winid.c_str()),
-                        wxEVT_COMMAND_MENU_SELECTED,
-                        wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool),
-                        NULL,
-                        this);
+        topWin->Connect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
     }
 
     // Register keyboard shortcuts
     for(int i = 0; i < MAX_TOOLS; i++) {
-        clKeyboardManager::Get()->AddGlobalAccelerator(
-            wxString::Format("external_tool_%d", i),
-            wxString::Format("Ctrl-Shift-%d", i),
-            wxString::Format("Plugins::External Tools::External Tool %d", i));
+        clKeyboardManager::Get()->AddGlobalAccelerator(wxString::Format("external_tool_%d", i),
+            wxString::Format("Ctrl-Shift-%d", i), wxString::Format("Plugins::External Tools::External Tool %d", i));
     }
 }
 
@@ -120,15 +115,11 @@ clToolBar* ExternalToolsPlugin::CreateToolBar(wxWindow* parent)
 
         m_tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
         m_tb->SetToolBitmapSize(wxSize(size, size));
-        m_tb->AddTool(XRCID("external_tools_settings"),
-                      _("Configure external tools..."),
-                      m_mgr->GetStdIcons()->LoadBitmap("tools", size),
-                      _("Configure external tools..."));
+        m_tb->AddTool(XRCID("external_tools_settings"), _("Configure external tools..."),
+            m_mgr->GetStdIcons()->LoadBitmap("tools", size), _("Configure external tools..."));
 
-        m_tb->AddTool(XRCID("external_tools_monitor"),
-                      _("Show Running Tools..."),
-                      m_mgr->GetStdIcons()->LoadBitmap("monitor", size),
-                      _("Show Running Tools..."));
+        m_tb->AddTool(XRCID("external_tools_monitor"), _("Show Running Tools..."),
+            m_mgr->GetStdIcons()->LoadBitmap("monitor", size), _("Show Running Tools..."));
 
         m_tb->SetArtProvider(new CLMainAuiTBArt());
         std::vector<ToolInfo> tools = inData.GetTools();
@@ -187,11 +178,8 @@ void ExternalToolsPlugin::UnPlug()
 
     for(int i = 0; i < MAX_TOOLS; ++i) {
         wxString winid = wxString::Format(wxT("external_tool_%d"), i);
-        topWin->Disconnect(wxXmlResource::GetXRCID(winid.c_str()),
-                           wxEVT_COMMAND_MENU_SELECTED,
-                           wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool),
-                           NULL,
-                           this);
+        topWin->Disconnect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
     }
     // now that all the event handlers have been disconneted, kill all the running tools
     ToolsTaskManager::Release();
@@ -236,9 +224,11 @@ void ExternalToolsPlugin::OnLaunchExternalTool(wxCommandEvent& e)
 void ExternalToolsPlugin::DoRecreateToolbar()
 {
     if(m_mgr->AllowToolbar()) {
+        wxAuiPaneInfo pi;
         wxWindow* parent(NULL);
         if(m_tb) {
             // we have a toolbar, remove it from the docking manager
+            pi = m_mgr->GetDockingManager()->GetPane(m_tb);
             m_mgr->GetDockingManager()->DetachPane(m_tb);
             parent = m_tb->GetParent();
             m_tb->Destroy();
@@ -248,15 +238,17 @@ void ExternalToolsPlugin::DoRecreateToolbar()
 
         m_tb = CreateToolBar(parent);
         if(m_tb) {
-            m_mgr->GetDockingManager()->AddPane(m_tb,
-                                                wxAuiPaneInfo()
-                                                    .Name(GetShortName())
-                                                    .LeftDockable(true)
-                                                    .RightDockable(true)
-                                                    .Caption(GetShortName())
-                                                    .ToolbarPane()
-                                                    .Top());
-
+            wxAuiPaneInfo newPi;
+            // Default
+            newPi.ToolbarPane().LeftDockable().RightDockable().Caption(GetShortName()).Name(GetShortName());
+            // If we got an old toolbar, reuse its docking attributes
+            if(pi.IsOk()) {
+                newPi.Direction(pi.dock_direction).Position(pi.dock_pos).Row(pi.dock_row);
+            } else {
+                newPi.Top().Position(999).Row(0);
+            }
+            m_mgr->GetDockingManager()->AddPane(m_tb, newPi);
+            
             // Apply changes
             m_mgr->GetDockingManager()->Update();
         }

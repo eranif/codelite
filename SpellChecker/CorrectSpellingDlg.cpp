@@ -36,82 +36,70 @@
 #include "CorrectSpellingDlg.h"
 #include "IHunSpell.h"
 // ------------------------------------------------------------
-CorrectSpellingDlg::CorrectSpellingDlg( wxWindow* parent )
-	:
-	CorrectSpellingDlg_base( parent )
+CorrectSpellingDlg::CorrectSpellingDlg(wxWindow* parent)
+    : CorrectSpellingDlg_base(parent)
 {
-	m_misspelled = wxT( "" );
-	m_pHs        = NULL;
-	this->Connect( wxEVT_MOVE, wxMoveEventHandler( CorrectSpellingDlg::OnMove ) );
-	m_currentPosition.x = -1;
-	m_currentPosition.y = -1;
+    m_misspelled = wxT("");
+    m_pHs = NULL;
+    this->Connect(wxEVT_MOVE, wxMoveEventHandler(CorrectSpellingDlg::OnMove));
+    m_currentPosition.x = -1;
+    m_currentPosition.y = -1;
+    GetSizer()->Fit(this);
 }
 // ------------------------------------------------------------
 CorrectSpellingDlg::~CorrectSpellingDlg()
 {
-	this->Disconnect( wxEVT_MOVE, wxMoveEventHandler( CorrectSpellingDlg::OnMove ) );
+    this->Disconnect(wxEVT_MOVE, wxMoveEventHandler(CorrectSpellingDlg::OnMove));
 }
 // ------------------------------------------------------------
-void CorrectSpellingDlg::OnInitDialog( wxInitDialogEvent& event )
+void CorrectSpellingDlg::OnInitDialog(wxInitDialogEvent& event)
 {
-	event.Skip();
-	m_pMisspelling->SetValue( m_misspelled );
+    event.Skip();
+    m_pMisspelling->SetValue(m_misspelled);
 
-	if( m_currentPosition.x != -1 )
-		Move( m_currentPosition );
+    if(m_currentPosition.x != -1) Move(m_currentPosition);
 }
 // ------------------------------------------------------------
-void CorrectSpellingDlg::OnSuggestionSelected( wxCommandEvent& event )
+void CorrectSpellingDlg::OnSuggestionSelected(wxCommandEvent& event)
 {
-	m_pMisspelling->SetValue( m_pSuggestions->GetString( event.GetInt() ) );
+    m_pMisspelling->SetValue(m_pSuggestions->GetString(event.GetInt()));
 }
 // ------------------------------------------------------------
-void CorrectSpellingDlg::OnChangeClick( wxCommandEvent& event )
+void CorrectSpellingDlg::OnChangeClick(wxCommandEvent& event)
 {
-	m_misspelled = m_pMisspelling->GetValue();
-	EndModal( SC_CHANGE );
+    m_misspelled = m_pMisspelling->GetValue();
+    EndModal(SC_CHANGE);
 }
 // ------------------------------------------------------------
-void CorrectSpellingDlg::OnIgnoreClick( wxCommandEvent& event )
+void CorrectSpellingDlg::OnIgnoreClick(wxCommandEvent& event) { EndModal(SC_IGNORE); }
+// ------------------------------------------------------------
+void CorrectSpellingDlg::OnDblClickSuggestions(wxCommandEvent& event)
 {
-	EndModal( SC_IGNORE );
+    m_pMisspelling->SetValue(m_pSuggestions->GetString(event.GetInt()));
+    m_misspelled = m_pMisspelling->GetValue();
+    EndModal(SC_CHANGE);
 }
 // ------------------------------------------------------------
-void CorrectSpellingDlg::OnDblClickSuggestions( wxCommandEvent& event )
-{
-	m_pMisspelling->SetValue( m_pSuggestions->GetString( event.GetInt() ) );
-	m_misspelled = m_pMisspelling->GetValue();
-	EndModal( SC_CHANGE );
-}
+void CorrectSpellingDlg::OnAddClick(wxCommandEvent& event) { EndModal(SC_ADD); }
 // ------------------------------------------------------------
-void CorrectSpellingDlg::OnAddClick( wxCommandEvent& event )
+void CorrectSpellingDlg::OnSuggestClick(wxCommandEvent& event)
 {
-	EndModal( SC_ADD );
-}
-// ------------------------------------------------------------
-void CorrectSpellingDlg::OnSuggestClick( wxCommandEvent& event )
-{
-	wxUnusedVar( event );
+    wxUnusedVar(event);
 
-	if( m_pHs ) {
-		m_pSuggestions->Clear();
-		wxArrayString suggests = m_pHs->GetSuggestions( m_pMisspelling->GetValue() );
+    if(m_pHs) {
+        m_pSuggestions->Clear();
+        wxArrayString suggests = m_pHs->GetSuggestions(m_pMisspelling->GetValue());
 
-		for( wxUint32 i = 0; i  < suggests.GetCount(); i++ )
-			m_pSuggestions->Append( suggests[i] );
-	}
+        for(wxUint32 i = 0; i < suggests.GetCount(); i++) m_pSuggestions->Append(suggests[i]);
+    }
 }
 // ------------------------------------------------------------
-void CorrectSpellingDlg::SetSuggestions( wxArrayString suggests )
+void CorrectSpellingDlg::SetSuggestions(wxArrayString suggests)
 {
-	m_pSuggestions->Clear();
+    m_pSuggestions->Clear();
 
-	for( wxUint32 i = 0; i  < suggests.GetCount(); i++ )
-		m_pSuggestions->Append( suggests[i] );
+    for(wxUint32 i = 0; i < suggests.GetCount(); i++) m_pSuggestions->Append(suggests[i]);
 }
 // ------------------------------------------------------------
-void CorrectSpellingDlg::OnMove( wxMoveEvent& event )
-{
-	m_currentPosition = GetPosition();
-}
+void CorrectSpellingDlg::OnMove(wxMoveEvent& event) { m_currentPosition = GetPosition(); }
 // ------------------------------------------------------------

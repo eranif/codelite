@@ -84,7 +84,6 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
         chStr.MakeLower();
     }
     m_text->ChangeValue(chStr);
-    m_text->SetInsertionPoint(m_text->GetLastPosition());
     CallAfter(&clTreeKeyboardInput::SetTextFocus);
 }
 
@@ -208,6 +207,7 @@ void clTreeKeyboardInput::SetTextFocus()
     m_text->SetFocus();
     // Remove the selection
     m_text->SelectNone();
+    m_text->SetInsertionPoint(m_text->GetLastPosition());
     m_tree->UnselectAll();
 }
 

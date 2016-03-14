@@ -36,36 +36,36 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
     bSizer1->Add(m_auibar, 0, wxEXPAND, 5);
     
-    m_auibar->AddTool(wxID_NEW, _("New Theme..."), wxXmlResource::Get()->LoadBitmap(wxT("16-file_new")), wxNullBitmap, wxITEM_NORMAL, _("New Theme..."), _("New Theme..."), NULL);
+    m_auibar->AddTool(XRCID("ID_TOOL_NEW_THEME"), _("New Theme..."), wxXmlResource::Get()->LoadBitmap(wxT("16-file_new")), wxNullBitmap, wxITEM_NORMAL, _("New Theme..."), _("New Theme..."), NULL);
     
-    m_auibar->AddTool(wxID_SAVE, _("Export"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_save")), wxNullBitmap, wxITEM_NORMAL, _("Export syntax highlight settings to zip file"), _("Export syntax highlight settings to zip file"), NULL);
+    m_auibar->AddTool(XRCID("ID_TOOL_SAVE"), _("Export"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_save")), wxNullBitmap, wxITEM_NORMAL, _("Export syntax highlight settings to zip file"), _("Export syntax highlight settings to zip file"), NULL);
     wxAuiToolBarItem* m_toolbarItemSave = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
     if (m_toolbarItemSave) {
         m_toolbarItemSave->SetHasDropDown(true);
         m_menu142 = new wxMenu;
-        m_menuItemExportAll = new wxMenuItem(m_menu142, ID_EXPORT_ALL, _("Export All"), _("Export All"), wxITEM_NORMAL);
+        m_menuItemExportAll = new wxMenuItem(m_menu142, XRCID("ID_EXPORT_ALL"), _("Export All"), _("Export All"), wxITEM_NORMAL);
         m_menu142->Append(m_menuItemExportAll);
-        m_menuItemExportSelective = new wxMenuItem(m_menu142, ID_EXPORT_SELECTIVE, _("Export..."), _("Export specific lexers"), wxITEM_NORMAL);
+        m_menuItemExportSelective = new wxMenuItem(m_menu142, XRCID("ID_EXPORT_SELECTIVE"), _("Export..."), _("Export specific lexers"), wxITEM_NORMAL);
         m_menu142->Append(m_menuItemExportSelective);
         
         m_dropdownMenus.insert(std::make_pair( m_toolbarItemSave->GetId(), m_menu142) );
     }
     
-    m_auibar->AddTool(wxID_OPEN, _("Import settings from a zip archive"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_open")), wxNullBitmap, wxITEM_NORMAL, _("Import settings from a zip archive"), _("Import settings from a zip archive"), NULL);
+    m_auibar->AddTool(XRCID("ID_TOOL_OPEN"), _("Import settings from a zip archive"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_open")), wxNullBitmap, wxITEM_NORMAL, _("Import settings from a zip archive"), _("Import settings from a zip archive"), NULL);
     
-    m_auibar->AddTool(wxID_REVERT, _("Revert to default settings"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_reload")), wxNullBitmap, wxITEM_NORMAL, _("Revert to default settings"), _("Revert to default settings"), NULL);
+    m_auibar->AddTool(XRCID("ID_TOOL_REVERT"), _("Revert to default settings"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_reload")), wxNullBitmap, wxITEM_NORMAL, _("Revert to default settings"), _("Revert to default settings"), NULL);
     
-    m_auibar->AddTool(ID_TOOL_IMPORT_ECLIPSE_THEME, _("Import Eclipse Theme"), wxXmlResource::Get()->LoadBitmap(wxT("16-eclipse")), wxNullBitmap, wxITEM_NORMAL, _("Import Eclipse Theme"), _("Import Eclipse Theme"), NULL);
+    m_auibar->AddTool(XRCID("ID_TOOL_IMPORT_ECLIPSE_THEME"), _("Import Eclipse Theme"), wxXmlResource::Get()->LoadBitmap(wxT("16-eclipse")), wxNullBitmap, wxITEM_NORMAL, _("Import Eclipse Theme"), _("Import Eclipse Theme"), NULL);
     wxAuiToolBarItem* m_toolbarItem150 = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
     if (m_toolbarItem150) {
         m_toolbarItem150->SetHasDropDown(true);
         m_menu151 = new wxMenu;
-        m_menuItem153 = new wxMenuItem(m_menu151, ID_MENU_ECLIPSE_WEBSITE, _("Load eclipse theme website"), _("Load eclipse theme website"), wxITEM_NORMAL);
+        m_menuItem153 = new wxMenuItem(m_menu151, XRCID("ID_MENU_ECLIPSE_WEBSITE"), _("Load eclipse theme website"), _("Load eclipse theme website"), wxITEM_NORMAL);
         m_menu151->Append(m_menuItem153);
         
         m_dropdownMenus.insert(std::make_pair( m_toolbarItem150->GetId(), m_menu151) );
@@ -426,7 +426,6 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     #endif
     
     SetName(wxT("SyntaxHighlightBaseDlg"));
-    SetMinClientSize(wxSize(-1,500));
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
@@ -444,13 +443,13 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     }
 #endif
     // Connect events
-    this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnNewTheme), NULL, this);
-    this->Connect(wxID_SAVE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnToolExportAll), NULL, this);
+    this->Connect(XRCID("ID_TOOL_NEW_THEME"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnNewTheme), NULL, this);
+    this->Connect(XRCID("ID_TOOL_SAVE"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnToolExportAll), NULL, this);
     this->Connect(m_menuItemExportAll->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportAll), NULL, this);
     this->Connect(m_menuItemExportSelective->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportSelective), NULL, this);
-    this->Connect(wxID_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
-    this->Connect(wxID_REVERT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
-    this->Connect(ID_TOOL_IMPORT_ECLIPSE_THEME, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnImportEclipseTheme), NULL, this);
+    this->Connect(XRCID("ID_TOOL_OPEN"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
+    this->Connect(XRCID("ID_TOOL_REVERT"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
+    this->Connect(XRCID("ID_TOOL_IMPORT_ECLIPSE_THEME"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnImportEclipseTheme), NULL, this);
     this->Connect(m_menuItem153->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLoadEclipseThemeWebsite), NULL, this);
     m_fontPickerGlobal->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);
@@ -488,13 +487,13 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
 SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
 {
-    this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnNewTheme), NULL, this);
-    this->Disconnect(wxID_SAVE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnToolExportAll), NULL, this);
+    this->Disconnect(XRCID("ID_TOOL_NEW_THEME"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnNewTheme), NULL, this);
+    this->Disconnect(XRCID("ID_TOOL_SAVE"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnToolExportAll), NULL, this);
     this->Disconnect(m_menuItemExportAll->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportAll), NULL, this);
     this->Disconnect(m_menuItemExportSelective->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportSelective), NULL, this);
-    this->Disconnect(wxID_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
-    this->Disconnect(wxID_REVERT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
-    this->Disconnect(ID_TOOL_IMPORT_ECLIPSE_THEME, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnImportEclipseTheme), NULL, this);
+    this->Disconnect(XRCID("ID_TOOL_OPEN"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
+    this->Disconnect(XRCID("ID_TOOL_REVERT"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
+    this->Disconnect(XRCID("ID_TOOL_IMPORT_ECLIPSE_THEME"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnImportEclipseTheme), NULL, this);
     this->Disconnect(m_menuItem153->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLoadEclipseThemeWebsite), NULL, this);
     m_fontPickerGlobal->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);

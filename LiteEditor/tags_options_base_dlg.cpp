@@ -316,51 +316,10 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
     m_panelCtagsAdvanced->SetSizer(bSizer6);
     
-    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer2->SetFlexibleDirection( wxBOTH );
-    fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer2->AddGrowableCol(1);
-    
-    bSizer6->Add(fgSizer2, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText3 = new wxStaticText(m_panelCtagsAdvanced, wxID_ANY, _("File Types:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer2->Add(m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textFileSpec = new wxTextCtrl(m_panelCtagsAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
-    m_textFileSpec->SetHint(wxT(""));
-    #endif
-    
-    fgSizer2->Add(m_textFileSpec, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxBoxSizer* bSizer14 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer6->Add(bSizer14, 0, wxEXPAND, 5);
-    
-    m_staticText92 = new wxStaticText(m_panelCtagsAdvanced, wxID_ANY, _("CodeLite can suggest a list of 'Tokens' that will be added to the 'Tokens' table based on parsing the following header files \n(space separated list):"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer14->Add(m_staticText92, 0, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* bSizer15 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer14->Add(bSizer15, 1, wxEXPAND, 5);
-    
-    m_textCtrlFilesList = new wxTextCtrl(m_panelCtagsAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlFilesList->SetHint(wxT(""));
-    #endif
-    
-    bSizer15->Add(m_textCtrlFilesList, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonParse = new wxButton(m_panelCtagsAdvanced, wxID_ANY, _("Parse!"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer15->Add(m_buttonParse, 0, wxALL, 5);
-    
     m_notebook2 = new wxNotebook(m_panelCtagsAdvanced, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
     m_notebook2->SetName(wxT("m_notebook2"));
     
-    bSizer6->Add(m_notebook2, 1, wxALL|wxEXPAND, 5);
+    bSizer6->Add(m_notebook2, 1, wxEXPAND, 5);
     
     m_panelClangGeneral = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_panelClangGeneral->SetToolTip(_("List here list of tokens to be pre-processed by codelite-indexer. \nUsually, you would like to add here macros which confuse the parser\nClick the below link to read more about this feature and the syntax supported.\n"));
@@ -425,6 +384,26 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_textTypes->SetFont(m_textTypesFont);
     
     bSizer13->Add(m_textTypes, 1, wxEXPAND, 5);
+    
+    wxBoxSizer* bSizer14 = new wxBoxSizer(wxVERTICAL);
+    
+    bSizer6->Add(bSizer14, 0, wxEXPAND, 5);
+    
+    wxBoxSizer* bSizer15 = new wxBoxSizer(wxHORIZONTAL);
+    
+    bSizer14->Add(bSizer15, 1, wxEXPAND, 5);
+    
+    m_textCtrlFilesList = new wxTextCtrl(m_panelCtagsAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlFilesList->SetToolTip(_("CodeLite can suggest a list of 'Tokens' that will be added to the 'Tokens' table based on parsing the following header files"));
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlFilesList->SetHint(wxT(""));
+    #endif
+    
+    bSizer15->Add(m_textCtrlFilesList, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_buttonParse = new wxButton(m_panelCtagsAdvanced, wxID_ANY, _("Parse!"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    bSizer15->Add(m_buttonParse, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_panelClang = new wxPanel(m_treebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook2->AddPage(m_panelClang, _("Clang"), false, wxNOT_FOUND);

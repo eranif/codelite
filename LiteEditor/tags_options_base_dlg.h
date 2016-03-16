@@ -77,11 +77,6 @@ protected:
     wxTextCtrl* m_textCtrlCtagsExcludePaths;
     wxButton* m_buttonAddExcludePath;
     wxPanel* m_panelCtagsAdvanced;
-    wxStaticText* m_staticText3;
-    wxTextCtrl* m_textFileSpec;
-    wxStaticText* m_staticText92;
-    wxTextCtrl* m_textCtrlFilesList;
-    wxButton* m_buttonParse;
     wxNotebook* m_notebook2;
     wxPanel* m_panelClangGeneral;
     wxTextCtrl* m_textPrep;
@@ -90,6 +85,8 @@ protected:
     wxPanel* m_panel5;
     wxStaticText* m_staticText91;
     wxTextCtrl* m_textTypes;
+    wxTextCtrl* m_textCtrlFilesList;
+    wxButton* m_buttonParse;
     wxPanel* m_panelClang;
     wxCheckBox* m_checkBoxEnableClangCC;
     wxNotebook* m_notebookClang;
@@ -151,11 +148,6 @@ public:
     wxPanel* GetPanel40() { return m_panel40; }
     wxNotebook* GetNotebook36() { return m_notebook36; }
     wxPanel* GetPanelCtagsSearchPaths() { return m_panelCtagsSearchPaths; }
-    wxStaticText* GetStaticText3() { return m_staticText3; }
-    wxTextCtrl* GetTextFileSpec() { return m_textFileSpec; }
-    wxStaticText* GetStaticText92() { return m_staticText92; }
-    wxTextCtrl* GetTextCtrlFilesList() { return m_textCtrlFilesList; }
-    wxButton* GetButtonParse() { return m_buttonParse; }
     wxTextCtrl* GetTextPrep() { return m_textPrep; }
     wxStaticText* GetStaticText9() { return m_staticText9; }
     wxHyperlinkCtrl* GetHyperlink1() { return m_hyperlink1; }
@@ -164,6 +156,8 @@ public:
     wxTextCtrl* GetTextTypes() { return m_textTypes; }
     wxPanel* GetPanel5() { return m_panel5; }
     wxNotebook* GetNotebook2() { return m_notebook2; }
+    wxTextCtrl* GetTextCtrlFilesList() { return m_textCtrlFilesList; }
+    wxButton* GetButtonParse() { return m_buttonParse; }
     wxPanel* GetPanelCtagsAdvanced() { return m_panelCtagsAdvanced; }
     wxPanel* GetPanelCtags() { return m_panelCtags; }
     wxCheckBox* GetCheckBoxEnableClangCC() { return m_checkBoxEnableClangCC; }

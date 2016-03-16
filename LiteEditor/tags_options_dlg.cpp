@@ -98,7 +98,6 @@ TagsOptionsDlg::TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data)
     m_textPrep->SetValue(m_data.GetTokens());
     m_textTypes->SetValue(m_data.GetTypes());
     m_textCtrlFilesList->SetValue(m_data.GetMacrosFiles());
-    m_textFileSpec->SetValue(m_data.GetFileSpec());
 
 //----------------------------------------------------
 // Clang page
@@ -172,7 +171,6 @@ void TagsOptionsDlg::CopyData()
     //----------------------------------------------------
     // CTags advanced paths
     //----------------------------------------------------
-    m_data.SetFileSpec(m_textFileSpec->GetValue());
     m_data.SetTokens(m_textPrep->GetValue());
     m_data.SetTypes(m_textTypes->GetValue());
     m_data.SetMacrosFiles(m_textCtrlFilesList->GetValue());

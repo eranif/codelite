@@ -197,18 +197,36 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
 bool FileExtManager::IsCxxFile(const wxString& filename)
 {
     FileType ft = GetType(filename);
+    if(ft == TypeOther) {
+        // failed to detect the type
+        if(!AutoDetectByContent(filename, ft)) {
+            return false;
+        }
+    }
     return ft == TypeSourceC || ft == TypeSourceCpp || ft == TypeHeader;
 }
 
 bool FileExtManager::IsJavascriptFile(const wxString& filename)
 {
     FileType ft = GetType(filename);
+    if(ft == TypeOther) {
+        // failed to detect the type
+        if(!AutoDetectByContent(filename, ft)) {
+            return false;
+        }
+    }
     return ft == TypeJS;
 }
 
 bool FileExtManager::IsPHPFile(const wxString& filename)
 {
     FileType ft = GetType(filename);
+    if(ft == TypeOther) {
+        // failed to detect the type
+        if(!AutoDetectByContent(filename, ft)) {
+            return false;
+        }
+    }
     return ft == TypePhp;
 }
 
@@ -234,5 +252,11 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
 bool FileExtManager::IsJavaFile(const wxString& filename)
 {
     FileType ft = GetType(filename);
+    if(ft == TypeOther) {
+        // failed to detect the type
+        if(!AutoDetectByContent(filename, ft)) {
+            return false;
+        }
+    }
     return ft == TypeJava;
 }

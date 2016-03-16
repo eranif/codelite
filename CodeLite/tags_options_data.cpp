@@ -89,6 +89,8 @@ TagsOptionsData::TagsOptionsData()
     // Initialize defaults
     m_languages.Add(wxT("C++"));
     m_tokens.Add(wxT("EXPORT"));
+    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE_VERSION"));
+    m_tokens.Add(wxT("_GLIBCXX_END_NAMESPACE_VERSION"));
     m_tokens.Add(wxT("_GLIBCXX_NOEXCEPT"));
     m_tokens.Add(wxT("_NOEXCEPT"));
     m_tokens.Add(wxT("WXDLLIMPEXP_CORE"));

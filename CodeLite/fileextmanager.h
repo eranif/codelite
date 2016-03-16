@@ -119,25 +119,25 @@ public:
      * @brief return true if the file is a C/C++ file
      */
     static bool IsCxxFile(const wxString& filename);
-    static bool IsCxxFile(const wxFileName& filename) { return IsCxxFile(filename.GetFullName()); }
+    static bool IsCxxFile(const wxFileName& filename) { return IsCxxFile(filename.GetFullPath()); }
 
     /**
      * @brief return true if a file is a JavaScript file
      */
     static bool IsJavascriptFile(const wxString& filename);
-    static bool IsJavascriptFile(const wxFileName& filename) { return IsJavascriptFile(filename.GetFullName()); }
+    static bool IsJavascriptFile(const wxFileName& filename) { return IsJavascriptFile(filename.GetFullPath()); }
 
     /**
      * @param return true if a file is a PHP file
      */
     static bool IsPHPFile(const wxString& filename);
-    static bool IsPHPFile(const wxFileName& filename) { return IsPHPFile(filename.GetFullName()); }
+    static bool IsPHPFile(const wxFileName& filename) { return IsPHPFile(filename.GetFullPath()); }
 
     /**
      * @param return true if a file is a Java file
      */
     static bool IsJavaFile(const wxString& filename);
-    static bool IsJavaFile(const wxFileName& filename) { return IsJavaFile(filename.GetFullName()); }
+    static bool IsJavaFile(const wxFileName& filename) { return IsJavaFile(filename.GetFullPath()); }
 
     /**
      * @brief attempt to autodetect the file type by examining its content

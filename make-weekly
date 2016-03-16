@@ -2,6 +2,7 @@
 
 # Clear old installers
 os_name=`uname -s`
+no_upload=$1
 
 if [ ${os_name} = "CYGWIN_NT-6.1" ]; then
     echo Building CodeLite for Windows...
@@ -43,11 +44,13 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ]; then
     iscc codelite64_mingw.iss
     
     # upload the binaries
-    cd output
-    scp *.exe root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+    if [ "${no_upload}" != "--no-upload" ]; then
+        cd output
+        scp *.exe root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+        # update the owner
+        ssh root@codelite.org 'chown -R www-data:www-data /var/www/html/downloads/codelite/weekly/wip'
+    fi
     
-    # update the owner
-    ssh root@codelite.org 'chown -R www-data:www-data /var/www/html/downloads/codelite/weekly/wip'
 else
     cd build-release
     curdir=`pwd`
@@ -79,13 +82,17 @@ else
     if [ ${os_name} == "Darwin" ]; then
         cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
         make -j4 && make install
-        tar cvfz codelite.app.tar.gz codelite.app/*
-        scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+        if [ "${no_upload}" != "--no-upload" ]; then
+            tar cvfz codelite.app.tar.gz codelite.app/*
+            scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+        fi
     else
         cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
         make -j4 && make package
-        deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
-        echo Uploading deb file ${deb_file}
-        scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+        if [ "${no_upload}" != "--no-upload" ]; then
+            deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
+            echo Uploading deb file ${deb_file}
+            scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+        fi
     fi
 fi

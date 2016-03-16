@@ -2,5 +2,5 @@
 
 void foo()
 {
-	std::vector<std::string> v;
-	v.at(0)->
+    std::vector<ClassWithMembers> v;
+    v.at(0)->

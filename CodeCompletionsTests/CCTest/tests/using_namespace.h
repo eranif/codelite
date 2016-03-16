@@ -1,3 +1,3 @@
 using namespace std;
 
-vector<string> v;
+vector<ClassWithMembers> v;

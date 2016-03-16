@@ -1,2 +1,1 @@
-// Defined in Interfaces/debugger.h
-StackEntryArray myStack;
+VectorTypedef_t myStack;

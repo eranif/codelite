@@ -1,3 +1,3 @@
 void foo(){
-	std::map<wxString, int> mm;
+	std::map<ClassWithMembers, int> mm;
 	

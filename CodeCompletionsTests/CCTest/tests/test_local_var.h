@@ -1,2 +1,2 @@
-const wxString& path;
+const ClassWithMembers& path;
 path.

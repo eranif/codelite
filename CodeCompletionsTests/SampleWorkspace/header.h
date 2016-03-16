@@ -27,9 +27,10 @@
 #include <Plugin/lexer_configuration.h>
 #include <wxcrafter/wx_ordered_map.h>
 #include <Plugin/workspace.h>
+#include <set>
 
 struct ST {
-	std::string name;
+    std::string name;
 };
 
 ST theStruct;
@@ -40,26 +41,25 @@ ST theStruct;
 // test_netsting_scope_resolving
 class string
 {
-	class SubClass
-	{
-		int member;
-		class SubSubClass
-		{
-			int sub_sub_member;
-			class Box
-			{
-				void foo();
-			};
-		};
-	};
+    class SubClass
+    {
+        int member;
+        class SubSubClass
+        {
+            int sub_sub_member;
+            class Box
+            {
+                void foo();
+            };
+        };
+    };
 };
 
 // Needed for the test of the 'goto decl inside namespace'
 namespace Baz
 {
-struct Tada
-{
-    int bar;  
+struct Tada {
+    int bar;
 };
 
 class Foo
@@ -72,15 +72,75 @@ public:
 // Test the 'testStructDeclaratorInFuncArgument
 //////////////////////////////////////////////////////////////
 
-void foo_bar(struct wxString *s) {
-    
-}
+void foo_bar(struct wxString* s) {}
 } // Namespace Baz
 
-class ClassWithTemplateFunction {
+class ClassWithTemplateFunction
+{
 public:
     void* m_type;
-    template <typename T> 
-    T* Get() { return (T*)m_type; }
+    template <typename T>
+    T* Get()
+    {
+        return (T*)m_type;
+    }
 };
+
+class ClassWithMembers
+{
+    int member0;
+    int member1;
+    int member2;
+    int member3;
+    int member4;
+    int member5;
+    int member6;
+    int member7;
+    int member8;
+    int member9;
+public:
+    typedef std::map<int, ClassWithMembers> Map_t;
+    typedef std::map<int, ClassWithMembers>::const_iterator ConstIterator_t;
+    
+public:
+    ClassWithMember() {}
+    ~ClassWithMembers() {}
+    void SetMember0(int member0) { this->member0 = member0; }
+    void SetMember1(int member1) { this->member1 = member1; }
+    void SetMember2(int member2) { this->member2 = member2; }
+    void SetMember3(int member3) { this->member3 = member3; }
+    void SetMember4(int member4) { this->member4 = member4; }
+    void SetMember5(int member5) { this->member5 = member5; }
+    void SetMember6(int member6) { this->member6 = member6; }
+    void SetMember7(int member7) { this->member7 = member7; }
+    void SetMember8(int member8) { this->member8 = member8; }
+    void SetMember9(int member9) { this->member9 = member9; }
+    int GetMember0() const { return member0; }
+    int GetMember1() const { return member1; }
+    int GetMember2() const { return member2; }
+    int GetMember3() const { return member3; }
+    int GetMember4() const { return member4; }
+    int GetMember5() const { return member5; }
+    int GetMember6() const { return member6; }
+    int GetMember7() const { return member7; }
+    int GetMember8() const { return member8; }
+    int GetMember9() const { return member9; }
+};
+
+typedef std::vector<ClassWithMembers> VectorTypedef_t;
+
+// Template class with static member
+template <class T>
+class Foo
+{
+    T* t;
+
+public:
+    static T* Get() { return t; }
+};
+
+ClassWithMembers::ConstIterator_t __iter;
+__iter->second.
+typedef Foo<ClassWithMembers> Foo_t;
+
 

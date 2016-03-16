@@ -1,3 +1,3 @@
 void foo() {
-    BOOST_FOREACH(wxString str, wxArrayString) {
+    BOOST_FOREACH(ClassWithMembers str, wxArrayString) {
         str.

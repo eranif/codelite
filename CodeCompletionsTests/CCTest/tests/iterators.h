@@ -1,2 +1,2 @@
-std::map<wxString, wxString>::iterator mapIter;
-std::vector<wxString>::iterator        vecIter;
+std::map<ClassWithMembers, ClassWithMembers>::iterator mapIter;
+std::vector<ClassWithMembers>::iterator        vecIter;

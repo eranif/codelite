@@ -1,2 +1,2 @@
-EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
-iter->second->
+ClassWithMembers::ConstIterator_t __iter;
+__iter->second->

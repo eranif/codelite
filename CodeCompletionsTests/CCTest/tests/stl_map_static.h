@@ -1,3 +1,4 @@
 void LEditor::Get()
 {
-	ms_bookmarkShapes.find(0)->
+    std::map<int, ClassWithMembers> ms_bookmarkShapes;
+	ms_bookmarkShapes.find(0)->second.

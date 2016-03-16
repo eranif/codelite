@@ -1,3 +1,1 @@
-void Manager::foo()
-{
-	ManagerST::Get()->
+Foo_t::Get()->

@@ -139,8 +139,4 @@ public:
     static T* Get() { return t; }
 };
 
-ClassWithMembers::ConstIterator_t __iter;
-__iter->second.
 typedef Foo<ClassWithMembers> Foo_t;
-
-

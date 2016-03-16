@@ -46,6 +46,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -72,6 +73,7 @@
     <File Name="tests/boost_foreach.h"/>
     <File Name="tests/test_auto_simple.h"/>
     <File Name="tests/test_template_function.h"/>
+    <File Name="tests/test_auto_simple.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="TestFramework">

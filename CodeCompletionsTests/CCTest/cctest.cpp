@@ -421,17 +421,17 @@ TEST_FUNC(testStrcutDelcratorInFuncArgument)
     return true;
 }
 
-//TEST_FUNC(testAutoSimple)
-//{
-//    std::vector<TagEntryPtr> tags;
-//    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_auto_simple.h")),
-//                                                 5,
-//                                                 wxT("a->"),
-//                                                 LoadFile(wxT("../tests/test_auto_simple.h")),
-//                                                 tags);
-//    CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
-//    return true;
-//}
+TEST_FUNC(testAutoSimple)
+{
+    std::vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_auto_simple.h")),
+                                                 2,
+                                                 wxT("autoPtr->second->"),
+                                                 LoadFile(wxT("../tests/test_auto_simple.h")),
+                                                 tags);
+    CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
+    return true;
+}
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////

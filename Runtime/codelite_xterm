@@ -3,7 +3,13 @@
 ## A wrapper script around the xterm (or other terminal) utility 
 ## which allows codelite to export LD_LIBRARY_PATH into the terminal shell
 
-terminal="x-terminal-emulator"
+# For (debianish) distros we can probably get the default terminal by:
+if [ -f /usr/bin/x-terminal-emulator ]; then 
+	terminal="x-terminal-emulator"
+else
+	# distros that don't have an update-alternatives x-terminal-emulator entry have to put up with:
+	terminal="xterm -sb -sl 1000"
+fi
 
 program_title=$1
 

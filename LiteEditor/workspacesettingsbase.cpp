@@ -64,8 +64,15 @@ WorkspaceSettingsBase::WorkspaceSettingsBase(wxWindow* parent, wxWindowID id, co
     
     bSizer81->Add(m_staticText6, 0, wxALL|wxEXPAND, 5);
     
-    m_textCtrlWspEnvVars = new wxTextCtrl(m_panelEnv, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
-    wxFont m_textCtrlWspEnvVarsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
+    m_textCtrlWspEnvVars = new wxTextCtrl(m_panelEnv, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrlWspEnvVarsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrlWspEnvVarsFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
+    wxFont m_textCtrlWspEnvVarsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_textCtrlWspEnvVarsFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
     m_textCtrlWspEnvVars->SetFont(m_textCtrlWspEnvVarsFont);
     
     bSizer81->Add(m_textCtrlWspEnvVars, 1, wxALL|wxEXPAND, 5);
@@ -97,11 +104,15 @@ WorkspaceSettingsBase::WorkspaceSettingsBase(wxWindow* parent, wxWindowID id, co
     #endif
     
     SetName(wxT("WorkspaceSettingsBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -150,7 +161,16 @@ CodeCompletionBasePage::CodeCompletionBasePage(wxWindow* parent, wxWindowID id, 
     
     bSizer24->Add(m_staticText5, 0, wxLEFT|wxRIGHT|wxTOP, 5);
     
-    m_textCtrlSearchPaths = new wxTextCtrl(m_panel8, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    m_textCtrlSearchPaths = new wxTextCtrl(m_panel8, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrlSearchPathsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrlSearchPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
+    wxFont m_textCtrlSearchPathsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_textCtrlSearchPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
+    m_textCtrlSearchPaths->SetFont(m_textCtrlSearchPathsFont);
     m_textCtrlSearchPaths->SetToolTip(_("Add here search paths used by clang / ctags for locating include files"));
     
     bSizer24->Add(m_textCtrlSearchPaths, 1, wxALL|wxEXPAND, 5);
@@ -165,7 +185,16 @@ CodeCompletionBasePage::CodeCompletionBasePage(wxWindow* parent, wxWindowID id, 
     
     bSizer221->Add(m_staticText12, 0, wxLEFT|wxRIGHT|wxTOP, 5);
     
-    m_textCtrlMacros = new wxTextCtrl(m_panel6, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    m_textCtrlMacros = new wxTextCtrl(m_panel6, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrlMacrosFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrlMacrosFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
+    wxFont m_textCtrlMacrosFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_textCtrlMacrosFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
+    m_textCtrlMacros->SetFont(m_textCtrlMacrosFont);
     m_textCtrlMacros->SetToolTip(_("Add here macros to pass to clang when generating PCH files\nOne macro per line"));
     
     bSizer221->Add(m_textCtrlMacros, 1, wxALL|wxEXPAND, 5);
@@ -191,11 +220,10 @@ CodeCompletionBasePage::CodeCompletionBasePage(wxWindow* parent, wxWindowID id, 
     boxSizer3->Add(m_checkBoxSWTLW, 0, wxALL, 5);
     
     SetName(wxT("CodeCompletionBasePage"));
-    SetSizeHints(500,300);
-    if ( GetSizer() ) {
+    SetSize(500,300);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_textCtrlSearchPaths->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);
     m_textCtrlMacros->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);

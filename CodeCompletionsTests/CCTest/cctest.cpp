@@ -433,6 +433,18 @@ TEST_FUNC(testAutoSimple)
     return true;
 }
 
+TEST_FUNC(testBoostSharedPtr)
+{
+    std::vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/boost_shared_ptr.h")),
+                                                 2,
+                                                 wxT("autoPtr->second->"),
+                                                 LoadFile(wxT("../tests/test_auto_simple.h")),
+                                                 tags);
+    CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
+    return true;
+}
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////

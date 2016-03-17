@@ -9,6 +9,8 @@
   "m_outputFileName": "project_settings_base_dlg.h",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -10805,7 +10807,7 @@
              "border": 5,
              "gbSpan": ",",
              "gbPosition": ",",
-             "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_ENTER", "wxTE_MULTILINE"],
+             "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_MULTILINE"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -10850,7 +10852,7 @@
               }, {
                "type": "bool",
                "m_label": "Focused",
-               "m_value": false
+               "m_value": true
               }, {
                "type": "string",
                "m_label": "Class Name:",
@@ -11069,7 +11071,7 @@
              "border": 5,
              "gbSpan": ",",
              "gbPosition": ",",
-             "m_styles": ["wxTE_RICH2", "wxTE_MULTILINE"],
+             "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_MULTILINE"],
              "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",

@@ -3,9 +3,11 @@
   <Project Name="SampleWorksapce" Path="SampleWorksapce.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
       <Project Name="SampleWorksapce" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

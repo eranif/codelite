@@ -32,9 +32,7 @@ class wxStringPrinter:
     def display_hint (self):
         return 'wxString'
         
-class wxArrayFooPrinter:
-    "For wxArrayString, wxArrayInt, wxArrayDouble etc"
-
+class wxArrayString:
     class _iterator:
         def __init__ (self, items, item_count):
             self.items = items
@@ -51,7 +49,7 @@ class wxArrayFooPrinter:
                 raise StopIteration
             try:
                 # Try the wx >=2.9 way first
-                elt = self.items[count]['m_impl']
+                elt = '"' + self.items[count]['_M_dataplus']['_M_p'].string() + '"'
             except Exception:
                 # The wx2.8 way
                 elt = self.items[count]
@@ -69,8 +67,7 @@ class wxArrayFooPrinter:
 
     def to_string(self):
         # Ideal would be to return e.g. "wxArrayInt", but how to find the type?
-        return "wxArray<T>"
-
+        return "wxArrayString"
 
     def display_hint(self):
         return 'array'
@@ -148,7 +145,7 @@ def lookup_function (val):
 
 def build_dictionary ():
     pretty_printers_dict[re.compile('^wxString$')] = lambda val: wxStringPrinter(val)
-    pretty_printers_dict[re.compile('^wxArray.+$')] = lambda val: wxArrayFooPrinter(val)
+    pretty_printers_dict[re.compile('wxArrayString')] = lambda val: wxArrayString(val)
     if platform.system() != 'Windows':
         pretty_printers_dict[re.compile('^wxFileName$')] = lambda val: wxFileNamePrinter(val)
     pretty_printers_dict[re.compile('^wxPoint$')] = lambda val: wxPointPrinter(val)

@@ -7489,7 +7489,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../bitmaps/16-next.png"
+       "m_path": "../bitmaps/16-git-commit.png"
       }],
      "m_events": [],
      "m_children": []

@@ -29,93 +29,72 @@
 #include <wx/string.h>
 #include <wx/arrstr.h>
 #include <vector>
+#include <set>
 
 class TagsManager;
 class ParsedToken
 {
-    wxString      m_type;
-    wxString      m_typeScope;
-    wxString      m_oper;
-    bool          m_isTemplate;
+    wxString m_type;
+    wxString m_typeScope;
+    wxString m_oper;
+    bool m_isTemplate;
     wxArrayString m_templateInitialization;
     wxArrayString m_templateArgList;
-    wxString      m_name;
-    bool          m_subscriptOperator;
-    wxString      m_currentScopeName;
-    wxString      m_argumentList;
-    ParsedToken*  m_next;
-    ParsedToken*  m_prev;
-    bool          m_isAutoVariable;
-    wxString      m_autoExpression;
+    wxString m_name;
+    bool m_subscriptOperator;
+    wxString m_currentScopeName;
+    wxString m_argumentList;
+    ParsedToken* m_next;
+    ParsedToken* m_prev;
+    bool m_isAutoVariable;
+    wxString m_autoExpression;
 
 public:
-    static void DeleteTokens( ParsedToken *head );
+    static void DeleteTokens(ParsedToken* head);
 
 public:
     ParsedToken();
     ~ParsedToken();
 
-    void SetAutoExpression(const wxString& autoExpression) {
-        this->m_autoExpression = autoExpression;
-    }
-    void SetIsAutoVariable(bool isAutoVariable) {
-        this->m_isAutoVariable = isAutoVariable;
-    }
-    const wxString& GetAutoExpression() const {
-        return m_autoExpression;
-    }
-    bool IsAutoVariable() const {
-        return m_isAutoVariable;
-    }
+    void SetAutoExpression(const wxString& autoExpression) { this->m_autoExpression = autoExpression; }
+    void SetIsAutoVariable(bool isAutoVariable) { this->m_isAutoVariable = isAutoVariable; }
+    const wxString& GetAutoExpression() const { return m_autoExpression; }
+    bool IsAutoVariable() const { return m_isAutoVariable; }
     bool IsThis() const;
-    void SetCurrentScopeName(const wxString& currentScopeName) {
+    void SetCurrentScopeName(const wxString& currentScopeName)
+    {
         this->m_currentScopeName = currentScopeName;
         this->m_currentScopeName.Trim().Trim(false);
     }
-    const wxString& GetCurrentScopeName() const {
-        return m_currentScopeName;
-    }
-    void SetName(const wxString& name) {
+    const wxString& GetCurrentScopeName() const { return m_currentScopeName; }
+    void SetName(const wxString& name)
+    {
         this->m_name = name;
-        this->m_name.Trim().Trim(false);;
+        this->m_name.Trim().Trim(false);
+        ;
     }
-    const wxString& GetName() const {
-        return m_name;
-    }
-    void SetNext(ParsedToken* next) {
-        this->m_next = next;
-    }
-    void SetPrev(ParsedToken* prev) {
-        this->m_prev = prev;
-    }
-    ParsedToken* GetNext() const {
-        return m_next;
-    }
-    ParsedToken* GetPrev() const {
-        return m_prev;
-    }
-    void SetSubscriptOperator(bool subscriptOperator) {
-        this->m_subscriptOperator = subscriptOperator;
-    }
-    bool GetSubscriptOperator() const {
-        return m_subscriptOperator;
-    }
+    const wxString& GetName() const { return m_name; }
+    void SetNext(ParsedToken* next) { this->m_next = next; }
+    void SetPrev(ParsedToken* prev) { this->m_prev = prev; }
+    ParsedToken* GetNext() const { return m_next; }
+    ParsedToken* GetPrev() const { return m_prev; }
+    void SetSubscriptOperator(bool subscriptOperator) { this->m_subscriptOperator = subscriptOperator; }
+    bool GetSubscriptOperator() const { return m_subscriptOperator; }
 
-    void SetIsTemplate(bool isTemplate) {
-        this->m_isTemplate = isTemplate;
-    }
-    bool GetIsTemplate() const {
-        return m_isTemplate;
-    }
-    void SetOperator(const wxString& oper) {
+    void SetIsTemplate(bool isTemplate) { this->m_isTemplate = isTemplate; }
+    bool GetIsTemplate() const { return m_isTemplate; }
+    void SetOperator(const wxString& oper)
+    {
         this->m_oper = oper;
         this->m_oper.Trim().Trim(false);
     }
-    void SetTypeName(const wxString& type) {
+    void SetTypeName(const wxString& type)
+    {
         this->m_type = type;
         this->m_type.Trim().Trim(false);
     }
-    void SetTypeScope(const wxString& typeScope) {
+    void SetTypeScope(const wxString& typeScope)
+    {
         this->m_typeScope = typeScope;
         this->m_typeScope.Trim().Trim(false);
 
@@ -124,42 +103,33 @@ public:
         }
     }
 
-    const wxString& GetOperator() const {
-        return m_oper;
-    }
-    const wxString& GetTypeName() const {
-        return m_type;
-    }
-    const wxString& GetTypeScope() const {
-        return m_typeScope;
-    }
-    void SetTemplateArgList(const wxArrayString& templateArgList) {
+    const wxString& GetOperator() const { return m_oper; }
+    const wxString& GetTypeName() const { return m_type; }
+    const wxString& GetTypeScope() const { return m_typeScope; }
+    void SetTemplateArgList(const wxArrayString& templateArgList, std::set<wxString>& argsSet)
+    {
         this->m_templateArgList = templateArgList;
+        // Keep track of the template arguments
+        argsSet.insert(m_templateArgList.begin(), m_templateArgList.end());
     }
-    void SetTemplateInitialization(const wxArrayString& templateInitialization) {
+    
+    void SetTemplateInitialization(const wxArrayString& templateInitialization)
+    {
         this->m_templateInitialization = templateInitialization;
     }
-    const wxArrayString& GetTemplateArgList() const {
-        return m_templateArgList;
-    }
-    const wxArrayString& GetTemplateInitialization() const {
-        return m_templateInitialization;
-    }
+    const wxArrayString& GetTemplateArgList() const { return m_templateArgList; }
+    const wxArrayString& GetTemplateInitialization() const { return m_templateInitialization; }
 
-    void SetArgumentList(const wxString& argumentList) {
-        this->m_argumentList = argumentList;
-    }
-    const wxString& GetArgumentList() const {
-        return m_argumentList;
-    }
+    void SetArgumentList(const wxString& argumentList) { this->m_argumentList = argumentList; }
+    const wxString& GetArgumentList() const { return m_argumentList; }
     wxString GetContextScope() const;
     wxString GetPath() const;
-    void     RemoveScopeFromType();
+    void RemoveScopeFromType();
 
     /**
      * @brief replace the current type which is template with an actual type
      */
-    bool ResovleTemplate(TagsManager *lookup);
+    bool ResovleTemplate(TagsManager* lookup);
 
     /**
      * @brief fix the template type with actual type
@@ -180,34 +150,40 @@ public:
      *
      * @param lookup
      */
-    void ResolveTemplateType(TagsManager *lookup);
+    void ResolveTemplateType(TagsManager* lookup);
 
     /**
      * @brief replace template argument with the actual type (std::vector<wxString>: _Tp --> wxString)
      * @param templateArg the template argument to replace
      */
-    wxString TemplateToType( const wxString &templateArg );
+    wxString TemplateToType(const wxString& templateArg);
 };
 
 class TokenContainer
 {
 public:
-    ParsedToken *head;
-    ParsedToken *current;
-    bool         rew;
-    int          retries;
+    ParsedToken* head;
+    ParsedToken* current;
+    bool rew;
+    int retries;
 
 public:
-    TokenContainer() : head(NULL), current(NULL), retries(0) {}
+    TokenContainer()
+        : head(NULL)
+        , current(NULL)
+        , retries(0)
+    {
+    }
 
-    bool Rewind() {
-        if(retries > 3)
-            return false;
+    bool Rewind()
+    {
+        if(retries > 3) return false;
 
         return rew;
     }
 
-    void SetRewind(bool r) {
+    void SetRewind(bool r)
+    {
         if(r) {
             retries++;
         } else {

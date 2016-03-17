@@ -38,6 +38,7 @@
 #include "comment.h"
 #include <vector>
 #include "codelite_exports.h"
+#include <set>
 
 enum SearchFlags {
     PartialMatch = 0x00000001,
@@ -101,6 +102,7 @@ private:
     std::vector<wxString> m_additionalScopes;                           // collected by parsing 'using namespace XXX'
     std::map<wxString, std::vector<wxString> > m_additionalScopesCache; // collected by parsing 'using namespace XXX'
     TemplateHelper m_templateHelper;
+    std::set<wxString> m_templateArgs;
 
 protected:
     void SetVisibleScope(const wxString& visibleScope) { this->m_visibleScope = visibleScope; }

@@ -28,6 +28,7 @@
 #include <wxcrafter/wx_ordered_map.h>
 #include <Plugin/workspace.h>
 #include <set>
+#include <boost/smart_ptr/shared_ptr.hpp>
 
 struct ST {
     std::string name;
@@ -131,7 +132,7 @@ typedef std::vector<ClassWithMembers> VectorTypedef_t;
 
 // Template class with static member
 template <class T>
-class Foo
+class FooTemplate
 {
     T* t;
 
@@ -139,4 +140,5 @@ public:
     static T* Get() { return t; }
 };
 
-typedef Foo<ClassWithMembers> Foo_t;
+//ContextManager::Get()->
+typedef FooTemplate<ClassWithMembers> Foo_t;

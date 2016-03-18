@@ -142,3 +142,4 @@ public:
 
 //ContextManager::Get()->
 typedef FooTemplate<ClassWithMembers> Foo_t;
+

@@ -214,6 +214,7 @@ TagsOptionsData::TagsOptionsData()
     m_types.Add(wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("wxOrderedMap::iterator=std::pair<Key,Value>"));
     m_types.Add(wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>"));
+    m_types.Add(wxT("boost::shared_ptr::type=T"));
 
     DoUpdateTokensWxMap();
     DoUpdateTokensWxMapReversed();

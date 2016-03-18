@@ -41,6 +41,7 @@
 #include "CxxPreProcessor.h"
 #include "CxxUsingNamespaceCollector.h"
 #include "CxxTemplateFunction.h"
+#include "CxxScannerTokens.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -1369,6 +1370,73 @@ bool Language::OnArrowOperatorOverloading(ParsedToken* token)
     GetTagsManager()->GetDereferenceOperator(token->GetPath(), tags);
 
     if(tags.size() == 1) {
+#if 0
+        wxString pattern = tags.at(0)->GetPattern();
+        // strip the pattern from ctags regex chars
+        pattern = pattern.BeforeLast(wxT('$'));
+        pattern = pattern.AfterFirst(wxT('^'));
+
+        Scanner_t cppScanner = ::LexerNew(pattern);
+        bool cont = true;
+        int depth = 0;
+        CxxLexerToken lexerToken;
+        std::vector<wxString> parts;
+        while(cont && ::LexerNext(cppScanner, lexerToken)) {
+            switch(lexerToken.type) {
+            case T_OPERATOR:
+                cont = false;
+                break;
+            case T_IDENTIFIER:
+                if(depth == 0) {
+                    parts.push_back(lexerToken.text);
+                }
+                break;
+            // Dont collect these keywords
+            case T_TYPENAME:
+            case T_CLASS:
+            case T_STRUCT:
+            case T_EXPLICIT:
+            case T_UNION:
+            case T_NAMESPACE:
+                break;
+            case '<':
+                depth++;
+                break;
+            case '>':
+                depth--;
+                break;
+            default:
+                if(depth == 0) {
+                    parts.push_back(lexerToken.text);
+                }
+                break;
+            }
+        }
+        ::LexerDestroy(&cppScanner);
+        if(parts.empty()) {
+            return false;
+        }
+
+        typeName = parts.back();
+        parts.pop_back();
+        if(!parts.empty()) {
+            parts.pop_back(); // remove the '::'
+        }
+
+        typeScope.clear();
+        // Convert the vector to string
+        for(size_t i = 0; i < parts.size(); ++i) {
+            typeScope << parts.at(i);
+        }
+        if(typeScope.IsEmpty()) {
+            typeScope = token->GetPath();
+        }
+
+        token->SetTypeName(typeName);
+        token->SetTypeScope(typeScope);
+        DoIsTypeAndScopeExist(token);
+        ret = true;
+#else
         // loop over the tags and scan for operator -> overloading
         // we found our overloading operator
         // extract the 'real' type from the pattern
@@ -1386,6 +1454,7 @@ bool Language::OnArrowOperatorOverloading(ParsedToken* token)
             DoIsTypeAndScopeExist(token);
             ret = true;
         }
+#endif
     }
     return ret;
 }
@@ -1823,7 +1892,7 @@ bool Language::OnSubscriptOperator(ParsedToken* token)
 
 void Language::ExcuteUserTypes(ParsedToken* token, const wxString& entryPath)
 {
-    const std::map<wxString, wxString> typeMap = GetTagsManager()->GetCtagsOptions().GetTypesMap();
+    std::map<wxString, wxString> typeMap = GetTagsManager()->GetCtagsOptions().GetTypesMap();
     // HACK1: Let the user override the parser decisions
     wxString path = entryPath.IsEmpty() ? token->GetPath() : entryPath;
     std::map<wxString, wxString>::const_iterator where = typeMap.find(path);

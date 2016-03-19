@@ -911,8 +911,14 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
 
     // in the case of re-tagging the entire workspace and full re-tagging is enabled
     // it is faster to drop the tables instead of deleting
-    if(type == TagsManager::Retag_Full) TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
-
+    if(type == TagsManager::Retag_Full) {
+        TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
+    }
+    
+    // Incase anything was changed, update the parser search paths
+    UpdateParserPaths();
+    
+    // Start the parsing by collecing list of files to parse
     wxArrayString projects;
     GetProjectList(projects);
 

@@ -58,9 +58,7 @@ struct EditorDimmerDisabler {
         }
     }
 
-    ~EditorDimmerDisabler()
-    {
-    }
+    ~EditorDimmerDisabler() {}
 };
 
 CodeCompletionManager::CodeCompletionManager()
@@ -162,7 +160,7 @@ bool CodeCompletionManager::DoCtagsWordCompletion(LEditor* editor, const wxStrin
     int lineNum = editor->LineFromPosition(editor->GetCurrentPosition()) + 1;
 
     if(TagsManagerST::Get()->WordCompletionCandidates(editor->GetFileName(), lineNum, expr, text, word, candidates) &&
-       !candidates.empty()) {
+        !candidates.empty()) {
         editor->ShowCompletionBox(candidates, word);
         return true;
     }
@@ -173,18 +171,14 @@ void CodeCompletionManager::DoClangWordCompletion(LEditor* editor)
 {
 #if HAS_LIBCLANG
     DoUpdateOptions();
-    if(GetOptions() & CC_CLANG_ENABLED)
-        ClangCodeCompletion::Instance()->WordComplete(editor);
+    if(GetOptions() & CC_CLANG_ENABLED) ClangCodeCompletion::Instance()->WordComplete(editor);
 #else
     wxUnusedVar(editor);
 #endif
 }
 
-bool CodeCompletionManager::DoCtagsCalltip(LEditor* editor,
-                                           int line,
-                                           const wxString& expr,
-                                           const wxString& text,
-                                           const wxString& word)
+bool CodeCompletionManager::DoCtagsCalltip(
+    LEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)
 {
     // Get the calltip
     clCallTipPtr tip = TagsManagerST::Get()->GetFunctionTip(editor->GetFileName(), line, expr, text, word);
@@ -200,24 +194,19 @@ void CodeCompletionManager::DoClangCalltip(LEditor* editor)
 {
 #if HAS_LIBCLANG
     DoUpdateOptions();
-    if(GetOptions() & CC_CLANG_ENABLED)
-        ClangCodeCompletion::Instance()->Calltip(editor);
+    if(GetOptions() & CC_CLANG_ENABLED) ClangCodeCompletion::Instance()->Calltip(editor);
 #else
     wxUnusedVar(editor);
 #endif
 }
 
-void CodeCompletionManager::Calltip(LEditor* editor,
-                                    int line,
-                                    const wxString& expr,
-                                    const wxString& text,
-                                    const wxString& word)
+void CodeCompletionManager::Calltip(
+    LEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)
 {
     bool res(false);
     DoUpdateOptions();
 
-    if(::IsCppKeyword(word))
-        return;
+    if(::IsCppKeyword(word)) return;
 
     if(GetOptions() & CC_CTAGS_ENABLED) {
         res = DoCtagsCalltip(editor, line, expr, text, word);
@@ -254,7 +243,7 @@ bool CodeCompletionManager::DoCtagsCodeComplete(LEditor* editor, int line, const
 {
     std::vector<TagEntryPtr> candidates;
     if(TagsManagerST::Get()->AutoCompleteCandidates(editor->GetFileName(), line, expr, text, candidates) &&
-       !candidates.empty()) {
+        !candidates.empty()) {
         editor->ShowCompletionBox(candidates, wxEmptyString);
         return true;
     }
@@ -285,8 +274,7 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
 
     wxArrayString macros;
     wxArrayString includePaths;
-    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros))
-        return;
+    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros)) return;
 
     // Queue this request in the worker thread
     m_preProcessorThread.QueueFile(editor->GetFileName().GetFullPath(), macros, includePaths);
@@ -348,7 +336,10 @@ bool CodeCompletionManager::DoCtagsGotoDecl(LEditor* editor)
         }
         // Use the async funtion here. Synchronously usually works but, if the file wasn't loaded, sometimes the
         // EnsureVisible code is called too early and fails
-        editor->FindAndSelectV(tag->GetPattern(), tag->GetName());
+        if(!editor->FindAndSelect(tag->GetPattern(), tag->GetName())) {
+            editor->SetCaretAt(editor->PosFromLine(tag->GetLine() - 1));
+            editor->CenterLineIfNeeded(tag->GetLine() - 1);
+        }
         return true;
     }
     return false;
@@ -383,15 +374,9 @@ void CodeCompletionManager::DoUpdateCompilationDatabase()
     ClangCompilationDbThreadST::Get()->AddFile(db.GetFileName().GetFullPath());
 }
 
-void CodeCompletionManager::OnAppActivated(wxActivateEvent& e)
-{
-    e.Skip();
-}
+void CodeCompletionManager::OnAppActivated(wxActivateEvent& e) { e.Skip(); }
 
-void CodeCompletionManager::Release()
-{
-    wxDELETE(ms_CodeCompletionManager);
-}
+void CodeCompletionManager::Release() { wxDELETE(ms_CodeCompletionManager); }
 
 void CodeCompletionManager::OnBuildStarted(clBuildEvent& e)
 {
@@ -516,29 +501,24 @@ void CodeCompletionManager::ProcessUsingNamespace(LEditor* editor)
 
     wxArrayString macros;
     wxArrayString includePaths;
-    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros))
-        return;
+    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros)) return;
 
     wxUnusedVar(macros);
     // Queue this request in the worker thread
     m_usingNamespaceThread.QueueFile(editor->GetFileName().GetFullPath(), includePaths);
 }
 
-bool CodeCompletionManager::GetDefinitionsAndSearchPaths(LEditor* editor,
-                                                         wxArrayString& searchPaths,
-                                                         wxArrayString& definitions)
+bool CodeCompletionManager::GetDefinitionsAndSearchPaths(
+    LEditor* editor, wxArrayString& searchPaths, wxArrayString& definitions)
 {
     // Sanity
     CHECK_PTR_RET_FALSE(editor);
 
-    if(editor->GetProjectName().IsEmpty())
-        return false;
-    if(!clCxxWorkspaceST::Get()->IsOpen())
-        return false;
+    if(editor->GetProjectName().IsEmpty()) return false;
+    if(!clCxxWorkspaceST::Get()->IsOpen()) return false;
 
     // Support only C/C++ files
-    if(!FileExtManager::IsCxxFile(editor->GetFileName().GetFullName()))
-        return false;
+    if(!FileExtManager::IsCxxFile(editor->GetFileName().GetFullName())) return false;
 
     // Get the file's project and get the build configuration settings
     // for it

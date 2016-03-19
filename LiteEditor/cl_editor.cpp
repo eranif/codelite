@@ -4424,7 +4424,6 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
     do {
         again = false;
         flags = wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD;
-        ;
 
         if(StringFindReplacer::Search(GetText().wc_str(), offset, pattern.wc_str(), flags, pos, match_len)) {
 
@@ -4482,8 +4481,6 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
             }
 
         } else {
-            wxLogMessage(wxT("Failed to find[") + pattern + wxT("]"));
-
             // match failed, restore the caret
             SetCurrentPos(curr_pos);
             SetSelectionStart(curr_pos);

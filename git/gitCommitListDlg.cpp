@@ -46,7 +46,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     : GitCommitListDlgBase(parent)
     , m_git(git)
     , m_workingDir(workingDir)
-    , m_skip(100)
+    , m_skip(0)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitCommitListDlg::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitCommitListDlg::OnProcessTerminated, this);
@@ -280,4 +280,4 @@ void GitCommitListDlg::OnPrevious(wxCommandEvent& event)
     }
 }
 
-void GitCommitListDlg::OnPreviousUI(wxUpdateUIEvent& event) { event.Enable(m_skip > 100); }
+void GitCommitListDlg::OnPreviousUI(wxUpdateUIEvent& event) { event.Enable(m_skip >= 100); }

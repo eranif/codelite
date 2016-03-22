@@ -214,12 +214,12 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
         ::wxMessageBox(_("The search thread is currently busy"), _("CodeLite"), wxICON_INFORMATION | wxOK);
         return;
     }
-    
+
     // Fire the wxEVT_CMD_FIND_IN_FILES_SHOWING showing event
     clCommandEvent fifDlgShowing(wxEVT_CMD_FIND_IN_FILES_SHOWING);
     EventNotifier::Get()->ProcessEvent(fifDlgShowing);
-    
-    // Display the Find In Files dialog 
+
+    // Display the Find In Files dialog
     FindInFilesDialog dlg(EventNotifier::Get()->TopFrame(), "FindInFilesData", fifDlgShowing.GetStrings());
     wxArrayString* paths = (wxArrayString*)e.GetClientData();
     if(paths) {
@@ -542,7 +542,12 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
     size_t matchStyleLen = 0;
     size_t i = 0;
     for(; iter != text.end(); ++iter) {
+        bool advance2Pos = false;
         const wxUniChar& ch = *iter;
+        if((long)ch >= 128) {
+            advance2Pos = true;
+        }
+
         switch(m_curstate) {
         default:
             break;
@@ -578,6 +583,7 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             break;
         case kScope:
             ++scopeStyleLen;
+
             if(ch == ']') {
                 // end of scope
                 ctrl->SetStyling(scopeStyleLen, LEX_FIF_SCOPE);
@@ -587,6 +593,9 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             break;
         case kMatch:
             ++matchStyleLen;
+            if(advance2Pos) {
+                ++matchStyleLen;
+            }
             if(ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
@@ -612,7 +621,11 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             }
             break;
         }
-        ++i;
+        if(advance2Pos) {
+            i += 2;
+        } else {
+            ++i;
+        }
     }
 
     // Left overs...

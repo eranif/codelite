@@ -36,6 +36,7 @@
 #include "DiffConfig.h"
 #include <wx/menu.h>
 #include <wx/filedlg.h>
+#include "fileutils.h"
 
 #define RED_MARKER 5
 #define GREEN_MARKER 6
@@ -93,7 +94,7 @@ DiffSideBySidePanel::~DiffSideBySidePanel()
 void DiffSideBySidePanel::Diff()
 {
     wxFileName fnLeft(m_textCtrlLeftFile->GetValue());
-    wxFileName fnRIght(m_textCtrlRightFile->GetValue());
+    wxFileName fnRight(m_textCtrlRightFile->GetValue());
 
     if(!fnLeft.Exists() && !m_textCtrlLeftFile->GetValue().IsEmpty()) {
         ::wxMessageBox(wxString() << _("Left Side File:\n") << fnLeft.GetFullPath() << _(" does not exist!"),
@@ -101,8 +102,8 @@ void DiffSideBySidePanel::Diff()
         return;
     }
 
-    if(!fnRIght.Exists() && !m_textCtrlRightFile->GetValue().IsEmpty()) {
-        ::wxMessageBox(wxString() << _("Right Side File:\n") << fnRIght.GetFullPath() << _(" does not exist!"),
+    if(!fnRight.Exists() && !m_textCtrlRightFile->GetValue().IsEmpty()) {
+        ::wxMessageBox(wxString() << _("Right Side File:\n") << fnRight.GetFullPath() << _(" does not exist!"),
             "CodeLite", wxICON_ERROR | wxCENTER | wxOK);
         return;
     }
@@ -126,8 +127,22 @@ void DiffSideBySidePanel::Diff()
         m_stcLeft->SetReadOnly(false);
         m_stcRight->SetReadOnly(false);
 
+        // Get the user converter
+        wxString leftFileText, rightFileText;
+        clMBConv(conv);
+        if(!FileUtils::ReadFileContent(fnLeft, leftFileText, *conv)) {
+            ::wxMessageBox(
+                _("Failed to load file content: ") + fnLeft.GetFullPath(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            return;
+        }
+        if(!FileUtils::ReadFileContent(fnRight, rightFileText, *conv)) {
+            ::wxMessageBox(
+                _("Failed to load file content: ") + fnRight.GetFullPath(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            return;
+        }
+
         m_stcLeft->LoadFile(fnLeft.GetFullPath());
-        m_stcRight->LoadFile(fnRIght.GetFullPath());
+        m_stcRight->LoadFile(fnRight.GetFullPath());
 
         m_stcLeft->SetSavePoint();
         m_stcRight->SetSavePoint();
@@ -542,9 +557,15 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
     // remove all lines that have the 'placeholder' markers
     wxString newContent = DoGetContentNoPlaceholders(stc);
 
+    clMBConv(conv);
+    if(!FileUtils::WriteFileContent(fn, newContent, *conv)) {
+        ::wxMessageBox(
+            _("Failed to save content to file: ") + fn.GetFullPath(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        return;
+    }
+
     stc->SetReadOnly(false);
     stc->SetText(newContent);
-    stc->SaveFile(fn.GetFullPath());
     stc->SetReadOnly(true);
     stc->SetSavePoint();
     stc->SetModified(false);

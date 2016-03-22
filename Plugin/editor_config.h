@@ -45,6 +45,12 @@ enum {
     View_Show_Default = View_Show_Workspace_Tab | View_Show_Explorer_Tab | View_Show_Tabs_Tab | View_Show_Tabgroups_Tab
 };
 
+// Helper macro for getting the correct wxMBConv object from the user settings
+#define clMBConv(converter)                                                                                  \
+    wxCSConv __fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());                      \
+    bool __useBuiltIn = (EditorConfigST::Get()->GetOptions()->GetFileFontEncoding() == wxFONTENCODING_UTF8); \
+    wxMBConv* converter = (__useBuiltIn ? (wxMBConv*)&wxConvUTF8 : (wxMBConv*)&__fontEncConv);
+
 class WXDLLIMPEXP_SDK SimpleLongValue : public SerializedObject
 {
     long m_value;

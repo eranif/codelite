@@ -26,13 +26,13 @@
 #include "commitmessagescache.h"
 #include "cl_config.h"
 
-CommitMessagesCache::CommitMessagesCache() 
+CommitMessagesCache::CommitMessagesCache()
 {
     clConfig conf("svn-commit.conf");
     m_messages = conf.Read("messages", wxArrayString());
 }
 
-CommitMessagesCache::~CommitMessagesCache() 
+CommitMessagesCache::~CommitMessagesCache()
 {
     clConfig conf("svn-commit.conf");
     conf.Write("messages", m_messages);
@@ -67,3 +67,7 @@ wxString CommitMessagesCache::FormatMessage(const wxString& message)
     formattedMessage.Trim(false).Trim();
     return formattedMessage;
 }
+
+bool CommitMessagesCache::IsEmpty() const { return m_messages.IsEmpty(); }
+
+void CommitMessagesCache::Clear() { m_messages.clear(); }

@@ -32,6 +32,8 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     boxSizer1->Add(m_auibar76, 0, wxEXPAND, 5);
     
     m_auibar76->AddTool(ID_SHOW_COMMIT_HISTORY, _("Commit History"), wxXmlResource::Get()->LoadBitmap(wxT("16-history")), wxNullBitmap, wxITEM_NORMAL, _("Show Commit History"), _("Show Commit History"), NULL);
+    
+    m_auibar76->AddTool(ID_TOOL_CLEAR_HISTORY, _("Clear History"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear History"), _("Clear History"), NULL);
     m_auibar76->Realize();
     
     wxFlexGridSizer* flexGridSizer5 = new wxFlexGridSizer(0, 2, 0, 0);
@@ -223,6 +225,8 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     // Connect events
     this->Connect(ID_SHOW_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnShowCommitHistory), NULL, this);
     this->Connect(ID_SHOW_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnCommitDialogBaseClass::OnShowCommitHistoryUI), NULL, this);
+    this->Connect(ID_TOOL_CLEAR_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnClearHistory), NULL, this);
+    this->Connect(ID_TOOL_CLEAR_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnCommitDialogBaseClass::OnClearHistoryUI), NULL, this);
     m_checkListFiles->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnFileSelected), NULL, this);
     
 }
@@ -231,6 +235,8 @@ SvnCommitDialogBaseClass::~SvnCommitDialogBaseClass()
 {
     this->Disconnect(ID_SHOW_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnShowCommitHistory), NULL, this);
     this->Disconnect(ID_SHOW_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnCommitDialogBaseClass::OnShowCommitHistoryUI), NULL, this);
+    this->Disconnect(ID_TOOL_CLEAR_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnClearHistory), NULL, this);
+    this->Disconnect(ID_TOOL_CLEAR_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnCommitDialogBaseClass::OnClearHistoryUI), NULL, this);
     m_checkListFiles->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnFileSelected), NULL, this);
     
 }

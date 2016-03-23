@@ -50,6 +50,15 @@ public:
      * @param message
      */
     void AddMessage(const wxString& message);
+    
+    /**
+     * @brief is the cache empty?
+     */
+    bool IsEmpty() const;
+    /**
+     * @brief clear the cache
+     */
+    void Clear();
 };
 
 #endif // COMMITMESSAGESCACHE_H

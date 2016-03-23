@@ -301,3 +301,8 @@ void SvnCommitDialog::OnShowCommitHistoryUI(wxUpdateUIEvent& event)
     m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
     event.Enable(!lastMessages.IsEmpty());
 }
+void SvnCommitDialog::OnClearHistory(wxCommandEvent& event) { m_plugin->GetCommitMessagesCache().Clear(); }
+void SvnCommitDialog::OnClearHistoryUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_plugin->GetCommitMessagesCache().IsEmpty());
+}

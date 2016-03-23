@@ -40,6 +40,7 @@ class SvnCommitDialogBaseClass : public wxDialog
 public:
     enum {
         ID_SHOW_COMMIT_HISTORY = 9001,
+        ID_TOOL_CLEAR_HISTORY = 9002,
     };
 protected:
     wxAuiToolBar* m_auibar76;
@@ -66,6 +67,8 @@ protected:
 protected:
     virtual void OnShowCommitHistory(wxCommandEvent& event) { event.Skip(); }
     virtual void OnShowCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClearHistory(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnFileSelected(wxCommandEvent& event) { event.Skip(); }
 
 public:

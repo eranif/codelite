@@ -48,15 +48,9 @@ clConfig::clConfig(const wxString& filename)
         m_filename = filename;
     } else {
         m_filename = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-                     wxFileName::GetPathSeparator() + filename;
+            wxFileName::GetPathSeparator() + filename;
     }
-
-    {
-        // Make sure that the directory exists
-        wxLogNull noLog;
-        wxMkdir(clStandardPaths::Get().GetUserDataDir());
-        wxMkdir(m_filename.GetPath());
-    }
+    m_filename.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
     if(m_filename.FileExists()) {
         m_root = new JSONRoot(m_filename);
@@ -74,7 +68,7 @@ clConfig::clConfig(const wxString& filename)
             m_cacheRecentItems.insert(std::make_pair("RecentWorkspaces", recentFiles));
         }
     }
-    
+
     {
         wxArrayString recentFiles;
         JSONElement e = m_root->toElement();
@@ -188,8 +182,8 @@ wxArrayString clConfig::MergeArrays(const wxArrayString& arr1, const wxArrayStri
     return output;
 }
 
-JSONElement::wxStringMap_t clConfig::MergeStringMaps(const JSONElement::wxStringMap_t& map1,
-                                                     const JSONElement::wxStringMap_t& map2) const
+JSONElement::wxStringMap_t clConfig::MergeStringMaps(
+    const JSONElement::wxStringMap_t& map1, const JSONElement::wxStringMap_t& map2) const
 {
     JSONElement::wxStringMap_t output;
     output.insert(map1.begin(), map1.end());

@@ -24,6 +24,19 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "commitmessagescache.h"
+#include "cl_config.h"
+
+CommitMessagesCache::CommitMessagesCache() 
+{
+    clConfig conf("svn-commit.conf");
+    m_messages = conf.Read("messages", wxArrayString());
+}
+
+CommitMessagesCache::~CommitMessagesCache() 
+{
+    clConfig conf("svn-commit.conf");
+    conf.Write("messages", m_messages);
+}
 
 void CommitMessagesCache::GetMessages(wxArrayString& messages, wxArrayString& previews)
 {

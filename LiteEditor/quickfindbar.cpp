@@ -197,7 +197,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_replaceWith->SetToolTip(_("Type the replacement string and hit ENTER to perform the replacement"));
     m_replaceWith->SetHint(_("Type any replacement string..."));
     m_bar->AddControl(m_replaceWith, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
-
+    
     m_buttonReplace = new wxButton(m_bar, wxID_ANY, _("Replace"), wxDefaultPosition, wxSize(100, -1));
     m_bar->AddControl(m_buttonReplace, 0);
     m_buttonReplace->SetToolTip(_("Replace the current selection"));
@@ -254,6 +254,14 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Initialize the list with the history
     m_findWhat->Append(clConfig::Get().GetQuickFindSearchItems());
     m_replaceWith->Append(clConfig::Get().GetQuickFindReplaceItems());
+    
+    // Set the TAB order
+    m_replaceWith->MoveAfterInTabOrder(m_findWhat);
+    btnNext->MoveAfterInTabOrder(m_replaceWith);
+    btnPrev->MoveAfterInTabOrder(btnNext);
+    btnAll->MoveAfterInTabOrder(btnPrev);
+    m_buttonReplace->MoveAfterInTabOrder(btnAll);
+    m_buttonReplaceAll->MoveAfterInTabOrder(m_buttonReplace);
 }
 
 bool QuickFindBar::Show(bool show, bool replaceBar)

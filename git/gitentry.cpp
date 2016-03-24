@@ -57,19 +57,21 @@ GitEntry::GitEntry()
     , m_gitDiffDlgSashPos(0)
     , m_gitConsoleSashPos(0)
     , m_gitCommitDlgHSashPos(0)
-    , m_gitCommitDlgVSashPos(0) 
+    , m_gitCommitDlgVSashPos(0)
 {
     GitLocator locator;
     wxFileName gitpath;
     if(locator.GetExecutable(gitpath)) {
         m_pathGIT = gitpath.GetFullPath();
     }
+    locator.MSWGetGitShellCommand(m_gitShellCommand);
 }
 
 GitEntry::~GitEntry() {}
 
 void GitEntry::FromJSON(const JSONElement& json)
 {
+    GitLocator locator;
     m_entries = json.namedObject("m_entries").toStringMap();
     wxString track, diff;
     track = json.namedObject("m_colourTrackedFile").toString();
@@ -81,7 +83,11 @@ void GitEntry::FromJSON(const JSONElement& json)
     m_gitConsoleSashPos = json.namedObject("m_gitConsoleSashPos").toInt(m_gitConsoleSashPos);
     m_gitCommitDlgHSashPos = json.namedObject("m_gitCommitDlgHSashPos").toInt(m_gitCommitDlgHSashPos);
     m_gitCommitDlgVSashPos = json.namedObject("m_gitCommitDlgVSashPos").toInt(m_gitCommitDlgVSashPos);
-
+    
+    wxString defaultGitShell;
+    locator.MSWGetGitShellCommand(defaultGitShell);
+    m_gitShellCommand = json.namedObject("m_gitShellCommand").toString(defaultGitShell);
+    
     // override the colour only if it is a valid colour
     if(!track.IsEmpty()) {
         m_colourTrackedFile = track;
@@ -89,9 +95,9 @@ void GitEntry::FromJSON(const JSONElement& json)
     if(!diff.IsEmpty()) {
         m_colourDiffFile = diff;
     }
-    
+
     m_recentCommits = json.namedObject("m_recentCommits").toArrayString();
-    
+
     // read the git commands
     JSONElement arrCommands = json.namedObject("Commands");
     for(int i = 0; i < arrCommands.arraySize(); ++i) {
@@ -121,6 +127,7 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_gitCommitDlgHSashPos", m_gitCommitDlgHSashPos);
     json.addProperty("m_gitCommitDlgVSashPos", m_gitCommitDlgVSashPos);
     json.addProperty("m_recentCommits", m_recentCommits);
+    json.addProperty("m_gitShellCommand", m_gitShellCommand);
     
     // Add the git commands array
     JSONElement arrCommands = JSONElement::createArray("Commands");
@@ -243,9 +250,8 @@ void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry:
                         fpo.Close();
                     }
                 } else {
-                    ::wxMessageBox("Could not save GIT global configuration. Configuration is unmodified",
-                                   "git",
-                                   wxICON_WARNING | wxOK | wxCENTER);
+                    ::wxMessageBox("Could not save GIT global configuration. Configuration is unmodified", "git",
+                        wxICON_WARNING | wxOK | wxCENTER);
                 }
             }
         }
@@ -274,9 +280,8 @@ void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry:
                     fpo.Close();
                 }
             } else {
-                ::wxMessageBox("Could not save GIT local configuration. Configuration is unmodified",
-                               "git",
-                               wxICON_WARNING | wxOK | wxCENTER);
+                ::wxMessageBox("Could not save GIT local configuration. Configuration is unmodified", "git",
+                    wxICON_WARNING | wxOK | wxCENTER);
             }
         }
     }
@@ -300,13 +305,13 @@ void GitEntry::AddRecentCommit(const wxString& commitMessage)
     wxString msg = commitMessage;
     msg.Trim().Trim(false);
     if(msg.IsEmpty()) return;
-    
+
     if(m_recentCommits.Index(msg) == wxNOT_FOUND) {
         m_recentCommits.Insert(msg, 0);
     }
-    
+
     if(m_recentCommits.size() > 20) {
-        m_recentCommits.RemoveAt(m_recentCommits.size() -1); // Remove the last commit
+        m_recentCommits.RemoveAt(m_recentCommits.size() - 1); // Remove the last commit
     }
 }
 

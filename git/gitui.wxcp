@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 353,
+  "m_objCounter": 366,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterpca4kKInitBitmapResources",
   "m_bitmapsFile": "gitui_git_bitmaps.cpp",
@@ -449,7 +449,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Label:",
-                 "m_value": "Path to git executable:"
+                 "m_value": "Git executable:"
                 }, {
                  "type": "string",
                  "m_label": "Wrap:",
@@ -463,7 +463,7 @@
                "border": 5,
                "gbSpan": ",",
                "gbPosition": ",",
-               "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
+               "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
                "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
                "m_properties": [{
                  "type": "winid",
@@ -603,7 +603,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Label:",
-                 "m_value": "Path to gitk executable:"
+                 "m_value": "Gitk executable:"
                 }, {
                  "type": "string",
                  "m_label": "Wrap:",
@@ -617,7 +617,7 @@
                "border": 5,
                "gbSpan": ",",
                "gbPosition": ",",
-               "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
+               "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
                "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
                "m_properties": [{
                  "type": "winid",
@@ -687,6 +687,168 @@
                  "type": "string",
                  "m_label": "Wildcard:",
                  "m_value": "*"
+                }],
+               "m_events": [],
+               "m_children": []
+              }, {
+               "m_type": 4405,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": "1,1",
+               "gbPosition": "0,0",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_staticText355"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": ""
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Label:",
+                 "m_value": "Git Shell command:"
+                }, {
+                 "type": "string",
+                 "m_label": "Wrap:",
+                 "m_value": "-1"
+                }],
+               "m_events": [],
+               "m_children": []
+              }, {
+               "m_type": 4406,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": "1,1",
+               "gbPosition": "0,0",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_textCtrlGitShell"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": ""
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Value:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Text Hint",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Max Length:",
+                 "m_value": "0"
+                }, {
+                 "type": "bool",
+                 "m_label": "Auto Complete Directories:",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Auto Complete Files:",
+                 "m_value": false
                 }],
                "m_events": [],
                "m_children": []
@@ -1875,7 +2037,7 @@
       }, {
        "m_type": 4467,
        "proportion": 0,
-       "border": 5,
+       "border": 10,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": [],

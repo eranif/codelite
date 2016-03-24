@@ -2257,9 +2257,9 @@ void GitPlugin::OnFileMenu(clContextMenuEvent& event)
 
 void GitPlugin::OnOpenMSYSGit(wxCommandEvent& e)
 {
-    GitLocator locator;
-    wxString bashcommand;
-    if(locator.MSWGetGitShellCommand(bashcommand)) {
+    GitEntry entry;
+    wxString bashcommand = entry.Load().GetGitShellCommand();
+    if(!bashcommand.IsEmpty()) {
         DirSaver ds;
         IEditor* editor = m_mgr->GetActiveEditor();
         if(editor) {

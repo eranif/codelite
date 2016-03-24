@@ -54,6 +54,8 @@ protected:
     wxFilePickerCtrl* m_pathGIT;
     wxStaticText* m_staticText54;
     wxFilePickerCtrl* m_pathGITK;
+    wxStaticText* m_staticText355;
+    wxTextCtrl* m_textCtrlGitShell;
     wxPanel* m_panel234;
     wxStaticText* m_staticText246;
     wxTextCtrl* m_textCtrlGlobalName;
@@ -80,6 +82,8 @@ public:
     wxFilePickerCtrl* GetPathGIT() { return m_pathGIT; }
     wxStaticText* GetStaticText54() { return m_staticText54; }
     wxFilePickerCtrl* GetPathGITK() { return m_pathGITK; }
+    wxStaticText* GetStaticText355() { return m_staticText355; }
+    wxTextCtrl* GetTextCtrlGitShell() { return m_textCtrlGitShell; }
     wxPanel* GetPanel232() { return m_panel232; }
     wxStaticText* GetStaticText246() { return m_staticText246; }
     wxTextCtrl* GetTextCtrlGlobalName() { return m_textCtrlGlobalName; }

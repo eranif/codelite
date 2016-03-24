@@ -38,6 +38,8 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath)
 
     m_pathGIT->SetPath(data.GetGITExecutablePath());
     m_pathGITK->SetPath(data.GetGITKExecutablePath());
+    m_textCtrlGitShell->ChangeValue(data.GetGitShellCommand());
+    
     m_checkBoxLog->SetValue(data.GetFlags() & GitEntry::Git_Verbose_Log);
     m_checkBoxTerminal->SetValue(data.GetFlags() & GitEntry::Git_Show_Terminal);
     m_checkBoxTrackTree->SetValue(data.GetFlags() & GitEntry::Git_Colour_Tree_View);
@@ -62,7 +64,8 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
 
     data.SetGITExecutablePath(m_pathGIT->GetPath());
     data.SetGITKExecutablePath(m_pathGITK->GetPath());
-
+    data.SetGitShellCommand(m_textCtrlGitShell->GetValue());
+    
     size_t flags = 0;
     if(m_checkBoxLog->IsChecked()) flags |= GitEntry::Git_Verbose_Log;
 

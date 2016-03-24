@@ -87,7 +87,7 @@ AccelTableDlg::AccelTableDlg(wxWindow* parent)
 
     m_textCtrlFilter->SetFocus();
     m_dataview->SetIndent(16);
-    
+
     SetName("AccelTableDlg");
     WindowAttrManager::Load(this);
 }
@@ -181,11 +181,29 @@ void AccelTableDlg::DoItemActivated()
         // search the list for similar accelerator
         MenuItemData who;
         if(HasAccelerator(mid.accel, who)) {
-            wxMessageBox(wxString::Format(_("'%s' is already assigned to: '%s'"), mid.accel, who.action),
-                         _("CodeLite"),
-                         wxOK | wxCENTER | wxICON_WARNING,
-                         this);
-            return;
+            if(wxMessageBox(wxString::Format(_("'%s' is already assigned to: '%s'\nWould you like to replace it?"),
+                                mid.accel, who.action),
+                   _("CodeLite"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) != wxYES) {
+                return;
+            }
+
+            // Remove the old entry
+            wxDataViewItem oldItem = FindAccel(mid);
+            if(oldItem.IsOk()) {
+                AccelItemData* cd = DoGetItemData(oldItem);
+                if(cd) {
+                    cd->m_menuItemData.accel.clear();
+                    wxVector<wxVariant> cols;
+                    cols.push_back(cd->m_menuItemData.action.AfterLast(':'));
+                    cols.push_back(wxString());
+                    m_dataviewModel->UpdateItem(oldItem, cols);
+
+                    MenuItemDataMap_t::iterator iter = m_accelMap.find(cd->m_menuItemData.resourceID);
+                    if(iter != m_accelMap.end()) {
+                        iter->second.accel = cd->m_menuItemData.accel;
+                    }
+                }
+            }
         }
 
         // Update the client data
@@ -193,7 +211,7 @@ void AccelTableDlg::DoItemActivated()
 
         // Update the UI
         wxVector<wxVariant> cols;
-        cols.push_back(mid.action);
+        cols.push_back(mid.action.AfterLast(':'));
         cols.push_back(mid.accel);
         m_dataviewModel->UpdateItem(sel, cols);
 
@@ -211,7 +229,7 @@ void AccelTableDlg::OnText(wxCommandEvent& event)
     PopulateTable(m_textCtrlFilter->GetValue());
 }
 
-AccelTableDlg::~AccelTableDlg() {  }
+AccelTableDlg::~AccelTableDlg() {}
 void AccelTableDlg::OnDVItemActivated(wxDataViewEvent& event)
 {
     wxUnusedVar(event);
@@ -295,4 +313,31 @@ wxDataViewItem AccelTableDlg::DoAddParentNode(std::map<wxString, wxDataViewItem>
 AccelItemData* AccelTableDlg::DoGetItemData(const wxDataViewItem& item)
 {
     return static_cast<AccelItemData*>(m_dataviewModel->GetClientObject(item));
+}
+
+wxDataViewItem AccelTableDlg::FindAccel(const MenuItemData& mid)
+{
+    wxDataViewItemArray children;
+    m_dataviewModel->GetChildren(wxDataViewItem(0), children);
+    std::vector<wxDataViewItemArray> q;
+    q.push_back(children);
+    while(!q.empty()) {
+        children = q.back();
+        q.pop_back();
+        for(size_t i = 0; i < children.GetCount(); ++i) {
+            wxDataViewItem item = children.Item(i);
+            AccelItemData* cd = DoGetItemData(item);
+            if(cd && cd->m_menuItemData.accel == mid.accel) {
+                return item;
+            }
+
+            // if this item has more children, add them to the queue
+            if(m_dataviewModel->HasChildren(item)) {
+                wxDataViewItemArray c;
+                m_dataviewModel->GetChildren(item, c);
+                q.push_back(c);
+            }
+        }
+    }
+    return wxDataViewItem();
 }

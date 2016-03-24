@@ -34,13 +34,13 @@ struct AccelItemData : public wxClientData {
     MenuItemData m_menuItemData;
     bool m_isParent;
     wxString m_displayName;
-    AccelItemData(const wxString &displayName)
+    AccelItemData(const wxString& displayName)
         : m_isParent(true)
         , m_displayName(displayName)
     {
     }
 
-    AccelItemData(const MenuItemData& data, bool isParent, const wxString &displayName)
+    AccelItemData(const MenuItemData& data, bool isParent, const wxString& displayName)
         : m_menuItemData(data)
         , m_isParent(isParent)
         , m_displayName(displayName)
@@ -48,15 +48,14 @@ struct AccelItemData : public wxClientData {
     }
 };
 
-
 class AccelTableDlg : public AccelTableBaseDlg
 {
     MenuItemDataMap_t m_accelMap;
-    
+
 protected:
     virtual void OnEditUI(wxUpdateUIEvent& event);
     virtual void OnDVItemActivated(wxDataViewEvent& event);
-    
+
     // Handlers for AccelTableBaseDlg events
     void PopulateTable(const wxString& filter = "");
     void OnButtonOk(wxCommandEvent& e);
@@ -66,10 +65,11 @@ protected:
 
     void DoItemActivated();
     bool IsMatchesFilter(const wxString& filter, const MenuItemData& item);
-    bool HasAccelerator(const wxString &accel, MenuItemData& who);
-    wxDataViewItem DoAddParentNode(std::map<wxString, wxDataViewItem>& parentsMap, const wxString &parentKey);
+    bool HasAccelerator(const wxString& accel, MenuItemData& who);
+    wxDataViewItem DoAddParentNode(std::map<wxString, wxDataViewItem>& parentsMap, const wxString& parentKey);
     AccelItemData* DoGetItemData(const wxDataViewItem& item);
-    
+    wxDataViewItem FindAccel(const MenuItemData& mid);
+
 public:
     /** Constructor */
     AccelTableDlg(wxWindow* parent);

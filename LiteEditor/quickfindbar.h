@@ -79,6 +79,9 @@ protected:
     wxFlatButton* m_regexOrWildButton;
     wxButton* m_buttonReplace;
     wxButton* m_buttonReplaceAll;
+    wxButton* btnPrev;
+    wxButton* btnNext;
+    wxButton* btnAll;
     wxFlatButton* m_closeButton;
     wxFlatButton* m_replaceInSelectionButton;
     clNoMatchBitmap* m_noMatchBmp;

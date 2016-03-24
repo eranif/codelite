@@ -148,7 +148,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_bar->AddControl(m_findWhat, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
 
     // Find
-    wxButton* btnNext = new wxButton(m_bar, wxID_ANY, _("Find"), wxDefaultPosition, wxSize(100, -1));
+    btnNext = new wxButton(m_bar, wxID_ANY, _("Find"), wxDefaultPosition, wxSize(100, -1));
     m_bar->AddControl(btnNext, 0);
     btnNext->SetDefault();
 
@@ -158,7 +158,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     btnNext->SetToolTip(_("Find Next"));
 
     // Find Prev
-    wxButton* btnPrev = new wxButton(m_bar, wxID_ANY, _("Find Prev"), wxDefaultPosition, wxSize(100, -1));
+    btnPrev = new wxButton(m_bar, wxID_ANY, _("Find Prev"), wxDefaultPosition, wxSize(100, -1));
     m_bar->AddControl(btnPrev, 0);
     btnPrev->Bind(wxEVT_BUTTON, &QuickFindBar::OnButtonPrev, this);
     btnPrev->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
@@ -166,7 +166,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     btnPrev->SetToolTip(_("Find Previous"));
 
     // Find All
-    wxButton* btnAll = new wxButton(m_bar, wxID_ANY, _("Find All"), wxDefaultPosition, wxSize(100, -1));
+    btnAll = new wxButton(m_bar, wxID_ANY, _("Find All"), wxDefaultPosition, wxSize(100, -1));
     m_bar->AddControl(btnAll, 0);
     btnAll->Bind(wxEVT_BUTTON, &QuickFindBar::OnFindAll, this);
     btnAll->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonPrevUI, this);
@@ -197,7 +197,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_replaceWith->SetToolTip(_("Type the replacement string and hit ENTER to perform the replacement"));
     m_replaceWith->SetHint(_("Type any replacement string..."));
     m_bar->AddControl(m_replaceWith, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
-    
+
     m_buttonReplace = new wxButton(m_bar, wxID_ANY, _("Replace"), wxDefaultPosition, wxSize(100, -1));
     m_bar->AddControl(m_buttonReplace, 0);
     m_buttonReplace->SetToolTip(_("Replace the current selection"));
@@ -231,21 +231,12 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     wxTheApp->Connect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Connect(XRCID("find_previous"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QuickFindBar::OnFindPrevious),
-                      NULL,
-                      this);
-    wxTheApp->Connect(XRCID("find_next_at_caret"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
-                      NULL,
-                      this);
-    wxTheApp->Connect(XRCID("find_previous_at_caret"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
-                      NULL,
-                      this);
+    wxTheApp->Connect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
+    wxTheApp->Connect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
+    wxTheApp->Connect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
 
     EventNotifier::Get()->Connect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
@@ -254,14 +245,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Initialize the list with the history
     m_findWhat->Append(clConfig::Get().GetQuickFindSearchItems());
     m_replaceWith->Append(clConfig::Get().GetQuickFindReplaceItems());
-    
-    // Set the TAB order
-    m_replaceWith->MoveAfterInTabOrder(m_findWhat);
-    btnNext->MoveAfterInTabOrder(m_replaceWith);
-    btnPrev->MoveAfterInTabOrder(btnNext);
-    btnAll->MoveAfterInTabOrder(btnPrev);
-    m_buttonReplace->MoveAfterInTabOrder(btnAll);
-    m_buttonReplaceAll->MoveAfterInTabOrder(m_buttonReplace);
 }
 
 bool QuickFindBar::Show(bool show, bool replaceBar)
@@ -409,7 +392,7 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 void QuickFindBar::OnUpdateUI(wxUpdateUIEvent& e)
 {
     e.Enable(ManagerST::Get()->IsShutdownInProgress() == false && m_sci && m_sci->GetLength() > 0 &&
-             !m_findWhat->GetValue().IsEmpty());
+        !m_findWhat->GetValue().IsEmpty());
 }
 
 void QuickFindBar::OnEnter(wxCommandEvent& e)
@@ -513,9 +496,8 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
 
     // Ensure that the selection matches our search pattern
     size_t searchFlags = DoGetSearchFlags();
-    if(m_sci->FindText(
-           selStart, selEnd, searchFlags & wxSTC_FIND_REGEXP ? findWhatSciVersion : findwhat, searchFlags) ==
-       wxNOT_FOUND) {
+    if(m_sci->FindText(selStart, selEnd, searchFlags & wxSTC_FIND_REGEXP ? findWhatSciVersion : findwhat,
+           searchFlags) == wxNOT_FOUND) {
         // we got a selection, but it does not match our search
         return;
     }
@@ -599,7 +581,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool replaceBar)
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif
-    
+
     bool res = wxPanel::Show(s);
 
     if(s && !m_eventsConnected) {
@@ -668,6 +650,21 @@ void QuickFindBar::ShowReplacebar(bool show)
     m_bar->GetSizer()->Layout();
     if(IsShown()) {
         clMainFrame::Get()->SendSizeEvent(); // Needed to show/hide the 'replace' bar itself
+    }
+
+    // Set the TAB order
+    if(show) {
+        m_replaceWith->MoveAfterInTabOrder(m_findWhat);
+        btnNext->MoveAfterInTabOrder(m_replaceWith);
+        btnPrev->MoveAfterInTabOrder(btnNext);
+        btnAll->MoveAfterInTabOrder(btnPrev);
+        m_buttonReplace->MoveAfterInTabOrder(btnAll);
+        m_buttonReplaceAll->MoveAfterInTabOrder(m_buttonReplace);
+    } else {
+        // Set the TAB order
+        btnNext->MoveAfterInTabOrder(m_findWhat);
+        btnPrev->MoveAfterInTabOrder(btnNext);
+        btnAll->MoveAfterInTabOrder(btnPrev);
     }
 }
 
@@ -923,21 +920,12 @@ QuickFindBar::~QuickFindBar()
 {
     wxTheApp->Disconnect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_previous"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QuickFindBar::OnFindPrevious),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(XRCID("find_next_at_caret"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(XRCID("find_previous_at_caret"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
-                         NULL,
-                         this);
+    wxTheApp->Disconnect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
+    wxTheApp->Disconnect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
+    wxTheApp->Disconnect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
 }

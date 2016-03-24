@@ -477,7 +477,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer76->Add(m_staticText301, 0, wxALL, 5);
     
-    m_textCtrlDbgCmds = new wxTextCtrl(m_panel71, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_MULTILINE|wxTE_DONTWRAP);
+    m_textCtrlDbgCmds = new wxTextCtrl(m_panel71, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE|wxTE_DONTWRAP);
     wxFont m_textCtrlDbgCmdsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
     m_textCtrlDbgCmds->SetFont(m_textCtrlDbgCmdsFont);
     
@@ -493,7 +493,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer78->Add(m_staticText311, 0, wxALL|wxEXPAND, 5);
     
-    m_textCtrlDbgPostConnectCmds = new wxTextCtrl(m_panel74, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_MULTILINE|wxTE_DONTWRAP);
+    m_textCtrlDbgPostConnectCmds = new wxTextCtrl(m_panel74, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE|wxTE_DONTWRAP);
     wxFont m_textCtrlDbgPostConnectCmdsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
     m_textCtrlDbgPostConnectCmds->SetFont(m_textCtrlDbgPostConnectCmdsFont);
     
@@ -699,7 +699,7 @@ PSEnvironmentBasePage::PSEnvironmentBasePage(wxWindow* parent, wxWindowID id, co
     
     bSizer34->Add(m_staticText47, 0, wxALL, 5);
     
-    m_textCtrlEnvvars = new wxTextCtrl(m_panelEnv, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    m_textCtrlEnvvars = new wxTextCtrl(m_panelEnv, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
     
     bSizer34->Add(m_textCtrlEnvvars, 1, wxALL|wxEXPAND, 5);
     
@@ -753,7 +753,7 @@ PSBuildEventsBasePage::PSBuildEventsBasePage(wxWindow* parent, wxWindowID id, co
     
     bSizer8->Add(bSizer9, 1, wxEXPAND, 5);
     
-    m_textCtrlBuildEvents = new wxTextCtrl(m_preBuildPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    m_textCtrlBuildEvents = new wxTextCtrl(m_preBuildPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlBuildEventsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -1034,7 +1034,7 @@ PSCustomMakefileBasePage::PSCustomMakefileBasePage(wxWindow* parent, wxWindowID 
     
     fgSizer5->Add(m_staticText26, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_textPreBuildRule = new wxTextCtrl(m_customMakefileStep, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_DONTWRAP);
+    m_textPreBuildRule = new wxTextCtrl(m_customMakefileStep, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE|wxTE_DONTWRAP);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
     wxFont m_textPreBuildRuleFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

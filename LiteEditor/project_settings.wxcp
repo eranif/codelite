@@ -4899,7 +4899,7 @@
                  "border": 5,
                  "gbSpan": ",",
                  "gbPosition": ",",
-                 "m_styles": ["wxTE_RICH2", "wxTE_MULTILINE", "wxTE_DONTWRAP"],
+                 "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_MULTILINE", "wxTE_DONTWRAP"],
                  "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                  "m_properties": [{
                    "type": "winid",
@@ -5179,7 +5179,7 @@
                  "border": 5,
                  "gbSpan": ",",
                  "gbPosition": ",",
-                 "m_styles": ["wxTE_RICH2", "wxTE_MULTILINE", "wxTE_DONTWRAP"],
+                 "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_MULTILINE", "wxTE_DONTWRAP"],
                  "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                  "m_properties": [{
                    "type": "winid",
@@ -7060,7 +7060,7 @@
            "border": 5,
            "gbSpan": ",",
            "gbPosition": ",",
-           "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_PROCESS_ENTER", "wxTE_MULTILINE"],
+           "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_MULTILINE"],
            "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
            "m_properties": [{
              "type": "winid",
@@ -7474,7 +7474,7 @@
              "border": 5,
              "gbSpan": ",",
              "gbPosition": ",",
-             "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_PROCESS_ENTER", "wxTE_MULTILINE"],
+             "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_MULTILINE"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -10215,7 +10215,7 @@
              "border": 5,
              "gbSpan": ",",
              "gbPosition": ",",
-             "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_PROCESS_ENTER", "wxTE_MULTILINE", "wxTE_DONTWRAP"],
+             "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_MULTILINE", "wxTE_DONTWRAP"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",

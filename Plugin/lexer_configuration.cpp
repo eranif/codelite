@@ -290,6 +290,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
 
+#ifdef __WXMSW__
+    ctrl->SetUseAntiAliasing(true);
+#endif
+
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     bool tooltip(false);
 

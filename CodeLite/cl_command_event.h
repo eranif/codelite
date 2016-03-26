@@ -64,7 +64,7 @@ public:
         return *this;
     }
     bool IsSelected() const { return m_selected; }
-    
+
     // Veto management
     void Veto() { this->m_allowed = false; }
     void Allow() { this->m_allowed = true; }
@@ -255,6 +255,19 @@ class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
     wxString m_workingDirectory; // wxEVT_DBG_UI_CORE_FILE, wxEVT_DBG_UI_QUICK_DEBUG
     wxString m_arguments;        // wxEVT_DBG_UI_QUICK_DEBUG
     wxString m_startupCommands;  // wxEVT_DBG_UI_QUICK_DEBUG
+    size_t m_features;
+
+public:
+    // Special features not available by all the debuggers
+    enum eFeatures {
+        kStepInst = (1 << 0),         // single step instruction
+        kInterrupt = (1 << 1),        // interrup the running process
+        kShowCursor = (1 << 2),       // show the current active line
+        kJumpToCursor = (1 << 3),     // Jump to the caret line, without executing the code in between
+        kRunToCursor = (1 << 4),      // execute all the code until reaching the caret
+        kReverseDebugging = (1 << 5), // execute all the code until reaching the caret
+        kAllFeatures = kStepInst | kInterrupt | kShowCursor | kJumpToCursor | kRunToCursor | kReverseDebugging,
+    };
 
 public:
     clDebugEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -264,6 +277,8 @@ public:
     virtual ~clDebugEvent();
     virtual wxEvent* Clone() const { return new clDebugEvent(*this); };
 
+    void SetFeatures(size_t features) { m_features = features; }
+    size_t GetFeatures() const { return m_features; }
     void SetDebuggerName(const wxString& debuggerName) { this->m_debuggerName = debuggerName; }
     const wxString& GetDebuggerName() const { return m_debuggerName; }
     void SetArguments(const wxString& arguments) { this->m_arguments = arguments; }

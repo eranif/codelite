@@ -120,6 +120,7 @@ void XDebugManager::OnDebugStartOrContinue(clDebugEvent& e)
     if(!m_readerThread) {
         // No reader thread is up, start on
         // starting the debugger
+        e.SetFeatures(0); // No special features by the PHP debugger
         DoStartDebugger();
 
     } else {

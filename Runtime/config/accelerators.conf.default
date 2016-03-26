@@ -123,6 +123,8 @@ dbg_next|Debugger|Next|F10
 dbg_nexti|Debugger|Next Instruction|Ctrl-F10
 dbg_stepout|Debugger|Step Out|Shift-F11
 show_cursor|Debugger|Show Cursor|
+dbg_run_to_cursor|Debugger|Run to Caret Line|
+dbg_jump_cursor|Debugger|Jump to Caret Line|
 insert_breakpoint|Debugger|Toggle Breakpoint|F9
 disable_all_breakpoints|Debugger|Disable All Breakpoints|
 enable_all_breakpoints|Debugger|Enable All Breakpoints|

@@ -180,6 +180,7 @@ clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
 // ------------------------------------------------------------------
 clDebugEvent::clDebugEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
+    , m_features(kAllFeatures)
 {
 }
 
@@ -190,6 +191,7 @@ clDebugEvent::clDebugEvent(const clDebugEvent& event) { *this = event; }
 clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
 {
     clCommandEvent::operator=(other);
+    m_features = other.m_features;
     m_debuggerName = other.m_debuggerName;
     m_projectName = other.m_projectName;
     m_configurationName = other.m_configurationName;

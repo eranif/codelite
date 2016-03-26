@@ -510,7 +510,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GET_TAB_BORDER_COLOUR, clColourEv
 // If a plugin wishes to override codelite's default debugger (gdb)
 // it simply needs to connect the event and avoid calling 'event.Skip();
 //----------------------------------------------------------------------
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_START, clDebugEvent);     // Start
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_START,
+    clDebugEvent); // Start. This event is fired when a debug session is starting. The plugin should also set the
+                   // "feaures" field to indicate which features are available by the debugger
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_CONTINUE, clDebugEvent);  // Continue
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_STOP, clDebugEvent);      // Stop the debugger
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_STEP_IN, clDebugEvent);   // Step into function
@@ -522,8 +524,7 @@ wxDECLARE_EXPORTED_EVENT(
     WXDLLIMPEXP_CL, wxEVT_DBG_UI_SHOW_CURSOR, clDebugEvent); // Set the focus to the current debugger file/line
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_RESTART, clDebugEvent); // Restart the debug session
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_IS_RUNNING, clDebugEvent); // Use evet.SetAnswer() method to reply
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
-    wxEVT_DBG_UI_TOGGLE_BREAKPOINT,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_TOGGLE_BREAKPOINT,
     clDebugEvent); // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
 // Can CodeLite interact with the debugger? use event.SetAnswer(true);
 // Note: by avoid calling Skip() CodeLite will assume that the plugin is controlling the debug session
@@ -539,22 +540,18 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_EXPR_TOOLTIP, clDebugEvent);
 // etc)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEvent);
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
-    wxEVT_DBG_UI_QUICK_DEBUG,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_QUICK_DEBUG,
     clDebugEvent); // User clicked on the 'Quick Debug' button. Event type is clDebugEvent
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
-    wxEVT_DBG_UI_CORE_FILE,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_CORE_FILE,
     clDebugEvent); // User selected to debug a core file. Event type is clDebugEvent
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
-    wxEVT_DBG_UI_ATTACH_TO_PROCESS,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_ATTACH_TO_PROCESS,
     clDebugEvent); // Attach to process. Use clDebugEvent::GetInt() to get the process ID
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS, clDebugEvent);   // Delete all breakpoints
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEvent);  // Enable all breakpoints
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, clDebugEvent); // Disable all breakpoints
 
 // -------------------Debugger events end------------------------------------------------
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
-    wxEVT_CMD_OPEN_PROJ_SETTINGS,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_OPEN_PROJ_SETTINGS,
     clCommandEvent); // clCommandEvent. Use event.GetString() to get the project name
 
 // Workspace reload started
@@ -649,7 +646,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_PROJECT, clContextMe
 // use event.GetFileName() to get the workspace file (if any). event.GetString() will return the workspace name
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_WORKSPACE, clContextMenuEvent);
 
-// A context menu for the active tab label header is about to be shown. You can get the active page 
+// A context menu for the active tab label header is about to be shown. You can get the active page
 // by calling clGetManager()->GetActivePage()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_TAB_LABEL, clContextMenuEvent);
 

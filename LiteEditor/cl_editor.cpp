@@ -3277,7 +3277,6 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
     // calltips from firing while our menu is popped
     m_popupIsOn = true;
 
-    int ToHereId = 0;
     wxMenu menu;
 
     // First, add/del bookmark
@@ -3317,25 +3316,12 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
         menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
     }
 
-    if(ManagerST::Get()->DbgCanInteract()) {
-        menu.AppendSeparator();
-        ToHereId = wxNewId();
-        menu.Append(ToHereId, _("Run to here"));
-        menu.Connect(
-            ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
-    }
-
     clContextMenuEvent event(wxEVT_CONTEXT_MENU_EDITOR_MARGIN);
     event.SetMenu(&menu);
     if(EventNotifier::Get()->ProcessEvent(event)) return;
 
     PopupMenu(&menu, pt.x, pt.y);
     m_popupIsOn = false;
-
-    if(ToHereId) {
-        menu.Disconnect(
-            ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
-    }
 }
 
 void LEditor::AddOtherBreakpointType(wxCommandEvent& event)
@@ -3582,16 +3568,8 @@ void LEditor::AddDebuggerContextMenu(wxMenu* menu)
     m_dynItems.push_back(item);
 
     menuItemText.Clear();
-    item = new wxMenuItem(menu, wxNewId(), _("Run to cursor"));
-    menu->Prepend(item);
-    menu->Connect(
-        item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
-    m_dynItems.push_back(item);
-
-    item = new wxMenuItem(menu, wxNewId(), _("Jump to cursor"));
-    menu->Prepend(item);
-    menu->Connect(
-        item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgJumpToCursor), NULL, this);
+    menu->Prepend(XRCID("dbg_run_to_cursor"), _("Run to Caret Line"), _("Run to Caret Line"));
+    menu->Prepend(XRCID("dbg_jump_cursor"), _("Jump to Caret Line"), _("Jump to Caret Line"));
     m_dynItems.push_back(item);
 }
 
@@ -4115,29 +4093,6 @@ wxString LEditor::GetEolString()
         break;
     }
     return eol;
-}
-
-void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
-{
-    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-
-    if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-        BreakpointInfo bp;
-        bp.Create(
-            GetFileName().GetFullPath(), GetCurrentLine() + 1, ManagerST::Get()->GetBreakpointsMgr()->GetNextID());
-        bp.bp_type = BP_type_tempbreak;
-        dbgr->Break(bp);
-        dbgr->Continue();
-    }
-}
-
-void LEditor::OnDbgJumpToCursor(wxCommandEvent& event)
-{
-    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-
-    if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-        dbgr->Jump(GetFileName().GetFullPath(), GetCurrentLine() + 1);
-    }
 }
 
 void LEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip)

@@ -60,7 +60,7 @@ DebuggerMgr::~DebuggerMgr()
     std::vector<clDynamicLibrary*>::iterator iter = m_dl.begin();
     for(; iter != m_dl.end(); iter++) {
         (*iter)->Detach();
-        delete (*iter);
+        delete(*iter);
     }
     m_dl.clear();
     m_debuggers.clear();
@@ -110,7 +110,7 @@ bool DebuggerMgr::LoadDebuggers()
     debuggersFolder.AppendDir("debuggers");
     wxString debuggersPath(debuggersFolder.GetPath());
 #endif
-    
+
     CL_DEBUG("Loading debuggers from: %s", debuggersPath);
     wxDir::GetAllFiles(debuggersPath, &files, fileSpec, wxDIR_FILES);
 

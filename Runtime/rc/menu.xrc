@@ -577,6 +577,13 @@
                 <label>Step &amp;Out</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="dbg_jump_cursor">
+                <label>Jump to Caret Line</label>
+            </object>
+            <object class="wxMenuItem" name="dbg_run_to_cursor">
+                <label>Run to Caret Line</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="show_cursor">
                 <label>Show &amp;Cursor</label>
             </object>

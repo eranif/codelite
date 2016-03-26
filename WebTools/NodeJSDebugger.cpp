@@ -155,7 +155,9 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
 {
     event.Skip();
     CHECK_COND_RET(NodeJSWorkspace::Get()->IsOpen());
-
+    
+    event.SetFeatures(0); // No special features by the NodeJS debugger
+    
     // Our to handle
     event.Skip(false);
     if(m_socket && m_socket->IsConnected()) {

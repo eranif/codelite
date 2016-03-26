@@ -7,6 +7,7 @@
 clMainFrameHelper::clMainFrameHelper(clMainFrame* frame, clDockingManager* dockMgr)
     : m_mainFrame(frame)
     , m_mgr(dockMgr)
+    , m_debuggerFeatures(clDebugEvent::kAllFeatures)
 {
 }
 

@@ -124,7 +124,7 @@ class clMainFrame : public wxFrame
     wxPrintDialogData m_printDlgData;
     wxToolBar* m_mainToolBar;
     clMainFrameHelper::Ptr_t m_frameHelper;
-    
+
 public:
     static bool m_initCompleted;
 
@@ -293,11 +293,7 @@ public:
 
 private:
     // make our frame's constructor private
-    clMainFrame(wxWindow* pParent,
-        wxWindowID id,
-        const wxString& title,
-        const wxPoint& pos,
-        const wxSize& size,
+    clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
         long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER |
             wxCLIP_CHILDREN);
     wxString CreateWorkspaceTable();
@@ -347,9 +343,9 @@ private:
      * @return true if a restart is needed
      */
     bool StartSetupWizard();
-    
+
     void DoShowCaptions(bool show);
-    
+
 public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
@@ -505,6 +501,17 @@ protected:
     void OnToggleReverseDebuggingUI(wxUpdateUIEvent& e);
     void OnToggleReverseDebuggingRecordingUI(wxUpdateUIEvent& e);
     void OnDebugCmdUI(wxUpdateUIEvent& e);
+    
+    void OnDebugRunToCursor(wxCommandEvent &e);
+    void OnDebugJumpToCursor(wxCommandEvent &e);
+    
+    // Special UI handlers for debugger events
+    void OnDebugStepInstUI(wxUpdateUIEvent& e);
+    void OnDebugJumpToCursorUI(wxUpdateUIEvent& e);
+    void OnDebugRunToCursorUI(wxUpdateUIEvent& e);
+    void OnDebugInterruptUI(wxUpdateUIEvent& e);
+    void OnDebugShowCursorUI(wxUpdateUIEvent& e);
+
     void OnDebuggerSettings(wxCommandEvent& e);
     void OnLinkClicked(wxHtmlLinkEvent& e);
     void OnLoadSession(wxCommandEvent& e);

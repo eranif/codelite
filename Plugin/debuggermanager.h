@@ -76,13 +76,13 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_FRAME_SELECTED;
 
 class WXDLLIMPEXP_SDK DebuggerMgr
 {
-    std::map<wxString, IDebugger*>   m_debuggers;
-    wxArrayString                    m_pluginsDebuggers;
-    wxString                         m_baseDir;
-    std::vector< clDynamicLibrary* > m_dl;
-    wxString                         m_activeDebuggerName;
-    EnvironmentConfig*               m_env;
-
+    std::map<wxString, IDebugger*> m_debuggers;
+    wxArrayString m_pluginsDebuggers;
+    wxString m_baseDir;
+    std::vector<clDynamicLibrary*> m_dl;
+    wxString m_activeDebuggerName;
+    EnvironmentConfig* m_env;
+    
 private:
     DebuggerMgr();
     virtual ~DebuggerMgr();
@@ -93,14 +93,13 @@ public:
      * equivalent to $(HOME)/.liteeditor/, and on windows it is set
      * to C:\Program Files\LiteEditor\
      */
-    void Initialize(wxEvtHandler *parent, EnvironmentConfig *env, const wxString &dir) {
+    void Initialize(wxEvtHandler* parent, EnvironmentConfig* env, const wxString& dir)
+    {
         m_baseDir = dir;
         m_env = env;
     }
 
-    const wxString& GetActiveDebuggerName() const {
-        return m_activeDebuggerName;
-    }
+    const wxString& GetActiveDebuggerName() const { return m_activeDebuggerName; }
     /**
      * Load all available debuggers. This functions searches for dll/so/sl
      * which are located udner $(HOME)/.liteeditor/debuggers/ on Linux, and on Windows
@@ -118,20 +117,20 @@ public:
      * Set the active debugger to be 'name'. If a debugger with name does not
      * exist, this function does nothing
      */
-    void SetActiveDebugger(const wxString &name);
+    void SetActiveDebugger(const wxString& name);
 
     /**
      * Return the currently selected debugger. The debugger is selected
      * based on previous call to SetActiveDebugger(). If no active debugger is
      * set, this function may return NULL
      */
-    IDebugger *GetActiveDebugger();
+    IDebugger* GetActiveDebugger();
 
-    //get/set debugger information
-    void SetDebuggerInformation(const wxString &name, const DebuggerInformation &info);
-    bool GetDebuggerInformation(const wxString &name, DebuggerInformation &info);
+    // get/set debugger information
+    void SetDebuggerInformation(const wxString& name, const DebuggerInformation& info);
+    bool GetDebuggerInformation(const wxString& name, DebuggerInformation& info);
 
     static DebuggerMgr& Get();
     static void Free();
 };
-#endif //DEBUGGER_MANAGER_H
+#endif // DEBUGGER_MANAGER_H

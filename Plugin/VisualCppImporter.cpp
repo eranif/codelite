@@ -769,8 +769,8 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                         while(customBuildChild) {
                             if(customBuildChild->GetName() == wxT("Command") &&
-                               customBuildChild->HasAttribute("Condition")) {
-                                wxString elemCondition = customBuildChild->GetAttribute("Condition");
+                               customBuildChild->HasAttribute(wxT("Condition"))) {
+                                wxString elemCondition = customBuildChild->GetAttribute(wxT("Condition"));
                                 wxString commandLine = customBuildChild->GetNodeContent();
                                 wxString projectCfgKey = ExtractProjectCfgName(wxT(""), elemCondition);
 
@@ -800,10 +800,10 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                 wxXmlNode* propertyGroupChild = projectChild->GetChildren();
 
                 while(propertyGroupChild) {
-                    wxString parentCondition = projectChild->GetAttribute("Condition");
+                    wxString parentCondition = projectChild->GetAttribute(wxT("Condition"));
 
                     if(propertyGroupChild->GetName() == wxT("ConfigurationType")) {
-                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString elemCondition = propertyGroupChild->GetAttribute(wxT("Condition"));
                         wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                         wxString configurationType = propertyGroupChild->GetNodeContent();
@@ -827,7 +827,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                     }
 
                     if(propertyGroupChild->GetName() == wxT("IntDir")) {
-                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString elemCondition = propertyGroupChild->GetAttribute(wxT("Condition"));
                         wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                         wxString intermediateDirectory = propertyGroupChild->GetNodeContent();
@@ -843,7 +843,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                     }
 
                     if(propertyGroupChild->GetName() == wxT("OutDir")) {
-                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString elemCondition = propertyGroupChild->GetAttribute(wxT("Condition"));
                         wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                         wxString outDir = propertyGroupChild->GetNodeContent();
@@ -857,7 +857,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                     }
                     
                     if(propertyGroupChild->GetName() == wxT("NMakeBuildCommandLine")) {
-                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString elemCondition = propertyGroupChild->GetAttribute(wxT("Condition"));
                         wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                         wxString nMakeBuildCommandLine = propertyGroupChild->GetNodeContent();
@@ -873,7 +873,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                     }
                     
                     if(propertyGroupChild->GetName() == wxT("NMakeReBuildCommandLine")) {
-                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString elemCondition = propertyGroupChild->GetAttribute(wxT("Condition"));
                         wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                         wxString nMakeReBuildCommandLine = propertyGroupChild->GetNodeContent();
@@ -889,7 +889,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                     }
                     
                     if(propertyGroupChild->GetName() == wxT("NMakeCleanCommandLine")) {
-                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString elemCondition = propertyGroupChild->GetAttribute(wxT("Condition"));
                         wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                         wxString nMakeCleanCommandLine = propertyGroupChild->GetNodeContent();
@@ -909,7 +909,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
             }
 
             if(projectChild->GetName() == wxT("ItemDefinitionGroup")) {
-                wxString parentCondition = projectChild->GetAttribute("Condition");
+                wxString parentCondition = projectChild->GetAttribute(wxT("Condition"));
 
                 wxXmlNode* itemDefinitionGroupChild = projectChild->GetChildren();
 
@@ -919,7 +919,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                         while(clcompileChild) {
                             if(clcompileChild->GetName() == wxT("PreprocessorDefinitions")) {
-                                wxString elemCondition = clcompileChild->GetAttribute("Condition");
+                                wxString elemCondition = clcompileChild->GetAttribute(wxT("Condition"));
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                                 wxString preprocessorDefinitions = clcompileChild->GetNodeContent();
@@ -933,7 +933,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                             }
 
                             if(clcompileChild->GetName() == wxT("PrecompiledHeaderFile")) {
-                                wxString elemCondition = clcompileChild->GetAttribute("Condition");
+                                wxString elemCondition = clcompileChild->GetAttribute(wxT("Condition"));
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                                 wxString precompiledHeaderFile = clcompileChild->GetNodeContent();
@@ -945,7 +945,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                             }
 
                             if(clcompileChild->GetName() == wxT("AdditionalIncludeDirectories")) {
-                                wxString elemCondition = clcompileChild->GetAttribute("Condition");
+                                wxString elemCondition = clcompileChild->GetAttribute(wxT("Condition"));
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                                 wxString additionalIncludeDirectories = clcompileChild->GetNodeContent();
@@ -968,7 +968,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                         while(linkChild) {
                             if(linkChild->GetName() == wxT("AdditionalDependencies")) {
-                                wxString elemCondition = linkChild->GetAttribute("Condition");
+                                wxString elemCondition = linkChild->GetAttribute(wxT("Condition"));
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                                 wxString additionalDependencies = linkChild->GetNodeContent();
@@ -982,7 +982,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                             }
 
                             if(linkChild->GetName() == wxT("AdditionalLibraryDirectories")) {
-                                wxString elemCondition = linkChild->GetAttribute("Condition");
+                                wxString elemCondition = linkChild->GetAttribute(wxT("Condition"));
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                                 wxString additionalLibraryDirectories = linkChild->GetNodeContent();
@@ -996,7 +996,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                             }
 
                             if(linkChild->GetName() == wxT("OutputFile")) {
-                                wxString elemCondition = linkChild->GetAttribute("Condition");
+                                wxString elemCondition = linkChild->GetAttribute(wxT("Condition"));
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                                 wxString outputFile = linkChild->GetNodeContent();
@@ -1022,7 +1022,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                         while(LibChild) {
                             if(LibChild->GetName() == wxT("OutputFile")) {
-                                wxString elemCondition = LibChild->GetAttribute("Condition");
+                                wxString elemCondition = LibChild->GetAttribute(wxT("Condition"));
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                                 wxString outputFile = LibChild->GetNodeContent();
@@ -1048,7 +1048,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                         while(preBuildEventChild) {
                             if(preBuildEventChild->GetName() == wxT("Command")) {
-                                wxString elemCondition = preBuildEventChild->GetAttribute("Condition");
+                                wxString elemCondition = preBuildEventChild->GetAttribute(wxT("Condition"));
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                                 wxString command = preBuildEventChild->GetNodeContent();
@@ -1069,7 +1069,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                         while(postBuildEventChild) {
                             if(postBuildEventChild->GetName() == wxT("Command")) {
-                                wxString elemCondition = postBuildEventChild->GetAttribute("Condition");
+                                wxString elemCondition = postBuildEventChild->GetAttribute(wxT("Condition"));
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
 
                                 wxString command = postBuildEventChild->GetNodeContent();
@@ -1222,7 +1222,7 @@ void VisualCppImporter::AddFilesVC11(wxXmlNode* itemGroupChild,
                                      GenericProjectPtr genericProject,
                                      std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap)
 {
-    wxString filename = itemGroupChild->GetAttribute("Include");
+    wxString filename = itemGroupChild->GetAttribute(wxT("Include"));
     filename.Replace(wxT("\\"), wxT("/"));
 
     GenericProjectFilePtr genericProjectFile = FindProjectFileByName(genericProject, filename);
@@ -1246,14 +1246,23 @@ void VisualCppImporter::AddFilesVC11(wxXmlNode* itemGroupChild,
         }
 
         if(otherChild->GetName() == wxT("ExcludedFromBuild")) {
-            wxString elemCondition = otherChild->GetAttribute("Condition");
+            wxString elemCondition = otherChild->GetAttribute(wxT("Condition"));
             wxString projectCfgKey = ExtractProjectCfgName(wxT(""), elemCondition);
             wxString content = otherChild->GetNodeContent();
 
-            GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+            if(content == wxT("true")) {
+                if(!projectCfgKey.IsEmpty()) {
+                    GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
 
-            if(genericProjectCfg && content == wxT("true")) {
-                genericProjectCfg->excludeFiles.push_back(genericProjectFile);
+                    if(genericProjectCfg) {
+                        genericProjectCfg->excludeFiles.push_back(genericProjectFile);
+                    }
+                }
+                else {
+                    for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfgPair : genericProjectCfgMap) {
+                        genericProjectCfgPair.second->excludeFiles.push_back(genericProjectFile);
+                    }
+                }
             }
         }
 

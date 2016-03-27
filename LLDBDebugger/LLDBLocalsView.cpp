@@ -32,8 +32,8 @@
 #include "globals.h"
 
 #define LOCALS_VIEW_NAME_COL_IDX 0
-#define LOCALS_VIEW_VALUE_COL_IDX 1
-#define LOCALS_VIEW_SUMMARY_COL_IDX 2
+#define LOCALS_VIEW_SUMMARY_COL_IDX 1
+#define LOCALS_VIEW_VALUE_COL_IDX 2
 #define LOCALS_VIEW_TYPE_COL_IDX 3
 
 LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
@@ -48,13 +48,13 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
                                         wxTR_ROW_LINES | wxTR_TWIST_BUTTONS | wxTR_MULTIPLE);
     m_treeList->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     m_treeList->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    
+
     m_treeList->AddColumn(_("Name"), 150);
-    m_treeList->AddColumn(_("Value"), 300);
     m_treeList->AddColumn(_("Summary"), 300);
+    m_treeList->AddColumn(_("Value"), 300);
     m_treeList->AddColumn(_("Type"), 300);
 
-    m_treeList->AddRoot(_("Local Vairables"));
+    m_treeList->AddRoot(_("Local Variables"));
     GetSizer()->Add(m_treeList, 1, wxEXPAND | wxALL, 2);
 
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_STARTED, &LLDBLocalsView::OnLLDBStarted, this);
@@ -116,8 +116,10 @@ void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, 
         LLDBVariable::Ptr_t variable = variables.at(i);
         wxTreeItemId item = m_treeList->AppendItem(
             parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, new LLDBVariableClientData(variable));
+        m_treeList->SetItemText(item,
+                                LOCALS_VIEW_SUMMARY_COL_IDX,
+                                variable->GetSummary().IsEmpty() ? variable->GetValue() : variable->GetSummary());
         m_treeList->SetItemText(item, LOCALS_VIEW_VALUE_COL_IDX, variable->GetValue());
-        m_treeList->SetItemText(item, LOCALS_VIEW_SUMMARY_COL_IDX, variable->GetSummary());
         m_treeList->SetItemText(item, LOCALS_VIEW_TYPE_COL_IDX, variable->GetType());
         if(variable->IsValueChanged()) {
             m_treeList->SetItemTextColour(item, "RED");
@@ -246,7 +248,7 @@ void LLDBLocalsView::GetWatchesFromSelections(wxArrayTreeItemIds& items)
 
 void LLDBLocalsView::OnLocalsContextMenu(wxContextMenuEvent& event)
 {
-    
+
     wxMenu menu;
     menu.Append(wxID_COPY, _("Copy value to clipboard"));
     int selection = GetPopupMenuSelectionFromUser(menu);
@@ -265,12 +267,12 @@ void LLDBLocalsView::OnLocalsContextMenu(wxContextMenuEvent& event)
             if(!lldbVar->GetValue().IsEmpty()) {
                 itemValue << lldbVar->GetValue();
             }
-            
+
             if(!lldbVar->GetSummary().IsEmpty()) {
                 if(!itemValue.IsEmpty()) itemValue << " ";
                 itemValue << lldbVar->GetSummary();
             }
-            
+
             if(!itemValue.IsEmpty()) {
                 if(!content.IsEmpty()) {
                     content << "\n";
@@ -278,7 +280,7 @@ void LLDBLocalsView::OnLocalsContextMenu(wxContextMenuEvent& event)
                 content << itemValue;
             }
         }
-        
+
         if(!content.IsEmpty()) {
             ::CopyToClipboard(content);
         }

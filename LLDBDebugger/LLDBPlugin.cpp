@@ -139,7 +139,9 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS,
-        clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints), NULL, this);
+                                  clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints),
+                                  NULL,
+                                  this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(LLDBPlugin::OnDebugNextInst), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL, this);
@@ -195,7 +197,9 @@ void LLDBPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(
         wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS,
-        clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints), NULL, this);
+                                     clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints),
+                                     NULL,
+                                     this);
     EventNotifier::Get()->Disconnect(
         wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(LLDBPlugin::OnDebugNextInst), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -303,8 +307,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
         wxString errMsg;
         ProjectPtr pProject = clCxxWorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
         if(!pProject) {
-            ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(), "LLDB Debugger",
-                wxICON_ERROR | wxOK | wxCENTER);
+            ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(),
+                           "LLDB Debugger",
+                           wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
 
@@ -317,8 +322,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
         BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(pProject->GetName(), wxEmptyString);
         if(!bldConf) {
-            ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"), "LLDB Debugger",
-                wxICON_ERROR | wxOK | wxCENTER);
+            ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"),
+                           "LLDB Debugger",
+                           wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
 
@@ -434,8 +440,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 wxString message;
                 message << _("Could not connect to codelite-lldb at '")
                         << (settings.IsUsingRemoteProxy() ? settings.GetTcpConnectString() :
-                                                            m_connector.GetConnectString())
-                        << "'";
+                                                            m_connector.GetConnectString()) << "'";
                 ::wxMessageBox(message, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
@@ -649,6 +654,12 @@ void LLDBPlugin::LoadLLDBPerspective()
     ShowLLDBPane(LLDB_BREAKPOINTS_PANE_NAME);
     ShowLLDBPane(LLDB_LOCALS_PANE_NAME);
     ShowLLDBPane(LLDB_THREADS_PANE_NAME);
+
+    // Hide the output pane
+    wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane("Output View");
+    if(pi.IsOk() && pi.IsShown()) {
+        pi.Hide();
+    }
     m_mgr->GetDockingManager()->Update();
 }
 
@@ -715,44 +726,45 @@ void LLDBPlugin::DestroyUI()
 void LLDBPlugin::InitializeUI()
 {
     wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
-    if(!m_callstack) {
-        m_callstack = new LLDBCallStackPane(parent, &m_connector);
-        m_mgr->GetDockingManager()->AddPane(m_callstack, wxAuiPaneInfo()
-                                                             .MinSize(200, 200)
-                                                             .Bottom()
-                                                             .Position(0)
-                                                             .CloseButton()
-                                                             .Caption("Callstack")
-                                                             .Name(LLDB_CALLSTACK_PANE_NAME));
-    }
-
     if(!m_breakpointsView) {
         m_breakpointsView = new LLDBOutputView(parent, this);
-        m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo()
-                                                                   .MinSize(200, 200)
-                                                                   .Bottom()
-                                                                   .Position(1)
-                                                                   .CloseButton()
-                                                                   .Caption("Breakpoints")
-                                                                   .Name(LLDB_BREAKPOINTS_PANE_NAME));
+        m_mgr->GetDockingManager()->AddPane(
+            m_breakpointsView,
+            wxAuiPaneInfo().MinSize(200, 200).Right().Position(1).Layer(10).CloseButton().Caption("Breakpoints").Name(
+                LLDB_BREAKPOINTS_PANE_NAME));
     }
-
-    if(!m_localsView) {
-        m_localsView = new LLDBLocalsView(parent, this);
-        m_mgr->GetDockingManager()->AddPane(m_localsView, wxAuiPaneInfo()
-                                                              .MinSize(200, 200)
-                                                              .Bottom()
-                                                              .Position(0)
-                                                              .CloseButton()
-                                                              .Caption("Locals & Watches")
-                                                              .Name(LLDB_LOCALS_PANE_NAME));
+    if(!m_callstack) {
+        m_callstack = new LLDBCallStackPane(parent, &m_connector);
+        m_mgr->GetDockingManager()->AddPane(m_callstack,
+                                            wxAuiPaneInfo()
+                                                .MinSize(200, 200)
+                                                .Right()
+                                                .Position(2) // top one
+                                                .Layer(10)   // outer layer
+                                                .CloseButton()
+                                                .Caption("Callstack")
+                                                .Name(LLDB_CALLSTACK_PANE_NAME));
     }
 
     if(!m_threadsView) {
         m_threadsView = new LLDBThreadsView(parent, this);
         m_mgr->GetDockingManager()->AddPane(
-            m_threadsView, wxAuiPaneInfo().MinSize(200, 200).Bottom().Position(0).CloseButton().Caption("Threads").Name(
-                               LLDB_THREADS_PANE_NAME));
+            m_threadsView,
+            wxAuiPaneInfo().MinSize(200, 200).Layer(10).Right().Position(1).CloseButton().Caption("Threads").Name(
+                LLDB_THREADS_PANE_NAME));
+    }
+
+    if(!m_localsView) {
+        m_localsView = new LLDBLocalsView(parent, this);
+        m_mgr->GetDockingManager()->AddPane(m_localsView,
+                                            wxAuiPaneInfo()
+                                                .MinSize(200, 200)
+                                                .Bottom()
+                                                .Layer(5) // outer, but not on the same layer as the left side pane
+                                                .Position(0)
+                                                .CloseButton()
+                                                .Caption("Locals & Watches")
+                                                .Name(LLDB_LOCALS_PANE_NAME));
     }
 }
 
@@ -858,8 +870,9 @@ void LLDBPlugin::OnBuildStarting(clBuildEvent& event)
 {
     if(m_connector.IsRunning()) {
         // lldb session is active, prompt the user
-        if(::wxMessageBox(_("A debug session is running\nCancel debug session and continue building?"), "CodeLite",
-               wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT | wxCENTER) == wxYES) {
+        if(::wxMessageBox(_("A debug session is running\nCancel debug session and continue building?"),
+                          "CodeLite",
+                          wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT | wxCENTER) == wxYES) {
             clDebugEvent dummy;
             OnDebugStop(dummy);
             event.Skip();
@@ -1011,8 +1024,9 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
 
     if(m_connector.IsRunning()) {
         // Another debug session is already in progress
-        ::wxMessageBox(_("Another debug session is already in progress. Please stop it first"), "CodeLite",
-            wxOK | wxCENTER | wxICON_WARNING);
+        ::wxMessageBox(_("Another debug session is already in progress. Please stop it first"),
+                       "CodeLite",
+                       wxOK | wxCENTER | wxICON_WARNING);
         return false;
     }
 

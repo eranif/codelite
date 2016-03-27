@@ -751,7 +751,7 @@ void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
 
     // next, add the watches
     for(size_t i = 0; i < m_watches.GetCount(); ++i) {
-        lldb::SBValue value = frame.EvaluateExpression(m_watches.Item(i).mb_str(wxConvUTF8).data());
+        lldb::SBValue value = frame.GetValueForVariablePath(m_watches.Item(i).mb_str(wxConvUTF8).data());
         if(value.IsValid()) {
             LLDBVariable::Ptr_t var(new LLDBVariable(value));
             var->SetIsWatch(true);
@@ -904,8 +904,11 @@ void CodeLiteLLDBApp::EvalExpression(const LLDBCommand& command)
     wxPrintf("codelite-lldb: evaluating expression '%s'\n", command.GetExpression());
 
     if(CanInteract()) {
-        lldb::SBExpressionOptions options;
-        lldb::SBValue value = m_target.EvaluateExpression(command.GetExpression().mb_str(wxConvUTF8).data(), options);
+        // Evaluate the expression based on the current frame
+        wxString expression = command.GetExpression();
+        expression.Trim().Trim(false);
+        lldb::SBValue value = m_target.GetProcess().GetSelectedThread().GetSelectedFrame().GetValueForVariablePath(
+            expression.mb_str(wxConvUTF8).data());
         if(value.IsValid()) {
 
             LLDBReply reply;
@@ -1063,12 +1066,12 @@ void CodeLiteLLDBApp::DeleteWatch(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::ExecuteInterperterCommand(const LLDBCommand& command)
 {
-    
+
     lldb::SBCommandReturnObject ret;
     std::string c_command = command.GetExpression().mb_str(wxConvUTF8).data();
     wxPrintf("codelite-lldb: ExecuteInterperterCommand: '%s'\n", c_command.c_str());
     m_debugger.GetCommandInterpreter().HandleCommand(c_command.c_str(), ret);
-    
+
     if(ret.GetOutput()) {
         LLDBReply reply;
         reply.SetText(ret.GetOutput());

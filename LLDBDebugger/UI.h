@@ -32,9 +32,6 @@
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
 #include <wx/hyperlink.h>
-#include <wx/popupwin.h>
-#include <wx/treectrl.h>
-#include <wx/timer.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
 #if wxVERSION_NUMBER >= 2900
@@ -200,33 +197,6 @@ public:
     wxDataViewListCtrl* GetDvListCtrlThreads() { return m_dvListCtrlThreads; }
     LLDBThreadsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBThreadsViewBase();
-};
-
-
-class LLDBTooltipBase : public wxPopupWindow
-{
-protected:
-    wxPanel* m_panel134;
-    wxTreeCtrl* m_treeCtrl;
-    wxPanel* m_panelStatus;
-    wxTimer* m_timerCheckMousePos;
-
-protected:
-    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnStatusBarLeftDown(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnStatusBarLeftUp(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnStatusBarMotion(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnStatusEnterWindow(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnStatusLeaveWindow(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnCheckMousePosition(wxTimerEvent& event) { event.Skip(); }
-
-public:
-    wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
-    wxPanel* GetPanelStatus() { return m_panelStatus; }
-    wxPanel* GetPanel134() { return m_panel134; }
-    wxTimer* GetTimerCheckMousePos() { return m_timerCheckMousePos; }
-    LLDBTooltipBase(wxWindow* parent, long style = wxBORDER_NONE);
-    virtual ~LLDBTooltipBase();
 };
 
 

@@ -748,11 +748,11 @@ clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent,long style)
     wxBoxSizer* boxSizer222 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer222);
     
-    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(300,250), wxTAB_TRAVERSAL);
+    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(300,250), wxTAB_TRAVERSAL|wxBORDER_THEME);
     m_mainPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     m_mainPanel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
-    boxSizer222->Add(m_mainPanel, 1, wxALL|wxEXPAND, 0);
+    boxSizer222->Add(m_mainPanel, 1, wxALL|wxEXPAND, 2);
     
     wxBoxSizer* boxSizer230 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer230);

@@ -29,43 +29,19 @@
 #include "event_notifier.h"
 #include <wx/wupdlock.h>
 #include "cl_config.h"
+#include "globals.h"
 
-LLDBTooltip::LLDBTooltip(wxWindow* parent, LLDBPlugin* plugin)
-    : LLDBTooltipBase(parent)
+LLDBTooltip::LLDBTooltip(LLDBPlugin* plugin)
+    : clResizableTooltip(plugin)
     , m_plugin(plugin)
-    , m_dragging(false)
 {
-    int initialSizeW = clConfig::Get().Read(kConfigLLDBTooltipW, wxNOT_FOUND);
-    int initialSizeH = clConfig::Get().Read(kConfigLLDBTooltipH, wxNOT_FOUND);
-
-    if(initialSizeH != wxNOT_FOUND && initialSizeW != wxNOT_FOUND) {
-        wxSize initSize(initialSizeW, initialSizeH);
-
-        if(initSize.GetWidth() > 200 && initSize.GetHeight() > 150) {
-            SetSize(initSize);
-
-        } else {
-            SetSize(wxSize(200, 150));
-        }
-    }
-
+    MSWSetNativeTheme(m_treeCtrl);
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_VARIABLE_EXPANDED, &LLDBTooltip::OnLLDBVariableExpanded, this);
-    m_panelStatus->Bind(wxEVT_MOUSE_CAPTURE_LOST, &LLDBTooltip::OnCaptureLost, this);
 }
 
 LLDBTooltip::~LLDBTooltip()
 {
-    if(m_panelStatus->HasCapture()) {
-        m_panelStatus->ReleaseMouse();
-    }
-
-    // store the size
-    wxSize sz = GetSize();
-    clConfig::Get().Write(kConfigLLDBTooltipW, sz.GetWidth());
-    clConfig::Get().Write(kConfigLLDBTooltipH, sz.GetHeight());
-
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_VARIABLE_EXPANDED, &LLDBTooltip::OnLLDBVariableExpanded, this);
-    m_panelStatus->Unbind(wxEVT_MOUSE_CAPTURE_LOST, &LLDBTooltip::OnCaptureLost, this);
 }
 
 void LLDBTooltip::OnItemExpanding(wxTreeEvent& event)
@@ -97,42 +73,13 @@ void LLDBTooltip::Show(const wxString& displayName, LLDBVariable::Ptr_t variable
     if(variable->HasChildren()) {
         m_treeCtrl->AppendItem(item, "<dummy>");
     }
-
-    Move(::wxGetMousePosition());
-    wxPopupWindow::Show();
-    m_treeCtrl->SetFocus();
+    clResizableTooltip::ShowTip();
 }
 
 void LLDBTooltip::DoCleanup()
 {
     m_treeCtrl->DeleteAllItems();
     m_itemsPendingExpansion.clear();
-}
-
-void LLDBTooltip::OnCheckMousePosition(wxTimerEvent& event)
-{
-#ifdef __WXMSW__
-    // On Windows, wxPopupWindow does not return a correct position
-    // in screen coordinates. So we use the inside tree-ctrl to
-    // calc our position and size
-    wxPoint tipPoint = m_treeCtrl->GetPosition();
-    tipPoint = m_treeCtrl->ClientToScreen(tipPoint);
-    wxSize tipSize = GetSize();
-    // Construct a wxRect from the tip size/position
-    wxRect rect(tipPoint, tipSize);
-#else
-    // Linux and OSX it works
-    wxRect rect(GetRect());
-#endif
-
-    // and increase it by 15 pixels
-    rect.Inflate(15, 15);
-    if(!rect.Contains(::wxGetMousePosition())) {
-        if(m_panelStatus->HasCapture()) {
-            m_panelStatus->ReleaseMouse();
-        }
-        m_plugin->CallAfter(&LLDBPlugin::DestroyTooltip);
-    }
 }
 
 LLDBVariableClientData* LLDBTooltip::ItemData(const wxTreeItemId& item) const
@@ -143,7 +90,7 @@ LLDBVariableClientData* LLDBTooltip::ItemData(const wxTreeItemId& item) const
 void LLDBTooltip::OnLLDBVariableExpanded(LLDBEvent& event)
 {
     int variableId = event.GetVariableId();
-	wxUnusedVar(variableId);
+    wxUnusedVar(variableId);
     std::map<int, wxTreeItemId>::iterator iter = m_itemsPendingExpansion.find(event.GetVariableId());
     if(iter == m_itemsPendingExpansion.end()) {
         // does not belong to us
@@ -174,84 +121,4 @@ void LLDBTooltip::DoAddVariable(const wxTreeItemId& parent, LLDBVariable::Ptr_t 
     if(variable->HasChildren()) {
         m_treeCtrl->AppendItem(item, "<dummy>");
     }
-}
-
-void LLDBTooltip::OnStatusBarLeftDown(wxMouseEvent& event)
-{
-    m_dragging = true;
-#ifndef __WXGTK__
-    wxSetCursor(wxCURSOR_SIZING);
-#endif
-    m_panelStatus->CaptureMouse();
-}
-
-void LLDBTooltip::OnStatusBarLeftUp(wxMouseEvent& event)
-{
-    event.Skip();
-    DoUpdateSize(true);
-}
-
-void LLDBTooltip::OnCaptureLost(wxMouseCaptureLostEvent& e)
-{
-    e.Skip();
-    if(m_panelStatus->HasCapture()) {
-        m_panelStatus->ReleaseMouse();
-        m_dragging = true;
-    }
-}
-
-void LLDBTooltip::OnStatusBarMotion(wxMouseEvent& event)
-{
-    event.Skip();
-    if(m_dragging) {
-        wxRect curect = GetScreenRect();
-        wxPoint curpos = ::wxGetMousePosition();
-
-        int xDiff = curect.GetBottomRight().x - curpos.x;
-        int yDiff = curect.GetBottomRight().y - curpos.y;
-
-        if((abs(xDiff) > 3) || (abs(yDiff) > 3)) {
-            DoUpdateSize(false);
-        }
-    }
-}
-
-void LLDBTooltip::DoUpdateSize(bool performClean)
-{
-    if(m_dragging) {
-        wxRect curect = GetScreenRect();
-        curect.SetBottomRight(::wxGetMousePosition());
-        if(curect.GetHeight() > 100 && curect.GetWidth() > 100) {
-#ifdef __WXMSW__
-            wxWindowUpdateLocker locker(EventNotifier::Get()->TopFrame());
-#endif
-            SetSize(curect);
-        }
-    }
-
-    if(performClean) {
-        m_dragging = false;
-        if(m_panelStatus->HasCapture()) {
-            m_panelStatus->ReleaseMouse();
-        }
-#ifndef __WXGTK__
-        wxSetCursor(wxNullCursor);
-#endif
-    }
-}
-
-void LLDBTooltip::OnStatusEnterWindow(wxMouseEvent& event)
-{
-    event.Skip();
-#ifndef __WXGTK__
-    ::wxSetCursor(wxCURSOR_SIZING);
-#endif
-}
-
-void LLDBTooltip::OnStatusLeaveWindow(wxMouseEvent& event)
-{
-    event.Skip();
-#ifndef __WXGTK__
-    ::wxSetCursor(wxNullCursor);
-#endif
 }

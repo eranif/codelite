@@ -979,23 +979,23 @@ void wxC9D6CInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-back.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-back@2x.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-copy.png"), xml_res_file_2, xml_res_size_2, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-copy@2x.png"), xml_res_file_3, xml_res_size_3, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-debugger_restart.png"), xml_res_file_4, xml_res_size_4, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-debugger_restart@2x.png"), xml_res_file_5, xml_res_size_5, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-file_save.png"), xml_res_file_6, xml_res_size_6, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-file_save@2x.png"), xml_res_file_7, xml_res_size_7, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-find.png"), xml_res_file_8, xml_res_size_8, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-find@2x.png"), xml_res_file_9, xml_res_size_9, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-forward.png"), xml_res_file_10, xml_res_size_10, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-forward@2x.png"), xml_res_file_11, xml_res_size_11, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-next.png"), xml_res_file_12, xml_res_size_12, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-next@2x.png"), xml_res_file_13, xml_res_size_13, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-up.png"), xml_res_file_14, xml_res_size_14, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-up@2x.png"), xml_res_file_15, xml_res_size_15, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._icons_resize.png"), xml_res_file_16, xml_res_size_16, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-back.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-back@2x.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-copy.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-copy@2x.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-debugger_restart.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-debugger_restart@2x.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-file_save.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-file_save@2x.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-find.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-find@2x.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-forward.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-forward@2x.png"), xml_res_file_11, xml_res_size_11, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-next.png"), xml_res_file_12, xml_res_size_12, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-next@2x.png"), xml_res_file_13, xml_res_size_13, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-up.png"), xml_res_file_14, xml_res_size_14, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._bitmaps_16-up@2x.png"), xml_res_file_15, xml_res_size_15, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._icons_resize.png"), xml_res_file_16, xml_res_size_16, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$_home_eran_devl_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"), xml_res_file_17, xml_res_size_17, wxT("text/xml"));
     wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_plugin_bitmaps.cpp$_home_eran_devl_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"));
 }

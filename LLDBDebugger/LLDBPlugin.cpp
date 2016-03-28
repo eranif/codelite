@@ -145,10 +145,12 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(LLDBPlugin::OnDebugNextInst), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL, this);
+    Bind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
 }
 
 void LLDBPlugin::UnPlug()
 {
+    Unbind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
     m_connector.StopDebugServer();
     DestroyUI();
 
@@ -914,7 +916,7 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
     // hide any tooltip
     if(!event.GetVariables().empty() && m_mgr->GetActiveEditor()) {
         if(!m_tooltip) {
-            m_tooltip = new LLDBTooltip(EventNotifier::Get()->TopFrame(), this);
+            m_tooltip = new LLDBTooltip(this);
         }
         m_tooltip->Show(event.GetExpression(), event.GetVariables().at(0));
     }
@@ -1166,4 +1168,12 @@ void LLDBPlugin::SetupPivotFolder(const LLDBConnectReturnObject& ret)
     }
     // Now that we got the pivot - start the network thread
     m_connector.StartNetworkThread();
+}
+
+void LLDBPlugin::OnDestroyTip(clCommandEvent& e)
+{
+    if(m_tooltip) {
+        m_tooltip->Destroy();
+        m_tooltip = NULL;
+    }
 }

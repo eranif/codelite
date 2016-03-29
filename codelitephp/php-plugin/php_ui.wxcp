@@ -10,6 +10,7 @@
   "m_firstWindowId": 8000,
   "m_useEnum": true,
   "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": [{
     "m_includeFile": "#include \"php_file_layout_tree.h\"",
     "m_allocationLine": "m_treeCtrlLayout = new PHPFileLayoutTree($parent);",
@@ -2364,7 +2365,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxDV_ROW_LINES", "wxDV_SINGLE"],
+       "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -2446,7 +2447,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "150"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",

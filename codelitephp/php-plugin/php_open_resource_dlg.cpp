@@ -10,6 +10,7 @@
 #include "PHPLookupTable.h"
 #include <wx/tokenzr.h>
 #include "FilesCollector.h"
+#include "fileutils.h"
 
 static int TIMER_ID = 5647;
 static wxBitmap CLASS_IMG_ID = wxNullBitmap;
@@ -202,7 +203,7 @@ void OpenResourceDlg::DoGetResources(const wxString& filter)
     m_resources.reserve(matches.size());
     for(; iter != matches.end(); ++iter) {
         PHPEntityBase::Ptr_t match = *iter;
-        if(IsMatchesFilter(filter, match->GetFullName())) {
+        if(FileUtils::FuzzyMatch(filter, match->GetFullName())) {
             ResourceItem resource;
             resource.displayName = match->GetDisplayName();
             resource.filename = match->GetFilename();
@@ -222,7 +223,7 @@ ResourceVector_t OpenResourceDlg::DoGetFiles(const wxString& filter)
 
     for(size_t i = 0; i < m_allFiles.size(); i++) {
         wxString filename = m_allFiles.at(i).filename.GetFullPath().Lower();
-        if(IsMatchesFilter(filter, filename)) {
+        if(FileUtils::FuzzyMatch(filter, filename)) {
             resources.push_back(m_allFiles.at(i));
             // Don't return too many matches...
             if(resources.size() == 300) break;

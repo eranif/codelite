@@ -10,6 +10,7 @@
 #include <wx/stopwatch.h>
 #include <wx/log.h>
 #include "PHPEntityFunctionAlias.h"
+#include <wx/tokenzr.h>
 
 wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
@@ -86,10 +87,10 @@ const static wxString CREATE_FUNCTION_TABLE_SQL_IDX5 =
 const static wxString CREATE_FUNCTION_ALIAS_TABLE_SQL =
     "CREATE TABLE IF NOT EXISTS FUNCTION_ALIAS_TABLE(ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
     "SCOPE_ID INTEGER NOT NULL DEFAULT -1, "
-    "NAME TEXT, "         // no scope, just the function name
-    "REALNAME TEXT, "     // The fullname of the actual function we are referencing
-    "FULLNAME TEXT, "     // Fullname with scope (of the alias name)
-    "SCOPE TEXT, "        // Usually, this means the namespace\class
+    "NAME TEXT, "     // no scope, just the function name
+    "REALNAME TEXT, " // The fullname of the actual function we are referencing
+    "FULLNAME TEXT, " // Fullname with scope (of the alias name)
+    "SCOPE TEXT, "    // Usually, this means the namespace\class
     "LINE_NUMBER INTEGER NOT NULL DEFAULT 0, "
     "FILE_NAME TEXT )";
 
@@ -384,11 +385,12 @@ PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName,
                 matches.push_back(match);
             }
         }
-        
+
         if(matches.empty()) {
             // Search functions alias table
             wxString sql;
-            sql << "SELECT * from FUNCTION_ALIAS_TABLE WHERE SCOPE_ID=" << parentDbId << " AND NAME='" << exactName << "'";
+            sql << "SELECT * from FUNCTION_ALIAS_TABLE WHERE SCOPE_ID=" << parentDbId << " AND NAME='" << exactName
+                << "'";
             wxSQLite3Statement st = m_db.PrepareStatement(sql);
             wxSQLite3ResultSet res = st.ExecuteQuery();
 
@@ -402,7 +404,7 @@ PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName,
                 }
             }
         }
-        
+
         if(matches.empty() && parentIsNamespace) {
             // search the scope table as well
             wxString sql;
@@ -759,8 +761,12 @@ void PHPLookupTable::DoAddNameFilter(wxString& sql, const wxString& nameHint, si
 void PHPLookupTable::LoadAllByFilter(PHPEntityBase::List_t& matches, const wxString& nameHint, eLookupFlags flags)
 {
     try {
-        LoadFromTableByNameHint(matches, "SCOPE_TABLE", nameHint, flags);
-        LoadFromTableByNameHint(matches, "FUNCTION_TABLE", nameHint, flags);
+        // Split the nameHint to spaces/tabs
+        wxArrayString parts = ::wxStringTokenize(nameHint, " \t", wxTOKEN_STRTOK);
+        for(size_t i = 0; i < parts.size(); ++i) {
+            LoadFromTableByNameHint(matches, "SCOPE_TABLE", parts.Item(i), flags);
+            LoadFromTableByNameHint(matches, "FUNCTION_TABLE", parts.Item(i), flags);
+        }
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::LoadAllByFilter: %s", e.GetMessage());
     }
@@ -839,7 +845,7 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
             st.ExecuteUpdate();
         }
-        
+
         {
             wxString sql;
             sql << "delete from FUNCTION_ALIAS_TABLE where FILE_NAME=:FILE_NAME";
@@ -847,7 +853,7 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
             st.ExecuteUpdate();
         }
-        
+
         {
             wxString sql;
             sql << "delete from VARIABLES_TABLE where FILE_NAME=:FILE_NAME";
@@ -936,7 +942,7 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
                 }
             }
         }
-        
+
         {
             // load function aliases
             wxString sql;
@@ -959,7 +965,7 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
                 }
             }
         }
-        
+
         {
             // Add members from the variables table
             wxString sql;
@@ -1058,14 +1064,14 @@ void PHPLookupTable::ClearAll(bool autoCommit)
             wxSQLite3Statement st = m_db.PrepareStatement(sql);
             st.ExecuteUpdate();
         }
-        
+
         {
             wxString sql;
             sql << "delete from FUNCTION_ALIAS_TABLE";
             wxSQLite3Statement st = m_db.PrepareStatement(sql);
             st.ExecuteUpdate();
         }
-        
+
         if(autoCommit) m_db.Commit();
     } catch(wxSQLite3Exception& e) {
         if(autoCommit) m_db.Rollback();
@@ -1295,7 +1301,7 @@ PHPEntityBase::List_t PHPLookupTable::FindSymbol(const wxString& name)
                 matches.push_back(match);
             }
         }
-        
+
         {
             //---------------------------------------------------------------------
             // Load function aliases

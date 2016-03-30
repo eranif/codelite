@@ -1996,17 +1996,19 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
     // Prompt before exit
-    if(::PromptForYesNoDialogWithCheckbox(_("Closing CodeLite\nSave perspective and exit?"), "SaveAndExit") !=
-        wxID_YES) {
+    wxStandardID ans = PromptForYesNoCancelDialogWithCheckbox(_("Closing CodeLite\n\nSave perspective and exit?"), "SaveAndExit", "Save and Exit", "Exit without saving", "Don't Exit");
+    if(ans == wxID_CANCEL) {
         event.Veto();
         event.Skip(false);
         return;
     }
 
-    if(!SaveLayoutAndSession()) {
-        event.Veto();
-        event.Skip(false);
-        return;
+    if(ans == wxID_YES) {
+        if(!SaveLayoutAndSession()) {
+            event.Veto();
+            event.Skip(false);
+            return;
+        }
     }
 
     event.Skip();

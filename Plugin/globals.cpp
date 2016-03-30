@@ -1861,8 +1861,8 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
     return execLine;
 }
 
-wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& dlgId, const wxString& yesLabel,
-    const wxString& noLabel, const wxString& checkboxLabel, long style, bool checkboxInitialValue)
+wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message, const wxString& dlgId, const wxString& yesLabel,
+    const wxString& noLabel, const wxString& cancelLabel, const wxString& checkboxLabel, long style, bool checkboxInitialValue)
 {
     int res = clConfig::Get().GetAnnoyingDlgAnswer(dlgId, wxNOT_FOUND);
     if(res == wxNOT_FOUND) {
@@ -1870,7 +1870,12 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxS
         // User did not save his answer
         wxRichMessageDialog d(EventNotifier::Get()->TopFrame(), message, "CodeLite", style);
         d.ShowCheckBox(checkboxLabel);
-        d.SetYesNoLabels(yesLabel, noLabel);
+		if (cancelLabel.empty()) {
+			d.SetYesNoLabels(yesLabel, noLabel);
+		} else {
+			d.SetYesNoCancelLabels(yesLabel, noLabel, cancelLabel);
+		}
+			
         res = d.ShowModal();
         if(d.IsCheckBoxChecked() && (res != wxID_CANCEL)) {
             // store the user result
@@ -1878,6 +1883,14 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxS
         }
     }
     return static_cast<wxStandardID>(res);
+}
+
+wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& dlgId, const wxString& yesLabel,
+    const wxString& noLabel, const wxString& checkboxLabel, long style, bool checkboxInitialValue)
+{
+    return PromptForYesNoCancelDialogWithCheckbox(message, dlgId, yesLabel, noLabel, "",
+												  checkboxLabel, style, checkboxInitialValue
+												 );
 }
 
 static wxChar sPreviousChar(wxStyledTextCtrl* ctrl, int pos, int& foundPos, bool wantWhitespace)

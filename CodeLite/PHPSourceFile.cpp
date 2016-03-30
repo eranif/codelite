@@ -176,18 +176,7 @@ void PHPSourceFile::Parse(int exitDepth)
             OnDefine(token);
             break;
         case kPHP_T_CONST:
-            if(ReadUntilFound(kPHP_T_IDENTIFIER, token)) {
-                // constant
-                PHPEntityBase::Ptr_t member(new PHPEntityVariable());
-                member->SetFilename(m_filename.GetFullPath());
-                PHPEntityVariable* var = member->Cast<PHPEntityVariable>();
-                var->SetFullName(token.text);
-                var->SetLine(token.lineNumber);
-                var->SetFlag(kVar_Member);
-                var->SetFlag(kVar_Const);
-                CurrentScope()->AddChild(member);
-                if(!ConsumeUntil(';')) return;
-            }
+            OnConstant(token);
             break;
         case kPHP_T_REQUIRE:
         case kPHP_T_REQUIRE_ONCE:
@@ -367,8 +356,8 @@ void PHPSourceFile::OnFunction()
     ParseFunctionSignature(funcDepth);
     func->SetFlags(LookBackForFunctionFlags());
     if(LookBackTokensContains(kPHP_T_ABSTRACT) || // The 'abstract modifier was found for this this function
-       (funcPtr->Parent() && funcPtr->Parent()->Is(kEntityTypeClass) &&
-        funcPtr->Parent()->Cast<PHPEntityClass>()->IsInterface())) // We are inside an interface
+        (funcPtr->Parent() && funcPtr->Parent()->Is(kEntityTypeClass) &&
+            funcPtr->Parent()->Cast<PHPEntityClass>()->IsInterface())) // We are inside an interface
     {
         // Mark this function as an abstract function
         func->SetFlags(func->GetFlags() | kFunc_Abstract);
@@ -750,7 +739,7 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
     typeWithNS.Trim().Trim(false);
 
     if(typeWithNS == "string" || typeWithNS == "array" || typeWithNS == "mixed" || typeWithNS == "bool" ||
-       typeWithNS == "int" || typeWithNS == "integer" || typeWithNS == "boolean" || typeWithNS == "double") {
+        typeWithNS == "int" || typeWithNS == "integer" || typeWithNS == "boolean" || typeWithNS == "double") {
         // primitives, don't bother...
         return typeWithNS;
     }
@@ -1381,6 +1370,36 @@ void PHPSourceFile::ParseUseTraitsBody()
         default:
             temp << token.text;
             break;
+        }
+    }
+}
+
+void PHPSourceFile::OnConstant(const phpLexerToken& tok)
+{
+    // Parse constant line (possibly multiple constants)
+    phpLexerToken token;
+    PHPEntityBase::Ptr_t member;
+    while(NextToken(token)) {
+        if(token.type == ';') {
+            if(member) {
+                CurrentScope()->AddChild(member);
+                break;
+            }
+        } else if(token.type == ',') {
+            if(member) {
+                CurrentScope()->AddChild(member);
+                member.Reset(NULL);
+            }
+        } else if(token.type == kPHP_T_IDENTIFIER) {
+            // found the constant name
+            member.Reset(new PHPEntityVariable());
+            member->Cast<PHPEntityVariable>()->SetFlag(kVar_Const);
+            member->Cast<PHPEntityVariable>()->SetFlag(kVar_Member);
+            member->SetFullName(token.text);
+            member->SetLine(token.lineNumber);
+            member->SetFilename(m_filename.GetFullPath());
+        } else {
+            // do nothing
         }
     }
 }

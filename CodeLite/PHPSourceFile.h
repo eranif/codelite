@@ -166,6 +166,11 @@ protected:
      * @brief a define keyword was found
      */
     void OnDefine(const phpLexerToken& tok);
+    
+    /**
+     * @brief found constant
+     */
+    void OnConstant(const phpLexerToken& tok);
 
     /**
      * @brief go over the look back tokens and extract all function flags

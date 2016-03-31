@@ -607,6 +607,12 @@ void Subversion2::OnDeleteFolder(wxCommandEvent& event)
 void Subversion2::OnFileExplorerRevertItem(wxCommandEvent& event)
 {
     // Coming from the file explorer
+    if(wxMessageBox(_("You are about to revert all your changes\nAre you sure?"),
+                    "CodeLite",
+                    wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER) != wxYES) {
+        return;
+    }
+    
     wxString command;
     wxString loginString;
 

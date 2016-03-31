@@ -45,6 +45,7 @@
 #include "json_node.h"
 #include <wx/stream.h>
 #include <wx/url.h>
+#include "environmentconfig.h"
 
 CompilersDetectorManager::CompilersDetectorManager()
 {
@@ -74,6 +75,10 @@ CompilersDetectorManager::~CompilersDetectorManager() {}
 
 bool CompilersDetectorManager::Locate()
 {
+    // Apply the enviroment before searching for compilers
+    // Some of the locators are relying on PATH environment
+    // variable (e.g. MinGW)
+    EnvSetter env;
     m_compilersFound.clear();
     ICompilerLocator::Vect_t::iterator iter = m_detectors.begin();
     for(; iter != m_detectors.end(); ++iter) {

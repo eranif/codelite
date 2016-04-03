@@ -23,8 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __WXMSW__
-
 #include "LLDBProcessEventHandlerThread.h"
 #include "file_logger.h"
 #include "CodeLiteLLDBApp.h"
@@ -130,4 +128,3 @@ void* LLDBProcessEventHandlerThread::Entry()
     }
     return NULL;
 }
-#endif // !__WXMSW__

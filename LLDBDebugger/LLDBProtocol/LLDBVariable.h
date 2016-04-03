@@ -32,7 +32,8 @@
 #include <wx/sharedptr.h>
 #include "json_node.h"
 #include <wx/treebase.h>
-#ifndef __WXMSW__
+#include "LLDBEnums.h"
+#if BUILD_CODELITE_LLDB
 #include <lldb/API/SBValue.h>
 #endif
 
@@ -53,12 +54,12 @@ protected:
     bool m_isWatch;
 
 private:
-#ifndef __WXMSW__
+#if BUILD_CODELITE_LLDB
     void DoInitFromLLDBValue(lldb::SBValue value);
 #endif
 
 public:
-#ifndef __WXMSW__
+#if BUILD_CODELITE_LLDB
     LLDBVariable(lldb::SBValue value);
 #endif
 

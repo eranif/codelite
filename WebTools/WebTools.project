@@ -82,10 +82,6 @@
       <File Name="m_dataview126model.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <Dependencies Name="CMake_Linux"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
   <VirtualDirectory Name="XML">
     <File Name="XMLCodeCompletion.h"/>
     <File Name="XMLCodeCompletion.cpp"/>
@@ -357,4 +353,8 @@
     <File Name="CSSCodeCompletion.cpp"/>
     <File Name="css.json"/>
   </VirtualDirectory>
+  <Dependencies Name="CMake_Linux"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

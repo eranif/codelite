@@ -333,11 +333,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
   <VirtualDirectory Name="UI">
     <File Name="NewFileComparison.h"/>
     <File Name="NewFileComparison.cpp"/>
@@ -352,4 +347,9 @@
       <File Name="CodeLiteDiff_UI.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

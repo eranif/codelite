@@ -461,13 +461,13 @@ void LLDBConnector::Interrupt(eInterruptReason reason)
 
 bool LLDBConnector::LaunchLocalDebugServer()
 {
-#ifdef __WXMSW__
+#if !BUILD_CODELITE_LLDB
     // Not supported :(
     ::wxMessageBox(_("Locally debugging with LLDB on Windows is not supported by LLDB"),
                    "CodeLite",
                    wxICON_WARNING | wxOK | wxCENTER);
     return false;
-#endif
+#endif 
 
     CL_DEBUG("Launching codelite-lldb");
     // Start the debugger

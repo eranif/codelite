@@ -582,11 +582,6 @@
     <File Name="newkeyshortcutdlg.cpp"/>
     <File Name="newkeyshortcutdlg.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Custom"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
   <VirtualDirectory Name="NodeJS">
     <File Name="NodeJSLocator.h"/>
     <File Name="NodeJSLocator.cpp"/>
@@ -773,8 +768,7 @@
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>
-        <PostConnectCommands>
-</PostConnectCommands>
+        <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
@@ -799,20 +793,8 @@
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
-        <ClangPP>
-
-
-
-
-
-</ClangPP>
-        <SearchPaths>
-
-
-
-
-
-</SearchPaths>
+        <ClangPP/>
+        <SearchPaths/>
       </Completion>
     </Configuration>
     <Configuration Name="Win_x86_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -868,4 +850,9 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Custom"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

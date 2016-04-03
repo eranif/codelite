@@ -351,10 +351,6 @@
       <File Name="clJSONObjectParser.y"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
   <VirtualDirectory Name="XML">
     <File Name="XMLLexer.l"/>
     <File Name="XMLLexerAPI.h"/>
@@ -595,4 +591,8 @@ PhpLexer.cpp: PhpLexer.l
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

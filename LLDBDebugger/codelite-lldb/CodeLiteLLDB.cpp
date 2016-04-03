@@ -23,12 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __WXMSW__
-
 #include <wx/init.h>
 #include "CodeLiteLLDBApp.h"
 #include <unistd.h>
+#ifndef __WXMSW__
 #include <sys/wait.h>
+#endif
 #include <lldb/API/SBDebugger.h>
 #include <wx/filename.h>
 #include <wx/wxcrtvararg.h>
@@ -66,8 +66,9 @@ int main(int argc, char** argv)
     signal(SIGTERM, OnTerminate);
     signal(SIGABRT, OnTerminate);
     signal(SIGINT,  OnTerminate);
+#ifndef __WXMSW__
     signal(SIGPIPE, SIG_IGN);
-
+#endif
     // Parse command line
     int c;
     wxString tcpConnectString;
@@ -140,4 +141,4 @@ int main(int argc, char** argv)
 
     return 0;
 }
-#endif
+

@@ -26,6 +26,13 @@
 #ifndef LLDB_ENUMS_H
 #define LLDB_ENUMS_H
 
+#if (defined(__MINGW32__) && defined(__MINGW64__)) || defined(__WXGTK__) || defined(__WXOSX__)
+// Supported on Windows 64 bits only
+#define BUILD_CODELITE_LLDB 0
+#else
+#define BUILD_CODELITE_LLDB 0
+#endif
+
 // defines the various reasons why the debugger
 // was inerrupted / stopped
 enum eInterruptReason {

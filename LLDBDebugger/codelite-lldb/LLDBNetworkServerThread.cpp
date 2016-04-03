@@ -23,8 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __WXMSW__
-
 #include "LLDBNetworkServerThread.h"
 #include "SocketAPI/clSocketServer.h"
 #include "LLDBProtocol/LLDBCommand.h"
@@ -175,4 +173,3 @@ void* LLDBNetworkServerThread::Entry()
     wxPrintf("codelite-lldb: network thread: leaving main loop\n");
     return NULL;
 }
-#endif /// !__WXMSW__

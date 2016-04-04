@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "LLDBVariable.h"
+#include "json_node.h"
 
 #if BUILD_CODELITE_LLDB
 #include <lldb/API/SBValue.h>

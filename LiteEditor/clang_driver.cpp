@@ -62,6 +62,7 @@
 #include "mainbook.h"
 #include "macromanager.h"
 #include "wxCodeCompletionBoxManager.h"
+#include <algorithm>
 
 static bool wxIsWhitespace(wxChar ch)
 {
@@ -204,15 +205,8 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
     wxFileName source_file(fileName);
 #endif
 
-    ClangThreadRequest* request = new ClangThreadRequest(m_index,
-                                                         fileName,
-                                                         currentBuffer,
-                                                         compileFlags,
-                                                         filterWord,
-                                                         context,
-                                                         lineNumber,
-                                                         column,
-                                                         DoCreateListOfModifiedBuffers(editor));
+    ClangThreadRequest* request = new ClangThreadRequest(m_index, fileName, currentBuffer, compileFlags, filterWord,
+        context, lineNumber, column, DoCreateListOfModifiedBuffers(editor));
     request->SetFileName(source_file.GetFullPath());
     return request;
 }
@@ -249,10 +243,8 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 
 void ClangDriver::Abort() { DoCleanup(); }
 
-FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
-                                                        const wxString& sourceFile,
-                                                        wxString& projectPath,
-                                                        wxString& pchfile)
+FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(
+    const wxString& projectName, const wxString& sourceFile, wxString& projectPath, wxString& pchfile)
 {
     FileTypeCmpArgs_t cmpArgs;
 
@@ -288,17 +280,12 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
             << _("This file should be created automatically for you.\nIf you don't have it, please run a full rebuild "
                  "of your workspace\n\n")
             << _("If this is a custom build project (i.e. project that uses a custom makefile),\nplease set the CXX "
-                 "and CC environment variables like this:\n") << _("CXX=codelite-cc g++\n")
-            << _("CC=codelite-cc gcc\n\n");
+                 "and CC environment variables like this:\n")
+            << _("CXX=codelite-cc g++\n") << _("CC=codelite-cc gcc\n\n");
 
-        clMainFrame::Get()->GetMainBook()->ShowMessage(
-            msg,
-            true,
-            PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
-            ButtonDetails(),
-            ButtonDetails(),
-            ButtonDetails(),
-            CheckboxDetails(wxT("CodeCompletionMissingCompilationDB")));
+        clMainFrame::Get()->GetMainBook()->ShowMessage(msg, true,
+            PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")), ButtonDetails(), ButtonDetails(),
+            ButtonDetails(), CheckboxDetails(wxT("CodeCompletionMissingCompilationDB")));
 
     } else {
         cdb.Open();
@@ -311,7 +298,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
             CompilerCommandLineParser cclp(compilationLine, cwd);
             cclp.MakeAbsolute(cwd);
             CL_DEBUG(wxT("Loaded compilation flags: %s"), compilationLine.c_str());
-            
+
             args.insert(args.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
             args.insert(args.end(), cclp.GetMacrosWithPrefix().begin(), cclp.GetMacrosWithPrefix().end());
             args.Add(cclp.GetStandardWithPrefix());
@@ -363,32 +350,51 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     size_t workspaceFlags = LocalWorkspaceST::Get()->GetParserFlags();
     if(workspaceFlags & LocalWorkspace::EnableCpp11) {
         cppCompileArgs.Add(wxT("-std=c++11"));
-        //cCompileArgs.Add(wxT("-std=c++11"));
+        // cCompileArgs.Add(wxT("-std=c++11"));
     }
     if(workspaceFlags & LocalWorkspace::EnableCpp14) {
         cppCompileArgs.Add(wxT("-std=c++14"));
-        //cCompileArgs.Add(wxT("-std=c++14"));
+        // cCompileArgs.Add(wxT("-std=c++14"));
     }
 
     ///////////////////////////////////////////////////////////////////////
     // Project setting additional flags
     ///////////////////////////////////////////////////////////////////////
 
+    ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(projectName);
+    if(proj) {
+        // Append the project include paths (this includes the C/C++ compiler options that may include
+        // any "pkg-config" style commands
+        wxArrayString compileIncludePaths = proj->GetIncludePaths();
+        std::for_each(compileIncludePaths.begin(), compileIncludePaths.end(), [&](const wxString& path) {
+            cppCompileArgs.Add(wxString::Format(wxT("-I%s"), path.c_str()));
+            cCompileArgs.Add(wxString::Format(wxT("-I%s"), path.c_str()));
+        });
+
+        // Append the macros from the build settings
+        wxArrayString macros = proj->GetPreProcessors();
+        std::for_each(macros.begin(), macros.end(), [&](const wxString& macro) {
+            cppCompileArgs.Add(wxString::Format(wxT("-D%s"), macro.c_str()));
+            cCompileArgs.Add(wxString::Format(wxT("-D%s"), macro.c_str()));
+        });
+    }
+
     BuildConfigPtr buildConf = ManagerST::Get()->GetCurrentBuildConf();
     if(buildConf) {
+
+        // User custom code completion paths
         wxString projSearchPaths = buildConf->GetCcSearchPaths();
         wxArrayString projectIncludePaths = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
         for(size_t i = 0; i < projectIncludePaths.GetCount(); i++) {
-            wxFileName fn(MacroManager::Instance()
-                              ->Expand(projectIncludePaths.Item(i),
-                                       PluginManager::Get(),
-                                       ManagerST::Get()->GetActiveProjectName()),
-                          wxT(""));
+            wxFileName fn(MacroManager::Instance()->Expand(projectIncludePaths.Item(i), PluginManager::Get(),
+                              ManagerST::Get()->GetActiveProjectName()),
+                wxT(""));
             fn.MakeAbsolute(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath());
             cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
             cCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
         }
 
+        // Use Clang pre-processor flags
         wxString strProjectMacros = buildConf->GetClangPPFlags();
         wxArrayString projectMacros = wxStringTokenize(strProjectMacros, wxT("\n\r"), wxTOKEN_STRTOK);
         for(size_t i = 0; i < projectMacros.GetCount(); i++) {
@@ -396,13 +402,14 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
             cCompileArgs.Add(wxString::Format(wxT("-D%s"), projectMacros.Item(i).Trim().Trim(false).c_str()));
         }
 
+        // Enale C++11?
         if(buildConf->IsClangC11()) {
             cppCompileArgs.Add(wxT("-std=c++11"));
-            //cCompileArgs.Add(wxT("-std=c++11"));
         }
+
+        // Enale C++14?
         if(buildConf->IsClangC14()) {
             cppCompileArgs.Add(wxT("-std=c++14"));
-            //cCompileArgs.Add(wxT("-std=c++14"));
         }
     }
 
@@ -456,12 +463,8 @@ void ClangDriver::DoCleanup()
     m_activeEditor = NULL;
 }
 
-void ClangDriver::DoParseCompletionString(CXCompletionString str,
-                                          int depth,
-                                          wxString& entryName,
-                                          wxString& signature,
-                                          wxString& completeString,
-                                          wxString& returnValue)
+void ClangDriver::DoParseCompletionString(CXCompletionString str, int depth, wxString& entryName, wxString& signature,
+    wxString& completeString, wxString& returnValue)
 {
 
     bool collectingSignature = false;
@@ -596,7 +599,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         // User kept on typing while the completion thread was working
         typedString = m_activeEditor->GetTextRange(m_position, m_activeEditor->GetCurrentPosition());
         if(typedString.find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")) !=
-           wxString::npos) {
+            wxString::npos) {
             // User typed some non valid identifier char, cancel code completion
             CL_DEBUG(
                 wxT("User typed: %s since the completion thread started working until it ended, ignoring completion"),

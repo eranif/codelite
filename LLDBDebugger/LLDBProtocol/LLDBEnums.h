@@ -26,9 +26,11 @@
 #ifndef LLDB_ENUMS_H
 #define LLDB_ENUMS_H
 
-#if (defined(__MINGW32__) && defined(__MINGW64__)) || defined(__WXGTK__) || defined(__WXOSX__)
+#if defined(__MINGW32__) && defined(__MINGW64__) && defined(__WXMSW__)
 // Supported on Windows 64 bits only
 #define BUILD_CODELITE_LLDB 0
+#elif defined(__WXGTK__) || defined(__WXOSX__)
+#define BUILD_CODELITE_LLDB 1
 #else
 #define BUILD_CODELITE_LLDB 0
 #endif
@@ -91,8 +93,8 @@ enum eCommandType {
 };
 
 enum eLLDBOptions {
-    kLLDBOptionRaiseCodeLite    = 0x00000001,
-    kLLDBOptionUseRemoteProxy   = 0x00000002,
+    kLLDBOptionRaiseCodeLite = 0x00000001,
+    kLLDBOptionUseRemoteProxy = 0x00000002,
 };
 
 enum eLLDBDebugSessionType {
@@ -109,7 +111,7 @@ enum eLLDBStopReason {
     kStopReasonWatchpoint,
     kStopReasonSignal,
     kStopReasonException,
-    kStopReasonExec,        // Program was re-exec'ed
+    kStopReasonExec, // Program was re-exec'ed
     kStopReasonPlanComplete,
     kStopReasonThreadExiting,
 };

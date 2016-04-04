@@ -53,8 +53,6 @@
   <Environment>
     <![CDATA[]]>
   </Environment>
-  <Project Name="LLDBApp" Path="LLDBDebugger/codelite-lldb/codelite_lldb.project" Active="No"/>
-  <Project Name="LLDBProtocol" Path="LLDBDebugger/LLDBProtocol/LLDBProtocol.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Environment/>
@@ -101,10 +99,8 @@
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
-      <Project Name="LLDBApp" ConfigName="Debug"/>
-      <Project Name="LLDBProtocol" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -149,8 +145,6 @@
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
-      <Project Name="LLDBApp" ConfigName="Debug"/>
-      <Project Name="LLDBProtocol" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -197,8 +191,6 @@
       <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
-      <Project Name="LLDBApp" ConfigName="Debug"/>
-      <Project Name="LLDBProtocol" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -245,8 +237,6 @@
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
-      <Project Name="LLDBApp" ConfigName="Debug"/>
-      <Project Name="LLDBProtocol" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
       <Environment/>
@@ -293,8 +283,6 @@
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
-      <Project Name="LLDBApp" ConfigName="Debug"/>
-      <Project Name="LLDBProtocol" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Environment>WXWIN=D:\src\wxWidgets
@@ -319,9 +307,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="hunspell" ConfigName="Win_x64_Release"/>
       <Project Name="Interfaces" ConfigName="Win_x64_Release"/>
       <Project Name="libCodeLite" ConfigName="Win_x64_Release"/>
-      <Project Name="LLDBApp" ConfigName="Win_x64_Release"/>
       <Project Name="LLDBDebugger" ConfigName="Win_x64_Release"/>
-      <Project Name="LLDBProtocol" ConfigName="Win_x64_Release"/>
       <Project Name="MacBundler" ConfigName="Win_x64_Release"/>
       <Project Name="MemCheck" ConfigName="Win_x64_Release"/>
       <Project Name="Outline" ConfigName="Win_x64_Release"/>
@@ -363,13 +349,10 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="ExternalTools" ConfigName="Win_x64_Debug"/>
       <Project Name="git" ConfigName="Win_x64_Debug"/>
       <Project Name="Gizmos" ConfigName="Win_x64_Debug"/>
-      <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="hunspell" ConfigName="Win_x64_Debug"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="libCodeLite" ConfigName="Win_x64_Debug"/>
-      <Project Name="LLDBApp" ConfigName="Win_x64_Debug"/>
       <Project Name="LLDBDebugger" ConfigName="Win_x64_Debug"/>
-      <Project Name="LLDBProtocol" ConfigName="Win_x64_Debug"/>
       <Project Name="MacBundler" ConfigName="Win_x64_Debug"/>
       <Project Name="MemCheck" ConfigName="Win_x64_Debug"/>
       <Project Name="Outline" ConfigName="Win_x64_Debug"/>
@@ -392,6 +375,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
+      <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

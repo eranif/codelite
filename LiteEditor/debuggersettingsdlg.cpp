@@ -105,6 +105,7 @@ DebuggerPage::DebuggerPage(wxWindow* parent, wxString title)
         m_raiseOnBpHit->SetValue(info.whenBreakpointHitRaiseCodelite);
         m_checkBoxCharArrAsPtr->SetValue(info.charArrAsPtr);
         m_checkBoxUsePrettyPrinting->SetValue(info.enableGDBPrettyPrinting);
+        m_checkBoxPrintObjectOn->SetValue(!(info.flags & DebuggerInformation::kPrintObjectOff));
     }
 }
 
@@ -310,6 +311,11 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
             info.whenBreakpointHitRaiseCodelite = page->m_raiseOnBpHit->IsChecked();
             info.charArrAsPtr = page->m_checkBoxCharArrAsPtr->IsChecked();
             info.enableGDBPrettyPrinting = page->m_checkBoxUsePrettyPrinting->IsChecked();
+            if(page->m_checkBoxPrintObjectOn->IsChecked()) {
+                info.flags &= ~DebuggerInformation::kPrintObjectOff;
+            } else {
+                info.flags |= DebuggerInformation::kPrintObjectOff;
+            }
             DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
         }
 

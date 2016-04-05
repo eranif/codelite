@@ -54,7 +54,7 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     #endif
     
     SetName(wxT("DebuggerSettingsBaseDlg"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -108,7 +108,7 @@ DbgPageStartupCmdsBase::DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id, 
     bSizer7->Add(m_textCtrlStartupCommands, 1, wxALL|wxEXPAND, 5);
     
     SetName(wxT("DbgPageStartupCmdsBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -163,7 +163,7 @@ PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id
     bSizer6->Add(m_buttonDelete, 0, wxALL|wxEXPAND, 5);
     
     SetName(wxT("PreDefinedTypesPageBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -251,7 +251,7 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
     bSizer18->Add(m_button10, 0, wxALL, 5);
     
     SetName(wxT("NewPreDefinedSetBaseDlg"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -415,8 +415,14 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer21->Add(0, 0, 0, wxALL, 5);
     
+    m_checkBoxPrintObjectOn = new wxCheckBox(m_panel6, wxID_ANY, _("Print object ON"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxPrintObjectOn->SetValue(false);
+    m_checkBoxPrintObjectOn->SetToolTip(_("When displaying a pointer to an object, identify the actual (derived) type of the object rather than the declared type, using the virtual function table."));
+    
+    fgSizer21->Add(m_checkBoxPrintObjectOn, 0, wxALL, 5);
+    
     SetName(wxT("DbgPageGeneralBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -516,7 +522,7 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     gSizer5->Add(m_textCtrlCygwinPathCommand, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     SetName(wxT("DbgPageMiscBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -581,7 +587,7 @@ DbgPagePreDefTypesBase::DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id, 
     sbSizer5->Add(m_notebookPreDefTypes, 1, wxEXPAND, 5);
     
     SetName(wxT("DbgPagePreDefTypesBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -698,7 +704,7 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
     
     SetName(wxT("DebuggerDisassemblyTabBase"));
-    SetSizeHints(500,300);
+    SetSize(500,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -745,7 +751,7 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     boxSizer29->Add(m_listTable, 1, wxALL|wxEXPAND, 2);
     
     SetName(wxT("LocalsTableBase"));
-    SetSizeHints(500,300);
+    SetSize(500,300);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

@@ -1047,7 +1047,11 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
         ExecuteCmd(wxT("break assert"));
     }
 #endif
-
+    
+    if(!(m_info.flags & DebuggerInformation::kPrintObjectOff)) {
+        ExecuteCmd("set print object on");
+    }
+    
     ExecuteCmd(wxT("set width 0"));
     ExecuteCmd(wxT("set height 0"));
 

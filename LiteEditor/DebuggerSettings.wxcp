@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 67,
+  "m_objCounter": 69,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafter6v4fW1InitBitmapResources",
   "m_bitmapsFile": "DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp",
@@ -9,6 +9,8 @@
   "m_outputFileName": "debuggersettingsbasedlg",
   "m_firstWindowId": 7333,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -3776,6 +3778,81 @@
                  "type": "string",
                  "m_label": "Size:",
                  "m_value": "0,0"
+                }],
+               "m_events": [],
+               "m_children": []
+              }, {
+               "m_type": 4415,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": "1,1",
+               "gbPosition": "0,0",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_checkBoxPrintObjectOn"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": "When displaying a pointer to an object, identify the actual (derived) type of the object rather than the declared type, using the virtual function table."
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Label:",
+                 "m_value": "Print object ON"
+                }, {
+                 "type": "bool",
+                 "m_label": "Value:",
+                 "m_value": false
                 }],
                "m_events": [],
                "m_children": []

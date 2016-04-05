@@ -424,3 +424,21 @@ void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
         e.Check(false);
     }
 }
+
+void ReplaceInFilesPanel::OnMouseDClick(wxStyledTextEvent& e)
+{
+    // Override the default behvior to avoid clearning the markers
+    long pos = e.GetPosition();
+    int line = m_sci->LineFromPosition(pos);
+    int style = m_sci->GetStyleAt(pos);
+
+    if(style == LEX_FIF_FILE || style == LEX_FIF_HEADER) {
+        m_sci->ToggleFold(line);
+
+    } else {
+        MatchInfo_t::const_iterator m = m_matchInfo.find(line);
+        if(m != m_matchInfo.end()) {
+            DoOpenSearchResult(m->second, NULL, m->first);
+        }
+    }
+}

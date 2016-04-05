@@ -56,6 +56,7 @@ protected:
     virtual void OnReplaceUI(wxUpdateUIEvent& e);
     virtual void OnReplaceWithComboUI(wxUpdateUIEvent& e);
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
+    virtual void OnMouseDClick(wxStyledTextEvent& e);
 
 public:
     ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString& name);

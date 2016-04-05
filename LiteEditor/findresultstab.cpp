@@ -51,15 +51,6 @@
 #include "editor_config.h"
 #include "codelite_events.h"
 
-// Custom styles
-#define LEX_FIF_DEFAULT 0
-#define LEX_FIF_FILE 1
-#define LEX_FIF_MATCH 2
-#define LEX_FIF_LINE_NUMBER 3
-#define LEX_FIF_HEADER 4
-#define LEX_FIF_SCOPE 5
-#define LEX_FIF_MATCH_COMMENT 6
-
 BEGIN_EVENT_TABLE(FindResultsTab, OutputTabWindow)
 EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED, FindResultsTab::OnSearchStart)
 EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND, FindResultsTab::OnSearchMatch)

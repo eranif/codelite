@@ -6105,9 +6105,6 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
         if(m_frameHelper->IsCaptionsVisible()) {
             DoShowCaptions(false);
         }
-        if(m_frameHelper->IsStatusBarVisible()) {
-            GetStatusBar()->Show(false);
-        }
     } else {
         if(!m_frameHelper->IsToolbarShown()) {
             DoShowToolbars(true, false);
@@ -6115,17 +6112,13 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
         if(!m_frameHelper->IsCaptionsVisible()) {
             DoShowCaptions(true);
         }
-        if(!m_frameHelper->IsStatusBarVisible()) {
-            GetStatusBar()->Show(true);
-        }
     }
 
     // Update the various configurations
     clConfig::Get().Write(kConfigShowToolBar, !minimalView);
-    clConfig::Get().Write(kConfigShowStatusBar, !minimalView);
     clConfig::Get().Write("MinimalView", !minimalView); // for next time
 
-    // Update the captiosn settings
+    // Update the captions settings
     OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
     opts->SetShowDockingWindowCaption(!minimalView);
     EditorConfigST::Get()->SetOptions(opts);

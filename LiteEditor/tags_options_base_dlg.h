@@ -27,6 +27,7 @@
 #include <wx/slider.h>
 #include <wx/notebook.h>
 #include <wx/bannerwindow.h>
+#include <wx/stc/stc.h>
 #include <wx/button.h>
 #include <wx/hyperlink.h>
 #include <wx/choice.h>
@@ -69,22 +70,22 @@ protected:
     wxNotebook* m_notebook36;
     wxPanel* m_panel38;
     wxBannerWindow* m_banner34;
-    wxTextCtrl* m_textCtrlCtagsSearchPaths;
+    wxStyledTextCtrl* m_textCtrlCtagsSearchPaths;
     wxButton* m_buttonAddSearchPath;
     wxButton* m_buttonCtagsSuggest;
     wxPanel* m_panel40;
     wxBannerWindow* m_banner44;
-    wxTextCtrl* m_textCtrlCtagsExcludePaths;
+    wxStyledTextCtrl* m_textCtrlCtagsExcludePaths;
     wxButton* m_buttonAddExcludePath;
     wxPanel* m_panelCtagsAdvanced;
     wxNotebook* m_notebook2;
     wxPanel* m_panelClangGeneral;
-    wxTextCtrl* m_textPrep;
+    wxStyledTextCtrl* m_textPrep;
     wxStaticText* m_staticText9;
     wxHyperlinkCtrl* m_hyperlink1;
     wxPanel* m_panel5;
     wxStaticText* m_staticText91;
-    wxTextCtrl* m_textTypes;
+    wxStyledTextCtrl* m_textTypes;
     wxTextCtrl* m_textCtrlFilesList;
     wxButton* m_buttonParse;
     wxPanel* m_panelClang;
@@ -94,7 +95,7 @@ protected:
     wxCheckBox* m_checkBoxClangFirst;
     wxStaticText* m_staticText13;
     wxPanel* m_panel8;
-    wxTextCtrl* m_textCtrlClangSearchPaths;
+    wxStyledTextCtrl* m_textCtrlClangSearchPaths;
     wxButton* m_buttonSuggest;
     wxPanel* m_panel4;
     wxStaticText* m_staticText101;
@@ -138,22 +139,22 @@ public:
     wxCheckBox* GetCheckAutoInsertSingleChoice() { return m_checkAutoInsertSingleChoice; }
     wxPanel* GetPaneTriggering() { return m_paneTriggering; }
     wxBannerWindow* GetBanner34() { return m_banner34; }
-    wxTextCtrl* GetTextCtrlCtagsSearchPaths() { return m_textCtrlCtagsSearchPaths; }
+    wxStyledTextCtrl* GetTextCtrlCtagsSearchPaths() { return m_textCtrlCtagsSearchPaths; }
     wxButton* GetButtonAddSearchPath() { return m_buttonAddSearchPath; }
     wxButton* GetButtonCtagsSuggest() { return m_buttonCtagsSuggest; }
     wxPanel* GetPanel38() { return m_panel38; }
     wxBannerWindow* GetBanner44() { return m_banner44; }
-    wxTextCtrl* GetTextCtrlCtagsExcludePaths() { return m_textCtrlCtagsExcludePaths; }
+    wxStyledTextCtrl* GetTextCtrlCtagsExcludePaths() { return m_textCtrlCtagsExcludePaths; }
     wxButton* GetButtonAddExcludePath() { return m_buttonAddExcludePath; }
     wxPanel* GetPanel40() { return m_panel40; }
     wxNotebook* GetNotebook36() { return m_notebook36; }
     wxPanel* GetPanelCtagsSearchPaths() { return m_panelCtagsSearchPaths; }
-    wxTextCtrl* GetTextPrep() { return m_textPrep; }
+    wxStyledTextCtrl* GetTextPrep() { return m_textPrep; }
     wxStaticText* GetStaticText9() { return m_staticText9; }
     wxHyperlinkCtrl* GetHyperlink1() { return m_hyperlink1; }
     wxPanel* GetPanelClangGeneral() { return m_panelClangGeneral; }
     wxStaticText* GetStaticText91() { return m_staticText91; }
-    wxTextCtrl* GetTextTypes() { return m_textTypes; }
+    wxStyledTextCtrl* GetTextTypes() { return m_textTypes; }
     wxPanel* GetPanel5() { return m_panel5; }
     wxNotebook* GetNotebook2() { return m_notebook2; }
     wxTextCtrl* GetTextCtrlFilesList() { return m_textCtrlFilesList; }
@@ -163,7 +164,7 @@ public:
     wxCheckBox* GetCheckBoxEnableClangCC() { return m_checkBoxEnableClangCC; }
     wxCheckBox* GetCheckBoxClangFirst() { return m_checkBoxClangFirst; }
     wxStaticText* GetStaticText13() { return m_staticText13; }
-    wxTextCtrl* GetTextCtrlClangSearchPaths() { return m_textCtrlClangSearchPaths; }
+    wxStyledTextCtrl* GetTextCtrlClangSearchPaths() { return m_textCtrlClangSearchPaths; }
     wxButton* GetButtonSuggest() { return m_buttonSuggest; }
     wxPanel* GetPanel8() { return m_panel8; }
     wxPanel* GetPanel3() { return m_panel3; }

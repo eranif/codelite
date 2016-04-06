@@ -34,6 +34,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class TagsOptionsDlg
 ///////////////////////////////////////////////////////////////////////////////
+class wxStyledTextCtrl;
 class TagsOptionsDlg : public TagsOptionsBaseDlg
 {
     TagsOptionsData m_data;
@@ -46,7 +47,7 @@ protected:
     virtual void OnColouringPropertyValueChanged(wxPropertyGridEvent& event);
     virtual void OnSuggestCtags(wxCommandEvent& event);
     wxArrayString GetCTagsSearchPaths() const;
-    void DoSuggest(wxTextCtrl* textCtrl);
+    void DoSuggest(wxStyledTextCtrl* textCtrl);
 
 protected:
     virtual void OnAddExcludePath(wxCommandEvent& event);

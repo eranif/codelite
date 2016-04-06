@@ -42,6 +42,8 @@
 #include <ICompilerLocator.h>
 #include <wx/msgdlg.h>
 #include "clSingleChoiceDialog.h"
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
 
 //---------------------------------------------------------
 
@@ -50,6 +52,15 @@ TagsOptionsDlg::TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data)
     , m_data(data)
 {
     MSWSetNativeTheme(m_treebook2->GetTreeCtrl());
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        lexer->Apply(m_textCtrlClangSearchPaths);
+        lexer->Apply(m_textCtrlCtagsExcludePaths);
+        lexer->Apply(m_textCtrlCtagsSearchPaths);
+        lexer->Apply(m_textPrep);
+        lexer->Apply(m_textTypes);
+    }
+    
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrColouring->GetGrid());
     Centre();
     GetSizer()->Fit(this);
@@ -330,7 +341,7 @@ void TagsOptionsDlg::OnSuggestCtags(wxCommandEvent& event)
     DoSuggest(m_textCtrlCtagsSearchPaths);
 }
 
-void TagsOptionsDlg::DoSuggest(wxTextCtrl* textCtrl)
+void TagsOptionsDlg::DoSuggest(wxStyledTextCtrl* textCtrl)
 {
     CompilerPtrVec_t allCompilers = BuildSettingsConfigST::Get()->GetAllCompilers();
 

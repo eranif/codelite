@@ -691,22 +691,25 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
         m_view->MarkerAdd(bli->GetLineInBuildTab(), LEX_GCC_MARKER);
 
         if(!fn.IsAbsolute()) {
-            std::vector<wxFileName> files;
+            std::set<wxString> files;
             std::vector<wxFileName> candidates;
-            ManagerST::Get()->GetWorkspaceFiles(files, true);
+            ManagerST::Get()->GetWorkspaceFiles(files);
 
-            for(size_t i = 0; i < files.size(); ++i) {
-                if(files.at(i).GetFullName() == fn.GetFullName()) {
-                    candidates.push_back(files.at(i));
+            std::for_each(files.begin(), files.end(), [&](const wxString& filepath) {
+                wxFileName fnFilePath(filepath);
+                if(fnFilePath.GetFullName() == fn.GetFullName()) {
+                    candidates.push_back(fnFilePath);
                 }
+            });
+
+            if(candidates.empty()) {
+                return false;
             }
 
-            if(candidates.empty()) return false;
-
-            if(candidates.size() == 1)
+            if(candidates.size() == 1) {
                 fn = candidates.at(0);
 
-            else {
+            } else {
                 // prompt the user
                 wxArrayString fileArr;
                 for(size_t i = 0; i < candidates.size(); ++i) {

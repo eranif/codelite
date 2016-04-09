@@ -34,7 +34,7 @@ You should have wxWidgets 3.0 or later built on your machine. If you don't know 
 
 On Ubuntu / Debian you can install all of the above (except for wxWidgets 3.0) by typing:
 
-    sudo apt-get install libgtk2.0-dev pkg-config build-essential git cmake libssh-dev
+    sudo apt-get install libgtk2.0-dev pkg-config build-essential git cmake libssh-dev libwxbase3.0-dev libsqlite3-dev libwxsqlite3-3.0-dev
 
 Git clone the sources:
 

@@ -533,4 +533,9 @@ WXDLLIMPEXP_SDK void clSetManager(IManager* manager);
  */
 WXDLLIMPEXP_SDK void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer);
 
+/**
+ * @brief return true if the name is valid
+ */
+WXDLLIMPEXP_SDK bool clIsVaidProjectName(const wxString& name);
+
 #endif // GLOBALS_H

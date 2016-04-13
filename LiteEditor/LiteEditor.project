@@ -479,6 +479,8 @@
     </VirtualDirectory>
     <File Name="OpenFolderDlg.h"/>
     <File Name="OpenFolderDlg.cpp"/>
+    <File Name="FindInFilesLocationsDlg.h"/>
+    <File Name="FindInFilesLocationsDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>

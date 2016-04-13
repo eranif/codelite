@@ -36,6 +36,7 @@
 #include "windowattrmanager.h"
 #include <algorithm>
 #include "clWorkspaceManager.h"
+#include "FindInFilesLocationsDlg.h"
 
 FindInFilesDialog::FindInFilesDialog(
     wxWindow* parent, const wxString& dataName, const wxArrayString& additionalSearchPaths)
@@ -330,6 +331,15 @@ void FindInFilesDialog::OnClose(wxCloseEvent& e) { Destroy(); }
 
 void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
 {
+#ifdef __WXOSX__
+    // There is a bug in OSX that prevents popup menu from being displayed from dialogs
+    // so we use an alternative way
+    FindInFilesLocationsDlg dlg(this, m_listPaths->GetStrings());
+    if(dlg.ShowModal() == wxID_OK) {
+        m_listPaths->Clear();
+        m_listPaths->Append(dlg.GetLocations());
+    }
+#else
     // Show a popup menu
     wxMenu menu;
     int firstItem = 8994;
@@ -349,9 +359,6 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     options.insert(std::make_pair(firstItem + 4, SEARCH_IN_OPEN_FILES));
 
     wxPoint pt = m_btnAddPath->GetRect().GetBottomLeft();
-    pt.x += 1;
-    pt.y += 1;
-
     int selection = GetPopupMenuSelectionFromUser(menu, pt);
     if(selection == wxID_NONE) return;
     if(selection == (firstItem + 5)) {
@@ -362,6 +369,7 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     } else if(options.count(selection)) {
         DoAddSearchPath(options.find(selection)->second);
     }
+#endif
 }
 
 int FindInFilesDialog::ShowDialog()
@@ -478,6 +486,5 @@ void FindInFilesDialog::DoAddSearchPaths(const wxArrayString& paths)
 }
 void FindInFilesDialog::OnReplaceUI(wxUpdateUIEvent& event)
 {
-    event.Enable(
-        !m_findString->GetValue().IsEmpty() && !m_listPaths->IsEmpty() && !m_replaceString->GetValue().IsEmpty());
+    event.Enable(!m_findString->GetValue().IsEmpty() && !m_listPaths->IsEmpty());
 }

@@ -33,6 +33,8 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     
     m_auibar76->AddTool(ID_SHOW_COMMIT_HISTORY, _("Commit History"), wxXmlResource::Get()->LoadBitmap(wxT("16-history")), wxNullBitmap, wxITEM_NORMAL, _("Show Commit History"), _("Show Commit History"), NULL);
     
+    m_auibar76->AddStretchSpacer(1);
+    
     m_auibar76->AddTool(ID_TOOL_CLEAR_HISTORY, _("Clear History"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear History"), _("Clear History"), NULL);
     m_auibar76->Realize();
     

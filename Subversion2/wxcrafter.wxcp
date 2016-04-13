@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 80,
+  "m_objCounter": 84,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC38D8InitBitmapResources",
   "m_bitmapsFile": "wxcrafter_subversion2_bitmaps.cpp",
@@ -246,6 +246,25 @@
            "m_description": "Process a wxEVT_UPDATE_UI event",
            "m_noBody": false
           }],
+         "m_children": []
+        }, {
+         "m_type": 4516,
+         "proportion": 0,
+         "border": 5,
+         "gbSpan": "1,1",
+         "gbPosition": "0,0",
+         "m_styles": [],
+         "m_sizerFlags": [],
+         "m_properties": [{
+           "type": "string",
+           "m_label": "Name:",
+           "m_value": "m_auitbarStretchSpace84"
+          }, {
+           "type": "string",
+           "m_label": "Proportion:",
+           "m_value": "1"
+          }],
+         "m_events": [],
          "m_children": []
         }, {
          "m_type": 4462,

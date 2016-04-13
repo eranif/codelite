@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 366,
+  "m_objCounter": 370,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterpca4kKInitBitmapResources",
   "m_bitmapsFile": "gitui_git_bitmaps.cpp",
@@ -2456,7 +2456,7 @@
           }],
          "m_children": []
         }, {
-         "m_type": 4504,
+         "m_type": 4516,
          "proportion": 0,
          "border": 5,
          "gbSpan": "1,1",
@@ -2466,12 +2466,11 @@
          "m_properties": [{
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_tbSeparator353"
+           "m_value": "m_auitbarStretchSpace370"
           }, {
-           "type": "choice",
-           "m_label": "Kind:",
-           "m_selection": 0,
-           "m_options": ["separator"]
+           "type": "string",
+           "m_label": "Proportion:",
+           "m_value": "1"
           }],
          "m_events": [],
          "m_children": []

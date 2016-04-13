@@ -55,6 +55,7 @@ private:
     void OnChangeFile(wxCommandEvent& e);
 
 protected:
+    virtual void OnClearGitCommitHistoryUI(wxUpdateUIEvent& event);
     virtual void OnCommitHistory(wxCommandEvent& event);
     virtual void OnCommitHistoryUI(wxUpdateUIEvent& event);
     virtual void OnClearGitCommitHistory(wxCommandEvent& event);

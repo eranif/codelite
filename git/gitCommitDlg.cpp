@@ -183,3 +183,6 @@ void GitCommitDlg::OnCommitHistoryUI(wxUpdateUIEvent& event)
     conf.ReadItem(&data);
     event.Enable(!data.GetRecentCommit().IsEmpty());
 }
+void GitCommitDlg::OnClearGitCommitHistoryUI(wxUpdateUIEvent& event)
+{
+}

@@ -3237,6 +3237,7 @@ void TagsManager::GetKeywordsTagsForLanguage(const wxString& filter, eLanguage l
             " not"
             " not_eq"
             " nullptr"
+            " once"
             " operator"
             " or"
             " or_eq"

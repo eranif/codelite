@@ -45,9 +45,6 @@ FindInFilesDialog::FindInFilesDialog(
     m_data.SetName(dataName);
     m_nonPersistentSearchPaths.insert(additionalSearchPaths.begin(), additionalSearchPaths.end());
 
-    GetSizer()->Fit(this);
-    SetMinClientSize(GetClientSize());
-
     // Store the find-in-files data
     clConfig::Get().ReadItem(&m_data);
     wxArrayString paths = m_data.GetSearchPaths();
@@ -107,7 +104,11 @@ FindInFilesDialog::FindInFilesDialog(
     // Set the file mask
     DoSetFileMask();
     SetName("FindInFilesDialog");
-
+    
+    // Fit the initial size and set it as the default minimum size
+    GetSizer()->Fit(this);
+    SetMinSize(GetSize());
+    
     // Load the last size and position, but not on GTK
     WindowAttrManager::Load(this);
     CentreOnParent();
@@ -357,9 +358,12 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     options.insert(std::make_pair(firstItem + 2, SEARCH_IN_CURR_FILE_PROJECT));
     options.insert(std::make_pair(firstItem + 3, SEARCH_IN_CURRENT_FILE));
     options.insert(std::make_pair(firstItem + 4, SEARCH_IN_OPEN_FILES));
-
-    wxPoint pt = m_btnAddPath->GetRect().GetBottomLeft();
-    int selection = GetPopupMenuSelectionFromUser(menu, pt);
+    
+    // Menu will be shown in client coordinates
+    wxRect size = m_btnAddPath->GetSize();
+    wxPoint menuPos(0, size.GetHeight());
+    int selection = m_btnAddPath->GetPopupMenuSelectionFromUser(menu, menuPos);
+    
     if(selection == wxID_NONE) return;
     if(selection == (firstItem + 5)) {
         wxString folder = ::wxDirSelector();

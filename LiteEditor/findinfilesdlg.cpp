@@ -455,11 +455,11 @@ void FindInFilesDialog::OnClearSelectedPath(wxCommandEvent& event)
 {
     wxArrayInt selections;
     m_listPaths->GetSelections(selections);
-    while(!selections.IsEmpty()) {
-        m_listPaths->Delete(selections.Item(0));
-
-        selections.Clear();
-        m_listPaths->GetSelections(selections);
+    int selectionsCount = selections.GetCount();
+    if(!selections.IsEmpty()) {
+        for(int i = (selectionsCount - 1); i >= 0; --i) {
+            m_listPaths->Delete(selections.Item(i));
+        }
     }
 }
 

@@ -133,36 +133,28 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer41->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_TOP, 5);
     
+    wxArrayString m_listPathsArr;
+    m_listPaths = new wxListBox(m_panelMainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_listPathsArr, wxLB_MULTIPLE);
+    
+    fgSizer41->Add(m_listPaths, 1, wxALL|wxEXPAND, 5);
+    
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxHORIZONTAL);
     
     fgSizer41->Add(bSizer9, 1, wxEXPAND, 5);
-    
-    wxArrayString m_listPathsArr;
-    m_listPaths = new wxListBox(m_panelMainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_listPathsArr, wxLB_SORT|wxLB_MULTIPLE);
-    
-    bSizer9->Add(m_listPaths, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     
     bSizer9->Add(boxSizer1, 0, wxEXPAND|wxALIGN_TOP, 5);
     
-    m_btnAddPath = new wxButton(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 2904
-    m_btnAddPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxLEFT);
-    m_btnAddPath->SetBitmapMargins(2,2);
-    #endif
-    m_btnAddPath->SetToolTip(_("Add search location..."));
+    m_btnAddPath = new wxButton(m_panelMainPanel, wxID_ANY, _("Add Path..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_btnAddPath->SetToolTip(_("Add new search location"));
     
-    boxSizer1->Add(m_btnAddPath, 0, wxALL|wxEXPAND, 5);
+    boxSizer1->Add(m_btnAddPath, 0, wxALL, 5);
     
-    m_btnClearSelectedPath = new wxButton(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 2904
-    m_btnClearSelectedPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("16-minus")), wxLEFT);
-    m_btnClearSelectedPath->SetBitmapMargins(5,5);
-    #endif
-    m_btnClearSelectedPath->SetToolTip(_("Remove the selected search location"));
+    m_btnClearSelectedPath = new wxButton(m_panelMainPanel, wxID_ANY, _("Clear Path"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_btnClearSelectedPath->SetToolTip(_("Clear the selected entry from the\n'Look In' list box"));
     
-    boxSizer1->Add(m_btnClearSelectedPath, 0, wxALL|wxEXPAND, 5);
+    boxSizer1->Add(m_btnClearSelectedPath, 0, wxALL, 5);
     
     fgSizer41->Add(0, 0, 1, wxALL, 5);
     

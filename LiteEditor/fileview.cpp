@@ -96,7 +96,6 @@ EVT_MENU(XRCID("local_project_prefs"), FileViewTree::OnLocalPrefs)
 EVT_MENU(XRCID("project_properties"), FileViewTree::OnProjectProperties)
 EVT_MENU(XRCID("sort_item"), FileViewTree::OnSortItem)
 EVT_MENU(XRCID("remove_item"), FileViewTree::OnRemoveItem)
-EVT_MENU(XRCID("export_makefile"), FileViewTree::OnExportMakefile)
 EVT_MENU(XRCID("save_as_template"), FileViewTree::OnSaveAsTemplate)
 EVT_MENU(XRCID("build_order"), FileViewTree::OnBuildOrder)
 EVT_MENU(XRCID("clean_project"), FileViewTree::OnClean)
@@ -607,21 +606,6 @@ void FileViewTree::OnOpenInEditor(wxCommandEvent& event)
             // DON'T ask the plugins if they want the file opening in another way, as happens from a double-click
             // Here we _know_ the user wants to open in CL
             clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), project, -1);
-        }
-    }
-}
-
-void FileViewTree::OnExportMakefile(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    wxTreeItemId item = GetSingleSelection();
-    if(item.IsOk()) {
-        wxString projectName, errMsg;
-        BuilderPtr builder = BuildManagerST::Get()->GetSelectedBuilder(); // use current builder
-        projectName = GetItemText(item);
-        if(!builder->Export(projectName, wxEmptyString, false, true, errMsg)) {
-            wxMessageBox(errMsg, _("CodeLite"), wxICON_HAND);
-            return;
         }
     }
 }

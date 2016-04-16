@@ -5093,7 +5093,7 @@ void clMainFrame::OnClearTagsCache(wxCommandEvent& e)
 void clMainFrame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
 {
     int cpus = wxThread::GetCPUCount();
-    BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(wxT("GNU makefile for g++/gcc"));
+    BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig("Default");
     if(bs && cpus != wxNOT_FOUND) {
         wxString jobs;
         jobs << cpus;

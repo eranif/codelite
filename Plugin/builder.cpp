@@ -39,7 +39,7 @@ Builder::Builder(const wxString &name, const wxString &buildTool, const wxString
         m_isActive = config->GetIsActive();
         
     } else {
-        m_isActive = (m_name == wxT("GNU makefile for g++/gcc"));
+        m_isActive = (m_name == "Default");
     }
 }
 

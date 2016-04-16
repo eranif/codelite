@@ -220,7 +220,7 @@ void BuildSettingsConfig::SaveBuilderConfig(BuilderPtr builder)
 
 wxString BuildSettingsConfig::GetSelectedBuildSystem()
 {
-    wxString active(wxT("GNU makefile for g++/gcc"));
+    wxString active("Default");
 
     wxXmlNode* node = m_doc->GetRoot()->GetChildren();
     while(node) {

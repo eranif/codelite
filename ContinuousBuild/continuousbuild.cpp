@@ -190,7 +190,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
         return;
     }
 
-    BuilderPtr builder = m_mgr->GetBuildManager()->GetBuilder(wxT("GNU makefile for g++/gcc"));
+    BuilderPtr builder = bldConf->GetBuilder();
     if(!builder) {
         CL_DEBUG(wxT("Failed to located builder\n"));
         return;

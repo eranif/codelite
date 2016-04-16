@@ -78,11 +78,14 @@ protected:
     wxPropertyGridManager* m_pgMgr136;
     wxPGProperty* CATEGORY_GENERAL;
     wxPGProperty* m_pgPropProjectType;
+    wxPGProperty* CATEGORY_BUILD;
+    wxPGProperty* m_pgPropMakeGenerator;
+    wxPGProperty* m_pgPropMakeGeneratorArgs;
     wxPGProperty* m_pgPropCompiler;
     wxPGProperty* m_pgPropIntermediateFolder;
     wxPGProperty* m_pgPropOutputFile;
-    wxPGProperty* m_pgPropPause;
     wxPGProperty* CATEGORY_EXECUTION;
+    wxPGProperty* m_pgPropPause;
     wxPGProperty* m_pgPropGUIApp;
     wxPGProperty* m_pgPropProgram;
     wxPGProperty* m_pgPropWorkingDirectory;

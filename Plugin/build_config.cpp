@@ -33,6 +33,7 @@
 #include "globals.h"
 #include "wx_xml_compatibility.h"
 #include <wx/tokenzr.h>
+#include "buildmanager.h"
 
 const wxString BuildConfig::OVERWRITE_GLOBAL_SETTINGS = "overwrite";
 const wxString BuildConfig::APPEND_TO_GLOBAL_SETTINGS = "append";
@@ -47,6 +48,7 @@ BuildConfig::BuildConfig(wxXmlNode* node)
     , m_isGUIProgram(false)
     , m_isProjectEnabled(true)
     , m_pchPolicy(BuildConfig::kPCHPolicyReplace)
+    , m_buildSystem("Default")
 {
     if(node) {
         m_name = XmlUtils::ReadString(node, wxT("Name"));
@@ -59,6 +61,12 @@ BuildConfig::BuildConfig(wxXmlNode* node)
             XmlUtils::ReadString(node, wxT("BuildLnkWithGlobalSettings"), APPEND_TO_GLOBAL_SETTINGS);
         m_buildResWithGlobalSettings =
             XmlUtils::ReadString(node, wxT("BuildResWithGlobalSettings"), APPEND_TO_GLOBAL_SETTINGS);
+
+        wxXmlNode* buildSystem = XmlUtils::FindFirstByTagName(node, wxT("BuildSystem"));
+        if(buildSystem) {
+            m_buildSystem = XmlUtils::ReadString(buildSystem, "Name", m_buildSystem);
+            m_buildSystemArguments = buildSystem->GetNodeContent();
+        }
 
         wxXmlNode* completion = XmlUtils::FindFirstByTagName(node, wxT("Completion"));
         if(completion) {
@@ -347,8 +355,12 @@ wxXmlNode* BuildConfig::ToXml() const
     general->AddProperty(wxT("PauseExecWhenProcTerminates"), BoolToString(m_pauseWhenExecEnds));
     general->AddProperty("IsGUIProgram", BoolToString(m_isGUIProgram));
     general->AddProperty("IsEnabled", BoolToString(m_isProjectEnabled));
-
     node->AddChild(general);
+
+    wxXmlNode* buildSystem = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("BuildSystem"));
+    buildSystem->AddProperty("Name", m_buildSystem);
+    XmlUtils::SetNodeContent(buildSystem, m_buildSystemArguments);
+    node->AddChild(buildSystem);
 
     wxXmlNode* debugger = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Debugger"));
     debugger->AddProperty(wxT("IsRemote"), BoolToString(m_isDbgRemoteTarget));
@@ -499,3 +511,5 @@ wxString BuildConfig::GetIntermediateDirectory() const { return NormalizePath(m_
 wxString BuildConfig::GetWorkingDirectory() const { return NormalizePath(m_workingDirectory); }
 
 CompilerPtr BuildConfig::GetCompiler() const { return BuildSettingsConfigST::Get()->GetCompiler(GetCompilerType()); }
+
+BuilderPtr BuildConfig::GetBuilder() { return BuildManagerST::Get()->GetBuilder(GetBuildSystem()); }

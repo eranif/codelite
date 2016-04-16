@@ -33,6 +33,7 @@
 #include <map>
 #include "compiler.h"
 #include "codelite_exports.h"
+#include "builder.h"
 
 #ifndef WXDLLIMPEXP_LE_SDK
 #ifdef WXMAKINGDLL_LE_SDK
@@ -143,6 +144,8 @@ private:
     bool m_isGUIProgram;
     bool m_isProjectEnabled;
     ePCHPolicy m_pchPolicy;
+    wxString m_buildSystem;
+    wxString m_buildSystemArguments;
 
 public:
     BuildConfig(wxXmlNode* node);
@@ -345,6 +348,20 @@ public:
     void SetEnvVarSet(const wxString& envVarSet) { this->m_envVarSet = envVarSet; }
     const wxString& GetDbgEnvSet() const { return m_dbgEnvSet; }
     const wxString& GetEnvVarSet() const { return m_envVarSet; }
+
+    void SetBuildSystem(const wxString& buildSystem) { this->m_buildSystem = buildSystem; }
+    const wxString& GetBuildSystem() const { return m_buildSystem; }
+    void SetBuildSystemArguments(const wxString& buildSystemArguments)
+    {
+        this->m_buildSystemArguments = buildSystemArguments;
+    }
+    const wxString& GetBuildSystemArguments() const { return m_buildSystemArguments; }
+    
+    /**
+     * @brief return the build defined for this build configuration
+     * @return 
+     */
+    BuilderPtr GetBuilder();
 };
 
 typedef SmartPtr<BuildConfig> BuildConfigPtr;

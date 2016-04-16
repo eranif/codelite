@@ -79,24 +79,6 @@ BuilderPtr BuildManager::GetBuilder(const wxString& name)
     return m_builders.begin()->second;
 }
 
-BuilderPtr BuildManager::GetSelectedBuilder()
-{
-    // Gnu Makefile C/C++ is the default builder
-    BuilderPtr defaultBuilder = m_builders.begin()->second;
-
-    std::list<wxString> builders;
-    GetBuilders(builders);
-
-    std::list<wxString>::iterator iter = builders.begin();
-    for(; iter != builders.end(); iter++) {
-
-        wxString builderName = *iter;
-        BuilderPtr builder = BuildManagerST::Get()->GetBuilder(builderName);
-        if(builder->IsActive()) return builder;
-    }
-
-    return defaultBuilder;
-}
 static BuildManager* gs_BuildManager = NULL;
 void BuildManagerST::Free()
 {

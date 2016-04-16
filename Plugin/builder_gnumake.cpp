@@ -76,7 +76,7 @@ static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString& relPath = 
 }
 
 BuilderGnuMake::BuilderGnuMake()
-    : Builder(wxT("GNU makefile for g++/gcc"), wxT("make"), wxT("-f"))
+    : Builder("Default", wxT("make"), wxT("-f"))
     , m_objectChunks(1)
 {
 }

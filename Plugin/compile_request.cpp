@@ -68,7 +68,6 @@ void CompileRequest::Process(IManager* manager)
     wxStringMap_t om;
 
     BuildSettingsConfig* bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
-    BuildManager* bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
     clCxxWorkspace* w(manager ? manager->GetWorkspace() : clCxxWorkspaceST::Get());
     EnvironmentConfig* env(manager ? manager->GetEnv() : EnvironmentConfig::Instance());
 
@@ -97,29 +96,6 @@ void CompileRequest::Process(IManager* manager)
         }
     }
 
-    // BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
-    BuilderPtr builder = bm->GetSelectedBuilder();
-    if(m_fileName.IsEmpty() == false) {
-        // we got a complie request of a single file
-        cmd = m_preprocessOnly ?
-            builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg) :
-            builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
-    } else if(m_info.GetProjectOnly()) {
-
-        switch(m_info.GetKind()) {
-        case QueueCommand::kRebuild:
-            cmd = builder->GetPORebuildCommand(m_info.GetProject(), m_info.GetConfiguration());
-            break;
-        default:
-        case QueueCommand::kBuild:
-            cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
-            break;
-        }
-
-    } else {
-        cmd = builder->GetBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
-    }
-
     // Notify plugins that a compile process is going to start
     clBuildEvent event(wxEVT_BUILD_STARTING);
     event.SetProjectName(pname);
@@ -139,14 +115,30 @@ void CompileRequest::Process(IManager* manager)
     // if we require to run the makefile generation command only, replace the 'cmd' with the
     // generation command line
     BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
-    if(m_premakeOnly && bldConf) {
-        BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
-        if(bldConf) {
-            cmd = bldConf->GetMakeGenerationCommand();
-        }
-    }
-
     if(bldConf) {
+        // BuilderPtr builder = bm->GetBuilder("Default");
+        BuilderPtr builder = bldConf->GetBuilder();
+        if(m_fileName.IsEmpty() == false) {
+            // we got a complie request of a single file
+            cmd = m_preprocessOnly ?
+                builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg) :
+                builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
+        } else if(m_info.GetProjectOnly()) {
+
+            switch(m_info.GetKind()) {
+            case QueueCommand::kRebuild:
+                cmd = builder->GetPORebuildCommand(m_info.GetProject(), m_info.GetConfiguration());
+                break;
+            default:
+            case QueueCommand::kBuild:
+                cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
+                break;
+            }
+
+        } else {
+            cmd = builder->GetBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
+        }
+
         wxString cmpType = bldConf->GetCompilerType();
         CompilerPtr cmp = bsc->GetCompiler(cmpType);
         if(cmp) {

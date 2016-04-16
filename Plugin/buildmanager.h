@@ -63,7 +63,6 @@ public:
     void RemoveBuilder(const wxString& name);
     void GetBuilders(std::list<wxString>& list);
     BuilderPtr GetBuilder(const wxString& name);
-    BuilderPtr GetSelectedBuilder();
 };
 
 class WXDLLIMPEXP_SDK BuildManagerST

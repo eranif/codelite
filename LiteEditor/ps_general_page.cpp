@@ -32,11 +32,11 @@
 #include <wx/filedlg.h>
 #include <wx/dirdlg.h>
 #include "globals.h"
+#include <algorithm>
+#include "buildmanager.h"
 
-PSGeneralPage::PSGeneralPage(wxWindow* parent,
-                             const wxString& projectName,
-                             const wxString& conf,
-                             ProjectSettingsDlg* dlg)
+PSGeneralPage::PSGeneralPage(
+    wxWindow* parent, const wxString& projectName, const wxString& conf, ProjectSettingsDlg* dlg)
     : PSGeneralPageBase(parent)
     , m_dlg(dlg)
     , m_projectName(projectName)
@@ -76,6 +76,19 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
         m_pgPropProjectType->SetChoiceSelection(sel);
     }
 
+    // Builders
+    wxPGChoices builders;
+    std::list<wxString> buildersList;
+    BuildManagerST::Get()->GetBuilders(buildersList);
+    std::for_each(buildersList.begin(), buildersList.end(), [&](const wxString& builder) { builders.Add(builder); });
+    m_pgPropMakeGenerator->SetChoices(builders);
+    m_pgPropMakeGeneratorArgs->SetValue(buildConf->GetBuildSystemArguments());
+    
+    sel = builders.Index(buildConf->GetBuildSystem());
+    if(sel != wxNOT_FOUND) {
+        m_pgPropMakeGenerator->SetChoiceSelection(sel);
+    }
+    
     // Compilers
     choices.Clear();
     wxString cmpType = buildConf->GetCompilerType();
@@ -115,6 +128,8 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
 
     // Get the project type selection, unlocalised
     projSettingsPtr->SetProjectType(GetPropertyAsString(m_pgPropProjectType));
+    buildConf->SetBuildSystemArguments(GetPropertyAsString(m_pgPropMakeGeneratorArgs));
+    buildConf->SetBuildSystem(GetPropertyAsString(m_pgPropMakeGenerator));
     buildConf->SetCompilerType(GetPropertyAsString(m_pgPropCompiler));
     buildConf->SetDebuggerType(GetPropertyAsString(m_pgPropDebugger));
     buildConf->SetPauseWhenExecEnds(GetPropertyAsBool(m_pgPropPause));
@@ -136,10 +151,7 @@ void PSGeneralPage::Clear()
     m_checkBoxEnabled->SetValue(true);
 }
 
-void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)
-{
-    m_dlg->SetIsDirty(true);
-}
+void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event) { m_dlg->SetIsDirty(true); }
 
 bool PSGeneralPage::GetPropertyAsBool(wxPGProperty* prop) const
 {

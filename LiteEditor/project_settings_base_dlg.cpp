@@ -147,7 +147,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     
     bSizer35->Add(m_pgMgr136, 1, wxALL|wxEXPAND, 5);
     
-    CATEGORY_GENERAL = m_pgMgr136->Append(  new wxPropertyCategory( _("General Project Settings") ) );
+    CATEGORY_GENERAL = m_pgMgr136->Append(  new wxPropertyCategory( _("General") ) );
     CATEGORY_GENERAL->SetHelpString(wxT(""));
     
     m_pgMgr136Arr.Clear();
@@ -158,22 +158,34 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_pgPropProjectType = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxEnumProperty( _("Project Type"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
     m_pgPropProjectType->SetHelpString(_("Sets the type of the project"));
     
+    CATEGORY_BUILD = m_pgMgr136->Append(  new wxPropertyCategory( _("Build") ) );
+    CATEGORY_BUILD->SetHelpString(wxT(""));
+    
     m_pgMgr136Arr.Clear();
     m_pgMgr136IntArr.Clear();
-    m_pgPropCompiler = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxEnumProperty( _("Compiler"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
+    m_pgPropMakeGenerator = m_pgMgr136->AppendIn( CATEGORY_BUILD,  new wxEnumProperty( _("Makefile Generator"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
+    m_pgPropMakeGenerator->SetHelpString(_("Select the Makefile generator to use. By default, CodeLite uses its builtin Makefile generator"));
+    
+    m_pgPropMakeGeneratorArgs = m_pgMgr136->AppendIn( m_pgPropMakeGenerator,  new wxStringProperty( _("Makefile Generator Arguments"), wxPG_LABEL, wxT("")) );
+    m_pgPropMakeGeneratorArgs->SetHelpString(wxT(""));
+    m_pgPropMakeGeneratorArgs->SetEditor( wxT("TextCtrlAndButton") );
+    
+    m_pgMgr136Arr.Clear();
+    m_pgMgr136IntArr.Clear();
+    m_pgPropCompiler = m_pgMgr136->AppendIn( CATEGORY_BUILD,  new wxEnumProperty( _("Compiler"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
     m_pgPropCompiler->SetHelpString(_("Select the compiler to use. The compiler controls two aspects of the project:\n- If the project is _not_ a custom build, then this compiler is used for compilation\n- CodeLite uses the compiler definition for parsing the output"));
     
-    m_pgPropIntermediateFolder = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxStringProperty( _("Intermediate Folder"), wxPG_LABEL, wxT("")) );
+    m_pgPropIntermediateFolder = m_pgMgr136->AppendIn( CATEGORY_BUILD,  new wxStringProperty( _("Intermediate Folder"), wxPG_LABEL, wxT("")) );
     m_pgPropIntermediateFolder->SetHelpString(_("The name of the folder used for the generated objects during compilation"));
     
-    m_pgPropOutputFile = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxStringProperty( _("Output File"), wxPG_LABEL, wxT("")) );
+    m_pgPropOutputFile = m_pgMgr136->AppendIn( CATEGORY_BUILD,  new wxStringProperty( _("Output File"), wxPG_LABEL, wxT("")) );
     m_pgPropOutputFile->SetHelpString(_("The name of the output file (e.g. the executable file name)"));
-    
-    m_pgPropPause = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxBoolProperty( _("Pause when execution ends"), wxPG_LABEL, 1) );
-    m_pgPropPause->SetHelpString(_("After the execution of the program ends, show a console with the message \"Hit any key to continue...\"\nThis is useful when you wish to view the output printed to stdout before the console terminates"));
     
     CATEGORY_EXECUTION = m_pgMgr136->Append(  new wxPropertyCategory( _("Execution") ) );
     CATEGORY_EXECUTION->SetHelpString(wxT(""));
+    
+    m_pgPropPause = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxBoolProperty( _("Pause when execution ends"), wxPG_LABEL, 1) );
+    m_pgPropPause->SetHelpString(_("After the execution of the program ends, show a console with the message \"Hit any key to continue...\"\nThis is useful when you wish to view the output printed to stdout before the console terminates"));
     
     m_pgPropGUIApp = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxBoolProperty( _("This program is a GUI application"), wxPG_LABEL, 0) );
     m_pgPropGUIApp->SetHelpString(_("By marking the project as a GUI project, CodeLite will launch the program without any console terminal wrapping the process execution"));
@@ -188,6 +200,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     
     m_pgPropArgs = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxStringProperty( _("Program Arguments"), wxPG_LABEL, wxT("")) );
     m_pgPropArgs->SetHelpString(_("The command line arguments to pass to the program when executing or debugging it"));
+    m_pgPropArgs->SetEditor( wxT("TextCtrlAndButton") );
     
     CATEGORY_DEBUGGER = m_pgMgr136->Append(  new wxPropertyCategory( _("Debugging") ) );
     CATEGORY_DEBUGGER->SetHelpString(wxT(""));
@@ -202,6 +215,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     
     m_pgPropDebugArgs = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxStringProperty( _("Debug Program Arguments"), wxPG_LABEL, wxT("")) );
     m_pgPropDebugArgs->SetHelpString(_("Arguments to pass to the debugger"));
+    m_pgPropDebugArgs->SetEditor( wxT("TextCtrlAndButton") );
     
     SetName(wxT("PSGeneralPageBase"));
     SetSize(-1,-1);

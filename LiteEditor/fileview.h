@@ -147,7 +147,6 @@ protected:
     virtual void OnSortItem(wxCommandEvent& event);
     virtual void OnRemoveVirtualFolder(wxCommandEvent& event);
     virtual void OnRemoveItem(wxCommandEvent& event);
-    virtual void OnExportMakefile(wxCommandEvent& event);
     virtual void OnSaveAsTemplate(wxCommandEvent& event);
     virtual void OnBuildOrder(wxCommandEvent& event);
     virtual void OnClean(wxCommandEvent& event);

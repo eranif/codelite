@@ -118,25 +118,27 @@ void CompileRequest::Process(IManager* manager)
     if(bldConf) {
         // BuilderPtr builder = bm->GetBuilder("Default");
         BuilderPtr builder = bldConf->GetBuilder();
+        wxString args = bldConf->GetBuildSystemArguments();
         if(m_fileName.IsEmpty() == false) {
             // we got a complie request of a single file
             cmd = m_preprocessOnly ?
-                builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg) :
-                builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
+                builder->GetPreprocessFileCmd(
+                    m_info.GetProject(), m_info.GetConfiguration(), args, m_fileName, errMsg) :
+                builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), args, m_fileName);
         } else if(m_info.GetProjectOnly()) {
 
             switch(m_info.GetKind()) {
             case QueueCommand::kRebuild:
-                cmd = builder->GetPORebuildCommand(m_info.GetProject(), m_info.GetConfiguration());
+                cmd = builder->GetPORebuildCommand(m_info.GetProject(), m_info.GetConfiguration(), args);
                 break;
             default:
             case QueueCommand::kBuild:
-                cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
+                cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration(), args);
                 break;
             }
 
         } else {
-            cmd = builder->GetBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
+            cmd = builder->GetBuildCommand(m_info.GetProject(), m_info.GetConfiguration(), args);
         }
 
         wxString cmpType = bldConf->GetCompilerType();

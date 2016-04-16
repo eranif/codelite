@@ -38,27 +38,28 @@
 class WXDLLIMPEXP_SDK BuilderGnuMakeOneStep : public BuilderGnuMake
 {
 public:
-	BuilderGnuMakeOneStep();
-	virtual ~BuilderGnuMakeOneStep();
+    BuilderGnuMakeOneStep();
+    virtual ~BuilderGnuMakeOneStep();
 
-
-/*	These methods available but supplied by baseclass BuilderGnuMake
-	virtual bool Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force, wxString &errMsg);
-	virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild);
-	virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild);
-	virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild);
-	virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild);
-	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName);
-	virtual wxString GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg);
-	virtual wxString GetPORebuildCommand(const wxString &project, const wxString &confToBuild);
-*/
+    /*	These methods available but supplied by baseclass BuilderGnuMake
+            virtual bool Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force,
+       wxString &errMsg);
+            virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild);
+            virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild);
+            virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild);
+            virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild);
+            virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString
+       &fileName);
+            virtual wxString GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString
+       &fileName, wxString &errMsg);
+            virtual wxString GetPORebuildCommand(const wxString &project, const wxString &confToBuild);
+    */
 protected:
-	virtual void CreateListMacros(ProjectPtr proj, const wxString &confToBuild, wxString &text);
-	virtual void CreateLinkTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text, wxString &targetName);
-	virtual void CreateFileTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
+    virtual void CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text);
+    virtual void CreateLinkTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text, wxString& targetName);
+    virtual void CreateFileTargets(ProjectPtr proj, const wxString& confToBuild, wxString& text);
 
 private:
-	void CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text);
-
+    void CreateTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text);
 };
 #endif // BUILDER_GNUMAKE_ONESTEP_H

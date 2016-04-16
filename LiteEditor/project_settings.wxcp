@@ -1277,11 +1277,11 @@
               }, {
                "type": "string",
                "m_label": "Label:",
-               "m_value": "Makefile Generator Arguments"
+               "m_value": "Arguments"
               }, {
                "type": "multi-string",
                "m_label": "Tooltip:",
-               "m_value": ""
+               "m_value": "Set the Makefile generator arguments"
               }, {
                "type": "colour",
                "m_label": "Bg Colour:",
@@ -1294,7 +1294,7 @@
               }, {
                "type": "choice",
                "m_label": "Kind:",
-               "m_selection": 4,
+               "m_selection": 5,
                "m_options": ["wxPropertyCategory", "wxIntProperty", "wxFloatProperty", "wxBoolProperty", "wxStringProperty", "wxLongStringProperty", "wxDirProperty", "wxArrayStringProperty", "wxFileProperty", "wxEnumProperty", "wxEditEnumProperty", "wxFlagsProperty", "wxDateProperty", "wxImageFileProperty", "wxFontProperty", "wxSystemColourProperty"]
               }, {
                "type": "string",
@@ -1875,12 +1875,12 @@
             }, {
              "type": "choice",
              "m_label": "Property Editor Control",
-             "m_selection": 5,
+             "m_selection": 0,
              "m_options": ["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
             }, {
              "type": "choice",
              "m_label": "Kind:",
-             "m_selection": 4,
+             "m_selection": 5,
              "m_options": ["wxPropertyCategory", "wxIntProperty", "wxFloatProperty", "wxBoolProperty", "wxStringProperty", "wxLongStringProperty", "wxDirProperty", "wxArrayStringProperty", "wxFileProperty", "wxEnumProperty", "wxEditEnumProperty", "wxFlagsProperty", "wxDateProperty", "wxImageFileProperty", "wxFontProperty", "wxSystemColourProperty"]
             }, {
              "type": "string",
@@ -2135,12 +2135,12 @@
             }, {
              "type": "choice",
              "m_label": "Property Editor Control",
-             "m_selection": 5,
+             "m_selection": 0,
              "m_options": ["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
             }, {
              "type": "choice",
              "m_label": "Kind:",
-             "m_selection": 4,
+             "m_selection": 5,
              "m_options": ["wxPropertyCategory", "wxIntProperty", "wxFloatProperty", "wxBoolProperty", "wxStringProperty", "wxLongStringProperty", "wxDirProperty", "wxArrayStringProperty", "wxFileProperty", "wxEnumProperty", "wxEditEnumProperty", "wxFlagsProperty", "wxDateProperty", "wxImageFileProperty", "wxFontProperty", "wxSystemColourProperty"]
             }, {
              "type": "string",

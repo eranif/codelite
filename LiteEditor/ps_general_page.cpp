@@ -83,6 +83,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     std::for_each(buildersList.begin(), buildersList.end(), [&](const wxString& builder) { builders.Add(builder); });
     m_pgPropMakeGenerator->SetChoices(builders);
     m_pgPropMakeGeneratorArgs->SetValue(buildConf->GetBuildSystemArguments());
+    m_pgPropMakeGenerator->SetExpanded(false);
     
     sel = builders.Index(buildConf->GetBuildSystem());
     if(sel != wxNOT_FOUND) {

@@ -166,8 +166,8 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_pgPropMakeGenerator = m_pgMgr136->AppendIn( CATEGORY_BUILD,  new wxEnumProperty( _("Makefile Generator"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
     m_pgPropMakeGenerator->SetHelpString(_("Select the Makefile generator to use. By default, CodeLite uses its builtin Makefile generator"));
     
-    m_pgPropMakeGeneratorArgs = m_pgMgr136->AppendIn( m_pgPropMakeGenerator,  new wxStringProperty( _("Makefile Generator Arguments"), wxPG_LABEL, wxT("")) );
-    m_pgPropMakeGeneratorArgs->SetHelpString(wxT(""));
+    m_pgPropMakeGeneratorArgs = m_pgMgr136->AppendIn( m_pgPropMakeGenerator,  new wxLongStringProperty( _("Arguments"), wxPG_LABEL, wxT("")) );
+    m_pgPropMakeGeneratorArgs->SetHelpString(_("Set the Makefile generator arguments"));
     m_pgPropMakeGeneratorArgs->SetEditor( wxT("TextCtrlAndButton") );
     
     m_pgMgr136Arr.Clear();
@@ -198,9 +198,8 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_pgPropWorkingDirectory->SetHelpString(_("The working directory to set before executing or debugging the program"));
     m_pgPropWorkingDirectory->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropArgs = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxStringProperty( _("Program Arguments"), wxPG_LABEL, wxT("")) );
+    m_pgPropArgs = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxLongStringProperty( _("Program Arguments"), wxPG_LABEL, wxT("")) );
     m_pgPropArgs->SetHelpString(_("The command line arguments to pass to the program when executing or debugging it"));
-    m_pgPropArgs->SetEditor( wxT("TextCtrlAndButton") );
     
     CATEGORY_DEBUGGER = m_pgMgr136->Append(  new wxPropertyCategory( _("Debugging") ) );
     CATEGORY_DEBUGGER->SetHelpString(wxT(""));
@@ -213,9 +212,8 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_pgPropUseSeparateDebuggerArgs = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxBoolProperty( _("Use separate debugger args"), wxPG_LABEL, 1) );
     m_pgPropUseSeparateDebuggerArgs->SetHelpString(_("When enabled (.e.g. set to True) codelite will pass the arguments set in 'Debug Program Arguments'"));
     
-    m_pgPropDebugArgs = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxStringProperty( _("Debug Program Arguments"), wxPG_LABEL, wxT("")) );
+    m_pgPropDebugArgs = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxLongStringProperty( _("Debug Program Arguments"), wxPG_LABEL, wxT("")) );
     m_pgPropDebugArgs->SetHelpString(_("Arguments to pass to the debugger"));
-    m_pgPropDebugArgs->SetEditor( wxT("TextCtrlAndButton") );
     
     SetName(wxT("PSGeneralPageBase"));
     SetSize(-1,-1);

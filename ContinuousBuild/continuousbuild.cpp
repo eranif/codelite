@@ -80,7 +80,7 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
     m_mgr->GetOutputPaneNotebook()->AddPage(m_view, CONT_BUILD, false, m_mgr->GetStdIcons()->LoadBitmap("execute"));
     m_tabHelper.reset(new clTabTogglerHelper(CONT_BUILD, m_view, "", NULL));
     m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("execute"));
-    
+
     m_topWin = m_mgr->GetTheApp();
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect(
@@ -119,7 +119,7 @@ void ContinuousBuild::UnPlug()
         }
     }
     m_view->Destroy();
-    
+
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
@@ -203,7 +203,8 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
     }
 
     // get the single file command to use
-    wxString cmd = builder->GetSingleFileCmd(projectName, bldConf->GetName(), fileName);
+    wxString cmd =
+        builder->GetSingleFileCmd(projectName, bldConf->GetName(), bldConf->GetBuildSystemArguments(), fileName);
     WrapInShell(cmd);
 
     if(m_buildProcess.IsBusy()) {

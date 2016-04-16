@@ -44,24 +44,22 @@ class Builder
 {
 protected:
     wxString m_name;
-    bool     m_isActive;
+    bool m_isActive;
 
 public:
-    Builder(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions) ;
+    Builder(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
     virtual ~Builder();
 
     /**
      * Normalize the configuration name, this is done by removing any trailing and leading
      * spaces from the string, and replacing any space character with underscore.
      */
-    static wxString NormalizeConfigName(const wxString &confgName);
+    static wxString NormalizeConfigName(const wxString& confgName);
 
     /**
      * \return the builder name
      */
-    const wxString &GetName() const {
-        return m_name;
-    }
+    const wxString& GetName() const { return m_name; }
 
     // ================ API ==========================
     // The below API as default implementation, but can be
@@ -78,10 +76,7 @@ public:
      * @brief return true if this builder is the active one
      * @return
      */
-    virtual bool IsActive() const {
-        return m_isActive;
-    }
-
+    virtual bool IsActive() const { return m_isActive; }
 
     // ================ API ==========================
     // The below API must be implemented by the
@@ -95,19 +90,22 @@ public:
      * \param errMsg output
      * \return true on success, false otherwise.
      */
-    virtual bool Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force, wxString &errMsg) = 0;
+    virtual bool Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
+        bool isProjectOnly, bool force, wxString& errMsg) = 0;
 
     /**
      * Return the command that should be executed for performing the clean
      * task
      */
-    virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild) = 0;
+    virtual wxString GetCleanCommand(
+        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
 
     /**
      * Return the command that should be executed for performing the build
      * task for a given project
      */
-    virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild) = 0;
+    virtual wxString GetBuildCommand(
+        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
 
     //-----------------------------------------------------------------
     // Project Only API
@@ -116,13 +114,15 @@ public:
      * Return the command that should be executed for performing the clean
      * task - for the project only (excluding dependencies)
      */
-    virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild) = 0;
+    virtual wxString GetPOCleanCommand(
+        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
 
     /**
      * Return the command that should be executed for performing the build
      * task for a given project - for the project only (excluding dependencies)
      */
-    virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild) = 0;
+    virtual wxString GetPOBuildCommand(
+        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
 
     /**
      * \brief create a command to execute for compiling single source file
@@ -131,7 +131,8 @@ public:
      * \param errMsg [output]
      * \return the command
      */
-    virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName) = 0;
+    virtual wxString GetSingleFileCmd(
+        const wxString& project, const wxString& confToBuild, const wxString& arguments, const wxString& fileName) = 0;
 
     /**
      * \brief create a command to execute for preprocessing single source file
@@ -140,7 +141,8 @@ public:
      * \param errMsg [output]
      * \return the command
      */
-    virtual wxString GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg) = 0;
+    virtual wxString GetPreprocessFileCmd(const wxString& project, const wxString& confToBuild,
+        const wxString& arguments, const wxString& fileName, wxString& errMsg) = 0;
 
     /**
      * @brief return the 'rebuild' command
@@ -148,7 +150,8 @@ public:
      * @param confToBuild
      * @return
      */
-    virtual wxString GetPORebuildCommand(const wxString &project, const wxString &confToBuild) = 0;
+    virtual wxString GetPORebuildCommand(
+        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
 };
 
 typedef SmartPtr<Builder> BuilderPtr;

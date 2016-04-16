@@ -41,82 +41,80 @@
 #include "wx/sstream.h"
 #include "globals.h"
 
-//wxStopWatch g_sw;
+// wxStopWatch g_sw;
 
 static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
 
 #if PERFORMANCE
-# define TIMER_START(){\
-		g_sw.Start();\
-	}
+#define TIMER_START() \
+    {                 \
+        g_sw.Start(); \
+    }
 
-# define PRINT_TIMESTAMP(msg) {\
-		wxString log_msg(msg);\
-		wxPrintf(wxT("%08d: %s"), g_sw.Time(), log_msg.c_str());\
-	}
+#define PRINT_TIMESTAMP(msg)                                     \
+    {                                                            \
+        wxString log_msg(msg);                                   \
+        wxPrintf(wxT("%08d: %s"), g_sw.Time(), log_msg.c_str()); \
+    }
 #else
-# define TIMER_START()
-# define PRINT_TIMESTAMP(msg)
+#define TIMER_START()
+#define PRINT_TIMESTAMP(msg)
 #endif
 
-
-
 BuilderGnuMakeOneStep::BuilderGnuMakeOneStep()
-		: BuilderGnuMake(wxT("GNU makefile onestep build"), wxT("make"), wxT("-f"))
+    : BuilderGnuMake(wxT("GNU makefile onestep build"), wxT("make"), wxT("-f"))
 {
 }
 
-BuilderGnuMakeOneStep::~BuilderGnuMakeOneStep()
+BuilderGnuMakeOneStep::~BuilderGnuMakeOneStep() {}
+
+void BuilderGnuMakeOneStep::CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text)
 {
+    // create a list of Sources
+    BuilderGnuMake::CreateSrcList(proj, confToBuild, text);
+    // create a list of objects
+    BuilderGnuMake::CreateObjectList(proj, confToBuild, text);
 }
 
-
-void BuilderGnuMakeOneStep::CreateListMacros( ProjectPtr proj, const wxString &confToBuild, wxString &text)
+void BuilderGnuMakeOneStep::CreateLinkTargets(
+    const wxString& type, BuildConfigPtr bldConf, wxString& text, wxString& targetName)
 {
-	// create a list of Sources
-	BuilderGnuMake::CreateSrcList(proj, confToBuild, text);
-	// create a list of objects
-	BuilderGnuMake::CreateObjectList(proj, confToBuild, text); 
+    // specify outfile dependency directly on source files (only)
+    text << wxT("all: $(OutputFile)\n\n");
+    text << wxT("$(OutputFile): makeDirStep $(Srcs)\n");
+    targetName = wxT("makeDirStep");
+    CreateTargets(type, bldConf, text); // overridden CreateTargets
+
+    // if (bldConf->IsLinkerRequired()) {
+    //	CreateTargets(type, bldConf, text);
+    //}
 }
 
-void BuilderGnuMakeOneStep::CreateLinkTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text, wxString &targetName)
+void BuilderGnuMakeOneStep::CreateFileTargets(ProjectPtr proj, const wxString& confToBuild, wxString& text)
 {
-	// specify outfile dependency directly on source files (only)
-	text << wxT("all: $(OutputFile)\n\n");
-	text << wxT("$(OutputFile): makeDirStep $(Srcs)\n");
-	targetName = wxT("makeDirStep");
-	CreateTargets(type, bldConf, text);  // overridden CreateTargets
-
-	//if (bldConf->IsLinkerRequired()) {
-	//	CreateTargets(type, bldConf, text);
-	//}
+    // override to do do nothing (no link objects) build rule already given in CreateLinkTargets
 }
 
-void BuilderGnuMakeOneStep::CreateFileTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text)
+void BuilderGnuMakeOneStep::CreateTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text)
 {
-	// override to do do nothing (no link objects) build rule already given in CreateLinkTargets
+    if(OS_WINDOWS) {
+        text << wxT("\t") << wxT("@makedir $(@D)\n");
+    } else {
+        text << wxT("\t") << wxT("@mkdir -p $(@D)\n");
+    }
+
+    // these patterns below should be all set and loadable from configuration file.
+    // compilerName is tool that does single stage construction srcs -> exe/lib
+
+    if(type == Project::STATIC_LIBRARY) {
+        // create a static library
+        text << wxT("\t")
+             << wxT("$(CXX) $(ArchiveOutputSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
+    } else if(type == Project::DYNAMIC_LIBRARY) {
+        // create a shared library
+        text << wxT("\t") << wxT("$(CXX) $(ObjectSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
+    } else if(type == Project::EXECUTABLE) {
+        // create an executable
+        text << wxT("\t") << wxT("$(CXX) $(SourceSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
+    }
 }
-
-void BuilderGnuMakeOneStep::CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text)
-{
-	if (OS_WINDOWS) {
-		text << wxT("\t") << wxT("@makedir $(@D)\n");
-	} else {
-		text << wxT("\t") << wxT("@mkdir -p $(@D)\n");
-	}
-
-	// these patterns below should be all set and loadable from configuration file.
-	// compilerName is tool that does single stage construction srcs -> exe/lib
-	
-	if (type == Project::STATIC_LIBRARY) {
-		//create a static library
-		text << wxT("\t") << wxT("$(CXX) $(ArchiveOutputSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
-	} else if (type == Project::DYNAMIC_LIBRARY) {
-		//create a shared library
-		text << wxT("\t") << wxT("$(CXX) $(ObjectSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
-	} else if (type == Project::EXECUTABLE) {
-		//create an executable
-		text << wxT("\t") << wxT("$(CXX) $(SourceSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
-	}
-}
-

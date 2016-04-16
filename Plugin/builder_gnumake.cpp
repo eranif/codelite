@@ -88,8 +88,8 @@ BuilderGnuMake::BuilderGnuMake(const wxString& name, const wxString& buildTool, 
 
 BuilderGnuMake::~BuilderGnuMake() {}
 
-bool BuilderGnuMake::Export(
-    const wxString& project, const wxString& confToBuild, bool isProjectOnly, bool force, wxString& errMsg)
+bool BuilderGnuMake::Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
+    bool isProjectOnly, bool force, wxString& errMsg)
 {
     m_projectFilesMetadata.clear();
     if(project.IsEmpty()) {
@@ -199,7 +199,7 @@ bool BuilderGnuMake::Export(
     text << wxT("All:\n");
 
     // iterate over the dependencies projects and generate makefile
-    wxString buildTool = GetBuildToolCommand(project, confToBuild, false);
+    wxString buildTool = GetBuildToolCommand(project, confToBuild, arguments, false);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
     // fix: replace all Windows like slashes to POSIX
@@ -1423,7 +1423,8 @@ wxString BuilderGnuMake::ParseLibs(const wxString& libs)
     return slibs;
 }
 
-wxString BuilderGnuMake::GetBuildCommand(const wxString& project, const wxString& confToBuild)
+wxString BuilderGnuMake::GetBuildCommand(
+    const wxString& project, const wxString& confToBuild, const wxString& arguments)
 {
     wxString errMsg, cmd;
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
@@ -1432,9 +1433,9 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString& project, const wxString
     }
 
     // generate the makefile
-    Export(project, confToBuild, false, false, errMsg);
+    Export(project, confToBuild, arguments, false, false, errMsg);
 
-    wxString buildTool = GetBuildToolCommand(project, confToBuild, true);
+    wxString buildTool = GetBuildToolCommand(project, confToBuild, arguments, true);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
     // fix: replace all Windows like slashes to POSIX
@@ -1443,7 +1444,8 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString& project, const wxString
     return cmd;
 }
 
-wxString BuilderGnuMake::GetCleanCommand(const wxString& project, const wxString& confToBuild)
+wxString BuilderGnuMake::GetCleanCommand(
+    const wxString& project, const wxString& confToBuild, const wxString& arguments)
 {
     wxString errMsg, cmd;
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
@@ -1452,9 +1454,9 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString& project, const wxString
     }
 
     // generate the makefile
-    Export(project, confToBuild, false, false, errMsg);
+    Export(project, confToBuild, arguments, false, false, errMsg);
 
-    wxString buildTool = GetBuildToolCommand(project, confToBuild, true);
+    wxString buildTool = GetBuildToolCommand(project, confToBuild, arguments, true);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
     // fix: replace all Windows like slashes to POSIX
@@ -1466,7 +1468,8 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString& project, const wxString
     return cmd;
 }
 
-wxString BuilderGnuMake::GetPOBuildCommand(const wxString& project, const wxString& confToBuild)
+wxString BuilderGnuMake::GetPOBuildCommand(
+    const wxString& project, const wxString& confToBuild, const wxString& arguments)
 {
     wxString errMsg, cmd;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
@@ -1475,12 +1478,13 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString& project, const wxStri
     }
 
     // generate the makefile
-    Export(project, confToBuild, true, false, errMsg);
+    Export(project, confToBuild, arguments, true, false, errMsg);
     cmd = GetProjectMakeCommand(proj, confToBuild, wxT("all"), false, false);
     return cmd;
 }
 
-wxString BuilderGnuMake::GetPOCleanCommand(const wxString& project, const wxString& confToBuild)
+wxString BuilderGnuMake::GetPOCleanCommand(
+    const wxString& project, const wxString& confToBuild, const wxString& arguments)
 {
     wxString errMsg, cmd;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
@@ -1489,13 +1493,13 @@ wxString BuilderGnuMake::GetPOCleanCommand(const wxString& project, const wxStri
     }
 
     // generate the makefile
-    Export(project, confToBuild, true, false, errMsg);
+    Export(project, confToBuild, arguments, true, false, errMsg);
     cmd = GetProjectMakeCommand(proj, confToBuild, wxT("clean"), false, true);
     return cmd;
 }
 
 wxString BuilderGnuMake::GetSingleFileCmd(
-    const wxString& project, const wxString& confToBuild, const wxString& fileName)
+    const wxString& project, const wxString& confToBuild, const wxString& arguments, const wxString& fileName)
 {
     wxString errMsg, cmd;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
@@ -1504,7 +1508,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(
     }
 
     // generate the makefile
-    Export(project, confToBuild, true, false, errMsg);
+    Export(project, confToBuild, arguments, true, false, errMsg);
 
     // Build the target list
     wxString target;
@@ -1531,8 +1535,8 @@ wxString BuilderGnuMake::GetSingleFileCmd(
     return EnvironmentConfig::Instance()->ExpandVariables(cmd, true);
 }
 
-wxString BuilderGnuMake::GetPreprocessFileCmd(
-    const wxString& project, const wxString& confToBuild, const wxString& fileName, wxString& errMsg)
+wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString& project, const wxString& confToBuild,
+    const wxString& arguments, const wxString& fileName, wxString& errMsg)
 {
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
     if(!proj) {
@@ -1546,10 +1550,10 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(
     }
 
     // generate the makefile
-    Export(project, confToBuild, true, false, errMsg);
+    Export(project, confToBuild, arguments, true, false, errMsg);
 
     BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
-    wxString buildTool = GetBuildToolCommand(project, confToBuild, true);
+    wxString buildTool = GetBuildToolCommand(project, confToBuild, arguments, true);
     wxString type = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), project);
 
     // fix: replace all Windows like slashes to POSIX
@@ -1644,7 +1648,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(
     wxString makeCommand;
     wxString basicMakeCommand;
 
-    wxString buildTool = GetBuildToolCommand(proj->GetName(), confToBuild, false);
+    wxString buildTool = GetBuildToolCommand(proj->GetName(), confToBuild, "", false);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
     basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\"");
 
@@ -1690,7 +1694,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(
     wxString makeCommand;
     wxString basicMakeCommand;
 
-    wxString buildTool = GetBuildToolCommand(proj->GetName(), confToBuild, true);
+    wxString buildTool = GetBuildToolCommand(proj->GetName(), confToBuild, "", true);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
     basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" ");
 
@@ -1750,7 +1754,8 @@ void BuilderGnuMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStr
     text << wxT("\n");
 }
 
-wxString BuilderGnuMake::GetPORebuildCommand(const wxString& project, const wxString& confToBuild)
+wxString BuilderGnuMake::GetPORebuildCommand(
+    const wxString& project, const wxString& confToBuild, const wxString& arguments)
 {
     wxString errMsg, cmd;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
@@ -1759,13 +1764,13 @@ wxString BuilderGnuMake::GetPORebuildCommand(const wxString& project, const wxSt
     }
 
     // generate the makefile
-    Export(project, confToBuild, true, false, errMsg);
+    Export(project, confToBuild, arguments, true, false, errMsg);
     cmd = GetProjectMakeCommand(proj, confToBuild, wxT("all"), true, false);
     return cmd;
 }
 
 wxString BuilderGnuMake::GetBuildToolCommand(
-    const wxString& project, const wxString& confToBuild, bool isCommandlineCommand) const
+    const wxString& project, const wxString& confToBuild, const wxString& arguments, bool isCommandlineCommand) const
 {
     wxString jobsCmd;
     wxString buildTool;

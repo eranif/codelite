@@ -10,42 +10,27 @@
 
 IMPLEMENT_APP_CONSOLE(clMakeGeneratorApp)
 
-static const wxCmdLineEntryDesc g_cmdDesc[] = {
-    { wxCMD_LINE_SWITCH, "h", "help", "show this help message", wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
-    { wxCMD_LINE_OPTION,
-      "w",
-      "workspace",
-      "codelite workspace file",
-      wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_OPTION_MANDATORY },
-    { wxCMD_LINE_OPTION,
-      "c",
-      "config",
-      "configuration name to generate",
-      wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_OPTION_MANDATORY },
-    { wxCMD_LINE_OPTION,
-      "d",
-      "command",
-      "which command to run? possible values are: build, clean or rebuild. The default is to build" },
-    { wxCMD_LINE_OPTION,
-      "p",
-      "project",
-      "project to build, if non given codelite will build the active project as defined in the workspace",
-      wxCMD_LINE_VAL_STRING },
+static const wxCmdLineEntryDesc g_cmdDesc[] = { { wxCMD_LINE_SWITCH, "h", "help", "show this help message",
+                                                    wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
+    { wxCMD_LINE_OPTION, "w", "workspace", "codelite workspace file", wxCMD_LINE_VAL_STRING,
+        wxCMD_LINE_OPTION_MANDATORY },
+    { wxCMD_LINE_OPTION, "c", "config", "configuration name to generate", wxCMD_LINE_VAL_STRING,
+        wxCMD_LINE_OPTION_MANDATORY },
+    { wxCMD_LINE_OPTION, "d", "command",
+        "which command to run? possible values are: build, clean or rebuild. The default is to build" },
+    { wxCMD_LINE_OPTION, "p", "project",
+        "project to build, if non given codelite will build the active project as defined in the workspace",
+        wxCMD_LINE_VAL_STRING },
     { wxCMD_LINE_SWITCH, "v", "verbose", "Run in verbose mode and print all log lines to the stdout/stderr" },
     { wxCMD_LINE_SWITCH, "e", "execute", "Instead of printing the command line, execute it" },
-    { wxCMD_LINE_OPTION,
-      "s",
-      "settings",
-      "The full path of the build_settings.xml file.\n"
-      "By default, codelite-make will load the compiler definitions from\n"
-      "%appdata%\\codelite\\config\\build_settings.xml (or the equivalent path on\n"
-      "Unix systems). Passing -s|--settings will override the default search\n"
-      "location",
-      wxCMD_LINE_VAL_STRING },
-    { wxCMD_LINE_NONE }
-};
+    { wxCMD_LINE_OPTION, "s", "settings",
+        "The full path of the build_settings.xml file.\n"
+        "By default, codelite-make will load the compiler definitions from\n"
+        "%appdata%\\codelite\\config\\build_settings.xml (or the equivalent path on\n"
+        "Unix systems). Passing -s|--settings will override the default search\n"
+        "location",
+        wxCMD_LINE_VAL_STRING },
+    { wxCMD_LINE_NONE } };
 
 clMakeGeneratorApp::clMakeGeneratorApp()
     : m_verbose(false)
@@ -117,7 +102,8 @@ bool clMakeGeneratorApp::OnInit()
         wxString command;
         command << "cd "
                 << MacroManager::Instance()->Expand(
-                       bldConf->GetCustomBuildWorkingDir(), NULL, m_project, m_configuration) << " && "
+                       bldConf->GetCustomBuildWorkingDir(), NULL, m_project, m_configuration)
+                << " && "
                 << MacroManager::Instance()->Expand(bldConf->GetCustomBuildCmd(), NULL, m_project, m_configuration);
         Out(command);
         if(m_executeCommand) {
@@ -129,7 +115,8 @@ bool clMakeGeneratorApp::OnInit()
         return true;
     }
 
-    if(!builder.Export(m_project, m_configuration, false, true, errmsg)) {
+    wxString args = bldConf->GetBuildSystemArguments();
+    if(!builder.Export(m_project, m_configuration, args, false, true, errmsg)) {
         Error(wxString() << "Error while exporting makefile. " << errmsg);
         return false;
     }
@@ -137,15 +124,15 @@ bool clMakeGeneratorApp::OnInit()
     wxString commandToRun;
     switch(m_commandType) {
     case kBuild:
-        commandToRun = builder.GetBuildCommand(m_project, m_configuration);
+        commandToRun = builder.GetBuildCommand(m_project, m_configuration, args);
         break;
     case kClean:
-        commandToRun = builder.GetCleanCommand(m_project, m_configuration);
+        commandToRun = builder.GetCleanCommand(m_project, m_configuration, args);
         break;
     case kRebuild:
-        commandToRun = builder.GetCleanCommand(m_project, m_configuration);
+        commandToRun = builder.GetCleanCommand(m_project, m_configuration, args);
         // append the build command
-        commandToRun << " && " << builder.GetBuildCommand(m_project, m_configuration);
+        commandToRun << " && " << builder.GetBuildCommand(m_project, m_configuration, args);
         break;
     }
 

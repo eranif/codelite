@@ -17,9 +17,10 @@
 #include <wx/treebook.h>
 #include <wx/button.h>
 #include <wx/panel.h>
-#include <wx/textctrl.h>
+#include <wx/stc/stc.h>
 #include <wx/listctrl.h>
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/checkbox.h>
@@ -27,7 +28,6 @@
 #include <wx/spinctrl.h>
 #include <wx/choicebk.h>
 #include <wx/splitter.h>
-#include <wx/stc/stc.h>
 #include <wx/dataview.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
@@ -65,12 +65,12 @@ public:
 class DbgPageStartupCmdsBase : public wxPanel
 {
 protected:
-    wxTextCtrl* m_textCtrlStartupCommands;
+    wxStyledTextCtrl* m_textCtrlStartupCommands;
 
 protected:
 
 public:
-    wxTextCtrl* GetTextCtrlStartupCommands() { return m_textCtrlStartupCommands; }
+    wxStyledTextCtrl* GetTextCtrlStartupCommands() { return m_textCtrlStartupCommands; }
     DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~DbgPageStartupCmdsBase();
 };

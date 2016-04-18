@@ -94,16 +94,41 @@ DbgPageStartupCmdsBase::DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer7);
     
-    m_textCtrlStartupCommands = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_textCtrlStartupCommandsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_textCtrlStartupCommandsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_textCtrlStartupCommandsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlStartupCommandsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_textCtrlStartupCommands->SetFont(m_textCtrlStartupCommandsFont);
+    m_textCtrlStartupCommands = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_textCtrlStartupCommands->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlStartupCommands->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_textCtrlStartupCommands->SetMarginSensitive(4, true);
+    m_textCtrlStartupCommands->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_textCtrlStartupCommands->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_textCtrlStartupCommands->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlStartupCommands->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlStartupCommands->SetMarginWidth(2, 0);
+    m_textCtrlStartupCommands->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_textCtrlStartupCommands->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlStartupCommands->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_textCtrlStartupCommands->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlStartupCommands->SetMarginMask(3, 0);
+    m_textCtrlStartupCommands->SetMarginWidth(3,0);
+    // Select the lexer
+    m_textCtrlStartupCommands->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlStartupCommands->StyleClearAll();
+    m_textCtrlStartupCommands->SetWrapMode(0);
+    m_textCtrlStartupCommands->SetIndentationGuides(0);
+    m_textCtrlStartupCommands->SetKeyWords(0, wxT(""));
+    m_textCtrlStartupCommands->SetKeyWords(1, wxT(""));
+    m_textCtrlStartupCommands->SetKeyWords(2, wxT(""));
+    m_textCtrlStartupCommands->SetKeyWords(3, wxT(""));
+    m_textCtrlStartupCommands->SetKeyWords(4, wxT(""));
     
     bSizer7->Add(m_textCtrlStartupCommands, 1, wxALL|wxEXPAND, 5);
     

@@ -32,6 +32,8 @@
 #include "globals.h"
 #include "dbgcommanddlg.h"
 #include "debuggerconfigtool.h"
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
 
 ///////////////////////////////////////////////////
 // Misc Page
@@ -75,9 +77,14 @@ DebuggerPageStartupCmds::DebuggerPageStartupCmds(wxWindow* parent, const wxStrin
     : DbgPageStartupCmdsBase(parent)
     , m_title(title)
 {
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text", "Default");
+    if(lexer) {
+        lexer->Apply(m_textCtrlStartupCommands);
+    }
+    
     DebuggerInformation info;
     if(DebuggerMgr::Get().GetDebuggerInformation(title, info)) {
-        m_textCtrlStartupCommands->SetValue(info.startupCommands);
+        m_textCtrlStartupCommands->SetText(info.startupCommands);
     }
 }
 
@@ -342,7 +349,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
             // find the debugger
             DebuggerInformation info;
             DebuggerMgr::Get().GetDebuggerInformation(suCmds->m_title, info);
-            info.startupCommands = suCmds->m_textCtrlStartupCommands->GetValue();
+            info.startupCommands = suCmds->m_textCtrlStartupCommands->GetText();
             DebuggerMgr::Get().SetDebuggerInformation(suCmds->m_title, info);
         }
 

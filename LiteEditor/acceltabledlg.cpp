@@ -181,6 +181,9 @@ void AccelTableDlg::DoItemActivated()
         // search the list for similar accelerator
         MenuItemData who;
         if(HasAccelerator(mid.accel, who)) {
+            if(who.action == mid.action) {
+                return;
+            }
             if(wxMessageBox(wxString::Format(_("'%s' is already assigned to: '%s'\nWould you like to replace it?"),
                                 mid.accel, who.action),
                    _("CodeLite"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) != wxYES) {

@@ -288,7 +288,7 @@ void ContextBase::AutoAddComment()
                             where += match.length();
                             int caretPos = startPos + where;
                             rCtrl.SetCaretAt(caretPos);
-                            
+
                             // Remove the @brief as its non standard in the PHP world
                             rCtrl.DeleteRange(caretPos - match.length(), match.length());
                         }
@@ -325,13 +325,20 @@ bool ContextBase::IsStringTriggerCodeComplete(const wxString& str) const
     }
 }
 
-int ContextBase::FindNext(const wxString& what, int& pos)
+int ContextBase::FindNext(const wxString& what, int& pos, bool wholePage)
 {
     wxStyledTextCtrl* ctrl = GetCtrl().GetCtrl();
-    int startpos = ctrl->PositionFromLine(ctrl->GetFirstVisibleLine());
-    int lastLine = ctrl->GetFirstVisibleLine() + ctrl->LinesOnScreen();
-    int endpos = ctrl->GetLineEndPosition(lastLine);
-
+    int startpos(wxNOT_FOUND);
+    int lastLine(wxNOT_FOUND);
+    int endpos(wxNOT_FOUND);
+    if(wholePage) {
+        startpos = ctrl->GetCurrentPos();
+        endpos = ctrl->GetLastPosition();
+    } else {
+        startpos = ctrl->PositionFromLine(ctrl->GetFirstVisibleLine());
+        lastLine = ctrl->GetFirstVisibleLine() + ctrl->LinesOnScreen();
+        endpos = ctrl->GetLineEndPosition(lastLine);
+    }
     if((pos < startpos) || (pos > endpos)) return wxNOT_FOUND;
     int where = ctrl->FindText(pos, endpos, what);
     if(where != wxNOT_FOUND) {
@@ -340,13 +347,20 @@ int ContextBase::FindNext(const wxString& what, int& pos)
     return where;
 }
 
-int ContextBase::FindPrev(const wxString& what, int& pos)
+int ContextBase::FindPrev(const wxString& what, int& pos, bool wholePage)
 {
     wxStyledTextCtrl* ctrl = GetCtrl().GetCtrl();
-    int startpos = ctrl->PositionFromLine(ctrl->GetFirstVisibleLine());
-    int lastLine = ctrl->GetFirstVisibleLine() + ctrl->LinesOnScreen();
-    int endpos = ctrl->GetLineEndPosition(lastLine);
-
+    int startpos(wxNOT_FOUND);
+    int lastLine(wxNOT_FOUND);
+    int endpos(wxNOT_FOUND);
+    if(wholePage) {
+        startpos = 0;
+        endpos = ctrl->GetCurrentPos();
+    } else {
+        startpos = ctrl->PositionFromLine(ctrl->GetFirstVisibleLine());
+        lastLine = ctrl->GetFirstVisibleLine() + ctrl->LinesOnScreen();
+        endpos = ctrl->GetLineEndPosition(lastLine);
+    }
     if((pos < startpos) || (pos > endpos)) return wxNOT_FOUND;
     int where = ctrl->FindText(pos, startpos, what);
     if(where != wxNOT_FOUND) {

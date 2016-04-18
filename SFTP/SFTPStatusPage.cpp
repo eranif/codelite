@@ -46,7 +46,7 @@ SFTPStatusPage::~SFTPStatusPage()
 void SFTPStatusPage::OnContentMenu(wxDataViewEvent& event)
 {
     wxUnusedVar(event);
-    CallAfter( &SFTPStatusPage::ShowContextMenu );
+    ShowContextMenu();
 }
 
 void SFTPStatusPage::AddLine(SFTPThreadMessage* message)

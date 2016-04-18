@@ -69,7 +69,7 @@ void ContextGeneric::ProcessIdleActions()
 {
     LEditor& ctrl = GetCtrl();
     if((ctrl.GetLexerId() == wxSTC_LEX_XML) || (ctrl.GetLexerId() == wxSTC_LEX_PHPSCRIPT) ||
-        (ctrl.GetLexerId() == wxSTC_LEX_HTML)) {
+       (ctrl.GetLexerId() == wxSTC_LEX_HTML)) {
         // XML lexer, highlight XML tags
         // Update the word chars
         clEditorXmlHelper xmlHelper(ctrl.GetCtrl());
@@ -83,9 +83,9 @@ void ContextGeneric::ProcessIdleActions()
             ctrl.IndicatorClearRange(0, ctrl.GetLength());
             return;
         }
-        
-        static wxRegEx reOpenHtmlTag("<(\\w+)", wxRE_ADVANCED);
-        static wxRegEx reCloseHtmlTag("</(\\w+)>", wxRE_ADVANCED);
+
+        static wxRegEx reOpenHtmlTag("<([a-z_\\-0-9]+)", wxRE_ADVANCED | wxRE_ICASE);
+        static wxRegEx reCloseHtmlTag("</([a-z_\\-0-9]+)>", wxRE_ADVANCED | wxRE_ICASE);
 
         wxString searchWhat;
         wxString closeTag;
@@ -98,7 +98,7 @@ void ContextGeneric::ProcessIdleActions()
 
             int pos = endPos;
             int depth = 0;
-            int where = FindNext(searchWhat, pos);
+            int where = FindNext(searchWhat, pos, true);
 
             while(where != wxNOT_FOUND) {
                 int startPos2, endPos2;
@@ -118,7 +118,7 @@ void ContextGeneric::ProcessIdleActions()
                 } else if(word.StartsWith(openTag)) {
                     depth++;
                 }
-                where = FindNext(searchWhat, pos);
+                where = FindNext(searchWhat, pos, true);
             }
 
         } else if(reCloseHtmlTag.Matches(word)) {
@@ -128,11 +128,11 @@ void ContextGeneric::ProcessIdleActions()
 
             int pos = startPos;
             int depth = 0;
-            int where = FindPrev(searchWhat, pos);
+            int where = FindPrev(searchWhat, pos, true);
 
             while(where != wxNOT_FOUND) {
                 int startPos2, endPos2;
-                word = xmlHelper.GetXmlTagAt(where, startPos2, endPos2);                
+                word = xmlHelper.GetXmlTagAt(where, startPos2, endPos2);
                 if(word.StartsWith(openTag) && (depth == 0)) {
                     // We got the closing brace
                     ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
@@ -148,7 +148,7 @@ void ContextGeneric::ProcessIdleActions()
                 } else if(word.StartsWith(openTag)) {
                     --depth;
                 }
-                where = FindPrev(searchWhat, pos);
+                where = FindPrev(searchWhat, pos, true);
             }
         }
 

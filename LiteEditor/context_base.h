@@ -69,14 +69,12 @@ protected:
     
     /**
      * @brief search for the next 'what' in the editor
-     * this function only searches through the visible lines
      */
-    int FindNext(const wxString& what, int &pos);
+    int FindNext(const wxString& what, int &pos, bool wholePage = false);
     /**
      * @brief search for the next 'what' in the editor
-     * this function only searches through the visible lines
      */
-    int FindPrev(const wxString& what, int &pos);
+    int FindPrev(const wxString& what, int &pos, bool wholePage = false);
 
 public:
     

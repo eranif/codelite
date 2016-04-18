@@ -48,31 +48,26 @@
 #include <cl_aui_notebook_art.h>
 
 ///////////////////////////////////////////////////////////////////////////
-AdvancedDlg::AdvancedDlg(wxWindow* parent,
-                         size_t selected_page,
-                         int id,
-                         wxString title,
-                         wxPoint pos,
-                         wxSize size,
-                         int style)
+AdvancedDlg::AdvancedDlg(
+    wxWindow* parent, size_t selected_page, int id, wxString title, wxPoint pos, wxSize size, int style)
     : AdvancedDlgBase(parent)
     , m_rightclickMenu(NULL)
 {
-    //m_compilersMainPanel = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    // m_compilersMainPanel = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     //
-    //wxBoxSizer* bSizer5;
-    //bSizer5 = new wxBoxSizer(wxVERTICAL);
+    // wxBoxSizer* bSizer5;
+    // bSizer5 = new wxBoxSizer(wxVERTICAL);
     //
-    //wxBoxSizer* bSizer4;
-    //bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    // wxBoxSizer* bSizer4;
+    // bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     //
-    //bSizer5->Add(bSizer4, 0, wxEXPAND, 5);
+    // bSizer5->Add(bSizer4, 0, wxEXPAND, 5);
     //
     m_compilersPage = new CompilerMainPage(m_notebook);
-    //bSizer5->Add(m_compilersPage, 1, wxALL | wxEXPAND, 5);
+    // bSizer5->Add(m_compilersPage, 1, wxALL | wxEXPAND, 5);
 
-    //m_compilersMainPanel->SetSizer(bSizer5);
-    //m_compilersMainPanel->Layout();
+    // m_compilersMainPanel->SetSizer(bSizer5);
+    // m_compilersMainPanel->Layout();
 
     m_notebook->AddPage(m_compilersPage, _("Compilers"), true);
     m_buildSettings = new BuildTabSetting(m_notebook);
@@ -88,18 +83,14 @@ AdvancedDlg::AdvancedDlg(wxWindow* parent,
     // center the dialog
     CentreOnParent();
     this->Layout();
-    
+
     SetName("AdvancedDlg");
     WindowAttrManager::Load(this);
 }
 
 void AdvancedDlg::LoadCompilers() { m_compilersPage->LoadCompilers(); }
 
-AdvancedDlg::~AdvancedDlg()
-{
-    wxDELETE(m_rightclickMenu);
-    
-}
+AdvancedDlg::~AdvancedDlg() { wxDELETE(m_rightclickMenu); }
 
 void AdvancedDlg::OnButtonNewClicked()
 {
@@ -221,7 +212,7 @@ void AdvancedDlg::OnCompilersDetected(const ICompilerLocator::CompilerVec_t& com
 }
 
 void AdvancedDlg::OnApply(wxCommandEvent& event)
-{ 
+{
     // save the build page
     m_compilersPage->Save();
     m_buildPage->Save();
@@ -238,7 +229,10 @@ void AdvancedDlg::OnApply(wxCommandEvent& event)
     }
 }
 
-void AdvancedDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_compilersPage->IsDirty() || m_buildSettings->IsModified()); }
+void AdvancedDlg::OnApplyUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_compilersPage->IsDirty() || m_buildSettings->IsModified());
+}
 
 void AdvancedDlg::OnAddExistingCompiler()
 {
@@ -270,5 +264,12 @@ void AdvancedDlg::OnAddExistingCompiler()
 
         // Reload the dialog
         LoadCompilers();
+    }
+}
+
+void AdvancedDlg::OnScanAndSuggestCompilers()
+{
+    if(m_compilersDetector.Locate()) {
+        CallAfter(&AdvancedDlg::OnCompilersDetected, m_compilersDetector.GetCompilersFound());
     }
 }

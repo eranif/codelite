@@ -81,8 +81,9 @@ protected:
     wxMenu *m_rightclickMenu;
     CompilersDetectorManager m_compilersDetector;
     
-protected:
+public:
     void OnButtonNewClicked();
+    void OnScanAndSuggestCompilers();
     void OnAddExistingCompiler();
     void OnButtonOKClicked(wxCommandEvent &);
     void OnContextMenu(wxContextMenuEvent &e);

@@ -75,7 +75,7 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
     bSizer24->Add(m_buttonCancel, 0, wxALL, 5);
     
     SetName(wxT("CompilerOptionDlgBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -180,7 +180,7 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer229->Realize();
     
     SetName(wxT("CompilerPatternDlgBase"));
-    SetSizeHints(500,-1);
+    SetSize(500,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -261,7 +261,7 @@ NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_stdBtnSizer75->Realize();
     
     SetName(wxT("NewCompilerDlgBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -301,13 +301,17 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer114 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer114);
     
-    m_button222 = new wxButton(this, wxID_ANY, _("Add Compilers"), wxDefaultPosition, wxSize(-1,-1), 0);
-    #if wxVERSION_NUMBER >= 2904
-    m_button222->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("arrow-down-16")), wxRIGHT);
-    m_button222->SetBitmapMargins(1,1);
-    #endif
+    m_auibar241 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar241->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer114->Add(m_button222, 0, wxALL|wxALIGN_RIGHT, 5);
+    boxSizer114->Add(m_auibar241, 0, wxEXPAND, 5);
+    
+    m_auibar241->AddTool(ID_TOOL_NEW_COMPILER, _("New"), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL, _("Add an existing compiler"), _("Add an existing compiler"), NULL);
+    
+    m_auibar241->AddTool(ID_TOOL_COPY_COMPILER, _("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("16-copy")), wxNullBitmap, wxITEM_NORMAL, _("Create a new compiler by copying an existing\ncompiler"), _("Create a new compiler by copying an existing\ncompiler"), NULL);
+    
+    m_auibar241->AddTool(ID_TOOL_SCAN_COMPILERS, _("Scan"), wxXmlResource::Get()->LoadBitmap(wxT("16-find_in_files")), wxNullBitmap, wxITEM_NORMAL, _("Scan for compilers on this computer"), _("Scan for compilers on this computer"), NULL);
+    m_auibar241->Realize();
     
     wxBoxSizer* boxSizer220 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -377,7 +381,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropMkdir->SetEditor( wxT("TextCtrlAndButton") );
     
     m_pgPropDebugger = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Gdb"), wxPG_LABEL, wxT("")) );
-    m_pgPropDebugger->SetHelpString(_("On various platform (e.g. Cygwin) it is recommended to use their own special gdb executable rather than the global one\nYou can specify one here, or leave this empty to use the default"));
+    m_pgPropDebugger->SetHelpString(_("On various platform (e.g. Cygwin) it is recommended to use their own sepcial gdb executable rather than the global one\nYou can specify one here, or leave this empty to use the default"));
     m_pgPropDebugger->SetEditor( wxT("TextCtrlAndButton") );
     m_pgMgrTools->GetGrid()->SetSplitterPosition(150, 0);
     m_panelPatterns = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
@@ -700,12 +704,14 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     fgSizer3->Add(m_checkBoxReadObjectsFromFile, 0, wxALL, 5);
     
     SetName(wxT("CompilerMainPageBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
     // Connect events
-    m_button222->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddCompilers), NULL, this);
+    this->Connect(ID_TOOL_NEW_COMPILER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddExistingCompiler), NULL, this);
+    this->Connect(ID_TOOL_COPY_COMPILER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCloneCompiler), NULL, this);
+    this->Connect(ID_TOOL_SCAN_COMPILERS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnScanCompilers), NULL, this);
     m_listBoxCompilers->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
     m_listBoxCompilers->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu), NULL, this);
     m_pgMgrTools->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
@@ -754,7 +760,9 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
 CompilerMainPageBase::~CompilerMainPageBase()
 {
-    m_button222->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddCompilers), NULL, this);
+    this->Disconnect(ID_TOOL_NEW_COMPILER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddExistingCompiler), NULL, this);
+    this->Disconnect(ID_TOOL_COPY_COMPILER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCloneCompiler), NULL, this);
+    this->Disconnect(ID_TOOL_SCAN_COMPILERS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnScanCompilers), NULL, this);
     m_listBoxCompilers->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
     m_listBoxCompilers->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu), NULL, this);
     m_pgMgrTools->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);

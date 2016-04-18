@@ -858,12 +858,6 @@ void CompilerPatternDlg::OnSubmit(wxCommandEvent& event)
     EndModal(wxID_OK);
 }
 
-void CompilerMainPage::OnAddCompilers(wxCommandEvent& event)
-{
-    AdvancedDlg* dlg = dynamic_cast<AdvancedDlg*>(wxGetTopLevelParent(this));
-    dlg->OnAutoDetectCompilers(m_button222);
-}
-
 void CompilerMainPage::OnContextMenu(wxContextMenuEvent& event)
 {
     wxMenu menu;
@@ -931,4 +925,21 @@ void CompilerMainPage::OnCmdModify(wxCommandEvent& event)
 {
     event.Skip();
     m_isDirty = true;
+}
+void CompilerMainPage::OnAddExistingCompiler(wxCommandEvent& event)
+{
+    AdvancedDlg* dlg = dynamic_cast<AdvancedDlg*>(wxGetTopLevelParent(this));
+    dlg->CallAfter(&AdvancedDlg::OnAddExistingCompiler);
+}
+
+void CompilerMainPage::OnCloneCompiler(wxCommandEvent& event)
+{
+    AdvancedDlg* dlg = dynamic_cast<AdvancedDlg*>(wxGetTopLevelParent(this));
+    dlg->CallAfter(&AdvancedDlg::OnButtonNewClicked);
+}
+
+void CompilerMainPage::OnScanCompilers(wxCommandEvent& event)
+{
+    AdvancedDlg* dlg = dynamic_cast<AdvancedDlg*>(wxGetTopLevelParent(this));
+    dlg->CallAfter(&AdvancedDlg::OnScanAndSuggestCompilers);
 }

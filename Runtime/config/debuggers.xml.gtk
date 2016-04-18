@@ -30,9 +30,6 @@ register_qt4_printers (None)
 from wx import register_wx_printers
 register_wx_printers (None)
 
-from boost.printers import register_printer_gen
-register_printer_gen(None)
-
 end]]>
     </CData>
   </ArchiveObject>

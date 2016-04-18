@@ -461,7 +461,7 @@ public:
         , applyBreakpointsAfterProgramStarted(false)
         , whenBreakpointHitRaiseCodelite(true)
         , charArrAsPtr(false)
-        , enableGDBPrettyPrinting(false)
+        , enableGDBPrettyPrinting(true)
         , flags(0)
     {
     }

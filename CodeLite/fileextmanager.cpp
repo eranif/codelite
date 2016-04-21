@@ -145,6 +145,10 @@ void FileExtManager::Init()
         // #ifndef WORD
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#ifndef[ \t]+[a-zA-Z0-9_]+", TypeSourceCpp)));
 
+        // vim modlines
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("/\\* \\-\\*\\- Mode:[ \t]+c\\+\\+", TypeSourceCpp)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("# \\-\\*\\- Mode:[ \t]+python", TypePython)));
+
         // #include <
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#include[ \t]+[\\<\"]", TypeSourceCpp)));
     }

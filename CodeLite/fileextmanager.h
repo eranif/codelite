@@ -90,7 +90,7 @@ public:
             : m_fileType(fileType)
         {
             if(regex) {
-                m_regex = new wxRegEx(pattern);
+                m_regex = new wxRegEx(pattern, wxRE_ADVANCED | wxRE_ICASE);
             } else {
                 m_exactMatch = pattern;
             }

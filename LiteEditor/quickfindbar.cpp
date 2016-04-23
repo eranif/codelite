@@ -776,6 +776,11 @@ void QuickFindBar::DoSelectAll(bool addMarkers)
     while(pos != wxNOT_FOUND) {
         std::pair<int, int> match;
         m_sci->GetSelection(&match.first, &match.second);
+        if(match.first == match.second) {
+            clGetManager()->SetStatusMessage(_("No match found"), 1);
+            return;
+        }
+        
         m_sci->SetCurrentPos(match.second);
         m_sci->SetSelectionStart(match.second);
         m_sci->SetSelectionEnd(match.second);

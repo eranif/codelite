@@ -149,12 +149,12 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_btnAddPath = new wxButton(m_panelMainPanel, wxID_ANY, _("Add Path..."), wxDefaultPosition, wxSize(-1,-1), 0);
     m_btnAddPath->SetToolTip(_("Add new search location"));
     
-    boxSizer1->Add(m_btnAddPath, 0, wxALL, 5);
+    boxSizer1->Add(m_btnAddPath, 0, wxALL|wxEXPAND, 5);
     
     m_btnClearSelectedPath = new wxButton(m_panelMainPanel, wxID_ANY, _("Clear Path"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_btnClearSelectedPath->SetToolTip(_("Clear the selected entry from the\n'Look In' list box"));
     
-    boxSizer1->Add(m_btnClearSelectedPath, 0, wxALL, 5);
+    boxSizer1->Add(m_btnClearSelectedPath, 0, wxALL|wxEXPAND, 5);
     
     fgSizer41->Add(0, 0, 1, wxALL, 5);
     
@@ -166,7 +166,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
-    boxSizer105->Add(fgSizer3, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer105->Add(fgSizer3, 0, wxALL|wxEXPAND, 5);
     
     m_matchCase = new wxCheckBox(m_panelMainPanel, wxID_ANY, _("&Match case"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_matchCase->SetValue(false);

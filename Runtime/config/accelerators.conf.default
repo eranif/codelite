@@ -40,6 +40,7 @@ function_call_tip|Edit|Display Function Calltip|Ctrl-Shift-SPACE
 convert_eol_win|Edit|Convert to Windows Format|
 convert_eol_unix|Edit|Convert to Unix Format|
 trim_trailing|Edit|Trim Trailing Spaces|
+selection_to_multi_caret|Edit|selection_to_multi_caret|Ctrl-Shift-L
 word_wrap|View|Word Wrap|
 toggle_fold|View|Toggle Current Fold|Alt-RIGHT
 fold_all|View|Toggle All Folds|
@@ -156,7 +157,7 @@ setters_getters|C++::Code Generation / Refactoring|Generate Setters/Getters...|
 move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|
 add_impl|C++::Code Generation / Refactoring|Add Function Implementation...|
 rename_symbol|C++::Code Generation / Refactoring|Rename Symbol...|Ctrl-Shift-H
-rename_local_variable|C++::Code Generation / Refactoring|Rename Local Variable...|Ctrl-Shift-L
+rename_local_variable|C++::Code Generation / Refactoring|Rename Local Variable...|
 add_multi_impl|C++::Code Generation / Refactoring|Implement all Un-implemented Functions...|
 add_virtual_impl|C++::Code Generation / Refactoring|Implement inherited virtual Functions...|
 add_pure_virtual_impl|C++::Code Generation / Refactoring|Implement inherited pure virtual Functions...|

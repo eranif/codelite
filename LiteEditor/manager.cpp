@@ -1231,7 +1231,10 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
     clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
     evtAddFiles.SetStrings(files);
     EventNotifier::Get()->AddPendingEvent(evtAddFiles);
-
+    
+    // Open the newly created file
+    clMainFrame::Get()->GetMainBook()->OpenFile(newName, projName);
+    
     // Step 5: Change all include files refering to the old
     // file
     if(!IsWorkspaceOpen()) {

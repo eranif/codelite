@@ -7,7 +7,7 @@
 
 WebToolsConfig::WebToolsConfig()
     : clConfigItem("WebTools")
-    , m_jsFlags(kJSEnableCC | kJSLibraryBrowser | kJSLibraryEcma5 | kJSLibraryEcma6 | kJSPluginStrings | kJSPluginNode)
+    , m_jsFlags(kJSEnableCC | kJSLibraryBrowser | kJSLibraryEcma5 | kJSLibraryEcma6 | kJSPluginNode)
     , m_xmlFlags(kXmlEnableCC)
     , m_htmlFlags(kHtmlEnableCC)
 {

@@ -50,7 +50,8 @@ FileLogger::~FileLogger()
 
 void FileLogger::AddLogLine(const wxString& msg, int verbosity)
 {
-    if(m_verbosity >= verbosity && m_fp) {
+    if(msg.IsEmpty()) return;
+    if((m_verbosity >= verbosity) && m_fp) {
         wxString formattedMsg;
 
         timeval tim;

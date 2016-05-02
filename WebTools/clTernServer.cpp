@@ -342,7 +342,7 @@ void clTernServer::OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply
     RecycleIfNeeded();
 
     m_entries.clear();
-    CL_DEBUG(reply.json);
+    CL_DEBUGS(reply.json);
 
     switch(reply.requestType) {
     case clTernWorkerThread::kFunctionTip:
@@ -359,10 +359,10 @@ void clTernServer::OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply
         }
     } break;
     case clTernWorkerThread::kReparse: {
-        CL_DEBUG("Tern reparse:\n%s\n", reply.json);
+        // TODO ??
     } break;
     case clTernWorkerThread::kReset:
-        CL_DEBUG("Tern reset:\n%s\n", reply.json);
+        // TODO ??
         break;
     }
 }

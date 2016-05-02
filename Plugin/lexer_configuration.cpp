@@ -523,6 +523,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetUseTabs(options->GetIndentUsesTabs());
     ctrl->SetTabWidth(options->GetTabWidth());
     ctrl->SetIndent(options->GetIndentWidth());
+    
+    // Overide TAB vs Space settings incase the file is a makefile
+    // It is not an option for Makefile to use TABS
+    ctrl->SetUseTabs((GetName().Lower() == "makefile"));
 }
 
 const StyleProperty& LexerConf::GetProperty(int propertyId) const

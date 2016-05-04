@@ -890,6 +890,7 @@ public:
 
 
         // ### Variables: ###
+        po["COMPILER_VERSION"] = cfg["COMPILER_VERSION"];
         po["WX_RELEASE_NODOT"] = cfg["WXVER_MAJOR"] + cfg["WXVER_MINOR"];
         if (po["WX_RELEASE_NODOT"].empty())
             po["WX_RELEASE_NODOT"] = "26";
@@ -1030,7 +1031,7 @@ public:
 //----------------------------------------------------
 
         // ### Variables, Part 2: ###
-        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
+        po["LIBDIRNAME"] = po["prefix"] + "/lib/" + getName() + po["COMPILER_VERSION"] + "_" + po["LIBTYPE_SUFFIX"] + cfg["CFG"];
 
         po["SETUPHDIR"]  = po["LIBDIRNAME"] + "/" + po["PORTNAME"] + po["WXUNIVNAME"];
         po["SETUPHDIR"] += po["WXUNICODEFLAG"] + po["WXDEBUGFLAG"];
@@ -2271,10 +2272,11 @@ void checkAdditionalFlags(Options& po, const CmdLineOptions& cl)
 void detectCompiler(Options& po, const CmdLineOptions& cl)
 {
     // input example of po["wxcfg"]:
+    // gcc510TDM_dll/mswu
     // gcc_dll/mswud
     // vc_lib/msw
 
-    if (po["wxcfg"].find("gcc_") != std::string::npos) {
+    if (po["wxcfg"].find("gcc") != std::string::npos) {
         CompilerMinGW compiler;
         compiler.process(po, cl);
         return;
@@ -2299,7 +2301,7 @@ void detectCompiler(Options& po, const CmdLineOptions& cl)
 
         std::cout << g_tokError << "No supported compiler has been detected in the configuration '" << po["wxcfg"] << "'." << std::endl;
         std::cerr << std::endl;
-        std::cerr << "The specified wxcfg must start with a 'gcc_', 'dmc_' or 'vc_'" << std::endl;
+        std::cerr << "The specified wxcfg must start with a 'gcc', 'dmc_' or 'vc_'" << std::endl;
         std::cerr << "to be successfully detected." << std::endl;
 
         exit(1);

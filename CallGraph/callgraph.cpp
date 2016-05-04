@@ -144,25 +144,6 @@ CallGraph::~CallGraph()
 void CallGraph::LogFn(wxString s)
 {
     return; // (log disabled)
-
-    FileLogger::Get()->AddLogLine(wxString("> ") + s, FileLogger::Dbg);
-
-    // on-demand log file creation
-    if(nil == m_LogFile) {
-        wxFileName cfn(wxGetenv("HOME"), "callgraph.log");
-        wxASSERT(cfn.IsOk());
-
-        m_LogFile = new wxFileOutputStream(cfn.GetFullPath());
-    }
-
-    wxTextOutputStream tos(*m_LogFile);
-
-    tos << s << "\n";
-
-    // cerr ends up in ~/xsesssion-errors ???
-    // cout goes nowhere?
-    // std::cout << s << "\n";
-    ::wxPrintf("%s\n", s);
 }
 
 //-----------------------------------------------------------------------------
@@ -214,43 +195,43 @@ wxMenu* CallGraph::CreateProjectPopMenu()
 
 //-----------------------------------------------------------------------------
 
-void CallGraph::HookPopupMenu(wxMenu *menu, MenuType type)
+void CallGraph::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if (type == MenuTypeEditor) {
-        //TODO::Append items for the editor context menu
-    } else if (type == MenuTypeFileExplorer) {
-        //TODO::Append items for the file explorer context menu
-    } else if (type == MenuTypeFileView_Workspace) {
-        //TODO::Append items for the file view / workspace context menu
-    } else if (type == MenuTypeFileView_Project) {
-        //TODO::Append items for the file view/Project context menu
-        if ( !menu->FindItem( XRCID("cg_show_callgraph_popup") ) ) {
+    if(type == MenuTypeEditor) {
+        // TODO::Append items for the editor context menu
+    } else if(type == MenuTypeFileExplorer) {
+        // TODO::Append items for the file explorer context menu
+    } else if(type == MenuTypeFileView_Workspace) {
+        // TODO::Append items for the file view / workspace context menu
+    } else if(type == MenuTypeFileView_Project) {
+        // TODO::Append items for the file view/Project context menu
+        if(!menu->FindItem(XRCID("cg_show_callgraph_popup"))) {
             menu->PrependSeparator();
-            menu->Prepend( XRCID("cg_show_callgraph_popup"), _("Call Graph"), CreateProjectPopMenu() );
+            menu->Prepend(XRCID("cg_show_callgraph_popup"), _("Call Graph"), CreateProjectPopMenu());
         }
-    } else if (type == MenuTypeFileView_Folder) {
-        //TODO::Append items for the file view/Virtual folder context menu
-    } else if (type == MenuTypeFileView_File) {
-        //TODO::Append items for the file view/file context menu
+    } else if(type == MenuTypeFileView_Folder) {
+        // TODO::Append items for the file view/Virtual folder context menu
+    } else if(type == MenuTypeFileView_File) {
+        // TODO::Append items for the file view/file context menu
     }
 }
 
 //-----------------------------------------------------------------------------
 
-void CallGraph::UnHookPopupMenu(wxMenu *menu, MenuType type)
+void CallGraph::UnHookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if (type == MenuTypeEditor) {
-        //TODO::Unhook items for the editor context menu
-    } else if (type == MenuTypeFileExplorer) {
-        //TODO::Unhook  items for the file explorer context menu
-    } else if (type == MenuTypeFileView_Workspace) {
-        //TODO::Unhook  items for the file view / workspace context menu
-    } else if (type == MenuTypeFileView_Project) {
-        //TODO::Unhook  items for the file view/Project context menu
-    } else if (type == MenuTypeFileView_Folder) {
-        //TODO::Unhook  items for the file view/Virtual folder context menu
-    } else if (type == MenuTypeFileView_File) {
-        //TODO::Unhook  items for the file view/file context menu
+    if(type == MenuTypeEditor) {
+        // TODO::Unhook items for the editor context menu
+    } else if(type == MenuTypeFileExplorer) {
+        // TODO::Unhook  items for the file explorer context menu
+    } else if(type == MenuTypeFileView_Workspace) {
+        // TODO::Unhook  items for the file view / workspace context menu
+    } else if(type == MenuTypeFileView_Project) {
+        // TODO::Unhook  items for the file view/Project context menu
+    } else if(type == MenuTypeFileView_Folder) {
+        // TODO::Unhook  items for the file view/Virtual folder context menu
+    } else if(type == MenuTypeFileView_File) {
+        // TODO::Unhook  items for the file view/file context menu
     }
 }
 
@@ -290,43 +271,44 @@ void CallGraph::OnAbout(wxCommandEvent& event)
 wxString CallGraph::LocateApp(const wxString& app_name)
 {
     wxArrayString out;
-    wxExecute( "which " + app_name, out );
-    if( out.GetCount() == 1 ) return out[0];
+    wxExecute("which " + app_name, out);
+    if(out.GetCount() == 1)
+        return out[0];
     else
         return "";
-    
-//    // myLog("LocateApp(\"%s\")", app_name);
-//
-//    wxProcess* proc = new wxProcess(wxPROCESS_REDIRECT);
-//
-//    wxString cmd = "which " + app_name;
-//
-//    // Q: HOW BIG IS INTERNAL BUFFER ???
-//    int err = wxExecute(cmd, wxEXEC_SYNC, proc);
-//    // ignore -1 error due to CL signal handler overload
-//
-//    /*int	pid = proc->GetPid();
-//
-//    myLog("  wxExecute(\"%s\") returned err %d, had pid %d", cmd, err, pid);
-//    */
-//
-//    // get process output
-//    wxInputStream* pis = proc->GetInputStream();
-//    if(!pis || !pis->CanRead()) {
-//        delete proc;
-//        return "<ERROR>";
-//    }
-//
-//    // read from it
-//    wxTextInputStream tis(*pis);
-//
-//    wxString out_str = tis.ReadLine();
-//
-//    delete proc;
-//
-//    // myLog("  returned \"%s\"", out_str);
-//
-//    return out_str;
+
+    //    // myLog("LocateApp(\"%s\")", app_name);
+    //
+    //    wxProcess* proc = new wxProcess(wxPROCESS_REDIRECT);
+    //
+    //    wxString cmd = "which " + app_name;
+    //
+    //    // Q: HOW BIG IS INTERNAL BUFFER ???
+    //    int err = wxExecute(cmd, wxEXEC_SYNC, proc);
+    //    // ignore -1 error due to CL signal handler overload
+    //
+    //    /*int	pid = proc->GetPid();
+    //
+    //    myLog("  wxExecute(\"%s\") returned err %d, had pid %d", cmd, err, pid);
+    //    */
+    //
+    //    // get process output
+    //    wxInputStream* pis = proc->GetInputStream();
+    //    if(!pis || !pis->CanRead()) {
+    //        delete proc;
+    //        return "<ERROR>";
+    //    }
+    //
+    //    // read from it
+    //    wxTextInputStream tis(*pis);
+    //
+    //    wxString out_str = tis.ReadLine();
+    //
+    //    delete proc;
+    //
+    //    // myLog("  returned \"%s\"", out_str);
+    //
+    //    return out_str;
 }
 
 //---- Get Gprof Path ---------------------------------------------------------
@@ -399,9 +381,9 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     wxFileName ws_cfn = ws->GetWorkspaceFileName();
 
     wxString projectName = ws->GetActiveProjectName();
-    
+
     wxString errMsg;
-    ProjectPtr proj = ws->FindProjectByName( projectName, errMsg );
+    ProjectPtr proj = ws->FindProjectByName(projectName, errMsg);
     wxString projPath = proj->GetProjectPath();
 
     BuildMatrixPtr mtx = ws->GetBuildMatrix();
@@ -412,16 +394,16 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     BuildConfigPtr bldConf = ws->GetProjBuildConf(projectName, build_config_name);
     if(!bldConf) return MessageBox(_("Unable to get opened workspace."), wxICON_ERROR);
 
-    wxString projOutputFn = macro->Expand( bldConf->GetOutputFileName(), m_mgr, projectName, build_config_name );
-    #ifdef __WXMSW__
-    if( ! projOutputFn.Lower().EndsWith( wxT(".exe") ) ) projOutputFn += wxT(".exe");
-    #endif //__WXMSW__
+    wxString projOutputFn = macro->Expand(bldConf->GetOutputFileName(), m_mgr, projectName, build_config_name);
+#ifdef __WXMSW__
+    if(!projOutputFn.Lower().EndsWith(wxT(".exe"))) projOutputFn += wxT(".exe");
+#endif //__WXMSW__
 
-//    myLog("WorkspaceFileName = \"%s\"", ws_cfn.GetFullPath());
-//    myLog("projectName \"%s\"", projectName);
-//    myLog("build_config_name = \"%s\"", build_config_name);
-//    myLog("projOutputFn = \"%s\"", projOutputFn);
-//    myLog("projPath = \"%s\"", projPath);
+    //    myLog("WorkspaceFileName = \"%s\"", ws_cfn.GetFullPath());
+    //    myLog("projectName \"%s\"", projectName);
+    //    myLog("build_config_name = \"%s\"", build_config_name);
+    //    myLog("projOutputFn = \"%s\"", projOutputFn);
+    //    myLog("projPath = \"%s\"", projPath);
 
     wxFileName cfn(projPath + wxFileName::GetPathSeparator() + projOutputFn);
     cfn.Normalize();
@@ -440,7 +422,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     if(!cfn.IsFileExecutable()) return MessageBox("bin/exe isn't executable", wxICON_ERROR);
 
     // check 'gmon.out' file exists
-    wxFileName gmon_cfn( cfn.GetPath() + wxFileName::GetPathSeparator() + GMON_FILENAME_OUT);
+    wxFileName gmon_cfn(cfn.GetPath() + wxFileName::GetPathSeparator() + GMON_FILENAME_OUT);
     gmon_cfn.Normalize();
 
     wxString gmonfn = gmon_cfn.GetFullPath();

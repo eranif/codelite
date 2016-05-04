@@ -36,6 +36,7 @@ static bool initialized = false;
 
 FileLogger::FileLogger()
     : m_verbosity(FileLogger::Error)
+    , _requestedLogLevel(FileLogger::Developer)
     , m_fp(NULL)
 {
 }
@@ -52,56 +53,22 @@ void FileLogger::AddLogLine(const wxString& msg, int verbosity)
 {
     if(msg.IsEmpty()) return;
     if((m_verbosity >= verbosity) && m_fp) {
-        wxString formattedMsg;
-
-        timeval tim;
-        gettimeofday(&tim, NULL);
-        int ms = (int)tim.tv_usec / 1000.0;
-
-        wxString msStr = wxString::Format(wxT("%03d"), ms);
-
-        formattedMsg << wxT("[ ") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
-
-        switch(verbosity) {
-        case System:
-            formattedMsg << wxT(" SYS ] ");
-            break;
-
-        case Error:
-            formattedMsg << wxT(" ERR ] ");
-            break;
-
-        case Warning:
-            formattedMsg << wxT(" WRN ] ");
-            break;
-
-        case Dbg:
-            formattedMsg << wxT(" DBG ] ");
-            break;
-
-        case Developer:
-            formattedMsg << wxT(" DVL ] ");
-            break;
-        }
-
-        formattedMsg << msg;
+        wxString formattedMsg = Prefix(verbosity);
+        formattedMsg << " " << msg;
         formattedMsg.Trim().Trim(false);
         formattedMsg << wxT("\n");
-
         wxFprintf(m_fp, wxT("%s"), formattedMsg.c_str());
         fflush(m_fp);
     }
 }
 
-FileLogger* FileLogger::Get()
-{
-    return &theLogger;
-}
+FileLogger& FileLogger::Get() { return theLogger; }
 
 void FileLogger::SetVerbosity(int level)
 {
-    if(level > FileLogger::Warning)
-        CL_SYSTEM(wxT("Log verbosity is now set to %s"), FileLogger::GetVerbosityAsString(level).c_str());
+    if(level > FileLogger::Warning) {
+        clSYSTEM() << "Log verbosity is now set to:" << FileLogger::GetVerbosityAsString(level) << clEndl;
+    }
     m_verbosity = level;
 }
 
@@ -147,10 +114,7 @@ wxString FileLogger::GetVerbosityAsString(int verbosity)
     }
 }
 
-void FileLogger::SetVerbosity(const wxString& verbosity)
-{
-    SetVerbosity(FileLogger::GetVerbosityAsNumber(verbosity));
-}
+void FileLogger::SetVerbosity(const wxString& verbosity) { SetVerbosity(FileLogger::GetVerbosityAsNumber(verbosity)); }
 
 void FileLogger::OpenLog(const wxString& fullName, int verbosity)
 {
@@ -168,4 +132,50 @@ void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
     for(size_t i = 0; i < arr.GetCount(); ++i) {
         AddLogLine(arr.Item(i), verbosity);
     }
+}
+
+void FileLogger::Flush()
+{
+    if(m_buffer.IsEmpty()) {
+        return;
+    }
+    wxFprintf(m_fp, "%s\n", m_buffer);
+    fflush(m_fp);
+    m_buffer.Clear();
+}
+
+wxString FileLogger::Prefix(int verbosity) const
+{
+    wxString prefix;
+
+    timeval tim;
+    gettimeofday(&tim, NULL);
+    int ms = (int)tim.tv_usec / 1000.0;
+
+    wxString msStr = wxString::Format(wxT("%03d"), ms);
+
+    prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
+
+    switch(verbosity) {
+    case System:
+        prefix << wxT(" SYS]");
+        break;
+
+    case Error:
+        prefix << wxT(" ERR]");
+        break;
+
+    case Warning:
+        prefix << wxT(" WRN]");
+        break;
+
+    case Dbg:
+        prefix << wxT(" DBG]");
+        break;
+
+    case Developer:
+        prefix << wxT(" DVL]");
+        break;
+    }
+    return prefix;
 }

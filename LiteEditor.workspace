@@ -104,7 +104,7 @@
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>

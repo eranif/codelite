@@ -292,7 +292,7 @@ int EditorSettingsMiscPanel::FindAvailableLocales()
 
 void EditorSettingsMiscPanel::OnLogVerbosityChanged(wxCommandEvent& event)
 {
-    FileLogger::Get()->SetVerbosity(event.GetString());
+    FileLogger::Get().SetVerbosity(event.GetString());
     clConfig::Get().Write("LogVerbosity", FileLogger::GetVerbosityAsNumber(m_choice4->GetStringSelection()));
 }
 

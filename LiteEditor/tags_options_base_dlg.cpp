@@ -27,13 +27,13 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_treebook2 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
-    m_treebook2->SetName(wxT("m_treebook2"));
+    m_notebook87 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook87->SetName(wxT("m_notebook87"));
     
-    mainSizer->Add(m_treebook2, 1, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_notebook87, 1, wxALL|wxEXPAND, 5);
     
-    m_paneDisplayAndBehavior = new wxPanel(m_treebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook2->AddPage(m_paneDisplayAndBehavior, _("Display and Behavior"), false, wxNOT_FOUND);
+    m_paneDisplayAndBehavior = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook87->AddPage(m_paneDisplayAndBehavior, _("Display and Behavior"), false);
     
     wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
     m_paneDisplayAndBehavior->SetSizer(bSizer19);
@@ -124,8 +124,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     flexGridSizer59->Add(m_checkBoxDeepUsingNamespaceResolving, 0, wxALL, 5);
     
-    m_paneColouring = new wxPanel(m_treebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook2->AddPage(m_paneColouring, _("Colouring"), false, wxNOT_FOUND);
+    m_paneColouring = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook87->AddPage(m_paneColouring, _("Colouring"), false);
     
     wxBoxSizer* bSizer16 = new wxBoxSizer(wxVERTICAL);
     m_paneColouring->SetSizer(bSizer16);
@@ -173,8 +173,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_pgPropColourWorkspaceSymbols = m_pgMgrColouring->Append(  new wxFlagsProperty( _("Colour workspace symbols"), wxPG_LABEL, m_pgMgrColouringArr, m_pgMgrColouringIntArr, 0) );
     m_pgPropColourWorkspaceSymbols->SetHelpString(_("Select from the list below which symbols type should be coloured by codelite with different colour.\nThe colour is configurable from the 'Colours and Fonts' dialog"));
     
-    m_paneTriggering = new wxPanel(m_treebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook2->AddPage(m_paneTriggering, _("Triggering"), false, wxNOT_FOUND);
+    m_paneTriggering = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook87->AddPage(m_paneTriggering, _("Triggering"), false);
     
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     m_paneTriggering->SetSizer(bSizer17);
@@ -214,21 +214,19 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer4->Add(m_checkAutoInsertSingleChoice, 0, wxALL, 5);
     
-    m_treebook2->AddPage(NULL, _("CTags"), false, wxNOT_FOUND);
+    m_pageCtags = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook87->AddPage(m_pageCtags, _("CTags"), false);
     
-    m_panelCtagsSearchPaths = new wxPanel(m_treebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook2->InsertSubPage(3, m_panelCtagsSearchPaths, _("Search paths"), false, wxNOT_FOUND);
+    wxBoxSizer* boxSizer91 = new wxBoxSizer(wxVERTICAL);
+    m_pageCtags->SetSizer(boxSizer91);
     
-    wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
-    m_panelCtagsSearchPaths->SetSizer(bSizer7);
+    m_notebook93 = new wxNotebook(m_pageCtags, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook93->SetName(wxT("m_notebook93"));
     
-    m_notebook36 = new wxNotebook(m_panelCtagsSearchPaths, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
-    m_notebook36->SetName(wxT("m_notebook36"));
+    boxSizer91->Add(m_notebook93, 1, wxALL|wxEXPAND, 5);
     
-    bSizer7->Add(m_notebook36, 1, wxALL|wxEXPAND, 5);
-    
-    m_panel38 = new wxPanel(m_notebook36, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook36->AddPage(m_panel38, _("Search Paths"), true);
+    m_panel38 = new wxPanel(m_notebook93, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook93->AddPage(m_panel38, _("Search Paths"), true);
     
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_panel38->SetSizer(boxSizer30);
@@ -301,8 +299,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer8->Add(m_buttonCtagsSuggest, 0, wxALL, 5);
     
-    m_panel40 = new wxPanel(m_notebook36, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook36->AddPage(m_panel40, _("Exclude Paths"), false);
+    m_panel40 = new wxPanel(m_notebook93, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook93->AddPage(m_panel40, _("Exclude Paths"), false);
     
     wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
     m_panel40->SetSizer(boxSizer42);
@@ -365,8 +363,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer81->Add(m_buttonAddExcludePath, 0, wxALL|wxEXPAND, 5);
     
-    m_panelCtagsAdvanced = new wxPanel(m_treebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook2->InsertSubPage(3, m_panelCtagsAdvanced, _("Advanced"), false, wxNOT_FOUND);
+    m_panelCtagsAdvanced = new wxPanel(m_notebook93, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook93->AddPage(m_panelCtagsAdvanced, _("Advanced"), false);
     
     wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
     m_panelCtagsAdvanced->SetSizer(bSizer6);
@@ -510,8 +508,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer15->Add(m_buttonParse, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_panelClang = new wxPanel(m_treebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook2->AddPage(m_panelClang, _("Clang"), false, wxNOT_FOUND);
+    m_panelClang = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook87->AddPage(m_panelClang, _("Clang"), false);
     
     wxBoxSizer* bSizer18 = new wxBoxSizer(wxVERTICAL);
     m_panelClang->SetSizer(bSizer18);
@@ -633,41 +631,34 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     fgSizerClangCache->Add(m_choiceCachePolicy, 0, wxALL|wxEXPAND|wxALIGN_RIGHT, 5);
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer95 = new wxStdDialogButtonSizer();
     
-    mainSizer->Add(bSizer3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    mainSizer->Add(m_stdBtnSizer95, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
     
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonOK->SetDefault();
+    m_button97 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button97->SetDefault();
+    m_stdBtnSizer95->AddButton(m_button97);
     
-    bSizer3->Add(m_buttonOK, 0, wxALL, 5);
+    m_button99 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer95->AddButton(m_button99);
+    m_stdBtnSizer95->Realize();
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer3->Add(m_buttonCancel, 0, wxALL, 5);
-    
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_treebook2)){
-        wxPersistenceManager::Get().RegisterAndRestore(m_treebook2);
-    } else {
-        wxPersistenceManager::Get().Restore(m_treebook2);
-    }
-    #endif
-    m_treebook2->ExpandNode( 0, true );
-    m_treebook2->ExpandNode( 1, true );
-    m_treebook2->ExpandNode( 2, true );
-    m_treebook2->ExpandNode( 3, true );
-    m_treebook2->ExpandNode( 4, true );
     
     #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook36)){
-        wxPersistenceManager::Get().RegisterAndRestore(m_notebook36);
+    if(!wxPersistenceManager::Get().Find(m_notebook87)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook87);
     } else {
-        wxPersistenceManager::Get().Restore(m_notebook36);
+        wxPersistenceManager::Get().Restore(m_notebook87);
     }
     #endif
-    m_treebook2->ExpandNode( 5, true );
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook93)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook93);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook93);
+    }
+    #endif
     
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebook2)){
@@ -676,7 +667,6 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
         wxPersistenceManager::Get().Restore(m_notebook2);
     }
     #endif
-    m_treebook2->ExpandNode( 6, true );
     
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebookClang)){
@@ -719,7 +709,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_staticText101->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnClangCCEnabledUI), NULL, this);
     m_buttonClearCache->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnClearClangCache), NULL, this);
     m_buttonClearCache->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnClearClangCacheUI), NULL, this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnButtonOK), NULL, this);
+    m_button97->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnButtonOK), NULL, this);
     
 }
 
@@ -740,6 +730,6 @@ TagsOptionsBaseDlg::~TagsOptionsBaseDlg()
     m_staticText101->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnClangCCEnabledUI), NULL, this);
     m_buttonClearCache->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnClearClangCache), NULL, this);
     m_buttonClearCache->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnClearClangCacheUI), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnButtonOK), NULL, this);
+    m_button97->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnButtonOK), NULL, this);
     
 }

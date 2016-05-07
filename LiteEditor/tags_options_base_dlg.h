@@ -14,7 +14,7 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/treebook.h>
+#include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
 #include <wx/statbox.h>
@@ -25,7 +25,6 @@
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
 #include <wx/slider.h>
-#include <wx/notebook.h>
 #include <wx/bannerwindow.h>
 #include <wx/stc/stc.h>
 #include <wx/button.h>
@@ -43,7 +42,7 @@
 class TagsOptionsBaseDlg : public wxDialog
 {
 protected:
-    wxTreebook* m_treebook2;
+    wxNotebook* m_notebook87;
     wxPanel* m_paneDisplayAndBehavior;
     wxStaticText* m_staticText14;
     wxTextCtrl* m_spinCtrlNumberOfCCItems;
@@ -65,9 +64,8 @@ protected:
     wxStaticText* m_staticTextMinWordLen;
     wxSlider* m_sliderMinWordLen;
     wxCheckBox* m_checkAutoInsertSingleChoice;
-    wxPanel* m_panelCtags;
-    wxPanel* m_panelCtagsSearchPaths;
-    wxNotebook* m_notebook36;
+    wxPanel* m_pageCtags;
+    wxNotebook* m_notebook93;
     wxPanel* m_panel38;
     wxBannerWindow* m_banner34;
     wxStyledTextCtrl* m_textCtrlCtagsSearchPaths;
@@ -102,8 +100,9 @@ protected:
     wxButton* m_buttonClearCache;
     wxStaticText* m_staticText12;
     wxChoice* m_choiceCachePolicy;
-    wxButton* m_buttonOK;
-    wxButton* m_buttonCancel;
+    wxStdDialogButtonSizer* m_stdBtnSizer95;
+    wxButton* m_button97;
+    wxButton* m_button99;
 
 protected:
     virtual void OnColouringPropertyValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
@@ -147,8 +146,6 @@ public:
     wxStyledTextCtrl* GetTextCtrlCtagsExcludePaths() { return m_textCtrlCtagsExcludePaths; }
     wxButton* GetButtonAddExcludePath() { return m_buttonAddExcludePath; }
     wxPanel* GetPanel40() { return m_panel40; }
-    wxNotebook* GetNotebook36() { return m_notebook36; }
-    wxPanel* GetPanelCtagsSearchPaths() { return m_panelCtagsSearchPaths; }
     wxStyledTextCtrl* GetTextPrep() { return m_textPrep; }
     wxStaticText* GetStaticText9() { return m_staticText9; }
     wxHyperlinkCtrl* GetHyperlink1() { return m_hyperlink1; }
@@ -160,7 +157,8 @@ public:
     wxTextCtrl* GetTextCtrlFilesList() { return m_textCtrlFilesList; }
     wxButton* GetButtonParse() { return m_buttonParse; }
     wxPanel* GetPanelCtagsAdvanced() { return m_panelCtagsAdvanced; }
-    wxPanel* GetPanelCtags() { return m_panelCtags; }
+    wxNotebook* GetNotebook93() { return m_notebook93; }
+    wxPanel* GetPageCtags() { return m_pageCtags; }
     wxCheckBox* GetCheckBoxEnableClangCC() { return m_checkBoxEnableClangCC; }
     wxCheckBox* GetCheckBoxClangFirst() { return m_checkBoxClangFirst; }
     wxStaticText* GetStaticText13() { return m_staticText13; }
@@ -175,9 +173,7 @@ public:
     wxPanel* GetPanel4() { return m_panel4; }
     wxNotebook* GetNotebookClang() { return m_notebookClang; }
     wxPanel* GetPanelClang() { return m_panelClang; }
-    wxTreebook* GetTreebook2() { return m_treebook2; }
-    wxButton* GetButtonOK() { return m_buttonOK; }
-    wxButton* GetButtonCancel() { return m_buttonCancel; }
+    wxNotebook* GetNotebook87() { return m_notebook87; }
     TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Code Completion"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~TagsOptionsBaseDlg();
 };

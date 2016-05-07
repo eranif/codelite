@@ -51,7 +51,6 @@ TagsOptionsDlg::TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data)
     : TagsOptionsBaseDlg(parent)
     , m_data(data)
 {
-    MSWSetNativeTheme(m_treebook2->GetTreeCtrl());
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
         lexer->Apply(m_textCtrlClangSearchPaths);

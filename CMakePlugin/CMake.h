@@ -74,17 +74,14 @@
 class CMake
 {
 
-// Public Structures
+    // Public Structures
 public:
-
-
     /**
      * @brief Helper class that helps notify about loading state.
      */
     class LoadNotifier
     {
     public:
-
         /**
          * @brief Checks if loading should be stopped.
          *
@@ -92,12 +89,10 @@ public:
          */
         virtual bool RequestStop() const = 0;
 
-
         /**
          * @brief Loading is started.
          */
         virtual void Start() = 0;
-
 
         /**
          * @brief Update loading progress.
@@ -106,7 +101,6 @@ public:
          */
         virtual void Update(int value) = 0;
 
-
         /**
          * @brief Increase loading progress.
          *
@@ -114,31 +108,24 @@ public:
          */
         virtual void Inc(int value) = 0;
 
-
         /**
          * @brief Loading is done.
          */
         virtual void Done() = 0;
-        
+
         /**
          * @brief stop the current thread
          */
         virtual void Stop() = 0;
     };
 
-
-// Public Types
+    // Public Types
 public:
-
-
     /// Lines map.
     typedef std::map<wxString, wxString> HelpMap;
 
-
-// Public Ctors
+    // Public Ctors
 public:
-
-
     /**
      * @brief Constructor.
      *
@@ -146,11 +133,8 @@ public:
      */
     explicit CMake(const wxFileName& path = wxFileName());
 
-
-// Public Accessors
+    // Public Accessors
 public:
-
-
     /**
      * @brief Returns a list of CMake versions.
      *
@@ -160,7 +144,6 @@ public:
      */
     static wxArrayString GetVersions();
 
-
     /**
      * @brief Returns path to the CMake application.
      *
@@ -168,10 +151,7 @@ public:
      *
      * @return
      */
-    const wxFileName& GetPath() const {
-        return m_path;
-    }
-
+    const wxFileName& GetPath() const { return m_path; }
 
     /**
      * @brief Check if CMake path is OK.
@@ -180,85 +160,59 @@ public:
      */
     bool IsOk() const;
 
-
     /**
      * @brief Returns CMake version.
      *
      * @return
      */
-    const wxString& GetVersion() const {
-        return m_version;
-    }
-
+    const wxString& GetVersion() const { return m_version; }
 
     /**
      * @brief Returns a list of available commands.
      *
      * @return
      */
-    const HelpMap& GetCommands() const {
-        return m_commands;
-    }
-
+    const HelpMap& GetCommands() const { return m_commands; }
 
     /**
      * @brief Returns a list of available modules.
      *
      * @return
      */
-    const HelpMap& GetModules() const {
-        return m_modules;
-    }
-
+    const HelpMap& GetModules() const { return m_modules; }
 
     /**
      * @brief Returns a list of available properties.
      *
      * @return
      */
-    const HelpMap& GetProperties() const {
-        return m_properties;
-    }
-
+    const HelpMap& GetProperties() const { return m_properties; }
 
     /**
      * @brief Returns a list of available variables.
      *
      * @return
      */
-    const HelpMap& GetVariables() const {
-        return m_variables;
-    }
-
+    const HelpMap& GetVariables() const { return m_variables; }
 
     /**
      * @brief Returns path of database file.
      *
      * @return
      */
-    const wxFileName& GetDatabaseFileName() const {
-        return m_dbFileName;
-    }
+    const wxFileName& GetDatabaseFileName() const { return m_dbFileName; }
 
-
-// Public Mutators
+    // Public Mutators
 public:
-
-
     /**
      * @brief Changes cmake application path.
      *
      * @param path
      */
-    void SetPath(const wxFileName& path) {
-        m_path = path;
-    }
+    void SetPath(const wxFileName& path) { m_path = path; }
 
-
-// Public Operations
+    // Public Operations
 public:
-
-
     /**
      * @brief Loads data from CMake application.
      *
@@ -270,16 +224,12 @@ public:
      */
     bool LoadData(bool force = false, LoadNotifier* notifier = NULL);
 
-
-// Private Operations
+    // Private Operations
 private:
-
-
     /**
      * @brief Prepare database for CMake.
      */
     void PrepareDatabase();
-
 
     /**
      * @brief Reads everything from CMake.
@@ -290,7 +240,6 @@ private:
      */
     bool LoadFromCMake(LoadNotifier* notifier = NULL);
 
-
     /**
      * @brief Loads data from SQLite3 database.
      *
@@ -298,12 +247,10 @@ private:
      */
     bool LoadFromDatabase();
 
-
     /**
      * @brief Stores data into SQLite3 database.
      */
     void StoreIntoDatabase();
-
 
     /**
      * @brief Loads help of type from command into list.
@@ -315,14 +262,10 @@ private:
      * @return false incase 'RequestStop' was called during the loading of the help
      *         true otherwise
      */
-    bool LoadList(const wxString& type, CMake::HelpMap& list,
-                  LoadNotifier* notifier, int limit);
+    bool LoadList(const wxString& type, CMake::HelpMap& list, LoadNotifier* notifier, int limit);
 
-
-// Private Data Members
+    // Private Data Members
 private:
-
-
     /// CMake application path.
     wxFileName m_path;
 
@@ -346,7 +289,6 @@ private:
 
     /// Was the database initialized properly?
     bool m_dbInitialized;
-
 };
 
 /* ************************************************************************ */

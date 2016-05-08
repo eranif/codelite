@@ -68,15 +68,12 @@
 class CMakeParser
 {
 
-// Public Enums
+    // Public Enums
 public:
-
-
     /**
      * @brief Error codes.
      */
-    enum ErrorCode
-    {
+    enum ErrorCode {
         /// Common error.
         ErrorCommon = 0,
 
@@ -90,16 +87,12 @@ public:
         ErrorCount
     };
 
-
-// Public Structures
+    // Public Structures
 public:
-
-
     /**
      * @brief Represents cmake command.
      */
-    struct Command
-    {
+    struct Command {
         /// Command start position.
         wxString::size_type pos;
 
@@ -110,12 +103,10 @@ public:
         wxArrayString arguments;
     };
 
-
     /**
      * @brief Represents source error.
      */
-    struct Error
-    {
+    struct Error {
         /// Error position.
         wxString::size_type pos;
 
@@ -123,60 +114,42 @@ public:
         ErrorCode code;
     };
 
-
-// Public Ctors
+    // Public Ctors
 public:
-
-
     /**
      * @brief Constructor.
      */
     CMakeParser();
 
-
-// Public Accessors
+    // Public Accessors
 public:
-
-
     /**
      * @brief Returns a path to the last parsed file.
      *
      * @return
      */
-    const wxFileName& GetFilename() const {
-        return m_filename;
-    }
-
+    const wxFileName& GetFilename() const { return m_filename; }
 
     /**
      * @brief Returns parsed commands.
      *
      * @return Parsed commands.
      */
-    const wxVector<Command>& GetCommands() const {
-        return m_commands;
-    }
-
+    const wxVector<Command>& GetCommands() const { return m_commands; }
 
     /**
      * @brief Returns defined variables.
      *
      * @return Variables.
      */
-    const std::set<wxString>& GetVariables() const {
-        return m_variables;
-    }
+    const std::set<wxString>& GetVariables() const { return m_variables; }
 
-
-// Public Operations
+    // Public Operations
 public:
-
-
     /**
      * @brief Clears internal variables.
      */
     void Clear();
-
 
     /**
      * @brief Parses given CMakeFileLists.txt.
@@ -187,7 +160,6 @@ public:
      */
     bool Parse(const wxString& content);
 
-
     /**
      * @brief Parses given CMakeFileLists.txt.
      *
@@ -196,7 +168,6 @@ public:
      * @return Result of the parsing.
      */
     bool ParseFile(const wxFileName& filename);
-
 
     /**
      * @brief Translate error code into human readable string.
@@ -207,11 +178,8 @@ public:
      */
     static wxString GetError(ErrorCode code);
 
-
-// Private Data Members
+    // Private Data Members
 private:
-
-
     /// Last parsed file.
     wxFileName m_filename;
 
@@ -223,7 +191,6 @@ private:
 
     /// Errors found in the last parsed source.
     wxVector<Error> m_errors;
-
 };
 
 /* ************************************************************************ */

@@ -76,13 +76,13 @@ static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString& relPath = 
 }
 
 BuilderGnuMake::BuilderGnuMake()
-    : Builder("Default", wxT("make"), wxT("-f"))
+    : Builder("Default")
     , m_objectChunks(1)
 {
 }
 
 BuilderGnuMake::BuilderGnuMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions)
-    : Builder(name, buildTool, buildToolOptions)
+    : Builder(name)
 {
 }
 

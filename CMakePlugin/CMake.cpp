@@ -50,6 +50,8 @@
 // Declaration
 #include "CMake.h"
 #include "cl_standard_paths.h"
+#include "CMakeBuilder.h"
+#include "buildmanager.h"
 
 // C++
 #include <utility>
@@ -106,6 +108,9 @@ CMake::CMake(const wxFileName& path)
 {
     // Prepare database
     PrepareDatabase();
+    
+    // Register the CMake builder
+    BuildManagerST::Get()->AddBuilder(new CMakeBuilder());
 }
 
 /* ************************************************************************ */

@@ -28,6 +28,7 @@
 #include "wx/string.h"
 #include "smart_ptr.h"
 #include "wx/event.h"
+#include "codelite_exports.h"
 
 /**
  * \ingroup SDK
@@ -40,14 +41,14 @@
  *
  * \author Eran
  */
-class Builder
+class WXDLLIMPEXP_SDK Builder
 {
 protected:
     wxString m_name;
     bool m_isActive;
 
 public:
-    Builder(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
+    Builder(const wxString& name);
     virtual ~Builder();
 
     /**

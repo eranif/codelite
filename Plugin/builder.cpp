@@ -29,7 +29,7 @@
 #include "buildmanager.h"
 #include "macros.h"
 
-Builder::Builder(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions)
+Builder::Builder(const wxString& name)
     : m_name(name)
     , m_isActive(false)
 {
@@ -37,17 +37,15 @@ Builder::Builder(const wxString &name, const wxString &buildTool, const wxString
     BuilderConfigPtr config = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
     if(config) {
         m_isActive = config->GetIsActive();
-        
+
     } else {
         m_isActive = (m_name == "Default");
     }
 }
 
-Builder::~Builder()
-{
-}
+Builder::~Builder() {}
 
-wxString Builder::NormalizeConfigName(const wxString &confgName)
+wxString Builder::NormalizeConfigName(const wxString& confgName)
 {
     wxString normalized(confgName);
     TrimString(normalized);

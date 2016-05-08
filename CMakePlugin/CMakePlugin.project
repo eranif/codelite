@@ -60,6 +60,8 @@
     <File Name="CMakeSettingsManager.cpp"/>
     <File Name="CMakeParser.cpp"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="CMakeBuilder.h"/>
+    <File Name="CMakeBuilder.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="CMakePlugin.h"/>

@@ -71,13 +71,13 @@ static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString& relPath = 
 }
 
 BuilderNMake::BuilderNMake()
-    : Builder(wxT("NMakefile for MSVC toolset"), wxT("NMake"), wxT("-f"))
+    : Builder(wxT("NMakefile for MSVC toolset"))
     , m_objectChunks(1)
 {
 }
 
 BuilderNMake::BuilderNMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions)
-    : Builder(name, buildTool, buildToolOptions)
+    : Builder(name)
 {
 }
 

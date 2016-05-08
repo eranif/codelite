@@ -64,49 +64,39 @@
 class CMakeConfiguration : public wxFileConfig
 {
 
-// Public Ctors
+    // Public Ctors
 public:
-
-
     /**
      * @brief Constructor.
      *
      * @param confPath Configuration path.
      */
     inline explicit CMakeConfiguration(const wxString& confPath)
-        : wxFileConfig(wxEmptyString, wxEmptyString, confPath,
-                       wxEmptyString, wxCONFIG_USE_LOCAL_FILE)
-    {}
-
+        : wxFileConfig(wxEmptyString, wxEmptyString, confPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE)
+    {
+    }
 
     /**
      * @brief Destructor.
      */
-    virtual ~CMakeConfiguration() {
-        Flush();
-    }
+    virtual ~CMakeConfiguration() { Flush(); }
 
-
-// Public Accessors
+    // Public Accessors
 public:
-
-
     /**
      * @brief Returns CMake program path.
      *
      * @return Path to CMake program.
      */
-    wxString GetProgramPath() const {
-        return Read("CMakePath", "cmake");
-    }
-
+    wxString GetProgramPath() const { return Read("CMakePath", "cmake"); }
 
     /**
      * @brief Returns default generator.
      *
      * @return Default generator.
      */
-    wxString GetDefaultGenerator() const {
+    wxString GetDefaultGenerator() const
+    {
 #ifdef __WXMSW__
         return Read("Generator", "MinGW Makefiles");
 #else
@@ -114,30 +104,21 @@ public:
 #endif
     }
 
-
-// Public Mutators
+    // Public Mutators
 public:
-
-
     /**
      * @brief Set and store program path.
      *
      * @param path CMake program path.
      */
-    void SetProgramPath(const wxString& path) {
-        Write("CMakePath", path);
-    }
-
+    void SetProgramPath(const wxString& path) { Write("CMakePath", path); }
 
     /**
      * @brief Change default generator.
      *
      * @param generator New default generator.
      */
-    void SetDefaultGenerator(const wxString& generator) {
-        Write("Generator", generator);
-    }
-
+    void SetDefaultGenerator(const wxString& generator) { Write("Generator", generator); }
 };
 
 /* ************************************************************************ */

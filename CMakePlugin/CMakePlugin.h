@@ -278,6 +278,16 @@ public:
 
     // Public Events
 public:
+    /**
+     * @brief add our 'Run CMake' command to the menu
+     */
+    void OnProjectContextMenu(clContextMenuEvent& event);
+
+    /**
+     * @brief Run CMake for the selected project
+     */
+    void OnRunCMake(wxCommandEvent& event);
+
     void OnToggleHelpTab(clCommandEvent& event);
     /**
      * @brief On setting dialog.
@@ -326,6 +336,14 @@ public:
      */
     void OnWorkspaceLoaded(wxCommandEvent& event);
 
+    /**
+     * @brief capture cmake output
+     */
+    void OnCMakeOutput(clProcessEvent& event);
+    /**
+     * @brief cmake process terminated
+     */
+    void OnCMakeTerminated(clProcessEvent& event);
     // Private Operations
 private:
     /**

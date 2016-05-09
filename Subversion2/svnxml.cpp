@@ -121,7 +121,6 @@ void SvnXML::GetSvnInfo(const wxString& input, SvnInfo& svnInfo)
 {
     int start = input.Find("<info>");
     if(start == wxNOT_FOUND) return;
-    int end = input.Find("</info>");
     wxStringInputStream stream(input);
     wxXmlDocument doc(stream);
 

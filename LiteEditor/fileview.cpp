@@ -429,6 +429,7 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
         wxMenu* pluginsMenu = new wxMenu;
         clContextMenuEvent event(wxEVT_CONTEXT_MENU_PROJECT);
         event.SetMenu(pluginsMenu);
+        pluginsMenu->SetParent(&menu);
         EventNotifier::Get()->ProcessEvent(event);
 
         // Use the old system

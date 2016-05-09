@@ -72,6 +72,14 @@ class CMakeGenerator
     static void ExpandOptions(
         const wxString& options, wxString& content, wxArrayString& arrVars, wxArrayString& arrOut);
 
+    static wxString Prefix(ProjectPtr project);
+
+    /**
+     * @brief Generate CMakeLists.txt file for given project
+     * @param project Project.
+     */
+    static wxString GenerateProject(ProjectPtr project, bool topProject, const wxString& configName = wxEmptyString);
+
 public:
     /**
      * @brief Generate CMakeLists.txt for workspace.
@@ -82,25 +90,12 @@ public:
      *
      * @param workspace Exported workspace.
      */
-    static bool Generate(clCxxWorkspace* workspace);
+    static bool Generate(ProjectPtr project);
 
     /**
-     * @brief Generate CMakeLists.txt file for given project
-     * This function always generte it for the build configuration that matches
-     * to the workspace configuration.
-     *
-     *
-     * @param project       Project.
-     * @param topProject    When set to true, generator will generate CMakeLists.txt file
-     * for all dependencies as well
+     * @brief check if a we can generate a CMakeLists.txt 
      */
-    static bool Generate(ProjectPtr project, bool topProject, const wxString& configName = wxEmptyString);
-
-    /**
-     * @brief check if a we can generate a CMakeLists.txt for the workspace.
-     * Return false if the CMakeLists.txt was hand edited by the user
-     */
-    static bool CanGenerate(clCxxWorkspace* workspace);
+    static bool CanGenerate(ProjectPtr project);
 };
 
 /* ************************************************************************ */

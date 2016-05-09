@@ -75,7 +75,7 @@ CMakeProjectMenu::CMakeProjectMenu(CMakePlugin* plugin)
 
     // Export
     Append(new wxMenuItem(this, ID_EXPORT_CMAKELISTS, _("Export CMakeLists.txt")));
-    
+
     // Binding directly to the wxMenu doesn't work
     wxTheApp->Bind(wxEVT_MENU, &CMakeProjectMenu::OnCMakeListsOpen, this, ID_OPEN_CMAKELISTS);
     wxTheApp->Bind(wxEVT_MENU, &CMakeProjectMenu::OnExport, this, ID_EXPORT_CMAKELISTS);
@@ -104,10 +104,7 @@ void CMakeProjectMenu::OnCMakeListsOpen(wxCommandEvent& event)
 
 /* ************************************************************************ */
 
-void CMakeProjectMenu::OnExport(wxCommandEvent& event)
-{
-    CMakeGenerator::Generate(m_plugin->GetSelectedProject(), true);
-}
+void CMakeProjectMenu::OnExport(wxCommandEvent& event) { CMakeGenerator::Generate(m_plugin->GetSelectedProject()); }
 
 /* ************************************************************************ */
 

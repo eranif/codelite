@@ -458,9 +458,9 @@ void CMakePlugin::OnRunCMake(wxCommandEvent& event)
 #else
     EnvSetter es(p);
 #endif
-
-    if(CMakeGenerator::CanGenerate(clCxxWorkspaceST::Get())) {
-        CMakeGenerator::Generate(clCxxWorkspaceST::Get());
+    
+    if(CMakeGenerator::CanGenerate(p)) {
+        CMakeGenerator::Generate(p);
     }
 
     const wxString& args = buildConf->GetBuildSystemArguments();

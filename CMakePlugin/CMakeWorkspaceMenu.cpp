@@ -91,10 +91,12 @@ CMakeWorkspaceMenu::~CMakeWorkspaceMenu()
 
 /* ************************************************************************ */
 
-void
-CMakeWorkspaceMenu::OnExport(wxCommandEvent& event)
+void CMakeWorkspaceMenu::OnExport(wxCommandEvent& event)
 {
-    CMakeGenerator::Generate(m_plugin->GetManager()->GetWorkspace());
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
+        ProjectPtr proj = clCxxWorkspaceST::Get()->GetActiveProject();
+        CMakeGenerator::Generate(proj);
+    }
 }
 
 /* ************************************************************************ */

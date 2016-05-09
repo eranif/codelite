@@ -74,7 +74,6 @@ public:
     {
         ID_OPEN_CMAKELISTS = 2556,
         ID_EXPORT_CMAKELISTS,
-        ID_MAKE_DIRTY
     };
 
 

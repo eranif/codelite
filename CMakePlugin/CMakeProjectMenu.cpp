@@ -75,10 +75,7 @@ CMakeProjectMenu::CMakeProjectMenu(CMakePlugin* plugin)
 
     // Export
     Append(new wxMenuItem(this, ID_EXPORT_CMAKELISTS, _("Export CMakeLists.txt")));
-    Append(new wxMenuItem(this, ID_MAKE_DIRTY, _("Make dirty"),
-        _("Marks CMake output files as dirty and forces cmake configuration to be call again. "
-          "This is very handy when you made some changes which don't change CMakeLists.txt")));
-
+    
     // Binding directly to the wxMenu doesn't work
     wxTheApp->Bind(wxEVT_MENU, &CMakeProjectMenu::OnCMakeListsOpen, this, ID_OPEN_CMAKELISTS);
     wxTheApp->Bind(wxEVT_MENU, &CMakeProjectMenu::OnExport, this, ID_EXPORT_CMAKELISTS);

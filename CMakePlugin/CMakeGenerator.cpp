@@ -131,7 +131,13 @@ bool CMakeGenerator::Generate(clCxxWorkspace* workspace)
     content << "cmake_minimum_required(VERSION 2.8.11)\n\n";
     content << "# Workspace name\n";
     content << "project(" << workspace->GetName() << ")\n\n";
-
+    
+    content << "# Set default locations\n";
+    content << "set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)\n";
+    content << "set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)\n";
+    content << "set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)\n";
+    content << "\n";
+    
     // Environment variables
     {
         wxString variables = workspace->GetEnvironmentVariabels(); // Nice typo

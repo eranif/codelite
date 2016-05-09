@@ -51,6 +51,7 @@
 #include "CMakePlugin.h"
 #include "processreaderthread.h"
 #include "asyncprocess.h"
+#include "CMakeBuilder.h"
 
 // wxWidgets
 #include <wx/app.h>
@@ -468,8 +469,7 @@ void CMakePlugin::OnRunCMake(wxCommandEvent& event)
     bool hasGeneratorInArgs = (args.Find(" -G") != wxNOT_FOUND);
 
     // Build the working directory
-    wxFileName fnWorkingDirectory(clCxxWorkspaceST::Get()->GetFileName().GetPath(), "");
-    fnWorkingDirectory.AppendDir(clCxxWorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName());
+    wxFileName fnWorkingDirectory(CMakeBuilder::GetWorkspaceBuildFolder(false), "");
     wxString workingDirectory = fnWorkingDirectory.GetPath();
 
     // Ensure that the build directory exists
@@ -509,6 +509,7 @@ void CMakePlugin::OnCMakeTerminated(clProcessEvent& event)
     IProcess* process = event.GetProcess();
     wxDELETE(process);
     event.SetProcess(NULL);
+    m_mgr->AppendOutputTabText(kOutputTab_Build, "==== Done ====\n");
 }
 
 /* ************************************************************************ */

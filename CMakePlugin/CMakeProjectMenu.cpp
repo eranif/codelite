@@ -77,97 +77,46 @@ CMakeProjectMenu::CMakeProjectMenu(CMakePlugin* plugin)
     Append(new wxMenuItem(this, ID_EXPORT_CMAKELISTS, _("Export CMakeLists.txt")));
     Append(new wxMenuItem(this, ID_MAKE_DIRTY, _("Make dirty"),
         _("Marks CMake output files as dirty and forces cmake configuration to be call again. "
-        "This is very handy when you made some changes which don't change CMakeLists.txt")
-    ));
+          "This is very handy when you made some changes which don't change CMakeLists.txt")));
 
     // Binding directly to the wxMenu doesn't work
     wxTheApp->Bind(wxEVT_MENU, &CMakeProjectMenu::OnCMakeListsOpen, this, ID_OPEN_CMAKELISTS);
     wxTheApp->Bind(wxEVT_MENU, &CMakeProjectMenu::OnExport, this, ID_EXPORT_CMAKELISTS);
-    wxTheApp->Bind(wxEVT_MENU, &CMakeProjectMenu::OnMakeDirty, this, ID_MAKE_DIRTY);
-
     wxTheApp->Bind(wxEVT_UPDATE_UI, &CMakeProjectMenu::OnFileExists, this, ID_OPEN_CMAKELISTS);
-    wxTheApp->Bind(wxEVT_UPDATE_UI, &CMakeProjectMenu::OnCMakeEnabled, this, ID_MAKE_DIRTY);
 }
 
 /* ************************************************************************ */
 
 CMakeProjectMenu::~CMakeProjectMenu()
 {
-    wxTheApp->Unbind(wxEVT_UPDATE_UI, &CMakeProjectMenu::OnCMakeEnabled, this, ID_MAKE_DIRTY);
     wxTheApp->Unbind(wxEVT_UPDATE_UI, &CMakeProjectMenu::OnFileExists, this, ID_OPEN_CMAKELISTS);
-
-    wxTheApp->Unbind(wxEVT_MENU, &CMakeProjectMenu::OnMakeDirty, this, ID_MAKE_DIRTY);
     wxTheApp->Unbind(wxEVT_MENU, &CMakeProjectMenu::OnExport, this, ID_EXPORT_CMAKELISTS);
     wxTheApp->Unbind(wxEVT_MENU, &CMakeProjectMenu::OnCMakeListsOpen, this, ID_OPEN_CMAKELISTS);
 }
 
 /* ************************************************************************ */
 
-void
-CMakeProjectMenu::OnCMakeListsOpen(wxCommandEvent& event)
+void CMakeProjectMenu::OnCMakeListsOpen(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
     ProjectPtr project = m_plugin->GetSelectedProject();
 
-    if (project)
-        m_plugin->OpenCMakeLists(m_plugin->GetProjectDirectory(project->GetName()));
+    if(project) m_plugin->OpenCMakeLists(m_plugin->GetProjectDirectory(project->GetName()));
 }
 
 /* ************************************************************************ */
 
-void
-CMakeProjectMenu::OnExport(wxCommandEvent& event)
+void CMakeProjectMenu::OnExport(wxCommandEvent& event)
 {
     CMakeGenerator::Generate(m_plugin->GetSelectedProject(), true);
 }
 
 /* ************************************************************************ */
 
-void
-CMakeProjectMenu::OnMakeDirty(wxCommandEvent& event)
-{
-    // Get settings
-    const CMakeProjectSettings* settings = m_plugin->GetSelectedProjectSettings();
-    // Event shouldn't be called when project is not enabled
-    wxASSERT(settings && settings->enabled);
-
-    // This function just touch .cmake_dirty file
-    ProjectPtr project = m_plugin->GetSelectedProject();
-
-    // Real project
-    wxString projectName = project->GetName();
-
-    // Project has parent project -> touch dirty file there
-    if (!settings->parentProject.IsEmpty()) {
-        projectName = settings->parentProject;
-    }
-
-    // Move to project directory
-    wxFileName dirtyFile = m_plugin->GetProjectDirectory(projectName);
-    dirtyFile.SetFullName(".cmake_dirty");
-
-    // Update file time
-    dirtyFile.Touch();
-}
-
-/* ************************************************************************ */
-
-void
-CMakeProjectMenu::OnFileExists(wxUpdateUIEvent& event)
+void CMakeProjectMenu::OnFileExists(wxUpdateUIEvent& event)
 {
     ProjectPtr project = m_plugin->GetSelectedProject();
 
-    if (project)
-        event.Enable(m_plugin->ExistsCMakeLists(m_plugin->GetProjectDirectory(project->GetName())));
+    if(project) event.Enable(m_plugin->ExistsCMakeLists(m_plugin->GetProjectDirectory(project->GetName())));
 }
-
-/* ************************************************************************ */
-
-void
-CMakeProjectMenu::OnCMakeEnabled(wxUpdateUIEvent& event)
-{
-    event.Enable(m_plugin->IsSeletedProjectEnabled());
-}
-
-/* ************************************************************************ */

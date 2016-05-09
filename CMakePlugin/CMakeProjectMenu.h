@@ -117,28 +117,11 @@ public:
 
 
     /**
-     * @brief On request to make current CMake output files dirty that
-     * forces cmake call.
-     *
-     * @param event
-     */
-    void OnMakeDirty(wxCommandEvent& event);
-
-
-    /**
      * @brief Enable open CMakeLists.txt only if exists
      *
      * @param
      */
     void OnFileExists(wxUpdateUIEvent& event);
-
-
-    /**
-     * @brief Enable make dirty when CMake is enabled for project.
-     *
-     * @param
-     */
-    void OnCMakeEnabled(wxUpdateUIEvent& event);
 
 
 // Private Data Members

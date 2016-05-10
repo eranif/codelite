@@ -149,7 +149,10 @@ bool CMakeGenerator::Generate(ProjectPtr p)
     workspaceContent << "cmake_minimum_required(VERSION 2.8.11)\n\n";
     workspaceContent << "# Workspace name\n";
     workspaceContent << "project(" << workspace->GetName() << ")\n\n";
-
+    
+    workspaceContent << "# This setting is useful for providing JSON file used by CodeLite for code completion\n";
+    workspaceContent << "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)\n\n";
+    
     workspaceContent << "# Set default locations\n";
     workspaceContent << "set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)\n";
     workspaceContent << "set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)\n";

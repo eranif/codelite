@@ -65,22 +65,49 @@
  */
 class CMakeGenerator
 {
+    size_t m_counter;
+    wxString m_userBlock1;
+    wxString m_userBlock2;
+    wxString m_userBlock3;
 
-    static size_t m_counter;
+protected:
+    void ExpandOptions(const wxString& options, wxString& content, wxArrayString& arrVars, wxArrayString& arrOut);
 
-    // Public Operations
-    static void ExpandOptions(
-        const wxString& options, wxString& content, wxArrayString& arrVars, wxArrayString& arrOut);
-
-    static wxString Prefix(ProjectPtr project);
+    wxString Prefix(ProjectPtr project);
 
     /**
      * @brief Generate CMakeLists.txt file for given project
      * @param project Project.
      */
-    static wxString GenerateProject(ProjectPtr project, bool topProject, const wxString& configName = wxEmptyString);
+    wxString GenerateProject(ProjectPtr project, bool topProject, const wxString& configName = wxEmptyString);
 
+    /**
+     * @brief Check if filename exists and asks if user want it overwrite if
+     * exists.
+     *
+     * @param filename Tested filename.
+     *
+     * @return If file can be written.
+     */
+    bool CheckExists(const wxFileName& filename);
+
+    bool IsCustomCMakeLists(const wxFileName& fn);
+
+    /**
+     * @brief extract from the CMakeLists.txt file the user code blocks
+     */
+    void ReadUserCode(const wxString& content);
+    
+    /**
+     * @brief read until we reach the end of user block
+     */
+    void ReadUntilEndOfUserBlock(wxArrayString& lines, wxString& content);
+    
+    void AddUserCodeSection(wxString& content, const wxString& sectionPrefix, const wxString& sectionCode = "");
 public:
+    CMakeGenerator();
+    ~CMakeGenerator();
+
     /**
      * @brief Generate CMakeLists.txt for workspace.
      *
@@ -90,12 +117,12 @@ public:
      *
      * @param workspace Exported workspace.
      */
-    static bool Generate(ProjectPtr project);
+    bool Generate(ProjectPtr project);
 
     /**
-     * @brief check if a we can generate a CMakeLists.txt 
+     * @brief check if a we can generate a CMakeLists.txt
      */
-    static bool CanGenerate(ProjectPtr project);
+    bool CanGenerate(ProjectPtr project);
 };
 
 /* ************************************************************************ */

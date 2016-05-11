@@ -104,7 +104,14 @@ void CMakeProjectMenu::OnCMakeListsOpen(wxCommandEvent& event)
 
 /* ************************************************************************ */
 
-void CMakeProjectMenu::OnExport(wxCommandEvent& event) { CMakeGenerator::Generate(m_plugin->GetSelectedProject()); }
+void CMakeProjectMenu::OnExport(wxCommandEvent& event)
+{
+    CMakeGenerator generator;
+    ProjectPtr proj = m_plugin->GetSelectedProject();
+    if(proj && generator.CanGenerate(proj)) {
+        generator.Generate(proj);
+    }
+}
 
 /* ************************************************************************ */
 

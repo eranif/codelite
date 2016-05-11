@@ -458,9 +458,10 @@ void CMakePlugin::OnRunCMake(wxCommandEvent& event)
 #else
     EnvSetter es(p);
 #endif
-    
-    if(CMakeGenerator::CanGenerate(p)) {
-        CMakeGenerator::Generate(p);
+
+    CMakeGenerator generator;
+    if(generator.CanGenerate(p)) {
+        generator.Generate(p);
     }
 
     const wxString& args = buildConf->GetBuildSystemArguments();

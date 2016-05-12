@@ -108,7 +108,7 @@ void CMakeProjectMenu::OnExport(wxCommandEvent& event)
 {
     CMakeGenerator generator;
     ProjectPtr proj = m_plugin->GetSelectedProject();
-    if(proj && generator.CanGenerate(proj)) {
+    if(proj) {
         generator.Generate(proj);
     }
 }

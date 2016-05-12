@@ -84,8 +84,8 @@ bool CMakeGenerator::CheckExists(const wxFileName& filename)
         FileUtils::ReadFileContent(filename, content);
         if(!content.StartsWith(CODELITE_CMAKE_PREFIX)) {
             wxString msg;
-            msg << CMakePlugin::CMAKELISTS_FILE << " exists. Overwrite?\n"
-                << "(" << filename.GetFullPath() << ")";
+            msg << _("A custom ") << CMakePlugin::CMAKELISTS_FILE << _(" exists.\nWould you like to overwrite it?\n")
+                << "( " << filename.GetFullPath() << " )";
             wxStandardID answer = ::PromptForYesNoDialogWithCheckbox(msg, "CMakePluginOverwriteDlg", _("Overwrite"),
                 _("Don't Overwrite"), _("Remember my answer and don't annoy me again"),
                 wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION | wxYES_DEFAULT);
@@ -236,7 +236,7 @@ bool CMakeGenerator::Generate(ProjectPtr p)
 
         fnTopProjPath.SetFullName(CMakePlugin::CMAKELISTS_FILE);
         FileUtils::WriteFileContent(fnTopProjPath, topProjectContent);
-        
+
         // Final hook goes here
         AddUserCodeSection(workspaceContent, CMAKELISTS_USER_CODE_3_PREFIX, m_userBlock3);
     }

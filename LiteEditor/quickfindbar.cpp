@@ -83,7 +83,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_eventsConnected(false)
     , m_optionsWindow(NULL)
     , m_regexType(kRegexNone)
-    , m_replaceInSelection(false)
     , m_disableTextUpdateEvent(false)
 {
     m_bar = new wxFlatButtonBar(this, wxFlatButton::kThemeNormal, 0, 10);
@@ -367,7 +366,7 @@ void QuickFindBar::OnPrev(wxCommandEvent& e)
 void QuickFindBar::OnText(wxCommandEvent& e)
 {
     e.Skip();
-    if(!m_replaceInSelection && !m_disableTextUpdateEvent) {
+    if(!m_replaceInSelectionButton->IsChecked() && !m_disableTextUpdateEvent) {
         CallAfter(&QuickFindBar::DoSearch, kSearchForward);
     }
 }
@@ -465,9 +464,9 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
 
     wxString findwhat = m_findWhat->GetValue();
     if(findwhat.IsEmpty()) return;
-    
+
     UPDATE_FIND_HISTORY();
-    
+
     wxString findWhatSciVersion = findwhat;
     DoFixRegexParen(findWhatSciVersion);
 
@@ -665,6 +664,16 @@ void QuickFindBar::ShowReplacebar(bool show)
         btnNext->MoveAfterInTabOrder(m_findWhat);
         btnPrev->MoveAfterInTabOrder(btnNext);
         btnAll->MoveAfterInTabOrder(btnPrev);
+    }
+
+    // Do we need to check the 'Search in selected text?'
+    m_replaceInSelectionButton->Check(false);
+    if(m_sci && !m_sci->GetSelectedText().IsEmpty()) {
+        wxString selection = m_sci->GetSelectedText();
+        if(selection.Find("\n") != wxNOT_FOUND) {
+            // the selection spans over multiple lines
+            m_replaceInSelectionButton->Check(true);
+        }
     }
 }
 
@@ -1096,7 +1105,7 @@ void QuickFindBar::OnButtonReplace(wxCommandEvent& e) { OnReplace(e); }
 
 void QuickFindBar::OnButtonReplaceUI(wxUpdateUIEvent& e)
 {
-    e.Enable(!m_findWhat->GetValue().IsEmpty() && !m_replaceInSelection);
+    e.Enable(!m_findWhat->GetValue().IsEmpty() && !m_replaceInSelectionButton->IsChecked());
 }
 
 void QuickFindBar::OnHideBar(wxFlatButtonEvent& e) { OnHide(e); }
@@ -1162,7 +1171,7 @@ void QuickFindBar::DoSetCaretAtEndOfText() { m_findWhat->SetInsertionPointEnd();
 void QuickFindBar::OnReplaceAll(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    DoReplaceAll(m_replaceInSelection);
+    DoReplaceAll(m_replaceInSelectionButton->IsChecked());
 }
 
 void QuickFindBar::DoReplaceAll(bool selectionOnly)
@@ -1302,7 +1311,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     }
 }
 
-void QuickFindBar::OnReplaceInSelection(wxFlatButtonEvent& e) { m_replaceInSelection = e.IsChecked(); }
+void QuickFindBar::OnReplaceInSelection(wxFlatButtonEvent& e) { wxUnusedVar(e); }
 
 void QuickFindBar::OnReplaceInSelectionUI(wxUpdateUIEvent& event) {}
 

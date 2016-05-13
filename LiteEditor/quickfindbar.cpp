@@ -342,14 +342,16 @@ void QuickFindBar::OnHide(wxCommandEvent& e)
     e.Skip();
 }
 
+#define UPDATE_FIND_HISTORY()                                           \
+    if(!m_findWhat->GetValue().IsEmpty()) {                             \
+        clConfig::Get().AddQuickFindSearchItem(m_findWhat->GetValue()); \
+        DoUpdateSearchHistory();                                        \
+    }
+
 void QuickFindBar::OnNext(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(!m_findWhat->GetValue().IsEmpty()) {
-        clConfig::Get().AddQuickFindSearchItem(m_findWhat->GetValue());
-        // Update the search history
-        DoUpdateSearchHistory();
-    }
+    UPDATE_FIND_HISTORY();
     size_t flags = kSearchForward;
     DoSearch(flags);
 }
@@ -357,11 +359,7 @@ void QuickFindBar::OnNext(wxCommandEvent& e)
 void QuickFindBar::OnPrev(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(!m_findWhat->GetValue().IsEmpty()) {
-        clConfig::Get().AddQuickFindSearchItem(m_findWhat->GetValue());
-        // Update the search history
-        DoUpdateSearchHistory();
-    }
+    UPDATE_FIND_HISTORY();
     size_t flags = 0;
     DoSearch(flags);
 }
@@ -467,7 +465,9 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
 
     wxString findwhat = m_findWhat->GetValue();
     if(findwhat.IsEmpty()) return;
-
+    
+    UPDATE_FIND_HISTORY();
+    
     wxString findWhatSciVersion = findwhat;
     DoFixRegexParen(findWhatSciVersion);
 
@@ -673,7 +673,7 @@ void QuickFindBar::OnFindNext(wxCommandEvent& e)
     CHECK_FOCUS_WIN();
 
     // Highlighted text takes precedence over the current search string
-    if (!IsShown()) {
+    if(!IsShown()) {
         wxString selectedText = DoGetSelectedText();
         if(selectedText.IsEmpty() == false) {
             m_findWhat->ChangeValue(selectedText);
@@ -689,7 +689,7 @@ void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
     CHECK_FOCUS_WIN();
 
     // Highlighted text takes precedence over the current search string
-    if (!IsShown()) {
+    if(!IsShown()) {
         wxString selectedText = DoGetSelectedText();
         if(selectedText.IsEmpty() == false) {
             m_findWhat->ChangeValue(selectedText);
@@ -784,7 +784,7 @@ void QuickFindBar::DoSelectAll(bool addMarkers)
             clGetManager()->SetStatusMessage(_("No match found"), 1);
             return;
         }
-        
+
         m_sci->SetCurrentPos(match.second);
         m_sci->SetSelectionStart(match.second);
         m_sci->SetSelectionEnd(match.second);
@@ -1168,6 +1168,7 @@ void QuickFindBar::OnReplaceAll(wxCommandEvent& e)
 void QuickFindBar::DoReplaceAll(bool selectionOnly)
 {
     if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty()) return;
+    UPDATE_FIND_HISTORY();
     clGetManager()->SetStatusMessage(wxEmptyString);
 
     wxString findwhat = m_findWhat->GetValue();

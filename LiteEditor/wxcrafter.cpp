@@ -713,10 +713,14 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner386 = new wxBannerWindow(m_wizardPageTemplate, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner386->SetBitmap(wxNullBitmap);
     m_banner386->SetText(_("New Project"), _("Select the project template from the list below"));
-    m_banner386->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,64)")));
-    m_banner386->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_banner386->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_banner386->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
     
     boxSizer383->Add(m_banner386, 0, wxALL|wxEXPAND, 2);
+    
+    wxBoxSizer* boxSizer572 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer383->Add(boxSizer572, 1, wxALL|wxEXPAND, 5);
     
     m_dataviewTemplates = new wxDataViewCtrl(m_wizardPageTemplate, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     m_dataviewTemplates->SetFocus();
@@ -725,7 +729,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     m_dataviewTemplatesModel->SetColCount( 1 );
     m_dataviewTemplates->AssociateModel(m_dataviewTemplatesModel.get() );
     
-    boxSizer383->Add(m_dataviewTemplates, 1, wxALL|wxEXPAND, 2);
+    boxSizer572->Add(m_dataviewTemplates, 1, wxALL|wxEXPAND, 5);
     
     m_dataviewTemplates->AppendIconTextColumn(_("Template"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, 450, wxALIGN_LEFT);
     m_wizardPageDetails = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
@@ -737,8 +741,8 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner398 = new wxBannerWindow(m_wizardPageDetails, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner398->SetBitmap(wxNullBitmap);
     m_banner398->SetText(_("New Project"), _("Set the project path and name"));
-    m_banner398->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,64)")));
-    m_banner398->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_banner398->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_banner398->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
     
     boxSizer396->Add(m_banner398, 0, wxALL|wxEXPAND, 2);
     
@@ -747,7 +751,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer15->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer15->AddGrowableCol(1);
     
-    boxSizer396->Add(flexGridSizer15, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 2);
+    boxSizer396->Add(flexGridSizer15, 1, wxALL|wxEXPAND, 5);
     
     m_staticText16 = new wxStaticText(m_wizardPageDetails, wxID_ANY, _("Project name:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -810,8 +814,8 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner390 = new wxBannerWindow(m_wizardPageToolchain, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner390->SetBitmap(wxNullBitmap);
     m_banner390->SetText(_("New Project"), _("Select the project toolchain"));
-    m_banner390->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,64)")));
-    m_banner390->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_banner390->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_banner390->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
     
     boxSizer388->Add(m_banner390, 0, wxALL|wxEXPAND, 2);
     
@@ -820,7 +824,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer412->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer412->AddGrowableCol(1);
     
-    boxSizer388->Add(flexGridSizer412, 1, wxALL|wxEXPAND, 5);
+    boxSizer388->Add(flexGridSizer412, 0, wxALL|wxEXPAND, 5);
     
     m_staticText414 = new wxStaticText(m_wizardPageToolchain, wxID_ANY, _("Compiler:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -839,6 +843,15 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     m_choiceDebugger = new wxChoice(m_wizardPageToolchain, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceDebuggerArr, 0);
     
     flexGridSizer412->Add(m_choiceDebugger, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticText569 = new wxStaticText(m_wizardPageToolchain, wxID_ANY, _("Build System:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer412->Add(m_staticText569, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_choiceBuildSystemArr;
+    m_choiceBuildSystem = new wxChoice(m_wizardPageToolchain, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceBuildSystemArr, 0);
+    
+    flexGridSizer412->Add(m_choiceBuildSystem, 0, wxALL|wxEXPAND, 5);
     
     SetName(wxT("NewProjectWizardBase"));
     SetMinClientSize(wxSize(500,400));

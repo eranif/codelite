@@ -51,6 +51,7 @@
 #include "CMakeGenerator.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
+#include <algorithm>
 
 // wxWidgets
 #include <wx/tokenzr.h>

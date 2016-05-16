@@ -84,8 +84,6 @@
 // CMakePlugin
 #include "CMake.h"
 #include "CMakeGenerator.h"
-#include "CMakeWorkspaceMenu.h"
-#include "CMakeProjectMenu.h"
 #include "CMakeSettingsDialog.h"
 #include "CMakeSettingsManager.h"
 #include "CMakeProjectSettings.h"
@@ -191,6 +189,7 @@ CMakePlugin::CMakePlugin(IManager* manager)
     // Bind events
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &CMakePlugin::OnToggleHelpTab, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_PROJECT, &CMakePlugin::OnProjectContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_WORKSPACE, &CMakePlugin::OnWorkspaceContextMenu, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &CMakePlugin::OnCMakeOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &CMakePlugin::OnCMakeTerminated, this);
 }
@@ -304,24 +303,6 @@ void CMakePlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 
 /* ************************************************************************ */
 
-void CMakePlugin::HookPopupMenu(wxMenu* menu, MenuType type)
-{
-    // Add menu to project menu
-    if(type == MenuTypeFileView_Project) {
-        if(!menu->FindItem(XRCID("cmake_project_menu"))) {
-            menu->PrependSeparator();
-            menu->Prepend(XRCID("cmake_project_menu"), _("CMake"), new CMakeProjectMenu(this));
-        }
-    } else if(type == MenuTypeFileView_Workspace) {
-        if(!menu->FindItem(XRCID("cmake_workspace_menu"))) {
-            menu->PrependSeparator();
-            menu->Prepend(XRCID("cmake_workspace_menu"), _("CMake"), new CMakeWorkspaceMenu(this));
-        }
-    }
-}
-
-/* ************************************************************************ */
-
 void CMakePlugin::UnPlug()
 {
     wxASSERT(m_mgr);
@@ -425,16 +406,34 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
 
     const wxMenuItemList& items = menu->GetMenuItems();
 
-    size_t pos = 0;
+    size_t buildPos = 0;
+    size_t settingsPos = 0;
+    size_t curpos = 0;
     wxMenuItemList::const_iterator iter = items.begin();
     for(; iter != items.end(); ++iter) {
         if((*iter)->GetId() == XRCID("build_project")) {
-            break;
+            buildPos = curpos;
         }
-        ++pos;
+        if((*iter)->GetId() == XRCID("project_properties")) {
+            settingsPos = curpos;
+        }
+        ++curpos;
     }
-    menu->Insert(pos, XRCID("cmake_run_cmake"), _("Run CMake"));
+
+    wxFileName projectFile = p->GetFileName();
+    projectFile.SetFullName(CMAKELISTS_FILE);
+    if(projectFile.FileExists()) {
+        wxMenuItem* item = new wxMenuItem(NULL, XRCID("cmake_open_cmake"), _("Open CMakeLists.txt"));
+        item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("cmake"));
+        menu->Insert(settingsPos, item);
+    }
+
+    menu->Insert(buildPos, XRCID("cmake_run_cmake"), _("Run CMake"));
+    menu->InsertSeparator(buildPos);
+    menu->Insert(buildPos, XRCID("cmake_export_cmakelists"), _("Export CMakeLists.txt"));
     menu->Bind(wxEVT_MENU, &CMakePlugin::OnRunCMake, this, XRCID("cmake_run_cmake"));
+    menu->Bind(wxEVT_MENU, &CMakePlugin::OnOpenCMakeLists, this, XRCID("cmake_open_cmake"));
+    menu->Bind(wxEVT_MENU, &CMakePlugin::OnExportCMakeLists, this, XRCID("cmake_export_cmakelists"));
 }
 
 void CMakePlugin::OnRunCMake(wxCommandEvent& event)
@@ -511,6 +510,71 @@ void CMakePlugin::OnCMakeTerminated(clProcessEvent& event)
     wxDELETE(process);
     event.SetProcess(NULL);
     m_mgr->AppendOutputTabText(kOutputTab_Build, "==== Done ====\n");
+}
+
+void CMakePlugin::OnOpenCMakeLists(wxCommandEvent& event)
+{
+    bool openWorkspaceCMakeLists = (event.GetId() == XRCID("cmake_open_active_project_cmake"));
+    wxFileName cmakelists;
+    if(openWorkspaceCMakeLists) {
+        cmakelists = clCxxWorkspaceST::Get()->GetFileName();
+    } else {
+        ProjectPtr proj = GetSelectedProject();
+        CHECK_PTR_RET(proj);
+        cmakelists = proj->GetFileName();
+    }
+
+    cmakelists.SetFullName(CMAKELISTS_FILE);
+    if(cmakelists.FileExists()) {
+        m_mgr->OpenFile(cmakelists.GetFullPath());
+    }
+}
+
+void CMakePlugin::OnExportCMakeLists(wxCommandEvent& event)
+{
+    ProjectPtr proj = (event.GetId() == XRCID("cmake_export_active_project")) ?
+        clCxxWorkspaceST::Get()->GetActiveProject() :
+        GetSelectedProject();
+
+    CHECK_PTR_RET(proj);
+
+    CMakeGenerator generator;
+    if(generator.Generate(proj)) {
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent();
+    }
+}
+
+void CMakePlugin::OnWorkspaceContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    CHECK_COND_RET(clCxxWorkspaceST::Get()->IsOpen());
+
+    ProjectPtr p = clCxxWorkspaceST::Get()->GetActiveProject();
+    CHECK_COND_RET(p);
+
+    BuildConfigPtr buildConf = p->GetBuildConfiguration();
+    CHECK_COND_RET(buildConf);
+
+    CHECK_COND_RET(buildConf->GetBuilder()->GetName() == "CMake");
+
+    // The active project is using CMake builder
+    // Add our context menu
+    wxMenu* menu = event.GetMenu();
+    CHECK_PTR_RET(menu);
+
+    wxFileName workspaceFile = clCxxWorkspaceST::Get()->GetFileName();
+    workspaceFile.SetFullName(CMAKELISTS_FILE);
+
+    menu->InsertSeparator(0);
+    if(workspaceFile.FileExists()) {
+        wxMenuItem* item = new wxMenuItem(NULL, XRCID("cmake_open_active_project_cmake"), _("Open CMakeLists.txt"));
+        item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("cmake"));
+        menu->Insert(0, item);
+    }
+    menu->Insert(0, XRCID("cmake_export_active_project"), _("Export CMakeLists.txt"));
+
+    menu->Bind(wxEVT_MENU, &CMakePlugin::OnOpenCMakeLists, this, XRCID("cmake_open_active_project_cmake"));
+    menu->Bind(wxEVT_MENU, &CMakePlugin::OnExportCMakeLists, this, XRCID("cmake_export_active_project"));
 }
 
 /* ************************************************************************ */

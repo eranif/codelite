@@ -210,14 +210,6 @@ public:
     void CreatePluginMenu(wxMenu* pluginsMenu);
 
     /**
-     * @brief Hook popup menu.
-     *
-     * @param menu
-     * @param type
-     */
-    void HookPopupMenu(wxMenu* menu, MenuType type);
-
-    /**
      * @brief Unplug plugin.
      */
     void UnPlug();
@@ -244,11 +236,23 @@ public:
      * @brief add our 'Run CMake' command to the menu
      */
     void OnProjectContextMenu(clContextMenuEvent& event);
+    /**
+     * @brief edit the workspace context menu
+     */
+    void OnWorkspaceContextMenu(clContextMenuEvent& event);
 
     /**
      * @brief Run CMake for the selected project
      */
     void OnRunCMake(wxCommandEvent& event);
+    /**
+     * @brief Open the selected projects' CMakeLists.txt
+     */
+    void OnOpenCMakeLists(wxCommandEvent& event);
+    /**
+     * @brief export CMakeLists.txt file for the selected project
+     */
+    void OnExportCMakeLists(wxCommandEvent& event);
 
     void OnToggleHelpTab(clCommandEvent& event);
     /**

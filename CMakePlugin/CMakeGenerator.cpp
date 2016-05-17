@@ -69,6 +69,23 @@
 #define CMAKELISTS_USER_CODE_3_PREFIX "#{{{{ User Code 3"
 #define CMAKELISTS_USER_CODE_END "#}}}}"
 
+static wxArrayString wxArrayUniqueMerge(const wxArrayString& arr1, const wxArrayString& arr2)
+{
+    wxArrayString outArr;
+    for(size_t i=0; i<arr1.size(); ++i) {
+        if(outArr.Index(arr1.Item(i))== wxNOT_FOUND) {
+            outArr.Add(arr1.Item(i));
+        }
+    }
+    
+    for(size_t i=0; i<arr2.size(); ++i) {
+        if(outArr.Index(arr2.Item(i))== wxNOT_FOUND) {
+            outArr.Add(arr2.Item(i));
+        }
+    }
+    return outArr;
+}
+
 CMakeGenerator::CMakeGenerator()
     : m_counter(0)
 {
@@ -345,20 +362,19 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
 
     // Add custom command from the compiler options
     {
-        wxArrayString optsNames, opts;
+        wxArrayString c_optsNames, c_opts, cxx_optNames, cxx_opts;
         content << "\n# Compiler options\n";
 
         wxString cxxCmpOptions = buildConf->GetCompileOptions();
-        ExpandOptions(cxxCmpOptions, content, optsNames, opts);
-        for(size_t i = 0; i < optsNames.size(); ++i) {
-            content << "add_definitions(${" << optsNames.Item(i) << "})\n";
-        }
-        for(size_t i = 0; i < opts.size(); ++i) {
-            content << "add_definitions(" << opts.Item(i) << ")\n";
-        }
-
+        ExpandOptions(cxxCmpOptions, content, cxx_optNames, cxx_opts);
+        
         wxString cCmpOptions = buildConf->GetCCompileOptions();
-        ExpandOptions(cCmpOptions, content, optsNames, opts);
+        ExpandOptions(cCmpOptions, content, c_optsNames, c_opts);
+        
+        // Merge the two
+        wxArrayString opts = wxArrayUniqueMerge(cxx_opts, c_opts);
+        wxArrayString optsNames = wxArrayUniqueMerge(cxx_optNames, c_optsNames);
+        
         for(size_t i = 0; i < optsNames.size(); ++i) {
             content << "add_definitions(${" << optsNames.Item(i) << "})\n";
         }

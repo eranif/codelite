@@ -9,6 +9,8 @@
   "m_outputFileName": "NewQtProj",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -766,7 +768,7 @@
            "gbSpan": ",",
            "gbPosition": ",",
            "m_styles": [],
-           "m_sizerFlags": ["wxLEFT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
+           "m_sizerFlags": ["wxLEFT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
            "m_properties": [{
              "type": "winid",
              "m_label": "ID:",
@@ -841,7 +843,7 @@
            "gbSpan": ",",
            "gbPosition": ",",
            "m_styles": ["wxBU_EXACTFIT"],
-           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
            "m_properties": [{
              "type": "winid",
              "m_label": "ID:",

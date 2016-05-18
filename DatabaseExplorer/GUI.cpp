@@ -62,7 +62,7 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     m_radioBtnScaleCustom = new wxRadioButton(this, wxID_ANY, _("Custom scale"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_radioBtnScaleCustom->SetValue(0);
     
-    customScaleSizer->Add(m_radioBtnScaleCustom, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    customScaleSizer->Add(m_radioBtnScaleCustom, 0, wxALL|wxEXPAND, 5);
     
     m_textCtrlScale = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(100,-1), 0);
     #if wxVERSION_NUMBER >= 3000
@@ -267,7 +267,7 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     
     m_labelStatus = new wxStaticText(m_panel14, wxID_ANY, _("Result:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer24->Add(m_labelStatus, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer24->Add(m_labelStatus, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
     
     SetName(wxT("_SqlCommandPanel"));
     SetSize(-1,-1);

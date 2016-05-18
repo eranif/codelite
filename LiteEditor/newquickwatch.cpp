@@ -61,11 +61,10 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     boxSizer42->Add(m_staticBitmap44, 0, wxALL|wxALIGN_RIGHT, 5);
     
     SetName(wxT("clDebuggerTipWindowBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_treeCtrl->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(clDebuggerTipWindowBase::OnKeyDown), NULL, this);
     m_treeCtrl->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clDebuggerTipWindowBase::OnLeftDown), NULL, this);
@@ -135,15 +134,19 @@ clDebuggerEditItemDlgBase::clDebuggerEditItemDlgBase(wxWindow* parent, wxWindowI
     
     m_button30 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer26->Add(m_button30, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer26->Add(m_button30, 0, wxALL, 5);
     
     SetName(wxT("clDebuggerEditItemDlgBase"));
-    SetMinSize( wxSize(400,-1) );
-    SetSizeHints(400,-1);
-    if ( GetSizer() ) {
+    SetMinClientSize(wxSize(400,-1));
+    SetSize(400,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

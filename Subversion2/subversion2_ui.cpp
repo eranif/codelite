@@ -481,7 +481,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
     
     m_staticText29 = new wxStaticText(m_panel6, wxID_ANY, _("Preprocessor name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer24->Add(m_staticText29, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer24->Add(m_staticText29, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlMacroName = new wxTextCtrl(m_panel6, wxID_ANY, wxT("SVN_REVISION"), wxDefaultPosition, wxSize(-1, -1), 0);
     #if wxVERSION_NUMBER >= 3000

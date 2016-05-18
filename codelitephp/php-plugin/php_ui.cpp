@@ -803,7 +803,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     wxFont m_staticText13Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText13->SetFont(m_staticText13Font);
     
-    bSizer23->Add(m_staticText13, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer23->Add(m_staticText13, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_button15 = new wxButton(m_panel47, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button15->SetDefault();

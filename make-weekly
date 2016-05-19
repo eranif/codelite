@@ -9,6 +9,14 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ]; then
     # Windows
     cd /cygdrive/c/src/codelite
     
+    # Update our source tree
+    git pull --rebase 
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+
+    cd wxcrafter && git pull --rebase && cd ..
+    
     export PATH=/cygdrive/c/Program\ Files/CodeLite:/cygdrive/d/software/Inno\ Setup\ 5/:$PATH
     export WXCFG=gcc_dll/mswu
     export WXWIN=D:/src/wxWidgets

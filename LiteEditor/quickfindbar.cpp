@@ -919,7 +919,7 @@ void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)
     bool showreplace = m_replaceWith->IsShown();
 
     if(e.IsChecked()) {
-        m_matchesFound->Show()
+        m_matchesFound->Show();
 
     } else {
         m_matchesFound->Hide();

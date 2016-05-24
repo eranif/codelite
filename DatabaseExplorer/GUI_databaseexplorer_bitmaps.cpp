@@ -1000,6 +1000,6 @@ void wxCrafterwyt5ghInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$.._bitmaps_16-plus@2x.png"), xml_res_file_13, xml_res_size_13, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$.._bitmaps_16-up.png"), xml_res_file_14, xml_res_size_14, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$.._bitmaps_16-up@2x.png"), xml_res_file_15, xml_res_size_15, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$C__src_codelite_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"), xml_res_file_16, xml_res_size_16, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/GUI_databaseexplorer_bitmaps.cpp$C__src_codelite_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"), xml_res_file_16, xml_res_size_16, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/GUI_databaseexplorer_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"));
 }

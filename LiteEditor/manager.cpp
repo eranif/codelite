@@ -528,7 +528,10 @@ void Manager::CreateProject(ProjectData& data)
 
         // Update the debugger according to the user selection
         bldConf->SetDebuggerType(data.m_debuggerType);
-
+        
+        // Update the build system
+        bldConf->SetBuildSystem(data.m_builderName);
+        
         // Make sure that the build configuration has a project type associated with it
         if(bldConf->GetProjectType().IsEmpty()) {
             bldConf->SetProjectType(settings->GetProjectType(wxEmptyString));

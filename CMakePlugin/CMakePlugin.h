@@ -68,7 +68,6 @@
 
 class CMake;
 class CMakeSettingsManager;
-class CMakeProjectSettingsPanel;
 class CMakeProjectSettings;
 class CMakeGenerator;
 class CMakeHelpTab;
@@ -132,13 +131,6 @@ public:
     CMake* GetCMake() const { return m_cmake.get(); }
 
     /**
-     * @brief Returns settings manager pointer.
-     *
-     * @return
-     */
-    CMakeSettingsManager* GetSettingsManager() const { return m_settingsManager.get(); }
-
-    /**
      * @brief Returns CMake configuration.
      *
      * @return
@@ -183,20 +175,6 @@ public:
     BuildConfigPtr GetSelectedBuildConfig() const;
 
     /**
-     * @brief Returns settings for currently selected project.
-     *
-     * @return Pointer to settings or nullptr if no project is seleted.
-     */
-    const CMakeProjectSettings* GetSelectedProjectSettings() const;
-
-    /**
-     * @brief Returns if currently selected project is enabled.
-     *
-     * @return
-     */
-    bool IsSeletedProjectEnabled() const;
-
-    /**
      * @brief Returns a list of supported generators.
      *
      * Plugin supports only generators that generate directly buildable
@@ -232,30 +210,6 @@ public:
     void CreatePluginMenu(wxMenu* pluginsMenu);
 
     /**
-     * @brief Hook popup menu.
-     *
-     * @param menu
-     * @param type
-     */
-    void HookPopupMenu(wxMenu* menu, MenuType type);
-
-    /**
-     * @brief allow the plugins to hook a tab in the project settings
-     *
-     * @param notebook the parent
-     * @param configName the associated configuration name
-     */
-    void HookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName);
-
-    /**
-     * @brief Unhook any tab from the project settings dialog.
-     *
-     * @param notebook the parent
-     * @param configName the associated configuration name
-     */
-    void UnHookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName);
-
-    /**
      * @brief Unplug plugin.
      */
     void UnPlug();
@@ -278,6 +232,28 @@ public:
 
     // Public Events
 public:
+    /**
+     * @brief add our 'Run CMake' command to the menu
+     */
+    void OnProjectContextMenu(clContextMenuEvent& event);
+    /**
+     * @brief edit the workspace context menu
+     */
+    void OnWorkspaceContextMenu(clContextMenuEvent& event);
+
+    /**
+     * @brief Run CMake for the selected project
+     */
+    void OnRunCMake(wxCommandEvent& event);
+    /**
+     * @brief Open the selected projects' CMakeLists.txt
+     */
+    void OnOpenCMakeLists(wxCommandEvent& event);
+    /**
+     * @brief export CMakeLists.txt file for the selected project
+     */
+    void OnExportCMakeLists(wxCommandEvent& event);
+
     void OnToggleHelpTab(clCommandEvent& event);
     /**
      * @brief On setting dialog.
@@ -287,68 +263,20 @@ public:
     void OnSettings(wxCommandEvent& event);
 
     /**
-     * @brief On project config saving.
-     *
-     * @param event
+     * @brief capture cmake output
      */
-    void OnSaveConfig(clProjectSettingsEvent& event);
-
+    void OnCMakeOutput(clProcessEvent& event);
     /**
-     * @brief Returns clean command.
-     *
-     * @param event
+     * @brief cmake process terminated
      */
-    void OnGetCleanCommand(clBuildEvent& event);
-
-    /**
-     * @brief Returns build command.
-     *
-     * @param event
-     */
-    void OnGetBuildCommand(clBuildEvent& event);
-
-    /**
-     * @brief Returns if custom makefile is generated.
-     */
-    void OnGetIsPluginMakefile(clBuildEvent& event);
-
-    /**
-     * @brief Generate custom makefile.
-     *
-     * @param event
-     */
-    void OnExportMakefile(clBuildEvent& event);
-
-    /**
-     * @brief On workspace is loaded.
-     *
-     * @param event
-     */
-    void OnWorkspaceLoaded(wxCommandEvent& event);
-
+    void OnCMakeTerminated(clProcessEvent& event);
     // Private Operations
-private:
-    /**
-     * @brief Processes build event.
-     *
-     * @param event
-     * @param param
-     */
-    void ProcessBuildEvent(clBuildEvent& event, wxString param = "");
-
-    // Private Data Members
 private:
     /// CMake configuration.
     wxScopedPtr<CMakeConfiguration> m_configuration;
 
     /// CMake application
     wxScopedPtr<CMake> m_cmake;
-
-    /// Settings manager.
-    wxScopedPtr<CMakeSettingsManager> m_settingsManager;
-
-    /// Only one is enough
-    CMakeProjectSettingsPanel* m_panel;
 
     CMakeHelpTab* m_helpTab;
 };

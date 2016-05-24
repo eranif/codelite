@@ -76,12 +76,12 @@ wxString CMakeBuilder::GetPreprocessFileCmd(const wxString& project, const wxStr
     return wxEmptyString;
 }
 
-wxString CMakeBuilder::GetWorkspaceBuildFolder(bool wrapWithQuotes) const
+wxString CMakeBuilder::GetWorkspaceBuildFolder(bool wrapWithQuotes)
 {
     wxFileName fn = clCxxWorkspaceST::Get()->GetFileName();
     wxString workspaceConfig = clCxxWorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName();
 
-    fn.AppendDir(workspaceConfig);
+    fn.AppendDir("cmake-build-" + workspaceConfig);
     wxString folder = fn.GetPath();
     if(wrapWithQuotes) {
         ::WrapWithQuotes(folder);
@@ -89,17 +89,18 @@ wxString CMakeBuilder::GetWorkspaceBuildFolder(bool wrapWithQuotes) const
     return folder;
 }
 
-wxString CMakeBuilder::GetProjectBuildFolder(const wxString& project, bool wrapWithQuotes) const
+wxString CMakeBuilder::GetProjectBuildFolder(const wxString& project, bool wrapWithQuotes)
 {
     ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(project);
     wxASSERT(p);
 
     wxFileName fnProject = p->GetFileName();
     wxFileName fnWorkspace = clCxxWorkspaceST::Get()->GetFileName();
-    wxString workspaceConfig = clCxxWorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName();
-    fnWorkspace.AppendDir(workspaceConfig);
-
     fnProject.MakeRelativeTo(fnWorkspace.GetPath());
+
+    wxString workspaceConfig = clCxxWorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName();
+    fnWorkspace.AppendDir("cmake-build-" + workspaceConfig);
+
     wxString folder;
     folder = fnWorkspace.GetPath();
     folder << wxFileName::GetPathSeparator() << fnProject.GetPath();

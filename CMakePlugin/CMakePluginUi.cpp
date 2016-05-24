@@ -66,12 +66,16 @@ CMakeSettingsDialogBase::CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id
     m_stdBtnSizer->Realize();
     
     SetName(wxT("CMakeSettingsDialogBase"));
-    SetMinSize( wxSize(400,150) );
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetMinClientSize(wxSize(400,150));
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -163,11 +167,10 @@ CMakeHelpTabBase::CMakeHelpTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_listBoxList->SetMinSize(wxSize(100,200));
     
     SetName(wxT("CMakeHelpTabBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_staticTextVersion->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_staticTextVersionValue->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
@@ -202,136 +205,6 @@ CMakeHelpTabBase::~CMakeHelpTabBase()
     m_listBoxList->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CMakeHelpTabBase::OnSelect), NULL, this);
     m_listBoxList->Disconnect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(CMakeHelpTabBase::OnInsert), NULL, this);
     m_listBoxList->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
-    
-}
-
-CMakeProjectSettingsPanelBase::CMakeProjectSettingsPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterR3nJ3cInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    wxBoxSizer* boxSizer = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer);
-    
-    m_checkBoxEnable = new wxCheckBox(this, wxID_ANY, _("Enable CMake for this project"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxEnable->SetValue(false);
-    
-    boxSizer->Add(m_checkBoxEnable, 0, wxALL, 5);
-    
-    wxFlexGridSizer* flexGridSizer = new wxFlexGridSizer(5, 2, 5, 5);
-    flexGridSizer->SetFlexibleDirection( wxBOTH );
-    flexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    flexGridSizer->AddGrowableCol(1);
-    
-    boxSizer->Add(flexGridSizer, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticTextParent = new wxStaticText(this, wxID_ANY, _("Parent project:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer->Add(m_staticTextParent, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 0);
-    
-    wxArrayString m_choiceParentArr;
-    m_choiceParent = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceParentArr, 0);
-    m_choiceParent->SetToolTip(_("Allow you to specify parent project. Specify this when project is sub-directory (see add_subdirectory) and it's built with the parent project."));
-    
-    flexGridSizer->Add(m_choiceParent, 0, wxALL|wxEXPAND, 0);
-    
-    m_staticTextSourceDir = new wxStaticText(this, wxID_ANY, _("Sources directory:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer->Add(m_staticTextSourceDir, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 0);
-    
-    m_dirPickerSourceDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
-    m_dirPickerSourceDir->SetToolTip(_("Path to directory where CMakeLists.txt is located."));
-    
-    flexGridSizer->Add(m_dirPickerSourceDir, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 0);
-    
-    m_staticTextBuildDir = new wxStaticText(this, wxID_ANY, _("Build directory:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer->Add(m_staticTextBuildDir, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 0);
-    
-    m_dirPickerBuildDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
-    m_dirPickerBuildDir->SetToolTip(_("Directory where the project will be built. Path is relative to $(WorkspacePath)."));
-    
-    flexGridSizer->Add(m_dirPickerBuildDir, 0, wxALL|wxEXPAND, 0);
-    
-    m_staticTextGenerator = new wxStaticText(this, wxID_ANY, _("Generator:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer->Add(m_staticTextGenerator, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 0);
-    
-    wxArrayString m_choiceGeneratorArr;
-    m_choiceGenerator = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceGeneratorArr, 0);
-    m_choiceGenerator->SetToolTip(_("Generator that will be used for CMake configuration. If no generator is selected, plugin uses global default generator selected in plugin settings."));
-    
-    flexGridSizer->Add(m_choiceGenerator, 0, wxALL|wxEXPAND, 0);
-    
-    m_staticTextBuildType = new wxStaticText(this, wxID_ANY, _("Build Type:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer->Add(m_staticTextBuildType, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 0);
-    
-    wxArrayString m_comboBoxBuildTypeArr;
-    m_comboBoxBuildTypeArr.Add(wxT("None"));
-    m_comboBoxBuildTypeArr.Add(wxT("Debug"));
-    m_comboBoxBuildTypeArr.Add(wxT("Release"));
-    m_comboBoxBuildTypeArr.Add(wxT("RelWithDebInfo"));
-    m_comboBoxBuildTypeArr.Add(wxT("MinSizeRel"));
-    m_comboBoxBuildType = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), m_comboBoxBuildTypeArr, 0);
-    m_comboBoxBuildType->SetToolTip(_("When is selected pass -DCMAKE_BUILD_TYPE to cmake."));
-    #if wxVERSION_NUMBER >= 3000
-    m_comboBoxBuildType->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer->Add(m_comboBoxBuildType, 0, wxALL|wxEXPAND, 0);
-    
-    m_staticTextArguments = new wxStaticText(this, wxID_ANY, _("CMake arguments (used for configuration)"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer->Add(m_staticTextArguments, 0, wxALL, 5);
-    
-    m_textCtrlArguments = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_MULTILINE);
-    m_textCtrlArguments->SetToolTip(_("Argument list used when CMake is called. Each argument must be separated by new line. Multiple arguments on the one line are OK too if they're separated by space.\nDo not use arguments -DCMAKE_BUILD_TYPE, -G and 'path', they are passed by the plugin.\n\nExample:\n-DCMAKE_CXX_FLAGS=-g\n-DCMAKE_C_FLAGS=-g"));
-    
-    boxSizer->Add(m_textCtrlArguments, 1, wxALL|wxEXPAND, 5);
-    
-    SetName(wxT("CMakeProjectSettingsPanelBase"));
-    SetMinSize( wxSize(400,300) );
-    SetSizeHints(400,300);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
-    }
-    CentreOnParent(wxBOTH);
-    // Connect events
-    m_staticTextParent->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck), NULL, this);
-    m_choiceParent->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck), NULL, this);
-    m_staticTextSourceDir->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_dirPickerSourceDir->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_staticTextBuildDir->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_dirPickerBuildDir->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_staticTextGenerator->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_choiceGenerator->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_staticTextBuildType->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_comboBoxBuildType->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_staticTextArguments->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_textCtrlArguments->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    
-}
-
-CMakeProjectSettingsPanelBase::~CMakeProjectSettingsPanelBase()
-{
-    m_staticTextParent->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck), NULL, this);
-    m_choiceParent->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck), NULL, this);
-    m_staticTextSourceDir->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_dirPickerSourceDir->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_staticTextBuildDir->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_dirPickerBuildDir->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_staticTextGenerator->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_choiceGenerator->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_staticTextBuildType->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_comboBoxBuildType->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_staticTextArguments->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
-    m_textCtrlArguments->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
     
 }
 

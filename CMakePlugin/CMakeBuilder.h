@@ -5,9 +5,11 @@
 
 class CMakeBuilder : public Builder
 {
+public:
+    static wxString GetWorkspaceBuildFolder(bool wrapWithQuotes);
+    static wxString GetProjectBuildFolder(const wxString& project, bool wrapWithQuotes);
+
 private:
-    wxString GetWorkspaceBuildFolder(bool wrapWithQuotes) const;
-    wxString GetProjectBuildFolder(const wxString& project, bool wrapWithQuotes) const;
     wxString GetBuildToolCommand(const wxString& project, const wxString& confToBuild) const;
 
 public:

@@ -75,13 +75,7 @@
   <Dependencies/>
   <VirtualDirectory Name="UI">
     <File Name="CMakeSettingsDialog.cpp"/>
-    <File Name="CMakeWorkspaceMenu.cpp"/>
-    <File Name="CMakeProjectMenu.cpp"/>
-    <File Name="CMakeProjectSettingsPanel.cpp"/>
     <File Name="CMakeSettingsDialog.h"/>
-    <File Name="CMakeProjectSettingsPanel.h"/>
-    <File Name="CMakeWorkspaceMenu.h"/>
-    <File Name="CMakeProjectMenu.h"/>
     <File Name="CMakeHelpTab.cpp"/>
     <File Name="CMakeHelpTab.h"/>
   </VirtualDirectory>

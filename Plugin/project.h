@@ -180,8 +180,8 @@ private:
 
 private:
     void DoUpdateProjectSettings();
-    wxArrayString
-    DoGetCompilerOptions(bool cxxOptions, bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
+    wxArrayString DoGetCompilerOptions(
+        bool cxxOptions, bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
 
 public:
     // -----------------------------------------
@@ -278,13 +278,13 @@ public:
     // default constructor
     Project();
     virtual ~Project();
-    
+
     /**
      * @brief return list of macros used in the configuration which could not be resolved
      * by CodeLite
      */
     void GetUnresolvedMacros(const wxString& configName, wxArrayString& vars) const;
-    
+
     /**
      * \return project name
      */
@@ -449,21 +449,15 @@ public:
      * Get the project's file toplevel directory, extensions, ignorefiles, exclude paths and regexes for use when
      * reconciling with filesystem reality
      */
-    void GetReconciliationData(wxString& toplevelDir,
-                               wxString& extensions,
-                               wxArrayString& ignoreFiles,
-                               wxArrayString& excludePaths,
-                               wxArrayString& regexes);
+    void GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& ignoreFiles,
+        wxArrayString& excludePaths, wxArrayString& regexes);
 
     /**
      * Set the project's file toplevel directory, extensions, ignorefiles, exclude paths and regexes for use when
      * reconciling with filesystem reality
      */
-    void SetReconciliationData(const wxString& toplevelDir,
-                               const wxString& extensions,
-                               const wxArrayString& ignoreFiles,
-                               const wxArrayString& excludePaths,
-                               wxArrayString& regexes);
+    void SetReconciliationData(const wxString& toplevelDir, const wxString& extensions,
+        const wxArrayString& ignoreFiles, const wxArrayString& excludePaths, wxArrayString& regexes);
     //-----------------------------------
     // visual operations
     //-----------------------------------
@@ -647,8 +641,8 @@ public:
      * @param fileName the fullpath of the file
      * @param virtualDirPath virtual folder path (a:b:c)
      */
-    void
-    SetExcludeConfigForFile(const wxString& filename, const wxString& virtualDirPath, const wxArrayString& configs);
+    void SetExcludeConfigForFile(
+        const wxString& filename, const wxString& virtualDirPath, const wxArrayString& configs);
 
     /**
      * @brief add this project files into the 'compile_commands' json object
@@ -661,12 +655,12 @@ public:
      * that matches the current workspace configuration
      */
     BuildConfigPtr GetBuildConfiguration(const wxString& configName = "") const;
-    
+
     /**
      * @brief clear the backtick expansion info
      */
     static void ClearBacktickCache();
-    
+
 private:
     /**
      * @brief associate this project with a workspace
@@ -717,6 +711,12 @@ public:
     wxString m_cmpType;        //< Project compiler type
     wxString m_debuggerType;   //< Selected debugger
     wxString m_sourceTemplate; //< The template selected by the user in the wizard
+    wxString m_builderName;    //< The builder to use for this project
+
+    ProjectData()
+        : m_builderName("Default")
+    {
+    }
 };
 
 //-----------------------------------------------------------------

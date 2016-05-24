@@ -269,7 +269,7 @@ SvnSyncDialogBaseClass::SvnSyncDialogBaseClass(wxWindow* parent, wxWindowID id, 
     
     m_staticTextSvnInfo = new wxStaticText(this, wxID_ANY, _("<none detected>"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer32->Add(m_staticTextSvnInfo, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+    boxSizer32->Add(m_staticTextSvnInfo, 0, wxALL, 5);
     
     wxFlexGridSizer* flexGridSizer37 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer37->SetFlexibleDirection( wxBOTH );

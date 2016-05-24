@@ -72,12 +72,12 @@ NewQtProjBaseDlg::NewQtProjBaseDlg(wxWindow* parent, wxWindowID id, const wxStri
     wxArrayString m_choiceQmakeArr;
     m_choiceQmake = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceQmakeArr, 0);
     
-    boxSizer6->Add(m_choiceQmake, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer6->Add(m_choiceQmake, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     m_buttonSelectConfig = new wxButton(this, wxID_ANY, _("New..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     m_buttonSelectConfig->SetToolTip(_("Open the QMakeSettings configuration dialog"));
     
-    boxSizer6->Add(m_buttonSelectConfig, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer6->Add(m_buttonSelectConfig, 0, wxALL|wxEXPAND, 5);
     
     wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Other settings:")), wxVERTICAL);
     
@@ -104,11 +104,15 @@ NewQtProjBaseDlg::NewQtProjBaseDlg(wxWindow* parent, wxWindowID id, const wxStri
     bSizer6->Add(m_buttonOk, 0, wxALL, 5);
     
     SetName(wxT("NewQtProjBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

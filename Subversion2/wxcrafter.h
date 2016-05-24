@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_SUBVERSION2_WXCRAFTER_BASE_CLASSES_H
-#define CODELITE_SUBVERSION2_WXCRAFTER_BASE_CLASSES_H
+#ifndef CL_SUBVERSION2_WXCRAFTER_BASE_CLASSES_H
+#define CL_SUBVERSION2_WXCRAFTER_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

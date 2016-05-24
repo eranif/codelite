@@ -35,6 +35,8 @@
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>
 #include "cl_config.h"
+#include "buildmanager.h"
+#include "windowattrmanager.h"
 
 class NewProjectDlgData : public SerializedObject
 {
@@ -250,6 +252,19 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
         m_choiceDebugger->SetSelection(0);
     }
 
+    {
+        // build system
+        std::list<wxString> builders;
+        wxArrayString knownBuilders;
+        BuildManagerST::Get()->GetBuilders(builders);
+        std::for_each(
+            builders.begin(), builders.end(), [&](const wxString& builderName) { knownBuilders.Add(builderName); });
+        m_choiceBuildSystem->Append(knownBuilders);
+        if(!m_choiceBuildSystem->IsEmpty()) {
+            m_choiceBuildSystem->SetSelection(0);
+        }
+    }
+
     m_cbSeparateDir->SetValue(info.GetFlags() & NewProjectDlgData::NpSeparateDirectory);
 
     // Make sure the old selection is restored
@@ -274,6 +289,7 @@ NewProjectWizard::~NewProjectWizard()
 
     clConfig::Get().Write("CxxWizard/Compiler", m_choiceCompiler->GetStringSelection());
     clConfig::Get().Write("CxxWizard/Debugger", m_choiceDebugger->GetStringSelection());
+    clConfig::Get().Write("CxxWizard/BuildSystem", m_choiceBuildSystem->GetStringSelection());
 
     if(m_cbSeparateDir->IsChecked()) flags |= NewProjectDlgData::NpSeparateDirectory;
 
@@ -343,7 +359,7 @@ void NewProjectWizard::UpdateProjectPage()
     // Restore previous selections
     wxString lastCompiler = clConfig::Get().Read("CxxWizard/Compiler", wxString());
     wxString lastDebugger = clConfig::Get().Read("CxxWizard/Debugger", wxString());
-
+    wxString lastBuilder = clConfig::Get().Read("CxxWizard/BuildSystem", wxString("Default"));
     if(!lastDebugger.IsEmpty()) {
         int where = m_choiceDebugger->FindString(lastDebugger);
         if(where != wxNOT_FOUND) {
@@ -355,6 +371,13 @@ void NewProjectWizard::UpdateProjectPage()
         int where = m_choiceCompiler->FindString(lastCompiler);
         if(where != wxNOT_FOUND) {
             m_choiceCompiler->SetSelection(where);
+        }
+    }
+
+    {
+        int where = m_choiceBuildSystem->FindString(lastBuilder);
+        if(where != wxNOT_FOUND) {
+            m_choiceBuildSystem->SetSelection(where);
         }
     }
 }
@@ -440,6 +463,7 @@ void NewProjectWizard::OnFinish(wxWizardEvent& event)
     m_projectData.m_path = fn.GetPath();
     m_projectData.m_cmpType = m_choiceCompiler->GetStringSelection();
     m_projectData.m_debuggerType = m_choiceDebugger->GetStringSelection();
+    m_projectData.m_builderName = m_choiceBuildSystem->GetStringSelection();
     event.Skip();
 }
 

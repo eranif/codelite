@@ -445,7 +445,7 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_hyperLink111->SetHoverColour(wxColour(wxT("#0000FF")));
     m_hyperLink111->SetVisitedColour(wxColour(wxT("#FF0000")));
     
-    boxSizer107->Add(m_hyperLink111, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer107->Add(m_hyperLink111, 0, wxALL|wxEXPAND, 5);
     
     m_panel142 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_panel142, _("Advanced"), false);

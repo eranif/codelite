@@ -159,7 +159,7 @@ ReconcileProjectDlg::~ReconcileProjectDlg() {}
 
 bool ReconcileProjectDlg::LoadData()
 {
-    ReconcileProjectFiletypesDlg dlg(this, m_projname);
+    ReconcileProjectFiletypesDlg dlg(clMainFrame::Get(), m_projname);
     dlg.SetData();
     if(dlg.ShowModal() != wxID_OK) {
         return false;

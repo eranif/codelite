@@ -69,6 +69,7 @@ protected:
     wxString m_lastText;
     wchar_t* m_lastTextPtr;
     bool m_eventsConnected;
+    bool m_onNextPrev;
     QuickFindBarOptionsMenu* m_optionsWindow;
     wxComboBox* m_findWhat;
     wxComboBox* m_replaceWith;
@@ -77,6 +78,8 @@ protected:
     wxFlatButton* m_caseSensitive;
     wxFlatButton* m_wholeWord;
     wxFlatButton* m_regexOrWildButton;
+    wxFlatButton* m_highlightOccurrences;
+    wxStaticText* m_matchesFound;
     wxButton* m_buttonReplace;
     wxButton* m_buttonReplaceAll;
     wxButton* btnPrev;
@@ -86,7 +89,6 @@ protected:
     wxFlatButton* m_replaceInSelectionButton;
     clNoMatchBitmap* m_noMatchBmp;
     eRegexType m_regexType;
-    bool m_replaceInSelection;
     bool m_disableTextUpdateEvent;
     friend class QuickFindBarOptionsMenu;
 
@@ -121,6 +123,7 @@ protected:
     void DoFixRegexParen(wxString& findwhat);
     wxString DoGetSelectedText();
     void DoSelectAll(bool addMarkers);
+    void DoHighlightMatches(bool checked);
 
     // General events
     void OnUndo(wxCommandEvent& e);

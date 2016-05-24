@@ -348,11 +348,15 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     #endif
     
     SetName(wxT("CppCheckSettingsDialogBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -481,18 +485,22 @@ CppCheckAddSuppressionDialogBase::CppCheckAddSuppressionDialogBase(wxWindow* par
     m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOK->SetDefault();
     
-    bSizer2->Add(m_buttonOK, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer2->Add(m_buttonOK, 0, wxALL, 5);
     
     m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer2->Add(m_buttonCancel, 0, wxALL, 5);
     
     SetName(wxT("CppCheckAddSuppressionDialogBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

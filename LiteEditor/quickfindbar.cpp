@@ -648,7 +648,9 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool replaceBar)
         m_findWhat->SelectAll();
         m_findWhat->SetFocus();
         if(m_highlightOccurrences->IsChecked()) {
-            DoHighlightMatches(true);
+            if(!m_regexOrWildButton->IsChecked() || m_findWhat->GetValue().Length() > 2) {
+                DoHighlightMatches(true);
+            }
         }
         PostCommandEvent(this, m_findWhat);
 
@@ -663,7 +665,9 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool replaceBar)
         m_findWhat->SelectAll();
         m_findWhat->SetFocus();
         if(m_highlightOccurrences->IsChecked()) {
-            DoHighlightMatches(true);
+            if(!m_regexOrWildButton->IsChecked() || m_findWhat->GetValue().Length() > 2) {
+                DoHighlightMatches(true);
+            }
         }
         PostCommandEvent(this, m_findWhat);
     }

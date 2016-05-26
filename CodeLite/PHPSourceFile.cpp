@@ -796,7 +796,8 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
 void PHPSourceFile::OnClass(const phpLexerToken& tok)
 {
     // A "complex" example: class A extends BaseClass implements C, D {}
-
+    bool isAbstractClass = LookBackTokensContains(kPHP_T_ABSTRACT);
+    
     // Read until we get the class name
     phpLexerToken token;
     while(NextToken(token)) {
@@ -812,8 +813,10 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
     PHPEntityBase::Ptr_t klass(new PHPEntityClass());
     klass->SetFilename(m_filename.GetFullPath());
     PHPEntityClass* pClass = klass->Cast<PHPEntityClass>();
+    
     // Is the class an interface?
     pClass->SetIsInterface(tok.type == kPHP_T_INTERFACE);
+    pClass->SetIsAbstractClass(isAbstractClass);
     pClass->SetIsTrait(tok.type == kPHP_T_TRAIT);
     pClass->SetFullName(MakeIdentifierAbsolute(token.text));
     pClass->SetLine(token.lineNumber);

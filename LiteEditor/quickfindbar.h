@@ -65,7 +65,6 @@ public:
 
 protected:
     wxStyledTextCtrl* m_sci;
-    size_t m_flags;
     wxString m_lastText;
     wchar_t* m_lastTextPtr;
     bool m_eventsConnected;

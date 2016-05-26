@@ -579,9 +579,12 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
     // Add the scoped matches
     // for the code completion
     size_t flags = PHPLookupTable::kLookupFlags_Contains | GetLookupFlags();
-    if(resolved->Is(kEntityTypeClass) && resolved->Cast<PHPEntityClass>()->IsInterface()) {
-        flags |= PHPLookupTable::kLookupFlags_IncludeAbstractMethods;
+    if(resolved->Is(kEntityTypeClass)) {
+        if(resolved->Cast<PHPEntityClass>()->IsInterface() || resolved->Cast<PHPEntityClass>()->IsAbstractClass()) {
+            flags |= PHPLookupTable::kLookupFlags_IncludeAbstractMethods;
+        }
     }
+    
     PHPEntityBase::List_t scopeChildren = lookup.FindChildren(resolved->GetDbId(), flags, GetFilter());
     matches.insert(matches.end(), scopeChildren.begin(), scopeChildren.end());
 

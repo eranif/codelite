@@ -78,7 +78,6 @@ void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
 QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     : QuickFindBarBase(parent, id)
     , m_sci(NULL)
-    , m_flags(0)
     , m_lastTextPtr(NULL)
     , m_eventsConnected(false)
     , m_optionsWindow(NULL)
@@ -86,7 +85,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_disableTextUpdateEvent(false)
 {
     m_bar = new wxFlatButtonBar(this, wxFlatButton::kThemeNormal, 0, 10);
-
+    
     //-------------------------------------------------------------
     // Find / Replace bar
     //-------------------------------------------------------------
@@ -129,7 +128,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_highlightOccurrences->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnHighlightMatches, this);
     m_highlightOccurrences->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnHighlightMatchesUI, this);
     m_highlightOccurrences->SetToolTip(_("Highlight Occurrences"));
-    m_highlightOccurrences->Check(true);
+    //m_highlightOccurrences->Check(true);
 
     m_noMatchBmp = new clNoMatchBitmap(m_bar);
     m_bar->AddControl(m_noMatchBmp);
@@ -249,6 +248,15 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Initialize the list with the history
     m_findWhat->Append(clConfig::Get().GetQuickFindSearchItems());
     m_replaceWith->Append(clConfig::Get().GetQuickFindReplaceItems());
+    
+    // Update the search flags
+    size_t searchFlags = clConfig::Get().Read("FindBar/SearchFlags", 0);
+    bool highlightOccurences = clConfig::Get().Read("FindBar/HighlightOccurences", true);
+    m_caseSensitive->Check(searchFlags & wxSTC_FIND_MATCHCASE);
+    m_wholeWord->Check(searchFlags & wxSTC_FIND_WHOLEWORD);
+    m_regexOrWildButton->Check(searchFlags & wxSTC_FIND_REGEXP);
+    m_highlightOccurrences->Check(highlightOccurences);
+    m_matchesFound->Show(highlightOccurences);
 }
 
 bool QuickFindBar::Show(bool show, bool replaceBar)
@@ -974,6 +982,10 @@ void QuickFindBar::OnQuickFindCommandEvent(wxCommandEvent& event)
 
 QuickFindBar::~QuickFindBar()
 {
+    // Remember the buttons clicked
+    clConfig::Get().Write("FindBar/SearchFlags", (int)DoGetSearchFlags());
+    clConfig::Get().Write("FindBar/HighlightOccurences", m_highlightOccurrences->IsChecked());
+    
     wxTheApp->Disconnect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
     wxTheApp->Disconnect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
@@ -1129,13 +1141,14 @@ void QuickFindBar::OnButtonNext(wxCommandEvent& e) { OnNext(e); }
 void QuickFindBar::OnButtonPrev(wxCommandEvent& e) { OnPrev(e); }
 void QuickFindBar::OnButtonNextUI(wxUpdateUIEvent& e) { e.Enable(!m_findWhat->GetValue().IsEmpty()); }
 void QuickFindBar::OnButtonPrevUI(wxUpdateUIEvent& e) { e.Enable(!m_findWhat->GetValue().IsEmpty()); }
+
 size_t QuickFindBar::DoGetSearchFlags()
 {
-    m_flags = 0;
-    if(m_caseSensitive->IsChecked()) m_flags |= wxSTC_FIND_MATCHCASE;
-    if(m_regexType == kRegexPosix) m_flags |= wxSTC_FIND_REGEXP;
-    if(m_wholeWord->IsChecked()) m_flags |= wxSTC_FIND_WHOLEWORD;
-    return m_flags;
+    size_t flags = 0;
+    if(m_caseSensitive->IsChecked()) flags |= wxSTC_FIND_MATCHCASE;
+    if(m_regexType == kRegexPosix) flags |= wxSTC_FIND_REGEXP;
+    if(m_wholeWord->IsChecked()) flags |= wxSTC_FIND_WHOLEWORD;
+    return flags;
 }
 
 void QuickFindBar::OnFindAll(wxCommandEvent& e) { DoSelectAll(true); }

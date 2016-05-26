@@ -2935,9 +2935,14 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor* editor, boo
             }
             break;
         case wxT('{'):
+            prevGt = false;
+            cont = false;
+            break;
         case wxT('='):
             prevGt = false;
             cont = false;
+            // dont include this token
+            at = ctrl->PositionAfter(at);
             break;
         case wxT('('):
         case wxT('['):

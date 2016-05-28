@@ -205,7 +205,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     // Results count
     m_matchesFound = new wxStaticText(m_bar, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1));
-    m_bar->AddControl(m_matchesFound, 0, wxALIGN_RIGHT | wxALIGN_CENTER);
+    m_bar->AddControl(m_matchesFound, 0, wxALIGN_RIGHT);
     m_matchesFound->SetLabel(wxT("0 ") + _("results"));
 
     m_buttonReplace->Bind(wxEVT_BUTTON, &QuickFindBar::OnButtonReplace, this);

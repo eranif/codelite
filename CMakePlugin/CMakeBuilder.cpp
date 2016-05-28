@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "workspace.h"
 
+#define CMAKE_BUILD_FOLDER_PREFIX "cmake-build-"
 CMakeBuilder::CMakeBuilder()
     : Builder("CMake")
 {
@@ -81,7 +82,7 @@ wxString CMakeBuilder::GetWorkspaceBuildFolder(bool wrapWithQuotes)
     wxFileName fn = clCxxWorkspaceST::Get()->GetFileName();
     wxString workspaceConfig = clCxxWorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName();
 
-    fn.AppendDir("cmake-build-" + workspaceConfig);
+    fn.AppendDir(CMAKE_BUILD_FOLDER_PREFIX + workspaceConfig);
     wxString folder = fn.GetPath();
     if(wrapWithQuotes) {
         ::WrapWithQuotes(folder);
@@ -99,7 +100,7 @@ wxString CMakeBuilder::GetProjectBuildFolder(const wxString& project, bool wrapW
     fnProject.MakeRelativeTo(fnWorkspace.GetPath());
 
     wxString workspaceConfig = clCxxWorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName();
-    fnWorkspace.AppendDir("cmake-build-" + workspaceConfig);
+    fnWorkspace.AppendDir(CMAKE_BUILD_FOLDER_PREFIX + workspaceConfig);
 
     wxString folder;
     folder = fnWorkspace.GetPath();
@@ -121,4 +122,10 @@ wxString CMakeBuilder::GetBuildToolCommand(const wxString& project, const wxStri
 
     wxString buildTool = compiler->GetTool("MAKE");
     return buildTool + " -e ";
+}
+wxString CMakeBuilder::GetOutputFile() const
+{
+    wxChar sep = wxFileName::GetPathSeparator();
+    return wxString() << "$(WorkspacePath)" << sep << CMAKE_BUILD_FOLDER_PREFIX << "$(WorkspaceConfiguration)" << sep
+                      << "bin" << sep << "$(ProjectName)";
 }

@@ -78,6 +78,7 @@ void MacrosDlg::Initialize()
     case MacrosProject:
         AddMacro(wxT("$(ProjectPath)"), _("Expands to project's path"));
         AddMacro(wxT("$(WorkspacePath)"), _("Expands to workspace's path"));
+        AddMacro(wxT("$(WorkspaceConfiguration)"), _("Expands to the workspace selected configuration"));
         AddMacro(wxT("$(ProjectName)"), _("Expands to the current project name as appears in the 'File View'"));
         AddMacro(wxT("$(IntermediateDirectory)"),
                  _("Expands to the current project intermediate directory path, as set in the project settings"));

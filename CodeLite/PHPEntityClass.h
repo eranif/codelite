@@ -67,7 +67,7 @@ public:
     void SetIsTrait(bool b) { SetFlag(kClass_Trait, b); }
     bool IsTrait() const { return HasFlag(kClass_Trait); }
     void SetIsAbstractClass(bool b) { SetFlag(kClass_Abstract, b); }
-    bool IsAbstractClass() const { HasFlag(kClass_Abstract); }
+    bool IsAbstractClass() const { return HasFlag(kClass_Abstract); }
 };
 
 #endif // PHPENTITYCLASSIMPL_H

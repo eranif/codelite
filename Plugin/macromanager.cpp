@@ -31,6 +31,8 @@
 #include "imanager.h"
 #include <wx/regex.h>
 #include "globals.h"
+#include "clWorkspaceManager.h"
+#include "IWorkspace.h"
 
 MacroManager::MacroManager() {}
 
@@ -143,7 +145,8 @@ wxString MacroManager::DoExpand(
 {
     wxString expandedString(expression);
     clCxxWorkspace* workspace = clCxxWorkspaceST::Get();
-
+    //IWorkspace* workspace = clWorkspaceManager::Get().IsWorkspaceOpened();
+    
     if(!manager) {
         manager = clGetManager();
     }
@@ -155,6 +158,14 @@ wxString MacroManager::DoExpand(
         DollarEscaper de(expandedString);
         if(workspace) {
             expandedString.Replace(wxT("$(WorkspaceName)"), workspace->GetName());
+            // Support the new $(WorkspaceConfiguration) macro
+            WorkspaceConfigurationPtr wspConfig = workspace->GetSelectedConfig();
+            if(wspConfig) {
+                expandedString.Replace("$(WorkspaceConfiguration)", wspConfig->GetName());
+            } else {
+                expandedString.Replace("$(WorkspaceConfiguration)", "");
+            }
+            
             ProjectPtr proj = workspace->GetProject(project);
             if(proj) {
                 wxString prjBuildWd;

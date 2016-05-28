@@ -153,6 +153,14 @@ public:
      */
     virtual wxString GetPORebuildCommand(
         const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
+
+    /**
+     * @brief return the output file path. Return here a path for the output file (the executable or library)
+     * Use CodeLite macros to make it 'portable' and configuration aware
+     * @return if an empty string is returned, CodeLite will use the default
+     * $(IntermediateDirectory)/$(ProjectName)
+     */
+    virtual wxString GetOutputFile() const { return wxEmptyString; }
 };
 
 typedef SmartPtr<Builder> BuilderPtr;

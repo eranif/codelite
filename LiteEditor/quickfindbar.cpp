@@ -251,7 +251,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     // Update the search flags
     size_t searchFlags = clConfig::Get().Read("FindBar/SearchFlags", 0);
-    bool highlightOccurences = clConfig::Get().Read("FindBar/HighlightOccurences", true);
+    bool highlightOccurences = clConfig::Get().Read("FindBar/HighlightOccurences", false);
     m_caseSensitive->Check(searchFlags & wxSTC_FIND_MATCHCASE);
     m_wholeWord->Check(searchFlags & wxSTC_FIND_WHOLEWORD);
     m_regexOrWildButton->Check(searchFlags & wxSTC_FIND_REGEXP);

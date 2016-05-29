@@ -72,14 +72,14 @@
 static wxArrayString wxArrayUniqueMerge(const wxArrayString& arr1, const wxArrayString& arr2)
 {
     wxArrayString outArr;
-    for(size_t i=0; i<arr1.size(); ++i) {
-        if(outArr.Index(arr1.Item(i))== wxNOT_FOUND) {
+    for(size_t i = 0; i < arr1.size(); ++i) {
+        if(outArr.Index(arr1.Item(i)) == wxNOT_FOUND) {
             outArr.Add(arr1.Item(i));
         }
     }
-    
-    for(size_t i=0; i<arr2.size(); ++i) {
-        if(outArr.Index(arr2.Item(i))== wxNOT_FOUND) {
+
+    for(size_t i = 0; i < arr2.size(); ++i) {
+        if(outArr.Index(arr2.Item(i)) == wxNOT_FOUND) {
             outArr.Add(arr2.Item(i));
         }
     }
@@ -367,14 +367,14 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
 
         wxString cxxCmpOptions = buildConf->GetCompileOptions();
         ExpandOptions(cxxCmpOptions, content, cxx_optNames, cxx_opts);
-        
+
         wxString cCmpOptions = buildConf->GetCCompileOptions();
         ExpandOptions(cCmpOptions, content, c_optsNames, c_opts);
-        
+
         // Merge the two
         wxArrayString opts = wxArrayUniqueMerge(cxx_opts, c_opts);
         wxArrayString optsNames = wxArrayUniqueMerge(cxx_optNames, c_optsNames);
-        
+
         for(size_t i = 0; i < optsNames.size(); ++i) {
             content << "add_definitions(${" << optsNames.Item(i) << "})\n";
         }
@@ -634,7 +634,7 @@ void CMakeGenerator::ReadUserCode(const wxString& content)
     m_userBlock2.clear();
     m_userBlock3.clear();
 
-    wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_RET_EMPTY_ALL);
+    wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_RET_DELIMS);
     while(!lines.IsEmpty()) {
         const wxString& curline = lines.Item(0);
         lines.RemoveAt(0);
@@ -650,6 +650,7 @@ void CMakeGenerator::ReadUserCode(const wxString& content)
 
 void CMakeGenerator::ReadUntilEndOfUserBlock(wxArrayString& lines, wxString& content)
 {
+    bool removeLf = false;
     while(!lines.IsEmpty()) {
         const wxString& curline = lines.Item(0);
         lines.RemoveAt(0);
@@ -657,7 +658,11 @@ void CMakeGenerator::ReadUntilEndOfUserBlock(wxArrayString& lines, wxString& con
             return;
         } else {
             content << curline;
+            //removeLf = true;
         }
+    }
+    if(removeLf) {
+        content.RemoveLast();
     }
 }
 
@@ -670,7 +675,7 @@ void CMakeGenerator::AddUserCodeSection(wxString& content, const wxString& secti
         content << "# Place your code here"
                 << "\n";
     } else {
-        content << sectionCode << "\n";
+        content << sectionCode;
     }
     content << CMAKELISTS_USER_CODE_END;
     content << "\n\n";

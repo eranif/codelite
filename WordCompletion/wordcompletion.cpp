@@ -107,8 +107,14 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     wxStringSet_t words = m_dictionary->GetWords();
     // Parse the current bufer (if modified), to include non saved words
     if(activeEditor->IsModified()) {
+        // For performance (this parsing is done in the main thread)
+        // only parse the visible area of the document
         wxStringSet_t unsavedBufferWords;
-        WordCompletionThread::ParseBuffer(stc->GetText(), unsavedBufferWords);
+        int startPos = stc->PositionFromLine(stc->GetFirstVisibleLine());
+        int endPos = stc->GetCurrentPos();
+        
+        wxString buffer = stc->GetTextRange(startPos, endPos);
+        WordCompletionThread::ParseBuffer(buffer, unsavedBufferWords);
 
         // Merge the results
         words.insert(unsavedBufferWords.begin(), unsavedBufferWords.end());

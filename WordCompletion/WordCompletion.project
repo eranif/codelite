@@ -48,6 +48,9 @@
     <File Name="WordCompletionSettingsDlg.cpp"/>
     <File Name="WordCompletionDictionary.h"/>
     <File Name="WordCompletionDictionary.cpp"/>
+    <File Name="WordTokenizer.l"/>
+    <File Name="WordTokenizerAPI.h"/>
+    <File Name="WordTokenizer.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="wxcrafter">

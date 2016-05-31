@@ -324,7 +324,7 @@ void wxCustomStatusBar::OnLeftDown(wxMouseEvent& event)
             clCommandEvent event(wxEVT_STATUSBAR_CLICKED);
             event.SetEventObject(this);
             event.SetInt(i);
-            GetEventHandler()->AddPendingEvent(event);
+            GetEventHandler()->ProcessEvent(event);
             break;
         }
     }
@@ -385,7 +385,7 @@ void wxCustomStatusBar::AnimationClicked(wxCustomStatusBarField* field)
             clCommandEvent event(wxEVT_STATUSBAR_CLICKED);
             event.SetEventObject(this);
             event.SetInt(i);
-            GetEventHandler()->AddPendingEvent(event);
+            GetEventHandler()->ProcessEvent(event);
             break;
         }
     }

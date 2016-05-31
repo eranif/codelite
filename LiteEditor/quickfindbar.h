@@ -117,6 +117,7 @@ private:
 
 protected:
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
+    virtual void OnFindKeyDown(wxKeyEvent& event);
     void DoSearch(size_t searchFlags);
     void DoSetCaretAtEndOfText();
     void DoFixRegexParen(wxString& findwhat);

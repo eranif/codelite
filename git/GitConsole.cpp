@@ -675,7 +675,7 @@ void GitConsole::OnCloseView(wxCommandEvent& e)
     // Clear the source control image
     clStatusBar* sb = clGetManager()->GetStatusBar();
     if(sb) {
-        sb->SetSourceControlBitmap(wxNullBitmap, "");
+        sb->SetSourceControlBitmap(wxNullBitmap, "", "");
     }
     OnWorkspaceClosed(e);
 }

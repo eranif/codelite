@@ -885,8 +885,28 @@ clStatusBar* PluginManager::GetStatusBar()
 void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
 {
     if(ManagerST::Get()->IsPaneVisible(wxT("Output View"))) {
-        ManagerST::Get()->HidePane("Output View");
+        if(!selectedWindow.IsEmpty()) {
+            wxString selectedTabName;
+            Notebook* book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
+            int where = book->GetSelection();
+            if(where != wxNOT_FOUND) {
+                selectedTabName = book->GetPageText(where);
+            }
+            if(selectedTabName == selectedWindow) {
+                // The requested tab is already selected, just hide the pane
+                ManagerST::Get()->HidePane("Output View");
+            } else {
+                // The output pane is visible, but the selected tab is not the one we wanted
+                // Select it
+                ManagerST::Get()->ShowOutputPane(selectedWindow);
+            }
+        } else {
+            // The output pane is visible and the selected tab is the one we requested
+            // So just hide it
+            ManagerST::Get()->HidePane("Output View");
+        }
     } else {
+        // The output pane is hidden, show it and select the requested tab
         ManagerST::Get()->ShowOutputPane(selectedWindow);
     }
 }

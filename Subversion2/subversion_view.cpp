@@ -1240,7 +1240,7 @@ void SubversionView::DoRootDirChanged(const wxString& path)
         clStatusBar* sb = clGetManager()->GetStatusBar();
         if(sb) {
             wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("subversion");
-            sb->SetSourceControlBitmap(bmp, "Svn");
+            sb->SetSourceControlBitmap(bmp, "Svn", _("Using Subversion\nClick to open the Subversion view"));
         }
     }
 }

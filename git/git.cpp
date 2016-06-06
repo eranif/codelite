@@ -497,7 +497,8 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
         // Update the status bar icon to reflect that we are using "Git"
         clStatusBar* sb = m_mgr->GetStatusBar();
         if(sb) {
-            sb->SetSourceControlBitmap(m_mgr->GetStdIcons()->LoadBitmap("git"), "Git");
+            sb->SetSourceControlBitmap(
+                m_mgr->GetStdIcons()->LoadBitmap("git"), "Git", _("Using Git\nClick to open the Git view"));
         }
         AddDefaultActions();
         ProcessGitActionQueue();

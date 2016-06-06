@@ -88,7 +88,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     wxCustomStatusBarField::Ptr_t eol(new wxCustomStatusBarFieldText(this, 50));
     AddField(eol);
-    
+
     wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, 100));
     AddField(language);
 
@@ -382,22 +382,22 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
 
             wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetCtrl();
             wxMenu menu;
-            
+
             wxMenuItem* idDisplayEOL = menu.Append(wxID_ANY, _("Display EOL"), "", wxITEM_CHECK);
             menu.AppendSeparator();
-            
+
             wxMenuItem* idUseLf = menu.Append(wxID_ANY, _("Use Linux Format (LF)"), "", wxITEM_CHECK);
             wxMenuItem* idUseCrLf = menu.Append(wxID_ANY, _("Use Windows Format (CRLF)"), "", wxITEM_CHECK);
             menu.AppendSeparator();
-            
+
             wxMenuItem* idConvertToCrLF = menu.Append(wxID_ANY, _("Convert to Windows Format"));
             wxMenuItem* idConvertToLf = menu.Append(wxID_ANY, _("Convert to Linux Format"));
-            
+
             // Check the proper tabs vs spaces option
             menu.Check(idUseLf->GetId(), stc->GetEOLMode() == wxSTC_EOL_LF);
             menu.Check(idUseCrLf->GetId(), stc->GetEOLMode() == wxSTC_EOL_CRLF);
             menu.Check(idDisplayEOL->GetId(), stc->GetViewEOL());
-            
+
             int selectedId = GetPopupMenuSelectionFromUser(menu);
             if(selectedId == wxID_NONE) return;
 
@@ -452,7 +452,7 @@ void clStatusBar::SetWhitespaceInfo()
     }
 }
 
-void clStatusBar::SetSourceControlBitmap(const wxBitmap& bmp, const wxString& outputTabName)
+void clStatusBar::SetSourceControlBitmap(const wxBitmap& bmp, const wxString& outputTabName, const wxString& tooltip)
 {
     m_sourceControlTabName = outputTabName;
     m_bmpSourceControl = bmp;
@@ -461,6 +461,7 @@ void clStatusBar::SetSourceControlBitmap(const wxBitmap& bmp, const wxString& ou
     CHECK_PTR_RET(field);
 
     field->Cast<wxCustomStatusBarBitmapField>()->SetBitmap(m_bmpSourceControl);
+    field->Cast<wxCustomStatusBarBitmapField>()->SetTooltip(tooltip);
 }
 
 void clStatusBar::ClearWhitespaceInfo()

@@ -238,7 +238,7 @@ void MainBook::OnWorkspaceClosed(wxCommandEvent& e)
     CloseAll(false); // make sure no unsaved files
     clStatusBar* sb = clGetManager()->GetStatusBar();
     if(sb) {
-        sb->SetSourceControlBitmap(wxNullBitmap, "");
+        sb->SetSourceControlBitmap(wxNullBitmap, "", "");
     }
 }
 

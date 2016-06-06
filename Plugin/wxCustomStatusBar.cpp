@@ -72,11 +72,11 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
 {
     m_text = text;
     // Render the new text
-    if(m_rect != wxRect() && m_parent) {
+    if((m_rect != wxRect()) && m_parent) {
         // valid rect
         wxCustomStatusBarArt::Ptr_t art = m_parent->GetArt();
         if(art->GetName() == m_parent->GetLastArtNameUsedForPaint()) {
-#ifdef __WXOSX__
+#if defined(__WXOSX__) || defined(__WXMSW__)
             m_parent->Refresh();
             return;
 #endif

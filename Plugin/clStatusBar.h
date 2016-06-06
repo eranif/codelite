@@ -70,10 +70,14 @@ public:
 
     /**
      * @brief set the whitespace information (Tabs vs Spaces)
-     * @param whitespaceInfo
      */
-    void SetWhitespaceInfo(const wxString& whitespaceInfo);
-
+    void SetWhitespaceInfo();
+    
+    /**
+     * @brief clear the whitespace info fields
+     */
+    void ClearWhitespaceInfo();
+    
     /**
      * @brief update the language field
      */

@@ -15,11 +15,12 @@
 #include "globals.h"
 #include <wx/menu.h>
 
-#define STATUSBAR_LINE_COL_IDX 0
-#define STATUSBAR_ANIMATION_COL_IDX 1
-#define STATUSBAR_WHITESPACE_INFO_IDX 2
-#define STATUSBAR_LANG_COL_IDX 3
-#define STATUSBAR_ICON_COL_IDX 4
+#define STATUSBAR_SCM_IDX 0
+#define STATUSBAR_LINE_COL_IDX 1
+#define STATUSBAR_ANIMATION_COL_IDX 2
+#define STATUSBAR_WHITESPACE_INFO_IDX 3
+#define STATUSBAR_LANG_COL_IDX 4
+#define STATUSBAR_ICON_COL_IDX 5
 
 class WXDLLIMPEXP_SDK clStatusBarArtNormal : public wxCustomStatusBarArt
 {
@@ -51,6 +52,9 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 
+    wxCustomStatusBarField::Ptr_t sourceControl(new wxCustomStatusBarBitmapField(this, 30));
+    AddField(sourceControl);
+
     wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 250));
     AddField(lineCol);
 
@@ -66,10 +70,10 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     wxCustomStatusBarField::Ptr_t buildStatus(new wxCustomStatusBarBitmapField(this, 30));
     AddField(buildStatus);
-
-    m_bmpBuildError = wxXmlResource::Get()->LoadBitmap("build-error");
-    m_bmpBuildWarnings = wxXmlResource::Get()->LoadBitmap("build-warning");
-    m_bmpBuild = wxXmlResource::Get()->LoadBitmap("build-building");
+    
+    BitmapLoader* bl = clGetManager()->GetStdIcons();
+    m_bmpBuildError = bl->LoadBitmap("error");
+    m_bmpBuildWarnings = bl->LoadBitmap("warning");
 }
 
 clStatusBar::~clStatusBar()
@@ -177,9 +181,9 @@ void clStatusBar::OnBuildEnded(clBuildEvent& event)
     event.Skip();
     StopAnimation();
     if(event.GetErrorCount()) {
-        SetBuildBitmap(m_bmpBuildError, _("Build ended with errors. Click to view"));
+        SetBuildBitmap(m_bmpBuildError, _("Build ended with errors\nClick to view"));
     } else if(event.GetWarningCount()) {
-        SetBuildBitmap(m_bmpBuildWarnings, _("Build ended with warnings. Click to view"));
+        SetBuildBitmap(m_bmpBuildWarnings, _("Build ended with warnings\nClick to view"));
     } else {
         SetBuildBitmap(wxNullBitmap, "");
     }

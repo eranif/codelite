@@ -35,7 +35,6 @@ class IManager;
 class WXDLLIMPEXP_SDK clStatusBar : public wxCustomStatusBar
 {
     IManager* m_mgr;
-    wxBitmap m_bmpBuild;
     wxBitmap m_bmpBuildError;
     wxBitmap m_bmpBuildWarnings;
 

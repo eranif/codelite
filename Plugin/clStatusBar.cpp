@@ -14,6 +14,7 @@
 #include <algorithm>
 #include "globals.h"
 #include <wx/menu.h>
+#include "bitmap_loader.h"
 
 #define STATUSBAR_SCM_IDX 0
 #define STATUSBAR_LINE_COL_IDX 1
@@ -70,7 +71,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     wxCustomStatusBarField::Ptr_t buildStatus(new wxCustomStatusBarBitmapField(this, 30));
     AddField(buildStatus);
-    
+
     BitmapLoader* bl = clGetManager()->GetStdIcons();
     m_bmpBuildError = bl->LoadBitmap("error");
     m_bmpBuildWarnings = bl->LoadBitmap("warning");
@@ -230,7 +231,15 @@ void clStatusBar::StopAnimation()
 
 void clStatusBar::OnFieldClicked(clCommandEvent& event)
 {
-    if(event.GetInt() == STATUSBAR_ICON_COL_IDX) {
+    if(event.GetInt() == STATUSBAR_SCM_IDX) {
+        if(m_sourceControlTabName.IsEmpty()) return;
+        wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_SCM_IDX);
+        CHECK_PTR_RET(field);
+        // Open the output view only if the bitmap is valid
+        if(field->Cast<wxCustomStatusBarBitmapField>()->GetBitmap().IsOk()) {
+            m_mgr->ToggleOutputPane(m_sourceControlTabName);
+        }
+    } else if(event.GetInt() == STATUSBAR_ICON_COL_IDX) {
         wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ICON_COL_IDX);
         CHECK_PTR_RET(field);
         // Open the output view only if the bitmap is valid
@@ -286,7 +295,7 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
                     IEditor::List_t editors;
                     clGetManager()->GetAllEditors(editors);
                     std::for_each(editors.begin(), editors.end(), [&](IEditor* e) {
-                        // get the lexer associated with this editor 
+                        // get the lexer associated with this editor
                         // and re-apply the syntax highlight
                         LexerConf::Ptr_t editorLexer =
                             ColoursAndFontsManager::Get().GetLexerForFile(e->GetFileName().GetFullPath());
@@ -324,13 +333,6 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
             // Check the proper tabs vs spaces option
             menu.Check(idUseSpaces->GetId(), !stc->GetUseTabs());
             menu.Check(idUseTabs->GetId(), stc->GetUseTabs());
-
-            // wxPoint pt = field->GetRect().GetTopLeft();
-            // int menuHeight = 20;
-            // menuHeight *= 5;
-            //
-            // pt.y -= menuHeight;
-
             int selectedId = GetPopupMenuSelectionFromUser(menu);
             if(selectedId == wxID_NONE) return;
 
@@ -369,4 +371,15 @@ void clStatusBar::SetWhitespaceInfo(const wxString& whitespaceInfo)
     wxString ws = whitespaceInfo.Upper();
     field->Cast<wxCustomStatusBarFieldText>()->SetText(ws);
     field->SetTooltip(ws);
+}
+
+void clStatusBar::SetSourceControlBitmap(const wxBitmap& bmp, const wxString& outputTabName)
+{
+    m_sourceControlTabName = outputTabName;
+    m_bmpSourceControl = bmp;
+
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_SCM_IDX);
+    CHECK_PTR_RET(field);
+
+    field->Cast<wxCustomStatusBarBitmapField>()->SetBitmap(m_bmpSourceControl);
 }

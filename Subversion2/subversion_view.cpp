@@ -1235,6 +1235,13 @@ void SubversionView::DoRootDirChanged(const wxString& path)
         }
         DoChangeRootPathUI(path);
         BuildTree();
+
+        // Clear the source control image
+        clStatusBar* sb = clGetManager()->GetStatusBar();
+        if(sb) {
+            wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("subversion");
+            sb->SetSourceControlBitmap(bmp, "Svn");
+        }
     }
 }
 

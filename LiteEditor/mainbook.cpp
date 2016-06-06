@@ -236,6 +236,10 @@ void MainBook::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     CloseAll(false); // make sure no unsaved files
+    clStatusBar* sb = clGetManager()->GetStatusBar();
+    if(sb) {
+        sb->SetSourceControlBitmap(wxNullBitmap, "");
+    }
 }
 
 bool MainBook::AskUserToSave(LEditor* editor)
@@ -498,12 +502,8 @@ static bool IsFileExists(const wxFileName& filename)
 #endif
 }
 
-LEditor* MainBook::OpenFile(const wxString& file_name,
-    const wxString& projectName,
-    int lineno,
-    long position,
-    OF_extra extra /*=OF_AddJump*/,
-    bool preserveSelection /*=true*/)
+LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectName, int lineno, long position,
+    OF_extra extra /*=OF_AddJump*/, bool preserveSelection /*=true*/)
 {
     wxFileName fileName(file_name);
     fileName.MakeAbsolute();
@@ -631,11 +631,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
     return editor;
 }
 
-bool MainBook::AddPage(wxWindow* win,
-    const wxString& text,
-    const wxString& tooltip,
-    const wxBitmap& bmp,
-    bool selected,
+bool MainBook::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected,
     int insert_at_index /*=wxNOT_FOUND*/)
 {
     if(m_book->GetPageIndex(win) != wxNOT_FOUND) return false;
@@ -1094,13 +1090,8 @@ bool MainBook::DoSelectPage(wxWindow* win)
     return true;
 }
 
-void MainBook::ShowMessage(const wxString& message,
-    bool showHideButton,
-    const wxBitmap& bmp,
-    const ButtonDetails& btn1,
-    const ButtonDetails& btn2,
-    const ButtonDetails& btn3,
-    const CheckboxDetails& cb)
+void MainBook::ShowMessage(const wxString& message, bool showHideButton, const wxBitmap& bmp, const ButtonDetails& btn1,
+    const ButtonDetails& btn2, const ButtonDetails& btn3, const CheckboxDetails& cb)
 {
     m_messagePane->ShowMessage(message, showHideButton, bmp, btn1, btn2, btn3, cb);
     clMainFrame::Get()->SendSizeEvent();

@@ -37,6 +37,8 @@ class WXDLLIMPEXP_SDK clStatusBar : public wxCustomStatusBar
     IManager* m_mgr;
     wxBitmap m_bmpBuildError;
     wxBitmap m_bmpBuildWarnings;
+    wxBitmap m_bmpSourceControl;
+    wxString m_sourceControlTabName;
 
 protected:
     void OnPageChanged(wxCommandEvent& event);
@@ -93,6 +95,12 @@ public:
      * @brief stop the animation
      */
     void StopAnimation();
+
+    /**
+     * @brief set a bitmap (16x16) in the source control section
+     * and optionally, provide an output tab name to toggle when the bitmap is clicked
+     */
+    void SetSourceControlBitmap(const wxBitmap& bmp, const wxString& outputTabName = "");
 };
 
 #endif // CLSTATUSBAR_H

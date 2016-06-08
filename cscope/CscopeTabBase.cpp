@@ -34,35 +34,58 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     bSizer3->Add(boxSizer4, 1, wxEXPAND, 2);
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_THEME);
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginSensitive(4, true);
+    m_stc->SetMarginWidth    (4, 0);
     
-    m_dataviewModel = new CScoptViewResultsModel;
-    m_dataviewModel->SetColCount( 3 );
-    m_dataview->AssociateModel(m_dataviewModel.get() );
+    // Configure the tracker margin
+    m_stc->SetMarginWidth(1, 0);
     
-    boxSizer4->Add(m_dataview, 1, wxEXPAND, 2);
+    // Configure the symbol margin
+    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginWidth(2, 16);
+    m_stc->SetMarginSensitive(2, true);
     
-    m_dataview->AppendIconTextColumn(_("Scope"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Line"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Pattern"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 600, wxALIGN_LEFT);
-    m_statusMessage = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    // Configure the line numbers margin
+    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stc->SetMarginWidth(0,0);
     
-    boxSizer4->Add(m_statusMessage, 0, wxTOP|wxEXPAND, 5);
+    // Configure the line symbol margin
+    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stc->SetMarginMask(3, 0);
+    m_stc->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stc->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stc->StyleClearAll();
+    m_stc->SetWrapMode(0);
+    m_stc->SetIndentationGuides(0);
+    m_stc->SetKeyWords(0, wxT(""));
+    m_stc->SetKeyWords(1, wxT(""));
+    m_stc->SetKeyWords(2, wxT(""));
+    m_stc->SetKeyWords(3, wxT(""));
+    m_stc->SetKeyWords(4, wxT(""));
+    
+    boxSizer4->Add(m_stc, 1, wxALL|wxEXPAND, 2);
     
     wxBoxSizer* bSizer31 = new wxBoxSizer(wxVERTICAL);
     
     bSizer3->Add(bSizer31, 0, wxEXPAND, 2);
     
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Search scope:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Search scope:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     bSizer31->Add(m_staticText2, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_LEFT, 5);
     
     wxArrayString m_choiceSearchScopeArr;
-    m_choiceSearchScope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceSearchScopeArr, 0);
+    m_choiceSearchScope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceSearchScopeArr, 0);
     
     bSizer31->Add(m_choiceSearchScope, 0, wxALL|wxEXPAND, 5);
     
-    m_checkBoxUpdateDb = new wxCheckBox(this, wxID_ANY, _("Update Db if stale"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxUpdateDb = new wxCheckBox(this, wxID_ANY, _("Update Db if stale"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxUpdateDb->SetValue(false);
     m_checkBoxUpdateDb->SetToolTip(_("If checked, before executing a command CScope will look for any changed files and, if found, try to update the database. In practice this seems unreliable."));
     
@@ -76,29 +99,26 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     bSizer31->Add(0, 0, 1, wxALL, 5);
     
-    m_buttonUpdateDbNow = new wxButton(this, wxID_ANY, _("&Update Database"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonUpdateDbNow = new wxButton(this, wxID_ANY, _("&Update"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonUpdateDbNow->SetToolTip(_("Perform an immediate database update"));
     
     bSizer31->Add(m_buttonUpdateDbNow, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
     
-    m_buttonClear = new wxButton(this, wxID_ANY, _("&Clear Results"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonClear = new wxButton(this, wxID_ANY, _("&Clear"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     bSizer31->Add(m_buttonClear, 0, wxALL|wxEXPAND, 5);
     
-    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,5), wxGA_SMOOTH|wxGA_HORIZONTAL);
+    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,-1), wxGA_SMOOTH|wxGA_HORIZONTAL);
     m_gauge->SetValue(0);
     
     bSizer31->Add(m_gauge, 0, wxALL|wxEXPAND, 5);
     
     SetName(wxT("CscopeTabBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(CscopeTabBase::OnItemActivated), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(CscopeTabBase::OnItemSelected), NULL, this);
     m_choiceSearchScope->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CscopeTabBase::OnWorkspaceOpenUI), NULL, this);
@@ -113,8 +133,6 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
 CscopeTabBase::~CscopeTabBase()
 {
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(CscopeTabBase::OnItemActivated), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(CscopeTabBase::OnItemSelected), NULL, this);
     m_choiceSearchScope->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CscopeTabBase::OnWorkspaceOpenUI), NULL, this);
@@ -170,11 +188,15 @@ CScopeSettingsDlgBase::CScopeSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_stdBtnSizer12->Realize();
     
     SetName(wxT("CScopeSettingsDlgBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

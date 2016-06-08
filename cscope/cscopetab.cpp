@@ -40,21 +40,23 @@
 #include "drawingutils.h"
 #include "event_notifier.h"
 
-CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
-    : CscopeTabBase( parent )
+CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
+    : CscopeTabBase(parent)
     , m_table(NULL)
     , m_mgr(mgr)
 {
+    m_styler.Reset(new clFindResultsStyler(m_stc));
     m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
 
     CScopeConfData data;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
 
     const wxString SearchScope[] = { wxTRANSLATE("Entire Workspace"), wxTRANSLATE("Active Project") };
-    m_stringManager.AddStrings(sizeof(SearchScope)/sizeof(wxString), SearchScope, data.GetScanScope(), m_choiceSearchScope);
+    m_stringManager.AddStrings(
+        sizeof(SearchScope) / sizeof(wxString), SearchScope, data.GetScanScope(), m_choiceSearchScope);
 
     wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_font = wxFont( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    m_font = wxFont(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
     m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());
     m_checkBoxRevertedIndex->SetValue(data.GetBuildRevertedIndexOption());
@@ -66,63 +68,47 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 
 CscopeTab::~CscopeTab()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL, this);
-}
-
-void CscopeTab::OnItemActivated(wxDataViewEvent& event)
-{
-    event.Skip();
-    DoItemActivated( event.GetItem() );
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL, this);
 }
 
 void CscopeTab::Clear()
 {
-    if (m_table) {
-        //free the old table
-        FreeTable();
-    }
-    m_dataviewModel->Clear();
+    FreeTable();
+    m_stc->SetEditable(true);
+    m_stc->ClearAll();
+    m_stc->SetEditable(false);
 }
 
-void CscopeTab::BuildTable(CScopeResultTable_t *table)
+void CscopeTab::BuildTable(CScopeResultTable_t* table)
 {
-    if ( !table ) {
-        return;
-    }
-
-    if (m_table) {
-        // Free the old table
-        FreeTable();
-    }
+    CHECK_PTR_RET(table);
+    // Free the old table
+    FreeTable();
 
     m_table = table;
-    m_dataviewModel->Clear();
-
+    ClearText();
+    m_styler->SetStyles(m_stc);
+    
     wxStringSet_t insertedItems;
     CScopeResultTable_t::iterator iter = m_table->begin();
-    for (; iter != m_table->end(); ++iter ) {
+    for(; iter != m_table->end(); ++iter) {
         wxString file = iter->first;
 
-        wxVector<wxVariant> cols;
-        cols.push_back( CScoptViewResultsModel::CreateIconTextVariant(file, GetBitmap(file)) );
-        cols.push_back(wxString());
-        cols.push_back(wxString());
-        wxDataViewItem fileItem = m_dataviewModel->AppendItem( wxDataViewItem(0), cols, NULL);
+        // Add line for the file
+        AddFile(file);
 
         // Add the entries for this file
         CScopeEntryDataVec_t* vec = iter->second;
-        for ( size_t i=0; i<vec->size(); ++i ) {
+        for(size_t i = 0; i < vec->size(); ++i) {
             CscopeEntryData entry = vec->at(i);
             // Dont insert duplicate entries to the match view
             wxString display_string;
-            display_string << _("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ") << entry.GetPattern();
-            if(insertedItems.find(display_string) == insertedItems.end()) {
+            display_string << _("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ")
+                           << entry.GetPattern();
+            if(insertedItems.count(display_string) == 0) {
                 insertedItems.insert(display_string);
-                cols.clear();
-                cols.push_back( CScoptViewResultsModel::CreateIconTextVariant(entry.GetScope(), wxNullBitmap) );
-                cols.push_back( (wxString() << entry.GetLine()) );
-                cols.push_back( (wxString() << entry.GetPattern()) );
-                m_dataviewModel->AppendItem( fileItem, cols, new CscopeTabClientData(entry) );
+                AddMatch(entry.GetLine(), entry.GetPattern());
             }
         }
     }
@@ -131,10 +117,10 @@ void CscopeTab::BuildTable(CScopeResultTable_t *table)
 
 void CscopeTab::FreeTable()
 {
-    if (m_table) {
+    if(m_table) {
         CScopeResultTable_t::iterator iter = m_table->begin();
-        for (; iter != m_table->end(); iter++ ) {
-            //delete the vector
+        for(; iter != m_table->end(); iter++) {
+            // delete the vector
             delete iter->second;
         }
         m_table->clear();
@@ -142,47 +128,53 @@ void CscopeTab::FreeTable()
     }
 }
 
-void CscopeTab::DoItemActivated(const wxDataViewItem& item )
+#if 0
+void CscopeTab::DoItemActivated(const wxDataViewItem& item)
 {
-    CscopeTabClientData *data = dynamic_cast<CscopeTabClientData*>(m_dataviewModel->GetClientObject(item));
-    if (data) {
+    CscopeTabClientData* data = dynamic_cast<CscopeTabClientData*>(m_dataviewModel->GetClientObject(item));
+    if(data) {
         wxString wsp_path = clCxxWorkspaceST::Get()->GetPrivateFolder();
-        //a single entry was activated, open the file
-        //convert the file path to absolut path. We do it here, to improve performance
+        // a single entry was activated, open the file
+        // convert the file path to absolut path. We do it here, to improve performance
         wxFileName fn(data->GetEntry().GetFile());
 
-        if ( !fn.MakeAbsolute(wsp_path) ) {
+        if(!fn.MakeAbsolute(wsp_path)) {
             wxLogMessage(wxT("failed to convert file to absolute path"));
         }
 
-        if(m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1)) {
-            IEditor *editor = m_mgr->GetActiveEditor();
-            if( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() && !GetFindWhat().IsEmpty()) {
-                // We can't use data->GetEntry().GetPattern() as the line to search for as any appended comments have been truncated
+        if(m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine() - 1)) {
+            IEditor* editor = m_mgr->GetActiveEditor();
+            if(editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() && !GetFindWhat().IsEmpty()) {
+                // We can't use data->GetEntry().GetPattern() as the line to search for as any appended comments have
+                // been truncated
                 // For some reason LEditor::DoFindAndSelect checks it against the whole current line
                 // and won't believe a match unless their lengths are the same
                 int line = data->GetEntry().GetLine() - 1;
-                int start = editor->PosFromLine(line);	// PosFromLine() returns the line start position
+                int start = editor->PosFromLine(line); // PosFromLine() returns the line start position
                 int end = editor->LineEnd(line);
                 wxString searchline(editor->GetTextRange(start, end));
                 // Find and select the entry in the file
                 editor->FindAndSelectV(searchline, GetFindWhat(), start); // The async version of FindAndSelect()
-                editor->DelayedSetActive(); // We need to SetActive() editor. At least in wxGTK, this won't work synchronously
+                editor->DelayedSetActive(); // We need to SetActive() editor. At least in wxGTK, this won't work
+                                            // synchronously
             }
         }
     } else {
         // Parent item, expand it
-        m_dataview->Expand( item );
+        m_dataview->Expand(item);
     }
 }
+#endif
 
-void CscopeTab::SetMessage(const wxString &msg, int percent)
+void CscopeTab::SetMessage(const wxString& msg, int percent)
 {
-    m_statusMessage->SetLabel(msg);
+    if(m_mgr->GetStatusBar()) {
+        m_mgr->GetStatusBar()->SetMessage(msg, 3);
+    }
     m_gauge->SetValue(percent);
 }
 
-void CscopeTab::OnClearResults(wxCommandEvent &e)
+void CscopeTab::OnClearResults(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     SetMessage(_("Ready"), 0);
@@ -192,7 +184,7 @@ void CscopeTab::OnClearResults(wxCommandEvent &e)
 void CscopeTab::OnClearResultsUI(wxUpdateUIEvent& e)
 {
     CHECK_CL_SHUTDOWN();
-    e.Enable( !m_dataviewModel->IsEmpty() );
+    e.Enable(!m_stc->IsEmpty());
 }
 
 void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)
@@ -207,7 +199,7 @@ void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)
     m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &data);
 }
 
-void CscopeTab::OnCreateDB(wxCommandEvent &e)
+void CscopeTab::OnCreateDB(wxCommandEvent& e)
 {
     // There's no easy way afaict to reach the class Cscope direct, so...
     e.SetId(XRCID("cscope_create_db"));
@@ -224,32 +216,49 @@ void CscopeTab::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 void CscopeTab::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    m_dataview->SetBackgroundColour( DrawingUtils::GetOutputPaneBgColour() );
-    m_dataview->SetForegroundColour( DrawingUtils::GetOutputPaneFgColour());
+    m_styler->SetStyles(m_stc);
 }
 
 wxBitmap CscopeTab::GetBitmap(const wxString& filename) const
 {
     wxFileName fn(filename);
     FileExtManager::FileType type = FileExtManager::GetType(filename);
-    if ( m_bitmaps.count(type) == 0 ) {
+    if(m_bitmaps.count(type) == 0) {
         type = FileExtManager::TypeText;
     }
     return m_bitmaps.find(type)->second;
 }
-void CscopeTab::OnItemSelected(wxDataViewEvent& event)
+
+void CscopeTab::ClearText()
 {
-    // Expand parent items on selection
-    CscopeTabClientData *data = dynamic_cast<CscopeTabClientData*>(m_dataviewModel->GetClientObject(event.GetItem()));
-    if ( !data ) {
-        // Parent item, expand it
-        if ( m_dataview->IsExpanded( event.GetItem() ) ) {
-            m_dataview->Collapse( event.GetItem() );
-        } else {
-            m_dataview->Expand( event.GetItem() );
-        }
-        
+    m_stc->SetEditable(true);
+    m_stc->ClearAll();
+    m_stc->SetEditable(false);
+}
+
+void CscopeTab::AddMatch(int line, const wxString& pattern)
+{
+    m_stc->SetEditable(true);
+    wxString linenum = wxString::Format(wxT(" %5d: "), line);
+    m_stc->AppendText(linenum + pattern + "\n");
+    m_stc->SetEditable(false);
+}
+
+void CscopeTab::AddFile(const wxString& filename)
+{
+    m_stc->SetEditable(true);
+    m_stc->AppendText(filename + "\n");
+    m_stc->SetEditable(false);
+}
+
+void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
+{
+    int clickedLine;
+    int style = m_styler->HitTest(e, clickedLine);
+    if(style == clFindResultsStyler::LEX_FIF_FILE || style == clFindResultsStyler::LEX_FIF_HEADER) {
+        // Toggle
+        m_stc->ToggleFold(clickedLine);
     } else {
-        event.Skip();
+        // Open the match
     }
 }

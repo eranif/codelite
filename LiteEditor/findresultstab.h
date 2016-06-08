@@ -37,7 +37,6 @@
 #include "findinfilesdlg.h"
 #include "wx_ordered_map.h"
 #include <wx/aui/auibar.h>
-#include "clFindResultsStyler.h"
 
 // Map between the line numbers and a search results
 typedef std::map<int, SearchResult> MatchInfo_t;
@@ -60,7 +59,6 @@ protected:
     };
 
     History::Map_t m_history;
-    static clFindResultsStyler m_styler;
 
 protected:
     MatchInfo_t m_matchInfo;
@@ -96,9 +94,9 @@ public:
     FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name);
     ~FindResultsTab();
 
-    static void SetStyles(wxStyledTextCtrl* sci);
-    static void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope = false);
-    static void ResetStyler();
+    void SetStyles(wxStyledTextCtrl* sci);
+    void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope = false);
+    void ResetStyler();
 
     void NextMatch();
     void PrevMatch();

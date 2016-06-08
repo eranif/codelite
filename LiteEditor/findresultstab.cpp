@@ -59,8 +59,6 @@ EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, FindResultsTab::OnSear
 EVT_UPDATE_UI(XRCID("hold_pane_open"), FindResultsTab::OnHoldOpenUpdateUI)
 END_EVENT_TABLE()
 
-clFindResultsStyler FindResultsTab::m_styler;
-
 FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name)
     : OutputTabWindow(parent, id, name)
     , m_searchInProgress(false)
@@ -99,7 +97,7 @@ FindResultsTab::~FindResultsTab()
         wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
 }
 
-void FindResultsTab::SetStyles(wxStyledTextCtrl* sci) { m_styler.SetStyles(sci); }
+void FindResultsTab::SetStyles(wxStyledTextCtrl* sci) { m_styler->SetStyles(sci); }
 
 void FindResultsTab::AppendText(const wxString& line)
 {
@@ -113,7 +111,7 @@ void FindResultsTab::Clear()
     m_indicators.clear();
     m_searchTitle.clear();
     OutputTabWindow::Clear();
-    m_styler.Reset();
+    m_styler->Reset();
 }
 
 void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
@@ -279,10 +277,10 @@ void FindResultsTab::OnRepeatOutputUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetL
 void FindResultsTab::OnMouseDClick(wxStyledTextEvent& e)
 {
     int clickedLine = wxNOT_FOUND;
-    m_styler.HitTest(m_sci, e, clickedLine);
+    m_styler->HitTest(m_sci, e, clickedLine);
 
     // Did we clicked on a togglable line?
-    int toggleLine = m_styler.TestToggle(m_sci, e);
+    int toggleLine = m_styler->TestToggle(m_sci, e);
     if(toggleLine != wxNOT_FOUND) {
         m_sci->ToggleFold(toggleLine);
 
@@ -438,7 +436,7 @@ void FindResultsTab::OnStyleNeeded(wxStyledTextEvent& e)
 
 void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope)
 {
-    m_styler.StyleText(ctrl, e, hasSope);
+    m_styler->StyleText(ctrl, e, hasSope);
 }
 
 void FindResultsTab::OnThemeChanged(wxCommandEvent& e)
@@ -511,7 +509,7 @@ void FindResultsTab::LoadSearch(const History& h)
 
 void FindResultsTab::OnRecentSearchesUI(wxUpdateUIEvent& e) { e.Enable(!m_history.IsEmpty() && !m_searchInProgress); }
 
-void FindResultsTab::ResetStyler() { m_styler.Reset(); }
+void FindResultsTab::ResetStyler() { m_styler->Reset(); }
 
 /////////////////////////////////////////////////////////////////////////////////
 

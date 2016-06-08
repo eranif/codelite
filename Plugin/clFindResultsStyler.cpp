@@ -5,11 +5,26 @@
 #include "optionsconfig.h"
 
 clFindResultsStyler::clFindResultsStyler()
-    : m_curstate(kStartOfLine)
+    : m_stc(NULL)
+    , m_curstate(kStartOfLine)
 {
 }
 
-clFindResultsStyler::~clFindResultsStyler() {}
+clFindResultsStyler::clFindResultsStyler(wxStyledTextCtrl* stc)
+    : m_stc(stc)
+    , m_curstate(kStartOfLine)
+{
+    SetStyles(m_stc);
+    m_stc->SetLexer(wxSTC_LEX_CONTAINER);
+    m_stc->Bind(wxEVT_STC_STYLENEEDED, &clFindResultsStyler::OnStyleNeeded, this);
+}
+
+clFindResultsStyler::~clFindResultsStyler()
+{
+    if(m_stc) {
+        m_stc->Unbind(wxEVT_STC_STYLENEEDED, &clFindResultsStyler::OnStyleNeeded, this);
+    }
+}
 
 void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
 {
@@ -239,3 +254,11 @@ int clFindResultsStyler::TestToggle(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
         return wxNOT_FOUND;
     }
 }
+
+void clFindResultsStyler::OnStyleNeeded(wxStyledTextEvent& e)
+{
+    e.Skip();
+    StyleText(m_stc, e, false);
+}
+
+int clFindResultsStyler::HitTest(wxStyledTextEvent& e, int& line) { return HitTest(m_stc, e, line); }

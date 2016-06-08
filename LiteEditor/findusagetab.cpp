@@ -38,7 +38,7 @@
 FindUsageTab::FindUsageTab(wxWindow* parent, const wxString& name)
     : OutputTabWindow(parent, wxID_ANY, name)
 {
-    FindResultsTab::SetStyles(m_sci);
+    m_styler->SetStyles(m_sci);
     m_sci->HideSelection(true);
     m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindUsageTab::OnStyleNeeded), NULL, this);
     m_tb->DeleteTool(XRCID("repeat_output"));
@@ -57,13 +57,13 @@ void FindUsageTab::OnStyleNeeded(wxStyledTextEvent& e)
 {
     wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(e.GetEventObject());
     if(!ctrl) return;
-    FindResultsTab::StyleText(ctrl, e, true);
+    m_styler->StyleText(ctrl, e, true);
 }
 
 void FindUsageTab::Clear()
 {
     m_matches.clear();
-    FindResultsTab::ResetStyler();
+    m_styler->Reset();
     OutputTabWindow::Clear();
 }
 
@@ -177,5 +177,5 @@ void FindUsageTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 void FindUsageTab::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    FindResultsTab::SetStyles(m_sci);
+    m_styler->SetStyles(m_sci);
 }

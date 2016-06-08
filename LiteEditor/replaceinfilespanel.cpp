@@ -428,10 +428,10 @@ void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 void ReplaceInFilesPanel::OnMouseDClick(wxStyledTextEvent& e)
 {
     int clickedLine = wxNOT_FOUND;
-    m_styler.HitTest(m_sci, e, clickedLine);
+    m_styler->HitTest(m_sci, e, clickedLine);
 
     // Did we clicked on a togglable line?
-    int toggleLine = m_styler.TestToggle(m_sci, e);
+    int toggleLine = m_styler->TestToggle(m_sci, e);
     if(toggleLine != wxNOT_FOUND) {
         m_sci->ToggleFold(toggleLine);
 

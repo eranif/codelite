@@ -43,6 +43,7 @@ protected:
     wxGauge* m_gauge;
 
 protected:
+    virtual void OnHotspotClicked(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnChangeSearchScope(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCreateDB(wxCommandEvent& event) { event.Skip(); }

@@ -78,6 +78,7 @@ void CscopeTab::Clear()
     m_stc->SetEditable(true);
     m_stc->ClearAll();
     m_stc->SetEditable(false);
+    m_matchesInStc.clear();
 }
 
 void CscopeTab::BuildTable(CScopeResultTable_t* table)
@@ -88,8 +89,9 @@ void CscopeTab::BuildTable(CScopeResultTable_t* table)
 
     m_table = table;
     ClearText();
+    m_matchesInStc.clear();
     m_styler->SetStyles(m_stc);
-    
+
     wxStringSet_t insertedItems;
     CScopeResultTable_t::iterator iter = m_table->begin();
     for(; iter != m_table->end(); ++iter) {
@@ -108,7 +110,9 @@ void CscopeTab::BuildTable(CScopeResultTable_t* table)
                            << entry.GetPattern();
             if(insertedItems.count(display_string) == 0) {
                 insertedItems.insert(display_string);
+                int lineno = m_stc->GetLineCount() - 1; // STC line number *before* we add the result
                 AddMatch(entry.GetLine(), entry.GetPattern());
+                m_matchesInStc.insert(std::make_pair(lineno, entry));
             }
         }
     }
@@ -127,44 +131,6 @@ void CscopeTab::FreeTable()
         wxDELETE(m_table);
     }
 }
-
-#if 0
-void CscopeTab::DoItemActivated(const wxDataViewItem& item)
-{
-    CscopeTabClientData* data = dynamic_cast<CscopeTabClientData*>(m_dataviewModel->GetClientObject(item));
-    if(data) {
-        wxString wsp_path = clCxxWorkspaceST::Get()->GetPrivateFolder();
-        // a single entry was activated, open the file
-        // convert the file path to absolut path. We do it here, to improve performance
-        wxFileName fn(data->GetEntry().GetFile());
-
-        if(!fn.MakeAbsolute(wsp_path)) {
-            wxLogMessage(wxT("failed to convert file to absolute path"));
-        }
-
-        if(m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine() - 1)) {
-            IEditor* editor = m_mgr->GetActiveEditor();
-            if(editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() && !GetFindWhat().IsEmpty()) {
-                // We can't use data->GetEntry().GetPattern() as the line to search for as any appended comments have
-                // been truncated
-                // For some reason LEditor::DoFindAndSelect checks it against the whole current line
-                // and won't believe a match unless their lengths are the same
-                int line = data->GetEntry().GetLine() - 1;
-                int start = editor->PosFromLine(line); // PosFromLine() returns the line start position
-                int end = editor->LineEnd(line);
-                wxString searchline(editor->GetTextRange(start, end));
-                // Find and select the entry in the file
-                editor->FindAndSelectV(searchline, GetFindWhat(), start); // The async version of FindAndSelect()
-                editor->DelayedSetActive(); // We need to SetActive() editor. At least in wxGTK, this won't work
-                                            // synchronously
-            }
-        }
-    } else {
-        // Parent item, expand it
-        m_dataview->Expand(item);
-    }
-}
-#endif
 
 void CscopeTab::SetMessage(const wxString& msg, int percent)
 {
@@ -253,6 +219,8 @@ void CscopeTab::AddFile(const wxString& filename)
 
 void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
 {
+    CHECK_PTR_RET(clCxxWorkspaceST::Get()->IsOpen());
+
     int clickedLine;
     int style = m_styler->HitTest(e, clickedLine);
     if(style == clFindResultsStyler::LEX_FIF_FILE || style == clFindResultsStyler::LEX_FIF_HEADER) {
@@ -260,5 +228,15 @@ void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
         m_stc->ToggleFold(clickedLine);
     } else {
         // Open the match
+        std::map<int, CscopeEntryData>::const_iterator iter = m_matchesInStc.find(clickedLine);
+        if(iter != m_matchesInStc.end()) {
+            wxString wsp_path = clCxxWorkspaceST::Get()->GetPrivateFolder();
+            wxFileName fn(iter->second.GetFile());
+            if(!fn.MakeAbsolute(wsp_path)) {
+                wxLogMessage(wxT("CScope: failed to convert file to absolute path"));
+                return;
+            }
+            m_mgr->OpenFile(fn.GetFullPath(), "", iter->second.GetLine() - 1);
+        }
     }
 }

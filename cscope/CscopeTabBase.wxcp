@@ -298,7 +298,14 @@
              "m_label": "Keywords Set 5",
              "m_value": ""
             }],
-           "m_events": [],
+           "m_events": [{
+             "m_eventName": "wxEVT_STC_HOTSPOT_CLICK",
+             "m_eventClass": "wxStyledTextEvent",
+             "m_eventHandler": "wxStyledTextEventHandler",
+             "m_functionNameAndSignature": "OnHotspotClicked(wxStyledTextEvent& event)",
+             "m_description": "A hotspot was clicked",
+             "m_noBody": false
+            }],
            "m_children": []
           }]
         }, {

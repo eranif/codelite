@@ -119,6 +119,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
          GetSizer()->Fit(this);
     }
     // Connect events
+    m_stc->Connect(wxEVT_STC_HOTSPOT_CLICK, wxStyledTextEventHandler(CscopeTabBase::OnHotspotClicked), NULL, this);
     m_choiceSearchScope->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CscopeTabBase::OnWorkspaceOpenUI), NULL, this);
@@ -133,6 +134,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
 CscopeTabBase::~CscopeTabBase()
 {
+    m_stc->Disconnect(wxEVT_STC_HOTSPOT_CLICK, wxStyledTextEventHandler(CscopeTabBase::OnHotspotClicked), NULL, this);
     m_choiceSearchScope->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CscopeTabBase::OnWorkspaceOpenUI), NULL, this);

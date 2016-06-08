@@ -84,15 +84,14 @@
 // Constants
 //-----------------------------------------------------
 
-const wxString clCMD_NEW = _("<New...>");
-const wxString clCMD_EDIT = _("<Edit...>");
-// const wxString clCMD_DELETE = _("<Delete...>");  Unused
+#define clCMD_NEW  "<New...>"
+#define clCMD_EDIT "<Edit...>"
 
 // constant message
-const wxString BUILD_START_MSG = _("----------Build Started--------\n");
-const wxString BUILD_END_MSG = _("----------Build Ended----------\n");
-const wxString BUILD_PROJECT_PREFIX = _("----------Building project:[ ");
-const wxString CLEAN_PROJECT_PREFIX = _("----------Cleaning project:[ ");
+#define BUILD_START_MSG "----------Build Started--------\n"
+#define BUILD_END_MSG "----------Build Ended----------\n"
+#define BUILD_PROJECT_PREFIX "----------Building project:[ "
+#define CLEAN_PROJECT_PREFIX "----------Cleaning project:[ "
 
 // Find in files options
 #define SEARCH_IN_WORKSPACE "<Entire Workspace>"
@@ -111,7 +110,7 @@ const wxString CLEAN_PROJECT_PREFIX = _("----------Cleaning project:[ ");
 #elif defined(__WXMAC__)
 #define TERMINAL_CMD wxString::Format(wxT("%s/OpenTerm '$(CMD)'"), clStandardPaths::Get().GetDataDir().c_str())
 #else
-const wxString TERMINAL_CMD = wxT("");
+#define TERMINAL_CMD ""
 #endif
 
 #if defined(__WXMSW__) && !defined(USE_POSIX_LAYOUT)

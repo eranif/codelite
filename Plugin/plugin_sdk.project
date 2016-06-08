@@ -193,6 +193,8 @@
     <File Name="theme_handler_helper.cpp"/>
     <File Name="clStringHistory.h"/>
     <File Name="clStringHistory.cpp"/>
+    <File Name="clFindResultsStyler.h"/>
+    <File Name="clFindResultsStyler.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>

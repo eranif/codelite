@@ -1,0 +1,66 @@
+#ifndef CLFINDRESULTSSTYLER_H
+#define CLFINDRESULTSSTYLER_H
+
+#include "codelite_exports.h"
+#include <wx/stc/stc.h>
+
+class WXDLLIMPEXP_SDK clFindResultsStyler : public wxEvtHandler
+{
+public:
+    enum eState {
+        kHeader,
+        kStartOfLine,
+        kFile,
+        kLineNumber,
+        kScope,
+        kMatch,
+    };
+
+    enum {
+        // Custom styles
+        LEX_FIF_DEFAULT = 0,
+        LEX_FIF_FILE,
+        LEX_FIF_MATCH,
+        LEX_FIF_LINE_NUMBER,
+        LEX_FIF_HEADER,
+        LEX_FIF_SCOPE,
+        LEX_FIF_MATCH_COMMENT,
+    };
+
+protected:
+    eState m_curstate;
+
+public:
+    clFindResultsStyler();
+    virtual ~clFindResultsStyler();
+
+    /**
+     * @brief style the control text
+     */
+    void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope);
+
+    /**
+     * @brief reset the styler
+     */
+    void Reset();
+    
+    /**
+     * @brief initialize the control styles and colours
+     */
+    void SetStyles(wxStyledTextCtrl* ctrl);
+    
+    /**
+     * @brief user clicked on the editor, return the matching style (LEX_FIF_*)
+     * @return return the clicked line + the style on that line
+     */
+    int HitTest(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, int &line);
+    
+    /**
+     * @brief check whether a "Togglable" style was clicked
+     * @return return the line number that was clicked if the style on that line is a togglable style
+     * otherwise return wxNOT_FOUND
+     */
+    int TestToggle(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e);
+};
+
+#endif // CLFINDRESULTSSTYLER_H

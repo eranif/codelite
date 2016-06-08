@@ -427,16 +427,16 @@ void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 
 void ReplaceInFilesPanel::OnMouseDClick(wxStyledTextEvent& e)
 {
-    // Override the default behvior to avoid clearning the markers
-    long pos = e.GetPosition();
-    int line = m_sci->LineFromPosition(pos);
-    int style = m_sci->GetStyleAt(pos);
+    int clickedLine = wxNOT_FOUND;
+    m_styler.HitTest(m_sci, e, clickedLine);
 
-    if(style == LEX_FIF_FILE || style == LEX_FIF_HEADER) {
-        m_sci->ToggleFold(line);
+    // Did we clicked on a togglable line?
+    int toggleLine = m_styler.TestToggle(m_sci, e);
+    if(toggleLine != wxNOT_FOUND) {
+        m_sci->ToggleFold(toggleLine);
 
     } else {
-        MatchInfo_t::const_iterator m = m_matchInfo.find(line);
+        MatchInfo_t::const_iterator m = m_matchInfo.find(clickedLine);
         if(m != m_matchInfo.end()) {
             DoOpenSearchResult(m->second, NULL, m->first);
         }

@@ -17,6 +17,8 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
     wxFileName fnClangFormat("/usr/bin", "");
     wxArrayString nameOptions;
     nameOptions.Add("clang-format");
+    nameOptions.Add("clang-format-3.9");
+    nameOptions.Add("clang-format-3.8");
     nameOptions.Add("clang-format-3.7");
     nameOptions.Add("clang-format-3.6");
     nameOptions.Add("clang-format-3.5");

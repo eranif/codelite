@@ -24,7 +24,3 @@ target_link_libraries(  codelite-lldb
                     )
 
 CL_INSTALL_EXECUTABLE(codelite-lldb)
-if ( MAKE_DEB AND LLDB_OFFICIAL_FOUND MATCHES 1 )
-    message("-- Adding lldb-3.4-dev to deb dependencies")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS  "${CPACK_DEBIAN_PACKAGE_DEPENDS} lldb-3.4-dev")
-endif()

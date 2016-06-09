@@ -924,7 +924,7 @@ void QuickFindBar::DoHighlightMatches(bool checked)
         matches += (found > 1 ? _("results") : _("result"));
         m_matchesFound->SetLabel(matches);
 
-    } else {
+    } else if(editor) {
         editor->SetFindBookmarksActive(false);
         editor->DelAllMarkers(smt_find_bookmark);
 

@@ -358,6 +358,7 @@ unset(PREVENT_WX_ASSERTS CACHE)
 
 set(ARCH 32)
 set(ARCH_NAME i386)
+set(OS_CODENAME "unknown")
 
 if ( UNIX AND NOT APPLE )
     execute_process(COMMAND /bin/sh -c "lsb_release -a|grep -i Codename | cut -d: -f2"    OUTPUT_VARIABLE OS_CODENAME OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
@@ -369,9 +370,14 @@ if ( UNIX AND NOT APPLE )
     string(REPLACE "\t" "" DISTRO_CODENAME "${DISTRO_CODENAME}")
     string(TOLOWER ${DISTRO_CODENAME} DISTRO_CODENAME)
 
+    string(REPLACE " " "" OS_CODENAME "${OS_CODENAME}")
+    string(REPLACE "\t" "" OS_CODENAME "${OS_CODENAME}")
+    string(TOLOWER ${OS_CODENAME} OS_CODENAME)
+
     set(CPACK_SYSTEM_NAME "${DISTRO_CODENAME}")
     message("-- CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME}")
 endif ( UNIX AND NOT APPLE )
+message("-- OS_CODENAME is set to ${OS_CODENAME}")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(ARCH 64)
@@ -402,11 +408,20 @@ if ( MAKE_DEB )
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY     "optional")
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential, git, subversion, gdb, xterm, gcc, g++")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS      "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.8-dev, clang-format-3.8, liblldb-3.8-dev")
+    if(OS_CODENAME STREQUAL "xenial")
+        message("-- CPack deps for Ubuntu-Xenial")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS      
+            "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.8-dev, clang-format-3.8, liblldb-3.8-dev")
+    else()
+        message("-- CPack deps for Ubuntu-Trusty/Debian-Jessy")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS
+            "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.5-dev, clang-format-3.5, liblldb-3.5-dev")
+    endif()
     set(CPACK_PACKAGE_DESCRIPTION_FILE    "${CL_SRC_ROOT}/DESC")
     set(CPACK_STRIP_FILES TRUE)
     INCLUDE(CPack)
 endif( MAKE_DEB )
+
 
 ############################################
 ## Clang support

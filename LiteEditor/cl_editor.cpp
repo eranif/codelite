@@ -1534,12 +1534,16 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     if(buf.length() == 0 && !theText.IsEmpty()) {
         // something went wrong in the conversion process
         wxString errmsg;
-        errmsg << _("File text conversion failed!\nCheck your file font encoding from\nSettings | Global Editor "
-                    "Prefernces | Misc | Locale");
+        errmsg << _(
+            "File text conversion failed!\nCheck your file font encoding from\nSettings | Preferences | Misc | Locale");
         wxMessageBox(errmsg, "CodeLite", wxOK | wxICON_ERROR | wxCENTER, wxTheApp->GetTopWindow());
         return false;
     }
-
+    
+    if(!m_fileBom.IsEmpty()) {
+        // restore the BOM
+        file.Write(m_fileBom.GetData(), m_fileBom.Len());
+    }
     file.Write(buf.data(), strlen(buf.data()));
     file.Close();
 

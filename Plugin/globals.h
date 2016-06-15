@@ -64,6 +64,8 @@ public:
     wxFontEncoding Encoding();
     static wxFontEncoding Encoding(const char* buff);
     void SetData(const char* buffer, size_t len);
+    void* GetData() const { return m_bom.GetData(); }
+    bool IsEmpty() const { return m_bom.IsEmpty(); }
 };
 
 class WXDLLIMPEXP_SDK clEventDisabler

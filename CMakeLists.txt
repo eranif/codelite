@@ -372,7 +372,9 @@ if ( UNIX AND NOT APPLE )
 
     string(REPLACE " " "" OS_CODENAME "${OS_CODENAME}")
     string(REPLACE "\t" "" OS_CODENAME "${OS_CODENAME}")
-    string(TOLOWER ${OS_CODENAME} OS_CODENAME)
+    if(NOT "${OS_CODENAME}" STREQUAL "") # It'll be empty if lsb_release isn't installed, which causes cmake to error out on the next line
+        string(TOLOWER ${OS_CODENAME} OS_CODENAME)
+    endif()
 
     set(CPACK_SYSTEM_NAME "${DISTRO_CODENAME}")
     message("-- CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME}")

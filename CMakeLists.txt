@@ -413,7 +413,7 @@ if ( MAKE_DEB )
         set(CPACK_DEBIAN_PACKAGE_DEPENDS      
             "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.8-dev, clang-format-3.8, liblldb-3.8-dev")
     else()
-        message("-- CPack deps for Ubuntu-Trusty/Debian-Jessy")
+        message("-- CPack deps for Ubuntu-Trusty/Debian-Jessie")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS
             "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.5-dev, clang-format-3.5, liblldb-3.5-dev")
     endif()

@@ -71,7 +71,8 @@ class CMakeGenerator
     wxString m_userBlock3;
 
 protected:
-    void ExpandOptions(const wxString& options, wxString& content, wxArrayString& arrVars, wxArrayString& arrOut);
+    void ExpandOptions(const wxString& options, wxString& content, wxArrayString& arrVars, wxArrayString& arrOut,
+        const wxString& indent = wxEmptyString);
 
     wxString Prefix(ProjectPtr project);
 
@@ -97,13 +98,14 @@ protected:
      * @brief extract from the CMakeLists.txt file the user code blocks
      */
     void ReadUserCode(const wxString& content);
-    
+
     /**
      * @brief read until we reach the end of user block
      */
     void ReadUntilEndOfUserBlock(wxArrayString& lines, wxString& content);
-    
+
     void AddUserCodeSection(wxString& content, const wxString& sectionPrefix, const wxString& sectionCode = "");
+
 public:
     CMakeGenerator();
     ~CMakeGenerator();

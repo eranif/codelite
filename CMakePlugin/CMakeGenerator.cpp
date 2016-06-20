@@ -423,18 +423,20 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     {
         wxArrayString optsNames, opts;
         wxString rcOptions = buildConf->GetResCompileOptions();
-        content << "\n# Resource options\n";
-        ExpandOptions(rcOptions, content, optsNames, opts);
+        content << "\nif(WIN32)\n";
+        content << "    # Resource options\n";
+        ExpandOptions(rcOptions, content, optsNames, opts, "    ");
         bool first = true;
         for(size_t i = 0; i < optsNames.size(); ++i) {
-            content << "set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << "${" << optsNames.Item(i) << "})\n";
+            content << "    set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << "${" << optsNames.Item(i) << "})\n";
             first = false;
         }
 
         for(size_t i = 0; i < opts.size(); ++i) {
-            content << "set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << opts.Item(i) << ")\n";
+            content << "    set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << opts.Item(i) << ")\n";
             first = false;
         }
+        content << "endif(WIN32)\n";
         content << "\n";
 
         // Resource options
@@ -497,12 +499,14 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         }
 
         if(!resourceFiles.IsEmpty()) {
-            content << "# Define the resource files\n";
-            content << "set ( RC_SRCS\n";
+            content << "if(WIN32)\n";
+            content << "    # Define the resource files\n";
+            content << "    set ( RC_SRCS\n";
             for(size_t i = 0; i < resourceFiles.GetCount(); ++i) {
-                content << "    " << resourceFiles.Item(i) << "\n";
+                content << "        " << resourceFiles.Item(i) << "\n";
             }
-            content << ")\n\n";
+            content << "    )\n";
+            content << "endif(WIN32)\n\n";
         }
     }
 
@@ -531,11 +535,11 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     }
 
     {
-        content << "if(MINGW)\n"
+        content << "if(WIN32)\n"
                 << "    enable_language(RC)\n"
                 << "    set(CMAKE_RC_COMPILE_OBJECT\n"
                 << "        \"<CMAKE_RC_COMPILER> ${RC_OPTIONS} -O coff -i <SOURCE> -o <OBJECT>\")\n"
-                << "endif(MINGW)\n\n";
+                << "endif(WIN32)\n\n";
     }
 
     // Add the second hook here
@@ -610,7 +614,7 @@ bool CMakeGenerator::CanGenerate(ProjectPtr project)
 }
 
 void CMakeGenerator::ExpandOptions(
-    const wxString& options, wxString& content, wxArrayString& arrVars, wxArrayString& arrOut)
+    const wxString& options, wxString& content, wxArrayString& arrVars, wxArrayString& arrOut, const wxString& indent)
 {
     arrVars.clear();
     arrOut.clear();
@@ -631,9 +635,12 @@ void CMakeGenerator::ExpandOptions(
             wxString varname;
             varname << "CL_VAR_" << (++m_counter);
             // Create a CMake command that executes this command
-            content << "execute_process(COMMAND \n    " << cmpOption << "\n    OUTPUT_VARIABLE\n    CL_TMP_VAR"
-                    << "\n    OUTPUT_STRIP_TRAILING_WHITESPACE)\n";
-            content << "string(STRIP ${CL_TMP_VAR} " << varname << ")\n";
+            content << indent << "execute_process(COMMAND \n" 
+                    << indent << "    " << cmpOption << "\n"
+                    << indent << "    " << "OUTPUT_VARIABLE\n"
+                    << indent << "    " << "CL_TMP_VAR\n"
+                    << indent << "    " << "OUTPUT_STRIP_TRAILING_WHITESPACE)\n";
+            content << indent << "string(STRIP ${CL_TMP_VAR} " << varname << ")\n";
             arrVars.Add(varname);
         } else {
             arrOut.Add(cmpOption); // Keep as is

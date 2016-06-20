@@ -277,7 +277,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     Project::FileInfoVector_t vfiles;
     project->GetFilesMetadata(vfiles);
 
-    wxArrayString cppSources, cSources;
+    wxArrayString cppSources, cSources, resourceFiles;
     wxString workspacePath = clCxxWorkspaceST::Get()->GetFileName().GetPath();
     std::for_each(vfiles.begin(), vfiles.end(), [&](const Project::FileInfo& fi) {
         wxFileName fn(fi.GetFilename());
@@ -293,8 +293,9 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             cSources.Add(file_name);
         } else if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeSourceCpp) {
             cppSources.Add(file_name);
+        } else if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeResource) {
+            resourceFiles.Add(file_name);
         }
-        // TODO :: support custom files like .rc / .y / .l etcs
     });
 
     // Get project directory
@@ -419,6 +420,26 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         content << "\n";
     }
 
+    {
+        wxArrayString optsNames, opts;
+        wxString rcOptions = buildConf->GetResCompileOptions();
+        content << "\n# Resource options\n";
+        ExpandOptions(rcOptions, content, optsNames, opts);
+        bool first = true;
+        for(size_t i = 0; i < optsNames.size(); ++i) {
+            content << "set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << "${" << optsNames.Item(i) << "})\n";
+            first = false;
+        }
+
+        for(size_t i = 0; i < opts.size(); ++i) {
+            content << "set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << opts.Item(i) << ")\n";
+            first = false;
+        }
+        content << "\n";
+
+        // Resource options
+    }
+
     // Add libraries paths
     {
         wxString lib_paths = buildConf->GetLibPath();
@@ -474,6 +495,15 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             }
             content << ")\n\n";
         }
+
+        if(!resourceFiles.IsEmpty()) {
+            content << "# Define the resource files\n";
+            content << "set ( RC_SRCS\n";
+            for(size_t i = 0; i < resourceFiles.GetCount(); ++i) {
+                content << "    " << resourceFiles.Item(i) << "\n";
+            }
+            content << ")\n\n";
+        }
     }
 
     // Add CXX compiler options
@@ -500,6 +530,14 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         }
     }
 
+    {
+        content << "if(MINGW)\n"
+                << "    enable_language(RC)\n"
+                << "    set(CMAKE_RC_COMPILE_OBJECT\n"
+                << "        \"<CMAKE_RC_COMPILER> ${RC_OPTIONS} -O coff -i <SOURCE> -o <OBJECT>\")\n"
+                << "endif(MINGW)\n\n";
+    }
+
     // Add the second hook here
     AddUserCodeSection(content, CMAKELISTS_USER_CODE_2_PREFIX, m_userBlock2);
 
@@ -507,15 +545,15 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     {
         wxString type = buildConf->GetProjectType();
         if(type == Project::EXECUTABLE) {
-            content << "add_executable(" << project->GetName() << " ${CXX_SRCS} ${C_SRCS})\n";
+            content << "add_executable(" << project->GetName() << " ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})\n";
             content << "target_link_libraries(" << project->GetName() << " ${LINK_OPTIONS})\n\n";
 
         } else if(type == Project::DYNAMIC_LIBRARY) {
-            content << "add_library(" << project->GetName() << " SHARED ${CXX_SRCS} ${C_SRCS})\n";
+            content << "add_library(" << project->GetName() << " SHARED ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})\n";
             content << "target_link_libraries(" << project->GetName() << " ${LINK_OPTIONS})\n\n";
 
         } else {
-            content << "add_library(" << project->GetName() << " ${CXX_SRCS} ${C_SRCS})\n\n";
+            content << "add_library(" << project->GetName() << " ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})\n\n";
         }
     }
 
@@ -658,7 +696,7 @@ void CMakeGenerator::ReadUntilEndOfUserBlock(wxArrayString& lines, wxString& con
             return;
         } else {
             content << curline;
-            //removeLf = true;
+            // removeLf = true;
         }
     }
     if(removeLf) {

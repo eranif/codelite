@@ -5861,7 +5861,19 @@ void clMainFrame::OnFileSaveAllUI(wxUpdateUIEvent& event)
     bool hasModifiedEditor = false;
     clTab::Vec_t tabs;
     GetMainBook()->GetAllTabs(tabs);
-
+    
+    // Make sure that modified detached editors are also enabling the "Save" and "Save All" button
+    const EditorFrame::List_t& detachedEditors = GetMainBook()->GetDetachedEditors();
+    std::for_each(detachedEditors.begin(), detachedEditors.end(), [&](EditorFrame* fr){
+        clTab tabInfo;
+        tabInfo.bitmap = wxNullBitmap;
+        tabInfo.filename = fr->GetEditor()->GetFileName();
+        tabInfo.isFile = true;
+        tabInfo.isModified = fr->GetEditor()->IsModified();
+        tabInfo.text = fr->GetEditor()->GetFileName().GetFullPath();
+        tabs.push_back(tabInfo);
+    });
+    
     for(size_t i = 0; i < tabs.size(); ++i) {
         if(tabs.at(i).isFile && tabs.at(i).isModified) {
             hasModifiedEditor = true;

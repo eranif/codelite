@@ -136,6 +136,12 @@ public:
      * @param tabs [output]
      */
     void GetAllTabs(clTab::Vec_t& tabs);
+    
+    /**
+     * @brief return a list of the detached tabs
+     */
+    void GetDetachedTabs(clTab::Vec_t& tabs);
+    
     LEditor* FindEditor(const wxString& fileName);
     bool CloseEditor(const wxString& fileName) { return ClosePage(FindEditor(fileName)); }
 

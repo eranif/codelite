@@ -72,12 +72,12 @@ void MainBook::CreateGuiControls()
 
     m_navBar = new NavBar(this);
     sz->Add(m_navBar, 0, wxEXPAND);
-    long style = kNotebook_AllowDnD |         // Allow tabs to move
-        kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
-        kNotebook_MouseMiddleClickFireEvent | // instead of closing the tab, fire an event
-        kNotebook_ShowFileListButton |        // show drop down list of all open tabs
-        kNotebook_EnableNavigationEvent |     // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
-        kNotebook_UnderlineActiveTab;         // Mark active tab with dedicated coloured line
+    long style = kNotebook_AllowDnD |                  // Allow tabs to move
+                 kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
+                 kNotebook_MouseMiddleClickFireEvent | // instead of closing the tab, fire an event
+                 kNotebook_ShowFileListButton |        // show drop down list of all open tabs
+                 kNotebook_EnableNavigationEvent |     // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
+                 kNotebook_UnderlineActiveTab;         // Mark active tab with dedicated coloured line
 
     if(EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
         style |= (kNotebook_CloseButtonOnActiveTabFireEvent | kNotebook_CloseButtonOnActiveTab);
@@ -418,11 +418,11 @@ LEditor* MainBook::FindEditor(const wxString& fileName)
 #ifndef __WXMSW__
             // On Unix files are case sensitive
             if(nativeFile.Cmp(fileName) == 0 || unixStyleFile.Cmp(fileName) == 0 ||
-                unixStyleFile.Cmp(fileNameDest) == 0)
+               unixStyleFile.Cmp(fileNameDest) == 0)
 #else
             // Compare in no case sensitive manner
             if(nativeFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileName) == 0 ||
-                unixStyleFile.CmpNoCase(fileNameDest) == 0)
+               unixStyleFile.CmpNoCase(fileNameDest) == 0)
 #endif
             {
                 return editor;
@@ -502,8 +502,12 @@ static bool IsFileExists(const wxFileName& filename)
 #endif
 }
 
-LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectName, int lineno, long position,
-    OF_extra extra /*=OF_AddJump*/, bool preserveSelection /*=true*/)
+LEditor* MainBook::OpenFile(const wxString& file_name,
+                            const wxString& projectName,
+                            int lineno,
+                            long position,
+                            OF_extra extra /*=OF_AddJump*/,
+                            bool preserveSelection /*=true*/)
 {
     wxFileName fileName(file_name);
     fileName.MakeAbsolute();
@@ -631,8 +635,12 @@ LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectNa
     return editor;
 }
 
-bool MainBook::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected,
-    int insert_at_index /*=wxNOT_FOUND*/)
+bool MainBook::AddPage(wxWindow* win,
+                       const wxString& text,
+                       const wxString& tooltip,
+                       const wxBitmap& bmp,
+                       bool selected,
+                       int insert_at_index /*=wxNOT_FOUND*/)
 {
     if(m_book->GetPageIndex(win) != wxNOT_FOUND) return false;
 
@@ -680,8 +688,10 @@ bool MainBook::SelectPage(wxWindow* win)
     return DoSelectPage(win);
 }
 
-bool MainBook::UserSelectFiles(
-    std::vector<std::pair<wxFileName, bool> >& files, const wxString& title, const wxString& caption, bool cancellable)
+bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName, bool> >& files,
+                               const wxString& title,
+                               const wxString& caption,
+                               bool cancellable)
 {
     if(files.empty()) return true;
 
@@ -713,8 +723,9 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
     }
     editors.resize(n);
 
-    bool res = !askUser || UserSelectFiles(files, _("Save Modified Files"),
-                               _("Some files are modified.\nChoose the files you would like to save."));
+    bool res = !askUser || UserSelectFiles(files,
+                                           _("Save Modified Files"),
+                                           _("Some files are modified.\nChoose the files you would like to save."));
     if(res) {
         for(size_t i = 0; i < files.size(); i++) {
             if(files[i].second) {
@@ -789,8 +800,11 @@ void MainBook::ReloadExternallyModified(bool prompt)
         }
 
         if(res == FilesModifiedDlg::kID_BUTTON_CHOOSE) {
-            UserSelectFiles(files, _("Reload Modified Files"),
-                _("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
+            UserSelectFiles(
+                files,
+                _("Reload Modified Files"),
+                _("Files have been modified outside the editor.\nChoose which files you would like to reload."),
+                false);
         }
     }
 
@@ -881,8 +895,10 @@ bool MainBook::CloseAll(bool cancellable)
     }
     editors.resize(n);
 
-    if(!UserSelectFiles(files, _("Save Modified Files"),
-           _("Some files are modified.\nChoose the files you would like to save."), cancellable))
+    if(!UserSelectFiles(files,
+                        _("Save Modified Files"),
+                        _("Some files are modified.\nChoose the files you would like to save."),
+                        cancellable))
         return false;
 
     for(size_t i = 0; i < files.size(); i++) {
@@ -1040,8 +1056,10 @@ void MainBook::MarkEditorReadOnly(LEditor* editor)
     if(readOnly && editor->GetModify()) {
         // an attempt to mark a modified file as read-only
         // ask the user to save his changes before
-        ::wxMessageBox(_("Please save your changes before marking the file as read only"), "CodeLite",
-            wxOK | wxCENTER | wxICON_WARNING, this);
+        ::wxMessageBox(_("Please save your changes before marking the file as read only"),
+                       "CodeLite",
+                       wxOK | wxCENTER | wxICON_WARNING,
+                       this);
         return;
     }
 #if !CL_USE_NATIVEBOOK
@@ -1090,8 +1108,13 @@ bool MainBook::DoSelectPage(wxWindow* win)
     return true;
 }
 
-void MainBook::ShowMessage(const wxString& message, bool showHideButton, const wxBitmap& bmp, const ButtonDetails& btn1,
-    const ButtonDetails& btn2, const ButtonDetails& btn3, const CheckboxDetails& cb)
+void MainBook::ShowMessage(const wxString& message,
+                           bool showHideButton,
+                           const wxBitmap& bmp,
+                           const ButtonDetails& btn1,
+                           const ButtonDetails& btn2,
+                           const ButtonDetails& btn3,
+                           const CheckboxDetails& cb)
 {
     m_messagePane->ShowMessage(message, showHideButton, bmp, btn1, btn2, btn3, cb);
     clMainFrame::Get()->SendSizeEvent();
@@ -1424,4 +1447,20 @@ bool MainBook::ClosePage(IEditor* editor, bool prompt)
     if(!page) return false;
     int pos = m_book->GetPageIndex(page);
     return (pos != wxNOT_FOUND) && (m_book->DeletePage(pos, false));
+}
+
+void MainBook::GetDetachedTabs(clTab::Vec_t& tabs)
+{
+    // Make sure that modified detached editors are also enabling the "Save" and "Save All" button
+    const EditorFrame::List_t& detachedEditors = GetDetachedEditors();
+    std::for_each(detachedEditors.begin(), detachedEditors.end(), [&](EditorFrame* fr) {
+        clTab tabInfo;
+        tabInfo.bitmap = wxNullBitmap;
+        tabInfo.filename = fr->GetEditor()->GetFileName();
+        tabInfo.isFile = true;
+        tabInfo.isModified = fr->GetEditor()->IsModified();
+        tabInfo.text = fr->GetEditor()->GetFileName().GetFullPath();
+        tabInfo.window = fr->GetEditor();
+        tabs.push_back(tabInfo);
+    });
 }

@@ -11,7 +11,7 @@ EclipsePHPThemeImporter::EclipsePHPThemeImporter()
                  "return static stdclass string switch true unset use var while xor __class__ __file__ __function__ "
                  "__line__ __sleep __namespace__ __trait__ __wakeup public protected private trait interface namespace "
                  "final throw extends try catch self yield");
-    SetFileExtensions("*.php;*.php3;*.phtml;*.inc");
+    SetFileExtensions("*.php;*.php3;*.phtml;*.inc;*.php5");
 }
 
 EclipsePHPThemeImporter::~EclipsePHPThemeImporter() {}

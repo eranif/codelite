@@ -119,8 +119,16 @@ void clStatusBar::OnPageChanged(wxCommandEvent& event)
     event.Skip();
     DoUpdateColour();
 
-    // update the language
+    // Update the language
     wxString language = "TEXT";
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) {
+        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
+        if(lexer) {
+            language = lexer->GetName().Upper();
+        }
+    }
+
     SetLanguage(language);
     SetWhitespaceInfo();
 }

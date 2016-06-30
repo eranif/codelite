@@ -21,6 +21,7 @@ PHPQuickOutlineDlg::PHPQuickOutlineDlg(wxWindow* parent, IEditor* editor, IManag
     m_treeCtrlLayout->Bind(wxEVT_KEY_DOWN, &PHPQuickOutlineDlg::OnKeyDown, this);
     SetName("PHPQuickOutlineDlg");
     WindowAttrManager::Load(this);
+    CenterOnParent();
 }
 
 PHPQuickOutlineDlg::~PHPQuickOutlineDlg()
@@ -44,8 +45,9 @@ void PHPQuickOutlineDlg::DoItemSelected(const wxTreeItemId& item)
     if(item.IsOk()) {
         QItemData* data = dynamic_cast<QItemData*>(m_treeCtrlLayout->GetItemData(item));
         if(data && data->m_entry) {
-            DoSelectMatch(data->m_entry->GetFilename().GetFullPath(), data->m_entry->GetLine() - 1,
-                data->m_entry->GetShortName());
+            DoSelectMatch(data->m_entry->GetFilename().GetFullPath(),
+                          data->m_entry->GetLine() - 1,
+                          data->m_entry->GetShortName());
             Close();
         }
     }

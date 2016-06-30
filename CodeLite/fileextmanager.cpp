@@ -70,6 +70,7 @@ void FileExtManager::Init()
         m_map[wxT("erd")] = TypeErd;
 
         m_map[wxT("php")] = TypePhp;
+        m_map[wxT("php5")] = TypePhp;
         m_map[wxT("inc")] = TypePhp;
         m_map[wxT("phtml")] = TypePhp;
 
@@ -187,10 +188,11 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
             } else {
                 JSONRoot root(content);
                 if(!root.isOk()) return TypeWorkspace;
-                if(root.toElement().hasNamedObject("NodeJS"))
+                if(root.toElement().hasNamedObject("NodeJS")) {
                     return TypeWorkspaceNodeJS;
-                else
+                } else {
                     return TypeWorkspacePHP;
+                }
             }
         } else {
             return TypeWorkspace;

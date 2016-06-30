@@ -266,8 +266,6 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
 #ifdef __WXMSW__
     if(GetIsRemoteDebugging()) {
         // This doesn't really make sense, but AttachConsole fails without it...
-		SetConsoleCtrlHandler(SigHandler, false);
-		FreeConsole();
 		wxMilliSleep(1000);
 		
         if(!AttachConsole(m_gdbProcess->GetPid()))
@@ -329,6 +327,13 @@ bool DbgGdb::Run(const wxString& args, const wxString& comm)
 
 void DbgGdb::DoCleanup()
 {
+#ifdef __WXMSW__
+    if(GetIsRemoteDebugging()) {
+		SetConsoleCtrlHandler(SigHandler, false);
+		FreeConsole(); // Disconnect any existing console window.
+    }
+#endif
+
     wxDELETE(m_gdbProcess);
     SetIsRecording(false);
     m_reverseDebugging = false;

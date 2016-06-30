@@ -58,6 +58,15 @@ BOOL CtrlHandler(DWORD fdwCtrlType)
     // return FALSE so other process in our group are allowed to process this event
     return FALSE;
 }
+
+static WINBOOL SigHandler(DWORD CtrlType)
+{
+	if (CtrlType == CTRL_C_EVENT) {
+		return true;
+	}
+	return false;
+}
+
 #endif
 
 #include <sys/types.h>
@@ -257,9 +266,10 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
 #ifdef __WXMSW__
     if(GetIsRemoteDebugging()) {
         // This doesn't really make sense, but AttachConsole fails without it...
-        AllocConsole();
-        FreeConsole(); // Disconnect any existing console window.
-
+		SetConsoleCtrlHandler(SigHandler, false);
+		FreeConsole();
+		wxMilliSleep(1000);
+		
         if(!AttachConsole(m_gdbProcess->GetPid()))
             m_observer->UpdateAddLine(wxString::Format(wxT("AttachConsole returned error %d"), GetLastError()));
 
@@ -267,7 +277,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
         if(!m_info.showTerminal) SetWindowPos(GetConsoleWindow(), HWND_BOTTOM, 0, 0, 0, 0, SWP_HIDEWINDOW);
 
         // Finally we ignore SIGINT so we don't get killed by our own signal
-        signal(SIGINT, SIG_IGN);
+		SetConsoleCtrlHandler(SigHandler, true);
     }
 #endif
     m_gdbProcess->SetHardKill(true);

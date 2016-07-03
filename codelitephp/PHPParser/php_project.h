@@ -50,15 +50,14 @@ public:
     /**
      * @class CreateData
      */
-    struct CreateData
-    {
+    struct CreateData {
         wxString path;
         wxString name;
         wxString phpExe;
         int projectType;
         bool importFilesUnderPath;
         wxString ccPaths;
-        
+
         CreateData()
             : projectType(0)
             , importFilesUnderPath(false)
@@ -70,7 +69,7 @@ public:
     PHPProject()
         : m_isActive(false)
         , m_importFileSpec(
-              "*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess")
+              "*.php;*.php5;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess")
         , m_excludeFolders(".git;.svn;.codelite;.clang")
     {
     }
@@ -99,12 +98,12 @@ public:
      * @brief return a list of all project files (fullpath)
      */
     wxArrayString& GetFiles(wxProgressDialog* progress);
-    
+
     /**
      * @brief return a list of all project files (fullpath)
      */
     void GetFilesArray(wxArrayString& files) const;
-    
+
     /**
      * @brief check if filename is part of this project
      * @param filename

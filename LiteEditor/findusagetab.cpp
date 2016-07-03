@@ -71,14 +71,20 @@ void FindUsageTab::OnClearAll(wxCommandEvent& e) { Clear(); }
 
 void FindUsageTab::OnMouseDClick(wxStyledTextEvent& e)
 {
-    long pos = e.GetPosition();
-    int line = m_sci->LineFromPosition(pos);
-    UsageResultsMap::const_iterator iter = m_matches.find(line);
-    if(iter != m_matches.end()) {
-        DoOpenResult(iter->second);
-    }
+    int clickedLine = wxNOT_FOUND;
+    m_styler->HitTest(m_sci, e, clickedLine);
 
-    m_sci->SetSelection(wxNOT_FOUND, pos);
+    // Did we clicked on a togglable line?
+    int toggleLine = m_styler->TestToggle(m_sci, e);
+    if(toggleLine != wxNOT_FOUND) {
+        m_sci->ToggleFold(toggleLine);
+
+    } else {
+        UsageResultsMap::const_iterator iter = m_matches.find(clickedLine);
+        if(iter != m_matches.end()) {
+            DoOpenResult(iter->second);
+        }
+    }
 }
 
 void FindUsageTab::OnClearAllUI(wxUpdateUIEvent& e) { e.Enable(m_sci && m_sci->GetLength()); }

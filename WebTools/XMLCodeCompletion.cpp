@@ -99,7 +99,7 @@ void XMLCodeCompletion::HtmlCodeComplete(IEditor* editor)
         m_completeReason = kHtmlOpenSequence;
         wxCodeCompletionBoxManager::Get().ShowCompletionBox(
             editor->GetCtrl(), entries, bitmaps, 0, GetWordStartPos(editor), this);
-    } 
+    }
 }
 
 void XMLCodeCompletion::PrepareHtmlCompletions()
@@ -130,8 +130,8 @@ void XMLCodeCompletion::PrepareHtmlCompletions()
     m_htmlCompletions.push_back(
         HtmlCompletion("<base", "Specifies the base URL/target for all relative URLs in a document"));
     m_htmlCompletions.push_back(HtmlCompletion("<basefont",
-                                               "Not supported in HTML5. Use CSS instead. Specifies a "
-                                               "default color, size, and font for all text in a document"));
+        "Not supported in HTML5. Use CSS instead. Specifies a "
+        "default color, size, and font for all text in a document"));
     m_htmlCompletions.push_back(HtmlCompletion(
         "bdi", "Isolates a part of text that might be formatted in a different direction from other text outside it"));
     m_htmlCompletions.push_back(HtmlCompletion("<bdo", "Overrides the current text direction"));
@@ -196,8 +196,7 @@ void XMLCodeCompletion::PrepareHtmlCompletions()
     m_htmlCompletions.push_back(HtmlCompletion("<label", "Defines a label for an <input> element"));
     m_htmlCompletions.push_back(HtmlCompletion("<legend", "Defines a caption for a <fieldset> element"));
     m_htmlCompletions.push_back(HtmlCompletion("<li", "Defines a list item"));
-    m_htmlCompletions.push_back(HtmlCompletion(
-        "link",
+    m_htmlCompletions.push_back(HtmlCompletion("link",
         "Defines the relationship between a document and an external resource (most used to link to style sheets)"));
     m_htmlCompletions.push_back(HtmlCompletion("<main", "Specifies the main content of a document"));
     m_htmlCompletions.push_back(HtmlCompletion("<map", "Defines a client-side image-map"));
@@ -355,7 +354,7 @@ int XMLCodeCompletion::GetWordStartPos(IEditor* editor)
     // Dont use WordStartPos / WordEndPos, instead, search for the first "<"
     // from this line backward and use that as the first insert position
     int minPos = editor->PosFromLine(editor->GetCurrentLine());
-    int curpos = editor->GetCurrentPosition();
+    int curpos = editor->GetCurrentPosition() - 1;
     for(int i = curpos; i >= minPos; --i) {
         if(editor->GetCharAtPos(i) == '<') {
             return i;

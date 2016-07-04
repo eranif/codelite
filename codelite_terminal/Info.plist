@@ -17,5 +17,7 @@
     <string>codelite-terminal version 1.0</string>
     <key>CFBundleShortVersionString</key>
     <string>codelite-terminal version 1.0</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
   </dict>
 </plist>

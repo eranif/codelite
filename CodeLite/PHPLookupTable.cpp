@@ -11,6 +11,7 @@
 #include <wx/log.h>
 #include "PHPEntityFunctionAlias.h"
 #include <wx/tokenzr.h>
+#include "fileextmanager.h"
 
 wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
@@ -683,9 +684,10 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
             }
 
             // Parse only valid PHP files
-            if((fnFile.GetExt() != "php") && (fnFile.GetExt() != "inc") && (fnFile.GetExt() != "phtml"))
+            if(FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) {
                 reParseNeeded = false;
-
+            }
+            
             if(reParseNeeded) {
                 // For performance reaons, load the file into memory and then parse it
                 wxFileName fnSourceFile(files.Item(i));

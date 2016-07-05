@@ -54,11 +54,11 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
     m_extensions.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc;*.hh"));
     filters.Add(_("All Files"));
     m_extensions.Add(wxT("*.*"));
-    
+
     m_tb->DeleteTool(XRCID("repeat_output"));
     m_tb->DeleteTool(XRCID("recent_searches"));
     m_tb->Realize();
-    
+
     wxBoxSizer* verticalPanelSizer = new wxBoxSizer(wxVERTICAL);
 
     wxButton* btn = new wxButton(this, wxID_FIND, _("&Search"));
@@ -69,7 +69,7 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
     verticalPanelSizer->Add(new wxStaticLine(this), 0, wxEXPAND | wxALL, 5);
 
     m_scope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, scopes);
-    m_scope->SetSelection(0);
+    m_scope->SetSelection(1);
     m_scope->SetToolTip(_("Select the scope of the search"));
     verticalPanelSizer->Add(m_scope, 0, wxEXPAND | wxALL, 5);
 

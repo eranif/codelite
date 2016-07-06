@@ -484,8 +484,7 @@ void CMakePlugin::OnRunCMake(wxCommandEvent& event)
         command << " -G\"MinGW Makefiles\"";
 #endif
     }
-    ::WrapInShell(command);
-
+    
     // Execute it
     IProcess* proc = ::CreateAsyncProcess(this, command, IProcessCreateDefault, fnWorkingDirectory.GetPath());
     if(!proc) {

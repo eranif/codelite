@@ -2718,10 +2718,19 @@ void ContextCpp::DoOpenWorkspaceFile()
     wxString fileToOpen;
     if(files2.size() > 1) {
         wxArrayString choices;
+        wxStringSet_t uniqueFileSet;
         for(size_t i = 0; i < files2.size(); i++) {
-            choices.Add(files2.at(i).GetFullPath());
+            wxString fullPath = files2.at(i).GetFullPath();
+            wxString fullPathLc = (wxGetOsVersion() & wxOS_WINDOWS) ? fullPath.Lower() : fullPath;
+            
+            // Dont add duplicate entries.
+            // On Windows, we have a non case sensitive file system
+            if(uniqueFileSet.count(fullPathLc) == 0) {
+                uniqueFileSet.insert(fullPathLc);
+                choices.Add(fullPath);
+            }
         }
-
+        
         fileToOpen = wxGetSingleChoice(_("Select file to open:"), _("Select file"), choices, &GetCtrl());
     } else if(files2.size() == 1) {
         fileToOpen = files2.at(0).GetFullPath();

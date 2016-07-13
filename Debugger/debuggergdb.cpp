@@ -51,7 +51,7 @@ DBG_BREAK_PROC_FUNC_PTR DebugBreakProcessFunc = NULL;
 HINSTANCE Kernel32Dll = NULL;
 
 // define a dummy control handler
-BOOL CtrlHandler(DWORD fdwCtrlType)
+static BOOL CtrlHandler(DWORD fdwCtrlType)
 {
     wxUnusedVar(fdwCtrlType);
 
@@ -59,12 +59,12 @@ BOOL CtrlHandler(DWORD fdwCtrlType)
     return FALSE;
 }
 
-static WINBOOL SigHandler(DWORD CtrlType)
+static BOOL SigHandler(DWORD CtrlType)
 {
-	if (CtrlType == CTRL_C_EVENT) {
-		return true;
-	}
-	return false;
+    if (CtrlType == CTRL_C_EVENT) {
+        return TRUE;
+    }
+    return FALSE;
 }
 
 #endif
@@ -275,7 +275,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
         if(!m_info.showTerminal) SetWindowPos(GetConsoleWindow(), HWND_BOTTOM, 0, 0, 0, 0, SWP_HIDEWINDOW);
 
         // Finally we ignore SIGINT so we don't get killed by our own signal
-		SetConsoleCtrlHandler(SigHandler, true);
+		SetConsoleCtrlHandler((PHANDLER_ROUTINE)SigHandler, TRUE);
     }
 #endif
     m_gdbProcess->SetHardKill(true);
@@ -329,7 +329,7 @@ void DbgGdb::DoCleanup()
 {
 #ifdef __WXMSW__
     if(GetIsRemoteDebugging()) {
-		SetConsoleCtrlHandler(SigHandler, false);
+		SetConsoleCtrlHandler((PHANDLER_ROUTINE)SigHandler, FALSE);
 		FreeConsole(); // Disconnect any existing console window.
     }
 #endif

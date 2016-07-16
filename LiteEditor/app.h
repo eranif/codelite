@@ -46,7 +46,13 @@ protected:
     wxArrayString m_allowedPlugins;
     PluginPolicy m_pluginLoadPolicy;
     clPersistenceManager* m_persistencManager;
-    
+    bool m_startedInDebuggerMode;
+
+    // When starting in debugger mode
+    wxString m_exeToDebug;
+    wxString m_debuggerArgs;
+    wxString m_debuggerWorkingDirectory;
+
 private: // Methods
     bool CopySettings(const wxString& destDir, wxString& installPath);
     bool IsSingleInstance(const wxCmdLineParser& parser);
@@ -59,6 +65,7 @@ private: // Methods
 #ifdef __WXMSW__
     HINSTANCE m_handler;
 #endif
+    void PrintUsage(const wxCmdLineParser& parser);
 
 public:
     CodeLiteApp(void);
@@ -73,6 +80,18 @@ public:
 
     void MacOpenFile(const wxString& fileName);
 
+    void SetStartedInDebuggerMode(bool startedInDebuggerMode) { this->m_startedInDebuggerMode = startedInDebuggerMode; }
+    bool IsStartedInDebuggerMode() const { return m_startedInDebuggerMode; }
+
+    void SetDebuggerArgs(const wxString& debuggerArgs) { this->m_debuggerArgs = debuggerArgs; }
+    void SetDebuggerWorkingDirectory(const wxString& debuggerWorkingDirectory)
+    {
+        this->m_debuggerWorkingDirectory = debuggerWorkingDirectory;
+    }
+    void SetExeToDebug(const wxString& exeToDebug) { this->m_exeToDebug = exeToDebug; }
+    const wxString& GetDebuggerArgs() const { return m_debuggerArgs; }
+    const wxString& GetDebuggerWorkingDirectory() const { return m_debuggerWorkingDirectory; }
+    const wxString& GetExeToDebug() const { return m_exeToDebug; }
 protected:
     virtual bool OnInit();
     virtual int OnExit();

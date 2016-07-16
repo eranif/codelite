@@ -121,47 +121,26 @@ wxString MacGetBasePath()
 
 ///////////////////////////////////////////////////////////////////
 
-static const wxCmdLineEntryDesc cmdLineDesc[] = {
-    { wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+static const wxCmdLineEntryDesc cmdLineDesc[] = { { wxCMD_LINE_SWITCH, "v", "version", "Print current version",
+                                                      wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_SWITCH,
-      "n",
-      "no-plugins",
-      "Start codelite without any plugins",
-      wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION,
-      "l",
-      "line",
-      "Open the file at a given line number",
-      wxCMD_LINE_VAL_NUMBER,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION,
-      "b",
-      "basedir",
-      "Use this path as the CodeLite installation path (Windows only)",
-      wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION,
-      "d",
-      "datadir",
-      "Use this path as the CodeLite data path",
-      wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION,
-      "p",
-      "with-plugins",
-      "Comma separated list of plugins to load",
-      wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_PARAM,
-      NULL,
-      NULL,
-      "Input file",
-      wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_NONE }
-};
+    { wxCMD_LINE_SWITCH, "n", "no-plugins", "Start CodeLite without any plugins", wxCMD_LINE_VAL_STRING,
+        wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "g", "dbg", "Start CodeLite's GDB debugger to debug an executable", wxCMD_LINE_VAL_STRING,
+        wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "l", "line", "Open the file at a given line number", wxCMD_LINE_VAL_NUMBER,
+        wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "b", "basedir", "Use this path as the CodeLite installation path (Windows only)",
+        wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "d", "datadir", "Use this path as the CodeLite data path", wxCMD_LINE_VAL_STRING,
+        wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "w", "dbg-dir", "When started with --dbg, set the working directory for the debugger",
+        wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "p", "with-plugins", "Comma separated list of plugins to load", wxCMD_LINE_VAL_STRING,
+        wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_PARAM, NULL, NULL, "Input file", wxCMD_LINE_VAL_STRING,
+        wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_NONE } };
 
 static void massCopy(const wxString& sourceDir, const wxString& spec, const wxString& destDir)
 {
@@ -241,9 +220,8 @@ static void WaitForDebugger(int signo)
             // Go down without launching the debugger, ask the user to do it manually
             wxMessageBox(wxString::Format(wxT("Failed to launch the debugger\nYou may still attach to codelite "
                                               "manually by typing this command in a terminal:\ngdb -p %d"),
-                                          getpid()),
-                         wxT("CodeLite Crash Handler"),
-                         wxOK | wxCENTER | wxICON_ERROR);
+                             getpid()),
+                wxT("CodeLite Crash Handler"), wxOK | wxCENTER | wxICON_ERROR);
             pause();
         }
     }
@@ -265,6 +243,7 @@ CodeLiteApp::CodeLiteApp(void)
     , m_singleInstance(NULL)
     , m_pluginLoadPolicy(PP_All)
     , m_persistencManager(NULL)
+    , m_startedInDebuggerMode(false)
 #ifdef __WXMSW__
     , m_handler(NULL)
 #endif
@@ -351,11 +330,21 @@ bool CodeLiteApp::OnInit()
     wxCmdLineParser parser;
     parser.SetDesc(cmdLineDesc);
     parser.SetCmdLine(wxAppBase::argc, wxAppBase::argv);
-    if(parser.Parse() != 0) {
+    if(parser.Parse(false) != 0) {
+        PrintUsage(parser);
         return false;
     }
 
     wxString newDataDir(wxEmptyString);
+    if(parser.Found("g", &m_exeToDebug)) {
+        SetStartedInDebuggerMode(true);
+        // Check to see if the user also passed "--working-directory" switch
+        parser.Found("w", &m_debuggerWorkingDirectory);
+        for(size_t i = 0; i < parser.GetParamCount(); ++i) {
+            m_debuggerArgs << parser.GetParam(i) << " ";
+        }
+    }
+
     if(parser.Found(wxT("d"), &newDataDir)) {
         clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
@@ -367,7 +356,7 @@ bool CodeLiteApp::OnInit()
 
     if(parser.Found(wxT("h"))) {
         // print usage
-        parser.Usage();
+        PrintUsage(parser);
         return false;
     }
 
@@ -577,10 +566,7 @@ bool CodeLiteApp::OnInit()
         if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
             wxString mainTitle = CODELITE_VERSION_STRING;
             clSplashScreen::g_splashScreen = new clSplashScreen(clSplashScreen::CreateSplashScreenBitmap(bitmap),
-                                                                wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
-                                                                -1,
-                                                                NULL,
-                                                                wxID_ANY);
+                wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT, -1, NULL, wxID_ANY);
             wxYield();
         }
     }
@@ -690,7 +676,7 @@ bool CodeLiteApp::OnInit()
     ColoursAndFontsManager::Get().Load();
 
     // Create the main application window
-    clMainFrame::Initialize(parser.GetParamCount() == 0);
+    clMainFrame::Initialize((parser.GetParamCount() == 0) && !IsStartedInDebuggerMode());
     m_pMainFrame = clMainFrame::Get();
     m_pMainFrame->Show(TRUE);
     SetTopWindow(m_pMainFrame);
@@ -703,17 +689,19 @@ bool CodeLiteApp::OnInit()
         lineNumber = 0;
     }
 
-    for(size_t i = 0; i < parser.GetParamCount(); i++) {
-        wxString argument = parser.GetParam(i);
+    if(!IsStartedInDebuggerMode()) {
+        for(size_t i = 0; i < parser.GetParamCount(); i++) {
+            wxString argument = parser.GetParam(i);
 
-        // convert to full path and open it
-        wxFileName fn(argument);
-        fn.MakeAbsolute(ManagerST::Get()->GetOriginalCwd());
+            // convert to full path and open it
+            wxFileName fn(argument);
+            fn.MakeAbsolute(ManagerST::Get()->GetOriginalCwd());
 
-        if(fn.GetExt() == wxT("workspace")) {
-            ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
-        } else {
-            clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNumber);
+            if(fn.GetExt() == wxT("workspace")) {
+                ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
+            } else {
+                clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNumber);
+            }
         }
     }
 
@@ -779,7 +767,7 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser)
     // check for single instance
     if(clConfig::Get().Read(kConfigSingleInstance, false)) {
         wxString name = wxString::Format(wxT("CodeLite-%s"), wxGetUserId().c_str());
-        
+
         wxString path;
 #ifndef __WXMSW__
         path = "/tmp";
@@ -907,9 +895,9 @@ void CodeLiteApp::MSWReadRegistry()
 wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxString& requiredVersion)
 {
     wxString defaultMenuFile = installDirectory + wxFileName::GetPathSeparator() + wxT("rc") +
-                               wxFileName::GetPathSeparator() + wxT("menu.xrc");
+        wxFileName::GetPathSeparator() + wxT("menu.xrc");
     wxFileName menuFile(clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("rc") +
-                        wxFileName::GetPathSeparator() + wxT("menu.xrc"));
+        wxFileName::GetPathSeparator() + wxT("menu.xrc"));
     if(menuFile.FileExists()) {
         // if we find the user's file menu, check that it has the required version
         {
@@ -1051,5 +1039,15 @@ void CodeLiteApp::AdjustPathForMSYSIfNeeded()
     wxString fixedPath = ::wxJoin(paths, ';');
     CL_DEBUG("Setting PATH environment variable to:\n%s", fixedPath);
     ::wxSetEnv("PATH", fixedPath);
+#endif
+}
+
+void CodeLiteApp::PrintUsage(const wxCmdLineParser& parser)
+{
+#ifdef __WXMSW__
+    parser.Usage();
+#else
+    wxString usageString = parser.GetUsageString();
+    std::cout << usageString.mb_str(wxConvUTF8).data() << std::endl;
 #endif
 }

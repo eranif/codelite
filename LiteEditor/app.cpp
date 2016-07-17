@@ -370,7 +370,8 @@ bool CodeLiteApp::OnInit()
         return false;
     }
 
-    if(parser.Found(wxT("n"))) {
+    // When launching CodeLite as a debugger interface, disable the plugins
+    if(parser.Found(wxT("n")) || IsStartedInDebuggerMode()) {
         // Load codelite without plugins
         SetPluginLoadPolicy(PP_None);
     }
@@ -558,16 +559,19 @@ bool CodeLiteApp::OnInit()
 
 #if !defined(__WXMAC__) && defined(NDEBUG)
     // Now all image handlers have been added, show splash screen; but only when using Release builds of codelite
-    GeneralInfo inf;
-    cfg->ReadObject(wxT("GeneralInfo"), &inf);
-    if(inf.GetFlags() & CL_SHOW_SPLASH) {
-        wxBitmap bitmap;
-        wxString splashName(clStandardPaths::Get().GetDataDir() + wxT("/images/splashscreen.png"));
-        if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-            wxString mainTitle = CODELITE_VERSION_STRING;
-            clSplashScreen::g_splashScreen = new clSplashScreen(clSplashScreen::CreateSplashScreenBitmap(bitmap),
-                wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT, -1, NULL, wxID_ANY);
-            wxYield();
+    // Also, if started as debugger interface, disable the splash screen
+    if(!IsStartedInDebuggerMode()) {
+        GeneralInfo inf;
+        cfg->ReadObject(wxT("GeneralInfo"), &inf);
+        if(inf.GetFlags() & CL_SHOW_SPLASH) {
+            wxBitmap bitmap;
+            wxString splashName(clStandardPaths::Get().GetDataDir() + wxT("/images/splashscreen.png"));
+            if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
+                wxString mainTitle = CODELITE_VERSION_STRING;
+                clSplashScreen::g_splashScreen = new clSplashScreen(clSplashScreen::CreateSplashScreenBitmap(bitmap),
+                    wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT, -1, NULL, wxID_ANY);
+                wxYield();
+            }
         }
     }
 #endif

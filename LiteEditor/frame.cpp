@@ -3764,8 +3764,7 @@ void clMainFrame::CompleteInitialization()
     ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
     m_initCompleted = true;
 
-    CodeLiteApp* app = dynamic_cast<CodeLiteApp*>(wxApp::GetInstance());
-    if(app && app->IsStartedInDebuggerMode()) {
+    if(GetTheApp()->IsStartedInDebuggerMode()) {
         wxCommandEvent quickDebugEvent(wxEVT_MENU, XRCID("quick_debug"));
         quickDebugEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(quickDebugEvent);
@@ -4426,19 +4425,18 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 {
     // launch the debugger
     QuickDebugDlg dlg(this);
-    CodeLiteApp* app = dynamic_cast<CodeLiteApp*>(wxApp::GetInstance());
-    bool bStartedInDebugMode = (app && app->IsStartedInDebuggerMode());
+    bool bStartedInDebugMode = GetTheApp()->IsStartedInDebuggerMode();
     if(bStartedInDebugMode || (dlg.ShowModal() == wxID_OK)) {
         // Disable the 'StartedInDebuggerMode' flag - so this will only happen once
-        app->SetStartedInDebuggerMode(false);
+        GetTheApp()->SetStartedInDebuggerMode(false);
         DebuggerMgr::Get().SetActiveDebugger(dlg.GetDebuggerName());
         IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
 
         if(dbgr && !dbgr->IsRunning()) {
 
             std::vector<BreakpointInfo> bpList;
-            wxString exepath = bStartedInDebugMode ? app->GetExeToDebug() : dlg.GetExe();
-            wxString wd = bStartedInDebugMode ? app->GetDebuggerWorkingDirectory() : dlg.GetWorkingDirectory();
+            wxString exepath = bStartedInDebugMode ? GetTheApp()->GetExeToDebug() : dlg.GetExe();
+            wxString wd = bStartedInDebugMode ? GetTheApp()->GetDebuggerWorkingDirectory() : dlg.GetWorkingDirectory();
             wxArrayString cmds = bStartedInDebugMode ? wxArrayString() : dlg.GetStartupCmds();
 
             // update the debugger information
@@ -4484,7 +4482,7 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 #ifndef __WXMSW__
             wxString title;
             title << _("Debugging: ") << exepath << wxT(" ")
-                  << (bStartedInDebugMode ? app->GetDebuggerArgs() : dlg.GetArguments());
+                  << (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : dlg.GetArguments());
             if(!ManagerST::Get()->StartTTY(title, tty)) {
                 wxMessageBox(
                     _("Could not start TTY console for debugger!"), _("codelite"), wxOK | wxCENTER | wxICON_ERROR);
@@ -4512,7 +4510,7 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
                 EventNotifier::Get()->ProcessEvent(eventStarted);
             }
 
-            dbgr->Run(bStartedInDebugMode ? app->GetDebuggerArgs() : dlg.GetArguments(), wxEmptyString);
+            dbgr->Run(bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : dlg.GetArguments(), wxEmptyString);
 
             // Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
             // so that it uses debugger_ids instead of internal_ids
@@ -6208,4 +6206,11 @@ void clMainFrame::OnDebugJumpToCursor(wxCommandEvent& e)
     if(editor && dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
         dbgr->Jump(editor->GetFileName().GetFullPath(), editor->GetCurrentLine() + 1);
     }
+}
+
+CodeLiteApp* clMainFrame::GetTheApp()
+{
+    CodeLiteApp* app = dynamic_cast<CodeLiteApp*>(wxApp::GetInstance());
+    wxASSERT(app);
+    return app;
 }

@@ -55,6 +55,7 @@
 #include "clMainFrameHelper.h"
 
 // forward decls
+class CodeLiteApp;
 class clSingleInstanceThread;
 class wxCustomStatusBar;
 class TagEntry;
@@ -137,7 +138,12 @@ protected:
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
-
+    
+    /**
+     * @brief Return CodeLite App object
+     */
+    CodeLiteApp* GetTheApp();
+    
     /**
      * @brief return the status bar
      */

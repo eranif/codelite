@@ -254,6 +254,10 @@
       <File Name="CxxScannerBase.cpp"/>
       <File Name="CxxTemplateFunction.h"/>
       <File Name="CxxTemplateFunction.cpp"/>
+      <File Name="CxxVariableScanner.cpp"/>
+      <File Name="CxxVariableScanner.h"/>
+      <File Name="CxxVariable.h"/>
+      <File Name="CxxVariable.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="RefactorEngine">

@@ -3314,7 +3314,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 // API methods implementation
 //=============-------------------------------
 
-void* LexerNew(const wxString& content, size_t options )
+void* LexerNew(const wxString& buffer, size_t options )
 {
     yyscan_t scanner;
     yylex_init(&scanner);
@@ -3325,7 +3325,7 @@ void* LexerNew(const wxString& content, size_t options )
     userData->SetCurrentPF(NULL);
     yyg->yyextra_r = userData;
     
-    wxCharBuffer cb = content.mb_str(wxConvUTF8);
+    wxCharBuffer cb = buffer.mb_str(wxConvUTF8);
     yy_switch_to_buffer(yy_scan_string(cb.data(),scanner),scanner);
     yycolumn = 1;
     return scanner;

@@ -30,6 +30,8 @@
 #include <wx/string.h>
 #include <wx/variant.h>
 #include <map>
+#include <list>
+#include <vector>
 #include <codelite_exports.h>
 
 #if 0
@@ -86,7 +88,7 @@ struct WXDLLIMPEXP_CL CxxLexerToken
         , type(0)
     {
     }
-    
+
     CxxLexerToken(int tokenType)
         : lineNumber(0)
         , column(0)
@@ -94,6 +96,8 @@ struct WXDLLIMPEXP_CL CxxLexerToken
         , type(tokenType)
     {
     }
+    typedef std::vector<CxxLexerToken> Vect_t;
+    typedef std::list<CxxLexerToken> List_t;
 };
 
 struct WXDLLIMPEXP_CL CxxPreProcessorToken
@@ -171,9 +175,9 @@ public:
 
 typedef void* Scanner_t;
 /**
- * @brief create a new Lexer for a file content
+ * @brief create a new Lexer for a buffer
  */
-WXDLLIMPEXP_CL Scanner_t LexerNew(const wxString& filename, size_t options = kLexerOpt_None);
+WXDLLIMPEXP_CL Scanner_t LexerNew(const wxString& buffer, size_t options = kLexerOpt_None);
 
 /**
  * @brief create a scanner for a given file name

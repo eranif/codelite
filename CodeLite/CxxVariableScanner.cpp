@@ -1,7 +1,11 @@
 #include "CxxVariableScanner.h"
 #include "CxxScannerTokens.h"
 
-CxxVariableScanner::CxxVariableScanner(const wxString& buffer) { m_scanner = ::LexerNew(buffer); }
+CxxVariableScanner::CxxVariableScanner(const wxString& buffer)
+    : m_eof(false)
+{
+    m_scanner = ::LexerNew(buffer);
+}
 
 CxxVariableScanner::~CxxVariableScanner()
 {
@@ -16,26 +20,31 @@ CxxVariable::List_t CxxVariableScanner::GetVariables()
     if(!m_scanner) return CxxVariable::List_t(); // Empty list
 
     // Read the variable type
-    CxxLexerToken::List_t vartype;
-    if(!ReadType(vartype)) return vars;
-    ;
+    while(!IsEof()) {
+        CxxVariable::LexerToken::List_t vartype;
+        if(!ReadType(vartype)) continue;
 
-    // Get the variable(s) name
-    wxString varname, pointerOrRef;
-    while(ReadName(varname, pointerOrRef)) {
-        CxxVariable::Ptr_t var(new CxxVariable());
-        var->SetName(varname);
-        var->SetType(vartype);
-        vars.push_back(var);
+        // Get the variable(s) name
+        wxString varname, pointerOrRef, varInitialization;
+        bool cont = false;
+        do {
+            cont = ReadName(varname, pointerOrRef, varInitialization);
+            CxxVariable::Ptr_t var(new CxxVariable());
+            var->SetName(varname);
+            var->SetType(vartype);
+            if(var->IsOk()) {
+                vars.push_back(var);
+            }
+        } while(cont);
     }
     return vars;
 }
 
-bool CxxVariableScanner::ReadType(CxxLexerToken::List_t& vartype)
+bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
 {
     int depth = 0;
     CxxLexerToken token;
-    while(::LexerNext(m_scanner, token)) {
+    while(GetNextToken(token)) {
         if(depth == 0) {
             if(vartype.empty()) {
                 // a type can start the following tokens
@@ -59,15 +68,17 @@ bool CxxVariableScanner::ReadType(CxxLexerToken::List_t& vartype)
                 case T_STATIC:
                 case T_UNSIGNED:
                 case T_VOLATILE:
-                case T_WCHAR_T:
-                    vartype.push_back(token);
+                case T_VOID:
+                case T_WCHAR_T: {
+                    vartype.push_back(CxxVariable::LexerToken(token));
                     break;
+                }
                 default:
                     // Not a type definition
                     return false;
                 }
             } else {
-                const CxxLexerToken& lastToken = vartype.back();
+                const CxxVariable::LexerToken& lastToken = vartype.back();
                 switch(token.type) {
                 case T_IDENTIFIER: {
                     // Found an identifier
@@ -93,9 +104,11 @@ bool CxxVariableScanner::ReadType(CxxLexerToken::List_t& vartype)
                 case T_SHORT:
                 case T_SIGNED:
                 case T_UNSIGNED:
-                case T_WCHAR_T:
-                    vartype.push_back(token);
+                case T_VOID:
+                case T_WCHAR_T: {
+                    vartype.push_back(CxxVariable::LexerToken(token));
                     break;
+                }
                 }
                 case '<':
                 case '[':
@@ -116,19 +129,26 @@ bool CxxVariableScanner::ReadType(CxxLexerToken::List_t& vartype)
     return false;
 }
 
-bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef)
+bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxString& varInitialization)
 {
     CxxLexerToken token;
-    while(::LexerNext(m_scanner, token)) {
+    while(GetNextToken(token)) {
         if(token.type == T_IDENTIFIER) {
             varname = token.text;
-            ConsumeInitialization();
+            ConsumeInitialization(varInitialization);
 
             // Now that we got the name, check if have more variables to expect
-            if(!::LexerNext(m_scanner, token)) {
+            if(!GetNextToken(token)) {
                 return false;
             }
-
+            
+            if((token.type == '{') && !varInitialization.IsEmpty()) {
+                // Don't collect functions and consider them as variables
+                ::LexerUnget(m_scanner);
+                varname.clear();
+                return false;
+            }
+            
             // If we found comma, return true
             if(token.type == ',') {
                 return true;
@@ -146,27 +166,72 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef)
     return false;
 }
 
-void CxxVariableScanner::ConsumeInitialization()
+void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
 {
     CxxLexerToken token;
-    if(!::LexerNext(m_scanner, token)) return;
-    if(token.type == '(') {
-        ReadUntil(')', ')', token);
+    wxString dummy;
+    if(!GetNextToken(token)) return;
+    int type = wxNOT_FOUND;
+    int tokType = token.type;
+    if(tokType == '(') {
+        // Read the initialization
+        std::set<int> delims;
+        delims.insert(')');
+        consumed = "(";
+        if(ReadUntil(delims, token, consumed) == wxNOT_FOUND) {
+            return;
+        }
+        // Now read until the delimiter
+        delims.clear();
+        delims.insert(';');
+        delims.insert(',');
+        delims.insert('{');
+        type = ReadUntil(delims, token, dummy);
+
+    } else if(tokType == '{') {
+        // Read the initialization
+        std::set<int> delims;
+        delims.insert('}');
+        consumed = "{";
+        if(ReadUntil(delims, token, consumed) == wxNOT_FOUND) {
+            return;
+        }
+        // Now read until the delimiter
+        delims.clear();
+        delims.insert(';');
+        delims.insert(',');
+        delims.insert('{');
+        type = ReadUntil(delims, token, dummy);
+
+    } else if(tokType == '=') {
+        std::set<int> delims;
+        delims.insert(';');
+        delims.insert(',');
+        delims.insert('{');
+        type = ReadUntil(delims, token, consumed);
+    } else {
+        ::LexerUnget(m_scanner);
+        consumed.clear();
+        std::set<int> delims;
+        delims.insert(';');
+        delims.insert(',');
+        delims.insert('{');
+        type = ReadUntil(delims, token, dummy);
     }
 
-    int type = ReadUntil(';', ',', token);
-    if(type == ',') {
+    if(type == ',' || type == '{') {
         ::LexerUnget(m_scanner);
     }
 }
 
-int CxxVariableScanner::ReadUntil(int delim1, int delim2, CxxLexerToken& token)
+int CxxVariableScanner::ReadUntil(const std::set<int>& delims, CxxLexerToken& token, wxString& consumed)
 {
     // loop until we find the open brace
     int depth = 0;
-    while(::LexerNext(m_scanner, token)) {
+    while(GetNextToken(token)) {
+        consumed << token.text;
         if(depth == 0) {
-            if((token.type == delim1) || (token.type == delim2)) {
+            if(delims.count(token.type)) {
                 return token.type;
             } else {
                 switch(token.type) {
@@ -196,4 +261,11 @@ int CxxVariableScanner::ReadUntil(int delim1, int delim2, CxxLexerToken& token)
         }
     }
     return wxNOT_FOUND;
+}
+
+bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
+{
+    bool res = ::LexerNext(m_scanner, token);
+    m_eof = !res;
+    return res;
 }

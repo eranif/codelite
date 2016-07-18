@@ -14,9 +14,11 @@
 #include <stringsearcher.h>
 #include <parse_thread.h>
 #include <wx/tokenzr.h>
+#include <algorithm>
 
 // CodeLite includes
 #include <ctags_manager.h>
+#include <CxxVariableScanner.h>
 #include <wx/crt.h>
 
 #define WX_STRING_MEMBERS_COUNT 446
@@ -57,24 +59,15 @@ void EventHandler::OnParsingDoneProg(wxCommandEvent& e) { wxPrintf(wxT("[%%%d] c
 TEST_FUNC(testMacros)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")),
-                                                 1,
-                                                 wxT("wxTheClipboard->"),
-                                                 LoadFile(wxT("../tests/simple_tests.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("wxTheClipboard->"),
+        LoadFile(wxT("../tests/simple_tests.h")), tags);
     CHECK_SIZE(tags.size(), 66);
 
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")),
-                                                 1,
-                                                 wxT("wxTheApp->"),
-                                                 LoadFile(wxT("../tests/simple_tests.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("wxTheApp->"),
+        LoadFile(wxT("../tests/simple_tests.h")), tags);
     CHECK_SIZE(tags.size(), 319);
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")),
-                                                 1,
-                                                 wxT("EG(name)."),
-                                                 LoadFile(wxT("../tests/simple_tests.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("EG(name)."),
+        LoadFile(wxT("../tests/simple_tests.h")), tags);
     CHECK_SIZE(tags.size(), 157);
     return true;
 }
@@ -82,11 +75,8 @@ TEST_FUNC(testMacros)
 TEST_FUNC(testUsingNamespace)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/using_namespace.h")),
-                                                 3,
-                                                 wxT("v.at(0)."),
-                                                 LoadFile(wxT("../tests/using_namespace.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/using_namespace.h")), 3, wxT("v.at(0)."),
+        LoadFile(wxT("../tests/using_namespace.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     return true;
 }
@@ -95,7 +85,7 @@ TEST_FUNC(testUsingNamespace)
 //{
 //	std::vector<TagEntryPtr> tags;
 //	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/inner_class_inheritance.h")), 3,
-//wxT("td->"), LoadFile(wxT("../tests/inner_class_inheritance.h")), tags);
+// wxT("td->"), LoadFile(wxT("../tests/inner_class_inheritance.h")), tags);
 //	CHECK_SIZE(tags.size(), 97);
 //	return true;
 //}
@@ -103,11 +93,8 @@ TEST_FUNC(testUsingNamespace)
 TEST_FUNC(testTypedefs)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/typedef_tests.h")),
-                                                 0,
-                                                 wxT("myStack.at(0)."),
-                                                 LoadFile(wxT("../tests/typedef_tests.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/typedef_tests.h")), 0, wxT("myStack.at(0)."),
+        LoadFile(wxT("../tests/typedef_tests.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     return true;
 }
@@ -117,25 +104,16 @@ TEST_FUNC(testStlMapLeditor)
     // test map template with basic types
     // std::map<wxString, int> mm;
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/stl_map_static.h")),
-                                                 2,
-                                                 wxT("ms_bookmarkShapes.find(0)->second."),
-                                                 LoadFile(wxT("../tests/stl_map_static.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/stl_map_static.h")), 2,
+        wxT("ms_bookmarkShapes.find(0)->second."), LoadFile(wxT("../tests/stl_map_static.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
 
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/stl_map_static.h")),
-                                                 2,
-                                                 wxT("ms_bookmarkShapes.find(wxT(\"value\"))->second."),
-                                                 LoadFile(wxT("../tests/stl_map_static.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/stl_map_static.h")), 2,
+        wxT("ms_bookmarkShapes.find(wxT(\"value\"))->second."), LoadFile(wxT("../tests/stl_map_static.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
 
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/stl_map_static.h")),
-                                                 2,
-                                                 wxT("ms_bookmarkShapes.find(wxT(\"value\"))->first."),
-                                                 LoadFile(wxT("../tests/stl_map_static.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/stl_map_static.h")), 2,
+        wxT("ms_bookmarkShapes.find(wxT(\"value\"))->first."), LoadFile(wxT("../tests/stl_map_static.h")), tags);
     CHECK_SIZE(tags.size(), 0);
 
     return true;
@@ -146,18 +124,12 @@ TEST_FUNC(testMapWithBasicTypes)
     // test map template with basic types
     // std::map<wxString, int> mm;
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")),
-                                                 2,
-                                                 wxT("mm.find()->first."),
-                                                 LoadFile(wxT("../tests/simple_tests.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 2,
+        wxT("mm.find()->first."), LoadFile(wxT("../tests/simple_tests.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
 
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")),
-                                                 2,
-                                                 wxT("mm.find()->second."),
-                                                 LoadFile(wxT("../tests/simple_tests.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 2,
+        wxT("mm.find()->second."), LoadFile(wxT("../tests/simple_tests.h")), tags);
     CHECK_SIZE(tags.size(), 0);
     return true;
 }
@@ -165,18 +137,12 @@ TEST_FUNC(testMapWithBasicTypes)
 TEST_FUNC(testTtp)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/smart_ptr_of_template.h")),
-                                                 3,
-                                                 wxT("ttp->GetRoot()->GetData()."),
-                                                 LoadFile(wxT("../tests/smart_ptr_of_template.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/smart_ptr_of_template.h")), 3,
+        wxT("ttp->GetRoot()->GetData()."), LoadFile(wxT("../tests/smart_ptr_of_template.h")), tags);
     CHECK_SIZE(tags.size(), 101);
 
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/smart_ptr_of_template.h")),
-                                                 3,
-                                                 wxT("ttp->GetRoot()->GetKey()."),
-                                                 LoadFile(wxT("../tests/smart_ptr_of_template.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/smart_ptr_of_template.h")), 3,
+        wxT("ttp->GetRoot()->GetKey()."), LoadFile(wxT("../tests/smart_ptr_of_template.h")), tags);
     CHECK_SIZE(tags.size(), 446);
     return true;
 }
@@ -184,11 +150,8 @@ TEST_FUNC(testTtp)
 TEST_FUNC(testTempalteInheritance)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")),
-                                                 2,
-                                                 wxT("ContextManager::Get()->"),
-                                                 LoadFile(wxT("../tests/simple_tests.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 2,
+        wxT("ContextManager::Get()->"), LoadFile(wxT("../tests/simple_tests.h")), tags);
     CHECK_SIZE(tags.size(), 7);
     return true;
 }
@@ -205,18 +168,12 @@ TEST_FUNC(testThis)
 TEST_FUNC(testStdVectorOfTagEntryPtr)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/std_vec_tag_entry_ptr.h")),
-                                                 3,
-                                                 wxT("tags.at(0)->"),
-                                                 LoadFile(wxT("../tests/std_vec_tag_entry_ptr.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/std_vec_tag_entry_ptr.h")), 3,
+        wxT("tags.at(0)->"), LoadFile(wxT("../tests/std_vec_tag_entry_ptr.h")), tags);
     CHECK_SIZE(tags.size(), 101);
 
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/std_vec_tag_entry_ptr.h")),
-                                                 3,
-                                                 wxT("tags.at(0)."),
-                                                 LoadFile(wxT("../tests/std_vec_tag_entry_ptr.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/std_vec_tag_entry_ptr.h")), 3,
+        wxT("tags.at(0)."), LoadFile(wxT("../tests/std_vec_tag_entry_ptr.h")), tags);
     CHECK_SIZE(tags.size(), 10);
     return true;
 }
@@ -224,11 +181,8 @@ TEST_FUNC(testStdVectorOfTagEntryPtr)
 TEST_FUNC(testIterators)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/iterators.h")),
-                                                 3,
-                                                 wxT("mapIter->first."),
-                                                 LoadFile(wxT("../tests/iterators.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/iterators.h")), 3, wxT("mapIter->first."),
+        LoadFile(wxT("../tests/iterators.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
 
     tags.clear();
@@ -241,11 +195,8 @@ TEST_FUNC(testIterators)
 TEST_FUNC(testTemplateTypedef)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_template_typedef.h")),
-                                                 11,
-                                                 wxT("Foo_t::Get()->"),
-                                                 LoadFile(wxT("../tests/test_template_typedef.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_template_typedef.h")), 11,
+        wxT("Foo_t::Get()->"), LoadFile(wxT("../tests/test_template_typedef.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     return true;
 }
@@ -253,11 +204,8 @@ TEST_FUNC(testTemplateTypedef)
 TEST_FUNC(testNamespace)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_namespace.h")),
-                                                 1,
-                                                 wxT("flex::"),
-                                                 LoadFile(wxT("../tests/test_namespace.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_namespace.h")), 1, wxT("flex::"),
+        LoadFile(wxT("../tests/test_namespace.h")), tags);
     CHECK_SIZE(tags.size(), 32);
     return true;
 }
@@ -265,11 +213,8 @@ TEST_FUNC(testNamespace)
 TEST_FUNC(testLocalArgument)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_local_var.h")),
-                                                 2,
-                                                 wxT("path."),
-                                                 LoadFile(wxT("../tests/test_local_var.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_local_var.h")), 2, wxT("path."),
+        LoadFile(wxT("../tests/test_local_var.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     return true;
 }
@@ -295,11 +240,8 @@ TEST_FUNC(testStdAutoPtr)
 TEST_FUNC(testVectorOfStdString_OperatorMeruba)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_vector_std_string.h")),
-                                                 6,
-                                                 wxT("v[0]->"),
-                                                 LoadFile(wxT("../tests/test_vector_std_string.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_vector_std_string.h")), 6, wxT("v[0]->"),
+        LoadFile(wxT("../tests/test_vector_std_string.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     return true;
 }
@@ -307,11 +249,8 @@ TEST_FUNC(testVectorOfStdString_OperatorMeruba)
 TEST_FUNC(testWxOrderedMap)
 {
     TagEntryPtrVector_t tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_wx_ordered_map.h")),
-                                                 2,
-                                                 wxT("om.begin()->first"),
-                                                 LoadFile(wxT("../tests/test_wx_ordered_map.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_wx_ordered_map.h")), 2,
+        wxT("om.begin()->first"), LoadFile(wxT("../tests/test_wx_ordered_map.h")), tags);
     CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
     return true;
 }
@@ -319,11 +258,8 @@ TEST_FUNC(testWxOrderedMap)
 TEST_FUNC(testWxArrayString_OperatorMeruba)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_wxarraystr.h")),
-                                                 7,
-                                                 wxT("myArr[]."),
-                                                 LoadFile(wxT("../tests/test_wxarraystr.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_wxarraystr.h")), 7, wxT("myArr[]."),
+        LoadFile(wxT("../tests/test_wxarraystr.h")), tags);
     CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
     return true;
 }
@@ -331,11 +267,8 @@ TEST_FUNC(testWxArrayString_OperatorMeruba)
 TEST_FUNC(testStdSharedPtr)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_shared_ptr.h")),
-                                                 10,
-                                                 wxT("p->"),
-                                                 LoadFile(wxT("../tests/test_shared_ptr.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_shared_ptr.h")), 10, wxT("p->"),
+        LoadFile(wxT("../tests/test_shared_ptr.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     return true;
 }
@@ -343,11 +276,8 @@ TEST_FUNC(testStdSharedPtr)
 TEST_FUNC(testVectorOfStdString)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_vector_std_string.h")),
-                                                 6,
-                                                 wxT("v.at(0)->"),
-                                                 LoadFile(wxT("../tests/test_vector_std_string.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_vector_std_string.h")), 6,
+        wxT("v.at(0)->"), LoadFile(wxT("../tests/test_vector_std_string.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     return true;
 }
@@ -355,12 +285,8 @@ TEST_FUNC(testVectorOfStdString)
 TEST_FUNC(testGotoDeclInsideNamespace)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->FindImplDecl(wxFileName(wxT("../tests/test_goto_decl_inside_ns.h")),
-                                       11,
-                                       wxT("Tada"),
-                                       wxT("Tada"),
-                                       LoadFile(wxT("../tests/test_goto_decl_inside_ns.h")),
-                                       tags);
+    TagsManagerST::Get()->FindImplDecl(wxFileName(wxT("../tests/test_goto_decl_inside_ns.h")), 11, wxT("Tada"),
+        wxT("Tada"), LoadFile(wxT("../tests/test_goto_decl_inside_ns.h")), tags);
 
     CHECK_SIZE(tags.size(), 1);
     CHECK_STRING(tags.at(0)->GetName().mb_str(wxConvUTF8).data(), "Tada");
@@ -370,12 +296,8 @@ TEST_FUNC(testGotoDeclInsideNamespace)
 TEST_FUNC(testGotoDeclOfFuncArgUsingTheMethodScope)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->FindImplDecl(wxFileName(wxT("../tests/test_goto_decl_of_func_arg.h")),
-                                       13,
-                                       wxT("Tada"),
-                                       wxT("Tada"),
-                                       LoadFile(wxT("../tests/test_goto_decl_of_func_arg.h")),
-                                       tags);
+    TagsManagerST::Get()->FindImplDecl(wxFileName(wxT("../tests/test_goto_decl_of_func_arg.h")), 13, wxT("Tada"),
+        wxT("Tada"), LoadFile(wxT("../tests/test_goto_decl_of_func_arg.h")), tags);
 
     CHECK_SIZE(tags.size(), 1);
     CHECK_STRING(tags.at(0)->GetName().mb_str(wxConvUTF8).data(), "Tada");
@@ -385,11 +307,8 @@ TEST_FUNC(testGotoDeclOfFuncArgUsingTheMethodScope)
 TEST_FUNC(testScopeResolving1)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_scope_resolving_1.h")),
-                                                 4,
-                                                 wxT("cls."),
-                                                 LoadFile(wxT("../tests/test_scope_resolving_1.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_scope_resolving_1.h")), 4, wxT("cls."),
+        LoadFile(wxT("../tests/test_scope_resolving_1.h")), tags);
     CHECK_SIZE(tags.size(), 1);
     return true;
 }
@@ -397,11 +316,8 @@ TEST_FUNC(testScopeResolving1)
 TEST_FUNC(testTypedefIteratorInsideClass)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_typedef_iterator_inside_class.h")),
-                                                 2,
-                                                 wxT("__iter->second->"),
-                                                 LoadFile(wxT("../tests/test_typedef_iterator_inside_class.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_typedef_iterator_inside_class.h")), 2,
+        wxT("__iter->second->"), LoadFile(wxT("../tests/test_typedef_iterator_inside_class.h")), tags);
     CHECK_SIZE(tags.size(), 31);
     return true;
 }
@@ -424,11 +340,8 @@ TEST_FUNC(testStrcutDelcratorInFuncArgument)
 TEST_FUNC(testAutoSimple)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_auto_simple.h")),
-                                                 2,
-                                                 wxT("autoPtr->second->"),
-                                                 LoadFile(wxT("../tests/test_auto_simple.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_auto_simple.h")), 2,
+        wxT("autoPtr->second->"), LoadFile(wxT("../tests/test_auto_simple.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     return true;
 }
@@ -436,12 +349,20 @@ TEST_FUNC(testAutoSimple)
 TEST_FUNC(testBoostSharedPtr)
 {
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/boost_shared_ptr.h")),
-                                                 2,
-                                                 wxT("s->"),
-                                                 LoadFile(wxT("../tests/boost_shared_ptr.h")),
-                                                 tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/boost_shared_ptr.h")), 2, wxT("s->"),
+        LoadFile(wxT("../tests/boost_shared_ptr.h")), tags);
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
+    return true;
+}
+
+TEST_FUNC(testVariablesParserSimple)
+{
+    wxString content = LoadFile("../tests/test_parse_variables_simple.h");
+    CxxVariableScanner scanner(content);
+    CxxVariable::List_t vars = scanner.GetVariables();
+    //CHECK_SIZE(vars.size(), 7); // a,b,c,d,e,f,g
+    std::for_each(vars.begin(), vars.end(),
+        [&](CxxVariable::Ptr_t var) { std::cout << "Variable: " << var->GetName() << std::endl; });
     return true;
 }
 

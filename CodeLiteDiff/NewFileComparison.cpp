@@ -11,17 +11,24 @@ NewFileComparison::NewFileComparison(wxWindow* parent, const wxFileName& leftFil
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
     m_textCtrlLeftFile->ChangeValue(leftFile.GetFullPath());
-    std::for_each(editors.begin(), editors.end(),
-        [&](IEditor* editor) { m_listBox16->Append(editor->GetFileName().GetFullPath()); });
+    std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
+        m_listBox16->Append(editor->GetFileName().GetFullPath());
+    });
 }
 
 NewFileComparison::~NewFileComparison() {}
 
 void NewFileComparison::OnBrowse(wxCommandEvent& event)
 {
-    wxString file = wxFileSelector(wxT("Select file:"));
+    static wxString lastPath;
+    wxString initialPath;
+    m_textCtrlFileName->IsEmpty() ? initialPath = lastPath : initialPath =
+                                                                 wxFileName(m_textCtrlFileName->GetValue()).GetPath();
+    wxString file = wxFileSelector(wxT("Select file:"), initialPath);
     if(!file.IsEmpty()) {
-        m_textCtrlFileName->ChangeValue(file);
+        wxFileName selectedFile(file);
+        lastPath = selectedFile.GetPath();
+        m_textCtrlFileName->ChangeValue(selectedFile.GetFullPath());
     }
 }
 

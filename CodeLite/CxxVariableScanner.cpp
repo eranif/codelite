@@ -289,7 +289,7 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
             case '(':
                 depth++;
                 strippedBuffer << "(";
-                if(lastToken.type == T_FOR) {
+                if((lastToken.type == T_FOR) && false) {
                     state = kInForLoop;
                 } else if(lastToken.type == T_CATCH) {
                     state = kInCatch;

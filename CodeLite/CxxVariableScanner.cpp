@@ -3,6 +3,7 @@
 
 CxxVariableScanner::CxxVariableScanner(const wxString& buffer)
     : m_eof(false)
+    , m_parenthesisDepth(0)
 {
     m_scanner = ::LexerNew(buffer);
 }
@@ -34,9 +35,19 @@ CxxVariable::List_t CxxVariableScanner::GetVariables()
             var->SetType(vartype);
             if(var->IsOk()) {
                 vars.push_back(var);
+            } else if(!varInitialization.IsEmpty()) {
+                // This means that the above was a function call
+                // Parse the siganture which is placed inside the varInitialization
+                CxxVariableScanner scanner(varInitialization);
+                CxxVariable::List_t args = scanner.GetVariables();
+                vars.insert(vars.end(), args.begin(), args.end());
+                break;
             }
-        } while(cont);
+        } while(cont && (m_parenthesisDepth == 0) /* not inside a function */);
     }
+
+    // Sort the variables by name
+    vars.sort([&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName().CmpNoCase(b->GetName()); });
     return vars;
 }
 
@@ -82,11 +93,18 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                 switch(token.type) {
                 case T_IDENTIFIER: {
                     // Found an identifier
-                    // We consider this part of the type only if the previous token was "::"
-                    if(lastToken.type == T_DOUBLE_COLONS) {
+                    // We consider this part of the type only if the previous token was "::" or
+                    // if it was T_CONST
+                    switch(lastToken.type) {
+                    case T_DOUBLE_COLONS:
+                    case T_CONST:
+                    case T_REGISTER:
+                    case T_MUTABLE:
+                    case T_VOLATILE:
+                    case T_STATIC:
                         vartype.push_back(token);
-                    } else {
-                        // End of type
+                        break;
+                    default:
                         ::LexerUnget(m_scanner);
                         return true;
                     }
@@ -115,6 +133,11 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                     vartype.push_back(CxxVariable::LexerToken(token));
                     depth++;
                     break;
+                case '*':
+                case '&':
+                    // Part of the name
+                    ::LexerUnget(m_scanner);
+                    return true;
                 default:
                     return false;
                 }
@@ -142,14 +165,14 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
             if(!GetNextToken(token)) {
                 return false;
             }
-            
+
             if((token.type == '{') && !varInitialization.IsEmpty()) {
                 // Don't collect functions and consider them as variables
                 ::LexerUnget(m_scanner);
                 varname.clear();
                 return false;
             }
-            
+
             // If we found comma, return true
             if(token.type == ',') {
                 return true;
@@ -230,7 +253,7 @@ int CxxVariableScanner::ReadUntil(const std::set<int>& delims, CxxLexerToken& to
     // loop until we find the open brace
     int depth = 0;
     while(GetNextToken(token)) {
-        consumed << token.text;
+        consumed << token.text << " ";
         if(depth == 0) {
             if(delims.count(token.type)) {
                 return token.type;
@@ -268,5 +291,15 @@ bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
 {
     bool res = ::LexerNext(m_scanner, token);
     m_eof = !res;
+    switch(token.type) {
+    case '(':
+        ++m_parenthesisDepth;
+        break;
+    case ')':
+        --m_parenthesisDepth;
+        break;
+    default:
+        break;
+    }
     return res;
 }

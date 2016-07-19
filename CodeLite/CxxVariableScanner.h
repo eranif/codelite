@@ -10,11 +10,12 @@ class WXDLLIMPEXP_CL CxxVariableScanner
 {
     Scanner_t m_scanner;
     bool m_eof;
+    int m_parenthesisDepth;
 
 protected:
     bool GetNextToken(CxxLexerToken& token);
     bool IsEof() const { return m_eof; }
-    
+
 protected:
     /**
      * @brief read the variable type

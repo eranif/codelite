@@ -80,6 +80,7 @@
 #include <wx/regex.h>
 #include "clEditorStateLocker.h"
 #include "clSelectSymbolDialog.h"
+#include "CxxVariableScanner.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -2491,13 +2492,12 @@ void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryP
         cppWords = lexPtr->GetKeyWords(1);
 
     } else {
-        cppWords =
-            "abstract boolean break byte case catch char class "
-            "const continue debugger default delete do double else enum export extends "
-            "final finally float for function goto if implements import in instanceof "
-            "int interface long native new package private protected public "
-            "return short static super switch synchronized this throw throws "
-            "transient try typeof var void volatile while with";
+        cppWords = "abstract boolean break byte case catch char class "
+                   "const continue debugger default delete do double else enum export extends "
+                   "final finally float for function goto if implements import in instanceof "
+                   "int interface long native new package private protected public "
+                   "return short static super switch synchronized this throw throws "
+                   "transient try typeof var void volatile while with";
     }
 
     wxString s1(word);
@@ -2664,7 +2664,7 @@ int ContextCpp::GetHyperlinkRange(int pos, int& start, int& end)
 
 void ContextCpp::GoHyperlink(int start, int end, int type, bool alt)
 {
-    (void) alt;
+    (void)alt;
 
     if(type == XRCID("open_include_file")) {
         m_selectedWord = GetCtrl().GetTextRange(start, end);
@@ -2722,7 +2722,7 @@ void ContextCpp::DoOpenWorkspaceFile()
         for(size_t i = 0; i < files2.size(); i++) {
             wxString fullPath = files2.at(i).GetFullPath();
             wxString fullPathLc = (wxGetOsVersion() & wxOS_WINDOWS) ? fullPath.Lower() : fullPath;
-            
+
             // Dont add duplicate entries.
             // On Windows, we have a non case sensitive file system
             if(uniqueFileSet.count(fullPathLc) == 0) {
@@ -2730,7 +2730,7 @@ void ContextCpp::DoOpenWorkspaceFile()
                 choices.Add(fullPath);
             }
         }
-        
+
         fileToOpen = wxGetSingleChoice(_("Select file to open:"), _("Select file"), choices, &GetCtrl());
     } else if(files2.size() == 1) {
         fileToOpen = files2.at(0).GetFullPath();
@@ -3221,14 +3221,12 @@ void ContextCpp::ColourContextTokens(const wxArrayString& workspaceTokens)
     //------------------------------------------
     // Local variables
     //------------------------------------------
-    wxArrayString localTokens;
-    TagsManagerST::Get()->GetVariables(ctrl.GetFileName(), localTokens);
+    CxxVariableScanner scanner(GetCtrl().GetText());
+    CxxVariable::List_t vars = scanner.GetVariables();
 
     if(cc_flags & CC_COLOUR_VARS) {
-        // convert it to space delimited string
-        for(size_t i = 0; i < localTokens.GetCount(); i++) {
-            flatStrLocals << localTokens.Item(i) << wxT(" ");
-        }
+        std::for_each(
+            vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) { flatStrLocals << var->GetName() << " "; });
     }
     ctrl.SetKeyWords(3, flatStrLocals);
     ctrl.SetKeywordLocals(flatStrLocals);

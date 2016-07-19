@@ -362,7 +362,7 @@ TEST_FUNC(testVariablesParserSimple)
     CxxVariable::List_t vars = scanner.GetVariables();
     //CHECK_SIZE(vars.size(), 7); // a,b,c,d,e,f,g
     std::for_each(vars.begin(), vars.end(),
-        [&](CxxVariable::Ptr_t var) { std::cout << "Variable: " << var->GetName() << std::endl; });
+        [&](CxxVariable::Ptr_t var) { std::cout << var->ToString() << std::endl; });
     return true;
 }
 

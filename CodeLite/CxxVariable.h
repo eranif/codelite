@@ -47,11 +47,16 @@ public:
     void SetType(const CxxVariable::LexerToken::List_t& type) { this->m_type = type; }
     const wxString& GetName() const { return m_name; }
     const CxxVariable::LexerToken::List_t& GetType() const { return m_type; }
+    wxString GetTypeAsString() const;
     
     /**
      * @brief is this a valid variable?
      */
     bool IsOk() const { return !m_name.IsEmpty() && !m_type.empty(); }
+    
+    wxString ToString() const {
+        return (wxString() << "Name: " << GetName() << ", Type: " << GetTypeAsString());
+    }
 };
 
 #endif // CXXVARIABLE_H

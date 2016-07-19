@@ -112,6 +112,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                 }
                 case '<':
                 case '[':
+                    vartype.push_back(CxxVariable::LexerToken(token));
                     depth++;
                     break;
                 default:

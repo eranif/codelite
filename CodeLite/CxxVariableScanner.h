@@ -9,12 +9,16 @@
 class WXDLLIMPEXP_CL CxxVariableScanner
 {
     Scanner_t m_scanner;
+    wxString m_buffer;
     bool m_eof;
     int m_parenthesisDepth;
+
+    enum eState { kNormal, kInParen, kInForLoop, kInCatch };
 
 protected:
     bool GetNextToken(CxxLexerToken& token);
     bool IsEof() const { return m_eof; }
+    void OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer);
 
 protected:
     /**
@@ -33,6 +37,8 @@ protected:
     void ConsumeInitialization(wxString& consumed);
 
     int ReadUntil(const std::set<int>& delims, CxxLexerToken& token, wxString& consumed);
+
+    CxxVariable::List_t DoGetVariables(const wxString& buffer);
 
 public:
     CxxVariableScanner(const wxString& buffer);

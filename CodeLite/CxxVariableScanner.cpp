@@ -2,51 +2,22 @@
 #include "CxxScannerTokens.h"
 
 CxxVariableScanner::CxxVariableScanner(const wxString& buffer)
-    : m_eof(false)
+    : m_scanner(NULL)
+    , m_buffer(buffer)
+    , m_eof(false)
     , m_parenthesisDepth(0)
 {
-    m_scanner = ::LexerNew(buffer);
 }
 
-CxxVariableScanner::~CxxVariableScanner()
-{
-    if(m_scanner) {
-        ::LexerDestroy(&m_scanner);
-    }
-}
+CxxVariableScanner::~CxxVariableScanner() {}
 
 CxxVariable::List_t CxxVariableScanner::GetVariables()
 {
-    CxxVariable::List_t vars;
-    if(!m_scanner) return CxxVariable::List_t(); // Empty list
-
-    // Read the variable type
-    while(!IsEof()) {
-        CxxVariable::LexerToken::List_t vartype;
-        if(!ReadType(vartype)) continue;
-
-        // Get the variable(s) name
-        wxString varname, pointerOrRef, varInitialization;
-        bool cont = false;
-        do {
-            cont = ReadName(varname, pointerOrRef, varInitialization);
-            CxxVariable::Ptr_t var(new CxxVariable());
-            var->SetName(varname);
-            var->SetType(vartype);
-            if(var->IsOk()) {
-                vars.push_back(var);
-            } else if(!varInitialization.IsEmpty()) {
-                // This means that the above was a function call
-                // Parse the siganture which is placed inside the varInitialization
-                CxxVariableScanner scanner(varInitialization);
-                CxxVariable::List_t args = scanner.GetVariables();
-                vars.insert(vars.end(), args.begin(), args.end());
-                break;
-            }
-        } while(cont && (m_parenthesisDepth == 0) /* not inside a function */);
-    }
-
-    // Sort the variables by name
+    wxString strippedBuffer, parenthesisBuffer;
+    OptimizeBuffer(strippedBuffer, parenthesisBuffer);
+    CxxVariable::List_t vars = DoGetVariables(strippedBuffer);
+    CxxVariable::List_t args = DoGetVariables(parenthesisBuffer);
+    vars.insert(vars.end(), args.begin(), args.end());
     vars.sort([&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName().CmpNoCase(b->GetName()); });
     return vars;
 }
@@ -302,4 +273,117 @@ bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
         break;
     }
     return res;
+}
+
+void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer)
+{
+    Scanner_t sc = ::LexerNew(m_buffer);
+    int depth = 0;
+    CxxLexerToken tok;
+    CxxLexerToken lastToken;
+
+    eState state = kNormal;
+    while(::LexerNext(sc, tok)) {
+        if(state == kNormal) {
+            switch(tok.type) {
+            case '(':
+                depth++;
+                strippedBuffer << "(";
+                if(lastToken.type == T_FOR) {
+                    state = kInForLoop;
+                } else if(lastToken.type == T_CATCH) {
+                    state = kInCatch;
+                } else {
+                    state = kInParen;
+                    parenthesisBuffer << "(";
+                }
+                break;
+            default:
+                strippedBuffer << tok.text << " ";
+                break;
+            }
+
+        } else if(state == kInParen) {
+            switch(tok.type) {
+            case '(':
+                depth++;
+                parenthesisBuffer << "(";
+                break;
+            case ')':
+                depth--;
+                parenthesisBuffer << ")";
+                if(depth == 0) {
+                    parenthesisBuffer << ";"; // Needed to help the parser
+                    state = kNormal;
+                    strippedBuffer << ")";
+                }
+                break;
+            default:
+                parenthesisBuffer << tok.text << " ";
+                break;
+            }
+        } else if((state == kInForLoop) || (state == kInCatch)) {
+            // 'for' and 'catch' parenthesis content is kept in the strippedBuffer
+            switch(tok.type) {
+            case '(':
+                depth++;
+                strippedBuffer << "(";
+                break;
+            case ')':
+                depth--;
+                strippedBuffer << ")";
+                if(depth == 0) {
+                    state = kNormal;
+                }
+                break;
+            default:
+                strippedBuffer << tok.text << " ";
+                break;
+            }
+        }
+        lastToken = tok;
+    }
+
+    ::LexerDestroy(&sc);
+}
+
+CxxVariable::List_t CxxVariableScanner::DoGetVariables(const wxString& buffer)
+{
+    // First, we strip all parenthesis content from the buffer
+    m_scanner = ::LexerNew(buffer);
+    m_eof = false;
+    m_parenthesisDepth = 0;
+    if(!m_scanner) return CxxVariable::List_t(); // Empty list
+
+    CxxVariable::List_t vars;
+
+    // Read the variable type
+    while(!IsEof()) {
+        CxxVariable::LexerToken::List_t vartype;
+        if(!ReadType(vartype)) continue;
+
+        // Get the variable(s) name
+        wxString varname, pointerOrRef, varInitialization;
+        bool cont = false;
+        do {
+            cont = ReadName(varname, pointerOrRef, varInitialization);
+            CxxVariable::Ptr_t var(new CxxVariable());
+            var->SetName(varname);
+            var->SetType(vartype);
+            if(var->IsOk()) {
+                vars.push_back(var);
+            } else if(!varInitialization.IsEmpty()) {
+                // This means that the above was a function call
+                // Parse the siganture which is placed inside the varInitialization
+                CxxVariableScanner scanner(varInitialization);
+                CxxVariable::List_t args = scanner.GetVariables();
+                vars.insert(vars.end(), args.begin(), args.end());
+                break;
+            }
+        } while(cont && (m_parenthesisDepth == 0) /* not inside a function */);
+    }
+
+    // Sort the variables by name
+    ::LexerDestroy(&m_scanner);
+    return vars;
 }

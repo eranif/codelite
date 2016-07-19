@@ -1,4 +1,4 @@
-void testCC()
+void Main::testCC(const wxString& mystr, const wxString& otherSide)
 {
     // Load the tags database that is used during the test.
     wxFileName fn(wxT("../../SampleWorkspace/.codelite/SampleWorkspace.tags"));
@@ -22,4 +22,5 @@ int c = 1, d = 2;
 int e(3), f(4);
 int g{1};
 std::string str;
-std::map<std::string, std::string, _Allocator()> stringMap;
+const std::map<std::string, std::string, _Allocator()>& stringMap;
+unsigned int nNumber = 0;

@@ -13,7 +13,7 @@ class WXDLLIMPEXP_CL CxxVariableScanner
     bool m_eof;
     int m_parenthesisDepth;
 
-    enum eState { kNormal, kInParen, kInForLoop, kInCatch };
+    enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor };
 
 protected:
     bool GetNextToken(CxxLexerToken& token);

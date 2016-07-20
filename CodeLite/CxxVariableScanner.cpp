@@ -285,24 +285,28 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
     eState state = kNormal;
     while(::LexerNext(sc, tok)) {
         if(state == kNormal) {
-            switch(tok.type) {
-            case '(':
-                depth++;
-                strippedBuffer << "(";
-                if((lastToken.type == T_FOR) && false) {
-                    state = kInForLoop;
-                } else if(lastToken.type == T_CATCH) {
-                    state = kInCatch;
-                } else {
-                    state = kInParen;
-                    parenthesisBuffer << "(";
+            if((tok.type >= T_PP_DEFINE) && (tok.type <= T_PP_LTEQ)) {
+                // In PreProcessor state
+                state = kPreProcessor;
+            } else {
+                switch(tok.type) {
+                case '(':
+                    depth++;
+                    strippedBuffer << "(";
+                    if((lastToken.type == T_FOR) && false) {
+                        state = kInForLoop;
+                    } else if(lastToken.type == T_CATCH) {
+                        state = kInCatch;
+                    } else {
+                        state = kInParen;
+                        parenthesisBuffer << "(";
+                    }
+                    break;
+                default:
+                    strippedBuffer << tok.text << " ";
+                    break;
                 }
-                break;
-            default:
-                strippedBuffer << tok.text << " ";
-                break;
             }
-
         } else if(state == kInParen) {
             switch(tok.type) {
             case '(':
@@ -340,10 +344,17 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
                 strippedBuffer << tok.text << " ";
                 break;
             }
+        } else if(state == kPreProcessor) {
+            switch(tok.type) {
+            case T_PP_STATE_EXIT:
+                state = kNormal;
+                break;
+            default:
+                break;
+            }
         }
         lastToken = tok;
     }
-
     ::LexerDestroy(&sc);
 }
 

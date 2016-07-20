@@ -246,6 +246,7 @@ CodeLiteApp::CodeLiteApp(void)
     , m_startedInDebuggerMode(false)
 #ifdef __WXMSW__
     , m_handler(NULL)
+    , m_user32Dll(NULL)
 #endif
 {
 }
@@ -264,6 +265,10 @@ CodeLiteApp::~CodeLiteApp(void)
     }
     wxDELETE(m_persistencManager);
 }
+
+#ifdef __WXMSW__
+typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
+#endif
 
 bool CodeLiteApp::OnInit()
 {
@@ -299,10 +304,22 @@ bool CodeLiteApp::OnInit()
 #endif
 
 #ifdef __WXMSW__
+    
+    m_user32Dll = LoadLibrary(L"User32.dll");
+    if(m_user32Dll) {
+        SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(m_user32Dll, "SetProcessDPIAware");
+        if(pFunc) {
+            pFunc();
+        }
+        FreeLibrary(m_user32Dll);
+        m_user32Dll = NULL;
+    }
+    
+    
     // as described in http://jrfonseca.dyndns.org/projects/gnu-win32/software/drmingw/
     // load the exception handler dll so we will get Dr MinGW at runtime
     m_handler = LoadLibrary(wxT("exchndl.dll"));
-
+    
 // Enable this process debugging priviliges
 // EnableDebugPriv();
 #endif

@@ -64,6 +64,7 @@ private: // Methods
 
 #ifdef __WXMSW__
     HINSTANCE m_handler;
+    HINSTANCE m_user32Dll;
 #endif
     void PrintUsage(const wxCmdLineParser& parser);
 

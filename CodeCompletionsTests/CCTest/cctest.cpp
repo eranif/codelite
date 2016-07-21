@@ -359,8 +359,9 @@ TEST_FUNC(testVariablesParserSimple)
 {
     wxString content = LoadFile("../tests/test_parse_variables_simple.h");
     CxxVariableScanner scanner(content);
-    CxxVariable::List_t vars = scanner.GetVariables();
-    CHECK_SIZE(vars.size(), 10); // a,b,c,d,e,f,g,str,stringMap,nNumber
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_SIZE(vars.size(), 1); // a,b,c,d,e,f,g,str,stringMap,nNumber
+    CHECK_CONDITION(vars.count("delims"), "variable 'delims' was not found");
     return true;
 }
 
@@ -374,6 +375,15 @@ TEST_FUNC(testVariablesParserCxx11)
     CHECK_CONDITION(vars.count("var2"), "variable 'var2' was not found");
     CHECK_CONDITION(vars.count("arg1"), "variable 'arg1' was not found");
     CHECK_CONDITION(vars.count("arg2"), "variable 'arg2' was not found");
+    return true;
+}
+
+TEST_FUNC(testVariablesParserClassMembers)
+{
+    wxString content = LoadFile("../tests/test_parse_variables_class_members.h");
+    CxxVariableScanner scanner(content);
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_SIZE(vars.size(), 2);
     return true;
 }
 

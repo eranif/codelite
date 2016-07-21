@@ -31,6 +31,16 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
             if(vartype.empty()) {
                 // a type can start the following tokens
                 switch(token.type) {
+                case T_CLASS:
+                case T_STRUCT: {
+                    // Class or struct forward decl
+                    std::set<int> delims;
+                    delims.insert(';'); // Forward decl
+                    delims.insert('{'); // Class body
+                    wxString consumed;
+                    ReadUntil(delims, token, consumed);
+                    return false;
+                }
                 case T_IDENTIFIER:
                 case T_DOUBLE_COLONS:
                 case T_AUTO:
@@ -64,7 +74,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                 const CxxVariable::LexerToken& lastToken = vartype.back();
                 switch(token.type) {
                 case T_IDENTIFIER: {
-                    if(TypeHasIdentifier(vartype)) {
+                    if(TypeHasIdentifier(vartype) && (vartype.back().type != T_DOUBLE_COLONS)) {
                         // We already found the identifier for this type, its probably part of the name
                         ::LexerUnget(m_scanner);
                         return true;

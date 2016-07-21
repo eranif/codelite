@@ -91,7 +91,7 @@ void WorkspacePane::CreateGUIControls()
 #else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
 #endif
-    // style |= kNotebook_UnderlineActiveTab;
+    style |= kNotebook_UnderlineActiveTab;
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());

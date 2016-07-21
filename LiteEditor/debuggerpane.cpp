@@ -94,7 +94,7 @@ void DebuggerPane::CreateGUIControls()
     if(!EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection()) {
         style |= kNotebook_BottomTabs;
     }
-    // style |= kNotebook_UnderlineActiveTab;
+    style |= kNotebook_UnderlineActiveTab;
 
     GeneralImages img;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);

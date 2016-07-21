@@ -153,7 +153,9 @@ void clTabRendererSquare::DrawBottomRect(
             // top tabs
             dc.SetPen(pen);
             p1.x += 1;
+#ifndef __WXGTK__
             p2.x -= 1;
+#endif
             DRAW_LINE(p1, p2);
 
             // draw the marker at the bottom of the tabs

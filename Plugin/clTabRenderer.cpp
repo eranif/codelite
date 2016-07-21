@@ -91,7 +91,7 @@ void clTabColours::InitLightColours()
     inactiveTabInnerPenColour = "#ffffff";
 
     tabAreaColour = "#dcdcdc"; // wxColour("rgb(64, 64, 64)");
-    markerColour = wxColour("rgb(105, 193, 240)");
+    markerColour = wxColour("rgb(227, 125, 9)");
     
     inactiveTabBgColour = tabAreaColour;
     

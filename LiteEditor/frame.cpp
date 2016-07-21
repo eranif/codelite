@@ -998,7 +998,18 @@ void clMainFrame::CreateGUIControls()
     SetAUIManagerFlags();
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, 22);
+    
+    int captionSize = 22;
+    {
+        wxMemoryDC memDC;
+        wxBitmap bmp(1, 1);
+        memDC.SelectObject(bmp);
+        memDC.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+        wxSize textSize = memDC.GetTextExtent("Tp");
+        captionSize = textSize.y;
+    }
+    
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);
 
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR, DrawingUtils::GetPanelBgColour());
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, DrawingUtils::GetPanelBgColour());

@@ -19,6 +19,7 @@ protected:
     bool GetNextToken(CxxLexerToken& token);
     bool IsEof() const { return m_eof; }
     void OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer);
+    bool TypeHasIdentifier(const CxxVariable::LexerToken::List_t& type);
 
 protected:
     /**
@@ -43,8 +44,17 @@ protected:
 public:
     CxxVariableScanner(const wxString& buffer);
     virtual ~CxxVariableScanner();
-
+    
+    /**
+     * @brief parse the buffer and return list of variables
+     * @return 
+     */
     CxxVariable::List_t GetVariables();
+    
+    /**
+     * @brief parse the buffer and return a unique set of variables
+     */
+    CxxVariable::Map_t GetVariablesMap();
 };
 
 #endif // CXXVARIABLESCANNER_H

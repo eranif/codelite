@@ -360,9 +360,20 @@ TEST_FUNC(testVariablesParserSimple)
     wxString content = LoadFile("../tests/test_parse_variables_simple.h");
     CxxVariableScanner scanner(content);
     CxxVariable::List_t vars = scanner.GetVariables();
-    //CHECK_SIZE(vars.size(), 7); // a,b,c,d,e,f,g
-    std::for_each(vars.begin(), vars.end(),
-        [&](CxxVariable::Ptr_t var) { std::cout << var->ToString() << std::endl; });
+    CHECK_SIZE(vars.size(), 10); // a,b,c,d,e,f,g,str,stringMap,nNumber
+    return true;
+}
+
+TEST_FUNC(testVariablesParserCxx11)
+{
+    wxString content = LoadFile("../tests/test_parse_variables_cxx11.h");
+    CxxVariableScanner scanner(content);
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_SIZE(vars.size(), 4);
+    CHECK_CONDITION(vars.count("var1"), "variable 'var1' was not found");
+    CHECK_CONDITION(vars.count("var2"), "variable 'var2' was not found");
+    CHECK_CONDITION(vars.count("arg1"), "variable 'arg1' was not found");
+    CHECK_CONDITION(vars.count("arg2"), "variable 'arg2' was not found");
     return true;
 }
 

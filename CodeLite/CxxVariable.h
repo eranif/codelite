@@ -4,6 +4,8 @@
 #include "codelite_exports.h"
 #include "smart_ptr.h"
 #include <list>
+#include <set>
+#include <map>
 #include <wx/string.h>
 #include "CxxLexerAPI.h"
 
@@ -38,6 +40,7 @@ protected:
 public:
     typedef SmartPtr<CxxVariable> Ptr_t;
     typedef std::list<CxxVariable::Ptr_t> List_t;
+    typedef std::map<wxString, CxxVariable::Ptr_t> Map_t;
 
 public:
     CxxVariable();
@@ -48,15 +51,13 @@ public:
     const wxString& GetName() const { return m_name; }
     const CxxVariable::LexerToken::List_t& GetType() const { return m_type; }
     wxString GetTypeAsString() const;
-    
+
     /**
      * @brief is this a valid variable?
      */
     bool IsOk() const { return !m_name.IsEmpty() && !m_type.empty(); }
-    
-    wxString ToString() const {
-        return (wxString() << "Name: " << GetName() << ", Type: " << GetTypeAsString());
-    }
+
+    wxString ToString() const { return (wxString() << "Name: " << GetName() << ", Type: " << GetTypeAsString()); }
 };
 
 #endif // CXXVARIABLE_H

@@ -39,6 +39,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                 case T_CHAR16_T:
                 case T_CHAR32_T:
                 case T_CONST:
+                case T_CONSTEXPR:
                 case T_DOUBLE:
                 case T_FLOAT:
                 case T_INT:
@@ -63,12 +64,18 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                 const CxxVariable::LexerToken& lastToken = vartype.back();
                 switch(token.type) {
                 case T_IDENTIFIER: {
+                    if(TypeHasIdentifier(vartype)) {
+                        // We already found the identifier for this type, its probably part of the name
+                        ::LexerUnget(m_scanner);
+                        return true;
+                    }
                     // Found an identifier
                     // We consider this part of the type only if the previous token was "::" or
                     // if it was T_CONST
                     switch(lastToken.type) {
                     case T_DOUBLE_COLONS:
                     case T_CONST:
+                    case T_CONSTEXPR:
                     case T_REGISTER:
                     case T_MUTABLE:
                     case T_VOLATILE:
@@ -86,6 +93,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                 case T_CHAR16_T:
                 case T_CHAR32_T:
                 case T_CONST:
+                case T_CONSTEXPR:
                 case T_DOUBLE:
                 case T_FLOAT:
                 case T_INT:
@@ -397,4 +405,24 @@ CxxVariable::List_t CxxVariableScanner::DoGetVariables(const wxString& buffer)
     // Sort the variables by name
     ::LexerDestroy(&m_scanner);
     return vars;
+}
+
+bool CxxVariableScanner::TypeHasIdentifier(const CxxVariable::LexerToken::List_t& type)
+{
+    // do we have an identifier in the type?
+    CxxVariable::LexerToken::List_t::const_iterator iter = std::find_if(
+        type.begin(), type.end(), [&](const CxxVariable::LexerToken& token) { return (token.type == T_IDENTIFIER); });
+    return (iter != type.end());
+}
+
+CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
+{
+    CxxVariable::List_t l = GetVariables();
+    CxxVariable::Map_t m;
+    std::for_each(l.begin(), l.end(), [&](CxxVariable::Ptr_t v) {
+        if(m.count(v->GetName()) == 0) {
+            m.insert(std::make_pair(v->GetName(), v));
+        }
+    });
+    return m;
 }

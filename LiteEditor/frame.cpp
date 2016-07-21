@@ -1006,7 +1006,7 @@ void clMainFrame::CreateGUIControls()
         memDC.SelectObject(bmp);
         memDC.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
         wxSize textSize = memDC.GetTextExtent("Tp");
-        captionSize = textSize.y;
+        captionSize = textSize.y + 6; // 3 pixesl space on each side
     }
     
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);

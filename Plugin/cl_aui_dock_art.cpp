@@ -102,8 +102,8 @@ void clAuiDockArt::DrawPaneButton(
     }
 }
 
-void clAuiDockArt::DrawCaption(
-    wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
+void
+clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
 {
     wxRect tmpRect(wxPoint(0, 0), rect.GetSize());
 
@@ -168,17 +168,21 @@ void clAuiDockArt::DrawCaption(
 
         wxGCDC gdc;
         wxDC* pDC = NULL;
+#ifdef __WXGTK__
+        pDC = &memDc;
+#else
         if(!DrawingUtils::GetGCDC(memDc, gdc)) {
             pDC = &memDc;
         } else {
             pDC = &gdc;
         }
+#endif
 
         // Prepare the colours
         wxColour bgColour, penColour, textColour;
         textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
         bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
-        ; // Same as the notebook background colour
+        // Same as the notebook background colour
         penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
         penColour = bgColour;
 

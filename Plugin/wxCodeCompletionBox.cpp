@@ -20,10 +20,10 @@
 #include "CxxTemplateFunction.h"
 #include <wx/app.h>
 
-#define LINES_PER_PAGE 8
-#define Y_SPACER 2
-#define SCROLLBAR_WIDTH 12
-#define BOX_WIDTH (400 + SCROLLBAR_WIDTH)
+static int LINES_PER_PAGE = 8;
+static int Y_SPACER = 2;
+static int SCROLLBAR_WIDTH = 12;
+static int BOX_WIDTH = 400 + SCROLLBAR_WIDTH;
 
 wxCodeCompletionBox::BmpVec_t wxCodeCompletionBox::m_defaultBitmaps;
 
@@ -38,10 +38,20 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_flags(flags)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    
     m_ccFont = DrawingUtils::GetDefaultFixedFont();
     SetCursor(wxCURSOR_HAND);
 
+    // Update the BOX_WIDTH to contains at least 30 chars
+    {
+        wxMemoryDC memDC;
+        wxBitmap bmp(1, 1);
+        memDC.SelectObject(bmp);
+        memDC.SetFont(m_ccFont);
+        wxString sampleString('X', 50);
+        wxSize sz = memDC.GetTextExtent(sampleString);
+        BOX_WIDTH = sz.GetWidth() + SCROLLBAR_WIDTH;
+    }
+    
     // Calculate the size of the box
     int singleLineHeight = GetSingleLineHeight();
     int boxHeight = singleLineHeight * LINES_PER_PAGE;
@@ -143,17 +153,15 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 {
     // Paint the background colour
     wxAutoBufferedPaintDC dc(m_canvas);
-    
+
     // Invalidate all item rects before we draw them
     for(size_t i = 0; i < m_entries.size(); ++i) {
         m_entries.at(i)->m_itemRect = wxRect();
     }
 
     wxRect rect = GetClientRect();
-    m_scrollArea = wxRect(rect.GetWidth() - SCROLLBAR_WIDTH + rect.GetTopLeft().x,
-                          rect.GetTopLeft().y,
-                          SCROLLBAR_WIDTH,
-                          rect.GetHeight());
+    m_scrollArea = wxRect(rect.GetWidth() - SCROLLBAR_WIDTH + rect.GetTopLeft().x, rect.GetTopLeft().y, SCROLLBAR_WIDTH,
+        rect.GetHeight());
 
     dc.SetFont(m_ccFont);
 
@@ -330,11 +338,11 @@ void wxCodeCompletionBox::StcCharAdded(wxStyledTextEvent& event)
 {
     event.Skip();
     int keychar = m_stc->GetCharAt(m_stc->PositionBefore(m_stc->GetCurrentPos()));
-    if(((keychar >= 65) && (keychar <= 90)) ||  // A-Z
-       ((keychar >= 97) && (keychar <= 122)) || // a-z
-       ((keychar >= 48) && (keychar <= 57)) ||  // 0-9
-       (keychar == 95) ||                       // _
-       (keychar == 33))                         // !
+    if(((keychar >= 65) && (keychar <= 90)) ||   // A-Z
+        ((keychar >= 97) && (keychar <= 122)) || // a-z
+        ((keychar >= 48) && (keychar <= 57)) ||  // 0-9
+        (keychar == 95) ||                       // _
+        (keychar == 33))                         // !
     {
         DoUpdateList();
     } else {
@@ -630,7 +638,7 @@ void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
     // Separate the scrollbar area into 2 big buttons: up and down
     m_scrollBottomRect =
         wxRect(wxPoint(scrollRect.GetTopLeft().x, scrollRect.GetTopLeft().y + scrollRect.GetHeight() / 2),
-               wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
+            wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
 #if 0
     wxPoint topRight;
     topRight = m_scrollBottomRect.GetTopRight();

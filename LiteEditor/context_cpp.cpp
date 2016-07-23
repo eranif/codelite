@@ -3199,7 +3199,7 @@ void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
     editor->PopupMenu(&menu);
 }
 
-void ContextCpp::ColourContextTokens(const wxArrayString& workspaceTokens)
+void ContextCpp::ColourContextTokens(const wxString& workspaceTokensStr, const wxString& localsTokensStr)
 {
     LEditor& ctrl = GetCtrl();
     size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
@@ -3207,27 +3207,11 @@ void ContextCpp::ColourContextTokens(const wxArrayString& workspaceTokens)
     //------------------------------------------
     // Classes
     //------------------------------------------
-    wxString flatStrClasses, flatStrLocals;
-    if(cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
-        for(size_t i = 0; i < workspaceTokens.GetCount(); i++) {
-            // add only entries that does not appear in the variable list
-            // if (varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
-            flatStrClasses << workspaceTokens.Item(i) << wxT(" ");
-        }
-    }
+    wxString flatStrClasses = cc_flags & CC_COLOUR_WORKSPACE_TAGS ? workspaceTokensStr : "";
     ctrl.SetKeyWords(1, flatStrClasses);
     ctrl.SetKeywordClasses(flatStrClasses);
 
-    //------------------------------------------
-    // Local variables
-    //------------------------------------------
-    CxxVariableScanner scanner(GetCtrl().GetText());
-    CxxVariable::List_t vars = scanner.GetVariables();
-
-    if(cc_flags & CC_COLOUR_VARS) {
-        std::for_each(
-            vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) { flatStrLocals << var->GetName() << " "; });
-    }
+    wxString flatStrLocals = cc_flags & CC_COLOUR_VARS ? localsTokensStr : "";
     ctrl.SetKeyWords(3, flatStrLocals);
     ctrl.SetKeywordLocals(flatStrLocals);
 }

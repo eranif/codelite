@@ -59,7 +59,7 @@ private:
     void DoUpdateCalltipHighlight();
 
 public:
-    virtual void ColourContextTokens(const wxArrayString& workspaceTokens);
+    virtual void ColourContextTokens(const wxString& workspaceTokensStr, const wxString& localsTokensStr);
     /**
      * @brief
      * @return

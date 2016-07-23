@@ -39,6 +39,7 @@
 #include <set>
 #include "cl_command_event.h"
 #include <tags_options_data.h>
+#include "CxxVariableScanner.h"
 
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 
@@ -77,9 +78,7 @@ ParseThread::ParseThread()
 {
 }
 
-ParseThread::~ParseThread()
-{
-}
+ParseThread::~ParseThread() {}
 
 void ParseThread::ProcessRequest(ThreadRequest* request)
 {
@@ -307,8 +306,8 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
     }
 }
 
-void
-ParseThread::ParseAndStoreFiles(ParseRequest* req, const wxArrayString& arrFiles, int initalCount, ITagsStoragePtr db)
+void ParseThread::ParseAndStoreFiles(
+    ParseRequest* req, const wxArrayString& arrFiles, int initalCount, ITagsStoragePtr db)
 {
     // Loop over the files and parse them
     int totalSymbols(0);
@@ -450,7 +449,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
     }
 
     // Process the macros
-    //PPTable::Instance()->Squeeze();
+    // PPTable::Instance()->Squeeze();
     const std::map<wxString, PPToken>& table = PPTable::Instance()->GetTable();
 
     // Store the macros
@@ -526,15 +525,9 @@ void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<wxString>* newSe
 //--------------------------------------------------------------------------------------
 // Parse Request Class
 //--------------------------------------------------------------------------------------
-void ParseRequest::setDbFile(const wxString& dbfile)
-{
-    _dbfile = dbfile.c_str();
-}
+void ParseRequest::setDbFile(const wxString& dbfile) { _dbfile = dbfile.c_str(); }
 
-void ParseRequest::setTags(const wxString& tags)
-{
-    _tags = tags.c_str();
-}
+void ParseRequest::setTags(const wxString& tags) { _tags = tags.c_str(); }
 
 ParseRequest::ParseRequest(const ParseRequest& rhs)
 {
@@ -553,14 +546,9 @@ ParseRequest& ParseRequest::operator=(const ParseRequest& rhs)
     return *this;
 }
 
-void ParseRequest::setFile(const wxString& file)
-{
-    _file = file.c_str();
-}
+void ParseRequest::setFile(const wxString& file) { _file = file.c_str(); }
 
-ParseRequest::~ParseRequest()
-{
-}
+ParseRequest::~ParseRequest() {}
 
 // Adaptor to the parse thread
 static ParseThread* gs_theParseThread = NULL;
@@ -646,6 +634,7 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
     // read the file content
     wxFFile fp(req->getFile(), "rb");
     if(fp.IsOpened()) {
+        wxString flatStrLocals, flatClasses;
         wxString content;
         fp.ReadAll(&content);
         fp.Close();
@@ -692,9 +681,24 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
         if(colourOptions & CC_COLOUR_TYPEDEF) kinds.Add("typedef");
 
         db->RemoveNonWorkspaceSymbols(tokensArr, kinds);
+        
+        // Convert the output to a space delimited array
+        std::for_each(tokensArr.begin(), tokensArr.end(), [&](const wxString& token) { flatClasses << token << " "; });
+        
+        // Now, get the locals
+        {
+            CxxVariableScanner scanner(content);
+            CxxVariable::List_t vars = scanner.GetVariables();
+
+            std::for_each(
+                vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) { flatStrLocals << var->GetName() << " "; });
+        }
 
         if(req->_evtHandler) {
             clCommandEvent event(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS);
+            tokensArr.clear();
+            tokensArr.Add(flatClasses);
+            tokensArr.Add(flatStrLocals);
             event.SetStrings(tokensArr);
             event.SetFileName(req->getFile());
             req->_evtHandler->AddPendingEvent(event);

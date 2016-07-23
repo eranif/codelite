@@ -3701,11 +3701,17 @@ bool Manager::StartTTY(const wxString& title, wxString& tty)
 void Manager::OnParserThreadSuggestColourTokens(clCommandEvent& event)
 {
     const wxArrayString& tokens = event.GetStrings();
+    wxString locals, classes;
+    if(tokens.size() == 2) {
+        classes = tokens.Item(0);
+        locals = tokens.Item(1);
+    }
+
     wxString originatingFile = event.GetFileName();
 
     LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(originatingFile);
     if(editor) {
-        editor->GetContext()->ColourContextTokens(tokens);
+        editor->GetContext()->ColourContextTokens(classes, locals);
     }
 }
 

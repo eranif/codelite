@@ -44,10 +44,10 @@ const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED = wxNewEventType();
 //----------------------------------------------------------------
 wxImageList* CreateSymbolTreeImages()
 {
-    wxImageList* images = new wxImageList(16, 16, true);
+    wxImageList* images = new wxImageList(clGetScaledSize(16), clGetScaledSize(16), true);
 
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
-    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));              // 0
+    images->Add(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 0
     images->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));          // 1
     images->Add(bmpLoader->LoadBitmap(wxT("cc/16/globals")));            // 2
     images->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));              // 3
@@ -62,7 +62,7 @@ wxImageList* CreateSymbolTreeImages()
     images->Add(bmpLoader->LoadBitmap(wxT("cc/16/macro")));              // 12
     images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enum")));               // 13
     images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));         // 14
-    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));              // 15
+    images->Add(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 15
     return images;
 }
 
@@ -74,7 +74,6 @@ CppSymbolTree::CppSymbolTree(wxWindow* parent, const wxWindowID id, const wxPoin
     Bind(wxEVT_TREE_ITEM_ACTIVATED, &CppSymbolTree::OnItemActivated, this);
     MSWSetNativeTheme(this);
 }
-
 
 bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool notify)
 {

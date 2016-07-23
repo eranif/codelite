@@ -32,6 +32,7 @@ PHPOutlineTree::PHPOutlineTree(wxWindow* parent, wxWindowID id, const wxPoint& p
     : wxTreeCtrl(parent, id, pos, size, style)
 {
     MSWSetNativeTheme(this);
+    SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 }
 
 PHPOutlineTree::~PHPOutlineTree() {}
@@ -92,7 +93,7 @@ void PHPOutlineTree::BuildTree(const wxFileName& filename)
 
     wxTreeItemId root = AddRoot(wxT("Root"));
 
-    wxImageList* images = new wxImageList(16, 16, true);
+    wxImageList* images = new wxImageList(clGetScaledSize(16), clGetScaledSize(16), true);
     images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/globals")));            // 0
     images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/function_private")));   // 1
     images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/function_protected"))); // 2

@@ -216,6 +216,8 @@ void FileViewTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& 
 
 void FileViewTree::BuildTree()
 {
+    wxFont defaultGuiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    
     wxWindowUpdateLocker locker(this);
     clCommandEvent event(wxEVT_WORKSPACE_VIEW_BUILD_STARTING);
     if(EventNotifier::Get()->ProcessEvent(event)) {
@@ -225,12 +227,14 @@ void FileViewTree::BuildTree()
             AssignImageList(imgList);
         }
     }
-
+    
+    SetFont(defaultGuiFont);
+    
     DeleteAllItems();
     long flags = GetWindowStyle();
     SetWindowStyle(flags | wxTR_MULTIPLE);
     m_itemsToSort.clear();
-
+    
     if(ManagerST::Get()->IsWorkspaceOpen()) {
         // Add an invisible tree root
         ProjectItem data;
@@ -238,6 +242,7 @@ void FileViewTree::BuildTree()
         data.m_kind = ProjectItem::TypeWorkspace;
 
         wxTreeItemId root = AddRoot(data.m_displayName, WORKSPACE_IMG_IDX, -1, new FilewViewTreeItemData(data));
+        SetItemFont(root, defaultGuiFont);
         m_itemsToSort[root.m_pItem] = true;
 
         wxArrayString list;

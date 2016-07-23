@@ -540,4 +540,14 @@ WXDLLIMPEXP_SDK void clStripTerminalColouring(const wxString& buffer, wxString& 
  */
 WXDLLIMPEXP_SDK bool clIsVaidProjectName(const wxString& name);
 
+/**
+ * @brief support for Hi-Res displays
+ */
+WXDLLIMPEXP_SDK double clGetContentScaleFactor();
+
+/**
+ * @brief return the real bitmap size for Hi-DPI screens
+ */
+WXDLLIMPEXP_SDK int clGetScaledSize(int size);
+
 #endif // GLOBALS_H

@@ -13,11 +13,8 @@
 #endif
 
 PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent, IEditor* editor, IManager* manager)
-    : wxTreeCtrl(parent,
-                 wxID_ANY,
-                 wxDefaultPosition,
-                 wxDefaultSize,
-                 wxTR_DEFAULT_STYLE | wxTR_FULL_ROW_HIGHLIGHT | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
+    : wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+          wxTR_DEFAULT_STYLE | wxTR_FULL_ROW_HIGHLIGHT | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
     , m_editor(editor)
     , m_manager(manager)
 {
@@ -26,11 +23,8 @@ PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent, IEditor* editor, IManager
 }
 
 PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent)
-    : wxTreeCtrl(parent,
-                 wxID_ANY,
-                 wxDefaultPosition,
-                 wxDefaultSize,
-                 wxTR_DEFAULT_STYLE | wxTR_FULL_ROW_HIGHLIGHT | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
+    : wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+          wxTR_DEFAULT_STYLE | wxTR_FULL_ROW_HIGHLIGHT | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
     , m_editor(NULL)
     , m_manager(NULL)
 {
@@ -54,7 +48,7 @@ void PHPFileLayoutTree::Construct()
     DeleteAllItems();
     wxTreeItemId root = AddRoot(wxT("Root"));
 
-    wxImageList* images = new wxImageList(16, 16, true);
+    wxImageList* images = new wxImageList(clGetScaledSize(16), clGetScaledSize(16), true);
     images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/globals")));            // 0
     images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/function_private")));   // 1
     images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/function_protected"))); // 2

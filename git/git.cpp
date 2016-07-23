@@ -197,30 +197,31 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     m_pluginMenu = new wxMenu();
     wxMenuItem* item(NULL);
-
+    
+    BitmapLoader *bmps = m_mgr->GetStdIcons();
     item = new wxMenuItem(m_pluginMenu, XRCID("git_pull"), _("Pull remote changes"));
-    item->SetBitmap(m_images.Bitmap("gitPull"));
+    item->SetBitmap(bmps->LoadBitmap("pull"));
     m_pluginMenu->Append(item);
     m_pluginMenu->AppendSeparator();
 
     item = new wxMenuItem(m_pluginMenu, XRCID("git_commit"), _("Commit local changes"));
-    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
+    item->SetBitmap(bmps->LoadBitmap("git-commit"));
     m_pluginMenu->Append(item);
     item = new wxMenuItem(m_pluginMenu, XRCID("git_push"), _("Push local commits"));
-    item->SetBitmap(m_images.Bitmap("gitPush"));
+    item->SetBitmap(bmps->LoadBitmap("up"));
     m_pluginMenu->Append(item);
     m_pluginMenu->AppendSeparator();
 
     item = new wxMenuItem(m_pluginMenu, XRCID("git_reset_repository"), _("Reset current repository"));
-    item->SetBitmap(m_images.Bitmap("gitReset"));
+    item->SetBitmap(bmps->LoadBitmap("clean"));
     m_pluginMenu->Append(item);
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem(m_pluginMenu, XRCID("git_create_branch"), _("Create local branch"));
-    item->SetBitmap(m_images.Bitmap("gitNewBranch"));
+    item->SetBitmap(bmps->LoadBitmap("plus"));
     m_pluginMenu->Append(item);
     item = new wxMenuItem(
         m_pluginMenu, XRCID("git_switch_branch"), _("Switch local branch"), _("Switch local branch"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitSwitchLocalBranch"));
+    item->SetBitmap(bmps->LoadBitmap("split"));
     m_pluginMenu->Append(item);
 
     item = new wxMenuItem(m_pluginMenu, XRCID("git_switch_to_remote_branch"), _("Switch remote branch"),
@@ -230,52 +231,52 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem(
         m_pluginMenu, XRCID("git_browse_commit_list"), _("List commits"), _("List commits"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitCommitedFiles"));
+    item->SetBitmap(bmps->LoadBitmap("tasks"));
     m_pluginMenu->Append(item);
     item =
         new wxMenuItem(m_pluginMenu, XRCID("git_commit_diff"), _("Show current diffs"), _("Show diffs"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitDiffs"));
+    item->SetBitmap(bmps->LoadBitmap("diff"));
     m_pluginMenu->Append(item);
     item = new wxMenuItem(m_pluginMenu, XRCID("git_apply_patch"), _("Apply Patch"), _("Apply Patch"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitApply"));
+    item->SetBitmap(bmps->LoadBitmap("patch"));
     m_pluginMenu->Append(item);
 
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem(
         m_pluginMenu, XRCID("git_list_modified"), _("List modified files"), _("List modified files"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitModifiedFiles"));
+    item->SetBitmap(bmps->LoadBitmap("marker"));
     m_pluginMenu->Append(item);
 
     item = new wxMenuItem(m_pluginMenu, XRCID("git_start_gitk"), _("Start gitk"), _("Start gitk"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitStart"));
+    item->SetBitmap(bmps->LoadBitmap("debugger_start"));
     m_pluginMenu->Append(item);
 
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem(m_pluginMenu, XRCID("git_garbage_collection"), _("Clean git database (garbage collection)"));
-    item->SetBitmap(m_images.Bitmap("gitTrash"));
+    item->SetBitmap(bmps->LoadBitmap("clean"));
     m_pluginMenu->Append(item);
 
     item = new wxMenuItem(
         m_pluginMenu, XRCID("git_refresh"), _("Refresh git file list"), _("Refresh file lists"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitRefresh"));
+    item->SetBitmap(bmps->LoadBitmap("debugger_restart"));
     m_pluginMenu->Append(item);
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem(
         m_pluginMenu, XRCID("git_settings"), _("GIT plugin settings"), _("GIT plugin settings"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitSettings"));
+    item->SetBitmap(bmps->LoadBitmap("cog"));
     m_pluginMenu->Append(item);
     item = new wxMenuItem(m_pluginMenu, XRCID("git_set_repository"), _("Set GIT repository path"),
         _("Set GIT repository path"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitPath"));
+    item->SetBitmap(bmps->LoadBitmap("folder"));
     m_pluginMenu->Append(item);
     item = new wxMenuItem(
         m_pluginMenu, XRCID("git_clone"), _("Clone a git repository"), _("Clone a git repository"), wxITEM_NORMAL);
-    item->SetBitmap(m_images.Bitmap("gitClone"));
+    item->SetBitmap(bmps->LoadBitmap("copy"));
     m_pluginMenu->Append(item);
 
     item = new wxMenuItem(pluginsMenu, wxID_ANY, wxT("Git"));
     item->SetSubMenu(m_pluginMenu);
-    item->SetBitmap(m_images.Bitmap("git"));
+    item->SetBitmap(bmps->LoadBitmap("git"));
     pluginsMenu->Append(item);
 
     m_eventHandler->Bind(wxEVT_COMMAND_MENU_SELECTED, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
@@ -2246,21 +2247,22 @@ void GitPlugin::OnFileMenu(clContextMenuEvent& event)
     wxMenu* menu = new wxMenu();
     wxMenu* parentMenu = event.GetMenu();
     m_filesSelected = event.GetStrings();
-
+    
+    BitmapLoader* bmps = m_mgr->GetStdIcons();
     wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"), _("Add file"));
-    item->SetBitmap(m_images.Bitmap("gitFileAdd"));
+    item->SetBitmap(bmps->LoadBitmap("plus"));
     menu->Append(item);
 
     item = new wxMenuItem(menu, XRCID("git_reset_file"), _("Reset file"));
-    item->SetBitmap(m_images.Bitmap("gitReset"));
+    item->SetBitmap(bmps->LoadBitmap("clean"));
     menu->Append(item);
 
     item = new wxMenuItem(menu, XRCID("git_diff_file"), _("Show file diff"));
-    item->SetBitmap(m_images.Bitmap("gitDiffs"));
+    item->SetBitmap(bmps->LoadBitmap("diff"));
     menu->Append(item);
 
     item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
-    item->SetBitmap(m_images.Bitmap("git"));
+    item->SetBitmap(bmps->LoadBitmap("git"));
     parentMenu->AppendSeparator();
     parentMenu->Append(item);
 }
@@ -2288,38 +2290,39 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
     wxMenu* menu = new wxMenu();
     wxMenu* parentMenu = event.GetMenu();
     m_selectedFolder = event.GetPath();
-
+    
+    BitmapLoader* bmps = m_mgr->GetStdIcons();
     wxMenuItem* item = new wxMenuItem(menu, XRCID("git_pull_rebase_folder"), _("Pull remote changes"));
-    item->SetBitmap(m_images.Bitmap("gitPull"));
+    item->SetBitmap(bmps->LoadBitmap("pull"));
     menu->Append(item);
 
     item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit"));
-    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
+    item->SetBitmap(bmps->LoadBitmap("git-commit"));
     menu->Append(item);
 
     item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
-    item->SetBitmap(m_images.Bitmap("gitPush"));
+    item->SetBitmap(bmps->LoadBitmap("up"));
     menu->Append(item);
 
     menu->AppendSeparator();
 
     item = new wxMenuItem(menu, XRCID("git_stash_folder"), _("Stash"));
-    item->SetBitmap(m_images.Bitmap("gitStash"));
+    item->SetBitmap(bmps->LoadBitmap("down"));
     menu->Append(item);
 
     item = new wxMenuItem(menu, XRCID("git_stash_pop_folder"), _("Stash pop"));
-    item->SetBitmap(m_images.Bitmap("gitStashPop"));
+    item->SetBitmap(bmps->LoadBitmap("up"));
     menu->Append(item);
 
 #ifdef __WXMSW__
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("git_bash_folder"), _("Open git bash"));
-    item->SetBitmap(m_images.Bitmap("msysgit"));
+    item->SetBitmap(bmps->LoadBitmap("console"));
     menu->Append(item);
 #endif
 
     item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
-    item->SetBitmap(m_images.Bitmap("git"));
+    item->SetBitmap(bmps->LoadBitmap("git"));
     parentMenu->AppendSeparator();
     parentMenu->Append(item);
 }

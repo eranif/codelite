@@ -30,6 +30,8 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     ::MSWSetNativeTheme(GetTreeCtrl());
     m_bmpLoader = clGetManager()->GetStdIcons();
     
+    GetTreeCtrl()->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    
     // Allow DnD
     SetDropTarget(new clFileOrFolderDropTarget(this));
     GetTreeCtrl()->SetDropTarget(new clFileOrFolderDropTarget(this));

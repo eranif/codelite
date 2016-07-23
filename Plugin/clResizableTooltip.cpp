@@ -11,6 +11,7 @@ clResizableTooltip::clResizableTooltip(wxEvtHandler* owner)
     , m_dragging(false)
     , m_owner(owner)
 {
+    m_treeCtrl->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 }
 
 clResizableTooltip::~clResizableTooltip()

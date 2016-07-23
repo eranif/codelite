@@ -75,6 +75,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     , m_mgr(mgr)
 {
     MSWSetNativeTheme(m_treeCtrlView);
+    //SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    
     // Initialise images map
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
     m_bitmaps = bmpLoader->MakeStandardMimeMap();
@@ -211,7 +213,7 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
 
 void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
 {
-    wxBitmap bmpFiF = m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/search/find_in_files");
+    wxBitmap bmpFiF = m_mgr->GetStdIcons()->LoadBitmap("find_in_files");
     PHPImages images;
     wxTreeItemId item = event.GetItem();
     if(item.IsOk()) {
@@ -285,7 +287,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
 
                 menuItem =
                     new wxMenuItem(NULL, XRCID("php_synch_with_filesystem"), _("Sync project with file system..."));
-                menuItem->SetBitmap(images.Bitmap("m_bmpSync"));
+                menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("debugger_restart"));
                 menu.Append(menuItem);
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_run_project"), _("Run project..."));

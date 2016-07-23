@@ -78,6 +78,7 @@
 #include "clGetTextFromUserDialog.h"
 #include "fileutils.h"
 #include "macromanager.h"
+#include <wx/dcscreen.h>
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -2185,4 +2186,28 @@ void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
 bool clIsVaidProjectName(const wxString& name)
 {
     return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos;
+}
+
+double clGetContentScaleFactor()
+{
+    // Currently we don't support per-monitor DPI, so it's useless to construct
+    // a DC associated with this window, just use the global value.
+    //
+    // We also use just the vertical component of the DPI because it's the one
+    // that counts most and, in practice, it's equal to the horizontal one
+    // anyhow.
+    //
+    // Finally, we consider 96 DPI to be the standard value, this is correct
+    // at least for MSW, but could conceivably need adjustment for the other
+    // platforms.
+    return wxScreenDC().GetPPI().y / 96.;
+}
+
+int clGetScaledSize(int size)
+{
+    if(clGetContentScaleFactor() >= 1.5) {
+        return size * 2;
+    } else {
+        return size;
+    }
 }

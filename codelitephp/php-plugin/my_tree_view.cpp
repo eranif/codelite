@@ -1,11 +1,13 @@
 #include "my_tree_view.h"
 #include "tree_item_data.h"
+#include <wx/settings.h>
 
 IMPLEMENT_DYNAMIC_CLASS(MyTreeView, wxTreeCtrl)
 
 MyTreeView::MyTreeView(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
     Create(parent, id, pos, size, style);
+    SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 }
 
 MyTreeView::~MyTreeView()

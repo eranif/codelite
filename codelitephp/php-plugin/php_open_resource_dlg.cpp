@@ -84,7 +84,7 @@ void OpenResourceDlg::DoInitialize()
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
 
     CLASS_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/class"));
-    FILE_IMG_ID = bmpLoader->LoadBitmap(wxT("mime/16/php"));
+    FILE_IMG_ID = bmpLoader->LoadBitmap(wxT("mime-php"));
     FUNC_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
     CONST_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
     DEFINE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/macro"));

@@ -66,12 +66,12 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_tagImgMap[wxT("function_protected")] = bmpLoader->LoadBitmap(wxT("cc/16/function_protected"));
     m_tagImgMap[wxT("enum")] = bmpLoader->LoadBitmap(wxT("cc/16/enum"));
     m_tagImgMap[wxT("enumerator")] = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
-    m_tagImgMap[wxT("cpp")] = bmpLoader->LoadBitmap(wxT("mime/16/cpp"));
-    m_tagImgMap[wxT("h")] = bmpLoader->LoadBitmap(wxT("mime/16/h"));
-    m_tagImgMap[wxT("text")] = bmpLoader->LoadBitmap(wxT("mime/16/text"));
-    m_tagImgMap[wxT("c")] = bmpLoader->LoadBitmap(wxT("mime/16/c"));
-    m_tagImgMap[wxT("wxfb")] = bmpLoader->LoadBitmap(wxT("mime/16/wxfb"));
-    m_tagImgMap[wxT("wxcp")] = bmpLoader->LoadBitmap(wxT("mime/16/wxcp"));
+    m_tagImgMap[wxT("cpp")] = bmpLoader->LoadBitmap(wxT("mime-cpp"));
+    m_tagImgMap[wxT("h")] = bmpLoader->LoadBitmap(wxT("mime-h"));
+    m_tagImgMap[wxT("text")] = bmpLoader->LoadBitmap(wxT("mime-txt"));
+    m_tagImgMap[wxT("c")] = bmpLoader->LoadBitmap(wxT("mime-c"));
+    m_tagImgMap[wxT("wxfb")] = bmpLoader->LoadBitmap(wxT("blocks"));
+    m_tagImgMap[wxT("wxcp")] = bmpLoader->LoadBitmap(wxT("blocks"));
 
     m_timer = new wxTimer(this, XRCID("OR_TIMER"));
 

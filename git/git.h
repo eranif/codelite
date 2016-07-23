@@ -156,7 +156,6 @@ class GitPlugin : public IPlugin
     wxWindow* m_topWindow;
     clToolBar* m_pluginToolbar;
     wxMenu* m_pluginMenu;
-    GitImages m_images;
     IntMap_t m_treeImageMapping;
     int m_baseImageCount;
     GitConsole* m_console;

@@ -35,10 +35,35 @@
 #include "clZipReader.h"
 #include <wx/dir.h>
 #include "file_logger.h"
+#include <wx/dcscreen.h>
 
 std::map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::map<wxString, wxString> BitmapLoader::m_manifest;
 BitmapLoader::BitmapMap_t BitmapLoader::m_userBitmaps;
+
+static double MSWGetContentScaleFactor()
+{
+    // Currently we don't support per-monitor DPI, so it's useless to construct
+    // a DC associated with this window, just use the global value.
+    //
+    // We also use just the vertical component of the DPI because it's the one
+    // that counts most and, in practice, it's equal to the horizontal one
+    // anyhow.
+    //
+    // Finally, we consider 96 DPI to be the standard value, this is correct
+    // at least for MSW, but could conceivably need adjustment for the other
+    // platforms.
+    return wxScreenDC().GetPPI().y / 96.;
+}
+
+static int MSWGetScaledSize(int size)
+{
+    if(MSWGetContentScaleFactor() >= 1.5) {
+        return size * 2;
+    } else {
+        return size;
+    }
+}
 
 BitmapLoader::~BitmapLoader() {}
 
@@ -177,8 +202,11 @@ int BitmapLoader::GetMimeImageId(const wxString& filename)
 
 wxImageList* BitmapLoader::MakeStandardMimeImageList()
 {
+#ifdef __WXMSW__
+    wxImageList* imageList = new wxImageList(MSWGetScaledSize(16), MSWGetScaledSize(16));
+#else
     wxImageList* imageList = new wxImageList(16, 16);
-
+#endif
     m_fileIndexMap.clear();
     AddImage(imageList->Add(LoadBitmap(wxT("mime/16/exe"))), FileExtManager::TypeExe);
     AddImage(imageList->Add(LoadBitmap(wxT("mime/16/html"))), FileExtManager::TypeHtml);
@@ -323,6 +351,15 @@ void BitmapLoader::initialize()
         }
     }
 
+// Windows scaling:
+// 96 DPI = 100% scaling
+// 120 DPI = 125% scaling
+// 144 DPI = 150% scaling
+// 192 DPI = 200% scaling
+#ifdef __WXMSW__
+    double scaleFactor = MSWGetContentScaleFactor();
+#endif
+
     wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps.zip");
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
@@ -347,6 +384,7 @@ void BitmapLoader::initialize()
         // Load all the files into wxBitmap
         wxArrayString files;
         wxDir::GetAllFiles(tmpFolder.GetPath(), &files, "*.png");
+
         for(size_t i = 0; i < files.size(); ++i) {
             wxFileName pngFile(files.Item(i));
             if(pngFile.GetFullName().Contains("@2x")) {
@@ -355,10 +393,30 @@ void BitmapLoader::initialize()
                 continue;
             }
             wxBitmap bmp;
+#ifdef __WXMSW__
+            wxFileName fileToLoad = pngFile;
+            wxString imageName = pngFile.GetName();
+            if(scaleFactor >= 1.5) {
+                // Try to find a @2x file
+                wxFileName hiresPngFile = pngFile;
+                wxString filename = hiresPngFile.GetName();
+                filename << "@2x";
+                hiresPngFile.SetName(filename);
+                if(hiresPngFile.Exists()) {
+                    fileToLoad = hiresPngFile;
+                }
+            }
+
+            if(bmp.LoadFile(fileToLoad.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+                CL_DEBUG("Adding new image: %s", imageName);
+                m_toolbarsBitmaps.insert(std::make_pair(imageName, bmp));
+            }
+#else
             if(bmp.LoadFile(pngFile.GetFullPath(), wxBITMAP_TYPE_PNG)) {
                 CL_DEBUG("Adding new image: %s", pngFile.GetName());
                 m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
             }
+#endif
         }
     }
 }

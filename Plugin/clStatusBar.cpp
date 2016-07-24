@@ -73,7 +73,6 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 
-    int size = clGetScaledSize(30);
     wxCustomStatusBarField::Ptr_t sourceControl(new wxCustomStatusBarBitmapField(this, clGetScaledSize(30)));
     AddField(sourceControl);
 

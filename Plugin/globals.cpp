@@ -2200,7 +2200,7 @@ double clGetContentScaleFactor()
     // Finally, we consider 96 DPI to be the standard value, this is correct
     // at least for MSW, but could conceivably need adjustment for the other
     // platforms.
-    return wxScreenDC().GetPPI().y / 96.;
+    return (wxScreenDC().GetPPI().y / 96.);
 }
 
 int clGetScaledSize(int size)

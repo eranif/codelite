@@ -178,7 +178,7 @@ int BitmapLoader::GetMimeImageId(const wxString& filename)
 
 wxImageList* BitmapLoader::MakeStandardMimeImageList()
 {
-#ifdef __WXMSW__
+#if defined(__WXMSW__)||defined(__WXGTK__)
     wxImageList* imageList = new wxImageList(clGetScaledSize(16), clGetScaledSize(16));
 #else
     wxImageList* imageList = new wxImageList(16, 16);
@@ -332,7 +332,7 @@ void BitmapLoader::initialize()
 // 120 DPI = 125% scaling
 // 144 DPI = 150% scaling
 // 192 DPI = 200% scaling
-#ifdef __WXMSW__
+#if defined(__WXMSW__)||defined(__WXGTK__)
     double scaleFactor = clGetContentScaleFactor();
 #endif
 
@@ -369,7 +369,7 @@ void BitmapLoader::initialize()
                 continue;
             }
             wxBitmap bmp;
-#ifdef __WXMSW__
+#if defined(__WXMSW__)||defined(__WXGTK__)
             wxFileName fileToLoad = pngFile;
             wxString imageName = pngFile.GetName();
             if(scaleFactor >= 1.5) {

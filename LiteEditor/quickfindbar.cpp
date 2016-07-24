@@ -98,24 +98,24 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Add the 'close' button
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
 
-    m_closeButton = m_bar->AddButton("", bmps->LoadBitmap("x-close"), wxSize(24, -1));
+    m_closeButton = m_bar->AddButton("", bmps->LoadBitmap("x-close"), wxSize(clGetScaledSize(24), -1));
     m_closeButton->SetToolTip(_("Close"));
     m_closeButton->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
     m_closeButton->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnHideBar, this);
 
     // Add the 'case sensitive' button
-    m_caseSensitive = m_bar->AddButton("", bmps->LoadBitmap("case-sensitive"), wxSize(24, -1));
+    m_caseSensitive = m_bar->AddButton("", bmps->LoadBitmap("case-sensitive"), wxSize(clGetScaledSize(24), -1));
     m_caseSensitive->SetTogglable(true);
     m_caseSensitive->SetToolTip(_("Case sensitive match"));
     m_caseSensitive->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
 
     // Add the 'whole word' button
-    m_wholeWord = m_bar->AddButton("", bmps->LoadBitmap("whole-word"), wxSize(24, -1));
+    m_wholeWord = m_bar->AddButton("", bmps->LoadBitmap("whole-word"), wxSize(clGetScaledSize(24), -1));
     m_wholeWord->SetTogglable(true);
     m_wholeWord->SetToolTip(_("Match a whole word"));
     m_wholeWord->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
 
-    m_regexOrWildButton = m_bar->AddButton("", bmps->LoadBitmap("regular-expression"), wxSize(24, -1));
+    m_regexOrWildButton = m_bar->AddButton("", bmps->LoadBitmap("regular-expression"), wxSize(clGetScaledSize(24), -1));
     m_regexOrWildButton->SetTogglable(true);
     m_regexOrWildButton->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnRegex, this);
     m_regexOrWildButton->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnRegexUI, this);
@@ -123,7 +123,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_regexOrWildButton->SetToolTip(_("Use regular expression"));
 
     // Marker button
-    m_highlightOccurrences = m_bar->AddButton("", bmps->LoadBitmap("marker"), wxSize(24, -1));
+    m_highlightOccurrences = m_bar->AddButton("", bmps->LoadBitmap("marker"), wxSize(clGetScaledSize(24), -1));
     m_highlightOccurrences->SetTogglable(true);
     m_highlightOccurrences->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnHighlightMatches, this);
     m_highlightOccurrences->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnHighlightMatchesUI, this);
@@ -146,8 +146,14 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_bar->AddControl(m_findWhat, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
     m_findWhat->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnFindKeyDown, this);
 
+    // We use a memory DC to get the actual size of the button
+    wxMemoryDC memDC;
+    wxBitmap bmp(1, 1);
+    memDC.SelectObject(bmp);
+    memDC.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+
     // Find
-    btnNext = new wxButton(m_bar, wxID_ANY, _("Find"), wxDefaultPosition, wxSize(100, -1));
+    btnNext = new wxButton(m_bar, wxID_ANY, _("Find"));
     m_bar->AddControl(btnNext, 0);
     btnNext->SetDefault();
 
@@ -157,7 +163,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     btnNext->SetToolTip(_("Find Next"));
 
     // Find Prev
-    btnPrev = new wxButton(m_bar, wxID_ANY, _("Find Prev"), wxDefaultPosition, wxSize(100, -1));
+    btnPrev = new wxButton(m_bar, wxID_ANY, _("Find Prev"));
     m_bar->AddControl(btnPrev, 0);
     btnPrev->Bind(wxEVT_BUTTON, &QuickFindBar::OnButtonPrev, this);
     btnPrev->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
@@ -165,7 +171,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     btnPrev->SetToolTip(_("Find Previous"));
 
     // Find All
-    btnAll = new wxButton(m_bar, wxID_ANY, _("Find All"), wxDefaultPosition, wxSize(100, -1));
+    btnAll = new wxButton(m_bar, wxID_ANY, _("Find All"));
     m_bar->AddControl(btnAll, 0);
     btnAll->Bind(wxEVT_BUTTON, &QuickFindBar::OnFindAll, this);
     btnAll->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonPrevUI, this);
@@ -179,8 +185,10 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_bar->AddSpacer(0);
     m_bar->AddSpacer(0);
     m_bar->AddSpacer(0);
+
     // Replace in selection
-    m_replaceInSelectionButton = m_bar->AddButton("", bmps->LoadBitmap("text_selection"), wxSize(24, -1));
+    m_replaceInSelectionButton =
+        m_bar->AddButton("", bmps->LoadBitmap("text_selection"), wxSize(clGetScaledSize(24), -1));
     m_replaceInSelectionButton->SetTogglable(true);
     m_replaceInSelectionButton->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnReplaceInSelection, this);
     m_replaceInSelectionButton->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnReplaceInSelectionUI, this);
@@ -197,11 +205,11 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_replaceWith->SetHint(_("Type any replacement string..."));
     m_bar->AddControl(m_replaceWith, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
 
-    m_buttonReplace = new wxButton(m_bar, wxID_ANY, _("Replace"), wxDefaultPosition, wxSize(100, -1));
+    m_buttonReplace = new wxButton(m_bar, wxID_ANY, _("Replace"));
     m_bar->AddControl(m_buttonReplace, 0);
     m_buttonReplace->SetToolTip(_("Replace the current selection"));
 
-    m_buttonReplaceAll = new wxButton(m_bar, wxID_ANY, _("Replace All"), wxDefaultPosition, wxSize(100, -1));
+    m_buttonReplaceAll = new wxButton(m_bar, wxID_ANY, _("Replace All"));
     m_bar->AddControl(m_buttonReplaceAll, 0);
 
     // Results count
@@ -235,21 +243,12 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     wxTheApp->Connect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Connect(XRCID("find_previous"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QuickFindBar::OnFindPrevious),
-                      NULL,
-                      this);
-    wxTheApp->Connect(XRCID("find_next_at_caret"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
-                      NULL,
-                      this);
-    wxTheApp->Connect(XRCID("find_previous_at_caret"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
-                      NULL,
-                      this);
+    wxTheApp->Connect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
+    wxTheApp->Connect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
+    wxTheApp->Connect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
 
     EventNotifier::Get()->Connect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
@@ -428,7 +427,7 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 void QuickFindBar::OnUpdateUI(wxUpdateUIEvent& e)
 {
     e.Enable(ManagerST::Get()->IsShutdownInProgress() == false && m_sci && m_sci->GetLength() > 0 &&
-             !m_findWhat->GetValue().IsEmpty());
+        !m_findWhat->GetValue().IsEmpty());
 }
 
 void QuickFindBar::OnEnter(wxCommandEvent& e)
@@ -534,9 +533,8 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
 
     // Ensure that the selection matches our search pattern
     size_t searchFlags = DoGetSearchFlags();
-    if(m_sci->FindText(
-           selStart, selEnd, searchFlags & wxSTC_FIND_REGEXP ? findWhatSciVersion : findwhat, searchFlags) ==
-       wxNOT_FOUND) {
+    if(m_sci->FindText(selStart, selEnd, searchFlags & wxSTC_FIND_REGEXP ? findWhatSciVersion : findwhat,
+           searchFlags) == wxNOT_FOUND) {
         // we got a selection, but it does not match our search
         return;
     }
@@ -1010,21 +1008,12 @@ QuickFindBar::~QuickFindBar()
 
     wxTheApp->Disconnect(
         XRCID("find_next"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_previous"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QuickFindBar::OnFindPrevious),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(XRCID("find_next_at_caret"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QuickFindBar::OnFindNextCaret),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(XRCID("find_previous_at_caret"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret),
-                         NULL,
-                         this);
+    wxTheApp->Disconnect(XRCID("find_previous"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPrevious), NULL, this);
+    wxTheApp->Disconnect(XRCID("find_next_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
+    wxTheApp->Disconnect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
 }

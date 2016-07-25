@@ -14,28 +14,6 @@ include( "${wxWidgets_USE_FILE}" )
 # Include paths
 include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
 
-## On UNIX we require GTK
-if (UNIX AND NOT APPLE)
-    if (GTK_VERSION EQUAL 3)
-        set(OLD_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}) # Cache the current value
-        set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-        find_package(GTK3)
-        set(CMAKE_MODULE_PATH ${OLD_CMAKE_MODULE_PATH}) # Reset, else the official path isn't used again :/
-        if (GTK3_FOUND)
-            include_directories(${GTK3_INCLUDE_DIRS})
-        else (GTK3_FOUND)
-            message(FATAL_ERROR "Could not locate GTK.")
-        endif (GTK3_FOUND)
-    else()
-        find_package(GTK2)
-        if (GTK2_FOUND)
-            include_directories(${GTK2_INCLUDE_DIRS})
-        else (GTK2_FOUND)
-            message(FATAL_ERROR "Could not locate GTK.")
-        endif (GTK2_FOUND)
-    endif()
-
-endif (UNIX AND NOT APPLE)
 if (NOT MINGW)
 add_definitions(-fPIC)
 endif (NOT MINGW)

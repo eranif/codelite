@@ -6,7 +6,7 @@
 
 class WXDLLIMPEXP_CL clBitmap : public wxBitmap
 {
-protected:
+public:
     static bool ShouldLoadHiResImages();
     
 public:

@@ -66,12 +66,12 @@ set( WITH_SFTP 1 )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # Avoid very multiple warnings spam due to deprecated wx methods
 
 if ( UNIX )
-	# Configure CCache if available
-	find_program(CCACHE_FOUND ccache)
-	if (CCACHE_FOUND)
-		set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-		set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-	endif(CCACHE_FOUND)
+    # Configure CCache if available
+    find_program(CCACHE_FOUND ccache)
+    if (CCACHE_FOUND)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+    endif(CCACHE_FOUND)
 endif(UNIX)
 
 if ( UNIX )
@@ -209,6 +209,29 @@ if ( WITH_SFTP )
     endif ( UNIX AND NOT APPLE OR MINGW )
     message("-- LIBSSH_LIB is set to ${LIBSSH_LIB}")
 endif ( WITH_SFTP )
+
+## On UNIX we require GTK
+if (UNIX AND NOT APPLE)
+    if (GTK_VERSION EQUAL 3)
+        set(OLD_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}) # Cache the current value
+        set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+        find_package(GTK3)
+        set(CMAKE_MODULE_PATH ${OLD_CMAKE_MODULE_PATH}) # Reset, else the official path isn't used again :/
+        if (GTK3_FOUND)
+            include_directories(${GTK3_INCLUDE_DIRS})
+        else (GTK3_FOUND)
+            message(FATAL_ERROR "Could not locate GTK.")
+        endif (GTK3_FOUND)
+    else()
+        find_package(GTK2)
+        if (GTK2_FOUND)
+            include_directories(${GTK2_INCLUDE_DIRS})
+        else (GTK2_FOUND)
+            message(FATAL_ERROR "Could not locate GTK.")
+        endif (GTK2_FOUND)
+    endif()
+
+endif (UNIX AND NOT APPLE)
 
 ## enable clang support?
 if(ENABLE_CLANG MATCHES 0)

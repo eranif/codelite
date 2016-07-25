@@ -93,6 +93,8 @@
     <File Name="clFontHelper.h"/>
     <File Name="clFontHelper.cpp"/>
     <File Name="macros.h"/>
+    <File Name="clBitmap.h"/>
+    <File Name="clBitmap.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

@@ -36,6 +36,7 @@
 #include <wx/dir.h>
 #include "file_logger.h"
 #include <wx/dcscreen.h>
+#include "clBitmap.h"
 
 std::map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::map<wxString, wxString> BitmapLoader::m_manifest;
@@ -125,7 +126,7 @@ wxBitmap BitmapLoader::doLoadBitmap(const wxString& filepath)
 {
     wxString bitmapFile;
     if(ExtractFileFromZip(m_zipPath.GetFullPath(), filepath, clStandardPaths::Get().GetUserDataDir(), bitmapFile)) {
-        wxBitmap bmp;
+        clBitmap bmp;
         if(bmp.LoadFile(bitmapFile, wxBITMAP_TYPE_PNG)) {
             wxRemoveFile(bitmapFile);
             return bmp;
@@ -178,7 +179,7 @@ int BitmapLoader::GetMimeImageId(const wxString& filename)
 
 wxImageList* BitmapLoader::MakeStandardMimeImageList()
 {
-#if defined(__WXMSW__)||defined(__WXGTK__)
+#if defined(__WXMSW__) || defined(__WXGTK__)
     wxImageList* imageList = new wxImageList(clGetScaledSize(16), clGetScaledSize(16));
 #else
     wxImageList* imageList = new wxImageList(16, 16);
@@ -327,15 +328,6 @@ void BitmapLoader::initialize()
         }
     }
 
-// Windows scaling:
-// 96 DPI = 100% scaling
-// 120 DPI = 125% scaling
-// 144 DPI = 150% scaling
-// 192 DPI = 200% scaling
-#if defined(__WXMSW__)||defined(__WXGTK__)
-    double scaleFactor = clGetContentScaleFactor();
-#endif
-
     wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps.zip");
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
@@ -368,31 +360,11 @@ void BitmapLoader::initialize()
                 // this is done by wxWidgets
                 continue;
             }
-            wxBitmap bmp;
-#if defined(__WXMSW__)||defined(__WXGTK__)
-            wxFileName fileToLoad = pngFile;
-            wxString imageName = pngFile.GetName();
-            if(scaleFactor >= 1.5) {
-                // Try to find a @2x file
-                wxFileName hiresPngFile = pngFile;
-                wxString filename = hiresPngFile.GetName();
-                filename << "@2x";
-                hiresPngFile.SetName(filename);
-                if(hiresPngFile.Exists()) {
-                    fileToLoad = hiresPngFile;
-                }
-            }
-
-            if(bmp.LoadFile(fileToLoad.GetFullPath(), wxBITMAP_TYPE_PNG)) {
-                CL_DEBUG("Adding new image: %s", imageName);
-                m_toolbarsBitmaps.insert(std::make_pair(imageName, bmp));
-            }
-#else
+            clBitmap bmp;
             if(bmp.LoadFile(pngFile.GetFullPath(), wxBITMAP_TYPE_PNG)) {
                 CL_DEBUG("Adding new image: %s", pngFile.GetName());
                 m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
             }
-#endif
         }
     }
 }

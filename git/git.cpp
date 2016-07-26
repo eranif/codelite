@@ -1921,7 +1921,7 @@ void GitPlugin::DoCreateTreeImages()
     // modified / OK
     // the index will be: m_baseImageCount + img-base + 1 => OK
     //                    m_baseImageCount + img-base + 2 => Modified
-
+#if 0
     if(m_treeImageMapping.empty()) {
         wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
 
@@ -1941,6 +1941,7 @@ void GitPlugin::DoCreateTreeImages()
             m_treeImageMapping.insert(std::make_pair(i, i));
         }
     }
+#endif
 }
 
 void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const

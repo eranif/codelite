@@ -227,7 +227,8 @@ void SubversionView::OnTreeMenu(wxTreeEvent& event)
 void SubversionView::CreatGUIControls()
 {
     MSWSetNativeTheme(m_treeCtrl);
-
+    m_treeCtrl->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    
     // Assign the image list
     BitmapLoader* bmpLoader = m_plugin->GetManager()->GetStdIcons();
 
@@ -235,15 +236,15 @@ void SubversionView::CreatGUIControls()
     wxImageList* imageList = bmpLoader->MakeStandardMimeImageList();
 
     // Append the subversion unique icons
-    FOLDER_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("mime/16/folder")));
-    MODIFIED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/modified")));
-    NEW_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/new")));
-    DELETED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/deleted")));
-    CONFLICT_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/conflict")));
-    UNVERSIONED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/unversioned")));
-    PROJECT_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("workspace/16/project")));
-    WORKSPACE_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("workspace/16/workspace")));
-    LOCKED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("subversion/16/locked")));
+    FOLDER_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("folder-yellow")));
+    MODIFIED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("error")));
+    NEW_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("plus")));
+    DELETED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("minus")));
+    CONFLICT_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("warning")));
+    UNVERSIONED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("info")));
+    PROJECT_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("project")));
+    WORKSPACE_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("php-workspace")));
+    LOCKED_IMG_ID = imageList->Add(bmpLoader->LoadBitmap(wxT("lock")));
 
     m_treeCtrl->AssignImageList(imageList);
 

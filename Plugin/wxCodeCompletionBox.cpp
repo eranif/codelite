@@ -168,8 +168,6 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
                           rect.GetHeight());
 
     dc.SetFont(m_ccFont);
-
-    wxSize textSize = dc.GetTextExtent("Tp");
     int singleLineHeight = GetSingleLineHeight();
 
     m_canvas->PrepareDC(dc);

@@ -42,6 +42,7 @@
 #include "globals.h"
 #include "clCommandProcessor.h"
 #include <wx/wupdlock.h>
+#include "clBitmap.h"
 
 #define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)                       \
@@ -174,7 +175,10 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
         lexCpp->Apply(m_stcLog);
     }
     m_bitmapLoader = clGetManager()->GetStdIcons();
+
     GitImages m_images;
+    m_images.SetBitmapResolution(clBitmap::ShouldLoadHiResImages() ? "@2x" : "");
+
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
     m_modifiedBmp = m_bitmapLoader->LoadBitmap("warning");
     m_untrackedBmp = m_bitmapLoader->LoadBitmap("info");
@@ -194,6 +198,18 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
 
     m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
+
+    // Toolbar
+    // clGetManager()->Get
+    BitmapLoader* bmps = clGetManager()->GetStdIcons();
+
+    m_auibar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), bmps->LoadBitmap("clear"), _("Clear Git Log"));
+    m_auibar->AddTool(XRCID("git_stop_process"), _("Terminate Git Process"), bmps->LoadBitmap("execute_stop"),
+        _("Terminate Git Process"));
+    m_auibar->AddSeparator();
+    m_auibar->AddTool(XRCID("git_console_add_file"), _("Add File"), bmps->LoadBitmap("plus"), _("Add File"));
+    m_auibar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), bmps->LoadBitmap("undo"), _("Reset File"));
+
     m_auibar->AddTool(
         XRCID("git_reset_repository"), _("Reset"), m_images.Bitmap("gitResetRepo"), _("Reset repository"));
     m_auibar->AddSeparator();
@@ -208,11 +224,20 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_auibar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
     m_auibar->AddTool(
         XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"), _("Browse commit history"));
+
 #ifdef __WXMSW__
     m_auibar->AddSeparator();
     m_auibar->AddTool(XRCID("git_msysgit"), _("Open MSYS Git"), m_images.Bitmap("msysgit"),
         _("Open MSYS Git at the current file location"));
 #endif
+
+    // Bind the events
+    Bind(wxEVT_MENU, &GitConsole::OnClearGitLog, this, XRCID("git_clear_log"));
+    Bind(wxEVT_UPDATE_UI, &GitConsole::OnClearGitLogUI, this, XRCID("git_clear_log"));
+    Bind(wxEVT_MENU, &GitConsole::OnAddFile, this, XRCID("git_console_add_file"));
+    Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
+    Bind(wxEVT_MENU, &GitConsole::OnStopGitProcess, this, XRCID("git_stop_process"));
+    Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
 
     wxAuiToolBarItemArray append_items;
     PopulateAuiToolbarOverflow(append_items, m_images);

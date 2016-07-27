@@ -214,7 +214,6 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
 void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
 {
     wxBitmap bmpFiF = m_mgr->GetStdIcons()->LoadBitmap("find_in_files");
-    PHPImages images;
     wxTreeItemId item = event.GetItem();
     if(item.IsOk()) {
         // Ensure that the item is selected

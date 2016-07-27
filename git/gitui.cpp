@@ -25,13 +25,13 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git@2x"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -42,12 +42,12 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_treebook230 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_treebook230 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
     m_treebook230->SetName(wxT("m_treebook230"));
     
-    mainSizer->Add(m_treebook230, 1, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_treebook230, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel232 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel232 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook230, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_treebook230->AddPage(m_panel232, _("Tools"), true, wxNOT_FOUND);
     
     wxBoxSizer* boxSizer240 = new wxBoxSizer(wxVERTICAL);
@@ -58,36 +58,36 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer11->AddGrowableCol(1);
     
-    boxSizer240->Add(fgSizer11, 0, wxALL|wxEXPAND, 5);
+    boxSizer240->Add(fgSizer11, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText42 = new wxStaticText(m_panel232, wxID_ANY, _("Git executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText42 = new wxStaticText(m_panel232, wxID_ANY, _("Git executable:"), wxDefaultPosition, wxDLG_UNIT(m_panel232, wxSize(-1, -1)), 0);
     
-    fgSizer11->Add(m_staticText42, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer11->Add(m_staticText42, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_pathGIT = new wxFilePickerCtrl(m_panel232, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_pathGIT = new wxFilePickerCtrl(m_panel232, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panel232, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     
-    fgSizer11->Add(m_pathGIT, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer11->Add(m_pathGIT, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText54 = new wxStaticText(m_panel232, wxID_ANY, _("Gitk executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText54 = new wxStaticText(m_panel232, wxID_ANY, _("Gitk executable:"), wxDefaultPosition, wxDLG_UNIT(m_panel232, wxSize(-1, -1)), 0);
     
-    fgSizer11->Add(m_staticText54, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer11->Add(m_staticText54, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_pathGITK = new wxFilePickerCtrl(m_panel232, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_pathGITK = new wxFilePickerCtrl(m_panel232, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panel232, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     
-    fgSizer11->Add(m_pathGITK, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer11->Add(m_pathGITK, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText355 = new wxStaticText(m_panel232, wxID_ANY, _("Git Shell command:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText355 = new wxStaticText(m_panel232, wxID_ANY, _("Git Shell command:"), wxDefaultPosition, wxDLG_UNIT(m_panel232, wxSize(-1,-1)), 0);
     
-    fgSizer11->Add(m_staticText355, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer11->Add(m_staticText355, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlGitShell = new wxTextCtrl(m_panel232, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlGitShell = new wxTextCtrl(m_panel232, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel232, wxSize(-1,-1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlGitShell->SetHint(wxT(""));
     #endif
     
-    fgSizer11->Add(m_textCtrlGitShell, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer11->Add(m_textCtrlGitShell, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_panel234 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel234 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook230, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_treebook230->AddPage(m_panel234, _("Configuration"), false, wxNOT_FOUND);
     
     wxBoxSizer* boxSizer242 = new wxBoxSizer(wxVERTICAL);
@@ -98,89 +98,89 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     flexGridSizer244->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer244->AddGrowableCol(1);
     
-    boxSizer242->Add(flexGridSizer244, 1, wxALL|wxEXPAND, 5);
+    boxSizer242->Add(flexGridSizer244, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText246 = new wxStaticText(m_panel234, wxID_ANY, _("Global user name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText246 = new wxStaticText(m_panel234, wxID_ANY, _("Global user name:"), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1,-1)), 0);
     
-    flexGridSizer244->Add(m_staticText246, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer244->Add(m_staticText246, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlGlobalName = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlGlobalName = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1,-1)), 0);
     m_textCtrlGlobalName->SetToolTip(_("Set the global user name (this name will tell git who you are)"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlGlobalName->SetHint(wxT(""));
     #endif
     
-    flexGridSizer244->Add(m_textCtrlGlobalName, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer244->Add(m_textCtrlGlobalName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText250 = new wxStaticText(m_panel234, wxID_ANY, _("Global email:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText250 = new wxStaticText(m_panel234, wxID_ANY, _("Global email:"), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1,-1)), 0);
     
-    flexGridSizer244->Add(m_staticText250, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer244->Add(m_staticText250, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlGlobalEmail = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlGlobalEmail = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1,-1)), 0);
     m_textCtrlGlobalEmail->SetToolTip(_("Set the current repository email"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlGlobalEmail->SetHint(wxT(""));
     #endif
     
-    flexGridSizer244->Add(m_textCtrlGlobalEmail, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer244->Add(m_textCtrlGlobalEmail, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText254 = new wxStaticText(m_panel234, wxID_ANY, _("Local repository user name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText254 = new wxStaticText(m_panel234, wxID_ANY, _("Local repository user name:"), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1,-1)), 0);
     
-    flexGridSizer244->Add(m_staticText254, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer244->Add(m_staticText254, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlLocalName = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlLocalName = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1,-1)), 0);
     m_textCtrlLocalName->SetToolTip(_("Set the current repository user name (this name will tell git who you are).\nIf this field letf empty, the global one is used"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlLocalName->SetHint(wxT(""));
     #endif
     
-    flexGridSizer244->Add(m_textCtrlLocalName, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer244->Add(m_textCtrlLocalName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText258 = new wxStaticText(m_panel234, wxID_ANY, _("Local repository email:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText258 = new wxStaticText(m_panel234, wxID_ANY, _("Local repository email:"), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1,-1)), 0);
     
-    flexGridSizer244->Add(m_staticText258, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer244->Add(m_staticText258, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlLocalEmail = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlLocalEmail = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1,-1)), 0);
     m_textCtrlLocalEmail->SetToolTip(_("Set the current repository email\nIf this field letf empty, the global one is used"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlLocalEmail->SetHint(wxT(""));
     #endif
     
-    flexGridSizer244->Add(m_textCtrlLocalEmail, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer244->Add(m_textCtrlLocalEmail, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel236 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel236 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook230, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_treebook230->AddPage(m_panel236, _("Misc"), false, wxNOT_FOUND);
     
     wxBoxSizer* boxSizer766 = new wxBoxSizer(wxVERTICAL);
     m_panel236->SetSizer(boxSizer766);
     
-    m_checkBoxTerminal = new wxCheckBox(m_panel236, wxID_ANY, _("Show Terminal"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxTerminal = new wxCheckBox(m_panel236, wxID_ANY, _("Show Terminal"), wxDefaultPosition, wxDLG_UNIT(m_panel236, wxSize(-1,-1)), 0);
     m_checkBoxTerminal->SetValue(false);
     m_checkBoxTerminal->SetToolTip(_("Mainly useful for Windows when the password\nprompt is not accessible via the UI"));
     
-    boxSizer766->Add(m_checkBoxTerminal, 0, wxALL, 5);
+    boxSizer766->Add(m_checkBoxTerminal, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxLog = new wxCheckBox(m_panel236, wxID_ANY, _("Verbose Logging"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxLog = new wxCheckBox(m_panel236, wxID_ANY, _("Verbose Logging"), wxDefaultPosition, wxDLG_UNIT(m_panel236, wxSize(-1,-1)), 0);
     m_checkBoxLog->SetValue(false);
     m_checkBoxLog->SetToolTip(_("Tick this option to enable a verbose logging of git"));
     
-    boxSizer766->Add(m_checkBoxLog, 0, wxALL, 5);
+    boxSizer766->Add(m_checkBoxLog, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxTrackTree = new wxCheckBox(m_panel236, wxID_ANY, _("Colour modified items in the workspace view"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxTrackTree = new wxCheckBox(m_panel236, wxID_ANY, _("Colour modified items in the workspace view"), wxDefaultPosition, wxDLG_UNIT(m_panel236, wxSize(-1,-1)), 0);
     m_checkBoxTrackTree->SetValue(false);
     m_checkBoxTrackTree->SetToolTip(_("Colour modified items in the workspace view tree"));
     
-    boxSizer766->Add(m_checkBoxTrackTree, 0, wxALL, 5);
+    boxSizer766->Add(m_checkBoxTrackTree, 0, wxALL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer284 = new wxStdDialogButtonSizer();
     
-    mainSizer->Add(m_stdBtnSizer284, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    mainSizer->Add(m_stdBtnSizer284, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer284->AddButton(m_buttonOK);
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer284->AddButton(m_buttonCancel);
     m_stdBtnSizer284->Realize();
     
@@ -244,13 +244,13 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git@2x"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -261,54 +261,54 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_HORZ_TEXT);
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_HORZ_TEXT);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    bSizer4->Add(m_auibar, 0, wxALL|wxEXPAND, 5);
+    bSizer4->Add(m_auibar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_auibar->AddTool(ID_TOGGLE_CHECKALL, _("Toggle Files"), wxXmlResource::Get()->LoadBitmap(wxT("16-ok")), wxNullBitmap, wxITEM_NORMAL, _("Toggle Check All"), _("Toggle Check All"), NULL);
+    m_auibar->AddTool(ID_TOGGLE_CHECKALL, _("Toggle Files"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Toggle Check All"), _("Toggle Check All"), NULL);
     
-    m_auibar->AddTool(ID_GIT_COMMIT_HISTORY, _("History"), wxXmlResource::Get()->LoadBitmap(wxT("16-history")), wxNullBitmap, wxITEM_NORMAL, _("Show Commit History"), _("Show Commit History"), NULL);
+    m_auibar->AddTool(ID_GIT_COMMIT_HISTORY, _("History"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Show Commit History"), _("Show Commit History"), NULL);
     
     m_auibar->AddStretchSpacer(1);
     
-    m_auibar->AddTool(wxID_CLEAR, _("Clear History"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear History"), _("Clear History"), NULL);
+    m_auibar->AddTool(wxID_CLEAR, _("Clear History"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Clear History"), _("Clear History"), NULL);
     m_auibar->Realize();
     
-    m_splitterMain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitterMain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitterMain->SetSashGravity(1);
     m_splitterMain->SetMinimumPaneSize(150);
     
-    bSizer4->Add(m_splitterMain, 1, wxALL|wxEXPAND, 5);
+    bSizer4->Add(m_splitterMain, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel3 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panel3 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterMain, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
     m_panel3->SetSizer(bSizer12);
     
-    m_splitterInner = new wxSplitterWindow(m_panel3, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitterInner = new wxSplitterWindow(m_panel3, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitterInner->SetSashGravity(0);
     m_splitterInner->SetMinimumPaneSize(100);
     
-    bSizer12->Add(m_splitterInner, 1, wxEXPAND, 5);
+    bSizer12->Add(m_splitterInner, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel1 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panel1 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterInner, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer11);
     
     wxArrayString m_listBoxArr;
-    m_listBox = new wxCheckListBox(m_panel1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxArr, wxLB_SINGLE);
+    m_listBox = new wxCheckListBox(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1,-1)), m_listBoxArr, wxLB_SINGLE);
     
-    bSizer11->Add(m_listBox, 1, wxALL|wxEXPAND, 5);
+    bSizer11->Add(m_listBox, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel2 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panel2 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterInner, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitterInner->SplitVertically(m_panel1, m_panel2, 0);
     
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer9);
     
-    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_stcDiff->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcDiff->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -344,19 +344,19 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_stcDiff->SetKeyWords(3, wxT(""));
     m_stcDiff->SetKeyWords(4, wxT(""));
     
-    bSizer9->Add(m_stcDiff, 1, wxALL|wxEXPAND, 5);
+    bSizer9->Add(m_stcDiff, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel4 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panel4 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterMain, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitterMain->SplitHorizontally(m_panel3, m_panel4, 0);
     
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer13);
     
-    m_staticText8 = new wxStaticText(m_panel4, wxID_ANY, _("Commit message:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText8 = new wxStaticText(m_panel4, wxID_ANY, _("Commit message:"), wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
     
-    bSizer13->Add(m_staticText8, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_LEFT, 5);
+    bSizer13->Add(m_staticText8, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_LEFT, WXC_FROM_DIP(5));
     
-    m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1,-1)), wxBORDER_THEME);
     m_stcCommitMessage->SetToolTip(_("Type your commit message here"));
     m_stcCommitMessage->SetFocus();
     // Configure the fold margin
@@ -394,23 +394,23 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_stcCommitMessage->SetKeyWords(3, wxT(""));
     m_stcCommitMessage->SetKeyWords(4, wxT(""));
     
-    bSizer13->Add(m_stcCommitMessage, 1, wxALL|wxEXPAND, 5);
+    bSizer13->Add(m_stcCommitMessage, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxAmend = new wxCheckBox(m_panel4, wxID_ANY, _("Amend the previous commit"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxAmend = new wxCheckBox(m_panel4, wxID_ANY, _("Amend the previous commit"), wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1,-1)), 0);
     m_checkBoxAmend->SetValue(false);
     m_checkBoxAmend->SetToolTip(_("The 'git commit --amend' command is a convenient way to fix up the most recent commit. It lets you combine staged changes with the previous commit instead of committing it as an entirely new snapshot. It can also be used to simply edit the previous commit message without changing its snapshot"));
     
-    bSizer13->Add(m_checkBoxAmend, 0, wxALL, 5);
+    bSizer13->Add(m_checkBoxAmend, 0, wxALL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer278 = new wxStdDialogButtonSizer();
     
-    bSizer4->Add(m_stdBtnSizer278, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer4->Add(m_stdBtnSizer278, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer278->AddButton(m_buttonOK);
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer278->AddButton(m_buttonCancel);
     m_stdBtnSizer278->Realize();
     
@@ -466,13 +466,13 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git@2x"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -483,95 +483,95 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
     
-    m_splitter174 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitter174 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter174->SetSashGravity(0);
     m_splitter174->SetMinimumPaneSize(150);
     
-    bSizer17->Add(m_splitter174, 1, wxALL|wxEXPAND, 5);
+    bSizer17->Add(m_splitter174, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPage178 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage178 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter174, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer205 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage178->SetSizer(boxSizer205);
     
     wxBoxSizer* boxSizer343 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer205->Add(boxSizer343, 0, wxEXPAND, 5);
+    boxSizer205->Add(boxSizer343, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_searchCtrlFilter = new wxSearchCtrl(m_splitterPage178, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_searchCtrlFilter = new wxSearchCtrl(m_splitterPage178, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
     m_searchCtrlFilter->SetToolTip(_("Search the commit list\nThe search is performed on all columns"));
     m_searchCtrlFilter->SetFocus();
     m_searchCtrlFilter->ShowSearchButton(true);
     m_searchCtrlFilter->ShowCancelButton(false);
     
-    boxSizer343->Add(m_searchCtrlFilter, 1, wxALL|wxALIGN_CENTER_VERTICAL, 2);
+    boxSizer343->Add(m_searchCtrlFilter, 1, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
     
-    m_button347 = new wxButton(m_splitterPage178, wxID_BACKWARD, _("Previous"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button347 = new wxButton(m_splitterPage178, wxID_BACKWARD, _("Previous"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), 0);
     m_button347->SetToolTip(_("Show previous 100 commits"));
     
-    boxSizer343->Add(m_button347, 0, wxALL, 2);
+    boxSizer343->Add(m_button347, 0, wxALL, WXC_FROM_DIP(2));
     
-    m_buttonNext = new wxButton(m_splitterPage178, wxID_FORWARD, _("Next"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonNext = new wxButton(m_splitterPage178, wxID_FORWARD, _("Next"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), 0);
     m_buttonNext->SetToolTip(_("Fetch the next 100 commits"));
     
-    boxSizer343->Add(m_buttonNext, 0, wxALL|wxALIGN_CENTER_VERTICAL, 2);
+    boxSizer343->Add(m_buttonNext, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
     
-    m_dvListCtrlCommitList = new wxDataViewListCtrl(m_splitterPage178, wxID_ANY, wxDefaultPosition, wxSize(500,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlCommitList = new wxDataViewListCtrl(m_splitterPage178, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(500,-1)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer205->Add(m_dvListCtrlCommitList, 1, wxALL|wxEXPAND, 2);
+    boxSizer205->Add(m_dvListCtrlCommitList, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     m_dvListCtrlCommitList->AppendTextColumn(_("Commit"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
     m_dvListCtrlCommitList->AppendTextColumn(_("Author"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dvListCtrlCommitList->AppendTextColumn(_("Date"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dvListCtrlCommitList->AppendTextColumn(_("Subject"), wxDATAVIEW_CELL_INERT, 600, wxALIGN_LEFT);
-    m_splitterPage182 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage182 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter174, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter174->SplitHorizontally(m_splitterPage178, m_splitterPage182, 150);
     
     wxBoxSizer* boxSizer184 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage182->SetSizer(boxSizer184);
     
-    m_splitter186 = new wxSplitterWindow(m_splitterPage182, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitter186 = new wxSplitterWindow(m_splitterPage182, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage182, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter186->SetSashGravity(1);
     m_splitter186->SetMinimumPaneSize(100);
     
-    boxSizer184->Add(m_splitter186, 1, wxEXPAND, 2);
+    boxSizer184->Add(m_splitter186, 1, wxEXPAND, WXC_FROM_DIP(2));
     
-    m_splitterPage190 = new wxPanel(m_splitter186, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage190 = new wxPanel(m_splitter186, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter186, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* bSizer18 = new wxBoxSizer(wxHORIZONTAL);
     m_splitterPage190->SetSizer(bSizer18);
     
-    m_splitter196 = new wxSplitterWindow(m_splitterPage190, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitter196 = new wxSplitterWindow(m_splitterPage190, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage190, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter196->SetSashGravity(0);
     m_splitter196->SetMinimumPaneSize(100);
     
-    bSizer18->Add(m_splitter196, 1, wxEXPAND, 2);
+    bSizer18->Add(m_splitter196, 1, wxEXPAND, WXC_FROM_DIP(2));
     
-    m_splitterPage200 = new wxPanel(m_splitter196, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage200 = new wxPanel(m_splitter196, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter196, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer208 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage200->SetSizer(boxSizer208);
     
-    m_staticText210 = new wxStaticText(m_splitterPage200, wxID_ANY, _("Modified files:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText210 = new wxStaticText(m_splitterPage200, wxID_ANY, _("Modified files:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage200, wxSize(-1,-1)), 0);
     
-    boxSizer208->Add(m_staticText210, 0, wxALL, 5);
+    boxSizer208->Add(m_staticText210, 0, wxALL, WXC_FROM_DIP(5));
     
     wxArrayString m_fileListBoxArr;
-    m_fileListBox = new wxListBox(m_splitterPage200, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListBoxArr, 0);
+    m_fileListBox = new wxListBox(m_splitterPage200, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage200, wxSize(-1, -1)), m_fileListBoxArr, 0);
     
-    boxSizer208->Add(m_fileListBox, 1, wxALL|wxEXPAND, 2);
+    boxSizer208->Add(m_fileListBox, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_splitterPage204 = new wxPanel(m_splitter196, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage204 = new wxPanel(m_splitter196, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter196, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter196->SplitVertically(m_splitterPage200, m_splitterPage204, 0);
     
     wxBoxSizer* boxSizer215 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage204->SetSizer(boxSizer215);
     
-    m_staticText217 = new wxStaticText(m_splitterPage204, wxID_ANY, _("Diff:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText217 = new wxStaticText(m_splitterPage204, wxID_ANY, _("Diff:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage204, wxSize(-1,-1)), 0);
     
-    boxSizer215->Add(m_staticText217, 0, wxALL, 5);
+    boxSizer215->Add(m_staticText217, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_stcDiff = new wxStyledTextCtrl(m_splitterPage204, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_stcDiff = new wxStyledTextCtrl(m_splitterPage204, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage204, wxSize(-1,-1)), wxBORDER_THEME);
     // Configure the fold margin
     m_stcDiff->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcDiff->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -607,19 +607,19 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_stcDiff->SetKeyWords(3, wxT(""));
     m_stcDiff->SetKeyWords(4, wxT(""));
     
-    boxSizer215->Add(m_stcDiff, 1, wxALL|wxEXPAND, 2);
+    boxSizer215->Add(m_stcDiff, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_splitterPage194 = new wxPanel(m_splitter186, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage194 = new wxPanel(m_splitter186, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter186, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter186->SplitHorizontally(m_splitterPage190, m_splitterPage194, 100);
     
     wxBoxSizer* boxSizer218 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage194->SetSizer(boxSizer218);
     
-    m_staticText220 = new wxStaticText(m_splitterPage194, wxID_ANY, _("Commit message:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText220 = new wxStaticText(m_splitterPage194, wxID_ANY, _("Commit message:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage194, wxSize(-1,-1)), 0);
     
-    boxSizer218->Add(m_staticText220, 0, wxALL, 5);
+    boxSizer218->Add(m_staticText220, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_stcCommitMessage = new wxStyledTextCtrl(m_splitterPage194, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_stcCommitMessage = new wxStyledTextCtrl(m_splitterPage194, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage194, wxSize(-1,-1)), wxBORDER_THEME);
     // Configure the fold margin
     m_stcCommitMessage->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcCommitMessage->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -655,7 +655,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_stcCommitMessage->SetKeyWords(3, wxT(""));
     m_stcCommitMessage->SetKeyWords(4, wxT(""));
     
-    boxSizer218->Add(m_stcCommitMessage, 1, wxALL|wxEXPAND, 2);
+    boxSizer218->Add(m_stcCommitMessage, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     SetName(wxT("GitCommitListDlgBase"));
     SetSize(-1,-1);
@@ -713,13 +713,13 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git@2x"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -730,44 +730,44 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
     
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
     m_splitter->SetSashGravity(0.5);
     m_splitter->SetMinimumPaneSize(10);
     
-    bSizer17->Add(m_splitter, 1, wxALL|wxEXPAND, 5);
+    bSizer17->Add(m_splitter, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPageFiles = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPageFiles = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer62 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageFiles->SetSizer(boxSizer62);
     
-    m_staticText68 = new wxStaticText(m_splitterPageFiles, wxID_ANY, _("Modified files:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText68 = new wxStaticText(m_splitterPageFiles, wxID_ANY, _("Modified files:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFiles, wxSize(-1,-1)), 0);
     
-    boxSizer62->Add(m_staticText68, 0, wxALL, 5);
+    boxSizer62->Add(m_staticText68, 0, wxALL, WXC_FROM_DIP(5));
     
     wxArrayString m_fileListBoxArr;
-    m_fileListBox = new wxListBox(m_splitterPageFiles, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListBoxArr, 0);
+    m_fileListBox = new wxListBox(m_splitterPageFiles, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageFiles, wxSize(-1, -1)), m_fileListBoxArr, 0);
     
-    boxSizer62->Add(m_fileListBox, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    boxSizer62->Add(m_fileListBox, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPageDiff = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPageDiff = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageFiles, m_splitterPageDiff, 0);
     
     wxBoxSizer* boxSizer64 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageDiff->SetSizer(boxSizer64);
     
-    m_staticText66 = new wxStaticText(m_splitterPageDiff, wxID_ANY, _("Diff:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText66 = new wxStaticText(m_splitterPageDiff, wxID_ANY, _("Diff:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageDiff, wxSize(-1,-1)), 0);
     
-    boxSizer64->Add(m_staticText66, 0, wxALL, 5);
+    boxSizer64->Add(m_staticText66, 0, wxALL, WXC_FROM_DIP(5));
     
     m_editor = new GitCommitEditor( m_splitterPageDiff );
-    boxSizer64->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    boxSizer64->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
     m_sdbSizer1 = new wxStdDialogButtonSizer();
     
-    bSizer17->Add(m_sdbSizer1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer17->Add(m_sdbSizer1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button145 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button145 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button145->SetDefault();
     m_sdbSizer1->AddButton(m_button145);
     m_sdbSizer1->Realize();
@@ -812,13 +812,13 @@ gitCloneDlgBaseClass::gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id, cons
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git@2x"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -834,40 +834,40 @@ gitCloneDlgBaseClass::gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id, cons
     flexGridSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer21->AddGrowableCol(1);
     
-    boxSizer17->Add(flexGridSizer21, 1, wxALL|wxEXPAND, 5);
+    boxSizer17->Add(flexGridSizer21, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText22 = new wxStaticText(this, wxID_ANY, _("Clone URL:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText22 = new wxStaticText(this, wxID_ANY, _("Clone URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer21->Add(m_staticText22, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer21->Add(m_staticText22, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrlURL->SetToolTip(_("git URL to clone"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlURL->SetHint(wxT(""));
     #endif
     
-    flexGridSizer21->Add(m_textCtrlURL, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer21->Add(m_textCtrlURL, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText24 = new wxStaticText(this, wxID_ANY, _("Target Directory:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText24 = new wxStaticText(this, wxID_ANY, _("Target Directory:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer21->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer21->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_dirPickerTargetDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL|wxDIRP_DIR_MUST_EXIST);
+    m_dirPickerTargetDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL|wxDIRP_DIR_MUST_EXIST);
     m_dirPickerTargetDir->SetToolTip(_("Clone the sources into this target directory"));
     
-    flexGridSizer21->Add(m_dirPickerTargetDir, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer21->Add(m_dirPickerTargetDir, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    flexGridSizer21->Add(0, 0, 0, wxALL, 5);
+    flexGridSizer21->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer294 = new wxStdDialogButtonSizer();
     
-    boxSizer17->Add(m_stdBtnSizer294, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer17->Add(m_stdBtnSizer294, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOk->SetDefault();
     m_stdBtnSizer294->AddButton(m_buttonOk);
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer294->AddButton(m_buttonCancel);
     m_stdBtnSizer294->Realize();
     
@@ -911,13 +911,13 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git@2x"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -928,7 +928,7 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer124);
     
-    m_editor = new GitCommitEditor(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_editor = new GitCommitEditor(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_editor->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_editor->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -964,17 +964,17 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_editor->SetKeyWords(3, wxT(""));
     m_editor->SetKeyWords(4, wxT(""));
     
-    boxSizer124->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    boxSizer124->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer306 = new wxStdDialogButtonSizer();
     
-    boxSizer124->Add(m_stdBtnSizer306, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer124->Add(m_stdBtnSizer306, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button308 = new wxButton(this, wxID_CLOSE, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button308 = new wxButton(this, wxID_CLOSE, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button308->SetDefault();
     m_stdBtnSizer306->AddButton(m_button308);
     
-    m_button310 = new wxButton(this, wxID_SAVE, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button310 = new wxButton(this, wxID_SAVE, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer306->AddButton(m_button310);
     m_stdBtnSizer306->Realize();
     
@@ -1022,225 +1022,525 @@ GitImages::GitImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitCommitLocal"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitCommitLocal"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitCommitLocal"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitCommitLocal@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitCommitLocal@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitArrowUp"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitArrowUp"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitArrowUp"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitArrowUp@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitArrowUp@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSwitchLocalBranch"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitSwitchLocalBranch"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitSwitchLocalBranch"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSwitchLocalBranch@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitSwitchLocalBranch@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSwitchRemoteBranch"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitSwitchRemoteBranch"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitSwitchRemoteBranch"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSwitchRemoteBranch@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitSwitchRemoteBranch@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitNewBranch"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitNewBranch"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitNewBranch"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitNewBranch@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitNewBranch@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitDiffs"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitDiffs"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitDiffs"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitDiffs@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitDiffs@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitCommitedFiles"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitCommitedFiles"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitCommitedFiles"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitCommitedFiles@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitCommitedFiles@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitApply"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitApply"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitApply"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitApply@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitApply@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitModifiedFiles"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitModifiedFiles"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitModifiedFiles"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitModifiedFiles@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitModifiedFiles@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPull"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitPull"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitPull"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPull@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitPull@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPush"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitPush"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitPush"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPush@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitPush@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitReset"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitReset"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitReset"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitReset@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitReset@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitResetRepo"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitResetRepo"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitResetRepo"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitResetRepo@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitResetRepo@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitTrash"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitTrash"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitTrash"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitTrash@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitTrash@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitRefresh"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitRefresh"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitRefresh"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitRefresh@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitRefresh@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStart"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitStart"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitStart"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStart@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitStart@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitFileAdd"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitFileAdd"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitFileAdd"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitFileAdd@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitFileAdd@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitClone"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitClone"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitClone"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitClone@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitClone@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("git"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("git"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("git"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("git@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("git@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPath"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitPath"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitPath"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPath@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitPath@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSettings"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitSettings"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitSettings"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSettings@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitSettings@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitRebase"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitRebase"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitRebase"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitRebase@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitRebase@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("msysgit"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("msysgit"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("msysgit"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("msysgit@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("msysgit@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStash"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitStash"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitStash"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStash@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitStash@2x"), bmp ) );
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStashPop"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("gitStashPop"), bmp ) );
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitStashPop"), bmp ) );
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStashPop@2x"));
+        if(bmp.IsOk()) {
+            icn.CopyFromBitmap( bmp );
+            this->Add( icn );
+            m_bitmaps.insert( std::make_pair(wxT("gitStashPop@2x"), bmp ) );
+        }
     }
     
 }
@@ -1261,13 +1561,13 @@ GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, cons
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
     }
     {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git@2x"));
+        wxBitmap iconBmp = wxNullBitmap;
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -1283,38 +1583,38 @@ GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer162->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer162->AddGrowableCol(1);
     
-    boxSizer154->Add(flexGridSizer162, 1, wxALL|wxEXPAND, 5);
+    boxSizer154->Add(flexGridSizer162, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText164 = new wxStaticText(this, wxID_ANY, _("Select patch file"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText164 = new wxStaticText(this, wxID_ANY, _("Select patch file"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer162->Add(m_staticText164, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer162->Add(m_staticText164, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerPatchFile = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Patch files (*.diff;*.patch)|*.diff;*.patch|All Files (*)|*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerPatchFile = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Patch files (*.diff;*.patch)|*.diff;*.patch|All Files (*)|*"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
     m_filePickerPatchFile->SetToolTip(_("Patch file to apply"));
     m_filePickerPatchFile->SetFocus();
     
-    flexGridSizer162->Add(m_filePickerPatchFile, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer162->Add(m_filePickerPatchFile, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText168 = new wxStaticText(this, wxID_ANY, _("git apply additional flags to use:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText168 = new wxStaticText(this, wxID_ANY, _("git apply additional flags to use:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer162->Add(m_staticText168, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer162->Add(m_staticText168, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlExtraFlags = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlExtraFlags = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrlExtraFlags->SetToolTip(_("By default, codelite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\nSet here an extra flags to use with this command, e.g.:\n\n--reverse\n\nSee the git manual for more options"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlExtraFlags->SetHint(wxT(""));
     #endif
     
-    flexGridSizer162->Add(m_textCtrlExtraFlags, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer162->Add(m_textCtrlExtraFlags, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer300 = new wxStdDialogButtonSizer();
     
-    boxSizer154->Add(m_stdBtnSizer300, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer154->Add(m_stdBtnSizer300, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer300->AddButton(m_buttonCancel);
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer300->AddButton(m_buttonOK);
     m_stdBtnSizer300->Realize();
@@ -1355,55 +1655,44 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
-    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,7), wxGA_SMOOTH|wxGA_HORIZONTAL);
+    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,7)), wxGA_SMOOTH|wxGA_HORIZONTAL);
     m_gauge->Hide();
     m_gauge->SetValue(10);
     
-    boxSizer36->Add(m_gauge, 0, wxEXPAND, 2);
+    boxSizer36->Add(m_gauge, 0, wxEXPAND, WXC_FROM_DIP(2));
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer36->Add(m_auibar, 0, wxLEFT|wxRIGHT|wxEXPAND, 0);
+    boxSizer36->Add(m_auibar, 0, wxLEFT|wxRIGHT|wxEXPAND, WXC_FROM_DIP(0));
     
-    m_auibar->AddTool(XRCID("git_clear_log"), _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
-    
-    m_auibar->AddTool(wxID_ABORT, _("m_toolKill"), wxXmlResource::Get()->LoadBitmap(wxT("16-stop")), wxNullBitmap, wxITEM_NORMAL, _("Terminate git process"), _("Terminate git process"), NULL);
-    
-    m_auibar->AddSeparator();
-    
-    m_auibar->AddTool(XRCID("git_console_add_file"), _("Add file"), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL, _("Add file"), _("Add file"), NULL);
-    
-    m_auibar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), wxXmlResource::Get()->LoadBitmap(wxT("16-undo")), wxNullBitmap, wxITEM_NORMAL, _("Reset File"), _("Reset File"), NULL);
-    m_auibar->Realize();
-    
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter->SetSashGravity(0);
     m_splitter->SetMinimumPaneSize(10);
     
-    boxSizer36->Add(m_splitter, 1, wxEXPAND, 5);
+    boxSizer36->Add(m_splitter, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPageTreeView = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPageTreeView = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTreeView->SetSizer(boxSizer94);
     
-    m_dvFiles = new wxDataViewCtrl(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE|wxBORDER_THEME);
+    m_dvFiles = new wxDataViewCtrl(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE|wxBORDER_THEME);
     
     m_dvFilesModel = new DataViewFilesModel;
     m_dvFilesModel->SetColCount( 1 );
     m_dvFiles->AssociateModel(m_dvFilesModel.get() );
     
-    boxSizer94->Add(m_dvFiles, 1, wxALL|wxEXPAND, 2);
+    boxSizer94->Add(m_dvFiles, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     m_dvFiles->AppendIconTextColumn(_("File View"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
-    m_splitterPage96 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage96 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageTreeView, m_splitterPage96, 250);
     
     wxBoxSizer* boxSizer92 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage96->SetSizer(boxSizer92);
     
-    m_stcLog = new wxStyledTextCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_stcLog = new wxStyledTextCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage96, wxSize(-1,-1)), wxBORDER_THEME);
     // Configure the fold margin
     m_stcLog->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcLog->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -1440,7 +1729,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_stcLog->SetKeyWords(3, wxT(""));
     m_stcLog->SetKeyWords(4, wxT(""));
     
-    boxSizer92->Add(m_stcLog, 1, wxALL|wxEXPAND, 2);
+    boxSizer92->Add(m_stcLog, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     SetName(wxT("GitConsoleBase"));
     SetSize(500,300);
@@ -1448,14 +1737,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
          GetSizer()->Fit(this);
     }
     // Connect events
-    this->Connect(XRCID("git_clear_log"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
-    this->Connect(XRCID("git_clear_log"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsoleBase::OnClearGitLog), NULL, this);
-    this->Connect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
-    this->Connect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
-    this->Connect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
-    this->Connect(XRCID("git_console_add_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
-    this->Connect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
-    this->Connect(XRCID("git_console_reset_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     m_dvFiles->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
     m_dvFiles->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
     m_stcLog->Connect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(GitConsoleBase::OnStclogStcChange), NULL, this);
@@ -1464,14 +1745,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
 GitConsoleBase::~GitConsoleBase()
 {
-    this->Disconnect(XRCID("git_clear_log"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
-    this->Disconnect(XRCID("git_clear_log"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsoleBase::OnClearGitLog), NULL, this);
-    this->Disconnect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
-    this->Disconnect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
-    this->Disconnect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
-    this->Disconnect(XRCID("git_console_add_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
-    this->Disconnect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
-    this->Disconnect(XRCID("git_console_reset_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
     m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
     m_stcLog->Disconnect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(GitConsoleBase::OnStclogStcChange), NULL, this);

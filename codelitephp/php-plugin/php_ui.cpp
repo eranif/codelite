@@ -1250,6 +1250,8 @@ LocalsViewBase::~LocalsViewBase()
 
 PHPImages::PHPImages()
     : wxImageList(16, 16, true)
+    , m_imagesWidth(16)
+    , m_imagesHeight(16)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
@@ -1263,9 +1265,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowActive"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpArrowActive"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpArrowActive"), bmp));
         }
     }
     {
@@ -1273,9 +1277,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowActive@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpArrowActive@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpArrowActive@2x"), bmp));
         }
     }
     
@@ -1284,9 +1290,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpConsole"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpConsole"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpConsole"), bmp));
         }
     }
     {
@@ -1294,9 +1302,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpConsole@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpConsole@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpConsole@2x"), bmp));
         }
     }
     
@@ -1305,9 +1315,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpDevil"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpDevil"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpDevil"), bmp));
         }
     }
     {
@@ -1315,9 +1327,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpDevil@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpDevil@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpDevil@2x"), bmp));
         }
     }
     
@@ -1326,9 +1340,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpElephant"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpElephant"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpElephant"), bmp));
         }
     }
     {
@@ -1336,9 +1352,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpElephant@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpElephant@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpElephant@2x"), bmp));
         }
     }
     
@@ -1347,9 +1365,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpFile"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpPhpFile"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpPhpFile"), bmp));
         }
     }
     
@@ -1358,9 +1378,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSync"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpSync"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpSync"), bmp));
         }
     }
     {
@@ -1368,9 +1390,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSync@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpSync@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpSync@2x"), bmp));
         }
     }
     
@@ -1379,9 +1403,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpWorkspace"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpPhpWorkspace"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpPhpWorkspace"), bmp));
         }
     }
     {
@@ -1389,9 +1415,11 @@ PHPImages::PHPImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpWorkspace@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("m_bmpPhpWorkspace@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpPhpWorkspace@2x"), bmp));
         }
     }
     

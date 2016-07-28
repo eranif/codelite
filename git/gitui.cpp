@@ -1010,6 +1010,8 @@ GitFileDiffDlgBase::~GitFileDiffDlgBase()
 
 GitImages::GitImages()
     : wxImageList(16, 16, true)
+    , m_imagesWidth(16)
+    , m_imagesHeight(16)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
@@ -1023,9 +1025,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitCommitLocal"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitCommitLocal"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitCommitLocal"), bmp));
         }
     }
     {
@@ -1033,9 +1037,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitCommitLocal@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitCommitLocal@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitCommitLocal@2x"), bmp));
         }
     }
     
@@ -1044,9 +1050,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitArrowUp"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitArrowUp"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitArrowUp"), bmp));
         }
     }
     {
@@ -1054,9 +1062,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitArrowUp@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitArrowUp@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitArrowUp@2x"), bmp));
         }
     }
     
@@ -1065,9 +1075,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSwitchLocalBranch"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitSwitchLocalBranch"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitSwitchLocalBranch"), bmp));
         }
     }
     {
@@ -1075,9 +1087,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSwitchLocalBranch@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitSwitchLocalBranch@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitSwitchLocalBranch@2x"), bmp));
         }
     }
     
@@ -1086,9 +1100,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSwitchRemoteBranch"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitSwitchRemoteBranch"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitSwitchRemoteBranch"), bmp));
         }
     }
     {
@@ -1096,9 +1112,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSwitchRemoteBranch@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitSwitchRemoteBranch@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitSwitchRemoteBranch@2x"), bmp));
         }
     }
     
@@ -1107,9 +1125,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitNewBranch"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitNewBranch"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitNewBranch"), bmp));
         }
     }
     {
@@ -1117,9 +1137,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitNewBranch@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitNewBranch@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitNewBranch@2x"), bmp));
         }
     }
     
@@ -1128,9 +1150,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitDiffs"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitDiffs"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitDiffs"), bmp));
         }
     }
     {
@@ -1138,9 +1162,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitDiffs@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitDiffs@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitDiffs@2x"), bmp));
         }
     }
     
@@ -1149,9 +1175,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitCommitedFiles"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitCommitedFiles"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitCommitedFiles"), bmp));
         }
     }
     {
@@ -1159,9 +1187,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitCommitedFiles@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitCommitedFiles@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitCommitedFiles@2x"), bmp));
         }
     }
     
@@ -1170,9 +1200,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitApply"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitApply"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitApply"), bmp));
         }
     }
     {
@@ -1180,9 +1212,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitApply@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitApply@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitApply@2x"), bmp));
         }
     }
     
@@ -1191,9 +1225,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitModifiedFiles"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitModifiedFiles"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitModifiedFiles"), bmp));
         }
     }
     {
@@ -1201,9 +1237,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitModifiedFiles@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitModifiedFiles@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitModifiedFiles@2x"), bmp));
         }
     }
     
@@ -1212,9 +1250,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPull"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitPull"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitPull"), bmp));
         }
     }
     {
@@ -1222,9 +1262,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPull@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitPull@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitPull@2x"), bmp));
         }
     }
     
@@ -1233,9 +1275,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPush"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitPush"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitPush"), bmp));
         }
     }
     {
@@ -1243,9 +1287,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPush@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitPush@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitPush@2x"), bmp));
         }
     }
     
@@ -1254,9 +1300,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitReset"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitReset"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitReset"), bmp));
         }
     }
     {
@@ -1264,9 +1312,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitReset@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitReset@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitReset@2x"), bmp));
         }
     }
     
@@ -1275,9 +1325,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitResetRepo"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitResetRepo"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitResetRepo"), bmp));
         }
     }
     {
@@ -1285,9 +1337,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitResetRepo@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitResetRepo@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitResetRepo@2x"), bmp));
         }
     }
     
@@ -1296,9 +1350,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitTrash"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitTrash"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitTrash"), bmp));
         }
     }
     {
@@ -1306,9 +1362,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitTrash@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitTrash@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitTrash@2x"), bmp));
         }
     }
     
@@ -1317,9 +1375,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitRefresh"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitRefresh"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitRefresh"), bmp));
         }
     }
     {
@@ -1327,9 +1387,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitRefresh@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitRefresh@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitRefresh@2x"), bmp));
         }
     }
     
@@ -1338,9 +1400,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStart"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitStart"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitStart"), bmp));
         }
     }
     {
@@ -1348,9 +1412,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStart@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitStart@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitStart@2x"), bmp));
         }
     }
     
@@ -1359,9 +1425,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitFileAdd"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitFileAdd"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitFileAdd"), bmp));
         }
     }
     {
@@ -1369,9 +1437,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitFileAdd@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitFileAdd@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitFileAdd@2x"), bmp));
         }
     }
     
@@ -1380,9 +1450,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitClone"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitClone"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitClone"), bmp));
         }
     }
     {
@@ -1390,9 +1462,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitClone@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitClone@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitClone@2x"), bmp));
         }
     }
     
@@ -1401,9 +1475,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("git"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("git"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("git"), bmp));
         }
     }
     {
@@ -1411,9 +1487,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("git@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("git@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("git@2x"), bmp));
         }
     }
     
@@ -1422,9 +1500,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPath"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitPath"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitPath"), bmp));
         }
     }
     {
@@ -1432,9 +1512,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitPath@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitPath@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitPath@2x"), bmp));
         }
     }
     
@@ -1443,9 +1525,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSettings"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitSettings"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitSettings"), bmp));
         }
     }
     {
@@ -1453,9 +1537,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSettings@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitSettings@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitSettings@2x"), bmp));
         }
     }
     
@@ -1464,9 +1550,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitRebase"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitRebase"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitRebase"), bmp));
         }
     }
     {
@@ -1474,9 +1562,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitRebase@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitRebase@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitRebase@2x"), bmp));
         }
     }
     
@@ -1485,9 +1575,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("msysgit"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("msysgit"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("msysgit"), bmp));
         }
     }
     {
@@ -1495,9 +1587,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("msysgit@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("msysgit@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("msysgit@2x"), bmp));
         }
     }
     
@@ -1506,9 +1600,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStash"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitStash"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitStash"), bmp));
         }
     }
     {
@@ -1516,9 +1612,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStash@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitStash@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitStash@2x"), bmp));
         }
     }
     
@@ -1527,9 +1625,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStashPop"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitStashPop"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitStashPop"), bmp));
         }
     }
     {
@@ -1537,9 +1637,11 @@ GitImages::GitImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitStashPop@2x"));
         if(bmp.IsOk()) {
-            icn.CopyFromBitmap( bmp );
-            this->Add( icn );
-            m_bitmaps.insert( std::make_pair(wxT("gitStashPop@2x"), bmp ) );
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitStashPop@2x"), bmp));
         }
     }
     

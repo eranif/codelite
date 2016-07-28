@@ -453,6 +453,8 @@ protected:
     std::map<wxString, wxBitmap> m_bitmaps;
     // The requested image resolution (can be one of @2x, @1.5x, @1.25x or an empty string (the default)
     wxString m_resolution;
+    int m_imagesWidth;
+    int m_imagesHeight;
 
 
 protected:

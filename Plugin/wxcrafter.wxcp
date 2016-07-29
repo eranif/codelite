@@ -3616,7 +3616,7 @@
               }, {
                "type": "string",
                "m_label": "Width:",
-               "m_value": "20"
+               "m_value": "30"
               }, {
                "type": "choice",
                "m_label": "Column Type",

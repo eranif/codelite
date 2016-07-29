@@ -8,12 +8,18 @@
 
 clBitmap::clBitmap() {}
 
+clBitmap::clBitmap(const wxImage& img, double scale)
+    : wxBitmap(img, -1, scale)
+{
+}
+
 clBitmap::~clBitmap() {}
 
 bool clBitmap::LoadFile(const wxString& name, wxBitmapType type)
 {
     wxFileName filename(name);
 #ifndef __WXOSX__
+    double scale = 1.0;
     if(ShouldLoadHiResImages()) {
         wxFileName hiResFileName = filename;
         wxString hiresName = hiResFileName.GetName();
@@ -21,10 +27,15 @@ bool clBitmap::LoadFile(const wxString& name, wxBitmapType type)
         hiResFileName.SetName(hiresName);
         if(hiResFileName.Exists()) {
             filename = hiResFileName;
+            scale = 2.0;
         }
     }
+    wxImage img(filename.GetFullPath(), type);
+    *this = clBitmap(img, scale);
+    return true;
+#else
+    return wxBitmap::LoadFile(name, type);
 #endif
-    return wxBitmap::LoadFile(filename.GetFullPath(), type);
 }
 
 bool clBitmap::ShouldLoadHiResImages()

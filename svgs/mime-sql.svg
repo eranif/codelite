@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="10"
-     inkscape:cx="8.610482"
-     inkscape:cy="24.936469"
+     inkscape:cx="-14.439518"
+     inkscape:cy="24.086469"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -97,16 +97,23 @@
          id="tspan6432" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.17777061px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#676767;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-       x="0.75657362"
-       y="1036.1915"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.83867073px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#3f3f3f;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="1.3825833"
+       y="1015.7365"
        id="text7103"
        sodipodi:linespacing="125%"
-       transform="scale(0.99550141,1.0045189)"><tspan
+       transform="scale(0.97584957,1.0247481)"><tspan
          sodipodi:role="line"
          id="tspan7105"
-         x="0.75657362"
-         y="1036.1915"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';fill:#676767;fill-opacity:1;">SQL</tspan></text>
+         x="1.3825833"
+         y="1015.7365"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';fill:#3f3f3f;fill-opacity:1">sql</tspan></text>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#3f3f3f;stroke-width:1.99999964;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
+       id="rect4137"
+       width="29.999977"
+       height="26.999977"
+       x="1.0000095"
+       y="1022.8622" />
   </g>
 </svg>

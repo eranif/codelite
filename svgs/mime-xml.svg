@@ -26,15 +26,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="10"
-     inkscape:cx="38.58494"
-     inkscape:cy="27.486469"
+     inkscape:cx="15.53494"
+     inkscape:cy="26.636469"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:showpageshadow="false"
      units="px"
      inkscape:window-width="2560"
-     inkscape:window-height="1331"
+     inkscape:window-height="1385"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -65,19 +65,36 @@
          sodipodi:role="line"
          id="tspan4690"
          x="8.3000002"
-         y="1029.3622"></tspan></text>
+         y="1029.3622" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.02745247px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#4358c1;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="1.0259175"
-       y="884.71942"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.50145721px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#1a30a8;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="2.0655422"
+       y="857.55377"
        id="text4692"
        sodipodi:linespacing="125%"
-       transform="scale(0.84695311,1.1807029)"><tspan
+       transform="scale(0.82078989,1.2183386)"><tspan
          sodipodi:role="line"
          id="tspan4694"
-         x="1.0259175"
-         y="884.71942"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.99999809px;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';fill:#4358c1;fill-opacity:1">&lt;/&gt;</tspan></text>
-  </g>
+         x="2.0655422"
+         y="857.55377"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.38217926px;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';fill:#1a30a8;fill-opacity:1;">&lt;/&gt;</tspan></text>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#1a30a8;stroke-width:1.99999964;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
+       id="rect4137"
+       width="29.999973"
+       height="26.999973"
+       x="1.0000114"
+       y="1022.8622" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot9386"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Arial;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px;-inkscape-font-specification:'Arial, Normal';font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr"><flowRegion
+         id="flowRegion9388"><rect
+           id="rect9390"
+           width="98.699997"
+           height="65.5"
+           x="-12.5"
+           y="-10.3" /></flowRegion><flowPara
+         id="flowPara9392"></flowPara></flowRoot>  </g>
 </svg>

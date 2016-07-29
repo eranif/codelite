@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="10"
-     inkscape:cx="-30.56506"
-     inkscape:cy="24.936469"
+     inkscape:cx="-36.799037"
+     inkscape:cy="24.086469"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -97,16 +97,23 @@
          id="tspan6432" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24.77862549px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#c7437a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="0.47203097"
-       y="876.30963"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:23.04460335px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#218cec;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="2.5490663"
+       y="814.98492"
        id="text7103"
        sodipodi:linespacing="125%"
-       transform="scale(0.83936396,1.1913783)"><tspan
+       transform="scale(0.78062475,1.2810252)"><tspan
          sodipodi:role="line"
          id="tspan7105"
-         x="0.47203097"
-         y="876.30963"
-         style="font-style:italic">css</tspan></text>
+         x="2.5490663"
+         y="814.98492"
+         style="font-style:italic;fill:#218cec;fill-opacity:1;">css</tspan></text>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#218cec;stroke-width:1.99999964;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
+       id="rect4137"
+       width="29.999996"
+       height="26.999996"
+       x="1"
+       y="1022.8622" />
   </g>
 </svg>

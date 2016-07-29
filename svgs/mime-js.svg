@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="10"
-     inkscape:cx="9.73494"
-     inkscape:cy="26.636469"
+     inkscape:cx="-13.31506"
+     inkscape:cy="25.786469"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -69,16 +69,16 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25.62670517px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#aa3c00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="0.31776512"
-       y="1323.4276"
+       x="0.95043522"
+       y="1323.4598"
        id="text6539"
        sodipodi:linespacing="125%"
-       transform="scale(1.2716377,0.78638753)"><tspan
+       transform="scale(1.2716377,0.78638751)"><tspan
          sodipodi:role="line"
          id="tspan6541"
-         x="0.31776512"
-         y="1323.4276"
-         style="font-size:21.96574593px;fill:#aa3c00;fill-opacity:1;font-style:italic">.js</tspan></text>
+         x="0.95043522"
+         y="1323.4598"
+         style="font-style:normal;font-size:21.96574593px;fill:#aa3c00;fill-opacity:1">.js</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot6543"
@@ -89,5 +89,12 @@
            height="35"
            x="-0.89999998"
            y="-7.4000001" /></flowRegion><flowPara
-         id="flowPara6549"></flowPara></flowRoot>  </g>
+         id="flowPara6549" /></flowRoot>    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#aa3c00;stroke-width:1.99999964;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
+       id="rect4137"
+       width="29.999985"
+       height="26.999985"
+       x="1.0000057"
+       y="1022.8622" />
+  </g>
 </svg>

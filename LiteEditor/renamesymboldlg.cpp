@@ -28,6 +28,7 @@
 #include "globals.h"
 #include "editor_config.h"
 #include "windowattrmanager.h"
+#include "macros.h"
 
 class RenameSymbolData : public wxClientData
 {
@@ -125,6 +126,8 @@ void RenameSymbol::DoSelectFile(const CppToken& token)
 
 void RenameSymbol::OnSelection(wxDataViewEvent& event)
 {
+    CHECK_ITEM_RET(event.GetItem());
+    
     RenameSymbolData* data = (RenameSymbolData*) m_dvListCtrl->GetItemData( event.GetItem() );
     if(data) {
         DoSelectFile( data->m_token );

@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="32"
-   height="32"
-   viewBox="0 0 31.999999 31.999998"
+   width="16"
+   height="16"
+   viewBox="0 0 15.999999 15.999999"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
@@ -25,19 +25,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="10"
-     inkscape:cx="-13.31506"
-     inkscape:cy="25.786469"
+     inkscape:zoom="5"
+     inkscape:cx="-32.192488"
+     inkscape:cy="24.936469"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-width="2560"
-     inkscape:window-height="1385"
+     inkscape:window-width="1920"
+     inkscape:window-height="1028"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     showborder="false" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -46,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -54,10 +55,10 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1020.3622)">
+     transform="translate(0,-1036.3622)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.49999851px;line-height:125%;font-family:Tahoma;-inkscape-font-specification:Tahoma;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="8.3000002"
        y="1029.3622"
        id="text4688"
@@ -66,35 +67,36 @@
          id="tspan4690"
          x="8.3000002"
          y="1029.3622" /></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25.62670517px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#aa3c00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="0.95043522"
-       y="1323.4598"
-       id="text6539"
-       sodipodi:linespacing="125%"
-       transform="scale(1.2716377,0.78638751)"><tspan
-         sodipodi:role="line"
-         id="tspan6541"
-         x="0.95043522"
-         y="1323.4598"
-         style="font-style:normal;font-size:21.96574593px;fill:#aa3c00;fill-opacity:1">.js</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot6543"
-       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Arial;font-style:normal;font-weight:normal;font-size:35px;line-height:125%;letter-spacing:0px;word-spacing:0px;-inkscape-font-specification:'Arial, Normal';font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr"><flowRegion
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.49999851px;line-height:125%;font-family:Tahoma;-inkscape-font-specification:Tahoma;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"><flowRegion
          id="flowRegion6545"><rect
            id="rect6547"
            width="41.099998"
            height="35"
            x="-0.89999998"
-           y="-7.4000001" /></flowRegion><flowPara
-         id="flowPara6549" /></flowRoot>    <rect
-       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#aa3c00;stroke-width:1.99999964;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
+           y="-7.4000001"
+           style="-inkscape-font-specification:Tahoma;font-family:Tahoma;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:12.49999851px;" /></flowRegion><flowPara
+         id="flowPara6549" /></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.99999809px;line-height:125%;font-family:Tahoma;-inkscape-font-specification:Tahoma;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#aa3c00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="2.2299483"
+       y="1312.1332"
+       id="text6539"
+       sodipodi:linespacing="125%"
+       transform="scale(1.2532524,0.79792386)"><tspan
+         sodipodi:role="line"
+         id="tspan6541"
+         x="2.2299483"
+         y="1312.1332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.49999809px;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#aa3c00;fill-opacity:1">js</tspan></text>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#aa3c00;stroke-width:0.99999988;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
        id="rect4137"
-       width="29.999985"
-       height="26.999985"
-       x="1.0000057"
-       y="1022.8622" />
+       width="14.999998"
+       height="12.999998"
+       x="0.5"
+       y="1037.8622" />
   </g>
 </svg>

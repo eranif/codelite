@@ -25,16 +25,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="10"
-     inkscape:cx="15.53494"
-     inkscape:cy="26.636469"
+     inkscape:zoom="0.5"
+     inkscape:cx="-7.51506"
+     inkscape:cy="25.786469"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-width="2560"
-     inkscape:window-height="1385"
+     inkscape:window-width="1920"
+     inkscape:window-height="1028"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
@@ -80,11 +80,11 @@
          y="857.55377"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.38217926px;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';fill:#1a30a8;fill-opacity:1;">&lt;/&gt;</tspan></text>
     <rect
-       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#1a30a8;stroke-width:1.99999964;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#1a30a8;stroke-width:0.99999988;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
        id="rect4137"
-       width="29.999973"
+       width="30.999996"
        height="26.999973"
-       x="1.0000114"
+       x="0.5"
        y="1022.8622" />
     <flowRoot
        xml:space="preserve"
@@ -96,5 +96,5 @@
            height="65.5"
            x="-12.5"
            y="-10.3" /></flowRegion><flowPara
-         id="flowPara9392"></flowPara></flowRoot>  </g>
+         id="flowPara9392" /></flowRoot>  </g>
 </svg>

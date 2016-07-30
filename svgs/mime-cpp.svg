@@ -10,9 +10,9 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="32"
-   height="32"
-   viewBox="0 0 31.999999 31.999998"
+   width="16"
+   height="16"
+   viewBox="0 0 15.999999 15.999999"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
@@ -35,10 +35,10 @@
        inkscape:collect="always"
        xlink:href="#linearGradient6564"
        id="linearGradient6570"
-       x1="19.623342"
-       y1="1043.0512"
+       x1="19.623343"
+       y1="1043.0511"
        x2="28.068832"
-       y2="1043.0512"
+       y2="1043.0511"
        gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
@@ -48,19 +48,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="10"
-     inkscape:cx="-53.61506"
-     inkscape:cy="24.086469"
+     inkscape:zoom="5"
+     inkscape:cx="22.3125"
+     inkscape:cy="10.064327"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-width="2560"
-     inkscape:window-height="1393"
+     inkscape:window-width="1920"
+     inkscape:window-height="1028"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     showborder="false" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -69,7 +70,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -77,7 +78,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1020.3622)">
+     transform="translate(0,-1036.3622)">
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -90,37 +91,37 @@
          x="8.3000002"
          y="1029.3622" /></text>
     <rect
-       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#007eb7;stroke-width:1.99999964;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#007eb7;stroke-width:0.99999988;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.58823529"
        id="rect4137"
-       width="29.999989"
-       height="26.999989"
-       x="1.0000038"
-       y="1022.8622" />
+       width="14.999998"
+       height="12.999998"
+       x="0.5"
+       y="1037.8622" />
     <text
-       transform="scale(1.1025041,0.90702611)"
+       transform="scale(1.0387064,0.96273596)"
        sodipodi:linespacing="125%"
        id="text4692"
-       y="1149.2953"
-       x="3.8676586"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:31.74591446px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#007eb7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       y="1088.8799"
+       x="1.3029132"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.72469139px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#007eb7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24.99999619px;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';fill:#007eb7;fill-opacity:1"
-         y="1149.2953"
-         x="3.8676586"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.99999809px;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#007eb7;fill-opacity:1"
+         y="1088.8799"
+         x="1.3029132"
          id="tspan4694"
          sodipodi:role="line">c</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.86814308px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a0aaae;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-       x="18.628729"
-       y="1049.3461"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.49655724px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#007eb7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="8.183279"
+       y="1035.3752"
        id="text4696-9-9-6-1"
        sodipodi:linespacing="125%"
-       transform="scale(1.0064543,0.9935871)"><tspan
+       transform="scale(0.98772808,1.0124244)"><tspan
          sodipodi:role="line"
          id="tspan4698-7-1-5-0"
-         x="18.628729"
-         y="1049.3461"
-         style="fill-opacity:1;fill:#a0aaae;">+</tspan></text>
+         x="8.183279"
+         y="1035.3752"
+         style="font-size:10.8698349px;fill:#007eb7;fill-opacity:1">+</tspan></text>
   </g>
 </svg>

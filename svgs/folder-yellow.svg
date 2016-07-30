@@ -2,7 +2,7 @@
 <!-- Generator: Adobe Illustrator 14.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 43363)  -->
 
 <svg
-   xmlns:ns="&amp;#38;#38;#38;#38;#38;ns_ai;"
+   xmlns:ns="&amp;#38;#38;#38;#38;#38;#38;#38;ns_ai;"
    xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
    xmlns:xmpG="http://ns.adobe.com/xap/1.0/g/"
    xmlns:stDim="http://ns.adobe.com/xap/1.0/sType/Dimensions#"
@@ -14,7 +14,7 @@
    xmlns:xmpGImg="http://ns.adobe.com/xap/1.0/g/img/"
    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
    xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
-   xmlns:i="&amp;#38;#38;#38;ns_ai;"
+   xmlns:i="&amp;#38;#38;#38;#38;#38;ns_ai;"
    xmlns:x="adobe:ns:meta/"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -140,8 +140,8 @@
      id="namedview57"
      showgrid="false"
      inkscape:zoom="5"
-     inkscape:cx="72.5625"
-     inkscape:cy="-1.3295346"
+     inkscape:cx="-19.6375"
+     inkscape:cy="-4.7295346"
      inkscape:window-x="189"
      inkscape:window-y="20"
      inkscape:window-maximized="0"
@@ -370,7 +370,7 @@ n/nh36K8z/8ALBL+H9cf5K1X8wr+Y0/88O/RXmf/AJYJfw/rj/JWq/mFfzGn/nhcmj+aHYKLGQE9
                          rdf:parseType="Resource"><xmpG:swatchName>R=189 G=204 B=212</xmpG:swatchName><xmpG:mode>RGB</xmpG:mode><xmpG:type>PROCESS</xmpG:type><xmpG:red>189</xmpG:red><xmpG:green>204</xmpG:green><xmpG:blue>212</xmpG:blue></rdf:li></rdf:Seq></xmpG:Colorants></rdf:li></rdf:Seq></xmpTPg:SwatchGroups></rdf:Description><rdf:Description
              rdf:about=""><pdf:Producer>Adobe PDF library 9.00</pdf:Producer></rdf:Description><cc:Work
              rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-               rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata></x:xmpmeta><?xpacket end="w"?></metadata><switch
+               rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata></x:xmpmeta><?xpacket end="w"?></metadata><switch
      id="switch6"
      transform="matrix(1.0000023,0,0,0.92306271,0.00150125,-328)"><foreignObject
        requiredExtensions="http://ns.adobe.com/AdobeIllustrator/10.0/"
@@ -460,27 +460,25 @@ n/nh36K8z/8ALBL+H9cf5K1X8wr+Y0/88O/RXmf/AJYJfw/rj/JWq/mFfzGn/nhcmj+aHYKLGQE9
              style="stop-color:#CCCCCC" /><a:midPointStop
              offset="1"
              style="stop-color:#FFFFFF" /></linearGradient><g
-           id="g4166"><g
-             id="g4289"
-             transform="matrix(1.0347522,0,0,1.0326147,-45.671074,-43.692709)"><path
-               ns:knockout="Off"
-               d="m 59.197863,391.60435 0,-1.20865 c 0,-0.45322 -0.328699,-0.82404 -0.730449,-0.82404 l -10.93225,0 c -0.40174,0 -0.73044,0.37082 -0.73044,0.82404 l 0,1.20865 c 0,0 -0.90166,0 -1.15608,0 -0.25441,0 -0.68742,0.37082 -0.69436,0.82398 l 0.049,23.10056 c -0.007,0.45306 0.31613,0.82454 0.71788,0.82487 l 27.90965,0 c 0.401739,4.9e-4 0.726279,-0.3691 0.721309,-0.82217 l -0.10971,-23.10326 c -0.005,-0.45325 -0.33769,-0.82398 -0.73943,-0.82398 l -14.30515,0 z"
-               id="path16"
-               inkscape:connector-curvature="0"
-               style="fill:#868686;fill-opacity:1" /><polygon
-               transform="matrix(0.07304433,0,0,0.0824052,44.259194,389.57166)"
-               ns:knockout="Off"
-               points="28.753,36.764 391.244,36.764 390.244,320.691 29.753,320.691 "
-               id="polygon27"
-               style="fill:url(#SVGID_2_-2)" /><polygon
-               transform="matrix(0.07304433,0,0,0.0824052,44.259194,389.57166)"
-               ns:knockout="Off"
-               points="22.753,49.764 397.244,49.764 390.244,320.691 29.753,320.691 "
-               id="polygon42"
-               style="fill:url(#SVGID_3_-0)" /><path
-               style="fill:#e3e3e3;fill-opacity:1;stroke:#868686;stroke-width:1.00692368;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-               inkscape:connector-curvature="0"
-               id="path55"
-               d="m 73.952753,415.53153 c -0.007,0.45322 -0.3328,0.82321 -0.724589,0.82214 l -27.21808,0 c -0.39178,-9.9e-4 -0.75949,-0.42669 -0.76626,-0.87973 l -0.60449,-19.80447 c -0.007,-0.45314 0.30823,-0.82389 0.70001,-0.82389 l 28.518099,0 c 0.39179,0 0.706791,0.37084 0.699951,0.82398 l -0.604641,19.86197 z"
-               ns:knockout="Off" /></g></g></g></g></switch><i:pgf
+           id="g4166"><path
+             style="fill:#c8a717;fill-opacity:1"
+             inkscape:connector-curvature="0"
+             id="path16"
+             d="m 15.584045,360.6837 0,-1.24807 c 0,-0.468 -0.340122,-0.85092 -0.755834,-0.85092 l -11.3121695,0 c -0.4157013,0 -0.7558244,0.38292 -0.7558244,0.85092 l 0,1.24807 c 0,0 -0.9329946,0 -1.1962563,0 -0.2632513,0 -0.71130935,0.38291 -0.71849053,0.85085 l 0.0507029,23.85398 c -0.007243,0.46784 0.32711617,0.85143 0.74282787,0.85177 l 28.879572,0 c 0.4157,5.1e-4 0.751519,-0.38113 0.746376,-0.84898 l -0.113523,-23.85677 c -0.0052,-0.46803 -0.349425,-0.85085 -0.765127,-0.85085 l -14.802285,0 z"
+             ns:knockout="Off" /><polygon
+             style="fill:url(#SVGID_2_-2)"
+             id="polygon27"
+             points="390.244,320.691 29.753,320.691 28.753,36.764 391.244,36.764 "
+             ns:knockout="Off"
+             transform="matrix(0.07558278,0,0,0.08509282,0.12622436,358.58471)" /><polygon
+             style="fill:url(#SVGID_3_-0)"
+             id="polygon42"
+             points="390.244,320.691 29.753,320.691 22.753,49.764 397.244,49.764 "
+             ns:knockout="Off"
+             transform="matrix(0.07558278,0,0,0.08509282,0.12622436,358.58471)" /><path
+             ns:knockout="Off"
+             d="m 30.8517,385.39126 c -0.0072,0.468 -0.344366,0.85006 -0.74977,0.84895 l -28.1639684,0 c -0.4053952,-10e-4 -0.7858839,-0.44061 -0.7928892,-0.90842 L 0.51957506,364.8814 c -0.007243,-0.46792 0.31894167,-0.85076 0.72433694,-0.85076 l 29.509166,0 c 0.405405,0 0.731353,0.38294 0.724275,0.85085 L 30.8517,385.39126 Z"
+             id="path55"
+             inkscape:connector-curvature="0"
+             style="fill:#edd362;fill-opacity:1;stroke:#edd362;stroke-width:1.04083979;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" /></g></g></g></switch><i:pgf
      id="adobe_illustrator_pgf" /></svg>

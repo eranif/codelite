@@ -1339,6 +1339,10 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
         } else {
             // the match is not in the selection range
             newpos = pos + replacementLen;
+            if(newpos <= pos) {
+                newpos = pos + 1; // make sure we dont hang
+            }
+            
             // Move to the next match
             m_sci->SetCurrentPos(newpos);
             m_sci->SetSelectionStart(newpos);

@@ -1,5 +1,6 @@
 #include "CxxVariableScanner.h"
 #include "CxxScannerTokens.h"
+#include <algorithm>
 
 CxxVariableScanner::CxxVariableScanner(const wxString& buffer)
     : m_scanner(NULL)

@@ -9,7 +9,11 @@
 clBitmap::clBitmap() {}
 
 clBitmap::clBitmap(const wxImage& img, double scale)
+#if wxVERSION_NUMBER >= 3100 
     : wxBitmap(img, -1, scale)
+#else
+    : wxBitmap(img, -1)
+#endif
 {
 }
 

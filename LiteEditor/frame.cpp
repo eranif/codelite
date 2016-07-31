@@ -1226,6 +1226,10 @@ void clMainFrame::CreateGUIControls()
 void clMainFrame::DoShowToolbars(bool show, bool update)
 {
     // Hide the _native_ toolbar
+#ifdef __WXMSW__
+    wxWindowUpdateLocker locker(this);
+#endif
+
     if(GetMainToolBar()) {
         if(show) {
             SetToolBar(NULL);

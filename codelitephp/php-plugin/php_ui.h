@@ -32,12 +32,12 @@
 #include <wx/aui/auibar.h>
 #include <map>
 #include <wx/menu.h>
-#include <wx/toolbar.h>
 #include <wx/gauge.h>
 #include <wx/treectrl.h>
 #include "my_tree_view.h"
 #include <wx/aui/auibook.h>
 #include "Notebook.h"
+#include <wx/toolbar.h>
 #include "xdebuglocalsviewmodel.h"
 #include <wx/bitmap.h>
 #include <wx/icon.h>
@@ -350,38 +350,23 @@ public:
     wxDirPickerCtrl* GetDirPickerSource() { return m_dirPickerSource; }
     wxStaticText* GetStaticText123() { return m_staticText123; }
     wxTextCtrl* GetTextCtrlRemote() { return m_textCtrlRemote; }
-    FileMappingDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File Mapping"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,200), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    FileMappingDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File Mapping"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~FileMappingDlgBase();
 };
 
 
 class PHPWorkspaceViewBase : public wxPanel
 {
-public:
-    enum {
-        ID_PHP_PROJECT_SETTINGS = 8001,
-        ID_TOOL_COLLAPSE = 8002,
-        ID_UPLOAD_CLOUD = 8003,
-    };
 protected:
     wxAuiToolBar* m_auibar29;
-    std::map<int, wxMenu*> m_dropdownMenus;
     wxGauge* m_gaugeParseProgress;
     MyTreeView* m_treeCtrlView;
 
 protected:
-    virtual void OnActiveProjectSettings(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnActiveProjectSettingsUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSetupRemoteUpload(wxAuiToolBarEvent& event) { event.Skip(); }
-    virtual void OnCollapse(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCollapseUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnMenu(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
 
 public:
-
-    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
     wxAuiToolBar* GetAuibar29() { return m_auibar29; }
     wxGauge* GetGaugeParseProgress() { return m_gaugeParseProgress; }
     MyTreeView* GetTreeCtrlView() { return m_treeCtrlView; }

@@ -288,9 +288,9 @@ OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const 
     
     bSizer10->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Kind"), wxDATAVIEW_CELL_INERT, 80, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 250, wxALIGN_LEFT);
+    m_dvListCtrl->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Kind"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(80), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(250), wxALIGN_LEFT);
     
     SetName(wxT("OpenResourceDlgBase"));
     SetMinClientSize(wxSize(400,300));
@@ -776,8 +776,8 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     
     boxSizer51->Add(m_dvListCtrlFileMapping, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrlFileMapping->AppendTextColumn(_("Source folder"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlFileMapping->AppendTextColumn(_("Target folder"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlFileMapping->AppendTextColumn(_("Source folder"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrlFileMapping->AppendTextColumn(_("Target folder"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
     m_panel47 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
@@ -983,8 +983,7 @@ FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_stdBtnSizer111->Realize();
     
     SetName(wxT("FileMappingDlgBase"));
-    SetMinClientSize(wxSize(400,200));
-    SetSize(400,200);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -1029,17 +1028,6 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer5->Add(m_auibar29, 0, wxEXPAND, WXC_FROM_DIP(2));
     
-    m_auibar29->AddTool(ID_PHP_PROJECT_SETTINGS, _("Open Active Project Settings..."), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Open Active Project Settings..."), _("Open Active Project Settings..."), NULL);
-    
-    m_auibar29->AddTool(ID_UPLOAD_CLOUD, _("Setup automatic upload"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Setup automatic upload to a remote site"), _("Setup automatic upload to a remote site"), NULL);
-    wxAuiToolBarItem* m_toolbarItemRemoteSave = m_auibar29->FindToolByIndex(m_auibar29->GetToolCount()-1);
-    if (m_toolbarItemRemoteSave) {
-        m_toolbarItemRemoteSave->SetHasDropDown(true);
-    }
-    
-    m_auibar29->AddTool(ID_TOOL_COLLAPSE, _("Collapse"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
-    m_auibar29->Realize();
-    
     m_gaugeParseProgress = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,8)), wxGA_HORIZONTAL);
     m_gaugeParseProgress->Hide();
     m_gaugeParseProgress->SetValue(0);
@@ -1056,58 +1044,18 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
          GetSizer()->Fit(this);
     }
     // Connect events
-    this->Connect(ID_PHP_PROJECT_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPWorkspaceViewBase::OnActiveProjectSettings), NULL, this);
-    this->Connect(ID_PHP_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnActiveProjectSettingsUI), NULL, this);
-    this->Connect(ID_UPLOAD_CLOUD, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnSetupRemoteUploadUI), NULL, this);
-    this->Connect(ID_UPLOAD_CLOUD, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(PHPWorkspaceViewBase::OnSetupRemoteUpload), NULL, this);
-    this->Connect(ID_TOOL_COLLAPSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPWorkspaceViewBase::OnCollapse), NULL, this);
-    this->Connect(ID_TOOL_COLLAPSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnCollapseUI), NULL, this);
     m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL, this);
     m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
     
-    this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(PHPWorkspaceViewBase::ShowAuiToolMenu), NULL, this);
 }
 
 PHPWorkspaceViewBase::~PHPWorkspaceViewBase()
 {
-    this->Disconnect(ID_PHP_PROJECT_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPWorkspaceViewBase::OnActiveProjectSettings), NULL, this);
-    this->Disconnect(ID_PHP_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnActiveProjectSettingsUI), NULL, this);
-    this->Disconnect(ID_UPLOAD_CLOUD, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnSetupRemoteUploadUI), NULL, this);
-    this->Disconnect(ID_UPLOAD_CLOUD, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(PHPWorkspaceViewBase::OnSetupRemoteUpload), NULL, this);
-    this->Disconnect(ID_TOOL_COLLAPSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPWorkspaceViewBase::OnCollapse), NULL, this);
-    this->Disconnect(ID_TOOL_COLLAPSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnCollapseUI), NULL, this);
     m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL, this);
     m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
     
-    std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
-    for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
-        wxDELETE( menuIter->second );
-    }
-    m_dropdownMenus.clear();
-
-    this->Disconnect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(PHPWorkspaceViewBase::ShowAuiToolMenu), NULL, this);
 }
 
-
-void PHPWorkspaceViewBase::ShowAuiToolMenu(wxAuiToolBarEvent& event)
-{
-    event.Skip();
-    if (event.IsDropDownClicked()) {
-        wxAuiToolBar* toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
-        if (toolbar) {
-            wxAuiToolBarItem* item = toolbar->FindTool(event.GetId());
-            if (item) {
-                std::map<int, wxMenu*>::iterator iter = m_dropdownMenus.find(item->GetId());
-                if (iter != m_dropdownMenus.end()) {
-                    event.Skip(false);
-                    wxPoint pt = event.GetItemRect().GetBottomLeft();
-                    pt.y++;
-                    toolbar->PopupMenu(iter->second, pt);
-                }
-            }
-        }
-    }
-}
 PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
@@ -1136,10 +1084,10 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     boxSizer144->Add(m_dvListCtrlStackTrace, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrlStackTrace->AppendIconTextColumn(_("Level"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlStackTrace->AppendTextColumn(_("Where"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlStackTrace->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlStackTrace->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlStackTrace->AppendIconTextColumn(_("Level"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrlStackTrace->AppendTextColumn(_("Where"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrlStackTrace->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrlStackTrace->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
     m_panel142 = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panel142, _("Breakpoints"), false);
     
@@ -1154,9 +1102,9 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     boxSizer204->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
     wxBoxSizer* boxSizer206 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer204->Add(boxSizer206, 0, 0, WXC_FROM_DIP(5));
@@ -1166,9 +1114,9 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     boxSizer204->Add(m_auibar218, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_auibar218->AddTool(ID_DELETE_BREAKPOINTS, _("Delete"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Delete the selected breakpoints"), NULL);
+    m_auibar218->AddTool(ID_DELETE_BREAKPOINTS, _("Delete"), wxXmlResource::Get()->LoadBitmap(wxT("delete-one")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Delete the selected breakpoints"), NULL);
     
-    m_auibar218->AddTool(ID_DELETE_ALL_BREAKPOINTS, _("Delete all breakpoints"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Delete all breakpoints"), NULL);
+    m_auibar218->AddTool(ID_DELETE_ALL_BREAKPOINTS, _("Delete all breakpoints"), wxXmlResource::Get()->LoadBitmap(wxT("delete-all")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Delete all breakpoints"), NULL);
     m_auibar218->Realize();
     m_auiBook->SetMinSize(wxSize(300,300));
     
@@ -1221,10 +1169,10 @@ LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     boxSizer236->Add(m_dataview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dataview->AppendTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Classname"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Value"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Classname"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Value"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
     
     SetName(wxT("LocalsViewBase"));
     SetSize(-1,-1);
@@ -1627,7 +1575,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     // Set icon(s) to the application/dialog
     wxIconBundle app_icons;
     {
-        wxBitmap iconBmp = wxNullBitmap;
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("xdebug-16"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon( icn );
@@ -2195,8 +2143,8 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
     
     boxSizer657->Add(m_dvListCtrlFunctions, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_ACTIVATABLE, 40, wxALIGN_LEFT);
-    m_dvListCtrlFunctions->AppendIconTextColumn(_("Variable"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(40), wxALIGN_LEFT);
+    m_dvListCtrlFunctions->AppendIconTextColumn(_("Variable"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
     wxFlexGridSizer* flexGridSizer667 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer667->SetFlexibleDirection( wxBOTH );
     flexGridSizer667->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

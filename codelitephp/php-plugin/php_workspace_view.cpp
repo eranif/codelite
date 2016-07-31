@@ -75,8 +75,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     , m_mgr(mgr)
 {
     MSWSetNativeTheme(m_treeCtrlView);
-    //SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-    
+    // SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+
     // Initialise images map
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
     m_bitmaps = bmpLoader->MakeStandardMimeMap();
@@ -101,6 +101,25 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
+
+    // Build the toolbar
+    m_auibar29->AddTool(XRCID("ID_PHP_PROJECT_SETTINGS"), _("Open active project settings"), bl->LoadBitmap("cog"),
+        _("Open active project settings"), wxITEM_NORMAL);
+    m_auibar29->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"),
+                  bl->LoadBitmap("remote-folder"), _("Setup automatic upload"), wxITEM_NORMAL)
+        ->SetHasDropDown(true);
+    m_auibar29->AddTool(
+        XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"), wxITEM_NORMAL);
+    m_auibar29->Realize();
+
+    // Bind events
+    Bind(wxEVT_MENU, &PHPWorkspaceView::OnActiveProjectSettings, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnActiveProjectSettingsUI, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
+    Bind(wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, &PHPWorkspaceView::OnSetupRemoteUpload, this,
+        XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnSetupRemoteUploadUI, this, XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+    Bind(wxEVT_MENU, &PHPWorkspaceView::OnCollapse, this, XRCID("ID_TOOL_COLLAPSE"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnCollapseUI, this, XRCID("ID_TOOL_COLLAPSE"));
 }
 
 PHPWorkspaceView::~PHPWorkspaceView()
@@ -1463,16 +1482,16 @@ void PHPWorkspaceView::OnRenameFolder(wxCommandEvent& e)
 void PHPWorkspaceView::OnFindInFilesShowing(clCommandEvent& e)
 {
     e.Skip();
-    
+
     if(!PHPWorkspace::Get()->IsOpen()) return;
     if(!IsShownOnScreen()) return;
-    
+
     // Get list of selected folders
     wxArrayString paths;
     DoGetSelectedFolders(paths);
     CHECK_COND_RET(!paths.IsEmpty());
-    
+
     // PHP workspace is opened and visible
-    wxArrayString &outPaths = e.GetStrings();
+    wxArrayString& outPaths = e.GetStrings();
     outPaths.insert(outPaths.end(), paths.begin(), paths.end());
 }

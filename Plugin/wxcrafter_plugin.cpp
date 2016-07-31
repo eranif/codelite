@@ -121,30 +121,32 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     boxSizer13->Add(m_auibar242, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_auibar242->AddTool(ID_DIFF_TOOL_REFRESH, _("Refresh"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Refresh"), _("Refresh"), NULL);
+    m_auibar242->AddTool(ID_DIFF_TOOL_REFRESH, _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("16-debugger_restart")), wxNullBitmap, wxITEM_NORMAL, _("Refresh"), _("Refresh"), NULL);
     
-    m_auibar242->AddTool(ID_DIFF_TOOL_SAVE, _("Save"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
-    
-    m_auibar242->AddSeparator();
-    
-    m_auibar242->AddTool(ID_DIFF_TOOL_NEXT, _("Next Diff"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Next Diff"), _("Next Diff"), NULL);
-    
-    m_auibar242->AddTool(ID_DIFF_TOOL_PREV, _("Previous"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Previous Diff"), _("Previous Diff"), NULL);
+    m_auibar242->AddTool(ID_DIFF_TOOL_SAVE, _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_save")), wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
     
     m_auibar242->AddSeparator();
     
-    m_auibar242->AddTool(ID_DIFF_TOOL_COPY_RIGHT, _("Copy Right"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Copy Right"), _("Copy Right"), NULL);
+    m_auibar242->AddTool(ID_DIFF_TOOL_NEXT, _("Next Diff"), wxXmlResource::Get()->LoadBitmap(wxT("16-next")), wxNullBitmap, wxITEM_NORMAL, _("Next Diff"), _("Next Diff"), NULL);
     
-    m_auibar242->AddTool(ID_DIFF_TOOL_COPY_LEFT, _("Copy Left"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("Copy Left"), _("Copy Left"), NULL);
+    m_auibar242->AddTool(ID_DIFF_TOOL_PREV, _("Previous"), wxXmlResource::Get()->LoadBitmap(wxT("16-up")), wxNullBitmap, wxITEM_NORMAL, _("Previous Diff"), _("Previous Diff"), NULL);
     
-    m_auibar242->AddTool(ID_DIFF_TOOL_COPY_ALL, _("CopyAll"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    m_auibar242->AddSeparator();
+    
+    m_auibar242->AddTool(ID_DIFF_TOOL_COPY_RIGHT, _("Copy Right"), wxXmlResource::Get()->LoadBitmap(wxT("16-forward")), wxNullBitmap, wxITEM_NORMAL, _("Copy Right"), _("Copy Right"), NULL);
+    
+    m_auibar242->AddTool(ID_DIFF_TOOL_COPY_LEFT, _("Copy Left"), wxXmlResource::Get()->LoadBitmap(wxT("16-back")), wxNullBitmap, wxITEM_NORMAL, _("Copy Left"), _("Copy Left"), NULL);
+    
+    m_auibar242->AddTool(ID_DIFF_TOOL_COPY_ALL, _("CopyAll"), wxXmlResource::Get()->LoadBitmap(wxT("16-copy")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     wxAuiToolBarItem* m_toolCopy = m_auibar242->FindToolByIndex(m_auibar242->GetToolCount()-1);
     if (m_toolCopy) {
         m_toolCopy->SetHasDropDown(true);
         m_menu257 = new wxMenu;
         m_menuItem271 = new wxMenuItem(m_menu257, ID_DIFF_TOOL_USE_LEFT, _("Copy All Content from Left to Right"), _("Copy All Content from Left to Right"), wxITEM_NORMAL);
+        m_menuItem271->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("16-forward")));
         m_menu257->Append(m_menuItem271);
         m_menuItem273 = new wxMenuItem(m_menu257, ID_DIFF_TOOL_USE_RIGHT, _("Copy All Content from Right to Left"), _("Copy All Content from Right to Left"), wxITEM_NORMAL);
+        m_menuItem273->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("16-back")));
         m_menu257->Append(m_menuItem273);
         
         m_dropdownMenus.insert(std::make_pair( m_toolCopy->GetId(), m_menu257) );
@@ -152,7 +154,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     m_auibar242->AddSeparator();
     
-    m_auibar242->AddTool(ID_DIFF_TOOL_VIEW, _("View Type"), wxNullBitmap, wxNullBitmap, wxITEM_NORMAL, _("View Type"), _("View Type"), NULL);
+    m_auibar242->AddTool(ID_DIFF_TOOL_VIEW, _("View Type"), wxXmlResource::Get()->LoadBitmap(wxT("16-find")), wxNullBitmap, wxITEM_NORMAL, _("View Type"), _("View Type"), NULL);
     wxAuiToolBarItem* m_toolbarItem277 = m_auibar242->FindToolByIndex(m_auibar242->GetToolCount()-1);
     if (m_toolbarItem277) {
         m_toolbarItem277->SetHasDropDown(true);
@@ -773,7 +775,7 @@ clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent,long style)
     
     boxSizer234->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_staticBitmap240 = new wxStaticBitmap(m_panelStatus, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDLG_UNIT(m_panelStatus, wxSize(-1,-1)), 0 );
+    m_staticBitmap240 = new wxStaticBitmap(m_panelStatus, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("resize")), wxDefaultPosition, wxDLG_UNIT(m_panelStatus, wxSize(-1,-1)), 0 );
     m_staticBitmap240->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     
     boxSizer234->Add(m_staticBitmap240, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));

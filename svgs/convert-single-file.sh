@@ -1,6 +1,6 @@
 #!/bin/sh
 ## 16x16 version
-files=`ls $1`
+files=`ls $@`
 
 for file in $files
 do

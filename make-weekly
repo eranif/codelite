@@ -10,12 +10,19 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ]; then
     cd /cygdrive/c/src/codelite
     
     # Update our source tree
+    echo "Pulling CodeLite changes..."
     git pull --rebase 
     if [ $? -ne 0 ]; then
         exit $?
     fi
 
-    cd wxcrafter && git pull --rebase && cd ..
+    echo "Pulling wxCrafter changes..."
+    cd wxcrafter
+    git pull --rebase
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+    cd ..
     
     export PATH=/cygdrive/c/Program\ Files/CodeLite:/cygdrive/d/software/Inno\ Setup\ 5/:$PATH
     export WXCFG=gcc_dll/mswu
@@ -89,12 +96,19 @@ else
     fi
 
     # Update our source tree
+    echo "Pulling CodeLite changes..."
     git pull --rebase 
     if [ $? -ne 0 ]; then
         exit $?
     fi
 
-    cd ../wxcrafter && git pull --rebase && cd ../build-release
+    echo "Pulling wxCrafter changes..."
+    cd ../wxcrafter
+    git pull --rebase
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+    cd ../build-release
 
     # Build and upload
     if [ ${os_name} == "Darwin" ]; then

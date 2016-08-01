@@ -228,7 +228,7 @@ void SubversionView::CreatGUIControls()
 {
     MSWSetNativeTheme(m_treeCtrl);
     m_treeCtrl->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-    
+
     // Assign the image list
     BitmapLoader* bmpLoader = m_plugin->GetManager()->GetStdIcons();
 
@@ -566,9 +566,6 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 
 void SubversionView::CreateRootMenu(wxMenu* menu)
 {
-    menu->Append(XRCID("svn_close_view"), wxT("Close"));
-    menu->AppendSeparator();
-
     menu->Append(XRCID("svn_update"), wxT("Update"));
     menu->Append(XRCID("svn_commit"), wxT("Commit"));
     menu->AppendSeparator();
@@ -592,6 +589,11 @@ void SubversionView::CreateRootMenu(wxMenu* menu)
 
     menu->AppendSeparator();
     menu->Append(XRCID("svn_properties"), _("Properties..."));
+
+    menu->AppendSeparator();
+    wxMenuItem* menuItem = new wxMenuItem(menu, XRCID("svn_close_view"), _("Close"));
+    menuItem->SetBitmap(m_plugin->GetManager()->GetStdIcons()->LoadBitmap("file_close"));
+    menu->Append(menuItem);
 }
 
 void SubversionView::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths)
@@ -1366,6 +1368,10 @@ void SubversionView::OnSciStcChange(wxStyledTextEvent& event)
 
 void SubversionView::OnCloseView(wxCommandEvent& event)
 {
+    if(::wxMessageBox(_("Close SVN view?"), _("Confirm"), wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) !=
+        wxYES) {
+        return;
+    }
     DoChangeRootPathUI("");
 
     wxCommandEvent dummy;

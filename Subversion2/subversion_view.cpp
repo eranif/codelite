@@ -332,7 +332,7 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
     }
 
     if(!m_plugin->IsPathUnderSvn(path)) {
-        OnCloseView(event);
+        DoCloseView();
 
     } else {
         DoRootDirChanged(path);
@@ -1372,8 +1372,12 @@ void SubversionView::OnCloseView(wxCommandEvent& event)
         wxYES) {
         return;
     }
-    DoChangeRootPathUI("");
+    DoCloseView();
+}
 
+void SubversionView::DoCloseView()
+{
+    DoChangeRootPathUI("");
     wxCommandEvent dummy;
     OnClearOuptut(dummy);
 }

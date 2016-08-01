@@ -77,13 +77,13 @@ class SubversionView : public SubversionPageBase
     ThemeHandlerHelper* m_themeHelper;
     wxFileName m_workspaceFile;
     IProcess* m_codeliteEcho;
-    
+
 public:
     enum { SvnInfo_Tag, SvnInfo_Branch, SvnInfo_Info };
 
     /**
      * @brief note that this function accepts arguments by value
-     * on purpose (since the caller object might get deleted before 
+     * on purpose (since the caller object might get deleted before
      * it finish processing)
      */
     void FinishDiff(wxString output, wxFileName fileBeingDiffed);
@@ -112,6 +112,7 @@ protected:
     wxTreeItemId DoGetParentNode(const wxString& filename, const wxTreeItemId& parent);
     wxTreeItemId DoFindChild(const wxTreeItemId& parent, const wxString& name, const wxString& curpath);
     wxTreeItemId DoFindFile(const wxTreeItemId& parent, const wxString& basepath, const wxString& fullpath);
+    void DoCloseView();
 
 protected:
     // Handlers for SubversionPageBase events.
@@ -171,21 +172,17 @@ public:
 
     SvnConsole* GetSubversionConsole() { return m_subversionConsole; }
     void DisconnectEvents();
-    void UpdateTree(const wxArrayString& modifiedFiles,
-                    const wxArrayString& conflictedFiles,
-                    const wxArrayString& unversionedFiles,
-                    const wxArrayString& newFiles,
-                    const wxArrayString& deletedFiles,
-                    const wxArrayString& lockedFiles,
-                    const wxArrayString& ignoreFiles,
-                    bool fileExplorerOnly,
-                    const wxString& rootDir);
+    void UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString& conflictedFiles,
+        const wxArrayString& unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles,
+        const wxArrayString& lockedFiles, const wxArrayString& ignoreFiles, bool fileExplorerOnly,
+        const wxString& rootDir);
     void BuildTree();
     void BuildTree(const wxString& root);
     void BuildExplorerTree(const wxString& root);
 
     wxString GetRootDir() const { return DoGetCurRepoPath(); }
-    bool IsValid() const {
+    bool IsValid() const
+    {
         wxString curpath = DoGetCurRepoPath();
         return !curpath.IsEmpty() && curpath != _("<No repository path is selected>");
     }

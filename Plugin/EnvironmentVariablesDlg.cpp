@@ -18,9 +18,8 @@
 
 EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     : EnvVarsTableDlgBase(parent)
+    , m_editEventsHander(m_textCtrlDefault)
 {
-    EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &EnvironmentVariablesDlg::OnEditEvent, this, wxID_COPY);
-    EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &EnvironmentVariablesDlg::OnEditEvent, this, wxID_PASTE);
     EvnVarList vars;
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
     std::map<wxString, wxString> envSets = vars.GetEnvVarSets();
@@ -55,7 +54,7 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     }
 }
 
-// EnvironmentVariablesDlg::~EnvironmentVariablesDlg() { EnvironmentVariablesDlg::m_dlg = nullptr; }
+EnvironmentVariablesDlg::~EnvironmentVariablesDlg() {}
 
 void EnvironmentVariablesDlg::DoAddPage(const wxString& name, const wxString& content, bool select)
 {
@@ -207,28 +206,5 @@ void EnvironmentVariablesDlg::DoAddNewSet()
         wxString name = dlg.GetValue();
         if(name.IsEmpty()) return;
         DoAddPage(name, wxT(""), false);
-    }
-}
-
-EnvironmentVariablesDlg::~EnvironmentVariablesDlg()
-{
-    EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &EnvironmentVariablesDlg::OnEditEvent, this, wxID_PASTE);
-    EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &EnvironmentVariablesDlg::OnEditEvent, this, wxID_COPY);
-}
-
-void EnvironmentVariablesDlg::OnEditEvent(wxCommandEvent& event)
-{
-    switch(event.GetId()) {
-    case wxID_COPY:
-        m_textCtrlDefault->Copy();
-        event.Skip(false);
-        break;
-    case wxID_PASTE:
-        m_textCtrlDefault->Paste();
-        event.Skip(false);
-        break;
-    default:
-        event.Skip();
-        break;
     }
 }

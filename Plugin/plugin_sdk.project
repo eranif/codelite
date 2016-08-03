@@ -145,6 +145,8 @@
       <File Name="clEditorWordCharsLocker.cpp"/>
       <File Name="clEditorColouriseLocker.h"/>
       <File Name="clEditorColouriseLocker.cpp"/>
+      <File Name="clEditorEditEventsHandler.h"/>
+      <File Name="clEditorEditEventsHandler.cpp"/>
     </VirtualDirectory>
     <File Name="CMakeLists.txt"/>
     <File Name="clWorkspaceManager.h"/>

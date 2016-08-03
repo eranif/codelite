@@ -30,6 +30,7 @@
 #include "wxFlatButton.h"
 #include <wx/combobox.h>
 #include "wxFlatButtonBar.h"
+#include "clEditorEditEventsHandler.h"
 
 class QuickFindBarOptionsMenu;
 class wxStyledTextCtrl;
@@ -90,6 +91,9 @@ protected:
     eRegexType m_regexType;
     bool m_disableTextUpdateEvent;
     friend class QuickFindBarOptionsMenu;
+
+    clEditEventsHandler::Ptr_t m_findEventsHandler;
+    clEditEventsHandler::Ptr_t m_replaceEventsHandler;
 
 public:
     enum {

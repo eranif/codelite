@@ -140,6 +140,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     wxArrayString m_findWhatArr;
     m_findWhat =
         new wxComboBox(m_bar, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), m_findWhatArr, wxTE_PROCESS_ENTER);
+    m_findEventsHandler.Reset(new clEditEventsHandler(m_findWhat));
+    
     m_findWhat->SetToolTip(_("Hit ENTER to search, or Shift + ENTER to search backward"));
     m_findWhat->SetFocus();
     m_findWhat->SetHint(_("Type to start a search..."));
@@ -201,6 +203,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     wxArrayString m_replaceWithArr;
     m_replaceWith = new wxComboBox(
         m_bar, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), m_replaceWithArr, wxTE_PROCESS_ENTER);
+    m_replaceEventsHandler.Reset(new clEditEventsHandler(m_replaceWith));
+    
     m_replaceWith->SetToolTip(_("Type the replacement string and hit ENTER to perform the replacement"));
     m_replaceWith->SetHint(_("Type any replacement string..."));
     m_bar->AddControl(m_replaceWith, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);

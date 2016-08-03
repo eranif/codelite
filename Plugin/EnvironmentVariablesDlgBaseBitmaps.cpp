@@ -44,6 +44,6 @@ void wxC48E6InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/EnvironmentVariablesDlgBaseBitmaps.cpp$C__src_codelite_Plugin_EnvironmentVariablesDlgBaseBitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/EnvironmentVariablesDlgBaseBitmaps.cpp$C__src_codelite_Plugin_EnvironmentVariablesDlgBaseBitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/EnvironmentVariablesDlgBaseBitmaps.cpp$_Users_eranif_devl_codelite_Plugin_EnvironmentVariablesDlgBaseBitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/EnvironmentVariablesDlgBaseBitmaps.cpp$_Users_eranif_devl_codelite_Plugin_EnvironmentVariablesDlgBaseBitmaps.xrc"));
 }

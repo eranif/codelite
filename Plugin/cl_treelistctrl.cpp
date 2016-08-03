@@ -74,7 +74,7 @@
 
 #include <wx/log.h> // only required for debugging purpose
 
-#ifndef __WXOSX__
+#ifdef __WXOSX__
 #if wxVERSION_NUMBER > 3100
     // The 'Tree' of wxTreeItemAttr no longer exists
     #define wxTreeItemAttr wxItemAttr

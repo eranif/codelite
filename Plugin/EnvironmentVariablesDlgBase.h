@@ -49,9 +49,8 @@ protected:
     wxButton* m_buttonNewSet;
     wxButton* m_buttonDeleteSet;
     wxButton* m_button5;
-    wxStdDialogButtonSizer* m_stdBtnSizer2;
-    wxButton* m_button4;
-    wxButton* m_button6;
+    wxButton* m_button16;
+    wxButton* m_button14;
 
 protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
@@ -59,8 +58,8 @@ protected:
     virtual void OnDeleteSet(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteSetUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnExport(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCancel(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
@@ -71,6 +70,8 @@ public:
     wxButton* GetButtonNewSet() { return m_buttonNewSet; }
     wxButton* GetButtonDeleteSet() { return m_buttonDeleteSet; }
     wxButton* GetButton5() { return m_button5; }
+    wxButton* GetButton16() { return m_button16; }
+    wxButton* GetButton14() { return m_button14; }
     EnvVarsTableDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Environment Variables"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~EnvVarsTableDlgBase();
 };

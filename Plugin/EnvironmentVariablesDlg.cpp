@@ -14,11 +14,13 @@
 #include "codelite_events.h"
 #include <wx/textdlg.h>
 
-EnvironmentVariablesDlg* EnvironmentVariablesDlg::m_dlg = nullptr;
+// EnvironmentVariablesDlg* EnvironmentVariablesDlg::m_dlg = nullptr;
 
 EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     : EnvVarsTableDlgBase(parent)
 {
+    EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &EnvironmentVariablesDlg::OnEditEvent, this, wxID_COPY);
+    EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &EnvironmentVariablesDlg::OnEditEvent, this, wxID_PASTE);
     EvnVarList vars;
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
     std::map<wxString, wxString> envSets = vars.GetEnvVarSets();
@@ -53,14 +55,10 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     }
 }
 
-EnvironmentVariablesDlg::~EnvironmentVariablesDlg() 
-{ 
-    EnvironmentVariablesDlg::m_dlg = nullptr; 
-}
+// EnvironmentVariablesDlg::~EnvironmentVariablesDlg() { EnvironmentVariablesDlg::m_dlg = nullptr; }
 
 void EnvironmentVariablesDlg::DoAddPage(const wxString& name, const wxString& content, bool select)
 {
-    clWindowUpdateLocker locker(this);
     wxStyledTextCtrl* page = new wxStyledTextCtrl(m_book, wxID_ANY, wxDefaultPosition, wxSize(0, 0));
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
@@ -100,9 +98,6 @@ void EnvironmentVariablesDlg::OnButtonOk(wxCommandEvent& event)
     clCommandEvent eventSave(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED);
     EventNotifier::Get()->AddPendingEvent(eventSave);
     event.Skip();
-    
-    // Destroy the dialog
-    CallAfter(&EnvironmentVariablesDlg::DoDestroy);
 }
 
 void EnvironmentVariablesDlg::OnDeleteSet(wxCommandEvent& event)
@@ -113,9 +108,8 @@ void EnvironmentVariablesDlg::OnDeleteSet(wxCommandEvent& event)
     if(selection == wxNOT_FOUND) return;
 
     wxString name = m_book->GetPageText((size_t)selection);
-    if(wxMessageBox(
-           wxString::Format(wxT("Are you sure you want to delete '%s' environment variables set?"), name.c_str()),
-           wxT("Confirm"), wxYES_NO | wxICON_QUESTION) != wxYES)
+    if(wxMessageBox(wxString::Format(wxT("Delete environment variables set\n'%s' ?"), name.c_str()), wxT("Confirm"),
+           wxYES_NO | wxICON_QUESTION, this) != wxYES)
         return;
     m_book->DeletePage((size_t)selection);
 }
@@ -161,7 +155,7 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
     wxFFile fp(fn.GetFullPath(), wxT("w+b"));
     if(fp.IsOpened() == false) {
         wxMessageBox(wxString::Format(_("Failed to open file: '%s' for write"), fn.GetFullPath().c_str()),
-            wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
+            wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING, this);
         return;
     }
 
@@ -192,46 +186,49 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
         fp.Write(sLine);
     }
 
-    wxMessageBox(
-        wxString::Format(_("Environment exported to: '%s' successfully"), fn.GetFullPath().c_str()), wxT("CodeLite"));
+    wxMessageBox(wxString::Format(_("Environment exported to: '%s' successfully"), fn.GetFullPath()), wxT("CodeLite"),
+        wxOK | wxCENTRE, this);
 }
 
-void EnvironmentVariablesDlg::OnNewSet(wxCommandEvent& event)
-{
-    wxString name = wxGetTextFromUser(wxT("Enter Name:"));
-    if(name.IsEmpty()) return;
+void EnvironmentVariablesDlg::OnNewSet(wxCommandEvent& event) { CallAfter(&EnvironmentVariablesDlg::DoAddNewSet); }
 
-    DoAddPage(name, wxT(""), false);
-}
-
-void EnvironmentVariablesDlg::ShowDialog(wxWindow* parent)
-{
-    if(m_dlg == nullptr) {
-        m_dlg = new EnvironmentVariablesDlg(parent);
-        m_dlg->Show();
-    } else {
-        m_dlg->Raise();
-    }
-}
-
-void EnvironmentVariablesDlg::OnClose(wxCloseEvent& event)
-{
-    event.Skip();
-    EnvironmentVariablesDlg::m_dlg = nullptr;
-}
+void EnvironmentVariablesDlg::OnClose(wxCloseEvent& event) { event.Skip(); }
 
 void EnvironmentVariablesDlg::OnCancel(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
-    CallAfter(&EnvironmentVariablesDlg::DoDestroy);
+    event.Skip();
+    EndModal(wxID_CANCEL);
 }
 
-void EnvironmentVariablesDlg::ReleaseDialog()
+void EnvironmentVariablesDlg::DoAddNewSet()
 {
-    if(m_dlg) {
-        m_dlg->Destroy();
-        m_dlg = NULL;
+    wxTextEntryDialog dlg(this, _("Name:"), wxT("Create a new set"), "My New Set");
+    if(dlg.ShowModal() == wxID_OK) {
+        wxString name = dlg.GetValue();
+        if(name.IsEmpty()) return;
+        DoAddPage(name, wxT(""), false);
     }
 }
 
-void EnvironmentVariablesDlg::DoDestroy() { Destroy(); }
+EnvironmentVariablesDlg::~EnvironmentVariablesDlg()
+{
+    EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &EnvironmentVariablesDlg::OnEditEvent, this, wxID_PASTE);
+    EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &EnvironmentVariablesDlg::OnEditEvent, this, wxID_COPY);
+}
+
+void EnvironmentVariablesDlg::OnEditEvent(wxCommandEvent& event)
+{
+    switch(event.GetId()) {
+    case wxID_COPY:
+        m_textCtrlDefault->Copy();
+        event.Skip(false);
+        break;
+    case wxID_PASTE:
+        m_textCtrlDefault->Paste();
+        event.Skip(false);
+        break;
+    default:
+        event.Skip();
+        break;
+    }
+}

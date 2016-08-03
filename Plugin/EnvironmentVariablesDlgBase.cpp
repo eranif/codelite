@@ -110,17 +110,18 @@ EnvVarsTableDlgBase::EnvVarsTableDlgBase(wxWindow* parent, wxWindowID id, const 
     
     bSizer7->Add(m_button5, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_stdBtnSizer2 = new wxStdDialogButtonSizer();
+    wxBoxSizer* boxSizer12 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+    bSizer1->Add(boxSizer12, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_button4 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_button4->SetDefault();
-    m_stdBtnSizer2->AddButton(m_button4);
+    m_button16 = new wxButton(this, wxID_ANY, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    m_button6 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_stdBtnSizer2->AddButton(m_button6);
-    m_stdBtnSizer2->Realize();
+    boxSizer12->Add(m_button16, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_button14 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_button14->SetDefault();
+    
+    boxSizer12->Add(m_button14, 0, wxALL, WXC_FROM_DIP(5));
     
     
     #if wxVERSION_NUMBER >= 2900
@@ -154,8 +155,8 @@ EnvVarsTableDlgBase::EnvVarsTableDlgBase(wxWindow* parent, wxWindowID id, const 
     m_buttonDeleteSet->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnDeleteSet), NULL, this);
     m_buttonDeleteSet->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EnvVarsTableDlgBase::OnDeleteSetUI), NULL, this);
     m_button5->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnExport), NULL, this);
-    m_button4->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnButtonOk), NULL, this);
-    m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnCancel), NULL, this);
+    m_button16->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnCancel), NULL, this);
+    m_button14->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnButtonOk), NULL, this);
     
 }
 
@@ -166,7 +167,7 @@ EnvVarsTableDlgBase::~EnvVarsTableDlgBase()
     m_buttonDeleteSet->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnDeleteSet), NULL, this);
     m_buttonDeleteSet->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EnvVarsTableDlgBase::OnDeleteSetUI), NULL, this);
     m_button5->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnExport), NULL, this);
-    m_button4->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnButtonOk), NULL, this);
-    m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnCancel), NULL, this);
+    m_button16->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnCancel), NULL, this);
+    m_button14->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarsTableDlgBase::OnButtonOk), NULL, this);
     
 }

@@ -2033,7 +2033,6 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     }
 
     event.Skip();
-    EnvironmentVariablesDlg::ReleaseDialog();
     
     wxString msg;
     ManagerST::Get()->SetShutdownInProgress(true);
@@ -2732,7 +2731,8 @@ void clMainFrame::OnTogglePanes(wxCommandEvent& event)
 void clMainFrame::OnAddEnvironmentVariable(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    EnvironmentVariablesDlg::ShowDialog(this);
+    EnvironmentVariablesDlg dlg(this);
+    dlg.ShowModal();
 }
 
 void clMainFrame::OnAdvanceSettings(wxCommandEvent& event)

@@ -149,6 +149,8 @@
     <File Name="CMakeLists.txt"/>
     <File Name="clWorkspaceManager.h"/>
     <File Name="clWorkspaceManager.cpp"/>
+    <File Name="EnvironmentVariablesDlg.h"/>
+    <File Name="EnvironmentVariablesDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>
@@ -355,6 +357,7 @@
       <File Name="clSelectSymbolDialog.h"/>
       <File Name="clSelectSymbolDialog.cpp"/>
       <File Name="nameanddescdlg.wxcp"/>
+      <File Name="envvar_table_dlg.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="drawingutils.cpp"/>
@@ -462,6 +465,7 @@
       <File Name="clSelectSymbolDialogBase_plugin_bitmaps.cpp"/>
       <File Name="nameanddescdlg_plugin_bitmaps.cpp"/>
       <File Name="MacrosBaseDlg_plugin_bitmaps.cpp"/>
+      <File Name="EnvironmentVariablesDlgBaseBitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
@@ -482,6 +486,8 @@
       <File Name="openresourcedialogmodel.h"/>
       <File Name="clSelectSymbolDialogBase.h"/>
       <File Name="clSelectSymbolDialogBase.cpp"/>
+      <File Name="EnvironmentVariablesDlgBase.h"/>
+      <File Name="EnvironmentVariablesDlgBase.cpp"/>
     </VirtualDirectory>
     <File Name="openresourcedialogbase.wxcp"/>
     <File Name="plugin_general_wxcp.wxcp"/>

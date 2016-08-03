@@ -163,8 +163,6 @@
       <File Name="free_text_dialog.cpp"/>
       <File Name="add_option_dialog.cpp"/>
       <File Name="add_option_dialog.h"/>
-      <File Name="envvar_table.cpp"/>
-      <File Name="envvar_table.h"/>
       <File Name="findreplacedlg.h"/>
       <File Name="findreplacedlg.cpp"/>
       <File Name="findinfilesdlg.h"/>
@@ -268,8 +266,6 @@
           <File Name="editor_options_comments_base.wxcp"/>
         </VirtualDirectory>
       </VirtualDirectory>
-      <File Name="env_var_dlg_base.h"/>
-      <File Name="env_var_dlg_base.cpp"/>
       <File Name="SyntaxHighlightBaseDlg.wxcp"/>
       <File Name="editor_options_bookmarks.wxcp"/>
       <File Name="editor_options_bookmarks_liteeditor_bitmaps.cpp"/>

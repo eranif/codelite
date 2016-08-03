@@ -756,6 +756,8 @@ clMainFrame::clMainFrame(
     wxTheApp->Connect(
         wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
 
+    EventNotifier::Get()->Bind(
+        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified, this);
     EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_SHELL_COMMAND_PROCESS_ENDED, clCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
@@ -849,6 +851,8 @@ clMainFrame::~clMainFrame(void)
     wxTheApp->Disconnect(
         wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
 
+    EventNotifier::Get()->Unbind(
+        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_SHELL_COMMAND_PROCESS_ENDED, clCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
@@ -998,7 +1002,7 @@ void clMainFrame::CreateGUIControls()
     SetAUIManagerFlags();
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
-    
+
     int captionSize = 22;
     {
         wxMemoryDC memDC;
@@ -1008,7 +1012,7 @@ void clMainFrame::CreateGUIControls()
         wxSize textSize = memDC.GetTextExtent("Tp");
         captionSize = textSize.y + 6; // 3 pixesl space on each side
     }
-    
+
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);
 
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR, DrawingUtils::GetPanelBgColour());
@@ -1225,7 +1229,7 @@ void clMainFrame::CreateGUIControls()
 
 void clMainFrame::DoShowToolbars(bool show, bool update)
 {
-    // Hide the _native_ toolbar
+// Hide the _native_ toolbar
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif
@@ -2029,6 +2033,8 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     }
 
     event.Skip();
+    EnvironmentVariablesDlg::ReleaseDialog();
+    
     wxString msg;
     ManagerST::Get()->SetShutdownInProgress(true);
 
@@ -2726,21 +2732,7 @@ void clMainFrame::OnTogglePanes(wxCommandEvent& event)
 void clMainFrame::OnAddEnvironmentVariable(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    EnvVarsTableDlg dlg(this);
-    dlg.ShowModal();
-    SelectBestEnvSet();
-
-    if(ManagerST::Get()->IsWorkspaceOpen()) {
-        // mark all the projects as dirty
-        wxArrayString projects;
-        clCxxWorkspaceST::Get()->GetProjectList(projects);
-        for(size_t i = 0; i < projects.size(); i++) {
-            ProjectPtr proj = ManagerST::Get()->GetProject(projects.Item(i));
-            if(proj) {
-                proj->SetModified(true);
-            }
-        }
-    }
+    EnvironmentVariablesDlg::ShowDialog(this);
 }
 
 void clMainFrame::OnAdvanceSettings(wxCommandEvent& event)
@@ -6228,4 +6220,23 @@ CodeLiteApp* clMainFrame::GetTheApp()
     CodeLiteApp* app = dynamic_cast<CodeLiteApp*>(wxApp::GetInstance());
     wxASSERT(app);
     return app;
+}
+
+void clMainFrame::OnEnvironmentVariablesModified(clCommandEvent& e)
+{
+    e.Skip();
+    SelectBestEnvSet();
+    {
+        if(clCxxWorkspaceST::Get()->IsOpen()) {
+            // mark all the projects as dirty
+            wxArrayString projects;
+            clCxxWorkspaceST::Get()->GetProjectList(projects);
+            for(size_t i = 0; i < projects.size(); i++) {
+                ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(projects.Item(i));
+                if(proj) {
+                    proj->SetModified(true);
+                }
+            }
+        }
+    }
 }

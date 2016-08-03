@@ -34,7 +34,7 @@
 #include "cl_editor.h"
 #include "output_pane.h"
 #include "cl_process.h"
-#include "envvar_table.h"
+#include "EnvironmentVariablesDlg.h"
 #include "wx/choice.h"
 #include "wx/timer.h"
 #include "parse_thread.h"
@@ -138,12 +138,12 @@ protected:
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
-    
+
     /**
      * @brief Return CodeLite App object
      */
     CodeLiteApp* GetTheApp();
-    
+
     /**
      * @brief return the status bar
      */
@@ -477,7 +477,8 @@ protected:
     void OnGrepWord(wxCommandEvent& e);
     void OnGrepWordUI(wxUpdateUIEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
-
+    void OnEnvironmentVariablesModified(clCommandEvent& e);
+    
     // handle symbol tree events
     void OnParsingThreadMessage(wxCommandEvent& e);
     void OnDatabaseUpgrade(wxCommandEvent& e);
@@ -507,10 +508,10 @@ protected:
     void OnToggleReverseDebuggingUI(wxUpdateUIEvent& e);
     void OnToggleReverseDebuggingRecordingUI(wxUpdateUIEvent& e);
     void OnDebugCmdUI(wxUpdateUIEvent& e);
-    
-    void OnDebugRunToCursor(wxCommandEvent &e);
-    void OnDebugJumpToCursor(wxCommandEvent &e);
-    
+
+    void OnDebugRunToCursor(wxCommandEvent& e);
+    void OnDebugJumpToCursor(wxCommandEvent& e);
+
     // Special UI handlers for debugger events
     void OnDebugStepInstUI(wxUpdateUIEvent& e);
     void OnDebugJumpToCursorUI(wxUpdateUIEvent& e);

@@ -39,6 +39,8 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
 
         if(name == wxT("Default")) {
             m_textCtrlDefault->SetText(content);
+            m_textCtrlDefault->SetSavePoint();
+            m_textCtrlDefault->EmptyUndoBuffer();
         } else {
             DoAddPage(name, content, false);
         }
@@ -49,8 +51,10 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
         if(m_book->GetPageText(i) == activePage) {
             m_book->GetPage(i)->SetFocus();
             m_book->SetSelection(i);
-            break;
         }
+        wxStyledTextCtrl* ctrl = static_cast<wxStyledTextCtrl*>(m_book->GetPage(i));
+        ctrl->SetSavePoint();
+        ctrl->EmptyUndoBuffer();
     }
 }
 

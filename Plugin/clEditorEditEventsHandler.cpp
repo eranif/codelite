@@ -35,7 +35,7 @@ clEditEventsHandler::~clEditEventsHandler()
         EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCopy, this, wxID_COPY);
         EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnPaste, this, wxID_PASTE);
         EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_CUT);
-        EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_SELECTALL);
+        EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnSelectAll, this, wxID_SELECTALL);
         EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnUndo, this, wxID_UNDO);
         EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnRedo, this, wxID_REDO);
     }
@@ -100,7 +100,7 @@ void clEditEventsHandler::DoInitialize()
         EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnCopy, this, wxID_COPY);
         EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnPaste, this, wxID_PASTE);
         EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_CUT);
-        EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_SELECTALL);
+        EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnSelectAll, this, wxID_SELECTALL);
         EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnUndo, this, wxID_UNDO);
         EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnRedo, this, wxID_REDO);
     }

@@ -52,9 +52,12 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
             m_book->GetPage(i)->SetFocus();
             m_book->SetSelection(i);
         }
-        wxStyledTextCtrl* ctrl = static_cast<wxStyledTextCtrl*>(m_book->GetPage(i));
-        ctrl->SetSavePoint();
-        ctrl->EmptyUndoBuffer();
+        wxWindow* page = m_book->GetPage(i);
+        wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(page);
+        if(ctrl) {
+            ctrl->SetSavePoint();
+            ctrl->EmptyUndoBuffer();
+        }
     }
 }
 
@@ -111,8 +114,10 @@ void EnvironmentVariablesDlg::OnDeleteSet(wxCommandEvent& event)
     if(selection == wxNOT_FOUND) return;
 
     wxString name = m_book->GetPageText((size_t)selection);
-    if(wxMessageBox(wxString::Format(wxT("Delete environment variables set\n'%s' ?"), name.c_str()), wxT("Confirm"),
-           wxYES_NO | wxICON_QUESTION, this) != wxYES)
+    if(wxMessageBox(wxString::Format(wxT("Delete environment variables set\n'%s' ?"), name.c_str()),
+                    wxT("Confirm"),
+                    wxYES_NO | wxICON_QUESTION,
+                    this) != wxYES)
         return;
     m_book->DeletePage((size_t)selection);
 }
@@ -158,7 +163,9 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
     wxFFile fp(fn.GetFullPath(), wxT("w+b"));
     if(fp.IsOpened() == false) {
         wxMessageBox(wxString::Format(_("Failed to open file: '%s' for write"), fn.GetFullPath().c_str()),
-            wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING, this);
+                     wxT("CodeLite"),
+                     wxOK | wxCENTER | wxICON_WARNING,
+                     this);
         return;
     }
 
@@ -189,8 +196,10 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
         fp.Write(sLine);
     }
 
-    wxMessageBox(wxString::Format(_("Environment exported to: '%s' successfully"), fn.GetFullPath()), wxT("CodeLite"),
-        wxOK | wxCENTRE, this);
+    wxMessageBox(wxString::Format(_("Environment exported to: '%s' successfully"), fn.GetFullPath()),
+                 wxT("CodeLite"),
+                 wxOK | wxCENTRE,
+                 this);
 }
 
 void EnvironmentVariablesDlg::OnNewSet(wxCommandEvent& event) { CallAfter(&EnvironmentVariablesDlg::DoAddNewSet); }

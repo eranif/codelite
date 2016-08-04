@@ -115,9 +115,13 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     // Bind events
     Bind(wxEVT_MENU, &PHPWorkspaceView::OnActiveProjectSettings, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnActiveProjectSettingsUI, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
+    
+#if USE_SFTP
     Bind(wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, &PHPWorkspaceView::OnSetupRemoteUpload, this,
         XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+#endif
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnSetupRemoteUploadUI, this, XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+
     Bind(wxEVT_MENU, &PHPWorkspaceView::OnCollapse, this, XRCID("ID_TOOL_COLLAPSE"));
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnCollapseUI, this, XRCID("ID_TOOL_COLLAPSE"));
 }

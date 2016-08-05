@@ -3583,7 +3583,18 @@ void LEditor::AddDebuggerContextMenu(wxMenu* menu)
             return;
         }
     }
-
+    
+    if(word.Contains("\n")) {
+        // Don't create massive context menu
+        return;
+    }
+    
+    // Truncate the word
+    if(word.length() > 20) {
+        word = word.Mid(0, 20);
+        word << "...";
+    }
+    
     m_customCmds.clear();
     wxString menuItemText;
 

@@ -22,39 +22,48 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "exelocator.h"
+#include "exelocator.h"
 #include <wx/filename.h>
 #include "procutils.h"
 
-bool ExeLocator::Locate(const wxString &name, wxString &where)
+bool ExeLocator::Locate(const wxString& name, wxString& where)
 {
-	wxString command;
+    wxString command;
+    
+    wxString filename = name;
+    filename.Trim().Trim(false);
+    if(filename.StartsWith("\"")) {
+        filename = filename.Mid(1);
+    }
+    
+    if(filename.EndsWith("\"")) {
+        filename = filename.RemoveLast();
+    }
+    
+    // Incase the name is a full path, just test for the file existance
+    wxFileName fn(filename);
+    if(fn.IsAbsolute() && fn.FileExists()) {
+        where = name;
+        return true;
+    }
 
-	// Incase the name is a full path, just test for the file existance
-	wxFileName fn(name);
-	if( fn.IsAbsolute() && fn.FileExists() ) {
-		where = name;
-		return true;
-	}
+    wxArrayString output;
+    command << wxT("which \"") << filename << wxT("\"");
+    ProcUtils::SafeExecuteCommand(command, output);
 
-	wxArrayString output;
-	command << wxT("which \"") << name << wxT("\"");
-	ProcUtils::SafeExecuteCommand(command, output);
+    if(output.IsEmpty() == false) {
+        wxString interstingLine = output.Item(0);
 
-	if(output.IsEmpty() == false){
-		wxString interstingLine = output.Item(0);
+        if(interstingLine.Trim().Trim(false).IsEmpty()) {
+            return false;
+        }
 
-		if(interstingLine.Trim().Trim(false).IsEmpty()){
-			return false;
-		}
-
-		if(	!interstingLine.StartsWith(wxT("which: no ")) &&
-			!interstingLine.Contains(wxT("command not found")) &&
-			!interstingLine.StartsWith(wxT("no "))){
-			where = output.Item(0);
-			where = where.Trim().Trim(false);
-			return true;
-		}
-	}
-	return false;
+        if(!interstingLine.StartsWith(wxT("which: no ")) && !interstingLine.Contains(wxT("command not found")) &&
+            !interstingLine.StartsWith(wxT("no "))) {
+            where = output.Item(0);
+            where = where.Trim().Trim(false);
+            return true;
+        }
+    }
+    return false;
 }

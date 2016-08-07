@@ -136,14 +136,6 @@ void BreakpointDlg::OnItemActivated(wxListEvent& e)
     clMainFrame::Get()->GetMainBook()->OpenFile(file, wxEmptyString, line_number - 1, wxNOT_FOUND, OF_AddJump, false);
 }
 
-void BreakpointDlg::OnItemRightClick(wxListEvent& e)
-{
-    m_selectedItem = e.m_itemIndex;
-    wxCommandEvent c;
-    m_selectedItem = e.m_itemIndex;
-    OnEdit(c);
-}
-
 void BreakpointDlg::OnEdit(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -248,4 +240,23 @@ int BreakpointsListctrl::GetSelection()
     long selecteditem = -1;
     selecteditem = GetNextItem(selecteditem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     return (int)selecteditem;
+}
+
+void BreakpointDlg::OnContextMenu(wxContextMenuEvent& event) 
+{
+    if(m_selectedItem == wxNOT_FOUND) return;
+    
+    wxMenu menu;
+    menu.Append(XRCID("edit_breakpoint"), _("Edit Breakpoint..."));
+    menu.Append(XRCID("delete_breakpoint"), _("Delete Breakpoint"));
+    
+    int where = GetPopupMenuSelectionFromUser(menu);
+    if(where == wxID_NONE) return;
+    if(where == XRCID("edit_breakpoint")) {
+        wxCommandEvent dummy;
+        OnEdit(event);
+    } else if(where == XRCID("delete_breakpoint")) {
+        wxCommandEvent dummy;
+        OnDelete(event);
+    }
 }

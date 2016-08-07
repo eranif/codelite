@@ -26,50 +26,50 @@ BreakpointTabBase::BreakpointTabBase(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(bSizer5);
     
-    m_listCtrlBreakpoints = new BreakpointsListctrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_SINGLE_SEL|wxLC_REPORT);
+    m_listCtrlBreakpoints = new BreakpointsListctrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLC_SINGLE_SEL|wxLC_REPORT);
+    m_listCtrlBreakpoints->SetFocus();
     
-    bSizer5->Add(m_listCtrlBreakpoints, 1, wxALL|wxEXPAND, 5);
+    bSizer5->Add(m_listCtrlBreakpoints, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer5->Add(bSizer6, 0, wxTOP|wxEXPAND, 25);
+    bSizer5->Add(bSizer6, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_buttonAdd = new wxButton(this, wxID_ANY, _("&Add"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonAdd = new wxButton(this, wxID_ANY, _("&Add"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonAdd->SetToolTip(_("Add a new breakpoint or watchpoint"));
     
-    bSizer6->Add(m_buttonAdd, 0, wxALL, 5);
+    bSizer6->Add(m_buttonAdd, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_buttonEdit = new wxButton(this, wxID_ANY, _("&Edit"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonEdit = new wxButton(this, wxID_ANY, _("&Edit"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonEdit->SetToolTip(_("Edit the selected item"));
     
-    bSizer6->Add(m_buttonEdit, 0, wxALL, 5);
+    bSizer6->Add(m_buttonEdit, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_buttonDelete = new wxButton(this, wxID_ANY, _("&Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonDelete = new wxButton(this, wxID_ANY, _("&Delete"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonDelete->SetToolTip(_("Delete the selected item"));
     
-    bSizer6->Add(m_buttonDelete, 0, wxALL, 5);
+    bSizer6->Add(m_buttonDelete, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_buttonDeleteAll = new wxButton(this, wxID_ANY, _("Delete &All"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonDeleteAll = new wxButton(this, wxID_ANY, _("Delete &All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonDeleteAll->SetToolTip(_("Delete all breakpoints and watchpoints"));
     
-    bSizer6->Add(m_buttonDeleteAll, 0, wxALL, 5);
+    bSizer6->Add(m_buttonDeleteAll, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_buttonApplyPending = new wxButton(this, wxID_ANY, _("Set Pending"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonApplyPending = new wxButton(this, wxID_ANY, _("Set Pending"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonApplyPending->SetToolTip(_("If this button is visible, there are breakpoints that you tried to set, but that the debugger refused. This most often happens when the breakpoint is inside a library that hadn't been loaded when the debugger started.\n\nClick to offer the breakpoints to the debugger again."));
     
-    bSizer6->Add(m_buttonApplyPending, 0, wxALL, 5);
+    bSizer6->Add(m_buttonApplyPending, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     SetName(wxT("BreakpointTabBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_listCtrlBreakpoints->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(BreakpointTabBase::OnItemActivated), NULL, this);
     m_listCtrlBreakpoints->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(BreakpointTabBase::OnItemDeselected), NULL, this);
-    m_listCtrlBreakpoints->Connect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, wxListEventHandler(BreakpointTabBase::OnItemRightClick), NULL, this);
     m_listCtrlBreakpoints->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(BreakpointTabBase::OnItemSelected), NULL, this);
+    m_listCtrlBreakpoints->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(BreakpointTabBase::OnContextMenu), NULL, this);
     m_buttonAdd->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnAdd), NULL, this);
     m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnEdit), NULL, this);
     m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnDelete), NULL, this);
@@ -82,8 +82,8 @@ BreakpointTabBase::~BreakpointTabBase()
 {
     m_listCtrlBreakpoints->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(BreakpointTabBase::OnItemActivated), NULL, this);
     m_listCtrlBreakpoints->Disconnect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(BreakpointTabBase::OnItemDeselected), NULL, this);
-    m_listCtrlBreakpoints->Disconnect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, wxListEventHandler(BreakpointTabBase::OnItemRightClick), NULL, this);
     m_listCtrlBreakpoints->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(BreakpointTabBase::OnItemSelected), NULL, this);
+    m_listCtrlBreakpoints->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(BreakpointTabBase::OnContextMenu), NULL, this);
     m_buttonAdd->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnAdd), NULL, this);
     m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnEdit), NULL, this);
     m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnDelete), NULL, this);
@@ -105,108 +105,108 @@ BreakpointPropertiesDlgBase::BreakpointPropertiesDlgBase(wxWindow* parent, wxWin
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer3);
     
-    m_staticText9 = new wxStaticText(this, wxID_ANY, _("Select the type of the breakpoint:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText9 = new wxStaticText(this, wxID_ANY, _("Select the type of the breakpoint:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer3->Add(m_staticText9, 0, wxALL, 5);
+    bSizer3->Add(m_staticText9, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_choicebook = new wxChoicebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+    m_choicebook = new wxChoicebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_choicebook->SetName(wxT("m_choicebook"));
     
-    bSizer3->Add(m_choicebook, 0, wxALL|wxEXPAND, 5);
+    bSizer3->Add(m_choicebook, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel1 = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panel1 = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_choicebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_choicebook->AddPage(m_panel1, _("Breakpoint"), false);
     
     wxBoxSizer* bSizer14 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer14);
     
-    m_staticText51 = new wxStaticText(m_panel1, wxID_ANY, _("Break by line, function or memory address:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText51 = new wxStaticText(m_panel1, wxID_ANY, _("Break by line, function or memory address:"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     
-    bSizer14->Add(m_staticText51, 0, wxALL|wxEXPAND, 5);
+    bSizer14->Add(m_staticText51, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer111 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer14->Add(bSizer111, 1, wxALL|wxEXPAND, 0);
+    bSizer14->Add(bSizer111, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
     wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer2->SetFlexibleDirection( wxBOTH );
     fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer2->AddGrowableCol(1);
     
-    bSizer111->Add(fgSizer2, 0, wxEXPAND, 5);
+    bSizer111->Add(fgSizer2, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkLineno = new wxCheckBox(m_panel1, wxID_ANY, _("Line number"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkLineno = new wxCheckBox(m_panel1, wxID_ANY, _("Line number"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     m_checkLineno->SetValue(false);
     
-    fgSizer2->Add(m_checkLineno, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer2->Add(m_checkLineno, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textLineno = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textLineno = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     m_textLineno->SetToolTip(_("Enter the line-number on which you wish to break. It's assumed to refer to the current file: if it doesn't, please enter the correct filepath below."));
     #if wxVERSION_NUMBER >= 3000
     m_textLineno->SetHint(wxT(""));
     #endif
     
-    fgSizer2->Add(m_textLineno, 0, wxALL|wxEXPAND, 5);
+    fgSizer2->Add(m_textLineno, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBreakFunction = new wxCheckBox(m_panel1, wxID_ANY, _("Function name"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBreakFunction = new wxCheckBox(m_panel1, wxID_ANY, _("Function name"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     m_checkBreakFunction->SetValue(false);
     
-    fgSizer2->Add(m_checkBreakFunction, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer2->Add(m_checkBreakFunction, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textFunctionname = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textFunctionname = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     m_textFunctionname->SetToolTip(_("If you wish to break when a particular function is entered, insert its name here. In C just the name will do e.g. 'main' or 'myFoo'. For C++ class methods, you need to do 'MyClass::myFoo'\n\nAlternatively you can enter a regular expression, and tick the checkbox below. A breakpoint will then be set on all matching functions."));
     #if wxVERSION_NUMBER >= 3000
     m_textFunctionname->SetHint(wxT(""));
     #endif
     
-    fgSizer2->Add(m_textFunctionname, 0, wxALL|wxEXPAND, 5);
+    fgSizer2->Add(m_textFunctionname, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    fgSizer2->Add(0, 0, 1, 0, 5);
+    fgSizer2->Add(0, 0, 1, 0, WXC_FROM_DIP(5));
     
-    m_checkRegex = new wxCheckBox(m_panel1, wxID_ANY, _("This is a regex"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkRegex = new wxCheckBox(m_panel1, wxID_ANY, _("This is a regex"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     m_checkRegex->SetValue(false);
     m_checkRegex->SetToolTip(_("If you wish to insert a breakpoint on several functions, you can tick this box, then enter a suitable regular expression in the textctrl above."));
     
-    fgSizer2->Add(m_checkRegex, 0, wxALL|wxEXPAND, 5);
+    fgSizer2->Add(m_checkRegex, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBreakMemory = new wxCheckBox(m_panel1, wxID_ANY, _("Memory address:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBreakMemory = new wxCheckBox(m_panel1, wxID_ANY, _("Memory address:"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     m_checkBreakMemory->SetValue(false);
     
-    fgSizer2->Add(m_checkBreakMemory, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer2->Add(m_checkBreakMemory, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textBreakMemory = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textBreakMemory = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     m_textBreakMemory->SetToolTip(_("To break on a memory address, enter the address here.\ne.g. 0x0a1b2c3d or 12345678"));
     #if wxVERSION_NUMBER >= 3000
     m_textBreakMemory->SetHint(wxT(""));
     #endif
     
-    fgSizer2->Add(m_textBreakMemory, 1, wxALL|wxEXPAND, 5);
+    fgSizer2->Add(m_textBreakMemory, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText6 = new wxStaticText(m_panel1, wxID_ANY, _("In file:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText6 = new wxStaticText(m_panel1, wxID_ANY, _("In file:"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     
-    fgSizer2->Add(m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer2->Add(m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer18 = new wxBoxSizer(wxHORIZONTAL);
     
-    fgSizer2->Add(bSizer18, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
+    fgSizer2->Add(bSizer18, 0, wxTOP|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textFilename = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textFilename = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     m_textFilename->SetToolTip(_("If you've entered a line-number, its assumed to refer to the current file. If it isn't, enter the correct filename here.\n\nFor a function, a file is usually not required. However, if you have several functions with the same name, in several different files (do people _really_ do that?) and you want to break on only one of those, enter the correct filename here."));
     #if wxVERSION_NUMBER >= 3000
     m_textFilename->SetHint(wxT(""));
     #endif
     
-    bSizer18->Add(m_textFilename, 1, wxALL, 5);
+    bSizer18->Add(m_textFilename, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_buttonBrowse = new wxButton(m_panel1, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonBrowse = new wxButton(m_panel1, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     
-    bSizer18->Add(m_buttonBrowse, 0, wxALL, 5);
+    bSizer18->Add(m_buttonBrowse, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_staticline5 = new wxStaticLine(m_panel1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
+    m_staticline5 = new wxStaticLine(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), wxLI_HORIZONTAL);
     
-    bSizer14->Add(m_staticline5, 0, wxALL|wxEXPAND, 5);
+    bSizer14->Add(m_staticline5, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel2 = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panel2 = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_choicebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_choicebook->AddPage(m_panel2, _("Watchpoint"), false);
     
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
@@ -216,42 +216,42 @@ BreakpointPropertiesDlgBase::BreakpointPropertiesDlgBase(wxWindow* parent, wxWin
     m_radioWatchtypeArr.Add(_("write only"));
     m_radioWatchtypeArr.Add(_("read only"));
     m_radioWatchtypeArr.Add(_("read-write"));
-    m_radioWatchtype = new wxRadioBox(m_panel2, wxID_ANY, _("Type of watchpoint:"), wxDefaultPosition, wxSize(-1, -1), m_radioWatchtypeArr, 3, wxRA_SPECIFY_ROWS);
+    m_radioWatchtype = new wxRadioBox(m_panel2, wxID_ANY, _("Type of watchpoint:"), wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1, -1)), m_radioWatchtypeArr, 3, wxRA_SPECIFY_ROWS);
     m_radioWatchtype->SetToolTip(_("The usual type of watchpoint is 'write-only': that is, it's triggered whenever the target is changed.\n\nAlternatively you can choose for it to trigger when the target is read from, or either written to or read from."));
     m_radioWatchtype->SetSelection(0);
     
-    bSizer13->Add(m_radioWatchtype, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer13->Add(m_radioWatchtype, 0, wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_staticText5 = new wxStaticText(m_panel2, wxID_ANY, _("Data to watch:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText5 = new wxStaticText(m_panel2, wxID_ANY, _("Data to watch:"), wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1, -1)), 0);
     
-    bSizer13->Add(m_staticText5, 0, wxALL|wxEXPAND, 5);
+    bSizer13->Add(m_staticText5, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textWatchExpression = new wxTextCtrl(m_panel2, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_MULTILINE);
+    m_textWatchExpression = new wxTextCtrl(m_panel2, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1, -1)), wxTE_MULTILINE);
     m_textWatchExpression->SetToolTip(_("Identify the data to be watched. It can be one of:\n1) Any variable name e.g. 'foo'\n2) A memory address, suitably cast e.g.*(int*)0x12345678 will watch an int-sized block starting at this address.\nDon't include spaces in the expression: gdb can't understand them.\n3) A complex expression e.g. a*b + c/d'. The expression can use any operators valid in the program's native language.\n\nNB. A watchpoint set on a local variable will automatically be removed when the variable loses scope."));
     
-    bSizer13->Add(m_textWatchExpression, 1, wxALL|wxEXPAND, 5);
+    bSizer13->Add(m_textWatchExpression, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer3->Add(bSizer5, 1, wxALL|wxEXPAND, 5);
+    bSizer3->Add(bSizer5, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Conditional Breaks: Add any condition here"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Conditional Breaks: Add any condition here"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer5->Add(m_staticText1, 0, wxALL|wxEXPAND, 5);
+    bSizer5->Add(m_staticText1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCond = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_MULTILINE);
+    m_textCond = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_MULTILINE);
     m_textCond->SetToolTip(_("You can add a condition to any breakpoint or watchpoint. The debugger will then stop only if the condition is met.\n\nThe condition can be any simple or complex expression in your programming language,providing it returns a bool. However any variables that you use must be in scope.\n\nIf you've previously set a condition and no longer want it, just clear this textctrl."));
     
-    bSizer5->Add(m_textCond, 1, wxALL|wxEXPAND, 5);
+    bSizer5->Add(m_textCond, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText11 = new wxStaticText(this, wxID_ANY, _("Command List: Add any command(s) here"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText11 = new wxStaticText(this, wxID_ANY, _("Command List: Add any command(s) here"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer5->Add(m_staticText11, 0, wxALL|wxEXPAND, 5);
+    bSizer5->Add(m_staticText11, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCommands = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_MULTILINE);
+    m_textCommands = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_MULTILINE);
     m_textCommands->SetToolTip(_("You can add a list of commands to any breakpoint or watchpoint. When the breakpoint is hit and the program interrupted, those commands will be executed.\n\nFor example, to print the value of the variable foo and then continue running the program, enter:\nprint foo\ncont\n\nIf you've previously entered commands, and no longer want them, just clear this textctrl."));
     
-    bSizer5->Add(m_textCommands, 1, wxALL|wxEXPAND, 5);
+    bSizer5->Add(m_textCommands, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(2, 4, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
@@ -261,47 +261,43 @@ BreakpointPropertiesDlgBase::BreakpointPropertiesDlgBase(wxWindow* parent, wxWin
     fgSizer1->AddGrowableCol(2);
     fgSizer1->AddGrowableCol(3);
     
-    bSizer5->Add(fgSizer1, 0, wxEXPAND, 5);
+    bSizer5->Add(fgSizer1, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkDisable = new wxCheckBox(this, wxID_ANY, _("Disable"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkDisable = new wxCheckBox(this, wxID_ANY, _("Disable"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkDisable->SetValue(false);
     m_checkDisable->SetToolTip(_("If you check this box, the breakpoint (or watchpoint) will still exist, but it won't trigger. If you uncheck it in the future, the breakpoint will work again."));
     
-    fgSizer1->Add(m_checkDisable, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer1->Add(m_checkDisable, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_checkTemp = new wxCheckBox(this, wxID_ANY, _("Make temporary"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkTemp = new wxCheckBox(this, wxID_ANY, _("Make temporary"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkTemp->SetValue(false);
     m_checkTemp->SetToolTip(_("A temporary breakpoint (or watchpoint) is one that works only once. When it's hit it behaves like any other, except that it's then deleted."));
     
-    fgSizer1->Add(m_checkTemp, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer1->Add(m_checkTemp, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText7 = new wxStaticText(this, wxID_ANY, _("Ignore count:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText7 = new wxStaticText(this, wxID_ANY, _("Ignore count:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_staticText7->SetToolTip(_("Enter a count >0 to ignore this breakpoint (or watchpoint) for that number of times. It then behaves as though it is disabled, except that every time it would have triggered, the ignore count decrements.\nWhen the count reaches zero, the breakpoint becomes active again."));
     
-    fgSizer1->Add(m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer1->Add(m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_spinIgnore = new wxSpinCtrl(this, wxID_ANY, wxT("0"), wxDefaultPosition, wxSize(-1, -1), wxSP_ARROW_KEYS);
+    m_spinIgnore = new wxSpinCtrl(this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_ARROW_KEYS);
     m_spinIgnore->SetRange(0, 1000000);
     m_spinIgnore->SetValue(0);
     
-    fgSizer1->Add(m_spinIgnore, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticline4 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer3->Add(m_staticline4, 0, wxALL|wxEXPAND, 5);
+    fgSizer1->Add(m_spinIgnore, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer3->Add(bSizer9, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer3->Add(bSizer9, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button6 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button6 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button6->SetDefault();
     
-    bSizer9->Add(m_button6, 0, wxALL, 5);
+    bSizer9->Add(m_button6, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_button7 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button7 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer9->Add(m_button7, 0, wxALL, 5);
+    bSizer9->Add(m_button7, 0, wxALL, WXC_FROM_DIP(5));
     
     
     #if wxVERSION_NUMBER >= 2900
@@ -313,11 +309,15 @@ BreakpointPropertiesDlgBase::BreakpointPropertiesDlgBase(wxWindow* parent, wxWin
     #endif
     
     SetName(wxT("BreakpointPropertiesDlgBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent();
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

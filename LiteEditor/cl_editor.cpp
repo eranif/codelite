@@ -3350,6 +3350,11 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
         menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
     }
 
+    if (ManagerST::Get()->DbgCanInteract()) {
+        menu.AppendSeparator();
+        menu.Append(XRCID("dbg_run_to_cursor"), _("Run to here"));
+    }
+
     clContextMenuEvent event(wxEVT_CONTEXT_MENU_EDITOR_MARGIN);
     event.SetMenu(&menu);
     if(EventNotifier::Get()->ProcessEvent(event)) return;

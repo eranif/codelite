@@ -402,17 +402,18 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     
     bSizer13->Add(m_checkBoxAmend, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_stdBtnSizer278 = new wxStdDialogButtonSizer();
+    wxBoxSizer* boxSizer372 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer4->Add(m_stdBtnSizer278, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    bSizer4->Add(boxSizer372, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_buttonOK->SetDefault();
-    m_stdBtnSizer278->AddButton(m_buttonOK);
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_stdBtnSizer278->AddButton(m_buttonCancel);
-    m_stdBtnSizer278->Realize();
+    boxSizer372->Add(m_buttonOK, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer372->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("GitCommitDlgBase"));
     SetSize(-1,-1);

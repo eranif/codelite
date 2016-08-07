@@ -134,7 +134,6 @@ protected:
     wxStaticText* m_staticText8;
     wxStyledTextCtrl* m_stcCommitMessage;
     wxCheckBox* m_checkBoxAmend;
-    wxStdDialogButtonSizer* m_stdBtnSizer278;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
 
@@ -160,6 +159,8 @@ public:
     wxCheckBox* GetCheckBoxAmend() { return m_checkBoxAmend; }
     wxPanel* GetPanel4() { return m_panel4; }
     wxSplitterWindow* GetSplitterMain() { return m_splitterMain; }
+    wxButton* GetButtonOK() { return m_buttonOK; }
+    wxButton* GetButtonCancel() { return m_buttonCancel; }
     GitCommitDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitCommitDlgBase();
 };

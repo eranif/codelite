@@ -55,6 +55,9 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     lex->Apply(m_stcCommitMessage);
+    
+    m_editEventsHandlerCommitStc.Reset(new clEditEventsHandler(m_stcCommitMessage));
+    m_editEventsHandlerDiffStc.Reset(new clEditEventsHandler(m_stcDiff));
 }
 
 /*******************************************************************************/

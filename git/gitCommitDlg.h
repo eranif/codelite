@@ -35,12 +35,15 @@
 
 #include "gitui.h"
 #include <map>
+#include "clEditorEditEventsHandler.h"
 
 class GitCommitDlg : public GitCommitDlgBase
 {
     std::map<wxString, wxString> m_diffMap;
     bool m_toggleChecks;
-    
+    clEditEventsHandler::Ptr_t m_editEventsHandlerCommitStc;
+    clEditEventsHandler::Ptr_t m_editEventsHandlerDiffStc;
+
 public:
     GitCommitDlg(wxWindow* parent);
     ~GitCommitDlg();

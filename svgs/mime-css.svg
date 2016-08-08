@@ -14,7 +14,7 @@
    viewBox="0 0 15.999999 15.999999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="mime-css.svg">
   <defs
      id="defs4" />
@@ -26,17 +26,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-25.445646"
+     inkscape:cx="-62.445646"
      inkscape:cy="17.030795"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-width="1707"
-     inkscape:window-height="913"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-width="1920"
+     inkscape:window-height="1027"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      showborder="false" />
   <metadata
@@ -98,17 +98,17 @@
          id="tspan6432" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.86148834px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#218cec;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="2.8964355"
-       y="813.69427"
+       style="font-size:9.41298771px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#218cec;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:'Arial, Normal'"
+       x="1.4024835"
+       y="938.05957"
        id="text7103"
        sodipodi:linespacing="125%"
-       transform="scale(0.77629417,1.2881715)"><tspan
+       transform="scale(0.89575275,1.1163795)"><tspan
          sodipodi:role="line"
          id="tspan7105"
-         x="2.8964355"
-         y="813.69427"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.86148834px;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#218cec;fill-opacity:1">css</tspan></text>
+         x="1.4024835"
+         y="938.05957"
+         style="font-size:9.41298771px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#218cec;fill-opacity:1;font-family:Tahoma;-inkscape-font-specification:Tahoma">css</tspan></text>
     <rect
        style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#218cec;stroke-width:0.99999988;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.49019608"
        id="rect4137"

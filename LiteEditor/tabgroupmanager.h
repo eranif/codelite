@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-
 #ifndef TABGROUP_MANAGER_H
 #define TABGROUP_MANAGER_H
 
@@ -32,59 +31,59 @@
 #include <vector>
 #include <utility>
 #include "singleton.h"
+#include <wx/event.h>
 
-	/**
-	 * Each pair consists of the tabgroup name, and an array of the names of the constituent tabs
-	 */
-	typedef std::pair<wxString,wxArrayString> spTabGrp;
-	typedef std::vector< spTabGrp > vTabGrps;
+/**
+ * Each pair consists of the tabgroup name, and an array of the names of the constituent tabs
+ */
+typedef std::pair<wxString, wxArrayString> spTabGrp;
+typedef std::vector<spTabGrp> vTabGrps;
 
-class TabgroupManager {
-  	friend class Singleton<TabgroupManager>;
-
-public:
-
-
-	wxString GetTabgroupDirectory();
-	vTabGrps& GetTabgroups();
-	void ClearTabgroups() {
-        m_tabgroups.clear();
-        m_tabgroupdir.Clear();
-    }
-
-	/*!
-	 * \brief Finds the spTabGrp that matches tabgroupname, returning its TabgroupItems in items
-	 * \param tabgroupname
-	 * \param items
-	 * \return true if tabgroup was found
-	 */
-	bool FindTabgroup(const wxString& tabgroupname, wxArrayString& items);
-	void LoadTabgroupData(const wxString& tabgroup);
-
-	wxXmlNode* FindTabgroupItem(wxXmlDocument& doc, const wxString& filepath, const wxString& itemfilepath);
-	bool DoAddItemToTabgroup(wxXmlDocument& doc, wxXmlNode* node, const wxString& filepath, const wxString& nextitemfilepath);
-	/*!
-	 * \brief Remove this item from the tabgroup on disc, optionally returning its data in an xml node to be stored for Cut
-	 * \param doc
-	 * \param filepath
-	 * \param itemfilepath
-	 * \return
-	 */
-	wxXmlNode* DoDeleteTabgroupItem(wxXmlDocument& doc, const wxString& filepath, const wxString& itemfilepath);
-
+class TabgroupManager : public wxEvtHandler
+{
+    friend class Singleton<TabgroupManager>;
 
 protected:
-	TabgroupManager(){}
-	~TabgroupManager();
+    void OnWorkspaceLoaded(wxCommandEvent& evt);
+    void OnWorkspaceClosed(wxCommandEvent& evt);
 
-	void LoadKnownTabgroups();
-	void TransferKnownTabgroupsToTabgroupDir(const wxString& TabgrpPath); // Transitional code. Remove sometime
-	void SetTabgroupDirectory();
+public:
+    wxString GetTabgroupDirectory();
+    vTabGrps& GetTabgroups();
 
-	wxString m_tabgroupdir;
-	vTabGrps m_tabgroups;
+    /*!
+     * \brief Finds the spTabGrp that matches tabgroupname, returning its TabgroupItems in items
+     * \param tabgroupname
+     * \param items
+     * \return true if tabgroup was found
+     */
+    bool FindTabgroup(const wxString& tabgroupname, wxArrayString& items);
+    void LoadTabgroupData(const wxString& tabgroup);
+
+    wxXmlNode* FindTabgroupItem(wxXmlDocument& doc, const wxString& filepath, const wxString& itemfilepath);
+    bool DoAddItemToTabgroup(
+        wxXmlDocument& doc, wxXmlNode* node, const wxString& filepath, const wxString& nextitemfilepath);
+    /*!
+     * \brief Remove this item from the tabgroup on disc, optionally returning its data in an xml node to be stored for
+     * Cut
+     * \param doc
+     * \param filepath
+     * \param itemfilepath
+     * \return
+     */
+    wxXmlNode* DoDeleteTabgroupItem(wxXmlDocument& doc, const wxString& filepath, const wxString& itemfilepath);
+
+protected:
+    TabgroupManager();
+    ~TabgroupManager();
+
+    void LoadKnownTabgroups();
+    void TransferKnownTabgroupsToTabgroupDir(const wxString& TabgrpPath); // Transitional code. Remove sometime
+    void SetTabgroupDirectory();
+
+    wxString m_tabgroupdir;
+    vTabGrps m_tabgroups;
 };
-
 
 typedef Singleton<TabgroupManager> TabGroupsManager;
 

@@ -71,13 +71,11 @@ public:
     TabgroupsPane(wxWindow* parent, const wxString& caption);
     ~TabgroupsPane();
     void DisplayTabgroups();
-    void ClearTabgroups() { m_tree->DeleteChildren(m_tree->GetRootItem()); }
     bool AddNewTabgroupToTree(const wxString& newfilepath, wxTreeItemId selection = wxTreeItemId());
 
 protected:
-    void AddTreeItem(const wxString& tabgroupname,
-                     const wxArrayString& tabfilepaths,
-                     const wxTreeItemId insertafter = wxTreeItemId());
+    void AddTreeItem(const wxString& tabgroupname, const wxArrayString& tabfilepaths,
+        const wxTreeItemId insertafter = wxTreeItemId());
     void AddTabgroupItem();
     void PasteTabgroupItem(wxTreeItemId itemtopaste = wxTreeItemId());
     void DeleteTabgroup();
@@ -100,7 +98,7 @@ protected:
 
     void OnBeginDrag(wxTreeEvent& event);
     void OnEndDrag(wxTreeEvent& event);
-
+    void OnWorkspaceClosed(wxCommandEvent& e);
     wxTreeCtrl* m_tree;
     /*!
      * \brief Stores the dragged item during DnD

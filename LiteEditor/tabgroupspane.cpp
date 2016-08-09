@@ -42,6 +42,8 @@
 #include <algorithm>
 #include "pluginmanager.h"
 #include "ieditor.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
 
 TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption) : wxPanel(parent, wxID_ANY)
 {
@@ -165,6 +167,7 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption) : wxPane
     m_tree->Connect(wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), NULL, this);
     
     m_themeHelper = new ThemeHandlerHelper(this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &TabgroupsPane::OnWorkspaceClosed, this);
 }
 
 TabgroupsPane::~TabgroupsPane()
@@ -185,6 +188,8 @@ TabgroupsPane::~TabgroupsPane()
     m_tree->Disconnect(wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), NULL, this);
 
     delete m_node;
+    
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &TabgroupsPane::OnWorkspaceClosed, this);
 }
 
 bool sortfunction(const spTabGrp& x, const spTabGrp& y)
@@ -805,4 +810,10 @@ int TabgroupsPane::DoGetIconIndex(const wxString& filename)
     } else {
         return 2; // Plain Text file
     }
+}
+
+void TabgroupsPane::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    m_tree->DeleteChildren(m_tree->GetRootItem());
 }

@@ -365,7 +365,6 @@ void Manager::DoSetupWorkspace(const wxString& path)
             clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(false);
             GetBreakpointsMgr()->LoadSession(session);
             clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-            clMainFrame::Get()->GetWorkspacePane()->GetTabgroupsTab()->DisplayTabgroups();
         }
     }
 
@@ -417,9 +416,6 @@ void Manager::CloseWorkspace()
 
     // Delete any breakpoints belong to the current workspace
     GetBreakpointsMgr()->DelAllBreakpoints();
-
-    clMainFrame::Get()->GetWorkspacePane()->GetTabgroupsTab()->ClearTabgroups();
-    TabGroupsManager::Get()->ClearTabgroups();
 
     // since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
     // default

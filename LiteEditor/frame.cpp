@@ -3767,7 +3767,9 @@ void clMainFrame::CompleteInitialization()
     eventShowTabBar.SetInt(clConfig::Get().Read(kConfigShowTabBar, true));
     OnShowTabBar(eventShowTabBar);
     ShowOrHideCaptions();
-
+    
+    TabGroupsManager::Get(); // Ensure that the events are binded
+    
     ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
     m_initCompleted = true;
 

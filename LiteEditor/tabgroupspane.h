@@ -63,7 +63,6 @@ class TabgroupsPane : public wxPanel
         TGM_ID_CutItem,
         TGM_ID_RemoveItem
     };
-    std::map<wxString, int> _imgIdx;
     ThemeHandlerHelper* m_themeHelper;
 
 public:
@@ -74,8 +73,9 @@ public:
     bool AddNewTabgroupToTree(const wxString& newfilepath, wxTreeItemId selection = wxTreeItemId());
 
 protected:
-    void AddTreeItem(const wxString& tabgroupname, const wxArrayString& tabfilepaths,
-        const wxTreeItemId insertafter = wxTreeItemId());
+    void AddTreeItem(const wxString& tabgroupname,
+                     const wxArrayString& tabfilepaths,
+                     const wxTreeItemId insertafter = wxTreeItemId());
     void AddTabgroupItem();
     void PasteTabgroupItem(wxTreeItemId itemtopaste = wxTreeItemId());
     void DeleteTabgroup();

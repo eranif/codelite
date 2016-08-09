@@ -48,66 +48,6 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY)
 {
     m_node = NULL;
-    _imgIdx[wxT("cpp")] = 3;
-    _imgIdx[wxT("cxx")] = 3;
-    _imgIdx[wxT("cc")] = 3;
-    _imgIdx[wxT("c++")] = 3;
-    _imgIdx[wxT("c")] = 4;
-    _imgIdx[wxT("h++")] = 5;
-    _imgIdx[wxT("hpp")] = 5;
-    _imgIdx[wxT("h")] = 5;
-
-    // executable
-    _imgIdx[wxT("exe")] = 6;
-
-    // shared libraris / static libraries
-    _imgIdx[wxT("php")] = 7;
-
-    // shared libraris / static libraries
-    _imgIdx[wxT("dylib")] = 8;
-    _imgIdx[wxT("dll")] = 8;
-    _imgIdx[wxT("so")] = 8;
-    _imgIdx[wxT("lib")] = 8;
-    _imgIdx[wxT("a")] = 8;
-
-    // images
-    _imgIdx[wxT("png")] = 9;
-    _imgIdx[wxT("bmp")] = 9;
-    _imgIdx[wxT("gif")] = 9;
-    _imgIdx[wxT("xpm")] = 9;
-
-    // scripts
-    _imgIdx[wxT("sh")] = 10;
-    _imgIdx[wxT("bat")] = 10;
-
-    // compressed files
-    _imgIdx[wxT("zip")] = 11;
-    _imgIdx[wxT("gz")] = 11;
-    _imgIdx[wxT("tgz")] = 11;
-    _imgIdx[wxT("tar")] = 11;
-    _imgIdx[wxT("jar")] = 11;
-
-    // XML files
-    _imgIdx[wxT("xml")] = 12;
-    _imgIdx[wxT("xrc")] = 12;
-
-    // HTML files
-    _imgIdx[wxT("html")] = 13;
-    _imgIdx[wxT("htm")] = 13;
-
-    // Makefile
-    _imgIdx[wxT("mk")] = 14;
-    _imgIdx[wxT("makefile")] = 14;
-
-    // formbuilder files
-    _imgIdx[wxT("fbp")] = 15;
-
-    // codedesigner files
-    _imgIdx[wxT("cdp")] = 16;
-
-    // erd (dbexplorer) files
-    _imgIdx[wxT("erd")] = 17;
-
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     m_tree = new wxTreeCtrl(this,
                             wxID_ANY,

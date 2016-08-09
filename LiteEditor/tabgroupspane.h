@@ -71,8 +71,11 @@ public:
     ~TabgroupsPane();
     void DisplayTabgroups();
     bool AddNewTabgroupToTree(const wxString& newfilepath, wxTreeItemId selection = wxTreeItemId());
-
+    void FileDropped(const wxString& filename);
+    
 protected:
+    void AddFile(const wxString& filename);
+    
     void AddTreeItem(const wxString& tabgroupname,
                      const wxArrayString& tabfilepaths,
                      const wxTreeItemId insertafter = wxTreeItemId());

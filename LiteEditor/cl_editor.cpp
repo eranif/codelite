@@ -227,7 +227,7 @@ public:
         if(pos == wxNOT_FOUND) return false;
 
         // Don't allow dropping tabs on the editor
-        static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}");
+        static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}\\{.*?\\}", wxRE_ADVANCED);
         if(re.Matches(text)) return false;
 
         int selStart = m_stc->GetSelectionStart();

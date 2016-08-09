@@ -43,6 +43,26 @@
 #include "ieditor.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
+#include <wx/regex.h>
+
+class MyDropTarget : public wxTextDropTarget
+{
+    TabgroupsPane* m_pane;
+
+public:
+    MyDropTarget(TabgroupsPane* pane)
+        : m_pane(pane)
+    {
+    }
+    virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data)
+    {
+        static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}\\{(.*?)\\}", wxRE_ADVANCED);
+        if(re.Matches(data)) {
+            m_pane->FileDropped(re.GetMatch(data, 2));
+        }
+        return true;
+    }
+};
 
 TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY)
@@ -57,6 +77,7 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
                             wxDefaultValidator,
                             wxT("tabgrouptree"));
     MSWSetNativeTheme(m_tree);
+    m_tree->SetDropTarget(new MyDropTarget(this));
 
     // Add icons to the tree
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
@@ -456,29 +477,7 @@ void TabgroupsPane::AddTabgroupItem()
         }
     }
 
-    // Create a suitable node, then piggyback on PasteTabgroupItem() to do the real work
-    // Reuse m_copieditem_filepath and m_node for this, so cache them first
-    wxString oldcopieditem_filepath = m_copieditem_filepath;
-    wxXmlNode* oldnode = m_node;
-
-    m_copieditem_filepath = newfilepath;
-    m_node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfo"));
-    wxXmlNode* fp = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("wxString"));
-    fp->AddProperty(wxT("Value"), newfilepath);
-    fp->AddProperty(wxT("Name"), wxT("FileName"));
-    wxXmlNode* fvl = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("int"));
-    fvl->AddProperty(wxT("Name"), wxT("FirstVisibleLine"));
-    wxXmlNode* cl = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("int"));
-    cl->AddProperty(wxT("Name"), wxT("CurrentLine"));
-    wxXmlNode* bm = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("wxArrayString"));
-    bm->AddProperty(wxT("Name"), wxT("Bookmarks"));
-
-    PasteTabgroupItem();
-
-    // Restore the old values
-    m_copieditem_filepath = oldcopieditem_filepath;
-    delete m_node;
-    m_node = oldnode;
+    AddFile(newfilepath);
 }
 
 void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId()*/)
@@ -776,4 +775,37 @@ void TabgroupsPane::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     m_tree->DeleteChildren(m_tree->GetRootItem());
+}
+
+void TabgroupsPane::FileDropped(const wxString& filename)
+{
+    // An editor was DnD to the TabGroup pane view
+    AddFile(filename);
+}
+
+void TabgroupsPane::AddFile(const wxString& filename)
+{
+    // Create a suitable node, then piggyback on PasteTabgroupItem() to do the real work
+    // Reuse m_copieditem_filepath and m_node for this, so cache them first
+    wxString oldcopieditem_filepath = m_copieditem_filepath;
+    wxXmlNode* oldnode = m_node;
+
+    m_copieditem_filepath = filename;
+    m_node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfo"));
+    wxXmlNode* fp = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("wxString"));
+    fp->AddProperty(wxT("Value"), filename);
+    fp->AddProperty(wxT("Name"), wxT("FileName"));
+    wxXmlNode* fvl = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("int"));
+    fvl->AddProperty(wxT("Name"), wxT("FirstVisibleLine"));
+    wxXmlNode* cl = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("int"));
+    cl->AddProperty(wxT("Name"), wxT("CurrentLine"));
+    wxXmlNode* bm = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("wxArrayString"));
+    bm->AddProperty(wxT("Name"), wxT("Bookmarks"));
+
+    PasteTabgroupItem();
+
+    // Restore the old values
+    m_copieditem_filepath = oldcopieditem_filepath;
+    wxDELETE(m_node);
+    m_node = oldnode;
 }

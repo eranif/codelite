@@ -19,6 +19,8 @@
 #endif
 
 #if CL_BUILD
+#include "globals.h"
+#include "imanager.h"
 #include "file_logger.h"
 #include "cl_command_event.h"
 #include "event_notifier.h"
@@ -574,7 +576,20 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     if((m_style & kNotebook_AllowDnD) && clickWasOnActiveTab) {
         // We simply drag the active tab index
         wxString dragText;
-        dragText << "{Class:Notebook,TabIndex:" << GetSelection() << "}";
+        dragText << "{Class:Notebook,TabIndex:" << GetSelection() << "}{";
+#if CL_BUILD
+        IEditor* activeEditor = clGetManager()->GetActiveEditor();
+        wxWindow* activePage = NULL;
+        if(GetSelection() != wxNOT_FOUND) {
+            activePage = GetPage(GetSelection());
+        }
+        
+        if(activeEditor && ((void*) activeEditor->GetCtrl() == (void*)activePage)) {
+            // The current Notebook is the main editor
+            dragText << activeEditor->GetFileName().GetFullPath();
+        }
+        dragText << "}";
+#endif
         wxTextDataObject dragContent(dragText);
         wxDropSource dragSource(this);
         dragSource.SetData(dragContent);
@@ -1307,8 +1322,9 @@ clTabCtrlDropTarget::~clTabCtrlDropTarget() {}
 bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
 {
     // Extract the content dragged using regular expression
-    wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}");
+    static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}\\{.*?\\}", wxRE_ADVANCED);
     if(!re.Matches(data)) return false;
+    
     wxString tabIndex = re.GetMatch(data, 1);
     long nTabIndex = wxNOT_FOUND;
     tabIndex.ToCLong(&nTabIndex);

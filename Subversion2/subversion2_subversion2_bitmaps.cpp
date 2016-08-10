@@ -545,7 +545,7 @@ static unsigned char xml_res_file_9[] = {
 23,56,48,210,101,52,26,255,0,85,133,207,225,11,178,60,7,0,0,0,0,73,69,78,
 68,174,66,96,130};
 
-static size_t xml_res_size_10 = 1297;
+static size_t xml_res_size_10 = 1459;
 static unsigned char xml_res_file_10[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
@@ -601,13 +601,21 @@ static unsigned char xml_res_file_10[] = {
 62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,61,34,119,120,
 66,105,116,109,97,112,34,32,110,97,109,101,61,34,109,95,98,109,112,83,118,
 110,34,62,115,117,98,118,101,114,115,105,111,110,50,95,115,117,98,118,101,
-114,115,105,111,110,50,95,98,105,116,109,97,112,115,46,99,112,112,36,46,
-46,95,98,105,116,109,97,112,115,95,49,54,45,115,117,98,118,101,114,115,
-105,111,110,46,112,110,103,60,47,111,98,106,101,99,116,62,10,32,32,60,111,
-98,106,101,99,116,32,99,108,97,115,115,61,34,119,120,66,105,116,109,97,
-112,34,32,110,97,109,101,61,34,109,95,98,109,112,83,118,110,64,50,120,34,
-62,115,117,98,118,101,114,115,105,111,110,50,95,115,117,98,118,101,114,
-115,105,111,110,50,95,98,105,116,109,97,112,115,46,99,112,112,36,46,46,
+114,115,105,111,110,50,95,98,105,116,109,97,112,115,46,99,112,112,36,67,
+95,95,115,114,99,95,99,111,100,101,108,105,116,101,95,98,105,116,109,97,
+112,115,95,49,54,45,115,117,98,118,101,114,115,105,111,110,46,112,110,103,
+60,47,111,98,106,101,99,116,62,10,32,32,60,111,98,106,101,99,116,32,99,
+108,97,115,115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,
+61,34,109,95,98,109,112,83,118,110,64,50,120,34,62,115,117,98,118,101,114,
+115,105,111,110,50,95,115,117,98,118,101,114,115,105,111,110,50,95,98,105,
+116,109,97,112,115,46,99,112,112,36,67,95,95,115,114,99,95,99,111,100,101,
+108,105,116,101,95,98,105,116,109,97,112,115,95,49,54,45,115,117,98,118,
+101,114,115,105,111,110,64,50,120,46,112,110,103,60,47,111,98,106,101,99,
+116,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,61,34,119,
+120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,109,95,98,109,112,
+83,118,110,64,50,120,34,62,115,117,98,118,101,114,115,105,111,110,50,95,
+115,117,98,118,101,114,115,105,111,110,50,95,98,105,116,109,97,112,115,
+46,99,112,112,36,67,95,95,115,114,99,95,99,111,100,101,108,105,116,101,
 95,98,105,116,109,97,112,115,95,49,54,45,115,117,98,118,101,114,115,105,
 111,110,64,50,120,46,112,110,103,60,47,111,98,106,101,99,116,62,10,60,47,
 114,101,115,111,117,114,99,101,62,10};
@@ -633,8 +641,8 @@ void wxC95F2InitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/subversion2_subversion2_bitmaps.cpp$.._bitmaps_16-diff@2x.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/subversion2_subversion2_bitmaps.cpp$.._bitmaps_16-lock.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/subversion2_subversion2_bitmaps.cpp$.._bitmaps_16-lock@2x.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/subversion2_subversion2_bitmaps.cpp$.._bitmaps_16-subversion.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/subversion2_subversion2_bitmaps.cpp$.._bitmaps_16-subversion@2x.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/subversion2_subversion2_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_Subversion2_subversion2_subversion2_bitmaps.xrc"), xml_res_file_10, xml_res_size_10, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/subversion2_subversion2_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_Subversion2_subversion2_subversion2_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/subversion2_subversion2_bitmaps.cpp$C__src_codelite_bitmaps_16-subversion.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/subversion2_subversion2_bitmaps.cpp$C__src_codelite_bitmaps_16-subversion@2x.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/subversion2_subversion2_bitmaps.cpp$C__src_codelite_Subversion2_subversion2_subversion2_bitmaps.xrc"), xml_res_file_10, xml_res_size_10, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/subversion2_subversion2_bitmaps.cpp$C__src_codelite_Subversion2_subversion2_subversion2_bitmaps.xrc"));
 }

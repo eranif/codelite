@@ -41,7 +41,8 @@ SvnPropsDlg::SvnPropsDlg(wxWindow* parent, const wxString& url, Subversion2* plu
     m_textCtrlBugMsg->SetValue(props.ReadProperty(SubversionLocalProperties::BUG_TRACKER_MESSAGE));
     m_textCtrlFrMsg->SetValue(props.ReadProperty(SubversionLocalProperties::FR_TRACKER_MESSAGE));
     SetName("SvnPropsDlg");
-    WindowAttrManager::Load(this);
+    CentreOnParent();
+    GetSizer()->Fit(this);
 }
 
 SvnPropsDlg::~SvnPropsDlg() {}

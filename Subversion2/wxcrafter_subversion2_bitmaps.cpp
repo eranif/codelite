@@ -341,6 +341,6 @@ void wxC38D8InitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_subversion2_bitmaps.cpp$.._bitmaps_16-clear@2x.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_subversion2_bitmaps.cpp$.._bitmaps_16-history.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_subversion2_bitmaps.cpp$.._bitmaps_16-history@2x.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_subversion2_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_Subversion2_wxcrafter_subversion2_bitmaps.xrc"), xml_res_file_4, xml_res_size_4, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_subversion2_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_Subversion2_wxcrafter_subversion2_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_subversion2_bitmaps.cpp$C__src_codelite_Subversion2_wxcrafter_subversion2_bitmaps.xrc"), xml_res_file_4, xml_res_size_4, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_subversion2_bitmaps.cpp$C__src_codelite_Subversion2_wxcrafter_subversion2_bitmaps.xrc"));
 }

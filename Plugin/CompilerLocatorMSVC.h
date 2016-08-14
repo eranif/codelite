@@ -44,6 +44,8 @@ public:
 protected:
     void AddTools(const wxString& masterFolder, const wxString& name, const wxString& platform);
     void AddTool(const wxString& toolpath, const wxString& extraArgs, const wxString& toolname, CompilerPtr compiler);
+    void AddCompilerOptions(CompilerPtr compiler);
+    void AddLinkerOptions(CompilerPtr compiler);
 };
 
 #endif // COMPILERLOCATORMSVC_H

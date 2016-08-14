@@ -26,10 +26,6 @@
 #include "CompilerLocatorMSVC.h"
 #include "compiler.h"
 #include <globals.h>
-#include <wx/tokenzr.h>
-#ifdef __WXMSW__
-#include <wx/msw/registry.h>
-#endif
 
 CompilerLocatorMSVC::CompilerLocatorMSVC() {}
 
@@ -50,17 +46,6 @@ bool CompilerLocatorMSVC::Locate()
             continue;
         }
 
-        wxFileName binPath(envvarPath, "");
-        binPath.RemoveLastDir();
-        binPath.RemoveLastDir();
-        binPath.AppendDir("VC");
-        binPath.AppendDir("bin");
-
-        wxFileName cl(binPath.GetPath(), "cl.exe");
-        if(!cl.FileExists()) {
-            continue;
-        }
-
         wxString vcVersion = envvarName.Mid(2, envvarName.Find('C') - 3);
         wxString compilerName = "Visual C++ " + vcVersion;
         AddTools(envvarPath, compilerName);
@@ -71,17 +56,6 @@ bool CompilerLocatorMSVC::Locate()
 
 void CompilerLocatorMSVC::AddTools(const wxString& masterFolder, const wxString& name)
 {
-    wxFileName fnBinFolder(masterFolder, "");
-    fnBinFolder.RemoveLastDir();
-    fnBinFolder.RemoveLastDir();
-    fnBinFolder.AppendDir("VC");
-    fnBinFolder.AppendDir("bin");
-    wxString binFolder = fnBinFolder.GetPath();
-
-    wxFileName fnIdeFolder(masterFolder, "");
-    fnIdeFolder.RemoveLastDir();
-    fnIdeFolder.AppendDir("IDE");
-
     wxFileName installPath(masterFolder, "");
     installPath.RemoveLastDir();
     installPath.RemoveLastDir();
@@ -90,26 +64,34 @@ void CompilerLocatorMSVC::AddTools(const wxString& masterFolder, const wxString&
     compiler->SetCompilerFamily(COMPILER_FAMILY_VC);
     compiler->SetName(name);
     compiler->SetInstallationPath(installPath.GetPath());
-    m_compilers.push_back(compiler);
-
-    wxFileName cxx(binFolder, "cl.exe");
 
     // CXX
-    AddTool(cxx.GetFullPath(), "-nologo -FC -EHs", "CXX", compiler);
+    AddTool("cl.exe", "/nologo /TP /FC", "CXX", compiler);
 
     // CC
-    AddTool(cxx.GetFullPath(), "-nologo -FC", "CC", compiler);
+    AddTool("cl.exe", "/nologo /TC /FC", "CC", compiler);
 
     // AR
-    cxx.SetFullName("lib.exe");
-    AddTool(cxx.GetFullPath(), "-nologo", "AR", compiler);
+    AddTool("lib.exe", "/nologo", "AR", compiler);
 
     // SharedObjectLinkerName
-    cxx.SetFullName("link.exe");
-    AddTool(cxx.GetFullPath(), "-DLL -nologo", "SharedObjectLinkerName", compiler);
+    AddTool("link.exe", "/nologo /DLL", "SharedObjectLinkerName", compiler);
 
     // LinkerName
-    AddTool(cxx.GetFullPath(), "-nologo", "LinkerName", compiler);
+    AddTool("link.exe", "/nologo", "LinkerName", compiler);
+
+    // AS
+    AddTool("ml.exe", "/nologo", "AS", compiler);
+
+    // Resource
+    AddTool("rc.exe", "/nologo", "ResourceCompiler", compiler);
+
+    //Make
+    wxFileName fnVCvars(installPath);
+    fnVCvars.AppendDir("VC");
+    fnVCvars.SetFullName("vcvarsall.bat");
+    wxString makeArgs = " > nul";
+    AddTool(fnVCvars.GetFullPath(), makeArgs, "MAKE", compiler);
 
     compiler->SetSwitch("ArchiveOutput", "/OUT:");
     compiler->SetSwitch("Debug", "/Zi ");
@@ -118,33 +100,46 @@ void CompilerLocatorMSVC::AddTools(const wxString& masterFolder, const wxString&
     compiler->SetSwitch("LibraryPath", "/LIBPATH:");
     compiler->SetSwitch("Object", "/Fo");
     compiler->SetSwitch("Output", "/OUT:");
+    compiler->SetSwitch("PreprocessOnly", "/P");
     compiler->SetSwitch("Preprocessor", "/D");
-    compiler->SetSwitch("Source", "-c ");
+    compiler->SetSwitch("Source", "");
     compiler->SetObjectSuffix(".obj");
 
-    // Add SDK paths
-    FindSDKs(compiler);
-
-    // Add the global include path
-    wxFileName includePath(binFolder, "");
-    includePath.RemoveLastDir();
-    includePath.AppendDir("include");
-
-    wxString globalIncPath = compiler->GetGlobalIncludePath();
-    AddIncOrLibPath(includePath.GetPath(), globalIncPath);
-    compiler->SetGlobalIncludePath(globalIncPath);
-
-    // Add the global include path
-    wxFileName libpath(binFolder, "");
-    libpath.RemoveLastDir();
-    libpath.AppendDir("lib");
-
-    wxString globalLibPath = compiler->GetGlobalLibPath();
-    AddIncOrLibPath(libpath.GetPath(), globalLibPath);
-    compiler->SetGlobalLibPath(globalLibPath);
-
     // IDE path
+    wxFileName fnIdeFolder(masterFolder, "");
+    fnIdeFolder.RemoveLastDir();
+    fnIdeFolder.AppendDir("IDE");
     compiler->SetPathVariable(fnIdeFolder.GetPath() + ";$PATH");
+
+    // include and lib path, check if cl.exe exists
+    wxString includePathCmd = "echo \%INCLUDE\%";
+    WrapInShell(includePathCmd);
+    wxString libPathCmd = "echo \%LIB\%";
+    WrapInShell(libPathCmd);
+    wxString clCheck = "where cl.exe";
+    wxString command = compiler->GetTool("MAKE") + " & " + includePathCmd + " & " + libPathCmd + " & " + clCheck;
+    WrapInShell(command);
+
+    wxArrayString output;
+    wxArrayString errors;
+    wxExecute(command, output, errors);
+
+    if (output.size() >= 2) {
+        wxString includePath = output[0];
+        if (includePath.Trim().Trim(false) != "\%INCLUDE\%") {
+            compiler->SetGlobalIncludePath(includePath);
+        }
+
+        wxString libPath = output[1];
+        if (libPath.Trim().Trim(false) != "\%LIB\%") {
+            compiler->SetGlobalLibPath(libPath);
+        }
+    }
+
+    // cl.exe exists
+    if (errors.IsEmpty()) {
+        m_compilers.push_back(compiler);
+    }
 }
 
 void CompilerLocatorMSVC::AddTool(const wxString& toolpath,
@@ -159,96 +154,4 @@ void CompilerLocatorMSVC::AddTool(const wxString& toolpath,
         tool << " " << extraArgs;
     }
     compiler->SetTool(toolname, tool);
-}
-
-void CompilerLocatorMSVC::FindSDKs(CompilerPtr compiler)
-{
-#ifdef __WXMSW__
-    wxString sdkDir;
-    bool sdkfound = false;
-    wxRegKey key; // defaults to HKCR
-    // try to detect Platform SDK (old versions)
-    key.SetName(_T("HKEY_CURRENT_USER\\Software\\Microsoft\\Win32SDK\\Directories"));
-    if(key.Exists() && key.Open(wxRegKey::Read)) {
-        key.QueryValue(_T("Install Dir"), sdkDir);
-        if(!sdkDir.IsEmpty() && wxDirExists(sdkDir)) sdkfound = true;
-        key.Close();
-    }
-
-    // try to detect Platform SDK (newer versions)
-    wxString msPsdkKeyName[2] = { _T("HKEY_CURRENT_USER\\Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs"),
-                                  _T("HKEY_CURRENT_USER\\Software\\Microsoft\\Microsoft SDKs\\Windows") };
-    wxString msPsdkKeyValue[2] = { _T("Install Dir"), _T("InstallationFolder") };
-    for(int i = 0; i < 2; ++i) {
-        key.SetName(msPsdkKeyName[i]);
-        if(!sdkfound && key.Exists() && key.Open(wxRegKey::Read)) {
-            wxString name;
-            long idx;
-            bool cont = key.GetFirstKey(name, idx);
-
-            while(cont) {
-                wxRegKey subkey(key.GetName(), name);
-
-                if(subkey.Open(wxRegKey::Read) && (subkey.QueryValue(msPsdkKeyValue[i], sdkDir), !sdkDir.IsEmpty()) &&
-                   wxDirExists(sdkDir)) {
-                    sdkfound = true;
-                    cont = false;
-                } else
-                    cont = key.GetNextKey(name, idx);
-
-                subkey.Close();
-            }
-            key.Close();
-        }
-
-        if(sdkfound) break;
-    }
-
-    if(!sdkfound) {
-        // Guess...
-        sdkDir = "C:\\Program Files"; // Default
-        wxGetEnv("ProgramFiles", &sdkDir);
-        sdkDir += wxT("\\Microsoft SDKs\\Windows\\v");
-        wxArrayString vers = ::wxStringTokenize("8.1A;8.1;8.0;7.1A;7.1;7.0A;7.0;6.1;6.0A;6.0", ";", wxTOKEN_STRTOK);
-        for(size_t i = 0; i < vers.GetCount(); ++i) {
-            wxString sdkVerDir;
-            sdkVerDir << sdkDir << vers.Item(i);
-            if(::wxDirExists(sdkVerDir) && ::wxDirExists(sdkVerDir + "\\Include")) {
-                sdkDir.swap(sdkVerDir);
-                sdkfound = true;
-                break;
-            }
-        }
-    }
-
-    if(sdkfound) {
-        if(sdkDir.GetChar(sdkDir.Length() - 1) != '\\') sdkDir += wxFILE_SEP_PATH;
-
-        wxString incPath = compiler->GetGlobalIncludePath();
-        AddIncOrLibPath(sdkDir + _T("include"), incPath);
-        compiler->SetGlobalIncludePath(incPath);
-
-        wxString libPath = compiler->GetGlobalLibPath();
-        AddIncOrLibPath(sdkDir + _T("lib"), libPath);
-        compiler->SetGlobalLibPath(libPath);
-    }
-
-#endif // __WXMSW__
-}
-
-void CompilerLocatorMSVC::AddIncOrLibPath(const wxString& path_to_add, wxString& add_to_me)
-{
-    wxArrayString paths = wxStringTokenize(add_to_me, ";", wxTOKEN_STRTOK);
-    paths.Add(path_to_add);
-
-    wxString joinedPath;
-    for(size_t i = 0; i < paths.GetCount(); ++i) {
-        joinedPath << paths.Item(i) << ";";
-    }
-
-    if(!joinedPath.IsEmpty()) {
-        joinedPath.RemoveLast();
-    }
-
-    joinedPath.swap(add_to_me);
 }

@@ -27,7 +27,7 @@
 #include "CompilerLocatorMinGW.h"
 #include "CompilerLocatorGCC.h"
 #include "CompilerLocatorCrossGCC.h"
-#include "CompilerLocatorMSVCBase.h"
+#include "CompilerLocatorMSVC.h"
 #include "CompilerLocatorCLANG.h"
 #include "CompilerLocatorCygwin.h"
 #include <wx/utils.h>

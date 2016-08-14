@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 Eran Ifrah
-// file name            : CompilerLocatorMSVCBase.cpp
+// file name            : CompilerLocatorMSVC.cpp
 //
 // -------------------------------------------------------------------------
 // A
@@ -31,11 +31,45 @@
 #include <wx/msw/registry.h>
 #endif
 
-CompilerLocatorMSVCBase::CompilerLocatorMSVCBase() {}
+CompilerLocatorMSVC::CompilerLocatorMSVC() {}
 
-CompilerLocatorMSVCBase::~CompilerLocatorMSVCBase() {}
+CompilerLocatorMSVC::~CompilerLocatorMSVC() {}
 
-void CompilerLocatorMSVCBase::AddTools(const wxString& masterFolder, const wxString& name)
+bool CompilerLocatorMSVC::Locate()
+{
+    m_compilers.clear();
+
+    wxEnvVariableHashMap envvars;
+    ::wxGetEnvMap(&envvars);
+
+    for (wxEnvVariableHashMap::const_iterator it = envvars.begin(); it != envvars.end(); ++it) {
+        wxString const& envvarName = it->first;
+        wxString const& envvarPath = it->second;
+
+        if (!envvarName.Matches("VS??*COMNTOOLS") || envvarPath.IsEmpty() || (envvarName.Find('C') < 3)) {
+            continue;
+        }
+
+        wxFileName binPath(envvarPath, "");
+        binPath.RemoveLastDir();
+        binPath.RemoveLastDir();
+        binPath.AppendDir("VC");
+        binPath.AppendDir("bin");
+
+        wxFileName cl(binPath.GetPath(), "cl.exe");
+        if(!cl.FileExists()) {
+            continue;
+        }
+
+        wxString vcVersion = envvarName.Mid(2, envvarName.Find('C') - 3);
+        wxString compilerName = "Visual C++ " + vcVersion;
+        AddTools(envvarPath, compilerName);
+    }
+
+    return !m_compilers.empty();
+}
+
+void CompilerLocatorMSVC::AddTools(const wxString& masterFolder, const wxString& name)
 {
     wxFileName fnBinFolder(masterFolder, "");
     fnBinFolder.RemoveLastDir();
@@ -113,7 +147,7 @@ void CompilerLocatorMSVCBase::AddTools(const wxString& masterFolder, const wxStr
     compiler->SetPathVariable(fnIdeFolder.GetPath() + ";$PATH");
 }
 
-void CompilerLocatorMSVCBase::AddTool(const wxString& toolpath,
+void CompilerLocatorMSVC::AddTool(const wxString& toolpath,
                                       const wxString& extraArgs,
                                       const wxString& toolname,
                                       CompilerPtr compiler)
@@ -127,7 +161,7 @@ void CompilerLocatorMSVCBase::AddTool(const wxString& toolpath,
     compiler->SetTool(toolname, tool);
 }
 
-void CompilerLocatorMSVCBase::FindSDKs(CompilerPtr compiler)
+void CompilerLocatorMSVC::FindSDKs(CompilerPtr compiler)
 {
 #ifdef __WXMSW__
     wxString sdkDir;
@@ -202,7 +236,7 @@ void CompilerLocatorMSVCBase::FindSDKs(CompilerPtr compiler)
 #endif // __WXMSW__
 }
 
-void CompilerLocatorMSVCBase::AddIncOrLibPath(const wxString& path_to_add, wxString& add_to_me)
+void CompilerLocatorMSVC::AddIncOrLibPath(const wxString& path_to_add, wxString& add_to_me)
 {
     wxArrayString paths = wxStringTokenize(add_to_me, ";", wxTOKEN_STRTOK);
     paths.Add(path_to_add);

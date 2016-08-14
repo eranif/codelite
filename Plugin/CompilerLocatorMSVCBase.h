@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 Eran Ifrah
-// file name            : CompilerLocatorMSVCBase.h
+// file name            : CompilerLocatorMSVC.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERLOCATORMSVCBASE_H
-#define COMPILERLOCATORMSVCBASE_H
+#ifndef COMPILERLOCATORMSVC_H
+#define COMPILERLOCATORMSVC_H
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
 
@@ -33,11 +33,12 @@
 // See here: https://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History
 //-------------------------------------------------------------------------
 
-class CompilerLocatorMSVCBase : public ICompilerLocator
+class CompilerLocatorMSVC : public ICompilerLocator
 {
 public:
-    CompilerLocatorMSVCBase();
-    virtual ~CompilerLocatorMSVCBase();
+    CompilerLocatorMSVC();
+    virtual ~CompilerLocatorMSVC();
+    virtual bool Locate();
     virtual CompilerPtr Locate(const wxString& folder) { return NULL; }
 
 protected:
@@ -47,4 +48,4 @@ protected:
     void AddIncOrLibPath(const wxString& path_to_add, wxString& add_to_me);
 };
 
-#endif // COMPILERLOCATORMSVCBASE_H
+#endif // COMPILERLOCATORMSVC_H

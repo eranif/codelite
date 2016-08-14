@@ -85,6 +85,11 @@ void CompilerLocatorMSVC::AddTools(const wxString& masterFolder, const wxString&
 
     // Resource
     AddTool("rc.exe", "/nologo", "ResourceCompiler", compiler);
+    compiler->AddCmpFileType("rc",
+                       Compiler::CmpFileKindResource,
+                       "$(RcCompilerName) $(RcCmpOptions) "
+                       "$(ObjectSwitch)$(IntermediateDirectory)/"
+                       "$(ObjectName)$(ObjectSuffix) $(RcIncludePath) \"$(FileFullPath)\"");
 
     //Make
     wxFileName fnVCvars(installPath);

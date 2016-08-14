@@ -74,7 +74,6 @@ public:
     typedef std::list<CmpInfoPattern> CmpListInfoPattern;
 
 private:
-    void AddCmpFileType(const wxString& extension, CmpFileKind type, const wxString& compile_line);
     void
     AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex, int colIndex = wxNOT_FOUND);
     void AddDefaultGnuComplierOptions();
@@ -202,6 +201,7 @@ public:
         this->m_readObjectFilesFromList = readObjectFilesFromList;
     }
     bool GetReadObjectFilesFromList() const { return m_readObjectFilesFromList; }
+    void AddCmpFileType(const wxString& extension, CmpFileKind type, const wxString& compile_line);
     bool GetCmpFileType(const wxString& extension, Compiler::CmpFileTypeInfo& ft);
     void SetObjectNameIdenticalToFileName(bool objectNameIdenticalToFileName)
     {

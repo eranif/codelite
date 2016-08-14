@@ -35,6 +35,10 @@ bool CompilerLocatorMSVC::Locate()
 {
     m_compilers.clear();
 
+    wxArrayString vc_platforms;
+    vc_platforms.Add("x86");
+    vc_platforms.Add("x64");
+
     wxEnvVariableHashMap envvars;
     ::wxGetEnvMap(&envvars);
 
@@ -47,14 +51,18 @@ bool CompilerLocatorMSVC::Locate()
         }
 
         wxString vcVersion = envvarName.Mid(2, envvarName.Find('C') - 3);
-        wxString compilerName = "Visual C++ " + vcVersion;
-        AddTools(envvarPath, compilerName);
+        for(size_t j = 0; j < vc_platforms.GetCount(); ++j) {
+            wxString compilerName = "Visual C++ " + vcVersion + " (" + vc_platforms[j] + ")";
+            AddTools(envvarPath, compilerName, vc_platforms[j]);
+        }
     }
 
     return !m_compilers.empty();
 }
 
-void CompilerLocatorMSVC::AddTools(const wxString& masterFolder, const wxString& name)
+void CompilerLocatorMSVC::AddTools(const wxString& masterFolder,
+                                   const wxString& name,
+                                   const wxString& platform)
 {
     wxFileName installPath(masterFolder, "");
     installPath.RemoveLastDir();
@@ -95,7 +103,7 @@ void CompilerLocatorMSVC::AddTools(const wxString& masterFolder, const wxString&
     wxFileName fnVCvars(installPath);
     fnVCvars.AppendDir("VC");
     fnVCvars.SetFullName("vcvarsall.bat");
-    wxString makeArgs = " > nul";
+    wxString makeArgs = platform + " > nul";
     AddTool(fnVCvars.GetFullPath(), makeArgs, "MAKE", compiler);
 
     compiler->SetSwitch("ArchiveOutput", "/OUT:");

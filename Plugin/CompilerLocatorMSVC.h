@@ -42,7 +42,7 @@ public:
     virtual CompilerPtr Locate(const wxString& folder) { return NULL; }
 
 protected:
-    void AddTools(const wxString& masterFolder, const wxString& name);
+    void AddTools(const wxString& masterFolder, const wxString& name, const wxString& platform);
     void AddTool(const wxString& toolpath, const wxString& extraArgs, const wxString& toolname, CompilerPtr compiler);
 };
 

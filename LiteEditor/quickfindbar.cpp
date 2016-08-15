@@ -735,13 +735,13 @@ void QuickFindBar::OnFindNext(wxCommandEvent& e)
     CHECK_FOCUS_WIN();
 
     // Highlighted text takes precedence over the current search string
-    if(!IsShown()) {
+//    if(!IsShown()) {
         wxString selectedText = DoGetSelectedText();
         if(selectedText.IsEmpty() == false) {
             m_findWhat->ChangeValue(selectedText);
             m_findWhat->SelectAll();
         }
-    }
+//    }
 
     DoSearch(kSearchForward);
 }
@@ -751,13 +751,13 @@ void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
     CHECK_FOCUS_WIN();
 
     // Highlighted text takes precedence over the current search string
-    if(!IsShown()) {
+//    if(!IsShown()) {
         wxString selectedText = DoGetSelectedText();
         if(selectedText.IsEmpty() == false) {
             m_findWhat->ChangeValue(selectedText);
             m_findWhat->SelectAll();
         }
-    }
+//    }
 
     DoSearch(0);
 }

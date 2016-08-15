@@ -43,7 +43,7 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
     bool m_isModified;
     bool m_globalThemeChanged;
     bool m_globalBgColourChanged;
-    bool m_globalBgColourChangedTooltipShown;
+    static bool m_globalBgColourChangedTooltipShown;
     LexerConf::Ptr_t m_lexer;
 
 protected:

@@ -57,6 +57,8 @@
 
 #define CXX_AND_JAVASCRIPT "c++"
 
+bool SyntaxHighlightDlg::m_globalBgColourChangedTooltipShown = false;
+
 const wxString sampleText =
     "class Demo {\n"
     "private:\n"
@@ -79,7 +81,6 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     , m_isModified(false)
     , m_globalThemeChanged(false)
     , m_globalBgColourChanged(false)
-    , m_globalBgColourChangedTooltipShown(false)
 {
     // Get list of available lexers
     wxString lexerName;

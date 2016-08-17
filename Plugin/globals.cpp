@@ -837,8 +837,8 @@ void WrapInShell(wxString& cmd)
 #if 0
     command << "\"" << cmd << "\"";
 #else
-    if(cmd.StartsWith("\"")) {
-        command << "\"" << cmd << "\"\"";
+    if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
+        command << "\"" << cmd << "\"";
     } else {
         command << cmd;
     }

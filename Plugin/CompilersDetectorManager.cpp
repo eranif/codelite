@@ -27,11 +27,7 @@
 #include "CompilerLocatorMinGW.h"
 #include "CompilerLocatorGCC.h"
 #include "CompilerLocatorCrossGCC.h"
-#include "CompilerLocatorMSVC9.h"  // VS 2008
-#include "CompilerLocatorMSVC10.h" // VS 2010
-#include "CompilerLocatorMSVC11.h" // VS 2012
-#include "CompilerLocatorMSVC12.h" // VS 2013
-#include "CompilerLocatorMSVC14.h" // VS 2015
+#include "CompilerLocatorMSVC.h"
 #include "CompilerLocatorCLANG.h"
 #include "CompilerLocatorCygwin.h"
 #include <wx/utils.h>
@@ -52,11 +48,7 @@ CompilersDetectorManager::CompilersDetectorManager()
 #ifdef __WXMSW__
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMinGW()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()));
-    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSVC9()));
-    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSVC10()));
-    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSVC11()));
-    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSVC12()));
-    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSVC14()));	
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSVC()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCygwin()));
 
 #elif defined(__WXGTK__)

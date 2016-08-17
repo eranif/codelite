@@ -152,20 +152,28 @@ void CompilersFoundDlg::MSWUpdateToolchain(CompilerPtr compiler)
 
         for(size_t i = 0; i < m_allCompilers.size(); ++i) {
             CompilerPtr c = m_allCompilers.at(i);
-            if(c->GetCompilerFamily() == COMPILER_FAMILY_CLANG || c->GetCompilerFamily() == COMPILER_FAMILY_VC) {
+
+            if(c->GetCompilerFamily() == COMPILER_FAMILY_VC) {
+                wxString vcMake = c->GetTool("MAKE");
+                if (!vcMake.IsEmpty()) {
+                    vcMake += " & ";
+                }
+                vcMake += make;
+                c->SetTool("MAKE", vcMake);
+            }
+
+            if(c->GetCompilerFamily() == COMPILER_FAMILY_CLANG) {
                 c->SetTool("MAKE", make);
                 c->SetTool("ResourceCompiler", resourceCompiler);
 
-                if(c->GetCompilerFamily() == COMPILER_FAMILY_CLANG) {
-                    // Clang under Windows, needs the include paths from the MinGW compiler
-                    IncludePathLocator locator(NULL);
-                    wxArrayString includePaths, excludePaths;
-                    locator.Locate(includePaths, excludePaths, false, compiler->GetTool("CXX"));
+                // Clang under Windows, needs the include paths from the MinGW compiler
+                IncludePathLocator locator(NULL);
+                wxArrayString includePaths, excludePaths;
+                locator.Locate(includePaths, excludePaths, false, compiler->GetTool("CXX"));
 
-                    // Convert the include paths to semi colon separated list
-                    wxString mingwIncludePaths = wxJoin(includePaths, ';');
-                    c->SetGlobalIncludePath(mingwIncludePaths);
-                }
+                // Convert the include paths to semi colon separated list
+                wxString mingwIncludePaths = wxJoin(includePaths, ';');
+                c->SetGlobalIncludePath(mingwIncludePaths);
             }
         }
     }

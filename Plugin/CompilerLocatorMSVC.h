@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 Eran Ifrah
-// file name            : CompilerLocatorMSVC11.h
+// file name            : CompilerLocatorMSVC.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,18 +23,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERLOCATORMSVC11_H
-#define COMPILERLOCATORMSVC11_H
+#ifndef COMPILERLOCATORMSVC_H
+#define COMPILERLOCATORMSVC_H
 
-#include "CompilerLocatorMSVCBase.h" // Base class: CompilerLocatorMSVCBase
+#include "ICompilerLocator.h" // Base class: ICompilerLocator
 
-class CompilerLocatorMSVC11 : public CompilerLocatorMSVCBase
+//-------------------------------------------------------------------------
+// For a complete list of MSVC compilers
+// See here: https://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History
+//-------------------------------------------------------------------------
+
+class CompilerLocatorMSVC : public ICompilerLocator
 {
 public:
-    CompilerLocatorMSVC11();
-    virtual ~CompilerLocatorMSVC11();
-    
+    CompilerLocatorMSVC();
+    virtual ~CompilerLocatorMSVC();
     virtual bool Locate();
+    virtual CompilerPtr Locate(const wxString& folder) { return NULL; }
+
+protected:
+    void AddTools(const wxString& masterFolder, const wxString& name, const wxString& platform);
+    void AddTool(const wxString& toolpath, const wxString& extraArgs, const wxString& toolname, CompilerPtr compiler);
+    void AddCompilerOptions(CompilerPtr compiler);
+    void AddLinkerOptions(CompilerPtr compiler);
 };
 
-#endif // COMPILERLOCATORMSVC11_H
+#endif // COMPILERLOCATORMSVC_H

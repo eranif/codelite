@@ -547,22 +547,12 @@
     <File Name="CompilerLocatorGCC.cpp"/>
     <File Name="CompilerLocatorCrossGCC.h"/>
     <File Name="CompilerLocatorCrossGCC.cpp"/>
-    <File Name="CompilerLocatorMSVC10.cpp"/>
-    <File Name="CompilerLocatorMSVC10.h"/>
-    <File Name="CompilerLocatorMSVCBase.h"/>
-    <File Name="CompilerLocatorMSVCBase.cpp"/>
-    <File Name="CompilerLocatorMSVC11.h"/>
-    <File Name="CompilerLocatorMSVC11.cpp"/>
-    <File Name="CompilerLocatorMSVC12.h"/>
-    <File Name="CompilerLocatorMSVC12.cpp"/>
+    <File Name="CompilerLocatorMSVC.h"/>
+    <File Name="CompilerLocatorMSVC.cpp"/>
     <File Name="CompilerLocatorCLANG.h"/>
     <File Name="CompilerLocatorCLANG.cpp"/>
-    <File Name="CompilerLocatorMSVC9.h"/>
-    <File Name="CompilerLocatorMSVC9.cpp"/>
     <File Name="CompilerLocatorCygwin.h"/>
     <File Name="CompilerLocatorCygwin.cpp"/>
-    <File Name="CompilerLocatorMSVC14.h"/>
-    <File Name="CompilerLocatorMSVC14.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Zip">
     <File Name="clZipReader.cpp"/>

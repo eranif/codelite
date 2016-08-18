@@ -218,7 +218,7 @@ void FileViewTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& 
 void FileViewTree::BuildTree()
 {
     wxFont defaultGuiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    
+
     wxWindowUpdateLocker locker(this);
     clCommandEvent event(wxEVT_WORKSPACE_VIEW_BUILD_STARTING);
     if(EventNotifier::Get()->ProcessEvent(event)) {
@@ -228,14 +228,14 @@ void FileViewTree::BuildTree()
             AssignImageList(imgList);
         }
     }
-    
+
     SetFont(defaultGuiFont);
-    
+
     DeleteAllItems();
     long flags = GetWindowStyle();
     SetWindowStyle(flags | wxTR_MULTIPLE);
     m_itemsToSort.clear();
-    
+
     if(ManagerST::Get()->IsWorkspaceOpen()) {
         // Add an invisible tree root
         ProjectItem data;
@@ -900,6 +900,7 @@ void FileViewTree::DoRemoveItems()
     }
 
     wxArrayString filesRemoved;
+    wxString affectedProject;
     for(size_t i = 0; i < num; i++) {
         wxTreeItemId item = items.Item(i);
         if(!item.IsOk()) {
@@ -940,6 +941,11 @@ void FileViewTree::DoRemoveItems()
                         // Remove the file. Do not fire an event here, we will send a "bulk" event
                         // with a list of all files removed
                         wxString fullpathOfFileRemoved;
+                        CL_DEBUG("File removed %s", path);
+                        if(affectedProject.IsEmpty()) {
+                            affectedProject = path.BeforeFirst(wxT(':'));
+                        }
+
                         if(ManagerST::Get()->RemoveFile(
                                data->GetData().GetFile(), path, fullpathOfFileRemoved, false)) {
                             filesRemoved.Add(fullpathOfFileRemoved);
@@ -970,9 +976,8 @@ void FileViewTree::DoRemoveItems()
                             AlsoDeleteFromDisc) {
                             AlsoDeleteFromDisc = ApplyToEachFileDeletion; // If we're here, ApplyToAll means delete all
 
-                            wxString message(
-                                _("An error occurred during file removal. Maybe it has been already "
-                                  "deleted or you don't have the necessary permissions"));
+                            wxString message(_("An error occurred during file removal. Maybe it has been already "
+                                               "deleted or you don't have the necessary permissions"));
                             if(wxDirExists(name)) {
                                 if(!wxRmdir(name)) {
                                     wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
@@ -999,9 +1004,10 @@ void FileViewTree::DoRemoveItems()
     }
 
     // Notify plugins if we actually removed files
-    if(filesRemoved.IsEmpty() == false) {
+    if(!filesRemoved.IsEmpty()) {
         clCommandEvent evtFileRemoved(wxEVT_PROJ_FILE_REMOVED);
-        evtFileRemoved.SetStrings(filesRemoved);
+        evtFileRemoved.SetStrings(filesRemoved);   // list of files removed
+        evtFileRemoved.SetString(affectedProject); // the affected project
         evtFileRemoved.SetEventObject(this);
         EventNotifier::Get()->ProcessEvent(evtFileRemoved);
     }
@@ -1610,8 +1616,11 @@ void FileViewTree::OnImportDirectory(wxCommandEvent& e)
     DoImportFolder(proj, dlg.GetBaseDir(), all_files, filespec, extlessFiles);
 }
 
-void FileViewTree::DoImportFolder(ProjectPtr proj, const wxString& baseDir, const wxArrayString& all_files,
-    const wxString& filespec, bool extlessFiles)
+void FileViewTree::DoImportFolder(ProjectPtr proj,
+    const wxString& baseDir,
+    const wxArrayString& all_files,
+    const wxString& filespec,
+    bool extlessFiles)
 {
     wxStringTokenizer tok(filespec, wxT(";"));
     wxStringSet_t specMap;

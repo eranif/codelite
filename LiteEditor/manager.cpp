@@ -681,6 +681,7 @@ bool Manager::RemoveProject(const wxString& name, bool notify)
         if(notify) {
             clCommandEvent evtFileRemoved(wxEVT_PROJ_FILE_REMOVED);
             evtFileRemoved.SetStrings(prjfls);
+            evtFileRemoved.SetString(proj->GetName());
             evtFileRemoved.SetEventObject(this);
             EventNotifier::Get()->ProcessEvent(evtFileRemoved);
         }
@@ -1037,6 +1038,7 @@ void Manager::RemoveVirtualDirectory(const wxString& virtualDirFullPath)
 
     clCommandEvent evtFileRemoved(wxEVT_PROJ_FILE_REMOVED);
     evtFileRemoved.SetStrings(files);
+    evtFileRemoved.SetString(project);
     evtFileRemoved.SetEventObject(this);
     EventNotifier::Get()->ProcessEvent(evtFileRemoved);
 }
@@ -1094,6 +1096,7 @@ bool Manager::AddFileToProject(const wxString& fileName, const wxString& vdFullP
 
     clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
     evtAddFiles.SetStrings(files);
+    evtAddFiles.SetString(project);
     EventNotifier::Get()->AddPendingEvent(evtAddFiles);
     return true;
 }
@@ -1159,6 +1162,7 @@ void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFu
     if(!actualAdded.IsEmpty()) {
         clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
         evtAddFiles.SetStrings(actualAdded);
+        evtAddFiles.SetString(project);
         EventNotifier::Get()->AddPendingEvent(evtAddFiles);
     }
 
@@ -1194,6 +1198,7 @@ bool Manager::RemoveFile(const wxString& fileName, const wxString& vdFullPath, w
         wxArrayString files(1, &fileName);
         clCommandEvent evtFileRemoved(wxEVT_PROJ_FILE_REMOVED);
         evtFileRemoved.SetStrings(files);
+        evtFileRemoved.SetString(project);
         evtFileRemoved.SetEventObject(this);
         EventNotifier::Get()->ProcessEvent(evtFileRemoved);
     }
@@ -1236,6 +1241,7 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
 
     clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
     evtAddFiles.SetStrings(files);
+    evtAddFiles.SetString(projName);
     EventNotifier::Get()->AddPendingEvent(evtAddFiles);
 
     // Open the newly created file

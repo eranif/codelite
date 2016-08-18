@@ -245,6 +245,7 @@ public:
      * @brief Run CMake for the selected project
      */
     void OnRunCMake(wxCommandEvent& event);
+
     /**
      * @brief Open the selected projects' CMakeLists.txt
      */
@@ -270,6 +271,19 @@ public:
      * @brief cmake process terminated
      */
     void OnCMakeTerminated(clProcessEvent& event);
+
+    /**
+     * @brief a file has been removed from the project, re-generate CMakeLists.txt
+     */
+    void OnFileRemoved(clCommandEvent& event);
+    /**
+     * @brief a file has been added from the project, re-generate CMakeLists.txt
+     */
+    void OnFileAdded(clCommandEvent& event);
+
+protected:
+    void DoRunCMake(ProjectPtr p);
+
     // Private Operations
 private:
     /// CMake configuration.

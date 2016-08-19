@@ -781,6 +781,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.php5");
     }
 
+    if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".ctp")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ctp");
+    }
+
     // Add wxcp file extension to the JavaScript lexer
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");

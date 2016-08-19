@@ -68,8 +68,8 @@ public:
 public:
     PHPProject()
         : m_isActive(false)
-        , m_importFileSpec(
-              "*.php;*.php5;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess")
+        , m_importFileSpec("*.php;*.php5;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;."
+                           "htaccess;*.ctp")
         , m_excludeFolders(".git;.svn;.codelite;.clang")
     {
     }

@@ -73,6 +73,7 @@ void FileExtManager::Init()
         m_map[wxT("php5")] = TypePhp;
         m_map[wxT("inc")] = TypePhp;
         m_map[wxT("phtml")] = TypePhp;
+        m_map[wxT("ctp")] = TypePhp;
 
         m_map[wxT("xml")] = TypeXml;
         m_map[wxT("xrc")] = TypeXRC;

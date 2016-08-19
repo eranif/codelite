@@ -88,7 +88,7 @@ else ()
     if(APPLE)
         install(
           DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics
-          DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/dics
+          DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport
           USE_SOURCE_PERMISSIONS
           PATTERN ".svn" EXCLUDE
           PATTERN ".git" EXCLUDE

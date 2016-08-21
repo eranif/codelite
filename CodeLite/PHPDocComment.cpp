@@ -54,9 +54,9 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
     // @var Type $Name
     static wxRegEx reVarType2(wxT("@(var|variable)[ \t]+([\\a-zA-Z0-9_]+)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]*)"));
     if(reVarType2.IsValid() && reVarType2.Matches(m_comment)) {
-        m_varType = reVarType2.GetMatch(m_comment, 3);
+        m_varType = reVarType2.GetMatch(m_comment, 2);
         m_varType = sourceFile.MakeIdentifierAbsolute(m_varType);
-        m_varName = reVarType2.GetMatch(m_comment, 2);
+        m_varName = reVarType2.GetMatch(m_comment, 3);
     }
 
     // @param PDO $name

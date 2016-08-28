@@ -1383,6 +1383,17 @@ void PHPSourceFile::OnConstant(const phpLexerToken& tok)
     phpLexerToken token;
     PHPEntityBase::Ptr_t member;
     while(NextToken(token)) {
+        if(token.type == '=') {
+            
+            // The next value should contain the constant value
+            if(!NextToken(token)) return;
+            
+            if(member) {
+                // Keep the constant value, we will be using it later for tooltip
+                member->Cast<PHPEntityVariable>()->SetDefaultValue(token.text);
+            }
+
+        }
         if(token.type == ';') {
             if(member) {
                 CurrentScope()->AddChild(member);

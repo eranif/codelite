@@ -82,7 +82,7 @@ void PHPEntityVariable::Store(wxSQLite3Database& db)
         try {
             wxSQLite3Statement statement =
                 db.PrepareStatement("INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
-                                    ":SCOPE_ID, :FUNCTION_ID, :NAME, :FULLNAME, :SCOPE, :TYPEHINT, "
+                                    ":SCOPE_ID, :FUNCTION_ID, :NAME, :FULLNAME, :SCOPE, :TYPEHINT, :DEFAULT_VALUE, "
                                     ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
             wxLongLong functionId, scopeId;
             if(IsFunctionArg()) {
@@ -90,7 +90,7 @@ void PHPEntityVariable::Store(wxSQLite3Database& db)
             } else {
                 functionId = -1;
             }
-            
+
             if(IsMember() || IsDefine()) {
                 scopeId = Parent()->GetDbId();
             } else {
@@ -102,6 +102,7 @@ void PHPEntityVariable::Store(wxSQLite3Database& db)
             statement.Bind(statement.GetParamIndex(":FULLNAME"), GetFullName());
             statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
             statement.Bind(statement.GetParamIndex(":TYPEHINT"), GetTypeHint());
+            statement.Bind(statement.GetParamIndex(":DEFAULT_VALUE"), GetDefaultValue());
             statement.Bind(statement.GetParamIndex(":FLAGS"), (int)GetFlags());
             statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
             statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
@@ -125,6 +126,7 @@ void PHPEntityVariable::FromResultSet(wxSQLite3ResultSet& res)
     SetDocComment(res.GetString("DOC_COMMENT"));
     SetLine(res.GetInt("LINE_NUMBER"));
     SetFilename(res.GetString("FILE_NAME"));
+    SetDefaultValue(res.GetString("DEFAULT_VALUE"));
 }
 
 wxString PHPEntityVariable::GetScope() const
@@ -135,7 +137,7 @@ wxString PHPEntityVariable::GetScope() const
 
     } else if(parent && parent->Is(kEntityTypeClass) && IsMember()) {
         return parent->GetFullName();
-        
+
     } else if(parent && parent->Is(kEntityTypeNamespace) && IsDefine()) {
         return parent->GetFullName();
 

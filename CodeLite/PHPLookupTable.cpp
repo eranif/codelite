@@ -17,7 +17,7 @@ wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
-static wxString PHP_SCHEMA_VERSION = "9.0.1";
+static wxString PHP_SCHEMA_VERSION = "9.3.0";
 
 //------------------------------------------------
 // Metadata table
@@ -115,6 +115,7 @@ const static wxString CREATE_VARIABLES_TABLE_SQL =
     "FULLNAME TEXT, "                           // Fullname with scope
     "SCOPE TEXT, "                              // Usually, this means the namespace\class
     "TYPEHINT TEXT, "                           // the Variable type hint
+    "DEFAULT_VALUE TEXT, "                      // Default value
     "FLAGS INTEGER DEFAULT 0, "
     "DOC_COMMENT TEXT, "
     "LINE_NUMBER INTEGER NOT NULL DEFAULT 0, "
@@ -687,7 +688,7 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
             if(FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) {
                 reParseNeeded = false;
             }
-            
+
             if(reParseNeeded) {
                 // For performance reaons, load the file into memory and then parse it
                 wxFileName fnSourceFile(files.Item(i));

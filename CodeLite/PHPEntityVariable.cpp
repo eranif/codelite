@@ -6,6 +6,7 @@
 PHPEntityVariable::PHPEntityVariable() {}
 
 PHPEntityVariable::~PHPEntityVariable() {}
+
 void PHPEntityVariable::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
@@ -80,10 +81,10 @@ void PHPEntityVariable::Store(wxSQLite3Database& db)
 {
     if(IsFunctionArg() || IsMember() || IsDefine()) {
         try {
-            wxSQLite3Statement statement =
-                db.PrepareStatement("INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
-                                    ":SCOPE_ID, :FUNCTION_ID, :NAME, :FULLNAME, :SCOPE, :TYPEHINT, :DEFAULT_VALUE, "
-                                    ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+            wxSQLite3Statement statement = db.PrepareStatement(
+                "INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
+                ":SCOPE_ID, :FUNCTION_ID, :NAME, :FULLNAME, :SCOPE, :TYPEHINT, :DEFAULT_VALUE, "
+                ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
             wxLongLong functionId, scopeId;
             if(IsFunctionArg()) {
                 functionId = Parent()->GetDbId();
@@ -166,4 +167,13 @@ wxString PHPEntityVariable::FormatPhpDoc() const
         << " * @var " << GetTypeHint() << "\n"
         << " */";
     return doc;
+}
+
+wxString PHPEntityVariable::ToTooltip() const
+{
+    if(IsConst() && !GetDefaultValue().IsEmpty()) {
+        return GetDefaultValue();
+    } else {
+        return wxEmptyString;
+    }
 }

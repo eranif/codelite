@@ -285,6 +285,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_SHOW_QUICK_OUTLINE, clCodeComp
 // User is hovering a text, display the typeinfo
 // IEditor* editor = dynamic_cast<IEditor*>(evt.GetEditor());
 // Hover position is set in the evt.GetPosition()
+// To pass a new tooltip, just call event.SetTooltip(...)
+// CodeLite will display the tooltip if a non empty string is passed. Simple markup is allowed (<br> <hr> etc)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_TYPEINFO_TIP, clCodeCompletionEvent);
 
 // Send a clCodeCompletionEvent
@@ -394,11 +396,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCo
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_FIND_IN_FILES_SHOWING, clCommandEvent);
 
 /////////////////////////////////////////////////////////
-
-// Send dwell end event to the plugins to notify them
-// to dismiss any displayed tooltip
-// event.GetEventObject() holds a pointer to the editor
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_EDITOR_TIP_DWELL_END, wxCommandEvent);
 
 // Sent when the parser thread has completed a tagging request
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_RETAG_COMPLETED, wxCommandEvent);

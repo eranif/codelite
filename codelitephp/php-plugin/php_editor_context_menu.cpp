@@ -466,7 +466,7 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
     IEditor* editor = m_manager->GetActiveEditor();
     if(editor) {
         PHPEntityBase::Ptr_t entry =
-            PHPCodeCompletion::Instance()->GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
+            PHPCodeCompletion::Instance()->GetPHPEntityAtPos(editor, editor->GetCurrentPosition());
         if(entry) {
             wxStyledTextCtrl* ctrl = editor->GetCtrl();
             ctrl->BeginUndoAction();

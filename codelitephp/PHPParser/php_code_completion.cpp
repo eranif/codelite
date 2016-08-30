@@ -84,8 +84,6 @@ PHPCodeCompletion::PHPCodeCompletion()
     EventNotifier::Get()->Connect(
         wxEVT_CC_FIND_SYMBOL, clCodeCompletionEventHandler(PHPCodeCompletion::OnFindSymbol), NULL, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_EDITOR_TIP_DWELL_END, wxCommandEventHandler(PHPCodeCompletion::OnDismissTooltip), NULL, this);
-    EventNotifier::Get()->Connect(
         wxEVT_CC_JUMP_HYPER_LINK, clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
 }
 
@@ -112,8 +110,6 @@ PHPCodeCompletion::~PHPCodeCompletion()
         wxEVT_CC_FIND_SYMBOL, clCodeCompletionEventHandler(PHPCodeCompletion::OnFindSymbol), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_GENERATE_DOXY_BLOCK, clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_EDITOR_TIP_DWELL_END, wxCommandEventHandler(PHPCodeCompletion::OnDismissTooltip), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_JUMP_HYPER_LINK, clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
 }
@@ -263,13 +259,13 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor && IsPHPFile(editor)) {
             e.Skip(false);
-            
+
             // Update the settings
             TagsOptionsData d;
             clConfig ccConfig("code-completion.conf");
             ccConfig.ReadItem(&d);
             m_lookupTable.SetSizeLimit(d.GetCcNumberOfDisplayItems());
-            
+
             // Check if the code completion was triggered due to user
             // typing '(', in this case, call OnFunctionCallTip()
             wxChar charAtPos = editor->GetCharAtPos(editor->GetCurrentPosition() - 1);
@@ -397,9 +393,11 @@ void PHPCodeCompletion::OnTypeinfoTip(clCodeCompletionEvent& e)
 
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
-            // we handle only .php files
             if(IsPHPFile(editor)) {
-                // FIXME: implement this using the new method
+                PHPEntityBase::Ptr_t entity = GetPHPEntityAtPos(editor, e.GetPosition());
+                if(entity) {
+                    e.SetTooltip(entity->ToTooltip());
+                }
                 return;
             }
         }
@@ -409,29 +407,12 @@ void PHPCodeCompletion::OnTypeinfoTip(clCodeCompletionEvent& e)
     }
 }
 
-void PHPCodeCompletion::OnDismissTooltip(wxCommandEvent& e)
-{
-    IEditor* editor = dynamic_cast<IEditor*>(e.GetEventObject());
-    if(editor) {
-        // we handle only .php files
-        if(IsPHPFile(editor)) {
-            // get the position
-            if(m_typeInfoTooltip) {
-                m_typeInfoTooltip->Destroy();
-                m_typeInfoTooltip = NULL;
-            }
-            return;
-        }
-    }
-    e.Skip();
-}
-
 PHPLocation::Ptr_t PHPCodeCompletion::FindDefinition(IEditor* editor, int pos)
 {
     CHECK_PHP_WORKSPACE_RET_NULL();
     PHPLocation::Ptr_t loc; // Null
     if(IsPHPFile(editor)) {
-        PHPEntityBase::Ptr_t resolved = GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
+        PHPEntityBase::Ptr_t resolved = GetPHPEntityAtPos(editor, editor->GetCurrentPosition());
         if(resolved) {
             if(resolved->Is(kEntityTypeFunctionAlias)) {
                 // use the internal function
@@ -453,7 +434,7 @@ void PHPCodeCompletion::OnCodeCompleteLangKeywords(clCodeCompletionEvent& e)
     e.Skip(false);
 }
 
-PHPEntityBase::Ptr_t PHPCodeCompletion::GetPHPEntryUnderTheAtPos(IEditor* editor, int pos)
+PHPEntityBase::Ptr_t PHPCodeCompletion::GetPHPEntityAtPos(IEditor* editor, int pos)
 {
     return DoGetPHPEntryUnderTheAtPos(editor, pos, false);
 }

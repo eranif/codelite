@@ -43,6 +43,7 @@ struct PHPLocation
     wxString what;     // Token name
     wxString filename; // file name (absolute path)
     int linenumber;    // line number within filename
+    PHPEntityBase::Ptr_t entity;
     typedef SmartPtr<PHPLocation> Ptr_t;
 };
 
@@ -95,7 +96,6 @@ private:
     void OnFindSymbol(clCodeCompletionEvent& e);
     void OnQuickJump(clCodeCompletionEvent& e);
     void OnInsertDoxyBlock(clCodeCompletionEvent& e);
-    void OnDismissTooltip(wxCommandEvent& e);
     void OnRetagWorkspace(wxCommandEvent& event);
 
     // Workspace events
@@ -123,7 +123,7 @@ public:
     /**
      * @brief return the PHPEntity under the caret
      */
-    PHPEntityBase::Ptr_t GetPHPEntryUnderTheAtPos(IEditor* editor, int pos);
+    PHPEntityBase::Ptr_t GetPHPEntityAtPos(IEditor* editor, int pos);
 
     /**
      * @brief open the symbols database for the given workspace file.

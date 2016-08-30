@@ -157,7 +157,12 @@ public:
      * @brief print this object to the stdout
      */
     virtual void PrintStdout(int indent) const = 0;
-
+    
+    /**
+     * @brief convert this object into a string tooltip
+     */
+    virtual wxString ToTooltip() const { return wxEmptyString; }
+    
     /**
      * @brief return a nicely formatted string to display for this
      * entity, mainly used for UI purposes

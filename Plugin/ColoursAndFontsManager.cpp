@@ -249,6 +249,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".scss")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.scss");
     }
+
+    // Add *.less file extension to the css lexer
+    if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".less")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.less");
+    }
     
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
@@ -767,6 +772,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     // Hack5: all the remove *.scss from the css lexer (it now has its own lexer)
     if(lexer->GetName() == "css" && lexer->GetFileSpec().Contains(".scss")) {
         lexer->SetFileSpec("*.css");
+    }
+    
+    // Add *.less file extension to the css lexer
+    if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".less")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.less");
     }
     
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {

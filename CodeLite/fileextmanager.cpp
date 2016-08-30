@@ -78,6 +78,7 @@ void FileExtManager::Init()
         m_map[wxT("xml")] = TypeXml;
         m_map[wxT("xrc")] = TypeXRC;
         m_map[wxT("css")] = TypeCSS;
+        m_map[wxT("less")] = TypeCSS;
         m_map[wxT("js")] = TypeJS;
         m_map[wxT("javascript")] = TypeJS;
         m_map[wxT("py")] = TypePython;

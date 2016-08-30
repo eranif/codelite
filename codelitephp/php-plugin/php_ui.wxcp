@@ -2183,7 +2183,7 @@
        "gbSpan": ",",
        "gbPosition": ",",
        "m_styles": [],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_LEFT"],
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",
@@ -2447,7 +2447,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "-2"
+           "m_value": "400"
           }, {
            "type": "choice",
            "m_label": "Column Type",

@@ -14,7 +14,6 @@
 
 static int TIMER_ID = 5647;
 static wxBitmap CLASS_IMG_ID = wxNullBitmap;
-static wxBitmap FILE_IMG_ID = wxNullBitmap;
 static wxBitmap FUNC_IMG_ID = wxNullBitmap;
 static wxBitmap CONST_IMG_ID = wxNullBitmap;
 static wxBitmap DEFINE_IMG_ID = wxNullBitmap;
@@ -82,9 +81,9 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
 void OpenResourceDlg::DoInitialize()
 {
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
+    m_fileImages = bmpLoader->MakeStandardMimeMap();
 
     CLASS_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/class"));
-    FILE_IMG_ID = bmpLoader->LoadBitmap(wxT("mime-php"));
     FUNC_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
     CONST_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
     DEFINE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/macro"));
@@ -293,8 +292,16 @@ wxBitmap OpenResourceDlg::DoGetImgIdx(const ResourceItem* item)
         return CLASS_IMG_ID;
     case ResourceItem::kRI_Constant:
         return CONST_IMG_ID;
-    case ResourceItem::kRI_File:
-        return FILE_IMG_ID;
+    case ResourceItem::kRI_File: {
+        FileExtManager::FileType fileType = FileExtManager::GetType(item->filename.GetFullName());
+        if(m_fileImages.count(fileType)) {
+            // CodeLite has a knowledge about this file type, return the associated image
+            return m_fileImages.find(fileType)->second;
+        } else {
+            // Default text file image
+            return m_fileImages.find(FileExtManager::TypeText)->second;
+        }
+    }
     case ResourceItem::kRI_Function:
         return FUNC_IMG_ID;
     default:

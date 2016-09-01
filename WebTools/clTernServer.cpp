@@ -85,7 +85,7 @@ bool clTernServer::Start(const wxString& workingDirectory)
 #ifdef __WXMAC__
     // set permissions to 755
     nodeJS.SetPermissions(wxPOSIX_GROUP_READ | wxPOSIX_GROUP_EXECUTE | wxPOSIX_OTHERS_READ | wxPOSIX_OTHERS_EXECUTE |
-                          wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
+        wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
 #endif
 
     wxString nodeExe = nodeJS.GetFullPath();
@@ -112,9 +112,8 @@ bool clTernServer::Start(const wxString& workingDirectory)
     wxFileName ternConfig(m_workingDirectory, ".tern-project");
     wxString content = conf.GetTernProjectFile();
     if(!FileUtils::WriteFileContent(ternConfig, content)) {
-        ::wxMessageBox(_("Could not write tern project file: ") + ternConfig.GetFullPath(),
-                       "CodeLite",
-                       wxICON_ERROR | wxOK | wxCENTER);
+        ::wxMessageBox(_("Could not write tern project file: ") + ternConfig.GetFullPath(), "CodeLite",
+            wxICON_ERROR | wxOK | wxCENTER);
         PrintMessage("Could not write tern project file: " + ternConfig.GetFullPath());
         m_fatalError = true;
         return false;
@@ -459,9 +458,9 @@ JSONElement clTernServer::CreateFilesArray(IEditor* editor, bool forDelete)
     files.arrayAppend(file);
 
     wxString filename;
-    if(NodeJSWorkspace::Get()->IsOpen()) {
+    if(!m_workingDirectory.IsEmpty()) {
         wxFileName fn(editor->GetFileName());
-        fn.MakeRelativeTo(NodeJSWorkspace::Get()->GetFilename().GetPath());
+        fn.MakeRelativeTo(m_workingDirectory);
         filename = fn.GetFullPath();
     } else {
         filename = editor->GetFileName().GetFullName();
@@ -483,15 +482,15 @@ bool clTernServer::LocateNodeJS(wxFileName& nodeJS)
 {
     WebToolsConfig config;
     config.Load();
-    
+
     // If we got it in the settings, use it
     if(wxFileName::FileExists(config.GetNodejs())) {
         nodeJS = config.GetNodejs();
         config.Save();
         return true;
     }
-    
-    // Auto detect 
+
+    // Auto detect
     NodeJSLocator locator;
     locator.Locate();
     if(!locator.GetNodejs().IsEmpty()) {
@@ -543,8 +542,8 @@ bool clTernServer::ProcessDefinitionOutput(const wxString& output, clTernDefinit
 
     if(json.hasNamedObject("file")) {
         wxFileName fn(json.namedObject("file").toString());
-        if(NodeJSWorkspace::Get()->IsOpen()) {
-            fn.MakeAbsolute(NodeJSWorkspace::Get()->GetFilename().GetPath());
+        if(!m_workingDirectory.IsEmpty()) {
+            fn.MakeAbsolute(m_workingDirectory);
         }
         loc.file = fn.GetFullPath();
         loc.start = json.namedObject("start").toInt();
@@ -597,7 +596,7 @@ bool clTernServer::PostReparseCommand(IEditor* editor)
     JSONRoot root(cJSON_Object);
     JSONElement files = CreateFilesArray(editor);
     root.toElement().append(files);
-    
+
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
     req->jsonRequest = root.toElement().FormatRawString();
     req->type = clTernWorkerThread::kReparse;

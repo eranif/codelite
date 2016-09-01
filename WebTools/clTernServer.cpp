@@ -545,7 +545,11 @@ bool clTernServer::ProcessDefinitionOutput(const wxString& output, clTernDefinit
         wxFileName fn(json.namedObject("file").toString());
         if(NodeJSWorkspace::Get()->IsOpen()) {
             fn.MakeAbsolute(NodeJSWorkspace::Get()->GetFilename().GetPath());
+        } else {
+            IEditor* editor = clGetManager()->GetActiveEditor();
+            fn.MakeAbsolute(editor->GetFileName().GetPath());
         }
+
         loc.file = fn.GetFullPath();
         loc.start = json.namedObject("start").toInt();
         loc.end = json.namedObject("end").toInt();

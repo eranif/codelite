@@ -308,6 +308,7 @@ void PHPLookupTable::CreateSchema()
         // phpdoc var table
         m_db.ExecuteUpdate(CREATE_PHPDOC_VAR_TABLE_SQL);
         m_db.ExecuteUpdate(CREATE_PHPDOC_VAR_TABLE_SQL_IDX1);
+        m_db.ExecuteUpdate(CREATE_PHPDOC_VAR_TABLE_SQL_IDX2);
 
         // Files
         m_db.ExecuteUpdate(CREATE_FILES_TABLE_SQL);

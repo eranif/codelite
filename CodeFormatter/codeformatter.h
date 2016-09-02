@@ -39,12 +39,8 @@ protected:
     wxString DoGetGlobalEOLString() const;
 
 private:
-    bool DoClangFormat(const wxFileName& filename,
-                       wxString& formattedOutput,
-                       int& cursorPosition,
-                       int startOffset,
-                       int length,
-                       const FormatOptions& options);
+    bool DoClangFormat(const wxFileName& filename, wxString& formattedOutput, int& cursorPosition, int startOffset,
+        int length, const FormatOptions& options, const wxFileName& originalFileName);
 
 public:
     /**
@@ -58,20 +54,13 @@ public:
      * @param startOffset start of chunk to format
      * @param length chunk length
      */
-    bool ClangFormatFile(const wxFileName& filename,
-                         wxString& formattedOutput,
-                         int& cursorPosition,
-                         int startOffset = wxNOT_FOUND,
-                         int length = wxNOT_FOUND);
+    bool ClangFormatFile(const wxFileName& filename, wxString& formattedOutput, int& cursorPosition,
+        int startOffset = wxNOT_FOUND, int length = wxNOT_FOUND);
     /**
      * @brief same as the above, but work on a buffer instead
      */
-    bool ClangFormatBuffer(const wxString& content,
-                           const wxFileName& filename,
-                           wxString& formattedOutput,
-                           int& cursorPosition,
-                           int startOffset = wxNOT_FOUND,
-                           int length = wxNOT_FOUND);
+    bool ClangFormatBuffer(const wxString& content, const wxFileName& filename, wxString& formattedOutput,
+        int& cursorPosition, int startOffset = wxNOT_FOUND, int length = wxNOT_FOUND);
 
     /**
      * @brief same as the above, but work on a buffer instead

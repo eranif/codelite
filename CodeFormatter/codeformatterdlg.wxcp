@@ -10,6 +10,7 @@
   "m_firstWindowId": 1000,
   "m_useEnum": false,
   "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -2742,7 +2743,7 @@
                           }, {
                            "type": "multi-string",
                            "m_label": "Tooltip:",
-                           "m_value": "Coding style"
+                           "m_value": "Coding style. If the \"File\" option is selected, CodeLite will ignore all the options set here and use the options set in your .clang-format file"
                           }, {
                            "type": "colour",
                            "m_label": "Bg Colour:",
@@ -2764,11 +2765,11 @@
                           }, {
                            "type": "multi-string",
                            "m_label": "Choices:",
-                           "m_value": "LLVM;Google;WebKit;Chromium;Mozilla"
+                           "m_value": "LLVM;Google;WebKit;Chromium;Mozilla;File"
                           }, {
                            "type": "multi-string",
                            "m_label": "Array Integer Values",
-                           "m_value": "kClangFormatLLVM;kClangFormatGoogle;kClangFormatWebKit;kClangFormatChromium;kClangFormatMozilla"
+                           "m_value": "kClangFormatLLVM;kClangFormatGoogle;kClangFormatWebKit;kClangFormatChromium;kClangFormatMozilla;kClangFormatFile"
                           }, {
                            "type": "bool",
                            "m_label": "Bool Value",

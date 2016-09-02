@@ -50,10 +50,8 @@
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
-extern "C" char* STDCALL AStyleMain(const char* pSourceIn,
-                                           const char* pOptions,
-                                           void(STDCALL* fpError)(int, const char*),
-                                           char*(STDCALL* fpAlloc)(unsigned long));
+extern "C" char* STDCALL AStyleMain(const char* pSourceIn, const char* pOptions,
+    void(STDCALL* fpError)(int, const char*), char*(STDCALL* fpAlloc)(unsigned long));
 
 //------------------------------------------------------------------------
 // Astyle functions required by AStyleLib
@@ -101,17 +99,14 @@ CodeFormatter::CodeFormatter(IManager* manager)
     : IPlugin(manager)
 {
     m_longName = _("Source Code Formatter");
-    m_shortName = wxT("Source Code Formatter");
+    m_shortName = _("Source Code Formatter");
 
     EventNotifier::Get()->Connect(
         wxEVT_FORMAT_STRING, clSourceFormatEventHandler(CodeFormatter::OnFormatString), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_FORMAT_FILE, clSourceFormatEventHandler(CodeFormatter::OnFormatFile), NULL, this);
-    m_mgr->GetTheApp()->Connect(ID_TOOL_SOURCE_CODE_FORMATTER,
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(CodeFormatter::OnFormatProject),
-                                NULL,
-                                this);
+    m_mgr->GetTheApp()->Connect(ID_TOOL_SOURCE_CODE_FORMATTER, wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
 
     // Migrate settings if needed
@@ -158,38 +153,22 @@ clToolBar* CodeFormatter::CreateToolBar(wxWindow* parent)
         tb->SetToolBitmapSize(wxSize(size, size));
 
         BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
-        tb->AddTool(XRCID("format_source"),
-                    _("Format Source"),
-                    bmpLoader->LoadBitmap("format", size),
-                    _("Format Source Code"));
-        tb->AddTool(XRCID("formatter_options"),
-                    _("Format Options"),
-                    bmpLoader->LoadBitmap("cog", size),
-                    _("Source Code Formatter Options..."));
+        tb->AddTool(
+            XRCID("format_source"), _("Format Source"), bmpLoader->LoadBitmap("format", size), _("Format Source Code"));
+        tb->AddTool(XRCID("formatter_options"), _("Format Options"), bmpLoader->LoadBitmap("cog", size),
+            _("Source Code Formatter Options..."));
         tb->Realize();
     }
 
     // Connect the events to us
-    m_mgr->GetTheApp()->Connect(XRCID("format_source"),
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(CodeFormatter::OnFormat),
-                                NULL,
-                                (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("formatter_options"),
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(CodeFormatter::OnFormatOptions),
-                                NULL,
-                                (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("format_source"),
-                                wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(CodeFormatter::OnFormatUI),
-                                NULL,
-                                (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("formatter_options"),
-                                wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI),
-                                NULL,
-                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("formatter_options"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("formatter_options"), wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
     return tb;
 }
 
@@ -272,15 +251,13 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             wxFileName php(fmtroptions.GetPhpExecutable());
             if(!php.Exists()) {
                 ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHP executable path"),
-                               "Code Formatter",
-                               wxICON_ERROR | wxOK | wxCENTER);
+                    "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
             wxFileName phar(fmtroptions.GetPHPCSFixerPhar());
             if(!phar.Exists()) {
-                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHAR file"),
-                               "Code Formatter",
-                               wxICON_ERROR | wxOK | wxCENTER);
+                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHAR file"), "Code Formatter",
+                    wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
 
@@ -293,8 +270,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             tmpfile << filename << ".php-cs-fixer";
             if(!FileUtils::WriteFileContent(tmpfile, editor->GetEditorText())) {
                 ::wxMessageBox(_("Can not format file using PHP-CS-Fixer:\nFailed to write temporary file"),
-                               "Code Formatter",
-                               wxICON_ERROR | wxOK | wxCENTER);
+                    "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
 
@@ -312,8 +288,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             output.clear();
             if(!FileUtils::ReadFileContent(tmpfile, output)) {
                 ::wxMessageBox(_("Can not format file using PHP-CS-Fixer:\nfailed to read temporary file content"),
-                               "Code Formatter",
-                               wxICON_ERROR | wxOK | wxCENTER);
+                    "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
 
@@ -328,8 +303,8 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
         // We allow ClangFormat to work only when the source file is known to be
         // a C/C++ source file or JavaScript (these are the types of files that clang-format can handle properly)
         if(fmtroptions.GetEngine() == kFormatEngineClangFormat &&
-           (FileExtManager::IsCxxFile(editor->GetFileName()) ||
-            FileExtManager::IsJavascriptFile(editor->GetFileName()))) {
+            (FileExtManager::IsCxxFile(editor->GetFileName()) ||
+                FileExtManager::IsJavascriptFile(editor->GetFileName()))) {
 
             int from = wxNOT_FOUND, length = wxNOT_FOUND;
             wxString formattedOutput;
@@ -405,9 +380,8 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                 if(formatSelectionOnly) {
                     clEditorStateLocker lk(editor->GetCtrl());
                     // format the text (add the indentation)
-                    output = editor->FormatTextKeepIndent(output,
-                                                          editor->GetSelectionStart(),
-                                                          Format_Text_Indent_Prev_Line | Format_Text_Save_Empty_Lines);
+                    output = editor->FormatTextKeepIndent(output, editor->GetSelectionStart(),
+                        Format_Text_Indent_Prev_Line | Format_Text_Save_Empty_Lines);
                     editor->ReplaceSelection(output);
 
                 } else {
@@ -469,31 +443,16 @@ void CodeFormatter::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void CodeFormatter::UnPlug()
 {
-    m_mgr->GetTheApp()->Disconnect(XRCID("format_source"),
-                                   wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(CodeFormatter::OnFormat),
-                                   NULL,
-                                   (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"),
-                                   wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(CodeFormatter::OnFormatOptions),
-                                   NULL,
-                                   (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("format_source"),
-                                   wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(CodeFormatter::OnFormatUI),
-                                   NULL,
-                                   (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"),
-                                   wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI),
-                                   NULL,
-                                   (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(ID_TOOL_SOURCE_CODE_FORMATTER,
-                                   wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(CodeFormatter::OnFormatProject),
-                                   NULL,
-                                   this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("format_source"), wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"), wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(ID_TOOL_SOURCE_CODE_FORMATTER, wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
 }
 
 IManager* CodeFormatter::GetManager() { return m_mgr; }
@@ -535,23 +494,21 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
             wxFileName php(fmtroptions.GetPhpExecutable());
             if(!php.Exists()) {
                 ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHP executable path"),
-                               "Code Formatter",
-                               wxICON_ERROR | wxOK | wxCENTER);
+                    "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
             wxFileName phar(fmtroptions.GetPHPCSFixerPhar());
             if(!phar.Exists()) {
-                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHAR file"),
-                               "Code Formatter",
-                               wxICON_ERROR | wxOK | wxCENTER);
+                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHAR file"), "Code Formatter",
+                    wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
 
             // Run the command, PHP-CS-Fixer works directly on the file
             //
             output.Clear();
-            IProcess::Ptr_t phpFixer(::CreateSyncProcess(fmtroptions.GetPhpFixerCommand(),
-                                                         IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+            IProcess::Ptr_t phpFixer(::CreateSyncProcess(
+                fmtroptions.GetPhpFixerCommand(), IProcessCreateDefault | IProcessCreateWithHiddenConsole));
             CHECK_PTR_RET(phpFixer);
             phpFixer->WaitForTerminate(output);
         }
@@ -611,17 +568,15 @@ wxString CodeFormatter::DoGetGlobalEOLString() const
 
 void CodeFormatter::OnFormatFile(clSourceFormatEvent& e) { wxUnusedVar(e); }
 
-bool CodeFormatter::ClangFormatBuffer(const wxString& content,
-                                      const wxFileName& filename,
-                                      wxString& formattedOutput,
-                                      int& cursorPosition,
-                                      int startOffset,
-                                      int length)
+bool CodeFormatter::ClangFormatBuffer(const wxString& content, const wxFileName& filename, wxString& formattedOutput,
+    int& cursorPosition, int startOffset, int length)
 {
     // Write the content into a temporary file
-    wxFileName fn(clStandardPaths::Get().GetTempDir(), "code-formatter-tmp.cpp");
+    wxFileName fn(filename.GetPath(), ".code-formatter-tmp.cpp");
     fn.SetExt(filename.GetExt());
 
+    // Delete the temporary file
+    FileUtils::Deleter fd(fn);
     wxFFile fp(fn.GetFullPath(), "w+b");
     if(fp.IsOpened()) {
         fp.Write(content, wxConvUTF8);
@@ -630,7 +585,7 @@ bool CodeFormatter::ClangFormatBuffer(const wxString& content,
 
     FormatOptions options;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
-    bool res = DoClangFormat(fn, formattedOutput, cursorPosition, startOffset, length, options);
+    bool res = DoClangFormat(fn, formattedOutput, cursorPosition, startOffset, length, options, filename);
     {
         // Delete the temporary file
         wxLogNull nl;
@@ -644,7 +599,7 @@ bool CodeFormatter::ClangFormatFile(
 {
     FormatOptions options;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
-    return DoClangFormat(filename, formattedOutput, cursorPosition, startOffset, length, options);
+    return DoClangFormat(filename, formattedOutput, cursorPosition, startOffset, length, options, filename);
 }
 
 bool CodeFormatter::ClangPreviewFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options)
@@ -652,13 +607,15 @@ bool CodeFormatter::ClangPreviewFormat(const wxString& content, wxString& format
     int startOffset, length, cursorPosition;
     startOffset = length = cursorPosition = wxNOT_FOUND;
 
-    wxFileName fn(clStandardPaths::Get().GetTempDir(), "code-formatter-tmp.cpp");
+    wxFileName fn(clStandardPaths::Get().GetTempDir(), ".code-formatter-tmp.cpp");
+    FileUtils::Deleter fd(fn);
+
     wxFFile fp(fn.GetFullPath(), "w+b");
     if(fp.IsOpened()) {
         fp.Write(content, wxConvUTF8);
         fp.Close();
     }
-    bool res = DoClangFormat(fn, formattedOutput, cursorPosition, startOffset, length, options);
+    bool res = DoClangFormat(fn, formattedOutput, cursorPosition, startOffset, length, options, fn);
     {
         // Delete the temporary file
         wxLogNull nl;
@@ -667,16 +624,11 @@ bool CodeFormatter::ClangPreviewFormat(const wxString& content, wxString& format
     return res;
 }
 
-bool CodeFormatter::DoClangFormat(const wxFileName& filename,
-                                  wxString& formattedOutput,
-                                  int& cursorPosition,
-                                  int startOffset,
-                                  int length,
-                                  const FormatOptions& options)
+bool CodeFormatter::DoClangFormat(const wxFileName& filename, wxString& formattedOutput, int& cursorPosition,
+    int startOffset, int length, const FormatOptions& options, const wxFileName& originalFileName)
 {
     // clang-format
     // Build the command line to run
-
     if(options.GetClangFormatExe().IsEmpty()) {
         return false;
     }
@@ -709,8 +661,14 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename,
 
     // Execute clang-format and reand the output
     formattedOutput.Clear();
-    IProcess::Ptr_t clangFormatProc(
-        ::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+
+    // Start clang-format with working directory set to the originalFileName path
+    // By default, CodeLite will create a temporary file and format it instead of the original file
+    // This temporary file is located under %appdata%\Temp folder
+    // We want that clang-format working directory will be located under the _original_ file directory
+    // (this is where the user might place a .clang-format file)
+    IProcess::Ptr_t clangFormatProc(::CreateSyncProcess(
+        command, IProcessCreateDefault | IProcessCreateWithHiddenConsole, originalFileName.GetPath()));
     CHECK_PTR_RET_FALSE(clangFormatProc);
     clangFormatProc->WaitForTerminate(formattedOutput);
     CL_DEBUG("clang-format returned with:\n%s\n", formattedOutput);
@@ -822,8 +780,8 @@ bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const
         dlg.Update(i, msg);
 
         // Execute clang-format and read the output
-        IProcess::Ptr_t clangFormatProc(
-            ::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+        IProcess::Ptr_t clangFormatProc(::CreateSyncProcess(
+            command, IProcessCreateDefault | IProcessCreateWithHiddenConsole, files.at(i).GetPath()));
         CHECK_PTR_RET_FALSE(clangFormatProc);
 
         wxString output;

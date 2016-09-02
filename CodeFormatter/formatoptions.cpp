@@ -36,7 +36,7 @@ FormatOptions::FormatOptions()
                            kSpaceBeforeAssignmentOperators |
                            kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
-    , m_clangColumnLimit(120) // No limit
+    , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
     , m_generalFlags(0)
 {
@@ -187,6 +187,12 @@ wxString FormatOptions::AstyleOptionsAsString() const
 
 wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, double clangFormatVersion) const
 {
+    // If the option: "File" is selected, it overrides everything here
+    if(m_clangFormatOptions & kClangFormatFile) {
+        // All our settings are taken from .clang-format file
+        return " -style=file";
+    }
+    
     wxString options, forceLanguage;
 
     // Try to autodetect the file type
@@ -201,7 +207,7 @@ wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, d
             forceLanguage << "Language : Java";
         }
     }
-
+    
     options << " -style=\"{ BasedOnStyle: ";
     if(m_clangFormatOptions & kClangFormatChromium) {
         options << "Chromium";

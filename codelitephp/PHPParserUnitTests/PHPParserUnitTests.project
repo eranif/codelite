@@ -91,6 +91,7 @@
     <File Name="Tests/test_class_member_initialized.php"/>
     <File Name="Tests/test_word_completion_after_casting.php"/>
     <File Name="Tests/test_constants.php"/>
+    <File Name="Tests/test_phpdoc_var_in_class.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

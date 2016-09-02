@@ -90,7 +90,8 @@ private:
     void CreateSchema();
     PHPEntityBase::Ptr_t
     DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace = false);
-
+    
+    void DoFixVarsDocComment(PHPEntityBase::List_t& matches, wxLongLong parentId);
     void DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
                                    std::vector<wxLongLong>& parents,
                                    std::set<wxLongLong>& parentsVisited,

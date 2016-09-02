@@ -172,7 +172,7 @@ TEST_FUNC(test_word_completion)
     return true;
 }
 
-// test word completion of a local variable (or anything) after a 
+// test word completion of a local variable (or anything) after a
 // casting
 TEST_FUNC(test_word_completion_after_casting)
 {
@@ -182,7 +182,7 @@ TEST_FUNC(test_word_completion_after_casting)
     lookup.UpdateSourceFile(sourceFile);
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
-    
+
     CHECK_BOOL(resolved);
     CHECK_BOOL(resolved->GetShortName().IsEmpty());
     CHECK_WXSTRING(resolved->GetFullName(), "\\");
@@ -651,7 +651,7 @@ TEST_FUNC(test_php7_function_arg_hinting)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_STRING(resolved->GetFullName().c_str(), "\\test_php7_function_arg_hinting_type2");
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
 
@@ -666,13 +666,13 @@ TEST_FUNC(test_constants)
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
-    // Use this epxression and check 
+
+    // Use this epxression and check
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_STRING(resolved->GetFullName().c_str(), "\\MyMoodyClass");
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
 
@@ -680,6 +680,26 @@ TEST_FUNC(test_constants)
     return true;
 }
 
+TEST_FUNC(test_phpdoc_var_in_class)
+{
+    // Parse the test file
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_phpdoc_var_in_class.php"));
+    sourceFile.SetParseFunctionBody(false);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+
+    // Use this epxression and check
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->Type().c_str(), "\\StructB");
+
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+
+    CHECK_SIZE(matches.size(), 2);
+    return true;
+}
 
 /*TEST_FUNC(test_cc_with_keywords)
 {
@@ -703,9 +723,10 @@ TEST_FUNC(test_constants)
 // Main
 //======================-------------------------------------------------
 
-static const wxString PERFORMANCE_CODE = "<?php\n"
-                                         "$app = new \\Illuminate\\Foundation\\Application();\n"
-                                         "$app->";
+static const wxString PERFORMANCE_CODE =
+    "<?php\n"
+    "$app = new \\Illuminate\\Foundation\\Application();\n"
+    "$app->";
 
 int main(int argc, char** argv)
 {

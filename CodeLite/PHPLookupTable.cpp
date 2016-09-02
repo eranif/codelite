@@ -17,7 +17,7 @@ wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
-static wxString PHP_SCHEMA_VERSION = "9.3.0";
+static wxString PHP_SCHEMA_VERSION = "9.3.0.1";
 
 //------------------------------------------------
 // Metadata table
@@ -131,6 +131,22 @@ const static wxString CREATE_VARIABLES_TABLE_SQL_IDX4 =
     "CREATE INDEX IF NOT EXISTS VARIABLES_TABLE_IDX_4 ON VARIABLES_TABLE(FUNCTION_ID)";
 
 //------------------------------------------------
+// Variables table
+//------------------------------------------------
+const static wxString CREATE_PHPDOC_VAR_TABLE_SQL =
+    "CREATE TABLE IF NOT EXISTS PHPDOC_VAR_TABLE(ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+    "SCOPE_ID INTEGER NOT NULL DEFAULT -1, " // for global variable or class member this will be the scope_id parent id
+    "NAME TEXT, "                            // the name
+    "TYPE TEXT, "                            // the type, full path
+    "LINE_NUMBER INTEGER NOT NULL DEFAULT 0, "
+    "FILE_NAME TEXT )";
+
+const static wxString CREATE_PHPDOC_VAR_TABLE_SQL_IDX1 =
+    "CREATE INDEX IF NOT EXISTS PHPDOC_VAR_TABLE_SQL_IDX1 ON PHPDOC_VAR_TABLE(SCOPE_ID)";
+const static wxString CREATE_PHPDOC_VAR_TABLE_SQL_IDX2 =
+    "CREATE INDEX IF NOT EXISTS PHPDOC_VAR_TABLE_SQL_IDX2 ON PHPDOC_VAR_TABLE(FILE_NAME)";
+
+//------------------------------------------------
 // Files table
 //------------------------------------------------
 const static wxString CREATE_FILES_TABLE_SQL =
@@ -157,11 +173,15 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const w
         std::set<wxLongLong> parentsVisited;
 
         DoGetInheritanceParentIDs(scope, parents, parentsVisited, flags & kLookupFlags_Parent);
+        std::reverse(parents.begin(), parents.end());
 
         // Parents should now contain an ordered list of all the inheritance
         for(size_t i = 0; i < parents.size(); ++i) {
             PHPEntityBase::Ptr_t match = DoFindMemberOf(parents.at(i), exactName);
             if(match) {
+                PHPEntityBase::List_t matches;
+                matches.push_back(match);
+                DoFixVarsDocComment(matches, parentDbId);
                 return match;
             }
         }
@@ -246,6 +266,7 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate("drop table if exists FUNCTION_ALIAS_TABLE");
         m_db.ExecuteUpdate("drop table if exists VARIABLES_TABLE");
         m_db.ExecuteUpdate("drop table if exists FILES_TABLE");
+        m_db.ExecuteUpdate("drop table if exists PHPDOC_VAR_TABLE");
     }
 
     try {
@@ -284,14 +305,18 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate(CREATE_VARIABLES_TABLE_SQL_IDX3);
         m_db.ExecuteUpdate(CREATE_VARIABLES_TABLE_SQL_IDX4);
 
+        // phpdoc var table
+        m_db.ExecuteUpdate(CREATE_PHPDOC_VAR_TABLE_SQL);
+        m_db.ExecuteUpdate(CREATE_PHPDOC_VAR_TABLE_SQL_IDX1);
+
         // Files
         m_db.ExecuteUpdate(CREATE_FILES_TABLE_SQL);
         m_db.ExecuteUpdate(CREATE_FILES_TABLE_SQL_IDX1);
 
         // Update the schema version
-        wxSQLite3Statement st =
-            m_db.PrepareStatement("replace into METADATA_TABLE (ID, SCHEMA_NAME, SCHEMA_VERSION) VALUES (NULL, "
-                                  ":SCHEMA_NAME, :SCHEMA_VERSION)");
+        wxSQLite3Statement st = m_db.PrepareStatement(
+            "replace into METADATA_TABLE (ID, SCHEMA_NAME, SCHEMA_VERSION) VALUES (NULL, "
+            ":SCHEMA_NAME, :SCHEMA_VERSION)");
         st.Bind(st.GetParamIndex(":SCHEMA_NAME"), "CODELITEPHP");
         st.Bind(st.GetParamIndex(":SCHEMA_VERSION"), PHP_SCHEMA_VERSION);
         st.ExecuteUpdate();
@@ -369,8 +394,8 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
     }
 }
 
-PHPEntityBase::Ptr_t
-PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace)
+PHPEntityBase::Ptr_t PHPLookupTable::DoFindMemberOf(
+    wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace)
 {
     // Find members of of parentDbID
     try {
@@ -449,6 +474,10 @@ PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName,
                 match->FromResultSet(res);
                 matches.push_back(match);
             }
+            
+            // Fix variables type using the PHPDOC_VAR_TABLE content for this class
+            DoFixVarsDocComment(matches, parentDbId);
+            
             if(matches.empty() || matches.size() > 1) {
                 return PHPEntityBase::Ptr_t(NULL);
             } else {
@@ -470,10 +499,8 @@ PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName,
     return PHPEntityBase::Ptr_t(NULL);
 }
 
-void PHPLookupTable::DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
-                                               std::vector<wxLongLong>& parents,
-                                               std::set<wxLongLong>& parentsVisited,
-                                               bool excludeSelf)
+void PHPLookupTable::DoGetInheritanceParentIDs(
+    PHPEntityBase::Ptr_t cls, std::vector<wxLongLong>& parents, std::set<wxLongLong>& parentsVisited, bool excludeSelf)
 {
     if(!excludeSelf) {
         parents.push_back(cls->GetDbId());
@@ -583,6 +610,9 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
         std::set<wxLongLong> parentsVisited;
 
         DoGetInheritanceParentIDs(scope, parents, parentsVisited, flags & kLookupFlags_Parent);
+        // Reverse the order of the parents
+        std::reverse(parents.begin(), parents.end());
+
         for(size_t i = 0; i < parents.size(); ++i) {
             DoFindChildren(matches, parents.at(i), flags, nameHint);
         }
@@ -790,10 +820,8 @@ PHPEntityBase::Ptr_t PHPLookupTable::NewEntity(const wxString& tableName, ePhpSc
     }
 }
 
-void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
-                                             const wxString& tableName,
-                                             const wxString& nameHint,
-                                             eLookupFlags flags)
+void PHPLookupTable::LoadFromTableByNameHint(
+    PHPEntityBase::List_t& matches, const wxString& tableName, const wxString& nameHint, eLookupFlags flags)
 {
     wxString trimmedNameHint(nameHint);
     trimmedNameHint.Trim().Trim(false);
@@ -873,6 +901,14 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.ExecuteUpdate();
         }
 
+        {
+            wxString sql;
+            sql << "delete from PHPDOC_VAR_TABLE where FILE_NAME=:FILE_NAME";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
+            st.ExecuteUpdate();
+        }
+
         if(autoCommit) m_db.Commit();
     } catch(wxSQLite3Exception& e) {
         if(autoCommit) m_db.Rollback();
@@ -895,10 +931,8 @@ void PHPLookupTable::Close()
 
 bool PHPLookupTable::IsOpened() const { return m_db.IsOpen(); }
 
-void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
-                                    wxLongLong parentId,
-                                    size_t flags,
-                                    const wxString& nameHint)
+void PHPLookupTable::DoFindChildren(
+    PHPEntityBase::List_t& matches, wxLongLong parentId, size_t flags, const wxString& nameHint)
 {
     // Find members of of parentDbID
     try {
@@ -992,13 +1026,13 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
 
                 bool isConst = match->Cast<PHPEntityVariable>()->IsConst();
                 bool isStatic = match->Cast<PHPEntityVariable>()->IsStatic();
-                if((isStatic || isConst) && CollectingStatics(flags)) {
-                    matches.push_back(match);
-
-                } else if(!isStatic && !isConst && !CollectingStatics(flags)) {
+                bool bAddIt = ((isStatic || isConst) && CollectingStatics(flags)) ||
+                    (!isStatic && !isConst && !CollectingStatics(flags));
+                if(bAddIt) {
                     matches.push_back(match);
                 }
             }
+            DoFixVarsDocComment(matches, parentId);
         }
 
     } catch(wxSQLite3Exception& e) {
@@ -1157,8 +1191,8 @@ void PHPLookupTable::DoSplitFullname(const wxString& fullname, wxString& ns, wxS
     shortName = fullname.AfterLast('\\');
 }
 
-PHPEntityBase::List_t PHPLookupTable::FindNamespaces(const wxString& fullnameStartsWith,
-                                                     const wxString& shortNameContains)
+PHPEntityBase::List_t PHPLookupTable::FindNamespaces(
+    const wxString& fullnameStartsWith, const wxString& shortNameContains)
 {
     PHPEntityBase::List_t matches;
     try {
@@ -1182,7 +1216,7 @@ PHPEntityBase::List_t PHPLookupTable::FindNamespaces(const wxString& fullnameSta
             PHPEntityBase::Ptr_t match(new PHPEntityNamespace());
             match->FromResultSet(res);
             if(match->Cast<PHPEntityNamespace>()->GetParentNamespace() == fullnameStartsWith &&
-               match->GetShortName().StartsWith(shortNameContains)) {
+                match->GetShortName().StartsWith(shortNameContains)) {
                 matches.push_back(match);
             }
         }
@@ -1343,4 +1377,33 @@ PHPEntityBase::List_t PHPLookupTable::FindSymbol(const wxString& name)
         CL_WARNING("PHPLookupTable::FindSymbol: %s", e.GetMessage());
     }
     return matches;
+}
+
+void PHPLookupTable::DoFixVarsDocComment(PHPEntityBase::List_t& matches, wxLongLong parentId)
+{
+    // Load all PHPDocVar belonged to this class
+    PHPDocVar::Map_t docs;
+    wxString sql;
+    sql << "SELECT * from PHPDOC_VAR_TABLE WHERE SCOPE_ID=" << parentId;
+    DoAddLimit(sql);
+    wxSQLite3Statement st = m_db.PrepareStatement(sql);
+    wxSQLite3ResultSet res = st.ExecuteQuery();
+
+    while(res.NextRow()) {
+        PHPDocVar::Ptr_t var(new PHPDocVar());
+        var->FromResultSet(res);
+        docs.insert(std::make_pair(var->GetName(), var));
+    }
+
+    // Let the PHPDOC table content override the matches' type
+    std::for_each(matches.begin(), matches.end(), [&](PHPEntityBase::Ptr_t match) {
+        if(match->Is(kEntityTypeVariable)) {
+            if(docs.count(match->GetShortName())) {
+                PHPDocVar::Ptr_t docvar = docs.find(match->GetShortName())->second;
+                if(!docvar->GetType().IsEmpty()) {
+                    match->Cast<PHPEntityVariable>()->SetTypeHint(docvar->GetType());
+                }
+            }
+        }
+    });
 }

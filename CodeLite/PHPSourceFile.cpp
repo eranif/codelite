@@ -721,6 +721,15 @@ bool PHPSourceFile::NextToken(phpLexerToken& token)
     bool res = ::phpLexerNext(m_scanner, token);
     if(res && token.type == kPHP_T_C_COMMENT) {
         m_comments.push_back(token);
+        // We keep comments made in the class body
+        if(CurrentScope()->Is(kEntityTypeClass)) {
+            PHPDocVar::Ptr_t var(new PHPDocVar(*this, token.text));
+            if(var->IsOk()) {
+                var->SetLineNumber(token.lineNumber);
+                // this comment is a @var comment
+                CurrentScope()->Cast<PHPEntityClass>()->AddVarPhpDoc(var);
+            }
+        }
     } else if(token.type == '{') {
         m_depth++;
     } else if(token.type == '}') {
@@ -797,7 +806,7 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
 {
     // A "complex" example: class A extends BaseClass implements C, D {}
     bool isAbstractClass = LookBackTokensContains(kPHP_T_ABSTRACT);
-    
+
     // Read until we get the class name
     phpLexerToken token;
     while(NextToken(token)) {
@@ -813,7 +822,7 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
     PHPEntityBase::Ptr_t klass(new PHPEntityClass());
     klass->SetFilename(m_filename.GetFullPath());
     PHPEntityClass* pClass = klass->Cast<PHPEntityClass>();
-    
+
     // Is the class an interface?
     pClass->SetIsInterface(tok.type == kPHP_T_INTERFACE);
     pClass->SetIsAbstractClass(isAbstractClass);
@@ -1384,15 +1393,14 @@ void PHPSourceFile::OnConstant(const phpLexerToken& tok)
     PHPEntityBase::Ptr_t member;
     while(NextToken(token)) {
         if(token.type == '=') {
-            
+
             // The next value should contain the constant value
             if(!NextToken(token)) return;
-            
+
             if(member) {
                 // Keep the constant value, we will be using it later for tooltip
                 member->Cast<PHPEntityVariable>()->SetDefaultValue(token.text);
             }
-
         }
         if(token.type == ';') {
             if(member) {

@@ -720,10 +720,10 @@ void PHPSourceFile::PhaseTwo()
 bool PHPSourceFile::NextToken(phpLexerToken& token)
 {
     bool res = ::phpLexerNext(m_scanner, token);
-    if(res && token.type == kPHP_T_C_COMMENT) {
+    if(res && (token.type == kPHP_T_C_COMMENT)) {
         m_comments.push_back(token);
         // We keep comments made in the class body
-        if(CurrentScope()->Is(kEntityTypeClass)) {
+        if(!m_scopes.empty() && CurrentScope()->Is(kEntityTypeClass)) {
             PHPDocVar::Ptr_t var(new PHPDocVar(*this, token.text));
             if(var->IsOk()) {
                 var->SetLineNumber(token.lineNumber);
@@ -731,7 +731,9 @@ bool PHPSourceFile::NextToken(phpLexerToken& token)
                 CurrentScope()->Cast<PHPEntityClass>()->AddVarPhpDoc(var);
             }
         }
-    } else if(token.type == '{') {
+    } 
+    
+    if(token.type == '{') {
         m_depth++;
     } else if(token.type == '}') {
         m_depth--;

@@ -1,5 +1,6 @@
 #include "PHPEntityClass.h"
 #include <wx/tokenzr.h>
+#include <algorithm>
 
 PHPEntityClass::PHPEntityClass() {}
 

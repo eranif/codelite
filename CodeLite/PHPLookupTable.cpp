@@ -12,6 +12,7 @@
 #include "PHPEntityFunctionAlias.h"
 #include <wx/tokenzr.h>
 #include "fileextmanager.h"
+#include <algorithm>
 
 wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);

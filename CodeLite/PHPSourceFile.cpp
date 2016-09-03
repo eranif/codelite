@@ -1,3 +1,4 @@
+
 #include "PHPSourceFile.h"
 #include <wx/ffile.h>
 #include "PHPScannerTokens.h"
@@ -804,6 +805,12 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
 
 void PHPSourceFile::OnClass(const phpLexerToken& tok)
 {
+    wxString classDoc;
+    const phpLexerToken& prevToken = GetPreviousToken();
+    if(!prevToken.IsNull() && prevToken.IsDocComment()) {
+        classDoc = prevToken.text;
+    }
+
     // A "complex" example: class A extends BaseClass implements C, D {}
     bool isAbstractClass = LookBackTokensContains(kPHP_T_ABSTRACT);
 
@@ -821,6 +828,8 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
     // create new class entity
     PHPEntityBase::Ptr_t klass(new PHPEntityClass());
     klass->SetFilename(m_filename.GetFullPath());
+    klass->SetDocComment(classDoc);
+
     PHPEntityClass* pClass = klass->Cast<PHPEntityClass>();
 
     // Is the class an interface?
@@ -1424,4 +1433,14 @@ void PHPSourceFile::OnConstant(const phpLexerToken& tok)
             // do nothing
         }
     }
+}
+
+phpLexerToken& PHPSourceFile::GetPreviousToken()
+{
+    static phpLexerToken NullToken;
+    if(m_lookBackTokens.size() >= 2) {
+        // The last token in the list is the current one. We want the previous one
+        return m_lookBackTokens.at(m_lookBackTokens.size() - 2);
+    }
+    return NullToken;
 }

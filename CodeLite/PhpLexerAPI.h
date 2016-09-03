@@ -40,8 +40,7 @@ enum eLexerOptions {
     kPhpLexerOpt_ReturnAllNonPhp = 0x00000004,
 };
 
-struct WXDLLIMPEXP_CL phpLexerToken
-{
+struct WXDLLIMPEXP_CL phpLexerToken {
     int type;
     std::string text;
     int lineNumber;
@@ -54,7 +53,18 @@ struct WXDLLIMPEXP_CL phpLexerToken
         , endLineNumber(-1)
     {
     }
-
+    
+    /**
+     * @brief clear the token, i.e. IsNull() return true
+     */
+    void Clear()
+    {
+        type = -1;
+        lineNumber = -1;
+        endLineNumber = -1;
+        text.clear();
+    }
+    
     bool IsNull() const { return type == -1; }
     /**
      * @brief is the current token a comment? (c++ or c comment)
@@ -70,8 +80,7 @@ struct WXDLLIMPEXP_CL phpLexerToken
 /**
  * @class phpLexerUserData
  */
-struct WXDLLIMPEXP_CL phpLexerUserData
-{
+struct WXDLLIMPEXP_CL phpLexerUserData {
 private:
     size_t m_flags;
     std::string m_comment;
@@ -191,8 +200,7 @@ WXDLLIMPEXP_CL void phpLexerUnget(PHPScanner_t scanner);
  * @class PHPScannerLocker
  * @brief a wrapper around the C API for PHPScanner
  */
-struct WXDLLIMPEXP_CL PHPScannerLocker
-{
+struct WXDLLIMPEXP_CL PHPScannerLocker {
     PHPScanner_t scanner;
     PHPScannerLocker(const wxString& content, size_t options = kPhpLexerOpt_None)
     {

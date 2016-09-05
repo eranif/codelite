@@ -11,6 +11,7 @@ PHPEntityBase::PHPEntityBase()
 
 void PHPEntityBase::AddChild(PHPEntityBase::Ptr_t child)
 {
+    // Add the child to this entity
     if(m_childrenMap.count(child->GetFullName()) == 0) {
         m_children.push_back(child);
         m_childrenMap.insert(std::make_pair(child->GetFullName(), child));
@@ -65,4 +66,26 @@ void PHPEntityBase::SetFullName(const wxString& fullname)
 {
     m_fullname = fullname;
     m_shortName = m_fullname.AfterLast('\\');
+}
+
+void PHPEntityBase::RemoveChild(PHPEntityBase::Ptr_t child)
+{
+    // Remove the child from the map
+    if(m_childrenMap.count(child->GetFullName())) {
+        m_childrenMap.erase(child->GetFullName());
+    }
+    
+    // Remove the child from the list as well
+    PHPEntityBase::List_t::iterator iter =
+        std::find_if(m_children.begin(), m_children.end(), [&](PHPEntityBase::Ptr_t c) {
+            if(c->GetFullName() == child->GetFullName()) {
+                return true;
+            }
+            return false;
+        });
+
+    if(iter != m_children.end()) {
+        m_children.erase(iter);
+    }
+    child->m_parent = NULL;
 }

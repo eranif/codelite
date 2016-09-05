@@ -188,7 +188,12 @@ public:
      * @brief add a child to this scope
      */
     void AddChild(PHPEntityBase::Ptr_t child);
-
+    
+    /**
+     * @brief remove a child
+     */
+    void RemoveChild(PHPEntityBase::Ptr_t child);
+    
     /**
      * @brief convert this base class to its concrete
      * @return

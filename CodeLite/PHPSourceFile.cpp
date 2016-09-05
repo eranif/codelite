@@ -24,6 +24,7 @@ PHPSourceFile::PHPSourceFile(const wxString& content)
     , m_parseFunctionBody(false)
     , m_depth(0)
     , m_reachedEOF(false)
+    , m_converter(NULL)
 {
     m_scanner = ::phpLexerNew(content, kPhpLexerOpt_ReturnComments);
 }
@@ -33,6 +34,7 @@ PHPSourceFile::PHPSourceFile(const wxFileName& filename)
     , m_parseFunctionBody(false)
     , m_depth(0)
     , m_reachedEOF(false)
+    , m_converter(NULL)
 {
     // Filename is kept in absolute path
     m_filename.MakeAbsolute();
@@ -731,8 +733,8 @@ bool PHPSourceFile::NextToken(phpLexerToken& token)
                 CurrentScope()->Cast<PHPEntityClass>()->AddVarPhpDoc(var);
             }
         }
-    } 
-    
+    }
+
     if(token.type == '{') {
         m_depth++;
     } else if(token.type == '}') {
@@ -747,6 +749,10 @@ bool PHPSourceFile::NextToken(phpLexerToken& token)
 
 wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
 {
+    if(m_converter) {
+        return m_converter->MakeIdentifierAbsolute(type);
+    }
+    
     wxString typeWithNS(type);
     typeWithNS.Trim().Trim(false);
 

@@ -31,16 +31,39 @@
 #include <wx/arrstr.h>
 #include <map>
 #include "PHPSourceFile.h"
+#include "macros.h"
 
 class WXDLLIMPEXP_CL PHPDocComment
 {
+public:
+    struct Property {
+        wxString name;
+        wxString type;
+        wxString desc;
+        typedef std::map<wxString, PHPDocComment::Property> Map_t;
+    };
+
+protected:
+    PHPSourceFile& m_sourceFile;
     wxString m_comment;
     std::map<wxString, wxString> m_params;
     wxArrayString m_paramsArr;
     wxString m_returnValue;
     wxString m_varType;
     wxString m_varName;
-    
+    PHPDocComment::Property::Map_t m_properties; // @property, @property-read, @property-write
+    PHPEntityBase::List_t m_methods;
+
+    /**
+     * @brief process @method php doc
+     */
+    void ProcessMethods();
+
+    /**
+     * @brief process a line that starts with @method
+     */
+    void ProcessMethod(wxString& strLine);
+
 public:
     PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment);
     virtual ~PHPDocComment();
@@ -49,8 +72,11 @@ public:
 
     const wxString& GetVar() const;
     const wxString& GetReturn() const;
-    const wxString& GetParam(const wxString &name) const;
+    const wxString& GetParam(const wxString& name) const;
     const wxString& GetParam(size_t index) const;
+    const PHPDocComment::Property::Map_t& GetProperties() const { return m_properties; }
+    PHPDocComment::Property::Map_t& GetProperties() { return m_properties; }
+    const PHPEntityBase::List_t& GetMethods() const { return m_methods; }
 };
 
 #endif // PHPDOCCOMMENT_H

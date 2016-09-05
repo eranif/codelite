@@ -23,6 +23,29 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
         // PHPDoc was already assigned to this entity during the parsing phase
         if(entity->Is(kEntityTypeClass)) {
             // Process @property tags here
+            PHPDocComment docComment(m_sourceFile, entity->GetDocComment());
+            if(!docComment.GetProperties().empty()) {
+                // Got some @properties
+                std::for_each(docComment.GetProperties().begin(), docComment.GetProperties().end(),
+                    [&](PHPDocComment::Property::Map_t::value_type& p) {
+                        PHPEntityBase::Ptr_t child = entity->FindChild(p.second.name);
+                        if(!child) {
+                            // No child of this type, create a new property and add it
+                            child.Reset(new PHPEntityVariable());
+                            child->SetFilename(m_sourceFile.GetFilename());
+                            child->SetLine(entity->GetLine());
+                            child->Cast<PHPEntityVariable>()->SetTypeHint(p.second.type);
+                            child->Cast<PHPEntityVariable>()->SetFlag(kVar_Member); // Member variable
+                            child->Cast<PHPEntityVariable>()->SetFlag(kVar_Public); // Public access
+                            child->SetShortName(p.second.name);
+                            child->SetFullName(p.second.name);
+                            entity->AddChild(child);
+                        }
+                    });
+            } else if(!docComment.GetMethods().empty()) {
+                std::for_each(docComment.GetMethods().begin(), docComment.GetMethods().end(),
+                    [&](PHPEntityBase::Ptr_t method) { entity->AddChild(method); });
+            }
         }
     } else {
         // search for the comment placed at the top of the variable

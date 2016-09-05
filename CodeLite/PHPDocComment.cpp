@@ -4,7 +4,8 @@
 #include <set>
 
 PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
-    : m_comment(comment)
+    : m_sourceFile(sourceFile)
+    , m_comment(comment)
 {
     std::set<wxString> nativeTypes;
     nativeTypes.insert("int");
@@ -59,21 +60,50 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
         m_varName = reVarType2.GetMatch(m_comment, 3);
     }
 
-    // @param PDO $name
-    static wxRegEx reParam2(wxT("@(param|parameter)[ \t]+([\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"));
-    wxArrayString lines2 = wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
-    if(reParam2.IsValid()) {
-        for(size_t i = 0; i < lines2.GetCount(); i++) {
-            wxString line = lines2.Item(i).Trim().Trim(false);
-            if(reParam2.Matches(line)) {
-                wxString paramName, paramHint;
-                paramHint = sourceFile.MakeIdentifierAbsolute(reParam2.GetMatch(line, 2));
-                paramName = reParam2.GetMatch(line, 3);
-                m_paramsArr.Add(paramHint);
-                m_params.insert(std::make_pair(paramName, paramHint));
-            }
+    // @param <TYPE> <NAME>
+    // @property-read, @property-write, @property
+    static wxRegEx reParam2(
+        wxT("@(param|parameter)[ \t]+([\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"), wxRE_ADVANCED);
+    static wxRegEx reProprety("@property[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
+    static wxRegEx rePropretyRead(
+        "@property\\-read[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
+    static wxRegEx rePropretyWrite(
+        "@property\\-write[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
+    wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
+
+    for(size_t i = 0; i < lines2.GetCount(); i++) {
+        wxString line = lines2.Item(i).Trim().Trim(false);
+        if(reParam2.IsValid() && reParam2.Matches(line)) {
+            wxString paramName, paramHint;
+            paramHint = sourceFile.MakeIdentifierAbsolute(reParam2.GetMatch(line, 2));
+            paramName = reParam2.GetMatch(line, 3);
+            m_paramsArr.Add(paramHint);
+            m_params.insert(std::make_pair(paramName, paramHint));
+        } else if(reProprety.IsValid() && reProprety.Matches(line)) {
+            PHPDocComment::Property prop;
+            prop.type = sourceFile.MakeIdentifierAbsolute(reProprety.GetMatch(line, 1));
+            prop.name = reProprety.GetMatch(line, 2);
+            prop.desc = reProprety.GetMatch(line, 3);
+            m_properties.insert(std::make_pair(prop.name, prop));
+
+        } else if(rePropretyRead.IsValid() && rePropretyRead.Matches(line)) {
+            PHPDocComment::Property prop;
+            prop.type = sourceFile.MakeIdentifierAbsolute(rePropretyRead.GetMatch(line, 1));
+            prop.name = rePropretyRead.GetMatch(line, 2);
+            prop.desc = rePropretyRead.GetMatch(line, 3);
+            m_properties.insert(std::make_pair(prop.name, prop));
+
+        } else if(rePropretyWrite.IsValid() && rePropretyWrite.Matches(line)) {
+            PHPDocComment::Property prop;
+            prop.type = sourceFile.MakeIdentifierAbsolute(rePropretyWrite.GetMatch(line, 1));
+            prop.name = rePropretyWrite.GetMatch(line, 2);
+            prop.desc = rePropretyWrite.GetMatch(line, 3);
+            m_properties.insert(std::make_pair(prop.name, prop));
         }
     }
+
+    // Attempt to parse and resolve @method entries in the PHPDoc
+    ProcessMethods();
 }
 
 PHPDocComment::~PHPDocComment() {}
@@ -98,4 +128,63 @@ const wxString& PHPDocComment::GetParam(const wxString& name) const
         return emptyString;
     }
     return m_params.find(name)->second;
+}
+
+void PHPDocComment::ProcessMethods()
+{
+    wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
+    for(size_t i = 0; i < lines2.GetCount(); ++i) {
+        wxString ll = lines2.Item(i).Trim().Trim(false);
+        if(ll.Contains("@method")) {
+            ProcessMethod(ll);
+        }
+    }
+}
+
+void PHPDocComment::ProcessMethod(wxString& strLine)
+{
+    // The phpdoc for method does not confirm to the PHP syntax.
+    // We need to alter the signature so we can use our parse to parse
+    // the signature
+    // @method syntax is:
+    // @method [return type] [name]([[type] [parameter]<, ...>]) [<description>]
+    // While PHP's syntax is:
+    // function [name] ([[type] [parameter]<, ...>]) [ : return_type ]
+
+    static wxRegEx reMethodWithReturnType(
+        "@method[ \t]+([\\a-zA-Z0-9_]+)[\t ]+([\\a-zA-Z0-9_]+)[ \t]*(\\(.*?\\))", wxRE_ADVANCED);
+    static wxRegEx reMethodNoReturnType("@method[ \t]+([\\a-zA-Z0-9_]+)[ \t]*(\\(.*?\\))", wxRE_ADVANCED);
+
+    wxString returnType;
+    wxString methodName;
+    wxString signature;
+    if(reMethodWithReturnType.IsValid() && reMethodWithReturnType.Matches(strLine)) {
+        returnType = reMethodWithReturnType.GetMatch(strLine, 1);
+        methodName = reMethodWithReturnType.GetMatch(strLine, 2);
+        signature = reMethodWithReturnType.GetMatch(strLine, 3);
+    } else if(reMethodNoReturnType.IsValid() && reMethodNoReturnType.Matches(strLine)) {
+        methodName = reMethodNoReturnType.GetMatch(strLine, 1);
+        signature = reMethodNoReturnType.GetMatch(strLine, 2);
+    }
+
+    wxString strBuffer;
+    strBuffer << "<?php function " << methodName << signature;
+    if(!returnType.IsEmpty()) {
+        strBuffer << " : " << returnType << " ";
+    }
+    strBuffer << " {} ";
+
+    PHPSourceFile buffer(strBuffer);
+    buffer.SetTypeAbsoluteConverter(&m_sourceFile);
+    buffer.Parse();
+
+    if(!buffer.CurrentScope()->GetChildren().empty()) {
+        PHPEntityBase::Ptr_t func = *buffer.CurrentScope()->GetChildren().begin();
+        if(func && func->Is(kEntityTypeFunction)) {
+            if(func->Parent()) {
+                func->Parent()->RemoveChild(func);
+            }
+            m_methods.push_back(func);
+        }
+    }
 }

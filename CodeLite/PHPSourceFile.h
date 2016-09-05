@@ -46,7 +46,8 @@ class WXDLLIMPEXP_CL PHPSourceFile
     bool m_reachedEOF;
     // aliases defined by the 'use' operator
     std::map<wxString, wxString> m_aliases;
-    
+    PHPSourceFile* m_converter;
+
 public:
     typedef wxSharedPtr<PHPSourceFile> Ptr_t;
 
@@ -62,12 +63,12 @@ protected:
      * since this function will handle all PHP comments found
      */
     bool NextToken(phpLexerToken& token);
-    
+
     /**
      * @brief return the previous token
      */
     phpLexerToken& GetPreviousToken();
-    
+
     /**
      * @brief read until we found 'delim' (consume it)
      */
@@ -222,7 +223,14 @@ public:
     PHPSourceFile(const wxString& content);
 
     virtual ~PHPSourceFile();
-
+    
+    /**
+     * @brief use a different PHPSourceFile class for converting types to their 
+     * absolute path
+     * @param converter
+     */
+    void SetTypeAbsoluteConverter(PHPSourceFile* converter) { m_converter = converter; }
+    
     /**
      * @brief check if we are inside a PHP block at the end of the given buffer
      */

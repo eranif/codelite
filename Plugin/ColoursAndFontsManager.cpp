@@ -548,12 +548,9 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
     wxFileName fnUserLexers(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
     fnUserLexers.AppendDir("lexers");
 
-// Default installation lexers
-#ifdef USE_POSIX_LAYOUT
-    wxFileName defaultLexersFileName(clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR), "");
-#else
+    // Default installation lexers
     wxFileName defaultLexersFileName(clStandardPaths::Get().GetDataDir(), "");
-#endif
+
     defaultLexersFileName.AppendDir("lexers");
     defaultLexersFileName.SetFullName("lexers.json");
     

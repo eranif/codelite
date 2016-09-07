@@ -3721,7 +3721,7 @@ void clMainFrame::CompleteInitialization()
 
 // Load debuggers (*must* be after the plugins)
 #ifdef USE_POSIX_LAYOUT
-    wxString plugdir(clStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));
+    wxString plugdir(clStandardPaths::Get().GetPluginsDirectory());
     DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), plugdir);
 #else
     DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), ManagerST::Get()->GetInstallDir());

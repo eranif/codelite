@@ -83,7 +83,7 @@ wxString GetResourceDirectory()
     fn.AppendDir("resources");
 #else
 #ifdef USE_POSIX_LAYOUT
-    fn = wxFileName(clStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));
+    fn = wxFileName(clStandardPaths::Get().GetPluginsDirectory());
 #else
     fn = wxFileName(clStandardPaths::Get().GetExecutablePath());
     fn.AppendDir("plugins");

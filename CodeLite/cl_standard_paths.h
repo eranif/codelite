@@ -118,6 +118,13 @@ public:
      * OSX: /Users/name/Documents
      */
     wxString GetDocumentsDir() const;
+    
+    /**
+     * @brief return the installation directory.
+     */
+    wxString GetInstallDir() const;
+    
+    void IgnoreAppSubDir(const wxString & subdirPattern);
 };
 
 #endif // CLSTANDARDPATHS_H

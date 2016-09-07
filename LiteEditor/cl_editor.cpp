@@ -82,6 +82,7 @@
 #include <wx/printdlg.h>
 #include "ColoursAndFontsManager.h"
 #include "lexer_configuration.h"
+#include "fileutils.h"
 //#include "clFileOrFolderDropTarget.h"
 
 // fix bug in wxscintilla.h
@@ -290,6 +291,35 @@ public:
     wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult) { return m_stc->DoDragOver(x, y, defResult); }
 };
 
+//=====================================================================
+
+#if defined(__WXMSW__)
+static bool MSWRemoveROFileAttribute(const wxFileName& fileName)
+{
+    DWORD dwAttrs = GetFileAttributes(fileName.GetFullPath().c_str());
+    if(dwAttrs != INVALID_FILE_ATTRIBUTES) {
+        if(dwAttrs & FILE_ATTRIBUTE_READONLY) {
+            if(wxMessageBox(
+                   wxString::Format(wxT("'%s' \n%s\n%s"), fileName.GetFullPath(), _("has the read-only attribute set"),
+                       _("Would you like CodeLite to try and remove it?")),
+                   _("CodeLite"), wxYES_NO | wxICON_QUESTION | wxCENTER) == wxYES) {
+                // try to clear the read-only flag from the file
+                if(SetFileAttributes(fileName.GetFullPath().c_str(), dwAttrs & ~(FILE_ATTRIBUTE_READONLY)) == FALSE) {
+                    wxMessageBox(wxString::Format(wxT("%s '%s' %s"), _("Failed to open file"),
+                                     fileName.GetFullPath().c_str(), _("for write")),
+                        _("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+#endif
+
+//=====================================================================
 LEditor::LEditor(wxWindow* parent)
     : wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxNO_BORDER)
     , m_popupIsOn(false)
@@ -1428,27 +1458,18 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
         }
     }
 
-#if defined(__WXMSW__)
-    DWORD dwAttrs = GetFileAttributes(fileName.GetFullPath().c_str());
-    if(dwAttrs != INVALID_FILE_ATTRIBUTES) {
-        if(dwAttrs & FILE_ATTRIBUTE_READONLY) {
-            if(wxMessageBox(
-                   wxString::Format(wxT("'%s' \n%s"), fileName.GetFullPath().c_str(),
-                       _("has the read-only attribute set"), _("Would you like CodeLite to try and remove it?")),
-                   _("CodeLite"), wxYES_NO | wxICON_QUESTION | wxCENTER) == wxYES) {
-                // try to clear the read-only flag from the file
-                if(SetFileAttributes(fileName.GetFullPath().c_str(), dwAttrs & ~(FILE_ATTRIBUTE_READONLY)) == FALSE) {
-                    wxMessageBox(wxString::Format(wxT("%s '%s' %s"), _("Failed to open file"),
-                                     fileName.GetFullPath().c_str(), _("for write")),
-                        _("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
+    // Do all the writing on the temporary file
+    wxFileName intermediateFile(fileName);
+    intermediateFile.SetFullName("~" + fileName.GetFullName() + "." + ::wxGetUserId());
+
+    {
+        // Ensure that a temporary file with this name does not exist
+        FileUtils::Deleter deleter(intermediateFile);
     }
-#endif
+
+    // Ensure that the temporary file that we will be creating
+    // is removed when leaving the function
+    FileUtils::Deleter deleter(intermediateFile);
 
     // save the file using the user's defined encoding
     // unless we got a BOM set
@@ -1461,50 +1482,32 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     // BUG#2982452
     // try to manually convert the text to make sure that the conversion does not fail
     wxString theText = GetText();
-    //	int      txtLen  = GetTextLength();
 
-    // Make sure we can open the file for writing
-    wxString tmp_file;
-
-#if HAS_LIBCLANG
-#ifdef __WXMSW__
-    // There is a bug in clang that locks the file
-    wxFFile testFile(fileName.GetFullPath().GetData(),
-        "wb"); // use ab to make sure that the file content is not discarded
-    if(!testFile.IsOpened()) {
-        ClangCodeCompletion::Instance()->ClearCache();
-    } else {
-        testFile.Close();
+    // If the intermediate file exists, it means that we got problems deleting it (usually permissions)
+    // Notify the user and continue
+    if(intermediateFile.Exists()) {
+        // We failed to delete the intermediate file
+        ::wxMessageBox(wxString::Format(_("Unable to create intermediate\n'%s'\nfor write. File already exists!"),
+                           intermediateFile.GetFullPath()),
+            "CodeLite", wxOK | wxCENTER | wxICON_ERROR, EventNotifier::Get()->TopFrame());
+        return false;
     }
-#endif
-#endif // HAS_LIBCLANG
 
-    wxFFile file(fileName.GetFullPath().GetData(), wxT("wb"));
-    if(file.IsOpened() == false) {
+    wxFFile file(intermediateFile.GetFullPath().GetData(), "wb");
+    if(!file.IsOpened()) {
         // Nothing to be done
-        if(wxMessageBox(wxString::Format(wxT("%s '%s' %s, %s"), _("Failed to open file"),
-                            fileName.GetFullPath().GetData(), _("for write"), _("Override it?")),
-               _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxYES) {
-            // try to override it
-            time_t curt = GetFileModificationTime(fileName.GetFullPath());
-            tmp_file << fileName.GetFullPath() << curt;
-            if(file.Open(tmp_file.c_str(), wxT("wb")) == false) {
-                wxMessageBox(
-                    wxString::Format(wxT("%s '%s' %s"), _("Failed to open file"), tmp_file.c_str(), _("for write")),
-                    _("CodeLite"), wxOK | wxICON_WARNING);
-                return false;
-            }
-        } else {
-            return false;
-        }
+        wxMessageBox(wxString::Format(_("Failed to open file\n'%s'\nfor write"), fileName.GetFullPath()), "CodeLite",
+            wxOK | wxCENTER | wxICON_ERROR);
+        return false;
     }
 
+    // Convert the text
     const wxWX2MBbuf buf = theText.mb_str(useBuiltIn ? (const wxMBConv&)wxConvUTF8 : (const wxMBConv&)fontEncConv);
-    if(!buf.data()) {
+    if(theText.IsEmpty()) {
         wxMessageBox(wxString::Format(wxT("%s\n%s '%s'"), _("Save file failed!"),
                          _("Could not convert the file to the requested encoding"),
-                         wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding()).c_str()),
-            _("CodeLite"), wxOK | wxICON_WARNING);
+                         wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding())),
+            "CodeLite", wxOK | wxICON_WARNING);
         return false;
     }
 
@@ -1529,27 +1532,55 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     mode_t origPermissions = GTKGetFilePermissions(fileName.GetFullPath());
 #endif
 
-    // if the saving was done to a temporary file, override it
-    if(tmp_file.IsEmpty() == false) {
-        if(wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false) {
-            wxMessageBox(
-                wxString::Format(_("Failed to override read-only file")), _("CodeLite"), wxOK | wxICON_WARNING);
-            return false;
-        } else {
-// override was successful, restore execute permissions
-#ifdef __WXGTK__
-            mode_t newFilePermissions = GTKGetFilePermissions(fileName.GetFullPath());
+// The write was done to a temporary file, override it
+#ifdef __WXMSW__
+    if(!::wxRenameFile(intermediateFile.GetFullPath(), fileName.GetFullPath(), true)) {
+        bool bSaveSucceeded = false;
+        // Check if the file has the ReadOnly attribute and attempt to remove it
+        if(MSWRemoveROFileAttribute(fileName)) {
+            if(!::wxRenameFile(intermediateFile.GetFullPath(), fileName.GetFullPath(), true)) {
+                wxMessageBox(
+                    wxString::Format(_("Failed to override read-only file")), "CodeLite", wxOK | wxICON_WARNING);
+                return false;
+            } else {
+                bSaveSucceeded = true;
+            }
+        }
 
-            if(origPermissions & S_IXUSR) newFilePermissions |= S_IXUSR;
-
-            if(origPermissions & S_IXGRP) newFilePermissions |= S_IXGRP;
-
-            if(origPermissions & S_IXOTH) newFilePermissions |= S_IXOTH;
-
-            ::chmod(fileName.GetFullPath().mb_str(wxConvUTF8), newFilePermissions);
-#endif
+        if(!bSaveSucceeded) {
+            // Try clearing the clang cache and try again
+            ClangCodeCompletion::Instance()->ClearCache();
+            if(!::wxRenameFile(intermediateFile.GetFullPath(), fileName.GetFullPath(), true)) {
+                wxMessageBox(
+                    wxString::Format(_("Failed to override read-only file")), "CodeLite", wxOK | wxICON_WARNING);
+                return false;
+            }
         }
     }
+#else
+    if(!::wxRenameFile(intermediateFile.GetFullPath(), fileName.GetFullPath(), true)) {
+        // Try clearing the clang cache and try again
+        wxMessageBox(wxString::Format(_("Failed to override read-only file")), "CodeLite", wxOK | wxICON_WARNING);
+        return false;
+    }
+#endif
+
+#if 0
+    else {
+// override was successful, restore execute permissions
+#ifdef __WXGTK__
+        mode_t newFilePermissions = GTKGetFilePermissions(fileName.GetFullPath());
+
+        if(origPermissions & S_IXUSR) newFilePermissions |= S_IXUSR;
+
+        if(origPermissions & S_IXGRP) newFilePermissions |= S_IXGRP;
+
+        if(origPermissions & S_IXOTH) newFilePermissions |= S_IXOTH;
+
+        ::chmod(fileName.GetFullPath().mb_str(wxConvUTF8), newFilePermissions);
+#endif
+    }
+#endif
 
     // update the modification time of the file
     m_modifyTime = GetFileModificationTime(fileName.GetFullPath());

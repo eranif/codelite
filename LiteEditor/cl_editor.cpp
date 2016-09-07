@@ -1503,7 +1503,7 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     // Notify the user and continue
     if(intermediateFile.Exists()) {
         // We failed to delete the intermediate file
-        ::wxMessageBox(wxString::Format(_("Unable to create intermediate\n'%s'\nfor write. File already exists!"),
+        ::wxMessageBox(wxString::Format(_("Unable to create intermediate file\n'%s'\nfor writing. File already exists!"),
                                         intermediateFile.GetFullPath()),
                        "CodeLite",
                        wxOK | wxCENTER | wxICON_ERROR,
@@ -1522,7 +1522,7 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
 
     // Convert the text
     const wxWX2MBbuf buf = theText.mb_str(useBuiltIn ? (const wxMBConv&)wxConvUTF8 : (const wxMBConv&)fontEncConv);
-    if(theText.IsEmpty()) {
+    if(!buf.data()) {
         wxMessageBox(wxString::Format(wxT("%s\n%s '%s'"),
                                       _("Save file failed!"),
                                       _("Could not convert the file to the requested encoding"),
@@ -1532,7 +1532,7 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
         return false;
     }
 
-    if(buf.length() == 0 && !theText.IsEmpty()) {
+    if((buf.length() == 0) && !theText.IsEmpty()) {
         // something went wrong in the conversion process
         wxString errmsg;
         errmsg << _(

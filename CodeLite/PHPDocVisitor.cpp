@@ -3,6 +3,7 @@
 #include "PHPDocComment.h"
 #include "PHPEntityFunction.h"
 #include "PHPEntityVariable.h"
+#include <algorithm>
 
 PHPDocVisitor::PHPDocVisitor(PHPSourceFile& sourceFile, const std::vector<phpLexerToken>& comments)
     : m_sourceFile(sourceFile)

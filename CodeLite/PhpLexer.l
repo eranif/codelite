@@ -445,7 +445,7 @@ void* phpLexerNew(const wxFileName& filename, size_t options )
         fn.MakeAbsolute();
     }
     
-    FILE* fp = ::fopen(fn.GetFullPath().mb_str(wxConvUTF8).data(), "rb");
+    FILE* fp = ::fopen(fn.GetFullPath().mb_str().data(), "rb");
     if(!fp) {
         return NULL;
     }
@@ -463,7 +463,7 @@ void* phpLexerNew(const wxString& content, size_t options )
 {
     yyscan_t scanner;
     phplex_init(&scanner);
-    wxCharBuffer cb = content.mb_str(wxConvUTF8);
+    wxCharBuffer cb = content.mb_str();
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     yyg->yyextra_r = new phpLexerUserData(options);
     php_switch_to_buffer(php_scan_string(cb.data(), scanner), scanner);

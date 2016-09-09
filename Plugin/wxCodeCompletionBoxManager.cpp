@@ -290,7 +290,7 @@ void wxCodeCompletionBoxManager::OnDismissBox(wxCommandEvent& event)
 void wxCodeCompletionBoxManager::OnAppActivate(wxActivateEvent& event)
 {
     event.Skip();
-    DestroyCCBox();
+    CallAfter(&wxCodeCompletionBox::DoDestroy);
 }
 
 void wxCodeCompletionBoxManager::Free()

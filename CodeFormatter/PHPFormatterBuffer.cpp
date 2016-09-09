@@ -65,7 +65,6 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             m_openTagWithEcho = false;
             m_buffer << token.text;
             AppendEOL();
-            AppendEOL();
 
         } else if(token.type == kPHP_T_OPEN_TAG_WITH_ECHO) {
             m_openTagWithEcho = true;

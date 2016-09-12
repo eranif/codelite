@@ -741,6 +741,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
     }
+    
+    // Add Arduino sketches files as C++ (*.ino)
+    if(lexer->GetName() == "c++" && !lexer->GetFileSpec().Contains(".ino")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ino");
+    }
 
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...

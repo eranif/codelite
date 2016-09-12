@@ -1840,7 +1840,6 @@ wxString BuilderGnuMake::DoGetCompilerMacro(const wxString& filename)
 
 wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxString& cwd, CompilerPtr cmp)
 {
-    const wxArrayString& dirs = filename.GetDirs();
     wxString lastDir;
     wxString ret;
 
@@ -1853,9 +1852,11 @@ wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxS
     }
 
     // remove cwd from filename
-    int start = wxFileName(cwd).GetDirCount();
-
-    for(size_t i = start + 1; i < filename.GetDirCount(); i++) {
+    wxFileName relpath = filename;
+    relpath.MakeRelativeTo(cwd);
+    
+    const wxArrayString& dirs = relpath.GetDirs();
+    for(int i = 0; i < dirs.size(); ++i) {
         lastDir = dirs.Item(i);
 
         // Handle special directory paths

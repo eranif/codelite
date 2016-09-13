@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2016 The CodeLite Team
-// File name            : autosave.h
+// File name            : AutoSaveSettings.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,40 +23,51 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __AutoSave__
-#define __AutoSave__
+#ifndef AUTOSAVESETTINGS_H
+#define AUTOSAVESETTINGS_H
 
-#include "plugin.h"
-#include <wx/timer.h>
+#include "cl_config.h"
 
-class AutoSave : public IPlugin
+class AutoSaveSettings : public clConfigItem
 {
-    wxTimer* m_timer;
+public:
+    enum {
+        kEnabled = (1 << 0),
+    };
 
 protected:
-    void OnSettings(wxCommandEvent& event);
-    void OnTimer(wxTimerEvent& event);
+    size_t m_flags;
+    size_t m_checkInterval;
 
-    void UpdateTimers();
-    void DeleteTimer();
-    
 public:
-    AutoSave(IManager* manager);
-    ~AutoSave();
+    AutoSaveSettings();
+    ~AutoSaveSettings();
 
-    //--------------------------------------------
-    // Abstract methods
-    //--------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
-    /**
-     * @brief Add plugin menu to the "Plugins" menu item in the menu bar
-     */
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
+    virtual void FromJSON(const JSONElement& json);
+    virtual JSONElement ToJSON() const;
 
-    /**
-     * @brief Unplug the plugin. Perform here any cleanup needed (e.g. unbind events, destroy allocated windows)
-     */
-    virtual void UnPlug();
+    static AutoSaveSettings Load();
+    static void Save(const AutoSaveSettings& settings);
+
+    AutoSaveSettings& EnableFlag(int flag, bool b = true)
+    {
+        b ? (m_flags |= flag) : (m_flags &= ~flag);
+        return *this;
+    }
+
+    bool HasFlag(int flag) const { return m_flags & flag; }
+    AutoSaveSettings& SetFlags(size_t flags)
+    {
+        this->m_flags = flags;
+        return *this;
+    }
+    size_t GetFlags() const { return m_flags; }
+    AutoSaveSettings& SetCheckInterval(size_t checkInterval)
+    {
+        this->m_checkInterval = checkInterval;
+        return *this;
+    }
+    size_t GetCheckInterval() const { return m_checkInterval; }
 };
 
-#endif // AutoSave
+#endif // AUTOSAVESETTINGS_H

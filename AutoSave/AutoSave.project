@@ -2,6 +2,8 @@
 <CodeLite_Project Name="AutoSave">
   <VirtualDirectory Name="src">
     <File Name="autosave.cpp"/>
+    <File Name="AutoSaveSettings.h"/>
+    <File Name="AutoSaveSettings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="autosave.h"/>
@@ -38,12 +40,12 @@
         <Command Enabled="yes">copy "$(IntermediateDirectory)\AutoSave-dbg.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
+        <CleanCommand/>
+        <BuildCommand/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
@@ -73,13 +75,27 @@
         <Command Enabled="yes">copy "$(IntermediateDirectory)\AutoSave.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
+        <CleanCommand/>
+        <BuildCommand/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="UI">
+    <File Name="AutoSaveDlg.h"/>
+    <File Name="AutoSaveDlg.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="AutoSaveUI.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="AutoSaveUI_autosave_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="AutoSaveUI.h"/>
+      <File Name="AutoSaveUI.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

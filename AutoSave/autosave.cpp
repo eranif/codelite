@@ -1,5 +1,10 @@
 #include "autosave.h"
 #include <wx/xrc/xmlres.h>
+#include "AutoSaveDlg.h"
+#include <wx/menu.h>
+#include "event_notifier.h"
+#include "AutoSaveSettings.h"
+#include <algorithm>
 
 static AutoSave* thePlugin = NULL;
 
@@ -26,9 +31,12 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 AutoSave::AutoSave(IManager* manager)
     : IPlugin(manager)
+    , m_timer(NULL)
 {
     m_longName = _("Automatically save modified source files");
     m_shortName = wxT("AutoSave");
+
+    UpdateTimers();
 }
 
 AutoSave::~AutoSave() {}
@@ -40,6 +48,60 @@ clToolBar* AutoSave::CreateToolBar(wxWindow* parent)
     return tb;
 }
 
-void AutoSave::CreatePluginMenu(wxMenu* pluginsMenu) {}
+void AutoSave::CreatePluginMenu(wxMenu* pluginsMenu)
+{
+    wxMenu* menu = new wxMenu();
+    menu->Append(new wxMenuItem(menu, XRCID("auto_save_settings"), _("Settings...")));
+    pluginsMenu->Append(wxID_ANY, "Auto Save", menu);
+    menu->Bind(wxEVT_MENU, &AutoSave::OnSettings, this, XRCID("auto_save_settings"));
+}
 
-void AutoSave::UnPlug() {}
+void AutoSave::UnPlug() { DeleteTimer(); }
+
+void AutoSave::OnSettings(wxCommandEvent& event)
+{
+    AutoSaveDlg dlg(EventNotifier::Get()->TopFrame());
+    if(dlg.ShowModal() == wxID_OK) {
+        // Update the settings
+        UpdateTimers();
+    }
+}
+
+void AutoSave::UpdateTimers()
+{
+    DeleteTimer();
+    AutoSaveSettings conf = AutoSaveSettings::Load();
+    if(!conf.HasFlag(AutoSaveSettings::kEnabled)) {
+        return;
+    }
+
+    m_timer = new wxTimer(this, XRCID("auto_save_timer"));
+    m_timer->Start((conf.GetCheckInterval() * 1000), true);
+    Bind(wxEVT_TIMER, &AutoSave::OnTimer, this);
+}
+
+void AutoSave::OnTimer(wxTimerEvent& event)
+{
+    IEditor::List_t editors;
+    m_mgr->GetAllEditors(editors);
+    
+    // Save every modified editor
+    std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
+        if(editor->IsModified()) {
+            editor->Save();
+        }
+    });
+    
+    // Restart the timer
+    AutoSaveSettings conf = AutoSaveSettings::Load();
+    m_timer->Start((conf.GetCheckInterval() * 1000), true);
+}
+
+void AutoSave::DeleteTimer()
+{
+    if(m_timer) {
+        Unbind(wxEVT_TIMER, &AutoSave::OnTimer, this);
+        m_timer->Stop();
+    }
+    wxDELETE(m_timer);
+}

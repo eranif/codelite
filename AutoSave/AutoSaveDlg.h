@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2016 The CodeLite Team
-// File name            : $(CurrentFileName).$(CurrentFileExt)
+// File name            : AutoSaveDlg.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,3 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#ifndef AUTOSAVEDLG_H
+#define AUTOSAVEDLG_H
+#include "AutoSaveUI.h"
+
+class AutoSaveDlg : public AutoSaveDlgBase
+{
+public:
+    AutoSaveDlg(wxWindow* parent);
+    virtual ~AutoSaveDlg();
+protected:
+    virtual void OnOK(wxCommandEvent& event);
+    virtual void OnEnabledUI(wxUpdateUIEvent& event);
+};
+#endif // AUTOSAVEDLG_H

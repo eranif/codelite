@@ -575,6 +575,7 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(CMakePlugin)
     add_subdirectory(CodeLiteDiff)
     add_subdirectory(SpellChecker)
+    add_subdirectory(AutoSave)
 
     if (WITH_SFTP)
         add_subdirectory(SFTP)

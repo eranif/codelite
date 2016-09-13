@@ -87,7 +87,8 @@ void AutoSave::OnTimer(wxTimerEvent& event)
     
     // Save every modified editor
     std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
-        if(editor->IsModified()) {
+        // Save modified files. However, don't attempt to try and save an "Untitled" document :/
+        if(editor->IsModified() && editor->GetFileName().Exists()) {
             editor->Save();
         }
     });

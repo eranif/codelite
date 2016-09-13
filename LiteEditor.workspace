@@ -106,7 +106,7 @@
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -155,7 +155,7 @@
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -204,7 +204,7 @@
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Debug" Selected="yes">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -253,7 +253,7 @@
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Release" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -302,7 +302,7 @@
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment>WXWIN=D:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
@@ -352,10 +352,9 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
-      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="CodeFormatter" ConfigName="Win_x64_Debug"/>
@@ -400,6 +399,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -55,6 +55,7 @@
   </Environment>
   <Project Name="LLDBApp" Path="LLDBDebugger/codelite-lldb/codelite_lldb.project" Active="No"/>
   <Project Name="LLDBProtocol" Path="LLDBDebugger/LLDBProtocol/LLDBProtocol.project" Active="No"/>
+  <Project Name="AutoSave" Path="AutoSave/AutoSave.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Environment/>
@@ -103,6 +104,7 @@
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
       <Environment/>
@@ -151,6 +153,7 @@
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -199,6 +202,7 @@
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -247,6 +251,7 @@
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
@@ -295,6 +300,7 @@
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Environment>WXWIN=D:\src\wxWidgets
@@ -344,10 +350,12 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="CodeFormatter" ConfigName="Win_x64_Debug"/>

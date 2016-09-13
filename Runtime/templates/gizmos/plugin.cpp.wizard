@@ -12,7 +12,7 @@ CL_PLUGIN_API IPlugin *CreatePlugin(IManager *manager)
     return thePlugin;
 }
 
-CL_PLUGIN_API PluginInfo GetPluginInfo()
+CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
     info.SetAuthor(wxT("$(UserName)"));

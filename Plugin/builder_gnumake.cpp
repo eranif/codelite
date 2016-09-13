@@ -1856,7 +1856,7 @@ wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxS
     relpath.MakeRelativeTo(cwd);
     
     const wxArrayString& dirs = relpath.GetDirs();
-    for(int i = 0; i < dirs.size(); ++i) {
+    for(int i = 0; i < (int)dirs.size(); ++i) {
         lastDir = dirs.Item(i);
 
         // Handle special directory paths

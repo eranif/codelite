@@ -111,6 +111,7 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\SpellCheck.dll"; DestDir: "{app}\plugi
 Source: "{#CODELITE_ROOT}\Runtime\plugins\PHP.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\WebTools.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\HelpPlugin.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
+Source: "{#CODELITE_ROOT}\Runtime\plugins\AutoSave.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 

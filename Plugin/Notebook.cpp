@@ -281,7 +281,9 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
-        if(t->IsActive() && clientRect.Intersects(t->GetRect())) return true;
+        if(t->IsActive() &&
+           (!IsVerticalTabs() && clientRect.Contains(t->GetRect())) ||
+           (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))) return true;
     }
     return false;
 }

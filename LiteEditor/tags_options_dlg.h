@@ -30,6 +30,7 @@
 #include "serialized_object.h"
 #include "wx/filename.h"
 #include "tags_options_data.h"
+#include "clEditorEditEventsHandler.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class TagsOptionsDlg
@@ -38,16 +39,20 @@ class wxStyledTextCtrl;
 class TagsOptionsDlg : public TagsOptionsBaseDlg
 {
     TagsOptionsData m_data;
+    std::vector<clEditEventsHandler::Ptr_t> m_handlers;
 
     void SetFlag(CodeCompletionOpts flag, bool set);
     void SetColouringFlag(CodeCompletionColourOpts flag, bool set);
     void CopyData();
 
 protected:
+    virtual void OnButtonCancel(wxCommandEvent& event);
+    virtual void OnButtonOk(wxCommandEvent& event);
     virtual void OnColouringPropertyValueChanged(wxPropertyGridEvent& event);
     virtual void OnSuggestCtags(wxCommandEvent& event);
     wxArrayString GetCTagsSearchPaths() const;
     void DoSuggest(wxStyledTextCtrl* textCtrl);
+    void DoSetEditEventsHandler(wxWindow* win);
 
 protected:
     virtual void OnAddExcludePath(wxCommandEvent& event);
@@ -59,7 +64,6 @@ protected:
     virtual void OnFileSelectedUI(wxUpdateUIEvent& event);
     virtual void OnParse(wxCommandEvent& event);
     virtual void OnSuggestSearchPaths(wxCommandEvent& event);
-    virtual void OnButtonOK(wxCommandEvent& event);
 
 public:
     void Parse();
@@ -67,10 +71,7 @@ public:
 public:
     TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data);
     virtual ~TagsOptionsDlg();
-    TagsOptionsData& GetData()
-    {
-        return m_data;
-    }
+    TagsOptionsData& GetData() { return m_data; }
 };
 
 #endif //__tags_options_dlg__

@@ -37,6 +37,16 @@
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
 #include "tags_options_data.h"
 
 class TagsOptionsBaseDlg : public wxDialog
@@ -100,9 +110,8 @@ protected:
     wxButton* m_buttonClearCache;
     wxStaticText* m_staticText12;
     wxChoice* m_choiceCachePolicy;
-    wxStdDialogButtonSizer* m_stdBtnSizer95;
-    wxButton* m_button97;
-    wxButton* m_button99;
+    wxButton* m_button104;
+    wxButton* m_button106;
 
 protected:
     virtual void OnColouringPropertyValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
@@ -116,7 +125,8 @@ protected:
     virtual void OnSuggestSearchPaths(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearClangCache(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearClangCacheUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText14() { return m_staticText14; }
@@ -174,6 +184,8 @@ public:
     wxNotebook* GetNotebookClang() { return m_notebookClang; }
     wxPanel* GetPanelClang() { return m_panelClang; }
     wxNotebook* GetNotebook87() { return m_notebook87; }
+    wxButton* GetButton104() { return m_button104; }
+    wxButton* GetButton106() { return m_button106; }
     TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Code Completion"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~TagsOptionsBaseDlg();
 };

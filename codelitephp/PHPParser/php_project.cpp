@@ -10,6 +10,71 @@
 #include <macros.h>
 #include <wx/msgdlg.h>
 #include "FilesCollector.h"
+#include "file_logger.h"
+
+wxDEFINE_EVENT(wxEVT_PHP_PROJECT_FILES_SYNC_START, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_PHP_PROJECT_FILES_SYNC_END, clCommandEvent);
+
+class PHPProjectSyncThread : public wxThread
+{
+public:
+    struct Data {
+        wxString excludes;
+        wxString includes;
+        wxString directory;
+        wxString projectName;
+    };
+
+protected:
+    wxEvtHandler* m_owner;
+    PHPProjectSyncThread::Data m_projectData;
+
+public:
+    PHPProjectSyncThread(wxEvtHandler* owner, const PHPProjectSyncThread::Data& data)
+        : wxThread(wxTHREAD_DETACHED)
+        , m_owner(owner)
+        , m_projectData(data)
+    {
+    }
+
+    virtual ~PHPProjectSyncThread() {}
+    void* Entry()
+    {
+        clDEBUG() << "Scanning files for project:" << m_projectData.projectName << "..." << clEndl;
+
+        // Report the start event
+        {
+            clCommandEvent event(wxEVT_PHP_PROJECT_FILES_SYNC_START);
+            event.SetString(m_projectData.projectName);
+            m_owner->AddPendingEvent(event);
+        }
+
+        // Scan and collect the files
+        wxArrayString files;
+        FilesCollector traverser(m_projectData.includes, m_projectData.excludes, NULL);
+        wxDir dir(m_projectData.directory);
+        dir.Traverse(traverser);
+        files.swap(traverser.GetFilesAndFolders());
+        files.Sort();
+
+        // Notify about sync completed
+        {
+            clCommandEvent event(wxEVT_PHP_PROJECT_FILES_SYNC_END);
+            event.SetString(m_projectData.projectName);
+            event.SetStrings(files);
+            m_owner->AddPendingEvent(event);
+        }
+
+        clDEBUG() << "Scanning files for project:" << m_projectData.projectName << "... is comleted" << clEndl;
+        return NULL;
+    }
+
+    void Start()
+    {
+        Create();
+        Run();
+    }
+};
 
 void PHPProject::FromJSON(const JSONElement& element)
 {
@@ -184,3 +249,23 @@ void PHPProject::FolderAdded(const wxString& folderpath)
         m_files.Sort();
     }
 }
+
+void PHPProject::SyncWithFileSystemAsync(wxEvtHandler* owner)
+{
+    // Build the info needed for the thread
+    PHPProjectSyncThread::Data data;
+    data.directory = GetFilename().GetPath();
+    data.projectName = GetName();
+    data.excludes = m_excludeFolders;
+    data.includes = m_importFileSpec;
+
+    // Start the background thread, a detached one which deletes itself at the end
+    PHPProjectSyncThread* thr = new PHPProjectSyncThread((owner ? owner : this), data);
+    thr->Start();
+}
+
+void PHPProject::OnFileScanStart(clCommandEvent& event) {}
+
+void PHPProject::OnFileScanEnd(clCommandEvent& event) { m_files.swap(event.GetStrings()); }
+
+void PHPProject::SetFiles(const wxArrayString& files) { m_files = files; }

@@ -32,8 +32,10 @@
 #include "php_project_settings_data.h"
 #include <wx/sharedptr.h>
 #include <wx/progdlg.h>
+#include "cl_command_event.h"
+#include <wx/event.h>
 
-class PHPProject
+class PHPProject : public wxEvtHandler
 {
     wxString m_name;
     bool m_isActive;
@@ -64,6 +66,10 @@ public:
         {
         }
     };
+
+private:
+    void OnFileScanStart(clCommandEvent& event);
+    void OnFileScanEnd(clCommandEvent& event);
 
 public:
     PHPProject()
@@ -99,7 +105,12 @@ public:
      * @brief return a list of all project files (fullpath)
      */
     wxArrayString& GetFiles(wxProgressDialog* progress);
-
+    
+    /**
+     * @brief set the project files
+     */
+    void SetFiles(const wxArrayString& files);
+    
     /**
      * @brief return a list of all project files (fullpath)
      */
@@ -147,5 +158,17 @@ public:
      * @brief synch the project folders with the file system
      */
     void SynchWithFileSystem();
+
+    /**
+     * @brief sync the projec with the file system. But do this in a background thread
+     * Once this function is done, it fires an event wxEVT_PHP_PROJECT_FILES_SYNCED
+     * @owner owner the class that will receive the start/end events. If no provided (i.e. NULL is passed) 
+     * the current project object will receive them
+     */
+    void SyncWithFileSystemAsync(wxEvtHandler* owner = NULL);
 };
+
+wxDECLARE_EVENT(wxEVT_PHP_PROJECT_FILES_SYNC_START, clCommandEvent);
+wxDECLARE_EVENT(wxEVT_PHP_PROJECT_FILES_SYNC_END, clCommandEvent);
+
 #endif

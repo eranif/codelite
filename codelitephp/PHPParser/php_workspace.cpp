@@ -36,9 +36,14 @@ PHPWorkspace::PHPWorkspace()
     , m_projectSyncOwner(NULL)
 {
     SetWorkspaceType(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
+    Bind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspace::OnProjectSyncEnd, this);
 }
 
-PHPWorkspace::~PHPWorkspace() { m_workspaceFile.Clear(); }
+PHPWorkspace::~PHPWorkspace()
+{
+    m_workspaceFile.Clear();
+    Unbind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspace::OnProjectSyncEnd, this);
+}
 
 PHPWorkspace* PHPWorkspace::Get()
 {
@@ -691,17 +696,19 @@ void PHPWorkspace::OnProjectSyncEnd(clCommandEvent& event)
                     << clEndl;
         return;
     }
-    
+
+    clDEBUG() << "PHPWorkspace::OnProjectSyncEnd: project" << name << "completed sync" << clEndl;
     m_inSyncProjects.erase(name);
-    
+
     // Load the project
     PHPProject::Ptr_t pProj = GetProject(name);
     CHECK_PTR_RET(pProj);
-    
+
     // Update the project files
     pProj->SetFiles(event.GetStrings());
-    
+
     if(m_inSyncProjects.empty() && m_projectSyncOwner) {
+        clDEBUG() << "PHPWorkspace::OnProjectSyncEnd: all projects completed sync" << clEndl;
         clCommandEvent endEvent(wxEVT_PHP_WORKSPACE_FILES_SYNC_END);
         m_projectSyncOwner->AddPendingEvent(endEvent);
     }

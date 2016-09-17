@@ -65,7 +65,7 @@ public:
             m_owner->AddPendingEvent(event);
         }
 
-        clDEBUG() << "Scanning files for project:" << m_projectData.projectName << "... is comleted" << clEndl;
+        clDEBUG() << "Scanning files for project:" << m_projectData.projectName << "... is completed" << clEndl;
         return NULL;
     }
 
@@ -75,6 +75,23 @@ public:
         Run();
     }
 };
+
+PHPProject::PHPProject()
+    : m_isActive(false)
+    , m_importFileSpec(
+          "*.php;*.php5;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.less;*.json;*.xml;*.ini;*.md;*.txt;*.text;."
+          "htaccess;*.ctp")
+    , m_excludeFolders(".git;.svn;.codelite;.clang")
+{
+    Bind(wxEVT_PHP_PROJECT_FILES_SYNC_START, &PHPProject::OnFileScanStart, this);
+    Bind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPProject::OnFileScanEnd, this);
+}
+
+PHPProject::~PHPProject()
+{
+    Unbind(wxEVT_PHP_PROJECT_FILES_SYNC_START, &PHPProject::OnFileScanStart, this);
+    Unbind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPProject::OnFileScanEnd, this);
+}
 
 void PHPProject::FromJSON(const JSONElement& element)
 {

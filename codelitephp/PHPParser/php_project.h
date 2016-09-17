@@ -72,15 +72,8 @@ private:
     void OnFileScanEnd(clCommandEvent& event);
 
 public:
-    PHPProject()
-        : m_isActive(false)
-        , m_importFileSpec(
-              "*.php;*.php5;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.less;*.json;*.xml;*.ini;*.md;*.txt;*.text;."
-              "htaccess;*.ctp")
-        , m_excludeFolders(".git;.svn;.codelite;.clang")
-    {
-    }
-    ~PHPProject() {}
+    PHPProject();
+    virtual ~PHPProject();
 
     void Create(const wxFileName& filename, const wxString& name);
     void Load(const wxFileName& filename);

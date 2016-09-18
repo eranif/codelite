@@ -277,7 +277,7 @@ void PhpPlugin::UnPlug()
     // Close any open workspace
     if(PHPWorkspace::Get()->IsOpen()) {
         PHPWorkspace::Get()->Close(true, false);
-        m_workspaceView->UnLoadWorkspace();
+        m_workspaceView->UnLoadWorkspaceView();
     }
 
     m_workspaceView->Destroy();
@@ -344,7 +344,7 @@ void PhpPlugin::OnCloseWorkspace(clCommandEvent& e)
 
         m_mgr->EnableClangCodeCompletion(m_clangOldFlag);
         PHPWorkspace::Get()->Close(true, true);
-        m_workspaceView->UnLoadWorkspace();
+        m_workspaceView->UnLoadWorkspaceView();
 
         // notify codelite to close the currently opened workspace
         wxCommandEvent eventClose(wxEVT_COMMAND_MENU_SELECTED, wxID_CLOSE_ALL);
@@ -409,7 +409,7 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing, 
     m_clangOldFlag = (options.GetClangOptions() & CC_CLANG_ENABLED);
 
     m_mgr->EnableClangCodeCompletion(false);
-    m_workspaceView->LoadWorkspace();
+    m_workspaceView->LoadWorkspaceView();
 
     // Select the 'PHP' tab
     m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
@@ -869,7 +869,7 @@ void PhpPlugin::OnFileSysetmUpdated(clFileSystemEvent& event)
     event.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
         PHPWorkspace::Get()->SyncWithFileSystem();
-        m_workspaceView->LoadWorkspace();
+        m_workspaceView->LoadWorkspaceView();
     }
 }
 

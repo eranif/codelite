@@ -316,9 +316,9 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate(CREATE_FILES_TABLE_SQL_IDX1);
 
         // Update the schema version
-        wxSQLite3Statement st = m_db.PrepareStatement(
-            "replace into METADATA_TABLE (ID, SCHEMA_NAME, SCHEMA_VERSION) VALUES (NULL, "
-            ":SCHEMA_NAME, :SCHEMA_VERSION)");
+        wxSQLite3Statement st =
+            m_db.PrepareStatement("replace into METADATA_TABLE (ID, SCHEMA_NAME, SCHEMA_VERSION) VALUES (NULL, "
+                                  ":SCHEMA_NAME, :SCHEMA_VERSION)");
         st.Bind(st.GetParamIndex(":SCHEMA_NAME"), "CODELITEPHP");
         st.Bind(st.GetParamIndex(":SCHEMA_VERSION"), PHP_SCHEMA_VERSION);
         st.ExecuteUpdate();
@@ -396,8 +396,8 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
     }
 }
 
-PHPEntityBase::Ptr_t PHPLookupTable::DoFindMemberOf(
-    wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace)
+PHPEntityBase::Ptr_t
+PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace)
 {
     // Find members of of parentDbID
     try {
@@ -476,10 +476,10 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindMemberOf(
                 match->FromResultSet(res);
                 matches.push_back(match);
             }
-            
+
             // Fix variables type using the PHPDOC_VAR_TABLE content for this class
             DoFixVarsDocComment(matches, parentDbId);
-            
+
             if(matches.empty() || matches.size() > 1) {
                 return PHPEntityBase::Ptr_t(NULL);
             } else {
@@ -501,8 +501,10 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindMemberOf(
     return PHPEntityBase::Ptr_t(NULL);
 }
 
-void PHPLookupTable::DoGetInheritanceParentIDs(
-    PHPEntityBase::Ptr_t cls, std::vector<wxLongLong>& parents, std::set<wxLongLong>& parentsVisited, bool excludeSelf)
+void PHPLookupTable::DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
+                                               std::vector<wxLongLong>& parents,
+                                               std::set<wxLongLong>& parentsVisited,
+                                               bool excludeSelf)
 {
     if(!excludeSelf) {
         parents.push_back(cls->GetDbId());
@@ -669,105 +671,6 @@ wxString PHPLookupTable::EscapeWildCards(const wxString& str)
 
 void PHPLookupTable::DoAddLimit(wxString& sql) { sql << " LIMIT " << m_sizeLimit; }
 
-void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdateMode updateMode, bool parseFuncBodies)
-{
-    try {
-
-        {
-            clParseEvent event(wxPHP_PARSE_STARTED);
-            event.SetTotalFiles(files.GetCount());
-            event.SetCurfileIndex(0);
-            EventNotifier::Get()->AddPendingEvent(event);
-        }
-
-        wxStopWatch sw;
-        sw.Start();
-
-        m_db.Begin();
-        for(size_t i = 0; i < files.GetCount(); ++i) {
-            {
-                clParseEvent event(wxPHP_PARSE_PROGRESS);
-                event.SetTotalFiles(files.GetCount());
-                event.SetCurfileIndex(i);
-                event.SetFileName(files.Item(i));
-                EventNotifier::Get()->AddPendingEvent(event);
-            }
-
-            wxFileName fnFile(files.Item(i));
-            bool reParseNeeded(true);
-
-            if(updateMode == kUpdateMode_Fast) {
-                // Check to see if we need to re-parse this file
-                // and store it to the database
-
-                if(!fnFile.Exists()) {
-                    reParseNeeded = false;
-                } else {
-                    time_t lastModifiedOnDisk = fnFile.GetModificationTime().GetTicks();
-                    wxLongLong lastModifiedInDB = GetFileLastParsedTimestamp(fnFile);
-                    if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
-                        reParseNeeded = false;
-                    }
-                }
-            }
-
-            // Ensure that the file exists
-            if(!fnFile.Exists()) {
-                reParseNeeded = false;
-            }
-
-            // Parse only valid PHP files
-            if(FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) {
-                reParseNeeded = false;
-            }
-
-            if(reParseNeeded) {
-                // For performance reaons, load the file into memory and then parse it
-                wxFileName fnSourceFile(files.Item(i));
-                wxString content;
-                if(!FileUtils::ReadFileContent(fnSourceFile, content, wxConvISO8859_1)) {
-                    CL_WARNING("PHP: Failed to read file: %s for parsing", fnSourceFile.GetFullPath());
-                    continue;
-                }
-                PHPSourceFile sourceFile(content);
-                sourceFile.SetFilename(fnSourceFile);
-                sourceFile.SetParseFunctionBody(parseFuncBodies);
-                sourceFile.Parse();
-                UpdateSourceFile(sourceFile, false);
-            }
-        }
-        m_db.Commit();
-        long elapsedMs = sw.Time();
-        wxString message;
-        message << _("PHP: parsed ") << files.GetCount() << " in " << elapsedMs << " milliseconds";
-        CL_DEBUGS(message);
-
-        {
-            clParseEvent event(wxPHP_PARSE_ENDED);
-            event.SetTotalFiles(files.GetCount());
-            event.SetCurfileIndex(files.GetCount());
-            EventNotifier::Get()->AddPendingEvent(event);
-        }
-
-    } catch(wxSQLite3Exception& e) {
-        try {
-            m_db.Rollback();
-
-        } catch(...) {
-        }
-
-        {
-            // always make sure that the end event is sent
-            clParseEvent event(wxPHP_PARSE_ENDED);
-            event.SetTotalFiles(files.GetCount());
-            event.SetCurfileIndex(files.GetCount());
-            EventNotifier::Get()->AddPendingEvent(event);
-        }
-
-        CL_WARNING("PHPLookupTable::UpdateSourceFiles: %s", e.GetMessage());
-    }
-}
-
 void PHPLookupTable::DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags)
 {
     wxString name = nameHint;
@@ -822,8 +725,10 @@ PHPEntityBase::Ptr_t PHPLookupTable::NewEntity(const wxString& tableName, ePhpSc
     }
 }
 
-void PHPLookupTable::LoadFromTableByNameHint(
-    PHPEntityBase::List_t& matches, const wxString& tableName, const wxString& nameHint, eLookupFlags flags)
+void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
+                                             const wxString& tableName,
+                                             const wxString& nameHint,
+                                             eLookupFlags flags)
 {
     wxString trimmedNameHint(nameHint);
     trimmedNameHint.Trim().Trim(false);
@@ -933,8 +838,10 @@ void PHPLookupTable::Close()
 
 bool PHPLookupTable::IsOpened() const { return m_db.IsOpen(); }
 
-void PHPLookupTable::DoFindChildren(
-    PHPEntityBase::List_t& matches, wxLongLong parentId, size_t flags, const wxString& nameHint)
+void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
+                                    wxLongLong parentId,
+                                    size_t flags,
+                                    const wxString& nameHint)
 {
     // Find members of of parentDbID
     try {
@@ -1029,7 +936,7 @@ void PHPLookupTable::DoFindChildren(
                 bool isConst = match->Cast<PHPEntityVariable>()->IsConst();
                 bool isStatic = match->Cast<PHPEntityVariable>()->IsStatic();
                 bool bAddIt = ((isStatic || isConst) && CollectingStatics(flags)) ||
-                    (!isStatic && !isConst && !CollectingStatics(flags));
+                              (!isStatic && !isConst && !CollectingStatics(flags));
                 if(bAddIt) {
                     matches.push_back(match);
                 }
@@ -1193,8 +1100,8 @@ void PHPLookupTable::DoSplitFullname(const wxString& fullname, wxString& ns, wxS
     shortName = fullname.AfterLast('\\');
 }
 
-PHPEntityBase::List_t PHPLookupTable::FindNamespaces(
-    const wxString& fullnameStartsWith, const wxString& shortNameContains)
+PHPEntityBase::List_t PHPLookupTable::FindNamespaces(const wxString& fullnameStartsWith,
+                                                     const wxString& shortNameContains)
 {
     PHPEntityBase::List_t matches;
     try {
@@ -1218,7 +1125,7 @@ PHPEntityBase::List_t PHPLookupTable::FindNamespaces(
             PHPEntityBase::Ptr_t match(new PHPEntityNamespace());
             match->FromResultSet(res);
             if(match->Cast<PHPEntityNamespace>()->GetParentNamespace() == fullnameStartsWith &&
-                match->GetShortName().StartsWith(shortNameContains)) {
+               match->GetShortName().StartsWith(shortNameContains)) {
                 matches.push_back(match);
             }
         }

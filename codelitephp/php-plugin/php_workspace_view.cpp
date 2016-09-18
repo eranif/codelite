@@ -208,7 +208,7 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
 
         // // We just created and opened a new workspace, add it to the "Recently used"
         // m_mgr->AddWorkspaceToRecentlyUsedList(workspaceFileName);
-        LoadWorkspace();
+        LoadWorkspaceView();
 
         // Ensure that the view is visible
         m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
@@ -369,7 +369,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
     }
 }
 
-void PHPWorkspaceView::LoadWorkspace()
+void PHPWorkspaceView::LoadWorkspaceView()
 {
     m_itemsToSort.Clear();
     m_filesItems.clear();
@@ -398,7 +398,7 @@ void PHPWorkspaceView::LoadWorkspace()
                                                 data);
     const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
     m_itemsToSort.PushBack(root, true);
-    
+
     wxBusyCursor bc;
     wxBusyInfo info(_("Building workspace tree view"), FRAME);
     wxYieldIfNeeded();
@@ -444,18 +444,23 @@ void PHPWorkspaceView::LoadWorkspace()
     OnEditorChanged(dummy);
 }
 
-void PHPWorkspaceView::UnLoadWorkspace() { m_treeCtrlView->DeleteAllItems(); }
+void PHPWorkspaceView::UnLoadWorkspaceView()
+{
+    m_treeCtrlView->DeleteAllItems();
+    m_scanInProgress = true;
+}
 
 void PHPWorkspaceView::CreateNewProject(PHPProject::CreateData cd)
 {
     PHPWorkspace::Get()->CreateProject(cd);
     // Update the UI
-    LoadWorkspace();
+    PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 }
 
 void PHPWorkspaceView::OnCloseWorkspace(wxCommandEvent& e)
 {
     wxUnusedVar(e);
+    m_scanInProgress = true;
     m_treeCtrlView->DeleteAllItems();
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
     event.SetEventObject(wxTheApp->GetTopWindow());
@@ -465,8 +470,8 @@ void PHPWorkspaceView::OnCloseWorkspace(wxCommandEvent& e)
 void PHPWorkspaceView::OnReloadWorkspace(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    UnLoadWorkspace();
-    LoadWorkspace();
+    UnLoadWorkspaceView();
+    LoadWorkspaceView();
 }
 
 void PHPWorkspaceView::OnDeleteProject(wxCommandEvent& e)
@@ -795,7 +800,7 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
     PHPWorkspace::Get()->SyncWithFileSystem();
     if(reloadWorkspaceNeeded) {
         // If a folder was deleted, reload the workspace view
-        LoadWorkspace();
+        LoadWorkspaceView();
 
     } else {
         // Just delete the file items, no folders were deleted
@@ -848,7 +853,7 @@ void PHPWorkspaceView::OnActiveProjectSettings(wxCommandEvent& event)
         PHPWorkspace::Get()->ParseWorkspace(false);
 
         // reload the workspace
-        CallAfter(&PHPWorkspaceView::LoadWorkspace);
+        CallAfter(&PHPWorkspaceView::LoadWorkspaceView);
     }
 }
 
@@ -869,7 +874,7 @@ void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
         PHPWorkspace::Get()->ParseWorkspace(false);
 
         // reload the workspace
-        CallAfter(&PHPWorkspaceView::LoadWorkspace);
+        CallAfter(&PHPWorkspaceView::LoadWorkspaceView);
     }
 }
 
@@ -1092,8 +1097,8 @@ void PHPWorkspaceView::ReloadWorkspace(bool saveBeforeReload)
     wxFileName fnWorkspace = PHPWorkspace::Get()->GetFilename();
     PHPWorkspace::Get()->Close(saveBeforeReload, true);
     PHPWorkspace::Get()->Open(fnWorkspace.GetFullPath(), this);
-    UnLoadWorkspace();
-    LoadWorkspace();
+    UnLoadWorkspaceView();
+    LoadWorkspaceView();
 }
 
 void PHPWorkspaceView::ReportParseThreadProgress(size_t curIndex, size_t total)
@@ -1467,7 +1472,7 @@ void PHPWorkspaceView::OnAddExistingProject(wxCommandEvent& e)
             }
             return;
         }
-        LoadWorkspace();
+        LoadWorkspaceView();
     }
 }
 
@@ -1559,7 +1564,7 @@ void PHPWorkspaceView::OnWorkspaceSyncEnd(clCommandEvent& event)
     m_scanInProgress = false;
     CallAfter(&PHPWorkspaceView::DoSetStatusBarText, "Scanning for PHP files completed", 3);
     PHPWorkspace::Get()->ParseWorkspace(false);
-    CallAfter(&PHPWorkspaceView::LoadWorkspace);
+    CallAfter(&PHPWorkspaceView::LoadWorkspaceView);
     m_treeCtrlView->Enable(true);
 }
 

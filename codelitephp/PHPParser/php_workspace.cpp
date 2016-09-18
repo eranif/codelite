@@ -80,7 +80,8 @@ bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
 
     // Close the code completion lookup table
     PHPCodeCompletion::Instance()->Close();
-
+    PHPParserThread::Clear();
+    
     PHPEvent phpEvent(wxEVT_PHP_WORKSPACE_CLOSED);
     EventNotifier::Get()->AddPendingEvent(phpEvent);
 
@@ -508,6 +509,7 @@ void PHPWorkspace::ParseWorkspace(bool full)
         // a full parsing is needed, stop the paser thread
         // close the database, delete it and recreate it
         // then, restart the parser thread
+        PHPParserThread::Clear();
         PHPParserThread::Release(); // Stop and wait the thread terminates
 
         // Close the CC manager

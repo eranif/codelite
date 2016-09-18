@@ -165,8 +165,8 @@ public:
      */
     void CreateNewProject(PHPProject::CreateData cd);
 
-    void LoadWorkspace();
-    void UnLoadWorkspace();
+    void LoadWorkspaceView();
+    void UnLoadWorkspaceView();
 
     void ReportParseThreadProgress(size_t curIndex, size_t total);
     void ReportParseThreadDone();

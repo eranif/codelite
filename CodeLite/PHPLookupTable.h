@@ -36,6 +36,11 @@
 #include <wx/longlong.h>
 #include "cl_command_event.h"
 #include "smart_ptr.h"
+#include "event_notifier.h"
+#include <wx/stopwatch.h>
+#include "fileextmanager.h"
+#include "fileutils.h"
+#include "file_logger.h"
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_STARTED, clParseEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_ENDED, clParseEvent);
@@ -66,7 +71,7 @@ public:
         kLookupFlags_StartsWith = (1 << 3),
         kLookupFlags_Members = (1 << 4),         // Class members
         kLookupFlags_Constants = (1 << 5),       // 'const'
-        kLookupFlags_Static = (1 << 6),   // include static members/functions (static::, class_type::)
+        kLookupFlags_Static = (1 << 6),          // include static members/functions (static::, class_type::)
         kLookupFlags_Self = (1 << 7),            // self::
         kLookupFlags_NameHintIsScope = (1 << 8), // the namehint provided is of a class name. When enabled, the search
                                                  // will try to take "\" into consideration
@@ -90,7 +95,7 @@ private:
     void CreateSchema();
     PHPEntityBase::Ptr_t
     DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace = false);
-    
+
     void DoFixVarsDocComment(PHPEntityBase::List_t& matches, wxLongLong parentId);
     void DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
                                    std::vector<wxLongLong>& parents,
@@ -125,7 +130,7 @@ private:
                                  const wxString& tableName,
                                  const wxString& nameHint,
                                  eLookupFlags flags);
-    
+
     /**
      * @brief use typed: static::
      */
@@ -158,7 +163,7 @@ public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
 
-    void SetSizeLimit(size_t sizeLimit) {this->m_sizeLimit = sizeLimit;}
+    void SetSizeLimit(size_t sizeLimit) { this->m_sizeLimit = sizeLimit; }
     /**
      * @brief return the entity at a given file/line
      */
@@ -258,7 +263,9 @@ public:
     /**
      * @brief update list of source files
      */
-    void RecreateSymbolsDatabase(const wxArrayString& files, eUpdateMode updateMode, bool parseFuncBodies = true);
+    template <typename GoindDownFunc>
+    void RecreateSymbolsDatabase(
+        const wxArrayString& files, eUpdateMode updateMode, GoindDownFunc pFuncGoingDown, bool parseFuncBodies = true);
 
     /**
      * @brief delete all entries belonged to filename.
@@ -273,5 +280,111 @@ public:
      */
     PHPEntityBase::List_t LoadFunctionArguments(wxLongLong parentId);
 };
+
+template <typename GoindDownFunc>
+void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files,
+                                             eUpdateMode updateMode,
+                                             GoindDownFunc pFuncGoingDown,
+                                             bool parseFuncBodies)
+{
+    try {
+
+        {
+            clParseEvent event(wxPHP_PARSE_STARTED);
+            event.SetTotalFiles(files.GetCount());
+            event.SetCurfileIndex(0);
+            EventNotifier::Get()->AddPendingEvent(event);
+        }
+
+        wxStopWatch sw;
+        sw.Start();
+
+        m_db.Begin();
+        for(size_t i = 0; i < files.GetCount(); ++i) {
+            if(pFuncGoingDown && pFuncGoingDown()) {
+                break;
+            }
+            {
+                clParseEvent event(wxPHP_PARSE_PROGRESS);
+                event.SetTotalFiles(files.GetCount());
+                event.SetCurfileIndex(i);
+                event.SetFileName(files.Item(i));
+                EventNotifier::Get()->AddPendingEvent(event);
+            }
+
+            wxFileName fnFile(files.Item(i));
+            bool reParseNeeded(true);
+
+            if(updateMode == kUpdateMode_Fast) {
+                // Check to see if we need to re-parse this file
+                // and store it to the database
+
+                if(!fnFile.Exists()) {
+                    reParseNeeded = false;
+                } else {
+                    time_t lastModifiedOnDisk = fnFile.GetModificationTime().GetTicks();
+                    wxLongLong lastModifiedInDB = GetFileLastParsedTimestamp(fnFile);
+                    if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
+                        reParseNeeded = false;
+                    }
+                }
+            }
+
+            // Ensure that the file exists
+            if(!fnFile.Exists()) {
+                reParseNeeded = false;
+            }
+
+            // Parse only valid PHP files
+            if(FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) {
+                reParseNeeded = false;
+            }
+
+            if(reParseNeeded) {
+                // For performance reaons, load the file into memory and then parse it
+                wxFileName fnSourceFile(files.Item(i));
+                wxString content;
+                if(!FileUtils::ReadFileContent(fnSourceFile, content, wxConvISO8859_1)) {
+                    CL_WARNING("PHP: Failed to read file: %s for parsing", fnSourceFile.GetFullPath());
+                    continue;
+                }
+                PHPSourceFile sourceFile(content);
+                sourceFile.SetFilename(fnSourceFile);
+                sourceFile.SetParseFunctionBody(parseFuncBodies);
+                sourceFile.Parse();
+                UpdateSourceFile(sourceFile, false);
+            }
+        }
+        m_db.Commit();
+        long elapsedMs = sw.Time();
+        wxString message;
+        message << _("PHP: parsed ") << files.GetCount() << " in " << elapsedMs << " milliseconds";
+        CL_DEBUGS(message);
+
+        {
+            clParseEvent event(wxPHP_PARSE_ENDED);
+            event.SetTotalFiles(files.GetCount());
+            event.SetCurfileIndex(files.GetCount());
+            EventNotifier::Get()->AddPendingEvent(event);
+        }
+
+    } catch(wxSQLite3Exception& e) {
+        try {
+            m_db.Rollback();
+
+        } catch(...) {
+        }
+
+        {
+            // always make sure that the end event is sent
+            clParseEvent event(wxPHP_PARSE_ENDED);
+            event.SetTotalFiles(files.GetCount());
+            event.SetCurfileIndex(files.GetCount());
+            EventNotifier::Get()->AddPendingEvent(event);
+        }
+
+        CL_WARNING("PHPLookupTable::UpdateSourceFiles: %s", e.GetMessage());
+    }
+}
 
 #endif // PHPLOOKUPTABLE_H

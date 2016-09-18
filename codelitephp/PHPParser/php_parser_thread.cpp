@@ -26,6 +26,7 @@ void PHPParserThread::Release()
         delete ms_instance;
     }
     ms_instance = 0;
+    ms_goingDown = false;
 }
 
 void PHPParserThread::ProcessRequest(ThreadRequest* request)

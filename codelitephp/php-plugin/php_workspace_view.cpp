@@ -1570,5 +1570,5 @@ void PHPWorkspaceView::OnWorkspaceSyncEnd(clCommandEvent& event)
 
 void PHPWorkspaceView::DoSetStatusBarText(const wxString& text, int timeOut)
 {
-    clGetManager()->GetStatusBar()->SetMessage("Scanning for PHP files...", timeOut);
+    clGetManager()->GetStatusBar()->SetMessage(text, timeOut);
 }

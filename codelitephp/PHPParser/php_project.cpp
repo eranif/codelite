@@ -113,6 +113,7 @@ void PHPProject::ToJSON(JSONElement& pro) const
 
 wxArrayString& PHPProject::GetFiles(wxProgressDialog* progress)
 {
+#if 0
     if(m_files.IsEmpty()) {
         FilesCollector traverser(m_importFileSpec, m_excludeFolders, progress);
         wxDir dir(GetFilename().GetPath());
@@ -120,11 +121,16 @@ wxArrayString& PHPProject::GetFiles(wxProgressDialog* progress)
         m_files.swap(traverser.GetFilesAndFolders());
         m_files.Sort();
     }
+#endif
+    wxUnusedVar(progress);
     return m_files;
 }
 
 void PHPProject::GetFilesArray(wxArrayString& files) const
 {
+#if 1
+    files.insert(files.end(), m_files.begin(), m_files.end());
+#else
     if(!m_files.IsEmpty()) {
         files.insert(files.end(), m_files.begin(), m_files.end());
         return;
@@ -136,6 +142,7 @@ void PHPProject::GetFilesArray(wxArrayString& files) const
     wxArrayString& collectedFiles = traverser.GetFilesAndFolders();
     files.insert(files.end(), collectedFiles.begin(), collectedFiles.end());
     files.Sort();
+#endif
 }
 
 void PHPProject::Create(const wxFileName& filename, const wxString& name)

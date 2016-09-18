@@ -46,6 +46,7 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
     std::map<wxString, wxTreeItemId> m_filesItems;
     std::map<wxString, wxTreeItemId> m_foldersItems;
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
+    bool m_scanInProgress;
 
 private:
     enum {
@@ -71,6 +72,7 @@ protected:
     virtual void OnActiveProjectSettingsUI(wxUpdateUIEvent& event);
     void DoGetSelectedFiles(wxArrayString& files);
     void DoGetSelectedFolders(wxArrayString& paths);
+    void DoSetStatusBarText(const wxString& text, int timeOut);
 
     // Helpers
     void DoSortItems();

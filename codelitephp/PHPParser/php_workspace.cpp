@@ -89,7 +89,7 @@ bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
     return true;
 }
 
-bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
+bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool createIfMissing)
 {
     // Close the currently opened workspace
     if(IsOpen()) {
@@ -156,13 +156,10 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
         EventNotifier::Get()->AddPendingEvent(event);
     }
 
-    wxBusyInfo busy(_("Scanning for workspace files..."), EventNotifier::Get()->TopFrame());
-    wxYieldIfNeeded();
-
-    wxArrayString dummy;
-    GetWorkspaceFiles(dummy);
-
-    // progress->Destroy();
+    // wxBusyInfo busy(_("Scanning for workspace files..."), EventNotifier::Get()->TopFrame());
+    // wxYieldIfNeeded();
+    wxBusyCursor bc;
+    SyncWithFileSystemAsync(view);
 
     // Perform a quick re-parse of the workspace
     ParseWorkspace(false);
@@ -314,8 +311,10 @@ void PHPWorkspace::DelFile(const wxString& project, const wxString& filename)
     proj->FilesDeleted(files, true);
 }
 
-bool PHPWorkspace::RunProject(
-    bool debugging, const wxString& urlOrFilePath, const wxString& projectName, const wxString& xdebugSessionName)
+bool PHPWorkspace::RunProject(bool debugging,
+                              const wxString& urlOrFilePath,
+                              const wxString& projectName,
+                              const wxString& xdebugSessionName)
 {
     wxString projectToRun = projectName;
     if(projectToRun.IsEmpty()) {
@@ -478,8 +477,10 @@ void PHPWorkspace::Rename(const wxString& newname)
 
 void PHPWorkspace::DoPromptWorkspaceModifiedDialog()
 {
-    wxMessageDialog dlg(FRAME, _("Workspace file modified externally. Would you like to reload the workspace?"),
-        "CodeLite", wxYES_NO | wxCENTER);
+    wxMessageDialog dlg(FRAME,
+                        _("Workspace file modified externally. Would you like to reload the workspace?"),
+                        "CodeLite",
+                        wxYES_NO | wxCENTER);
     dlg.SetYesNoLabels(_("Reload Workspace"), _("Ignore"));
 
     int answer = dlg.ShowModal();
@@ -667,8 +668,9 @@ void PHPWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString& f
 
 void PHPWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
-    std::for_each(m_projects.begin(), m_projects.end(),
-        [&](const PHPProject::Map_t::value_type& v) { v.second->GetFilesArray(files); });
+    std::for_each(m_projects.begin(), m_projects.end(), [&](const PHPProject::Map_t::value_type& v) {
+        v.second->GetFilesArray(files);
+    });
 }
 
 void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
@@ -676,7 +678,7 @@ void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
     m_inSyncProjects.clear();
     m_projectSyncOwner = owner;
 
-    {
+    if(owner) {
         clCommandEvent event(wxEVT_PHP_WORKSPACE_FILES_SYNC_START);
         owner->AddPendingEvent(event);
     }
@@ -707,9 +709,11 @@ void PHPWorkspace::OnProjectSyncEnd(clCommandEvent& event)
     // Update the project files
     pProj->SetFiles(event.GetStrings());
 
-    if(m_inSyncProjects.empty() && m_projectSyncOwner) {
+    if(m_inSyncProjects.empty()) {
         clDEBUG() << "PHPWorkspace::OnProjectSyncEnd: all projects completed sync" << clEndl;
-        clCommandEvent endEvent(wxEVT_PHP_WORKSPACE_FILES_SYNC_END);
-        m_projectSyncOwner->AddPendingEvent(endEvent);
+        if(m_projectSyncOwner) {
+            clCommandEvent endEvent(wxEVT_PHP_WORKSPACE_FILES_SYNC_END);
+            m_projectSyncOwner->AddPendingEvent(endEvent);
+        }
     }
 }

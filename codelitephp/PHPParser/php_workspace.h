@@ -147,8 +147,9 @@ public:
 
     /**
      * @brief open a workspace
+     * @param view the view that will receive the start/end events
      */
-    bool Open(const wxString& filename, bool createIfMissing = false);
+    bool Open(const wxString& filename, wxEvtHandler* view, bool createIfMissing = false);
 
     /**
      * @brief create an empty workspace
@@ -235,8 +236,10 @@ public:
     ////////////////////////////////////////////
     // Project execution
     ////////////////////////////////////////////
-    bool RunProject(bool debugging, const wxString& urlOrFilePath, const wxString& projectName = wxEmptyString,
-        const wxString& xdebugSessionName = wxEmptyString);
+    bool RunProject(bool debugging,
+                    const wxString& urlOrFilePath,
+                    const wxString& projectName = wxEmptyString,
+                    const wxString& xdebugSessionName = wxEmptyString);
     bool IsProjectRunning() const { return m_executor.IsRunning(); }
     void StopExecutedProgram() { m_executor.Stop(); }
 };

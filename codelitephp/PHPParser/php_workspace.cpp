@@ -677,7 +677,7 @@ void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
     m_projectSyncOwner = owner;
 
     {
-        clCommandEvent event(wxEVT_PHP_WORKSPACE_FILES_SYNC_END);
+        clCommandEvent event(wxEVT_PHP_WORKSPACE_FILES_SYNC_START);
         owner->AddPendingEvent(event);
     }
 

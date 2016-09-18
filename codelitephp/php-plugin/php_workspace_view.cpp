@@ -115,7 +115,7 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     // Bind events
     Bind(wxEVT_MENU, &PHPWorkspaceView::OnActiveProjectSettings, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnActiveProjectSettingsUI, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
-    
+
 #if USE_SFTP
     Bind(wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, &PHPWorkspaceView::OnSetupRemoteUpload, this,
         XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
@@ -124,6 +124,9 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
 
     Bind(wxEVT_MENU, &PHPWorkspaceView::OnCollapse, this, XRCID("ID_TOOL_COLLAPSE"));
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnCollapseUI, this, XRCID("ID_TOOL_COLLAPSE"));
+
+    Bind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
+    Bind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
 }
 
 PHPWorkspaceView::~PHPWorkspaceView()
@@ -142,6 +145,8 @@ PHPWorkspaceView::~PHPWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &PHPWorkspaceView::OnFindInFilesShowing, this);
     Unbind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
+    Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
+    Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
 }
 
 void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
@@ -1116,9 +1121,7 @@ void PHPWorkspaceView::DoSortItems()
 
 void PHPWorkspaceView::OnSyncProjectWithFileSystem(wxCommandEvent& e)
 {
-    PHPWorkspace::Get()->SyncWithFileSystem();
-    PHPWorkspace::Get()->ParseWorkspace(false);
-    CallAfter(&PHPWorkspaceView::LoadWorkspace);
+    PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 }
 
 void PHPWorkspaceView::DoBuildProjectNode(const wxTreeItemId& projectItem, PHPProject::Ptr_t project)
@@ -1498,4 +1501,16 @@ void PHPWorkspaceView::OnFindInFilesShowing(clCommandEvent& e)
     // PHP workspace is opened and visible
     wxArrayString& outPaths = e.GetStrings();
     outPaths.insert(outPaths.end(), paths.begin(), paths.end());
+}
+
+void PHPWorkspaceView::OnWorkspaceSyncStart(clCommandEvent& event)
+{
+    clGetManager()->GetStatusBar()->SetMessage("PHP workspace: scanning for files...", 3);
+}
+
+void PHPWorkspaceView::OnWorkspaceSyncEnd(clCommandEvent& event)
+{
+    clGetManager()->GetStatusBar()->SetMessage("PHP workspace: scanning for files completed", 3);
+    PHPWorkspace::Get()->ParseWorkspace(false);
+    CallAfter(&PHPWorkspaceView::LoadWorkspace);
 }

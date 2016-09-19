@@ -62,46 +62,49 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
 
     // @param <TYPE> <NAME>
     // @property-read, @property-write, @property
-    static wxRegEx reParam2(
-        wxT("@(param|parameter)[ \t]+([\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"), wxRE_ADVANCED);
-    static wxRegEx reProprety("@property[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
-    static wxRegEx rePropretyRead(
-        "@property\\-read[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
-    static wxRegEx rePropretyWrite(
-        "@property\\-write[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
-    wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
+    if(m_comment.Contains("@property")) {
+        static wxRegEx reParam2(
+            wxT("@(param|parameter)[ \t]+([\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"), wxRE_ADVANCED);
+        static wxRegEx reProprety(
+            "@property[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
+        static wxRegEx rePropretyRead(
+            "@property\\-read[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
+        static wxRegEx rePropretyWrite(
+            "@property\\-write[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
+        wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
 
-    for(size_t i = 0; i < lines2.GetCount(); i++) {
-        wxString line = lines2.Item(i).Trim().Trim(false);
-        if(reParam2.IsValid() && reParam2.Matches(line)) {
-            wxString paramName, paramHint;
-            paramHint = sourceFile.MakeIdentifierAbsolute(reParam2.GetMatch(line, 2));
-            paramName = reParam2.GetMatch(line, 3);
-            m_paramsArr.Add(paramHint);
-            m_params.insert(std::make_pair(paramName, paramHint));
-        } else if(reProprety.IsValid() && reProprety.Matches(line)) {
-            PHPDocComment::Property prop;
-            prop.type = sourceFile.MakeIdentifierAbsolute(reProprety.GetMatch(line, 1));
-            prop.name = reProprety.GetMatch(line, 2);
-            prop.desc = reProprety.GetMatch(line, 3);
-            m_properties.insert(std::make_pair(prop.name, prop));
+        for(size_t i = 0; i < lines2.GetCount(); i++) {
+            wxString line = lines2.Item(i).Trim().Trim(false);
+            if(reParam2.IsValid() && reParam2.Matches(line)) {
+                wxString paramName, paramHint;
+                paramHint = sourceFile.MakeIdentifierAbsolute(reParam2.GetMatch(line, 2));
+                paramName = reParam2.GetMatch(line, 3);
+                m_paramsArr.Add(paramHint);
+                m_params.insert(std::make_pair(paramName, paramHint));
+            } else if(reProprety.IsValid() && reProprety.Matches(line)) {
+                PHPDocComment::Property prop;
+                prop.type = sourceFile.MakeIdentifierAbsolute(reProprety.GetMatch(line, 1));
+                prop.name = reProprety.GetMatch(line, 2);
+                prop.desc = reProprety.GetMatch(line, 3);
+                m_properties.insert(std::make_pair(prop.name, prop));
 
-        } else if(rePropretyRead.IsValid() && rePropretyRead.Matches(line)) {
-            PHPDocComment::Property prop;
-            prop.type = sourceFile.MakeIdentifierAbsolute(rePropretyRead.GetMatch(line, 1));
-            prop.name = rePropretyRead.GetMatch(line, 2);
-            prop.desc = rePropretyRead.GetMatch(line, 3);
-            m_properties.insert(std::make_pair(prop.name, prop));
+            } else if(rePropretyRead.IsValid() && rePropretyRead.Matches(line)) {
+                PHPDocComment::Property prop;
+                prop.type = sourceFile.MakeIdentifierAbsolute(rePropretyRead.GetMatch(line, 1));
+                prop.name = rePropretyRead.GetMatch(line, 2);
+                prop.desc = rePropretyRead.GetMatch(line, 3);
+                m_properties.insert(std::make_pair(prop.name, prop));
 
-        } else if(rePropretyWrite.IsValid() && rePropretyWrite.Matches(line)) {
-            PHPDocComment::Property prop;
-            prop.type = sourceFile.MakeIdentifierAbsolute(rePropretyWrite.GetMatch(line, 1));
-            prop.name = rePropretyWrite.GetMatch(line, 2);
-            prop.desc = rePropretyWrite.GetMatch(line, 3);
-            m_properties.insert(std::make_pair(prop.name, prop));
+            } else if(rePropretyWrite.IsValid() && rePropretyWrite.Matches(line)) {
+                PHPDocComment::Property prop;
+                prop.type = sourceFile.MakeIdentifierAbsolute(rePropretyWrite.GetMatch(line, 1));
+                prop.name = rePropretyWrite.GetMatch(line, 2);
+                prop.desc = rePropretyWrite.GetMatch(line, 3);
+                m_properties.insert(std::make_pair(prop.name, prop));
+            }
         }
     }
-
+    
     // Attempt to parse and resolve @method entries in the PHPDoc
     ProcessMethods();
 }
@@ -132,6 +135,7 @@ const wxString& PHPDocComment::GetParam(const wxString& name) const
 
 void PHPDocComment::ProcessMethods()
 {
+    if(!m_comment.Contains("@method")) return;
     wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
     for(size_t i = 0; i < lines2.GetCount(); ++i) {
         wxString ll = lines2.Item(i).Trim().Trim(false);

@@ -2,6 +2,10 @@
 #define WORD_TOKENIZER_API_H
 
 #include <wx/string.h>
+// Needed as per GH-1364
+#ifndef __WIN32
+#include <unistd.h>
+#endif
 
 extern int isatty(int);
 

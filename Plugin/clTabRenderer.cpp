@@ -22,7 +22,7 @@ void clTabColours::InitFromColours(const wxColour& baseColour, const wxColour& t
         inactiveTabTextColour = "WHITE";
         inactiveTabBgColour = baseColour.ChangeLightness(110);
         inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
-        inactiveTabInnerPenColour = inactiveTabPenColour;//inactiveTabBgColour.ChangeLightness(120);
+        inactiveTabInnerPenColour = inactiveTabPenColour; // inactiveTabBgColour.ChangeLightness(120);
 
         tabAreaColour = baseColour.ChangeLightness(130);
         // 12x12 bitmap
@@ -37,7 +37,7 @@ void clTabColours::InitFromColours(const wxColour& baseColour, const wxColour& t
         inactiveTabTextColour = "BLACK";
         inactiveTabBgColour = baseColour.ChangeLightness(90);
         inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
-        inactiveTabInnerPenColour = inactiveTabPenColour;//baseColour;
+        inactiveTabInnerPenColour = inactiveTabPenColour; // baseColour;
 
         tabAreaColour = baseColour.ChangeLightness(130);
         // 12x12 bitmap
@@ -55,14 +55,14 @@ void clTabColours::InitDarkColours()
     activeTabTextColour = "WHITE";
     activeTabBgColour = wxColour("rgb(80,80,80)");
     activeTabPenColour = wxColour("rgb(37,36,36)");
-    activeTabInnerPenColour = activeTabBgColour;//wxColour("#343131");
+    activeTabInnerPenColour = activeTabBgColour; // wxColour("#343131");
 
     inactiveTabTextColour = wxColour("rgb(200, 200, 200)");
     inactiveTabBgColour = wxColour("rgb(50,49,48)");
     inactiveTabPenColour = wxColour("#100f0f");
-    inactiveTabInnerPenColour = inactiveTabBgColour;//wxColour("#535252");
+    inactiveTabInnerPenColour = inactiveTabBgColour; // wxColour("#535252");
 
-    tabAreaColour = wxColour("rgb(37,22,22)");//.ChangeLightness(115);
+    tabAreaColour = wxColour("rgb(37,22,22)"); //.ChangeLightness(115);
     // markerColour = wxColour("rgb(255, 128, 0)");
     markerColour = wxColour("rgb(105, 193, 240)");
 
@@ -83,17 +83,18 @@ void clTabColours::InitLightColours()
     //    activeTabBgColour = "#FBFBFB";
     //#else
     activeTabBgColour = "#f0f0f0";
-    activeTabInnerPenColour = activeTabBgColour;//"#ffffff";
-    
+    activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
+
     //#endif
     inactiveTabBgColour = "#e5e5e5";
     inactiveTabPenColour = "#b9b9b9";
-    inactiveTabInnerPenColour = inactiveTabBgColour;//"#ffffff";
+    inactiveTabInnerPenColour = inactiveTabBgColour; //"#ffffff";
 
-    tabAreaColour = "#dcdcdc"; // wxColour("rgb(64, 64, 64)");
+    tabAreaColour = DrawingUtils::DarkColour(
+        wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.5); // "#dcdcdc"; // wxColour("rgb(64, 64, 64)");
     markerColour = wxColour("rgb(227, 125, 9)");
 
-    inactiveTabBgColour = tabAreaColour;
+    inactiveTabBgColour = tabAreaColour.ChangeLightness(120);
 
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");

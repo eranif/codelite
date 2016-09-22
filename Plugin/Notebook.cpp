@@ -281,9 +281,9 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
-        if(t->IsActive() &&
-           (!IsVerticalTabs() && clientRect.Contains(t->GetRect())) ||
-           (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))) return true;
+        if(t->IsActive() && ((!IsVerticalTabs() && clientRect.Contains(t->GetRect())) ||
+                                (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
+            return true;
     }
     return false;
 }
@@ -473,9 +473,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -585,8 +585,8 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
         if(GetSelection() != wxNOT_FOUND) {
             activePage = GetPage(GetSelection());
         }
-        
-        if(activeEditor && ((void*) activeEditor->GetCtrl() == (void*)activePage)) {
+
+        if(activeEditor && ((void*)activeEditor->GetCtrl() == (void*)activePage)) {
             // The current Notebook is the main editor
             dragText << activeEditor->GetFileName().GetFullPath();
         }
@@ -1246,8 +1246,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void
-clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
+void clTabCtrl::DoDrawBottomBox(
+    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
 {
     GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
 }
@@ -1326,7 +1326,7 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
     // Extract the content dragged using regular expression
     static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}\\{.*?\\}", wxRE_ADVANCED);
     if(!re.Matches(data)) return false;
-    
+
     wxString tabIndex = re.GetMatch(data, 1);
     long nTabIndex = wxNOT_FOUND;
     tabIndex.ToCLong(&nTabIndex);

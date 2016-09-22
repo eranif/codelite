@@ -183,16 +183,7 @@ public:
     int ySpacer;
 
 public:
-    clTabRenderer()
-        : bottomAreaHeight(0)
-        , majorCurveWidth(0)
-        , smallCurveWidth(0)
-        , overlapWidth(0)
-        , verticalOverlapWidth(0)
-        , xSpacer(5)
-        , ySpacer(3)
-    {
-    }
+    clTabRenderer();
     virtual ~clTabRenderer() {}
     virtual void Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style) = 0;
     virtual void DrawBottomRect(

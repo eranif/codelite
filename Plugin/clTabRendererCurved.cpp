@@ -5,7 +5,7 @@
 
 clTabRendererCurved::clTabRendererCurved()
 {
-    bottomAreaHeight = 3;
+    bottomAreaHeight = 5;
     majorCurveWidth = 15;
     smallCurveWidth = 4;
     overlapWidth = 20;
@@ -16,7 +16,7 @@ clTabRendererCurved::~clTabRendererCurved() {}
 
 void clTabRendererCurved::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style)
 {
-    const int TOP_SMALL_HEIGHT = 2;
+    const int TOP_SMALL_HEIGHT = 0;
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

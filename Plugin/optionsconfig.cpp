@@ -124,8 +124,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
     , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift | Opt_WrapBrackets |
-          Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock | Opt_WrapCmdWithDoubleQuotes |
-          Opt_TabStyleMinimal)
+          Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock | Opt_WrapCmdWithDoubleQuotes)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)

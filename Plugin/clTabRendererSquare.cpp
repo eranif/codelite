@@ -29,7 +29,7 @@ clTabRendererSquare::~clTabRendererSquare() {}
 void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style)
 {
     wxColour inactiveTabPenColour = colours.inactiveTabPenColour;
-    
+
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : inactiveTabPenColour);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -40,10 +40,13 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
 
     dc.SetBrush(bgColour);
     dc.SetPen(penColour);
-    if(tabInfo.IsActive()) {
-        dc.DrawRectangle(rr);
+    if(!tabInfo.IsActive()) {
+        dc.SetPen(*wxTRANSPARENT_PEN);
     }
-
+    dc.DrawRectangle(rr);
+    
+    // Restore the pen
+    dc.SetPen(penColour);
     if(style & kNotebook_BottomTabs) {
         // Draw bitmap
         if(tabInfo.GetBitmap().IsOk()) {
@@ -60,13 +63,13 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
         dc.DrawLine(rr.GetBottomLeft(), rr.GetBottomRight());
         dc.SetPen(bgColour);
         DRAW_LINE(rr.GetTopLeft(), rr.GetBottomLeft());
-        
+
     } else if(style & kNotebook_RightTabs) {
         dc.DrawRotatedText(tabInfo.m_label, tabInfo.m_textX, rr.GetY() + rr.GetHeight() - tabInfo.m_textY, 90);
         dc.DrawLine(rr.GetBottomLeft(), rr.GetBottomRight());
         dc.SetPen(bgColour);
         DRAW_LINE(rr.GetTopRight(), rr.GetBottomRight());
-        
+
     } else {
         // Draw bitmap
         if(tabInfo.GetBitmap().IsOk()) {
@@ -106,10 +109,10 @@ void clTabRendererSquare::DrawBottomRect(
 
         // p1.x += penWidth + 1;
         // p2.x += penWidth + 1;
-    } else if(style & kNotebook_BottomTabs){
+    } else if(style & kNotebook_BottomTabs) {
         // draw a single line at the top
         dc.DrawLine(clientRect.GetBottomLeft(), clientRect.GetBottomRight());
-        
+
     } else {
         // draw a single line at the top
         dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());

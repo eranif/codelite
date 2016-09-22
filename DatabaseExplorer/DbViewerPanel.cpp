@@ -236,12 +236,12 @@ void DbViewerPanel::RefreshDbView()
     // clear items from tree
     m_treeDatabases->DeleteAllItems();
     // create imageList for icons
-    wxImageList* pImageList = new wxImageList(16, 16, true, 3);
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/standard/file_open"))); // folder icon
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/table")));           // table icon
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("toolbars/16/search/find")));        // view icon
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/database")));        // database
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/column")));          // column
+    wxImageList* pImageList = new wxImageList(clGetScaledSize(16), clGetScaledSize(16), true);
+    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("folder-yellow"))); // 0, folder icon
+    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-table")));      // 1, table icon
+    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("cscope")));        // 2, view icon
+    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("database")));      // 3, database
+    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-column")));     // 4, column
 
     m_treeDatabases->AssignImageList(pImageList);
 

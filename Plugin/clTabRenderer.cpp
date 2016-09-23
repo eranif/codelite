@@ -89,9 +89,8 @@ void clTabColours::InitLightColours()
     inactiveTabBgColour = "#e5e5e5";
     inactiveTabPenColour = "#b9b9b9";
     inactiveTabInnerPenColour = inactiveTabBgColour; //"#ffffff";
+    tabAreaColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(80);
 
-    tabAreaColour = DrawingUtils::DarkColour(
-        wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.5); // "#dcdcdc"; // wxColour("rgb(64, 64, 64)");
     markerColour = wxColour("rgb(227, 125, 9)");
 
     inactiveTabBgColour = tabAreaColour.ChangeLightness(120);

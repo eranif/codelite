@@ -312,12 +312,7 @@ void BitmapLoader::initialize()
     wxString bitmapPath = wxString(INSTALL_DIR, wxConvUTF8);
     fn = wxFileName(bitmapPath, zipname);
 #else
-#ifdef USE_POSIX_LAYOUT
-    wxString bitmapPath(clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR));
-    fn = wxFileName(bitmapPath, zipname);
-#else
     fn = wxFileName(clStandardPaths::Get().GetDataDir(), zipname);
-#endif
 #endif
 
     if(m_manifest.empty() || m_toolbarsBitmaps.empty()) {

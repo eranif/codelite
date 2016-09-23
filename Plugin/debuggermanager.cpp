@@ -103,7 +103,11 @@ bool DebuggerMgr::LoadDebuggers()
     wxString debuggersPath(PLUGINS_DIR, wxConvUTF8);
     debuggersPath += wxT("/debuggers");
 #elif defined(__WXMSW__)
+#ifdef USE_POSIX_LAYOUT
+    wxString debuggersPath(clStandardPaths::Get().GetPluginsDirectory() + wxT("/debuggers"));
+#else
     wxString debuggersPath(m_baseDir + wxT("/debuggers"));
+#endif
 #else
     // OSX
     wxFileName debuggersFolder(clStandardPaths::Get().GetDataDir(), "");

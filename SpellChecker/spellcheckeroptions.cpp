@@ -46,11 +46,7 @@ SpellCheckerOptions::SpellCheckerOptions()
     m_scanD2  = false;
     
     wxString defaultDicsDir;
-#ifdef USE_POSIX_LAYOUT
-    defaultDicsDir << clStandardPaths::Get().GetDataDir() << wxT(INSTALL_DIR) << wxFILE_SEP_PATH << "dics";
-#else
     defaultDicsDir << clStandardPaths::Get().GetDataDir() << wxFILE_SEP_PATH << "dics";
-#endif
     m_dictionaryPath = defaultDicsDir;
 }
 

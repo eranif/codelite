@@ -301,7 +301,7 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files,
 
         m_db.Begin();
         for(size_t i = 0; i < files.GetCount(); ++i) {
-            if(pFuncGoingDown && pFuncGoingDown()) {
+            if(pFuncGoingDown()) {
                 break;
             }
             {

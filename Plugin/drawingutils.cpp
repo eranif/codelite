@@ -323,10 +323,14 @@ void DrawingUtils::DrawHorizontalButton(wxDC& dc,
 
 bool DrawingUtils::IsDark(const wxColour& color)
 {
-    int evg = (color.Red() + color.Green() + color.Blue()) / 3;
-    if(evg < 127) return true;
+    // convert to grayscale
+    double dark = (0.2126*color.Red() + 0.7152*color.Green() + 0.0722*color.Blue())/255;
 
-    return false;
+    if (dark > 0.5) {
+        return false;
+    }
+
+    return true; // dark color
 }
 
 float DrawingUtils::GetDdkShadowLightFactor()
@@ -685,7 +689,7 @@ wxFont DrawingUtils::GetDefaultFixedFont()
     return wxFont(wxFontInfo(DEFAULT_FONT_SIZE).Family(wxFONTFAMILY_TELETYPE).FaceName(DEFAULT_FACE_NAME));
 }
 
-clColourPalette DrawingUtils::GetColourPalette() 
+clColourPalette DrawingUtils::GetColourPalette()
 {
     // basic dark colours
     clColourPalette palette;
@@ -694,7 +698,7 @@ clColourPalette DrawingUtils::GetColourPalette()
     palette.selecteTextColour = *wxWHITE;
     palette.selectionBgColour = wxColour("rgb(87, 87, 87)");
     palette.textColour = wxColour("rgb(200, 200, 200)");
-    
+
     if(::clGetManager()) {
         IEditor* editor = ::clGetManager()->GetActiveEditor();
         if(editor && !IsDark(editor->GetCtrl()->StyleGetBackground(0))) {
@@ -704,7 +708,7 @@ clColourPalette DrawingUtils::GetColourPalette()
             palette.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
             palette.textColour = wxColour("rgb(0, 0, 0)");
         }
-        
+
     }
     return palette;
 }

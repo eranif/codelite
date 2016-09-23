@@ -93,7 +93,7 @@ svSymbolTree::svSymbolTree(
     Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(svSymbolTree::OnMouseDblClick), NULL, this);
     Connect(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, wxCommandEventHandler(svSymbolTree::OnIncludeStatements), NULL, this);
     MSWSetNativeTheme(this);
-    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+    //SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 }
 

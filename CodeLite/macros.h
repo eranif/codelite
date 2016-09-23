@@ -115,6 +115,8 @@
 
 #if defined(__WXMSW__)
 #define PATH_SEP wxT("\\")
+#else
+#define PATH_SEP wxT("/")
 #endif
 
 #define ID_MENU_CUSTOM_TARGET_FIRST 15000

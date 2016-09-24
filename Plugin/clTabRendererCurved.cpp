@@ -3,6 +3,12 @@
 #include <wx/settings.h>
 #include <wx/dcmemory.h>
 
+#define DRAW_LINE(__p1, __p2) \
+    dc.DrawLine(__p1, __p2);  \
+    dc.DrawLine(__p1, __p2);  \
+    dc.DrawLine(__p1, __p2);  \
+    dc.DrawLine(__p1, __p2);
+
 clTabRendererCurved::clTabRendererCurved()
 {
     bottomAreaHeight = 5;
@@ -241,6 +247,7 @@ void clTabRendererCurved::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
 void clTabRendererCurved::DrawBottomRect(
     clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours, size_t style)
 {
+#ifdef __WXGTK__
     if(style & kNotebook_LeftTabs) {
         // Draw 3 lines on the right
         dc.SetPen(colours.activeTabPenColour);
@@ -369,4 +376,31 @@ void clTabRendererCurved::DrawBottomRect(
         dc.DrawLine(from, to);
 #endif
     }
+#else // #ifndef OSX
+    if(!IS_VERTICAL_TABS(style)) {
+        dc.SetPen(colours.activeTabBgColour);
+        wxPoint pt1, pt2;
+        if(style & kNotebook_BottomTabs) {
+            // bottom tabs
+            pt1 = clientRect.GetTopLeft();
+            pt2 = clientRect.GetTopRight();
+            DRAW_LINE(pt1, pt2);
+
+            pt1.y += 1;
+            pt2.y += 1;
+            DRAW_LINE(pt1, pt2);
+
+        } else {
+            // Top tabs
+            // bottom tabs
+            pt1 = clientRect.GetBottomLeft();
+            pt2 = clientRect.GetBottomRight();
+            DRAW_LINE(pt1, pt2);
+
+            pt1.y -= 1;
+            pt2.y -= 1;
+            DRAW_LINE(pt1, pt2);
+        }
+    }
+#endif
 }

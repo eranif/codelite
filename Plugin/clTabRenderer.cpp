@@ -233,7 +233,7 @@ clTabRenderer::clTabRenderer()
     , overlapWidth(0)
     , verticalOverlapWidth(0)
     , xSpacer(5)
-#ifdef __WXMSW__
+#ifndef __WXGTK__
     , ySpacer(5)
 #else
     , ySpacer(3)

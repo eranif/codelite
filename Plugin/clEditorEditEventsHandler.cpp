@@ -45,8 +45,10 @@ clEditEventsHandler::~clEditEventsHandler()
     wxWindow* focus = wxWindow::FindFocus();                                     \
     if(!focus) {                                                                 \
         event.Skip();                                                            \
+        return;                                                                  \
     } else if((focus != m_stc) && (focus != m_textCtrl) && (focus != m_combo)) { \
         event.Skip();                                                            \
+        return;                                                                  \
     }
 
 #define CALL_FUNC(func)     \

@@ -209,10 +209,11 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 {
     wxString dbfile = req->getDbfile();
     wxString file = req->getFile();
-
+    
+    clDEBUG1() << "Parsing saved file:" << file << clEndl;
     // Skip binary file
     if(TagsManagerST::Get()->IsBinaryFile(file)) {
-        DEBUG_MESSAGE(wxString::Format(wxT("Skipping binary file %s"), file.c_str()));
+        clDEBUG1() << "File:" << file << "is binady and will be skipped" << clEndl;
         return;
     }
 
@@ -225,7 +226,9 @@ void ParseThread::ProcessSimple(ParseRequest* req)
     wxString tags;
     wxString file_name(req->getFile());
     tagmgr->SourceToTags(file_name, tags);
-
+    
+    clDEBUG1() << "Parsed file output: [" << tags << "]" << clEndl;
+    
     int count;
     DoStoreTags(tags, file_name, count, db);
 

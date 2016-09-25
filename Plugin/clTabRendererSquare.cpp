@@ -153,24 +153,30 @@ void clTabRendererSquare::DrawBottomRect(
                 p2.x += 1;
             }
         } else {
-            // top tabs
-            dc.SetPen(pen);
-            p1.x += 1;
-#ifndef __WXGTK__
-            p2.x -= 1;
-#endif
-            DRAW_LINE(p1, p2);
-
+            wxPoint topP1 = p1;
+            wxPoint topP2 = p2;
+            
             // draw the marker at the bottom of the tabs
             p1 = activeTab->GetRect().GetBottomLeft();
             p2 = activeTab->GetRect().GetBottomRight();
-
             dc.SetPen(markerPen);
             for(size_t i = 0; i < 3; ++i) {
                 DRAW_LINE(p1, p2);
                 p1.y -= 1;
                 p2.y -= 1;
             }
+            
+            dc.SetPen(colours.activeTabPenColour);
+            dc.SetBrush(*wxTRANSPARENT_BRUSH);
+            dc.DrawRectangle(activeTab->GetRect());
+            
+            // top tabs
+            dc.SetPen(pen);
+            topP1.x += 1;
+            topP2.x -= 1;
+            
+            DRAW_LINE(topP1, topP2);
+            
         }
     }
 }

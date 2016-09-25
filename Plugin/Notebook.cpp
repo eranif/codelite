@@ -228,12 +228,12 @@ void clTabCtrl::DoSetBestSize()
 
     m_height = sz.GetHeight() + (4 * GetArt()->ySpacer);
     m_vTabsWidth = sz.GetHeight() + (5 * GetArt()->ySpacer);
-#ifdef __WXGTK__
-    // On GTK, limit the tab height
-    if(m_height >= 30) {
-        m_height = 30;
-    }
-#endif
+// #ifdef __WXGTK__
+//     // On GTK, limit the tab height
+//     if(m_height >= 30) {
+//         m_height = 30;
+//     }
+// #endif
     if(IsVerticalTabs()) {
         SetSizeHints(wxSize(m_vTabsWidth, -1));
         SetSize(m_vTabsWidth, -1);
@@ -282,7 +282,7 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
         if(t->IsActive() && ((!IsVerticalTabs() && clientRect.Contains(t->GetRect())) ||
-                                (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
+                             (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
             return true;
     }
     return false;
@@ -418,9 +418,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     if(rect.GetSize().x > 0 && rect.GetSize().y > 0) {
-// wxBitmap bmpTabs(rect.GetSize());
-// wxMemoryDC memDC(bmpTabs);
-#ifdef __WXGTK__
+#if 0
         wxDC& gcdc = dc;
         PrepareDC(gcdc);
 #else
@@ -473,9 +471,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -1246,8 +1244,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::DoDrawBottomBox(
-    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
+void
+clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
 {
     GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
 }

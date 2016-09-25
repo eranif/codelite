@@ -74,7 +74,6 @@ void clTabColours::InitDarkColours()
 void clTabColours::InitLightColours()
 {
     activeTabTextColour = "#444444";
-    activeTabPenColour = "#b9b9b9";
 
     //    dc.GradientFillLinear( rect , wxColour( 0xCC,0xCC,0xCC ), wxColour( 0xA8,0xA8,0xA8 ) , wxSOUTH );
     //    dc.SetPen( wxPen( wxColour( 0x51,0x51,0x51 ) ) );
@@ -83,18 +82,21 @@ void clTabColours::InitLightColours()
     //    activeTabBgColour = "#FBFBFB";
     //#else
     activeTabBgColour = "#f0f0f0";
+    activeTabPenColour = activeTabBgColour.ChangeLightness(75);
     activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
 
     //#endif
-    inactiveTabBgColour = "#e5e5e5";
-    inactiveTabPenColour = "#b9b9b9";
-    inactiveTabInnerPenColour = inactiveTabBgColour; //"#ffffff";
     tabAreaColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(80);
 
     markerColour = wxColour("rgb(227, 125, 9)");
 
     inactiveTabBgColour = tabAreaColour.ChangeLightness(120);
-
+    inactiveTabInnerPenColour = inactiveTabBgColour;
+    inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(75); // The outline is a bit darker
+    
+    // The active tab pen colour is darker than the Inactive one
+    activeTabPenColour = inactiveTabPenColour.ChangeLightness(80);
+    
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");
     chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");

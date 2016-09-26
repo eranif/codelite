@@ -145,12 +145,12 @@ void clTabInfo::CalculateOffsets(size_t style)
         m_height = fixedHeight.GetHeight() + (4 * m_tabCtrl->GetArt()->ySpacer);
     }
 
-#ifdef __WXGTK__
-    // On GTK, limit the tab height
-    if(m_height >= 30) {
-        m_height = 30;
-    }
-#endif
+//#ifdef __WXGTK__
+//    // On GTK, limit the tab height
+//    if(m_height >= 30) {
+//        m_height = 30;
+//    }
+//#endif
 
     m_width = 0;
     if(!IS_VERTICAL_TABS(style) || true) {
@@ -238,7 +238,7 @@ clTabRenderer::clTabRenderer()
 #ifndef __WXGTK__
     , ySpacer(5)
 #else
-    , ySpacer(3)
+    , ySpacer(5)
 #endif
 {
 }

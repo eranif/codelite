@@ -744,6 +744,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
     }
     
+    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("override")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(0) + " override", 0);
+    }
+    
     // Add Arduino sketches files as C++ (*.ino)
     if(lexer->GetName() == "c++" && !lexer->GetFileSpec().Contains(".ino")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ino");

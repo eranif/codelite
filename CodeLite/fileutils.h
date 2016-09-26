@@ -82,8 +82,8 @@ public:
      * @param password the password
      * @param port ssh port
      */
-    static void OpenSSHTerminal(
-        const wxString& sshClient, const wxString& connectString, const wxString& password, int port = 22);
+    static void
+    OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password, int port = 22);
 
     /**
      * @brief OSX only: open Terminal and return its TTY
@@ -131,5 +131,15 @@ public:
      * @brief is the file or folder a hidden file?
      */
     static bool IsHidden(const wxString& path);
+
+    /**
+     * @brief set permissions to filename
+     */
+    static bool SetFilePermissions(const wxFileName& filename, mode_t perm);
+
+    /**
+     * @brief get file permissions
+     */
+    static bool GetFilePermissions(const wxFileName& filename, mode_t& perm);
 };
 #endif // FILEUTILS_H

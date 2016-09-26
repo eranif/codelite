@@ -171,8 +171,7 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
         escapedPath.Prepend("\"").Append("\"");
     }
     tmpfile << "/tmp/terminal.tty." << ::wxGetProcessId();
-    command << "osascript -e 'tell app \"Terminal\" to do script \"tty > " << tmpfile
-            << " && clear && sleep 12345\"'";
+    command << "osascript -e 'tell app \"Terminal\" to do script \"tty > " << tmpfile << " && clear && sleep 12345\"'";
     CL_DEBUG("Executing: %s", command);
     long res = ::wxExecute(command);
     if(res == 0) {
@@ -229,7 +228,7 @@ FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectStr
         wxMessageBox(_("Can't launch PuTTY. Don't know where it is ...."), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
         return;
     }
-    
+
     wxString puttyClient = putty.GetFullPath();
     if(puttyClient.Contains(" ")) {
         puttyClient.Prepend("\"").Append("\"");
@@ -362,10 +361,7 @@ bool FileUtils::IsHidden(const wxFileName& filename)
 #endif
 }
 
-bool FileUtils::IsHidden(const wxString& filename)
-{
-    return IsHidden(filename);
-}
+bool FileUtils::IsHidden(const wxString& filename) { return IsHidden(filename); }
 
 bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
 {
@@ -373,7 +369,7 @@ bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
         // If one of the masks is plain "*" - we match everything
         return true;
     }
-    
+
     wxString lcFilename = filename.Lower();
     for(size_t i = 0; i < masks.size(); ++i) {
         const wxString& pattern = masks.Item(i);
@@ -382,6 +378,23 @@ bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
             // use exact match
             return true;
         }
+    }
+    return false;
+}
+
+bool FileUtils::SetFilePermissions(const wxFileName& filename, mode_t perm)
+{
+    wxString strFileName = filename.GetFullPath();
+    return (::chmod(strFileName.mb_str(wxConvUTF8).data(), perm & 07777) != 0);
+}
+
+bool FileUtils::GetFilePermissions(const wxFileName& filename, mode_t& perm)
+{
+    struct stat b;
+    wxString strFileName = filename.GetFullPath();
+    if(::stat(strFileName.mb_str(wxConvUTF8).data(), &b) == 0) {
+        perm = b.st_mode;
+        return true;
     }
     return false;
 }

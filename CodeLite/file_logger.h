@@ -29,6 +29,7 @@
 #include <wx/ffile.h>
 #include "codelite_exports.h"
 #include <wx/stopwatch.h>
+#include <wx/filename.h>
 
 // manipulator function
 class FileLogger;
@@ -112,7 +113,18 @@ public:
         m_buffer << "]";
         return *this;
     }
-
+    
+    /**
+     * @brief special wxFileName printing
+     */
+    inline FileLogger& operator<<(const wxFileName& fn)
+    {
+        if(GetRequestedLogLevel() > m_verbosity) {
+            return *this;
+        }
+        return ((*this) << fn.GetFullPath());
+    }
+    
     /**
      * @brief append any type to the buffer, take log level into consideration
      */

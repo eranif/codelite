@@ -1443,22 +1443,6 @@ bool LEditor::SaveFileAs(const wxString& newname, const wxString& savePath)
     return false;
 }
 
-#ifdef __WXGTK__
-//--------------------------------
-// GTK only get permissions method
-//--------------------------------
-mode_t GTKGetFilePermissions(const wxString& filename)
-{
-    // keep the original file permissions
-    struct stat b;
-    mode_t permissions(0);
-    if(stat(filename.mb_str(wxConvUTF8).data(), &b) == 0) {
-        permissions = b.st_mode;
-    }
-    return permissions;
-}
-#endif
-
 // an internal function that does the actual file writing to disk
 bool LEditor::SaveToFile(const wxFileName& fileName)
 {
@@ -1548,10 +1532,12 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     file.Write(buf.data(), strlen(buf.data()));
     file.Close();
 
-#ifdef __WXGTK__
     // keep the original file permissions
-    mode_t origPermissions = GTKGetFilePermissions(fileName.GetFullPath());
-#endif
+    mode_t origPermissions = 0;
+    if(!FileUtils::GetFilePermissions(fileName, origPermissions)) {
+        clWARNING() << "Failed to read file permissions." << fileName << clEndl;
+    }
+
 
 // The write was done to a temporary file, override it
 #ifdef __WXMSW__
@@ -1586,14 +1572,8 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     }
 #endif
 
-// override was successful, restore execute permissions
-#ifdef __WXGTK__
-    mode_t newFilePermissions = GTKGetFilePermissions(fileName.GetFullPath());
-    if(origPermissions & S_IXUSR) newFilePermissions |= S_IXUSR;
-    if(origPermissions & S_IXGRP) newFilePermissions |= S_IXGRP;
-    if(origPermissions & S_IXOTH) newFilePermissions |= S_IXOTH;
-    ::chmod(fileName.GetFullPath().mb_str(wxConvUTF8), newFilePermissions);
-#endif
+    // Restore the orig file permissions
+    FileUtils::SetFilePermissions(fileName, origPermissions);
 
     // update the modification time of the file
     m_modifyTime = GetFileModificationTime(fileName.GetFullPath());

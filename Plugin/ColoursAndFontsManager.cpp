@@ -205,6 +205,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
     }
     
+    // Add C++ keyword "override"
+    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("override")) {
+        lexer->SetKeyWords(lexer->GetKeyWords(0) + " override", 0);
+    }
+    
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {

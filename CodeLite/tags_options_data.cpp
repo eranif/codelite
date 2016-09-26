@@ -125,6 +125,7 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("__nonnull"));
     m_tokens.Add(wxT("noexcept"));
     m_tokens.Add(wxT("wxOVERRIDE"));
+    m_tokens.Add(wxT("override"));
     m_tokens.Add("final"); // ignore "final" keyword
 #if defined(__WXGTK__)
     m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowGTK"));

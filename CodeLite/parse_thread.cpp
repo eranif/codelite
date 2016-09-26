@@ -209,7 +209,7 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 {
     wxString dbfile = req->getDbfile();
     wxString file = req->getFile();
-    
+
     clDEBUG1() << "Parsing saved file:" << file << clEndl;
     // Skip binary file
     if(TagsManagerST::Get()->IsBinaryFile(file)) {
@@ -226,9 +226,9 @@ void ParseThread::ProcessSimple(ParseRequest* req)
     wxString tags;
     wxString file_name(req->getFile());
     tagmgr->SourceToTags(file_name, tags);
-    
+
     clDEBUG1() << "Parsed file output: [" << tags << "]" << clEndl;
-    
+
     int count;
     DoStoreTags(tags, file_name, count, db);
 
@@ -684,18 +684,26 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
         if(colourOptions & CC_COLOUR_TYPEDEF) kinds.Add("typedef");
 
         db->RemoveNonWorkspaceSymbols(tokensArr, kinds);
-        
-        // Convert the output to a space delimited array
-        std::for_each(tokensArr.begin(), tokensArr.end(), [&](const wxString& token) { flatClasses << token << " "; });
-        
+
         // Now, get the locals
         {
             CxxVariableScanner scanner(content);
             CxxVariable::List_t vars = scanner.GetVariables();
 
-            std::for_each(
-                vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) { flatStrLocals << var->GetName() << " "; });
+            std::for_each(vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) {
+                if(var->IsUsing()) {
+                    tokensArr.Add(var->GetName());
+                } else {
+                    flatStrLocals << var->GetName() << " ";
+                }
+            });
         }
+
+        // Convert the class types into a flat string
+        tokensArr.Sort();
+
+        // Convert the output to a space delimited array
+        std::for_each(tokensArr.begin(), tokensArr.end(), [&](const wxString& token) { flatClasses << token << " "; });
 
         if(req->_evtHandler) {
             clCommandEvent event(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS);

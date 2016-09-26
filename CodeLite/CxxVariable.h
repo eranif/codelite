@@ -53,6 +53,12 @@ public:
     wxString GetTypeAsString() const;
 
     /**
+     * @brief return true if this variable was constructed from a statement like:
+     * using MyInt = int;
+     */
+    bool IsUsing() const { return GetTypeAsString() == "using"; }
+
+    /**
      * @brief is this a valid variable?
      */
     bool IsOk() const { return !m_name.IsEmpty() && !m_type.empty(); }

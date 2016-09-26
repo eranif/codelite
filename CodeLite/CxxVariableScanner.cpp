@@ -8,6 +8,20 @@ CxxVariableScanner::CxxVariableScanner(const wxString& buffer)
     , m_eof(false)
     , m_parenthesisDepth(0)
 {
+    m_nativeTypes.insert(T_AUTO);
+    m_nativeTypes.insert(T_BOOL);
+    m_nativeTypes.insert(T_CHAR);
+    m_nativeTypes.insert(T_CHAR16_T);
+    m_nativeTypes.insert(T_CHAR32_T);
+    m_nativeTypes.insert(T_DOUBLE);
+    m_nativeTypes.insert(T_FLOAT);
+    m_nativeTypes.insert(T_INT);
+    m_nativeTypes.insert(T_LONG);
+    m_nativeTypes.insert(T_SHORT);
+    m_nativeTypes.insert(T_SIGNED);
+    m_nativeTypes.insert(T_UNSIGNED);
+    m_nativeTypes.insert(T_VOID);
+    m_nativeTypes.insert(T_WCHAR_T);
 }
 
 CxxVariableScanner::~CxxVariableScanner() {}
@@ -63,6 +77,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                 case T_UNSIGNED:
                 case T_VOLATILE:
                 case T_VOID:
+                case T_USING:
                 case T_WCHAR_T: {
                     vartype.push_back(CxxVariable::LexerToken(token));
                     break;
@@ -77,6 +92,9 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                 case T_IDENTIFIER: {
                     if(TypeHasIdentifier(vartype) && (vartype.back().type != T_DOUBLE_COLONS)) {
                         // We already found the identifier for this type, its probably part of the name
+                        ::LexerUnget(m_scanner);
+                        return true;
+                    } else if(HasTypeInList(vartype)) {
                         ::LexerUnget(m_scanner);
                         return true;
                     }
@@ -113,6 +131,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
                 case T_SIGNED:
                 case T_UNSIGNED:
                 case T_VOID:
+                case T_AUTO:
                 case T_WCHAR_T: {
                     vartype.push_back(CxxVariable::LexerToken(token));
                     break;
@@ -436,4 +455,11 @@ CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
         }
     });
     return m;
+}
+
+bool CxxVariableScanner::HasTypeInList(const CxxVariable::LexerToken::List_t& type) const
+{
+    CxxVariable::LexerToken::List_t::const_iterator iter = std::find_if(type.begin(), type.end(),
+        [&](const CxxVariable::LexerToken& token) { return m_nativeTypes.count(token.type) != 0; });
+    return (iter != type.end());
 }

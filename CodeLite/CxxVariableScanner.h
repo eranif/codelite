@@ -5,6 +5,7 @@
 #include "CxxLexerAPI.h"
 #include "CxxVariable.h"
 #include <set>
+#include "macros.h"
 
 class WXDLLIMPEXP_CL CxxVariableScanner
 {
@@ -12,7 +13,8 @@ class WXDLLIMPEXP_CL CxxVariableScanner
     wxString m_buffer;
     bool m_eof;
     int m_parenthesisDepth;
-
+    std::set<int> m_nativeTypes;
+    
     enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor };
 
 protected:
@@ -20,7 +22,8 @@ protected:
     bool IsEof() const { return m_eof; }
     void OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer);
     bool TypeHasIdentifier(const CxxVariable::LexerToken::List_t& type);
-
+    bool HasTypeInList(const CxxVariable::LexerToken::List_t& type) const;
+    
 protected:
     /**
      * @brief read the variable type

@@ -161,7 +161,7 @@ bool PHPEditorContextMenu::IsIncludeOrRequireStatement(wxString& includeWhat)
     // Do a basic check to see whether this line is include statement or not.
     // Don't bother in full parsing the file since it can be a quite an expensive operation
     // (include|require_once|require|include_once)[ \t\\(]*(.*?)[\\) \t)]*;
-    static wxRegEx reInclude(wxT("(include|require_once|require|include_once)[ \\t\\(]*(.*?)[\\) \\t]*;"),
+    static wxRegEx reInclude(wxT("(include|require_once|require|include_once)[ \t\\(]*(.*?)[\\) \t]*;"),
                              wxRE_ADVANCED);
 
     IEditor* editor = m_manager->GetActiveEditor();

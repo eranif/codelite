@@ -860,14 +860,14 @@ wxString TagEntry::FormatComment()
     }
 
     // Update all "doxy" comments and surround them with <green> tags
-    static wxRegEx reDoxyParam("([@\\\\]{1}param)[ \\t]+([_a-z][a-z0-9_]*)?", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyBrief("([@\\\\]{1}(brief|details))[ \\t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyThrow("([@\\\\]{1}(throw|throws))[ \\t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyReturn("([@\\\\]{1}(return|retval|returns))[ \\t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyToDo("([@\\\\]{1}todo)[ \\t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyRemark("([@\\\\]{1}(remarks|remark))[ \\t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDate("([@\\\\]{1}date)[ \\t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reFN("([@\\\\]{1}fn)[ \\t]*", wxRE_DEFAULT | wxRE_ICASE);
+    static wxRegEx reDoxyParam("([@\\\\]{1}param)[ \t]+([_a-z][a-z0-9_]*)?", wxRE_DEFAULT | wxRE_ICASE);
+    static wxRegEx reDoxyBrief("([@\\\\]{1}(brief|details))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+    static wxRegEx reDoxyThrow("([@\\\\]{1}(throw|throws))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+    static wxRegEx reDoxyReturn("([@\\\\]{1}(return|retval|returns))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+    static wxRegEx reDoxyToDo("([@\\\\]{1}todo)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+    static wxRegEx reDoxyRemark("([@\\\\]{1}(remarks|remark))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+    static wxRegEx reDate("([@\\\\]{1}date)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+    static wxRegEx reFN("([@\\\\]{1}fn)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
 
     if(reDoxyParam.IsValid() && reDoxyParam.Matches(m_formattedComment)) {
         reDoxyParam.ReplaceAll(&m_formattedComment, "\n<b>Parameter</b>\n<i>\\2</i>");

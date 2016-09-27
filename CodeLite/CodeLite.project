@@ -603,4 +603,8 @@ PhpLexer.cpp: PhpLexer.l
   <Dependencies Name="Win_x64_Debug"/>
   <Dependencies Name="Win_x64_Release"/>
   <Dependencies Name="Win_x86_Release"/>
+  <VirtualDirectory Name="FileSystemWatcher">
+    <File Name="clFileSystemWatcher.h"/>
+    <File Name="clFileSystemWatcher.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

@@ -106,11 +106,6 @@ public:
     bool CanCreateProjectAtPath(const wxFileName& projectFileName, bool prompt) const;
 
     /**
-     * @brief sync the workspace with the file system
-     */
-    void SyncWithFileSystem();
-
-    /**
      * @brief sync the workspace with the file system, but do this in a background thread
      */
     void SyncWithFileSystemAsync(wxEvtHandler* owner);

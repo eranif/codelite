@@ -550,14 +550,6 @@ void PHPWorkspace::RestoreWorkspaceSession()
     }
 }
 
-void PHPWorkspace::SyncWithFileSystem()
-{
-    PHPProject::Map_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        iter->second->SynchWithFileSystem();
-    }
-}
-
 PHPProject::Ptr_t PHPWorkspace::GetProjectForFile(const wxFileName& filename) const
 {
     PHPProject::Map_t::const_iterator iter = m_projects.begin();

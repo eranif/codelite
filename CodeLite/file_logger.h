@@ -122,7 +122,11 @@ public:
         if(GetRequestedLogLevel() > m_verbosity) {
             return *this;
         }
-        return ((*this) << fn.GetFullPath());
+        if(!m_buffer.IsEmpty()) {
+            m_buffer << " ";
+        }
+        m_buffer << fn.GetFullPath();
+        return *this;
     }
     
     /**

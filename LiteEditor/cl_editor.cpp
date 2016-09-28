@@ -1573,7 +1573,9 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
 #endif
 
     // Restore the orig file permissions
-    FileUtils::SetFilePermissions(fileName, origPermissions);
+    if(origPermissions) {
+        FileUtils::SetFilePermissions(fileName, origPermissions);
+    }
 
     // update the modification time of the file
     m_modifyTime = GetFileModificationTime(fileName.GetFullPath());

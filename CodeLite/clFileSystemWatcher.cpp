@@ -32,9 +32,11 @@ void clFileSystemWatcher::AddFile(const wxFileName& filename)
 
 void clFileSystemWatcher::Start()
 {
-    if(m_timer && m_timer->IsRunning()) {
+    if(m_timer) {
         return;
     }
+    
+    m_timer = new wxTimer(this);
     m_timer->Start(FILE_CHECK_INTERVAL, true);
 }
 

@@ -273,10 +273,10 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 {
     wxRect clientRect(GetClientRect());
     if((GetStyle() & kNotebook_ShowFileListButton) && !IsVerticalTabs()) {
-        clientRect.SetWidth(clientRect.GetWidth() - 30);
+        clientRect.SetWidth(clientRect.GetWidth() - m_chevronRect.GetWidth());
     } else if((GetStyle() & kNotebook_ShowFileListButton) && IsVerticalTabs()) {
         // Vertical tabs
-        clientRect.SetHeight(clientRect.GetHeight() - 30);
+        clientRect.SetHeight(clientRect.GetHeight() - m_chevronRect.GetWidth());
     }
 
     for(size_t i = 0; i < tabs.size(); ++i) {

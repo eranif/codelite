@@ -868,8 +868,8 @@ void PhpPlugin::OnFileSysetmUpdated(clFileSystemEvent& event)
 {
     event.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
-        PHPWorkspace::Get()->SyncWithFileSystem();
-        m_workspaceView->LoadWorkspaceView();
+        // Sync the workspace view, notify the view when its done
+        PHPWorkspace::Get()->SyncWithFileSystemAsync(m_workspaceView);
     }
 }
 

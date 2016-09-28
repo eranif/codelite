@@ -257,16 +257,10 @@ void clTabRendererCurved::DrawBottomRect(
             pt2 = clientRect.GetTopRight();
             DRAW_LINE(pt1, pt2);
 
-            pt1.y += 1;
-            pt2.y += 1;
-            DRAW_LINE(pt1, pt2);
-
         } else {
             // Top tabs
             pt1 = clientRect.GetBottomLeft();
             pt2 = clientRect.GetBottomRight();
-            DRAW_LINE(pt1, pt2);
-
             pt1.y -= 1;
             pt2.y -= 1;
             DRAW_LINE(pt1, pt2);

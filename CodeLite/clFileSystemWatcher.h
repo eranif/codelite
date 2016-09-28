@@ -5,6 +5,7 @@
 #include "clFileSystemEvent.h"
 #include <map>
 #include <wx/timer.h>
+#include <wx/filename.h>
 
 class WXDLLIMPEXP_CL clFileSystemWatcher : public wxEvtHandler
 {

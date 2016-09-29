@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
-#define CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
+#ifndef _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
+#define _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

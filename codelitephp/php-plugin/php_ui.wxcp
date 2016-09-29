@@ -9642,7 +9642,7 @@
        "border": 2,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxTR_MULTIPLE", "wxTR_FULL_ROW_HIGHLIGHT", "wxTR_NO_LINES", "wxTR_HAS_BUTTONS", "wxBORDER_STATIC"],
+       "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_MULTIPLE", "wxTR_FULL_ROW_HIGHLIGHT", "wxTR_NO_LINES", "wxBORDER_STATIC"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",

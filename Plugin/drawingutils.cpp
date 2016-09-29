@@ -57,6 +57,40 @@
 #include <gtk/gtk.h>
 #undef GSocket
 #endif
+
+static void RGBtoHSB(int r, int g, int b, float* h, float* s, float* br)
+{
+    float hue, saturation, brightness;
+    int cmax = (r > g) ? r : g;
+    if(b > cmax) cmax = b;
+    int cmin = (r < g) ? r : g;
+    if(b < cmin) cmin = b;
+
+    brightness = ((float)cmax) / 255.0f;
+    if(cmax != 0)
+        saturation = ((float)(cmax - cmin)) / ((float)cmax);
+    else
+        saturation = 0;
+    if(saturation == 0)
+        hue = 0;
+    else {
+        float redc = ((float)(cmax - r)) / ((float)(cmax - cmin));
+        float greenc = ((float)(cmax - g)) / ((float)(cmax - cmin));
+        float bluec = ((float)(cmax - b)) / ((float)(cmax - cmin));
+        if(r == cmax)
+            hue = bluec - greenc;
+        else if(g == cmax)
+            hue = 2.0f + redc - bluec;
+        else
+            hue = 4.0f + greenc - redc;
+        hue = hue / 6.0f;
+        if(hue < 0) hue = hue + 1.0f;
+    }
+    (*h) = hue;
+    (*s) = saturation;
+    (*br) = brightness;
+}
+
 //////////////////////////////////////////////////
 // Colour methods to convert HSL <-> RGB
 //////////////////////////////////////////////////
@@ -312,14 +346,9 @@ void DrawingUtils::DrawHorizontalButton(
 
 bool DrawingUtils::IsDark(const wxColour& color)
 {
-    // see: http://stackoverflow.com/questions/12043187/how-to-check-if-hex-color-is-too-black
-    // for how to check if a colour is dark
-    wxUint32 rgb = color.GetRGB();
-    wxUint32 r = (rgb >> 16) & 0xff;
-    wxUint32 g = (rgb >> 8) & 0xff;
-    wxUint32 b = (rgb >> 0) & 0xff;
-    double luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b); // per ITU-R BT.709
-    return (luma < 40);
+    float h, s, b;
+    RGBtoHSB(color.Red(), color.Green(), color.Blue(), &h, &s, &b);
+    return (b < 0.5);
 }
 
 float DrawingUtils::GetDdkShadowLightFactor()

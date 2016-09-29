@@ -6,7 +6,7 @@
 //
 // To generate a source file from this .l file, you will need
 // a flex version 2.5.34 and later
-// Under Windows, you will need to run the following command 
+// Under Windows, you will need to run the following command
 // from within *MSYS* terminal (or run codelite from an MSYS shell):
 // /usr/bin/flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 //
@@ -51,7 +51,7 @@ extern "C" int yywrap(void*) { return 1; }
 
 %x PHP
 %x CPP_COMMENT
-%x DOC_COMMENT 
+%x DOC_COMMENT
 %x HEREDOC
 %x DSTRING
 %x SINGLE_STRING
@@ -85,7 +85,7 @@ c_return [\015]
 
 horizontal_white [ ]|{h_tab}
 
-%% 
+%%
 <INITIAL>"<script"{WHITESPACE}+"language"{WHITESPACE}*"="{WHITESPACE}*("php"|"\"php\""|"'php'"){WHITESPACE}*">" {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -135,10 +135,10 @@ horizontal_white [ ]|{h_tab}
     std::string label = yytext;
     StdToWX::Remove(label, 0, 3);
     StdToWX::Trim(label);
-    
+
     if(StdToWX::StartsWith(label, "'")) StdToWX::Remove(label, 0, 1);
     if(StdToWX::EndsWith(label, "'")) StdToWX::RemoveLast(label, 1);
-    
+
     userData->SetRawStringLabel(label);
     userData->GetString().append(yytext);
     BEGIN(HEREDOC);
@@ -184,7 +184,7 @@ horizontal_white [ ]|{h_tab}
         return kPHP_T_C_COMMENT;
     }
 }
-<DOC_COMMENT>"\n" { 
+<DOC_COMMENT>"\n" {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->AppendToComment("\n");
@@ -197,8 +197,8 @@ horizontal_white [ ]|{h_tab}
     }
 }
 
-<PHP>"//"|"#" { 
-    BEGIN(CPP_COMMENT); 
+<PHP>"//"|"#" {
+    BEGIN(CPP_COMMENT);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->ClearComment();
@@ -216,7 +216,7 @@ horizontal_white [ ]|{h_tab}
         return kPHP_T_CXX_COMMENT;
     }
 }
-<CPP_COMMENT>. { 
+<CPP_COMMENT>. {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->AppendToComment(yytext[0]);
@@ -365,7 +365,7 @@ horizontal_white [ ]|{h_tab}
     return kPHP_T_CLOSE_TAG;
 }
 <PHP>"'" {
-    BEGIN(SINGLE_STRING); 
+    BEGIN(SINGLE_STRING);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->SetString("'");
 }
@@ -374,8 +374,8 @@ horizontal_white [ ]|{h_tab}
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->SetString("\"");
 }
-<PHP><<EOF>> { 
-    yyterminate(); 
+<PHP><<EOF>> {
+    yyterminate();
     return 0;
 }
 <PHP>. {
@@ -444,7 +444,7 @@ void* phpLexerNew(const wxFileName& filename, size_t options )
     if(fn.IsRelative()) {
         fn.MakeAbsolute();
     }
-    
+
     FILE* fp = ::fopen(fn.GetFullPath().mb_str().data(), "rb");
     if(!fp) {
         return NULL;
@@ -459,11 +459,17 @@ void* phpLexerNew(const wxFileName& filename, size_t options )
     return scanner;
 }
 
-void* phpLexerNew(const wxString& content, size_t options )
+void* phpLexerNew(const wxString& content, size_t options, bool convert)
 {
     yyscan_t scanner;
     phplex_init(&scanner);
-    wxCharBuffer cb = content.mb_str();
+    wxCharBuffer cb;
+    if(!convert) {
+        cb = content.mb_str();
+    } else {
+        wxConvAuto autoConvert;
+        cb = content.mb_str(autoConvert);
+    }
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     yyg->yyextra_r = new phpLexerUserData(options);
     php_switch_to_buffer(php_scan_string(cb.data(), scanner), scanner);
@@ -496,7 +502,7 @@ bool phpLexerNext(void* scanner, phpLexerToken& token)
         phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
         switch(token.type) {
         case kPHP_T_END_HEREDOC:
-            token.lineNumber = yylineno; 
+            token.lineNumber = yylineno;
             token.text = userData->GetString();
             userData->GetString().clear();
             break;

@@ -53,7 +53,7 @@ struct WXDLLIMPEXP_CL phpLexerToken {
         , endLineNumber(-1)
     {
     }
-    
+
     /**
      * @brief clear the token, i.e. IsNull() return true
      */
@@ -64,7 +64,7 @@ struct WXDLLIMPEXP_CL phpLexerToken {
         endLineNumber = -1;
         text.clear();
     }
-    
+
     bool IsNull() const { return type == -1; }
     /**
      * @brief is the current token a comment? (c++ or c comment)
@@ -174,7 +174,7 @@ WXDLLIMPEXP_CL phpLexerUserData* phpLexerGetUserData(PHPScanner_t scanner);
 /**
  * @brief create a new Lexer for a given file content
  */
-WXDLLIMPEXP_CL PHPScanner_t phpLexerNew(const wxString& content, size_t options = kPhpLexerOpt_None);
+WXDLLIMPEXP_CL PHPScanner_t phpLexerNew(const wxString& content, size_t options = kPhpLexerOpt_None, bool convert=true);
 
 /**
  * @brief destroy the current lexer and perform cleanup

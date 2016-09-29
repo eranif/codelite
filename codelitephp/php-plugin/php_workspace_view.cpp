@@ -457,9 +457,8 @@ void PHPWorkspaceView::OnCloseWorkspace(wxCommandEvent& e)
 
 void PHPWorkspaceView::OnReloadWorkspace(wxCommandEvent& e)
 {
-    wxUnusedVar(e);
-    UnLoadWorkspaceView();
-    LoadWorkspaceView();
+    // sync the file view and rebuild the tree
+    PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 }
 
 void PHPWorkspaceView::OnDeleteProject(wxCommandEvent& e)
@@ -773,7 +772,7 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
             filesDeleted.Add(items.Item(i));
         }
     }
-    
+
     // Sync the workspace with the file system
     PHPWorkspace::Get()->SyncWithFileSystemAsync(reloadWorkspaceNeeded ? this : NULL);
 }

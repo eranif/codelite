@@ -33,7 +33,7 @@
 #if defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 
 /* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
- * if you want the limit (max/min) macros for int types. 
+ * if you want the limit (max/min) macros for int types.
  */
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS 1
@@ -50,7 +50,7 @@ typedef uint32_t flex_uint32_t;
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
 typedef int flex_int32_t;
-typedef unsigned char flex_uint8_t; 
+typedef unsigned char flex_uint8_t;
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 
@@ -184,7 +184,7 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
     /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
      *       access to the local variable yy_act. Since yyless() is a macro, it would break
-     *       existing scanners that call yyless() from OUTSIDE phplex. 
+     *       existing scanners that call yyless() from OUTSIDE phplex.
      *       One obvious solution it to make yy_act a global. I tried that, and saw
      *       a 5% performance hit in a non-yylineno scanner, because yy_act is
      *       normally declared as a register variable-- so it is not worth it.
@@ -196,7 +196,7 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
                     if ( yytext[yyl] == '\n' )\
                         --yylineno;\
             }while(0)
-    
+
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
 	do \
@@ -258,7 +258,7 @@ struct yy_buffer_state
 
     int yy_bs_lineno; /**< The line count. */
     int yy_bs_column; /**< The column count. */
-    
+
 	/* Whether to try to fill the input buffer when we reach the
 	 * end of it.
 	 */
@@ -914,13 +914,13 @@ static yyconst flex_int16_t yy_chk[1160] =
 /* Table of booleans, true if rule could match eol. */
 static yyconst flex_int32_t yy_rule_can_match_eol[154] =
     {   0,
-0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 
-    1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
+    1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0,     };
 
 /* The intent behind this definition is that it'll catch
@@ -937,7 +937,7 @@ static yyconst flex_int32_t yy_rule_can_match_eol[154] =
 //
 // To generate a source file from this .l file, you will need
 // a flex version 2.5.34 and later
-// Under Windows, you will need to run the following command 
+// Under Windows, you will need to run the following command
 // from within *MSYS* terminal (or run codelite from an MSYS shell):
 // /usr/bin/flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 //
@@ -1076,7 +1076,7 @@ extern int phpwrap (yyscan_t yyscanner );
 #endif
 
     static void yyunput (int c,char *buf_ptr  ,yyscan_t yyscanner);
-    
+
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char *,yyconst char *,int ,yyscan_t yyscanner);
 #endif
@@ -1275,7 +1275,7 @@ yy_find_action:
 			int yyl;
 			for ( yyl = 0; yyl < yyleng; ++yyl )
 				if ( yytext[yyl] == '\n' )
-					   
+
     do{ yylineno++;
         yycolumn=0;
     }while(0)
@@ -1385,10 +1385,10 @@ YY_RULE_SETUP
     std::string label = yytext;
     StdToWX::Remove(label, 0, 3);
     StdToWX::Trim(label);
-    
+
     if(StdToWX::StartsWith(label, "'")) StdToWX::Remove(label, 0, 1);
     if(StdToWX::EndsWith(label, "'")) StdToWX::RemoveLast(label, 1);
-    
+
     userData->SetRawStringLabel(label);
     userData->GetString().append(yytext);
     BEGIN(HEREDOC);
@@ -1454,7 +1454,7 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-{ 
+{
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->AppendToComment("\n");
@@ -1472,8 +1472,8 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-{ 
-    BEGIN(CPP_COMMENT); 
+{
+    BEGIN(CPP_COMMENT);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->ClearComment();
@@ -1498,7 +1498,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-{ 
+{
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->AppendToComment(yytext[0]);
@@ -2002,7 +2002,7 @@ YY_RULE_SETUP
 case 142:
 YY_RULE_SETUP
 {
-    BEGIN(SINGLE_STRING); 
+    BEGIN(SINGLE_STRING);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->SetString("'");
 }
@@ -2016,8 +2016,8 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(PHP):
-{ 
-    yyterminate(); 
+{
+    yyterminate();
     return 0;
 }
 	YY_BREAK
@@ -2544,7 +2544,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	yyg->yy_hold_char = *++yyg->yy_c_buf_p;
 
 	if ( c == '\n' )
-		   
+
     do{ yylineno++;
         yycolumn=0;
     }while(0)
@@ -2627,7 +2627,7 @@ static void php_load_buffer_state  (yyscan_t yyscanner)
     YY_BUFFER_STATE php_create_buffer  (FILE * file, int  size , yyscan_t yyscanner)
 {
 	YY_BUFFER_STATE b;
-    
+
 	b = (YY_BUFFER_STATE) phpalloc(sizeof( struct yy_buffer_state ) ,yyscanner );
 	if ( ! b )
 		YY_FATAL_ERROR( "out of dynamic memory in php_create_buffer()" );
@@ -2671,7 +2671,7 @@ static void php_load_buffer_state  (yyscan_t yyscanner)
 #ifndef __cplusplus
 extern int isatty (int );
 #endif /* __cplusplus */
-    
+
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
  * such as during a phprestart() or at EOF.
@@ -2697,7 +2697,7 @@ extern int isatty (int );
     }
 
         b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
-    
+
 	errno = oerrno;
 }
 
@@ -2803,9 +2803,9 @@ static void phpensure_buffer_stack (yyscan_t yyscanner)
 								, yyscanner);
 		if ( ! yyg->yy_buffer_stack )
 			YY_FATAL_ERROR( "out of dynamic memory in phpensure_buffer_stack()" );
-								  
+
 		memset(yyg->yy_buffer_stack, 0, num_to_alloc * sizeof(struct yy_buffer_state*));
-				
+
 		yyg->yy_buffer_stack_max = num_to_alloc;
 		yyg->yy_buffer_stack_top = 0;
 		return;
@@ -2834,12 +2834,12 @@ static void phpensure_buffer_stack (yyscan_t yyscanner)
  * @param base the character buffer
  * @param size the size in bytes of the character buffer
  * @param yyscanner The scanner object.
- * @return the newly allocated buffer state object. 
+ * @return the newly allocated buffer state object.
  */
 YY_BUFFER_STATE php_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscanner)
 {
 	YY_BUFFER_STATE b;
-    
+
 	if ( size < 2 ||
 	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
 	     base[size-1] != YY_END_OF_BUFFER_CHAR )
@@ -2875,7 +2875,7 @@ YY_BUFFER_STATE php_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscan
  */
 YY_BUFFER_STATE php_scan_string (yyconst char * yystr , yyscan_t yyscanner)
 {
-    
+
 	return php_scan_bytes(yystr,strlen(yystr) ,yyscanner);
 }
 
@@ -2892,7 +2892,7 @@ YY_BUFFER_STATE php_scan_bytes  (yyconst char * yybytes, int  _yybytes_len , yys
 	char *buf;
 	yy_size_t n;
 	int i;
-    
+
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = _yybytes_len + 2;
 	buf = (char *) phpalloc(n ,yyscanner );
@@ -2960,10 +2960,10 @@ YY_EXTRA_TYPE phpget_extra  (yyscan_t yyscanner)
 int phpget_lineno  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-    
+
         if (! YY_CURRENT_BUFFER)
             return 0;
-    
+
     return yylineno;
 }
 
@@ -2973,10 +2973,10 @@ int phpget_lineno  (yyscan_t yyscanner)
 int phpget_column  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-    
+
         if (! YY_CURRENT_BUFFER)
             return 0;
-    
+
     return yycolumn;
 }
 
@@ -3037,8 +3037,8 @@ void phpset_lineno (int  line_number , yyscan_t yyscanner)
 
         /* lineno is only valid if an input buffer exists. */
         if (! YY_CURRENT_BUFFER )
-           yy_fatal_error( "phpset_lineno called with no buffer" , yyscanner); 
-    
+           yy_fatal_error( "phpset_lineno called with no buffer" , yyscanner);
+
     yylineno = line_number;
 }
 
@@ -3052,8 +3052,8 @@ void phpset_column (int  column_no , yyscan_t yyscanner)
 
         /* column is only valid if an input buffer exists. */
         if (! YY_CURRENT_BUFFER )
-           yy_fatal_error( "phpset_column called with no buffer" , yyscanner); 
-    
+           yy_fatal_error( "phpset_column called with no buffer" , yyscanner);
+
     yycolumn = column_no;
 }
 
@@ -3136,20 +3136,20 @@ int phplex_init_extra(YY_EXTRA_TYPE yy_user_defined,yyscan_t* ptr_yy_globals )
         errno = EINVAL;
         return 1;
     }
-	
+
     *ptr_yy_globals = (yyscan_t) phpalloc ( sizeof( struct yyguts_t ), &dummy_yyguts );
-	
+
     if (*ptr_yy_globals == NULL){
         errno = ENOMEM;
         return 1;
     }
-    
+
     /* By setting to 0xAA, we expose bugs in
     yy_init_globals. Leave at 0x00 for releases. */
     memset(*ptr_yy_globals,0x00,sizeof(struct yyguts_t));
-    
+
     phpset_extra (yy_user_defined, *ptr_yy_globals);
-    
+
     return yy_init_globals ( *ptr_yy_globals );
 }
 
@@ -3288,7 +3288,7 @@ void* phpLexerNew(const wxFileName& filename, size_t options )
     if(fn.IsRelative()) {
         fn.MakeAbsolute();
     }
-    
+
     FILE* fp = ::fopen(fn.GetFullPath().mb_str().data(), "rb");
     if(!fp) {
         return NULL;
@@ -3303,11 +3303,17 @@ void* phpLexerNew(const wxFileName& filename, size_t options )
     return scanner;
 }
 
-void* phpLexerNew(const wxString& content, size_t options )
+void* phpLexerNew(const wxString& content, size_t options, bool convert)
 {
     yyscan_t scanner;
     phplex_init(&scanner);
-    wxCharBuffer cb = content.mb_str();
+    wxCharBuffer cb;
+    if(!convert) {
+        cb = content.mb_str();
+    } else {
+        wxConvAuto autoConvert;
+        cb = content.mb_str(autoConvert);
+    }
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     yyg->yyextra_r = new phpLexerUserData(options);
     php_switch_to_buffer(php_scan_string(cb.data(), scanner), scanner);
@@ -3340,7 +3346,7 @@ bool phpLexerNext(void* scanner, phpLexerToken& token)
         phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
         switch(token.type) {
         case kPHP_T_END_HEREDOC:
-            token.lineNumber = yylineno; 
+            token.lineNumber = yylineno;
             token.text = userData->GetString();
             userData->GetString().clear();
             break;
@@ -3377,4 +3383,3 @@ bool phpLexerNext(void* scanner, phpLexerToken& token)
     }
     return token.type != 0;
 }
-

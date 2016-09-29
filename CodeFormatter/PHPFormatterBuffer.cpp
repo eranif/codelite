@@ -37,7 +37,7 @@ PHPFormatterBuffer::PHPFormatterBuffer(const wxString& buffer, const PHPFormatte
     , m_lastCommentLine(-1)
     , m_parenDepth(0)
 {
-    m_scanner = ::phpLexerNew(buffer, kPhpLexerOpt_ReturnComments | kPhpLexerOpt_ReturnAllNonPhp);
+    m_scanner = ::phpLexerNew(buffer, kPhpLexerOpt_ReturnComments | kPhpLexerOpt_ReturnAllNonPhp, false);
 }
 
 PHPFormatterBuffer::~PHPFormatterBuffer()

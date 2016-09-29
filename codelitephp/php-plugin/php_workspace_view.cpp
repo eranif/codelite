@@ -971,10 +971,18 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
         if(!event.GetFormattedString().IsEmpty()) {
             fileContent = event.GetFormattedString();
         }
-
-        DoCreateFile(folderId, pcd.GetFilepath().GetFullPath(), fileContent);
+        
+        wxTreeItemId fileItem = DoCreateFile(folderId, pcd.GetFilepath().GetFullPath(), fileContent);
         DoSortItems();
-
+        
+        // Set the focus the new class
+        if(fileItem.IsOk()) {
+            if(!m_treeCtrlView->IsExpanded(folderId)) {
+                m_treeCtrlView->Expand(folderId);
+            }
+            CallAfter(&PHPWorkspaceView::DoOpenFile, fileItem);
+        }
+        
         // Trigger parsing
         PHPWorkspace::Get()->ParseWorkspace(false);
     }

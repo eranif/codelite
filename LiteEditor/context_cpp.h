@@ -42,6 +42,7 @@ class ContextCpp : public ContextBase
 
     static wxBitmap m_cppFileBmp;
     static wxBitmap m_hFileBmp;
+    static wxBitmap m_otherFileBmp;
 
 protected:
     void OnShowCodeNavMenu(clCodeCompletionEvent& e);

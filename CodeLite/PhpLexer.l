@@ -463,7 +463,7 @@ void* phpLexerNew(const wxString& content, size_t options )
 {
     yyscan_t scanner;
     phplex_init(&scanner);
-    wxCharBuffer cb = content.mb_str();
+    wxCharBuffer cb = content.mb_str(wxConvUTF8);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     yyg->yyextra_r = new phpLexerUserData(options);
     php_switch_to_buffer(php_scan_string(cb.data(), scanner), scanner);

@@ -53,7 +53,7 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
 
         // Inside PHP tags
         if(m_insideHereDoc) {
-            m_buffer << token.text;
+            m_buffer << token.Text();
             if(token.type == kPHP_T_END_HEREDOC) {
                 AppendEOL();
                 if(m_options.flags & kPFF_BreakAfterHeredoc) {
@@ -63,34 +63,34 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             }
         } else if(token.type == kPHP_T_OPEN_TAG) {
             m_openTagWithEcho = false;
-            m_buffer << token.text;
+            m_buffer << token.Text();
             AppendEOL();
 
         } else if(token.type == kPHP_T_OPEN_TAG_WITH_ECHO) {
             m_openTagWithEcho = true;
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
 
         } else if(token.type == '{') {
             HandleOpenCurlyBrace();
 
         } else if(token.type == kPHP_T_VARIABLE) {
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
 
         } else if(token.type == kPHP_T_FOREACH) {
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
             if(m_options.flags & kPFF_BreakBeforeForeach) {
                 InsertSeparatorLine();
             }
         } else if(token.type == kPHP_T_ELSE || token.type == kPHP_T_ELSEIF) {
             if(m_options.flags & kPFF_ElseOnSameLineAsClosingCurlyBrace && m_lastToken.type == '}') {
                 ReverseClearUntilFind("}");
-                m_buffer << " " << token.text << " ";
+                m_buffer << " " << token.Text() << " ";
             } else {
-                m_buffer << token.text << " ";
+                m_buffer << token.Text() << " ";
             }
 
         } else if(token.type == kPHP_T_WHILE) {
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
             if(m_options.flags & kPFF_BreakBeforeWhile) {
                 InsertSeparatorLine();
             }
@@ -98,11 +98,11 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             if(m_options.flags & kPFF_BreakBeforeClass) {
                 InsertSeparatorLine();
             }
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
 
         } else if(token.type == kPHP_T_FUNCTION) {
             // Found a function
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
             if(m_lastCommentLine != token.lineNumber) {
                 // this function has no comment associated with it
                 if(m_options.flags & kPFF_BreakBeforeFunction) {
@@ -118,29 +118,29 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             }
         } else if(token.type == kPHP_T_START_HEREDOC) {
             RemoveLastSpace();
-            m_buffer << token.text;
+            m_buffer << token.Text();
             m_insideHereDoc = true;
 
         } else if(token.type == kPHP_T_FOR) {
             // for(;;) is a special case where
             // we don't insert new line after semi-colon
             m_insideForStatement = true;
-            m_buffer << token.text;
+            m_buffer << token.Text();
 
         } else if(token.type == '(' && m_insideForStatement) {
             m_forDepth++;
-            m_buffer << token.text;
+            m_buffer << token.Text();
 
         } else if(token.type == ')' && m_insideForStatement) {
             m_forDepth--;
             if(m_forDepth == 0) {
                 m_insideForStatement = false;
             }
-            m_buffer << token.text;
+            m_buffer << token.Text();
 
         } else if(token.type == '(' || token.type == '[') {
             RemoveLastSpace();
-            m_buffer << token.text;
+            m_buffer << token.Text();
 
             if(m_options.flags & kPFF_VerticalArrays && token.type == '(' && m_lastToken.type == kPHP_T_ARRAY &&
                m_parenDepth == 1) {
@@ -149,28 +149,28 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
 
         } else if(token.type == ')') {
             RemoveLastSpace();
-            m_buffer << token.text;
+            m_buffer << token.Text();
 
         } else if(token.type == ']') {
             RemoveLastSpace();
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
 
         } else if(token.type == ';') {
             RemoveLastSpace();
-            m_buffer << token.text;
+            m_buffer << token.Text();
             AppendEOL();
 
         } else if(token.type == '}') {
             UnIndent();
-            m_buffer << token.text;
+            m_buffer << token.Text();
             AppendEOL(kDepthDec);
 
         } else if(token.type == ',') {
             RemoveLastSpace();
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
 
         } else if(token.type == '.') {
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
             if(m_options.flags & kPFF_BreakAfterStringConcatentation && (m_parenDepth == 1)) {
                 // inside a function call
                 wxString whitepace = GetIndentationToLast('(');
@@ -181,12 +181,12 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             }
         } else if(token.type == '&') {
             // attach reference to the next token
-            m_buffer << token.text;
+            m_buffer << token.Text();
 
         } else if(token.type == kPHP_T_CXX_COMMENT) {
             // C++ style comment ("//")
             // AppendEOL();
-            m_buffer << token.text;
+            m_buffer << token.Text();
             AppendEOL();
             m_lastCommentLine = token.lineNumber + 1;
 
@@ -196,30 +196,30 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             // it to the current buffer
             if(m_parenDepth == 0) {
                 AppendEOL();
-                m_buffer << FormatDoxyComment(token.text);
+                m_buffer << FormatDoxyComment(token.Text());
                 AppendEOL();
                 m_lastCommentLine = token.endLineNumber + 1;
             } else {
-                m_buffer << token.text << " ";
+                m_buffer << token.Text() << " ";
             }
 
         } else if(token.type == kPHP_T_OBJECT_OPERATOR || token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
             // -> operator or ::
             RemoveLastSpace();
-            m_buffer << token.text;
+            m_buffer << token.Text();
 
         } else if(token.type == '!') {
             // dont add extrace space after the NOT operator
-            m_buffer << token.text;
+            m_buffer << token.Text();
 
         } else if(token.type == kPHP_T_NS_SEPARATOR) {
             if(m_lastToken.type == kPHP_T_IDENTIFIER) {
                 RemoveLastSpace();
             }
-            m_buffer << token.text;
+            m_buffer << token.Text();
         } else {
             // by default, add the token text and a space after it
-            m_buffer << token.text << " ";
+            m_buffer << token.Text() << " ";
         }
 
         m_lastToken = token;
@@ -228,7 +228,7 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
         if(token.type == kPHP_T_CLOSE_TAG && !m_openTagWithEcho) {
             AppendEOL();
         }
-        m_buffer << token.text;
+        m_buffer << token.Text();
     }
     return *this;
 }
@@ -476,17 +476,17 @@ void PHPFormatterBuffer::ProcessArray(int openParen, int closingChar)
             if(token.type == openParen) {
                 ++depth;
                 RemoveLastSpace();
-                m_buffer << token.text;
+                m_buffer << token.Text();
             } else if(token.type == closingChar) {
                 --depth;
                 RemoveLastSpace();
-                m_buffer << token.text;
+                m_buffer << token.Text();
                 if(depth == 0) break;
 
             } else if(token.type == ',') {
                 // New line
                 RemoveLastSpace();
-                m_buffer << token.text;
+                m_buffer << token.Text();
                 m_buffer << m_options.eol;
                 m_buffer << whitespace;
 
@@ -494,10 +494,10 @@ void PHPFormatterBuffer::ProcessArray(int openParen, int closingChar)
                       token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM || token.type == kPHP_T_NS_SEPARATOR ||
                       token.type == kPHP_T_VARIABLE ||token.type == '[' || token.type == ']') {
                 RemoveLastSpace();
-                m_buffer << token.text;
+                m_buffer << token.Text();
 
             } else {
-                m_buffer << token.text << " ";
+                m_buffer << token.Text() << " ";
             }
 
         } else {
@@ -505,7 +505,7 @@ void PHPFormatterBuffer::ProcessArray(int openParen, int closingChar)
             if(token.type == kPHP_T_CLOSE_TAG && !m_openTagWithEcho) {
                 AppendEOL();
             }
-            m_buffer << token.text;
+            m_buffer << token.Text();
         }
     }
 }

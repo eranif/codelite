@@ -67,7 +67,7 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
         if(iter != m_comments.end()) {
 
             // we got a match
-            entity->SetDocComment(iter->second.text);
+            entity->SetDocComment(iter->second.Text());
             m_comments.erase(iter);
 
             PHPDocComment docComment(m_sourceFile, entity->GetDocComment());

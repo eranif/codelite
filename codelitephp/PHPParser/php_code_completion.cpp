@@ -678,7 +678,7 @@ wxString PHPCodeCompletion::ExpandRequire(const wxFileName& curfile, const wxStr
         case kPHP_T_REQUIRE_ONCE:
             break;
         case kPHP_T_CONSTANT_ENCAPSED_STRING: {
-            wxString str = token.text;
+            wxString str = token.Text();
             str.Trim().Trim(false);
             // strip the " or ' from the string
             str.Remove(0, 1).RemoveLast();
@@ -738,7 +738,7 @@ int PHPCodeCompletion::GetLocationForSettersGetters(const wxString& filecontent,
             continue;
         }
 
-        if(::phpLexerNext(scanner, token) && token.type == kPHP_T_IDENTIFIER && token.text == classname) {
+        if(::phpLexerNext(scanner, token) && token.type == kPHP_T_IDENTIFIER && token.Text() == classname) {
             // we found the class definition
             isOK = true;
             break;

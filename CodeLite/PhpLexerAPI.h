@@ -41,19 +41,23 @@ enum eLexerOptions {
 };
 
 struct WXDLLIMPEXP_CL phpLexerToken {
-    int type;
+private:
     std::string text;
+    wxString wtext;
+
+public:
+    int type;
     int lineNumber;
     int endLineNumber; // Usually, this is the same as lineNumber. Unless a multiple line token is found (heredoc,
                        // c-style comment etc)
-
+public:
     phpLexerToken()
         : type(-1)
         , lineNumber(-1)
         , endLineNumber(-1)
     {
     }
-    
+
     /**
      * @brief clear the token, i.e. IsNull() return true
      */
@@ -63,8 +67,22 @@ struct WXDLLIMPEXP_CL phpLexerToken {
         lineNumber = -1;
         endLineNumber = -1;
         text.clear();
+        wtext.clear();
     }
-    
+
+    void ClearText()
+    {
+        text.clear();
+        wtext.clear();
+    }
+
+    void SetText(const std::string& t)
+    {
+        text = t;
+        wtext = wxString(text.c_str(), wxConvUTF8);
+    }
+
+    const wxString& Text() const { return wtext; }
     bool IsNull() const { return type == -1; }
     /**
      * @brief is the current token a comment? (c++ or c comment)

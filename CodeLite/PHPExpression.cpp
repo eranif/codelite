@@ -165,7 +165,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 
     if(current && !current->empty()) {
         if(current->at(0).type == kPHP_T_OPEN_TAG) {
-            if(current->at(0).text == "<?") {
+            if(current->at(0).Text() == "<?") {
                 m_exprStartsWithOpenTag = true;
             }
             current->erase(current->begin());
@@ -372,7 +372,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 // However, $this also need a replacement so eventually, it becomes like this:
                 // \MyClass->getQuery->fetchAll-> and this is something that we can evaluate easily using
                 // our lookup tables (note that the parenthessis are missing on purpose)
-                PHPEntityBase::Ptr_t local = scope->FindChild(token.text);
+                PHPEntityBase::Ptr_t local = scope->FindChild(token.Text());
                 if(local && local->Cast<PHPEntityVariable>()) {
                     if(!local->Cast<PHPEntityVariable>()->GetTypeHint().IsEmpty()) {
                         // we have type hint! - use it
@@ -392,13 +392,13 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 } else {
                     // this local variable does not exist in the current scope
                     // This is probably a word-completion for local variable
-                    m_filter = token.text;
+                    m_filter = token.Text();
                     return "";
                 }
 
             } else if(token.type == kPHP_T_IDENTIFIER) {
                 // an identifier, convert it to the fullpath
-                firstToken = sourceFile->MakeIdentifierAbsolute(token.text);
+                firstToken = sourceFile->MakeIdentifierAbsolute(token.Text());
             }
         }
 
@@ -406,7 +406,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
             newExpr = firstToken;
             firstToken.Clear();
         } else {
-            newExpr << " " << token.text;
+            newExpr << " " << token.Text();
         }
     }
 
@@ -452,7 +452,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
             }
 
             part.m_operator = token.type;
-            part.m_operatorText = token.text;
+            part.m_operatorText = token.Text();
             m_parts.push_back(part);
 
             // cleanup
@@ -465,10 +465,10 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
         case kPHP_T_SELF:
         case kPHP_T_STATIC:
             part.m_textType = token.type;
-            currentText << token.text;
+            currentText << token.Text();
             break;
         default:
-            currentText << token.text;
+            currentText << token.Text();
             break;
         }
     }
@@ -489,7 +489,7 @@ wxString PHPExpression::GetExpressionAsString() const
 {
     wxString expr;
     for(size_t i = 0; i < m_expression.size(); ++i) {
-        expr << m_expression.at(i).text;
+        expr << m_expression.at(i).Text();
     }
     return expr;
 }

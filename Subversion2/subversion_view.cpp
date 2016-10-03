@@ -166,7 +166,7 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(SubversionView::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(SubversionView::OnFileAdded), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_RENAMED, wxCommandEventHandler(SubversionView::OnFileRenamed), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_RENAMED, &SubversionView::OnFileRenamed, this);
     EventNotifier::Get()->Connect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
 
@@ -924,14 +924,12 @@ void SubversionView::OnFileAdded(clCommandEvent& event)
     }
 }
 
-void SubversionView::OnFileRenamed(wxCommandEvent& event)
+void SubversionView::OnFileRenamed(clFileSystemEvent& event)
 {
-    wxArrayString* files = (wxArrayString*)event.GetClientData();
-
     // If the Svn Client Version is set to 0.0 it means that we dont have SVN client installed
-    if(m_plugin->GetSvnClientVersion() && files && (m_plugin->GetSettings().GetFlags() & SvnRenameFileInRepo)) {
-        wxString oldName = files->Item(0);
-        wxString newName = files->Item(1);
+    if(m_plugin->GetSvnClientVersion() && (m_plugin->GetSettings().GetFlags() & SvnRenameFileInRepo)) {
+        wxString oldName = event.GetPath();
+        wxString newName = event.GetNewpath();
 
         if(m_plugin->IsPathUnderSvn(wxFileName(oldName).GetPath()) == false) {
             event.Skip();
@@ -943,8 +941,9 @@ void SubversionView::OnFileRenamed(wxCommandEvent& event)
         m_plugin->GetConsole()->Execute(
             command, DoGetCurRepoPath(), new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
 
-    } else
+    } else {
         event.Skip();
+    }
 }
 
 void SubversionView::OnShowSvnInfo(wxCommandEvent& event)
@@ -1128,8 +1127,7 @@ void SubversionView::DisconnectEvents()
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(SubversionView::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(SubversionView::OnFileAdded), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_FILE_RENAMED, wxCommandEventHandler(SubversionView::OnFileRenamed), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_RENAMED, &SubversionView::OnFileRenamed, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
 }

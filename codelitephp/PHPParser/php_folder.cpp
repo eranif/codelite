@@ -7,6 +7,7 @@
 #include <wx/busyinfo.h>
 #include <wx/utils.h>
 #include "php_strings.h"
+#include "clFileSystemEvent.h"
 
 JSONElement PHPFolder::ToJSON() const
 {
@@ -63,15 +64,14 @@ bool PHPFolder::RenameFile(const wxString& old_filename, const wxString& new_fil
     // Step: 2
     // Notify the plugins, maybe they want to override the
     // default behavior (e.g. Subversion plugin)
-    wxArrayString f;
-    f.Add(fnOld.GetFullPath());
-    f.Add(fnNew.GetFullPath());
-
-    if(!::SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f)) {
-        // rename the file on filesystem
+    clFileSystemEvent e(wxEVT_FILE_RENAMED);
+    e.SetPath(fnOld.GetFullPath());
+    e.SetNewpath(fnNew.GetFullPath());
+    
+    if(!EventNotifier::Get()->ProcessEvent(e)) {
         wxRenameFile(fnOld.GetFullPath(), fnNew.GetFullPath());
     }
-
+    
     PHPEvent eventFileRenamed(wxEVT_PHP_FILE_RENAMED);
     eventFileRenamed.SetOldFilename(fnOld.GetFullPath());
     eventFileRenamed.SetFileName(fnNew.GetFullPath());

@@ -21,5 +21,6 @@ clFileSystemEvent& clFileSystemEvent::operator=(const clFileSystemEvent& src)
     
     // clFileSystemEvent specifics
     m_path = src.m_path;
+    m_newpath = src.m_newpath;
     return *this;
 }

@@ -98,6 +98,7 @@
 #include "code_completion_manager.h"
 #include "CompileCommandsCreateor.h"
 #include "CompilersModifiedDlg.h"
+#include "clFileSystemEvent.h"
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
 #include "clKeyboardManager.h"
@@ -1216,11 +1217,10 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
     // Step: 2
     // Notify the plugins, maybe they want to override the
     // default behavior (e.g. Subversion plugin)
-    wxArrayString f;
-    f.Add(origName);
-    f.Add(newName);
-
-    if(!SendCmdEvent(wxEVT_FILE_RENAMED, (void*)&f)) {
+    clFileSystemEvent renameEvent(wxEVT_FILE_RENAMED);
+    renameEvent.SetOldName(origName);
+    renameEvent.SetNewpath(newName);
+    if(!EventNotifier::Get()->ProcessEvent(renameEvent)) {
         // rename the file on filesystem
         wxLogNull noLog;
         wxRenameFile(origName, newName);

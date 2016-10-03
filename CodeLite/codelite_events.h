@@ -106,12 +106,15 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SAVE_BY_BUILD_START, wxComma
 // Use: clCommandEvent::GetString() or clCommandEvent::GetFileName() to get the name of file
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SAVED, clCommandEvent);
 
+// A file was renamed
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_RENAMED, clFileSystemEvent);
+
+// A file was "Save as" by the user
+// This event can also be fired if the user selected "Duplicate Tab"
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SAVEAS, clFileSystemEvent);
+
 // clientData is list of files which have been retagged (std::vector<wxFileName>*)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_RETAGGED, wxCommandEvent);
-
-// clientData is wxArrayString*: Item(0) = oldName
-//                               Item(1) = newName
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_RENAMED, wxCommandEvent);
 
 // The active editor was changed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEvent);

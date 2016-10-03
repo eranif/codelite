@@ -34,6 +34,7 @@
 #include <cl_command_event.h>
 #include "wx_ordered_map.h"
 #include "clTreeKeyboardInput.h"
+#include "clFileSystemEvent.h"
 
 class IManager;
 class ItemData;
@@ -153,6 +154,7 @@ protected:
     // PHP Workspace events
     void OnWorkspaceSyncStart(clCommandEvent& event);
     void OnWorkspaceSyncEnd(clCommandEvent& event);
+    void OnFileSaveAs(clFileSystemEvent& event);
 
 public:
     /** Constructor */

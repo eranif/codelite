@@ -93,6 +93,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &PHPWorkspaceView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &PHPWorkspaceView::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVEAS, &PHPWorkspaceView::OnFileSaveAs, this);
+
     BitmapLoader* bl = m_mgr->GetStdIcons();
     wxImageList* imageList = bl->MakeStandardMimeImageList();
     m_treeCtrlView->AssignImageList(imageList);
@@ -148,6 +150,7 @@ PHPWorkspaceView::~PHPWorkspaceView()
     Unbind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVEAS, &PHPWorkspaceView::OnFileSaveAs, this);
 }
 
 void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
@@ -971,10 +974,10 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
         if(!event.GetFormattedString().IsEmpty()) {
             fileContent = event.GetFormattedString();
         }
-        
+
         wxTreeItemId fileItem = DoCreateFile(folderId, pcd.GetFilepath().GetFullPath(), fileContent);
         DoSortItems();
-        
+
         // Set the focus the new class
         if(fileItem.IsOk()) {
             if(!m_treeCtrlView->IsExpanded(folderId)) {
@@ -982,7 +985,7 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
             }
             CallAfter(&PHPWorkspaceView::DoOpenFile, fileItem);
         }
-        
+
         // Trigger parsing
         PHPWorkspace::Get()->ParseWorkspace(false);
     }
@@ -1532,4 +1535,13 @@ void PHPWorkspaceView::OnWorkspaceSyncEnd(clCommandEvent& event)
 void PHPWorkspaceView::DoSetStatusBarText(const wxString& text, int timeOut)
 {
     clGetManager()->GetStatusBar()->SetMessage(text, timeOut);
+}
+
+void PHPWorkspaceView::OnFileSaveAs(clFileSystemEvent& event)
+{
+    event.Skip();
+    // File "Save as"
+    if(PHPWorkspace::Get()->IsOpen()) {
+        PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
+    }
 }

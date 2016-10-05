@@ -58,8 +58,8 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     std::map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
     if(iter != m_toolbarsBitmaps.end()) {
         const wxBitmap& b = iter->second;
-        CL_DEBUG("Loaded HiRes image: %s", newName);
-        CL_DEBUG("Image Size: (%d,%d)", b.GetWidth(), b.GetHeight());
+        clDEBUG1() << "Loaded HiRes image:" << newName << clEndl;
+        clDEBUG1() << "Image Size:" << b.GetWidth() << "x" << b.GetHeight() << clEndl;
         return b;
     }
 
@@ -357,7 +357,7 @@ void BitmapLoader::initialize()
             }
             clBitmap bmp;
             if(bmp.LoadFile(pngFile.GetFullPath(), wxBITMAP_TYPE_PNG)) {
-                CL_DEBUG("Adding new image: %s", pngFile.GetName());
+                clDEBUG1() << "Adding new image:" << pngFile.GetName() << clEndl;
                 m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
             }
         }

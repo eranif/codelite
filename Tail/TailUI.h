@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_TAIL_TAILUI_BASE_CLASSES_H
-#define _CODELITE_TAIL_TAILUI_BASE_CLASSES_H
+#ifndef CODELITE_TAIL_TAILUI_BASE_CLASSES_H
+#define CODELITE_TAIL_TAILUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -40,9 +40,11 @@ class TailPanelBase : public wxPanel
 {
 public:
     enum {
-        ID_TAIL_OPEN = 10001,
-        ID_TAIL_PAUSE = 10002,
-        ID_TAIL_PLAY = 10003,
+        ID_TAIL_CLEAR = 10001,
+        ID_TAIL_CLOSE = 10002,
+        ID_TAIL_OPEN = 10003,
+        ID_TAIL_PAUSE = 10004,
+        ID_TAIL_PLAY = 10005,
     };
 protected:
     wxAuiToolBar* m_auibar6;
@@ -50,10 +52,14 @@ protected:
 
 protected:
     virtual void OnOpenFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCloseUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPause(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPauseUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPlay(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPlayUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxAuiToolBar* GetAuibar6() { return m_auibar6; }

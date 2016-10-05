@@ -33,9 +33,17 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     m_auibar6->AddTool(ID_TAIL_OPEN, _("Open file"), wxXmlResource::Get()->LoadBitmap(wxT("16-folder")), wxNullBitmap, wxITEM_NORMAL, _("Open file"), wxT(""), NULL);
     
+    m_auibar6->AddTool(ID_TAIL_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_close")), wxNullBitmap, wxITEM_NORMAL, _("Close"), wxT(""), NULL);
+    
+    m_auibar6->AddSeparator();
+    
     m_auibar6->AddTool(ID_TAIL_PAUSE, _("Pause"), wxXmlResource::Get()->LoadBitmap(wxT("16-interrupt")), wxNullBitmap, wxITEM_NORMAL, _("Pause"), wxT(""), NULL);
     
     m_auibar6->AddTool(ID_TAIL_PLAY, _("Play"), wxXmlResource::Get()->LoadBitmap(wxT("16-debugger_start")), wxNullBitmap, wxITEM_NORMAL, _("Play"), wxT(""), NULL);
+    
+    m_auibar6->AddSeparator();
+    
+    m_auibar6->AddTool(ID_TAIL_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear"), wxT(""), NULL);
     m_auibar6->Realize();
     
     m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
@@ -84,19 +92,27 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     }
     // Connect events
     this->Connect(ID_TAIL_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnOpenFile), NULL, this);
+    this->Connect(ID_TAIL_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClose), NULL, this);
+    this->Connect(ID_TAIL_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnCloseUI), NULL, this);
     this->Connect(ID_TAIL_PAUSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnPause), NULL, this);
     this->Connect(ID_TAIL_PAUSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnPauseUI), NULL, this);
     this->Connect(ID_TAIL_PLAY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnPlay), NULL, this);
     this->Connect(ID_TAIL_PLAY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnPlayUI), NULL, this);
+    this->Connect(ID_TAIL_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClear), NULL, this);
+    this->Connect(ID_TAIL_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnClearUI), NULL, this);
     
 }
 
 TailPanelBase::~TailPanelBase()
 {
     this->Disconnect(ID_TAIL_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnOpenFile), NULL, this);
+    this->Disconnect(ID_TAIL_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClose), NULL, this);
+    this->Disconnect(ID_TAIL_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnCloseUI), NULL, this);
     this->Disconnect(ID_TAIL_PAUSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnPause), NULL, this);
     this->Disconnect(ID_TAIL_PAUSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnPauseUI), NULL, this);
     this->Disconnect(ID_TAIL_PLAY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnPlay), NULL, this);
     this->Disconnect(ID_TAIL_PLAY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnPlayUI), NULL, this);
+    this->Disconnect(ID_TAIL_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClear), NULL, this);
+    this->Disconnect(ID_TAIL_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnClearUI), NULL, this);
     
 }

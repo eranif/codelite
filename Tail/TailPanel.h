@@ -11,9 +11,15 @@ class TailPanel : public TailPanelBase
 {
     clFileSystemWatcher::Ptr_t m_fileWatcher;
     wxFileName m_file;
+    size_t m_lastPos;
 
 protected:
+    virtual void OnClear(wxCommandEvent& event);
+    virtual void OnClearUI(wxUpdateUIEvent& event);
+    virtual void OnClose(wxCommandEvent& event);
+    virtual void OnCloseUI(wxUpdateUIEvent& event);
     void DoClear();
+    void DoAppendText(const wxString& text);
 
 public:
     TailPanel(wxWindow* parent);
@@ -26,5 +32,6 @@ protected:
     virtual void OnPlay(wxCommandEvent& event);
     virtual void OnPlayUI(wxUpdateUIEvent& event);
     void OnFileModified(clFileSystemEvent& event);
+    void OnThemeChanged(wxCommandEvent& event);
 };
 #endif // TAILPANEL_H

@@ -81,7 +81,10 @@ void TailPanel::DoAppendText(const wxString& text)
     m_stc->SetReadOnly(false);
     m_stc->AppendText(text);
     m_stc->SetReadOnly(true);
-    m_stc->ScrollToEnd();
+    m_stc->SetSelectionEnd(m_stc->GetLength());
+    m_stc->SetSelectionStart(m_stc->GetLength());
+    m_stc->SetCurrentPos(m_stc->GetLength());
+    m_stc->EnsureCaretVisible();
 }
 
 void TailPanel::OnThemeChanged(wxCommandEvent& event)

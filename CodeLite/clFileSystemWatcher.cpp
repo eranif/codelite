@@ -110,11 +110,9 @@ void clFileSystemWatcher::OnTimer(wxTimerEvent& event)
 #ifdef __WXMSW__
             size_t prev_value = f.file_size;
             size_t curr_value = FileUtils::GetFileSize(fn);
-            wxLogMessage(wxString() << "File size:" << curr_value);
 #else
             time_t prev_value = f.lastModified;
             time_t curr_value = FileUtils::GetFileModificationTime(fn);
-            wxLogMessage(wxString() << "File modified:" << curr_value);
 #endif
 
             if(prev_value != curr_value) {

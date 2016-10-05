@@ -43,11 +43,11 @@ void TailPanel::OnOpenFile(wxCommandEvent& event)
 
 void TailPanel::OnPause(wxCommandEvent& event) { m_fileWatcher->Stop(); }
 
-void TailPanel::OnPauseUI(wxUpdateUIEvent& event) { event.Enable(m_fileWatcher->IsRunning()); }
+void TailPanel::OnPauseUI(wxUpdateUIEvent& event) { event.Enable(m_file.IsOk() && m_fileWatcher->IsRunning()); }
 
 void TailPanel::OnPlay(wxCommandEvent& event) { m_fileWatcher->Start(); }
 
-void TailPanel::OnPlayUI(wxUpdateUIEvent& event) { event.Enable(!m_fileWatcher->IsRunning()); }
+void TailPanel::OnPlayUI(wxUpdateUIEvent& event) { event.Enable(m_file.IsOk() && !m_fileWatcher->IsRunning()); }
 
 void TailPanel::DoClear()
 {

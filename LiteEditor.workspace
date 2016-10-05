@@ -56,6 +56,7 @@
   <Project Name="LLDBApp" Path="LLDBDebugger/codelite-lldb/codelite_lldb.project" Active="No"/>
   <Project Name="LLDBProtocol" Path="LLDBDebugger/LLDBProtocol/LLDBProtocol.project" Active="No"/>
   <Project Name="AutoSave" Path="AutoSave/AutoSave.project" Active="No"/>
+  <Project Name="Tail" Path="Tail/Tail.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Environment/>
@@ -105,6 +106,7 @@
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
+      <Project Name="Tail" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -154,6 +156,7 @@
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
+      <Project Name="Tail" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -203,6 +206,7 @@
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
+      <Project Name="Tail" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -252,6 +256,7 @@
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
+      <Project Name="Tail" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
@@ -301,11 +306,13 @@
       <Project Name="LLDBApp" ConfigName="Debug"/>
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
+      <Project Name="Tail" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Environment>WXWIN=D:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>
       <Project Name="CodeFormatter" ConfigName="Win_x64_Release"/>
@@ -342,6 +349,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="SpellCheck" ConfigName="Win_x64_Release"/>
       <Project Name="sqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="Subversion2" ConfigName="Win_x64_Release"/>
+      <Project Name="Tail" ConfigName="Win_x64_Release"/>
       <Project Name="Tweaks" ConfigName="Win_x64_Release"/>
       <Project Name="UnitTestPP" ConfigName="Win_x64_Release"/>
       <Project Name="WebTools" ConfigName="Win_x64_Release"/>
@@ -350,11 +358,11 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
-      <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="CodeFormatter" ConfigName="Win_x64_Debug"/>
@@ -391,6 +399,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="SpellCheck" ConfigName="Win_x64_Debug"/>
       <Project Name="sqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="Subversion2" ConfigName="Win_x64_Debug"/>
+      <Project Name="Tail" ConfigName="Win_x64_Debug"/>
       <Project Name="Tweaks" ConfigName="Win_x64_Debug"/>
       <Project Name="UnitTestPP" ConfigName="Win_x64_Debug"/>
       <Project Name="WebTools" ConfigName="Win_x64_Debug"/>
@@ -399,7 +408,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
-      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

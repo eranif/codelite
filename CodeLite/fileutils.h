@@ -141,5 +141,15 @@ public:
      * @brief get file permissions
      */
     static bool GetFilePermissions(const wxFileName& filename, mode_t& perm);
+    
+    /**
+     * @brief return the file modification time
+     */
+    static time_t GetFileModificationTime(const wxFileName& filename);
+    
+    /**
+     * @brief return the file size, in bytes
+     */
+    static size_t GetFileSize(const wxFileName& filename);
 };
 #endif // FILEUTILS_H

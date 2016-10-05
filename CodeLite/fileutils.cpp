@@ -218,8 +218,8 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
     CL_DEBUG("TTY is: %s\n", tty);
 }
 
-void
-FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password, int port)
+void FileUtils::OpenSSHTerminal(
+    const wxString& sshClient, const wxString& connectString, const wxString& password, int port)
 {
 #ifdef __WXMSW__
     wxString command;
@@ -264,7 +264,7 @@ bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
     for(size_t i = 0; i < masks.size(); ++i) {
         const wxString& pattern = masks.Item(i);
         if((!pattern.Contains("*") && lcFilename == pattern) ||
-           (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+            (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
             // use exact match
             return true;
         }
@@ -374,7 +374,7 @@ bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
     for(size_t i = 0; i < masks.size(); ++i) {
         const wxString& pattern = masks.Item(i);
         if((!pattern.Contains("*") && lcFilename == pattern) ||
-           (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+            (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
             // use exact match
             return true;
         }
@@ -397,4 +397,24 @@ bool FileUtils::GetFilePermissions(const wxFileName& filename, mode_t& perm)
         return true;
     }
     return false;
+}
+
+time_t FileUtils::GetFileModificationTime(const wxFileName& filename)
+{
+    wxString file = filename.GetFullPath();
+    struct stat buff;
+    const wxCharBuffer cname = file.mb_str(wxConvUTF8);
+    if(stat(cname.data(), &buff) < 0) {
+        return 0;
+    }
+    return buff.st_mtime;
+}
+
+size_t FileUtils::GetFileSize(const wxFileName& filename)
+{
+    wxFFile fp(filename.GetFullPath(), "rb");
+    if(fp.IsOpened()) {
+        return fp.Length();
+    }
+    return 0;
 }

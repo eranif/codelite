@@ -6,12 +6,14 @@
 #include <wx/filename.h>
 #include <vector>
 #include "clFileSystemEvent.h"
+#include "clEditorEditEventsHandler.h"
 
 class TailPanel : public TailPanelBase
 {
     clFileSystemWatcher::Ptr_t m_fileWatcher;
     wxFileName m_file;
     size_t m_lastPos;
+    clEditEventsHandler::Ptr_t m_editEvents;
 
 protected:
     virtual void OnClear(wxCommandEvent& event);

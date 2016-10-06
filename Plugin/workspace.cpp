@@ -156,16 +156,16 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
             if(!DoAddProject(projectPath, errMsg)) {
                 tmperr << wxString::Format(wxT("Error occurred while loading project: \"%s\"\nCodeLite has removed the "
                                                "faulty project from the workspace\n"),
-                                           projectPath.c_str());
+                    projectPath.c_str());
                 removedChildren.push_back(child);
             }
         } else if((child->GetName() == wxT("WorkspaceParserPaths")) ||
-                  (child->GetName() == wxT("WorkspaceParserMacros"))) {
+            (child->GetName() == wxT("WorkspaceParserMacros"))) {
             wxString swtlw = wxEmptyString;
             swtlw = XmlUtils::ReadString(m_doc.GetRoot(), "SWTLW");
             if(swtlw.CmpNoCase("yes") == 0) {
-                LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() |
-                                                        LocalWorkspace::EnableSWTLW);
+                LocalWorkspaceST::Get()->SetParserFlags(
+                    LocalWorkspaceST::Get()->GetParserFlags() | LocalWorkspace::EnableSWTLW);
                 SyncToLocalWorkspaceSTParserPaths();
                 SyncToLocalWorkspaceSTParserMacros();
             }
@@ -492,8 +492,7 @@ bool clCxxWorkspace::AddProject(const wxString& path, wxString& errMsg)
         if(!SaveXmlFile()) {
             wxMessageBox(
                 _("Failed to save workspace file to disk. Please check that you have permission to write to disk"),
-                _("CodeLite"),
-                wxICON_ERROR | wxOK);
+                _("CodeLite"), wxICON_ERROR | wxOK);
             return false;
         }
 
@@ -501,8 +500,8 @@ bool clCxxWorkspace::AddProject(const wxString& path, wxString& errMsg)
         return true;
 
     } else {
-        errMsg = wxString::Format(wxT("A project with a similar name '%s' already exists in the workspace"),
-                                  proj->GetName().c_str());
+        errMsg = wxString::Format(
+            wxT("A project with a similar name '%s' already exists in the workspace"), proj->GetName().c_str());
         return false;
     }
 }
@@ -622,7 +621,7 @@ wxString clCxxWorkspace::GetActiveProjectName() const
     wxXmlNode* child = root->GetChildren();
     while(child) {
         if(child->GetName() == wxT("Project") &&
-           child->GetPropVal(wxT("Active"), wxEmptyString).CmpNoCase(wxT("Yes")) == 0) {
+            child->GetPropVal(wxT("Active"), wxEmptyString).CmpNoCase(wxT("Yes")) == 0) {
             return child->GetPropVal(wxT("Name"), wxEmptyString);
         }
         child = child->GetNext();
@@ -1080,7 +1079,7 @@ void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) co
     for(; iter != m_projects.end(); ++iter) {
         BuildConfigPtr buildConf = iter->second->GetBuildConfiguration();
         if(buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
-           buildConf->IsCompilerRequired()) {
+            buildConf->IsCompilerRequired()) {
             iter->second->CreateCompileCommandsJSON(compile_commands);
         }
     }
@@ -1228,4 +1227,10 @@ WorkspaceConfigurationPtr clCxxWorkspace::GetSelectedConfig() const
     if(!GetBuildMatrix()) return NULL;
     wxString buildConf = GetBuildMatrix()->GetSelectedConfigurationName();
     return GetBuildMatrix()->GetConfigurationByName(buildConf);
+}
+
+void clCxxWorkspace::ClearIncludePathCache()
+{
+    std::for_each(m_projects.begin(), m_projects.end(),
+        [&](const clCxxWorkspace::ProjectMap_t::value_type& v) { v.second->ClearIncludePathCache(); });
 }

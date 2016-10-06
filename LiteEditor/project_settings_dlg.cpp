@@ -170,8 +170,12 @@ ProjectSettingsDlg::~ProjectSettingsDlg()
 void ProjectSettingsDlg::OnButtonOK(wxCommandEvent& event)
 {
     event.Skip();
-    OnButtonApply(event);
-    ManagerST::Get()->UpdateParserPaths(true);
+    SaveValues();
+    
+    // Clear the project include paths cache
+    clCxxWorkspaceST::Get()->ClearIncludePathCache();
+    ManagerST::Get()->CallAfter(&Manager::UpdateParserPaths, true);
+
 #ifndef __WXMAC__
     Destroy();
 #endif
@@ -181,7 +185,11 @@ void ProjectSettingsDlg::OnButtonApply(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     SaveValues();
-    ManagerST::Get()->UpdateParserPaths();
+    
+    // Clear the project include paths cache
+    clCxxWorkspaceST::Get()->ClearIncludePathCache();
+    ManagerST::Get()->CallAfter(&Manager::UpdateParserPaths, false);
+    // Clear the dirty flag to (this disables the "Apply" button in the UI)
     SetIsDirty(false);
 }
 

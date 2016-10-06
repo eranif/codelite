@@ -1176,15 +1176,18 @@ wxString Project::GetBestPathForVD(const wxString& vdPath)
     return basePath;
 }
 
-wxArrayString Project::GetIncludePaths(bool clearCache)
+wxArrayString Project::GetIncludePaths()
 {
-    wxArrayString paths;
+    if(!m_cachedIncludePaths.IsEmpty()) {
+        return m_cachedIncludePaths;
+    }
 
     BuildMatrixPtr matrix = GetWorkspace()->GetBuildMatrix();
     if(!matrix) {
-        return paths;
+        return m_cachedIncludePaths;
     }
 
+    wxStringSet_t paths;
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
 
     wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, GetName());
@@ -1194,10 +1197,6 @@ wxArrayString Project::GetIncludePaths(bool clearCache)
     if(buildConf) {
         // Apply the environment
         EnvSetter es(this);
-        
-        if(clearCache) {
-            s_backticks.clear();
-        }
 
         // Get the include paths and add them
         wxString projectIncludePaths = buildConf->GetIncludePath();
@@ -1219,7 +1218,7 @@ wxArrayString Project::GetIncludePaths(bool clearCache)
                     fn.MakeAbsolute(GetFileName().GetPath());
                 }
             }
-            paths.Add(fn.GetFullPath());
+            paths.insert(fn.GetFullPath());
         }
 
         // get the compiler options and add them
@@ -1244,11 +1243,16 @@ wxArrayString Project::GetIncludePaths(bool clearCache)
             // unchanged
             wxArrayString includePaths = DoBacktickToIncludePath(cmpOption);
             if(!includePaths.IsEmpty()) {
-                paths.insert(paths.end(), includePaths.begin(), includePaths.end());
+                std::for_each(includePaths.begin(), includePaths.end(), [&](const wxString& path) {
+                    wxFileName fn(path, "");
+                    paths.insert(fn.GetPath());
+                });
             }
         }
     }
-    return paths;
+
+    std::for_each(paths.begin(), paths.end(), [&](const wxString& path) { m_cachedIncludePaths.Add(path); });
+    return m_cachedIncludePaths;
 }
 
 wxArrayString Project::DoBacktickToPreProcessors(const wxString& backtick)
@@ -1942,3 +1946,5 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
         }
     }
 }
+
+void Project::ClearIncludePathCache() { m_cachedIncludePaths.clear(); }

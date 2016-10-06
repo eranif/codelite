@@ -217,7 +217,7 @@ public:
      * and the workspace specifc ones
      * @return true if the paths were modified, false otherwise
      */
-    void UpdateParserPaths(bool notify = false);
+    void UpdateParserPaths(bool notify);
 
 protected:
     void DoSetupWorkspace(const wxString& path);

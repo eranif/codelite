@@ -370,7 +370,7 @@ void Manager::DoSetupWorkspace(const wxString& path)
     }
 
     // Update the parser search paths
-    UpdateParserPaths();
+    UpdateParserPaths(false);
     clMainFrame::Get()->SelectBestEnvSet();
 
     // send an event to the main frame indicating that a re-tag is required
@@ -441,7 +441,7 @@ void Manager::CloseWorkspace()
     EnvironmentConfig::Instance()->SetSettings(vars);
     clMainFrame::Get()->SelectBestEnvSet();
 
-    UpdateParserPaths();
+    UpdateParserPaths(false);
     if(!IsShutdownInProgress()) {
         SendCmdEvent(wxEVT_WORKSPACE_CLOSED);
     }
@@ -926,28 +926,37 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
     }
 
     // Incase anything was changed, update the parser search paths
-    UpdateParserPaths();
-
+    clDEBUG() << "Updating parser paths..." << clEndl;
+    UpdateParserPaths(false);
+    clDEBUG() << "Updating parser paths...done" << clEndl;
+    
+    clDEBUG() << "Fetching project list..." << clEndl;
     // Start the parsing by collecing list of files to parse
     wxArrayString projects;
     GetProjectList(projects);
-
+    
+    clDEBUG() << "Fetching project list...done" << clEndl;
     std::vector<wxFileName> projectFiles;
     for(size_t i = 0; i < projects.GetCount(); i++) {
         ProjectPtr proj = GetProject(projects.Item(i));
         if(proj) {
+            clDEBUG() << "Fetching files for project:" << proj->GetName() << clEndl;
             proj->GetFiles(projectFiles, true);
+            clDEBUG() << "Fetching files for project:" << proj->GetName() << "...done" << clEndl;
         }
     }
 
     // Create a parsing request
     ParseRequest* parsingRequest = new ParseRequest(clMainFrame::Get());
+    clDEBUG() << "Filtering non relevant files..." << clEndl;
     for(size_t i = 0; i < projectFiles.size(); i++) {
         // filter any non valid coding file
         if(!TagsManagerST::Get()->IsValidCtagsFile(projectFiles.at(i))) continue;
         parsingRequest->_workspaceFiles.push_back(projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data());
     }
-
+    
+    clDEBUG() << "Filtering non relevant files...done" << clEndl;
+    
     if(parsingRequest->_workspaceFiles.empty()) {
         SetRetagInProgress(false);
         delete parsingRequest;
@@ -3351,6 +3360,8 @@ void Manager::DoShowQuickWatchDialog(const DebuggerEventData& event)
 
 void Manager::UpdateParserPaths(bool notify)
 {
+    wxBusyCursor bc;
+    
     wxArrayString localIncludePaths;
     wxArrayString localExcludePaths;
     wxArrayString projectIncludePaths;

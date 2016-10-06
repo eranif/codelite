@@ -51,7 +51,7 @@ public:
     SFTP(IManager* manager);
     ~SFTP();
 
-    void FileDownloadedSuccessfully(const wxString& localFileName);
+    void FileDownloadedSuccessfully(const wxString& localFileName, const wxString& remotePath);
     void OpenWithDefaultApp(const wxString& localFileName);
     void OpenContainingFolder(const wxString& localFileName);
     void AddRemoteFile(const RemoteFileInfo& remoteFile);

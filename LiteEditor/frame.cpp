@@ -2558,7 +2558,7 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
 
         // We use this method 'UpdateParserPaths' since it will also update the parser
         // thread with any workspace search/exclude paths related
-        ManagerST::Get()->UpdateParserPaths();
+        ManagerST::Get()->UpdateParserPaths(false);
 
         TagsManagerST::Get()->GetDatabase()->SetMaxWorkspaceTagToColour(m_tagsOptionsData.GetMaxItemToColour());
 

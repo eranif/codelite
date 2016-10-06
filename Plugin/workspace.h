@@ -385,7 +385,11 @@ public:
      * @brief return the active project
      */
     ProjectPtr GetActiveProject() const;
-
+    
+    /**
+     * @brief clear the workspace include path cache (for each project)
+     */
+    void ClearIncludePathCache();
 private:
     /**
      * Do the actual add project

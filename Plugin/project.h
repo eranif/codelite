@@ -177,6 +177,7 @@ private:
     clCxxWorkspace* m_workspace;
     ProjectSettingsPtr m_settings;
     wxString m_iconPath; /// Not serializable
+    wxArrayString m_cachedIncludePaths;
 
 private:
     void DoUpdateProjectSettings();
@@ -231,7 +232,12 @@ public:
      * If no workspace is associated, then the global workspace is returned
      */
     clCxxWorkspace* GetWorkspace();
-
+    
+    /**
+     * @brief clear the include path cache
+     */
+    void ClearIncludePathCache();
+    
     /**
      * @brief a project was renamed - update our dependeices if needed
      */
@@ -584,7 +590,7 @@ public:
      * The include paths are returned as an array in the order they appear in the
      * project settings
      */
-    wxArrayString GetIncludePaths(bool clearCache = false);
+    wxArrayString GetIncludePaths();
 
     /**
      * @brief return the pre-processors for this project.

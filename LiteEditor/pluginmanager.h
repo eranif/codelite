@@ -84,6 +84,8 @@ public:
     Notebook* GetOutputPaneNotebook();
     Notebook* GetWorkspacePaneNotebook();
     IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
+    IEditor* OpenFile(
+        const wxString& fileName, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString);
     IEditor* OpenFile(const BrowseRecord& rec);
     wxString GetStartupDirectory() const;
     void AddProject(const wxString& path);

@@ -432,7 +432,7 @@ void FileExplorerTab::OnTagNode(wxCommandEvent& event)
         LocalWorkspaceST::Get()->SetParserPaths(includePaths, excludePaths);
 
         // Update the parser
-        ManagerST::Get()->UpdateParserPaths();
+        ManagerST::Get()->UpdateParserPaths(false);
 
         // send notification to the main frame to perform retag
         if(retagRequires) {

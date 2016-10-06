@@ -108,7 +108,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
 
                 // We should also notify the parent window about download completed
                 if(req->GetDirection() == SFTPThreadRequet::kDownload) {
-                    m_plugin->CallAfter(&SFTP::FileDownloadedSuccessfully, req->GetLocalFile());
+                    m_plugin->CallAfter(&SFTP::FileDownloadedSuccessfully, req->GetLocalFile(), req->GetRemoteFile());
 
                 } else if(req->GetDirection() == SFTPThreadRequet::kDownloadAndOpenContainingFolder) {
                     m_plugin->CallAfter(&SFTP::OpenContainingFolder, req->GetLocalFile());

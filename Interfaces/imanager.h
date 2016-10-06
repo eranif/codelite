@@ -187,6 +187,12 @@ public:
         const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
 
     /**
+     * @brief open a file with a given tooltip and bitmap
+     */
+    virtual IEditor* OpenFile(
+        const wxString& fileName, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString) = 0;
+
+    /**
      * @brief Open file using browsing record
      * @param rec browsing record
      * @return true on success false otherwise

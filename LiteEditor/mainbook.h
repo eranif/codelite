@@ -136,12 +136,12 @@ public:
      * @param tabs [output]
      */
     void GetAllTabs(clTab::Vec_t& tabs);
-    
+
     /**
      * @brief return a list of the detached tabs
      */
     void GetDetachedTabs(clTab::Vec_t& tabs);
-    
+
     LEditor* FindEditor(const wxString& fileName);
     bool CloseEditor(const wxString& fileName) { return ClosePage(FindEditor(fileName)); }
 
@@ -154,10 +154,19 @@ public:
     LEditor* NewEditor();
 
     LEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
-        long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true);
+        long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
+        const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
     LEditor* OpenFile(const BrowseRecord& rec)
     {
         return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, OF_None, false);
+    }
+
+    /**
+     * @brief a simpler version: open a file with a given tooltip and bitmap
+     */
+    LEditor* OpenFile(const wxString& file_name, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString)
+    {
+        return OpenFile(file_name, "", wxNOT_FOUND, wxNOT_FOUND, OF_AddJump, false, bmp, tooltip);
     }
 
     bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString,

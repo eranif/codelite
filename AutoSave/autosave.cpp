@@ -89,7 +89,12 @@ void AutoSave::OnTimer(wxTimerEvent& event)
     std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
         // Save modified files. However, don't attempt to try and save an "Untitled" document :/
         if(editor->IsModified() && editor->GetFileName().Exists()) {
-            editor->Save();
+            
+            // Don't auto-save remote files marked with "SFTP"
+            if(!editor->GetClientData("sftp")) {
+                editor->Save();
+            }
+            
         }
     });
     

@@ -360,8 +360,10 @@ void SFTP::FileDownloadedSuccessfully(const wxString& localFileName, const wxStr
 {
     wxString tooltip;
     tooltip << "Local: " << localFileName << "\n"
-            << "SFTP: " << remotePath;
-    IEditor* editor = m_mgr->OpenFile(localFileName, m_mgr->GetStdIcons()->LoadBitmap("remote-folder"), tooltip);
+            << "Remote: " << remotePath;
+    
+    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("download");
+    IEditor* editor = m_mgr->OpenFile(localFileName, bmp, tooltip);
     if(editor) {
         // Tag this editor as a remote file
         SFTPClientData* cd = new SFTPClientData();

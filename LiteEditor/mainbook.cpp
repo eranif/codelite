@@ -637,7 +637,6 @@ bool MainBook::AddPage(wxWindow* win, const wxString& text, const wxString& tool
     int insert_at_index /*=wxNOT_FOUND*/)
 {
     if(m_book->GetPageIndex(win) != wxNOT_FOUND) return false;
-
     long MaxBuffers = clConfig::Get().Read(kConfigMaxOpenedTabs, 15);
     bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
     if(insert_at_index == wxNOT_FOUND) {
@@ -1047,9 +1046,11 @@ void MainBook::MarkEditorReadOnly(LEditor* editor)
         return;
     }
 #if !CL_USE_NATIVEBOOK
+    wxBitmap lockBmp = ::clGetManager()->GetStdIcons()->LoadBitmap("lock");
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
+        wxBitmap bmp = m_book->GetPageBitmap(i);
         if(editor == m_book->GetPage(i)) {
-            m_book->SetPageBitmap(i, readOnly ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap);
+            m_book->SetPageBitmap(i, readOnly ? lockBmp : bmp);
             break;
         }
     }

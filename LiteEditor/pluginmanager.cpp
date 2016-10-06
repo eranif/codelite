@@ -411,7 +411,7 @@ Notebook* PluginManager::GetOutputPaneNotebook() { return clMainFrame::Get()->Ge
 
 Notebook* PluginManager::GetWorkspacePaneNotebook() { return clMainFrame::Get()->GetWorkspacePane()->GetNotebook(); }
 
-IEditor PluginManager::OpenFile(const wxString& fileName, const wxBitmap& bmp, const wxString& tooltip)
+IEditor* PluginManager::OpenFile(const wxString& fileName, const wxBitmap& bmp, const wxString& tooltip)
 {
     IEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(fileName, bmp, tooltip);
     if(editor) {

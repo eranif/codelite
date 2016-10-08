@@ -561,6 +561,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectNa
         if(m_book->GetPageCount() == 0) hidden = GetSizer()->Hide(m_book);
 
         editor = new LEditor(m_book);
+        editor->SetEditorBitmap(bmp);
         editor->Create(projName, fileName);
 
         int sel = m_book->GetSelection();
@@ -1045,16 +1046,18 @@ void MainBook::MarkEditorReadOnly(LEditor* editor)
             wxOK | wxCENTER | wxICON_WARNING, this);
         return;
     }
+    
 #if !CL_USE_NATIVEBOOK
     wxBitmap lockBmp = ::clGetManager()->GetStdIcons()->LoadBitmap("lock");
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
-        wxBitmap bmp = m_book->GetPageBitmap(i);
+        wxBitmap orig_bmp = editor->GetEditorBitmap();
         if(editor == m_book->GetPage(i)) {
-            m_book->SetPageBitmap(i, readOnly ? lockBmp : bmp);
+            m_book->SetPageBitmap(i, readOnly ? lockBmp : orig_bmp);
             break;
         }
     }
 #endif
+
 }
 
 long MainBook::GetBookStyle() { return 0; }

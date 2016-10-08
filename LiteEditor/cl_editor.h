@@ -47,6 +47,7 @@
 #include "cl_unredo.h"
 #include "clEditorStateLocker.h"
 #include <wx/cmndata.h>
+#include <wx/bitmap.h>
 
 #define DEBUGGER_INDICATOR 11
 #define MATCH_INDICATOR 10
@@ -238,6 +239,7 @@ protected:
     wxString m_keywordClasses;
     /// A space delimited list of all the variables in this editor
     wxString m_keywordLocals;
+    wxBitmap m_editorBitmap;
 
 public:
     static bool m_ccShowPrivateMembers;
@@ -254,6 +256,9 @@ public:
     bool IsHasCCAnnotation() const { return m_hasCCAnnotation; }
     void ClearCCAnnotations();
 
+    void SetEditorBitmap(const wxBitmap& editorBitmap) { this->m_editorBitmap = editorBitmap; }
+    const wxBitmap& GetEditorBitmap() const { return m_editorBitmap; }
+    
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 

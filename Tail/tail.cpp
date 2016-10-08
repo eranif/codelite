@@ -37,6 +37,8 @@ Tail::Tail(IManager* manager)
     // Hook our output-pane panel
     wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("mime-txt");
     m_view = new TailPanel(m_mgr->GetOutputPaneNotebook());
+    m_editEventsHandler.Reset(new clEditEventsHandler(m_view->GetStc()));
+
     m_mgr->GetOutputPaneNotebook()->AddPage(m_view, "Tail", false, bmp);
     m_tabHelper.reset(new clTabTogglerHelper("Tail", m_view, "", NULL));
     m_tabHelper->SetOutputTabBmp(bmp);
@@ -68,6 +70,7 @@ void Tail::CreatePluginMenu(wxMenu* pluginsMenu) {}
 
 void Tail::UnPlug()
 {
+    m_editEventsHandler.Reset(NULL);
     // Unbind events
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &Tail::OnInitDone, this);
 

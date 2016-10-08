@@ -15,7 +15,6 @@ TailPanel::TailPanel(wxWindow* parent)
     m_fileWatcher->SetOwner(this);
     Bind(wxEVT_FILE_MODIFIED, &TailPanel::OnFileModified, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &TailPanel::OnThemeChanged, this);
-    m_editEvents.Reset(new clEditEventsHandler(m_stc));
 }
 
 TailPanel::~TailPanel()

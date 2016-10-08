@@ -3,12 +3,14 @@
 
 #include "plugin.h"
 #include "clTabTogglerHelper.h"
+#include "clEditorEditEventsHandler.h"
 
 class TailPanel;
 class Tail : public IPlugin
 {
     TailPanel* m_view;
     clTabTogglerHelper::Ptr_t m_tabHelper;
+    clEditEventsHandler::Ptr_t m_editEventsHandler;
 
 protected:
     void OnInitDone(wxCommandEvent& event);

@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_TAIL_TAILUI_BASE_CLASSES_H
-#define CODELITE_TAIL_TAILUI_BASE_CLASSES_H
+#ifndef _CODELITE_TAIL_TAILUI_BASE_CLASSES_H
+#define _CODELITE_TAIL_TAILUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -47,11 +47,12 @@ public:
         ID_TAIL_PLAY = 10005,
     };
 protected:
-    wxAuiToolBar* m_auibar6;
+    wxAuiToolBar* m_auibar;
+    std::map<int, wxMenu*> m_dropdownMenus;
     wxStyledTextCtrl* m_stc;
 
 protected:
-    virtual void OnOpenFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOpen(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCloseUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPause(wxCommandEvent& event) { event.Skip(); }
@@ -62,7 +63,9 @@ protected:
     virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar6() { return m_auibar6; }
+
+    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
     TailPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~TailPanelBase();

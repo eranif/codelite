@@ -26,25 +26,29 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    m_auibar6 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar6->SetToolBitmapSize(wxSize(16,16));
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer2->Add(m_auibar6, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer2->Add(m_auibar, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_auibar6->AddTool(ID_TAIL_OPEN, _("Open file"), wxXmlResource::Get()->LoadBitmap(wxT("16-folder")), wxNullBitmap, wxITEM_NORMAL, _("Open file"), wxT(""), NULL);
+    m_auibar->AddTool(ID_TAIL_OPEN, _("Open file"), wxXmlResource::Get()->LoadBitmap(wxT("16-folder")), wxNullBitmap, wxITEM_NORMAL, _("Open file"), wxT(""), NULL);
+    wxAuiToolBarItem* m_toolbarItemOpen = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
+    if (m_toolbarItemOpen) {
+        m_toolbarItemOpen->SetHasDropDown(true);
+    }
     
-    m_auibar6->AddTool(ID_TAIL_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_close")), wxNullBitmap, wxITEM_NORMAL, _("Close"), wxT(""), NULL);
+    m_auibar->AddTool(ID_TAIL_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("16-file_close")), wxNullBitmap, wxITEM_NORMAL, _("Close"), wxT(""), NULL);
     
-    m_auibar6->AddSeparator();
+    m_auibar->AddSeparator();
     
-    m_auibar6->AddTool(ID_TAIL_PAUSE, _("Pause"), wxXmlResource::Get()->LoadBitmap(wxT("16-interrupt")), wxNullBitmap, wxITEM_NORMAL, _("Pause"), wxT(""), NULL);
+    m_auibar->AddTool(ID_TAIL_PAUSE, _("Pause"), wxXmlResource::Get()->LoadBitmap(wxT("16-interrupt")), wxNullBitmap, wxITEM_NORMAL, _("Pause"), wxT(""), NULL);
     
-    m_auibar6->AddTool(ID_TAIL_PLAY, _("Play"), wxXmlResource::Get()->LoadBitmap(wxT("16-debugger_start")), wxNullBitmap, wxITEM_NORMAL, _("Play"), wxT(""), NULL);
+    m_auibar->AddTool(ID_TAIL_PLAY, _("Play"), wxXmlResource::Get()->LoadBitmap(wxT("16-debugger_start")), wxNullBitmap, wxITEM_NORMAL, _("Play"), wxT(""), NULL);
     
-    m_auibar6->AddSeparator();
+    m_auibar->AddSeparator();
     
-    m_auibar6->AddTool(ID_TAIL_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear"), wxT(""), NULL);
-    m_auibar6->Realize();
+    m_auibar->AddTool(ID_TAIL_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear"), wxT(""), NULL);
+    m_auibar->Realize();
     
     m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     // Configure the fold margin
@@ -91,7 +95,7 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
          GetSizer()->Fit(this);
     }
     // Connect events
-    this->Connect(ID_TAIL_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnOpenFile), NULL, this);
+    this->Connect(ID_TAIL_OPEN, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(TailPanelBase::OnOpen), NULL, this);
     this->Connect(ID_TAIL_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClose), NULL, this);
     this->Connect(ID_TAIL_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnCloseUI), NULL, this);
     this->Connect(ID_TAIL_PAUSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnPause), NULL, this);
@@ -101,11 +105,12 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     this->Connect(ID_TAIL_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClear), NULL, this);
     this->Connect(ID_TAIL_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnClearUI), NULL, this);
     
+    this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(TailPanelBase::ShowAuiToolMenu), NULL, this);
 }
 
 TailPanelBase::~TailPanelBase()
 {
-    this->Disconnect(ID_TAIL_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnOpenFile), NULL, this);
+    this->Disconnect(ID_TAIL_OPEN, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(TailPanelBase::OnOpen), NULL, this);
     this->Disconnect(ID_TAIL_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClose), NULL, this);
     this->Disconnect(ID_TAIL_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnCloseUI), NULL, this);
     this->Disconnect(ID_TAIL_PAUSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnPause), NULL, this);
@@ -115,4 +120,32 @@ TailPanelBase::~TailPanelBase()
     this->Disconnect(ID_TAIL_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClear), NULL, this);
     this->Disconnect(ID_TAIL_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnClearUI), NULL, this);
     
+    std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
+    for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
+        wxDELETE( menuIter->second );
+    }
+    m_dropdownMenus.clear();
+
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(TailPanelBase::ShowAuiToolMenu), NULL, this);
+}
+
+
+void TailPanelBase::ShowAuiToolMenu(wxAuiToolBarEvent& event)
+{
+    event.Skip();
+    if (event.IsDropDownClicked()) {
+        wxAuiToolBar* toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
+        if (toolbar) {
+            wxAuiToolBarItem* item = toolbar->FindTool(event.GetId());
+            if (item) {
+                std::map<int, wxMenu*>::iterator iter = m_dropdownMenus.find(item->GetId());
+                if (iter != m_dropdownMenus.end()) {
+                    event.Skip(false);
+                    wxPoint pt = event.GetItemRect().GetBottomLeft();
+                    pt.y++;
+                    toolbar->PopupMenu(iter->second, pt);
+                }
+            }
+        }
+    }
 }

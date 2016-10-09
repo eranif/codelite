@@ -6,6 +6,7 @@
 #include "codelite_events.h"
 #include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
+#include "cl_config.h"
 
 TailPanel::TailPanel(wxWindow* parent)
     : TailPanelBase(parent)
@@ -21,23 +22,6 @@ TailPanel::~TailPanel()
 {
     Unbind(wxEVT_FILE_MODIFIED, &TailPanel::OnFileModified, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &TailPanel::OnThemeChanged, this);
-}
-
-void TailPanel::OnOpenFile(wxCommandEvent& event)
-{
-    wxString filepath = ::wxFileSelector();
-    if(filepath.IsEmpty()) {
-        return;
-    }
-
-    DoClear();
-
-    m_file = filepath;
-    m_lastPos = FileUtils::GetFileSize(m_file);
-
-    // Stop the current watcher
-    m_fileWatcher->SetFile(m_file);
-    m_fileWatcher->Start();
 }
 
 void TailPanel::OnPause(wxCommandEvent& event) { m_fileWatcher->Stop(); }
@@ -106,3 +90,62 @@ void TailPanel::OnClearUI(wxUpdateUIEvent& event) { event.Enable(!m_stc->IsEmpty
 void TailPanel::OnClose(wxCommandEvent& event) { DoClear(); }
 
 void TailPanel::OnCloseUI(wxUpdateUIEvent& event) { event.Enable(m_file.IsOk()); }
+void TailPanel::OnOpen(wxAuiToolBarEvent& event)
+{
+    if(event.IsDropDownClicked()) {
+        wxPoint pt = event.GetItemRect().GetBottomLeft();
+        pt.y++;
+
+        wxMenu menu;
+        DoPrepareRecentItemsMenu(menu);
+        m_auibar->PopupMenu(&menu, pt);
+
+    } else {
+        wxString filepath = ::wxFileSelector();
+        if(filepath.IsEmpty() || !wxFileName::Exists(filepath)) {
+            return;
+        }
+
+        DoClear();
+        DoOpen(filepath);
+    }
+}
+
+void TailPanel::DoOpen(const wxString& filename)
+{
+    m_file = filename;
+    m_lastPos = FileUtils::GetFileSize(m_file);
+
+    wxArrayString recentItems = clConfig::Get().Read("tail", wxArrayString());
+    if(recentItems.Index(m_file.GetFullPath()) == wxNOT_FOUND) {
+        // add it
+        recentItems.Add(m_file.GetFullPath());
+        recentItems.Sort();
+        clConfig::Get().Write("tail", recentItems);
+    }
+
+    // Stop the current watcher
+    m_fileWatcher->SetFile(m_file);
+    m_fileWatcher->Start();
+}
+
+void TailPanel::DoPrepareRecentItemsMenu(wxMenu& menu)
+{
+    m_recentItemsMap.clear();
+    wxArrayString recentItems = clConfig::Get().Read("tail", wxArrayString());
+    for(size_t i = 0; i < recentItems.size(); ++i) {
+        int id = ::wxNewId();
+        m_recentItemsMap.insert(std::make_pair(id, recentItems.Item(i)));
+        menu.Append(id, recentItems.Item(i));
+    }
+
+    menu.Bind(wxEVT_MENU, &TailPanel::OnOpenRecentItem, this);
+}
+
+void TailPanel::OnOpenRecentItem(wxCommandEvent& event)
+{
+    if(m_recentItemsMap.count(event.GetId()) == 0) return;
+    wxString filepath = m_recentItemsMap[event.GetId()];
+    DoOpen(filepath);
+    m_recentItemsMap.clear();
+}

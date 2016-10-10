@@ -254,8 +254,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     wxTheApp->Connect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
 
-    EventNotifier::Get()->Connect(
-        wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDBAR_RELEASE_EDITOR, &QuickFindBar::OnReleaseEditor, this);
     Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(QuickFindBar::OnQuickFindCommandEvent), NULL, this);
 
     // Initialize the list with the history
@@ -735,13 +734,13 @@ void QuickFindBar::OnFindNext(wxCommandEvent& e)
     CHECK_FOCUS_WIN();
 
     // Highlighted text takes precedence over the current search string
-//    if(!IsShown()) {
-        wxString selectedText = DoGetSelectedText();
-        if(selectedText.IsEmpty() == false) {
-            m_findWhat->ChangeValue(selectedText);
-            m_findWhat->SelectAll();
-        }
-//    }
+    //    if(!IsShown()) {
+    wxString selectedText = DoGetSelectedText();
+    if(selectedText.IsEmpty() == false) {
+        m_findWhat->ChangeValue(selectedText);
+        m_findWhat->SelectAll();
+    }
+    //    }
 
     DoSearch(kSearchForward);
 }
@@ -751,13 +750,13 @@ void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
     CHECK_FOCUS_WIN();
 
     // Highlighted text takes precedence over the current search string
-//    if(!IsShown()) {
-        wxString selectedText = DoGetSelectedText();
-        if(selectedText.IsEmpty() == false) {
-            m_findWhat->ChangeValue(selectedText);
-            m_findWhat->SelectAll();
-        }
-//    }
+    //    if(!IsShown()) {
+    wxString selectedText = DoGetSelectedText();
+    if(selectedText.IsEmpty() == false) {
+        m_findWhat->ChangeValue(selectedText);
+        m_findWhat->SelectAll();
+    }
+    //    }
 
     DoSearch(0);
 }
@@ -1018,13 +1017,12 @@ QuickFindBar::~QuickFindBar()
         wxCommandEventHandler(QuickFindBar::OnFindNextCaret), NULL, this);
     wxTheApp->Disconnect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDBAR_RELEASE_EDITOR, &QuickFindBar::OnReleaseEditor, this);
 }
 
-void QuickFindBar::OnReleaseEditor(wxCommandEvent& e)
+void QuickFindBar::OnReleaseEditor(clFindEvent& e)
 {
-    wxStyledTextCtrl* win = reinterpret_cast<wxStyledTextCtrl*>(e.GetClientData());
+    wxStyledTextCtrl* win = e.GetCtrl();
     if(win && win == m_sci) {
         m_sci = NULL;
         Show(false);
@@ -1034,12 +1032,9 @@ void QuickFindBar::OnReleaseEditor(wxCommandEvent& e)
 wxStyledTextCtrl* QuickFindBar::DoCheckPlugins()
 {
     // Let the plugins a chance to provide their own window
-    wxCommandEvent evt(wxEVT_FINDBAR_ABOUT_TO_SHOW);
-    evt.SetClientData(NULL);
+    clFindEvent evt(wxEVT_FINDBAR_ABOUT_TO_SHOW);
     EventNotifier::Get()->ProcessEvent(evt);
-
-    wxStyledTextCtrl* win = reinterpret_cast<wxStyledTextCtrl*>(evt.GetClientData());
-    return win;
+    return evt.GetCtrl();
 }
 
 bool QuickFindBar::ShowForPlugins()

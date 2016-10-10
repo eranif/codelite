@@ -489,6 +489,27 @@ public:
 typedef void (wxEvtHandler::*clProjectSettingsEventFunction)(clProjectSettingsEvent&);
 #define clProjectSettingsEventHandler(func) wxEVENT_HANDLER_CAST(clProjectSettingsEventFunction, func)
 
+//---------------------------------------------------------------
+// Find event
+//---------------------------------------------------------------
+class WXDLLIMPEXP_CL clFindEvent : public clCommandEvent
+{
+    wxStyledTextCtrl* m_ctrl;
+
+public:
+    clFindEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clFindEvent(const clFindEvent& event);
+    clFindEvent& operator=(const clFindEvent& src);
+    virtual ~clFindEvent();
+    virtual wxEvent* Clone() const { return new clFindEvent(*this); }
+
+    void SetCtrl(wxStyledTextCtrl* ctrl) { this->m_ctrl = ctrl; }
+    wxStyledTextCtrl* GetCtrl() { return m_ctrl; }
+};
+
+typedef void (wxEvtHandler::*clFindEventFunction)(clFindEvent&);
+#define clFindEventHandler(func) wxEVENT_HANDLER_CAST(clFindEventFunction, func)
+
 // --------------------------------------------------------------
 // Parsing event
 // --------------------------------------------------------------

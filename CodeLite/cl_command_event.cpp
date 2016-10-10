@@ -330,6 +330,26 @@ clProjectSettingsEvent::clProjectSettingsEvent(wxEventType commandType, int wini
 clProjectSettingsEvent::~clProjectSettingsEvent() {}
 
 //------------------------------------------------------------------------
+// clFindEvent
+//------------------------------------------------------------------------
+clFindEvent& clFindEvent::operator=(const clFindEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_ctrl = src.m_ctrl;
+    return *this;
+}
+
+clFindEvent::clFindEvent(const clFindEvent& event) { *this = event; }
+
+clFindEvent::clFindEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+    , m_ctrl(NULL)
+{
+}
+
+clFindEvent::~clFindEvent() {}
+
+//------------------------------------------------------------------------
 // clParseEvent
 //------------------------------------------------------------------------
 

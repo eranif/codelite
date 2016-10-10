@@ -421,19 +421,18 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_REBUILD_WORKSPACE_TREE, wxCommand
 // Event type: clProjectSettingsEvent
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ACTIVE_PROJECT_CHANGED, clProjectSettingsEvent);
 
-// This event is fired by codelite when the find-bar is requested to be shown
-// the default for the find bar is not to be shown if it has no window associated with it
-// The Window is passed using the event.GetClientData()
-// The Window *MUST* be of type wxStyledTextCtrl
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FINDBAR_ABOUT_TO_SHOW, wxCommandEvent);
+// This event is fired by CodeLite before the find bar is shown
+// The handler can pass a wxStyledTextCtrl class pointer to be associated with the 
+// find bar by using the clFindEvent::SetCtrl() method
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FINDBAR_ABOUT_TO_SHOW, clFindEvent);
 
 // A plugin *must* send this event to ask the find bar to release any window associated with it
 // This event should be used with  'wxEVT_FINDBAR_ABOUT_TO_SHOW'. If this event is not sent when the window
 // is destroyed - it might result in a crash
-// The window pointer is passed using event.GetClientData()
-// If the editor managed by the find-bar is the same as event.GetClientData() -> the find-bar will un-refernce it
+// The window pointer is passed using event.SetCtrl()
+// If the editor managed by the find-bar is the same as event.GetCtrl() -> the find-bar will un-refernce it
 // but *IT DOES NOT FREE ITS MEMORY*
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FINDBAR_RELEASE_EDITOR, clFindEvent);
 
 // Instruct codelite to build a project only ( no deps )
 // the project name is passed in the wxCommandEvent::GetString

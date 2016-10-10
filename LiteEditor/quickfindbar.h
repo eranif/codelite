@@ -167,7 +167,7 @@ protected:
     void OnReplaceInSelectionUI(wxUpdateUIEvent& event);
     void OnQuickFindCommandEvent(wxCommandEvent& event);
     void OnReceivingFocus(wxFocusEvent& event);
-    void OnReleaseEditor(wxCommandEvent& e);
+    void OnReleaseEditor(clFindEvent& e);
 
     void OnFindNext(wxCommandEvent& e);
     void OnFindPrevious(wxCommandEvent& e);

@@ -226,9 +226,6 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& ev
         } else if(event.GetId() == XRCID("ID_QUICK_FIND_ALL")) {
             editor->QuickFindAll();
         }
-
-    } else if(event.GetId() == wxID_FIND) {
-        clMainFrame::Get()->GetMainBook()->ShowQuickBarForPlugins();
     }
 }
 

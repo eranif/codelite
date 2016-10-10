@@ -1965,12 +1965,13 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
         return;
     }
 
-    // Do the default and pass this event to the Editor
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if(!editor && (event.GetId() != wxID_FIND)) {
-        return;
+    if(editor) {
+        editor->OnMenuCommand(event);
+    } else if(event.GetId() == wxID_FIND) {
+        // Let the plugins handle this
+        GetMainBook()->ShowQuickBarForPlugins();
     }
-    editor->OnMenuCommand(event);
 }
 
 void clMainFrame::DispatchUpdateUIEvent(wxUpdateUIEvent& event)
@@ -2033,7 +2034,7 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     }
 
     event.Skip();
-    
+
     wxString msg;
     ManagerST::Get()->SetShutdownInProgress(true);
 
@@ -3767,9 +3768,9 @@ void clMainFrame::CompleteInitialization()
     eventShowTabBar.SetInt(clConfig::Get().Read(kConfigShowTabBar, true));
     OnShowTabBar(eventShowTabBar);
     ShowOrHideCaptions();
-    
+
     TabGroupsManager::Get(); // Ensure that the events are binded
-    
+
     ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
     m_initCompleted = true;
 

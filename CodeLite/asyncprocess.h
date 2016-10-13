@@ -33,19 +33,19 @@
 #include <wx/sharedptr.h>
 
 enum IProcessCreateFlags {
-    IProcessCreateDefault             = 0x0000001, // Default: create process with no console window
-    IProcessCreateConsole             = 0x0000002, // Create with console window shown
-    IProcessCreateWithHiddenConsole   = 0x0000004, // Create process with a hidden console
-    IProcessCreateSync                = 0x0000008, // Create a synchronous process (i.e. there is no background thread that performs the reads)
+    IProcessCreateDefault = (1 << 0),           // Default: create process with no console window
+    IProcessCreateConsole = (1 << 1),           // Create with console window shown
+    IProcessCreateWithHiddenConsole = (1 << 2), // Create process with a hidden console
+    IProcessCreateSync =
+        (1 << 3), // Create a synchronous process (i.e. there is no background thread that performs the reads)
+    IProcessCreateAsSuperuser = (1 << 4), // On platforms that support it, start the process as superuser
 };
 
 class WXDLLIMPEXP_CL IProcess;
 class WXDLLIMPEXP_CL IProcessCallback : public wxEvtHandler
 {
 public:
-    virtual void OnProcessOutput(const wxString &str) {
-        wxUnusedVar(str);
-    }
+    virtual void OnProcessOutput(const wxString& str) { wxUnusedVar(str); }
     virtual void OnProcessTerminated() {}
 };
 
@@ -59,16 +59,23 @@ public:
 class WXDLLIMPEXP_CL IProcess
 {
 protected:
-    wxEvtHandler *            m_parent;
-    int                       m_pid;
-    bool                      m_hardKill;
-    IProcessCallback*         m_callback;
-    size_t                    m_flags; // The creation flags
+    wxEvtHandler* m_parent;
+    int m_pid;
+    bool m_hardKill;
+    IProcessCallback* m_callback;
+    size_t m_flags; // The creation flags
 public:
     typedef wxSharedPtr<IProcess> Ptr_t;
-    
+
 public:
-    IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_hardKill(false), m_callback(NULL), m_flags(0) {}
+    IProcess(wxEvtHandler* parent)
+        : m_parent(parent)
+        , m_pid(-1)
+        , m_hardKill(false)
+        , m_callback(NULL)
+        , m_flags(0)
+    {
+    }
     virtual ~IProcess() {}
 
 public:
@@ -76,13 +83,13 @@ public:
     // under Linux / Mac the exit code is returned only after the signal child has been
     // handled by codelite
     static void SetProcessExitCode(int pid, int exitCode);
-    static bool GetProcessExitCode(int pid, int &exitCode);
-    
+    static bool GetProcessExitCode(int pid, int& exitCode);
+
     // Stop notifying the parent window about input/output from the process
     // this is useful when we wish to terminate the process onExit but we don't want
     // to know about its termination
     virtual void Detach() = 0;
-    
+
     // Read from process stdout - return immediately if no data is available
     virtual bool Read(wxString& buff) = 0;
 
@@ -93,13 +100,13 @@ public:
      * @brief wait for process to terminate and return all its output to the caller
      * Note that this function is blocking
      */
-    virtual void WaitForTerminate(wxString &output);
+    virtual void WaitForTerminate(wxString& output);
 
     /**
      * @brief this method is mostly needed on MSW where writing a password
      * is done directly on the console buffer rather than its stdin
      */
-    virtual bool WriteToConsole(const wxString &buff) = 0;
+    virtual bool WriteToConsole(const wxString& buff) = 0;
 
     // Return true if the process is still alive
     virtual bool IsAlive() = 0;
@@ -113,23 +120,13 @@ public:
     // termination event will be sent out
     virtual void Terminate() = 0;
 
-    void SetPid(int pid) {
-        this->m_pid = pid;
-    }
+    void SetPid(int pid) { this->m_pid = pid; }
 
-    int GetPid() const {
-        return m_pid;
-    }
+    int GetPid() const { return m_pid; }
 
-    void SetHardKill(bool hardKill) {
-        this->m_hardKill = hardKill;
-    }
-    bool GetHardKill() const {
-        return m_hardKill;
-    }
-    IProcessCallback* GetCallback() {
-        return m_callback;
-    }
+    void SetHardKill(bool hardKill) { this->m_hardKill = hardKill; }
+    bool GetHardKill() const { return m_hardKill; }
+    IProcessCallback* GetCallback() { return m_callback; }
 };
 
 // Help method
@@ -141,7 +138,8 @@ public:
  * @param workingDir set the working directory of the executed process
  * @return
  */
-WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, size_t flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd,
+    size_t flags = IProcessCreateDefault, const wxString& workingDir = wxEmptyString);
 
 /**
  * @brief create synchronus process
@@ -150,7 +148,8 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString
  * @param workingDir working directory for the new process
  * @return IPorcess handle on succcess
  */
-WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
+WXDLLIMPEXP_CL IProcess* CreateSyncProcess(
+    const wxString& cmd, size_t flags = IProcessCreateDefault, const wxString& workingDir = wxEmptyString);
 
 /**
  * @brief start process
@@ -161,7 +160,7 @@ WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = I
  * @param workingDir set the working directory of the executed process
  * @return
  */
-WXDLLIMPEXP_CL IProcess* CreateAsyncProcessCB(wxEvtHandler *parent, IProcessCallback* cb, const wxString& cmd, size_t flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
-
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const wxString& cmd,
+    size_t flags = IProcessCreateDefault, const wxString& workingDir = wxEmptyString);
 
 #endif // I_PROCESS_H

@@ -371,9 +371,21 @@ bool UnixProcessImpl::Write(const wxString& buff)
 IProcess* UnixProcessImpl::Execute(
     wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDirectory, IProcessCallback* cb)
 {
-    wxUnusedVar(flags);
+    wxString newCmd = cmd;
+    if((flags & IProcessCreateAsSuperuser)) {
+        if(wxFileName::Exists("/usr/bin/sudo")) {
+            newCmd.Prepend("/usr/bin/sudo --askpass ");
+            clDEBUG1() << "Executing command:" << newCmd << clEndl;
+            
+        } else {
+            clWARNING() << "Unable to run command: '" << cmd
+                        << "' as superuser: /usr/bin/sudo: no such file or directory" << clEndl;
+        }
+    } else {
+        clDEBUG1() << "Executing command:" << newCmd << clEndl;
+    }
 
-    make_argv(cmd);
+    make_argv(newCmd);
     if(argc == 0) {
         return NULL;
     }
@@ -397,7 +409,10 @@ IProcess* UnixProcessImpl::Execute(
         }
 
         // execute the process
-        execvp(argv[0], argv);
+        errno = 0;
+        if(execvp(argv[0], argv) < 0) {
+            clERROR() << "execvp('" << newCmd << "') error:" << strerror(errno) << clEndl;
+        }
 
         // if we got here, we failed...
         exit(0);

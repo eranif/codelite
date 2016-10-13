@@ -1445,8 +1445,13 @@ bool DbgGdb::Attach(const DebugSessionInfo& si)
     m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
     m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), wxGetCwd().c_str()));
     m_observer->UpdateAddLine(wxString::Format(wxT("Starting debugger  : %s"), cmd.c_str()));
-
-    m_gdbProcess = CreateAsyncProcess(this, cmd);
+    
+    // Build the process creation flags
+    size_t createFlags = IProcessCreateDefault;
+    if(m_info.flags & DebuggerInformation::kRunAsSuperuser) {
+        createFlags |= IProcessCreateAsSuperuser;
+    }
+    m_gdbProcess = CreateAsyncProcess(this, cmd, createFlags);
     if(!m_gdbProcess) {
         return false;
     }

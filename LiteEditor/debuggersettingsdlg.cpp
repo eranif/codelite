@@ -322,7 +322,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
             } else {
                 info.flags |= DebuggerInformation::kPrintObjectOff;
             }
-            if(page->m_checkBoxRunAsSuperuser) {
+            if(page->m_checkBoxRunAsSuperuser->IsChecked()) {
                 info.flags |= DebuggerInformation::kRunAsSuperuser;
             } else {
                 info.flags &= ~DebuggerInformation::kRunAsSuperuser;

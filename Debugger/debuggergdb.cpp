@@ -261,12 +261,12 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
     if(m_info.flags & DebuggerInformation::kRunAsSuperuser) {
         flags |= IProcessCreateAsSuperuser;
     }
-    
+
     m_gdbProcess = CreateAsyncProcess(this, cmd, flags, si.cwd);
     if(!m_gdbProcess) {
         return false;
     }
-    
+
 #ifdef __WXMSW__
     if(GetIsRemoteDebugging()) {
         // This doesn't really make sense, but AttachConsole fails without it...
@@ -363,8 +363,7 @@ bool DbgGdb::Stop()
     m_goingDown = true;
 
     if(!m_attachedMode) {
-
-        wxKill(m_debuggeePid, wxSIGKILL, NULL, wxKILL_CHILDREN);
+        clKill((int)m_debuggeePid, wxSIGKILL, true, (m_info.flags & DebuggerInformation::kRunAsSuperuser));
     }
 
     wxCommandEvent event(wxEVT_GDB_STOP_DEBUGGER);
@@ -584,7 +583,9 @@ bool DbgGdb::Interrupt()
         // debuggee process
         return false;
 #else
-        kill(m_debuggeePid, SIGINT);
+        // Send SIGINT to the process to interrupt it
+        clKill((int)m_debuggeePid, wxSIGINT, false, (m_info.flags & DebuggerInformation::kRunAsSuperuser));
+        // kill(m_debuggeePid, SIGINT);
         return true;
 #endif
     } else {

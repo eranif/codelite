@@ -416,7 +416,9 @@ class DebuggerInformation : public SerializedObject
 public:
     enum eGdbFlags {
         kPrintObjectOff = (1 << 0),
+        kRunAsSuperuser = (1 << 1), // Run GDB as superuser
     };
+
     wxString name;
     wxString path;
     bool enableDebugLog;

@@ -44,18 +44,18 @@ class DebuggerPageBase;
 ///////////////////////////////////////////////////
 class DebuggerPage : public DbgPageGeneralBase
 {
-	friend class DebuggerSettingsDlg;
-	wxString m_title;
+    friend class DebuggerSettingsDlg;
+    wxString m_title;
 
 protected:
-	void OnBrowse     (wxCommandEvent &e);
-	void OnDebugAssert(wxCommandEvent &e);
+    void OnBrowse(wxCommandEvent& e);
+    void OnDebugAssert(wxCommandEvent& e);
 
-	virtual void OnWindowsUI(wxUpdateUIEvent& event);
+    virtual void OnWindowsUI(wxUpdateUIEvent& event);
 
 public:
-	DebuggerPage(wxWindow *parent, wxString title);
-	virtual ~DebuggerPage();
+    DebuggerPage(wxWindow* parent, wxString title);
+    virtual ~DebuggerPage();
 };
 
 ///////////////////////////////////////////////////
@@ -63,14 +63,15 @@ public:
 ///////////////////////////////////////////////////
 class DebuggerPageMisc : public DbgPageMiscBase
 {
-	friend class DebuggerSettingsDlg;
-	wxString m_title;
-public:
-	virtual void OnDebugAssert(wxCommandEvent& event);
-	virtual void OnWindowsUI(wxUpdateUIEvent& event);
+    friend class DebuggerSettingsDlg;
+    wxString m_title;
 
-	DebuggerPageMisc(wxWindow *parent, const wxString &title);
-	virtual ~DebuggerPageMisc();
+public:
+    virtual void OnDebugAssert(wxCommandEvent& event);
+    virtual void OnWindowsUI(wxUpdateUIEvent& event);
+
+    DebuggerPageMisc(wxWindow* parent, const wxString& title);
+    virtual ~DebuggerPageMisc();
 };
 
 ///////////////////////////////////////////////////
@@ -78,11 +79,12 @@ public:
 ///////////////////////////////////////////////////
 class DebuggerPageStartupCmds : public DbgPageStartupCmdsBase
 {
-	friend class DebuggerSettingsDlg;
-	wxString m_title;
+    friend class DebuggerSettingsDlg;
+    wxString m_title;
+
 public:
-	DebuggerPageStartupCmds(wxWindow *parent, const wxString &title);
-	virtual ~DebuggerPageStartupCmds();
+    DebuggerPageStartupCmds(wxWindow* parent, const wxString& title);
+    virtual ~DebuggerPageStartupCmds();
 };
 
 ///////////////////////////////////////////////////
@@ -90,41 +92,43 @@ public:
 ///////////////////////////////////////////////////
 class DbgPagePreDefTypes : public DbgPagePreDefTypesBase
 {
-	friend class DebuggerSettingsDlg;
+    friend class DebuggerSettingsDlg;
+
 public:
-	DbgPagePreDefTypes(wxWindow *parent);
-	virtual ~DbgPagePreDefTypes();
+    DbgPagePreDefTypes(wxWindow* parent);
+    virtual ~DbgPagePreDefTypes();
 
-	virtual void OnDeleteSet(wxCommandEvent& event);
-	virtual void OnDeleteSetUI(wxUpdateUIEvent& event);
-	virtual void OnNewSet(wxCommandEvent& event);
+    virtual void OnDeleteSet(wxCommandEvent& event);
+    virtual void OnDeleteSetUI(wxUpdateUIEvent& event);
+    virtual void OnNewSet(wxCommandEvent& event);
 
-	void Save();
+    void Save();
 };
 
 /** Implementing DebuggerSettingsBaseDlg */
 class DebuggerSettingsDlg : public DebuggerSettingsBaseDlg
 {
 protected:
-	void Initialize();
-	void OnOk(wxCommandEvent &e);
-	void OnButtonCancel(wxCommandEvent &e);
+    void Initialize();
+    void OnOk(wxCommandEvent& e);
+    void OnButtonCancel(wxCommandEvent& e);
 
 public:
-	/** Constructor */
-	DebuggerSettingsDlg( wxWindow* parent );
-	virtual ~DebuggerSettingsDlg();
+    /** Constructor */
+    DebuggerSettingsDlg(wxWindow* parent);
+    virtual ~DebuggerSettingsDlg();
 };
-
 
 class NewPreDefinedSetDlg : public NewPreDefinedSetBaseDlg
 {
 protected:
-
 public:
-	NewPreDefinedSetDlg(wxWindow* parent) : NewPreDefinedSetBaseDlg(parent){}
-	virtual ~NewPreDefinedSetDlg(){}
-    
+    NewPreDefinedSetDlg(wxWindow* parent)
+        : NewPreDefinedSetBaseDlg(parent)
+    {
+    }
+    virtual ~NewPreDefinedSetDlg() {}
+
     wxTextCtrl* GetNameTextctl() { return m_textCtrlName; }
     wxChoice* GetChoiceCopyFrom() { return m_choiceCopyFrom; }
     wxCheckBox* GetCheckBoxMakeActive() { return m_checkBoxMakeActive; }

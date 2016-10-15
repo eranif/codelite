@@ -315,7 +315,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
             info.whenBreakpointHitRaiseCodelite = page->m_raiseOnBpHit->IsChecked();
             info.charArrAsPtr = page->m_checkBoxCharArrAsPtr->IsChecked();
             info.enableGDBPrettyPrinting = page->m_checkBoxUsePrettyPrinting->IsChecked();
-            
+
             // Update the flags
             if(page->m_checkBoxPrintObjectOn->IsChecked()) {
                 info.flags &= ~DebuggerInformation::kPrintObjectOff;
@@ -373,3 +373,9 @@ void DebuggerSettingsDlg::OnButtonCancel(wxCommandEvent& e)
 }
 
 DebuggerSettingsDlg::~DebuggerSettingsDlg() {}
+
+void DebuggerPage::OnSuperuserUI(wxUpdateUIEvent& event)
+{
+    event.Check(false);
+    event.Enable(false);
+}

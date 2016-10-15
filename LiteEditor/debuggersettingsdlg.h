@@ -48,6 +48,7 @@ class DebuggerPage : public DbgPageGeneralBase
     wxString m_title;
 
 protected:
+    virtual void OnSuperuserUI(wxUpdateUIEvent& event);
     void OnBrowse(wxCommandEvent& e);
     void OnDebugAssert(wxCommandEvent& e);
 

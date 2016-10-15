@@ -170,6 +170,7 @@ protected:
 
 protected:
     virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSuperuserUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }

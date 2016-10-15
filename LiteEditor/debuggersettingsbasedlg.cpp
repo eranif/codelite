@@ -467,12 +467,14 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     }
     // Connect events
     m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPageGeneralBase::OnBrowse), NULL, this);
+    m_checkBoxRunAsSuperuser->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageGeneralBase::OnSuperuserUI), NULL, this);
     
 }
 
 DbgPageGeneralBase::~DbgPageGeneralBase()
 {
     m_buttonBrowse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPageGeneralBase::OnBrowse), NULL, this);
+    m_checkBoxRunAsSuperuser->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageGeneralBase::OnSuperuserUI), NULL, this);
     
 }
 

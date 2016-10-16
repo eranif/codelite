@@ -41,10 +41,8 @@
 #include "globals.h"
 #include "imanager.h"
 
-VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent,
-                                                         clCxxWorkspace* wsp,
-                                                         const wxString& initialPath,
-                                                         const wxString& projectname)
+VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(
+    wxWindow* parent, clCxxWorkspace* wsp, const wxString& initialPath, const wxString& projectname)
     : VirtualDirectorySelectorDlgBaseClass(parent)
     , m_workspace(wsp)
     , m_projectName(projectname)
@@ -131,11 +129,11 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
     m_treeCtrl->DeleteAllItems();
 
     if(m_images == NULL) {
-        m_images = new wxImageList(16, 16);
+        m_images = new wxImageList(clGetScaledSize(16), clGetScaledSize(16));
         BitmapLoader& bmpLoader = *clGetManager()->GetStdIcons();
-        m_images->Add(bmpLoader.LoadBitmap(wxT("workspace/16/workspace"))); // 0
-        m_images->Add(bmpLoader.LoadBitmap(wxT("mime/16/folder")));         // 1
-        m_images->Add(bmpLoader.LoadBitmap(wxT("workspace/16/project")));   // 2
+        m_images->Add(bmpLoader.LoadBitmap(wxT("cxx-workspace"))); // 0
+        m_images->Add(bmpLoader.LoadBitmap(wxT("folder-yellow"))); // 1
+        m_images->Add(bmpLoader.LoadBitmap(wxT("project")));       // 2
         m_treeCtrl->AssignImageList(m_images);
     }
 
@@ -195,11 +193,11 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
             }
 
             // add the item to the tree
-            node->GetData().itemId = m_treeCtrl->AppendItem(parentHti,            // parent
-                                                            node->GetData().name, // display name
-                                                            imgId,                // item image index
-                                                            imgId                 // selected item image
-                                                            );
+            node->GetData().itemId = m_treeCtrl->AppendItem(parentHti, // parent
+                node->GetData().name,                                  // display name
+                imgId,                                                 // item image index
+                imgId                                                  // selected item image
+                );
             m_treeCtrl->SortChildren(parentHti);
         }
 
@@ -336,8 +334,8 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
     curpath << ":" << newname;
     wxString errmsg;
     if(!clCxxWorkspaceST::Get()->CreateVirtualDirectory(curpath, errmsg, true)) {
-        wxMessageBox(
-            _("Error occurred while creating virtual folder:\n") + errmsg, "codelite", wxOK | wxICON_WARNING | wxCENTER);
+        wxMessageBox(_("Error occurred while creating virtual folder:\n") + errmsg, "codelite",
+            wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
 

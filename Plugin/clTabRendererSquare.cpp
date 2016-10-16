@@ -56,17 +56,17 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
             dc.DrawBitmap(colours.closeButton, tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY);
         }
-        dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
+        //dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
 
     } else if(style & kNotebook_LeftTabs) {
         dc.DrawRotatedText(tabInfo.m_label, tabInfo.m_textX, rr.GetY() + rr.GetHeight() - tabInfo.m_textY, 90.0);
-        dc.DrawLine(rr.GetBottomLeft(), rr.GetBottomRight());
+        //dc.DrawLine(rr.GetBottomLeft(), rr.GetBottomRight());
         dc.SetPen(bgColour);
         DRAW_LINE(rr.GetTopLeft(), rr.GetBottomLeft());
 
     } else if(style & kNotebook_RightTabs) {
         dc.DrawRotatedText(tabInfo.m_label, tabInfo.m_textX, rr.GetY() + rr.GetHeight() - tabInfo.m_textY, 90);
-        dc.DrawLine(rr.GetBottomLeft(), rr.GetBottomRight());
+        //dc.DrawLine(rr.GetBottomLeft(), rr.GetBottomRight());
         dc.SetPen(bgColour);
         DRAW_LINE(rr.GetTopRight(), rr.GetBottomRight());
 
@@ -79,7 +79,7 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
             dc.DrawBitmap(colours.closeButton, tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY);
         }
-        dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
+        //dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
     }
 }
 

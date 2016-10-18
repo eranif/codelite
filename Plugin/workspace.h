@@ -80,6 +80,10 @@ public:
 
 private:
     void DoUpdateBuildMatrix();
+    /**
+     * @brief mark all projects as non-active
+     */
+    void DoUnselectActiveProject();
 
 public:
     /**
@@ -227,9 +231,8 @@ public:
     /**
      * Set project as active
      * \param name  project name
-     * \param active state
      */
-    void SetActiveProject(const wxString& name, bool active);
+    void SetActiveProject(const wxString& name);
 
     /**
      * Add new virtual directoy to workspace
@@ -385,11 +388,12 @@ public:
      * @brief return the active project
      */
     ProjectPtr GetActiveProject() const;
-    
+
     /**
      * @brief clear the workspace include path cache (for each project)
      */
     void ClearIncludePathCache();
+
 private:
     /**
      * Do the actual add project

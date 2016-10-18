@@ -316,7 +316,7 @@ void Manager::OpenWorkspace(const wxString& path)
         wxArrayString list;
         clCxxWorkspaceST::Get()->GetProjectList(list);
         if(!list.IsEmpty()) {
-            clCxxWorkspaceST::Get()->SetActiveProject(list.Item(0), true);
+            clCxxWorkspaceST::Get()->SetActiveProject(list.Item(0));
         }
     }
 
@@ -719,8 +719,7 @@ wxString Manager::GetActiveProjectName() { return clCxxWorkspaceST::Get()->GetAc
 
 void Manager::SetActiveProject(const wxString& name)
 {
-    clCxxWorkspaceST::Get()->SetActiveProject(clCxxWorkspaceST::Get()->GetActiveProjectName(), false);
-    clCxxWorkspaceST::Get()->SetActiveProject(name, true);
+    clCxxWorkspaceST::Get()->SetActiveProject(name);
     clMainFrame::Get()->SelectBestEnvSet();
 
     // Notify about the change

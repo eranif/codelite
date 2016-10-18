@@ -2,7 +2,7 @@
 
 AutoSaveSettings::AutoSaveSettings()
     : clConfigItem("auto-save")
-    , m_flags(kEnabled)
+    , m_flags(0)
     , m_checkInterval(5)
 {
 }

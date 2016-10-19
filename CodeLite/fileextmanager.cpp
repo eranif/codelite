@@ -216,30 +216,6 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
     return ft == TypeSourceC || ft == TypeSourceCpp || ft == TypeHeader;
 }
 
-bool FileExtManager::IsJavascriptFile(const wxString& filename)
-{
-    FileType ft = GetType(filename);
-    if(ft == TypeOther) {
-        // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
-            return false;
-        }
-    }
-    return ft == TypeJS;
-}
-
-bool FileExtManager::IsPHPFile(const wxString& filename)
-{
-    FileType ft = GetType(filename);
-    if(ft == TypeOther) {
-        // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
-            return false;
-        }
-    }
-    return ft == TypePhp;
-}
-
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
     wxString fileContent;
@@ -259,7 +235,7 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
     return false;
 }
 
-bool FileExtManager::IsJavaFile(const wxString& filename)
+bool FileExtManager::IsFileType(const wxString& filename, FileExtManager::FileType type)
 {
     FileType ft = GetType(filename);
     if(ft == TypeOther) {
@@ -268,5 +244,11 @@ bool FileExtManager::IsJavaFile(const wxString& filename)
             return false;
         }
     }
-    return ft == TypeJava;
+    return (ft == type);
 }
+
+bool FileExtManager::IsJavascriptFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypeJS); }
+
+bool FileExtManager::IsPHPFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypePhp); }
+
+bool FileExtManager::IsJavaFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypeJava); }

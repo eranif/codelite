@@ -113,7 +113,7 @@ public:
         m_buffer << "]";
         return *this;
     }
-    
+
     /**
      * @brief special wxFileName printing
      */
@@ -128,11 +128,12 @@ public:
         m_buffer << fn.GetFullPath();
         return *this;
     }
-    
+
     /**
      * @brief append any type to the buffer, take log level into consideration
      */
-    template <typename T> FileLogger& Append(const T& elem, int level)
+    template <typename T>
+    FileLogger& Append(const T& elem, int level)
     {
         if(level > m_verbosity) {
             return *this;
@@ -156,7 +157,8 @@ inline FileLogger& clEndl(FileLogger& d)
     return d;
 }
 
-template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
+template <typename T>
+FileLogger& operator<<(FileLogger& logger, const T& obj)
 {
     logger.Append(obj, logger.GetRequestedLogLevel());
     return logger;
@@ -172,24 +174,18 @@ template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
 #define CL_DEBUG1_ARR(arr) FileLogger::Get().AddLogLine(arr, FileLogger::Developer);
 
 // New API
-#define clDEBUG()                                           \
-    FileLogger::Get().SetRequestedLogLevel(FileLogger::Dbg) \
-        << FileLogger::Get().Prefix(FileLogger::Get().GetRequestedLogLevel())
+#define clDEBUG() FileLogger::Get().SetRequestedLogLevel(FileLogger::Dbg) << FileLogger::Get().Prefix(FileLogger::Dbg)
 
-#define clDEBUG1()                                                \
-    FileLogger::Get().SetRequestedLogLevel(FileLogger::Developer) \
-        << FileLogger::Get().Prefix(FileLogger::Get().GetRequestedLogLevel())
+#define clDEBUG1() \
+    FileLogger::Get().SetRequestedLogLevel(FileLogger::Developer) << FileLogger::Get().Prefix(FileLogger::Developer)
 
-#define clERROR()                                             \
-    FileLogger::Get().SetRequestedLogLevel(FileLogger::Error) \
-        << FileLogger::Get().Prefix(FileLogger::Get().GetRequestedLogLevel())
+#define clERROR() \
+    FileLogger::Get().SetRequestedLogLevel(FileLogger::Error) << FileLogger::Get().Prefix(FileLogger::Error)
 
-#define clWARNING()                                             \
-    FileLogger::Get().SetRequestedLogLevel(FileLogger::Warning) \
-        << FileLogger::Get().Prefix(FileLogger::Get().GetRequestedLogLevel())
+#define clWARNING() \
+    FileLogger::Get().SetRequestedLogLevel(FileLogger::Warning) << FileLogger::Get().Prefix(FileLogger::Warning)
 
-#define clSYSTEM()                                             \
-    FileLogger::Get().SetRequestedLogLevel(FileLogger::System) \
-        << FileLogger::Get().Prefix(FileLogger::Get().GetRequestedLogLevel())
+#define clSYSTEM() \
+    FileLogger::Get().SetRequestedLogLevel(FileLogger::System) << FileLogger::Get().Prefix(FileLogger::System)
 
 #endif // FILELOGGER_H

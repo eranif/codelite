@@ -42,6 +42,8 @@ private:
     bool DoClangFormat(const wxFileName& filename, wxString& formattedOutput, int& cursorPosition, int startOffset,
         int length, const FormatOptions& options, const wxFileName& originalFileName);
 
+    void DoFormatXmlSource(IEditor* editor);
+
 public:
     /**
      * @brief format a file using clang-foramt tool. Optioanlly, you can format a portion of

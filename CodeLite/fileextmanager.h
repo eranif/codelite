@@ -140,6 +140,15 @@ public:
     static bool IsJavaFile(const wxFileName& filename) { return IsJavaFile(filename.GetFullPath()); }
 
     /**
+     * @param return true if the file is of type 'type'
+     */
+    static bool IsFileType(const wxString& filename, FileExtManager::FileType type);
+    static bool IsFileType(const wxFileName& filename, FileExtManager::FileType type)
+    {
+        return IsFileType(filename.GetFullPath(), type);
+    }
+
+    /**
      * @brief attempt to autodetect the file type by examining its content
      */
     static bool AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType);

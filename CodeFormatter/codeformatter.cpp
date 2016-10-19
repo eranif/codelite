@@ -47,6 +47,7 @@
 #include "fileutils.h"
 #include "clClangFormatLocator.h"
 #include "clEditorStateLocker.h"
+#include <wx/sstream.h>
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
@@ -201,6 +202,8 @@ void CodeFormatter::OnFormat(wxCommandEvent& e)
     // get the editor that requires formatting
     if(!editor) return;
 
+    clDEBUG() << "Formatting file: '" << editor->GetFileName() << "'" << clEndl;
+
     // Notify about indentation about to start
     wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_STARTING);
     evt.SetString(editor->GetFileName().GetFullPath());
@@ -210,6 +213,8 @@ void CodeFormatter::OnFormat(wxCommandEvent& e)
         wxString::Format(wxT("%s: %s..."), _("Formatting"), editor->GetFileName().GetFullPath().c_str()), 0);
     DoFormatFile(editor);
     m_mgr->SetStatusMessage(_("Done"), 0);
+
+    clDEBUG() << "Formatting file: '" << editor->GetFileName() << "'...is done" << clEndl;
 }
 
 void CodeFormatter::DoFormatFile(IEditor* editor)
@@ -220,7 +225,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
     if(FileExtManager::IsPHPFile(editor->GetFileName())) {
-
+        clDEBUG() << "Using PHP formatter" << clEndl;
         if(fmtroptions.GetPhpEngine() == kPhpFormatEngineBuiltin) {
 
             // use the built-in PHP formatter
@@ -299,6 +304,9 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             editor->GetCtrl()->EndUndoAction();
         }
 
+    } else if(FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeXml) ||
+        FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeXRC)) {
+        DoFormatXmlSource(editor);
     } else {
         // We allow ClangFormat to work only when the source file is known to be
         // a C/C++ source file or JavaScript (these are the types of files that clang-format can handle properly)
@@ -306,6 +314,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             (FileExtManager::IsCxxFile(editor->GetFileName()) ||
                 FileExtManager::IsJavascriptFile(editor->GetFileName()))) {
 
+            clDEBUG() << "Using C++/Clang formatter" << clEndl;
             int from = wxNOT_FOUND, length = wxNOT_FOUND;
             wxString formattedOutput;
             if(editor->GetSelectionStart() != wxNOT_FOUND) {
@@ -333,6 +342,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             editor->GetCtrl()->EndUndoAction();
 
         } else {
+            clDEBUG() << "Using C++/AStyle formatter" << clEndl;
             // AStyle
             wxString options = fmtroptions.AstyleOptionsAsString();
 
@@ -657,7 +667,7 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename, wxString& formatte
     ::WrapInShell(command);
 
     // Log the command
-    CL_DEBUG("CodeForamtter: running:\n%s\n", command);
+    clDEBUG() << "CodeForamtter:" << command << clEndl;
 
     // Execute clang-format and reand the output
     formattedOutput.Clear();
@@ -671,10 +681,11 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename, wxString& formatte
         command, IProcessCreateDefault | IProcessCreateWithHiddenConsole, originalFileName.GetPath()));
     CHECK_PTR_RET_FALSE(clangFormatProc);
     clangFormatProc->WaitForTerminate(formattedOutput);
-    CL_DEBUG("clang-format returned with:\n%s\n", formattedOutput);
-
+    clDEBUG1() << "clang-format returned with:\n" << formattedOutput << clEndl;
+    clDEBUG() << "Done" << clEndl;
     if(formattedOutput.IsEmpty()) {
         // crash?
+        clWARNING() << "DoClangFormat:: an error occurred. Got empty response" << clEndl;
         return false;
     }
 
@@ -861,4 +872,35 @@ void CodeFormatter::OnBeforeFileSave(clCommandEvent& e)
             DoFormatFile(editor);
         }
     }
+}
+
+void CodeFormatter::DoFormatXmlSource(IEditor* editor)
+{
+    wxXmlDocument doc;
+    wxStringInputStream ss(editor->GetCtrl()->GetText());
+    if(!doc.Load(ss)) {
+        clWARNING() << "Failed to format XML file (Load):" << editor->GetFileName() << clEndl;
+        return;
+    }
+
+    wxString formattedOutput;
+    wxStringOutputStream os(&formattedOutput);
+    if(!doc.Save(os, m_mgr->GetEditorSettings()->GetIndentWidth())) {
+        clWARNING() << "Failed to format XML file (Save):" << editor->GetFileName() << clEndl;
+        return;
+    }
+
+    clEditorStateLocker lk(editor->GetCtrl());
+    int curpos = editor->GetCurrentPosition();
+    editor->GetCtrl()->BeginUndoAction();
+    editor->SetEditorText(formattedOutput);
+    editor->SetCaretAt(curpos);
+    
+    // Convert SPACEs to TABs?
+    if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
+        wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_tabs"));
+        wxTheApp->GetTopWindow()->GetEventHandler()->ProcessEvent(evt);
+    }
+    
+    editor->GetCtrl()->EndUndoAction();
 }

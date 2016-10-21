@@ -49,6 +49,8 @@
     <File Name="GitLocator.h"/>
     <File Name="GitLocator.cpp"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="gitBlameDlg.cpp"/>
+    <File Name="gitBlameDlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="icons">
     <File Name="icons/icon_git.xpm"/>

@@ -52,6 +52,8 @@
 #include "clTabTogglerHelper.h"
 
 class clCommandProcessor;
+class GitBlameDlg;
+
 class gitAction
 {
 public:
@@ -122,6 +124,9 @@ class GitPlugin : public IPlugin
         gitBranchSwitch,
         gitBranchSwitchRemote,
         gitCommitList,
+        gitBlame,
+        gitRevlist,
+        gitLog,
         gitRebase,
         gitGarbageCollection,
         gitClone,
@@ -165,6 +170,7 @@ class GitPlugin : public IPlugin
     wxString m_selectedFolder;
     clCommandProcessor* m_commandProcessor;
     clTabTogglerHelper::Ptr_t m_tabToggler;
+    GitBlameDlg* m_gitBlameDlg;
 
 private:
     void DoCreateTreeImages();
@@ -238,6 +244,7 @@ private:
     void OnStartGitk(wxCommandEvent& e);
     void OnStartGitkUI(wxUpdateUIEvent& e);
     void OnListModified(wxCommandEvent& e);
+    void OnGitBlame(wxCommandEvent& e);
     void OnRefresh(wxCommandEvent& e);
     void OnGarbageColletion(wxCommandEvent& e);
     void OnOpenMSYSGit(wxCommandEvent& e);
@@ -293,6 +300,11 @@ public:
     void UndoAddFiles(const wxArrayString& files);
 
     void RefreshFileListView();
+    
+    void DoGitBlame(const wxString& args); // Called by OnGitBlame or the git blame dialog
+    wxString GetEditorRelativeFilepath() const; // Called by OnGitBlame or the git blame dialog
+    void OnGitBlameRevList(const wxString& arg, const wxString& filepath, const wxString& commit=""); // Called by the git blame dialog
+    void OnGitBlameLog(const wxString& commit); // Called by the git blame dialog
 
     /**
      * @brief simple git command executioin completed. Display its output etc

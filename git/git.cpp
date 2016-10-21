@@ -42,7 +42,6 @@
 #include "gitCommitListDlg.h"
 #include "gitDiffDlg.h"
 #include "gitFileDiffDlg.h"
-#include "gitLogDlg.h"
 #include "gitSettingsDlg.h"
 #include "git.h"
 
@@ -57,6 +56,7 @@
 #include <wx/msgdlg.h>
 #include "GitApplyPatchDlg.h"
 #include "DiffSideBySidePanel.h"
+#include "gitBlameDlg.h"
 #include <wx/ffile.h>
 #include "file_logger.h"
 #include "GitLocator.h"
@@ -134,6 +134,7 @@ GitPlugin::GitPlugin(IManager* manager)
     , m_pluginMenu(NULL)
     , m_commitListDlg(NULL)
     , m_commandProcessor(NULL)
+    , m_gitBlameDlg(NULL)
 {
     m_longName = _("GIT plugin");
     m_shortName = wxT("Git");
@@ -183,7 +184,10 @@ GitPlugin::GitPlugin(IManager* manager)
     m_progressTimer.SetOwner(this);
 }
 /*******************************************************************************/
-GitPlugin::~GitPlugin() {}
+GitPlugin::~GitPlugin()
+{
+    delete m_gitBlameDlg;
+}
 
 /*******************************************************************************/
 clToolBar* GitPlugin::CreateToolBar(wxWindow* parent)
@@ -236,6 +240,10 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     item =
         new wxMenuItem(m_pluginMenu, XRCID("git_commit_diff"), _("Show current diffs"), _("Show diffs"), wxITEM_NORMAL);
     item->SetBitmap(bmps->LoadBitmap("diff"));
+    m_pluginMenu->Append(item);
+    item =
+        new wxMenuItem(m_pluginMenu, XRCID("git_blame"), _("Show git blame"), _("Show blame"), wxITEM_NORMAL);
+    //item->SetBitmap(bmps->LoadBitmap("diff")); TODO:
     m_pluginMenu->Append(item);
     item = new wxMenuItem(m_pluginMenu, XRCID("git_apply_patch"), _("Apply Patch"), _("Apply Patch"), wxITEM_NORMAL);
     item->SetBitmap(bmps->LoadBitmap("patch"));
@@ -300,6 +308,8 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
         wxCommandEventHandler(GitPlugin::OnCommitList), NULL, this);
     m_eventHandler->Connect(XRCID("git_commit_diff"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(GitPlugin::OnShowDiffs), NULL, this);
+    m_eventHandler->Connect(XRCID("git_blame"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(GitPlugin::OnGitBlame), NULL, this);
     m_eventHandler->Connect(XRCID("git_apply_patch"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(GitPlugin::OnApplyPatch), NULL, this);
     m_eventHandler->Connect(
@@ -393,6 +403,8 @@ void GitPlugin::UnPlug()
         wxCommandEventHandler(GitPlugin::OnCommitList), NULL, this);
     m_eventHandler->Disconnect(XRCID("git_commit_diff"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(GitPlugin::OnShowDiffs), NULL, this);
+    m_eventHandler->Disconnect(XRCID("git_blame"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(GitPlugin::OnGitBlame), NULL, this);
     m_eventHandler->Disconnect(XRCID("git_apply_patch"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(GitPlugin::OnApplyPatch), NULL, this);
     m_eventHandler->Disconnect(
@@ -857,6 +869,62 @@ void GitPlugin::OnListModified(wxCommandEvent& e)
         }
     }
 }
+
+/*******************************************************************************/
+void GitPlugin::OnGitBlame(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    
+    wxString filepath = GetEditorRelativeFilepath();
+    if (!filepath.empty()) {
+        DoGitBlame(filepath);
+    }
+}
+/*******************************************************************************/
+wxString GitPlugin::GetEditorRelativeFilepath() const // Called by OnGitBlame or the git blame dialog
+{
+    IEditor* current = m_mgr->GetActiveEditor();
+    if (!current || m_repositoryDirectory.empty()) {
+        return "";
+    }
+    
+    // We need to be symlink-aware here on Linux, so use CLRealPath
+    wxString realfilepath = CLRealPath(current->GetFileName().GetFullPath());
+    wxFileName fn(realfilepath); 
+    fn.MakeRelativeTo(CLRealPath(m_repositoryDirectory));
+    
+    return fn.GetFullPath();
+
+}
+/*******************************************************************************/
+void GitPlugin::DoGitBlame(const wxString& args) // Called by OnGitBlame or the git blame dialog
+{
+    gitAction ga(gitBlame, args);
+    m_gitActionQueue.push_back(ga);
+    ProcessGitActionQueue();
+}
+/*******************************************************************************/
+void GitPlugin::OnGitBlameRevList(const wxString& arg, const wxString& filepath, const wxString& commit) // Called by the git blame dialog
+{
+    wxString cmt(commit);
+    if (cmt.empty()) {
+        cmt = "HEAD";
+    }
+    wxString args = arg + ' ' + cmt + " -- " + filepath;
+    
+    gitAction ga(gitRevlist, args);
+    m_gitActionQueue.push_back(ga);
+    ProcessGitActionQueue();
+}
+/*******************************************************************************/
+void GitPlugin::OnGitBlameLog(const wxString& commit) // Called by the git blame dialog
+{
+    wxString args = "-1 --stat --ignore-all-space --ignore-blank-lines --shortstat " + commit;
+    
+    gitAction ga(gitLog, args);
+    m_gitActionQueue.push_back(ga);
+    ProcessGitActionQueue();
+}
 /*******************************************************************************/
 void GitPlugin::OnRefresh(wxCommandEvent& e)
 {
@@ -1179,6 +1247,22 @@ void GitPlugin::ProcessGitActionQueue()
         // hash @ author-name @ date @ subject
         command << wxT(" --no-pager log --pretty=\"%h@%an@%ci@%s\" -n 100 ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
+        break;
+
+    case gitBlame:
+        GIT_MESSAGE("Git blame...");
+        command << " --no-pager blame --line-porcelain " << ga.arguments;
+        GIT_MESSAGE("Git blame: %s", command);
+        break;
+
+    case gitRevlist:
+        command << " --no-pager rev-list " << ga.arguments;
+        GIT_MESSAGE("Git rev-list: %s", command);
+        break;
+
+    case gitLog:
+        command << " --no-pager log " << ga.arguments;
+        GIT_MESSAGE("Git log: %s", command);
         break;
 
     case gitRebase:
@@ -1520,6 +1604,24 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
             AddDefaultActions();
         }
 
+    } else if(ga.action == gitBlame) {
+        if (!m_gitBlameDlg) {
+            m_gitBlameDlg = new GitBlameDlg(m_topWindow, this);
+        }
+        m_gitBlameDlg->SetBlame(m_commandOutput, ga.arguments);
+        m_gitBlameDlg->Show();
+        m_gitBlameDlg->SetFocus();
+
+    } else if(ga.action == gitRevlist) {
+        if (m_gitBlameDlg) {
+            m_gitBlameDlg->OnRevListOutput(m_commandOutput, ga.arguments);
+        }
+
+    } else if(ga.action == gitLog) {
+        if (m_gitBlameDlg) {
+            m_gitBlameDlg->OnLogOutput(m_commandOutput, ga.arguments);
+        }
+
     } else if(ga.action == gitDiffRepoShow) {
         GitDiffDlg dlg(m_topWindow, m_repositoryDirectory);
         dlg.SetDiff(m_commandOutput);
@@ -1644,7 +1746,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     tmpOutput.MakeLower();
 
     if(ga.action != gitDiffRepoCommit && ga.action != gitDiffFile && ga.action != gitCommitList &&
-        ga.action != gitDiffRepoShow)
+        ga.action != gitDiffRepoShow && ga.action != gitBlame && ga.action != gitRevlist)
 
     {
         if(tmpOutput.Contains("username for")) {

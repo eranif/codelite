@@ -261,6 +261,20 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
     
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_HORZ_TEXT);
+    m_auibar->SetToolBitmapSize(wxSize(16,16));
+    
+    bSizer4->Add(m_auibar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_auibar->AddTool(ID_TOGGLE_CHECKALL, _("Toggle Files"), wxXmlResource::Get()->LoadBitmap(wxT("16-ok")), wxNullBitmap, wxITEM_NORMAL, _("Toggle Check All"), _("Toggle Check All"), NULL);
+    
+    m_auibar->AddTool(ID_GIT_COMMIT_HISTORY, _("History"), wxXmlResource::Get()->LoadBitmap(wxT("16-history")), wxNullBitmap, wxITEM_NORMAL, _("Show Commit History"), _("Show Commit History"), NULL);
+    
+    m_auibar->AddStretchSpacer(1);
+    
+    m_auibar->AddTool(wxID_CLEAR, _("Clear History"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear History"), _("Clear History"), NULL);
+    m_auibar->Realize();
+    
     m_splitterMain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitterMain->SetSashGravity(1);
     m_splitterMain->SetMinimumPaneSize(150);
@@ -338,19 +352,9 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer13);
     
-    m_auibar = new wxAuiToolBar(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_HORZ_TEXT);
-    m_auibar->SetToolBitmapSize(wxSize(16,16));
+    m_staticText8 = new wxStaticText(m_panel4, wxID_ANY, _("Commit message:"), wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
     
-    bSizer13->Add(m_auibar, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_auibar->AddTool(ID_TOGGLE_CHECKALL, _("Toggle Files"), wxXmlResource::Get()->LoadBitmap(wxT("16-ok")), wxNullBitmap, wxITEM_NORMAL, _("Toggle Check All"), _("Toggle Check All"), NULL);
-    
-    m_auibar->AddTool(ID_GIT_COMMIT_HISTORY, _("History"), wxXmlResource::Get()->LoadBitmap(wxT("16-history")), wxNullBitmap, wxITEM_NORMAL, _("Show Commit History"), _("Show Commit History"), NULL);
-    
-    m_auibar->AddStretchSpacer(1);
-    
-    m_auibar->AddTool(wxID_CLEAR, _("Clear History"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear History"), _("Clear History"), NULL);
-    m_auibar->Realize();
+    bSizer13->Add(m_staticText8, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_LEFT, WXC_FROM_DIP(5));
     
     m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1,-1)), wxBORDER_THEME);
     m_stcCommitMessage->SetToolTip(_("Type your commit message here"));
@@ -429,24 +433,24 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     }
 #endif
     // Connect events
-    m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
     this->Connect(ID_TOGGLE_CHECKALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnToggleCheckAll), NULL, this);
     this->Connect(ID_GIT_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitHistory), NULL, this);
     this->Connect(ID_GIT_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnCommitHistoryUI), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnClearGitCommitHistory), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnClearGitCommitHistoryUI), NULL, this);
+    m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
 }
 
 GitCommitDlgBase::~GitCommitDlgBase()
 {
-    m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
     this->Disconnect(ID_TOGGLE_CHECKALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnToggleCheckAll), NULL, this);
     this->Disconnect(ID_GIT_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitHistory), NULL, this);
     this->Disconnect(ID_GIT_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnCommitHistoryUI), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnClearGitCommitHistory), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnClearGitCommitHistoryUI), NULL, this);
+    m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
 }
@@ -1195,6 +1199,19 @@ GitImages::GitImages()
     {
         wxBitmap bmp;
         wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitBlame"));
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("gitBlame"), bmp));
+        }
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitApply"));
         if(bmp.IsOk()) {
             if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
@@ -1848,4 +1865,238 @@ GitConsoleBase::~GitConsoleBase()
     m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
     m_stcLog->Disconnect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(GitConsoleBase::OnStclogStcChange), NULL, this);
     
+}
+
+GitBlameDlgBase::GitBlameDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git@2x"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
+    
+    wxBoxSizer* boxSizer374 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer374);
+    
+    wxBoxSizer* boxSizer378 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer374->Add(boxSizer378, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_toolbar389 = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTB_FLAT);
+    m_toolbar389->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer378->Add(m_toolbar389, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_toolbar389->AddTool(XRCID("m_tbBack"), _("Previous"), wxArtProvider::GetBitmap(wxART_GO_BACK, wxART_TOOLBAR, wxDefaultSize), wxNullBitmap, wxITEM_NORMAL, _("Go backwards to earlier commit's blame"), _("Show earlier commit's blame"), NULL);
+    
+    m_toolbar389->AddTool(XRCID("m_tbForward"), _("Next"), wxArtProvider::GetBitmap(wxART_GO_FORWARD, wxART_TOOLBAR, wxDefaultSize), wxNullBitmap, wxITEM_NORMAL, _("Go forward to more-recent commit's blame"), _("Show next-seen commit's blame"), NULL);
+    
+    wxArrayString m_choiceHistoryArr;
+    m_choiceHistoryArr.Add(wxT("abcd4444 (HEAD)"));
+    m_choiceHistory = new wxChoice(m_toolbar389, XRCID("m_choiceHistory"), wxDefaultPosition, wxDLG_UNIT(m_toolbar389, wxSize(-1,-1)), m_choiceHistoryArr, 0);
+    m_choiceHistory->SetToolTip(_("Previously-visited commits. Note that these are listed in the order that you visited them, not commit-date order."));
+    m_toolbar389->AddControl(m_choiceHistory);
+    
+    m_staticText414 = new wxStaticText(m_toolbar389, wxID_ANY, _("    Extra arguments:"), wxDefaultPosition, wxDLG_UNIT(m_toolbar389, wxSize(-1,-1)), 0);
+    m_toolbar389->AddControl(m_staticText414);
+    
+    wxArrayString m_comboExtraArgsArr;
+    m_comboExtraArgsArr.Add(wxT("-L 123,130 foo bar"));
+    m_comboExtraArgs = new wxComboBox(m_toolbar389, XRCID("m_comboExtraArgs"), wxT(""), wxDefaultPosition, wxDLG_UNIT(m_toolbar389, wxSize(-1,-1)), m_comboExtraArgsArr, wxTE_PROCESS_ENTER);
+    m_comboExtraArgs->SetToolTip(_("Optional extra arguments that you wish passed to git blame.\nAn example might be: -L 100,130\nNote that this is _not_ sanity-checked, it's added just as it is."));
+    #if wxVERSION_NUMBER >= 3000
+    m_comboExtraArgs->SetHint(wxT(""));
+    #endif
+    m_toolbar389->AddControl(m_comboExtraArgs);
+    
+    m_toolbar389->AddTool(XRCID("m_toolbarItemRefresh"), _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("16-debugger_restart")), wxNullBitmap, wxITEM_NORMAL, _("Redo the current commit's blame"), _("Redo the current commit's blame"), NULL);
+    
+    m_toolbar389->AddStretchableSpace();
+    
+    m_toolbar389->AddTool(XRCID("m_toolbarItemSettings"), _("Settings"), wxXmlResource::Get()->LoadBitmap(wxT("16-cog")), wxNullBitmap, wxITEM_NORMAL, _("Settings"), wxT(""), NULL);
+    m_toolbar389->Realize();
+    
+    m_stcBlame = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    // Configure the fold margin
+    m_stcBlame->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcBlame->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcBlame->SetMarginSensitive(4, true);
+    m_stcBlame->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stcBlame->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcBlame->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcBlame->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcBlame->SetMarginWidth(2, 0);
+    m_stcBlame->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcBlame->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcBlame->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcBlame->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcBlame->SetMarginMask(3, 0);
+    m_stcBlame->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcBlame->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcBlame->StyleClearAll();
+    m_stcBlame->SetWrapMode(0);
+    m_stcBlame->SetIndentationGuides(0);
+    m_stcBlame->SetKeyWords(0, wxT(""));
+    m_stcBlame->SetKeyWords(1, wxT(""));
+    m_stcBlame->SetKeyWords(2, wxT(""));
+    m_stcBlame->SetKeyWords(3, wxT(""));
+    m_stcBlame->SetKeyWords(4, wxT(""));
+    
+    boxSizer378->Add(m_stcBlame, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_stdBtnSizer306 = new wxStdDialogButtonSizer();
+    
+    boxSizer374->Add(m_stdBtnSizer306, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    
+    m_button308 = new wxButton(this, wxID_CLOSE, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button308->SetDefault();
+    m_stdBtnSizer306->AddButton(m_button308);
+    m_stdBtnSizer306->Realize();
+    
+    SetName(wxT("GitBlameDlgBase"));
+    SetSize(-1,-1);
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    this->Connect(XRCID("m_tbBack"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnPreviousBlame), NULL, this);
+    this->Connect(XRCID("m_tbBack"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitBlameDlgBase::OnBackUpdateUI), NULL, this);
+    this->Connect(XRCID("m_tbForward"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnNextBlame), NULL, this);
+    this->Connect(XRCID("m_tbForward"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitBlameDlgBase::OnForwardUpdateUI), NULL, this);
+    m_choiceHistory->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(GitBlameDlgBase::OnHistoryItemSelected), NULL, this);
+    m_comboExtraArgs->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GitBlameDlgBase::OnExtraArgsTextEnter), NULL, this);
+    this->Connect(XRCID("m_toolbarItemRefresh"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnRefreshBlame), NULL, this);
+    this->Connect(XRCID("m_toolbarItemSettings"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnSettings), NULL, this);
+    m_stcBlame->Connect(wxEVT_STC_DWELLSTART, wxStyledTextEventHandler(GitBlameDlgBase::OnSTCDwellStart), NULL, this);
+    m_stcBlame->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(GitBlameDlgBase::OnStcblameLeftDclick), NULL, this);
+    m_button308->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnCloseDialog), NULL, this);
+    
+}
+
+GitBlameDlgBase::~GitBlameDlgBase()
+{
+    this->Disconnect(XRCID("m_tbBack"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnPreviousBlame), NULL, this);
+    this->Disconnect(XRCID("m_tbBack"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitBlameDlgBase::OnBackUpdateUI), NULL, this);
+    this->Disconnect(XRCID("m_tbForward"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnNextBlame), NULL, this);
+    this->Disconnect(XRCID("m_tbForward"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitBlameDlgBase::OnForwardUpdateUI), NULL, this);
+    m_choiceHistory->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(GitBlameDlgBase::OnHistoryItemSelected), NULL, this);
+    m_comboExtraArgs->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GitBlameDlgBase::OnExtraArgsTextEnter), NULL, this);
+    this->Disconnect(XRCID("m_toolbarItemRefresh"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnRefreshBlame), NULL, this);
+    this->Disconnect(XRCID("m_toolbarItemSettings"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnSettings), NULL, this);
+    m_stcBlame->Disconnect(wxEVT_STC_DWELLSTART, wxStyledTextEventHandler(GitBlameDlgBase::OnSTCDwellStart), NULL, this);
+    m_stcBlame->Disconnect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(GitBlameDlgBase::OnStcblameLeftDclick), NULL, this);
+    m_button308->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitBlameDlgBase::OnCloseDialog), NULL, this);
+    
+}
+
+GitBlameSettingsDlgBase::GitBlameSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer420 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer420);
+    
+    wxBoxSizer* boxSizer434 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer420->Add(boxSizer434, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_checkParentCommit = new wxCheckBox(this, wxID_ANY, _("Double-clicking a line shows blame for the parent commit"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_checkParentCommit->SetValue(true);
+    m_checkParentCommit->SetToolTip(_("A double-click on a code line refreshes blame, rebasing it either to the commit clicked or to its parent commit.\nMost of the time you will want to see what the code looked like earlier, so will want the parent commit."));
+    
+    boxSizer434->Add(m_checkParentCommit, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxBoxSizer* boxSizer425 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer420->Add(boxSizer425, 1, wxALL, WXC_FROM_DIP(5));
+    
+    m_spinCtrlDwelltime = new wxSpinCtrl(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_ARROW_KEYS);
+    m_spinCtrlDwelltime->SetToolTip(_("Choose the delay, in seconds, before hovering over a commit hash in the margin will show the log entry for that commit.\nA delay of 0 will disable this feature."));
+    m_spinCtrlDwelltime->SetRange(0, 100);
+    m_spinCtrlDwelltime->SetValue(1);
+    
+    boxSizer425->Add(m_spinCtrlDwelltime, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_staticText427 = new wxStaticText(this, wxID_ANY, _("Delay before showing a commit's log. See the tooltip."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer425->Add(m_staticText427, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_stdBtnSizer429 = new wxStdDialogButtonSizer();
+    
+    boxSizer420->Add(m_stdBtnSizer429, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_button431 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer429->AddButton(m_button431);
+    
+    m_button433 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer429->AddButton(m_button433);
+    m_stdBtnSizer429->Realize();
+    
+    SetName(wxT("GitBlameSettingsDlgBase"));
+    SetSize(-1,-1);
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+}
+
+GitBlameSettingsDlgBase::~GitBlameSettingsDlgBase()
+{
 }

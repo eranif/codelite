@@ -9661,7 +9661,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "CL:git"
+     "m_path": "git:UI"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -9761,7 +9761,7 @@
          "border": 5,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxTB_FLAT"],
+         "m_styles": ["wxTB_NODIVIDER", "wxTB_FLAT"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
@@ -9828,7 +9828,7 @@
             }, {
              "type": "bitmapPicker",
              "m_label": "Bitmap File:",
-             "m_path": "wxART_GO_BACK,wxART_TOOLBAR,wxDefaultSize"
+             "m_path": "../bitmaps/24-back.png"
             }, {
              "type": "filePicker",
              "m_label": "Disabled-Bitmap File",
@@ -9890,7 +9890,7 @@
             }, {
              "type": "bitmapPicker",
              "m_label": "Bitmap File:",
-             "m_path": "wxART_GO_FORWARD,wxART_TOOLBAR,wxDefaultSize"
+             "m_path": "../bitmaps/24-forward.png"
             }, {
              "type": "filePicker",
              "m_label": "Disabled-Bitmap File",
@@ -10199,7 +10199,7 @@
             }, {
              "type": "bitmapPicker",
              "m_label": "Bitmap File:",
-             "m_path": "../bitmaps/16-debugger_restart.png"
+             "m_path": "../bitmaps/24-debugger_restart.png"
             }, {
              "type": "filePicker",
              "m_label": "Disabled-Bitmap File",
@@ -10274,7 +10274,7 @@
             }, {
              "type": "bitmapPicker",
              "m_label": "Bitmap File:",
-             "m_path": "../bitmaps/16-cog.png"
+             "m_path": "../bitmaps/24-cog.png"
             }, {
              "type": "filePicker",
              "m_label": "Disabled-Bitmap File",
@@ -10608,7 +10608,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "CL:git"
+     "m_path": "git:UI"
     }, {
      "type": "choice",
      "m_label": "Centre:",

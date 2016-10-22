@@ -1900,14 +1900,14 @@ GitBlameDlgBase::GitBlameDlgBase(wxWindow* parent, wxWindowID id, const wxString
     
     boxSizer374->Add(boxSizer378, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_toolbar389 = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTB_FLAT);
+    m_toolbar389 = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTB_NODIVIDER|wxTB_FLAT);
     m_toolbar389->SetToolBitmapSize(wxSize(16,16));
     
     boxSizer378->Add(m_toolbar389, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_toolbar389->AddTool(XRCID("m_tbBack"), _("Previous"), wxArtProvider::GetBitmap(wxART_GO_BACK, wxART_TOOLBAR, wxDefaultSize), wxNullBitmap, wxITEM_NORMAL, _("Go backwards to earlier commit's blame"), _("Show earlier commit's blame"), NULL);
+    m_toolbar389->AddTool(XRCID("m_tbBack"), _("Previous"), wxXmlResource::Get()->LoadBitmap(wxT("24-back")), wxNullBitmap, wxITEM_NORMAL, _("Go backwards to earlier commit's blame"), _("Show earlier commit's blame"), NULL);
     
-    m_toolbar389->AddTool(XRCID("m_tbForward"), _("Next"), wxArtProvider::GetBitmap(wxART_GO_FORWARD, wxART_TOOLBAR, wxDefaultSize), wxNullBitmap, wxITEM_NORMAL, _("Go forward to more-recent commit's blame"), _("Show next-seen commit's blame"), NULL);
+    m_toolbar389->AddTool(XRCID("m_tbForward"), _("Next"), wxXmlResource::Get()->LoadBitmap(wxT("24-forward")), wxNullBitmap, wxITEM_NORMAL, _("Go forward to more-recent commit's blame"), _("Show next-seen commit's blame"), NULL);
     
     wxArrayString m_choiceHistoryArr;
     m_choiceHistoryArr.Add(wxT("abcd4444 (HEAD)"));
@@ -1927,11 +1927,11 @@ GitBlameDlgBase::GitBlameDlgBase(wxWindow* parent, wxWindowID id, const wxString
     #endif
     m_toolbar389->AddControl(m_comboExtraArgs);
     
-    m_toolbar389->AddTool(XRCID("m_toolbarItemRefresh"), _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("16-debugger_restart")), wxNullBitmap, wxITEM_NORMAL, _("Redo the current commit's blame"), _("Redo the current commit's blame"), NULL);
+    m_toolbar389->AddTool(XRCID("m_toolbarItemRefresh"), _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("24-debugger_restart")), wxNullBitmap, wxITEM_NORMAL, _("Redo the current commit's blame"), _("Redo the current commit's blame"), NULL);
     
     m_toolbar389->AddStretchableSpace();
     
-    m_toolbar389->AddTool(XRCID("m_toolbarItemSettings"), _("Settings"), wxXmlResource::Get()->LoadBitmap(wxT("16-cog")), wxNullBitmap, wxITEM_NORMAL, _("Settings"), wxT(""), NULL);
+    m_toolbar389->AddTool(XRCID("m_toolbarItemSettings"), _("Settings"), wxXmlResource::Get()->LoadBitmap(wxT("24-cog")), wxNullBitmap, wxITEM_NORMAL, _("Settings"), wxT(""), NULL);
     m_toolbar389->Realize();
     
     m_stcBlame = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);

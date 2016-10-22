@@ -203,7 +203,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"Edit the line too add:"
+											"m_value":	"Edit the line to add:"
 										}, {
 											"type":	"string",
 											"m_label":	"Width:",

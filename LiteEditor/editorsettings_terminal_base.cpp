@@ -26,7 +26,7 @@ EditorSettingsTerminalBase::EditorSettingsTerminalBase(wxWindow* parent, wxWindo
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    m_checkBoxUseCodeLiteTerminal = new wxCheckBox(this, wxID_ANY, _("Use CodeLite built in terminal emulator"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxUseCodeLiteTerminal = new wxCheckBox(this, wxID_ANY, _("Use CodeLite's built-in terminal emulator"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxUseCodeLiteTerminal->SetValue(false);
     
     bSizer1->Add(m_checkBoxUseCodeLiteTerminal, 0, wxALL, 5);

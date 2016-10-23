@@ -22,21 +22,15 @@ size_t FindAuthorLine(wxArrayString& blameArr, size_t n, wxString* author) // He
     return n; // which will now index either the next 'author ' field, or the end of the array
 }
 
-// Keep some static values as cache to avoid text re-calculation
-static int cw = 8;
-static int max_date_extent = cw * DATE_WIDTH;
-static int spacewidth = cw;
-static int inbetweenwidth =
-    (cw + spacewidth) / 2; // If we need to truncate an author-name, try with this before the more drastic cw
-static int marginwidth = 20;
+// The text margin needs to be 24 chars wide for the date & hash, the max author-width, plus 2 spaces between
+static int marginwidth = DATE_WIDTH + AUTHOR_WIDTH + HASH_WIDTH +2;
 
-wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr,
-    size_t& n) // Helper function. 'n' indexes any previous 'author ' field + 1
+// Helper function. 'n' indexes any previous 'author ' field + 1
+wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr, size_t& n)
 {
     // For a format supposedly designed for easy parsing, porcelain is decidedly unhelpful
     // Each line's entry usually has 13 fields but may have 12 (or less?)
-    // Most fields start with a descriptive string e.g. 'author', 'filename', but the hash and the code-line itself
-    // don't.
+    // Most fields start with a descriptive string e.g. 'author', 'filename', but the hash and the code-line don't.
     // 'author ' should normally be present, so search for that and then guess
     wxArrayString arr;
     wxString hash, author, dtstring, date;
@@ -50,7 +44,7 @@ wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr,
     wxCHECK_MSG(hash.Len() > 39, arr,
         "What should have been the 'commit-hash' field is too short"); // Something went seriously wrong, or the output
                                                                        // is very strange. Skip.
-    hash = hash.Left(8);
+    hash = ' ' + hash.Left(8);
 
     for(size_t c = n + 1; c < blameArr.GetCount(); ++c) {
         if(blameArr.Item(c).StartsWith("author-time ", &dtstring)) {
@@ -65,7 +59,7 @@ wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr,
         if(dtstring.ToLong(&datetime)) {
             wxDateTime dt((time_t)datetime);
             if(dt.IsValid()) {
-                date = dt.Format("%F %H-%M", wxDateTime::UTC);
+                date = dt.Format("%F %H-%M ", wxDateTime::UTC);
             }
         }
     }
@@ -80,37 +74,13 @@ wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr,
 
     // Now create the margin line, carefully: the central 'author' field is truncated/padded to fill the available space
     // All this would be much easier if scintilla allowed writing text to 3 'text' margins, but afaict it doesn't
-
-    int dsize = stc->GetTextExtent(date).x;
-    size_t datepadding = (max_date_extent - dsize) + 1;
-    datepadding = wxMax(datepadding, spacewidth); // We need at least 1 space as separator
-    //date.Pad(datepadding / spacewidth, ' ');
-    
-    dsize = stc->GetTextExtent(date).x;
-
-    int hsize = stc->GetTextExtent(hash).x;
-    int max_author_extent = marginwidth - (dsize + (hsize + spacewidth));
-
-    int asize = stc->GetTextExtent(author).x;
-    if(asize > max_author_extent) {
-        author.Truncate(max_author_extent / inbetweenwidth);
-        if(asize > max_author_extent) {
-            author.Truncate(max_author_extent / cw);
-        }
-        asize = stc->GetTextExtent(author).x;
-    }
-    size_t authorpadding = marginwidth - dsize - hsize - asize;
-    if((int)authorpadding < 0) {
-        wxASSERT((int)authorpadding < 0);
-        authorpadding = 0;
-    }
-
-    //author.Pad(authorpadding / spacewidth, ' ');
+    author.Truncate(AUTHOR_WIDTH);
+    author.Pad(AUTHOR_WIDTH - author.Len(), ' ');
 
     wxString margin;
-    margin << date << " " << author << " " << hash;
+    margin << date << author << hash;
     
-    wxASSERT(stc->GetTextExtent(margin).x <= marginwidth);
+    wxASSERT(margin.Len() <= marginwidth);
     arr.Add(margin);
     arr.Add(blameArr.Item(cl)); // code-line
 
@@ -148,10 +118,9 @@ GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
 
     m_comboExtraArgs->Clear(); // Remove the placeholder string (there to make the control wider)
 
-    // Configure the text margin. It needs to be 24 chars wide for the date & hash, the max author-width, plus 2 spaces
-    // between
     m_stcBlame->SetMarginType(TEXT_MARGIN_ID, wxSTC_MARGIN_RTEXT);
-    m_stcBlame->SetMarginWidth(TEXT_MARGIN_ID, (24 + AUTHOR_WIDTH) * GetCharWidth() + (2 * GetTextExtent(" ").x));
+    // The text margin needs to be 24 chars wide for the date & hash, the max author-width, plus 2 spaces between
+    m_stcBlame->SetMarginWidth(TEXT_MARGIN_ID, marginwidth * GetCharWidth());
     m_stcBlame->SetMarginSensitive(TEXT_MARGIN_ID, true);
 
     // Configure the line numbers margin
@@ -195,15 +164,6 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
     }
     lexer->Apply(m_stcBlame, true);
 
-    // Initialise the statics which depends on the wxSTC styles
-    cw = m_stcBlame->GetCharWidth();
-    max_date_extent = cw * DATE_WIDTH;
-    spacewidth = m_stcBlame->GetTextExtent(" ").x;
-    inbetweenwidth =
-        (cw + spacewidth) / 2; // If we need to truncate an author-name, try with this before the more drastic cw
-    marginwidth = m_stcBlame->GetMarginWidth(TEXT_MARGIN_ID);
-
-    // int style = MarginGetStyle();
     wxArrayString lines = wxStringTokenize(blame, "\n");
     const size_t count = lines.GetCount();
     wxString blameCommit;
@@ -217,8 +177,8 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
     int m_stcBlame_PixelWidth = 4 + numlen * m_stcBlame->TextWidth(wxSTC_STYLE_LINENUMBER, "9");
     m_stcBlame->SetMarginWidth(LINENUMBER_MARGIN_ID, m_stcBlame_PixelWidth);
 
-    m_stcBlame->SetReadOnly(false); // In case we're re-entering, ensure we're r/w. For a wxSTC 'readonly' seems to mean
-                                    // can't append text programatically either
+    // In case we're re-entering, ensure we're r/w. For a wxSTC 'readonly' also means can't append text programatically
+    m_stcBlame->SetReadOnly(false); 
     m_stcBlame->ClearAll();
 
     for(size_t n = 0, line = 0; n < count; ++n) {
@@ -227,8 +187,8 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
             continue; // The entry must be corrupt, or we overran
         }
 
-        m_stcBlame->AppendText(item.Item(1) + '\n'); // We must append each code-line before doing MarginSetText(),
-                                                     // which seems to fail if the line doesn't yet exist
+    // We must append each code-line before doing MarginSetText(), which seems to fail if the line doesn't yet exist
+        m_stcBlame->AppendText(item.Item(1) + '\n'); 
         m_stcBlame->MarginSetText(line++, item.Item(0));
     }
 

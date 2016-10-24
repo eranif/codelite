@@ -174,7 +174,8 @@ GitPlugin::GitPlugin(IManager* manager)
         wxCommandEventHandler(GitPlugin::OnFileResetSelected), NULL, this);
     m_eventHandler->Connect(XRCID("git_diff_file"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(GitPlugin::OnFileDiffSelected), NULL, this);
-
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
+    
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_console, _("Git"), false, m_mgr->GetStdIcons()->LoadBitmap("git"));
@@ -243,7 +244,7 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     m_pluginMenu->Append(item);
     item =
         new wxMenuItem(m_pluginMenu, XRCID("git_blame"), _("Show git blame"), _("Show blame"), wxITEM_NORMAL);
-    //item->SetBitmap(bmps->LoadBitmap("diff")); TODO:
+    item->SetBitmap(bmps->LoadBitmap("finger"));
     m_pluginMenu->Append(item);
     item = new wxMenuItem(m_pluginMenu, XRCID("git_apply_patch"), _("Apply Patch"), _("Apply Patch"), wxITEM_NORMAL);
     item->SetBitmap(bmps->LoadBitmap("patch"));
@@ -419,7 +420,8 @@ void GitPlugin::UnPlug()
         XRCID("git_refresh"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnRefresh), NULL, this);
     m_eventHandler->Disconnect(XRCID("git_garbage_collection"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(GitPlugin::OnGarbageColletion), NULL, this);
-
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
+    
     /*SYSTEM*/
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
@@ -2363,7 +2365,12 @@ void GitPlugin::OnFileMenu(clContextMenuEvent& event)
     item = new wxMenuItem(menu, XRCID("git_diff_file"), _("Show file diff"));
     item->SetBitmap(bmps->LoadBitmap("diff"));
     menu->Append(item);
-
+    
+    menu->AppendSeparator();
+    item = new wxMenuItem(menu, XRCID("git_blame_file"), _("Show Git Blame"));
+    item->SetBitmap(bmps->LoadBitmap("finger"));
+    menu->Append(item);
+    
     item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
     item->SetBitmap(bmps->LoadBitmap("git"));
     parentMenu->AppendSeparator();
@@ -2653,4 +2660,17 @@ void GitPlugin::FetchNextCommits(int skip)
     gitAction ga(gitCommitList, skipCommits);
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
+}
+
+void GitPlugin::OnFileGitBlame(wxCommandEvent& event)
+{
+    // Sanity
+    if(m_filesSelected.IsEmpty() || m_repositoryDirectory.empty()) return;
+    
+    // We need to be symlink-aware here on Linux, so use CLRealPath
+    wxString realfilepath = CLRealPath(m_filesSelected.Item(0));
+    wxFileName fn(realfilepath); 
+    fn.MakeRelativeTo(CLRealPath(m_repositoryDirectory));
+    
+    DoGitBlame(fn.GetFullPath());
 }

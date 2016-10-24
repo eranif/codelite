@@ -319,6 +319,7 @@ void GitBlameDlg::OnForwardUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_com
 
 void GitBlameDlg::OnHistoryItemSelected(wxCommandEvent& event)
 {
+    wxBusyCursor bc;
     int sel = event.GetSelection();
     wxString str = event.GetString();
     wxString commit = m_commitStore.GetCommit(sel);

@@ -1896,43 +1896,39 @@ GitBlameDlgBase::GitBlameDlgBase(wxWindow* parent, wxWindowID id, const wxString
     wxBoxSizer* boxSizer374 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer374);
     
-    wxBoxSizer* boxSizer378 = new wxBoxSizer(wxVERTICAL);
+    m_auibar436 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar436->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer374->Add(boxSizer378, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer374->Add(m_auibar436, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_toolbar389 = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTB_NODIVIDER|wxTB_FLAT);
-    m_toolbar389->SetToolBitmapSize(wxSize(16,16));
+    m_auibar436->AddTool(XRCID("m_tbBack"), _("Previous"), wxXmlResource::Get()->LoadBitmap(wxT("24-back")), wxNullBitmap, wxITEM_NORMAL, _("Go backwards to earlier commit's blame"), _("Show earlier commit's blame"), NULL);
     
-    boxSizer378->Add(m_toolbar389, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_toolbar389->AddTool(XRCID("m_tbBack"), _("Previous"), wxXmlResource::Get()->LoadBitmap(wxT("24-back")), wxNullBitmap, wxITEM_NORMAL, _("Go backwards to earlier commit's blame"), _("Show earlier commit's blame"), NULL);
-    
-    m_toolbar389->AddTool(XRCID("m_tbForward"), _("Next"), wxXmlResource::Get()->LoadBitmap(wxT("24-forward")), wxNullBitmap, wxITEM_NORMAL, _("Go forward to more-recent commit's blame"), _("Show next-seen commit's blame"), NULL);
+    m_auibar436->AddTool(XRCID("m_tbForward"), _("Next"), wxXmlResource::Get()->LoadBitmap(wxT("24-forward")), wxNullBitmap, wxITEM_NORMAL, _("Go forward to more-recent commit's blame"), _("Show next-seen commit's blame"), NULL);
     
     wxArrayString m_choiceHistoryArr;
     m_choiceHistoryArr.Add(wxT("abcd4444 (HEAD)"));
-    m_choiceHistory = new wxChoice(m_toolbar389, XRCID("m_choiceHistory"), wxDefaultPosition, wxDLG_UNIT(m_toolbar389, wxSize(-1,-1)), m_choiceHistoryArr, 0);
+    m_choiceHistory = new wxChoice(m_auibar436, XRCID("m_choiceHistory"), wxDefaultPosition, wxDLG_UNIT(m_auibar436, wxSize(-1,-1)), m_choiceHistoryArr, 0);
     m_choiceHistory->SetToolTip(_("Previously-visited commits. Note that these are listed in the order that you visited them, not commit-date order."));
-    m_toolbar389->AddControl(m_choiceHistory);
+    m_auibar436->AddControl(m_choiceHistory);
     
-    m_staticText414 = new wxStaticText(m_toolbar389, wxID_ANY, _("    Extra arguments:"), wxDefaultPosition, wxDLG_UNIT(m_toolbar389, wxSize(-1,-1)), 0);
-    m_toolbar389->AddControl(m_staticText414);
+    m_staticText414 = new wxStaticText(m_auibar436, wxID_ANY, _("    Extra arguments:"), wxDefaultPosition, wxDLG_UNIT(m_auibar436, wxSize(-1,-1)), 0);
+    m_auibar436->AddControl(m_staticText414);
     
     wxArrayString m_comboExtraArgsArr;
     m_comboExtraArgsArr.Add(wxT("-L 123,130 foo bar"));
-    m_comboExtraArgs = new wxComboBox(m_toolbar389, XRCID("m_comboExtraArgs"), wxT(""), wxDefaultPosition, wxDLG_UNIT(m_toolbar389, wxSize(-1,-1)), m_comboExtraArgsArr, wxTE_PROCESS_ENTER);
+    m_comboExtraArgs = new wxComboBox(m_auibar436, XRCID("m_comboExtraArgs"), wxT(""), wxDefaultPosition, wxDLG_UNIT(m_auibar436, wxSize(-1,-1)), m_comboExtraArgsArr, wxTE_PROCESS_ENTER);
     m_comboExtraArgs->SetToolTip(_("Optional extra arguments that you wish passed to git blame.\nAn example might be: -L 100,130\nNote that this is _not_ sanity-checked, it's added just as it is."));
     #if wxVERSION_NUMBER >= 3000
     m_comboExtraArgs->SetHint(wxT(""));
     #endif
-    m_toolbar389->AddControl(m_comboExtraArgs);
+    m_auibar436->AddControl(m_comboExtraArgs);
     
-    m_toolbar389->AddTool(XRCID("m_toolbarItemRefresh"), _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("24-debugger_restart")), wxNullBitmap, wxITEM_NORMAL, _("Redo the current commit's blame"), _("Redo the current commit's blame"), NULL);
+    m_auibar436->AddTool(XRCID("m_toolbarItemRefresh"), _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("24-debugger_restart")), wxNullBitmap, wxITEM_NORMAL, _("Redo the current commit's blame"), _("Redo the current commit's blame"), NULL);
     
-    m_toolbar389->AddStretchableSpace();
+    m_auibar436->AddStretchSpacer(1);
     
-    m_toolbar389->AddTool(XRCID("m_toolbarItemSettings"), _("Settings"), wxXmlResource::Get()->LoadBitmap(wxT("24-cog")), wxNullBitmap, wxITEM_NORMAL, _("Settings"), wxT(""), NULL);
-    m_toolbar389->Realize();
+    m_auibar436->AddTool(XRCID("m_toolbarItemSettings"), _("Settings"), wxXmlResource::Get()->LoadBitmap(wxT("24-cog")), wxNullBitmap, wxITEM_NORMAL, _("Settings"), wxT(""), NULL);
+    m_auibar436->Realize();
     
     m_stcBlame = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     // Configure the fold margin
@@ -1970,7 +1966,7 @@ GitBlameDlgBase::GitBlameDlgBase(wxWindow* parent, wxWindowID id, const wxString
     m_stcBlame->SetKeyWords(3, wxT(""));
     m_stcBlame->SetKeyWords(4, wxT(""));
     
-    boxSizer378->Add(m_stcBlame, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer374->Add(m_stcBlame, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer306 = new wxStdDialogButtonSizer();
     
@@ -2069,7 +2065,7 @@ GitBlameSettingsDlgBase::GitBlameSettingsDlgBase(wxWindow* parent, wxWindowID id
     
     m_stdBtnSizer429 = new wxStdDialogButtonSizer();
     
-    boxSizer420->Add(m_stdBtnSizer429, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer420->Add(m_stdBtnSizer429, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
     m_button431 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer429->AddButton(m_button431);

@@ -386,7 +386,7 @@ public:
 class GitBlameDlgBase : public wxDialog
 {
 protected:
-    wxToolBar* m_toolbar389;
+    wxAuiToolBar* m_auibar436;
     wxChoice* m_choiceHistory;
     wxStaticText* m_staticText414;
     wxComboBox* m_comboExtraArgs;
@@ -411,7 +411,7 @@ public:
     wxChoice* GetChoiceHistory() { return m_choiceHistory; }
     wxStaticText* GetStaticText414() { return m_staticText414; }
     wxComboBox* GetComboExtraArgs() { return m_comboExtraArgs; }
-    wxToolBar* GetToolbar389() { return m_toolbar389; }
+    wxAuiToolBar* GetAuibar436() { return m_auibar436; }
     wxStyledTextCtrl* GetStcBlame() { return m_stcBlame; }
     GitBlameDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Blame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitBlameDlgBase();

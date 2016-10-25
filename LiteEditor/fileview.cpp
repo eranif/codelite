@@ -72,6 +72,7 @@
 #include "compiler.h"
 #include "ICompilerLocator.h"
 #include "fileutils.h"
+#include <algorithm>
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 

@@ -356,7 +356,7 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
         // Set active project with bold
         wxString activeProjectName = ManagerST::Get()->GetActiveProjectName();
         wxString displayName = node->GetData().GetDisplayName();
-        
+
         // Cache the project item ID
         if((node->GetData().GetKind() == ProjectItem::TypeProject) && (m_projectsMap.count(displayName) == 0)) {
             m_projectsMap.insert(std::make_pair(displayName, hti));
@@ -1133,7 +1133,11 @@ void FileViewTree::DoRemoveProject(const wxString& name)
     message << _(" from the workspace, click 'Yes' to proceed or 'No' to abort.");
     if(wxMessageBox(message, _("Confirm"), wxYES_NO) == wxYES) {
         ManagerST::Get()->RemoveProject(name, true);
-        // SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED); -- sent by WorkspaceTab
+
+        // Remove the project from the cache
+        if(m_projectsMap.count(name)) {
+            m_projectsMap.erase(name);
+        }
     }
 }
 
@@ -1466,13 +1470,8 @@ void FileViewTree::OnCleanProjectOnly(wxCommandEvent& event)
 
 void FileViewTree::ExpandToPath(const wxString& project, const wxFileName& fileName)
 {
-    wxTreeItemId root = GetRootItem();
-    if(!root.IsOk()) return;
-
-    CL_DEBUG1(" ===> [workspace] Expand to path for " + project + "::" + fileName.GetFullPath());
-
-    wxTreeItemIdValue cookie;
-    for(wxTreeItemId child = GetFirstChild(root, cookie); child.IsOk(); child = GetNextChild(root, cookie)) {
+    if(m_projectsMap.count(project)) {
+        wxTreeItemId child = m_projectsMap.find(project)->second;
         FilewViewTreeItemData* childData = static_cast<FilewViewTreeItemData*>(GetItemData(child));
         if(childData->GetData().GetDisplayName() == project) {
             wxTreeItemId fileItem = fileName.GetName().IsEmpty() ?
@@ -1497,10 +1496,8 @@ void FileViewTree::ExpandToPath(const wxString& project, const wxFileName& fileN
                 message << _("Failed to find file: ") << fileName.GetFullPath() << _(" in FileView.");
                 wxLogMessage(message);
             }
-            break;
         }
     }
-    CL_DEBUG1(" <=== [workspace] Expand to path for " + project + "::" + fileName.GetFullPath());
 }
 
 wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& parent, const wxString& projectPath, const wxString& fileName)
@@ -1997,15 +1994,8 @@ bool FileViewTree::CreateVirtualDirectory(const wxString& parentPath, const wxSt
 void FileViewTree::MarkActive(const wxString& projectName)
 {
     // Find the project item ID by name and select it
-    wxTreeItemIdValue cookie;
-    wxTreeItemId child = GetFirstChild(GetRootItem(), cookie);
-    while(child.IsOk()) {
-        FilewViewTreeItemData* childData = static_cast<FilewViewTreeItemData*>(GetItemData(child));
-        if(childData->GetData().GetDisplayName() == projectName) {
-            DoSetProjectActive(child);
-            break;
-        }
-        child = GetNextChild(GetRootItem(), cookie);
+    if(m_projectsMap.count(projectName)) {
+        DoSetProjectActive(m_projectsMap.find(projectName)->second);
     }
 }
 
@@ -2131,26 +2121,29 @@ ProjectPtr FileViewTree::GetSelectedProject() const
         return NULL;
     }
 
-    wxString errMsg;
-    for(size_t i = 0; i < count; i++) {
+    // Return the first item which is of type "TypeProject"
+    for(size_t i = 0; i < count; ++i) {
         FilewViewTreeItemData* itemData = dynamic_cast<FilewViewTreeItemData*>(GetItemData(selections.Item(i)));
-        if(itemData && itemData->GetData().GetKind() == ProjectItem::TypeProject) {
-            return clCxxWorkspaceST::Get()->FindProjectByName(GetItemText(selections.Item(i)), errMsg);
+        if(itemData && (itemData->GetData().GetKind() == ProjectItem::TypeProject)) {
+            return clCxxWorkspaceST::Get()->GetProject(GetItemText(selections.Item(i)));
         }
     }
 
-    // None of the selected items is not a project
-    // return the project parent of the first item
+    // None of the selected items is a project.
+    // Return the project parent of the first item
     wxTreeItemId item = selections.Item(0);
-    while(item.IsOk() && item != GetRootItem()) {
+    while(item.IsOk() && (item != GetRootItem())) {
         FilewViewTreeItemData* itemData = dynamic_cast<FilewViewTreeItemData*>(GetItemData(item));
         if(!itemData) {
             return NULL;
         } else if(itemData->GetData().GetKind() == ProjectItem::TypeProject) {
-            return clCxxWorkspaceST::Get()->FindProjectByName(GetItemText(item), errMsg);
+            // Found a project
+            return clCxxWorkspaceST::Get()->GetProject(GetItemText(item));
         }
         item = GetItemParent(item);
     }
+
+    // No project was found
     return NULL;
 }
 
@@ -2335,13 +2328,24 @@ void FileViewTree::OnRenameProject(wxCommandEvent& event)
         wxString newname = ::wxGetTextFromUser(_("Project new name:"), _("Rename project"));
         newname.Trim().Trim(false);
         CHECK_COND_RET(!newname.IsEmpty());
-        if(data->GetData().GetDisplayName() == newname) return;
+
+        wxString oldname = data->GetData().GetDisplayName();
+        // If the new name and the old name are the same, do nothing
+        if(oldname == newname) return;
+
+        // If a project with this name already exists, abort
+        if(m_projectsMap.count(newname)) {
+            ::wxMessageBox(_("A project with this name already exists in the workspace"), "CodeLite",
+                wxOK | wxICON_WARNING | wxCENTRE, this);
+            return;
+        }
 
         if(!::clIsVaidProjectName(newname)) {
             wxMessageBox(_("Project names may contain only the following characters [a-z0-9_-]"), "CodeLite",
                 wxOK | wxICON_WARNING | wxCENTER, this);
             return;
         }
+
         // Calling 'RenameProject' will trigger a wxEVT_PROJ_RENAMED event
         clCxxWorkspaceST::Get()->RenameProject(data->GetData().GetDisplayName(), newname);
 
@@ -2350,6 +2354,10 @@ void FileViewTree::OnRenameProject(wxCommandEvent& event)
 
         // Update the user data
         data->GetData().SetDisplayName(newname);
+
+        // Update the cache
+        m_projectsMap.erase(oldname);
+        m_projectsMap.insert(std::make_pair(newname, item));
     }
 }
 
@@ -2606,15 +2614,8 @@ void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu, const wxString& proj
 
 void FileViewTree::UnselectAllProject()
 {
-    wxTreeItemIdValue cookie;
-    wxTreeItemId child = GetFirstChild(GetRootItem(), cookie);
-    while(child.IsOk()) {
-        FilewViewTreeItemData* childData = static_cast<FilewViewTreeItemData*>(GetItemData(child));
-        if(childData && (childData->GetData().GetKind() == ProjectItem::TypeProject)) {
-            SetItemBold(child, false);
-        }
-        child = GetNextChild(GetRootItem(), cookie);
-    }
+    std::for_each(m_projectsMap.begin(), m_projectsMap.end(),
+        [&](std::pair<wxString, wxTreeItemId> p) { SetItemBold(p.second, false); });
 }
 
 wxTreeItemId FileViewTree::AddWorkspaceFolder(const wxString& folderPath)

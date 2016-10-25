@@ -93,7 +93,7 @@ WordScanner_t WordLexerNew(const wxString& buffer)
     yylex_init(&scanner);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     //wxScopedCharBuffer cb = buffer.mb_str(wxConvUTF8);
-    yy_switch_to_buffer(yy_scan_string(buffer, scanner), scanner);
+    yy_switch_to_buffer(yy_scan_string(buffer.ToUTF8(), scanner), scanner);
     yycolumn = 1;
     return scanner;
 }

@@ -421,6 +421,7 @@ EVT_MENU(XRCID("file_close_workspace"), clMainFrame::OnCloseWorkspace)
 EVT_MENU(XRCID("reload_workspace"), clMainFrame::OnReloadWorkspace)
 EVT_MENU(XRCID("import_from_msvs"), clMainFrame::OnImportMSVS)
 EVT_MENU(XRCID("new_project"), clMainFrame::OnProjectNewProject)
+EVT_MENU(XRCID("add_workspace_folder"), clMainFrame::OnNewWorkspaceFolder)
 EVT_MENU(XRCID("file_new_project"), clMainFrame::OnProjectNewProject)
 EVT_MENU(XRCID("add_project"), clMainFrame::OnProjectAddProject)
 EVT_MENU(XRCID("reconcile_project"), clMainFrame::OnReconcileProject)
@@ -429,6 +430,7 @@ EVT_MENU(XRCID("full_retag_workspace"), clMainFrame::OnRetagWorkspace)
 EVT_MENU(XRCID("project_properties"), clMainFrame::OnShowActiveProjectSettings)
 
 EVT_UPDATE_UI(XRCID("local_workspace_prefs"), clMainFrame::OnWorkspaceOpen)
+EVT_UPDATE_UI(XRCID("add_workspace_folder"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("local_workspace_settings"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("close_workspace"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("file_close_workspace"), clMainFrame::OnWorkspaceOpen)
@@ -6242,4 +6244,9 @@ void clMainFrame::OnEnvironmentVariablesModified(clCommandEvent& e)
             }
         }
     }
+}
+
+void clMainFrame::OnNewWorkspaceFolder(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
 }

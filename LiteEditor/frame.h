@@ -419,6 +419,7 @@ protected:
     void OnShowTabBarUI(wxUpdateUIEvent& event);
     void OnProjectNewWorkspace(wxCommandEvent& event);
     void OnProjectNewProject(wxCommandEvent& event);
+    void OnNewWorkspaceFolder(wxCommandEvent& event);
     void OnReloadWorkspace(wxCommandEvent& event);
     void OnReloadWorkspaceUI(wxUpdateUIEvent& event);
     void OnSwitchWorkspace(wxCommandEvent& event);

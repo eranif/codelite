@@ -85,7 +85,52 @@ private:
      */
     void DoUnselectActiveProject();
 
+    /**
+     * @brief load projects from the XML file
+     */
+    void DoLoadProjectsFromXml(wxXmlNode* parentNode, const wxString& folder, std::vector<wxXmlNode*>& removedChildren);
+
+    // return the wxXmlNode instance for the give path
+    // the path is separated by "/"
+    // return NULL if no such virtual directory exists
+    wxXmlNode* DoGetWorkspaceFolderXmlNode(const wxString& path);
+    
+    /**
+     * @brief return the wxXmlNode for this project
+     */
+    wxXmlNode* DoGetProjectXmlNode(const wxString& projectName);
+
+    /**
+     * @brief create workspace folder and return the wxXmlNode. If this path already exists, return it
+     * @param path the path is separated by "/".e.g. "projects/plugins/C++"
+     */
+    wxXmlNode* DoCreateWorkspaceFolder(const wxString& path);
+    
+    bool DoLoadWorkspace(const wxString& fileName, wxString& errMsg);
+    
+    /**
+     * @brief return list of all projects nodes in this workspace
+     */
+    std::list<wxXmlNode*> DoGetProjectsXmlNodes() const;
+    
 public:
+    /**
+     * @brief move 'projectName' to folder. Create the folder if it does not exists
+     */
+    bool MoveProjectToFolder(const wxString& projectName, const wxString& folderPath);
+
+    /**
+     * @brief create workspace folder
+     * @param path the path is separated by "/".e.g. "projects/plugins/C++"
+     */
+    bool CreateWorkspaceFolder(const wxString& path);
+    
+    /**
+     * @brief delete workspace folder. Notice that this will also remove (but not delete) all the projects from the
+     * workspace
+     */
+    void DeleteWorkspaceFolder(const wxString& path);
+    
     /**
      * @brief createa 'compile_commands' json object for the workspace projects (only the enabled ones)
      */

@@ -22,14 +22,14 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
+#include <wx/splitter.h>
+#include <wx/checklst.h>
+#include <wx/stc/stc.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <map>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
-#include <wx/splitter.h>
-#include <wx/checklst.h>
-#include <wx/stc/stc.h>
 #include <wx/srchctrl.h>
 #include <wx/dataview.h>
 #include <wx/listbox.h>
@@ -126,7 +126,6 @@ public:
         ID_TOGGLE_CHECKALL = 6002,
     };
 protected:
-    wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitterMain;
     wxPanel* m_panel3;
     wxSplitterWindow* m_splitterInner;
@@ -135,30 +134,29 @@ protected:
     wxPanel* m_panel2;
     wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_panel4;
-    wxStaticText* m_staticText8;
+    wxAuiToolBar* m_auibar;
     wxStyledTextCtrl* m_stcCommitMessage;
     wxCheckBox* m_checkBoxAmend;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
 
 protected:
+    virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnToggleCheckAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitHistory(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClearGitCommitHistory(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearGitCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxCheckListBox* GetListBox() { return m_listBox; }
     wxPanel* GetPanel1() { return m_panel1; }
     wxStyledTextCtrl* GetStcDiff() { return m_stcDiff; }
     wxPanel* GetPanel2() { return m_panel2; }
     wxSplitterWindow* GetSplitterInner() { return m_splitterInner; }
     wxPanel* GetPanel3() { return m_panel3; }
-    wxStaticText* GetStaticText8() { return m_staticText8; }
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxStyledTextCtrl* GetStcCommitMessage() { return m_stcCommitMessage; }
     wxCheckBox* GetCheckBoxAmend() { return m_checkBoxAmend; }
     wxPanel* GetPanel4() { return m_panel4; }

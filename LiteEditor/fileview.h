@@ -188,6 +188,7 @@ protected:
     int OnCompareItems(const FilewViewTreeItemData* a, const FilewViewTreeItemData* b);
 
     void ShowWorkspaceContextMenu();
+    void ShowWorkspaceFolderContextMenu();
     void ShowProjectContextMenu(const wxString& projectName);
     void ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData);
     void ShowFileContextMenu();

@@ -497,6 +497,9 @@ void FileViewTree::OnPopupMenu(wxTreeEvent& event)
             case ProjectItem::TypeWorkspace:
                 ShowWorkspaceContextMenu();
                 break;
+            case ProjectItem::TypeWorkspaceFolder:
+                ShowWorkspaceFolderContextMenu();
+                break;
             default:
                 break;
             }
@@ -2651,4 +2654,8 @@ void FileViewTree::DoClear()
     m_itemsToSort.clear();
     m_workspaceFolders.clear();
     m_projectsMap.clear();
+}
+
+void FileViewTree::ShowWorkspaceFolderContextMenu()
+{
 }

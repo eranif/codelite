@@ -94,7 +94,7 @@ private:
     // the path is separated by "/"
     // return NULL if no such virtual directory exists
     wxXmlNode* DoGetWorkspaceFolderXmlNode(const wxString& path);
-    
+
     /**
      * @brief return the wxXmlNode for this project
      */
@@ -105,14 +105,16 @@ private:
      * @param path the path is separated by "/".e.g. "projects/plugins/C++"
      */
     wxXmlNode* DoCreateWorkspaceFolder(const wxString& path);
-    
+
     bool DoLoadWorkspace(const wxString& fileName, wxString& errMsg);
-    
+
     /**
      * @brief return list of all projects nodes in this workspace
      */
     std::list<wxXmlNode*> DoGetProjectsXmlNodes() const;
-    
+
+    void DoVisitWorkspaceFolders(wxXmlNode* parent, const wxString& curpath, wxArrayString& paths) const;
+
 public:
     /**
      * @brief move 'projectName' to folder. Create the folder if it does not exists
@@ -124,13 +126,21 @@ public:
      * @param path the path is separated by "/".e.g. "projects/plugins/C++"
      */
     bool CreateWorkspaceFolder(const wxString& path);
-    
+
     /**
      * @brief delete workspace folder. Notice that this will also remove (but not delete) all the projects from the
      * workspace
      */
     void DeleteWorkspaceFolder(const wxString& path);
-    
+
+    /**
+     * @brief return list of workspace folders in the form of:
+     * a/b/c
+     * a/b/d
+     * e/f/g
+     */
+    wxArrayString GetWorkspaceFolders() const;
+
     /**
      * @brief createa 'compile_commands' json object for the workspace projects (only the enabled ones)
      */

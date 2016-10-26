@@ -182,7 +182,14 @@ protected:
     virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnBuildTree(wxCommandEvent& e);
     void OnFolderDropped(clCommandEvent& event);
-
+    
+    // Called from the context menu of a workspace folder
+    void OnWorkspaceNewWorkspaceFolder(wxCommandEvent &evt);
+    // Called from the workspace context menu
+    void OnWorkspaceFolderNewFolder(wxCommandEvent &evt);
+    
+    void OnWorkspaceFolderDelete(wxCommandEvent &evt);
+    
     // Tree sorting
     virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
     int OnCompareItems(const FilewViewTreeItemData* a, const FilewViewTreeItemData* b);

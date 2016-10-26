@@ -1072,6 +1072,7 @@
         </object>
     </object>    //File explorer
     
+    
     <object class="wxMenu" name="file_explorer_menu">
         <object class="wxMenuItem" name="refresh_node">
             <label>Refresh</label>

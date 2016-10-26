@@ -6247,4 +6247,7 @@ void clMainFrame::OnEnvironmentVariablesModified(clCommandEvent& e)
     }
 }
 
-void clMainFrame::OnNewWorkspaceFolder(wxCommandEvent& event) { wxUnusedVar(event); }
+void clMainFrame::OnNewWorkspaceFolder(wxCommandEvent& event) 
+{
+    event.Skip();
+}

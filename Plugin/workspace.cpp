@@ -1202,14 +1202,39 @@ void clCxxWorkspace::DoLoadProjectsFromXml(
 
 wxXmlNode* clCxxWorkspace::DoGetWorkspaceFolderXmlNode(const wxString& path)
 {
-    // TODO :: implement this
-    return NULL;
+    wxArrayString parts = ::wxStringTokenize(path, "/", wxTOKEN_STRTOK);
+    if(parts.IsEmpty()) return m_doc.GetRoot();
+
+    wxXmlNode* parent = m_doc.GetRoot();
+    for(size_t i = 0; i < parts.size(); ++i) {
+        parent = XmlUtils::FindNodeByName(parent, "VirtualDirectory", parts.Item(i));
+        if(!parent) return NULL;
+    }
+    return parent;
 }
 
 wxXmlNode* clCxxWorkspace::DoCreateWorkspaceFolder(const wxString& path)
 {
-    // TODO :: implement this
-    return NULL;
+    wxXmlNode* node = DoGetWorkspaceFolderXmlNode(path);
+    if(node) return node; // already exists
+
+    // Create it
+    wxArrayString parts = ::wxStringTokenize(path, "/", wxTOKEN_STRTOK);
+    if(parts.IsEmpty()) return m_doc.GetRoot();
+
+    // Starting from the root node
+    wxXmlNode* parent = m_doc.GetRoot();
+    for(size_t i = 0; i < parts.size(); ++i) {
+        wxXmlNode* child = XmlUtils::FindNodeByName(parent, "VirtualDirectory", parts.Item(i));
+        if(!child) {
+            // add this child
+            child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
+            child->AddAttribute("Name", parts.Item(i));
+            parent->AddChild(child);
+        }
+        parent = child;
+    }
+    return parent;
 }
 
 bool clCxxWorkspace::MoveProjectToFolder(const wxString& projectName, const wxString& folderPath)

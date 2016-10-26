@@ -1331,7 +1331,8 @@ void clMainFrame::CreateToolbars24()
     //----------------------------------------------
     // create the standard toolbar
     //----------------------------------------------
-    clToolBar* tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    clToolBar* tb =
+        new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetToolBitmapSize(wxSize(24, 24));
     tb->SetArtProvider(new CLMainAuiTBArt());
 
@@ -1372,7 +1373,7 @@ void clMainFrame::CreateToolbars24()
     // create the search toolbar
     //----------------------------------------------
     info = wxAuiPaneInfo();
-    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetArtProvider(new CLMainAuiTBArt());
     tb->SetToolBitmapSize(wxSize(24, 24));
 
@@ -1400,7 +1401,7 @@ void clMainFrame::CreateToolbars24()
     //----------------------------------------------
     // create the build toolbar
     //----------------------------------------------
-    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetArtProvider(new CLMainAuiTBArt());
     tb->SetToolBitmapSize(wxSize(24, 24));
 
@@ -1431,7 +1432,7 @@ void clMainFrame::CreateToolbars24()
     //----------------------------------------------
     // create the debugger toolbar
     //----------------------------------------------
-    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetArtProvider(new CLMainAuiTBArt());
     tb->SetToolBitmapSize(wxSize(24, 24));
 
@@ -1659,7 +1660,7 @@ void clMainFrame::CreateToolbars16()
     //----------------------------------------------
     wxWindow* toolbar_parent(m_mainPanel);
 
-    clToolBar* tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    clToolBar* tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetArtProvider(new CLMainAuiTBArt());
 
     wxAuiPaneInfo info;
@@ -1705,7 +1706,7 @@ void clMainFrame::CreateToolbars16()
     //----------------------------------------------
     info = wxAuiPaneInfo();
 
-    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetArtProvider(new CLMainAuiTBArt());
     tb->SetToolBitmapSize(wxSize(16, 16));
 
@@ -1734,7 +1735,7 @@ void clMainFrame::CreateToolbars16()
     //----------------------------------------------
     // create the build toolbar
     //----------------------------------------------
-    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetArtProvider(new CLMainAuiTBArt());
     tb->SetToolBitmapSize(wxSize(16, 16));
 
@@ -1764,7 +1765,7 @@ void clMainFrame::CreateToolbars16()
     //----------------------------------------------
     // create the debugger toolbar
     //----------------------------------------------
-    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
+    tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetArtProvider(new CLMainAuiTBArt());
     tb->SetToolBitmapSize(wxSize(16, 16));
 
@@ -6246,7 +6247,4 @@ void clMainFrame::OnEnvironmentVariablesModified(clCommandEvent& e)
     }
 }
 
-void clMainFrame::OnNewWorkspaceFolder(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-}
+void clMainFrame::OnNewWorkspaceFolder(wxCommandEvent& event) { wxUnusedVar(event); }

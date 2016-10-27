@@ -5,10 +5,12 @@
 #include "ColoursAndFontsManager.h"
 #include "lexer_configuration.h"
 #include "file_logger.h"
+#include <wx/dcmemory.h>
+#include <wx/bitmap.h>
 
 #define TEXT_MARGIN_ID 0
 #define LINENUMBER_MARGIN_ID 1
-#define DATE_WIDTH 16
+#define DATE_WIDTH 11 // 2000-00-00
 #define AUTHOR_WIDTH 15
 #define HASH_WIDTH 8
 
@@ -23,7 +25,7 @@ size_t FindAuthorLine(wxArrayString& blameArr, size_t n, wxString* author) // He
 }
 
 // The text margin needs to be 24 chars wide for the date & hash, the max author-width, plus 2 spaces between
-static int marginwidth = DATE_WIDTH + AUTHOR_WIDTH + HASH_WIDTH +2;
+static int marginwidth = DATE_WIDTH + AUTHOR_WIDTH + HASH_WIDTH + 2;
 
 // Helper function. 'n' indexes any previous 'author ' field + 1
 wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr, size_t& n)
@@ -59,7 +61,7 @@ wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr, size_t&
         if(dtstring.ToLong(&datetime)) {
             wxDateTime dt((time_t)datetime);
             if(dt.IsValid()) {
-                date = dt.Format("%F %H-%M ", wxDateTime::UTC);
+                date = dt.Format("%d-%m-%Y ");
             }
         }
     }
@@ -79,7 +81,7 @@ wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr, size_t&
 
     wxString margin;
     margin << date << author << hash;
-    
+
     wxASSERT(margin.Len() <= marginwidth);
     arr.Add(margin);
     arr.Add(blameArr.Item(cl)); // code-line
@@ -117,16 +119,6 @@ GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
     m_showParentCommit = data.GetGitBlameShowParentCommit();
 
     m_comboExtraArgs->Clear(); // Remove the placeholder string (there to make the control wider)
-
-    m_stcBlame->SetMarginType(TEXT_MARGIN_ID, wxSTC_MARGIN_RTEXT);
-    // The text margin needs to be 24 chars wide for the date & hash, the max author-width, plus 2 spaces between
-    m_stcBlame->SetMarginWidth(TEXT_MARGIN_ID, marginwidth * GetCharWidth());
-    m_stcBlame->SetMarginSensitive(TEXT_MARGIN_ID, true);
-
-    // Configure the line numbers margin
-    m_stcBlame->SetMarginType(LINENUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
-
-    m_stcBlame->SetMouseDwellTime(m_hovertime * 1000);
 }
 
 GitBlameDlg::~GitBlameDlg()
@@ -155,7 +147,7 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
     filename.Trim().Trim(false);
 
     clDEBUG() << "GitBlame is called for file:" << filename << clEndl;
-    clDEBUG() << "GitBlame 'blame':\n" << blame << clEndl;
+    clDEBUG1() << "GitBlame 'blame':\n" << blame << clEndl;
 
     // Set blame editor style and fonts
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(wxFileName(filename).GetFullName());
@@ -163,6 +155,18 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
         lexer = ColoursAndFontsManager::Get().GetLexer("default");
     }
     lexer->Apply(m_stcBlame, true);
+
+    m_stcBlame->SetMarginType(TEXT_MARGIN_ID, wxSTC_MARGIN_RTEXT);
+    // The text margin needs to be 24 chars wide for the date & hash, the max author-width, plus 2 spaces between
+    wxBitmap bmp(1, 1);
+    wxMemoryDC memDC(bmp);
+    memDC.SetFont(m_stcBlame->StyleGetFont(0));
+    int charWidth = memDC.GetTextExtent("W").x;
+    
+    m_stcBlame->SetMarginWidth(TEXT_MARGIN_ID, marginwidth * charWidth);
+    m_stcBlame->SetMarginSensitive(TEXT_MARGIN_ID, true);
+
+    m_stcBlame->SetMouseDwellTime(m_hovertime * 1000);
 
     wxArrayString lines = wxStringTokenize(blame, "\n");
     const size_t count = lines.GetCount();
@@ -175,10 +179,11 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
     size_t numlen =
         wxString::Format("%i", (int)count).length(); // How many digits must we allow room for in the number margin?
     int m_stcBlame_PixelWidth = 4 + numlen * m_stcBlame->TextWidth(wxSTC_STYLE_LINENUMBER, "9");
+    m_stcBlame->SetMarginType(LINENUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
     m_stcBlame->SetMarginWidth(LINENUMBER_MARGIN_ID, m_stcBlame_PixelWidth);
 
     // In case we're re-entering, ensure we're r/w. For a wxSTC 'readonly' also means can't append text programatically
-    m_stcBlame->SetReadOnly(false); 
+    m_stcBlame->SetReadOnly(false);
     m_stcBlame->ClearAll();
 
     for(size_t n = 0, line = 0; n < count; ++n) {
@@ -187,8 +192,8 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
             continue; // The entry must be corrupt, or we overran
         }
 
-    // We must append each code-line before doing MarginSetText(), which seems to fail if the line doesn't yet exist
-        m_stcBlame->AppendText(item.Item(1) + '\n'); 
+        // We must append each code-line before doing MarginSetText(), which seems to fail if the line doesn't yet exist
+        m_stcBlame->AppendText(item.Item(1) + '\n');
         m_stcBlame->MarginSetText(line++, item.Item(0));
     }
 
@@ -284,12 +289,12 @@ void GitBlameDlg::OnStcblameLeftDclick(wxMouseEvent& event)
 
 void GitBlameDlg::OnLogOutput(const wxString& output, const wxString& logArguments)
 {
-    if(!m_displayLog) {
-        m_displayLog = new LogPopupTransientWindow(this);
-    }
-
-    m_displayLog->SetText(output);
-    m_displayLog->Popup();
+    //     if(!m_displayLog) {
+    //         m_displayLog = new LogPopupTransientWindow(this);
+    //     }
+    //
+    //     m_displayLog->SetText(output);
+    //     m_displayLog->Popup();
 }
 
 void GitBlameDlg::OnExtraArgsTextEnter(wxCommandEvent& event)

@@ -421,7 +421,6 @@ EVT_MENU(XRCID("file_close_workspace"), clMainFrame::OnCloseWorkspace)
 EVT_MENU(XRCID("reload_workspace"), clMainFrame::OnReloadWorkspace)
 EVT_MENU(XRCID("import_from_msvs"), clMainFrame::OnImportMSVS)
 EVT_MENU(XRCID("new_project"), clMainFrame::OnProjectNewProject)
-EVT_MENU(XRCID("add_workspace_folder"), clMainFrame::OnNewWorkspaceFolder)
 EVT_MENU(XRCID("file_new_project"), clMainFrame::OnProjectNewProject)
 EVT_MENU(XRCID("add_project"), clMainFrame::OnProjectAddProject)
 EVT_MENU(XRCID("reconcile_project"), clMainFrame::OnReconcileProject)
@@ -430,7 +429,6 @@ EVT_MENU(XRCID("full_retag_workspace"), clMainFrame::OnRetagWorkspace)
 EVT_MENU(XRCID("project_properties"), clMainFrame::OnShowActiveProjectSettings)
 
 EVT_UPDATE_UI(XRCID("local_workspace_prefs"), clMainFrame::OnWorkspaceOpen)
-EVT_UPDATE_UI(XRCID("add_workspace_folder"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("local_workspace_settings"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("close_workspace"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("file_close_workspace"), clMainFrame::OnWorkspaceOpen)
@@ -2444,33 +2442,8 @@ void clMainFrame::OnProjectNewWorkspace(wxCommandEvent& event)
 void clMainFrame::OnProjectNewProject(wxCommandEvent& event)
 {
     // Let the plugin process this request first
-    clNewProjectEvent newProjectEvent(wxEVT_NEW_PROJECT_WIZARD_SHOWING);
-    newProjectEvent.SetEventObject(this);
-    if(EventNotifier::Get()->ProcessEvent(newProjectEvent)) {
-        return;
-    }
-
     wxUnusedVar(event);
-    NewProjectWizard wiz(this, newProjectEvent.GetTemplates());
-    if(wiz.RunWizard(wiz.GetFirstPage())) {
-
-        ProjectData data = wiz.GetProjectData();
-
-        // Try the plugins first
-        clNewProjectEvent finishEvent(wxEVT_NEW_PROJECT_WIZARD_FINISHED);
-        finishEvent.SetEventObject(this);
-        finishEvent.SetToolchain(data.m_cmpType);
-        finishEvent.SetDebugger(data.m_debuggerType);
-        finishEvent.SetProjectName(data.m_name);
-        finishEvent.SetProjectFolder(data.m_path);
-        finishEvent.SetTemplateName(data.m_sourceTemplate);
-        if(EventNotifier::Get()->ProcessEvent(finishEvent)) {
-            return;
-        }
-
-        // Carry on with the default behaviour
-        ManagerST::Get()->CreateProject(data);
-    }
+    ManagerST::Get()->ShowNewProjectWizard();
 }
 
 void clMainFrame::OnProjectAddProject(wxCommandEvent& event)
@@ -6245,9 +6218,4 @@ void clMainFrame::OnEnvironmentVariablesModified(clCommandEvent& e)
             }
         }
     }
-}
-
-void clMainFrame::OnNewWorkspaceFolder(wxCommandEvent& event) 
-{
-    event.Skip();
 }

@@ -936,11 +936,12 @@
             <label>Rename ...</label>
         </object>
     </object>
-    <!-- Workspace -->
+    
+    <!-- Workspace popup menu -->
     <object class="wxMenu" name="workspace_popup_menu">
-        <object class="wxMenu" name="workspace_popup_menu_new_submenu">
+        <object class="wxMenu" name="wxID_ANY">
             <label>New</label>
-            <object class="wxMenuItem" name="new_project">
+            <object class="wxMenuItem" name="new_cxx_project">
                 <label>New Project</label>
             </object>
             <object class="wxMenuItem" name="add_workspace_folder">

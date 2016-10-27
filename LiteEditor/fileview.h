@@ -49,9 +49,12 @@ class FileViewTree : public wxTreeCtrl
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     std::map<wxString, wxTreeItemId> m_workspaceFolders;
     std::map<wxString, wxTreeItemId> m_projectsMap;
+    bool m_eventsBound;
 
 protected:
     void DoCreateProjectContextMenu(wxMenu& menu, const wxString& projectName);
+    void DoBindEvents();
+    void DoUnbindEvents();
 
 public:
     /**
@@ -182,14 +185,15 @@ protected:
     virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnBuildTree(wxCommandEvent& e);
     void OnFolderDropped(clCommandEvent& event);
-    
+
     // Called from the context menu of a workspace folder
-    void OnWorkspaceNewWorkspaceFolder(wxCommandEvent &evt);
+    void OnWorkspaceNewWorkspaceFolder(wxCommandEvent& evt);
+    void OnNewProject(wxCommandEvent& evt);
     // Called from the workspace context menu
-    void OnWorkspaceFolderNewFolder(wxCommandEvent &evt);
-    
-    void OnWorkspaceFolderDelete(wxCommandEvent &evt);
-    
+    void OnWorkspaceFolderNewFolder(wxCommandEvent& evt);
+
+    void OnWorkspaceFolderDelete(wxCommandEvent& evt);
+
     // Tree sorting
     virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
     int OnCompareItems(const FilewViewTreeItemData* a, const FilewViewTreeItemData* b);

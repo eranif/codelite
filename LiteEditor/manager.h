@@ -236,12 +236,9 @@ public:
     void AddToRecentlyOpenedWorkspaces(const wxString& fileName);
     
     /**
-     * \brief create an empty project
-     * \param name project name
-     * \param path project file path
-     * \param type project type, Project::STATIC_LIBRARY, Project::DYNAMIC_LIBRARY or Project::EXECUTABLE
+     * @brief create an empty project
      */
-    void CreateProject(ProjectData& data);
+    void CreateProject(ProjectData& data, const wxString& workspaceFolder);
 
     /**
      * Add an existing project to the workspace. If no workspace is open,
@@ -713,6 +710,13 @@ public:
      * or incase it is detached and visible
      */
     bool IsDebuggerViewVisible(const wxString& name);
+    
+    /**
+     * @brief show the new project wizard.
+     * @param workspaceFolder the new project will be placed inside this workspace folder. 
+     * If left empty (the default) place the new project directly under the workspace
+     */
+    void ShowNewProjectWizard(const wxString &workspaceFolder = wxEmptyString);
     
 protected:
     void DoBuildProject(const QueueCommand& buildInfo);

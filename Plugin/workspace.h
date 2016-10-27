@@ -227,8 +227,8 @@ public:
      * \returns
      * true on success false otherwise
      */
-    bool CreateProject(
-        const wxString& name, const wxString& path, const wxString& type, bool addToBuildMatrix, wxString& errMsg);
+    bool CreateProject(const wxString& name, const wxString& path, const wxString& type,
+        const wxString& workspaceFolder, bool addToBuildMatrix, wxString& errMsg);
 
     /**
      * @brief rename a project

@@ -320,8 +320,8 @@ void clCxxWorkspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
     SetBuildMatrix(matrix);
 }
 
-bool clCxxWorkspace::CreateProject(
-    const wxString& name, const wxString& path, const wxString& type, bool addToBuildMatrix, wxString& errMsg)
+bool clCxxWorkspace::CreateProject(const wxString& name, const wxString& path, const wxString& type,
+    const wxString& workspaceFolder, bool addToBuildMatrix, wxString& errMsg)
 {
     if(!m_doc.IsOk()) {
         errMsg = wxT("No workspace open");
@@ -331,6 +331,7 @@ bool clCxxWorkspace::CreateProject(
     ProjectPtr proj(new Project());
     proj->Create(name, wxEmptyString, path, type);
     proj->AssociateToWorkspace(this);
+    proj->SetWorkspaceFolder(workspaceFolder);
     m_projects[name] = proj;
 
     // make the project path to be relative to the workspace, if it's sensible to do so
@@ -342,7 +343,9 @@ bool clCxxWorkspace::CreateProject(
     node->AddProperty(wxT("Name"), name);
     node->AddProperty(wxT("Path"), tmp.GetFullPath(wxPATH_UNIX));
 
-    m_doc.GetRoot()->AddChild(node);
+    // Create the workspace folder and add the project
+    wxXmlNode* parentNode = DoCreateWorkspaceFolder(workspaceFolder);
+    parentNode->AddChild(node);
 
     if(m_projects.size() == 1) {
         SetActiveProject(name);
@@ -420,8 +423,7 @@ bool clCxxWorkspace::AddProject(const wxString& path, wxString& errMsg)
         if(!SaveXmlFile()) {
             wxMessageBox(
                 _("Failed to save workspace file to disk. Please check that you have permission to write to disk"),
-                _("CodeLite"),
-                wxICON_ERROR | wxOK);
+                _("CodeLite"), wxICON_ERROR | wxOK);
             return false;
         }
 
@@ -429,8 +431,8 @@ bool clCxxWorkspace::AddProject(const wxString& path, wxString& errMsg)
         return true;
 
     } else {
-        errMsg = wxString::Format(wxT("A project with a similar name '%s' already exists in the workspace"),
-                                  proj->GetName().c_str());
+        errMsg = wxString::Format(
+            wxT("A project with a similar name '%s' already exists in the workspace"), proj->GetName().c_str());
         return false;
     }
 }
@@ -548,9 +550,8 @@ wxString clCxxWorkspace::GetActiveProjectName() const
     }
 
     std::list<wxXmlNode*> xmls = DoGetProjectsXmlNodes();
-    std::list<wxXmlNode*>::iterator iter = std::find_if(xmls.begin(), xmls.end(), [&](wxXmlNode* node) {
-        return (node->GetAttribute("Active", wxEmptyString).CmpNoCase("yes") == 0);
-    });
+    std::list<wxXmlNode*>::iterator iter = std::find_if(xmls.begin(), xmls.end(),
+        [&](wxXmlNode* node) { return (node->GetAttribute("Active", wxEmptyString).CmpNoCase("yes") == 0); });
 
     if(iter == xmls.end()) return "";
     return (*iter)->GetAttribute("Name", wxEmptyString);
@@ -1003,7 +1004,7 @@ void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) co
     for(; iter != m_projects.end(); ++iter) {
         BuildConfigPtr buildConf = iter->second->GetBuildConfiguration();
         if(buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
-           buildConf->IsCompilerRequired()) {
+            buildConf->IsCompilerRequired()) {
             iter->second->CreateCompileCommandsJSON(compile_commands);
         }
     }
@@ -1155,9 +1156,8 @@ WorkspaceConfigurationPtr clCxxWorkspace::GetSelectedConfig() const
 
 void clCxxWorkspace::ClearIncludePathCache()
 {
-    std::for_each(m_projects.begin(), m_projects.end(), [&](const clCxxWorkspace::ProjectMap_t::value_type& v) {
-        v.second->ClearIncludePathCache();
-    });
+    std::for_each(m_projects.begin(), m_projects.end(),
+        [&](const clCxxWorkspace::ProjectMap_t::value_type& v) { v.second->ClearIncludePathCache(); });
 }
 
 void clCxxWorkspace::DoUnselectActiveProject()
@@ -1168,9 +1168,8 @@ void clCxxWorkspace::DoUnselectActiveProject()
     std::for_each(xmls.begin(), xmls.end(), [&](wxXmlNode* node) { XmlUtils::UpdateProperty(node, "Active", "No"); });
 }
 
-void clCxxWorkspace::DoLoadProjectsFromXml(wxXmlNode* parentNode,
-                                           const wxString& folder,
-                                           std::vector<wxXmlNode*>& removedChildren)
+void clCxxWorkspace::DoLoadProjectsFromXml(
+    wxXmlNode* parentNode, const wxString& folder, std::vector<wxXmlNode*>& removedChildren)
 {
     wxXmlNode* child = parentNode->GetChildren();
     while(child) {
@@ -1190,12 +1189,12 @@ void clCxxWorkspace::DoLoadProjectsFromXml(wxXmlNode* parentNode,
             currentFolder << vdName;
             DoLoadProjectsFromXml(child, currentFolder, removedChildren);
         } else if((child->GetName() == wxT("WorkspaceParserPaths")) ||
-                  (child->GetName() == wxT("WorkspaceParserMacros"))) {
+            (child->GetName() == wxT("WorkspaceParserMacros"))) {
             wxString swtlw = wxEmptyString;
             swtlw = XmlUtils::ReadString(m_doc.GetRoot(), "SWTLW");
             if(swtlw.CmpNoCase("yes") == 0) {
-                LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() |
-                                                        LocalWorkspace::EnableSWTLW);
+                LocalWorkspaceST::Get()->SetParserFlags(
+                    LocalWorkspaceST::Get()->GetParserFlags() | LocalWorkspace::EnableSWTLW);
                 SyncToLocalWorkspaceSTParserPaths();
                 SyncToLocalWorkspaceSTParserMacros();
             }
@@ -1336,9 +1335,8 @@ bool clCxxWorkspace::DoLoadWorkspace(const wxString& fileName, wxString& errMsg)
 wxXmlNode* clCxxWorkspace::DoGetProjectXmlNode(const wxString& projectName)
 {
     std::list<wxXmlNode*> xmls = DoGetProjectsXmlNodes();
-    std::list<wxXmlNode*>::iterator iter = std::find_if(xmls.begin(), xmls.end(), [&](wxXmlNode* node) {
-        return (node->GetAttribute("Name", wxEmptyString) == projectName);
-    });
+    std::list<wxXmlNode*>::iterator iter = std::find_if(xmls.begin(), xmls.end(),
+        [&](wxXmlNode* node) { return (node->GetAttribute("Name", wxEmptyString) == projectName); });
 
     if(iter == xmls.end()) return NULL;
     return (*iter);

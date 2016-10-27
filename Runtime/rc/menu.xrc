@@ -938,7 +938,7 @@
     </object>
     <!-- Workspace -->
     <object class="wxMenu" name="workspace_popup_menu">
-        <object class="wxMenu" name="wxID_ANY">
+        <object class="wxMenu" name="workspace_popup_menu_new_submenu">
             <label>New</label>
             <object class="wxMenuItem" name="new_project">
                 <label>New Project</label>

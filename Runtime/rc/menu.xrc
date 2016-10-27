@@ -938,22 +938,28 @@
     </object>
     <!-- Workspace -->
     <object class="wxMenu" name="workspace_popup_menu">
-        <object class="wxMenuItem" name="build_workspace">
-            <label>Build Workspace</label>
+        <object class="wxMenu" name="wxID_ANY">
+            <label>New</label>
+            <object class="wxMenuItem" name="new_project">
+                <label>New Project</label>
+            </object>
+            <object class="wxMenuItem" name="add_workspace_folder">
+                <label>New Virtual Directory</label>
+            </object>
         </object>
-        <object class="wxMenuItem" name="clean_workspace">
-            <label>Clean Workspace</label>
-        </object>
-        <object class="wxMenuItem" name="rebuild_workspace">
-            <label>Rebuild Workspace</label>
+        <object class="wxMenu" name="wxID_ANY">
+            <label>Build</label>
+            <object class="wxMenuItem" name="build_workspace">
+                <label>Build Workspace</label>
+            </object>
+            <object class="wxMenuItem" name="clean_workspace">
+                <label>Clean Workspace</label>
+            </object>
+            <object class="wxMenuItem" name="rebuild_workspace">
+                <label>ReBuild Workspace</label>
+            </object>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="new_project">
-            <label>Create New Project</label>
-        </object>
-        <object class="wxMenuItem" name="add_workspace_folder">
-            <label>New Virtual Directory</label>
-        </object>
         <object class="wxMenuItem" name="add_project">
             <label>Add an Existing Project</label>
         </object>
@@ -1071,6 +1077,8 @@
             </object>
         </object>
     </object>    //File explorer
+    
+    
     
     
     <object class="wxMenu" name="file_explorer_menu">

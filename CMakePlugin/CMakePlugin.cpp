@@ -518,14 +518,13 @@ void CMakePlugin::OnWorkspaceContextMenu(clContextMenuEvent& event)
     wxFileName workspaceFile = clCxxWorkspaceST::Get()->GetFileName();
     workspaceFile.SetFullName(CMAKELISTS_FILE);
 
-    menu->InsertSeparator(0);
+    menu->AppendSeparator();
     if(workspaceFile.FileExists()) {
         wxMenuItem* item = new wxMenuItem(NULL, XRCID("cmake_open_active_project_cmake"), _("Open CMakeLists.txt"));
         item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("cmake"));
-        menu->Insert(0, item);
+        menu->Append(item);
     }
-    menu->Insert(0, XRCID("cmake_export_active_project"), _("Export CMakeLists.txt"));
-
+    menu->Append(XRCID("cmake_export_active_project"), _("Export CMakeLists.txt"));
     menu->Bind(wxEVT_MENU, &CMakePlugin::OnOpenCMakeLists, this, XRCID("cmake_open_active_project_cmake"));
     menu->Bind(wxEVT_MENU, &CMakePlugin::OnExportCMakeLists, this, XRCID("cmake_export_active_project"));
 }

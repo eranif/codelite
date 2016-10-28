@@ -58,7 +58,7 @@ struct NodeJSHandle {
 
     bool IsOk() const { return handleID != wxNOT_FOUND; }
     bool IsString() const { return type.Lower() == "string"; }
-    bool IsArray() const { return type.Lower() == "Array"; }
+    bool IsArray() const { return type.Lower() == "array"; }
 };
 
 class NodeJSOuptutParser

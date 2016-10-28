@@ -168,7 +168,7 @@ public:
     void ClearComment()
     {
         m_comment.Clear();
-        m_commentEndLine = wxNOT_FOUND;
+        m_commentStartLine = wxNOT_FOUND;
         m_commentEndLine = wxNOT_FOUND;
     }
 };

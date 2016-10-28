@@ -121,6 +121,7 @@ char *loadFile(const char *fileName)
     if (bytes != len) {
         fclose(fp);
         printf("failed to read from file 'test.h': %s\n", strerror(errno));
+		free(buf);
         return NULL;
     }
 
@@ -147,7 +148,7 @@ bool testParseLocals()
     if (!l) {
         return false;
     }
-    std::string strline = l, tmpline;
+    std::string strline = l;
 
     size_t pos = strline.find("{");
     if(pos != std::string::npos) {
@@ -302,7 +303,6 @@ void MakeSubTree(int depth)
     //where value can be a complex value:
     //key = {...}
     std::string displayLine;
-    std::string name, value;
     std::string currentToken;
     int type(0);
 

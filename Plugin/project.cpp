@@ -1874,7 +1874,6 @@ wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool clearCache, bo
 
 void Project::ProjectRenamed(const wxString& oldname, const wxString& newname)
 {
-    std::map<wxString, wxArrayString> configs;
     // dependencies are located directly under the root level
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
     while(node) {

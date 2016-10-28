@@ -3571,7 +3571,6 @@ void clTreeListMainWindow::OnChar(wxKeyEvent& event)
         int col = 0;
         wxPoint abs_p = CalcUnscrolledPosition(wxPoint(1, 1));
         // PAGE-UP: first go the the first visible row
-        newItem = m_rootItem->HitTest(abs_p, this, flags, col, 0);
         newItem = GetFirstVisible(false, true);
         // if we are already there then scroll back one page
         if(newItem == m_curItem) {
@@ -3655,7 +3654,6 @@ void clTreeListMainWindow::OnChar(wxKeyEvent& event)
         int col = 0;
         wxPoint abs_p = CalcUnscrolledPosition(wxPoint(1, GetClientSize().GetHeight() - m_curItem->GetHeight()));
         // PAGE-UP: first go the the first visible row
-        newItem = m_rootItem->HitTest(abs_p, this, flags, col, 0);
         newItem = GetLastVisible(false, true);
         // if we are already there then scroll down one page
         if(newItem == m_curItem) {

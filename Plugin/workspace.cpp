@@ -1190,8 +1190,7 @@ void clCxxWorkspace::DoLoadProjectsFromXml(
             DoLoadProjectsFromXml(child, currentFolder, removedChildren);
         } else if((child->GetName() == wxT("WorkspaceParserPaths")) ||
             (child->GetName() == wxT("WorkspaceParserMacros"))) {
-            wxString swtlw = wxEmptyString;
-            swtlw = XmlUtils::ReadString(m_doc.GetRoot(), "SWTLW");
+            wxString swtlw = XmlUtils::ReadString(m_doc.GetRoot(), "SWTLW");
             if(swtlw.CmpNoCase("yes") == 0) {
                 LocalWorkspaceST::Get()->SetParserFlags(
                     LocalWorkspaceST::Get()->GetParserFlags() | LocalWorkspace::EnableSWTLW);

@@ -763,9 +763,7 @@ void Language::ParseComments(const wxFileName& fileName, std::vector<CommentPtr>
 
 wxString Language::GetScopeName(const wxString& in, std::vector<wxString>* additionlNS)
 {
-    std::string lastFunc, lastFuncSig;
     std::vector<std::string> moreNS;
-    FunctionList fooList;
 
     const wxCharBuffer buf = _C(in);
 
@@ -2350,7 +2348,6 @@ void Language::InsertFunctionImpl(const wxString& clsname, const wxString& funct
             return;
         }
 
-        std::string stmp = scanner.YYText();
         if(scanner.LineNo() == line) break;
     }
 

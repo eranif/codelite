@@ -379,7 +379,6 @@ void MainBook::GetAllEditors(LEditor::Vec_t& editors, size_t flags)
                 }
             }
         } else {
-            std::vector<wxWindow*> windows;
             for(size_t i = 0; i < m_book->GetPageCount(); i++) {
                 LEditor* editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
                 if(editor) {

@@ -540,15 +540,6 @@ bool CodeLiteApp::OnInit()
     // set the CTAGS_REPLACEMENT environment variable
     wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ManagerST::Get()->GetStartupDirectory() + wxT("/ctags.replacements"));
 
-    long style = wxSIMPLE_BORDER;
-#if defined(__WXMSW__) || defined(__WXGTK__)
-    style |= wxFRAME_NO_TASKBAR;
-
-#else // Mac
-    wxUnusedVar(style);
-
-#endif
-
 // read the last frame size from the configuration file
 // Initialise editor configuration files
 #ifdef __WXMSW__

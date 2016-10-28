@@ -2545,7 +2545,6 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
 
 void GitPlugin::OnFolderCommit(wxCommandEvent& event)
 {
-    GitCmd::Vec_t commands;
     // 1. Get diff output
     wxString diff;
     bool res = DoExecuteCommandSync("diff --no-color HEAD", m_selectedFolder, diff);

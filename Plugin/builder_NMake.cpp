@@ -892,7 +892,6 @@ void BuilderNMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToBui
     wxString cmpType = bldConf->GetCompilerType();
     // get the compiler settings
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
-    std::vector<wxFileName> abs_files, rel_paths;
 
     // Can we use asterisk in the clean command?
     wxString imd = GetIntermediateFolder(bldConf);

@@ -127,7 +127,7 @@ void clSSH::Connect(int seconds) throw(clException)
 
 bool clSSH::AuthenticateServer(wxString& message) throw(clException)
 {
-    int state = -1;
+    int state;
     unsigned char* hash = NULL;
     char* hexa = NULL;
 

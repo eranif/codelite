@@ -733,7 +733,6 @@ void clTabCtrl::SetPageBitmap(size_t index, const wxBitmap& bmp)
         int diff = (newWidth - oldWidth);
 
         // Update the coordinates starting from the current tab
-        clTabInfo::Vec_t tabsToUpdate;
         bool foundActiveTab = false;
         for(size_t i = 0; i < m_tabs.size(); ++i) {
             if(!foundActiveTab && (m_tabs.at(i)->GetWindow() == tab->GetWindow())) {

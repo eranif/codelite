@@ -1985,9 +1985,6 @@ void ContextCpp::OnFileSaved()
 
     if(!IsJavaScript()) {
         VariableList var_list;
-        std::map<std::string, Variable> var_map;
-        std::map<wxString, TagEntryPtr> foo_map;
-        std::map<std::string, std::string> ignoreTokens;
 
         wxArrayString varList;
         wxArrayString projectTags;
@@ -2624,7 +2621,6 @@ void ContextCpp::DoCodeComplete(long pos)
         text.Prepend(globalText);
     }
 
-    std::vector<TagEntryPtr> candidates;
     if(showFuncProto) {
         // for function prototype, the last char entered was '(', this will break
         // the logic of the Getexpression() method to workaround this, we search for
@@ -3015,8 +3011,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor* editor, boo
     CppScanner sc;
     sc.SetText(_C(expr));
     wxString expression;
-    int type = 0;
-    while((type = sc.yylex()) != 0) {
+    while((sc.yylex()) != 0) {
         wxString token = _U(sc.YYText());
         expression += token;
         expression += wxT(" ");

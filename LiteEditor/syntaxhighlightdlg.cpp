@@ -383,13 +383,12 @@ void SyntaxHighlightDlg::OnItemSelected(wxCommandEvent& event)
             StyleProperty p = iter->second;
             wxString colour = p.GetFgColour();
             wxString bgColour = p.GetBgColour();
-            wxFont font = wxNullFont;
 
             int size = p.GetFontSize();
             wxString face = p.GetFaceName();
             bool bold = p.IsBold();
 
-            font = wxFont(size, wxFONTFAMILY_TELETYPE, p.GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+            wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, p.GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
                 bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, p.GetUnderlined(), face);
             m_fontPicker->SetSelectedFont(font);
             m_bgColourPicker->SetColour(bgColour);

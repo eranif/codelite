@@ -380,9 +380,8 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
                     // {name="argv",value="0x602420"}],file="C:/src/TestArea/TestEXE/main.cpp",fullname="C:\\src\\TestArea\\TestEXE\\main.cpp",line="5"},thread-id="1",stopped-threads="all"
 
                     // try to locate the file name + line number:
-                    int length = -1;
                     int filePos = line.Find(wxT("fullname=\""));
-                    length = wxStrlen(wxT("fullname=\""));
+                    int length = wxStrlen(wxT("fullname=\""));
                     wxString filename;
                     long curline = -1;
                     wxFileName curfile;

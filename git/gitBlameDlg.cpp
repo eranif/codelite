@@ -234,7 +234,6 @@ void GitBlameDlg::OnRevListOutput(const wxString& output, const wxString& Argume
 void GitBlameDlg::OnSTCDwellStart(wxStyledTextEvent& event)
 {
     // First see if we're hovering over the text margin
-    int margin = 0;
     wxPoint pt(m_stcBlame->ScreenToClient(wxGetMousePosition()));
     wxRect clientRect = m_stcBlame->GetClientRect();
 

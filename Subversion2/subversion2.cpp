@@ -1575,10 +1575,9 @@ wxString Subversion2::GetSvnExeNameNoConfigDir(bool nonInteractive)
 {
     SvnSettingsData ssd = GetSettings();
     wxString executeable;
-    bool encloseQuotations = false;
     wxString exeName = ssd.GetExecutable();
     exeName.Trim().Trim(false);
-    encloseQuotations = (exeName.Find(wxT(" ")) != wxNOT_FOUND);
+    bool encloseQuotations = (exeName.Find(wxT(" ")) != wxNOT_FOUND);
     if(encloseQuotations) {
         executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" ");
     } else {

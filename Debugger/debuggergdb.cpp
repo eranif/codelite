@@ -1295,7 +1295,6 @@ bool DbgGdb::UpdateWatch(const wxString& name)
     wxString cmd;
     cmd << wxT("-var-update \"") << name << wxT("\" ");
     return WriteCommand(cmd, new DbgVarObjUpdate(m_observer, this, name, DBG_USERR_WATCHTABLE));
-    return true;
 }
 
 void DbgGdb::AssignValue(const wxString& expression, const wxString& newValue)

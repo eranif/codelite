@@ -939,11 +939,10 @@ void NewBuildTab::DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor, bool ce
 
     if(centerLine) {
         // If the line in the build error tab is not visible, ensure it is
-        int firstVisibleLine = m_view->GetFirstVisibleLine();
         int linesOnScreen = m_view->LinesOnScreen();
 
         // Our line is not visible
-        firstVisibleLine = bli->GetLineInBuildTab() - (linesOnScreen / 2);
+        int firstVisibleLine = bli->GetLineInBuildTab() - (linesOnScreen / 2);
         if(firstVisibleLine < 0) {
             firstVisibleLine = 0;
         }

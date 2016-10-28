@@ -383,7 +383,7 @@ void MainFrame::OnSignal(wxCommandEvent& e)
         else if(sigid == ID_SIGKILL)
             wxKill(m_process->GetPid(), wxSIGKILL);
 
-        else if(sigid == ID_SIGKILL)
+        else if(sigid == wxSIGTERM)
             wxKill(m_process->GetPid(), wxSIGTERM);
     }
 }

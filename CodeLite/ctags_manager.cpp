@@ -559,7 +559,6 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName, int linen
         int lastFuncLine = funcTag ? funcTag->GetLine() : -1;
         textAfterTokenReplacements = GetLanguage()->ApplyCtagsReplacementTokens(text);
         scope = GetLanguage()->OptimizeScope(textAfterTokenReplacements, lastFuncLine, curFunctionBody);
-        std::vector<TagEntryPtr> tmpCandidates;
 
         // First get the scoped tags
         TagsByScopeAndName(scopeName, word, scoped);
@@ -944,7 +943,7 @@ void TagsManager::FindImplDecl(const wxFileName& fileName, int lineno, const wxS
 
     wxString path;
     wxString tmp;
-    std::vector<TagEntryPtr> tmpCandidates, candidates;
+    std::vector<TagEntryPtr> tmpCandidates;
 
     // remove the word from the expression
     wxString expression(expr);
@@ -1700,8 +1699,6 @@ void TagsManager::CloseDatabase()
 DoxygenComment TagsManager::GenerateDoxygenComment(const wxString& file, const int line, wxChar keyPrefix)
 {
     if(GetDatabase()->IsOpen()) {
-        std::vector<TagEntryPtr> tags;
-
         TagEntryPtr tag = GetDatabase()->GetTagAboveFileAndLine(file, line);
         if(!tag) {
             return DoxygenComment();
@@ -2303,7 +2300,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
         protos[key] = tag;
     }
 
-    std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetTokensMap();
+   // std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetTokensMap();
 
     // remove functions with implementation
     for(size_t i = 0; i < vimpl.size(); i++) {
@@ -2386,7 +2383,7 @@ wxString TagsManager::DoReplaceMacros(wxString name)
     wxString _name(name);
 
     std::map<wxString, wxString> iTokens = GetCtagsOptions().GetTokensWxMap();
-    std::map<wxString, wxString>::iterator it = iTokens.end();
+    std::map<wxString, wxString>::iterator it;
 
     it = iTokens.find(name);
     if(it != iTokens.end()) {
@@ -2884,7 +2881,6 @@ wxString TagsManager::DoReplaceMacrosFromDatabase(const wxString& name)
     std::set<wxString> scannedMacros;
     wxString newName = name;
     while(true) {
-        std::vector<TagEntryPtr> tmpTags;
         TagEntryPtr matchedTag = GetDatabase()->GetTagsByNameLimitOne(newName);
         if(matchedTag && matchedTag->IsMacro() && scannedMacros.find(matchedTag->GetName()) == scannedMacros.end()) {
             TagEntryPtr realTag = matchedTag->ReplaceSimpleMacro();

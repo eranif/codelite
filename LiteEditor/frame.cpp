@@ -986,7 +986,6 @@ void clMainFrame::CreateGUIControls()
     m_mainPanel = new wxPanel(this);
     GetSizer()->Add(m_mainPanel, 1, wxEXPAND);
     InitializeLogo();
-    BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
 
 #if defined(__WXOSX__) && wxCHECK_VERSION(3, 1, 0)
     EnableFullScreenView();

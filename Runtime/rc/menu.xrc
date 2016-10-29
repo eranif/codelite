@@ -945,7 +945,7 @@
                 <label>New Project</label>
             </object>
             <object class="wxMenuItem" name="add_workspace_folder">
-                <label>New Virtual Directory</label>
+                <label>New Workspace Folder</label>
             </object>
         </object>
         <object class="wxMenu" name="wxID_ANY">

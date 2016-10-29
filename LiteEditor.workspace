@@ -6,57 +6,10 @@
     <Option Name="FileSpec">*.cpp;*.c;*.cxx;*.cc;*.h;*.hpp</Option>
     <Option Name="ParseComments">yes</Option>
   </Ctags>
-  <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
-  <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
-  <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
-  <Project Name="sqlite3" Path="sqlite3/sqlite3.project" Active="No"/>
-  <Project Name="libCodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
-  <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
-  <Project Name="Interfaces" Path="Interfaces/Interfaces.project" Active="No"/>
-  <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
-  <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
-  <Project Name="Copyright" Path="Copyright/Copyright.project" Active="No"/>
-  <Project Name="UnitTestPP" Path="UnitTestCPP/UnitTestPP.project" Active="No"/>
-  <Project Name="ExternalTools" Path="ExternalTools/ExternalTools.project" Active="No"/>
-  <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
-  <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
-  <Project Name="abbreviation" Path="abbreviation/abbreviation.project" Active="No"/>
-  <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="No"/>
-  <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
-  <Project Name="CppChecker" Path="cppchecker/CppChecker.project" Active="No"/>
   <Options/>
-  <Project Name="Subversion2" Path="Subversion2/Subversion2.project" Active="No"/>
-  <Project Name="MacBundler" Path="MacBundler/MacBundler.project" Active="No"/>
-  <Project Name="git" Path="git/git.project" Active="No"/>
-  <Project Name="DatabaseExplorer" Path="DatabaseExplorer/DatabaseExplorer.project" Active="No"/>
-  <Project Name="wxshapeframework" Path="sdk/wxshapeframework/wxshapeframework.project" Active="No"/>
-  <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
-  <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
-  <Project Name="PCH" Path="PCH/PCH.project" Active="No"/>
-  <Project Name="CallGraph" Path="CallGraph/CallGraph.project" Active="No"/>
-  <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
-  <Project Name="ZoomNavigator" Path="ZoomNavigator/ZoomNavigator.project" Active="No"/>
-  <Project Name="SFTP" Path="SFTP/SFTP.project" Active="No"/>
-  <Project Name="Tweaks" Path="Tweaks/Tweaks.project" Active="No"/>
-  <Project Name="CMakePlugin" Path="CMakePlugin/CMakePlugin.project" Active="No"/>
-  <Project Name="CodeLiteDiff" Path="CodeLiteDiff/CodeLiteDiff.project" Active="No"/>
-  <Project Name="LLDBDebugger" Path="LLDBDebugger/LLDBDebugger.project" Active="No"/>
-  <Project Name="SpellCheck" Path="SpellChecker/SpellCheck.project" Active="No"/>
-  <Project Name="hunspell" Path="SpellChecker/hunspell/hunspell.project" Active="No"/>
-  <Project Name="MemCheck" Path="MemCheck/MemCheck.project" Active="No"/>
-  <Project Name="PHPParser" Path="codelitephp/PHPParser/PHPParser.project" Active="No"/>
-  <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
-  <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
-  <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
-  <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
-  <Project Name="HelpPlugin" Path="HelpPlugin/HelpPlugin.project" Active="No"/>
   <Environment>
     <![CDATA[]]>
   </Environment>
-  <Project Name="LLDBApp" Path="LLDBDebugger/codelite-lldb/codelite_lldb.project" Active="No"/>
-  <Project Name="LLDBProtocol" Path="LLDBDebugger/LLDBProtocol/LLDBProtocol.project" Active="No"/>
-  <Project Name="AutoSave" Path="AutoSave/AutoSave.project" Active="No"/>
-  <Project Name="Tail" Path="Tail/Tail.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Environment/>
@@ -410,4 +363,57 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
+  <VirtualDirectory Name="Plugins">
+    <Project Name="abbreviation" Path="abbreviation/abbreviation.project" Active="No"/>
+    <Project Name="AutoSave" Path="AutoSave/AutoSave.project" Active="No"/>
+    <Project Name="CallGraph" Path="CallGraph/CallGraph.project" Active="No"/>
+    <Project Name="CMakePlugin" Path="CMakePlugin/CMakePlugin.project" Active="No"/>
+    <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
+    <Project Name="CodeLiteDiff" Path="CodeLiteDiff/CodeLiteDiff.project" Active="No"/>
+    <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="No"/>
+    <Project Name="Copyright" Path="Copyright/Copyright.project" Active="No"/>
+    <Project Name="CppChecker" Path="cppchecker/CppChecker.project" Active="No"/>
+    <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
+    <Project Name="DatabaseExplorer" Path="DatabaseExplorer/DatabaseExplorer.project" Active="No"/>
+    <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
+    <Project Name="ExternalTools" Path="ExternalTools/ExternalTools.project" Active="No"/>
+    <Project Name="git" Path="git/git.project" Active="No"/>
+    <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
+    <Project Name="HelpPlugin" Path="HelpPlugin/HelpPlugin.project" Active="No"/>
+    <Project Name="LLDBApp" Path="LLDBDebugger/codelite-lldb/codelite_lldb.project" Active="No"/>
+    <Project Name="LLDBDebugger" Path="LLDBDebugger/LLDBDebugger.project" Active="No"/>
+    <Project Name="LLDBProtocol" Path="LLDBDebugger/LLDBProtocol/LLDBProtocol.project" Active="No"/>
+    <Project Name="MacBundler" Path="MacBundler/MacBundler.project" Active="No"/>
+    <Project Name="MemCheck" Path="MemCheck/MemCheck.project" Active="No"/>
+    <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
+    <Project Name="PHPParser" Path="codelitephp/PHPParser/PHPParser.project" Active="No"/>
+    <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
+    <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
+    <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
+    <Project Name="SFTP" Path="SFTP/SFTP.project" Active="No"/>
+    <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
+    <Project Name="SpellCheck" Path="SpellChecker/SpellCheck.project" Active="No"/>
+    <Project Name="Subversion2" Path="Subversion2/Subversion2.project" Active="No"/>
+    <Project Name="Tail" Path="Tail/Tail.project" Active="No"/>
+    <Project Name="Tweaks" Path="Tweaks/Tweaks.project" Active="No"/>
+    <Project Name="UnitTestPP" Path="UnitTestCPP/UnitTestPP.project" Active="No"/>
+    <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
+    <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
+    <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
+    <Project Name="ZoomNavigator" Path="ZoomNavigator/ZoomNavigator.project" Active="No"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Core">
+    <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="SDK">
+    <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
+    <Project Name="hunspell" Path="SpellChecker/hunspell/hunspell.project" Active="No"/>
+    <Project Name="Interfaces" Path="Interfaces/Interfaces.project" Active="No"/>
+    <Project Name="libCodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
+    <Project Name="PCH" Path="PCH/PCH.project" Active="No"/>
+    <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
+    <Project Name="sqlite3" Path="sqlite3/sqlite3.project" Active="No"/>
+    <Project Name="wxshapeframework" Path="sdk/wxshapeframework/wxshapeframework.project" Active="No"/>
+    <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
+  </VirtualDirectory>
 </CodeLite_Workspace>

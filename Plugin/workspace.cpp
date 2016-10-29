@@ -1239,7 +1239,7 @@ wxXmlNode* clCxxWorkspace::DoCreateWorkspaceFolder(const wxString& path)
     return parent;
 }
 
-bool clCxxWorkspace::MoveProjectToFolder(const wxString& projectName, const wxString& folderPath)
+bool clCxxWorkspace::MoveProjectToFolder(const wxString& projectName, const wxString& folderPath, bool saveAndReload)
 {
     wxXmlNode* folderXml = DoGetWorkspaceFolderXmlNode(folderPath);
     if(!folderXml) {
@@ -1257,8 +1257,10 @@ bool clCxxWorkspace::MoveProjectToFolder(const wxString& projectName, const wxSt
 
     projectXml->GetParent()->RemoveChild(projectXml);
     folderXml->AddChild(projectXml);
-
-    // Store the XML file
+    
+    if(!saveAndReload) return true;
+    
+    // Store the XML file and reload the workspace
     if(!SaveXmlFile()) {
         return false;
     }

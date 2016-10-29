@@ -2811,7 +2811,10 @@ void FileViewTree::DoProjectsEndDrag(wxTreeItemId& itemDst)
     // We allow dropping on workspace or an a "workspace folder"
     FilewViewTreeItemData* cd = static_cast<FilewViewTreeItemData*>(GetItemData(itemDst));
     CHECK_PTR_RET(cd);
-
+    
+    // Sanity
+    if(m_draggedProjects.IsEmpty()) return;
+    
     wxString targetPath;
     if(cd->GetData().GetKind() == ProjectItem::TypeWorkspaceFolder) {
         targetPath = cd->GetData().Key(); // The full path
@@ -2824,8 +2827,8 @@ void FileViewTree::DoProjectsEndDrag(wxTreeItemId& itemDst)
     // Move the projects to the target folder and rebuild the tree view
     for(size_t i = 0; i < m_draggedProjects.size(); ++i) {
         FilewViewTreeItemData* d = static_cast<FilewViewTreeItemData*>(GetItemData(m_draggedProjects.Item(i)));
-        clCxxWorkspaceST::Get()->MoveProjectToFolder(d->GetData().GetDisplayName(), targetPath);
+        clCxxWorkspaceST::Get()->MoveProjectToFolder(
+            d->GetData().GetDisplayName(), targetPath, (i == (m_draggedProjects.size() - 1)));
     }
-
     CallAfter(&FileViewTree::BuildTree);
 }

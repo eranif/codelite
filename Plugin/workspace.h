@@ -119,7 +119,7 @@ public:
     /**
      * @brief move 'projectName' to folder. Create the folder if it does not exists
      */
-    bool MoveProjectToFolder(const wxString& projectName, const wxString& folderPath);
+    bool MoveProjectToFolder(const wxString& projectName, const wxString& folderPath, bool saveAndReload);
 
     /**
      * @brief create workspace folder

@@ -45,7 +45,8 @@ class FileViewTree : public wxTreeCtrl
     DECLARE_DYNAMIC_CLASS()
 
     std::map<void*, bool> m_itemsToSort;
-    wxArrayTreeItemIds m_draggedItems;
+    wxArrayTreeItemIds m_draggedFiles;
+    wxArrayTreeItemIds m_draggedProjects;
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     std::map<wxString, wxTreeItemId> m_workspaceFolders;
     std::map<wxString, wxTreeItemId> m_projectsMap;
@@ -55,6 +56,8 @@ protected:
     void DoCreateProjectContextMenu(wxMenu& menu, const wxString& projectName);
     void DoBindEvents();
     void DoUnbindEvents();
+    void DoFilesEndDrag(wxTreeItemId& itemDst);
+    void DoProjectsEndDrag(wxTreeItemId& itemDst);
 
 public:
     /**

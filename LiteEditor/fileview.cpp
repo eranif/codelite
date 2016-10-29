@@ -539,7 +539,7 @@ TreeItemInfo FileViewTree::GetSelectedItemInfo()
         info.m_itemType = data->GetData().GetKind();
         info.m_fileName = data->GetData().GetFile();
         if(info.m_itemType == ProjectItem::TypeVirtualDirectory) {
-            // incase of virtual directories, set the file name to be the directory of
+            // in-case of virtual directories, set the file name to be the directory of
             // the project
             wxString path = GetItemPath(item);
             wxString project = path.BeforeFirst(wxT(':'));
@@ -1378,20 +1378,28 @@ void FileViewTree::OnItemBeginDrag(wxTreeEvent& event)
     wxArrayTreeItemIds selections;
     size_t num = GetMultiSelection(selections);
 
-    m_draggedItems.Clear();
+    // We allow dragging of homogenous items (all files or all projects)
+    m_draggedFiles.Clear();
+    m_draggedProjects.Clear();
     for(size_t n = 0; n < num; ++n) {
         wxTreeItemId item = selections[n];
         if(item.IsOk() && item != GetRootItem()) {
             // If it's a file, add it to the array
             FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
             if(data && data->GetData().GetKind() == ProjectItem::TypeFile) {
-                m_draggedItems.Add(item);
+                m_draggedFiles.Add(item);
+            } else if(data && data->GetData().GetKind() == ProjectItem::TypeProject) {
+                m_draggedProjects.Add(item);
             }
         }
     }
 
     // Allow the event only if there were any valid selections
-    if(m_draggedItems.GetCount() > 0) {
+    if(m_draggedFiles.IsEmpty() && !m_draggedProjects.IsEmpty()) {
+        // only projects are being dragged
+        event.Allow();
+    } else if(!m_draggedFiles.IsEmpty() && m_draggedProjects.IsEmpty()) {
+        // only files are being dragged
         event.Allow();
     }
 }
@@ -1399,67 +1407,15 @@ void FileViewTree::OnItemBeginDrag(wxTreeEvent& event)
 void FileViewTree::OnItemEndDrag(wxTreeEvent& event)
 {
     wxTreeItemId itemDst = event.GetItem();
-    if(!itemDst.IsOk()) {
-        return;
-    }
+    CHECK_ITEM_RET(itemDst);
 
-    wxString targetVD, fromVD;
-    while(true) {
-        if(!itemDst.IsOk()) {
-            return;
-        }
-        FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(itemDst));
-        if(data && data->GetData().GetKind() == ProjectItem::TypeVirtualDirectory) {
-            break; // Found a vd, so break out of the while loop
-        }
-        // We're only allowed to drag items between virtual folders, so find the parent folder
-        itemDst = GetItemParent(itemDst);
-    }
+    if(!m_draggedFiles.IsEmpty()) {
+        // Files were being dragged
+        DoFilesEndDrag(itemDst);
 
-    wxTreeItemId target = itemDst;
-    if(target.IsOk()) {
-        targetVD = GetItemPath(target);
-    } else {
-        return;
-    }
-
-    for(size_t n = 0; n < m_draggedItems.GetCount(); ++n) {
-        wxTreeItemId itemSrc = m_draggedItems.Item(n);
-        wxTreeItemId fromItem = GetItemParent(itemSrc);
-        if(fromItem.IsOk()) {
-            fromVD = GetItemPath(fromItem);
-        } else {
-            continue;
-        }
-
-        if(fromVD == targetVD) {
-            // Not much point dropping onto the same virtual dir
-            continue;
-        }
-
-        // the file name to remove
-        FilewViewTreeItemData* srcData = static_cast<FilewViewTreeItemData*>(GetItemData(itemSrc));
-
-        // no tree-item-data? skip this one
-        if(!srcData) continue;
-
-        wxString filename = srcData->GetData().GetFile();
-
-        ProjectItem itemData = srcData->GetData();
-
-        // call the manager to remove them in the underlying project
-        if(ManagerST::Get()->MoveFileToVD(filename, fromVD, targetVD)) {
-            // remove the item from its current node, and place it under the
-            // new parent node
-            AppendItem(target,             // parent
-                itemData.GetDisplayName(), // display name
-                GetIconIndex(itemData),    // item image index
-                GetIconIndex(itemData),    // selected item image
-                new FilewViewTreeItemData(itemData));
-            Delete(itemSrc);
-            Expand(target);
-            SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
-        }
+    } else if(!m_draggedProjects.IsEmpty()) {
+        // Projects were being dragged
+        DoProjectsEndDrag(itemDst);
     }
 }
 
@@ -2693,20 +2649,42 @@ void FileViewTree::ShowWorkspaceFolderContextMenu()
 
 void FileViewTree::OnWorkspaceFolderDelete(wxCommandEvent& evt)
 {
-    wxTreeItemId item = GetSingleSelection();
-    CHECK_ITEM_RET(item);
+    wxArrayTreeItemIds items, folderItems;
+    GetMultiSelection(items);
 
-    FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
+    for(size_t i = 0; i < items.size(); ++i) {
+        FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(items.Item(i)));
+        if(data && data->GetData().GetKind() == ProjectItem::TypeWorkspaceFolder) {
+            folderItems.Add(items.Item(i));
+        }
+    }
+
+    CHECK_COND_RET(!folderItems.IsEmpty());
 
     wxString message;
-    message << _("Are you sure you want to delete the workspace folder:\n'") << data->GetData().GetDisplayName()
-            << "' ?";
+    if(folderItems.size() > 1) {
+        message << _("Are you sure you want to delete the following workspace folders:\n");
+        for(size_t i = 0; i < folderItems.size(); ++i) {
+            FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(folderItems.Item(i)));
+            message << data->GetData().GetDisplayName() << "\n";
+        }
+        message << "?";
+    } else {
+        message << _("Are you sure you want to delete the workspace folder:\n");
+        FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(folderItems.Item(0)));
+        message << data->GetData().GetDisplayName() << "\n?";
+    }
+
     if(::wxMessageBox(message, "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER,
            EventNotifier::Get()->TopFrame()) != wxYES) {
         return;
     }
 
-    clCxxWorkspaceST::Get()->DeleteWorkspaceFolder(data->GetData().Key());
+    // Delete each folder
+    for(size_t i = 0; i < folderItems.size(); ++i) {
+        FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(folderItems.Item(i)));
+        clCxxWorkspaceST::Get()->DeleteWorkspaceFolder(data->GetData().Key());
+    }
     CallAfter(&FileViewTree::BuildTree);
 }
 
@@ -2763,4 +2741,91 @@ void FileViewTree::OnNewProject(wxCommandEvent& evt)
         }
     }
     ManagerST::Get()->ShowNewProjectWizard(workspaceFolder);
+}
+
+void FileViewTree::DoFilesEndDrag(wxTreeItemId& itemDst)
+{
+    // Files were being dragged
+    wxString targetVD, fromVD;
+    while(true) {
+        if(!itemDst.IsOk()) {
+            return;
+        }
+        FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(itemDst));
+        if(data && data->GetData().GetKind() == ProjectItem::TypeVirtualDirectory) {
+            break; // Found a vd, so break out of the while loop
+        }
+        // We're only allowed to drag items between virtual folders, so find the parent folder
+        itemDst = GetItemParent(itemDst);
+    }
+
+    wxTreeItemId target = itemDst;
+    if(target.IsOk()) {
+        targetVD = GetItemPath(target);
+    } else {
+        return;
+    }
+
+    for(size_t n = 0; n < m_draggedFiles.GetCount(); ++n) {
+        wxTreeItemId itemSrc = m_draggedFiles.Item(n);
+        wxTreeItemId fromItem = GetItemParent(itemSrc);
+        if(fromItem.IsOk()) {
+            fromVD = GetItemPath(fromItem);
+        } else {
+            continue;
+        }
+
+        if(fromVD == targetVD) {
+            // Not much point dropping onto the same virtual dir
+            continue;
+        }
+
+        // the file name to remove
+        FilewViewTreeItemData* srcData = static_cast<FilewViewTreeItemData*>(GetItemData(itemSrc));
+
+        // no tree-item-data? skip this one
+        if(!srcData) continue;
+
+        wxString filename = srcData->GetData().GetFile();
+
+        ProjectItem itemData = srcData->GetData();
+
+        // call the manager to remove them in the underlying project
+        if(ManagerST::Get()->MoveFileToVD(filename, fromVD, targetVD)) {
+            // remove the item from its current node, and place it under the
+            // new parent node
+            AppendItem(target,             // parent
+                itemData.GetDisplayName(), // display name
+                GetIconIndex(itemData),    // item image index
+                GetIconIndex(itemData),    // selected item image
+                new FilewViewTreeItemData(itemData));
+            Delete(itemSrc);
+            Expand(target);
+            SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+        }
+    }
+}
+
+void FileViewTree::DoProjectsEndDrag(wxTreeItemId& itemDst)
+{
+    // We allow dropping on workspace or an a "workspace folder"
+    FilewViewTreeItemData* cd = static_cast<FilewViewTreeItemData*>(GetItemData(itemDst));
+    CHECK_PTR_RET(cd);
+
+    wxString targetPath;
+    if(cd->GetData().GetKind() == ProjectItem::TypeWorkspaceFolder) {
+        targetPath = cd->GetData().Key(); // The full path
+    } else if(cd->GetData().GetKind() == ProjectItem::TypeWorkspace) {
+        targetPath = "";
+    } else {
+        return; // We do not allow dropping on anything else than the workspace or a workspace folder
+    }
+
+    // Move the projects to the target folder and rebuild the tree view
+    for(size_t i = 0; i < m_draggedProjects.size(); ++i) {
+        FilewViewTreeItemData* d = static_cast<FilewViewTreeItemData*>(GetItemData(m_draggedProjects.Item(i)));
+        clCxxWorkspaceST::Get()->MoveProjectToFolder(d->GetData().GetDisplayName(), targetPath);
+    }
+
+    CallAfter(&FileViewTree::BuildTree);
 }

@@ -40,6 +40,7 @@
 #include <wx/msgdlg.h>
 #include "globals.h"
 #include "imanager.h"
+#include "project.h"
 
 VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(
     wxWindow* parent, clCxxWorkspace* wsp, const wxString& initialPath, const wxString& projectname)
@@ -87,7 +88,6 @@ wxString VirtualDirectorySelectorDlg::DoGetPath(wxTreeCtrl* tree, const wxTreeIt
     if(!item.IsOk()) {
         return wxEmptyString;
     }
-
     if(validateFolder) {
         int imgId = tree->GetItemImage(item);
         if(imgId != 1) { // not a virtual folder
@@ -100,7 +100,15 @@ wxString VirtualDirectorySelectorDlg::DoGetPath(wxTreeCtrl* tree, const wxTreeIt
     queue.push_front(text);
 
     wxTreeItemId p = tree->GetItemParent(item);
-    while(p.IsOk() && p != tree->GetRootItem()) {
+    while(true) {
+
+        if(!p.IsOk() || p == tree->GetRootItem()) break;
+
+        FilewViewTreeItemData* data = dynamic_cast<FilewViewTreeItemData*>(tree->GetItemData(p));
+        if(data && (data->GetData().GetKind() == ProjectItem::TypeWorkspaceFolder)) {
+            // We reached the top level
+            break;
+        }
 
         text = tree->GetItemText(p);
         queue.push_front(text);

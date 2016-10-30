@@ -1072,7 +1072,17 @@ wxString FileViewTree::GetItemPath(wxTreeItemId& item) const
     queue.push_front(text);
 
     wxTreeItemId p = GetItemParent(item);
-    while(p.IsOk() && p != GetRootItem()) {
+    while(true) {
+
+        if(!p.IsOk() || p == GetRootItem()) break;
+
+        FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(p));
+        if(!data) break;
+
+        if(data->GetData().GetKind() == ProjectItem::TypeWorkspaceFolder) {
+            // We reached the top level
+            break;
+        }
 
         text = GetItemText(p);
         queue.push_front(text);
@@ -1519,8 +1529,12 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& parent, const wxString& 
 wxTreeItemId FileViewTree::ItemByFullPath(const wxString& fullPath)
 {
     if(!ItemHasChildren(GetRootItem())) return wxTreeItemId();
-
-    wxTreeItemId parent = GetRootItem();
+    
+    // Locate the project item
+    wxString projname = fullPath.BeforeFirst(':');
+    if(m_projectsMap.count(projname) == 0) return wxTreeItemId();
+    
+    wxTreeItemId parent = GetItemParent(m_projectsMap[projname]);
     wxArrayString texts = wxStringTokenize(fullPath, wxT(":"), wxTOKEN_STRTOK);
     for(size_t i = 0; i < texts.GetCount(); i++) {
         parent = DoGetItemByText(parent, texts.Item(i));
@@ -2811,10 +2825,10 @@ void FileViewTree::DoProjectsEndDrag(wxTreeItemId& itemDst)
     // We allow dropping on workspace or an a "workspace folder"
     FilewViewTreeItemData* cd = static_cast<FilewViewTreeItemData*>(GetItemData(itemDst));
     CHECK_PTR_RET(cd);
-    
+
     // Sanity
     if(m_draggedProjects.IsEmpty()) return;
-    
+
     wxString targetPath;
     if(cd->GetData().GetKind() == ProjectItem::TypeWorkspaceFolder) {
         targetPath = cd->GetData().Key(); // The full path

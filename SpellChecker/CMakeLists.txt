@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.6.2)
 find_library(LIBHUNSPELL 
             # Fedora doesn't create a hunspell->hunspell-1.3 symlink, so explicitly look for (the current) full name
             NAMES hunspell hunspell-1.3
+            HINTS /usr/lib/x86_64-linux-gnu/
             PATH_SUFFIXES lib)
 
 find_path(  HUNSPELL_H

@@ -2652,11 +2652,11 @@ void GitPlugin::WorkspaceClosed()
     m_workspaceFilename.Clear();
 }
 
-void GitPlugin::FetchNextCommits(int skip)
+void GitPlugin::FetchNextCommits(int skip, const wxString& args)
 {
     wxString skipCommits;
     skipCommits << " --skip=" << skip;
-    gitAction ga(gitCommitList, skipCommits);
+    gitAction ga(gitCommitList, args + skipCommits);
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }

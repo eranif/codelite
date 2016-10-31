@@ -280,7 +280,7 @@ public:
      * and show them in the commit list dialog
      * @param skip number of first commits to skip
      */
-    void FetchNextCommits(int skip);
+    void FetchNextCommits(int skip, const wxString& args);
 
     GitConsole* GetConsole() { return m_console; }
     const wxString& GetRepositoryDirectory() const { return m_repositoryDirectory; }

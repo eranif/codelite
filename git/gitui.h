@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_GIT_GITUI_BASE_CLASSES_H
-#define _CODELITE_GIT_GITUI_BASE_CLASSES_H
+#ifndef _CL_GIT_GITUI_BASE_CLASSES_H
+#define _CL_GIT_GITUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -31,6 +31,8 @@
 #include <wx/menu.h>
 #include <wx/toolbar.h>
 #include <wx/srchctrl.h>
+#include <wx/combobox.h>
+#include <wx/arrstr.h>
 #include <wx/dataview.h>
 #include <wx/listbox.h>
 #include "gitCommitEditor.h"
@@ -39,8 +41,6 @@
 #include <wx/gauge.h>
 #include "dataviewfilesmodel.h"
 #include <wx/choice.h>
-#include <wx/arrstr.h>
-#include <wx/combobox.h>
 #include <wx/spinctrl.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -174,8 +174,11 @@ protected:
     wxSplitterWindow* m_splitter174;
     wxPanel* m_splitterPage178;
     wxSearchCtrl* m_searchCtrlFilter;
-    wxButton* m_button347;
+    wxButton* m_buttonPrevious;
     wxButton* m_buttonNext;
+    wxCheckBox* m_checkBoxIgnoreCase;
+    wxStaticText* m_staticText414;
+    wxComboBox* m_comboExtraArgs;
     wxDataViewListCtrl* m_dvListCtrlCommitList;
     wxPanel* m_splitterPage182;
     wxSplitterWindow* m_splitter186;
@@ -197,14 +200,19 @@ protected:
     virtual void OnPrevious(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPreviousUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnNext(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNextUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnExtraArgsTextEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxSearchCtrl* GetSearchCtrlFilter() { return m_searchCtrlFilter; }
-    wxButton* GetButton347() { return m_button347; }
+    wxButton* GetButtonPrevious() { return m_buttonPrevious; }
     wxButton* GetButtonNext() { return m_buttonNext; }
+    wxCheckBox* GetCheckBoxIgnoreCase() { return m_checkBoxIgnoreCase; }
+    wxStaticText* GetStaticText414() { return m_staticText414; }
+    wxComboBox* GetComboExtraArgs() { return m_comboExtraArgs; }
     wxDataViewListCtrl* GetDvListCtrlCommitList() { return m_dvListCtrlCommitList; }
     wxPanel* GetSplitterPage178() { return m_splitterPage178; }
     wxStaticText* GetStaticText210() { return m_staticText210; }

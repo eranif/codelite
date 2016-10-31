@@ -481,7 +481,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     this->SetSizer(bSizer17);
     
     m_splitter174 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
-    m_splitter174->SetSashGravity(0);
+    m_splitter174->SetSashGravity(0.7);
     m_splitter174->SetMinimumPaneSize(150);
     
     bSizer17->Add(m_splitter174, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
@@ -491,29 +491,61 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer205 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage178->SetSizer(boxSizer205);
     
+    wxBoxSizer* boxSizer449 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer205->Add(boxSizer449, 0, wxEXPAND, WXC_FROM_DIP(5));
+    
     wxBoxSizer* boxSizer343 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer205->Add(boxSizer343, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer449->Add(boxSizer343, 0, wxEXPAND, WXC_FROM_DIP(5));
     
     m_searchCtrlFilter = new wxSearchCtrl(m_splitterPage178, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
-    m_searchCtrlFilter->SetToolTip(_("Search the commit list\nThe search is performed on all columns"));
-    m_searchCtrlFilter->SetFocus();
+    m_searchCtrlFilter->SetToolTip(_("Search for specific text in commits.\nThis uses --grep, and so searches only the text of the commit message. To search by author etc, use the 'Extra arguments' box."));
     m_searchCtrlFilter->ShowSearchButton(true);
     m_searchCtrlFilter->ShowCancelButton(false);
     
-    boxSizer343->Add(m_searchCtrlFilter, 1, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    boxSizer343->Add(m_searchCtrlFilter, 1, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
     
-    m_button347 = new wxButton(m_splitterPage178, wxID_BACKWARD, _("Previous"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), 0);
-    m_button347->SetToolTip(_("Show previous 100 commits"));
+    m_buttonPrevious = new wxButton(m_splitterPage178, wxID_BACKWARD, _("Previous"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), 0);
+    m_buttonPrevious->SetToolTip(_("Show previous 100 commits"));
     
-    boxSizer343->Add(m_button347, 0, wxALL, WXC_FROM_DIP(2));
+    boxSizer343->Add(m_buttonPrevious, 0, wxALL, WXC_FROM_DIP(2));
     
     m_buttonNext = new wxButton(m_splitterPage178, wxID_FORWARD, _("Next"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), 0);
     m_buttonNext->SetToolTip(_("Fetch the next 100 commits"));
     
     boxSizer343->Add(m_buttonNext, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
     
-    m_dvListCtrlCommitList = new wxDataViewListCtrl(m_splitterPage178, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(500,-1)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    wxBoxSizer* boxSizer451 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer449->Add(boxSizer451, 0, wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_checkBoxIgnoreCase = new wxCheckBox(m_splitterPage178, wxID_ANY, _("Ignore case"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), 0);
+    m_checkBoxIgnoreCase->SetValue(false);
+    m_checkBoxIgnoreCase->SetToolTip(_("--regexp-ignore-case Display commits that match the pattern without regard to case"));
+    
+    boxSizer451->Add(m_checkBoxIgnoreCase, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_staticText414 = new wxStaticText(m_splitterPage178, wxID_ANY, _("    Extra arguments:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), 0);
+    
+    boxSizer451->Add(m_staticText414, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_comboExtraArgsArr;
+    m_comboExtraArgsArr.Add(wxT("--since="));
+    m_comboExtraArgsArr.Add(wxT("--before="));
+    m_comboExtraArgsArr.Add(wxT("--author="));
+    m_comboExtraArgsArr.Add(wxT("--committer="));
+    m_comboExtraArgsArr.Add(wxT("-S"));
+    m_comboExtraArgs = new wxComboBox(m_splitterPage178, XRCID("m_comboExtraArgs"), wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), m_comboExtraArgsArr, wxTE_PROCESS_ENTER);
+    m_comboExtraArgs->SetToolTip(_("Optional extra arguments that you wish passed to git log.\nAn example might be: --since=\"2 weeks ago\"\nNote that this is _not_ sanity-checked, it's added just as it is."));
+    m_comboExtraArgs->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_comboExtraArgs->SetHint(wxT(""));
+    #endif
+    
+    boxSizer451->Add(m_comboExtraArgs, 1, wxALL, WXC_FROM_DIP(5));
+    
+    m_dvListCtrlCommitList = new wxDataViewListCtrl(m_splitterPage178, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer205->Add(m_dvListCtrlCommitList, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
@@ -522,7 +554,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_dvListCtrlCommitList->AppendTextColumn(_("Date"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT);
     m_dvListCtrlCommitList->AppendTextColumn(_("Subject"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(600), wxALIGN_LEFT);
     m_splitterPage182 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter174, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    m_splitter174->SplitHorizontally(m_splitterPage178, m_splitterPage182, 150);
+    m_splitter174->SplitHorizontally(m_splitterPage178, m_splitterPage182, 0);
     
     wxBoxSizer* boxSizer184 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage182->SetSizer(boxSizer184);
@@ -675,9 +707,11 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(GitCommitListDlgBase::OnClose), NULL, this);
     m_searchCtrlFilter->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GitCommitListDlgBase::OnSearchCommitList), NULL, this);
     m_searchCtrlFilter->Connect(wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler(GitCommitListDlgBase::OnSearchCommitList), NULL, this);
-    m_button347->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnPrevious), NULL, this);
-    m_button347->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitListDlgBase::OnPreviousUI), NULL, this);
+    m_buttonPrevious->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnPrevious), NULL, this);
+    m_buttonPrevious->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitListDlgBase::OnPreviousUI), NULL, this);
     m_buttonNext->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnNext), NULL, this);
+    m_buttonNext->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitListDlgBase::OnNextUpdateUI), NULL, this);
+    m_comboExtraArgs->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GitCommitListDlgBase::OnExtraArgsTextEnter), NULL, this);
     m_dvListCtrlCommitList->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(GitCommitListDlgBase::OnSelectionChanged), NULL, this);
     m_dvListCtrlCommitList->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitCommitListDlgBase::OnContextMenu), NULL, this);
     m_fileListBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitListDlgBase::OnChangeFile), NULL, this);
@@ -689,9 +723,11 @@ GitCommitListDlgBase::~GitCommitListDlgBase()
     this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(GitCommitListDlgBase::OnClose), NULL, this);
     m_searchCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GitCommitListDlgBase::OnSearchCommitList), NULL, this);
     m_searchCtrlFilter->Disconnect(wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler(GitCommitListDlgBase::OnSearchCommitList), NULL, this);
-    m_button347->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnPrevious), NULL, this);
-    m_button347->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitListDlgBase::OnPreviousUI), NULL, this);
+    m_buttonPrevious->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnPrevious), NULL, this);
+    m_buttonPrevious->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitListDlgBase::OnPreviousUI), NULL, this);
     m_buttonNext->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnNext), NULL, this);
+    m_buttonNext->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitListDlgBase::OnNextUpdateUI), NULL, this);
+    m_comboExtraArgs->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GitCommitListDlgBase::OnExtraArgsTextEnter), NULL, this);
     m_dvListCtrlCommitList->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(GitCommitListDlgBase::OnSelectionChanged), NULL, this);
     m_dvListCtrlCommitList->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitCommitListDlgBase::OnContextMenu), NULL, this);
     m_fileListBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitListDlgBase::OnChangeFile), NULL, this);
@@ -1202,18 +1238,6 @@ GitImages::GitImages()
                 this->Add(icn);
             }
             m_bitmaps.insert(std::make_pair(wxT("gitBlame"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitBlame@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("gitBlame@2x"), bmp));
         }
     }
     

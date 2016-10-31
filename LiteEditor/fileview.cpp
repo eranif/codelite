@@ -1701,17 +1701,9 @@ void FileViewTree::DoImportFolder(ProjectPtr proj, const wxString& baseDir, cons
 
     // save the project file to disk
     proj->CommitTranscation();
-
-    // reload the project
-    wxString curr_proj_name(proj->GetName());
-    bool was_active(ManagerST::Get()->GetActiveProjectName() == curr_proj_name);
-    ManagerST::Get()->RemoveProject(proj->GetName(), false); // Don't notify about this action
-    ManagerST::Get()->AddProject(proj->GetFileName().GetFullPath());
-
-    // restore the active project
-    if(was_active) {
-        MarkActive(curr_proj_name);
-    }
+    
+    // Reload the view
+    CallAfter(&FileViewTree::BuildTree);
 }
 void FileViewTree::OnReconcileProject(wxCommandEvent& e)
 {

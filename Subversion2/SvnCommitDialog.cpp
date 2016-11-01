@@ -215,18 +215,7 @@ wxString SvnCommitDialog::GetMesasge()
 
 wxString SvnCommitDialog::NormalizeMessage(const wxString& message)
 {
-    wxString normalizedStr;
-    // first remove the comment section of the text
-    wxArrayString lines = wxStringTokenize(message, wxT("\r\n"), wxTOKEN_STRTOK);
-
-    for(size_t i = 0; i < lines.GetCount(); i++) {
-        wxString line = lines.Item(i);
-        line = line.Trim().Trim(false);
-        if(!line.StartsWith(wxT("#"))) {
-            normalizedStr << line << wxT("\n");
-        }
-    }
-
+    wxString normalizedStr = message;
     normalizedStr.Trim().Trim(false);
 
     // SVN does not like any quotation marks in the comment -> escape them

@@ -743,6 +743,27 @@ TEST_FUNC(test_phpdoc_method)
     return true;
 }
 
+TEST_FUNC(test_function_phpdoc)
+{
+    // Parse the test file
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_function_phpdoc.php"));
+    sourceFile.SetParseFunctionBody(false);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+
+    // Use this epxression and check
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->Type(), "\\ArgType");
+
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+    
+    CHECK_SIZE(matches.size(), 2);
+    return true;
+}
+
 /*TEST_FUNC(test_cc_with_keywords)
 {
     PHPSourceFile sourceFile(wxFileName("../Tests/test_cc_with_keywords.php"));

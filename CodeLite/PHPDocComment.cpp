@@ -59,20 +59,12 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
         m_varType = sourceFile.MakeIdentifierAbsolute(m_varType);
         m_varName = reVarType2.GetMatch(m_comment, 3);
     }
-
+    
     // @param <TYPE> <NAME>
-    // @property-read, @property-write, @property
-    if(m_comment.Contains("@property")) {
+    if(m_comment.Contains("@param")) {
         static wxRegEx reParam2(
             wxT("@(param|parameter)[ \t]+([\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"), wxRE_ADVANCED);
-        static wxRegEx reProprety(
-            "@property[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
-        static wxRegEx rePropretyRead(
-            "@property\\-read[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
-        static wxRegEx rePropretyWrite(
-            "@property\\-write[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
         wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
-
         for(size_t i = 0; i < lines2.GetCount(); i++) {
             wxString line = lines2.Item(i).Trim().Trim(false);
             if(reParam2.IsValid() && reParam2.Matches(line)) {
@@ -81,7 +73,22 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
                 paramName = reParam2.GetMatch(line, 3);
                 m_paramsArr.Add(paramHint);
                 m_params.insert(std::make_pair(paramName, paramHint));
-            } else if(reProprety.IsValid() && reProprety.Matches(line)) {
+            }
+        }
+    }
+
+    // @property-read, @property-write, @property
+    if(m_comment.Contains("@property")) {
+        static wxRegEx reProprety(
+            "@property[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
+        static wxRegEx rePropretyRead(
+            "@property\\-read[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
+        static wxRegEx rePropretyWrite(
+            "@property\\-write[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)", wxRE_ADVANCED);
+        wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
+        for(size_t i = 0; i < lines2.GetCount(); i++) {
+            wxString line = lines2.Item(i).Trim().Trim(false);
+            if(reProprety.IsValid() && reProprety.Matches(line)) {
                 PHPDocComment::Property prop;
                 prop.type = sourceFile.MakeIdentifierAbsolute(reProprety.GetMatch(line, 1));
                 prop.name = reProprety.GetMatch(line, 2);
@@ -104,7 +111,7 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
             }
         }
     }
-    
+
     // Attempt to parse and resolve @method entries in the PHPDoc
     ProcessMethods();
 }

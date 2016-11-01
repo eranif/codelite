@@ -34,7 +34,6 @@
     <Project Name="MemCheck" Path="MemCheck/MemCheck.project" Active="No"/>
     <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
     <Project Name="PHPParser" Path="codelitephp/PHPParser/PHPParser.project" Active="No"/>
-    <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
     <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
     <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
     <Project Name="SFTP" Path="SFTP/SFTP.project" Active="No"/>
@@ -62,6 +61,9 @@
     <Project Name="sqlite3" Path="sqlite3/sqlite3.project" Active="No"/>
     <Project Name="wxshapeframework" Path="sdk/wxshapeframework/wxshapeframework.project" Active="No"/>
     <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="UnitTests">
+    <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
   </VirtualDirectory>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
@@ -314,7 +316,7 @@
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment>WXWIN=D:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
@@ -365,7 +367,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>

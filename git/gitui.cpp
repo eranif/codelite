@@ -501,6 +501,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     m_searchCtrlFilter = new wxSearchCtrl(m_splitterPage178, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
     m_searchCtrlFilter->SetToolTip(_("Search for specific text in commits.\nThis uses --grep, and so searches only the text of the commit message. To search by author etc, use the 'Extra arguments' box."));
+    m_searchCtrlFilter->SetFocus();
     m_searchCtrlFilter->ShowSearchButton(true);
     m_searchCtrlFilter->ShowCancelButton(false);
     
@@ -538,7 +539,6 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_comboExtraArgsArr.Add(wxT("-S"));
     m_comboExtraArgs = new wxComboBox(m_splitterPage178, XRCID("m_comboExtraArgs"), wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPage178, wxSize(-1,-1)), m_comboExtraArgsArr, wxTE_PROCESS_ENTER);
     m_comboExtraArgs->SetToolTip(_("Optional extra arguments that you wish passed to git log.\nAn example might be: --since=\"2 weeks ago\"\nNote that this is _not_ sanity-checked, it's added just as it is."));
-    m_comboExtraArgs->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_comboExtraArgs->SetHint(wxT(""));
     #endif
@@ -648,7 +648,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer218->Add(m_staticText220, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_stcCommitMessage = new wxStyledTextCtrl(m_splitterPage194, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage194, wxSize(-1,-1)), wxBORDER_THEME);
+    m_stcCommitMessage = new wxStyledTextCtrl(m_splitterPage194, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage194, wxSize(-1,200)), wxBORDER_THEME);
     // Configure the fold margin
     m_stcCommitMessage->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcCommitMessage->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -685,6 +685,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_stcCommitMessage->SetKeyWords(4, wxT(""));
     
     boxSizer218->Add(m_stcCommitMessage, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    m_stcCommitMessage->SetMinSize(wxSize(-1,200));
     
     SetName(wxT("GitCommitListDlgBase"));
     SetSize(-1,-1);

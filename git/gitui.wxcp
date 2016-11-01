@@ -3704,7 +3704,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": ""
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -4115,7 +4115,7 @@
                   }, {
                    "type": "bool",
                    "m_label": "Focused",
-                   "m_value": false
+                   "m_value": true
                   }, {
                    "type": "string",
                    "m_label": "Class Name:",
@@ -4590,7 +4590,7 @@
                   }, {
                    "type": "bool",
                    "m_label": "Focused",
-                   "m_value": true
+                   "m_value": false
                   }, {
                    "type": "string",
                    "m_label": "Class Name:",
@@ -5945,11 +5945,11 @@
                     }, {
                      "type": "string",
                      "m_label": "Size:",
-                     "m_value": "-1,-1"
+                     "m_value": "-1,200"
                     }, {
                      "type": "string",
                      "m_label": "Minimum Size:",
-                     "m_value": "-1,-1"
+                     "m_value": "-1,200"
                     }, {
                      "type": "string",
                      "m_label": "Name:",

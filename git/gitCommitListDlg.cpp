@@ -70,7 +70,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     }
     SetName("GitCommitListDlg");
     WindowAttrManager::Load(this);
-
+    
     m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH, wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard), NULL, this);
     m_dvListCtrlCommitList->Connect(ID_REVERT_COMMIT, wxEVT_COMMAND_MENU_SELECTED,
@@ -105,11 +105,11 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
     wxUnusedVar(event);
     wxDELETE(m_process);
 
-	ClearAll(false);
+    ClearAll(false);
 
     m_commandOutput.Replace(wxT("\r"), wxT(""));
     wxArrayString diffList = wxStringTokenize(m_commandOutput, wxT("\n"));
-	
+
     m_stcCommitMessage->SetEditable(true);
     m_stcDiff->SetEditable(true);
 
@@ -138,7 +138,6 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
     for(std::map<wxString, wxString>::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
     }
-
 
     if(m_diffMap.size() != 0) {
         std::map<wxString, wxString>::iterator it = m_diffMap.begin();
@@ -208,7 +207,7 @@ void GitCommitListDlg::OnOK(wxCommandEvent& event) { Destroy(); }
 
 void GitCommitListDlg::DoLoadCommits(const wxString& filter)
 {
-	ClearAll();
+    ClearAll();
 
     // hash @ subject @ author-name @ date
     wxArrayString gitList = wxStringTokenize(m_commitList, wxT("\n"), wxTOKEN_STRTOK);
@@ -232,7 +231,7 @@ void GitCommitListDlg::ClearAll(bool includingCommitlist /*=true*/)
     m_stcDiff->SetEditable(true);
     m_stcCommitMessage->ClearAll();
     m_fileListBox->Clear();
-    if (includingCommitlist) {
+    if(includingCommitlist) {
         m_dvListCtrlCommitList->DeleteAllItems();
     }
     m_diffMap.clear();
@@ -244,52 +243,57 @@ void GitCommitListDlg::ClearAll(bool includingCommitlist /*=true*/)
 void GitCommitListDlg::OnSearchCommitList(wxCommandEvent& event)
 {
     wxString filter = GetFilterString();
-    if (filter == m_Filter) {
+    if(filter == m_Filter) {
         return; // No change
     }
-    
+
     m_Filter = filter;
 
-	if (m_Filter.empty()) {
+    if(m_Filter.empty()) {
         wxCommandEvent e; // A search-filter has been removed, so reload
-		m_git->OnCommitList(e);
+        m_git->OnCommitList(e);
         return;
-	}
-    
+    }
+
     ClearAll();
-    
+
     m_skip = 0;
     m_history.clear();
     m_commitList.clear();
-    
+
     m_git->FetchNextCommits(m_skip, m_Filter);
 }
-
 
 wxString GitCommitListDlg::GetFilterString() const
 {
     wxString args;
     wxString filter = m_searchCtrlFilter->GetValue();
-    
-    if (filter.empty() && m_comboExtraArgs->GetValue().empty()) {
+
+    if(filter.empty() && m_comboExtraArgs->GetValue().empty()) {
         return args;
     }
-
-    if (!filter.empty()) {
-        args << " --grep=" << filter;
+    
+    wxArrayString searchStrings = ::wxStringTokenize(filter, " ", wxTOKEN_STRTOK);
+    for(size_t i=0; i<searchStrings.size(); ++i) {
+        // Pass each search string using its own --grep field
+        args << " --grep=" << searchStrings.Item(i);
     }
-
-    if (m_checkBoxIgnoreCase->IsChecked()) {
+    
+    if(!searchStrings.IsEmpty()) {
+        //  Limit the commits output to ones that match all given --grep
+        args << " --all-match";
+    }
+    
+    if(m_checkBoxIgnoreCase->IsChecked()) {
         args << " -i";
     }
 
-    if (!m_comboExtraArgs->GetValue().empty()) {
+    if(!m_comboExtraArgs->GetValue().empty()) {
         args << ' ' << m_comboExtraArgs->GetValue();
     }
 
     return args;
 }
-
 
 void GitCommitListDlg::OnNext(wxCommandEvent& event)
 {
@@ -315,9 +319,9 @@ void GitCommitListDlg::OnExtraArgsTextEnter(wxCommandEvent& event)
 {
     // Add any text to the combobox, uniqued
     wxString extraArgs = m_comboExtraArgs->GetValue();
-    if (!extraArgs.empty()) {
+    if(!extraArgs.empty()) {
         int pos = m_comboExtraArgs->FindString(extraArgs);
-        if(pos != 0 && pos != wxNOT_FOUND) {  // 0 == already the first item in the list
+        if(pos != 0 && pos != wxNOT_FOUND) { // 0 == already the first item in the list
             m_comboExtraArgs->Delete(pos);
         }
         m_comboExtraArgs->Insert(extraArgs, 0);
@@ -325,8 +329,10 @@ void GitCommitListDlg::OnExtraArgsTextEnter(wxCommandEvent& event)
 
     OnSearchCommitList(event);
 }
-    
 
 void GitCommitListDlg::OnPreviousUI(wxUpdateUIEvent& event) { event.Enable(m_skip >= 100); }
 
-void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrlCommitList->GetItemCount() >= 100); }
+void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dvListCtrlCommitList->GetItemCount() >= 100);
+}

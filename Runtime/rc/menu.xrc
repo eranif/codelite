@@ -40,7 +40,7 @@
                 <label>&amp;Save File</label>
             </object>
             <object class="wxMenuItem" name="save_file_as">
-                <label>Save As...</label>
+                <label>Save &amp;As...</label>
             </object>
             <object class="wxMenuItem" name="save_all">
                 <label>Save all files</label>

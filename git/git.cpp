@@ -919,15 +919,7 @@ void GitPlugin::OnGitBlameRevList(const wxString& arg, const wxString& filepath,
     ProcessGitActionQueue();
 }
 /*******************************************************************************/
-void GitPlugin::OnGitBlameLog(const wxString& commit) // Called by the git blame dialog
-{
-    wxString args = "-1 --stat --ignore-all-space --ignore-blank-lines --shortstat " + commit;
-    
-    gitAction ga(gitLog, args);
-    m_gitActionQueue.push_back(ga);
-    ProcessGitActionQueue();
-}
-/*******************************************************************************/
+
 void GitPlugin::OnRefresh(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -1260,11 +1252,6 @@ void GitPlugin::ProcessGitActionQueue()
     case gitRevlist:
         command << " --no-pager rev-list " << ga.arguments;
         GIT_MESSAGE("Git rev-list: %s", command);
-        break;
-
-    case gitLog:
-        command << " --no-pager log " << ga.arguments;
-        GIT_MESSAGE("Git log: %s", command);
         break;
 
     case gitRebase:
@@ -1617,11 +1604,6 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     } else if(ga.action == gitRevlist) {
         if (m_gitBlameDlg) {
             m_gitBlameDlg->OnRevListOutput(m_commandOutput, ga.arguments);
-        }
-
-    } else if(ga.action == gitLog) {
-        if (m_gitBlameDlg) {
-            m_gitBlameDlg->OnLogOutput(m_commandOutput, ga.arguments);
         }
 
     } else if(ga.action == gitDiffRepoShow) {

@@ -2,25 +2,15 @@
 #define GITBLAMEDLG_H
 #include "gitui.h"
 #include "clEditorEditEventsHandler.h"
+#include "cl_command_event.h"
+#include "macros.h"
 #include <wx/stc/stc.h>
-#include <wx/popupwin.h>
 #include <wx/arrstr.h>
 #include <wx/choice.h>
+#include <map>
 
+class IProcess;
 class GitPlugin;
-
-class LogPopupTransientWindow : public wxPopupTransientWindow
-{
-public:
-    LogPopupTransientWindow(wxWindow* parent);
-    virtual ~LogPopupTransientWindow() {}
-
-    void SetText(const wxString& text);
-
-protected:
-    void OnLeaveWindow(wxMouseEvent& event);
-    wxStaticText* m_staticText;
-};
 
 class CommitStore
 {
@@ -94,7 +84,6 @@ public:
 
     void SetBlame(const wxString& blame, const wxString& args);
     void OnRevListOutput(const wxString& output, const wxString& Arguments);
-    void OnLogOutput(const wxString& output, const wxString& logArguments);
 
 protected:
     virtual void OnExtraArgsTextEnter(wxCommandEvent& event);
@@ -106,22 +95,35 @@ protected:
     virtual void OnPreviousBlame(wxCommandEvent& event);
     virtual void OnSettings(wxCommandEvent& event);
     virtual void OnStcblameLeftDclick(wxMouseEvent& event);
-    virtual void OnSTCDwellStart(wxStyledTextEvent& event);
     virtual void OnCloseDialog(wxCommandEvent& event);
     void GetNewCommitBlame(const wxString& commit);
+    void ClearLogControls();
+    void UpdateLogControls(const wxString& commit);
+
+    void OnProcessTerminated(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnChangeFile(wxCommandEvent& event);
 
     GitPlugin* m_plugin;
     clEditEventsHandler::Ptr_t m_editEventsHandler;
-    LogPopupTransientWindow* m_displayLog;
+
     CommitStore m_commitStore;
     bool m_showParentCommit;
-    size_t m_hovertime;
+    bool m_showLogControls;
+    wxStringMap_t m_diffMap;
+    int m_sashPositionMain;
+    int m_sashPositionV;
+    int m_sashPositionH;
+
+    wxString m_commandOutput;
+    IProcess* m_process;
+    wxString m_gitPath;
 };
 
 class GitBlameSettingsDlg : public GitBlameSettingsDlgBase
 {
 public:
-    GitBlameSettingsDlg(wxWindow* parent, bool showParentCommit, size_t hovertime);
+    GitBlameSettingsDlg(wxWindow* parent, bool showParentCommit, bool showLogControls);
     virtual ~GitBlameSettingsDlg() {}
 
 protected:

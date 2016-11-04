@@ -58,8 +58,11 @@ GitEntry::GitEntry()
     , m_gitConsoleSashPos(0)
     , m_gitCommitDlgHSashPos(0)
     , m_gitCommitDlgVSashPos(0)
-    , m_gitBlameHovertime(1)
+    , m_gitBlameShowLogControls(true)
     , m_gitBlameShowParentCommit(true)
+    , m_gitBlameDlgMainSashPos(0)
+    , m_gitBlameDlgHSashPos(0)
+    , m_gitBlameDlgVSashPos(0)
 {
     GitLocator locator;
     wxFileName gitpath;
@@ -85,8 +88,11 @@ void GitEntry::FromJSON(const JSONElement& json)
     m_gitConsoleSashPos = json.namedObject("m_gitConsoleSashPos").toInt(m_gitConsoleSashPos);
     m_gitCommitDlgHSashPos = json.namedObject("m_gitCommitDlgHSashPos").toInt(m_gitCommitDlgHSashPos);
     m_gitCommitDlgVSashPos = json.namedObject("m_gitCommitDlgVSashPos").toInt(m_gitCommitDlgVSashPos);
-    m_gitBlameHovertime = json.namedObject("m_gitBlameHovertime").toSize_t(m_gitBlameHovertime);
+    m_gitBlameShowLogControls = json.namedObject("gitBlameShowLogControls").toBool(m_gitBlameShowLogControls);
     m_gitBlameShowParentCommit = json.namedObject("m_gitBlameShowParentCommit").toBool(m_gitBlameShowParentCommit);
+    m_gitBlameDlgMainSashPos = json.namedObject("m_gitBlameDlgMainSashPos").toInt(m_gitBlameDlgMainSashPos);
+    m_gitBlameDlgHSashPos = json.namedObject("m_gitBlameDlgHSashPos").toInt(m_gitBlameDlgHSashPos);
+    m_gitBlameDlgVSashPos = json.namedObject("m_gitBlameDlgVSashPos").toInt(m_gitBlameDlgVSashPos);
     
     wxString defaultGitShell;
     locator.MSWGetGitShellCommand(defaultGitShell);
@@ -132,8 +138,11 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_gitCommitDlgVSashPos", m_gitCommitDlgVSashPos);
     json.addProperty("m_recentCommits", m_recentCommits);
     json.addProperty("m_gitShellCommand", m_gitShellCommand);
-    json.addProperty("m_gitBlameHovertime", m_gitBlameHovertime);
+    json.addProperty("gitBlameShowLogControls", m_gitBlameShowLogControls);
     json.addProperty("m_gitBlameShowParentCommit", m_gitBlameShowParentCommit);
+    json.addProperty("m_gitBlameDlgMainSashPos", m_gitBlameDlgMainSashPos);
+    json.addProperty("m_gitBlameDlgHSashPos", m_gitBlameDlgHSashPos);
+    json.addProperty("m_gitBlameDlgVSashPos", m_gitBlameDlgVSashPos);
     
     // Add the git commands array
     JSONElement arrCommands = JSONElement::createArray("Commands");

@@ -41,7 +41,6 @@
 #include <wx/gauge.h>
 #include "dataviewfilesmodel.h"
 #include <wx/choice.h>
-#include <wx/spinctrl.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -396,7 +395,22 @@ protected:
     wxChoice* m_choiceHistory;
     wxStaticText* m_staticText414;
     wxComboBox* m_comboExtraArgs;
+    wxSplitterWindow* m_splitterMain;
+    wxPanel* m_splitterPageTop;
     wxStyledTextCtrl* m_stcBlame;
+    wxPanel* m_splitterPageBottom;
+    wxSplitterWindow* m_splitterH;
+    wxPanel* m_splitterPage194;
+    wxStaticText* m_staticText220;
+    wxStyledTextCtrl* m_stcCommitMessage;
+    wxPanel* m_splitterPage190;
+    wxSplitterWindow* m_splitterV;
+    wxPanel* m_splitterPage200;
+    wxStaticText* m_staticText210;
+    wxListBox* m_fileListBox;
+    wxPanel* m_splitterPage204;
+    wxStaticText* m_staticText217;
+    wxStyledTextCtrl* m_stcDiff;
     wxStdDialogButtonSizer* m_stdBtnSizer306;
     wxButton* m_button308;
 
@@ -409,8 +423,9 @@ protected:
     virtual void OnExtraArgsTextEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefreshBlame(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSettings(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSTCDwellStart(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnStcblameLeftDclick(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnSelectionChanged(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCloseDialog(wxCommandEvent& event) { event.Skip(); }
 
 public:
@@ -419,6 +434,21 @@ public:
     wxComboBox* GetComboExtraArgs() { return m_comboExtraArgs; }
     wxAuiToolBar* GetAuibar436() { return m_auibar436; }
     wxStyledTextCtrl* GetStcBlame() { return m_stcBlame; }
+    wxPanel* GetSplitterPageTop() { return m_splitterPageTop; }
+    wxStaticText* GetStaticText220() { return m_staticText220; }
+    wxStyledTextCtrl* GetStcCommitMessage() { return m_stcCommitMessage; }
+    wxPanel* GetSplitterPage194() { return m_splitterPage194; }
+    wxStaticText* GetStaticText210() { return m_staticText210; }
+    wxListBox* GetFileListBox() { return m_fileListBox; }
+    wxPanel* GetSplitterPage200() { return m_splitterPage200; }
+    wxStaticText* GetStaticText217() { return m_staticText217; }
+    wxStyledTextCtrl* GetStcDiff() { return m_stcDiff; }
+    wxPanel* GetSplitterPage204() { return m_splitterPage204; }
+    wxSplitterWindow* GetSplitterV() { return m_splitterV; }
+    wxPanel* GetSplitterPage190() { return m_splitterPage190; }
+    wxSplitterWindow* GetSplitterH() { return m_splitterH; }
+    wxPanel* GetSplitterPageBottom() { return m_splitterPageBottom; }
+    wxSplitterWindow* GetSplitterMain() { return m_splitterMain; }
     GitBlameDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Blame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitBlameDlgBase();
 };
@@ -428,8 +458,7 @@ class GitBlameSettingsDlgBase : public wxDialog
 {
 protected:
     wxCheckBox* m_checkParentCommit;
-    wxSpinCtrl* m_spinCtrlDwelltime;
-    wxStaticText* m_staticText427;
+    wxCheckBox* m_checkShowLogControls;
     wxStdDialogButtonSizer* m_stdBtnSizer429;
     wxButton* m_button431;
     wxButton* m_button433;
@@ -438,8 +467,7 @@ protected:
 
 public:
     wxCheckBox* GetCheckParentCommit() { return m_checkParentCommit; }
-    wxSpinCtrl* GetSpinCtrlDwelltime() { return m_spinCtrlDwelltime; }
-    wxStaticText* GetStaticText427() { return m_staticText427; }
+    wxCheckBox* GetCheckShowLogControls() { return m_checkShowLogControls; }
     GitBlameSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Blame Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~GitBlameSettingsDlgBase();
 };

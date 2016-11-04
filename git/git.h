@@ -126,7 +126,6 @@ class GitPlugin : public IPlugin
         gitCommitList,
         gitBlame,
         gitRevlist,
-        gitLog,
         gitRebase,
         gitGarbageCollection,
         gitClone,
@@ -306,7 +305,6 @@ public:
     wxString GetEditorRelativeFilepath() const; // Called by OnGitBlame or the git blame dialog
     void OnGitBlameRevList(
         const wxString& arg, const wxString& filepath, const wxString& commit = ""); // Called by the git blame dialog
-    void OnGitBlameLog(const wxString& commit);                                      // Called by the git blame dialog
 
     /**
      * @brief simple git command executioin completed. Display its output etc

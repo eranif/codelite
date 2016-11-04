@@ -3,8 +3,11 @@
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
 #include "ColoursAndFontsManager.h"
+#include "editor_config.h"
 #include "lexer_configuration.h"
 #include "file_logger.h"
+#include "asyncprocess.h"
+#include "processreaderthread.h"
 #include <wx/dcmemory.h>
 #include <wx/bitmap.h>
 
@@ -106,7 +109,9 @@ void StoreExtraArgs(wxComboBox* m_comboExtraArgs, const wxString extraArgs) // H
 GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
     : GitBlameDlgBase(parent)
     , m_plugin(plugin)
-    , m_displayLog(NULL)
+    , m_sashPositionMain(0)
+    , m_sashPositionV(0)
+    , m_sashPositionH(0)
 {
     WindowAttrManager::Load(this);
     m_editEventsHandler.Reset(new clEditEventsHandler(m_stcBlame));
@@ -115,16 +120,59 @@ GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
     GitEntry data;
     conf.ReadItem(&data);
 
-    m_hovertime = data.GetGitBlameHovertime();
     m_showParentCommit = data.GetGitBlameShowParentCommit();
+    m_showLogControls = data.GetGitBlameShowLogControls();
+    
+    m_sashPositionMain = data.GetGitBlameDlgMainSashPos();
+    m_sashPositionV = data.GetGitBlameDlgVSashPos();
+    m_sashPositionH = data.GetGitBlameDlgHSashPos();;
+    
+    if (m_splitterMain->IsSplit()) {
+        m_splitterMain->SetSashPosition(m_sashPositionMain);
+        m_splitterH->SetSashPosition(m_sashPositionH);
+        m_splitterV->SetSashPosition(m_sashPositionV);
+        if (!m_showLogControls) {
+            m_splitterMain->Unsplit();
+        }
+    } else if (m_showLogControls && !m_splitterMain->IsSplit()) {
+        m_splitterMain->SplitHorizontally(m_splitterPageBottom, m_splitterPageBottom, m_sashPositionMain);
+        m_splitterH->SetSashPosition(m_sashPositionH);
+        m_splitterV->SetSashPosition(m_sashPositionV);
+    }
+
+    m_gitPath = data.GetGITExecutablePath();
+    m_gitPath.Trim().Trim(false);
+    
+    m_gitPath = data.GetGITExecutablePath();
 
     m_comboExtraArgs->Clear(); // Remove the placeholder string (there to make the control wider)
+    
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitBlameDlg::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitBlameDlg::OnProcessTerminated, this);
 }
 
 GitBlameDlg::~GitBlameDlg()
 {
-    delete m_displayLog;
     m_editEventsHandler.Reset(NULL);
+    
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+
+    if (m_showLogControls && m_splitterMain->IsSplit()) {
+        data.SetGitBlameDlgMainSashPos(m_splitterMain->GetSashPosition());
+        data.SetGitBlameDlgHSashPos(m_splitterH->GetSashPosition());
+        data.SetGitBlameDlgVSashPos(m_splitterV->GetSashPosition());
+    } else {
+        data.SetGitBlameDlgMainSashPos(m_sashPositionMain);
+        data.SetGitBlameDlgHSashPos(m_sashPositionH);
+        data.SetGitBlameDlgVSashPos(m_sashPositionV);
+    }
+    
+    data.SetGitBlameShowParentCommit(m_showParentCommit);
+    data.SetGitBlameShowLogControls(m_showLogControls);
+    
+    conf.WriteItem(&data);
 }
 
 void GitBlameDlg::OnCloseDialog(wxCommandEvent& event)
@@ -133,6 +181,8 @@ void GitBlameDlg::OnCloseDialog(wxCommandEvent& event)
     m_choiceHistory->Clear();
     m_comboExtraArgs->Clear();
     m_commitStore.Clear();
+
+    ClearLogControls();
 
     Hide();
 }
@@ -156,6 +206,14 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
     }
     lexer->Apply(m_stcBlame, true);
 
+    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("diff");
+    if(lex) {
+        lex->Apply(m_stcDiff, true);
+    }
+
+    LexerConf::Ptr_t textLex = EditorConfigST::Get()->GetLexer("text");
+    textLex->Apply(m_stcCommitMessage, true);
+    
     m_stcBlame->SetMarginType(TEXT_MARGIN_ID, wxSTC_MARGIN_RTEXT);
     // The text margin needs to be 24 chars wide for the date & hash, the max author-width, plus 2 spaces between
     wxBitmap bmp(1, 1);
@@ -165,8 +223,6 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
     
     m_stcBlame->SetMarginWidth(TEXT_MARGIN_ID, marginwidth * charWidth);
     m_stcBlame->SetMarginSensitive(TEXT_MARGIN_ID, true);
-
-    m_stcBlame->SetMouseDwellTime(m_hovertime * 1000);
 
     wxArrayString lines = wxStringTokenize(blame, "\n");
     const size_t count = lines.GetCount();
@@ -214,6 +270,10 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
             m_plugin->OnGitBlameRevList("--parents ", filepath); // Find each commit's parent(s)
         }
     }
+    
+    if (!blameCommit.Left(8).empty()) {
+        UpdateLogControls(blameCommit.Left(8));
+    }
 }
 
 void GitBlameDlg::OnRevListOutput(const wxString& output, const wxString& Arguments)
@@ -228,28 +288,9 @@ void GitBlameDlg::OnRevListOutput(const wxString& output, const wxString& Argume
         wxString head = revlistOutput.Item(0).BeforeFirst(' '); // Add HEAD
         m_commitStore.AddCommit(head.Left(8) + " (HEAD)");
         m_commitStore.LoadChoice(m_choiceHistory);
-    }
-}
-
-void GitBlameDlg::OnSTCDwellStart(wxStyledTextEvent& event)
-{
-    // First see if we're hovering over the text margin
-    wxPoint pt(m_stcBlame->ScreenToClient(wxGetMousePosition()));
-    wxRect clientRect = m_stcBlame->GetClientRect();
-
-    // If the mouse is no longer over the editor, cancel the tooltip
-    if(!clientRect.Contains(pt)) {
-        return;
-    }
-
-    if(event.GetX() > 0 &&
-        event.GetX() < m_stcBlame->GetMarginWidth(0)) { // It seems that we can get spurious events with x == 0
-        // We can't use event.GetPosition() here, as in the margin it returns -1
-        int position = m_stcBlame->PositionFromPoint(wxPoint(event.GetX(), event.GetY()));
-        int line = m_stcBlame->LineFromPosition(position);
-        wxString commit = m_stcBlame->MarginGetText(line).Right(8);
-        if(!commit.empty()) {
-            m_plugin->OnGitBlameLog(commit);
+                
+        if (m_stcCommitMessage->IsEmpty()) {
+            UpdateLogControls(head.Left(8));
         }
     }
 }
@@ -284,16 +325,6 @@ void GitBlameDlg::OnStcblameLeftDclick(wxMouseEvent& event)
 
         m_commitStore.AddCommit(newBlame);
     }
-}
-
-void GitBlameDlg::OnLogOutput(const wxString& output, const wxString& logArguments)
-{
-    //     if(!m_displayLog) {
-    //         m_displayLog = new LogPopupTransientWindow(this);
-    //     }
-    //
-    //     m_displayLog->SetText(output);
-    //     m_displayLog->Popup();
 }
 
 void GitBlameDlg::OnExtraArgsTextEnter(wxCommandEvent& event)
@@ -347,56 +378,129 @@ void GitBlameDlg::GetNewCommitBlame(const wxString& commit)
 
         args << " -- " << filepath;
         m_plugin->DoGitBlame(args);
+        
+        ClearLogControls();
     }
 }
 
+void GitBlameDlg::ClearLogControls()
+{
+    m_stcCommitMessage->SetEditable(true);
+    m_stcDiff->SetEditable(true);
+    
+    m_stcCommitMessage->ClearAll();
+    m_fileListBox->Clear();
+    m_diffMap.clear();
+    m_stcDiff->ClearAll();
+    
+    m_stcCommitMessage->SetEditable(false);
+    m_stcDiff->SetEditable(false);
+}
 void GitBlameDlg::OnSettings(wxCommandEvent& event)
 {
-    GitBlameSettingsDlg dlg(this, m_showParentCommit, m_hovertime);
+    GitBlameSettingsDlg dlg(this, m_showParentCommit, m_showLogControls);
     if(dlg.ShowModal() == wxID_OK) {
         m_showParentCommit = dlg.GetCheckParentCommit()->IsChecked();
-        m_hovertime = dlg.GetSpinCtrlDwelltime()->GetValue();
-        m_stcBlame->SetMouseDwellTime(m_hovertime * 1000);
+        m_showLogControls = dlg.GetCheckShowLogControls()->IsChecked();
 
         clConfig conf("git.conf");
         GitEntry data;
         conf.ReadItem(&data);
 
         data.SetGitBlameShowParentCommit(m_showParentCommit);
-        data.SetGitBlameHovertime(m_hovertime);
+        data.SetGitBlameShowLogControls(m_showLogControls);
         conf.WriteItem(&data);
+        
+        if (m_splitterMain->IsSplit() && !m_showLogControls) {
+            m_sashPositionMain = m_splitterMain->GetSashPosition();
+            m_sashPositionH = m_splitterH->GetSashPosition();
+            m_sashPositionV = m_splitterV->GetSashPosition();
+            m_splitterMain->Unsplit();
+        } else if (m_showLogControls && !m_splitterMain->IsSplit()) {
+            m_splitterMain->SplitHorizontally(m_splitterPageTop, m_splitterPageBottom, m_sashPositionMain);
+            m_splitterH->SetSashPosition(m_sashPositionH);
+            m_splitterV->SetSashPosition(m_sashPositionV);
+        }
     }
 }
 
-GitBlameSettingsDlg::GitBlameSettingsDlg(wxWindow* parent, bool showParentCommit, size_t hovertime)
+GitBlameSettingsDlg::GitBlameSettingsDlg(wxWindow* parent, bool showParentCommit, bool showLogControls)
     : GitBlameSettingsDlgBase(parent)
 {
     m_checkParentCommit->SetValue(showParentCommit);
-    m_spinCtrlDwelltime->SetValue(hovertime);
+    m_checkShowLogControls->SetValue(showLogControls);
 }
 
-LogPopupTransientWindow::LogPopupTransientWindow(wxWindow* parent)
-    : wxPopupTransientWindow(parent)
+void GitBlameDlg::OnChangeFile(wxCommandEvent& event)
 {
-    wxSize size = parent->GetClientSize(); // The user will have set the dialog size to suit the screensize
-    size.DecBy(50);                        // so this should mean a sensible size
-
-    wxScrolledWindow* panel = new wxScrolledWindow(this);
-
-    m_staticText = new wxStaticText(panel, wxID_ANY, "", wxDefaultPosition, size);
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-    sizer->Add(m_staticText, 1, wxALL, 5);
-    panel->SetSizer(sizer);
-
-    panel->SetSize(600, 600);
-    panel->SetScrollRate(10, 10);
-
-    SetClientSize(panel->GetSize());
-    CentreOnParent(); // which doesn't seem to work here, but at least it puts it somewhere sensible
-
-    Bind(wxEVT_LEAVE_WINDOW, &LogPopupTransientWindow::OnLeaveWindow, this);
+    int sel = m_fileListBox->GetSelection();
+    wxString file = m_fileListBox->GetString(sel);
+    m_stcDiff->SetReadOnly(false);
+    m_stcDiff->SetText(m_diffMap[file]);
+    m_stcDiff->SetReadOnly(true);
 }
 
-void LogPopupTransientWindow::SetText(const wxString& text) { m_staticText->SetLabel(text); }
+void GitBlameDlg::OnProcessTerminated(clProcessEvent& event)
+{
+    wxUnusedVar(event);
+    wxDELETE(m_process);
 
-void LogPopupTransientWindow::OnLeaveWindow(wxMouseEvent& WXUNUSED(event)) { Dismiss(); }
+    m_stcCommitMessage->SetEditable(true);
+    m_stcDiff->SetEditable(true);
+    m_stcCommitMessage->ClearAll();
+    m_fileListBox->Clear();
+    m_diffMap.clear();
+    m_stcDiff->ClearAll();
+
+
+    m_commandOutput.Replace(wxT("\r"), wxT(""));
+    wxArrayString diffList = wxStringTokenize(m_commandOutput, wxT("\n"));
+
+
+    bool foundFirstDiff = false;
+    unsigned index = 0;
+    wxString currentFile;
+    while(index < diffList.GetCount()) {
+
+        wxString line = diffList[index];
+        if(line.StartsWith(wxT("diff"))) {
+            line.Replace(wxT("diff --git a/"), wxT(""));
+            currentFile = line.Left(line.Find(wxT(" ")));
+            foundFirstDiff = true;
+
+        } else if(line.StartsWith(wxT("Binary"))) {
+            m_diffMap[currentFile] = wxT("Binary diff");
+
+        } else if(!foundFirstDiff) {
+            m_stcCommitMessage->AppendText(line + wxT("\n"));
+
+        } else {
+            m_diffMap[currentFile].Append(line + wxT("\n"));
+        }
+        ++index;
+    }
+    for(std::map<wxString, wxString>::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
+        m_fileListBox->Append((*it).first);
+    }
+
+    if(m_diffMap.size() != 0) {
+        wxString file = m_plugin->GetEditorRelativeFilepath();
+        m_stcDiff->SetText(m_diffMap[file]);
+        m_fileListBox->SetStringSelection(file);
+    }
+
+    m_stcDiff->SetEditable(false);
+    m_commandOutput.Clear();
+    m_stcCommitMessage->SetEditable(false);
+}
+
+void GitBlameDlg::OnProcessOutput(clProcessEvent& event) { m_commandOutput.Append(event.GetOutput()); }
+
+void GitBlameDlg::UpdateLogControls(const wxString& commit)
+{
+    if (!commit.empty()) {
+        wxString command = wxString::Format(wxT("%s --no-pager show %s"), m_gitPath, commit);
+        m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
+    }
+}
+

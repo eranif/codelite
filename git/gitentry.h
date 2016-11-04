@@ -117,8 +117,11 @@ class GitEntry : public clConfigItem
     int m_gitCommitDlgVSashPos;
     wxArrayString m_recentCommits;
     wxString m_gitShellCommand;
-	size_t m_gitBlameHovertime;
+	bool m_gitBlameShowLogControls;
 	bool m_gitBlameShowParentCommit;
+    int m_gitBlameDlgMainSashPos;
+    int m_gitBlameDlgHSashPos;
+    int m_gitBlameDlgVSashPos;
 
 public:
     enum { Git_Verbose_Log = 0x00000001, Git_Show_Terminal = 0x00000002, Git_Colour_Tree_View = 0x00000004 };
@@ -179,10 +182,16 @@ public:
     wxString GetGITKExecutablePath() const;
     void SetGitConsoleSashPos(int gitConsoleSashPos) { this->m_gitConsoleSashPos = gitConsoleSashPos; }
     int GetGitConsoleSashPos() const { return m_gitConsoleSashPos; }
-    void SetGitBlameHovertime(size_t gitBlameHovertime) { this->m_gitBlameHovertime = gitBlameHovertime; }
-    size_t GetGitBlameHovertime() const { return m_gitBlameHovertime; }
+    void SetGitBlameShowLogControls(bool gitBlameShowLogControls) { this->m_gitBlameShowLogControls = gitBlameShowLogControls; }
+    bool GetGitBlameShowLogControls() const { return m_gitBlameShowLogControls; }
     void SetGitBlameShowParentCommit(bool gitBlameShowParentCommit) { this->m_gitBlameShowParentCommit = gitBlameShowParentCommit; }
     bool GetGitBlameShowParentCommit() const { return m_gitBlameShowParentCommit; }
+    void SetGitBlameDlgMainSashPos(int MainSashPos) { this->m_gitBlameDlgMainSashPos = MainSashPos; }
+    void SetGitBlameDlgHSashPos(int HSashPos) { this->m_gitBlameDlgHSashPos = HSashPos; }
+    void SetGitBlameDlgVSashPos(int VSashPos) { this->m_gitBlameDlgVSashPos = VSashPos; }
+    int GetGitBlameDlgMainSashPos() const { return m_gitBlameDlgMainSashPos; }
+    int GetGitBlameDlgHSashPos() const { return m_gitBlameDlgHSashPos; }
+    int GetGitBlameDlgVSashPos() const { return m_gitBlameDlgVSashPos; }
 
     GitCommandsEntries& GetGitCommandsEntries(const wxString& entryName);
 

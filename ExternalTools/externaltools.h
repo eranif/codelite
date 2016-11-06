@@ -29,6 +29,7 @@
 #include "plugin.h"
 #include "externaltoolsdata.h"
 #include "asyncprocess.h"
+#include "cl_command_event.h"
 
 class wxToolBar;
 class AsyncExeCmd;
@@ -46,6 +47,8 @@ protected:
     void DoCreatePluginMenu();
     void OnRecreateTB();
     void OnLaunchExternalTool(wxCommandEvent& e);
+
+    void OnFileSave(clCommandEvent& event);
 
 public:
     ExternalToolsPlugin(IManager* manager);

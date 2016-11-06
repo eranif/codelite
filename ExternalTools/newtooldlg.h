@@ -59,6 +59,7 @@ public:
     wxString GetIcon24() const { return m_textCtrlIcon24->GetValue(); }
     bool GetCaptureOutput() const { return m_checkBoxCaptureOutput->IsChecked(); }
     bool GetSaveAllFiles() const { return m_checkBoxSaveAllFilesBefore->IsChecked(); }
+    bool IsCallOnFileSave() const { return m_checkBoxCallOnFileSave->IsChecked(); }
 };
 
 #endif // __newtooldlg__

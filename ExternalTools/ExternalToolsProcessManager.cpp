@@ -10,6 +10,7 @@
 #include <wx/utils.h>
 #include <wx/process.h>
 #include <wx/msgdlg.h>
+#include "file_logger.h"
 #ifndef __WXMSW__
 #include <signal.h>
 #endif
@@ -109,6 +110,8 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti)
 
     EnvSetter envGuard(clGetManager()->GetEnv(), NULL, projectName, configName);
     //::WrapInShell(command);
+    
+    clDEBUG() << "Running command:" << command << clEndl;
     
     int pid = wxNOT_FOUND;
     if(ti.GetCaptureOutput()) {

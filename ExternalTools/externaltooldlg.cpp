@@ -69,7 +69,8 @@ void ExternalToolDlg::OnButtonNew(wxCommandEvent& event)
                       dlg.GetIcon16(),
                       dlg.GetIcon24(),
                       dlg.GetCaptureOutput(),
-                      dlg.GetSaveAllFiles());
+                      dlg.GetSaveAllFiles(),
+                      dlg.IsCallOnFileSave());
     }
 }
 
@@ -115,7 +116,8 @@ void ExternalToolDlg::DoUpdateEntry(const wxString& id,
                                     const wxString& icon16,
                                     const wxString& icon24,
                                     bool captureOutput,
-                                    bool saveAllFiles)
+                                    bool saveAllFiles,
+                                    bool callOnFileSave)
 {
     // try to see if 'id' already exist in the list control
     long item(wxNOT_FOUND);
@@ -140,8 +142,8 @@ void ExternalToolDlg::DoUpdateEntry(const wxString& id,
     SetColumnText(m_listCtrlTools, item, 1, name);
     SetColumnText(m_listCtrlTools, item, 2, path);
 
-    ExternalToolData* data =
-        new ExternalToolData(id, name, path, workingDirectory, arguments, icon16, icon24, captureOutput, saveAllFiles);
+    ExternalToolData* data = new ExternalToolData(
+        id, name, path, workingDirectory, arguments, icon16, icon24, captureOutput, saveAllFiles, callOnFileSave);
     m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
 }
 
@@ -158,7 +160,8 @@ void ExternalToolDlg::DoEditEntry(long item)
                       dlg.GetIcon16(),
                       dlg.GetIcon24(),
                       dlg.GetCaptureOutput(),
-                      dlg.GetSaveAllFiles());
+                      dlg.GetSaveAllFiles(),
+                      dlg.IsCallOnFileSave());
     }
 }
 
@@ -180,6 +183,7 @@ std::vector<ToolInfo> ExternalToolDlg::GetTools()
             ti.SetIcon24(data->m_icon24);
             ti.SetCaptureOutput(data->m_captureOutput);
             ti.SetSaveAllFiles(data->m_saveAllFiles);
+            ti.SetCallOnFileSave(data->m_callOnFileSave);
             tools.push_back(ti);
         }
     }

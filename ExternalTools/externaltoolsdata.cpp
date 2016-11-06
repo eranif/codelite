@@ -24,7 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "externaltoolsdata.h"
-ToolInfo::ToolInfo() {}
+
+ToolInfo::ToolInfo()
+    : m_flags(0)
+{
+}
 
 ToolInfo::~ToolInfo() {}
 
@@ -43,6 +47,9 @@ void ToolInfo::DeSerialize(Archive& arch)
 
     m_saveAllFiles = false;
     arch.Read(wxT("m_saveAllFiles"), m_saveAllFiles);
+
+    m_flags = 0;
+    arch.Read("m_flags", m_flags);
 }
 
 void ToolInfo::Serialize(Archive& arch)
@@ -56,6 +63,7 @@ void ToolInfo::Serialize(Archive& arch)
     arch.Write(wxT("m_icon24"), m_icon24);
     arch.Write(wxT("m_captureOutput"), m_captureOutput);
     arch.Write(wxT("m_saveAllFiles"), m_saveAllFiles);
+    arch.Write("m_flags", m_flags);
 }
 
 //----------------------------------------------------------------

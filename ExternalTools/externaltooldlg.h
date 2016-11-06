@@ -42,6 +42,7 @@ public:
     wxString m_icon24;
     bool m_captureOutput;
     bool m_saveAllFiles;
+    bool m_callOnFileSave;
 
 public:
     ExternalToolData(const ToolInfo& ti)
@@ -54,6 +55,7 @@ public:
         , m_icon24(ti.GetIcon24())
         , m_captureOutput(ti.GetCaptureOutput())
         , m_saveAllFiles(ti.GetSaveAllFiles())
+        , m_callOnFileSave(ti.IsCallOnFileSave())
     {
     }
 
@@ -65,7 +67,8 @@ public:
                      const wxString& icon16,
                      const wxString& icon24,
                      bool captureOutput,
-                     bool saveAllFiles)
+                     bool saveAllFiles,
+                     bool callOnFileSave)
         : m_id(id)
         , m_name(name)
         , m_path(path)
@@ -75,6 +78,7 @@ public:
         , m_icon24(icon24)
         , m_captureOutput(captureOutput)
         , m_saveAllFiles(saveAllFiles)
+        , m_callOnFileSave(callOnFileSave)
     {
     }
 
@@ -98,7 +102,8 @@ private:
                        const wxString& icon16,
                        const wxString& icon24,
                        bool captureOutput,
-                       bool saveAllFiles);
+                       bool saveAllFiles,
+                       bool callOnFileSave);
     void DoEditEntry(long item);
 
 protected:

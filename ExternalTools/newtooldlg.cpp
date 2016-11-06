@@ -55,6 +55,7 @@ NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
         m_textCtrlName->ChangeValue(data->m_name);
         m_checkBoxCaptureOutput->SetValue(data->m_captureOutput);
         m_checkBoxSaveAllFilesBefore->SetValue(data->m_saveAllFiles);
+        m_checkBoxCallOnFileSave->SetValue(data->m_callOnFileSave);
         m_choiceId->Enable(false);
     }
     GetSizer()->Fit(this);

@@ -7,14 +7,20 @@
 #include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
 #include "cl_config.h"
+#include "tail.h"
 
-TailPanel::TailPanel(wxWindow* parent)
+TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     : TailPanelBase(parent)
     , m_lastPos(0)
+    , m_plugin(plugin)
+    , m_isDetached(false)
 {
     m_fileWatcher.reset(new clFileSystemWatcher());
     m_fileWatcher->SetOwner(this);
     Bind(wxEVT_FILE_MODIFIED, &TailPanel::OnFileModified, this);
+    
+    wxCommandEvent dummy;
+    OnThemeChanged(dummy);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &TailPanel::OnThemeChanged, this);
 }
 
@@ -78,6 +84,7 @@ void TailPanel::OnThemeChanged(wxCommandEvent& event)
         lexer->Apply(m_stc);
     }
 }
+
 void TailPanel::OnClear(wxCommandEvent& event)
 {
     m_stc->SetReadOnly(false);
@@ -149,3 +156,12 @@ void TailPanel::OnOpenRecentItem(wxCommandEvent& event)
     DoOpen(filepath);
     m_recentItemsMap.clear();
 }
+
+void TailPanel::OnDetachWindow(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_plugin->CallAfter(&Tail::DetachTailWindow);
+    m_isDetached = true;
+}
+
+void TailPanel::OnDetachWindowUI(wxUpdateUIEvent& event) { event.Enable(!m_isDetached); }

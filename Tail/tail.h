@@ -6,19 +6,33 @@
 #include "clEditorEditEventsHandler.h"
 
 class TailPanel;
+class TailFrame;
 class Tail : public IPlugin
 {
+    friend class TailFrame;
     TailPanel* m_view;
     clTabTogglerHelper::Ptr_t m_tabHelper;
     clEditEventsHandler::Ptr_t m_editEventsHandler;
 
 protected:
     void OnInitDone(wxCommandEvent& event);
-
+    void DoDetachWindow();
+    void InitTailWindow(wxWindow* parent, bool isNotebook);
+    
 public:
     Tail(IManager* manager);
     ~Tail();
-
+    
+    /**
+     * @brief detach the tail window from the output notebook
+     */
+    void DetachTailWindow();
+    
+    /**
+     * @brief dock the tail window back to the output notebook
+     */
+    void DockTailWindow();
+    
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------

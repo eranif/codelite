@@ -19,6 +19,8 @@
 #include <wx/menu.h>
 #include <wx/toolbar.h>
 #include <wx/stc/stc.h>
+#include <wx/frame.h>
+#include <wx/iconbndl.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -42,9 +44,10 @@ public:
     enum {
         ID_TAIL_CLEAR = 10001,
         ID_TAIL_CLOSE = 10002,
-        ID_TAIL_OPEN = 10003,
-        ID_TAIL_PAUSE = 10004,
-        ID_TAIL_PLAY = 10005,
+        ID_TAIL_DETACH = 10003,
+        ID_TAIL_OPEN = 10004,
+        ID_TAIL_PAUSE = 10005,
+        ID_TAIL_PLAY = 10006,
     };
 protected:
     wxAuiToolBar* m_auibar;
@@ -61,6 +64,8 @@ protected:
     virtual void OnPlayUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDetachWindow(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDetachWindowUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
 
@@ -69,6 +74,19 @@ public:
     wxStyledTextCtrl* GetStc() { return m_stc; }
     TailPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~TailPanelBase();
+};
+
+
+class TailFrameBase : public wxFrame
+{
+protected:
+
+protected:
+    virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
+
+public:
+    TailFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_FLOAT_ON_PARENT);
+    virtual ~TailFrameBase();
 };
 
 #endif

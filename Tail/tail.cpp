@@ -4,6 +4,7 @@
 #include "cl_config.h"
 #include "cl_command_event.h"
 #include "event_notifier.h"
+#include "TailFrame.h"
 
 static Tail* thePlugin = NULL;
 
@@ -30,19 +31,13 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 Tail::Tail(IManager* manager)
     : IPlugin(manager)
+    , m_view(NULL)
 {
     m_longName = _("A Linux like tail command ");
     m_shortName = wxT("Tail");
 
     // Hook our output-pane panel
-    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("mime-txt");
-    m_view = new TailPanel(m_mgr->GetOutputPaneNotebook());
-    m_editEventsHandler.Reset(new clEditEventsHandler(m_view->GetStc()));
-
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_view, "Tail", false, bmp);
-    m_tabHelper.reset(new clTabTogglerHelper("Tail", m_view, "", NULL));
-    m_tabHelper->SetOutputTabBmp(bmp);
-
+    InitTailWindow(m_mgr->GetOutputPaneNotebook(), true);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &Tail::OnInitDone, this);
 }
 
@@ -76,11 +71,53 @@ void Tail::UnPlug()
 
     // Remove our tab
     m_tabHelper.reset(NULL); // before this plugin is un-plugged we must remove the tab we added
+    if(m_view && !m_view->IsDetached()) {
+        DoDetachWindow();
+        m_view->Destroy();
+        m_view = NULL;
+    }
+}
+
+void Tail::DetachTailWindow()
+{
+    // Create new frame
+    TailFrame* frame = new TailFrame(EventNotifier::Get()->TopFrame(), this);
+    InitTailWindow(frame, false);
+    m_view->SetIsDetached(true); // set the window as detached
+    frame->GetSizer()->Add(m_view, 1, wxEXPAND | wxALL);
+    frame->GetSizer()->Fit(frame);
+    frame->Show();
+}
+
+void Tail::DockTailWindow() { InitTailWindow(m_mgr->GetOutputPaneNotebook(), true); }
+
+void Tail::DoDetachWindow()
+{
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
         if(m_view == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
             m_mgr->GetOutputPaneNotebook()->RemovePage(i);
-            m_view->Destroy();
             break;
         }
+    }
+}
+
+void Tail::InitTailWindow(wxWindow* parent, bool isNotebook)
+{
+    if(m_view) {
+        DoDetachWindow();
+        m_view->Destroy();
+        m_view = NULL;
+    }
+
+    // Hook our output-pane panel
+    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("mime-txt");
+    m_view = new TailPanel(parent, this);
+    m_editEventsHandler.Reset(new clEditEventsHandler(m_view->GetStc()));
+    if(isNotebook) {
+        m_mgr->GetOutputPaneNotebook()->AddPage(m_view, "Tail", false, bmp);
+        m_tabHelper.reset(new clTabTogglerHelper("Tail", m_view, "", NULL));
+        m_tabHelper->SetOutputTabBmp(bmp);
+    } else {
+        m_tabHelper.reset(NULL);
     }
 }

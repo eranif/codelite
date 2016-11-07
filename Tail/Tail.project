@@ -4,6 +4,8 @@
     <File Name="tail.cpp"/>
     <File Name="TailPanel.h"/>
     <File Name="TailPanel.cpp"/>
+    <File Name="TailFrame.h"/>
+    <File Name="TailFrame.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="tail.h"/>

@@ -9,6 +9,7 @@
 #include "clEditorEditEventsHandler.h"
 #include <map>
 
+class Tail;
 class TailPanel : public TailPanelBase
 {
     clFileSystemWatcher::Ptr_t m_fileWatcher;
@@ -16,8 +17,12 @@ class TailPanel : public TailPanelBase
     size_t m_lastPos;
     clEditEventsHandler::Ptr_t m_editEvents;
     std::map<int, wxString> m_recentItemsMap;
+    Tail* m_plugin;
+    bool m_isDetached;
 
 protected:
+    virtual void OnDetachWindow(wxCommandEvent& event);
+    virtual void OnDetachWindowUI(wxUpdateUIEvent& event);
     virtual void OnOpen(wxAuiToolBarEvent& event);
     virtual void OnClear(wxCommandEvent& event);
     virtual void OnClearUI(wxUpdateUIEvent& event);
@@ -32,8 +37,11 @@ private:
     void DoPrepareRecentItemsMenu(wxMenu& menu);
 
 public:
-    TailPanel(wxWindow* parent);
+    TailPanel(wxWindow* parent, Tail* plugin);
     virtual ~TailPanel();
+
+    void SetIsDetached(bool isDetached) { this->m_isDetached = isDetached; }
+    bool IsDetached() const { return m_isDetached; }
 
 protected:
     virtual void OnPause(wxCommandEvent& event);

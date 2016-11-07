@@ -48,6 +48,10 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     m_auibar->AddSeparator();
     
     m_auibar->AddTool(ID_TAIL_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear"), wxT(""), NULL);
+    
+    m_auibar->AddStretchSpacer(1);
+    
+    m_auibar->AddTool(ID_TAIL_DETACH, _("Open in a separate window"), wxXmlResource::Get()->LoadBitmap(wxT("16-windows")), wxNullBitmap, wxITEM_NORMAL, _("Open in a separate window"), _("Open in a separate window"), NULL);
     m_auibar->Realize();
     
     m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
@@ -67,9 +71,8 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     m_stc->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
-    int m_stc_PixelWidth = 4 + 5 *m_stc->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
     m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stc->SetMarginWidth(0,m_stc_PixelWidth);
+    m_stc->SetMarginWidth(0,0);
     
     // Configure the line symbol margin
     m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
@@ -104,6 +107,8 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     this->Connect(ID_TAIL_PLAY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnPlayUI), NULL, this);
     this->Connect(ID_TAIL_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClear), NULL, this);
     this->Connect(ID_TAIL_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnClearUI), NULL, this);
+    this->Connect(ID_TAIL_DETACH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnDetachWindow), NULL, this);
+    this->Connect(ID_TAIL_DETACH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnDetachWindowUI), NULL, this);
     
     this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(TailPanelBase::ShowAuiToolMenu), NULL, this);
 }
@@ -119,6 +124,8 @@ TailPanelBase::~TailPanelBase()
     this->Disconnect(ID_TAIL_PLAY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnPlayUI), NULL, this);
     this->Disconnect(ID_TAIL_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnClear), NULL, this);
     this->Disconnect(ID_TAIL_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnClearUI), NULL, this);
+    this->Disconnect(ID_TAIL_DETACH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(TailPanelBase::OnDetachWindow), NULL, this);
+    this->Disconnect(ID_TAIL_DETACH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TailPanelBase::OnDetachWindowUI), NULL, this);
     
     std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
     for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
@@ -148,4 +155,44 @@ void TailPanelBase::ShowAuiToolMenu(wxAuiToolBarEvent& event)
             }
         }
     }
+}
+TailFrameBase::TailFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxFrame(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCB60EInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer37 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer37);
+    
+    SetName(wxT("TailFrameBase"));
+    SetSize(500,300);
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TailFrameBase::OnClose), NULL, this);
+    
+}
+
+TailFrameBase::~TailFrameBase()
+{
+    this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TailFrameBase::OnClose), NULL, this);
+    
 }

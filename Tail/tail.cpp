@@ -89,7 +89,11 @@ void Tail::DetachTailWindow()
     frame->Show();
 }
 
-void Tail::DockTailWindow() { InitTailWindow(m_mgr->GetOutputPaneNotebook(), true); }
+void Tail::DockTailWindow()
+{
+    InitTailWindow(m_mgr->GetOutputPaneNotebook(), true);
+    m_mgr->GetDockingManager()->Update();
+}
 
 void Tail::DoDetachWindow()
 {

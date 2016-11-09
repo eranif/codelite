@@ -129,19 +129,20 @@ void XDebugManager::OnDebugStartOrContinue(clDebugEvent& e)
     }
 }
 
-void XDebugManager::DoStartDebugger()
+void XDebugManager::DoStartDebugger(bool ideInitiate)
 {
     CHECK_COND_RET(PHPWorkspace::Get()->GetActiveProject());
 
     // Test which file we want to debug
     PHPDebugStartDlg debugDlg(
         EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_plugin->GetManager());
-    if(debugDlg.ShowModal() != wxID_OK) {
-        return;
+    if(ideInitiate) {
+        if(debugDlg.ShowModal() != wxID_OK) {
+            return;
+        }
     }
-
     wxDELETE(m_readerThread);
-    m_readerThread = new XDebugComThread(this, GetPort(), GetHost());
+    m_readerThread = new XDebugComThread(this, GetPort(), GetHost(), ideInitiate ? 5 : -1);
     m_readerThread->Start();
 
     // Starting event
@@ -151,7 +152,7 @@ void XDebugManager::DoStartDebugger()
     PHPConfigurationData conf;
     conf.Load();
     if(!conf.HasFlag(PHPConfigurationData::kDontPromptForMissingFileMapping) &&
-        GetFileMapping(PHPWorkspace::Get()->GetActiveProject()).empty()) {
+       GetFileMapping(PHPWorkspace::Get()->GetActiveProject()).empty()) {
         // Issue a warning
         wxString message;
         message << _("This project has no file mapping defined. This may result in breakpoints not applied\n")
@@ -170,12 +171,13 @@ void XDebugManager::DoStartDebugger()
         }
     }
 
-    // Now we can run the project
-    if(!PHPWorkspace::Get()->RunProject(true, debugDlg.GetPath(), "", conf.GetXdebugIdeKey())) {
-        DoStopDebugger();
-        return;
+    if(ideInitiate) {
+        // Now we can run the project
+        if(!PHPWorkspace::Get()->RunProject(true, debugDlg.GetPath(), "", conf.GetXdebugIdeKey())) {
+            DoStopDebugger();
+            return;
+        }
     }
-
     // Notify about debug session started
     XDebugEvent eventStart(wxEVT_XDEBUG_SESSION_STARTED);
     EventNotifier::Get()->AddPendingEvent(eventStart);
@@ -450,8 +452,9 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
         frame->Raise();
     }
 
-    CL_DEBUG("CodeLite: opening file %s:%d", e.GetFileName(),
-        e.GetLineNumber() + 1); // The user sees the line number from 1 (while scintilla counts them from 0)
+    CL_DEBUG("CodeLite: opening file %s:%d",
+             e.GetFileName(),
+             e.GetLineNumber() + 1); // The user sees the line number from 1 (while scintilla counts them from 0)
 
     // Mark the debugger line / file
     IEditor* editor = m_plugin->GetManager()->FindEditor(e.GetFileName());
@@ -734,8 +737,10 @@ void XDebugManager::OnCommThreadTerminated()
 
 void XDebugManager::XDebugNotConnecting()
 {
-    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(), _("XDebug did not connect in a timely manner"),
-        "CodeLite", wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
+    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
+                            _("XDebug did not connect in a timely manner"),
+                            "CodeLite",
+                            wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
     dlg.SetOKCancelLabels(_("Run XDebug Test"), _("OK"));
     if(dlg.ShowModal() == wxID_OK) {
         m_plugin->CallAfter(&PhpPlugin::RunXDebugDiagnostics);
@@ -803,4 +808,15 @@ void XDebugManager::CenterEditor(wxStyledTextCtrl* ctrl, int lineNo)
     int linesOnScreen = ctrl->LinesOnScreen();
     int topLine = lineNo - (linesOnScreen / 2);
     ctrl->SetFirstVisibleLine(topLine);
+}
+
+void XDebugManager::StartListener()
+{
+    if(m_readerThread) {
+        // Stop the current session
+        DoStopDebugger();
+    }
+
+    // Start the listener
+    DoStartDebugger(false);
 }

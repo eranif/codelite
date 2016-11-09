@@ -36,6 +36,7 @@
 #include <wx/msgdlg.h>
 #include "clWorkspaceView.h"
 #include "php_strings.h"
+#include "XDebugManager.h"
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -118,6 +119,10 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
                         wxITEM_NORMAL)->SetHasDropDown(true);
     m_auibar29->AddTool(
         XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"), wxITEM_NORMAL);
+    m_auibar29->AddTool(XRCID("ID_TOOL_START_DEBUGGER_LISTENER"),
+                        _("Wait for Debugger Connection"),
+                        bl->LoadBitmap("debugger_start"),
+                        _("Wait for Debugger Connection"));
     m_auibar29->Realize();
 
     // Bind events
@@ -134,6 +139,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
 
     Bind(wxEVT_MENU, &PHPWorkspaceView::OnCollapse, this, XRCID("ID_TOOL_COLLAPSE"));
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnCollapseUI, this, XRCID("ID_TOOL_COLLAPSE"));
+    Bind(wxEVT_MENU, &PHPWorkspaceView::OnStartDebuggerListener, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnStartDebuggerListenerUI, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
 
     Bind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
     Bind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
@@ -157,6 +164,8 @@ PHPWorkspaceView::~PHPWorkspaceView()
     Unbind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
+    Unbind(wxEVT_MENU, &PHPWorkspaceView::OnStartDebuggerListener, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnStartDebuggerListenerUI, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVEAS, &PHPWorkspaceView::OnFileSaveAs, this);
 }
 
@@ -754,7 +763,7 @@ void PHPWorkspaceView::OnRenameFile(wxCommandEvent& e)
             m_mgr->OpenFile(newFileName.GetFullPath());
         }
     }
-    
+
     PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 }
 
@@ -1425,6 +1434,10 @@ void PHPWorkspaceView::OnCollapse(wxCommandEvent& event)
 }
 
 void PHPWorkspaceView::OnCollapseUI(wxUpdateUIEvent& event) { event.Enable(PHPWorkspace::Get()->IsOpen()); }
+void PHPWorkspaceView::OnStartDebuggerListenerUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!XDebugManager::Get().IsDebugSessionRunning());
+}
 
 void PHPWorkspaceView::DoCollapseItem(wxTreeItemId& item)
 {
@@ -1568,3 +1581,5 @@ void PHPWorkspaceView::OnFileSaveAs(clFileSystemEvent& event)
         PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
     }
 }
+
+void PHPWorkspaceView::OnStartDebuggerListener(wxCommandEvent& e) { XDebugManager::Get().StartListener(); }

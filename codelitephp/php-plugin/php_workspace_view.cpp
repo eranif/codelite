@@ -815,13 +815,7 @@ void PHPWorkspaceView::OnActiveProjectSettings(wxCommandEvent& event)
     PHPProjectSettingsDlg settingsDlg(FRAME, PHPWorkspace::Get()->GetActiveProjectName());
     if(settingsDlg.ShowModal() == wxID_OK && settingsDlg.IsResyncNeeded()) {
         // Re-sync the project with the file system
-        PHPWorkspace::Get()->GetActiveProject()->SynchWithFileSystem();
-
-        // Incase files were added - reparse
-        PHPWorkspace::Get()->ParseWorkspace(false);
-
-        // reload the workspace
-        CallAfter(&PHPWorkspaceView::LoadWorkspaceView);
+        PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
     }
 }
 
@@ -836,13 +830,7 @@ void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
     PHPProjectSettingsDlg settingsDlg(FRAME, selectedProject);
     if(settingsDlg.ShowModal() == wxID_OK && settingsDlg.IsResyncNeeded()) {
         // Re-sync the project with the file system
-        PHPWorkspace::Get()->GetProject(selectedProject)->SynchWithFileSystem();
-
-        // Incase files were added - reparse
-        PHPWorkspace::Get()->ParseWorkspace(false);
-
-        // reload the workspace
-        CallAfter(&PHPWorkspaceView::LoadWorkspaceView);
+        PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
     }
 }
 

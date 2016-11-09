@@ -38,8 +38,9 @@
 #include "clWorkspaceManager.h"
 #include "FindInFilesLocationsDlg.h"
 
-FindInFilesDialog::FindInFilesDialog(
-    wxWindow* parent, const wxString& dataName, const wxArrayString& additionalSearchPaths)
+FindInFilesDialog::FindInFilesDialog(wxWindow* parent,
+                                     const wxString& dataName,
+                                     const wxArrayString& additionalSearchPaths)
     : FindInFilesDialogBase(parent, wxID_ANY)
 {
     m_data.SetName(dataName);
@@ -54,14 +55,18 @@ FindInFilesDialog::FindInFilesDialog(
 
     // Create a new set 'd' which contains the elements that appear in 'm_nonPersistentSearchPaths' but not in
     // 'persistentSearchPaths' set
-    std::set_difference(m_nonPersistentSearchPaths.begin(), m_nonPersistentSearchPaths.end(),
-        persistentSearchPaths.begin(), persistentSearchPaths.end(), std::inserter(d, d.end()));
+    std::set_difference(m_nonPersistentSearchPaths.begin(),
+                        m_nonPersistentSearchPaths.end(),
+                        persistentSearchPaths.begin(),
+                        persistentSearchPaths.end(),
+                        std::inserter(d, d.end()));
     m_nonPersistentSearchPaths.swap(d);
 
     // At this point, m_nonPersistentSearchPaths contains list of paths that we should not persist
     // Append them to the list of paths to search
-    std::for_each(m_nonPersistentSearchPaths.begin(), m_nonPersistentSearchPaths.end(),
-        [&](const wxString& path) { paths.Add(path); });
+    std::for_each(m_nonPersistentSearchPaths.begin(), m_nonPersistentSearchPaths.end(), [&](const wxString& path) {
+        paths.Add(path);
+    });
     DoAddSearchPaths(paths);
 
     // Search for
@@ -104,11 +109,11 @@ FindInFilesDialog::FindInFilesDialog(
     // Set the file mask
     DoSetFileMask();
     SetName("FindInFilesDialog");
-    
+
     // Fit the initial size and set it as the default minimum size
     GetSizer()->Fit(this);
     SetMinSize(GetSize());
-    
+
     // Load the last size and position, but not on GTK
     WindowAttrManager::Load(this);
     CentreOnParent();
@@ -136,8 +141,11 @@ FindInFilesDialog::~FindInFilesDialog()
     wxStringSet_t searchPaths, d;
     wxArrayString searchPathsArr = m_listPaths->GetStrings();
     searchPaths.insert(searchPathsArr.begin(), searchPathsArr.end());
-    std::set_difference(searchPaths.begin(), searchPaths.end(), m_nonPersistentSearchPaths.begin(),
-        m_nonPersistentSearchPaths.end(), std::inserter(d, d.end()));
+    std::set_difference(searchPaths.begin(),
+                        searchPaths.end(),
+                        m_nonPersistentSearchPaths.begin(),
+                        m_nonPersistentSearchPaths.end(),
+                        std::inserter(d, d.end()));
 
     // Copy the entries from the set back to the wxArrayString
     searchPathsArr.clear();
@@ -274,7 +282,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
             }
 
         } else if((rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) ||
-            (rootDir == SEARCH_IN_CURR_FILE_PROJECT)) {
+                  (rootDir == SEARCH_IN_CURR_FILE_PROJECT)) {
 
             if(!clWorkspaceManager::Get().IsWorkspaceOpened()) continue;
             IEditor* editor = clGetManager()->GetActiveEditor();
@@ -358,12 +366,12 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     options.insert(std::make_pair(firstItem + 2, SEARCH_IN_CURR_FILE_PROJECT));
     options.insert(std::make_pair(firstItem + 3, SEARCH_IN_CURRENT_FILE));
     options.insert(std::make_pair(firstItem + 4, SEARCH_IN_OPEN_FILES));
-    
+
     // Menu will be shown in client coordinates
     wxRect size = m_btnAddPath->GetSize();
     wxPoint menuPos(0, size.GetHeight());
     int selection = m_btnAddPath->GetPopupMenuSelectionFromUser(menu, menuPos);
-    
+
     if(selection == wxID_NONE) return;
     if(selection == (firstItem + 5)) {
         wxString folder = ::wxDirSelector();
@@ -457,14 +465,8 @@ void FindInFilesDialog::SetSearchPaths(const wxArrayString& paths)
 
 void FindInFilesDialog::OnClearSelectedPath(wxCommandEvent& event)
 {
-    wxArrayInt selections;
-    m_listPaths->GetSelections(selections);
-    int selectionsCount = selections.GetCount();
-    if(!selections.IsEmpty()) {
-        for(int i = (selectionsCount - 1); i >= 0; --i) {
-            m_listPaths->Delete(selections.Item(i));
-        }
-    }
+    wxUnusedVar(event);
+    DoDeletedSelectedPaths();
 }
 
 void FindInFilesDialog::OnClearSelectedPathUI(wxUpdateUIEvent& event)
@@ -491,4 +493,26 @@ void FindInFilesDialog::DoAddSearchPaths(const wxArrayString& paths)
 void FindInFilesDialog::OnReplaceUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_findString->GetValue().IsEmpty() && !m_listPaths->IsEmpty());
+}
+
+void FindInFilesDialog::OnLookInKeyDown(wxKeyEvent& event)
+{
+    event.Skip();
+    if(event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE) {
+        // Delete the selected entry
+        event.Skip(false);
+        CallAfter(&FindInFilesDialog::DoDeletedSelectedPaths);
+    }
+}
+
+void FindInFilesDialog::DoDeletedSelectedPaths()
+{
+    wxArrayInt selections;
+    m_listPaths->GetSelections(selections);
+    int selectionsCount = selections.GetCount();
+    if(!selections.IsEmpty()) {
+        for(int i = (selectionsCount - 1); i >= 0; --i) {
+            m_listPaths->Delete(selections.Item(i));
+        }
+    }
 }

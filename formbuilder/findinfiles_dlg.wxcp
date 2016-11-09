@@ -1456,7 +1456,14 @@
                "m_label": "Selection:",
                "m_value": "-1"
               }],
-             "m_events": [],
+             "m_events": [{
+               "m_eventName": "wxEVT_KEY_DOWN",
+               "m_eventClass": "wxKeyEvent",
+               "m_eventHandler": "wxKeyEventHandler",
+               "m_functionNameAndSignature": "OnLookInKeyDown(wxKeyEvent& event)",
+               "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
+               "m_noBody": false
+              }],
              "m_children": []
             }, {
              "m_type": 4401,

@@ -755,7 +755,7 @@ TEST_FUNC(test_function_phpdoc)
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    CHECK_STRING(resolved->Type(), "\\ArgType");
+    CHECK_STRING(resolved->Type().ToUTF8(), "\\ArgType");
 
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);

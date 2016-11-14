@@ -305,7 +305,9 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
         }
 
     } else if(FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeXml) ||
-        FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeXRC)) {
+        FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeXRC) ||
+        FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeWorkspace) ||
+        FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeProject)) {
         DoFormatXmlSource(editor);
     } else {
         // We allow ClangFormat to work only when the source file is known to be
@@ -342,6 +344,10 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             editor->GetCtrl()->EndUndoAction();
 
         } else {
+            if(!FileExtManager::IsCxxFile(editor->GetFileName())) {
+                clDEBUG() << "CodeFormatter: engine is set to ASTYLE. Source is not C/C++, skipped" << clEndl;
+                return;
+            }
             clDEBUG() << "Using C++/AStyle formatter" << clEndl;
             // AStyle
             wxString options = fmtroptions.AstyleOptionsAsString();
@@ -523,6 +529,12 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
             phpFixer->WaitForTerminate(output);
         }
     } else if(fmtroptions.GetEngine() == kFormatEngineAStyle) {
+        if(!FileExtManager::IsCxxFile(e.GetFileName())) {
+            clDEBUG() << "CodeFormatter: engine is set to ASTYLE. Source is not C/C++, skipped" << clEndl;
+            e.Skip();
+            return;
+        }
+
         wxString options = fmtroptions.AstyleOptionsAsString();
 
         // determine indentation method and amount
@@ -535,6 +547,12 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
         output << DoGetGlobalEOLString();
 
     } else if(fmtroptions.GetEngine() == kFormatEngineClangFormat) {
+        if(!FileExtManager::IsCxxFile(e.GetFileName()) && !FileExtManager::IsJavascriptFile(e.GetFileName())) {
+            clDEBUG() << "CodeFormatter: engine is set to clang-format. Source is not C/C++/JavaScript, skipped"
+                      << clEndl;
+            e.Skip();
+            return;
+        }
         ClangPreviewFormat(str, output, fmtroptions);
 
     } else {
@@ -890,17 +908,18 @@ void CodeFormatter::DoFormatXmlSource(IEditor* editor)
         return;
     }
 
+    clDEBUG() << "CodeForamtter: using standard XML foramtter" << clEndl;
     clEditorStateLocker lk(editor->GetCtrl());
     int curpos = editor->GetCurrentPosition();
     editor->GetCtrl()->BeginUndoAction();
     editor->SetEditorText(formattedOutput);
     editor->SetCaretAt(curpos);
-    
+
     // Convert SPACEs to TABs?
     if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
         wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_tabs"));
         wxTheApp->GetTopWindow()->GetEventHandler()->ProcessEvent(evt);
     }
-    
+
     editor->GetCtrl()->EndUndoAction();
 }

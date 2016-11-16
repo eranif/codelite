@@ -58,12 +58,12 @@ protected:
     virtual void OnOpen(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCloseUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPause(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPauseUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPlay(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPlayUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDetachWindow(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDetachWindowUI(wxUpdateUIEvent& event) { event.Skip(); }
 

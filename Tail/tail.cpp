@@ -37,7 +37,7 @@ Tail::Tail(IManager* manager)
     m_shortName = wxT("Tail");
 
     // Hook our output-pane panel
-    InitTailWindow(m_mgr->GetOutputPaneNotebook(), true);
+    InitTailWindow(m_mgr->GetOutputPaneNotebook(), true, TailData());
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &Tail::OnInitDone, this);
 }
 
@@ -78,20 +78,20 @@ void Tail::UnPlug()
     }
 }
 
-void Tail::DetachTailWindow()
+void Tail::DetachTailWindow(const TailData& d)
 {
     // Create new frame
     TailFrame* frame = new TailFrame(EventNotifier::Get()->TopFrame(), this);
-    InitTailWindow(frame, false);
+    InitTailWindow(frame, false, d);
     m_view->SetIsDetached(true); // set the window as detached
     frame->GetSizer()->Add(m_view, 1, wxEXPAND | wxALL);
     frame->GetSizer()->Fit(frame);
     frame->Show();
 }
 
-void Tail::DockTailWindow()
+void Tail::DockTailWindow(const TailData& d)
 {
-    InitTailWindow(m_mgr->GetOutputPaneNotebook(), true);
+    InitTailWindow(m_mgr->GetOutputPaneNotebook(), true, d);
     m_mgr->GetDockingManager()->Update();
 }
 
@@ -105,9 +105,13 @@ void Tail::DoDetachWindow()
     }
 }
 
-void Tail::InitTailWindow(wxWindow* parent, bool isNotebook)
+void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d)
 {
+    TailPanel* tmpView = new TailPanel(parent, this);
+    tmpView->Initialize(d);
+
     if(m_view) {
+        // copy the settinhs from the current view
         DoDetachWindow();
         m_view->Destroy();
         m_view = NULL;
@@ -115,7 +119,7 @@ void Tail::InitTailWindow(wxWindow* parent, bool isNotebook)
 
     // Hook our output-pane panel
     wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("mime-txt");
-    m_view = new TailPanel(parent, this);
+    m_view = tmpView;
     m_editEventsHandler.Reset(new clEditEventsHandler(m_view->GetStc()));
     if(isNotebook) {
         m_mgr->GetOutputPaneNotebook()->AddPage(m_view, "Tail", false, bmp);

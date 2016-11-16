@@ -9,6 +9,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="tail.h"/>
+    <File Name="TailData.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CMake">
     <File Name="CMakeLists.txt"/>

@@ -160,8 +160,27 @@ void TailPanel::OnOpenRecentItem(wxCommandEvent& event)
 void TailPanel::OnDetachWindow(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_plugin->CallAfter(&Tail::DetachTailWindow);
+    m_plugin->CallAfter(&Tail::DetachTailWindow, m_plugin->GetView()->GetTailData());
     m_isDetached = true;
 }
 
 void TailPanel::OnDetachWindowUI(wxUpdateUIEvent& event) { event.Enable(!m_isDetached); }
+
+void TailPanel::Initialize(const TailData& tailData)
+{
+    DoClear();
+    if(tailData.filename.IsOk() && tailData.filename.Exists()) {
+        DoOpen(tailData.filename.GetFullPath());
+        DoAppendText(tailData.displayedText);
+        m_lastPos = tailData.lastPos;
+    }
+}
+
+TailData TailPanel::GetTailData() const
+{
+    TailData dt;
+    dt.displayedText = m_stc->GetText();
+    dt.filename = m_file;
+    dt.lastPos = m_lastPos;
+    return dt;
+}

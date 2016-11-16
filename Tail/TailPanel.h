@@ -8,6 +8,7 @@
 #include "clFileSystemEvent.h"
 #include "clEditorEditEventsHandler.h"
 #include <map>
+#include "TailData.h"
 
 class Tail;
 class TailPanel : public TailPanelBase
@@ -42,6 +43,26 @@ public:
 
     void SetIsDetached(bool isDetached) { this->m_isDetached = isDetached; }
     bool IsDetached() const { return m_isDetached; }
+
+    /**
+     * @brief duplicate the settings from src into this tail panel
+     */
+    void Initialize(const TailData& tailData);
+
+    /**
+     * @brief return the current tail panel data
+     */
+    TailData GetTailData() const;
+
+    /**
+     * @brief is this panel watching a file?
+     */
+    bool IsOpen() const { return m_fileWatcher && m_fileWatcher->IsRunning(); }
+
+    /**
+     * @brief return the currently watched file name
+     */
+    wxFileName GetFileName() const { return m_file; }
 
 protected:
     virtual void OnPause(wxCommandEvent& event);

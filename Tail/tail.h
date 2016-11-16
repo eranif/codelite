@@ -4,9 +4,11 @@
 #include "plugin.h"
 #include "clTabTogglerHelper.h"
 #include "clEditorEditEventsHandler.h"
+#include "TailData.h"
 
 class TailPanel;
 class TailFrame;
+
 class Tail : public IPlugin
 {
     friend class TailFrame;
@@ -17,7 +19,7 @@ class Tail : public IPlugin
 protected:
     void OnInitDone(wxCommandEvent& event);
     void DoDetachWindow();
-    void InitTailWindow(wxWindow* parent, bool isNotebook);
+    void InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d);
     
 public:
     Tail(IManager* manager);
@@ -26,12 +28,12 @@ public:
     /**
      * @brief detach the tail window from the output notebook
      */
-    void DetachTailWindow();
+    void DetachTailWindow(const TailData& d);
     
     /**
      * @brief dock the tail window back to the output notebook
      */
-    void DockTailWindow();
+    void DockTailWindow(const TailData& d);
     
     //--------------------------------------------
     // Abstract methods
@@ -46,6 +48,8 @@ public:
      * @brief Unplug the plugin. Perform here any cleanup needed (e.g. unbind events, destroy allocated windows)
      */
     virtual void UnPlug();
+    
+    TailPanel* GetView() const { return m_view; }
 };
 
 #endif // Tail

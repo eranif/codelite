@@ -1,5 +1,6 @@
 #include "TailFrame.h"
 #include "tail.h"
+#include "TailPanel.h"
 
 TailFrame::TailFrame(wxWindow* parent, Tail* plugin)
     : TailFrameBase(parent)
@@ -11,7 +12,8 @@ TailFrame::~TailFrame() {}
 
 void TailFrame::OnClose(wxCloseEvent& event)
 {
-    m_plugin->CallAfter(&Tail::DockTailWindow);
+    TailData d = m_plugin->GetView()->GetTailData();
+    m_plugin->CallAfter(&Tail::DockTailWindow, d);
     m_plugin->m_view = NULL;
     event.Skip();
 }

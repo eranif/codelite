@@ -19,7 +19,7 @@ class Tail : public IPlugin
 protected:
     void OnInitDone(wxCommandEvent& event);
     void DoDetachWindow();
-    void InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d);
+    void InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, bool selectPage);
     
 public:
     Tail(IManager* manager);

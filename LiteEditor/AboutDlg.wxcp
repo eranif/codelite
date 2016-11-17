@@ -10,6 +10,7 @@
   "m_firstWindowId": 1000,
   "m_useEnum": false,
   "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -1002,11 +1003,11 @@
             }, {
              "type": "string",
              "m_label": "Label:",
-             "m_value": "http://www.codelite.org"
+             "m_value": "https://www.codelite.org"
             }, {
              "type": "string",
              "m_label": "URL:",
-             "m_value": "http://www.codelite.org"
+             "m_value": "https://www.codelite.org"
             }, {
              "type": "colour",
              "m_label": "Normal Colour:",
@@ -1164,11 +1165,11 @@
             }, {
              "type": "string",
              "m_label": "Label:",
-             "m_value": "http://forums.codelite.org"
+             "m_value": "https://forums.codelite.org"
             }, {
              "type": "string",
              "m_label": "URL:",
-             "m_value": "http://forums.codelite.org"
+             "m_value": "https://forums.codelite.org"
             }, {
              "type": "colour",
              "m_label": "Normal Colour:",
@@ -1476,7 +1477,7 @@
             }, {
              "type": "string",
              "m_label": "URL:",
-             "m_value": "http://codelite.org/support.php"
+             "m_value": "https://codelite.org/support.php"
             }, {
              "type": "colour",
              "m_label": "Normal Colour:",

@@ -48,6 +48,9 @@ void TailPanel::DoClear()
     m_stc->ClearAll();
     m_stc->SetReadOnly(true);
     m_lastPos = 0;
+    
+    m_staticTextFileName->SetLabel(_("<No opened file>"));
+    Layout();
 }
 
 void TailPanel::OnFileModified(clFileSystemEvent& event)
@@ -134,6 +137,8 @@ void TailPanel::DoOpen(const wxString& filename)
     // Stop the current watcher
     m_fileWatcher->SetFile(m_file);
     m_fileWatcher->Start();
+    m_staticTextFileName->SetLabel(m_file.GetFullPath());
+    Layout();
 }
 
 void TailPanel::DoPrepareRecentItemsMenu(wxMenu& menu)

@@ -18,6 +18,7 @@
 #include <map>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
+#include <wx/stattext.h>
 #include <wx/stc/stc.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
@@ -52,6 +53,7 @@ public:
 protected:
     wxAuiToolBar* m_auibar;
     std::map<int, wxMenu*> m_dropdownMenus;
+    wxStaticText* m_staticTextFileName;
     wxStyledTextCtrl* m_stc;
 
 protected:
@@ -71,6 +73,7 @@ public:
 
     virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
     wxAuiToolBar* GetAuibar() { return m_auibar; }
+    wxStaticText* GetStaticTextFileName() { return m_staticTextFileName; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
     TailPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~TailPanelBase();

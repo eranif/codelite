@@ -26,10 +26,14 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
+    wxBoxSizer* boxSizer43 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer2->Add(boxSizer43, 0, wxEXPAND, WXC_FROM_DIP(5));
+    
     m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer2->Add(m_auibar, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer43->Add(m_auibar, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     m_auibar->AddTool(ID_TAIL_OPEN, _("Open file"), wxXmlResource::Get()->LoadBitmap(wxT("16-folder")), wxNullBitmap, wxITEM_NORMAL, _("Open file"), wxT(""), NULL);
     wxAuiToolBarItem* m_toolbarItemOpen = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
@@ -51,6 +55,14 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     m_auibar->AddTool(ID_TAIL_DETACH, _("Open in a separate window"), wxXmlResource::Get()->LoadBitmap(wxT("16-windows")), wxNullBitmap, wxITEM_NORMAL, _("Open in a separate window"), _("Open in a separate window"), NULL);
     m_auibar->Realize();
+    
+    boxSizer43->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+    
+    m_staticTextFileName = new wxStaticText(this, wxID_ANY, _("<No opened file>"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer43->Add(m_staticTextFileName, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    boxSizer43->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
     m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     // Configure the fold margin

@@ -71,9 +71,9 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ]; then
         # Echo the sha1sum
         /usr/bin/sha1sum ${output_file_7z} ${output_file_7z}
         
-        scp ${output_file_7z} root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+        scp ${output_file_7z} root@codelite.org:/var/www/html/downloads/codelite/wip
         # update the owner
-        ssh root@codelite.org 'chown -R www-data:www-data /var/www/html/downloads/codelite/weekly/wip'
+        ssh root@codelite.org 'chown -R www-data:www-data /var/www/html/downloads/codelite/wip'
     fi
     
 else
@@ -116,7 +116,7 @@ else
         make -j4 && make install
         if [ "${no_upload}" != "--no-upload" ]; then
             tar cvfz codelite.app.tar.gz codelite.app/*
-            scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+            scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
         fi
     else
         cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
@@ -124,7 +124,7 @@ else
         if [ "${no_upload}" != "--no-upload" ]; then
             deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
             echo Uploading deb file ${deb_file}
-            scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/weekly/wip
+            scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/wip
         fi
     fi
 fi

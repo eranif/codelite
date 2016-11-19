@@ -30,14 +30,14 @@
 #include "webupdatethread.h"
 #include "procutils.h"
 #include "json_node.h"
+#include "file_logger.h"
 
 const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE = wxNewEventType();
 const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
 
 static const size_t DLBUFSIZE = 4096;
 
-struct CodeLiteVersion
-{
+struct CodeLiteVersion {
     wxString m_os;
     wxString m_codename;
     wxString m_arch;
@@ -54,6 +54,8 @@ struct CodeLiteVersion
         m_version = json.namedObject("version").toInt();
     }
 
+    void Print() { clDEBUG() << "--->" << m_os << "," << m_codename << "," << m_arch << "," << m_version << clEndl; }
+
     /**
      * @brief return true of this codelite version object is newer than the provided input
      */
@@ -65,7 +67,11 @@ struct CodeLiteVersion
         strVersionNumer.ToCLong(&nVersionNumber);
 
         if((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
-            return (m_version > nVersionNumber);
+            bool res = (m_version > nVersionNumber);
+            if(res) {
+                clDEBUG() << "Found new version!" << clEndl;
+            }
+            return res;
         }
         return false;
     }
@@ -174,16 +180,20 @@ void WebUpdateJob::ParseFile()
     wxString os, arch, codename;
     GetPlatformDetails(os, codename, arch);
 
+    clDEBUG() << "Current platform details:" << os << "," << codename << "," << arch << "," << CODELITE_VERSION_STRING
+              << clEndl;
     JSONRoot root(m_dataRead);
     JSONElement platforms = root.toElement().namedObject("platforms");
 
     int count = platforms.arraySize();
     for(int i = 0; i < count; ++i) {
         CodeLiteVersion v(platforms.arrayItem(i));
+        v.Print();
         if(v.IsNewer(os, codename, arch)) {
+            clDEBUG() << "A new version of CodeLite found" << clEndl;
             wxCommandEvent event(wxEVT_CMD_NEW_VERSION_AVAILABLE);
             event.SetClientData(new WebUpdateJobData(
-                "http://codelite.org/support.php", v.GetUrl(), CODELITE_VERSION_STRING, "", false, true));
+                "https://codelite.org/support.php", v.GetUrl(), CODELITE_VERSION_STRING, "", false, true));
             m_parent->AddPendingEvent(event);
             return;
         }

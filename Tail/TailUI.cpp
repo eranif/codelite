@@ -60,7 +60,7 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     m_staticTextFileName = new wxStaticText(this, wxID_ANY, _("<No opened file>"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer43->Add(m_staticTextFileName, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    boxSizer43->Add(m_staticTextFileName, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     boxSizer43->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     

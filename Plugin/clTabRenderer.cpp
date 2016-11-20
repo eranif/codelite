@@ -3,6 +3,7 @@
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
 #include "Notebook.h"
+#include "editor_config.h"
 
 #if CL_BUILD
 #include "drawingutils.h"
@@ -233,10 +234,6 @@ clTabRenderer::clTabRenderer()
     , overlapWidth(0)
     , verticalOverlapWidth(0)
     , xSpacer(5)
-#ifndef __WXGTK__
-    , ySpacer(4)
-#else
-    , ySpacer(4)
-#endif
 {
+   ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }

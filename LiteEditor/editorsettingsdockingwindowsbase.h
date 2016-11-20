@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
-#define CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
+#ifndef _CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
+#define _CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -28,6 +28,16 @@
 #include <wx/persist/treebook.h>
 #endif
 
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
+
 class EditorSettingsDockingWindowsBase : public wxPanel
 {
 protected:
@@ -36,6 +46,8 @@ protected:
     wxRadioBox* m_radioBoxHint;
     wxStaticText* m_staticText46;
     wxChoice* m_choiceTabStyle;
+    wxStaticText* m_staticTextTabHeight;
+    wxChoice* m_choiceTabHeight;
     wxStaticText* m_staticText38;
     wxChoice* m_choiceWorkspaceTabsOrientation;
     wxStaticText* m_staticText42;
@@ -73,6 +85,8 @@ public:
     wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
     wxStaticText* GetStaticText46() { return m_staticText46; }
     wxChoice* GetChoiceTabStyle() { return m_choiceTabStyle; }
+    wxStaticText* GetStaticTextTabHeight() { return m_staticTextTabHeight; }
+    wxChoice* GetChoiceTabHeight() { return m_choiceTabHeight; }
     wxStaticText* GetStaticText38() { return m_staticText38; }
     wxChoice* GetChoiceWorkspaceTabsOrientation() { return m_choiceWorkspaceTabsOrientation; }
     wxStaticText* GetStaticText42() { return m_staticText42; }

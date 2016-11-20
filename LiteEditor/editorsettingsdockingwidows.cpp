@@ -56,6 +56,14 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
     m_choiceTabStyle->SetSelection(options->GetOptions() & OptionsConfig::Opt_TabStyleMinimal ? 1 : 0);
+    int sel(0);
+    switch(options->GetNotebookTabHeight()) {
+        case OptionsConfig::nbTabHt_Tiny: sel = 3; break;
+        case OptionsConfig::nbTabHt_Short: sel = 2; break;
+        case OptionsConfig::nbTabHt_Medium: sel = 1; break;
+        default: sel = 0;
+    }
+    m_choiceTabHeight->SetSelection(sel);
 #if 0
     {
         wxArrayString tabOptionsArr;
@@ -139,6 +147,14 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
     options->EnableOption(OptionsConfig::Opt_TabStyleMinimal, (m_choiceTabStyle->GetSelection() == 1));
+    int ht(0);
+    switch(m_choiceTabHeight->GetSelection()) {
+        case 3: ht = OptionsConfig::nbTabHt_Tiny; break;
+        case 2: ht = OptionsConfig::nbTabHt_Short; break;
+        case 1: ht = OptionsConfig::nbTabHt_Medium; break;
+        default: ht = OptionsConfig::nbTabHt_Tall;
+    }
+    options->SetNotebookTabHeight(ht);
     
     switch(m_choiceOutputTabsOrientation->GetSelection()) {
     case 0:

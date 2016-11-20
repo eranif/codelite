@@ -120,6 +120,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_caretUseCamelCase(true)
     , m_wordWrap(false)
     , m_dockingStyle(0)
+	, m_nbTabHeight(nbTabHt_Tall)
     , m_preferredLocale(wxT("en_US"))
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
@@ -207,6 +208,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_caretUseCamelCase = XmlUtils::ReadBool(node, wxT("m_caretUseCamelCase"), m_caretUseCamelCase);
         m_wordWrap = XmlUtils::ReadBool(node, wxT("m_wordWrap"), m_wordWrap);
         m_dockingStyle = XmlUtils::ReadLong(node, wxT("m_dockingStyle"), m_dockingStyle);
+        m_nbTabHeight = XmlUtils::ReadLong(node, wxT("m_nbTabHeight"), m_nbTabHeight);
         m_mswTheme = XmlUtils::ReadBool(node, wxT("m_mswTheme"), m_mswTheme);
         m_preferredLocale = XmlUtils::ReadString(node, wxT("m_preferredLocale"), m_preferredLocale);
         m_useLocale = XmlUtils::ReadBool(node, wxT("m_useLocale"), m_useLocale);
@@ -305,6 +307,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("m_caretUseCamelCase"), BoolToString(m_caretUseCamelCase));
     n->AddProperty(wxT("m_wordWrap"), BoolToString(m_wordWrap));
     n->AddProperty(wxT("m_dockingStyle"), wxString::Format(wxT("%d"), m_dockingStyle));
+    n->AddProperty(wxT("m_nbTabHeight"), wxString::Format(wxT("%d"), m_nbTabHeight));
     n->AddProperty(wxT("m_mswTheme"), BoolToString(m_mswTheme));
     n->AddProperty(wxT("m_preferredLocale"), m_preferredLocale);
     n->AddProperty(wxT("m_useLocale"), BoolToString(m_useLocale));

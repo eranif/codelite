@@ -120,7 +120,6 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_caretUseCamelCase(true)
     , m_wordWrap(false)
     , m_dockingStyle(0)
-	, m_nbTabHeight(nbTabHt_Tall)
     , m_preferredLocale(wxT("en_US"))
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
@@ -129,6 +128,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
+    , m_nbTabHeight(nbTabHt_Tall)
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;

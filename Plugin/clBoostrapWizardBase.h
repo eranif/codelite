@@ -108,7 +108,7 @@ public:
     wxRadioBox* GetRadioBoxSpacesVsTabs() { return m_radioBoxSpacesVsTabs; }
     wxRadioBox* GetRadioBoxWhitespaceVisibility() { return m_radioBoxWhitespaceVisibility; }
     clBoostrapWizardPageWhitespace* GetWizardPageWhitespace() { return m_wizardPageWhitespace; }
-    clBoostrapWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Welcome!"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
+    clBoostrapWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Welcome!"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxCAPTION|wxRESIZE_BORDER);
     wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~clBoostrapWizardBase();
 };

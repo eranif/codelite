@@ -65,7 +65,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer89->Add(boxSizer93, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    wxBoxSizer* boxSizer114 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer114 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer93->Add(boxSizer114, 1, wxEXPAND, WXC_FROM_DIP(5));
     
@@ -181,7 +181,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer12->Add(m_choiceTheme, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_stc24 = new wxStyledTextCtrl(m_wizardPageColoursAndFonts, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_wizardPageColoursAndFonts, wxSize(500,400)), 0);
+    m_stc24 = new wxStyledTextCtrl(m_wizardPageColoursAndFonts, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_wizardPageColoursAndFonts, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_stc24->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stc24->SetMarginMask     (4, wxSTC_MASK_FOLDERS);

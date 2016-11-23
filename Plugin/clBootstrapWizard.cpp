@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "macros.h"
 #include <wx/msgdlg.h>
+#include "file_logger.h"
 
 class clBootstrapWizardPluginData : public wxClientData
 {
@@ -23,31 +24,32 @@ public:
     {
     }
     virtual ~clBootstrapWizardPluginData() {}
-    
-    wxString GetPluginSummary() const {
+
+    wxString GetPluginSummary() const
+    {
         wxString summary;
-        summary << pluginInfo.GetName() << " " << pluginInfo.GetVersion() << "\n"
-                << _("By: ") << pluginInfo.GetAuthor() << "\n\n"
-                << pluginInfo.GetDescription();
+        summary << pluginInfo.GetName() << " " << pluginInfo.GetVersion() << "\n" << _("By: ") << pluginInfo.GetAuthor()
+                << "\n\n" << pluginInfo.GetDescription();
         return summary;
     }
 };
 
-const wxString sampleText = "class Demo {\n"
-                            "private:\n"
-                            "    std::string m_str;\n"
-                            "    int m_integer;\n"
-                            "    \n"
-                            "public:\n"
-                            "    /**\n"
-                            "     * Creates a new demo.\n"
-                            "     * @param o The object\n"
-                            "     */\n"
-                            "    Demo(const Demo &other) {\n"
-                            "        m_str = other.m_str;\n"
-                            "        m_integer = other.m_integer;\n"
-                            "    }\n"
-                            "}";
+const wxString sampleText =
+    "class Demo {\n"
+    "private:\n"
+    "    std::string m_str;\n"
+    "    int m_integer;\n"
+    "    \n"
+    "public:\n"
+    "    /**\n"
+    "     * Creates a new demo.\n"
+    "     * @param o The object\n"
+    "     */\n"
+    "    Demo(const Demo &other) {\n"
+    "        m_str = other.m_str;\n"
+    "        m_integer = other.m_integer;\n"
+    "    }\n"
+    "}";
 
 clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
     : clBoostrapWizardBase(parent)
@@ -80,10 +82,16 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
         m_dvListCtrlPlugins->AppendItem(cols, (wxUIntPtr) new clBootstrapWizardPluginData(item.second));
     });
 
-    lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    lexer = ColoursAndFontsManager::Get().GetLexer("text", "Default");
     if(lexer) {
         lexer->Apply(m_stcPluginDesc);
         m_stcPluginDesc->SetWrapMode(wxSTC_WRAP_WORD);
+    }
+
+    for(size_t i = 0; i < m_pages.size(); ++i) {
+        int height = m_pages.at(i)->GetSize().y;
+        int width = m_pages.at(i)->GetSize().x;
+        clDEBUG() << "clBootstrapWizard::Page_" << i << "size is:" << width << "x" << height << clEndl;
     }
 }
 
@@ -310,10 +318,8 @@ void clBootstrapWizard::OnFinish(wxWizardEvent& event)
 
 void clBootstrapWizard::OnCancelWizard(wxCommandEvent& event)
 {
-    ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"),
-                   "CodeLite",
-                   wxOK | wxCENTER | wxICON_INFORMATION,
-                   this);
+    ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"), "CodeLite",
+        wxOK | wxCENTER | wxICON_INFORMATION, this);
     CallAfter(&clBootstrapWizard::EndModal, wxID_CANCEL);
 }
 void clBootstrapWizard::OnPluginSelectionChanged(wxDataViewEvent& event)

@@ -35,31 +35,30 @@
 #include "fileextmanager.h"
 #include "ColoursAndFontsManager.h"
 
-static const wxString PHPSample =
-    "<?php\n"
-    "namespace MySpace;\n"
-    "require_once 'bla.php';\n"
-    "class MyClass {\n"
-    "  const MY_CONST = \"Hello World\";\n"
-    "  const MY_2ND_CONST = \"Second Constant\";\n"
-    "  public function __construct() {}\n"
-    "  public function foo() {}\n"
-    "  public function bar() {\n"
-    "    $array = array(\"foo\" => \"bar\",\"bar\" => \"foo\",);\n"
-    "    $a=1;\n"
-    "    if($a == 1) {\n"
-    "      // do something\n"
-    "    } elseif ($==2) {\n"
-    "      // do something else\n"
-    "    } else {\n"
-    "      // default\n"
-    "    }\n"
-    "    while($a==1) {\n"
-    "      // a is 1... reduce it\n"
-    "      --$a;\n"
-    "    }\n"
-    "  }\n"
-    "}\n";
+static const wxString PHPSample = "<?php\n"
+                                  "namespace MySpace;\n"
+                                  "require_once 'bla.php';\n"
+                                  "class MyClass {\n"
+                                  "  const MY_CONST = \"Hello World\";\n"
+                                  "  const MY_2ND_CONST = \"Second Constant\";\n"
+                                  "  public function __construct() {}\n"
+                                  "  public function foo() {}\n"
+                                  "  public function bar() {\n"
+                                  "    $array = array(\"foo\" => \"bar\",\"bar\" => \"foo\",);\n"
+                                  "    $a=1;\n"
+                                  "    if($a == 1) {\n"
+                                  "      // do something\n"
+                                  "    } elseif ($==2) {\n"
+                                  "      // do something else\n"
+                                  "    } else {\n"
+                                  "      // default\n"
+                                  "    }\n"
+                                  "    while($a==1) {\n"
+                                  "      // a is 1... reduce it\n"
+                                  "      --$a;\n"
+                                  "    }\n"
+                                  "  }\n"
+                                  "}\n";
 
 CodeFormatterDlg::CodeFormatterDlg(
     wxWindow* parent, IManager* mgr, CodeFormatter* cf, const FormatOptions& opts, const wxString& sampleCode)
@@ -90,11 +89,11 @@ CodeFormatterDlg::CodeFormatterDlg(
     // set the selection based on the editor
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && FileExtManager::IsPHPFile(editor->GetFileName())) {
-        m_treebook->SetSelection(4);
+        m_notebook->SetSelection(2); // PHP page
     } else if(editor && FileExtManager::IsCxxFile(editor->GetFileName())) {
-        m_treebook->SetSelection(1);
+        m_notebook->SetSelection(1); // CXX page
     } else {
-        m_treebook->SetSelection(0);
+        m_notebook->SetSelection(0); // General
     }
 
     SetName("CodeFormatterDlg");
@@ -173,11 +172,11 @@ void CodeFormatterDlg::InitDialog()
 
     } else if(m_options.GetClangFormatOptions() & kClangFormatLLVM) {
         m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatLLVM, wxPG_FULL_VALUE);
-        
+
     } else if(m_options.GetClangFormatOptions() & kClangFormatFile) {
         m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatFile, wxPG_FULL_VALUE);
     }
-    
+
     m_pgPropClangFormattingOptions->SetValue((int)m_options.GetClangFormatOptions());
     m_pgPropClangBraceBreakStyle->SetValue((int)m_options.GetClangBreakBeforeBrace());
     m_pgPropColumnLimit->SetValue((int)m_options.GetClangColumnLimit());

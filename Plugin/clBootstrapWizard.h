@@ -55,6 +55,7 @@ public:
     bool IsRestartRequired();
     
 protected:
+    virtual void OnPluginSelectionChanged(wxDataViewEvent& event);
     virtual void OnCancelWizard(wxCommandEvent& event);
     virtual void OnFinish(wxWizardEvent& event);
     virtual void OnCheckAllPlugins(wxCommandEvent& event);

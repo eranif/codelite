@@ -14,13 +14,23 @@ class clBootstrapWizardPluginData : public wxClientData
 {
 public:
     bool checked;
+    PluginInfo pluginInfo;
 
 public:
-    clBootstrapWizardPluginData()
+    clBootstrapWizardPluginData(const PluginInfo& pi)
         : checked(true)
+        , pluginInfo(pi)
     {
     }
     virtual ~clBootstrapWizardPluginData() {}
+    
+    wxString GetPluginSummary() const {
+        wxString summary;
+        summary << pluginInfo.GetName() << " " << pluginInfo.GetVersion() << "\n"
+                << _("By: ") << pluginInfo.GetAuthor() << "\n\n"
+                << pluginInfo.GetDescription();
+        return summary;
+    }
 };
 
 const wxString sampleText = "class Demo {\n"
@@ -67,12 +77,14 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
         wxVector<wxVariant> cols;
         cols.push_back(true);
         cols.push_back(item.first);
-        wxString desc = item.second.GetDescription();
-        desc.Replace("\n", " ");
-        desc.Replace("\r", "");
-        cols.push_back(desc);
-        m_dvListCtrlPlugins->AppendItem(cols, (wxUIntPtr) new clBootstrapWizardPluginData());
+        m_dvListCtrlPlugins->AppendItem(cols, (wxUIntPtr) new clBootstrapWizardPluginData(item.second));
     });
+
+    lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        lexer->Apply(m_stcPluginDesc);
+        m_stcPluginDesc->SetWrapMode(wxSTC_WRAP_WORD);
+    }
 }
 
 clBootstrapWizard::~clBootstrapWizard() {}
@@ -94,7 +106,7 @@ void clBootstrapWizard::OnScanForCompilers(wxCommandEvent& event)
 {
     wxBusyCursor bc;
     m_compilers.clear();
-    
+
 #ifndef __WXGTK__
     wxWindowUpdateLocker locker(m_wizardPageCompilers);
 #endif
@@ -303,4 +315,17 @@ void clBootstrapWizard::OnCancelWizard(wxCommandEvent& event)
                    wxOK | wxCENTER | wxICON_INFORMATION,
                    this);
     CallAfter(&clBootstrapWizard::EndModal, wxID_CANCEL);
+}
+void clBootstrapWizard::OnPluginSelectionChanged(wxDataViewEvent& event)
+{
+    wxDataViewItem sel = m_dvListCtrlPlugins->GetSelection();
+    CHECK_ITEM_RET(sel);
+
+    clBootstrapWizardPluginData* cd =
+        reinterpret_cast<clBootstrapWizardPluginData*>(m_dvListCtrlPlugins->GetItemData(sel));
+    if(cd) {
+        m_stcPluginDesc->SetReadOnly(false);
+        m_stcPluginDesc->SetText(cd->GetPluginSummary());
+        m_stcPluginDesc->SetReadOnly(true);
+    }
 }

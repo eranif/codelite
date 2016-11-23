@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
-#define CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#ifndef _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#define _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -14,7 +14,7 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/treebook.h>
+#include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
 #include <wx/checkbox.h>
@@ -25,8 +25,8 @@
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
-#include <wx/textctrl.h>
 #include <wx/stc/stc.h>
+#include <wx/textctrl.h>
 #include <wx/filepicker.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
@@ -51,14 +51,27 @@
 class CodeFormatterBaseDlg : public wxDialog
 {
 protected:
-    wxTreebook* m_treebook;
-    wxPanel* m_panel133;
+    wxNotebook* m_notebook;
+    wxPanel* m_panelGeneral;
     wxCheckBox* m_checkBoxFormatOnSave;
     wxStaticText* m_staticText115;
     wxChoice* m_choiceCxxEngine;
     wxStaticText* m_staticText198;
     wxChoice* m_choicePhpFormatter;
     wxPanel* m_panelCxx;
+    wxNotebook* m_notebookCxx;
+    wxPanel* m_panelClangFormat;
+    wxSplitterWindow* m_splitter165;
+    wxPanel* m_splitterPage169;
+    wxPropertyGridManager* m_pgMgrClang;
+    wxPGProperty* m_pgPropClangFormat;
+    wxPGProperty* m_pgPropClangFormatExePath;
+    wxPGProperty* m_pgPropColumnLimit;
+    wxPGProperty* m_pgPropClangBraceBreakStyle;
+    wxPGProperty* m_pgPropClangFormatStyle;
+    wxPGProperty* m_pgPropClangFormattingOptions;
+    wxPanel* m_splitterPage173;
+    wxStyledTextCtrl* m_textCtrlPreview_Clang;
     wxPanel* m_panelAstyle;
     wxSplitterWindow* m_splitter145;
     wxPanel* m_splitterPage149;
@@ -73,19 +86,8 @@ protected:
     wxTextCtrl* m_textCtrlUserFlags;
     wxPanel* m_splitterPage153;
     wxStyledTextCtrl* m_textCtrlPreview;
-    wxPanel* m_panelClang;
-    wxSplitterWindow* m_splitter165;
-    wxPanel* m_splitterPage169;
-    wxPropertyGridManager* m_pgMgrClang;
-    wxPGProperty* m_pgPropClangFormat;
-    wxPGProperty* m_pgPropClangFormatExePath;
-    wxPGProperty* m_pgPropColumnLimit;
-    wxPGProperty* m_pgPropClangBraceBreakStyle;
-    wxPGProperty* m_pgPropClangFormatStyle;
-    wxPGProperty* m_pgPropClangFormattingOptions;
-    wxPanel* m_splitterPage173;
-    wxStyledTextCtrl* m_textCtrlPreview_Clang;
-    wxPanel* m_panelPHP;
+    wxPanel* m_panelPhp;
+    wxNotebook* m_notebookPhp;
     wxPanel* m_panelBuiltIn;
     wxSplitterWindow* m_splitter119;
     wxPanel* m_splitterPage123;
@@ -94,7 +96,7 @@ protected:
     wxPGProperty* m_pgPropPhpFormatterOptions;
     wxPanel* m_splitterPage127;
     wxStyledTextCtrl* m_stcPhpPreview;
-    wxPanel* m_panel185;
+    wxPanel* m_panelPhpCSFixer;
     wxStaticText* m_staticText192;
     wxFilePickerCtrl* m_filePickerPhpExec;
     wxStaticText* m_staticText202;
@@ -112,9 +114,9 @@ protected:
     virtual void OnFormatOnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPgmgrclangPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnCustomAstyleFlags(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPgmgrclangPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnPgmgrphpPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnPhpFileSelected(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnPharFileSelected(wxFileDirPickerEvent& event) { event.Skip(); }
@@ -130,7 +132,13 @@ public:
     wxChoice* GetChoiceCxxEngine() { return m_choiceCxxEngine; }
     wxStaticText* GetStaticText198() { return m_staticText198; }
     wxChoice* GetChoicePhpFormatter() { return m_choicePhpFormatter; }
-    wxPanel* GetPanel133() { return m_panel133; }
+    wxPanel* GetPanelGeneral() { return m_panelGeneral; }
+    wxPropertyGridManager* GetPgMgrClang() { return m_pgMgrClang; }
+    wxPanel* GetSplitterPage169() { return m_splitterPage169; }
+    wxStyledTextCtrl* GetTextCtrlPreview_Clang() { return m_textCtrlPreview_Clang; }
+    wxPanel* GetSplitterPage173() { return m_splitterPage173; }
+    wxSplitterWindow* GetSplitter165() { return m_splitter165; }
+    wxPanel* GetPanelClangFormat() { return m_panelClangFormat; }
     wxPropertyGridManager* GetPgMgrAstyle() { return m_pgMgrAstyle; }
     wxStaticText* GetStaticText59() { return m_staticText59; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
@@ -140,12 +148,7 @@ public:
     wxPanel* GetSplitterPage153() { return m_splitterPage153; }
     wxSplitterWindow* GetSplitter145() { return m_splitter145; }
     wxPanel* GetPanelAstyle() { return m_panelAstyle; }
-    wxPropertyGridManager* GetPgMgrClang() { return m_pgMgrClang; }
-    wxPanel* GetSplitterPage169() { return m_splitterPage169; }
-    wxStyledTextCtrl* GetTextCtrlPreview_Clang() { return m_textCtrlPreview_Clang; }
-    wxPanel* GetSplitterPage173() { return m_splitterPage173; }
-    wxSplitterWindow* GetSplitter165() { return m_splitter165; }
-    wxPanel* GetPanelClang() { return m_panelClang; }
+    wxNotebook* GetNotebookCxx() { return m_notebookCxx; }
     wxPanel* GetPanelCxx() { return m_panelCxx; }
     wxPropertyGridManager* GetPgMgrPhp() { return m_pgMgrPhp; }
     wxPanel* GetSplitterPage123() { return m_splitterPage123; }
@@ -160,9 +163,10 @@ public:
     wxStaticText* GetStaticText217() { return m_staticText217; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
     wxStyledTextCtrl* GetStcFixerPreview() { return m_stcFixerPreview; }
-    wxPanel* GetPanel185() { return m_panel185; }
-    wxPanel* GetPanelPHP() { return m_panelPHP; }
-    wxTreebook* GetTreebook() { return m_treebook; }
+    wxPanel* GetPanelPhpCSFixer() { return m_panelPhpCSFixer; }
+    wxNotebook* GetNotebookPhp() { return m_notebookPhp; }
+    wxPanel* GetPanelPhp() { return m_panelPhp; }
+    wxNotebook* GetNotebook() { return m_notebook; }
     CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Source Code Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CodeFormatterBaseDlg();
 };

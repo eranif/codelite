@@ -868,7 +868,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBu
                 if(supportPreprocessOnlyFiles) {
                     text << preprocessedFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
                     text << wxT("\t") << compilerMacro << wxT(" ") << cmpOptions
-                         << wxT(" $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile
+                         << wxT(" $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" ")
                          << source_file_to_compile << wxT("\n\n");
                 }
 

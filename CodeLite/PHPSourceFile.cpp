@@ -757,7 +757,9 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
     typeWithNS.Trim().Trim(false);
 
     if(typeWithNS == "string" || typeWithNS == "array" || typeWithNS == "mixed" || typeWithNS == "bool" ||
-        typeWithNS == "int" || typeWithNS == "integer" || typeWithNS == "boolean" || typeWithNS == "double") {
+        typeWithNS == "int" || typeWithNS == "integer" || typeWithNS == "boolean" || typeWithNS == "double" ||
+        typeWithNS == "float" || typeWithNS == "void"
+    ) {
         // primitives, don't bother...
         return typeWithNS;
     }

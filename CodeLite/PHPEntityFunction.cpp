@@ -2,9 +2,7 @@
 #include "PHPEntityVariable.h"
 #include "file_logger.h"
 
-PHPEntityFunction::PHPEntityFunction()
-{
-}
+PHPEntityFunction::PHPEntityFunction() {}
 
 PHPEntityFunction::~PHPEntityFunction() {}
 
@@ -51,8 +49,9 @@ void PHPEntityFunction::Store(wxSQLite3Database& db)
 {
     wxString fullname;
     fullname << GetScope() << "\\" << GetShortName();
-    while(fullname.Replace("\\\\", "\\")){}
-    
+    while(fullname.Replace("\\\\", "\\")) {
+    }
+
     try {
         wxSQLite3Statement statement = db.PrepareStatement(
             "INSERT OR REPLACE INTO FUNCTION_TABLE VALUES(NULL, :SCOPE_ID, :NAME, :FULLNAME, :SCOPE, :SIGNATURE, "
@@ -107,8 +106,10 @@ wxString PHPEntityFunction::FormatPhpDoc() const
     PHPEntityBase::List_t::const_iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {
         const PHPEntityVariable* var = (*iter)->Cast<PHPEntityVariable>();
-        doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "<unknown>" : var->GetTypeHint()) << " "
-            << var->GetFullName() << " \n";
+        if(var) {
+            doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "<unknown>" : var->GetTypeHint()) << " "
+                << var->GetFullName() << " \n";
+        }
     }
     doc << " * @return " << GetReturnValue() << " \n";
     doc << " */";

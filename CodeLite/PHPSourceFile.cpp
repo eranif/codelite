@@ -379,7 +379,7 @@ void PHPSourceFile::OnFunction()
         if(token.type == ':') {
             // PHP 7 signature type
             // function foobar(...) : RETURN_TYPE
-            wxString returnValuetype = ReadType();
+            wxString returnValuetype = ReadFunctionReturnValueFromSignature();
             if(returnValuetype.IsEmpty()) return; // parse error
             func->SetReturnValue(returnValuetype);
 
@@ -752,7 +752,7 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
     if(m_converter) {
         return m_converter->MakeIdentifierAbsolute(type);
     }
-    
+
     wxString typeWithNS(type);
     typeWithNS.Trim().Trim(false);
 
@@ -1451,4 +1451,36 @@ phpLexerToken& PHPSourceFile::GetPreviousToken()
         return m_lookBackTokens.at(m_lookBackTokens.size() - 2);
     }
     return NullToken;
+}
+
+wxString PHPSourceFile::ReadFunctionReturnValueFromSignature()
+{
+    bool cont = true;
+    wxString type;
+    phpLexerToken token;
+
+    while(cont && NextToken(token)) {
+        switch(token.type) {
+        case kPHP_T_SELF:
+        case kPHP_T_ARRAY:
+            return token.Text();
+            
+        case kPHP_T_IDENTIFIER:
+            type << token.Text();
+            break;
+
+        case kPHP_T_NS_SEPARATOR:
+            type << token.Text();
+            break;
+        default:
+            // restore the token so next call to NextToken
+            // will pick it up again
+            UngetToken(token);
+            cont = false;
+            break;
+        }
+    }
+
+    type = MakeIdentifierAbsolute(type);
+    return type;
 }

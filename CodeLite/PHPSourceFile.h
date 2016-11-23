@@ -107,7 +107,12 @@ protected:
      * @brief read the type
      */
     wxString ReadType();
-
+    
+    /**
+     * @brief PHP7 style: read the return value
+     */
+    wxString ReadFunctionReturnValueFromSignature();
+    
     /**
      * @brief read the value that comes after the 'extends' keyword
      */

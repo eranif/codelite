@@ -40,9 +40,9 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
 
     dc.SetBrush(bgColour);
     dc.SetPen(penColour);
-    if(!tabInfo.IsActive()) {
+    // if(!tabInfo.IsActive()) {
         dc.SetPen(*wxTRANSPARENT_PEN);
-    }
+    // }
     dc.DrawRectangle(rr);
     
     // Restore the pen
@@ -129,23 +129,27 @@ void clTabRendererSquare::DrawBottomRect(
     if(underlineTab) {
         if(style & kNotebook_BottomTabs) {
             p1 = activeTab->GetRect().GetTopLeft();
-            p2 = activeTab->GetRect().GetTopRight();
+            p2 = activeTab->GetRect().GetBottomLeft();
             dc.SetPen(markerPen);
 
+            for(size_t i = 0; i < 3; ++i) {
+                DRAW_LINE(p1, p2);
+                p1.x += 1;
+                p2.x += 1;
+            }
+
+        } else if((style & kNotebook_LeftTabs) || (style & kNotebook_RightTabs)) {
+            p1 = activeTab->GetRect().GetTopLeft();
+            p2 = activeTab->GetRect().GetTopRight();
+            dc.SetPen(markerPen);
             for(size_t i = 0; i < 3; ++i) {
                 DRAW_LINE(p1, p2);
                 p1.y += 1;
                 p2.y += 1;
             }
-
-        } else if(style & kNotebook_LeftTabs) {
-            dc.SetPen(markerPen);
-            for(size_t i = 0; i < 3; ++i) {
-                DRAW_LINE(p1, p2);
-                p1.x -= 1;
-                p2.x -= 1;
-            }
-        } else if(style & kNotebook_RightTabs) {
+        } else if(false) {
+            p1 = activeTab->GetRect().GetTopLeft();
+            p2 = activeTab->GetRect().GetBottomLeft();
             dc.SetPen(markerPen);
             for(size_t i = 0; i < 3; ++i) {
                 DRAW_LINE(p1, p2);
@@ -157,13 +161,13 @@ void clTabRendererSquare::DrawBottomRect(
             wxPoint topP2 = p2;
             
             // draw the marker at the bottom of the tabs
-            p1 = activeTab->GetRect().GetBottomLeft();
-            p2 = activeTab->GetRect().GetBottomRight();
+            p1 = activeTab->GetRect().GetTopLeft();
+            p2 = activeTab->GetRect().GetBottomLeft();
             dc.SetPen(markerPen);
             for(size_t i = 0; i < 3; ++i) {
                 DRAW_LINE(p1, p2);
-                p1.y -= 1;
-                p2.y -= 1;
+                p1.x += 1;
+                p2.x += 1;
             }
             
             dc.SetPen(colours.activeTabPenColour);

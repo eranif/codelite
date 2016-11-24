@@ -55,7 +55,8 @@ void clTabColours::InitDarkColours()
 {
     activeTabTextColour = "WHITE";
     activeTabBgColour = wxColour("rgb(80,80,80)");
-    activeTabPenColour = wxColour("rgb(37,36,36)");
+//    activeTabPenColour = wxColour("rgb(37,36,36)");
+    activeTabPenColour = activeTabBgColour;//.ChangeLightness(110);
     activeTabInnerPenColour = activeTabBgColour; // wxColour("#343131");
 
     inactiveTabTextColour = wxColour("rgb(200, 200, 200)");
@@ -81,7 +82,7 @@ void clTabColours::InitLightColours()
     activeTabTextColour = "#444444";
     inactiveTabTextColour = "#444444";
     activeTabBgColour = "#f0f0f0";
-    activeTabPenColour = activeTabBgColour.ChangeLightness(75);
+    activeTabPenColour = activeTabBgColour;//.ChangeLightness(90);
     activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
 
     //#endif
@@ -94,7 +95,7 @@ void clTabColours::InitLightColours()
     inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(75); // The outline is a bit darker
     
     // The active tab pen colour is darker than the Inactive one
-    activeTabPenColour = inactiveTabPenColour;//.ChangeLightness(80);
+    //activeTabPenColour = inactiveTabPenColour;//.ChangeLightness(80);
     
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");

@@ -81,7 +81,6 @@ void clTabColours::InitLightColours()
     activeTabTextColour = "#444444";
     inactiveTabTextColour = "#444444";
     activeTabBgColour = "#f0f0f0";
-    activeTabPenColour = activeTabBgColour.ChangeLightness(80);
     activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
 
     //#endif
@@ -92,6 +91,7 @@ void clTabColours::InitLightColours()
     inactiveTabBgColour = tabAreaColour.ChangeLightness(120);
     inactiveTabInnerPenColour = inactiveTabBgColour;
     inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(75); // The outline is a bit darker
+    activeTabPenColour = inactiveTabPenColour;
     
     // The active tab pen colour is darker than the Inactive one
     

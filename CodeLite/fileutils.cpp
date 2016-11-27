@@ -433,12 +433,11 @@ wxString FileUtils::GetOSXTerminalCommand(const wxString& command, const wxStrin
     wxFileName script(clStandardPaths::Get().GetBinFolder(), "osx-terminal.sh");
     
     wxString cmd;
-    cmd << EscapeString(command) << " \"";
+    cmd << EscapeString(script.GetFullPath()) << " \"";
     if(!workingDirectory.IsEmpty()) {
         cmd << "cd " << EscapeString(workingDirectory) << " && ";
     }
     cmd << EscapeString(command) << "\"";
-    
     clDEBUG() << "GetOSXTerminalCommand returned:" << cmd << clEndl;
     return cmd;
 }

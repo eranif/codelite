@@ -98,6 +98,7 @@
 #include "code_completion_manager.h"
 #include "CompileCommandsCreateor.h"
 #include "CompilersModifiedDlg.h"
+#include "fileutils.h"
 #include "NewProjectWizard.h"
 #include "clFileSystemEvent.h"
 #include "clWorkspaceManager.h"
@@ -1524,21 +1525,12 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
         ProjectPtr proj = GetProject(projectName);
 
 #if defined(__WXMAC__)
-        wxString newCommand;
-        newCommand << "/usr/bin/open " << fnCodeliteTerminal.GetPath(true) << "codelite-terminal.app --args ";
-        newCommand << " --exit ";
-        if(bldConf->GetPauseWhenExecEnds()) {
-            newCommand << " --wait ";
-        }
-
         wxFileName fnWD(wd, "");
         if(fnWD.IsRelative()) {
             fnWD.MakeAbsolute(GetProject(projectName)->GetFileName().GetPath());
         }
-        newCommand << " --working-directory \"" << fnWD.GetFullPath() << "\" --title \"" << title << "\" --cmd "
-                   << title;
-        execLine = newCommand;
-
+        execLine = FileUtils::GetOSXTerminalCommand(cmd + " " + cmdArgs, fnWD.GetPath());
+        
 #elif defined(__WXGTK__)
 
         // Set a console to the execute target

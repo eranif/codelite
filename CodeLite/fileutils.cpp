@@ -418,3 +418,11 @@ size_t FileUtils::GetFileSize(const wxFileName& filename)
     }
     return 0;
 }
+
+wxString FileUtils::EscapeString(const wxString& str)
+{
+    wxString modstr = str;
+    modstr.Replace(" ", "\\ ");
+    modstr.Replace("\"", "\\\"");
+    return modstr;
+}

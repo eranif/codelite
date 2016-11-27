@@ -122,7 +122,12 @@ public:
      * @brief encode URI using percent encoding
      */
     static wxString EncodeURI(const wxString& uri);
-
+    
+    /**
+     * @brief escape string. Each space and double quotes marker is escaped with backslash
+     */
+    static wxString EscapeString(const wxString& str);
+    
     /**
      * @brief is the file or folder a hidden file?
      */

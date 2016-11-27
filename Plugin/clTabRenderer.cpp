@@ -91,8 +91,12 @@ void clTabColours::InitLightColours()
     inactiveTabBgColour = tabAreaColour.ChangeLightness(120);
     inactiveTabInnerPenColour = inactiveTabBgColour;
     inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(75); // The outline is a bit darker
+#ifdef __WXOSX__
+    activeTabPenColour = activeTabBgColour;
+#else
     activeTabPenColour = inactiveTabPenColour;
-    
+#endif
+
     // The active tab pen colour is darker than the Inactive one
     
     // 12x12 bitmap

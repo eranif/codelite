@@ -91,7 +91,12 @@ public:
      * @param [output] tty the TTY of the launched terminal
      */
     static void OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString& tty, long& pid);
-
+    
+    /**
+     * @brief return the command needed to open OSX terminal at a given directory and launch a command
+     */
+    static wxString GetOSXTerminalCommand(const wxString& command, const wxString& workingDirectory);
+    
     /**
      * @brief file masking search
      */

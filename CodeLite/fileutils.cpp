@@ -34,6 +34,7 @@
 #include <wx/tokenzr.h>
 #include <map>
 #include <wx/msgdlg.h>
+#include "cl_standard_paths.h"
 
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
@@ -425,4 +426,19 @@ wxString FileUtils::EscapeString(const wxString& str)
     modstr.Replace(" ", "\\ ");
     modstr.Replace("\"", "\\\"");
     return modstr;
+}
+
+wxString FileUtils::GetOSXTerminalCommand(const wxString& command, const wxString& workingDirectory)
+{
+    wxFileName script(clStandardPaths::Get().GetBinFolder(), "osx-terminal.sh");
+    
+    wxString cmd;
+    cmd << EscapeString(command) << " \"";
+    if(!workingDirectory.IsEmpty()) {
+        cmd << "cd " << EscapeString(workingDirectory) << " && ";
+    }
+    cmd << EscapeString(command) << "\"";
+    
+    clDEBUG() << "GetOSXTerminalCommand returned:" << cmd << clEndl;
+    return cmd;
 }

@@ -65,6 +65,14 @@ set( WITH_SFTP 1 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # Avoid very multiple warnings spam due to deprecated wx methods
 
+if( UNIX AND NOT APPLE)
+	if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+		set(CMAKE_LIBRARY_ARCHITECTURE "x86_64-linux-gnu")
+	else()
+		set(CMAKE_LIBRARY_ARCHITECTURE "i386-linux-gnu")
+	endif()
+endif()
+
 if ( UNIX )
     # Configure CCache if available
     find_program(CCACHE_FOUND ccache)

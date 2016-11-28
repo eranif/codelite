@@ -43,12 +43,13 @@ void EditorSettingsTerminal::Save(OptionsConfigPtr options)
 
 void EditorSettingsTerminal::OnUseCodeLiteTerminalUI(wxUpdateUIEvent& event)
 {
-#ifdef __WXMSW__
+#if defined(__WXMSW__) || defined(__WXOSX__)
     event.Enable(false);
 #else
     event.Enable(!m_checkBoxUseCodeLiteTerminal->IsChecked());
 #endif
 }
+
 void EditorSettingsTerminal::OnCheckboxmswwrapdoublequotesUpdateUi(wxUpdateUIEvent& event)
 {
 #ifdef __WXMSW__

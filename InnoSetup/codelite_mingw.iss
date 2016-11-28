@@ -162,6 +162,9 @@ Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
 
+[Run]
+Filename: "{app}\codelite.exe"; Description: "Launch CodeLite"; Flags: postinstall nowait skipifsilent
+
 [Code]
 var
     // Globals

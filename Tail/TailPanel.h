@@ -36,11 +36,13 @@ private:
     void DoOpen(const wxString& filename);
     void DoAppendText(const wxString& text);
     void DoPrepareRecentItemsMenu(wxMenu& menu);
+    wxString GetTailTitle() const;
 
 public:
     TailPanel(wxWindow* parent, Tail* plugin);
     virtual ~TailPanel();
 
+    void SetFrameTitle();
     void SetIsDetached(bool isDetached) { this->m_isDetached = isDetached; }
     bool IsDetached() const { return m_isDetached; }
 

@@ -175,6 +175,22 @@ TailFrameBase::TailFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         wxCB60EInitBitmapResources();
         bBitmapLoaded = true;
     }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-find"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-find@2x"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
     
     wxBoxSizer* boxSizer37 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer37);

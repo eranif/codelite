@@ -86,6 +86,7 @@ void Tail::DetachTailWindow(const TailData& d)
     m_view->SetIsDetached(true); // set the window as detached
     frame->GetSizer()->Add(m_view, 1, wxEXPAND | wxALL);
     frame->GetSizer()->Fit(frame);
+    m_view->SetFrameTitle();
     frame->Show();
 }
 

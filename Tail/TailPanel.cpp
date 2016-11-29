@@ -18,7 +18,7 @@ TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     m_fileWatcher.reset(new clFileSystemWatcher());
     m_fileWatcher->SetOwner(this);
     Bind(wxEVT_FILE_MODIFIED, &TailPanel::OnFileModified, this);
-    
+
     wxCommandEvent dummy;
     OnThemeChanged(dummy);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &TailPanel::OnThemeChanged, this);
@@ -48,8 +48,9 @@ void TailPanel::DoClear()
     m_stc->ClearAll();
     m_stc->SetReadOnly(true);
     m_lastPos = 0;
-    
+
     m_staticTextFileName->SetLabel(_("<No opened file>"));
+    SetFrameTitle();
     Layout();
 }
 
@@ -138,6 +139,8 @@ void TailPanel::DoOpen(const wxString& filename)
     m_fileWatcher->SetFile(m_file);
     m_fileWatcher->Start();
     m_staticTextFileName->SetLabel(m_file.GetFullPath());
+    SetFrameTitle();
+
     Layout();
 }
 
@@ -178,6 +181,7 @@ void TailPanel::Initialize(const TailData& tailData)
         DoOpen(tailData.filename.GetFullPath());
         DoAppendText(tailData.displayedText);
         m_lastPos = tailData.lastPos;
+        SetFrameTitle();
     }
 }
 
@@ -188,4 +192,25 @@ TailData TailPanel::GetTailData() const
     dt.filename = m_file;
     dt.lastPos = m_lastPos;
     return dt;
+}
+
+wxString TailPanel::GetTailTitle() const
+{
+    wxString title;
+    if(IsDetached()) {
+        if(IsOpen()) {
+            title << m_file.GetFullName() << " (" << m_file.GetFullPath() << ")";
+        } else {
+            title = "Tail";
+        }
+    }
+    return title;
+}
+
+void TailPanel::SetFrameTitle()
+{
+    wxFrame* parent = dynamic_cast<wxFrame*>(GetParent());
+    if(parent) {
+        parent->SetLabel(GetTailTitle());
+    }
 }

@@ -958,14 +958,16 @@ void FileViewTree::DoRemoveItems()
                             message << _("Do you also want to delete the file '") << name << _("' from disc?");
                             if((num > 1) && ((i + 1) < num)) {
                                 // For multiple selections, use a YesToAll dialog
-                                wxRichMessageDialog dlg(wxTheApp->GetTopWindow(), message, _("Confirm"),
-                                    wxYES_NO | wxYES_DEFAULT | wxCANCEL | wxCENTER | wxICON_QUESTION);
+                                wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(), message, _("Confirm"),
+                                    wxYES_NO | wxNO_DEFAULT | wxCANCEL | wxCENTER | wxICON_QUESTION);
                                 dlg.ShowCheckBox(_("Remember my answer and apply it all files"), false);
                                 DeleteThisItemFromDisc = dlg.ShowModal();
                                 ApplyToEachFileDeletion = dlg.IsCheckBoxChecked();
                             } else {
                                 DeleteThisItemFromDisc =
-                                    wxMessageBox(message, _("Are you sure?"), wxYES_NO | wxICON_QUESTION, this);
+                                    ::PromptForYesNoCancelDialogWithCheckbox(message, "fileview_del_file_from_disc",
+                                        _("Yes"), _("No"), _("Cancel"), _("Remember my answer and don't ask me again"),
+                                        wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION);
                             }
                         }
 
@@ -1529,11 +1531,11 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& parent, const wxString& 
 wxTreeItemId FileViewTree::ItemByFullPath(const wxString& fullPath)
 {
     if(!ItemHasChildren(GetRootItem())) return wxTreeItemId();
-    
+
     // Locate the project item
     wxString projname = fullPath.BeforeFirst(':');
     if(m_projectsMap.count(projname) == 0) return wxTreeItemId();
-    
+
     wxTreeItemId parent = GetItemParent(m_projectsMap[projname]);
     wxArrayString texts = wxStringTokenize(fullPath, wxT(":"), wxTOKEN_STRTOK);
     for(size_t i = 0; i < texts.GetCount(); i++) {
@@ -1701,7 +1703,7 @@ void FileViewTree::DoImportFolder(ProjectPtr proj, const wxString& baseDir, cons
 
     // save the project file to disk
     proj->CommitTranscation();
-    
+
     // Reload the view
     CallAfter(&FileViewTree::BuildTree);
 }

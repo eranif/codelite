@@ -44,7 +44,7 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
 {
     m_strings.clear();
     m_ptr = src.m_ptr;
-    for(size_t i=0; i<src.m_strings.size(); ++i) {
+    for(size_t i = 0; i < src.m_strings.size(); ++i) {
         m_strings.Add(src.m_strings.Item(i).c_str());
     }
     m_fileName = src.m_fileName;
@@ -391,5 +391,24 @@ clProcessEvent& clProcessEvent::operator=(const clProcessEvent& src)
     clCommandEvent::operator=(src);
     m_process = src.m_process;
     m_output = src.m_output;
+    return *this;
+}
+
+// --------------------------------------------------------------
+// Compiler event
+// --------------------------------------------------------------
+clEditorConfigEvent::~clEditorConfigEvent() {}
+
+clEditorConfigEvent::clEditorConfigEvent(const clEditorConfigEvent& event) { *this = event; }
+
+clEditorConfigEvent::clEditorConfigEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clEditorConfigEvent& clEditorConfigEvent::operator=(const clEditorConfigEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_editorConfig = src.m_editorConfig;
     return *this;
 }

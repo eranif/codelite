@@ -752,4 +752,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHOW_OUTPUT_TAB, clCommandEvent);
 // Use: event.GetClientData() to get the pointer to the window page
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PAGE_MODIFIED_UPDATE_UI, clCommandEvent);
 
+// Send a clEditorConfig event. This event is sent whenever an editor requires
+// to update its properties (tabs vs spaces, EOL style etc)
+// A plugin may capture the event and send back EditorConfig data by doing the following:
+// Call: 
+// 1. event.Skip(false)
+// 2. Set the data using event.SetEditorConfig(...) method
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_CONFIG_LOADING, clEditorConfigEvent);
+
 #endif // CODELITE_EVENTS_H

@@ -95,6 +95,8 @@
     <File Name="macros.h"/>
     <File Name="clBitmap.h"/>
     <File Name="clBitmap.cpp"/>
+    <File Name="clEditorConfig.h"/>
+    <File Name="clEditorConfig.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

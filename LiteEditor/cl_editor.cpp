@@ -4517,6 +4517,22 @@ void LEditor::DoUpdateOptions()
     if(ManagerST::Get()->IsWorkspaceOpen()) {
         LocalWorkspaceST::Get()->GetOptions(m_options, GetProject());
     }
+    
+    // Finally, fire an event letting plugins knowing that we need to update the current file options
+    clEditorConfigEvent event(wxEVT_EDITOR_CONFIG_LOADING);
+    event.SetFileName(GetFileName().GetFullPath());
+    event.SetEventObject(this);
+    if(EventNotifier::Get()->ProcessEvent(event)) {
+        // Use the editor config settings
+        const clEditorConfig& editorConfig = event.GetEditorConfig();
+        m_options->SetAppendLF(editorConfig.IsInsertFinalNewline());
+        m_options->SetEolMode(editorConfig.GetEndOfLine());
+        m_options->SetTabWidth(editorConfig.GetTabWidth());
+        m_options->SetIndentUsesTabs(editorConfig.GetIndentStyle() == "tab");
+        m_options->SetTabWidth(editorConfig.GetTabWidth());
+        m_options->SetIndentWidth(editorConfig.GetIndentSize());
+        // TODO: fix the locale here
+    }
 }
 
 bool LEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replaceWith)

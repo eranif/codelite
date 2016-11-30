@@ -33,6 +33,7 @@
 #include <wx/arrstr.h>
 #include <vector>
 #include "wxCodeCompletionBoxEntry.h"
+#include "clEditorConfig.h"
 
 // Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
 enum {
@@ -532,4 +533,25 @@ public:
 
 typedef void (wxEvtHandler::*clParseEventFunction)(clParseEvent&);
 #define clParseEventHandler(func) wxEVENT_HANDLER_CAST(clParseEventFunction, func)
+
+// --------------------------------------------------------------
+// clEditorConfigEvent event
+// --------------------------------------------------------------
+class WXDLLIMPEXP_CL clEditorConfigEvent : public clCommandEvent
+{
+    clEditorConfig m_editorConfig;
+
+public:
+    clEditorConfigEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clEditorConfigEvent(const clEditorConfigEvent& event);
+    clEditorConfigEvent& operator=(const clEditorConfigEvent& src);
+    virtual ~clEditorConfigEvent();
+    virtual wxEvent* Clone() const { return new clEditorConfigEvent(*this); }
+    void SetEditorConfig(const clEditorConfig& editorConfig) { this->m_editorConfig = editorConfig; }
+    const clEditorConfig& GetEditorConfig() const { return m_editorConfig; }
+};
+
+typedef void (wxEvtHandler::*clEditorConfigEventFunction)(clEditorConfigEvent&);
+#define clEditorConfigEventHandler(func) wxEVENT_HANDLER_CAST(clEditorConfigEventFunction, func)
+
 #endif // CLCOMMANDEVENT_H

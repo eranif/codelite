@@ -189,7 +189,16 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
         }
         }
     }
-    trees.push_back(tree);
+    
+    // Remainder
+    if(!curpattern.IsEmpty()) {
+        if(tree->IsEmpty()) {
+            tree->AddChild(curpattern);
+        } else {
+            tree->AddToAllLeaves(curpattern);
+        }
+        trees.push_back(tree);
+    }
 
     wxArrayString res;
     for(size_t i = 0; i < trees.size(); ++i) {

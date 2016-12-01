@@ -539,7 +539,7 @@ typedef void (wxEvtHandler::*clParseEventFunction)(clParseEvent&);
 // --------------------------------------------------------------
 class WXDLLIMPEXP_CL clEditorConfigEvent : public clCommandEvent
 {
-    clEditorConfig m_editorConfig;
+    clEditorConfigSection m_editorConfigSection;
 
 public:
     clEditorConfigEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -547,8 +547,8 @@ public:
     clEditorConfigEvent& operator=(const clEditorConfigEvent& src);
     virtual ~clEditorConfigEvent();
     virtual wxEvent* Clone() const { return new clEditorConfigEvent(*this); }
-    void SetEditorConfig(const clEditorConfig& editorConfig) { this->m_editorConfig = editorConfig; }
-    const clEditorConfig& GetEditorConfig() const { return m_editorConfig; }
+    void SetEditorConfig(const clEditorConfigSection& editorConfig) { this->m_editorConfigSection = editorConfig; }
+    const clEditorConfigSection& GetEditorConfig() const { return m_editorConfigSection; }
 };
 
 typedef void (wxEvtHandler::*clEditorConfigEventFunction)(clEditorConfigEvent&);

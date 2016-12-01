@@ -409,6 +409,6 @@ clEditorConfigEvent::clEditorConfigEvent(wxEventType commandType, int winid)
 clEditorConfigEvent& clEditorConfigEvent::operator=(const clEditorConfigEvent& src)
 {
     clCommandEvent::operator=(src);
-    m_editorConfig = src.m_editorConfig;
+    m_editorConfigSection = src.m_editorConfigSection;
     return *this;
 }

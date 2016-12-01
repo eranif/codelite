@@ -5,12 +5,7 @@
 #include <algorithm>
 
 clEditorConfig::clEditorConfig()
-    : indent_style("space")
-    , indent_size(4)
-    , tab_width(4)
-    , charset("utf-8")
-    , trim_trailing_whitespace(false)
-    , insert_final_newline(false)
+    : m_rootFileFound(false)
 {
 }
 
@@ -37,6 +32,10 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename)
         return false;
     }
 
+    clEditorConfigSection section;
+    m_sections.push_back(section);
+    clEditorConfigSection* cursection = &(m_sections.back());
+
     wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_STRTOK);
     for(size_t i = 0; i < lines.size(); ++i) {
         // Remove comments
@@ -51,23 +50,22 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename)
         // Process the line
         if(strLine.StartsWith("[") && strLine.EndsWith("]")) {
             strLine.RemoveLast().Remove(0, 1); // remove the []
-            ProcessSection(strLine);
+            clEditorConfigSection section;
+            section.patterns = ProcessSection(strLine);
+            m_sections.push_back(section);
+            cursection = &(m_sections.back());
+
         } else {
             ProcessDirective(strLine);
         }
     }
     return true;
 }
-
-enum eEditorConfigState {
-    kEC_STATE_NORMAL,
-    kEC_STATE_IN_CURLYGRP,
-    kEC_STATE_IN_SQUAREGRP,
-};
-
-struct clEditorConfigTreeNode {
+struct clEditorConfigTreeNode
+{
     wxString data;
-    std::vector<clEditorConfigTreeNode*> children;
+    typedef std::vector<clEditorConfigTreeNode*> Vec_t;
+    clEditorConfigTreeNode::Vec_t children;
 
     clEditorConfigTreeNode* AddChild(const wxString& data)
     {
@@ -87,10 +85,40 @@ public:
 
 public:
     void GetPatterns(wxArrayString& patterns) { DoGetPatterns(this, patterns, data); }
-    void AddToAllLeaves(const wxString& pattern) { DoAddToAllLeaves(this, pattern); }
+    void Add(const wxString& pattern)
+    {
+        wxArrayString arr;
+        arr.Add(pattern);
+        Add(arr);
+    }
+
+    void Add(const wxArrayString& patterns)
+    {
+        clEditorConfigTreeNode::Vec_t leaves;
+        DoGetLeaves(this, leaves);
+
+        std::for_each(leaves.begin(), leaves.end(), [&](clEditorConfigTreeNode* leaf) {
+            for(size_t i = 0; i < patterns.size(); ++i) {
+                leaf->AddChild(patterns.Item(i));
+            }
+        });
+    }
+
     bool IsEmpty() const { return children.empty(); }
 
 private:
+    void DoGetLeaves(clEditorConfigTreeNode* node, clEditorConfigTreeNode::Vec_t& leaves)
+    {
+        if(node->children.empty()) {
+            // leaf node
+            leaves.push_back(node);
+        } else {
+            for(size_t i = 0; i < node->children.size(); ++i) {
+                DoGetLeaves(node->children.at(i), leaves);
+            }
+        }
+    }
+
     /**
      * @brief collect the patterns from the leaf nodes
      */
@@ -98,10 +126,10 @@ private:
     {
         if(node->children.empty()) {
             // leaf node
-            patterns.Add(curpattern + data);
+            patterns.Add(curpattern + node->data);
         } else {
             for(size_t i = 0; i < node->children.size(); ++i) {
-                DoGetPatterns(node->children.at(i), patterns, curpattern + data);
+                DoGetPatterns(node->children.at(i), patterns, curpattern + node->data);
             }
         }
     }
@@ -122,19 +150,26 @@ private:
     }
 };
 
+enum eEditorConfigState {
+    kEC_STATE_NORMAL,
+    kEC_STATE_IN_CURLYGRP,
+    kEC_STATE_IN_SQUAREGRP,
+};
+
 wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
 {
     eEditorConfigState state = kEC_STATE_NORMAL;
 
     clEditorConfigTreeNode* tree = new clEditorConfigTreeNode;
     std::vector<clEditorConfigTreeNode*> trees;
+    trees.push_back(tree);
 
     wxString curpattern;
     while(!strLine.IsEmpty()) {
-        wxChar ch = strLine.at(0);
-        strLine.Remove(0, 1);
         switch(state) {
-        case kEC_STATE_NORMAL:
+        case kEC_STATE_NORMAL: {
+            wxChar ch = strLine.at(0);
+            strLine.Remove(0, 1);
             switch(ch) {
             case '{':
                 state = kEC_STATE_IN_CURLYGRP;
@@ -145,13 +180,10 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
             case ',':
                 // new pattern
                 if(!curpattern.IsEmpty()) {
-                    if(tree->IsEmpty()) {
-                        tree->AddChild(curpattern);
-                    } else {
-                        tree->AddToAllLeaves(curpattern);
-                    }
-                    trees.push_back(tree);
+                    tree->Add(curpattern);
+
                     tree = new clEditorConfigTreeNode;
+                    trees.push_back(tree);
                     curpattern.clear();
                 }
                 break;
@@ -160,7 +192,14 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
                 break;
             }
             break;
+        }
         case kEC_STATE_IN_CURLYGRP: {
+            // if we got something so far, add it before we continue
+            if(!curpattern.IsEmpty()) {
+                tree->Add(curpattern);
+                curpattern.clear();
+            }
+
             // read the buffer until we hit the closing brace
             wxString buffer;
             if(!ReadUntil('}', strLine, buffer)) {
@@ -168,15 +207,7 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
             }
             state = kEC_STATE_NORMAL;
             wxArrayString groupPatterns = ProcessSection(buffer);
-            if(tree->IsEmpty()) {
-                for(size_t i = 0; i < groupPatterns.size(); ++i) {
-                    tree->AddChild(groupPatterns.Item(i));
-                }
-            } else {
-                for(size_t i = 0; i < groupPatterns.size(); ++i) {
-                    tree->AddToAllLeaves(groupPatterns.Item(i));
-                }
-            }
+            tree->Add(groupPatterns);
             break;
         }
         case kEC_STATE_IN_SQUAREGRP: {
@@ -189,15 +220,10 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
         }
         }
     }
-    
+
     // Remainder
     if(!curpattern.IsEmpty()) {
-        if(tree->IsEmpty()) {
-            tree->AddChild(curpattern);
-        } else {
-            tree->AddToAllLeaves(curpattern);
-        }
-        trees.push_back(tree);
+        tree->Add(curpattern);
     }
 
     wxArrayString res;
@@ -207,10 +233,52 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
         res.insert(res.end(), patterns.begin(), patterns.end());
         delete trees.at(i);
     }
+
+    // Loop over the array and change "**" => "*"
+    for(size_t i = 0; i < res.size(); ++i) {
+        res.Item(i).Replace("**", "*");
+    }
     return res;
 }
 
-void clEditorConfig::ProcessDirective(wxString& strLine) {}
+#define IS_TRUE(value) ((value.CmpNoCase("true") == 0) || (value.CmpNoCase("yes") == 0) || (value.CmpNoCase("1") == 0))
+void clEditorConfig::ProcessDirective(wxString& strLine)
+{
+    clEditorConfigSection* cursection = &(m_sections.back());
+    wxString key = strLine.BeforeFirst('=');
+    wxString value = strLine.AfterFirst('=');
+    key.Trim().Trim(false);
+    value.Trim().Trim(false);
+
+    if(key == "indent_style") {
+        cursection->SetIndentStyle(value.Lower());
+
+    } else if(key == "indent_size") {
+        long lv = 4;
+        value.ToCLong(&lv);
+        cursection->SetIndentSize(lv);
+
+    } else if(key == "tab_width") {
+        long lv = 4;
+        value.ToCLong(&lv);
+        cursection->SetTabWidth(lv);
+
+    } else if(key == "charset") {
+        cursection->SetCharset(value.Lower());
+
+    } else if(key == "trim_trailing_whitespace") {
+        cursection->SetTrimTrailingWhitespace(IS_TRUE(value));
+
+    } else if(key == "insert_final_newline") {
+        cursection->SetInsertFinalNewline(IS_TRUE(value));
+
+    } else if(key == "end_of_line") {
+        cursection->SetEndOfLine(value.Lower());
+
+    } else if(key == "root") {
+        m_rootFileFound = IS_TRUE(value);
+    }
+}
 
 bool clEditorConfig::ReadUntil(wxChar delim, wxString& strLine, wxString& output)
 {
@@ -224,4 +292,42 @@ bool clEditorConfig::ReadUntil(wxChar delim, wxString& strLine, wxString& output
         }
     }
     return false;
+}
+
+bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfigSection& section)
+{
+    if(!LoadForFile(filename)) return false;
+    section = clEditorConfigSection();
+    bool match_found = false;
+    std::for_each(m_sections.begin(), m_sections.end(), [&](const clEditorConfigSection& sec) {
+        for(size_t i = 0; i < sec.patterns.size(); ++i) {
+            const wxString& pattern = sec.patterns.Item(i);
+            if(::wxMatchWild(pattern, filename.GetFullPath(), false)) {
+                match_found = true;
+                if(sec.IsCharsetSet()) {
+                    section.SetCharset(sec.GetCharset());
+                }
+                if(sec.IsIndentSizeSet()) {
+                    section.SetIndentSize(sec.GetIndentSize());
+                }
+                if(sec.IsIndentStyleSet()) {
+                    section.SetIndentStyle(sec.GetIndentStyle());
+                }
+                if(sec.IsInsertFinalNewlineSet()) {
+                    section.SetInsertFinalNewline(sec.IsInsertFinalNewline());
+                }
+                if(sec.IsSetEndOfLineSet()) {
+                    section.SetEndOfLine(sec.GetEndOfLine());
+                }
+                if(sec.IsTabWidthSet()) {
+                    section.SetTabWidth(sec.GetTabWidth());
+                }
+                if(sec.IsTrimTrailingWhitespaceSet()) {
+                    section.SetTrimTrailingWhitespace(sec.IsTrimTrailingWhitespace());
+                }
+                break;
+            }
+        }
+    });
+    return match_found;
 }

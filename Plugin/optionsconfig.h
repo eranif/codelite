@@ -32,6 +32,7 @@
 #include "wx/font.h"
 #include "configuration_object.h"
 #include "codelite_exports.h"
+#include "clEditorConfig.h"
 
 class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
 {
@@ -65,12 +66,11 @@ public:
         Opt_FoldHighlightActiveBlock = 0x04000000,
         Opt_EnsureCaptionsVisible = 0x08000000,
         Opt_DisableMouseCtrlZoom = 0x10000000,
-        Opt_UseBlockCaret =   0x20000000,
+        Opt_UseBlockCaret = 0x20000000,
         Opt_TabStyleMinimal = 0x40000000,
     };
-    enum {
-		nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall
-	};
+    enum { nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall };
+
 protected:
     bool m_displayFoldMargin;
     bool m_underlineFoldLine;
@@ -143,7 +143,7 @@ protected:
     wxDirection m_workspaceTabsDirection; // Up/Down/Left/Right
     wxDirection m_outputTabsDirection;    // Up/Down
     bool m_indentedComments;
-    int m_nbTabHeight;	// Should notebook tabs be too tall, too short or...
+    int m_nbTabHeight; // Should notebook tabs be too tall, too short or...
 
 public:
     // Helpers
@@ -431,8 +431,9 @@ public:
     bool MSWIsWrapCmdWithDoubleQuotes() const { return true; }
     bool IsMouseZoomEnabled() const { return !HasOption(Opt_DisableMouseCtrlZoom); }
     void SetMouseZoomEnabled(bool b) { EnableOption(Opt_DisableMouseCtrlZoom, !b); }
-	
-	
+
+    void UpdateFromEditorConfig(const clEditorConfigSection& section);
+
     /**
      * Return an XML representation of this object
      * \return XML node

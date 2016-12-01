@@ -124,7 +124,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
     , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift | Opt_WrapBrackets |
-          Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock | Opt_WrapCmdWithDoubleQuotes)
+                Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock |
+                Opt_WrapCmdWithDoubleQuotes)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
@@ -446,5 +447,37 @@ void OptionsConfig::SetBookmarkLabel(const wxString& label, size_t index)
     if(index < arr.GetCount()) {
         arr.Item(index) = label;
         m_bookmarkLabels = wxJoin(arr, ';');
+    }
+}
+
+void OptionsConfig::UpdateFromEditorConfig(const clEditorConfigSection& section)
+{
+    if(section.IsInsertFinalNewlineSet()) {
+        this->SetAppendLF(section.IsInsertFinalNewline());
+    }
+    if(section.IsSetEndOfLineSet()) {
+        // Convert .editorconfig to CodeLite strings
+        wxString eolMode = "Unix (LF)"; // default
+        if(section.GetEndOfLine() == "crlf") {
+            eolMode = "Windows (CRLF)";
+        } else if(section.GetEndOfLine() == "cr") {
+            eolMode = "Mac (CR)";
+        }
+        this->SetEolMode(eolMode);
+    }
+    if(section.IsTabWidthSet()) {
+        this->SetTabWidth(section.GetTabWidth());
+    }
+    if(section.IsIndentStyleSet()) {
+        this->SetIndentUsesTabs(section.GetIndentStyle() == "tab");
+    }
+    if(section.IsTabWidthSet()) {
+        this->SetTabWidth(section.GetTabWidth());
+    }
+    if(section.IsIndentSizeSet()) {
+        this->SetIndentWidth(section.GetIndentSize());
+    }
+    if(section.IsCharsetSet()) {
+        // TODO: fix the locale here
     }
 }

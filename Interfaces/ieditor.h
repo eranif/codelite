@@ -35,6 +35,7 @@
 #include "cl_calltip.h"
 #include <list>
 #include <map>
+#include "optionsconfig.h"
 
 class wxStyledTextCtrl;
 
@@ -493,6 +494,16 @@ public:
      * @brief return a string representing all the local variables coloured by this editor
      */
     virtual const wxString& GetKeywordLocals() const = 0;
+    
+    /**
+     * @brief get the options associated with this editor
+     */
+    virtual OptionsConfigPtr GetOptions() = 0;
+    
+    /**
+     * @brief apply editor configuration (TAB vs SPACES, tab size, EOL mode etc)
+     */
+    virtual void ApplyEditorConfig() = 0;
 };
 
 #endif // IEDITOR_H

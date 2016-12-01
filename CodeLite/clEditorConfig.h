@@ -16,6 +16,11 @@ protected:
     bool insert_final_newline;
     wxString end_of_line;
 
+private:
+    wxArrayString ProcessSection(wxString& strLine);
+    void ProcessDirective(wxString& strLine);
+    bool ReadUntil(wxChar delim, wxString& strLine, wxString& output);
+    
 public:
     clEditorConfig();
     ~clEditorConfig();

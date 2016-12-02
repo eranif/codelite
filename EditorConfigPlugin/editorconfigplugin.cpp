@@ -35,6 +35,7 @@ EditorConfigPlugin::EditorConfigPlugin(IManager* manager)
 
     // Bind events
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_LOADING, &EditorConfigPlugin::OnEditorConfigLoading, this);
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &EditorConfigPlugin::OnActiveEditorChanged, this);
 }
 
 EditorConfigPlugin::~EditorConfigPlugin() {}
@@ -51,18 +52,53 @@ void EditorConfigPlugin::CreatePluginMenu(wxMenu* pluginsMenu) {}
 void EditorConfigPlugin::UnPlug()
 {
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_LOADING, &EditorConfigPlugin::OnEditorConfigLoading, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &EditorConfigPlugin::OnActiveEditorChanged, this);
 }
 
 void EditorConfigPlugin::OnEditorConfigLoading(clEditorConfigEvent& event)
 {
-    // TODO: cache the results
     event.Skip();
-    clEditorConfig conf;
     clEditorConfigSection section;
     wxFileName fn(event.GetFileName());
-    if(!fn.IsOk() || !fn.FileExists()) return;
-    if(conf.GetSectionForFile(event.GetFileName(), section)) {
-        event.Skip(false);
-        event.SetEditorConfig(section);
+    if(!DoGetEditorConfigForFile(fn, section)) {
+        return;
     }
+
+    event.Skip(false);
+    event.SetEditorConfig(section);
+}
+
+void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    OptionsConfigPtr conf = editor->GetOptions();
+    CHECK_PTR_RET(conf);
+
+    clEditorConfigSection section;
+    if(!DoGetEditorConfigForFile(editor->GetFileName(), section)) return;
+    conf->UpdateFromEditorConfig(section);
+    editor->ApplyEditorConfig();
+}
+
+bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, clEditorConfigSection& section)
+{
+    // Try the cache first
+    if(m_cache.Get(filename, section)) {
+        return true;
+    }
+
+    // Sanity
+    if(!filename.IsOk() || !filename.FileExists()) return false;
+
+    clEditorConfig conf;
+    if(!conf.GetSectionForFile(filename, section)) {
+        // Update the cache
+        return false;
+    }
+
+    m_cache.Add(filename, section);
+    return true;
 }

@@ -2,6 +2,8 @@
 <CodeLite_Project Name="EditorConfigPlugin">
   <VirtualDirectory Name="src">
     <File Name="editorconfigplugin.cpp"/>
+    <File Name="EditorConfigCache.h"/>
+    <File Name="EditorConfigCache.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="editorconfigplugin.h"/>
@@ -38,12 +40,12 @@
         <Command Enabled="yes">copy "$(IntermediateDirectory)\EditorConfigPlugin-dbg.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
+        <CleanCommand/>
+        <BuildCommand/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
@@ -73,12 +75,12 @@
         <Command Enabled="yes">copy "$(IntermediateDirectory)\EditorConfigPlugin.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
+        <CleanCommand/>
+        <BuildCommand/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
   </Settings>

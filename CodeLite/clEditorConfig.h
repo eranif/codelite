@@ -30,7 +30,7 @@ public:
     bool trim_trailing_whitespace;
     bool insert_final_newline;
     wxString end_of_line;
-
+    wxFileName filename; // the path to the .editorconfig file 
     typedef std::vector<clEditorConfigSection> Vec_t;
 
     clEditorConfigSection()
@@ -43,6 +43,9 @@ public:
         , insert_final_newline(false)
     {
     }
+    void SetFilename(const wxFileName& filename) {this->filename = filename;}
+    const wxFileName& GetFilename() const {return filename;}
+    
     void SetCharset(const wxString& charset)
     {
         this->charset = charset;
@@ -55,7 +58,7 @@ public:
         this->indent_size = indent_size;
         this->flags |= kIndentSizeSet;
     }
-    bool IsIndentSizeSet() const { return this->flags & kIndentSizeSet; }
+    bool IsIndentSizeSet() const { return (this->flags & kTabWidthSet) || (this->flags & kIndentSizeSet); }
 
     void SetIndentStyle(const wxString& indent_style)
     {
@@ -76,7 +79,7 @@ public:
         this->tab_width = tab_width;
         this->flags |= kTabWidthSet;
     }
-    bool IsTabWidthSet() const { return this->flags & kTabWidthSet; }
+    bool IsTabWidthSet() const { return (this->flags & kTabWidthSet) || (this->flags & kIndentSizeSet); }
 
     void SetTrimTrailingWhitespace(bool trim_trailing_whitespace)
     {
@@ -93,10 +96,17 @@ public:
     bool IsSetEndOfLineSet() const { return this->flags & kEOLStyleSet; }
 
     const wxString& GetCharset() const { return charset; }
-    size_t GetIndentSize() const { return indent_size; }
+    // According to the docs:
+    // When set to tab, the value of tab_width (if specified) will be used
+    size_t GetIndentSize() const
+    {
+        return (GetIndentStyle() == "tab" && (this->flags & kTabWidthSet)) ? tab_width : indent_size;
+    }
+
+    // If user set the tab_width, return its value, otherwise return the size of the indent size
+    size_t GetTabWidth() const { return (this->flags & kTabWidthSet) ? tab_width : indent_size; }
     const wxString& GetIndentStyle() const { return indent_style; }
     bool IsInsertFinalNewline() const { return insert_final_newline; }
-    size_t GetTabWidth() const { return tab_width; }
     bool IsTrimTrailingWhitespace() const { return trim_trailing_whitespace; }
     const wxString& GetEndOfLine() const { return end_of_line; }
 };
@@ -119,7 +129,7 @@ public:
      * @brief try and load a .editorconfig settings for 'filename'. We start looking from the current file location
      * and going up until we hit the root folder
      */
-    bool LoadForFile(const wxFileName& filename);
+    bool LoadForFile(const wxFileName& filename, wxFileName& editorConfigFile);
 
     /**
      * @brief find the best section for a file

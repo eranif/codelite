@@ -11,9 +11,9 @@ clEditorConfig::clEditorConfig()
 
 clEditorConfig::~clEditorConfig() {}
 
-bool clEditorConfig::LoadForFile(const wxFileName& filename)
+bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorConfigFile)
 {
-    wxFileName editorConfigFile(filename.GetPath(), ".editorconfig");
+    editorConfigFile= wxFileName(filename.GetPath(), ".editorconfig");
 
     bool foundFile = false;
     while(editorConfigFile.GetDirCount()) {
@@ -35,7 +35,7 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename)
     clEditorConfigSection section;
     m_sections.push_back(section);
     clEditorConfigSection* cursection = &(m_sections.back());
-
+    wxUnusedVar(cursection); // for debug purposes
     wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_STRTOK);
     for(size_t i = 0; i < lines.size(); ++i) {
         // Remove comments
@@ -296,8 +296,10 @@ bool clEditorConfig::ReadUntil(wxChar delim, wxString& strLine, wxString& output
 
 bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfigSection& section)
 {
-    if(!LoadForFile(filename)) return false;
+    wxFileName editorConfigFile;
+    if(!LoadForFile(filename, editorConfigFile)) return false;
     section = clEditorConfigSection();
+    section.filename = editorConfigFile;
     bool match_found = false;
     std::for_each(m_sections.begin(), m_sections.end(), [&](const clEditorConfigSection& sec) {
         for(size_t i = 0; i < sec.patterns.size(); ++i) {

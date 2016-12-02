@@ -115,7 +115,6 @@ CodeFormatter::CodeFormatter(IManager* manager)
                                 NULL,
                                 this);
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_LOADING, &CodeFormatter::OnEditorConfigLoading, this);
 
     // Migrate settings if needed
     FormatOptions fmtroptions;
@@ -502,7 +501,6 @@ void CodeFormatter::UnPlug()
                                    wxCommandEventHandler(CodeFormatter::OnFormatProject),
                                    NULL,
                                    this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_LOADING, &CodeFormatter::OnEditorConfigLoading, this);
     EventNotifier::Get()->Connect(
         wxEVT_FORMAT_STRING, clSourceFormatEventHandler(CodeFormatter::OnFormatString), NULL, this);
     EventNotifier::Get()->Connect(
@@ -973,18 +971,4 @@ void CodeFormatter::DoFormatXmlSource(IEditor* editor)
     }
 
     editor->GetCtrl()->EndUndoAction();
-}
-
-void CodeFormatter::OnEditorConfigLoading(clEditorConfigEvent& event)
-{
-    // TODO: cache the results
-    event.Skip();
-    clEditorConfig conf;
-    clEditorConfigSection section;
-    wxFileName fn(event.GetFileName());
-    if(!fn.IsOk() || !fn.FileExists()) return;
-    if(conf.GetSectionForFile(event.GetFileName(), section)) {
-        event.Skip(false);
-        event.SetEditorConfig(section);
-    }
 }

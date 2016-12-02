@@ -121,7 +121,6 @@ public:
     void OnFormatFile(clSourceFormatEvent& e);
     void OnFormatProject(wxCommandEvent& e);
     void OnBeforeFileSave(clCommandEvent& e);
-    void OnEditorConfigLoading(clEditorConfigEvent& event);
 };
 
 #endif // CODEFORMATTER_H

@@ -47,6 +47,7 @@
     <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
     <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
     <Project Name="ZoomNavigator" Path="ZoomNavigator/ZoomNavigator.project" Active="No"/>
+    <Project Name="EditorConfigPlugin" Path="EditorConfigPlugin/EditorConfigPlugin.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
@@ -68,53 +69,54 @@
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Environment/>
-      <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
-      <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
-      <Project Name="CMakePlugin" ConfigName="Win_x86_Release"/>
-      <Project Name="CodeFormatter" ConfigName="Win_x86_Release"/>
-      <Project Name="CodeLiteDiff" ConfigName="Win_x86_Release"/>
-      <Project Name="CodeLiteIDE" ConfigName="Win_x86_Release"/>
-      <Project Name="ContinuousBuild" ConfigName="Win_x86_Release"/>
-      <Project Name="Copyright" ConfigName="Win_x86_Release"/>
-      <Project Name="CppChecker" ConfigName="Win_x86_Release"/>
-      <Project Name="Cscope" ConfigName="Win_x86_Release"/>
-      <Project Name="DatabaseExplorer" ConfigName="Win_x86_Release"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x86_Release"/>
-      <Project Name="DebuggerGDB" ConfigName="Win_x86_Release"/>
-      <Project Name="ExternalTools" ConfigName="Win_x86_Release"/>
-      <Project Name="git" ConfigName="Win_x86_Release"/>
-      <Project Name="Gizmos" ConfigName="Win_x86_Release"/>
-      <Project Name="HelpPlugin" ConfigName="Win_x86_Release"/>
-      <Project Name="hunspell" ConfigName="Release"/>
-      <Project Name="Interfaces" ConfigName="Common"/>
-      <Project Name="libCodeLite" ConfigName="Win_x86_Release"/>
-      <Project Name="LLDBDebugger" ConfigName="Win_x86_Release"/>
-      <Project Name="MacBundler" ConfigName="Win_x86_Release"/>
-      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
-      <Project Name="Outline" ConfigName="Win_x86_Release"/>
-      <Project Name="PCH" ConfigName="Release"/>
-      <Project Name="PHPParser" ConfigName="Release"/>
-      <Project Name="PHPParserUnitTests" ConfigName="Release"/>
-      <Project Name="PHPPlugin" ConfigName="Win_x86_Release"/>
-      <Project Name="plugin_sdk" ConfigName="Win_x86_Release"/>
-      <Project Name="QMakePlugin" ConfigName="Win_x86_Release"/>
-      <Project Name="SFTP" ConfigName="Win_x86_Release"/>
-      <Project Name="snipwiz" ConfigName="Win_x86_Release"/>
-      <Project Name="SpellCheck" ConfigName="Win_x86_Release"/>
-      <Project Name="sqlite3" ConfigName="Common"/>
-      <Project Name="Subversion2" ConfigName="Win_x86_Release"/>
-      <Project Name="Tweaks" ConfigName="Win_x86_Release"/>
-      <Project Name="UnitTestPP" ConfigName="Win_x86_Release"/>
-      <Project Name="WebTools" ConfigName="Win_x86_Release"/>
-      <Project Name="WordCompletion" ConfigName="Win_x86_Release"/>
-      <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
-      <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
-      <Project Name="LLDBApp" ConfigName="Debug"/>
-      <Project Name="LLDBProtocol" ConfigName="Debug"/>
-      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
+      <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
+      <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
+      <Project Name="WordCompletion" ConfigName="Win_x86_Release"/>
+      <Project Name="WebTools" ConfigName="Win_x86_Release"/>
+      <Project Name="UnitTestPP" ConfigName="Win_x86_Release"/>
+      <Project Name="Tweaks" ConfigName="Win_x86_Release"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
+      <Project Name="Subversion2" ConfigName="Win_x86_Release"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="SpellCheck" ConfigName="Win_x86_Release"/>
+      <Project Name="snipwiz" ConfigName="Win_x86_Release"/>
+      <Project Name="SFTP" ConfigName="Win_x86_Release"/>
+      <Project Name="QMakePlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="plugin_sdk" ConfigName="Win_x86_Release"/>
+      <Project Name="PHPPlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Release"/>
+      <Project Name="PHPParser" ConfigName="Release"/>
+      <Project Name="PCH" ConfigName="Release"/>
+      <Project Name="Outline" ConfigName="Win_x86_Release"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
+      <Project Name="MacBundler" ConfigName="Win_x86_Release"/>
+      <Project Name="LLDBProtocol" ConfigName="Win_x64_Debug"/>
+      <Project Name="LLDBDebugger" ConfigName="Win_x86_Release"/>
+      <Project Name="LLDBApp" ConfigName="Win_x64_Debug"/>
+      <Project Name="libCodeLite" ConfigName="Win_x86_Release"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="hunspell" ConfigName="Release"/>
+      <Project Name="HelpPlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="Gizmos" ConfigName="Win_x86_Release"/>
+      <Project Name="git" ConfigName="Win_x86_Release"/>
+      <Project Name="ExternalTools" ConfigName="Win_x86_Release"/>
+      <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Release"/>
+      <Project Name="DebuggerGDB" ConfigName="Win_x86_Release"/>
+      <Project Name="databaselayer_sqlite" ConfigName="Win_x86_Release"/>
+      <Project Name="DatabaseExplorer" ConfigName="Win_x86_Release"/>
+      <Project Name="Cscope" ConfigName="Win_x86_Release"/>
+      <Project Name="CppChecker" ConfigName="Win_x86_Release"/>
+      <Project Name="Copyright" ConfigName="Win_x86_Release"/>
+      <Project Name="ContinuousBuild" ConfigName="Win_x86_Release"/>
+      <Project Name="CodeLiteIDE" ConfigName="Win_x86_Release"/>
+      <Project Name="CodeLiteDiff" ConfigName="Win_x86_Release"/>
+      <Project Name="CodeFormatter" ConfigName="Win_x86_Release"/>
+      <Project Name="CMakePlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
+      <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
+      <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -165,8 +167,9 @@
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
+      <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -215,6 +218,7 @@
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
+      <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -265,8 +269,9 @@
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
+      <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Release" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -315,8 +320,9 @@
       <Project Name="LLDBProtocol" ConfigName="Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
+      <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment>WXWIN=D:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
@@ -366,8 +372,9 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
+      <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
@@ -416,6 +423,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
+      <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

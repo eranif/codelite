@@ -585,6 +585,7 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(SpellChecker)
     add_subdirectory(AutoSave)
     add_subdirectory(Tail)
+    add_subdirectory(EditorConfigPlugin)
 
     if (WITH_SFTP)
         add_subdirectory(SFTP)

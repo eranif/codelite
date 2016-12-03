@@ -13,7 +13,7 @@ clEditorConfig::~clEditorConfig() {}
 
 bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorConfigFile)
 {
-    editorConfigFile= wxFileName(filename.GetPath(), ".editorconfig");
+    editorConfigFile = wxFileName(filename.GetPath(), ".editorconfig");
 
     bool foundFile = false;
     while(editorConfigFile.GetDirCount()) {
@@ -59,10 +59,11 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorC
             ProcessDirective(strLine);
         }
     }
+    clDEBUG() << "Using .editorconfig file:" << editorConfigFile << clEndl;
     return true;
 }
-struct clEditorConfigTreeNode
-{
+
+struct clEditorConfigTreeNode {
     wxString data;
     typedef std::vector<clEditorConfigTreeNode*> Vec_t;
     clEditorConfigTreeNode::Vec_t children;
@@ -304,7 +305,9 @@ bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfi
     std::for_each(m_sections.begin(), m_sections.end(), [&](const clEditorConfigSection& sec) {
         for(size_t i = 0; i < sec.patterns.size(); ++i) {
             const wxString& pattern = sec.patterns.Item(i);
-            if(::wxMatchWild(pattern, filename.GetFullPath(), false)) {
+            bool is_wild = pattern.Contains("*");
+            if((is_wild && ::wxMatchWild(pattern, filename.GetFullPath(), false)) ||
+                (!is_wild && filename.GetFullName() == pattern)) {
                 match_found = true;
                 if(sec.IsCharsetSet()) {
                     section.SetCharset(sec.GetCharset());
@@ -331,5 +334,36 @@ bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfi
             }
         }
     });
+
+    // Print the match to the log file
+    if(match_found) {
+        section.PrintToLog();
+    }
     return match_found;
+}
+
+void clEditorConfigSection::PrintToLog()
+{
+    clDEBUG1() << ".editorconfig (" << filename << ") :" << clEndl;
+    if(IsCharsetSet()) {
+        clDEBUG1() << "charset:" << GetCharset() << clEndl;
+    }
+    if(IsIndentSizeSet()) {
+        clDEBUG1() << "indent_size:" << GetIndentSize() << clEndl;
+    }
+    if(IsIndentStyleSet()) {
+        clDEBUG1() << "indent_style:" << GetIndentStyle() << clEndl;
+    }
+    if(IsInsertFinalNewlineSet()) {
+        clDEBUG1() << "insert_final_newline:" << IsInsertFinalNewline() << clEndl;
+    }
+    if(IsSetEndOfLineSet()) {
+        clDEBUG1() << "end_of_line:" << GetEndOfLine() << clEndl;
+    }
+    if(IsTabWidthSet()) {
+        clDEBUG1() << "tab_width:" << GetTabWidth() << clEndl;
+    }
+    if(IsTrimTrailingWhitespaceSet()) {
+        clDEBUG1() << "trim_trailing_whitespace:" << IsTrimTrailingWhitespace() << clEndl;
+    }
 }

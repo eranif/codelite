@@ -43,6 +43,12 @@ public:
         , insert_final_newline(false)
     {
     }
+    
+    /**
+     * @brief print this section properties to the log file
+     */
+    void PrintToLog();
+    
     void SetFilename(const wxFileName& filename) {this->filename = filename;}
     const wxFileName& GetFilename() const {return filename;}
     

@@ -7,6 +7,7 @@
 #include "EditorConfigSettingsDlg.h"
 #include "EditorConfigSettings.h"
 #include <wx/menu.h>
+#include "file_logger.h"
 
 static EditorConfigPlugin* thePlugin = NULL;
 
@@ -71,7 +72,10 @@ void EditorConfigPlugin::UnPlug()
 void EditorConfigPlugin::OnEditorConfigLoading(clEditorConfigEvent& event)
 {
     event.Skip();
-    if(!m_settings.IsEnabled()) return;
+    if(!m_settings.IsEnabled()) {
+        clDEBUG() << "EditorConfig is disabled." << clEndl;
+        return;
+    }
     
     clEditorConfigSection section;
     wxFileName fn(event.GetFileName());
@@ -86,7 +90,10 @@ void EditorConfigPlugin::OnEditorConfigLoading(clEditorConfigEvent& event)
 void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
-    if(!m_settings.IsEnabled()) return;
+    if(!m_settings.IsEnabled()) {
+        clDEBUG() << "EditorConfig is disabled." << clEndl;
+        return;
+    }
     
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -104,18 +111,24 @@ bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, cl
 {
     // Try the cache first
     if(m_cache.Get(filename, section)) {
+        clDEBUG() << "Using EditorConfig settings for file:" << filename << clEndl;
+        section.PrintToLog();
         return true;
     }
 
     // Sanity
-    if(!filename.IsOk() || !filename.FileExists()) return false;
+    if(!filename.IsOk() || !filename.FileExists()) {
+        clDEBUG() << "No EditorConfig file found for file:" << filename << clEndl;
+        return false;
+    }
 
     clEditorConfig conf;
     if(!conf.GetSectionForFile(filename, section)) {
         // Update the cache
+        clDEBUG() << "No EditorConfig file found for file:" << filename << clEndl;
         return false;
     }
-
+    
     m_cache.Add(filename, section);
     return true;
 }

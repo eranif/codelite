@@ -6,10 +6,12 @@
 #include "EditorConfigCache.h"
 #include <wx/filename.h>
 #include "clEditorConfig.h"
+#include "EditorConfigSettings.h"
 
 class EditorConfigPlugin : public IPlugin
 {
     EditorConfigCache m_cache;
+    EditorConfigSettings m_settings;
 
 protected:
     bool DoGetEditorConfigForFile(const wxFileName& filename, clEditorConfigSection& section);
@@ -34,6 +36,7 @@ public:
 
     void OnEditorConfigLoading(clEditorConfigEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
+    void OnSettings(wxCommandEvent& event);
 };
 
 #endif // EditorConfigPlugin

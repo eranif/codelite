@@ -4,6 +4,10 @@
     <File Name="editorconfigplugin.cpp"/>
     <File Name="EditorConfigCache.h"/>
     <File Name="EditorConfigCache.cpp"/>
+    <File Name="EditorConfigSettingsDlg.h"/>
+    <File Name="EditorConfigSettingsDlg.cpp"/>
+    <File Name="EditorConfigSettings.h"/>
+    <File Name="EditorConfigSettings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="editorconfigplugin.h"/>
@@ -84,4 +88,14 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="EditorConfigUI.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="EditorConfigUI_editorconfigplugin_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="EditorConfigUI.h"/>
+      <File Name="EditorConfigUI.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

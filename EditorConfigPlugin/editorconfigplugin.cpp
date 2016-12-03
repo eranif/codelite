@@ -3,6 +3,10 @@
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include <wx/filename.h>
+#include "cl_config.h"
+#include "EditorConfigSettingsDlg.h"
+#include "EditorConfigSettings.h"
+#include <wx/menu.h>
 
 static EditorConfigPlugin* thePlugin = NULL;
 
@@ -32,7 +36,10 @@ EditorConfigPlugin::EditorConfigPlugin(IManager* manager)
 {
     m_longName = _("Support for .editorconfig files in CodeLite");
     m_shortName = wxT("EditorConfig");
-
+    
+    // Load the settings
+    m_settings.Load();
+    
     // Bind events
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_LOADING, &EditorConfigPlugin::OnEditorConfigLoading, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &EditorConfigPlugin::OnActiveEditorChanged, this);
@@ -47,7 +54,13 @@ clToolBar* EditorConfigPlugin::CreateToolBar(wxWindow* parent)
     return tb;
 }
 
-void EditorConfigPlugin::CreatePluginMenu(wxMenu* pluginsMenu) {}
+void EditorConfigPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
+{
+    wxMenu* menu = new wxMenu();
+    menu->Append(new wxMenuItem(menu, XRCID("editor_config_settings"), _("Settings...")));
+    pluginsMenu->Append(wxID_ANY, "EditorConfig", menu);
+    menu->Bind(wxEVT_MENU, &EditorConfigPlugin::OnSettings, this, XRCID("editor_config_settings"));
+}
 
 void EditorConfigPlugin::UnPlug()
 {
@@ -58,6 +71,8 @@ void EditorConfigPlugin::UnPlug()
 void EditorConfigPlugin::OnEditorConfigLoading(clEditorConfigEvent& event)
 {
     event.Skip();
+    if(!m_settings.IsEnabled()) return;
+    
     clEditorConfigSection section;
     wxFileName fn(event.GetFileName());
     if(!DoGetEditorConfigForFile(fn, section)) {
@@ -71,6 +86,8 @@ void EditorConfigPlugin::OnEditorConfigLoading(clEditorConfigEvent& event)
 void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
+    if(!m_settings.IsEnabled()) return;
+    
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
@@ -101,4 +118,14 @@ bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, cl
 
     m_cache.Add(filename, section);
     return true;
+}
+
+void EditorConfigPlugin::OnSettings(wxCommandEvent& event)
+{
+    EditorConfigSettingsDlg dlg(wxTheApp->GetTopWindow());
+    if(dlg.ShowModal() == wxID_OK) {
+        // Store the settings
+        m_settings.SetEnabled(dlg.IsEnabled());
+        m_settings.Save();
+    }
 }

@@ -306,8 +306,11 @@ bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfi
         for(size_t i = 0; i < sec.patterns.size(); ++i) {
             const wxString& pattern = sec.patterns.Item(i);
             bool is_wild = pattern.Contains("*");
-            if((is_wild && ::wxMatchWild(pattern, filename.GetFullPath(), false)) ||
-                (!is_wild && filename.GetFullName() == pattern)) {
+
+            wxString fullpath = filename.GetFullPath(wxPATH_UNIX);
+            wxString fullname = filename.GetFullName();
+
+            if((is_wild && ::wxMatchWild(pattern, fullpath, false)) || (!is_wild && fullname == pattern)) {
                 match_found = true;
                 if(sec.IsCharsetSet()) {
                     section.SetCharset(sec.GetCharset());

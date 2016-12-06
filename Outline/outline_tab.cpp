@@ -34,6 +34,7 @@
 #include "fileutils.h"
 #include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
+#include "cl_config.h"
 
 const wxEventType wxEVT_SV_GOTO_DEFINITION = wxNewEventType();
 const wxEventType wxEVT_SV_GOTO_DECLARATION = wxNewEventType();
@@ -48,8 +49,13 @@ const wxEventType wxEVT_SV_OPEN_FILE = wxNewEventType();
 OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     : OutlineTabBaseClass(parent)
     , m_mgr(mgr)
+    , m_sortCxxTreeAlphabetically(false)
 {
     m_tree = new svSymbolTree(m_panelCxx, m_mgr, wxID_ANY);
+    m_sortCxxTreeAlphabetically =
+        clConfig::Get().Read("OutlineView/SortCxxAlphabetically", m_sortCxxTreeAlphabetically);
+    m_tree->SetSortByLineNumber(!m_sortCxxTreeAlphabetically);
+    
     m_panelCxx->GetSizer()->Add(m_tree, 1, wxEXPAND);
     m_tree->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(OutlineTab::OnMenu), NULL, this);
     m_tree->AssignImageList(svSymbolTree::CreateSymbolTreeImages());
@@ -145,7 +151,7 @@ void OutlineTab::OnActiveEditorChanged(wxCommandEvent& e)
 
     // Use the lexer to determine if we can show outline
     if(editor && cxxLexer && FileUtils::WildMatch(cxxLexer->GetFileSpec(), editor->GetFileName())) {
-        m_tree->BuildTree(editor->GetFileName());
+        m_tree->BuildTree(editor->GetFileName(), false);
         m_simpleBook->SetSelection(OUTLINE_TAB_CXX);
         m_textCtrlSearch->Enable(true);
 
@@ -197,7 +203,7 @@ void OutlineTab::OnFilesTagged(wxCommandEvent& e)
     if(editor) {
 
         wxWindow* oldFocusedWindow = wxWindow::FindFocus();
-        m_tree->BuildTree(editor->GetFileName());
+        m_tree->BuildTree(editor->GetFileName(), false);
         wxWindow* focusedWindow = wxWindow::FindFocus();
         if(oldFocusedWindow != focusedWindow && oldFocusedWindow) {
             // restore the focus back the old window
@@ -225,26 +231,14 @@ void OutlineTab::OnMenu(wxContextMenuEvent& e)
         menu.AppendSeparator();
         menu.Append(wxEVT_SV_RENAME_SYMBOL, _("Rename Symbol..."));
 
-        menu.Connect(wxEVT_SV_GOTO_DEFINITION,
-                     wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(OutlineTab::OnGotoImpl),
-                     NULL,
-                     this);
-        menu.Connect(wxEVT_SV_GOTO_DECLARATION,
-                     wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(OutlineTab::OnGotoDecl),
-                     NULL,
-                     this);
-        menu.Connect(wxEVT_SV_FIND_REFERENCES,
-                     wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(OutlineTab::OnFindReferenes),
-                     NULL,
-                     this);
-        menu.Connect(wxEVT_SV_RENAME_SYMBOL,
-                     wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(OutlineTab::OnRenameSymbol),
-                     NULL,
-                     this);
+        menu.Connect(wxEVT_SV_GOTO_DEFINITION, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(OutlineTab::OnGotoImpl), NULL, this);
+        menu.Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(OutlineTab::OnGotoDecl), NULL, this);
+        menu.Connect(wxEVT_SV_FIND_REFERENCES, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(OutlineTab::OnFindReferenes), NULL, this);
+        menu.Connect(wxEVT_SV_RENAME_SYMBOL, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(OutlineTab::OnRenameSymbol), NULL, this);
     }
 
     m_tree->PopupMenu(&menu);
@@ -310,4 +304,21 @@ void OutlineTab::OnPhpItemActivated(wxTreeEvent& event)
 {
     event.Skip();
     m_treeCtrlPhp->ItemSelected(event.GetItem(), true);
+}
+
+void OutlineTab::OnSortAlpha(wxCommandEvent& event)
+{
+    m_sortCxxTreeAlphabetically = event.IsChecked();
+    clConfig::Get().Write("OutlineView/SortCxxAlphabetically", m_sortCxxTreeAlphabetically);
+    m_tree->SetSortByLineNumber(!m_sortCxxTreeAlphabetically);
+    CallAfter(&OutlineTab::DoRefreshCxxView);
+}
+
+void OutlineTab::OnSortAlphaUI(wxUpdateUIEvent& event) { event.Check(m_sortCxxTreeAlphabetically); }
+
+void OutlineTab::DoRefreshCxxView()
+{
+    wxFileName fn = m_tree->GetFilename();
+    m_tree->Clear();
+    m_tree->BuildTree(fn, true);
 }

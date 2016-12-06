@@ -90,7 +90,7 @@ QuickOutlineDlg::QuickOutlineDlg(
     Layout();
 
     // no hidden root
-    m_treeOutline->BuildTree(m_fileName);
+    m_treeOutline->BuildTree(m_fileName, TagEntryPtrVector_t());
     m_treeOutline->ExpandAll();
     m_treeOutline->CallAfter(&CppSymbolTree::SetFocus);
 

@@ -79,6 +79,7 @@ wxImageList* svSymbolTree::CreateSymbolTreeImages()
 svSymbolTree::svSymbolTree()
     : m_uid(0)
 {
+    m_sortByLineNumber = true;
 }
 
 svSymbolTree::svSymbolTree(
@@ -86,6 +87,7 @@ svSymbolTree::svSymbolTree(
     : SymbolTree(parent, id, pos, size, style)
     , m_uid(0)
 {
+    m_sortByLineNumber = true;
     m_manager = manager;
     Connect(GetId(), wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler(svSymbolTree::OnMouseRightUp));
     Connect(GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler(svSymbolTree::OnMouseDblClick));
@@ -93,7 +95,7 @@ svSymbolTree::svSymbolTree(
     Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(svSymbolTree::OnMouseDblClick), NULL, this);
     Connect(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, wxCommandEventHandler(svSymbolTree::OnIncludeStatements), NULL, this);
     MSWSetNativeTheme(this);
-    //SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+    // SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 }
 
@@ -239,7 +241,7 @@ void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxStr
     m_manager->GetActiveEditor()->GetCtrl()->SetFocus();
 }
 
-void svSymbolTree::BuildTree(const wxFileName& fn)
+void svSymbolTree::BuildTree(const wxFileName& fn, bool forceBuild)
 {
     TagEntryPtrVector_t newTags;
     ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
@@ -248,12 +250,14 @@ void svSymbolTree::BuildTree(const wxFileName& fn)
     }
 
     db->SelectTagsByFile(fn.GetFullPath(), newTags);
-    if(TagsManagerST::Get()->AreTheSame(newTags, m_currentTags)) return;
+    if(!forceBuild && TagsManagerST::Get()->AreTheSame(newTags, m_currentTags)) return;
 
-    std::sort(
-        newTags.begin(), newTags.end(), [&](TagEntryPtr t1, TagEntryPtr t2) { return t1->GetLine() > t2->GetLine(); });
+    if(m_sortByLineNumber) {
+        std::sort(newTags.begin(), newTags.end(),
+            [&](TagEntryPtr t1, TagEntryPtr t2) { return t1->GetLine() > t2->GetLine(); });
+    }
     wxWindowUpdateLocker locker(this);
-    SymbolTree::BuildTree(fn, &newTags);
+    SymbolTree::BuildTree(fn, newTags, forceBuild);
 
     // Request from the parsing thread list of include files
     ++m_uid;

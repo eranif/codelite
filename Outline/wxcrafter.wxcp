@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 21,
+  "m_objCounter": 29,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC682BInitBitmapResources",
   "m_bitmapsFile": "wxcrafter_outline_bitmaps.cpp",
@@ -9,6 +9,8 @@
   "m_outputFileName": "",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -128,11 +130,11 @@
      "m_children": [{
        "m_type": 4406,
        "proportion": 0,
-       "border": 2,
+       "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_ENTER"],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+       "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",
@@ -152,7 +154,7 @@
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
-         "m_value": "Search a symbol"
+         "m_value": ""
         }, {
          "type": "colour",
          "m_label": "Bg Colour:",
@@ -211,18 +213,18 @@
          "m_value": false
         }],
        "m_events": [{
-         "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-         "m_eventClass": "wxCommandEvent",
-         "m_eventHandler": "wxCommandEventHandler",
-         "m_functionNameAndSignature": "OnSearchSymbol(wxCommandEvent& event)",
-         "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
-         "m_noBody": false
-        }, {
          "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
          "m_eventClass": "wxCommandEvent",
          "m_eventHandler": "wxCommandEventHandler",
          "m_functionNameAndSignature": "OnSearchEnter(wxCommandEvent& event)",
          "m_description": "Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
+         "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
+         "m_eventClass": "wxCommandEvent",
+         "m_eventHandler": "wxCommandEventHandler",
+         "m_functionNameAndSignature": "OnSearchSymbol(wxCommandEvent& event)",
+         "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
          "m_noBody": false
         }],
        "m_children": []
@@ -406,7 +408,104 @@
              "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
             }],
            "m_events": [],
-           "m_children": []
+           "m_children": [{
+             "m_type": 4463,
+             "proportion": 0,
+             "border": 5,
+             "gbSpan": "1,1",
+             "gbPosition": "0,0",
+             "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
+             "m_sizerFlags": ["wxEXPAND"],
+             "m_properties": [{
+               "type": "winid",
+               "m_label": "ID:",
+               "m_winid": "wxID_ANY"
+              }, {
+               "type": "string",
+               "m_label": "Size:",
+               "m_value": "-1,-1"
+              }, {
+               "type": "string",
+               "m_label": "Name:",
+               "m_value": "m_auibar"
+              }, {
+               "type": "string",
+               "m_label": "Tooltip:",
+               "m_value": ""
+              }, {
+               "type": "string",
+               "m_label": "Bitmap Size:",
+               "m_value": "16,16"
+              }, {
+               "type": "string",
+               "m_label": "Margins:",
+               "m_value": "-1,-1"
+              }],
+             "m_events": [],
+             "m_children": [{
+               "m_type": 4462,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": "1,1",
+               "gbPosition": "0,0",
+               "m_styles": [],
+               "m_sizerFlags": [],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "ID_TOOL_SORT_ALPHABETICALLY"
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_itemSortAlphabetically"
+                }, {
+                 "type": "string",
+                 "m_label": "Label:",
+                 "m_value": "Sort Alphabetically"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": "Sort Alphabetically"
+                }, {
+                 "type": "string",
+                 "m_label": "Help String:",
+                 "m_value": "Sort Alphabetically"
+                }, {
+                 "type": "bitmapPicker",
+                 "m_label": "Bitmap File:",
+                 "m_path": "../bitmaps/16-sort.png"
+                }, {
+                 "type": "filePicker",
+                 "m_label": "Disabled-Bitmap File",
+                 "m_path": ""
+                }, {
+                 "type": "choice",
+                 "m_label": "Kind:",
+                 "m_selection": 1,
+                 "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
+                }, {
+                 "type": "bool",
+                 "m_label": "Construct the Dropdown Menu:",
+                 "m_value": true
+                }],
+               "m_events": [{
+                 "m_eventName": "wxEVT_COMMAND_TOOL_CLICKED",
+                 "m_eventClass": "wxCommandEvent",
+                 "m_eventHandler": "wxCommandEventHandler",
+                 "m_functionNameAndSignature": "OnSortAlpha(wxCommandEvent& event)",
+                 "m_description": "Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+                 "m_noBody": false
+                }, {
+                 "m_eventName": "wxEVT_UPDATE_UI",
+                 "m_eventClass": "wxUpdateUIEvent",
+                 "m_eventHandler": "wxUpdateUIEventHandler",
+                 "m_functionNameAndSignature": "OnSortAlphaUI(wxUpdateUIEvent& event)",
+                 "m_description": "Process a wxEVT_UPDATE_UI event",
+                 "m_noBody": false
+                }],
+               "m_children": []
+              }]
+            }]
           }]
         }, {
          "m_type": 4441,

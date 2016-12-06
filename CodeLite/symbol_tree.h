@@ -85,6 +85,7 @@ protected:
     std::map<wxString, void*> m_items;
     TagTreePtr m_tree;
     TagEntryPtrVector_t m_currentTags;
+    bool m_sortByLineNumber;
 
 public:
     /**
@@ -100,11 +101,8 @@ public:
      * \param size Window size
      * \param style Window style
      */
-    SymbolTree(wxWindow* parent,
-        const wxWindowID id,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize,
-        long style = 0);
+    SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize, long style = 0);
 
     /**
      * @brief clear the tree content
@@ -124,18 +122,15 @@ public:
      * \param size Window size
      * \param style Window style
      */
-    virtual void Create(wxWindow* parent,
-        const wxWindowID id,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize,
-        long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
+    virtual void Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
 
     /**
      * Construct a outline tree for fileName
      * possible return values:
      *
      */
-    virtual void BuildTree(const wxFileName& fileName, TagEntryPtrVector_t* tags = NULL);
+    virtual void BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t& tags, bool forceBuild = false);
 
     /**
      * User provided icons for the symbols tree.
@@ -179,6 +174,9 @@ public:
      */
     void SelectItemByName(const wxString& name);
 
+    void SetSortByLineNumber(bool sortByLineNumber) { this->m_sortByLineNumber = sortByLineNumber; }
+    bool IsSortByLineNumber() const { return m_sortByLineNumber; }
+    
 protected:
     bool Matches(const wxTreeItemId& item, const wxString& patter);
 

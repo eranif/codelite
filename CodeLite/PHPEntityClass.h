@@ -38,7 +38,7 @@ class WXDLLIMPEXP_CL PHPEntityClass : public PHPEntityBase
     PHPDocVar::List_t m_varPhpDocs; // List of @var defined inside the class body
 
 public:
-    virtual wxString FormatPhpDoc() const;
+    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual wxString GetDisplayName() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;

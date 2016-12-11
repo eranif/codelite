@@ -37,7 +37,7 @@ protected:
 
 public:
     wxString GetParentNamespace() const;
-    virtual wxString FormatPhpDoc() const;
+    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual wxString GetDisplayName() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;

@@ -28,7 +28,7 @@
 #include "serialized_object.h"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK CommentConfigData : public SerializedObject
+class WXDLLIMPEXP_CL CommentConfigData : public SerializedObject
 {
     bool m_addStarOnCComment;
     bool m_continueCppComment;
@@ -65,7 +65,7 @@ public:
         this->m_autoInsertAfterSlash2Stars = autoInsertAfterSlash2Stars;
     }
     bool IsAutoInsertAfterSlash2Stars() const { return m_autoInsertAfterSlash2Stars; }
-    
+
     wxString GetCommentBlockPrefix() const { return GetUseSlash2Stars() ? wxString("/**") : wxString("/*!"); }
 };
 #endif // __commentconfigdata__

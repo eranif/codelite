@@ -160,10 +160,10 @@ wxString PHPEntityVariable::GetNameNoDollar() const
     name.Trim().Trim(false);
     return name;
 }
-wxString PHPEntityVariable::FormatPhpDoc() const
+wxString PHPEntityVariable::FormatPhpDoc(const CommentConfigData& data) const
 {
     wxString doc;
-    doc << "/**\n"
+    doc << data.GetCommentBlockPrefix() << "\n"
         << " * @var " << GetTypeHint() << "\n"
         << " */";
     return doc;

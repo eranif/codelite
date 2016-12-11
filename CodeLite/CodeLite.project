@@ -44,7 +44,7 @@
  }]]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="Source Files">
+  <VirtualDirectory Name="src">
     <File Name="worker_thread.cpp"/>
     <File Name="tokenizer.cpp"/>
     <File Name="tag_tree.cpp"/>
@@ -97,6 +97,8 @@
     <File Name="clBitmap.cpp"/>
     <File Name="clEditorConfig.h"/>
     <File Name="clEditorConfig.cpp"/>
+    <File Name="commentconfigdata.cpp"/>
+    <File Name="commentconfigdata.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

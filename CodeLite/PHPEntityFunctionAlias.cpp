@@ -39,10 +39,10 @@ void PHPEntityFunctionAlias::Store(wxSQLite3Database& db)
     }
 }
 
-wxString PHPEntityFunctionAlias::FormatPhpDoc() const
+wxString PHPEntityFunctionAlias::FormatPhpDoc(const CommentConfigData& data) const
 {
     if(m_func) {
-        return m_func->FormatPhpDoc();
+        return m_func->FormatPhpDoc(data);
     }
     return "";
 }

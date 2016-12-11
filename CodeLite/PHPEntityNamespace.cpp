@@ -71,10 +71,10 @@ void PHPEntityNamespace::FromResultSet(wxSQLite3ResultSet& res)
 wxString PHPEntityNamespace::Type() const { return GetFullName(); }
 bool PHPEntityNamespace::Is(eEntityType type) const { return type == kEntityTypeNamespace; }
 wxString PHPEntityNamespace::GetDisplayName() const { return GetFullName(); }
-wxString PHPEntityNamespace::FormatPhpDoc() const
+wxString PHPEntityNamespace::FormatPhpDoc(const CommentConfigData& data) const
 {
     wxString doc;
-    doc << "/**\n"
+    doc << data.GetCommentBlockPrefix() << "\n"
         << " * @brief \n";
     doc << " */";
     return doc;

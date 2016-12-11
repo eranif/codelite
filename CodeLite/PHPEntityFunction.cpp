@@ -1,6 +1,7 @@
 #include "PHPEntityFunction.h"
 #include "PHPEntityVariable.h"
 #include "file_logger.h"
+#include "commentconfigdata.h"
 
 PHPEntityFunction::PHPEntityFunction() {}
 
@@ -98,10 +99,10 @@ wxString PHPEntityFunction::GetScope() const
 wxString PHPEntityFunction::Type() const { return GetReturnValue(); }
 bool PHPEntityFunction::Is(eEntityType type) const { return type == kEntityTypeFunction; }
 wxString PHPEntityFunction::GetDisplayName() const { return wxString() << GetShortName() << GetSignature(); }
-wxString PHPEntityFunction::FormatPhpDoc() const
+wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
 {
     wxString doc;
-    doc << "/**\n"
+    doc << data.GetCommentBlockPrefix() << "\n"
         << " * @brief \n";
     PHPEntityBase::List_t::const_iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {

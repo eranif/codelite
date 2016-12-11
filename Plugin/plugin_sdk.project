@@ -257,8 +257,6 @@
     <File Name="evnvarlist.h"/>
     <File Name="plugindata.cpp"/>
     <File Name="plugindata.h"/>
-    <File Name="commentconfigdata.cpp"/>
-    <File Name="commentconfigdata.h"/>
     <File Name="quickdebuginfo.cpp"/>
     <File Name="quickdebuginfo.h"/>
     <File Name="windowattrmanager.cpp"/>

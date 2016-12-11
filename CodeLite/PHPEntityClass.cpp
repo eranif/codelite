@@ -90,10 +90,10 @@ wxArrayString PHPEntityClass::GetInheritanceArray() const
 wxString PHPEntityClass::Type() const { return GetFullName(); }
 bool PHPEntityClass::Is(eEntityType type) const { return type == kEntityTypeClass; }
 wxString PHPEntityClass::GetDisplayName() const { return GetShortName(); }
-wxString PHPEntityClass::FormatPhpDoc() const
+wxString PHPEntityClass::FormatPhpDoc(const CommentConfigData& data) const
 {
     wxString doc;
-    doc << "/**\n"
+    doc << data.GetCommentBlockPrefix() << "\n"
         << " * @class " << GetFullName() << "\n"
         << " * @brief \n"
         << " */";

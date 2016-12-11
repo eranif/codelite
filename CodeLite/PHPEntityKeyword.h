@@ -37,7 +37,7 @@ public:
     virtual ~PHPEntityKeyword();
 
 public:
-    virtual wxString FormatPhpDoc() const;
+    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual wxString GetDisplayName() const;
     virtual bool Is(eEntityType type) const;

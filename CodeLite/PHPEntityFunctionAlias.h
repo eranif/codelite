@@ -37,7 +37,7 @@ class WXDLLIMPEXP_CL PHPEntityFunctionAlias : public PHPEntityBase
     PHPEntityBase::Ptr_t m_func;
 
 public:
-    virtual wxString FormatPhpDoc() const;
+    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual wxString GetDisplayName() const;
     virtual void PrintStdout(int indent) const;
     virtual wxString Type() const;

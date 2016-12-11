@@ -19,6 +19,7 @@
 #include "clEditorStateLocker.h"
 #include <wx/regex.h>
 #include "globals.h"
+#include "editor_config.h"
 
 PHPEditorContextMenu* PHPEditorContextMenu::ms_instance = 0;
 
@@ -104,7 +105,7 @@ void PHPEditorContextMenu::DoBuildMenu(wxMenu* menu, IEditor* editor)
     // If we are placed over an include/include_once/require/require_once statement,
     // add an option in the menu to open it
     wxString includeWhat;
-    
+
     // if this is not a PHP section than the above menu items are all we can offer
     int styleAtPos = editor->GetStyleAtPos(editor->GetSelectionStart());
     if(!IsPHPSection(styleAtPos)) return;
@@ -161,8 +162,7 @@ bool PHPEditorContextMenu::IsIncludeOrRequireStatement(wxString& includeWhat)
     // Do a basic check to see whether this line is include statement or not.
     // Don't bother in full parsing the file since it can be a quite an expensive operation
     // (include|require_once|require|include_once)[ \t\\(]*(.*?)[\\) \t)]*;
-    static wxRegEx reInclude(wxT("(include|require_once|require|include_once)[ \t\\(]*(.*?)[\\) \t]*;"),
-                             wxRE_ADVANCED);
+    static wxRegEx reInclude(wxT("(include|require_once|require|include_once)[ \t\\(]*(.*?)[\\) \t]*;"), wxRE_ADVANCED);
 
     IEditor* editor = m_manager->GetActiveEditor();
     if(!editor) return false;
@@ -470,7 +470,11 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
         if(entry) {
             wxStyledTextCtrl* ctrl = editor->GetCtrl();
             ctrl->BeginUndoAction();
-            wxString comment = entry->FormatPhpDoc();
+
+            CommentConfigData data;
+            EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+
+            wxString comment = entry->FormatPhpDoc(data);
 
             // Create the whitespace buffer
             int lineStartPos = ctrl->PositionFromLine(ctrl->GetCurrentLine());

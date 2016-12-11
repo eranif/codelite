@@ -30,15 +30,22 @@ EditorSettingsCommentsDoxygenPanelBase::EditorSettingsCommentsDoxygenPanelBase(w
     wxUnusedVar(m_pgMgrDoxyArr);
     wxArrayInt m_pgMgrDoxyIntArr;
     wxUnusedVar(m_pgMgrDoxyIntArr);
-    m_pgMgrDoxy = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgrDoxy = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,300)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    bSizer1->Add(m_pgMgrDoxy, 1, wxALL|wxEXPAND, 5);
+    bSizer1->Add(m_pgMgrDoxy, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_pgProp10 = m_pgMgrDoxy->Append(  new wxPropertyCategory( _("General") ) );
     m_pgProp10->SetHelpString(wxT(""));
     
-    m_pgPropAutoGen = m_pgMgrDoxy->AppendIn( m_pgProp10,  new wxBoolProperty( _("Generate doxygen comment after \"/**\""), wxPG_LABEL, 1) );
+    m_pgPropAutoGen = m_pgMgrDoxy->AppendIn( m_pgProp10,  new wxBoolProperty( _("Generate comment after \"/**\" or \"/*!\""), wxPG_LABEL, 1) );
     m_pgPropAutoGen->SetHelpString(_("When the user hit ENTER after \"/**\" generate the proper documentation block"));
+    
+    m_pgMgrDoxyArr.Clear();
+    m_pgMgrDoxyIntArr.Clear();
+    m_pgMgrDoxyArr.Add(_("/**"));
+    m_pgMgrDoxyArr.Add(_("/*!"));
+    m_pgPropCommentBlockPrefix = m_pgMgrDoxy->AppendIn( m_pgProp10,  new wxEnumProperty( _("Comment block start"), wxPG_LABEL, m_pgMgrDoxyArr, m_pgMgrDoxyIntArr, 0) );
+    m_pgPropCommentBlockPrefix->SetHelpString(_("Select the comment block prefix (\"/**\" or \"/*!\")"));
     
     m_pgProp4 = m_pgMgrDoxy->Append(  new wxPropertyCategory( _("Templates") ) );
     m_pgProp4->SetHelpString(wxT(""));
@@ -52,7 +59,7 @@ EditorSettingsCommentsDoxygenPanelBase::EditorSettingsCommentsDoxygenPanelBase(w
     m_pgPropDoxyFunctionPrefix->SetEditor( wxT("TextCtrlAndButton") );
     
     SetName(wxT("EditorSettingsCommentsDoxygenPanelBase"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

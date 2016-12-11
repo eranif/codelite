@@ -38,6 +38,7 @@ EditorSettingsCommentsDoxygenPanel::EditorSettingsCommentsDoxygenPanel(wxWindow*
     m_pgPropDoxyClassPrefix->SetValueFromString(data.GetClassPattern());
     m_pgPropDoxyFunctionPrefix->SetValueFromString(data.GetFunctionPattern());
     m_pgPropAutoGen->SetValue(data.IsAutoInsertAfterSlash2Stars());
+    m_pgPropCommentBlockPrefix->SetValueFromString(data.GetUseSlash2Stars() ? wxString("/**") : wxString("/*!"));
 }
 
 void EditorSettingsCommentsDoxygenPanel::Save(OptionsConfigPtr)
@@ -47,12 +48,14 @@ void EditorSettingsCommentsDoxygenPanel::Save(OptionsConfigPtr)
 
     wxString classPattern = m_pgPropDoxyClassPrefix->GetValue().GetString();
     wxString funcPattern = m_pgPropDoxyFunctionPrefix->GetValue().GetString();
+    wxString blockPrefix = m_pgPropCommentBlockPrefix->GetValue().GetString();
     classPattern.Replace("\\n", "\n");
     funcPattern.Replace("\\n", "\n");
 
     data.SetClassPattern(classPattern);
     data.SetFunctionPattern(funcPattern);
     data.SetAutoInsertAfterSlash2Stars(m_pgPropAutoGen->GetValue().GetBool());
+    data.SetUseSlash2Stars((blockPrefix == "/**"));
     EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &data);
 }
 

@@ -252,7 +252,7 @@ void ContextBase::AutoAddComment()
         startPos -= 3; // for "/**"
         if(startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
-            if(textTyped == "/**" && data.IsAutoInsertAfterSlash2Stars()) {
+            if(((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsertAfterSlash2Stars()) {
                 // Let the plugins/codelite check if they can provide a doxy comment
                 // for the current entry
                 clCodeCompletionEvent event(wxEVT_CC_GENERATE_DOXY_BLOCK);

@@ -59,11 +59,13 @@ public:
     const bool& GetContinueCppComment() const { return m_continueCppComment; }
     const wxString& GetFunctionPattern() const { return m_functionPattern; }
     bool GetUseShtroodel() const { return true; }
-    bool GetUseSlash2Stars() const { return true; }
+    bool GetUseSlash2Stars() const { return m_useSlash2Stars; }
     void SetAutoInsertAfterSlash2Stars(bool autoInsertAfterSlash2Stars)
     {
         this->m_autoInsertAfterSlash2Stars = autoInsertAfterSlash2Stars;
     }
     bool IsAutoInsertAfterSlash2Stars() const { return m_autoInsertAfterSlash2Stars; }
+    
+    wxString GetCommentBlockPrefix() const { return GetUseSlash2Stars() ? wxString("/**") : wxString("/*!"); }
 };
 #endif // __commentconfigdata__

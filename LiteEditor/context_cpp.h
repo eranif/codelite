@@ -155,7 +155,7 @@ private:
     bool DoGetSingatureRange(int line, int& start, int& end, LEditor* ctrl);
 
 public:
-    void DoMakeDoxyCommentString(DoxygenComment& dc);
+    void DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix);
 
 private:
     /**

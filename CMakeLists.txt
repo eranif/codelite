@@ -14,7 +14,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ## Optional command line arguments:                                                                                                                             #
 ##                                                                                                                                                              #
 ##      -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull // Build release, debug + optimisation or debug without optimisation (for others see the Cmake docs)         #
-##      -DPREFIX="<some-prefix>"                   // Installation prefix, default is set to /usr                                                               #
+##      -DCL_PREFIX="<some-prefix>"                // Installation prefix. The default on unix is /usr/                                                         #
 ##      -DENABLE_CLANG=1|0                         // Build codelite with clang code completion support?, default is 1 (with clang)                             #
 ##      -DWITH_WXC=1|0                             // Build wxCrafter (sources are not part of codelite distribution) default is 0                              #
 ##      -DCOPY_WX_LIBS=1|0                         // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0           #
@@ -28,6 +28,10 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DENABLE_LLDB=1|0                          // When set to 0 codelite won't try to build or link to the lldb debugger. Default is 1 on Unix platforms    #
 #################################################################################################################################################################
 
+if (NOT CMAKE_VERSION VERSION_LESS 3.1) # THIS MUST STAY AT THE TOP OF THE FILE
+    cmake_policy(VERSION 3.1) # Doing this prevents multiple, very verbose warnings about policy CMP0053 not being set
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 #############################################
@@ -39,13 +43,15 @@ if(APPLE)
   execute_process(COMMAND make type=release os=osx WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/PCH)
 endif()
 
-if (NOT CMAKE_VERSION VERSION_LESS 3.1)
-    cmake_policy(VERSION 3.1) # Doing this prevents multiple, very verbose warnings about policy CMP0053 not being set
+
+if ( PREFIX ) # Apparently cmake uses $PREFIX internally, so we shouldn't set it ourselves
+  message("**** Setting -DPREFIX is deprecated. Please use -DCL_PREFIX in future")
+  set ( CL_PREFIX ${PREFIX} )
+  unset ( PREFIX ) # Unfortunately this doesn't seem to work. Nor does ENV(PREFIX) or setting it to ""
 endif()
 
 ## Generate compile_commands.json file for code completion
 set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
-set( CL_PREFIX "/usr" )
 
 if (CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3
     set( CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
@@ -154,9 +160,8 @@ endif (UNIX OR MINGW)
 ########################################
 
 set( CL_INSTALL_LIBDIR "lib" )
-if ( PREFIX )
-  set ( CL_PREFIX ${PREFIX} )
-else()
+
+if ( NOT CL_PREFIX )
     # If the caller hasn't set his own destination, install to a multi-arch lib dir if applicable
     if (CMAKE_VERSION VERSION_GREATER 2.8.7 AND ( UNIX AND NOT APPLE ))
         if (CMAKE_VERSION VERSION_GREATER 3.0.0)
@@ -168,7 +173,9 @@ else()
         include (GNUInstallDirs) # defines CMAKE_INSTALL_LIBDIR to lib or lib64 or whatever. Available since cmake 2.8.8
         set( CL_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} )
     endif()
-endif(PREFIX)
+    
+    set( CL_PREFIX "/usr" )
+endif(NOT CL_PREFIX)
 
 ## Try to link-to or build lldb?
 if (UNIX)
@@ -497,8 +504,8 @@ if (USE_CLANG)
     message( "-- clang include path ${CLANG_INCLUDE} ")
     message( "-- clang binary ${CLANG_BINARY}" )
     message( "-- CL_SRC_ROOT is set to => " ${CL_SRC_ROOT} )
-    message( "-- PREFIX      is set to => " ${CL_PREFIX} )
-    message( "-- PREFIX/LIB_DIR is set to => " ${CL_PREFIX}/${CL_INSTALL_LIBDIR} )
+    message( "-- CL_PREFIX      is set to => " ${CL_PREFIX} )
+    message( "-- CL_PREFIX/LIB_DIR is set to => " ${CL_PREFIX}/${CL_INSTALL_LIBDIR} )
     message( "-- PLUGINS_DIR is set to => " ${PLUGINS_DIR} )
     message( "-- wx-config   is set to => " ${WX_TOOL} )
 else()
@@ -655,5 +662,3 @@ include(plugin)
 ## Scan for user plugins
 CL_SCAN_FOR_PLUGINS()
 
-# Don't unset this earlier: it would affect the plugins' CMakeLists.txts
-unset(PREFIX CACHE)

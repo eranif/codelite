@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 12,
+  "m_objCounter": 14,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCFD7DInitBitmapResources",
   "m_bitmapsFile": "AccelTableBaseDlg_liteeditor_bitmaps.cpp",
@@ -9,6 +9,8 @@
   "m_outputFileName": "",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -291,7 +293,7 @@
         }],
        "m_events": [],
        "m_children": [{
-         "m_type": 4473,
+         "m_type": 4469,
          "proportion": 1,
          "border": 5,
          "gbSpan": "1,1",
@@ -305,15 +307,15 @@
           }, {
            "type": "string",
            "m_label": "Size:",
-           "m_value": "500,300"
+           "m_value": "300,200"
           }, {
            "type": "string",
            "m_label": "Minimum Size:",
-           "m_value": "-1,-1"
+           "m_value": "300,200"
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_dataview"
+           "m_value": "m_dvListCtrl"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
@@ -354,14 +356,6 @@
            "type": "string",
            "m_label": "Style:",
            "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Generated Model Class Name",
-           "m_value": "KeyboardAcceleModel"
-          }, {
-           "type": "bool",
-           "m_label": "Container Item Has Columns",
-           "m_value": true
           }],
          "m_events": [{
            "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
@@ -382,11 +376,11 @@
            "m_properties": [{
              "type": "string",
              "m_label": "Name:",
-             "m_value": "Menu"
+             "m_value": "Description"
             }, {
              "type": "string",
              "m_label": "Width:",
-             "m_value": "300"
+             "m_value": "200"
             }, {
              "type": "choice",
              "m_label": "Column Type",

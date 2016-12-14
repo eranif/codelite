@@ -36,37 +36,7 @@
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
 #include <wx/tokenzr.h>
-
-//-------------------------------------------------------------------------------
-// Helper classes for sorting
-//-------------------------------------------------------------------------------
-struct AccelSorter {
-    bool operator()(const MenuItemData& rStart, const MenuItemData& rEnd)
-    {
-        return rEnd.accel.CmpNoCase(rStart.accel) < 0;
-    }
-};
-
-struct ActionSorter {
-    bool operator()(const MenuItemData& rStart, const MenuItemData& rEnd)
-    {
-        return rEnd.action.CmpNoCase(rStart.action) < 0;
-    }
-};
-
-struct AccelRSorter {
-    bool operator()(const MenuItemData& rStart, const MenuItemData& rEnd)
-    {
-        return rEnd.accel.CmpNoCase(rStart.accel) > 0;
-    }
-};
-
-struct ActionRSorter {
-    bool operator()(const MenuItemData& rStart, const MenuItemData& rEnd)
-    {
-        return rEnd.action.CmpNoCase(rStart.action) > 0;
-    }
-};
+#include "fileutils.h"
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
@@ -80,13 +50,12 @@ AccelTableDlg::AccelTableDlg(wxWindow* parent)
     imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("list-control/16/sort_up")));
 
     clKeyboardManager::Get()->GetAllAccelerators(m_accelMap);
-    PopulateTable();
+    PopulateTable("");
 
     // center the dialog
     CentreOnParent();
 
     m_textCtrlFilter->SetFocus();
-    m_dataview->SetIndent(16);
 
     SetName("AccelTableDlg");
     WindowAttrManager::Load(this);
@@ -94,53 +63,32 @@ AccelTableDlg::AccelTableDlg(wxWindow* parent)
 
 void AccelTableDlg::PopulateTable(const wxString& filter)
 {
-    m_dataviewModel->Clear();
+    m_dvListCtrl->DeleteAllItems();
 
-    std::map<wxString, wxDataViewItem> parents;
+    MenuItemDataMap_t filteredMap;
+    if(filter.IsEmpty()) {
+        filteredMap = m_accelMap;
+    } else {
+        for(MenuItemDataMap_t::iterator iter = m_accelMap.begin(); iter != m_accelMap.end(); ++iter) {
+            if(!IsMatchesFilter(filter, iter->second)) continue;
+            filteredMap.insert(std::make_pair(iter->first, iter->second));
+        }
+    }
+
+    if(filteredMap.empty()) return;
+
     // Add core entries
-    for(MenuItemDataMap_t::iterator iter = m_accelMap.begin(); iter != m_accelMap.end(); ++iter) {
-        if(!IsMatchesFilter(filter, iter->second)) continue;
-
-        MenuItemData& mid = iter->second;
-        wxString parentNodeKey, childKey;
-        if(mid.parentMenu.IsEmpty()) {
-            wxString strAction = mid.action;
-            strAction.Replace("::", "@");
-            parentNodeKey = strAction.BeforeLast('@');
-            childKey = strAction.AfterLast('@');
-        } else {
-            parentNodeKey = mid.parentMenu;
-            childKey = mid.action;
-
-            parentNodeKey.Replace("::", "@");
-            childKey.Replace("::", "@");
-        }
-
-        std::map<wxString, wxDataViewItem>::iterator parentIter = parents.find(parentNodeKey);
-        wxDataViewItem parentItem;
-        if(parentIter == parents.end()) {
-
-            // this parent does not yet exist, add it (this function also updates the cache)
-            parentItem = DoAddParentNode(parents, parentNodeKey);
-
-        } else {
-            parentItem = parentIter->second;
-        }
+    for(MenuItemDataMap_t::const_iterator iter = filteredMap.begin(); iter != filteredMap.end(); ++iter) {
+        const MenuItemData& mid = iter->second;
 
         wxVector<wxVariant> cols;
-        cols.push_back(childKey);
+        cols.push_back(mid.action.AfterLast(':'));
         cols.push_back(mid.accel);
-        m_dataviewModel->AppendItem(parentItem, cols, new AccelItemData(mid, false, childKey));
+        m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new AccelItemData(mid));
     }
-
-    if(!filter.IsEmpty()) {
-        std::map<wxString, wxDataViewItem>::iterator iter = parents.begin();
-        for(; iter != parents.end(); ++iter) {
-            if(m_dataviewModel->HasChildren(iter->second)) {
-                m_dataview->Expand(iter->second);
-            }
-        }
-    }
+    
+    m_dvListCtrl->GetColumn(0)->SetSortable(true);
+    m_dvListCtrl->GetColumn(1)->SetSortable(true);
 }
 
 void AccelTableDlg::OnButtonOk(wxCommandEvent& e)
@@ -158,7 +106,7 @@ void AccelTableDlg::OnButtonDefaults(wxCommandEvent& e)
     m_textCtrlFilter->ChangeValue(""); // Clear the filter
     clKeyboardManager::Get()->RestoreDefaults();
     clKeyboardManager::Get()->GetAllAccelerators(m_accelMap);
-    PopulateTable();
+    CallAfter(&AccelTableDlg::PopulateTable, wxString());
 }
 
 void AccelTableDlg::OnEditButton(wxCommandEvent& e)
@@ -169,11 +117,11 @@ void AccelTableDlg::OnEditButton(wxCommandEvent& e)
 
 void AccelTableDlg::DoItemActivated()
 {
-    wxDataViewItem sel = m_dataview->GetSelection();
+    wxDataViewItem sel = m_dvListCtrl->GetSelection();
     CHECK_ITEM_RET(sel);
 
     AccelItemData* itemData = DoGetItemData(sel);
-    if(itemData->m_isParent) return;
+    if(!itemData) return;
 
     // build the selected entry
     MenuItemData mid = itemData->m_menuItemData;
@@ -185,8 +133,11 @@ void AccelTableDlg::DoItemActivated()
                 return;
             }
             if(wxMessageBox(wxString::Format(_("'%s' is already assigned to: '%s'\nWould you like to replace it?"),
-                                mid.accel, who.action),
-                   _("CodeLite"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) != wxYES) {
+                                             mid.accel,
+                                             who.action),
+                            _("CodeLite"),
+                            wxYES_NO | wxCENTER | wxICON_QUESTION,
+                            this) != wxYES) {
                 return;
             }
 
@@ -195,15 +146,13 @@ void AccelTableDlg::DoItemActivated()
             if(oldItem.IsOk()) {
                 AccelItemData* cd = DoGetItemData(oldItem);
                 if(cd) {
-                    cd->m_menuItemData.accel.clear();
-                    wxVector<wxVariant> cols;
-                    cols.push_back(cd->m_menuItemData.action.AfterLast(':'));
-                    cols.push_back(wxString());
-                    m_dataviewModel->UpdateItem(oldItem, cols);
+                    cd->m_menuItemData.accel.Clear();
+                    int row = m_dvListCtrl->ItemToRow(oldItem);
+                    m_dvListCtrl->SetValue(wxString(), row, 1);
 
                     MenuItemDataMap_t::iterator iter = m_accelMap.find(cd->m_menuItemData.resourceID);
                     if(iter != m_accelMap.end()) {
-                        iter->second.accel = cd->m_menuItemData.accel;
+                        iter->second.accel.Clear(); // Clear the accelerator
                     }
                 }
             }
@@ -213,10 +162,9 @@ void AccelTableDlg::DoItemActivated()
         itemData->m_menuItemData = mid;
 
         // Update the UI
-        wxVector<wxVariant> cols;
-        cols.push_back(mid.action.AfterLast(':'));
-        cols.push_back(mid.accel);
-        m_dataviewModel->UpdateItem(sel, cols);
+        int row = m_dvListCtrl->ItemToRow(sel);
+        if(row == wxNOT_FOUND) return;
+        m_dvListCtrl->SetValue(mid.accel, row, 1);
 
         // and update the map
         MenuItemDataMap_t::iterator iter = m_accelMap.find(itemData->m_menuItemData.resourceID);
@@ -229,20 +177,18 @@ void AccelTableDlg::DoItemActivated()
 void AccelTableDlg::OnText(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    PopulateTable(m_textCtrlFilter->GetValue());
+    CallAfter(&AccelTableDlg::PopulateTable, m_textCtrlFilter->GetValue());
 }
 
 AccelTableDlg::~AccelTableDlg() {}
+
 void AccelTableDlg::OnDVItemActivated(wxDataViewEvent& event)
 {
     wxUnusedVar(event);
     DoItemActivated();
 }
 
-void AccelTableDlg::OnEditUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dataview->GetSelectedItemsCount() && !DoGetItemData(m_dataview->GetSelection())->m_isParent);
-}
+void AccelTableDlg::OnEditUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->GetSelectedItemsCount()); }
 
 bool AccelTableDlg::IsMatchesFilter(const wxString& filter, const MenuItemData& item)
 {
@@ -250,15 +196,7 @@ bool AccelTableDlg::IsMatchesFilter(const wxString& filter, const MenuItemData& 
     lcFilter.Trim().Trim(false);
     if(lcFilter.IsEmpty()) return true;
 
-    wxString label = item.parentMenu + " :: " + item.action;
-    wxString action = label.Lower();
-    wxString accel = item.accel.Lower();
-
-    wxArrayString filters = ::wxStringTokenize(lcFilter, " ", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < filters.GetCount(); ++i) {
-        if(!action.Contains(filters.Item(i)) && !accel.Contains(filters.Item(i))) return false;
-    }
-    return true;
+    return FileUtils::FuzzyMatch(filter, item.accel) || FileUtils::FuzzyMatch(filter, item.action);
 }
 
 bool AccelTableDlg::HasAccelerator(const wxString& accel, MenuItemData& who)
@@ -273,74 +211,19 @@ bool AccelTableDlg::HasAccelerator(const wxString& accel, MenuItemData& who)
     return false;
 }
 
-wxDataViewItem AccelTableDlg::DoAddParentNode(std::map<wxString, wxDataViewItem>& parentsMap, const wxString& parentKey)
-{
-    wxString currentKey;
-    wxArrayString parts = ::wxStringTokenize(parentKey, "@", wxTOKEN_STRTOK);
-    wxDataViewItem parent = wxDataViewItem(0); // starting from the top
-    for(size_t i = 0; i < parts.GetCount(); ++i) {
-        if(!currentKey.IsEmpty()) {
-            currentKey << "@";
-        }
-
-        currentKey << parts.Item(i);
-        if(parentsMap.count(currentKey)) {
-            parent = parentsMap.find(currentKey)->second;
-            continue;
-        }
-
-        wxDataViewItemArray children;
-        m_dataviewModel->GetChildren(parent, children);
-
-        bool parentExists = false;
-        for(size_t j = 0; j < children.GetCount(); ++j) {
-            AccelItemData* cd = DoGetItemData(children.Item(j));
-            if(cd->m_displayName == parts.Item(i)) {
-                // we got a match
-                parentExists = true;
-                break;
-            }
-        }
-
-        if(parentExists) continue;
-        // Add it
-        wxVector<wxVariant> cols;
-        cols.push_back(parts.Item(i));
-        cols.push_back(wxString(""));
-        parent = m_dataviewModel->AppendItem(parent, cols, new AccelItemData(parts.Item(i)));
-        parentsMap.insert(std::make_pair(currentKey, parent));
-    }
-    return parent;
-}
-
 AccelItemData* AccelTableDlg::DoGetItemData(const wxDataViewItem& item)
 {
-    return static_cast<AccelItemData*>(m_dataviewModel->GetClientObject(item));
+    return reinterpret_cast<AccelItemData*>(m_dvListCtrl->GetItemData(item));
 }
 
 wxDataViewItem AccelTableDlg::FindAccel(const MenuItemData& mid)
 {
-    wxDataViewItemArray children;
-    m_dataviewModel->GetChildren(wxDataViewItem(0), children);
-    std::vector<wxDataViewItemArray> q;
-    q.push_back(children);
-    while(!q.empty()) {
-        children = q.back();
-        q.pop_back();
-        for(size_t i = 0; i < children.GetCount(); ++i) {
-            wxDataViewItem item = children.Item(i);
-            AccelItemData* cd = DoGetItemData(item);
-            if(cd && cd->m_menuItemData.accel == mid.accel) {
-                return item;
-            }
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        if(!item.IsOk()) continue;
 
-            // if this item has more children, add them to the queue
-            if(m_dataviewModel->HasChildren(item)) {
-                wxDataViewItemArray c;
-                m_dataviewModel->GetChildren(item, c);
-                q.push_back(c);
-            }
-        }
+        AccelItemData* cd = DoGetItemData(item);
+        if(cd && cd->m_menuItemData.accel == mid.accel) return item;
     }
     return wxDataViewItem();
 }

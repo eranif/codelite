@@ -28,60 +28,62 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
     
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(bSizer5, 0, wxEXPAND, 5);
+    bSizer1->Add(bSizer5, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCtrlFilter = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlFilter = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
     m_textCtrlFilter->SetToolTip(_("Search for a keyboard shortcut either by its keyboard shortcut or by its description"));
     m_textCtrlFilter->SetFocus();
     m_textCtrlFilter->ShowSearchButton(true);
     m_textCtrlFilter->ShowCancelButton(false);
     
-    bSizer5->Add(m_textCtrlFilter, 1, wxALL, 5);
+    bSizer5->Add(m_textCtrlFilter, 1, wxALL, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(bSizer4, 1, wxEXPAND, 5);
+    bSizer1->Add(bSizer4, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(500,300), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,200)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
-    m_dataviewModel = new KeyboardAcceleModel;
-    m_dataviewModel->SetColCount( 2 );
-    m_dataview->AssociateModel(m_dataviewModel.get() );
+    bSizer4->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    bSizer4->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
+    m_dvListCtrl->AppendTextColumn(_("Description"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Keyboard Shortcut"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrl->SetMinSize(wxSize(300,200));
     
-    m_dataview->AppendTextColumn(_("Menu"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Keyboard Shortcut"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer4->Add(bSizer3, 0, 0, 5);
+    bSizer4->Add(bSizer3, 0, 0, WXC_FROM_DIP(5));
     
-    m_buttonEdit = new wxButton(this, wxID_ANY, _("&Edit..."), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonEdit = new wxButton(this, wxID_ANY, _("&Edit..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer3->Add(m_buttonEdit, 0, wxALL, 5);
+    bSizer3->Add(m_buttonEdit, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_buttonDefault = new wxButton(this, wxID_ANY, _("&Defaults"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonDefault = new wxButton(this, wxID_ANY, _("&Defaults"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer3->Add(m_buttonDefault, 0, wxALL, 5);
+    bSizer3->Add(m_buttonDefault, 0, wxALL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer6 = new wxStdDialogButtonSizer();
     
-    bSizer1->Add(m_stdBtnSizer6, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer1->Add(m_stdBtnSizer6, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_button8 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button8 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button8->SetDefault();
     m_stdBtnSizer6->AddButton(m_button8);
     
-    m_button10 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button10 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer6->AddButton(m_button10);
     m_stdBtnSizer6->Realize();
     
     SetName(wxT("AccelTableBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -91,7 +93,7 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
 #endif
     // Connect events
     m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AccelTableBaseDlg::OnText), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(AccelTableBaseDlg::OnDVItemActivated), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(AccelTableBaseDlg::OnDVItemActivated), NULL, this);
     m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AccelTableBaseDlg::OnEditButton), NULL, this);
     m_buttonEdit->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AccelTableBaseDlg::OnEditUI), NULL, this);
     m_buttonDefault->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AccelTableBaseDlg::OnButtonDefaults), NULL, this);
@@ -102,7 +104,7 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
 AccelTableBaseDlg::~AccelTableBaseDlg()
 {
     m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AccelTableBaseDlg::OnText), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(AccelTableBaseDlg::OnDVItemActivated), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(AccelTableBaseDlg::OnDVItemActivated), NULL, this);
     m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AccelTableBaseDlg::OnEditButton), NULL, this);
     m_buttonEdit->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AccelTableBaseDlg::OnEditUI), NULL, this);
     m_buttonDefault->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AccelTableBaseDlg::OnButtonDefaults), NULL, this);

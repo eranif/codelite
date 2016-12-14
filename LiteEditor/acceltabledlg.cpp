@@ -82,13 +82,20 @@ void AccelTableDlg::PopulateTable(const wxString& filter)
         const MenuItemData& mid = iter->second;
 
         wxVector<wxVariant> cols;
-        cols.push_back(mid.action.AfterLast(':'));
-        cols.push_back(mid.accel);
+        wxString parentMenu = mid.parentMenu.BeforeFirst(':');
+        if(parentMenu.IsEmpty()) {
+            parentMenu = "<Global>";
+        }
+
+        cols.push_back(parentMenu);                // Parent menu
+        cols.push_back(mid.action.AfterLast(':')); // Action description
+        cols.push_back(mid.accel);                 // shortcut
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new AccelItemData(mid));
     }
-    
+
     m_dvListCtrl->GetColumn(0)->SetSortable(true);
     m_dvListCtrl->GetColumn(1)->SetSortable(true);
+    m_dvListCtrl->GetColumn(2)->SetSortable(true);
 }
 
 void AccelTableDlg::OnButtonOk(wxCommandEvent& e)
@@ -133,11 +140,8 @@ void AccelTableDlg::DoItemActivated()
                 return;
             }
             if(wxMessageBox(wxString::Format(_("'%s' is already assigned to: '%s'\nWould you like to replace it?"),
-                                             mid.accel,
-                                             who.action),
-                            _("CodeLite"),
-                            wxYES_NO | wxCENTER | wxICON_QUESTION,
-                            this) != wxYES) {
+                                mid.accel, who.action),
+                   _("CodeLite"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) != wxYES) {
                 return;
             }
 
@@ -196,7 +200,11 @@ bool AccelTableDlg::IsMatchesFilter(const wxString& filter, const MenuItemData& 
     lcFilter.Trim().Trim(false);
     if(lcFilter.IsEmpty()) return true;
 
-    return FileUtils::FuzzyMatch(filter, item.accel) || FileUtils::FuzzyMatch(filter, item.action);
+    wxString parentMenu = item.parentMenu;
+
+    wxString haystack;
+    haystack << parentMenu << " " << item.accel << " " << item.action;
+    return FileUtils::FuzzyMatch(filter, haystack);
 }
 
 bool AccelTableDlg::HasAccelerator(const wxString& accel, MenuItemData& who)

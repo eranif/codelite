@@ -39,6 +39,10 @@ if(APPLE)
   execute_process(COMMAND make type=release os=osx WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/PCH)
 endif()
 
+if (NOT CMAKE_VERSION VERSION_LESS 3.1)
+    cmake_policy(VERSION 3.1) # Doing this prevents multiple, very verbose warnings about policy CMP0053 not being set
+endif()
+
 ## Generate compile_commands.json file for code completion
 set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
 set( CL_PREFIX "/usr" )

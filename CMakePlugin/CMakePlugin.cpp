@@ -574,8 +574,12 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
         generator.Generate(p);
     }
 
-    const wxString& args = buildConf->GetBuildSystemArguments();
+    wxString args = buildConf->GetBuildSystemArguments();
+    
+    // Expand CodeLite macros
+    args = MacroManager::Instance()->Expand(args, m_mgr, p->GetName(), buildConf->GetName());
     wxString cmakeExe = GetCMake()->GetPath().GetFullPath();
+    
     // Did the user provide a generator to use?
     bool hasGeneratorInArgs = (args.Find(" -G") != wxNOT_FOUND);
 

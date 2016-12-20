@@ -1990,6 +1990,7 @@ void ContextCpp::DoFormatEditor(LEditor* editor)
 {
     clSourceFormatEvent formatEvent(wxEVT_FORMAT_STRING);
     formatEvent.SetInputString(editor->GetText());
+    formatEvent.SetFileName(editor->GetFileName().GetFullPath());
     EventNotifier::Get()->ProcessEvent(formatEvent);
     if(!formatEvent.GetFormattedString().IsEmpty()) {
         editor->SetText(formatEvent.GetFormattedString());

@@ -69,8 +69,9 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Wizards"));
-    info.SetDescription(_("Wizards Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets "
-                          "Wizard, new Plugin Wizard"));
+    info.SetDescription(
+        _("Wizards Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets "
+          "Wizard, new Plugin Wizard"));
     info.SetVersion(wxT("v1.1"));
     return &info;
 }
@@ -107,7 +108,7 @@ static void ExpandVariables(wxString& content, const NewWxProjectInfo& info)
     content.Replace(wxT("$(MWindowsFlag)"), info.GetFlags() & wxWidgetsSetMWindows ? wxT("-mwindows") : wxEmptyString);
     content.Replace(wxT("$(PCHFlag)"), info.GetFlags() & wxWidgetsPCH ? wxT("WX_PRECOMP") : wxEmptyString);
     content.Replace(wxT("$(PCHCmpOptions)"),
-                    info.GetFlags() & wxWidgetsPCH ? wxT("-Winvalid-pch;-include wx_pch.h") : wxEmptyString);
+        info.GetFlags() & wxWidgetsPCH ? wxT("-Winvalid-pch;-include wx_pch.h") : wxEmptyString);
     content.Replace(wxT("$(PCHFileName)"), info.GetFlags() & wxWidgetsPCH ? wxT("wx_pch.h") : wxEmptyString);
 
     if(info.GetFlags() & wxWidgetsWinRes) content.Replace(wxT("$(WinResFile)"), wxT("<File Name=\"resources.rc\" />"));
@@ -199,50 +200,26 @@ clToolBar* WizardsPlugin::CreateToolBar(wxWindow* parent)
 //
 // Connect the events to us
 #if !USE_AUI_TOOLBAR
-    m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"),
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(WizardsPlugin::OnGizmos),
-                                NULL,
-                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(WizardsPlugin::OnGizmos), NULL, (wxEvtHandler*)this);
 #endif
-    m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"),
-                                wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI),
-                                NULL,
-                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN,
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(WizardsPlugin::OnNewPlugin),
-                                NULL,
-                                (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN,
-                                wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(WizardsPlugin::OnNewPluginUI),
-                                NULL,
-                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(WizardsPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(WizardsPlugin::OnNewPluginUI), NULL, (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS,
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(WizardsPlugin::OnNewClass),
-                                NULL,
-                                (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS,
-                                wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI),
-                                NULL,
-                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(WizardsPlugin::OnNewClass), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI), NULL, (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT,
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(WizardsPlugin::OnNewWxProject),
-                                NULL,
-                                (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT,
-                                wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(WizardsPlugin::OnNewWxProjectUI),
-                                NULL,
-                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(WizardsPlugin::OnNewWxProject), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(WizardsPlugin::OnNewWxProjectUI), NULL, (wxEvtHandler*)this);
     return tb;
 }
 
@@ -279,16 +256,10 @@ void WizardsPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void WizardsPlugin::UnPlug()
 {
-    m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"),
-                                   wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(WizardsPlugin::OnGizmos),
-                                   NULL,
-                                   (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"),
-                                   wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI),
-                                   NULL,
-                                   (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(WizardsPlugin::OnGizmos), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,
+        wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
 }
 
 void WizardsPlugin::OnNewPlugin(wxCommandEvent& e)
@@ -382,6 +353,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         // Notify the formatter plugin to format the plugin source files
         clSourceFormatEvent evtFormat(wxEVT_FORMAT_STRING);
         evtFormat.SetInputString(content);
+        evtFormat.SetFileName(srcFile.GetFullPath());
         EventNotifier::Get()->ProcessEvent(evtFormat);
         content = evtFormat.GetFormattedString();
 

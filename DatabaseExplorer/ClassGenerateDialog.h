@@ -50,7 +50,7 @@ class ClassGenerateDialog : public _ClassGenerateDialog
 
 public:
     /*! \brief Defautl constructor.  */
-    ClassGenerateDialog(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pItems, IManager* pMgr);
+    ClassGenerateDialog(wxWindow* parent, IDbAdapter* dbAdapter, xsSerializable* pItems, IManager* pMgr);
 
     /*! \brief Return string with type name on UNIVERSAL TYPE base */
     wxString GetTypeName(IDbType::UNIVERSAL_TYPE type);
@@ -67,14 +67,16 @@ public:
     /*! \brief Return string with type name in add function format on UNIVERSAL TYPE base */
     wxString GetAddParamFunction(IDbType::UNIVERSAL_TYPE type);
 
-
-    /*! \brief Function for generating classes for selected table. It call GenerateFile function two times. Fist time for generate .h, second time for generate .cpp file. */
+    /*! \brief Function for generating classes for selected table. It call GenerateFile function two times. Fist time
+     * for generate .h, second time for generate .cpp file. */
     bool GenerateClass(Table* pTab, const wxString& path);
 
     /*! \brief Function for generating file for selected table.  */
-    bool GenerateFile(Table* pTab,wxTextFile& htmpFile, wxString& hFile, const wxString& classItemName,const wxString& classItemDef, const wxString& classColName, const wxString& classTableName, const wxString& classUtilName);
+    bool GenerateFile(Table* pTab, wxTextFile& htmpFile, wxString& hFile, const wxString& classItemName,
+        const wxString& classItemDef, const wxString& classColName, const wxString& classTableName,
+        const wxString& classUtilName);
     /*! \brief Format text file */
-    void FormatFile(wxString& content);
+    void FormatFile(wxString& content, const wxFileName& filename);
 
     virtual void OnCancelClick(wxCommandEvent& event);
 

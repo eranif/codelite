@@ -8,7 +8,7 @@
     <key>CFBundleExecutable</key>
     <string>codelite</string>
     <key>CFBundleInfoDictionaryVersion</key>
-    <string>9.3</string>
+    <string>10.0.0</string>
     <key>CFBundleName</key>
     <string>CodeLite</string>
     <key>CFBundleIconFile</key>
@@ -16,9 +16,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleVersion</key>
-    <string>CodeLite IDE version 9.3</string>
+    <string>CodeLite IDE version 10.0.0</string>
     <key>CFBundleShortVersionString</key>
-    <string>CodeLite IDE version 9.3</string>
+    <string>CodeLite IDE version 10.0.0</string>
     <key>CSResourcesFileMapped</key>
     <true/>
     <key>CFBundleDocumentTypes</key>

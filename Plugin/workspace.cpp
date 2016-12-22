@@ -618,12 +618,19 @@ bool clCxxWorkspace::SaveXmlFile()
     if(m_doc.GetRoot()->GetAttribute(wxT("SWTLW")) != wxEmptyString) {
         m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
     }
+    
     if(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
         m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
         SyncFromLocalWorkspaceSTParserPaths();
         SyncFromLocalWorkspaceSTParserMacros();
     }
 
+    // Set the workspace XML version
+    wxString version;
+    if(!m_doc.GetRoot()->GetAttribute("Version", &version)) {
+        m_doc.GetRoot()->AddAttribute("Version", WORKSPACE_XML_VERSION);
+    }
+    
     bool ok = m_doc.Save(m_fileName.GetFullPath());
     SetWorkspaceLastModifiedTime(GetFileLastModifiedTime());
     EventNotifier::Get()->PostFileSavedEvent(m_fileName.GetFullPath());
@@ -1393,4 +1400,10 @@ void clCxxWorkspace::DoVisitWorkspaceFolders(wxXmlNode* parent, const wxString& 
         }
         child = child->GetNext();
     }
+}
+
+wxString clCxxWorkspace::GetVersion() const
+{
+    if(!m_doc.IsOk() || m_doc.GetRoot()) return wxEmptyString;
+    return m_doc.GetRoot()->GetAttribute("Version");
 }

@@ -233,7 +233,12 @@ public:
      * If no workspace is associated, then the global workspace is returned
      */
     clCxxWorkspace* GetWorkspace();
-
+    
+    /**
+     * @brief return the XML version
+     */
+    wxString GetVersion() const;
+    
     /**
      * @brief clear the include path cache
      */

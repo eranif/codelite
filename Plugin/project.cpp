@@ -90,7 +90,8 @@ bool Project::Create(const wxString& name, const wxString& description, const wx
     wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Project"));
     m_doc.SetRoot(root);
     m_doc.GetRoot()->AddProperty(wxT("Name"), name);
-
+    m_doc.GetRoot()->AddAttribute("Version", WORKSPACE_XML_VERSION);
+    
     wxXmlNode* descNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Description"));
     XmlUtils::SetNodeContent(descNode, description);
     m_doc.GetRoot()->AddChild(descNode);
@@ -390,6 +391,13 @@ bool Project::SaveXmlFile()
 {
     wxString projectXml;
     wxStringOutputStream sos(&projectXml);
+    
+    // Set the workspace XML version
+    wxString version;
+    if(!m_doc.GetRoot()->GetAttribute("Version", &version)) {
+        m_doc.GetRoot()->AddAttribute("Version", WORKSPACE_XML_VERSION);
+    }
+    
     bool ok = m_doc.Save(sos);
 
     wxFFile file(m_fileName.GetFullPath(), wxT("w+b"));
@@ -582,7 +590,8 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 
     // update the 'Name' property
     XmlUtils::UpdateProperty(doc.GetRoot(), wxT("Name"), new_name);
-
+    XmlUtils::UpdateProperty(doc.GetRoot(), "Version", WORKSPACE_XML_VERSION);
+    
     // set description
     wxXmlNode* descNode(NULL);
 
@@ -1947,3 +1956,9 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
 }
 
 void Project::ClearIncludePathCache() { m_cachedIncludePaths.clear(); }
+
+wxString Project::GetVersion() const
+{
+    if(!m_doc.IsOk() || m_doc.GetRoot()) return wxEmptyString;
+    return m_doc.GetRoot()->GetAttribute("Version");
+}

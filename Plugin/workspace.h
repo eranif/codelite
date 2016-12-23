@@ -79,12 +79,12 @@ public:
 
     /// Destructor
     virtual ~clCxxWorkspace();
-
-private:
     /**
      * @brief return the XML version of this workspace
      */
     wxString GetVersion() const;
+
+private:
     
     void DoUpdateBuildMatrix();
     /**

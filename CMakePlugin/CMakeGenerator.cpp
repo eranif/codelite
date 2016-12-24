@@ -280,8 +280,8 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     wxArrayString cppSources, cSources, resourceFiles;
     wxString workspacePath = clCxxWorkspaceST::Get()->GetFileName().GetPath();
     std::for_each(vfiles.begin(), vfiles.end(), [&](const Project::FileInfo& fi) {
+        if(fi.IsExcludeFromConfiguration(configName)) return;
         wxFileName fn(fi.GetFilename());
-
         // Make it relative to the workspace
         fn.MakeRelativeTo(workspacePath);
 
@@ -635,11 +635,11 @@ void CMakeGenerator::ExpandOptions(
             wxString varname;
             varname << "CL_VAR_" << (++m_counter);
             // Create a CMake command that executes this command
-            content << indent << "execute_process(COMMAND \n" 
-                    << indent << "    " << cmpOption << "\n"
-                    << indent << "    " << "OUTPUT_VARIABLE\n"
-                    << indent << "    " << "CL_TMP_VAR\n"
-                    << indent << "    " << "OUTPUT_STRIP_TRAILING_WHITESPACE)\n";
+            content << indent << "execute_process(COMMAND \n" << indent << "    " << cmpOption << "\n" << indent
+                    << "    "
+                    << "OUTPUT_VARIABLE\n" << indent << "    "
+                    << "CL_TMP_VAR\n" << indent << "    "
+                    << "OUTPUT_STRIP_TRAILING_WHITESPACE)\n";
             content << indent << "string(STRIP ${CL_TMP_VAR} " << varname << ")\n";
             arrVars.Add(varname);
         } else {

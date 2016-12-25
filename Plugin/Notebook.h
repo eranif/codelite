@@ -135,12 +135,12 @@ protected:
      * @param offset reset the 0 based index from m_tabs
      */
     void UpdateVisibleTabs();
-    
+
     /**
      * @brief calculate and set the tab ctrl size
      */
     void DoSetBestSize();
-    
+
     clTabInfo::Ptr_t GetTabInfo(size_t index);
     clTabInfo::Ptr_t GetTabInfo(size_t index) const;
     clTabInfo::Ptr_t GetTabInfo(wxWindow* page);
@@ -150,7 +150,8 @@ protected:
 
     void DoDeletePage(size_t page) { RemovePage(page, true, true); }
     void DoShowTabList();
-
+    void DoUpdateXCoordFromPage(wxWindow* page, int diff);
+    
 public:
     clTabCtrl(wxWindow* notebook, size_t style);
     virtual ~clTabCtrl();
@@ -255,12 +256,12 @@ public:
      * Constructor
      */
     Notebook(wxWindow* parent,
-        wxWindowID id = wxID_ANY,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize,
-        long style = 0,
-        const wxString& name = wxEmptyString);
-    
+             wxWindowID id = wxID_ANY,
+             const wxPoint& pos = wxDefaultPosition,
+             const wxSize& size = wxDefaultSize,
+             long style = 0,
+             const wxString& name = wxEmptyString);
+
     /**
      * @brief update the notebook art class and refresh
      */

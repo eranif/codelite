@@ -2160,7 +2160,7 @@ void clMainFrame::OnFileReload(wxCommandEvent& event)
         if(editor->GetModify()) {
             // Ask user if he really wants to lose all changes
             wxString msg;
-            msg << editor->GetFileName().GetFullName() << _(" has been modified, reload file anyways?");
+            msg << editor->GetFileName().GetFullName() << _(" has been modified, reload file anyway?");
             wxRichMessageDialog dlg(::wxGetTopLevelParent(editor), msg, _("Reload File"),
                 wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxICON_WARNING);
             if(dlg.ShowModal() != wxID_YES) {

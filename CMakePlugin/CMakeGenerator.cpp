@@ -276,11 +276,16 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     // we need to fix this
     Project::FileInfoVector_t vfiles;
     project->GetFilesMetadata(vfiles);
-
+    
+    
+    // Get the project build configuration and compiler
+    BuildConfigPtr buildConf = project->GetBuildConfiguration(configName);
+    if(!buildConf) return "";
+    
     wxArrayString cppSources, cSources, resourceFiles;
     wxString workspacePath = clCxxWorkspaceST::Get()->GetFileName().GetPath();
     std::for_each(vfiles.begin(), vfiles.end(), [&](const Project::FileInfo& fi) {
-        if(fi.IsExcludeFromConfiguration(configName)) return;
+        if(fi.IsExcludeFromConfiguration(buildConf->GetName())) return;
         wxFileName fn(fi.GetFilename());
         // Make it relative to the workspace
         fn.MakeRelativeTo(workspacePath);
@@ -300,9 +305,6 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
 
     // Get project directory
     wxString projectDir = project->GetFileName().GetPath();
-
-    // Get the project build configuration and compiler
-    BuildConfigPtr buildConf = project->GetBuildConfiguration(configName);
 
     // Sanity
     if(!buildConf || buildConf->IsCustomBuild()) {

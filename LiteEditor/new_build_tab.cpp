@@ -553,8 +553,11 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
 
         m_view->SetEditable(true);
         buildLine.Trim();
+        wxString modText;
+        ::clStripTerminalColouring(buildLine, modText);
+        
         int curline = m_view->GetLineCount() - 1;
-        m_view->AppendText(buildLine + "\n");
+        m_view->AppendText(modText + "\n");
 
         // get the newly added line width
         int endPosition = m_view->GetLineEndPosition(curline); // get character position from begin

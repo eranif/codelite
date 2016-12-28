@@ -110,6 +110,7 @@ public:
 
     enum {
         kSearchForward = (1 << 0),
+        kDisableDisplayErrorMessages = (1 << 1),
     };
 
 private:
@@ -122,7 +123,9 @@ private:
 protected:
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
     virtual void OnFindKeyDown(wxKeyEvent& event);
-    void DoSearch(size_t searchFlags);
+    bool DoSearch(size_t searchFlags);
+    void DoSearchCB(size_t searchFlags) { DoSearch(searchFlags); }
+    void DoReplace();
     void DoSetCaretAtEndOfText();
     void DoFixRegexParen(wxString& findwhat);
     wxString DoGetSelectedText();

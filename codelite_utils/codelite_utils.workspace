@@ -50,13 +50,13 @@
       <Project Name="build_all" ConfigName="Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Release"/>
       <Project Name="codelite_echo" ConfigName="Release"/>
-      <Project Name="codelite_indexer" ConfigName="Release_Win"/>
+      <Project Name="codelite_indexer" ConfigName="Release"/>
       <Project Name="codelite_launcher" ConfigName="Release"/>
       <Project Name="codelite_make" ConfigName="Release"/>
       <Project Name="codelite_terminal" ConfigName="Release"/>
       <Project Name="codelitegcc" ConfigName="Release"/>
       <Project Name="le_exec" ConfigName="Release"/>
-      <Project Name="makedir" ConfigName="ReleaseUnicode"/>
+      <Project Name="makedir" ConfigName="Release"/>
       <Project Name="wx-config" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

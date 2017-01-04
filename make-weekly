@@ -5,12 +5,8 @@ os_name=`uname -s`
 no_upload=$1
 is_32_bit_windows=`uname -a|grep i686|wc -l`
 
-codelite_make=C:\Program\ Files/CodeLite/codelite-make.exe
-codelite_config="Win_x64_Release"
 if [ "${is_32_bit_windows}" = "1" ]; then
     echo "Windows 32 bit detected"
-    codelite_make=C:\Program\ Files\ \(x86\)/CodeLite/codelite-make.exe
-    codelite_config="Win_x86_Release"
 fi
 
 if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; then
@@ -40,7 +36,7 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
 
         cmd /c "C:\Program Files (x86)\CodeLite\codelite-make.exe"  \
             --workspace=LiteEditor.workspace                        \
-            --project=CodeLiteIDE --config=${codelite_config} --execute
+            --project=CodeLiteIDE --config=Win_x86_Release --execute
         
         # Build wxCrafter
         echo Building wxCrafter for Windows...
@@ -49,7 +45,7 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
         # Initiate the build
         cmd /c "C:\Program Files (x86)\CodeLite\codelite-make.exe"  \
             --workspace=wxcrafter.workspace                         \
-            --project=wxcrafter --config=${codelite_config} --execute
+            --project=wxcrafter --config=Win_x64_Release --execute
         
         # Build wxCrafter
         echo Building Utils for Windows...
@@ -58,12 +54,10 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
         # Initiate the build
         cmd /c "C:\Program Files (x86)\CodeLite\codelite-make.exe"  \
             --workspace=codelite_utils.workspace                    \
-            --project=build_all --config=${codelite_config} --execute
-            
+            --project=build_all --config=Win_x64_Release --execute
         # Package
         cd /cygdrive/c/src/codelite/InnoSetup
         rm -f output/*.exe
-    
         # Compile
         iscc codelite_mingw.iss
     else
@@ -73,7 +67,7 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
 
         cmd /c "C:\Program Files/CodeLite/codelite-make.exe"        \
             --workspace=LiteEditor.workspace                        \
-            --project=CodeLiteIDE --config=${codelite_config} --execute
+            --project=CodeLiteIDE --config=Win_x64_Release --execute
         
         # Build wxCrafter
         echo Building wxCrafter for Windows...
@@ -82,7 +76,7 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
         # Initiate the build
         cmd /c "C:\Program Files/CodeLite/codelite-make.exe"        \
             --workspace=wxcrafter.workspace                         \
-            --project=wxcrafter --config=${codelite_config} --execute
+            --project=wxcrafter --config=Win_x64_Release --execute
         
         # Build wxCrafter
         echo Building Utils for Windows...
@@ -91,7 +85,7 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
         # Initiate the build
         cmd /c "C:\Program Files/CodeLite/codelite-make.exe"                                     \
             --workspace=codelite_utils.workspace                    \
-            --project=build_all --config=${codelite_config} --execute
+            --project=build_all --config=Win_x64_Release --execute
             
         # Package
         cd /cygdrive/c/src/codelite/InnoSetup

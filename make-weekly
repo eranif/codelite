@@ -103,9 +103,12 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
         output_file_7z=${output_file_7z}.7z
 
         # Zip it
+        echo `pwd`
+        echo /usr/bin/7za a ${output_file_7z} ${output_file}
         /usr/bin/7za a ${output_file_7z} ${output_file}
 
         # Echo the sha1sum
+        echo /usr/bin/sha1sum ${output_file_7z} ${output_file_7z}
         /usr/bin/sha1sum ${output_file_7z} ${output_file_7z}
         
         scp ${output_file_7z} root@codelite.org:/var/www/html/downloads/codelite/wip

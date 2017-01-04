@@ -50,7 +50,7 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
         # Initiate the build
         cmd /c "C:\Program Files (x86)\CodeLite\codelite-make.exe"  \
             --workspace=wxcrafter.workspace                         \
-            --project=wxcrafter --config=${codelite_config} --execute
+            --project=wxcrafter --config=Release --execute
         
         # Build wxCrafter
         echo Building Utils for Windows...
@@ -60,6 +60,13 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
         cmd /c "C:\Program Files (x86)\CodeLite\codelite-make.exe"  \
             --workspace=codelite_utils.workspace                    \
             --project=build_all --config=${codelite_config} --execute
+            
+        # Package
+        cd /cygdrive/c/src/codelite/InnoSetup
+        rm -f output/*.exe
+    
+        # Compile
+        iscc codelite_mingw.iss
     else
         export PATH=/cygdrive/c/Program\ Files/CodeLite:/cygdrive/d/software/Inno\ Setup\ 5/:$PATH
         export WXCFG=gcc_dll/mswu
@@ -86,14 +93,14 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
         cmd /c "C:\Program Files/CodeLite/codelite-make.exe"                                     \
             --workspace=codelite_utils.workspace                    \
             --project=build_all --config=${codelite_config} --execute
+            
+        # Package
+        cd /cygdrive/c/src/codelite/InnoSetup
+        rm -f output/*.exe
+    
+        # Compile
+        iscc codelite64_mingw.iss
     fi
-    
-    # Package
-    cd /cygdrive/c/src/codelite/InnoSetup
-    rm -f output/*.exe
-    
-    # Compile
-    iscc codelite64_mingw.iss
     
     # upload the binaries
     if [ "${no_upload}" != "--no-upload" ]; then

@@ -49,7 +49,7 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
         # Initiate the build
         cmd /c "C:\Program Files (x86)\CodeLite\codelite-make.exe"  \
             --workspace=wxcrafter.workspace                         \
-            --project=wxcrafter --config=Release --execute
+            --project=wxcrafter --config=${codelite_config} --execute
         
         # Build wxCrafter
         echo Building Utils for Windows...

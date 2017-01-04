@@ -20,10 +20,9 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
     # Update our source tree
     echo "Pulling CodeLite changes..."
     git pull --rebase 
-    #if [ $? -ne 0 ]; then
-    #    exit $?
-    #fi
-    #
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
     
     echo "Pulling wxCrafter changes..."
     cd wxcrafter

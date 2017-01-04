@@ -49,7 +49,8 @@ protected:
     std::list<int> m_indicators;
     bool m_searchInProgress;
 
-    struct History {
+    struct History
+    {
         wxString title;
         SearchData searchData;
         wxString text;
@@ -88,6 +89,7 @@ protected:
     SearchData* GetSearchData();
     void DoOpenSearchResult(const SearchResult& result, wxStyledTextCtrl* sci, int markerLine);
     void OnThemeChanged(wxCommandEvent& e);
+    void OnWorkspaceClosed(wxCommandEvent& event);
     DECLARE_EVENT_TABLE()
 
 public:

@@ -290,6 +290,12 @@ public:
     bool SaveLayoutAndSession();
 
     /**
+     * @brief save settings (such as whether to show the splashscreen) which should be saved
+     * regardless of whether SaveLayoutAndSession is called
+     */
+    void SaveGeneralSettings();
+
+    /**
      * @brief create the recently-opened-workspaces menu
      */
     void CreateRecentlyOpenedWorkspacesMenu();

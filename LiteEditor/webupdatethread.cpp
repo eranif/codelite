@@ -97,9 +97,9 @@ void WebUpdateJob::Process(wxThread* thread)
     wxFileName fn(wxT("/tmp/codelite-packages.json"));
     wxString command;
 #ifdef __WXMAC__
-    command << wxT("curl http://codelite.org/packages.json  --output ") << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
+    command << wxT("curl http://www.codelite.org/packages.json  --output ") << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
 #else
-    command << "wget http://codelite.org/packages.json --output-file=/dev/null -O " << fn.GetFullPath()
+    command << "wget http://www.codelite.org/packages.json --output-file=/dev/null -O " << fn.GetFullPath()
             << wxT(" > /dev/null 2>&1");
 #endif
     {
@@ -123,7 +123,7 @@ void WebUpdateJob::Process(wxThread* thread)
     }
 
 #else
-    wxURL url(wxT("http://codelite.org/packages.json"));
+    wxURL url(wxT("http://www.codelite.org/packages.json"));
     if(url.GetError() == wxURL_NOERR) {
 
         wxInputStream* in_stream = url.GetInputStream();

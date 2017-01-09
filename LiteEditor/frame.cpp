@@ -2032,6 +2032,7 @@ void clMainFrame::OnClose(wxCloseEvent& event)
             return;
         }
     }
+    SaveGeneralSettings();
 
     event.Skip();
 
@@ -4902,6 +4903,11 @@ bool clMainFrame::SaveLayoutAndSession()
     EditorConfigST::Get()->SetInteger(wxT("MainBook"), GetMainBook()->GetBookStyle());
     EditorConfigST::Get()->Save();
     return true;
+}
+
+void clMainFrame::SaveGeneralSettings()
+{
+    EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
 }
 
 void clMainFrame::OnNextFiFMatch(wxCommandEvent& e)

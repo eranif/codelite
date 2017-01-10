@@ -372,6 +372,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(
         });
 
         // Append the macros from the build settings
+        // TODO :: add here the -U options from the options. Do this for both c and c++
         wxArrayString macros = proj->GetPreProcessors();
         std::for_each(macros.begin(), macros.end(), [&](const wxString& macro) {
             cppCompileArgs.Add(wxString::Format(wxT("-D%s"), macro.c_str()));

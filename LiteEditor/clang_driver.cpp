@@ -378,6 +378,14 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(
             cppCompileArgs.Add(wxString::Format(wxT("-D%s"), macro.c_str()));
             cCompileArgs.Add(wxString::Format(wxT("-D%s"), macro.c_str()));
         });
+
+        wxArrayString cUndefMacros = proj->GetCUnPreProcessors();
+        std::for_each(cUndefMacros.begin(), cUndefMacros.end(),
+            [&](const wxString& macro) { cCompileArgs.Add(wxString::Format(wxT("-U%s"), macro.c_str())); });
+
+        wxArrayString cxxUndefMacros = proj->GetCxxUnPreProcessors();
+        std::for_each(cxxUndefMacros.begin(), cxxUndefMacros.end(),
+            [&](const wxString& macro) { cppCompileArgs.Add(wxString::Format(wxT("-U%s"), macro.c_str())); });
     }
 
     BuildConfigPtr buildConf = ManagerST::Get()->GetCurrentBuildConf();

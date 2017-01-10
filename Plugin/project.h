@@ -184,6 +184,7 @@ private:
     void DoUpdateProjectSettings();
     wxArrayString DoGetCompilerOptions(
         bool cxxOptions, bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
+    wxArrayString DoGetUnPreProcessors(bool clearCache, const wxString& cmpOptions);
 
 public:
     // -----------------------------------------
@@ -233,12 +234,12 @@ public:
      * If no workspace is associated, then the global workspace is returned
      */
     clCxxWorkspace* GetWorkspace();
-    
+
     /**
      * @brief return the XML version
      */
     wxString GetVersion() const;
-    
+
     /**
      * @brief clear the include path cache
      */
@@ -604,6 +605,18 @@ public:
      * that matches the current workspace configuration
      */
     wxArrayString GetPreProcessors(bool clearCache = false);
+
+    /**
+     * @brief return the C++ Undefined Pre preprocessors
+     * These are the defined by -U__SOMETHING__
+     */
+    wxArrayString GetCxxUnPreProcessors(bool clearCache = false);
+
+    /**
+     * @brief return the C Undefined Pre preprocessors
+     * These are the defined by -U__SOMETHING__
+     */
+    wxArrayString GetCUnPreProcessors(bool clearCache = false);
 
     /**
      * @brief return the compiler. Optionally ommit the defines/include paths

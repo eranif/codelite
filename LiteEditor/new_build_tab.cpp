@@ -55,6 +55,7 @@
 #include "optionsconfig.h"
 #include "editor_config.h"
 #include "clSingleChoiceDialog.h"
+#include "clStrings.h"
 
 #define IS_VALID_LINE(lineNumber) ((lineNumber >= 0 && lineNumber < m_view->GetLineCount()))
 #ifdef __WXMSW__
@@ -265,7 +266,7 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
     }
 
     if(m_showMe == BuildTabSettingsData::ShowOnStart) {
-        ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN, true);
+        ManagerST::Get()->ShowOutputPane(BUILD_WIN, true);
 
     } else if(m_showMe == BuildTabSettingsData::ShowOnEnd && m_autoHide &&
         ManagerST::Get()->IsPaneVisible(opane->GetCaption()) && win == this) {
@@ -626,7 +627,7 @@ void NewBuildTab::DoToggleWindow()
         ManagerST::Get()->HidePane(clMainFrame::Get()->GetOutputPane()->GetCaption());
 
     } else if(m_showMe == BuildTabSettingsData::ShowOnEnd && !m_autoHide) {
-        ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
+        ManagerST::Get()->ShowOutputPane(BUILD_WIN);
     }
 }
 

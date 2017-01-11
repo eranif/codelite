@@ -50,6 +50,7 @@
 #include "optionsconfig.h"
 #include "editor_config.h"
 #include "codelite_events.h"
+#include "clStrings.h"
 
 BEGIN_EVENT_TABLE(FindResultsTab, OutputTabWindow)
 EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED, FindResultsTab::OnSearchStart)
@@ -166,6 +167,22 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
         AppendText(message);
     }
     wxDELETE(data);
+
+    // Make sure that the Output view & the "Replace" tab
+    // are visible
+    Notebook* book = clGetManager()->GetOutputPaneNotebook();
+    bool visible = false;
+    for(size_t i = 0; i < book->GetPageCount(); ++i) {
+        if(book->GetPageText(i) == FIND_IN_FILES_WIN) {
+            visible = true;
+            break;
+        }
+    }
+    if(!visible) {
+        clCommandEvent event(wxEVT_SHOW_OUTPUT_TAB);
+        event.SetSelected(true).SetString(FIND_IN_FILES_WIN);
+        EventNotifier::Get()->AddPendingEvent(event);
+    }
 }
 
 void FindResultsTab::OnSearchMatch(wxCommandEvent& e)

@@ -35,6 +35,9 @@
 #include "clFileSystemEvent.h"
 #include "event_notifier.h"
 #include "macros.h"
+#include "clStrings.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
 
 ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxString& name)
     : FindResultsTab(parent, id, name)
@@ -101,9 +104,24 @@ void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
     // set the "Replace With" field with the user value
     SearchData* data = (SearchData*)e.GetClientData();
     m_replaceWith->ChangeValue(data->GetReplaceWith());
-
-    //
     FindResultsTab::OnSearchStart(e);
+
+    // Make sure that the Output view & the "Replace" tab
+    // are visible
+    Notebook* book = clGetManager()->GetOutputPaneNotebook();
+    bool visible = false;
+    for(size_t i = 0; i < book->GetPageCount(); ++i) {
+        if(book->GetPageText(i) == REPLACE_IN_FILES) {
+            visible = true;
+            break;
+        }
+    }
+
+    if(!visible) {
+        clCommandEvent event(wxEVT_SHOW_OUTPUT_TAB);
+        event.SetSelected(true).SetString(REPLACE_IN_FILES);
+        EventNotifier::Get()->AddPendingEvent(event);
+    }
 }
 
 void ReplaceInFilesPanel::OnSearchMatch(wxCommandEvent& e)
@@ -160,16 +178,18 @@ void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e)
     e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress);
 }
 
-void ReplaceInFilesPanel::DoSaveResults(
-    wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin, std::map<int, SearchResult>::iterator end)
+void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci,
+                                        std::map<int, SearchResult>::iterator begin,
+                                        std::map<int, SearchResult>::iterator end)
 {
     if(!sci || begin == end) return;
     bool ok = true;
     if(dynamic_cast<LEditor*>(sci) == NULL) {
         // it's a temp editor, check if we have any changes to save
         if(sci->GetModify() && !WriteFileWithBackup(begin->second.GetFileName(), sci->GetText(), false)) {
-            wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(), _("CodeLite - Replace"),
-                wxICON_ERROR | wxOK);
+            wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(),
+                         _("CodeLite - Replace"),
+                         wxICON_ERROR | wxOK);
             wxLogMessage(wxT("Replace: Failed to write file ") + begin->second.GetFileName());
             ok = false;
         }
@@ -371,8 +391,11 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         filesToSave.push_back(std::make_pair(wxFileName(*i), true));
     }
     if(!filesToSave.empty() &&
-        clMainFrame::Get()->GetMainBook()->UserSelectFiles(filesToSave, _("Save Modified Files"),
-            _("Some files are modified.\nChoose the files you would like to save."), true)) {
+       clMainFrame::Get()->GetMainBook()->UserSelectFiles(
+           filesToSave,
+           _("Save Modified Files"),
+           _("Some files are modified.\nChoose the files you would like to save."),
+           true)) {
         for(size_t i = 0; i < filesToSave.size(); i++) {
             if(filesToSave[i].second) {
                 LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(filesToSave[i].first.GetFullPath());

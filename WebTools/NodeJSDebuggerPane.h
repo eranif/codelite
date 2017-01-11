@@ -78,6 +78,7 @@ protected:
     void OnExceptionThrown(clDebugEvent& event);
     void OnUpdateDebuggerView(clDebugEvent& event);
     void OnFrameSelected(clDebugEvent& event);
+    void OnSettingsChanged(wxCommandEvent& event);
 
 public:
     NodeJSDebuggerPane(wxWindow* parent);

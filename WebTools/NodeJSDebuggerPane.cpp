@@ -14,6 +14,7 @@
 #include <algorithm>
 #include "lexer_configuration.h"
 #include "bookmark_manager.h"
+#include <editor_config.h>
 
 class NodeJSLocalClientData : public wxClientData
 {
@@ -47,6 +48,13 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebuggerPane::OnFrameSelected, this);
     EventNotifier::Get()->Bind(
         wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &NodeJSDebuggerPane::OnSettingsChanged, this);
+
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_notebook->SetStyle(kNotebook_Default & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+    } else {
+        m_notebook->SetStyle(kNotebook_Default);
+    }
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
@@ -75,6 +83,7 @@ NodeJSDebuggerPane::~NodeJSDebuggerPane()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebuggerPane::OnFrameSelected, this);
     EventNotifier::Get()->Unbind(
         wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &NodeJSDebuggerPane::OnSettingsChanged, this);
 
     ClearCallstack();
 }
@@ -510,4 +519,13 @@ void NodeJSDebuggerPane::OnLookup(clDebugEvent& event)
         m_dataviewLocals->Expand(parent);
     }
     m_pendingLookupRefs.clear();
+}
+
+void NodeJSDebuggerPane::OnSettingsChanged(wxCommandEvent& event) {
+    event.Skip();
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_notebook->SetStyle(m_notebook->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+    } else {
+        m_notebook->SetStyle(m_notebook->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+    }
 }

@@ -91,6 +91,10 @@ void WorkspacePane::CreateGUIControls()
 #else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
 #endif
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        style &= ~kNotebook_LightTabs;
+        style |= kNotebook_DarkTabs;
+    }
     style |= kNotebook_UnderlineActiveTab;
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -395,6 +399,11 @@ void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+    } else {
+        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+    }
 }
 
 void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)

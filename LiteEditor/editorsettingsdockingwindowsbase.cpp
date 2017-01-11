@@ -129,6 +129,11 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     staticBoxSizer27->Add(m_checkBoxEditorTabsFollowsTheme, 0, wxALL, WXC_FROM_DIP(5));
     
+    m_checkBoxUseDarkTabTheme = new wxCheckBox(m_panel12, wxID_ANY, _("Use dark notebook tab theme by default"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_checkBoxUseDarkTabTheme->SetValue(false);
+    
+    staticBoxSizer27->Add(m_checkBoxUseDarkTabTheme, 0, wxALL, WXC_FROM_DIP(5));
+    
     wxBoxSizer* boxSizer25 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer22->Add(boxSizer25, 0, wxALL, WXC_FROM_DIP(10));

@@ -47,6 +47,7 @@ public:
     void OnXDebugSessionEnded(XDebugEvent& e);
     void OnXDebugSessionStarted(XDebugEvent& e);
     void OnXDebugSessionStarting(XDebugEvent& event);
+    void OnSettingsChanged(wxCommandEvent& event);
     void SelectTab(const wxString& title);
     void SetTerminal(TerminalEmulator* terminal) { m_console->SetTerminal(terminal); }
 

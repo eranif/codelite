@@ -54,6 +54,7 @@ protected:
     wxChoice* m_choiceOutputTabsOrientation;
     wxCheckBox* m_checkBoxShowXButton;
     wxCheckBox* m_checkBoxEditorTabsFollowsTheme;
+    wxCheckBox* m_checkBoxUseDarkTabTheme;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
     wxPanel* m_panel14;
@@ -93,6 +94,7 @@ public:
     wxChoice* GetChoiceOutputTabsOrientation() { return m_choiceOutputTabsOrientation; }
     wxCheckBox* GetCheckBoxShowXButton() { return m_checkBoxShowXButton; }
     wxCheckBox* GetCheckBoxEditorTabsFollowsTheme() { return m_checkBoxEditorTabsFollowsTheme; }
+    wxCheckBox* GetCheckBoxUseDarkTabTheme() { return m_checkBoxUseDarkTabTheme; }
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
     wxPanel* GetPanel12() { return m_panel12; }

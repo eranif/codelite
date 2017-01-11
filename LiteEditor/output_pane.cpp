@@ -103,6 +103,10 @@ void OutputPane::CreateGUIControls()
         style |= kNotebook_RightTabs;
 #endif
     }
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        style &= ~kNotebook_LightTabs;
+        style |= kNotebook_DarkTabs;
+    }
     style |= kNotebook_UnderlineActiveTab;
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -289,6 +293,11 @@ void OutputPane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+    } else {
+        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+    }
 }
 
 void OutputPane::OnToggleTab(clCommandEvent& event)

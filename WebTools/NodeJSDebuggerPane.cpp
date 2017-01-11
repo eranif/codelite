@@ -51,7 +51,7 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &NodeJSDebuggerPane::OnSettingsChanged, this);
 
     if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_notebook->SetStyle(kNotebook_Default & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+        m_notebook->SetStyle((kNotebook_Default & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_notebook->SetStyle(kNotebook_Default);
     }
@@ -524,8 +524,8 @@ void NodeJSDebuggerPane::OnLookup(clDebugEvent& event)
 void NodeJSDebuggerPane::OnSettingsChanged(wxCommandEvent& event) {
     event.Skip();
     if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_notebook->SetStyle(m_notebook->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+        m_notebook->SetStyle((m_notebook->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
-        m_notebook->SetStyle(m_notebook->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+        m_notebook->SetStyle((m_notebook->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
     }
 }

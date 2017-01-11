@@ -94,6 +94,10 @@ void DebuggerPane::CreateGUIControls()
     if(!EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection()) {
         style |= kNotebook_BottomTabs;
     }
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        style &= ~kNotebook_LightTabs;
+        style |= kNotebook_DarkTabs;
+    }
     style |= kNotebook_UnderlineActiveTab;
 
     GeneralImages img;
@@ -257,6 +261,11 @@ void DebuggerPane::OnSettingsChanged(wxCommandEvent& event)
     event.Skip();
     m_book->EnableStyle(kNotebook_BottomTabs,
                         EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM);
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+    } else {
+        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+    }
 }
 
 //----------------------------------------------------------------

@@ -54,7 +54,7 @@ public:
         Opt_Mark_Debugger_Line = 0x00004000,
         Opt_TabNoXButton = 0x00008000,
         Opt_TabColourPersistent = 0x00010000,
-        Opt_Unused3 = 0x00020000,
+        Opt_TabColourDark = 0x00020000,
         Opt_Use_CodeLite_Terminal = 0x00040000,
         Opt_Unused6 = 0x00080000,
         Opt_Unused5 = 0x00100000,
@@ -179,6 +179,8 @@ public:
     //-------------------------------------
     void SetTabColourMatchesTheme(bool b) { EnableOption(Opt_TabColourPersistent, !b); }
     bool IsTabColourMatchesTheme() const { return !HasOption(Opt_TabColourPersistent); }
+    void SetTabColourDark(bool b) { EnableOption(Opt_TabColourDark, b); }
+    bool IsTabColourDark() const { return HasOption(Opt_TabColourDark); }
     void SetTabHasXButton(bool b) { EnableOption(Opt_TabNoXButton, !b); }
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
 

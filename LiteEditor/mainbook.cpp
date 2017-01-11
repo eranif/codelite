@@ -1143,6 +1143,9 @@ void MainBook::DoUpdateNotebookTheme()
             style &= ~kNotebook_DarkTabs;
             style |= kNotebook_LightTabs;
         }
+    } else if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        style &= ~kNotebook_LightTabs;
+        style |= kNotebook_DarkTabs;
     } else {
         style &= ~kNotebook_DarkTabs;
         style |= kNotebook_LightTabs;

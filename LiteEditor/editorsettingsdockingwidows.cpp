@@ -54,6 +54,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxHideCaptions->SetValue(!options->IsShowDockingWindowCaption());
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
+    m_checkBoxUseDarkTabTheme->SetValue(options->IsTabColourDark());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
     m_choiceTabStyle->SetSelection(options->GetOptions() & OptionsConfig::Opt_TabStyleMinimal ? 1 : 0);
     int sel(0);
@@ -145,6 +146,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetShowDockingWindowCaption(!m_checkBoxHideCaptions->IsChecked());
     options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
     options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
+    options->SetTabColourDark(m_checkBoxUseDarkTabTheme->IsChecked());
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
     options->EnableOption(OptionsConfig::Opt_TabStyleMinimal, (m_choiceTabStyle->GetSelection() == 1));
     int ht(0);

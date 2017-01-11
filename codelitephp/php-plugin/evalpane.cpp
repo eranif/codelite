@@ -11,11 +11,18 @@ EvalPane::EvalPane(wxWindow* parent)
     Hide();
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_EVAL_EXPRESSION,  &EvalPane::OnExpressionEvaluate, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_UNKNOWN_RESPONSE, &EvalPane::OnDBGPCommandEvaluated, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &EvalPane::OnSettingsChanged, this);
     LexerConf::Ptr_t lex =  EditorConfigST::Get()->GetLexer("text");
     if ( lex ) {
         lex->Apply(m_stcOutput);
     }
-    
+
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_notebook257->SetStyle(kNotebook_Default & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+    } else {
+        m_notebook257->SetStyle(kNotebook_Default);
+    }
+
     // Since XDebug replies with XML, use the XML lexer for the output
     LexerConf::Ptr_t xml_lex =  EditorConfigST::Get()->GetLexer("xml");
     if ( xml_lex ) {
@@ -29,6 +36,7 @@ EvalPane::~EvalPane()
 {
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_EVAL_EXPRESSION, &EvalPane::OnExpressionEvaluate, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_UNKNOWN_RESPONSE, &EvalPane::OnDBGPCommandEvaluated, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &EvalPane::OnSettingsChanged, this);
 }
 
 void EvalPane::OnEnter(wxCommandEvent& event)
@@ -99,4 +107,13 @@ void EvalPane::OnDBGPCommandEvaluated(XDebugEvent& e)
     m_stcOutputXDebug->SetText(e.GetEvaluted());
     m_stcOutputXDebug->SetEditable(true);
     m_stcOutputXDebug->ScrollToEnd();
+}
+
+void EvalPane::OnSettingsChanged(wxCommandEvent& event) {
+    event.Skip();
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_notebook257->SetStyle(m_notebook257->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+    } else {
+        m_notebook257->SetStyle(m_notebook257->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+    }
 }

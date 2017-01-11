@@ -262,9 +262,9 @@ void DebuggerPane::OnSettingsChanged(wxCommandEvent& event)
     m_book->EnableStyle(kNotebook_BottomTabs,
                         EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM);
     if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
-        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
     }
 }
 

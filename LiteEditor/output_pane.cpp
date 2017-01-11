@@ -293,9 +293,9 @@ void OutputPane::OnSettingsChanged(wxCommandEvent& event)
     event.Skip();
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
     if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
-        m_book->SetStyle(m_book->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
     }
 }
 

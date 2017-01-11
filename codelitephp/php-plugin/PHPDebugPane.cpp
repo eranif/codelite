@@ -26,7 +26,7 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
     m_console = new TerminalEmulatorUI(m_auiBook);
 
     if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_auiBook->SetStyle(kNotebook_Default & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+        m_auiBook->SetStyle((kNotebook_Default & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_auiBook->SetStyle(kNotebook_Default);
     }
@@ -213,8 +213,8 @@ void PHPDebugPane::OnCallStackMenu(wxDataViewEvent& event) {}
 void PHPDebugPane::OnSettingsChanged(wxCommandEvent& event) {
     event.Skip();
     if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_auiBook->SetStyle(m_auiBook->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+        m_auiBook->SetStyle((m_auiBook->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
-        m_auiBook->SetStyle(m_auiBook->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+        m_auiBook->SetStyle((m_auiBook->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
     }
 }

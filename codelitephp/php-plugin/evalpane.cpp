@@ -18,7 +18,7 @@ EvalPane::EvalPane(wxWindow* parent)
     }
 
     if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_notebook257->SetStyle(kNotebook_Default & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+        m_notebook257->SetStyle((kNotebook_Default & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_notebook257->SetStyle(kNotebook_Default);
     }
@@ -112,8 +112,8 @@ void EvalPane::OnDBGPCommandEvaluated(XDebugEvent& e)
 void EvalPane::OnSettingsChanged(wxCommandEvent& event) {
     event.Skip();
     if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_notebook257->SetStyle(m_notebook257->GetStyle() & ~kNotebook_LightTabs | kNotebook_DarkTabs);
+        m_notebook257->SetStyle((m_notebook257->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
-        m_notebook257->SetStyle(m_notebook257->GetStyle() & ~kNotebook_DarkTabs | kNotebook_LightTabs);
+        m_notebook257->SetStyle((m_notebook257->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
     }
 }

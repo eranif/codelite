@@ -16,9 +16,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleVersion</key>
-    <string>CodeLite IDE version 10.0.0</string>
+    <string>CodeLite IDE version 10.1.0</string>
     <key>CFBundleShortVersionString</key>
-    <string>CodeLite IDE version 10.0.0</string>
+    <string>CodeLite IDE version 10.1.0</string>
     <key>CSResourcesFileMapped</key>
     <true/>
     <key>CFBundleDocumentTypes</key>

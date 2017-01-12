@@ -34,6 +34,7 @@
 #include <wx/bitmap.h>
 #include <wx/sharedptr.h>
 
+class Notebook;
 class WXDLLIMPEXP_SDK clTabTogglerHelper : public wxEvtHandler
 {
     wxString m_outputTabName;
@@ -46,15 +47,20 @@ class WXDLLIMPEXP_SDK clTabTogglerHelper : public wxEvtHandler
 protected:
     void OnToggleOutputTab(clCommandEvent& event);
     void OnToggleWorkspaceTab(clCommandEvent& event);
+    
+public:
+    /**
+     * @brief return true if "tabname" is in the notebook (does not matter if it is focused or not)
+     * @return wxNOT_FOUND if the tab does not exists, otherwise, return the tab index
+     */
+    static int IsTabInNotebook(Notebook* book, const wxString& tabname);
 
 public:
     typedef wxSharedPtr<clTabTogglerHelper> Ptr_t;
 
 public:
-    clTabTogglerHelper(const wxString& outputTabName,
-                       wxWindow* outputTab,
-                       const wxString& workspaceTabName,
-                       wxWindow* workspaceTab);
+    clTabTogglerHelper(
+        const wxString& outputTabName, wxWindow* outputTab, const wxString& workspaceTabName, wxWindow* workspaceTab);
     virtual ~clTabTogglerHelper();
 
     clTabTogglerHelper& SetOutputTab(wxWindow* outputTab)

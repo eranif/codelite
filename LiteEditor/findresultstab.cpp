@@ -68,25 +68,18 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
 
     BitmapLoader& loader = *(PluginManager::Get()->GetStdIcons());
 
-    wxTheApp->Connect(XRCID("find_in_files"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(FindResultsTab::OnFindInFiles),
-                      NULL,
-                      this);
+    wxTheApp->Connect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
     m_tb->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &FindResultsTab::OnRecentSearches, this, XRCID("recent_searches"));
     m_tb->Bind(wxEVT_UPDATE_UI, &FindResultsTab::OnRecentSearchesUI, this, XRCID("recent_searches"));
 
     m_tb->AddTool(XRCID("stop_search"), _("Stop current search"), loader.LoadBitmap("stop"), _("Stop current search"));
-    m_tb->AddTool(XRCID("recent_searches"),
-                  _("Show Recent Searches"),
-                  loader.LoadBitmap("history"),
-                  _("Show Recent Searches"))->SetHasDropDown(true);
+    m_tb->AddTool(XRCID("recent_searches"), _("Show Recent Searches"), loader.LoadBitmap("history"),
+            _("Show Recent Searches"))
+        ->SetHasDropDown(true);
 
-    Connect(XRCID("stop_search"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(FindResultsTab::OnStopSearch),
-            NULL,
-            this);
+    Connect(XRCID("stop_search"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnStopSearch),
+        NULL, this);
     Connect(XRCID("stop_search"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindResultsTab::OnStopSearchUI), NULL, this);
     m_tb->Realize();
 
@@ -102,11 +95,8 @@ FindResultsTab::~FindResultsTab()
 {
     EventNotifier::Get()->Connect(
         wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL, this);
-    wxTheApp->Disconnect(XRCID("find_in_files"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(FindResultsTab::OnFindInFiles),
-                         NULL,
-                         this);
+    wxTheApp->Disconnect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &FindResultsTab::OnWorkspaceClosed, this);
 }
 
@@ -170,19 +160,10 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 
     // Make sure that the Output view & the "Replace" tab
     // are visible
-    Notebook* book = clGetManager()->GetOutputPaneNotebook();
-    bool visible = false;
-    for(size_t i = 0; i < book->GetPageCount(); ++i) {
-        if(book->GetPageText(i) == FIND_IN_FILES_WIN) {
-            visible = true;
-            break;
-        }
-    }
-    if(!visible) {
-        clCommandEvent event(wxEVT_SHOW_OUTPUT_TAB);
-        event.SetSelected(true).SetString(FIND_IN_FILES_WIN);
-        EventNotifier::Get()->AddPendingEvent(event);
-    }
+
+    clCommandEvent event(wxEVT_SHOW_OUTPUT_TAB);
+    event.SetSelected(true).SetString(FIND_IN_FILES_WIN);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
@@ -392,7 +373,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
                 changePosition = changes.at(i);
                 changeLength = changes.at(i + 1);
                 if((changeLength < 0) && (changePosition - changeLength > position) &&
-                   (changePosition < position + resultLength)) {
+                    (changePosition < position + resultLength)) {
                     // It looks like the data corresponding to this search result has been deleted
                     // While it's possible that it's been cut, then (later in the changes) re-pasted
                     // so that the result still matches, it's more likely to have been replaced by different text
@@ -406,9 +387,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
                 }
             }
             if(!removed) {
-                editor->SetEnsureCaretIsVisible(
-                    position + resultLength,
-                    true,
+                editor->SetEnsureCaretIsVisible(position + resultLength, true,
                     true); // The 3rd parameter sets a small delay, otherwise it fails for long folded files
                 int lineNumber = editor->LineFromPos(position);
                 if(lineNumber) {

@@ -62,7 +62,8 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
             // add extra info
             wxVariant modifiedItem;
             wxVariant nullBmp;
-            nullBmp << wxNullBitmap;
+            unsigned char zeros[] = "\0\0";
+            nullBmp << wxBitmap{wxImage{1, 1, zeros, zeros, true}};
             std::map<void*, clTab>::iterator iter = tabsInfoMap.find(windows.Item(i));
             if(iter != tabsInfoMap.end()) {
                 d->isFile = iter->second.isFile;

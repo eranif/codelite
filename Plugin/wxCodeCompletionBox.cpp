@@ -90,6 +90,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_canvas->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Bind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
+    m_canvas->Bind(wxEVT_MOUSEWHEEL, &wxCodeCompletionBox::OnMouseScroll, this);
 
     // Default colorus (dark theme)
     clColourPalette palette = DrawingUtils::GetColourPalette();
@@ -146,6 +147,7 @@ wxCodeCompletionBox::~wxCodeCompletionBox()
 {
     m_canvas->Unbind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Unbind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
+    m_canvas->Unbind(wxEVT_MOUSEWHEEL, &wxCodeCompletionBox::OnMouseScroll, this);
     DoDestroyTipWindow();
 }
 
@@ -202,10 +204,10 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     }
 
     // Paint the entries, starting from m_index => m_index + 7
-    wxCoord y =  0; // Initial coord for drawing the first line
+    wxCoord y = 0; // Initial coord for drawing the first line
     wxCoord textX = m_bitmaps.empty() ? 2 : clGetScaledSize(20);
     wxCoord bmpX = clGetScaledSize(2);
-    
+
     // Draw all items from firstIndex => lastIndex
     for(int i = firstIndex; i < lastIndex; ++i) {
         bool isSelected = (i == m_index);
@@ -220,7 +222,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         dc.SetTextForeground(isSelected ? m_selectedTextColour : m_textColour);
         dc.SetPen(m_lightBorder);
         dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
-        
+
         // If this item has a bitmap, draw it
         wxCodeCompletionBoxEntry::Ptr_t entry = m_entries.at(i);
         if(entry->GetImgIndex() != wxNOT_FOUND && entry->GetImgIndex() < (int)m_bitmaps.size()) {
@@ -235,7 +237,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         // Truncate the text to fit the screen
         wxString choppedText;
         DrawingUtils::TruncateText(entry->GetText(), itemRect.GetWidth(), dc, choppedText);
-        
+
         wxSize itemTextSize = dc.GetTextExtent(choppedText);
         wxCoord textY = ((singleLineHeight - itemTextSize.GetHeight()) / 2) + itemRect.y;
         dc.DrawText(choppedText, textX, textY);
@@ -367,29 +369,11 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
         DoScrollDown();
         break;
     case WXK_PAGEDOWN: {
-        int newindex = m_index + (LINES_PER_PAGE - 1);
-        if(newindex >= (int)m_entries.size()) {
-            newindex = (int)m_entries.size() - 1;
-        }
-        // only refresh if there was an actual change
-        if(m_index != newindex) {
-            m_index = newindex;
-            DoDisplayTipWindow();
-            Refresh();
-        }
+        DoPgDown();
         break;
     }
     case WXK_PAGEUP: {
-        int newindex = m_index - (LINES_PER_PAGE - 1);
-        if(newindex < 0) {
-            newindex = 0;
-        }
-        // only refresh if there was an actual change
-        if(m_index != newindex) {
-            m_index = newindex;
-            DoDisplayTipWindow();
-            Refresh();
-        }
+        DoPgUp();
         break;
     }
     case WXK_ESCAPE:
@@ -781,5 +765,43 @@ void wxCodeCompletionBox::InitializeDefaultBitmaps()
         m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("mime/16/h"));                // 15
         m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("mime/16/text"));             // 16
         m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/cpp_keyword"));        // 17
+    }
+}
+
+void wxCodeCompletionBox::OnMouseScroll(wxMouseEvent& event)
+{
+    if(event.GetWheelRotation() < 0) {
+        // down
+        DoPgDown();
+    } else {
+        DoPgUp();
+    }
+}
+
+void wxCodeCompletionBox::DoPgUp()
+{
+    int newindex = m_index - (LINES_PER_PAGE - 1);
+    if(newindex < 0) {
+        newindex = 0;
+    }
+    // only refresh if there was an actual change
+    if(m_index != newindex) {
+        m_index = newindex;
+        DoDisplayTipWindow();
+        Refresh();
+    }
+}
+
+void wxCodeCompletionBox::DoPgDown()
+{
+    int newindex = m_index + (LINES_PER_PAGE - 1);
+    if(newindex >= (int)m_entries.size()) {
+        newindex = (int)m_entries.size() - 1;
+    }
+    // only refresh if there was an actual change
+    if(m_index != newindex) {
+        m_index = newindex;
+        DoDisplayTipWindow();
+        Refresh();
     }
 }

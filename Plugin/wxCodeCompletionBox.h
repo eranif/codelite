@@ -61,7 +61,7 @@ protected:
     wxCodeCompletionBoxEntry::Vec_t m_entries;
     wxCodeCompletionBox::BmpVec_t m_bitmaps;
     static wxCodeCompletionBox::BmpVec_t m_defaultBitmaps;
-    
+
     int m_index;
     wxString m_displayedTip;
     wxStyledTextCtrl* m_stc;
@@ -108,17 +108,20 @@ protected:
 
     // Event handlers
     void OnLeftDClick(wxMouseEvent& event);
+    void OnMouseScroll(wxMouseEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
     void OnPaint(wxPaintEvent& event);
-    
+
     static void InitializeDefaultBitmaps();
-    
+    void DoPgUp();
+    void DoPgDown();
+
 public:
     /**
      * @brief return the bitamp associated with this tag entry
      */
     static wxBitmap GetBitmap(TagEntryPtr tag);
-    
+
     virtual ~wxCodeCompletionBox();
     /**
      * @brief construct a code completion box

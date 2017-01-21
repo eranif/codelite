@@ -772,9 +772,9 @@ void wxCodeCompletionBox::OnMouseScroll(wxMouseEvent& event)
 {
     if(event.GetWheelRotation() < 0) {
         // down
-        DoPgDown();
+        DoScrollDown();
     } else {
-        DoPgUp();
+        DoScrollUp();
     }
 }
 

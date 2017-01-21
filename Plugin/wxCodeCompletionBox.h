@@ -115,7 +115,7 @@ protected:
     static void InitializeDefaultBitmaps();
     void DoPgUp();
     void DoPgDown();
-
+    
 public:
     /**
      * @brief return the bitamp associated with this tag entry

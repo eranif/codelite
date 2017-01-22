@@ -510,10 +510,6 @@
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>
     <File Name="checktreectrl.h"/>
-    <File Name="checkdirtreectrl.cpp"/>
-    <File Name="checkdirtreectrl.h"/>
-    <File Name="ccvirtuallistctrl.cpp"/>
-    <File Name="ccvirtuallistctrl.h"/>
     <File Name="quickfindbar.h"/>
     <File Name="quickfindbar.cpp"/>
     <File Name="navbar.h"/>
@@ -528,8 +524,6 @@
     <File Name="messagepane_base.cpp"/>
     <File Name="message_pane.h"/>
     <File Name="message_pane.cpp"/>
-    <File Name="ccboxmainpanel.h"/>
-    <File Name="ccboxmainpanel.cpp"/>
     <File Name="save_perspective_as_dlg.cpp"/>
     <File Name="save_perspective_as_dlg.h"/>
     <File Name="messagepane.wxcp"/>

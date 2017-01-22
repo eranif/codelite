@@ -52,6 +52,7 @@
 #include "fileextmanager.h"
 #include "fileutils.h"
 #include <algorithm>
+#include "CMakeBuilder.h"
 
 // wxWidgets
 #include <wx/tokenzr.h>
@@ -132,68 +133,68 @@ bool CMakeGenerator::Generate(ProjectPtr p)
     CHECK_COND_RET_FALSE(buildConf);
 
     clCxxWorkspace* workspace = clCxxWorkspaceST::Get();
-    // Is the top level project and the workspace paths are the same?
-    bool isDupPath = (p->GetFileName().GetPath() == workspace->GetFileName().GetPath());
 
-    wxArrayString cmakelistsFolders;
-
+    // Generate CMakeLists.txt file for each dependency project
     wxArrayString projectsArr = p->GetDependencies(buildConf->GetName());
     for(size_t i = 0; i < projectsArr.GetCount(); ++i) {
         ProjectPtr pProj = workspace->GetProject(projectsArr.Item(i));
         CMakeGenerator generator;
         wxString cmakeFileContent = generator.GenerateProject(pProj, false);
         if(!cmakeFileContent.IsEmpty()) {
+            // Write the content to the file system
             wxFileName cmakelists(pProj->GetFileName());
             cmakelists.SetFullName(CMakePlugin::CMAKELISTS_FILE);
             FileUtils::WriteFileContent(cmakelists, cmakeFileContent);
-            cmakelists.MakeRelativeTo(workspace->GetFileName().GetPath());
-            wxString path = cmakelists.GetPath();
-            path.Prepend("${CMAKE_SOURCE_DIR}/");
-            path.Replace("\\", "/");
-            cmakelistsFolders.Add(path);
         }
     }
 
+    // Generate the top level CMakeLists.txt
     wxString topProjectContent = GenerateProject(p, true);
 
-    // ====----------------------------
-    // Now generate the workspace
-    // ====----------------------------
-    // Get workspace directory.
-    const wxFileName workspaceDir = workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME);
+    // ====--------------------------------
+    // Now generate the top level project
+    // ====--------------------------------
 
     // Output file name
-    const wxFileName filename(workspaceDir.GetPath(), CMakePlugin::CMAKELISTS_FILE);
+    const wxFileName filename(p->GetFileName().GetPath(), CMakePlugin::CMAKELISTS_FILE);
 
     // Check for file existance and read any user code from the current CMakeLists.txt file
     if(!CheckExists(filename)) return false;
 
     // File content
-    wxString workspaceContent;
+    wxString mainProjectContent;
 
     // Print project name
-    workspaceContent << CODELITE_CMAKE_PREFIX << "\n\n";
-    workspaceContent << "cmake_minimum_required(VERSION 2.8.11)\n\n";
-    workspaceContent << "# Workspace name\n";
-    workspaceContent << "project(" << workspace->GetName() << ")\n\n";
+    mainProjectContent << CODELITE_CMAKE_PREFIX << "\n\n";
+    mainProjectContent << "cmake_minimum_required(VERSION 2.8.11)\n\n";
+    mainProjectContent << "# Workspace name\n";
+    mainProjectContent << "project(" << workspace->GetName() << ")\n\n";
 
-    workspaceContent << "# This setting is useful for providing JSON file used by CodeLite for code completion\n";
-    workspaceContent << "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)\n\n";
+    mainProjectContent << "# This setting is useful for providing JSON file used by CodeLite for code completion\n";
+    mainProjectContent << "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)\n\n";
 
-    workspaceContent << "# Set default locations\n";
-    workspaceContent << "set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)\n";
-    workspaceContent << "set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)\n";
-    workspaceContent << "set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)\n";
-    workspaceContent << "\n";
+    // Set the output directory. We want a common location for all projects
+    // so we set it under cmake-build-Debug/bin
+    wxFileName fnWorkspace = workspace->GetFileName();
+    fnWorkspace.MakeRelativeTo(p->GetFileName().GetPath());
+    wxString outputDir;
 
-    if(!isDupPath) {
-        AddUserCodeSection(workspaceContent, CMAKELISTS_USER_CODE_1_PREFIX, m_userBlock1);
-    }
+    wxFileName workspaceBuildFoler(CMakeBuilder::GetWorkspaceBuildFolder(false), "");
+    outputDir << "${CMAKE_CURRENT_LIST_DIR}/" << fnWorkspace.GetPath() << "/" << workspaceBuildFoler.GetDirs().Last()
+              << "/output";
+
+    mainProjectContent << "# Set default locations\n";
+    mainProjectContent << "set(CL_OUTPUT_DIRECTORY " << outputDir << ")\n";
+    mainProjectContent << "set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})\n";
+    mainProjectContent << "set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})\n";
+    mainProjectContent << "set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})\n";
+    mainProjectContent << "\n";
+
     // Export common variables into CMake variables
     {
-        workspaceContent << "set(CONFIGURATION_NAME \"" << workspace->GetBuildMatrix()->GetSelectedConfigurationName()
-                         << "\")\n";
-        workspaceContent << "\n";
+        mainProjectContent << "set(CONFIGURATION_NAME \"" << workspace->GetBuildMatrix()->GetSelectedConfigurationName()
+                           << "\")\n";
+        mainProjectContent << "\n";
     }
 
     // Environment variables
@@ -213,56 +214,25 @@ bool CMakeGenerator::Generate(ProjectPtr p)
                 const wxString value = (pair.GetCount() >= 2) ? pair[1] : "";
 
                 // Set environment variable
-                workspaceContent << "set(" << name << " \"" << value << "\")\n";
+                mainProjectContent << "set(" << name << " \"" << value << "\")\n";
             }
 
-            workspaceContent << "\n";
+            mainProjectContent << "\n";
         }
     }
 
-    if(!isDupPath) {
-        AddUserCodeSection(workspaceContent, CMAKELISTS_USER_CODE_2_PREFIX, m_userBlock2);
-    }
-    workspaceContent << "# Projects\n";
+    mainProjectContent << "# Projects\n";
 
-    // Get full paths to all projects
-    const wxArrayString projects = workspace->GetAllProjectPaths();
-
-    // Foreach projects path
-    for(size_t i = 0; i < cmakelistsFolders.size(); ++i) {
-        workspaceContent << "add_subdirectory(" << cmakelistsFolders.Item(i) << ")\n";
-    }
-
-    if(isDupPath) {
-        // the workspace and the active project "sits" on the same folder
-        // merge the two cmakelists.txt files
-        workspaceContent << "\n\n";
-        workspaceContent << "# Top project\n";
-        workspaceContent << topProjectContent;
-
-    } else {
-        // Different paths
-        wxFileName fnTopProjPath(p->GetFileName());
-        fnTopProjPath.MakeRelativeTo(workspace->GetFileName().GetPath());
-        wxString topProjPath = fnTopProjPath.GetPath();
-        topProjPath.Prepend("${CMAKE_SOURCE_DIR}/");
-        topProjPath.Replace("\\", "/");
-        workspaceContent << "add_subdirectory(" << topProjPath << ")\n";
-
-        // Write the top project file content
-        topProjectContent.Prepend(Prefix(p));
-
-        fnTopProjPath.SetFullName(CMakePlugin::CMAKELISTS_FILE);
-        FileUtils::WriteFileContent(fnTopProjPath, topProjectContent);
-
-        // Final hook goes here
-        AddUserCodeSection(workspaceContent, CMAKELISTS_USER_CODE_3_PREFIX, m_userBlock3);
-    }
+    // the workspace and the active project "sits" on the same folder
+    // merge the two cmakelists.txt files
+    mainProjectContent << "\n\n";
+    mainProjectContent << "# Top project\n";
+    mainProjectContent << topProjectContent;
 
     // Write the workspace
-    wxFileName fnMainCMakeLists(workspace->GetFileName());
+    wxFileName fnMainCMakeLists(p->GetFileName());
     fnMainCMakeLists.SetFullName(CMakePlugin::CMAKELISTS_FILE);
-    FileUtils::WriteFileContent(fnMainCMakeLists, workspaceContent);
+    FileUtils::WriteFileContent(fnMainCMakeLists, mainProjectContent);
     return true;
 }
 
@@ -276,23 +246,21 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     // we need to fix this
     Project::FileInfoVector_t vfiles;
     project->GetFilesMetadata(vfiles);
-    
-    
+
     // Get the project build configuration and compiler
     BuildConfigPtr buildConf = project->GetBuildConfiguration(configName);
     if(!buildConf) return "";
-    
+
     wxArrayString cppSources, cSources, resourceFiles;
     wxString workspacePath = clCxxWorkspaceST::Get()->GetFileName().GetPath();
     std::for_each(vfiles.begin(), vfiles.end(), [&](const Project::FileInfo& fi) {
         if(fi.IsExcludeFromConfiguration(buildConf->GetName())) return;
-        wxFileName fn(fi.GetFilename());
-        // Make it relative to the workspace
-        fn.MakeRelativeTo(workspacePath);
 
-        // Append each file with the "${CMAKE_SOURCE_DIR}/" prefix
+        wxFileName fn(fi.GetFilename());
+
+        // Append each file with the "${CMAKE_CURRENT_LIST_DIR}/" prefix
         wxString file_name;
-        file_name << "${CMAKE_SOURCE_DIR}/" << fn.GetFullPath();
+        file_name << "${CMAKE_CURRENT_LIST_DIR}/" << fi.GetFilenameRelpath();
         file_name.Replace("\\", "/");
         if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeSourceC) {
             cSources.Add(file_name);
@@ -328,6 +296,25 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     wxString content;
     if(!topProject) {
         content << Prefix(project);
+    }
+
+    if(topProject) {
+        // Add the dependencies
+        wxArrayString projectsArr = project->GetDependencies(buildConf->GetName());
+        if(!projectsArr.IsEmpty()) {
+            content << "## Add the dependencies\n";
+        }
+
+        for(size_t i = 0; i < projectsArr.GetCount(); ++i) {
+            ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject(projectsArr.Item(i));
+            wxFileName fnProject = pProj->GetFileName();
+            fnProject.MakeRelativeTo(project->GetFileName().GetPath());
+            wxString path = fnProject.GetPath();
+            path.Prepend("${CMAKE_SOURCE_DIR}/");
+            path.Replace("\\", "/");
+            content << "add_subdirectory(" << path << " ${CMAKE_CURRENT_BINARY_DIR}/" << pProj->GetName()
+                    << "-build)\n";
+        }
     }
 
     wxFileName fnProject = project->GetFileName();

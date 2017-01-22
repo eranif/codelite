@@ -26,7 +26,7 @@ wxString CMakeBuilder::GetCleanCommand(const wxString& project, const wxString& 
 {
     // The build folder is set to the workspace-path/workspace-config
     wxString command;
-    command << "cd " << GetWorkspaceBuildFolder(true) << " && " << GetBuildToolCommand(project, confToBuild)
+    command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild)
             << " clean";
     return command;
 }
@@ -35,7 +35,7 @@ wxString CMakeBuilder::GetBuildCommand(const wxString& project, const wxString& 
 {
     // The build folder is set to the workspace-path/workspace-config
     wxString command;
-    command << "cd " << GetWorkspaceBuildFolder(true) << " && " << GetBuildToolCommand(project, confToBuild);
+    command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild);
     return command;
 }
 
@@ -95,16 +95,12 @@ wxString CMakeBuilder::GetProjectBuildFolder(const wxString& project, bool wrapW
     ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(project);
     wxASSERT(p);
 
-    wxFileName fnProject = p->GetFileName();
-    wxFileName fnWorkspace = clCxxWorkspaceST::Get()->GetFileName();
-    fnProject.MakeRelativeTo(fnWorkspace.GetPath());
-
-    wxString workspaceConfig = clCxxWorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName();
-    fnWorkspace.AppendDir(CMAKE_BUILD_FOLDER_PREFIX + workspaceConfig);
+    wxString workspaceFolder = GetWorkspaceBuildFolder(wrapWithQuotes);
+    wxFileName fn(workspaceFolder, "");
+    fn.AppendDir(p->GetName());
 
     wxString folder;
-    folder = fnWorkspace.GetPath();
-    folder << wxFileName::GetPathSeparator() << fnProject.GetPath();
+    folder = fn.GetPath();
     if(wrapWithQuotes) {
         ::WrapWithQuotes(folder);
     }
@@ -127,5 +123,5 @@ wxString CMakeBuilder::GetOutputFile() const
 {
     wxChar sep = wxFileName::GetPathSeparator();
     return wxString() << "$(WorkspacePath)" << sep << CMAKE_BUILD_FOLDER_PREFIX << "$(WorkspaceConfiguration)" << sep
-                      << "bin" << sep << "$(ProjectName)";
+                      << "output" << sep << "$(ProjectName)";
 }

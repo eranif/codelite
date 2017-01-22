@@ -582,23 +582,27 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
     
     // Did the user provide a generator to use?
     bool hasGeneratorInArgs = (args.Find(" -G") != wxNOT_FOUND);
-
+    wxUnusedVar(hasGeneratorInArgs);
+    
     // Build the working directory
-    wxFileName fnWorkingDirectory(CMakeBuilder::GetWorkspaceBuildFolder(false), "");
-    wxString workingDirectory = fnWorkingDirectory.GetPath();
+    wxFileName fnWorkingDirectory(CMakeBuilder::GetProjectBuildFolder(p->GetName(), false), "");
 
     // Ensure that the build directory exists
     fnWorkingDirectory.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     ::WrapWithQuotes(cmakeExe);
-
+    
+    // We run the cmake 
     wxString command;
-    command << cmakeExe << " .. " << args;
-    if(!hasGeneratorInArgs) {
+    wxString projectFolder = p->GetFileName().GetPath();
+    ::WrapWithQuotes(projectFolder);
+    
+    command << cmakeExe <<  " " << projectFolder << " " << args;
 #ifdef __WXMSW__
+    if(!hasGeneratorInArgs) {
         // On Windows, generate MinGW makefiles
         command << " -G\"MinGW Makefiles\"";
-#endif
     }
+#endif
 
     // Execute it
     IProcess* proc = ::CreateAsyncProcess(this, command, IProcessCreateDefault, fnWorkingDirectory.GetPath());

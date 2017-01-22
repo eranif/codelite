@@ -109,8 +109,11 @@ public:
     };
 
     enum {
-        kSearchForward = (1 << 0),
-        kDisableDisplayErrorMessages = (1 << 1),
+        // We mix between wxSTC flags and our own, to avoid the mixing the values
+        // we start from the 16th bit
+        kSearchForward = (1 << 16),
+        kDisableDisplayErrorMessages = (1 << 17),
+        kBreakWhenWrapSearch = (1 << 18),
     };
 
 private:

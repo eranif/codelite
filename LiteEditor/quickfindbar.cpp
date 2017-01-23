@@ -1275,6 +1275,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
             DoReplace();
         }
         m_sci->EndUndoAction();
+        m_sci->ClearSelections();
     } else {
         if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty()) return;
         UPDATE_FIND_HISTORY();

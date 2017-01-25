@@ -347,6 +347,9 @@ void WebTools::OnCommentSelection(wxCommandEvent& e)
     if(IsJavaScriptFile(editor)) {
         e.Skip(false);
         editor->CommentBlockSelection("/*", "*/");
+    } else if(IsHTMLFile(editor)) {
+        e.Skip(false);
+        editor->CommentBlockSelection("<!-- ", " -->");
     }
 }
 

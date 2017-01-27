@@ -179,7 +179,7 @@ GitPlugin::GitPlugin(IManager* manager)
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_console, _("Git"), false, m_mgr->GetStdIcons()->LoadBitmap("git"));
-    m_tabToggler.reset(new clTabTogglerHelper(_("git"), m_console, "", NULL));
+    m_tabToggler.reset(new clTabTogglerHelper(_("Git"), m_console, "", NULL));
     m_tabToggler->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("git"));
 
     m_progressTimer.SetOwner(this);
@@ -549,7 +549,7 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
     if(files.IsEmpty()) return;
 
     // Make the git console visible
-    m_mgr->ShowOutputPane("git");
+    m_mgr->ShowOutputPane("Git");
 
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
@@ -584,7 +584,7 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
     if(files.IsEmpty()) return;
 
     // Make the git console visible
-    m_mgr->ShowOutputPane("git");
+    m_mgr->ShowOutputPane("Git");
 
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
@@ -621,7 +621,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
     if(files.IsEmpty()) return;
 
     // Make the git console visible
-    m_mgr->ShowOutputPane("git");
+    m_mgr->ShowOutputPane("Git");
 
     wxString workingDir;
     workingDir = wxFileName(files.Item(0)).GetPath();
@@ -1741,11 +1741,11 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
 
         } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
             m_process->Terminate();
-            ::wxMessageBox(output, "git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
+            ::wxMessageBox(output, "Git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
 
         } else if(tmpOutput.Contains("*** please tell me who you are")) {
             m_process->Terminate();
-            ::wxMessageBox(output, "git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
+            ::wxMessageBox(output, "Git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
 
         } else if(tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for")) {
 
@@ -2483,7 +2483,7 @@ void GitPlugin::DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString&
     }
     m_commandProcessor->Bind(wxEVT_COMMAND_PROCESSOR_OUTPUT, &GitPlugin::OnCommandOutput, this);
     m_commandProcessor->Bind(wxEVT_COMMAND_PROCESSOR_ENDED, &GitPlugin::OnCommandEnded, this);
-    m_mgr->ShowOutputPane("git");
+    m_mgr->ShowOutputPane("Git");
     m_commandProcessor->ExecuteCommand();
 }
 

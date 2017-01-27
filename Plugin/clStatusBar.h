@@ -48,12 +48,13 @@ protected:
     void OnBuildEnded(clBuildEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnFieldClicked(clCommandEvent& event);
-
+    void OnEditorSettingsChanged(wxCommandEvent &event);
     void DoUpdateColour();
     void DoSetLinePosColumn(const wxString& message);
 
     void SetBuildBitmap(const wxBitmap& bmp, const wxString& tooltip);
-
+    
+    void DoUpdateView();
 public:
     clStatusBar(wxWindow* parent, IManager* mgr);
     virtual ~clStatusBar();
@@ -82,7 +83,12 @@ public:
      * @brief update the language field
      */
     void SetLanguage(const wxString& lang);
-
+    
+    /**
+     * @brief Update the encoding field
+     */
+    void SetEncoding(const wxString& enc);
+    
     /**
      * @brief update the line / column / pos field
      */

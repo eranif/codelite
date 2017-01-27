@@ -455,7 +455,7 @@ bool EditorConfig::GetPaneStickiness(const wxString& caption)
         return GetOptions()->GetHideOutputPaneNotIfSvn();
     } else if(caption == _("CScope")) {
         return GetOptions()->GetHideOutputPaneNotIfCscope();
-    } else if(caption == _("Git") {
+    } else if(caption == _("Git")) {
         return GetOptions()->GetHideOutputPaneNotIfGit();
     } else if(caption == _("MemCheck")) {
         return GetOptions()->GetHideOutputPaneNotIfMemCheck();

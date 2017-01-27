@@ -79,6 +79,7 @@
 #include "fileutils.h"
 #include "macromanager.h"
 #include <wx/dcscreen.h>
+#include "ctags_manager.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -2237,4 +2238,12 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
         ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
     }
 #endif
+}
+
+void clSetEditorFontEncoding(const wxString& encoding)
+{
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    options->SetFileFontEncoding(encoding);
+    TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
+    EditorConfigST::Get()->SetOptions(options);
 }

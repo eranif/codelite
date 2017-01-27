@@ -15,6 +15,8 @@
 #include "globals.h"
 #include <wx/menu.h>
 #include "bitmap_loader.h"
+#include <wx/fontenc.h>
+#include <wx/fontmap.h>
 
 #define STATUSBAR_SCM_IDX 0
 #define STATUSBAR_LINE_COL_IDX 1
@@ -22,7 +24,8 @@
 #define STATUSBAR_WHITESPACE_INFO_IDX 3
 #define STATUSBAR_EOL_COL_IDX 4
 #define STATUSBAR_LANG_COL_IDX 5
-#define STATUSBAR_ICON_COL_IDX 6
+#define STATUSBAR_ENCODING_COL_IDX 6
+#define STATUSBAR_ICON_COL_IDX 7
 
 static void GetWhitespaceInfo(wxStyledTextCtrl* ctrl, wxString& whitespace, wxString& eol)
 {
@@ -71,6 +74,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &clStatusBar::OnBuildStarted, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clStatusBar::OnEditorSettingsChanged, this);
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 
     wxCustomStatusBarField::Ptr_t sourceControl(new wxCustomStatusBarBitmapField(this, clGetScaledSize(30)));
@@ -92,6 +96,9 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, clGetScaledSize(100)));
     AddField(language);
 
+    wxCustomStatusBarField::Ptr_t encoding(new wxCustomStatusBarFieldText(this, clGetScaledSize(80)));
+    AddField(encoding);
+
     wxCustomStatusBarField::Ptr_t buildStatus(new wxCustomStatusBarBitmapField(this, clGetScaledSize(30)));
     AddField(buildStatus);
 
@@ -109,6 +116,7 @@ clStatusBar::~clStatusBar()
     EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTED, &clStatusBar::OnBuildStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clStatusBar::OnEditorSettingsChanged, this);
     Unbind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 }
 
@@ -117,20 +125,7 @@ void clStatusBar::SetMessage(const wxString& message, int secondsToLive) { SetTe
 void clStatusBar::OnPageChanged(wxCommandEvent& event)
 {
     event.Skip();
-    DoUpdateColour();
-
-    // Update the language
-    wxString language = "TEXT";
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) {
-        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
-        if(lexer) {
-            language = lexer->GetName().Upper();
-        }
-    }
-
-    SetLanguage(language);
-    SetWhitespaceInfo();
+    DoUpdateView();
 }
 
 void clStatusBar::OnThemeChanged(wxCommandEvent& event)
@@ -197,6 +192,7 @@ void clStatusBar::Clear()
     StopAnimation();
     SetLanguage("");
     ClearWhitespaceInfo();
+    SetEncoding("");
 }
 
 void clStatusBar::OnBuildEnded(clBuildEvent& event)
@@ -275,6 +271,33 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
         if(field->Cast<wxCustomStatusBarAnimationField>()->IsRunning()) {
             m_mgr->ToggleOutputPane("Build");
         }
+    } else if(event.GetInt() == STATUSBAR_ENCODING_COL_IDX) {
+        // Show encoding menu
+        wxMenu menu;
+        wxFontEncoding fontEnc;
+        OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+        size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
+        std::map<int, wxString> encodingMenuItems;
+        for(size_t i = 0; i < iEncCnt; i++) {
+            fontEnc = wxFontMapper::GetEncoding(i);
+            if(wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+                continue;
+            }
+
+            wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
+            wxMenuItem* itemEnc = menu.Append(wxID_ANY, encodingName, "", wxITEM_CHECK);
+            itemEnc->Check(fontEnc == options->GetFileFontEncoding());
+            encodingMenuItems.insert(std::make_pair(itemEnc->GetId(), encodingName));
+        }
+        int selectedId = GetPopupMenuSelectionFromUser(menu);
+        if(encodingMenuItems.count(selectedId) == 0) return;
+
+        // Change the encoding
+        wxString selectedEncodingName = encodingMenuItems.find(selectedId)->second;
+        ::clSetEditorFontEncoding(selectedEncodingName);
+        // Update the status bar
+        SetEncoding(selectedEncodingName);
+
     } else if(event.GetInt() == STATUSBAR_LANG_COL_IDX) {
         if(m_mgr->GetActiveEditor()) {
             wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LANG_COL_IDX);
@@ -489,4 +512,42 @@ void clStatusBar::ClearWhitespaceInfo()
         field->Cast<wxCustomStatusBarFieldText>()->SetText(wxEmptyString);
         field->SetTooltip(wxEmptyString);
     }
+}
+
+void clStatusBar::SetEncoding(const wxString& enc)
+{
+    // Col 2
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ENCODING_COL_IDX);
+    CHECK_PTR_RET(field);
+
+    wxString ucEnc = enc.Upper();
+    field->Cast<wxCustomStatusBarFieldText>()->SetText(ucEnc);
+    field->SetTooltip(ucEnc);
+}
+
+void clStatusBar::OnEditorSettingsChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    DoUpdateView();
+}
+
+void clStatusBar::DoUpdateView()
+{
+    DoUpdateColour();
+
+    // Update the language
+    wxString language = "TEXT";
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) {
+        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
+        if(lexer) {
+            language = lexer->GetName().Upper();
+        }
+    }
+
+    SetLanguage(language);
+
+    wxString encodingName = wxFontMapper::GetEncodingName(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+    SetEncoding(encodingName);
+    SetWhitespaceInfo();
 }

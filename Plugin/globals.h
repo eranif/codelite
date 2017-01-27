@@ -559,4 +559,10 @@ WXDLLIMPEXP_SDK int clGetScaledSize(int size);
  */
 WXDLLIMPEXP_SDK void clKill(int processID, wxSignal signo, bool kill_whole_group = false, bool as_superuser = false);
 
+
+/**
+ * @brief set the new font encoding name for the editors
+ */
+WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
+
 #endif // GLOBALS_H

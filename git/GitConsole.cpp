@@ -224,8 +224,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_auibar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
     m_auibar->AddTool(
         XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"), _("Browse commit history"));
-    m_auibar->AddTool(
-        XRCID("git_blame"), _("Blame"), m_images.Bitmap("gitBlame"), _("Git blame"));
+    m_auibar->AddTool(XRCID("git_blame"), _("Blame"), m_images.Bitmap("gitBlame"), _("Git blame"));
 
 #ifdef __WXMSW__
     m_auibar->AddSeparator();
@@ -472,6 +471,10 @@ void GitConsole::OnAddFile(wxCommandEvent& event)
 
 void GitConsole::OnResetFile(wxCommandEvent& event)
 {
+    if(::wxMessageBox(_("This action will reset all changes done to the files.\nContinue?"), "CodeLite",
+           wxCENTER | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION) != wxYES) {
+        return;
+    }
     wxDataViewItemArray items;
     m_dvFiles->GetSelections(items);
     wxArrayString filesToRemove, filesToRevert;

@@ -88,6 +88,9 @@ ConfigEntry ConfigurationManagerDlg::DoCreateChoicesForProject(
         m_projectPropertiesMap.erase(projectName);
     }
     m_projectPropertiesMap.insert(std::make_pair(projectName, entry));
+    if(m_projectPropertiesMap.size() % 2 == 0) {
+        p->SetBackgroundColour("#E0E0E0");
+    }
     return entry;
 }
 

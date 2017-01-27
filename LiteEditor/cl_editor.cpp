@@ -5178,21 +5178,11 @@ void LEditor::ToggleLineComment(const wxString& commentSymbol, int commentStyle)
 {
     int start = GetSelectionStart();
     int end = GetSelectionEnd();
-    if(LineFromPosition(PositionBefore(end)) != LineFromPosition(end)) {
-        end = wxMax(start, PositionBefore(end));
+    
+    if(start > end) {
+        wxSwap(start, end);
     }
-
-    // If the caret is set at the EOL position
-    int lineStartPos = PositionFromLine(GetCurrentLine());
-    int lineEndPos = PositionBefore(LineEnd(GetCurrentLine()));
-    bool atEOL = (lineEndPos == GetCurrentPos()) && // The caret is placed at the end of the line
-                 (lineStartPos != lineEndPos);      // The line is not empty
-    if(atEOL) {
-        start = PositionBefore(start); // Use the style of previous position (this is due to bug in some lexer which
-                                       // don't give the EOL char
-                                       // the same style as the char before it
-    }
-
+    
     int lineStart = LineFromPosition(start);
     int lineEnd = LineFromPosition(end);
 
@@ -5226,7 +5216,7 @@ void LEditor::ToggleLineComment(const wxString& commentSymbol, int commentStyle)
     }
 
     BeginUndoAction();
-    for(; lineStart <= lineEnd; lineStart++) {
+    for(; lineStart <= lineEnd; ++lineStart) {
         start = PositionFromLine(lineStart);
         if(doingComment) {
             if(indentedComments) {

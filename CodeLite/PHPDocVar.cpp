@@ -14,11 +14,18 @@ PHPDocVar::PHPDocVar(PHPSourceFile& sourceFile, const wxString& doc)
     }
 
     // @var Type $Name
-    static wxRegEx reVarType2(wxT("@(var|variable)[ \t]+([\\a-zA-Z0-9_]+)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]*)"));
-    if(reVarType2.IsValid() && reVarType2.Matches(doc)) {
-        m_type = reVarType2.GetMatch(doc, 2);
+    static wxRegEx reVarType1(wxT("@(var|variable)[ \t]+([\\a-zA-Z0-9_]+)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]*)"));
+    // @var $Name Type
+    static wxRegEx reVarType2(wxT("@(var|variable)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)[ \t]+([\\a-zA-Z0-9_]+)"));
+    if(reVarType1.IsValid() && reVarType1.Matches(doc)) {
+        m_type = reVarType1.GetMatch(doc, 2);
         m_type = sourceFile.MakeIdentifierAbsolute(m_type);
-        m_name = reVarType2.GetMatch(doc, 3);
+        m_name = reVarType1.GetMatch(doc, 3);
+        m_isOk = true;
+    } else if(reVarType2.IsValid() && reVarType2.Matches(doc)) {
+        m_type = reVarType2.GetMatch(doc, 3);
+        m_type = sourceFile.MakeIdentifierAbsolute(m_type);
+        m_name = reVarType2.GetMatch(doc, 2);
         m_isOk = true;
     }
     m_filename = sourceFile.GetFilename();

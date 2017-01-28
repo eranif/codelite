@@ -1414,11 +1414,18 @@ void PHPSourceFile::OnConstant(const phpLexerToken& tok)
         if(token.type == '=') {
 
             // The next value should contain the constant value
-            if(!NextToken(token)) return;
-
-            if(member) {
+            wxString constantValue;
+            while(NextToken(token)) {
+                if(token.type == ';') {
+                    UngetToken(token);
+                    break;
+                }
+                constantValue << token.Text();
+            }
+            
+            if(member && !constantValue.IsEmpty()) {
                 // Keep the constant value, we will be using it later for tooltip
-                member->Cast<PHPEntityVariable>()->SetDefaultValue(token.Text());
+                member->Cast<PHPEntityVariable>()->SetDefaultValue(constantValue);
             }
         }
         if(token.type == ';') {

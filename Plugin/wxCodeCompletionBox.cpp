@@ -164,10 +164,8 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     }
 
     wxRect rect = GetClientRect();
-    m_scrollArea = wxRect(rect.GetWidth() - SCROLLBAR_WIDTH + rect.GetTopLeft().x,
-                          rect.GetTopLeft().y,
-                          SCROLLBAR_WIDTH,
-                          rect.GetHeight());
+    m_scrollArea = wxRect(rect.GetWidth() - SCROLLBAR_WIDTH + rect.GetTopLeft().x, rect.GetTopLeft().y, SCROLLBAR_WIDTH,
+        rect.GetHeight());
 
     dc.SetFont(m_ccFont);
     int singleLineHeight = GetSingleLineHeight();
@@ -341,11 +339,11 @@ void wxCodeCompletionBox::StcCharAdded(wxStyledTextEvent& event)
 {
     event.Skip();
     int keychar = m_stc->GetCharAt(m_stc->PositionBefore(m_stc->GetCurrentPos()));
-    if(((keychar >= 65) && (keychar <= 90)) ||  // A-Z
-       ((keychar >= 97) && (keychar <= 122)) || // a-z
-       ((keychar >= 48) && (keychar <= 57)) ||  // 0-9
-       (keychar == 95) ||                       // _
-       (keychar == 33))                         // !
+    if(((keychar >= 65) && (keychar <= 90)) ||   // A-Z
+        ((keychar >= 97) && (keychar <= 122)) || // a-z
+        ((keychar >= 48) && (keychar <= 57)) ||  // 0-9
+        (keychar == 95) ||                       // _
+        (keychar == 33))                         // !
     {
         DoUpdateList();
     } else {
@@ -623,7 +621,7 @@ void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
     // Separate the scrollbar area into 2 big buttons: up and down
     m_scrollBottomRect =
         wxRect(wxPoint(scrollRect.GetTopLeft().x, scrollRect.GetTopLeft().y + scrollRect.GetHeight() / 2),
-               wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
+            wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
 #if 0
     wxPoint topRight;
     topRight = m_scrollBottomRect.GetTopRight();
@@ -768,15 +766,7 @@ void wxCodeCompletionBox::InitializeDefaultBitmaps()
     }
 }
 
-void wxCodeCompletionBox::OnMouseScroll(wxMouseEvent& event)
-{
-    if(event.GetWheelRotation() < 0) {
-        // down
-        DoScrollDown();
-    } else {
-        DoScrollUp();
-    }
-}
+void wxCodeCompletionBox::OnMouseScroll(wxMouseEvent& event) { DoMouseScroll(event); }
 
 void wxCodeCompletionBox::DoPgUp()
 {
@@ -803,5 +793,15 @@ void wxCodeCompletionBox::DoPgDown()
         m_index = newindex;
         DoDisplayTipWindow();
         Refresh();
+    }
+}
+
+void wxCodeCompletionBox::DoMouseScroll(wxMouseEvent& event)
+{
+    if(event.GetWheelRotation() < 0) {
+        // down
+        DoScrollDown();
+    } else {
+        DoScrollUp();
     }
 }

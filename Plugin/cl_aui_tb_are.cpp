@@ -64,14 +64,11 @@ CLMainAuiTBArt::~CLMainAuiTBArt()
 
 void CLMainAuiTBArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
-#ifdef __WXMSW__
-    wxAuiDefaultToolBarArt::DrawPlainBackground(dc, wnd, rect);
-#else
+    bool darkTb = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
     wxUnusedVar(wnd);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(DrawingUtils::GetAUIPaneBGColour());
+    dc.SetBrush(darkTb ? wxColour("rgb(80,80,80)") : DrawingUtils::GetAUIPaneBGColour());
     dc.DrawRectangle(rect);
-#endif
 }
 
 void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
@@ -264,4 +261,11 @@ void CLMainAuiTBArt::OnThemeChanged(wxCommandEvent& event)
     }
     m_baseColour = DrawingUtils::GetAUIPaneBGColour();
 #endif
+}
+
+void CLMainAuiTBArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
+{
+    wxUnusedVar(dc);
+    wxUnusedVar(wnd);
+    wxUnusedVar(rect);
 }

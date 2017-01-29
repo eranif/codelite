@@ -248,13 +248,13 @@ void clAuiDockArt::DrawCaption(
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-#ifdef __WXMSW__
+#if 0
     wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
 #else
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(DrawingUtils::GetAUIPaneBGColour());
+    dc.SetBrush(m_useDarkColours ? m_notebookTabAreaDarkBgColour : DrawingUtils::GetAUIPaneBGColour());
     dc.DrawRectangle(rect);
 #endif
 }
@@ -267,6 +267,33 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(rect);
 }
+
+#if 0
+static wxBrush GetStippleBrush(const wxColour& colour)
+{
+    wxMemoryDC memDC;
+    wxColour bgColour = colour;
+    wxBitmap bmpStipple(3, 3);
+    wxColour lightPen = DrawingUtils::DarkColour(bgColour, 5.0);
+    wxColour darkPen = DrawingUtils::LightColour(bgColour, 3.0);
+    memDC.SelectObject(bmpStipple);
+    memDC.SetBrush(bgColour);
+    memDC.SetPen(bgColour);
+    memDC.DrawRectangle(wxPoint(0, 0), bmpStipple.GetSize());
+
+    /// Draw all the light points, we have 3 of them
+    memDC.SetPen(lightPen);
+    memDC.DrawPoint(0, 2);
+    memDC.DrawPoint(2, 0);
+
+    /// and 2 dark points
+    memDC.SetPen(darkPen);
+    memDC.DrawPoint(0, 1);
+
+    memDC.SelectObject(wxNullBitmap);
+    return wxBrush(bmpStipple);
+}
+#endif
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {

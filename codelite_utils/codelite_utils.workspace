@@ -31,7 +31,7 @@
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment/>
       <Project Name="build_all" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
@@ -45,7 +45,7 @@
       <Project Name="makedir" ConfigName="Win_x64_Release"/>
       <Project Name="wx-config" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x86_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Environment/>
       <Project Name="build_all" ConfigName="Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Release"/>

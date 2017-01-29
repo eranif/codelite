@@ -13,6 +13,7 @@
 #include <wx/regex.h>
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
+#include "clTabRendererClassic.h"
 
 #if defined(WXUSINGDLL_CL) || defined(USE_SFTP) || defined(PLUGINS_DIR)
 #define CL_BUILD 1
@@ -186,11 +187,14 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
 #if CL_BUILD
     if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
         m_art.reset(new clTabRendererSquare);
-    } else {
+    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleTRAPEZOID) {
         m_art.reset(new clTabRendererCurved);
+    } else {
+        // the default
+        m_art.reset(new clTabRendererClassic);
     }
 #else
-    m_art.reset(new clTabRendererCurved); // Default art
+    m_art.reset(new clTabRendererClassic); // Default art
 #endif
     DoSetBestSize();
 

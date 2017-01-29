@@ -108,6 +108,8 @@ public:
      * @brief initialize the light colours
      */
     virtual void InitLightColours();
+    
+    bool IsDarkColours() const;
 };
 
 /**

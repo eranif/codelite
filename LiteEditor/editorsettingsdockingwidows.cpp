@@ -56,7 +56,18 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxUseDarkTabTheme->SetValue(options->IsTabColourDark());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
-    m_choiceTabStyle->SetSelection(options->GetOptions() & OptionsConfig::Opt_TabStyleMinimal ? 1 : 0);
+    
+    // DEFAULT 0
+    // MINIMAL 1
+    // TRAPEZOID 2
+    if(options->GetOptions() & OptionsConfig::Opt_TabStyleTRAPEZOID) {
+        m_choiceTabStyle->SetSelection(2);
+    } else if(options->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
+        m_choiceTabStyle->SetSelection(1);
+    } else {
+        // default
+        m_choiceTabStyle->SetSelection(0);
+    }
     int sel(0);
     switch(options->GetNotebookTabHeight()) {
         case OptionsConfig::nbTabHt_Tiny: sel = 3; break;
@@ -148,7 +159,14 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
     options->SetTabColourDark(m_checkBoxUseDarkTabTheme->IsChecked());
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
+    
+    // Set the tab style:
+    // DEFAULT 0
+    // MINIMAL 1
+    // TRAPEZOID 2
     options->EnableOption(OptionsConfig::Opt_TabStyleMinimal, (m_choiceTabStyle->GetSelection() == 1));
+    options->EnableOption(OptionsConfig::Opt_TabStyleTRAPEZOID, (m_choiceTabStyle->GetSelection() == 2));
+    
     int ht(0);
     switch(m_choiceTabHeight->GetSelection()) {
         case 3: ht = OptionsConfig::nbTabHt_Tiny; break;

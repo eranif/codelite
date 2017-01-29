@@ -68,6 +68,7 @@ public:
         Opt_DisableMouseCtrlZoom = 0x10000000,
         Opt_UseBlockCaret = 0x20000000,
         Opt_TabStyleMinimal = 0x40000000,
+        Opt_TabStyleTRAPEZOID = 0x80000000,
     };
     enum { nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall };
 

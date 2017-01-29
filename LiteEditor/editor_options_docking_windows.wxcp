@@ -659,7 +659,7 @@
                     }, {
                      "type": "multi-string",
                      "m_label": "Choices:",
-                     "m_value": "DEFAULT;MINIMAL"
+                     "m_value": "DEFAULT;MINIMAL;TRAPEZOID"
                     }, {
                      "type": "string",
                      "m_label": "Selection:",

@@ -51,8 +51,14 @@ void clTabRendererClassic::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabC
     const int TOP_SMALL_HEIGHT = 2;
 
     clTabColours colours;
+    // Copy the bitmaps
+    colours.closeButton = colors.closeButton;
+    colours.chevronDown = colors.chevronDown;
+    
+    // Initialise the colours
     if(colors.IsDarkColours()) {
         InitDarkColours(colours);
+        
     } else {
         InitLightColours(colours);
     }
@@ -283,11 +289,19 @@ void clTabRendererClassic::DrawBottomRect(
     clTabInfo::Ptr_t tabInfo, const wxRect& clientRect, wxDC& dc, const clTabColours& colors, size_t style)
 {
     clTabColours colours;
+    
+    // Copy the bitmaps
+    colours.closeButton = colors.closeButton;
+    colours.chevronDown = colors.chevronDown;
+    
+    // Initialise the colours
     if(colors.IsDarkColours()) {
         InitDarkColours(colours);
+        
     } else {
         InitLightColours(colours);
     }
+    
     if(style & kNotebook_LeftTabs) {
         // Draw 3 lines on the right
         dc.SetPen(colours.activeTabPenColour);

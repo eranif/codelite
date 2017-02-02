@@ -45,7 +45,7 @@ public:
         Opt_AutoCompleteNormalBraces = (1 << 4),
         Opt_SmartAddFiles = (1 << 5),
         Opt_IconSet_FreshFarm = (1 << 6),
-        Opt_Unused13 = (1 << 7),
+        Opt_TabStyleTRAPEZOID = (1 << 7),
         Opt_IconSet_Classic = (1 << 8),
         Opt_AutoCompleteDoubleQuotes = (1 << 9),
         Opt_NavKey_Shift = (1 << 10), // (No longer actively used)
@@ -69,7 +69,6 @@ public:
         Opt_DisableMouseCtrlZoom = (1 << 28),
         Opt_UseBlockCaret = (1 << 29),
         Opt_TabStyleMinimal = (1 << 30),
-        Opt_TabStyleTRAPEZOID = (1 << 31),
     };
     enum { nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall };
 

@@ -78,9 +78,9 @@ void clTabColours::InitDarkColours()
 
 void clTabColours::InitLightColours()
 {
-    activeTabTextColour = "#444444";
-    inactiveTabTextColour = "#444444";
-    activeTabBgColour = "#f0f0f0";
+    activeTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).ChangeLightness(110);
+    activeTabBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
 
     //#endif

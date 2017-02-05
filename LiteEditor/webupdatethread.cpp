@@ -43,15 +43,17 @@ struct CodeLiteVersion {
     wxString m_arch;
     wxString m_url;
     int m_version;
-
+    bool m_isReleaseVersion;
     CodeLiteVersion(const JSONElement& json)
         : m_version(wxNOT_FOUND)
+        , m_isReleaseVersion(false)
     {
         m_os = json.namedObject("os").toString();
         m_codename = json.namedObject("codename").toString();
         m_arch = json.namedObject("arch").toString();
         m_url = json.namedObject("url").toString();
         m_version = json.namedObject("version").toInt();
+        m_isReleaseVersion = json.namedObject("isRelease").toBool(m_isReleaseVersion);
     }
 
     void Print() { clDEBUG() << "--->" << m_os << "," << m_codename << "," << m_arch << "," << m_version << clEndl; }
@@ -75,7 +77,8 @@ struct CodeLiteVersion {
         }
         return false;
     }
-
+    
+    bool IsReleaseVersion() const { return m_isReleaseVersion; }
     const wxString& GetArch() const { return m_arch; }
     const wxString& GetCodename() const { return m_codename; }
     const wxString& GetOs() const { return m_os; }
@@ -97,7 +100,8 @@ void WebUpdateJob::Process(wxThread* thread)
     wxFileName fn(wxT("/tmp/codelite-packages.json"));
     wxString command;
 #ifdef __WXMAC__
-    command << wxT("curl http://www.codelite.org/packages.json  --output ") << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
+    command << wxT("curl http://www.codelite.org/packages.json  --output ") << fn.GetFullPath()
+            << wxT(" > /dev/null 2>&1");
 #else
     command << "wget http://www.codelite.org/packages.json --output-file=/dev/null -O " << fn.GetFullPath()
             << wxT(" > /dev/null 2>&1");

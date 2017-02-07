@@ -86,9 +86,10 @@ struct CodeLiteVersion {
     int GetVersion() const { return m_version; }
 };
 
-WebUpdateJob::WebUpdateJob(wxEvtHandler* parent, bool userRequest)
+WebUpdateJob::WebUpdateJob(wxEvtHandler* parent, bool userRequest, bool onlyRelease)
     : Job(parent)
     , m_userRequest(userRequest)
+    , m_onlyRelease(onlyRelease)
 {
 }
 
@@ -193,6 +194,12 @@ void WebUpdateJob::ParseFile()
     for(int i = 0; i < count; ++i) {
         CodeLiteVersion v(platforms.arrayItem(i));
         v.Print();
+        if(!v.IsReleaseVersion() && m_onlyRelease) {
+            // User wishes to be prompted for new releases only
+            // skip weekly builds
+            continue;
+        }
+        
         if(v.IsNewer(os, codename, arch)) {
             clDEBUG() << "A new version of CodeLite found" << clEndl;
             wxCommandEvent event(wxEVT_CMD_NEW_VERSION_AVAILABLE);

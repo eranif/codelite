@@ -1657,7 +1657,8 @@ void clMainFrame::CreateToolbars16()
     //----------------------------------------------
     wxWindow* toolbar_parent(m_mainPanel);
 
-    clToolBar* tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
+    clToolBar* tb =
+        new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetArtProvider(new CLMainAuiTBArt());
 
     wxAuiPaneInfo info;
@@ -3002,7 +3003,8 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
     }
 
     if(clConfig::Get().Read(kConfigCheckForNewVersion, true)) {
-        JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
+        JobQueueSingleton::Instance()->PushJob(
+            new WebUpdateJob(this, false, clConfig::Get().Read("PromptForNewReleaseOnly", false)));
     }
 
     // enable/disable plugins toolbar functionality
@@ -4905,10 +4907,7 @@ bool clMainFrame::SaveLayoutAndSession()
     return true;
 }
 
-void clMainFrame::SaveGeneralSettings()
-{
-    EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
-}
+void clMainFrame::SaveGeneralSettings() { EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo); }
 
 void clMainFrame::OnNextFiFMatch(wxCommandEvent& e)
 {
@@ -4989,7 +4988,8 @@ void clMainFrame::UpdateTagsOptions(const TagsOptionsData& tod)
 
 void clMainFrame::OnCheckForUpdate(wxCommandEvent& e)
 {
-    JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, true));
+    JobQueueSingleton::Instance()->PushJob(
+        new WebUpdateJob(this, true, clConfig::Get().Read("PromptForNewReleaseOnly", false)));
 }
 
 void clMainFrame::OnShowActiveProjectSettings(wxCommandEvent& e)

@@ -44,6 +44,7 @@ class EditorSettingsMiscPanel
     bool     m_oldMswUseTheme;
 
 protected:
+    virtual void OnPromptStableReleaseUI(wxUpdateUIEvent& event);
     virtual void OnResetAnnoyingDialogsAnswers(wxCommandEvent& event);
     virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event);
     int FindAvailableLocales();

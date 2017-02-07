@@ -73,7 +73,8 @@ class WebUpdateJob : public Job
 {
     wxString m_dataRead;
     bool m_userRequest;
-
+    bool m_onlyRelease;
+    
 protected:
     /**
      * @brief get the current platform details
@@ -81,7 +82,7 @@ protected:
     void GetPlatformDetails(wxString& os, wxString& codename, wxString& arch) const;
 
 public:
-    WebUpdateJob(wxEvtHandler* parent, bool userRequest);
+    WebUpdateJob(wxEvtHandler* parent, bool userRequest, bool onlyRelease);
     virtual ~WebUpdateJob();
     void ParseFile();
 

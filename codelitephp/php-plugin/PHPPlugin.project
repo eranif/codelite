@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="PHPPlugin">
+<CodeLite_Project Name="PHPPlugin" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00070001N0010Debug_Unix0000000000000001N0012Release_Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode0000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release0000000000000001N0015Win_x86_Release000000000000]]>
@@ -138,6 +138,7 @@
     <File Name="../resources/TestXDebugSettings.php"/>
     <File Name="../resources/pack-resources.sh"/>
     <File Name="../../Runtime/PHP.zip"/>
+    <File Name="../resources/cc/superglobals.php"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
     <File Name="php_ui.cpp"/>

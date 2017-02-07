@@ -9,5 +9,6 @@ define('$_REQUEST', "");
 define('$_SERVER', ""); 
 define('$_SESSION', "");
 define('$GLOBALS', "");
+define('$_COOKIE', "");
 
 ?>

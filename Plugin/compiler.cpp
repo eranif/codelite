@@ -696,7 +696,8 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
     
     wxString outputStr;
     IProcess::Ptr_t proc(::CreateSyncProcess(command));
-    proc->WaitForTerminate(outputStr);
+    if (proc)
+        proc->WaitForTerminate(outputStr);
 
     wxArrayString arr;
     wxArrayString outputArr = ::wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);

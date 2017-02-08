@@ -30,7 +30,7 @@ void clTabRendererClassic::InitDarkColours(clTabColours& colours)
     colours.inactiveTabBgColour = wxColour("#393838");
     colours.inactiveTabPenColour = wxColour("#100f0f");
     colours.inactiveTabInnerPenColour = wxColour("#535252");
-    colours.tabAreaColour = wxColour("#131111").ChangeLightness(115);
+    colours.tabAreaColour = colours.inactiveTabBgColour.ChangeLightness(110);
 }
 
 void clTabRendererClassic::InitLightColours(clTabColours& colours)

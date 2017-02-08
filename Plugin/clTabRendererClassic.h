@@ -5,9 +5,9 @@
 
 class WXDLLIMPEXP_SDK clTabRendererClassic : public clTabRenderer
 {
-protected:
-    void InitDarkColours(clTabColours& colours);
-    void InitLightColours(clTabColours& colours);
+public:
+    static void InitDarkColours(clTabColours& colours);
+    static void InitLightColours(clTabColours& colours);
 
 public:
     clTabRendererClassic();

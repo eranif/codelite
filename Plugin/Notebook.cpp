@@ -184,6 +184,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_contextMenu(NULL)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
+    bool isClassicLook = false;
 #if CL_BUILD
     if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
         m_art.reset(new clTabRendererSquare);
@@ -192,9 +193,11 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     } else {
         // the default
         m_art.reset(new clTabRendererClassic);
+        isClassicLook = true;
     }
 #else
     m_art.reset(new clTabRendererClassic); // Default art
+    isClassicLook = true;
 #endif
     DoSetBestSize();
 
@@ -214,6 +217,9 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     notebook->Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     if(m_style & kNotebook_DarkTabs) {
         m_colours.InitDarkColours();
+        if(isClassicLook) {
+            clTabRendererClassic::InitDarkColours(m_colours);
+        }
     } else {
         m_colours.InitLightColours();
     }
@@ -863,6 +869,9 @@ void clTabCtrl::SetStyle(size_t style)
 
     if(style & kNotebook_DarkTabs) {
         m_colours.InitDarkColours();
+        if(dynamic_cast<clTabRendererClassic*>(m_art.get())) {
+            clTabRendererClassic::InitDarkColours(m_colours);
+        }
     } else {
         m_colours.InitLightColours();
     }

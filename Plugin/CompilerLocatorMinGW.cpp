@@ -30,6 +30,8 @@
 #include <globals.h>
 #include "file_logger.h"
 #include "procutils.h"
+#include <wx/wfstream.h>
+#include <wx/txtstrm.h>
 
 #ifdef __WXMSW__
 #   include <wx/msw/registry.h>

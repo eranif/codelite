@@ -292,7 +292,7 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
         if(t->IsActive() && ((!IsVerticalTabs() && clientRect.Contains(t->GetRect())) ||
-                             (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
+                                (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
             return true;
     }
     return false;
@@ -481,9 +481,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -678,10 +678,10 @@ bool clTabCtrl::SetPageText(size_t page, const wxString& text)
     tab->SetLabel(text, GetStyle());
     int newWidth = tab->GetWidth();
     int diff = (newWidth - oldWidth);
-    
+
     // Update the width of the tabs from the current tab by "diff"
     DoUpdateXCoordFromPage(tab->GetWindow(), diff);
-    
+
     // Redraw the tab control
     Refresh();
     return true;
@@ -758,16 +758,16 @@ void clTabCtrl::SetPageBitmap(size_t index, const wxBitmap& bmp)
 {
     clTabInfo::Ptr_t tab = GetTabInfo(index);
     if(!tab) return;
-    
+
     // Set the new bitmap and calc the difference
     int oldWidth = tab->GetWidth();
     tab->SetBitmap(bmp, GetStyle());
     int newWidth = tab->GetWidth();
     int diff = (newWidth - oldWidth);
-    
+
     // Update the width of the tabs from the current tab by "diff"
     DoUpdateXCoordFromPage(tab->GetWindow(), diff);
-    
+
     // Redraw the tab control
     Refresh();
 }
@@ -1273,8 +1273,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void
-clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
+void clTabCtrl::DoDrawBottomBox(
+    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
 {
     GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
 }
@@ -1300,6 +1300,19 @@ bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
 }
 
 void clTabCtrl::OnRightUp(wxMouseEvent& event) { event.Skip(); }
+
+void clTabCtrl::SetArt(clTabRenderer::Ptr_t art)
+{
+    m_art = art;
+    if((m_style & kNotebook_DarkTabs)) {
+        m_colours.InitDarkColours();
+        if(dynamic_cast<clTabRendererClassic*>(m_art.get())) {
+            clTabRendererClassic::InitDarkColours(m_colours);
+        }
+    }
+    DoSetBestSize();
+    Refresh();
+}
 
 // ----------------------------------------------------------------------
 // clTabHistory

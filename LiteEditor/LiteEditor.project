@@ -561,6 +561,7 @@
     <File Name="ContextJavaScript.cpp"/>
     <File Name="clPrintout.h"/>
     <File Name="clPrintout.cpp"/>
+    <File Name="movefuncimplbasedlg.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>
@@ -933,6 +934,7 @@
       <File Name="ThreadListPanelBase_liteeditor_bitmaps.cpp"/>
       <File Name="AttachDbgProcBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="ConfigManagerBaseDlg_liteeditor_bitmaps.cpp"/>
+      <File Name="movefuncimplbasedlg_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

@@ -53,7 +53,7 @@ MoveFuncImplDlg::MoveFuncImplDlg(wxWindow* parent, const wxString& text, const w
         m_preview->SetText(text);
     }
     m_preview->CallAfter(&wxStyledTextCtrl::SetFocus);
-    Centre();
+    CentreOnParent();
 }
 
 void MoveFuncImplDlg::SetText(const wxString& text) { m_preview->SetText(text); }

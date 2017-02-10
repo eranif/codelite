@@ -219,6 +219,8 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
         m_colours.InitDarkColours();
         if(isClassicLook) {
             clTabRendererClassic::InitDarkColours(m_colours);
+        } else {
+            clTabRendererClassic::InitLightColours(m_colours);
         }
     } else {
         m_colours.InitLightColours();
@@ -871,6 +873,8 @@ void clTabCtrl::SetStyle(size_t style)
         m_colours.InitDarkColours();
         if(dynamic_cast<clTabRendererClassic*>(m_art.get())) {
             clTabRendererClassic::InitDarkColours(m_colours);
+        } else {
+            clTabRendererClassic::InitLightColours(m_colours);
         }
     } else {
         m_colours.InitLightColours();
@@ -1304,11 +1308,15 @@ void clTabCtrl::OnRightUp(wxMouseEvent& event) { event.Skip(); }
 void clTabCtrl::SetArt(clTabRenderer::Ptr_t art)
 {
     m_art = art;
+    bool isClassic = (dynamic_cast<clTabRendererClassic*>(m_art.get()) != NULL);
     if((m_style & kNotebook_DarkTabs)) {
         m_colours.InitDarkColours();
-        if(dynamic_cast<clTabRendererClassic*>(m_art.get())) {
+        if(isClassic) {
             clTabRendererClassic::InitDarkColours(m_colours);
         }
+    } else if(isClassic){
+        m_colours.InitLightColours();
+        clTabRendererClassic::InitLightColours(m_colours);
     }
     DoSetBestSize();
     Refresh();

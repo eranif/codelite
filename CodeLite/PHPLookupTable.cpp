@@ -1171,7 +1171,7 @@ void PHPLookupTable::ResetDatabase()
     Open(curfile);
 }
 
-bool PHPLookupTable::CheckDiskImage(wxSQLite3Database& db)
+bool PHPLookupTable::CheckDiskImage(wxSQLite3Database& db, const wxFileName& filename)
 {
     try {
         wxSQLite3ResultSet res = db.ExecuteQuery("PRAGMA quick_check");
@@ -1183,7 +1183,7 @@ bool PHPLookupTable::CheckDiskImage(wxSQLite3Database& db)
         }
     } catch(wxSQLite3Exception& exec) {
         // this can only happen if we have a corrupt disk image
-        CL_WARNING("PHP: database image is corrupted %s", m_filename.GetFullPath());
+        clWARNING() << "PHP: database image is corrupted:" << filename.GetFullPath() << clEndl;
         return false;
     }
     return true;
@@ -1194,7 +1194,7 @@ void PHPLookupTable::EnsureIntegrity(const wxFileName& filename)
     wxSQLite3Database db;
     db.Open(filename.GetFullPath());
     if(db.IsOpen()) {
-        if(!CheckDiskImage(db)) {
+        if(!CheckDiskImage(db, filename)) {
             // disk image is malformed
             db.Close();
             wxLogNull noLog;

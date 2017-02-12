@@ -1183,6 +1183,7 @@ bool PHPLookupTable::CheckDiskImage(wxSQLite3Database& db, const wxFileName& fil
         }
     } catch(wxSQLite3Exception& exec) {
         // this can only happen if we have a corrupt disk image
+        clWARNING() << "PHP: exception caught:" << exec.GetMessage() << clEndl;
         clWARNING() << "PHP: database image is corrupted:" << filename.GetFullPath() << clEndl;
         return false;
     }

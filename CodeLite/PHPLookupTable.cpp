@@ -1176,7 +1176,8 @@ bool PHPLookupTable::CheckDiskImage(wxSQLite3Database& db, const wxFileName& fil
     try {
         wxSQLite3ResultSet res = db.ExecuteQuery("PRAGMA quick_check");
         if(res.NextRow()) {
-            wxString value = res.GetString("integrity_check");
+            wxString value = res.GetString(0);
+            clDEBUG() << "PHP: 'PRAGMA quick_check' returned:" << value << clEndl;
             return (value.Lower() == "ok");
         } else {
             return false;

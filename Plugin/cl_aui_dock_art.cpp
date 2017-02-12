@@ -69,11 +69,6 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 clAuiDockArt::clAuiDockArt(IManager* manager)
     : m_manager(manager)
 {
-    m_dockCloseBmp = wxXmlResource::Get()->LoadBitmap("aui-close");
-    m_dockMoreBmp = wxXmlResource::Get()->LoadBitmap("aui-more");
-    m_dockExpandeBmp = wxXmlResource::Get()->LoadBitmap("aui-expand");
-    m_dockMinimizeBmp = wxXmlResource::Get()->LoadBitmap("aui-minimize");
-
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
     m_useDarkColours = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
     m_darkBgColour = wxColour("rgb(80,80,80)");
@@ -83,6 +78,18 @@ clAuiDockArt::clAuiDockArt(IManager* manager)
     m_notebookTabAreaDarkBgColour = wxColour("rgb(37,22,22)"); //.ChangeLightness(115);
 #endif
     m_notebookTabAreaDarkBgColour = m_darkBgColour;
+
+    if(m_useDarkColours) {
+        m_dockCloseBmp = wxXmlResource::Get()->LoadBitmap("aui-close-white");
+        m_dockMoreBmp = wxXmlResource::Get()->LoadBitmap("aui-more-white");
+        m_dockExpandeBmp = wxXmlResource::Get()->LoadBitmap("aui-expand-white");
+        m_dockMinimizeBmp = wxXmlResource::Get()->LoadBitmap("aui-minimize-white");
+    } else {
+        m_dockCloseBmp = wxXmlResource::Get()->LoadBitmap("aui-close");
+        m_dockMoreBmp = wxXmlResource::Get()->LoadBitmap("aui-more");
+        m_dockExpandeBmp = wxXmlResource::Get()->LoadBitmap("aui-expand");
+        m_dockMinimizeBmp = wxXmlResource::Get()->LoadBitmap("aui-minimize");
+    }
 }
 
 clAuiDockArt::~clAuiDockArt()
@@ -312,4 +319,17 @@ void clAuiDockArt::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_useDarkColours = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
+    
+    // update the bitmaps
+    if(m_useDarkColours) {
+        m_dockCloseBmp = wxXmlResource::Get()->LoadBitmap("aui-close-white");
+        m_dockMoreBmp = wxXmlResource::Get()->LoadBitmap("aui-more-white");
+        m_dockExpandeBmp = wxXmlResource::Get()->LoadBitmap("aui-expand-white");
+        m_dockMinimizeBmp = wxXmlResource::Get()->LoadBitmap("aui-minimize-white");
+    } else {
+        m_dockCloseBmp = wxXmlResource::Get()->LoadBitmap("aui-close");
+        m_dockMoreBmp = wxXmlResource::Get()->LoadBitmap("aui-more");
+        m_dockExpandeBmp = wxXmlResource::Get()->LoadBitmap("aui-expand");
+        m_dockMinimizeBmp = wxXmlResource::Get()->LoadBitmap("aui-minimize");
+    }
 }

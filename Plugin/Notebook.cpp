@@ -360,7 +360,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
-
+    
     wxRect clientRect(GetClientRect());
     if(clientRect.width <= 3) return;
     if(clientRect.height <= 3) return;
@@ -430,17 +430,11 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     if(rect.GetSize().x > 0 && rect.GetSize().y > 0) {
-#if 0
-        wxDC& gcdc = dc;
-        PrepareDC(gcdc);
-#else
         wxGCDC gcdc(dc);
         PrepareDC(gcdc);
-#endif
         gcdc.SetPen(tabAreaBgCol);
         gcdc.SetBrush(tabAreaBgCol);
         gcdc.DrawRectangle(rect.GetSize());
-
         UpdateVisibleTabs();
 
         int activeTabInex = wxNOT_FOUND;

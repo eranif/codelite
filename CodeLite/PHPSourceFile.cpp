@@ -1419,6 +1419,8 @@ void PHPSourceFile::OnConstant(const phpLexerToken& tok)
                 if(token.type == ';') {
                     UngetToken(token);
                     break;
+                } else if(token.type == ',') {
+                    break;
                 }
                 constantValue << token.Text();
             }

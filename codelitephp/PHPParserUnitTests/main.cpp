@@ -772,6 +772,8 @@ TEST_FUNC(test_foreach)
     lookup.UpdateSourceFile(sourceFile);
     PHPEntityBase::Ptr_t myKey = sourceFile.Namespace()->FindChild("$myKey");
     PHPEntityBase::Ptr_t myValue = sourceFile.Namespace()->FindChild("$myValue");
+    CHECK_BOOL(myKey && myKey->GetFullName() == "$myKey");
+    CHECK_BOOL(myValue && myValue->GetFullName() == "$myValue");
     return true;
 }
 

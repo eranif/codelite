@@ -30,8 +30,8 @@
 #include <wx/filename.h>
 #include "codelite_exports.h"
 #include <list>
-#include <wx/sharedptr.h>
 #include <wx/clntdata.h>
+#include "smart_ptr.h"
 
 // We do it this way to avoid exposing the include to <libssh/sftp.h> to files including this header
 struct sftp_attributes_struct;
@@ -40,20 +40,21 @@ typedef struct sftp_attributes_struct* SFTPAttribute_t;
 class WXDLLIMPEXP_CL SFTPAttribute : public wxClientData
 {
     wxString m_name;
-    size_t   m_flags;
-    size_t   m_size;
+    size_t m_flags;
+    size_t m_size;
     SFTPAttribute_t m_attributes;
+    size_t m_permissions;
 
 public:
-    typedef wxSharedPtr<SFTPAttribute>      Ptr_t;
+    typedef SmartPtr<SFTPAttribute> Ptr_t;
     typedef std::list<SFTPAttribute::Ptr_t> List_t;
 
     enum {
-        TYPE_FOLDER       = 0x00000001,
-        TYPE_SYMBLINK     = 0x00000002,
+        TYPE_FOLDER = 0x00000001,
+        TYPE_SYMBLINK = 0x00000002,
         TYPE_REGULAR_FILE = 0x00000004,
-        TYPE_SEPCIAL      = 0x00000008,
-        TYPE_UNKNOWN      = 0x00000010,
+        TYPE_SEPCIAL = 0x00000008,
+        TYPE_UNKNOWN = 0x00000010,
     };
 
 protected:
@@ -72,29 +73,19 @@ public:
      */
     void Assign(SFTPAttribute_t attr);
 
-    size_t GetSize() const {
-        return m_size;
-    }
+    size_t GetSize() const { return m_size; }
     wxString GetTypeAsString() const;
-    const wxString& GetName() const {
-        return m_name;
-    }
+    const wxString& GetName() const { return m_name; }
 
-    bool IsFolder() const {
-        return m_flags & TYPE_FOLDER;
-    }
+    bool IsFolder() const { return m_flags & TYPE_FOLDER; }
 
-    bool IsFile() const {
-        return m_flags & TYPE_REGULAR_FILE;
-    }
+    bool IsFile() const { return m_flags & TYPE_REGULAR_FILE; }
 
-    bool IsSymlink() const {
-        return m_flags & TYPE_SYMBLINK;
-    }
+    bool IsSymlink() const { return m_flags & TYPE_SYMBLINK; }
 
-    bool IsSpecial() const {
-        return m_flags & TYPE_SEPCIAL;
-    }
+    bool IsSpecial() const { return m_flags & TYPE_SEPCIAL; }
+    void SetPermissions(size_t permissions) { this->m_permissions = permissions; }
+    size_t GetPermissions() const { return m_permissions; }
 };
 #endif
 #endif // SFTPATTRIBUTE_H

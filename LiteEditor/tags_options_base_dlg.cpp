@@ -37,96 +37,97 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     mainSizer->Add(m_notebook87, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_paneDisplayAndBehavior = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook87, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    m_notebook87->AddPage(m_paneDisplayAndBehavior, _("Display and Behavior"), false);
+    m_notebook87->AddPage(m_paneDisplayAndBehavior, _("General"), false);
     
     wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
     m_paneDisplayAndBehavior->SetSizer(bSizer19);
     
-    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_paneDisplayAndBehavior, wxID_ANY, _("Display:")), wxVERTICAL);
-    
-    bSizer19->Add(sbSizer2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
     wxFlexGridSizer* flexGridSizer12 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer12->SetFlexibleDirection( wxBOTH );
     flexGridSizer12->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer12->AddGrowableCol(1);
     
-    sbSizer2->Add(flexGridSizer12, 0, wxALL, WXC_FROM_DIP(5));
+    bSizer19->Add(flexGridSizer12, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_staticText14 = new wxStaticText(m_paneDisplayAndBehavior, wxID_ANY, _("Number of items to display in the completion box:"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     
-    flexGridSizer12->Add(m_staticText14, 0, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    flexGridSizer12->Add(m_staticText14, 0, wxLEFT|wxRIGHT|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     m_spinCtrlNumberOfCCItems = new wxTextCtrl(m_paneDisplayAndBehavior, wxID_ANY, wxT("50"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_spinCtrlNumberOfCCItems->SetHint(wxT(""));
     #endif
     
-    flexGridSizer12->Add(m_spinCtrlNumberOfCCItems, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
+    flexGridSizer12->Add(m_spinCtrlNumberOfCCItems, 0, wxALL|wxEXPAND|wxALIGN_LEFT, WXC_FROM_DIP(5));
     
-    m_checkBoxEnableCaseSensitiveCompletion = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Code Completion is case sensitive (improves performance)"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
-    m_checkBoxEnableCaseSensitiveCompletion->SetValue(false);
-    m_checkBoxEnableCaseSensitiveCompletion->SetToolTip(_("When enabled, the code completion search engine will use case sensitive searches. \nSo 'QString' is NOT equal 'qstring'"));
+    m_staticText123 = new wxStaticText(m_paneDisplayAndBehavior, wxID_ANY, _("Additional file extensions to parse:"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1,-1)), 0);
     
-    flexGridSizer12->Add(m_checkBoxEnableCaseSensitiveCompletion, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer12->Add(m_staticText123, 0, wxALL, WXC_FROM_DIP(5));
     
-    flexGridSizer12->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+    m_textCtrlFileSpec = new wxTextCtrl(m_paneDisplayAndBehavior, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1,-1)), 0);
+    m_textCtrlFileSpec->SetToolTip(_("In addition to the default C/C++ file extensions, you may add here\nadditional file extensions so CodeLite will know to parse them as\nC/C++ files"));
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlFileSpec->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer12->Add(m_textCtrlFileSpec, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticLine129 = new wxStaticLine(m_paneDisplayAndBehavior, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1,-1)), wxLI_HORIZONTAL);
+    
+    bSizer19->Add(m_staticLine129, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxFlexGridSizer* flexGridSizer127 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer127->SetFlexibleDirection( wxBOTH );
+    flexGridSizer127->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    
+    bSizer19->Add(flexGridSizer127, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_checkDisplayTypeInfo = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Display type info tooltips"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     m_checkDisplayTypeInfo->SetValue(false);
     m_checkDisplayTypeInfo->SetToolTip(_("Display information about the hovered text"));
     
-    flexGridSizer12->Add(m_checkDisplayTypeInfo, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer127->Add(m_checkDisplayTypeInfo, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
     
-    flexGridSizer12->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+    m_checkBoxEnableCaseSensitiveCompletion = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Code Completion is case sensitive"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
+    m_checkBoxEnableCaseSensitiveCompletion->SetValue(false);
+    m_checkBoxEnableCaseSensitiveCompletion->SetToolTip(_("When enabled, the code completion search engine will use case sensitive searches. \nSo 'QString' is NOT equal 'qstring'"));
+    
+    flexGridSizer127->Add(m_checkBoxEnableCaseSensitiveCompletion, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
     
     m_checkDisplayFunctionTip = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Display function calltip"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     m_checkDisplayFunctionTip->SetValue(false);
     m_checkDisplayFunctionTip->SetToolTip(_("Display function argument list after typing an open brace '('"));
     
-    flexGridSizer12->Add(m_checkDisplayFunctionTip, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer127->Add(m_checkDisplayFunctionTip, 0, wxALL, WXC_FROM_DIP(5));
     
-    flexGridSizer12->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+    m_checkBoxKeepFunctionSignature = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Keep function signature un-formatted"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
+    m_checkBoxKeepFunctionSignature->SetValue(false);
+    
+    flexGridSizer127->Add(m_checkBoxKeepFunctionSignature, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_checkCppKeywordAssist = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Display completion box for language keywords"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     m_checkCppKeywordAssist->SetValue(false);
     m_checkCppKeywordAssist->SetToolTip(_("When enabled, codelite will auto show the code completion box for C/C++ keywords after typing 2 chars"));
     
-    flexGridSizer12->Add(m_checkCppKeywordAssist, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer127->Add(m_checkCppKeywordAssist, 0, wxALL, WXC_FROM_DIP(5));
     
-    flexGridSizer12->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxKeepFunctionSignature = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Keep function signature un-formatted"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
-    m_checkBoxKeepFunctionSignature->SetValue(false);
-    
-    flexGridSizer12->Add(m_checkBoxKeepFunctionSignature, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    wxStaticBoxSizer* sbSizer15 = new wxStaticBoxSizer( new wxStaticBox(m_paneDisplayAndBehavior, wxID_ANY, _("Behavior:")), wxVERTICAL);
-    
-    bSizer19->Add(sbSizer15, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    wxFlexGridSizer* flexGridSizer59 = new wxFlexGridSizer(0, 1, 0, 0);
-    flexGridSizer59->SetFlexibleDirection( wxBOTH );
-    flexGridSizer59->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    
-    sbSizer15->Add(flexGridSizer59, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_checkBoxretagWorkspaceOnStartup = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Perform a retag  when workspace is loaded"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
+    m_checkBoxretagWorkspaceOnStartup = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Re-parse on workspace loaded"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     m_checkBoxretagWorkspaceOnStartup->SetValue(false);
     m_checkBoxretagWorkspaceOnStartup->SetToolTip(_("Retag workspace once loaded"));
     
-    flexGridSizer59->Add(m_checkBoxretagWorkspaceOnStartup, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer127->Add(m_checkBoxretagWorkspaceOnStartup, 0, wxALL, WXC_FROM_DIP(5));
     
     m_checkDisableParseOnSave = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Do not parse the file after saving it"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     m_checkDisableParseOnSave->SetValue(false);
     m_checkDisableParseOnSave->SetToolTip(_("Do not trigger file parsing after saving a file"));
     
-    flexGridSizer59->Add(m_checkDisableParseOnSave, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer127->Add(m_checkDisableParseOnSave, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxDeepUsingNamespaceResolving = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Scan all included files to locate 'using namespace' statements"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
+    m_checkBoxDeepUsingNamespaceResolving = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Crawl all files to locate 'using namespace' calls"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     m_checkBoxDeepUsingNamespaceResolving->SetValue(false);
     m_checkBoxDeepUsingNamespaceResolving->SetToolTip(_("Allways search for 'using namespace' statements in all included files"));
     
-    flexGridSizer59->Add(m_checkBoxDeepUsingNamespaceResolving, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer127->Add(m_checkBoxDeepUsingNamespaceResolving, 0, wxALL, WXC_FROM_DIP(5));
     
     m_paneColouring = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook87, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_paneColouring, _("Colouring"), false);
@@ -207,7 +208,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer4->Add(m_staticTextMinWordLen, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_sliderMinWordLen = new wxSlider(m_paneTriggering, wxID_ANY, 3, 1, 25, wxDefaultPosition, wxDLG_UNIT(m_paneTriggering, wxSize(-1, -1)), wxSL_LABELS|wxSL_AUTOTICKS|wxSL_HORIZONTAL);
+    m_sliderMinWordLen = new wxSlider(m_paneTriggering, wxID_ANY, 3, 1, 10, wxDefaultPosition, wxDLG_UNIT(m_paneTriggering, wxSize(-1, -1)), wxSL_LABELS|wxSL_AUTOTICKS|wxSL_HORIZONTAL);
     m_sliderMinWordLen->SetToolTip(_("Number of chars to type before showing the code completion box"));
     
     fgSizer4->Add(m_sliderMinWordLen, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -237,8 +238,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     m_banner34 = new wxBannerWindow(m_panel38, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_panel38, wxSize(-1,-1)), wxBORDER_THEME);
     m_banner34->SetBitmap(wxNullBitmap);
-    m_banner34->SetText(_("Search paths"), _("codelite will search for include files in these locations"));
+    m_banner34->SetText(_("Search paths"), _("CodeLite will search for include files in these locations"));
     m_banner34->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_banner34->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     m_banner34->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
     
     boxSizer30->Add(m_banner34, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
@@ -311,8 +313,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     m_banner44 = new wxBannerWindow(m_panel40, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_panel40, wxSize(-1,-1)), wxBORDER_THEME);
     m_banner44->SetBitmap(wxNullBitmap);
-    m_banner44->SetText(_("Exclude paths"), _("codelite code completion will ignore any files found in one of the paths below"));
+    m_banner44->SetText(_("Exclude paths"), _("CodeLite code completion will ignore any files found in one of the paths below"));
     m_banner44->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_banner44->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     m_banner44->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
     
     boxSizer42->Add(m_banner44, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));

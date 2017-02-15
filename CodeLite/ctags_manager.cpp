@@ -65,6 +65,7 @@
 #include <algorithm>
 #include "CxxTemplateFunction.h"
 #include <wx/log.h>
+#include "fileutils.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -443,7 +444,10 @@ TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int& count)
     return tree;
 }
 
-bool TagsManager::IsValidCtagsFile(const wxFileName& filename) const { return FileExtManager::IsCxxFile(filename); }
+bool TagsManager::IsValidCtagsFile(const wxFileName& filename) const
+{
+    return FileExtManager::IsCxxFile(filename) || FileUtils::WildMatch(m_tagsOptions.GetFileSpec(), filename);
+}
 
 //-----------------------------------------------------------------------------
 // >>>>>>>>>>>>>>>>>>>>> Code Completion API START
@@ -2300,7 +2304,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
         protos[key] = tag;
     }
 
-   // std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetTokensMap();
+    // std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetTokensMap();
 
     // remove functions with implementation
     for(size_t i = 0; i < vimpl.size(); i++) {

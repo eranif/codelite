@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
-#define CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
+#ifndef _CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
+#define _CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -17,13 +17,14 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
-#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/statline.h>
 #include <wx/checkbox.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
+#include <wx/statbox.h>
 #include <wx/slider.h>
 #include <wx/bannerwindow.h>
 #include <wx/stc/stc.h>
@@ -56,11 +57,14 @@ protected:
     wxPanel* m_paneDisplayAndBehavior;
     wxStaticText* m_staticText14;
     wxTextCtrl* m_spinCtrlNumberOfCCItems;
-    wxCheckBox* m_checkBoxEnableCaseSensitiveCompletion;
+    wxStaticText* m_staticText123;
+    wxTextCtrl* m_textCtrlFileSpec;
+    wxStaticLine* m_staticLine129;
     wxCheckBox* m_checkDisplayTypeInfo;
+    wxCheckBox* m_checkBoxEnableCaseSensitiveCompletion;
     wxCheckBox* m_checkDisplayFunctionTip;
-    wxCheckBox* m_checkCppKeywordAssist;
     wxCheckBox* m_checkBoxKeepFunctionSignature;
+    wxCheckBox* m_checkCppKeywordAssist;
     wxCheckBox* m_checkBoxretagWorkspaceOnStartup;
     wxCheckBox* m_checkDisableParseOnSave;
     wxCheckBox* m_checkBoxDeepUsingNamespaceResolving;
@@ -131,11 +135,14 @@ protected:
 public:
     wxStaticText* GetStaticText14() { return m_staticText14; }
     wxTextCtrl* GetSpinCtrlNumberOfCCItems() { return m_spinCtrlNumberOfCCItems; }
-    wxCheckBox* GetCheckBoxEnableCaseSensitiveCompletion() { return m_checkBoxEnableCaseSensitiveCompletion; }
+    wxStaticText* GetStaticText123() { return m_staticText123; }
+    wxTextCtrl* GetTextCtrlFileSpec() { return m_textCtrlFileSpec; }
+    wxStaticLine* GetStaticLine129() { return m_staticLine129; }
     wxCheckBox* GetCheckDisplayTypeInfo() { return m_checkDisplayTypeInfo; }
+    wxCheckBox* GetCheckBoxEnableCaseSensitiveCompletion() { return m_checkBoxEnableCaseSensitiveCompletion; }
     wxCheckBox* GetCheckDisplayFunctionTip() { return m_checkDisplayFunctionTip; }
-    wxCheckBox* GetCheckCppKeywordAssist() { return m_checkCppKeywordAssist; }
     wxCheckBox* GetCheckBoxKeepFunctionSignature() { return m_checkBoxKeepFunctionSignature; }
+    wxCheckBox* GetCheckCppKeywordAssist() { return m_checkCppKeywordAssist; }
     wxCheckBox* GetCheckBoxretagWorkspaceOnStartup() { return m_checkBoxretagWorkspaceOnStartup; }
     wxCheckBox* GetCheckDisableParseOnSave() { return m_checkDisableParseOnSave; }
     wxCheckBox* GetCheckBoxDeepUsingNamespaceResolving() { return m_checkBoxDeepUsingNamespaceResolving; }

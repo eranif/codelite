@@ -260,7 +260,7 @@ SFTPAttribute::Ptr_t clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& bu
                           sftp_get_error(m_sftp));
     }
     wxInt64 fileSize = fileAttr->GetSize();
-    if(fileSize == 0) fileAttr;
+    if(fileSize == 0) return fileAttr;
 
     // Allocate buffer for the file content
     char pBuffer[65536]; // buffer

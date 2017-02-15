@@ -178,7 +178,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_panelSyntaxHighlight->SetSizer(boxSizer21);
     
     wxArrayString m_listBoxArr;
-    m_listBox = new wxListBox(m_panelSyntaxHighlight, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelSyntaxHighlight, wxSize(150,-1)), m_listBoxArr, wxLB_SORT|wxLB_SINGLE);
+    m_listBox = new wxListBox(m_panelSyntaxHighlight, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelSyntaxHighlight, wxSize(-1,-1)), m_listBoxArr, wxLB_SORT|wxLB_SINGLE);
     
     boxSizer21->Add(m_listBox, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     

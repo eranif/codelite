@@ -118,7 +118,9 @@ void LLDBLocalsView::OnLLDBLocalsUpdated(LLDBEvent& event)
         // Locate the item ID
         if(m_pathToItem.count(path)) {
             const wxTreeItemId& itemToExpand = m_pathToItem[path];
-            m_treeList->Expand(itemToExpand);
+            if(m_treeList->HasChildren(itemToExpand)) {
+                m_treeList->Expand(itemToExpand);
+            }
         }
     });
 }

@@ -104,6 +104,7 @@ public:
 class LLDBVariableClientData : public wxTreeItemData
 {
     LLDBVariable::Ptr_t m_variable;
+    wxString m_path;
 
 public:
     LLDBVariableClientData(LLDBVariable::Ptr_t variable)
@@ -111,6 +112,9 @@ public:
     {
     }
     LLDBVariable::Ptr_t GetVariable() const { return m_variable; }
+    
+    void SetPath(const wxString& path) { this->m_path = path; }
+    const wxString& GetPath() const { return m_path; }
 };
 
 #endif // LLDBLOCALVARIABLE_H

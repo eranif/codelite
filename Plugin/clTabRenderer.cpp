@@ -80,19 +80,19 @@ void clTabColours::InitLightColours()
 {
     activeTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).ChangeLightness(110);
-    activeTabInnerPenColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE); //"#ffffff";
+    activeTabBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
 
     //#endif
     tabAreaColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(80);
 
     markerColour = wxColour("rgb(227, 125, 9)");
 
-    inactiveTabBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    activeTabBgColour = inactiveTabBgColour.ChangeLightness(180);
+    inactiveTabBgColour = tabAreaColour.ChangeLightness(120);
     inactiveTabInnerPenColour = inactiveTabBgColour;
     inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(75); // The outline is a bit darker
 #ifdef __WXOSX__
-    activeTabPenColour = activeTabInnerPenColour;
+    activeTabPenColour = activeTabBgColour;
 #else
     activeTabPenColour = inactiveTabPenColour;
 #endif

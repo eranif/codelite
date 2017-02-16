@@ -39,8 +39,8 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours)
 {
     colours.activeTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     colours.inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    colours.inactiveTabBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    colours.activeTabBgColour = colours.inactiveTabBgColour.ChangeLightness(180);
+    colours.activeTabBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    colours.inactiveTabBgColour = colours.activeTabBgColour.ChangeLightness(90); // darker
     colours.activeTabPenColour = colours.inactiveTabPenColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     colours.activeTabInnerPenColour = colours.inactiveTabInnerPenColour =
         colours.inactiveTabPenColour.ChangeLightness(180);

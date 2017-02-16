@@ -80,7 +80,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     wxCustomStatusBarField::Ptr_t sourceControl(new wxCustomStatusBarBitmapField(this, clGetScaledSize(30)));
     AddField(sourceControl);
 
-    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, clGetScaledSize(250)));
+    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, clGetScaledSize(300)));
     AddField(lineCol);
 
     wxCustomStatusBarField::Ptr_t buildAnimation(new wxCustomStatusBarAnimationField(

@@ -3081,7 +3081,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
         if(reUrl.IsValid() && reUrl.Matches(selectText)) {
             // Offer to open the URL
             if(ID_OPEN_URL == wxNOT_FOUND) {
-                ID_OPEN_URL == ::wxNewId();
+                ID_OPEN_URL = ::wxNewId();
             }
             wxString text;
             text << "Go to " << reUrl.GetMatch(selectText);

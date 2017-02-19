@@ -26,6 +26,7 @@
 #define SHELLTAB_H
 
 #include "outputtabwindow.h"
+#include "OutputDebugStringThread.h"
 
 class AsyncExeCmd;
 
@@ -64,9 +65,16 @@ public:
 
 class OutputTab : public ShellTab
 {
+    OutputDebugStringThread* m_thread;
+
 public:
     OutputTab(wxWindow* parent, wxWindowID id, const wxString& name);
     virtual ~OutputTab();
+    
+    /**
+     * @brief Windows only. Report a string from a debuggee process which used the "OuptutDebugString" method
+     */
+    void OnOutputDebugString(clCommandEvent& event);
 };
 
 class DebugTab : public ShellTab

@@ -34,6 +34,7 @@
 #include "editor_config.h"
 #include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
+#include "event_notifier.h"
 
 BEGIN_EVENT_TABLE(ShellTab, OutputTabWindow)
 EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, ShellTab::OnProcStarted)
@@ -343,9 +344,30 @@ void DebugTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 
 OutputTab::OutputTab(wxWindow* parent, wxWindowID id, const wxString& name)
     : ShellTab(parent, id, name)
+    , m_thread(NULL)
 {
     m_inputSizer->Show(false);
     GetSizer()->Layout();
+#ifdef __WXMSW__
+    m_thread = new OutputDebugStringThread();
+    m_thread->Start();
+#endif
+    EventNotifier::Get()->Bind(wxEVT_OUTPUT_DEBUG_STRING, &OutputTab::OnOutputDebugString, this);
 }
 
-OutputTab::~OutputTab() {}
+OutputTab::~OutputTab() 
+{
+    EventNotifier::Get()->Unbind(wxEVT_OUTPUT_DEBUG_STRING, &OutputTab::OnOutputDebugString, this);
+    if(m_thread) {
+        m_thread->Stop();
+        wxDELETE(m_thread);
+    }
+}
+
+void OutputTab::OnOutputDebugString(clCommandEvent& event)
+{
+    event.Skip();
+    wxString msg;
+    msg << "[" << event.GetInt() << "] " << event.GetString() << "\n";
+    AppendText(msg);
+}

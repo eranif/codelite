@@ -685,6 +685,10 @@
     <File Name="editor_options_docking_windows_liteeditor_bitmaps.cpp"/>
     <File Name="ClangOutputTab.h"/>
     <File Name="ClangOutputTab.cpp"/>
+    <VirtualDirectory Name="OutputTab">
+      <File Name="OutputDebugStringThread.h"/>
+      <File Name="OutputDebugStringThread.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

@@ -68,6 +68,9 @@ class OutputTab : public ShellTab
     OutputDebugStringThread* m_thread;
     bool m_outputDebugStringActive;
 
+protected:
+    void DoSetCollecting(bool b);
+
 public:
     OutputTab(wxWindow* parent, wxWindowID id, const wxString& name);
     virtual ~OutputTab();

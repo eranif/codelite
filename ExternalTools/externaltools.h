@@ -32,7 +32,6 @@
 #include "cl_command_event.h"
 
 class wxToolBar;
-class AsyncExeCmd;
 
 class ExternalToolsPlugin : public IPlugin
 {

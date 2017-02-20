@@ -108,11 +108,10 @@ bool ShellTab::DoSendInput(const wxString& line)
 void ShellTab::OnProcStarted(wxCommandEvent& e)
 {
     if(m_cmd && m_cmd->IsBusy()) {
-        // TODO: log message: already running a process
         return;
     }
     m_cmd = (AsyncExeCmd*)e.GetEventObject();
-    Clear();
+    AppendText("\n");
     AppendText(e.GetString());
     m_input->Clear();
 }
@@ -342,9 +341,16 @@ void DebugTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
     }
 }
 
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+// OutputTab class
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+
 OutputTab::OutputTab(wxWindow* parent, wxWindowID id, const wxString& name)
     : ShellTab(parent, id, name)
     , m_thread(NULL)
+    , m_outputDebugStringActive(false)
 {
     m_inputSizer->Show(false);
     GetSizer()->Layout();
@@ -353,11 +359,15 @@ OutputTab::OutputTab(wxWindow* parent, wxWindowID id, const wxString& name)
     m_thread->Start();
 #endif
     EventNotifier::Get()->Bind(wxEVT_OUTPUT_DEBUG_STRING, &OutputTab::OnOutputDebugString, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &OutputTab::OnDebugStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &OutputTab::OnDebugStopped, this);
 }
 
-OutputTab::~OutputTab() 
+OutputTab::~OutputTab()
 {
     EventNotifier::Get()->Unbind(wxEVT_OUTPUT_DEBUG_STRING, &OutputTab::OnOutputDebugString, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &OutputTab::OnDebugStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &OutputTab::OnDebugStopped, this);
     if(m_thread) {
         m_thread->Stop();
         wxDELETE(m_thread);
@@ -367,7 +377,37 @@ OutputTab::~OutputTab()
 void OutputTab::OnOutputDebugString(clCommandEvent& event)
 {
     event.Skip();
-    wxString msg;
-    msg << "[" << event.GetInt() << "] " << event.GetString() << "\n";
-    AppendText(msg);
+    if(!m_outputDebugStringActive) return;
+    
+    wxString msg = event.GetString();
+    msg.Trim().Trim(false);
+    if(msg.IsEmpty()) return;
+
+    wxString formattedMessage;
+    formattedMessage << "[" << event.GetInt() << "] " << msg << "\n";
+    AppendText(formattedMessage);
+}
+
+void OutputTab::OnDebugStarted(clDebugEvent& event)
+{
+    event.Skip();
+    m_outputDebugStringActive = true;
+}
+
+void OutputTab::OnDebugStopped(clDebugEvent& event)
+{
+    event.Skip();
+    m_outputDebugStringActive = false;
+}
+
+void OutputTab::OnProcStarted(wxCommandEvent& e)
+{
+    ShellTab::OnProcStarted(e);
+    m_outputDebugStringActive = true;
+}
+
+void OutputTab::OnProcEnded(wxCommandEvent& e)
+{
+    ShellTab::OnProcEnded(e);
+    m_outputDebugStringActive = false;
 }

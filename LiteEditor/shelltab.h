@@ -66,15 +66,21 @@ public:
 class OutputTab : public ShellTab
 {
     OutputDebugStringThread* m_thread;
+    bool m_outputDebugStringActive;
 
 public:
     OutputTab(wxWindow* parent, wxWindowID id, const wxString& name);
     virtual ~OutputTab();
-    
+
     /**
      * @brief Windows only. Report a string from a debuggee process which used the "OuptutDebugString" method
      */
     void OnOutputDebugString(clCommandEvent& event);
+
+    void OnDebugStarted(clDebugEvent& event);
+    void OnDebugStopped(clDebugEvent& event);
+    virtual void OnProcStarted(wxCommandEvent& e);
+    virtual void OnProcEnded(wxCommandEvent& e);
 };
 
 class DebugTab : public ShellTab

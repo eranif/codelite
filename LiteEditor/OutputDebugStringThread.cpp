@@ -12,8 +12,8 @@ OutputDebugStringThread::OutputDebugStringThread()
     , m_hEventBufferReady(INVALID_HANDLE_VALUE)
     , m_hEventDataReady(INVALID_HANDLE_VALUE)
     , m_pDBBuffer(NULL)
-    , m_collecting(false)
 #endif
+    , m_collecting(false)
 {
 #ifdef __WXMSW__
     SetLastError(0);

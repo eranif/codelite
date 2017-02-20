@@ -17,8 +17,8 @@ class OutputDebugStringThread : public wxThread
     HANDLE m_hEventBufferReady;
     HANDLE m_hEventDataReady;
     dbwin_buffer* m_pDBBuffer;
-    bool m_collecting;
 #endif
+    bool m_collecting;
 
 public:
     OutputDebugStringThread();

@@ -17,6 +17,7 @@ class OutputDebugStringThread : public wxThread
     HANDLE m_hEventBufferReady;
     HANDLE m_hEventDataReady;
     dbwin_buffer* m_pDBBuffer;
+    bool m_collecting;
 #endif
 
 public:
@@ -41,6 +42,11 @@ public:
      * \note This call must be called from the context of other thread (e.g. main thread)
      */
     void Start(int priority = WXTHREAD_DEFAULT_PRIORITY);
+    
+    /**
+     * @brief enable collection
+     */
+    void SetCollecting(bool collecting) { this->m_collecting = collecting; }
 };
 
 #endif // OUTPUTDEBUGSTRINGTHREAD_H

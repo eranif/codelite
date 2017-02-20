@@ -394,24 +394,28 @@ void OutputTab::OnDebugStarted(clDebugEvent& event)
 {
     event.Skip();
     m_outputDebugStringActive = true;
+    m_thread->SetCollecting(true);
 }
 
 void OutputTab::OnDebugStopped(clDebugEvent& event)
 {
     event.Skip();
     m_outputDebugStringActive = false;
+    m_thread->SetCollecting(false);
 }
 
 void OutputTab::OnProcStarted(wxCommandEvent& e)
 {
     ShellTab::OnProcStarted(e);
     m_outputDebugStringActive = true;
+    m_thread->SetCollecting(true);
 }
 
 void OutputTab::OnProcEnded(wxCommandEvent& e)
 {
     ShellTab::OnProcEnded(e);
     m_outputDebugStringActive = false;
+    m_thread->SetCollecting(false);
 }
 
 void OutputTab::OnWorkspaceClosed(wxCommandEvent& event)

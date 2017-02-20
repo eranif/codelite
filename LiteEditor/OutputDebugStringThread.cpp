@@ -12,6 +12,7 @@ OutputDebugStringThread::OutputDebugStringThread()
     , m_hEventBufferReady(INVALID_HANDLE_VALUE)
     , m_hEventDataReady(INVALID_HANDLE_VALUE)
     , m_pDBBuffer(NULL)
+    , m_collecting(false)
 #endif
 {
 #ifdef __WXMSW__
@@ -111,22 +112,27 @@ void* OutputDebugStringThread::Entry()
 {
 #ifdef __WXMSW__
     while(!TestDestroy()) {
-        DWORD ret = 0;
+        if(m_collecting) {
+            DWORD ret = 0;
 
-        // wait for data ready
-        ret = ::WaitForSingleObject(m_hEventDataReady, 100);
+            // wait for data ready
+            ret = ::WaitForSingleObject(m_hEventDataReady, 100);
 
-        if(ret == WAIT_OBJECT_0) {
-            // Send the data
-            wxString data = m_pDBBuffer->data;
-            int processID = m_pDBBuffer->dwProcessId;
-            clCommandEvent event(wxEVT_OUTPUT_DEBUG_STRING);
-            event.SetInt(processID);
-            event.SetString(data);
-            
-            EventNotifier::Get()->AddPendingEvent(event);
-            // signal buffer ready
-            SetEvent(m_hEventBufferReady);
+            if(ret == WAIT_OBJECT_0) {
+                // Send the data
+                wxString data = m_pDBBuffer->data;
+                int processID = m_pDBBuffer->dwProcessId;
+                clCommandEvent event(wxEVT_OUTPUT_DEBUG_STRING);
+                event.SetInt(processID);
+                event.SetString(data);
+
+                EventNotifier::Get()->AddPendingEvent(event);
+                // signal buffer ready
+                SetEvent(m_hEventBufferReady);
+            }
+
+        } else {
+            wxMilliSleep(100);
         }
     }
 #endif

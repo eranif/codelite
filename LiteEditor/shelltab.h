@@ -81,6 +81,7 @@ public:
     void OnDebugStopped(clDebugEvent& event);
     virtual void OnProcStarted(wxCommandEvent& e);
     virtual void OnProcEnded(wxCommandEvent& e);
+    void OnWorkspaceClosed(wxCommandEvent& event);
 };
 
 class DebugTab : public ShellTab

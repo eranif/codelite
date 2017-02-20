@@ -361,6 +361,7 @@ OutputTab::OutputTab(wxWindow* parent, wxWindowID id, const wxString& name)
     EventNotifier::Get()->Bind(wxEVT_OUTPUT_DEBUG_STRING, &OutputTab::OnOutputDebugString, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &OutputTab::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &OutputTab::OnDebugStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &OutputTab::OnWorkspaceClosed, this);
 }
 
 OutputTab::~OutputTab()
@@ -368,6 +369,7 @@ OutputTab::~OutputTab()
     EventNotifier::Get()->Unbind(wxEVT_OUTPUT_DEBUG_STRING, &OutputTab::OnOutputDebugString, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &OutputTab::OnDebugStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &OutputTab::OnDebugStopped, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &OutputTab::OnWorkspaceClosed, this);
     if(m_thread) {
         m_thread->Stop();
         wxDELETE(m_thread);
@@ -410,4 +412,10 @@ void OutputTab::OnProcEnded(wxCommandEvent& e)
 {
     ShellTab::OnProcEnded(e);
     m_outputDebugStringActive = false;
+}
+
+void OutputTab::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    Clear();
 }

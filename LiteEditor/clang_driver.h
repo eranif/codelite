@@ -59,8 +59,7 @@ protected:
     void DoCleanup();
     FileTypeCmpArgs_t DoPrepareCompilationArgs(const wxString& projectName,
                                                const wxString& sourceFile,
-                                               wxString& projectPath,
-                                               wxString& pchfile);
+                                               wxString& projectPath);
     void DoParseCompletionString(CXCompletionString str,
                                  int depth,
                                  wxString& entryName,

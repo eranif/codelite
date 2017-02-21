@@ -867,11 +867,12 @@ void clTabCtrl::SetStyle(size_t style)
         m_colours.InitDarkColours();
         if(dynamic_cast<clTabRendererClassic*>(m_art.get())) {
             clTabRendererClassic::InitDarkColours(m_colours);
-        } else {
-            clTabRendererClassic::InitLightColours(m_colours);
         }
     } else {
         m_colours.InitLightColours();
+        if(dynamic_cast<clTabRendererClassic*>(m_art.get())) {
+            clTabRendererClassic::InitLightColours(m_colours);
+        }
     }
 
     for(size_t i = 0; i < m_tabs.size(); ++i) {

@@ -795,12 +795,6 @@ void ClangDriver::OnTUCreateError(wxCommandEvent& e)
 void ClangDriver::OnWorkspaceLoaded(wxCommandEvent& event)
 {
     event.Skip();
-    // wxLogNull nolog;
-    // wxString cachePath;
-    // cachePath << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator()
-    //           << wxT(".clang");
-    // wxMkdir(cachePath);
-    // ClangTUCache::DeleteDirectoryContent(cachePath);
 }
 
 ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* excludeEditor)

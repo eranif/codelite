@@ -195,10 +195,9 @@ void ExternalToolDlg::SetTools(const std::vector<ToolInfo>& tools)
     m_listCtrlTools->Freeze();
     for(size_t i = 0; i < (size_t)m_listCtrlTools->GetItemCount(); i++) {
         ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(i);
-        if(data) {
-            delete data;
-        }
+        wxDELETE(data);
     }
+    
     m_listCtrlTools->DeleteAllItems();
 
     for(size_t i = 0; i < tools.size(); i++) {

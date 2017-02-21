@@ -4186,7 +4186,7 @@ int LEditor::DoGetOpenBracePos()
     bool exit_loop(false);
 
     int pos = PositionBefore(GetCurrentPos());
-    while(pos > 0 && char_tested < 256) {
+    while((pos > 0) && (char_tested < 256)) {
         wxChar ch = SafeGetChar(pos);
         if(m_context->IsCommentOrString(pos)) {
             pos = PositionBefore(pos);
@@ -4197,7 +4197,13 @@ int LEditor::DoGetOpenBracePos()
 
         switch(ch) {
         case wxT('{'):
+            depth++;
+            pos = PositionBefore(pos);
+            break;
         case wxT('}'):
+            depth--;
+            pos = PositionBefore(pos);
+            break;
         case wxT(';'):
             exit_loop = true;
             break;

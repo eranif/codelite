@@ -109,6 +109,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SAVED, clCommandEvent);
 // A file was renamed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_RENAMED, clFileSystemEvent);
 
+// A file was deleted
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_DELETED, clFileSystemEvent);
+
+// A folder was deleted
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FOLDER_DELETED, clFileSystemEvent);
+
 // A file was "Save as" by the user
 // This event can also be fired if the user selected "Duplicate Tab"
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SAVEAS, clFileSystemEvent);

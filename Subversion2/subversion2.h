@@ -34,6 +34,7 @@
 #include "project.h"
 #include "cl_command_event.h"
 #include "clTabTogglerHelper.h"
+#include "clFileSystemEvent.h"
 
 class SubversionView;
 class SvnConsole;
@@ -99,7 +100,9 @@ protected:
     ///////////////////////////////////////////////////////////
     void OnGetCompileLine(clBuildEvent& event);
     void OnWorkspaceConfigChanged(wxCommandEvent& event);
-    void OnFileRemoved(clCommandEvent& event);
+    void OnProjectFileRemoved(clCommandEvent& event);
+    void OnFileDeleted(clFileSystemEvent& event);
+    void OnFolderDeleted(clFileSystemEvent& event);
     void OnFolderContextMenu(clContextMenuEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
         
@@ -115,7 +118,8 @@ public:
     void
     DoRename(const wxString& workingDirectory, const wxString& oldname, const wxString& newname, wxCommandEvent& event);
     void DoCommit(const wxArrayString& files, const wxString& workingDirectory, wxCommandEvent& event);
-
+    void DoFilesDeleted(const wxArrayString& files, bool isFolder = false);
+    
 public:
     Subversion2(IManager* manager);
     ~Subversion2();

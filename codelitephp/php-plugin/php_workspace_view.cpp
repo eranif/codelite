@@ -37,6 +37,7 @@
 #include "clWorkspaceView.h"
 #include "php_strings.h"
 #include "XDebugManager.h"
+#include "clFileSystemEvent.h"
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -782,6 +783,8 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
                                                           _("Remember my answer and don't ask me again"),
                                                           wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT);
     if(res != wxID_YES) return;
+
+    wxArrayString removedFiles, removedFolders;
     for(size_t i = 0; i < items.GetCount(); ++i) {
         ItemData* itemData = static_cast<ItemData*>(m_treeCtrlView->GetItemData(items.Item(i)));
         if(!itemData || (!itemData->IsFile() && !itemData->IsFolder())) continue;
@@ -799,15 +802,32 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
                                                      _("Remember my answer and don't ask me again"),
                                                      wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT);
             if(res != wxID_YES) continue; // Don't delete the folder
+            removedFolders.Add(itemData->GetFolderPath());
             wxFileName::Rmdir(itemData->GetFolderPath(), wxPATH_RMDIR_RECURSIVE);
 
         } else {
             ::wxRemoveFile(itemData->GetFile());
+            removedFiles.Add(itemData->GetFile());
         }
     }
 
     // Sync the workspace with the file system
     PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
+
+    // Notify about the file/folder deletion
+    {
+        clFileSystemEvent evt(wxEVT_FILE_DELETED);
+        evt.SetPaths(removedFiles);
+        evt.SetEventObject(this);
+        EventNotifier::Get()->AddPendingEvent(evt);
+    }
+
+    {
+        clFileSystemEvent evt(wxEVT_FOLDER_DELETED);
+        evt.SetPaths(removedFolders);
+        evt.SetEventObject(this);
+        EventNotifier::Get()->AddPendingEvent(evt);
+    }
 }
 
 void PHPWorkspaceView::OnRunProject(wxCommandEvent& e)

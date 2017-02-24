@@ -21,7 +21,7 @@ OutputDebugStringThread::OutputDebugStringThread()
     // Mutex: DBWin
     // ---------------------------------------------------------
     m_hDBWinMutex = ::OpenMutex(MUTEX_ALL_ACCESS, FALSE, L"DBWinMutex");
-
+    
     if(m_hDBWinMutex == NULL) {
         clWARNING() << "Failed to open mutex: 'DBWinMutex'." << GetLastError() << clEndl;
         return;

@@ -354,10 +354,6 @@ OutputTab::OutputTab(wxWindow* parent, wxWindowID id, const wxString& name)
 {
     m_inputSizer->Show(false);
     GetSizer()->Layout();
-#ifdef __WXMSW__
-    m_thread = new OutputDebugStringThread();
-    m_thread->Start();
-#endif
     EventNotifier::Get()->Bind(wxEVT_OUTPUT_DEBUG_STRING, &OutputTab::OnOutputDebugString, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &OutputTab::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &OutputTab::OnDebugStopped, this);
@@ -380,7 +376,7 @@ void OutputTab::OnOutputDebugString(clCommandEvent& event)
 {
     event.Skip();
     if(!m_outputDebugStringActive) return;
-    
+
     wxString msg = event.GetString();
     msg.Trim().Trim(false);
     if(msg.IsEmpty()) return;
@@ -426,7 +422,20 @@ void OutputTab::OnWorkspaceClosed(wxCommandEvent& event)
 
 void OutputTab::DoSetCollecting(bool b)
 {
-    if(m_thread) {
-        m_thread->SetCollecting(b);
+#ifdef __WXMSW__
+    if(b) {
+        if(m_thread) {
+            m_thread->Stop();
+            wxDELETE(m_thread);
+        }
+        m_thread = new OutputDebugStringThread();
+        m_thread->Start();
+        m_thread->SetCollecting(true);
+    } else {
+        if(m_thread) {
+            m_thread->Stop();
+            wxDELETE(m_thread);
+        }
     }
+#endif
 }

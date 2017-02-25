@@ -149,7 +149,9 @@ protected:
     void OnRunProject(wxCommandEvent& e);
     void OnMakeIndexPHP(wxCommandEvent& e);
     void OnSyncWorkspaceWithFileSystem(wxCommandEvent& e);
+    void OnSyncWorkspaceWithFileSystemUI(wxUpdateUIEvent& e);
     void OnSyncProjectWithFileSystem(wxCommandEvent& e);
+    void OnSyncFolderWithFileSystem(wxCommandEvent& e);
     void OnOpenWithDefaultApp(wxCommandEvent& e);
     void OnRunActiveProject(clExecuteEvent& e);
     void OnStopExecutedProgram(clExecuteEvent& e);

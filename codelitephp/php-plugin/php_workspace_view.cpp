@@ -70,6 +70,7 @@ EVT_MENU(XRCID("php_run_project"), PHPWorkspaceView::OnRunProject)
 EVT_MENU(XRCID("make_index"), PHPWorkspaceView::OnMakeIndexPHP)
 EVT_MENU(XRCID("php_synch_with_filesystem"), PHPWorkspaceView::OnSyncWorkspaceWithFileSystem)
 EVT_MENU(XRCID("php_sync_project_with_filesystem"), PHPWorkspaceView::OnSyncProjectWithFileSystem)
+EVT_MENU(XRCID("php_sync_folder_with_filesystem"), PHPWorkspaceView::OnSyncFolderWithFileSystem)
 EVT_MENU(XRCID("php_open_with_default_app"), PHPWorkspaceView::OnOpenWithDefaultApp)
 END_EVENT_TABLE()
 
@@ -115,8 +116,12 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     m_auibar29->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"),
                   bl->LoadBitmap("remote-folder"), _("Setup automatic upload"), wxITEM_NORMAL)
         ->SetHasDropDown(true);
+    m_auibar29->AddSeparator();
     m_auibar29->AddTool(
         XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"), wxITEM_NORMAL);
+    m_auibar29->AddTool(XRCID("ID_TOOL_SYNC_WORKSPACE"), _("Collapse All"), bl->LoadBitmap("debugger_restart"),
+        _("Sync workspace with file system..."), wxITEM_NORMAL);
+    m_auibar29->AddSeparator();
     m_auibar29->AddTool(XRCID("ID_TOOL_START_DEBUGGER_LISTENER"), _("Wait for Debugger Connection"),
         bl->LoadBitmap("debugger_start"), _("Wait for Debugger Connection"));
     m_auibar29->Realize();
@@ -138,6 +143,9 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
 
     Bind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
     Bind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
+
+    Bind(wxEVT_MENU, &PHPWorkspaceView::OnSyncWorkspaceWithFileSystem, this, XRCID("ID_TOOL_SYNC_WORKSPACE"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnSyncWorkspaceWithFileSystemUI, this, XRCID("ID_TOOL_SYNC_WORKSPACE"));
 }
 
 PHPWorkspaceView::~PHPWorkspaceView()
@@ -159,9 +167,13 @@ PHPWorkspaceView::~PHPWorkspaceView()
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
     Unbind(wxEVT_MENU, &PHPWorkspaceView::OnStartDebuggerListener, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
-    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnStartDebuggerListenerUI, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
+    Unbind(
+        wxEVT_UPDATE_UI, &PHPWorkspaceView::OnStartDebuggerListenerUI, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVEAS, &PHPWorkspaceView::OnFileSaveAs, this);
     Unbind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspaceView::OnProjectSyncCompleted, this);
+
+    Unbind(wxEVT_MENU, &PHPWorkspaceView::OnSyncWorkspaceWithFileSystem, this, XRCID("ID_TOOL_SYNC_WORKSPACE"));
+    Unbind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnSyncWorkspaceWithFileSystemUI, this, XRCID("ID_TOOL_SYNC_WORKSPACE"));
 }
 
 void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
@@ -359,6 +371,11 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_rename_folder"), _("Rename..."));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_remove_file"), _("Delete"));
+                menu.AppendSeparator();
+                menuItem = new wxMenuItem(
+                    NULL, XRCID("php_sync_folder_with_filesystem"), _("Sync folder with file system..."));
+                menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("debugger_restart"));
+                menu.Append(menuItem);
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_open_folder_in_explorer"), _("Open Containing Folder"));
                 menu.Append(XRCID("php_open_shell"), _("Open Shell"));
@@ -1607,6 +1624,7 @@ void PHPWorkspaceView::OnProjectSyncCompleted(clCommandEvent& event)
         }
     });
 
+    wxWindowUpdateLocker locker(m_treeCtrlView);
     // Now we can delete the subtree
     m_treeCtrlView->DeleteChildren(item);
 
@@ -1665,3 +1683,22 @@ void PHPWorkspaceView::DoExpandToActiveEditor()
         m_treeCtrlView->EnsureVisible(item);
     }
 }
+
+void PHPWorkspaceView::OnSyncFolderWithFileSystem(wxCommandEvent& e)
+{
+    wxArrayTreeItemIds items;
+    DoGetSelectedItems(items);
+
+    if(items.GetCount() > 1) return;
+
+    wxTreeItemId item = items.Item(0);
+    CHECK_ITEM_RET(item);
+
+    PHPProject::Ptr_t pProject = DoGetProjectForItem(item);
+    CHECK_PTR_RET(pProject);
+
+    pProject->SyncWithFileSystemAsync(this);
+    m_pendingSync.insert(pProject->GetName());
+}
+
+void PHPWorkspaceView::OnSyncWorkspaceWithFileSystemUI(wxUpdateUIEvent& e) { e.Enable(PHPWorkspace::Get()->IsOpen()); }

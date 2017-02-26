@@ -241,7 +241,17 @@ bool CMakeGenerator::Generate(ProjectPtr p)
 wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, const wxString& configName)
 {
     wxASSERT(project);
-
+    wxString projectPathVariable; // PROJECT_<name>_PATH
+    wxString projectPathVariableValue; // ${PROJECT_<name>_PATH}
+    wxString workspacePath;
+    
+    projectPathVariable << "PROJECT_" << project->GetName() << "_PATH";
+    projectPathVariableValue << "${PROJECT_" << project->GetName() << "_PATH}";
+    
+    wxFileName fnWorkspace = clCxxWorkspaceST::Get()->GetFileName();
+    fnWorkspace.MakeRelativeTo(project->GetFileName().GetPath());
+    workspacePath << "${CMAKE_CURRENT_LIST_DIR}/" << fnWorkspace.GetPath(wxPATH_NO_SEPARATOR, wxPATH_UNIX);
+    
     // Sources are kept relative in the project
     // we need to fix this
     Project::FileInfoVector_t vfiles;
@@ -252,7 +262,6 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     if(!buildConf) return "";
 
     wxArrayString cppSources, cSources, resourceFiles;
-    wxString workspacePath = clCxxWorkspaceST::Get()->GetFileName().GetPath();
     std::for_each(vfiles.begin(), vfiles.end(), [&](const Project::FileInfo& fi) {
         if(fi.IsExcludeFromConfiguration(buildConf->GetName())) return;
 
@@ -317,14 +326,9 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         }
     }
 
-    wxFileName fnProject = project->GetFileName();
-    fnProject.MakeRelativeTo(clCxxWorkspaceST::Get()->GetFileName().GetPath());
-    wxString strProjectPath = fnProject.GetPath();
-    strProjectPath.Replace("\\", "/");
-    strProjectPath.Prepend("${CMAKE_SOURCE_DIR}/");
-
     content << "# Define some variables\n";
-    content << "set(PROJECT_PATH \"" << strProjectPath << "\")\n";
+    content << "set(" << projectPathVariable << " \"${CMAKE_CURRENT_LIST_DIR}\")\n";
+    content << "set(WORKSPACE_PATH \"" << workspacePath << "\")\n";
     content << "\n";
 
     // Add the first hook here
@@ -340,8 +344,8 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             includePath.Replace("\\", "/");
             includePath.Trim(false).Trim();
             // Replace standard macros with CMake variables
-            includePath.Replace("$(WorkspacePath)", "${CMAKE_SOURCE_DIR}");
-            includePath.Replace("$(ProjectPath)", "${PROJECT_PATH}");
+            includePath.Replace("$(WorkspacePath)", "${WORKSPACE_PATH}");
+            includePath.Replace("$(ProjectPath)", projectPathVariableValue);
             if(includePath.IsEmpty()) {
                 continue;
             }
@@ -457,8 +461,8 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         for(size_t i = 0; i < lib_paths_list.GetCount(); ++i) {
             wxString libPath = lib_paths_list.Item(i);
             // Replace standard macros with CMake variables
-            libPath.Replace("$(WorkspacePath)", "${CMAKE_SOURCE_DIR}");
-            libPath.Replace("$(ProjectPath)", "${PROJECT_PATH}");
+            libPath.Replace("$(WorkspacePath)", "${WORKSPACE_PATH}");
+            libPath.Replace("$(ProjectPath)", projectPathVariableValue);
             ::WrapWithQuotes(libPath);
             lib_paths << lib_switch << libPath << " ";
         }

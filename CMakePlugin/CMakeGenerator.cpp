@@ -167,8 +167,8 @@ bool CMakeGenerator::Generate(ProjectPtr p)
     // Print project name
     mainProjectContent << CODELITE_CMAKE_PREFIX << "\n\n";
     mainProjectContent << "cmake_minimum_required(VERSION 2.8.11)\n\n";
-    mainProjectContent << "# Workspace name\n";
-    mainProjectContent << "project(" << workspace->GetName() << ")\n\n";
+    mainProjectContent << "# Project name\n";
+    mainProjectContent << "project(" << p->GetName() << ")\n\n";
 
     mainProjectContent << "# This setting is useful for providing JSON file used by CodeLite for code completion\n";
     mainProjectContent << "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)\n\n";
@@ -561,7 +561,19 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             content << "target_link_libraries(" << project->GetName() << "\n    " << libs << "\n)\n\n";
         }
     }
-
+    
+    // set the dependecies for the top level project
+    if(topProject) {
+        wxArrayString projects = project->GetDependencies(buildConf->GetName());
+        if(!projects.IsEmpty()) {
+            content << "\n";
+            content << "# Adding dependencies\n";
+            for(size_t i=0; i<projects.GetCount(); ++i) {
+                content << "add_dependencies(" << project->GetName() << " " << projects.Item(i) << ")\n";
+            }
+        }
+    }
+    
     // Add the last hook here
     AddUserCodeSection(content, CMAKELISTS_USER_CODE_3_PREFIX, m_userBlock3);
 

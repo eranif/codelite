@@ -13,6 +13,7 @@
 #include <wx/regex.h>
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
+#include "clTabRendererClassic.h"
 
 #if defined(WXUSINGDLL_CL) || defined(USE_SFTP) || defined(PLUGINS_DIR)
 #define CL_BUILD 1
@@ -183,14 +184,20 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_contextMenu(NULL)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
+    bool isClassicLook = false;
 #if CL_BUILD
     if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
         m_art.reset(new clTabRendererSquare);
-    } else {
+    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleTRAPEZOID) {
         m_art.reset(new clTabRendererCurved);
+    } else {
+        // the default
+        m_art.reset(new clTabRendererClassic);
+        isClassicLook = true;
     }
 #else
-    m_art.reset(new clTabRendererCurved); // Default art
+    m_art.reset(new clTabRendererClassic); // Default art
+    isClassicLook = true;
 #endif
     DoSetBestSize();
 
@@ -210,6 +217,11 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     notebook->Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     if(m_style & kNotebook_DarkTabs) {
         m_colours.InitDarkColours();
+        if(isClassicLook) {
+            clTabRendererClassic::InitDarkColours(m_colours);
+        } else {
+            clTabRendererClassic::InitLightColours(m_colours);
+        }
     } else {
         m_colours.InitLightColours();
     }
@@ -282,7 +294,7 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
         if(t->IsActive() && ((!IsVerticalTabs() && clientRect.Contains(t->GetRect())) ||
-                             (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
+                                (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
             return true;
     }
     return false;
@@ -348,7 +360,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
-
+    
     wxRect clientRect(GetClientRect());
     if(clientRect.width <= 3) return;
     if(clientRect.height <= 3) return;
@@ -418,17 +430,11 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     if(rect.GetSize().x > 0 && rect.GetSize().y > 0) {
-#if 0
-        wxDC& gcdc = dc;
-        PrepareDC(gcdc);
-#else
         wxGCDC gcdc(dc);
         PrepareDC(gcdc);
-#endif
         gcdc.SetPen(tabAreaBgCol);
         gcdc.SetBrush(tabAreaBgCol);
         gcdc.DrawRectangle(rect.GetSize());
-
         UpdateVisibleTabs();
 
         int activeTabInex = wxNOT_FOUND;
@@ -471,9 +477,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -668,10 +674,10 @@ bool clTabCtrl::SetPageText(size_t page, const wxString& text)
     tab->SetLabel(text, GetStyle());
     int newWidth = tab->GetWidth();
     int diff = (newWidth - oldWidth);
-    
+
     // Update the width of the tabs from the current tab by "diff"
     DoUpdateXCoordFromPage(tab->GetWindow(), diff);
-    
+
     // Redraw the tab control
     Refresh();
     return true;
@@ -748,16 +754,16 @@ void clTabCtrl::SetPageBitmap(size_t index, const wxBitmap& bmp)
 {
     clTabInfo::Ptr_t tab = GetTabInfo(index);
     if(!tab) return;
-    
+
     // Set the new bitmap and calc the difference
     int oldWidth = tab->GetWidth();
     tab->SetBitmap(bmp, GetStyle());
     int newWidth = tab->GetWidth();
     int diff = (newWidth - oldWidth);
-    
+
     // Update the width of the tabs from the current tab by "diff"
     DoUpdateXCoordFromPage(tab->GetWindow(), diff);
-    
+
     // Redraw the tab control
     Refresh();
 }
@@ -859,8 +865,14 @@ void clTabCtrl::SetStyle(size_t style)
 
     if(style & kNotebook_DarkTabs) {
         m_colours.InitDarkColours();
+        if(dynamic_cast<clTabRendererClassic*>(m_art.get())) {
+            clTabRendererClassic::InitDarkColours(m_colours);
+        }
     } else {
         m_colours.InitLightColours();
+        if(dynamic_cast<clTabRendererClassic*>(m_art.get())) {
+            clTabRendererClassic::InitLightColours(m_colours);
+        }
     }
 
     for(size_t i = 0; i < m_tabs.size(); ++i) {
@@ -1260,8 +1272,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void
-clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
+void clTabCtrl::DoDrawBottomBox(
+    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
 {
     GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
 }
@@ -1287,6 +1299,23 @@ bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
 }
 
 void clTabCtrl::OnRightUp(wxMouseEvent& event) { event.Skip(); }
+
+void clTabCtrl::SetArt(clTabRenderer::Ptr_t art)
+{
+    m_art = art;
+    bool isClassic = (dynamic_cast<clTabRendererClassic*>(m_art.get()) != NULL);
+    if((m_style & kNotebook_DarkTabs)) {
+        m_colours.InitDarkColours();
+        if(isClassic) {
+            clTabRendererClassic::InitDarkColours(m_colours);
+        }
+    } else if(isClassic){
+        m_colours.InitLightColours();
+        clTabRendererClassic::InitLightColours(m_colours);
+    }
+    DoSetBestSize();
+    Refresh();
+}
 
 // ----------------------------------------------------------------------
 // clTabHistory

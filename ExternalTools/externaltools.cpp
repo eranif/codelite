@@ -51,9 +51,8 @@
 
 static ExternalToolsPlugin* thePlugin = NULL;
 
-struct DecSort
-{
-    bool operator()(const ToolInfo& t1, const ToolInfo& t2) { return t1.GetName().CmpNoCase(t2.GetName()) > 0; }
+struct DecSort {
+    bool operator()(const ToolInfo& t1, const ToolInfo& t2) { return t1.GetName().CmpNoCase(t2.GetName()) < 0; }
 };
 
 // Define the plugin entry point
@@ -92,19 +91,14 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
 
     for(int i = 0; i < MAX_TOOLS; i++) {
         wxString winid = wxString::Format(wxT("external_tool_%d"), i);
-        topWin->Connect(wxXmlResource::GetXRCID(winid.c_str()),
-                        wxEVT_COMMAND_MENU_SELECTED,
-                        wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool),
-                        NULL,
-                        this);
+        topWin->Connect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
     }
 
     // Register keyboard shortcuts
     for(int i = 0; i < MAX_TOOLS; i++) {
-        clKeyboardManager::Get()->AddGlobalAccelerator(
-            wxString::Format("external_tool_%d", i),
-            wxString::Format("Ctrl-Shift-%d", i),
-            wxString::Format("Plugins::External Tools::External Tool %d", i));
+        clKeyboardManager::Get()->AddGlobalAccelerator(wxString::Format("external_tool_%d", i),
+            wxString::Format("Ctrl-Shift-%d", i), wxString::Format("Plugins::External Tools::External Tool %d", i));
     }
 
     // Bind the "OnFileSave" event
@@ -125,15 +119,11 @@ clToolBar* ExternalToolsPlugin::CreateToolBar(wxWindow* parent)
 
         m_tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
         m_tb->SetToolBitmapSize(wxSize(size, size));
-        m_tb->AddTool(XRCID("external_tools_settings"),
-                      _("Configure external tools..."),
-                      m_mgr->GetStdIcons()->LoadBitmap("tools", size),
-                      _("Configure external tools..."));
+        m_tb->AddTool(XRCID("external_tools_settings"), _("Configure external tools..."),
+            m_mgr->GetStdIcons()->LoadBitmap("tools", size), _("Configure external tools..."));
 
-        m_tb->AddTool(XRCID("external_tools_monitor"),
-                      _("Show Running Tools..."),
-                      m_mgr->GetStdIcons()->LoadBitmap("monitor", size),
-                      _("Show Running Tools..."));
+        m_tb->AddTool(XRCID("external_tools_monitor"), _("Show Running Tools..."),
+            m_mgr->GetStdIcons()->LoadBitmap("monitor", size), _("Show Running Tools..."));
 
         m_tb->SetArtProvider(new CLMainAuiTBArt());
         std::vector<ToolInfo> tools = inData.GetTools();
@@ -193,11 +183,8 @@ void ExternalToolsPlugin::UnPlug()
 
     for(int i = 0; i < MAX_TOOLS; ++i) {
         wxString winid = wxString::Format(wxT("external_tool_%d"), i);
-        topWin->Disconnect(wxXmlResource::GetXRCID(winid.c_str()),
-                           wxEVT_COMMAND_MENU_SELECTED,
-                           wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool),
-                           NULL,
-                           this);
+        topWin->Disconnect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
     }
     // now that all the event handlers have been disconneted, kill all the running tools
     ToolsTaskManager::Release();
@@ -295,9 +282,11 @@ void ExternalToolsPlugin::DoCreatePluginMenu()
         // Loop and append the tools already defined
         ExternalToolsData inData;
         m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
+        std::vector<ToolInfo> tools = inData.GetTools();
+        std::sort(tools.begin(), tools.end(), DecSort());
 
-        for(size_t i = 0; i < inData.GetTools().size(); i++) {
-            ToolInfo ti = inData.GetTools().at(i);
+        for(size_t i = 0; i < tools.size(); i++) {
+            ToolInfo ti = tools.at(i);
             item = new wxMenuItem(
                 menu, wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), wxEmptyString, wxITEM_NORMAL);
             menu->Append(item);

@@ -245,9 +245,11 @@ Subversion2::Subversion2(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(Subversion2::OnWorkspaceConfigChanged), NULL, this);
     EventNotifier::Get()->Connect(
-        wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(Subversion2::OnFileRemoved), NULL, this);
+        wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(Subversion2::OnProjectFileRemoved), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &Subversion2::OnFolderContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &Subversion2::OnFileContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_DELETED, &Subversion2::OnFileDeleted, this);
+    EventNotifier::Get()->Bind(wxEVT_FOLDER_DELETED, &Subversion2::OnFolderDeleted, this);
 }
 
 Subversion2::~Subversion2() {}
@@ -345,18 +347,8 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu(bool isFile)
 
     item = new wxMenuItem(menu, XRCID("svn_explorer_diff"), _("Create Diff"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
-    /*    item = new wxMenuItem(menu, XRCID("svn_explorer_blame"), _("Blame ..."), wxEmptyString, wxITEM_NORMAL);
-        menu->Append(item);*/
     item = new wxMenuItem(menu, XRCID("svn_explorer_log"), _("Change Log..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
-
-    /*    menu->AppendSeparator();
-        wxMenu* subMenu;
-        subMenu = new wxMenu;
-        subMenu->Append(XRCID("svn_explorer_ignore_file"), _("Ignore this file"));
-        subMenu->Append(XRCID("svn_explorer_ignore_file_pattern"), _("Ignore this file pattern"));
-        menu->Append(wxID_ANY, _("Ignore"), subMenu);*/
-
     return menu;
 }
 
@@ -364,6 +356,9 @@ void Subversion2::UnPlug()
 {
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &Subversion2::OnFolderContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &Subversion2::OnFileContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_DELETED, &Subversion2::OnFileDeleted, this);
+    EventNotifier::Get()->Unbind(wxEVT_FOLDER_DELETED, &Subversion2::OnFolderDeleted, this);
+
     m_tabToggler.reset(NULL);
     GetManager()->GetTheApp()->Disconnect(XRCID("subversion2_settings"),
                                           wxEVT_COMMAND_MENU_SELECTED,
@@ -612,7 +607,7 @@ void Subversion2::OnFileExplorerRevertItem(wxCommandEvent& event)
                     wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER) != wxYES) {
         return;
     }
-    
+
     wxString command;
     wxString loginString;
 
@@ -1138,53 +1133,14 @@ void Subversion2::OnWorkspaceConfigChanged(wxCommandEvent& event)
     m_subversionView->BuildTree();
 }
 
-void Subversion2::OnFileRemoved(clCommandEvent& event)
+void Subversion2::OnProjectFileRemoved(clCommandEvent& event)
 {
     event.Skip();
     if(m_skipRemoveFilesDlg) {
         m_skipRemoveFilesDlg = false;
         return;
     }
-    const wxArrayString& files = event.GetStrings();
-    if(!files.IsEmpty()) {
-
-        // test the first file, see if it is under SVN
-        wxFileName fn(files.Item(0));
-        if(IsPathUnderSvn(fn.GetPath())) {
-            // Build the message:
-
-            // Limit the message to maximum of 10 files
-            wxString filesString;
-            wxString msg;
-            msg << _("Would you like to remove the following files from SVN?\n\n");
-            size_t fileCount = files.GetCount();
-
-            for(size_t i = 0; i < files.GetCount(); i++) {
-                if(i < 10) {
-                    msg << files.Item(i) << wxT("\n");
-                    filesString << wxT("\"") << files.Item(i) << wxT("\" ");
-                    --fileCount;
-                } else {
-                    break;
-                }
-            }
-
-            if(fileCount) {
-                msg << ".. and " << fileCount << " more files";
-            }
-
-            if(wxMessageBox(
-                   msg, wxT("Subversion"), wxYES_NO | wxCANCEL | wxCENTER, GetManager()->GetTheApp()->GetTopWindow()) ==
-               wxYES) {
-
-                wxString command;
-                RecreateLocalSvnConfigFile();
-                command << GetSvnExeName(false) << wxT(" delete --force ") << filesString;
-                GetConsole()->Execute(
-                    command, m_subversionView->GetRootDir(), new SvnDefaultCommandHandler(this, event.GetId(), this));
-            }
-        }
-    }
+    DoFilesDeleted(event.GetStrings());
 }
 
 void Subversion2::OnFileExplorerRenameItem(wxCommandEvent& event)
@@ -1686,4 +1642,68 @@ void Subversion2::OnFileContextMenu(clContextMenuEvent& event)
         item->SetBitmap(m_svnBitmap);
         event.GetMenu()->Append(item);
     }
+}
+
+void Subversion2::DoFilesDeleted(const wxArrayString& files, bool isFolder)
+{
+    if(!files.IsEmpty()) {
+
+        // test the first file, see if it is under SVN
+        wxFileName fn = isFolder ? wxFileName(files.Item(0), "") : wxFileName(files.Item(0));
+        if(IsPathUnderSvn(fn.GetPath())) {
+            // Build the message:
+
+            // Limit the message to maximum of 10 files
+            wxString filesString;
+            wxString msg;
+            if(isFolder) {
+                msg << _("Would you like to remove the following folders from SVN?\n\n");
+            } else {
+                msg << _("Would you like to remove the following files from SVN?\n\n");
+            }
+
+            size_t fileCount = files.GetCount();
+            for(size_t i = 0; i < files.GetCount(); i++) {
+                if(i < 10) {
+                    msg << files.Item(i) << wxT("\n");
+                    filesString << wxT("\"") << files.Item(i) << wxT("\" ");
+                    --fileCount;
+                } else {
+                    break;
+                }
+            }
+
+            if(fileCount) {
+                if(isFolder) {
+                    msg << ".. and " << fileCount << " more folders";
+                } else {
+                    msg << ".. and " << fileCount << " more files";
+                }
+            }
+
+            if(wxMessageBox(msg,
+                            wxT("Subversion"),
+                            wxYES_NO | wxCANCEL | wxCENTER | wxNO_DEFAULT,
+                            GetManager()->GetTheApp()->GetTopWindow()) == wxYES) {
+
+                wxString command;
+                RecreateLocalSvnConfigFile();
+                command << GetSvnExeName(false) << wxT(" delete --force ") << filesString;
+                GetConsole()->Execute(
+                    command, m_subversionView->GetRootDir(), new SvnDefaultCommandHandler(this, wxNOT_FOUND, this));
+            }
+        }
+    }
+}
+
+void Subversion2::OnFileDeleted(clFileSystemEvent& event)
+{
+    event.Skip();
+    DoFilesDeleted(event.GetPaths());
+}
+
+void Subversion2::OnFolderDeleted(clFileSystemEvent& event)
+{
+    event.Skip();
+    DoFilesDeleted(event.GetPaths(), true);
 }

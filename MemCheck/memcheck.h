@@ -42,7 +42,6 @@
 #include "TerminalEmulator.h"
 #include "clTabTogglerHelper.h"
 
-class AsyncExeCmd;
 class MemCheckOutputView;
 
 class MemCheckPlugin : public IPlugin

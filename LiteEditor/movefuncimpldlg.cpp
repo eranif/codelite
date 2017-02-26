@@ -26,59 +26,57 @@
 #include "wx/filename.h"
 #include "drawingutils.h"
 #include "movefuncimpldlg.h"
+#include "lexer_configuration.h"
+#include "ColoursAndFontsManager.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 
-MoveFuncImplDlg::MoveFuncImplDlg( wxWindow* parent, const wxString &text, const wxString &fileName )
-    : MoveFuncImplBaseDlg( parent )
+MoveFuncImplDlg::MoveFuncImplDlg(wxWindow* parent, const wxString& text, const wxString& fileName)
+    : MoveFuncImplBaseDlg(parent)
 {
-    m_preview->SetLexer(wxSTC_LEX_NULL);
-    m_preview->StyleClearAll();
-    for (int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
-        wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        defFont.SetFamily(wxFONTFAMILY_TELETYPE);
-        m_preview->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
-        m_preview->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
-        m_preview->StyleSetFont(i, defFont);
+    m_filePicker->SetPath(fileName);
+    LexerConf::Ptr_t lexerCpp = ColoursAndFontsManager::Get().GetLexer("c++");
+    if(lexerCpp) {
+        lexerCpp->Apply(m_preview, true);
     }
-
-    m_preview->SetText(text);
-    m_filePicker->SetPath(fileName);
-    m_preview->SetFocus();
-    Centre();
+    
+    // Format the source code before using it
+    clSourceFormatEvent event(wxEVT_FORMAT_STRING);
+    event.SetInputString(text);
+    event.SetFileName(wxFileName(fileName).GetFullName());
+    
+    EventNotifier::Get()->ProcessEvent(event);
+    if(!event.GetFormattedString().IsEmpty()) {
+        m_preview->SetText(event.GetFormattedString());
+    } else {
+        m_preview->SetText(text);
+    }
+    m_preview->CallAfter(&wxStyledTextCtrl::SetFocus);
+    CentreOnParent();
 }
 
-void MoveFuncImplDlg::SetText(const wxString &text)
-{
-    m_preview->SetText(text);
-}
+void MoveFuncImplDlg::SetText(const wxString& text) { m_preview->SetText(text); }
 
-wxString MoveFuncImplDlg::GetText()
-{
-    return m_preview->GetText();
-}
+wxString MoveFuncImplDlg::GetText() { return m_preview->GetText(); }
 
-void MoveFuncImplDlg::SetFileName(const wxString &fileName)
-{
-    m_filePicker->SetPath(fileName);
-}
+void MoveFuncImplDlg::SetFileName(const wxString& fileName) { m_filePicker->SetPath(fileName); }
 
-wxString MoveFuncImplDlg::GetFileName()
-{
-    return m_filePicker->GetPath();
-}
+wxString MoveFuncImplDlg::GetFileName() { return m_filePicker->GetPath(); }
 
-void MoveFuncImplDlg::OnButtonCancel(wxCommandEvent &e)
+void MoveFuncImplDlg::OnButtonCancel(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     EndModal(wxID_CANCEL);
 }
 
-void MoveFuncImplDlg::OnButtonOK(wxCommandEvent &e)
+void MoveFuncImplDlg::OnButtonOK(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    //make sure that the file exist
+    // make sure that the file exist
     if(!wxFileName::FileExists(m_filePicker->GetPath())) {
-        wxMessageBox(_("File: ") + m_filePicker->GetPath() + _(" does not exist"),
-                     _("CodeLite"), wxICON_WARNING| wxOK);
+        wxMessageBox(
+            _("File: ") + m_filePicker->GetPath() + _(" does not exist"), _("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
     EndModal(wxID_OK);

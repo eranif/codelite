@@ -764,23 +764,18 @@ TEST_FUNC(test_function_phpdoc)
     return true;
 }
 
-/*TEST_FUNC(test_cc_with_keywords)
+TEST_FUNC(test_foreach)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_cc_with_keywords.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_foreach.php"));
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-
-    PHPExpression expr(sourceFile.GetText());
-    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
-    CHECK_BOOL(resolved);
-
-    PHPEntityBase::List_t matches;
-    expr.Suggest(resolved, lookup, matches);
-//
-//    CHECK_SIZE(matches.size(), 1);
+    PHPEntityBase::Ptr_t myKey = sourceFile.Namespace()->FindChild("$myKey");
+    PHPEntityBase::Ptr_t myValue = sourceFile.Namespace()->FindChild("$myValue");
+    CHECK_BOOL(myKey && myKey->GetFullName() == "$myKey");
+    CHECK_BOOL(myValue && myValue->GetFullName() == "$myValue");
     return true;
-}*/
+}
 
 //======================-------------------------------------------------
 // Main

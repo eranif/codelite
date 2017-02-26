@@ -758,8 +758,7 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
 
     if(typeWithNS == "string" || typeWithNS == "array" || typeWithNS == "mixed" || typeWithNS == "bool" ||
         typeWithNS == "int" || typeWithNS == "integer" || typeWithNS == "boolean" || typeWithNS == "double" ||
-        typeWithNS == "float" || typeWithNS == "void"
-    ) {
+        typeWithNS == "float" || typeWithNS == "void") {
         // primitives, don't bother...
         return typeWithNS;
     }
@@ -1311,24 +1310,36 @@ void PHPSourceFile::OnForEach()
     // Ensure we got a variable
     if(token.type != kPHP_T_VARIABLE) return;
 
+    // Add the key
+    {
+        PHPEntityBase::Ptr_t var(new PHPEntityVariable());
+        var->SetFullName(token.Text());
+        var->SetFilename(m_filename.GetFullPath());
+        var->SetLine(token.lineNumber);
+        if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
+            CurrentScope()->AddChild(var);
+        }
+    }
     // Check to see if we are using the syntax of:
     // foreach (array_expression as $key => $value)
     if(peekToken.type == kPHP_T_DOUBLE_ARROW) {
         if(!NextToken(token) || token.type != kPHP_T_VARIABLE) {
             return;
         }
+
+        // Add the value as well
+        // Create a new variable
+        PHPEntityBase::Ptr_t var(new PHPEntityVariable());
+        var->SetFullName(token.Text());
+        var->SetFilename(m_filename.GetFullPath());
+        var->SetLine(token.lineNumber);
+
+        if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
+            CurrentScope()->AddChild(var);
+        }
+
     } else {
         UngetToken(peekToken);
-    }
-
-    // Create a new variable
-    PHPEntityBase::Ptr_t var(new PHPEntityVariable());
-    var->SetFullName(token.Text());
-    var->SetFilename(m_filename.GetFullPath());
-    var->SetLine(token.lineNumber);
-
-    if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
-        CurrentScope()->AddChild(var);
     }
 }
 
@@ -1414,11 +1425,20 @@ void PHPSourceFile::OnConstant(const phpLexerToken& tok)
         if(token.type == '=') {
 
             // The next value should contain the constant value
-            if(!NextToken(token)) return;
+            wxString constantValue;
+            while(NextToken(token)) {
+                if(token.type == ';') {
+                    UngetToken(token);
+                    break;
+                } else if(token.type == ',') {
+                    break;
+                }
+                constantValue << token.Text();
+            }
 
-            if(member) {
+            if(member && !constantValue.IsEmpty()) {
                 // Keep the constant value, we will be using it later for tooltip
-                member->Cast<PHPEntityVariable>()->SetDefaultValue(token.Text());
+                member->Cast<PHPEntityVariable>()->SetDefaultValue(constantValue);
             }
         }
         if(token.type == ';') {
@@ -1466,7 +1486,7 @@ wxString PHPSourceFile::ReadFunctionReturnValueFromSignature()
         case kPHP_T_SELF:
         case kPHP_T_ARRAY:
             return token.Text();
-            
+
         case kPHP_T_IDENTIFIER:
             type << token.Text();
             break;

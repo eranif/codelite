@@ -48,6 +48,7 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
     std::map<wxString, wxTreeItemId> m_foldersItems;
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     bool m_scanInProgress;
+    std::set<wxString> m_pendingSync;
 
 private:
     enum {
@@ -102,14 +103,25 @@ protected:
      * @param project
      */
     void DoBuildProjectNode(const wxTreeItemId& projectItem, PHPProject::Ptr_t project);
-
+    
+    /**
+     * @brief return list of files and folders for a given project
+     */
+    void DoGetFilesAndFolders(const wxString& projectName, wxArrayString& folders, wxArrayString& files);
+    void DoGetFilesAndFolders(const wxTreeItemId& parent, wxArrayString& folders, wxArrayString& files);
+    
     /**
      * @brief open an item into an editor
      */
     void DoOpenFile(const wxTreeItemId& item);
 
     void DoSetProjectActive(const wxString& projectName);
-
+    
+    /**
+     * @brief expand the tree view to highlight the active editor
+     */
+    void DoExpandToActiveEditor();
+    
 protected:
     // Handlers for PHPWorkspaceViewBase events.
 
@@ -136,7 +148,10 @@ protected:
     void OnRenameWorkspace(wxCommandEvent& e);
     void OnRunProject(wxCommandEvent& e);
     void OnMakeIndexPHP(wxCommandEvent& e);
+    void OnSyncWorkspaceWithFileSystem(wxCommandEvent& e);
+    void OnSyncWorkspaceWithFileSystemUI(wxUpdateUIEvent& e);
     void OnSyncProjectWithFileSystem(wxCommandEvent& e);
+    void OnSyncFolderWithFileSystem(wxCommandEvent& e);
     void OnOpenWithDefaultApp(wxCommandEvent& e);
     void OnRunActiveProject(clExecuteEvent& e);
     void OnStopExecutedProgram(clExecuteEvent& e);
@@ -147,6 +162,7 @@ protected:
     void OnFindInFilesShowing(clCommandEvent& e);
     void OnToggleAutoUpload(wxCommandEvent& e);
     void OnStartDebuggerListener(wxCommandEvent& e);
+    void OnProjectSyncCompleted(clCommandEvent& event);
     
     // Php parser events
     void OnPhpParserStarted(clParseEvent& event);
@@ -157,7 +173,7 @@ protected:
     void OnWorkspaceSyncStart(clCommandEvent& event);
     void OnWorkspaceSyncEnd(clCommandEvent& event);
     void OnFileSaveAs(clFileSystemEvent& event);
-    
+
 public:
     /** Constructor */
     PHPWorkspaceView(wxWindow* parent, IManager* mgr);

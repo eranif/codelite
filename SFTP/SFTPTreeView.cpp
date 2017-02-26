@@ -937,6 +937,6 @@ void SFTPTreeView::OnFileDropped(clCommandEvent& event)
             wxTreeListItem fileItem = DoAddFile(parenItem, remotePath);
             if(!fileItem.IsOk()) continue;
         }
-        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(m_account, remotePath, localFile.GetFullPath()));
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(m_account, remotePath, localFile.GetFullPath(), 0));
     }
 }

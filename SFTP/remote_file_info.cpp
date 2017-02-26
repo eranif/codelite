@@ -27,7 +27,10 @@
 #include <wx/stdpaths.h>
 #include "cl_standard_paths.h"
 
-RemoteFileInfo::RemoteFileInfo() {}
+RemoteFileInfo::RemoteFileInfo()
+    : m_premissions(0)
+{
+}
 
 RemoteFileInfo::~RemoteFileInfo() {}
 

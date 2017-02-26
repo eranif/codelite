@@ -30,6 +30,7 @@
 #include <wx/wupdlock.h>
 #include <wx/textdlg.h>
 #include "globals.h"
+#include <algorithm>
 
 #define LOCALS_VIEW_NAME_COL_IDX 0
 #define LOCALS_VIEW_SUMMARY_COL_IDX 1
@@ -83,6 +84,7 @@ void LLDBLocalsView::OnLLDBExited(LLDBEvent& event)
 {
     event.Skip();
     Cleanup();
+    m_expandedItems.clear();
 }
 
 void LLDBLocalsView::OnLLDBRunning(LLDBEvent& event)
@@ -106,19 +108,40 @@ void LLDBLocalsView::OnLLDBLocalsUpdated(LLDBEvent& event)
     Enable(true);
 
     m_treeList->DeleteChildren(m_treeList->GetRootItem());
-    CL_DEBUG("Updating locals view");
+    m_pathToItem.clear();
+
+    clDEBUG() << "Updating locals view" << clEndl;
     DoAddVariableToView(event.GetVariables(), m_treeList->GetRootItem());
+
+    // Re-expand all the items
+    std::for_each(m_expandedItems.begin(), m_expandedItems.end(), [&](const wxString& path) {
+        // Locate the item ID
+        if(m_pathToItem.count(path)) {
+            const wxTreeItemId& itemToExpand = m_pathToItem[path];
+            if(m_treeList->HasChildren(itemToExpand)) {
+                m_treeList->Expand(itemToExpand);
+            }
+        }
+    });
 }
 
 void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent)
 {
     for(size_t i = 0; i < variables.size(); ++i) {
         LLDBVariable::Ptr_t variable = variables.at(i);
-        wxTreeItemId item = m_treeList->AppendItem(
-            parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, new LLDBVariableClientData(variable));
+        LLDBVariableClientData* cd = new LLDBVariableClientData(variable);
+        wxTreeItemId item = m_treeList->AppendItem(parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, cd);
         m_treeList->SetItemText(item,
                                 LOCALS_VIEW_SUMMARY_COL_IDX,
                                 variable->GetSummary().IsEmpty() ? variable->GetValue() : variable->GetSummary());
+        cd->SetPath(GetItemPath(item));
+
+        // Keep a map between the 'path'->wxTreeItemId
+        if(m_pathToItem.count(cd->GetPath())) {
+            m_pathToItem.erase(cd->GetPath());
+        }
+        m_pathToItem.insert(std::make_pair(cd->GetPath(), item));
+
         m_treeList->SetItemText(item, LOCALS_VIEW_VALUE_COL_IDX, variable->GetValue());
         m_treeList->SetItemText(item, LOCALS_VIEW_TYPE_COL_IDX, variable->GetType());
         if(variable->IsValueChanged()) {
@@ -165,6 +188,7 @@ void LLDBLocalsView::Cleanup()
 {
     m_treeList->DeleteChildren(m_treeList->GetRootItem());
     m_pendingExpandItems.clear();
+    m_pathToItem.clear();
 }
 
 void LLDBLocalsView::OnLLDBVariableExpanded(LLDBEvent& event)
@@ -179,8 +203,14 @@ void LLDBLocalsView::OnLLDBVariableExpanded(LLDBEvent& event)
     }
 
     // add the variables
-    DoAddVariableToView(event.GetVariables(), iter->second);
+    wxTreeItemId parentItem = iter->second;
+    DoAddVariableToView(event.GetVariables(), parentItem);
     m_pendingExpandItems.erase(iter);
+
+    LLDBVariableClientData* cd = GetItemData(parentItem);
+    if(cd) {
+        m_expandedItems.insert(cd->GetPath());
+    }
 }
 
 void LLDBLocalsView::OnNewWatch(wxCommandEvent& event)
@@ -285,4 +315,21 @@ void LLDBLocalsView::OnLocalsContextMenu(wxContextMenuEvent& event)
             ::CopyToClipboard(content);
         }
     }
+}
+
+wxString LLDBLocalsView::GetItemPath(const wxTreeItemId& item)
+{
+    wxString path;
+    wxTreeItemId currentItem = item;
+    while(currentItem.IsOk()) {
+        LLDBVariableClientData* cd = GetItemData(currentItem);
+        currentItem = m_treeList->GetItemParent(currentItem);
+        if(cd) {
+            if(!path.IsEmpty()) {
+                path.Prepend(".");
+            }
+            path.Prepend(cd->GetVariable()->GetName());
+        }
+    }
+    return path;
 }

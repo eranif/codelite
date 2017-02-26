@@ -106,6 +106,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     m_oldMswUseTheme = m_checkBoxEnableMSWTheme->IsChecked();
 
     m_redirectLogOutput->SetValue(clConfig::Get().Read(kConfigRedirectLogOutput, true));
+    m_checkBoxPromptReleaseOnly->SetValue(clConfig::Get().Read("PromptForNewReleaseOnly", false));
 }
 
 void EditorSettingsMiscPanel::OnClearButtonClick(wxCommandEvent&)
@@ -211,7 +212,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     }
 
     clConfig::Get().Write("RedirectLogOutput", m_redirectLogOutput->IsChecked());
-
+    clConfig::Get().Write("PromptForNewReleaseOnly", m_checkBoxPromptReleaseOnly->IsChecked());
     options->SetOptions(flags);
     m_restartRequired = ((oldIconFlags != newIconFlags) || m_restartRequired);
 }
@@ -316,4 +317,9 @@ void EditorSettingsMiscPanel::OnResetAnnoyingDialogsAnswers(wxCommandEvent& even
 {
     wxUnusedVar(event);
     clConfig::Get().ClearAnnoyingDlgAnswers();
+}
+
+void EditorSettingsMiscPanel::OnPromptStableReleaseUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_versionCheckOnStartup->IsChecked());
 }

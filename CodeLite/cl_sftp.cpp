@@ -79,7 +79,9 @@ void clSFTP::Close()
     m_sftp = NULL;
 }
 
-void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath) throw(clException)
+void clSFTP::Write(const wxFileName& localFile,
+                   const wxString& remotePath,
+                   SFTPAttribute::Ptr_t attributes) throw(clException)
 {
     if(!m_connected) {
         throw clException("scp is not initialized!");
@@ -105,9 +107,14 @@ void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath) thro
     }
     fp.Close();
     Write(memBuffer, remotePath);
+    if(attributes && attributes->GetPermissions()) {
+        Chmod(remotePath, attributes->GetPermissions());
+    }
 }
 
-void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath) throw(clException)
+void clSFTP::Write(const wxMemoryBuffer& fileContent,
+                   const wxString& remotePath,
+                   SFTPAttribute::Ptr_t attributes) throw(clException)
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -165,6 +172,10 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
         throw clException(wxString() << _("Failed to rename file: ") << tmpRemoteFile << " -> " << remotePath << ". "
                                      << ssh_get_error(m_ssh->GetSession()),
                           sftp_get_error(m_sftp));
+    }
+
+    if(attributes && attributes->GetPermissions()) {
+        Chmod(remotePath, attributes->GetPermissions());
     }
 }
 
@@ -229,7 +240,7 @@ SFTPAttribute::List_t clSFTP::CdUp(size_t flags, const wxString& filter) throw(c
     return List(fn.GetPath(false, wxPATH_UNIX), flags, filter);
 }
 
-void clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& buffer) throw(clException)
+SFTPAttribute::Ptr_t clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& buffer) throw(clException)
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -249,7 +260,7 @@ void clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& buffer) throw(clEx
                           sftp_get_error(m_sftp));
     }
     wxInt64 fileSize = fileAttr->GetSize();
-    if(fileSize == 0) return;
+    if(fileSize == 0) return fileAttr;
 
     // Allocate buffer for the file content
     char pBuffer[65536]; // buffer
@@ -272,6 +283,7 @@ void clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& buffer) throw(clEx
                           sftp_get_error(m_sftp));
     }
     sftp_close(file);
+    return fileAttr;
 }
 
 void clSFTP::CreateDir(const wxString& dirname) throw(clException)
@@ -352,11 +364,13 @@ SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path) throw(clException)
     return pattr;
 }
 
-void clSFTP::CreateRemoteFile(const wxString& remoteFullPath, const wxString& content) throw(clException)
+void clSFTP::CreateRemoteFile(const wxString& remoteFullPath,
+                              const wxString& content,
+                              SFTPAttribute::Ptr_t attr) throw(clException)
 {
     // Create the path to the file
     Mkpath(wxFileName(remoteFullPath).GetPath());
-    Write(content, remoteFullPath);
+    Write(content, remoteFullPath, attr);
 }
 
 void clSFTP::Mkpath(const wxString& remoteDirFullpath) throw(clException)
@@ -391,10 +405,28 @@ void clSFTP::Mkpath(const wxString& remoteDirFullpath) throw(clException)
     }
 }
 
-void clSFTP::CreateRemoteFile(const wxString& remoteFullPath, const wxFileName& localFile) throw(clException)
+void clSFTP::CreateRemoteFile(const wxString& remoteFullPath,
+                              const wxFileName& localFile,
+                              SFTPAttribute::Ptr_t attr) throw(clException)
 {
     Mkpath(wxFileName(remoteFullPath).GetPath());
-    Write(localFile, remoteFullPath);
+    Write(localFile, remoteFullPath, attr);
+}
+
+void clSFTP::Chmod(const wxString& remotePath, size_t permissions) throw(clException)
+{
+    if(!m_sftp) {
+        throw clException("SFTP is not initialized");
+    }
+    
+    if(permissions == 0) return;
+    
+    int rc = sftp_chmod(m_sftp, remotePath.mb_str(wxConvUTF8).data(), permissions);
+    if(rc != SSH_OK) {
+        throw clException(wxString() << _("Failed to chmod file: ") << remotePath << ". "
+                                     << ssh_get_error(m_ssh->GetSession()),
+                          sftp_get_error(m_sftp));
+    }
 }
 
 #endif // USE_SFTP

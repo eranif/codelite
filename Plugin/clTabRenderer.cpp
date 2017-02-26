@@ -78,9 +78,9 @@ void clTabColours::InitDarkColours()
 
 void clTabColours::InitLightColours()
 {
-    activeTabTextColour = "#444444";
-    inactiveTabTextColour = "#444444";
-    activeTabBgColour = "#f0f0f0";
+    activeTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).ChangeLightness(110);
+    activeTabBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
 
     //#endif
@@ -98,11 +98,13 @@ void clTabColours::InitLightColours()
 #endif
 
     // The active tab pen colour is darker than the Inactive one
-    
+
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");
     chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");
 }
+
+bool clTabColours::IsDarkColours() const { return DrawingUtils::IsDark(activeTabBgColour); }
 
 clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp)
     : m_tabCtrl(tabCtrl)
@@ -147,12 +149,12 @@ void clTabInfo::CalculateOffsets(size_t style)
         m_height = fixedHeight.GetHeight() + (4 * m_tabCtrl->GetArt()->ySpacer);
     }
 
-//#ifdef __WXGTK__
-//    // On GTK, limit the tab height
-//    if(m_height >= 30) {
-//        m_height = 30;
-//    }
-//#endif
+    //#ifdef __WXGTK__
+    //    // On GTK, limit the tab height
+    //    if(m_height >= 30) {
+    //        m_height = 30;
+    //    }
+    //#endif
 
     m_width = 0;
     if(!IS_VERTICAL_TABS(style) || true) {
@@ -238,5 +240,5 @@ clTabRenderer::clTabRenderer()
     , verticalOverlapWidth(0)
     , xSpacer(5)
 {
-   ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
+    ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }

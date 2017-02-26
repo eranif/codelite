@@ -160,15 +160,11 @@ public:
      * @brief return the art class used by this tab control
      */
     clTabRenderer::Ptr_t GetArt() { return m_art; }
+    
     /**
      * @brief replace the art used by this tab control
      */
-    void SetArt(clTabRenderer::Ptr_t art)
-    {
-        m_art = art;
-        DoSetBestSize();
-        Refresh();
-    }
+    void SetArt(clTabRenderer::Ptr_t art);
 
     bool IsVerticalTabs() const;
 

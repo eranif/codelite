@@ -157,7 +157,7 @@ private:
     /**
      * @brief check the database disk image to see if it corrupted
      */
-    bool CheckDiskImage(wxSQLite3Database& db);
+    bool CheckDiskImage(wxSQLite3Database& db, const wxFileName& filename);
 
 public:
     PHPLookupTable();

@@ -1604,11 +1604,11 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
 
             wxString targetFile;
             FindSwappedFile(rCtrl.GetFileName(), targetFile);
-            MoveFuncImplDlg* dlg = new MoveFuncImplDlg(NULL, body, targetFile);
-            if(dlg->ShowModal() == wxID_OK) {
+            MoveFuncImplDlg dlg(EventNotifier::Get()->TopFrame(), body, targetFile);
+            if(dlg.ShowModal() == wxID_OK) {
                 // get the updated data
-                targetFile = dlg->GetFileName();
-                body = dlg->GetText();
+                targetFile = dlg.GetFileName();
+                body = dlg.GetText();
 
                 // Place the implementation in its new home
                 LEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile);
@@ -1635,7 +1635,6 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
                     }
                 }
             }
-            dlg->Destroy();
         }
     }
 }
@@ -1956,7 +1955,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
             targetFile = rCtrl.GetFileName().GetFullPath();
         }
 
-        MoveFuncImplDlg dlg(NULL, body, targetFile);
+        MoveFuncImplDlg dlg(EventNotifier::Get()->TopFrame(), body, targetFile);
         dlg.SetTitle(_("Add Function Implementation"));
         if(dlg.ShowModal() == wxID_OK) {
             // get the updated data

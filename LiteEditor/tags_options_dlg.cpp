@@ -82,7 +82,8 @@ TagsOptionsDlg::TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data)
     m_checkBoxEnableCaseSensitiveCompletion->SetValue(m_data.GetFlags() & CC_IS_CASE_SENSITIVE ? true : false);
     m_checkBoxKeepFunctionSignature->SetValue(m_data.GetFlags() & CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED);
     m_spinCtrlNumberOfCCItems->ChangeValue(::wxIntToString(m_data.GetCcNumberOfDisplayItems()));
-
+    m_textCtrlFileSpec->ChangeValue(m_data.GetFileSpec());
+    
     //------------------------------------------------------------------
     // Colouring
     //------------------------------------------------------------------
@@ -158,7 +159,8 @@ void TagsOptionsDlg::CopyData()
     SetFlag(CC_IS_CASE_SENSITIVE, m_checkBoxEnableCaseSensitiveCompletion->IsChecked());
     SetFlag(CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED, m_checkBoxKeepFunctionSignature->IsChecked());
     m_data.SetCcNumberOfDisplayItems(::wxStringToInt(m_spinCtrlNumberOfCCItems->GetValue(), 100));
-
+    m_data.SetFileSpec(m_textCtrlFileSpec->GetValue());
+    
     //----------------------------------------------------
     // Colouring
     //----------------------------------------------------

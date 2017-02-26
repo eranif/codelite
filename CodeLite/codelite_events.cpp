@@ -1,5 +1,7 @@
 #include "codelite_events.h"
 
+wxDEFINE_EVENT(wxEVT_FILE_DELETED, clFileSystemEvent);
+wxDEFINE_EVENT(wxEVT_FOLDER_DELETED, clFileSystemEvent);
 wxDEFINE_EVENT(wxEVT_INIT_DONE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_EDITOR_CONFIG_CHANGED, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_WORKSPACE_LOADED, wxCommandEvent);

@@ -72,6 +72,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     wxArrayString m_choiceTabStyleArr;
     m_choiceTabStyleArr.Add(wxT("DEFAULT"));
     m_choiceTabStyleArr.Add(wxT("MINIMAL"));
+    m_choiceTabStyleArr.Add(wxT("TRAPEZOID"));
     m_choiceTabStyle = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), m_choiceTabStyleArr, 0);
     m_choiceTabStyle->SetSelection(0);
     

@@ -38,6 +38,27 @@
 class SFTPStatusPage;
 class SFTPTreeView;
 
+class SFTPClientData : public wxClientData
+{
+    wxString localPath;
+    wxString remotePath;
+    size_t permissions;
+
+public:
+    SFTPClientData()
+        : permissions(0)
+    {
+    }
+    virtual ~SFTPClientData() {}
+
+    void SetLocalPath(const wxString& localPath) { this->localPath = localPath; }
+    void SetRemotePath(const wxString& remotePath) { this->remotePath = remotePath; }
+    const wxString& GetLocalPath() const { return localPath; }
+    const wxString& GetRemotePath() const { return remotePath; }
+    void SetPermissions(size_t permissions) { this->permissions = permissions; }
+    size_t GetPermissions() const { return permissions; }
+};
+
 class SFTP : public IPlugin
 {
     wxFileName m_workspaceFile;
@@ -51,7 +72,7 @@ public:
     SFTP(IManager* manager);
     ~SFTP();
 
-    void FileDownloadedSuccessfully(const wxString& localFileName, const wxString& remotePath);
+    void FileDownloadedSuccessfully(const SFTPClientData& cd);
     void OpenWithDefaultApp(const wxString& localFileName);
     void OpenContainingFolder(const wxString& localFileName);
     void AddRemoteFile(const RemoteFileInfo& remoteFile);

@@ -304,7 +304,7 @@ bool CodeLiteApp::OnInit()
 #endif
 
 #ifdef __WXMSW__
-    
+
     m_user32Dll = LoadLibrary(L"User32.dll");
     if(m_user32Dll) {
         SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(m_user32Dll, "SetProcessDPIAware");
@@ -314,12 +314,11 @@ bool CodeLiteApp::OnInit()
         FreeLibrary(m_user32Dll);
         m_user32Dll = NULL;
     }
-    
-    
+
     // as described in http://jrfonseca.dyndns.org/projects/gnu-win32/software/drmingw/
     // load the exception handler dll so we will get Dr MinGW at runtime
     m_handler = LoadLibrary(wxT("exchndl.dll"));
-    
+
 // Enable this process debugging priviliges
 // EnableDebugPriv();
 #endif
@@ -538,7 +537,8 @@ bool CodeLiteApp::OnInit()
     ConfFileLocator::Instance()->Initialize(ManagerST::Get()->GetInstallDir(), ManagerST::Get()->GetStartupDirectory());
 
     // set the CTAGS_REPLACEMENT environment variable
-    wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ManagerST::Get()->GetStartupDirectory() + wxT("/ctags.replacements"));
+    wxFileName ctagsReplacements(clStandardPaths::Get().GetUserDataDir(), "ctags.replacements");
+    wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ctagsReplacements.GetFullPath());
 
 // read the last frame size from the configuration file
 // Initialise editor configuration files

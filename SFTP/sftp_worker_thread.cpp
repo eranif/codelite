@@ -85,7 +85,9 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
             msg.Clear();
             if(req->GetDirection() == SFTPThreadRequet::kUpload) {
                 DoReportStatusBarMessage(wxString() << _("Uploading file: ") << req->GetRemoteFile());
-                m_sftp->CreateRemoteFile(req->GetRemoteFile(), wxFileName(req->GetLocalFile()));
+                SFTPAttribute::Ptr_t attr(new SFTPAttribute(NULL));
+                attr->SetPermissions(req->GetPermissions());
+                m_sftp->CreateRemoteFile(req->GetRemoteFile(), wxFileName(req->GetLocalFile()), attr);
                 msg << "Successfully uploaded file: " << req->GetLocalFile() << " -> " << req->GetRemoteFile();
                 DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
                 DoReportStatusBarMessage("");
@@ -95,7 +97,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                       req->GetDirection() == SFTPThreadRequet::kDownloadAndOpenWithDefaultApp) {
                 DoReportStatusBarMessage(wxString() << _("Downloading file: ") << req->GetRemoteFile());
                 wxMemoryBuffer buffer;
-                m_sftp->Read(req->GetRemoteFile(), buffer);
+                SFTPAttribute::Ptr_t fileAttr = m_sftp->Read(req->GetRemoteFile(), buffer);
                 wxFFile fp(req->GetLocalFile(), "w+b");
                 if(fp.IsOpened()) {
                     fp.Write(buffer.GetData(), buffer.GetDataLen());
@@ -108,7 +110,11 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
 
                 // We should also notify the parent window about download completed
                 if(req->GetDirection() == SFTPThreadRequet::kDownload) {
-                    m_plugin->CallAfter(&SFTP::FileDownloadedSuccessfully, req->GetLocalFile(), req->GetRemoteFile());
+                    SFTPClientData cd;
+                    cd.SetLocalPath(req->GetLocalFile());
+                    cd.SetRemotePath(req->GetRemoteFile());
+                    cd.SetPermissions(fileAttr ? fileAttr->GetPermissions() : 0);
+                    m_plugin->CallAfter(&SFTP::FileDownloadedSuccessfully, cd);
 
                 } else if(req->GetDirection() == SFTPThreadRequet::kDownloadAndOpenContainingFolder) {
                     m_plugin->CallAfter(&SFTP::OpenContainingFolder, req->GetLocalFile());
@@ -198,13 +204,15 @@ void SFTPWorkerThread::DoReportStatusBarMessage(const wxString& message)
 
 SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo,
                                    const wxString& remoteFile,
-                                   const wxString& localFile)
+                                   const wxString& localFile,
+                                   size_t persmissions)
     : m_account(accountInfo)
     , m_remoteFile(remoteFile)
     , m_localFile(localFile)
     , m_retryCounter(0)
     , m_uploadSuccess(false)
     , m_direction(kUpload)
+    , m_permissions(persmissions)
 {
 }
 
@@ -215,6 +223,7 @@ SFTPThreadRequet::SFTPThreadRequet(const RemoteFileInfo& remoteFile)
     , m_retryCounter(0)
     , m_uploadSuccess(false)
     , m_direction(kDownload)
+    , m_permissions(0)
 {
 }
 
@@ -223,6 +232,7 @@ SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo)
     , m_retryCounter(0)
     , m_uploadSuccess(false)
     , m_direction(kConnect)
+    , m_permissions(0)
 {
 }
 

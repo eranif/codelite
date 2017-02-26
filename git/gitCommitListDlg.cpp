@@ -70,11 +70,17 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     }
     SetName("GitCommitListDlg");
     WindowAttrManager::Load(this);
-    
-    m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard), NULL, this);
-    m_dvListCtrlCommitList->Connect(ID_REVERT_COMMIT, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(GitCommitListDlg::OnRevertCommit), NULL, this);
+
+    m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH,
+                                    wxEVT_COMMAND_MENU_SELECTED,
+                                    wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard),
+                                    NULL,
+                                    this);
+    m_dvListCtrlCommitList->Connect(ID_REVERT_COMMIT,
+                                    wxEVT_COMMAND_MENU_SELECTED,
+                                    wxCommandEventHandler(GitCommitListDlg::OnRevertCommit),
+                                    NULL,
+                                    this);
 }
 
 /*******************************************************************************/
@@ -194,6 +200,12 @@ void GitCommitListDlg::OnRevertCommit(wxCommandEvent& e)
     m_dvListCtrlCommitList->GetValue(v, m_dvListCtrlCommitList->ItemToRow(sel), 0);
     wxString commitID = v.GetString();
 
+    if(::wxMessageBox(_("Are you sure you want to revert commit #") + commitID,
+                      "CodeLite",
+                      wxYES_NO | wxCANCEL | wxICON_QUESTION,
+                      this) != wxID_YES) {
+        return;
+    }
     m_git->CallAfter(&GitPlugin::RevertCommit, commitID);
 }
 
@@ -272,18 +284,18 @@ wxString GitCommitListDlg::GetFilterString() const
     if(filter.empty() && m_comboExtraArgs->GetValue().empty()) {
         return args;
     }
-    
+
     wxArrayString searchStrings = ::wxStringTokenize(filter, " ", wxTOKEN_STRTOK);
-    for(size_t i=0; i<searchStrings.size(); ++i) {
+    for(size_t i = 0; i < searchStrings.size(); ++i) {
         // Pass each search string using its own --grep field
         args << " --grep=" << searchStrings.Item(i);
     }
-    
+
     if(!searchStrings.IsEmpty()) {
         //  Limit the commits output to ones that match all given --grep
         args << " --all-match";
     }
-    
+
     if(m_checkBoxIgnoreCase->IsChecked()) {
         args << " -i";
     }

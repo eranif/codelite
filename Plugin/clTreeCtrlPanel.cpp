@@ -19,6 +19,7 @@
 #include "cl_config.h"
 #include "clTreeCtrlPanelDefaultPage.h"
 #include <wx/app.h>
+#include "clFileSystemEvent.h"
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
@@ -554,21 +555,38 @@ void clTreeCtrlPanel::OnDeleteSelections(wxCommandEvent& event)
 
     wxWindowUpdateLocker locker(GetTreeCtrl());
     wxArrayTreeItemIds deletedItems;
+    wxArrayString deletedFiles, deletedFolders;
     if(dialog.ShowModal() == wxID_YES) {
         wxLogNull nl;
         for(size_t i = 0; i < v.size(); ++i) {
             if(v.at(i).folder) {
                 if(wxFileName::Rmdir(v.at(i).path, wxPATH_RMDIR_RECURSIVE)) {
                     deletedItems.Add(v.at(i).item);
+                    deletedFolders.Add(v.at(i).path);
                 }
             } else {
                 if(::wxRemoveFile(v.at(i).path)) {
                     deletedItems.Add(v.at(i).item);
+                    deletedFiles.Add(v.at(i).path);
                 }
             }
         }
     }
-
+    
+    // Notify about the folder/files deletion
+    {
+        clFileSystemEvent evt(wxEVT_FILE_DELETED);
+        evt.SetPaths(deletedFiles);
+        evt.SetEventObject(this);
+        EventNotifier::Get()->AddPendingEvent(evt);
+    }
+    {
+        clFileSystemEvent evt(wxEVT_FOLDER_DELETED);
+        evt.SetPaths(deletedFolders);
+        evt.SetEventObject(this);
+        EventNotifier::Get()->AddPendingEvent(evt);
+    }
+    
     // Update the UI
     for(size_t i = 0; i < deletedItems.size(); ++i) {
         // Before we delete the item from the tree, update the parent cache

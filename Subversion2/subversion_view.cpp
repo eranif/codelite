@@ -775,6 +775,11 @@ void SubversionView::OnDelete(wxCommandEvent& event)
     bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
     command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" --force delete ");
 
+    if(::wxMessageBox(_("Delete the selected files?"), _("Confirm"),
+           wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
+        return;
+    }
+
     // Concatenate list of files to be updated
     for(size_t i = 0; i < m_selectionInfo.m_paths.GetCount(); i++) {
         command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");

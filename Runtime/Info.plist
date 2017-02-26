@@ -8,7 +8,7 @@
     <key>CFBundleExecutable</key>
     <string>codelite</string>
     <key>CFBundleInfoDictionaryVersion</key>
-    <string>10.0.0</string>
+    <string>10.1.0</string>
     <key>CFBundleName</key>
     <string>CodeLite</string>
     <key>CFBundleIconFile</key>

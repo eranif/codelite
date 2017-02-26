@@ -34,6 +34,7 @@
 #include "editor_config.h"
 #include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
+#include "event_notifier.h"
 
 BEGIN_EVENT_TABLE(ShellTab, OutputTabWindow)
 EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, ShellTab::OnProcStarted)
@@ -107,11 +108,10 @@ bool ShellTab::DoSendInput(const wxString& line)
 void ShellTab::OnProcStarted(wxCommandEvent& e)
 {
     if(m_cmd && m_cmd->IsBusy()) {
-        // TODO: log message: already running a process
         return;
     }
     m_cmd = (AsyncExeCmd*)e.GetEventObject();
-    Clear();
+    AppendText("\n");
     AppendText(e.GetString());
     m_input->Clear();
 }
@@ -341,11 +341,101 @@ void DebugTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
     }
 }
 
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+// OutputTab class
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+
 OutputTab::OutputTab(wxWindow* parent, wxWindowID id, const wxString& name)
     : ShellTab(parent, id, name)
+    , m_thread(NULL)
+    , m_outputDebugStringActive(false)
 {
     m_inputSizer->Show(false);
     GetSizer()->Layout();
+    EventNotifier::Get()->Bind(wxEVT_OUTPUT_DEBUG_STRING, &OutputTab::OnOutputDebugString, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &OutputTab::OnDebugStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &OutputTab::OnDebugStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &OutputTab::OnWorkspaceClosed, this);
 }
 
-OutputTab::~OutputTab() {}
+OutputTab::~OutputTab()
+{
+    EventNotifier::Get()->Unbind(wxEVT_OUTPUT_DEBUG_STRING, &OutputTab::OnOutputDebugString, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &OutputTab::OnDebugStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &OutputTab::OnDebugStopped, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &OutputTab::OnWorkspaceClosed, this);
+    if(m_thread) {
+        m_thread->Stop();
+        wxDELETE(m_thread);
+    }
+}
+
+void OutputTab::OnOutputDebugString(clCommandEvent& event)
+{
+    event.Skip();
+    if(!m_outputDebugStringActive) return;
+
+    wxString msg = event.GetString();
+    msg.Trim().Trim(false);
+    if(msg.IsEmpty()) return;
+
+    wxString formattedMessage;
+    formattedMessage << "[" << event.GetInt() << "] " << msg << "\n";
+    AppendText(formattedMessage);
+}
+
+void OutputTab::OnDebugStarted(clDebugEvent& event)
+{
+    event.Skip();
+    m_outputDebugStringActive = true;
+    DoSetCollecting(true);
+}
+
+void OutputTab::OnDebugStopped(clDebugEvent& event)
+{
+    event.Skip();
+    m_outputDebugStringActive = false;
+    DoSetCollecting(false);
+}
+
+void OutputTab::OnProcStarted(wxCommandEvent& e)
+{
+    ShellTab::OnProcStarted(e);
+    m_outputDebugStringActive = true;
+    DoSetCollecting(true);
+}
+
+void OutputTab::OnProcEnded(wxCommandEvent& e)
+{
+    ShellTab::OnProcEnded(e);
+    m_outputDebugStringActive = false;
+    DoSetCollecting(false);
+}
+
+void OutputTab::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    Clear();
+}
+
+void OutputTab::DoSetCollecting(bool b)
+{
+#ifdef __WXMSW__
+    if(b) {
+        if(m_thread) {
+            m_thread->Stop();
+            wxDELETE(m_thread);
+        }
+        m_thread = new OutputDebugStringThread();
+        m_thread->Start();
+        m_thread->SetCollecting(true);
+    } else {
+        if(m_thread) {
+            m_thread->Stop();
+            wxDELETE(m_thread);
+        }
+    }
+#endif
+}

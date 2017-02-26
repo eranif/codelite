@@ -32,16 +32,27 @@
     <object class="wxBitmap" name="arrow-right-24">res/arrow-left-24.png</object>
     
     <!-- aui dockablepane -->
-    <object class="wxBitmap" name="aui-close">res/aui-close.png</object>
-    <object class="wxBitmap" name="aui-more">res/aui-more.png</object>
-    <object class="wxBitmap" name="aui-expand">res/aui-expand.png</object>
-    <object class="wxBitmap" name="aui-minimize">res/aui-minimize.png</object>
+    <object class="wxBitmap" name="aui-close">res/12-aui-close.png</object>
+    <object class="wxBitmap" name="aui-more">res/12-aui-more.png</object>
+    <object class="wxBitmap" name="aui-expand">res/12-aui-expand.png</object>
+    <object class="wxBitmap" name="aui-minimize">res/12-aui-expand.png</object>
     
-    <object class="wxBitmap" name="aui-close@2x">res/aui-close@2x.png</object>
-    <object class="wxBitmap" name="aui-more@2x">res/aui-more@2x.png</object>
-    <object class="wxBitmap" name="aui-expand@2x">res/aui-expand@2x.png</object>
-    <object class="wxBitmap" name="aui-minimize@2x">res/aui-minimize@2x.png</object>
+    <object class="wxBitmap" name="aui-close@2x">res/12-aui-close@2x.png</object>
+    <object class="wxBitmap" name="aui-more@2x">res/12-aui-more@2x.png</object>
+    <object class="wxBitmap" name="aui-expand@2x">res/12-aui-expand@2x.png</object>
+    <object class="wxBitmap" name="aui-minimize@2x">res/12-aui-expand@2x.png</object>
     
+    <!-- white version -->
+    <object class="wxBitmap" name="aui-close-white">res/12-aui-close-white.png</object>
+    <object class="wxBitmap" name="aui-more-white">res/12-aui-more-white.png</object>
+    <object class="wxBitmap" name="aui-expand-white">res/12-aui-expand-white.png</object>
+    <object class="wxBitmap" name="aui-minimize-white">res/12-aui-expand-white.png</object>
+    
+    <object class="wxBitmap" name="aui-close-white@2x">res/12-aui-close-white@2x.png</object>
+    <object class="wxBitmap" name="aui-more-white@2x">res/12-aui-more-white@2x.png</object>
+    <object class="wxBitmap" name="aui-expand-white@2x">res/12-aui-expand-white@2x.png</object>
+    <object class="wxBitmap" name="aui-minimize-white@2x">res/12-aui-expand-white@2x.png</object>
+
     <!--
         Toolbar bitmaps (24x24)
     -->

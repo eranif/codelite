@@ -24,10 +24,8 @@ PHPExecutor::PHPExecutor() {}
 
 PHPExecutor::~PHPExecutor() {}
 
-bool PHPExecutor::Exec(const wxString& projectName,
-                       const wxString& urlOrFilePath,
-                       const wxString& xdebugSessionName,
-                       bool neverPauseOnExit)
+bool PHPExecutor::Exec(const wxString& projectName, const wxString& urlOrFilePath, const wxString& xdebugSessionName,
+    bool neverPauseOnExit)
 {
     PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(projectName);
     CHECK_PTR_RET_FALSE(proj);
@@ -67,16 +65,12 @@ bool PHPExecutor::RunRUL(PHPProject::Ptr_t pProject, const wxString& urlToRun, c
     return true;
 }
 
-bool PHPExecutor::DoRunCLI(const wxString& script,
-                           PHPProject::Ptr_t proj,
-                           const wxString& xdebugSessionName,
-                           bool neverPauseOnExit)
+bool PHPExecutor::DoRunCLI(
+    const wxString& script, PHPProject::Ptr_t proj, const wxString& xdebugSessionName, bool neverPauseOnExit)
 {
     if(IsRunning()) {
-        ::wxMessageBox(_("Another process is already running"),
-                       wxT("CodeLite"),
-                       wxOK | wxICON_INFORMATION,
-                       wxTheApp->GetTopWindow());
+        ::wxMessageBox(_("Another process is already running"), wxT("CodeLite"), wxOK | wxICON_INFORMATION,
+            wxTheApp->GetTopWindow());
         return false;
     }
 
@@ -215,7 +209,7 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
         }
         cmd << wxT("\" ");
     }
-    
+
     ::WrapWithQuotes(index);
     cmd << index;
 

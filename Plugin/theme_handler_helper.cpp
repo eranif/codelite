@@ -35,6 +35,7 @@
 #include "Notebook.h"
 #include "clTabRendererSquare.h"
 #include "clTabRendererCurved.h"
+#include "clTabRendererClassic.h"
 
 class wxDataViewCtrl;
 class wxTextCtrl;
@@ -83,9 +84,9 @@ void ThemeHandlerHelper::DoUpdateColours(wxWindow* win, const wxColour& bg, cons
 
     // Generic handling
     if(dynamic_cast<wxTreeCtrl*>(win) || dynamic_cast<wxListBox*>(win) || dynamic_cast<wxDataViewCtrl*>(win) ||
-        dynamic_cast<wxTextCtrl*>(win) /*||
-    dynamic_cast<wxHtmlWindow*>(win) */
-        ) {
+       dynamic_cast<wxTextCtrl*>(win) /*||
+   dynamic_cast<wxHtmlWindow*>(win) */
+       ) {
         win->SetBackgroundColour(bg);
         win->SetForegroundColour(fg);
         win->Refresh();
@@ -107,8 +108,13 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
         if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
             clTabRenderer::Ptr_t art(new clTabRendererSquare);
             book->SetArt(art);
-        } else {
+
+        } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleTRAPEZOID) {
             clTabRenderer::Ptr_t art(new clTabRendererCurved);
+            book->SetArt(art);
+
+        } else {
+            clTabRenderer::Ptr_t art(new clTabRendererClassic);
             book->SetArt(art);
         }
     }

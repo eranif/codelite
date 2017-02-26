@@ -155,7 +155,12 @@ public:
 
     void SetStartPos(int startPos) { this->m_startPos = startPos; }
     int GetStartPos() const { return m_startPos; }
-
+    
+    void ScrollDown() { DoScrollDown(); }
+    void ScrollUp() { DoScrollUp(); }
+    
+    void DoMouseScroll(wxMouseEvent& event);
+    
 protected:
     int GetSingleLineHeight() const;
     /**

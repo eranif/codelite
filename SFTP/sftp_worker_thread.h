@@ -40,12 +40,16 @@ class SFTPThreadRequet : public ThreadRequest
     size_t m_retryCounter;
     bool m_uploadSuccess;
     int m_direction;
+    size_t m_permissions;
 
 public:
     enum { kUpload, kDownload, kConnect, kDownloadAndOpenWithDefaultApp, kDownloadAndOpenContainingFolder };
 
 public:
-    SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile);
+    SFTPThreadRequet(const SSHAccountInfo& accountInfo,
+                     const wxString& remoteFile,
+                     const wxString& localFile,
+                     size_t persmissions);
     SFTPThreadRequet(const RemoteFileInfo& remoteFile);
     SFTPThreadRequet(const SSHAccountInfo& accountInfo);
     SFTPThreadRequet(const SFTPThreadRequet& other);
@@ -64,6 +68,8 @@ public:
     const wxString& GetLocalFile() const { return m_localFile; }
     int GetDirection() const { return m_direction; }
     void SetDirection(int d) { m_direction = d; }
+    void SetPermissions(size_t permissions) { this->m_permissions = permissions; }
+    size_t GetPermissions() const { return m_permissions; }
     ThreadRequest* Clone() const;
 };
 

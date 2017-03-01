@@ -6,6 +6,10 @@
 #include "jobqueue.h"
 #include "job.h"
 #include "cl_standard_paths.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "macros.h"
+#include <imanager.h>
 
 class clJSCTagsZipJob : public Job
 {
@@ -42,6 +46,7 @@ clJSCTags::clJSCTags()
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clJSCTags::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clJSCTags::OnEditorSaved, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clJSCTags::OnInitDone, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &clJSCTags::OnEditorClosing, this);
 }
 
 clJSCTags::~clJSCTags()
@@ -49,11 +54,25 @@ clJSCTags::~clJSCTags()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clJSCTags::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clJSCTags::OnEditorSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clJSCTags::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &clJSCTags::OnEditorClosing, this);
 }
 
-void clJSCTags::OnEditorSaved(clCommandEvent& event) { event.Skip(); }
+void clJSCTags::OnEditorSaved(clCommandEvent& event)
+{
+    event.Skip();
+    if(!m_zipExtracted) return;
+    
+    wxString filename = event.GetFileName();
+}
 
-void clJSCTags::OnEditorChanged(wxCommandEvent& event) { event.Skip(); }
+void clJSCTags::OnEditorChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    if(!m_zipExtracted) return;
+    
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+}
 
 void clJSCTags::ZipExtractCompleted() { m_zipExtracted = true; }
 
@@ -68,4 +87,14 @@ void clJSCTags::OnInitDone(wxCommandEvent& event)
         JobQueueSingleton::Instance()->PushJob(
             new clJSCTagsZipJob(this, jsctagsZip.GetFullPath(), targetDir.GetPath()));
     }
+}
+
+void clJSCTags::OnEditorClosing(wxCommandEvent& e)
+{
+    e.Skip();
+    IEditor* editor = (IEditor*)e.GetClientData();
+    CHECK_PTR_RET(editor);
+    
+    wxString closingpath = editor->GetFileName().GetFullPath();
+    // Clear this file's cache
 }

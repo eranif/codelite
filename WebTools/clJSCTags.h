@@ -20,6 +20,7 @@ public:
     void OnEditorSaved(clCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
+    void OnEditorClosing(wxCommandEvent& e);
 };
 
 #endif // CLJSCTAGS_H

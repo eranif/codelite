@@ -32,12 +32,14 @@
 #include "clTernServer.h"
 #include "wxCodeCompletionBoxEntry.h"
 #include "cl_calltip.h"
+#include "clJSCTags.h"
 
 class JSCodeCompletion : public wxEvtHandler
 {
     clTernServer m_ternServer;
     int m_ccPos;
     wxString m_workingDirectory;
+    clJSCTags::Ptr_t m_jsctags;
 
 public:
     typedef SmartPtr<JSCodeCompletion> Ptr_t;
@@ -45,7 +47,7 @@ public:
     void OnFunctionTipReady(clCallTipPtr calltip, const wxString& filename);
     void OnDefinitionFound(const clTernDefinition& loc);
     void OnGotoDefinition(wxCommandEvent& event);
-    
+
     /**
      * @brief start code completion based on the word completion plugin
      */
@@ -78,7 +80,7 @@ public:
      * @param editor
      */
     void ResetTern();
-    
+
     /**
      * @brief reparse the file
      */

@@ -65,8 +65,6 @@
     <File Name="clTernServer.cpp"/>
     <File Name="clTernWorkerThread.h"/>
     <File Name="clTernWorkerThread.cpp"/>
-    <File Name="clJSCTags.h"/>
-    <File Name="clJSCTags.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
     <File Name="WebToolsSettings.h"/>

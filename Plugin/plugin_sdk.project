@@ -586,6 +586,9 @@
   <VirtualDirectory Name="NodeJS">
     <File Name="NodeJSLocator.h"/>
     <File Name="NodeJSLocator.cpp"/>
+    <File Name="clJSCTags.cpp"/>
+    <File Name="clJSCTags.h"/>
+    <File Name="jsctags.zip"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

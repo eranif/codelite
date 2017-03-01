@@ -4,8 +4,9 @@
 #include <wx/event.h>
 #include "cl_command_event.h"
 #include "smart_ptr.h"
+#include "codelite_exports.h"
 
-class clJSCTags : public wxEvtHandler
+class WXDLLIMPEXP_SDK clJSCTags : public wxEvtHandler
 {
     bool m_zipExtracted;
 

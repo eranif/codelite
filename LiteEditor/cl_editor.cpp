@@ -1527,6 +1527,17 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
         clWARNING() << "Failed to read file permissions." << fileName << clEndl;
     }
 
+    // If this file is not writable, prompt the user before we do something stupid
+    if(!fileName.IsFileWritable()) {
+        // Prompt the user
+        if(::wxMessageBox(
+               wxString() << _("The file\n") << fileName.GetFullPath() << _("\nis a read only file, continue?"),
+               "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING,
+               EventNotifier::Get()->TopFrame()) != wxYES) {
+            return false;
+        }
+    }
+
 // The write was done to a temporary file, override it
 #ifdef __WXMSW__
     if(!::wxRenameFile(intermediateFile.GetFullPath(), fileName.GetFullPath(), true)) {
@@ -3071,7 +3082,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
 
     // let the plugins hook their content
     PluginManager::Get()->HookPopupMenu(menu, MenuTypeEditor);
-    
+
     // +++++------------------------------------------------------
     // if the selection is URL, offer to open it in the browser
     // +++++------------------------------------------------------

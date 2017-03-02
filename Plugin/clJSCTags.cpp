@@ -78,6 +78,7 @@ void clJSCTags::ZipExtractCompleted() { m_zipExtracted = true; }
 
 void clJSCTags::OnInitDone(wxCommandEvent& event)
 {
+    event.Skip();
     // Extract the zip file
     wxFileName jsctagsZip(clStandardPaths::Get().GetDataDir(), "jsctags.zip");
     if(jsctagsZip.Exists()) {

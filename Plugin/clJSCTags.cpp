@@ -36,7 +36,7 @@ public:
         wxFileName::Mkdir(m_targetFolder, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         clZipReader zipReader(m_zipfile);
         zipReader.Extract("*", m_targetFolder);
-        m_jsctags->CallAfter(&clJSCTags::ZipExtractCompleted);
+        m_jsctags->ZipExtractCompleted();
     }
 };
 

@@ -18,7 +18,8 @@ public:
 protected:
     void GTKExtractZip();
     void OnZipProcessTerminated(clProcessEvent& event);
-
+    void OnZipProcessOutput(clProcessEvent& event);
+    
 public:
     clJSCTags();
     virtual ~clJSCTags();

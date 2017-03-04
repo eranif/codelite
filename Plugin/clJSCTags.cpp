@@ -51,6 +51,7 @@ clJSCTags::clJSCTags()
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clJSCTags::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &clJSCTags::OnEditorClosing, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clJSCTags::OnZipProcessTerminated, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clJSCTags::OnZipProcessOutput, this);
 }
 
 clJSCTags::~clJSCTags()
@@ -60,6 +61,7 @@ clJSCTags::~clJSCTags()
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clJSCTags::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &clJSCTags::OnEditorClosing, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clJSCTags::OnZipProcessTerminated, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clJSCTags::OnZipProcessOutput, this);
 }
 
 void clJSCTags::OnEditorSaved(clCommandEvent& event)
@@ -99,9 +101,14 @@ void clJSCTags::OnInitDone(wxCommandEvent& event)
     // Build the unzip command
     wxString command;
     wxString zipfile = jsctagsZip.GetFullPath();
-    ::WrapWithQuotes(zipfile);
+    wxString workingDir = targetDir.GetPath();
+    ::EscapeSpaces(workingDir);
+    ::EscapeSpaces(zipfile);
 
-    command << "/usr/bin/unzip " << zipfile;
+    command << "cd " << workingDir << " && /usr/bin/unzip -o " << zipfile;
+    ::WrapInShell(command);
+    
+    clDEBUG() << "Running command:" << command << clEndl;
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, targetDir.GetPath());
     if(!m_process) {
         clERROR() << "Failed to execute process" << command << clEndl;
@@ -127,4 +134,9 @@ void clJSCTags::OnZipProcessTerminated(clProcessEvent& event)
     clDEBUG() << "unzipping of jsctags completed successfully" << clEndl;
     ZipExtractCompleted();
     wxDELETE(m_process);
+}
+
+void clJSCTags::OnZipProcessOutput(clProcessEvent& event)
+{
+    clDEBUG1() << "unzip:" << event.GetOutput() << clEndl;
 }

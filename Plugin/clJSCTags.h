@@ -5,13 +5,19 @@
 #include "cl_command_event.h"
 #include "smart_ptr.h"
 #include "codelite_exports.h"
+#include "asyncprocess.h"
 
 class WXDLLIMPEXP_SDK clJSCTags : public wxEvtHandler
 {
     bool m_zipExtracted;
+    IProcess* m_process;
 
 public:
     typedef SmartPtr<clJSCTags> Ptr_t;
+
+protected:
+    void GTKExtractZip();
+    void OnZipProcessTerminated(clProcessEvent& event);
 
 public:
     clJSCTags();

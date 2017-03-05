@@ -20,9 +20,8 @@ protected:
     wxString m_targetFolder;
 
 public:
-    clJSCTagsZipJob(clJSCTags* jsctags, const wxString& zipfile, const wxString& targetFolder)
-        : Job(jsctags)
-        , m_jsctags(jsctags)
+    clJSCTagsZipJob(const wxString& zipfile, const wxString& targetFolder)
+        : Job()
         , m_zipfile(zipfile)
         , m_targetFolder(targetFolder)
     {
@@ -38,7 +37,6 @@ public:
         clZipReader zipReader(m_zipfile);
         clDEBUG() << "Extracting zip file:" << m_zipfile << clEndl;
         zipReader.Extract("*", m_targetFolder);
-        m_jsctags->CallAfter(&clJSCTags::ZipExtractCompleted);
         clDEBUG() << "Extracting zip file:" << m_zipfile << "...done" << clEndl;
     }
 };
@@ -88,7 +86,8 @@ void clJSCTags::OnInitDone(wxCommandEvent& event)
     wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "");
     targetDir.AppendDir("webtools");
     targetDir.AppendDir("jsctags");
-    JobQueueSingleton::Instance()->PushJob(new clJSCTagsZipJob(this, jsctagsZip.GetFullPath(), targetDir.GetPath()));
+    JobQueueSingleton::Instance()->PushJob(new clJSCTagsZipJob(jsctagsZip.GetFullPath(), targetDir.GetPath()));
+    ZipExtractCompleted();
 }
 
 void clJSCTags::OnEditorClosing(wxCommandEvent& e)

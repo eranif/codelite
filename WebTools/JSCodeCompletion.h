@@ -39,7 +39,6 @@ class JSCodeCompletion : public wxEvtHandler
     clTernServer m_ternServer;
     int m_ccPos;
     wxString m_workingDirectory;
-    clJSCTags::Ptr_t m_jsctags;
 
 public:
     typedef SmartPtr<JSCodeCompletion> Ptr_t;

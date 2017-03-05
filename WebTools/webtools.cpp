@@ -97,7 +97,8 @@ WebTools::WebTools(IManager* manager)
     m_jsCodeComplete.Reset(new JSCodeCompletion(""));
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
     m_cssCodeComplete.Reset(new CSSCodeCompletion());
-
+    m_jsctags.Reset(new clJSCTags());
+    
     // Connect the timer
     m_timer = new wxTimer(this);
     m_timer->Start(3000);

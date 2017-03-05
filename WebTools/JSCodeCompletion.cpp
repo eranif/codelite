@@ -49,8 +49,6 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory)
 
         m_ternServer.Start(m_workingDirectory);
     }
-    
-    m_jsctags.Reset(new clJSCTags());
 }
 
 JSCodeCompletion::~JSCodeCompletion()

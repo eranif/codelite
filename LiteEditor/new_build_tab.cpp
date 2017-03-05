@@ -829,7 +829,12 @@ void NewBuildTab::OnStyleNeeded(wxStyledTextEvent& event)
     int startPos = m_view->GetEndStyled();
     int endPos = event.GetPosition();
     wxString text = m_view->GetTextRange(startPos, endPos);
-    m_view->StartStyling(startPos, 0x1f); // text styling
+#if wxCHECK_VERSION(3, 1, 1)
+        // The scintilla syntax in e.g. wx3.1.1 changed
+        m_view->StartStyling(startPos, 0);
+#else
+        m_view->StartStyling(startPos, 0x1f);
+#endif
 
     int curline = m_view->GetLineCount();
     curline -= 1; // The view always ends with a "\n", we don't count it as a line
@@ -970,7 +975,13 @@ void NewBuildTab::ColourOutput()
         int startPos = m_view->PositionFromLine(i);
         int lineEndPos = m_view->GetLineEndPosition(i);
 
-        m_view->StartStyling(startPos, 0x1f); // text styling
+#if wxCHECK_VERSION(3, 1, 1)
+            // The scintilla syntax in e.g. wx3.1.1 changed
+            m_view->StartStyling(startPos, 0);
+#else
+            m_view->StartStyling(startPos, 0x1f);
+#endif
+        
         // Run the regexes
         wxString lineText = m_view->GetLine(i);
         LINE_SEVERITY severity;

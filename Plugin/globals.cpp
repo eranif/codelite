@@ -1176,7 +1176,8 @@ bool wxIsFileSymlink(const wxFileName& filename)
 #else
     wxCharBuffer cb = filename.GetFullPath().mb_str(wxConvUTF8).data();
     struct stat stat_buff;
-    if(::stat(cb.data(), &stat_buff) < 0) return false;
+    // use lstat() otherwise, stat() will follow the actual file
+    if(::lstat(cb.data(), &stat_buff) < 0) return false;
     return S_ISLNK(stat_buff.st_mode);
 #endif
 }

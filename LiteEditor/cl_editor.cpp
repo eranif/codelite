@@ -1522,13 +1522,18 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     file.Close();
 
     // keep the original file permissions
+    wxFileName symlinkedFile = fileName;
+    if(wxIsFileSymlink(fileName)) {
+        symlinkedFile = wxReadLink(fileName);
+    }
+    
     mode_t origPermissions = 0;
-    if(!FileUtils::GetFilePermissions(fileName, origPermissions)) {
+    if(!FileUtils::GetFilePermissions(symlinkedFile, origPermissions)) {
         clWARNING() << "Failed to read file permissions." << fileName << clEndl;
     }
 
     // If this file is not writable, prompt the user before we do something stupid
-    if(!fileName.IsFileWritable()) {
+    if(!symlinkedFile.IsFileWritable()) {
         // Prompt the user
         if(::wxMessageBox(
                wxString() << _("The file\n") << fileName.GetFullPath() << _("\nis a read only file, continue?"),
@@ -1538,13 +1543,13 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
         }
     }
 
-// The write was done to a temporary file, override it
+    // The write was done to a temporary file, override it
 #ifdef __WXMSW__
-    if(!::wxRenameFile(intermediateFile.GetFullPath(), fileName.GetFullPath(), true)) {
+    if(!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {
         bool bSaveSucceeded = false;
         // Check if the file has the ReadOnly attribute and attempt to remove it
-        if(MSWRemoveROFileAttribute(fileName)) {
-            if(!::wxRenameFile(intermediateFile.GetFullPath(), fileName.GetFullPath(), true)) {
+        if(MSWRemoveROFileAttribute(symlinkedFile)) {
+            if(!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {
                 wxMessageBox(
                     wxString::Format(_("Failed to override read-only file")), "CodeLite", wxOK | wxICON_WARNING);
                 return false;
@@ -1556,7 +1561,7 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
         if(!bSaveSucceeded) {
             // Try clearing the clang cache and try again
             ClangCodeCompletion::Instance()->ClearCache();
-            if(!::wxRenameFile(intermediateFile.GetFullPath(), fileName.GetFullPath(), true)) {
+            if(!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {
                 wxMessageBox(
                     wxString::Format(_("Failed to override read-only file")), "CodeLite", wxOK | wxICON_WARNING);
                 return false;
@@ -1564,7 +1569,7 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
         }
     }
 #else
-    if(!::wxRenameFile(intermediateFile.GetFullPath(), fileName.GetFullPath(), true)) {
+    if(!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {
         // Try clearing the clang cache and try again
         wxMessageBox(wxString::Format(_("Failed to override read-only file")), "CodeLite", wxOK | wxICON_WARNING);
         return false;
@@ -1573,11 +1578,11 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
 
     // Restore the orig file permissions
     if(origPermissions) {
-        FileUtils::SetFilePermissions(fileName, origPermissions);
+        FileUtils::SetFilePermissions(symlinkedFile, origPermissions);
     }
 
     // update the modification time of the file
-    m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
+    m_modifyTime = GetFileModificationTime(symlinkedFile.GetFullPath());
     SetSavePoint();
 
     // update the tab title (remove the star from the file name)

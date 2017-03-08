@@ -150,7 +150,6 @@ EVT_COMMAND(wxID_ANY, wxEVT_FRD_BOOKMARKALL, LEditor::OnFindDialog)
 EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
 EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
 EVT_COMMAND(wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, LEditor::OnRemoveMatchInidicator)
-EVT_IDLE(LEditor::OnIdle)
 END_EVENT_TABLE()
 
 // Instantiate statics
@@ -3793,7 +3792,12 @@ int LEditor::GetCurrLineHeight()
 
 void LEditor::DoHighlightWord()
 {
-    wxString word = GetSelectedText();
+    // Read the primary selected text
+    int mainSelection = GetMainSelection();
+    int mainSelectionStart = GetSelectionNStart(GetMainSelection());
+    int mainSelectionEnd = GetSelectionNEnd(GetMainSelection());
+    wxString word = GetTextRange(mainSelectionStart, mainSelectionEnd);
+            
     wxString selectedTextTrimmed = word;
     selectedTextTrimmed.Trim().Trim(false);
     if(selectedTextTrimmed.IsEmpty()) {
@@ -4987,8 +4991,13 @@ void LEditor::OnTimer(wxTimerEvent& event)
             int wordStartPos = WordStartPos(pos, true);
             int wordEndPos = WordEndPos(pos, true);
             wxString word = GetTextRange(wordStartPos, wordEndPos);
-            wxString selectedText = GetSelectedText();
-
+            
+            // Read the primary selected text
+            int mainSelection = GetMainSelection();
+            int mainSelectionStart = GetSelectionNStart(GetMainSelection());
+            int mainSelectionEnd = GetSelectionNEnd(GetMainSelection());
+            
+            wxString selectedText = GetTextRange(mainSelectionStart, mainSelectionEnd);
             if(!m_highlightedWordInfo.IsValid(this)) {
 
                 // Check to see if we have marker already on

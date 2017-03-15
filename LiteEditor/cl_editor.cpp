@@ -4749,6 +4749,7 @@ void LEditor::OnKeyUp(wxKeyEvent& event)
         // Clear hyperlink markers
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
         IndicatorClearRange(0, GetLength());
+        m_hyperLinkType = wxID_NONE;     
 
         // Clear debugger marker
         SetIndicatorCurrent(DEBUGGER_INDICATOR);

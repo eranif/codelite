@@ -10,6 +10,7 @@
   "m_firstWindowId": 1000,
   "m_useEnum": false,
   "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -474,7 +475,7 @@
             }, {
              "type": "string",
              "m_label": "Label:",
-             "m_value": "Show indentation gudelines"
+             "m_value": "Show indentation guidelines"
             }, {
              "type": "multi-string",
              "m_label": "Tooltip:",

@@ -3793,7 +3793,6 @@ int LEditor::GetCurrLineHeight()
 void LEditor::DoHighlightWord()
 {
     // Read the primary selected text
-    int mainSelection = GetMainSelection();
     int mainSelectionStart = GetSelectionNStart(GetMainSelection());
     int mainSelectionEnd = GetSelectionNEnd(GetMainSelection());
     wxString word = GetTextRange(mainSelectionStart, mainSelectionEnd);
@@ -4994,7 +4993,6 @@ void LEditor::OnTimer(wxTimerEvent& event)
             wxString word = GetTextRange(wordStartPos, wordEndPos);
             
             // Read the primary selected text
-            int mainSelection = GetMainSelection();
             int mainSelectionStart = GetSelectionNStart(GetMainSelection());
             int mainSelectionEnd = GetSelectionNEnd(GetMainSelection());
             

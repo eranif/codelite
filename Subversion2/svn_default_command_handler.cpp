@@ -27,6 +27,9 @@
 #include "subversion2.h"
 #include "subversion_view.h"
 #include "event_notifier.h"
+#include <wx/filename.h>
+#include "fileutils.h"
+#include "file_logger.h"
 
 SvnDefaultCommandHandler::SvnDefaultCommandHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner)
     : SvnCommandHandler(plugin, commandId, owner)
@@ -46,4 +49,9 @@ void SvnDefaultCommandHandler::Process(const wxString &output)
 
     // Refresh the SVN output page
     GetPlugin()->GetSvnView()->BuildTree();
+    
+    // Delete the commit message file
+    wxFileName tmpFile(clStandardPaths::Get().GetTempDir(), ".svn-commit");
+    clDEBUG() << "Svn commit handler: deleting commit file" << tmpFile << clEndl;
+    FileUtils::Deleter d(tmpFile);
 }

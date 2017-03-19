@@ -1118,7 +1118,7 @@ void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDi
 
         wxString filepath = tmpFile.GetFullPath();
         ::WrapWithQuotes(filepath);
-        command << wxT(" --file ") << filepath;
+        command << wxT(" --file ") << filepath << " ";
 
         // Add the changed files
         for(size_t i = 0; i < actualFiles.GetCount(); ++i) {

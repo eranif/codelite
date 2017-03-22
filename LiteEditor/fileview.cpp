@@ -382,7 +382,10 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
         }
 
         if((node->GetData().GetKind() == ProjectItem::TypeProject) && (displayName == activeProjectName)) {
-            SetItemBold(hti);
+            wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+            f.SetWeight(wxFONTWEIGHT_BOLD);
+            f.SetStyle(wxFONTSTYLE_ITALIC);
+            SetItemFont(hti, f);
             if(!iconFromPlugin) {
                 SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX);
                 SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX, wxTreeItemIcon_Selected);
@@ -854,7 +857,10 @@ void FileViewTree::DoSetProjectActive(wxTreeItemId& item)
         if(data->GetData().GetKind() == ProjectItem::TypeProject) {
             UnselectAllProject(); // Clear any previously marked item
             ManagerST::Get()->SetActiveProject(data->GetData().GetDisplayName());
-            SetItemBold(item);
+            wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+            f.SetStyle(wxFONTSTYLE_ITALIC);
+            f.SetWeight(wxFONTWEIGHT_BOLD);
+            SetItemFont(item, f);
         }
     }
 }
@@ -2600,7 +2606,13 @@ void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu, const wxString& proj
 void FileViewTree::UnselectAllProject()
 {
     std::for_each(m_projectsMap.begin(), m_projectsMap.end(),
-        [&](std::pair<wxString, wxTreeItemId> p) { SetItemBold(p.second, false); });
+        [&](std::pair<wxString, wxTreeItemId> p) { 
+            wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+            f.SetWeight(wxFONTWEIGHT_NORMAL);
+            f.SetStyle(wxFONTSTYLE_NORMAL);
+            SetItemFont(p.second, f);
+        }
+    );
 }
 
 wxTreeItemId FileViewTree::AddWorkspaceFolder(const wxString& folderPath)

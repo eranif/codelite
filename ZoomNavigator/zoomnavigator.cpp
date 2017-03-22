@@ -353,6 +353,7 @@ void ZoomNavigator::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
     m_startupCompleted = true;
+    m_text->Startup();
 }
 
 void ZoomNavigator::OnIdle(wxIdleEvent& e)

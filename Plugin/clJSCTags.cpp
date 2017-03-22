@@ -86,7 +86,12 @@ void clJSCTags::OnInitDone(wxCommandEvent& event)
     wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "");
     targetDir.AppendDir("webtools");
     targetDir.AppendDir("jsctags");
+#ifndef __WXGTK__
     JobQueueSingleton::Instance()->PushJob(new clJSCTagsZipJob(jsctagsZip.GetFullPath(), targetDir.GetPath()));
+#else
+    clJSCTagsZipJob job(jsctagsZip.GetFullPath(), targetDir.GetPath());
+    job.Process(NULL);
+#endif
     ZipExtractCompleted();
 }
 

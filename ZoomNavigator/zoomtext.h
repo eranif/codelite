@@ -43,10 +43,11 @@ class ZoomText : public wxStyledTextCtrl
     wxString m_filename;
     wxString m_classes;
     wxString m_locals;
-
+    wxTimer* m_timer;
+    
 protected:
     void OnThemeChanged(wxCommandEvent& e);
-    void OnIdle(wxIdleEvent& event);
+    void OnTimer(wxTimerEvent& event);
     void DoClear();
     
 public:
@@ -61,6 +62,8 @@ public:
     void OnSettingsChanged(wxCommandEvent& e);
     void UpdateText(IEditor* editor);
     void HighlightLines(int start, int end);
+    
+    void Startup();
 };
 
 #endif // ZOOM_NAV_TEXT

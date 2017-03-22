@@ -82,7 +82,9 @@ ZoomText::ZoomText(wxWindow* parent,
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 #endif
     MarkerSetAlpha(1, 10);
-    wxTheApp->Bind(wxEVT_IDLE, &ZoomText::OnIdle, this);
+    
+    m_timer = new wxTimer(this);
+    Bind(wxEVT_TIMER, &ZoomText::OnTimer, this, m_timer->GetId());
 }
 
 ZoomText::~ZoomText()
@@ -91,7 +93,12 @@ ZoomText::~ZoomText()
         wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
-    wxTheApp->Unbind(wxEVT_IDLE, &ZoomText::OnIdle, this);
+    Unbind(wxEVT_TIMER, &ZoomText::OnTimer, this, m_timer->GetId());
+    
+    if(m_timer->IsRunning()) {
+        m_timer->Stop();
+    }
+    wxDELETE(m_timer);
 }
 
 void ZoomText::UpdateLexer(IEditor* editor)
@@ -178,14 +185,19 @@ void ZoomText::OnThemeChanged(wxCommandEvent& e)
     UpdateLexer(NULL);
 }
 
-void ZoomText::OnIdle(wxIdleEvent& event)
+void ZoomText::OnTimer(wxTimerEvent& event)
 {
-    event.Skip();
     // sanity
-    if(!m_classes.IsEmpty() || IsEmpty()) return;
+    if(!m_classes.IsEmpty() || IsEmpty()) {
+        m_timer->Start(1000, true);
+        return;
+    }
     
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(!editor) return;
+    if(!editor) {
+        m_timer->Start(1000, true);
+        return;
+    }
 
     if(m_classes.IsEmpty() && !editor->GetKeywordClasses().IsEmpty() &&
        (editor->GetFileName().GetFullPath() == m_filename)) {
@@ -194,6 +206,7 @@ void ZoomText::OnIdle(wxIdleEvent& event)
         SetKeyWords(3, editor->GetKeywordLocals());  // locals
         Colourise(0, GetLength());
     }
+    m_timer->Start(1000, true);
 }
 
 void ZoomText::DoClear()
@@ -203,4 +216,9 @@ void ZoomText::DoClear()
     SetReadOnly(false);
     SetText("");
     SetReadOnly(true);
+}
+
+void ZoomText::Startup()
+{
+    m_timer->Start(1000, true);
 }

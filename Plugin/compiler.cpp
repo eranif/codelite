@@ -247,7 +247,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
             AddPattern(eErrorPattern, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1, -1);
 
             AddPattern(eWarningPattern,
-                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)",
+                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?[ ]*(warning|required)",
                        1,
                        3,
                        4);

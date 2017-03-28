@@ -116,6 +116,7 @@ protected:
     void OnLeftDClick(wxMouseEvent& event);
     void OnMouseMotion(wxMouseEvent& event);
     void OnMouseMiddleClick(wxMouseEvent& event);
+    void OnMouseScroll(wxMouseEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
     int DoGetPageIndex(wxWindow* win) const;
     int DoGetPageIndex(const wxString& label) const;

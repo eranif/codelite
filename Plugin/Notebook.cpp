@@ -210,6 +210,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_LEFT_UP, &clTabCtrl::OnLeftUp, this);
     Bind(wxEVT_MOTION, &clTabCtrl::OnMouseMotion, this);
     Bind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
+    Bind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
     Bind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     Bind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
@@ -294,7 +295,7 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
         if(t->IsActive() && ((!IsVerticalTabs() && clientRect.Contains(t->GetRect())) ||
-                                (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
+                             (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
             return true;
     }
     return false;
@@ -314,6 +315,7 @@ clTabCtrl::~clTabCtrl()
     Unbind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     Unbind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
+    Unbind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
     GetParent()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
 }
 
@@ -360,7 +362,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
-    
+
     wxRect clientRect(GetClientRect());
     if(clientRect.width <= 3) return;
     if(clientRect.height <= 3) return;
@@ -477,9 +479,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -1272,8 +1274,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::DoDrawBottomBox(
-    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
+void
+clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
 {
     GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
 }
@@ -1309,12 +1311,27 @@ void clTabCtrl::SetArt(clTabRenderer::Ptr_t art)
         if(isClassic) {
             clTabRendererClassic::InitDarkColours(m_colours);
         }
-    } else if(isClassic){
+    } else if(isClassic) {
         m_colours.InitLightColours();
         clTabRendererClassic::InitLightColours(m_colours);
     }
     DoSetBestSize();
     Refresh();
+}
+
+void clTabCtrl::OnMouseScroll(wxMouseEvent& event)
+{
+    event.Skip();
+    size_t curSelection = GetSelection();
+    if(event.GetWheelRotation() > 0) {
+        if(curSelection < GetTabs().size()) {
+            SetSelection(curSelection + 1);
+        }
+    } else {
+        if(curSelection > 0) {
+            SetSelection(curSelection - 1);
+        }
+    }
 }
 
 // ----------------------------------------------------------------------

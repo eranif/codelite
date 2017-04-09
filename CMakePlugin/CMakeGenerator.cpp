@@ -105,9 +105,13 @@ bool CMakeGenerator::CheckExists(const wxFileName& filename)
             wxString msg;
             msg << _("A custom ") << CMakePlugin::CMAKELISTS_FILE << _(" exists.\nWould you like to overwrite it?\n")
                 << "( " << filename.GetFullPath() << " )";
-            wxStandardID answer = ::PromptForYesNoDialogWithCheckbox(msg, "CMakePluginOverwriteDlg", _("Overwrite"),
-                _("Don't Overwrite"), _("Remember my answer and don't annoy me again"),
-                wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION | wxYES_DEFAULT);
+            wxStandardID answer =
+                ::PromptForYesNoDialogWithCheckbox(msg,
+                                                   "CMakePluginOverwriteDlg",
+                                                   _("Overwrite"),
+                                                   _("Don't Overwrite"),
+                                                   _("Remember my answer and don't annoy me again"),
+                                                   wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION | wxYES_DEFAULT);
             return (answer == wxID_YES);
         } else {
             // A CodeLite generated CMakeLists.txt file
@@ -241,17 +245,17 @@ bool CMakeGenerator::Generate(ProjectPtr p)
 wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, const wxString& configName)
 {
     wxASSERT(project);
-    wxString projectPathVariable; // PROJECT_<name>_PATH
+    wxString projectPathVariable;      // PROJECT_<name>_PATH
     wxString projectPathVariableValue; // ${PROJECT_<name>_PATH}
     wxString workspacePath;
-    
+
     projectPathVariable << "PROJECT_" << project->GetName() << "_PATH";
     projectPathVariableValue << "${PROJECT_" << project->GetName() << "_PATH}";
-    
+
     wxFileName fnWorkspace = clCxxWorkspaceST::Get()->GetFileName();
     fnWorkspace.MakeRelativeTo(project->GetFileName().GetPath());
     workspacePath << "${CMAKE_CURRENT_LIST_DIR}/" << fnWorkspace.GetPath(wxPATH_NO_SEPARATOR, wxPATH_UNIX);
-    
+
     // Sources are kept relative in the project
     // we need to fix this
     Project::FileInfoVector_t vfiles;
@@ -565,24 +569,61 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             content << "target_link_libraries(" << project->GetName() << "\n    " << libs << "\n)\n\n";
         }
     }
-    
+
     // set the dependecies for the top level project
     if(topProject) {
         wxArrayString projects = project->GetDependencies(buildConf->GetName());
         if(!projects.IsEmpty()) {
             content << "\n";
             content << "# Adding dependencies\n";
-            for(size_t i=0; i<projects.GetCount(); ++i) {
+            for(size_t i = 0; i < projects.GetCount(); ++i) {
                 content << "add_dependencies(" << project->GetName() << " " << projects.Item(i) << ")\n";
             }
         }
     }
-    
+
+    // Add pre|post build commands
+    {
+        BuildCommandList commands;
+        buildConf->GetPreBuildCommands(commands);
+        AddBuildCommands("PRE_BUILD", commands, project, content);
+    }
+
+    {
+        BuildCommandList commands;
+        buildConf->GetPostBuildCommands(commands);
+        AddBuildCommands("POST_BUILD", commands, project, content);
+    }
+
     // Add the last hook here
     AddUserCodeSection(content, CMAKELISTS_USER_CODE_3_PREFIX, m_userBlock3);
 
     // Write result
     return content;
+}
+
+void CMakeGenerator::AddBuildCommands(const wxString& buildType,
+                                      const BuildCommandList& commands,
+                                      ProjectPtr project,
+                                      wxString& content)
+{
+    if(!commands.empty()) {
+        wxString projectPathVariableValue;
+        projectPathVariableValue << "${PROJECT_" << project->GetName() << "_PATH}";
+        content << "\n# Adding " << buildType << " commands\n";
+        std::for_each(commands.begin(), commands.end(), [&](const BuildCommand& buildCommand) {
+            if(buildCommand.GetEnabled()) {
+                wxString cmd = buildCommand.GetCommand();
+                cmd.Replace("$(WorkspacePath)", "${WORKSPACE_PATH}");
+                cmd.Replace("$(ProjectPath)", projectPathVariableValue);
+                content << "add_custom_command(\n"
+                        << "    TARGET " << project->GetName() << "\n"
+                        << "    " << buildType << "\n"
+                        << "    COMMAND " << cmd << ")\n";
+            }
+        });
+        content << "\n";
+    }
 }
 
 bool CMakeGenerator::CanGenerate(ProjectPtr project)

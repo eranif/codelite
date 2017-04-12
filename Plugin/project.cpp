@@ -1952,6 +1952,15 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
                 break;
             }
         }
+        
+        // remove duplicate entries
+        wxArrayString uniqueVars;
+        for(size_t i=0; i<vars.size(); ++i) {
+            if(uniqueVars.Index(vars.Item(i)) == wxNOT_FOUND) {
+                uniqueVars.Add(vars.Item(i));
+            }
+        }
+        vars.swap(uniqueVars);
     }
 }
 

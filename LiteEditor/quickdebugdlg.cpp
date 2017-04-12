@@ -43,10 +43,7 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-QuickDebugDlg::~QuickDebugDlg()
-{
-    
-}
+QuickDebugDlg::~QuickDebugDlg() {}
 
 void QuickDebugDlg::Initialize()
 {
@@ -66,7 +63,13 @@ void QuickDebugDlg::Initialize()
         m_ExeFilepath->SetSelection(0);
     }
 
-    m_WD->Append(info.GetWds());
+    wxArrayString wds = info.GetWds();
+    wxString homeDir = wxStandardPaths::Get().GetUserConfigDir();
+    if(wds.Index(homeDir) == wxNOT_FOUND) {
+        wds.Add(homeDir);
+    }
+
+    m_WD->Append(wds);
     if(m_WD->GetCount() > 0) {
         m_WD->SetSelection(0);
     }
@@ -91,7 +94,7 @@ void QuickDebugDlg::OnButtonBrowseExe(wxCommandEvent& event)
         path = fn.GetPath();
     } else {
         // Otherwise use any working dir entry, which might just have been altered
-        path = GetWorkingDirectory();
+        path = wxStandardPaths::Get().GetUserConfigDir();
     }
 
     ans = wxFileSelector(_("Select file:"), path);
@@ -116,14 +119,13 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
     info.SetAlternateDebuggerExec(m_textCtrlDebuggerExec->GetValue());
     EditorConfigST::Get()->WriteObject(wxT("QuickDebugDlg"), &info);
 
-    
     EndModal(wxID_OK);
 }
 
 void QuickDebugDlg::OnButtonCancel(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    
+
     EndModal(wxID_CANCEL);
 }
 
@@ -149,7 +151,7 @@ void QuickDebugDlg::OnButtonBrowseWD(wxCommandEvent& event)
 
     wxString ans, path(GetWorkingDirectory());
     if(!wxFileName::DirExists(path)) {
-        path = wxGetCwd();
+        path = wxStandardPaths::Get().GetUserConfigDir();
     }
 
     ans = wxDirSelector(_("Select working directory:"), path);
@@ -160,7 +162,7 @@ void QuickDebugDlg::OnButtonBrowseWD(wxCommandEvent& event)
 }
 void QuickDebugDlg::OnSelectAlternateDebugger(wxCommandEvent& event)
 {
-    wxString debuggerPath = ::wxFileSelector(_("Choose debugger:"));
+    wxString debuggerPath = ::wxFileSelector(_("Choose debugger:"), wxStandardPaths::Get().GetUserConfigDir());
     if(debuggerPath.IsEmpty()) return;
     m_textCtrlDebuggerExec->ChangeValue(debuggerPath);
 }

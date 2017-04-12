@@ -21,6 +21,7 @@ Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
 PrivilegesRequired=none
+UninstallDisplayIcon={app}\codelite.exe,0
 
 ;;==================================
 ;; 32 bit setup

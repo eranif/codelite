@@ -1,62 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="UnitTest++" InternalType="UnitTest++" IconIndex="console16">
-  <Description>A UnitTest++ executable</Description>
-  <Settings Type="Executable">
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-g">
-        <IncludePath Value="$(UNIT_TEST_PP_SRC_DIR)/src"/>
-        <IncludePath Value="."/>
-      </Compiler>
-      <Linker Required="yes" Options="">
-        <LibraryPath Value="$(UNIT_TEST_PP_SRC_DIR)/Debug"/>
-        <Library Value="libUnitTest++.a"/>
-      </Linker>
-      <ResourceCompiler Required="no" Options=""/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="">
-        <IncludePath Value="."/>
-        <IncludePath Value="$(UNIT_TEST_PP_SRC_DIR)/src"/>
-      </Compiler>
-      <Linker Required="yes" Options="-O2">
-        <LibraryPath Value="$(UNIT_TEST_PP_SRC_DIR)/Release"/>
-        <Library Value="libUnitTest++.a"/>
-      </Linker>
-      <ResourceCompiler Required="no" Options=""/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-  </Settings>
-  <Dependencies/>
-  <VirtualDirectory Name="src">
-    <File Name="main.cpp"/>
-  </VirtualDirectory>
+    <Description>A UnitTest++ executable</Description>
+    <Settings Type="Executable">
+        <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+            <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+            <Compiler Required="yes" Options="-g">
+                <IncludePath Value="."/>
+            </Compiler>
+            <Linker Required="yes" Options="">
+                <LibraryPath/>
+                <Library Value="libUnitTest++.a"/>
+            </Linker>
+            <ResourceCompiler Required="no" Options=""/>
+            <PreBuild/>
+            <PostBuild/>
+            <CustomBuild Enabled="no">
+                <CleanCommand/>
+                <BuildCommand/>
+                <SingleFileCommand/>
+                <MakefileGenerationCommand/>
+                <ThirdPartyToolName>None</ThirdPartyToolName>
+                <WorkingDirectory/>
+            </CustomBuild>
+            <AdditionalRules>
+                <CustomPostBuild/>
+                <CustomPreBuild/>
+            </AdditionalRules>
+        </Configuration>
+        <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+            <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+            <Compiler Required="yes" Options="">
+                <IncludePath Value="."/>
+            </Compiler>
+            <Linker Required="yes" Options="-O2">
+                <LibraryPath/>
+                <Library Value="libUnitTest++.a"/>
+            </Linker>
+            <ResourceCompiler Required="no" Options=""/>
+            <PreBuild/>
+            <PostBuild/>
+            <CustomBuild Enabled="no">
+                <CleanCommand/>
+                <BuildCommand/>
+                <SingleFileCommand/>
+                <MakefileGenerationCommand/>
+                <ThirdPartyToolName>None</ThirdPartyToolName>
+                <WorkingDirectory/>
+            </CustomBuild>
+            <AdditionalRules>
+                <CustomPostBuild/>
+                <CustomPreBuild/>
+            </AdditionalRules>
+        </Configuration>
+    </Settings>
+    <Dependencies/>
+    <VirtualDirectory Name="src">
+        <File Name="main.cpp"/>
+    </VirtualDirectory>
 </CodeLite_Project>

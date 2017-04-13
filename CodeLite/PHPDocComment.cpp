@@ -60,6 +60,14 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
         m_varName = reVarType2.GetMatch(m_comment, 3);
     }
     
+    // @var $Name Type 
+    static wxRegEx reVarType3(wxT("@(var|variable)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\a-zA-Z0-9_]+)"));
+    if(reVarType3.IsValid() && reVarType3.Matches(m_comment)) {
+        m_varType = reVarType3.GetMatch(m_comment, 3);
+        m_varType = sourceFile.MakeIdentifierAbsolute(m_varType);
+        m_varName = reVarType3.GetMatch(m_comment, 2);
+    }
+    
     // @param <TYPE> <NAME>
     if(m_comment.Contains("@param")) {
         static wxRegEx reParam2(

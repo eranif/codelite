@@ -42,51 +42,51 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_textCtrlResourceName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlResourceName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
     m_textCtrlResourceName->SetToolTip(_("Type resource name to open.\nYou may use a space delimited list of words to narrow down the list of choices\ne.g. Typing: 'Open Dialog' will include results that contain both words \"Open\" _and_ \"Dialog\""));
     m_textCtrlResourceName->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlResourceName->SetHint(wxT(""));
     #endif
     
-    mainSizer->Add(m_textCtrlResourceName, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_textCtrlResourceName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,200), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,200)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
     
     m_dataviewModel = new OpenResourceDialogModel;
     m_dataviewModel->SetColCount( 3 );
     m_dataview->AssociateModel(m_dataviewModel.get() );
     
-    mainSizer->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_dataview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Impl?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 60, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Full Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
+    m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(500), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Impl?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(60), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Full Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(500), wxALIGN_LEFT);
     wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
-    mainSizer->Add(fgSizer1, 0, wxALL|wxALIGN_LEFT, 5);
+    mainSizer->Add(fgSizer1, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
     
-    m_checkBoxFiles = new wxCheckBox(this, wxID_ANY, _("Show &files"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxFiles = new wxCheckBox(this, wxID_ANY, _("Show &files"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_checkBoxFiles->SetValue(false);
     
-    fgSizer1->Add(m_checkBoxFiles, 0, wxALL|wxEXPAND, 5);
+    fgSizer1->Add(m_checkBoxFiles, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxShowSymbols = new wxCheckBox(this, wxID_ANY, _("Show &symbols"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxShowSymbols = new wxCheckBox(this, wxID_ANY, _("Show &symbols"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_checkBoxShowSymbols->SetValue(false);
     
-    fgSizer1->Add(m_checkBoxShowSymbols, 0, wxALL|wxEXPAND, 5);
+    fgSizer1->Add(m_checkBoxShowSymbols, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
     
-    mainSizer->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    mainSizer->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer2->AddButton(m_buttonOK);
     
-    m_button6 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button6 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer2->AddButton(m_button6);
     m_stdBtnSizer2->Realize();
     
@@ -95,7 +95,6 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
-         SetMinClientSize(GetMinClientSize());
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);

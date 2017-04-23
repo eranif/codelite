@@ -189,9 +189,9 @@ void OpenResourceDialog::DoPopulateList()
     wxString modFilter;
     GetLineNumberFromFilter(name, modFilter, nLineNumber);
     name.swap(modFilter);
-    
+
     m_lineNumber = nLineNumber;
-    
+
     // Prepare the user filter
     m_userFilters.Clear();
     m_userFilters = ::wxStringTokenize(name, " \t", wxTOKEN_STRTOK);
@@ -340,7 +340,14 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
         bool down = (event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN);
         wxDataViewItemArray children;
         m_dataviewModel->GetChildren(wxDataViewItem(0), children);
-        wxDataViewItem selection = m_dataview->GetSelection();
+        wxDataViewItemArray selections;
+        wxDataViewItem selection;
+        m_dataview->GetSelections(selections);
+        
+        if(!selections.IsEmpty()) {
+            selection = selections.Item(0);
+        }
+        
         if(!selection.IsOk()) {
             // No selection, select the first
             DoSelectItem(children.Item(0));
@@ -370,8 +377,7 @@ void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
 
 void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event)
 {
-    wxDataViewItem item = m_dataview->GetSelection();
-    event.Enable(item.IsOk());
+    event.Enable(m_dataview->GetSelectedItemsCount());
 }
 
 bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false; }
@@ -379,6 +385,7 @@ bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false
 void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
 {
     CHECK_ITEM_RET(item);
+    m_dataview->UnselectAll();
     m_dataview->Select(item);
     m_dataview->EnsureVisible(item);
 }
@@ -474,26 +481,32 @@ void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& ev
 
 void OpenResourceDialog::OnEnter(wxCommandEvent& event)
 {
-    wxDataViewItem item = m_dataview->GetSelection();
-
-    if(item.IsOk()) {
-        EndModal(wxID_OK);
-    }
+    event.Skip();
+    EndModal(wxID_OK);
 }
 
 void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event) { event.Skip(); }
 
-OpenResourceDialogItemData* OpenResourceDialog::GetSelection() const
+std::vector<OpenResourceDialogItemData*> OpenResourceDialog::GetSelections() const
 {
-    wxDataViewItem item = m_dataview->GetSelection();
-    if(!item.IsOk()) return NULL;
-
-    OpenResourceDialogItemData* data =
-        dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(item));
-    if(data && GetLineNumber() != wxNOT_FOUND) {
-        data->m_line = GetLineNumber();
+    std::vector<OpenResourceDialogItemData*> selections;
+    wxDataViewItemArray items;
+    m_dataview->GetSelections(items);
+    if(items.IsEmpty()) {
+        return selections;
     }
-    return data;
+
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        OpenResourceDialogItemData* data =
+            dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(items.Item(i)));
+        if(data) {
+            if(m_lineNumber != wxNOT_FOUND) {
+                data->m_line = m_lineNumber;
+            }
+            selections.push_back(data);
+        }
+    }
+    return selections;
 }
 
 void OpenResourceDialog::GetLineNumberFromFilter(const wxString& filter, wxString& modFilter, long& lineNumber)

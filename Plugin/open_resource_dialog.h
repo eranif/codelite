@@ -122,9 +122,7 @@ public:
     OpenResourceDialog(wxWindow* parent, IManager* manager, const wxString& initialSelection);
     virtual ~OpenResourceDialog();
 
-    OpenResourceDialogItemData* GetSelection() const;
-    long GetLineNumber() const { return m_lineNumber; }
-    
+    std::vector<OpenResourceDialogItemData*> GetSelections() const;
     wxArrayString& GetFilters() { return m_filters; }
 
     /**

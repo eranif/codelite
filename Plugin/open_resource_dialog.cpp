@@ -513,8 +513,8 @@ void OpenResourceDialog::GetLineNumberFromFilter(const wxString& filter, wxStrin
 {
     modFilter = filter;
     lineNumber = -1;
-    static wxRegEx reNumber(":([0-9]+)");
-    if(reNumber.IsValid() && reNumber.Matches(modFilter, wxRE_ADVANCED)) {
+    static wxRegEx reNumber(":([0-9]+)", wxRE_ADVANCED);
+    if(reNumber.IsValid() && reNumber.Matches(modFilter)) {
         wxString strLineNumber;
         strLineNumber = reNumber.GetMatch(modFilter, 1);
         strLineNumber.ToCLong(&lineNumber);

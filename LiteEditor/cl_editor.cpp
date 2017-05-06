@@ -2074,7 +2074,12 @@ void LEditor::BraceMatch(const bool& bSelRegion)
 void LEditor::SetActive()
 {
     // ensure that the top level window parent of this editor is 'Raised'
-    DoUpdateTLWTitle(true);
+    bool raise(true);
+#ifdef __WXGTK__
+    // On Wayland and gtk+3.22, raise not only fails, it hangs the subsequent DnD call. See http://trac.wxwidgets.org/ticket/17853
+    raise = !clMainFrame::Get()->GetIsWaylandSession();
+#endif
+    DoUpdateTLWTitle(raise);
 
     // if the find and replace dialog is opened, set ourself
     // as the event owners

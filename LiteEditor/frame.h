@@ -115,6 +115,11 @@ class clMainFrame : public wxFrame
 #ifndef __WXMSW__
     ZombieReaperPOSIX m_zombieReaper;
 #endif
+
+#ifdef __WXGTK__
+    bool m_isWaylandSession;
+#endif
+
     // Maintain a set of core toolbars (i.e. toolbars not owned by any plugin)
     wxStringSet_t m_coreToolbars;
     clStatusBar* m_statusBar;
@@ -302,6 +307,10 @@ public:
     void DoSuggestRestart();
 
     void Bootstrap();
+
+#ifdef __WXGTK__
+    bool GetIsWaylandSession() const { return m_isWaylandSession; }
+#endif
 
 private:
     // make our frame's constructor private

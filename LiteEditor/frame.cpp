@@ -696,6 +696,9 @@ clMainFrame::clMainFrame(
     , m_bookmarksDropDownMenu(NULL)
     , m_singleInstanceThread(NULL)
     , m_mainToolBar(NULL)
+#ifdef __WXGTK__
+    , m_isWaylandSession(false)
+#endif
 {
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -832,6 +835,13 @@ clMainFrame::clMainFrame(
         "open_shell_from_filepath", "Ctrl-Shift-T", "Search::Open Shell From File Path");
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "open_file_explorer", "Ctrl-Alt-Shift-T", "Search::Open Containing Folder");
+
+#ifdef __WXGTK__
+    // Try to detect if this is a Wayland session; we have some Wayland-workaround code
+    wxString sesstype("XDG_SESSION_TYPE"), session_type;
+    wxGetEnv(sesstype, &session_type); 
+    m_isWaylandSession = session_type.Lower().Contains("wayland");
+#endif
 }
 
 clMainFrame::~clMainFrame(void)

@@ -7,6 +7,7 @@
 #include <wx/crt.h>
 #include <globals.h>
 #include <build_settings_config.h>
+#include <algorithm>
 
 IMPLEMENT_APP_CONSOLE(clMakeGeneratorApp)
 

@@ -1186,7 +1186,7 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex, wxAlignment align)
     // Sanity
     if(newIndex == wxNOT_FOUND) return false;
     if(activeTabInex == wxNOT_FOUND) return false;
-    if((newIndex < 0) || (newIndex >= m_tabs.size())) return false;
+    if((newIndex < 0) || (newIndex >= (int)m_tabs.size())) return false;
 
     bool movingTabRight;
     if(align == wxALIGN_INVALID) {

@@ -4,3 +4,7 @@ GRTAGS
 GTAGS
 codelite_vim/VimAcceleratorManager.h
 installation/
+
+dbg_build_arch/
+installation_arch/
+backup

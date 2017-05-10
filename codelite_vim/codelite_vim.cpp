@@ -41,7 +41,6 @@ CodeliteVim::CodeliteVim(IManager *manager)
     m_longName = _("vim bindings for codelite");
     m_shortName = wxT("CodeliteVim");
 
-	// wxEvtHandler::AddFilter(this);
 	wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_binds"));
 	
 	m_vimM = new VimManager();
@@ -70,7 +69,6 @@ void CodeliteVim::CreatePluginMenu(wxMenu *pluginsMenu)
 
 void CodeliteVim::UnPlug()
 {
-    // wxEvtHandler::RemoveFilter(this);
 	wxTheApp->Unbind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_binds"));
 
 }

@@ -5,11 +5,12 @@
 
 class VimManager;
 
+
 class CodeliteVim : public IPlugin 
 {
 public:
     CodeliteVim(IManager *manager);
-    ~CodeliteVim();
+	~CodeliteVim();
 
     //--------------------------------------------
     //Abstract methods

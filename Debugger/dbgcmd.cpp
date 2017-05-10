@@ -35,6 +35,7 @@
 #include "event_notifier.h"
 #include "debuggermanager.h"
 #include "cl_command_event.h"
+#include <algorithm>
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
 

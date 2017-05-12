@@ -13,13 +13,6 @@
 #include "codelite_events.h"
 #include <wx/kbdstate.h>
 
-enum class VIM_MODI {
-	NORMAL_MODUS,
-	INSERT_MODUS,
-	VISUAL_MODUS,
-	COMMAND_MODUS,
-	SEARCH_MODUS
-};
 
 
 /**
@@ -40,15 +33,16 @@ class VimManager
  protected:
 	void OnEditorChanged(wxCommandEvent &event);
 	void OnCharEvt(wxKeyEvent &event);
- private:
+	void OnKeyDown(wxKeyEvent &event);
 
+ private:
 	// IEditor* mEditor;
 	wxStyledTextCtrl* mCtrl;
-	VIM_MODI current_modus;
-	VimCommand mCurrCmd; /*!< command currenly */
-	VimCommand mLastCmd; /*!< last command performed */
-	wxString mTmpBuf;    /*!< tmporary buffer (of inserted text) */
-	
+	VimCommand mCurrCmd;     /*!< command currenly */
+	VimCommand mLastCmd;     /*!< last command performed */
+	wxString mTmpBuf;        /*!< tmporary buffer (of inserted text) */
+
+	void Issue_cmd();
 };
 
 #endif // __VIM_MANAGER_H__

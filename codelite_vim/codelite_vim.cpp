@@ -11,6 +11,7 @@
 static CodeliteVim* thePlugin = NULL;
 
 
+
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin *CreatePlugin(IManager *manager)
 {

@@ -86,7 +86,6 @@ private:
     void OnInitDone(wxCommandEvent& e);
     void OnDetachedEditorClosed(clCommandEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
-    bool AskUserToSave(LEditor* editor);
     bool DoSelectPage(wxWindow* win);
     void DoPositionFindBar(int where);
     void DoHandleFrameMenu(LEditor* editor);
@@ -99,6 +98,7 @@ public:
     MainBook(wxWindow* parent);
     ~MainBook();
 
+    static bool AskUserToSave(LEditor* editor);
     const EditorFrame::List_t& GetDetachedEditors() const { return m_detachedEditors; }
     void DetachActiveEditor();
     void ClearFileHistory();

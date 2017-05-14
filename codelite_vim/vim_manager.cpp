@@ -99,8 +99,10 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
 		} else {
 			mCtrl->SetCaretStyle(1);
 		}
-		
-		mCurrCmd.ResetCommand();
+
+		if ( mCurrCmd.get_current_modus() != VIM_MODI::REPLACING_MODUS ) {
+			mCurrCmd.ResetCommand();
+		}
 	}
 		
 	event.Skip( skip_event );
@@ -109,8 +111,10 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
 
 void VimManager::Issue_cmd()
 {
-	for ( int i = 0; i < mCurrCmd.getNumRepeat(); ++i)
-		mCurrCmd.Command_call( mCtrl );
+	for ( int i = 0; i < mCurrCmd.getNumRepeat(); ++i){
+		if ( !mCurrCmd.Command_call( mCtrl ) )
+			return; /*If the num repeat is internally implemented do not repeat!*/
+	}
 }
 
 

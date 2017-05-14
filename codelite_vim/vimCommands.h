@@ -7,8 +7,9 @@
 enum class COMMAND_PART {
 	REPEAT_NUM,
 	FIRST_CMD,
-	MOD_NUM,
-	MOD_CMD
+	MOD_NUM, /*MOD == MODIFIER*/
+	MOD_CMD,
+	REPLACING	
 };
 
 enum class COMMAND_TYPE	{
@@ -25,14 +26,18 @@ enum class VIM_MODI {
 	VISUAL_MODUS,
 	COMMAND_MODUS,
 	SEARCH_MODUS,
-	ISSUE_CMD
+	ISSUE_CMD,
+	REPLACING_MODUS	
 };
 
 enum class COMMANDVI {
 	NO_COMMAND,
 	j, k, h, l,
 	_0, _$, w, b, G,
-	a
+	i, I, a, A, o, O,
+	u,
+	r,R,cw,C,cc, S,
+	x, dw, dd, D
 };
 
 
@@ -49,7 +54,7 @@ class VimCommand
 	int  getNumActions();
 	
 	VIM_MODI get_current_modus();
-	void Command_call( wxStyledTextCtrl *ctrl);
+	bool Command_call( wxStyledTextCtrl *ctrl);
 	bool is_cmd_complete();
 	
  private:
@@ -63,7 +68,7 @@ class VimCommand
 	wxChar       mBaseCmd;
 	wxChar       mActionCmd;
 	int          nActions;
-
+	int          nCumulativeUndo;
 };
 
 #endif //__VIM_COMMANDS__

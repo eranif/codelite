@@ -100,6 +100,10 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
         FileLogger::GetVerbosityAsString(clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error)));
     m_checkBoxRestoreSession->SetValue(clConfig::Get().Read(kConfigRestoreLastSession, true));
     m_textCtrlPattern->ChangeValue(clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath")));
+    m_statusbarShowLine->SetValue(clConfig::Get().Read(kConfigStatusbarShowLine, true));
+    m_statusbarShowCol->SetValue(clConfig::Get().Read(kConfigStatusbarShowColumn, true));
+    m_statusbarShowPos->SetValue(clConfig::Get().Read(kConfigStatusbarShowPosition, false));
+    m_statusbarShowFileLength->SetValue(clConfig::Get().Read(kConfigStatusbarShowLength, false));
 
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
@@ -137,7 +141,11 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write(kConfigMaxOpenedTabs, ::wxStringToInt(m_spinCtrlMaxOpenTabs->GetValue(), 15));
     clConfig::Get().Write(kConfigRestoreLastSession, m_checkBoxRestoreSession->IsChecked());
     clConfig::Get().Write(kConfigFrameTitlePattern, m_textCtrlPattern->GetValue());
-
+    clConfig::Get().Write(kConfigStatusbarShowLine, m_statusbarShowLine->IsChecked());
+    clConfig::Get().Write(kConfigStatusbarShowColumn, m_statusbarShowCol->IsChecked());
+    clConfig::Get().Write(kConfigStatusbarShowPosition, m_statusbarShowPos->IsChecked());
+    clConfig::Get().Write(kConfigStatusbarShowLength, m_statusbarShowFileLength->IsChecked());
+    
     bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
     EditorConfigST::Get()->SetInteger(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
 

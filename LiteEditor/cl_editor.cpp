@@ -1238,11 +1238,19 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     int mainSelectionPos = GetSelectionNCaret(GetMainSelection());
     int curLine = LineFromPosition(mainSelectionPos);
 
-    // update line number
     wxString message;
-
-    message << wxT("Ln ") << curLine + 1 << ", Pos " << mainSelectionPos << ", Len " << GetLength();
-
+    if (clConfig::Get().Read(kConfigStatusbarShowLine, true)) {
+        message << "Ln " << curLine + 1;
+    }
+    if (clConfig::Get().Read(kConfigStatusbarShowColumn, true)) {
+        message << (!message.empty() ? ", ":"") << "Col " << GetColumn(mainSelectionPos);
+    }
+    if (clConfig::Get().Read(kConfigStatusbarShowPosition, false)) {
+        message << (!message.empty() ? ", ":"") << "Pos " << mainSelectionPos;
+    }
+    if (clConfig::Get().Read(kConfigStatusbarShowLength, false)) {
+        message << (!message.empty() ? ", ":"") << "Len " << GetLength();
+    }
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);
 

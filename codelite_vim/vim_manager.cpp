@@ -60,14 +60,6 @@ VimManager::~VimManager()
 void VimManager::OnEditorChanged(wxCommandEvent &event)
 {
 
-	// auto status_bar = ::clGetManager()->GetStatusBar();
-	// status_bar->SetMessage("NORMAL:");
-	/* change of the editor*/
-	//if ( mCtrl != NULL ) {
-	//	mCtrl->Unbind( wxEVT_CHAR, &VimManager::OnCharEvt, this );
-	//	mCtrl->Unbind( wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this );
-	//}
-
 	mEditor = m_mgr->GetActiveEditor();
 	CHECK_PTR_RET( mEditor );
 	mCtrl = mEditor->GetCtrl();
@@ -144,6 +136,7 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
 	wxChar ch = event.GetUnicodeKey();
 	
 	if ( ch != WXK_NONE ) {
+
 	 	switch ( ch ) {
 	 	case WXK_ESCAPE:
 	 		skip_event = mCurrCmd.OnEscapeDown();
@@ -152,6 +145,7 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
 			skip_event = mCurrCmd.OnNewKeyDown( ch );
 			break;
 	 	}
+
 	} else { 
 		skip_event = true;
 	}
@@ -166,7 +160,6 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
 	}
 		
 	updateView();
-	
 	event.Skip( skip_event );
 }
 

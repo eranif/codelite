@@ -64,7 +64,6 @@ bool VimCommand::OnEscapeDown()
 void VimCommand::ResetCommand()
 {
 	current_cmd_part = COMMAND_PART::REPEAT_NUM;
-	current_modus    = VIM_MODI::NORMAL_MODUS;
 	mRepeat          = 0;
 	mBaseCmd         = '\0';
 	mActionCmd       = '\0';
@@ -184,6 +183,7 @@ bool VimCommand::OnReturnDown(IEditor **editor, IManager *manager)
 			skip_event = false;
 			tmpBuf.Clear();
 			ResetCommand();
+			current_modus    = VIM_MODI::NORMAL_MODUS;
 		}
 		/* FIXME: quit break the active editor change event*/
 		else if ( tmpBuf == ":q" || tmpBuf == ":quit" ) {
@@ -192,6 +192,7 @@ bool VimCommand::OnReturnDown(IEditor **editor, IManager *manager)
 			(*editor) = NULL;
 			tmpBuf.Clear();
 			ResetCommand();
+			current_modus    = VIM_MODI::NORMAL_MODUS;
 		} else if ( tmpBuf == ":q!"  ) {
 			manager->CloseEditor( *editor, true );
 			skip_event = false;
@@ -205,6 +206,7 @@ bool VimCommand::OnReturnDown(IEditor **editor, IManager *manager)
 			skip_event = false;
 			tmpBuf.Clear();
 			ResetCommand();
+			current_modus    = VIM_MODI::NORMAL_MODUS;
 		}
 		/**/
 	}
@@ -365,25 +367,72 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
 		break;
 
 	case COMMANDVI::diesis:
-
-		// wxString LEditor::GetWordAtCaret()
-		// {
-		// 	// Get the partial word that we have
-		 	long pos = ctrl->GetCurrentPos();
-		 	long start = ctrl->WordStartPosition(pos, true);
-		 	long end = ctrl->WordEndPosition(pos, true);
-		 	wxString word = ctrl->GetTextRange(start, end);
-		// }
-			int pos_word = ctrl->SearchPrev( 0, word );
-			ctrl->SetCurrentPos( pos_word );
+	{
+		get_word_at_position( ctrl );
+		search_word( SEARCH_DIRECTION::BACKWARD, ctrl );
+	}
 		break;
 
+	case COMMANDVI::N :
+		search_word( SEARCH_DIRECTION::BACKWARD, ctrl );
+		break;
+
+	case COMMANDVI::n :
+		search_word( SEARCH_DIRECTION::FORWARD, ctrl );
+		break;
 	}
 	
 	return repeat_command;
 	
 }
 
+void VimCommand::get_word_at_position(wxStyledTextCtrl *ctrl)
+{
+	long pos = ctrl->GetCurrentPos();
+	long start = ctrl->WordStartPosition(pos, true);
+	long end = ctrl->WordEndPosition(pos, true);
+	wxString word = ctrl->GetTextRange(start, end);
+	ctrl->SetCurrentPos( start );
+	m_search_word = word;
+}
+
+bool VimCommand::search_word( SEARCH_DIRECTION direction, wxStyledTextCtrl *ctrl )
+{
+	
+	// /*flag 2: word separated, Big pr small!*/
+	// /*flag 3: same as before*/
+	// /*flag 1-0: from the find other*/
+	long pos = ctrl->GetCurrentPos();
+	bool found = false;
+	int flag = 3;
+	int pos_prev;
+	if ( direction == SEARCH_DIRECTION::BACKWARD ) {
+		pos_prev = ctrl->FindText( 0, pos, m_search_word, flag);
+	} else {
+		// FIXME!
+		pos_prev = ctrl->FindText( ctrl->WordEndPosition(pos, true) + 1,
+								   ctrl->GetTextLength(), m_search_word, flag);
+		ctrl->SetCurrentPos( pos_prev + 1 );
+	}
+	ctrl->SearchAnchor();
+	if ( pos_prev != wxNOT_FOUND ) {
+	 	int pos_word;
+
+		if ( direction == SEARCH_DIRECTION::BACKWARD ) {
+			pos_word = ctrl->SearchPrev( flag, m_search_word );
+		} else {
+			pos_word = ctrl->SearchNext( flag, m_search_word ) + 1;
+			/*FIXME error searching next: we get the current*/
+		}
+	 	ctrl->GotoPos( pos_word );
+	 	//ctrl->SetSelectionStart( pos_prev );
+	 	//ctrl->SetSelectionEnd( pos_prev + (end-start) );
+	 	found = true;
+	 } else {
+	 	found = false;
+	 }
+	return found;
+}
 
 /**
  * This function is used to check when a command is complete.
@@ -556,6 +605,18 @@ bool VimCommand::is_cmd_complete()
 	case '#':
 		command_complete = true;
 		command_id = COMMANDVI::diesis;
+		mRepeat = 1;
+		break;
+
+	case 'N':
+		command_complete = true;
+		command_id = COMMANDVI::N;
+		mRepeat = 1;
+		break;
+
+	case 'n':
+		command_complete = true;
+		command_id = COMMANDVI::n;
 		mRepeat = 1;
 		break;
 		

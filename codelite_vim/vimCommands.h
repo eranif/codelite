@@ -32,6 +32,11 @@ enum class VIM_MODI {
 	REPLACING_MODUS	
 };
 
+enum class SEARCH_DIRECTION {
+	BACKWARD,
+	FORWARD	
+};
+
 /*enumeration of implemented commands*/
 enum class COMMANDVI {
 	NO_COMMAND,
@@ -41,7 +46,7 @@ enum class COMMANDVI {
 	u,
 	r,R,cw,C,cc, S,
 	x, dw, dd, D,
-	diesis
+	diesis, N, n
 };
 
 /**
@@ -95,6 +100,8 @@ class VimCommand
 	
  private:
 
+	void get_word_at_position(wxStyledTextCtrl *ctrl);
+	bool search_word( SEARCH_DIRECTION flag, wxStyledTextCtrl *ctrl );
 	void normal_modus( wxChar ch );
 	void command_modus( wxChar ch );
 
@@ -108,6 +115,9 @@ class VimCommand
 	int          nCumulativeUndo;      /*!< cumulative actions performed in the editor*/
 	                                   /*in order to currectly do the undo!*/
 	wxString     tmpBuf;
+	wxString     m_search_word;
+	/*FIXME: make a std::pair and save also the start postion*/ 
+
 };
 
 #endif //__VIM_COMMANDS__

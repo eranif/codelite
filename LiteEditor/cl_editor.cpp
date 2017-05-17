@@ -364,7 +364,7 @@ LEditor::LEditor(wxWindow* parent)
     ms_bookmarkShapes[wxT("Circle")] = wxSTC_MARK_CIRCLE;
 
     SetSyntaxHighlight();
-    CmdKeyClear(wxT('D'), wxSTC_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
+    CmdKeyClear(wxT('D'), wxSTC_KEYMOD_CTRL); // clear Ctrl+D because we use it for something else
     Connect(wxEVT_STC_DWELLSTART, wxStyledTextEventHandler(LEditor::OnDwellStart), NULL, this);
 
     // Initialise the breakpt-marker array
@@ -524,7 +524,7 @@ void LEditor::SetCaretAt(long pos)
 void LEditor::SetProperties()
 {
     UsePopUp(false);
-    SetRectangularSelectionModifier(wxSTC_SCMOD_CTRL);
+    SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
     CallTipUseStyle(1);
@@ -838,38 +838,38 @@ void LEditor::SetProperties()
     IndicatorSetStyle(DEBUGGER_INDICATOR, wxSTC_INDIC_BOX);
     IndicatorSetForeground(DEBUGGER_INDICATOR, wxT("GREY"));
 
-    CmdKeyClear(wxT('L'), wxSTC_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
+    CmdKeyClear(wxT('L'), wxSTC_KEYMOD_CTRL); // clear Ctrl+D because we use it for something else
 
     // Set CamelCase caret movement
     if(options->GetCaretUseCamelCase()) {
         // selection
-        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_CTRL | wxSTC_SCMOD_SHIFT, wxSTC_CMD_WORDPARTLEFTEXTEND);
-        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL | wxSTC_SCMOD_SHIFT, wxSTC_CMD_WORDPARTRIGHTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDPARTLEFTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDPARTRIGHTEXTEND);
 
         // movement
-        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDPARTLEFT);
-        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDPARTRIGHT);
+        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_WORDPARTLEFT);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_WORDPARTRIGHT);
     } else {
         // selection
-        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_CTRL | wxSTC_SCMOD_SHIFT, wxSTC_CMD_WORDLEFTEXTEND);
-        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL | wxSTC_SCMOD_SHIFT, wxSTC_CMD_WORDRIGHTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDLEFTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDRIGHTEXTEND);
 
         // movement
-        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDLEFT);
-        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDRIGHT);
+        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_WORDLEFT);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_WORDRIGHT);
     }
 
 #ifdef __WXOSX__
-    CmdKeyAssign(wxSTC_KEY_DOWN, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTEND);
-    CmdKeyAssign(wxSTC_KEY_UP, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTSTART);
+    CmdKeyAssign(wxSTC_KEY_DOWN, wxSTC_KEYMOD_CTRL, wxSTC_CMD_DOCUMENTEND);
+    CmdKeyAssign(wxSTC_KEY_UP, wxSTC_KEYMOD_CTRL, wxSTC_CMD_DOCUMENTSTART);
 
-    // OSX: wxSTC_SCMOD_CTRL => CMD key
-    CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL, wxSTC_CMD_LINEEND);
-    CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_CTRL, wxSTC_CMD_HOME);
+    // OSX: wxSTC_KEYMOD_CTRL => CMD key
+    CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_LINEEND);
+    CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_HOME);
 
-    // OSX: wxSTC_SCMOD_META => CONTROL key
-    CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_META, wxSTC_CMD_WORDPARTLEFT);
-    CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_META, wxSTC_CMD_WORDPARTRIGHT);
+    // OSX: wxSTC_KEYMOD_META => CONTROL key
+    CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_META, wxSTC_CMD_WORDPARTLEFT);
+    CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_META, wxSTC_CMD_WORDPARTRIGHT);
 #endif
 }
 

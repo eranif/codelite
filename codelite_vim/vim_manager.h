@@ -6,7 +6,6 @@
 #include "ieditor.h"
 #include "event_notifier.h"
 #include "macros.h"
-#include "ieditor.h"
 #include "imanager.h"
 #include "globals.h"
 #include "cl_editor.h"
@@ -27,7 +26,7 @@ class VimManager
 
  public:
 	/*ctr-distr ... */
-	VimManager();
+	VimManager(IManager *manager);
 	~VimManager();
 
  protected:
@@ -36,13 +35,17 @@ class VimManager
 	void OnKeyDown(wxKeyEvent &event);
 
  private:
-	// IEditor* mEditor;
-	wxStyledTextCtrl* mCtrl;
-	VimCommand mCurrCmd;     /*!< command currenly */
-	VimCommand mLastCmd;     /*!< last command performed */
-	wxString mTmpBuf;        /*!< tmporary buffer (of inserted text) */
-
+	IEditor          * mEditor;
+	wxStyledTextCtrl * mCtrl;
+	VimCommand       mCurrCmd;     /*!< command currenly */
+	VimCommand       mLastCmd;     /*!< last command performed */
+	wxString         mTmpBuf;      /*!< tmporary buffer (of inserted text) */
+	IManager         * m_mgr;
+	int mCaretInsStyle;
+	int mCaretNormStyle;
+	
 	void Issue_cmd();
+	void updateView();
 };
 
 #endif // __VIM_MANAGER_H__

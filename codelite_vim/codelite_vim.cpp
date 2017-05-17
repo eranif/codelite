@@ -44,7 +44,7 @@ CodeliteVim::CodeliteVim(IManager *manager)
 
 	wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_binds"));
 	
-	m_vimM = new VimManager();
+	m_vimM = new VimManager( manager );
 }
 
 CodeliteVim::~CodeliteVim()
@@ -77,6 +77,6 @@ void CodeliteVim::UnPlug()
 
 void CodeliteVim::onVimSetting(wxCommandEvent &event)
 {
-
+	
 }
 

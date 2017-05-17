@@ -1,5 +1,11 @@
 #include "vimCommands.h"
 
+#include "macros.h"
+#include "imanager.h"
+#include "globals.h"
+#include "codelite_events.h"
+#include "clMainFrameHelper.h"
+
 VimCommand::VimCommand()
 	: current_cmd_part(COMMAND_PART::REPEAT_NUM),
 	  current_modus(VIM_MODI::NORMAL_MODUS),
@@ -32,25 +38,44 @@ bool VimCommand::OnNewKeyDown(wxChar ch)
 		normal_modus ( ch );
 		skip_event = false;
 		break;
+	case VIM_MODI::COMMAND_MODUS:
+		command_modus( ch );
+		skip_event = false;
+		break;
 	}
 
 }
 
+/**
+ * This function is used to deal with the Esc press event.
+ * Mostly it terminates insert/replace mode and push back into
+ * normal mode
+ */
 bool VimCommand::OnEscapeDown()
 {
 	current_cmd_part = COMMAND_PART::REPEAT_NUM;
 	current_modus = VIM_MODI::NORMAL_MODUS;
+	tmpBuf.Clear();
 }
 
+/**
+ * used to reset the command.
+ */
 void VimCommand::ResetCommand()
 {
 	current_cmd_part = COMMAND_PART::REPEAT_NUM;
+	current_modus    = VIM_MODI::NORMAL_MODUS;
 	mRepeat          = 0;
 	mBaseCmd         = '\0';
 	mActionCmd       = '\0';
 	nActions         = 0;
 }
 
+/**
+ * get for the number of repetition a command has to be issued
+ * Note: if the command is of <num>+'G' type, the repetition change
+ * drasically the command, that's why there's a special behaviour.
+ */
 int VimCommand::getNumRepeat()
 {
 	if ( mBaseCmd == 'G' )
@@ -59,16 +84,43 @@ int VimCommand::getNumRepeat()
 	return ( ( mRepeat > 0 ) ? mRepeat : 1 ); 
 }
 
+/**
+ *return the modus (insert/normal/serach/visual ...) we are actually working with.
+ * Use mostly to comunicate with VimManager and differentiate the handliing of 
+ * key event.
+ */
 VIM_MODI VimCommand::get_current_modus()
 {
 	return current_modus;
 }
 
+wxString VimCommand::getTmpBuf()
+{
+	return tmpBuf;
+}
+
+/**
+ * Getter for the number of action for the modifier command.
+ * NOTE:
+ * most of the commands in vi have the following abstract structure:
+ * <repetition of command > + < base command > + [ <extra> ].
+ * Some commands have an extra argument made up of <number> + <command>, hier called
+ * <nAction> + <mActionCmd>.
+ * ~~~~~~~~~~~~~~~~
+ * example:
+ * ~~~~~~~~~~~~~~~~
+ * command >> 5d3w 
+ * means [5] times [d]elete [3] [w]ords
+ */
 int VimCommand::getNumActions()
 {
 	return nActions;
 }
 
+/**
+ * This function is used to deal with the key event when we are in the 
+ * normal modus.
+ */
 void VimCommand::normal_modus( wxChar ch )
 {
 
@@ -84,12 +136,19 @@ void VimCommand::normal_modus( wxChar ch )
 			mRepeat += mRepeat*10 + (int)ch - shift_ashii_num;
 		} else {
 			mBaseCmd = ch;
-			if ( mBaseCmd == 'R' ) {
+			switch ( mBaseCmd ) {
+			case 'R':
 				current_modus = VIM_MODI::REPLACING_MODUS;
 				current_cmd_part = COMMAND_PART::REPLACING;
-			} else {
+				break;
+			case ':':
+				current_modus = VIM_MODI::COMMAND_MODUS;
+				tmpBuf.Append( ch );
+				break;
+			default:
 				current_cmd_part = COMMAND_PART::MOD_NUM;
-			}
+				break;
+			} 
 		}
 		break;
 
@@ -108,7 +167,63 @@ void VimCommand::normal_modus( wxChar ch )
 	}
 }
 
+bool VimCommand::OnReturnDown(IEditor **editor, IManager *manager)
+{
+	bool skip_event = true;
+	
+	if ( current_modus == VIM_MODI::COMMAND_MODUS )
+	{
+		if ( tmpBuf == ":w" || tmpBuf == ":write") {
+			if( (*editor)->IsModified() && (*editor)->GetFileName().Exists()) {
+				// Don't auto-save remote files marked with "SFTP"
+				if(!(*editor)->GetClientData("sftp")) {
+					(*editor)->Save();
+				}
+			}
 
+			skip_event = false;
+			tmpBuf.Clear();
+			ResetCommand();
+		}
+		/* FIXME: quit break the active editor change event*/
+		else if ( tmpBuf == ":q" || tmpBuf == ":quit" ) {
+			manager->CloseEditor( *editor, true );
+			skip_event = false;
+			(*editor) = NULL;
+			tmpBuf.Clear();
+			ResetCommand();
+		} else if ( tmpBuf == ":q!"  ) {
+			manager->CloseEditor( *editor, true );
+			skip_event = false;
+			(*editor) = NULL;
+			tmpBuf.Clear();
+			ResetCommand();
+		}else if ( tmpBuf == ":wq" ) {
+			(*editor)->Save();
+			manager->CloseEditor( *editor, false );
+			(*editor) = NULL;
+			skip_event = false;
+			tmpBuf.Clear();
+			ResetCommand();
+		}
+		/**/
+	}
+
+	return skip_event;
+}
+
+/**
+ * function dealing with the command status (i.e. ": ... " )
+ */
+void VimCommand::command_modus( wxChar ch )
+{
+	tmpBuf.Append( ch );
+}
+
+/**
+ * This function call on the controller of the actual editor the vim-command.
+ * Here is the actual implementation of the binding.
+ */
 bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
 {
 
@@ -200,13 +315,15 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
 		break;
 
 	case COMMANDVI::S :
-		{
-			int repeat_S = std::max( 1, mRepeat );
-			for ( int i = 0; i < repeat_S ; ++i ) {
-				ctrl->LineDelete();
-			}
-			break;
+	{
+		int repeat_S = std::max( 1, mRepeat );
+		for ( int i = 0; i < repeat_S ; ++i ) {
+			ctrl->LineDelete();
 		}
+		ctrl->NewLine();
+		ctrl->LineUp();
+		break;
+	}
 	case COMMANDVI::C :
 		ctrl->DelLineRight();
 		if ( mRepeat > 1 ) {
@@ -247,6 +364,20 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
 		ctrl->DelLineRight();
 		break;
 
+	case COMMANDVI::diesis:
+
+		// wxString LEditor::GetWordAtCaret()
+		// {
+		// 	// Get the partial word that we have
+		 	long pos = ctrl->GetCurrentPos();
+		 	long start = ctrl->WordStartPosition(pos, true);
+		 	long end = ctrl->WordEndPosition(pos, true);
+		 	wxString word = ctrl->GetTextRange(start, end);
+		// }
+			int pos_word = ctrl->SearchPrev( 0, word );
+			ctrl->SetCurrentPos( pos_word );
+		break;
+
 	}
 	
 	return repeat_command;
@@ -254,6 +385,11 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
 }
 
 
+/**
+ * This function is used to check when a command is complete.
+ * In this case it is assign a unque command_id, which will be used by the 
+ * function Command_call().
+ */
 bool VimCommand::is_cmd_complete()
 {
 
@@ -415,6 +551,14 @@ bool VimCommand::is_cmd_complete()
 		command_complete = true;
 		command_id = COMMANDVI::D;
 		break;
+
+		/*================== SEARCH ====================*/
+	case '#':
+		command_complete = true;
+		command_id = COMMANDVI::diesis;
+		mRepeat = 1;
+		break;
+		
 	}
 
 	/*===================== DELETE TEXT ===============*/

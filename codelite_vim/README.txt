@@ -23,16 +23,16 @@
 
 
 
-        [start command] ...............................  bool inserting_num_repeat
+        [start command] .................  bool inserting_num_repeat
 	           |
 			   |                
 		   ----------
      <-[Y] | number |-----
-	|	   ----------    |                                                              bool issue_cmd
-	|                    |                                                          /  
-	-------------->  ['char' ] .......................... bool inserting_cmd_base  /__  bool mod_num_cmd 
-                        |                                                          \
-                        |                                                           \   bool mod_cmd
+	|	   ----------    |                                               bool issue_cmd
+	|                    |                                           /  
+	-------------->  ['char' ] ........... bool inserting_cmd_base  /__  bool mod_num_cmd 
+                        |                                           \
+                        |                                            \   bool mod_cmd
                  -------------\  
                 |              | 
                 |              |
@@ -51,3 +51,12 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+NOTE 01: where to look to modify the editor:
+           - class clMainFrame
+	       - class Main::Book
+		   - class NavBar
+		   - class EditorFrame
+	     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	     good breakpoints:
+	       (gdb) p LEditor::LEditor(wxWindow*)
+           (gdb) p NavBar::NavBar(wxWindow* parent)  

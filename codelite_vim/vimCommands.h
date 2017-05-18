@@ -5,6 +5,7 @@
 #include <wx/stc/stc.h>
 #include "ieditor.h"
 #include "imanager.h"
+#include <vector>
 
 enum class COMMAND_PART {
 	REPEAT_NUM,
@@ -42,11 +43,13 @@ enum class COMMANDVI {
 	NO_COMMAND,
 	j, k, h, l,
 	_0, _$, w, b, G,
-	i, I, a, A, o, O,
+	i, I, a, A, o, O, perc,
 	u,
 	r,R,cw,C,cc, S,
 	x, dw, dd, D,
-	diesis, N, n
+	diesis, N, n, slesh,
+	repeat,
+	ctrl_U, ctrl_D	
 };
 
 /**
@@ -77,7 +80,10 @@ enum class COMMANDVI {
                 |     /
          [ issue_cmd ]  ............................... bool issue_command
                                                         bool save_buf 
-
+														
+ * TODO:
+ * - repeat command
+ * - copy paste (y, dd, x ...)														
  */
 
 class VimCommand
@@ -87,7 +93,7 @@ class VimCommand
 	~VimCommand();
 
 	bool OnNewKeyDown(wxChar ch);
-	bool OnEscapeDown();
+	bool OnEscapeDown( wxStyledTextCtrl *ctrl );
 	bool OnReturnDown(IEditor **mEditor, IManager* manager);
 	void ResetCommand();
 	int  getNumRepeat();
@@ -97,9 +103,13 @@ class VimCommand
 	VIM_MODI get_current_modus();
 	bool Command_call( wxStyledTextCtrl *ctrl);
 	bool is_cmd_complete();
-	
+	void set_current_word( wxString word);
+	void set_current_modus( VIM_MODI modus );
+
  private:
 
+	void evidentiate_word( wxStyledTextCtrl *ctrl );
+	void append_command( wxChar ch );
 	void get_word_at_position(wxStyledTextCtrl *ctrl);
 	bool search_word( SEARCH_DIRECTION flag, wxStyledTextCtrl *ctrl );
 	void normal_modus( wxChar ch );
@@ -116,6 +126,8 @@ class VimCommand
 	                                   /*in order to currectly do the undo!*/
 	wxString     tmpBuf;
 	wxString     m_search_word;
+	std::vector<wxString> list_copied_str;
+	
 	/*FIXME: make a std::pair and save also the start postion*/ 
 
 };

@@ -33,6 +33,7 @@ class VimManager
 	void OnEditorChanged(wxCommandEvent &event);
 	void OnCharEvt(wxKeyEvent &event);
 	void OnKeyDown(wxKeyEvent &event);
+	wxString get_current_word();
 
  private:
 	IEditor          * mEditor;

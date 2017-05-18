@@ -69,6 +69,12 @@ protected:
     wxStaticText* m_staticText47;
     wxStaticText* m_staticText49;
     wxTextCtrl* m_textCtrlPattern;
+    wxPanel* m_panel44;
+    wxStaticText* m_staticText70;
+    wxCheckBox* m_statusbarShowLine;
+    wxCheckBox* m_statusbarShowCol;
+    wxCheckBox* m_statusbarShowPos;
+    wxCheckBox* m_statusbarShowFileLength;
     wxPanel* m_panel2;
     wxStaticText* m_staticText1;
     wxChoice* m_fileEncoding;
@@ -93,6 +99,7 @@ protected:
 protected:
     virtual void OnEnableThemeUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPromptStableReleaseUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleChkUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleStaticUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleChoiceUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -101,7 +108,6 @@ protected:
     virtual void OnResetAnnoyingDialogsAnswers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLogVerbosityChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnShowLogFile(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText7() { return m_staticText7; }
@@ -129,6 +135,12 @@ public:
     wxStaticText* GetStaticText49() { return m_staticText49; }
     wxTextCtrl* GetTextCtrlPattern() { return m_textCtrlPattern; }
     wxPanel* GetPanel23() { return m_panel23; }
+    wxStaticText* GetStaticText70() { return m_staticText70; }
+    wxCheckBox* GetStatusbarShowLine() { return m_statusbarShowLine; }
+    wxCheckBox* GetStatusbarShowCol() { return m_statusbarShowCol; }
+    wxCheckBox* GetStatusbarShowPos() { return m_statusbarShowPos; }
+    wxCheckBox* GetStatusbarShowFileLength() { return m_statusbarShowFileLength; }
+    wxPanel* GetPanel44() { return m_panel44; }
     wxStaticText* GetStaticText1() { return m_staticText1; }
     wxChoice* GetFileEncoding() { return m_fileEncoding; }
     wxCheckBox* GetSetLocale() { return m_SetLocale; }

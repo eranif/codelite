@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 572,
+  "m_objCounter": 573,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC3F25InitBitmapResources",
   "m_bitmapsFile": "wxcrafter_liteeditor_bitmaps.cpp",
@@ -2691,7 +2691,7 @@
                "m_events": [],
                "m_children": []
               }, {
-               "m_type": 4452,
+               "m_type": 4403,
                "proportion": 0,
                "border": 5,
                "gbSpan": "1,1",
@@ -2705,7 +2705,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "gridSizer235"
+                 "m_value": "flexGridSizer573"
                 }, {
                  "type": "string",
                  "m_label": "Style:",
@@ -2717,7 +2717,15 @@
                 }, {
                  "type": "string",
                  "m_label": "# Rows:",
-                 "m_value": "3"
+                 "m_value": "0"
+                }, {
+                 "type": "string",
+                 "m_label": "Growable columns:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Growable rows:",
+                 "m_value": ""
                 }, {
                  "type": "string",
                  "m_label": "Horizontal gap:",
@@ -2743,7 +2751,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Size:",
-                   "m_value": "-1,-1"
+                   "m_value": "-1,100"
                   }, {
                    "type": "string",
                    "m_label": "Minimum Size:",
@@ -3117,7 +3125,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Size:",
-                   "m_value": "-1,-1"
+                   "m_value": "-1,100"
                   }, {
                    "type": "string",
                    "m_label": "Minimum Size:",
@@ -3285,7 +3293,7 @@
                 }]
               }, {
                "m_type": 4454,
-               "proportion": 0,
+               "proportion": 1,
                "border": 5,
                "gbSpan": "1,1",
                "gbPosition": "0,0",

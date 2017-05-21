@@ -42,14 +42,15 @@ enum class SEARCH_DIRECTION {
 enum class COMMANDVI {
 	NO_COMMAND,
 	j, k, h, l,
-	_0, _$, w, b, G,
+	_0, _$, w, b, G,gg,
 	i, I, a, A, o, O, perc,
 	u,
 	r,R,cw,C,cc, S,
 	x, dw, dd, D,
 	diesis, N, n, slesh,
 	repeat,
-	ctrl_U, ctrl_D	
+	ctrl_U, ctrl_D,    /*One has to 'disattivate' the default behavior of Ctrl+D/U*/	
+	p, P, yy, yw
 };
 
 /**
@@ -85,6 +86,7 @@ enum class COMMANDVI {
  * - repeat command
  * - copy paste (y, dd, x ...)														
  */
+class VimCommand;
 
 class VimCommand
 {
@@ -92,43 +94,58 @@ class VimCommand
 	VimCommand();
 	~VimCommand();
 
-	bool OnNewKeyDown(wxChar ch);
+	/*~~~~~~~ EVENT HANLDER ~~~~~~~~~~~~~~~~*/
+	bool OnNewKeyDown(wxChar ch, int modifier);
 	bool OnEscapeDown( wxStyledTextCtrl *ctrl );
 	bool OnReturnDown(IEditor **mEditor, IManager* manager);
-	void ResetCommand();
+    
+	/*~~~~~~~ GETTER ~~~~~~~~~~~~~~~~*/
 	int  getNumRepeat();
 	int  getNumActions();
-	wxString getTmpBuf();
-	
 	VIM_MODI get_current_modus();
+	wxString getTmpBuf();
+	bool repeat_last_cmd();
+	bool save_current_cmd();
+
+	/*~~~~~~~ Commands-related ~~~~~~~~~~~~~~~~*/
 	bool Command_call( wxStyledTextCtrl *ctrl);
 	bool is_cmd_complete();
 	void set_current_word( wxString word);
 	void set_current_modus( VIM_MODI modus );
+	void reset_repeat_last();
+	void ResetCommand();
 
  private:
 
+    /*~~~~~~~~ PRIVAT METHODS ~~~~~~~~~*/   
 	void evidentiate_word( wxStyledTextCtrl *ctrl );
 	void append_command( wxChar ch );
-	void get_word_at_position(wxStyledTextCtrl *ctrl);
+	wxString get_word_at_position(wxStyledTextCtrl *ctrl);
+	bool is_space_following( wxStyledTextCtrl *ctrl);
 	bool search_word( SEARCH_DIRECTION flag, wxStyledTextCtrl *ctrl );
 	void normal_modus( wxChar ch );
 	void command_modus( wxChar ch );
 
+    /*~~~~~~~~ INFO ~~~~~~~~~*/   
 	COMMANDVI    command_id;           /*!< id of the current command to identify it*/
 	COMMAND_PART current_cmd_part;     /*!< current part of the command */ 
 	VIM_MODI     current_modus;        /*!< actual mode the editor is in */
+	bool         save_cmd;
+    /*~~~~~~~~ COMMAND ~~~~~~~~~*/   
 	int          mRepeat;              /*!< number of repetition for the command */
 	wxChar       mBaseCmd;             /*!< base command (first char of the cmd)*/
 	wxChar       mActionCmd;           /*!< eventual command modifier.In 'c3w', "w" */ 
 	int          nActions;             /*!< repetition of the modifier.In 'c3x', "3" */
+	
 	int          nCumulativeUndo;      /*!< cumulative actions performed in the editor*/
 	                                   /*in order to currectly do the undo!*/
+    /*~~~~~~~~ HELPER ~~~~~~~~~*/   
+    bool         repeat_cmd;
+	int          modifier_key;         /*!< to take into account for some commands*/
 	wxString     tmpBuf;
 	wxString     m_search_word;
+	bool         new_line_cpy;         /*!< take track if we copy/pase the complete line (dd,yy)*/         
 	std::vector<wxString> list_copied_str;
-	
-	/*FIXME: make a std::pair and save also the start postion*/ 
 
 };
 

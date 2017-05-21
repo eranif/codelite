@@ -11,11 +11,19 @@
 VimCommand::VimCommand()
     : current_cmd_part(COMMAND_PART::REPEAT_NUM),
       current_modus(VIM_MODI::NORMAL_MODUS),
+      command_id(COMMANDVI::NO_COMMAND),
       mRepeat(0),
       mBaseCmd('\0'),
       mActionCmd('\0'),
       nActions(0),
-	  list_copied_str()
+	  list_copied_str(),
+      nCumulativeUndo(0),
+      modifier_key(0),
+      tmpBuf(),
+      m_search_word(),
+      new_line_cpy(false),
+      repeat_cmd(false),
+      save_cmd(true)
 {}
 
 VimCommand::~VimCommand()
@@ -30,11 +38,12 @@ void VimCommand::set_current_word( wxString word)
  *@return true if the command can be issue
  */
 
-bool VimCommand::OnNewKeyDown(wxChar ch)
+bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
 {
-
-    bool skip_event = false;
     
+    bool skip_event = false;
+    this->modifier_key = modifier;
+
     switch ( current_modus )
     {
     case VIM_MODI::INSERT_MODUS:
@@ -89,7 +98,8 @@ void VimCommand::ResetCommand()
  */
 int VimCommand::getNumRepeat()
 {
-    if ( mBaseCmd == 'G' )
+    if ( mBaseCmd == 'G' ||
+         mBaseCmd == 'g'    )
         return 1;
     
     return ( ( mRepeat > 0 ) ? mRepeat : 1 ); 
@@ -144,7 +154,7 @@ void VimCommand::normal_modus( wxChar ch )
         if (    ( ( ch <= '9' && ch >= '0' ) && mRepeat != 0 )
              || ( ( ch <= '9' && ch >  '0' ) && mRepeat == 0 ) )
         {
-            mRepeat += mRepeat*10 + (int)ch - shift_ashii_num;
+            mRepeat = mRepeat*10 + (int)ch - shift_ashii_num;
         } else {
             mBaseCmd = ch;
             switch ( mBaseCmd ) {
@@ -166,7 +176,7 @@ void VimCommand::normal_modus( wxChar ch )
     case COMMAND_PART::MOD_NUM:
         
         if ( ch < '9' && ch > '0' && mBaseCmd != 'r' ) {
-            nActions += nActions*10 + (int)ch - shift_ashii_num;
+            nActions = nActions*10 + (int)ch - shift_ashii_num;
         } else {
             mActionCmd = ch;
         }
@@ -181,11 +191,11 @@ void VimCommand::normal_modus( wxChar ch )
 bool VimCommand::OnReturnDown(IEditor **editor, IManager *manager)
 {
     bool skip_event = true;
-    wxUIActionSimulator sim;
+    //wxUIActionSimulator sim;
 
     if ( current_modus == VIM_MODI::COMMAND_MODUS )
     {
-        if ( tmpBuf == ":w" || tmpBuf == ":write") {
+        if ( tmpBuf == _(":w") || tmpBuf == _(":write") ) {
             if( (*editor)->IsModified() && (*editor)->GetFileName().Exists()) {
                 // Don't auto-save remote files marked with "SFTP"
                 if(!(*editor)->GetClientData("sftp")) {
@@ -198,36 +208,29 @@ bool VimCommand::OnReturnDown(IEditor **editor, IManager *manager)
             ResetCommand();
             current_modus    = VIM_MODI::NORMAL_MODUS;
         }
-        /* FIXME: quit break the active editor change event*/
-        else if ( tmpBuf == ":q" || tmpBuf == ":quit" ) {
-            //manager->CloseEditor( *editor, true );
-            skip_event = false;
-            (*editor) = NULL;
-            tmpBuf.Clear();
-            ResetCommand();
-            current_modus    = VIM_MODI::NORMAL_MODUS;
-            sim.Char('W', wxMOD_CONTROL);
-            wxYield();
-        } else if ( tmpBuf == ":q!"  ) {
+        else if ( tmpBuf == _(":q") || tmpBuf == _(":quit") ) {
             manager->CloseEditor( *editor, true );
             skip_event = false;
             (*editor) = NULL;
             tmpBuf.Clear();
             ResetCommand();
-            sim.Char('W', wxMOD_CONTROL);
-            wxYield();
-        }else if ( tmpBuf == ":wq" ) {
-            //(*editor)->Save();
-            //manager->CloseEditor( *editor, false );
+            //current_modus    = VIM_MODI::NORMAL_MODUS;
+            //sim.Char('W', wxMOD_CONTROL);
+            //wxYield();
+        } else if ( tmpBuf == _(":q!")  ) {
+            manager->CloseEditor( *editor, true );
+            skip_event = false;
+            (*editor) = NULL;
+            tmpBuf.Clear();
+            ResetCommand();
+        }else if ( tmpBuf == _(":wq") ) {
+            (*editor)->Save();
+            manager->CloseEditor( *editor, false );
             (*editor) = NULL;
             skip_event = false;
             tmpBuf.Clear();
             ResetCommand();
-            current_modus    = VIM_MODI::NORMAL_MODUS;
-            sim.Char('W', wxMOD_CONTROL);
-            wxYield();
         }
-        /**/
     }
 
     return skip_event;
@@ -249,40 +252,52 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
 {
     wxUIActionSimulator sim;
     bool repeat_command = true;
-    
+    this->save_cmd = true; 
     switch ( command_id ) {
         /*======= MOVEMENT ===========*/    
+    
     case COMMANDVI::j :
         ctrl->LineDown();
+        this->save_cmd = false;
         break;
     case COMMANDVI::k :
         ctrl->LineUp();
+        this->save_cmd = false;
         break;
     case COMMANDVI::h :
         ctrl->CharLeft();
+        this->save_cmd = false;
         break;
     case COMMANDVI::l :
         ctrl->CharRight();
+        this->save_cmd = false;
         break;
     case COMMANDVI::_0 :
         ctrl->Home();
+        this->save_cmd = false;
         break;
     case COMMANDVI::_$  :
         ctrl->LineEnd();
+        this->save_cmd = false;
             break;
     case COMMANDVI::w  :
         ctrl->WordRight();
+        this->save_cmd = false;
             break;
     case COMMANDVI::b  :
         ctrl->WordLeft();
+        this->save_cmd = false;
             break;
 	case COMMANDVI::ctrl_D :
 		ctrl->PageDown();
+        this->save_cmd = false;
 		break;
 	case COMMANDVI::ctrl_U :
 		ctrl->PageUp();
+        this->save_cmd = false;
 		break;
     case COMMANDVI::G  :                /*====== START G =======*/
+        this->save_cmd = false;
         switch ( mRepeat ) {
         case 0:
             ctrl->DocumentEnd();
@@ -291,36 +306,50 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
             ctrl->DocumentStart();
                 break;
         default:
-            ctrl->GotoLine( mRepeat );
+            ctrl->GotoLine( mRepeat -1 );
             break;                      
         }
         break;                          /*~~~~~~~ END G ~~~~~~~~*/
+    case COMMANDVI::gg  :                /*====== START G =======*/
+        this->save_cmd = false;
+        if ( mRepeat == 0) {
+            mRepeat = 1;
+        }
+        ctrl->GotoLine( mRepeat -1 );
+        repeat_command = false;
+        break;
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
         /*========= PUT IN INSERT MODE =============*/
     case COMMANDVI::i :
-            break;
+        this->tmpBuf.Clear();
+        break;
     case COMMANDVI::I :
-            ctrl->Home();
-            break;
+        this->tmpBuf.Clear();
+        ctrl->Home();
+        break;
     case COMMANDVI::a :
-            ctrl->CharRight();
-            break;
+        this->tmpBuf.Clear();
+        ctrl->CharRight();
+        break;
     case COMMANDVI::A :
+        this->tmpBuf.Clear();
         ctrl->LineEnd();
             break;
     case COMMANDVI::o :
+        this->tmpBuf.Clear();
         ctrl->LineEnd();
         ctrl->NewLine();
             break;
     case COMMANDVI::O :
+        this->tmpBuf.Clear();
         ctrl->LineUp();
         ctrl->LineEnd();
         ctrl->NewLine();
         break;
 	case COMMANDVI::perc:
 		/*FIXME*/
-		//sim.Char(']', wxMOD_);
+		//sim.Char(']', wxMOD_SHIFT);
         //wxYield();
 		break;
         /*========= UNDO =============*/
@@ -331,22 +360,26 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
         
         /*======== REPLACE ===========*/
     case COMMANDVI::r :
+        this->tmpBuf.Clear();
         ctrl->CharRight();
         ctrl->DeleteBackNotLine();
         ctrl->AddText(mActionCmd);
         break;
     case COMMANDVI::R :
+        this->tmpBuf.Clear();
         ctrl->CharRight();
         ctrl->DeleteBackNotLine();
         ctrl->AddText(mActionCmd);
         repeat_command = false;
         break;
     case COMMANDVI::cw :
+        this->tmpBuf.Clear();
         ctrl->DelWordRight();
         break;
 
     case COMMANDVI::S :
     {
+        this->tmpBuf.Clear();
         int repeat_S = std::max( 1, mRepeat );
         for ( int i = 0; i < repeat_S ; ++i ) {
             ctrl->LineDelete();
@@ -381,23 +414,46 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
     }
     
     case COMMANDVI::x :
+        this->tmpBuf.Clear();
         ctrl->CharRight();
         ctrl->DeleteBackNotLine();
         break;
     case COMMANDVI::dw :
+        list_copied_str.push_back( get_word_at_position( ctrl ) ); 
+        if ( is_space_following( ctrl ) ) 
+            list_copied_str.push_back( ' ' ); 
+        new_line_cpy = false;
         ctrl->DelWordRight();
         break;
     case COMMANDVI::dd :
-        ctrl->LineDelete();
+        {
+            int linePos;
+            this->list_copied_str.push_back( ctrl->GetCurLine( &linePos ) );
+            ctrl->LineDelete();
+        }
         break;
         
     case COMMANDVI::D:
         ctrl->DelLineRight();
         break;
-
+    /*=============== COPY ====================*/
+    case COMMANDVI::yw :
+        list_copied_str.push_back( get_word_at_position( ctrl ) ); 
+        if ( is_space_following( ctrl ) ) 
+            list_copied_str.push_back( ' ' ); 
+        new_line_cpy = false;
+        break;
+    case COMMANDVI::yy :
+        {
+            int linePos;
+            this->list_copied_str.push_back( ctrl->GetCurLine( &linePos ) );
+        }
+        break;
+    
     case COMMANDVI::diesis:
     {
-        get_word_at_position( ctrl );
+        m_search_word = get_word_at_position( ctrl );
+            //ctrl->SetCurrentPos( /*FIXME*/ );
         search_word( SEARCH_DIRECTION::BACKWARD, ctrl );
     }
         break;
@@ -406,14 +462,63 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
         sim.Char('F', wxMOD_CONTROL);
         current_modus = VIM_MODI::SEARCH_MODUS;
         wxYield();
+        this->save_cmd = false;
         break;
 
     case COMMANDVI::N :
         search_word( SEARCH_DIRECTION::BACKWARD, ctrl );
         break;
+        this->save_cmd = false;
 
     case COMMANDVI::n :
         search_word( SEARCH_DIRECTION::FORWARD, ctrl );
+        this->save_cmd = false;
+        break;
+
+    /*=============================== PASTE =========================*/
+    // FIXME: One line too many !!!
+    case COMMANDVI::P :
+        this->save_cmd = false;
+        if ( this->new_line_cpy ){
+            ctrl->LineEnd();
+            ctrl->NewLine();
+        } else {
+            ctrl->CharLeft();    /*Is one char before andd the the same as p!*/
+        }
+
+        for ( std::vector<wxString>::iterator 
+              yanked = this->list_copied_str.begin();
+              yanked != this->list_copied_str.end();
+              ++yanked ) 
+            {
+                ctrl->AddText( *yanked );
+            }
+            // FIXME: troppo contorto!
+            if ( this->new_line_cpy )
+                ctrl->LineDelete();
+        break;
+    case COMMANDVI::p :
+        this->save_cmd = false;
+        if ( this->new_line_cpy ) {
+            ctrl->LineUp();
+            ctrl->LineEnd();
+            ctrl->NewLine();
+        }
+        for ( std::vector<wxString>::iterator 
+              yanked = this->list_copied_str.begin();
+              yanked != this->list_copied_str.end();
+              ++yanked ) 
+            {
+                ctrl->AddText( *yanked );
+            }
+            // FIXME: troppo contorto!
+            if ( this->new_line_cpy )
+                ctrl->LineDelete();
+        break;
+    case COMMANDVI::repeat :
+        //repeat_cmd( ctrl );
+        this->save_cmd = false;
+        this->repeat_cmd = true;
         break;
     }
     
@@ -421,14 +526,23 @@ bool VimCommand::Command_call( wxStyledTextCtrl *ctrl )
     
 }
 
-void VimCommand::get_word_at_position(wxStyledTextCtrl *ctrl)
+wxString VimCommand::get_word_at_position(wxStyledTextCtrl *ctrl)
 {
     long pos = ctrl->GetCurrentPos();
     long start = ctrl->WordStartPosition(pos, true);
     long end = ctrl->WordEndPosition(pos, true);
     wxString word = ctrl->GetTextRange(start, end);
-    ctrl->SetCurrentPos( start );
-    m_search_word = word;
+    return word;
+}
+
+bool VimCommand::is_space_following( wxStyledTextCtrl *ctrl)
+{
+    long pos = ctrl->GetCurrentPos();
+    long end = ctrl->WordEndPosition( pos, true );
+    if ( ctrl->GetCharAt( end ) == ' ' )
+        return true;
+
+    return false;
 }
 
 bool VimCommand::search_word( SEARCH_DIRECTION direction, wxStyledTextCtrl *ctrl )
@@ -532,6 +646,12 @@ bool VimCommand::is_cmd_complete()
         command_id = COMMANDVI::G;
         command_complete = true;
         break;
+    case 'g':
+        if ( this->mActionCmd == 'g') {
+            command_id = COMMANDVI::gg;
+            command_complete = true;
+        }
+        break;
         }
         /*===================== CANGE INTO INSER ====================*/
         {
@@ -622,6 +742,7 @@ bool VimCommand::is_cmd_complete()
             current_modus = VIM_MODI::INSERT_MODUS;
             break;
         }
+        break;
     case 'S':
         command_complete = true;
         command_id = COMMANDVI::S;
@@ -634,6 +755,8 @@ bool VimCommand::is_cmd_complete()
         current_modus = VIM_MODI::INSERT_MODUS;
         break;
     case 'x':
+        command_complete = true;
+        command_id = COMMANDVI::x;
         break;
     case 'd':                               /*~~~~~~~ d[...] ~~~~~~~~*/
         switch ( mActionCmd ) {
@@ -643,19 +766,56 @@ bool VimCommand::is_cmd_complete()
         case 'w' :
             command_complete  = true;
             command_id = COMMANDVI::dw;
+            this->list_copied_str.clear();
             break;
         case 'd':
             command_complete = true;
             command_id = COMMANDVI::dd;
+            this->list_copied_str.clear();
+            this->new_line_cpy = true;
             break;
         }
         break;
     case 'D':
-        command_complete = true;
-        command_id = COMMANDVI::D;
+        /*FIXME: the event ctrl+D event does not reach the editor*/
+        if ( this->modifier_key == wxMOD_CONTROL ) {
+            command_complete = true;
+            command_id = COMMANDVI::ctrl_D;
+            modifier_key = 0;
+        } else {
+            command_complete = true;
+            command_id = COMMANDVI::D;
+        }
         break;
-
-        /*================== SEARCH ====================*/
+    case 'U':
+        /*FIXME: the event ctrl+U event does not reach the editor*/
+        if ( this->modifier_key == wxMOD_CONTROL ) {
+            command_complete = true;
+            command_id = COMMANDVI::ctrl_U;
+            modifier_key = 0;
+        } 
+        break;
+    /*========================== COPY ==================================*/
+    /*FIXME To be complete */
+    case 'y':                            
+        switch ( mActionCmd ) {
+        case '\0' :
+            command_complete = false;
+            break;
+        case 'w' :
+            command_complete  = true;
+            command_id = COMMANDVI::yw;
+            this->list_copied_str.clear();
+            break;
+        case 'y':
+            command_complete = true;
+            command_id = COMMANDVI::yy;
+            this->list_copied_str.clear();
+            this->new_line_cpy = true;
+            break;
+        }
+        break;
+         /*================== SEARCH ====================*/
     case '#':
         command_complete = true;
         command_id = COMMANDVI::diesis;
@@ -684,8 +844,21 @@ bool VimCommand::is_cmd_complete()
 	/*================ Repeat , i.e '.' ============*/
 	case '.':
 		command_complete = true;
+        this->repeat_cmd = true;
 		command_id = COMMANDVI::repeat;
 		break;
+
+    /*=============== Paste ======================*/
+    case 'p':
+        command_complete = true;
+        command_id = COMMANDVI::p;
+        this->mRepeat = 1;
+        break;
+    case 'P':
+        command_complete = true;
+        command_id = COMMANDVI::P;
+        this->mRepeat = 1;
+        break;
 
     }
 
@@ -695,9 +868,24 @@ bool VimCommand::is_cmd_complete()
 
 void VimCommand::set_current_modus( VIM_MODI modus) {
     current_modus = modus;
-}
+} 
 
 void VimCommand::append_command( wxChar ch )
 {
 	tmpBuf.Append( ch );
+}
+
+bool VimCommand::repeat_last_cmd()
+{
+    return repeat_cmd;
+}
+
+void VimCommand::reset_repeat_last()
+{
+    repeat_cmd = false;
+}
+
+bool VimCommand::save_current_cmd()
+{
+    return save_cmd;
 }

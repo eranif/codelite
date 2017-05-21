@@ -64,11 +64,6 @@ void VimManager::OnEditorChanged(wxCommandEvent &event)
     CHECK_PTR_RET( mEditor );
     mCtrl = mEditor->GetCtrl();
 
-    //FIXME
-    //if ( clMainFrame::Get() && clMainFrame::Get()->GetMainBook() ) {
-    //  LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    //}
-    
     mCtrl->Bind( wxEVT_CHAR, &VimManager::OnCharEvt, this );
     mCtrl->Bind( wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this );
 
@@ -146,6 +141,7 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
 {
 
     bool skip_event = true;
+    int modifier_key = event.GetModifiers();
     wxChar ch = event.GetUnicodeKey();
     
     if ( ch != WXK_NONE ) {
@@ -155,7 +151,8 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
             skip_event = mCurrCmd.OnEscapeDown( mCtrl );
             break;
         default:
-            skip_event = mCurrCmd.OnNewKeyDown( ch );
+            skip_event = mCurrCmd.OnNewKeyDown( ch, modifier_key );
+            /*FIXME save here inser tmp buffer!*/
             break;
         }
 
@@ -163,11 +160,22 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
         skip_event = true;
     }
 
+
     if ( mCurrCmd.is_cmd_complete() ) {
 
-        Issue_cmd();
+       bool repeat_last = mCurrCmd.repeat_last_cmd();
+
+        if ( repeat_last )
+            repeat_cmd();
+        else
+            Issue_cmd();
         
         if ( mCurrCmd.get_current_modus() != VIM_MODI::REPLACING_MODUS ) {
+            if ( repeat_last ) {
+                mCurrCmd.reset_repeat_last();
+            } else if ( mCurrCmd.save_current_cmd() ){ 
+                mLastCmd = mCurrCmd;
+            }
             mCurrCmd.ResetCommand();
         }
     }
@@ -181,7 +189,7 @@ void VimManager::Issue_cmd()
 {
     if ( mCtrl == NULL )
         return;
-    
+      
     for ( int i = 0; i < mCurrCmd.getNumRepeat(); ++i){
         if ( !mCurrCmd.Command_call( mCtrl ) )
             return; /*If the num repeat is internally implemented do not repeat!*/
@@ -189,4 +197,20 @@ void VimManager::Issue_cmd()
 }
 
 
+void VimManager::repeat_cmd()
+{
+    if ( mCtrl == NULL )
+        return;
+      
+    for ( int i = 0; i < mCurrCmd.getNumRepeat(); ++i){
+        if ( !mLastCmd.Command_call( mCtrl ) )
+            return;
+    }
+
+    if ( mLastCmd.get_current_modus() == VIM_MODI::INSERT_MODUS) {
+        /*FIXME*/
+        mCtrl->AddText( "temp buffer ..." );
+    }
+
+}
 

@@ -11,7 +11,8 @@
 #include "cl_editor.h"
 #include "codelite_events.h"
 #include <wx/kbdstate.h>
-
+/*Experimental*/
+#include <list>
 
 
 /**
@@ -41,12 +42,14 @@ class VimManager
 	VimCommand       mCurrCmd;     /*!< command currenly */
 	VimCommand       mLastCmd;     /*!< last command performed */
 	wxString         mTmpBuf;      /*!< tmporary buffer (of inserted text) */
+	std::list<wxString> yank_buf;  /*!< list of yanked buffers */
 	IManager         * m_mgr;
 	int mCaretInsStyle;
 	int mCaretNormStyle;
 	
 	void Issue_cmd();
 	void updateView();
+	void repeat_cmd();
 };
 
 #endif // __VIM_MANAGER_H__

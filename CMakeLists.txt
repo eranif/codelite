@@ -666,3 +666,4 @@ include(plugin)
 ## Scan for user plugins
 CL_SCAN_FOR_PLUGINS()
 
+add_subdirectory(phpcs)

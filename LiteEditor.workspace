@@ -66,6 +66,7 @@
   <VirtualDirectory Name="UnitTests">
     <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
   </VirtualDirectory>
+  <Project Name="phpcs" Path="phpcs/phpcs.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Environment/>
@@ -117,6 +118,7 @@
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
+      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -168,6 +170,7 @@
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
+      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -219,6 +222,7 @@
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
+      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -270,6 +274,7 @@
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
+      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
@@ -321,6 +326,7 @@
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
+      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment>WXWIN=D:\src\wxWidgets
@@ -373,6 +379,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Release"/>
+      <Project Name="phpcs" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment/>
@@ -424,6 +431,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
+      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -1,5 +1,10 @@
 #include "phpcs.h"
 #include <wx/xrc/xmlres.h>
+#include "asyncprocess.h"
+#include "file_logger.h"
+#include <event_notifier.h>
+#include "globals.h"
+#include "processreaderthread.h"
 
 static phpcs* thePlugin = NULL;
 
@@ -32,6 +37,9 @@ phpcs::phpcs(IManager *manager)
 {
     m_longName = _("Run code style checking on PHP source files");
     m_shortName = wxT("phpcs");
+
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &phpcs::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &phpcs::OnProcessTerminated, this);
 }
 
 phpcs::~phpcs()
@@ -42,6 +50,11 @@ clToolBar *phpcs::CreateToolBar(wxWindow *parent)
 {
     // Create the toolbar to be used by the plugin
     clToolBar *tb(NULL);
+
+    // Connect the events to us
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(phpcs::OnFileAction), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_LOADED, clCommandEventHandler(phpcs::OnFileAction), NULL, this);
+
     return tb;
 }
 
@@ -51,4 +64,138 @@ void phpcs::CreatePluginMenu(wxMenu *pluginsMenu)
 
 void phpcs::UnPlug()
 {
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(phpcs::OnFileAction), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_LOADED, clCommandEventHandler(phpcs::OnFileAction), NULL, this);
+}
+
+void phpcs::OnCheck(wxCommandEvent& e)
+{
+    IEditor* editor(NULL);
+    wxString fileToCheck = e.GetString();
+
+    // If we got a file name in the event, use it instead of the active editor
+    if(fileToCheck.IsEmpty() == false) {
+        editor = m_mgr->FindEditor(fileToCheck);
+
+    } else {
+        editor = m_mgr->GetActiveEditor();
+    }
+
+    // get the editor that requires checking
+    if(!editor) return;
+
+    clDEBUG() << "Checking file: '" << editor->GetFileName() << "'" << clEndl;
+
+    m_mgr->SetStatusMessage(
+        wxString::Format(wxT("%s: %s..."), _("Checking"), editor->GetFileName().GetFullPath().c_str()), 0);
+    DoCheckFile(editor->GetFileName());
+    m_mgr->SetStatusMessage(_("Done"), 0);
+
+    clDEBUG() << "Checking file: '" << editor->GetFileName() << "'...is done" << clEndl;
+}
+
+void phpcs::OnFileAction(clCommandEvent& e)
+{
+    e.Skip();
+
+    // Run phpcs
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    if (FileExtManager::IsPHPFile(editor->GetFileName())) {
+        /* Calling DelAllCompilerMarkers will remove marks placed by other linters
+        if(m_mgr->GetActiveEditor()) {
+            m_mgr->GetActiveEditor()->DelAllCompilerMarkers();
+        }
+        */
+        phpcs::DoCheckFile(editor->GetFileName());
+    }
+}
+
+void phpcs::DoCheckFile(const wxFileName& filename)
+{
+    m_output.Clear();
+
+    // Build the command
+    wxString command;
+    command = "/usr/bin/php";
+    ::WrapWithQuotes(command);
+
+    wxString file = filename.GetFullPath();
+    ::WrapWithQuotes(file);
+
+    command << " /usr/bin/phpcs " << file;
+
+    // Run the check command
+    m_process = ::CreateAsyncProcess(this, command);
+    if(!m_process) {
+        // failed to run the command
+        CL_WARNING("phpcs: could not run command '%s'", command);
+        DoProcessQueue();
+        m_currentFileBeingProcessed.Clear();
+
+    } else {
+        CL_DEBUG("phpcs: running check: %s", command);
+        m_currentFileBeingProcessed = filename.GetFullPath();
+    }
+}
+
+void phpcs::DoProcessQueue()
+{
+    if(!m_process && !m_queue.empty()) {
+        wxFileName filename = m_queue.front();
+        m_queue.pop_front();
+        DoCheckFile(filename);
+    }
+}
+
+void phpcs::OnProcessTerminated(clProcessEvent& event)
+{
+    CL_DEBUG("phpcs: process terminated. output: %s", m_output);
+    wxDELETE(m_process);
+    CallAfter(&phpcs::PhpCSDone, m_output, m_currentFileBeingProcessed);
+    // Check the queue for more files
+    DoProcessQueue();
+}
+
+void phpcs::OnProcessOutput(clProcessEvent& event)
+{
+    m_output << event.GetOutput();
+}
+
+void phpcs::PhpCSDone(const wxString& lintOutput, const wxString& filename)
+{
+    // Find the editor
+    CL_DEBUG("phpcs: searching editor for file: %s", filename);
+
+    IEditor* editor = m_mgr->FindEditor(filename);
+    CHECK_PTR_RET(editor);
+
+    wxRegEx reLine("^\\s+([0-9]+) \\| (?:WARNING|ERROR)\\s+\\| ", wxRE_ADVANCED);
+    wxRegEx muLine("\\n\\s+\\|\\s+\\|\\s+", wxRE_ADVANCED);
+    wxString lintOutput2 = lintOutput.Clone();
+    muLine.Replace(&lintOutput2, "<br>");
+    wxArrayString lines = ::wxStringTokenize(lintOutput2, "\n", wxTOKEN_STRTOK);
+    for(size_t i = 0; i < lines.GetCount(); ++i) {
+        wxString errorString = lines.Item(i);
+        if(errorString.Contains(" | WARNING ") || errorString.Contains(" | ERROR ")) {
+            // get the line number
+            if(reLine.Matches(errorString)) {
+                wxString strLine = reLine.GetMatch(errorString, 1);
+                int where = errorString.find_last_of("|") + 2;
+                wxString errorMessage = errorString.Mid(where);
+                errorMessage.Trim().Trim(false);
+                errorMessage.Replace("<br>", "\n");
+                long nLine(wxNOT_FOUND);
+                if(strLine.ToCLong(&nLine)) {
+                    CL_DEBUG("phpcs: adding error marker @%d", (int)nLine - 1);
+                    if (errorString.Contains(" | WARNING ")) {
+                        editor->SetWarningMarker(nLine - 1, errorMessage);
+                    } else {
+                        editor->SetErrorMarker(nLine - 1, errorMessage);
+                    }
+                }
+            }
+        }
+    }
 }

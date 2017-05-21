@@ -134,7 +134,8 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(PhpPlugin::OnFindInFilesDismissed), NULL, this);
 
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileAction), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_LOADED, clCommandEventHandler(PhpPlugin::OnFileAction), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpPlugin::OnReplaceInFiles, this);
     EventNotifier::Get()->Connect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Connect(
@@ -255,7 +256,8 @@ void PhpPlugin::UnPlug()
                                      this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_GET_ACTIVE_PROJECT_FILES, wxCommandEventHandler(PhpPlugin::OnGetActiveProjectFiles), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileAction), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_LOADED, clCommandEventHandler(PhpPlugin::OnFileAction), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpPlugin::OnReplaceInFiles, this);
     EventNotifier::Get()->Disconnect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -562,7 +564,7 @@ void PhpPlugin::OnMenuCommand(wxCommandEvent& e)
     }
 }
 
-void PhpPlugin::OnFileSaved(clCommandEvent& e)
+void PhpPlugin::OnFileAction(clCommandEvent& e)
 {
     e.Skip();
 

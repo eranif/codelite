@@ -122,7 +122,7 @@ public:
     void OnFindInFilesDismissed(clCommandEvent& e);
     void OnRunXDebugDiagnostics(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
-    void OnFileSaved(clCommandEvent& e);
+    void OnFileAction(clCommandEvent& e);
     void OnXDebugShowBreakpointsWindow(wxCommandEvent& e);
     void OnXDebugDeleteAllBreakpoints(clDebugEvent& e);
     void OnXDebugSettings(wxCommandEvent& e);

@@ -143,6 +143,7 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
     bool skip_event = true;
     int modifier_key = event.GetModifiers();
     wxChar ch = event.GetUnicodeKey();
+
     
     if ( ch != WXK_NONE ) {
 
@@ -166,7 +167,7 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
        bool repeat_last = mCurrCmd.repeat_last_cmd();
 
         if ( repeat_last )
-            repeat_cmd();
+            repeat_cmd( );
         else
             Issue_cmd();
         
@@ -190,10 +191,7 @@ void VimManager::Issue_cmd()
     if ( mCtrl == NULL )
         return;
       
-    for ( int i = 0; i < mCurrCmd.getNumRepeat(); ++i){
-        if ( !mCurrCmd.Command_call( mCtrl ) )
-            return; /*If the num repeat is internally implemented do not repeat!*/
-    }
+    mCurrCmd.issue_cmd( mCtrl );
 }
 
 
@@ -201,16 +199,8 @@ void VimManager::repeat_cmd()
 {
     if ( mCtrl == NULL )
         return;
-      
-    for ( int i = 0; i < mCurrCmd.getNumRepeat(); ++i){
-        if ( !mLastCmd.Command_call( mCtrl ) )
-            return;
-    }
-
-    if ( mLastCmd.get_current_modus() == VIM_MODI::INSERT_MODUS) {
-        /*FIXME*/
-        mCtrl->AddText( "temp buffer ..." );
-    }
+     
+    mLastCmd.repeat_issue_cmd( mCtrl, mTmpBuf);
 
 }
 

@@ -100,14 +100,14 @@ class VimCommand
 	bool OnReturnDown(IEditor **mEditor, IManager* manager);
     
 	/*~~~~~~~ GETTER ~~~~~~~~~~~~~~~~*/
-	int  getNumRepeat();
-	int  getNumActions();
 	VIM_MODI get_current_modus();
 	wxString getTmpBuf();
 	bool repeat_last_cmd();
 	bool save_current_cmd();
 
 	/*~~~~~~~ Commands-related ~~~~~~~~~~~~~~~~*/
+	void issue_cmd( wxStyledTextCtrl *ctrl);
+	void repeat_issue_cmd( wxStyledTextCtrl *ctrl, wxString buf);
 	bool Command_call( wxStyledTextCtrl *ctrl);
 	bool is_cmd_complete();
 	void set_current_word( wxString word);
@@ -118,6 +118,8 @@ class VimCommand
  private:
 
     /*~~~~~~~~ PRIVAT METHODS ~~~~~~~~~*/   
+	int  getNumRepeat();
+	int  getNumActions();
 	void evidentiate_word( wxStyledTextCtrl *ctrl );
 	void append_command( wxChar ch );
 	wxString get_word_at_position(wxStyledTextCtrl *ctrl);
@@ -125,6 +127,7 @@ class VimCommand
 	bool search_word( SEARCH_DIRECTION flag, wxStyledTextCtrl *ctrl );
 	void normal_modus( wxChar ch );
 	void command_modus( wxChar ch );
+	void insert_modus( wxChar ch);
 
     /*~~~~~~~~ INFO ~~~~~~~~~*/   
 	COMMANDVI    command_id;           /*!< id of the current command to identify it*/

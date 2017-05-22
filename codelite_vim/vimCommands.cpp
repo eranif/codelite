@@ -47,6 +47,7 @@ bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
     switch ( current_modus )
     {
     case VIM_MODI::INSERT_MODUS:
+        insert_modus( ch );
         skip_event = true;
         break;
     case VIM_MODI::SEARCH_MODUS:
@@ -138,6 +139,10 @@ int VimCommand::getNumActions()
     return nActions;
 }
 
+void VimCommand::insert_modus( wxChar ch)
+{
+    tmpBuf.Append( ch );
+}
 /**
  * This function is used to deal with the key event when we are in the 
  * normal modus.
@@ -535,6 +540,7 @@ wxString VimCommand::get_word_at_position(wxStyledTextCtrl *ctrl)
     return word;
 }
 
+
 bool VimCommand::is_space_following( wxStyledTextCtrl *ctrl)
 {
     long pos = ctrl->GetCurrentPos();
@@ -889,3 +895,34 @@ bool VimCommand::save_current_cmd()
 {
     return save_cmd;
 }
+
+
+void VimCommand::issue_cmd( wxStyledTextCtrl *ctrl)
+{
+    if ( ctrl == NULL )
+        return;
+      
+    for ( int i = 0; i < this->getNumRepeat(); ++i){
+        if ( !this->Command_call( ctrl ) )
+            return; /*If the num repeat is internally implemented do not repeat!*/
+    }
+}
+
+
+void VimCommand::repeat_issue_cmd( wxStyledTextCtrl *ctrl, wxString buf)
+{
+    if ( ctrl == NULL )
+        return;
+    
+    for ( int i = 0; i < this->getNumRepeat(); ++i){
+        if ( !this->Command_call( ctrl ) )
+            return;
+    }
+
+    if ( current_modus == VIM_MODI::INSERT_MODUS) {
+        /*FIXME*/
+        ctrl->AddText( buf );
+    }
+
+}
+

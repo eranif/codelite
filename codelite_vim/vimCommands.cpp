@@ -926,3 +926,7 @@ void VimCommand::repeat_issue_cmd( wxStyledTextCtrl *ctrl, wxString buf)
 
 }
 
+void VimCommand::set_ctrl( wxStyledTextCtrl *ctrl )
+{
+
+}

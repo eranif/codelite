@@ -84,6 +84,9 @@ void VimManager::OnKeyDown(wxKeyEvent &event){
 
         switch ( ch ) {
         case WXK_ESCAPE:
+            if ( mCurrCmd.get_current_modus() == VIM_MODI::INSERT_MODUS) {
+                mTmpBuf = mCurrCmd.getTmpBuf();
+            }
             skip_event = mCurrCmd.OnEscapeDown( mCtrl );
             break;
         case WXK_RETURN:
@@ -98,7 +101,7 @@ void VimManager::OnKeyDown(wxKeyEvent &event){
             }
             skip_event = true;
             break;
-        }   
+        }
 
     } else { 
         skip_event = true;
@@ -144,7 +147,7 @@ void VimManager::OnCharEvt(wxKeyEvent &event)
     int modifier_key = event.GetModifiers();
     wxChar ch = event.GetUnicodeKey();
 
-    
+
     if ( ch != WXK_NONE ) {
 
         switch ( ch ) {

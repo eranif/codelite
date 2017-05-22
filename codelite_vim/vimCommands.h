@@ -114,6 +114,7 @@ class VimCommand
 	void set_current_modus( VIM_MODI modus );
 	void reset_repeat_last();
 	void ResetCommand();
+	void set_ctrl( wxStyledTextCtrl *ctrl );
 
  private:
 

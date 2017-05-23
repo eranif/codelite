@@ -1426,12 +1426,12 @@ void MainBook::OnTabLabelContextMenu(wxBookCtrlEvent& e)
     }
 }
 
-bool MainBook::ClosePage(IEditor* editor, bool prompt)
+bool MainBook::ClosePage(IEditor* editor, bool notify)
 {
     wxWindow* page = dynamic_cast<wxWindow*>(editor->GetCtrl());
     if(!page) return false;
     int pos = m_book->GetPageIndex(page);
-    return (pos != wxNOT_FOUND) && (m_book->DeletePage(pos, false));
+    return (pos != wxNOT_FOUND) && (m_book->DeletePage(pos, notify));
 }
 
 void MainBook::GetDetachedTabs(clTab::Vec_t& tabs)

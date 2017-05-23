@@ -601,6 +601,7 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(AutoSave)
     add_subdirectory(Tail)
     add_subdirectory(EditorConfigPlugin)
+    add_subdirectory(codelite_vim)
 
     if (WITH_SFTP)
         add_subdirectory(SFTP)

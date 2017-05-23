@@ -10,12 +10,10 @@
 
 static CodeliteVim* thePlugin = NULL;
 
-
-
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin *CreatePlugin(IManager *manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == NULL) {
+    if(thePlugin == NULL) {
         thePlugin = new CodeliteVim(manager);
     }
     return thePlugin;
@@ -31,52 +29,42 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 
-CL_PLUGIN_API int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-CodeliteVim::CodeliteVim(IManager *manager)
+CodeliteVim::CodeliteVim(IManager* manager)
     : IPlugin(manager)
 {
     m_longName = _("vim bindings for codelite");
     m_shortName = wxT("CodeliteVim");
 
-	wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_binds"));
-	
-	m_vimM = new VimManager( manager );
+    wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_binds"));
+
+    m_vimM = new VimManager(manager);
 }
 
-CodeliteVim::~CodeliteVim()
-{
-}
+CodeliteVim::~CodeliteVim() {}
 
-clToolBar *CodeliteVim::CreateToolBar(wxWindow *parent)
+clToolBar* CodeliteVim::CreateToolBar(wxWindow* parent)
 {
     // Create the toolbar to be used by the plugin
-    clToolBar *tb(NULL);
-	
+    clToolBar* tb(NULL);
+
     return tb;
 }
 
-void CodeliteVim::CreatePluginMenu(wxMenu *pluginsMenu)
+void CodeliteVim::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     // menu->Append(XRCID("vim_binds"), _("Use vim key bindings"));
-	// menu->AppendSeparator();
-	menu->Append(XRCID("vim_settings"), _("Settings"));
-	pluginsMenu->Append(wxID_ANY, GetShortName(), menu);
+    // menu->AppendSeparator();
+    menu->Append(XRCID("vim_settings"), _("Settings"));
+    pluginsMenu->Append(wxID_ANY, GetShortName(), menu);
 }
 
 void CodeliteVim::UnPlug()
 {
-	wxTheApp->Unbind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_binds"));
-
+    wxTheApp->Unbind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_binds"));
+    wxDELETE(m_vimM);
 }
 
-
-void CodeliteVim::onVimSetting(wxCommandEvent &event)
-{
-	
-}
-
+void CodeliteVim::onVimSetting(wxCommandEvent& event) {}

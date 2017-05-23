@@ -7,6 +7,9 @@
 #include <wx/dialog.h>
 #include "macros.h"
 #include "vim_manager.h"
+#include "VimSettingsDlg.h"
+#include "event_notifier.h"
+#include "VimSettings.h"
 
 static CodeliteVim* thePlugin = NULL;
 
@@ -35,11 +38,13 @@ CodeliteVim::CodeliteVim(IManager* manager)
     : IPlugin(manager)
 {
     m_longName = _("vim bindings for codelite");
-    m_shortName = wxT("CodeliteVim");
+    m_shortName = wxT("Codelite Vim");
 
-    wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_binds"));
-
-    m_vimM = new VimManager(manager);
+    wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_settings"));
+    
+    // Load the settings from the file system    
+    m_settings.Load();
+    m_vimM = new VimManager(manager, m_settings);
 }
 
 CodeliteVim::~CodeliteVim() {}
@@ -55,16 +60,23 @@ clToolBar* CodeliteVim::CreateToolBar(wxWindow* parent)
 void CodeliteVim::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    // menu->Append(XRCID("vim_binds"), _("Use vim key bindings"));
-    // menu->AppendSeparator();
-    menu->Append(XRCID("vim_settings"), _("Settings"));
+    menu->Append(new wxMenuItem(menu, XRCID("vim_settings"), _("Settings...")));
     pluginsMenu->Append(wxID_ANY, GetShortName(), menu);
+    wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_settings"));
 }
 
 void CodeliteVim::UnPlug()
 {
-    wxTheApp->Unbind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_binds"));
+    wxTheApp->Unbind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_settings"));
     wxDELETE(m_vimM);
 }
 
-void CodeliteVim::onVimSetting(wxCommandEvent& event) {}
+void CodeliteVim::onVimSetting(wxCommandEvent& event) 
+{
+    VimSettingsDlg dlg(EventNotifier::Get()->TopFrame());
+    if(dlg.ShowModal() == wxID_OK) {
+        // Store the settings
+        m_settings.SetEnabled(dlg.GetCheckBoxEnabled()->IsChecked()).Save();
+        m_vimM->SettingsUpdated();
+    }
+}

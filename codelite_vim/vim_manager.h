@@ -10,6 +10,7 @@
 #include "globals.h"
 #include "codelite_events.h"
 #include <wx/kbdstate.h>
+#include "VimSettings.h"
 /*Experimental*/
 #include <list>
 
@@ -25,8 +26,9 @@ class VimManager : public wxEvtHandler
 
 public:
     /*ctr-distr ... */
-    VimManager(IManager* manager);
+    VimManager(IManager* manager, VimSettings& settings);
     virtual ~VimManager();
+    void SettingsUpdated();
 
 protected:
     void OnEditorChanged(wxCommandEvent& event);
@@ -35,12 +37,14 @@ protected:
     void OnKeyDown(wxKeyEvent& event);
     wxString get_current_word();
     void DoCleanup();
+    void DoBindCurrentEditor();
     
     // Internals
     void CloseCurrentEditor();
     void SaveCurrentEditor();
-    
+
 private:
+    VimSettings& m_settings;
     IEditor* m_editor;
     wxStyledTextCtrl* m_ctrl;
     VimCommand mCurrCmd;          /*!< command currenly */

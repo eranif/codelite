@@ -2,11 +2,16 @@
 #define __CodeliteVim__
 
 #include "plugin.h"
+#include "VimSettings.h"
 
 class VimManager;
 
 class CodeliteVim : public IPlugin
 {
+private:
+    VimManager* m_vimM;
+    VimSettings m_settings;
+
 public:
     CodeliteVim(IManager* manager);
     ~CodeliteVim();
@@ -29,9 +34,6 @@ public:
     // virtual int FilterEvent(wxEvent &event);
 protected:
     void onVimSetting(wxCommandEvent& event);
-
-private:
-    VimManager* m_vimM;
 };
 
 #endif // CodeliteVim

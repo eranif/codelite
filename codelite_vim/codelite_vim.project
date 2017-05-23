@@ -7,6 +7,10 @@
     <File Name="vim_manager.h"/>
     <File Name="vimCommands.cpp"/>
     <File Name="vimCommands.h"/>
+    <File Name="VimSettingsDlg.h"/>
+    <File Name="VimSettingsDlg.cpp"/>
+    <File Name="VimSettings.h"/>
+    <File Name="VimSettings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="codelite_vim.h"/>
@@ -87,4 +91,14 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="VIM.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="VIM_codelite_vim_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="VIM.h"/>
+      <File Name="VIM.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

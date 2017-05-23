@@ -17,8 +17,9 @@
  * Default constructor
  */
 
-VimManager::VimManager(IManager* manager)
-    : mCurrCmd()
+VimManager::VimManager(IManager* manager, VimSettings& settings)
+    : m_settings(settings)
+    , mCurrCmd()
     , mLastCmd()
     , mTmpBuf()
 {
@@ -50,16 +51,8 @@ VimManager::~VimManager()
 void VimManager::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip(); // Always call Skip() so other plugins/core components will get this event
-    DoCleanup();
-    
-    m_editor = m_mgr->GetActiveEditor();
-    CHECK_PTR_RET(m_editor);
-    
-    m_ctrl = m_editor->GetCtrl();
-    m_ctrl->Bind(wxEVT_CHAR, &VimManager::OnCharEvt, this);
-    m_ctrl->Bind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
-    
-    CallAfter(&VimManager::updateView);
+    if(!m_settings.IsEnabled()) return;
+    DoBindCurrentEditor();
 }
 
 void VimManager::OnKeyDown(wxKeyEvent& event)
@@ -236,7 +229,31 @@ void VimManager::DoCleanup()
     if(m_ctrl) {
         m_ctrl->Unbind(wxEVT_CHAR, &VimManager::OnCharEvt, this);
         m_ctrl->Unbind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
+        m_ctrl->SetCaretStyle(mCaretInsStyle);
     }
     m_editor = NULL;
     m_ctrl = NULL;
+    m_mgr->GetStatusBar()->SetMessage("");
+}
+
+void VimManager::SettingsUpdated()
+{
+    if(m_settings.IsEnabled()) {
+        DoBindCurrentEditor();
+    } else {
+        DoCleanup();
+    }
+}
+
+void VimManager::DoBindCurrentEditor()
+{
+    DoCleanup();
+    m_editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(m_editor);
+
+    m_ctrl = m_editor->GetCtrl();
+    m_ctrl->Bind(wxEVT_CHAR, &VimManager::OnCharEvt, this);
+    m_ctrl->Bind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
+
+    CallAfter(&VimManager::updateView);
 }

@@ -601,6 +601,8 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(AutoSave)
     add_subdirectory(Tail)
     add_subdirectory(EditorConfigPlugin)
+    add_subdirectory(phpcs)
+    add_subdirectory(phpmd)
     add_subdirectory(codelite_vim)
 
     if (WITH_SFTP)
@@ -666,6 +668,3 @@ include(plugin)
 
 ## Scan for user plugins
 CL_SCAN_FOR_PLUGINS()
-
-add_subdirectory(phpcs)
-add_subdirectory(phpmd)

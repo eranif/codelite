@@ -1347,12 +1347,12 @@ void clTabCtrl::OnMouseScroll(wxMouseEvent& event)
     event.Skip();
     size_t curSelection = GetSelection();
     if(event.GetWheelRotation() > 0) {
-        if(curSelection < GetTabs().size()) {
-            SetSelection(curSelection + 1);
-        }
-    } else {
         if(curSelection > 0) {
             SetSelection(curSelection - 1);
+        }
+    } else {
+        if(curSelection < GetTabs().size()) {
+            SetSelection(curSelection + 1);
         }
     }
 }

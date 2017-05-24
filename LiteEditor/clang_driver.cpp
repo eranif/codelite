@@ -576,12 +576,14 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         break;
     }
 
-    if(!reply->results && !reply->errorMessage.IsEmpty()) {
-        // Notify about this error
-        clCommandEvent event(wxEVT_CLANG_CODE_COMPLETE_MESSAGE);
-        event.SetString(reply->errorMessage);
-        event.SetInt(1); // indicates that this is an error message
-        EventNotifier::Get()->AddPendingEvent(event);
+    if(!reply->results) {
+        if (!reply->errorMessage.IsEmpty()) {
+            // Notify about this error
+            clCommandEvent event(wxEVT_CLANG_CODE_COMPLETE_MESSAGE);
+            event.SetString(reply->errorMessage);
+            event.SetInt(1); // indicates that this is an error message
+            EventNotifier::Get()->AddPendingEvent(event);
+        }
         return;
     }
 

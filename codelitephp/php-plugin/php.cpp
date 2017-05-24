@@ -578,7 +578,7 @@ void PhpPlugin::OnFileAction(clCommandEvent& e)
 
     PHPConfigurationData conf;
     conf.Load();
-    if(::IsPHPFile(editor) && conf.IsRunLint()) {
+    if(FileExtManager::IsPHPFile(editor->GetFileName()) && conf.IsRunLint()) {
         if(m_mgr->GetActiveEditor()) {
             m_mgr->GetActiveEditor()->DelAllCompilerMarkers();
         }

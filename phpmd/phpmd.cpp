@@ -5,7 +5,6 @@
 #include "processreaderthread.h"
 #include <event_notifier.h>
 #include <wx/sstream.h>
-#include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
 
 static phpmd* thePlugin = NULL;
@@ -179,9 +178,8 @@ void phpmd::PhpCSDone(const wxString& lintOutput, const wxString& filename)
 
     wxStringInputStream lintOutputStream(lintOutput);
     wxXmlDocument doc;
-    if(!doc.Load(lintOutputStream)) {
+    if(!doc.Load(lintOutputStream))
         return;
-    }
 
     // Priority can be 1-5, 5 being the least sevear.
     // By default phpmd seams to award 1, 3 and 5 to it rules. Only very few rules have 5
@@ -190,9 +188,8 @@ void phpmd::PhpCSDone(const wxString& lintOutput, const wxString& filename)
     int warningLevel = 3;
 
     wxXmlNode* file = doc.GetRoot()->GetChildren();
-    if(!file) {
+    if(!file)
         return;
-    }
 
     wxXmlNode* violation = file->GetChildren();
     while(violation) {

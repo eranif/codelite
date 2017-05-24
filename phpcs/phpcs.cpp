@@ -1,17 +1,18 @@
-#include "phpcs.h"
-#include <wx/xrc/xmlres.h>
 #include "asyncprocess.h"
 #include "file_logger.h"
-#include <event_notifier.h>
 #include "globals.h"
+#include "phpcs.h"
 #include "processreaderthread.h"
+#include <event_notifier.h>
+#include <wx/sstream.h>
+#include <wx/xrc/xmlres.h>
 
 static phpcs* thePlugin = NULL;
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin *CreatePlugin(IManager *manager)
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == NULL) {
+    if(thePlugin == NULL) {
         thePlugin = new phpcs(manager);
     }
     return thePlugin;
@@ -32,7 +33,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion()
     return PLUGIN_INTERFACE_VERSION;
 }
 
-phpcs::phpcs(IManager *manager)
+phpcs::phpcs(IManager* manager)
     : IPlugin(manager)
 {
     m_longName = _("Run code style checking on PHP source files");
@@ -46,10 +47,10 @@ phpcs::~phpcs()
 {
 }
 
-clToolBar *phpcs::CreateToolBar(wxWindow *parent)
+clToolBar* phpcs::CreateToolBar(wxWindow* parent)
 {
     // Create the toolbar to be used by the plugin
-    clToolBar *tb(NULL);
+    clToolBar* tb(NULL);
 
     // Connect the events to us
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(phpcs::OnFileAction), NULL, this);
@@ -58,7 +59,7 @@ clToolBar *phpcs::CreateToolBar(wxWindow *parent)
     return tb;
 }
 
-void phpcs::CreatePluginMenu(wxMenu *pluginsMenu)
+void phpcs::CreatePluginMenu(wxMenu* pluginsMenu)
 {
 }
 
@@ -82,7 +83,8 @@ void phpcs::OnCheck(wxCommandEvent& e)
     }
 
     // get the editor that requires checking
-    if(!editor) return;
+    if(!editor)
+        return;
 
     clDEBUG() << "Checking file: '" << editor->GetFileName() << "'" << clEndl;
 
@@ -102,7 +104,7 @@ void phpcs::OnFileAction(clCommandEvent& e)
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    if (FileExtManager::IsPHPFile(editor->GetFileName())) {
+    if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         /* Calling DelAllCompilerMarkers will remove marks placed by other linters
         if(m_mgr->GetActiveEditor()) {
             m_mgr->GetActiveEditor()->DelAllCompilerMarkers();
@@ -124,7 +126,7 @@ void phpcs::DoCheckFile(const wxFileName& filename)
     wxString file = filename.GetFullPath();
     ::WrapWithQuotes(file);
 
-    command << " /usr/bin/phpcs " << file;
+    command << " /usr/bin/phpcs --report=xml " << file;
 
     // Run the check command
     m_process = ::CreateAsyncProcess(this, command);
@@ -171,31 +173,31 @@ void phpcs::PhpCSDone(const wxString& lintOutput, const wxString& filename)
     IEditor* editor = m_mgr->FindEditor(filename);
     CHECK_PTR_RET(editor);
 
-    wxRegEx reLine("^\\s+([0-9]+) \\| (?:WARNING|ERROR)\\s+\\| ", wxRE_ADVANCED);
-    wxRegEx muLine("\\n\\s+\\|\\s+\\|\\s+", wxRE_ADVANCED);
-    wxString lintOutput2 = lintOutput.Clone();
-    muLine.Replace(&lintOutput2, "<br>");
-    wxArrayString lines = ::wxStringTokenize(lintOutput2, "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.GetCount(); ++i) {
-        wxString errorString = lines.Item(i);
-        if(errorString.Contains(" | WARNING ") || errorString.Contains(" | ERROR ")) {
-            // get the line number
-            if(reLine.Matches(errorString)) {
-                wxString strLine = reLine.GetMatch(errorString, 1);
-                int where = errorString.find_last_of("|") + 2;
-                wxString errorMessage = errorString.Mid(where);
-                errorMessage.Trim().Trim(false);
-                errorMessage.Replace("<br>", "\n");
-                long nLine(wxNOT_FOUND);
-                if(strLine.ToCLong(&nLine)) {
-                    CL_DEBUG("phpcs: adding error marker @%d", (int)nLine - 1);
-                    if (errorString.Contains(" | WARNING ")) {
-                        editor->SetWarningMarker(nLine - 1, errorMessage);
-                    } else {
-                        editor->SetErrorMarker(nLine - 1, errorMessage);
-                    }
-                }
+    wxStringInputStream lintOutputStream(lintOutput);
+    wxXmlDocument doc;
+    if(!doc.Load(lintOutputStream))
+        return;
+
+    wxXmlNode* file = doc.GetRoot()->GetChildren();
+    if(!file)
+        return;
+
+    wxXmlNode* violation = file->GetChildren();
+    while(violation) {
+        wxString strLine = violation->GetAttribute("line");
+        wxString errorMessage = violation->GetNodeContent().Trim().Trim(false);
+
+        long nLine(wxNOT_FOUND);
+        if(strLine.ToCLong(&nLine)) {
+            CL_DEBUG("phpcs: adding error marker @%d", (int)nLine - 1);
+
+            if(violation->GetName() == "error") {
+                editor->SetErrorMarker(nLine - 1, errorMessage);
+            } else {
+                editor->SetWarningMarker(nLine - 1, errorMessage);
             }
         }
+
+        violation = violation->GetNext();
     }
 }

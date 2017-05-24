@@ -1,11 +1,11 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.8)
 
 # set the plugin name here
 set( PLUGIN_NAME "phpcs")
 
 # Our project is called 'plugin' this is how it will be called in
-# visual studio, and in our makefiles. 
+# visual studio, and in our makefiles.
 project( ${PLUGIN_NAME} )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -15,7 +15,11 @@ find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 include( "${wxWidgets_USE_FILE}" )
 
 # Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
+include_directories("${CL_SRC_ROOT}/Plugin"
+                    "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
+                    "${CL_SRC_ROOT}/CodeLite"
+                    "${CL_SRC_ROOT}/PCH"
+                    "${CL_SRC_ROOT}/Interfaces")
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
@@ -50,6 +54,5 @@ target_link_libraries(${PLUGIN_NAME}
                       plugin
                       )
 
-
+# Use CodeLite's macro: CL_INSTALL_PLUGIN which handles both OSX and Linux installation
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
-CL_INSTALL_FILE_SHARED(${CL_SRC_ROOT}/Runtime/astyle.sample)

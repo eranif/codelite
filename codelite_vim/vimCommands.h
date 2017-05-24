@@ -117,6 +117,7 @@ public:
         kSave,
         kSaveAndClose,
     };
+
 public:
     VimCommand();
     ~VimCommand();
@@ -125,6 +126,12 @@ public:
     bool OnNewKeyDown(wxChar ch, int modifier);
     bool OnEscapeDown(wxStyledTextCtrl* ctrl);
     bool OnReturnDown(IEditor* mEditor, IManager* manager, VimCommand::eAction& action);
+
+    /**
+     * @brief delete last char from the command buffer
+     * @return true on success, false otherwise
+     */
+    bool DeleteLastCommandChar();
 
     /*~~~~~~~ GETTER ~~~~~~~~~~~~~~~~*/
     VIM_MODI get_current_modus();
@@ -157,25 +164,25 @@ private:
     void insert_modus(wxChar ch);
 
     /*~~~~~~~~ INFO ~~~~~~~~~*/
-    COMMANDVI command_id;          /*!< id of the current command to identify it*/
-    COMMAND_PART current_cmd_part; /*!< current part of the command */
-    VIM_MODI current_modus;        /*!< actual mode the editor is in */
-    bool save_cmd;
+    COMMANDVI m_commandID;             /*!< id of the current command to identify it*/
+    COMMAND_PART m_currentCommandPart; /*!< current part of the command */
+    VIM_MODI m_currentModus;           /*!< actual mode the editor is in */
+    bool m_saveCommand;
     /*~~~~~~~~ COMMAND ~~~~~~~~~*/
-    int mRepeat;       /*!< number of repetition for the command */
-    wxChar mBaseCmd;   /*!< base command (first char of the cmd)*/
-    wxChar mActionCmd; /*!< eventual command modifier.In 'c3w', "w" */
-    int nActions;      /*!< repetition of the modifier.In 'c3x', "3" */
+    int m_repeat;           /*!< number of repetition for the command */
+    wxChar m_baseCommand;   /*!< base command (first char of the cmd)*/
+    wxChar m_actionCommand; /*!< eventual command modifier.In 'c3w', "w" */
+    int m_actions;          /*!< repetition of the modifier.In 'c3x', "3" */
 
-    int nCumulativeUndo; /*!< cumulative actions performed in the editor*/
-                         /*in order to currectly do the undo!*/
+    int m_cumulativeUndo; /*!< cumulative actions performed in the editor*/
+                          /*in order to currectly do the undo!*/
     /*~~~~~~~~ HELPER ~~~~~~~~~*/
-    bool repeat_cmd;
-    int modifier_key; /*!< to take into account for some commands*/
-    wxString tmpBuf;
-    wxString m_search_word;
-    bool new_line_cpy; /*!< take track if we copy/pase the complete line (dd,yy)*/
-    std::vector<wxString> list_copied_str;
+    bool m_repeatCommand;
+    int m_modifierKey; /*!< to take into account for some commands*/
+    wxString m_tmpbuf;
+    wxString m_searchWord;
+    bool m_newLineCopy; /*!< take track if we copy/pase the complete line (dd,yy)*/
+    std::vector<wxString> m_listCopiedStr;
 };
 
 #endif //__VIM_COMMANDS__

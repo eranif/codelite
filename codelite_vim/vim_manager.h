@@ -38,7 +38,7 @@ protected:
     wxString get_current_word();
     void DoCleanup();
     void DoBindCurrentEditor();
-    
+
     // Internals
     void CloseCurrentEditor();
     void SaveCurrentEditor();
@@ -47,13 +47,12 @@ private:
     VimSettings& m_settings;
     IEditor* m_editor;
     wxStyledTextCtrl* m_ctrl;
-    VimCommand mCurrCmd;          /*!< command currenly */
-    VimCommand mLastCmd;          /*!< last command performed */
-    wxString mTmpBuf;             /*!< tmporary buffer (of inserted text) */
-    std::list<wxString> yank_buf; /*!< list of yanked buffers */
+    VimCommand m_currentCommand; /*!< command currenly */
+    VimCommand m_lastCommand;    /*!< last command performed */
+    wxString m_tmpBuf;           /*!< tmporary buffer (of inserted text) */
     IManager* m_mgr;
-    int mCaretInsStyle;
-    int mCaretNormStyle;
+    int m_caretInsertStyle;
+    int m_caretBlockStyle;
 
     void Issue_cmd();
     void updateView();

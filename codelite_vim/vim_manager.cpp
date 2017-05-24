@@ -19,16 +19,16 @@
 
 VimManager::VimManager(IManager* manager, VimSettings& settings)
     : m_settings(settings)
-    , mCurrCmd()
-    , mLastCmd()
-    , mTmpBuf()
+    , m_currentCommand()
+    , m_lastCommand()
+    , m_tmpBuf()
 {
 
     m_ctrl = NULL;
     m_editor = NULL;
     m_mgr = manager;
-    mCaretInsStyle = 1;
-    mCaretNormStyle = 2;
+    m_caretInsertStyle = 1;
+    m_caretBlockStyle = 2;
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &VimManager::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &VimManager::OnEditorClosing, this);
@@ -70,21 +70,26 @@ void VimManager::OnKeyDown(wxKeyEvent& event)
     if(ch != WXK_NONE) {
 
         switch(ch) {
+        case WXK_BACK: {
+            // Delete the last comand char, if not in command mode, return true (for skip event)
+            skip_event = !(m_currentCommand.DeleteLastCommandChar());
+            break;
+        }
         case WXK_ESCAPE:
-            if(mCurrCmd.get_current_modus() == VIM_MODI::INSERT_MODUS) {
-                mTmpBuf = mCurrCmd.getTmpBuf();
+            if(m_currentCommand.get_current_modus() == VIM_MODI::INSERT_MODUS) {
+                m_tmpBuf = m_currentCommand.getTmpBuf();
             }
-            skip_event = mCurrCmd.OnEscapeDown(m_ctrl);
+            skip_event = m_currentCommand.OnEscapeDown(m_ctrl);
             break;
         case WXK_RETURN: {
 
-            skip_event = mCurrCmd.OnReturnDown(m_editor, m_mgr, action);
+            skip_event = m_currentCommand.OnReturnDown(m_editor, m_mgr, action);
             break;
         }
         default:
-            if(mCurrCmd.get_current_modus() == VIM_MODI::SEARCH_MODUS) {
-                mCurrCmd.set_current_word(get_current_word());
-                mCurrCmd.set_current_modus(VIM_MODI::NORMAL_MODUS);
+            if(m_currentCommand.get_current_modus() == VIM_MODI::SEARCH_MODUS) {
+                m_currentCommand.set_current_word(get_current_word());
+                m_currentCommand.set_current_modus(VIM_MODI::NORMAL_MODUS);
             }
             skip_event = true;
             break;
@@ -126,14 +131,14 @@ void VimManager::updateView()
 
     if(m_ctrl == NULL) return;
 
-    if(mCurrCmd.get_current_modus() == VIM_MODI::NORMAL_MODUS) {
-        m_ctrl->SetCaretStyle(mCaretNormStyle);
+    if(m_currentCommand.get_current_modus() == VIM_MODI::NORMAL_MODUS) {
+        m_ctrl->SetCaretStyle(m_caretBlockStyle);
         //::clGetManager()->GetStatusBar()->SetMessage("<N>");
         m_mgr->GetStatusBar()->SetMessage("NORMAL");
-    } else if(mCurrCmd.get_current_modus() == VIM_MODI::COMMAND_MODUS) {
-        m_mgr->GetStatusBar()->SetMessage(mCurrCmd.getTmpBuf());
+    } else if(m_currentCommand.get_current_modus() == VIM_MODI::COMMAND_MODUS) {
+        m_mgr->GetStatusBar()->SetMessage(m_currentCommand.getTmpBuf());
     } else {
-        m_ctrl->SetCaretStyle(mCaretInsStyle);
+        m_ctrl->SetCaretStyle(m_caretInsertStyle);
         //::clGetManager()->GetStatusBar()->SetMessage("<I>");
     }
 }
@@ -149,10 +154,10 @@ void VimManager::OnCharEvt(wxKeyEvent& event)
 
         switch(ch) {
         case WXK_ESCAPE:
-            skip_event = mCurrCmd.OnEscapeDown(m_ctrl);
+            skip_event = m_currentCommand.OnEscapeDown(m_ctrl);
             break;
         default:
-            skip_event = mCurrCmd.OnNewKeyDown(ch, modifier_key);
+            skip_event = m_currentCommand.OnNewKeyDown(ch, modifier_key);
             /*FIXME save here inser tmp buffer!*/
             break;
         }
@@ -161,22 +166,22 @@ void VimManager::OnCharEvt(wxKeyEvent& event)
         skip_event = true;
     }
 
-    if(mCurrCmd.is_cmd_complete()) {
+    if(m_currentCommand.is_cmd_complete()) {
 
-        bool repeat_last = mCurrCmd.repeat_last_cmd();
+        bool repeat_last = m_currentCommand.repeat_last_cmd();
 
         if(repeat_last)
             repeat_cmd();
         else
             Issue_cmd();
 
-        if(mCurrCmd.get_current_modus() != VIM_MODI::REPLACING_MODUS) {
+        if(m_currentCommand.get_current_modus() != VIM_MODI::REPLACING_MODUS) {
             if(repeat_last) {
-                mCurrCmd.reset_repeat_last();
-            } else if(mCurrCmd.save_current_cmd()) {
-                mLastCmd = mCurrCmd;
+                m_currentCommand.reset_repeat_last();
+            } else if(m_currentCommand.save_current_cmd()) {
+                m_lastCommand = m_currentCommand;
             }
-            mCurrCmd.ResetCommand();
+            m_currentCommand.ResetCommand();
         }
     }
 
@@ -188,14 +193,14 @@ void VimManager::Issue_cmd()
 {
     if(m_ctrl == NULL) return;
 
-    mCurrCmd.issue_cmd(m_ctrl);
+    m_currentCommand.issue_cmd(m_ctrl);
 }
 
 void VimManager::repeat_cmd()
 {
     if(m_ctrl == NULL) return;
 
-    mLastCmd.repeat_issue_cmd(m_ctrl, mTmpBuf);
+    m_lastCommand.repeat_issue_cmd(m_ctrl, m_tmpBuf);
 }
 
 void VimManager::CloseCurrentEditor()
@@ -229,7 +234,7 @@ void VimManager::DoCleanup()
     if(m_ctrl) {
         m_ctrl->Unbind(wxEVT_CHAR, &VimManager::OnCharEvt, this);
         m_ctrl->Unbind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
-        m_ctrl->SetCaretStyle(mCaretInsStyle);
+        m_ctrl->SetCaretStyle(m_caretInsertStyle);
     }
     m_editor = NULL;
     m_ctrl = NULL;

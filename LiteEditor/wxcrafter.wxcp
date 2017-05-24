@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 573,
+  "m_objCounter": 574,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC3F25InitBitmapResources",
   "m_bitmapsFile": "wxcrafter_liteeditor_bitmaps.cpp",
@@ -2691,7 +2691,7 @@
                "m_events": [],
                "m_children": []
               }, {
-               "m_type": 4403,
+               "m_type": 4452,
                "proportion": 0,
                "border": 5,
                "gbSpan": "1,1",
@@ -2705,7 +2705,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "flexGridSizer573"
+                 "m_value": "gridSizer574"
                 }, {
                  "type": "string",
                  "m_label": "Style:",
@@ -2718,14 +2718,6 @@
                  "type": "string",
                  "m_label": "# Rows:",
                  "m_value": "0"
-                }, {
-                 "type": "string",
-                 "m_label": "Growable columns:",
-                 "m_value": ""
-                }, {
-                 "type": "string",
-                 "m_label": "Growable rows:",
-                 "m_value": ""
                 }, {
                  "type": "string",
                  "m_label": "Horizontal gap:",
@@ -2751,11 +2743,11 @@
                   }, {
                    "type": "string",
                    "m_label": "Size:",
-                   "m_value": "-1,100"
+                   "m_value": "-1,-1"
                   }, {
                    "type": "string",
                    "m_label": "Minimum Size:",
-                   "m_value": "-1,-1"
+                   "m_value": "-1,50"
                   }, {
                    "type": "string",
                    "m_label": "Name:",
@@ -2931,7 +2923,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Size:",
-                   "m_value": "-1,100"
+                   "m_value": "-1,-1"
                   }, {
                    "type": "string",
                    "m_label": "Minimum Size:",
@@ -3125,7 +3117,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Size:",
-                   "m_value": "-1,100"
+                   "m_value": "-1,-1"
                   }, {
                    "type": "string",
                    "m_label": "Minimum Size:",

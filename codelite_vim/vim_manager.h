@@ -33,10 +33,12 @@ public:
 protected:
     void OnEditorChanged(wxCommandEvent& event);
     void OnEditorClosing(wxCommandEvent& event);
+    void OnWorkspaceClosing(wxCommandEvent& event);
+    void OnAllEditorsClosing(wxCommandEvent& event);
     void OnCharEvt(wxKeyEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     wxString get_current_word();
-    void DoCleanup();
+    void DoCleanup(bool unbind = true);
     void DoBindCurrentEditor();
 
     // Internals

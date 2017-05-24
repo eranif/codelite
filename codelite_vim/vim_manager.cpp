@@ -32,6 +32,8 @@ VimManager::VimManager(IManager* manager, VimSettings& settings)
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &VimManager::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &VimManager::OnEditorClosing, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSING, &VimManager::OnWorkspaceClosing, this);
+    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSING, &VimManager::OnAllEditorsClosing, this);
 }
 
 /**
@@ -42,6 +44,8 @@ VimManager::~VimManager()
 {
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &VimManager::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &VimManager::OnEditorClosing, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSING, &VimManager::OnWorkspaceClosing, this);
+    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSING, &VimManager::OnAllEditorsClosing, this);
 }
 
 /**
@@ -229,9 +233,9 @@ void VimManager::OnEditorClosing(wxCommandEvent& event)
     DoCleanup();
 }
 
-void VimManager::DoCleanup()
+void VimManager::DoCleanup(bool unbind)
 {
-    if(m_ctrl) {
+    if(m_ctrl && unbind) {
         m_ctrl->Unbind(wxEVT_CHAR, &VimManager::OnCharEvt, this);
         m_ctrl->Unbind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
         m_ctrl->SetCaretStyle(m_caretInsertStyle);
@@ -261,4 +265,16 @@ void VimManager::DoBindCurrentEditor()
     m_ctrl->Bind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
 
     CallAfter(&VimManager::updateView);
+}
+
+void VimManager::OnWorkspaceClosing(wxCommandEvent& event)
+{
+    event.Skip();
+    DoCleanup(false);
+}
+
+void VimManager::OnAllEditorsClosing(wxCommandEvent& event)
+{
+    event.Skip();
+    DoCleanup(false);
 }

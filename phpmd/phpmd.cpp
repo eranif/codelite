@@ -189,7 +189,12 @@ void phpmd::PhpCSDone(const wxString& lintOutput, const wxString& filename)
     // especially if people define different priorities in there phpmd.xml
     int warningLevel = 3;
 
-    wxXmlNode* violation = doc.GetRoot()->GetChildren()->GetChildren();
+    wxXmlNode* file = doc.GetRoot()->GetChildren();
+    if(!file) {
+        return;
+    }
+
+    wxXmlNode* violation = file->GetChildren();
     while(violation) {
         wxString strLine = violation->GetAttribute("beginline");
         wxString priority = violation->GetAttribute("priority", "1");

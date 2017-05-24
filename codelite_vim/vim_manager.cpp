@@ -56,7 +56,8 @@ void VimManager::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip(); // Always call Skip() so other plugins/core components will get this event
     if(!m_settings.IsEnabled()) return;
-    DoBindCurrentEditor();
+    IEditor* editor = reinterpret_cast<IEditor*>(event.GetClientData());
+    DoBindEditor(editor);
 }
 
 void VimManager::OnKeyDown(wxKeyEvent& event)
@@ -65,7 +66,7 @@ void VimManager::OnKeyDown(wxKeyEvent& event)
     wxChar ch = event.GetUnicodeKey();
     bool skip_event = true;
 
-    if(m_ctrl == NULL || m_editor == NULL) {
+    if(m_ctrl == NULL || m_editor == NULL || !m_settings.IsEnabled()) {
         event.Skip();
         return;
     }
@@ -132,23 +133,24 @@ wxString VimManager::get_current_word()
 
 void VimManager::updateView()
 {
-
     if(m_ctrl == NULL) return;
-
     if(m_currentCommand.get_current_modus() == VIM_MODI::NORMAL_MODUS) {
         m_ctrl->SetCaretStyle(m_caretBlockStyle);
-        //::clGetManager()->GetStatusBar()->SetMessage("<N>");
         m_mgr->GetStatusBar()->SetMessage("NORMAL");
     } else if(m_currentCommand.get_current_modus() == VIM_MODI::COMMAND_MODUS) {
+        m_ctrl->SetCaretStyle(m_caretBlockStyle);
         m_mgr->GetStatusBar()->SetMessage(m_currentCommand.getTmpBuf());
     } else {
         m_ctrl->SetCaretStyle(m_caretInsertStyle);
-        //::clGetManager()->GetStatusBar()->SetMessage("<I>");
     }
 }
 
 void VimManager::OnCharEvt(wxKeyEvent& event)
 {
+    if(!m_settings.IsEnabled()) {
+        event.Skip();
+        return;
+    }
 
     bool skip_event = true;
     int modifier_key = event.GetModifiers();
@@ -248,16 +250,16 @@ void VimManager::DoCleanup(bool unbind)
 void VimManager::SettingsUpdated()
 {
     if(m_settings.IsEnabled()) {
-        DoBindCurrentEditor();
+        DoBindEditor(m_mgr->GetActiveEditor());
     } else {
         DoCleanup();
     }
 }
 
-void VimManager::DoBindCurrentEditor()
+void VimManager::DoBindEditor(IEditor* editor)
 {
     DoCleanup();
-    m_editor = m_mgr->GetActiveEditor();
+    m_editor = editor;
     CHECK_PTR_RET(m_editor);
 
     m_ctrl = m_editor->GetCtrl();

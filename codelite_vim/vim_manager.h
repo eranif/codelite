@@ -39,7 +39,7 @@ protected:
     void OnKeyDown(wxKeyEvent& event);
     wxString get_current_word();
     void DoCleanup(bool unbind = true);
-    void DoBindCurrentEditor();
+    void DoBindEditor(IEditor* editor);
 
     // Internals
     void CloseCurrentEditor();

@@ -1089,6 +1089,7 @@ bool MainBook::DoSelectPage(wxWindow* win)
         //     }
         // }
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
+        event.SetClientData((void*)dynamic_cast<IEditor*>(editor));
         EventNotifier::Get()->AddPendingEvent(event);
     }
 

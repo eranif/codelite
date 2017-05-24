@@ -1,10 +1,12 @@
-#include "phpmd.h"
-#include <wx/xrc/xmlres.h>
 #include "asyncprocess.h"
 #include "file_logger.h"
-#include <event_notifier.h>
 #include "globals.h"
+#include "phpmd.h"
 #include "processreaderthread.h"
+#include <event_notifier.h>
+#include <wx/sstream.h>
+#include <wx/xml/xml.h>
+#include <wx/xrc/xmlres.h>
 
 static phpmd* thePlugin = NULL;
 
@@ -82,7 +84,8 @@ void phpmd::OnCheck(wxCommandEvent& e)
     }
 
     // get the editor that requires checking
-    if(!editor) return;
+    if(!editor)
+        return;
 
     clDEBUG() << "Checking file: '" << editor->GetFileName() << "'" << clEndl;
 
@@ -102,7 +105,7 @@ void phpmd::OnFileAction(clCommandEvent& e)
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    if (FileExtManager::IsPHPFile(editor->GetFileName())) {
+    if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         /* Calling DelAllCompilerMarkers will remove marks placed by other linters
         if(m_mgr->GetActiveEditor()) {
             m_mgr->GetActiveEditor()->DelAllCompilerMarkers();
@@ -127,7 +130,7 @@ void phpmd::DoCheckFile(const wxFileName& filename)
     wxString config = "/home/ajenbo/code/meebookweb/build/phpmd.xml";
     ::WrapWithQuotes(config);
 
-    command << " /usr/bin/phpmd " << file << " text " << config;
+    command << " /usr/bin/phpmd " << file << " xml " << config;
 
     // Run the check command
     m_process = ::CreateAsyncProcess(this, command);
@@ -174,21 +177,36 @@ void phpmd::PhpCSDone(const wxString& lintOutput, const wxString& filename)
     IEditor* editor = m_mgr->FindEditor(filename);
     CHECK_PTR_RET(editor);
 
-    wxRegEx reLine("^.*:([0-9]+)\t", wxRE_ADVANCED);
-    wxArrayString lines = ::wxStringTokenize(lintOutput, "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.GetCount(); ++i) {
-        wxString errorString = lines.Item(i);
-        // get the line number
-        if(reLine.Matches(errorString)) {
-            wxString strLine = reLine.GetMatch(errorString, 1);
-            int where = errorString.find("\t");
-            errorString = errorString.Mid(where);
-            errorString.Trim().Trim(false);
-            long nLine(wxNOT_FOUND);
-            if(strLine.ToCLong(&nLine)) {
-                CL_DEBUG("phpmd: adding error marker @%d", (int)nLine - 1);
-                editor->SetErrorMarker(nLine - 1, errorString);
+    wxStringInputStream lintOutputStream(lintOutput);
+    wxXmlDocument doc;
+    if(!doc.Load(lintOutputStream)) {
+        return;
+    }
+
+    // Priority can be 1-5, 5 being the least sevear.
+    // By default phpmd seams to award 1, 3 and 5 to it rules. Only very few rules have 5
+    // So 3 seams a sensible default, but it might be good to have it configurable,
+    // especially if people define different priorities in there phpmd.xml
+    int warningLevel = 3;
+
+    wxXmlNode* violation = doc.GetRoot()->GetChildren()->GetChildren();
+    while(violation) {
+        wxString strLine = violation->GetAttribute("beginline");
+        wxString priority = violation->GetAttribute("priority", "1");
+        wxString errorMessage = violation->GetNodeContent().Trim().Trim(false);
+
+        long nLine(wxNOT_FOUND);
+        if(strLine.ToCLong(&nLine)) {
+            CL_DEBUG("phpmd: adding error marker @%d", (int)nLine - 1);
+
+            long nPriority(wxNOT_FOUND);
+            if(priority.ToCLong(&nPriority) < warningLevel) {
+                editor->SetErrorMarker(nLine - 1, errorMessage);
+            } else {
+                editor->SetWarningMarker(nLine - 1, errorMessage);
             }
         }
+
+        violation = violation->GetNext();
     }
 }

@@ -49,6 +49,8 @@
     <Project Name="ZoomNavigator" Path="ZoomNavigator/ZoomNavigator.project" Active="No"/>
     <Project Name="EditorConfigPlugin" Path="EditorConfigPlugin/EditorConfigPlugin.project" Active="No"/>
     <Project Name="codelite_vim" Path="codelite_vim/codelite_vim.project" Active="No"/>
+    <Project Name="phpcs" Path="phpcs/phpcs.project" Active="Yes"/>
+    <Project Name="phpcs" Path="phpmd/phpmd.project" Active="Yes"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
@@ -67,8 +69,6 @@
   <VirtualDirectory Name="UnitTests">
     <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
   </VirtualDirectory>
-  <Project Name="phpcs" Path="phpcs/phpcs.project" Active="No"/>
-  <Project Name="phpmd" Path="phpmd/phpmd.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Environment/>

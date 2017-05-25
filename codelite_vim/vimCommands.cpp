@@ -47,7 +47,7 @@ bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
         skip_event = true;
         break;
     case VIM_MODI::SEARCH_MODUS:
-        // get_word_at_position( ctrl);
+        // get_text_at_position( ctrl);
         m_currentModus = VIM_MODI::NORMAL_MODUS;
     case VIM_MODI::NORMAL_MODUS:
     case VIM_MODI::REPLACING_MODUS:
@@ -58,6 +58,10 @@ bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
         command_modus(ch);
         skip_event = false;
         break;
+    case VIM_MODI::VISUAL_MODUS:
+       visual_modus( ch );
+       skip_event = false;
+       break;
     }
 
     return skip_event;
@@ -173,6 +177,48 @@ void VimCommand::normal_modus(wxChar ch)
     }
 }
 
+void VimCommand::visual_modus(wxChar ch)
+{
+
+    const int shift_ashii_num = 48;
+
+    switch(m_currentCommandPart) {
+
+    case COMMAND_PART::REPEAT_NUM:
+
+        if(((ch <= '9' && ch >= '0') && m_repeat != 0) || ((ch <= '9' && ch > '0') && m_repeat == 0)) {
+            m_repeat = m_repeat * 10 + (int)ch - shift_ashii_num;
+        } else {
+            m_baseCommand = ch;
+            switch(m_baseCommand) {
+            case 'R':
+                m_currentModus = VIM_MODI::REPLACING_MODUS;
+                m_currentCommandPart = COMMAND_PART::REPLACING;
+                break;
+            case ':':
+                m_currentModus = VIM_MODI::COMMAND_MODUS;
+                m_tmpbuf.Append(ch);
+                break;
+            default:
+                m_currentCommandPart = COMMAND_PART::MOD_NUM;
+                break;
+            }
+        }
+        break;
+
+    case COMMAND_PART::MOD_NUM:
+
+        if(ch < '9' && ch > '0' && m_baseCommand != 'r') {
+            m_actions = m_actions * 10 + (int)ch - shift_ashii_num;
+        } else {
+            m_actionCommand = ch;
+        }
+        break;
+
+    }
+}
+
+
 bool VimCommand::OnReturnDown(IEditor* editor, IManager* manager, VimCommand::eAction& action)
 {
     bool skip_event = true;
@@ -218,6 +264,11 @@ void VimCommand::command_modus(wxChar ch) { m_tmpbuf.Append(ch); }
  */
 bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
 {
+
+    if ( m_currentModus == VIM_MODI::VISUAL_MODUS ) {
+       return Command_call_visual_mode( ctrl );
+    }
+   
     wxUIActionSimulator sim;
     bool repeat_command = true;
     this->m_saveCommand = true;
@@ -315,6 +366,13 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
         ctrl->LineEnd();
         ctrl->NewLine();
         break;
+
+    /*=============== VISUAL MODE ===============*/
+    case COMMANDVI::v:
+        m_currentModus = VIM_MODI::VISUAL_MODUS;
+        this->m_tmpbuf.Clear();
+        break;
+        
     case COMMANDVI::perc:
         /*FIXME*/
         // sim.Char(']', wxMOD_SHIFT);
@@ -385,11 +443,19 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
         ctrl->DeleteBackNotLine();
         break;
     case COMMANDVI::dw:
-        m_listCopiedStr.push_back(get_word_at_position(ctrl));
+        m_listCopiedStr.push_back(get_text_at_position(ctrl , VimCommand::eTypeTextSearch::kFromPosToEndWord) );
         if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
         m_newLineCopy = false;
         ctrl->DelWordRight();
         break;
+    break;
+    case COMMANDVI::db:
+        m_listCopiedStr.push_back(get_text_at_position(ctrl, VimCommand::eTypeTextSearch::kFromPosToBeginWord ));
+        if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
+        m_newLineCopy = false;
+        ctrl->DelWordLeft();
+        break;
+    break;
     case COMMANDVI::dd: {
         int linePos;
         this->m_listCopiedStr.push_back(ctrl->GetCurLine(&linePos));
@@ -397,11 +463,12 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
     } break;
 
     case COMMANDVI::D:
+        this->m_listCopiedStr.push_back( get_text_at_position( ctrl, VimCommand::eTypeTextSearch::kFromPositionToEndLine) );
         ctrl->DelLineRight();
         break;
     /*=============== COPY ====================*/
     case COMMANDVI::yw:
-        m_listCopiedStr.push_back(get_word_at_position(ctrl));
+        m_listCopiedStr.push_back(get_text_at_position(ctrl));
         if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
         m_newLineCopy = false;
         break;
@@ -411,7 +478,7 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
     } break;
 
     case COMMANDVI::diesis: {
-        m_searchWord = get_word_at_position(ctrl);
+        m_searchWord = get_text_at_position(ctrl);
         // ctrl->SetCurrentPos( /*FIXME*/ );
         search_word(SEARCH_DIRECTION::BACKWARD, ctrl);
     } break;
@@ -472,18 +539,156 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
         this->m_saveCommand = false;
         this->m_repeatCommand = true;
         break;
+
+    {
+    case COMMANDVI::J:
+        int curr_pos = ctrl->GetCurrentPos();
+        ctrl->LineDown();
+        ctrl->Home();
+        ctrl->DeleteBack();
+        ctrl->SetCurrentPos( curr_pos );
+        /*FIXME: Workaround to avoid selection between previous 
+          end of line and current position*/
+        ctrl->CharLeft();
+        ctrl->CharRight();
+        break;
+    }
+
     }
 
     return repeat_command;
 }
 
-wxString VimCommand::get_word_at_position(wxStyledTextCtrl* ctrl)
+bool VimCommand::Command_call_visual_mode(wxStyledTextCtrl* ctrl)
 {
-    long pos = ctrl->GetCurrentPos();
-    long start = ctrl->WordStartPosition(pos, true);
-    long end = ctrl->WordEndPosition(pos, true);
-    wxString word = ctrl->GetTextRange(start, end);
-    return word;
+
+    wxUIActionSimulator sim;
+    bool repeat_command = true;
+    this->m_saveCommand = true;
+    switch(m_commandID) {
+    /*======= MOVEMENT ===========*/
+
+    case COMMANDVI::j:
+        ctrl->LineDownExtend();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::k:
+        ctrl->LineUpExtend();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::h:
+        ctrl->CharLeftExtend();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::l:
+        ctrl->CharRightExtend();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::_0:
+        ctrl->HomeExtend();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::_$:
+        ctrl->LineEndExtend();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::w:
+        ctrl->WordRightExtend();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::b:
+        ctrl->WordLeftExtend();
+        this->m_saveCommand = false;
+        break;
+
+    case COMMANDVI::G: /*====== START G =======*/
+       {
+          /*FIXME extend section*/
+            // this->m_saveCommand = false;
+        //     switch(m_repeat) {
+        //     case 0:
+        //         ctrl->DocumentEndExtend();
+        //         break;
+        //     case 1:
+        //         ctrl->DocumentStartExtend();
+        //         break;
+        //     default:
+        //        //ctrl->SetSelectionStart( ctrl->GetCurrentPos() );
+        //         ctrl->GotoLine(m_repeat - 1);
+        //         ctrl->SetSelectionEnd( ctrl->GetCurrentPos() );
+        //         break;
+        //     }
+        }
+        break;          /*~~~~~~~ END G ~~~~~~~~*/
+    case COMMANDVI::gg: /*====== START G =======*/
+        {
+          /*// FIXME extend section*/
+        //     this->m_saveCommand = false;
+        //     if(m_repeat == 0) {
+        //         m_repeat = 1;
+        //     }
+        //     //ctrl->SetSelectionStart( ctrl->GetCurrentPos() );
+        //     ctrl->GotoLine(m_repeat - 1);
+        //     ctrl->SetSelectionEnd( ctrl->GetCurrentPos() );
+        //     repeat_command = false;
+        }
+        break;
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+        /*========== DELETE AND COPY =======================*/
+        
+    case COMMANDVI::d:
+        this->m_listCopiedStr.push_back( ctrl->GetSelectedText() );
+        ctrl->DeleteBack(); /*? better use Clear()*/
+        this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
+        m_currentModus = VIM_MODI::NORMAL_MODUS;
+        break;
+
+    case COMMANDVI::y:
+        this->m_listCopiedStr.push_back( ctrl->GetSelectedText() );
+        this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
+        m_currentModus = VIM_MODI::NORMAL_MODUS;
+        break;
+    }
+
+    return repeat_command;
+}
+
+
+
+wxString VimCommand::get_text_at_position(wxStyledTextCtrl* ctrl, VimCommand::eTypeTextSearch typeTextToSearch)
+{
+
+   long pos, start, end;
+   
+   pos = ctrl->GetCurrentPos();
+
+   switch ( typeTextToSearch )
+   {
+   case kAllWord:
+      start = ctrl->WordStartPosition(pos, true);
+      end = ctrl->WordEndPosition(pos, true);
+      break;
+   case kFromPosToEndWord:
+      start = pos;
+      end = ctrl->WordEndPosition(pos, true);
+      break;
+   case kFromPosToBeginWord:
+      end = pos;
+      start = ctrl->WordStartPosition( pos, true );
+      break;
+   case kFromPositionToEndLine:
+      start = pos;
+      end = ctrl->GetLineEndPosition( ctrl->GetCurrentLine() );
+      break;
+   case kFromPositionToBeginLine:
+      end = pos;
+      start = ctrl->PositionFromLine( ctrl->GetCurrentLine() );
+      break;
+   }
+
+   return ctrl->GetTextRange(start, end);
+
 }
 
 bool VimCommand::is_space_following(wxStyledTextCtrl* ctrl)
@@ -643,6 +848,13 @@ bool VimCommand::is_cmd_complete()
             m_repeat = 1;
             break;
         }
+        /*================== CHANGE INTO VISUAL MODE ================*/
+    case 'v':
+        m_commandID = COMMANDVI::v;
+        //m_currentModus = VIM_MODI::VISUAL_MODUS;
+        command_complete = true;
+        m_repeat = 1;
+        break;
     case '%':
         m_commandID = COMMANDVI::perc;
         command_complete = true;
@@ -710,7 +922,13 @@ bool VimCommand::is_cmd_complete()
     case 'd': /*~~~~~~~ d[...] ~~~~~~~~*/
         switch(m_actionCommand) {
         case '\0':
-            command_complete = false;
+            if ( m_currentModus == VIM_MODI::VISUAL_MODUS ) {
+                command_complete = true;
+                m_commandID = COMMANDVI::d;
+                this->m_listCopiedStr.clear();
+            } else {
+                command_complete = false;
+            }
             break;
         case 'w':
             command_complete = true;
@@ -723,6 +941,11 @@ bool VimCommand::is_cmd_complete()
             this->m_listCopiedStr.clear();
             this->m_newLineCopy = true;
             break;
+        case 'b':
+            command_complete = true;
+            m_commandID = COMMANDVI::db;
+            this->m_listCopiedStr.clear();
+            break;
         }
         break;
     case 'D':
@@ -733,6 +956,7 @@ bool VimCommand::is_cmd_complete()
             m_modifierKey = 0;
         } else {
             command_complete = true;
+            this->m_listCopiedStr.clear();
             m_commandID = COMMANDVI::D;
         }
         break;
@@ -749,7 +973,13 @@ bool VimCommand::is_cmd_complete()
     case 'y':
         switch(m_actionCommand) {
         case '\0':
-            command_complete = false;
+            if ( m_currentModus == VIM_MODI::VISUAL_MODUS ) {
+                command_complete = true;
+                m_commandID = COMMANDVI::y;
+                this->m_listCopiedStr.clear();
+            } else {
+                command_complete = false;
+            }
             break;
         case 'w':
             command_complete = true;
@@ -807,6 +1037,10 @@ bool VimCommand::is_cmd_complete()
         command_complete = true;
         m_commandID = COMMANDVI::P;
         this->m_repeat = 1;
+        break;
+    case 'J':
+        command_complete = true;
+        m_commandID = COMMANDVI::J;
         break;
     }
 

@@ -29,6 +29,7 @@ enum class VIM_MODI {
 
 enum class SEARCH_DIRECTION { BACKWARD, FORWARD };
 
+
 /*enumeration of implemented commands*/
 enum class COMMANDVI {
     NO_COMMAND,
@@ -57,8 +58,10 @@ enum class COMMANDVI {
     cc,
     S,
     x,
+    d, /*Visual modeyy delete*/
     dw,
     dd,
+    db,
     D,
     diesis,
     N,
@@ -69,8 +72,11 @@ enum class COMMANDVI {
     ctrl_D, /*One has to 'disattivate' the default behavior of Ctrl+D/U*/
     p,
     P,
+    y, /*visual mode*/        
     yy,
-    yw
+    yw,
+    J,
+    v
 };
 
 /**
@@ -118,6 +124,14 @@ public:
         kSaveAndClose,
     };
 
+    enum eTypeTextSearch {
+       kAllWord,
+       kFromPosToEndWord,
+       kFromPosToBeginWord,
+       kFromPositionToEndLine,
+       kFromPositionToBeginLine
+    };
+    
 public:
     VimCommand();
     ~VimCommand();
@@ -143,6 +157,7 @@ public:
     void issue_cmd(wxStyledTextCtrl* ctrl);
     void repeat_issue_cmd(wxStyledTextCtrl* ctrl, wxString buf);
     bool Command_call(wxStyledTextCtrl* ctrl);
+    bool Command_call_visual_mode(wxStyledTextCtrl* ctrl);
     bool is_cmd_complete();
     void set_current_word(wxString word);
     void set_current_modus(VIM_MODI modus);
@@ -156,10 +171,11 @@ private:
     int getNumActions();
     void evidentiate_word(wxStyledTextCtrl* ctrl);
     void append_command(wxChar ch);
-    wxString get_word_at_position(wxStyledTextCtrl* ctrl);
+    wxString get_text_at_position(wxStyledTextCtrl* ctrl, VimCommand::eTypeTextSearch typeSearch = VimCommand::eTypeTextSearch::kAllWord);
     bool is_space_following(wxStyledTextCtrl* ctrl);
     bool search_word(SEARCH_DIRECTION flag, wxStyledTextCtrl* ctrl);
     void normal_modus(wxChar ch);
+    void visual_modus(wxChar ch);
     void command_modus(wxChar ch);
     void insert_modus(wxChar ch);
 

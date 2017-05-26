@@ -34,7 +34,7 @@ class LEditor;
 class clPrintout : public wxPrintout
 {
     LEditor* m_edit;
-    int m_printed;
+    wxArrayInt m_pageEnds;
     wxRect m_pageRect;
     wxRect m_printRect;
     int m_minPage;

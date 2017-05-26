@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
-#define _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
+#ifndef CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
+#define CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -187,7 +187,6 @@ protected:
     wxTextCtrl* m_textCtrlXDebugPort;
     wxStaticText* m_staticText152;
     wxTextCtrl* m_textCtrlIdeKey;
-    wxPanel* m_panel407;
     wxButton* m_button9;
     wxButton* m_button10;
 
@@ -217,7 +216,6 @@ public:
     wxStaticText* GetStaticText152() { return m_staticText152; }
     wxTextCtrl* GetTextCtrlIdeKey() { return m_textCtrlIdeKey; }
     wxPanel* GetPanel13() { return m_panel13; }
-    wxPanel* GetPanel407() { return m_panel407; }
     wxTreebook* GetTreebook9() { return m_treebook9; }
     wxButton* GetButton9() { return m_button9; }
     wxButton* GetButton10() { return m_button10; }

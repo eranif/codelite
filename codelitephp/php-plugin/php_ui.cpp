@@ -513,7 +513,6 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_treebook9->ExpandNode( 0, true );
     m_treebook9->ExpandNode( 1, true );
     m_treebook9->ExpandNode( 2, true );
-    m_treebook9->ExpandNode( 3, true );
 
     SetName(wxT("PHPSettingsBaseDlg"));
     SetMinClientSize(wxSize(500,300));

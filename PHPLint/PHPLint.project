@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="PHPLint">
+<CodeLite_Project Name="PHPLint" Version="10.0.0">
   <VirtualDirectory Name="src">
     <File Name="phplint.cpp"/>
+    <File Name="phplintdlg.wxcp"/>
+    <File Name="phplintdlgbase.cpp"/>
+    <File Name="phplintdlgbase.h"/>
+    <File Name="phplintdlg_phplint_bitmaps.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="phplint.h"/>
@@ -38,12 +42,12 @@
         <Command Enabled="yes">copy "$(IntermediateDirectory)\phpmd-dbg.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
+        <CleanCommand/>
+        <BuildCommand/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
@@ -73,13 +77,17 @@
         <Command Enabled="yes">copy "$(IntermediateDirectory)\PHPLint.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
+        <CleanCommand/>
+        <BuildCommand/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="Dialogs">
+    <File Name="phplintdlg.cpp"/>
+    <File Name="phplintdlg.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

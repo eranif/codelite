@@ -35,6 +35,7 @@
     <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
     <Project Name="PHPParser" Path="codelitephp/PHPParser/PHPParser.project" Active="No"/>
     <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
+    <Project Name="PHPLint" Path="PHPLint/PHPLint.project" Active="No"/>
     <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
     <Project Name="SFTP" Path="SFTP/SFTP.project" Active="No"/>
     <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
@@ -49,8 +50,6 @@
     <Project Name="ZoomNavigator" Path="ZoomNavigator/ZoomNavigator.project" Active="No"/>
     <Project Name="EditorConfigPlugin" Path="EditorConfigPlugin/EditorConfigPlugin.project" Active="No"/>
     <Project Name="codelite_vim" Path="codelite_vim/codelite_vim.project" Active="No"/>
-    <Project Name="phpcs" Path="phpcs/phpcs.project" Active="Yes"/>
-    <Project Name="phpcs" Path="phpmd/phpmd.project" Active="Yes"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
@@ -104,6 +103,7 @@
       <Project Name="PHPParser" ConfigName="Release"/>
       <Project Name="PHPParserUnitTests" ConfigName="Release"/>
       <Project Name="PHPPlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="plugin_sdk" ConfigName="Win_x86_Release"/>
       <Project Name="QMakePlugin" ConfigName="Win_x86_Release"/>
       <Project Name="SFTP" ConfigName="Win_x86_Release"/>
@@ -120,8 +120,6 @@
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
-      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpmd" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
@@ -143,6 +141,7 @@
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPParser" ConfigName="Debug"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="PCH" ConfigName="Release"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
@@ -174,8 +173,6 @@
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpmd" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
@@ -198,6 +195,7 @@
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
       <Project Name="PHPParserUnitTests" ConfigName="Debug_Unix"/>
       <Project Name="PHPParser" ConfigName="Debug_Unix"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="PCH" ConfigName="Release"/>
       <Project Name="Outline" ConfigName="Win_x86_Release"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
@@ -228,8 +226,6 @@
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpmd" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
@@ -274,6 +270,7 @@
       <Project Name="PHPParser" ConfigName="Debug"/>
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
@@ -282,8 +279,6 @@
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpmd" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
@@ -328,6 +323,7 @@
       <Project Name="PHPParser" ConfigName="Debug"/>
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
@@ -336,8 +332,6 @@
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpmd" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
@@ -374,6 +368,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="PHPParser" ConfigName="Win_x64_Release"/>
       <Project Name="PHPParserUnitTests" ConfigName="Win_x64_Release"/>
       <Project Name="PHPPlugin" ConfigName="Win_x64_Release"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Release"/>
       <Project Name="plugin_sdk" ConfigName="Win_x64_Release"/>
       <Project Name="QMakePlugin" ConfigName="Win_x64_Release"/>
       <Project Name="SFTP" ConfigName="Win_x64_Release"/>
@@ -391,8 +386,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Release"/>
-      <Project Name="phpcs" ConfigName="Win_x64_Release"/>
-      <Project Name="phpmd" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
@@ -428,6 +421,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="PHPParser" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPParserUnitTests" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPPlugin" ConfigName="Win_x64_Debug"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="plugin_sdk" ConfigName="Win_x64_Debug"/>
       <Project Name="QMakePlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="SFTP" ConfigName="Win_x64_Debug"/>
@@ -445,8 +439,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpcs" ConfigName="Win_x64_Debug"/>
-      <Project Name="phpmd" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

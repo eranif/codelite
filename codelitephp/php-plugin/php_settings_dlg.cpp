@@ -16,7 +16,6 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     m_textCtrlIncludePath->ChangeValue(data.GetIncludePathsAsString());
     m_textCtrCClIncludePath->ChangeValue(data.GetCCIncludePathsAsString());
     m_textCtrlIdeKey->ChangeValue(data.GetXdebugIdeKey());
-    m_checkBoxRunLint->SetValue(data.IsRunLint());
     wxString strPort;
     strPort << data.GetXdebugPort();
     m_textCtrlXDebugPort->ChangeValue(strPort);
@@ -49,7 +48,6 @@ void PHPSettingsDlg::OnOK(wxCommandEvent& event)
     data.SetCcIncludePath(wxStringTokenize(m_textCtrCClIncludePath->GetValue(), wxT("\n\n"), wxTOKEN_STRTOK));
     data.SetPhpExe(m_filePickerPHPPath->GetPath());
     data.SetXdebugIdeKey(m_textCtrlIdeKey->GetValue());
-    data.SetRunLint(m_checkBoxRunLint->IsChecked());
     data.SetXdebugHost(m_textCtrlHost->GetValue());
     wxString xdebugPort = m_textCtrlXDebugPort->GetValue();
     long port(0);

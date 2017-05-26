@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// Copyright            : (C) 2015 Eran Ifrah
-// File name            : PHPLint.h
+// Copyright            : (C) 2017 Anders Jenbo
+// File name            : phplint.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,44 +23,55 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHPLINT_H
-#define PHPLINT_H
+#ifndef __phplint__
+#define __phplint__
 
-#include <wx/string.h>
-#include <wx/event.h>
-#include <list>
-#include <wx/filename.h>
-#include "smart_ptr.h"
-#include "cl_command_event.h"
+#include "plugin.h"
 
-class PhpPlugin;
-class IProcess;
-class PHPLint : public wxEvtHandler
+class PHPLint : public IPlugin
 {
-    PhpPlugin* m_plugin;
     std::list<wxFileName> m_queue;
     wxString m_output;
     IProcess* m_process;
     wxString m_currentFileBeingProcessed;
-    
-public:
-    typedef SmartPtr<PHPLint> Ptr_t;
-    
+
+private:
+    void DispatchCommand(const wxString& command, const wxFileName& filename);
+    void ProcessPhpError(const wxString& lintOutput, IEditor*& editor);
+    void ProcessXML(const wxString& lintOutput, IEditor*& editor);
+    bool IsWarning(wxXmlNode* violation, const wxString& linter);
+    void MarkError(wxString& errorMessage, const wxString& strLine, IEditor*& editor, bool isWarning = false);
+    void RunLint();
+
 protected:
     void DoProcessQueue();
     void DoCheckFile(const wxFileName& filename);
-    
+
 public:
-    PHPLint(PhpPlugin *plugin);
+    PHPLint(IManager *manager);
     ~PHPLint();
-    
+
+    //--------------------------------------------
+    //Abstract methods
+    //--------------------------------------------
+    virtual clToolBar *CreateToolBar(wxWindow *parent);
     /**
-     * @brief run php line on the current file and report back the error
+     * @brief Add plugin menu to the "Plugins" menu item in the menu bar
      */
-    void CheckCode(const wxFileName& filename);
-    
+    virtual void CreatePluginMenu(wxMenu *pluginsMenu);
+
+    /**
+     * @brief Unplug the plugin. Perform here any cleanup needed (e.g. unbind events, destroy allocated windows)
+     */
+    virtual void UnPlug();
+
+    void OnCheck(wxCommandEvent& e);
+    void OnLintingDone(const wxString& lintOutput, const wxString& filename);
+    void OnFileAction(clCommandEvent& e);
     void OnProcessTerminated(clProcessEvent &event);
     void OnProcessOutput(clProcessEvent &event);
+    void OnMenuCommand(wxCommandEvent& e);
+    void OnMenuRunLint(wxCommandEvent& e);
 };
 
-#endif // PHPLINT_H
+#endif //PHPLint

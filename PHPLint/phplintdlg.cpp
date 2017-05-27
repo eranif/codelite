@@ -1,35 +1,33 @@
 #include "phplintdlg.h"
+#include "windowattrmanager.h"
+#include "lintoptions.h"
 
 PHPLintDlg::PHPLintDlg(wxWindow* parent)
     : PHPLintBaseDlg(parent)
 {
+    // center the dialog
+    Centre();
+
+    InitDialog();
+
+    SetName("PHPLintDlg");
+    WindowAttrManager::Load(this);
 }
 
 PHPLintDlg::~PHPLintDlg()
 {
 }
 
-void PHPLintDlg::OnCancel(wxCommandEvent& event)
+void PHPLintDlg::InitDialog()
 {
-}
-void PHPLintDlg::OnLintOnLoad(wxCommandEvent& event)
-{
-}
-void PHPLintDlg::OnLintOnSave(wxCommandEvent& event)
-{
-}
-void PHPLintDlg::OnOK(wxCommandEvent& event)
-{
-}
-void PHPLintDlg::OnPhpFileSelected(wxFileDirPickerEvent& event)
-{
-}
-void PHPLintDlg::OnPhpcsFileSelected(wxFileDirPickerEvent& event)
-{
-}
-void PHPLintDlg::OnPhpmdFileSelected(wxFileDirPickerEvent& event)
-{
-}
-void PHPLintDlg::OnPhpmdRulesFileSelected(wxFileDirPickerEvent& event)
-{
+    LintOptions settings;
+    settings.Load();
+
+    m_filePickerPhpcsPhar->SetPath(settings.GetPhpcsPhar());
+    m_filePickerPhpmdPhar->SetPath(settings.GetPhpmdPhar());
+    m_filePickerPhpmdRules->SetPath(settings.GetPhpmdRules());
+
+    // General Options
+    m_checkBoxLintOnLoad->SetValue(settings.IsLintOnFileLoad());
+    m_checkBoxLintOnSave->SetValue(settings.IsLintOnFileSave());
 }

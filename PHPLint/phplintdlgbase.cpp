@@ -44,16 +44,6 @@ PHPLintBaseDlg::PHPLintBaseDlg(wxWindow* parent, wxWindowID id, const wxString& 
     
     boxSizer1->Add(flexGridSizer1, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_staticText1 = new wxStaticText(m_panelGeneral, wxID_ANY, _("PHP Executable:"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1,-1)), 0);
-    
-    flexGridSizer1->Add(m_staticText1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_filePickerPhpExec = new wxFilePickerCtrl(m_panelGeneral, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPhpExec->SetToolTip(_("Select the PHP executable to use"));
-    m_filePickerPhpExec->SetFocus();
-    
-    flexGridSizer1->Add(m_filePickerPhpExec, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
     m_checkBoxLintOnLoad = new wxCheckBox(m_panelGeneral, wxID_ANY, _("Lint on file load"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1,-1)), 0);
     m_checkBoxLintOnLoad->SetValue(false);
     m_checkBoxLintOnLoad->SetToolTip(_("When saving a file, automatically lint it"));
@@ -161,27 +151,8 @@ PHPLintBaseDlg::PHPLintBaseDlg(wxWindow* parent, wxWindowID id, const wxString& 
         wxPersistenceManager::Get().Restore(this);
     }
 #endif
-    // Connect events
-    m_filePickerPhpExec->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPLintBaseDlg::OnPhpFileSelected), NULL, this);
-    m_checkBoxLintOnLoad->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPLintBaseDlg::OnLintOnLoad), NULL, this);
-    m_checkBoxLintOnSave->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPLintBaseDlg::OnLintOnSave), NULL, this);
-    m_filePickerPhpcsPhar->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPLintBaseDlg::OnPhpcsFileSelected), NULL, this);
-    m_filePickerPhpmdPhar->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPLintBaseDlg::OnPhpmdFileSelected), NULL, this);
-    m_filePickerPhpmdRules->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPLintBaseDlg::OnPhpmdRulesFileSelected), NULL, this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPLintBaseDlg::OnOK), NULL, this);
-    m_buttonCancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPLintBaseDlg::OnCancel), NULL, this);
-    
 }
 
 PHPLintBaseDlg::~PHPLintBaseDlg()
 {
-    m_filePickerPhpExec->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPLintBaseDlg::OnPhpFileSelected), NULL, this);
-    m_checkBoxLintOnLoad->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPLintBaseDlg::OnLintOnLoad), NULL, this);
-    m_checkBoxLintOnSave->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPLintBaseDlg::OnLintOnSave), NULL, this);
-    m_filePickerPhpcsPhar->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPLintBaseDlg::OnPhpcsFileSelected), NULL, this);
-    m_filePickerPhpmdPhar->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPLintBaseDlg::OnPhpmdFileSelected), NULL, this);
-    m_filePickerPhpmdRules->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPLintBaseDlg::OnPhpmdRulesFileSelected), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPLintBaseDlg::OnOK), NULL, this);
-    m_buttonCancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPLintBaseDlg::OnCancel), NULL, this);
-    
 }

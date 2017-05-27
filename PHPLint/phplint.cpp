@@ -6,8 +6,11 @@
 #include <event_notifier.h>
 #include <wx/sstream.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/msgdlg.h>
 #include "wx/menu.h"
 #include "phplintdlg.h"
+#include "lintoptions.h"
+#include "lintphpoptions.h"
 
 static PHPLint* thePlugin = NULL;
 
@@ -43,6 +46,9 @@ PHPLint::PHPLint(IManager* manager)
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &PHPLint::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &PHPLint::OnProcessTerminated, this);
+
+    m_settings.Load();
+    m_settingsPhp.Load();
 }
 
 PHPLint::~PHPLint()
@@ -55,8 +61,8 @@ clToolBar* PHPLint::CreateToolBar(wxWindow* parent)
     clToolBar* tb(NULL);
 
     // Connect the events to us
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(PHPLint::OnFileAction), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_LOADED, clCommandEventHandler(PHPLint::OnFileAction), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_LOADED, clCommandEventHandler(PHPLint::OnLoadFile), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(PHPLint::OnSaveFile), NULL, this);
 
     return tb;
 }
@@ -84,8 +90,17 @@ void PHPLint::OnMenuCommand(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
-    PHPLintDlg dlg(m_mgr->GetTheApp()->GetTopWindow());
-    dlg.ShowModal();
+    PHPLintDlg dlg(EventNotifier::Get()->TopFrame());
+    if(dlg.ShowModal() == wxID_OK) {
+        // Store the settings
+        m_settings
+        .SetLintOnFileLoad(dlg.GetCheckBoxLintOnLoad()->IsChecked())
+        .SetLintOnFileSave(dlg.GetCheckBoxLintOnSave()->IsChecked())
+        .SetPhpcsPhar(dlg.GetFilePickerPhpcsPhar()->GetFileName())
+        .SetPhpmdPhar(dlg.GetFilePickerPhpmdPhar()->GetFileName())
+        .SetPhpmdRules(dlg.GetFilePickerPhpmdRules()->GetFileName())
+        .Save();
+    }
 }
 
 void PHPLint::OnMenuRunLint(wxCommandEvent& e)
@@ -102,16 +117,30 @@ void PHPLint::UnPlug()
     m_mgr->GetTheApp()->Disconnect(2006, wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(PHPLint::OnMenuCommand), NULL, (wxEvtHandler*)this);
 
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(PHPLint::OnFileAction), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_LOADED, clCommandEventHandler(PHPLint::OnFileAction), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_LOADED, clCommandEventHandler(PHPLint::OnLoadFile), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(PHPLint::OnSaveFile), NULL, this);
 }
 
-void PHPLint::OnFileAction(clCommandEvent& e)
+void PHPLint::OnLoadFile(clCommandEvent& e)
 {
     e.Skip();
 
-    RunLint();
+    if(!m_settings.IsLintOnFileLoad()) {
+        return;
+    }
 
+    RunLint();
+}
+
+void PHPLint::OnSaveFile(clCommandEvent& e)
+{
+    e.Skip();
+
+    if(!m_settings.IsLintOnFileSave()) {
+        return;
+    }
+
+    RunLint();
 }
 
 void PHPLint::RunLint()
@@ -137,17 +166,38 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
     wxString file = filename.GetFullPath();
     ::WrapWithQuotes(file);
 
-    command = "/usr/bin/phpmd ";
-    command << file << " xml /home/ajenbo/code/ArmsGallery/phpmd.xml";
+    wxFileName php(m_settingsPhp.GetPhpExecutable());
+    if(!php.Exists()) {
+        ::wxMessageBox(_("Can not lint file: Missing PHP executable path"),
+                       "PHPLint", wxICON_ERROR | wxOK | wxCENTER);
+        return;
+    }
+    wxString phpPath = php.GetFullPath();
+    ::WrapWithQuotes(phpPath);
+
+    command = phpPath + " -l " + file;
     DispatchCommand(command, filename);
 
-    command = "/usr/bin/phpcs --report=xml ";
-    command << file;
-    DispatchCommand(command, filename);
+    wxFileName phpcs(m_settings.GetPhpcsPhar());
+    if(phpcs.Exists()) {
+        wxString phpcsPath = phpcs.GetFullPath();
+        ::WrapWithQuotes(phpcsPath);
 
-    command = "/usr/bin/php -l ";
-    command << file;
-    DispatchCommand(command, filename);
+        command = phpPath + " " + phpcsPath + " --report=xml " + file;
+        DispatchCommand(command, filename);
+    }
+
+    wxFileName phpmd(m_settings.GetPhpmdPhar());
+    wxFileName phpmdRules(m_settings.GetPhpmdRules());
+    if(phpmd.Exists() && phpmdRules.Exists()) {
+        wxString phpmdPath = phpmd.GetFullPath();
+        ::WrapWithQuotes(phpmdPath);
+        wxString phpmdRulesPath = phpmdRules.GetFullPath();
+        ::WrapWithQuotes(phpmdRulesPath);
+
+        command = phpPath + " " + phpmdPath + " " + file + " xml " + phpmdRulesPath;
+        DispatchCommand(command, filename);
+    }
 }
 
 void PHPLint::DispatchCommand(const wxString& command, const wxFileName& filename)
@@ -179,8 +229,9 @@ void PHPLint::OnProcessTerminated(clProcessEvent& event)
 {
     CL_DEBUG("PHPLint: process terminated. output: %s", m_output);
     wxDELETE(m_process);
-    CallAfter(&PHPLint::OnLintingDone, m_output, m_currentFileBeingProcessed);
-    m_output = "";
+    wxString output = m_output.Clone();
+    m_output.clear();
+    CallAfter(&PHPLint::OnLintingDone, output, m_currentFileBeingProcessed);
     // Check the queue for more files
     DoProcessQueue();
 }
@@ -198,7 +249,7 @@ void PHPLint::OnLintingDone(const wxString& lintOutput, const wxString& filename
     IEditor* editor = m_mgr->FindEditor(filename);
     CHECK_PTR_RET(editor);
 
-    if (lintOutput.Contains("PHP Parse error:") && lintOutput.Contains(" in ")) {
+    if (lintOutput.Contains("Errors parsing")) {
         ProcessPhpError(lintOutput, editor);
         return;
     }
@@ -213,9 +264,9 @@ void PHPLint::ProcessPhpError(const wxString& lintOutput, IEditor*& editor)
     if(reLine.Matches(lintOutput)) {
         wxString strLine = reLine.GetMatch(lintOutput, 1);
 
-        int start = lintOutput.Find("PHP Parse error:");
+        int start = lintOutput.Find("error:");
         int end = lintOutput.Find(" in ");
-        wxString errorMessage = lintOutput.Mid(start, end - start);
+        wxString errorMessage = lintOutput.Mid(start + 6, end - 6 - start);
 
         MarkError(errorMessage, strLine, editor);
     }

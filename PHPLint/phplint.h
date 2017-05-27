@@ -27,6 +27,8 @@
 #define __phplint__
 
 #include "plugin.h"
+#include "lintoptions.h"
+#include "lintphpoptions.h"
 
 class PHPLint : public IPlugin
 {
@@ -34,6 +36,8 @@ class PHPLint : public IPlugin
     wxString m_output;
     IProcess* m_process;
     wxString m_currentFileBeingProcessed;
+    LintOptions m_settings;
+    LintPhpOptions m_settingsPhp;
 
 private:
     void DispatchCommand(const wxString& command, const wxFileName& filename);
@@ -67,7 +71,8 @@ public:
 
     void OnCheck(wxCommandEvent& e);
     void OnLintingDone(const wxString& lintOutput, const wxString& filename);
-    void OnFileAction(clCommandEvent& e);
+    void OnLoadFile(clCommandEvent& e);
+    void OnSaveFile(clCommandEvent& e);
     void OnProcessTerminated(clProcessEvent &event);
     void OnProcessOutput(clProcessEvent &event);
     void OnMenuCommand(wxCommandEvent& e);

@@ -17,9 +17,9 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
+#include <wx/checkbox.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
-#include <wx/checkbox.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -43,8 +43,6 @@ class PHPLintBaseDlg : public wxDialog
 protected:
     wxNotebook* m_notebook;
     wxPanel* m_panelGeneral;
-    wxStaticText* m_staticText1;
-    wxFilePickerCtrl* m_filePickerPhpExec;
     wxCheckBox* m_checkBoxLintOnLoad;
     wxCheckBox* m_checkBoxLintOnSave;
     wxPanel* m_panelPhpcs;
@@ -60,18 +58,8 @@ protected:
     wxButton* m_buttonCancel;
 
 protected:
-    virtual void OnPhpFileSelected(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnLintOnLoad(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnLintOnSave(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPhpcsFileSelected(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnPhpmdFileSelected(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnPhpmdRulesFileSelected(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCancel(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText1() { return m_staticText1; }
-    wxFilePickerCtrl* GetFilePickerPhpExec() { return m_filePickerPhpExec; }
     wxCheckBox* GetCheckBoxLintOnLoad() { return m_checkBoxLintOnLoad; }
     wxCheckBox* GetCheckBoxLintOnSave() { return m_checkBoxLintOnSave; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }

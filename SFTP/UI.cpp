@@ -26,14 +26,14 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,200), wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,200)), wxDV_SINGLE);
     
-    boxSizer2->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 2);
+    boxSizer2->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrl->AppendTextColumn(_("Time"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
-    m_dvListCtrl->AppendBitmapColumn(_("Status"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Account"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, 600, wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Time"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT);
+    m_dvListCtrl->AppendBitmapColumn(_("Status"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Account"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(600), wxALIGN_LEFT);
     
     SetName(wxT("SFTPStatusPageBase"));
     SetSize(-1,-1);
@@ -53,6 +53,8 @@ SFTPStatusPageBase::~SFTPStatusPageBase()
 
 SFTPImages::SFTPImages()
     : wxImageList(16, 16, true)
+    , m_imagesWidth(16)
+    , m_imagesHeight(16)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
@@ -65,54 +67,150 @@ SFTPImages::SFTPImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_ok"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("sftp_ok"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_ok"), bmp));
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_ok@2x"));
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_ok@2x"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_error"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("sftp_error"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_error"), bmp));
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_error@2x"));
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_error@2x"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_info"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("sftp_info"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_info"), bmp));
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_info@2x"));
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_info@2x"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_tab"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("sftp_tab"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_tab"), bmp));
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_tab@2x"));
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_tab@2x"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_connected"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("sftp_connected"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_connected"), bmp));
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_connected@2x"));
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_connected@2x"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_disconnected"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("sftp_disconnected"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_disconnected"), bmp));
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_disconnected@2x"));
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("sftp_disconnected@2x"), bmp));
+        }
     }
     
 }
@@ -134,10 +232,10 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer16->Add(m_auibar, 0, wxEXPAND, 5);
+    boxSizer16->Add(m_auibar, 0, wxEXPAND, WXC_FROM_DIP(5));
     
     m_auibar->AddTool(ID_OPEN_ACCOUNT_MANAGER, _("Open account manager..."), wxXmlResource::Get()->LoadBitmap(wxT("16-folder-users")), wxNullBitmap, wxITEM_NORMAL, _("Open account manager..."), _("Open account manager..."), NULL);
     
@@ -165,34 +263,32 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_auibar->Realize();
     
     wxArrayString m_choiceAccountArr;
-    m_choiceAccount = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceAccountArr, 0);
+    m_choiceAccount = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceAccountArr, 0);
     
-    boxSizer16->Add(m_choiceAccount, 0, wxALL|wxEXPAND, 2);
+    boxSizer16->Add(m_choiceAccount, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     wxFlexGridSizer* flexGridSizer43 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer43->SetFlexibleDirection( wxBOTH );
     flexGridSizer43->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer43->AddGrowableCol(1);
     
-    boxSizer16->Add(flexGridSizer43, 0, wxEXPAND, 5);
+    boxSizer16->Add(flexGridSizer43, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText49 = new wxStaticText(this, wxID_ANY, _("Go to:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText49 = new wxStaticText(this, wxID_ANY, _("Go to:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer43->Add(m_staticText49, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer43->Add(m_staticText49, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlQuickJump = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlQuickJump = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
     m_textCtrlQuickJump->SetToolTip(_("Type a path and hit ENTER"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlQuickJump->SetHint(wxT(""));
     #endif
     
-    flexGridSizer43->Add(m_textCtrlQuickJump, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer43->Add(m_textCtrlQuickJump, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_treeListCtrl = new wxTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(200,200), wxTL_DEFAULT_STYLE|wxTL_MULTIPLE);
+    m_treeCtrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE);
     
-    boxSizer16->Add(m_treeListCtrl, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 2);
-    
-    m_treeListCtrl->AppendColumn(_("Name"), 400, wxALIGN_LEFT, wxCOL_RESIZABLE|wxCOL_SORTABLE);
+    boxSizer16->Add(m_treeCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     SetName(wxT("SFTPTreeViewBase"));
     SetSize(-1,-1);
@@ -212,10 +308,9 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_staticText49->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_textCtrlQuickJump->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation), NULL, this);
     m_textCtrlQuickJump->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
-    m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
-    m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
-    m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_CONTEXT_MENU, wxTreeListEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
-    m_treeListCtrl->Connect(wxEVT_TREELIST_SELECTION_CHANGED, wxTreeListEventHandler(SFTPTreeViewBase::OnSelectionChanged), NULL, this);
+    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
+    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
+    m_treeCtrl->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
     
     this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::ShowAuiToolMenu), NULL, this);
 }
@@ -234,10 +329,9 @@ SFTPTreeViewBase::~SFTPTreeViewBase()
     m_staticText49->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_textCtrlQuickJump->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation), NULL, this);
     m_textCtrlQuickJump->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
-    m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
-    m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
-    m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_CONTEXT_MENU, wxTreeListEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
-    m_treeListCtrl->Disconnect(wxEVT_TREELIST_SELECTION_CHANGED, wxTreeListEventHandler(SFTPTreeViewBase::OnSelectionChanged), NULL, this);
+    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
+    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
+    m_treeCtrl->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
     
     std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
     for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
@@ -283,30 +377,30 @@ SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowI
     
     wxBoxSizer* boxSizer64 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer56->Add(boxSizer64, 1, wxALL|wxEXPAND, 5);
+    boxSizer56->Add(boxSizer64, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxArrayString m_listBoxBookmarksArr;
-    m_listBoxBookmarks = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxBookmarksArr, wxLB_NEEDED_SB|wxLB_SINGLE);
+    m_listBoxBookmarks = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_listBoxBookmarksArr, wxLB_NEEDED_SB|wxLB_SINGLE);
     
-    boxSizer64->Add(m_listBoxBookmarks, 1, wxALL|wxEXPAND, 5);
+    boxSizer64->Add(m_listBoxBookmarks, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer68 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer64->Add(boxSizer68, 0, wxEXPAND, 5);
+    boxSizer64->Add(boxSizer68, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_button70 = new wxButton(this, wxID_DELETE, _("Delete"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button70 = new wxButton(this, wxID_DELETE, _("Delete"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer68->Add(m_button70, 0, wxALL|wxEXPAND, 5);
+    boxSizer68->Add(m_button70, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer58 = new wxStdDialogButtonSizer();
     
-    boxSizer56->Add(m_stdBtnSizer58, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer56->Add(m_stdBtnSizer58, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOk->SetDefault();
     m_stdBtnSizer58->AddButton(m_buttonOk);
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer58->AddButton(m_buttonCancel);
     m_stdBtnSizer58->Realize();
     
@@ -358,25 +452,25 @@ SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, 
     flexGridSizer91->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer91->AddGrowableCol(1);
     
-    boxSizer83->Add(flexGridSizer91, 1, wxALL|wxEXPAND, 5);
+    boxSizer83->Add(flexGridSizer91, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticSSHClient = new wxStaticText(this, wxID_ANY, _("SSH Client:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticSSHClient = new wxStaticText(this, wxID_ANY, _("SSH Client:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer91->Add(m_staticSSHClient, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer91->Add(m_staticSSHClient, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_sshClientPath = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
+    m_sshClientPath = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
     
-    flexGridSizer91->Add(m_sshClientPath, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer91->Add(m_sshClientPath, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer85 = new wxStdDialogButtonSizer();
     
-    boxSizer83->Add(m_stdBtnSizer85, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer83->Add(m_stdBtnSizer85, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button87 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button87 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button87->SetDefault();
     m_stdBtnSizer85->AddButton(m_button87);
     
-    m_button89 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button89 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer85->AddButton(m_button89);
     m_stdBtnSizer85->Realize();
     
@@ -421,11 +515,11 @@ SFTPUploadDialogBase::SFTPUploadDialogBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer102 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer102);
     
-    m_staticText110 = new wxStaticText(this, wxID_ANY, _("Upload the files to this folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText110 = new wxStaticText(this, wxID_ANY, _("Upload the files to this folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer102->Add(m_staticText110, 0, wxALL, 5);
+    boxSizer102->Add(m_staticText110, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_textCtrlRemoteFolder = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(400,-1), 0);
+    m_textCtrlRemoteFolder = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(400,-1)), 0);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlRemoteFolderFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -441,19 +535,19 @@ SFTPUploadDialogBase::SFTPUploadDialogBase(wxWindow* parent, wxWindowID id, cons
     m_textCtrlRemoteFolder->SetHint(wxT(""));
     #endif
     
-    boxSizer102->Add(m_textCtrlRemoteFolder, 0, wxALL|wxEXPAND, 5);
+    boxSizer102->Add(m_textCtrlRemoteFolder, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    boxSizer102->Add(0, 0, 1, wxALL, 5);
+    boxSizer102->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer104 = new wxStdDialogButtonSizer();
     
-    boxSizer102->Add(m_stdBtnSizer104, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer102->Add(m_stdBtnSizer104, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer104->AddButton(m_buttonOK);
     
-    m_button108 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button108 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer104->AddButton(m_button108);
     m_stdBtnSizer104->Realize();
     

@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 115,
+  "m_objCounter": 117,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC32BEInitBitmapResources",
   "m_bitmapsFile": "UI_sftp_bitmaps.cpp",
@@ -10,6 +10,7 @@
   "m_firstWindowId": 1000,
   "m_useEnum": true,
   "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -1295,13 +1296,13 @@
          "m_children": []
         }]
       }, {
-       "m_type": 4509,
+       "m_type": 4422,
        "proportion": 1,
-       "border": 2,
+       "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxTL_DEFAULT_STYLE", "wxTL_MULTIPLE"],
-       "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxBOTTOM", "wxEXPAND"],
+       "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_MULTIPLE"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",
@@ -1309,7 +1310,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "200,200"
+         "m_value": "-1,-1"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -1317,7 +1318,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_treeListCtrl"
+         "m_value": "m_treeCtrl"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -1360,63 +1361,28 @@
          "m_value": ""
         }],
        "m_events": [{
-         "m_eventName": "wxEVT_TREELIST_ITEM_EXPANDING",
-         "m_eventClass": "wxTreeListEvent",
-         "m_eventHandler": "wxTreeListEventHandler",
-         "m_functionNameAndSignature": "OnItemExpanding(wxTreeListEvent& event)",
-         "m_description": "Process wxEVT_TREELIST_ITEM_EXPANDING event notifying about the given branch being expanded. This event is sent before the expansion occurs and can be vetoed to prevent it from happening.",
+         "m_eventName": "wxEVT_COMMAND_TREE_ITEM_ACTIVATED",
+         "m_eventClass": "wxTreeEvent",
+         "m_eventHandler": "wxTreeEventHandler",
+         "m_functionNameAndSignature": "OnItemActivated(wxTreeEvent& event)",
+         "m_description": "An item has been activated (e.g. double clicked).",
          "m_noBody": false
         }, {
-         "m_eventName": "wxEVT_TREELIST_ITEM_ACTIVATED",
-         "m_eventClass": "wxTreeListEvent",
-         "m_eventHandler": "wxTreeListEventHandler",
-         "m_functionNameAndSignature": "OnItemActivated(wxTreeListEvent& event)",
-         "m_description": "Process wxEVT_TREELIST_ITEM_ACTIVATED event notifying about the user double clicking the item or activating it from keyboard.",
+         "m_eventName": "wxEVT_COMMAND_TREE_ITEM_EXPANDING",
+         "m_eventClass": "wxTreeEvent",
+         "m_eventHandler": "wxTreeEventHandler",
+         "m_functionNameAndSignature": "OnItemExpanding(wxTreeEvent& event)",
+         "m_description": "The item is being expanded. This can be prevented by calling Veto().",
          "m_noBody": false
         }, {
-         "m_eventName": "wxEVT_TREELIST_ITEM_CONTEXT_MENU",
-         "m_eventClass": "wxTreeListEvent",
-         "m_eventHandler": "wxTreeListEventHandler",
-         "m_functionNameAndSignature": "OnContextMenu(wxTreeListEvent& event)",
-         "m_description": "Process wxEVT_TREELIST_ITEM_CONTEXT_MENU event indicating that the popup menu for the given item should be displayed.",
-         "m_noBody": false
-        }, {
-         "m_eventName": "wxEVT_TREELIST_SELECTION_CHANGED",
-         "m_eventClass": "wxTreeListEvent",
-         "m_eventHandler": "wxTreeListEventHandler",
-         "m_functionNameAndSignature": "OnSelectionChanged(wxTreeListEvent& event)",
-         "m_description": "Process wxEVT_TREELIST_SELECTION_CHANGED event and notifies about the selection change in the control. In the single selection case the item indicated by the event has been selected and previously selected item, if any, was deselected. In multiple selection case, the selection of this item has just changed (it may have been either selected or deselected) but notice that the selection of other items could have changed as well, use wxTreeListCtrl::GetSelections() to retrieve the new selection if necessary.",
+         "m_eventName": "wxEVT_CONTEXT_MENU",
+         "m_eventClass": "wxContextMenuEvent",
+         "m_eventHandler": "wxContextMenuEventHandler",
+         "m_functionNameAndSignature": "OnContextMenu(wxContextMenuEvent& event)",
+         "m_description": "A right click (or other context menu command depending on platform) has been detected",
          "m_noBody": false
         }],
-       "m_children": [{
-         "m_type": 4510,
-         "proportion": 0,
-         "border": 5,
-         "gbSpan": "1,1",
-         "gbPosition": "0,0",
-         "m_styles": [],
-         "m_sizerFlags": [],
-         "m_properties": [{
-           "type": "string",
-           "m_label": "Name:",
-           "m_value": "Name"
-          }, {
-           "type": "choice",
-           "m_label": "Alignment",
-           "m_selection": 0,
-           "m_options": ["wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER"]
-          }, {
-           "type": "string",
-           "m_label": "Width:",
-           "m_value": "400"
-          }, {
-           "type": "colHeaderFlags",
-           "m_label": "Column Flags",
-           "stringValue": "wxCOL_RESIZABLE|wxCOL_SORTABLE"
-          }],
-         "m_events": [],
-         "m_children": []
-        }]
+       "m_children": []
       }]
     }]
   }, {

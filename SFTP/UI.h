@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_SFTP_UI_BASE_CLASSES_H
-#define CODELITE_SFTP_UI_BASE_CLASSES_H
+#ifndef _CODELITE_SFTP_UI_BASE_CLASSES_H
+#define _CODELITE_SFTP_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -26,7 +26,7 @@
 #include <wx/arrstr.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/treelist.h>
+#include <wx/treectrl.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/listbox.h>
@@ -38,6 +38,16 @@
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
 
 class SFTPStatusPageBase : public wxPanel
 {
@@ -59,6 +69,10 @@ class SFTPImages : public wxImageList
 protected:
     // Maintain a map of all bitmaps representd by their name
     std::map<wxString, wxBitmap> m_bitmaps;
+    // The requested image resolution (can be one of @2x, @1.5x, @1.25x or an empty string (the default)
+    wxString m_resolution;
+    int m_imagesWidth;
+    int m_imagesHeight;
 
 
 protected:
@@ -66,10 +80,15 @@ protected:
 public:
     SFTPImages();
     const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name) )
+        if ( !m_bitmaps.count(name + m_resolution) )
             return wxNullBitmap;
-        return m_bitmaps.find(name)->second;
+        return m_bitmaps.find(name + m_resolution)->second;
     }
+
+    void SetBitmapResolution(const wxString &res = wxEmptyString) {
+        m_resolution = res;
+    }
+
     virtual ~SFTPImages();
 };
 
@@ -93,7 +112,7 @@ protected:
     wxChoice* m_choiceAccount;
     wxStaticText* m_staticText49;
     wxTextCtrl* m_textCtrlQuickJump;
-    wxTreeListCtrl* m_treeListCtrl;
+    wxTreeCtrl* m_treeCtrl;
 
 protected:
     virtual void OnOpenAccountManager(wxCommandEvent& event) { event.Skip(); }
@@ -107,10 +126,9 @@ protected:
     virtual void OnChoiceAccountUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGotoLocation(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnItemExpanding(wxTreeListEvent& event) { event.Skip(); }
-    virtual void OnItemActivated(wxTreeListEvent& event) { event.Skip(); }
-    virtual void OnContextMenu(wxTreeListEvent& event) { event.Skip(); }
-    virtual void OnSelectionChanged(wxTreeListEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxContextMenuEvent& event) { event.Skip(); }
 
 public:
 
@@ -119,7 +137,7 @@ public:
     wxChoice* GetChoiceAccount() { return m_choiceAccount; }
     wxStaticText* GetStaticText49() { return m_staticText49; }
     wxTextCtrl* GetTextCtrlQuickJump() { return m_textCtrlQuickJump; }
-    wxTreeListCtrl* GetTreeListCtrl() { return m_treeListCtrl; }
+    wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     SFTPTreeViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~SFTPTreeViewBase();
 };

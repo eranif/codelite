@@ -85,6 +85,10 @@
 #include "fileutils.h"
 //#include "clFileOrFolderDropTarget.h"
 
+#if wxUSE_PRINTING_ARCHITECTURE
+    #include "wx/paper.h"
+#endif // wxUSE_PRINTING_ARCHITECTURE
+
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
 #undef EVT_STC_CALLTIP_CLICK
@@ -5371,8 +5375,13 @@ void LEditor::CenterLineIfNeeded(int line, bool force)
 
 void LEditor::Print()
 {
+#if wxUSE_PRINTING_ARCHITECTURE
     if(g_printData == NULL) {
         g_printData = new wxPrintData();
+        wxPrintPaperType *paper = wxThePrintPaperDatabase->FindPaperType(wxPAPER_A4);
+        g_printData->SetPaperId(paper->GetId());
+        g_printData->SetPaperSize(paper->GetSize());
+        g_printData->SetOrientation(wxPORTRAIT);
         g_pageSetupData = new wxPageSetupDialogData();
         (*g_pageSetupData) = *g_printData;
         PageSetup();
@@ -5397,12 +5406,18 @@ void LEditor::Print()
     } else {
         (*g_printData) = printer.GetPrintDialogData().GetPrintData();
     }
+#endif // wxUSE_PRINTING_ARCHITECTURE
 }
 
 void LEditor::PageSetup()
 {
+#if wxUSE_PRINTING_ARCHITECTURE
     if(g_printData == NULL) {
         g_printData = new wxPrintData();
+        wxPrintPaperType *paper = wxThePrintPaperDatabase->FindPaperType(wxPAPER_A4);
+        g_printData->SetPaperId(paper->GetId());
+        g_printData->SetPaperSize(paper->GetSize());
+        g_printData->SetOrientation(wxPORTRAIT);
         g_pageSetupData = new wxPageSetupDialogData();
         (*g_pageSetupData) = *g_printData;
     }
@@ -5410,6 +5425,7 @@ void LEditor::PageSetup()
     pageSetupDialog.ShowModal();
     (*g_printData) = pageSetupDialog.GetPageSetupData().GetPrintData();
     (*g_pageSetupData) = pageSetupDialog.GetPageSetupData();
+#endif // wxUSE_PRINTING_ARCHITECTURE
 }
 
 void LEditor::OnMouseWheel(wxMouseEvent& event)

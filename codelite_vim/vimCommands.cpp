@@ -427,7 +427,7 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
         break;
 
     case COMMANDVI::cc: {
-        int repeat_cc = std::max(1, m_repeat + m_actions);
+       int repeat_cc = std::max(1, m_repeat)*std::max(1, m_actions);
 
         for(int i = 0; i < repeat_cc; ++i) {
             ctrl->LineDelete();
@@ -442,24 +442,33 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
         ctrl->CharRight();
         ctrl->DeleteBackNotLine();
         break;
-    case COMMANDVI::dw:
-        m_listCopiedStr.push_back(get_text_at_position(ctrl , VimCommand::eTypeTextSearch::kFromPosToEndWord) );
-        if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
-        m_newLineCopy = false;
-        ctrl->DelWordRight();
-        break;
+    case COMMANDVI::dw: {
+        int repeat_dw = std::max(1, m_actions);
+        for(int i = 0; i < repeat_dw; ++i) {
+           m_listCopiedStr.push_back(get_text_at_position(ctrl ,VimCommand::eTypeTextSearch::kFromPosToEndWord) );
+           if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
+           m_newLineCopy = false;
+           ctrl->DelWordRight();
+        }
+    }break;
     break;
-    case COMMANDVI::db:
-        m_listCopiedStr.push_back(get_text_at_position(ctrl, VimCommand::eTypeTextSearch::kFromPosToBeginWord ));
-        if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
-        m_newLineCopy = false;
-        ctrl->DelWordLeft();
-        break;
+    case COMMANDVI::db: {
+        int repeat_db = std::max(1, m_actions);
+        for(int i = 0; i < repeat_db; ++i) {
+           m_listCopiedStr.push_back(get_text_at_position(ctrl, VimCommand::eTypeTextSearch::kFromPosToBeginWord ));
+           if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
+           m_newLineCopy = false;
+           ctrl->DelWordLeft();
+        }
+    }break;
     break;
     case COMMANDVI::dd: {
+        int repeat_dd = std::max(1, m_actions);
         int linePos;
-        this->m_listCopiedStr.push_back(ctrl->GetCurLine(&linePos));
-        ctrl->LineDelete();
+        for(int i = 0; i < repeat_dd; ++i) {
+           this->m_listCopiedStr.push_back(ctrl->GetCurLine(&linePos));
+           ctrl->LineDelete();
+        }
     } break;
 
     case COMMANDVI::D:
@@ -467,14 +476,40 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
         ctrl->DelLineRight();
         break;
     /*=============== COPY ====================*/
-    case COMMANDVI::yw:
-        m_listCopiedStr.push_back(get_text_at_position(ctrl));
-        if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
+    case COMMANDVI::yw: {
+        int position_init_yw = ctrl->GetCurrentPos();
+        int repeat_yw = std::max(1, m_repeat)*std::max(1, m_actions);
+        for(int i = 0; i < repeat_yw; ++i) {
+           m_listCopiedStr.push_back(get_text_at_position(ctrl, VimCommand::eTypeTextSearch::kFromPosToEndWord ));
+           ctrl->WordRight();
+           if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
+        }
+        repeat_command = false; 
+        ctrl->SetCurrentPos( position_init_yw );
         m_newLineCopy = false;
-        break;
+    }break;
+    case COMMANDVI::yb: {
+        int position_init_yw = ctrl->GetCurrentPos();
+        int repeat_yw = std::max(1, m_repeat)*std::max(1, m_actions);
+        for(int i = 0; i < repeat_yw; ++i) {
+           m_listCopiedStr.push_back(get_text_at_position(ctrl, VimCommand::eTypeTextSearch::kFromPosToBeginWord ));
+           if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
+           ctrl->WordLeft();
+        }
+        repeat_command = false; 
+        ctrl->SetCurrentPos( position_init_yw );
+        m_newLineCopy = false;
+    }break;
     case COMMANDVI::yy: {
+        int position_init_yy = ctrl->GetCurrentPos();
         int linePos;
-        this->m_listCopiedStr.push_back(ctrl->GetCurLine(&linePos));
+        int repeat_yy = std::max(1, m_repeat)*std::max(1, m_actions);
+        for(int i = 0; i < repeat_yy; ++i) {
+           this->m_listCopiedStr.push_back(ctrl->GetCurLine(&linePos));
+           ctrl->LineDown();
+        }
+        repeat_command = false; 
+        ctrl->SetCurrentPos( position_init_yy );
     } break;
 
     case COMMANDVI::diesis: {
@@ -672,10 +707,16 @@ wxString VimCommand::get_text_at_position(wxStyledTextCtrl* ctrl, VimCommand::eT
    case kFromPosToEndWord:
       start = pos;
       end = ctrl->WordEndPosition(pos, true);
+      if ( start == end ){
+         end++;
+      }
       break;
    case kFromPosToBeginWord:
       end = pos;
       start = ctrl->WordStartPosition( pos, true );
+      if ( start == end ){
+         start--;
+      }
       break;
    case kFromPositionToEndLine:
       start = pos;
@@ -986,6 +1027,11 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::yw;
             this->m_listCopiedStr.clear();
             break;
+        case 'b':
+            command_complete = true;
+            m_commandID = COMMANDVI::yb;
+            this->m_listCopiedStr.clear();
+            break;
         case 'y':
             command_complete = true;
             m_commandID = COMMANDVI::yy;
@@ -1060,16 +1106,18 @@ bool VimCommand::save_current_cmd() { return m_saveCommand; }
 void VimCommand::issue_cmd(wxStyledTextCtrl* ctrl)
 {
     if(ctrl == NULL) return;
-
+    ctrl->BeginUndoAction();
     for(int i = 0; i < this->getNumRepeat(); ++i) {
         if(!this->Command_call(ctrl)) return; /*If the num repeat is internally implemented do not repeat!*/
     }
+    ctrl->EndUndoAction();
 }
 
 void VimCommand::repeat_issue_cmd(wxStyledTextCtrl* ctrl, wxString buf)
 {
     if(ctrl == NULL) return;
 
+    ctrl->BeginUndoAction();
     for(int i = 0; i < this->getNumRepeat(); ++i) {
         if(!this->Command_call(ctrl)) return;
     }
@@ -1078,6 +1126,7 @@ void VimCommand::repeat_issue_cmd(wxStyledTextCtrl* ctrl, wxString buf)
         /*FIXME*/
         ctrl->AddText(buf);
     }
+    ctrl->EndUndoAction();
 }
 
 void VimCommand::set_ctrl(wxStyledTextCtrl* ctrl) {}

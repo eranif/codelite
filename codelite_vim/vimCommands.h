@@ -75,6 +75,7 @@ enum class COMMANDVI {
     y, /*visual mode*/        
     yy,
     yw,
+    yb,
     J,
     v
 };

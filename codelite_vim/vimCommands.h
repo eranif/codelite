@@ -174,6 +174,9 @@ private:
     void append_command(wxChar ch);
     wxString get_text_at_position(wxStyledTextCtrl* ctrl, VimCommand::eTypeTextSearch typeSearch = VimCommand::eTypeTextSearch::kAllWord);
     bool is_space_following(wxStyledTextCtrl* ctrl);
+    bool is_space_preceding(wxStyledTextCtrl* ctrl);
+    wxString add_following_spaces(wxStyledTextCtrl* ctrl);
+    wxString add_preceding_spaces(wxStyledTextCtrl* ctrl);
     bool search_word(SEARCH_DIRECTION flag, wxStyledTextCtrl* ctrl);
     void normal_modus(wxChar ch);
     void visual_modus(wxChar ch);

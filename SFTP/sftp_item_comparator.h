@@ -29,7 +29,7 @@
 #include <wx/treelist.h>
 #include <vector>
 
-class MyClientData : public wxClientData
+class MyClientData : public wxTreeItemData
 {
     wxString m_path;
     bool     m_initialized;

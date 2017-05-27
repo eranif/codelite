@@ -63,14 +63,14 @@ protected:
     virtual void OnOpenTerminal(wxAuiToolBarEvent& event);
     virtual void OnOpenTerminalUI(wxUpdateUIEvent& event);
     virtual void OnConnection(wxCommandEvent& event);
-    virtual void OnSelectionChanged(wxTreeListEvent& event);
+    virtual void OnSelectionChanged(wxTreeEvent& event);
     virtual void OnChoiceAccount(wxCommandEvent& event);
     virtual void OnChoiceAccountUI(wxUpdateUIEvent& event);
     virtual void OnGotoLocation(wxCommandEvent& event);
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event);
     virtual void OnAddBookmark(wxAuiToolBarEvent& event);
     virtual void OnAddBookmarkUI(wxUpdateUIEvent& event);
-    virtual void OnContextMenu(wxTreeListEvent& event);
+    virtual void OnContextMenu(wxTreeEvent& event);
     virtual void OnDisconnect(wxCommandEvent& event);
     virtual void OnDisconnectUI(wxUpdateUIEvent& event);
     virtual void OnConnectUI(wxUpdateUIEvent& event);
@@ -95,21 +95,21 @@ protected:
 
     void DoCloseSession();
     void DoOpenSession();
-    bool DoExpandItem(const wxTreeListItem& item);
+    bool DoExpandItem(const wxTreeItemId& item);
     void DoBuildTree(const wxString& initialFolder);
     void ManageBookmarks();
 
-    wxTreeListItem DoAddFolder(const wxTreeListItem& parent, const wxString& path);
-    wxTreeListItem DoAddFile(const wxTreeListItem& parent, const wxString& path);
+    wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
+    wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);
 
-    MyClientData* GetItemData(const wxTreeListItem& item);
+    MyClientData* GetItemData(const wxTreeItemId& item);
     MyClientDataVect_t GetSelectionsItemData();
-    bool DoOpenFile(const wxTreeListItem& item);
+    bool DoOpenFile(const wxTreeItemId& item);
     void DoDeleteColumn(int colIdx);
 
 protected:
-    virtual void OnItemActivated(wxTreeListEvent& event);
-    virtual void OnItemExpanding(wxTreeListEvent& event);
+    virtual void OnItemActivated(wxTreeEvent& event);
+    virtual void OnItemExpanding(wxTreeEvent& event);
     virtual void OnOpenAccountManager(wxCommandEvent& event);
 };
 #endif // SFTPTREEVIEW_H

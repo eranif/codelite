@@ -477,27 +477,31 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
         break;
     /*=============== COPY ====================*/
     case COMMANDVI::yw: {
-        int position_init_yw = ctrl->GetCurrentPos();
+        int pos_init_yw = ctrl->GetCurrentPos();
         int repeat_yw = std::max(1, m_repeat)*std::max(1, m_actions);
         for(int i = 0; i < repeat_yw; ++i) {
-           m_listCopiedStr.push_back(get_text_at_position(ctrl, VimCommand::eTypeTextSearch::kFromPosToEndWord ));
            ctrl->WordRight();
-           if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
         }
+        int pos_end_yw = ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back( ctrl->GetTextRange( pos_init_yw, pos_end_yw) );
         repeat_command = false; 
-        ctrl->SetCurrentPos( position_init_yw );
+        ctrl->SetCurrentPos( pos_init_yw );
+        ctrl->CharLeft();
+        ctrl->CharRight();
         m_newLineCopy = false;
     }break;
     case COMMANDVI::yb: {
-        int position_init_yw = ctrl->GetCurrentPos();
-        int repeat_yw = std::max(1, m_repeat)*std::max(1, m_actions);
-        for(int i = 0; i < repeat_yw; ++i) {
-           m_listCopiedStr.push_back(get_text_at_position(ctrl, VimCommand::eTypeTextSearch::kFromPosToBeginWord ));
-           if(is_space_following(ctrl)) m_listCopiedStr.push_back(' ');
+        int pos_init_yb = ctrl->GetCurrentPos();
+        int repeat_yb = std::max(1, m_repeat)*std::max(1, m_actions);
+        for(int i = 0; i < repeat_yb; ++i) {
            ctrl->WordLeft();
         }
+        int pos_end_yb = ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back( ctrl->GetTextRange( pos_init_yb, pos_end_yb) );
         repeat_command = false; 
-        ctrl->SetCurrentPos( position_init_yw );
+        ctrl->SetCurrentPos( pos_init_yb );
+        ctrl->CharLeft();
+        ctrl->CharRight();
         m_newLineCopy = false;
     }break;
     case COMMANDVI::yy: {
@@ -510,6 +514,8 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
         }
         repeat_command = false; 
         ctrl->SetCurrentPos( position_init_yy );
+        ctrl->CharLeft();
+        ctrl->CharRight();
     } break;
 
     case COMMANDVI::diesis: {

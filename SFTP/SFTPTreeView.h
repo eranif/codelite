@@ -32,6 +32,7 @@
 #include "ssh_account_info.h"
 #include <vector>
 #include "cl_command_event.h"
+#include "clTreeKeyboardInput.h"
 
 class MyClientData;
 class SFTP;
@@ -45,6 +46,7 @@ class SFTPTreeView : public SFTPTreeViewBase
     SSHAccountInfo m_account;
     SFTP* m_plugin;
     wxString m_commandOutput;
+    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
 
 public:
     enum {
@@ -70,7 +72,7 @@ protected:
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event);
     virtual void OnAddBookmark(wxAuiToolBarEvent& event);
     virtual void OnAddBookmarkUI(wxUpdateUIEvent& event);
-    virtual void OnContextMenu(wxTreeEvent& event);
+    virtual void OnContextMenu(wxContextMenuEvent& event);
     virtual void OnDisconnect(wxCommandEvent& event);
     virtual void OnDisconnectUI(wxUpdateUIEvent& event);
     virtual void OnConnectUI(wxUpdateUIEvent& event);

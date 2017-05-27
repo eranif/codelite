@@ -26,8 +26,8 @@
 #ifndef SFTPITEMCOMPARATOR_H
 #define SFTPITEMCOMPARATOR_H
 
-#include <wx/treelist.h>
 #include <vector>
+#include <wx/treectrl.h>
 
 class MyClientData : public wxTreeItemData
 {
@@ -79,15 +79,6 @@ public:
     bool IsFolder() const {
         return m_isFolder;
     }
-};
-
-
-class SFTPItemComparator : public wxTreeListItemComparator
-{
-public:
-    SFTPItemComparator();
-    virtual ~SFTPItemComparator();
-    virtual int Compare(wxTreeListCtrl* treelist, unsigned column, wxTreeListItem first, wxTreeListItem second);
 };
 
 #endif // SFTPITEMCOMPARATOR_H

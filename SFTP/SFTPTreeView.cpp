@@ -113,6 +113,9 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
 
     m_treeCtrl->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
+    
+    m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrl));
+    ::MSWSetNativeTheme(m_treeCtrl);
 }
 
 SFTPTreeView::~SFTPTreeView()
@@ -330,16 +333,21 @@ MyClientDataVect_t SFTPTreeView::GetSelectionsItemData()
 
 void SFTPTreeView::OnDisconnectUI(wxUpdateUIEvent& event) { event.Enable(m_sftp); }
 
-void SFTPTreeView::OnContextMenu(wxTreeEvent& event)
+void SFTPTreeView::OnContextMenu(wxContextMenuEvent& event)
 {
-    CHECK_ITEM_RET(event.GetItem());
-
-    MyClientData* cd = GetItemData(event.GetItem());
+    wxArrayTreeItemIds items;
+    m_treeCtrl->GetSelections(items);
+    if(items.size() == 0) return;
+    
+    wxTreeItemId item = items.Item(0);
+    CHECK_ITEM_RET(item);
+    
+    MyClientData* cd = GetItemData(item);
     wxMenu menu;
     if(cd) {
 
         // Just incase, make sure the item is selected
-        m_treeCtrl->SelectItem(event.GetItem());
+        m_treeCtrl->SelectItem(item);
         if(!cd->IsFolder()) {
             menu.Append(ID_OPEN, _("Open"));
             menu.Append(ID_OPEN_WITH_DEFAULT_APP, _("Open with Default Application..."));

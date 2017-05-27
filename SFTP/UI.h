@@ -128,6 +128,7 @@ protected:
     virtual void OnGotoLocation(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxContextMenuEvent& event) { event.Skip(); }
 
 public:
 

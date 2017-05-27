@@ -25,7 +25,7 @@
 
 #include "sftp_item_comparator.h"
 
-SFTPItemComparator::SFTPItemComparator()
+/*SFTPItemComparator::SFTPItemComparator()
 {
 }
 
@@ -52,4 +52,4 @@ int SFTPItemComparator::Compare(wxTreeListCtrl* treelist, unsigned column, wxTre
         return 1;
     else 
         return cdOne->GetFullName() > cdTwo->GetFullName();
-}
+}*/

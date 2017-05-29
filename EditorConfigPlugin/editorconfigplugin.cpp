@@ -91,7 +91,7 @@ void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     if(!m_settings.IsEnabled()) {
-        clDEBUG() << "EditorConfig is disabled." << clEndl;
+        clDEBUG1() << "EditorConfig is disabled." << clEndl;
         return;
     }
     
@@ -111,14 +111,14 @@ bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, cl
 {
     // Try the cache first
     if(m_cache.Get(filename, section)) {
-        clDEBUG() << "Using EditorConfig settings for file:" << filename << clEndl;
+        clDEBUG1() << "Using EditorConfig settings for file:" << filename << clEndl;
         section.PrintToLog();
         return true;
     }
 
     // Sanity
     if(!filename.IsOk() || !filename.FileExists()) {
-        clDEBUG() << "No EditorConfig file found for file:" << filename << clEndl;
+        clDEBUG1() << "No EditorConfig file found for file:" << filename << clEndl;
         return false;
     }
 

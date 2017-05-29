@@ -26,6 +26,7 @@
 #define FORMATOPTIONS_H
 
 #include "serialized_object.h"
+#include "phpoptions.h"
 
 enum AstyleOptions {
     AS_ANSI = 0x00000001,
@@ -131,9 +132,9 @@ class FormatOptions : public SerializedObject
     size_t m_clangColumnLimit; // when indenting, limit the line to fit into a column width
     size_t m_phpFormatOptions;
     size_t m_generalFlags;
-    wxString m_phpExecutable;
     wxString m_PHPCSFixerPhar;
     wxString m_PHPCSFixerPharOptions;
+    PhpOptions m_settingsPhp;
 
 private:
     wxString ClangFlagToBool(ClangFormatStyle flag) const;
@@ -183,12 +184,10 @@ public:
         this->m_PHPCSFixerPharOptions = PHPCSFixerPharOptions;
     }
     void SetPhpEngine(const PHPFormatterEngine& phpEngine) { this->m_phpEngine = phpEngine; }
-    void SetPhpExecutable(const wxString& phpExecutable) { this->m_phpExecutable = phpExecutable; }
     const wxString& GetPHPCSFixerPhar() const { return m_PHPCSFixerPhar; }
     const wxString& GetPHPCSFixerPharOptions() const { return m_PHPCSFixerPharOptions; }
     const PHPFormatterEngine& GetPhpEngine() const { return m_phpEngine; }
-    const wxString& GetPhpExecutable() const { return m_phpExecutable; }
-    wxString GetPhpFixerCommand() const;
+    wxString GetPhpFixerCommand();
 };
 
 #endif // FORMATOPTIONS_H

@@ -185,7 +185,6 @@ void CodeFormatterDlg::InitDialog()
     m_pgPropPhpFormatterOptions->SetValue((int)m_options.GetPHPFormatterOptions());
 
     m_filePickerPHPCsFixerPhar->SetPath(m_options.GetPHPCSFixerPhar());
-    m_filePickerPhpExec->SetPath(m_options.GetPhpExecutable());
     m_stc->SetText(m_options.GetPHPCSFixerPharOptions());
 
     // General Options
@@ -376,13 +375,6 @@ void CodeFormatterDlg::OnPharFileSelected(wxFileDirPickerEvent& event)
 {
     m_isDirty = true;
     m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetPath());
-    CallAfter(&CodeFormatterDlg::UpdatePreview);
-    event.Skip();
-}
-void CodeFormatterDlg::OnPhpFileSelected(wxFileDirPickerEvent& event)
-{
-    m_isDirty = true;
-    m_options.SetPhpExecutable(m_filePickerPhpExec->GetPath());
     CallAfter(&CodeFormatterDlg::UpdatePreview);
     event.Skip();
 }

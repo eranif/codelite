@@ -49,6 +49,7 @@
 #include "clEditorStateLocker.h"
 #include <wx/sstream.h>
 #include "clEditorConfig.h"
+#include "phpoptions.h"
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
@@ -110,6 +111,8 @@ CodeFormatter::CodeFormatter(IManager* manager)
     m_mgr->GetTheApp()->Connect(ID_TOOL_SOURCE_CODE_FORMATTER, wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
+
+    m_settingsPhp.Load();
 
     // Migrate settings if needed
     FormatOptions fmtroptions;
@@ -246,16 +249,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                 editor->GetCtrl()->EndUndoAction();
             }
         } else {
-            wxFileName php(fmtroptions.GetPhpExecutable());
-            if(!php.Exists()) {
-                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHP executable path"),
-                    "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
-                return;
-            }
-            wxFileName phar(fmtroptions.GetPHPCSFixerPhar());
-            if(!phar.Exists()) {
-                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHAR file"), "Code Formatter",
-                    wxICON_ERROR | wxOK | wxCENTER);
+            if (!IsPhpConfigValid(fmtroptions)) {
                 return;
             }
 
@@ -506,16 +500,7 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
             // set the output
             output = buffer.GetBuffer();
         } else {
-            wxFileName php(fmtroptions.GetPhpExecutable());
-            if(!php.Exists()) {
-                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHP executable path"),
-                    "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
-                return;
-            }
-            wxFileName phar(fmtroptions.GetPHPCSFixerPhar());
-            if(!phar.Exists()) {
-                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHAR file"), "Code Formatter",
-                    wxICON_ERROR | wxOK | wxCENTER);
+            if (!IsPhpConfigValid(fmtroptions)) {
                 return;
             }
 
@@ -558,6 +543,25 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
         // ??
     }
     e.SetFormattedString(output);
+}
+
+bool CodeFormatter::IsPhpConfigValid(const FormatOptions& options)
+{
+    m_settingsPhp.Load(); // Incase it was modified by the user
+    wxFileName php(m_settingsPhp.GetPhpExecutable());
+    if(!php.Exists()) {
+        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHP executable path"),
+            "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
+        return false;
+    }
+    wxFileName phar(options.GetPHPCSFixerPhar());
+    if(!phar.Exists()) {
+        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHAR file"), "Code Formatter",
+            wxICON_ERROR | wxOK | wxCENTER);
+        return false;
+    }
+
+    return true;
 }
 
 int CodeFormatter::DoGetGlobalEOL() const

@@ -32,6 +32,8 @@
 
 class CodeFormatter : public IPlugin
 {
+    PhpOptions m_settingsPhp;
+
 protected:
     void DoFormatFile(IEditor* editor);
 
@@ -39,6 +41,7 @@ protected:
     wxString DoGetGlobalEOLString() const;
 
 private:
+    bool IsPhpConfigValid(const FormatOptions& options);
     bool DoClangFormat(const wxFileName& filename,
                        wxString& formattedOutput,
                        int& cursorPosition,

@@ -35,6 +35,7 @@
     <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
     <Project Name="PHPParser" Path="codelitephp/PHPParser/PHPParser.project" Active="No"/>
     <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
+    <Project Name="PHPLint" Path="PHPLint/PHPLint.project" Active="No"/>
     <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
     <Project Name="SFTP" Path="SFTP/SFTP.project" Active="No"/>
     <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
@@ -103,6 +104,7 @@
       <Project Name="PHPParser" ConfigName="Release"/>
       <Project Name="PHPParserUnitTests" ConfigName="Release"/>
       <Project Name="PHPPlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="plugin_sdk" ConfigName="Win_x86_Release"/>
       <Project Name="QMakePlugin" ConfigName="Win_x86_Release"/>
       <Project Name="SFTP" ConfigName="Win_x86_Release"/>
@@ -141,6 +143,7 @@
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPParser" ConfigName="Debug"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="PCH" ConfigName="Release"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
@@ -195,6 +198,7 @@
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
       <Project Name="PHPParserUnitTests" ConfigName="Debug_Unix"/>
       <Project Name="PHPParser" ConfigName="Debug_Unix"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="PCH" ConfigName="Release"/>
       <Project Name="Outline" ConfigName="Win_x86_Release"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
@@ -270,6 +274,7 @@
       <Project Name="PHPParser" ConfigName="Debug"/>
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
@@ -323,6 +328,7 @@
       <Project Name="PHPParser" ConfigName="Debug"/>
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
@@ -368,6 +374,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="PHPParser" ConfigName="Win_x64_Release"/>
       <Project Name="PHPParserUnitTests" ConfigName="Win_x64_Release"/>
       <Project Name="PHPPlugin" ConfigName="Win_x64_Release"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Release"/>
       <Project Name="plugin_sdk" ConfigName="Win_x64_Release"/>
       <Project Name="QMakePlugin" ConfigName="Win_x64_Release"/>
       <Project Name="SFTP" ConfigName="Win_x64_Release"/>
@@ -421,6 +428,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="PHPParser" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPParserUnitTests" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPPlugin" ConfigName="Win_x64_Debug"/>
+      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
       <Project Name="plugin_sdk" ConfigName="Win_x64_Debug"/>
       <Project Name="QMakePlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="SFTP" ConfigName="Win_x64_Debug"/>

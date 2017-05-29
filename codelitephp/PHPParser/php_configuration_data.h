@@ -48,7 +48,6 @@ protected:
 public:
     enum {
         kDontPromptForMissingFileMapping = (1 << 0),
-        kRunLintOnFileSave = (1 << 1),
     };
 
 public:
@@ -79,8 +78,6 @@ public:
     }
 
     bool HasFlag(size_t flag) const { return m_flags & flag; }
-    bool IsRunLint() const { return HasFlag(kRunLintOnFileSave); }
-    void SetRunLint(bool b) { EnableFlag(kRunLintOnFileSave, b); }
 
     PHPConfigurationData& SetFindInFilesMask(const wxString& findInFilesMask)
     {

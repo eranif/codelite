@@ -10,7 +10,6 @@ PHPConfigurationData::PHPConfigurationData()
     : clConfigItem("PHPConfigurationData")
     , m_errorReporting(wxT("E_ALL & ~E_NOTICE"))
     , m_xdebugPort(9000)
-    , m_flags(kRunLintOnFileSave)
     , m_xdebugIdeKey("codeliteide")
     , m_xdebugHost("127.0.0.1")
     , m_findInFilesMask(

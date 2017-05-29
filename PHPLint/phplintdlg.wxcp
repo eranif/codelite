@@ -782,7 +782,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": "Select the PHP-CS-Fixer phar file location"
+                 "m_value": "Select the PHP_CodeSniffer phar file location"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -1094,7 +1094,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": "Select the PHP-CS-Fixer phar file location"
+                 "m_value": "Select the PHPMD phar file location"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -1248,7 +1248,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": "Select the PHPCS phar file location"
+                 "m_value": "Select the xml rules file to use with PHPMD"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",

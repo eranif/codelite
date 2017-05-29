@@ -74,7 +74,7 @@ PHPLintBaseDlg::PHPLintBaseDlg(wxWindow* parent, wxWindowID id, const wxString& 
     flexGridSizer2->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     m_filePickerPhpcsPhar = new wxFilePickerCtrl(m_panelPhpcs, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpcs, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPhpcsPhar->SetToolTip(_("Select the PHP-CS-Fixer phar file location"));
+    m_filePickerPhpcsPhar->SetToolTip(_("Select the PHP_CodeSniffer phar file location"));
     
     flexGridSizer2->Add(m_filePickerPhpcsPhar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
@@ -96,7 +96,7 @@ PHPLintBaseDlg::PHPLintBaseDlg(wxWindow* parent, wxWindowID id, const wxString& 
     flexGridSizer3->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     m_filePickerPhpmdPhar = new wxFilePickerCtrl(m_panelPhpmd, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPhpmdPhar->SetToolTip(_("Select the PHP-CS-Fixer phar file location"));
+    m_filePickerPhpmdPhar->SetToolTip(_("Select the PHPMD phar file location"));
     
     flexGridSizer3->Add(m_filePickerPhpmdPhar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
@@ -105,7 +105,7 @@ PHPLintBaseDlg::PHPLintBaseDlg(wxWindow* parent, wxWindowID id, const wxString& 
     flexGridSizer3->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     m_filePickerPhpmdRules = new wxFilePickerCtrl(m_panelPhpmd, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*.xml"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPhpmdRules->SetToolTip(_("Select the PHPCS phar file location"));
+    m_filePickerPhpmdRules->SetToolTip(_("Select the xml rules file to use with PHPMD"));
     
     flexGridSizer3->Add(m_filePickerPhpmdRules, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     

@@ -134,14 +134,22 @@ wxString VimManager::get_current_word()
 void VimManager::updateView()
 {
     if(m_ctrl == NULL) return;
-    if(m_currentCommand.get_current_modus() == VIM_MODI::NORMAL_MODUS) {
+    switch (m_currentCommand.get_current_modus() ) {
+    case VIM_MODI::NORMAL_MODUS:
         m_ctrl->SetCaretStyle(m_caretBlockStyle);
         m_mgr->GetStatusBar()->SetMessage("NORMAL");
-    } else if(m_currentCommand.get_current_modus() == VIM_MODI::COMMAND_MODUS) {
+        break;
+    case VIM_MODI::COMMAND_MODUS:
         m_ctrl->SetCaretStyle(m_caretBlockStyle);
         m_mgr->GetStatusBar()->SetMessage(m_currentCommand.getTmpBuf());
-    } else {
+        break;
+    case VIM_MODI::VISUAL_MODUS:
+        m_ctrl->SetCaretStyle(m_caretBlockStyle);
+        m_mgr->GetStatusBar()->SetMessage("VISUAL");
+        break;
+    default:
         m_ctrl->SetCaretStyle(m_caretInsertStyle);
+        break;
     }
 }
 

@@ -26,8 +26,8 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
     info.SetAuthor(wxT("bau"));
-    info.SetName(wxT("CodeliteVim"));
-    info.SetDescription(_("vim bindings for codelite"));
+    info.SetName(wxT("CodeLite Vim"));
+    info.SetDescription(_("vim bindings for CodeLite"));
     info.SetVersion(wxT("v1.0"));
     return &info;
 }
@@ -37,7 +37,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 CodeliteVim::CodeliteVim(IManager* manager)
     : IPlugin(manager)
 {
-    m_longName = _("vim bindings for codelite");
+    m_longName = _("vim bindings for CodeLite");
     m_shortName = wxT("Codelite Vim");
 
     wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_settings"));

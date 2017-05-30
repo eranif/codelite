@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
-#define _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#ifndef CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#define CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -97,8 +97,6 @@ protected:
     wxPanel* m_splitterPage127;
     wxStyledTextCtrl* m_stcPhpPreview;
     wxPanel* m_panelPhpCSFixer;
-    wxStaticText* m_staticText192;
-    wxFilePickerCtrl* m_filePickerPhpExec;
     wxStaticText* m_staticText202;
     wxFilePickerCtrl* m_filePickerPHPCsFixerPhar;
     wxStaticText* m_staticText217;
@@ -118,7 +116,6 @@ protected:
     virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnCustomAstyleFlags(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPgmgrphpPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
-    virtual void OnPhpFileSelected(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnPharFileSelected(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnPHPCSFixerOptionsUpdated(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
@@ -156,8 +153,6 @@ public:
     wxPanel* GetSplitterPage127() { return m_splitterPage127; }
     wxSplitterWindow* GetSplitter119() { return m_splitter119; }
     wxPanel* GetPanelBuiltIn() { return m_panelBuiltIn; }
-    wxStaticText* GetStaticText192() { return m_staticText192; }
-    wxFilePickerCtrl* GetFilePickerPhpExec() { return m_filePickerPhpExec; }
     wxStaticText* GetStaticText202() { return m_staticText202; }
     wxFilePickerCtrl* GetFilePickerPHPCsFixerPhar() { return m_filePickerPHPCsFixerPhar; }
     wxStaticText* GetStaticText217() { return m_staticText217; }

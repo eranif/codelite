@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="CodeFormatter">
+<CodeLite_Project Name="CodeFormatter" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00050001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug000000000000]]>
@@ -59,10 +59,12 @@
     <File Name="clClangFormatLocator.h"/>
     <File Name="clClangFormatLocator.cpp"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="phpoptions.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="codeformatter.h"/>
     <File Name="formatoptions.h"/>
+    <File Name="phpoptions.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="AStyle">
     <File Name="astyle_main.cpp"/>

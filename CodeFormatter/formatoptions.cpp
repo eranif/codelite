@@ -27,6 +27,7 @@
 #include "editor_config.h"
 #include "PHPFormatterBuffer.h"
 #include "globals.h"
+#include "phpoptions.h"
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
@@ -68,7 +69,6 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read("m_clangColumnLimit", m_clangColumnLimit);
     arch.Read("m_phpFormatOptions", m_phpFormatOptions);
     arch.Read("m_generalFlags", m_generalFlags);
-    arch.Read("m_phpExecutable", m_phpExecutable);
     arch.Read("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Read("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
 }
@@ -85,7 +85,6 @@ void FormatOptions::Serialize(Archive& arch)
     arch.Write("m_clangColumnLimit", m_clangColumnLimit);
     arch.Write("m_phpFormatOptions", m_phpFormatOptions);
     arch.Write("m_generalFlags", m_generalFlags);
-    arch.Write("m_phpExecutable", m_phpExecutable);
     arch.Write("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Write("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
 }
@@ -192,7 +191,7 @@ wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, d
         // All our settings are taken from .clang-format file
         return " -style=file";
     }
-    
+
     wxString options, forceLanguage;
 
     // Try to autodetect the file type
@@ -207,7 +206,7 @@ wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, d
             forceLanguage << "Language : Java";
         }
     }
-    
+
     options << " -style=\"{ BasedOnStyle: ";
     if(m_clangFormatOptions & kClangFormatChromium) {
         options << "Chromium";
@@ -296,15 +295,16 @@ wxString FormatOptions::ClangGlobalSettings() const
     return options;
 }
 
-wxString FormatOptions::GetPhpFixerCommand() const
+wxString FormatOptions::GetPhpFixerCommand()
 {
+    m_settingsPhp.Load();
     wxString command, phar, php, options;
-    php << GetPhpExecutable();
+    php << m_settingsPhp.GetPhpExecutable();
     ::WrapWithQuotes(php);
-    
+
     phar << GetPHPCSFixerPhar();
     ::WrapWithQuotes(phar);
-    
+
     options << GetPHPCSFixerPharOptions();
     options.Trim().Trim(false);
     command << php << " " << phar << " fix " << options;

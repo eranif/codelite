@@ -541,16 +541,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     boxSizer209->Add(flexGridSizer190, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText192 = new wxStaticText(m_panelPhpCSFixer, wxID_ANY, _("PHP Executable:"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpCSFixer, wxSize(-1,-1)), 0);
-    
-    flexGridSizer190->Add(m_staticText192, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_filePickerPhpExec = new wxFilePickerCtrl(m_panelPhpCSFixer, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpCSFixer, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPhpExec->SetToolTip(_("Select the PHP executable to use"));
-    m_filePickerPhpExec->SetFocus();
-    
-    flexGridSizer190->Add(m_filePickerPhpExec, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
     m_staticText202 = new wxStaticText(m_panelPhpCSFixer, wxID_ANY, _("PHP-CS-Fixer phar file:"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpCSFixer, wxSize(-1,-1)), 0);
     
     flexGridSizer190->Add(m_staticText202, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -714,7 +704,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrAstyle->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrastylePgChanged), NULL, this);
     m_textCtrlUserFlags->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
     m_pgMgrPhp->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrphpPgChanged), NULL, this);
-    m_filePickerPhpExec->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(CodeFormatterBaseDlg::OnPhpFileSelected), NULL, this);
     m_filePickerPHPCsFixerPhar->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(CodeFormatterBaseDlg::OnPharFileSelected), NULL, this);
     m_stc->Connect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(CodeFormatterBaseDlg::OnPHPCSFixerOptionsUpdated), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnOK), NULL, this);
@@ -733,7 +722,6 @@ CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
     m_pgMgrAstyle->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrastylePgChanged), NULL, this);
     m_textCtrlUserFlags->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
     m_pgMgrPhp->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrphpPgChanged), NULL, this);
-    m_filePickerPhpExec->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(CodeFormatterBaseDlg::OnPhpFileSelected), NULL, this);
     m_filePickerPHPCsFixerPhar->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(CodeFormatterBaseDlg::OnPharFileSelected), NULL, this);
     m_stc->Disconnect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(CodeFormatterBaseDlg::OnPHPCSFixerOptionsUpdated), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnOK), NULL, this);

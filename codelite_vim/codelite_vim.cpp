@@ -38,7 +38,7 @@ CodeliteVim::CodeliteVim(IManager* manager)
     : IPlugin(manager)
 {
     m_longName = _("vim bindings for CodeLite");
-    m_shortName = wxT("Codelite Vim");
+    m_shortName = wxT("CodeLite Vim");
 
     wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_settings"));
     

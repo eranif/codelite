@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2016 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ namespace {
     CheckBoost instance;
 }
 
+static const CWE CWE664(664);
+
 void CheckBoost::checkBoostForeachModification()
 {
     const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
@@ -38,14 +40,10 @@ void CheckBoost::checkBoostForeachModification()
             if (!Token::Match(containerTok, "%var% ) {"))
                 continue;
 
-            const unsigned int containerId = containerTok->varId();
-            if (containerId == 0)
-                continue;
-
             const Token *tok2 = containerTok->tokAt(2);
             const Token *end = tok2->link();
             for (; tok2 != end; tok2 = tok2->next()) {
-                if (Token::Match(tok2, "%varid% . insert|erase|push_back|push_front|pop_front|pop_back|clear|swap|resize|assign|merge|remove|remove_if|reverse|sort|splice|unique|pop|push", containerId)) {
+                if (Token::Match(tok2, "%varid% . insert|erase|push_back|push_front|pop_front|pop_back|clear|swap|resize|assign|merge|remove|remove_if|reverse|sort|splice|unique|pop|push", containerTok->varId())) {
                     const Token* nextStatement = Token::findsimplematch(tok2->linkAt(3), ";", end);
                     if (!Token::Match(nextStatement, "; break|return|throw"))
                         boostForeachError(tok2);
@@ -59,6 +57,6 @@ void CheckBoost::checkBoostForeachModification()
 void CheckBoost::boostForeachError(const Token *tok)
 {
     reportError(tok, Severity::error, "boostForeachError",
-                "BOOST_FOREACH caches the end() iterator. It's undefined behavior if you modify the container inside."
+                "BOOST_FOREACH caches the end() iterator. It's undefined behavior if you modify the container inside.", CWE664, false
                );
 }

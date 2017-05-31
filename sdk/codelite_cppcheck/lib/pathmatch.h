@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2016 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #ifndef PATHMATCH_H
 #define PATHMATCH_H
 
+#include "config.h"
 #include <string>
 #include <vector>
 
@@ -28,16 +29,16 @@
 /**
  * @brief Simple path matching for ignoring paths in CLI.
  */
-class PathMatch {
+class CPPCHECKLIB PathMatch {
 public:
 
     /**
      * The constructor.
-     * @param masks List of masks.
+     * @param excludedPaths List of masks.
      * @param caseSensitive Match the case of the characters when
      *   matching paths?
      */
-    explicit PathMatch(const std::vector<std::string> &masks, bool caseSensitive = true);
+    explicit PathMatch(const std::vector<std::string> &excludedPaths, bool caseSensitive = true);
 
     /**
      * @brief Match path against list of masks.
@@ -56,8 +57,9 @@ protected:
     static std::string RemoveFilename(const std::string &path);
 
 private:
-    std::vector<std::string> _masks;
+    std::vector<std::string> _excludedPaths;
     bool _caseSensitive;
+    std::vector<std::string> _workingDirectory;
 };
 
 /// @}

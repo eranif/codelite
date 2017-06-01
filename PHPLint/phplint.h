@@ -28,7 +28,7 @@
 
 #include "plugin.h"
 #include "lintoptions.h"
-#include "lintphpoptions.h"
+#include "phpoptions.h"
 
 class PHPLint : public IPlugin
 {
@@ -37,7 +37,7 @@ class PHPLint : public IPlugin
     IProcess* m_process;
     wxString m_currentFileBeingProcessed;
     LintOptions m_settings;
-    LintPhpOptions m_settingsPhp;
+    PhpOptions m_settingsPhp;
 
 private:
     void DispatchCommand(const wxString& command, const wxFileName& filename);

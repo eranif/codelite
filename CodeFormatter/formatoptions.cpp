@@ -41,10 +41,6 @@ FormatOptions::FormatOptions()
     , m_phpFormatOptions(kPFF_Defaults)
     , m_generalFlags(0)
 {
-    if(m_clangFormatExe.IsEmpty()) {
-        clClangFormatLocator locator;
-        locator.Locate(m_clangFormatExe);
-    }
 }
 
 FormatOptions::~FormatOptions() {}
@@ -71,6 +67,22 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read("m_generalFlags", m_generalFlags);
     arch.Read("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Read("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
+
+    if(m_clangFormatExe.IsEmpty()) {
+        clClangFormatLocator locator;
+        locator.Locate(m_clangFormatExe);
+    }
+
+#ifndef __WXMSW__
+    // Find an installed php style fixer
+    if (m_PHPCSFixerPhar.IsEmpty()) {
+        wxFileName file;
+        if(!clFindExecutable("php-cs-fixer", file)) {
+            clFindExecutable("phpcbf", file);
+        }
+        SetPHPCSFixerPhar(file.GetFullPath());
+    }
+#endif
 }
 
 void FormatOptions::Serialize(Archive& arch)

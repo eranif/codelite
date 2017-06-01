@@ -42,9 +42,7 @@ public:
         return *this;
     }
 
-    bool IsLintOnFileLoad() const
-
-    {
+    bool IsLintOnFileLoad() const {
         return m_lintOnFileLoad;
     }
     bool IsLintOnFileSave() const {

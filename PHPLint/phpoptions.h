@@ -1,23 +1,23 @@
-#ifndef LINTPHPOPTIONS_H
-#define LINTPHPOPTIONS_H
+#ifndef PHPOPTIONS_H
+#define PHPOPTIONS_H
 
 #include "cl_config.h" // Base class: clConfigItem
 
-class LintPhpOptions : public clConfigItem
+class PhpOptions : public clConfigItem
 {
     wxString m_phpExe;
 
 public:
-    LintPhpOptions();
-    virtual ~LintPhpOptions();
+    PhpOptions();
+    virtual ~PhpOptions();
 
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 
-    LintPhpOptions& Load();
-    LintPhpOptions& Save();
+    PhpOptions& Load();
+    PhpOptions& Save();
 
-    LintPhpOptions& SetPhpExecutable(const wxFileName& phpExecutable) {
+    PhpOptions& SetPhpExecutable(const wxFileName& phpExecutable) {
         this->m_phpExe = phpExecutable.GetFullPath();
         return *this;
     }
@@ -27,4 +27,4 @@ public:
     }
 };
 
-#endif // LINTPHPOPTIONS_H
+#endif // PHPOPTIONS_H

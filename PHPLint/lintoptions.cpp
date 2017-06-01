@@ -1,4 +1,7 @@
 #include "lintoptions.h"
+#ifndef __WXMSW__
+#include "globals.h"
+#endif
 
 LintOptions::LintOptions()
     : clConfigItem("phplint")
@@ -19,6 +22,22 @@ void LintOptions::FromJSON(const JSONElement& json)
     m_phpcsPhar = json.namedObject("phpcsPhar").toString(m_phpcsPhar);
     m_phpmdPhar = json.namedObject("phpmdPhar").toString(m_phpmdPhar);
     m_phpmdRules = json.namedObject("phpmdRules").toString(m_phpmdRules);
+
+#ifndef __WXMSW__
+    // Find an installed version of phpcs
+    if (m_phpcsPhar.IsEmpty()) {
+        wxFileName phpcsFile;
+        clFindExecutable("phpcs", phpcsFile);
+        SetPhpcsPhar(phpcsFile);
+    }
+
+    // Find an installed version of phpmd
+    if (m_phpmdPhar.IsEmpty()) {
+        wxFileName phpmdFile;
+        clFindExecutable("phpmd", phpmdFile);
+        SetPhpmdPhar(phpmdFile);
+    }
+#endif
 }
 
 JSONElement LintOptions::ToJSON() const

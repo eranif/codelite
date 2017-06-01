@@ -104,9 +104,9 @@ public:
         this->m_includePaths = includePaths;
         return *this;
     }
-    PHPConfigurationData& SetPhpExe(const wxString& phpExe)
+    PHPConfigurationData& SetPhpExe(const wxFileName& phpExe)
     {
-        this->m_phpExe = phpExe;
+        this->m_phpExe = phpExe.GetFullPath();
         return *this;
     }
     PHPConfigurationData& SetXdebugPort(size_t xdebugPort)

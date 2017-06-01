@@ -10,7 +10,7 @@
 #include "wx/menu.h"
 #include "phplintdlg.h"
 #include "lintoptions.h"
-#include "lintphpoptions.h"
+#include "phpoptions.h"
 
 static PHPLint* thePlugin = NULL;
 
@@ -145,7 +145,7 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
 {
     m_output.Clear();
     m_settingsPhp.Load(); // Incase it was modified by the user
-    
+
     // Build the commands
     wxString command;
 

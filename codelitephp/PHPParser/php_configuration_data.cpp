@@ -2,9 +2,9 @@
 #include "php_utils.h"
 #include <wx/ffile.h>
 #include <wx/stdpaths.h>
-#include "php_utils.h"
 #include <cl_config.h>
 #include "PHPSetterGetterEntry.h"
+#include "globals.h"
 
 PHPConfigurationData::PHPConfigurationData()
     : clConfigItem("PHPConfigurationData")
@@ -35,6 +35,12 @@ void PHPConfigurationData::FromJSON(const JSONElement& json)
     m_xdebugIdeKey = json.namedObject("m_xdebugIdeKey").toString(m_xdebugIdeKey);
     m_workspaceType = json.namedObject("m_workspaceType").toInt(m_workspaceType);
     m_xdebugIdeKey.Trim().Trim(false);
+
+    if(m_phpExe.IsEmpty()) {
+        wxFileName phpExe;
+        clFindExecutable("php", phpExe);
+        SetPhpExe(phpExe);
+    }
 
     // xdebug IDE can not be an empty string, or else debugging in command line
     // will not work

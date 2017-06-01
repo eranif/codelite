@@ -565,4 +565,8 @@ WXDLLIMPEXP_SDK void clKill(int processID, wxSignal signo, bool kill_whole_group
  */
 WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
 
+/**
+ * @brief locate an executable on the system using the PATH environment variable
+ */
+WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name, wxFileName& exepath);
 #endif // GLOBALS_H

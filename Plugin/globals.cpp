@@ -2248,3 +2248,30 @@ void clSetEditorFontEncoding(const wxString& encoding)
     TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
     EditorConfigST::Get()->SetOptions(options);
 }
+
+bool clFindExecutable(const wxString& name, wxFileName& exepath)
+{
+    wxString path;
+    if(!::wxGetEnv("PATH", &path)) {
+        clWARNING() << "Could not read environment variable PATH" << clEndl;
+        return false;
+    }
+
+    wxArrayString paths = ::wxStringTokenize(path, clPATH_SEPARATOR, wxTOKEN_STRTOK);
+    for(size_t i = 0; i < paths.size(); ++i) {
+        wxFileName fnPath(paths.Item(i), name);
+        if(fnPath.FileExists()) {
+            exepath = fnPath;
+            return true;
+        }
+#ifdef __WXMSW__
+        wxFileName fnPathWithExeExt(paths.Item(i), name);
+        fnPathWithExeExt.SetExt("exe");
+        if(fnPathWithExeExt.FileExists()) {
+            exepath = fnPathWithExeExt;
+            return true;
+        }
+#endif
+    }
+    return false;
+}

@@ -145,9 +145,6 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
 {
     m_settingsPhp.Load(); // Incase it was modified by the user
 
-    // Build the commands
-    wxString command;
-
     wxString file = filename.GetFullPath();
     ::WrapWithQuotes(file);
 
@@ -159,38 +156,45 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
     wxString phpPath = php.GetFullPath();
     ::WrapWithQuotes(phpPath);
 
-    command = phpPath + " -l " + file;
-    m_queue.push_back(command);
-
-    wxFileName phpcs(m_settings.GetPhpcsPhar());
-    if(phpcs.Exists()) {
-        wxString phpcsPath = phpcs.GetFullPath();
-        ::WrapWithQuotes(phpcsPath);
-
-        command = phpPath + " " + phpcsPath + " --report=xml " + file;
-        m_queue.push_back(command);
-    } else  {
-        clDEBUG() << "PHPLint: Could not find the PHP-CS application. Ignoring" << clEndl;
-    }
-
-    wxFileName phpmd(m_settings.GetPhpmdPhar());
-    if(phpmd.Exists()) {
-        wxString phpmdPath = phpmd.GetFullPath();
-        ::WrapWithQuotes(phpmdPath);
-
-        wxString phpmdRules(m_settings.GetPhpmdRules());
-        if (phpmdRules.IsEmpty()) {
-            phpmdRules = "cleancode,codesize,controversial,design,naming,unusedcode";
-        }
-        ::WrapWithQuotes(phpmdRules);
-
-        command = phpPath + " " + phpmdPath + " " + file + " xml " + phpmdRules;
-        m_queue.push_back(command);
-    } else {
-        clDEBUG() << "PHPLint: Could not find the PHPMD application. Ignoring" << clEndl;
-    }
+    m_queue.push_back(phpPath + " -l " + file);
+    QueuePhpcsCommand(phpPath, file);
+    QueuePhpmdCommand(phpPath, file);
 
     DoProcessQueue();
+}
+
+void PHPLint::QueuePhpcsCommand(const wxString& phpPath, const wxString& file)
+{
+    wxFileName phpcs(m_settings.GetPhpcsPhar());
+    if(!phpcs.Exists()) {
+        clDEBUG() << "PHPLint: Could not find the PHP-CS application. Ignoring" << clEndl;
+        return;
+    }
+
+    wxString phpcsPath = phpcs.GetFullPath();
+    ::WrapWithQuotes(phpcsPath);
+
+    m_queue.push_back(phpPath + " " + phpcsPath + " --report=xml " + file);
+}
+
+void PHPLint::QueuePhpmdCommand(const wxString& phpPath, const wxString& file)
+{
+    wxFileName phpmd(m_settings.GetPhpmdPhar());
+    if(!phpmd.Exists()) {
+        clDEBUG() << "PHPLint: Could not find the PHPMD application. Ignoring" << clEndl;
+        return;
+    }
+
+    wxString phpmdPath = phpmd.GetFullPath();
+    ::WrapWithQuotes(phpmdPath);
+
+    wxString phpmdRules(m_settings.GetPhpmdRules());
+    if (phpmdRules.IsEmpty()) {
+        phpmdRules = "cleancode,codesize,controversial,design,naming,unusedcode";
+    }
+    ::WrapWithQuotes(phpmdRules);
+
+    m_queue.push_back(phpPath + " " + phpmdPath + " " + file + " xml " + phpmdRules);
 }
 
 void PHPLint::DoProcessQueue()
@@ -211,10 +215,7 @@ void PHPLint::DispatchCommand(const wxString& command)
         // failed to run the command
         clWARNING() << "PHPLint: Could not run command:" << command << clEndl;
         DoProcessQueue();
-        return;
     }
-
-    clDEBUG() << "PHPLint: Running command:" << command << clEndl;
 }
 
 void PHPLint::OnProcessTerminated(clProcessEvent& event)

@@ -45,6 +45,8 @@ private:
     bool IsWarning(wxXmlNode* violation, const wxString& linter);
     void MarkError(wxString& errorMessage, const wxString& strLine, IEditor*& editor, bool isWarning = false);
     void RunLint();
+    void QueuePhpcsCommand(const wxString& phpPath, const wxString& file);
+    void QueuePhpmdCommand(const wxString& phpPath, const wxString& file);
 
 protected:
     void DoProcessQueue();

@@ -1212,7 +1212,7 @@
         <LibraryPath Value="Debug"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/asis/root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -1226,7 +1226,7 @@
       <PostBuild/>
       <CustomBuild Enabled="yes">
         <Target Name="install">make install</Target>
-        <Target Name="cmake">cmake -DPREFIX=/home/eran/root   -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCOPY_WX_LIBS=1</Target>
+        <Target Name="cmake">cmake -DPREFIX=/home/asis/root   -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCOPY_WX_LIBS=1</Target>
         <RebuildCommand>make clean &amp;&amp; make -j4</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make -j4</BuildCommand>

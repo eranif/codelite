@@ -237,6 +237,9 @@ void clBootstrapWizard::OnToggleCxxPlugins(wxCommandEvent& event)
     cxxPlugins.Add("ContinuousBuild");
     cxxPlugins.Add("CppChecker");
     cxxPlugins.Add("LLDBDebuggerPlugin");
+#ifdef __WXGTK__
+    cxxPlugins.Add("MemCheck");
+#endif
     cxxPlugins.Add("QMakePlugin");
     cxxPlugins.Add("UnitTestPP");
     cxxPlugins.Add("Wizards");

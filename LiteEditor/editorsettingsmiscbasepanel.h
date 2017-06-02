@@ -99,7 +99,6 @@ protected:
 protected:
     virtual void OnEnableThemeUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPromptStableReleaseUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleChkUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleStaticUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleChoiceUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -108,6 +107,7 @@ protected:
     virtual void OnResetAnnoyingDialogsAnswers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLogVerbosityChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnShowLogFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText7() { return m_staticText7; }

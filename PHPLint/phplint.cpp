@@ -175,14 +175,17 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
     }
 
     wxFileName phpmd(m_settings.GetPhpmdPhar());
-    wxFileName phpmdRules(m_settings.GetPhpmdRules());
-    if(phpmd.Exists() && phpmdRules.Exists()) {
+    if(phpmd.Exists()) {
         wxString phpmdPath = phpmd.GetFullPath();
         ::WrapWithQuotes(phpmdPath);
-        wxString phpmdRulesPath = phpmdRules.GetFullPath();
-        ::WrapWithQuotes(phpmdRulesPath);
 
-        command = phpPath + " " + phpmdPath + " " + file + " xml " + phpmdRulesPath;
+        wxString phpmdRules(m_settings.GetPhpmdRules());
+        if (phpmdRules.IsEmpty()) {
+            phpmdRules = "cleancode,codesize,controversial,design,naming,unusedcode";
+        }
+        ::WrapWithQuotes(phpmdRules);
+
+        command = phpPath + " " + phpmdPath + " " + file + " xml " + phpmdRules;
         DispatchCommand(command, filename);
     } else {
         clDEBUG() << "PHPLint: Could not find PHPMD file(s). Ignoring" << clEndl;

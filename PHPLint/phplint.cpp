@@ -143,11 +143,7 @@ void PHPLint::RunLint()
 
 void PHPLint::DoCheckFile(const wxFileName& filename)
 {
-    m_output.Clear();
     m_settingsPhp.Load(); // Incase it was modified by the user
-
-    // Build the commands
-    wxString command;
 
     wxString file = filename.GetFullPath();
     ::WrapWithQuotes(file);
@@ -160,105 +156,112 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
     wxString phpPath = php.GetFullPath();
     ::WrapWithQuotes(phpPath);
 
-    command = phpPath + " -l " + file;
-    DispatchCommand(command, filename);
+    m_queue.push_back(phpPath + " -l " + file);
+    QueuePhpcsCommand(phpPath, file);
+    QueuePhpmdCommand(phpPath, file);
 
-    wxFileName phpcs(m_settings.GetPhpcsPhar());
-    if(phpcs.Exists()) {
-        wxString phpcsPath = phpcs.GetFullPath();
-        ::WrapWithQuotes(phpcsPath);
-
-        command = phpPath + " " + phpcsPath + " --report=xml " + file;
-        DispatchCommand(command, filename);
-    } else  {
-        clDEBUG() << "PHPLint: Could not find PHP-CS file. Ignoring" << clEndl;
-    }
-
-    wxFileName phpmd(m_settings.GetPhpmdPhar());
-    wxFileName phpmdRules(m_settings.GetPhpmdRules());
-    if(phpmd.Exists() && phpmdRules.Exists()) {
-        wxString phpmdPath = phpmd.GetFullPath();
-        ::WrapWithQuotes(phpmdPath);
-        wxString phpmdRulesPath = phpmdRules.GetFullPath();
-        ::WrapWithQuotes(phpmdRulesPath);
-
-        command = phpPath + " " + phpmdPath + " " + file + " xml " + phpmdRulesPath;
-        DispatchCommand(command, filename);
-    } else {
-        clDEBUG() << "PHPLint: Could not find PHPMD file(s). Ignoring" << clEndl;
-    }
+    DoProcessQueue();
 }
 
-void PHPLint::DispatchCommand(const wxString& command, const wxFileName& filename)
+void PHPLint::QueuePhpcsCommand(const wxString& phpPath, const wxString& file)
 {
-    // Run the check command
-    m_process = ::CreateAsyncProcess(this, command);
-    if(!m_process) {
-        // failed to run the command
-        clWARNING() << "PHPLint: could not run command" << command << clEndl;
-        DoProcessQueue();
-        m_currentFileBeingProcessed.Clear();
-
-    } else {
-        clWARNING() << "PHPLint: running check" << command << clEndl;
-        m_currentFileBeingProcessed = filename.GetFullPath();
+    wxFileName phpcs(m_settings.GetPhpcsPhar());
+    if(!phpcs.Exists()) {
+        clDEBUG() << "PHPLint: Could not find the PHP-CS application. Ignoring" << clEndl;
+        return;
     }
+
+    wxString phpcsPath = phpcs.GetFullPath();
+    ::WrapWithQuotes(phpcsPath);
+
+    m_queue.push_back(phpPath + " " + phpcsPath + " --report=xml " + file);
+}
+
+void PHPLint::QueuePhpmdCommand(const wxString& phpPath, const wxString& file)
+{
+    wxFileName phpmd(m_settings.GetPhpmdPhar());
+    if(!phpmd.Exists()) {
+        clDEBUG() << "PHPLint: Could not find the PHPMD application. Ignoring" << clEndl;
+        return;
+    }
+
+    wxString phpmdPath = phpmd.GetFullPath();
+    ::WrapWithQuotes(phpmdPath);
+
+    wxString phpmdRules(m_settings.GetPhpmdRules());
+    if (phpmdRules.IsEmpty()) {
+        phpmdRules = "cleancode,codesize,controversial,design,naming,unusedcode";
+    }
+    ::WrapWithQuotes(phpmdRules);
+
+    m_queue.push_back(phpPath + " " + phpmdPath + " " + file + " xml " + phpmdRules);
 }
 
 void PHPLint::DoProcessQueue()
 {
     if(!m_process && !m_queue.empty()) {
-        wxFileName filename = m_queue.front();
+        wxString command = m_queue.front();
         m_queue.pop_front();
-        DoCheckFile(filename);
+        DispatchCommand(command);
+    }
+}
+
+void PHPLint::DispatchCommand(const wxString& command)
+{
+    // Run the check command
+    m_output.clear();
+    m_process = ::CreateAsyncProcess(this, command);
+    if(!m_process) {
+        // failed to run the command
+        clWARNING() << "PHPLint: Could not run command:" << command << clEndl;
+        DoProcessQueue();
     }
 }
 
 void PHPLint::OnProcessTerminated(clProcessEvent& event)
 {
-    clDEBUG() << "PHPLint: process terminated. output:" << event.GetOutput() << clEndl;
+    clDEBUG() << "PHPLint: process terminated. output:" << m_output << clEndl;
     wxDELETE(m_process);
-    wxString output = m_output.Clone();
-    m_output.clear();
-    CallAfter(&PHPLint::OnLintingDone, output, m_currentFileBeingProcessed);
+    CallAfter(&PHPLint::OnLintingDone, m_output.Clone());
     // Check the queue for more files
     DoProcessQueue();
 }
 
 void PHPLint::OnProcessOutput(clProcessEvent& event) { m_output << event.GetOutput(); }
 
-void PHPLint::OnLintingDone(const wxString& lintOutput, const wxString& filename)
+void PHPLint::OnLintingDone(const wxString& lintOutput)
 {
-    // Find the editor
-    clDEBUG() << "PHPLint: searching editor for file:" << filename << clEndl;
-
-    IEditor* editor = m_mgr->FindEditor(filename);
-    CHECK_PTR_RET(editor);
-
-    if(lintOutput.Contains("Errors parsing")) {
-        ProcessPhpError(lintOutput, editor);
+    if(lintOutput.Contains("Errors parsing ")) {
+        ProcessPhpError(lintOutput);
         return;
     }
 
-    ProcessXML(lintOutput, editor);
+    ProcessXML(lintOutput);
 }
 
-void PHPLint::ProcessPhpError(const wxString& lintOutput, IEditor*& editor)
+void PHPLint::ProcessPhpError(const wxString& lintOutput)
 {
     wxRegEx reLine("[ \t]*on line ([0-9]+)");
     // get the line number
     if(reLine.Matches(lintOutput)) {
         wxString strLine = reLine.GetMatch(lintOutput, 1);
 
-        int start = lintOutput.Find("error:");
+        int start = lintOutput.Find("error:") + 6;
         int end = lintOutput.Find(" in ");
-        wxString errorMessage = lintOutput.Mid(start + 6, end - 6 - start);
+        wxString errorMessage = lintOutput.Mid(start, end - start);
+
+        // Find the editor
+        int fileStart = lintOutput.Find("Errors parsing ") + 15;
+        wxString filename = lintOutput.Mid(fileStart);
+        clDEBUG() << "PHPLint: searching editor for file:" << filename << clEndl;
+        IEditor* editor = m_mgr->FindEditor(filename);
+        CHECK_PTR_RET(editor);
 
         MarkError(errorMessage, strLine, editor);
     }
 }
 
-void PHPLint::ProcessXML(const wxString& lintOutput, IEditor*& editor)
+void PHPLint::ProcessXML(const wxString& lintOutput)
 {
     wxStringInputStream lintOutputStream(lintOutput);
     wxXmlDocument doc;
@@ -266,6 +269,12 @@ void PHPLint::ProcessXML(const wxString& lintOutput, IEditor*& editor)
 
     wxXmlNode* file = doc.GetRoot()->GetChildren();
     if(!file) return;
+
+    // Find the editor
+    wxString filename = file->GetAttribute("name");
+    clDEBUG() << "PHPLint: searching editor for file:" << filename << clEndl;
+    IEditor* editor = m_mgr->FindEditor(filename);
+    CHECK_PTR_RET(editor);
 
     wxString linter = doc.GetRoot()->GetName();
 

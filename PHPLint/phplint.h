@@ -32,20 +32,21 @@
 
 class PHPLint : public IPlugin
 {
-    std::list<wxFileName> m_queue;
+    std::list<wxString> m_queue;
     wxString m_output;
     IProcess* m_process;
-    wxString m_currentFileBeingProcessed;
     LintOptions m_settings;
     PhpOptions m_settingsPhp;
 
 private:
-    void DispatchCommand(const wxString& command, const wxFileName& filename);
-    void ProcessPhpError(const wxString& lintOutput, IEditor*& editor);
-    void ProcessXML(const wxString& lintOutput, IEditor*& editor);
+    void DispatchCommand(const wxString& command);
+    void ProcessPhpError(const wxString& lintOutput);
+    void ProcessXML(const wxString& lintOutput);
     bool IsWarning(wxXmlNode* violation, const wxString& linter);
     void MarkError(wxString& errorMessage, const wxString& strLine, IEditor*& editor, bool isWarning = false);
     void RunLint();
+    void QueuePhpcsCommand(const wxString& phpPath, const wxString& file);
+    void QueuePhpmdCommand(const wxString& phpPath, const wxString& file);
 
 protected:
     void DoProcessQueue();
@@ -70,7 +71,7 @@ public:
     virtual void UnPlug();
 
     void OnCheck(wxCommandEvent& e);
-    void OnLintingDone(const wxString& lintOutput, const wxString& filename);
+    void OnLintingDone(const wxString& lintOutput);
     void OnLoadFile(clCommandEvent& e);
     void OnSaveFile(clCommandEvent& e);
     void OnProcessTerminated(clProcessEvent &event);

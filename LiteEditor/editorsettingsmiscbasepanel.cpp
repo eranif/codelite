@@ -371,10 +371,6 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     // Connect events
     m_checkBoxEnableMSWTheme->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnEnableThemeUI), NULL, this);
     m_checkBoxPromptReleaseOnly->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnPromptStableReleaseUI), NULL, this);
-    m_statusbarShowLine->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
-    m_statusbarShowCol->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
-    m_statusbarShowPos->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
-    m_statusbarShowFileLength->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
     m_SetLocale->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChkUpdateUI), NULL, this);
     m_staticTextLocale->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleStaticUpdateUI), NULL, this);
     m_AvailableLocales->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChoiceUpdateUI), NULL, this);
@@ -391,10 +387,6 @@ EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
 {
     m_checkBoxEnableMSWTheme->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnEnableThemeUI), NULL, this);
     m_checkBoxPromptReleaseOnly->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnPromptStableReleaseUI), NULL, this);
-    m_statusbarShowLine->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
-    m_statusbarShowCol->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
-    m_statusbarShowPos->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
-    m_statusbarShowFileLength->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
     m_SetLocale->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChkUpdateUI), NULL, this);
     m_staticTextLocale->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleStaticUpdateUI), NULL, this);
     m_AvailableLocales->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChoiceUpdateUI), NULL, this);

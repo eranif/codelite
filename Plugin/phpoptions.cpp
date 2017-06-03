@@ -1,4 +1,6 @@
 #include "phpoptions.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
 
 PhpOptions::PhpOptions()
     : clConfigItem("PHPConfigurationData")
@@ -29,5 +31,11 @@ PhpOptions& PhpOptions::Load()
 PhpOptions& PhpOptions::Save()
 {
     clConfig config("php.conf");
+    config.WriteItem(this);
+    
+    // Notify that the PHP settings were modified
+    clCommandEvent event(wxEVT_PHP_SETTINGS_CHANGED);
+    EventNotifier::Get()->AddPendingEvent(event);
+    
     return *this;
 }

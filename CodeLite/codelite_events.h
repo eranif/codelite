@@ -766,4 +766,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PAGE_MODIFIED_UPDATE_UI, clComman
 // 2. Set the data using event.SetEditorConfig(...) method
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_CONFIG_LOADING, clEditorConfigEvent);
 
+// Sent when PHP settings have been saved to the file system
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PHP_SETTINGS_CHANGED, clCommandEvent);
+
 #endif // CODELITE_EVENTS_H

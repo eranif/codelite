@@ -2,8 +2,9 @@
 #define PHPOPTIONS_H
 
 #include "cl_config.h" // Base class: clConfigItem
+#include "codelite_exports.h"
 
-class PhpOptions : public clConfigItem
+class WXDLLIMPEXP_SDK PhpOptions : public clConfigItem
 {
     wxString m_phpExe;
 

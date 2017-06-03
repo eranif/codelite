@@ -10,11 +10,11 @@ PhpOptions::PhpOptions()
     , m_phpExe("")
     , m_errorReporting("E_ALL & ~E_NOTICE")
 {
-    wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-        wxFileName::GetPathSeparator() + "php.conf";
     wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
         wxFileName::GetPathSeparator() + "php-general.conf";
     if(!newConfigFile.FileExists()) {
+        wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
+            wxFileName::GetPathSeparator() + "php.conf";
         // first time, copy the values from the old settings
         JSONRoot root(oldConfigFile);
         JSONElement oldJson = root.toElement().namedObject("PHPConfigurationData");

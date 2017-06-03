@@ -12,11 +12,12 @@ LintOptions::LintOptions()
     , m_phpmdPhar("")
     , m_phpmdRules("")
 {
-    wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-        wxFileName::GetPathSeparator() + "php.conf";
     wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
         wxFileName::GetPathSeparator() + "phplint.conf";
     if(!newConfigFile.FileExists()) {
+        wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
+            wxFileName::GetPathSeparator() + "php.conf";
+
         // first time, copy the values from the old settings
         JSONRoot root(oldConfigFile);
         JSONElement oldJson = root.toElement().namedObject("PHPConfigurationData");

@@ -1,4 +1,5 @@
 #include "lintoptions.h"
+#include "cl_standard_paths.h"
 #ifndef __WXMSW__
 #include "globals.h"
 #endif
@@ -20,7 +21,7 @@ LintOptions::LintOptions()
         JSONRoot root(oldConfigFile);
         JSONElement oldJson = root.toElement().namedObject("PHPConfigurationData");
         size_t m_flags = oldJson.namedObject("m_flags").toSize_t(m_flags) & (1 << 1);
-        bool m_lintOnFileSave = m_flags & (1 << 1);
+        m_lintOnFileSave = m_flags & (1 << 1);
 
         // Save it
         JSONRoot newRoot(newConfigFile);

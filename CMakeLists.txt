@@ -602,6 +602,7 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(Tail)
     add_subdirectory(EditorConfigPlugin)
     add_subdirectory(PHPLint)
+    add_subdirectory(PHPRefactoring)
     add_subdirectory(codelite_vim)
 
     if (WITH_SFTP)

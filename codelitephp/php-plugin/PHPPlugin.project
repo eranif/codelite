@@ -119,8 +119,6 @@
       <File Name="XDebugTester.h"/>
       <File Name="XDebugTester.cpp"/>
     </VirtualDirectory>
-    <File Name="PHPLocator.h"/>
-    <File Name="PHPLocator.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="php.h"/>

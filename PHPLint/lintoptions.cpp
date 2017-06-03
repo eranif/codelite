@@ -1,4 +1,7 @@
 #include "lintoptions.h"
+#ifndef __WXMSW__
+#include "globals.h"
+#endif
 
 LintOptions::LintOptions()
     : clConfigItem("phplint")
@@ -8,6 +11,23 @@ LintOptions::LintOptions()
     , m_phpmdPhar("")
     , m_phpmdRules("")
 {
+    wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
+        wxFileName::GetPathSeparator() + "php.conf";
+    wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
+        wxFileName::GetPathSeparator() + "phplint.conf";
+    if(!newConfigFile.FileExists()) {
+        // first time, copy the values from the old settings
+        JSONRoot root(oldConfigFile);
+        JSONElement oldJson = root.toElement().namedObject("PHPConfigurationData");
+        bool m_lintOnFileSave = oldJson.namedObject("m_flags").toSize_t(m_flags) & (1 << 1);
+
+        // Save it
+        JSONRoot newRoot(newConfigFile);
+        JSONElement e = JSONElement::createObject(GetName());
+        e.addProperty("lintOnFileSave", m_lintOnFileSave);
+        newRoot.toElement().append(e);
+        newRoot.save(newConfigFile);
+    }
 }
 
 LintOptions::~LintOptions() {}
@@ -19,6 +39,22 @@ void LintOptions::FromJSON(const JSONElement& json)
     m_phpcsPhar = json.namedObject("phpcsPhar").toString(m_phpcsPhar);
     m_phpmdPhar = json.namedObject("phpmdPhar").toString(m_phpmdPhar);
     m_phpmdRules = json.namedObject("phpmdRules").toString(m_phpmdRules);
+
+#ifndef __WXMSW__
+    // Find an installed version of phpcs
+    if (m_phpcsPhar.IsEmpty()) {
+        wxFileName phpcsFile;
+        clFindExecutable("phpcs", phpcsFile);
+        SetPhpcsPhar(phpcsFile);
+    }
+
+    // Find an installed version of phpmd
+    if (m_phpmdPhar.IsEmpty()) {
+        wxFileName phpmdFile;
+        clFindExecutable("phpmd", phpmdFile);
+        SetPhpmdPhar(phpmdFile);
+    }
+#endif
 }
 
 JSONElement LintOptions::ToJSON() const

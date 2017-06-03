@@ -28,7 +28,7 @@
 
 #include "plugin.h"
 #include "lintoptions.h"
-#include "lintphpoptions.h"
+#include "phpoptions.h"
 
 class PHPLint : public IPlugin
 {
@@ -36,7 +36,7 @@ class PHPLint : public IPlugin
     wxString m_output;
     IProcess* m_process;
     LintOptions m_settings;
-    LintPhpOptions m_settingsPhp;
+    PhpOptions m_settingsPhp;
 
 private:
     void DispatchCommand(const wxString& command);
@@ -47,6 +47,7 @@ private:
     void RunLint();
     void QueuePhpcsCommand(const wxString& phpPath, const wxString& file);
     void QueuePhpmdCommand(const wxString& phpPath, const wxString& file);
+    void OnPhpSettingsChanged(clCommandEvent& event);
 
 protected:
     void DoProcessQueue();

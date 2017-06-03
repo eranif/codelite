@@ -3,6 +3,7 @@
 #include "codelite_events.h"
 #include "cl_standard_paths.h"
 #include <wx/filename.h>
+#include "globals.h"
 
 PhpOptions::PhpOptions()
     : clConfigItem("PHPConfigurationData")
@@ -39,6 +40,12 @@ PhpOptions::~PhpOptions() {}
 void PhpOptions::FromJSON(const JSONElement& json)
 {
     m_phpExe = json.namedObject("m_phpExe").toString(m_phpExe);
+    if (m_phpExe.IsEmpty()) {
+        wxFileName phpExe;
+        clFindExecutable("php", phpExe);
+        m_phpExe = phpExe.GetFullPath();
+    }
+
     m_errorReporting = json.namedObject("m_errorReporting").toString(m_errorReporting);
     m_includePaths = json.namedObject("m_includePaths").toArrayString();
 }

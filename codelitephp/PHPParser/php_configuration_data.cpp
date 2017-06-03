@@ -2,9 +2,9 @@
 #include "php_utils.h"
 #include <wx/ffile.h>
 #include <wx/stdpaths.h>
-#include "php_utils.h"
 #include <cl_config.h>
 #include "PHPSetterGetterEntry.h"
+#include "globals.h"
 
 PHPConfigurationData::PHPConfigurationData()
     : clConfigItem("PHPConfigurationData")

@@ -32,7 +32,6 @@
 #include "clZipReader.h"
 #include "cl_standard_paths.h"
 #include "php_configuration_data.h"
-#include "PHPLocator.h"
 #include <wx/regex.h>
 #include "bookmark_manager.h"
 #include "NewPHPProjectWizard.h"
@@ -795,15 +794,6 @@ void PhpPlugin::FinalizeStartup()
     // if not - update it
     PHPConfigurationData data;
     data.Load();
-
-    PHPLocator locator;
-    if(locator.Locate()) {
-        // update a PHP executable in the settings
-        if(data.GetPhpExe().IsEmpty()) {
-            data.SetPhpExe(locator.GetPhpExe().GetFullPath());
-        }
-        data.Save();
-    }
 }
 
 void PhpPlugin::OnGoingDown(clCommandEvent& event)

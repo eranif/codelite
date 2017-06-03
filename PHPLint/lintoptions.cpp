@@ -11,6 +11,23 @@ LintOptions::LintOptions()
     , m_phpmdPhar("")
     , m_phpmdRules("")
 {
+    wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
+        wxFileName::GetPathSeparator() + "php.conf";
+    wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
+        wxFileName::GetPathSeparator() + "phplint.conf";
+    if(!newConfigFile.FileExists()) {
+        // first time, copy the values from the old settings
+        JSONRoot root(oldConfigFile);
+        JSONElement oldJson = root.toElement().namedObject("PHPConfigurationData");
+        bool m_lintOnFileSave = oldJson.namedObject("m_flags").toSize_t(m_flags) & (1 << 1);
+
+        // Save it
+        JSONRoot newRoot(newConfigFile);
+        JSONElement e = JSONElement::createObject(GetName());
+        e.addProperty("lintOnFileSave", m_lintOnFileSave);
+        newRoot.toElement().append(e);
+        newRoot.save(newConfigFile);
+    }
 }
 
 LintOptions::~LintOptions() {}

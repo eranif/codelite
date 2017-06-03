@@ -111,7 +111,7 @@ CodeFormatter::CodeFormatter(IManager* manager)
     m_mgr->GetTheApp()->Connect(ID_TOOL_SOURCE_CODE_FORMATTER, wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
-
+    EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &CodeFormatter::OnPhpSettingsChanged, this);
     m_settingsPhp.Load();
 
     // Migrate settings if needed
@@ -249,7 +249,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                 editor->GetCtrl()->EndUndoAction();
             }
         } else {
-            if (!IsPhpConfigValid(fmtroptions)) {
+            if(!IsPhpConfigValid(fmtroptions)) {
                 return;
             }
 
@@ -462,6 +462,7 @@ void CodeFormatter::UnPlug()
         wxEVT_FORMAT_FILE, clSourceFormatEventHandler(CodeFormatter::OnFormatFile), NULL, this);
     EventNotifier::Get()->Unbind(
         wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
+    EventNotifier::Get()->Unbind(wxEVT_PHP_SETTINGS_CHANGED, &CodeFormatter::OnPhpSettingsChanged, this);
 }
 
 IManager* CodeFormatter::GetManager() { return m_mgr; }
@@ -500,7 +501,7 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
             // set the output
             output = buffer.GetBuffer();
         } else {
-            if (!IsPhpConfigValid(fmtroptions)) {
+            if(!IsPhpConfigValid(fmtroptions)) {
                 return;
             }
 
@@ -547,11 +548,10 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
 
 bool CodeFormatter::IsPhpConfigValid(const FormatOptions& options)
 {
-    m_settingsPhp.Load(); // Incase it was modified by the user
-    wxFileName php(m_settingsPhp.GetPhpExecutable());
+    wxFileName php(m_settingsPhp.GetPhpExe());
     if(!php.Exists()) {
-        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHP executable path"),
-            "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
+        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHP executable path"), "Code Formatter",
+            wxICON_ERROR | wxOK | wxCENTER);
         return false;
     }
     wxFileName phar(options.GetPHPCSFixerPhar());
@@ -926,4 +926,10 @@ void CodeFormatter::DoFormatXmlSource(IEditor* editor)
     }
 
     editor->GetCtrl()->EndUndoAction();
+}
+
+void CodeFormatter::OnPhpSettingsChanged(clCommandEvent& event)
+{
+    event.Skip();
+    m_settingsPhp.Load();
 }

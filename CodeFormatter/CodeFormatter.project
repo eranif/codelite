@@ -59,12 +59,10 @@
     <File Name="clClangFormatLocator.h"/>
     <File Name="clClangFormatLocator.cpp"/>
     <File Name="CMakeLists.txt"/>
-    <File Name="phpoptions.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="codeformatter.h"/>
     <File Name="formatoptions.h"/>
-    <File Name="phpoptions.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="AStyle">
     <File Name="astyle_main.cpp"/>

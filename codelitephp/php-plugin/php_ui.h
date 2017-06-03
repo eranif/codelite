@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
-#define CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
+#ifndef _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
+#define _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -24,6 +24,7 @@
 #include <wx/treebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
+#include <wx/stc/stc.h>
 #include <wx/choicebk.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
@@ -42,7 +43,6 @@
 #include <wx/bitmap.h>
 #include <wx/icon.h>
 #include <wx/notebook.h>
-#include <wx/stc/stc.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/simplebook.h>
@@ -175,7 +175,7 @@ protected:
     wxTextCtrl* m_textCtrlErrorReporting;
     wxStaticText* m_staticText14;
     wxButton* m_buttonBrowseIncludePath;
-    wxTextCtrl* m_textCtrlIncludePath;
+    wxStyledTextCtrl* m_stcIncludePaths;
     wxPanel* m_panel15;
     wxStaticText* m_staticText13;
     wxButton* m_button15;
@@ -203,7 +203,7 @@ public:
     wxTextCtrl* GetTextCtrlErrorReporting() { return m_textCtrlErrorReporting; }
     wxStaticText* GetStaticText14() { return m_staticText14; }
     wxButton* GetButtonBrowseIncludePath() { return m_buttonBrowseIncludePath; }
-    wxTextCtrl* GetTextCtrlIncludePath() { return m_textCtrlIncludePath; }
+    wxStyledTextCtrl* GetStcIncludePaths() { return m_stcIncludePaths; }
     wxPanel* GetPanel11() { return m_panel11; }
     wxStaticText* GetStaticText13() { return m_staticText13; }
     wxButton* GetButton15() { return m_button15; }
@@ -219,7 +219,7 @@ public:
     wxTreebook* GetTreebook9() { return m_treebook9; }
     wxButton* GetButton9() { return m_button9; }
     wxButton* GetButton10() { return m_button10; }
-    PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP General Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP General Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPSettingsBaseDlg();
 };
 

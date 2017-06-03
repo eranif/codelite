@@ -200,6 +200,8 @@
     <File Name="clStringHistory.cpp"/>
     <File Name="clFindResultsStyler.h"/>
     <File Name="clFindResultsStyler.cpp"/>
+    <File Name="phpoptions.cpp"/>
+    <File Name="phpoptions.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>

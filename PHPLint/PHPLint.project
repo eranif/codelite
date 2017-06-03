@@ -3,12 +3,10 @@
   <VirtualDirectory Name="src">
     <File Name="phplint.cpp"/>
     <File Name="lintoptions.cpp"/>
-    <File Name="phpoptions.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="phplint.h"/>
     <File Name="lintoptions.h"/>
-    <File Name="phpoptions.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CMake">
     <File Name="CMakeLists.txt"/>

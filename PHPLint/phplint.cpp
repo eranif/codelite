@@ -52,6 +52,7 @@ PHPLint::PHPLint(IManager* manager)
 
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &PHPLint::OnLoadFile, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &PHPLint::OnSaveFile, this);
+    EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &PHPLint::OnPhpSettingsChanged, this);
 }
 
 PHPLint::~PHPLint() {}
@@ -104,6 +105,7 @@ void PHPLint::UnPlug()
 
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &PHPLint::OnLoadFile, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &PHPLint::OnSaveFile, this);
+    EventNotifier::Get()->Unbind(wxEVT_PHP_SETTINGS_CHANGED, &PHPLint::OnPhpSettingsChanged, this);
 }
 
 void PHPLint::OnLoadFile(clCommandEvent& e)
@@ -143,12 +145,10 @@ void PHPLint::RunLint()
 
 void PHPLint::DoCheckFile(const wxFileName& filename)
 {
-    m_settingsPhp.Load(); // Incase it was modified by the user
-
     wxString file = filename.GetFullPath();
     ::WrapWithQuotes(file);
 
-    wxFileName php(m_settingsPhp.GetPhpExecutable());
+    wxFileName php(m_settingsPhp.GetPhpExe());
     if(!php.Exists()) {
         ::wxMessageBox(_("Can not lint file: Missing PHP executable path"), "PHPLint", wxICON_ERROR | wxOK | wxCENTER);
         return;
@@ -316,3 +316,10 @@ void PHPLint::MarkError(wxString& errorMessage, const wxString& strLine, IEditor
         editor->SetErrorMarker(nLine - 1, errorMessage);
     }
 }
+
+void PHPLint::OnPhpSettingsChanged(clCommandEvent& event)
+{
+    event.Skip();
+    m_settingsPhp.Load();
+}
+

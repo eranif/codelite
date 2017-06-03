@@ -299,7 +299,7 @@ wxString FormatOptions::GetPhpFixerCommand()
 {
     m_settingsPhp.Load();
     wxString command, phar, php, options;
-    php << m_settingsPhp.GetPhpExecutable();
+    php << m_settingsPhp.GetPhpExe();
     ::WrapWithQuotes(php);
 
     phar << GetPHPCSFixerPhar();

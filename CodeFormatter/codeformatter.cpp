@@ -548,7 +548,7 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
 bool CodeFormatter::IsPhpConfigValid(const FormatOptions& options)
 {
     m_settingsPhp.Load(); // Incase it was modified by the user
-    wxFileName php(m_settingsPhp.GetPhpExecutable());
+    wxFileName php(m_settingsPhp.GetPhpExe());
     if(!php.Exists()) {
         ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHP executable path"),
             "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);

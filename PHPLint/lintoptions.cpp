@@ -19,7 +19,8 @@ LintOptions::LintOptions()
         // first time, copy the values from the old settings
         JSONRoot root(oldConfigFile);
         JSONElement oldJson = root.toElement().namedObject("PHPConfigurationData");
-        bool m_lintOnFileSave = oldJson.namedObject("m_flags").toSize_t(m_flags) & (1 << 1);
+        size_t m_flags = oldJson.namedObject("m_flags").toSize_t(m_flags) & (1 << 1);
+        bool m_lintOnFileSave = m_flags & (1 << 1);
 
         // Save it
         JSONRoot newRoot(newConfigFile);

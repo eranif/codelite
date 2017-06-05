@@ -22,39 +22,40 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "precompiled_header.h"
-#include "globals.h"
+#include "asyncprocess.h"
+#include "clClangFormatLocator.h"
+#include "clEditorConfig.h"
+#include "clEditorStateLocker.h"
+#include "clSTCLineKeeper.h"
+#include "codeformatter.h"
+#include "codeformatterdlg.h"
 #include "editor_config.h"
 #include "event_notifier.h"
-#include "codeformatter.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/app.h> //wxInitialize/wxUnInitialize
-#include "wx/ffile.h"
-#include "formatoptions.h"
-#include "wx/log.h"
-#include "codeformatterdlg.h"
-#include "wx/menu.h"
 #include "file_logger.h"
-#include "asyncprocess.h"
+#include "fileutils.h"
+#include "formatoptions.h"
+#include "globals.h"
 #include "json_node.h"
+#include "macros.h"
+#include "phpoptions.h"
+#include "precompiled_header.h"
+#include "procutils.h"
+#include "wx/ffile.h"
+#include "wx/log.h"
+#include "wx/menu.h"
+#include <wx/app.h> //wxInitialize/wxUnInitialize
 #include <wx/ffile.h>
 #include <wx/filename.h>
-#include "file_logger.h"
-#include "procutils.h"
-#include "clSTCLineKeeper.h"
-#include "macros.h"
 #include <wx/progdlg.h>
-#include "fileutils.h"
-#include "clClangFormatLocator.h"
-#include "clEditorStateLocker.h"
 #include <wx/sstream.h>
-#include "clEditorConfig.h"
-#include "phpoptions.h"
+#include <wx/xrc/xmlres.h>
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
-extern "C" char* STDCALL AStyleMain(const char* pSourceIn, const char* pOptions,
-    void(STDCALL* fpError)(int, const char*), char*(STDCALL* fpAlloc)(unsigned long));
+extern "C" char* STDCALL AStyleMain(const char* pSourceIn,
+    const char* pOptions,
+    void(STDCALL* fpError)(int, const char*),
+    char*(STDCALL* fpAlloc)(unsigned long));
 
 //------------------------------------------------------------------------
 // Astyle functions required by AStyleLib
@@ -96,7 +97,10 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 
-CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion()
+{
+    return PLUGIN_INTERFACE_VERSION;
+}
 
 CodeFormatter::CodeFormatter(IManager* manager)
     : IPlugin(manager)
@@ -137,7 +141,9 @@ CodeFormatter::CodeFormatter(IManager* manager)
     EditorConfigST::Get()->WriteObject("FormatterOptions", &fmtroptions);
 }
 
-CodeFormatter::~CodeFormatter() {}
+CodeFormatter::~CodeFormatter()
+{
+}
 
 clToolBar* CodeFormatter::CreateToolBar(wxWindow* parent)
 {
@@ -196,7 +202,8 @@ void CodeFormatter::OnFormat(wxCommandEvent& e)
     }
 
     // get the editor that requires formatting
-    if(!editor) return;
+    if(!editor)
+        return;
 
     clDEBUG() << "Formatting file: '" << editor->GetFileName() << "'" << clEndl;
 
@@ -378,7 +385,8 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                     eol = wxT("\n");
                 }
 
-                if(!formatSelectionOnly) output << eol;
+                if(!formatSelectionOnly)
+                    output << eol;
 
                 if(formatSelectionOnly) {
                     clEditorStateLocker lk(editor->GetCtrl());
@@ -432,7 +440,10 @@ void CodeFormatter::OnFormatUI(wxUpdateUIEvent& e)
     e.Enable(m_mgr->GetActiveEditor() != NULL);
 }
 
-void CodeFormatter::OnFormatOptionsUI(wxUpdateUIEvent& e) { e.Enable(true); }
+void CodeFormatter::OnFormatOptionsUI(wxUpdateUIEvent& e)
+{
+    e.Enable(true);
+}
 
 void CodeFormatter::HookPopupMenu(wxMenu* menu, MenuType type)
 {
@@ -465,7 +476,10 @@ void CodeFormatter::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_PHP_SETTINGS_CHANGED, &CodeFormatter::OnPhpSettingsChanged, this);
 }
 
-IManager* CodeFormatter::GetManager() { return m_mgr; }
+IManager* CodeFormatter::GetManager()
+{
+    return m_mgr;
+}
 
 void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
 {
@@ -597,10 +611,17 @@ wxString CodeFormatter::DoGetGlobalEOLString() const
     }
 }
 
-void CodeFormatter::OnFormatFile(clSourceFormatEvent& e) { wxUnusedVar(e); }
+void CodeFormatter::OnFormatFile(clSourceFormatEvent& e)
+{
+    wxUnusedVar(e);
+}
 
-bool CodeFormatter::ClangFormatBuffer(const wxString& content, const wxFileName& filename, wxString& formattedOutput,
-    int& cursorPosition, int startOffset, int length)
+bool CodeFormatter::ClangFormatBuffer(const wxString& content,
+    const wxFileName& filename,
+    wxString& formattedOutput,
+    int& cursorPosition,
+    int startOffset,
+    int length)
 {
     // Write the content into a temporary file
     wxFileName fn(filename.GetPath(), ".code-formatter-tmp.cpp");
@@ -625,8 +646,11 @@ bool CodeFormatter::ClangFormatBuffer(const wxString& content, const wxFileName&
     return res;
 }
 
-bool CodeFormatter::ClangFormatFile(
-    const wxFileName& filename, wxString& formattedOutput, int& cursorPosition, int startOffset, int length)
+bool CodeFormatter::ClangFormatFile(const wxFileName& filename,
+    wxString& formattedOutput,
+    int& cursorPosition,
+    int startOffset,
+    int length)
 {
     FormatOptions options;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
@@ -655,8 +679,13 @@ bool CodeFormatter::ClangPreviewFormat(const wxString& content, wxString& format
     return res;
 }
 
-bool CodeFormatter::DoClangFormat(const wxFileName& filename, wxString& formattedOutput, int& cursorPosition,
-    int startOffset, int length, const FormatOptions& options, const wxFileName& originalFileName)
+bool CodeFormatter::DoClangFormat(const wxFileName& filename,
+    wxString& formattedOutput,
+    int& cursorPosition,
+    int startOffset,
+    int length,
+    const FormatOptions& options,
+    const wxFileName& originalFileName)
 {
     // clang-format
     // Build the command line to run

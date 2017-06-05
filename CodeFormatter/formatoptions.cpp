@@ -22,10 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "formatoptions.h"
+#include "PHPFormatterBuffer.h"
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
-#include "PHPFormatterBuffer.h"
+#include "formatoptions.h"
 #include "globals.h"
 #include "phpoptions.h"
 
@@ -34,8 +34,8 @@ FormatOptions::FormatOptions()
     , m_engine(kFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
-                           kSpaceBeforeAssignmentOperators |
-                           kAlignEscapedNewlinesLeft)
+          kSpaceBeforeAssignmentOperators |
+          kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
@@ -43,7 +43,9 @@ FormatOptions::FormatOptions()
 {
 }
 
-FormatOptions::~FormatOptions() {}
+FormatOptions::~FormatOptions()
+{
+}
 
 void FormatOptions::DeSerialize(Archive& arch)
 {
@@ -75,7 +77,7 @@ void FormatOptions::DeSerialize(Archive& arch)
 
 #ifndef __WXMSW__
     // Find an installed php style fixer
-    if (m_PHPCSFixerPhar.IsEmpty()) {
+    if(m_PHPCSFixerPhar.IsEmpty()) {
         wxFileName file;
         if(!clFindExecutable("php-cs-fixer", file)) {
             clFindExecutable("phpcbf", file);

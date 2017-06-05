@@ -22,18 +22,16 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "ColoursAndFontsManager.h"
+#include "clSTCLineKeeper.h"
 #include "codeformatter.h"
-#include "globals.h"
-#include "windowattrmanager.h"
 #include "codeformatterdlg.h"
 #include "editor_config.h"
-#include "lexer_configuration.h"
-#include "editor_config.h"
-#include "lexer_configuration.h"
-#include <wx/menu.h>
-#include "clSTCLineKeeper.h"
 #include "fileextmanager.h"
-#include "ColoursAndFontsManager.h"
+#include "globals.h"
+#include "lexer_configuration.h"
+#include "windowattrmanager.h"
+#include <wx/menu.h>
 
 static const wxString PHPSample = "<?php\n"
                                   "namespace MySpace;\n"
@@ -60,8 +58,11 @@ static const wxString PHPSample = "<?php\n"
                                   "  }\n"
                                   "}\n";
 
-CodeFormatterDlg::CodeFormatterDlg(
-    wxWindow* parent, IManager* mgr, CodeFormatter* cf, const FormatOptions& opts, const wxString& sampleCode)
+CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
+    IManager* mgr,
+    CodeFormatter* cf,
+    const FormatOptions& opts,
+    const wxString& sampleCode)
     : CodeFormatterBaseDlg(parent)
     , m_cf(cf)
     , m_sampleCode(sampleCode)
@@ -271,9 +272,14 @@ void CodeFormatterDlg::UpdatePreview()
     }
 }
 
-CodeFormatterDlg::~CodeFormatterDlg() {}
+CodeFormatterDlg::~CodeFormatterDlg()
+{
+}
 
-void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isDirty); }
+void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_isDirty);
+}
 
 void CodeFormatterDlg::OnCustomAstyleFlags(wxCommandEvent& event)
 {

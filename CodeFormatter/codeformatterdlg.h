@@ -59,12 +59,15 @@ protected:
 public:
     /** Constructor */
     CodeFormatterDlg(wxWindow* parent,
-                     IManager* mgr,
-                     CodeFormatter* cf,
-                     const FormatOptions& opts,
-                     const wxString& sampleCode);
+        IManager* mgr,
+        CodeFormatter* cf,
+        const FormatOptions& opts,
+        const wxString& sampleCode);
     ~CodeFormatterDlg();
-    FormatOptions GetOptions() const { return m_options; }
+    FormatOptions GetOptions() const
+    {
+        return m_options;
+    }
 };
 
 #endif // __codeformatterdlg__

@@ -27,8 +27,8 @@
 #define PHPFORMATTERBUFFER_H
 
 #include "PhpLexerAPI.h"
-#include <wx/string.h>
 #include <stack>
+#include <wx/string.h>
 
 enum ePHPFormatterFlags {
     kPFF_UseTabs = (1 << 1),
@@ -42,14 +42,13 @@ enum ePHPFormatterFlags {
     kPFF_VerticalArrays = (1 << 9),
     kPFF_BreakAfterStringConcatentation = (1 << 10),
     kPFF_Defaults = kPFF_BreakBeforeFunction | kPFF_BreakBeforeWhile | kPFF_BreakBeforeIf | kPFF_BreakBeforeForeach |
-                    kPFF_ElseOnSameLineAsClosingCurlyBrace |
-                    kPFF_VerticalArrays |
-                    kPFF_BreakAfterStringConcatentation |
-                    kPFF_BreakBeforeClass,
+        kPFF_ElseOnSameLineAsClosingCurlyBrace |
+        kPFF_VerticalArrays |
+        kPFF_BreakAfterStringConcatentation |
+        kPFF_BreakBeforeClass,
 };
 
-struct PHPFormatterOptions
-{
+struct PHPFormatterOptions {
     wxString eol;      // default: \n
     size_t indentSize; // default: 4
     size_t flags;
@@ -97,15 +96,18 @@ protected:
 
     // Is the last seen function has a comment associated with it?
     int m_lastCommentLine;
-    
+
     // Paren depth "("
     int m_parenDepth;
-    
+
 protected:
     /**
      * @brief indent using tabs?
      */
-    bool IsUseTabs() const { return m_options.flags & kPFF_UseTabs; }
+    bool IsUseTabs() const
+    {
+        return m_options.flags & kPFF_UseTabs;
+    }
 
     /**
      * @brief insert a new line before the current statement
@@ -160,14 +162,14 @@ protected:
      * "(" and the token previously found was "array"
      */
     void ProcessArray(int openParen, int closingChar);
-    
+
     /**
-     * @brief reverse find ch in the buffer and return a whitepace representing 
+     * @brief reverse find ch in the buffer and return a whitepace representing
      * the distance from the line start position and ch index
      * If 'ch' is not found, return the current line indentation string
      */
     wxString GetIndentationToLast(wxChar ch);
-    
+
 public:
     PHPFormatterBuffer(const wxString& buffer, const PHPFormatterOptions& options);
     virtual ~PHPFormatterBuffer();
@@ -177,7 +179,10 @@ public:
      */
     void format();
 
-    const wxString& GetBuffer() const { return m_buffer; }
+    const wxString& GetBuffer() const
+    {
+        return m_buffer;
+    }
 };
 
 #endif // PHPFORMATTERBUFFER_H

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="PHPRefactoring">
+<CodeLite_Project Name="PHPRefactoring" Version="10.0.0">
   <VirtualDirectory Name="src">
     <File Name="phprefactoring.cpp"/>
+    <File Name="phprefactoringoptions.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="phprefactoring.h"/>
+    <File Name="phprefactoringoptions.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CMake">
     <File Name="CMakeLists.txt"/>
@@ -38,12 +40,12 @@
         <Command Enabled="yes">copy "$(IntermediateDirectory)\PHPRefactoring-dbg.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
+        <CleanCommand/>
+        <BuildCommand/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
@@ -73,13 +75,21 @@
         <Command Enabled="yes">copy "$(IntermediateDirectory)\PHPRefactoring.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
+        <CleanCommand/>
+        <BuildCommand/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="Dialogs">
+    <File Name="phprefactoringdlg.cpp"/>
+    <File Name="phprefactoringdlg.h"/>
+    <File Name="phprefactoringdlg.wxcp"/>
+    <File Name="phprefactoringdlgbase.cpp"/>
+    <File Name="phprefactoringdlgbase.h"/>
+    <File Name="phprefactoringdlg_phprefactoring_bitmaps.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Bcc AStyle Lib" />
+		<Option pch_mode="2" />
+		<Option compiler="embarcadero_compiler_x86_bcc32c" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/astyled" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="objLib/Debug/" />
+				<Option type="2" />
+				<Option compiler="embarcadero_compiler_x86_bcc32c" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-w" />
+					<Add option="-DASTYLE_LIB" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/astyle" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="objLib/Release/" />
+				<Option type="2" />
+				<Option compiler="embarcadero_compiler_x86_bcc32c" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-w" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DASTYLE_LIB" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="../../src/ASBeautifier.cpp" />
+		<Unit filename="../../src/ASEnhancer.cpp" />
+		<Unit filename="../../src/ASFormatter.cpp" />
+		<Unit filename="../../src/ASResource.cpp" />
+		<Unit filename="../../src/astyle.h" />
+		<Unit filename="../../src/astyle_main.cpp" />
+		<Unit filename="../../src/astyle_main.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

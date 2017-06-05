@@ -1,5 +1,6 @@
 #include "phprefactoringdlg.h"
 #include "phprefactoringoptions.h"
+#include "windowattrmanager.h"
 
 PHPRefactoringDlg::PHPRefactoringDlg(wxWindow* parent)
     : PHPRefactoringBaseDlg(parent)
@@ -14,6 +15,10 @@ PHPRefactoringDlg::PHPRefactoringDlg(wxWindow* parent)
 }
 
 PHPRefactoringDlg::~PHPRefactoringDlg()
+{
+}
+
+void PHPRefactoringDlg::InitDialog()
 {
     PHPRefactoringOptions settings;
     settings.Load();

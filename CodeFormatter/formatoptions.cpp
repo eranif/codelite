@@ -70,21 +70,38 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Read("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
 
-    if(m_clangFormatExe.IsEmpty()) {
+    AutodetectSettings();
+}
+
+void FormatOptions::AutodetectSettings()
+{
+    wxFileName clangFormatExe(m_clangFormatExe);
+    if(m_clangFormatExe.IsEmpty() || !clangFormatExe.Exists()) {
         clClangFormatLocator locator;
-        locator.Locate(m_clangFormatExe);
+        if(locator.Locate(m_clangFormatExe)) {
+            clangFormatExe.SetPath(m_clangFormatExe);
+        }
+    }
+    if(m_clangFormatExe.IsEmpty() || !clangFormatExe.Exists()) {
+        // Change the active engine to AStyle
+        m_engine = kFormatEngineAStyle;
+        m_clangFormatExe = ""; // Clear the non existed executable
     }
 
-#ifndef __WXMSW__
     // Find an installed php style fixer
-    if(m_PHPCSFixerPhar.IsEmpty()) {
-        wxFileName file;
-        if(!clFindExecutable("php-cs-fixer", file)) {
-            clFindExecutable("phpcbf", file);
+    wxFileName phpFormatPhar(m_PHPCSFixerPhar);
+#ifndef __WXMSW__
+    if(m_PHPCSFixerPhar.IsEmpty() || phpFormatPhar.Exists()) {
+        if(!clFindExecutable("php-cs-fixer", phpFormatPhar)) {
+            clFindExecutable("phpcbf", phpFormatPhar);
         }
-        SetPHPCSFixerPhar(file.GetFullPath());
+        m_PHPCSFixerPhar = phpFormatPhar.GetFullPath();
     }
 #endif
+    if(m_PHPCSFixerPhar.IsEmpty() || phpFormatPhar.Exists()) {
+        m_phpEngine = kPhpFormatEngineBuiltin;
+        m_PHPCSFixerPhar = ""; // Clear the non existed executable
+    }
 }
 
 void FormatOptions::Serialize(Archive& arch)

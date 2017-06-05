@@ -153,6 +153,7 @@ private:
      * editor settings (namely: tab vs spaces, and tab width)
      */
     wxString ClangGlobalSettings() const;
+    void AutodetectSettings();
 
 public:
     FormatOptions();

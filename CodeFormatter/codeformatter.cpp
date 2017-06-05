@@ -118,25 +118,9 @@ CodeFormatter::CodeFormatter(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &CodeFormatter::OnPhpSettingsChanged, this);
     m_settingsPhp.Load();
 
-    // Migrate settings if needed
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject("FormatterOptions", &fmtroptions);
-    if(fmtroptions.GetEngine() == kFormatEngineClangFormat) {
-        // check to see that the selected clang executable exists
-        wxFileName clangFomatExe(fmtroptions.GetClangFormatExe());
-        if(fmtroptions.GetClangFormatExe().IsEmpty() || !clangFomatExe.Exists()) {
-            // No valid clang executable found, try to locate one
-            clClangFormatLocator locator;
-            wxString clangFormatPath;
-            if(locator.Locate(clangFormatPath)) {
-                fmtroptions.SetClangFormatExe(clangFormatPath);
-            } else {
-                // Change the active engine to AStyle
-                fmtroptions.SetEngine(kFormatEngineAStyle);
-                fmtroptions.SetClangFormatExe(""); // Clear the non existed executable
-            }
-        }
-    }
+
     // Save the options
     EditorConfigST::Get()->WriteObject("FormatterOptions", &fmtroptions);
 }
@@ -196,7 +180,6 @@ void CodeFormatter::OnFormat(wxCommandEvent& e)
     // If we got a file name in the event, use it instead of the active editor
     if(fileToFormat.IsEmpty() == false) {
         editor = m_mgr->FindEditor(fileToFormat);
-
     } else {
         editor = m_mgr->GetActiveEditor();
     }
@@ -205,210 +188,231 @@ void CodeFormatter::OnFormat(wxCommandEvent& e)
     if(!editor)
         return;
 
-    clDEBUG() << "Formatting file: '" << editor->GetFileName() << "'" << clEndl;
-
-    // Notify about indentation about to start
-    wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_STARTING);
-    evt.SetString(editor->GetFileName().GetFullPath());
-    EventNotifier::Get()->ProcessEvent(evt);
-
-    m_mgr->SetStatusMessage(
-        wxString::Format(wxT("%s: %s..."), _("Formatting"), editor->GetFileName().GetFullPath().c_str()), 0);
     DoFormatFile(editor);
-    m_mgr->SetStatusMessage(_("Done"), 0);
-
-    clDEBUG() << "Formatting file: '" << editor->GetFileName() << "'...is done" << clEndl;
 }
 
 void CodeFormatter::DoFormatFile(IEditor* editor)
 {
-    int curpos = editor->GetCurrentPosition();
+    wxFileName fileName = editor->GetFileName();
+
+    clDEBUG() << "Formatting file: '" << fileName << "'" << clEndl;
+
+    m_mgr->SetStatusMessage(wxString::Format(wxT("%s: %s..."), _("Formatting"), fileName.GetFullPath().c_str()), 0);
+
+    // Notify about indentation about to start
+    wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_STARTING);
+    evt.SetString(fileName.GetFullPath());
+    EventNotifier::Get()->ProcessEvent(evt);
 
     // execute the formatter
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-    if(FileExtManager::IsPHPFile(editor->GetFileName())) {
-        clDEBUG() << "Using PHP formatter" << clEndl;
+    if(FileExtManager::IsPHPFile(fileName)) {
         if(fmtroptions.GetPhpEngine() == kPhpFormatEngineBuiltin) {
-
-            // use the built-in PHP formatter
-
-            // Construct the formatting options
-            PHPFormatterOptions phpOptions;
-            phpOptions.flags = fmtroptions.GetPHPFormatterOptions();
-            if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
-                phpOptions.flags |= kPFF_UseTabs;
-            }
-            phpOptions.indentSize = m_mgr->GetEditorSettings()->GetTabWidth();
-            phpOptions.eol = m_mgr->GetEditorSettings()->GetEOLAsString();
-            // Create the formatter buffer
-            PHPFormatterBuffer buffer(editor->GetCtrl()->GetText(), phpOptions);
-
-            // Format the source
-            buffer.format();
-
-            // Restore line
-            if(!buffer.GetBuffer().IsEmpty()) {
-                clSTCLineKeeper lk(editor);
-                editor->GetCtrl()->BeginUndoAction();
-                // Replace the text with the new formatted buffer
-                editor->SetEditorText(buffer.GetBuffer());
-                editor->GetCtrl()->EndUndoAction();
-            }
+            DoFormatWithBuildInPhp(editor);
         } else {
-            if(!IsPhpConfigValid(fmtroptions)) {
-                return;
-            }
-
-            // Run the command, PHP-CS-Fixer works directly on the file
-            // so create a copy of the file and format it, then replace the buffers
-            // we do this like this so we won't lose our ability to undo the action
-            wxString output;
-            wxString command, filename, tmpfile;
-            filename = editor->GetFileName().GetFullPath();
-            tmpfile << filename << ".php-cs-fixer";
-            if(!FileUtils::WriteFileContent(tmpfile, editor->GetEditorText())) {
-                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer:\nFailed to write temporary file"),
-                    "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
-                return;
-            }
-
-            // Ensure that the temporary file is deleted once we are done with it
-            FileUtils::Deleter fd(tmpfile);
-
-            ::WrapWithQuotes(tmpfile);
-            command << fmtroptions.GetPhpFixerCommand() << " " << tmpfile;
-            ::WrapInShell(command);
-            IProcess::Ptr_t phpFixer(
-                ::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
-            CHECK_PTR_RET(phpFixer);
-            phpFixer->WaitForTerminate(output);
-
-            output.clear();
-            if(!FileUtils::ReadFileContent(tmpfile, output)) {
-                ::wxMessageBox(_("Can not format file using PHP-CS-Fixer:\nfailed to read temporary file content"),
-                    "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
-                return;
-            }
-
-            // Update the editor
-            clEditorStateLocker lk(editor->GetCtrl());
-            editor->GetCtrl()->BeginUndoAction();
-            editor->SetEditorText(output);
-            editor->GetCtrl()->EndUndoAction();
+            DoFormatWithPhpCsFixer(editor);
         }
-
-    } else if(FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeXml) ||
-        FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeXRC) ||
-        FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeWorkspace) ||
-        FileExtManager::IsFileType(editor->GetFileName(), FileExtManager::TypeProject)) {
+    } else if(FileExtManager::IsFileType(fileName, FileExtManager::TypeXml) ||
+        FileExtManager::IsFileType(fileName, FileExtManager::TypeXRC) ||
+        FileExtManager::IsFileType(fileName, FileExtManager::TypeWorkspace) ||
+        FileExtManager::IsFileType(fileName, FileExtManager::TypeProject)) {
         DoFormatXmlSource(editor);
-    } else {
-        // We allow ClangFormat to work only when the source file is known to be
-        // a C/C++ source file or JavaScript (these are the types of files that clang-format can handle properly)
-        if(fmtroptions.GetEngine() == kFormatEngineClangFormat &&
-            (FileExtManager::IsCxxFile(editor->GetFileName()) ||
-                FileExtManager::IsJavascriptFile(editor->GetFileName()))) {
-
-            clDEBUG() << "Using C++/Clang formatter" << clEndl;
-            int from = wxNOT_FOUND, length = wxNOT_FOUND;
-            wxString formattedOutput;
-            if(editor->GetSelectionStart() != wxNOT_FOUND) {
-                // we got a selection, only format it
-                from = editor->GetSelectionStart();
-                length = editor->GetSelectionEnd() - from;
-                if(length <= 0) {
-                    from = wxNOT_FOUND;
-                    length = wxNOT_FOUND;
-                }
-            }
-
-            // Make sure we format the editor string and _not_ the file (there might be some newly added lines
-            // that could be missing ...)
-            if(!ClangFormatBuffer(
-                   editor->GetCtrl()->GetText(), editor->GetFileName(), formattedOutput, curpos, from, length)) {
-                ::wxMessageBox(_("Source code formatting error!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
-                return;
-            }
-
-            clEditorStateLocker lk(editor->GetCtrl());
-            editor->GetCtrl()->BeginUndoAction();
-            editor->SetEditorText(formattedOutput);
-            editor->SetCaretAt(curpos);
-            editor->GetCtrl()->EndUndoAction();
-
+    } else if(FileExtManager::IsJavascriptFile(fileName) || FileExtManager::IsJavaFile(fileName)) {
+        DoFormatWithClang(editor);
+    } else if(FileExtManager::IsCxxFile(fileName)) {
+        if(fmtroptions.GetEngine() == kFormatEngineClangFormat) {
+            DoFormatWithClang(editor);
         } else {
-            if(!FileExtManager::IsCxxFile(editor->GetFileName())) {
-                clDEBUG() << "CodeFormatter: engine is set to ASTYLE. Source is not C/C++, skipped" << clEndl;
-                return;
-            }
-            clDEBUG() << "Using C++/AStyle formatter" << clEndl;
-            // AStyle
-            wxString options = fmtroptions.AstyleOptionsAsString();
-
-            // determine indentation method and amount
-            bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
-            int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
-            int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
-            options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
-
-            wxString output;
-            wxString inputString;
-            bool formatSelectionOnly(editor->GetSelection().IsEmpty() == false);
-
-            if(formatSelectionOnly) {
-                // get the lines contained in the selection
-                int selStart = editor->GetSelectionStart();
-                int selEnd = editor->GetSelectionEnd();
-                int lineNumber = editor->LineFromPos(selStart);
-
-                selStart = editor->PosFromLine(lineNumber);
-                selEnd = editor->LineEnd(editor->LineFromPos(selEnd));
-
-                editor->SelectText(selStart, selEnd - selStart);
-                inputString = editor->GetSelection();
-
-            } else {
-                inputString = editor->GetEditorText();
-            }
-
-            AstyleFormat(inputString, options, output);
-            if(!output.IsEmpty()) {
-
-                // append new-line
-                wxString eol;
-                if(editor->GetEOL() == 0) { // CRLF
-                    eol = wxT("\r\n");
-                } else if(editor->GetEOL() == 1) { // CR
-                    eol = wxT("\r");
-                } else {
-                    eol = wxT("\n");
-                }
-
-                if(!formatSelectionOnly)
-                    output << eol;
-
-                if(formatSelectionOnly) {
-                    clEditorStateLocker lk(editor->GetCtrl());
-                    // format the text (add the indentation)
-                    output = editor->FormatTextKeepIndent(output, editor->GetSelectionStart(),
-                        Format_Text_Indent_Prev_Line | Format_Text_Save_Empty_Lines);
-                    editor->ReplaceSelection(output);
-
-                } else {
-                    clEditorStateLocker lk(editor->GetCtrl());
-                    editor->SetEditorText(output);
-                }
-            }
+            DoFormatWithAstyle(editor);
         }
     }
+
     // Notify that a file was indented
-    wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_COMPLETED);
-    evt.SetString(editor->GetFileName().GetFullPath());
-    EventNotifier::Get()->AddPendingEvent(evt);
+    wxCommandEvent evtDone(wxEVT_CODEFORMATTER_INDENT_COMPLETED);
+    evtDone.SetString(fileName.GetFullPath());
+    EventNotifier::Get()->AddPendingEvent(evtDone);
+
+    m_mgr->SetStatusMessage(_("Done"), 0);
+
+    clDEBUG() << "File formatted: '" << fileName << clEndl;
 }
 
-void CodeFormatter::AstyleFormat(const wxString& input, const wxString& options, wxString& output)
+void CodeFormatter::DoFormatWithPhpCsFixer(IEditor* editor)
+{
+    clDEBUG() << "Using php-cs-fixer formatter" << clEndl;
+
+    FormatOptions fmtroptions;
+    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
+    if(!IsPhpConfigValid(fmtroptions)) {
+        return;
+    }
+
+    // Run the command, PHP-CS-Fixer works directly on the file
+    // so create a copy of the file and format it, then replace the buffers
+    // we do this like this so we won't lose our ability to undo the action
+    wxString output;
+    wxString command, filename, tmpfile;
+    filename = editor->GetFileName().GetFullPath();
+    tmpfile << filename << ".php-cs-fixer";
+    if(!FileUtils::WriteFileContent(tmpfile, editor->GetEditorText())) {
+        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer:\nFailed to write temporary file"), "Code Formatter",
+            wxICON_ERROR | wxOK | wxCENTER);
+        return;
+    }
+
+    // Ensure that the temporary file is deleted once we are done with it
+    FileUtils::Deleter fd(tmpfile);
+
+    ::WrapWithQuotes(tmpfile);
+    command << fmtroptions.GetPhpFixerCommand() << " " << tmpfile;
+    ::WrapInShell(command);
+    IProcess::Ptr_t phpFixer(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+    CHECK_PTR_RET(phpFixer);
+    phpFixer->WaitForTerminate(output);
+
+    output.clear();
+    if(!FileUtils::ReadFileContent(tmpfile, output)) {
+        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer:\nfailed to read temporary file content"),
+            "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
+        return;
+    }
+
+    OverwriteEditorText(editor, output);
+}
+
+void CodeFormatter::DoFormatWithBuildInPhp(IEditor* editor)
+{
+    clDEBUG() << "Using built in php formatter" << clEndl;
+
+    FormatOptions fmtroptions;
+    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
+
+    // Construct the formatting options
+    PHPFormatterOptions phpOptions;
+    phpOptions.flags = fmtroptions.GetPHPFormatterOptions();
+    if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
+        phpOptions.flags |= kPFF_UseTabs;
+    }
+    phpOptions.indentSize = m_mgr->GetEditorSettings()->GetTabWidth();
+    phpOptions.eol = m_mgr->GetEditorSettings()->GetEOLAsString();
+    // Create the formatter buffer
+    PHPFormatterBuffer buffer(editor->GetEditorText(), phpOptions);
+
+    // Format the source
+    buffer.format();
+
+    OverwriteEditorText(editor, buffer.GetBuffer());
+}
+
+void CodeFormatter::DoFormatWithClang(IEditor* editor)
+{
+    clDEBUG() << "Using Clang formatter" << clEndl;
+
+    int curpos = editor->GetCurrentPosition();
+    int from = wxNOT_FOUND, length = wxNOT_FOUND;
+    wxString formattedOutput;
+    if(editor->GetSelectionStart() != wxNOT_FOUND) {
+        // we got a selection, only format it
+        from = editor->GetSelectionStart();
+        length = editor->GetSelectionEnd() - from;
+        if(length <= 0) {
+            from = wxNOT_FOUND;
+            length = wxNOT_FOUND;
+        }
+    }
+
+    if(!ClangFormatBuffer(editor->GetEditorText(), editor->GetFileName(), formattedOutput, curpos, from, length)) {
+        ::wxMessageBox(_("Source code formatting error!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        return;
+    }
+
+    OverwriteEditorText(editor, formattedOutput, curpos);
+}
+
+void CodeFormatter::DoFormatWithAstyle(IEditor* editor)
+{
+    clDEBUG() << "Using AStyle formatter" << clEndl;
+
+    FormatOptions fmtroptions;
+    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
+
+    // AStyle
+    wxString options = fmtroptions.AstyleOptionsAsString();
+    int curpos = editor->GetCurrentPosition();
+
+    // determine indentation method and amount
+    bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
+    int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
+    int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
+    options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
+
+    wxString output;
+    wxString inputString;
+    bool formatSelectionOnly(editor->GetSelection().IsEmpty() == false);
+
+    if(formatSelectionOnly) {
+        // get the lines contained in the selection
+        int selStart = editor->GetSelectionStart();
+        int selEnd = editor->GetSelectionEnd();
+        int lineNumber = editor->LineFromPos(selStart);
+
+        selStart = editor->PosFromLine(lineNumber);
+        selEnd = editor->LineEnd(editor->LineFromPos(selEnd));
+
+        editor->SelectText(selStart, selEnd - selStart);
+        inputString = editor->GetSelection();
+    } else {
+        inputString = editor->GetEditorText();
+    }
+
+    AstyleFormat(inputString, output, options);
+    if(output.IsEmpty()) {
+        return;
+    }
+
+    if(formatSelectionOnly) {
+        clEditorStateLocker lk(editor->GetCtrl());
+        // format the text (add the indentation)
+        output = editor->FormatTextKeepIndent(
+            output, editor->GetSelectionStart(), Format_Text_Indent_Prev_Line | Format_Text_Save_Empty_Lines);
+        editor->ReplaceSelection(output);
+        return;
+    }
+
+    // append new-line
+    wxString eol;
+    if(editor->GetEOL() == 0) { // CRLF
+        eol = wxT("\r\n");
+    } else if(editor->GetEOL() == 1) { // CR
+        eol = wxT("\r");
+    } else {
+        eol = wxT("\n");
+    }
+
+    output << eol;
+
+    OverwriteEditorText(editor, output, curpos);
+}
+
+void CodeFormatter::OverwriteEditorText(IEditor*& editor, const wxString& text, int curpos)
+{
+    if(text.IsEmpty() || editor->GetEditorText().IsSameAs(text)) {
+        return;
+    }
+
+    if(!curpos) {
+        curpos = editor->GetCurrentPosition();
+    }
+
+    clEditorStateLocker lk(editor->GetCtrl());
+    editor->GetCtrl()->BeginUndoAction();
+    editor->SetEditorText(text);
+    editor->SetCaretAt(curpos);
+    editor->GetCtrl()->EndUndoAction();
+}
+
+void CodeFormatter::AstyleFormat(const wxString& input, wxString& output, const wxString& options)
 {
     char* textOut = AStyleMain(_C(input), _C(options), ASErrorHandler, ASMemoryAlloc);
     if(textOut) {
@@ -542,7 +546,7 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
         int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
         options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
 
-        AstyleFormat(str, options, output);
+        AstyleFormat(str, output, options);
         output << DoGetGlobalEOLString();
 
     } else if(fmtroptions.GetEngine() == kFormatEngineClangFormat) {
@@ -553,9 +557,6 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
             return;
         }
         ClangPreviewFormat(str, output, fmtroptions);
-
-    } else {
-        // ??
     }
     e.SetFormattedString(output);
 }
@@ -880,7 +881,7 @@ bool CodeFormatter::AStyleBatchFOrmat(const std::vector<wxFileName>& files, cons
         fmtOptions << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
 
         wxString output;
-        AstyleFormat(content, fmtOptions, output);
+        AstyleFormat(content, output, fmtOptions);
         output << DoGetGlobalEOLString();
 
         // Replace the content of the file
@@ -915,20 +916,23 @@ void CodeFormatter::OnBeforeFileSave(clCommandEvent& e)
     e.Skip();
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-    if(fmtroptions.HasFlag(kCF_AutoFormatOnFileSave)) {
-        // format the file before we save it
-        IEditor* editor = m_mgr->FindEditor(e.GetFileName());
-        if(editor && m_mgr->GetActiveEditor() == editor) {
-            // we have our editor, format it
-            DoFormatFile(editor);
-        }
+    if(!fmtroptions.HasFlag(kCF_AutoFormatOnFileSave)) {
+        return;
     }
+
+    IEditor* editor = m_mgr->FindEditor(e.GetFileName());
+    if(!editor || m_mgr->GetActiveEditor() != editor) {
+        return;
+    }
+
+    // we have our editor, format it
+    DoFormatFile(editor);
 }
 
 void CodeFormatter::DoFormatXmlSource(IEditor* editor)
 {
     wxXmlDocument doc;
-    wxStringInputStream ss(editor->GetCtrl()->GetText());
+    wxStringInputStream ss(editor->GetEditorText());
     if(!doc.Load(ss)) {
         clWARNING() << "Failed to format XML file (Load):" << editor->GetFileName() << clEndl;
         return;
@@ -942,19 +946,13 @@ void CodeFormatter::DoFormatXmlSource(IEditor* editor)
     }
 
     clDEBUG() << "CodeForamtter: using standard XML foramtter" << clEndl;
-    clEditorStateLocker lk(editor->GetCtrl());
-    int curpos = editor->GetCurrentPosition();
-    editor->GetCtrl()->BeginUndoAction();
-    editor->SetEditorText(formattedOutput);
-    editor->SetCaretAt(curpos);
+    OverwriteEditorText(editor, formattedOutput);
 
     // Convert SPACEs to TABs?
     if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
         wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_tabs"));
         wxTheApp->GetTopWindow()->GetEventHandler()->ProcessEvent(evt);
     }
-
-    editor->GetCtrl()->EndUndoAction();
 }
 
 void CodeFormatter::OnPhpSettingsChanged(clCommandEvent& event)

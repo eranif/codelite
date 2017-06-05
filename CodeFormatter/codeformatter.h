@@ -50,7 +50,12 @@ private:
         const FormatOptions& options,
         const wxFileName& originalFileName);
 
+    void DoFormatWithBuildInPhp(IEditor* editor);
+    void DoFormatWithPhpCsFixer(IEditor* editor);
+    void DoFormatWithClang(IEditor* editor);
+    void DoFormatWithAstyle(IEditor* editor);
     void DoFormatXmlSource(IEditor* editor);
+    void OverwriteEditorText(IEditor*& editor, const wxString& text, int curpos = 0);
 
     void OnPhpSettingsChanged(clCommandEvent& event);
 
@@ -109,7 +114,7 @@ public:
 public:
     CodeFormatter(IManager* manager);
     virtual ~CodeFormatter();
-    void AstyleFormat(const wxString& input, const wxString& options, wxString& output);
+    void AstyleFormat(const wxString& input, wxString& output, const wxString& options);
     virtual clToolBar* CreateToolBar(wxWindow* parent);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);

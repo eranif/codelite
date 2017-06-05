@@ -238,7 +238,7 @@ void CodeFormatterDlg::UpdatePreview()
     {
         // Astyle
         output.Clear();
-        m_cf->AstyleFormat(m_sampleCode, m_options.AstyleOptionsAsString(), output);
+        m_cf->AstyleFormat(m_sampleCode, output, m_options.AstyleOptionsAsString());
         m_textCtrlPreview->SetEditable(true);
         clSTCLineKeeper lk(m_textCtrlPreview);
         m_textCtrlPreview->SetText(output);

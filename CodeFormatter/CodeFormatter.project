@@ -72,8 +72,6 @@
     <File Name="ASResource.cpp"/>
     <File Name="astyle.h"/>
     <File Name="astyle_main.h"/>
-    <File Name="ASLocalizer.cpp"/>
-    <File Name="ASLocalizer.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Dialogs">
     <File Name="codeformatterdlg.h"/>
@@ -85,6 +83,8 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="CodeFormatter">
+    <File Name="ASLocalizer.cpp"/>
+    <File Name="ASLocalizer.h"/>
     <File Name="codeformatterdlg.wxcp"/>
     <File Name="codeformatterdlg_codeformatter_bitmaps.cpp"/>
     <File Name="codeformatterdlgbase.cpp"/>

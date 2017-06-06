@@ -1,0 +1,24 @@
+<?php
+namespace MySpace;
+require_once 'bla.php';
+class MyClass {
+  const MY_CONST = "Hello World";
+  const MY_2ND_CONST = "Second Constant";
+  public function __construct() {}
+  public function foo() {}
+  public function bar() {
+    $array = array("foo" => "bar","bar" => "foo",);
+    $a=1;
+    if($a == 1) {
+      // do something
+    } elseif ($a==2) {
+      // do something else
+    } else {
+      // default
+    }
+    while($a==1) {
+      // a is 1... reduce it
+      --$a;
+    }
+  }
+}

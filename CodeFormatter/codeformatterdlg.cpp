@@ -33,39 +33,16 @@
 #include "windowattrmanager.h"
 #include <wx/menu.h>
 
-static const wxString PHPSample = "<?php\n"
-                                  "namespace MySpace;\n"
-                                  "require_once 'bla.php';\n"
-                                  "class MyClass {\n"
-                                  "  const MY_CONST = \"Hello World\";\n"
-                                  "  const MY_2ND_CONST = \"Second Constant\";\n"
-                                  "  public function __construct() {}\n"
-                                  "  public function foo() {}\n"
-                                  "  public function bar() {\n"
-                                  "    $array = array(\"foo\" => \"bar\",\"bar\" => \"foo\",);\n"
-                                  "    $a=1;\n"
-                                  "    if($a == 1) {\n"
-                                  "      // do something\n"
-                                  "    } elseif ($a==2) {\n"
-                                  "      // do something else\n"
-                                  "    } else {\n"
-                                  "      // default\n"
-                                  "    }\n"
-                                  "    while($a==1) {\n"
-                                  "      // a is 1... reduce it\n"
-                                  "      --$a;\n"
-                                  "    }\n"
-                                  "  }\n"
-                                  "}\n";
-
 CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     IManager* mgr,
     CodeFormatter* cf,
     const FormatOptions& options,
-    const wxString& sampleCode)
+    const wxString& cppSampleCode,
+    const wxString& phpSampleCode)
     : CodeFormatterBaseDlg(parent)
     , m_cf(cf)
-    , m_sampleCode(sampleCode)
+    , m_cppSampleCode(cppSampleCode)
+    , m_phpSampleCode(phpSampleCode)
     , m_isDirty(false)
     , m_mgr(mgr)
 {
@@ -77,7 +54,12 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     Centre();
 
     m_options = options;
-    m_textCtrlPreview->SetText(m_sampleCode);
+    m_textCtrlPreview->SetText(m_cppSampleCode);
+    m_textCtrlPreview_Clang->SetText(m_cppSampleCode);
+    m_stcPhpPreview->SetText(m_phpSampleCode);
+    m_textCtrlPreview_PhpCSFixer->SetText(m_phpSampleCode);
+    m_textCtrlPreview_Phpcbf->SetText(m_phpSampleCode);
+
     GetSizer()->Fit(this);
     InitDialog();
     UpdatePreview();
@@ -244,27 +226,27 @@ void CodeFormatterDlg::UpdatePreview()
     wxString output, command;
     // Astyle
     output.Clear();
-    m_cf->AstyleFormat(m_sampleCode, output, m_options.AstyleOptionsAsString());
+    m_cf->AstyleFormat(m_cppSampleCode, output, m_options.AstyleOptionsAsString());
     UpdatePreviewText(m_textCtrlPreview, output);
 
     // Clang
     output.Clear();
-    m_cf->ClangPreviewFormat(m_sampleCode, output);
+    m_cf->ClangPreviewFormat(m_cppSampleCode, output);
     UpdatePreviewText(m_textCtrlPreview_Clang, output);
 
     // PHP preview
-    output = PHPSample;
+    output = m_phpSampleCode;
     m_cf->PhpFormat(output);
     UpdatePreviewText(m_stcPhpPreview, output);
 
     // PhpCsFixer preview
-    output = PHPSample;
+    output = m_phpSampleCode;
     command = m_options.GetPhpFixerCommand();
     m_cf->DoFormatExternally(output, command);
     UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
 
     // Phpcbf preview
-    output = PHPSample;
+    output = m_phpSampleCode;
     command = m_options.GetPhpcbfCommand();
     m_cf->DoFormatExternally(output, command);
     UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);

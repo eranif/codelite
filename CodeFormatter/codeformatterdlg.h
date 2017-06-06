@@ -35,7 +35,8 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
 {
     FormatOptions m_options;
     CodeFormatter* m_cf;
-    wxString m_sampleCode;
+    wxString m_cppSampleCode;
+    wxString m_phpSampleCode;
     bool m_isDirty;
     IManager* m_mgr;
 
@@ -62,8 +63,9 @@ public:
     CodeFormatterDlg(wxWindow* parent,
         IManager* mgr,
         CodeFormatter* cf,
-        const FormatOptions& opts,
-        const wxString& sampleCode);
+        const FormatOptions& options,
+        const wxString& cppSampleCode,
+        const wxString& phpSampleCode);
     ~CodeFormatterDlg();
     FormatOptions GetOptions() const
     {

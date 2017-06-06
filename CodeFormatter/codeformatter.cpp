@@ -408,12 +408,13 @@ void CodeFormatter::OnFormatOptions(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
-    wxString sampleFile;
-    wxString content;
-    sampleFile << m_mgr->GetStartupDirectory() << wxT("/astyle.sample");
-    ReadFileWithConversion(sampleFile, content);
+    wxString cppSampleFile, phpSampleFile, cppSample, phpSample;
+    cppSampleFile << m_mgr->GetStartupDirectory() << wxT("/astyle.sample");
+    phpSampleFile << m_mgr->GetStartupDirectory() << wxT("/php.sample");
+    ReadFileWithConversion(cppSampleFile, cppSample);
+    ReadFileWithConversion(phpSampleFile, phpSample);
 
-    CodeFormatterDlg dlg(NULL, m_mgr, this, m_options, content);
+    CodeFormatterDlg dlg(NULL, m_mgr, this, m_options, cppSample, phpSample);
     dlg.ShowModal();
 }
 

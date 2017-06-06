@@ -33,7 +33,7 @@ class CodeFormatter;
 
 class CodeFormatterDlg : public CodeFormatterBaseDlg
 {
-    FormatOptions m_options;
+    FormatOptions& m_options;
     CodeFormatter* m_cf;
     wxString m_sampleCode;
     bool m_isDirty;
@@ -59,16 +59,10 @@ protected:
 
 public:
     /** Constructor */
-    CodeFormatterDlg(wxWindow* parent,
-        IManager* mgr,
-        CodeFormatter* cf,
-        const FormatOptions& opts,
-        const wxString& sampleCode);
-    ~CodeFormatterDlg();
-    FormatOptions GetOptions() const
-    {
-        return m_options;
-    }
+    CodeFormatterDlg(
+        wxWindow* parent, IManager* mgr, CodeFormatter* cf, FormatOptions& opts, const wxString& sampleCode);
+    virtual ~CodeFormatterDlg();
+    FormatOptions GetOptions() const { return m_options; }
 };
 
 #endif // __codeformatterdlg__

@@ -58,12 +58,10 @@ static const wxString PHPSample = "<?php\n"
                                   "  }\n"
                                   "}\n";
 
-CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
-    IManager* mgr,
-    CodeFormatter* cf,
-    const FormatOptions& options,
-    const wxString& sampleCode)
+CodeFormatterDlg::CodeFormatterDlg(
+    wxWindow* parent, IManager* mgr, CodeFormatter* cf, FormatOptions& options, const wxString& sampleCode)
     : CodeFormatterBaseDlg(parent)
+    , m_options(options)
     , m_cf(cf)
     , m_sampleCode(sampleCode)
     , m_isDirty(false)
@@ -76,7 +74,6 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     // center the dialog
     Centre();
 
-    m_options = options;
     m_textCtrlPreview->SetText(m_sampleCode);
     GetSizer()->Fit(this);
     InitDialog();
@@ -278,14 +275,9 @@ void CodeFormatterDlg::UpdatePreviewText(wxStyledTextCtrl*& textCtrl, const wxSt
     textCtrl->SetEditable(false);
 }
 
-CodeFormatterDlg::~CodeFormatterDlg()
-{
-}
+CodeFormatterDlg::~CodeFormatterDlg() {}
 
-void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_isDirty);
-}
+void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isDirty); }
 
 void CodeFormatterDlg::OnCustomAstyleFlags(wxCommandEvent& event)
 {

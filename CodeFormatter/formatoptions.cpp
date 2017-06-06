@@ -398,6 +398,6 @@ wxString FormatOptions::GetPhpcbfCommand()
     }
     parameters.Trim().Trim(false);
     // no-patch is needed for files in /tmp, or it thinkgs it's risky...
-    command << php << " " << phar << " --no-patch " << options;
+    command << php << " " << phar << " " << parameters;
     return command;
 }

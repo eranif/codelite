@@ -865,7 +865,8 @@ bool CodeFormatter::PhpFormat(wxString& content)
 bool CodeFormatter::DoFormatExternally(wxString& content, wxString command, wxString filePath)
 {
     if(filePath == "") {
-        wxFileName tmpfile(clStandardPaths::Get().GetTempDir(), ".code-formatter-tmp.php");
+        // 3.x doesn't handel dot-files.
+        wxFileName tmpfile(clStandardPaths::Get().GetTempDir(), "code-formatter-tmp.php");
         // Ensure that the temporary file is deleted once we are done with it
         FileUtils::Deleter fd(tmpfile);
         filePath = tmpfile.GetFullPath();

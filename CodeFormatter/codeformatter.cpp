@@ -271,9 +271,10 @@ void CodeFormatter::DoFormatWithPhar(IEditor* editor,
         return;
     }
 
-    wxString output;
-    if(!DoFormatExternally(editor->GetEditorText(), output, command)) {
-        ::wxMessageBox(_("Can not format file using " + name + ":\nAccess to temporary file failed"), "Code Formatter",
+    wxString output = editor->GetEditorText();
+    wxString fileName = editor->GetFileName().GetFullPath() + ".code-formatter-tmp.php";
+    if(!DoFormatExternally(output, command, fileName)) {
+        ::wxMessageBox(_("Can not format file:\nAccess to temporary file failed"), "Code Formatter",
             wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
@@ -876,7 +877,7 @@ bool CodeFormatter::AStyleBatchFOrmat(const std::vector<wxFileName>& files, cons
     return true;
 }
 
-bool CodeFormatter::PhpFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options)
+bool CodeFormatter::PhpFormat(wxString& content, const FormatOptions& options)
 {
     // Construct the formatting options
     PHPFormatterOptions phpOptions;
@@ -891,29 +892,33 @@ bool CodeFormatter::PhpFormat(const wxString& content, wxString& formattedOutput
 
     // Format the source
     buffer.format();
-    formattedOutput << buffer.GetBuffer();
+    content = buffer.GetBuffer();
     return true;
 }
 
-bool CodeFormatter::DoFormatExternally(const wxString& content, wxString& formattedOutput, wxString& command)
+bool CodeFormatter::DoFormatExternally(wxString& content, wxString command, wxString filePath)
 {
-    wxFileName tmpfile(clStandardPaths::Get().GetTempDir(), ".code-formatter-tmp.php");
-    wxString tempPath = tmpfile.GetFullPath();
-    if(!FileUtils::WriteFileContent(tempPath, content)) {
+    if(filePath == "") {
+        wxFileName tmpfile(clStandardPaths::Get().GetTempDir(), ".code-formatter-tmp.php");
+        // Ensure that the temporary file is deleted once we are done with it
+        FileUtils::Deleter fd(tmpfile);
+        filePath = tmpfile.GetFullPath();
+    }
+
+    if(!FileUtils::WriteFileContent(filePath, content)) {
         return false;
     }
 
-    // Ensure that the temporary file is deleted once we are done with it
-    FileUtils::Deleter fd(tempPath);
-
-    ::WrapWithQuotes(tempPath);
-    command << " " << tempPath;
+    ::WrapWithQuotes(filePath);
+    command << " " << filePath;
     clDEBUG() << "CodeFormatter running:" << command << clEndl;
     ProcUtils::SafeExecuteCommand(command);
 
-    if(!FileUtils::ReadFileContent(tempPath, formattedOutput)) {
+    wxString output;
+    if(!FileUtils::ReadFileContent(filePath, output) || output.IsEmpty()) {
         return false;
     }
+    content = output;
     return true;
 }
 

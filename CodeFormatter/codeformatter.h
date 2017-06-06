@@ -100,8 +100,8 @@ public:
     /**
      * @brief format a PHP content
      */
-    bool PhpFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
-    bool DoFormatExternally(const wxString& content, wxString& formattedOutput, wxString& command);
+    bool PhpFormat(wxString& content, const FormatOptions& options);
+    bool DoFormatExternally(wxString& content, wxString command, wxString filePath = "");
 
     /**
      * @brief format list of files

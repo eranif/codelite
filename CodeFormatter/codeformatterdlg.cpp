@@ -253,20 +253,20 @@ void CodeFormatterDlg::UpdatePreview()
     UpdatePreviewText(m_textCtrlPreview_Clang, output);
 
     // PHP preview
-    output.Clear();
-    m_cf->PhpFormat(PHPSample, output, m_options);
+    output = PHPSample;
+    m_cf->PhpFormat(output, m_options);
     UpdatePreviewText(m_stcPhpPreview, output);
 
     // PhpCsFixer preview
-    output.Clear();
+    output = PHPSample;
     command = m_options.GetPhpFixerCommand();
-    m_cf->DoFormatExternally(PHPSample, output, command);
+    m_cf->DoFormatExternally(output, command);
     UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
 
     // Phpcbf preview
-    output.Clear();
+    output = PHPSample;
     command = m_options.GetPhpcbfCommand();
-    m_cf->DoFormatExternally(PHPSample, output, command);
+    m_cf->DoFormatExternally(output, command);
     UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
 }
 

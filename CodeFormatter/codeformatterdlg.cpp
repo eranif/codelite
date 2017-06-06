@@ -61,7 +61,7 @@ static const wxString PHPSample = "<?php\n"
 CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     IManager* mgr,
     CodeFormatter* cf,
-    const FormatOptions& opts,
+    const FormatOptions& options,
     const wxString& sampleCode)
     : CodeFormatterBaseDlg(parent)
     , m_cf(cf)
@@ -76,7 +76,7 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     // center the dialog
     Centre();
 
-    m_options = opts;
+    m_options = options;
     m_textCtrlPreview->SetText(m_sampleCode);
     GetSizer()->Fit(this);
     InitDialog();
@@ -249,12 +249,12 @@ void CodeFormatterDlg::UpdatePreview()
 
     // Clang
     output.Clear();
-    m_cf->ClangPreviewFormat(m_sampleCode, output, m_options);
+    m_cf->ClangPreviewFormat(m_sampleCode, output);
     UpdatePreviewText(m_textCtrlPreview_Clang, output);
 
     // PHP preview
     output = PHPSample;
-    m_cf->PhpFormat(output, m_options);
+    m_cf->PhpFormat(output);
     UpdatePreviewText(m_stcPhpPreview, output);
 
     // PhpCsFixer preview

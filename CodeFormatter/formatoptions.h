@@ -158,7 +158,7 @@ class FormatOptions : public SerializedObject
     wxString m_PhpcbfEncoding;
     wxString m_PhpcbfStandard;
     size_t m_PhpcbfPharOptions;
-    PhpOptions m_settingsPhp;
+    PhpOptions m_optionsPhp;
 
 private:
     wxString ClangFlagToBool(ClangFormatStyle flag) const;

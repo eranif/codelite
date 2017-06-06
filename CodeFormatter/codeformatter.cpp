@@ -116,13 +116,9 @@ CodeFormatter::CodeFormatter(IManager* manager)
         wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
     EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &CodeFormatter::OnPhpSettingsChanged, this);
-    m_settingsPhp.Load();
+    m_optionsPhp.Load();
 
-    FormatOptions fmtroptions;
-    m_mgr->GetConfigTool()->ReadObject("FormatterOptions", &fmtroptions);
-
-    // Save the options
-    EditorConfigST::Get()->WriteObject("FormatterOptions", &fmtroptions);
+    m_mgr->GetConfigTool()->ReadObject("FormatterOptions", &m_options);
 }
 
 CodeFormatter::~CodeFormatter()
@@ -204,13 +200,10 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
     evt.SetString(fileName.GetFullPath());
     EventNotifier::Get()->ProcessEvent(evt);
 
-    // execute the formatter
-    FormatOptions fmtroptions;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
     if(FileExtManager::IsPHPFile(fileName)) {
-        if(fmtroptions.GetPhpEngine() == kPhpFormatEnginePhpCsFixer) {
+        if(m_options.GetPhpEngine() == kPhpFormatEnginePhpCsFixer) {
             DoFormatWithPhpCsFixer(editor);
-        } else if(fmtroptions.GetPhpEngine() == kPhpFormatEnginePhpcbf) {
+        } else if(m_options.GetPhpEngine() == kPhpFormatEnginePhpcbf) {
             DoFormatWithPhpcbf(editor);
         } else {
             DoFormatWithBuildInPhp(editor);
@@ -223,7 +216,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
     } else if(FileExtManager::IsJavascriptFile(fileName) || FileExtManager::IsJavaFile(fileName)) {
         DoFormatWithClang(editor);
     } else if(FileExtManager::IsCxxFile(fileName)) {
-        if(fmtroptions.GetEngine() == kFormatEngineClangFormat) {
+        if(m_options.GetEngine() == kFormatEngineClangFormat) {
             DoFormatWithClang(editor);
         } else {
             DoFormatWithAstyle(editor);
@@ -242,37 +235,31 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
 
 void CodeFormatter::DoFormatWithPhpCsFixer(IEditor* editor)
 {
-    FormatOptions options;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
-    wxFileName phar(options.GetPHPCSFixerPhar());
+    wxFileName phar(m_options.GetPHPCSFixerPhar());
     wxString name = "PHP-CS-Fixer";
-    wxString command = options.GetPhpFixerCommand();
+    wxString command = m_options.GetPhpFixerCommand();
+    DoFormatWithPhar(editor, phar, name, command);
 }
 
 void CodeFormatter::DoFormatWithPhpcbf(IEditor* editor)
 {
-    FormatOptions options;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
-    wxFileName phar(options.GetPhpcbfPhar());
+    wxFileName phar(m_options.GetPhpcbfPhar());
     wxString name = "PHPCBF";
-    wxString command = options.GetPhpcbfCommand();
-    DoFormatWithPhar(editor, options, phar, name, command);
+    wxString command = m_options.GetPhpcbfCommand();
+    DoFormatWithPhar(editor, phar, name, command);
 }
 
-void CodeFormatter::DoFormatWithPhar(IEditor* editor,
-    const FormatOptions& options,
-    const wxFileName& phar,
-    const wxString& name,
-    wxString& command)
+void CodeFormatter::DoFormatWithPhar(IEditor* editor, const wxFileName& phar, const wxString& name, wxString& command)
 {
     clDEBUG() << "Using" << name << "formatter" << clEndl;
 
-    if(!IsPharConfigValid(options, phar, name)) {
+    if(!IsPharConfigValid(phar, name)) {
         return;
     }
 
     wxString output = editor->GetEditorText();
     wxString fileName = editor->GetFileName().GetFullPath() + ".code-formatter-tmp.php";
+    FileUtils::Deleter fd(fileName);
     if(!DoFormatExternally(output, command, fileName)) {
         ::wxMessageBox(_("Can not format file:\nAccess to temporary file failed"), "Code Formatter",
             wxICON_ERROR | wxOK | wxCENTER);
@@ -286,12 +273,9 @@ void CodeFormatter::DoFormatWithBuildInPhp(IEditor* editor)
 {
     clDEBUG() << "Using built in php formatter" << clEndl;
 
-    FormatOptions fmtroptions;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-
     // Construct the formatting options
     PHPFormatterOptions phpOptions;
-    phpOptions.flags = fmtroptions.GetPHPFormatterOptions();
+    phpOptions.flags = m_options.GetPHPFormatterOptions();
     if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
         phpOptions.flags |= kPFF_UseTabs;
     }
@@ -335,11 +319,8 @@ void CodeFormatter::DoFormatWithAstyle(IEditor* editor)
 {
     clDEBUG() << "Using AStyle formatter" << clEndl;
 
-    FormatOptions fmtroptions;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-
     // AStyle
-    wxString options = fmtroptions.AstyleOptionsAsString();
+    wxString options = m_options.AstyleOptionsAsString();
     int curpos = editor->GetCurrentPosition();
 
     // determine indentation method and amount
@@ -426,16 +407,13 @@ void CodeFormatter::AstyleFormat(const wxString& input, wxString& output, const 
 void CodeFormatter::OnFormatOptions(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    // load options from settings file
-    FormatOptions fmtroptions;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
 
     wxString sampleFile;
     wxString content;
     sampleFile << m_mgr->GetStartupDirectory() << wxT("/astyle.sample");
     ReadFileWithConversion(sampleFile, content);
 
-    CodeFormatterDlg dlg(NULL, m_mgr, this, fmtroptions, content);
+    CodeFormatterDlg dlg(NULL, m_mgr, this, m_options, content);
     dlg.ShowModal();
 }
 
@@ -494,16 +472,12 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
         return;
     }
 
-    // execute the formatter
-    FormatOptions fmtroptions;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-
     wxString output;
     if(FileExtManager::IsPHPFile(e.GetFileName())) {
         // use the built-in PHP formatter
         // Construct the formatting options
         PHPFormatterOptions phpOptions;
-        phpOptions.flags = fmtroptions.GetPHPFormatterOptions();
+        phpOptions.flags = m_options.GetPHPFormatterOptions();
         if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
             phpOptions.flags |= kPFF_UseTabs;
         }
@@ -517,14 +491,14 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
 
         // set the output
         output = buffer.GetBuffer();
-    } else if(fmtroptions.GetEngine() == kFormatEngineAStyle) {
+    } else if(m_options.GetEngine() == kFormatEngineAStyle) {
         if(!FileExtManager::IsCxxFile(e.GetFileName())) {
             clDEBUG() << "CodeFormatter: engine is set to ASTYLE. Source is not C/C++, skipped" << clEndl;
             e.Skip();
             return;
         }
 
-        wxString options = fmtroptions.AstyleOptionsAsString();
+        wxString options = m_options.AstyleOptionsAsString();
 
         // determine indentation method and amount
         bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
@@ -535,21 +509,21 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
         AstyleFormat(str, output, options);
         output << DoGetGlobalEOLString();
 
-    } else if(fmtroptions.GetEngine() == kFormatEngineClangFormat) {
+    } else if(m_options.GetEngine() == kFormatEngineClangFormat) {
         if(!FileExtManager::IsCxxFile(e.GetFileName()) && !FileExtManager::IsJavascriptFile(e.GetFileName())) {
             clDEBUG() << "CodeFormatter: engine is set to clang-format. Source is not C/C++/JavaScript, skipped"
                       << clEndl;
             e.Skip();
             return;
         }
-        ClangPreviewFormat(str, output, fmtroptions);
+        ClangPreviewFormat(str, output);
     }
     e.SetFormattedString(output);
 }
 
-bool CodeFormatter::IsPharConfigValid(const FormatOptions& options, const wxFileName& phar, const wxString& name)
+bool CodeFormatter::IsPharConfigValid(const wxFileName& phar, const wxString& name)
 {
-    wxFileName php(m_settingsPhp.GetPhpExe());
+    wxFileName php(m_optionsPhp.GetPhpExe());
     if(!php.Exists()) {
         ::wxMessageBox(_("Can not format file using " + name + ": Missing PHP executable path"), "Code Formatter",
             wxICON_ERROR | wxOK | wxCENTER);
@@ -621,9 +595,7 @@ bool CodeFormatter::ClangFormatBuffer(const wxString& content,
         fp.Close();
     }
 
-    FormatOptions options;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
-    bool res = DoClangFormat(fn, formattedOutput, cursorPosition, startOffset, length, options, filename);
+    bool res = DoClangFormat(fn, formattedOutput, cursorPosition, startOffset, length, filename);
     {
         // Delete the temporary file
         wxLogNull nl;
@@ -638,12 +610,10 @@ bool CodeFormatter::ClangFormatFile(const wxFileName& filename,
     int startOffset,
     int length)
 {
-    FormatOptions options;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
-    return DoClangFormat(filename, formattedOutput, cursorPosition, startOffset, length, options, filename);
+    return DoClangFormat(filename, formattedOutput, cursorPosition, startOffset, length, filename);
 }
 
-bool CodeFormatter::ClangPreviewFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options)
+bool CodeFormatter::ClangPreviewFormat(const wxString& content, wxString& formattedOutput)
 {
     int startOffset, length, cursorPosition;
     startOffset = length = cursorPosition = wxNOT_FOUND;
@@ -656,7 +626,7 @@ bool CodeFormatter::ClangPreviewFormat(const wxString& content, wxString& format
         fp.Write(content, wxConvUTF8);
         fp.Close();
     }
-    bool res = DoClangFormat(fn, formattedOutput, cursorPosition, startOffset, length, options, fn);
+    bool res = DoClangFormat(fn, formattedOutput, cursorPosition, startOffset, length, fn);
     {
         // Delete the temporary file
         wxLogNull nl;
@@ -670,27 +640,26 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename,
     int& cursorPosition,
     int startOffset,
     int length,
-    const FormatOptions& options,
     const wxFileName& originalFileName)
 {
     // clang-format
     // Build the command line to run
-    if(options.GetClangFormatExe().IsEmpty()) {
+    if(m_options.GetClangFormatExe().IsEmpty()) {
         return false;
     }
 
     wxString command, file;
 
     clClangFormatLocator locator;
-    double version = locator.GetVersion(options.GetClangFormatExe());
+    double version = locator.GetVersion(m_options.GetClangFormatExe());
 
-    command << options.GetClangFormatExe();
+    command << m_options.GetClangFormatExe();
     file = filename.GetFullPath();
     ::WrapWithQuotes(command);
     ::WrapWithQuotes(file);
 
     command << " -assume-filename=" << originalFileName.GetFullName() << " ";
-    command << options.ClangFormatOptionsAsString(filename, version);
+    command << m_options.ClangFormatOptionsAsString(filename, version);
     if(cursorPosition != wxNOT_FOUND) {
         command << " -cursor=" << cursorPosition;
     }
@@ -782,21 +751,18 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& e)
 
 bool CodeFormatter::BatchFormat(const std::vector<wxFileName>& files)
 {
-    FormatOptions options;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
-
-    switch(options.GetEngine()) {
+    switch(m_options.GetEngine()) {
     case kFormatEngineAStyle:
-        return AStyleBatchFOrmat(files, options);
+        return AStyleBatchFOrmat(files);
     case kFormatEngineClangFormat:
-        return ClangBatchFormat(files, options);
+        return ClangBatchFormat(files);
     }
     return false;
 }
 
-bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const FormatOptions& options)
+bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files)
 {
-    if(options.GetClangFormatExe().IsEmpty()) {
+    if(m_options.GetClangFormatExe().IsEmpty()) {
         return false;
     }
 
@@ -804,15 +770,15 @@ bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const
         _("Source Code Formatter"), _("Formatting files..."), (int)files.size(), m_mgr->GetTheApp()->GetTopWindow());
 
     clClangFormatLocator locator;
-    double version = locator.GetVersion(options.GetClangFormatExe());
+    double version = locator.GetVersion(m_options.GetClangFormatExe());
 
     for(size_t i = 0; i < files.size(); ++i) {
         wxString command, file;
-        command << options.GetClangFormatExe();
+        command << m_options.GetClangFormatExe();
         ::WrapWithQuotes(command);
 
         command << " -i "; // inline editing
-        command << options.ClangFormatOptionsAsString(files.at(i), version);
+        command << m_options.ClangFormatOptionsAsString(files.at(i), version);
         file = files.at(i).GetFullPath();
         ::WrapWithQuotes(file);
         command << " " << file;
@@ -841,9 +807,9 @@ bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const
     return true;
 }
 
-bool CodeFormatter::AStyleBatchFOrmat(const std::vector<wxFileName>& files, const FormatOptions& options)
+bool CodeFormatter::AStyleBatchFOrmat(const std::vector<wxFileName>& files)
 {
-    wxString fmtOptions = options.AstyleOptionsAsString();
+    wxString fmtOptions = m_options.AstyleOptionsAsString();
 
     wxProgressDialog dlg(
         _("Source Code Formatter"), _("Formatting files..."), (int)files.size(), m_mgr->GetTheApp()->GetTopWindow());
@@ -877,11 +843,11 @@ bool CodeFormatter::AStyleBatchFOrmat(const std::vector<wxFileName>& files, cons
     return true;
 }
 
-bool CodeFormatter::PhpFormat(wxString& content, const FormatOptions& options)
+bool CodeFormatter::PhpFormat(wxString& content)
 {
     // Construct the formatting options
     PHPFormatterOptions phpOptions;
-    phpOptions.flags = options.GetPHPFormatterOptions();
+    phpOptions.flags = m_options.GetPHPFormatterOptions();
     if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
         phpOptions.flags |= kPFF_UseTabs;
     }
@@ -925,9 +891,7 @@ bool CodeFormatter::DoFormatExternally(wxString& content, wxString command, wxSt
 void CodeFormatter::OnBeforeFileSave(clCommandEvent& e)
 {
     e.Skip();
-    FormatOptions fmtroptions;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-    if(!fmtroptions.HasFlag(kCF_AutoFormatOnFileSave)) {
+    if(!m_options.HasFlag(kCF_AutoFormatOnFileSave)) {
         return;
     }
 
@@ -969,5 +933,5 @@ void CodeFormatter::DoFormatXmlSource(IEditor* editor)
 void CodeFormatter::OnPhpSettingsChanged(clCommandEvent& event)
 {
     event.Skip();
-    m_settingsPhp.Load();
+    m_optionsPhp.Load();
 }

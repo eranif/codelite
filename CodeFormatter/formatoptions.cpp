@@ -355,48 +355,48 @@ wxString FormatOptions::ClangGlobalSettings() const
 
 wxString FormatOptions::GetPhpFixerCommand()
 {
-    m_settingsPhp.Load();
-    wxString command, phar, php, options;
-    php << m_settingsPhp.GetPhpExe();
+    m_optionsPhp.Load();
+    wxString command, phar, php, parameters;
+    php << m_optionsPhp.GetPhpExe();
     ::WrapWithQuotes(php);
 
     phar << GetPHPCSFixerPhar();
     ::WrapWithQuotes(phar);
 
-    options << GetPHPCSFixerPharOptions();
-    if(options.IsEmpty()) {
+    parameters << GetPHPCSFixerPharOptions();
+    if(parameters.IsEmpty()) {
         if(m_PHPCSFixerPharRules & kAllowRisky) {
-            options << " --allow-risky=yes";
+            parameters << " --allow-risky=yes";
         }
     }
-    options.Trim().Trim(false);
-    command << php << " " << phar << " fix " << options;
+    parameters.Trim().Trim(false);
+    command << php << " " << phar << " fix " << parameters;
     return command;
 }
 
 wxString FormatOptions::GetPhpcbfCommand()
 {
-    m_settingsPhp.Load();
-    wxString command, phar, php, options;
-    php << m_settingsPhp.GetPhpExe();
+    m_optionsPhp.Load();
+    wxString command, phar, php, parameters;
+    php << m_optionsPhp.GetPhpExe();
     ::WrapWithQuotes(php);
 
     phar << GetPhpcbfPhar();
     ::WrapWithQuotes(phar);
 
     if(m_PhpcbfStandard != "phpcs.xml") {
-        options << " --standard=" << m_PhpcbfStandard;
+        parameters << " --standard=" << m_PhpcbfStandard;
     }
     if(m_PhpcbfEncoding != "") {
-        options << " --encoding=" << m_PhpcbfEncoding;
+        parameters << " --encoding=" << m_PhpcbfEncoding;
     }
     if(m_phpcbfSeverity) {
-        options << " --severity=" << m_phpcbfSeverity;
+        parameters << " --severity=" << m_phpcbfSeverity;
     }
     if(m_PhpcbfPharOptions & kWarningSeverity0) {
-        options << " -n";
+        parameters << " -n";
     }
-    options.Trim().Trim(false);
+    parameters.Trim().Trim(false);
     // no-patch is needed for files in /tmp, or it thinkgs it's risky...
     command << php << " " << phar << " --no-patch " << options;
     return command;

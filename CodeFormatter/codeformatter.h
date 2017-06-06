@@ -32,7 +32,8 @@
 
 class CodeFormatter : public IPlugin
 {
-    PhpOptions m_settingsPhp;
+    FormatOptions m_options;
+    PhpOptions m_optionsPhp;
 
 protected:
     void DoFormatFile(IEditor* editor);
@@ -41,13 +42,12 @@ protected:
     wxString DoGetGlobalEOLString() const;
 
 private:
-    bool IsPharConfigValid(const FormatOptions& options, const wxFileName& phar, const wxString& name);
+    bool IsPharConfigValid(const wxFileName& phar, const wxString& name);
     bool DoClangFormat(const wxFileName& filename,
         wxString& formattedOutput,
         int& cursorPosition,
         int startOffset,
         int length,
-        const FormatOptions& options,
         const wxFileName& originalFileName);
 
     void DoFormatWithPhpcbf(IEditor* editor);
@@ -59,11 +59,7 @@ private:
     void OverwriteEditorText(IEditor*& editor, const wxString& text, int curpos = 0);
 
     void OnPhpSettingsChanged(clCommandEvent& event);
-    void DoFormatWithPhar(IEditor* editor,
-        const FormatOptions& options,
-        const wxFileName& phar,
-        const wxString& name,
-        wxString& command);
+    void DoFormatWithPhar(IEditor* editor, const wxFileName& phar, const wxString& name, wxString& command);
 
 public:
     /**
@@ -95,12 +91,12 @@ public:
     /**
      * @brief same as the above, but work on a buffer instead
      */
-    bool ClangPreviewFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
+    bool ClangPreviewFormat(const wxString& content, wxString& formattedOutput);
 
     /**
      * @brief format a PHP content
      */
-    bool PhpFormat(wxString& content, const FormatOptions& options);
+    bool PhpFormat(wxString& content);
     bool DoFormatExternally(wxString& content, wxString command, wxString filePath = "");
 
     /**
@@ -111,12 +107,12 @@ public:
     /**
      * @brief batch format of files using clang-format tool
      */
-    bool ClangBatchFormat(const std::vector<wxFileName>& files, const FormatOptions& options);
+    bool ClangBatchFormat(const std::vector<wxFileName>& files);
 
     /**
      * @brief batch format of files using astyle tool
      */
-    bool AStyleBatchFOrmat(const std::vector<wxFileName>& files, const FormatOptions& options);
+    bool AStyleBatchFOrmat(const std::vector<wxFileName>& files);
 
 public:
     CodeFormatter(IManager* manager);

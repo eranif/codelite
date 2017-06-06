@@ -128,7 +128,7 @@ void Copyright::UnPlug()
     wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnInsertCopyrights, this, XRCID("CR_insert_copyrights"));
     wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnBatchInsertCopyrights, this, XRCID("CR_batch_insert_copyrights"));
     wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnProjectInsertCopyrights, this, XRCID("CR_insert_prj_copyrights"));
-    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Copyright::OnEditorContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &Copyright::OnEditorContextMenu, this);
 }
 
 void Copyright::OnInsertCopyrights(wxCommandEvent& e)

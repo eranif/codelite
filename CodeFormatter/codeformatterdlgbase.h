@@ -27,7 +27,6 @@
 #include <wx/propgrid/advprops.h>
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
-#include <wx/filepicker.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -97,11 +96,27 @@ protected:
     wxPanel* m_splitterPage127;
     wxStyledTextCtrl* m_stcPhpPreview;
     wxPanel* m_panelPhpCSFixer;
-    wxStaticText* m_staticText202;
-    wxFilePickerCtrl* m_filePickerPHPCsFixerPhar;
-    wxStaticText* m_staticText217;
-    wxStyledTextCtrl* m_stc;
-    wxStyledTextCtrl* m_stcFixerPreview;
+    wxSplitterWindow* m_splitter165318;
+    wxPanel* m_splitterPage169419;
+    wxPropertyGridManager* m_pgMgrPHPCsFixer;
+    wxPGProperty* m_pgPropPhpCSFixer;
+    wxPGProperty* m_filePickerPHPCsFixerPhar;
+    wxPGProperty* m_pgPropPHPCsFixerOptions;
+    wxPGProperty* m_pgPropPHPCsFixerRules;
+    wxPanel* m_splitterPage1731328;
+    wxStyledTextCtrl* m_textCtrlPreview_PhpCSFixer;
+    wxPanel* m_panelPhpcbf;
+    wxSplitterWindow* m_splitter1653;
+    wxPanel* m_splitterPage1694;
+    wxPropertyGridManager* m_pgMgrPhpcbf;
+    wxPGProperty* m_pgPropPhpcbf;
+    wxPGProperty* m_filePickerPhpcbfPhar;
+    wxPGProperty* m_pgPropPhpcbfSeverity;
+    wxPGProperty* m_pgPropPhpcbfEncoding;
+    wxPGProperty* m_pgPropPhpcbfStandard;
+    wxPGProperty* m_pgPropPhpcbfOptions;
+    wxPanel* m_splitterPage17313;
+    wxStyledTextCtrl* m_textCtrlPreview_Phpcbf;
     wxStdDialogButtonSizer* m_stdBtnSizer30;
     wxButton* m_buttonOK;
     wxButton* m_buttonApply;
@@ -116,8 +131,8 @@ protected:
     virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnCustomAstyleFlags(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPgmgrphpPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
-    virtual void OnPharFileSelected(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnPHPCSFixerOptionsUpdated(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnApply(wxCommandEvent& event) { event.Skip(); }
@@ -153,12 +168,18 @@ public:
     wxPanel* GetSplitterPage127() { return m_splitterPage127; }
     wxSplitterWindow* GetSplitter119() { return m_splitter119; }
     wxPanel* GetPanelBuiltIn() { return m_panelBuiltIn; }
-    wxStaticText* GetStaticText202() { return m_staticText202; }
-    wxFilePickerCtrl* GetFilePickerPHPCsFixerPhar() { return m_filePickerPHPCsFixerPhar; }
-    wxStaticText* GetStaticText217() { return m_staticText217; }
-    wxStyledTextCtrl* GetStc() { return m_stc; }
-    wxStyledTextCtrl* GetStcFixerPreview() { return m_stcFixerPreview; }
+    wxPropertyGridManager* GetPgMgrPHPCsFixer() { return m_pgMgrPHPCsFixer; }
+    wxPanel* GetSplitterPage169419() { return m_splitterPage169419; }
+    wxStyledTextCtrl* GetTextCtrlPreview_PhpCSFixer() { return m_textCtrlPreview_PhpCSFixer; }
+    wxPanel* GetSplitterPage1731328() { return m_splitterPage1731328; }
+    wxSplitterWindow* GetSplitter165318() { return m_splitter165318; }
     wxPanel* GetPanelPhpCSFixer() { return m_panelPhpCSFixer; }
+    wxPropertyGridManager* GetPgMgrPhpcbf() { return m_pgMgrPhpcbf; }
+    wxPanel* GetSplitterPage1694() { return m_splitterPage1694; }
+    wxStyledTextCtrl* GetTextCtrlPreview_Phpcbf() { return m_textCtrlPreview_Phpcbf; }
+    wxPanel* GetSplitterPage17313() { return m_splitterPage17313; }
+    wxSplitterWindow* GetSplitter1653() { return m_splitter1653; }
+    wxPanel* GetPanelPhpcbf() { return m_panelPhpcbf; }
     wxNotebook* GetNotebookPhp() { return m_notebookPhp; }
     wxPanel* GetPanelPhp() { return m_panelPhp; }
     wxNotebook* GetNotebook() { return m_notebook; }

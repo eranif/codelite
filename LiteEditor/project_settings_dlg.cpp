@@ -164,7 +164,6 @@ ProjectSettingsDlg::~ProjectSettingsDlg()
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ProjectSettingsDlg::OnWorkspaceClosed), NULL, this);
 
     PluginManager::Get()->UnHookProjectSettingsTab(m_treebook, m_projectName, wxEmptyString /* all tabs */);
-    EditorConfigST::Get()->SetString(wxT("PSSelectedPage"), m_treebook->GetPageText(m_treebook->GetSelection()));
 }
 
 void ProjectSettingsDlg::OnButtonOK(wxCommandEvent& event)
@@ -172,6 +171,8 @@ void ProjectSettingsDlg::OnButtonOK(wxCommandEvent& event)
     event.Skip();
     SaveValues();
     
+    EditorConfigST::Get()->SetString(wxT("PSSelectedPage"), m_treebook->GetPageText(m_treebook->GetSelection()));
+
     // Clear the project include paths cache
     clCxxWorkspaceST::Get()->ClearIncludePathCache();
     ManagerST::Get()->CallAfter(&Manager::UpdateParserPaths, true);

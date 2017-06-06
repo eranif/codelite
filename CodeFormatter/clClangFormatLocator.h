@@ -39,7 +39,7 @@ public:
      * @return
      */
     bool Locate(wxString& clangFormat);
-    
+
     /**
      * @brief return the clang format version installed
      */

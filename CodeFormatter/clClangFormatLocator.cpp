@@ -1,15 +1,19 @@
 #include "clClangFormatLocator.h"
 #include "cl_standard_paths.h"
-#include <wx/filename.h>
-#include <wx/regex.h>
 #include "globals.h"
-#include <wx/tokenzr.h>
 #include "procutils.h"
+#include <wx/filename.h>
 #include <wx/log.h>
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
 
-clClangFormatLocator::clClangFormatLocator() {}
+clClangFormatLocator::clClangFormatLocator()
+{
+}
 
-clClangFormatLocator::~clClangFormatLocator() {}
+clClangFormatLocator::~clClangFormatLocator()
+{
+}
 
 bool clClangFormatLocator::Locate(wxString& clangFormat)
 {
@@ -26,7 +30,7 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
 
     wxFileName file;
     for(size_t i = 0; i < nameOptions.GetCount(); ++i) {
-        if (clFindExecutable(nameOptions.Item(i), file)) {
+        if(clFindExecutable(nameOptions.Item(i), file)) {
             clangFormat = file.GetFullPath();
             return true;
         }
@@ -61,7 +65,7 @@ double clClangFormatLocator::GetVersion(const wxString& clangFormat) const
     for(size_t i = 0; i < lines.GetCount(); ++i) {
         if(reClangFormatVersion.Matches(lines.Item(i))) {
             wxString version = reClangFormatVersion.GetMatch(lines.Item(i), 1);
-            //wxLogMessage("clang-format version is %s", version);
+            // wxLogMessage("clang-format version is %s", version);
             version.ToCDouble(&double_version);
             return double_version;
         }

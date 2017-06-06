@@ -41,7 +41,7 @@ protected:
     wxString DoGetGlobalEOLString() const;
 
 private:
-    bool IsPhpConfigValid(const FormatOptions& options);
+    bool IsPharConfigValid(const FormatOptions& options, const wxFileName& phar, const wxString& name);
     bool DoClangFormat(const wxFileName& filename,
         wxString& formattedOutput,
         int& cursorPosition,
@@ -50,6 +50,7 @@ private:
         const FormatOptions& options,
         const wxFileName& originalFileName);
 
+    void DoFormatWithPhpcbf(IEditor* editor);
     void DoFormatWithBuildInPhp(IEditor* editor);
     void DoFormatWithPhpCsFixer(IEditor* editor);
     void DoFormatWithClang(IEditor* editor);
@@ -58,6 +59,11 @@ private:
     void OverwriteEditorText(IEditor*& editor, const wxString& text, int curpos = 0);
 
     void OnPhpSettingsChanged(clCommandEvent& event);
+    void DoFormatWithPhar(IEditor* editor,
+        const FormatOptions& options,
+        const wxFileName& phar,
+        const wxString& name,
+        wxString& command);
 
 public:
     /**
@@ -95,6 +101,7 @@ public:
      * @brief format a PHP content
      */
     bool PhpFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
+    bool DoFormatExternally(const wxString& content, wxString& formattedOutput, wxString& command);
 
     /**
      * @brief format list of files

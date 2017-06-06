@@ -208,10 +208,12 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
     if(FileExtManager::IsPHPFile(fileName)) {
-        if(fmtroptions.GetPhpEngine() == kPhpFormatEngineBuiltin) {
-            DoFormatWithBuildInPhp(editor);
-        } else {
+        if(fmtroptions.GetPhpEngine() == kPhpFormatEnginePhpCsFixer) {
             DoFormatWithPhpCsFixer(editor);
+        } else if(fmtroptions.GetPhpEngine() == kPhpFormatEnginePhpcbf) {
+            DoFormatWithPhpcbf(editor);
+        } else {
+            DoFormatWithBuildInPhp(editor);
         }
     } else if(FileExtManager::IsFileType(fileName, FileExtManager::TypeXml) ||
         FileExtManager::IsFileType(fileName, FileExtManager::TypeXRC) ||
@@ -240,41 +242,39 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
 
 void CodeFormatter::DoFormatWithPhpCsFixer(IEditor* editor)
 {
-    clDEBUG() << "Using php-cs-fixer formatter" << clEndl;
+    FormatOptions options;
+    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
+    wxFileName phar(options.GetPHPCSFixerPhar());
+    wxString name = "PHP-CS-Fixer";
+    wxString command = options.GetPhpFixerCommand();
+}
 
-    FormatOptions fmtroptions;
-    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-    if(!IsPhpConfigValid(fmtroptions)) {
+void CodeFormatter::DoFormatWithPhpcbf(IEditor* editor)
+{
+    FormatOptions options;
+    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
+    wxFileName phar(options.GetPhpcbfPhar());
+    wxString name = "PHPCBF";
+    wxString command = options.GetPhpcbfCommand();
+    DoFormatWithPhar(editor, options, phar, name, command);
+}
+
+void CodeFormatter::DoFormatWithPhar(IEditor* editor,
+    const FormatOptions& options,
+    const wxFileName& phar,
+    const wxString& name,
+    wxString& command)
+{
+    clDEBUG() << "Using" << name << "formatter" << clEndl;
+
+    if(!IsPharConfigValid(options, phar, name)) {
         return;
     }
 
-    // Run the command, PHP-CS-Fixer works directly on the file
-    // so create a copy of the file and format it, then replace the buffers
-    // we do this like this so we won't lose our ability to undo the action
     wxString output;
-    wxString command, filename, tmpfile;
-    filename = editor->GetFileName().GetFullPath();
-    tmpfile << filename << ".php-cs-fixer";
-    if(!FileUtils::WriteFileContent(tmpfile, editor->GetEditorText())) {
-        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer:\nFailed to write temporary file"), "Code Formatter",
+    if(!DoFormatExternally(editor->GetEditorText(), output, command)) {
+        ::wxMessageBox(_("Can not format file using " + name + ":\nAccess to temporary file failed"), "Code Formatter",
             wxICON_ERROR | wxOK | wxCENTER);
-        return;
-    }
-
-    // Ensure that the temporary file is deleted once we are done with it
-    FileUtils::Deleter fd(tmpfile);
-
-    ::WrapWithQuotes(tmpfile);
-    command << fmtroptions.GetPhpFixerCommand() << " " << tmpfile;
-    ::WrapInShell(command);
-    IProcess::Ptr_t phpFixer(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
-    CHECK_PTR_RET(phpFixer);
-    phpFixer->WaitForTerminate(output);
-
-    output.clear();
-    if(!FileUtils::ReadFileContent(tmpfile, output)) {
-        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer:\nfailed to read temporary file content"),
-            "Code Formatter", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
 
@@ -499,38 +499,23 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
 
     wxString output;
     if(FileExtManager::IsPHPFile(e.GetFileName())) {
-
-        if(fmtroptions.GetPhpEngine() == kPhpFormatEngineBuiltin) {
-            // use the built-in PHP formatter
-            // Construct the formatting options
-            PHPFormatterOptions phpOptions;
-            phpOptions.flags = fmtroptions.GetPHPFormatterOptions();
-            if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
-                phpOptions.flags |= kPFF_UseTabs;
-            }
-            phpOptions.indentSize = m_mgr->GetEditorSettings()->GetTabWidth();
-            phpOptions.eol = m_mgr->GetEditorSettings()->GetEOLAsString();
-            // Create the formatter buffer
-            PHPFormatterBuffer buffer(e.GetInputString(), phpOptions);
-
-            // Format the source
-            buffer.format();
-
-            // set the output
-            output = buffer.GetBuffer();
-        } else {
-            if(!IsPhpConfigValid(fmtroptions)) {
-                return;
-            }
-
-            // Run the command, PHP-CS-Fixer works directly on the file
-            //
-            output.Clear();
-            IProcess::Ptr_t phpFixer(::CreateSyncProcess(
-                fmtroptions.GetPhpFixerCommand(), IProcessCreateDefault | IProcessCreateWithHiddenConsole));
-            CHECK_PTR_RET(phpFixer);
-            phpFixer->WaitForTerminate(output);
+        // use the built-in PHP formatter
+        // Construct the formatting options
+        PHPFormatterOptions phpOptions;
+        phpOptions.flags = fmtroptions.GetPHPFormatterOptions();
+        if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
+            phpOptions.flags |= kPFF_UseTabs;
         }
+        phpOptions.indentSize = m_mgr->GetEditorSettings()->GetTabWidth();
+        phpOptions.eol = m_mgr->GetEditorSettings()->GetEOLAsString();
+        // Create the formatter buffer
+        PHPFormatterBuffer buffer(e.GetInputString(), phpOptions);
+
+        // Format the source
+        buffer.format();
+
+        // set the output
+        output = buffer.GetBuffer();
     } else if(fmtroptions.GetEngine() == kFormatEngineAStyle) {
         if(!FileExtManager::IsCxxFile(e.GetFileName())) {
             clDEBUG() << "CodeFormatter: engine is set to ASTYLE. Source is not C/C++, skipped" << clEndl;
@@ -561,17 +546,16 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
     e.SetFormattedString(output);
 }
 
-bool CodeFormatter::IsPhpConfigValid(const FormatOptions& options)
+bool CodeFormatter::IsPharConfigValid(const FormatOptions& options, const wxFileName& phar, const wxString& name)
 {
     wxFileName php(m_settingsPhp.GetPhpExe());
     if(!php.Exists()) {
-        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHP executable path"), "Code Formatter",
+        ::wxMessageBox(_("Can not format file using " + name + ": Missing PHP executable path"), "Code Formatter",
             wxICON_ERROR | wxOK | wxCENTER);
         return false;
     }
-    wxFileName phar(options.GetPHPCSFixerPhar());
     if(!phar.Exists()) {
-        ::wxMessageBox(_("Can not format file using PHP-CS-Fixer: Missing PHAR file"), "Code Formatter",
+        ::wxMessageBox(_("Can not format file using " + name + ": Missing PHAR file"), "Code Formatter",
             wxICON_ERROR | wxOK | wxCENTER);
         return false;
     }
@@ -908,6 +892,28 @@ bool CodeFormatter::PhpFormat(const wxString& content, wxString& formattedOutput
     // Format the source
     buffer.format();
     formattedOutput << buffer.GetBuffer();
+    return true;
+}
+
+bool CodeFormatter::DoFormatExternally(const wxString& content, wxString& formattedOutput, wxString& command)
+{
+    wxFileName tmpfile(clStandardPaths::Get().GetTempDir(), ".code-formatter-tmp.php");
+    wxString tempPath = tmpfile.GetFullPath();
+    if(!FileUtils::WriteFileContent(tempPath, content)) {
+        return false;
+    }
+
+    // Ensure that the temporary file is deleted once we are done with it
+    FileUtils::Deleter fd(tempPath);
+
+    ::WrapWithQuotes(tempPath);
+    command << " " << tempPath;
+    clDEBUG() << "CodeFormatter running:" << command << clEndl;
+    ProcUtils::SafeExecuteCommand(command);
+
+    if(!FileUtils::ReadFileContent(tempPath, formattedOutput)) {
+        return false;
+    }
     return true;
 }
 

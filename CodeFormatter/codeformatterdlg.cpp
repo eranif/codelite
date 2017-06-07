@@ -33,30 +33,31 @@
 #include "windowattrmanager.h"
 #include <wx/menu.h>
 
-static const wxString PHPSample = "<?php\n"
-                                  "namespace MySpace;\n"
-                                  "require_once 'bla.php';\n"
-                                  "class MyClass {\n"
-                                  "  const MY_CONST = \"Hello World\";\n"
-                                  "  const MY_2ND_CONST = \"Second Constant\";\n"
-                                  "  public function __construct() {}\n"
-                                  "  public function foo() {}\n"
-                                  "  public function bar() {\n"
-                                  "    $array = array(\"foo\" => \"bar\",\"bar\" => \"foo\",);\n"
-                                  "    $a=1;\n"
-                                  "    if($a == 1) {\n"
-                                  "      // do something\n"
-                                  "    } elseif ($a==2) {\n"
-                                  "      // do something else\n"
-                                  "    } else {\n"
-                                  "      // default\n"
-                                  "    }\n"
-                                  "    while($a==1) {\n"
-                                  "      // a is 1... reduce it\n"
-                                  "      --$a;\n"
-                                  "    }\n"
-                                  "  }\n"
-                                  "}\n";
+static const wxString PHPSample =
+    "<?php\n"
+    "namespace MySpace;\n"
+    "require_once 'bla.php';\n"
+    "class MyClass {\n"
+    "  const MY_CONST = \"Hello World\";\n"
+    "  const MY_2ND_CONST = \"Second Constant\";\n"
+    "  public function __construct() {}\n"
+    "  public function foo() {}\n"
+    "  public function bar() {\n"
+    "    $array = array(\"foo\" => \"bar\",\"bar\" => \"foo\",);\n"
+    "    $a=1;\n"
+    "    if($a == 1) {\n"
+    "      // do something\n"
+    "    } elseif ($a==2) {\n"
+    "      // do something else\n"
+    "    } else {\n"
+    "      // default\n"
+    "    }\n"
+    "    while($a==1) {\n"
+    "      // a is 1... reduce it\n"
+    "      --$a;\n"
+    "    }\n"
+    "  }\n"
+    "}\n";
 
 CodeFormatterDlg::CodeFormatterDlg(
     wxWindow* parent, IManager* mgr, CodeFormatter* cf, FormatOptions& options, const wxString& sampleCode)
@@ -256,15 +257,21 @@ void CodeFormatterDlg::UpdatePreview()
 
     // PhpCsFixer preview
     output = PHPSample;
-    command = m_options.GetPhpFixerCommand();
-    m_cf->DoFormatExternally(output, command);
-    UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
+    if(m_options.GetPhpFixerCommand(command)) {
+        m_cf->DoFormatExternally(output, command);
+        UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
+    } else {
+        UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, _("No Preview Available"));
+    }
 
     // Phpcbf preview
     output = PHPSample;
-    command = m_options.GetPhpcbfCommand();
-    m_cf->DoFormatExternally(output, command);
-    UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
+    if(m_options.GetPhpcbfCommand(command)) {
+        m_cf->DoFormatExternally(output, command);
+        UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
+    } else {
+        UpdatePreviewText(m_textCtrlPreview_Phpcbf, _("No Preview Available"));
+    }
 }
 
 void CodeFormatterDlg::UpdatePreviewText(wxStyledTextCtrl*& textCtrl, const wxString& text)

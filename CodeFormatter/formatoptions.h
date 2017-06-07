@@ -90,7 +90,22 @@ enum PHPFormatterEngine {
 };
 
 enum PHPFixserFormatterStyle {
-    kAllowRisky = (1 << 0),
+    kPcfAllowRisky = (1 << 0),
+    kPcfPHP56Migration = (1 << 1),
+    kPcfPHP70Migration = (1 << 2),
+    kPcfPHP71Migration = (1 << 3),
+    kPcfPSR1 = (1 << 4),
+    kPcfPSR2 = (1 << 5),
+    kPcfSymfony = (1 << 6),
+    kPcfShortArray = (1 << 7),
+    kPcfLongArray = (1 << 8),
+    kPcfAlignDoubleArrow = (1 << 9),
+    kPcfStripDoubleArrow = (1 << 10),
+    kPcfAlignEquals = (1 << 11),
+    kPcfStripEquals = (1 << 12),
+    kPcfBlankLineAfterNamespace = (1 << 13),
+    kPcfBlankLineAfterOpeningTag = (1 << 14),
+    kPcfBlankLineBeforeReturn = (1 << 15),
 };
 
 enum PhpbcfFormatterStyle {

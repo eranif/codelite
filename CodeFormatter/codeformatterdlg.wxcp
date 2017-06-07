@@ -4647,11 +4647,11 @@
                               }, {
                                "type": "multi-string",
                                "m_label": "Choices:",
-                               "m_value": "Allow risky"
+                               "m_value": "PHP 5.6 migration;PHP 7.0 migration;PHP 7.1 migration;PSR1;PSR2;Symfony;Allow risky;Short array syntax;Logn array syntax;Align double arrows;Strip double arrows alignment;Align equals;Strip equals alignment;Blank line after namespace;Blank line after opening tag;Blank line before return"
                               }, {
                                "type": "multi-string",
                                "m_label": "Array Integer Values",
-                               "m_value": "kAllowRisky"
+                               "m_value": "kPcfPHP56Migration;kPcfPHP70Migration;kPcfPHP71Migration;kPcfPSR1;kPcfPSR2;kPcfSymfony;kPcfAllowRisky;kPcfShortArray;kPcfLongArray;kPcfAlignDoubleArrow;kPcfStripDoubleArrow;kPcfAlignEquals;kPcfStripEquals;kPcfBlankLineAfterNamespace;kPcfBlankLineAfterOpeningTag;kPcfBlankLineBeforeReturn"
                               }, {
                                "type": "bool",
                                "m_label": "Bool Value",

@@ -25,8 +25,10 @@
 #include "PHPFormatterBuffer.h"
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
+#include "file_logger.h"
 #include "formatoptions.h"
 #include "globals.h"
+#include "json_node.h"
 #include "phpoptions.h"
 
 FormatOptions::FormatOptions()
@@ -365,11 +367,72 @@ wxString FormatOptions::GetPhpFixerCommand()
 
     parameters << GetPHPCSFixerPharOptions();
     if(parameters.IsEmpty()) {
-        if(m_PHPCSFixerPharRules & kAllowRisky) {
+        if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
             parameters << " --allow-risky=yes";
+        }
+
+        JSONRoot root(cJSON_Object);
+        JSONElement rules = root.toElement();
+        if(m_PHPCSFixerPharRules & kPcfPHP56Migration) {
+            rules.addProperty("@PHP56Migration", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfPHP70Migration) {
+            rules.addProperty("@PHP70Migration", true);
+            if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
+                rules.addProperty("@PHP70Migration:risky", true);
+            }
+        }
+        if(m_PHPCSFixerPharRules & kPcfPHP71Migration) {
+            rules.addProperty("@PHP71Migration", true);
+            if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
+                rules.addProperty("@PHP71Migration:risky", true);
+            }
+        }
+        if(m_PHPCSFixerPharRules & kPcfPSR1) {
+            rules.addProperty("@PSR1", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfPSR2) {
+            rules.addProperty("@PSR2", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfSymfony) {
+            rules.addProperty("@Symfony", true);
+            if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
+                rules.addProperty("@Symfony:risky", true);
+            }
+        }
+        if(m_PHPCSFixerPharRules & (kPcfShortArray | kPcfLongArray)) {
+            JSONElement array_syntax = JSONElement::createObject("array_syntax");
+            array_syntax.addProperty("syntax", m_PHPCSFixerPharRules & kPcfShortArray ? "short" : "long");
+            rules.addProperty("array_syntax", array_syntax);
+        }
+        if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals)) {
+            JSONElement binary_operator_spaces = JSONElement::createObject("binary_operator_spaces");
+            if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow)) {
+                binary_operator_spaces.addProperty(
+                    "align_double_arrow", m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
+            }
+            if(m_PHPCSFixerPharRules & (kPcfAlignEquals | kPcfStripEquals)) {
+                binary_operator_spaces.addProperty(
+                    "align_equals", m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
+            }
+            rules.addProperty("binary_operator_spaces", binary_operator_spaces);
+        }
+        if(m_PHPCSFixerPharRules & kPcfBlankLineAfterNamespace) {
+            rules.addProperty("blank_line_after_namespace", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfBlankLineAfterOpeningTag) {
+            rules.addProperty("blank_line_after_opening_tag", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfBlankLineBeforeReturn) {
+            rules.addProperty("blank_line_before_return", true);
+        }
+        wxString rulesString = rules.FormatRawString(false);
+        if(rulesString != "{}") {
+            parameters << " --rules='" << rulesString << "'";
         }
     }
     parameters.Trim().Trim(false);
+    clDEBUG() << parameters << clEndl;
     command << php << " " << phar << " fix " << parameters;
     return command;
 }

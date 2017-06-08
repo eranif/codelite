@@ -172,6 +172,9 @@ void PHPRefactoring::RenameVariable(const wxString& action)
 
     wxString line = std::to_string(editor->GetCurrentLine() + 1);
     wxString oldName = editor->GetWordAtCaret();
+    if (oldName.StartsWith("$")) {
+        oldName = oldName.Mid(1);
+    }
     if(oldName.IsEmpty()) {
         return;
     }
@@ -194,6 +197,9 @@ void PHPRefactoring::OnConvertLocalToInstanceVariable(wxCommandEvent& e)
 
     wxString line = std::to_string(editor->GetCurrentLine() + 1);
     wxString oldName = editor->GetWordAtCaret();
+    if (oldName.StartsWith("$")) {
+        oldName = oldName.Mid(1);
+    }
     if(oldName.IsEmpty()) {
         return;
     }

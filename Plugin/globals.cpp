@@ -2300,11 +2300,22 @@ bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArraySt
             return true;
         }
 #ifdef __WXMSW__
-        wxFileName fnPathWithExeExt(paths.Item(i), name);
-        fnPathWithExeExt.SetExt("exe");
-        if(fnPathWithExeExt.FileExists()) {
-            exepath = fnPathWithExeExt;
-            return true;
+        // On Windows try to look for .exe or .bat (give the .exe a priority)
+        {
+            wxFileName fnFileWithExt(paths.Item(i), name);
+            fnFileWithExt.SetExt("exe");
+            if(fnFileWithExt.FileExists()) {
+                exepath = fnFileWithExt;
+                return true;
+            }
+        }
+        {
+            wxFileName fnFileWithExt(paths.Item(i), name);
+            fnFileWithExt.SetExt("bat");
+            if(fnFileWithExt.FileExists()) {
+                exepath = fnFileWithExt;
+                return true;
+            }
         }
 #endif
     }

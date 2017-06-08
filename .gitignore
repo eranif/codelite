@@ -9,5 +9,9 @@ prepare_cmake.sh
 dbg_build_arch/
 installation_arch/
 backup
+build-debug/
+my_build.sh
+
+setup_flycheck.el
 
 .vscode

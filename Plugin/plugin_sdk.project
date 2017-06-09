@@ -538,6 +538,8 @@
     <File Name="DiffSideBySidePanel.cpp"/>
     <File Name="DiffConfig.h"/>
     <File Name="DiffConfig.cpp"/>
+    <File Name="clPatch.h"/>
+    <File Name="clPatch.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Compilers">
     <File Name="ICompilerLocator.h"/>

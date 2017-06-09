@@ -22,47 +22,47 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "ColoursAndFontsManager.h"
+#include "clSTCLineKeeper.h"
 #include "codeformatter.h"
-#include "globals.h"
-#include "windowattrmanager.h"
 #include "codeformatterdlg.h"
 #include "editor_config.h"
-#include "lexer_configuration.h"
-#include "editor_config.h"
-#include "lexer_configuration.h"
-#include <wx/menu.h>
-#include "clSTCLineKeeper.h"
 #include "fileextmanager.h"
-#include "ColoursAndFontsManager.h"
+#include "globals.h"
+#include "lexer_configuration.h"
+#include "windowattrmanager.h"
+#include <wx/menu.h>
 
-static const wxString PHPSample = "<?php\n"
-                                  "namespace MySpace;\n"
-                                  "require_once 'bla.php';\n"
-                                  "class MyClass {\n"
-                                  "  const MY_CONST = \"Hello World\";\n"
-                                  "  const MY_2ND_CONST = \"Second Constant\";\n"
-                                  "  public function __construct() {}\n"
-                                  "  public function foo() {}\n"
-                                  "  public function bar() {\n"
-                                  "    $array = array(\"foo\" => \"bar\",\"bar\" => \"foo\",);\n"
-                                  "    $a=1;\n"
-                                  "    if($a == 1) {\n"
-                                  "      // do something\n"
-                                  "    } elseif ($==2) {\n"
-                                  "      // do something else\n"
-                                  "    } else {\n"
-                                  "      // default\n"
-                                  "    }\n"
-                                  "    while($a==1) {\n"
-                                  "      // a is 1... reduce it\n"
-                                  "      --$a;\n"
-                                  "    }\n"
-                                  "  }\n"
-                                  "}\n";
+static const wxString PHPSample =
+    "<?php\n"
+    "namespace MySpace;\n"
+    "require_once 'bla.php';\n"
+    "class MyClass {\n"
+    "  const MY_CONST = \"Hello World\";\n"
+    "  const MY_2ND_CONST = \"Second Constant\";\n"
+    "  public function __construct() {}\n"
+    "  public function foo() {}\n"
+    "  public function bar() {\n"
+    "    $array = array(\"foo\" => \"bar\",\"bar\" => \"foo\",);\n"
+    "    $a=1;\n"
+    "    if($a == 1) {\n"
+    "      // do something\n"
+    "    } elseif ($a==2) {\n"
+    "      // do something else\n"
+    "    } else {\n"
+    "      // default\n"
+    "    }\n"
+    "    while($a==1) {\n"
+    "      // a is 1... reduce it\n"
+    "      --$a;\n"
+    "    }\n"
+    "  }\n"
+    "}\n";
 
 CodeFormatterDlg::CodeFormatterDlg(
-    wxWindow* parent, IManager* mgr, CodeFormatter* cf, const FormatOptions& opts, const wxString& sampleCode)
+    wxWindow* parent, IManager* mgr, CodeFormatter* cf, FormatOptions& options, const wxString& sampleCode)
     : CodeFormatterBaseDlg(parent)
+    , m_options(options)
     , m_cf(cf)
     , m_sampleCode(sampleCode)
     , m_isDirty(false)
@@ -75,7 +75,6 @@ CodeFormatterDlg::CodeFormatterDlg(
     // center the dialog
     Centre();
 
-    m_options = opts;
     m_textCtrlPreview->SetText(m_sampleCode);
     GetSizer()->Fit(this);
     InitDialog();
@@ -102,12 +101,6 @@ CodeFormatterDlg::CodeFormatterDlg(
 
 void CodeFormatterDlg::InitDialog()
 {
-    LexerConf::Ptr_t text = ColoursAndFontsManager::Get().GetLexer("text");
-    if(text) {
-        text->Apply(m_stc);
-        text->Apply(m_stcFixerPreview);
-    }
-
     long formatOptions = (m_options.GetOptions() & AS_ALL_FORMAT_OPTIONS);
     long indentOptions = (m_options.GetOptions() & AS_ALL_INDENT_OPTIONS);
     m_pgPropIndentation->SetValue(indentOptions);
@@ -145,10 +138,14 @@ void CodeFormatterDlg::InitDialog()
     LexerConf::Ptr_t phpLexer = EditorConfigST::Get()->GetLexer("php");
     if(phpLexer) {
         phpLexer->Apply(m_stcPhpPreview, true);
+        phpLexer->Apply(m_textCtrlPreview_PhpCSFixer, true);
+        phpLexer->Apply(m_textCtrlPreview_Phpcbf, true);
     }
     m_textCtrlPreview->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
     m_textCtrlPreview_Clang->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
     m_stcPhpPreview->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
+    m_textCtrlPreview_PhpCSFixer->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
+    m_textCtrlPreview_Phpcbf->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
 
     // Select the proper engine
     m_choiceCxxEngine->SetSelection((int)m_options.GetEngine());
@@ -184,8 +181,17 @@ void CodeFormatterDlg::InitDialog()
     // PHP flags
     m_pgPropPhpFormatterOptions->SetValue((int)m_options.GetPHPFormatterOptions());
 
-    m_filePickerPHPCsFixerPhar->SetPath(m_options.GetPHPCSFixerPhar());
-    m_stc->SetText(m_options.GetPHPCSFixerPharOptions());
+    // PHP-CS-FIXER
+    m_filePickerPHPCsFixerPhar->SetValue(m_options.GetPHPCSFixerPhar());
+    m_pgPropPHPCsFixerOptions->SetValue(m_options.GetPHPCSFixerPharOptions());
+    m_pgPropPHPCsFixerRules->SetValue((int)m_options.GetPHPCSFixerPharRules());
+
+    // PHPCBF
+    m_filePickerPhpcbfPhar->SetValue(m_options.GetPhpcbfPhar());
+    m_pgPropPhpcbfSeverity->SetValue((int)m_options.GetPhpcbfSeverity());
+    m_pgPropPhpcbfEncoding->SetValue(m_options.GetPhpcbfEncoding());
+    m_pgPropPhpcbfStandard->SetValue(m_options.GetPhpcbfStandard());
+    m_pgPropPhpcbfOptions->SetValue((int)m_options.GetPhpcbfOptions());
 
     // General Options
     m_checkBoxFormatOnSave->SetValue(m_options.HasFlag(kCF_AutoFormatOnFileSave));
@@ -233,42 +239,47 @@ void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
 
 void CodeFormatterDlg::UpdatePreview()
 {
-    wxString output;
-    {
-        // Astyle
-        output.Clear();
-        m_cf->AstyleFormat(m_sampleCode, m_options.AstyleOptionsAsString(), output);
-        m_textCtrlPreview->SetEditable(true);
-        clSTCLineKeeper lk(m_textCtrlPreview);
-        m_textCtrlPreview->SetText(output);
-        m_textCtrlPreview->SetEditable(false);
+    wxString output, command;
+    // Astyle
+    output.Clear();
+    m_cf->AstyleFormat(m_sampleCode, output, m_options.AstyleOptionsAsString());
+    UpdatePreviewText(m_textCtrlPreview, output);
+
+    // Clang
+    output.Clear();
+    m_cf->ClangPreviewFormat(m_sampleCode, output);
+    UpdatePreviewText(m_textCtrlPreview_Clang, output);
+
+    // PHP preview
+    output = PHPSample;
+    m_cf->PhpFormat(output);
+    UpdatePreviewText(m_stcPhpPreview, output);
+
+    // PhpCsFixer preview
+    output = PHPSample;
+    if(m_options.GetPhpFixerCommand(command)) {
+        m_cf->DoFormatExternally(output, command);
+        UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
+    } else {
+        UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, _("No Preview Available"));
     }
 
-    {
-        // Clang
-        output.Clear();
-        m_cf->ClangPreviewFormat(m_sampleCode, output, m_options);
-        m_textCtrlPreview_Clang->SetEditable(true);
-        clSTCLineKeeper lk(m_textCtrlPreview_Clang);
-        m_textCtrlPreview_Clang->SetText(output);
-        m_textCtrlPreview_Clang->SetEditable(false);
+    // Phpcbf preview
+    output = PHPSample;
+    if(m_options.GetPhpcbfCommand(command)) {
+        m_cf->DoFormatExternally(output, command);
+        UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
+    } else {
+        UpdatePreviewText(m_textCtrlPreview_Phpcbf, _("No Preview Available"));
     }
-    {
-        // PHP preview
-        output.Clear();
-        m_cf->PhpFormat(PHPSample, output, m_options);
-        m_stcPhpPreview->SetEditable(true);
-        clSTCLineKeeper lk(m_stcPhpPreview);
-        m_stcPhpPreview->SetText(output);
-        m_stcPhpPreview->SetEditable(false);
-    }
+}
 
-    {
-        // Update the preview command
-        m_stcFixerPreview->SetEditable(true);
-        m_stcFixerPreview->SetText(m_options.GetPhpFixerCommand());
-        m_stcFixerPreview->SetEditable(false);
-    }
+void CodeFormatterDlg::UpdatePreviewText(wxStyledTextCtrl*& textCtrl, const wxString& text)
+{
+    textCtrl->SetEditable(true);
+    clSTCLineKeeper lk(textCtrl);
+    textCtrl->SetText(text);
+    textCtrl->SetEditable(false);
 }
 
 CodeFormatterDlg::~CodeFormatterDlg() {}
@@ -364,23 +375,35 @@ void CodeFormatterDlg::OnFormatOnSave(wxCommandEvent& event)
     m_isDirty = true;
     m_options.SetFlag(kCF_AutoFormatOnFileSave, event.IsChecked());
 }
-void CodeFormatterDlg::OnPHPCSFixerOptionsUpdated(wxStyledTextEvent& event)
+
+void CodeFormatterDlg::OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event)
 {
     m_isDirty = true;
-    m_options.SetPHPCSFixerPharOptions(m_stc->GetText());
+    m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetValueAsString());
+    m_options.SetPHPCSFixerPharOptions(m_pgPropPHPCsFixerOptions->GetValueAsString());
+    size_t phpcsfixerOptions(0);
+    phpcsfixerOptions |= m_pgPropPHPCsFixerRules->GetValue().GetInteger();
+    m_options.SetPHPCSFixerPharRules(phpcsfixerOptions);
+
     CallAfter(&CodeFormatterDlg::UpdatePreview);
-    event.Skip();
-}
-void CodeFormatterDlg::OnPharFileSelected(wxFileDirPickerEvent& event)
-{
-    m_isDirty = true;
-    m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetPath());
-    CallAfter(&CodeFormatterDlg::UpdatePreview);
-    event.Skip();
 }
 void CodeFormatterDlg::OnChoicephpformatterChoiceSelected(wxCommandEvent& event)
 {
     m_isDirty = true;
     m_options.SetPhpEngine((PHPFormatterEngine)event.GetSelection());
+    CallAfter(&CodeFormatterDlg::UpdatePreview);
+}
+
+void CodeFormatterDlg::OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event)
+{
+    m_isDirty = true;
+    m_options.SetPhpcbfPhar(m_filePickerPhpcbfPhar->GetValueAsString());
+    m_options.SetPhpcbfSeverity(m_pgPropPhpcbfSeverity->GetValue().GetInteger());
+    m_options.SetPhpcbfEncoding(m_pgPropPhpcbfEncoding->GetValueAsString());
+    m_options.SetPhpcbfStandard(m_pgPropPhpcbfStandard->GetValueAsString());
+    size_t phpcbfOptions(0);
+    phpcbfOptions |= m_pgPropPhpcbfOptions->GetValue().GetInteger();
+    m_options.SetPhpcbfOptions(phpcbfOptions);
+
     CallAfter(&CodeFormatterDlg::UpdatePreview);
 }

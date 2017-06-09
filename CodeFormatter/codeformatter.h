@@ -25,14 +25,15 @@
 #ifndef CODEFORMATTER_H
 #define CODEFORMATTER_H
 
-#include "plugin.h"
 #include "cl_command_event.h"
-#include "formatoptions.h"
 #include "fileextmanager.h"
+#include "formatoptions.h"
+#include "plugin.h"
 
 class CodeFormatter : public IPlugin
 {
-    PhpOptions m_settingsPhp;
+    FormatOptions m_options;
+    PhpOptions m_optionsPhp;
 
 protected:
     void DoFormatFile(IEditor* editor);
@@ -41,13 +42,24 @@ protected:
     wxString DoGetGlobalEOLString() const;
 
 private:
-    bool IsPhpConfigValid(const FormatOptions& options);
-    bool DoClangFormat(const wxFileName& filename, wxString& formattedOutput, int& cursorPosition, int startOffset,
-        int length, const FormatOptions& options, const wxFileName& originalFileName);
+    bool IsPharConfigValid(const wxFileName& phar, const wxString& name);
+    bool DoClangFormat(const wxFileName& filename,
+        wxString& formattedOutput,
+        int& cursorPosition,
+        int startOffset,
+        int length,
+        const wxFileName& originalFileName);
 
+    void DoFormatWithPhpcbf(IEditor* editor);
+    void DoFormatWithBuildInPhp(IEditor* editor);
+    void DoFormatWithPhpCsFixer(IEditor* editor);
+    void DoFormatWithClang(IEditor* editor);
+    void DoFormatWithAstyle(IEditor* editor);
     void DoFormatXmlSource(IEditor* editor);
+    void OverwriteEditorText(IEditor*& editor, const wxString& text, int curpos = 0);
 
     void OnPhpSettingsChanged(clCommandEvent& event);
+    void DoFormatWithPhar(IEditor* editor, const wxFileName& phar, const wxString& name, wxString& command);
 
 public:
     /**
@@ -61,23 +73,31 @@ public:
      * @param startOffset start of chunk to format
      * @param length chunk length
      */
-    bool ClangFormatFile(const wxFileName& filename, wxString& formattedOutput, int& cursorPosition,
-        int startOffset = wxNOT_FOUND, int length = wxNOT_FOUND);
+    bool ClangFormatFile(const wxFileName& filename,
+        wxString& formattedOutput,
+        int& cursorPosition,
+        int startOffset = wxNOT_FOUND,
+        int length = wxNOT_FOUND);
     /**
      * @brief same as the above, but work on a buffer instead
      */
-    bool ClangFormatBuffer(const wxString& content, const wxFileName& filename, wxString& formattedOutput,
-        int& cursorPosition, int startOffset = wxNOT_FOUND, int length = wxNOT_FOUND);
+    bool ClangFormatBuffer(const wxString& content,
+        const wxFileName& filename,
+        wxString& formattedOutput,
+        int& cursorPosition,
+        int startOffset = wxNOT_FOUND,
+        int length = wxNOT_FOUND);
 
     /**
      * @brief same as the above, but work on a buffer instead
      */
-    bool ClangPreviewFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
+    bool ClangPreviewFormat(const wxString& content, wxString& formattedOutput);
 
     /**
      * @brief format a PHP content
      */
-    bool PhpFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
+    bool PhpFormat(wxString& content);
+    bool DoFormatExternally(wxString& content, wxString command, wxString filePath = "");
 
     /**
      * @brief format list of files
@@ -87,17 +107,17 @@ public:
     /**
      * @brief batch format of files using clang-format tool
      */
-    bool ClangBatchFormat(const std::vector<wxFileName>& files, const FormatOptions& options);
+    bool ClangBatchFormat(const std::vector<wxFileName>& files);
 
     /**
      * @brief batch format of files using astyle tool
      */
-    bool AStyleBatchFOrmat(const std::vector<wxFileName>& files, const FormatOptions& options);
+    bool AStyleBatchFOrmat(const std::vector<wxFileName>& files);
 
 public:
     CodeFormatter(IManager* manager);
     virtual ~CodeFormatter();
-    void AstyleFormat(const wxString& input, const wxString& options, wxString& output);
+    void AstyleFormat(const wxString& input, wxString& output, const wxString& options);
     virtual clToolBar* CreateToolBar(wxWindow* parent);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);

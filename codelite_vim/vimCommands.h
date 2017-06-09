@@ -29,6 +29,13 @@ enum class VIM_MODI {
 
 enum class SEARCH_DIRECTION { BACKWARD, FORWARD };
 
+enum class MESSAGES_VIM { 
+    NO_ERROR, 
+    UNBALNCED_PARENTESIS,
+    SAVED,
+    SAVE_AND_CLOSE,
+    CLOSED
+};
 
 /*enumeration of implemented commands*/
 enum class COMMANDVI {
@@ -183,6 +190,7 @@ public:
      * @return true on success, false otherwise
      */
     bool DeleteLastCommandChar();
+    MESSAGES_VIM getError();
 
     /*~~~~~~~ GETTER ~~~~~~~~~~~~~~~~*/
     VIM_MODI get_current_modus();
@@ -214,6 +222,7 @@ private:
     wxString add_following_spaces();
     wxString add_preceding_spaces();
     bool search_word(SEARCH_DIRECTION flag);
+    long goToMatchingParentesis(long start_pos);
     void normal_modus(wxChar ch);
     void visual_modus(wxChar ch);
     void command_modus(wxChar ch);
@@ -221,6 +230,7 @@ private:
 
     /*~~~~~~~~ INFO ~~~~~~~~~*/
     COMMANDVI m_commandID;             /*!< id of the current command to identify it*/
+    MESSAGES_VIM m_message_ID;
     COMMAND_PART m_currentCommandPart; /*!< current part of the command */
     VIM_MODI m_currentModus;           /*!< actual mode the editor is in */
     bool m_saveCommand;

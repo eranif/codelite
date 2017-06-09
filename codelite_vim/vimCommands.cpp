@@ -24,11 +24,14 @@ VimCommand::VimCommand()
     , m_newLineCopy(false)
     , m_repeatCommand(false)
     , m_saveCommand(true)
+    , m_message_ID( MESSAGES_VIM::NO_ERROR )
 {
 	m_ctrl = NULL; /*FIXME: check it*/
 }
 
 VimCommand::~VimCommand() {}
+
+MESSAGES_VIM VimCommand::getError() { return m_message_ID; }
 
 void VimCommand::set_current_word(wxString word) { m_searchWord = word; }
 /**
@@ -38,7 +41,7 @@ void VimCommand::set_current_word(wxString word) { m_searchWord = word; }
 
 bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
 {
-
+    m_message_ID = MESSAGES_VIM::NO_ERROR;
     bool skip_event = false;
     this->m_modifierKey = modifier;
 
@@ -91,6 +94,8 @@ void VimCommand::ResetCommand()
     m_baseCommand = '\0';
     m_actionCommand = '\0';
     m_actions = 0;
+    //m_message_ID = MESSAGES_VIM::NO_ERROR;
+
 }
 
 /**
@@ -233,21 +238,25 @@ bool VimCommand::OnReturnDown(VimCommand::eAction& action)
             m_tmpbuf.Clear();
             ResetCommand();
             m_currentModus = VIM_MODI::NORMAL_MODUS;
+            m_message_ID = MESSAGES_VIM::SAVED;
         } else if(m_tmpbuf == _(":q") || m_tmpbuf == _(":quit")) {
             action = kClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
+            m_message_ID = MESSAGES_VIM::CLOSED;
         } else if(m_tmpbuf == _(":q!")) {
             action = kClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
+            m_message_ID = MESSAGES_VIM::CLOSED;
         } else if(m_tmpbuf == _(":wq")) {
             action = kSaveAndClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
+            m_message_ID = MESSAGES_VIM::SAVE_AND_CLOSE;
         }
     }
 
@@ -374,11 +383,17 @@ bool VimCommand::Command_call()
         this->m_tmpbuf.Clear();
         break;
         
-    case COMMANDVI::perc:
-        /*FIXME*/
+    case COMMANDVI::perc: {
+        long pos_matching = goToMatchingParentesis( m_ctrl->GetCurrentPos() );
+        if ( pos_matching != -1 )
+            m_ctrl->GotoPos( pos_matching );
+        else
+            m_message_ID = MESSAGES_VIM::UNBALNCED_PARENTESIS;
+        
+        // FIXME:
         // sim.Char(']', wxMOD_SHIFT);
         // wxYield();
-        break;
+    }break;
     /*========= UNDO =============*/
     /* FIXME: the undo works strange with 'r' command*/
     case COMMANDVI::u:
@@ -679,21 +694,21 @@ bool VimCommand::Command_call_visual_mode()
 
     case COMMANDVI::G: /*====== START G =======*/
        {
-          /*FIXME extend section*/
-            // this->m_saveCommand = false;
-        //     switch(m_repeat) {
-        //     case 0:
-        //         m_ctrl->DocumentEndExtend();
-        //         break;
-        //     case 1:
-        //         m_ctrl->DocumentStartExtend();
-        //         break;
-        //     default:
-        //        //m_ctrl->SetSelectionStart( m_ctrl->GetCurrentPos() );
-        //         m_ctrl->GotoLine(m_repeat - 1);
-        //         m_ctrl->SetSelectionEnd( m_ctrl->GetCurrentPos() );
-        //         break;
-        //     }
+           /*FIXME extend section*/
+            this->m_saveCommand = false;
+            switch(m_repeat) {
+            case 0:
+                m_ctrl->DocumentEndExtend();
+                break;
+            case 1:
+                m_ctrl->DocumentStartExtend();
+                break;
+            default:
+               //m_ctrl->SetSelectionStart( m_ctrl->GetCurrentPos() );
+                //m_ctrl->GotoLine(m_repeat - 1);
+                //m_ctrl->SetSelectionEnd( m_ctrl->GetCurrentPos() );
+                break;
+            }
         }
         break;          /*~~~~~~~ END G ~~~~~~~~*/
     case COMMANDVI::gg: /*====== START G =======*/
@@ -1239,6 +1254,54 @@ bool VimCommand::DeleteLastCommandChar()
     return false;
 }
 
+/**
+ * @return the position of the matching parentesis
+ */
+long VimCommand::goToMatchingParentesis(long start_pos)
+{
+    const wxChar parentesis[]  = {'(', ')',
+                                  '[', ']',
+                                  '{', '}',
+                                  /*NOT VIM STANDARD, but useful*/
+                                  '<', '>',
+                                  '\"', '\"',
+                                   }; 
+    SEARCH_DIRECTION direction;
+    long pos          = start_pos;
+    long max_n_char   = m_ctrl->GetTextLength();
+    wxChar currChar = m_ctrl->GetCharAt( pos );
+
+    int index_parentesis;
+    int increment = 0;
+    bool found = false;
+
+    for( index_parentesis = 0;
+         index_parentesis < sizeof( parentesis );
+         ++index_parentesis)
+    {
+        if ( currChar == parentesis[index_parentesis] ) {
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) return -1;
+
+    increment = ( index_parentesis % 2 == 0 ) ? +1 : -1 ;
+    int indenting_level = 1;
+    while( indenting_level > 0 && pos >= 0 && pos < max_n_char ) {
+        pos+=increment;
+        currChar = m_ctrl->GetCharAt( pos );
+        if ( currChar == parentesis[index_parentesis] ) {
+            ++indenting_level;
+        } else if ( currChar == parentesis[ index_parentesis + increment ] ) {
+            --indenting_level;
+        }
+    }
+
+    return ( indenting_level == 0 ) ? pos : -1;
+}
+
 /* ###############################################################
  #                      VIM BASE COMMAND                         #
  ################################################################# */
@@ -1256,7 +1319,7 @@ VimBaseCommand::VimBaseCommand(wxString fullpath_name)
       m_repeatCommand(0),
       m_modifierKey(0)
 
-{ }
+{}
 
 VimBaseCommand::VimBaseCommand( const VimBaseCommand& command )
     : m_fullpath_name(command.m_fullpath_name),
@@ -1304,3 +1367,4 @@ void VimBaseCommand::setSavedStatus( VimCommand &command )
     command.m_repeatCommand      = m_repeatCommand ;
     command.m_modifierKey        = m_modifierKey ;
 }
+

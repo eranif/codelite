@@ -13,10 +13,6 @@
 #include <algorithm>
 #include "clWorkspaceManager.h"
 
-/**
- * Default constructor
- */
-
 VimManager::VimManager(IManager* manager, VimSettings& settings)
     : m_settings(settings)
     , m_currentCommand()
@@ -40,10 +36,6 @@ VimManager::VimManager(IManager* manager, VimSettings& settings)
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSING,
                                &VimManager::OnAllEditorsClosing, this);
 }
-
-/**
- * Default distructor
- */
 
 VimManager::~VimManager()
 {
@@ -146,28 +138,81 @@ wxString VimManager::get_current_word()
 void VimManager::updateView()
 {
     if(m_ctrl == NULL) return;
+
+    updateCarret();
+
+    if ( m_currentCommand.getError() == MESSAGES_VIM::NO_ERROR ) {
+        updateMessageModus();
+    } else {
+        updateVimMessage();
+    }
+}
+
+void VimManager::updateMessageModus()
+{
     switch (m_currentCommand.get_current_modus() ) {
     case VIM_MODI::NORMAL_MODUS:
-        m_ctrl->SetCaretStyle(m_caretBlockStyle);
         m_mgr->GetStatusBar()->SetMessage("NORMAL");
         break;
     case VIM_MODI::COMMAND_MODUS:
-        m_ctrl->SetCaretStyle(m_caretBlockStyle);
         m_mgr->GetStatusBar()->SetMessage(m_currentCommand.getTmpBuf());
         break;
     case VIM_MODI::VISUAL_MODUS:
-        m_ctrl->SetCaretStyle(m_caretBlockStyle);
         m_mgr->GetStatusBar()->SetMessage("VISUAL");
         break;
-	case VIM_MODI::INSERT_MODUS:
+    case VIM_MODI::INSERT_MODUS:
         m_mgr->GetStatusBar()->SetMessage("INSERT");
+        break;
+    default:
+        m_mgr->GetStatusBar()->SetMessage("NORMAL");
+        break;
+    }
+
+}
+
+void VimManager::updateVimMessage()
+{
+    switch (m_currentCommand.getError() ) {
+    case MESSAGES_VIM::UNBALNCED_PARENTESIS:
+        m_mgr->GetStatusBar()->SetMessage(_("Unbalanced Parentesis"));
+        break;
+    case MESSAGES_VIM::SAVED:
+        m_mgr->GetStatusBar()->SetMessage(_("Saving"));
+        break;
+    case MESSAGES_VIM::CLOSED:
+        m_mgr->GetStatusBar()->SetMessage(_("Closing"));
+        break;
+    case MESSAGES_VIM::SAVE_AND_CLOSE:
+        m_mgr->GetStatusBar()->SetMessage(_("Saving and Closing"));
+        break;
+    default:
+        m_mgr->GetStatusBar()->SetMessage("Unknown Error");
+        break;
+    }
+
+}
+
+void VimManager::updateCarret()
+{
+    
+    switch (m_currentCommand.get_current_modus() ) {
+    case VIM_MODI::NORMAL_MODUS:
+        m_ctrl->SetCaretStyle(m_caretBlockStyle);
+        break;
+    case VIM_MODI::COMMAND_MODUS:
+        m_ctrl->SetCaretStyle(m_caretBlockStyle);
+        break;
+    case VIM_MODI::VISUAL_MODUS:
+        m_ctrl->SetCaretStyle(m_caretBlockStyle);
+        break;
+	case VIM_MODI::INSERT_MODUS:
         m_ctrl->SetCaretStyle(m_caretInsertStyle);
         break;
     default:
         m_ctrl->SetCaretStyle(m_caretBlockStyle);
-        m_mgr->GetStatusBar()->SetMessage("NORMAL");
         break;
     }
+
 }
 
 void VimManager::OnCharEvt(wxKeyEvent& event)
@@ -272,7 +317,7 @@ void VimManager::DoCleanup(bool unbind)
     
     m_editor = NULL;
     m_ctrl = NULL;
-    m_mgr->GetStatusBar()->SetMessage("");
+    //m_mgr->GetStatusBar()->SetMessage("");
 }
 
 void VimManager::SettingsUpdated()
@@ -297,8 +342,8 @@ void VimManager::DoBindEditor(IEditor* editor)
     m_ctrl->Bind(wxEVT_CHAR, &VimManager::OnCharEvt, this);
     m_ctrl->Bind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
 
-    CallAfter(&VimManager::updateView);
-    //updateView();
+    //CallAfter(&VimManager::updateView);
+    updateView();
 }
 
 void VimManager::OnWorkspaceClosing(wxCommandEvent& event)
@@ -369,3 +414,5 @@ void VimManager::DeleteClosedEditorState()
 }
    
 void VimManager::DeleteAllEditorState() { m_editorStates.clear(); }
+
+

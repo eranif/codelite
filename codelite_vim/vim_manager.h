@@ -47,6 +47,10 @@ protected:
     void SaveOldEditorState();
     void DeleteClosedEditorState();
     void DeleteAllEditorState();
+
+    void updateCarret();
+    void updateMessageModus();
+    void updateVimMessage();
     
 private:
     VimSettings& m_settings;
@@ -66,3 +70,4 @@ private:
 };
 
 #endif // __VIM_MANAGER_H__
+

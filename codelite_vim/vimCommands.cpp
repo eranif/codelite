@@ -24,7 +24,7 @@ VimCommand::VimCommand()
     , m_newLineCopy(false)
     , m_repeatCommand(false)
     , m_saveCommand(true)
-    , m_message_ID( MESSAGES_VIM::NO_ERROR )
+    , m_message_ID( MESSAGES_VIM::NO_ERROR_VIM_MSG )
 {
 	m_ctrl = NULL; /*FIXME: check it*/
 }
@@ -41,7 +41,7 @@ void VimCommand::set_current_word(wxString word) { m_searchWord = word; }
 
 bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
 {
-    m_message_ID = MESSAGES_VIM::NO_ERROR;
+    m_message_ID = MESSAGES_VIM::NO_ERROR_VIM_MSG;
     bool skip_event = false;
     this->m_modifierKey = modifier;
 
@@ -238,25 +238,25 @@ bool VimCommand::OnReturnDown(VimCommand::eAction& action)
             m_tmpbuf.Clear();
             ResetCommand();
             m_currentModus = VIM_MODI::NORMAL_MODUS;
-            m_message_ID = MESSAGES_VIM::SAVED;
+            m_message_ID = MESSAGES_VIM::SAVED_VIM_MSG;
         } else if(m_tmpbuf == _(":q") || m_tmpbuf == _(":quit")) {
             action = kClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
-            m_message_ID = MESSAGES_VIM::CLOSED;
+            m_message_ID = MESSAGES_VIM::CLOSED_VIM_MSG;
         } else if(m_tmpbuf == _(":q!")) {
             action = kClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
-            m_message_ID = MESSAGES_VIM::CLOSED;
+            m_message_ID = MESSAGES_VIM::CLOSED_VIM_MSG;
         } else if(m_tmpbuf == _(":wq")) {
             action = kSaveAndClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
-            m_message_ID = MESSAGES_VIM::SAVE_AND_CLOSE;
+            m_message_ID = MESSAGES_VIM::SAVE_AND_CLOSE_VIM_MSG;
         }
     }
 
@@ -388,7 +388,7 @@ bool VimCommand::Command_call()
         if ( pos_matching != -1 )
             m_ctrl->GotoPos( pos_matching );
         else
-            m_message_ID = MESSAGES_VIM::UNBALNCED_PARENTESIS;
+            m_message_ID = MESSAGES_VIM::UNBALNCED_PARENTESIS_VIM_MSG   ;
         
         // FIXME:
         // sim.Char(']', wxMOD_SHIFT);

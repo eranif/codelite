@@ -141,7 +141,7 @@ void VimManager::updateView()
 
     updateCarret();
 
-    if ( m_currentCommand.getError() == MESSAGES_VIM::NO_ERROR ) {
+    if ( m_currentCommand.getError() == MESSAGES_VIM::NO_ERROR_VIM_MSG ) {
         updateMessageModus();
     } else {
         updateVimMessage();
@@ -173,16 +173,16 @@ void VimManager::updateMessageModus()
 void VimManager::updateVimMessage()
 {
     switch (m_currentCommand.getError() ) {
-    case MESSAGES_VIM::UNBALNCED_PARENTESIS:
+    case MESSAGES_VIM::UNBALNCED_PARENTESIS_VIM_MSG:
         m_mgr->GetStatusBar()->SetMessage(_("Unbalanced Parentesis"));
         break;
-    case MESSAGES_VIM::SAVED:
+    case MESSAGES_VIM::SAVED_VIM_MSG:
         m_mgr->GetStatusBar()->SetMessage(_("Saving"));
         break;
-    case MESSAGES_VIM::CLOSED:
+    case MESSAGES_VIM::CLOSED_VIM_MSG:
         m_mgr->GetStatusBar()->SetMessage(_("Closing"));
         break;
-    case MESSAGES_VIM::SAVE_AND_CLOSE:
+    case MESSAGES_VIM::SAVE_AND_CLOSE_VIM_MSG:
         m_mgr->GetStatusBar()->SetMessage(_("Saving and Closing"));
         break;
     default:

@@ -29,12 +29,12 @@ enum class VIM_MODI {
 
 enum class SEARCH_DIRECTION { BACKWARD, FORWARD };
 
-enum class MESSAGES_VIM { 
-    NO_ERROR, 
-    UNBALNCED_PARENTESIS,
-    SAVED,
-    SAVE_AND_CLOSE,
-    CLOSED
+enum class MESSAGES_VIM {
+    NO_ERROR_VIM_MSG = 0, 
+    UNBALNCED_PARENTESIS_VIM_MSG,
+    SAVED_VIM_MSG,
+    SAVE_AND_CLOSE_VIM_MSG,
+    CLOSED_VIM_MSG
 };
 
 /*enumeration of implemented commands*/

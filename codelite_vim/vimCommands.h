@@ -29,6 +29,13 @@ enum class VIM_MODI {
 
 enum class SEARCH_DIRECTION { BACKWARD, FORWARD };
 
+enum class MESSAGES_VIM {
+    NO_ERROR_VIM_MSG = 0, 
+    UNBALNCED_PARENTESIS_VIM_MSG,
+    SAVED_VIM_MSG,
+    SAVE_AND_CLOSE_VIM_MSG,
+    CLOSED_VIM_MSG
+};
 
 /*enumeration of implemented commands*/
 enum class COMMANDVI {
@@ -41,6 +48,7 @@ enum class COMMANDVI {
     _$,
     w,
     b,
+    e,
     G,
     gg,
     i,
@@ -54,6 +62,8 @@ enum class COMMANDVI {
     r,
     R,
     cw,
+	cb,
+	ce,
     C,
     cc,
     S,
@@ -62,6 +72,7 @@ enum class COMMANDVI {
     dw,
     dd,
     db,
+	de,
     D,
     diesis,
     N,
@@ -76,6 +87,7 @@ enum class COMMANDVI {
     yy,
     yw,
     yb,
+    ye,
     J,
     v
 };
@@ -115,6 +127,37 @@ enum class COMMANDVI {
  */
 class VimCommand;
 
+class VimBaseCommand
+{
+public:
+    VimBaseCommand(wxString fullpath_name);
+    VimBaseCommand(const VimBaseCommand& command);
+    ~VimBaseCommand();
+
+    bool isCurrentEditor(const wxString& fullpath_name);
+    void saveCurrentStatus(const VimCommand &command);
+    void setSavedStatus( VimCommand &command);
+    
+private:
+    
+    wxString m_fullpath_name;
+
+    /*~~~~~~~~ INFO ~~~~~~~~~*/
+    COMMANDVI m_commandID;             /*!< id of the current command to identify it*/
+    COMMAND_PART m_currentCommandPart; /*!< current part of the command */
+    VIM_MODI m_currentModus;           /*!< actual mode the editor is in */
+    bool m_saveCommand;
+    /*~~~~~~~~ COMMAND ~~~~~~~~~*/
+    int m_repeat;           /*!< number of repetition for the command */
+    wxChar m_baseCommand;   /*!< base command (first char of the cmd)*/
+    wxChar m_actionCommand; /*!< eventual command modifier.In 'c3w', "w" */
+    int m_actions;          /*!< repetition of the modifier.In 'c3x', "3" */
+
+    /*~~~~~~~~ HELPER ~~~~~~~~~*/
+    bool m_repeatCommand;
+    int m_modifierKey; /*!< to take into account for some commands*/
+};
+
 class VimCommand
 {
 public:
@@ -139,14 +182,15 @@ public:
 
     /*~~~~~~~ EVENT HANLDER ~~~~~~~~~~~~~~~~*/
     bool OnNewKeyDown(wxChar ch, int modifier);
-    bool OnEscapeDown(wxStyledTextCtrl* ctrl);
-    bool OnReturnDown(IEditor* mEditor, IManager* manager, VimCommand::eAction& action);
+    bool OnEscapeDown();
+    bool OnReturnDown(VimCommand::eAction& action);
 
     /**
      * @brief delete last char from the command buffer
      * @return true on success, false otherwise
      */
     bool DeleteLastCommandChar();
+    MESSAGES_VIM getError();
 
     /*~~~~~~~ GETTER ~~~~~~~~~~~~~~~~*/
     VIM_MODI get_current_modus();
@@ -155,29 +199,30 @@ public:
     bool save_current_cmd();
 
     /*~~~~~~~ Commands-related ~~~~~~~~~~~~~~~~*/
-    void issue_cmd(wxStyledTextCtrl* ctrl);
-    void repeat_issue_cmd(wxStyledTextCtrl* ctrl, wxString buf);
-    bool Command_call(wxStyledTextCtrl* ctrl);
-    bool Command_call_visual_mode(wxStyledTextCtrl* ctrl);
+    void IssueCommand();
+    void RepeatIssueCommand(wxString buf);
+    bool Command_call();
+    bool Command_call_visual_mode();
     bool is_cmd_complete();
     void set_current_word(wxString word);
     void set_current_modus(VIM_MODI modus);
     void reset_repeat_last();
     void ResetCommand();
-    void set_ctrl(wxStyledTextCtrl* ctrl);
+    void set_ctrl(wxStyledTextCtrl *ctrl);
 
 private:
     /*~~~~~~~~ PRIVAT METHODS ~~~~~~~~~*/
     int getNumRepeat();
     int getNumActions();
-    void evidentiate_word(wxStyledTextCtrl* ctrl);
+    void evidentiate_word();
     void append_command(wxChar ch);
-    wxString get_text_at_position(wxStyledTextCtrl* ctrl, VimCommand::eTypeTextSearch typeSearch = VimCommand::eTypeTextSearch::kAllWord);
-    bool is_space_following(wxStyledTextCtrl* ctrl);
-    bool is_space_preceding(wxStyledTextCtrl* ctrl);
-    wxString add_following_spaces(wxStyledTextCtrl* ctrl);
-    wxString add_preceding_spaces(wxStyledTextCtrl* ctrl);
-    bool search_word(SEARCH_DIRECTION flag, wxStyledTextCtrl* ctrl);
+    wxString get_text_at_position(VimCommand::eTypeTextSearch typeSearch = VimCommand::eTypeTextSearch::kAllWord);
+    bool is_space_following();
+    bool is_space_preceding();
+    wxString add_following_spaces();
+    wxString add_preceding_spaces();
+    bool search_word(SEARCH_DIRECTION flag);
+    long goToMatchingParentesis(long start_pos);
     void normal_modus(wxChar ch);
     void visual_modus(wxChar ch);
     void command_modus(wxChar ch);
@@ -185,6 +230,7 @@ private:
 
     /*~~~~~~~~ INFO ~~~~~~~~~*/
     COMMANDVI m_commandID;             /*!< id of the current command to identify it*/
+    MESSAGES_VIM m_message_ID;
     COMMAND_PART m_currentCommandPart; /*!< current part of the command */
     VIM_MODI m_currentModus;           /*!< actual mode the editor is in */
     bool m_saveCommand;
@@ -203,6 +249,10 @@ private:
     wxString m_searchWord;
     bool m_newLineCopy; /*!< take track if we copy/pase the complete line (dd,yy)*/
     std::vector<wxString> m_listCopiedStr;
+
+	/*~~~~~~~ EDITOR ~~~~~~~~~*/
+	wxStyledTextCtrl *m_ctrl;
+    friend VimBaseCommand;
 };
 
 #endif //__VIM_COMMANDS__

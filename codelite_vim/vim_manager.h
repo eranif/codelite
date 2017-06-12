@@ -17,8 +17,6 @@
 /**
  * @brief This Class is used to intercet the key event end rederect them
  * to perform vi-key-bindings.
- *
- *
  */
 
 class VimManager : public wxEvtHandler
@@ -45,6 +43,15 @@ protected:
     void CloseCurrentEditor();
     void SaveCurrentEditor();
 
+    void UpdateOldEditorState();
+    void SaveOldEditorState();
+    void DeleteClosedEditorState();
+    void DeleteAllEditorState();
+
+    void updateCarret();
+    void updateMessageModus();
+    void updateVimMessage();
+    
 private:
     VimSettings& m_settings;
     IEditor* m_editor;
@@ -55,10 +62,12 @@ private:
     IManager* m_mgr;
     int m_caretInsertStyle;
     int m_caretBlockStyle;
-
-    void Issue_cmd();
+    std::vector<VimBaseCommand*> m_editorStates;
+	
+    void IssueCommand();
     void updateView();
-    void repeat_cmd();
+    void RepeatCommand();
 };
 
 #endif // __VIM_MANAGER_H__
+

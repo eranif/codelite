@@ -424,6 +424,9 @@ void CodeFormatter::OnFormatOptions(wxCommandEvent& e)
 
     CodeFormatterDlg dlg(NULL, m_mgr, this, m_options, cppSample, phpSample);
     dlg.ShowModal();
+
+    // Reload options in case changes where cancled
+    m_mgr->GetConfigTool()->ReadObject("FormatterOptions", &m_options);
 }
 
 void CodeFormatter::OnFormatUI(wxUpdateUIEvent& e)

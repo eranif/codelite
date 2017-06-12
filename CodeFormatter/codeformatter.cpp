@@ -237,7 +237,11 @@ void CodeFormatter::DoFormatWithPhpCsFixer(IEditor* editor)
 {
     wxFileName phar(m_options.GetPHPCSFixerPhar());
     wxString name = "PHP-CS-Fixer";
-    wxString command = m_options.GetPhpFixerCommand();
+    wxString command;
+    if(!phar.FileExists() || !m_options.GetPhpFixerCommand(command)) {
+        clDEBUG() << "CodeFormatter: Invalid PHP-FIXER command" << clEndl;
+        return;
+    }
     DoFormatWithPhar(editor, phar, name, command);
 }
 
@@ -245,7 +249,11 @@ void CodeFormatter::DoFormatWithPhpcbf(IEditor* editor)
 {
     wxFileName phar(m_options.GetPhpcbfPhar());
     wxString name = "PHPCBF";
-    wxString command = m_options.GetPhpcbfCommand();
+    wxString command;
+    if(!phar.FileExists() || !m_options.GetPhpcbfCommand(command)) {
+        clDEBUG() << "CodeFormatter: Invalid PHPCBF command" << clEndl;
+        return;
+    }
     DoFormatWithPhar(editor, phar, name, command);
 }
 

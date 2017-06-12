@@ -36,10 +36,11 @@
 CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     IManager* mgr,
     CodeFormatter* cf,
-    const FormatOptions& options,
+    FormatOptions& options,
     const wxString& cppSampleCode,
     const wxString& phpSampleCode)
     : CodeFormatterBaseDlg(parent)
+    , m_options(options)
     , m_cf(cf)
     , m_cppSampleCode(cppSampleCode)
     , m_phpSampleCode(phpSampleCode)
@@ -53,7 +54,6 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     // center the dialog
     Centre();
 
-    m_options = options;
     m_textCtrlPreview->SetText(m_cppSampleCode);
     m_textCtrlPreview_Clang->SetText(m_cppSampleCode);
     m_stcPhpPreview->SetText(m_phpSampleCode);
@@ -241,15 +241,21 @@ void CodeFormatterDlg::UpdatePreview()
 
     // PhpCsFixer preview
     output = m_phpSampleCode;
-    command = m_options.GetPhpFixerCommand();
-    m_cf->DoFormatExternally(output, command);
-    UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
+    if(m_options.GetPhpFixerCommand(command)) {
+        m_cf->DoFormatExternally(output, command);
+        UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
+    } else {
+        UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, _("No Preview Available"));
+    }
 
     // Phpcbf preview
     output = m_phpSampleCode;
-    command = m_options.GetPhpcbfCommand();
-    m_cf->DoFormatExternally(output, command);
-    UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
+    if(m_options.GetPhpcbfCommand(command)) {
+        m_cf->DoFormatExternally(output, command);
+        UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
+    } else {
+        UpdatePreviewText(m_textCtrlPreview_Phpcbf, _("No Preview Available"));
+    }
 }
 
 void CodeFormatterDlg::UpdatePreviewText(wxStyledTextCtrl*& textCtrl, const wxString& text)
@@ -260,14 +266,9 @@ void CodeFormatterDlg::UpdatePreviewText(wxStyledTextCtrl*& textCtrl, const wxSt
     textCtrl->SetEditable(false);
 }
 
-CodeFormatterDlg::~CodeFormatterDlg()
-{
-}
+CodeFormatterDlg::~CodeFormatterDlg() {}
 
-void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_isDirty);
-}
+void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isDirty); }
 
 void CodeFormatterDlg::OnCustomAstyleFlags(wxCommandEvent& event)
 {

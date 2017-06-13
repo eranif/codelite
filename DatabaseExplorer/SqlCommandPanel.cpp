@@ -39,6 +39,7 @@
 #include "db_explorer_settings.h"
 #include <algorithm>
 #include "clStatusBarMessage.h"
+#include "clKeyboardManager.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__

@@ -6,10 +6,10 @@ clStatusBarMessage::clStatusBarMessage(const wxString& startMessage, const wxStr
     : m_startMessage(startMessage)
     , m_endMessage(endMessage)
 {
-    clGetManager()->SetStatusMessage(m_startMessage);
     if(m_endMessage.IsEmpty()) {
         m_endMessage = clGetManager()->GetStatusBar()->GetText();
     }
+    clGetManager()->SetStatusMessage(m_startMessage);
 }
 
 clStatusBarMessage::~clStatusBarMessage() { clGetManager()->SetStatusMessage(m_endMessage); }

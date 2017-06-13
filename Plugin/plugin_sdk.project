@@ -202,6 +202,8 @@
     <File Name="clFindResultsStyler.cpp"/>
     <File Name="phpoptions.cpp"/>
     <File Name="phpoptions.h"/>
+    <File Name="clStatusBarMessage.h"/>
+    <File Name="clStatusBarMessage.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>

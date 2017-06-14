@@ -1544,7 +1544,7 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     }
 
     // If this file is not writable, prompt the user before we do something stupid
-    if(!symlinkedFile.IsFileWritable()) {
+    if(symlinkedFile.FileExists() && !symlinkedFile.IsFileWritable()) {
         // Prompt the user
         if(::wxMessageBox(
                wxString() << _("The file\n") << fileName.GetFullPath() << _("\nis a read only file, continue?"),

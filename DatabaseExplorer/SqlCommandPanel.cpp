@@ -66,7 +66,18 @@ SQLCommandPanel::SQLCommandPanel(wxWindow* parent,
     LexerConf::Ptr_t lexerSQL = EditorConfigST::Get()->GetLexer("SQL");
     if(lexerSQL) {
         lexerSQL->Apply(m_scintillaSQL, true);
-
+        
+        // determine how an operator and a comment are styled
+        auto lexerProperties = lexerSQL->GetLexerProperties();
+        auto operatorStyle  = std::find_if(lexerProperties.begin(), lexerProperties.end(), StyleProperty::FindByName("Operator"));
+        auto commentStyle  = std::find_if(lexerProperties.begin(), lexerProperties.end(), StyleProperty::FindByName("Comment block"));
+        
+        if(  std::end(lexerProperties) != operatorStyle) {
+            m_OperatorStyle = operatorStyle->second.GetId();
+        }
+        if(  std::end(lexerProperties) != commentStyle) {
+            m_CommentStyle = commentStyle->second.GetId();
+        }
     } else {
         DbViewerPanel::InitStyledTextCtrl(m_scintillaSQL);
     }
@@ -553,38 +564,87 @@ void SQLCommandPanel::OnHistoryToolClicked(wxAuiToolBarEvent& event)
     }
 }
 
-wxArrayString SQLCommandPanel::ParseSql(const wxString& sql) const
+wxArrayString SQLCommandPanel::ParseSql() const
 {
-    // filter out comments
-    wxString noCommentsSql;
-    wxArrayString lines = ::wxStringTokenize(sql, "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.GetCount(); ++i) {
-        lines.Item(i).Trim().Trim(false);
-        if(lines.Item(i).StartsWith("--")) {
-            continue;
-        }
-        noCommentsSql << lines.Item(i) << "\n";
-    }
-
-    // Split by semi-colon
-    wxArrayString tmpSqls = ::wxStringTokenize(noCommentsSql, ";", wxTOKEN_STRTOK);
+    const char SEMICOLON = ';';
+    const char NEWLINE = '\n';
+    const char SPACE = ' ';
+   
+    wxMemoryBuffer styledText = m_scintillaSQL->GetStyledText(0,m_scintillaSQL->GetLength());
+    auto bufSize = styledText.GetDataLen();
+    char *pStyledTextBuf = static_cast<char*>(styledText.GetData());
+  
+    int startPos = 0;
+    int stopPos = 0;
+    wxString currStmt = "";
+    
+    char currChar;  
+    char currStyle;
+    
     wxArrayString sqls;
-    for(size_t i = 0; i < tmpSqls.GetCount(); ++i) {
-
-        wxString sql = tmpSqls.Item(i);
-        sql.Trim().Trim(false);
-        if(sql.IsEmpty()) continue;
-
-        sql.Replace("\n", " ");
-        sql.Replace("\r", "");
-        sqls.Add(sql);
+    bool bAdded = true;
+    
+    for(int index=0; index<bufSize; index+= 2) {
+        
+        currChar = pStyledTextBuf[index];
+        currStyle = pStyledTextBuf[index+1];
+    
+        // eat comments
+        if( m_CommentStyle == currStyle) {
+            
+            // copy the string previous to the comments
+            currStmt += m_scintillaSQL->GetTextRange (startPos, stopPos);
+            // replace the comments with a space
+            currStmt += SPACE;
+            while( (m_CommentStyle == currStyle || std::isspace(currChar)) && index < bufSize)
+            {
+                index += 2;
+                currChar = pStyledTextBuf[index];
+                currStyle = pStyledTextBuf[index+1];
+                stopPos++;
+            }
+            startPos = stopPos;
+            
+        }
+        
+        // non-comment, valid character
+        if( m_CommentStyle != currStyle  && 0 != currChar)   {            
+            stopPos++;
+            bAdded = false;
+        }
+        
+        // found an operator semi-colon to mark end of statement
+        if( m_OperatorStyle == currStyle && SEMICOLON == currChar)  {
+            currStmt += m_scintillaSQL->GetTextRange (startPos, stopPos);
+           
+           currStmt.Trim(false);
+           currStmt.Trim();
+            if( currStmt.length() != 0) {
+                sqls.Add(currStmt);
+                currStmt.clear();
+                bAdded = true;
+            }
+            startPos = stopPos;
+            stopPos = startPos;
+        }
+    }
+    
+    // in case the last statement did not end in a semicolon
+    if(!bAdded) {
+        currStmt += m_scintillaSQL->GetTextRange (startPos, stopPos);
+            
+         currStmt.Trim(false);
+         currStmt.Trim();
+        if( currStmt.length() != 0) {
+            sqls.Add(currStmt);
+        }
     }
     return sqls;
 }
 
 void SQLCommandPanel::SaveSqlHistory()
 {
-    wxArrayString sqls = ParseSql(m_scintillaSQL->GetText());
+    wxArrayString sqls = ParseSql();
     if(sqls.IsEmpty()) return;
 
     DbExplorerSettings s;

@@ -45,7 +45,7 @@ class WorkspaceTab : public WorkspaceTabBase
 protected:
     void ProjectSettingsDlgClosed();
     void DoGoHome();
-    void DoConfigChanged();
+    void DoConfigChanged(const wxString& newConfigName);
 
 protected:
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);

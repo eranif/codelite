@@ -22,24 +22,29 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "formatoptions.h"
+#include "PHPFormatterBuffer.h"
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
-#include "PHPFormatterBuffer.h"
+#include "formatoptions.h"
 #include "globals.h"
 #include "phpoptions.h"
+#include "file_logger.h"
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
     , m_engine(kFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
-                           kSpaceBeforeAssignmentOperators |
-                           kAlignEscapedNewlinesLeft)
+          kSpaceBeforeAssignmentOperators | kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
+    , m_PHPCSFixerPharRules(0)
     , m_generalFlags(0)
+    , m_PhpcbfStandard("phpcs.xml")
+    , m_PhpcbfEncoding("UTF-8")
+    , m_phpcbfSeverity(0)
+    , m_PhpcbfPharOptions(0)
 {
 }
 
@@ -67,22 +72,58 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read("m_generalFlags", m_generalFlags);
     arch.Read("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Read("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
+    arch.Read("m_PHPCSFixerPharRules", m_PHPCSFixerPharRules);
+    arch.Read("m_PhpcbfPhar", m_PhpcbfPhar);
+    arch.Read("m_PhpcbfPharOptions", m_PhpcbfPharOptions);
 
-    if(m_clangFormatExe.IsEmpty()) {
+    AutodetectSettings();
+}
+
+void FormatOptions::AutodetectSettings()
+{
+    wxFileName clangFormatExe(m_clangFormatExe);
+    if(m_clangFormatExe.IsEmpty() || !clangFormatExe.Exists()) {
         clClangFormatLocator locator;
-        locator.Locate(m_clangFormatExe);
+        if(locator.Locate(m_clangFormatExe)) {
+            clangFormatExe.SetPath(m_clangFormatExe);
+        }
+    }
+    if(m_clangFormatExe.IsEmpty() || !clangFormatExe.Exists()) {
+        m_engine = kFormatEngineAStyle; // Change the active engine to AStyle
+        m_clangFormatExe = "";          // Clear the non existed executable
     }
 
-#ifndef __WXMSW__
     // Find an installed php style fixer
-    if (m_PHPCSFixerPhar.IsEmpty()) {
-        wxFileName file;
-        if(!clFindExecutable("php-cs-fixer", file)) {
-            clFindExecutable("phpcbf", file);
+    wxFileName phpcsfixerFormatPhar(m_PHPCSFixerPhar);
+#ifndef __WXMSW__
+    if(m_PHPCSFixerPhar.IsEmpty() || !phpcsfixerFormatPhar.Exists()) {
+        if(clFindExecutable("php-cs-fixer", phpcsfixerFormatPhar)) {
+            m_PHPCSFixerPhar = phpcsfixerFormatPhar.GetFullPath();
         }
-        SetPHPCSFixerPhar(file.GetFullPath());
     }
 #endif
+    if(m_PHPCSFixerPhar.IsEmpty() || !phpcsfixerFormatPhar.Exists()) {
+        if(m_phpEngine == kPhpFormatEnginePhpCsFixer) {
+            m_phpEngine = kPhpFormatEngineBuiltin;
+        }
+        m_PHPCSFixerPhar = ""; // Clear the non existed executable
+    }
+
+    // Find an installed php style fixer
+    wxFileName phpcbfFormatPhar(m_PhpcbfPhar);
+#ifndef __WXMSW__
+    if(m_PhpcbfPhar.IsEmpty() || !phpcbfFormatPhar.Exists()) {
+        if(clFindExecutable("phpcbf", phpcbfFormatPhar)) {
+            m_PhpcbfPhar = phpcbfFormatPhar.GetFullPath();
+        }
+    }
+#endif
+    if(m_PhpcbfPhar.IsEmpty() || !phpcbfFormatPhar.Exists()) {
+        if(m_phpEngine == kPhpFormatEnginePhpcbf) {
+            m_phpEngine = kPhpFormatEngineBuiltin;
+        }
+        m_PhpcbfPhar = ""; // Clear the non existed executable
+    }
 }
 
 void FormatOptions::Serialize(Archive& arch)
@@ -99,6 +140,9 @@ void FormatOptions::Serialize(Archive& arch)
     arch.Write("m_generalFlags", m_generalFlags);
     arch.Write("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Write("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
+    arch.Write("m_PHPCSFixerPharRules", m_PHPCSFixerPharRules);
+    arch.Write("m_PhpcbfPhar", m_PhpcbfPhar);
+    arch.Write("m_PhpcbfPharOptions", m_PhpcbfPharOptions);
 }
 
 wxString FormatOptions::AstyleOptionsAsString() const
@@ -307,18 +351,69 @@ wxString FormatOptions::ClangGlobalSettings() const
     return options;
 }
 
-wxString FormatOptions::GetPhpFixerCommand()
+bool FormatOptions::GetPhpFixerCommand(wxString& command)
 {
-    m_settingsPhp.Load();
-    wxString command, phar, php, options;
-    php << m_settingsPhp.GetPhpExe();
+    command.Clear();
+    m_optionsPhp.Load();
+    wxString phar, php, parameters;
+    php = m_optionsPhp.GetPhpExe();
+    if(php.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpFixerCommand(): empty php command" << clEndl;
+        return false;
+    }
     ::WrapWithQuotes(php);
-
-    phar << GetPHPCSFixerPhar();
+    phar = GetPHPCSFixerPhar();
+    if(phar.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpFixerCommand(): empty phar path" << clEndl;
+        return false;
+    }
     ::WrapWithQuotes(phar);
 
-    options << GetPHPCSFixerPharOptions();
-    options.Trim().Trim(false);
-    command << php << " " << phar << " fix " << options;
-    return command;
+    parameters = GetPHPCSFixerPharOptions();
+    if(parameters.IsEmpty()) {
+        if(m_PHPCSFixerPharRules & kAllowRisky) {
+            parameters << " --allow-risky=yes";
+        }
+    }
+    parameters.Trim().Trim(false);
+    command << php << " " << phar << " fix " << parameters;
+    return true;
+}
+
+bool FormatOptions::GetPhpcbfCommand(wxString& command)
+{
+    command.Clear();
+    m_optionsPhp.Load();
+    wxString phar, php, parameters;
+    php = m_optionsPhp.GetPhpExe();
+    if(php.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpcbfCommand(): empty php command" << clEndl;
+        return false;
+    }
+    ::WrapWithQuotes(php);
+
+    phar = GetPhpcbfPhar();
+    if(phar.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpcbfCommand(): empty phar path" << clEndl;
+        return false;
+    }
+    ::WrapWithQuotes(phar);
+
+    if(m_PhpcbfStandard != "phpcs.xml") {
+        parameters << " --standard=" << m_PhpcbfStandard;
+    }
+    if(m_PhpcbfEncoding != "") {
+        parameters << " --encoding=" << m_PhpcbfEncoding;
+    }
+    if(m_phpcbfSeverity) {
+        parameters << " --severity=" << m_phpcbfSeverity;
+    }
+    if(m_PhpcbfPharOptions & kWarningSeverity0) {
+        parameters << " -n";
+    }
+    parameters.Trim().Trim(false);
+    // no-patch is needed for files in /tmp, or it thinkgs it's risky...
+    command << php << " " << phar << " " << parameters;
+    return true;
+    ;
 }

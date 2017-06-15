@@ -11,3 +11,6 @@ installation_arch/
 backup
 
 .vscode
+build-debug/
+my_build.sh
+setup_flycheck.el

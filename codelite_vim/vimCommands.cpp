@@ -600,7 +600,8 @@ bool VimCommand::Command_call(wxStyledTextCtrl* ctrl)
         ctrl->CharRight();
         break;
     }
-
+    default:
+        break;
     }
 
     return repeat_command;
@@ -695,6 +696,8 @@ bool VimCommand::Command_call_visual_mode(wxStyledTextCtrl* ctrl)
         this->m_listCopiedStr.push_back( ctrl->GetSelectedText() );
         this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
         m_currentModus = VIM_MODI::NORMAL_MODUS;
+        break;
+    default:
         break;
     }
 
@@ -1136,6 +1139,10 @@ bool VimCommand::is_cmd_complete()
     case 'J':
         command_complete = true;
         m_commandID = COMMANDVI::J;
+        break;
+    default:
+        command_complete = true;
+        m_commandID = COMMANDVI::NO_COMMAND;
         break;
     }
 

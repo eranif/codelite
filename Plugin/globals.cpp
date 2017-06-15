@@ -2294,24 +2294,23 @@ bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArraySt
     mergedPaths.swap(paths);
 
     for(size_t i = 0; i < paths.size(); ++i) {
-        wxFileName fnPath(paths.Item(i), name);
+        wxString curpath = paths.Item(i);
+        wxFileName fnPath(curpath, name);
         if(fnPath.FileExists()) {
             exepath = fnPath;
             return true;
         }
 #ifdef __WXMSW__
-        // On Windows try to look for .exe or .bat (give the .exe a priority)
-        {
-            wxFileName fnFileWithExt(paths.Item(i), name);
-            fnFileWithExt.SetExt("exe");
-            if(fnFileWithExt.FileExists()) {
-                exepath = fnFileWithExt;
-                return true;
-            }
-        }
-        {
-            wxFileName fnFileWithExt(paths.Item(i), name);
-            fnFileWithExt.SetExt("bat");
+        // on Windows, an executable can have a list of known extensions defined in the
+        // environment variable PATHEXT
+        wxString pathext;
+        ::wxGetEnv("PATHEXT", &pathext);
+        wxArrayString exts = ::wxStringTokenize(pathext, ";", wxTOKEN_STRTOK);
+
+        for(size_t j = 0; j < exts.size(); ++j) {
+            wxString ext = exts.Item(j).AfterFirst('.'); // remove the . from the extension
+            wxFileName fnFileWithExt(curpath, name);
+            fnFileWithExt.SetExt(ext);
             if(fnFileWithExt.FileExists()) {
                 exepath = fnFileWithExt;
                 return true;

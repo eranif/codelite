@@ -89,12 +89,11 @@ void ContextGeneric::ProcessIdleActions()
 
         wxString searchWhat;
         wxString closeTag;
-        wxString openTag;
 
         if(reOpenHtmlTag.Matches(word)) {
             searchWhat = reOpenHtmlTag.GetMatch(word, 1);
             closeTag << "</" << searchWhat << ">";
-            openTag << "<" << searchWhat;
+            wxRegEx reOpenTag("<" + searchWhat + "[ \t>]+");
 
             int pos = endPos;
             int depth = 0;
@@ -115,7 +114,7 @@ void ContextGeneric::ProcessIdleActions()
 
                 } else if(closeTag == word) {
                     --depth;
-                } else if(word.StartsWith(openTag)) {
+                } else if(reOpenTag.Matches(word)) {
                     depth++;
                 }
                 where = FindNext(searchWhat, pos, true);
@@ -124,8 +123,9 @@ void ContextGeneric::ProcessIdleActions()
         } else if(reCloseHtmlTag.Matches(word)) {
             searchWhat = reCloseHtmlTag.GetMatch(word, 1);
             closeTag << "</" << searchWhat << ">";
-            openTag << "<" << searchWhat;
-
+            
+            wxRegEx reOpenTag("<" + searchWhat + "[ \t>]+");
+            
             int pos = startPos;
             int depth = 0;
             int where = FindPrev(searchWhat, pos, true);
@@ -133,7 +133,7 @@ void ContextGeneric::ProcessIdleActions()
             while(where != wxNOT_FOUND) {
                 int startPos2, endPos2;
                 word = xmlHelper.GetXmlTagAt(where, startPos2, endPos2);
-                if(word.StartsWith(openTag) && (depth == 0)) {
+                if(reOpenTag.Matches(word) && (depth == 0)) {
                     // We got the closing brace
                     ctrl.SetIndicatorCurrent(MARKER_CONTEXT_WORD_HIGHLIGHT);
                     ctrl.IndicatorClearRange(0, ctrl.GetLength());
@@ -145,7 +145,7 @@ void ContextGeneric::ProcessIdleActions()
 
                 } else if(closeTag == word) {
                     ++depth;
-                } else if(word.StartsWith(openTag)) {
+                } else if(reOpenTag.Matches(word)) {
                     --depth;
                 }
                 where = FindPrev(searchWhat, pos, true);

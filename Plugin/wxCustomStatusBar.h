@@ -261,6 +261,12 @@ public:
      * @brief set text in the main status bar text area
      */
     void SetText(const wxString& message, int secondsToLive = wxNOT_FOUND);
+    
+    /**
+     * @brief return the main status bar area text message
+     */
+    const wxString& GetText() const { return m_text; }
+    
     /**
      * @brief clear the main text
      */

@@ -5121,6 +5121,7 @@ void LEditor::ConvertIndentToSpaces()
     clSTCLineKeeper lk(GetCtrl());
     bool useTabs = GetUseTabs();
     SetUseTabs(false);
+    BeginUndoAction();
     int lineCount = GetLineCount();
     for(int i = 0; i < lineCount; ++i) {
         int indentStart = PositionFromLine(i);
@@ -5134,6 +5135,7 @@ void LEditor::ConvertIndentToSpaces()
             SetLineIndentation(i, lineIndentSize);
         }
     }
+    EndUndoAction();
     SetUseTabs(useTabs);
 }
 
@@ -5142,6 +5144,7 @@ void LEditor::ConvertIndentToTabs()
     clSTCLineKeeper lk(GetCtrl());
     bool useTabs = GetUseTabs();
     SetUseTabs(true);
+    BeginUndoAction();
     int lineCount = GetLineCount();
     for(int i = 0; i < lineCount; ++i) {
         int indentStart = PositionFromLine(i);
@@ -5155,6 +5158,7 @@ void LEditor::ConvertIndentToTabs()
             SetLineIndentation(i, lineIndentSize);
         }
     }
+    EndUndoAction();
     SetUseTabs(useTabs);
 }
 

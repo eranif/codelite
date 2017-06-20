@@ -5214,7 +5214,14 @@ void LEditor::ToggleLineComment(const wxString& commentSymbol, int commentStyle)
 
     int lineStart = LineFromPosition(start);
     int lineEnd = LineFromPosition(end);
-
+    
+    // Check if the "end" position is at the start of a line, in that case, don't
+    // include it
+    int endLineStartPos = PositionFromLine(lineEnd);
+    if(endLineStartPos == end) {
+        --lineEnd;
+    }
+    
     bool indentedComments = GetOptions()->GetIndentedComments();
 
     bool doingComment;

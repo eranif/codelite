@@ -57,25 +57,25 @@ BEGIN_EVENT_TABLE(SQLCommandPanel, _SqlCommandPanel)
 EVT_COMMAND(wxID_ANY, wxEVT_EXECUTE_SQL, SQLCommandPanel::OnExecuteSQL)
 END_EVENT_TABLE()
 
-SQLCommandPanel::SQLCommandPanel(wxWindow* parent,
-                                 IDbAdapter* dbAdapter,
-                                 const wxString& dbName,
-                                 const wxString& dbTable)
+SQLCommandPanel::SQLCommandPanel(
+    wxWindow* parent, IDbAdapter* dbAdapter, const wxString& dbName, const wxString& dbTable)
     : _SqlCommandPanel(parent)
 {
     LexerConf::Ptr_t lexerSQL = EditorConfigST::Get()->GetLexer("SQL");
     if(lexerSQL) {
         lexerSQL->Apply(m_scintillaSQL, true);
-        
+
         // determine how an operator and a comment are styled
         auto lexerProperties = lexerSQL->GetLexerProperties();
-        auto operatorStyle  = std::find_if(lexerProperties.begin(), lexerProperties.end(), StyleProperty::FindByName("Operator"));
-        auto commentStyle  = std::find_if(lexerProperties.begin(), lexerProperties.end(), StyleProperty::FindByName("Comment block"));
-        
-        if(  std::end(lexerProperties) != operatorStyle) {
+        auto operatorStyle =
+            std::find_if(lexerProperties.begin(), lexerProperties.end(), StyleProperty::FindByName("Operator"));
+        auto commentStyle =
+            std::find_if(lexerProperties.begin(), lexerProperties.end(), StyleProperty::FindByName("Comment block"));
+
+        if(std::end(lexerProperties) != operatorStyle) {
             m_OperatorStyle = operatorStyle->second.GetId();
         }
-        if(  std::end(lexerProperties) != commentStyle) {
+        if(std::end(lexerProperties) != commentStyle) {
             m_CommentStyle = commentStyle->second.GetId();
         }
     } else {
@@ -140,7 +140,7 @@ void SQLCommandPanel::OnScintilaKeyDown(wxKeyEvent& event)
 void SQLCommandPanel::ExecuteSql()
 {
     clStatusBarMessage message(_("Executing SQL..."));
-    
+
     clWindowUpdateLocker locker(this);
     std::set<int> textCols;
     std::set<int> blobCols;
@@ -187,8 +187,8 @@ void SQLCommandPanel::ExecuteSql()
                 m_gridTable->AppendCols(cols);
                 for(int i = 1; i <= pResultSet->GetMetaData()->GetColumnCount(); i++) {
                     m_gridTable->SetColLabelValue(i - 1, pResultSet->GetMetaData()->GetColumnName(i));
-                    m_colsMetaData.at(i - 1) = ColumnInfo(pResultSet->GetMetaData()->GetColumnType(i),
-                                                          pResultSet->GetMetaData()->GetColumnName(i));
+                    m_colsMetaData.at(i - 1) = ColumnInfo(
+                        pResultSet->GetMetaData()->GetColumnType(i), pResultSet->GetMetaData()->GetColumnName(i));
                 }
 
                 m_gridTable->BeginBatch();
@@ -351,18 +351,14 @@ void SQLCommandPanel::OnTeplatesLeftDown(wxMouseEvent& event) {}
 void SQLCommandPanel::OnTemplatesBtnClick(wxAuiToolBarEvent& event)
 {
     wxMenu menu;
-    menu.Append(XRCID("IDR_SQLCOMMAND_SELECT"),
-                _("Insert SELECT SQL template"),
-                _("Insert SELECT SQL statement template into editor."));
-    menu.Append(XRCID("IDR_SQLCOMMAND_INSERT"),
-                _("Insert INSERT SQL template"),
-                _("Insert INSERT SQL statement template into editor."));
-    menu.Append(XRCID("IDR_SQLCOMMAND_UPDATE"),
-                _("Insert UPDATE SQL template"),
-                _("Insert UPDATE SQL statement template into editor."));
-    menu.Append(XRCID("IDR_SQLCOMMAND_DELETE"),
-                _("Insert DELETE SQL template"),
-                _("Insert DELETE SQL statement template into editor."));
+    menu.Append(XRCID("IDR_SQLCOMMAND_SELECT"), _("Insert SELECT SQL template"),
+        _("Insert SELECT SQL statement template into editor."));
+    menu.Append(XRCID("IDR_SQLCOMMAND_INSERT"), _("Insert INSERT SQL template"),
+        _("Insert INSERT SQL statement template into editor."));
+    menu.Append(XRCID("IDR_SQLCOMMAND_UPDATE"), _("Insert UPDATE SQL template"),
+        _("Insert UPDATE SQL statement template into editor."));
+    menu.Append(XRCID("IDR_SQLCOMMAND_DELETE"), _("Insert DELETE SQL template"),
+        _("Insert DELETE SQL statement template into editor."));
     menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, NULL, this);
 
     wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
@@ -420,11 +416,8 @@ void SQLCommandPanel::OnGridCellRightClick(wxGridEvent& event)
 
     wxMenu menu;
     menu.Append(XRCID("db_copy_cell_value"), _("Copy value to clipboard"));
-    menu.Connect(XRCID("db_copy_cell_value"),
-                 wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(SQLCommandPanel::OnCopyCellValue),
-                 NULL,
-                 this);
+    menu.Connect(XRCID("db_copy_cell_value"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(SQLCommandPanel::OnCopyCellValue), NULL, this);
     m_gridTable->PopupMenu(&menu);
 }
 
@@ -569,57 +562,55 @@ wxArrayString SQLCommandPanel::ParseSql() const
     const char SEMICOLON = ';';
     const char NEWLINE = '\n';
     const char SPACE = ' ';
-   
-    wxMemoryBuffer styledText = m_scintillaSQL->GetStyledText(0,m_scintillaSQL->GetLength());
+
+    wxMemoryBuffer styledText = m_scintillaSQL->GetStyledText(0, m_scintillaSQL->GetLength());
     auto bufSize = styledText.GetDataLen();
-    char *pStyledTextBuf = static_cast<char*>(styledText.GetData());
-  
+    char* pStyledTextBuf = static_cast<char*>(styledText.GetData());
+
     int startPos = 0;
     int stopPos = 0;
     wxString currStmt = "";
-    
-    char currChar;  
+
+    char currChar;
     char currStyle;
-    
+
     wxArrayString sqls;
     bool bAdded = true;
-    
-    for(int index=0; index<bufSize; index+= 2) {
-        
+
+    for(int index = 0; index < bufSize; index += 2) {
+
         currChar = pStyledTextBuf[index];
-        currStyle = pStyledTextBuf[index+1];
-    
+        currStyle = pStyledTextBuf[index + 1];
+
         // eat comments
-        if( m_CommentStyle == currStyle) {
-            
+        if(m_CommentStyle == currStyle) {
+
             // copy the string previous to the comments
-            currStmt += m_scintillaSQL->GetTextRange (startPos, stopPos);
+            currStmt += m_scintillaSQL->GetTextRange(startPos, stopPos);
             // replace the comments with a space
             currStmt += SPACE;
-            while( (m_CommentStyle == currStyle || std::isspace(currChar)) && index < bufSize)
-            {
+            while((m_CommentStyle == currStyle || std::isspace(currChar)) && index < bufSize) {
                 index += 2;
                 currChar = pStyledTextBuf[index];
-                currStyle = pStyledTextBuf[index+1];
+                currStyle = pStyledTextBuf[index + 1];
                 stopPos++;
             }
             startPos = stopPos;
-            
         }
-        
+
         // non-comment, valid character
-        if( m_CommentStyle != currStyle  && 0 != currChar)   {            
+        if(m_CommentStyle != currStyle && 0 != currChar) {
             stopPos++;
             bAdded = false;
         }
-        
+
         // found an operator semi-colon to mark end of statement
-        if( m_OperatorStyle == currStyle && SEMICOLON == currChar)  {
-            currStmt += m_scintillaSQL->GetTextRange (startPos, stopPos);
-           
-           currStmt.Trim(false);
-           currStmt.Trim();
-            if( currStmt.length() != 0) {
+        if(m_OperatorStyle == currStyle && SEMICOLON == currChar) {
+            currStmt += m_scintillaSQL->GetTextRange(startPos, stopPos);
+
+            currStmt.Trim(false);
+            currStmt.Trim();
+            if(currStmt.length() != 0) {
                 sqls.Add(currStmt);
                 currStmt.clear();
                 bAdded = true;
@@ -628,14 +619,14 @@ wxArrayString SQLCommandPanel::ParseSql() const
             stopPos = startPos;
         }
     }
-    
+
     // in case the last statement did not end in a semicolon
     if(!bAdded) {
-        currStmt += m_scintillaSQL->GetTextRange (startPos, stopPos);
-            
-         currStmt.Trim(false);
-         currStmt.Trim();
-        if( currStmt.length() != 0) {
+        currStmt += m_scintillaSQL->GetTextRange(startPos, stopPos);
+
+        currStmt.Trim(false);
+        currStmt.Trim();
+        if(currStmt.length() != 0) {
             sqls.Add(currStmt);
         }
     }

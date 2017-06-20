@@ -560,7 +560,6 @@ void SQLCommandPanel::OnHistoryToolClicked(wxAuiToolBarEvent& event)
 wxArrayString SQLCommandPanel::ParseSql() const
 {
     const char SEMICOLON = ';';
-    const char NEWLINE = '\n';
     const char SPACE = ' ';
 
     wxMemoryBuffer styledText = m_scintillaSQL->GetStyledText(0, m_scintillaSQL->GetLength());
@@ -577,7 +576,7 @@ wxArrayString SQLCommandPanel::ParseSql() const
     wxArrayString sqls;
     bool bAdded = true;
 
-    for(int index = 0; index < bufSize; index += 2) {
+    for(size_t index = 0; index < bufSize; index += 2) {
 
         currChar = pStyledTextBuf[index];
         currStyle = pStyledTextBuf[index + 1];

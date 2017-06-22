@@ -81,7 +81,7 @@ bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
     // Close the code completion lookup table
     PHPCodeCompletion::Instance()->Close();
     PHPParserThread::Clear();
-    
+
     PHPEvent phpEvent(wxEVT_PHP_WORKSPACE_CLOSED);
     EventNotifier::Get()->AddPendingEvent(phpEvent);
 
@@ -710,4 +710,22 @@ void PHPWorkspace::OnProjectSyncEnd(clCommandEvent& event)
             m_projectSyncOwner->AddPendingEvent(endEvent);
         }
     }
+}
+wxFileName PHPWorkspace::GetProjectFileName(const wxString& projectName) const
+{
+    PHPProject::Ptr_t p = GetProject(projectName);
+    if(!p) {
+        return wxFileName();
+    }
+    return p->GetFilename();
+}
+
+wxArrayString PHPWorkspace::GetWorkspaceProjects() const
+{
+    wxArrayString projectArr;
+    PHPProject::Map_t projects = GetProjects();
+    std::for_each(projects.begin(), projects.end(), [&](PHPProject::Map_t::value_type p) {
+        projectArr.Add(p.second->GetName());
+    });
+    return projectArr;
 }

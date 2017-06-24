@@ -971,14 +971,7 @@
                "m_label": "Style:",
                "m_value": ""
               }],
-             "m_events": [{
-               "m_eventName": "wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED",
-               "m_eventClass": "wxNotebookEvent",
-               "m_eventHandler": "wxNotebookEventHandler",
-               "m_functionNameAndSignature": "UpdatePreviewUI(wxNotebookEvent& event)",
-               "m_description": "The page selection was changed",
-               "m_noBody": false
-              }],
+             "m_events": [],
              "m_children": [{
                "m_type": 4441,
                "proportion": 0,
@@ -3343,14 +3336,7 @@
                "m_label": "Style:",
                "m_value": ""
               }],
-             "m_events": [{
-               "m_eventName": "wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED",
-               "m_eventClass": "wxNotebookEvent",
-               "m_eventHandler": "wxNotebookEventHandler",
-               "m_functionNameAndSignature": "UpdatePreviewUI(wxNotebookEvent& event)",
-               "m_description": "The page selection was changed",
-               "m_noBody": false
-              }],
+             "m_events": [],
              "m_children": [{
                "m_type": 4441,
                "proportion": 0,

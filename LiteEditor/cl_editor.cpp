@@ -1544,7 +1544,7 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     }
 
     // If this file is not writable, prompt the user before we do something stupid
-    if(!symlinkedFile.IsFileWritable()) {
+    if(symlinkedFile.FileExists() && !symlinkedFile.IsFileWritable()) {
         // Prompt the user
         if(::wxMessageBox(
                wxString() << _("The file\n") << fileName.GetFullPath() << _("\nis a read only file, continue?"),
@@ -5121,6 +5121,7 @@ void LEditor::ConvertIndentToSpaces()
     clSTCLineKeeper lk(GetCtrl());
     bool useTabs = GetUseTabs();
     SetUseTabs(false);
+    BeginUndoAction();
     int lineCount = GetLineCount();
     for(int i = 0; i < lineCount; ++i) {
         int indentStart = PositionFromLine(i);
@@ -5134,6 +5135,7 @@ void LEditor::ConvertIndentToSpaces()
             SetLineIndentation(i, lineIndentSize);
         }
     }
+    EndUndoAction();
     SetUseTabs(useTabs);
 }
 
@@ -5142,6 +5144,7 @@ void LEditor::ConvertIndentToTabs()
     clSTCLineKeeper lk(GetCtrl());
     bool useTabs = GetUseTabs();
     SetUseTabs(true);
+    BeginUndoAction();
     int lineCount = GetLineCount();
     for(int i = 0; i < lineCount; ++i) {
         int indentStart = PositionFromLine(i);
@@ -5155,6 +5158,7 @@ void LEditor::ConvertIndentToTabs()
             SetLineIndentation(i, lineIndentSize);
         }
     }
+    EndUndoAction();
     SetUseTabs(useTabs);
 }
 
@@ -5210,7 +5214,14 @@ void LEditor::ToggleLineComment(const wxString& commentSymbol, int commentStyle)
 
     int lineStart = LineFromPosition(start);
     int lineEnd = LineFromPosition(end);
-
+    
+    // Check if the "end" position is at the start of a line, in that case, don't
+    // include it
+    int endLineStartPos = PositionFromLine(lineEnd);
+    if(endLineStartPos == end) {
+        --lineEnd;
+    }
+    
     bool indentedComments = GetOptions()->GetIndentedComments();
 
     bool doingComment;

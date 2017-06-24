@@ -134,6 +134,7 @@ public:
     void OnFileSysetmUpdated(clFileSystemEvent& event);
     void OnSaveSession(clCommandEvent& event);
     void OnReplaceInFiles(clFileSystemEvent& e);
+    void OnFileAction(clCommandEvent& e);
 };
 
 #endif // PHP

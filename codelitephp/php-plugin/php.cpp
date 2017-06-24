@@ -145,6 +145,9 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
+    
     CallAfter(&PhpPlugin::FinalizeStartup);
 
     // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
@@ -264,7 +267,10 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
-
+    
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
+    
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");
     SafelyDetachAndDestroyPane(m_xdebugEvalPane, "XDebugEval");
@@ -869,5 +875,13 @@ void PhpPlugin::OnReplaceInFiles(clFileSystemEvent& e)
         for(size_t i = 0; i < files.size(); ++i) {
             DoSyncFileWithRemote(files.Item(i));
         }
+    }
+}
+
+void PhpPlugin::OnFileAction(clCommandEvent& e)
+{
+    e.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        DoSyncFileWithRemote(e.GetFileName());
     }
 }

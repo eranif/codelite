@@ -150,9 +150,10 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
 
     wxFileName php(m_settingsPhp.GetPhpExe());
     if(!php.Exists()) {
-        ::wxMessageBox(_("Can not lint file: Missing PHP executable path"), "PHPLint", wxICON_ERROR | wxOK | wxCENTER);
+        clGetManager()->SetStatusMessage(_("PHPLint: can not lint file. Missing PHP executable path"), 5);
         return;
     }
+    
     wxString phpPath = php.GetFullPath();
     ::WrapWithQuotes(phpPath);
 

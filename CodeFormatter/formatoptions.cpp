@@ -30,14 +30,14 @@
 #include "globals.h"
 #include "json_node.h"
 #include "phpoptions.h"
+#include "file_logger.h"
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
     , m_engine(kFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
-          kSpaceBeforeAssignmentOperators |
-          kAlignEscapedNewlinesLeft)
+          kSpaceBeforeAssignmentOperators | kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
@@ -50,9 +50,7 @@ FormatOptions::FormatOptions()
 {
 }
 
-FormatOptions::~FormatOptions()
-{
-}
+FormatOptions::~FormatOptions() {}
 
 void FormatOptions::DeSerialize(Archive& arch)
 {
@@ -366,17 +364,25 @@ wxString FormatOptions::ClangGlobalSettings() const
     return options;
 }
 
-wxString FormatOptions::GetPhpFixerCommand(const wxFileName& fileName)
+bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& command)
 {
+    command.Clear();
     m_optionsPhp.Load();
-    wxString command, phar, php, parameters, filePath;
-    php << m_optionsPhp.GetPhpExe();
+    wxString phar, php, parameters, filePath;
+    php = m_optionsPhp.GetPhpExe();
+    if(php.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpFixerCommand(): empty php command" << clEndl;
+        return false;
+    }
     ::WrapWithQuotes(php);
-
-    phar << GetPHPCSFixerPhar();
+    phar = GetPHPCSFixerPhar();
+    if(phar.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpFixerCommand(): empty php-cs-fixer phar path" << clEndl;
+        return false;
+    }
     ::WrapWithQuotes(phar);
 
-    parameters << GetPHPCSFixerPharOptions();
+    parameters = GetPHPCSFixerPharOptions();
     if(parameters.IsEmpty()) {
         if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
             parameters << " --allow-risky=yes";
@@ -449,17 +455,26 @@ wxString FormatOptions::GetPhpFixerCommand(const wxFileName& fileName)
     ::WrapWithQuotes(filePath);
 
     command << php << " " << phar << " fix " << parameters << " " << filePath;
-    return command;
+    return true;
 }
 
-wxString FormatOptions::GetPhpcbfCommand(const wxFileName& fileName)
+bool FormatOptions::GetPhpcbfCommand(const wxFileName& fileName, wxString& command)
 {
+    command.Clear();
     m_optionsPhp.Load();
-    wxString command, phar, php, parameters, filePath;
-    php << m_optionsPhp.GetPhpExe();
+    wxString phar, php, parameters, filePath;
+    php = m_optionsPhp.GetPhpExe();
+    if(php.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpcbfCommand(): empty php command" << clEndl;
+        return false;
+    }
     ::WrapWithQuotes(php);
 
-    phar << GetPhpcbfPhar();
+    phar = GetPhpcbfPhar();
+    if(phar.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpcbfCommand(): empty phpcbf phar path" << clEndl;
+        return false;
+    }
     ::WrapWithQuotes(phar);
 
     if(m_PhpcbfStandard != "phpcs.xml") {
@@ -480,5 +495,5 @@ wxString FormatOptions::GetPhpcbfCommand(const wxFileName& fileName)
     ::WrapWithQuotes(filePath);
 
     command << php << " " << phar << " " << parameters << " " << filePath;
-    return command;
+    return true;
 }

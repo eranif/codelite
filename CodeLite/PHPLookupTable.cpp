@@ -174,7 +174,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const w
         std::set<wxLongLong> parentsVisited;
 
         DoGetInheritanceParentIDs(scope, parents, parentsVisited, flags & kLookupFlags_Parent);
-        std::reverse(parents.begin(), parents.end());
+        //std::reverse(parents.begin(), parents.end());
 
         // Parents should now contain an ordered list of all the inheritance
         for(size_t i = 0; i < parents.size(); ++i) {

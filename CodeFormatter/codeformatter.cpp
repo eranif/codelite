@@ -303,22 +303,22 @@ void CodeFormatter::DoFormatFile(const wxFileName& fileName, const int& engine)
 bool CodeFormatter::DoFormatWithPhpCsFixer(const wxFileName& fileName)
 {
     wxFileName phar(m_options.GetPHPCSFixerPhar());
-    if(!IsPharConfigValid(phar)) {
+
+    wxString command;
+    if(!m_options.GetPhpFixerCommand(fileName, command)) {
         return false;
     }
-
-    wxString command = m_options.GetPhpFixerCommand(fileName);
     return DoFormatExternally(fileName, command);
 }
 
 bool CodeFormatter::DoFormatWithPhpcbf(const wxFileName& fileName)
 {
     wxFileName phar(m_options.GetPhpcbfPhar());
-    if(!IsPharConfigValid(phar)) {
+
+    wxString command;
+    if(!m_options.GetPhpcbfCommand(fileName, command)) {
         return false;
     }
-
-    wxString command = m_options.GetPhpcbfCommand(fileName);
     return DoFormatExternally(fileName, command);
 }
 
@@ -440,6 +440,7 @@ void CodeFormatter::OnFormatOptions(wxCommandEvent& e)
     CodeFormatterDlg dlg(NULL, m_mgr, this, m_options, cppSample, phpSample);
     dlg.ShowModal();
 
+    // Reload options in case changes where cancled
     m_mgr->GetConfigTool()->ReadObject("FormatterOptions", &m_options);
 }
 
@@ -510,16 +511,6 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
     int engine = FindFormatter(e.GetFileName());
     DoFormatWithTempFile(e.GetFileName(), content, engine);
     e.SetFormattedString(content);
-}
-
-bool CodeFormatter::IsPharConfigValid(const wxFileName& phar)
-{
-    wxFileName php(m_optionsPhp.GetPhpExe());
-    if(!php.Exists() || !phar.Exists()) {
-        return false;
-    }
-
-    return true;
 }
 
 int CodeFormatter::DoGetGlobalEOL() const

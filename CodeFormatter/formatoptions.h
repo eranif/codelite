@@ -285,7 +285,7 @@ public:
     }
 
     // PHP-CS-FIXER
-    wxString GetPhpFixerCommand(const wxFileName& fileName);
+    bool GetPhpFixerCommand(const wxFileName& fileName, wxString& command);
     void SetPHPCSFixerPhar(const wxString& PHPCSFixerPhar)
     {
         this->m_PHPCSFixerPhar = PHPCSFixerPhar;
@@ -312,7 +312,7 @@ public:
     }
 
     // PHPCBF
-    wxString GetPhpcbfCommand(const wxFileName& fileName);
+    bool GetPhpcbfCommand(const wxFileName& fileName, wxString& command);
     void SetPhpcbfPhar(const wxString& PhpcbfPhar)
     {
         this->m_PhpcbfPhar = PhpcbfPhar;

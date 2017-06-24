@@ -96,6 +96,7 @@
     <File Name="Tests/test_phpdoc_method.php"/>
     <File Name="Tests/test_function_phpdoc.php"/>
     <File Name="Tests/test_foreach.php"/>
+    <File Name="Tests/test_wrong_goto_interface.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

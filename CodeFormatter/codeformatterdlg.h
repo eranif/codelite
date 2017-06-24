@@ -41,6 +41,7 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
     IManager* m_mgr;
 
 protected:
+    virtual void UpdatePreviewUI(wxNotebookEvent& event) { UpdatePreview(); event.Skip(); }
     virtual void OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event);
     virtual void OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event);
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event);

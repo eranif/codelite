@@ -244,80 +244,91 @@ wxString FormatOptions::AstyleOptionsAsString() const
     return options;
 }
 
-wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, double clangFormatVersion) const
+wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName) const
 {
+    wxString command, filePath;
+
+    command << GetClangFormatExe();
+    ::WrapWithQuotes(command);
+
+    filePath = fileName.GetFullPath();
+    ::WrapWithQuotes(filePath);
+
     // If the option: "File" is selected, it overrides everything here
     if(m_clangFormatOptions & kClangFormatFile) {
         // All our settings are taken from .clang-format file
-        return " -style=file";
+        command << " -style=file " << filePath;
+        return command;
     }
 
-    wxString options, forceLanguage;
-
-    // Try to autodetect the file type
-    if(clangFormatVersion >= 3.5) {
-        if(FileExtManager::IsJavascriptFile(filename)) {
-            forceLanguage << "Language : JavaScript";
-
-        } else if(FileExtManager::IsCxxFile(filename)) {
-            forceLanguage << "Language : Cpp";
-
-        } else if(FileExtManager::IsJavaFile(filename)) {
-            forceLanguage << "Language : Java";
-        }
-    }
-
-    options << " -style=\"{ BasedOnStyle: ";
+    command << " -style=\"{ BasedOnStyle: ";
     if(m_clangFormatOptions & kClangFormatChromium) {
-        options << "Chromium";
+        command << "Chromium";
     } else if(m_clangFormatOptions & kClangFormatGoogle) {
-        options << "Google";
+        command << "Google";
     } else if(m_clangFormatOptions & kClangFormatLLVM) {
-        options << "LLVM";
+        command << "LLVM";
     } else if(m_clangFormatOptions & kClangFormatMozilla) {
-        options << "Mozilla";
+        command << "Mozilla";
     } else if(m_clangFormatOptions & kClangFormatWebKit) {
-        options << "WebKit";
+        command << "WebKit";
     }
 
     // add tab width and space vs tabs based on the global editor settings
-    options << ClangGlobalSettings();
+    command << ClangGlobalSettings();
 
     // Language
-    if(!forceLanguage.IsEmpty()) {
-        options << ", " << forceLanguage << " ";
+    clClangFormatLocator locator;
+    double clangFormatVersion = locator.GetVersion(GetClangFormatExe());
+    if(clangFormatVersion >= 3.5) {
+        wxString forceLanguage;
+
+        if(FileExtManager::IsJavascriptFile(fileName)) {
+            forceLanguage << "Language : JavaScript";
+
+        } else if(FileExtManager::IsCxxFile(fileName)) {
+            forceLanguage << "Language : Cpp";
+
+        } else if(FileExtManager::IsJavaFile(fileName)) {
+            forceLanguage << "Language : Java";
+        }
+
+        if(!forceLanguage.IsEmpty()) {
+            command << ", " << forceLanguage << " ";
+        }
     }
-    options << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
-    options << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
-    options << ", AllowAllParametersOfDeclarationOnNextLine : "
+
+    command << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
+    command << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
+    command << ", AllowAllParametersOfDeclarationOnNextLine : "
             << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
     if(clangFormatVersion >= 3.5) {
-        options << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
-        options << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
+        command << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
+        command << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
     }
-    options << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
-    options << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
-    options << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
-    options << ", AlwaysBreakTemplateDeclarations : " << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
-    options << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
-    options << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
-    options << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
-    options << ", BreakConstructorInitializersBeforeComma : "
+    command << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
+    command << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
+    command << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
+    command << ", AlwaysBreakTemplateDeclarations : " << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
+    command << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
+    command << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
+    command << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
+    command << ", BreakConstructorInitializersBeforeComma : "
             << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
-    options << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
-    options << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
-    options << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
+    command << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
+    command << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
+    command << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
     if(clangFormatVersion >= 3.5) {
-        options << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
+        command << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
     }
-    options << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
-    options << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
-    options << ", ColumnLimit : " << m_clangColumnLimit;
+    command << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
+    command << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
+    command << ", ColumnLimit : " << m_clangColumnLimit;
     if(clangFormatVersion >= 3.5) {
-        options << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
+        command << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
     }
-    options << " }\" ";
-    return options;
+    command << " }\" " << filePath;
+    return command;
 }
 
 wxString FormatOptions::ClangFlagToBool(ClangFormatStyle flag) const
@@ -355,10 +366,10 @@ wxString FormatOptions::ClangGlobalSettings() const
     return options;
 }
 
-wxString FormatOptions::GetPhpFixerCommand()
+wxString FormatOptions::GetPhpFixerCommand(const wxFileName& fileName)
 {
     m_optionsPhp.Load();
-    wxString command, phar, php, parameters;
+    wxString command, phar, php, parameters, filePath;
     php << m_optionsPhp.GetPhpExe();
     ::WrapWithQuotes(php);
 
@@ -433,14 +444,18 @@ wxString FormatOptions::GetPhpFixerCommand()
     }
     parameters.Trim().Trim(false);
     clDEBUG() << parameters << clEndl;
-    command << php << " " << phar << " fix " << parameters;
+
+    filePath = fileName.GetFullPath();
+    ::WrapWithQuotes(filePath);
+
+    command << php << " " << phar << " fix " << parameters << " " << filePath;
     return command;
 }
 
-wxString FormatOptions::GetPhpcbfCommand()
+wxString FormatOptions::GetPhpcbfCommand(const wxFileName& fileName)
 {
     m_optionsPhp.Load();
-    wxString command, phar, php, parameters;
+    wxString command, phar, php, parameters, filePath;
     php << m_optionsPhp.GetPhpExe();
     ::WrapWithQuotes(php);
 
@@ -460,7 +475,10 @@ wxString FormatOptions::GetPhpcbfCommand()
         parameters << " -n";
     }
     parameters.Trim().Trim(false);
-    // no-patch is needed for files in /tmp, or it thinkgs it's risky...
-    command << php << " " << phar << " " << parameters;
+
+    filePath = fileName.GetFullPath();
+    ::WrapWithQuotes(filePath);
+
+    command << php << " " << phar << " " << parameters << " " << filePath;
     return command;
 }

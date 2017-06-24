@@ -224,32 +224,31 @@ void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
 void CodeFormatterDlg::UpdatePreview()
 {
     wxString output, command;
-    // Astyle
-    output.Clear();
-    m_cf->AstyleFormat(m_cppSampleCode, output, m_options.AstyleOptionsAsString());
-    UpdatePreviewText(m_textCtrlPreview, output);
 
-    // Clang
-    output.Clear();
-    m_cf->ClangPreviewFormat(m_cppSampleCode, output);
-    UpdatePreviewText(m_textCtrlPreview_Clang, output);
+    if(m_notebook->GetSelection() == 1) { // CXX page
+        output = m_cppSampleCode;
 
-    // PHP preview
-    output = m_phpSampleCode;
-    m_cf->PhpFormat(output);
-    UpdatePreviewText(m_stcPhpPreview, output);
+        if (m_notebookCxx->GetSelection() == 0) { // Clang
+            m_cf->DoFormatPreview(output, "cpp", cFormatEngineClangFormat);
+            UpdatePreviewText(m_textCtrlPreview_Clang, output);
+        } else if (m_notebookCxx->GetSelection() == 1) { // Astyle
+            m_cf->DoFormatPreview(output, "cpp", cFormatEngineAStyle);
+            UpdatePreviewText(m_textCtrlPreview, output);
+        }
+    } else if(m_notebook->GetSelection() == 2) { // PHP page
+        output = m_phpSampleCode;
 
-    // PhpCsFixer preview
-    output = m_phpSampleCode;
-    command = m_options.GetPhpFixerCommand();
-    m_cf->DoFormatExternally(output, command);
-    UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
-
-    // Phpcbf preview
-    output = m_phpSampleCode;
-    command = m_options.GetPhpcbfCommand();
-    m_cf->DoFormatExternally(output, command);
-    UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
+        if (m_notebookPhp->GetSelection() == 0) { // Build In PHP
+            m_cf->DoFormatPreview(output, "php", cFormatEngineBuildInPhp);
+            UpdatePreviewText(m_stcPhpPreview, output);
+        } else if (m_notebookPhp->GetSelection() == 1) { // PhpCsFixer
+            m_cf->DoFormatPreview(output, "php", cFormatEnginePhpCsFixer);
+            UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
+        } else if (m_notebookPhp->GetSelection() == 2) { // Phpcbf
+            m_cf->DoFormatPreview(output, "php", cFormatEnginePhpcbf);
+            UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
+        }
+    }
 }
 
 void CodeFormatterDlg::UpdatePreviewText(wxStyledTextCtrl*& textCtrl, const wxString& text)
@@ -350,7 +349,6 @@ void CodeFormatterDlg::OnChoicecxxengineChoiceSelected(wxCommandEvent& event)
 {
     m_isDirty = true;
     m_options.SetEngine((FormatterEngine)event.GetSelection());
-    CallAfter(&CodeFormatterDlg::UpdatePreview);
 }
 
 void CodeFormatterDlg::OnFormatOnSave(wxCommandEvent& event)
@@ -374,7 +372,6 @@ void CodeFormatterDlg::OnChoicephpformatterChoiceSelected(wxCommandEvent& event)
 {
     m_isDirty = true;
     m_options.SetPhpEngine((PHPFormatterEngine)event.GetSelection());
-    CallAfter(&CodeFormatterDlg::UpdatePreview);
 }
 
 void CodeFormatterDlg::OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event)

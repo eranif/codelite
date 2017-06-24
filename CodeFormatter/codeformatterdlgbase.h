@@ -124,6 +124,7 @@ protected:
     wxButton* m_buttonHelp;
 
 protected:
+    virtual void UpdatePreviewUI(wxNotebookEvent& event) { event.Skip(); }
     virtual void OnFormatOnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event) { event.Skip(); }

@@ -230,7 +230,7 @@ public:
     wxString AstyleOptionsAsString() const;
 
     // Clang
-    wxString ClangFormatOptionsAsString(const wxFileName& filename, double clangFormatVersion) const;
+    wxString ClangFormatCommand(const wxFileName& fileName) const;
     void SetClangFormatExe(const wxString& clangFormatExe)
     {
         this->m_clangFormatExe = clangFormatExe;
@@ -285,7 +285,7 @@ public:
     }
 
     // PHP-CS-FIXER
-    wxString GetPhpFixerCommand();
+    wxString GetPhpFixerCommand(const wxFileName& fileName);
     void SetPHPCSFixerPhar(const wxString& PHPCSFixerPhar)
     {
         this->m_PHPCSFixerPhar = PHPCSFixerPhar;
@@ -312,7 +312,7 @@ public:
     }
 
     // PHPCBF
-    wxString GetPhpcbfCommand();
+    wxString GetPhpcbfCommand(const wxFileName& fileName);
     void SetPhpcbfPhar(const wxString& PhpcbfPhar)
     {
         this->m_PhpcbfPhar = PhpcbfPhar;

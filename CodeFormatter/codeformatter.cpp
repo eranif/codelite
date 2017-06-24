@@ -26,8 +26,9 @@
 #include "clEditorConfig.h"
 #include "clEditorStateLocker.h"
 #include "clSTCLineKeeper.h"
-#include "codeformatter.h"
+#include "clWorkspaceManager.h"
 #include "codeformatterdlg.h"
+#include "codeformatter.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -40,12 +41,12 @@
 #include "precompiled_header.h"
 #include "procutils.h"
 #include "workspace.h"
-#include "wx/ffile.h"
-#include "wx/log.h"
-#include "wx/menu.h"
 #include <wx/app.h> //wxInitialize/wxUnInitialize
 #include <wx/ffile.h>
+#include "wx/ffile.h"
 #include <wx/filename.h>
+#include "wx/log.h"
+#include "wx/menu.h"
 #include <wx/progdlg.h>
 #include <wx/xrc/xmlres.h>
 
@@ -255,10 +256,10 @@ void CodeFormatter::DoFormatEditor(IEditor* editor)
 void CodeFormatter::DoFormatPreview(wxString& content, const wxString& ext, const int& engine)
 {
     wxString path;
-
-    clCxxWorkspace* cppworkspace = m_mgr->GetWorkspace();
-    if (cppworkspace->IsOpen()) {
-        path = cppworkspace->GetActiveProject()->GetProjectPath();
+    if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        wxString projectname = clWorkspaceManager::Get().GetWorkspace()->GetActiveProjectName();
+        wxFileName filename = clWorkspaceManager::Get().GetWorkspace()->GetProjectFileName(projectname);
+        path = filename.GetPath();
     }
 
     wxFileName tempFileName(path, "preview." + ext);

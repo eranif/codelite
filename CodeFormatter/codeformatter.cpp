@@ -433,6 +433,8 @@ void CodeFormatter::DoFormatWithBuildInPhp(wxString& content)
 
     // Format the source
     buffer.format();
+
+    content = buffer.GetBuffer();
 }
 
 void CodeFormatter::DoFormatWithClang(const wxFileName& fileName)

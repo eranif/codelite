@@ -246,6 +246,7 @@ wxString FormatOptions::AstyleOptionsAsString() const
 }
 
 wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName,
+    const bool& formatInline,
     const int& cursorPosition,
     const int& selStart,
     const int& selEnd) const
@@ -260,7 +261,9 @@ wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName,
 
     if(cursorPosition != wxNOT_FOUND) {
         command << " -cursor=" << cursorPosition;
-    } else {
+    }
+
+    if(formatInline) {
         command << " -i";
     }
 

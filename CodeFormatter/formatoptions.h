@@ -231,6 +231,7 @@ public:
 
     // Clang
     wxString ClangFormatCommand(const wxFileName& fileName,
+        const bool& formatInline = true,
         const int& cursorPosition = wxNOT_FOUND,
         const int& selStart = wxNOT_FOUND,
         const int& selEnd = wxNOT_FOUND) const;

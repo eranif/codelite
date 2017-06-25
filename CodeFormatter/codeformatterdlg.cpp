@@ -22,9 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "codeformatter.h"
 #include "ColoursAndFontsManager.h"
 #include "clSTCLineKeeper.h"
-#include "codeformatter.h"
 #include "codeformatterdlg.h"
 #include "editor_config.h"
 #include "fileextmanager.h"
@@ -228,23 +228,23 @@ void CodeFormatterDlg::UpdatePreview()
     if(m_notebook->GetSelection() == 1) { // CXX page
         output = m_cppSampleCode;
 
-        if (m_notebookCxx->GetSelection() == 0) { // Clang
+        if(m_notebookCxx->GetSelection() == 0) { // Clang
             m_cf->DoFormatPreview(output, "cpp", cFormatEngineClangFormat);
             UpdatePreviewText(m_textCtrlPreview_Clang, output);
-        } else if (m_notebookCxx->GetSelection() == 1) { // Astyle
+        } else if(m_notebookCxx->GetSelection() == 1) { // Astyle
             m_cf->DoFormatPreview(output, "cpp", cFormatEngineAStyle);
             UpdatePreviewText(m_textCtrlPreview, output);
         }
     } else if(m_notebook->GetSelection() == 2) { // PHP page
         output = m_phpSampleCode;
 
-        if (m_notebookPhp->GetSelection() == 0) { // Build In PHP
+        if(m_notebookPhp->GetSelection() == 0) { // Build In PHP
             m_cf->DoFormatPreview(output, "php", cFormatEngineBuildInPhp);
             UpdatePreviewText(m_stcPhpPreview, output);
-        } else if (m_notebookPhp->GetSelection() == 1) { // PhpCsFixer
+        } else if(m_notebookPhp->GetSelection() == 1) { // PhpCsFixer
             m_cf->DoFormatPreview(output, "php", cFormatEnginePhpCsFixer);
             UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
-        } else if (m_notebookPhp->GetSelection() == 2) { // Phpcbf
+        } else if(m_notebookPhp->GetSelection() == 2) { // Phpcbf
             m_cf->DoFormatPreview(output, "php", cFormatEnginePhpcbf);
             UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
         }
@@ -259,9 +259,14 @@ void CodeFormatterDlg::UpdatePreviewText(wxStyledTextCtrl*& textCtrl, const wxSt
     textCtrl->SetEditable(false);
 }
 
-CodeFormatterDlg::~CodeFormatterDlg() {}
+CodeFormatterDlg::~CodeFormatterDlg()
+{
+}
 
-void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isDirty); }
+void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_isDirty);
+}
 
 void CodeFormatterDlg::OnCustomAstyleFlags(wxCommandEvent& event)
 {
@@ -381,4 +386,10 @@ void CodeFormatterDlg::OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event)
     m_options.SetPhpcbfOptions(phpcbfOptions);
 
     CallAfter(&CodeFormatterDlg::UpdatePreview);
+}
+
+void CodeFormatterDlg::UpdatePreviewUI(wxNotebookEvent& event)
+{
+    UpdatePreview();
+    event.Skip();
 }

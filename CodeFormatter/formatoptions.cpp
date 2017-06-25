@@ -22,22 +22,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "formatoptions.h"
 #include "PHPFormatterBuffer.h"
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
 #include "file_logger.h"
-#include "formatoptions.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "json_node.h"
 #include "phpoptions.h"
-#include "file_logger.h"
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
     , m_engine(kFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
-          kSpaceBeforeAssignmentOperators | kAlignEscapedNewlinesLeft)
+          kSpaceBeforeAssignmentOperators |
+          kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
@@ -50,7 +51,9 @@ FormatOptions::FormatOptions()
 {
 }
 
-FormatOptions::~FormatOptions() {}
+FormatOptions::~FormatOptions()
+{
+}
 
 void FormatOptions::DeSerialize(Archive& arch)
 {
@@ -242,7 +245,10 @@ wxString FormatOptions::AstyleOptionsAsString() const
     return options;
 }
 
-wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName) const
+wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName,
+    const int& cursorPosition,
+    const int& selStart,
+    const int& selEnd) const
 {
     wxString command, filePath;
 
@@ -252,28 +258,46 @@ wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName) const
     filePath = fileName.GetFullPath();
     ::WrapWithQuotes(filePath);
 
+    if(cursorPosition != wxNOT_FOUND) {
+        command << " -cursor=" << cursorPosition;
+    } else {
+        command << " -i";
+    }
+
+    if(selStart != wxNOT_FOUND && selEnd != wxNOT_FOUND) {
+        command << " -offset=" << selStart << " -length=" << (selEnd - selStart);
+    }
+
+    command << " -style=" << GetClangFormatStyleAsString(fileName);
+
+    command << " " << filePath;
+
+    return command;
+}
+
+wxString FormatOptions::GetClangFormatStyleAsString(const wxFileName& fileName) const
+{
     // If the option: "File" is selected, it overrides everything here
     if(m_clangFormatOptions & kClangFormatFile) {
         // All our settings are taken from .clang-format file
-        command << " -style=file " << filePath;
-        return command;
+        return "file";
     }
 
-    command << " -style=\"{ BasedOnStyle: ";
+    wxString style = "\"{ BasedOnStyle: ";
     if(m_clangFormatOptions & kClangFormatChromium) {
-        command << "Chromium";
+        style << "Chromium";
     } else if(m_clangFormatOptions & kClangFormatGoogle) {
-        command << "Google";
+        style << "Google";
     } else if(m_clangFormatOptions & kClangFormatLLVM) {
-        command << "LLVM";
+        style << "LLVM";
     } else if(m_clangFormatOptions & kClangFormatMozilla) {
-        command << "Mozilla";
+        style << "Mozilla";
     } else if(m_clangFormatOptions & kClangFormatWebKit) {
-        command << "WebKit";
+        style << "WebKit";
     }
 
     // add tab width and space vs tabs based on the global editor settings
-    command << ClangGlobalSettings();
+    style << ClangGlobalSettings();
 
     // Language
     clClangFormatLocator locator;
@@ -292,41 +316,41 @@ wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName) const
         }
 
         if(!forceLanguage.IsEmpty()) {
-            command << ", " << forceLanguage << " ";
+            style << ", " << forceLanguage << " ";
         }
     }
 
-    command << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
-    command << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
-    command << ", AllowAllParametersOfDeclarationOnNextLine : "
-            << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
+    style << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
+    style << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
+    style << ", AllowAllParametersOfDeclarationOnNextLine : "
+          << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
     if(clangFormatVersion >= 3.5) {
-        command << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
-        command << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
+        style << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
+        style << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
     }
-    command << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
-    command << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
-    command << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
-    command << ", AlwaysBreakTemplateDeclarations : " << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
-    command << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
-    command << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
-    command << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
-    command << ", BreakConstructorInitializersBeforeComma : "
-            << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
-    command << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
-    command << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
-    command << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
+    style << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
+    style << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
+    style << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
+    style << ", AlwaysBreakTemplateDeclarations : " << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
+    style << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
+    style << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
+    style << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
+    style << ", BreakConstructorInitializersBeforeComma : "
+          << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
+    style << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
+    style << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
+    style << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
     if(clangFormatVersion >= 3.5) {
-        command << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
+        style << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
     }
-    command << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
-    command << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
-    command << ", ColumnLimit : " << m_clangColumnLimit;
+    style << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
+    style << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
+    style << ", ColumnLimit : " << m_clangColumnLimit;
     if(clangFormatVersion >= 3.5) {
-        command << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
+        style << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
     }
-    command << " }\" " << filePath;
-    return command;
+    style << " }\"";
+    return style;
 }
 
 wxString FormatOptions::ClangFlagToBool(ClangFormatStyle flag) const

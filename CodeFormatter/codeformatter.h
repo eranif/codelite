@@ -53,23 +53,42 @@ protected:
 
 private:
     void DoFormatFile(const wxFileName& fileName, const int& engine);
-    void DoFormatEditor(IEditor* editor);
+    void DoFormatFileAsString(const wxFileName& fileName, const int& engine);
+    void DoFormatString(wxString& content, const wxFileName& fileName, const int& engine, int& cursorPosition);
+    void DoFormatSelection(IEditor* editor,
+        wxString& content,
+        const int& engine,
+        int& cursorPosition,
+        const int& selStart,
+        const int& selEnd);
+    void DoFormatEditor(IEditor* editor, int selStart = wxNOT_FOUND, int selEnd = wxNOT_FOUND);
     void DoFormatWithTempFile(const wxFileName& fileName, wxString& content, const int& engine);
-    bool IsPharConfigValid(const wxFileName& phar);
-    void OverwriteEditorText(IEditor*& editor, const wxString& content, const int& curpos = 0);
+    void OverwriteEditorText(IEditor*& editor,
+        const wxString& content,
+        const int& cursorPosition = 0,
+        const int& selStart = wxNOT_FOUND,
+        const int& selEnd = wxNOT_FOUND);
     int FindFormatter(const wxFileName& fileName);
+    bool CanFormatSelection(const int& engine);
+    bool CanFormatString(const int& engine);
+    bool CanFormatFile(const int& engine);
 
-    bool DoFormatWithPhpcbf(const wxFileName& fileName);
-    bool DoFormatWithBuildInPhp(const wxFileName& fileName);
-    bool DoFormatWithPhpCsFixer(const wxFileName& fileName);
-    bool DoFormatWithClang(const wxFileName& fileName);
-    bool DoFormatWithAstyle(const wxFileName& fileName);
-    bool DoFormatWithWxXmlDocument(const wxFileName& fileName);
+    void DoFormatWithPhpcbf(const wxFileName& fileName);
+    void DoFormatWithBuildInPhp(wxString& content);
+    void DoFormatWithPhpCsFixer(const wxFileName& fileName);
+    void DoFormatWithClang(const wxFileName& fileName);
+    void DoFormatWithClang(wxString& content,
+        const wxFileName& fileName,
+        int& cursorPosition,
+        const int& selStart = wxNOT_FOUND,
+        const int& selEnd = wxNOT_FOUND);
+    void DoFormatWithAstyle(wxString& content, const bool& appendEOL = true);
+    void DoFormatWithWxXmlDocument(const wxFileName& fileName);
 
     void OnPhpSettingsChanged(clCommandEvent& event);
 
 public:
-    bool DoFormatExternally(const wxFileName& fileName, const wxString& command);
+    wxString RunCommand(const wxString& command);
 
     /**
      * @brief format list of files

@@ -102,6 +102,13 @@ protected:
     wxPGProperty* m_pgPropPhpCSFixer;
     wxPGProperty* m_filePickerPHPCsFixerPhar;
     wxPGProperty* m_pgPropPHPCsFixerOptions;
+    wxPGProperty* m_pgPropPHPCsFixerStandard;
+    wxPGProperty* m_pgPropPHPCsFixerMigration;
+    wxPGProperty* m_pgPropPHPCsFixerDoubleArrows;
+    wxPGProperty* m_pgPropPHPCsFixerEquals;
+    wxPGProperty* m_pgPropPHPCsFixerArrays;
+    wxPGProperty* m_pgPropPHPCsFixerEmptyReturn;
+    wxPGProperty* m_pgPropPHPCsFixerConcatSpace;
     wxPGProperty* m_pgPropPHPCsFixerRules;
     wxPanel* m_splitterPage1731328;
     wxStyledTextCtrl* m_textCtrlPreview_PhpCSFixer;

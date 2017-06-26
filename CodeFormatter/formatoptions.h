@@ -62,20 +62,20 @@ enum AstyleOptions {
     AS_INDENT_USES_TABS = 0x40000000,
     AS_DEFAULT = AS_LINUX | AS_BRACKETS_LINUX | AS_INDENT_PREPROCESSORS,
     AS_ALL_INDENT_OPTIONS = AS_INDENT_CLASS | AS_INDENT_BRACKETS | AS_INDENT_SWITCHES | AS_INDENT_NAMESPACES |
-        AS_INDENT_CASE |
-        AS_INDENT_LABELS |
-        AS_INDENT_BLOCKS |
-        AS_INDENT_PREPROCESSORS |
-        AS_MAX_INSTATEMENT_INDENT |
-        AS_MIN_COND_INDENT,
+                            AS_INDENT_CASE |
+                            AS_INDENT_LABELS |
+                            AS_INDENT_BLOCKS |
+                            AS_INDENT_PREPROCESSORS |
+                            AS_MAX_INSTATEMENT_INDENT |
+                            AS_MIN_COND_INDENT,
     AS_ALL_FORMAT_OPTIONS = AS_BREAK_BLOCKS | AS_PAD_PARENTHESIS | AS_BREAK_BLOCKS_ALL | AS_PAD_PARENTHESIS_OUT |
-        AS_BREAK_ELSEIF |
-        AS_PAD_PARENTHESIS_IN |
-        AS_PAD_OPER |
-        AS_UNPAD_PARENTHESIS |
-        AS_ONE_LINE_KEEP_STATEMENT |
-        AS_FILL_EMPTY_LINES |
-        AS_ONE_LINE_KEEP_BLOCKS,
+                            AS_BREAK_ELSEIF |
+                            AS_PAD_PARENTHESIS_IN |
+                            AS_PAD_OPER |
+                            AS_UNPAD_PARENTHESIS |
+                            AS_ONE_LINE_KEEP_STATEMENT |
+                            AS_FILL_EMPTY_LINES |
+                            AS_ONE_LINE_KEEP_BLOCKS,
 };
 
 enum FormatterEngine {
@@ -101,11 +101,17 @@ enum PHPFixserFormatterStyle {
     kPcfLongArray = (1 << 8),
     kPcfAlignDoubleArrow = (1 << 9),
     kPcfStripDoubleArrow = (1 << 10),
+    kPcfIgnoreDoubleArrow = (1 << 16),
     kPcfAlignEquals = (1 << 11),
     kPcfStripEquals = (1 << 12),
+    kPcfIgnoreEquals = (1 << 17),
     kPcfBlankLineAfterNamespace = (1 << 13),
     kPcfBlankLineAfterOpeningTag = (1 << 14),
     kPcfBlankLineBeforeReturn = (1 << 15),
+    kPcfConcatSpaceNone = (1 << 18),
+    kPcfConcatSpaceOne = (1 << 19),
+    kPcfEmptyReturnStrip = (1 << 20),
+    kPcfEmptyReturnKeep = (1 << 21),
 };
 
 enum PhpbcfFormatterStyle {
@@ -231,10 +237,10 @@ public:
 
     // Clang
     wxString ClangFormatCommand(const wxFileName& fileName,
-        const bool& formatInline = true,
-        const int& cursorPosition = wxNOT_FOUND,
-        const int& selStart = wxNOT_FOUND,
-        const int& selEnd = wxNOT_FOUND) const;
+                                const bool& formatInline = true,
+                                const int& cursorPosition = wxNOT_FOUND,
+                                const int& selStart = wxNOT_FOUND,
+                                const int& selEnd = wxNOT_FOUND) const;
     wxString GetClangFormatStyleAsString(const wxFileName& fileName) const;
     void SetClangFormatExe(const wxString& clangFormatExe)
     {

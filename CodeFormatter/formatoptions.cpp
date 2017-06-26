@@ -37,8 +37,8 @@ FormatOptions::FormatOptions()
     , m_engine(kFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
-          kSpaceBeforeAssignmentOperators |
-          kAlignEscapedNewlinesLeft)
+                           kSpaceBeforeAssignmentOperators |
+                           kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
@@ -246,10 +246,10 @@ wxString FormatOptions::AstyleOptionsAsString() const
 }
 
 wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName,
-    const bool& formatInline,
-    const int& cursorPosition,
-    const int& selStart,
-    const int& selEnd) const
+        const bool& formatInline,
+        const int& cursorPosition,
+        const int& selStart,
+        const int& selEnd) const
 {
     wxString command, filePath;
 
@@ -449,20 +449,25 @@ bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& com
             array_syntax.addProperty("syntax", m_PHPCSFixerPharRules & kPcfShortArray ? "short" : "long");
             rules.addProperty("array_syntax", array_syntax);
         }
-        if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals)) {
+        if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreDoubleArrow)) {
             JSONElement binary_operator_spaces = JSONElement::createObject("binary_operator_spaces");
-            if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow)) {
+            if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow)) {
                 binary_operator_spaces.addProperty(
-                    "align_double_arrow", m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
+                    "align_double_arrow", m_PHPCSFixerPharRules & kPcfIgnoreDoubleArrow ? cJSON_NULL : m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
             }
-            if(m_PHPCSFixerPharRules & (kPcfAlignEquals | kPcfStripEquals)) {
+            if(m_PHPCSFixerPharRules & (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals)) {
                 binary_operator_spaces.addProperty(
-                    "align_equals", m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
+                    "align_equals", m_PHPCSFixerPharRules & kPcfIgnoreEquals ? cJSON_NULL : m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
             }
             rules.addProperty("binary_operator_spaces", binary_operator_spaces);
         }
-        if(m_PHPCSFixerPharRules & kPcfBlankLineAfterNamespace) {
-            rules.addProperty("blank_line_after_namespace", true);
+        if(m_PHPCSFixerPharRules & (kPcfConcatSpaceNone | kPcfConcatSpaceOne)) {
+            JSONElement concat_space = JSONElement::createObject("concat_space");
+            concat_space.addProperty("spacing", m_PHPCSFixerPharRules & kPcfConcatSpaceNone ? "none" : "one");
+            rules.addProperty("concat_space", concat_space);
+        }
+        if(m_PHPCSFixerPharRules & (kPcfEmptyReturnStrip | kPcfEmptyReturnKeep)) {
+            rules.addProperty("phpdoc_no_empty_return", m_PHPCSFixerPharRules & kPcfEmptyReturnStrip ? true : false);
         }
         if(m_PHPCSFixerPharRules & kPcfBlankLineAfterOpeningTag) {
             rules.addProperty("blank_line_after_opening_tag", true);
@@ -470,6 +475,10 @@ bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& com
         if(m_PHPCSFixerPharRules & kPcfBlankLineBeforeReturn) {
             rules.addProperty("blank_line_before_return", true);
         }
+        if(m_PHPCSFixerPharRules & kPcfBlankLineBeforeReturn) {
+            rules.addProperty("blank_line_before_return", true);
+        }
+
         wxString rulesString = rules.FormatRawString(false);
         if(rulesString != "{}") {
             parameters << " --rules='" << rulesString << "'";

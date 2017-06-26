@@ -34,11 +34,11 @@
 #include <wx/menu.h>
 
 CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
-    IManager* mgr,
-    CodeFormatter* cf,
-    FormatOptions& options,
-    const wxString& cppSampleCode,
-    const wxString& phpSampleCode)
+                                   IManager* mgr,
+                                   CodeFormatter* cf,
+                                   FormatOptions& options,
+                                   const wxString& cppSampleCode,
+                                   const wxString& phpSampleCode)
     : CodeFormatterBaseDlg(parent)
     , m_options(options)
     , m_cf(cf)
@@ -168,6 +168,14 @@ void CodeFormatterDlg::InitDialog()
     // PHP-CS-FIXER
     m_filePickerPHPCsFixerPhar->SetValue(m_options.GetPHPCSFixerPhar());
     m_pgPropPHPCsFixerOptions->SetValue(m_options.GetPHPCSFixerPharOptions());
+
+    m_pgPropPHPCsFixerStandard->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfPSR1 | kPcfPSR2 | kPcfSymfony));
+    m_pgPropPHPCsFixerMigration->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfPHP56Migration | kPcfPHP70Migration | kPcfPHP71Migration));
+    m_pgPropPHPCsFixerDoubleArrows->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow));
+    m_pgPropPHPCsFixerEquals->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals));
+    m_pgPropPHPCsFixerArrays->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfShortArray | kPcfLongArray));
+    m_pgPropPHPCsFixerConcatSpace->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfConcatSpaceNone | kPcfConcatSpaceOne));
+    m_pgPropPHPCsFixerEmptyReturn->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfEmptyReturnStrip | kPcfEmptyReturnKeep));
     m_pgPropPHPCsFixerRules->SetValue((int)m_options.GetPHPCSFixerPharRules());
 
     // PHPCBF
@@ -363,6 +371,13 @@ void CodeFormatterDlg::OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event)
     m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetValueAsString());
     m_options.SetPHPCSFixerPharOptions(m_pgPropPHPCsFixerOptions->GetValueAsString());
     size_t phpcsfixerOptions(0);
+    phpcsfixerOptions |= m_pgPropPHPCsFixerStandard->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerMigration->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerDoubleArrows->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerEquals->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerArrays->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerConcatSpace->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerEmptyReturn->GetValue().GetInteger();
     phpcsfixerOptions |= m_pgPropPHPCsFixerRules->GetValue().GetInteger();
     m_options.SetPHPCSFixerPharRules(phpcsfixerOptions);
 

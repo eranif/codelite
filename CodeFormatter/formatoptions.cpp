@@ -475,9 +475,37 @@ bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& com
         if(m_PHPCSFixerPharRules & kPcfBlankLineBeforeReturn) {
             rules.addProperty("blank_line_before_return", true);
         }
-        if(m_PHPCSFixerPharRules & kPcfBlankLineBeforeReturn) {
-            rules.addProperty("blank_line_before_return", true);
+        if(m_PHPCSFixerPharRules & kPcfCombineConsecutiveUnsets) {
+            rules.addProperty("combine_consecutive_unsets", true);
         }
+        if(m_PHPCSFixerPharRules & kPcfLinebreakAfterOpeningTag) {
+            rules.addProperty("linebreak_after_opening_tag", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfMbStrFunctions) {
+            rules.addProperty("mb_str_functions", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoBlankLinesBeforeNamespace) {
+            rules.addProperty("no_blank_lines_before_namespace", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoMultilineWhitespaceBeforeSemicolons) {
+            rules.addProperty("no_multiline_whitespace_before_semicolons", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoNullPropertyInitialization) {
+            rules.addProperty("no_null_property_initialization", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoPhp4Constructor) {
+            rules.addProperty("no_php4_constructor", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoShortEchoTag) {
+            rules.addProperty("no_short_echo_tag", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoUnreachableDefaultArgumentValue) {
+            rules.addProperty("no_unreachable_default_argument_value", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoUselessElse) {
+            rules.addProperty("no_useless_else", true);
+        }
+
 
         wxString rulesString = rules.FormatRawString(false);
         if(rulesString != "{}") {

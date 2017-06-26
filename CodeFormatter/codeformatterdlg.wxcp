@@ -5109,11 +5109,11 @@
                               }, {
                                "type": "multi-string",
                                "m_label": "Choices:",
-                               "m_value": "Allow risky;Blank line after namespace;Blank line after opening tag;Blank line before return"
+                               "m_value": "Allow risky;Blank line after namespace;Blank line after opening tag;Blank line before return;Combine consecutive unsets;Linebreak after opening tag;Use mb_str functions;No blank lines before namespace;No multiline whitespace before semicolons;No null property initialization;No PHP 4 constructor;No short echo tag;No unreachable default argument value;No useless else"
                               }, {
                                "type": "multi-string",
                                "m_label": "Array Integer Values",
-                               "m_value": "kPcfAllowRisky;kPcfBlankLineAfterNamespace;kPcfBlankLineAfterOpeningTag;kPcfBlankLineBeforeReturn"
+                               "m_value": "kPcfAllowRisky;kPcfBlankLineAfterNamespace;kPcfBlankLineAfterOpeningTag;kPcfBlankLineBeforeReturn;kPcfCombineConsecutiveUnsets;kPcfLinebreakAfterOpeningTag;kPcfMbStrFunctions;kPcfNoBlankLinesBeforeNamespace;kPcfNoMultilineWhitespaceBeforeSemicolons;kPcfNoNullPropertyInitialization;kPcfNoPhp4Constructor;kPcfNoShortEchoTag;kPcfNoUnreachableDefaultArgumentValue;kPcfNoUselessElse"
                               }, {
                                "type": "bool",
                                "m_label": "Bool Value",

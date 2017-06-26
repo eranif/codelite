@@ -112,6 +112,16 @@ enum PHPFixserFormatterStyle {
     kPcfConcatSpaceOne = (1 << 19),
     kPcfEmptyReturnStrip = (1 << 20),
     kPcfEmptyReturnKeep = (1 << 21),
+    kPcfCombineConsecutiveUnsets = (1 << 22),
+    kPcfLinebreakAfterOpeningTag = (1 << 23),
+    kPcfMbStrFunctions = (1 << 24),
+    kPcfNoBlankLinesBeforeNamespace = (1 << 25),
+    kPcfNoMultilineWhitespaceBeforeSemicolons = (1 << 26),
+    kPcfNoNullPropertyInitialization = (1 << 27),
+    kPcfNoPhp4Constructor = (1 << 28),
+    kPcfNoShortEchoTag = (1 << 29),
+    kPcfNoUnreachableDefaultArgumentValue = (1 << 30),
+    kPcfNoUselessElse = (1 << 31),
 };
 
 enum PhpbcfFormatterStyle {

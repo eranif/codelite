@@ -1298,7 +1298,18 @@ void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
 {
     std::vector<LEditor*> editors;
     GetAllEditors(editors, kGetAll_RetainOrder);
-
+    
+    // Remove editors which belong to the SFTP
+    std::vector<LEditor*> editorsTmp;
+    std::for_each(editors.begin(), editors.end(), [&](LEditor* editor) {
+        IEditor *ieditor = dynamic_cast<IEditor*>(editor);
+        if(ieditor->GetClientData("sftp") == NULL) {
+            editorsTmp.push_back(editor);
+        }
+    });
+    
+    editors.swap(editorsTmp);
+    
     session.SetSelectedTab(0);
     std::vector<TabInfo> vTabInfoArr;
     for(size_t i = 0; i < editors.size(); i++) {

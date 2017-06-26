@@ -57,7 +57,12 @@ public:
 public:
     clSFTP(clSSH::Ptr_t ssh);
     virtual ~clSFTP();
-
+    
+    /**
+     * @brief return the default download folder
+     */
+    static wxString GetDefaultDownloadFolder();
+    
     /**
      * @brief return the underlying ssh session
      */

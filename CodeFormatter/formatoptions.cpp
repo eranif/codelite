@@ -34,7 +34,7 @@
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
-    , m_engine(kFormatEngineClangFormat)
+    , m_engine(kCxxFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
                            kSpaceBeforeAssignmentOperators |
@@ -61,9 +61,9 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read(wxT("m_customFlags"), m_customFlags);
 
     // By default, use clang-format as it is more robust and advanced
-    int engine = kFormatEngineClangFormat;
+    int engine = kCxxFormatEngineClangFormat;
     arch.Read("m_engine", engine);
-    m_engine = static_cast<FormatterEngine>(engine);
+    m_engine = static_cast<CXXFormatterEngine>(engine);
 
     engine = kPhpFormatEngineBuiltin;
     arch.Read("m_phpEngine", engine);
@@ -94,7 +94,7 @@ void FormatOptions::AutodetectSettings()
         }
     }
     if(m_clangFormatExe.IsEmpty() || !clangFormatExe.Exists()) {
-        m_engine = kFormatEngineAStyle; // Change the active engine to AStyle
+        m_engine = kCxxFormatEngineAStyle; // Change the active engine to AStyle
         m_clangFormatExe = "";          // Clear the non existed executable
     }
 
@@ -505,7 +505,6 @@ bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& com
         if(m_PHPCSFixerPharRules & kPcfNoUselessElse) {
             rules.addProperty("no_useless_else", true);
         }
-
 
         wxString rulesString = rules.FormatRawString(false);
         if(rulesString != "{}") {

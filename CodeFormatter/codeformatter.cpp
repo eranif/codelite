@@ -201,65 +201,65 @@ void CodeFormatter::OnFormat(wxCommandEvent& e)
     DoFormatEditor(editor, selStart, selEnd);
 }
 
-int CodeFormatter::FindFormatter(const wxFileName& fileName)
+FormatterEngine CodeFormatter::FindFormatter(const wxFileName& fileName)
 {
     if(FileExtManager::IsCxxFile(fileName)) {
-        if(m_options.GetEngine() == kFormatEngineClangFormat) {
-            return cFormatEngineClangFormat;
+        if(m_options.GetEngine() == kCxxFormatEngineClangFormat) {
+            return kFormatEngineClangFormat;
         }
-        if(m_options.GetEngine() == kFormatEngineAStyle) {
-            return cFormatEngineAStyle;
+        if(m_options.GetEngine() == kCxxFormatEngineAStyle) {
+            return kFormatEngineAStyle;
         }
     }
 
     if(FileExtManager::IsPHPFile(fileName)) {
         if(m_options.GetPhpEngine() == kPhpFormatEnginePhpCsFixer) {
-            return cFormatEnginePhpCsFixer;
+            return kFormatEnginePhpCsFixer;
         }
         if(m_options.GetPhpEngine() == kPhpFormatEnginePhpcbf) {
-            return cFormatEnginePhpcbf;
+            return kFormatEnginePhpcbf;
         }
         if(m_options.GetPhpEngine() == kPhpFormatEngineBuiltin) {
-            return cFormatEngineBuildInPhp;
+            return kFormatEngineBuildInPhp;
         }
     }
 
     if(FileExtManager::IsFileType(fileName, FileExtManager::TypeXml) ||
-        FileExtManager::IsFileType(fileName, FileExtManager::TypeXRC) ||
-        FileExtManager::IsFileType(fileName, FileExtManager::TypeWorkspace) ||
-        FileExtManager::IsFileType(fileName, FileExtManager::TypeProject)) {
-        return cFormatEngineWxXmlDocument;
+       FileExtManager::IsFileType(fileName, FileExtManager::TypeXRC) ||
+       FileExtManager::IsFileType(fileName, FileExtManager::TypeWorkspace) ||
+       FileExtManager::IsFileType(fileName, FileExtManager::TypeProject)) {
+        return kFormatEngineWxXmlDocument;
     }
 
     if(FileExtManager::IsJavascriptFile(fileName) || FileExtManager::IsJavaFile(fileName)) {
-        return cFormatEngineClangFormat;
+        return kFormatEngineClangFormat;
     }
 
-    return cFormatEngineNone;
+    return kFormatEngineNone;
 }
 
-bool CodeFormatter::CanFormatSelection(const int& engine)
+bool CodeFormatter::CanFormatSelection(const FormatterEngine& engine)
 {
-    if(engine == cFormatEngineClangFormat || engine == cFormatEngineAStyle) {
+    if(engine == kFormatEngineClangFormat || engine == kFormatEngineAStyle) {
         return true;
     }
 
     return false;
 }
 
-bool CodeFormatter::CanFormatString(const int& engine)
+bool CodeFormatter::CanFormatString(const FormatterEngine& engine)
 {
-    if(engine == cFormatEngineAStyle || engine == cFormatEngineClangFormat || engine == cFormatEngineBuildInPhp) {
+    if(engine == kFormatEngineAStyle || engine == kFormatEngineClangFormat || engine == kFormatEngineBuildInPhp) {
         return true;
     }
 
     return false;
 }
 
-bool CodeFormatter::CanFormatFile(const int& engine)
+bool CodeFormatter::CanFormatFile(const FormatterEngine& engine)
 {
-    if(engine == cFormatEngineClangFormat || engine == cFormatEnginePhpCsFixer || engine == cFormatEnginePhpcbf ||
-        engine == cFormatEngineWxXmlDocument) {
+    if(engine == kFormatEngineClangFormat || engine == kFormatEnginePhpCsFixer || engine == kFormatEnginePhpcbf ||
+       engine == kFormatEngineWxXmlDocument) {
         return true;
     }
 
@@ -278,7 +278,7 @@ void CodeFormatter::DoFormatEditor(IEditor* editor, int selStart, int selEnd)
     EventNotifier::Get()->ProcessEvent(evt);
 
     int cursorPosition = editor->GetCurrentPosition();
-    int engine = FindFormatter(fileName);
+    FormatterEngine engine = FindFormatter(fileName);
 
     wxString content;
     if(selStart != wxNOT_FOUND && CanFormatSelection(engine)) {
@@ -300,7 +300,7 @@ void CodeFormatter::DoFormatEditor(IEditor* editor, int selStart, int selEnd)
     m_mgr->SetStatusMessage(_("Done"), 0);
 }
 
-void CodeFormatter::DoFormatPreview(wxString& content, const wxString& ext, const int& engine)
+void CodeFormatter::DoFormatPreview(wxString& content, const wxString& ext, const FormatterEngine& engine)
 {
     wxString path;
     if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
@@ -315,25 +315,25 @@ void CodeFormatter::DoFormatPreview(wxString& content, const wxString& ext, cons
 }
 
 void CodeFormatter::DoFormatString(wxString& content,
-    const wxFileName& fileName,
-    const int& engine,
-    int& cursorPosition)
+                                   const wxFileName& fileName,
+                                   const FormatterEngine& engine,
+                                   int& cursorPosition)
 {
     if(!CanFormatString(engine)) {
         DoFormatWithTempFile(fileName, content, engine);
         return;
     }
 
-    if(engine == cFormatEngineAStyle) {
+    if(engine == kFormatEngineAStyle) {
         DoFormatWithAstyle(content);
-    } else if(engine == cFormatEngineBuildInPhp) {
+    } else if(engine == kFormatEngineBuildInPhp) {
         DoFormatWithBuildInPhp(content);
-    } else if(engine == cFormatEngineClangFormat) {
+    } else if(engine == kFormatEngineClangFormat) {
         DoFormatWithClang(content, fileName, cursorPosition);
     }
 }
 
-void CodeFormatter::DoFormatWithTempFile(const wxFileName& fileName, wxString& content, const int& engine)
+void CodeFormatter::DoFormatWithTempFile(const wxFileName& fileName, wxString& content, const FormatterEngine& engine)
 {
     wxFileName tempFileName = fileName.GetFullPath() + "-code-formatter-tmp." + fileName.GetExt();
     FileUtils::Deleter fd(tempFileName);
@@ -350,19 +350,19 @@ void CodeFormatter::DoFormatWithTempFile(const wxFileName& fileName, wxString& c
     }
 }
 
-void CodeFormatter::DoFormatFile(const wxFileName& fileName, const int& engine)
+void CodeFormatter::DoFormatFile(const wxFileName& fileName, const FormatterEngine& engine)
 {
     clDEBUG() << "CodeFormatter formatting file: " << fileName << clEndl;
 
     if(!CanFormatFile(engine)) {
         DoFormatFileAsString(fileName, engine);
-    } else if(engine == cFormatEngineClangFormat) {
+    } else if(engine == kFormatEngineClangFormat) {
         DoFormatWithClang(fileName);
-    } else if(engine == cFormatEnginePhpCsFixer) {
+    } else if(engine == kFormatEnginePhpCsFixer) {
         DoFormatWithPhpCsFixer(fileName);
-    } else if(engine == cFormatEnginePhpcbf) {
+    } else if(engine == kFormatEnginePhpcbf) {
         DoFormatWithPhpcbf(fileName);
-    } else if(engine == cFormatEngineWxXmlDocument) {
+    } else if(engine == kFormatEngineWxXmlDocument) {
         DoFormatWithWxXmlDocument(fileName);
     }
 
@@ -370,17 +370,17 @@ void CodeFormatter::DoFormatFile(const wxFileName& fileName, const int& engine)
 }
 
 void CodeFormatter::DoFormatSelection(IEditor* editor,
-    wxString& content,
-    const int& engine,
-    int& cursorPosition,
-    const int& selStart,
-    const int& selEnd)
+                                      wxString& content,
+                                      const FormatterEngine& engine,
+                                      int& cursorPosition,
+                                      const int& selStart,
+                                      const int& selEnd)
 {
-    if(engine == cFormatEngineAStyle) {
+    if(engine == kFormatEngineAStyle) {
         DoFormatWithAstyle(content, false);
         wxString content = editor->FormatTextKeepIndent(
-            content, selStart, Format_Text_Indent_Prev_Line | Format_Text_Save_Empty_Lines);
-    } else if(engine == cFormatEngineClangFormat) {
+                               content, selStart, Format_Text_Indent_Prev_Line | Format_Text_Save_Empty_Lines);
+    } else if(engine == kFormatEngineClangFormat) {
         content = editor->GetEditorText();
         wxFileName fileName = editor->GetFileName();
         DoFormatWithClang(content, fileName, cursorPosition, selStart, selEnd);
@@ -511,7 +511,7 @@ void CodeFormatter::DoFormatWithAstyle(wxString& content, const bool& appendEOL)
     content << DoGetGlobalEOLString();
 }
 
-void CodeFormatter::DoFormatFileAsString(const wxFileName& fileName, const int& engine)
+void CodeFormatter::DoFormatFileAsString(const wxFileName& fileName, const FormatterEngine& engine)
 {
     wxString content;
     if(!FileUtils::ReadFileContent(fileName, content)) {
@@ -654,7 +654,7 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
         e.SetFormattedString(content);
         return;
     }
-    int engine = FindFormatter(e.GetFileName());
+    FormatterEngine engine = FindFormatter(e.GetFileName());
     int cursorPosition = wxNOT_FOUND;
     DoFormatString(content, e.GetFileName(), engine, cursorPosition);
     e.SetFormattedString(content);
@@ -711,8 +711,8 @@ void CodeFormatter::OnFormatFiles(wxCommandEvent& event)
     std::vector<wxFileName> filesToFormat;
 
     for(size_t i = 0; i < files.GetCount(); ++i) {
-        int engine = FindFormatter(files.Item(i));
-        if(engine == cFormatEngineNone) {
+        FormatterEngine engine = FindFormatter(files.Item(i));
+        if(engine == kFormatEngineNone) {
             continue;
         }
 
@@ -739,8 +739,8 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
     std::vector<wxFileName> filesToFormat;
 
     for(size_t i = 0; i < allFiles.size(); ++i) {
-        int engine = FindFormatter(allFiles.at(i).GetFilename());
-        if(engine == cFormatEngineNone) {
+        FormatterEngine engine = FindFormatter(allFiles.at(i).GetFilename());
+        if(engine == kFormatEngineNone) {
             continue;
         }
 
@@ -772,7 +772,7 @@ void CodeFormatter::BatchFormat(const std::vector<wxFileName>& files)
         msg << "[ " << i << " / " << files.size() << " ] " << files.at(i).GetFullName();
         dlg.Update(i, msg);
 
-        int engine = FindFormatter(files.at(i).GetFullPath());
+        FormatterEngine engine = FindFormatter(files.at(i).GetFullPath());
         DoFormatFile(files.at(i).GetFullPath(), engine);
     }
 

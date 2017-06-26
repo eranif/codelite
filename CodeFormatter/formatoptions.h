@@ -78,9 +78,9 @@ enum AstyleOptions {
                             AS_ONE_LINE_KEEP_BLOCKS,
 };
 
-enum FormatterEngine {
-    kFormatEngineAStyle,
-    kFormatEngineClangFormat,
+enum CXXFormatterEngine {
+    kCxxFormatEngineAStyle,
+    kCxxFormatEngineClangFormat,
 };
 
 enum PHPFormatterEngine {
@@ -175,7 +175,7 @@ class FormatOptions : public SerializedObject
     size_t m_clangFormatOptions;
     size_t m_clangBreakBeforeBrace;
     wxString m_customFlags;
-    FormatterEngine m_engine;
+    CXXFormatterEngine m_engine;
     PHPFormatterEngine m_phpEngine;
     wxString m_clangFormatExe;
     size_t m_clangColumnLimit; // when indenting, limit the line to fit into a column width
@@ -225,11 +225,11 @@ public:
     }
 
     // C++
-    void SetEngine(FormatterEngine engine)
+    void SetEngine(CXXFormatterEngine engine)
     {
         m_engine = engine;
     }
-    FormatterEngine GetEngine() const
+    CXXFormatterEngine GetEngine() const
     {
         return m_engine;
     }

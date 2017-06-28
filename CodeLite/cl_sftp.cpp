@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include <wx/filefn.h>
 #include <libssh/sftp.h>
+#include "cl_standard_paths.h"
 
 class SFTPDirCloser
 {
@@ -427,6 +428,14 @@ void clSFTP::Chmod(const wxString& remotePath, size_t permissions) throw(clExcep
                                      << ssh_get_error(m_ssh->GetSession()),
                           sftp_get_error(m_sftp));
     }
+}
+
+wxString clSFTP::GetDefaultDownloadFolder()
+{
+    wxFileName path(clStandardPaths::Get().GetUserDataDir(), "");
+    path.AppendDir("sftp");
+    path.AppendDir("tmp");
+    return path.GetPath();
 }
 
 #endif // USE_SFTP

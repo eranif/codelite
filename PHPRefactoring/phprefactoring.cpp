@@ -1,4 +1,6 @@
+#include "asyncprocess.h"
 #include "clEditorStateLocker.h"
+#include "clPatch.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -7,7 +9,6 @@
 #include "phprefactoring.h"
 #include "phprefactoringdlg.h"
 #include "phprefactoringoptions.h"
-#include "procutils.h"
 #include "string"
 #include <wx/filename.h>
 #include <wx/menu.h>
@@ -172,7 +173,7 @@ void PHPRefactoring::RenameVariable(const wxString& action)
 
     wxString line = std::to_string(editor->GetCurrentLine() + 1);
     wxString oldName = editor->GetWordAtCaret();
-    if (oldName.StartsWith("$")) {
+    if(oldName.StartsWith("$")) {
         oldName = oldName.Mid(1);
     }
     if(oldName.IsEmpty()) {
@@ -197,7 +198,7 @@ void PHPRefactoring::OnConvertLocalToInstanceVariable(wxCommandEvent& e)
 
     wxString line = std::to_string(editor->GetCurrentLine() + 1);
     wxString oldName = editor->GetWordAtCaret();
-    if (oldName.StartsWith("$")) {
+    if(oldName.StartsWith("$")) {
         oldName = oldName.Mid(1);
     }
     if(oldName.IsEmpty()) {
@@ -215,8 +216,8 @@ void PHPRefactoring::OnRenameClassAndNamespaces(wxCommandEvent& e)
         return;
     }
 
-    wxString dir = editor->GetFileName().GetPath();
-    RunCommand("fix-class-names " + dir);
+    wxString path = editor->GetFileName().GetPath();
+    RunCommand("fix-class-names " + path);
 }
 
 void PHPRefactoring::OnOptimizeUseStatements(wxCommandEvent& e)
@@ -233,7 +234,7 @@ void PHPRefactoring::RefactorFile(const wxString& action, const wxString& extraP
 {
     wxString filePath, tmpfile, parameters, output;
     filePath = editor->GetFileName().GetFullPath();
-    tmpfile << filePath << ".php-refactoring-browser";
+    tmpfile << filePath << "-refactoring-browser.php";
     wxString oldContent = editor->GetEditorText();
     if(!FileUtils::WriteFileContent(tmpfile, oldContent)) {
         ::wxMessageBox(_("Can not refactor file:\nFailed to write temporary file"), "PHP Refactoring",
@@ -245,7 +246,7 @@ void PHPRefactoring::RefactorFile(const wxString& action, const wxString& extraP
     FileUtils::Deleter fd(tmpfile);
 
     ::WrapWithQuotes(tmpfile);
-    parameters = action + " " + tmpfile + " " + extraParameters + " | patch -p1";
+    parameters = action + " " + tmpfile + " " + extraParameters;
 
     // Notify about indentation about to start
     wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_STARTING);
@@ -302,7 +303,25 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
 
     command = phpPath + " " + refactorPath + " " + parameters;
     clDEBUG() << "PHPRefactoring running:" << command << clEndl;
-    ProcUtils::SafeExecuteCommand(command);
+    ::WrapInShell(command);
+    IProcess::Ptr_t process(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+    // CHECK_PTR_RET_FALSE(process);
+
+    wxString patch, tmpfile;
+    process->WaitForTerminate(patch);
+    int fd1;
+    char name[] = "/tmp/diff-XXXXXX";
+    fd1 = mkstemp(name);
+    tmpfile = name;
+    if(!FileUtils::WriteFileContent(tmpfile, patch)) {
+        ::wxMessageBox(_("Can not refactor file:\nFailed to write temporary file"), "PHP Refactoring",
+            wxICON_ERROR | wxOK | wxCENTER);
+        return;
+    }
+    FileUtils::Deleter fd(tmpfile);
+
+    clPatch patcher = clPatch();
+    patcher.Patch(tmpfile, "", "-p1 < ");
 }
 
 void PHPRefactoring::OnPhpSettingsChanged(clCommandEvent& event)

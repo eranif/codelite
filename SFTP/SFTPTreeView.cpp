@@ -48,6 +48,7 @@
 #include "SFTPSettingsDialog.h"
 #include "clFileOrFolderDropTarget.h"
 #include "SFTPUploadDialog.h"
+#include <algorithm>
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -82,21 +83,21 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
         m_choiceAccount->SetSelection(0);
     }
 
-//#ifdef __WXMSW__
-//    m_treeCtrl->GetDataView()->SetIndent(16);
-//#endif
-//    m_treeCtrl->SetItemComparator(new SFTPItemComparator);
+    //#ifdef __WXMSW__
+    //    m_treeCtrl->GetDataView()->SetIndent(16);
+    //#endif
+    //    m_treeCtrl->SetItemComparator(new SFTPItemComparator);
     m_treeCtrl->Connect(ID_OPEN, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuOpen), NULL, this);
     m_treeCtrl->Connect(ID_OPEN_WITH_DEFAULT_APP,
-                            wxEVT_MENU,
-                            wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication),
-                            NULL,
-                            this);
+                        wxEVT_MENU,
+                        wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication),
+                        NULL,
+                        this);
     m_treeCtrl->Connect(ID_OPEN_CONTAINING_FOLDER,
-                            wxEVT_MENU,
-                            wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder),
-                            NULL,
-                            this);
+                        wxEVT_MENU,
+                        wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder),
+                        NULL,
+                        this);
     m_treeCtrl->Connect(ID_DELETE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuDelete), NULL, this);
     m_treeCtrl->Connect(ID_NEW, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNew), NULL, this);
     m_treeCtrl->Connect(ID_RENAME, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRename), NULL, this);
@@ -113,7 +114,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
 
     m_treeCtrl->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
-    
+
     m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrl));
     ::MSWSetNativeTheme(m_treeCtrl);
 }
@@ -129,15 +130,15 @@ SFTPTreeView::~SFTPTreeView()
 
     m_treeCtrl->Disconnect(ID_OPEN, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuOpen), NULL, this);
     m_treeCtrl->Disconnect(ID_OPEN_WITH_DEFAULT_APP,
-                               wxEVT_MENU,
-                               wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication),
-                               NULL,
-                               this);
+                           wxEVT_MENU,
+                           wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication),
+                           NULL,
+                           this);
     m_treeCtrl->Disconnect(ID_OPEN_CONTAINING_FOLDER,
-                               wxEVT_MENU,
-                               wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder),
-                               NULL,
-                               this);
+                           wxEVT_MENU,
+                           wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder),
+                           NULL,
+                           this);
 
     m_treeCtrl->Disconnect(ID_DELETE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuDelete), NULL, this);
     m_treeCtrl->Disconnect(ID_NEW, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNew), NULL, this);
@@ -159,10 +160,10 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
     cd->SetIsFolder(true);
 
     wxTreeItemId root = m_treeCtrl->AppendItem(m_treeCtrl->GetRootItem(),
-                                                     initialFolder,
-                                                     m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder),
-                                                     wxNOT_FOUND,
-                                                     cd);
+                                               initialFolder,
+                                               m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder),
+                                               wxNOT_FOUND,
+                                               cd);
 
     m_treeCtrl->AppendItem(root, "<dummy>");
     DoExpandItem(root);
@@ -236,6 +237,23 @@ void SFTPTreeView::OnOpenAccountManager(wxCommandEvent& event)
 
 void SFTPTreeView::DoCloseSession()
 {
+    // Check if we have unmodified files belonged to this session
+    IEditor::List_t editors;
+    IEditor::List_t modeditors;
+    clGetManager()->GetAllEditors(editors);
+    std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
+        if(editor->GetClientData("sftp") && editor->IsModified()) {
+            if(!clGetManager()->CloseEditor(editor)) {
+                modeditors.push_back(editor);
+            }
+        }
+    });
+
+    // User chose to close an SFTP file
+    if(!modeditors.empty()) {
+        return;
+    }
+
     m_sftp.reset(NULL);
     m_treeCtrl->DeleteAllItems();
 }
@@ -338,10 +356,10 @@ void SFTPTreeView::OnContextMenu(wxContextMenuEvent& event)
     wxArrayTreeItemIds items;
     m_treeCtrl->GetSelections(items);
     if(items.size() == 0) return;
-    
+
     wxTreeItemId item = items.Item(0);
     CHECK_ITEM_RET(item);
-    
+
     MyClientData* cd = GetItemData(item);
     wxMenu menu;
     if(cd) {
@@ -515,12 +533,12 @@ wxTreeItemId SFTPTreeView::DoAddFile(const wxTreeItemId& parent, const wxString&
         newFile->SetIsFolder(false);
         newFile->SetInitialized(false);
 
-        wxTreeItemId child = m_treeCtrl->AppendItem(
-            parent,
-            newFile->GetFullName(),
-            m_bmpLoader->GetMimeImageId(FileExtManager::GetType(path, FileExtManager::TypeText)),
-            wxNOT_FOUND,
-            newFile);
+        wxTreeItemId child =
+            m_treeCtrl->AppendItem(parent,
+                                   newFile->GetFullName(),
+                                   m_bmpLoader->GetMimeImageId(FileExtManager::GetType(path, FileExtManager::TypeText)),
+                                   wxNOT_FOUND,
+                                   newFile);
         return child;
 
     } catch(clException& e) {

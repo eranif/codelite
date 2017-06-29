@@ -31,6 +31,8 @@
 #include <wx/xrc/xmlres.h>
 #include "wx/wxsf/AutoLayout.h"
 #include "event_notifier.h"
+#include "clKeyboardManager.h"
+#include "SqlCommandPanel.h"
 
 //#ifdef DBL_USE_MYSQL
 #include "MySqlDbAdapter.h"
@@ -140,6 +142,9 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
 
     m_longName = _("DatabaseExplorer for CodeLite");
     m_shortName = wxT("DatabaseExplorer");
+
+    clKeyboardManager::Get()->AddGlobalAccelerator("wxEVT_EXECUTE_SQL", "Ctrl-J", _("Execute SQL"));
+    wxTheApp->Bind(wxEVT_MENU, &DatabaseExplorer::OnExecuteSQL, this, XRCID("wxEVT_EXECUTE_SQL"));
 }
 
 DatabaseExplorer::~DatabaseExplorer() { wxSFAutoLayout::CleanUp(); }
@@ -159,6 +164,8 @@ void DatabaseExplorer::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenuItem* item(NULL);
     item = new wxMenuItem(menu, XRCID("dbe_about"), _("About..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
+    item = new wxMenuItem(menu, XRCID("wxEVT_EXECUTE_SQL"), _("Execute SQL"), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("Database Explorer"), menu);
     m_mgr->GetTheApp()->Connect(
         XRCID("dbe_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DatabaseExplorer::OnAbout), NULL, this);
@@ -170,6 +177,15 @@ void DatabaseExplorer::HookPopupMenu(wxMenu* menu, MenuType type)
     wxUnusedVar(type);
 }
 
+void DatabaseExplorer::OnExecuteSQL(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    SQLCommandPanel* panel = dynamic_cast<SQLCommandPanel*>(m_mgr->GetActivePage());
+    CHECK_PTR_RET(panel);
+    
+    panel->ExecuteSql();
+}
+
 void DatabaseExplorer::UnPlug()
 {
     EventNotifier::Get()->Disconnect(
@@ -179,6 +195,7 @@ void DatabaseExplorer::UnPlug()
     if(index != wxNOT_FOUND) {
         m_mgr->GetWorkspacePaneNotebook()->RemovePage(index);
     }
+    wxTheApp->Unbind(wxEVT_MENU, &DatabaseExplorer::OnExecuteSQL, this, XRCID("wxEVT_EXECUTE_SQL"));
     wxDELETE(m_dbViewerPanel);
 }
 

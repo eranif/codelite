@@ -10,14 +10,17 @@ bool IsEmptyQuery(const wxString& strQuery)
 wxArrayString ParseQueries(const wxString& strQuery)
 {
   wxArrayString returnArray;
-  bool bInQuote = false;
+  bool bInDQuote = false;
+  bool bInSQuote = false;
   int nLast = 0;
 
-  for ( int i=0; i<(int)strQuery.Length(); i++ )
+  for (int i = 0; i < (int) strQuery.Length(); i++)
   {
-      if ( strQuery.SubString(i, i) == _T("'") )
-          bInQuote = !bInQuote;
-      else if ( strQuery.SubString(i, i) == _T(";") && !bInQuote )
+      if (!bInDQuote && strQuery.SubString(i, i) == _T("'") && strQuery.SubString(i - 1, i - 1) != _T("\\"))
+          bInSQuote = !bInSQuote;
+      else if (!bInSQuote && strQuery.SubString(i, i) == _T("\"") && strQuery.SubString(i - 1, i - 1) != _T("\\"))
+          bInDQuote = !bInDQuote;
+      else if ( strQuery.SubString(i, i) == _T(";") && (!bInSQuote && !bInDQuote))
       {
           wxString str;
           str << strQuery.SubString(nLast, i);

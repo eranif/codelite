@@ -154,7 +154,7 @@ void SQLCommandPanel::ExecuteSql()
         }
 
         // save the history
-        SaveSqlHistory();
+        SaveSqlHistory(sqls);
 
         if(!sqls.IsEmpty()) {
             try {
@@ -632,9 +632,8 @@ wxArrayString SQLCommandPanel::ParseSql() const
     return sqls;
 }
 
-void SQLCommandPanel::SaveSqlHistory()
+void SQLCommandPanel::SaveSqlHistory(wxArrayString sqls)
 {
-    wxArrayString sqls = ParseSql();
     if(sqls.IsEmpty()) return;
 
     DbExplorerSettings s;

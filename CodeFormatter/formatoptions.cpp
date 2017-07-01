@@ -22,20 +22,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "formatoptions.h"
 #include "PHPFormatterBuffer.h"
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
-#include "formatoptions.h"
-#include "globals.h"
-#include "phpoptions.h"
 #include "file_logger.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "json_node.h"
+#include "phpoptions.h"
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
-    , m_engine(kFormatEngineClangFormat)
+    , m_engine(kCxxFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
-          kSpaceBeforeAssignmentOperators | kAlignEscapedNewlinesLeft)
+                           kSpaceBeforeAssignmentOperators |
+                           kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
@@ -48,7 +51,9 @@ FormatOptions::FormatOptions()
 {
 }
 
-FormatOptions::~FormatOptions() {}
+FormatOptions::~FormatOptions()
+{
+}
 
 void FormatOptions::DeSerialize(Archive& arch)
 {
@@ -56,9 +61,9 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read(wxT("m_customFlags"), m_customFlags);
 
     // By default, use clang-format as it is more robust and advanced
-    int engine = kFormatEngineClangFormat;
+    int engine = kCxxFormatEngineClangFormat;
     arch.Read("m_engine", engine);
-    m_engine = static_cast<FormatterEngine>(engine);
+    m_engine = static_cast<CXXFormatterEngine>(engine);
 
     engine = kPhpFormatEngineBuiltin;
     arch.Read("m_phpEngine", engine);
@@ -89,7 +94,7 @@ void FormatOptions::AutodetectSettings()
         }
     }
     if(m_clangFormatExe.IsEmpty() || !clangFormatExe.Exists()) {
-        m_engine = kFormatEngineAStyle; // Change the active engine to AStyle
+        m_engine = kCxxFormatEngineAStyle; // Change the active engine to AStyle
         m_clangFormatExe = "";          // Clear the non existed executable
     }
 
@@ -240,80 +245,115 @@ wxString FormatOptions::AstyleOptionsAsString() const
     return options;
 }
 
-wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, double clangFormatVersion) const
+wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName,
+        const bool& formatInline,
+        const int& cursorPosition,
+        const int& selStart,
+        const int& selEnd) const
+{
+    wxString command, filePath;
+
+    command << GetClangFormatExe();
+    ::WrapWithQuotes(command);
+
+    filePath = fileName.GetFullPath();
+    ::WrapWithQuotes(filePath);
+
+    if(cursorPosition != wxNOT_FOUND) {
+        command << " -cursor=" << cursorPosition;
+    }
+
+    if(formatInline) {
+        command << " -i";
+    }
+
+    if(selStart != wxNOT_FOUND && selEnd != wxNOT_FOUND) {
+        command << " -offset=" << selStart << " -length=" << (selEnd - selStart);
+    }
+
+    command << " -style=" << GetClangFormatStyleAsString(fileName);
+
+    command << " " << filePath;
+
+    return command;
+}
+
+wxString FormatOptions::GetClangFormatStyleAsString(const wxFileName& fileName) const
 {
     // If the option: "File" is selected, it overrides everything here
     if(m_clangFormatOptions & kClangFormatFile) {
         // All our settings are taken from .clang-format file
-        return " -style=file";
+        return "file";
     }
 
-    wxString options, forceLanguage;
-
-    // Try to autodetect the file type
-    if(clangFormatVersion >= 3.5) {
-        if(FileExtManager::IsJavascriptFile(filename)) {
-            forceLanguage << "Language : JavaScript";
-
-        } else if(FileExtManager::IsCxxFile(filename)) {
-            forceLanguage << "Language : Cpp";
-
-        } else if(FileExtManager::IsJavaFile(filename)) {
-            forceLanguage << "Language : Java";
-        }
-    }
-
-    options << " -style=\"{ BasedOnStyle: ";
+    wxString style = "\"{ BasedOnStyle: ";
     if(m_clangFormatOptions & kClangFormatChromium) {
-        options << "Chromium";
+        style << "Chromium";
     } else if(m_clangFormatOptions & kClangFormatGoogle) {
-        options << "Google";
+        style << "Google";
     } else if(m_clangFormatOptions & kClangFormatLLVM) {
-        options << "LLVM";
+        style << "LLVM";
     } else if(m_clangFormatOptions & kClangFormatMozilla) {
-        options << "Mozilla";
+        style << "Mozilla";
     } else if(m_clangFormatOptions & kClangFormatWebKit) {
-        options << "WebKit";
+        style << "WebKit";
     }
 
     // add tab width and space vs tabs based on the global editor settings
-    options << ClangGlobalSettings();
+    style << ClangGlobalSettings();
 
     // Language
-    if(!forceLanguage.IsEmpty()) {
-        options << ", " << forceLanguage << " ";
-    }
-    options << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
-    options << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
-    options << ", AllowAllParametersOfDeclarationOnNextLine : "
-            << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
+    clClangFormatLocator locator;
+    double clangFormatVersion = locator.GetVersion(GetClangFormatExe());
     if(clangFormatVersion >= 3.5) {
-        options << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
-        options << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
+        wxString forceLanguage;
+
+        if(FileExtManager::IsJavascriptFile(fileName)) {
+            forceLanguage << "Language : JavaScript";
+
+        } else if(FileExtManager::IsCxxFile(fileName)) {
+            forceLanguage << "Language : Cpp";
+
+        } else if(FileExtManager::IsJavaFile(fileName)) {
+            forceLanguage << "Language : Java";
+        }
+
+        if(!forceLanguage.IsEmpty()) {
+            style << ", " << forceLanguage << " ";
+        }
     }
-    options << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
-    options << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
-    options << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
-    options << ", AlwaysBreakTemplateDeclarations : " << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
-    options << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
-    options << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
-    options << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
-    options << ", BreakConstructorInitializersBeforeComma : "
-            << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
-    options << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
-    options << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
-    options << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
+
+    style << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
+    style << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
+    style << ", AllowAllParametersOfDeclarationOnNextLine : "
+          << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
     if(clangFormatVersion >= 3.5) {
-        options << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
+        style << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
+        style << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
     }
-    options << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
-    options << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
-    options << ", ColumnLimit : " << m_clangColumnLimit;
+    style << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
+    style << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
+    style << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
+    style << ", AlwaysBreakTemplateDeclarations : " << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
+    style << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
+    style << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
+    style << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
+    style << ", BreakConstructorInitializersBeforeComma : "
+          << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
+    style << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
+    style << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
+    style << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
     if(clangFormatVersion >= 3.5) {
-        options << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
+        style << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
     }
-    options << " }\" ";
-    return options;
+    style << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
+    style << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
+    style << ", ColumnLimit : " << m_clangColumnLimit;
+    if(clangFormatVersion >= 3.5) {
+        style << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
+    }
+    style << " }\"";
+    return style;
 }
 
 wxString FormatOptions::ClangFlagToBool(ClangFormatStyle flag) const
@@ -351,11 +391,11 @@ wxString FormatOptions::ClangGlobalSettings() const
     return options;
 }
 
-bool FormatOptions::GetPhpFixerCommand(wxString& command)
+bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& command)
 {
     command.Clear();
     m_optionsPhp.Load();
-    wxString phar, php, parameters;
+    wxString phar, php, parameters, filePath;
     php = m_optionsPhp.GetPhpExe();
     if(php.IsEmpty()) {
         clDEBUG() << "CodeForamtter: GetPhpFixerCommand(): empty php command" << clEndl;
@@ -364,27 +404,128 @@ bool FormatOptions::GetPhpFixerCommand(wxString& command)
     ::WrapWithQuotes(php);
     phar = GetPHPCSFixerPhar();
     if(phar.IsEmpty()) {
-        clDEBUG() << "CodeForamtter: GetPhpFixerCommand(): empty phar path" << clEndl;
+        clDEBUG() << "CodeForamtter: GetPhpFixerCommand(): empty php-cs-fixer phar path" << clEndl;
         return false;
     }
     ::WrapWithQuotes(phar);
 
     parameters = GetPHPCSFixerPharOptions();
     if(parameters.IsEmpty()) {
-        if(m_PHPCSFixerPharRules & kAllowRisky) {
+        if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
             parameters << " --allow-risky=yes";
+        }
+
+        JSONRoot root(cJSON_Object);
+        JSONElement rules = root.toElement();
+        if(m_PHPCSFixerPharRules & kPcfPHP56Migration) {
+            rules.addProperty("@PHP56Migration", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfPHP70Migration) {
+            rules.addProperty("@PHP70Migration", true);
+            if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
+                rules.addProperty("@PHP70Migration:risky", true);
+            }
+        }
+        if(m_PHPCSFixerPharRules & kPcfPHP71Migration) {
+            rules.addProperty("@PHP71Migration", true);
+            if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
+                rules.addProperty("@PHP71Migration:risky", true);
+            }
+        }
+        if(m_PHPCSFixerPharRules & kPcfPSR1) {
+            rules.addProperty("@PSR1", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfPSR2) {
+            rules.addProperty("@PSR2", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfSymfony) {
+            rules.addProperty("@Symfony", true);
+            if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
+                rules.addProperty("@Symfony:risky", true);
+            }
+        }
+        if(m_PHPCSFixerPharRules & (kPcfShortArray | kPcfLongArray)) {
+            JSONElement array_syntax = JSONElement::createObject("array_syntax");
+            array_syntax.addProperty("syntax", m_PHPCSFixerPharRules & kPcfShortArray ? "short" : "long");
+            rules.addProperty("array_syntax", array_syntax);
+        }
+        if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreDoubleArrow)) {
+            JSONElement binary_operator_spaces = JSONElement::createObject("binary_operator_spaces");
+            if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow)) {
+                binary_operator_spaces.addProperty(
+                    "align_double_arrow", m_PHPCSFixerPharRules & kPcfIgnoreDoubleArrow ? cJSON_NULL : m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
+            }
+            if(m_PHPCSFixerPharRules & (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals)) {
+                binary_operator_spaces.addProperty(
+                    "align_equals", m_PHPCSFixerPharRules & kPcfIgnoreEquals ? cJSON_NULL : m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
+            }
+            rules.addProperty("binary_operator_spaces", binary_operator_spaces);
+        }
+        if(m_PHPCSFixerPharRules & (kPcfConcatSpaceNone | kPcfConcatSpaceOne)) {
+            JSONElement concat_space = JSONElement::createObject("concat_space");
+            concat_space.addProperty("spacing", m_PHPCSFixerPharRules & kPcfConcatSpaceNone ? "none" : "one");
+            rules.addProperty("concat_space", concat_space);
+        }
+        if(m_PHPCSFixerPharRules & (kPcfEmptyReturnStrip | kPcfEmptyReturnKeep)) {
+            rules.addProperty("phpdoc_no_empty_return", m_PHPCSFixerPharRules & kPcfEmptyReturnStrip ? true : false);
+        }
+        if(m_PHPCSFixerPharRules & kPcfBlankLineAfterOpeningTag) {
+            rules.addProperty("blank_line_after_opening_tag", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfBlankLineBeforeReturn) {
+            rules.addProperty("blank_line_before_return", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfCombineConsecutiveUnsets) {
+            rules.addProperty("combine_consecutive_unsets", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfLinebreakAfterOpeningTag) {
+            rules.addProperty("linebreak_after_opening_tag", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfMbStrFunctions) {
+            rules.addProperty("mb_str_functions", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoBlankLinesBeforeNamespace) {
+            rules.addProperty("no_blank_lines_before_namespace", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoMultilineWhitespaceBeforeSemicolons) {
+            rules.addProperty("no_multiline_whitespace_before_semicolons", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoNullPropertyInitialization) {
+            rules.addProperty("no_null_property_initialization", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoPhp4Constructor) {
+            rules.addProperty("no_php4_constructor", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoShortEchoTag) {
+            rules.addProperty("no_short_echo_tag", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoUnreachableDefaultArgumentValue) {
+            rules.addProperty("no_unreachable_default_argument_value", true);
+        }
+        if(m_PHPCSFixerPharRules & kPcfNoUselessElse) {
+            rules.addProperty("no_useless_else", true);
+        }
+
+        wxString rulesString = rules.FormatRawString(false);
+        if(rulesString != "{}") {
+            parameters << " --rules='" << rulesString << "'";
         }
     }
     parameters.Trim().Trim(false);
-    command << php << " " << phar << " fix " << parameters;
+    clDEBUG() << parameters << clEndl;
+
+    filePath = fileName.GetFullPath();
+    ::WrapWithQuotes(filePath);
+
+    command << php << " " << phar << " fix " << parameters << " " << filePath;
     return true;
 }
 
-bool FormatOptions::GetPhpcbfCommand(wxString& command)
+bool FormatOptions::GetPhpcbfCommand(const wxFileName& fileName, wxString& command)
 {
     command.Clear();
     m_optionsPhp.Load();
-    wxString phar, php, parameters;
+    wxString phar, php, parameters, filePath;
     php = m_optionsPhp.GetPhpExe();
     if(php.IsEmpty()) {
         clDEBUG() << "CodeForamtter: GetPhpcbfCommand(): empty php command" << clEndl;
@@ -394,7 +535,7 @@ bool FormatOptions::GetPhpcbfCommand(wxString& command)
 
     phar = GetPhpcbfPhar();
     if(phar.IsEmpty()) {
-        clDEBUG() << "CodeForamtter: GetPhpcbfCommand(): empty phar path" << clEndl;
+        clDEBUG() << "CodeForamtter: GetPhpcbfCommand(): empty phpcbf phar path" << clEndl;
         return false;
     }
     ::WrapWithQuotes(phar);
@@ -412,8 +553,10 @@ bool FormatOptions::GetPhpcbfCommand(wxString& command)
         parameters << " -n";
     }
     parameters.Trim().Trim(false);
-    // no-patch is needed for files in /tmp, or it thinkgs it's risky...
-    command << php << " " << phar << " " << parameters;
+
+    filePath = fileName.GetFullPath();
+    ::WrapWithQuotes(filePath);
+
+    command << php << " " << phar << " " << parameters << " " << filePath;
     return true;
-    ;
 }

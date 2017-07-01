@@ -12,17 +12,17 @@ LintOptions::LintOptions()
     , m_phpmdPhar("")
     , m_phpmdRules("")
 {
-    wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-        wxFileName::GetPathSeparator() + "phplint.conf";
-    if(!newConfigFile.FileExists()) {
-        wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-            wxFileName::GetPathSeparator() + "php.conf";
+    wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config"
+        + wxFileName::GetPathSeparator() + "phplint.conf";
+    if (!newConfigFile.FileExists()) {
+        wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config"
+            + wxFileName::GetPathSeparator() + "php.conf";
 
         // first time, copy the values from the old settings
         JSONRoot root(oldConfigFile);
         JSONElement oldJson = root.toElement().namedObject("PHPConfigurationData");
-        size_t m_flags = oldJson.namedObject("m_flags").toSize_t(m_flags) & (1 << 1);
-        m_lintOnFileSave = m_flags & (1 << 1);
+        size_t m_flags      = oldJson.namedObject("m_flags").toSize_t(m_flags) & (1 << 1);
+        m_lintOnFileSave    = m_flags & (1 << 1);
 
         // Save it
         JSONRoot newRoot(newConfigFile);
@@ -39,9 +39,9 @@ void LintOptions::FromJSON(const JSONElement& json)
 {
     m_lintOnFileLoad = json.namedObject("lintOnFileLoad").toBool(m_lintOnFileLoad);
     m_lintOnFileSave = json.namedObject("lintOnFileSave").toBool(m_lintOnFileSave);
-    m_phpcsPhar = json.namedObject("phpcsPhar").toString(m_phpcsPhar);
-    m_phpmdPhar = json.namedObject("phpmdPhar").toString(m_phpmdPhar);
-    m_phpmdRules = json.namedObject("phpmdRules").toString(m_phpmdRules);
+    m_phpcsPhar      = json.namedObject("phpcsPhar").toString(m_phpcsPhar);
+    m_phpmdPhar      = json.namedObject("phpmdPhar").toString(m_phpmdPhar);
+    m_phpmdRules     = json.namedObject("phpmdRules").toString(m_phpmdRules);
 
 #ifndef __WXMSW__
     // Find an installed version of phpcs

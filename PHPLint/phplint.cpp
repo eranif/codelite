@@ -1,23 +1,23 @@
+#include "phplint.h"
 #include "asyncprocess.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "phplint.h"
+#include "lintoptions.h"
+#include "phplintdlg.h"
+#include "phpoptions.h"
 #include "processreaderthread.h"
+#include "wx/menu.h"
 #include <event_notifier.h>
+#include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/msgdlg.h>
-#include "wx/menu.h"
-#include "phplintdlg.h"
-#include "lintoptions.h"
-#include "phpoptions.h"
 
 static PHPLint* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
+    if (thePlugin == NULL) {
         thePlugin = new PHPLint(manager);
     }
     return thePlugin;
@@ -38,7 +38,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 PHPLint::PHPLint(IManager* manager)
     : IPlugin(manager)
 {
-    m_longName = _("Run code style checking on PHP source files");
+    m_longName  = _("Run code style checking on PHP source files");
     m_shortName = wxT("PHPLint");
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &PHPLint::OnProcessOutput, this);
@@ -81,7 +81,7 @@ void PHPLint::OnMenuCommand(wxCommandEvent& e)
     wxUnusedVar(e);
 
     PHPLintDlg dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // Store the settings
         m_settings.SetLintOnFileLoad(dlg.GetCheckBoxLintOnLoad()->IsChecked())
             .SetLintOnFileSave(dlg.GetCheckBoxLintOnSave()->IsChecked())
@@ -112,7 +112,7 @@ void PHPLint::OnLoadFile(clCommandEvent& e)
 {
     e.Skip();
 
-    if(!m_settings.IsLintOnFileLoad()) {
+    if (!m_settings.IsLintOnFileLoad()) {
         return;
     }
 
@@ -123,7 +123,7 @@ void PHPLint::OnSaveFile(clCommandEvent& e)
 {
     e.Skip();
 
-    if(!m_settings.IsLintOnFileSave()) {
+    if (!m_settings.IsLintOnFileSave()) {
         return;
     }
 
@@ -135,8 +135,8 @@ void PHPLint::RunLint()
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    if(FileExtManager::IsPHPFile(editor->GetFileName())) {
-        if(m_mgr->GetActiveEditor()) {
+    if (FileExtManager::IsPHPFile(editor->GetFileName())) {
+        if (m_mgr->GetActiveEditor()) {
             m_mgr->GetActiveEditor()->DelAllCompilerMarkers();
         }
         PHPLint::DoCheckFile(editor->GetFileName());
@@ -149,11 +149,11 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
     ::WrapWithQuotes(file);
 
     wxFileName php(m_settingsPhp.GetPhpExe());
-    if(!php.Exists()) {
+    if (!php.Exists()) {
         clGetManager()->SetStatusMessage(_("PHPLint: can not lint file. Missing PHP executable path"), 5);
         return;
     }
-    
+
     wxString phpPath = php.GetFullPath();
     ::WrapWithQuotes(phpPath);
 
@@ -167,7 +167,7 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
 void PHPLint::QueuePhpcsCommand(const wxString& phpPath, const wxString& file)
 {
     wxFileName phpcs(m_settings.GetPhpcsPhar());
-    if(!phpcs.Exists()) {
+    if (!phpcs.Exists()) {
         clDEBUG() << "PHPLint: Could not find the PHP-CS application. Ignoring" << clEndl;
         return;
     }
@@ -181,7 +181,7 @@ void PHPLint::QueuePhpcsCommand(const wxString& phpPath, const wxString& file)
 void PHPLint::QueuePhpmdCommand(const wxString& phpPath, const wxString& file)
 {
     wxFileName phpmd(m_settings.GetPhpmdPhar());
-    if(!phpmd.Exists()) {
+    if (!phpmd.Exists()) {
         clDEBUG() << "PHPLint: Could not find the PHPMD application. Ignoring" << clEndl;
         return;
     }
@@ -200,7 +200,7 @@ void PHPLint::QueuePhpmdCommand(const wxString& phpPath, const wxString& file)
 
 void PHPLint::DoProcessQueue()
 {
-    if(!m_process && !m_queue.empty()) {
+    if (!m_process && !m_queue.empty()) {
         wxString command = m_queue.front();
         m_queue.pop_front();
         DispatchCommand(command);
@@ -212,7 +212,7 @@ void PHPLint::DispatchCommand(const wxString& command)
     // Run the check command
     m_output.clear();
     m_process = ::CreateAsyncProcess(this, command);
-    if(!m_process) {
+    if (!m_process) {
         // failed to run the command
         clWARNING() << "PHPLint: Could not run command:" << command << clEndl;
         DoProcessQueue();
@@ -232,7 +232,7 @@ void PHPLint::OnProcessOutput(clProcessEvent& event) { m_output << event.GetOutp
 
 void PHPLint::OnLintingDone(const wxString& lintOutput)
 {
-    if(lintOutput.Contains("Errors parsing ")) {
+    if (lintOutput.Contains("Errors parsing ")) {
         ProcessPhpError(lintOutput);
         return;
     }
@@ -244,15 +244,15 @@ void PHPLint::ProcessPhpError(const wxString& lintOutput)
 {
     wxRegEx reLine("[ \t]*on line ([0-9]+)");
     // get the line number
-    if(reLine.Matches(lintOutput)) {
+    if (reLine.Matches(lintOutput)) {
         wxString strLine = reLine.GetMatch(lintOutput, 1);
 
-        int start = lintOutput.Find("error:") + 6;
-        int end = lintOutput.Find(" in ");
+        int start             = lintOutput.Find("error:") + 6;
+        int end               = lintOutput.Find(" in ");
         wxString errorMessage = lintOutput.Mid(start, end - start);
 
         // Find the editor
-        int fileStart = lintOutput.Find("Errors parsing ") + 15;
+        int fileStart     = lintOutput.Find("Errors parsing ") + 15;
         wxString filename = lintOutput.Mid(fileStart);
         clDEBUG() << "PHPLint: searching editor for file:" << filename << clEndl;
         IEditor* editor = m_mgr->FindEditor(filename);
@@ -266,10 +266,10 @@ void PHPLint::ProcessXML(const wxString& lintOutput)
 {
     wxStringInputStream lintOutputStream(lintOutput);
     wxXmlDocument doc;
-    if(!doc.Load(lintOutputStream)) return;
+    if (!doc.Load(lintOutputStream)) return;
 
     wxXmlNode* file = doc.GetRoot()->GetChildren();
-    if(!file) return;
+    if (!file) return;
 
     // Find the editor
     wxString filename = file->GetAttribute("name");
@@ -280,10 +280,10 @@ void PHPLint::ProcessXML(const wxString& lintOutput)
     wxString linter = doc.GetRoot()->GetName();
 
     wxXmlNode* violation = file->GetChildren();
-    while(violation) {
+    while (violation) {
         wxString errorMessage = violation->GetNodeContent();
-        wxString strLine = violation->GetAttribute(linter == "pmd" ? "beginline" : "line");
-        bool isWarning = IsWarning(violation, linter);
+        wxString strLine      = violation->GetAttribute(linter == "pmd" ? "beginline" : "line");
+        bool isWarning        = IsWarning(violation, linter);
         MarkError(errorMessage, strLine, editor, isWarning);
 
         violation = violation->GetNext();
@@ -292,7 +292,7 @@ void PHPLint::ProcessXML(const wxString& lintOutput)
 
 bool PHPLint::IsWarning(wxXmlNode* violation, const wxString& linter)
 {
-    if(linter == "pmd") {
+    if (linter == "pmd") {
         wxString priority = violation->GetAttribute("priority", "1");
         long nPriority(wxNOT_FOUND);
         return priority.ToCLong(&nPriority) > 2;
@@ -306,10 +306,10 @@ void PHPLint::MarkError(wxString& errorMessage, const wxString& strLine, IEditor
     errorMessage = errorMessage.Trim().Trim(false);
 
     long nLine(wxNOT_FOUND);
-    if(strLine.ToCLong(&nLine)) {
+    if (strLine.ToCLong(&nLine)) {
         clDEBUG() << "PHPLint: adding error marker @%d" << (nLine - 1) << clEndl;
 
-        if(isWarning) {
+        if (isWarning) {
             editor->SetWarningMarker(nLine - 1, errorMessage);
             return;
         }
@@ -323,4 +323,3 @@ void PHPLint::OnPhpSettingsChanged(clCommandEvent& event)
     event.Skip();
     m_settingsPhp.Load();
 }
-

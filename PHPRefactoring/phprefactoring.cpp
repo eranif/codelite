@@ -170,6 +170,14 @@ void PHPRefactoring::RenameVariable(const wxString& action)
     }
 
     wxString newName = wxGetTextFromUser("New name for " + oldName);
+    newName.Trim().Trim(false);
+    
+    // If it starts with $ sign, remove it
+    if(newName.StartsWith("$")) {
+        newName = newName.Mid(1);
+    }
+    
+    // Sanity
     if(newName.IsEmpty()) {
         return;
     }
@@ -309,8 +317,15 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
     }
     FileUtils::Deleter fd(tmpfile);
 
-    clPatch patcher = clPatch();
-    patcher.Patch(tmpfile, "", "-p1 < ");
+    // Apply the patch
+    try {
+        clPatch patcher;
+        patcher.Patch(tmpfile, "", "-p1 < ");
+        // Reload the patched files
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+    } catch(clException& e) {
+        wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
+    }
 }
 
 void PHPRefactoring::OnPhpSettingsChanged(clCommandEvent& event)

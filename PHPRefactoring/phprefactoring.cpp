@@ -260,7 +260,7 @@ void PHPRefactoring::RefactorFile(const wxString& action, const wxString& extraP
         return;
     }
 
-    if(oldContent != output) {
+    if(!oldContent.IsSameAs(output)) {
         // Update the editor
         clEditorStateLocker lk(editor->GetCtrl());
         editor->GetCtrl()->BeginUndoAction();
@@ -307,6 +307,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
     wxString patch, tmpfile;
     process->WaitForTerminate(patch);
     clDEBUG() << "PHPRefactoring ouput:" << patch << clEndl;
+
     if (!patch.StartsWith("--- a/")) { // not a patch
         if (patch.Contains("RefactoringException")) { // has an error exception
             int start = patch.Find("RefactoringException");
@@ -316,7 +317,6 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
         }
         return;
     }
-
 
     int fd1;
     char name[] = "/tmp/diff-XXXXXX";

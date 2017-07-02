@@ -311,12 +311,22 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
     clDEBUG() << "PHPRefactoring ouput:" << patch << clEndl;
 
     if (!patch.StartsWith("--- a/")) { // not a patch
+        wxString errorMessage = "Refactoring failed";
+        wxRegEx reLine("[ \t]*on line ([0-9]+)");
         if (patch.Contains("Exception]")) { // has an error exception
             int start = patch.Find("Exception]");
-            wxString errorMessage = patch.Mid(start).AfterFirst('\n').BeforeFirst('\n');
+            errorMessage = patch.Mid(start).AfterFirst('\n').BeforeFirst('\n');
             errorMessage = errorMessage.Trim().Trim(false);
-            ::wxMessageBox(errorMessage, "PHP Refactoring", wxICON_ERROR | wxOK | wxCENTER);
+        } else if(reLine.Matches(patch)) {
+            wxString strLine = reLine.GetMatch(patch, 1);
+
+            int start = patch.Find("error:") + 6;
+            int end = patch.Find(" in ");
+            errorMessage = patch.Mid(start, end - start);
+
+            errorMessage = "Can only refactor well formed code: " + errorMessage + " on line " + strLine;
         }
+        ::wxMessageBox(errorMessage, "PHP Refactoring", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
 

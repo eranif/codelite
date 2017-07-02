@@ -215,6 +215,8 @@ void PHPRefactoring::OnRenameClassAndNamespaces(wxCommandEvent& e)
 
     wxString path = editor->GetFileName().GetPath();
     RunCommand("fix-class-names " + path);
+    // Reload the patched files
+    EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 }
 
 void PHPRefactoring::OnOptimizeUseStatements(wxCommandEvent& e)

@@ -311,8 +311,8 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
     clDEBUG() << "PHPRefactoring ouput:" << patch << clEndl;
 
     if (!patch.StartsWith("--- a/")) { // not a patch
-        if (patch.Contains("RefactoringException")) { // has an error exception
-            int start = patch.Find("RefactoringException");
+        if (patch.Contains("Exception]")) { // has an error exception
+            int start = patch.Find("Exception]");
             wxString errorMessage = patch.Mid(start).AfterFirst('\n').BeforeFirst('\n');
             errorMessage = errorMessage.Trim().Trim(false);
             ::wxMessageBox(errorMessage, "PHP Refactoring", wxICON_ERROR | wxOK | wxCENTER);

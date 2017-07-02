@@ -329,11 +329,9 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
         ::wxMessageBox(errorMessage, "PHP Refactoring", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
-
-    int fd1;
-    char name[] = "/tmp/diff-XXXXXX";
-    fd1 = mkstemp(name);
-    tmpfile = name;
+    
+    wxFileName fnTmpFile(wxFileName::CreateTempFileName("diff-XXXXXX"));
+    tmpfile = fnTmpFile.GetFullPath();
     if(!FileUtils::WriteFileContent(tmpfile, patch)) {
         ::wxMessageBox(_("Can not refactor file:\nFailed to write temporary file"), "PHP Refactoring",
                        wxICON_ERROR | wxOK | wxCENTER);

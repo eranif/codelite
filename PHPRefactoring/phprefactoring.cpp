@@ -321,8 +321,6 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
     try {
         clPatch patcher;
         patcher.Patch(tmpfile, "", "-p1 < ");
-        // Reload the patched files
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
     } catch(clException& e) {
         wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
     }

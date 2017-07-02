@@ -1,16 +1,16 @@
+#include "phplint.h"
 #include "asyncprocess.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "phplint.h"
+#include "lintoptions.h"
+#include "phplintdlg.h"
+#include "phpoptions.h"
 #include "processreaderthread.h"
+#include "wx/menu.h"
 #include <event_notifier.h>
+#include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/msgdlg.h>
-#include "wx/menu.h"
-#include "phplintdlg.h"
-#include "lintoptions.h"
-#include "phpoptions.h"
 
 static PHPLint* thePlugin = NULL;
 
@@ -153,7 +153,7 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
         clGetManager()->SetStatusMessage(_("PHPLint: can not lint file. Missing PHP executable path"), 5);
         return;
     }
-    
+
     wxString phpPath = php.GetFullPath();
     ::WrapWithQuotes(phpPath);
 
@@ -190,7 +190,7 @@ void PHPLint::QueuePhpmdCommand(const wxString& phpPath, const wxString& file)
     ::WrapWithQuotes(phpmdPath);
 
     wxString phpmdRules(m_settings.GetPhpmdRules());
-    if (phpmdRules.IsEmpty()) {
+    if(phpmdRules.IsEmpty()) {
         phpmdRules = "cleancode,codesize,controversial,design,naming,unusedcode";
     }
     ::WrapWithQuotes(phpmdRules);
@@ -323,4 +323,3 @@ void PHPLint::OnPhpSettingsChanged(clCommandEvent& event)
     event.Skip();
     m_settingsPhp.Load();
 }
-

@@ -1,7 +1,7 @@
 #ifndef PHPLINTDLG_H
 #define PHPLINTDLG_H
-#include "phplintdlgbase.h"
 #include "lintoptions.h"
+#include "phplintdlgbase.h"
 
 class IManager;
 class PHPLintDlg : public PHPLintBaseDlg
@@ -11,6 +11,7 @@ class PHPLintDlg : public PHPLintBaseDlg
 public:
     PHPLintDlg(wxWindow* parent);
     virtual ~PHPLintDlg();
+
 protected:
     void InitDialog();
 };

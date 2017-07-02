@@ -26,9 +26,9 @@
 #ifndef __phplint__
 #define __phplint__
 
-#include "plugin.h"
 #include "lintoptions.h"
 #include "phpoptions.h"
+#include "plugin.h"
 
 class PHPLint : public IPlugin
 {
@@ -54,17 +54,17 @@ protected:
     void DoCheckFile(const wxFileName& filename);
 
 public:
-    PHPLint(IManager *manager);
+    PHPLint(IManager* manager);
     ~PHPLint();
 
     //--------------------------------------------
-    //Abstract methods
+    // Abstract methods
     //--------------------------------------------
-    virtual clToolBar *CreateToolBar(wxWindow *parent);
+    virtual clToolBar* CreateToolBar(wxWindow* parent);
     /**
      * @brief Add plugin menu to the "Plugins" menu item in the menu bar
      */
-    virtual void CreatePluginMenu(wxMenu *pluginsMenu);
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
 
     /**
      * @brief Unplug the plugin. Perform here any cleanup needed (e.g. unbind events, destroy allocated windows)
@@ -75,10 +75,10 @@ public:
     void OnLintingDone(const wxString& lintOutput);
     void OnLoadFile(clCommandEvent& e);
     void OnSaveFile(clCommandEvent& e);
-    void OnProcessTerminated(clProcessEvent &event);
-    void OnProcessOutput(clProcessEvent &event);
+    void OnProcessTerminated(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
     void OnMenuCommand(wxCommandEvent& e);
     void OnMenuRunLint(wxCommandEvent& e);
 };
 
-#endif //PHPLint
+#endif // PHPLint

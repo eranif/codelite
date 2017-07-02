@@ -23,10 +23,7 @@ public:
         return *this;
     }
 
-    const wxString& GetPhprefactoringPhar() const
-    {
-        return m_phprefactoringPhar;
-    }
+    const wxString& GetPhprefactoringPhar() const { return m_phprefactoringPhar; }
 };
 
 #endif // PHPREFACTORINGOPTIONS_H

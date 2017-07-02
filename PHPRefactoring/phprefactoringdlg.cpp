@@ -14,9 +14,7 @@ PHPRefactoringDlg::PHPRefactoringDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-PHPRefactoringDlg::~PHPRefactoringDlg()
-{
-}
+PHPRefactoringDlg::~PHPRefactoringDlg() {}
 
 void PHPRefactoringDlg::InitDialog()
 {

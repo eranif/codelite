@@ -1,5 +1,5 @@
-#include "cl_standard_paths.h"
 #include "phprefactoringoptions.h"
+#include "cl_standard_paths.h"
 
 PHPRefactoringOptions::PHPRefactoringOptions()
     : clConfigItem("phprefactoring")
@@ -7,9 +7,7 @@ PHPRefactoringOptions::PHPRefactoringOptions()
 {
 }
 
-PHPRefactoringOptions::~PHPRefactoringOptions()
-{
-}
+PHPRefactoringOptions::~PHPRefactoringOptions() {}
 
 void PHPRefactoringOptions::FromJSON(const JSONElement& json)
 {

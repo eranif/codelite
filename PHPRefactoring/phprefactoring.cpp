@@ -171,12 +171,12 @@ void PHPRefactoring::RenameVariable(const wxString& action)
 
     wxString newName = wxGetTextFromUser("New name for " + oldName);
     newName.Trim().Trim(false);
-    
+
     // If it starts with $ sign, remove it
     if(newName.StartsWith("$")) {
         newName = newName.Mid(1);
     }
-    
+
     // Sanity
     if(newName.IsEmpty()) {
         return;
@@ -306,6 +306,18 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
 
     wxString patch, tmpfile;
     process->WaitForTerminate(patch);
+    clDEBUG() << "PHPRefactoring ouput:" << patch << clEndl;
+    if (!patch.StartsWith("--- a/")) { // not a patch
+        if (patch.Contains("RefactoringException")) { // has an error exception
+            int start = patch.Find("RefactoringException");
+            wxString errorMessage = patch.Mid(start).AfterFirst('\n').BeforeFirst('\n');
+            errorMessage = errorMessage.Trim().Trim(false);
+            ::wxMessageBox(errorMessage, "PHP Refactoring", wxICON_ERROR | wxOK | wxCENTER);
+        }
+        return;
+    }
+
+
     int fd1;
     char name[] = "/tmp/diff-XXXXXX";
     fd1 = mkstemp(name);

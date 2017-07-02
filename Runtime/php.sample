@@ -1,0 +1,44 @@
+<?php
+namespace foospace;
+require_once 'bla.php';
+
+function Foo( int $b ): int
+{
+    if ( $b == 0 ) {
+        return 0;
+    } else if ( $b == 1 ) {
+        return 2;
+    } else {
+        return $b * $b;
+    }
+}
+
+class Foo
+{
+    /** @var string */
+    private $m_name;
+    /** @var string */
+    private $m_lastName;
+    const MY_CONST = "Hello World";
+    /**
+     * constructor with an initializatin list
+     */
+    public function __construct() { $this->m_name = ''; $this->m_lastName = ''; }
+    public function Bar(): void {
+      // reduce it foo
+      --$foo;
+        switch ( $foo ) { // switch
+        case 1: // case 1
+            break; // break
+        case 2: { // case 2
+            break;
+        }
+        }
+    }
+    public function FunctionWithParameter(int $size, string &$str, int $longValue): bool
+    {
+        return false;
+    }
+}
+
+$array = array("foo" => "bar","bar" => "foo",);

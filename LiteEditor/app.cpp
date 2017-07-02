@@ -752,6 +752,7 @@ bool CodeLiteApp::CopySettings(const wxString& destDir, wxString& installPath)
     wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
     wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
     wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
+    wxCopyFile(installPath + wxT("/php.sample"), destDir + wxT("/php.sample"));
     return true;
 }
 

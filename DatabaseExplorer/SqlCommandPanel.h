@@ -92,7 +92,7 @@ protected:
 protected:
     bool IsBlobColumn(const wxString &str);
     wxArrayString ParseSql() const;
-    void SaveSqlHistory();
+    void SaveSqlHistory(wxArrayString sqls);
 
 public:
     SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter, const wxString& dbName,const wxString& dbTable);

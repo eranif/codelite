@@ -53,3 +53,4 @@ target_link_libraries(${PLUGIN_NAME}
 
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
 CL_INSTALL_FILE_SHARED(${CL_SRC_ROOT}/Runtime/astyle.sample)
+CL_INSTALL_FILE_SHARED(${CL_SRC_ROOT}/Runtime/php.sample)

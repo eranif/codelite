@@ -102,6 +102,13 @@ protected:
     wxPGProperty* m_pgPropPhpCSFixer;
     wxPGProperty* m_filePickerPHPCsFixerPhar;
     wxPGProperty* m_pgPropPHPCsFixerOptions;
+    wxPGProperty* m_pgPropPHPCsFixerStandard;
+    wxPGProperty* m_pgPropPHPCsFixerMigration;
+    wxPGProperty* m_pgPropPHPCsFixerDoubleArrows;
+    wxPGProperty* m_pgPropPHPCsFixerEquals;
+    wxPGProperty* m_pgPropPHPCsFixerArrays;
+    wxPGProperty* m_pgPropPHPCsFixerEmptyReturn;
+    wxPGProperty* m_pgPropPHPCsFixerConcatSpace;
     wxPGProperty* m_pgPropPHPCsFixerRules;
     wxPanel* m_splitterPage1731328;
     wxStyledTextCtrl* m_textCtrlPreview_PhpCSFixer;
@@ -124,6 +131,7 @@ protected:
     wxButton* m_buttonHelp;
 
 protected:
+    virtual void UpdatePreviewUI(wxNotebookEvent& event) { event.Skip(); }
     virtual void OnFormatOnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event) { event.Skip(); }

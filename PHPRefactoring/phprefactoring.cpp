@@ -73,10 +73,12 @@ void PHPRefactoring::CreatePluginMenu(wxMenu* pluginsMenu)
     wxTheApp->Bind(wxEVT_MENU, &PHPRefactoring::OnRenameClassProperty, this, wxID_RENAME_CLASS_PROPERTY);
     wxTheApp->Bind(wxEVT_MENU, &PHPRefactoring::OnConvertLocalToInstanceVariable, this,
                    wxID_CONVERT_LOCAL_TO_INSTANCE_VARIABLE);
-    wxTheApp->Bind(wxEVT_MENU, &PHPRefactoring::OnRenameClassAndNamespaces, this, wxID_RENAME_CLASS_AND_NAMESPACES);
     wxTheApp->Bind(wxEVT_MENU, &PHPRefactoring::OnOptimizeUseStatements, this, wxID_OPTIMIZE_USE_STATEMENTS);
+    wxTheApp->Connect(wxID_RENAME_CLASS_AND_NAMESPACES, wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(PHPRefactoring::OnRenameClassAndNamespaces), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &PHPRefactoring::OnEditorContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &PHPRefactoring::OnPhpSettingsChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &PHPRefactoring::OnContextMenu, this);
 }
 
 void PHPRefactoring::UnPlug()
@@ -87,10 +89,12 @@ void PHPRefactoring::UnPlug()
     wxTheApp->Unbind(wxEVT_MENU, &PHPRefactoring::OnRenameClassProperty, this, wxID_RENAME_CLASS_PROPERTY);
     wxTheApp->Unbind(wxEVT_MENU, &PHPRefactoring::OnConvertLocalToInstanceVariable, this,
                      wxID_CONVERT_LOCAL_TO_INSTANCE_VARIABLE);
-    wxTheApp->Unbind(wxEVT_MENU, &PHPRefactoring::OnRenameClassAndNamespaces, this, wxID_RENAME_CLASS_AND_NAMESPACES);
     wxTheApp->Unbind(wxEVT_MENU, &PHPRefactoring::OnOptimizeUseStatements, this, wxID_OPTIMIZE_USE_STATEMENTS);
+    wxTheApp->Disconnect(wxID_RENAME_CLASS_AND_NAMESPACES, wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(PHPRefactoring::OnRenameClassAndNamespaces), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &PHPRefactoring::OnEditorContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_SETTINGS_CHANGED, &PHPRefactoring::OnPhpSettingsChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &PHPRefactoring::OnContextMenu, this);
 }
 
 void PHPRefactoring::OnEditorContextMenu(clContextMenuEvent& event)
@@ -107,7 +111,6 @@ void PHPRefactoring::OnEditorContextMenu(clContextMenuEvent& event)
     refactoringMenu->Append(wxID_RENAME_LOCAL_VARIABLE, _("Rename Local Variable"));
     refactoringMenu->Append(wxID_RENAME_CLASS_PROPERTY, _("Rename Class Property"));
     refactoringMenu->Append(wxID_CONVERT_LOCAL_TO_INSTANCE_VARIABLE, _("Convert Local to Instance Variable"));
-    refactoringMenu->Append(wxID_RENAME_CLASS_AND_NAMESPACES, _("Rename Class and Namespaces"));
     refactoringMenu->Append(wxID_OPTIMIZE_USE_STATEMENTS, _("Optimize use statements"));
 
     event.GetMenu()->AppendSeparator();
@@ -208,13 +211,13 @@ void PHPRefactoring::OnConvertLocalToInstanceVariable(wxCommandEvent& e)
 
 void PHPRefactoring::OnRenameClassAndNamespaces(wxCommandEvent& e)
 {
-    IEditor* editor = m_manager->GetActiveEditor();
-    if(!editor) {
+    wxString msg;
+    msg << _("This will sync namespaces and classes with folder and filenames, for all files in the selected folder, to comply with psr-0\nContinue?");
+    if(wxYES != ::wxMessageBox(msg, "PHP Refactoring", wxYES_NO | wxCANCEL | wxCENTER)) {
         return;
     }
 
-    wxString path = editor->GetFileName().GetPath();
-    RunCommand("fix-class-names " + path);
+    RunCommand("fix-class-names " + m_selectedFolder);
     // Reload the patched files
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 }
@@ -329,7 +332,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
         ::wxMessageBox(errorMessage, "PHP Refactoring", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
-    
+
     wxFileName fnTmpFile(wxFileName::CreateTempFileName("diff-XXXXXX"));
     tmpfile = fnTmpFile.GetFullPath();
     if(!FileUtils::WriteFileContent(tmpfile, patch)) {
@@ -347,6 +350,13 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
     } catch(clException& e) {
         wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
     }
+}
+
+void PHPRefactoring::OnContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    event.GetMenu()->Append(wxID_RENAME_CLASS_AND_NAMESPACES, _("Rename Class and Namespaces"));
+    m_selectedFolder = event.GetPath();
 }
 
 void PHPRefactoring::OnPhpSettingsChanged(clCommandEvent& event)

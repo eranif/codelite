@@ -137,6 +137,7 @@ Source: "{#CODELITE_ROOT}\Runtime\codelite-make.exe"; DestDir: "{app}"; Flags: i
 Source: "{#CODELITE_ROOT}\Runtime\le_exec.exe"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion 
+Source: "{#CODELITE_ROOT}\Runtime\msys-1.0.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion 

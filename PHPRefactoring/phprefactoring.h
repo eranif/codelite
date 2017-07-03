@@ -21,6 +21,9 @@ class PHPRefactoring : public IPlugin
     PhpOptions m_settingsPhp;
     PHPRefactoringOptions m_settings;
 
+protected:
+    wxString m_selectedFolder;
+
 private:
     void RenameVariable(const wxString& action);
     void RefactorFile(const wxString& action, const wxString& extraParameters, IEditor*& editor);
@@ -53,6 +56,7 @@ public:
     void OnOptimizeUseStatements(wxCommandEvent& e);
     void OnOptimizeUseStatementsTest(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
+    void OnContextMenu(clContextMenuEvent& event);
 };
 
 #endif // PHPRefactoring

@@ -355,6 +355,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
 void PHPRefactoring::OnContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
+    event.GetMenu()->AppendSeparator();
     event.GetMenu()->Append(wxID_RENAME_CLASS_AND_NAMESPACES, _("Rename Class and Namespaces"));
     m_selectedFolder = event.GetPath();
 }

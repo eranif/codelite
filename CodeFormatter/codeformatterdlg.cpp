@@ -161,8 +161,10 @@ void CodeFormatterDlg::InitDialog()
 
     // PHP-CS-FIXER
     m_filePickerPHPCsFixerPhar->SetValue(m_options.GetPHPCSFixerPhar());
-    m_pgPropPHPCsFixerOptions->SetValue(m_options.GetPHPCSFixerPharOptions());
+    wxString options = m_options.GetPHPCSFixerPharOptions();
+    m_pgPropPHPCsFixerOptions->SetValue(options.Trim().Trim(false));
 
+    m_pgPropPHPCsFixerUseFile->SetValue(wxVariant((bool)(m_options.GetPHPCSFixerPharSettings() & kPHPFixserFormatFile)));
     m_pgPropPHPCsFixerStandard->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfPSR1 | kPcfPSR2 | kPcfSymfony));
     m_pgPropPHPCsFixerMigration->SetValue((int)m_options.GetPHPCSFixerPharRules() &
                                           (kPcfPHP56Migration | kPcfPHP70Migration | kPcfPHP71Migration));
@@ -181,6 +183,7 @@ void CodeFormatterDlg::InitDialog()
     m_filePickerPhpcbfPhar->SetValue(m_options.GetPhpcbfPhar());
     m_pgPropPhpcbfSeverity->SetValue((int)m_options.GetPhpcbfSeverity());
     m_pgPropPhpcbfEncoding->SetValue(m_options.GetPhpcbfEncoding());
+    m_pgPropPhpcbfUseFile->SetValue(wxVariant((bool)(m_options.GetPhpcbfOptions() & kPhpbcfFormatFile)));
     m_pgPropPhpcbfStandard->SetValue(m_options.GetPhpcbfStandard());
     m_pgPropPhpcbfOptions->SetValue((int)m_options.GetPhpcbfOptions());
 
@@ -367,7 +370,12 @@ void CodeFormatterDlg::OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event)
 {
     m_isDirty = true;
     m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetValueAsString());
-    m_options.SetPHPCSFixerPharOptions(m_pgPropPHPCsFixerOptions->GetValueAsString());
+    m_options.SetPHPCSFixerPharOptions(m_pgPropPHPCsFixerOptions->GetValueAsString().Trim().Trim(false));
+    size_t phpcsfixerSettings(0);
+    if (m_pgPropPHPCsFixerUseFile->GetValue().GetBool()) {
+        phpcsfixerSettings |= kPHPFixserFormatFile;
+    }
+    m_options.SetPHPCSFixerPharSettings(phpcsfixerSettings);
     size_t phpcsfixerOptions(0);
     phpcsfixerOptions |= m_pgPropPHPCsFixerStandard->GetValue().GetInteger();
     phpcsfixerOptions |= m_pgPropPHPCsFixerMigration->GetValue().GetInteger();
@@ -396,6 +404,9 @@ void CodeFormatterDlg::OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event)
     m_options.SetPhpcbfStandard(m_pgPropPhpcbfStandard->GetValueAsString());
     size_t phpcbfOptions(0);
     phpcbfOptions |= m_pgPropPhpcbfOptions->GetValue().GetInteger();
+    if(m_pgPropPhpcbfUseFile->GetValue().GetBool()) {
+        phpcbfOptions |= kPhpbcfFormatFile;
+    }
     m_options.SetPhpcbfOptions(phpcbfOptions);
 
     CallAfter(&CodeFormatterDlg::UpdatePreview);

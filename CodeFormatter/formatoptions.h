@@ -89,6 +89,10 @@ enum PHPFormatterEngine {
     kPhpFormatEnginePhpcbf,
 };
 
+enum PHPFixserFormatterSettings {
+    kPHPFixserFormatFile = (1 << 1),
+};
+
 enum PHPFixserFormatterStyle {
     kPcfAllowRisky = (1 << 0),
     kPcfPHP56Migration = (1 << 1),
@@ -126,6 +130,7 @@ enum PHPFixserFormatterStyle {
 
 enum PhpbcfFormatterStyle {
     kWarningSeverity0 = (1 << 0),
+    kPhpbcfFormatFile = (1 << 1),
 };
 
 enum ClangFormatStyle {
@@ -183,6 +188,7 @@ class FormatOptions : public SerializedObject
     size_t m_generalFlags;
     wxString m_PHPCSFixerPhar;
     wxString m_PHPCSFixerPharOptions;
+    size_t m_PHPCSFixerPharSettings;
     size_t m_PHPCSFixerPharRules;
     wxString m_PhpcbfPhar;
     size_t m_phpcbfSeverity;
@@ -200,6 +206,11 @@ private:
      */
     wxString ClangGlobalSettings() const;
     void AutodetectSettings();
+
+    /**
+     * @brief Check if there is a file of the given name in any of the parent directories of the input file
+     */
+    bool HasConfigForFile(const wxFileName& fileName, const wxString& configName) const;
 
 public:
     FormatOptions();
@@ -307,6 +318,7 @@ public:
 
     // PHP-CS-FIXER
     bool GetPhpFixerCommand(const wxFileName& fileName, wxString& command);
+    wxString GetPhpFixerRules(const wxFileName& fileName);
     void SetPHPCSFixerPhar(const wxString& PHPCSFixerPhar)
     {
         this->m_PHPCSFixerPhar = PHPCSFixerPhar;
@@ -323,6 +335,14 @@ public:
     {
         return m_PHPCSFixerPharOptions;
     }
+    void SetPHPCSFixerPharSettings(const size_t& PHPCSFixerPharSettings)
+    {
+        this->m_PHPCSFixerPharSettings = PHPCSFixerPharSettings;
+    }
+    size_t GetPHPCSFixerPharSettings() const
+    {
+        return m_PHPCSFixerPharSettings;
+    }
     void SetPHPCSFixerPharRules(const size_t& PHPCSFixerPharRules)
     {
         this->m_PHPCSFixerPharRules = PHPCSFixerPharRules;
@@ -334,6 +354,7 @@ public:
 
     // PHPCBF
     bool GetPhpcbfCommand(const wxFileName& fileName, wxString& command);
+    wxString GetPhpcbfStandard(const wxFileName& fileName);
     void SetPhpcbfPhar(const wxString& PhpcbfPhar)
     {
         this->m_PhpcbfPhar = PhpcbfPhar;

@@ -162,7 +162,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrClangIntArr.Add(kClangFormatWebKit);
     m_pgMgrClangIntArr.Add(kClangFormatChromium);
     m_pgMgrClangIntArr.Add(kClangFormatMozilla);
-    m_pgMgrClangIntArr.Add(kClangFormatFile);
     m_pgPropClangFormatStyle = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0) );
     m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
     
@@ -568,6 +567,9 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgPropPHPCsFixerOptions = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxStringProperty( _("Parameters"), wxPG_LABEL, wxT("")) );
     m_pgPropPHPCsFixerOptions->SetHelpString(_("Manually enter parameters.\nIf filled CodeLite will ignore all other options and use the"));
     
+    m_pgPropPHPCsFixerUseFile = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxBoolProperty( _("Use .php_cs file"), wxPG_LABEL, 1) );
+    m_pgPropPHPCsFixerUseFile->SetHelpString(_("Use .php_cs file if exists"));
+    
     m_pgMgrPHPCsFixerArr.Clear();
     m_pgMgrPHPCsFixerIntArr.Clear();
     m_pgMgrPHPCsFixerArr.Add(_("None"));
@@ -774,18 +776,19 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgPropPhpcbfEncoding = m_pgMgrPhpcbf->AppendIn( m_pgPropPhpcbf,  new wxEnumProperty( _("Encoding"), wxPG_LABEL, m_pgMgrPhpcbfArr, m_pgMgrPhpcbfIntArr, 0) );
     m_pgPropPhpcbfEncoding->SetHelpString(_("The encoding of the files being fixed"));
     
+    m_pgPropPhpcbfUseFile = m_pgMgrPhpcbf->AppendIn( m_pgPropPhpcbf,  new wxBoolProperty( _("Use phpcs.xml file"), wxPG_LABEL, 1) );
+    m_pgPropPhpcbfUseFile->SetHelpString(_("Use phpcs.xml file if exists"));
+    
     m_pgMgrPhpcbfArr.Clear();
     m_pgMgrPhpcbfIntArr.Clear();
-    m_pgMgrPhpcbfArr.Add(_("phpcs.xml"));
     m_pgMgrPhpcbfArr.Add(_("MySource"));
     m_pgMgrPhpcbfArr.Add(_("PEAR"));
-    m_pgMgrPhpcbfArr.Add(_("PHPCS"));
     m_pgMgrPhpcbfArr.Add(_("PSR1"));
     m_pgMgrPhpcbfArr.Add(_("PSR2"));
     m_pgMgrPhpcbfArr.Add(_("Squiz"));
     m_pgMgrPhpcbfArr.Add(_("Zend"));
     m_pgPropPhpcbfStandard = m_pgMgrPhpcbf->AppendIn( m_pgPropPhpcbf,  new wxEnumProperty( _("Standard"), wxPG_LABEL, m_pgMgrPhpcbfArr, m_pgMgrPhpcbfIntArr, 0) );
-    m_pgPropPhpcbfStandard->SetHelpString(_("Coding standard. If the \"phpcs.xml\" option is selected, CodeLite will ignore all the options set here and use the options set in your phpcs.xml file"));
+    m_pgPropPhpcbfStandard->SetHelpString(_("Coding standard."));
     
     m_pgMgrPhpcbfArr.Clear();
     m_pgMgrPhpcbfIntArr.Clear();

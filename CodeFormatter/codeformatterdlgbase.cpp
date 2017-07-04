@@ -157,7 +157,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrClangArr.Add(_("WebKit"));
     m_pgMgrClangArr.Add(_("Chromium"));
     m_pgMgrClangArr.Add(_("Mozilla"));
-    m_pgMgrClangArr.Add(_("File"));
     m_pgMgrClangIntArr.Add(kClangFormatLLVM);
     m_pgMgrClangIntArr.Add(kClangFormatGoogle);
     m_pgMgrClangIntArr.Add(kClangFormatWebKit);
@@ -165,7 +164,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrClangIntArr.Add(kClangFormatMozilla);
     m_pgMgrClangIntArr.Add(kClangFormatFile);
     m_pgPropClangFormatStyle = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0) );
-    m_pgPropClangFormatStyle->SetHelpString(_("Coding style. If the \"File\" option is selected, CodeLite will ignore all the options set here and use the options set in your .clang-format file"));
+    m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
+    
+    m_pgPropClangUseFile = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxBoolProperty( _("Use .clang-format file"), wxPG_LABEL, 1) );
+    m_pgPropClangUseFile->SetHelpString(_("Use .clang-format file if exists"));
     
     m_pgMgrClangArr.Clear();
     m_pgMgrClangIntArr.Clear();

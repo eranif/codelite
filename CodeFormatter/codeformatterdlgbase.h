@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
-#define CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#ifndef _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#define _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -68,6 +68,7 @@ protected:
     wxPGProperty* m_pgPropColumnLimit;
     wxPGProperty* m_pgPropClangBraceBreakStyle;
     wxPGProperty* m_pgPropClangFormatStyle;
+    wxPGProperty* m_pgPropClangUseFile;
     wxPGProperty* m_pgPropClangFormattingOptions;
     wxPanel* m_splitterPage173;
     wxStyledTextCtrl* m_textCtrlPreview_Clang;

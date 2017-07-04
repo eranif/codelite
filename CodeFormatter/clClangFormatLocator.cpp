@@ -7,13 +7,9 @@
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 
-clClangFormatLocator::clClangFormatLocator()
-{
-}
+clClangFormatLocator::clClangFormatLocator() {}
 
-clClangFormatLocator::~clClangFormatLocator()
-{
-}
+clClangFormatLocator::~clClangFormatLocator() {}
 
 bool clClangFormatLocator::Locate(wxString& clangFormat)
 {
@@ -76,4 +72,16 @@ double clClangFormatLocator::GetVersion(const wxString& clangFormat) const
     double_version = 3.5;
 #endif
     return double_version; // Default
+}
+
+wxFileName clClangFormatLocator::FindConfigForFile(const wxFileName& filename) const
+{
+    wxFileName clangFormatConfigFile(filename.GetPath(), ".clang-format");
+    while(clangFormatConfigFile.GetDirCount()) {
+        if(clangFormatConfigFile.FileExists()) {
+            return clangFormatConfigFile;
+        }
+        clangFormatConfigFile.RemoveLastDir();
+    }
+    return wxFileName();
 }

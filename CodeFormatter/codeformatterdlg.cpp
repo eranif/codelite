@@ -33,12 +33,8 @@
 #include "windowattrmanager.h"
 #include <wx/menu.h>
 
-CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
-                                   IManager* mgr,
-                                   CodeFormatter* cf,
-                                   FormatOptions& options,
-                                   const wxString& cppSampleCode,
-                                   const wxString& phpSampleCode)
+CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent, IManager* mgr, CodeFormatter* cf, FormatOptions& options,
+                                   const wxString& cppSampleCode, const wxString& phpSampleCode)
     : CodeFormatterBaseDlg(parent)
     , m_options(options)
     , m_cf(cf)
@@ -153,11 +149,9 @@ void CodeFormatterDlg::InitDialog()
 
     } else if(m_options.GetClangFormatOptions() & kClangFormatLLVM) {
         m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatLLVM, wxPG_FULL_VALUE);
-
-    } else if(m_options.GetClangFormatOptions() & kClangFormatFile) {
-        m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatFile, wxPG_FULL_VALUE);
     }
 
+    m_pgPropClangUseFile->SetValue(wxVariant((bool)(m_options.GetClangFormatOptions() & kClangFormatFile)));
     m_pgPropClangFormattingOptions->SetValue((int)m_options.GetClangFormatOptions());
     m_pgPropClangBraceBreakStyle->SetValue((int)m_options.GetClangBreakBeforeBrace());
     m_pgPropColumnLimit->SetValue((int)m_options.GetClangColumnLimit());
@@ -170,12 +164,17 @@ void CodeFormatterDlg::InitDialog()
     m_pgPropPHPCsFixerOptions->SetValue(m_options.GetPHPCSFixerPharOptions());
 
     m_pgPropPHPCsFixerStandard->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfPSR1 | kPcfPSR2 | kPcfSymfony));
-    m_pgPropPHPCsFixerMigration->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfPHP56Migration | kPcfPHP70Migration | kPcfPHP71Migration));
-    m_pgPropPHPCsFixerDoubleArrows->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow));
-    m_pgPropPHPCsFixerEquals->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals));
+    m_pgPropPHPCsFixerMigration->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                          (kPcfPHP56Migration | kPcfPHP70Migration | kPcfPHP71Migration));
+    m_pgPropPHPCsFixerDoubleArrows->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                             (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow));
+    m_pgPropPHPCsFixerEquals->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                       (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals));
     m_pgPropPHPCsFixerArrays->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfShortArray | kPcfLongArray));
-    m_pgPropPHPCsFixerConcatSpace->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfConcatSpaceNone | kPcfConcatSpaceOne));
-    m_pgPropPHPCsFixerEmptyReturn->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfEmptyReturnStrip | kPcfEmptyReturnKeep));
+    m_pgPropPHPCsFixerConcatSpace->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                            (kPcfConcatSpaceNone | kPcfConcatSpaceOne));
+    m_pgPropPHPCsFixerEmptyReturn->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                            (kPcfEmptyReturnStrip | kPcfEmptyReturnKeep));
     m_pgPropPHPCsFixerRules->SetValue((int)m_options.GetPHPCSFixerPharRules());
 
     // PHPCBF
@@ -267,14 +266,9 @@ void CodeFormatterDlg::UpdatePreviewText(wxStyledTextCtrl*& textCtrl, const wxSt
     textCtrl->SetEditable(false);
 }
 
-CodeFormatterDlg::~CodeFormatterDlg()
-{
-}
+CodeFormatterDlg::~CodeFormatterDlg() {}
 
-void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_isDirty);
-}
+void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isDirty); }
 
 void CodeFormatterDlg::OnCustomAstyleFlags(wxCommandEvent& event)
 {
@@ -337,6 +331,10 @@ void CodeFormatterDlg::OnPgmgrclangPgChanged(wxPropertyGridEvent& event)
     size_t clangOptions(0);
     clangOptions |= m_pgPropClangFormatStyle->GetValue().GetInteger();
     clangOptions |= m_pgPropClangFormattingOptions->GetValue().GetInteger();
+    if(m_pgPropClangUseFile->GetValue().GetBool()) {
+        clangOptions |= kClangFormatFile;
+    }
+
     m_options.SetClangFormatOptions(clangOptions);
     m_options.SetClangBreakBeforeBrace(m_pgPropClangBraceBreakStyle->GetValue().GetInteger());
     m_options.SetClangFormatExe(m_pgPropClangFormatExePath->GetValueAsString());

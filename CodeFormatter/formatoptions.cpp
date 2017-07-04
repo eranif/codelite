@@ -37,8 +37,7 @@ FormatOptions::FormatOptions()
     , m_engine(kCxxFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
-                           kSpaceBeforeAssignmentOperators |
-                           kAlignEscapedNewlinesLeft)
+                           kSpaceBeforeAssignmentOperators | kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
@@ -51,9 +50,7 @@ FormatOptions::FormatOptions()
 {
 }
 
-FormatOptions::~FormatOptions()
-{
-}
+FormatOptions::~FormatOptions() {}
 
 void FormatOptions::DeSerialize(Archive& arch)
 {
@@ -95,7 +92,7 @@ void FormatOptions::AutodetectSettings()
     }
     if(m_clangFormatExe.IsEmpty() || !clangFormatExe.Exists()) {
         m_engine = kCxxFormatEngineAStyle; // Change the active engine to AStyle
-        m_clangFormatExe = "";          // Clear the non existed executable
+        m_clangFormatExe = "";             // Clear the non existed executable
     }
 
     // Find an installed php style fixer
@@ -245,11 +242,8 @@ wxString FormatOptions::AstyleOptionsAsString() const
     return options;
 }
 
-wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName,
-        const bool& formatInline,
-        const int& cursorPosition,
-        const int& selStart,
-        const int& selEnd) const
+wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName, const bool& formatInline,
+                                           const int& cursorPosition, const int& selStart, const int& selEnd) const
 {
     wxString command, filePath;
 
@@ -282,8 +276,13 @@ wxString FormatOptions::GetClangFormatStyleAsString(const wxFileName& fileName) 
 {
     // If the option: "File" is selected, it overrides everything here
     if(m_clangFormatOptions & kClangFormatFile) {
-        // All our settings are taken from .clang-format file
-        return "file";
+        // Even if the user specified to use File, we only enable it incase
+        // .clang-format file exists
+        clClangFormatLocator locator;
+        wxFileName configFile = locator.FindConfigForFile(fileName);
+        if(configFile.IsOk()) {
+            return "file";
+        }
     }
 
     wxString style = "\"{ BasedOnStyle: ";
@@ -449,15 +448,20 @@ bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& com
             array_syntax.addProperty("syntax", m_PHPCSFixerPharRules & kPcfShortArray ? "short" : "long");
             rules.addProperty("array_syntax", array_syntax);
         }
-        if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreDoubleArrow)) {
+        if(m_PHPCSFixerPharRules &
+           (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreDoubleArrow)) {
             JSONElement binary_operator_spaces = JSONElement::createObject("binary_operator_spaces");
             if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow)) {
-                binary_operator_spaces.addProperty(
-                    "align_double_arrow", m_PHPCSFixerPharRules & kPcfIgnoreDoubleArrow ? cJSON_NULL : m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
+                binary_operator_spaces.addProperty("align_double_arrow",
+                                                   m_PHPCSFixerPharRules & kPcfIgnoreDoubleArrow
+                                                       ? cJSON_NULL
+                                                       : m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
             }
             if(m_PHPCSFixerPharRules & (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals)) {
-                binary_operator_spaces.addProperty(
-                    "align_equals", m_PHPCSFixerPharRules & kPcfIgnoreEquals ? cJSON_NULL : m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
+                binary_operator_spaces.addProperty("align_equals",
+                                                   m_PHPCSFixerPharRules & kPcfIgnoreEquals
+                                                       ? cJSON_NULL
+                                                       : m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
             }
             rules.addProperty("binary_operator_spaces", binary_operator_spaces);
         }

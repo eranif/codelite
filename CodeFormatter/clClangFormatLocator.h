@@ -27,6 +27,7 @@
 #define CLCLANGFORMATLOCATOR_H
 
 #include <wx/string.h>
+#include <wx/filename.h>
 
 class clClangFormatLocator
 {
@@ -44,6 +45,12 @@ public:
      * @brief return the clang format version installed
      */
     double GetVersion(const wxString& clangFormat) const;
+
+    /**
+     * @brief When using -style=file, clang-format for each input file will try to find the .clang-format file located
+     * in the closest parent directory of the input file
+     */
+    wxFileName FindConfigForFile(const wxFileName& filename) const;
 };
 
 #endif // CLCLANGFORMATLOCATOR_H

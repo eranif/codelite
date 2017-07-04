@@ -267,7 +267,7 @@ public:
     virtual void AddProject(const wxString& path) = 0;
 
     /**
-     * @brief return true of a workspace is already open
+     * @brief return true if a workspace is already open
      */
     virtual bool IsWorkspaceOpen() const = 0;
 

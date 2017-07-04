@@ -1,8 +1,8 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.8)
 
 # set the plugin name here
-set( PLUGIN_NAME "CodeFormatter")
+set( PLUGIN_NAME "PHPRefactoring")
 
 # Our project is called 'plugin' this is how it will be called in
 # visual studio, and in our makefiles. 
@@ -15,7 +15,11 @@ find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 include( "${wxWidgets_USE_FILE}" )
 
 # Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
+include_directories("${CL_SRC_ROOT}/Plugin" 
+                    "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
+                    "${CL_SRC_ROOT}/CodeLite" 
+                    "${CL_SRC_ROOT}/PCH" 
+                    "${CL_SRC_ROOT}/Interfaces")
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
@@ -50,7 +54,5 @@ target_link_libraries(${PLUGIN_NAME}
                       plugin
                       )
 
-
+# Use CodeLite's macro: CL_INSTALL_PLUGIN which handles both OSX and Linux installation
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
-CL_INSTALL_FILE_SHARED(${CL_SRC_ROOT}/Runtime/astyle.sample)
-CL_INSTALL_FILE_SHARED(${CL_SRC_ROOT}/Runtime/php.sample)

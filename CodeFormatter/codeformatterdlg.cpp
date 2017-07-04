@@ -22,9 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "codeformatter.h"
 #include "ColoursAndFontsManager.h"
 #include "clSTCLineKeeper.h"
-#include "codeformatter.h"
 #include "codeformatterdlg.h"
 #include "editor_config.h"
 #include "fileextmanager.h"
@@ -33,38 +33,13 @@
 #include "windowattrmanager.h"
 #include <wx/menu.h>
 
-static const wxString PHPSample =
-    "<?php\n"
-    "namespace MySpace;\n"
-    "require_once 'bla.php';\n"
-    "class MyClass {\n"
-    "  const MY_CONST = \"Hello World\";\n"
-    "  const MY_2ND_CONST = \"Second Constant\";\n"
-    "  public function __construct() {}\n"
-    "  public function foo() {}\n"
-    "  public function bar() {\n"
-    "    $array = array(\"foo\" => \"bar\",\"bar\" => \"foo\",);\n"
-    "    $a=1;\n"
-    "    if($a == 1) {\n"
-    "      // do something\n"
-    "    } elseif ($a==2) {\n"
-    "      // do something else\n"
-    "    } else {\n"
-    "      // default\n"
-    "    }\n"
-    "    while($a==1) {\n"
-    "      // a is 1... reduce it\n"
-    "      --$a;\n"
-    "    }\n"
-    "  }\n"
-    "}\n";
-
-CodeFormatterDlg::CodeFormatterDlg(
-    wxWindow* parent, IManager* mgr, CodeFormatter* cf, FormatOptions& options, const wxString& sampleCode)
+CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent, IManager* mgr, CodeFormatter* cf, FormatOptions& options,
+                                   const wxString& cppSampleCode, const wxString& phpSampleCode)
     : CodeFormatterBaseDlg(parent)
     , m_options(options)
     , m_cf(cf)
-    , m_sampleCode(sampleCode)
+    , m_cppSampleCode(cppSampleCode)
+    , m_phpSampleCode(phpSampleCode)
     , m_isDirty(false)
     , m_mgr(mgr)
 {
@@ -75,7 +50,12 @@ CodeFormatterDlg::CodeFormatterDlg(
     // center the dialog
     Centre();
 
-    m_textCtrlPreview->SetText(m_sampleCode);
+    m_textCtrlPreview->SetText(m_cppSampleCode);
+    m_textCtrlPreview_Clang->SetText(m_cppSampleCode);
+    m_stcPhpPreview->SetText(m_phpSampleCode);
+    m_textCtrlPreview_PhpCSFixer->SetText(m_phpSampleCode);
+    m_textCtrlPreview_Phpcbf->SetText(m_phpSampleCode);
+
     GetSizer()->Fit(this);
     InitDialog();
     UpdatePreview();
@@ -169,11 +149,9 @@ void CodeFormatterDlg::InitDialog()
 
     } else if(m_options.GetClangFormatOptions() & kClangFormatLLVM) {
         m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatLLVM, wxPG_FULL_VALUE);
-
-    } else if(m_options.GetClangFormatOptions() & kClangFormatFile) {
-        m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatFile, wxPG_FULL_VALUE);
     }
 
+    m_pgPropClangUseFile->SetValue(wxVariant((bool)(m_options.GetClangFormatOptions() & kClangFormatFile)));
     m_pgPropClangFormattingOptions->SetValue((int)m_options.GetClangFormatOptions());
     m_pgPropClangBraceBreakStyle->SetValue((int)m_options.GetClangBreakBeforeBrace());
     m_pgPropColumnLimit->SetValue((int)m_options.GetClangColumnLimit());
@@ -184,6 +162,19 @@ void CodeFormatterDlg::InitDialog()
     // PHP-CS-FIXER
     m_filePickerPHPCsFixerPhar->SetValue(m_options.GetPHPCSFixerPhar());
     m_pgPropPHPCsFixerOptions->SetValue(m_options.GetPHPCSFixerPharOptions());
+
+    m_pgPropPHPCsFixerStandard->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfPSR1 | kPcfPSR2 | kPcfSymfony));
+    m_pgPropPHPCsFixerMigration->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                          (kPcfPHP56Migration | kPcfPHP70Migration | kPcfPHP71Migration));
+    m_pgPropPHPCsFixerDoubleArrows->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                             (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow));
+    m_pgPropPHPCsFixerEquals->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                       (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals));
+    m_pgPropPHPCsFixerArrays->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfShortArray | kPcfLongArray));
+    m_pgPropPHPCsFixerConcatSpace->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                            (kPcfConcatSpaceNone | kPcfConcatSpaceOne));
+    m_pgPropPHPCsFixerEmptyReturn->SetValue((int)m_options.GetPHPCSFixerPharRules() &
+                                            (kPcfEmptyReturnStrip | kPcfEmptyReturnKeep));
     m_pgPropPHPCsFixerRules->SetValue((int)m_options.GetPHPCSFixerPharRules());
 
     // PHPCBF
@@ -240,37 +231,30 @@ void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
 void CodeFormatterDlg::UpdatePreview()
 {
     wxString output, command;
-    // Astyle
-    output.Clear();
-    m_cf->AstyleFormat(m_sampleCode, output, m_options.AstyleOptionsAsString());
-    UpdatePreviewText(m_textCtrlPreview, output);
 
-    // Clang
-    output.Clear();
-    m_cf->ClangPreviewFormat(m_sampleCode, output);
-    UpdatePreviewText(m_textCtrlPreview_Clang, output);
+    if(m_notebook->GetSelection() == 1) { // CXX page
+        output = m_cppSampleCode;
 
-    // PHP preview
-    output = PHPSample;
-    m_cf->PhpFormat(output);
-    UpdatePreviewText(m_stcPhpPreview, output);
+        if(m_notebookCxx->GetSelection() == 0) { // Clang
+            m_cf->DoFormatPreview(output, "cpp", kFormatEngineClangFormat);
+            UpdatePreviewText(m_textCtrlPreview_Clang, output);
+        } else if(m_notebookCxx->GetSelection() == 1) { // Astyle
+            m_cf->DoFormatPreview(output, "cpp", kFormatEngineAStyle);
+            UpdatePreviewText(m_textCtrlPreview, output);
+        }
+    } else if(m_notebook->GetSelection() == 2) { // PHP page
+        output = m_phpSampleCode;
 
-    // PhpCsFixer preview
-    output = PHPSample;
-    if(m_options.GetPhpFixerCommand(command)) {
-        m_cf->DoFormatExternally(output, command);
-        UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
-    } else {
-        UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, _("No Preview Available"));
-    }
-
-    // Phpcbf preview
-    output = PHPSample;
-    if(m_options.GetPhpcbfCommand(command)) {
-        m_cf->DoFormatExternally(output, command);
-        UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
-    } else {
-        UpdatePreviewText(m_textCtrlPreview_Phpcbf, _("No Preview Available"));
+        if(m_notebookPhp->GetSelection() == 0) { // Build In PHP
+            m_cf->DoFormatPreview(output, "php", kFormatEngineBuildInPhp);
+            UpdatePreviewText(m_stcPhpPreview, output);
+        } else if(m_notebookPhp->GetSelection() == 1) { // PhpCsFixer
+            m_cf->DoFormatPreview(output, "php", kFormatEnginePhpCsFixer);
+            UpdatePreviewText(m_textCtrlPreview_PhpCSFixer, output);
+        } else if(m_notebookPhp->GetSelection() == 2) { // Phpcbf
+            m_cf->DoFormatPreview(output, "php", kFormatEnginePhpcbf);
+            UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
+        }
     }
 }
 
@@ -347,6 +331,10 @@ void CodeFormatterDlg::OnPgmgrclangPgChanged(wxPropertyGridEvent& event)
     size_t clangOptions(0);
     clangOptions |= m_pgPropClangFormatStyle->GetValue().GetInteger();
     clangOptions |= m_pgPropClangFormattingOptions->GetValue().GetInteger();
+    if(m_pgPropClangUseFile->GetValue().GetBool()) {
+        clangOptions |= kClangFormatFile;
+    }
+
     m_options.SetClangFormatOptions(clangOptions);
     m_options.SetClangBreakBeforeBrace(m_pgPropClangBraceBreakStyle->GetValue().GetInteger());
     m_options.SetClangFormatExe(m_pgPropClangFormatExePath->GetValueAsString());
@@ -366,8 +354,7 @@ void CodeFormatterDlg::OnPgmgrphpPgChanged(wxPropertyGridEvent& event)
 void CodeFormatterDlg::OnChoicecxxengineChoiceSelected(wxCommandEvent& event)
 {
     m_isDirty = true;
-    m_options.SetEngine((FormatterEngine)event.GetSelection());
-    CallAfter(&CodeFormatterDlg::UpdatePreview);
+    m_options.SetEngine((CXXFormatterEngine)event.GetSelection());
 }
 
 void CodeFormatterDlg::OnFormatOnSave(wxCommandEvent& event)
@@ -382,6 +369,13 @@ void CodeFormatterDlg::OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event)
     m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetValueAsString());
     m_options.SetPHPCSFixerPharOptions(m_pgPropPHPCsFixerOptions->GetValueAsString());
     size_t phpcsfixerOptions(0);
+    phpcsfixerOptions |= m_pgPropPHPCsFixerStandard->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerMigration->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerDoubleArrows->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerEquals->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerArrays->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerConcatSpace->GetValue().GetInteger();
+    phpcsfixerOptions |= m_pgPropPHPCsFixerEmptyReturn->GetValue().GetInteger();
     phpcsfixerOptions |= m_pgPropPHPCsFixerRules->GetValue().GetInteger();
     m_options.SetPHPCSFixerPharRules(phpcsfixerOptions);
 
@@ -391,7 +385,6 @@ void CodeFormatterDlg::OnChoicephpformatterChoiceSelected(wxCommandEvent& event)
 {
     m_isDirty = true;
     m_options.SetPhpEngine((PHPFormatterEngine)event.GetSelection());
-    CallAfter(&CodeFormatterDlg::UpdatePreview);
 }
 
 void CodeFormatterDlg::OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event)
@@ -406,4 +399,10 @@ void CodeFormatterDlg::OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event)
     m_options.SetPhpcbfOptions(phpcbfOptions);
 
     CallAfter(&CodeFormatterDlg::UpdatePreview);
+}
+
+void CodeFormatterDlg::UpdatePreviewUI(wxNotebookEvent& event)
+{
+    UpdatePreview();
+    event.Skip();
 }

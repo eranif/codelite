@@ -50,6 +50,7 @@
     <Project Name="ZoomNavigator" Path="ZoomNavigator/ZoomNavigator.project" Active="No"/>
     <Project Name="EditorConfigPlugin" Path="EditorConfigPlugin/EditorConfigPlugin.project" Active="No"/>
     <Project Name="codelite_vim" Path="codelite_vim/codelite_vim.project" Active="No"/>
+    <Project Name="PHPRefactoring" Path="PHPRefactoring/PHPRefactoring.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
@@ -123,6 +124,7 @@
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
+      <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -177,6 +179,7 @@
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
+      <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -231,6 +234,7 @@
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
+      <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -285,6 +289,7 @@
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
+      <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
@@ -339,8 +344,9 @@
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
+      <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment>WXWIN=D:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
@@ -394,8 +400,9 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Release"/>
+      <Project Name="PHPRefactoring" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
@@ -448,6 +455,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
+      <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

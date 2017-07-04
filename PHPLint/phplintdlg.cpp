@@ -1,6 +1,6 @@
 #include "phplintdlg.h"
-#include "windowattrmanager.h"
 #include "lintoptions.h"
+#include "windowattrmanager.h"
 
 PHPLintDlg::PHPLintDlg(wxWindow* parent)
     : PHPLintBaseDlg(parent)
@@ -14,9 +14,7 @@ PHPLintDlg::PHPLintDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-PHPLintDlg::~PHPLintDlg()
-{
-}
+PHPLintDlg::~PHPLintDlg() {}
 
 void PHPLintDlg::InitDialog()
 {

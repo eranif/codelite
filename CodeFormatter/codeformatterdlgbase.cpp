@@ -157,7 +157,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrClangArr.Add(_("WebKit"));
     m_pgMgrClangArr.Add(_("Chromium"));
     m_pgMgrClangArr.Add(_("Mozilla"));
-    m_pgMgrClangArr.Add(_("File"));
     m_pgMgrClangIntArr.Add(kClangFormatLLVM);
     m_pgMgrClangIntArr.Add(kClangFormatGoogle);
     m_pgMgrClangIntArr.Add(kClangFormatWebKit);
@@ -165,7 +164,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrClangIntArr.Add(kClangFormatMozilla);
     m_pgMgrClangIntArr.Add(kClangFormatFile);
     m_pgPropClangFormatStyle = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0) );
-    m_pgPropClangFormatStyle->SetHelpString(_("Coding style. If the \"File\" option is selected, CodeLite will ignore all the options set here and use the options set in your .clang-format file"));
+    m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
+    
+    m_pgPropClangUseFile = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxBoolProperty( _("Use .clang-format file"), wxPG_LABEL, 1) );
+    m_pgPropClangUseFile->SetHelpString(_("Use .clang-format file if exists"));
     
     m_pgMgrClangArr.Clear();
     m_pgMgrClangIntArr.Clear();
@@ -568,8 +570,119 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     m_pgMgrPHPCsFixerArr.Clear();
     m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("None"));
+    m_pgMgrPHPCsFixerArr.Add(_("PSR1"));
+    m_pgMgrPHPCsFixerArr.Add(_("PSR2"));
+    m_pgMgrPHPCsFixerArr.Add(_("Symfony"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPSR1);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPSR2);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfSymfony);
+    m_pgPropPHPCsFixerStandard = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Standard"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerStandard->SetHelpString(_("Coding standard."));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("None"));
+    m_pgMgrPHPCsFixerArr.Add(_("PHP 5.6"));
+    m_pgMgrPHPCsFixerArr.Add(_("PHP 7.0"));
+    m_pgMgrPHPCsFixerArr.Add(_("PHP 7.1"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPHP56Migration);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPHP70Migration);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPHP71Migration);
+    m_pgPropPHPCsFixerMigration = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Migration"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerMigration->SetHelpString(_("Migrate old code to use features by newer versions of php."));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("Align"));
+    m_pgMgrPHPCsFixerArr.Add(_("Strip"));
+    m_pgMgrPHPCsFixerArr.Add(_("Ignore"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfAlignDoubleArrow);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfStripDoubleArrow);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfIgnoreDoubleArrow);
+    m_pgPropPHPCsFixerDoubleArrows = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Double arrows"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerDoubleArrows->SetHelpString(_("Double arrows alignment"));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("Align"));
+    m_pgMgrPHPCsFixerArr.Add(_("Strip"));
+    m_pgMgrPHPCsFixerArr.Add(_("Ignore"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfAlignEquals);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfStripEquals);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfIgnoreEquals);
+    m_pgPropPHPCsFixerEquals = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Equals"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerEquals->SetHelpString(_("Equals alignment"));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("Short"));
+    m_pgMgrPHPCsFixerArr.Add(_("Long"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfShortArray);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfLongArray);
+    m_pgPropPHPCsFixerArrays = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Arrays"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerArrays->SetHelpString(_("Array style"));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("Strip"));
+    m_pgMgrPHPCsFixerArr.Add(_("Keep"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfEmptyReturnStrip);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfEmptyReturnKeep);
+    m_pgPropPHPCsFixerEmptyReturn = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Empty return"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerEmptyReturn->SetHelpString(_("Remove @return void|null from phpdoc."));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("None"));
+    m_pgMgrPHPCsFixerArr.Add(_("One"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfConcatSpaceNone);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfConcatSpaceOne);
+    m_pgPropPHPCsFixerConcatSpace = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Concat space"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerConcatSpace->SetHelpString(_("Spacing around concatination dots."));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
     m_pgMgrPHPCsFixerArr.Add(_("Allow risky"));
-    m_pgMgrPHPCsFixerIntArr.Add(kAllowRisky);
+    m_pgMgrPHPCsFixerArr.Add(_("Blank line after namespace"));
+    m_pgMgrPHPCsFixerArr.Add(_("Blank line after opening tag"));
+    m_pgMgrPHPCsFixerArr.Add(_("Blank line before return"));
+    m_pgMgrPHPCsFixerArr.Add(_("Combine consecutive unsets"));
+    m_pgMgrPHPCsFixerArr.Add(_("Linebreak after opening tag"));
+    m_pgMgrPHPCsFixerArr.Add(_("Use mb_str functions"));
+    m_pgMgrPHPCsFixerArr.Add(_("No blank lines before namespace"));
+    m_pgMgrPHPCsFixerArr.Add(_("No multiline whitespace before semicolons"));
+    m_pgMgrPHPCsFixerArr.Add(_("No null property initialization"));
+    m_pgMgrPHPCsFixerArr.Add(_("No PHP 4 constructor"));
+    m_pgMgrPHPCsFixerArr.Add(_("No short echo tag"));
+    m_pgMgrPHPCsFixerArr.Add(_("No unreachable default argument value"));
+    m_pgMgrPHPCsFixerArr.Add(_("No useless else"));
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfAllowRisky);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfBlankLineAfterNamespace);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfBlankLineAfterOpeningTag);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfBlankLineBeforeReturn);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfCombineConsecutiveUnsets);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfLinebreakAfterOpeningTag);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfMbStrFunctions);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoBlankLinesBeforeNamespace);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoMultilineWhitespaceBeforeSemicolons);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoNullPropertyInitialization);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoPhp4Constructor);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoShortEchoTag);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoUnreachableDefaultArgumentValue);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoUselessElse);
     m_pgPropPHPCsFixerRules = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxFlagsProperty( _("Rules"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
     m_pgPropPHPCsFixerRules->SetHelpString(wxT(""));
     
@@ -790,6 +903,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     }
 #endif
     // Connect events
+    m_notebook->Connect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler(CodeFormatterBaseDlg::UpdatePreviewUI), NULL, this);
     m_checkBoxFormatOnSave->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnFormatOnSave), NULL, this);
     m_choiceCxxEngine->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicecxxengineChoiceSelected), NULL, this);
     m_choicePhpFormatter->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicephpformatterChoiceSelected), NULL, this);
@@ -808,6 +922,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
 
 CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
 {
+    m_notebook->Disconnect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler(CodeFormatterBaseDlg::UpdatePreviewUI), NULL, this);
     m_checkBoxFormatOnSave->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnFormatOnSave), NULL, this);
     m_choiceCxxEngine->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicecxxengineChoiceSelected), NULL, this);
     m_choicePhpFormatter->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicephpformatterChoiceSelected), NULL, this);

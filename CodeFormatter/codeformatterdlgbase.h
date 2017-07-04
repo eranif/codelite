@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
-#define CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#ifndef _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#define _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -68,6 +68,7 @@ protected:
     wxPGProperty* m_pgPropColumnLimit;
     wxPGProperty* m_pgPropClangBraceBreakStyle;
     wxPGProperty* m_pgPropClangFormatStyle;
+    wxPGProperty* m_pgPropClangUseFile;
     wxPGProperty* m_pgPropClangFormattingOptions;
     wxPanel* m_splitterPage173;
     wxStyledTextCtrl* m_textCtrlPreview_Clang;
@@ -102,6 +103,13 @@ protected:
     wxPGProperty* m_pgPropPhpCSFixer;
     wxPGProperty* m_filePickerPHPCsFixerPhar;
     wxPGProperty* m_pgPropPHPCsFixerOptions;
+    wxPGProperty* m_pgPropPHPCsFixerStandard;
+    wxPGProperty* m_pgPropPHPCsFixerMigration;
+    wxPGProperty* m_pgPropPHPCsFixerDoubleArrows;
+    wxPGProperty* m_pgPropPHPCsFixerEquals;
+    wxPGProperty* m_pgPropPHPCsFixerArrays;
+    wxPGProperty* m_pgPropPHPCsFixerEmptyReturn;
+    wxPGProperty* m_pgPropPHPCsFixerConcatSpace;
     wxPGProperty* m_pgPropPHPCsFixerRules;
     wxPanel* m_splitterPage1731328;
     wxStyledTextCtrl* m_textCtrlPreview_PhpCSFixer;
@@ -124,6 +132,7 @@ protected:
     wxButton* m_buttonHelp;
 
 protected:
+    virtual void UpdatePreviewUI(wxNotebookEvent& event) { event.Skip(); }
     virtual void OnFormatOnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event) { event.Skip(); }

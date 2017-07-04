@@ -337,6 +337,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_new_folder"), _("New Folder..."));
                 menu.Append(XRCID("php_new_file"), _("New File..."));
                 menu.AppendSeparator();
+                
                 menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
                 menuItem->SetBitmap(bmpFiF);
                 menu.Append(menuItem);
@@ -353,7 +354,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_run_project"), _("Run project..."));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_project_settings"), _("Project settings..."));
-
+                
+                // Let other plugins add content here
                 clContextMenuEvent folderMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
                 folderMenuEvent.SetMenu(&menu);
                 folderMenuEvent.SetPath(wxFileName(data->GetFile()).GetPath());

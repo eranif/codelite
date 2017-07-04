@@ -13,10 +13,10 @@ LintOptions::LintOptions()
     , m_phpmdRules("")
 {
     wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-        wxFileName::GetPathSeparator() + "phplint.conf";
+                               wxFileName::GetPathSeparator() + "phplint.conf";
     if(!newConfigFile.FileExists()) {
         wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-            wxFileName::GetPathSeparator() + "php.conf";
+                                   wxFileName::GetPathSeparator() + "php.conf";
 
         // first time, copy the values from the old settings
         JSONRoot root(oldConfigFile);
@@ -45,14 +45,14 @@ void LintOptions::FromJSON(const JSONElement& json)
 
 #ifndef __WXMSW__
     // Find an installed version of phpcs
-    if (m_phpcsPhar.IsEmpty()) {
+    if(m_phpcsPhar.IsEmpty()) {
         wxFileName phpcsFile;
         clFindExecutable("phpcs", phpcsFile);
         SetPhpcsPhar(phpcsFile);
     }
 
     // Find an installed version of phpmd
-    if (m_phpmdPhar.IsEmpty()) {
+    if(m_phpmdPhar.IsEmpty()) {
         wxFileName phpmdFile;
         clFindExecutable("phpmd", phpmdFile);
         SetPhpmdPhar(phpmdFile);

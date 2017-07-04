@@ -35,11 +35,13 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
 {
     FormatOptions& m_options;
     CodeFormatter* m_cf;
-    wxString m_sampleCode;
+    wxString m_cppSampleCode;
+    wxString m_phpSampleCode;
     bool m_isDirty;
     IManager* m_mgr;
 
 protected:
+    virtual void UpdatePreviewUI(wxNotebookEvent& event);
     virtual void OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event);
     virtual void OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event);
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event);
@@ -59,10 +61,17 @@ protected:
 
 public:
     /** Constructor */
-    CodeFormatterDlg(
-        wxWindow* parent, IManager* mgr, CodeFormatter* cf, FormatOptions& opts, const wxString& sampleCode);
+    CodeFormatterDlg(wxWindow* parent,
+        IManager* mgr,
+        CodeFormatter* cf,
+        FormatOptions& options,
+        const wxString& cppSampleCode,
+        const wxString& phpSampleCode);
     virtual ~CodeFormatterDlg();
-    FormatOptions GetOptions() const { return m_options; }
+    FormatOptions GetOptions() const
+    {
+        return m_options;
+    }
 };
 
 #endif // __codeformatterdlg__

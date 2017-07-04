@@ -41,9 +41,10 @@ FormatOptions::FormatOptions()
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
+    , m_PHPCSFixerPharSettings(0)
     , m_PHPCSFixerPharRules(0)
     , m_generalFlags(0)
-    , m_PhpcbfStandard("phpcs.xml")
+    , m_PhpcbfStandard("PEAR")
     , m_PhpcbfEncoding("UTF-8")
     , m_phpcbfSeverity(0)
     , m_PhpcbfPharOptions(0)
@@ -74,6 +75,7 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read("m_generalFlags", m_generalFlags);
     arch.Read("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Read("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
+    arch.Read("m_PHPCSFixerPharSettings", m_PHPCSFixerPharSettings);
     arch.Read("m_PHPCSFixerPharRules", m_PHPCSFixerPharRules);
     arch.Read("m_PhpcbfPhar", m_PhpcbfPhar);
     arch.Read("m_PhpcbfPharOptions", m_PhpcbfPharOptions);
@@ -142,6 +144,7 @@ void FormatOptions::Serialize(Archive& arch)
     arch.Write("m_generalFlags", m_generalFlags);
     arch.Write("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Write("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
+    arch.Write("m_PHPCSFixerPharSettings", m_PHPCSFixerPharSettings);
     arch.Write("m_PHPCSFixerPharRules", m_PHPCSFixerPharRules);
     arch.Write("m_PhpcbfPhar", m_PhpcbfPhar);
     arch.Write("m_PhpcbfPharOptions", m_PhpcbfPharOptions);
@@ -274,13 +277,10 @@ wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName, const boo
 
 wxString FormatOptions::GetClangFormatStyleAsString(const wxFileName& fileName) const
 {
-    // If the option: "File" is selected, it overrides everything here
+    // If the rules file option is enabled it overrides everything here
     if(m_clangFormatOptions & kClangFormatFile) {
-        // Even if the user specified to use File, we only enable it incase
-        // .clang-format file exists
-        clClangFormatLocator locator;
-        wxFileName configFile = locator.FindConfigForFile(fileName);
-        if(configFile.IsOk()) {
+        // Even if the user specified to use rules file, we only enable it incase it exists
+        if(HasConfigForFile(fileName, ".clang-format")) {
             return "file";
         }
     }
@@ -410,110 +410,11 @@ bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& com
 
     parameters = GetPHPCSFixerPharOptions();
     if(parameters.IsEmpty()) {
-        if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
+        if(m_PHPCSFixerPharSettings & kPcfAllowRisky) {
             parameters << " --allow-risky=yes";
         }
 
-        JSONRoot root(cJSON_Object);
-        JSONElement rules = root.toElement();
-        if(m_PHPCSFixerPharRules & kPcfPHP56Migration) {
-            rules.addProperty("@PHP56Migration", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfPHP70Migration) {
-            rules.addProperty("@PHP70Migration", true);
-            if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
-                rules.addProperty("@PHP70Migration:risky", true);
-            }
-        }
-        if(m_PHPCSFixerPharRules & kPcfPHP71Migration) {
-            rules.addProperty("@PHP71Migration", true);
-            if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
-                rules.addProperty("@PHP71Migration:risky", true);
-            }
-        }
-        if(m_PHPCSFixerPharRules & kPcfPSR1) {
-            rules.addProperty("@PSR1", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfPSR2) {
-            rules.addProperty("@PSR2", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfSymfony) {
-            rules.addProperty("@Symfony", true);
-            if(m_PHPCSFixerPharRules & kPcfAllowRisky) {
-                rules.addProperty("@Symfony:risky", true);
-            }
-        }
-        if(m_PHPCSFixerPharRules & (kPcfShortArray | kPcfLongArray)) {
-            JSONElement array_syntax = JSONElement::createObject("array_syntax");
-            array_syntax.addProperty("syntax", m_PHPCSFixerPharRules & kPcfShortArray ? "short" : "long");
-            rules.addProperty("array_syntax", array_syntax);
-        }
-        if(m_PHPCSFixerPharRules &
-           (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreDoubleArrow)) {
-            JSONElement binary_operator_spaces = JSONElement::createObject("binary_operator_spaces");
-            if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow)) {
-                binary_operator_spaces.addProperty("align_double_arrow",
-                                                   m_PHPCSFixerPharRules & kPcfIgnoreDoubleArrow
-                                                       ? cJSON_NULL
-                                                       : m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
-            }
-            if(m_PHPCSFixerPharRules & (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals)) {
-                binary_operator_spaces.addProperty("align_equals",
-                                                   m_PHPCSFixerPharRules & kPcfIgnoreEquals
-                                                       ? cJSON_NULL
-                                                       : m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
-            }
-            rules.addProperty("binary_operator_spaces", binary_operator_spaces);
-        }
-        if(m_PHPCSFixerPharRules & (kPcfConcatSpaceNone | kPcfConcatSpaceOne)) {
-            JSONElement concat_space = JSONElement::createObject("concat_space");
-            concat_space.addProperty("spacing", m_PHPCSFixerPharRules & kPcfConcatSpaceNone ? "none" : "one");
-            rules.addProperty("concat_space", concat_space);
-        }
-        if(m_PHPCSFixerPharRules & (kPcfEmptyReturnStrip | kPcfEmptyReturnKeep)) {
-            rules.addProperty("phpdoc_no_empty_return", m_PHPCSFixerPharRules & kPcfEmptyReturnStrip ? true : false);
-        }
-        if(m_PHPCSFixerPharRules & kPcfBlankLineAfterOpeningTag) {
-            rules.addProperty("blank_line_after_opening_tag", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfBlankLineBeforeReturn) {
-            rules.addProperty("blank_line_before_return", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfCombineConsecutiveUnsets) {
-            rules.addProperty("combine_consecutive_unsets", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfLinebreakAfterOpeningTag) {
-            rules.addProperty("linebreak_after_opening_tag", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfMbStrFunctions) {
-            rules.addProperty("mb_str_functions", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfNoBlankLinesBeforeNamespace) {
-            rules.addProperty("no_blank_lines_before_namespace", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfNoMultilineWhitespaceBeforeSemicolons) {
-            rules.addProperty("no_multiline_whitespace_before_semicolons", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfNoNullPropertyInitialization) {
-            rules.addProperty("no_null_property_initialization", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfNoPhp4Constructor) {
-            rules.addProperty("no_php4_constructor", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfNoShortEchoTag) {
-            rules.addProperty("no_short_echo_tag", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfNoUnreachableDefaultArgumentValue) {
-            rules.addProperty("no_unreachable_default_argument_value", true);
-        }
-        if(m_PHPCSFixerPharRules & kPcfNoUselessElse) {
-            rules.addProperty("no_useless_else", true);
-        }
-
-        wxString rulesString = rules.FormatRawString(false);
-        if(rulesString != "{}") {
-            parameters << " --rules='" << rulesString << "'";
-        }
+        parameters << GetPhpFixerRules(fileName);
     }
     parameters.Trim().Trim(false);
     clDEBUG() << parameters << clEndl;
@@ -523,6 +424,120 @@ bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& com
 
     command << php << " " << phar << " fix " << parameters << " " << filePath;
     return true;
+}
+
+wxString FormatOptions::GetPhpFixerRules(const wxFileName& fileName)
+{
+    // If the rules file option is enabled it overrides everything here
+    if(m_PHPCSFixerPharSettings & kPHPFixserFormatFile) {
+        // Even if the user specified to use rules file, we only enable it incase it exists
+        if(HasConfigForFile(fileName, ".php_cs") || HasConfigForFile(fileName, ".php_cs.dist")) {
+            return "";
+        }
+    }
+
+    JSONRoot root(cJSON_Object);
+    JSONElement rules = root.toElement();
+    if(m_PHPCSFixerPharRules & kPcfPHP56Migration) {
+        rules.addProperty("@PHP56Migration", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfPHP70Migration) {
+        rules.addProperty("@PHP70Migration", true);
+        if(m_PHPCSFixerPharSettings & kPcfAllowRisky) {
+            rules.addProperty("@PHP70Migration:risky", true);
+        }
+    }
+    if(m_PHPCSFixerPharRules & kPcfPHP71Migration) {
+        rules.addProperty("@PHP71Migration", true);
+        if(m_PHPCSFixerPharSettings & kPcfAllowRisky) {
+            rules.addProperty("@PHP71Migration:risky", true);
+        }
+    }
+    if(m_PHPCSFixerPharRules & kPcfPSR1) {
+        rules.addProperty("@PSR1", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfPSR2) {
+        rules.addProperty("@PSR2", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfSymfony) {
+        rules.addProperty("@Symfony", true);
+        if(m_PHPCSFixerPharSettings & kPcfAllowRisky) {
+            rules.addProperty("@Symfony:risky", true);
+        }
+    }
+    if(m_PHPCSFixerPharRules & (kPcfShortArray | kPcfLongArray)) {
+        JSONElement array_syntax = JSONElement::createObject("array_syntax");
+        array_syntax.addProperty("syntax", m_PHPCSFixerPharRules & kPcfShortArray ? "short" : "long");
+        rules.addProperty("array_syntax", array_syntax);
+    }
+    if(m_PHPCSFixerPharRules &
+       (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreDoubleArrow)) {
+        JSONElement binary_operator_spaces = JSONElement::createObject("binary_operator_spaces");
+        if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow)) {
+            binary_operator_spaces.addProperty("align_double_arrow",
+                                               m_PHPCSFixerPharRules & kPcfIgnoreDoubleArrow
+                                               ? cJSON_NULL
+                                               : m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
+        }
+        if(m_PHPCSFixerPharRules & (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals)) {
+            binary_operator_spaces.addProperty("align_equals",
+                                               m_PHPCSFixerPharRules & kPcfIgnoreEquals
+                                               ? cJSON_NULL
+                                               : m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
+        }
+        rules.addProperty("binary_operator_spaces", binary_operator_spaces);
+    }
+    if(m_PHPCSFixerPharRules & (kPcfConcatSpaceNone | kPcfConcatSpaceOne)) {
+        JSONElement concat_space = JSONElement::createObject("concat_space");
+        concat_space.addProperty("spacing", m_PHPCSFixerPharRules & kPcfConcatSpaceNone ? "none" : "one");
+        rules.addProperty("concat_space", concat_space);
+    }
+    if(m_PHPCSFixerPharRules & (kPcfEmptyReturnStrip | kPcfEmptyReturnKeep)) {
+        rules.addProperty("phpdoc_no_empty_return", m_PHPCSFixerPharRules & kPcfEmptyReturnStrip ? true : false);
+    }
+    if(m_PHPCSFixerPharRules & kPcfBlankLineAfterOpeningTag) {
+        rules.addProperty("blank_line_after_opening_tag", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfBlankLineBeforeReturn) {
+        rules.addProperty("blank_line_before_return", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfCombineConsecutiveUnsets) {
+        rules.addProperty("combine_consecutive_unsets", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfLinebreakAfterOpeningTag) {
+        rules.addProperty("linebreak_after_opening_tag", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfMbStrFunctions) {
+        rules.addProperty("mb_str_functions", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoBlankLinesBeforeNamespace) {
+        rules.addProperty("no_blank_lines_before_namespace", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoMultilineWhitespaceBeforeSemicolons) {
+        rules.addProperty("no_multiline_whitespace_before_semicolons", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoNullPropertyInitialization) {
+        rules.addProperty("no_null_property_initialization", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoPhp4Constructor) {
+        rules.addProperty("no_php4_constructor", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoShortEchoTag) {
+        rules.addProperty("no_short_echo_tag", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoUnreachableDefaultArgumentValue) {
+        rules.addProperty("no_unreachable_default_argument_value", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoUselessElse) {
+        rules.addProperty("no_useless_else", true);
+    }
+
+    wxString rulesString = rules.FormatRawString(false);
+    if(rulesString == "{}") {
+        return "";
+    }
+
+    return " --rules='" + rulesString + "'";
 }
 
 bool FormatOptions::GetPhpcbfCommand(const wxFileName& fileName, wxString& command)
@@ -544,9 +559,7 @@ bool FormatOptions::GetPhpcbfCommand(const wxFileName& fileName, wxString& comma
     }
     ::WrapWithQuotes(phar);
 
-    if(m_PhpcbfStandard != "phpcs.xml") {
-        parameters << " --standard=" << m_PhpcbfStandard;
-    }
+    parameters << GetPhpcbfStandard(fileName);
     if(m_PhpcbfEncoding != "") {
         parameters << " --encoding=" << m_PhpcbfEncoding;
     }
@@ -563,4 +576,29 @@ bool FormatOptions::GetPhpcbfCommand(const wxFileName& fileName, wxString& comma
 
     command << php << " " << phar << " " << parameters << " " << filePath;
     return true;
+}
+
+wxString FormatOptions::GetPhpcbfStandard(const wxFileName& fileName)
+{
+    // If the rules file option is enabled it overrides everything here
+    if(m_PhpcbfPharOptions & kPhpbcfFormatFile) {
+        // Even if the user specified to use rules file, we only enable it incase it exists
+        if(HasConfigForFile(fileName, "phpcs.xml")) {
+            return "";
+        }
+    }
+
+    return " --standard=" + m_PhpcbfStandard;
+}
+
+bool FormatOptions::HasConfigForFile(const wxFileName& fileName, const wxString& configName) const
+{
+    wxFileName configFile(fileName.GetPath(), configName);
+    while(configFile.GetDirCount()) {
+        if(configFile.FileExists()) {
+            return true;
+        }
+        configFile.RemoveLastDir();
+    }
+    return false;
 }

@@ -31,20 +31,21 @@ PHPRefactoringBaseDlg::PHPRefactoringBaseDlg(wxWindow* parent, wxWindowID id, co
     flexGridSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer2->AddGrowableCol(1);
     
-    bSizerMain->Add(flexGridSizer2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    bSizerMain->Add(flexGridSizer2, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("PHP Refactoring"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_staticText2 = new wxStaticText(this, wxID_ANY, _("PHP Refactoring PHAR file:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
     flexGridSizer2->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     m_filePickerPhprefactoringPhar = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     m_filePickerPhprefactoringPhar->SetToolTip(_("Select the PHP Refactoring Browser phar file location"));
+    m_filePickerPhprefactoringPhar->SetFocus();
     
     flexGridSizer2->Add(m_filePickerPhprefactoringPhar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer = new wxStdDialogButtonSizer();
     
-    bSizerMain->Add(m_stdBtnSizer, 0, wxALL, WXC_FROM_DIP(5));
+    bSizerMain->Add(m_stdBtnSizer, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();

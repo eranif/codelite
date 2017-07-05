@@ -213,12 +213,13 @@ void PHPRefactoring::OnConvertLocalToInstanceVariable(wxCommandEvent& e)
 void PHPRefactoring::OnRenameClassAndNamespaces(wxCommandEvent& e)
 {
     wxString msg;
-    msg << _("This will sync namespaces and classes with folder and filenames, for all files in the selected folder, to comply with psr-0\nContinue?");
+    msg << _("This will sync namespaces and classes with folder and filenames, for all files in the selected folder, "
+             "to comply with psr-0\nContinue?");
     if(wxYES != ::wxMessageBox(msg, "PHP Refactoring", wxYES_NO | wxCANCEL | wxCENTER)) {
         return;
     }
 
-    RunCommand("fix-class-names " + m_selectedFolder);
+    RunCommand("fix-class-names " + m_selectedFolder, m_selectedFolder);
     // Reload the patched files
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 }
@@ -282,7 +283,7 @@ void PHPRefactoring::RefactorFile(const wxString& action, const wxString& extraP
     EventNotifier::Get()->AddPendingEvent(evtDone);
 }
 
-void PHPRefactoring::RunCommand(const wxString& parameters)
+void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& workingDir)
 {
     wxString phpPath, refactorPath, command;
 
@@ -307,17 +308,18 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
     command = phpPath + " " + refactorPath + " " + parameters;
     clDEBUG() << "PHPRefactoring running:" << command << clEndl;
     ::WrapInShell(command);
-    IProcess::Ptr_t process(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+    IProcess::Ptr_t process(
+        ::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole, workingDir));
     // CHECK_PTR_RET_FALSE(process);
 
     wxString patch, tmpfile;
     process->WaitForTerminate(patch);
     clDEBUG() << "PHPRefactoring ouput:" << patch << clEndl;
 
-    if (!patch.StartsWith("--- a/")) { // not a patch
+    if(!patch.StartsWith("--- a/")) { // not a patch
         wxString errorMessage = "Refactoring failed";
         wxRegEx reLine("[ \t]*on line ([0-9]+)");
-        if (patch.Contains("Exception]")) { // has an error exception
+        if(patch.Contains("Exception]")) { // has an error exception
             int start = patch.Find("Exception]");
             errorMessage = patch.Mid(start).AfterFirst('\n').BeforeFirst('\n');
             errorMessage = errorMessage.Trim().Trim(false);
@@ -342,7 +344,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
         return;
     }
     FileUtils::Deleter fd(tmpfile);
-    
+
     // Load the changes into the preview dialog
     PHPRefactoringPreviewDlg dlg(EventNotifier::Get()->TopFrame(), tmpfile, patch);
     dlg.ShowModal();

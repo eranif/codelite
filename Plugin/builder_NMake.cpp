@@ -49,6 +49,30 @@
 
 static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
 
+static wxString ReplaceBackslashes(const wxString& instr)
+{
+    wxString tmpstr = instr;
+    tmpstr.Trim().Trim(false);
+
+    if(tmpstr.StartsWith("\"")) {
+        tmpstr = tmpstr.Mid(1);
+        wxString strBefore = tmpstr.BeforeFirst('"');
+        wxString strAfter = tmpstr.AfterFirst('"');
+        strBefore.Prepend("\"").Append("\""); // restore the " that we removed
+        strBefore.Replace("/", "\\");
+        strBefore << strAfter;
+        tmpstr.swap(strBefore);
+    } else {
+        wxString strBefore = tmpstr.BeforeFirst(' ');
+        wxString strAfter = tmpstr.AfterFirst(' ');
+        strAfter.Prepend(" ");
+        strBefore.Replace("/", "\\");
+        strBefore << strAfter;
+        tmpstr.swap(strBefore);
+    }
+    return tmpstr;
+}
+
 static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString& relPath = wxEmptyString)
 {
     wxString intermediateDirectory(bldConf->GetIntermediateDirectory());
@@ -1191,12 +1215,16 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     text << wxT("User                   =") << wxGetUserName() << wxT("\n");
     text << wxT("Date                   =") << wxDateTime::Now().FormatDate() << wxT("\n");
     text << wxT("CodeLitePath           =\"") << clCxxWorkspaceST::Get()->GetStartupDir() << wxT("\"\n");
-
     // replace all occurence of forward slash with double backslash
     wxString linkerStr(cmp->GetTool(wxT("LinkerName")));
-
+    if(OS_WINDOWS) {
+        linkerStr = ReplaceBackslashes(linkerStr);
+    }
     text << wxT("LinkerName             =") << linkerStr << wxT("\n");
     wxString shObjlinkerStr(cmp->GetTool(wxT("SharedObjectLinkerName")));
+    if(OS_WINDOWS) {
+        shObjlinkerStr = ReplaceBackslashes(shObjlinkerStr);
+    }
 
     text << wxT("SharedObjectLinkerName =") << shObjlinkerStr << wxT("\n");
     text << wxT("ObjectSuffix           =") << cmp->GetObjectSuffix() << wxT("\n");
@@ -1225,7 +1253,7 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     if(!mkdirCommand.IsEmpty()) {
         // use the compiler defined one
         if(OS_WINDOWS) {
-            mkdirCommand.Replace(wxT("/"), wxT("\\"));
+            mkdirCommand = ReplaceBackslashes(mkdirCommand);
         }
         text << wxT("MakeDirCommand         =") << mkdirCommand << wxT("\n");
     } else {
@@ -1311,11 +1339,17 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     text << wxT("## Common variables\n");
     text << wxT("## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables\n");
     text << wxT("##\n");
-
     wxString arStr(cmp->GetTool(wxT("AR")));
     wxString cxxStr(cmp->GetTool(wxT("CXX")));
     wxString ccStr(cmp->GetTool(wxT("CC")));
     wxString asStr(cmp->GetTool(wxT("AS")));
+
+    if(OS_WINDOWS) {
+        arStr = ReplaceBackslashes(arStr);
+        cxxStr = ReplaceBackslashes(cxxStr);
+        ccStr = ReplaceBackslashes(ccStr);
+        asStr = ReplaceBackslashes(asStr);
+    }
 
     text << wxT("AR       = ") << arStr << wxT("\n");
     text << wxT("CXX      = ") << cxxStr << wxT("\n");

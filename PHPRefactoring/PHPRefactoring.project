@@ -91,5 +91,7 @@
     <File Name="phprefactoringdlgbase.cpp"/>
     <File Name="phprefactoringdlgbase.h"/>
     <File Name="phprefactoringdlg_phprefactoring_bitmaps.cpp"/>
+    <File Name="PHPRefactoringPreviewDlg.h"/>
+    <File Name="PHPRefactoringPreviewDlg.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

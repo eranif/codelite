@@ -126,7 +126,7 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -181,7 +181,7 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>

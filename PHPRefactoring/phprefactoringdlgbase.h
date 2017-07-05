@@ -17,6 +17,7 @@
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include <wx/button.h>
+#include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -50,6 +51,26 @@ public:
     wxFilePickerCtrl* GetFilePickerPhprefactoringPhar() { return m_filePickerPhprefactoringPhar; }
     PHPRefactoringBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Refactoring Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPRefactoringBaseDlg();
+};
+
+
+class PHPRefactoringPreviewBaseDlg : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText267;
+    wxStyledTextCtrl* m_stcPreview;
+    wxStdDialogButtonSizer* m_stdBtnSizer261;
+    wxButton* m_button263;
+    wxButton* m_button265;
+
+protected:
+    virtual void OnApplyChanges(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText267() { return m_staticText267; }
+    wxStyledTextCtrl* GetStcPreview() { return m_stcPreview; }
+    PHPRefactoringPreviewBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Refcatoring Preview"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~PHPRefactoringPreviewBaseDlg();
 };
 
 #endif

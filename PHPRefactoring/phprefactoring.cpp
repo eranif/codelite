@@ -15,6 +15,7 @@
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
+#include "PHPRefactoringPreviewDlg.h"
 
 class to_string;
 static PHPRefactoring* thePlugin = NULL;
@@ -341,15 +342,10 @@ void PHPRefactoring::RunCommand(const wxString& parameters)
         return;
     }
     FileUtils::Deleter fd(tmpfile);
-
-    // Apply the patch
-    try {
-        clPatch patcher;
-        // We pass "--verbose" otherwise it crashes oftenly on Windows... go figure...
-        patcher.Patch(tmpfile, "", "--ignore-whitespace --verbose -p1 < ");
-    } catch(clException& e) {
-        wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
-    }
+    
+    // Load the changes into the preview dialog
+    PHPRefactoringPreviewDlg dlg(EventNotifier::Get()->TopFrame(), tmpfile, patch);
+    dlg.ShowModal();
 }
 
 void PHPRefactoring::OnContextMenu(clContextMenuEvent& event)

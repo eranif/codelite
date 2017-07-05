@@ -88,22 +88,16 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     //#endif
     //    m_treeCtrl->SetItemComparator(new SFTPItemComparator);
     m_treeCtrl->Connect(ID_OPEN, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuOpen), NULL, this);
-    m_treeCtrl->Connect(ID_OPEN_WITH_DEFAULT_APP,
-                        wxEVT_MENU,
-                        wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication),
-                        NULL,
-                        this);
-    m_treeCtrl->Connect(ID_OPEN_CONTAINING_FOLDER,
-                        wxEVT_MENU,
-                        wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder),
-                        NULL,
-                        this);
+    m_treeCtrl->Connect(ID_OPEN_WITH_DEFAULT_APP, wxEVT_MENU,
+                        wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication), NULL, this);
+    m_treeCtrl->Connect(ID_OPEN_CONTAINING_FOLDER, wxEVT_MENU,
+                        wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder), NULL, this);
     m_treeCtrl->Connect(ID_DELETE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuDelete), NULL, this);
     m_treeCtrl->Connect(ID_NEW, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNew), NULL, this);
     m_treeCtrl->Connect(ID_RENAME, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRename), NULL, this);
     m_treeCtrl->Connect(ID_NEW_FILE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNewFile), NULL, this);
-    m_treeCtrl->Connect(
-        ID_REFRESH_FOLDER, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder), NULL, this);
+    m_treeCtrl->Connect(ID_REFRESH_FOLDER, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder), NULL,
+                        this);
 
     wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnCopy, this, wxID_COPY);
     wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnCut, this, wxID_CUT);
@@ -129,23 +123,17 @@ SFTPTreeView::~SFTPTreeView()
     wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnRedo, this, wxID_REDO);
 
     m_treeCtrl->Disconnect(ID_OPEN, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuOpen), NULL, this);
-    m_treeCtrl->Disconnect(ID_OPEN_WITH_DEFAULT_APP,
-                           wxEVT_MENU,
-                           wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication),
-                           NULL,
-                           this);
-    m_treeCtrl->Disconnect(ID_OPEN_CONTAINING_FOLDER,
-                           wxEVT_MENU,
-                           wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder),
-                           NULL,
-                           this);
+    m_treeCtrl->Disconnect(ID_OPEN_WITH_DEFAULT_APP, wxEVT_MENU,
+                           wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication), NULL, this);
+    m_treeCtrl->Disconnect(ID_OPEN_CONTAINING_FOLDER, wxEVT_MENU,
+                           wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder), NULL, this);
 
     m_treeCtrl->Disconnect(ID_DELETE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuDelete), NULL, this);
     m_treeCtrl->Disconnect(ID_NEW, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNew), NULL, this);
     m_treeCtrl->Disconnect(ID_RENAME, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRename), NULL, this);
     m_treeCtrl->Disconnect(ID_NEW_FILE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNewFile), NULL, this);
-    m_treeCtrl->Disconnect(
-        ID_REFRESH_FOLDER, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder), NULL, this);
+    m_treeCtrl->Disconnect(ID_REFRESH_FOLDER, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
+                           NULL, this);
     Unbind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
 }
 
@@ -159,11 +147,9 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
     MyClientData* cd = new MyClientData(initialFolder);
     cd->SetIsFolder(true);
 
-    wxTreeItemId root = m_treeCtrl->AppendItem(m_treeCtrl->GetRootItem(),
-                                               initialFolder,
-                                               m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder),
-                                               wxNOT_FOUND,
-                                               cd);
+    wxTreeItemId root =
+        m_treeCtrl->AppendItem(m_treeCtrl->GetRootItem(), initialFolder,
+                               m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
 
     m_treeCtrl->AppendItem(root, "<dummy>");
     DoExpandItem(root);
@@ -242,14 +228,14 @@ void SFTPTreeView::DoCloseSession()
     IEditor::List_t modeditors;
     clGetManager()->GetAllEditors(editors);
     std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
-        if(editor->GetClientData("sftp") && editor->IsModified()) {
+        if(editor->GetClientData("sftp")) {
             if(!clGetManager()->CloseEditor(editor)) {
                 modeditors.push_back(editor);
             }
         }
     });
 
-    // User chose to close an SFTP file
+    // User cancel to close request, so dont close the session just yet
     if(!modeditors.empty()) {
         return;
     }
@@ -533,12 +519,9 @@ wxTreeItemId SFTPTreeView::DoAddFile(const wxTreeItemId& parent, const wxString&
         newFile->SetIsFolder(false);
         newFile->SetInitialized(false);
 
-        wxTreeItemId child =
-            m_treeCtrl->AppendItem(parent,
-                                   newFile->GetFullName(),
-                                   m_bmpLoader->GetMimeImageId(FileExtManager::GetType(path, FileExtManager::TypeText)),
-                                   wxNOT_FOUND,
-                                   newFile);
+        wxTreeItemId child = m_treeCtrl->AppendItem(
+            parent, newFile->GetFullName(),
+            m_bmpLoader->GetMimeImageId(FileExtManager::GetType(path, FileExtManager::TypeText)), wxNOT_FOUND, newFile);
         return child;
 
     } catch(clException& e) {

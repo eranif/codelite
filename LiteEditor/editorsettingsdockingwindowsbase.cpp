@@ -31,41 +31,20 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     mainSizer->Add(m_notebook10, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    m_notebook10->AddPage(m_panel12, _("Docking"), true);
+    m_panelTabs = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebook10->AddPage(m_panelTabs, _("Tabs"), true);
     
-    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
-    m_panel12->SetSizer(boxSizer22);
-    
-    wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer22->Add(bSizer2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    wxArrayString m_radioBoxHintArr;
-    m_radioBoxHintArr.Add(_("Transparent hint"));
-    m_radioBoxHintArr.Add(_("Rectangle hint"));
-    m_radioBoxHintArr.Add(_("Venetian blinds hints"));
-    m_radioBoxHint = new wxRadioBox(m_panel12, wxID_ANY, _("Docking Style:"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)), m_radioBoxHintArr, 1, wxRA_SPECIFY_COLS);
-    m_radioBoxHint->SetSelection(0);
-    
-    bSizer2->Add(m_radioBoxHint, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
-    
-    wxBoxSizer* boxSizer32 = new wxBoxSizer(wxVERTICAL);
-    
-    boxSizer22->Add(boxSizer32, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
-    
-    wxStaticBoxSizer* staticBoxSizer27 = new wxStaticBoxSizer( new wxStaticBox(m_panel12, wxID_ANY, _("Tabs")), wxVERTICAL);
-    
-    boxSizer32->Add(staticBoxSizer27, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    wxBoxSizer* boxSizer56 = new wxBoxSizer(wxVERTICAL);
+    m_panelTabs->SetSizer(boxSizer56);
     
     wxFlexGridSizer* flexGridSizer36 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer36->SetFlexibleDirection( wxBOTH );
     flexGridSizer36->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer36->AddGrowableCol(1);
     
-    staticBoxSizer27->Add(flexGridSizer36, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer56->Add(flexGridSizer36, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText46 = new wxStaticText(m_panel12, wxID_ANY, _("Tab Style:"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_staticText46 = new wxStaticText(m_panelTabs, wxID_ANY, _("Tab Style:"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
     
     flexGridSizer36->Add(m_staticText46, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
@@ -73,12 +52,12 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_choiceTabStyleArr.Add(wxT("DEFAULT"));
     m_choiceTabStyleArr.Add(wxT("MINIMAL"));
     m_choiceTabStyleArr.Add(wxT("TRAPEZOID"));
-    m_choiceTabStyle = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), m_choiceTabStyleArr, 0);
+    m_choiceTabStyle = new wxChoice(m_panelTabs, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), m_choiceTabStyleArr, 0);
     m_choiceTabStyle->SetSelection(0);
     
     flexGridSizer36->Add(m_choiceTabStyle, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticTextTabHeight = new wxStaticText(m_panel12, wxID_ANY, _("Tab Height:"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_staticTextTabHeight = new wxStaticText(m_panelTabs, wxID_ANY, _("Tab Height:"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
     
     flexGridSizer36->Add(m_staticTextTabHeight, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
@@ -87,12 +66,12 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_choiceTabHeightArr.Add(wxT("MEDIUM"));
     m_choiceTabHeightArr.Add(wxT("SHORT"));
     m_choiceTabHeightArr.Add(wxT("TINY"));
-    m_choiceTabHeight = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), m_choiceTabHeightArr, 0);
+    m_choiceTabHeight = new wxChoice(m_panelTabs, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), m_choiceTabHeightArr, 0);
     m_choiceTabHeight->SetSelection(3);
     
     flexGridSizer36->Add(m_choiceTabHeight, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText38 = new wxStaticText(m_panel12, wxID_ANY, _("Workspace Pane Tabs Orientation:"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_staticText38 = new wxStaticText(m_panelTabs, wxID_ANY, _("Workspace Pane Tabs Orientation:"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
     
     flexGridSizer36->Add(m_staticText38, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
@@ -101,43 +80,71 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_choiceWorkspaceTabsOrientationArr.Add(wxT("RIGHT"));
     m_choiceWorkspaceTabsOrientationArr.Add(wxT("TOP"));
     m_choiceWorkspaceTabsOrientationArr.Add(wxT("BOTTOM"));
-    m_choiceWorkspaceTabsOrientation = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), m_choiceWorkspaceTabsOrientationArr, 0);
+    m_choiceWorkspaceTabsOrientation = new wxChoice(m_panelTabs, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), m_choiceWorkspaceTabsOrientationArr, 0);
     m_choiceWorkspaceTabsOrientation->SetSelection(0);
     
     flexGridSizer36->Add(m_choiceWorkspaceTabsOrientation, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText42 = new wxStaticText(m_panel12, wxID_ANY, _("Output Pane Tabs Orientation:"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_staticText42 = new wxStaticText(m_panelTabs, wxID_ANY, _("Output Pane Tabs Orientation:"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
     
     flexGridSizer36->Add(m_staticText42, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceOutputTabsOrientationArr;
     m_choiceOutputTabsOrientationArr.Add(wxT("TOP"));
     m_choiceOutputTabsOrientationArr.Add(wxT("BOTTOM"));
-    m_choiceOutputTabsOrientation = new wxChoice(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), m_choiceOutputTabsOrientationArr, 0);
+    m_choiceOutputTabsOrientation = new wxChoice(m_panelTabs, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), m_choiceOutputTabsOrientationArr, 0);
     m_choiceOutputTabsOrientation->SetSelection(0);
     
     flexGridSizer36->Add(m_choiceOutputTabsOrientation, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_checkBoxShowXButton = new wxCheckBox(m_panel12, wxID_ANY, _("Show close button on active tab"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_staticLine61 = new wxStaticLine(m_panelTabs, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), wxLI_HORIZONTAL);
+    
+    boxSizer56->Add(m_staticLine61, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_checkBoxShowXButton = new wxCheckBox(m_panelTabs, wxID_ANY, _("Show close button on active tab"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
     m_checkBoxShowXButton->SetValue(true);
     m_checkBoxShowXButton->SetToolTip(_("Show close button on active tab"));
     
-    staticBoxSizer27->Add(m_checkBoxShowXButton, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer56->Add(m_checkBoxShowXButton, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxEditorTabsFollowsTheme = new wxCheckBox(m_panel12, wxID_ANY, _("The editor tabs matches to the editor colour theme"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_checkBoxEditorTabsFollowsTheme = new wxCheckBox(m_panelTabs, wxID_ANY, _("The editor tabs matches to the editor colour theme"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
     m_checkBoxEditorTabsFollowsTheme->SetValue(true);
     m_checkBoxEditorTabsFollowsTheme->SetToolTip(_("The editor tabs matches to the editor colour theme"));
     
-    staticBoxSizer27->Add(m_checkBoxEditorTabsFollowsTheme, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer56->Add(m_checkBoxEditorTabsFollowsTheme, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxUseDarkTabTheme = new wxCheckBox(m_panel12, wxID_ANY, _("Use dark notebook tab theme by default"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_checkBoxUseDarkTabTheme = new wxCheckBox(m_panelTabs, wxID_ANY, _("Use dark notebook tab theme by default"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
     m_checkBoxUseDarkTabTheme->SetValue(false);
     
-    staticBoxSizer27->Add(m_checkBoxUseDarkTabTheme, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer56->Add(m_checkBoxUseDarkTabTheme, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_checkBoxMouseScrollSwitchTabs = new wxCheckBox(m_panelTabs, wxID_ANY, _("Mouse scroll switches between tabs"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
+    m_checkBoxMouseScrollSwitchTabs->SetValue(false);
+    
+    boxSizer56->Add(m_checkBoxMouseScrollSwitchTabs, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebook10->AddPage(m_panel12, _("Docking"), false);
+    
+    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
+    m_panel12->SetSizer(boxSizer22);
+    
+    wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer22->Add(bSizer2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxArrayString m_radioBoxHintArr;
+    m_radioBoxHintArr.Add(_("Transparent hint"));
+    m_radioBoxHintArr.Add(_("Rectangle hint"));
+    m_radioBoxHintArr.Add(_("Venetian blinds hints"));
+    m_radioBoxHint = new wxRadioBox(m_panel12, wxID_ANY, _("Docking Style:"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)), m_radioBoxHintArr, 1, wxRA_SPECIFY_ROWS);
+    m_radioBoxHint->SetSelection(0);
+    
+    bSizer2->Add(m_radioBoxHint, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer25 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer22->Add(boxSizer25, 0, wxALL, WXC_FROM_DIP(10));
+    bSizer2->Add(boxSizer25, 0, wxALL, WXC_FROM_DIP(10));
     
     m_checkBoxHideCaptions = new wxCheckBox(m_panel12, wxID_ANY, _("Hide Docking Windows captions"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
     m_checkBoxHideCaptions->SetValue(false);

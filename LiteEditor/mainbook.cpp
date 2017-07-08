@@ -83,6 +83,10 @@ void MainBook::CreateGuiControls()
         style |= (kNotebook_CloseButtonOnActiveTabFireEvent | kNotebook_CloseButtonOnActiveTab);
     }
 
+    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
+        style |= kNotebook_MouseScrollSwitchTabs;
+    }
+
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     sz->Add(m_book, 1, wxEXPAND);

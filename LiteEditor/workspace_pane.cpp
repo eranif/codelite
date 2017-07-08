@@ -97,7 +97,9 @@ void WorkspacePane::CreateGUIControls()
         style |= kNotebook_DarkTabs;
     }
     style |= kNotebook_UnderlineActiveTab;
-
+    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
+        style |= kNotebook_MouseScrollSwitchTabs;
+    }
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
 

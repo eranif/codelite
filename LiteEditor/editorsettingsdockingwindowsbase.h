@@ -15,12 +15,12 @@
 #include <wx/sizer.h>
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
-#include <wx/radiobox.h>
-#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include <wx/statline.h>
 #include <wx/checkbox.h>
+#include <wx/radiobox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -42,8 +42,7 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 {
 protected:
     wxNotebook* m_notebook10;
-    wxPanel* m_panel12;
-    wxRadioBox* m_radioBoxHint;
+    wxPanel* m_panelTabs;
     wxStaticText* m_staticText46;
     wxChoice* m_choiceTabStyle;
     wxStaticText* m_staticTextTabHeight;
@@ -52,9 +51,13 @@ protected:
     wxChoice* m_choiceWorkspaceTabsOrientation;
     wxStaticText* m_staticText42;
     wxChoice* m_choiceOutputTabsOrientation;
+    wxStaticLine* m_staticLine61;
     wxCheckBox* m_checkBoxShowXButton;
     wxCheckBox* m_checkBoxEditorTabsFollowsTheme;
     wxCheckBox* m_checkBoxUseDarkTabTheme;
+    wxCheckBox* m_checkBoxMouseScrollSwitchTabs;
+    wxPanel* m_panel12;
+    wxRadioBox* m_radioBoxHint;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
     wxPanel* m_panel14;
@@ -83,7 +86,6 @@ protected:
     virtual void OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
     wxStaticText* GetStaticText46() { return m_staticText46; }
     wxChoice* GetChoiceTabStyle() { return m_choiceTabStyle; }
     wxStaticText* GetStaticTextTabHeight() { return m_staticTextTabHeight; }
@@ -92,9 +94,13 @@ public:
     wxChoice* GetChoiceWorkspaceTabsOrientation() { return m_choiceWorkspaceTabsOrientation; }
     wxStaticText* GetStaticText42() { return m_staticText42; }
     wxChoice* GetChoiceOutputTabsOrientation() { return m_choiceOutputTabsOrientation; }
+    wxStaticLine* GetStaticLine61() { return m_staticLine61; }
     wxCheckBox* GetCheckBoxShowXButton() { return m_checkBoxShowXButton; }
     wxCheckBox* GetCheckBoxEditorTabsFollowsTheme() { return m_checkBoxEditorTabsFollowsTheme; }
     wxCheckBox* GetCheckBoxUseDarkTabTheme() { return m_checkBoxUseDarkTabTheme; }
+    wxCheckBox* GetCheckBoxMouseScrollSwitchTabs() { return m_checkBoxMouseScrollSwitchTabs; }
+    wxPanel* GetPanelTabs() { return m_panelTabs; }
+    wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
     wxPanel* GetPanel12() { return m_panel12; }

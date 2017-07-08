@@ -149,6 +149,10 @@ void CodeFormatterDlg::InitDialog()
 
     } else if(m_options.GetClangFormatOptions() & kClangFormatLLVM) {
         m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatLLVM, wxPG_FULL_VALUE);
+    } else {
+        // There should be at least one good formatting option, we choose WebKit for this purpose
+        m_options.SetClangFormatOptions(m_options.GetClangFormatOptions() | kClangFormatWebKit);
+        m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatWebKit, wxPG_FULL_VALUE);
     }
 
     m_pgPropClangUseFile->SetValue(wxVariant((bool)(m_options.GetClangFormatOptions() & kClangFormatFile)));
@@ -164,7 +168,8 @@ void CodeFormatterDlg::InitDialog()
     wxString options = m_options.GetPHPCSFixerPharOptions();
     m_pgPropPHPCsFixerOptions->SetValue(options.Trim().Trim(false));
 
-    m_pgPropPHPCsFixerUseFile->SetValue(wxVariant((bool)(m_options.GetPHPCSFixerPharSettings() & kPHPFixserFormatFile)));
+    m_pgPropPHPCsFixerUseFile->SetValue(
+        wxVariant((bool)(m_options.GetPHPCSFixerPharSettings() & kPHPFixserFormatFile)));
     m_pgPropPHPCsFixerStandard->SetValue((int)m_options.GetPHPCSFixerPharRules() & (kPcfPSR1 | kPcfPSR2 | kPcfSymfony));
     m_pgPropPHPCsFixerMigration->SetValue((int)m_options.GetPHPCSFixerPharRules() &
                                           (kPcfPHP56Migration | kPcfPHP70Migration | kPcfPHP71Migration));
@@ -372,7 +377,7 @@ void CodeFormatterDlg::OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event)
     m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetValueAsString());
     m_options.SetPHPCSFixerPharOptions(m_pgPropPHPCsFixerOptions->GetValueAsString().Trim().Trim(false));
     size_t phpcsfixerSettings(0);
-    if (m_pgPropPHPCsFixerUseFile->GetValue().GetBool()) {
+    if(m_pgPropPHPCsFixerUseFile->GetValue().GetBool()) {
         phpcsfixerSettings |= kPHPFixserFormatFile;
     }
     m_options.SetPHPCSFixerPharSettings(phpcsfixerSettings);

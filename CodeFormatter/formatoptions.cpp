@@ -294,7 +294,8 @@ wxString FormatOptions::GetClangFormatStyleAsString(const wxFileName& fileName) 
         style << "LLVM";
     } else if(m_clangFormatOptions & kClangFormatMozilla) {
         style << "Mozilla";
-    } else if(m_clangFormatOptions & kClangFormatWebKit) {
+    } else {
+        // Default style
         style << "WebKit";
     }
 

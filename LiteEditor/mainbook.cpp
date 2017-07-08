@@ -1248,7 +1248,11 @@ void MainBook::DetachActiveEditor()
         LEditor* editor = GetActiveEditor();
         m_book->RemovePage(m_book->GetSelection(), true);
         EditorFrame* frame = new EditorFrame(clMainFrame::Get(), editor);
+        // Move it to the same position as the main frame
+        frame->Move(EventNotifier::Get()->TopFrame()->GetPosition());
+        // And show it
         frame->Show();
+        frame->Raise();
         m_detachedEditors.push_back(frame);
     }
 }

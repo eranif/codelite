@@ -66,6 +66,8 @@ EditorFrame::EditorFrame(wxWindow* parent, LEditor* editor)
 
     // Update the accelerator table for this frame
     ManagerST::Get()->UpdateMenuAccelerators(this);
+    SetSize(600, 600);
+    CentreOnScreen();
 }
 
 EditorFrame::~EditorFrame()

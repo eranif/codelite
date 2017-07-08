@@ -146,7 +146,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
+    //EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
     
     CallAfter(&PhpPlugin::FinalizeStartup);
 
@@ -269,7 +269,7 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
     
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
+    //EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
     
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");

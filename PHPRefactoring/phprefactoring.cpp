@@ -317,7 +317,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
     clDEBUG() << "PHPRefactoring ouput:" << patch << clEndl;
 
     if(!patch.StartsWith("--- a/")) { // not a patch
-        wxString errorMessage = "Refactoring failed";
+        wxString errorMessage = "Refactoring failed!";
         wxRegEx reLine("[ \t]*on line ([0-9]+)");
         if(patch.Contains("Exception]")) { // has an error exception
             int start = patch.Find("Exception]");
@@ -329,8 +329,15 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
             int start = patch.Find("error:") + 6;
             int end = patch.Find(" in ");
             errorMessage = patch.Mid(start, end - start);
-
-            errorMessage = "Can only refactor well formed code: " + errorMessage + " on line " + strLine;
+            errorMessage = _("Can only refactor well formed code: ") + errorMessage + _(" on line ") + strLine;
+        } else {
+            errorMessage << _("\nExpected patch format. Received:\n") << patch;
+        }
+        
+        // Truncate the message to something readable
+        if(errorMessage.length() > 500) {
+            errorMessage = errorMessage.Mid(0, 500);
+            errorMessage << "...";
         }
         ::wxMessageBox(errorMessage, "PHP Refactoring", wxICON_ERROR | wxOK | wxCENTER);
         return;

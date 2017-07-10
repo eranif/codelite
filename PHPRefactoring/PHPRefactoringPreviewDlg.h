@@ -4,12 +4,10 @@
 
 class PHPRefactoringPreviewDlg : public PHPRefactoringPreviewBaseDlg
 {
-    wxFileName m_patchFile;
 
 public:
-    PHPRefactoringPreviewDlg(wxWindow* parent, const wxString& patchFile, const wxString& patchContent);
+    PHPRefactoringPreviewDlg(wxWindow* parent, const wxString& patchContent);
     virtual ~PHPRefactoringPreviewDlg();
-
 protected:
     virtual void OnApplyChanges(wxCommandEvent& event);
 };

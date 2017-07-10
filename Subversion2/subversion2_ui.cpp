@@ -1395,3 +1395,154 @@ SubversionImages::SubversionImages()
 SubversionImages::~SubversionImages()
 {
 }
+
+SvnShowRecentChangesBaseDlg::SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC95F2InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer60 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer60);
+    
+    wxBoxSizer* boxSizer66 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer60->Add(boxSizer66, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxArrayString m_listBoxRevisionsArr;
+    m_listBoxRevisions = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(100,-1)), m_listBoxRevisionsArr, wxLB_SINGLE);
+    
+    boxSizer66->Add(m_listBoxRevisions, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxBoxSizer* boxSizer70 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer66->Add(boxSizer70, 1, wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticTextDesc = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer70->Add(m_staticTextDesc, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_stcDiff = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    // Configure the fold margin
+    m_stcDiff->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcDiff->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcDiff->SetMarginSensitive(4, true);
+    m_stcDiff->SetMarginWidth    (4, 16);
+    
+    m_stcDiff->SetProperty(wxT("fold"),wxT("1"));
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN,    wxSTC_MARK_ARROWDOWN);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDER,        wxSTC_MARK_ARROW);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB,     wxSTC_MARK_BACKGROUND);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL,    wxSTC_MARK_BACKGROUND);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDEREND,     wxSTC_MARK_ARROW);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
+    // Configure the tracker margin
+    m_stcDiff->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcDiff->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcDiff->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcDiff->SetMarginWidth(2, 0);
+    m_stcDiff->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcDiff->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcDiff->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcDiff->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcDiff->SetMarginMask(3, 0);
+    m_stcDiff->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcDiff->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcDiff->StyleClearAll();
+    m_stcDiff->SetWrapMode(0);
+    m_stcDiff->SetIndentationGuides(0);
+    m_stcDiff->SetKeyWords(0, wxT(""));
+    m_stcDiff->SetKeyWords(1, wxT(""));
+    m_stcDiff->SetKeyWords(2, wxT(""));
+    m_stcDiff->SetKeyWords(3, wxT(""));
+    m_stcDiff->SetKeyWords(4, wxT(""));
+    
+    boxSizer70->Add(m_stcDiff, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_stcComment = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    // Configure the fold margin
+    m_stcComment->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcComment->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcComment->SetMarginSensitive(4, true);
+    m_stcComment->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stcComment->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcComment->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcComment->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcComment->SetMarginWidth(2, 0);
+    m_stcComment->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcComment->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcComment->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcComment->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcComment->SetMarginMask(3, 0);
+    m_stcComment->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcComment->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcComment->StyleClearAll();
+    m_stcComment->SetWrapMode(1);
+    m_stcComment->SetIndentationGuides(0);
+    m_stcComment->SetKeyWords(0, wxT(""));
+    m_stcComment->SetKeyWords(1, wxT(""));
+    m_stcComment->SetKeyWords(2, wxT(""));
+    m_stcComment->SetKeyWords(3, wxT(""));
+    m_stcComment->SetKeyWords(4, wxT(""));
+    
+    boxSizer70->Add(m_stcComment, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_stdBtnSizer62 = new wxStdDialogButtonSizer();
+    
+    boxSizer60->Add(m_stdBtnSizer62, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    
+    m_button64 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button64->SetDefault();
+    m_stdBtnSizer62->AddButton(m_button64);
+    m_stdBtnSizer62->Realize();
+    
+    SetName(wxT("SvnShowRecentChangesBaseDlg"));
+    SetSize(-1,-1);
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_listBoxRevisions->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnShowRecentChangesBaseDlg::OnRevisionSelected), NULL, this);
+    
+}
+
+SvnShowRecentChangesBaseDlg::~SvnShowRecentChangesBaseDlg()
+{
+    m_listBoxRevisions->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnShowRecentChangesBaseDlg::OnRevisionSelected), NULL, this);
+    
+}

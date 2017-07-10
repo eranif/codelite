@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_SUBVERSION2_SUBVERSION2_BASE_CLASSES_H
-#define CODELITE_SUBVERSION2_SUBVERSION2_BASE_CLASSES_H
+#ifndef _CODELITE_SUBVERSION2_SUBVERSION2_BASE_CLASSES_H
+#define _CODELITE_SUBVERSION2_SUBVERSION2_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -459,6 +459,29 @@ public:
     }
 
     virtual ~SubversionImages();
+};
+
+
+class SvnShowRecentChangesBaseDlg : public wxDialog
+{
+protected:
+    wxListBox* m_listBoxRevisions;
+    wxStaticText* m_staticTextDesc;
+    wxStyledTextCtrl* m_stcDiff;
+    wxStyledTextCtrl* m_stcComment;
+    wxStdDialogButtonSizer* m_stdBtnSizer62;
+    wxButton* m_button64;
+
+protected:
+    virtual void OnRevisionSelected(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    wxListBox* GetListBoxRevisions() { return m_listBoxRevisions; }
+    wxStaticText* GetStaticTextDesc() { return m_staticTextDesc; }
+    wxStyledTextCtrl* GetStcDiff() { return m_stcDiff; }
+    wxStyledTextCtrl* GetStcComment() { return m_stcComment; }
+    SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Subversion: Show Recent Changes"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~SvnShowRecentChangesBaseDlg();
 };
 
 #endif

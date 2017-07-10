@@ -6,6 +6,7 @@
 class PHPRefactoringOptions : public clConfigItem
 {
     wxString m_phprefactoringPhar;
+    bool m_skipPreview;
 
 public:
     PHPRefactoringOptions();
@@ -24,6 +25,14 @@ public:
     }
 
     const wxString& GetPhprefactoringPhar() const { return m_phprefactoringPhar; }
+
+    PHPRefactoringOptions& SetSkipPreview(const bool& SkipPreview)
+    {
+        this->m_skipPreview = SkipPreview;
+        return *this;
+    }
+
+    const bool& GetSkipPreview() const { return m_skipPreview; }
 };
 
 #endif // PHPREFACTORINGOPTIONS_H

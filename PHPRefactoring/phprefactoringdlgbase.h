@@ -16,6 +16,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
+#include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
@@ -40,6 +41,7 @@ class PHPRefactoringBaseDlg : public wxDialog
 protected:
     wxStaticText* m_staticText2;
     wxFilePickerCtrl* m_filePickerPhprefactoringPhar;
+    wxCheckBox* m_checkBoxSkipPreview;
     wxStdDialogButtonSizer* m_stdBtnSizer;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
@@ -49,6 +51,7 @@ protected:
 public:
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxFilePickerCtrl* GetFilePickerPhprefactoringPhar() { return m_filePickerPhprefactoringPhar; }
+    wxCheckBox* GetCheckBoxSkipPreview() { return m_checkBoxSkipPreview; }
     PHPRefactoringBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Refactoring Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPRefactoringBaseDlg();
 };

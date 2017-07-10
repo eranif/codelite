@@ -43,6 +43,11 @@ PHPRefactoringBaseDlg::PHPRefactoringBaseDlg(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer2->Add(m_filePickerPhprefactoringPhar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
+    m_checkBoxSkipPreview = new wxCheckBox(this, wxID_ANY, _("Apply changes without previewing"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_checkBoxSkipPreview->SetValue(false);
+    
+    flexGridSizer2->Add(m_checkBoxSkipPreview, 0, wxALL, WXC_FROM_DIP(5));
+    
     m_stdBtnSizer = new wxStdDialogButtonSizer();
     
     bSizerMain->Add(m_stdBtnSizer, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));

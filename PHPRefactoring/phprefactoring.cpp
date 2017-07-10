@@ -1,4 +1,5 @@
 #include "phprefactoring.h"
+#include "PHPRefactoringPreviewDlg.h"
 #include "asyncprocess.h"
 #include "clEditorStateLocker.h"
 #include "clPatch.h"
@@ -15,7 +16,6 @@
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
-#include "PHPRefactoringPreviewDlg.h"
 
 class to_string;
 static PHPRefactoring* thePlugin = NULL;
@@ -125,7 +125,9 @@ void PHPRefactoring::OnMenuCommand(wxCommandEvent& e)
     PHPRefactoringDlg dlg(EventNotifier::Get()->TopFrame());
     if(dlg.ShowModal() == wxID_OK) {
         // Store the settings
-        m_settings.SetPhprefactoringPhar(dlg.GetFilePickerPhprefactoringPhar()->GetFileName()).Save();
+        m_settings.SetPhprefactoringPhar(dlg.GetFilePickerPhprefactoringPhar()->GetFileName())
+            .SetSkipPreview(dlg.GetCheckBoxSkipPreview()->GetValue())
+            .Save();
     }
 }
 
@@ -333,7 +335,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
         } else {
             errorMessage << _("\nExpected patch format. Received:\n") << patch;
         }
-        
+
         // Truncate the message to something readable
         if(errorMessage.length() > 500) {
             errorMessage = errorMessage.Mid(0, 500);
@@ -353,8 +355,17 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
     FileUtils::Deleter fd(tmpfile);
 
     // Load the changes into the preview dialog
-    PHPRefactoringPreviewDlg dlg(EventNotifier::Get()->TopFrame(), tmpfile, patch);
-    dlg.ShowModal();
+    PHPRefactoringPreviewDlg dlg(EventNotifier::Get()->TopFrame(), patch);
+    if(m_settings.GetSkipPreview() || dlg.ShowModal() == wxID_OK) {
+        // Apply the patch
+        try {
+            clPatch patcher;
+            // We pass "--verbose" otherwise it crashes oftenly on Windows... go figure...
+            patcher.Patch(tmpfile, "", "--ignore-whitespace --verbose -p1 < ");
+        } catch(clException& e) {
+            wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
+        }
+    }
 }
 
 void PHPRefactoring::OnContextMenu(clContextMenuEvent& event)

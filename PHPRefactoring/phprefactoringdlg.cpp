@@ -22,4 +22,5 @@ void PHPRefactoringDlg::InitDialog()
     settings.Load();
 
     m_filePickerPhprefactoringPhar->SetPath(settings.GetPhprefactoringPhar());
+    m_checkBoxSkipPreview->SetValue(settings.GetSkipPreview());
 }

@@ -6,12 +6,10 @@ PHPRefactoringDlg::PHPRefactoringDlg(wxWindow* parent)
     : PHPRefactoringBaseDlg(parent)
 {
     // center the dialog
-    Centre();
-
     InitDialog();
-
     SetName("PHPRefactoringDlg");
     WindowAttrManager::Load(this);
+    CentreOnParent();
 }
 
 PHPRefactoringDlg::~PHPRefactoringDlg() {}

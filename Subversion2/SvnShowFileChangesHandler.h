@@ -2,6 +2,7 @@
 #define SVNSHOWFILECHANGESHANDLER_H
 
 #include "svncommandhandler.h" // Base class: SvnCommandHandler
+#include <algorithm>
 #include <list>
 
 class Subversion2;

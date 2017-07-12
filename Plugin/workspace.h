@@ -283,7 +283,7 @@ public:
     /**
      * \return The active project name or wxEmptyString
      */
-    wxString GetActiveProjectName() const;
+    virtual wxString GetActiveProjectName() const;
 
     /**
      * @brief return the paths of all projects in the workspace (full paths)
@@ -455,7 +455,17 @@ public:
      * @brief clear the workspace include path cache (for each project)
      */
     void ClearIncludePathCache();
-
+    
+    /**
+     * @brief return the underlying file for a given project name
+     */
+    virtual wxFileName GetProjectFileName(const wxString& projectName) const;
+    
+    /**
+     * @brief return list of projects for this workspace
+     */
+    virtual wxArrayString GetWorkspaceProjects() const;
+    
 private:
     /**
      * Do the actual add project

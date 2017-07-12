@@ -581,7 +581,7 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
     wxString cmakeExe = GetCMake()->GetPath().GetFullPath();
     
     // Did the user provide a generator to use?
-    bool hasGeneratorInArgs = (args.Find(" -G") != wxNOT_FOUND);
+    bool hasGeneratorInArgs = (args.Find("-G") != wxNOT_FOUND);
     wxUnusedVar(hasGeneratorInArgs);
     
     // Build the working directory

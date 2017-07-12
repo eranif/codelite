@@ -50,6 +50,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     : OpenResourceDialogBase(parent)
     , m_manager(manager)
     , m_needRefresh(false)
+    , m_lineNumber(wxNOT_FOUND)
 {
     Hide();
     BitmapLoader* bmpLoader = m_manager->GetStdIcons();
@@ -175,13 +176,21 @@ void OpenResourceDialog::DoPopulateList()
 {
     wxString name = m_textCtrlResourceName->GetValue();
     name.Trim().Trim(false);
-    if(name.IsEmpty()) return;
+    if(name.IsEmpty()) {
+        return;
+    }
 
     Clear();
 
     wxWindowUpdateLocker locker(m_dataview);
 
     // First add the workspace files
+    long nLineNumber;
+    wxString modFilter;
+    GetLineNumberFromFilter(name, modFilter, nLineNumber);
+    name.swap(modFilter);
+
+    m_lineNumber = nLineNumber;
 
     // Prepare the user filter
     m_userFilters.Clear();
@@ -194,7 +203,7 @@ void OpenResourceDialog::DoPopulateList()
         DoPopulateWorkspaceFile();
     }
 
-    if(m_checkBoxShowSymbols->IsChecked()) {
+    if(m_checkBoxShowSymbols->IsChecked() && (nLineNumber == -1)) {
         DoPopulateTags();
     }
 }
@@ -225,17 +234,21 @@ void OpenResourceDialog::DoPopulateTags()
         if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype")) {
             fullname = wxString::Format(
                 wxT("%s::%s%s"), tag->GetScope().c_str(), tag->GetName().c_str(), tag->GetSignature().c_str());
-            item = DoAppendLine(tag->GetName(), fullname, (tag->GetKind() == wxT("function")),
-                new OpenResourceDialogItemData(
+            item = DoAppendLine(tag->GetName(),
+                                fullname,
+                                (tag->GetKind() == wxT("function")),
+                                new OpenResourceDialogItemData(
                                     tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
-                DoGetTagImg(tag));
+                                DoGetTagImg(tag));
         } else {
 
             fullname = wxString::Format(wxT("%s::%s"), tag->GetScope().c_str(), tag->GetName().c_str());
-            item = DoAppendLine(tag->GetName(), fullname, false,
-                new OpenResourceDialogItemData(
+            item = DoAppendLine(tag->GetName(),
+                                fullname,
+                                false,
+                                new OpenResourceDialogItemData(
                                     tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
-                DoGetTagImg(tag));
+                                DoGetTagImg(tag));
         }
 
         if((m_userFilters.GetCount() == 1) && (m_userFilters.Item(0).CmpNoCase(name) == 0) && !gotExactMatch) {
@@ -282,8 +295,11 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
             default:
                 break;
             }
-            DoAppendLine(fn.GetFullName(), fn.GetFullPath(), false,
-                new OpenResourceDialogItemData(fn.GetFullPath(), -1, wxT(""), fn.GetFullName(), wxT("")), imgId);
+            DoAppendLine(fn.GetFullName(),
+                         fn.GetFullPath(),
+                         false,
+                         new OpenResourceDialogItemData(fn.GetFullPath(), -1, wxT(""), fn.GetFullName(), wxT("")),
+                         imgId);
             ++counter;
         }
     }
@@ -319,12 +335,19 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
     if(m_dataviewModel->IsEmpty()) return;
 
     if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP ||
-        event.GetKeyCode() == WXK_NUMPAD_DOWN) {
+       event.GetKeyCode() == WXK_NUMPAD_DOWN) {
         event.Skip(false);
         bool down = (event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN);
         wxDataViewItemArray children;
         m_dataviewModel->GetChildren(wxDataViewItem(0), children);
-        wxDataViewItem selection = m_dataview->GetSelection();
+        wxDataViewItemArray selections;
+        wxDataViewItem selection;
+        m_dataview->GetSelections(selections);
+        
+        if(!selections.IsEmpty()) {
+            selection = selections.Item(0);
+        }
+        
         if(!selection.IsOk()) {
             // No selection, select the first
             DoSelectItem(children.Item(0));
@@ -354,8 +377,7 @@ void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
 
 void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event)
 {
-    wxDataViewItem item = m_dataview->GetSelection();
-    event.Enable(item.IsOk());
+    event.Enable(m_dataview->GetSelectedItemsCount());
 }
 
 bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false; }
@@ -363,15 +385,16 @@ bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false
 void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
 {
     CHECK_ITEM_RET(item);
+    m_dataview->UnselectAll();
     m_dataview->Select(item);
     m_dataview->EnsureVisible(item);
 }
 
 wxDataViewItem OpenResourceDialog::DoAppendLine(const wxString& name,
-    const wxString& fullname,
-    bool boldFont,
-    OpenResourceDialogItemData* clientData,
-    const wxBitmap& bmp)
+                                                const wxString& fullname,
+                                                bool boldFont,
+                                                OpenResourceDialogItemData* clientData,
+                                                const wxBitmap& bmp)
 {
     wxString prefix;
     clientData->m_impl = boldFont;
@@ -394,10 +417,10 @@ void OpenResourceDialog::OnTimer(wxTimerEvent& event)
         wxDataViewItemArray children;
         m_dataviewModel->GetChildren(wxDataViewItem(0), children);
 
-        if (children.size() == 1) {
+        if(children.size() == 1) {
             DoSelectItem(children.Item(0));
         }
-    }    
+    }
 }
 
 wxBitmap OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)
@@ -458,21 +481,43 @@ void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& ev
 
 void OpenResourceDialog::OnEnter(wxCommandEvent& event)
 {
-    wxDataViewItem item = m_dataview->GetSelection();
-
-    if(item.IsOk()) {
-        EndModal(wxID_OK);
-    }
+    event.Skip();
+    EndModal(wxID_OK);
 }
 
 void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event) { event.Skip(); }
 
-OpenResourceDialogItemData* OpenResourceDialog::GetSelection() const
+std::vector<OpenResourceDialogItemData*> OpenResourceDialog::GetSelections() const
 {
-    wxDataViewItem item = m_dataview->GetSelection();
-    if(!item.IsOk()) return NULL;
+    std::vector<OpenResourceDialogItemData*> selections;
+    wxDataViewItemArray items;
+    m_dataview->GetSelections(items);
+    if(items.IsEmpty()) {
+        return selections;
+    }
 
-    OpenResourceDialogItemData* data =
-        dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(item));
-    return data;
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        OpenResourceDialogItemData* data =
+            dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(items.Item(i)));
+        if(data) {
+            if(m_lineNumber != wxNOT_FOUND) {
+                data->m_line = m_lineNumber;
+            }
+            selections.push_back(data);
+        }
+    }
+    return selections;
+}
+
+void OpenResourceDialog::GetLineNumberFromFilter(const wxString& filter, wxString& modFilter, long& lineNumber)
+{
+    modFilter = filter;
+    lineNumber = -1;
+    static wxRegEx reNumber(":([0-9]+)", wxRE_ADVANCED);
+    if(reNumber.IsValid() && reNumber.Matches(modFilter)) {
+        wxString strLineNumber;
+        strLineNumber = reNumber.GetMatch(modFilter, 1);
+        strLineNumber.ToCLong(&lineNumber);
+        reNumber.Replace(&modFilter, "");
+    }
 }

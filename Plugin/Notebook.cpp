@@ -42,8 +42,8 @@ wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 
 extern void Notebook_Init_Bitmaps();
 
-Notebook::Notebook(
-    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+                   const wxString& name)
     : wxPanel(parent, id, pos, size, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL, name)
 {
     static bool once = false;
@@ -210,6 +210,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_LEFT_UP, &clTabCtrl::OnLeftUp, this);
     Bind(wxEVT_MOTION, &clTabCtrl::OnMouseMotion, this);
     Bind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
+    Bind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
     Bind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     Bind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
@@ -294,7 +295,7 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
         if(t->IsActive() && ((!IsVerticalTabs() && clientRect.Contains(t->GetRect())) ||
-                                (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
+                             (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
             return true;
     }
     return false;
@@ -314,6 +315,7 @@ clTabCtrl::~clTabCtrl()
     Unbind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     Unbind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
+    Unbind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
     GetParent()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
 }
 
@@ -360,7 +362,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
-    
+
     wxRect clientRect(GetClientRect());
     if(clientRect.width <= 3) return;
     if(clientRect.height <= 3) return;
@@ -477,9 +479,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
+                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             // dc.SetPen(activeTabColours.tabAreaColour);
             // dc.SetBrush(*wxTRANSPARENT_BRUSH);
             // dc.DrawRectangle(m_chevronRect);
@@ -554,7 +556,8 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     }
 
     int tabHit, realPos;
-    TestPoint(event.GetPosition(), realPos, tabHit);
+    wxAlignment align;
+    TestPoint(event.GetPosition(), realPos, tabHit, align);
     if(tabHit == wxNOT_FOUND) return;
 
     // Did we hit the active tab?
@@ -780,7 +783,8 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
 
     } else {
         int tabHit, realPos;
-        TestPoint(event.GetPosition(), realPos, tabHit);
+        wxAlignment align;
+        TestPoint(event.GetPosition(), realPos, tabHit, align);
         if(tabHit != wxNOT_FOUND) {
             if((GetStyle() & kNotebook_CloseButtonOnActiveTab) && m_visibleTabs.at(tabHit)->IsActive()) {
                 // we clicked on the selected index
@@ -809,7 +813,8 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
     event.Skip();
     int realPos, tabHit;
     wxString curtip = GetToolTipText();
-    TestPoint(event.GetPosition(), realPos, tabHit);
+    wxAlignment align;
+    TestPoint(event.GetPosition(), realPos, tabHit, align);
     if(tabHit == wxNOT_FOUND || realPos == wxNOT_FOUND) {
         if(!curtip.IsEmpty()) {
             SetToolTip("");
@@ -822,10 +827,11 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit)
+void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, wxAlignment& align)
 {
     realPosition = wxNOT_FOUND;
     tabHit = wxNOT_FOUND;
+    align = wxALIGN_INVALID;
 
     if(m_visibleTabs.empty()) return;
 
@@ -844,7 +850,14 @@ void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit)
 
     for(size_t i = 0; i < m_visibleTabs.size(); ++i) {
         clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
-        if(tab->GetRect().Contains(pt)) {
+        wxRect r(tab->GetRect());
+        if(r.Contains(pt)) {
+            if(pt.x > ((r.GetWidth() / 2) + r.GetX())) {
+                // the point is on the RIGHT side
+                align = wxALIGN_RIGHT;
+            } else {
+                align = wxALIGN_LEFT;
+            }
             tabHit = i;
             realPosition = DoGetPageIndex(tab->GetWindow());
             return;
@@ -1029,13 +1042,15 @@ void clTabCtrl::OnMouseMiddleClick(wxMouseEvent& event)
     event.Skip();
     if(GetStyle() & kNotebook_MouseMiddleClickClosesTab) {
         int realPos, tabHit;
-        TestPoint(event.GetPosition(), realPos, tabHit);
+        wxAlignment align;
+        TestPoint(event.GetPosition(), realPos, tabHit, align);
         if(realPos != wxNOT_FOUND) {
             CallAfter(&clTabCtrl::DoDeletePage, realPos);
         }
     } else if(GetStyle() & kNotebook_MouseMiddleClickFireEvent) {
         int realPos, tabHit;
-        TestPoint(event.GetPosition(), realPos, tabHit);
+        wxAlignment align;
+        TestPoint(event.GetPosition(), realPos, tabHit, align);
         if(realPos != wxNOT_FOUND) {
             // Just fire an event
             wxBookCtrlEvent e(wxEVT_BOOK_PAGE_CLOSE_BUTTON);
@@ -1048,8 +1063,8 @@ void clTabCtrl::OnMouseMiddleClick(wxMouseEvent& event)
 
 void clTabCtrl::GetAllPages(std::vector<wxWindow*>& pages)
 {
-    std::for_each(
-        m_tabs.begin(), m_tabs.end(), [&](clTabInfo::Ptr_t tabInfo) { pages.push_back(tabInfo->GetWindow()); });
+    std::for_each(m_tabs.begin(), m_tabs.end(),
+                  [&](clTabInfo::Ptr_t tabInfo) { pages.push_back(tabInfo->GetWindow()); });
 }
 
 void clTabCtrl::SetMenu(wxMenu* menu)
@@ -1065,7 +1080,8 @@ void clTabCtrl::OnContextMenu(wxContextMenuEvent& event)
     wxPoint pt = ::wxGetMousePosition();
     pt = ScreenToClient(pt);
     int realPos, tabHit;
-    TestPoint(pt, realPos, tabHit);
+    wxAlignment align;
+    TestPoint(pt, realPos, tabHit, align);
 
     if((realPos != wxNOT_FOUND)) {
         // Show context menu for active tabs only
@@ -1163,15 +1179,23 @@ void clTabCtrl::DoChangeSelection(size_t index)
     }
 }
 
-bool clTabCtrl::MoveActiveToIndex(int newIndex)
+bool clTabCtrl::MoveActiveToIndex(int newIndex, wxAlignment align)
 {
     int activeTabInex = GetSelection();
 
     // Sanity
     if(newIndex == wxNOT_FOUND) return false;
     if(activeTabInex == wxNOT_FOUND) return false;
+    if((newIndex < 0) || (newIndex >= (int)m_tabs.size())) return false;
 
-    bool movingTabRight = (newIndex > activeTabInex);
+    bool movingTabRight;
+    if(align == wxALIGN_INVALID) {
+        movingTabRight = (newIndex > activeTabInex);
+    } else if(align == wxALIGN_RIGHT) {
+        movingTabRight = true;
+    } else {
+        movingTabRight = false;
+    }
 
     clTabInfo::Ptr_t movingTab = GetActiveTabInfo();
     clTabInfo::Ptr_t insertBeforeTab = m_tabs.at(newIndex);
@@ -1257,7 +1281,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
 {
     event.Skip();
     int realPos, tabHit;
-    TestPoint(event.GetPosition(), realPos, tabHit);
+    wxAlignment align;
+    TestPoint(event.GetPosition(), realPos, tabHit, align);
     if(tabHit == wxNOT_FOUND) {
         // Fire background d-clicked event
         wxBookCtrlEvent e(wxEVT_BOOK_TABAREA_DCLICKED);
@@ -1272,8 +1297,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::DoDrawBottomBox(
-    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
+void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
+                                const clTabColours& colours)
 {
     GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
 }
@@ -1309,12 +1334,29 @@ void clTabCtrl::SetArt(clTabRenderer::Ptr_t art)
         if(isClassic) {
             clTabRendererClassic::InitDarkColours(m_colours);
         }
-    } else if(isClassic){
+    } else if(isClassic) {
         m_colours.InitLightColours();
         clTabRendererClassic::InitLightColours(m_colours);
     }
     DoSetBestSize();
     Refresh();
+}
+
+void clTabCtrl::OnMouseScroll(wxMouseEvent& event)
+{
+    event.Skip();
+    if(GetStyle() & kNotebook_MouseScrollSwitchTabs) {
+        size_t curSelection = GetSelection();
+        if(event.GetWheelRotation() > 0) {
+            if(curSelection > 0) {
+                SetSelection(curSelection - 1);
+            }
+        } else {
+            if(curSelection < GetTabs().size()) {
+                SetSelection(curSelection + 1);
+            }
+        }
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -1378,11 +1420,12 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
 
     // Test the drop tab index
     int realPos, tabHit;
-    m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit);
+    wxAlignment align;
+    m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit, align);
 
     // if the tab being dragged and the one we drop it on are the same
     // return false
     if(nTabIndex == realPos) return false;
-    m_tabCtrl->MoveActiveToIndex(realPos);
+    m_tabCtrl->MoveActiveToIndex(realPos, align);
     return true;
 }

@@ -372,6 +372,6 @@ void wxCrafterGgLOZbInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$.._bitmaps_16-mime-cpp@2x.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$.._bitmaps_16-mime-php.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$.._bitmaps_16-mime-php@2x.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$_home_eran_devl_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"), xml_res_file_6, xml_res_size_6, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$_home_eran_devl_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$_home_ajenbo_code_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"), xml_res_file_6, xml_res_size_6, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$_home_ajenbo_code_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"));
 }

@@ -25,6 +25,7 @@
 #ifndef FORMATOPTIONS_H
 #define FORMATOPTIONS_H
 
+#include "phpoptions.h"
 #include "serialized_object.h"
 
 enum AstyleOptions {
@@ -61,21 +62,75 @@ enum AstyleOptions {
     AS_INDENT_USES_TABS = 0x40000000,
     AS_DEFAULT = AS_LINUX | AS_BRACKETS_LINUX | AS_INDENT_PREPROCESSORS,
     AS_ALL_INDENT_OPTIONS = AS_INDENT_CLASS | AS_INDENT_BRACKETS | AS_INDENT_SWITCHES | AS_INDENT_NAMESPACES |
-        AS_INDENT_CASE | AS_INDENT_LABELS | AS_INDENT_BLOCKS | AS_INDENT_PREPROCESSORS | AS_MAX_INSTATEMENT_INDENT |
-        AS_MIN_COND_INDENT,
+                            AS_INDENT_CASE |
+                            AS_INDENT_LABELS |
+                            AS_INDENT_BLOCKS |
+                            AS_INDENT_PREPROCESSORS |
+                            AS_MAX_INSTATEMENT_INDENT |
+                            AS_MIN_COND_INDENT,
     AS_ALL_FORMAT_OPTIONS = AS_BREAK_BLOCKS | AS_PAD_PARENTHESIS | AS_BREAK_BLOCKS_ALL | AS_PAD_PARENTHESIS_OUT |
-        AS_BREAK_ELSEIF | AS_PAD_PARENTHESIS_IN | AS_PAD_OPER | AS_UNPAD_PARENTHESIS | AS_ONE_LINE_KEEP_STATEMENT |
-        AS_FILL_EMPTY_LINES | AS_ONE_LINE_KEEP_BLOCKS,
+                            AS_BREAK_ELSEIF |
+                            AS_PAD_PARENTHESIS_IN |
+                            AS_PAD_OPER |
+                            AS_UNPAD_PARENTHESIS |
+                            AS_ONE_LINE_KEEP_STATEMENT |
+                            AS_FILL_EMPTY_LINES |
+                            AS_ONE_LINE_KEEP_BLOCKS,
 };
 
-enum FormatterEngine {
-    kFormatEngineAStyle,
-    kFormatEngineClangFormat,
+enum CXXFormatterEngine {
+    kCxxFormatEngineAStyle,
+    kCxxFormatEngineClangFormat,
 };
 
 enum PHPFormatterEngine {
     kPhpFormatEngineBuiltin,
     kPhpFormatEnginePhpCsFixer,
+    kPhpFormatEnginePhpcbf,
+};
+
+enum PHPFixserFormatterSettings {
+    kPHPFixserFormatFile = (1 << 1),
+};
+
+enum PHPFixserFormatterStyle {
+    kPcfAllowRisky = (1 << 0),
+    kPcfPHP56Migration = (1 << 1),
+    kPcfPHP70Migration = (1 << 2),
+    kPcfPHP71Migration = (1 << 3),
+    kPcfPSR1 = (1 << 4),
+    kPcfPSR2 = (1 << 5),
+    kPcfSymfony = (1 << 6),
+    kPcfShortArray = (1 << 7),
+    kPcfLongArray = (1 << 8),
+    kPcfAlignDoubleArrow = (1 << 9),
+    kPcfStripDoubleArrow = (1 << 10),
+    kPcfIgnoreDoubleArrow = (1 << 16),
+    kPcfAlignEquals = (1 << 11),
+    kPcfStripEquals = (1 << 12),
+    kPcfIgnoreEquals = (1 << 17),
+    kPcfBlankLineAfterNamespace = (1 << 13),
+    kPcfBlankLineAfterOpeningTag = (1 << 14),
+    kPcfBlankLineBeforeReturn = (1 << 15),
+    kPcfConcatSpaceNone = (1 << 18),
+    kPcfConcatSpaceOne = (1 << 19),
+    kPcfEmptyReturnStrip = (1 << 20),
+    kPcfEmptyReturnKeep = (1 << 21),
+    kPcfCombineConsecutiveUnsets = (1 << 22),
+    kPcfLinebreakAfterOpeningTag = (1 << 23),
+    kPcfMbStrFunctions = (1 << 24),
+    kPcfNoBlankLinesBeforeNamespace = (1 << 25),
+    kPcfNoMultilineWhitespaceBeforeSemicolons = (1 << 26),
+    kPcfNoNullPropertyInitialization = (1 << 27),
+    kPcfNoPhp4Constructor = (1 << 28),
+    kPcfNoShortEchoTag = (1 << 29),
+    kPcfNoUnreachableDefaultArgumentValue = (1 << 30),
+    kPcfNoUselessElse = (1 << 31),
+};
+
+enum PhpbcfFormatterStyle {
+    kWarningSeverity0 = (1 << 0),
+    kPhpbcfFormatFile = (1 << 1),
 };
 
 enum ClangFormatStyle {
@@ -125,15 +180,22 @@ class FormatOptions : public SerializedObject
     size_t m_clangFormatOptions;
     size_t m_clangBreakBeforeBrace;
     wxString m_customFlags;
-    FormatterEngine m_engine;
+    CXXFormatterEngine m_engine;
     PHPFormatterEngine m_phpEngine;
     wxString m_clangFormatExe;
     size_t m_clangColumnLimit; // when indenting, limit the line to fit into a column width
     size_t m_phpFormatOptions;
     size_t m_generalFlags;
-    wxString m_phpExecutable;
     wxString m_PHPCSFixerPhar;
     wxString m_PHPCSFixerPharOptions;
+    size_t m_PHPCSFixerPharSettings;
+    size_t m_PHPCSFixerPharRules;
+    wxString m_PhpcbfPhar;
+    size_t m_phpcbfSeverity;
+    wxString m_PhpcbfEncoding;
+    wxString m_PhpcbfStandard;
+    size_t m_PhpcbfPharOptions;
+    PhpOptions m_optionsPhp;
 
 private:
     wxString ClangFlagToBool(ClangFormatStyle flag) const;
@@ -143,52 +205,196 @@ private:
      * editor settings (namely: tab vs spaces, and tab width)
      */
     wxString ClangGlobalSettings() const;
+    void AutodetectSettings();
+
+    /**
+     * @brief Check if there is a file of the given name in any of the parent directories of the input file
+     */
+    bool HasConfigForFile(const wxFileName& fileName, const wxString& configName) const;
 
 public:
     FormatOptions();
     virtual ~FormatOptions();
 
-    wxString AstyleOptionsAsString() const;
-    wxString ClangFormatOptionsAsString(const wxFileName& filename, double clangFormatVersion) const;
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
+    bool HasFlag(eCF_GeneralOptions flag) const
+    {
+        return m_generalFlags & flag;
+    }
+    void SetFlag(eCF_GeneralOptions flag, bool b)
+    {
+        b ? m_generalFlags |= flag : m_generalFlags &= ~flag;
+    }
+    void SetCustomFlags(const wxString& customFlags)
+    {
+        this->m_customFlags = customFlags;
+    }
+    const wxString& GetCustomFlags() const
+    {
+        return m_customFlags;
+    }
 
-    void SetClangColumnLimit(size_t clangColumnLimit) { this->m_clangColumnLimit = clangColumnLimit; }
-    size_t GetClangColumnLimit() const { return m_clangColumnLimit; }
+    // C++
+    void SetEngine(CXXFormatterEngine engine)
+    {
+        m_engine = engine;
+    }
+    CXXFormatterEngine GetEngine() const
+    {
+        return m_engine;
+    }
 
-    void SetClangFormatExe(const wxString& clangFormatExe) { this->m_clangFormatExe = clangFormatExe; }
-    const wxString& GetClangFormatExe() const { return m_clangFormatExe; }
-    FormatterEngine GetEngine() const { return m_engine; }
+    // AStyle
+    void SetOption(size_t options)
+    {
+        m_astyleOptions = options;
+    }
+    size_t GetOptions() const
+    {
+        return m_astyleOptions;
+    }
+    wxString AstyleOptionsAsString() const;
 
+    // Clang
+    wxString ClangFormatCommand(const wxFileName& fileName,
+                                const bool& formatInline = true,
+                                const int& cursorPosition = wxNOT_FOUND,
+                                const int& selStart = wxNOT_FOUND,
+                                const int& selEnd = wxNOT_FOUND) const;
+    wxString GetClangFormatStyleAsString(const wxFileName& fileName) const;
+    void SetClangFormatExe(const wxString& clangFormatExe)
+    {
+        this->m_clangFormatExe = clangFormatExe;
+    }
+    const wxString& GetClangFormatExe() const
+    {
+        return m_clangFormatExe;
+    }
+    void SetClangColumnLimit(size_t clangColumnLimit)
+    {
+        this->m_clangColumnLimit = clangColumnLimit;
+    }
+    size_t GetClangColumnLimit() const
+    {
+        return m_clangColumnLimit;
+    }
     void SetClangBreakBeforeBrace(size_t clangBreakBeforeBrace)
     {
         this->m_clangBreakBeforeBrace = clangBreakBeforeBrace;
     }
-    size_t GetClangBreakBeforeBrace() const { return m_clangBreakBeforeBrace; }
-    void SetEngine(FormatterEngine engine) { m_engine = engine; }
+    size_t GetClangBreakBeforeBrace() const
+    {
+        return m_clangBreakBeforeBrace;
+    }
+    void SetClangFormatOptions(size_t clangFormatOptions)
+    {
+        this->m_clangFormatOptions = clangFormatOptions;
+    }
+    size_t GetClangFormatOptions() const
+    {
+        return m_clangFormatOptions;
+    }
 
-    size_t GetOptions() const { return m_astyleOptions; }
-    void SetOption(size_t options) { m_astyleOptions = options; }
-    void SetCustomFlags(const wxString& customFlags) { this->m_customFlags = customFlags; }
-    const wxString& GetCustomFlags() const { return m_customFlags; }
-    void SetClangFormatOptions(size_t clangFormatOptions) { this->m_clangFormatOptions = clangFormatOptions; }
-    size_t GetClangFormatOptions() const { return m_clangFormatOptions; }
-    size_t GetPHPFormatterOptions() const { return m_phpFormatOptions; }
-    void SetPHPFormatterOptions(size_t options) { m_phpFormatOptions = options; }
-    bool HasFlag(eCF_GeneralOptions flag) const { return m_generalFlags & flag; }
-    void SetFlag(eCF_GeneralOptions flag, bool b) { b ? m_generalFlags |= flag : m_generalFlags &= ~flag; }
-    void SetPHPCSFixerPhar(const wxString& PHPCSFixerPhar) { this->m_PHPCSFixerPhar = PHPCSFixerPhar; }
+    // PHP
+    void SetPhpEngine(const PHPFormatterEngine& phpEngine)
+    {
+        this->m_phpEngine = phpEngine;
+    }
+    const PHPFormatterEngine& GetPhpEngine() const
+    {
+        return m_phpEngine;
+    }
+
+    // PHP Formatter
+    size_t GetPHPFormatterOptions() const
+    {
+        return m_phpFormatOptions;
+    }
+    void SetPHPFormatterOptions(size_t options)
+    {
+        m_phpFormatOptions = options;
+    }
+
+    // PHP-CS-FIXER
+    bool GetPhpFixerCommand(const wxFileName& fileName, wxString& command);
+    wxString GetPhpFixerRules(const wxFileName& fileName);
+    void SetPHPCSFixerPhar(const wxString& PHPCSFixerPhar)
+    {
+        this->m_PHPCSFixerPhar = PHPCSFixerPhar;
+    }
+    const wxString& GetPHPCSFixerPhar() const
+    {
+        return m_PHPCSFixerPhar;
+    }
     void SetPHPCSFixerPharOptions(const wxString& PHPCSFixerPharOptions)
     {
         this->m_PHPCSFixerPharOptions = PHPCSFixerPharOptions;
     }
-    void SetPhpEngine(const PHPFormatterEngine& phpEngine) { this->m_phpEngine = phpEngine; }
-    void SetPhpExecutable(const wxString& phpExecutable) { this->m_phpExecutable = phpExecutable; }
-    const wxString& GetPHPCSFixerPhar() const { return m_PHPCSFixerPhar; }
-    const wxString& GetPHPCSFixerPharOptions() const { return m_PHPCSFixerPharOptions; }
-    const PHPFormatterEngine& GetPhpEngine() const { return m_phpEngine; }
-    const wxString& GetPhpExecutable() const { return m_phpExecutable; }
-    wxString GetPhpFixerCommand() const;
+    const wxString& GetPHPCSFixerPharOptions() const
+    {
+        return m_PHPCSFixerPharOptions;
+    }
+    void SetPHPCSFixerPharSettings(const size_t& PHPCSFixerPharSettings)
+    {
+        this->m_PHPCSFixerPharSettings = PHPCSFixerPharSettings;
+    }
+    size_t GetPHPCSFixerPharSettings() const
+    {
+        return m_PHPCSFixerPharSettings;
+    }
+    void SetPHPCSFixerPharRules(const size_t& PHPCSFixerPharRules)
+    {
+        this->m_PHPCSFixerPharRules = PHPCSFixerPharRules;
+    }
+    size_t GetPHPCSFixerPharRules() const
+    {
+        return m_PHPCSFixerPharRules;
+    }
+
+    // PHPCBF
+    bool GetPhpcbfCommand(const wxFileName& fileName, wxString& command);
+    wxString GetPhpcbfStandard(const wxFileName& fileName);
+    void SetPhpcbfPhar(const wxString& PhpcbfPhar)
+    {
+        this->m_PhpcbfPhar = PhpcbfPhar;
+    }
+    const wxString& GetPhpcbfPhar() const
+    {
+        return m_PhpcbfPhar;
+    }
+    void SetPhpcbfSeverity(size_t phpcbfSeverity)
+    {
+        this->m_phpcbfSeverity = phpcbfSeverity;
+    }
+    size_t GetPhpcbfSeverity() const
+    {
+        return m_phpcbfSeverity;
+    }
+    void SetPhpcbfEncoding(const wxString& PhpcbfEncoding)
+    {
+        this->m_PhpcbfEncoding = PhpcbfEncoding;
+    }
+    const wxString& GetPhpcbfEncoding() const
+    {
+        return m_PhpcbfEncoding;
+    }
+    void SetPhpcbfStandard(const wxString& PhpcbfStandard)
+    {
+        this->m_PhpcbfStandard = PhpcbfStandard;
+    }
+    const wxString& GetPhpcbfStandard() const
+    {
+        return m_PhpcbfStandard;
+    }
+    void SetPhpcbfOptions(size_t phpcbfPharOptions)
+    {
+        this->m_PhpcbfPharOptions = phpcbfPharOptions;
+    }
+    size_t GetPhpcbfOptions() const
+    {
+        return m_PhpcbfPharOptions;
+    }
 };
 
 #endif // FORMATOPTIONS_H

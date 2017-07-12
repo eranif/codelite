@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="CodeFormatter">
+<CodeLite_Project Name="CodeFormatter" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00050001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug000000000000]]>
@@ -72,6 +72,8 @@
     <File Name="ASResource.cpp"/>
     <File Name="astyle.h"/>
     <File Name="astyle_main.h"/>
+    <File Name="ASLocalizer.cpp"/>
+    <File Name="ASLocalizer.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Dialogs">
     <File Name="codeformatterdlg.h"/>
@@ -83,8 +85,6 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="CodeFormatter">
-    <File Name="ASLocalizer.cpp"/>
-    <File Name="ASLocalizer.h"/>
     <File Name="codeformatterdlg.wxcp"/>
     <File Name="codeformatterdlg_codeformatter_bitmaps.cpp"/>
     <File Name="codeformatterdlgbase.cpp"/>

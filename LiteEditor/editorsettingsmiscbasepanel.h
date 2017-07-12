@@ -69,6 +69,12 @@ protected:
     wxStaticText* m_staticText47;
     wxStaticText* m_staticText49;
     wxTextCtrl* m_textCtrlPattern;
+    wxPanel* m_panel44;
+    wxStaticText* m_staticText70;
+    wxCheckBox* m_statusbarShowLine;
+    wxCheckBox* m_statusbarShowCol;
+    wxCheckBox* m_statusbarShowPos;
+    wxCheckBox* m_statusbarShowFileLength;
     wxPanel* m_panel2;
     wxStaticText* m_staticText1;
     wxChoice* m_fileEncoding;
@@ -129,6 +135,12 @@ public:
     wxStaticText* GetStaticText49() { return m_staticText49; }
     wxTextCtrl* GetTextCtrlPattern() { return m_textCtrlPattern; }
     wxPanel* GetPanel23() { return m_panel23; }
+    wxStaticText* GetStaticText70() { return m_staticText70; }
+    wxCheckBox* GetStatusbarShowLine() { return m_statusbarShowLine; }
+    wxCheckBox* GetStatusbarShowCol() { return m_statusbarShowCol; }
+    wxCheckBox* GetStatusbarShowPos() { return m_statusbarShowPos; }
+    wxCheckBox* GetStatusbarShowFileLength() { return m_statusbarShowFileLength; }
+    wxPanel* GetPanel44() { return m_panel44; }
     wxStaticText* GetStaticText1() { return m_staticText1; }
     wxChoice* GetFileEncoding() { return m_fileEncoding; }
     wxCheckBox* GetSetLocale() { return m_SetLocale; }

@@ -23,27 +23,32 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "formatoptions.h"
+#include "PHPFormatterBuffer.h"
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
-#include "PHPFormatterBuffer.h"
+#include "file_logger.h"
+#include "file_logger.h"
 #include "globals.h"
+#include "json_node.h"
+#include "phpoptions.h"
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
-    , m_engine(kFormatEngineClangFormat)
+    , m_engine(kCxxFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
-                           kSpaceBeforeAssignmentOperators |
-                           kAlignEscapedNewlinesLeft)
+                           kSpaceBeforeAssignmentOperators | kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
+    , m_PHPCSFixerPharSettings(0)
+    , m_PHPCSFixerPharRules(0)
     , m_generalFlags(0)
+    , m_PhpcbfStandard("PEAR")
+    , m_PhpcbfEncoding("UTF-8")
+    , m_phpcbfSeverity(0)
+    , m_PhpcbfPharOptions(0)
 {
-    if(m_clangFormatExe.IsEmpty()) {
-        clClangFormatLocator locator;
-        locator.Locate(m_clangFormatExe);
-    }
 }
 
 FormatOptions::~FormatOptions() {}
@@ -54,9 +59,9 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read(wxT("m_customFlags"), m_customFlags);
 
     // By default, use clang-format as it is more robust and advanced
-    int engine = kFormatEngineClangFormat;
+    int engine = kCxxFormatEngineClangFormat;
     arch.Read("m_engine", engine);
-    m_engine = static_cast<FormatterEngine>(engine);
+    m_engine = static_cast<CXXFormatterEngine>(engine);
 
     engine = kPhpFormatEngineBuiltin;
     arch.Read("m_phpEngine", engine);
@@ -68,9 +73,61 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read("m_clangColumnLimit", m_clangColumnLimit);
     arch.Read("m_phpFormatOptions", m_phpFormatOptions);
     arch.Read("m_generalFlags", m_generalFlags);
-    arch.Read("m_phpExecutable", m_phpExecutable);
     arch.Read("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Read("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
+    arch.Read("m_PHPCSFixerPharSettings", m_PHPCSFixerPharSettings);
+    arch.Read("m_PHPCSFixerPharRules", m_PHPCSFixerPharRules);
+    arch.Read("m_PhpcbfPhar", m_PhpcbfPhar);
+    arch.Read("m_PhpcbfPharOptions", m_PhpcbfPharOptions);
+
+    AutodetectSettings();
+}
+
+void FormatOptions::AutodetectSettings()
+{
+    wxFileName clangFormatExe(m_clangFormatExe);
+    if(m_clangFormatExe.IsEmpty() || !clangFormatExe.Exists()) {
+        clClangFormatLocator locator;
+        if(locator.Locate(m_clangFormatExe)) {
+            clangFormatExe.SetPath(m_clangFormatExe);
+        }
+    }
+    if(m_clangFormatExe.IsEmpty() || !clangFormatExe.Exists()) {
+        m_engine = kCxxFormatEngineAStyle; // Change the active engine to AStyle
+        m_clangFormatExe = "";             // Clear the non existed executable
+    }
+
+    // Find an installed php style fixer
+    wxFileName phpcsfixerFormatPhar(m_PHPCSFixerPhar);
+#ifndef __WXMSW__
+    if(m_PHPCSFixerPhar.IsEmpty() || !phpcsfixerFormatPhar.Exists()) {
+        if(clFindExecutable("php-cs-fixer", phpcsfixerFormatPhar)) {
+            m_PHPCSFixerPhar = phpcsfixerFormatPhar.GetFullPath();
+        }
+    }
+#endif
+    if(m_PHPCSFixerPhar.IsEmpty() || !phpcsfixerFormatPhar.Exists()) {
+        if(m_phpEngine == kPhpFormatEnginePhpCsFixer) {
+            m_phpEngine = kPhpFormatEngineBuiltin;
+        }
+        m_PHPCSFixerPhar = ""; // Clear the non existed executable
+    }
+
+    // Find an installed php style fixer
+    wxFileName phpcbfFormatPhar(m_PhpcbfPhar);
+#ifndef __WXMSW__
+    if(m_PhpcbfPhar.IsEmpty() || !phpcbfFormatPhar.Exists()) {
+        if(clFindExecutable("phpcbf", phpcbfFormatPhar)) {
+            m_PhpcbfPhar = phpcbfFormatPhar.GetFullPath();
+        }
+    }
+#endif
+    if(m_PhpcbfPhar.IsEmpty() || !phpcbfFormatPhar.Exists()) {
+        if(m_phpEngine == kPhpFormatEnginePhpcbf) {
+            m_phpEngine = kPhpFormatEngineBuiltin;
+        }
+        m_PhpcbfPhar = ""; // Clear the non existed executable
+    }
 }
 
 void FormatOptions::Serialize(Archive& arch)
@@ -85,9 +142,12 @@ void FormatOptions::Serialize(Archive& arch)
     arch.Write("m_clangColumnLimit", m_clangColumnLimit);
     arch.Write("m_phpFormatOptions", m_phpFormatOptions);
     arch.Write("m_generalFlags", m_generalFlags);
-    arch.Write("m_phpExecutable", m_phpExecutable);
     arch.Write("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
     arch.Write("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
+    arch.Write("m_PHPCSFixerPharSettings", m_PHPCSFixerPharSettings);
+    arch.Write("m_PHPCSFixerPharRules", m_PHPCSFixerPharRules);
+    arch.Write("m_PhpcbfPhar", m_PhpcbfPhar);
+    arch.Write("m_PhpcbfPharOptions", m_PhpcbfPharOptions);
 }
 
 wxString FormatOptions::AstyleOptionsAsString() const
@@ -185,80 +245,115 @@ wxString FormatOptions::AstyleOptionsAsString() const
     return options;
 }
 
-wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, double clangFormatVersion) const
+wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName, const bool& formatInline,
+                                           const int& cursorPosition, const int& selStart, const int& selEnd) const
 {
-    // If the option: "File" is selected, it overrides everything here
-    if(m_clangFormatOptions & kClangFormatFile) {
-        // All our settings are taken from .clang-format file
-        return " -style=file";
+    wxString command, filePath;
+
+    command << GetClangFormatExe();
+    ::WrapWithQuotes(command);
+
+    filePath = fileName.GetFullPath();
+    ::WrapWithQuotes(filePath);
+
+    if(cursorPosition != wxNOT_FOUND) {
+        command << " -cursor=" << cursorPosition;
     }
-    
-    wxString options, forceLanguage;
 
-    // Try to autodetect the file type
-    if(clangFormatVersion >= 3.5) {
-        if(FileExtManager::IsJavascriptFile(filename)) {
-            forceLanguage << "Language : JavaScript";
+    if(formatInline) {
+        command << " -i";
+    }
 
-        } else if(FileExtManager::IsCxxFile(filename)) {
-            forceLanguage << "Language : Cpp";
+    if(selStart != wxNOT_FOUND && selEnd != wxNOT_FOUND) {
+        command << " -offset=" << selStart << " -length=" << (selEnd - selStart);
+    }
 
-        } else if(FileExtManager::IsJavaFile(filename)) {
-            forceLanguage << "Language : Java";
+    command << " -style=" << GetClangFormatStyleAsString(fileName);
+
+    command << " " << filePath;
+
+    return command;
+}
+
+wxString FormatOptions::GetClangFormatStyleAsString(const wxFileName& fileName) const
+{
+    // If the rules file option is enabled it overrides everything here
+    if(m_clangFormatOptions & kClangFormatFile) {
+        // Even if the user specified to use rules file, we only enable it incase it exists
+        if(HasConfigForFile(fileName, ".clang-format")) {
+            return "file";
         }
     }
-    
-    options << " -style=\"{ BasedOnStyle: ";
+
+    wxString style = "\"{ BasedOnStyle: ";
     if(m_clangFormatOptions & kClangFormatChromium) {
-        options << "Chromium";
+        style << "Chromium";
     } else if(m_clangFormatOptions & kClangFormatGoogle) {
-        options << "Google";
+        style << "Google";
     } else if(m_clangFormatOptions & kClangFormatLLVM) {
-        options << "LLVM";
+        style << "LLVM";
     } else if(m_clangFormatOptions & kClangFormatMozilla) {
-        options << "Mozilla";
-    } else if(m_clangFormatOptions & kClangFormatWebKit) {
-        options << "WebKit";
+        style << "Mozilla";
+    } else {
+        // Default style
+        style << "WebKit";
     }
 
     // add tab width and space vs tabs based on the global editor settings
-    options << ClangGlobalSettings();
+    style << ClangGlobalSettings();
 
     // Language
-    if(!forceLanguage.IsEmpty()) {
-        options << ", " << forceLanguage << " ";
-    }
-    options << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
-    options << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
-    options << ", AllowAllParametersOfDeclarationOnNextLine : "
-            << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
+    clClangFormatLocator locator;
+    double clangFormatVersion = locator.GetVersion(GetClangFormatExe());
     if(clangFormatVersion >= 3.5) {
-        options << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
-        options << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
+        wxString forceLanguage;
+
+        if(FileExtManager::IsJavascriptFile(fileName)) {
+            forceLanguage << "Language : JavaScript";
+
+        } else if(FileExtManager::IsCxxFile(fileName)) {
+            forceLanguage << "Language : Cpp";
+
+        } else if(FileExtManager::IsJavaFile(fileName)) {
+            forceLanguage << "Language : Java";
+        }
+
+        if(!forceLanguage.IsEmpty()) {
+            style << ", " << forceLanguage << " ";
+        }
     }
-    options << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
-    options << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
-    options << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
-    options << ", AlwaysBreakTemplateDeclarations : " << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
-    options << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
-    options << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
-    options << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
-    options << ", BreakConstructorInitializersBeforeComma : "
-            << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
-    options << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
-    options << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
-    options << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
+
+    style << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
+    style << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
+    style << ", AllowAllParametersOfDeclarationOnNextLine : "
+          << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
     if(clangFormatVersion >= 3.5) {
-        options << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
+        style << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
+        style << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
     }
-    options << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
-    options << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
-    options << ", ColumnLimit : " << m_clangColumnLimit;
+    style << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
+    style << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
+    style << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
+    style << ", AlwaysBreakTemplateDeclarations : " << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
+    style << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
+    style << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
+    style << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
+    style << ", BreakConstructorInitializersBeforeComma : "
+          << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
+    style << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
+    style << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
+    style << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
     if(clangFormatVersion >= 3.5) {
-        options << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
+        style << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
     }
-    options << " }\" ";
-    return options;
+    style << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
+    style << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
+    style << ", ColumnLimit : " << m_clangColumnLimit;
+    if(clangFormatVersion >= 3.5) {
+        style << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
+    }
+    style << " }\"";
+    return style;
 }
 
 wxString FormatOptions::ClangFlagToBool(ClangFormatStyle flag) const
@@ -296,17 +391,215 @@ wxString FormatOptions::ClangGlobalSettings() const
     return options;
 }
 
-wxString FormatOptions::GetPhpFixerCommand() const
+bool FormatOptions::GetPhpFixerCommand(const wxFileName& fileName, wxString& command)
 {
-    wxString command, phar, php, options;
-    php << GetPhpExecutable();
+    command.Clear();
+    m_optionsPhp.Load();
+    wxString phar, php, parameters, filePath;
+    php = m_optionsPhp.GetPhpExe();
+    if(php.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpFixerCommand(): empty php command" << clEndl;
+        return false;
+    }
     ::WrapWithQuotes(php);
-    
-    phar << GetPHPCSFixerPhar();
+    phar = GetPHPCSFixerPhar();
+    if(phar.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpFixerCommand(): empty php-cs-fixer phar path" << clEndl;
+        return false;
+    }
     ::WrapWithQuotes(phar);
-    
-    options << GetPHPCSFixerPharOptions();
-    options.Trim().Trim(false);
-    command << php << " " << phar << " fix " << options;
-    return command;
+
+    parameters = GetPHPCSFixerPharOptions();
+    if(parameters.IsEmpty()) {
+        if(m_PHPCSFixerPharSettings & kPcfAllowRisky) {
+            parameters << " --allow-risky=yes";
+        }
+
+        parameters << GetPhpFixerRules(fileName);
+    }
+    parameters.Trim().Trim(false);
+    clDEBUG() << parameters << clEndl;
+
+    filePath = fileName.GetFullPath();
+    ::WrapWithQuotes(filePath);
+
+    command << php << " " << phar << " fix " << parameters << " " << filePath;
+    return true;
+}
+
+wxString FormatOptions::GetPhpFixerRules(const wxFileName& fileName)
+{
+    // If the rules file option is enabled it overrides everything here
+    if(m_PHPCSFixerPharSettings & kPHPFixserFormatFile) {
+        // Even if the user specified to use rules file, we only enable it incase it exists
+        if(HasConfigForFile(fileName, ".php_cs") || HasConfigForFile(fileName, ".php_cs.dist")) {
+            return "";
+        }
+    }
+
+    JSONRoot root(cJSON_Object);
+    JSONElement rules = root.toElement();
+    if(m_PHPCSFixerPharRules & kPcfPHP56Migration) {
+        rules.addProperty("@PHP56Migration", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfPHP70Migration) {
+        rules.addProperty("@PHP70Migration", true);
+        if(m_PHPCSFixerPharSettings & kPcfAllowRisky) {
+            rules.addProperty("@PHP70Migration:risky", true);
+        }
+    }
+    if(m_PHPCSFixerPharRules & kPcfPHP71Migration) {
+        rules.addProperty("@PHP71Migration", true);
+        if(m_PHPCSFixerPharSettings & kPcfAllowRisky) {
+            rules.addProperty("@PHP71Migration:risky", true);
+        }
+    }
+    if(m_PHPCSFixerPharRules & kPcfPSR1) {
+        rules.addProperty("@PSR1", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfPSR2) {
+        rules.addProperty("@PSR2", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfSymfony) {
+        rules.addProperty("@Symfony", true);
+        if(m_PHPCSFixerPharSettings & kPcfAllowRisky) {
+            rules.addProperty("@Symfony:risky", true);
+        }
+    }
+    if(m_PHPCSFixerPharRules & (kPcfShortArray | kPcfLongArray)) {
+        JSONElement array_syntax = JSONElement::createObject("array_syntax");
+        array_syntax.addProperty("syntax", m_PHPCSFixerPharRules & kPcfShortArray ? "short" : "long");
+        rules.addProperty("array_syntax", array_syntax);
+    }
+    if(m_PHPCSFixerPharRules &
+       (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreDoubleArrow)) {
+        JSONElement binary_operator_spaces = JSONElement::createObject("binary_operator_spaces");
+        if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow)) {
+            binary_operator_spaces.addProperty("align_double_arrow",
+                                               m_PHPCSFixerPharRules & kPcfIgnoreDoubleArrow
+                                               ? cJSON_NULL
+                                               : m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
+        }
+        if(m_PHPCSFixerPharRules & (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals)) {
+            binary_operator_spaces.addProperty("align_equals",
+                                               m_PHPCSFixerPharRules & kPcfIgnoreEquals
+                                               ? cJSON_NULL
+                                               : m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
+        }
+        rules.addProperty("binary_operator_spaces", binary_operator_spaces);
+    }
+    if(m_PHPCSFixerPharRules & (kPcfConcatSpaceNone | kPcfConcatSpaceOne)) {
+        JSONElement concat_space = JSONElement::createObject("concat_space");
+        concat_space.addProperty("spacing", m_PHPCSFixerPharRules & kPcfConcatSpaceNone ? "none" : "one");
+        rules.addProperty("concat_space", concat_space);
+    }
+    if(m_PHPCSFixerPharRules & (kPcfEmptyReturnStrip | kPcfEmptyReturnKeep)) {
+        rules.addProperty("phpdoc_no_empty_return", m_PHPCSFixerPharRules & kPcfEmptyReturnStrip ? true : false);
+    }
+    if(m_PHPCSFixerPharRules & kPcfBlankLineAfterOpeningTag) {
+        rules.addProperty("blank_line_after_opening_tag", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfBlankLineBeforeReturn) {
+        rules.addProperty("blank_line_before_return", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfCombineConsecutiveUnsets) {
+        rules.addProperty("combine_consecutive_unsets", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfLinebreakAfterOpeningTag) {
+        rules.addProperty("linebreak_after_opening_tag", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfMbStrFunctions) {
+        rules.addProperty("mb_str_functions", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoBlankLinesBeforeNamespace) {
+        rules.addProperty("no_blank_lines_before_namespace", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoMultilineWhitespaceBeforeSemicolons) {
+        rules.addProperty("no_multiline_whitespace_before_semicolons", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoNullPropertyInitialization) {
+        rules.addProperty("no_null_property_initialization", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoPhp4Constructor) {
+        rules.addProperty("no_php4_constructor", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoShortEchoTag) {
+        rules.addProperty("no_short_echo_tag", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoUnreachableDefaultArgumentValue) {
+        rules.addProperty("no_unreachable_default_argument_value", true);
+    }
+    if(m_PHPCSFixerPharRules & kPcfNoUselessElse) {
+        rules.addProperty("no_useless_else", true);
+    }
+
+    wxString rulesString = rules.FormatRawString(false);
+    if(rulesString == "{}") {
+        return "";
+    }
+
+    return " --rules='" + rulesString + "'";
+}
+
+bool FormatOptions::GetPhpcbfCommand(const wxFileName& fileName, wxString& command)
+{
+    command.Clear();
+    m_optionsPhp.Load();
+    wxString phar, php, parameters, filePath;
+    php = m_optionsPhp.GetPhpExe();
+    if(php.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpcbfCommand(): empty php command" << clEndl;
+        return false;
+    }
+    ::WrapWithQuotes(php);
+
+    phar = GetPhpcbfPhar();
+    if(phar.IsEmpty()) {
+        clDEBUG() << "CodeForamtter: GetPhpcbfCommand(): empty phpcbf phar path" << clEndl;
+        return false;
+    }
+    ::WrapWithQuotes(phar);
+
+    parameters << GetPhpcbfStandard(fileName);
+    if(m_PhpcbfEncoding != "") {
+        parameters << " --encoding=" << m_PhpcbfEncoding;
+    }
+    if(m_phpcbfSeverity) {
+        parameters << " --severity=" << m_phpcbfSeverity;
+    }
+    if(m_PhpcbfPharOptions & kWarningSeverity0) {
+        parameters << " -n";
+    }
+    parameters.Trim().Trim(false);
+
+    filePath = fileName.GetFullPath();
+    ::WrapWithQuotes(filePath);
+
+    command << php << " " << phar << " " << parameters << " " << filePath;
+    return true;
+}
+
+wxString FormatOptions::GetPhpcbfStandard(const wxFileName& fileName)
+{
+    // If the rules file option is enabled it overrides everything here
+    if(m_PhpcbfPharOptions & kPhpbcfFormatFile) {
+        // Even if the user specified to use rules file, we only enable it incase it exists
+        if(HasConfigForFile(fileName, "phpcs.xml")) {
+            return "";
+        }
+    }
+
+    return " --standard=" + m_PhpcbfStandard;
+}
+
+bool FormatOptions::HasConfigForFile(const wxFileName& fileName, const wxString& configName) const
+{
+    wxFileName configFile(fileName.GetPath(), configName);
+    while(configFile.GetDirCount()) {
+        if(configFile.FileExists()) {
+            return true;
+        }
+        configFile.RemoveLastDir();
+    }
+    return false;
 }

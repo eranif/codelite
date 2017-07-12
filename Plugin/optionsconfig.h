@@ -70,6 +70,11 @@ public:
         Opt_UseBlockCaret = (1 << 29),
         Opt_TabStyleMinimal = (1 << 30),
     };
+
+    enum {
+        Opt2_MouseScrollSwitchTabs = (1 << 0),
+    };
+
     enum { nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall };
 
 protected:
@@ -140,6 +145,7 @@ protected:
     bool m_useLocale;
     bool m_trimOnlyModifiedLines;
     size_t m_options;
+    size_t m_options2;
     wxColour m_debuggerMarkerLine;
     wxDirection m_workspaceTabsDirection; // Up/Down/Left/Right
     wxDirection m_outputTabsDirection;    // Up/Down
@@ -158,6 +164,16 @@ public:
     }
 
     bool HasOption(size_t flag) const { return m_options & flag; }
+    void EnableOption2(size_t flag, bool b)
+    {
+        if(b) {
+            m_options2 |= flag;
+        } else {
+            m_options2 &= ~flag;
+        }
+    }
+
+    bool HasOption2(size_t flag) const { return m_options2 & flag; }
 
 public:
     OptionsConfig() {}
@@ -184,6 +200,8 @@ public:
     bool IsTabColourDark() const { return HasOption(Opt_TabColourDark); }
     void SetTabHasXButton(bool b) { EnableOption(Opt_TabNoXButton, !b); }
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
+    bool IsMouseScrollSwitchTabs() const { return HasOption2(Opt2_MouseScrollSwitchTabs); }
+    void SetMouseScrollSwitchTabs(bool b) { EnableOption2(Opt2_MouseScrollSwitchTabs, b); }
 
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }

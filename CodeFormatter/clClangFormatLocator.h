@@ -27,6 +27,7 @@
 #define CLCLANGFORMATLOCATOR_H
 
 #include <wx/string.h>
+#include <wx/filename.h>
 
 class clClangFormatLocator
 {
@@ -39,7 +40,7 @@ public:
      * @return
      */
     bool Locate(wxString& clangFormat);
-    
+
     /**
      * @brief return the clang format version installed
      */

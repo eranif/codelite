@@ -29,13 +29,11 @@
 #include <wx/arrstr.h>
 #include <wx/string.h>
 #include <cl_config.h>
+#include "phpoptions.h"
 
 class PHPConfigurationData : public clConfigItem
 {
 protected:
-    wxArrayString m_includePaths;
-    wxString m_phpExe;
-    wxString m_errorReporting;
     size_t m_xdebugPort;
     wxArrayString m_ccIncludePath;
     size_t m_flags;
@@ -44,11 +42,11 @@ protected:
     wxString m_findInFilesMask;
     int m_workspaceType;
     size_t m_settersGettersFlags;
+    PhpOptions m_phpOptions;
 
 public:
     enum {
         kDontPromptForMissingFileMapping = (1 << 0),
-        kRunLintOnFileSave = (1 << 1),
     };
 
 public:
@@ -79,8 +77,6 @@ public:
     }
 
     bool HasFlag(size_t flag) const { return m_flags & flag; }
-    bool IsRunLint() const { return HasFlag(kRunLintOnFileSave); }
-    void SetRunLint(bool b) { EnableFlag(kRunLintOnFileSave, b); }
 
     PHPConfigurationData& SetFindInFilesMask(const wxString& findInFilesMask)
     {
@@ -99,17 +95,17 @@ public:
     }
     PHPConfigurationData& SetErrorReporting(const wxString& errorReporting)
     {
-        this->m_errorReporting = errorReporting;
+        m_phpOptions.SetErrorReporting(errorReporting);
         return *this;
     }
     PHPConfigurationData& SetIncludePaths(const wxArrayString& includePaths)
     {
-        this->m_includePaths = includePaths;
+        m_phpOptions.SetIncludePaths(includePaths);
         return *this;
     }
     PHPConfigurationData& SetPhpExe(const wxString& phpExe)
     {
-        this->m_phpExe = phpExe;
+        m_phpOptions.SetPhpExe(phpExe);
         return *this;
     }
     PHPConfigurationData& SetXdebugPort(size_t xdebugPort)
@@ -135,11 +131,11 @@ public:
     const wxArrayString& GetCcIncludePath() const { return m_ccIncludePath; }
     wxArrayString& GetCcIncludePath() { return m_ccIncludePath; }
 
-    const wxString& GetErrorReporting() const { return m_errorReporting; }
-    const wxArrayString& GetIncludePaths() const { return m_includePaths; }
+    const wxString& GetErrorReporting() const { return m_phpOptions.GetErrorReporting(); }
+    const wxArrayString& GetIncludePaths() const { return m_phpOptions.GetIncludePaths(); }
     wxString GetIncludePathsAsString() const;
     wxString GetCCIncludePathsAsString() const;
-    const wxString& GetPhpExe() const { return m_phpExe; }
+    const wxString& GetPhpExe() const { return m_phpOptions.GetPhpExe(); }
     size_t GetXdebugPort() const { return m_xdebugPort; }
 
     size_t GetFlags() const { return m_flags; }

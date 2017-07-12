@@ -32,7 +32,6 @@
 #include "clZipReader.h"
 #include "cl_standard_paths.h"
 #include "php_configuration_data.h"
-#include "PHPLocator.h"
 #include <wx/regex.h>
 #include "bookmark_manager.h"
 #include "NewPHPProjectWizard.h"
@@ -63,7 +62,10 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 
-CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion()
+{
+    return PLUGIN_INTERFACE_VERSION;
+}
 
 PhpPlugin::PhpPlugin(IManager* manager)
     : IPlugin(manager)
@@ -75,8 +77,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     , m_showWelcomePage(false)
     , m_toggleToolbar(false)
 {
-    m_lint.Reset(new PHPLint(this));
-
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new PHPWorkspace());
 
@@ -134,7 +134,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(PhpPlugin::OnFindInFilesDismissed), NULL, this);
 
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpPlugin::OnReplaceInFiles, this);
     EventNotifier::Get()->Connect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Connect(
@@ -146,6 +145,9 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
+    //EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
+    
     CallAfter(&PhpPlugin::FinalizeStartup);
 
     // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
@@ -161,7 +163,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
         fnSampleFile.AppendDir("cc");
         PHPConfigurationData config;
         if(!fnSampleFile.Exists() || // the sample file does not exists
-                                     // Or the resource file (PHP.zip) is newer than the sample file
+           // Or the resource file (PHP.zip) is newer than the sample file
            (phpResources.GetModificationTime().GetTicks() > fnSampleFile.GetModificationTime().GetTicks())) {
 
             targetDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
@@ -255,7 +257,6 @@ void PhpPlugin::UnPlug()
                                      this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_GET_ACTIVE_PROJECT_FILES, wxCommandEventHandler(PhpPlugin::OnGetActiveProjectFiles), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpPlugin::OnReplaceInFiles, this);
     EventNotifier::Get()->Disconnect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -266,7 +267,10 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
-
+    
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
+    //EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
+    
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");
     SafelyDetachAndDestroyPane(m_xdebugEvalPane, "XDebugEval");
@@ -555,32 +559,11 @@ void PhpPlugin::OnMenuCommand(wxCommandEvent& e)
     case wxID_PHP_SETTINGS: {
         PHPSettingsDlg dlg(FRAME);
         dlg.ShowModal();
-    } break;
+    }
+    break;
     default:
         e.Skip();
         break;
-    }
-}
-
-void PhpPlugin::OnFileSaved(clCommandEvent& e)
-{
-    e.Skip();
-
-    if(PHPWorkspace::Get()->IsOpen()) {
-        DoSyncFileWithRemote(e.GetString());
-    }
-
-    // Run php lint
-    IEditor* editor = m_mgr->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-
-    PHPConfigurationData conf;
-    conf.Load();
-    if(::IsPHPFile(editor) && conf.IsRunLint()) {
-        if(m_mgr->GetActiveEditor()) {
-            m_mgr->GetActiveEditor()->DelAllCompilerMarkers();
-        }
-        m_lint->CheckCode(e.GetFileName());
     }
 }
 
@@ -645,7 +628,10 @@ void PhpPlugin::OnXDebugDeleteAllBreakpoints(clDebugEvent& e)
     EventNotifier::Get()->AddPendingEvent(eventDelAllBP);
 }
 
-void PhpPlugin::OnXDebugShowBreakpointsWindow(wxCommandEvent& e) { DoEnsureXDebugPanesVisible(_("Breakpoints")); }
+void PhpPlugin::OnXDebugShowBreakpointsWindow(wxCommandEvent& e)
+{
+    DoEnsureXDebugPanesVisible(_("Breakpoints"));
+}
 
 void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
 {
@@ -741,7 +727,10 @@ void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
     }
 }
 
-void PhpPlugin::SetEditorActive(IEditor* editor) { editor->SetActive(); }
+void PhpPlugin::SetEditorActive(IEditor* editor)
+{
+    editor->SetActive();
+}
 
 void PhpPlugin::RunXDebugDiagnostics()
 {
@@ -789,13 +778,13 @@ void PhpPlugin::FinalizeStartup()
     m_debuggerPane = new PHPDebugPane(parent);
     m_mgr->GetDockingManager()->AddPane(m_debuggerPane,
                                         wxAuiPaneInfo()
-                                            .Name("XDebug")
-                                            .Caption("Call Stack & Breakpoints")
-                                            .Hide()
-                                            .CloseButton()
-                                            .MaximizeButton()
-                                            .Bottom()
-                                            .Position(3));
+                                        .Name("XDebug")
+                                        .Caption("Call Stack & Breakpoints")
+                                        .Hide()
+                                        .CloseButton()
+                                        .MaximizeButton()
+                                        .Bottom()
+                                        .Position(3));
 
     m_xdebugLocalsView = new LocalsView(parent);
     m_mgr->GetDockingManager()->AddPane(
@@ -811,47 +800,11 @@ void PhpPlugin::FinalizeStartup()
     // if not - update it
     PHPConfigurationData data;
     data.Load();
-
-    PHPLocator locator;
-    if(locator.Locate()) {
-        // update a PHP executable in the settings
-        if(data.GetPhpExe().IsEmpty()) {
-            data.SetPhpExe(locator.GetPhpExe().GetFullPath());
-        }
-        data.Save();
-    }
 }
 
-void PhpPlugin::OnGoingDown(clCommandEvent& event) { event.Skip(); }
-
-void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString& filename)
+void PhpPlugin::OnGoingDown(clCommandEvent& event)
 {
-    // Find the editor
-    CL_DEBUG("PHPLint: searching editor for file: %s", filename);
-    IEditor* editor = m_mgr->FindEditor(filename);
-    CHECK_PTR_RET(editor);
-
-    wxRegEx reLine("[ \t]*on line ([0-9]+)");
-    wxArrayString lines = ::wxStringTokenize(lintOutput, "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.GetCount(); ++i) {
-        wxString errorString = lines.Item(i);
-        errorString.Trim().Trim(false);
-        if(errorString.Contains("syntax error")) {
-            // get the line number
-            if(reLine.Matches(errorString)) {
-                wxString strLine = reLine.GetMatch(errorString, 1);
-                int where = errorString.Find(" in ");
-                if(where != wxNOT_FOUND) {
-                    errorString.Truncate(where);
-                }
-                long nLine(wxNOT_FOUND);
-                if(strLine.ToCLong(&nLine)) {
-                    CL_DEBUG("PHPLint: adding error marker @%d", (int)nLine - 1);
-                    editor->SetErrorMarker(nLine - 1, errorString);
-                }
-            }
-        }
-    }
+    event.Skip();
 }
 
 void PhpPlugin::OnFindInFilesDismissed(clCommandEvent& e)
@@ -892,7 +845,7 @@ void PhpPlugin::DoSyncFileWithRemote(const wxFileName& localFile)
         clDEBUG() << localFile << "is not a PHP workspace file, will not sync it with remote" << clEndl;
         return;
     }
-    
+
     SSHWorkspaceSettings settings;
     settings.Load();
 
@@ -922,5 +875,13 @@ void PhpPlugin::OnReplaceInFiles(clFileSystemEvent& e)
         for(size_t i = 0; i < files.size(); ++i) {
             DoSyncFileWithRemote(files.Item(i));
         }
+    }
+}
+
+void PhpPlugin::OnFileAction(clCommandEvent& e)
+{
+    e.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        DoSyncFileWithRemote(e.GetFileName());
     }
 }

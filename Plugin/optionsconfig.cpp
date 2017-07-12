@@ -126,6 +126,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift | Opt_WrapBrackets |
                 Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock |
                 Opt_WrapCmdWithDoubleQuotes)
+    , m_options2(0)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
@@ -215,6 +216,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_useLocale = XmlUtils::ReadBool(node, wxT("m_useLocale"), m_useLocale);
         m_trimOnlyModifiedLines = XmlUtils::ReadBool(node, wxT("m_trimOnlyModifiedLines"), m_trimOnlyModifiedLines);
         m_options = XmlUtils::ReadLong(node, wxT("m_options"), m_options);
+        m_options2 = XmlUtils::ReadLong(node, wxT("m_options2"), m_options2);
         m_debuggerMarkerLine = XmlUtils::ReadString(
             node, wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
         m_indentedComments = XmlUtils::ReadBool(node, wxT("IndentedComments"), m_indentedComments);
@@ -363,6 +365,10 @@ wxXmlNode* OptionsConfig::ToXml() const
     tmp.Clear();
     tmp << m_options;
     n->AddProperty(wxT("m_options"), tmp);
+    
+    tmp.Clear();
+    tmp << m_options2;
+    n->AddProperty(wxT("m_options2"), tmp);
     return n;
 }
 

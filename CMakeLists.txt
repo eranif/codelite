@@ -173,7 +173,7 @@ if ( NOT CL_PREFIX )
         include (GNUInstallDirs) # defines CMAKE_INSTALL_LIBDIR to lib or lib64 or whatever. Available since cmake 2.8.8
         set( CL_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} )
     endif()
-    
+
     set( CL_PREFIX "/usr" )
 endif(NOT CL_PREFIX)
 
@@ -303,11 +303,11 @@ message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
 if ( GTK_USE_NATIVEBOOK )
     add_definitions( -DGTK_USE_NATIVEBOOK=1 )
     message("-- Using wxNotebook")
-    
+
 else ( GTK_USE_NATIVEBOOK )
     add_definitions( -DGTK_USE_NATIVEBOOK=0 )
     message("-- Using wxAuiNotebook")
-    
+
 endif ( GTK_USE_NATIVEBOOK )
 unset(GTK_USE_NATIVEBOOK CACHE)
 
@@ -363,7 +363,7 @@ else ()
             list(APPEND LINKER_OPTIONS "-s") ## strip binaries
         endif()
     endif()
-    
+
     set( CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_release.h")
     set( CL_PCH_TARGET "precompiled_header_release.h.gch")
     if(APPLE)
@@ -450,7 +450,7 @@ if ( MAKE_DEB )
 
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "CodeLite")
-    set(CPACK_PACKAGE_VERSION             "10.0.3")
+    set(CPACK_PACKAGE_VERSION             "10.0.7")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++/PHP and Node.js IDE (Integrated Development Environment)")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")
@@ -458,7 +458,7 @@ if ( MAKE_DEB )
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential, git, subversion, gdb, xterm, gcc, g++")
     if(OS_CODENAME STREQUAL "xenial")
         message("-- CPack deps for Ubuntu-Xenial")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS      
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS
             "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.8-dev, clang-format-3.8, liblldb-3.8-dev")
     else()
         message("-- CPack deps for Ubuntu-Trusty/Debian-Jessie")
@@ -601,6 +601,9 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(AutoSave)
     add_subdirectory(Tail)
     add_subdirectory(EditorConfigPlugin)
+    add_subdirectory(PHPLint)
+    add_subdirectory(PHPRefactoring)
+    add_subdirectory(codelite_vim)
 
     if (WITH_SFTP)
         add_subdirectory(SFTP)
@@ -609,17 +612,17 @@ if(NOT NO_CORE_PLUGINS)
     if (WITH_LLDB)
         add_subdirectory(LLDBDebugger)
     endif()
-    
+
     add_subdirectory(codelitephp)
     add_subdirectory(WordCompletion)
     add_subdirectory(HelpPlugin)
     add_subdirectory(WebTools)
-    
+
     if(UNIX AND NOT APPLE)
         ## Add valgrind plugin
         add_subdirectory(MemCheck)
     endif(UNIX AND NOT APPLE)
-    
+
     if(APPLE)
         message("-- Adding MacBundler...")
         add_subdirectory(MacBundler)
@@ -665,4 +668,3 @@ include(plugin)
 
 ## Scan for user plugins
 CL_SCAN_FOR_PLUGINS()
-

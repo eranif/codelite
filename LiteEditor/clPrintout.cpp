@@ -10,9 +10,8 @@ clPrintout::clPrintout(LEditor* edit, const wxString& title)
     : wxPrintout(title)
     , m_minPage(0)
     , m_maxPage(0)
+    , m_edit(edit)
 {
-    m_edit = edit;
-    m_printed = 0;
 }
 
 bool clPrintout::OnPrintPage(int page)
@@ -25,8 +24,8 @@ bool clPrintout::OnPrintPage(int page)
     PrintScaling(dc);
 
     // print page
-    if(page == 1) m_printed = 0;
-    m_printed = m_edit->FormatRange(1, m_printed, m_edit->GetLength(), dc, dc, m_printRect, m_pageRect);
+    m_edit->FormatRange(true, page == 1 ? 0 : m_pageEnds[page-2], m_pageEnds[page-1],
+                                      dc, dc, m_printRect, m_pageRect);
 
     return true;
 }
@@ -60,6 +59,10 @@ void clPrintout::GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* 
     wxSize page = g_pageSetupData->GetPaperSize();
     page.x = static_cast<int>(page.x * ppiScr.x / 25.4);
     page.y = static_cast<int>(page.y * ppiScr.y / 25.4);
+    // In landscape mode we need to swap the width and height
+    if ( g_pageSetupData->GetPrintData().GetOrientation() == wxLANDSCAPE ) {
+        wxSwap(page.x, page.y);
+    }
     m_pageRect = wxRect(0, 0, page.x, page.y);
 
     // get margins informations and convert to printer pixels
@@ -78,8 +81,12 @@ void clPrintout::GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* 
     m_printRect = wxRect(left, top, page.x - (left + right), page.y - (top + bottom));
 
     // count pages
-    while((m_printed < m_edit->GetLength())) {
-        m_printed = m_edit->FormatRange(0, m_printed, m_edit->GetLength(), dc, dc, m_printRect, m_pageRect);
+    m_pageEnds.Clear();
+    int printed = 0;
+    while ( printed < m_edit->GetLength() ) {
+        printed = m_edit->FormatRange(false, printed, m_edit->GetLength(),
+                                      dc, dc, m_printRect, m_pageRect);
+        m_pageEnds.Add(printed);
         *maxPage += 1;
     }
     
@@ -91,7 +98,7 @@ void clPrintout::GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* 
     m_maxPage = *maxPage;
 }
 
-bool clPrintout::HasPage(int page) { return (page >= m_minPage) && (page <= m_maxPage); }
+bool clPrintout::HasPage(int page) {  return page <= (int)m_pageEnds.Count(); }
 
 bool clPrintout::PrintScaling(wxDC* dc)
 {

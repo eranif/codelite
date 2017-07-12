@@ -108,7 +108,7 @@ wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
     for(; iter != m_children.end(); ++iter) {
         const PHPEntityVariable* var = (*iter)->Cast<PHPEntityVariable>();
         if(var) {
-            doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "<unknown>" : var->GetTypeHint()) << " "
+            doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "mixed" : var->GetTypeHint()) << " "
                 << var->GetFullName() << " \n";
         }
     }

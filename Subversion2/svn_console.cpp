@@ -40,6 +40,7 @@
 #include "event_notifier.h"
 #include <wx/regex.h>
 #include <wx/settings.h>
+#include "file_logger.h"
 
 //-------------------------------------------------------------
 SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)
@@ -203,7 +204,9 @@ void SvnConsole::DoProcessNextCommand()
 
     bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
     EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
-
+    
+    clDEBUG() << "Running svn command:" << cmdShell << clEndl;
+    
     m_process = CreateAsyncProcess(this,
                                    cmdShell,
                                    m_currCmd.showConsole ? IProcessCreateConsole : IProcessCreateWithHiddenConsole,

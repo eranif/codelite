@@ -99,6 +99,22 @@ public:
      * @param files [output] list of files in absolute path
      */
     virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const = 0;
+    
+    /**
+     * @brief return the active project name. For workspace that does not support
+     * projects, return an empty string
+     */
+    virtual wxString GetActiveProjectName() const  = 0;
+    
+    /**
+     * @brief return the underlying file for a given project name
+     */
+    virtual wxFileName GetProjectFileName(const wxString& projectName) const  = 0;
+    
+    /**
+     * @brief return list of projects for this workspace
+     */
+    virtual wxArrayString GetWorkspaceProjects() const  = 0;
 };
 
 #endif // IWORKSPACE_H

@@ -204,6 +204,37 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     flexGridSizer29->Add(m_textCtrlPattern, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
+    m_panel44 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook2->AddPage(m_panel44, _("Status Bar"), false);
+    
+    wxBoxSizer* boxSizer115 = new wxBoxSizer(wxVERTICAL);
+    m_panel44->SetSizer(boxSizer115);
+    
+    m_staticText70 = new wxStaticText(m_panel44, wxID_ANY, _("What statistics to show in the status bar about an editor's text:"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
+    
+    boxSizer115->Add(m_staticText70, 0, wxALL, WXC_FROM_DIP(10));
+    
+    m_statusbarShowLine = new wxCheckBox(m_panel44, wxID_ANY, _("Show current line"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
+    m_statusbarShowLine->SetValue(true);
+    
+    boxSizer115->Add(m_statusbarShowLine, 0, wxALL, WXC_FROM_DIP(10));
+    
+    m_statusbarShowCol = new wxCheckBox(m_panel44, wxID_ANY, _("Show current column"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
+    m_statusbarShowCol->SetValue(true);
+    
+    boxSizer115->Add(m_statusbarShowCol, 0, wxALL, WXC_FROM_DIP(10));
+    
+    m_statusbarShowPos = new wxCheckBox(m_panel44, wxID_ANY, _("Show current position within the file"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
+    m_statusbarShowPos->SetValue(false);
+    m_statusbarShowPos->SetToolTip(_("e.g. character 1234 in the file"));
+    
+    boxSizer115->Add(m_statusbarShowPos, 0, wxALL, WXC_FROM_DIP(10));
+    
+    m_statusbarShowFileLength = new wxCheckBox(m_panel44, wxID_ANY, _("Show total length of the file"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
+    m_statusbarShowFileLength->SetValue(false);
+    
+    boxSizer115->Add(m_statusbarShowFileLength, 0, wxALL, WXC_FROM_DIP(10));
+    
     m_panel2 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel2, _("Encoding & Locale"), false);
     

@@ -41,10 +41,14 @@ public:
     typedef std::list<EditorFrame*> List_t;
 
 protected:
-    LEditor *m_editor;
+    virtual void OnCloseWindow(wxCloseEvent& event);
+    LEditor* m_editor;
     QuickFindBar* m_findBar;
-    MyMenuBar *m_myMenuBar;
-    
+    MyMenuBar* m_myMenuBar;
+
+protected:
+    bool ConfirmClose();
+
 protected:
     virtual void OnFindUI(wxUpdateUIEvent& event);
     virtual void OnFind(wxCommandEvent& event);
@@ -54,8 +58,6 @@ protected:
 public:
     EditorFrame(wxWindow* parent, LEditor* editor);
     virtual ~EditorFrame();
-    LEditor* GetEditor() {
-        return m_editor;
-    }
+    LEditor* GetEditor() { return m_editor; }
 };
 #endif // EDITORFRAME_H

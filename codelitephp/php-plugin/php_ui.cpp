@@ -395,19 +395,43 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer18->Add(0, 0, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCtrlIncludePath = new wxTextCtrl(m_panel11, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_DONTWRAP);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_textCtrlIncludePathFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_textCtrlIncludePathFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_textCtrlIncludePathFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlIncludePathFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_textCtrlIncludePath->SetFont(m_textCtrlIncludePathFont);
-    m_textCtrlIncludePath->SetToolTip(_("Additional include path for PHP (affects command line runs only)"));
+    m_stcIncludePaths = new wxStyledTextCtrl(m_panel11, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1,-1)), 0);
+    // Configure the fold margin
+    m_stcIncludePaths->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcIncludePaths->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcIncludePaths->SetMarginSensitive(4, true);
+    m_stcIncludePaths->SetMarginWidth    (4, 0);
     
-    bSizer13->Add(m_textCtrlIncludePath, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    // Configure the tracker margin
+    m_stcIncludePaths->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcIncludePaths->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcIncludePaths->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcIncludePaths->SetMarginWidth(2, 0);
+    m_stcIncludePaths->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcIncludePaths->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcIncludePaths->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcIncludePaths->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcIncludePaths->SetMarginMask(3, 0);
+    m_stcIncludePaths->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcIncludePaths->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcIncludePaths->StyleClearAll();
+    m_stcIncludePaths->SetWrapMode(0);
+    m_stcIncludePaths->SetIndentationGuides(0);
+    m_stcIncludePaths->SetKeyWords(0, wxT(""));
+    m_stcIncludePaths->SetKeyWords(1, wxT(""));
+    m_stcIncludePaths->SetKeyWords(2, wxT(""));
+    m_stcIncludePaths->SetKeyWords(3, wxT(""));
+    m_stcIncludePaths->SetKeyWords(4, wxT(""));
+    
+    bSizer13->Add(m_stcIncludePaths, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_panel15 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook9, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_treebook9->AddPage(m_panel15, _("Code Completion"), false, wxNOT_FOUND);
@@ -489,18 +513,6 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer5->Add(m_textCtrlIdeKey, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel407 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook9, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    m_treebook9->AddPage(m_panel407, _("Syntax Check"), false, wxNOT_FOUND);
-    
-    wxBoxSizer* boxSizer409 = new wxBoxSizer(wxVERTICAL);
-    m_panel407->SetSizer(boxSizer409);
-    
-    m_checkBoxRunLint = new wxCheckBox(m_panel407, wxID_ANY, _("Perform syntax check when saving a file"), wxDefaultPosition, wxDLG_UNIT(m_panel407, wxSize(-1,-1)), 0);
-    m_checkBoxRunLint->SetValue(true);
-    m_checkBoxRunLint->SetToolTip(_("When saving a PHP script, run syntax check and report errors in the editor"));
-    
-    boxSizer409->Add(m_checkBoxRunLint, 0, wxALL, WXC_FROM_DIP(5));
-    
     wxBoxSizer* bSizer16 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer12->Add(bSizer16, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
@@ -525,11 +537,9 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_treebook9->ExpandNode( 0, true );
     m_treebook9->ExpandNode( 1, true );
     m_treebook9->ExpandNode( 2, true );
-    m_treebook9->ExpandNode( 3, true );
     
     SetName(wxT("PHPSettingsBaseDlg"));
-    SetMinClientSize(wxSize(500,300));
-    SetSize(500,300);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

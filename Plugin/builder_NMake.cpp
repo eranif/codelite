@@ -49,6 +49,30 @@
 
 static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
 
+static wxString ReplaceBackslashes(const wxString& instr)
+{
+    wxString tmpstr = instr;
+    tmpstr.Trim().Trim(false);
+
+    if(tmpstr.StartsWith("\"")) {
+        tmpstr = tmpstr.Mid(1);
+        wxString strBefore = tmpstr.BeforeFirst('"');
+        wxString strAfter = tmpstr.AfterFirst('"');
+        strBefore.Prepend("\"").Append("\""); // restore the " that we removed
+        strBefore.Replace("/", "\\");
+        strBefore << strAfter;
+        tmpstr.swap(strBefore);
+    } else {
+        wxString strBefore = tmpstr.BeforeFirst(' ');
+        wxString strAfter = tmpstr.AfterFirst(' ');
+        strAfter.Prepend(" ");
+        strBefore.Replace("/", "\\");
+        strBefore << strAfter;
+        tmpstr.swap(strBefore);
+    }
+    return tmpstr;
+}
+
 static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString& relPath = wxEmptyString)
 {
     wxString intermediateDirectory(bldConf->GetIntermediateDirectory());
@@ -84,7 +108,7 @@ BuilderNMake::BuilderNMake(const wxString& name, const wxString& buildTool, cons
 BuilderNMake::~BuilderNMake() {}
 
 bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
-    bool isProjectOnly, bool force, wxString& errMsg)
+                          bool isProjectOnly, bool force, wxString& errMsg)
 {
     m_projectFilesMetadata.clear();
     if(project.IsEmpty()) {
@@ -259,9 +283,9 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
                 wxString customWdCmd;
 
                 customWd = ExpandAllVariables(customWd, clCxxWorkspaceST::Get(), dependProj->GetName(),
-                    dependProjbldConf->GetName(), wxEmptyString);
+                                              dependProjbldConf->GetName(), wxEmptyString);
                 build_cmd = ExpandAllVariables(build_cmd, clCxxWorkspaceST::Get(), dependProj->GetName(),
-                    dependProjbldConf->GetName(), wxEmptyString);
+                                               dependProjbldConf->GetName(), wxEmptyString);
 
                 build_cmd.Trim().Trim(false);
 
@@ -390,9 +414,9 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
                 wxString clean_cmd = dependProjbldConf->GetCustomCleanCmd();
 
                 customWd = ExpandAllVariables(customWd, clCxxWorkspaceST::Get(), dependProj->GetName(),
-                    dependProjbldConf->GetName(), wxEmptyString);
+                                              dependProjbldConf->GetName(), wxEmptyString);
                 clean_cmd = ExpandAllVariables(clean_cmd, clCxxWorkspaceST::Get(), dependProj->GetName(),
-                    dependProjbldConf->GetName(), wxEmptyString);
+                                               dependProjbldConf->GetName(), wxEmptyString);
 
                 wxString customWdCmd;
 
@@ -451,8 +475,8 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
     return true;
 }
 
-void BuilderNMake::GenerateMakefile(
-    ProjectPtr proj, const wxString& confToBuild, bool force, const wxArrayString& depsProj)
+void BuilderNMake::GenerateMakefile(ProjectPtr proj, const wxString& confToBuild, bool force,
+                                    const wxArrayString& depsProj)
 {
     wxString pname(proj->GetName());
     wxString tmpConfigName(confToBuild.c_str());
@@ -552,8 +576,8 @@ void BuilderNMake::GenerateMakefile(
     // which causes the makefile to report 'nothing to be done'
     // even when a dependency was modified
     wxString targetName(bldConf->GetIntermediateDirectory());
-    CreateLinkTargets(
-        proj->GetSettings()->GetProjectType(bldConf->GetName()), bldConf, text, targetName, proj->GetName(), depsProj);
+    CreateLinkTargets(proj->GetSettings()->GetProjectType(bldConf->GetName()), bldConf, text, targetName,
+                      proj->GetName(), depsProj);
 
     CreatePostBuildEvents(proj, bldConf, text);
     CreateMakeDirsTarget(proj, bldConf, targetName, text);
@@ -579,8 +603,8 @@ void BuilderNMake::GenerateMakefile(
     proj->SetModified(false);
 }
 
-void BuilderNMake::CreateMakeDirsTarget(
-    ProjectPtr proj, BuildConfigPtr bldConf, const wxString& targetName, wxString& text)
+void BuilderNMake::CreateMakeDirsTarget(ProjectPtr proj, BuildConfigPtr bldConf, const wxString& targetName,
+                                        wxString& text)
 {
     text << "\n";
     text << "MakeIntermediateDirs:\n";
@@ -727,7 +751,8 @@ void BuilderNMake::CreateObjectList(ProjectPtr proj, const wxString& confToBuild
     }
 
     text << "\n\nObjects=";
-    for(size_t i = 0; i < objCounter; ++i) text << "$(Objects" << i << ") ";
+    for(size_t i = 0; i < objCounter; ++i)
+        text << "$(Objects" << i << ") ";
 
     text << wxT("\n\n");
     m_objectChunks = objCounter;
@@ -949,7 +974,7 @@ void BuilderNMake::CreateListMacros(ProjectPtr proj, const wxString& confToBuild
 }
 
 void BuilderNMake::CreateLinkTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text, wxString& targetName,
-    const wxString& projName, const wxArrayString& depsProj)
+                                     const wxString& projName, const wxArrayString& depsProj)
 {
 
     wxString extraDeps;
@@ -1193,13 +1218,14 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     // replace all occurence of forward slash with double backslash
     wxString linkerStr(cmp->GetTool(wxT("LinkerName")));
     if(OS_WINDOWS) {
-        linkerStr.Replace(wxT("/"), wxT("\\"));
+        linkerStr = ReplaceBackslashes(linkerStr);
     }
     text << wxT("LinkerName             =") << linkerStr << wxT("\n");
     wxString shObjlinkerStr(cmp->GetTool(wxT("SharedObjectLinkerName")));
     if(OS_WINDOWS) {
-        shObjlinkerStr.Replace(wxT("/"), wxT("\\"));
+        shObjlinkerStr = ReplaceBackslashes(shObjlinkerStr);
     }
+
     text << wxT("SharedObjectLinkerName =") << shObjlinkerStr << wxT("\n");
     text << wxT("ObjectSuffix           =") << cmp->GetObjectSuffix() << wxT("\n");
     text << wxT("DependSuffix           =") << cmp->GetDependSuffix() << wxT("\n");
@@ -1227,7 +1253,7 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     if(!mkdirCommand.IsEmpty()) {
         // use the compiler defined one
         if(OS_WINDOWS) {
-            mkdirCommand.Replace(wxT("/"), wxT("\\"));
+            mkdirCommand = ReplaceBackslashes(mkdirCommand);
         }
         text << wxT("MakeDirCommand         =") << mkdirCommand << wxT("\n");
     } else {
@@ -1319,10 +1345,10 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     wxString asStr(cmp->GetTool(wxT("AS")));
 
     if(OS_WINDOWS) {
-        arStr.Replace(wxT("/"), wxT("\\"));
-        cxxStr.Replace(wxT("/"), wxT("\\"));
-        ccStr.Replace(wxT("/"), wxT("\\"));
-        asStr.Replace(wxT("/"), wxT("\\"));
+        arStr = ReplaceBackslashes(arStr);
+        cxxStr = ReplaceBackslashes(cxxStr);
+        ccStr = ReplaceBackslashes(ccStr);
+        asStr = ReplaceBackslashes(asStr);
     }
 
     text << wxT("AR       = ") << arStr << wxT("\n");
@@ -1410,7 +1436,7 @@ wxString BuilderNMake::ParseLibs(const wxString& libs)
 
         // remove known suffixes
         if(lib.EndsWith(wxT(".a")) || lib.EndsWith(wxT(".so")) || lib.EndsWith(wxT(".dylib")) ||
-            lib.EndsWith(wxT(".dll"))) {
+           lib.EndsWith(wxT(".dll"))) {
             lib = lib.BeforeLast(wxT('.'));
         }
 
@@ -1462,8 +1488,8 @@ wxString BuilderNMake::GetCleanCommand(const wxString& project, const wxString& 
     return cmd;
 }
 
-wxString BuilderNMake::GetPOBuildCommand(
-    const wxString& project, const wxString& confToBuild, const wxString& arguments)
+wxString BuilderNMake::GetPOBuildCommand(const wxString& project, const wxString& confToBuild,
+                                         const wxString& arguments)
 {
     wxString errMsg, cmd;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
@@ -1477,8 +1503,8 @@ wxString BuilderNMake::GetPOBuildCommand(
     return cmd;
 }
 
-wxString BuilderNMake::GetPOCleanCommand(
-    const wxString& project, const wxString& confToBuild, const wxString& arguments)
+wxString BuilderNMake::GetPOCleanCommand(const wxString& project, const wxString& confToBuild,
+                                         const wxString& arguments)
 {
     wxString errMsg, cmd;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
@@ -1492,8 +1518,8 @@ wxString BuilderNMake::GetPOCleanCommand(
     return cmd;
 }
 
-wxString BuilderNMake::GetSingleFileCmd(
-    const wxString& project, const wxString& confToBuild, const wxString& arguments, const wxString& fileName)
+wxString BuilderNMake::GetSingleFileCmd(const wxString& project, const wxString& confToBuild, const wxString& arguments,
+                                        const wxString& fileName)
 {
     wxString errMsg, cmd;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
@@ -1530,7 +1556,7 @@ wxString BuilderNMake::GetSingleFileCmd(
 }
 
 wxString BuilderNMake::GetPreprocessFileCmd(const wxString& project, const wxString& confToBuild,
-    const wxString& arguments, const wxString& fileName, wxString& errMsg)
+                                            const wxString& arguments, const wxString& fileName, wxString& errMsg)
 {
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
     if(!proj) {
@@ -1633,8 +1659,8 @@ void BuilderNMake::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString& 
     }
 }
 
-wxString BuilderNMake::GetProjectMakeCommand(
-    const wxFileName& wspfile, const wxFileName& projectPath, ProjectPtr proj, const wxString& confToBuild)
+wxString BuilderNMake::GetProjectMakeCommand(const wxFileName& wspfile, const wxFileName& projectPath, ProjectPtr proj,
+                                             const wxString& confToBuild)
 {
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
 
@@ -1679,8 +1705,8 @@ wxString BuilderNMake::GetProjectMakeCommand(
     return makeCommand;
 }
 
-wxString BuilderNMake::GetProjectMakeCommand(
-    ProjectPtr proj, const wxString& confToBuild, const wxString& target, bool addCleanTarget, bool cleanOnly)
+wxString BuilderNMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& confToBuild, const wxString& target,
+                                             bool addCleanTarget, bool cleanOnly)
 {
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
 
@@ -1748,8 +1774,8 @@ void BuilderNMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStrin
     text << wxT("\n");
 }
 
-wxString BuilderNMake::GetPORebuildCommand(
-    const wxString& project, const wxString& confToBuild, const wxString& arguments)
+wxString BuilderNMake::GetPORebuildCommand(const wxString& project, const wxString& confToBuild,
+                                           const wxString& arguments)
 {
     wxString errMsg, cmd;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
@@ -1763,8 +1789,8 @@ wxString BuilderNMake::GetPORebuildCommand(
     return cmd;
 }
 
-wxString BuilderNMake::GetBuildToolCommand(
-    const wxString& project, const wxString& confToBuild, const wxString& arguments, bool isCommandlineCommand) const
+wxString BuilderNMake::GetBuildToolCommand(const wxString& project, const wxString& confToBuild,
+                                           const wxString& arguments, bool isCommandlineCommand) const
 {
     wxString jobsCmd;
     wxString buildTool;

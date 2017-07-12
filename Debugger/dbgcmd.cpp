@@ -35,6 +35,7 @@
 #include "event_notifier.h"
 #include "debuggermanager.h"
 #include "cl_command_event.h"
+#include <algorithm>
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
 
@@ -1058,6 +1059,16 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
         li.push_back(breakpoint);
     }
 
+    // Filter duplicate file:line breakpoints
+    std::vector<BreakpointInfo> uniqueBreakpoints;
+    std::for_each(li.begin(), li.end(), [&](const BreakpointInfo& bp) {
+        if(bp.debugger_id == (long)bp.debugger_id) {
+            // real breakpoint ID
+            uniqueBreakpoints.push_back(bp);
+        }
+    });
+    
+    li.swap(uniqueBreakpoints);
     m_observer->ReconcileBreakpoints(li);
     return true;
 }

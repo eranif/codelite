@@ -200,6 +200,10 @@
     <File Name="clStringHistory.cpp"/>
     <File Name="clFindResultsStyler.h"/>
     <File Name="clFindResultsStyler.cpp"/>
+    <File Name="phpoptions.cpp"/>
+    <File Name="phpoptions.h"/>
+    <File Name="clStatusBarMessage.h"/>
+    <File Name="clStatusBarMessage.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>
@@ -536,6 +540,8 @@
     <File Name="DiffSideBySidePanel.cpp"/>
     <File Name="DiffConfig.h"/>
     <File Name="DiffConfig.cpp"/>
+    <File Name="clPatch.h"/>
+    <File Name="clPatch.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Compilers">
     <File Name="ICompilerLocator.h"/>
@@ -586,6 +592,9 @@
   <VirtualDirectory Name="NodeJS">
     <File Name="NodeJSLocator.h"/>
     <File Name="NodeJSLocator.cpp"/>
+    <File Name="clJSCTags.cpp"/>
+    <File Name="clJSCTags.h"/>
+    <File Name="jsctags.zip"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

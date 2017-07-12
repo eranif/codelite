@@ -1,11 +1,11 @@
 #include "clClangFormatLocator.h"
 #include "cl_standard_paths.h"
-#include <wx/filename.h>
-#include <wx/regex.h>
 #include "globals.h"
-#include <wx/tokenzr.h>
 #include "procutils.h"
+#include <wx/filename.h>
 #include <wx/log.h>
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
 
 clClangFormatLocator::clClangFormatLocator() {}
 
@@ -14,7 +14,6 @@ clClangFormatLocator::~clClangFormatLocator() {}
 bool clClangFormatLocator::Locate(wxString& clangFormat)
 {
 #ifdef __WXGTK__
-    wxFileName fnClangFormat("/usr/bin", "");
     wxArrayString nameOptions;
     nameOptions.Add("clang-format");
     nameOptions.Add("clang-format-3.9");
@@ -25,22 +24,21 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
     nameOptions.Add("clang-format-3.4");
     nameOptions.Add("clang-format-3.3");
 
+    wxFileName file;
     for(size_t i = 0; i < nameOptions.GetCount(); ++i) {
-        fnClangFormat.SetFullName(nameOptions.Item(i));
-        if(fnClangFormat.Exists()) {
-            clangFormat = fnClangFormat.GetFullPath();
+        if(clFindExecutable(nameOptions.Item(i), file)) {
+            clangFormat = file.GetFullPath();
             return true;
         }
     }
-    return false;
 #else
     wxFileName fnClangFormat(clStandardPaths::Get().GetBinaryFullPath("codelite-clang-format"));
     if(fnClangFormat.FileExists()) {
         clangFormat = fnClangFormat.GetFullPath();
         return true;
     }
-    return false;
 #endif
+    return false;
 }
 
 double clClangFormatLocator::GetVersion(const wxString& clangFormat) const
@@ -51,7 +49,7 @@ double clClangFormatLocator::GetVersion(const wxString& clangFormat) const
     //    LLVM version 3.3 // Linux, old format
     //    clang-format version 3.6.0 (217570) // Windows
     double_version = 3.3;
-    
+
     static wxRegEx reClangFormatVersion("version ([0-9]+\\.[0-9]+)");
     wxString command;
     command << clangFormat;
@@ -63,7 +61,7 @@ double clClangFormatLocator::GetVersion(const wxString& clangFormat) const
     for(size_t i = 0; i < lines.GetCount(); ++i) {
         if(reClangFormatVersion.Matches(lines.Item(i))) {
             wxString version = reClangFormatVersion.GetMatch(lines.Item(i), 1);
-            //wxLogMessage("clang-format version is %s", version);
+            // wxLogMessage("clang-format version is %s", version);
             version.ToCDouble(&double_version);
             return double_version;
         }

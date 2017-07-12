@@ -2,15 +2,13 @@
 #include "php_utils.h"
 #include <wx/ffile.h>
 #include <wx/stdpaths.h>
-#include "php_utils.h"
 #include <cl_config.h>
 #include "PHPSetterGetterEntry.h"
+#include "globals.h"
 
 PHPConfigurationData::PHPConfigurationData()
     : clConfigItem("PHPConfigurationData")
-    , m_errorReporting(wxT("E_ALL & ~E_NOTICE"))
     , m_xdebugPort(9000)
-    , m_flags(kRunLintOnFileSave)
     , m_xdebugIdeKey("codeliteide")
     , m_xdebugHost("127.0.0.1")
     , m_findInFilesMask(
@@ -18,17 +16,14 @@ PHPConfigurationData::PHPConfigurationData()
     , m_workspaceType(0)
     , m_settersGettersFlags(kSG_None)
 {
+    m_phpOptions.Load();
 }
 
 PHPConfigurationData::~PHPConfigurationData() {}
 
 void PHPConfigurationData::FromJSON(const JSONElement& json)
 {
-    m_includePaths = json.namedObject("m_includePaths").toArrayString();
     m_findInFilesMask = json.namedObject("m_findInFilesMask").toString(m_findInFilesMask);
-
-    m_phpExe = json.namedObject("m_phpExe").toString("php");
-    m_errorReporting = json.namedObject("m_errorReporting").toString(m_errorReporting);
     m_xdebugPort = json.namedObject("m_xdebugPort").toInt(m_xdebugPort);
     m_xdebugHost = json.namedObject("m_xdebugHost").toString(m_xdebugHost);
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
@@ -48,9 +43,6 @@ void PHPConfigurationData::FromJSON(const JSONElement& json)
 JSONElement PHPConfigurationData::ToJSON() const
 {
     JSONElement e = JSONElement::createObject(GetName());
-    e.addProperty("m_includePaths", m_includePaths);
-    e.addProperty("m_phpExe", m_phpExe);
-    e.addProperty("m_errorReporting", m_errorReporting);
     e.addProperty("m_xdebugPort", m_xdebugPort);
     e.addProperty("m_xdebugHost", m_xdebugHost);
     e.addProperty("m_ccIncludePath", m_ccIncludePath);
@@ -65,8 +57,8 @@ JSONElement PHPConfigurationData::ToJSON() const
 wxString PHPConfigurationData::GetIncludePathsAsString() const
 {
     wxString str;
-    for(size_t i = 0; i < m_includePaths.GetCount(); i++) {
-        str << m_includePaths.Item(i) << wxT("\n");
+    for(size_t i = 0; i < GetIncludePaths().GetCount(); i++) {
+        str << GetIncludePaths().Item(i) << wxT("\n");
     }
     if(str.IsEmpty() == false) {
         str.RemoveLast();
@@ -90,6 +82,8 @@ PHPConfigurationData& PHPConfigurationData::Load()
 {
     clConfig conf("php.conf");
     conf.ReadItem(this);
+
+    m_phpOptions.Load();
     return *this;
 }
 
@@ -97,4 +91,6 @@ void PHPConfigurationData::Save()
 {
     clConfig conf("php.conf");
     conf.WriteItem(this);
+
+    m_phpOptions.Save();
 }

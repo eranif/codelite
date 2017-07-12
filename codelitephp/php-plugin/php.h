@@ -33,7 +33,6 @@
 #include "php_event.h"
 #include <wx/sharedptr.h>
 #include "XDebugManager.h"
-#include "PHPLint.h"
 
 class EvalPane;
 class LocalsView;
@@ -55,7 +54,6 @@ protected:
     LocalsView* m_xdebugLocalsView;
     EvalPane* m_xdebugEvalPane;
     bool m_showWelcomePage;
-    PHPLint::Ptr_t m_lint;
     bool m_toggleToolbar;
 
 public:
@@ -73,9 +71,10 @@ public:
     void SafelyDetachAndDestroyPane(wxWindow* pane, const wxString& name);
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update = false);
     void FinalizeStartup();
-    void PhpLintDone(const wxString& lintOutput, const wxString& filename);
 
-    PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
+    PHPDebugPane* GetDebuggerPane() {
+        return m_debuggerPane;
+    }
 
 protected:
     bool IsWorkspaceViewDetached();
@@ -95,7 +94,9 @@ public:
     virtual void UnPlug();
     void RunXDebugDiagnostics();
 
-    IManager* GetManager() { return m_mgr; }
+    IManager* GetManager() {
+        return m_mgr;
+    }
     // Event handlers
 
     void SetEditorActive(IEditor* editor);
@@ -122,7 +123,6 @@ public:
     void OnFindInFilesDismissed(clCommandEvent& e);
     void OnRunXDebugDiagnostics(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
-    void OnFileSaved(clCommandEvent& e);
     void OnXDebugShowBreakpointsWindow(wxCommandEvent& e);
     void OnXDebugDeleteAllBreakpoints(clDebugEvent& e);
     void OnXDebugSettings(wxCommandEvent& e);
@@ -134,6 +134,7 @@ public:
     void OnFileSysetmUpdated(clFileSystemEvent& event);
     void OnSaveSession(clCommandEvent& event);
     void OnReplaceInFiles(clFileSystemEvent& e);
+    void OnFileAction(clCommandEvent& e);
 };
 
 #endif // PHP

@@ -116,6 +116,7 @@ protected:
     void OnLeftDClick(wxMouseEvent& event);
     void OnMouseMotion(wxMouseEvent& event);
     void OnMouseMiddleClick(wxMouseEvent& event);
+    void OnMouseScroll(wxMouseEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
     int DoGetPageIndex(wxWindow* win) const;
     int DoGetPageIndex(const wxString& label) const;
@@ -151,7 +152,7 @@ protected:
     void DoDeletePage(size_t page) { RemovePage(page, true, true); }
     void DoShowTabList();
     void DoUpdateXCoordFromPage(wxWindow* page, int diff);
-    
+
 public:
     clTabCtrl(wxWindow* notebook, size_t style);
     virtual ~clTabCtrl();
@@ -160,7 +161,7 @@ public:
      * @brief return the art class used by this tab control
      */
     clTabRenderer::Ptr_t GetArt() { return m_art; }
-    
+
     /**
      * @brief replace the art used by this tab control
      */
@@ -176,14 +177,16 @@ public:
      * @param pt mouse click position
      * @param realPosition [output] the index position in the m_tabs array
      * @param tabHit [output] the index position in the m_visibleTabs array
+     * @param leftSide [output] if the point is on the LEFT side of the tab's rect, then return wxALIGN_LEFT, otherwise
+     * return wxALIGN_RIGHT. Another possible value is wxALIGN_INVALID
      */
-    void TestPoint(const wxPoint& pt, int& realPosition, int& tabHit);
+    void TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, wxAlignment& align);
 
     /**
      * @brief Move the active tab to a new position
      * @param newIndex the new position. 0-based index in the m_tabs array
      */
-    bool MoveActiveToIndex(int newIndex);
+    bool MoveActiveToIndex(int newIndex, wxAlignment align = wxALIGN_INVALID);
 
     /**
      * @brief return true if index is in the tabs vector range

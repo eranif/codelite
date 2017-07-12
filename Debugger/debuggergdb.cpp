@@ -695,7 +695,7 @@ void DbgGdb::Poke()
             if(curline.IsEmpty() == false && !tmpline.StartsWith(wxT(">"))) {
                 wxString strdebug(wxT("DEBUG>>"));
                 strdebug << curline;
-                CL_DEBUG(strdebug);
+                clDEBUG() << strdebug << clEndl;
                 m_observer->UpdateAddLine(strdebug);
             }
         }

@@ -113,6 +113,8 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case kPHP_T_ARRAY_CAST:
         case kPHP_T_BOOL_CAST:
         case kPHP_T_UNSET_CAST:
+        case kPHP_T_INCLUDE:
+        case kPHP_T_INCLUDE_ONCE:
         case '.':
         case ';':
         case '{':
@@ -125,6 +127,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case '|':
         case '@':
         case '<':
+        case '*':
             if(current) current->clear();
             break;
         case '(':

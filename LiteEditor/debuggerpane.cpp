@@ -94,9 +94,12 @@ void DebuggerPane::CreateGUIControls()
     if(!EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection()) {
         style |= kNotebook_BottomTabs;
     }
-    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         style &= ~kNotebook_LightTabs;
         style |= kNotebook_DarkTabs;
+    }
+    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
+        style |= kNotebook_MouseScrollSwitchTabs;
     }
     style |= kNotebook_UnderlineActiveTab;
 
@@ -225,7 +228,7 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(DISASSEMBLY);
     bmp = img.Bitmap("dbgAsm");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name,false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_disassemble = new DebuggerDisassemblyTab(cp, wxGetTranslation(DISASSEMBLY));
         cp->SetChildNoReparent(m_disassemble);
 
@@ -261,7 +264,7 @@ void DebuggerPane::OnSettingsChanged(wxCommandEvent& event)
     event.Skip();
     m_book->EnableStyle(kNotebook_BottomTabs,
                         EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM);
-    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         m_book->SetStyle((m_book->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_book->SetStyle((m_book->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);

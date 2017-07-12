@@ -30,9 +30,9 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     wxUnusedVar(m_pgMgrGeneralArr);
     wxArrayInt m_pgMgrGeneralIntArr;
     wxUnusedVar(m_pgMgrGeneralIntArr);
-    m_pgMgrGeneral = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgrGeneral = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    bSizer1->Add(m_pgMgrGeneral, 1, wxALL|wxEXPAND, 0);
+    bSizer1->Add(m_pgMgrGeneral, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
     m_pgPropCategoryGeneral = m_pgMgrGeneral->Append(  new wxPropertyCategory( _("General") ) );
     m_pgPropCategoryGeneral->SetHelpString(wxT(""));
@@ -46,7 +46,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     m_pgPropHideEditMargin = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Hide the edit margin"), wxPG_LABEL, 1) );
     m_pgPropHideEditMargin->SetHelpString(_("Hide the edit margin ( the red/green marks when a line is modified)"));
     
-    m_pgPropShowIndentGuidelines = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Show indentation gudelines"), wxPG_LABEL, 1) );
+    m_pgPropShowIndentGuidelines = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Show indentation guidelines"), wxPG_LABEL, 1) );
     m_pgPropShowIndentGuidelines->SetHelpString(_("Show indentation guidelines (vertical lines)"));
     
     m_pgPropDisableSemiColonShift = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Disable semicolon shift"), wxPG_LABEL, 1) );
@@ -95,11 +95,10 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     m_pgPropDebuggerLineColour->SetHelpString(_("Debugger line background colour"));
     
     SetName(wxT("EditorOptionsGeneralGuidesPanelBase"));
-    SetSizeHints(500,500);
-    if ( GetSizer() ) {
+    SetSize(500,500);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
 }
 
 EditorOptionsGeneralGuidesPanelBase::~EditorOptionsGeneralGuidesPanelBase()
@@ -123,9 +122,9 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     wxUnusedVar(m_pgMgrEditArr);
     wxArrayInt m_pgMgrEditIntArr;
     wxUnusedVar(m_pgMgrEditIntArr);
-    m_pgMgrEdit = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgrEdit = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer4->Add(m_pgMgrEdit, 1, wxALL|wxEXPAND, 5);
+    boxSizer4->Add(m_pgMgrEdit, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_pgProp8 = m_pgMgrEdit->Append(  new wxPropertyCategory( _("Edit") ) );
     m_pgProp8->SetHelpString(wxT(""));
@@ -161,11 +160,10 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     m_pgPropCommentsIndented->SetHelpString(_("Indent line comments (C++-style comments) according to the indentation of the selected fragmant of the text"));
     
     SetName(wxT("EditorOptionsGeneralEditBase"));
-    SetSizeHints(500,300);
-    if ( GetSizer() ) {
+    SetSize(500,300);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_pgMgrEdit->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EditorOptionsGeneralEditBase::OnValueChanged), NULL, this);
     

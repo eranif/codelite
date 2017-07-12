@@ -227,7 +227,8 @@ bool NewClassDlg::ValidateInput()
     if(wxFileName::FileExists(cpp_file)) {
         if(wxMessageBox(
                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()),
-               _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
+               _("CodeLite"),
+               wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
@@ -236,7 +237,8 @@ bool NewClassDlg::ValidateInput()
     if(wxFileName::FileExists(h_file)) {
         if(wxMessageBox(
                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()),
-               _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
+               _("CodeLite"),
+               wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
@@ -324,13 +326,18 @@ void NewClassDlg::OnBrowseNamespace(wxCommandEvent& e)
     kinds.Add(wxT("namespace"));
 
     OpenResourceDialog dlg(this, m_mgr, "");
-    if(dlg.ShowModal() == wxID_OK && dlg.GetSelection()) {
-        wxString nameSpace;
-        if(dlg.GetSelection()->m_scope.IsEmpty() == false && dlg.GetSelection()->m_scope != wxT("<global>")) {
-            nameSpace << dlg.GetSelection()->m_scope << wxT("::");
+    if(dlg.ShowModal() == wxID_OK) {
+        std::vector<OpenResourceDialogItemData*> selections = dlg.GetSelections();
+        if(!selections.empty()) {
+            OpenResourceDialogItemData* item = selections.at(0);
+            wxString nameSpace;
+            if(item->m_scope.IsEmpty() == false && item->m_scope != wxT("<global>")) {
+                nameSpace << item->m_scope << wxT("::");
+            }
+            nameSpace << item->m_name;
+            m_textCtrlNamespace->ChangeValue(nameSpace);
+
         }
-        nameSpace << dlg.GetSelection()->m_name;
-        m_textCtrlNamespace->ChangeValue(nameSpace);
     }
 }
 

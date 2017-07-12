@@ -34,6 +34,7 @@
 #include "ieditor.h"
 #include "XMLCodeCompletion.h"
 #include "CSSCodeCompletion.h"
+#include "clJSCTags.h"
 
 class NodeJSDebuggerPane;
 class NodeJSWorkspaceView;
@@ -46,7 +47,7 @@ class WebTools : public IPlugin
     JSCodeCompletion::Ptr_t m_jsCodeComplete;
     XMLCodeCompletion::Ptr_t m_xmlCodeComplete;
     CSSCodeCompletion::Ptr_t m_cssCodeComplete;
-
+    clJSCTags::Ptr_t m_jsctags;
     time_t m_lastColourUpdate;
     wxTimer* m_timer;
 

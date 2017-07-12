@@ -126,10 +126,10 @@ void TestClassDlg::OnShowClassListDialog(wxCommandEvent& e)
 {
     m_textCtrlClassName->SetFocus();
     OpenResourceDialog dlg(m_manager->GetTheApp()->GetTopWindow(), m_manager, "");
-    if(dlg.ShowModal() == wxID_OK && dlg.GetSelection()) {
-
+    if(dlg.ShowModal() == wxID_OK && !dlg.GetSelections().empty()) {
+        OpenResourceDialogItemData* item = dlg.GetSelections().at(0);
         // do something with the selected text
-        m_textCtrlClassName->SetValue(dlg.GetSelection()->m_name);
+        m_textCtrlClassName->SetValue(item->m_name);
 
         // display the class methods
         DoRefreshFunctions();

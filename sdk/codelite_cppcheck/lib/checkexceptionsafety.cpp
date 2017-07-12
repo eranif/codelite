@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2016 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ namespace {
 
 void CheckExceptionSafety::destructors()
 {
-    if (!_settings->isEnabled("warning"))
+    if (!_settings->isEnabled(Settings::WARNING))
         return;
 
     const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
@@ -52,7 +52,7 @@ void CheckExceptionSafety::destructors()
                         tok = tok->next()->link();
                     }
 
-                    // Skip uncaught execptions
+                    // Skip uncaught exceptions
                     else if (Token::simpleMatch(tok, "if ( ! std :: uncaught_exception ( ) ) {")) {
                         tok = tok->next()->link(); // end of if ( ... )
                         tok = tok->next()->link(); // end of { ... }
@@ -74,9 +74,10 @@ void CheckExceptionSafety::destructors()
 
 void CheckExceptionSafety::deallocThrow()
 {
-    if (!_settings->isEnabled("warning"))
+    if (!_settings->isEnabled(Settings::WARNING))
         return;
 
+    const bool printInconclusive = _settings->inconclusive;
     const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
 
     // Deallocate a global/member pointer and then throw exception
@@ -113,7 +114,7 @@ void CheckExceptionSafety::deallocThrow()
             for (const Token *tok2 = tok; tok2 != end2; tok2 = tok2->next()) {
                 // Throw after delete -> Dead pointer
                 if (tok2->str() == "throw") {
-                    if (_settings->inconclusive) { // For inconclusive checking, throw directly.
+                    if (printInconclusive) { // For inconclusive checking, throw directly.
                         deallocThrowError(tok2, tok->str());
                         break;
                     }
@@ -142,7 +143,7 @@ void CheckExceptionSafety::deallocThrow()
 //---------------------------------------------------------------------------
 void CheckExceptionSafety::checkRethrowCopy()
 {
-    if (!_settings->isEnabled("style"))
+    if (!_settings->isEnabled(Settings::STYLE))
         return;
 
     const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
@@ -154,9 +155,11 @@ void CheckExceptionSafety::checkRethrowCopy()
         const unsigned int varid = i->classStart->tokAt(-2)->varId();
         if (varid) {
             for (const Token* tok = i->classStart->next(); tok && tok != i->classEnd; tok = tok->next()) {
-                if (Token::simpleMatch(tok, "catch (") && tok->next()->link() && tok->next()->link()->next()) // Don't check inner catch - it is handled in another iteration of outer loop.
+                if (Token::simpleMatch(tok, "catch (") && tok->next()->link() && tok->next()->link()->next()) { // Don't check inner catch - it is handled in another iteration of outer loop.
                     tok = tok->next()->link()->next()->link();
-                else if (Token::Match(tok, "throw %varid% ;", varid))
+                    if (!tok)
+                        break;
+                } else if (Token::Match(tok, "throw %varid% ;", varid))
                     rethrowCopyError(tok, tok->strAt(1));
             }
         }
@@ -168,7 +171,7 @@ void CheckExceptionSafety::checkRethrowCopy()
 //---------------------------------------------------------------------------
 void CheckExceptionSafety::checkCatchExceptionByValue()
 {
-    if (!_settings->isEnabled("style"))
+    if (!_settings->isEnabled(Settings::STYLE))
         return;
 
     const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
@@ -206,9 +209,9 @@ static const Token * functionThrowsRecursive(const Function * function, std::set
         } else if (tok->function()) {
             const Function * called = tok->function();
             // check if called function has an exception specification
-            if (called->isThrow && called->throwArg) {
+            if (called->isThrow() && called->throwArg) {
                 return tok;
-            } else if (called->isNoExcept && called->noexceptArg &&
+            } else if (called->isNoExcept() && called->noexceptArg &&
                        called->noexceptArg->str() != "true") {
                 return tok;
             } else if (functionThrowsRecursive(called, recursive)) {
@@ -243,8 +246,8 @@ void CheckExceptionSafety::nothrowThrows()
         if (!function)
             continue;
 
-        // check noexcept functions
-        if (function->isNoExcept &&
+        // check noexcept and noexcept(true) functions
+        if (function->isNoExcept() &&
             (!function->noexceptArg || function->noexceptArg->str() == "true")) {
             const Token *throws = functionThrows(function);
             if (throws)
@@ -252,24 +255,17 @@ void CheckExceptionSafety::nothrowThrows()
         }
 
         // check throw() functions
-        else if (function->isThrow && !function->throwArg) {
+        else if (function->isThrow() && !function->throwArg) {
             const Token *throws = functionThrows(function);
             if (throws)
-                nothrowThrowError(throws);
+                noexceptThrowError(throws);
         }
 
-        // check __attribute__((nothrow)) functions
+        // check __attribute__((nothrow)) or __declspec(nothrow) functions
         else if (function->isAttributeNothrow()) {
             const Token *throws = functionThrows(function);
             if (throws)
-                nothrowAttributeThrowError(throws);
-        }
-
-        // check __declspec(nothrow) functions
-        else if (function->isDeclspecNothrow()) {
-            const Token *throws = functionThrows(function);
-            if (throws)
-                nothrowDeclspecThrowError(throws);
+                noexceptThrowError(throws);
         }
     }
 }
@@ -279,7 +275,7 @@ void CheckExceptionSafety::nothrowThrows()
 //--------------------------------------------------------------------------
 void CheckExceptionSafety::unhandledExceptionSpecification()
 {
-    if (!_settings->isEnabled("style") || !_settings->inconclusive)
+    if (!_settings->isEnabled(Settings::STYLE) || !_settings->inconclusive)
         return;
 
     const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
@@ -288,7 +284,7 @@ void CheckExceptionSafety::unhandledExceptionSpecification()
     for (std::size_t i = 0; i < functions; ++i) {
         const Scope * scope = symbolDatabase->functionScopes[i];
         // only check functions without exception epecification
-        if (scope->function && !scope->function->isThrow &&
+        if (scope->function && !scope->function->isThrow() &&
             scope->className != "main" && scope->className != "wmain" &&
             scope->className != "_tmain" && scope->className != "WinMain") {
             for (const Token *tok = scope->function->functionScope->classStart->next();
@@ -298,7 +294,7 @@ void CheckExceptionSafety::unhandledExceptionSpecification()
                 } else if (tok->function()) {
                     const Function * called = tok->function();
                     // check if called function has an exception specification
-                    if (called->isThrow && called->throwArg) {
+                    if (called->isThrow() && called->throwArg) {
                         unhandledExceptionSpecificationError(tok, called->tokenDef, scope->function->name());
                         break;
                     }

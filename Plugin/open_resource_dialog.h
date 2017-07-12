@@ -57,11 +57,8 @@ public:
     {
     }
 
-    OpenResourceDialogItemData(const wxString& file,
-                               int line,
-                               const wxString& pattern,
-                               const wxString& name,
-                               const wxString& scope)
+    OpenResourceDialogItemData(
+        const wxString& file, int line, const wxString& pattern, const wxString& name, const wxString& scope)
         : m_file(file)
         , m_line(line)
         , m_pattern(pattern)
@@ -86,6 +83,7 @@ class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
     std::map<wxString, wxBitmap> m_tagImgMap;
     wxArrayString m_filters;
     wxArrayString m_userFilters;
+    long m_lineNumber;
 
 protected:
     virtual void OnEnter(wxCommandEvent& event);
@@ -117,13 +115,14 @@ protected:
 
     DECLARE_EVENT_TABLE()
 
+    void GetLineNumberFromFilter(const wxString& filter, wxString& modFilter, long& lineNumber);
+
 public:
     /** Constructor */
     OpenResourceDialog(wxWindow* parent, IManager* manager, const wxString& initialSelection);
     virtual ~OpenResourceDialog();
 
-    OpenResourceDialogItemData* GetSelection() const;
-
+    std::vector<OpenResourceDialogItemData*> GetSelections() const;
     wxArrayString& GetFilters() { return m_filters; }
 
     /**

@@ -25,86 +25,79 @@
 #ifndef CODEFORMATTER_H
 #define CODEFORMATTER_H
 
-#include "plugin.h"
 #include "cl_command_event.h"
-#include "formatoptions.h"
 #include "fileextmanager.h"
+#include "formatoptions.h"
+#include "plugin.h"
+
+enum FormatterEngine {
+    kFormatEngineNone,
+    kFormatEngineAStyle,
+    kFormatEngineClangFormat,
+    kFormatEngineBuildInPhp,
+    kFormatEnginePhpCsFixer,
+    kFormatEnginePhpcbf,
+    kFormatEngineWxXmlDocument,
+};
 
 class CodeFormatter : public IPlugin
 {
+    FormatOptions m_options;
+    PhpOptions m_optionsPhp;
+
 protected:
-    void DoFormatFile(IEditor* editor);
+    wxString m_selectedFolder;
 
     int DoGetGlobalEOL() const;
     wxString DoGetGlobalEOLString() const;
 
 private:
-    bool DoClangFormat(const wxFileName& filename,
-                       wxString& formattedOutput,
-                       int& cursorPosition,
-                       int startOffset,
-                       int length,
-                       const FormatOptions& options,
-                       const wxFileName& originalFileName);
+    void DoFormatFile(const wxFileName& fileName, const FormatterEngine& engine);
+    void DoFormatFileAsString(const wxFileName& fileName, const FormatterEngine& engine);
+    void DoFormatString(wxString& content, const wxFileName& fileName, const FormatterEngine& engine, int& cursorPosition);
+    void DoFormatSelection(IEditor* editor,
+                           wxString& content,
+                           const FormatterEngine& engine,
+                           int& cursorPosition,
+                           const int& selStart,
+                           const int& selEnd);
+    void DoFormatEditor(IEditor* editor, int selStart = wxNOT_FOUND, int selEnd = wxNOT_FOUND);
+    void DoFormatWithTempFile(const wxFileName& fileName, wxString& content, const FormatterEngine& engine);
+    void OverwriteEditorText(IEditor*& editor,
+        const wxString& content,
+        const int& cursorPosition = 0,
+        const int& selStart = wxNOT_FOUND,
+        const int& selEnd = wxNOT_FOUND);
+    FormatterEngine FindFormatter(const wxFileName& fileName);
+    bool CanFormatSelection(const FormatterEngine& engine);
+    bool CanFormatString(const FormatterEngine& engine);
+    bool CanFormatFile(const FormatterEngine& engine);
 
-    void DoFormatXmlSource(IEditor* editor);
+    void DoFormatWithPhpcbf(const wxFileName& fileName);
+    void DoFormatWithBuildInPhp(wxString& content);
+    void DoFormatWithPhpCsFixer(const wxFileName& fileName);
+    void DoFormatWithClang(const wxFileName& fileName);
+    void DoFormatWithClang(wxString& content,
+        const wxFileName& fileName,
+        int& cursorPosition,
+        const int& selStart = wxNOT_FOUND,
+        const int& selEnd = wxNOT_FOUND);
+    void DoFormatWithAstyle(wxString& content, const bool& appendEOL = true);
+    void DoFormatWithWxXmlDocument(const wxFileName& fileName);
+
+    void OnPhpSettingsChanged(clCommandEvent& event);
 
 public:
-    /**
-     * @brief format a file using clang-foramt tool. Optioanlly, you can format a portion of
-     * the file by passing startOffset and length.
-     * @param filename The file to parse
-     * @param formattedOutput formatted output string
-     * @param cursorPosition [input/output] the initial cursor position before the parsing started. the function will
-     * update it
-     * to its proper location after the parsing is compeleted
-     * @param startOffset start of chunk to format
-     * @param length chunk length
-     */
-    bool ClangFormatFile(const wxFileName& filename,
-                         wxString& formattedOutput,
-                         int& cursorPosition,
-                         int startOffset = wxNOT_FOUND,
-                         int length = wxNOT_FOUND);
-    /**
-     * @brief same as the above, but work on a buffer instead
-     */
-    bool ClangFormatBuffer(const wxString& content,
-                           const wxFileName& filename,
-                           wxString& formattedOutput,
-                           int& cursorPosition,
-                           int startOffset = wxNOT_FOUND,
-                           int length = wxNOT_FOUND);
-
-    /**
-     * @brief same as the above, but work on a buffer instead
-     */
-    bool ClangPreviewFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
-
-    /**
-     * @brief format a PHP content
-     */
-    bool PhpFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
+    wxString RunCommand(const wxString& command);
 
     /**
      * @brief format list of files
      */
-    bool BatchFormat(const std::vector<wxFileName>& files);
+    void BatchFormat(const std::vector<wxFileName>& files);
+    void OnContextMenu(clContextMenuEvent& event);
 
-    /**
-     * @brief batch format of files using clang-format tool
-     */
-    bool ClangBatchFormat(const std::vector<wxFileName>& files, const FormatOptions& options);
-
-    /**
-     * @brief batch format of files using astyle tool
-     */
-    bool AStyleBatchFOrmat(const std::vector<wxFileName>& files, const FormatOptions& options);
-
-public:
     CodeFormatter(IManager* manager);
     virtual ~CodeFormatter();
-    void AstyleFormat(const wxString& input, const wxString& options, wxString& output);
     virtual clToolBar* CreateToolBar(wxWindow* parent);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
@@ -116,9 +109,11 @@ public:
     void OnFormatOptions(wxCommandEvent& e);
     void OnFormatUI(wxUpdateUIEvent& e);
     void OnFormatOptionsUI(wxUpdateUIEvent& e);
+    void DoFormatPreview(wxString& content, const wxString& ext, const FormatterEngine& engine);
 
     void OnFormatString(clSourceFormatEvent& e);
     void OnFormatFile(clSourceFormatEvent& e);
+    void OnFormatFiles(wxCommandEvent& e);
     void OnFormatProject(wxCommandEvent& e);
     void OnBeforeFileSave(clCommandEvent& e);
 };

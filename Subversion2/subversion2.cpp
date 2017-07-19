@@ -880,7 +880,8 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
     }
 
     GetConsole()->AppendText(command + wxT("\n"));
-    m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this, files.Item(0)), this);
+    m_blameCommand.Execute(command, GetSvnView()->GetRootDir(),
+                           new SvnBlameHandler(this, event.GetId(), this, files.Item(0)), this);
 }
 
 void Subversion2::OnGetCompileLine(clBuildEvent& event)

@@ -57,6 +57,7 @@ VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent, clCxx
     GetSizer()->Fit(this);
     CentreOnParent();
     ::MSWSetNativeTheme(m_treeCtrl);
+    m_treeCtrlSearchHelper.reset(new clTreeKeyboardInput(m_treeCtrl));
 }
 
 VirtualDirectorySelectorDlg::~VirtualDirectorySelectorDlg() {}

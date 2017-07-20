@@ -3,6 +3,7 @@
 
 #include "svncommandhandler.h" // Base class: SvnCommandHandler
 #include <list>
+#include <algorithm>
 
 class Subversion2;
 

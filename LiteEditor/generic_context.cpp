@@ -27,6 +27,7 @@
 #include "cl_editor.h"
 #include "clEditorWordCharsLocker.h"
 #include "clEditorColouriseLocker.h"
+#include "file_logger.h"
 
 ContextGeneric::ContextGeneric(LEditor* container, const wxString& name)
     : ContextBase(container)
@@ -124,7 +125,11 @@ void ContextGeneric::ProcessIdleActions()
             searchWhat = reCloseHtmlTag.GetMatch(word, 1);
             closeTag << "</" << searchWhat << ">";
             
-            wxRegEx reOpenTag("<" + searchWhat + "[ \t>]+");
+            wxString reString = "<" + searchWhat + "[ \t>]?";
+            wxRegEx reOpenTag(reString, wxRE_DEFAULT | wxRE_ICASE);
+            if(!reOpenTag.IsValid()) {
+                clDEBUG() << "Invalid regex:" << reString << clEndl;
+            }
             
             int pos = startPos;
             int depth = 0;

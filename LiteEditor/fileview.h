@@ -31,6 +31,7 @@
 #include "imanager.h"
 #include "map"
 #include "clTreeKeyboardInput.h"
+#include <VirtualDirectoryColour.h>
 
 class wxMenu;
 

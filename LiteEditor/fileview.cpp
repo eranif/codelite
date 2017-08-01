@@ -342,13 +342,8 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
     VirtualDirectoryColour::List_t coloursList;
     LocalWorkspaceST::Get()->GetFolderColours(coloursMap);
 
-    // Copy the map to list
-    std::for_each(coloursMap.begin(), coloursMap.end(),
-                  [&](const VirtualDirectoryColour::Map_t::value_type& p) { coloursList.push_back(p.second); });
-
     // Sort the list
-    coloursList.sort([&](const VirtualDirectoryColour& first,
-                         const VirtualDirectoryColour& second) { return first.path.Cmp(second.path) > 0; });
+    VirtualDirectoryColour::SortToList(coloursMap, coloursList);
     std::map<wxString, wxTreeItemId> items;
     wxColour bgColour = wxNullColour;
     for(; !walker.End(); walker++) {
@@ -384,18 +379,16 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
         if(node->GetData().GetKind() == ProjectItem::TypeVirtualDirectory) {
             SetItemImage(hti, FOLDER_EXPAND_IMG_IDX, wxTreeItemIcon_Expanded);
         }
-        
+
         // Set the background colour for the item if it is a virtual folder or a file
         if(node->GetData().GetKind() == ProjectItem::TypeVirtualDirectory ||
            node->GetData().GetKind() == ProjectItem::TypeFile) {
             if(!coloursList.empty()) {
                 // A virtual folder, try to find a custom colour for it
                 wxString vdPath = GetItemPath(hti);
-                VirtualDirectoryColour::List_t::iterator iter =
-                    std::find_if(coloursList.begin(), coloursList.end(),
-                                 [&](const VirtualDirectoryColour& vdc) { return vdPath.StartsWith(vdc.path); });
-                if(iter != coloursList.end()) {
-                    bgColour = iter->colour;
+                const VirtualDirectoryColour& match = VirtualDirectoryColour::FindForPath(coloursList, vdPath);
+                if(match.IsOk()) {
+                    bgColour = match.GetColour();
                 } else {
                     bgColour = wxNullColour;
                 }
@@ -827,8 +820,9 @@ void FileViewTree::OnAddExistingItem(wxCommandEvent& WXUNUSED(event))
         return;
     }
 
-    const wxString ALL(wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
-                       wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
+    const wxString ALL(
+        wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
+            wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
 
     wxString vdPath = GetItemPath(item);
     wxString project, vd;
@@ -1217,8 +1211,8 @@ void FileViewTree::DoRemoveProject(const wxString& name)
 int FileViewTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
 {
     // used for SortChildren, reroute to our sort routine
-    FilewViewTreeItemData* a = (FilewViewTreeItemData*)GetItemData(item1),
-                           *b = (FilewViewTreeItemData*)GetItemData(item2);
+    FilewViewTreeItemData *a = (FilewViewTreeItemData *)GetItemData(item1),
+                          *b = (FilewViewTreeItemData *)GetItemData(item2);
     if(a && b) return OnCompareItems(a, b);
 
     return 0;
@@ -2902,7 +2896,7 @@ void FileViewTree::OnSetBgColourVirtualFolder(wxCommandEvent& e)
     if(coloursMap.count(vdPath)) {
         coloursMap.erase(vdPath);
     }
-    VirtualDirectoryColour vdc{ vdPath, col };
+    VirtualDirectoryColour vdc(vdPath, col);
     coloursMap.insert(std::make_pair(vdPath, vdc));
 
     // Update the local settings
@@ -2918,7 +2912,7 @@ void FileViewTree::DoColourSubtree(const wxTreeItemId& item, const wxColour& cur
     wxColour bgColour = currentBgColour;
     VirtualDirectoryColour::Map_t::const_iterator iter = coloursMap.find(vdPath);
     if(iter != coloursMap.end()) {
-        bgColour = iter->second.colour;
+        bgColour = iter->second.GetColour();
     }
 
     FilewViewTreeItemData* d = static_cast<FilewViewTreeItemData*>(GetItemData(item));

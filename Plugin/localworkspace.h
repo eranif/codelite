@@ -33,6 +33,7 @@
 #include <list>
 #include <map>
 #include <wx/colour.h>
+#include "VirtualDirectoryColour.h"
 
 // Denotes whether we're dealing with preferences at a global, workspace, project or (maybe one day) file level
 enum prefsLevel { pLevel_global, pLevel_workspace, pLevel_project, pLevel_file, pLevel_dunno };
@@ -229,14 +230,6 @@ public:
      * \return XML node
      */
     wxXmlNode* ToXml(wxXmlNode* parent = NULL, const wxString& nodename = wxT("Options")) const;
-};
-
-struct WXDLLIMPEXP_SDK VirtualDirectoryColour
-{
-    wxString path;
-    wxColour colour;
-    typedef std::list<VirtualDirectoryColour> List_t;
-    typedef std::map<wxString, VirtualDirectoryColour> Map_t;
 };
 
 class WXDLLIMPEXP_SDK LocalWorkspace

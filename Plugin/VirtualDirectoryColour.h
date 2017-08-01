@@ -4,6 +4,8 @@
 #include <codelite_exports.h>
 #include <wx/string.h>
 #include <wx/colour.h>
+#include <list>
+#include <map>
 
 class WXDLLIMPEXP_SDK VirtualDirectoryColour
 {

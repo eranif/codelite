@@ -598,10 +598,17 @@ bool LocalWorkspace::SetFolderColours(const VirtualDirectoryColour::Map_t& vdCol
     wxXmlNode* coloursNode = new wxXmlNode(root, wxXML_ELEMENT_NODE, wxT("VirtualFoldersColours"));
     root->AddChild(coloursNode);
 
-    std::for_each(vdColours.begin(), vdColours.end(), [&](const VirtualDirectoryColour::Map_t::value_type& vdc) {
-        wxXmlNode* folderNode = new wxXmlNode(coloursNode, wxXML_ELEMENT_NODE, wxT("VirtualFolder"));
-        folderNode->AddAttribute("Path", vdc.first);
-        folderNode->AddAttribute("Colour", vdc.second.colour.GetAsString(wxC2S_HTML_SYNTAX));
+    VirtualDirectoryColour::List_t coloursList;
+    std::for_each(vdColours.begin(), vdColours.end(),
+                  [&](const VirtualDirectoryColour::Map_t::value_type& p) { coloursList.push_back(p.second); });
+
+    coloursList.sort([&](const VirtualDirectoryColour& first,
+                         const VirtualDirectoryColour& second) { return first.path.Cmp(second.path) > 0; });
+
+    std::for_each(coloursList.begin(), coloursList.end(), [&](const VirtualDirectoryColour& vdc) {
+        wxXmlNode* folderNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualFolder"));
+        folderNode->AddAttribute("Path", vdc.path);
+        folderNode->AddAttribute("Colour", vdc.colour.GetAsString(wxC2S_HTML_SYNTAX));
         coloursNode->AddChild(folderNode);
     });
     return SaveXmlFile();

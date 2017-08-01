@@ -338,7 +338,19 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
     // Add the folder containing this project
     wxTreeItemId rootItem = AddWorkspaceFolder(prj->GetWorkspaceFolder());
 
+    VirtualDirectoryColour::Map_t coloursMap;
+    VirtualDirectoryColour::List_t coloursList;
+    LocalWorkspaceST::Get()->GetFolderColours(coloursMap);
+
+    // Copy the map to list
+    std::for_each(coloursMap.begin(), coloursMap.end(),
+                  [&](const VirtualDirectoryColour::Map_t::value_type& p) { coloursList.push_back(p.second); });
+
+    // Sort the list
+    coloursList.sort([&](const VirtualDirectoryColour& first,
+                         const VirtualDirectoryColour& second) { return first.path.Cmp(second.path) > 0; });
     std::map<wxString, wxTreeItemId> items;
+    wxColour bgColour = wxNullColour;
     for(; !walker.End(); walker++) {
 
         // Did we get the icon from a plugin?
@@ -371,6 +383,26 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
                                       new FilewViewTreeItemData(node->GetData()));
         if(node->GetData().GetKind() == ProjectItem::TypeVirtualDirectory) {
             SetItemImage(hti, FOLDER_EXPAND_IMG_IDX, wxTreeItemIcon_Expanded);
+        }
+        
+        // Set the background colour for the item if it is a virtual folder or a file
+        if(node->GetData().GetKind() == ProjectItem::TypeVirtualDirectory ||
+           node->GetData().GetKind() == ProjectItem::TypeFile) {
+            if(!coloursList.empty()) {
+                // A virtual folder, try to find a custom colour for it
+                wxString vdPath = GetItemPath(hti);
+                VirtualDirectoryColour::List_t::iterator iter =
+                    std::find_if(coloursList.begin(), coloursList.end(),
+                                 [&](const VirtualDirectoryColour& vdc) { return vdPath.StartsWith(vdc.path); });
+                if(iter != coloursList.end()) {
+                    bgColour = iter->colour;
+                } else {
+                    bgColour = wxNullColour;
+                }
+                if(bgColour.IsOk()) {
+                    SetItemBackgroundColour(hti, bgColour);
+                }
+            }
         }
         m_itemsToSort[parentHti.m_pItem] = true;
 

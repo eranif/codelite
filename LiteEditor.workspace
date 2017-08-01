@@ -346,7 +346,7 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
@@ -401,7 +401,7 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Release"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>

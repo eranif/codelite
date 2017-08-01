@@ -38,6 +38,7 @@
 #include "wx_xml_compatibility.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include <algorithm>
 
 //-----------------------------------------------------------------------------
 
@@ -329,7 +330,7 @@ bool LocalWorkspace::SanityCheck()
     wxString localFile, globalFile;
     localFile = localWspFile.GetFullPath();
     globalFile = workspaceFile.GetFullPath();
-    
+
     if((localFile == globalFile) && m_doc.IsOk()) {
         return true;
     }
@@ -574,4 +575,62 @@ void LocalWorkspace::SetSearchInFilesMask(const wxString& findInFileMask)
     optsNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("FindInFilesMask"));
     m_doc.GetRoot()->AddChild(optsNode);
     SetCDATANodeContent(optsNode, findInFileMask);
+}
+
+bool LocalWorkspace::SetFolderColours(const VirtualDirectoryColour::Map_t& vdColours)
+{
+    // Stored as:
+    // <VirtualFoldersColours>
+    //     <VirtualFolder Path=".." Colour=".."/>
+    //     ...
+    // </VirtualFoldersColours>
+    if(!SanityCheck()) {
+        return false;
+    }
+
+    wxXmlNode* root = m_doc.GetRoot();
+    wxXmlNode* oldOptions = XmlUtils::FindFirstByTagName(root, wxT("VirtualFoldersColours"));
+    if(oldOptions) {
+        root->RemoveChild(oldOptions);
+        wxDELETE(oldOptions);
+    }
+
+    wxXmlNode* coloursNode = new wxXmlNode(root, wxXML_ELEMENT_NODE, wxT("VirtualFoldersColours"));
+    root->AddChild(coloursNode);
+
+    std::for_each(vdColours.begin(), vdColours.end(), [&](const VirtualDirectoryColour::Map_t::value_type& vdc) {
+        wxXmlNode* folderNode = new wxXmlNode(coloursNode, wxXML_ELEMENT_NODE, wxT("VirtualFolder"));
+        folderNode->AddAttribute("Path", vdc.first);
+        folderNode->AddAttribute("Colour", vdc.second.colour.GetAsString(wxC2S_HTML_SYNTAX));
+        coloursNode->AddChild(folderNode);
+    });
+    return SaveXmlFile();
+}
+
+bool LocalWorkspace::GetFolderColours(VirtualDirectoryColour::Map_t& vdColours)
+{
+    // Stored as:
+    // <VirtualFoldersColours>
+    //     <VirtualFolder Path=".." Colour=".."/>
+    //     ...
+    // </VirtualFoldersColours>
+    vdColours.clear();
+    if(!SanityCheck()) {
+        return false;
+    }
+
+    wxXmlNode* coloursNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "VirtualFoldersColours");
+    if(!coloursNode) return true;
+
+    wxXmlNode* child = coloursNode->GetChildren();
+    while(child) {
+        if(child->GetName() == "VirtualFolder") {
+            VirtualDirectoryColour vdc;
+            vdc.path = child->GetAttribute("Path");
+            vdc.colour = child->GetAttribute("Colour", "#000000");
+            vdColours.insert(std::make_pair(vdc.path, vdc));
+        }
+        child = child->GetNext();
+    }
+    return true;
 }

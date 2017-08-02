@@ -24,52 +24,53 @@ VirtualDirectorySelectorDlgBaseClass::VirtualDirectorySelectorDlgBaseClass(wxWin
         bBitmapLoaded = true;
     }
     
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Select Virtual Directory:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticText1Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText1Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText1->SetFont(m_staticText1Font);
+    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Select Virtual Folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    bSizer1->Add(m_staticText1, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+    bSizer1->Add(m_staticText1, 0, wxALL|wxEXPAND|wxALIGN_LEFT, WXC_FROM_DIP(5));
     
-    m_treeCtrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxTR_DEFAULT_STYLE|wxTR_SINGLE);
+    m_treeCtrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_DEFAULT_STYLE|wxTR_SINGLE);
     
-    bSizer1->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 5);
+    bSizer1->Add(m_treeCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
-    bSizer1->Add(sbSizer1, 0, wxEXPAND|wxALL, 5);
+    bSizer1->Add(sbSizer1, 0, wxEXPAND|wxALL, WXC_FROM_DIP(5));
     
-    m_staticTextPreview = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticTextPreview = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    sbSizer1->Add(m_staticTextPreview, 0, wxEXPAND|wxALL, 5);
+    sbSizer1->Add(m_staticTextPreview, 0, wxEXPAND|wxALL, WXC_FROM_DIP(5));
     
-    bSizer2 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(bSizer2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+    bSizer1->Add(bSizer2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, WXC_FROM_DIP(5));
     
-    m_buttonOk = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOk = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOk->SetDefault();
     
-    bSizer2->Add(m_buttonOk, 0, wxALL, 5);
+    bSizer2->Add(m_buttonOk, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer2->Add(m_buttonCancel, 0, wxALL, 5);
+    bSizer2->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_button1 = new wxButton(this, wxID_NEW, _("New..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button1 = new wxButton(this, wxID_NEW, _("New..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_button1->SetToolTip(_("Create new virtual folder..."));
     
-    bSizer2->Add(m_button1, 0, wxALL, 5);
+    bSizer2->Add(m_button1, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("VirtualDirectorySelectorDlgBaseClass"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

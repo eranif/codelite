@@ -35,6 +35,7 @@
 #include "cl_command_event.h"
 #include "clTabTogglerHelper.h"
 #include "clFileSystemEvent.h"
+#include "SvnShowFileChangesHandler.h"
 
 class SubversionView;
 class SvnConsole;
@@ -88,6 +89,7 @@ protected:
     void OnBlame(wxCommandEvent& event);
     void OnIgnoreFile(wxCommandEvent& event);
     void OnIgnoreFilePattern(wxCommandEvent& event);
+    void OnShowFileChanges(wxCommandEvent& event);
     void OnSelectAsView(wxCommandEvent& event);
     void OnSwitchURL(wxCommandEvent& event);
     void OnLockFile(wxCommandEvent& event);
@@ -140,8 +142,8 @@ public:
 
     SvnSettingsData GetSettings();
     void SetSettings(SvnSettingsData& ssd);
-    wxString GetSvnExeName(bool nonInteractive = true);
-    wxString GetSvnExeNameNoConfigDir(bool nonInteractive = true);
+    wxString GetSvnExeName();
+    wxString GetSvnExeNameNoConfigDir();
     wxString GetUserConfigDir();
     void RecreateLocalSvnConfigFile();
     void Patch(bool dryRun, const wxString& workingDirectory, wxEvtHandler* owner, int id);
@@ -164,7 +166,10 @@ public:
                            const wxString& output);
 
     void AddCommandLineOption(wxString& command, Subversion2::eCommandLineOption opt);
-
+    
+    void ShowRecentChanges(const wxString& file);
+    void ShowRecentChangesDialog(const SvnShowDiffChunk::List_t& changes);
+    
 protected:
     void DoInitialize();
     void DoSetSSH();

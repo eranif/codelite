@@ -44,6 +44,9 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
         wxPersistenceManager::Get().RegisterAndRestore(win);
     }    
     DoLoad(win, win->GetName(), 0);
+    if(win->GetParent()) {
+        win->CentreOnParent();
+    }
 }
 
 void WindowAttrManager::DoLoad(wxWindow* win, const wxString& parentName, int depth)

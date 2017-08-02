@@ -417,6 +417,8 @@
     <File Name="clMouseCaptureLocker.cpp"/>
     <File Name="clMainFrameHelper.h"/>
     <File Name="clMainFrameHelper.cpp"/>
+    <File Name="VirtualDirectoryColour.h"/>
+    <File Name="VirtualDirectoryColour.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>

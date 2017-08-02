@@ -73,15 +73,3 @@ double clClangFormatLocator::GetVersion(const wxString& clangFormat) const
 #endif
     return double_version; // Default
 }
-
-wxFileName clClangFormatLocator::FindConfigForFile(const wxFileName& filename) const
-{
-    wxFileName clangFormatConfigFile(filename.GetPath(), ".clang-format");
-    while(clangFormatConfigFile.GetDirCount()) {
-        if(clangFormatConfigFile.FileExists()) {
-            return clangFormatConfigFile;
-        }
-        clangFormatConfigFile.RemoveLastDir();
-    }
-    return wxFileName();
-}

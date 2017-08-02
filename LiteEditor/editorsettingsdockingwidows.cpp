@@ -56,7 +56,8 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxUseDarkTabTheme->SetValue(options->IsTabColourDark());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
-
+    m_checkBoxMouseScrollSwitchTabs->SetValue(options->IsMouseScrollSwitchTabs());
+    
     // DEFAULT 0
     // MINIMAL 1
     // TRAPEZOID 2
@@ -166,7 +167,8 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
     options->SetTabColourDark(m_checkBoxUseDarkTabTheme->IsChecked());
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
-
+    options->SetMouseScrollSwitchTabs(m_checkBoxMouseScrollSwitchTabs->IsChecked());
+    
     // Set the tab style:
     // DEFAULT 0
     // MINIMAL 1

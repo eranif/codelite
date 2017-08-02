@@ -93,7 +93,9 @@ private:
     void OnWorkspaceReloadStarted(clCommandEvent& e);
     void OnWorkspaceReloadEnded(clCommandEvent& e);
     void OnEditorSettingsChanged(wxCommandEvent& e);
-
+    
+    void DoOpenFile(const wxString& filename);
+    
 public:
     MainBook(wxWindow* parent);
     ~MainBook();

@@ -8,9 +8,9 @@ extern wxPageSetupDialogData* g_pageSetupData;
 
 clPrintout::clPrintout(LEditor* edit, const wxString& title)
     : wxPrintout(title)
+    , m_edit(edit)
     , m_minPage(0)
     , m_maxPage(0)
-    , m_edit(edit)
 {
 }
 

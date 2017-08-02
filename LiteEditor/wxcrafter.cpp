@@ -872,7 +872,7 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
     
     SetName(wxT("EditorFrameBase"));
     SetMinClientSize(wxSize(800,600));
-    SetSize(-1,-1);
+    SetSize(800,600);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

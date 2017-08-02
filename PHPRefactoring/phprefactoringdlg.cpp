@@ -6,12 +6,10 @@ PHPRefactoringDlg::PHPRefactoringDlg(wxWindow* parent)
     : PHPRefactoringBaseDlg(parent)
 {
     // center the dialog
-    Centre();
-
     InitDialog();
-
     SetName("PHPRefactoringDlg");
     WindowAttrManager::Load(this);
+    CentreOnParent();
 }
 
 PHPRefactoringDlg::~PHPRefactoringDlg() {}
@@ -22,4 +20,5 @@ void PHPRefactoringDlg::InitDialog()
     settings.Load();
 
     m_filePickerPhprefactoringPhar->SetPath(settings.GetPhprefactoringPhar());
+    m_checkBoxSkipPreview->SetValue(settings.GetSkipPreview());
 }

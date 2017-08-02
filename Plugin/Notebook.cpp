@@ -42,8 +42,8 @@ wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 
 extern void Notebook_Init_Bitmaps();
 
-Notebook::Notebook(
-    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+                   const wxString& name)
     : wxPanel(parent, id, pos, size, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL, name)
 {
     static bool once = false;
@@ -1063,8 +1063,8 @@ void clTabCtrl::OnMouseMiddleClick(wxMouseEvent& event)
 
 void clTabCtrl::GetAllPages(std::vector<wxWindow*>& pages)
 {
-    std::for_each(
-        m_tabs.begin(), m_tabs.end(), [&](clTabInfo::Ptr_t tabInfo) { pages.push_back(tabInfo->GetWindow()); });
+    std::for_each(m_tabs.begin(), m_tabs.end(),
+                  [&](clTabInfo::Ptr_t tabInfo) { pages.push_back(tabInfo->GetWindow()); });
 }
 
 void clTabCtrl::SetMenu(wxMenu* menu)
@@ -1297,8 +1297,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void
-clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
+void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
+                                const clTabColours& colours)
 {
     GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
 }
@@ -1345,14 +1345,16 @@ void clTabCtrl::SetArt(clTabRenderer::Ptr_t art)
 void clTabCtrl::OnMouseScroll(wxMouseEvent& event)
 {
     event.Skip();
-    size_t curSelection = GetSelection();
-    if(event.GetWheelRotation() > 0) {
-        if(curSelection > 0) {
-            SetSelection(curSelection - 1);
-        }
-    } else {
-        if(curSelection < GetTabs().size()) {
-            SetSelection(curSelection + 1);
+    if(GetStyle() & kNotebook_MouseScrollSwitchTabs) {
+        size_t curSelection = GetSelection();
+        if(event.GetWheelRotation() > 0) {
+            if(curSelection > 0) {
+                SetSelection(curSelection - 1);
+            }
+        } else {
+            if(curSelection < GetTabs().size()) {
+                SetSelection(curSelection + 1);
+            }
         }
     }
 }

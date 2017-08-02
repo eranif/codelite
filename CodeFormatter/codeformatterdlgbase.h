@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
-#define _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#ifndef CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
+#define CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -103,6 +103,7 @@ protected:
     wxPGProperty* m_pgPropPhpCSFixer;
     wxPGProperty* m_filePickerPHPCsFixerPhar;
     wxPGProperty* m_pgPropPHPCsFixerOptions;
+    wxPGProperty* m_pgPropPHPCsFixerUseFile;
     wxPGProperty* m_pgPropPHPCsFixerStandard;
     wxPGProperty* m_pgPropPHPCsFixerMigration;
     wxPGProperty* m_pgPropPHPCsFixerDoubleArrows;
@@ -121,6 +122,7 @@ protected:
     wxPGProperty* m_filePickerPhpcbfPhar;
     wxPGProperty* m_pgPropPhpcbfSeverity;
     wxPGProperty* m_pgPropPhpcbfEncoding;
+    wxPGProperty* m_pgPropPhpcbfUseFile;
     wxPGProperty* m_pgPropPhpcbfStandard;
     wxPGProperty* m_pgPropPhpcbfOptions;
     wxPanel* m_splitterPage17313;

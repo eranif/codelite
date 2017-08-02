@@ -12,6 +12,7 @@
 #include "fileutils.h"
 #include "HelpPluginSettings.h"
 #include "HelpPluginSettingsDlg.h"
+#include "file_logger.h"
 
 static HelpPlugin* thePlugin = NULL;
 
@@ -159,11 +160,10 @@ wxString HelpPlugin::DoBuildQueryString()
     if(!language.IsEmpty()) {
         // Build context aware search string
         q << "dash-plugin://keys=" << language << "&query=" << selection;
-        q = FileUtils::EncodeURI(q);
     } else {
         q << "dash-plugin://query=" << selection;
-        q = FileUtils::EncodeURI(q);
     }
+    q = FileUtils::EncodeURI(q);
     return q;
 }
 
@@ -187,8 +187,10 @@ void HelpPlugin::DoHelp()
     wxString command;
     command << fnZeal.GetFullPath() << " "
             << "\"" << query << "\"";
+    clDEBUG() << "Help Plugin:" << command << clEndl;
     ::wxExecute(command);
 #else
+    clDEBUG() << "Help Plugin:" << query << clEndl;
     if(!::wxLaunchDefaultBrowser(query)) {
         HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
         dlg.ShowModal();

@@ -42,10 +42,8 @@ NewIneritanceDlg::NewIneritanceDlg(wxWindow* parent, IManager* mgr, const wxStri
         m_choiceAccess->SetStringSelection(access);
     }
     m_textCtrlInhertiance->SetValue(parentName);
+    GetSizer()->Fit(this);
     CentreOnParent();
-
-    SetName("NewIneritanceDlg");
-    WindowAttrManager::Load(this);
 }
 
 NewIneritanceDlg::~NewIneritanceDlg() {}

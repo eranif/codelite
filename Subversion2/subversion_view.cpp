@@ -635,8 +635,7 @@ void SubversionView::OnUpdate(wxCommandEvent& event)
     if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
         return;
     }
-    bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-    command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" update ");
+    command << m_plugin->GetSvnExeName() << loginString << wxT(" update ");
     m_plugin->AddCommandLineOption(command, Subversion2::kOpt_ForceInteractive);
 
     if(m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
@@ -663,7 +662,7 @@ void SubversionView::OnAdd(wxCommandEvent& event)
         return;
     }
 
-    command << m_plugin->GetSvnExeName(false) << loginString << wxT(" add ");
+    command << m_plugin->GetSvnExeName() << loginString << wxT(" add ");
 
     // Concatenate list of files to be updated
     for(size_t i = 0; i < m_selectionInfo.m_paths.GetCount(); i++) {
@@ -684,7 +683,7 @@ void SubversionView::OnRevert(wxCommandEvent& event)
     }
 
     // Svn revert does not require login string
-    command << m_plugin->GetSvnExeName(false) << wxT(" revert --recursive ");
+    command << m_plugin->GetSvnExeName() << wxT(" revert --recursive ");
 
     if(m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
         // Concatenate list of files to be updated
@@ -722,8 +721,7 @@ void SubversionView::OnBranch(wxCommandEvent& event)
     if(dlg.ShowModal() == wxID_OK) {
         command.Clear();
         // Prepare the 'copy' command
-        bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-        command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" copy ") << dlg.GetSourceURL()
+        command << m_plugin->GetSvnExeName() << loginString << wxT(" copy ") << dlg.GetSourceURL()
                 << wxT(" ") << dlg.GetTargetURL() << wxT(" -m \"") << dlg.GetMessage() << wxT("\"");
 
         m_plugin->GetConsole()->Execute(
@@ -755,9 +753,8 @@ void SubversionView::OnTag(wxCommandEvent& event)
 
     if(dlg.ShowModal() == wxID_OK) {
         // Prepare the 'copy' command
-        bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
         command.Clear();
-        command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" copy ") << dlg.GetSourceURL()
+        command << m_plugin->GetSvnExeName() << loginString << wxT(" copy ") << dlg.GetSourceURL()
                 << wxT(" ") << dlg.GetTargetURL() << wxT(" -m \"") << dlg.GetMessage() << wxT("\"");
 
         m_plugin->GetConsole()->Execute(
@@ -772,8 +769,7 @@ void SubversionView::OnDelete(wxCommandEvent& event)
     if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
         return;
     }
-    bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-    command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" --force delete ");
+    command << m_plugin->GetSvnExeName() << loginString << wxT(" --force delete ");
 
     if(::wxMessageBox(_("Delete the selected files?"), _("Confirm"),
            wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
@@ -797,7 +793,7 @@ void SubversionView::OnResolve(wxCommandEvent& event)
         return;
     }
 
-    command << m_plugin->GetSvnExeName(false) << loginString << wxT(" resolved ");
+    command << m_plugin->GetSvnExeName() << loginString << wxT(" resolved ");
 
     // Concatenate list of files to be updated
     for(size_t i = 0; i < m_selectionInfo.m_paths.GetCount(); i++) {
@@ -815,8 +811,6 @@ void SubversionView::OnDiff(wxCommandEvent& event)
         return;
     }
 
-    bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-
     DiffDialog dlg(this, m_plugin->GetManager());
     if(dlg.ShowModal() == wxID_OK) {
         wxString from = dlg.GetFromRevision();
@@ -828,7 +822,7 @@ void SubversionView::OnDiff(wxCommandEvent& event)
 
         // Simple diff
         wxString diff_cmd;
-        diff_cmd << m_plugin->GetSvnExeNameNoConfigDir(nonInteractive) << loginString;
+        diff_cmd << m_plugin->GetSvnExeNameNoConfigDir() << loginString;
 
         SvnSettingsData ssd = m_plugin->GetSettings();
         if(ssd.GetFlags() & SvnUseExternalDiff) {
@@ -861,7 +855,7 @@ void SubversionView::OnCleanup(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString command;
-    command << m_plugin->GetSvnExeName(false) << wxT(" cleanup ");
+    command << m_plugin->GetSvnExeName() << wxT(" cleanup ");
     m_plugin->GetConsole()->Execute(
         command, DoGetCurRepoPath(), new SvnDefaultCommandHandler(m_plugin, wxNOT_FOUND, NULL));
 }
@@ -983,13 +977,12 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
         return;
     }
 
-    bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
 
     // Simple diff
     wxString command;
 
     // By default use ignore-whitespaces
-    command << m_plugin->GetSvnExeNameNoConfigDir(nonInteractive) << loginString;
+    command << m_plugin->GetSvnExeNameNoConfigDir() << loginString;
 
     SvnSettingsData ssd = m_plugin->GetSettings();
     if(ssd.GetFlags() & SvnUseExternalDiff) {
@@ -1038,11 +1031,9 @@ void SubversionView::OnCheckout(wxCommandEvent& event)
     if(!m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString)) return;
 
     wxString command;
-    bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-
     SvnCheckoutDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow(), m_plugin);
     if(dlg.ShowModal() == wxID_OK) {
-        command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" co ") << dlg.GetURL() << wxT(" \"")
+        command << m_plugin->GetSvnExeName() << loginString << wxT(" co ") << dlg.GetURL() << wxT(" \"")
                 << dlg.GetTargetDir() << wxT("\"");
         m_plugin->GetConsole()->ExecuteURL(
             command, dlg.GetURL(), new SvnCheckoutHandler(m_plugin, event.GetId(), this), true);

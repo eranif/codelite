@@ -161,6 +161,7 @@ void TailPanel::OnOpenRecentItem(wxCommandEvent& event)
 {
     if(m_recentItemsMap.count(event.GetId()) == 0) return;
     wxString filepath = m_recentItemsMap[event.GetId()];
+    DoClear(); // Clear the old content first
     DoOpen(filepath);
     m_recentItemsMap.clear();
 }

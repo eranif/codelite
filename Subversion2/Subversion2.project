@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="Subversion2">
+<CodeLite_Project Name="Subversion2" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00070001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
@@ -45,6 +45,8 @@
     <File Name="workspacesvnsettings.h"/>
     <File Name="workspacesvnsettings.cpp"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="SvnShowFileChangesHandler.h"/>
+    <File Name="SvnShowFileChangesHandler.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="subversion2.h"/>
@@ -97,6 +99,8 @@
     <File Name="SvnCommitDialog.cpp"/>
     <File Name="SvnBlameFrame.h"/>
     <File Name="SvnBlameFrame.cpp"/>
+    <File Name="SvnShowRecentChangesDlg.h"/>
+    <File Name="SvnShowRecentChangesDlg.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>

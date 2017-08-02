@@ -54,9 +54,12 @@ enum NotebookStyle {
     kNotebook_LeftTabs = (1 << 12),
     /// Vertical tabs as buttons
     kNotebook_VerticalButtons = (1 << 13),
-    
+
     /// Underline the active tab with a 2 pixel line
     kNotebook_UnderlineActiveTab = (1 << 14),
+
+    /// When scrolling with the mouse button when hovering the tab control, switch between tabs
+    kNotebook_MouseScrollSwitchTabs = (1 << 15),
 
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
@@ -88,10 +91,10 @@ public:
 
     /// Chevron down arrow used as the button for showing tab list
     wxBitmap chevronDown;
-    
+
     /// Marker colour
     wxColour markerColour;
-    
+
     clTabColours();
     virtual ~clTabColours() {}
 
@@ -108,7 +111,7 @@ public:
      * @brief initialize the light colours
      */
     virtual void InitLightColours();
-    
+
     bool IsDarkColours() const;
 };
 
@@ -145,8 +148,8 @@ public:
     typedef std::vector<clTabInfo::Ptr_t> Vec_t;
 
     clTabInfo(clTabCtrl* tabCtrl);
-    clTabInfo(
-        clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp = wxNullBitmap);
+    clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text,
+              const wxBitmap& bmp = wxNullBitmap);
     virtual ~clTabInfo() {}
 
     bool IsValid() const { return m_window != NULL; }
@@ -188,8 +191,8 @@ public:
     clTabRenderer();
     virtual ~clTabRenderer() {}
     virtual void Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style) = 0;
-    virtual void DrawBottomRect(
-        clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours, size_t style) = 0;
+    virtual void DrawBottomRect(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
+                                const clTabColours& colours, size_t style) = 0;
 };
 
 #endif // CLTABRENDERER_H

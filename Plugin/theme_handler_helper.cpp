@@ -44,18 +44,18 @@ class wxListBox;
 ThemeHandlerHelper::ThemeHandlerHelper(wxWindow* win)
     : m_window(win)
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnThemeChanged), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnPreferencesUpdated), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnThemeChanged),
+                                  NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_EDITOR_SETTINGS_CHANGED,
+                                  wxCommandEventHandler(ThemeHandlerHelper::OnPreferencesUpdated), NULL, this);
 }
 
 ThemeHandlerHelper::~ThemeHandlerHelper()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnThemeChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnPreferencesUpdated), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandlerHelper::OnThemeChanged),
+                                     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_SETTINGS_CHANGED,
+                                     wxCommandEventHandler(ThemeHandlerHelper::OnPreferencesUpdated), NULL, this);
 }
 
 void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
@@ -117,6 +117,10 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
             clTabRenderer::Ptr_t art(new clTabRendererClassic);
             book->SetArt(art);
         }
+        
+        // Enable tab switching using the mouse scrollbar
+        book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
+                          EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
     }
     wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
     while(pclNode) {

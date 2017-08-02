@@ -27,7 +27,7 @@ protected:
 private:
     void RenameVariable(const wxString& action);
     void RefactorFile(const wxString& action, const wxString& extraParameters, IEditor*& editor);
-    void RunCommand(const wxString& parameters);
+    void RunCommand(const wxString& parameters, const wxString& workingDir = wxEmptyString);
     void OnPhpSettingsChanged(clCommandEvent& event);
 
 public:

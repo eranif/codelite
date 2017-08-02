@@ -66,6 +66,8 @@ EditorFrame::EditorFrame(wxWindow* parent, LEditor* editor)
 
     // Update the accelerator table for this frame
     ManagerST::Get()->UpdateMenuAccelerators(this);
+    SetSize(600, 600);
+    CentreOnScreen();
 }
 
 EditorFrame::~EditorFrame()
@@ -79,6 +81,7 @@ EditorFrame::~EditorFrame()
 
     clCommandEvent evntInternalClosed(wxEVT_DETACHED_EDITOR_CLOSED);
     evntInternalClosed.SetClientData((IEditor*)m_editor);
+    evntInternalClosed.SetFileName(m_editor->GetFileName().GetFullPath());
     EventNotifier::Get()->ProcessEvent(evntInternalClosed);
 
     // Send the traditional plugin event notifying that this editor is about to be destroyed

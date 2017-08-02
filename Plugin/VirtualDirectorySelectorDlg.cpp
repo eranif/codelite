@@ -42,8 +42,8 @@
 #include "imanager.h"
 #include "project.h"
 
-VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(
-    wxWindow* parent, clCxxWorkspace* wsp, const wxString& initialPath, const wxString& projectname)
+VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent, clCxxWorkspace* wsp,
+                                                         const wxString& initialPath, const wxString& projectname)
     : VirtualDirectorySelectorDlgBaseClass(parent)
     , m_workspace(wsp)
     , m_projectName(projectname)
@@ -54,8 +54,10 @@ VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(
     m_treeCtrl->SetFocus();
     DoBuildTree();
 
-    SetName("VirtualDirectorySelectorDlg");
-    WindowAttrManager::Load(this);
+    GetSizer()->Fit(this);
+    CentreOnParent();
+    ::MSWSetNativeTheme(m_treeCtrl);
+    m_treeCtrlSearchHelper.reset(new clTreeKeyboardInput(m_treeCtrl));
 }
 
 VirtualDirectorySelectorDlg::~VirtualDirectorySelectorDlg() {}
@@ -201,11 +203,11 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
             }
 
             // add the item to the tree
-            node->GetData().itemId = m_treeCtrl->AppendItem(parentHti, // parent
-                node->GetData().name,                                  // display name
-                imgId,                                                 // item image index
-                imgId                                                  // selected item image
-                );
+            node->GetData().itemId = m_treeCtrl->AppendItem(parentHti,            // parent
+                                                            node->GetData().name, // display name
+                                                            imgId,                // item image index
+                                                            imgId                 // selected item image
+                                                            );
             m_treeCtrl->SortChildren(parentHti);
         }
 
@@ -343,7 +345,7 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
     wxString errmsg;
     if(!clCxxWorkspaceST::Get()->CreateVirtualDirectory(curpath, errmsg, true)) {
         wxMessageBox(_("Error occurred while creating virtual folder:\n") + errmsg, "codelite",
-            wxOK | wxICON_WARNING | wxCENTER);
+                     wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
 

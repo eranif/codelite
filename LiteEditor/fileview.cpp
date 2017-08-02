@@ -120,6 +120,7 @@ EVT_MENU(XRCID("preprocess_item"), FileViewTree::OnPreprocessItem)
 EVT_MENU(XRCID("rename_item"), FileViewTree::OnRenameItem)
 EVT_MENU(XRCID("rename_virtual_folder"), FileViewTree::OnRenameVirtualFolder)
 EVT_MENU(XRCID("colour_virtual_folder"), FileViewTree::OnSetBgColourVirtualFolder)
+EVT_MENU(XRCID("clear_virtual_folder_colour"), FileViewTree::OnClearBgColourVirtualFolder)
 EVT_MENU(XRCID("open_with_default_application"), FileViewTree::OnOpenWithDefaultApplication)
 
 EVT_UPDATE_UI(XRCID("remove_project"), FileViewTree::OnBuildInProgress)
@@ -2931,4 +2932,15 @@ void FileViewTree::DoColourSubtree(const wxTreeItemId& item, const wxColour& cur
             child = GetNextChild(item, cookie);
         }
     }
+}
+
+void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    wxTreeItemId item = GetSingleSelection();
+    CHECK_ITEM_RET(item);
+
+    // Get colour from the user
+    wxColour col = GetBackgroundColour();
+    DoColourSubtree(item, col, VirtualDirectoryColour::Map_t());
 }

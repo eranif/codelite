@@ -939,6 +939,9 @@
         <object class="wxMenuItem" name="colour_virtual_folder">
             <label>Set Custom Background Colour...</label>
         </object>
+        <object class="wxMenuItem" name="clear_virtual_folder_colour">
+            <label>Clear Background Colour</label>
+        </object>
     </object>
     
     <!-- Workspace popup menu -->

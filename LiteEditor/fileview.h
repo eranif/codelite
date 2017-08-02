@@ -186,6 +186,7 @@ protected:
     virtual void SortItem(wxTreeItemId& item);
     virtual void OnRenameVirtualFolder(wxCommandEvent& e);
     virtual void OnSetBgColourVirtualFolder(wxCommandEvent& e);
+    virtual void OnClearBgColourVirtualFolder(wxCommandEvent& e);
     virtual wxTreeItemId ItemByFullPath(const wxString& fullPath);
     virtual void OnLocalWorkspaceSettings(wxCommandEvent& e);
     virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);

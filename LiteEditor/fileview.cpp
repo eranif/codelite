@@ -2939,8 +2939,23 @@ void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
     wxUnusedVar(e);
     wxTreeItemId item = GetSingleSelection();
     CHECK_ITEM_RET(item);
+    
+    // Fetch the current colours map
+    VirtualDirectoryColour::Map_t coloursMap;
+    if(!LocalWorkspaceST::Get()->GetFolderColours(coloursMap)) return;
 
-    // Get colour from the user
+    // Update the colours map
+    wxString vdPath = GetItemPath(item);
+    VirtualDirectoryColour::Map_t::const_iterator iter = coloursMap.find(vdPath);
+    if(coloursMap.count(vdPath)) {
+        coloursMap.erase(vdPath);
+    }
+    
+    // Update the local settings
+    LocalWorkspaceST::Get()->SetFolderColours(coloursMap);
+    
+    // And clear the colour
     wxColour col = GetBackgroundColour();
     DoColourSubtree(item, col, VirtualDirectoryColour::Map_t());
+    
 }

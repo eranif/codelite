@@ -239,6 +239,19 @@ void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxStr
 
     m_manager->GetActiveEditor()->GetCtrl()->SetSTCFocus(true);
     m_manager->GetActiveEditor()->GetCtrl()->SetFocus();
+
+    // If the editor has folds and the target line is above the current position,
+    // the stc doesn't scroll back far enough to show the target. So:
+    CallAfter(&svSymbolTree::CenterEditorLine);
+}
+
+void svSymbolTree::CenterEditorLine()
+{
+    IEditor* editor = m_manager->GetActiveEditor();
+    if (editor) {
+        int lineno = editor->GetCurrentLine();
+        editor->CenterLine(lineno);
+    }
 }
 
 void svSymbolTree::BuildTree(const wxFileName& fn, bool forceBuild)

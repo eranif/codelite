@@ -43,6 +43,7 @@
 #include "clCommandProcessor.h"
 #include <wx/wupdlock.h>
 #include "clBitmap.h"
+#include "GitResetDlg.h"
 
 #define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)                       \
@@ -471,13 +472,10 @@ void GitConsole::OnAddFile(wxCommandEvent& event)
 
 void GitConsole::OnResetFile(wxCommandEvent& event)
 {
-    if(::wxMessageBox(_("This action will reset all changes done to the files.\nContinue?"), "CodeLite",
-           wxCENTER | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION) != wxYES) {
-        return;
-    }
     wxDataViewItemArray items;
     m_dvFiles->GetSelections(items);
-    wxArrayString filesToRemove, filesToRevert;
+    wxArrayString filesToRevert, filesToRemove;
+
     for(size_t i = 0; i < items.GetCount(); ++i) {
         wxString parentNodeName;
         wxDataViewItem parent = m_dvFilesModel->GetParent(items.Item(i));
@@ -496,6 +494,17 @@ void GitConsole::OnResetFile(wxCommandEvent& event)
             }
         }
     }
+    if (filesToRevert.IsEmpty() && filesToRemove.IsEmpty()) {
+        return;
+    }
+    
+    GitResetDlg dlg(GetParent(), filesToRevert, filesToRemove);
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+    
+    filesToRevert = dlg.GetItemsToRevert();
+    filesToRemove = dlg.GetItemsToRemove();
 
     if(!filesToRevert.IsEmpty()) {
         m_git->ResetFiles(filesToRevert);

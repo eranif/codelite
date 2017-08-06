@@ -287,12 +287,12 @@ public:
     /**
      * @brief Set virtual folder colours for the workspace
      */
-    bool SetFolderColours(const VirtualDirectoryColour::Map_t& vdColours);
+    bool SetFolderColours(const FolderColour::Map_t& vdColours);
 
     /**
      * @brief Get virtual folder colours for the workspace
      */
-    bool GetFolderColours(VirtualDirectoryColour::Map_t& vdColours);
+    bool GetFolderColours(FolderColour::Map_t& vdColours);
 
     /**
     * @brief Returns the node where any current local workspace options are stored

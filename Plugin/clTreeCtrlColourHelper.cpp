@@ -10,20 +10,20 @@ clTreeCtrlColourHelper::clTreeCtrlColourHelper(wxTreeCtrl* tree)
 clTreeCtrlColourHelper::~clTreeCtrlColourHelper() {}
 
 void clTreeCtrlColourHelper::DoSetBgColour(const wxTreeItemId& item, const wxColour& currentBgColour,
-                                           const VirtualDirectoryColour::Map_t& coloursMap) const
+                                           const FolderColour::Map_t& coloursMap) const
 {
     CHECK_ITEM_RET(item);
     wxString path = GetItemPath(item);
     wxColour bgColour = currentBgColour;
-    VirtualDirectoryColour::Map_t::const_iterator iter = coloursMap.find(path);
+    FolderColour::Map_t::const_iterator iter = coloursMap.find(path);
     if(iter != coloursMap.end()) {
         bgColour = iter->second.GetColour();
     }
-    
+
     if(bgColour.IsOk()) {
         m_tree->SetItemBackgroundColour(item, bgColour);
     }
-    
+
     if(m_tree->ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = m_tree->GetFirstChild(item, cookie);
@@ -35,11 +35,11 @@ void clTreeCtrlColourHelper::DoSetBgColour(const wxTreeItemId& item, const wxCol
 }
 
 void clTreeCtrlColourHelper::DoClearBgColour(const wxTreeItemId& item, const wxColour& colourToSet,
-                                             VirtualDirectoryColour::Map_t& coloursMap) const
+                                             FolderColour::Map_t& coloursMap) const
 {
     CHECK_ITEM_RET(item);
     wxString path = GetItemPath(item);
-    VirtualDirectoryColour::Map_t::const_iterator iter = coloursMap.find(path);
+    FolderColour::Map_t::const_iterator iter = coloursMap.find(path);
     if(iter != coloursMap.end()) {
         coloursMap.erase(iter);
     }
@@ -56,7 +56,7 @@ void clTreeCtrlColourHelper::DoClearBgColour(const wxTreeItemId& item, const wxC
     }
 }
 
-void clTreeCtrlColourHelper::ResetBgColour(const wxTreeItemId& item, VirtualDirectoryColour::Map_t& coloursMap) const
+void clTreeCtrlColourHelper::ResetBgColour(const wxTreeItemId& item, FolderColour::Map_t& coloursMap) const
 {
     CHECK_ITEM_RET(item);
     wxTreeItemId itemParent = m_tree->GetItemParent(item);
@@ -68,10 +68,10 @@ void clTreeCtrlColourHelper::ResetBgColour(const wxTreeItemId& item, VirtualDire
 }
 
 void clTreeCtrlColourHelper::SetBgColour(const wxTreeItemId& item, const wxColour& currentBgColour,
-                                         VirtualDirectoryColour::Map_t& coloursMap) const
+                                         FolderColour::Map_t& coloursMap) const
 {
     wxString path = GetItemPath(item);
-    VirtualDirectoryColour vdc(path, currentBgColour);
+    FolderColour vdc(path, currentBgColour);
     if(coloursMap.count(path)) {
         coloursMap.erase(path);
     }
@@ -79,17 +79,17 @@ void clTreeCtrlColourHelper::SetBgColour(const wxTreeItemId& item, const wxColou
     DoSetBgColour(item, currentBgColour, coloursMap);
 }
 
-wxString clTreeCtrlColourHelper::GetItemPath(const wxTreeItemId& item) const
+wxString clTreeCtrlColourHelper::GetItemPath(wxTreeCtrl* tree, const wxTreeItemId& item)
 {
     std::deque<wxString> queue;
-    wxString text = m_tree->GetItemText(item);
+    wxString text = tree->GetItemText(item);
     queue.push_front(text);
 
-    wxTreeItemId p = m_tree->GetItemParent(item);
+    wxTreeItemId p = tree->GetItemParent(item);
     while(p.IsOk()) {
-        text = m_tree->GetItemText(p);
+        text = tree->GetItemText(p);
         queue.push_front(text);
-        p = m_tree->GetItemParent(p);
+        p = tree->GetItemParent(p);
     }
 
     wxString path;
@@ -104,3 +104,4 @@ wxString clTreeCtrlColourHelper::GetItemPath(const wxTreeItemId& item) const
     return path;
 }
 
+wxString clTreeCtrlColourHelper::GetItemPath(const wxTreeItemId& item) const { return GetItemPath(m_tree, item); }

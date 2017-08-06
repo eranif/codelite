@@ -341,12 +341,12 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
     // Add the folder containing this project
     wxTreeItemId rootItem = AddWorkspaceFolder(prj->GetWorkspaceFolder());
 
-    VirtualDirectoryColour::Map_t coloursMap;
-    VirtualDirectoryColour::List_t coloursList;
+    FolderColour::Map_t coloursMap;
+    FolderColour::List_t coloursList;
     LocalWorkspaceST::Get()->GetFolderColours(coloursMap);
 
     // Sort the list
-    VirtualDirectoryColour::SortToList(coloursMap, coloursList);
+    FolderColour::SortToList(coloursMap, coloursList);
     std::map<wxString, wxTreeItemId> items;
     wxColour bgColour = wxNullColour;
     for(; !walker.End(); walker++) {
@@ -389,8 +389,8 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
            node->GetData().GetKind() == ProjectItem::TypeProject) {
             if(!coloursList.empty()) {
                 // A virtual folder, try to find a custom colour for it
-                wxString vdPath = GetItemPath(hti);
-                const VirtualDirectoryColour& match = VirtualDirectoryColour::FindForPath(coloursList, vdPath);
+                wxString itemPath = m_colourHelper->GetItemPath(this, hti);
+                const FolderColour& match = FolderColour::FindForPath(coloursList, itemPath);
                 if(match.IsOk()) {
                     bgColour = match.GetColour();
                 } else {
@@ -2902,7 +2902,7 @@ void FileViewTree::OnSetBgColourVirtualFolder(wxCommandEvent& e)
     if(!col.IsOk()) return;
 
     // Read the current colours map
-    VirtualDirectoryColour::Map_t coloursMap;
+    FolderColour::Map_t coloursMap;
     if(!LocalWorkspaceST::Get()->GetFolderColours(coloursMap)) return;
     // Colour the tree (it will also update the 'coloursMap' table)
     m_colourHelper->SetBgColour(item, col, coloursMap);
@@ -2917,7 +2917,7 @@ void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
     CHECK_ITEM_RET(item);
 
     // Fetch the current colours map
-    VirtualDirectoryColour::Map_t coloursMap;
+    FolderColour::Map_t coloursMap;
     if(!LocalWorkspaceST::Get()->GetFolderColours(coloursMap)) return;
 
     // Colour the tree (it will also update the 'coloursMap' table)

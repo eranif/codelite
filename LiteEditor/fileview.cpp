@@ -164,6 +164,7 @@ static int WORKSPACE_FOLDER_IMG_IDX = wxNOT_FOUND;
 FileViewTree::FileViewTree()
     : m_eventsBound(false)
 {
+    m_colourHelper.Reset(new clTreeCtrlColourHelper(this));
 }
 
 void FileViewTree::OnBuildInProgress(wxUpdateUIEvent& event) { event.Enable(!ManagerST::Get()->IsBuildInProgress()); }
@@ -172,6 +173,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     : m_eventsBound(false)
 {
     Create(parent, id, pos, size, style);
+    m_colourHelper.Reset(new clTreeCtrlColourHelper(this));
     SetBackgroundColour(wxBG_STYLE_CUSTOM);
     MSWSetNativeTheme(this);
     m_keyboardHelper.reset(new clTreeKeyboardInput(this));
@@ -2899,50 +2901,13 @@ void FileViewTree::OnSetBgColourVirtualFolder(wxCommandEvent& e)
     wxColour col = ::wxGetColourFromUser(EventNotifier::Get()->TopFrame());
     if(!col.IsOk()) return;
 
+    // Read the current colours map
     VirtualDirectoryColour::Map_t coloursMap;
     if(!LocalWorkspaceST::Get()->GetFolderColours(coloursMap)) return;
-
-    // Update the colours map
-    wxString vdPath = GetItemPath(item);
-    if(coloursMap.count(vdPath)) {
-        coloursMap.erase(vdPath);
-    }
-    VirtualDirectoryColour vdc(vdPath, col);
-    coloursMap.insert(std::make_pair(vdPath, vdc));
-
-    // Update the local settings
+    // Colour the tree (it will also update the 'coloursMap' table)
+    m_colourHelper->SetBgColour(item, col, coloursMap);
+    // Store the settings
     LocalWorkspaceST::Get()->SetFolderColours(coloursMap);
-    DoColourSubtree(item, wxNullColour, coloursMap);
-}
-
-void FileViewTree::DoColourSubtree(const wxTreeItemId& item, const wxColour& currentBgColour,
-                                   const VirtualDirectoryColour::Map_t& coloursMap)
-{
-    CHECK_ITEM_RET(item);
-    wxString vdPath = GetItemPath(item);
-    wxColour bgColour = currentBgColour;
-    VirtualDirectoryColour::Map_t::const_iterator iter = coloursMap.find(vdPath);
-    if(iter != coloursMap.end()) {
-        bgColour = iter->second.GetColour();
-    }
-
-    FilewViewTreeItemData* d = static_cast<FilewViewTreeItemData*>(GetItemData(item));
-    CHECK_PTR_RET(d);
-
-    if(bgColour.IsOk() && ((d->GetData().GetKind() == ProjectItem::TypeFile) ||
-                           (d->GetData().GetKind() == ProjectItem::TypeVirtualDirectory) ||
-                           d->GetData().GetKind() == ProjectItem::TypeProject)) {
-        SetItemBackgroundColour(item, bgColour);
-    }
-
-    if(ItemHasChildren(item)) {
-        wxTreeItemIdValue cookie;
-        wxTreeItemId child = GetFirstChild(item, cookie);
-        while(child.IsOk()) {
-            DoColourSubtree(child, bgColour, coloursMap);
-            child = GetNextChild(item, cookie);
-        }
-    }
 }
 
 void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
@@ -2955,20 +2920,9 @@ void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
     VirtualDirectoryColour::Map_t coloursMap;
     if(!LocalWorkspaceST::Get()->GetFolderColours(coloursMap)) return;
 
-    // Update the colours map
-    wxString vdPath = GetItemPath(item);
-    VirtualDirectoryColour::Map_t::const_iterator iter = coloursMap.find(vdPath);
-    if(coloursMap.count(vdPath)) {
-        coloursMap.erase(vdPath);
-    }
+    // Colour the tree (it will also update the 'coloursMap' table)
+    m_colourHelper->ResetBgColour(item, coloursMap);
 
     // Update the local settings
     LocalWorkspaceST::Get()->SetFolderColours(coloursMap);
-
-    // And clear the colour, set it to be the same as the parent's item colour
-    wxTreeItemId itemParent = GetItemParent(item);
-    wxColour col = (itemParent.IsOk() && GetItemBackgroundColour(itemParent).IsOk())
-                       ? GetItemBackgroundColour(itemParent)
-                       : GetBackgroundColour();
-    DoColourSubtree(item, col, VirtualDirectoryColour::Map_t());
 }

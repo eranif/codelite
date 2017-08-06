@@ -383,7 +383,8 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
 
         // Set the background colour for the item if it is a virtual folder or a file
         if(node->GetData().GetKind() == ProjectItem::TypeVirtualDirectory ||
-           node->GetData().GetKind() == ProjectItem::TypeFile) {
+           node->GetData().GetKind() == ProjectItem::TypeFile ||
+           node->GetData().GetKind() == ProjectItem::TypeProject) {
             if(!coloursList.empty()) {
                 // A virtual folder, try to find a custom colour for it
                 wxString vdPath = GetItemPath(hti);
@@ -462,6 +463,11 @@ void FileViewTree::ShowFileContextMenu()
 void FileViewTree::ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData)
 {
     wxMenu* menu = wxXmlResource::Get()->LoadMenu("file_tree_folder");
+    wxMenuItem* menuItem = menu->FindItem(XRCID("colour_virtual_folder"));
+    if(menuItem) {
+        menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("colour-pallette"));
+    }
+
     if(!ManagerST::Get()->IsBuildInProgress()) {
         // Let the plugins alter it
         clContextMenuEvent event(wxEVT_CONTEXT_MENU_VIRTUAL_FOLDER);
@@ -2545,6 +2551,7 @@ void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu, const wxString& proj
     wxBitmap bmpSort = bmpLoader->LoadBitmap("sort");
     wxBitmap bmpFolder = bmpLoader->LoadBitmap("folder-yellow");
     wxBitmap bmpConsole = bmpLoader->LoadBitmap("console");
+    wxBitmap bmpColourPallette = bmpLoader->LoadBitmap("colour-pallette");
 
     item = new wxMenuItem(&menu, XRCID("build_project"), _("Build"), _("Build project"));
     item->SetBitmap(bmpBuild);
@@ -2626,6 +2633,9 @@ void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu, const wxString& proj
     menu.AppendSeparator();
     menu.Append(XRCID("local_project_prefs"), _("Project Editor Preferences..."));
 
+    menu.AppendSeparator();
+    menu.Append(XRCID("colour_virtual_folder"), _("Set Custom Background Colour..."))->SetBitmap(bmpColourPallette);
+    menu.Append(XRCID("clear_virtual_folder_colour"), _("Clear Background Colour"));
     menu.AppendSeparator();
     item = new wxMenuItem(&menu, XRCID("project_properties"), _("Settings..."), _("Settings..."));
     item->SetBitmap(bmpSettings);
@@ -2920,7 +2930,8 @@ void FileViewTree::DoColourSubtree(const wxTreeItemId& item, const wxColour& cur
     CHECK_PTR_RET(d);
 
     if(bgColour.IsOk() && ((d->GetData().GetKind() == ProjectItem::TypeFile) ||
-                           (d->GetData().GetKind() == ProjectItem::TypeVirtualDirectory))) {
+                           (d->GetData().GetKind() == ProjectItem::TypeVirtualDirectory) ||
+                           d->GetData().GetKind() == ProjectItem::TypeProject)) {
         SetItemBackgroundColour(item, bgColour);
     }
 
@@ -2939,7 +2950,7 @@ void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
     wxUnusedVar(e);
     wxTreeItemId item = GetSingleSelection();
     CHECK_ITEM_RET(item);
-    
+
     // Fetch the current colours map
     VirtualDirectoryColour::Map_t coloursMap;
     if(!LocalWorkspaceST::Get()->GetFolderColours(coloursMap)) return;
@@ -2950,12 +2961,14 @@ void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
     if(coloursMap.count(vdPath)) {
         coloursMap.erase(vdPath);
     }
-    
+
     // Update the local settings
     LocalWorkspaceST::Get()->SetFolderColours(coloursMap);
-    
-    // And clear the colour
-    wxColour col = GetBackgroundColour();
+
+    // And clear the colour, set it to be the same as the parent's item colour
+    wxTreeItemId itemParent = GetItemParent(item);
+    wxColour col = (itemParent.IsOk() && GetItemBackgroundColour(itemParent).IsOk())
+                       ? GetItemBackgroundColour(itemParent)
+                       : GetBackgroundColour();
     DoColourSubtree(item, col, VirtualDirectoryColour::Map_t());
-    
 }

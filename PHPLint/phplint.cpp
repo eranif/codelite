@@ -176,7 +176,7 @@ void PHPLint::QueuePhpcsCommand(const wxString& phpPath, const wxString& file)
     wxString phpcsPath = phpcs.GetFullPath();
     ::WrapWithQuotes(phpcsPath);
 
-    m_queue.push_back(phpPath + " " + phpcsPath + " --report=xml " + file);
+    m_queue.push_back(phpPath + " " + phpcsPath + " --report=xml -q " + file);
 }
 
 void PHPLint::QueuePhpmdCommand(const wxString& phpPath, const wxString& file)

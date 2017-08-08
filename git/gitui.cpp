@@ -348,8 +348,6 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_auibar->AddTool(ID_GIT_COMMIT_HISTORY, _("History"), wxXmlResource::Get()->LoadBitmap(wxT("16-history")), wxNullBitmap, wxITEM_NORMAL, _("Show Commit History"), _("Show Commit History"), NULL);
     
     m_auibar->AddStretchSpacer(1);
-    
-    m_auibar->AddTool(wxID_CLEAR, _("Clear History"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear History"), _("Clear History"), NULL);
     m_auibar->Realize();
     
     m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1,-1)), wxBORDER_THEME);
@@ -433,8 +431,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     this->Connect(ID_TOGGLE_CHECKALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnToggleCheckAll), NULL, this);
     this->Connect(ID_GIT_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitHistory), NULL, this);
     this->Connect(ID_GIT_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnCommitHistoryUI), NULL, this);
-    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnClearGitCommitHistory), NULL, this);
-    this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnClearGitCommitHistoryUI), NULL, this);
+    m_checkBoxAmend->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnAmendClicked), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
 }
@@ -445,8 +442,7 @@ GitCommitDlgBase::~GitCommitDlgBase()
     this->Disconnect(ID_TOGGLE_CHECKALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnToggleCheckAll), NULL, this);
     this->Disconnect(ID_GIT_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitHistory), NULL, this);
     this->Disconnect(ID_GIT_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnCommitHistoryUI), NULL, this);
-    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnClearGitCommitHistory), NULL, this);
-    this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnClearGitCommitHistoryUI), NULL, this);
+    m_checkBoxAmend->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnAmendClicked), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
 }

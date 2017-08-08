@@ -144,8 +144,7 @@ protected:
     virtual void OnToggleCheckAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitHistory(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClearGitCommitHistory(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearGitCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnAmendClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:

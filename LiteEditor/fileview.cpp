@@ -473,7 +473,7 @@ void FileViewTree::ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData)
         wxMenuItem* menuItem =
             new wxMenuItem(menu, XRCID("colour_virtual_folder"), _("Set Custom Background Colour..."));
         menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("colour-pallette"));
-        menu->Insert(where, menuItem);
+        menu->Insert(where + 1, menuItem);
     }
 
     if(!ManagerST::Get()->IsBuildInProgress()) {

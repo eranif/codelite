@@ -132,25 +132,17 @@ public:
     clInternalEventHandler()
     {
         EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS,
-                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0),
-                                      NULL,
-                                      this);
+                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
         EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS,
-                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1),
-                                      NULL,
-                                      this);
+                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
     }
 
     virtual ~clInternalEventHandler()
     {
         EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS,
-                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0),
-                                         NULL,
-                                         this);
+                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
         EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS,
-                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1),
-                                         NULL,
-                                         this);
+                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
     }
 
     /**
@@ -194,11 +186,8 @@ clInternalEventHandler clEventHandlerHelper;
 // Internal handler to handle queuing requests... end
 // --------------------------------------------------------
 
-static wxString DoExpandAllVariables(const wxString& expression,
-                                     clCxxWorkspace* workspace,
-                                     const wxString& projectName,
-                                     const wxString& confToBuild,
-                                     const wxString& fileName);
+static wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
+                                     const wxString& confToBuild, const wxString& fileName);
 
 #ifdef __WXMAC__
 #include <mach-o/dyld.h>
@@ -451,11 +440,8 @@ wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* e
 }
 
 // This functions accepts expression and expand all variables in it
-wxString ExpandAllVariables(const wxString& expression,
-                            clCxxWorkspace* workspace,
-                            const wxString& projectName,
-                            const wxString& selConf,
-                            const wxString& fileName)
+wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
+                            const wxString& selConf, const wxString& fileName)
 {
     // add support for backticks commands
     wxString tmpExp;
@@ -504,11 +490,8 @@ wxString ExpandAllVariables(const wxString& expression,
     return DoExpandAllVariables(tmpExp, workspace, projectName, selConf, fileName);
 }
 
-wxString DoExpandAllVariables(const wxString& expression,
-                              clCxxWorkspace* workspace,
-                              const wxString& projectName,
-                              const wxString& confToBuild,
-                              const wxString& fileName)
+wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
+                              const wxString& confToBuild, const wxString& fileName)
 {
     wxString errMsg;
     wxString output(expression);
@@ -876,8 +859,8 @@ wxString clGetUserName()
     return (squashedname.IsEmpty() ? wxString(wxT("someone")) : squashedname);
 }
 
-static void
-DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list, bool loadDefaults = true)
+static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list,
+                                             bool loadDefaults = true)
 {
     // read all files under this directory
     wxArrayString files;
@@ -1011,9 +994,7 @@ bool IsCppKeyword(const wxString& word)
     return words.count(word) != 0;
 }
 
-bool ExtractFileFromZip(const wxString& zipPath,
-                        const wxString& filename,
-                        const wxString& targetDir,
+bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const wxString& targetDir,
                         wxString& targetFileName)
 {
     wxZipEntry* entry(NULL);
@@ -1052,8 +1033,8 @@ void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
 #endif
 }
 
-void
-StringManager::AddStrings(size_t size, const wxString* strings, const wxString& current, wxControlWithItems* control)
+void StringManager::AddStrings(size_t size, const wxString* strings, const wxString& current,
+                               wxControlWithItems* control)
 {
     m_size = size;
     m_unlocalisedStringArray = wxArrayString(size, strings);
@@ -1888,14 +1869,10 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
     return execLine;
 }
 
-wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message,
-                                                    const wxString& dlgId,
-                                                    const wxString& yesLabel,
-                                                    const wxString& noLabel,
-                                                    const wxString& cancelLabel,
-                                                    const wxString& checkboxLabel,
-                                                    long style,
-                                                    bool checkboxInitialValue)
+wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message, const wxString& dlgId,
+                                                    const wxString& yesLabel, const wxString& noLabel,
+                                                    const wxString& cancelLabel, const wxString& checkboxLabel,
+                                                    long style, bool checkboxInitialValue)
 {
     int res = clConfig::Get().GetAnnoyingDlgAnswer(dlgId, wxNOT_FOUND);
     if(res == wxNOT_FOUND) {
@@ -1918,16 +1895,12 @@ wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message,
     return static_cast<wxStandardID>(res);
 }
 
-wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
-                                              const wxString& dlgId,
-                                              const wxString& yesLabel,
-                                              const wxString& noLabel,
-                                              const wxString& checkboxLabel,
-                                              long style,
+wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& dlgId, const wxString& yesLabel,
+                                              const wxString& noLabel, const wxString& checkboxLabel, long style,
                                               bool checkboxInitialValue)
 {
-    return PromptForYesNoCancelDialogWithCheckbox(
-        message, dlgId, yesLabel, noLabel, "", checkboxLabel, style, checkboxInitialValue);
+    return PromptForYesNoCancelDialogWithCheckbox(message, dlgId, yesLabel, noLabel, "", checkboxLabel, style,
+                                                  checkboxInitialValue);
 }
 
 static wxChar sPreviousChar(wxStyledTextCtrl* ctrl, int pos, int& foundPos, bool wantWhitespace)
@@ -2169,11 +2142,11 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
         ctrl->SetScrollWidth(maxPixel);
     }
 }
-wxString clGetTextFromUser(
-    const wxString& title, const wxString& message, const wxString& initialValue, int charsToSelect, wxWindow* parent)
+wxString clGetTextFromUser(const wxString& title, const wxString& message, const wxString& initialValue,
+                           int charsToSelect, wxWindow* parent)
 {
-    clGetTextFromUserDialog dialog(
-        parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message, initialValue, charsToSelect);
+    clGetTextFromUserDialog dialog(parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message,
+                                   initialValue, charsToSelect);
     if(dialog.ShowModal() == wxID_OK) {
         return dialog.GetValue();
     }
@@ -2319,4 +2292,18 @@ bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArraySt
 #endif
     }
     return false;
+}
+
+int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
+{
+    if(!menu) return wxNOT_FOUND;
+
+    const wxMenuItemList& list = menu->GetMenuItems();
+    wxMenuItemList::const_iterator iter = list.begin();
+    for(int pos = 0; iter != list.end(); ++iter, ++pos) {
+        if((*iter)->GetId() == menuItemId) {
+            return pos;
+        }
+    }
+    return wxNOT_FOUND;
 }

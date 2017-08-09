@@ -465,9 +465,15 @@ void FileViewTree::ShowFileContextMenu()
 void FileViewTree::ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData)
 {
     wxMenu* menu = wxXmlResource::Get()->LoadMenu("file_tree_folder");
-    wxMenuItem* menuItem = menu->FindItem(XRCID("colour_virtual_folder"));
-    if(menuItem) {
+    int where = clFindMenuItemPosition(menu, XRCID("clear_virtual_folder_colour"));
+    if(where != wxNOT_FOUND) {
+        // Insert the "Set Custom Background Colour" menu entry. We do it like this
+        // instead of using the menu.xrc file cause there is a bug that a bitmap can
+        // not be set to an already existing menu item
+        wxMenuItem* menuItem =
+            new wxMenuItem(menu, XRCID("colour_virtual_folder"), _("Set Custom Background Colour..."));
         menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("colour-pallette"));
+        menu->Insert(where, menuItem);
     }
 
     if(!ManagerST::Get()->IsBuildInProgress()) {
@@ -829,9 +835,8 @@ void FileViewTree::OnAddExistingItem(wxCommandEvent& WXUNUSED(event))
         return;
     }
 
-    const wxString ALL(
-        wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
-            wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
+    const wxString ALL(wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
+                       wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
 
     wxString vdPath = GetItemPath(item);
     wxString project, vd;
@@ -1220,8 +1225,8 @@ void FileViewTree::DoRemoveProject(const wxString& name)
 int FileViewTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
 {
     // used for SortChildren, reroute to our sort routine
-    FilewViewTreeItemData *a = (FilewViewTreeItemData *)GetItemData(item1),
-                          *b = (FilewViewTreeItemData *)GetItemData(item2);
+    FilewViewTreeItemData* a = (FilewViewTreeItemData*)GetItemData(item1),
+                           *b = (FilewViewTreeItemData*)GetItemData(item2);
     if(a && b) return OnCompareItems(a, b);
 
     return 0;
@@ -2636,7 +2641,11 @@ void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu, const wxString& proj
     menu.Append(XRCID("local_project_prefs"), _("Project Editor Preferences..."));
 
     menu.AppendSeparator();
-    menu.Append(XRCID("colour_virtual_folder"), _("Set Custom Background Colour..."))->SetBitmap(bmpColourPallette);
+
+    item = new wxMenuItem(&menu, XRCID("colour_virtual_folder"), _("Set Custom Background Colour..."));
+    item->SetBitmap(bmpColourPallette);
+    menu.Append(item);
+
     menu.Append(XRCID("clear_virtual_folder_colour"), _("Clear Background Colour"));
     menu.AppendSeparator();
     item = new wxMenuItem(&menu, XRCID("project_properties"), _("Settings..."), _("Settings..."));

@@ -310,7 +310,16 @@ bool Project::RemoveFile(const wxString& fileName, const wxString& virtualDir)
         delete node;
 
     } else {
+        // The relative path wasn't found, so try again with the absolute one
+        // in case the user edited the project by hand & used absolute paths
+        node = XmlUtils::FindNodeByName(vd, wxT("File"), fileName);
+        if(node) {
+            node->GetParent()->RemoveChild(node);
+            delete node;
+
+        } else {
         wxLogMessage(wxT("Failed to remove file %s from project"), tmp.GetFullPath(wxPATH_UNIX).c_str());
+        }
     }
     SetModified(true);
 

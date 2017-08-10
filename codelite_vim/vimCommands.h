@@ -1,11 +1,12 @@
 #ifndef __VIM_COMMANDS__
 #define __VIM_COMMANDS__
 
-#include <wx/chartype.h>
-#include <wx/stc/stc.h>
+
 #include "ieditor.h"
 #include "imanager.h"
 #include <vector>
+#include <wx/stc/stc.h>
+//#include <wx/chartype.h>
 
 enum class COMMAND_PART {
     REPEAT_NUM,
@@ -23,6 +24,7 @@ enum class VIM_MODI {
     VISUAL_MODUS,
     COMMAND_MODUS,
     SEARCH_MODUS,
+    SEARCH_CURR_MODUS,
     ISSUE_CMD,
     REPLACING_MODUS
 };
@@ -46,9 +48,11 @@ enum class COMMANDVI {
     l,
     _0,
     _$,
-    w,
-    b,
-    e,
+    w, W,
+    b, B,
+    e, E, /*FIXME E works/does not work*/
+    f, F,
+    t, T,
     G,
     gg,
     i,
@@ -68,6 +72,7 @@ enum class COMMANDVI {
     cc,
     S,
     x,
+    X,
     d, /*Visual modeyy delete*/
     dw,
     dd,
@@ -121,9 +126,6 @@ enum class COMMANDVI {
          [ issue_cmd ]  ............................... bool issue_command
                                                         bool save_buf
 
- * TODO:
- * - repeat command
- * - copy paste (y, dd, x ...)
  */
 class VimCommand;
 
@@ -166,6 +168,7 @@ public:
         kClose,
         kSave,
         kSaveAndClose,
+        kSearch,
     };
 
     enum eTypeTextSearch {
@@ -218,16 +221,17 @@ private:
     void append_command(wxChar ch);
     wxString get_text_at_position(VimCommand::eTypeTextSearch typeSearch = VimCommand::eTypeTextSearch::kAllWord);
     bool is_space_following();
-    bool is_space_preceding();
+    bool is_space_preceding(bool onlyWordChar = true, bool cross_line = false);
     wxString add_following_spaces();
     wxString add_preceding_spaces();
     bool search_word(SEARCH_DIRECTION flag);
+    bool search_word(SEARCH_DIRECTION flag, long pos);
     long goToMatchingParentesis(long start_pos);
     void normal_modus(wxChar ch);
     void visual_modus(wxChar ch);
     void command_modus(wxChar ch);
     void insert_modus(wxChar ch);
-
+    void parse_cmd_string();
     /*~~~~~~~~ INFO ~~~~~~~~~*/
     COMMANDVI m_commandID;             /*!< id of the current command to identify it*/
     MESSAGES_VIM m_message_ID;

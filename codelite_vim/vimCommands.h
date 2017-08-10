@@ -52,6 +52,7 @@ enum class COMMANDVI {
     b, B,
     e, E, /*FIXME E works/does not work*/
     f, F,
+    t, T,
     G,
     gg,
     i,

@@ -179,7 +179,10 @@ void VimCommand::normal_modus(wxChar ch)
         if(ch < '9' && ch > '0' &&
            m_baseCommand != 'r' &&
            m_baseCommand != 'f' &&
-           m_baseCommand != 'F'    ) {
+           m_baseCommand != 'F' &&
+           m_baseCommand != 't' &&
+           m_baseCommand != 'T'
+           ) {
             m_actions = m_actions * 10 + (int)ch - shift_ashii_num;
         } else {
             m_actionCommand = ch;
@@ -499,6 +502,34 @@ bool VimCommand::Command_call()
             ++i;
         }
         if ( eoline != true ) m_ctrl->GotoPos( pos + i );
+    }break;
+    case COMMANDVI::T:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos - i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos - i + 1);
+    }break;
+    case COMMANDVI::t:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos + i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos + i - 1);
     }break;
     case COMMANDVI::ctrl_D:
         m_ctrl->PageDown();
@@ -962,7 +993,7 @@ bool VimCommand::Command_call_visual_mode()
             }
             ++i;
         }
-        if ( eoline != true ) m_ctrl->GotoPos( pos - i );
+        if ( eoline != true ) m_ctrl->SetCurrentPos( pos - i );
     }break;
     case COMMANDVI::f:{
         long i = 1;
@@ -976,7 +1007,36 @@ bool VimCommand::Command_call_visual_mode()
             }
             ++i;
         }
-        if ( eoline != true ) m_ctrl->GotoPos( pos + i );
+        if ( eoline != true ) m_ctrl->SetCurrentPos( pos + i );
+    }break;
+
+    case COMMANDVI::T:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos - i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->SetCurrentPos( pos - i + 1);
+    }break;
+    case COMMANDVI::t:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos + i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->SetCurrentPos( pos + i - 1 );
     }break;
 
     case COMMANDVI::G: /*====== START G =======*/
@@ -1294,6 +1354,20 @@ bool VimCommand::is_cmd_complete()
                 command_complete = true;
             }
             break;    
+        case 't':
+            m_commandID = COMMANDVI::t;
+            if ( this->m_actionCommand != '\0' ) {
+                command_complete = true;
+            }
+            break;
+        case 'T':
+            m_commandID = COMMANDVI::T;
+            command_complete = false;
+            if ( this->m_actionCommand != '\0' ) {
+                command_complete = true;
+            }
+            break;    
+
         case 'G':
             m_commandID = COMMANDVI::G;
             command_complete = true;

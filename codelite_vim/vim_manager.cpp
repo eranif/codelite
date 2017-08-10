@@ -88,6 +88,10 @@ void VimManager::OnKeyDown(wxKeyEvent& event)
         case WXK_ESCAPE:
             if(m_currentCommand.get_current_modus() == VIM_MODI::INSERT_MODUS) {
                 m_tmpBuf = m_currentCommand.getTmpBuf();
+            } else if (m_currentCommand.get_current_modus() == VIM_MODI::VISUAL_MODUS) {
+                long pos = m_ctrl->GetCurrentPos();
+                m_ctrl->ClearSelections();
+                m_ctrl->GotoPos( pos );
             }
             skip_event = m_currentCommand.OnEscapeDown();
             break;

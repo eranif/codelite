@@ -176,7 +176,10 @@ void VimCommand::normal_modus(wxChar ch)
 
     case COMMAND_PART::MOD_NUM:
 
-        if(ch < '9' && ch > '0' && m_baseCommand != 'r') {
+        if(ch < '9' && ch > '0' &&
+           m_baseCommand != 'r' &&
+           m_baseCommand != 'f' &&
+           m_baseCommand != 'F'    ) {
             m_actions = m_actions * 10 + (int)ch - shift_ashii_num;
         } else {
             m_actionCommand = ch;
@@ -422,7 +425,81 @@ bool VimCommand::Command_call()
         this->m_saveCommand = false;
         break;
     }
+    case COMMANDVI::e: {
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if ( pos >= end - 1 ) {
+            m_ctrl->WordRight();
+            long i = 1;
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+            while ( m_ctrl->GetCharAt( end + i ) == ' ' ) {
+                i++;
+                end = m_ctrl->WordEndPosition(pos + i, false);
+            }
+        }
+        m_ctrl->GotoPos( end - 1);
+        this->m_saveCommand = false;
+        break;
+    }
+    case COMMANDVI::E: {
+        bool single_word = is_space_following();
+        m_ctrl->WordRight();
+        if ( !single_word ) {
+            bool next_is_space = is_space_following();
+            while ( !next_is_space) {
+                m_ctrl->WordRight();
+                next_is_space = is_space_following();
+            }
+            //m_ctrl->WordRight();
+        }
+        /*FIME - is a sequence of white space rightly jumped?*/
+        this->m_saveCommand = false;
 
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if ( pos == end - 1 ) {
+            m_ctrl->WordRight();
+            long i = 1;
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+            while ( m_ctrl->GetCharAt( end + i ) == ' ' ) {
+                i++;
+                end = m_ctrl->WordEndPosition(pos + i, false);
+            }
+        }
+        m_ctrl->GotoPos( end - 1);
+
+        break;
+    }
+    case COMMANDVI::F:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos - i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos - i );
+    }break;
+    case COMMANDVI::f:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos + i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos + i );
+    }break;
     case COMMANDVI::ctrl_D:
         m_ctrl->PageDown();
         this->m_saveCommand = false;
@@ -831,7 +908,77 @@ bool VimCommand::Command_call_visual_mode()
         this->m_saveCommand = false;
         break;
     }
+    case COMMANDVI::e: {
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if ( pos == end ) {
+            m_ctrl->WordRight();
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+        }
+        m_ctrl->SetCurrentPos( end );
+        break;
+    }
+    case COMMANDVI::E: {
         
+        bool single_word = is_space_following();
+        m_ctrl->WordRight();
+        if ( !single_word ) {
+            bool next_is_space = is_space_following();
+            while ( !next_is_space) {
+                m_ctrl->WordRight();
+                next_is_space = is_space_following();
+            }
+            //_ctrl->WordRight();
+        }
+        /*FIME - is a sequence of white space rightly jumped?*/
+        this->m_saveCommand = false;
+
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if ( pos == end - 1 ) {
+            m_ctrl->WordRight();
+            long i = 1;
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+            while ( m_ctrl->GetCharAt( end + i ) == ' ' ) {
+                i++;
+                end = m_ctrl->WordEndPosition(pos + i, false);
+            }
+        }
+        m_ctrl->GotoPos( end - 1);
+
+        break;
+    }
+    case COMMANDVI::F:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos - i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos - i );
+    }break;
+    case COMMANDVI::f:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos + i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos + i );
+    }break;
+
     case COMMANDVI::G: /*====== START G =======*/
        {
            /*FIXME extend section*/
@@ -1126,6 +1273,27 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::B;
             command_complete = true;
             break;
+        case 'e':
+            m_commandID = COMMANDVI::e;
+            command_complete = true;
+            break;
+        case 'E':
+            m_commandID = COMMANDVI::E;
+            command_complete = true;
+            break;
+        case 'f':
+            m_commandID = COMMANDVI::f;
+            if ( this->m_actionCommand != '\0' ) {
+                command_complete = true;
+            }
+            break;
+        case 'F':
+            m_commandID = COMMANDVI::F;
+            command_complete = false;
+            if ( this->m_actionCommand != '\0' ) {
+                command_complete = true;
+            }
+            break;    
         case 'G':
             m_commandID = COMMANDVI::G;
             command_complete = true;

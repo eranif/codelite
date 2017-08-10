@@ -1,11 +1,12 @@
 #ifndef __VIM_COMMANDS__
 #define __VIM_COMMANDS__
 
-#include <wx/chartype.h>
-#include <wx/stc/stc.h>
+
 #include "ieditor.h"
 #include "imanager.h"
 #include <vector>
+#include <wx/stc/stc.h>
+//#include <wx/chartype.h>
 
 enum class COMMAND_PART {
     REPEAT_NUM,
@@ -49,7 +50,8 @@ enum class COMMANDVI {
     _$,
     w, W,
     b, B,
-    e,
+    e, E, /*FIXME E works/does not work*/
+    f, F,
     G,
     gg,
     i,
@@ -123,9 +125,6 @@ enum class COMMANDVI {
          [ issue_cmd ]  ............................... bool issue_command
                                                         bool save_buf
 
- * TODO:
- * - repeat command
- * - copy paste (y, dd, x ...)
  */
 class VimCommand;
 

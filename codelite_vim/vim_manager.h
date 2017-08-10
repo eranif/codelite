@@ -53,6 +53,7 @@ protected:
     void updateVimMessage();
     
 private:
+    wxStatusBar* status_vim;
     VimSettings& m_settings;
     IEditor* m_editor;
     wxStyledTextCtrl* m_ctrl;

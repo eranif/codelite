@@ -52,6 +52,7 @@
 DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
     , m_flags(0)
+    , m_ignoreWhitespaceDiffs(false)
 {
     Hide();
     m_config.Load();
@@ -118,8 +119,8 @@ void DiffSideBySidePanel::Diff()
     clDTL d;
     d.Diff(m_textCtrlLeftFile->GetValue(), m_textCtrlRightFile->GetValue(),
         m_config.IsSingleViewMode() ? clDTL::kOnePane : clDTL::kTwoPanes);
-    const clDTL::LineInfoVec_t& resultLeft = d.GetResultLeft();
-    const clDTL::LineInfoVec_t& resultRight = d.GetResultRight();
+    clDTL::LineInfoVec_t& resultLeft = const_cast<clDTL::LineInfoVec_t&>(d.GetResultLeft());
+    clDTL::LineInfoVec_t& resultRight = const_cast<clDTL::LineInfoVec_t&>(d.GetResultRight());
     m_sequences = d.GetSequences();
 
     if(m_sequences.empty()) {
@@ -150,6 +151,24 @@ void DiffSideBySidePanel::Diff()
         m_stcLeft->SetReadOnly(true);
         m_stcRight->SetReadOnly(true);
         return;
+    }
+
+    if(m_ignoreWhitespaceDiffs && !m_config.IsSingleViewMode()) {
+        // If the user wants to ignore whitespace diffs, go through first to remove them
+        // Note that this doesn't work in singleview mode where each change is shown on
+        // 2 lines, before & after. Having those unmarked would be very confusing
+        for(size_t l=0, r=0; l < resultLeft.size(),r < resultRight.size(); ++l, ++r) {
+            if (resultLeft.at(l).m_type == clDTL::LINE_REMOVED || resultLeft.at(l).m_type == clDTL::LINE_ADDED) {
+                wxString left(resultLeft.at(l).m_line);
+                left.Replace(" ", ""); left.Replace("\t", ""); left.Replace("\r", "");
+                wxString right(resultRight.at(r).m_line);
+                right.Replace(" ", ""); right.Replace("\t", ""); right.Replace("\r", "");
+                if (left == right) {
+                    resultLeft.at(l).m_type = clDTL::LINE_COMMON;
+                    resultRight.at(r).m_type = clDTL::LINE_COMMON;
+                }
+            }
+        }
     }
 
     m_cur_sequence = 0; // the first line of the sequence
@@ -783,4 +802,17 @@ void DiffSideBySidePanel::OnBrowseRightFile(wxCommandEvent& event)
     if(!file.IsEmpty()) {
         m_textCtrlRightFile->ChangeValue(file);
     }
+}
+
+void DiffSideBySidePanel::OnIgnoreWhitespaceClicked(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_ignoreWhitespaceDiffs = !m_ignoreWhitespaceDiffs;
+    Diff();
+}
+
+void DiffSideBySidePanel::OnIgnoreWhitespaceUI(wxUpdateUIEvent& event)
+{
+   event.Check(m_ignoreWhitespaceDiffs);
+   event.Enable(!m_config.IsSingleViewMode());
 }

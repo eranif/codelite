@@ -100,6 +100,7 @@ protected:
     wxString m_leftCaption;
     wxString m_rightCaption;
     DiffConfig m_config;
+    bool m_ignoreWhitespaceDiffs;
 
 protected:
     wxString DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const;
@@ -130,6 +131,8 @@ protected:
     virtual void OnRefreshDiff(wxCommandEvent& event);
     virtual void OnLeftStcPainted(wxStyledTextEvent& event);
     virtual void OnRightStcPainted(wxStyledTextEvent& event);
+    virtual void OnIgnoreWhitespaceClicked(wxCommandEvent& event);
+    virtual void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event);
     void OnPageClosing(wxNotifyEvent& event);
 
     void PrepareViews();

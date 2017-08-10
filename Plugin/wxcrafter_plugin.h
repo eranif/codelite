@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
-#define CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
+#ifndef _CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
+#define _CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -76,16 +76,17 @@ public:
         ID_DIFF_TOOL_COPY_ALL = 1001,
         ID_DIFF_TOOL_COPY_LEFT = 1002,
         ID_DIFF_TOOL_COPY_RIGHT = 1003,
-        ID_DIFF_TOOL_NEXT = 1004,
-        ID_DIFF_TOOL_PREV = 1005,
-        ID_DIFF_TOOL_REFRESH = 1006,
-        ID_DIFF_TOOL_SAVE = 1007,
-        ID_DIFF_TOOL_USE_LEFT = 1008,
-        ID_DIFF_TOOL_USE_RIGHT = 1009,
-        ID_DIFF_TOOL_VIEW = 1010,
-        ID_DIFF_TOOL_VIEW_HORIZONTAL = 1011,
-        ID_DIFF_TOOL_VIEW_SINGLE = 1012,
-        ID_DIFF_VERTICAL_VIEW = 1013,
+        ID_DIFF_TOOL_IGNORE_WHITESPACE = 1004,
+        ID_DIFF_TOOL_NEXT = 1005,
+        ID_DIFF_TOOL_PREV = 1006,
+        ID_DIFF_TOOL_REFRESH = 1007,
+        ID_DIFF_TOOL_SAVE = 1008,
+        ID_DIFF_TOOL_USE_LEFT = 1009,
+        ID_DIFF_TOOL_USE_RIGHT = 1010,
+        ID_DIFF_TOOL_VIEW = 1011,
+        ID_DIFF_TOOL_VIEW_HORIZONTAL = 1012,
+        ID_DIFF_TOOL_VIEW_SINGLE = 1013,
+        ID_DIFF_VERTICAL_VIEW = 1014,
     };
 protected:
     wxAuiToolBar* m_auibar242;
@@ -130,6 +131,8 @@ protected:
     virtual void OnVertical(wxCommandEvent& event) { event.Skip(); }
     virtual void OnHorizontal(wxCommandEvent& event) { event.Skip(); }
     virtual void OnHorizontalUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnIgnoreWhitespaceClicked(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBrowseLeftFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }

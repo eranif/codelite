@@ -172,6 +172,8 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_auibar242->AddSeparator();
     
     m_auibar242->AddTool(ID_DIFF_TOOL_IGNORE_WHITESPACE, _("Ignore whitespace"), wxXmlResource::Get()->LoadBitmap(wxT("16-ignoreworddiffs")), wxNullBitmap, wxITEM_CHECK, _("Ignore whitespace-only changes. Note that this is not possible in Single-View mode"), _("Ignore whitespace-only changes"), NULL);
+    
+    m_auibar242->AddTool(ID_SHOW_LINENUMBERS, _("Show Linenumbers"), wxXmlResource::Get()->LoadBitmap(wxT("16-showlinenumbers")), wxNullBitmap, wxITEM_CHECK, _("Show Linenumbers"), _("Show Linenumbers"), NULL);
     m_auibar242->Realize();
     
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_PERMIT_UNSPLIT|wxSP_3DSASH);
@@ -339,6 +341,8 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     this->Connect(m_hView->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnHorizontalUI), NULL, this);
     this->Connect(ID_DIFF_TOOL_IGNORE_WHITESPACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnIgnoreWhitespaceClicked), NULL, this);
     this->Connect(ID_DIFF_TOOL_IGNORE_WHITESPACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnIgnoreWhitespaceUI), NULL, this);
+    this->Connect(ID_SHOW_LINENUMBERS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnShowLinenosClicked), NULL, this);
+    this->Connect(ID_SHOW_LINENUMBERS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnShowLinenosUI), NULL, this);
     m_textCtrlLeftFile->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
     m_button290->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
     m_button290->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseLeftFile), NULL, this);
@@ -379,6 +383,8 @@ DiffSideBySidePanelBase::~DiffSideBySidePanelBase()
     this->Disconnect(m_hView->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnHorizontalUI), NULL, this);
     this->Disconnect(ID_DIFF_TOOL_IGNORE_WHITESPACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnIgnoreWhitespaceClicked), NULL, this);
     this->Disconnect(ID_DIFF_TOOL_IGNORE_WHITESPACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnIgnoreWhitespaceUI), NULL, this);
+    this->Disconnect(ID_SHOW_LINENUMBERS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnShowLinenosClicked), NULL, this);
+    this->Disconnect(ID_SHOW_LINENUMBERS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnShowLinenosUI), NULL, this);
     m_textCtrlLeftFile->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
     m_button290->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
     m_button290->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseLeftFile), NULL, this);

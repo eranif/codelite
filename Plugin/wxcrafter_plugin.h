@@ -87,6 +87,7 @@ public:
         ID_DIFF_TOOL_VIEW_HORIZONTAL = 1012,
         ID_DIFF_TOOL_VIEW_SINGLE = 1013,
         ID_DIFF_VERTICAL_VIEW = 1014,
+        ID_SHOW_LINENUMBERS = 1015,
     };
 protected:
     wxAuiToolBar* m_auibar242;
@@ -133,6 +134,8 @@ protected:
     virtual void OnHorizontalUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnIgnoreWhitespaceClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnShowLinenosClicked(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnShowLinenosUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBrowseLeftFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }

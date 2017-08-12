@@ -37,6 +37,7 @@
 #include <wx/menu.h>
 #include <wx/filedlg.h>
 #include "fileutils.h"
+#include "bookmark_manager.h"
 
 #define RED_MARKER 5
 #define GREEN_MARKER 6
@@ -49,10 +50,13 @@
 #define MARKER_SEQUENCE 8
 #define MARKER_SEQUENCE_VERTICAL 9
 
+#define NUMBER_MARGIN_ID 0
+
 DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
     , m_flags(0)
     , m_ignoreWhitespaceDiffs(false)
+    , m_showLinenos(false)
 {
     Hide();
     m_config.Load();
@@ -248,16 +252,22 @@ void DiffSideBySidePanel::PrepareViews()
     leftLexer->Apply(m_stcLeft, true);
     rightLexer->Apply(m_stcRight, true);
 
-    // Create the markers we need
-    DefineMarkers(m_stcLeft);
-    DefineMarkers(m_stcRight);
+    wxStyledTextCtrl* stc = m_stcLeft;
+    for (int n=0; n<2; ++n, stc = m_stcRight) {
+        // Create the markers we need
+        DefineMarkers(stc);
 
-    // Turn off PP highlighting
-    m_stcLeft->SetProperty("lexer.cpp.track.preprocessor", "0");
-    m_stcLeft->SetProperty("lexer.cpp.update.preprocessor", "0");
+        // Turn off PP highlighting
+        stc->SetProperty("lexer.cpp.track.preprocessor", "0");
+        stc->SetProperty("lexer.cpp.update.preprocessor", "0");
 
-    m_stcRight->SetProperty("lexer.cpp.track.preprocessor", "0");
-    m_stcRight->SetProperty("lexer.cpp.update.preprocessor", "0");
+        // Show number margins if desired
+        stc->SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
+        stc->SetMarginMask(NUMBER_MARGIN_ID,
+                      ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
+        int pixelWidth = 4 + 5 * stc->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
+        stc->SetMarginWidth(NUMBER_MARGIN_ID, m_showLinenos ? pixelWidth : 0);
+    }
 }
 
 void DiffSideBySidePanel::DefineMarkers(wxStyledTextCtrl* ctrl)
@@ -815,4 +825,16 @@ void DiffSideBySidePanel::OnIgnoreWhitespaceUI(wxUpdateUIEvent& event)
 {
    event.Check(m_ignoreWhitespaceDiffs);
    event.Enable(!m_config.IsSingleViewMode());
+}
+
+void DiffSideBySidePanel::OnShowLinenosClicked(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_showLinenos = !m_showLinenos;
+    Diff();
+}
+
+void DiffSideBySidePanel::OnShowLinenosUI(wxUpdateUIEvent& event)
+{
+   event.Check(m_showLinenos);
 }

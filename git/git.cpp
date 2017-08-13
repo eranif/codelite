@@ -2489,9 +2489,17 @@ void GitPlugin::DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString&
 
 void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
 {
+    wxString lastCommitString, commitHistory;
+    // Find the title/body message of the previous commit, in case the user wants to amend it
+    DoExecuteCommandSync("log -1 --pretty=format:\"%B\"", m_repositoryDirectory, lastCommitString);
+    // Similarly the # and title of the last 100 commits for the commit history
+    DoExecuteCommandSync("log -100 --abbrev-commit --pretty=oneline", m_repositoryDirectory, commitHistory);
+    
     commitArgs.Clear();
-    GitCommitDlg dlg(m_topWindow);
+    GitCommitDlg dlg(m_topWindow, this, m_repositoryDirectory);
     dlg.AppendDiff(diff);
+    dlg.SetPreviousCommitMessage(lastCommitString);
+    dlg.SetHistory(commitHistory);
     if(dlg.ShowModal() == wxID_OK) {
         if(dlg.GetSelectedFiles().IsEmpty() && !dlg.IsAmending()) return;
         wxString message = dlg.GetCommitMessage();

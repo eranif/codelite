@@ -36,32 +36,45 @@
 #include "gitui.h"
 #include <map>
 #include "clEditorEditEventsHandler.h"
+#include <wx/tokenzr.h> 
+
+class GitPlugin;
 
 class GitCommitDlg : public GitCommitDlgBase
 {
+    GitPlugin* m_plugin;
+    wxString m_workingDir;
     std::map<wxString, wxString> m_diffMap;
     bool m_toggleChecks;
     clEditEventsHandler::Ptr_t m_editEventsHandlerCommitStc;
     clEditEventsHandler::Ptr_t m_editEventsHandlerDiffStc;
+    wxString m_previousCommitMessage;
+    wxArrayString m_history;
+    wxString m_stashedMessage;
 
 public:
-    GitCommitDlg(wxWindow* parent);
+    GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir);
     ~GitCommitDlg();
 
     void AppendDiff(const wxString& diff);
 
     wxArrayString GetSelectedFiles();
     wxString GetCommitMessage();
+    void SetPreviousCommitMessage(const wxString& previous) {
+        m_previousCommitMessage = previous;
+    }
+    void SetHistory(const wxString& history) {
+        m_history = wxStringTokenize(history, "\n");
+    }
     bool IsAmending() const { return m_checkBoxAmend->IsChecked(); }
 
 private:
     void OnChangeFile(wxCommandEvent& e);
 
 protected:
-    virtual void OnClearGitCommitHistoryUI(wxUpdateUIEvent& event);
+    virtual void OnAmendClicked(wxCommandEvent& event);
     virtual void OnCommitHistory(wxCommandEvent& event);
     virtual void OnCommitHistoryUI(wxUpdateUIEvent& event);
-    virtual void OnClearGitCommitHistory(wxCommandEvent& event);
     virtual void OnToggleCheckAll(wxCommandEvent& event);
     virtual void OnCommitOK(wxCommandEvent& event);
 };

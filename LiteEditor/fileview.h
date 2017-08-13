@@ -32,11 +32,11 @@
 #include "map"
 #include "clTreeKeyboardInput.h"
 #include <VirtualDirectoryColour.h>
+#include "clTreeCtrlColourHelper.h"
 
 class wxMenu;
 
-struct FileViewItem
-{
+struct FileViewItem {
     wxString virtualDir;
     wxString fullpath;
     wxString displayName;
@@ -53,6 +53,7 @@ class FileViewTree : public wxTreeCtrl
     std::map<wxString, wxTreeItemId> m_workspaceFolders;
     std::map<wxString, wxTreeItemId> m_projectsMap;
     bool m_eventsBound;
+    clTreeCtrlColourHelper::Ptr_t m_colourHelper;
 
 protected:
     void DoCreateProjectContextMenu(wxMenu& menu, const wxString& projectName);
@@ -219,9 +220,6 @@ protected:
      * @brief clear the "active" marker from all the projects
      */
     void UnselectAllProject();
-
-    void DoColourSubtree(const wxTreeItemId& item, const wxColour& currentBgColour,
-                         const VirtualDirectoryColour::Map_t& coloursMap);
 
 private:
     // Build project node

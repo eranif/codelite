@@ -25,6 +25,7 @@
 
 #include "gitCommitDlg.h"
 #include "gitCommitEditor.h"
+#include "git.h"
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
 #include "gitentry.h"
@@ -34,8 +35,8 @@
 #include "globals.h"
 #include "clSingleChoiceDialog.h"
 
-GitCommitDlg::GitCommitDlg(wxWindow* parent)
-    : GitCommitDlgBase(parent)
+GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir)
+    : GitCommitDlgBase(parent), m_plugin(plugin), m_workingDir(workingDir)
     , m_toggleChecks(false)
 {
     // read the configuration
@@ -68,8 +69,6 @@ GitCommitDlg::~GitCommitDlg()
     GitEntry data;
     conf.ReadItem(&data);
 
-    wxString message = m_stcCommitMessage->GetText();
-    data.AddRecentCommit(message);
     data.SetGitCommitDlgHSashPos(m_splitterInner->GetSashPosition());
     data.SetGitCommitDlgVSashPos(m_splitterMain->GetSashPosition());
     conf.WriteItem(&data);
@@ -154,38 +153,38 @@ void GitCommitDlg::OnToggleCheckAll(wxCommandEvent& event)
     m_toggleChecks = !m_toggleChecks;
 }
 
-void GitCommitDlg::OnClearGitCommitHistory(wxCommandEvent& event)
-{
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-
-    data.GetRecentCommit().Clear();
-    conf.WriteItem(&data);
-}
 
 void GitCommitDlg::OnCommitHistory(wxCommandEvent& event)
 {
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-    
-    const wxArrayString& options = data.GetRecentCommit();
-    
-    clSingleChoiceDialog dlg(this, options);
+    clSingleChoiceDialog dlg(this, m_history);
     dlg.SetLabel(_("Choose a commit"));
     if(dlg.ShowModal() != wxID_OK) return;
     
-    m_stcCommitMessage->SetText(dlg.GetSelection());
+    wxString commitHash = dlg.GetSelection().BeforeFirst(' ');
+    if (!commitHash.empty()) {
+        wxString selectedCommit;
+        m_plugin->DoExecuteCommandSync("log -1 --pretty=format:\"%B\" " + commitHash, m_workingDir, selectedCommit);
+        if (!selectedCommit.empty()) {
+            m_stcCommitMessage->SetText(selectedCommit);
+        }
+    }
 }
 
 void GitCommitDlg::OnCommitHistoryUI(wxUpdateUIEvent& event)
 {
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-    event.Enable(!data.GetRecentCommit().IsEmpty());
+    event.Enable(!m_history.IsEmpty());
 }
-void GitCommitDlg::OnClearGitCommitHistoryUI(wxUpdateUIEvent& event)
+
+void GitCommitDlg::OnAmendClicked(wxCommandEvent& event)
 {
+    if (event.IsChecked()) {
+        if (!m_previousCommitMessage.empty()) {
+            m_stashedMessage = m_stcCommitMessage->GetText();
+            m_stcCommitMessage->SetText(m_previousCommitMessage);
+        }
+    } else {
+        if (!m_stashedMessage.empty()) {
+            m_stcCommitMessage->SetText(m_stashedMessage);
+        }
+    }
 }

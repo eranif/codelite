@@ -577,7 +577,7 @@ void LocalWorkspace::SetSearchInFilesMask(const wxString& findInFileMask)
     SetCDATANodeContent(optsNode, findInFileMask);
 }
 
-bool LocalWorkspace::SetFolderColours(const VirtualDirectoryColour::Map_t& vdColours)
+bool LocalWorkspace::SetFolderColours(const FolderColour::Map_t& vdColours)
 {
     // Stored as:
     // <VirtualFoldersColours>
@@ -598,10 +598,10 @@ bool LocalWorkspace::SetFolderColours(const VirtualDirectoryColour::Map_t& vdCol
     wxXmlNode* coloursNode = new wxXmlNode(root, wxXML_ELEMENT_NODE, wxT("VirtualFoldersColours"));
     root->AddChild(coloursNode);
 
-    VirtualDirectoryColour::List_t coloursList;
-    VirtualDirectoryColour::SortToList(vdColours, coloursList);
+    FolderColour::List_t coloursList;
+    FolderColour::SortToList(vdColours, coloursList);
 
-    std::for_each(coloursList.begin(), coloursList.end(), [&](const VirtualDirectoryColour& vdc) {
+    std::for_each(coloursList.begin(), coloursList.end(), [&](const FolderColour& vdc) {
         wxXmlNode* folderNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualFolder"));
         folderNode->AddAttribute("Path", vdc.GetPath());
         folderNode->AddAttribute("Colour", vdc.GetColour().GetAsString(wxC2S_HTML_SYNTAX));
@@ -610,7 +610,7 @@ bool LocalWorkspace::SetFolderColours(const VirtualDirectoryColour::Map_t& vdCol
     return SaveXmlFile();
 }
 
-bool LocalWorkspace::GetFolderColours(VirtualDirectoryColour::Map_t& vdColours)
+bool LocalWorkspace::GetFolderColours(FolderColour::Map_t& vdColours)
 {
     // Stored as:
     // <VirtualFoldersColours>
@@ -628,7 +628,7 @@ bool LocalWorkspace::GetFolderColours(VirtualDirectoryColour::Map_t& vdColours)
     wxXmlNode* child = coloursNode->GetChildren();
     while(child) {
         if(child->GetName() == "VirtualFolder") {
-            VirtualDirectoryColour vdc(child->GetAttribute("Path"), child->GetAttribute("Colour", "#000000"));
+            FolderColour vdc(child->GetAttribute("Path"), child->GetAttribute("Colour", "#000000"));
             vdColours.insert(std::make_pair(vdc.GetPath(), vdc));
         }
         child = child->GetNext();

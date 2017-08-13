@@ -99,6 +99,7 @@ class GitPlugin : public IPlugin
 {
     friend class GitConsole;
     friend class GitCommitListDlg;
+    friend class GitCommitDlg;
 
     typedef std::map<int, int> IntMap_t;
     enum {

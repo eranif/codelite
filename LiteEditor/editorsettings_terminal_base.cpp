@@ -26,56 +26,56 @@ EditorSettingsTerminalBase::EditorSettingsTerminalBase(wxWindow* parent, wxWindo
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    m_checkBoxUseCodeLiteTerminal = new wxCheckBox(this, wxID_ANY, _("Use CodeLite's built-in terminal emulator"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxUseCodeLiteTerminal = new wxCheckBox(this, wxID_ANY, _("Use CodeLite's built-in terminal emulator"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_checkBoxUseCodeLiteTerminal->SetValue(false);
     
-    bSizer1->Add(m_checkBoxUseCodeLiteTerminal, 0, wxALL, 5);
+    bSizer1->Add(m_checkBoxUseCodeLiteTerminal, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Enter here the command to be used by CodeLite for launching consoles:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Enter here the command to be used by CodeLite for launching consoles:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer1->Add(m_staticText2, 0, wxALL|wxEXPAND, 5);
+    bSizer1->Add(m_staticText2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCtrlProgramConsoleCmd = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlProgramConsoleCmd = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlProgramConsoleCmd->SetHint(wxT(""));
     #endif
     
-    bSizer1->Add(m_textCtrlProgramConsoleCmd, 0, wxALL|wxEXPAND, 5);
+    bSizer1->Add(m_textCtrlProgramConsoleCmd, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Where:")), wxVERTICAL);
     
-    bSizer1->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
+    bSizer1->Add(sbSizer1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(2, 2, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
     
-    sbSizer1->Add(fgSizer1, 1, wxEXPAND, 5);
+    sbSizer1->Add(fgSizer1, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText3 = new wxStaticText(this, wxID_ANY, _("$(TITLE)"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText3 = new wxStaticText(this, wxID_ANY, _("$(TITLE)"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer1->Add(m_staticText3, 1, wxALL|wxEXPAND, 5);
+    fgSizer1->Add(m_staticText3, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("The console title"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText4 = new wxStaticText(this, wxID_ANY, _("The console title"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer1->Add(m_staticText4, 0, wxALL, 5);
+    fgSizer1->Add(m_staticText4, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("$(CMD)"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText5 = new wxStaticText(this, wxID_ANY, _("$(CMD)"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer1->Add(m_staticText5, 0, wxALL, 5);
+    fgSizer1->Add(m_staticText5, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_staticText6 = new wxStaticText(this, wxID_ANY, _("The command to execute"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText6 = new wxStaticText(this, wxID_ANY, _("The command to execute"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer1->Add(m_staticText6, 0, wxALL, 5);
+    fgSizer1->Add(m_staticText6, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("EditorSettingsTerminalBase"));
-    SetSizeHints(500,300);
-    if ( GetSizer() ) {
+    SetSize(500,300);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
+    m_checkBoxUseCodeLiteTerminal->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_staticText2->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_textCtrlProgramConsoleCmd->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_staticText3->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
@@ -87,6 +87,7 @@ EditorSettingsTerminalBase::EditorSettingsTerminalBase(wxWindow* parent, wxWindo
 
 EditorSettingsTerminalBase::~EditorSettingsTerminalBase()
 {
+    m_checkBoxUseCodeLiteTerminal->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_staticText2->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_textCtrlProgramConsoleCmd->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_staticText3->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);

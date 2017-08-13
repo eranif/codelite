@@ -1,28 +1,28 @@
 #include "VirtualDirectoryColour.h"
 #include <algorithm>
 
-VirtualDirectoryColour::VirtualDirectoryColour() {}
+FolderColour::FolderColour() {}
 
-VirtualDirectoryColour::~VirtualDirectoryColour() {}
+FolderColour::~FolderColour() {}
 
-void VirtualDirectoryColour::SortToList(const VirtualDirectoryColour::Map_t& m, VirtualDirectoryColour::List_t& l)
+void FolderColour::SortToList(const FolderColour::Map_t& m, FolderColour::List_t& l)
 {
     l.clear();
     std::for_each(m.begin(), m.end(),
-                  [&](const VirtualDirectoryColour::Map_t::value_type& p) { l.push_back(p.second); });
+                  [&](const FolderColour::Map_t::value_type& p) { l.push_back(p.second); });
 
-    l.sort([&](const VirtualDirectoryColour& first, const VirtualDirectoryColour& second) {
+    l.sort([&](const FolderColour& first, const FolderColour& second) {
         return first.GetPath().Cmp(second.GetPath()) > 0;
     });
 }
 
-const VirtualDirectoryColour& VirtualDirectoryColour::FindForPath(const VirtualDirectoryColour::List_t& sortedList,
+const FolderColour& FolderColour::FindForPath(const FolderColour::List_t& sortedList,
                                                                   const wxString& path)
 {
-    static VirtualDirectoryColour nullValue;
-    VirtualDirectoryColour::List_t::const_iterator iter =
+    static FolderColour nullValue;
+    FolderColour::List_t::const_iterator iter =
         std::find_if(sortedList.begin(), sortedList.end(),
-                     [&](const VirtualDirectoryColour& vdc) { return path.StartsWith(vdc.GetPath()); });
+                     [&](const FolderColour& vdc) { return path.StartsWith(vdc.GetPath()); });
     if(iter == sortedList.end()) {
         return nullValue;
     } else {

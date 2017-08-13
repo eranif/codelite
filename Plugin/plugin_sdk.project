@@ -334,6 +334,8 @@
       <File Name="clTreeKeyboardInput.cpp"/>
       <File Name="clBitmapOverlayCtrl.h"/>
       <File Name="clBitmapOverlayCtrl.cpp"/>
+      <File Name="clTreeCtrlColourHelper.h"/>
+      <File Name="clTreeCtrlColourHelper.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>

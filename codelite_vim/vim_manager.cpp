@@ -165,6 +165,7 @@ void VimManager::updateMessageModus()
     case VIM_MODI::SEARCH_MODUS:
         //m_mgr->GetStatusBar()->SetMessage(m_currentCommand.getTmpBuf());
         m_tmpBuf = m_currentCommand.getTmpBuf();
+        setUpVimBar();
         status_vim->SetStatusText( m_tmpBuf );
         if ( !status_vim->IsShown() ) status_vim->Show(true);
         break;
@@ -329,8 +330,9 @@ void VimManager::DoCleanup(bool unbind)
         m_ctrl->SetCaretStyle(m_caretInsertStyle);
     }
     
-    m_editor = NULL;
-    m_ctrl = NULL;
+    m_editor   = NULL;
+    m_ctrl        = NULL;
+    status_vim = NULL;
     //m_mgr->GetStatusBar()->SetMessage("");
 }
 
@@ -357,16 +359,38 @@ void VimManager::DoBindEditor(IEditor* editor)
     m_ctrl->Bind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
 
     /*baby-steps*/
-    wxWindow* parent = m_ctrl->GetParent();
-
-    if ( status_vim != NULL )
-        delete status_vim;
-    
-    status_vim = new wxStatusBar(parent, 1);
-    status_vim->Show(true);
-    status_vim->SetFieldsCount();
+    setUpVimBar();
+  
     //CallAfter(&VimManager::updateView);
     updateView();
+}
+
+
+void VimManager::setUpVimBar()
+{
+    
+      if ( status_vim != NULL )
+        delete status_vim;
+        
+    //wxWindow* parent = m_ctrl->GetParent();
+    wxWindow* parent = (wxWindow*) m_ctrl;
+    status_vim = new wxStatusBar(parent, 1);
+    //status_vim->Show( true );
+    status_vim->SetFieldsCount(1);
+    
+    setUpVimBarPos();
+
+}
+
+void VimManager::setUpVimBarPos()
+{
+    int hight;
+    int width;
+    wxWindow* parent = (wxWindow*) m_ctrl;
+    parent->GetSize( &width, &hight);
+    //status_vim->Show( true );
+    status_vim->SetSize(wxDefaultCoord, wxDefaultCoord, width, wxDefaultCoord);
+    //status_vim->SetSize(0, 0, width, wxDefaultCoord);
 }
 
 void VimManager::OnWorkspaceClosing(wxCommandEvent& event)

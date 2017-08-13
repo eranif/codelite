@@ -232,6 +232,7 @@ private:
     void command_modus(wxChar ch);
     void insert_modus(wxChar ch);
     void parse_cmd_string();
+    void completing_command( wxChar ch );
     /*~~~~~~~~ INFO ~~~~~~~~~*/
     COMMANDVI m_commandID;             /*!< id of the current command to identify it*/
     MESSAGES_VIM m_message_ID;

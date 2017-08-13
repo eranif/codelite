@@ -8,6 +8,7 @@
 /*EXPERIMENTAL*/
 #include "wx/uiaction.h"
 
+
 VimCommand::VimCommand()
     : m_currentCommandPart(COMMAND_PART::REPEAT_NUM)
     , m_currentModus(VIM_MODI::NORMAL_MODUS)
@@ -136,21 +137,19 @@ wxString VimCommand::getTmpBuf() { return m_tmpbuf; }
 int VimCommand::getNumActions() { return m_actions; }
 
 void VimCommand::insert_modus(wxChar ch) { m_tmpbuf.Append(ch); }
-/**
- * This function is used to deal with the key event when we are in the
- * normal modus.
- */
-void VimCommand::normal_modus(wxChar ch)
-{
 
-    const int shift_ashii_num = 48;
+void VimCommand::completing_command(wxChar ch) {
+    
+    
+    const int shift_ashii_num = '0';
 
     switch(m_currentCommandPart) {
 
     case COMMAND_PART::REPEAT_NUM:
 
         if(((ch <= '9' && ch >= '0') && m_repeat != 0) || ((ch <= '9' && ch > '0') && m_repeat == 0)) {
-            m_repeat = m_repeat * 10 + (int)ch - shift_ashii_num;
+            int tmp = (int)ch;
+            m_repeat = m_repeat * 10 + tmp - shift_ashii_num;
         } else {
             m_baseCommand = ch;
             switch(m_baseCommand) {
@@ -188,58 +187,30 @@ void VimCommand::normal_modus(wxChar ch)
             m_actionCommand = ch;
         }
         break;
-
-    case COMMAND_PART::REPLACING:
-        m_actionCommand = ch;
+    default:
         break;
+    
+    }
+}
+
+
+/**
+ * This function is used to deal with the key event when we are in the
+ * normal modus.
+ */
+void VimCommand::normal_modus(wxChar ch)
+{
+
+    completing_command( ch );
+    
+    if ( m_currentCommandPart == COMMAND_PART::REPLACING ) {
+        m_actionCommand = ch;
     }
 }
 
 void VimCommand::visual_modus(wxChar ch)
 {
-
-    const int shift_ashii_num = 48;
-
-    switch(m_currentCommandPart) {
-
-    case COMMAND_PART::REPEAT_NUM:
-
-        if(((ch <= '9' && ch >= '0') && m_repeat != 0) || ((ch <= '9' && ch > '0') && m_repeat == 0)) {
-            m_repeat = m_repeat * 10 + (int)ch - shift_ashii_num;
-        } else {
-            m_baseCommand = ch;
-            switch(m_baseCommand) {
-            case 'R':
-                m_currentModus = VIM_MODI::REPLACING_MODUS;
-                m_currentCommandPart = COMMAND_PART::REPLACING;
-                break;
-            case ':':
-                m_currentModus = VIM_MODI::COMMAND_MODUS;
-                m_tmpbuf.Append(ch);
-                break;
-            case '/':
-            case '?':
-                m_currentModus = VIM_MODI::SEARCH_MODUS;
-                m_tmpbuf.Append(ch);
-                break;
-
-            default:
-                m_currentCommandPart = COMMAND_PART::MOD_NUM;
-                break;
-            }
-        }
-        break;
-
-    case COMMAND_PART::MOD_NUM:
-
-        if(ch < '9' && ch > '0' && m_baseCommand != 'r') {
-            m_actions = m_actions * 10 + (int)ch - shift_ashii_num;
-        } else {
-            m_actionCommand = ch;
-        }
-        break;
-
-    }
+    completing_command( ch );
 }
 
 
@@ -292,9 +263,6 @@ bool VimCommand::OnReturnDown(VimCommand::eAction& action)
         ResetCommand();
         m_currentModus = VIM_MODI::NORMAL_MODUS;
     }
-
-    
-
     return skip_event;
 }
 
@@ -865,6 +833,7 @@ bool VimCommand::Command_call()
         break;
     }
     default:
+        repeat_command = false;
         break;
     }
 

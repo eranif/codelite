@@ -61,6 +61,12 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     Hide();
     m_config.Load();
 
+    // Vertical is the default; DoLayout() unsplits; but nothing implements Horizontal. So:
+    if(m_config.IsSplitHorizontal()) {
+        m_splitter->Unsplit();
+        m_splitter->SplitHorizontally(m_splitterPageLeft, m_splitterPageRight);
+    }
+
     EventNotifier::Get()->Connect(
         wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
 

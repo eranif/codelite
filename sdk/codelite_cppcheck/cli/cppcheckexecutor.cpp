@@ -18,7 +18,7 @@
 
 #include "cppcheckexecutor.h"
 #include "analyzerinfo.h"
-#include "cmdlineprser.h"
+#include "cmdlineparser.h"
 #include "cppcheck.h"
 #include "filelister.h"
 #include "path.h"

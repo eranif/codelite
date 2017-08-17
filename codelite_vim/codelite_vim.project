@@ -21,16 +21,16 @@
     <File Name="codelite_vim.cpp"/>
     <File Name="README.txt"/>
     <File Name="vim_manager.cpp"/>
-    <File Name="vim_manager.h"/>
     <File Name="vimCommands.cpp"/>
-    <File Name="vimCommands.h"/>
-    <File Name="VimSettingsDlg.h"/>
     <File Name="VimSettingsDlg.cpp"/>
-    <File Name="VimSettings.h"/>
     <File Name="VimSettings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="codelite_vim.h"/>
+    <File Name="vim_manager.h"/>
+    <File Name="vimCommands.h"/>
+    <File Name="VimSettings.h"/>
+    <File Name="VimSettingsDlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CMake">
     <File Name="CMakeLists.txt"/>

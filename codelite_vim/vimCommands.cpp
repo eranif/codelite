@@ -8,6 +8,7 @@
 /*EXPERIMENTAL*/
 #include "wx/uiaction.h"
 
+
 VimCommand::VimCommand()
     : m_currentCommandPart(COMMAND_PART::REPEAT_NUM)
     , m_currentModus(VIM_MODI::NORMAL_MODUS)
@@ -50,14 +51,15 @@ bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
         insert_modus(ch);
         skip_event = true;
         break;
-    case VIM_MODI::SEARCH_MODUS:
+
         // get_text_at_position( ctrl);
-        m_currentModus = VIM_MODI::NORMAL_MODUS;
+        //m_currentModus = VIM_MODI::NORMAL_MODUS;
     case VIM_MODI::NORMAL_MODUS:
     case VIM_MODI::REPLACING_MODUS:
         normal_modus(ch);
         skip_event = false;
         break;
+    case VIM_MODI::SEARCH_MODUS:
     case VIM_MODI::COMMAND_MODUS:
         command_modus(ch);
         skip_event = false;
@@ -135,6 +137,63 @@ wxString VimCommand::getTmpBuf() { return m_tmpbuf; }
 int VimCommand::getNumActions() { return m_actions; }
 
 void VimCommand::insert_modus(wxChar ch) { m_tmpbuf.Append(ch); }
+
+void VimCommand::completing_command(wxChar ch) {
+    
+    
+    const int shift_ashii_num = '0';
+
+    switch(m_currentCommandPart) {
+
+    case COMMAND_PART::REPEAT_NUM:
+
+        if(((ch <= '9' && ch >= '0') && m_repeat != 0) || ((ch <= '9' && ch > '0') && m_repeat == 0)) {
+            int tmp = (int)ch;
+            m_repeat = m_repeat * 10 + tmp - shift_ashii_num;
+        } else {
+            m_baseCommand = ch;
+            switch(m_baseCommand) {
+            case 'R':
+                m_currentModus = VIM_MODI::REPLACING_MODUS;
+                m_currentCommandPart = COMMAND_PART::REPLACING;
+                break;
+            case ':':
+                m_currentModus = VIM_MODI::COMMAND_MODUS;
+                m_tmpbuf.Append(ch);
+                break;
+            case '/':
+            case '?':
+                m_currentModus = VIM_MODI::SEARCH_MODUS;
+                m_tmpbuf.Append(ch);
+                break;
+            default:
+                m_currentCommandPart = COMMAND_PART::MOD_NUM;
+                break;
+            }
+        }
+        break;
+
+    case COMMAND_PART::MOD_NUM:
+
+        if(ch < '9' && ch > '0' &&
+           m_baseCommand != 'r' &&
+           m_baseCommand != 'f' &&
+           m_baseCommand != 'F' &&
+           m_baseCommand != 't' &&
+           m_baseCommand != 'T'
+           ) {
+            m_actions = m_actions * 10 + (int)ch - shift_ashii_num;
+        } else {
+            m_actionCommand = ch;
+        }
+        break;
+    default:
+        break;
+    
+    }
+}
+
+
 /**
  * This function is used to deal with the key event when we are in the
  * normal modus.
@@ -142,86 +201,16 @@ void VimCommand::insert_modus(wxChar ch) { m_tmpbuf.Append(ch); }
 void VimCommand::normal_modus(wxChar ch)
 {
 
-    const int shift_ashii_num = 48;
-
-    switch(m_currentCommandPart) {
-
-    case COMMAND_PART::REPEAT_NUM:
-
-        if(((ch <= '9' && ch >= '0') && m_repeat != 0) || ((ch <= '9' && ch > '0') && m_repeat == 0)) {
-            m_repeat = m_repeat * 10 + (int)ch - shift_ashii_num;
-        } else {
-            m_baseCommand = ch;
-            switch(m_baseCommand) {
-            case 'R':
-                m_currentModus = VIM_MODI::REPLACING_MODUS;
-                m_currentCommandPart = COMMAND_PART::REPLACING;
-                break;
-            case ':':
-                m_currentModus = VIM_MODI::COMMAND_MODUS;
-                m_tmpbuf.Append(ch);
-                break;
-            default:
-                m_currentCommandPart = COMMAND_PART::MOD_NUM;
-                break;
-            }
-        }
-        break;
-
-    case COMMAND_PART::MOD_NUM:
-
-        if(ch < '9' && ch > '0' && m_baseCommand != 'r') {
-            m_actions = m_actions * 10 + (int)ch - shift_ashii_num;
-        } else {
-            m_actionCommand = ch;
-        }
-        break;
-
-    case COMMAND_PART::REPLACING:
+    completing_command( ch );
+    
+    if ( m_currentCommandPart == COMMAND_PART::REPLACING ) {
         m_actionCommand = ch;
-        break;
     }
 }
 
 void VimCommand::visual_modus(wxChar ch)
 {
-
-    const int shift_ashii_num = 48;
-
-    switch(m_currentCommandPart) {
-
-    case COMMAND_PART::REPEAT_NUM:
-
-        if(((ch <= '9' && ch >= '0') && m_repeat != 0) || ((ch <= '9' && ch > '0') && m_repeat == 0)) {
-            m_repeat = m_repeat * 10 + (int)ch - shift_ashii_num;
-        } else {
-            m_baseCommand = ch;
-            switch(m_baseCommand) {
-            case 'R':
-                m_currentModus = VIM_MODI::REPLACING_MODUS;
-                m_currentCommandPart = COMMAND_PART::REPLACING;
-                break;
-            case ':':
-                m_currentModus = VIM_MODI::COMMAND_MODUS;
-                m_tmpbuf.Append(ch);
-                break;
-            default:
-                m_currentCommandPart = COMMAND_PART::MOD_NUM;
-                break;
-            }
-        }
-        break;
-
-    case COMMAND_PART::MOD_NUM:
-
-        if(ch < '9' && ch > '0' && m_baseCommand != 'r') {
-            m_actions = m_actions * 10 + (int)ch - shift_ashii_num;
-        } else {
-            m_actionCommand = ch;
-        }
-        break;
-
-    }
+    completing_command( ch );
 }
 
 
@@ -244,24 +233,88 @@ bool VimCommand::OnReturnDown(VimCommand::eAction& action)
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
+            m_currentModus = VIM_MODI::NORMAL_MODUS;
             m_message_ID = MESSAGES_VIM::CLOSED_VIM_MSG;
         } else if(m_tmpbuf == _(":q!")) {
             action = kClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
+            m_currentModus = VIM_MODI::NORMAL_MODUS;
             m_message_ID = MESSAGES_VIM::CLOSED_VIM_MSG;
         } else if(m_tmpbuf == _(":wq")) {
             action = kSaveAndClose;
             skip_event = false;
             m_tmpbuf.Clear();
             ResetCommand();
+            m_currentModus = VIM_MODI::NORMAL_MODUS;
             m_message_ID = MESSAGES_VIM::SAVE_AND_CLOSE_VIM_MSG;
+        } else if ( m_tmpbuf[0].GetValue() == ':' ) {
+            skip_event = false;
+            parse_cmd_string();
+            m_tmpbuf.Clear();
+            m_currentModus = VIM_MODI::NORMAL_MODUS;
+            ResetCommand();
         }
+    } else if ( m_currentModus == VIM_MODI::SEARCH_MODUS ) {
+        skip_event = false;
+        parse_cmd_string();
+        m_tmpbuf.Clear();
+        ResetCommand();
+        m_currentModus = VIM_MODI::NORMAL_MODUS;
     }
-
     return skip_event;
 }
+
+
+void VimCommand::parse_cmd_string()
+{
+    bool all_file        = false;
+    bool search_forward  = false;
+    bool search_backward = false;
+    bool replace         = false;
+    size_t len_buf = m_tmpbuf.Length();
+
+    wxString word_to_replace;
+    m_searchWord.Clear();    
+    for( size_t i = 0; i < len_buf; ++i ) {
+        switch ( m_tmpbuf[i].GetValue() ) {
+        case '%':
+            if ( i + 1 <len_buf &&
+                 m_tmpbuf[i+1].GetValue() == 's' ) {
+                all_file = true;
+            }
+            break;
+        case '/':
+            replace = search_forward;
+            search_forward = true;
+            break;
+        case '?':
+            replace = search_backward;
+            search_backward = true;
+            break;
+        default:
+            if ( search_forward || search_backward )
+                m_searchWord.Append(m_tmpbuf[i]);
+            else if ( replace )
+                word_to_replace.Append(m_tmpbuf[i]);
+            break;
+        }
+
+    }
+
+    if (search_forward && !replace) {
+        long pos = -1L;
+        if ( all_file ) pos = 0L;
+        search_word(SEARCH_DIRECTION::FORWARD, pos);
+    } else if (search_backward && !replace) {
+        long pos = -1L;
+        if ( all_file ) pos = 0L;
+        search_word(SEARCH_DIRECTION::BACKWARD, pos);
+    }
+    
+}
+
 
 /**
  * function dealing with the command status (i.e. ": ... " )
@@ -313,10 +366,139 @@ bool VimCommand::Command_call()
         m_ctrl->WordRight();
         this->m_saveCommand = false;
         break;
+    case COMMANDVI::W: {
+        bool single_word = is_space_following();
+        m_ctrl->WordRight();
+        if ( !single_word ) {
+            bool next_is_space = is_space_following();
+            while ( !next_is_space) {
+                m_ctrl->WordRight();
+                next_is_space = is_space_following();
+            }
+            m_ctrl->WordRight();
+        }
+        /*FIME - is a sequence of white space rightly jumped?*/
+        this->m_saveCommand = false;
+        break;
+    }
     case COMMANDVI::b:
         m_ctrl->WordLeft();
         this->m_saveCommand = false;
         break;
+    /*FIXME*/
+    case COMMANDVI::B:{
+        m_ctrl->WordLeft();
+        bool prev_is_space = is_space_preceding(false, true);
+        while ( !prev_is_space) {
+            m_ctrl->WordLeft();
+            prev_is_space = is_space_preceding(false, true);
+        }
+        this->m_saveCommand = false;
+        break;
+    }
+    case COMMANDVI::e: {
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if ( pos >= end - 1 ) {
+            m_ctrl->WordRight();
+            long i = 1;
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+            while ( m_ctrl->GetCharAt( end + i ) == ' ' ) {
+                i++;
+                end = m_ctrl->WordEndPosition(pos + i, false);
+            }
+        }
+        m_ctrl->GotoPos( end - 1);
+        this->m_saveCommand = false;
+        break;
+    }
+    case COMMANDVI::E: {
+        bool single_word = is_space_following();
+        m_ctrl->WordRight();
+        if ( !single_word ) {
+            bool next_is_space = is_space_following();
+            while ( !next_is_space) {
+                m_ctrl->WordRight();
+                next_is_space = is_space_following();
+            }
+            //m_ctrl->WordRight();
+        }
+        /*FIME - is a sequence of white space rightly jumped?*/
+        this->m_saveCommand = false;
+
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if ( pos == end - 1 ) {
+            m_ctrl->WordRight();
+            long i = 1;
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+            while ( m_ctrl->GetCharAt( end + i ) == ' ' ) {
+                i++;
+                end = m_ctrl->WordEndPosition(pos + i, false);
+            }
+        }
+        m_ctrl->GotoPos( end - 1);
+
+        break;
+    }
+    case COMMANDVI::F:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos - i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos - i );
+    }break;
+    case COMMANDVI::f:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos + i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos + i );
+    }break;
+    case COMMANDVI::T:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos - i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos - i + 1);
+    }break;
+    case COMMANDVI::t:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos + i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->GotoPos( pos + i - 1);
+    }break;
     case COMMANDVI::ctrl_D:
         m_ctrl->PageDown();
         this->m_saveCommand = false;
@@ -461,6 +643,12 @@ bool VimCommand::Command_call()
         m_ctrl->CharRight();
         m_ctrl->DeleteBackNotLine();
         break;
+    case COMMANDVI::X:
+        this->m_tmpbuf.Clear();
+        m_ctrl->CharRight();
+        m_ctrl->CharRight();
+        m_ctrl->DeleteBackNotLine();
+        break;
 
     case COMMANDVI::dw: {
         int repeat_dw = std::max(1, m_actions);
@@ -575,14 +763,14 @@ bool VimCommand::Command_call()
         // m_ctrl->SetCurrentPos( /*FIXME*/ );
         search_word(SEARCH_DIRECTION::BACKWARD);
     } break;
-
+    /*
     case COMMANDVI::slesh:
-        sim.Char('F', wxMOD_CONTROL);
+        //sim.Char('F', wxMOD_CONTROL);
         m_currentModus = VIM_MODI::SEARCH_MODUS;
-        wxYield();
+        //wxYield();
         this->m_saveCommand = false;
         break;
-
+    */
     case COMMANDVI::N:
         search_word(SEARCH_DIRECTION::BACKWARD);
         break;
@@ -644,7 +832,9 @@ bool VimCommand::Command_call()
         m_ctrl->CharRight();
         break;
     }
-
+    default:
+        repeat_command = false;
+        break;
     }
 
     return repeat_command;
@@ -687,10 +877,136 @@ bool VimCommand::Command_call_visual_mode()
         m_ctrl->WordRightExtend();
         this->m_saveCommand = false;
         break;
+        /*CHECK-ME*/
+    case COMMANDVI::W:{
+        bool single_word = is_space_following();
+        m_ctrl->WordRightExtend();
+        if ( !single_word ) {
+            bool next_is_space = is_space_following();
+            while ( !next_is_space) {
+                m_ctrl->WordRightExtend();
+                next_is_space = is_space_following();
+            }
+            m_ctrl->WordRightExtend();
+        }
+        /*FIME - is a sequence of white space rightly jumped?*/
+        this->m_saveCommand = false;
+        break;
+    }
     case COMMANDVI::b:
         m_ctrl->WordLeftExtend();
         this->m_saveCommand = false;
         break;
+    /*FIXME*/
+    case COMMANDVI::B:{
+        m_ctrl->WordLeft();
+        bool prev_is_space = is_space_preceding(false, true);
+        while ( !prev_is_space) {
+            m_ctrl->WordLeft();
+            prev_is_space = is_space_preceding(false, true);
+        }
+        this->m_saveCommand = false;
+        break;
+    }
+    case COMMANDVI::e: {
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if ( pos == end ) {
+            m_ctrl->WordRight();
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+        }
+        m_ctrl->SetCurrentPos( end );
+        break;
+    }
+    case COMMANDVI::E: {
+        
+        bool single_word = is_space_following();
+        m_ctrl->WordRight();
+        if ( !single_word ) {
+            bool next_is_space = is_space_following();
+            while ( !next_is_space) {
+                m_ctrl->WordRight();
+                next_is_space = is_space_following();
+            }
+            //_ctrl->WordRight();
+        }
+        /*FIME - is a sequence of white space rightly jumped?*/
+        this->m_saveCommand = false;
+
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if ( pos == end - 1 ) {
+            m_ctrl->WordRight();
+            long i = 1;
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+            while ( m_ctrl->GetCharAt( end + i ) == ' ' ) {
+                i++;
+                end = m_ctrl->WordEndPosition(pos + i, false);
+            }
+        }
+        m_ctrl->GotoPos( end - 1);
+
+        break;
+    }
+    case COMMANDVI::F:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos - i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->SetCurrentPos( pos - i );
+    }break;
+    case COMMANDVI::f:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos + i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->SetCurrentPos( pos + i );
+    }break;
+
+    case COMMANDVI::T:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos - i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->SetCurrentPos( pos - i + 1);
+    }break;
+    case COMMANDVI::t:{
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while ( ( cur_char = m_ctrl->GetCharAt( pos + i ) ) != m_actionCommand) {
+            if ( cur_char == '\n' ) {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if ( eoline != true ) m_ctrl->SetCurrentPos( pos + i - 1 );
+    }break;
 
     case COMMANDVI::G: /*====== START G =======*/
        {
@@ -739,6 +1055,8 @@ bool VimCommand::Command_call_visual_mode()
         this->m_listCopiedStr.push_back( m_ctrl->GetSelectedText() );
         this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
         m_currentModus = VIM_MODI::NORMAL_MODUS;
+        break;
+    default:
         break;
     }
 
@@ -791,18 +1109,22 @@ wxString VimCommand::get_text_at_position( VimCommand::eTypeTextSearch typeTextT
 bool VimCommand::is_space_following()
 {
     long pos = m_ctrl->GetCurrentPos();
+    if ( m_ctrl->GetCharAt(pos+1) == ' ' ) return true;
     long end = m_ctrl->WordEndPosition(pos, true);
     if(m_ctrl->GetCharAt(end) == ' ') return true;
 
     return false;
 }
 
-/*FIXME start is right pos*/
-bool VimCommand::is_space_preceding()
+/*FIXME start is right pos? 
+ * @return true is a space preciding or we reached the start of the file*/
+bool VimCommand::is_space_preceding(bool onlyWordChar, bool cross_line)
 {
     long pos = m_ctrl->GetCurrentPos();
-    long start = m_ctrl->WordStartPosition(pos, true);
-    if(m_ctrl->GetCharAt(start) == ' ') return true;
+    if ( pos == 0 ) return true;
+    long start = m_ctrl->WordStartPosition(pos, onlyWordChar);
+    if ( m_ctrl->GetCharAt(start) == ' ' ) return true;
+    if ( cross_line && m_ctrl->GetCharAt(start) == '\n') return true;
 
     return false;
 }
@@ -834,6 +1156,49 @@ wxString VimCommand::add_preceding_spaces()
     return white_spaces_buf;
 }
 
+bool VimCommand::search_word(SEARCH_DIRECTION direction, long start_pos)
+{
+
+    // /*flag 2: word separated, Big pr small!*/
+    // /*flag 3: same as before*/
+    // /*flag 1-0: from the find other*/
+    long pos;
+    if ( start_pos == -1 ) {
+        pos = m_ctrl->GetCurrentPos();
+    } else {
+        pos = start_pos;
+    }
+    bool found = false;
+    int flag = 3;
+    int pos_prev;
+    if(direction == SEARCH_DIRECTION::BACKWARD) {
+        pos_prev = m_ctrl->FindText(0, pos, m_searchWord, flag);
+    } else {
+        pos_prev = m_ctrl->FindText(pos, m_ctrl->GetTextLength(), m_searchWord, flag);
+        m_ctrl->SetCurrentPos(pos);
+    }
+    m_ctrl->SearchAnchor();
+    if(pos_prev != wxNOT_FOUND) {
+        int pos_word;
+
+        if(direction == SEARCH_DIRECTION::BACKWARD) {
+            pos_word = m_ctrl->SearchPrev(flag, m_searchWord);
+            m_ctrl->GotoPos(pos_word);
+        } else {
+            pos_word = m_ctrl->SearchNext(flag, m_searchWord);
+            /*FIXME error searching next: we get the current*/
+            m_ctrl->GotoPos(pos_word + 1);
+        }
+
+        evidentiate_word();
+        found = true;
+
+    } else {
+        found = false;
+    }
+    return found;
+}
+
 bool VimCommand::search_word(SEARCH_DIRECTION direction)
 {
 
@@ -841,6 +1206,7 @@ bool VimCommand::search_word(SEARCH_DIRECTION direction)
     // /*flag 3: same as before*/
     // /*flag 1-0: from the find other*/
     long pos = m_ctrl->GetCurrentPos();
+
     bool found = false;
     int flag = 3;
     int pos_prev;
@@ -926,10 +1292,53 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::w;
             command_complete = true;
             break;
+        case 'W':
+            m_commandID = COMMANDVI::W;
+            command_complete = true;
+            break;
         case 'b':
             m_commandID = COMMANDVI::b;
             command_complete = true;
             break;
+        case 'B':
+            m_commandID = COMMANDVI::B;
+            command_complete = true;
+            break;
+        case 'e':
+            m_commandID = COMMANDVI::e;
+            command_complete = true;
+            break;
+        case 'E':
+            m_commandID = COMMANDVI::E;
+            command_complete = true;
+            break;
+        case 'f':
+            m_commandID = COMMANDVI::f;
+            if ( this->m_actionCommand != '\0' ) {
+                command_complete = true;
+            }
+            break;
+        case 'F':
+            m_commandID = COMMANDVI::F;
+            command_complete = false;
+            if ( this->m_actionCommand != '\0' ) {
+                command_complete = true;
+            }
+            break;    
+        case 't':
+            m_commandID = COMMANDVI::t;
+            if ( this->m_actionCommand != '\0' ) {
+                command_complete = true;
+            }
+            break;
+        case 'T':
+            m_commandID = COMMANDVI::T;
+            command_complete = false;
+            if ( this->m_actionCommand != '\0' ) {
+                command_complete = true;
+            }
+            break;    
+
         case 'G':
             m_commandID = COMMANDVI::G;
             command_complete = true;
@@ -1041,6 +1450,7 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::cb;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
+
         case 'e':
             command_complete = true;
             m_commandID = COMMANDVI::ce;
@@ -1062,6 +1472,10 @@ bool VimCommand::is_cmd_complete()
     case 'x':
         command_complete = true;
         m_commandID = COMMANDVI::x;
+        break;
+    case 'X':
+        command_complete = true;
+        m_commandID = COMMANDVI::X;
         break;
     case 'd': /*~~~~~~~ d[...] ~~~~~~~~*/
         switch(m_actionCommand) {
@@ -1202,6 +1616,10 @@ bool VimCommand::is_cmd_complete()
         command_complete = true;
         m_commandID = COMMANDVI::J;
         break;
+    default:
+        command_complete = true;
+        m_commandID = COMMANDVI::NO_COMMAND;
+        break;
     }
 
     return command_complete;
@@ -1247,7 +1665,8 @@ void VimCommand::set_ctrl(wxStyledTextCtrl *ctrl) { m_ctrl = ctrl; }
 
 bool VimCommand::DeleteLastCommandChar()
 {
-    if(m_currentModus == VIM_MODI::COMMAND_MODUS) {
+    if(m_currentModus == VIM_MODI::COMMAND_MODUS ||
+       m_currentModus == VIM_MODI::SEARCH_MODUS ) {
         m_tmpbuf.RemoveLast();
         return true;
     }

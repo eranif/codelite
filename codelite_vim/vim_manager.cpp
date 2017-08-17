@@ -26,7 +26,7 @@ VimManager::VimManager(IManager* manager, VimSettings& settings)
     m_ctrl = NULL;
     m_editor = NULL;
     m_mgr = manager;
-
+    status_vim = NULL;
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED,
                                &VimManager::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING,
@@ -62,6 +62,7 @@ void VimManager::OnEditorChanged(wxCommandEvent& event)
 
     DoBindEditor(editor);
 	m_currentCommand.set_ctrl( m_ctrl );
+
 }
 
 void VimManager::OnKeyDown(wxKeyEvent& event)
@@ -87,16 +88,21 @@ void VimManager::OnKeyDown(wxKeyEvent& event)
         case WXK_ESCAPE:
             if(m_currentCommand.get_current_modus() == VIM_MODI::INSERT_MODUS) {
                 m_tmpBuf = m_currentCommand.getTmpBuf();
+            } else if (m_currentCommand.get_current_modus() == VIM_MODI::VISUAL_MODUS) {
+                long pos = m_ctrl->GetCurrentPos();
+                m_ctrl->ClearSelections();
+                m_ctrl->GotoPos( pos );
             }
             skip_event = m_currentCommand.OnEscapeDown();
             break;
         case WXK_RETURN: {
 
             skip_event = m_currentCommand.OnReturnDown(action);
+            status_vim->Show(false);
             break;
         }
         default:
-            if(m_currentCommand.get_current_modus() == VIM_MODI::SEARCH_MODUS) {
+            if(m_currentCommand.get_current_modus() == VIM_MODI::SEARCH_CURR_MODUS) {
                 m_currentCommand.set_current_word(get_current_word());
                 m_currentCommand.set_current_modus(VIM_MODI::NORMAL_MODUS);
             }
@@ -153,18 +159,27 @@ void VimManager::updateMessageModus()
     switch (m_currentCommand.get_current_modus() ) {
     case VIM_MODI::NORMAL_MODUS:
         m_mgr->GetStatusBar()->SetMessage("NORMAL");
+        if ( status_vim->IsShown() ) status_vim->Show(false);
         break;
     case VIM_MODI::COMMAND_MODUS:
-        m_mgr->GetStatusBar()->SetMessage(m_currentCommand.getTmpBuf());
+    case VIM_MODI::SEARCH_MODUS:
+        //m_mgr->GetStatusBar()->SetMessage(m_currentCommand.getTmpBuf());
+        m_tmpBuf = m_currentCommand.getTmpBuf();
+        setUpVimBar();
+        status_vim->SetStatusText( m_tmpBuf );
+        if ( !status_vim->IsShown() ) status_vim->Show(true);
         break;
     case VIM_MODI::VISUAL_MODUS:
         m_mgr->GetStatusBar()->SetMessage("VISUAL");
+        if ( status_vim->IsShown() ) status_vim->Show(false);
         break;
     case VIM_MODI::INSERT_MODUS:
         m_mgr->GetStatusBar()->SetMessage("INSERT");
+        if ( status_vim->IsShown() ) status_vim->Show(false);
         break;
     default:
         m_mgr->GetStatusBar()->SetMessage("NORMAL");
+        if ( status_vim->IsShown() ) status_vim->Show(false);
         break;
     }
 
@@ -315,8 +330,9 @@ void VimManager::DoCleanup(bool unbind)
         m_ctrl->SetCaretStyle(m_caretInsertStyle);
     }
     
-    m_editor = NULL;
-    m_ctrl = NULL;
+    m_editor   = NULL;
+    m_ctrl        = NULL;
+    status_vim = NULL;
     //m_mgr->GetStatusBar()->SetMessage("");
 }
 
@@ -342,8 +358,39 @@ void VimManager::DoBindEditor(IEditor* editor)
     m_ctrl->Bind(wxEVT_CHAR, &VimManager::OnCharEvt, this);
     m_ctrl->Bind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
 
+    /*baby-steps*/
+    setUpVimBar();
+  
     //CallAfter(&VimManager::updateView);
     updateView();
+}
+
+
+void VimManager::setUpVimBar()
+{
+    
+      if ( status_vim != NULL )
+        delete status_vim;
+        
+    //wxWindow* parent = m_ctrl->GetParent();
+    wxWindow* parent = (wxWindow*) m_ctrl;
+    status_vim = new wxStatusBar(parent, 1);
+    //status_vim->Show( true );
+    status_vim->SetFieldsCount(1);
+    
+    setUpVimBarPos();
+
+}
+
+void VimManager::setUpVimBarPos()
+{
+    int hight;
+    int width;
+    wxWindow* parent = (wxWindow*) m_ctrl;
+    parent->GetSize( &width, &hight);
+    //status_vim->Show( true );
+    status_vim->SetSize(wxDefaultCoord, wxDefaultCoord, width, wxDefaultCoord);
+    //status_vim->SetSize(0, 0, width, wxDefaultCoord);
 }
 
 void VimManager::OnWorkspaceClosing(wxCommandEvent& event)

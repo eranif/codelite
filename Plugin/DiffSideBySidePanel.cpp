@@ -57,9 +57,13 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     , m_flags(0)
     , m_ignoreWhitespaceDiffs(false)
     , m_showLinenos(false)
+    , m_showOverviewBar(true)
+    , m_darkTheme(DrawingUtils::IsThemeDark())
 {
     Hide();
     m_config.Load();
+    m_showLinenos = m_config.ShowLineNumbers();
+    m_showOverviewBar = m_config.ShowOverviewBar();
 
     // Vertical is the default; DoLayout() unsplits; but nothing implements Horizontal. So:
     if(m_config.IsSplitHorizontal()) {
@@ -185,16 +189,20 @@ void DiffSideBySidePanel::Diff()
 
     // Create 2 strings "left" and "right"
     wxString leftContent, rightContent;
+    
+    m_overviewPanelMarkers.SetCount(wxMax(resultLeft.size(), resultRight.size())+1, 0);
 
     // The left pane is always the one with the deletions "-"
     for(size_t i = 0; i < resultLeft.size(); ++i) {
         if(resultLeft.at(i).m_type == clDTL::LINE_ADDED) {
             leftContent << resultLeft.at(i).m_line;
             m_leftGreenMarkers.push_back(i);
+            m_overviewPanelMarkers.Item(i) = 1;
 
         } else if(resultLeft.at(i).m_type == clDTL::LINE_REMOVED) {
             leftContent << resultLeft.at(i).m_line;
             m_leftRedMarkers.push_back(i);
+            m_overviewPanelMarkers.Item(i) = 1;
 
         } else if(resultLeft.at(i).m_type == clDTL::LINE_PLACEHOLDER) {
             // PLACEHOLDER
@@ -212,10 +220,12 @@ void DiffSideBySidePanel::Diff()
         if(resultRight.at(i).m_type == clDTL::LINE_REMOVED) {
             rightContent << resultRight.at(i).m_line;
             m_rightRedMarkers.push_back(i);
+            m_overviewPanelMarkers.Item(i) = 1;
 
         } else if(resultRight.at(i).m_type == clDTL::LINE_ADDED) {
             rightContent << resultRight.at(i).m_line;
             m_rightGreenMarkers.push_back(i);
+            m_overviewPanelMarkers.Item(i) = 1;
 
         } else if(resultRight.at(i).m_type == clDTL::LINE_PLACEHOLDER) {
             rightContent << resultRight.at(i).m_line;
@@ -279,7 +289,7 @@ void DiffSideBySidePanel::PrepareViews()
 void DiffSideBySidePanel::DefineMarkers(wxStyledTextCtrl* ctrl)
 {
     wxColour red, green, grey, sideMarker;
-    if(DrawingUtils::IsThemeDark()) {
+    if(m_darkTheme) {
         red = "RED";
         green = "GREEN";
         grey = "dark grey";
@@ -434,6 +444,7 @@ void DiffSideBySidePanel::OnRefreshDiff(wxCommandEvent& event)
         }
     }
     Diff();
+    Refresh();
 }
 
 void DiffSideBySidePanel::DoClean()
@@ -446,6 +457,8 @@ void DiffSideBySidePanel::DoClean()
     m_rightGreenMarkers.clear();
     m_rightRedMarkers.clear();
     m_rightPlaceholdersMarkers.clear();
+    
+    m_overviewPanelMarkers.Clear();
     m_sequences.clear();
 
     m_stcLeft->SetReadOnly(false);
@@ -674,9 +687,10 @@ void DiffSideBySidePanel::OnPageClosing(wxNotifyEvent& event)
 void DiffSideBySidePanel::OnHorizontal(wxCommandEvent& event)
 {
     m_splitter->Unsplit();
-    m_splitter->SplitHorizontally(m_splitterPageLeft, m_splitterPageRight);
     m_config.SetViewMode(DiffConfig::kViewHorizontalSplit);
+
     Diff();
+    CallAfter(&DiffSideBySidePanel::DoLayout);
 }
 
 void DiffSideBySidePanel::OnHorizontalUI(wxUpdateUIEvent& event) { event.Check(m_config.IsSplitHorizontal()); }
@@ -684,9 +698,10 @@ void DiffSideBySidePanel::OnHorizontalUI(wxUpdateUIEvent& event) { event.Check(m
 void DiffSideBySidePanel::OnVertical(wxCommandEvent& event)
 {
     m_splitter->Unsplit();
-    m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight);
     m_config.SetViewMode(DiffConfig::kViewVerticalSplit);
+   
     Diff();
+    CallAfter(&DiffSideBySidePanel::DoLayout);
 }
 
 void DiffSideBySidePanel::OnVerticalUI(wxUpdateUIEvent& event) { event.Check(m_config.IsSplitVertical()); }
@@ -783,14 +798,28 @@ void DiffSideBySidePanel::OnSingleView(wxCommandEvent& event)
 {
     m_config.SetViewMode(DiffConfig::kViewSingle);
     m_splitter->Unsplit();
+    
     Diff();
+    CallAfter(&DiffSideBySidePanel::DoLayout);
 }
 
 void DiffSideBySidePanel::DoLayout()
 {
     if(m_config.IsSingleViewMode()) {
+        m_panelOverviewFull->Hide(); m_panelOverviewL->Show(m_showOverviewBar); m_panelOverviewR->Hide();
         m_splitter->Unsplit();
     }
+    if(m_config.IsSplitHorizontal()) {
+        m_panelOverviewFull->Show(m_showOverviewBar); m_panelOverviewL->Hide(); m_panelOverviewR->Hide();
+        m_splitter->SplitHorizontally(m_splitterPageLeft, m_splitterPageRight);
+    }
+    if(m_config.IsSplitVertical()) {
+        m_panelOverviewFull->Hide(); m_panelOverviewL->Hide(); m_panelOverviewR->Show(m_showOverviewBar);
+        m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight);
+    }
+    m_panelOverviewFull->GetParent()->Layout();
+    m_panelOverviewL->GetParent()->Layout();
+    m_panelOverviewR->GetParent()->Layout();
     GetSizer()->Layout();
     Refresh();
 }
@@ -825,6 +854,7 @@ void DiffSideBySidePanel::OnIgnoreWhitespaceClicked(wxCommandEvent& event)
     wxUnusedVar(event);
     m_ignoreWhitespaceDiffs = !m_ignoreWhitespaceDiffs;
     Diff();
+    Refresh();
 }
 
 void DiffSideBySidePanel::OnIgnoreWhitespaceUI(wxUpdateUIEvent& event)
@@ -837,6 +867,7 @@ void DiffSideBySidePanel::OnShowLinenosClicked(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_showLinenos = !m_showLinenos;
+    m_config.SetShowLineNumbers(m_showLinenos);
     Diff();
 }
 
@@ -844,3 +875,121 @@ void DiffSideBySidePanel::OnShowLinenosUI(wxUpdateUIEvent& event)
 {
    event.Check(m_showLinenos);
 }
+
+void DiffSideBySidePanel::OnShowOverviewBarClicked(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_showOverviewBar = !m_showOverviewBar;
+    m_config.SetShowOverviewBar(m_showOverviewBar);
+    
+    CallAfter(&DiffSideBySidePanel::DoLayout);
+}
+
+void DiffSideBySidePanel::OnShowOverviewBarUI(wxUpdateUIEvent& event)
+{
+   event.Check(m_showOverviewBar);
+}
+
+void DiffSideBySidePanel::OnPaneloverviewEraseBackground(wxEraseEvent& event)
+{
+    if (!m_showOverviewBar) {
+        return;
+    }
+
+    wxWindow* win;
+    if(m_config.IsSplitHorizontal()) {
+        win = m_splitter;
+    } else if(m_config.IsSingleViewMode()) {
+        win = m_stcLeft;
+    } else {
+        win = m_stcRight;
+    }
+    wxWindow* panel = dynamic_cast<wxWindow*>(event.GetEventObject());
+
+    int lines = m_stcLeft->GetLineCount();
+    if (!lines || !win || !panel->IsShown()) {
+        return;
+    }
+
+    int yOffset = 0, x1 = panel->GetClientSize().GetWidth() - 1;
+    int ht = win->GetClientSize().GetHeight();
+
+    if(m_config.IsSplitHorizontal()) {
+        // It's harder if we have to span 2 wxSTCs...
+        yOffset = (ht/2) - m_stcLeft->GetSize().GetHeight(); // The height of the text bits above the stc
+        ht -= yOffset;
+    } else {
+        // Without this, for short files the markers will be below the corresponding diffs
+        ht = wxMin(ht, lines * m_stcLeft->TextHeight(0));
+    }        
+
+    int pixelsPerLine = wxMax(ht / lines, 1);
+    
+    wxDC& dc = *event.GetDC();
+    // Set a distinctive background colour, as the standard panel bg is the same as its container
+    wxColour bg = panel->GetBackgroundColour().ChangeLightness(m_darkTheme ? 105 : 95);
+    dc.SetBrush(bg); dc.SetPen(bg);
+    dc.DrawRectangle (0, yOffset, x1, ht - yOffset);
+    
+    if (!m_overviewPanelMarkers.GetCount()) {
+        return;
+    }
+
+    dc.SetPen(m_darkTheme ? *wxCYAN_PEN : *wxBLUE_PEN);
+    dc.SetBrush(m_darkTheme ? *wxCYAN_BRUSH : *wxBLUE_BRUSH);
+    for (size_t n=0; n < lines; ++n) {
+        if (m_overviewPanelMarkers.Item(n)) {
+            if (pixelsPerLine > 1) {
+                dc.DrawRectangle (0, yOffset + (n*pixelsPerLine),  x1,  pixelsPerLine);
+            } else {
+                if(m_config.IsSplitHorizontal()) {
+                    int y = (n * (ht-yOffset)) / lines;
+                    dc.DrawLine(0, yOffset + y, x1, yOffset + y);
+                } else {
+                    int y = n * ht / lines;
+                    dc.DrawLine(0, yOffset + y, x1, yOffset + y);
+                }
+            }
+        }
+    }
+}
+
+void DiffSideBySidePanel::OnPaneloverviewLeftDown(wxMouseEvent& event)
+{
+    event.Skip();
+
+    if (!m_showOverviewBar) {
+        return;
+    }
+
+    wxWindow* panel = static_cast<wxWindow*>(event.GetEventObject());
+    wxWindow* win;
+    if(m_config.IsSplitHorizontal()) {
+        win = m_splitter;
+    } else if(m_config.IsSingleViewMode()) {
+        win = m_stcLeft;
+    } else {
+        win = m_stcRight;
+    }
+
+    int yOffset = 0, ht = win->GetClientSize().GetHeight();
+    int pos = event.GetPosition().y;
+    int lines = m_stcLeft->GetLineCount();
+
+    if(m_config.IsSplitHorizontal()) {
+        // It's harder if we have to span 2 wxSTCs...
+        yOffset = (ht/2) - m_stcLeft->GetSize().GetHeight(); // The height of the text bits above the stc
+        pos -= yOffset;
+        ht -= (2*yOffset);
+    }
+
+    const int extra = 10; // Allow clicks just above/below the 'bar' to succeed
+    if (!lines || !win || !panel->IsShown() || pos > (ht+extra) || pos < -extra) {
+        return;
+    }
+    
+    // Make the wxSTCs scroll to the line matching the mouse-click
+    m_stcLeft->ScrollToLine((lines * pos) / ht);
+    
+}
+

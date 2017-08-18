@@ -81,6 +81,7 @@ protected:
     virtual void OnSingleView(wxCommandEvent& event);
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event);
     virtual void OnRightPickerUI(wxUpdateUIEvent& event);
+    virtual void OnPaneloverviewLeftDown(wxMouseEvent& event);
 
     void OnMenuCopyLeft2Right(wxCommandEvent& event);
     void OnMenuCopyRight2Left(wxCommandEvent& event);
@@ -92,6 +93,10 @@ protected:
     Markers_t m_rightGreenMarkers;
     Markers_t m_rightRedMarkers;
     Markers_t m_rightPlaceholdersMarkers;
+    
+    wxArrayInt m_overviewPanelMarkers;
+    
+    bool m_darkTheme;
 
     std::vector<std::pair<int, int> > m_sequences; // start-line - end-line pairs
     int m_cur_sequence;
@@ -102,6 +107,7 @@ protected:
     DiffConfig m_config;
     bool m_ignoreWhitespaceDiffs;
     bool m_showLinenos;
+    bool m_showOverviewBar;
 
 protected:
     wxString DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const;
@@ -136,6 +142,9 @@ protected:
     virtual void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event);
     virtual void OnShowLinenosClicked(wxCommandEvent& event);
     virtual void OnShowLinenosUI(wxUpdateUIEvent& event);
+    virtual void OnShowOverviewBarClicked(wxCommandEvent& event);
+    virtual void OnShowOverviewBarUI(wxUpdateUIEvent& event);
+    virtual void OnPaneloverviewEraseBackground(wxEraseEvent& event);
     void OnPageClosing(wxNotifyEvent& event);
 
     void PrepareViews();

@@ -613,7 +613,7 @@ bool TdsDatabaseLayer::TableExists(const wxString& table)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -678,7 +678,7 @@ bool TdsDatabaseLayer::ViewExists(const wxString& view)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -724,7 +724,7 @@ wxArrayString TdsDatabaseLayer::GetTables()
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -764,7 +764,7 @@ wxArrayString TdsDatabaseLayer::GetViews()
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -861,7 +861,7 @@ wxArrayString TdsDatabaseLayer::GetColumns(const wxString& table)
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 

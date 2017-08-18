@@ -727,7 +727,7 @@ bool FirebirdDatabaseLayer::TableExists(const wxString& table)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -793,7 +793,7 @@ bool FirebirdDatabaseLayer::ViewExists(const wxString& view)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -838,7 +838,7 @@ wxArrayString FirebirdDatabaseLayer::GetTables()
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -877,7 +877,7 @@ wxArrayString FirebirdDatabaseLayer::GetViews()
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -934,7 +934,7 @@ wxArrayString FirebirdDatabaseLayer::GetColumns(const wxString& table)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 

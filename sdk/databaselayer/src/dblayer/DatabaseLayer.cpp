@@ -177,7 +177,7 @@ int DatabaseLayer::GetSingleResultInt(const wxString& strSQL, const wxVariant* f
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -261,7 +261,7 @@ wxString DatabaseLayer::GetSingleResultString(const wxString& strSQL, const wxVa
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -345,7 +345,7 @@ long DatabaseLayer::GetSingleResultLong(const wxString& strSQL, const wxVariant*
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -429,7 +429,7 @@ bool DatabaseLayer::GetSingleResultBool(const wxString& strSQL, const wxVariant*
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -513,7 +513,7 @@ wxDateTime DatabaseLayer::GetSingleResultDate(const wxString& strSQL, const wxVa
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -597,7 +597,7 @@ void* DatabaseLayer::GetSingleResultBlob(const wxString& strSQL, const wxVariant
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -681,7 +681,7 @@ double DatabaseLayer::GetSingleResultDouble(const wxString& strSQL, const wxVari
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -744,7 +744,7 @@ wxArrayInt DatabaseLayer::GetResultsArrayInt(const wxString& strSQL, const wxVar
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -797,7 +797,7 @@ wxArrayString DatabaseLayer::GetResultsArrayString(const wxString& strSQL, const
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -850,7 +850,7 @@ wxArrayLong DatabaseLayer::GetResultsArrayLong(const wxString& strSQL, const wxV
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 

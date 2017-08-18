@@ -326,7 +326,7 @@ bool SqliteDatabaseLayer::TableExists(const wxString& table)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -391,7 +391,7 @@ bool SqliteDatabaseLayer::ViewExists(const wxString& view)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -436,7 +436,7 @@ wxArrayString SqliteDatabaseLayer::GetTables()
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -475,7 +475,7 @@ wxArrayString SqliteDatabaseLayer::GetViews()
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -529,7 +529,7 @@ wxArrayString SqliteDatabaseLayer::GetColumns(const wxString& table)
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 

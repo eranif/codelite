@@ -158,7 +158,7 @@ FirebirdPreparedStatement* FirebirdPreparedStatement::CreateStatement(FirebirdIn
       }
 
       // Pass on the error
-      throw e;
+      throw;
     }
 #endif
 

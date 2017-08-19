@@ -56,3 +56,18 @@ target_link_libraries(${PLUGIN_NAME}
 
 # Use CodeLite's macro: CL_INSTALL_PLUGIN which handles both OSX and Linux installation
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
+
+# install the phprefactor.phar
+if(APPLE)
+    install(
+      FILES ${CL_SRC_ROOT}/PHPRefactoring/phprefactor.phar
+      DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport
+      USE_SOURCE_PERMISSIONS
+    )
+else()
+    install(
+      FILES ${CL_SRC_ROOT}/PHPRefactoring/phprefactor.phar
+      DESTINATION ${CL_PREFIX}/share/codelite
+      USE_SOURCE_PERMISSIONS
+    )
+endif()

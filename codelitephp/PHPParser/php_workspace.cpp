@@ -676,11 +676,19 @@ void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
         clCommandEvent event(wxEVT_PHP_WORKSPACE_FILES_SYNC_START);
         owner->AddPendingEvent(event);
     }
-
-    PHPProject::Map_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        m_inSyncProjects.insert(iter->first);
-        iter->second->SyncWithFileSystemAsync(this);
+    
+    if(!m_projects.empty()) {
+        PHPProject::Map_t::const_iterator iter = m_projects.begin();
+        for(; iter != m_projects.end(); ++iter) {
+            m_inSyncProjects.insert(iter->first);
+            iter->second->SyncWithFileSystemAsync(this);
+        }
+    } else {
+        if(owner) {
+            // Fire sync-ended event
+            clCommandEvent endEvent(wxEVT_PHP_WORKSPACE_FILES_SYNC_END);
+            owner->AddPendingEvent(endEvent);
+        }
     }
 }
 

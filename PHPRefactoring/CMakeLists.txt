@@ -62,12 +62,10 @@ if(APPLE)
     install(
       FILES ${CL_SRC_ROOT}/PHPRefactoring/phprefactor.phar
       DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport
-      USE_SOURCE_PERMISSIONS
     )
 else()
     install(
       FILES ${CL_SRC_ROOT}/PHPRefactoring/phprefactor.phar
       DESTINATION ${CL_PREFIX}/share/codelite
-      USE_SOURCE_PERMISSIONS
     )
 endif()

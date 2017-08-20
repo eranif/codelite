@@ -54,11 +54,11 @@
 
 DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
+    , m_darkTheme(DrawingUtils::IsThemeDark())
     , m_flags(0)
     , m_ignoreWhitespaceDiffs(false)
     , m_showLinenos(false)
     , m_showOverviewBar(true)
-    , m_darkTheme(DrawingUtils::IsThemeDark())
 {
     Hide();
     m_config.Load();
@@ -171,7 +171,7 @@ void DiffSideBySidePanel::Diff()
         // If the user wants to ignore whitespace diffs, go through first to remove them
         // Note that this doesn't work in singleview mode where each change is shown on
         // 2 lines, before & after. Having those unmarked would be very confusing
-        for(size_t l=0, r=0; l < resultLeft.size(),r < resultRight.size(); ++l, ++r) {
+        for(size_t l=0, r=0; (l < resultLeft.size()) && (r < resultRight.size()); ++l, ++r) {
             if (resultLeft.at(l).m_type == clDTL::LINE_REMOVED || resultLeft.at(l).m_type == clDTL::LINE_ADDED) {
                 wxString left(resultLeft.at(l).m_line);
                 left.Replace(" ", ""); left.Replace("\t", ""); left.Replace("\r", "");
@@ -937,7 +937,7 @@ void DiffSideBySidePanel::OnPaneloverviewEraseBackground(wxEraseEvent& event)
 
     dc.SetPen(m_darkTheme ? *wxCYAN_PEN : *wxBLUE_PEN);
     dc.SetBrush(m_darkTheme ? *wxCYAN_BRUSH : *wxBLUE_BRUSH);
-    for (size_t n=0; n < lines; ++n) {
+    for (size_t n=0; n < (size_t)lines; ++n) {
         if (m_overviewPanelMarkers.Item(n)) {
             if (pixelsPerLine > 1) {
                 dc.DrawRectangle (0, yOffset + (n*pixelsPerLine),  x1,  pixelsPerLine);

@@ -1,7 +1,6 @@
 #ifndef __VIM_COMMANDS__
 #define __VIM_COMMANDS__
 
-
 #include "ieditor.h"
 #include "imanager.h"
 #include <vector>
@@ -32,7 +31,7 @@ enum class VIM_MODI {
 enum class SEARCH_DIRECTION { BACKWARD, FORWARD };
 
 enum class MESSAGES_VIM {
-    NO_ERROR_VIM_MSG = 0, 
+    NO_ERROR_VIM_MSG = 0,
     UNBALNCED_PARENTESIS_VIM_MSG,
     SAVED_VIM_MSG,
     SAVE_AND_CLOSE_VIM_MSG,
@@ -48,11 +47,16 @@ enum class COMMANDVI {
     l,
     _0,
     _$,
-    w, W,
-    b, B,
-    e, E, /*FIXME E works/does not work*/
-    f, F,
-    t, T,
+    w,
+    W,
+    b,
+    B,
+    e,
+    E, /*FIXME E works/does not work*/
+    f,
+    F,
+    t,
+    T,
     G,
     gg,
     i,
@@ -66,8 +70,8 @@ enum class COMMANDVI {
     r,
     R,
     cw,
-	cb,
-	ce,
+    cb,
+    ce,
     C,
     cc,
     S,
@@ -77,7 +81,7 @@ enum class COMMANDVI {
     dw,
     dd,
     db,
-	de,
+    de,
     D,
     diesis,
     N,
@@ -88,7 +92,7 @@ enum class COMMANDVI {
     ctrl_D, /*One has to 'disattivate' the default behavior of Ctrl+D/U*/
     p,
     P,
-    y, /*visual mode*/        
+    y, /*visual mode*/
     yy,
     yw,
     yb,
@@ -137,11 +141,10 @@ public:
     ~VimBaseCommand();
 
     bool isCurrentEditor(const wxString& fullpath_name);
-    void saveCurrentStatus(const VimCommand &command);
-    void setSavedStatus( VimCommand &command);
-    
+    void saveCurrentStatus(const VimCommand& command);
+    void setSavedStatus(VimCommand& command);
+
 private:
-    
     wxString m_fullpath_name;
 
     /*~~~~~~~~ INFO ~~~~~~~~~*/
@@ -172,13 +175,13 @@ public:
     };
 
     enum eTypeTextSearch {
-       kAllWord,
-       kFromPosToEndWord,
-       kFromPosToBeginWord,
-       kFromPositionToEndLine,
-       kFromPositionToBeginLine
+        kAllWord,
+        kFromPosToEndWord,
+        kFromPosToBeginWord,
+        kFromPositionToEndLine,
+        kFromPositionToBeginLine
     };
-    
+
 public:
     VimCommand();
     ~VimCommand();
@@ -211,7 +214,7 @@ public:
     void set_current_modus(VIM_MODI modus);
     void reset_repeat_last();
     void ResetCommand();
-    void set_ctrl(wxStyledTextCtrl *ctrl);
+    void set_ctrl(wxStyledTextCtrl* ctrl);
 
 private:
     /*~~~~~~~~ PRIVAT METHODS ~~~~~~~~~*/
@@ -232,9 +235,9 @@ private:
     void command_modus(wxChar ch);
     void insert_modus(wxChar ch);
     void parse_cmd_string();
-    void completing_command( wxChar ch );
+    void completing_command(wxChar ch);
     /*~~~~~~~~ INFO ~~~~~~~~~*/
-    COMMANDVI m_commandID;             /*!< id of the current command to identify it*/
+    COMMANDVI m_commandID; /*!< id of the current command to identify it*/
     MESSAGES_VIM m_message_ID;
     COMMAND_PART m_currentCommandPart; /*!< current part of the command */
     VIM_MODI m_currentModus;           /*!< actual mode the editor is in */
@@ -255,8 +258,8 @@ private:
     bool m_newLineCopy; /*!< take track if we copy/pase the complete line (dd,yy)*/
     std::vector<wxString> m_listCopiedStr;
 
-	/*~~~~~~~ EDITOR ~~~~~~~~~*/
-	wxStyledTextCtrl *m_ctrl;
+    /*~~~~~~~ EDITOR ~~~~~~~~~*/
+    wxStyledTextCtrl* m_ctrl;
     friend VimBaseCommand;
 };
 

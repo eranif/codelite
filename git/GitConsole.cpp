@@ -179,11 +179,15 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     GitImages m_images;
     m_images.SetBitmapResolution(clBitmap::ShouldLoadHiResImages() ? "@2x" : "");
+    
+#ifdef __WXMSW__
+    m_dvFiles->SetIndent(clGetScaledSize(16));
+#endif
 
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
     m_modifiedBmp = m_bitmapLoader->LoadBitmap("warning");
     m_untrackedBmp = m_bitmapLoader->LoadBitmap("info");
-    m_folderBmp = m_bitmapLoader->LoadBitmap("folder");
+    m_folderBmp = m_bitmapLoader->LoadBitmap("folder-yellow");
     m_newBmp = m_bitmapLoader->LoadBitmap("plus");
     m_deleteBmp = m_bitmapLoader->LoadBitmap("minus");
 
@@ -498,7 +502,7 @@ void GitConsole::OnResetFile(wxCommandEvent& event)
         return;
     }
     
-    GitResetDlg dlg(GetParent(), filesToRevert, filesToRemove);
+    GitResetDlg dlg(EventNotifier::Get()->TopFrame(), filesToRevert, filesToRemove);
     if(dlg.ShowModal() != wxID_OK) {
         return;
     }

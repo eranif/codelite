@@ -40,9 +40,9 @@ public:
      * LocalSocket is implemented under Windows with TCP/IP with IP always set to 127.0.0.1
      * @param pipePath
      */
-    void CreateServer(const std::string &pipePath) throw (clSocketException);
-    void CreateServer(const std::string &address, int port) throw (clSocketException);
-    clSocketBase::Ptr_t WaitForNewConnection( long timeout = -1 ) throw (clSocketException);
+    void CreateServer(const std::string &pipePath);
+    void CreateServer(const std::string &address, int port);
+    clSocketBase::Ptr_t WaitForNewConnection( long timeout = -1 );
 };
 
 #endif // CLSOCKETSERVER_H

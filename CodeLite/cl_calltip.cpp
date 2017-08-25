@@ -51,6 +51,7 @@ clCallTip& clCallTip::operator=(const clCallTip& rhs)
 {
     if(this == &rhs) return *this;
     m_tips = rhs.m_tips;
+    m_curr = rhs.m_curr;
     return *this;
 }
 

@@ -1,6 +1,7 @@
 #include "CxxVariableScanner.h"
 #include "CxxScannerTokens.h"
 #include <algorithm>
+#include "file_logger.h"
 
 CxxVariableScanner::CxxVariableScanner(const wxString& buffer)
     : m_scanner(NULL)
@@ -316,6 +317,10 @@ bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
 void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer)
 {
     Scanner_t sc = ::LexerNew(m_buffer);
+    if(!sc) {
+        clWARNING() << "CxxVariableScanner::OptimizeBuffer(): failed to create Scanner_t" << clEndl;
+        return; // Failed to allocate scanner
+    }
     int depth = 0;
     CxxLexerToken tok;
     CxxLexerToken lastToken;

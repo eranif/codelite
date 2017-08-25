@@ -399,6 +399,21 @@ void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
     }
 }
 
+void DiffSideBySidePanel::OnLeftStcUpdateUI(wxStyledTextEvent& event)
+{
+    event.Skip();
+    if (m_showOverviewBar) {
+        // This makes the Overview bar's 'Where are we?' marker react to scrolling
+        if(m_config.IsSingleViewMode()) {
+            m_panelOverviewL->Refresh();
+        } else if(m_config.IsSplitHorizontal()) {
+            m_panelOverviewFull->Refresh();
+        } else {
+            m_panelOverviewR->Refresh();
+        }
+    }
+}
+
 void DiffSideBySidePanel::SetFilesDetails(
     const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile)
 {
@@ -935,12 +950,31 @@ void DiffSideBySidePanel::OnPaneloverviewEraseBackground(wxEraseEvent& event)
         return;
     }
 
+    if (m_stcLeft->LinesOnScreen() < lines) {
+        // Make it clearer which markers correspond to any currently-displayed diff-lines
+        int topVisibleLine = m_stcLeft->GetFirstVisibleLine();
+        int depth =  wxMin(m_stcLeft->LinesOnScreen(), lines);
+
+        dc.SetBrush(bg.ChangeLightness(m_darkTheme ? 110 : 90));
+        dc.SetPen(bg.ChangeLightness(m_darkTheme ? 120 : 80));
+        if(m_config.IsSplitHorizontal()) {
+            dc.DrawRectangle(0, yOffset + topVisibleLine * (ht-yOffset) / lines, x1, wxMax(depth * (ht-yOffset) / lines, 1));
+        } else {
+            dc.DrawRectangle(0, yOffset + topVisibleLine * ht / lines, x1, wxMax(depth * ht / lines, 1));
+        }
+    }
+
+    // Finally paint the markers
     dc.SetPen(m_darkTheme ? *wxCYAN_PEN : *wxBLUE_PEN);
     dc.SetBrush(m_darkTheme ? *wxCYAN_BRUSH : *wxBLUE_BRUSH);
     for (size_t n=0; n < (size_t)lines; ++n) {
         if (m_overviewPanelMarkers.Item(n)) {
             if (pixelsPerLine > 1) {
-                dc.DrawRectangle (0, yOffset + (n*pixelsPerLine),  x1,  pixelsPerLine);
+                if(m_config.IsSplitHorizontal()) {
+                    dc.DrawRectangle (0, yOffset + (n*pixelsPerLine), x1, pixelsPerLine);
+                } else {
+                    dc.DrawRectangle (0, yOffset + (n*ht) / lines, x1, pixelsPerLine); // Don't use pixelsPerLine for y0; it's wrong for short files
+                }
             } else {
                 if(m_config.IsSplitHorizontal()) {
                     int y = (n * (ht-yOffset)) / lines;
@@ -990,6 +1024,4 @@ void DiffSideBySidePanel::OnPaneloverviewLeftDown(wxMouseEvent& event)
     
     // Make the wxSTCs scroll to the line matching the mouse-click
     m_stcLeft->ScrollToLine((lines * pos) / ht);
-    
 }
-

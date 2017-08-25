@@ -138,6 +138,7 @@ protected:
     virtual void OnRefreshDiff(wxCommandEvent& event);
     virtual void OnLeftStcPainted(wxStyledTextEvent& event);
     virtual void OnRightStcPainted(wxStyledTextEvent& event);
+    virtual void OnLeftStcUpdateUI(wxStyledTextEvent& event);
     virtual void OnIgnoreWhitespaceClicked(wxCommandEvent& event);
     virtual void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event);
     virtual void OnShowLinenosClicked(wxCommandEvent& event);

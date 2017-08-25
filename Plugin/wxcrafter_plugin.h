@@ -146,6 +146,7 @@ protected:
     virtual void OnBrowseLeftFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnLeftStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnPaneloverviewEraseBackground(wxEraseEvent& event) { event.Skip(); }
     virtual void OnPaneloverviewLeftDown(wxMouseEvent& event) { event.Skip(); }
     virtual void OnRightPickerUI(wxUpdateUIEvent& event) { event.Skip(); }

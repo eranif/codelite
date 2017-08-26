@@ -940,10 +940,14 @@ void DiffSideBySidePanel::OnPaneloverviewEraseBackground(wxEraseEvent& event)
     }        
 
     int pixelsPerLine = wxMax(ht / lines, 1);
-    
     wxDC& dc = *event.GetDC();
+    
     // Set a distinctive background colour, as the standard panel bg is the same as its container
-    wxColour bg = panel->GetBackgroundColour().ChangeLightness(m_darkTheme ? 105 : 95);
+    // NB When deciding whether to use dark-theme colours, don't use the CodeLite theme which 
+    // probably won't affect the bar; measure its actual colour
+    wxColour bg = panel->GetBackgroundColour();
+    bool isDarkTheme = (bg.Red() + bg.Blue() + bg.Green()) < 384;
+    bg.ChangeLightness(isDarkTheme ? 105 : 95);
     dc.SetBrush(bg); dc.SetPen(bg);
     dc.DrawRectangle (0, yOffset, x1, ht - yOffset);
     
@@ -956,8 +960,8 @@ void DiffSideBySidePanel::OnPaneloverviewEraseBackground(wxEraseEvent& event)
         int topVisibleLine = m_stcLeft->GetFirstVisibleLine();
         int depth =  wxMin(m_stcLeft->LinesOnScreen(), lines);
 
-        dc.SetBrush(bg.ChangeLightness(m_darkTheme ? 110 : 90));
-        dc.SetPen(bg.ChangeLightness(m_darkTheme ? 120 : 80));
+        dc.SetBrush(bg.ChangeLightness(isDarkTheme ? 110 : 90));
+        dc.SetPen(bg.ChangeLightness(isDarkTheme ? 120 : 80));
         if(m_config.IsSplitHorizontal()) {
             dc.DrawRectangle(0, yOffset + topVisibleLine * (ht-yOffset) / lines, x1, wxMax(depth * (ht-yOffset) / lines, 1));
         } else {
@@ -966,8 +970,8 @@ void DiffSideBySidePanel::OnPaneloverviewEraseBackground(wxEraseEvent& event)
     }
 
     // Finally paint the markers
-    dc.SetPen(m_darkTheme ? *wxCYAN_PEN : *wxBLUE_PEN);
-    dc.SetBrush(m_darkTheme ? *wxCYAN_BRUSH : *wxBLUE_BRUSH);
+    dc.SetPen(isDarkTheme ? *wxCYAN_PEN : *wxBLUE_PEN);
+    dc.SetBrush(isDarkTheme ? *wxCYAN_BRUSH : *wxBLUE_BRUSH);
     for (size_t n=0; n < (size_t)lines; ++n) {
         if (m_overviewPanelMarkers.Item(n)) {
             if (pixelsPerLine > 1) {

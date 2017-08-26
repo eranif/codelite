@@ -36,7 +36,7 @@ public:
         kCopyLeftToRightAndMove = (1 << 0),
         kCopyRightToLeftAndMove = (1 << 1),
         diffShowLineNumbers = (1 << 2),
-        diffShowOverviewBar = (1 << 3),
+        diffHideOverviewBar = (1 << 3),
     };
 
     // View mode
@@ -90,11 +90,11 @@ public:
         }
     }
 
-    bool ShowOverviewBar() const { return m_flags & diffShowOverviewBar; }
-    void SetShowOverviewBar(bool flag) {
-        m_flags &= ~diffShowOverviewBar;
+    bool HideOverviewBar() const { return m_flags & diffHideOverviewBar; }
+    void SetHideOverviewBar(bool flag) {
+        m_flags &= ~diffHideOverviewBar;
         if (flag) {
-            m_flags |= diffShowOverviewBar;
+            m_flags |= diffHideOverviewBar;
         }
     }
 

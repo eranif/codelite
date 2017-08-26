@@ -63,7 +63,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     Hide();
     m_config.Load();
     m_showLinenos = m_config.ShowLineNumbers();
-    m_showOverviewBar = m_config.ShowOverviewBar();
+    m_showOverviewBar = !m_config.HideOverviewBar();
 
     // Vertical is the default; DoLayout() unsplits; but nothing implements Horizontal. So:
     if(m_config.IsSplitHorizontal()) {
@@ -895,7 +895,8 @@ void DiffSideBySidePanel::OnShowOverviewBarClicked(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_showOverviewBar = !m_showOverviewBar;
-    m_config.SetShowOverviewBar(m_showOverviewBar);
+    // m_config thinks 'Hide' not 'Show' so that the default state will be shown
+    m_config.SetHideOverviewBar(!m_showOverviewBar);
     
     CallAfter(&DiffSideBySidePanel::DoLayout);
 }

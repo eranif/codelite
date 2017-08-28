@@ -25,10 +25,10 @@ void CxxPreProcessorScanner::GetRestOfPPLine(wxString& rest, bool collectNumberO
 {
     CxxLexerToken token;
     bool numberFound = false;
-    while(::LexerNext(m_scanner, token) && token.type != T_PP_STATE_EXIT) {
+    while(m_scanner && ::LexerNext(m_scanner, token) && token.type != T_PP_STATE_EXIT) {
         if(!numberFound && collectNumberOnly) {
             if(token.type == T_PP_DEC_NUMBER || token.type == T_PP_OCTAL_NUMBER || token.type == T_PP_HEX_NUMBER ||
-                token.type == T_PP_FLOAT_NUMBER) {
+               token.type == T_PP_FLOAT_NUMBER) {
                 rest = token.text;
                 numberFound = true;
             }
@@ -43,7 +43,7 @@ bool CxxPreProcessorScanner::ConsumeBlock()
 {
     CxxLexerToken token;
     int depth = 1;
-    while(::LexerNext(m_scanner, token)) {
+    while(m_scanner && ::LexerNext(m_scanner, token)) {
         switch(token.type) {
         case T_PP_ENDIF:
             depth--;
@@ -70,7 +70,7 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
     CxxLexerToken token;
     bool searchingForBranch = false;
     CxxPreProcessorToken::Map_t& ppTable = pp->GetTokens();
-    while(::LexerNext(m_scanner, token)) {
+    while(m_scanner && ::LexerNext(m_scanner, token)) {
         // Pre Processor state
         switch(token.type) {
         case T_PP_INCLUDE_FILENAME: {
@@ -195,7 +195,7 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
 bool CxxPreProcessorScanner::CheckIfDefined(const CxxPreProcessorToken::Map_t& table)
 {
     CxxLexerToken token;
-    if(::LexerNext(m_scanner, token)) {
+    if(m_scanner && ::LexerNext(m_scanner, token)) {
         if(token.type == T_PP_STATE_EXIT) {
             return false;
         }
@@ -238,7 +238,7 @@ bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)
     CxxPreProcessorExpression* cur = new CxxPreProcessorExpression(false);
     ExpressionLocker locker(cur);
     CxxPreProcessorExpression* head = cur;
-    while(::LexerNext(m_scanner, token)) {
+    while(m_scanner && ::LexerNext(m_scanner, token)) {
         if(token.type == T_PP_STATE_EXIT) {
             bool res = head->IsTrue();
             return res;
@@ -360,7 +360,7 @@ bool CxxPreProcessorScanner::ConsumeCurrentBranch()
     // T_PP_ELIF
     // T_PP_ELSE
     // T_PP_ENDIF
-    while(::LexerNext(m_scanner, token)) {
+    while(m_scanner && ::LexerNext(m_scanner, token)) {
         switch(token.type) {
         case T_PP_IF:
         case T_PP_IFDEF:
@@ -391,7 +391,7 @@ bool CxxPreProcessorScanner::ConsumeCurrentBranch()
 
 void CxxPreProcessorScanner::ReadUntilMatch(int type, CxxLexerToken& token) throw(CxxLexerException)
 {
-    while(::LexerNext(m_scanner, token)) {
+    while(m_scanner && ::LexerNext(m_scanner, token)) {
         if(token.type == type) {
             return;
         } else if(token.type == T_PP_STATE_EXIT) {

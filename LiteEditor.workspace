@@ -71,13 +71,14 @@
   </VirtualDirectory>
   <Project Name="codelite_vim" Path="codelite_vim/codelite_vim.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x86_Release" Selected="yes">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
       <Project Name="AutoSave" ConfigName="Win_x86_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x86_Release"/>
       <Project Name="CodeFormatter" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_vim" ConfigName="Win_x86_Release"/>
       <Project Name="CodeLiteDiff" ConfigName="Win_x86_Release"/>
       <Project Name="CodeLiteIDE" ConfigName="Win_x86_Release"/>
       <Project Name="ContinuousBuild" ConfigName="Win_x86_Release"/>
@@ -102,10 +103,11 @@
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
       <Project Name="Outline" ConfigName="Win_x86_Release"/>
       <Project Name="PCH" ConfigName="Release"/>
+      <Project Name="PHPLint" ConfigName="Win_x86_Release"/>
       <Project Name="PHPParser" ConfigName="Release"/>
       <Project Name="PHPParserUnitTests" ConfigName="Release"/>
       <Project Name="PHPPlugin" ConfigName="Win_x86_Release"/>
-      <Project Name="PHPLint" ConfigName="Win_x64_Debug"/>
+      <Project Name="PHPRefactoring" ConfigName="Win_x86_Release"/>
       <Project Name="plugin_sdk" ConfigName="Win_x86_Release"/>
       <Project Name="QMakePlugin" ConfigName="Win_x86_Release"/>
       <Project Name="SFTP" ConfigName="Win_x86_Release"/>
@@ -122,9 +124,6 @@
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
-      <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
-      <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
-      <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -346,7 +345,7 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>

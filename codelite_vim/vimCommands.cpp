@@ -582,11 +582,18 @@ bool VimCommand::Command_call()
         break;
     case COMMANDVI::cw:
         this->m_tmpbuf.Clear();
-        m_ctrl->DelWordRight();
+        for( int i = 0; i < m_actions; ++i )
+            m_ctrl->DelWordRight();
+        break;
+    case COMMANDVI::cb:
+        this->m_tmpbuf.Clear();
+        for( int i = 0; i < m_actions; ++i )
+            m_ctrl->DelWordLeft();
         break;
     case COMMANDVI::ce:
         this->m_tmpbuf.Clear();
-        m_ctrl->DelWordRightEnd();
+        for( int i = 0; i < m_actions; ++i )
+            m_ctrl->DelWordRightEnd();
         break;
 
     case COMMANDVI::S: {
@@ -1232,67 +1239,81 @@ bool VimCommand::is_cmd_complete()
 {
 
     bool command_complete = false;
-
+    bool possible_command = false;
     switch(m_baseCommand) {
 
         /*========================== MOVEMENT =========================*/
         {
         case 'j':
+            possible_command = true;
             m_commandID = COMMANDVI::j;
             command_complete = true;
             break;
         case 'h':
+            possible_command = true;
             m_commandID = COMMANDVI::h;
             command_complete = true;
             break;
         case 'l':
+            possible_command = true;
             m_commandID = COMMANDVI::l;
             command_complete = true;
             break;
         case 'k':
+            possible_command = true;
             m_commandID = COMMANDVI::k;
             command_complete = true;
             break;
 
         case '$':
+            possible_command = true;
             m_commandID = COMMANDVI::_$;
             command_complete = true;
             break;
         case '0':
+            possible_command = true;
             m_commandID = COMMANDVI::_0;
             command_complete = true;
             break;
         case 'w':
+            possible_command = true;
             m_commandID = COMMANDVI::w;
             command_complete = true;
             break;
         case 'W':
+            possible_command = true;
             m_commandID = COMMANDVI::W;
             command_complete = true;
             break;
         case 'b':
+            possible_command = true;
             m_commandID = COMMANDVI::b;
             command_complete = true;
             break;
         case 'B':
+            possible_command = true;
             m_commandID = COMMANDVI::B;
             command_complete = true;
             break;
         case 'e':
+            possible_command = true;
             m_commandID = COMMANDVI::e;
             command_complete = true;
             break;
         case 'E':
+            possible_command = true;
             m_commandID = COMMANDVI::E;
             command_complete = true;
             break;
         case 'f':
+            possible_command = true;
             m_commandID = COMMANDVI::f;
             if(this->m_actionCommand != '\0') {
                 command_complete = true;
             }
             break;
         case 'F':
+            possible_command = true;
             m_commandID = COMMANDVI::F;
             command_complete = false;
             if(this->m_actionCommand != '\0') {
@@ -1300,12 +1321,14 @@ bool VimCommand::is_cmd_complete()
             }
             break;
         case 't':
+            possible_command = true;
             m_commandID = COMMANDVI::t;
             if(this->m_actionCommand != '\0') {
                 command_complete = true;
             }
             break;
         case 'T':
+            possible_command = true;
             m_commandID = COMMANDVI::T;
             command_complete = false;
             if(this->m_actionCommand != '\0') {
@@ -1314,10 +1337,12 @@ bool VimCommand::is_cmd_complete()
             break;
 
         case 'G':
+            possible_command = true;
             m_commandID = COMMANDVI::G;
             command_complete = true;
             break;
         case 'g':
+            possible_command = true;
             if(this->m_actionCommand == 'g') {
                 m_commandID = COMMANDVI::gg;
                 command_complete = true;
@@ -1327,12 +1352,14 @@ bool VimCommand::is_cmd_complete()
         /*===================== CANGE INTO INSER ====================*/
         {
         case 'i':
+            possible_command = true;
             m_commandID = COMMANDVI::i;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             command_complete = true;
             m_repeat = 1;
             break;
         case 'I':
+            possible_command = true;
             m_commandID = COMMANDVI::I;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             command_complete = true;
@@ -1340,12 +1367,14 @@ bool VimCommand::is_cmd_complete()
             break;
 
         case 'a':
+            possible_command = true;
             m_commandID = COMMANDVI::a;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             command_complete = true;
             m_repeat = 1;
             break;
         case 'A':
+            possible_command = true;
             m_commandID = COMMANDVI::A;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             command_complete = true;
@@ -1353,12 +1382,14 @@ bool VimCommand::is_cmd_complete()
             break;
 
         case 'o':
+            possible_command = true;
             m_commandID = COMMANDVI::o;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             command_complete = true;
             m_repeat = 1;
             break;
         case 'O':
+            possible_command = true;
             m_commandID = COMMANDVI::O;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             command_complete = true;
@@ -1367,24 +1398,28 @@ bool VimCommand::is_cmd_complete()
         }
     /*================== CHANGE INTO VISUAL MODE ================*/
     case 'v':
+        possible_command = true;
         m_commandID = COMMANDVI::v;
         // m_currentModus = VIM_MODI::VISUAL_MODUS;
         command_complete = true;
         m_repeat = 1;
         break;
     case '%':
+        possible_command = true;
         m_commandID = COMMANDVI::perc;
         command_complete = true;
         m_repeat = 1;
         break;
     /*===================== UNDO ====================*/
     case 'u':
+        possible_command = true;
         m_commandID = COMMANDVI::u;
         command_complete = true;
         break;
 
     /*==================== REPLACE =================*/
     case 'r':
+        possible_command = true;
         if(m_actionCommand == '\0') {
             command_complete = false;
         } else {
@@ -1394,6 +1429,7 @@ bool VimCommand::is_cmd_complete()
         break;
 
     case 'R':
+        possible_command = true;
         if(m_actionCommand == '\0') {
             command_complete = false;
         } else {
@@ -1405,6 +1441,7 @@ bool VimCommand::is_cmd_complete()
     /*===================== DELETE TEXT ===============*/
 
     case 'c': /*~~~~~~ c[...] ~~~~~~~*/
+        possible_command = true;
         switch(m_actionCommand) {
         case '\0':
             command_complete = false;
@@ -1433,25 +1470,30 @@ bool VimCommand::is_cmd_complete()
         }
         break;
     case 'S':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::S;
         m_currentModus = VIM_MODI::INSERT_MODUS;
         break;
 
     case 'C':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::C;
         m_currentModus = VIM_MODI::INSERT_MODUS;
         break;
     case 'x':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::x;
         break;
     case 'X':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::X;
         break;
     case 'd': /*~~~~~~~ d[...] ~~~~~~~~*/
+        possible_command = true;
         switch(m_actionCommand) {
         case '\0':
             if(m_currentModus == VIM_MODI::VISUAL_MODUS) {
@@ -1486,6 +1528,7 @@ bool VimCommand::is_cmd_complete()
         }
         break;
     case 'D':
+        possible_command = true;
         /*FIXME: the event m_ctrl+D event does not reach the editor*/
         if(this->m_modifierKey == wxMOD_CONTROL) {
             command_complete = true;
@@ -1498,6 +1541,7 @@ bool VimCommand::is_cmd_complete()
         }
         break;
     case 'U':
+        possible_command = true;
         /*FIXME: the event m_ctrl+U event does not reach the editor*/
         if(this->m_modifierKey == wxMOD_CONTROL) {
             command_complete = true;
@@ -1508,6 +1552,7 @@ bool VimCommand::is_cmd_complete()
     /*========================== COPY ==================================*/
     /*FIXME To be complete */
     case 'y':
+        possible_command = true;
         switch(m_actionCommand) {
         case '\0':
             if(m_currentModus == VIM_MODI::VISUAL_MODUS) {
@@ -1544,18 +1589,21 @@ bool VimCommand::is_cmd_complete()
         break;
     /*================== SEARCH ====================*/
     case '#':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::diesis;
         m_repeat = 1;
         break;
 
     case 'N':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::N;
         m_repeat = 1;
         break;
 
     case 'n':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::n;
         m_repeat = 1;
@@ -1563,6 +1611,7 @@ bool VimCommand::is_cmd_complete()
 
     /*We just open quick find*/
     case '/':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::slesh;
         m_repeat = 1;
@@ -1570,6 +1619,7 @@ bool VimCommand::is_cmd_complete()
 
     /*================ Repeat , i.e '.' ============*/
     case '.':
+        possible_command = true;
         command_complete = true;
         this->m_repeatCommand = true;
         m_commandID = COMMANDVI::repeat;
@@ -1577,23 +1627,31 @@ bool VimCommand::is_cmd_complete()
 
     /*=============== Paste ======================*/
     case 'p':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::p;
         this->m_repeat = 1;
         break;
     case 'P':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::P;
         this->m_repeat = 1;
         break;
     case 'J':
+        possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::J;
         break;
+    case '\0':
+        possible_command = true;
     default:
+        break;
+    }
+
+    if(!possible_command) {
         command_complete = true;
         m_commandID = COMMANDVI::NO_COMMAND;
-        break;
     }
 
     return command_complete;

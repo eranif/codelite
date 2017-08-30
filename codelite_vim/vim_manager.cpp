@@ -274,7 +274,7 @@ void VimManager::OnCharEvt(wxKeyEvent& event)
 void VimManager::IssueCommand()
 {
     if(m_ctrl == NULL) return;
-
+    m_currentCommand.set_ctrl(m_ctrl);
     m_currentCommand.IssueCommand();
 }
 

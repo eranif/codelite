@@ -125,12 +125,14 @@ bool DebuggerMgr::LoadDebuggers()
 #if defined(__WXMSW__) && !defined(NDEBUG)
         // Under MSW loading a release plugin while in debug mode will cause a crash
         if(!fileName.EndsWith("-dbg.dll")) {
+            wxDELETE(dl);
             continue;
         }
 #elif defined(__WXMSW__)
 
         // filter debug plugins
         if(fileName.EndsWith("-dbg.dll")) {
+            wxDELETE(dl);
             continue;
         }
 #endif
@@ -139,7 +141,7 @@ bool DebuggerMgr::LoadDebuggers()
             if(!dl->GetError().IsEmpty()) {
                 CL_WARNING("%s", dl->GetError());
             }
-            delete dl;
+            wxDELETE(dl);
             continue;
         }
 

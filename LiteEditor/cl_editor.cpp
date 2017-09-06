@@ -769,8 +769,6 @@ void LEditor::SetProperties()
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 
 #elif defined(__WXGTK__)
-    SetTwoPhaseDraw(true);
-    SetBufferedDraw(false);
     SetLayoutCache(wxSTC_CACHE_PAGE);
 
 #else // MSW

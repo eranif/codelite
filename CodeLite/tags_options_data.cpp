@@ -208,6 +208,8 @@ TagsOptionsData::TagsOptionsData()
     m_types.Add(wxT("std::queue::const_reference=_Tp"));
     m_types.Add(wxT("std::set::const_iterator=_Key"));
     m_types.Add(wxT("std::set::iterator=_Key"));
+    m_types.Add(wxT("std::unordered_set::const_iterator=_Key"));
+    m_types.Add(wxT("std::unordered_set::iterator=_Key"));
     m_types.Add(wxT("std::deque::reference=_Tp"));
     m_types.Add(wxT("std::deque::const_reference=_Tp"));
     m_types.Add(wxT("std::map::iterator=std::pair<_Key, _Tp>"));

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="PHPParser" InternalType="Console">
+<CodeLite_Project Name="PHPParser" InternalType="Console" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00060001N0005Debug0000000000000001N0010Debug_Unix0000000000000001N0007Release0000000000000001N0012Release_Unix0000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
@@ -381,5 +381,7 @@ php_expr_lexer.cpp: php_expr.l
   <Dependencies Name="Release"/>
   <Dependencies Name="Release_Unix"/>
   <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
 </CodeLite_Project>

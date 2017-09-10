@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="abbreviation">
+<CodeLite_Project Name="abbreviation" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00050001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug000000000000]]>
@@ -271,6 +271,8 @@
   </Settings>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
   <Dependencies Name="Win_x86_Release"/>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="plugin_sdk"/>
+  </Dependencies>
 </CodeLite_Project>

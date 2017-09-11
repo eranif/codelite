@@ -204,6 +204,8 @@
     <File Name="phpoptions.h"/>
     <File Name="clStatusBarMessage.h"/>
     <File Name="clStatusBarMessage.cpp"/>
+    <File Name="cProjectDependecySorter.h"/>
+    <File Name="cProjectDependecySorter.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>
@@ -334,6 +336,8 @@
       <File Name="clTreeKeyboardInput.cpp"/>
       <File Name="clBitmapOverlayCtrl.h"/>
       <File Name="clBitmapOverlayCtrl.cpp"/>
+      <File Name="clTreeCtrlColourHelper.h"/>
+      <File Name="clTreeCtrlColourHelper.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>
@@ -417,6 +421,8 @@
     <File Name="clMouseCaptureLocker.cpp"/>
     <File Name="clMainFrameHelper.h"/>
     <File Name="clMainFrameHelper.cpp"/>
+    <File Name="VirtualDirectoryColour.h"/>
+    <File Name="VirtualDirectoryColour.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>
@@ -863,6 +869,12 @@
   <Dependencies Name="Custom"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
   <Dependencies Name="Win_x86_Release"/>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="libCodeLite"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="databaselayer_sqlite"/>
+    <Project Name="wxshapeframework"/>
+  </Dependencies>
 </CodeLite_Project>

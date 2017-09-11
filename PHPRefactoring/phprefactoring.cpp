@@ -16,8 +16,8 @@
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
+#include <sstream>
 
-class to_string;
 static PHPRefactoring* thePlugin = NULL;
 
 // Define the plugin entry point
@@ -149,8 +149,10 @@ void PHPRefactoring::OnExtractMethod(wxCommandEvent& e)
         ::wxMessageBox(_("Methode name may not contain spaces"), "PHPRefactoring", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
-
-    std::string range = std::to_string(startLine) + "-" + std::to_string(endLine);
+    
+    std::stringstream ss;
+    ss << startLine << "-" << endLine;
+    std::string range = ss.str();
     wxString parameters = range + " " + method;
     RefactorFile("extract-method", parameters, editor);
 }
@@ -166,7 +168,8 @@ void PHPRefactoring::RenameVariable(const wxString& action)
         return;
     }
 
-    wxString line = std::to_string(editor->GetCurrentLine() + 1);
+    wxString line;
+    line << (editor->GetCurrentLine() + 1);
     wxString oldName = editor->GetWordAtCaret();
     if(oldName.StartsWith("$")) {
         oldName = oldName.Mid(1);
@@ -199,7 +202,8 @@ void PHPRefactoring::OnConvertLocalToInstanceVariable(wxCommandEvent& e)
         return;
     }
 
-    wxString line = std::to_string(editor->GetCurrentLine() + 1);
+    wxString line;
+    line << (editor->GetCurrentLine() + 1);
     wxString oldName = editor->GetWordAtCaret();
     if(oldName.StartsWith("$")) {
         oldName = oldName.Mid(1);

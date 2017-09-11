@@ -11,6 +11,7 @@
 #include <wx/tokenzr.h>
 #include "FilesCollector.h"
 #include "fileutils.h"
+#include "cl_config.h"
 
 static int TIMER_ID = 5647;
 static wxBitmap CLASS_IMG_ID = wxNullBitmap;
@@ -71,9 +72,15 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     SetName("OpenResourceDlg");
     WindowAttrManager::Load(this);
 
-    if(m_mgr->GetActiveEditor()) {
+    wxString lastStringTyped = clConfig::Get().Read("PHP/OpenResourceDialog/SearchString", wxString());
+
+    if(m_mgr->GetActiveEditor() && !m_mgr->GetActiveEditor()->GetSelection().IsEmpty()) {
         wxString sel = m_mgr->GetActiveEditor()->GetSelection();
         m_textCtrlFilter->ChangeValue(sel);
+        m_textCtrlFilter->SelectAll();
+
+    } else if(!lastStringTyped.IsEmpty()) {
+        m_textCtrlFilter->ChangeValue(lastStringTyped);
         m_textCtrlFilter->SelectAll();
     }
 }
@@ -105,6 +112,7 @@ OpenResourceDlg::~OpenResourceDlg()
         wxDELETE(data);
     }
     m_dvListCtrl->DeleteAllItems();
+    clConfig::Get().Write("PHP/OpenResourceDialog/SearchString", m_textCtrlFilter->GetValue());
 }
 
 void OpenResourceDlg::OnFilterEnter(wxCommandEvent& event)

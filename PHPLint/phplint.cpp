@@ -37,6 +37,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 PHPLint::PHPLint(IManager* manager)
     : IPlugin(manager)
+    , m_process(NULL)
 {
     m_longName = _("Run code style checking on PHP source files");
     m_shortName = wxT("PHPLint");
@@ -175,7 +176,7 @@ void PHPLint::QueuePhpcsCommand(const wxString& phpPath, const wxString& file)
     wxString phpcsPath = phpcs.GetFullPath();
     ::WrapWithQuotes(phpcsPath);
 
-    m_queue.push_back(phpPath + " " + phpcsPath + " --report=xml " + file);
+    m_queue.push_back(phpPath + " " + phpcsPath + " --report=xml -q " + file);
 }
 
 void PHPLint::QueuePhpmdCommand(const wxString& phpPath, const wxString& file)
@@ -246,14 +247,18 @@ void PHPLint::ProcessPhpError(const wxString& lintOutput)
     // get the line number
     if(reLine.Matches(lintOutput)) {
         wxString strLine = reLine.GetMatch(lintOutput, 1);
-
+        strLine.Trim().Trim(false);
+        
         int start = lintOutput.Find("error:") + 6;
         int end = lintOutput.Find(" in ");
         wxString errorMessage = lintOutput.Mid(start, end - start);
-
+        errorMessage.Trim().Trim(false);
+        
         // Find the editor
         int fileStart = lintOutput.Find("Errors parsing ") + 15;
         wxString filename = lintOutput.Mid(fileStart);
+        filename.Trim().Trim(false);
+        
         clDEBUG() << "PHPLint: searching editor for file:" << filename << clEndl;
         IEditor* editor = m_mgr->FindEditor(filename);
         CHECK_PTR_RET(editor);

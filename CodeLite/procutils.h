@@ -34,7 +34,7 @@
 
 #ifdef __WXMSW__
 #include <windows.h>
-#include <devpropdef.h>
+//#include <devpropdef.h>
 #include <SetupAPI.h>
 #include <Psapi.h>
 #include <tlhelp32.h>

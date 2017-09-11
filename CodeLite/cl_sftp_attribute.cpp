@@ -30,6 +30,7 @@
 
 SFTPAttribute::SFTPAttribute(SFTPAttribute_t attr)
     : m_attributes(NULL)
+    , m_permissions(0)
 {
     Assign(attr);
 }

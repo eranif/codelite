@@ -208,10 +208,15 @@ TagsOptionsData::TagsOptionsData()
     m_types.Add(wxT("std::queue::const_reference=_Tp"));
     m_types.Add(wxT("std::set::const_iterator=_Key"));
     m_types.Add(wxT("std::set::iterator=_Key"));
+    m_types.Add(wxT("std::unordered_set::const_iterator=_Key"));
+    m_types.Add(wxT("std::unordered_set::iterator=_Key"));
     m_types.Add(wxT("std::deque::reference=_Tp"));
     m_types.Add(wxT("std::deque::const_reference=_Tp"));
     m_types.Add(wxT("std::map::iterator=std::pair<_Key, _Tp>"));
     m_types.Add(wxT("std::map::const_iterator=std::pair<_Key,_Tp>"));
+    m_types.Add(wxT("std::unordered_map::iterator=std::pair<_Key, _Tp>"));
+    m_types.Add(wxT("std::unordered_map::const_iterator=std::pair<_Key,_Tp>"));
+    m_types.Add(wxT("std::unordered_map::value_type=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("std::multimap::iterator=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("wxOrderedMap::iterator=std::pair<Key,Value>"));

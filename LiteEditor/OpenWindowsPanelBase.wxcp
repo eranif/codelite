@@ -9,6 +9,8 @@
   "m_outputFileName": "openwindowspanelbase",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -228,7 +230,7 @@
        "border": 2,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxDV_NO_HEADER", "wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxDV_SINGLE"],
+       "m_styles": ["wxDV_NO_HEADER", "wxDV_HORIZ_RULES", "wxDV_MULTIPLE", "wxDV_SINGLE"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",

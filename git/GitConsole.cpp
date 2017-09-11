@@ -43,6 +43,7 @@
 #include "clCommandProcessor.h"
 #include <wx/wupdlock.h>
 #include "clBitmap.h"
+#include "GitResetDlg.h"
 
 #define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)                       \
@@ -178,11 +179,15 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     GitImages m_images;
     m_images.SetBitmapResolution(clBitmap::ShouldLoadHiResImages() ? "@2x" : "");
+    
+#ifdef __WXMSW__
+    m_dvFiles->SetIndent(clGetScaledSize(16));
+#endif
 
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
     m_modifiedBmp = m_bitmapLoader->LoadBitmap("warning");
     m_untrackedBmp = m_bitmapLoader->LoadBitmap("info");
-    m_folderBmp = m_bitmapLoader->LoadBitmap("folder");
+    m_folderBmp = m_bitmapLoader->LoadBitmap("folder-yellow");
     m_newBmp = m_bitmapLoader->LoadBitmap("plus");
     m_deleteBmp = m_bitmapLoader->LoadBitmap("minus");
 
@@ -471,13 +476,10 @@ void GitConsole::OnAddFile(wxCommandEvent& event)
 
 void GitConsole::OnResetFile(wxCommandEvent& event)
 {
-    if(::wxMessageBox(_("This action will reset all changes done to the files.\nContinue?"), "CodeLite",
-           wxCENTER | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION) != wxYES) {
-        return;
-    }
     wxDataViewItemArray items;
     m_dvFiles->GetSelections(items);
-    wxArrayString filesToRemove, filesToRevert;
+    wxArrayString filesToRevert, filesToRemove;
+
     for(size_t i = 0; i < items.GetCount(); ++i) {
         wxString parentNodeName;
         wxDataViewItem parent = m_dvFilesModel->GetParent(items.Item(i));
@@ -496,6 +498,17 @@ void GitConsole::OnResetFile(wxCommandEvent& event)
             }
         }
     }
+    if (filesToRevert.IsEmpty() && filesToRemove.IsEmpty()) {
+        return;
+    }
+    
+    GitResetDlg dlg(EventNotifier::Get()->TopFrame(), filesToRevert, filesToRemove);
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+    
+    filesToRevert = dlg.GetItemsToRevert();
+    filesToRemove = dlg.GetItemsToRemove();
 
     if(!filesToRevert.IsEmpty()) {
         m_git->ResetFiles(filesToRevert);

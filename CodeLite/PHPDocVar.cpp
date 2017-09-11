@@ -13,8 +13,8 @@ PHPDocVar::PHPDocVar(PHPSourceFile& sourceFile, const wxString& doc)
         m_isOk = true;
     }
 
-    // @var Type $Name
-    static wxRegEx reVarType1(wxT("@(var|variable)[ \t]+([\\a-zA-Z0-9_]+)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]*)"));
+    // @var Type
+    static wxRegEx reVarType1(wxT("@(var|variable)[ \t]+([\\a-zA-Z0-9_]+))"));
     // @var $Name Type
     static wxRegEx reVarType2(wxT("@(var|variable)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)[ \t]+([\\a-zA-Z0-9_]+)"));
     if(reVarType1.IsValid() && reVarType1.Matches(doc)) {

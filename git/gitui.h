@@ -144,8 +144,7 @@ protected:
     virtual void OnToggleCheckAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitHistory(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClearGitCommitHistory(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearGitCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnAmendClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
@@ -470,6 +469,45 @@ public:
     wxCheckBox* GetCheckShowLogControls() { return m_checkShowLogControls; }
     GitBlameSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Blame Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~GitBlameSettingsDlgBase();
+};
+
+
+class GitResetDlgBase : public wxDialog
+{
+public:
+    enum {
+        ID_TOGGLE_CHECKALL_REMOVE = 6001,
+        ID_TOGGLE_CHECKALL_REVERT = 6002,
+    };
+protected:
+    wxStaticText* m_staticText585;
+    wxStaticText* m_staticText581;
+    wxCheckListBox* m_checkListBoxChanged;
+    wxAuiToolBar* m_auibar569;
+    wxStaticText* m_staticText5815;
+    wxCheckListBox* m_checkListBoxNew;
+    wxAuiToolBar* m_auibar5693;
+    wxButton* m_buttonOK;
+    wxButton* m_buttonCancel;
+
+protected:
+    virtual void OnToggleAllRevert(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnToggleAllRevertUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnToggleAllRemove(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnToggleAllRemoveUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText585() { return m_staticText585; }
+    wxStaticText* GetStaticText581() { return m_staticText581; }
+    wxCheckListBox* GetCheckListBoxChanged() { return m_checkListBoxChanged; }
+    wxAuiToolBar* GetAuibar569() { return m_auibar569; }
+    wxStaticText* GetStaticText5815() { return m_staticText5815; }
+    wxCheckListBox* GetCheckListBoxNew() { return m_checkListBoxNew; }
+    wxAuiToolBar* GetAuibar5693() { return m_auibar5693; }
+    wxButton* GetButtonOK() { return m_buttonOK; }
+    wxButton* GetButtonCancel() { return m_buttonCancel; }
+    GitResetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Reset Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxMAXIMIZE_BOX);
+    virtual ~GitResetDlgBase();
 };
 
 #endif

@@ -250,6 +250,7 @@ SFTPThreadRequet& SFTPThreadRequet::operator=(const SFTPThreadRequet& other)
     m_retryCounter = other.m_retryCounter;
     m_uploadSuccess = other.m_uploadSuccess;
     m_direction = other.m_direction;
+    m_permissions = other.m_permissions;
     return *this;
 }
 

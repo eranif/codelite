@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="libCodeLite">
+<CodeLite_Project Name="libCodeLite" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00080001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
@@ -605,10 +605,14 @@ PhpLexer.cpp: PhpLexer.l
   </Settings>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
   <Dependencies Name="Win_x86_Release"/>
   <VirtualDirectory Name="FileSystemWatcher">
     <File Name="clFileSystemWatcher.h"/>
     <File Name="clFileSystemWatcher.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="wxsqlite3"/>
+    <Project Name="wxshapeframework"/>
+    <Project Name="sqlite3"/>
+  </Dependencies>
 </CodeLite_Project>

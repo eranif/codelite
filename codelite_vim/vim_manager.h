@@ -38,7 +38,8 @@ protected:
     wxString get_current_word();
     void DoCleanup(bool unbind = true);
     void DoBindEditor(IEditor* editor);
-
+    void setUpVimBar();
+    void setUpVimBarPos();
     // Internals
     void CloseCurrentEditor();
     void SaveCurrentEditor();
@@ -53,6 +54,7 @@ protected:
     void updateVimMessage();
     
 private:
+    wxStatusBar* status_vim;
     VimSettings& m_settings;
     IEditor* m_editor;
     wxStyledTextCtrl* m_ctrl;

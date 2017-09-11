@@ -81,6 +81,7 @@ protected:
     void ClearText();
     void AddMatch(int line, const wxString& pattern);
     void AddFile(const wxString& filename);
+    void CenterEditorLine(int lineno);
 
 public:
     /** Constructor */

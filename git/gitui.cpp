@@ -348,8 +348,6 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_auibar->AddTool(ID_GIT_COMMIT_HISTORY, _("History"), wxXmlResource::Get()->LoadBitmap(wxT("16-history")), wxNullBitmap, wxITEM_NORMAL, _("Show Commit History"), _("Show Commit History"), NULL);
     
     m_auibar->AddStretchSpacer(1);
-    
-    m_auibar->AddTool(wxID_CLEAR, _("Clear History"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear History"), _("Clear History"), NULL);
     m_auibar->Realize();
     
     m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1,-1)), wxBORDER_THEME);
@@ -433,8 +431,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     this->Connect(ID_TOGGLE_CHECKALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnToggleCheckAll), NULL, this);
     this->Connect(ID_GIT_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitHistory), NULL, this);
     this->Connect(ID_GIT_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnCommitHistoryUI), NULL, this);
-    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnClearGitCommitHistory), NULL, this);
-    this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnClearGitCommitHistoryUI), NULL, this);
+    m_checkBoxAmend->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnAmendClicked), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
 }
@@ -445,8 +442,7 @@ GitCommitDlgBase::~GitCommitDlgBase()
     this->Disconnect(ID_TOGGLE_CHECKALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnToggleCheckAll), NULL, this);
     this->Disconnect(ID_GIT_COMMIT_HISTORY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitHistory), NULL, this);
     this->Disconnect(ID_GIT_COMMIT_HISTORY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnCommitHistoryUI), NULL, this);
-    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnClearGitCommitHistory), NULL, this);
-    this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnClearGitCommitHistoryUI), NULL, this);
+    m_checkBoxAmend->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnAmendClicked), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
 }
@@ -2277,4 +2273,132 @@ GitBlameSettingsDlgBase::GitBlameSettingsDlgBase(wxWindow* parent, wxWindowID id
 
 GitBlameSettingsDlgBase::~GitBlameSettingsDlgBase()
 {
+}
+
+GitResetDlgBase::GitResetDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-git@2x"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
+    
+    wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(bSizer4);
+    
+    m_staticText585 = new wxStaticText(this, wxID_ANY, _("These are the file(s) you have chosen to Reset"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    bSizer4->Add(m_staticText585, 0, wxALL|wxALIGN_CENTER, WXC_FROM_DIP(5));
+    
+    wxGridSizer* gridSizer563 = new wxGridSizer(0, 2, 0, 0);
+    
+    bSizer4->Add(gridSizer563, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxBoxSizer* boxSizer565 = new wxBoxSizer(wxVERTICAL);
+    
+    gridSizer563->Add(boxSizer565, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText581 = new wxStaticText(this, wxID_ANY, _("Altered files"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer565->Add(m_staticText581, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_checkListBoxChangedArr;
+    m_checkListBoxChanged = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_checkListBoxChangedArr, wxLB_SINGLE);
+    m_checkListBoxChanged->SetToolTip(_("These are the files that are altered. Select which you want to reset."));
+    
+    boxSizer565->Add(m_checkListBoxChanged, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_auibar569 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_HORZ_TEXT);
+    m_auibar569->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer565->Add(m_auibar569, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_auibar569->AddTool(ID_TOGGLE_CHECKALL_REVERT, _("Toggle all"), wxXmlResource::Get()->LoadBitmap(wxT("16-ok")), wxNullBitmap, wxITEM_NORMAL, _("Toggle check all"), _("Toggle check all"), NULL);
+    m_auibar569->Realize();
+    
+    wxBoxSizer* boxSizer5651 = new wxBoxSizer(wxVERTICAL);
+    
+    gridSizer563->Add(boxSizer5651, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText5815 = new wxStaticText(this, wxID_ANY, _("Added files"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer5651->Add(m_staticText5815, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_checkListBoxNewArr;
+    m_checkListBoxNew = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_checkListBoxNewArr, wxLB_SINGLE);
+    m_checkListBoxNew->SetToolTip(_("These are the files that have been added. Select which you want to remove."));
+    
+    boxSizer5651->Add(m_checkListBoxNew, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_auibar5693 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_HORZ_TEXT);
+    m_auibar5693->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer5651->Add(m_auibar5693, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_auibar5693->AddTool(ID_TOGGLE_CHECKALL_REMOVE, _("Toggle all"), wxXmlResource::Get()->LoadBitmap(wxT("16-ok")), wxNullBitmap, wxITEM_NORMAL, _("Toggle check all"), _("Toggle check all"), NULL);
+    m_auibar5693->Realize();
+    
+    wxBoxSizer* boxSizer372 = new wxBoxSizer(wxHORIZONTAL);
+    
+    bSizer4->Add(boxSizer372, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    
+    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_buttonOK->SetDefault();
+    
+    boxSizer372->Add(m_buttonOK, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer372->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
+    
+    SetName(wxT("GitResetDlgBase"));
+    SetSize(-1,-1);
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    this->Connect(ID_TOGGLE_CHECKALL_REVERT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitResetDlgBase::OnToggleAllRevert), NULL, this);
+    this->Connect(ID_TOGGLE_CHECKALL_REVERT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitResetDlgBase::OnToggleAllRevertUI), NULL, this);
+    this->Connect(ID_TOGGLE_CHECKALL_REMOVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitResetDlgBase::OnToggleAllRemove), NULL, this);
+    this->Connect(ID_TOGGLE_CHECKALL_REMOVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitResetDlgBase::OnToggleAllRemoveUI), NULL, this);
+    
+}
+
+GitResetDlgBase::~GitResetDlgBase()
+{
+    this->Disconnect(ID_TOGGLE_CHECKALL_REVERT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitResetDlgBase::OnToggleAllRevert), NULL, this);
+    this->Disconnect(ID_TOGGLE_CHECKALL_REVERT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitResetDlgBase::OnToggleAllRevertUI), NULL, this);
+    this->Disconnect(ID_TOGGLE_CHECKALL_REMOVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitResetDlgBase::OnToggleAllRemove), NULL, this);
+    this->Disconnect(ID_TOGGLE_CHECKALL_REMOVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitResetDlgBase::OnToggleAllRemoveUI), NULL, this);
+    
 }

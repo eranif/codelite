@@ -769,8 +769,6 @@ void LEditor::SetProperties()
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 
 #elif defined(__WXGTK__)
-    SetTwoPhaseDraw(true);
-    SetBufferedDraw(false);
     SetLayoutCache(wxSTC_CACHE_PAGE);
 
 #else // MSW
@@ -5214,9 +5212,9 @@ void LEditor::ToggleLineComment(const wxString& commentSymbol, int commentStyle)
     int lineEnd = LineFromPosition(end);
 
     // Check if the "end" position is at the start of a line, in that case, don't
-    // include it
+    // include it. Only do this in case of a selection.
     int endLineStartPos = PositionFromLine(lineEnd);
-    if(endLineStartPos == end) {
+    if(lineStart < lineEnd && endLineStartPos == end) {
         --lineEnd;
     }
 

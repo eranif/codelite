@@ -530,9 +530,13 @@ void Subversion2::OnFileExplorerRevertItem(wxCommandEvent& event)
     }
 
     wxString command;
-    wxString loginString;
-
-    command << GetSvnExeName() << loginString << wxT(" revert --recursive .");
+    if(m_selectedFile.FileExists()) {
+        // Revert was called on a file, revert only the file
+        command << GetSvnExeName() << " revert --recursive " << m_selectedFile.GetFullName();
+    } else {
+        // Revert the folder
+        command << GetSvnExeName() << " revert --recursive .";
+    }
     GetConsole()->Execute(command, m_selectedFolder, new SvnDefaultCommandHandler(this, event.GetId(), this));
 }
 
@@ -880,7 +884,8 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
     }
 
     GetConsole()->AppendText(command + wxT("\n"));
-    m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this, files.Item(0)), this);
+    m_blameCommand.Execute(command, GetSvnView()->GetRootDir(),
+                           new SvnBlameHandler(this, event.GetId(), this, files.Item(0)), this);
 }
 
 void Subversion2::OnGetCompileLine(clBuildEvent& event)

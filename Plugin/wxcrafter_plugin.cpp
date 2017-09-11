@@ -168,13 +168,25 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
         
         m_dropdownMenus.insert(std::make_pair( m_toolbarItem277->GetId(), m_menu278) );
     }
+    
+    m_auibar242->AddSeparator();
+    
+    m_auibar242->AddTool(ID_DIFF_TOOL_IGNORE_WHITESPACE, _("Ignore whitespace"), wxXmlResource::Get()->LoadBitmap(wxT("16-ignoreworddiffs")), wxNullBitmap, wxITEM_CHECK, _("Ignore whitespace-only changes. Note that this is not possible in Single-View mode"), _("Ignore whitespace-only changes"), NULL);
+    
+    m_auibar242->AddTool(ID_SHOW_LINENUMBERS, _("Show Linenumbers"), wxXmlResource::Get()->LoadBitmap(wxT("16-showlinenumbers")), wxNullBitmap, wxITEM_CHECK, _("Show Linenumbers"), _("Show Linenumbers"), NULL);
+    
+    m_auibar242->AddTool(ID_SHOW_OVERVIEW_BAR, _("Show Overview Bar"), wxXmlResource::Get()->LoadBitmap(wxT("16-show-overview-bar")), wxNullBitmap, wxITEM_CHECK, _("Show the Overview bar. This lets you see the location of all the file's diffs"), _("Show Overview bar"), NULL);
     m_auibar242->Realize();
+    
+    wxBoxSizer* boxSizer314 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer13->Add(boxSizer314, 1, wxEXPAND, WXC_FROM_DIP(0));
     
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_PERMIT_UNSPLIT|wxSP_3DSASH);
     m_splitter->SetSashGravity(0.5);
     m_splitter->SetMinimumPaneSize(10);
     
-    boxSizer13->Add(m_splitter, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer314->Add(m_splitter, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     m_splitterPageLeft = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
@@ -202,6 +214,10 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_staticTextLeft = new wxStaticText(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(100,-1)), wxALIGN_CENTRE|wxBORDER_THEME);
     
     boxSizer285->Add(m_staticTextLeft, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    
+    wxBoxSizer* boxSizer310 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer111->Add(boxSizer310, 1, wxEXPAND, WXC_FROM_DIP(0));
     
     m_stcLeft = new wxStyledTextCtrl(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(-1,-1)), 0);
     // Configure the fold margin
@@ -239,7 +255,11 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_stcLeft->SetKeyWords(3, wxT(""));
     m_stcLeft->SetKeyWords(4, wxT(""));
     
-    boxSizer111->Add(m_stcLeft, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer310->Add(m_stcLeft, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    
+    m_panelOverviewL = new wxPanel(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(6,-1)), wxTAB_TRAVERSAL);
+    
+    boxSizer310->Add(m_panelOverviewL, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     m_splitterPageRight = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight, 0);
@@ -266,6 +286,10 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_staticTextRight = new wxStaticText(m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(100,-1)), wxALIGN_CENTRE|wxBORDER_THEME);
     
     boxSizer286->Add(m_staticTextRight, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    
+    wxBoxSizer* boxSizer307 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer113->Add(boxSizer307, 1, wxEXPAND, WXC_FROM_DIP(0));
     
     m_stcRight = new wxStyledTextCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(-1,-1)), 0);
     // Configure the fold margin
@@ -303,7 +327,15 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_stcRight->SetKeyWords(3, wxT(""));
     m_stcRight->SetKeyWords(4, wxT(""));
     
-    boxSizer113->Add(m_stcRight, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer307->Add(m_stcRight, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    
+    m_panelOverviewR = new wxPanel(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(6,-1)), wxTAB_TRAVERSAL);
+    
+    boxSizer307->Add(m_panelOverviewR, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    
+    m_panelOverviewFull = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(6,-1)), wxTAB_TRAVERSAL);
+    
+    boxSizer314->Add(m_panelOverviewFull, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     SetName(wxT("DiffSideBySidePanelBase"));
     SetSize(-1,-1);
@@ -333,16 +365,29 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     this->Connect(m_vView->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanelBase::OnVertical), NULL, this);
     this->Connect(m_hView->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanelBase::OnHorizontal), NULL, this);
     this->Connect(m_hView->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnHorizontalUI), NULL, this);
+    this->Connect(ID_DIFF_TOOL_IGNORE_WHITESPACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnIgnoreWhitespaceClicked), NULL, this);
+    this->Connect(ID_DIFF_TOOL_IGNORE_WHITESPACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnIgnoreWhitespaceUI), NULL, this);
+    this->Connect(ID_SHOW_LINENUMBERS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnShowLinenosClicked), NULL, this);
+    this->Connect(ID_SHOW_LINENUMBERS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnShowLinenosUI), NULL, this);
+    this->Connect(ID_SHOW_OVERVIEW_BAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnShowOverviewBarUI), NULL, this);
+    this->Connect(ID_SHOW_OVERVIEW_BAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnShowOverviewBarClicked), NULL, this);
     m_textCtrlLeftFile->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
     m_button290->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
     m_button290->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseLeftFile), NULL, this);
     m_stcLeft->Connect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcPainted), NULL, this);
     m_stcLeft->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
+    m_stcLeft->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcUpdateUI), NULL, this);
+    m_panelOverviewL->Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewEraseBackground), NULL, this);
+    m_panelOverviewL->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewLeftDown), NULL, this);
     m_textCtrlRightFile->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
     m_button294->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
     m_button294->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseRightFile), NULL, this);
     m_stcRight->Connect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnRightStcPainted), NULL, this);
     m_stcRight->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
+    m_panelOverviewR->Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewEraseBackground), NULL, this);
+    m_panelOverviewR->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewLeftDown), NULL, this);
+    m_panelOverviewFull->Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewEraseBackground), NULL, this);
+    m_panelOverviewFull->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewLeftDown), NULL, this);
     
     this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(DiffSideBySidePanelBase::ShowAuiToolMenu), NULL, this);
 }
@@ -371,16 +416,29 @@ DiffSideBySidePanelBase::~DiffSideBySidePanelBase()
     this->Disconnect(m_vView->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanelBase::OnVertical), NULL, this);
     this->Disconnect(m_hView->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanelBase::OnHorizontal), NULL, this);
     this->Disconnect(m_hView->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnHorizontalUI), NULL, this);
+    this->Disconnect(ID_DIFF_TOOL_IGNORE_WHITESPACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnIgnoreWhitespaceClicked), NULL, this);
+    this->Disconnect(ID_DIFF_TOOL_IGNORE_WHITESPACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnIgnoreWhitespaceUI), NULL, this);
+    this->Disconnect(ID_SHOW_LINENUMBERS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnShowLinenosClicked), NULL, this);
+    this->Disconnect(ID_SHOW_LINENUMBERS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnShowLinenosUI), NULL, this);
+    this->Disconnect(ID_SHOW_OVERVIEW_BAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnShowOverviewBarUI), NULL, this);
+    this->Disconnect(ID_SHOW_OVERVIEW_BAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnShowOverviewBarClicked), NULL, this);
     m_textCtrlLeftFile->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
     m_button290->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnLeftPickerUI), NULL, this);
     m_button290->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseLeftFile), NULL, this);
     m_stcLeft->Disconnect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcPainted), NULL, this);
     m_stcLeft->Disconnect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
+    m_stcLeft->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcUpdateUI), NULL, this);
+    m_panelOverviewL->Disconnect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewEraseBackground), NULL, this);
+    m_panelOverviewL->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewLeftDown), NULL, this);
     m_textCtrlRightFile->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
     m_button294->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
     m_button294->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseRightFile), NULL, this);
     m_stcRight->Disconnect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnRightStcPainted), NULL, this);
     m_stcRight->Disconnect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
+    m_panelOverviewR->Disconnect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewEraseBackground), NULL, this);
+    m_panelOverviewR->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewLeftDown), NULL, this);
+    m_panelOverviewFull->Disconnect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewEraseBackground), NULL, this);
+    m_panelOverviewFull->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewLeftDown), NULL, this);
     
     std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
     for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {

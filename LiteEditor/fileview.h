@@ -31,6 +31,8 @@
 #include "imanager.h"
 #include "map"
 #include "clTreeKeyboardInput.h"
+#include <VirtualDirectoryColour.h>
+#include "clTreeCtrlColourHelper.h"
 
 class wxMenu;
 
@@ -51,6 +53,7 @@ class FileViewTree : public wxTreeCtrl
     std::map<wxString, wxTreeItemId> m_workspaceFolders;
     std::map<wxString, wxTreeItemId> m_projectsMap;
     bool m_eventsBound;
+    clTreeCtrlColourHelper::Ptr_t m_colourHelper;
 
 protected:
     void DoCreateProjectContextMenu(wxMenu& menu, const wxString& projectName);
@@ -74,7 +77,7 @@ public:
      * @param style Window style
      */
     FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = wxBORDER_NONE);
+                 const wxSize& size = wxDefaultSize, long style = wxBORDER_NONE);
 
     /**
      * Destructor .
@@ -90,7 +93,7 @@ public:
      * @param style Window style
      */
     virtual void Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = 0);
+                        const wxSize& size = wxDefaultSize, long style = 0);
 
     // Build the actual tree from the workspace
     void BuildTree();
@@ -183,6 +186,8 @@ protected:
     virtual void SortTree();
     virtual void SortItem(wxTreeItemId& item);
     virtual void OnRenameVirtualFolder(wxCommandEvent& e);
+    virtual void OnSetBgColourVirtualFolder(wxCommandEvent& e);
+    virtual void OnClearBgColourVirtualFolder(wxCommandEvent& e);
     virtual wxTreeItemId ItemByFullPath(const wxString& fullPath);
     virtual void OnLocalWorkspaceSettings(wxCommandEvent& e);
     virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);
@@ -228,7 +233,7 @@ private:
     wxTreeItemId AddWorkspaceFolder(const wxString& folderPath);
 
     int GetIconIndex(const ProjectItem& item);
-    wxString GetItemPath(wxTreeItemId& item) const;
+    wxString GetItemPath(const wxTreeItemId& item) const;
     bool IsFileExcludedFromBuild(const wxTreeItemId& item) const;
 
     void DoGetProjectIconIndex(const wxString& projectName, int& iconIndex, bool& fromPlugin);
@@ -241,7 +246,7 @@ private:
     void DoItemActivated(wxTreeItemId& item, wxEvent& event);
     void DoAddItem(ProjectPtr proj, const FileViewItem& item);
     void DoImportFolder(ProjectPtr proj, const wxString& baseDir, const wxArrayString& all_files,
-        const wxString& filespec, bool extlessFiles);
+                        const wxString& filespec, bool extlessFiles);
 
     wxTreeItemId DoGetItemByText(const wxTreeItemId& parent, const wxString& text);
 

@@ -219,8 +219,8 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
     CL_DEBUG("TTY is: %s\n", tty);
 }
 
-void FileUtils::OpenSSHTerminal(
-    const wxString& sshClient, const wxString& connectString, const wxString& password, int port)
+void FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password,
+                                int port)
 {
 #ifdef __WXMSW__
     wxString command;
@@ -253,19 +253,49 @@ void FileUtils::OpenSSHTerminal(
 #endif
 }
 
+static void SplitMask(const wxString& maskString, wxArrayString& includeMask, wxArrayString& excludeMask)
+{
+    wxString lcMask = maskString.Lower();
+    wxArrayString masks = ::wxStringTokenize(lcMask, ";,", wxTOKEN_STRTOK);
+    for(size_t i = 0; i < masks.size(); ++i) {
+        wxString& mask = masks.Item(i);
+        mask.Trim().Trim(false);
+        if(mask[0] == '!') {
+            mask.Remove(0, 1);
+            excludeMask.Add(mask);
+        } else {
+            includeMask.Add(mask);
+        }
+    }
+}
+
 bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
 {
-    wxString lcMask = mask.Lower();
-    wxArrayString masks = ::wxStringTokenize(lcMask, ";,", wxTOKEN_STRTOK);
-    if(masks.Index("*") != wxNOT_FOUND) {
+
+    wxArrayString incMasks;
+    wxArrayString excMasks;
+    SplitMask(mask, incMasks, excMasks);
+
+    if(incMasks.Index("*") != wxNOT_FOUND) {
         // If one of the masks is plain "*" - we match everything
         return true;
     }
+
     wxString lcFilename = filename.GetFullName().Lower();
-    for(size_t i = 0; i < masks.size(); ++i) {
-        const wxString& pattern = masks.Item(i);
+    // Try to the "exclude" masking first
+    for(size_t i = 0; i < excMasks.size(); ++i) {
+        const wxString& pattern = excMasks.Item(i);
         if((!pattern.Contains("*") && lcFilename == pattern) ||
-            (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+           (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+            // use exact match
+            return false;
+        }
+    }
+
+    for(size_t i = 0; i < incMasks.size(); ++i) {
+        const wxString& pattern = incMasks.Item(i);
+        if((!pattern.Contains("*") && lcFilename == pattern) ||
+           (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
             // use exact match
             return true;
         }
@@ -375,7 +405,7 @@ bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
     for(size_t i = 0; i < masks.size(); ++i) {
         const wxString& pattern = masks.Item(i);
         if((!pattern.Contains("*") && lcFilename == pattern) ||
-            (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+           (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
             // use exact match
             return true;
         }
@@ -431,7 +461,7 @@ wxString FileUtils::EscapeString(const wxString& str)
 wxString FileUtils::GetOSXTerminalCommand(const wxString& command, const wxString& workingDirectory)
 {
     wxFileName script(clStandardPaths::Get().GetBinFolder(), "osx-terminal.sh");
-    
+
     wxString cmd;
     cmd << EscapeString(script.GetFullPath()) << " \"";
     if(!workingDirectory.IsEmpty()) {

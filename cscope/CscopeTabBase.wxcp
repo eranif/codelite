@@ -305,6 +305,13 @@
              "m_functionNameAndSignature": "OnHotspotClicked(wxStyledTextEvent& event)",
              "m_description": "A hotspot was clicked",
              "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_STC_HOTSPOT_DCLICK",
+             "m_eventClass": "wxStyledTextEvent",
+             "m_eventHandler": "wxStyledTextEventHandler",
+             "m_functionNameAndSignature": "OnHotspotClicked(wxStyledTextEvent& event)",
+             "m_description": "A hotspot was double clicked",
+             "m_noBody": false
             }],
            "m_children": []
           }]

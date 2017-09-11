@@ -26,27 +26,19 @@ VimManager::VimManager(IManager* manager, VimSettings& settings)
     m_ctrl = NULL;
     m_editor = NULL;
     m_mgr = manager;
-
-    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED,
-                               &VimManager::OnEditorChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING,
-                               &VimManager::OnEditorClosing, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSING,
-                               &VimManager::OnWorkspaceClosing, this);
-    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSING,
-                               &VimManager::OnAllEditorsClosing, this);
+    status_vim = NULL;
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &VimManager::OnEditorChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &VimManager::OnEditorClosing, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSING, &VimManager::OnWorkspaceClosing, this);
+    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSING, &VimManager::OnAllEditorsClosing, this);
 }
 
 VimManager::~VimManager()
 {
-    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED,
-                                 &VimManager::OnEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING,
-                                 &VimManager::OnEditorClosing, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSING,
-                                 &VimManager::OnWorkspaceClosing, this);
-    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSING,
-                                 &VimManager::OnAllEditorsClosing, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &VimManager::OnEditorChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &VimManager::OnEditorClosing, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSING, &VimManager::OnWorkspaceClosing, this);
+    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSING, &VimManager::OnAllEditorsClosing, this);
 }
 
 /**
@@ -55,13 +47,14 @@ VimManager::~VimManager()
  */
 void VimManager::OnEditorChanged(wxCommandEvent& event)
 {
-    event.Skip(); // Always call Skip() so other plugins/core components will get this event
+    event.Skip();                      // Always call Skip() so other plugins/core components will get this event
+    m_currentCommand.set_ctrl(m_ctrl); // Always keep the current editor. Even when disabled. Otherwise, when opening an
+                                       // editor and *then* enabling the VIM plugin, it may lead to crashes
     if(!m_settings.IsEnabled()) return;
     IEditor* editor = reinterpret_cast<IEditor*>(event.GetClientData());
     SaveOldEditorState();
 
     DoBindEditor(editor);
-	m_currentCommand.set_ctrl( m_ctrl );
 }
 
 void VimManager::OnKeyDown(wxKeyEvent& event)
@@ -87,16 +80,21 @@ void VimManager::OnKeyDown(wxKeyEvent& event)
         case WXK_ESCAPE:
             if(m_currentCommand.get_current_modus() == VIM_MODI::INSERT_MODUS) {
                 m_tmpBuf = m_currentCommand.getTmpBuf();
+            } else if(m_currentCommand.get_current_modus() == VIM_MODI::VISUAL_MODUS) {
+                long pos = m_ctrl->GetCurrentPos();
+                m_ctrl->ClearSelections();
+                m_ctrl->GotoPos(pos);
             }
             skip_event = m_currentCommand.OnEscapeDown();
             break;
         case WXK_RETURN: {
 
             skip_event = m_currentCommand.OnReturnDown(action);
+            status_vim->Show(false);
             break;
         }
         default:
-            if(m_currentCommand.get_current_modus() == VIM_MODI::SEARCH_MODUS) {
+            if(m_currentCommand.get_current_modus() == VIM_MODI::SEARCH_CURR_MODUS) {
                 m_currentCommand.set_current_word(get_current_word());
                 m_currentCommand.set_current_modus(VIM_MODI::NORMAL_MODUS);
             }
@@ -141,7 +139,7 @@ void VimManager::updateView()
 
     updateCarret();
 
-    if ( m_currentCommand.getError() == MESSAGES_VIM::NO_ERROR_VIM_MSG ) {
+    if(m_currentCommand.getError() == MESSAGES_VIM::NO_ERROR_VIM_MSG) {
         updateMessageModus();
     } else {
         updateVimMessage();
@@ -150,29 +148,37 @@ void VimManager::updateView()
 
 void VimManager::updateMessageModus()
 {
-    switch (m_currentCommand.get_current_modus() ) {
+    switch(m_currentCommand.get_current_modus()) {
     case VIM_MODI::NORMAL_MODUS:
         m_mgr->GetStatusBar()->SetMessage("NORMAL");
+        if(status_vim->IsShown()) status_vim->Show(false);
         break;
     case VIM_MODI::COMMAND_MODUS:
-        m_mgr->GetStatusBar()->SetMessage(m_currentCommand.getTmpBuf());
+    case VIM_MODI::SEARCH_MODUS:
+        // m_mgr->GetStatusBar()->SetMessage(m_currentCommand.getTmpBuf());
+        m_tmpBuf = m_currentCommand.getTmpBuf();
+        setUpVimBar();
+        status_vim->SetStatusText(m_tmpBuf);
+        if(!status_vim->IsShown()) status_vim->Show(true);
         break;
     case VIM_MODI::VISUAL_MODUS:
         m_mgr->GetStatusBar()->SetMessage("VISUAL");
+        if(status_vim->IsShown()) status_vim->Show(false);
         break;
     case VIM_MODI::INSERT_MODUS:
         m_mgr->GetStatusBar()->SetMessage("INSERT");
+        if(status_vim->IsShown()) status_vim->Show(false);
         break;
     default:
         m_mgr->GetStatusBar()->SetMessage("NORMAL");
+        if(status_vim->IsShown()) status_vim->Show(false);
         break;
     }
-
 }
 
 void VimManager::updateVimMessage()
 {
-    switch (m_currentCommand.getError() ) {
+    switch(m_currentCommand.getError()) {
     case MESSAGES_VIM::UNBALNCED_PARENTESIS_VIM_MSG:
         m_mgr->GetStatusBar()->SetMessage(_("Unbalanced Parentesis"));
         break;
@@ -189,13 +195,12 @@ void VimManager::updateVimMessage()
         m_mgr->GetStatusBar()->SetMessage("Unknown Error");
         break;
     }
-
 }
 
 void VimManager::updateCarret()
 {
-    
-    switch (m_currentCommand.get_current_modus() ) {
+
+    switch(m_currentCommand.get_current_modus()) {
     case VIM_MODI::NORMAL_MODUS:
         m_ctrl->SetCaretStyle(m_caretBlockStyle);
         break;
@@ -205,14 +210,13 @@ void VimManager::updateCarret()
     case VIM_MODI::VISUAL_MODUS:
         m_ctrl->SetCaretStyle(m_caretBlockStyle);
         break;
-	case VIM_MODI::INSERT_MODUS:
+    case VIM_MODI::INSERT_MODUS:
         m_ctrl->SetCaretStyle(m_caretInsertStyle);
         break;
     default:
         m_ctrl->SetCaretStyle(m_caretBlockStyle);
         break;
     }
-
 }
 
 void VimManager::OnCharEvt(wxKeyEvent& event)
@@ -247,12 +251,12 @@ void VimManager::OnCharEvt(wxKeyEvent& event)
         bool repeat_last = m_currentCommand.repeat_last_cmd();
 
         if(repeat_last) {
-			m_lastCommand.set_ctrl(m_ctrl);
-			RepeatCommand();
+            m_lastCommand.set_ctrl(m_ctrl);
+            RepeatCommand();
         } else {
             IssueCommand();
-		}
-		
+        }
+
         if(m_currentCommand.get_current_modus() != VIM_MODI::REPLACING_MODUS) {
             if(repeat_last) {
                 m_currentCommand.reset_repeat_last();
@@ -270,7 +274,7 @@ void VimManager::OnCharEvt(wxKeyEvent& event)
 void VimManager::IssueCommand()
 {
     if(m_ctrl == NULL) return;
-
+    m_currentCommand.set_ctrl(m_ctrl);
     m_currentCommand.IssueCommand();
 }
 
@@ -314,10 +318,11 @@ void VimManager::DoCleanup(bool unbind)
         m_ctrl->Unbind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
         m_ctrl->SetCaretStyle(m_caretInsertStyle);
     }
-    
+
     m_editor = NULL;
     m_ctrl = NULL;
-    //m_mgr->GetStatusBar()->SetMessage("");
+    status_vim = NULL;
+    // m_mgr->GetStatusBar()->SetMessage("");
 }
 
 void VimManager::SettingsUpdated()
@@ -337,13 +342,41 @@ void VimManager::DoBindEditor(IEditor* editor)
     CHECK_PTR_RET(m_editor);
 
     UpdateOldEditorState();
-    
+
     m_ctrl = m_editor->GetCtrl();
     m_ctrl->Bind(wxEVT_CHAR, &VimManager::OnCharEvt, this);
     m_ctrl->Bind(wxEVT_KEY_DOWN, &VimManager::OnKeyDown, this);
 
-    //CallAfter(&VimManager::updateView);
+    /*baby-steps*/
+    setUpVimBar();
+
+    // CallAfter(&VimManager::updateView);
     updateView();
+}
+
+void VimManager::setUpVimBar()
+{
+
+    if(status_vim != NULL) delete status_vim;
+
+    // wxWindow* parent = m_ctrl->GetParent();
+    wxWindow* parent = (wxWindow*)m_ctrl;
+    status_vim = new wxStatusBar(parent, 1);
+    // status_vim->Show( true );
+    status_vim->SetFieldsCount(1);
+
+    setUpVimBarPos();
+}
+
+void VimManager::setUpVimBarPos()
+{
+    int hight;
+    int width;
+    wxWindow* parent = (wxWindow*)m_ctrl;
+    parent->GetSize(&width, &hight);
+    // status_vim->Show( true );
+    status_vim->SetSize(wxDefaultCoord, wxDefaultCoord, width, wxDefaultCoord);
+    // status_vim->SetSize(0, 0, width, wxDefaultCoord);
 }
 
 void VimManager::OnWorkspaceClosing(wxCommandEvent& event)
@@ -365,54 +398,45 @@ void VimManager::UpdateOldEditorState()
 
     wxString fullpath_name = m_editor->GetFileName().GetFullPath();
 
-    for ( auto status_editor = m_editorStates.begin();
-          status_editor != m_editorStates.end();
-          ++ status_editor) {
+    for(auto status_editor = m_editorStates.begin(); status_editor != m_editorStates.end(); ++status_editor) {
 
-        if ( (*status_editor)->isCurrentEditor( fullpath_name ) ) {
-            (*status_editor)->setSavedStatus( m_currentCommand );
+        if((*status_editor)->isCurrentEditor(fullpath_name)) {
+            (*status_editor)->setSavedStatus(m_currentCommand);
             return;
         }
     }
-    
-    // if one arrived here, it is a new editor
-    m_editorStates.push_back( new VimBaseCommand( fullpath_name ) );
 
+    // if one arrived here, it is a new editor
+    m_editorStates.push_back(new VimBaseCommand(fullpath_name));
 }
 
 void VimManager::SaveOldEditorState()
 {
-    if ( !m_editor ) return;
-    
+    if(!m_editor) return;
+
     wxString fullpath_name = m_editor->GetFileName().GetFullPath();
-    for ( auto status_editor = m_editorStates.begin();
-          status_editor != m_editorStates.end();
-          ++ status_editor) {
-        if ( (*status_editor)->isCurrentEditor( fullpath_name ) ) {
-            (*status_editor)->saveCurrentStatus( m_currentCommand );
+    for(auto status_editor = m_editorStates.begin(); status_editor != m_editorStates.end(); ++status_editor) {
+        if((*status_editor)->isCurrentEditor(fullpath_name)) {
+            (*status_editor)->saveCurrentStatus(m_currentCommand);
             return;
         }
     }
 
     // if one arrived here, it is a new editor
-    m_editorStates.push_back( new VimBaseCommand( fullpath_name ) );
+    m_editorStates.push_back(new VimBaseCommand(fullpath_name));
 }
-   
+
 void VimManager::DeleteClosedEditorState()
 {
-    if ( !m_editor ) return;
-    
+    if(!m_editor) return;
+
     wxString fullpath_name = m_editor->GetFileName().GetFullPath();
-    for ( auto status_editor = m_editorStates.begin();
-          status_editor != m_editorStates.end();
-          ++ status_editor) {
-        if ( (*status_editor)->isCurrentEditor( fullpath_name ) ) {
-            m_editorStates.erase( status_editor );
+    for(auto status_editor = m_editorStates.begin(); status_editor != m_editorStates.end(); ++status_editor) {
+        if((*status_editor)->isCurrentEditor(fullpath_name)) {
+            m_editorStates.erase(status_editor);
             return;
         }
     }
 }
-   
+
 void VimManager::DeleteAllEditorState() { m_editorStates.clear(); }
-
-

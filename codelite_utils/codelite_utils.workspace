@@ -15,7 +15,7 @@
   <Project Name="codelite_echo" Path="../codelite_echo/codelite_echo.project" Active="No"/>
   <Project Name="codelite_cppcheck" Path="../sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="autorev" ConfigName="Debug"/>
       <Project Name="build_all" ConfigName="Debug"/>
@@ -31,7 +31,7 @@
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Environment/>
       <Project Name="build_all" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>

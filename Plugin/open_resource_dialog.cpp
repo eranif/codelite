@@ -106,11 +106,15 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
             }
         }
     }
-
+    
+    wxString lastStringTyped = clConfig::Get().Read("OpenResourceDialog/SearchString", wxString());
     // Set the initial selection
     // We use here 'SetValue' so an event will get fired and update the control
     if(!initialSelection.IsEmpty()) {
         m_textCtrlResourceName->SetValue(initialSelection);
+        m_textCtrlResourceName->SelectAll();
+    } else if(!lastStringTyped.IsEmpty()) {
+        m_textCtrlResourceName->SetValue(lastStringTyped);
         m_textCtrlResourceName->SelectAll();
     }
 
@@ -129,9 +133,11 @@ OpenResourceDialog::~OpenResourceDialog()
 {
     m_timer->Stop();
     wxDELETE(m_timer);
-
+    
+    // Store current values
     clConfig::Get().Write("OpenResourceDialog/ShowFiles", m_checkBoxFiles->IsChecked());
     clConfig::Get().Write("OpenResourceDialog/ShowSymbols", m_checkBoxShowSymbols->IsChecked());
+    clConfig::Get().Write("OpenResourceDialog/SearchString", m_textCtrlResourceName->GetValue());
 }
 
 void OpenResourceDialog::OnText(wxCommandEvent& event)

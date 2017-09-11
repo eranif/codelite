@@ -35,6 +35,8 @@ public:
     enum {
         kCopyLeftToRightAndMove = (1 << 0),
         kCopyRightToLeftAndMove = (1 << 1),
+        diffShowLineNumbers = (1 << 2),
+        diffHideOverviewBar = (1 << 3),
     };
 
     // View mode
@@ -79,6 +81,22 @@ public:
     bool IsSplitHorizontal() const { return m_viewFlags & kViewHorizontalSplit; }
 
     bool IsSingleViewMode() const { return m_viewFlags & kViewSingle; }
+
+    bool ShowLineNumbers() const { return m_flags & diffShowLineNumbers; }
+    void SetShowLineNumbers(bool flag) {
+        m_flags &= ~diffShowLineNumbers;
+        if (flag) {
+            m_flags |= diffShowLineNumbers;
+        }
+    }
+
+    bool HideOverviewBar() const { return m_flags & diffHideOverviewBar; }
+    void SetHideOverviewBar(bool flag) {
+        m_flags &= ~diffHideOverviewBar;
+        if (flag) {
+            m_flags |= diffHideOverviewBar;
+        }
+    }
 
     void SetFlags(size_t flags) { this->m_flags = flags; }
     size_t GetFlags() const { return m_flags; }

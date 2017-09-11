@@ -37,14 +37,14 @@ echo "Creating tarballs"
 cd ${tmpdir}
 
 # First for Linux
-GZIP="-9" tar cvzf ${curdir}/${codelite_ver}-gtk.src.tar.gz ${codelite_ver}/* --exclude *.exe --exclude *.dll --exclude *.dylib
-tar cv --xz -f ${curdir}/${codelite_ver}-gtk.src.tar.xz ${codelite_ver}/* --exclude *.exe --exclude *.dll --exclude *.dylib
+GZIP="-9" tar cvzf ${curdir}/${codelite_ver}-gtk.src.tar.gz --exclude='*.exe' --exclude='*.dll' --exclude='*.dylib' ${codelite_ver}/*
+tar cv --xz -f ${curdir}/${codelite_ver}-gtk.src.tar.xz --exclude='*.exe' --exclude='*.dll' --exclude='*.dylib' ${codelite_ver}/* 
 
 # then for MSWin
-#tar cv --lzma -f ${curdir}/${codelite_ver}-win.src.tar.7z ${codelite_ver}/* --exclude *.so --exclude *.dylib
+#tar cv --lzma -f ${curdir}/${codelite_ver}-win.src.tar.7z --exclude='*.so' --exclude='*.dylib' ${codelite_ver}/*
 
 # and OS/X
-#GZIP="-9" tar cvzf ${curdir}/${codelite_ver}-mac.src.tar.gz ${codelite_ver}/* --exclude *.exe --exclude *.dll --exclude *.so
+#GZIP="-9" tar cvzf ${curdir}/${codelite_ver}-mac.src.tar.gz --exclude='*.exe' --exclude='*.dll' --exclude=*.so ${codelite_ver}/*
 
 # Clean up
 rm -rf ${codelite_ver}

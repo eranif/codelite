@@ -1,6 +1,7 @@
 #ifndef CPROJECTDEPENDECYSORTER_H
 #define CPROJECTDEPENDECYSORTER_H
 
+#include <vector>
 #include "codelite_exports.h"
 #include <wx/arrstr.h>
 #include <unordered_map>

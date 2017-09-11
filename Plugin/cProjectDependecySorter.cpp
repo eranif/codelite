@@ -1,4 +1,5 @@
 #include "cProjectDependecySorter.h"
+#include <algorithm>
 #include "macros.h"
 #include <workspace.h>
 #include "cl_exception.h"

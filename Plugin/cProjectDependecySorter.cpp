@@ -8,7 +8,7 @@ clProjectDependecySorter::clProjectDependecySorter() {}
 
 clProjectDependecySorter::~clProjectDependecySorter() {}
 
-void clProjectDependecySorter::Visit(clProjectDependecySorter::Node* node, wxArrayString& buildOrder) throw(clException)
+void clProjectDependecySorter::Visit(clProjectDependecySorter::Node* node, wxArrayString& buildOrder)
 {
     if(node->marker == kPerm) return;
     if(node->marker == kTemp) throw clException("Dependency loop found for node: " + node->name);
@@ -20,7 +20,7 @@ void clProjectDependecySorter::Visit(clProjectDependecySorter::Node* node, wxArr
 }
 
 void clProjectDependecySorter::GetProjectBuildOrder(const wxString& projectName, const wxString& configName,
-                                                    wxArrayString& buildOrder) throw(clException)
+                                                    wxArrayString& buildOrder)
 {
     Graph_t G;
     wxArrayString projects;
@@ -48,10 +48,11 @@ void clProjectDependecySorter::GetProjectBuildOrder(const wxString& projectName,
 
 clProjectDependecySorter::Node* clProjectDependecySorter::GetNodeCreateIfNeeded(Graph_t& G, const wxString& name)
 {
-    if(G.count(name) == 0) {
+    std::string key = name.mb_str(wxConvUTF8).data();
+    if(G.count(key) == 0) {
         clProjectDependecySorter::Node n;
-        n.name = name;
-        G[name] = n;
+        n.name = key;
+        G[key] = n;
     }
-    return &G[name];
+    return &G[key];
 }

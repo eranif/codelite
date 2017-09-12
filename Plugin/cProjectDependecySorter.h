@@ -1,10 +1,10 @@
 #ifndef CPROJECTDEPENDECYSORTER_H
 #define CPROJECTDEPENDECYSORTER_H
 
-#include <vector>
 #include "codelite_exports.h"
 #include <wx/arrstr.h>
 #include <unordered_map>
+#include <vector>
 #include "cl_exception.h"
 
 class WXDLLIMPEXP_SDK clProjectDependecySorter
@@ -20,10 +20,10 @@ class WXDLLIMPEXP_SDK clProjectDependecySorter
         {
         }
     };
-    typedef std::unordered_map<wxString, clProjectDependecySorter::Node> Graph_t;
+    typedef std::unordered_map<std::string, clProjectDependecySorter::Node> Graph_t;
 
 protected:
-    void Visit(clProjectDependecySorter::Node* node, wxArrayString& buildOrder) throw(clException);
+    void Visit(clProjectDependecySorter::Node* node, wxArrayString& buildOrder);
     clProjectDependecySorter::Node* GetNodeCreateIfNeeded(Graph_t& G, const wxString& name);
 
 public:
@@ -37,7 +37,7 @@ public:
      * @return the build order. Throws clException in case of an error
      */
     void GetProjectBuildOrder(const wxString& projectName, const wxString& configName,
-                              wxArrayString& buildOrder) throw(clException);
+                              wxArrayString& buildOrder);
 };
 
 #endif // CPROJECTDEPENDECYSORTER_H

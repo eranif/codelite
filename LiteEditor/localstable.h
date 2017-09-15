@@ -43,6 +43,8 @@ protected:
     bool m_resolveLocals;
     bool m_arrayAsCharPtr;
     bool m_sortAsc;
+    bool m_defaultHexDisplay;
+    
 
 protected:
     void DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved,

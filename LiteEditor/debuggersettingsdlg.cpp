@@ -114,6 +114,7 @@ DebuggerPage::DebuggerPage(wxWindow* parent, wxString title)
         m_checkBoxUsePrettyPrinting->SetValue(info.enableGDBPrettyPrinting);
         m_checkBoxPrintObjectOn->SetValue(!(info.flags & DebuggerInformation::kPrintObjectOff));
         m_checkBoxRunAsSuperuser->SetValue(info.flags & DebuggerInformation::kRunAsSuperuser);
+        m_checkBoxDefaultHexDisplay->SetValue(info.defaultHexDisplay);
     }
 }
 
@@ -315,6 +316,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
             info.whenBreakpointHitRaiseCodelite = page->m_raiseOnBpHit->IsChecked();
             info.charArrAsPtr = page->m_checkBoxCharArrAsPtr->IsChecked();
             info.enableGDBPrettyPrinting = page->m_checkBoxUsePrettyPrinting->IsChecked();
+            info.defaultHexDisplay = page->m_checkBoxDefaultHexDisplay->IsChecked();
 
             // Update the flags
             if(page->m_checkBoxPrintObjectOn->IsChecked()) {

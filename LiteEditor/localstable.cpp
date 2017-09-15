@@ -79,6 +79,7 @@ void LocalsTable::Initialize()
         DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
         m_resolveLocals = info.resolveLocals;
         m_arrayAsCharPtr = info.charArrAsPtr;
+        m_defaultHexDisplay = info.defaultHexDisplay;
     }
 
     m_preDefTypes = data.GetActiveSet();

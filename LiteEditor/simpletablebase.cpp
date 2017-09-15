@@ -137,6 +137,7 @@ void DebuggerTreeListCtrlBase::DoRefreshItemRecursively(IDebugger* dbgr,
             int where = itemsToRefresh.Index(data->_gdbId);
             if(where != wxNOT_FOUND) {
                 dbgr->EvaluateVariableObject(data->_gdbId, m_DBG_USERR);
+                dbgr->SetVariableObbjectDisplayFormat(data->_gdbId, DBG_DF_HEXADECIMAL);
                 m_gdbIdToTreeId[data->_gdbId] = exprItem;
                 itemsToRefresh.RemoveAt((size_t)where);
             }

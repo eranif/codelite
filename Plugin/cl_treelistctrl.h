@@ -167,6 +167,7 @@ public:
                const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize,
                long style = wxTR_DEFAULT_STYLE,
+               //long style = wxTR_MULTIPLE,
                const wxValidator &validator = wxDefaultValidator,
                const wxString& name = clTreeListCtrlNameStr )
         : m_header_win(0), m_main_win(0), m_headerHeight(0)

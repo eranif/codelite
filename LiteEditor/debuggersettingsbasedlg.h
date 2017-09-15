@@ -167,7 +167,7 @@ protected:
     wxCheckBox* m_checkBoxCharArrAsPtr;
     wxCheckBox* m_checkBoxUsePrettyPrinting;
     wxCheckBox* m_checkBoxPrintObjectOn;
-
+    wxCheckBox* m_checkBoxDefaultHexDisplay;
 protected:
     virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSuperuserUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -192,6 +192,7 @@ public:
     wxCheckBox* GetCheckBoxCharArrAsPtr() { return m_checkBoxCharArrAsPtr; }
     wxCheckBox* GetCheckBoxUsePrettyPrinting() { return m_checkBoxUsePrettyPrinting; }
     wxCheckBox* GetCheckBoxPrintObjectOn() { return m_checkBoxPrintObjectOn; }
+    wxCheckBox* GetCheckBoxDefaultHexDisplay() { return m_checkBoxDefaultHexDisplay; }
     wxPanel* GetPanelDisplay() { return m_panelDisplay; }
     wxNotebook* GetNotebook73() { return m_notebook73; }
     wxPanel* GetPanel6() { return m_panel6; }

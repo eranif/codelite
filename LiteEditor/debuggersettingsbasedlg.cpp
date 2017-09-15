@@ -460,6 +460,13 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer21->Add(m_checkBoxPrintObjectOn, 0, wxALL, WXC_FROM_DIP(5));
     
+    fgSizer21->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_checkBoxDefaultHexDisplay = new wxCheckBox(m_panelDisplay, wxID_ANY, _("Default Hex Display"), wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1,-1)), 0);
+    m_checkBoxDefaultHexDisplay->SetValue(false);
+    m_checkBoxDefaultHexDisplay->SetToolTip(_("Debugger value display default to use Hex, easier for driver/rtos debugging."));
+    fgSizer21->Add(m_checkBoxDefaultHexDisplay, 0, wxALL, WXC_FROM_DIP(5));
+    
     SetName(wxT("DbgPageGeneralBase"));
     SetSize(-1,-1);
     if (GetSizer()) {
@@ -787,7 +794,7 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_auibar31->AddTool(ID_SORT_LOCALS, _("Sort Items"), wxXmlResource::Get()->LoadBitmap(wxT("sort")), wxNullBitmap, wxITEM_NORMAL, _("Sort Items"), _("Sort Items"), NULL);
     m_auibar31->Realize();
     
-    m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS|wxTR_NO_LINES);
+    m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_MULTIPLE|wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS|wxTR_NO_LINES);
     
     boxSizer29->Add(m_listTable, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     

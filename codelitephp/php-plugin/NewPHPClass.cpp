@@ -119,8 +119,8 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
     classString << "{" << EOL;
 
     if(IsClass() && (GetFlags() & GEN_SINGLETON)) {
-        classString << indent << indent << "/** @var " << GetNamespace() << "\\" << GetName() << "*/" << EOL;
-        classString << indent << indent << "protected static $instance = null;" << EOL;
+        classString << indent << indent << "/** @var self */" << EOL;
+        classString << indent << indent << "protected static $instance;" << EOL;
     }
 
     if(IsClass() && (GetFlags() & GEN_CTOR)) {
@@ -144,21 +144,10 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
     }
 
     if(IsClass() && (GetFlags() & GEN_SINGLETON)) {
-        wxString returnType;
-        if(GetNamespace().IsEmpty()) {
-            returnType = GetName();
-        } else {
-            // user provided a namespace
-            returnType << GetNamespace() << "\\" << GetName();
-        }
-
-        // Remove duplicate backslahes
-        while(returnType.Replace("\\\\", "\\")) {
-        }
-        classString << indent << "/** @return " << returnType << " **/" << EOL;
+        classString << indent << "/** @return self **/" << EOL;
         classString << indent << "static public function getInstance() {" << EOL;
-        classString << indent << indent << "if (is_null(self::$instance)) {" << EOL;
-        classString << indent << indent << indent << "self::$instance = new " << GetName() << "();" << EOL;
+        classString << indent << indent << "if (null === self::$instance) {" << EOL;
+        classString << indent << indent << indent << "self::$instance = new self();" << EOL;
         classString << indent << indent << "}" << EOL;
         classString << indent << indent << "return self::$instance;" << EOL;
         classString << indent << "}" << EOL << EOL;

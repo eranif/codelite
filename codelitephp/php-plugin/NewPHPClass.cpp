@@ -134,11 +134,10 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
     }
 
     if(IsClass() && (GetFlags() & GEN_DTOR)) {
-        if(GetFlags() & GEN_SINGLETON) {
-            classString << indent << "protected function __destruct() {" << EOL;
-        } else {
-            classString << indent << "public function __destruct() {" << EOL;
+        if (GetFlags() & (GEN_CTOR | GEN_SINGLETON)) {
+            classString << EOL;
         }
+        classString << indent << "public function __destruct()" << EOL;
         classString << indent << indent << EOL;
         classString << indent << "}" << EOL << EOL;
     }

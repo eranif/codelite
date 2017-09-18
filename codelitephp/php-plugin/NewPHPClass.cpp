@@ -123,7 +123,7 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
         classString << indent << indent << "protected static $instance;" << EOL;
     }
 
-    if(IsClass() && (GetFlags() & GEN_CTOR)) {
+    if(IsClass() && (GetFlags() & (GEN_CTOR | GEN_SINGLETON))) {
         if(GetFlags() & GEN_SINGLETON) {
             classString << indent << "protected function __construct() {" << EOL;
         } else {

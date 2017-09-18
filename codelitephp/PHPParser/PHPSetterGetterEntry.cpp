@@ -35,7 +35,8 @@ wxString PHPSetterGetterEntry::GetGetter(size_t flags) const
     }
 
     wxString body;
-    body << "    /**\n"
+    body << "\n"
+         << "    /**\n"
          << "     * @return " << m_entry->Cast<PHPEntityVariable>()->GetTypeHint() << "\n"
          << "     */\n"
          << "    public function " << functionName << "() {\n"
@@ -61,7 +62,8 @@ wxString PHPSetterGetterEntry::GetSetter(const wxString& scope, size_t flags) co
     }
 
     wxString body;
-    body << "    /**\n"
+    body << "\n"
+         << "    /**\n"
          << "     * @param " << m_entry->Cast<PHPEntityVariable>()->GetTypeHint() << " " << m_entry->GetShortName()
          << "\n";
 
@@ -72,7 +74,8 @@ wxString PHPSetterGetterEntry::GetSetter(const wxString& scope, size_t flags) co
          << "    public function " << functionName << "(" << nameWithDollar << ") {\n"
          << "        $this->" << nameNoDollar << " = " << nameWithDollar << ";\n";
     if(flags & kSG_ReturnThis) {
-        body << "        return $this;\n";
+        body << "\n"
+             << "        return $this;\n";
     }
     body << "    }";
     return body;

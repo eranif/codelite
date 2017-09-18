@@ -117,12 +117,12 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
     }
 
     classString << "{" << EOL;
-    
+
     if(IsClass() && (GetFlags() & GEN_SINGLETON)) {
         classString << indent << indent << "/** @var " << GetNamespace() << "\\" << GetName() << "*/" << EOL;
         classString << indent << indent << "protected static $instance = null;" << EOL;
     }
-    
+
     if(IsClass() && (GetFlags() & GEN_CTOR)) {
         if(GetFlags() & GEN_SINGLETON) {
             classString << indent << "protected function __construct() {" << EOL;
@@ -132,14 +132,13 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
         classString << indent << indent << EOL;
         classString << indent << "}" << EOL << EOL;
     }
-    
+
     if(IsClass() && (GetFlags() & GEN_DTOR)) {
         if(GetFlags() & GEN_SINGLETON) {
             classString << indent << "protected function __destruct() {" << EOL;
         } else {
             classString << indent << "public function __destruct() {" << EOL;
         }
-        classString << indent << "public function __destruct() {" << EOL;
         classString << indent << indent << EOL;
         classString << indent << "}" << EOL << EOL;
     }

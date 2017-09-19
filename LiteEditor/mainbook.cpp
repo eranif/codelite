@@ -832,7 +832,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
     std::vector<wxFileName> filesToRetag;
     for(size_t i = 0; i < files.size(); i++) {
         if(files[i].second) {
-            editors[i]->ReloadFile();
+            editors[i]->ReloadFile(true);
             filesToRetag.push_back(files[i].first);
         }
     }

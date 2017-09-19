@@ -2346,7 +2346,7 @@ void clMainFrame::OnFileReload(wxCommandEvent& event)
                 return;
             }
         }
-        editor->ReloadFile();
+        editor->ReloadFile(true);
     }
 }
 

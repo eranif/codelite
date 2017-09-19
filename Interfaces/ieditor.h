@@ -134,7 +134,7 @@ public:
      * \brief reload the current file from disk - this function discards all changes made
      * to the  current file
      */
-    virtual void ReloadFile() = 0;
+    virtual void ReloadFile(bool keepUndoHistory = false) = 0;
 
     /**
      * @brief save the editor

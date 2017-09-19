@@ -2900,7 +2900,7 @@ void LEditor::GetBookmarkTooltip(int lineno, wxString& tip, wxString& title)
     }
 }
 
-void LEditor::ReloadFile()
+void LEditor::ReloadFile(bool keepUndoHistory)
 {
     wxWindowUpdateLocker locker(this);
     SetReloadingFile(true);
@@ -2932,8 +2932,10 @@ void LEditor::ReloadFile()
     m_modifyTime = GetFileLastModifiedTime();
 
     SetSavePoint();
-    EmptyUndoBuffer();
-    GetCommandsProcessor().Reset();
+    if(!keepUndoHistory) {
+        EmptyUndoBuffer();
+        GetCommandsProcessor().Reset();
+    }
 
     // Update the editor properties
     DoUpdateOptions();

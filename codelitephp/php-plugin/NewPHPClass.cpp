@@ -154,7 +154,7 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
         classString << indent << "/**" << EOL;
         classString << indent << " * @return self" << EOL;
         classString << indent << " */" << EOL;
-        classString << indent << "static public function getInstance()" << EOL;
+        classString << indent << "public static function getInstance()" << EOL;
         classString << indent << "{" << EOL;
         classString << indent << indent << "if (!self::$instance) {" << EOL;
         classString << indent << indent << indent << "self::$instance = new self();" << EOL;

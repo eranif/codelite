@@ -69,6 +69,7 @@ wxString PHPSetterGetterEntry::GetSetter(const wxString& scope, size_t flags) co
          << "\n";
 
     if(flags & kSG_ReturnThis) {
+        body << "     *\n";
         body << "     * @return " << scope << "\n";
     }
     body << "     */\n"

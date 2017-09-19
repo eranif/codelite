@@ -28,97 +28,97 @@ NewPHPClassBase::NewPHPClassBase(wxWindow* parent, wxWindowID id, const wxString
     
     wxStaticBoxSizer* staticBoxSizer24 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("General:")), wxVERTICAL);
     
-    boxSizer2->Add(staticBoxSizer24, 0, wxALL|wxEXPAND, 5);
+    boxSizer2->Add(staticBoxSizer24, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxFlexGridSizer* flexGridSizer10 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer10->SetFlexibleDirection( wxBOTH );
     flexGridSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer10->AddGrowableCol(1);
     
-    staticBoxSizer24->Add(flexGridSizer10, 1, wxALL|wxEXPAND, 5);
+    staticBoxSizer24->Add(flexGridSizer10, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText50 = new wxStaticText(this, wxID_ANY, _("Type:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText50 = new wxStaticText(this, wxID_ANY, _("Type:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer10->Add(m_staticText50, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer10->Add(m_staticText50, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceTypeArr;
     m_choiceTypeArr.Add(wxT("class"));
     m_choiceTypeArr.Add(wxT("interface"));
     m_choiceTypeArr.Add(wxT("trait"));
-    m_choiceType = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceTypeArr, 0);
+    m_choiceType = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceTypeArr, 0);
     m_choiceType->SetToolTip(_("Choose the object type"));
     m_choiceType->SetSelection(0);
     
-    flexGridSizer10->Add(m_choiceType, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer10->Add(m_choiceType, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    flexGridSizer10->Add(0, 0, 1, wxALL, 5);
+    flexGridSizer10->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_staticText12 = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText12 = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer10->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer10->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlClassName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlClassName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrlClassName->SetToolTip(_("The name"));
     m_textCtrlClassName->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlClassName->SetHint(wxT(""));
     #endif
     
-    flexGridSizer10->Add(m_textCtrlClassName, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer10->Add(m_textCtrlClassName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    flexGridSizer10->Add(0, 0, 1, wxALL, 5);
+    flexGridSizer10->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_staticText16 = new wxStaticText(this, wxID_ANY, _("Namespace:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText16 = new wxStaticText(this, wxID_ANY, _("Namespace:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer10->Add(m_staticText16, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer10->Add(m_staticText16, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlNamespace = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlNamespace = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrlNamespace->SetToolTip(_("If set, the generated code will be placed inside this namespace"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlNamespace->SetHint(wxT(""));
     #endif
     
-    flexGridSizer10->Add(m_textCtrlNamespace, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer10->Add(m_textCtrlNamespace, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    flexGridSizer10->Add(0, 0, 1, wxALL, 5);
+    flexGridSizer10->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_staticText74 = new wxStaticText(this, wxID_ANY, _("Extends:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText74 = new wxStaticText(this, wxID_ANY, _("Extends:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer10->Add(m_staticText74, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer10->Add(m_staticText74, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlExtends = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlExtends = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrlExtends->SetToolTip(_("A comma separated list of parents for this class"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlExtends->SetHint(wxT(""));
     #endif
     
-    flexGridSizer10->Add(m_textCtrlExtends, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer10->Add(m_textCtrlExtends, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_button90 = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_button90 = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBU_EXACTFIT);
     m_button90->SetToolTip(_("Edit in a small text editor..."));
     
-    flexGridSizer10->Add(m_button90, 0, wxALL, 5);
+    flexGridSizer10->Add(m_button90, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_staticText78 = new wxStaticText(this, wxID_ANY, _("Implements:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText78 = new wxStaticText(this, wxID_ANY, _("Implements:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer10->Add(m_staticText78, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer10->Add(m_staticText78, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlImplements = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlImplements = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrlImplements->SetToolTip(_("A comma separated list of interfaces for this class"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlImplements->SetHint(wxT(""));
     #endif
     
-    flexGridSizer10->Add(m_textCtrlImplements, 0, wxALL|wxEXPAND|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer10->Add(m_textCtrlImplements, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_button92 = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_button92 = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBU_EXACTFIT);
     m_button92->SetToolTip(_("Edit in a small text editor..."));
     
-    flexGridSizer10->Add(m_button92, 0, wxALL, 5);
+    flexGridSizer10->Add(m_button92, 0, wxALL, WXC_FROM_DIP(5));
     
     wxStaticBoxSizer* staticBoxSizer40 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Options:")), wxVERTICAL);
     
-    boxSizer2->Add(staticBoxSizer40, 0, wxALL|wxEXPAND, 5);
+    boxSizer2->Add(staticBoxSizer40, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxFlexGridSizer* flexGridSizer46 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer46->SetFlexibleDirection( wxBOTH );
@@ -126,50 +126,54 @@ NewPHPClassBase::NewPHPClassBase(wxWindow* parent, wxWindowID id, const wxString
     flexGridSizer46->AddGrowableCol(0);
     flexGridSizer46->AddGrowableCol(1);
     
-    staticBoxSizer40->Add(flexGridSizer46, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    staticBoxSizer40->Add(flexGridSizer46, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_checkBoxCtor = new wxCheckBox(this, wxID_ANY, _("Generate consturctor"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxCtor = new wxCheckBox(this, wxID_ANY, _("Generate consturctor"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_checkBoxCtor->SetValue(true);
     
-    flexGridSizer46->Add(m_checkBoxCtor, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer46->Add(m_checkBoxCtor, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxDtor = new wxCheckBox(this, wxID_ANY, _("Generate desctructor"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxDtor = new wxCheckBox(this, wxID_ANY, _("Generate desctructor"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_checkBoxDtor->SetValue(false);
     
-    flexGridSizer46->Add(m_checkBoxDtor, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer46->Add(m_checkBoxDtor, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxFolderPerNamespace = new wxCheckBox(this, wxID_ANY, _("Create folder per namespace"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxFolderPerNamespace = new wxCheckBox(this, wxID_ANY, _("Create folder per namespace"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_checkBoxFolderPerNamespace->SetValue(false);
     
-    flexGridSizer46->Add(m_checkBoxFolderPerNamespace, 0, wxALL, 5);
+    flexGridSizer46->Add(m_checkBoxFolderPerNamespace, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxSingleton = new wxCheckBox(this, wxID_ANY, _("Make singleton (available for classes only)"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxSingleton = new wxCheckBox(this, wxID_ANY, _("Make singleton (available for classes only)"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_checkBoxSingleton->SetValue(false);
     m_checkBoxSingleton->SetToolTip(_("The generated class will be generated as a singleton\nclass"));
     
-    flexGridSizer46->Add(m_checkBoxSingleton, 0, wxALL, 5);
+    flexGridSizer46->Add(m_checkBoxSingleton, 0, wxALL, WXC_FROM_DIP(5));
     
-    boxSizer2->Add(0, 0, 1, wxALL, 5);
+    boxSizer2->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_buttonOK->SetDefault();
     
-    boxSizer4->Add(m_buttonOK, 0, wxALL, 5);
+    boxSizer4->Add(m_buttonOK, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer4->Add(m_buttonCancel, 0, wxALL, 5);
+    boxSizer4->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("NewPHPClassBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

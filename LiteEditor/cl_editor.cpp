@@ -2932,10 +2932,10 @@ void LEditor::ReloadFile(bool keepUndoHistory)
     m_modifyTime = GetFileLastModifiedTime();
 
     SetSavePoint();
-    if(!keepUndoHistory) {
+    /*if(!keepUndoHistory) {*/
         EmptyUndoBuffer();
         GetCommandsProcessor().Reset();
-    }
+    /*}*/
 
     // Update the editor properties
     DoUpdateOptions();

@@ -778,7 +778,8 @@ public:
 
     virtual wxString GetEditorText() { return GetText(); }
     virtual void SetEditorText(const wxString& text);
-    virtual void ReloadFile(bool keepUndoHistory = false);
+    virtual void OpenFile();
+    virtual void ReloadFromDisk(bool keepUndoHistory = false);
     virtual void SetCaretAt(long pos);
     virtual long GetCurrentPosition() { return GetCurrentPos(); }
     virtual const wxFileName& GetFileName() const { return m_fileName; }

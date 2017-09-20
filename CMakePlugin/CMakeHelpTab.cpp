@@ -420,7 +420,7 @@ void CMakeHelpTab::CreateHelpPage(const wxString& content, const wxString& subje
         IEditor* activeEditor = manager->GetActiveEditor();
         if(activeEditor && activeEditor->GetFileName().GetFullPath() == fnCMakeHelpFile.GetFullPath()) {
             activeEditor->GetCtrl()->SetEditable(true);
-            activeEditor->ReloadFile();
+            activeEditor->OpenFile();
             activeEditor->GetCtrl()->SetFirstVisibleLine(0);
             activeEditor->GetCtrl()->SetEditable(false);
         }

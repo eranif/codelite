@@ -441,7 +441,6 @@ public:
     bool charArrAsPtr;
     bool enableGDBPrettyPrinting;
     bool defaultHexDisplay;
-    
     size_t flags; // see eGdbFlags
 
 public:

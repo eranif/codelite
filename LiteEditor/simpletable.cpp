@@ -516,20 +516,7 @@ void WatchesTable::OnMenuDisplayFormat(wxCommandEvent& event)
             DoRefreshItem(dbgr, item, true);
         }       
     }
-#if 0
-    wxTreeItemId item = m_listTable->GetSelection();
-    IDebugger* dbgr = DoGetDebugger();
-    if(!dbgr || !item.IsOk()) {
-        return;
-    }
-
-    wxString gdbId = DoGetGdbId(item);
-    if(gdbId.IsEmpty() == false) {
-        dbgr->SetVariableObbjectDisplayFormat(gdbId, df);
-        dbgr->UpdateVariableObject(gdbId, m_DBG_USERR);
-        DoRefreshItem(dbgr, item, true);
-    }
-#endif 
+ 
 }
 
 void WatchesTable::OnUpdateVariableObject(const DebuggerEventData& event)

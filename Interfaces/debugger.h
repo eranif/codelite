@@ -440,6 +440,7 @@ public:
     wxString cygwinPathCommand;
     bool charArrAsPtr;
     bool enableGDBPrettyPrinting;
+    bool defaultHexDisplay;
     size_t flags; // see eGdbFlags
 
 public:
@@ -464,6 +465,7 @@ public:
         , whenBreakpointHitRaiseCodelite(true)
         , charArrAsPtr(false)
         , enableGDBPrettyPrinting(true)
+        , defaultHexDisplay(false)
         , flags(0)
     {
     }
@@ -493,6 +495,7 @@ public:
         arch.Write(wxT("cygwinPathCommand"), cygwinPathCommand);
         arch.Write(wxT("charArrAsPtr"), charArrAsPtr);
         arch.Write(wxT("enableGDBPrettyPrinting"), enableGDBPrettyPrinting);
+        arch.Write(wxT("defaultHexDisplay"), defaultHexDisplay);
         arch.Write("flags", flags);
     }
 
@@ -525,6 +528,7 @@ public:
         arch.Read(wxT("cygwinPathCommand"), cygwinPathCommand);
         arch.Read(wxT("charArrAsPtr"), charArrAsPtr);
         arch.Read(wxT("enableGDBPrettyPrinting"), enableGDBPrettyPrinting);
+        arch.Read(wxT("defaultHexDisplay"), defaultHexDisplay);
         arch.Read("flags", flags);
     }
 };

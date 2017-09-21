@@ -525,6 +525,8 @@ void LEditor::SetCaretAt(long pos)
 void LEditor::SetProperties()
 {
     UsePopUp(false);
+    SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+    
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();

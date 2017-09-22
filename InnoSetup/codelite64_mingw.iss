@@ -57,6 +57,7 @@ Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_propgrid_gcc_cl.dll"; DestDir: "{app}"; 
 Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_ribbon_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- Binaries needed by CodeLite
 Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; 

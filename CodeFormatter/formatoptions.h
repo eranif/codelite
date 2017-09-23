@@ -257,10 +257,8 @@ public:
     wxString AstyleOptionsAsString() const;
 
     // Clang
-    wxString ClangFormatCommand(const wxFileName& fileName,
-                                const bool& formatInline = true,
-                                const int& cursorPosition = wxNOT_FOUND,
-                                const int& selStart = wxNOT_FOUND,
+    wxString ClangFormatCommand(const wxFileName& fileName, wxString originalFileName = "",
+                                const int& cursorPosition = wxNOT_FOUND, const int& selStart = wxNOT_FOUND,
                                 const int& selEnd = wxNOT_FOUND) const;
     wxString GetClangFormatStyleAsString(const wxFileName& fileName) const;
     void SetClangFormatExe(const wxString& clangFormatExe)

@@ -471,7 +471,9 @@ void CodeFormatter::DoFormatWithClang(wxString& content,
         return;
     }
 
-    wxString command = m_options.ClangFormatCommand(tempFileName, false, cursorPosition, selStart, selEnd);
+    wxString command =
+        m_options.ClangFormatCommand(tempFileName, fileName.GetFullName(), cursorPosition, selStart, selEnd);
+
     content = RunCommand(command);
 
     // The first line contains the cursor position

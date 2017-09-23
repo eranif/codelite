@@ -245,7 +245,7 @@ wxString FormatOptions::AstyleOptionsAsString() const
     return options;
 }
 
-wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName, const bool& formatInline,
+wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName, wxString originalFileName,
                                            const int& cursorPosition, const int& selStart, const int& selEnd) const
 {
     wxString command, filePath;
@@ -260,8 +260,11 @@ wxString FormatOptions::ClangFormatCommand(const wxFileName& fileName, const boo
         command << " -cursor=" << cursorPosition;
     }
 
-    if(formatInline) {
-        command << " -i";
+    if(originalFileName != "") {
+        ::WrapWithQuotes(originalFileName);
+        command << " -assume-filename=" << originalFileName;
+    } else {
+        command << " -i"; // Overwrite input file
     }
 
     if(selStart != wxNOT_FOUND && selEnd != wxNOT_FOUND) {

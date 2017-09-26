@@ -795,6 +795,21 @@ TEST_FUNC(test_wrong_goto_interface)
 }
 
 
+TEST_FUNC(test_function_arg_type_hint_and_php_doc)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_function_arg_type_hint_and_php_doc.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    CHECK_STRING(resolved->GetFullName(), "\\test_function_arg_type_hint_and_php_doc");
+    return true;
+}
+
+
 //======================-------------------------------------------------
 // Main
 //======================-------------------------------------------------

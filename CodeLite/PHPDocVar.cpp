@@ -6,10 +6,13 @@ PHPDocVar::PHPDocVar(PHPSourceFile& sourceFile, const wxString& doc)
     , m_dbId(wxNOT_FOUND)
     , m_lineNumber(wxNOT_FOUND)
 {
-    static wxRegEx reVarType(wxT("@(var|variable)[ \t]+([\\a-zA-Z_]{1}[\\a-zA-Z0-9_]*)"));
+    // @var Type $name
+    static wxRegEx reVarType(
+        wxT("@(var|variable)[ \t]+([\\a-zA-Z_]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"));
     if(reVarType.IsValid() && reVarType.Matches(doc)) {
         m_type = reVarType.GetMatch(doc, 2);
         m_type = sourceFile.MakeIdentifierAbsolute(m_type);
+        m_name = reVarType.GetMatch(doc, 3);
         m_isOk = true;
     }
 
@@ -43,9 +46,9 @@ PHPDocVar::~PHPDocVar() {}
 void PHPDocVar::Store(wxSQLite3Database& db, wxLongLong parentDdId)
 {
     try {
-        wxSQLite3Statement statement = db.PrepareStatement(
-            "REPLACE INTO PHPDOC_VAR_TABLE (ID, SCOPE_ID, NAME, TYPE, LINE_NUMBER, FILE_NAME) "
-            "VALUES (NULL, :SCOPE_ID, :NAME, :TYPE, :LINE_NUMBER, :FILE_NAME)");
+        wxSQLite3Statement statement =
+            db.PrepareStatement("REPLACE INTO PHPDOC_VAR_TABLE (ID, SCOPE_ID, NAME, TYPE, LINE_NUMBER, FILE_NAME) "
+                                "VALUES (NULL, :SCOPE_ID, :NAME, :TYPE, :LINE_NUMBER, :FILE_NAME)");
 
         statement.Bind(statement.GetParamIndex(":SCOPE_ID"), parentDdId);
         statement.Bind(statement.GetParamIndex(":NAME"), GetName());

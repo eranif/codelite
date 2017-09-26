@@ -83,7 +83,10 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
             // A function argument
             PHPDocComment docComment(m_sourceFile, entity->Parent()->GetDocComment());
             wxString typeHint = docComment.GetParam(entity->GetFullName());
-            if(!typeHint.IsEmpty()) {
+            const wxString& currentTypeHint = entity->Cast<PHPEntityVariable>()->GetTypeHint();
+            if(!typeHint.IsEmpty() && currentTypeHint.IsEmpty()) {
+                // The typehint of a functin argument should have more value than the one provided
+                // in the documentation
                 entity->Cast<PHPEntityVariable>()->SetTypeHint(typeHint);
             }
         }

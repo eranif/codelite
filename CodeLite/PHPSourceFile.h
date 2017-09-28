@@ -222,7 +222,10 @@ protected:
      * On this stage, all phpdoc comments are assigned to the proper PHP entity
      */
     void PhaseTwo();
-
+    
+    wxString DoMakeIdentifierAbsolute(const wxString& type, bool exactMatch);
+    
+    
 public:
     PHPSourceFile(const wxFileName& filename);
     PHPSourceFile(const wxString& content);
@@ -255,6 +258,16 @@ public:
      * @brief attempt to resolve 'type' to its full path
      */
     wxString MakeIdentifierAbsolute(const wxString& type);
+    
+    /**
+     * @brief attempt to resolve 'type' to its full path
+     */
+    wxString MakeTypehintAbsolute(const wxString& type);
+    
+    /**
+     * @brief prepend the current scope to the class name (or trait, interface...)
+     */
+    wxString PrependCurrentScope(const wxString& className);
 
     /**
      * @brief return the source file text

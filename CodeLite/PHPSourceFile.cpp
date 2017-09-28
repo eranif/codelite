@@ -1527,8 +1527,8 @@ wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exac
     if(!ns.EndsWith("\\")) {
         ns << "\\";
     }
-
-    if(exactMatch && !typeWithNS.Contains("\\") && !Namespace()->FindChild(typeWithNS)) {
+    
+    if(exactMatch && !typeWithNS.Contains("\\") && !Namespace()->FindChild(ns + typeWithNS)) {
         // Only when "exactMatch" apply this logic, otherwise, we might be getting a partialy typed string
         // which we will not find by calling FindChild()
         typeWithNS.Prepend("\\"); // Use the global NS

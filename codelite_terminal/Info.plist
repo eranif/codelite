@@ -9,6 +9,8 @@
     <string>6.0</string>
     <key>CFBundleName</key>
     <string>codelite-terminal</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.eranif.codelite</string>
     <key>CFBundleIconFile</key>
     <string>icon.icns</string>
     <key>CFBundlePackageType</key>

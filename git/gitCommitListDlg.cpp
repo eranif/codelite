@@ -167,7 +167,7 @@ void GitCommitListDlg::OnSelectionChanged(wxDataViewEvent& event)
 
     m_dvListCtrlCommitList->GetValue(v, m_dvListCtrlCommitList->ItemToRow(event.GetItem()), 0);
     wxString commitID = v.GetString();
-    wxString command = wxString::Format(wxT("%s --no-pager show %s"), m_gitPath.c_str(), commitID.c_str());
+    wxString command = wxString::Format(wxT("%s --no-pager show --first-parent %s"), m_gitPath.c_str(), commitID.c_str());
     m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_workingDir);
 }
 

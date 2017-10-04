@@ -2614,6 +2614,11 @@ void GitPlugin::OnFolderGitBash(wxCommandEvent& event)
 void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
 {
     event.Skip();
+    // Clear any stale repo data, otherwise it looks as if there's a valid git
+    // repo when it actually belongs to a different project
+    DoCleanup();
+    m_console->UpdateTreeView("");
+
     wxFileName projectFile(event.GetFileName());
     DoSetRepoPath(projectFile.GetPath(), false);
 }

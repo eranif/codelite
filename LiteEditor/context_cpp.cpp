@@ -1162,11 +1162,8 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     CommentConfigData data;
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
 
-    // get doxygen comment based on file and line
-    wxChar keyPrefix(wxT('\\'));
-    if(data.GetUseShtroodel()) {
-        keyPrefix = wxT('@');
-    }
+    // We decide whether to use @ or \ based on the current class pattern
+    wxChar keyPrefix = data.GetClassPattern().Find("\\") != -1 ? '\\' : '@';
 
     int curpos = editor.GetCurrentPos();
     int newPos = curpos; // the new position to place the caret after the insertion of the doxy block

@@ -1485,12 +1485,12 @@ wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exac
 
     // If the symbol contains namespace separator
     // Convert it full path and return (prepend namespace separator)
-    if(typeWithNS.Contains("\\")) {
-        if(!typeWithNS.StartsWith("\\")) {
-            typeWithNS.Prepend("\\");
-        }
-        return typeWithNS;
-    }
+//    if(typeWithNS.Contains("\\")) {
+//        if(!typeWithNS.StartsWith("\\")) {
+//            typeWithNS.Prepend("\\");
+//        }
+//        return typeWithNS;
+//    }
 
     // Use the alias table first
     if(m_aliases.find(type) != m_aliases.end()) {

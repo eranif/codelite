@@ -626,6 +626,34 @@ TEST_FUNC(test_partial_namespace)
     return true;
 }
 
+
+TEST_FUNC(test_extends_with_namespace)
+{
+    {
+        // parse the helper file first
+        PHPSourceFile sourceFile(wxFileName("../Tests/test_partial_namespace_helper.php"));
+        sourceFile.SetParseFunctionBody(false);
+        sourceFile.Parse();
+        lookup.UpdateSourceFile(sourceFile);
+    }
+
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_extends_with_namespace.php"));
+    sourceFile.SetParseFunctionBody(false);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+
+    CHECK_SIZE(matches.size(), 1);
+    CHECK_WXSTRING((*matches.begin())->GetShortName(), "foo");
+    return true;
+}
+
 TEST_FUNC(test_php7_function_return_value)
 {
     PHPSourceFile sourceFile(wxFileName("../Tests/test_php7_function_return_value.php"));

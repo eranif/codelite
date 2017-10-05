@@ -99,6 +99,7 @@
     <File Name="Tests/test_wrong_goto_interface.php"/>
     <File Name="Tests/test_function_arg_type_hint_and_php_doc.php"/>
     <File Name="Tests/test_func_arg_in_lambda_in_assignment.php"/>
+    <File Name="Tests/test_extends_with_namespace.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

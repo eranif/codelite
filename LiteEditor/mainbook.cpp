@@ -1264,9 +1264,12 @@ void MainBook::DetachActiveEditor()
 void MainBook::OnDetachedEditorClosed(clCommandEvent& e)
 {
     e.Skip();
-    DoEraseDetachedEditor((IEditor*)e.GetClientData());
+    IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
+    DoEraseDetachedEditor(editor);
+    
+    wxString alternateText = (editor && editor->IsModified()) ? editor->GetCtrl()->GetText() : "";
     // Open the file again in the main book
-    CallAfter(&MainBook::DoOpenFile, e.GetFileName());
+    CallAfter(&MainBook::DoOpenFile, e.GetFileName(), alternateText);
 }
 
 void MainBook::DoEraseDetachedEditor(IEditor* editor)
@@ -1472,4 +1475,10 @@ void MainBook::GetDetachedTabs(clTab::Vec_t& tabs)
     });
 }
 
-void MainBook::DoOpenFile(const wxString& filename) { OpenFile(filename); }
+void MainBook::DoOpenFile(const wxString& filename, const wxString& content)
+{
+    LEditor* editor = OpenFile(filename);
+    if(editor && !content.IsEmpty()) {
+        editor->SetText(content);
+    }
+}

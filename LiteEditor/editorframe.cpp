@@ -95,9 +95,6 @@ EditorFrame::~EditorFrame()
 void EditorFrame::OnClose(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(!ConfirmClose()) {
-        return; // Don't skip and don't destory the window
-    }
     Destroy();
 }
 
@@ -113,14 +110,6 @@ void EditorFrame::OnFind(wxCommandEvent& event)
 
 void EditorFrame::OnFindUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
-void EditorFrame::OnCloseWindow(wxCloseEvent& event)
-{
-    event.Skip();
-    if(!ConfirmClose()) {
-        event.Skip(false);
-        event.Veto();
-        return;
-    }
-}
+void EditorFrame::OnCloseWindow(wxCloseEvent& event) { event.Skip(); }
 
 bool EditorFrame::ConfirmClose() { return !(m_editor->IsModified() && !MainBook::AskUserToSave(m_editor)); }

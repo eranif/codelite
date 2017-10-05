@@ -618,7 +618,7 @@ void PHPSourceFile::ParseFunctionBody()
             OnCatch();
             break;
         case kPHP_T_VARIABLE: {
-            var.Reset(new PHPEntityVariable());
+            /*var.Reset(new PHPEntityVariable());
             var->SetFullName(token.Text());
             var->SetFilename(m_filename.GetFullPath());
             var->SetLine(token.lineNumber);
@@ -648,7 +648,9 @@ void PHPSourceFile::ParseFunctionBody()
                     // keep the expression
                     var->Cast<PHPEntityVariable>()->SetExpressionHint(expr);
                 }
-            }
+            }*/
+            OnVariable(token);
+            break;
         } break;
         default:
             break;
@@ -874,6 +876,9 @@ bool PHPSourceFile::ReadExpression(wxString& expression)
         }
 
         switch(token.type) {
+        case kPHP_T_FUNCTION:
+            OnFunction();
+            break;
         case kPHP_T_REQUIRE:
         case kPHP_T_REQUIRE_ONCE:
             expression.clear();

@@ -809,6 +809,25 @@ TEST_FUNC(test_function_arg_type_hint_and_php_doc)
     return true;
 }
 
+TEST_FUNC(test_func_arg_in_lambda_in_assignment)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_func_arg_in_lambda_in_assignment.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+
+    CHECK_SIZE(matches.size(), 1);
+    CHECK_WXSTRING((*matches.begin())->GetFullName(), "$lambdaArg");
+    return true;
+}
+
 
 //======================-------------------------------------------------
 // Main

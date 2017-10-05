@@ -618,37 +618,6 @@ void PHPSourceFile::ParseFunctionBody()
             OnCatch();
             break;
         case kPHP_T_VARIABLE: {
-            /*var.Reset(new PHPEntityVariable());
-            var->SetFullName(token.Text());
-            var->SetFilename(m_filename.GetFullPath());
-            var->SetLine(token.lineNumber);
-            CurrentScope()->AddChild(var);
-
-            // Peek at the next token
-            if(!NextToken(token)) return; // EOF
-            if(token.type != '=') {
-                m_lookBackTokens.clear();
-                var.Reset(NULL);
-                UngetToken(token);
-
-            } else {
-
-                wxString expr;
-                if(!ReadExpression(expr)) return; // EOF
-
-                // Optimize 'new ClassName(..)' expression
-                if(expr.StartsWith("new")) {
-                    expr = expr.Mid(3);
-                    expr.Trim().Trim(false);
-                    expr = expr.BeforeFirst('(');
-                    expr.Trim().Trim(false);
-                    var->Cast<PHPEntityVariable>()->SetTypeHint(MakeIdentifierAbsolute(expr));
-
-                } else {
-                    // keep the expression
-                    var->Cast<PHPEntityVariable>()->SetExpressionHint(expr);
-                }
-            }*/
             OnVariable(token);
             break;
         } break;

@@ -63,7 +63,7 @@ if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; the
     else
         export PATH=/cygdrive/c/Program\ Files/CodeLite:/cygdrive/d/software/Inno\ Setup\ 5/:$PATH
         export WXCFG=gcc_dll/mswu
-        export WXWIN=D:/src/wxWidgets
+        export WXWIN=D:/src/wxWidgets.git
 
         cmd /c "C:\Program Files/CodeLite/codelite-make.exe"        \
             --workspace=LiteEditor.workspace                        \

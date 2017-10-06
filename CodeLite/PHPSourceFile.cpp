@@ -10,6 +10,7 @@
 #include "PHPDocVisitor.h"
 #include "PHPEntityFunctionAlias.h"
 #include <unordered_set>
+#include "PHPLookupTable.h"
 
 #define NEXT_TOKEN_BREAK_IF_NOT(t, action) \
     {                                      \
@@ -20,22 +21,24 @@
         }                                  \
     }
 
-PHPSourceFile::PHPSourceFile(const wxString& content)
+PHPSourceFile::PHPSourceFile(const wxString& content, PHPLookupTable* lookup)
     : m_text(content)
     , m_parseFunctionBody(false)
     , m_depth(0)
     , m_reachedEOF(false)
     , m_converter(NULL)
+    , m_lookup(lookup)
 {
     m_scanner = ::phpLexerNew(content, kPhpLexerOpt_ReturnComments);
 }
 
-PHPSourceFile::PHPSourceFile(const wxFileName& filename)
+PHPSourceFile::PHPSourceFile(const wxFileName& filename, PHPLookupTable* lookup)
     : m_filename(filename)
     , m_parseFunctionBody(false)
     , m_depth(0)
     , m_reachedEOF(false)
     , m_converter(NULL)
+    , m_lookup(lookup)
 {
     // Filename is kept in absolute path
     m_filename.MakeAbsolute();
@@ -1483,15 +1486,6 @@ wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exac
         }
     }
 
-    // If the symbol contains namespace separator
-    // Convert it full path and return (prepend namespace separator)
-//    if(typeWithNS.Contains("\\")) {
-//        if(!typeWithNS.StartsWith("\\")) {
-//            typeWithNS.Prepend("\\");
-//        }
-//        return typeWithNS;
-//    }
-
     // Use the alias table first
     if(m_aliases.find(type) != m_aliases.end()) {
         return m_aliases.find(type)->second;
@@ -1501,8 +1495,8 @@ wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exac
     if(!ns.EndsWith("\\")) {
         ns << "\\";
     }
-    
-    if(exactMatch && !typeWithNS.Contains("\\") && !Namespace()->FindChild(ns + typeWithNS)) {
+
+    if(exactMatch && m_lookup && !typeWithNS.Contains("\\") && !m_lookup->ClassExists(ns + typeWithNS)) {
         // Only when "exactMatch" apply this logic, otherwise, we might be getting a partialy typed string
         // which we will not find by calling FindChild()
         typeWithNS.Prepend("\\"); // Use the global NS

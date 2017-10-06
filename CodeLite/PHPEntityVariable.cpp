@@ -2,6 +2,7 @@
 #include "PHPScannerTokens.h"
 #include "PHPEntityFunction.h"
 #include "PHPEntityClass.h"
+#include "PHPLookupTable.h"
 
 PHPEntityVariable::PHPEntityVariable() {}
 
@@ -77,10 +78,11 @@ wxString PHPEntityVariable::ToFuncArgString() const
     }
     return str;
 }
-void PHPEntityVariable::Store(wxSQLite3Database& db)
+void PHPEntityVariable::Store(PHPLookupTable* lookup)
 {
     if(IsFunctionArg() || IsMember() || IsDefine()) {
         try {
+            wxSQLite3Database& db = lookup->Database();
             wxSQLite3Statement statement = db.PrepareStatement(
                 "INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
                 ":SCOPE_ID, :FUNCTION_ID, :NAME, :FULLNAME, :SCOPE, :TYPEHINT, :DEFAULT_VALUE, "

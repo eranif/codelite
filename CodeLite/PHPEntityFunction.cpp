@@ -2,6 +2,7 @@
 #include "PHPEntityVariable.h"
 #include "file_logger.h"
 #include "commentconfigdata.h"
+#include "PHPLookupTable.h"
 
 PHPEntityFunction::PHPEntityFunction() {}
 
@@ -46,7 +47,7 @@ wxString PHPEntityFunction::GetSignature() const
     }
 }
 
-void PHPEntityFunction::Store(wxSQLite3Database& db)
+void PHPEntityFunction::Store(PHPLookupTable* lookup)
 {
     wxString fullname;
     fullname << GetScope() << "\\" << GetShortName();
@@ -54,6 +55,7 @@ void PHPEntityFunction::Store(wxSQLite3Database& db)
     }
 
     try {
+        wxSQLite3Database& db = lookup->Database();
         wxSQLite3Statement statement = db.PrepareStatement(
             "INSERT OR REPLACE INTO FUNCTION_TABLE VALUES(NULL, :SCOPE_ID, :NAME, :FULLNAME, :SCOPE, :SIGNATURE, "
             ":RETURN_VALUE, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");

@@ -1,5 +1,6 @@
 #include "PHPEntityFunctionAlias.h"
 #include "file_logger.h"
+#include "PHPLookupTable.h"
 
 PHPEntityFunctionAlias::PHPEntityFunctionAlias() {}
 
@@ -18,9 +19,10 @@ void PHPEntityFunctionAlias::FromResultSet(wxSQLite3ResultSet& res)
     SetScope(res.GetString("SCOPE"));
 }
 
-void PHPEntityFunctionAlias::Store(wxSQLite3Database& db)
+void PHPEntityFunctionAlias::Store(PHPLookupTable* lookup)
 {
     try {
+        wxSQLite3Database& db = lookup->Database();
         wxSQLite3Statement statement = db.PrepareStatement(
             "INSERT OR REPLACE INTO FUNCTION_ALIAS_TABLE VALUES(NULL, :SCOPE_ID, :NAME, :REALNAME, :FULLNAME, :SCOPE, "
             ":LINE_NUMBER, :FILE_NAME)");

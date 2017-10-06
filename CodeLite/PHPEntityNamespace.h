@@ -42,7 +42,7 @@ public:
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
     virtual void FromResultSet(wxSQLite3ResultSet& res);
-    virtual void Store(wxSQLite3Database& db);
+    virtual void Store(PHPLookupTable* lookup);
     virtual void PrintStdout(int indent) const;
     PHPEntityNamespace();
     virtual ~PHPEntityNamespace();

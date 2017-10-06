@@ -67,7 +67,7 @@ public:
      * @brief write this object into the database
      * @param db
      */
-    virtual void Store(wxSQLite3Database& db);
+    virtual void Store(PHPLookupTable* lookup);
 };
 
 #endif // PHPENTITYFUNCTION_H

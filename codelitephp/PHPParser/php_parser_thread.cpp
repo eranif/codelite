@@ -93,7 +93,7 @@ void PHPParserThread::ParseFile(PHPParserThreadRequest* request)
     lookuptable.Open(fnWorkspaceFile.GetPath());
 
     // Parse the source file
-    PHPSourceFile sourceFile(wxFileName(request->file));
+    PHPSourceFile sourceFile(wxFileName(request->file), &lookuptable);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
 

@@ -46,7 +46,7 @@ public:
 
 public:
     virtual bool Is(eEntityType type) const;
-    virtual void Store(wxSQLite3Database& db);
+    virtual void Store(PHPLookupTable* lookup);
     virtual void FromResultSet(wxSQLite3ResultSet& res);
 
     void SetScope(const wxString& scope) { this->m_scope = scope; }

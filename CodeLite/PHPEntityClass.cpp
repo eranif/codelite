@@ -1,6 +1,7 @@
 #include "PHPEntityClass.h"
 #include <wx/tokenzr.h>
 #include <algorithm>
+#include "PHPLookupTable.h"
 
 PHPEntityClass::PHPEntityClass() {}
 
@@ -27,9 +28,10 @@ void PHPEntityClass::PrintStdout(int indent) const
     }
 }
 
-void PHPEntityClass::Store(wxSQLite3Database& db)
+void PHPEntityClass::Store(PHPLookupTable* lookup)
 {
     try {
+        wxSQLite3Database& db = lookup->Database();
         wxSQLite3Statement statement = db.PrepareStatement(
             "REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, EXTENDS, "
             "IMPLEMENTS, USING_TRAITS, FLAGS, DOC_COMMENT, "
@@ -52,6 +54,7 @@ void PHPEntityClass::Store(wxSQLite3Database& db)
         // Now that we got the class saved, store any PHPDocVar
         std::for_each(
             m_varPhpDocs.begin(), m_varPhpDocs.end(), [&](PHPDocVar::Ptr_t doc) { doc->Store(db, GetDbId()); });
+        lookup->UpdateClassCache(GetFullName());
     } catch(wxSQLite3Exception& exc) {
         wxUnusedVar(exc);
     }

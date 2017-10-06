@@ -174,7 +174,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const w
         std::set<wxLongLong> parentsVisited;
 
         DoGetInheritanceParentIDs(scope, parents, parentsVisited, flags & kLookupFlags_Parent);
-        //std::reverse(parents.begin(), parents.end());
+        // std::reverse(parents.begin(), parents.end());
 
         // Parents should now contain an ordered list of all the inheritance
         for(size_t i = 0; i < parents.size(); ++i) {
@@ -218,9 +218,10 @@ void PHPLookupTable::Open(const wxFileName& dbfile)
         m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
         m_filename = dbfile;
         CreateSchema();
-
+        RebuildClassCache();
+        
     } catch(wxSQLite3Exception& e) {
-        CL_WARNING("PHPLookupTable::Open: %s", e.GetMessage());
+        clWARNING() << "PHPLookupTable::Open" << e.GetMessage() << clEndl;
     }
 }
 
@@ -339,7 +340,7 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
         // Store new entries
         PHPEntityBase::Ptr_t topNamespace = source.Namespace();
         if(topNamespace) {
-            topNamespace->StoreRecursive(m_db);
+            topNamespace->StoreRecursive(this);
             UpdateFileLastParsedTimestamp(source.GetFilename());
         }
 
@@ -384,7 +385,7 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
             // Now, loop over the namespace map and store all entries
             PHPEntityBase::Map_t::iterator nsIter = nsMap.begin();
             for(; nsIter != nsMap.end(); ++nsIter) {
-                nsIter->second->StoreRecursive(m_db);
+                nsIter->second->StoreRecursive(this);
             }
         }
 
@@ -396,8 +397,8 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
     }
 }
 
-PHPEntityBase::Ptr_t
-PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace)
+PHPEntityBase::Ptr_t PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName,
+                                                    bool parentIsNamespace)
 {
     // Find members of of parentDbID
     try {
@@ -501,10 +502,8 @@ PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName,
     return PHPEntityBase::Ptr_t(NULL);
 }
 
-void PHPLookupTable::DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
-                                               std::vector<wxLongLong>& parents,
-                                               std::set<wxLongLong>& parentsVisited,
-                                               bool excludeSelf)
+void PHPLookupTable::DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls, std::vector<wxLongLong>& parents,
+                                               std::set<wxLongLong>& parentsVisited, bool excludeSelf)
 {
     if(!excludeSelf) {
         parents.push_back(cls->GetDbId());
@@ -725,10 +724,8 @@ PHPEntityBase::Ptr_t PHPLookupTable::NewEntity(const wxString& tableName, ePhpSc
     }
 }
 
-void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
-                                             const wxString& tableName,
-                                             const wxString& nameHint,
-                                             eLookupFlags flags)
+void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches, const wxString& tableName,
+                                             const wxString& nameHint, eLookupFlags flags)
 {
     wxString trimmedNameHint(nameHint);
     trimmedNameHint.Trim().Trim(false);
@@ -838,9 +835,7 @@ void PHPLookupTable::Close()
 
 bool PHPLookupTable::IsOpened() const { return m_db.IsOpen(); }
 
-void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
-                                    wxLongLong parentId,
-                                    size_t flags,
+void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches, wxLongLong parentId, size_t flags,
                                     const wxString& nameHint)
 {
     // Find members of of parentDbID
@@ -1082,7 +1077,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::CreateNamespaceForDefine(PHPEntityBase::Ptr
         pNamespace->SetShortName(nameSpaceName.AfterLast('\\'));
         pNamespace->SetFilename(define->GetFilename());
         pNamespace->SetLine(define->GetLine());
-        pNamespace->Store(m_db);
+        pNamespace->Store(this);
     }
     return pNamespace;
 }
@@ -1317,4 +1312,37 @@ void PHPLookupTable::DoFixVarsDocComment(PHPEntityBase::List_t& matches, wxLongL
             }
         }
     });
+}
+
+void PHPLookupTable::UpdateClassCache(const wxString& classname)
+{
+    if(m_allClasses.count(classname) == 0) {
+        m_allClasses.insert(classname);
+    }
+}
+
+bool PHPLookupTable::ClassExists(const wxString& classname) const { return m_allClasses.count(classname) != 0; }
+
+void PHPLookupTable::RebuildClassCache()
+{
+    // locate the scope
+    clDEBUG() << "Rebuilding PHP class cache..." << clEndl;
+    m_allClasses.clear();
+    size_t count = 0;
+    try {
+        wxString sql;
+        sql << "SELECT FULLNAME from SCOPE_TABLE WHERE SCOPE_TYPE=1";
+
+        wxSQLite3ResultSet res = m_db.ExecuteQuery(sql);
+        while(res.NextRow()) {
+            UpdateClassCache(res.GetString("FULLNAME"));
+            ++count;
+        }
+
+    } catch(wxSQLite3Exception& e) {
+        clWARNING() << "PHPLookupTable::RebuildClassCache:" << e.GetMessage() << clEndl;
+        return;
+    }
+    clDEBUG() << "Loading" << count << "class names into the cache" << clEndl;
+    clDEBUG() << "Rebuilding PHP class cache...done" << clEndl;
 }

@@ -40,6 +40,7 @@
 #include "commentconfigdata.h"
 
 // The entity type
+class WXDLLIMPEXP_CL PHPLookupTable;
 enum eEntityType {
     kEntityTypeVariable = 0,
     kEntityTypeFunction = 1,
@@ -205,7 +206,7 @@ public:
      * @brief store this object and all its children into the database
      * @param db
      */
-    virtual void Store(wxSQLite3Database& db) = 0;
+    virtual void Store(PHPLookupTable* lookup) = 0;
 
     /**
      * @brief construct this instance from a sqlite3 result set
@@ -215,6 +216,6 @@ public:
     /**
      * @brief store this entry and all its children
      */
-    void StoreRecursive(wxSQLite3Database& db);
+    void StoreRecursive(PHPLookupTable* lookup);
 };
 #endif // PHPENTITYIMPL_H

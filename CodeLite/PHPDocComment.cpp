@@ -187,7 +187,7 @@ void PHPDocComment::ProcessMethod(wxString& strLine)
     }
     strBuffer << " {} ";
 
-    PHPSourceFile buffer(strBuffer);
+    PHPSourceFile buffer(strBuffer, NULL);
     buffer.SetTypeAbsoluteConverter(&m_sourceFile);
     buffer.Parse();
 

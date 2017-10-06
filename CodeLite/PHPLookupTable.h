@@ -156,14 +156,14 @@ private:
      */
     bool CheckDiskImage(wxSQLite3Database& db, const wxFileName& filename);
     
+public:
+    PHPLookupTable();
+    virtual ~PHPLookupTable();
+    
     /**
      * @brief rebuild the class cache
      */
     void RebuildClassCache();
-    
-public:
-    PHPLookupTable();
-    virtual ~PHPLookupTable();
     
     /**
      * @brief add class name to the class cache

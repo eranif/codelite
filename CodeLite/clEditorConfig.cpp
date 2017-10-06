@@ -59,7 +59,7 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorC
             ProcessDirective(strLine);
         }
     }
-    clDEBUG() << "Using .editorconfig file:" << editorConfigFile << clEndl;
+    clDEBUG1() << "Using .editorconfig file:" << editorConfigFile << clEndl;
     return true;
 }
 

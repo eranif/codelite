@@ -97,7 +97,8 @@ private:
     void OnQuickJump(clCodeCompletionEvent& e);
     void OnInsertDoxyBlock(clCodeCompletionEvent& e);
     void OnRetagWorkspace(wxCommandEvent& event);
-
+    void OnParseEnded(clParseEvent& event);
+    
     // Workspace events
     void OnFileSaved(clCommandEvent& event);
     void DoSelectInEditor(IEditor* editor, const wxString& what, int from);

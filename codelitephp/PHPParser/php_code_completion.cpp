@@ -88,6 +88,7 @@ PHPCodeCompletion::PHPCodeCompletion()
                                   NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CC_JUMP_HYPER_LINK,
                                   clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
+    EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPCodeCompletion::OnParseEnded, this);
 }
 
 PHPCodeCompletion::~PHPCodeCompletion()
@@ -117,6 +118,7 @@ PHPCodeCompletion::~PHPCodeCompletion()
                                      clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_JUMP_HYPER_LINK,
                                      clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
+    EventNotifier::Get()->Unbind(wxPHP_PARSE_ENDED, &PHPCodeCompletion::OnParseEnded, this);
 }
 
 PHPCodeCompletion* PHPCodeCompletion::Instance()
@@ -574,7 +576,8 @@ void PHPCodeCompletion::Open(const wxFileName& workspaceFile)
 {
     Close();
     m_lookupTable.Open(workspaceFile.GetPath());
-
+    m_lookupTable.RebuildClassCache();
+    
     // Cache the symbols into the OS caching, this is done by simply reading the entire file content and
     // then closing it
     wxFileName fnDBFile(workspaceFile.GetPath(), "phpsymbols.db");
@@ -862,4 +865,10 @@ void PHPCodeCompletion::DoOpenEditorForEntry(PHPEntityBase::Ptr_t entry)
         int selectFromPos = editor->GetCtrl()->PositionFromLine(entry->GetLine());
         DoSelectInEditor(editor, entry->GetShortName(), selectFromPos);
     }
+}
+
+void PHPCodeCompletion::OnParseEnded(clParseEvent& event)
+{
+    event.Skip();
+    m_lookupTable.RebuildClassCache();
 }

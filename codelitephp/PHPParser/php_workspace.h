@@ -233,9 +233,7 @@ public:
     ////////////////////////////////////////////
     // Project execution
     ////////////////////////////////////////////
-    bool RunProject(bool debugging,
-                    const wxString& urlOrFilePath,
-                    const wxString& projectName = wxEmptyString,
+    bool RunProject(bool debugging, const wxString& urlOrFilePath, const wxString& projectName = wxEmptyString,
                     const wxString& xdebugSessionName = wxEmptyString);
     bool IsProjectRunning() const { return m_executor.IsRunning(); }
     void StopExecutedProgram() { m_executor.Stop(); }

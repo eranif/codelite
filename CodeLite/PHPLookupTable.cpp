@@ -218,7 +218,6 @@ void PHPLookupTable::Open(const wxFileName& dbfile)
         m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
         m_filename = dbfile;
         CreateSchema();
-        RebuildClassCache();
         
     } catch(wxSQLite3Exception& e) {
         clWARNING() << "PHPLookupTable::Open" << e.GetMessage() << clEndl;
@@ -827,7 +826,8 @@ void PHPLookupTable::Close()
             m_db.Close();
         }
         m_filename.Clear();
-
+        m_allClasses.clear();
+        
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::Close: %s", e.GetMessage());
     }

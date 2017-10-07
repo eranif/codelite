@@ -524,7 +524,9 @@ void LEditor::SetCaretAt(long pos)
 /// Setup some scintilla properties
 void LEditor::SetProperties()
 {
+#ifndef __WXMSW__
     UsePopUp(false);
+#endif
     SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
     
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);

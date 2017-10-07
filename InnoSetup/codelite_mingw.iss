@@ -157,7 +157,7 @@ Source: "{#RUNTIME_MINGW32}\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: i
 Source: "{#RUNTIME_MINGW32}\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#RUNTIME_MINGW32}\bin\libiconv-2.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#RUNTIME_MINGW32}\bin\libintl-8.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-;Source: "{#RUNTIME_MINGW32}\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#BINUTILS_DIR}\which.exe"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#BINUTILS_DIR}\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#BINUTILS_DIR}\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ;

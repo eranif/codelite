@@ -2058,7 +2058,7 @@ resources.cpp: resources.xrc
         <Preprocessor Value="HAS_LIBCLANG=1"/>
         <Preprocessor Value="HAS_LIBCLANG_BRIEFCOMMENTS=1"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid);-Wl,--subsystem,windows -mwindows;-O2;-s" Required="yes">
+      <Linker Options="$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid);-Wl,--subsystem,windows -mwindows;-O2" Required="yes">
         <LibraryPath Value="."/>
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="../sdk/clang/lib"/>

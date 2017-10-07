@@ -28,8 +28,8 @@ UninstallDisplayIcon={app}\codelite.exe,0
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
 #define WXWIN "C:\src\wxWidgets.git"
-#define RUNTIME_MINGW "C:\TDM-GCC-32"
-#define RUNTIME_MINGW32 "C:\TDM-GCC-32"
+#define RUNTIME_MINGW "C:\MinGW-4.8.1"
+#define RUNTIME_MINGW32 "C:\MinGW-4.8.1"
 #define BINUTILS_DIR "C:\bin"
 
 [Languages]

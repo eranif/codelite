@@ -27,9 +27,9 @@ UninstallDisplayIcon={app}\codelite.exe,0
 ;; 32 bit setup
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
-#define WXWIN "C:\src\wxWidgets"
-#define RUNTIME_MINGW "C:\MinGW-4.8.1"
-#define RUNTIME_MINGW32 "C:\MinGW-4.8.1"
+#define WXWIN "C:\src\wxWidgets.git"
+#define RUNTIME_MINGW "C:\TDM-GCC-32"
+#define RUNTIME_MINGW32 "C:\TDM-GCC-32"
 #define BINUTILS_DIR "C:\bin"
 
 [Languages]
@@ -154,14 +154,13 @@ Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ign
 Source: "{#CODELITE_ROOT}\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "{#RUNTIME_MINGW32}\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#RUNTIME_MINGW32}\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+;Source: "{#RUNTIME_MINGW32}\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\which.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs 
 Source: "{#CODELITE_ROOT}\Runtime\gdb_printers\*"; DestDir: "{app}\gdb_printers"; Flags: recursesubdirs 
 Source: "{#CODELITE_ROOT}\Runtime\wxgui.zip";  DestDir: "{app}"; Flags: ignoreversion

@@ -71,8 +71,8 @@ AbbreviationPlugin::AbbreviationPlugin(IManager* manager)
     m_longName = _("Abbreviation plugin");
     m_shortName = wxT("Abbreviation");
     m_topWindow = m_mgr->GetTheApp();
-    EventNotifier::Get()->Connect(
-        wxEVT_CCBOX_SELECTION_MADE, clCodeCompletionEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CCBOX_SELECTION_MADE,
+                                  clCodeCompletionEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
 
     InitDefaults();
 }
@@ -99,16 +99,10 @@ void AbbreviationPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 
     pluginsMenu->Append(wxID_ANY, wxT("Abbreviation"), menu);
 
-    m_topWindow->Connect(XRCID("abbrev_settings"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(AbbreviationPlugin::OnSettings),
-                         NULL,
-                         this);
-    m_topWindow->Connect(XRCID("abbrev_insert"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(AbbreviationPlugin::OnAbbreviations),
-                         NULL,
-                         this);
+    m_topWindow->Connect(XRCID("abbrev_settings"), wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(AbbreviationPlugin::OnSettings), NULL, this);
+    m_topWindow->Connect(XRCID("abbrev_insert"), wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(AbbreviationPlugin::OnAbbreviations), NULL, this);
 }
 
 void AbbreviationPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
@@ -119,18 +113,12 @@ void AbbreviationPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void AbbreviationPlugin::UnPlug()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CCBOX_SELECTION_MADE, clCodeCompletionEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
-    m_topWindow->Disconnect(XRCID("abbrev_settings"),
-                            wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(AbbreviationPlugin::OnSettings),
-                            NULL,
-                            this);
-    m_topWindow->Disconnect(XRCID("abbrev_insert"),
-                            wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(AbbreviationPlugin::OnAbbreviations),
-                            NULL,
-                            this);
+    EventNotifier::Get()->Disconnect(wxEVT_CCBOX_SELECTION_MADE,
+                                     clCodeCompletionEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
+    m_topWindow->Disconnect(XRCID("abbrev_settings"), wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(AbbreviationPlugin::OnSettings), NULL, this);
+    m_topWindow->Disconnect(XRCID("abbrev_insert"), wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(AbbreviationPlugin::OnAbbreviations), NULL, this);
 }
 
 void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
@@ -178,8 +166,8 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
             for(; iter != entries.end(); ++iter) {
                 ccEntries.push_back(wxCodeCompletionBoxEntry::New(iter->first, 0));
             }
-            wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-                editor->GetCtrl(), ccEntries, bitmaps, wxCodeCompletionBox::kNone, wxNOT_FOUND, this);
+            wxCodeCompletionBoxManager::Get().ShowCompletionBox(editor->GetCtrl(), ccEntries, bitmaps,
+                                                                wxCodeCompletionBox::kNone, wxNOT_FOUND, this);
         }
     }
 }
@@ -221,8 +209,8 @@ void AbbreviationPlugin::InitDefaults()
         jsonData.SetEntries(entries);
         m_config.WriteItem(&jsonData);
     }
-    clKeyboardManager::Get()->AddGlobalAccelerator(
-        "abbrev_insert", "Ctrl-Alt-SPACE", _("Plugins::Abbreviations::Show abbreviations completion box"));
+    clKeyboardManager::Get()->AddGlobalAccelerator("abbrev_insert", "Ctrl-Alt-SPACE",
+                                                   _("Plugins::Abbreviations::Show abbreviations completion box"));
 }
 
 bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
@@ -293,19 +281,32 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         wxString project;
         text = MacroManager::Instance()->Expand(text, m_mgr, editor->GetProjectName());
 
-        // locate the caret
+        // locate the caret(s)
+        std::vector<int> carets;
         int where = text.Find(wxT("|"));
-        if(where == wxNOT_FOUND) {
-            where = text.length();
+        while(where != wxNOT_FOUND) {
+            carets.push_back(where);
+            where = text.find('|', where + 1);
         }
 
         // remove the pipe (|) character
-        text.Replace(wxT("|"), wxT(""));
+        text.Replace(wxT("|"), wxT(" "));
 
         if(selEnd - selStart >= 0) {
             editor->SelectText(selStart, selEnd - selStart);
             editor->ReplaceSelection(text);
-            editor->SetCaretAt(curPos + where - typedWordLen);
+            editor->GetCtrl()->ClearSelections();
+
+            bool first = true;
+            std::for_each(carets.begin(), carets.end(), [&](int where) {
+                int caretPos = curPos + where - typedWordLen;
+                if(first) {
+                    editor->GetCtrl()->SetSelection(caretPos, caretPos);
+                    first = false;
+                } else {
+                    editor->GetCtrl()->AddSelection(caretPos, caretPos);
+                }
+            });
         }
         return true;
     } else

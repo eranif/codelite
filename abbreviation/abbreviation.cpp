@@ -201,11 +201,12 @@ void AbbreviationPlugin::InitDefaults()
     if(jsonData.GetEntries().empty()) {
         // fill some default abbreviations
         JSONElement::wxStringMap_t entries;
-        entries[wxT("main")] = wxT("int main(int argc, char **argv) {\n    |\n}\n");
-        entries[wxT("while")] = wxT("while(|) {\n    \n}\n");
-        entries[wxT("dowhile")] = wxT("do {\n    \n} while( | );\n");
-        entries[wxT("for_size")] = wxT("for(size_t i=0; i<|; ++i) {\n}\n");
-        entries[wxT("for_int")] = wxT("for(int i=0; i<|; ++i) {\n}\n");
+        entries["main"] = wxT("int main(int argc, char **argv) {\n    |\n}\n");
+        entries["while"] = wxT("while(|) {\n    \n}\n");
+        entries["dowhile"] = wxT("do {\n    \n} while( | );\n");
+        entries["for_size"] = wxT("for(size_t |=0; |<; ++|) {\n}\n");
+        entries["for_int"] = wxT("for(int |=0; |<; ++|) {\n}\n");
+        entries["for_php"] = wxT("for($|=0; $|<; ++$|) {\n}\n");
         jsonData.SetEntries(entries);
         m_config.WriteItem(&jsonData);
     }

@@ -302,10 +302,10 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
             std::for_each(carets.begin(), carets.end(), [&](int where) {
                 int caretPos = curPos + where - typedWordLen;
                 if(first) {
-                    editor->GetCtrl()->SetSelection(caretPos, caretPos);
+                    editor->GetCtrl()->SetSelection(caretPos, caretPos + 1);
                     first = false;
                 } else {
-                    editor->GetCtrl()->AddSelection(caretPos, caretPos);
+                    editor->GetCtrl()->AddSelection(caretPos, caretPos + 1);
                 }
             });
         }

@@ -526,6 +526,8 @@ void LEditor::SetProperties()
 {
 #ifndef __WXMSW__
     UsePopUp(false);
+#else
+    UsePopUp(0);
 #endif
     SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
     

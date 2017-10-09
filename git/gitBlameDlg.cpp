@@ -19,7 +19,7 @@
 
 size_t FindAuthorLine(wxArrayString& blameArr, size_t n, wxString* author) // Helper function
 {
-    for(n; n < blameArr.GetCount(); ++n) {
+    for(; n < blameArr.GetCount(); ++n) {
         if(blameArr.Item(n).StartsWith("author ", author)) {
             break;
         }

@@ -43,7 +43,6 @@
 #include "cl_indexer_reply.h"
 #include <wx/txtstrm.h>
 #include <wx/file.h>
-#include <algorithm>
 #include <wx/progdlg.h>
 #include "wx/tokenzr.h"
 #include "wx/filename.h"
@@ -62,7 +61,6 @@
 #include <wx/stdpaths.h>
 #include "tags_storage_sqlite3.h"
 #include "cl_standard_paths.h"
-#include <algorithm>
 #include "CxxTemplateFunction.h"
 #include <wx/log.h>
 #include "fileutils.h"

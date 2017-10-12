@@ -42,6 +42,7 @@
 #include "CxxUsingNamespaceCollector.h"
 #include "CxxTemplateFunction.h"
 #include "CxxScannerTokens.h"
+#include "CxxVariableScanner.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -124,7 +125,6 @@ ParsedToken* Language::ParseTokens(const wxString& scopeName)
     wxString funcArgList;
 
     while(NextToken(token, delim, subscript, funcArgList)) {
-
         ParsedToken* pt = new ParsedToken;
         pt->SetSubscriptOperator(subscript);
         pt->SetOperator(delim);
@@ -144,8 +144,8 @@ ParsedToken* Language::ParseTokens(const wxString& scopeName)
         }
 
         if(result.m_isaType) {
-            pt->SetTypeScope(
-                result.m_scope.empty() ? wxString(wxT("<global>")) : wxString::From8BitData(result.m_scope.c_str()));
+            pt->SetTypeScope(result.m_scope.empty() ? wxString(wxT("<global>"))
+                                                    : wxString::From8BitData(result.m_scope.c_str()));
             pt->SetTypeName(wxString::From8BitData(result.m_name.c_str()));
 
         } else if(result.m_isGlobalScope) {
@@ -157,8 +157,8 @@ ParsedToken* Language::ParseTokens(const wxString& scopeName)
             // special handle for 'this' keyword
             //-----------------------------------------
 
-            pt->SetTypeScope(
-                result.m_scope.empty() ? wxString(wxT("<global>")) : wxString::From8BitData(result.m_scope.c_str()));
+            pt->SetTypeScope(result.m_scope.empty() ? wxString(wxT("<global>"))
+                                                    : wxString::From8BitData(result.m_scope.c_str()));
             if(scopeName == wxT("<global>")) {
                 ParsedToken::DeleteTokens(header);
                 return NULL;
@@ -320,10 +320,10 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
 void Language::SetAutoCompDeliemters(const std::vector<wxString>& delimArr) { m_delimArr = delimArr; }
 
 bool Language::ProcessExpression(const wxString& stmt, const wxString& text, const wxFileName& fn, int lineno,
-    wxString& typeName,              // output
-    wxString& typeScope,             // output
-    wxString& oper,                  // output
-    wxString& scopeTemplateInitList) // output
+                                 wxString& typeName,              // output
+                                 wxString& typeScope,             // output
+                                 wxString& oper,                  // output
+                                 wxString& scopeTemplateInitList) // output
 {
     CL_DEBUG(wxT(" >>> Language::ProcessExpression started ..."));
 
@@ -799,7 +799,7 @@ wxString Language::GetScopeName(const wxString& in, std::vector<wxString>* addit
         wxArrayString moreScopes = GetTagsManager()->BreakToOuterScopes(scope);
         for(size_t i = 0; i < moreScopes.GetCount(); i++) {
             if(moreScopes.Item(i) != scope &&
-                std::find(additionlNS->begin(), additionlNS->end(), moreScopes.Item(i)) == additionlNS->end()) {
+               std::find(additionlNS->begin(), additionlNS->end(), moreScopes.Item(i)) == additionlNS->end()) {
                 additionlNS->push_back(moreScopes.Item(i));
             }
         }
@@ -831,7 +831,7 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
     std::vector<TagEntryPtr> tags;
 
     TagsManager* mgr = GetTagsManager();
-    std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
+    const wxStringTable_t& ignoreTokens = mgr->GetCtagsOptions().GetTokensWxMap();
 
     wxString type;
     wxString typeScope;
@@ -850,33 +850,26 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
         // We are the first token in the chain
         // examine the local scope
 
-        CL_DEBUG(wxT("Parsing for local variables..."));
-        CL_DEBUG1("Current scrope:\n%s\n", GetVisibleScope());
+        clDEBUG1() << "Parsing for local variables..." << clEndl;
+        clDEBUG1() << "Current scrope:\n" << GetVisibleScope() << "\n" << clEndl;
 
-        const wxCharBuffer buf = _C(GetVisibleScope());
-        const wxCharBuffer buf2 = _C(GetLastFunctionSignature() + wxT(";"));
-        get_variables(buf.data(), li, ignoreTokens, false);
-        get_variables(buf2.data(), li, ignoreTokens, true);
-        CL_DEBUG(wxT("Parsing for local variables... done"));
+        // Local variables shadow function arguments
+        // So read the local variables first then append the function arguments
+        CxxVariable::Ptr_t pVar =
+            FindVariableInScopes({ GetVisibleScope(), GetLastFunctionSignature() }, ignoreTokens, token->GetName());
+        clDEBUG1() << "Parsing for local variables... done" << clEndl;
 
         // Search for a full match in the returned list
-        for(VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
-            // Print the locals found
-            CL_DEBUG1("%s", iter->m_name.c_str());
-            Variable var = (*iter);
-            wxString var_name = _U(var.m_name.c_str());
-            if(var_name == token->GetName()) {
+        if(pVar) {
+            if(pVar->IsAuto()) {
+                tokeContainer->current->SetIsAutoVariable(true);
+                tokeContainer->current->SetAutoExpression(pVar->GetDefaultValue());
+                DoFixTokensFromVariable(tokeContainer, tokeContainer->current->GetAutoExpression());
 
-                if(var.m_isAuto) {
-                    tokeContainer->current->SetIsAutoVariable(true);
-                    tokeContainer->current->SetAutoExpression(var.m_completeType);
-                    DoFixTokensFromVariable(tokeContainer, tokeContainer->current->GetAutoExpression());
-
-                } else {
-                    DoFixTokensFromVariable(tokeContainer, wxString::From8BitData(var.m_completeType.c_str()));
-                }
-                return false;
+            } else {
+                DoFixTokensFromVariable(tokeContainer, pVar->GetTypeAsCxxString());
             }
+            return false;
         }
     }
 
@@ -930,15 +923,11 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
             li.clear();
             TagEntryPtr tag = tags.at(0);
             if(tag->GetKind() == wxT("member") || tag->GetKind() == wxT("variable")) {
-                const wxCharBuffer buf = _C(tags.at(0)->GetPattern());
-                get_variables(buf.data(), li, ignoreTokens, true);
-
-                // Search for a full match in the returned list
-                for(VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
-                    Variable var = (*iter);
-                    wxString var_name = _U(var.m_name.c_str());
-                    if(var_name == tags.at(0)->GetName()) {
-                        DoFixTokensFromVariable(tokeContainer, _U(var.m_completeType.c_str()));
+                CxxVariable::Ptr_t pVar =
+                    FindVariableInScope(tags.at(0)->GetPattern(), ignoreTokens, tags.at(0)->GetName());
+                if(pVar) {
+                    if(pVar->GetName() == tags.at(0)->GetName()) {
+                        DoFixTokensFromVariable(tokeContainer, pVar->GetTypeAsCxxString());
                     }
                 }
                 return false;
@@ -953,24 +942,19 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
 
             TagEntryPtr tag = tags.at(0);
             if(!isTyperef && (tags.at(0)->GetKind() == wxT("member") || tags.at(0)->GetKind() == wxT("variable"))) {
-                const wxCharBuffer buf = _C(tags.at(0)->GetPattern());
-                get_variables(buf.data(), li, ignoreTokens, true);
-
+                CxxVariable::Ptr_t pVar = FindVariableInScope(tag->GetPattern(), ignoreTokens, tags.at(0)->GetName());
                 // Search for a full match in the returned list
-                for(VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
-                    Variable var = (*iter);
-                    wxString var_name = _U(var.m_name.c_str());
-                    if(var_name == tags.at(0)->GetName()) {
-                        ExpressionResult expRes = ParseExpression(_U(var.m_completeType.c_str()));
-                        if(expRes.m_isTemplate) {
-                            token->SetIsTemplate(expRes.m_isTemplate);
+                if(pVar) {
+                    ExpressionResult expRes = ParseExpression(pVar->GetTypeAsCxxString());
+                    if(expRes.m_isTemplate) {
+                        token->SetIsTemplate(expRes.m_isTemplate);
 
-                            wxArrayString argsList;
-                            ParseTemplateInitList(wxString::From8BitData(expRes.m_templateInitList.c_str()), argsList);
-                            token->SetTemplateInitialization(argsList);
-                        }
+                        wxArrayString argsList;
+                        ParseTemplateInitList(wxString::From8BitData(expRes.m_templateInitList.c_str()), argsList);
+                        token->SetTemplateInitialization(argsList);
                     }
                 }
+
             } else if(tag->IsTemplateFunction()) {
                 // Parse the definition list
                 CxxTemplateFunction ctf(tag);
@@ -993,8 +977,8 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
     return false;
 }
 
-bool Language::CorrectUsingNamespace(
-    wxString& type, wxString& typeScope, const wxString& parentScope, std::vector<TagEntryPtr>& tags)
+bool Language::CorrectUsingNamespace(wxString& type, wxString& typeScope, const wxString& parentScope,
+                                     std::vector<TagEntryPtr>& tags)
 {
     wxString strippedScope(typeScope);
     wxArrayString tmplInitList;
@@ -1043,7 +1027,7 @@ bool Language::CorrectUsingNamespace(
 }
 
 bool Language::DoSearchByNameAndScope(const wxString& name, const wxString& scopeName, std::vector<TagEntryPtr>& tags,
-    wxString& type, wxString& typeScope, bool testGlobalScope)
+                                      wxString& type, wxString& typeScope, bool testGlobalScope)
 {
     PERF_BLOCK("DoSearchByNameAndScope")
     {
@@ -1531,11 +1515,11 @@ void Language::DoFixFunctionUsingCtagsReturnValue(clFunction& foo, TagEntryPtr t
     }
 }
 
-void Language::DoReplaceTokens(wxString& inStr, const std::map<wxString, wxString>& ignoreTokens)
+void Language::DoReplaceTokens(wxString& inStr, const wxStringTable_t& ignoreTokens)
 {
     if(inStr.IsEmpty()) return;
 
-    std::map<wxString, wxString>::const_iterator iter = ignoreTokens.begin();
+    wxStringTable_t::const_iterator iter = ignoreTokens.begin();
     for(; iter != ignoreTokens.end(); iter++) {
         wxString findWhat = iter->first;
         wxString replaceWith = iter->second;
@@ -1802,7 +1786,7 @@ wxString TemplateHelper::Substitute(const wxString& name)
         if(where != wxNOT_FOUND) {
             // it exists, return the name in the templateInstantiation list
             if(templateInstantiationVector.at(i).GetCount() > (size_t)where &&
-                templateInstantiationVector.at(i).Item(where) != name)
+               templateInstantiationVector.at(i).Item(where) != name)
                 return templateInstantiationVector.at(i).Item(where);
         }
     }
@@ -1844,7 +1828,7 @@ void Language::SetAdditionalScopes(const std::vector<wxString>& additionalScopes
         // "using namespace" may not contains current namespace, so make sure we add it
         for(size_t i = 0; i < additionalScopes.size(); i++) {
             if(!(std::find(this->m_additionalScopes.begin(), this->m_additionalScopes.end(), additionalScopes.at(i)) !=
-                   this->m_additionalScopes.end())) {
+                 this->m_additionalScopes.end())) {
                 this->m_additionalScopes.push_back(additionalScopes.at(i));
             }
         }
@@ -1890,10 +1874,10 @@ bool Language::OnSubscriptOperator(ParsedToken* token)
 
 void Language::ExcuteUserTypes(ParsedToken* token, const wxString& entryPath)
 {
-    std::map<wxString, wxString> typeMap = GetTagsManager()->GetCtagsOptions().GetTypesMap();
+    wxStringTable_t typeMap = GetTagsManager()->GetCtagsOptions().GetTypesMap();
     // HACK1: Let the user override the parser decisions
     wxString path = entryPath.IsEmpty() ? token->GetPath() : entryPath;
-    std::map<wxString, wxString>::const_iterator where = typeMap.find(path);
+    wxStringTable_t::const_iterator where = typeMap.find(path);
     if(where != typeMap.end()) {
         wxArrayString argList;
 
@@ -2100,8 +2084,8 @@ wxString Language::ApplyCtagsReplacementTokens(const wxString& in)
 {
     // First, get the replacement map
     CLReplacementList replacements;
-    const std::map<wxString, wxString>& replacementMap = GetTagsManager()->GetCtagsOptions().GetTokensWxMap();
-    std::map<wxString, wxString>::const_iterator iter = replacementMap.begin();
+    const wxStringTable_t& replacementMap = GetTagsManager()->GetCtagsOptions().GetTokensWxMap();
+    wxStringTable_t::const_iterator iter = replacementMap.begin();
     for(; iter != replacementMap.end(); ++iter) {
 
         if(iter->second.IsEmpty()) continue;
@@ -2158,8 +2142,8 @@ int Language::DoReadClassName(CppScanner& scanner, wxString& clsname) const
     return 0;
 }
 
-bool Language::InsertFunctionDecl(
-    const wxString& clsname, const wxString& functionDecl, wxString& sourceContent, int visibility)
+bool Language::InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
+                                  int visibility)
 {
     // detemine the visibility requested
     int typeVisibility = lexPUBLIC;
@@ -2291,7 +2275,7 @@ bool Language::InsertFunctionDecl(
 }
 
 void Language::InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename,
-    wxString& sourceContent, int& insertedLine)
+                                  wxString& sourceContent, int& insertedLine)
 {
     insertedLine = wxNOT_FOUND;
     if(sourceContent.EndsWith(wxT("\n")) == false) sourceContent << wxT("\n");
@@ -2445,3 +2429,25 @@ void Language::UpdateAdditionalScopesCache(const wxString& filename, const std::
 }
 
 void Language::ClearAdditionalScopesCache() { m_additionalScopesCache.clear(); }
+
+CxxVariable::Ptr_t Language::FindVariableInScope(const wxString& buffer, const wxStringTable_t& ignoreTokens,
+                                                 const wxString& name)
+{
+    std::vector<wxString> scopes;
+    scopes.push_back(buffer);
+    return FindVariableInScopes(scopes, ignoreTokens, name);
+}
+
+CxxVariable::Ptr_t Language::FindVariableInScopes(const std::vector<wxString>& buffers,
+                                                  const wxStringTable_t& ignoreTokens, const wxString& name)
+{
+    CxxVariable::Map_t m;
+    for(size_t i = 0; i < buffers.size(); ++i) {
+        CxxVariableScanner scanner(buffers[i], eCxxStandard::kCxx11, ignoreTokens);
+        CxxVariable::Map_t tmpm = scanner.GetVariablesMap();
+        m.insert(tmpm.begin(), tmpm.end());
+    }
+    CxxVariable::Map_t::iterator iter = m.find(name);
+    if(iter == m.end()) return nullptr;
+    return iter->second;
+}

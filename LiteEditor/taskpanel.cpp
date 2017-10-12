@@ -137,7 +137,7 @@ SearchData TaskPanel::DoGetSearchData()
     TasksPanelData d;
     EditorConfigST::Get()->ReadObject(wxT("TasksPanelData"), &d);
 
-    std::map<wxString, wxString>::const_iterator iter = d.GetTasks().begin();
+    wxStringMap_t::const_iterator iter = d.GetTasks().begin();
     for(; iter != d.GetTasks().end(); iter++) {
         wxString name = iter->first;
         wxString regex = iter->second;

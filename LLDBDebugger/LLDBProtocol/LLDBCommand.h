@@ -44,7 +44,7 @@ protected:
     LLDBBreakpoint::Vec_t m_breakpoints;
     int m_interruptReason;
     int m_lldbId;
-    JSONElement::wxStringMap_t m_env;
+    wxStringMap_t m_env;
     LLDBSettings m_settings;
     int m_frameId;
     int m_threadId;
@@ -109,8 +109,8 @@ public:
 
     void SetFrameId(int frameId) { this->m_frameId = frameId; }
     int GetFrameId() const { return m_frameId; }
-    void SetEnv(const JSONElement::wxStringMap_t& env) { this->m_env = env; }
-    const JSONElement::wxStringMap_t& GetEnv() const { return m_env; }
+    void SetEnv(const wxStringMap_t& env) { this->m_env = env; }
+    const wxStringMap_t& GetEnv() const { return m_env; }
     void SetSettings(const LLDBSettings& settings) { this->m_settings = settings; }
     const LLDBSettings& GetSettings() const { return m_settings; }
     void SetLldbId(int lldbId) { this->m_lldbId = lldbId; }

@@ -490,9 +490,9 @@ void PhpPlugin::OnGetWorkspaceFiles(wxCommandEvent& e)
     if(PHPWorkspace::Get()->IsOpen()) {
         wxArrayString* pfiles = (wxArrayString*)e.GetClientData();
         if(pfiles) {
-            std::set<wxString> files;
+            wxStringSet_t files;
             PHPWorkspace::Get()->GetWorkspaceFiles(files);
-            std::set<wxString>::iterator iter = files.begin();
+            wxStringSet_t::iterator iter = files.begin();
             for(; iter != files.end(); iter++) {
                 pfiles->Add(*iter);
             }

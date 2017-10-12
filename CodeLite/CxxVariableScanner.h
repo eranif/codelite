@@ -18,6 +18,7 @@ protected:
     int m_parenthesisDepth;
     std::unordered_set<int> m_nativeTypes;
     eCxxStandard m_standard;
+    wxStringTable_t m_macros;
 
 protected:
     bool GetNextToken(CxxLexerToken& token);
@@ -30,7 +31,7 @@ protected:
     /**
      * @brief read the variable type
      */
-    bool ReadType(CxxVariable::LexerToken::Vec_t& vartype);
+    bool ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool& isAuto);
     /**
      * @brief read the variable name. Return true if there are more variables
      * for the current type
@@ -48,7 +49,7 @@ protected:
     CxxVariable::Vec_t DoParseFunctionArguments(const wxString& buffer);
 
 public:
-    CxxVariableScanner(const wxString& buffer, eCxxStandard standard);
+    CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros);
     virtual ~CxxVariableScanner();
 
     /**

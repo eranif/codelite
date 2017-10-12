@@ -39,6 +39,8 @@
 #include <vector>
 #include "codelite_exports.h"
 #include <set>
+#include "CxxVariable.h"
+#include "macros.h"
 
 enum SearchFlags {
     PartialMatch = 0x00000001,
@@ -107,6 +109,10 @@ private:
 protected:
     void SetVisibleScope(const wxString& visibleScope) { this->m_visibleScope = visibleScope; }
     const wxString& GetVisibleScope() const { return m_visibleScope; }
+    CxxVariable::Ptr_t FindVariableInScope(const wxString& buffer, const wxStringTable_t& ignoreTokens,
+                                           const wxString& name);
+    CxxVariable::Ptr_t FindVariableInScopes(const std::vector<wxString>& buffers, const wxStringTable_t& ignoreTokens,
+                                            const wxString& name);
 
 public:
     /**
@@ -152,18 +158,18 @@ public:
     const wxString& GetLastFunctionSignature() const { return m_lastFunctionSignature; }
 
     void SetAdditionalScopes(const std::vector<wxString>& additionalScopes, const wxString& filename);
-    
+
     /**
      * @brief update the 'additional scopes' cache with list of scopes
      * @param filename
      * @param additionalScopes
      */
-    void UpdateAdditionalScopesCache(const wxString &filename, const std::vector<wxString>& additionalScopes);
+    void UpdateAdditionalScopesCache(const wxString& filename, const std::vector<wxString>& additionalScopes);
     /**
      * @brief clear the additional scopes cache
      */
     void ClearAdditionalScopesCache();
-    
+
     const std::vector<wxString>& GetAdditionalScopes() const;
     /**
      * Set the language specific auto completion delimeteres, for example: for C++ you should populate
@@ -211,14 +217,8 @@ public:
      * \return true on success, false otherwise. The output fields are only to be checked with the return
      * valus is 'true'
      */
-    bool ProcessExpression(const wxString& stmt,
-                           const wxString& text,
-                           const wxFileName& fn,
-                           int lineno,
-                           wxString& typeName,
-                           wxString& typeScope,
-                           wxString& oper,
-                           wxString& scopeTemplateInitList);
+    bool ProcessExpression(const wxString& stmt, const wxString& text, const wxFileName& fn, int lineno,
+                           wxString& typeName, wxString& typeScope, wxString& oper, wxString& scopeTemplateInitList);
 
     /**
      * return scope name from given input string
@@ -250,9 +250,7 @@ public:
      *			   'variable' with public access
      * \param name optional name to look for (name can be partial).
      */
-    void GetLocalVariables(const wxString& in,
-                           std::vector<TagEntryPtr>& tags,
-                           const wxString& name = wxEmptyString,
+    void GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& tags, const wxString& name = wxEmptyString,
                            size_t flag = PartialMatch);
 
     wxString ApplyCtagsReplacementTokens(const wxString& in);
@@ -265,32 +263,21 @@ public:
      * to place the function body. set visibility to 0 for 'pubilc' function, 1 for 'protected' and 2 for private
      * return true if this function succeeded, false otherwise
      */
-    bool InsertFunctionDecl(const wxString& clsname,
-                            const wxString& functionDecl,
-                            wxString& sourceContent,
+    bool InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
                             int visibility = 0);
 
     /**
      * @brief insert functionBody into clsname. This function will search for best location
      * to place the function body
      */
-    void InsertFunctionImpl(const wxString& clsname,
-                            const wxString& functionImpl,
-                            const wxString& filename,
-                            wxString& sourceContent,
-                            int& insertedLine);
+    void InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename,
+                            wxString& sourceContent, int& insertedLine);
 
 private:
-    bool DoSearchByNameAndScope(const wxString& name,
-                                const wxString& scopeName,
-                                std::vector<TagEntryPtr>& tags,
-                                wxString& type,
-                                wxString& typeScope,
-                                bool testGlobalScope = true);
+    bool DoSearchByNameAndScope(const wxString& name, const wxString& scopeName, std::vector<TagEntryPtr>& tags,
+                                wxString& type, wxString& typeScope, bool testGlobalScope = true);
 
-    bool CorrectUsingNamespace(wxString& type,
-                               wxString& typeScope,
-                               const wxString& parentScope,
+    bool CorrectUsingNamespace(wxString& type, wxString& typeScope, const wxString& parentScope,
                                std::vector<TagEntryPtr>& tags);
     /**
      * Private constructor
@@ -364,7 +351,7 @@ private:
     void DoRemoveTempalteInitialization(wxString& str, wxArrayString& tmplInitList);
     void DoResolveTemplateInitializationList(wxArrayString& tmpInitList);
     void DoFixFunctionUsingCtagsReturnValue(clFunction& foo, TagEntryPtr tag);
-    void DoReplaceTokens(wxString& inStr, const std::map<wxString, wxString>& ignoreTokens);
+    void DoReplaceTokens(wxString& inStr, const wxStringTable_t& ignoreTokens);
     wxArrayString DoExtractTemplateDeclarationArgsFromScope();
     wxArrayString DoExtractTemplateDeclarationArgs(ParsedToken* token);
     wxArrayString DoExtractTemplateDeclarationArgs(TagEntryPtr tag);

@@ -3,12 +3,13 @@
 #include <algorithm>
 #include "file_logger.h"
 
-CxxVariableScanner::CxxVariableScanner(const wxString& buffer, eCxxStandard standard)
+CxxVariableScanner::CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros)
     : m_scanner(NULL)
     , m_buffer(buffer)
     , m_eof(false)
     , m_parenthesisDepth(0)
     , m_standard(standard)
+    , m_macros(macros)
 {
     m_nativeTypes.insert(T_AUTO);
     m_nativeTypes.insert(T_BOOL);
@@ -36,15 +37,15 @@ CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
     CxxVariable::Vec_t args = DoGetVariables(parenthesisBuffer, sort);
     vars.insert(vars.end(), args.begin(), args.end());
     if(sort) {
-        std::sort(vars.begin(), vars.end(), [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) {
-            return a->GetName() < b->GetName();
-        });
+        std::sort(vars.begin(), vars.end(),
+                  [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName() < b->GetName(); });
     }
     return vars;
 }
 
-bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype)
+bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool& isAuto)
 {
+    isAuto = false;
     int depth = 0;
     CxxLexerToken token;
     while(GetNextToken(token)) {
@@ -52,19 +53,13 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype)
             if(vartype.empty()) {
                 // a type can start the following tokens
                 switch(token.type) {
+                case T_AUTO:
+                    isAuto = true;
+                // fall
                 case T_CLASS:
-                case T_STRUCT: {
-                    // Class or struct forward decl
-                    std::set<int> delims;
-                    delims.insert(';'); // Forward decl
-                    delims.insert('{'); // Class body
-                    wxString consumed;
-                    ReadUntil(delims, token, consumed);
-                    return false;
-                }
+                case T_STRUCT:
                 case T_IDENTIFIER:
                 case T_DOUBLE_COLONS:
-                case T_AUTO:
                 case T_BOOL:
                 case T_CHAR:
                 case T_CHAR16_T:
@@ -108,6 +103,8 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype)
                     // We consider this part of the type only if the previous token was "::" or
                     // if it was T_CONST
                     switch(lastToken.type) {
+                    case T_CLASS:
+                    case T_STRUCT:
                     case T_DOUBLE_COLONS:
                     case T_CONST:
                     case T_CONSTEXPR:
@@ -122,6 +119,9 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype)
                         return true;
                     }
                     break;
+                case T_AUTO:
+                    isAuto = true;
+                // fall
                 case T_DOUBLE_COLONS:
                 case T_BOOL:
                 case T_CHAR:
@@ -137,7 +137,6 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype)
                 case T_SIGNED:
                 case T_UNSIGNED:
                 case T_VOID:
-                case T_AUTO:
                 case T_WCHAR_T: {
                     vartype.push_back(CxxVariable::LexerToken(token));
                     break;
@@ -182,14 +181,18 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
             if(!GetNextToken(token)) {
                 return false;
             }
-
+            
             if((token.type == '{') && !varInitialization.IsEmpty()) {
                 // Don't collect functions and consider them as variables
                 ::LexerUnget(m_scanner);
                 varname.clear();
                 return false;
             }
-
+            
+            if(!varInitialization.empty()){
+                varInitialization.RemoveLast();
+            }
+            
             // If we found comma, return true
             if(token.type == ',') {
                 return true;
@@ -262,9 +265,6 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
 
     if(type == ',' || type == '{') {
         ::LexerUnget(m_scanner);
-        if(!consumed.IsEmpty()) {
-            consumed.RemoveLast();
-        }
     }
 }
 
@@ -311,7 +311,19 @@ int CxxVariableScanner::ReadUntil(const std::set<int>& delims, CxxLexerToken& to
 
 bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
 {
-    bool res = ::LexerNext(m_scanner, token);
+    bool res = false;
+    
+    while(true) {
+        res = ::LexerNext(m_scanner, token);
+        if(!res) break;
+        
+        // Ignore any T_IDENTIFIER which is declared as macro
+        if((token.type == T_IDENTIFIER) && m_macros.count(token.text)) {
+            continue;
+        }
+        break;
+    }
+    
     m_eof = !res;
     switch(token.type) {
     case '(':
@@ -425,8 +437,9 @@ CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bo
 
     // Read the variable type
     while(!IsEof()) {
+        bool isAuto;
         CxxVariable::LexerToken::Vec_t vartype;
-        if(!ReadType(vartype)) continue;
+        if(!ReadType(vartype, isAuto)) continue;
 
         // Get the variable(s) name
         wxString varname, pointerOrRef, varInitialization;
@@ -436,12 +449,15 @@ CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bo
             CxxVariable::Ptr_t var(new CxxVariable(m_standard));
             var->SetName(varname);
             var->SetType(vartype);
+            var->SetDefaultValue(varInitialization);
+            var->SetPointerOrReference(pointerOrRef);
+            var->SetIsAuto(isAuto);
             if(var->IsOk()) {
                 vars.push_back(var);
             } else if(!varInitialization.IsEmpty()) {
                 // This means that the above was a function call
                 // Parse the siganture which is placed inside the varInitialization
-                CxxVariableScanner scanner(varInitialization, m_standard);
+                CxxVariableScanner scanner(varInitialization, m_standard, m_macros);
                 CxxVariable::Vec_t args = scanner.GetVariables(sort);
                 vars.insert(vars.end(), args.begin(), args.end());
                 break;
@@ -492,8 +508,9 @@ CxxVariable::Vec_t CxxVariableScanner::DoParseFunctionArguments(const wxString& 
 
     // Read the variable type
     while(!IsEof()) {
+        bool isAuto;
         CxxVariable::LexerToken::Vec_t vartype;
-        if(!ReadType(vartype)) continue;
+        if(!ReadType(vartype, isAuto)) continue;
 
         // Get the variable(s) name
         wxString varname, pointerOrRef, varInitialization;
@@ -503,6 +520,7 @@ CxxVariable::Vec_t CxxVariableScanner::DoParseFunctionArguments(const wxString& 
         var->SetType(vartype);
         var->SetDefaultValue(varInitialization);
         var->SetPointerOrReference(pointerOrRef);
+        var->SetIsAuto(isAuto);
         vars.push_back(var);
     }
     ::LexerDestroy(&m_scanner);

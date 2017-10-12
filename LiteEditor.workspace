@@ -351,7 +351,7 @@
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
       <Project Name="CxxParserTests" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>
@@ -406,7 +406,7 @@
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>

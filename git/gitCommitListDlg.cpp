@@ -141,12 +141,12 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
         }
         ++index;
     }
-    for(std::map<wxString, wxString>::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
+    for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
     }
 
     if(m_diffMap.size() != 0) {
-        std::map<wxString, wxString>::iterator it = m_diffMap.begin();
+        wxStringMap_t::iterator it = m_diffMap.begin();
         m_stcDiff->SetText((*it).second);
         m_fileListBox->Select(0);
     }

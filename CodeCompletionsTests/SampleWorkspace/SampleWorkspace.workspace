@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="SampleWorkspace" Database="./SampleWorkspace.tags">
+<CodeLite_Workspace Name="SampleWorkspace" Database="./SampleWorkspace.tags" Version="10.0.0">
   <Project Name="SampleWorksapce" Path="SampleWorksapce.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">

@@ -6,8 +6,10 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <unordered_map>
 #include <wx/string.h>
 #include "CxxLexerAPI.h"
+#include <wxStringHash.h>
 
 class WXDLLIMPEXP_CL CxxVariable
 {
@@ -48,16 +50,20 @@ protected:
     wxString m_defaultValue;
     eCxxStandard m_standard;
     wxString m_pointerOrReference;
+    bool m_isAuto;
 
 public:
     typedef SmartPtr<CxxVariable> Ptr_t;
     typedef std::vector<CxxVariable::Ptr_t> Vec_t;
-    typedef std::map<wxString, CxxVariable::Ptr_t> Map_t;
+    typedef std::unordered_map<wxString, CxxVariable::Ptr_t> Map_t;
 
 public:
     CxxVariable(eCxxStandard standard);
-    CxxVariable() : m_standard(eCxxStandard::kCxx11) {}
-    
+    CxxVariable()
+        : m_standard(eCxxStandard::kCxx11)
+    {
+    }
+
     virtual ~CxxVariable();
 
     void SetName(const wxString& name) { this->m_name = name; }
@@ -65,9 +71,11 @@ public:
     const wxString& GetName() const { return m_name; }
     const CxxVariable::LexerToken::Vec_t& GetType() const { return m_type; }
     wxString GetTypeAsString() const;
-    
-    static wxString PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard);
-    
+    wxString GetTypeAsCxxString() const;
+
+    static wxString PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard,
+                             bool omitClassKeyword = false);
+
     /**
      * @brief return true if this variable was constructed from a statement like:
      * using MyInt = int;
@@ -80,6 +88,12 @@ public:
     bool IsOk() const { return !m_name.IsEmpty() && !m_type.empty(); }
 
     /**
+     * @brief is this an "auto" variable?
+     */
+    bool IsAuto() const { return m_isAuto; }
+
+    void SetIsAuto(bool b) { m_isAuto = b; }
+    /**
      * @brief return a string representation for this variable
      * @param flags see values in eFlags
      * @param standard format standard
@@ -88,7 +102,7 @@ public:
 
     void SetDefaultValue(const wxString& defaultValue) { this->m_defaultValue = defaultValue; }
     const wxString& GetDefaultValue() const { return m_defaultValue; }
-    
+
     void SetPointerOrReference(const wxString& pointerOrReference) { this->m_pointerOrReference = pointerOrReference; }
     const wxString& GetPointerOrReference() const { return m_pointerOrReference; }
 };

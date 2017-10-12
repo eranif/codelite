@@ -50,8 +50,8 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     PHPWorkspace::Get()->GetWorkspaceFiles(files);
     m_table.Open(PHPWorkspace::Get()->GetFilename().GetPath());
     m_allFiles.reserve(files.size());
-    std::set<wxString>::iterator iter = files.begin();
-    for(; iter != files.end(); iter++) {
+    wxStringSet_t::iterator iter = files.begin();
+    for(; iter != files.end(); ++iter) {
         wxFileName fn((*iter));
         if(fn.GetFullName() == FOLDER_MARKER) {
             // fake item

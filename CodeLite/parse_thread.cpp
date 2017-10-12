@@ -687,7 +687,7 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
 
         // Now, get the locals
         {
-            CxxVariableScanner scanner(content, eCxxStandard::kCxx11);
+            CxxVariableScanner scanner(content, eCxxStandard::kCxx11, wxStringTable_t());
             CxxVariable::Vec_t vars = scanner.GetVariables();
 
             std::for_each(vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) {

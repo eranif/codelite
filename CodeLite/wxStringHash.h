@@ -1,9 +1,8 @@
 #ifndef WXSTRING_HASH
 #define WXSTRING_HASH
 
-#include <wx/string.h>
-
 #if wxVERSION_NUMBER < 3100
+#include <wx/string.h>
 #include <functional>
 
 namespace std

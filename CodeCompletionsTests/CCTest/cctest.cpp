@@ -21,7 +21,7 @@
 #include <CxxVariableScanner.h>
 #include <wx/crt.h>
 
-#define WX_STRING_MEMBERS_COUNT 446
+#define WX_STRING_MEMBERS_COUNT 453
 #define CLASS_WITH_MEMBERS_COUNT 31
 
 wxString LoadFile(const wxString& filename)
@@ -61,14 +61,14 @@ TEST_FUNC(testMacros)
     std::vector<TagEntryPtr> tags;
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("wxTheClipboard->"),
         LoadFile(wxT("../tests/simple_tests.h")), tags);
-    CHECK_SIZE(tags.size(), 66);
+    CHECK_SIZE(tags.size(), 65);
 
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("wxTheApp->"),
         LoadFile(wxT("../tests/simple_tests.h")), tags);
-    CHECK_SIZE(tags.size(), 319);
+    CHECK_SIZE(tags.size(), 316);
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/simple_tests.h")), 1, wxT("EG(name)."),
         LoadFile(wxT("../tests/simple_tests.h")), tags);
-    CHECK_SIZE(tags.size(), 157);
+    CHECK_SIZE(tags.size(), 169);
     return true;
 }
 
@@ -143,7 +143,7 @@ TEST_FUNC(testTtp)
 
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/smart_ptr_of_template.h")), 3,
         wxT("ttp->GetRoot()->GetKey()."), LoadFile(wxT("../tests/smart_ptr_of_template.h")), tags);
-    CHECK_SIZE(tags.size(), 446);
+    CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
     return true;
 }
 
@@ -206,7 +206,7 @@ TEST_FUNC(testNamespace)
     std::vector<TagEntryPtr> tags;
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_namespace.h")), 1, wxT("flex::"),
         LoadFile(wxT("../tests/test_namespace.h")), tags);
-    CHECK_SIZE(tags.size(), 32);
+    CHECK_SIZE(tags.size(), 35);
     return true;
 }
 
@@ -358,7 +358,7 @@ TEST_FUNC(testBoostSharedPtr)
 TEST_FUNC(testVariablesParserSimple)
 {
     wxString content = LoadFile("../tests/test_parse_variables_simple.h");
-    CxxVariableScanner scanner(content);
+    CxxVariableScanner scanner(content, eCxxStandard::kCxx11, wxStringTable_t());
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
     CHECK_SIZE(vars.size(), 1); // a,b,c,d,e,f,g,str,stringMap,nNumber
     CHECK_CONDITION(vars.count("delims"), "variable 'delims' was not found");
@@ -368,7 +368,7 @@ TEST_FUNC(testVariablesParserSimple)
 TEST_FUNC(testVariablesParserCxx11)
 {
     wxString content = LoadFile("../tests/test_parse_variables_cxx11.h");
-    CxxVariableScanner scanner(content);
+    CxxVariableScanner scanner(content, eCxxStandard::kCxx11, wxStringTable_t());
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
     CHECK_SIZE(vars.size(), 4);
     CHECK_CONDITION(vars.count("var1"), "variable 'var1' was not found");
@@ -381,7 +381,10 @@ TEST_FUNC(testVariablesParserCxx11)
 TEST_FUNC(testVariablesParserClassMembers)
 {
     wxString content = LoadFile("../tests/test_parse_variables_class_members.h");
-    CxxVariableScanner scanner(content);
+    
+    // Ignore table: WXDLLEXPORT => ""
+    wxStringTable_t t { {"WXDLLEXPORT", ""} };
+    CxxVariableScanner scanner(content, eCxxStandard::kCxx11, t);
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
     CHECK_SIZE(vars.size(), 2);
     return true;

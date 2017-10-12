@@ -73,7 +73,9 @@ public:
 // Test the 'testStructDeclaratorInFuncArgument
 //////////////////////////////////////////////////////////////
 
-void foo_bar(struct wxString* s) {}
+void foo_bar(struct wxString* s) {
+    
+}
 } // Namespace Baz
 
 class ClassWithTemplateFunction

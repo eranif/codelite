@@ -599,7 +599,7 @@ bool Archive::Write(const wxString& name, const wxColour& colour)
     return true;
 }
 
-bool Archive::Write(const wxString& name, const std::map<wxString, wxString>& strinMap)
+bool Archive::Write(const wxString& name, const wxStringMap_t& strinMap)
 {
     if(!m_root) {
         return false;
@@ -610,8 +610,8 @@ bool Archive::Write(const wxString& name, const std::map<wxString, wxString>& st
     node->AddProperty(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    std::map<wxString, wxString>::const_iterator iter = strinMap.begin();
-    for(; iter != strinMap.end(); iter++) {
+    wxStringMap_t::const_iterator iter = strinMap.begin();
+    for(; iter != strinMap.end(); ++iter) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
         node->AddChild(child);
         child->AddProperty(wxT("Key"), iter->first);
@@ -620,7 +620,7 @@ bool Archive::Write(const wxString& name, const std::map<wxString, wxString>& st
     return true;
 }
 
-bool Archive::Read(const wxString& name, std::map<wxString, wxString>& strinMap)
+bool Archive::Read(const wxString& name, wxStringMap_t& strinMap)
 {
     if(!m_root) {
         return false;
@@ -646,7 +646,7 @@ bool Archive::Read(const wxString& name, std::map<wxString, wxString>& strinMap)
     return false;
 }
 
-bool Archive::Read(const wxString& name, std::set<wxString>& s)
+bool Archive::Read(const wxString& name, wxStringSet_t& s)
 {
     if(!m_root) {
         return false;
@@ -670,7 +670,7 @@ bool Archive::Read(const wxString& name, std::set<wxString>& s)
     return false;
 }
 
-bool Archive::Write(const wxString& name, const std::set<wxString>& s)
+bool Archive::Write(const wxString& name, const wxStringSet_t& s)
 {
     if(!m_root) {
         return false;
@@ -681,8 +681,8 @@ bool Archive::Write(const wxString& name, const std::set<wxString>& s)
     node->AddProperty(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    std::set<wxString>::const_iterator iter = s.begin();
-    for(; iter != s.end(); iter++) {
+    wxStringSet_t::const_iterator iter = s.begin();
+    for(; iter != s.end(); ++iter) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SetEntry"));
         node->AddChild(child);
         SetNodeContent(child, *iter);
@@ -690,7 +690,7 @@ bool Archive::Write(const wxString& name, const std::set<wxString>& s)
     return true;
 }
 
-bool Archive::Read(const wxString& name, wxFont& font, const wxFont& defaultFont) 
+bool Archive::Read(const wxString& name, wxFont& font, const wxFont& defaultFont)
 {
     wxString strFont;
     bool res = Read(name, strFont);
@@ -702,7 +702,4 @@ bool Archive::Read(const wxString& name, wxFont& font, const wxFont& defaultFont
     return true;
 }
 
-bool Archive::Write(const wxString& name, const wxFont& font) 
-{
-    return Write(name, clFontHelper::ToString(font));
-}
+bool Archive::Write(const wxString& name, const wxFont& font) { return Write(name, clFontHelper::ToString(font)); }

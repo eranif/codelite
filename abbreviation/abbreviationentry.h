@@ -32,7 +32,7 @@
 
 class AbbreviationEntry : public SerializedObject
 {
-    std::map<wxString, wxString> m_entries;
+    wxStringMap_t m_entries;
     bool m_autoInsert;
 
 public:
@@ -44,7 +44,7 @@ public:
     virtual void Serialize(Archive &arch);
 
     //Setters
-    void SetEntries(const std::map<wxString, wxString>& entries) {
+    void SetEntries(const wxStringMap_t& entries) {
         this->m_entries = entries;
     }
     void SetAutoInsert(const bool& autoInsert) {
@@ -52,7 +52,7 @@ public:
     }
 
     //Getters
-    const std::map<wxString, wxString>& GetEntries() const {
+    const wxStringMap_t& GetEntries() const {
         return m_entries;
     }
     const bool& GetAutoInsert() const {
@@ -62,7 +62,7 @@ public:
 
 class AbbreviationJSONEntry : public clConfigItem
 {
-    JSONElement::wxStringMap_t m_entries;
+    wxStringMap_t m_entries;
     bool                       m_autoInsert;
 public:
     AbbreviationJSONEntry() : clConfigItem("Abbreviations"), m_autoInsert(false)
@@ -74,10 +74,10 @@ public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 
-    void SetEntries(const JSONElement::wxStringMap_t& entries) {
+    void SetEntries(const wxStringMap_t& entries) {
         this->m_entries = entries;
     }
-    const JSONElement::wxStringMap_t& GetEntries() const {
+    const wxStringMap_t& GetEntries() const {
         return m_entries;
     }
     void SetAutoInsert(bool autoInsert) {

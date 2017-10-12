@@ -30,11 +30,8 @@
 #include <wx/textdlg.h>
 #include <wx/dirdlg.h>
 
-CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent,
-                                               CppCheckSettings* settings,
-                                               IConfigTool* conf,
-                                               const wxString& defaultpath,
-                                               bool showDefsTab)
+CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent, CppCheckSettings* settings, IConfigTool* conf,
+                                               const wxString& defaultpath, bool showDefsTab)
     : CppCheckSettingsDialogBase(parent)
     , m_settings(settings)
     , m_conf(conf)
@@ -59,7 +56,7 @@ CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent,
     // e.g. <"cstyleCast", "C-style pointer casting">
     // We display the second, so store the keys in a wxArrayInt so that we can identify each again
     m_SuppressionsKeys.Clear();
-    std::map<wxString, wxString>::const_iterator iter = settings->GetSuppressedWarningsStrings1()->begin();
+    wxStringMap_t::const_iterator iter = settings->GetSuppressedWarningsStrings1()->begin();
     for(; iter != settings->GetSuppressedWarningsStrings1()->end(); ++iter) {
         // First the checked ones
         int index = m_checkListSuppress->Append((*iter).second);
@@ -68,8 +65,7 @@ CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent,
     }
 
     for(iter = settings->GetSuppressedWarningsStrings0()->begin();
-        iter != settings->GetSuppressedWarningsStrings0()->end();
-        ++iter) {
+        iter != settings->GetSuppressedWarningsStrings0()->end(); ++iter) {
         // Then the unchecked ones
         int index = m_checkListSuppress->Append((*iter).second);
         m_checkListSuppress->Check(index, false);
@@ -87,7 +83,7 @@ CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent,
         m_DefinesPanel->Hide(); // Don't show this panel unless its contents are valid i.e. we got here via a rt-click
                                 // over a project
     }
-    
+
     SetName("CppCheckSettingsDialog");
     WindowAttrManager::Load(this);
 }
@@ -148,13 +144,8 @@ void CppCheckSettingsDialog::OnAddFile(wxCommandEvent& WXUNUSED(e))
     filter << wxT("(*.c;*.cpp)|*.c;*.cpp|") << wxString(_("All Files")) << wxT(" (") << wxFileSelectorDefaultWildcardStr
            << wxT(")|") << wxFileSelectorDefaultWildcardStr;
 
-    wxFileDialog dlg(this,
-                     _("Add File(s):"),
-                     m_defaultpath,
-                     wxEmptyString,
-                     filter,
-                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE,
-                     wxDefaultPosition);
+    wxFileDialog dlg(this, _("Add File(s):"), m_defaultpath, wxEmptyString, filter,
+                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
 
     if(dlg.ShowModal() == wxID_OK) {
         wxArrayString paths;
@@ -189,10 +180,8 @@ void CppCheckSettingsDialog::OnAddSuppression(wxCommandEvent& WXUNUSED(e))
         wxString key = dlg.GetKey()->GetValue();
         if(m_settings->GetSuppressedWarningsStrings0()->count(key) ||
            m_settings->GetSuppressedWarningsStrings1()->count(key)) {
-            int ans = wxMessageBox(_("There is already an entry with ID string. Try again?"),
-                                   _("CppCheck"),
-                                   wxYES_NO | wxICON_QUESTION,
-                                   this);
+            int ans = wxMessageBox(_("There is already an entry with ID string. Try again?"), _("CppCheck"),
+                                   wxYES_NO | wxICON_QUESTION, this);
             if(ans != wxID_YES && ans != wxYES) {
                 return;
             } else {
@@ -211,10 +200,8 @@ void CppCheckSettingsDialog::OnAddSuppression(wxCommandEvent& WXUNUSED(e))
 
 void CppCheckSettingsDialog::OnRemoveSuppression(wxCommandEvent& WXUNUSED(e))
 {
-    int ans = wxMessageBox(_("Really remove this warning suppression, rather than just unticking it?"),
-                           _("CppCheck"),
-                           wxYES_NO | wxICON_QUESTION,
-                           this);
+    int ans = wxMessageBox(_("Really remove this warning suppression, rather than just unticking it?"), _("CppCheck"),
+                           wxYES_NO | wxICON_QUESTION, this);
     if(ans != wxID_YES && ans != wxYES) {
         return;
     }

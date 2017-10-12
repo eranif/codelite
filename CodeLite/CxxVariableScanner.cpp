@@ -36,8 +36,9 @@ CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
     CxxVariable::Vec_t args = DoGetVariables(parenthesisBuffer, sort);
     vars.insert(vars.end(), args.begin(), args.end());
     if(sort) {
-        std::sort(vars.begin(), vars.end(),
-                  [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName().CmpNoCase(b->GetName()); });
+        std::sort(vars.begin(), vars.end(), [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) {
+            return a->GetName() < b->GetName();
+        });
     }
     return vars;
 }

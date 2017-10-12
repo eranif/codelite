@@ -35,7 +35,8 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
     // const std::vector<std::pair<int, int> >& v
     wxString s;
     std::for_each(type.begin(), type.end(), [&](const CxxVariable::LexerToken& tok) {
-        if(((tok.type == ',') || (tok.type == '>') || tok.type == '(' || tok.type == ')') && s.Last() == ' ') {
+        if((!s.empty() && s.Last() == ' ') &&
+           ((tok.type == ',') || (tok.type == '>') || tok.type == '(' || tok.type == ')')) {
             s.RemoveLast();
         }
         s << tok.text;
@@ -73,7 +74,7 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
             break;
         }
     });
-    if(s.EndsWith(" ")) {
+    if(!s.empty() && s.EndsWith(" ")) {
         s.RemoveLast();
     }
     return s;

@@ -56,6 +56,8 @@ public:
 
 public:
     CxxVariable(eCxxStandard standard);
+    CxxVariable() : m_standard(eCxxStandard::kCxx11) {}
+    
     virtual ~CxxVariable();
 
     void SetName(const wxString& name) { this->m_name = name; }

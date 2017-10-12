@@ -33,11 +33,6 @@ public:
         typedef std::vector<CxxVariable::LexerToken> Vec_t;
     };
 
-    enum eStandard {
-        kCxx03, // Old
-        kCxx11  // C++11
-    };
-
     enum eFlags {
         kToString_None = 0,
         // Include the variable name
@@ -51,6 +46,8 @@ protected:
     wxString m_name;
     CxxVariable::LexerToken::Vec_t m_type;
     wxString m_defaultValue;
+    eCxxStandard m_standard;
+    wxString m_pointerOrReference;
 
 public:
     typedef SmartPtr<CxxVariable> Ptr_t;
@@ -58,15 +55,17 @@ public:
     typedef std::map<wxString, CxxVariable::Ptr_t> Map_t;
 
 public:
-    CxxVariable();
+    CxxVariable(eCxxStandard standard);
     virtual ~CxxVariable();
 
     void SetName(const wxString& name) { this->m_name = name; }
     void SetType(const CxxVariable::LexerToken::Vec_t& type) { this->m_type = type; }
     const wxString& GetName() const { return m_name; }
     const CxxVariable::LexerToken::Vec_t& GetType() const { return m_type; }
-    wxString GetTypeAsString(CxxVariable::eStandard standard = CxxVariable::kCxx11) const;
-
+    wxString GetTypeAsString() const;
+    
+    static wxString PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard);
+    
     /**
      * @brief return true if this variable was constructed from a statement like:
      * using MyInt = int;
@@ -83,11 +82,13 @@ public:
      * @param flags see values in eFlags
      * @param standard format standard
      */
-    wxString ToString(size_t flags = CxxVariable::kToString_Default,
-                      CxxVariable::eStandard standard = CxxVariable::kCxx11) const;
+    wxString ToString(size_t flags = CxxVariable::kToString_Default) const;
 
     void SetDefaultValue(const wxString& defaultValue) { this->m_defaultValue = defaultValue; }
     const wxString& GetDefaultValue() const { return m_defaultValue; }
+    
+    void SetPointerOrReference(const wxString& pointerOrReference) { this->m_pointerOrReference = pointerOrReference; }
+    const wxString& GetPointerOrReference() const { return m_pointerOrReference; }
 };
 
 #endif // CXXVARIABLE_H

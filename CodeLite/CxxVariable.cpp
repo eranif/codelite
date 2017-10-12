@@ -2,21 +2,52 @@
 #include <algorithm>
 #include "CxxScannerTokens.h"
 
-CxxVariable::CxxVariable() {}
+CxxVariable::CxxVariable(eCxxStandard standard)
+    : m_standard(standard)
+{
+}
 
 CxxVariable::~CxxVariable() {}
 
-wxString CxxVariable::GetTypeAsString(CxxVariable::eStandard standard) const
+wxString CxxVariable::GetTypeAsString() const { return PackType(m_type, m_standard); }
+
+wxString CxxVariable::ToString(size_t flags) const
 {
+    wxString str;
+    str << GetTypeAsString();
+
+    if(!GetPointerOrReference().IsEmpty()) {
+        str << GetPointerOrReference();
+    }
+
+    if(flags & kToString_Name) {
+        str << " " << GetName();
+    }
+
+    if((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty()) {
+        str << " = " << GetDefaultValue();
+    }
+    return str;
+}
+
+wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard)
+{ // Example:
+    // const std::vector<std::pair<int, int> >& v
     wxString s;
-    std::for_each(m_type.begin(), m_type.end(), [&](const CxxVariable::LexerToken& tok) {
+    std::for_each(type.begin(), type.end(), [&](const CxxVariable::LexerToken& tok) {
+        if(((tok.type == ',') || (tok.type == '>') || tok.type == '(' || tok.type == ')') && s.Last() == ' ') {
+            s.RemoveLast();
+        }
         s << tok.text;
-        switch(tok.type) {
-        case '<':
-            if(standard == kCxx03) {
-                s << " ";
+
+        if(standard == eCxxStandard::kCxx03 && (tok.type == '>')) {
+            if(s.length() > 1 && s.EndsWith(">>")) {
+                s.RemoveLast(2);
+                s << "> >";
             }
-            break;
+        }
+
+        switch(tok.type) {
         case T_AUTO:
         case T_BOOL:
         case T_CHAR:
@@ -37,22 +68,13 @@ wxString CxxVariable::GetTypeAsString(CxxVariable::eStandard standard) const
         case T_VOID:
         case T_WCHAR_T:
         case ',':
+        case '>':
             s << " ";
             break;
         }
     });
+    if(s.EndsWith(" ")) {
+        s.RemoveLast();
+    }
     return s;
-}
-
-wxString CxxVariable::ToString(size_t flags, CxxVariable::eStandard standard) const
-{
-    wxString str;
-    str << GetTypeAsString(standard);
-    if(flags & kToString_Name) {
-        str << " " << GetName();
-    }
-    if(flags & kToString_DefaultValue) {
-        str << " = " << GetDefaultValue();
-    }
-    return str;
 }

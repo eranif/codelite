@@ -3,11 +3,12 @@
 #include <algorithm>
 #include "file_logger.h"
 
-CxxVariableScanner::CxxVariableScanner(const wxString& buffer)
+CxxVariableScanner::CxxVariableScanner(const wxString& buffer, eCxxStandard standard)
     : m_scanner(NULL)
     , m_buffer(buffer)
     , m_eof(false)
     , m_parenthesisDepth(0)
+    , m_standard(standard)
 {
     m_nativeTypes.insert(T_AUTO);
     m_nativeTypes.insert(T_BOOL);
@@ -27,15 +28,17 @@ CxxVariableScanner::CxxVariableScanner(const wxString& buffer)
 
 CxxVariableScanner::~CxxVariableScanner() {}
 
-CxxVariable::Vec_t CxxVariableScanner::GetVariables()
+CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
 {
     wxString strippedBuffer, parenthesisBuffer;
     OptimizeBuffer(strippedBuffer, parenthesisBuffer);
-    CxxVariable::Vec_t vars = DoGetVariables(strippedBuffer);
-    CxxVariable::Vec_t args = DoGetVariables(parenthesisBuffer);
+    CxxVariable::Vec_t vars = DoGetVariables(strippedBuffer, sort);
+    CxxVariable::Vec_t args = DoGetVariables(parenthesisBuffer, sort);
     vars.insert(vars.end(), args.begin(), args.end());
-    std::sort(vars.begin(), vars.end(),
-              [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName().CmpNoCase(b->GetName()); });
+    if(sort) {
+        std::sort(vars.begin(), vars.end(),
+                  [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName().CmpNoCase(b->GetName()); });
+    }
     return vars;
 }
 
@@ -158,6 +161,8 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype)
             vartype.push_back(token);
             if(token.type == '>' || token.type == ']') {
                 --depth;
+            } else if(token.type == '<' || token.type == '[') {
+                ++depth;
             }
         }
     }
@@ -256,17 +261,22 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
 
     if(type == ',' || type == '{') {
         ::LexerUnget(m_scanner);
+        if(!consumed.IsEmpty()) {
+            consumed.RemoveLast();
+        }
     }
 }
 
 int CxxVariableScanner::ReadUntil(const std::set<int>& delims, CxxLexerToken& token, wxString& consumed)
 {
     // loop until we find the open brace
+    CxxVariable::LexerToken::Vec_t v;
     int depth = 0;
     while(GetNextToken(token)) {
-        consumed << token.text << " ";
+        v.push_back(CxxVariable::LexerToken(token));
         if(depth == 0) {
             if(delims.count(token.type)) {
+                consumed = CxxVariable::PackType(v, m_standard);
                 return token.type;
             } else {
                 switch(token.type) {
@@ -402,7 +412,7 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
     ::LexerDestroy(&sc);
 }
 
-CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer)
+CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bool sort)
 {
     // First, we strip all parenthesis content from the buffer
     m_scanner = ::LexerNew(buffer);
@@ -422,7 +432,7 @@ CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer)
         bool cont = false;
         do {
             cont = ReadName(varname, pointerOrRef, varInitialization);
-            CxxVariable::Ptr_t var(new CxxVariable());
+            CxxVariable::Ptr_t var(new CxxVariable(m_standard));
             var->SetName(varname);
             var->SetType(vartype);
             if(var->IsOk()) {
@@ -430,15 +440,14 @@ CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer)
             } else if(!varInitialization.IsEmpty()) {
                 // This means that the above was a function call
                 // Parse the siganture which is placed inside the varInitialization
-                CxxVariableScanner scanner(varInitialization);
-                CxxVariable::Vec_t args = scanner.GetVariables();
+                CxxVariableScanner scanner(varInitialization, m_standard);
+                CxxVariable::Vec_t args = scanner.GetVariables(sort);
                 vars.insert(vars.end(), args.begin(), args.end());
                 break;
             }
         } while(cont && (m_parenthesisDepth == 0) /* not inside a function */);
     }
 
-    // Sort the variables by name
     ::LexerDestroy(&m_scanner);
     return vars;
 }
@@ -453,7 +462,7 @@ bool CxxVariableScanner::TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t&
 
 CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
 {
-    CxxVariable::Vec_t l = GetVariables();
+    CxxVariable::Vec_t l = GetVariables(true);
     CxxVariable::Map_t m;
     std::for_each(l.begin(), l.end(), [&](CxxVariable::Ptr_t v) {
         if(m.count(v->GetName()) == 0) {
@@ -470,3 +479,33 @@ bool CxxVariableScanner::HasTypeInList(const CxxVariable::LexerToken::Vec_t& typ
                      [&](const CxxVariable::LexerToken& token) { return m_nativeTypes.count(token.type) != 0; });
     return (iter != type.end());
 }
+
+CxxVariable::Vec_t CxxVariableScanner::DoParseFunctionArguments(const wxString& buffer)
+{
+    m_scanner = ::LexerNew(buffer);
+    m_eof = false;
+    m_parenthesisDepth = 0;
+    if(!m_scanner) return CxxVariable::Vec_t(); // Empty list
+
+    CxxVariable::Vec_t vars;
+
+    // Read the variable type
+    while(!IsEof()) {
+        CxxVariable::LexerToken::Vec_t vartype;
+        if(!ReadType(vartype)) continue;
+
+        // Get the variable(s) name
+        wxString varname, pointerOrRef, varInitialization;
+        ReadName(varname, pointerOrRef, varInitialization);
+        CxxVariable::Ptr_t var(new CxxVariable(m_standard));
+        var->SetName(varname);
+        var->SetType(vartype);
+        var->SetDefaultValue(varInitialization);
+        var->SetPointerOrReference(pointerOrRef);
+        vars.push_back(var);
+    }
+    ::LexerDestroy(&m_scanner);
+    return vars;
+}
+
+CxxVariable::Vec_t CxxVariableScanner::ParseFunctionArguments() { return DoParseFunctionArguments(m_buffer); }

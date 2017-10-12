@@ -9,13 +9,15 @@
 
 class WXDLLIMPEXP_CL CxxVariableScanner
 {
+    enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor };
+
+protected:
     Scanner_t m_scanner;
     wxString m_buffer;
     bool m_eof;
     int m_parenthesisDepth;
     std::unordered_set<int> m_nativeTypes;
-    
-    enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor };
+    eCxxStandard m_standard;
 
 protected:
     bool GetNextToken(CxxLexerToken& token);
@@ -23,7 +25,7 @@ protected:
     void OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer);
     bool TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t& type);
     bool HasTypeInList(const CxxVariable::LexerToken::Vec_t& type) const;
-    
+
 protected:
     /**
      * @brief read the variable type
@@ -42,18 +44,25 @@ protected:
 
     int ReadUntil(const std::set<int>& delims, CxxLexerToken& token, wxString& consumed);
 
-    CxxVariable::Vec_t DoGetVariables(const wxString& buffer);
+    CxxVariable::Vec_t DoGetVariables(const wxString& buffer, bool sort);
+    CxxVariable::Vec_t DoParseFunctionArguments(const wxString& buffer);
 
 public:
-    CxxVariableScanner(const wxString& buffer);
+    CxxVariableScanner(const wxString& buffer, eCxxStandard standard);
     virtual ~CxxVariableScanner();
-    
+
     /**
      * @brief parse the buffer and return list of variables
-     * @return 
+     * @return
      */
-    CxxVariable::Vec_t GetVariables();
-    
+    CxxVariable::Vec_t GetVariables(bool sort = true);
+
+    /**
+     * @brief parse the buffer and return list of variables
+     * @return
+     */
+    CxxVariable::Vec_t ParseFunctionArguments();
+
     /**
      * @brief parse the buffer and return a unique set of variables
      */

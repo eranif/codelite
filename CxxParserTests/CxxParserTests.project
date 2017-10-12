@@ -9,6 +9,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Tests">
     <File Name="Tests/test_cxx_local_variables.h"/>
+    <File Name="Tests/test_cxx_normalize_signature.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -23,9 +24,10 @@
     <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-std=c++11;-Wall;$(shell wx-config --cxxflags)" C_Options="-g;-O0" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="$(CODELITE_DIR)/CodeLite"/>
+        <IncludePath Value="$(CODELITE_DIR)/sdk/wxsqlite3/include"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs)" Required="yes">
-        <LibraryPath Value="$CODELITE_DIR/lib/gcc_lib"/>
+        <LibraryPath Value="$(CODELITE_DIR)/lib/gcc_lib"/>
         <Library Value="libcodeliteud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
@@ -33,7 +35,7 @@
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=C:\src\codelite\lib\gcc_lib;$WXWIN/lib/gcc_dll;$PATH
-CODELITE_DIR=../]]>
+CODELITE_DIR=C:\src\codelite]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="yes">
         <DebuggerSearchPaths/>
@@ -108,4 +110,7 @@ CODELITE_DIR=..\]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
 </CodeLite_Project>

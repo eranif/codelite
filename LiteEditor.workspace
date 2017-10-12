@@ -53,7 +53,7 @@
     <Project Name="PHPRefactoring" Path="PHPRefactoring/PHPRefactoring.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
-    <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="No"/>
+    <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
   </VirtualDirectory>
   <VirtualDirectory Name="SDK">
     <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
@@ -68,7 +68,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="UnitTests">
     <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
-    <Project Name="CxxParserTests" Path="CxxParserTests/CxxParserTests.project" Active="Yes"/>
+    <Project Name="CxxParserTests" Path="CxxParserTests/CxxParserTests.project" Active="No"/>
   </VirtualDirectory>
   <Project Name="codelite_vim" Path="codelite_vim/codelite_vim.project" Active="No"/>
   <BuildMatrix>

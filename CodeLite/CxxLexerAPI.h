@@ -65,6 +65,11 @@ enum eLexerOptions {
     kLexerOpt_DontCollectMacrosDefinedInThisFile = 0x00000008,
 };
 
+enum class eCxxStandard {
+    kCxx03,
+    kCxx11
+};
+
 struct WXDLLIMPEXP_CL CxxLexerException
 {
     wxString message;

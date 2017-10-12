@@ -43,6 +43,7 @@
 #include "CxxTemplateFunction.h"
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
+#include "CxxLexerAPI.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -82,7 +83,6 @@ static wxString ScopeFromPath(const wxString& path)
 Language::Language()
     : m_expression(wxEmptyString)
     , m_scanner(new CppScanner())
-    , m_tokenScanner(new CppScanner())
     , m_tm(NULL)
 {
     // Initialise the braces map
@@ -224,39 +224,57 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
     subscriptOperator = false;
     funcArgList.Clear();
 
-    while((type = m_tokenScanner->yylex()) != 0) {
-        switch(type) {
-        case lexTHIS:
-            token << wxT("this");
+    CxxLexerToken tok;
+    while(m_tokenScanner.NextToken(tok)) {
+        switch(tok.type) {
+        case T_STATIC_CAST:
+        case T_DYNAMIC_CAST:
+        case T_REINTERPRET_CAST:
+        case T_CONST_CAST: {
+            // We expect now: "<"
+            if(!m_tokenScanner.NextToken(tok) || (tok.type != '<')) return false;
+            wxString typestr;
+            if(!m_tokenScanner.ReadUntilClosingBracket('>', typestr)) return false;
+            token.swap(typestr);
+            if(!m_tokenScanner.NextToken(tok) || (tok.type != '>')) return false;
+            if(!m_tokenScanner.NextToken(tok) || (tok.type != '(')) return false;
+            if(!m_tokenScanner.ReadUntilClosingBracket(')', typestr)) return false;
+            if(!m_tokenScanner.NextToken(tok) || (tok.type != ')')) return false;
+            token.Replace("*", "");
+            token.Replace("&", "");
             break;
-        case CLCL:
-        case wxT('.'):
-        case lexARROW:
+        }
+        case T_THIS:
+            token << "this";
+            break;
+        case T_DOUBLE_COLONS:
+        case '.':
+        case T_ARROW:
             if(depth == 0) {
-                delim = _U(m_tokenScanner->YYText());
+                delim = tok.text;
                 return true;
             } else {
-                token << wxT(" ") << _U(m_tokenScanner->YYText());
+                token << " " << tok.text;
             }
             break;
-        case wxT('['):
+        case '[':
             subscriptOperator = true;
             depth++;
-            token << wxT(" ") << _U(m_tokenScanner->YYText());
+            token << " " << tok.text;
             break;
-        case wxT('('):
+        case '(':
             if(token.IsEmpty()) {
                 // casting like expression, (type)->
                 // simply ignore the parenthessis
                 break;
             }
         // fall through
-        case wxT('<'):
-        case wxT('{'):
+        case '<':
+        case '{':
             depth++;
-            token << wxT(" ") << _U(m_tokenScanner->YYText());
+            token << " " << tok.text;
             break;
-        case wxT(')'):
+        case ')':
             if(depth == 0) {
                 // ignore this closing brace
                 // since it might have been here because of an extra open brace at the beginig of token
@@ -269,48 +287,48 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
                 break;
             }
         // fall through
-        case wxT('>'):
-        case wxT(']'):
-        case wxT('}'):
+        case '>':
+        case ']':
+        case '}':
             depth--;
-            if(depth == 0 && type == wxT(')')) {
+            if((depth == 0) && (type == ')')) {
                 // we have found closing brace, disable siganture collection
-                funcArgList << wxT(')');
+                funcArgList << ')';
                 collectingFuncArgList = false;
             }
 
-            token << wxT(" ") << _U(m_tokenScanner->YYText());
+            token << " " << tok.text;
             break;
-        case IDENTIFIER:
-        case wxT(','):
-        case lexDOUBLE:
-        case lexINT:
-        case lexSTRUCT:
-        case lexLONG:
-        case lexENUM:
-        case lexCHAR:
-        case UNION:
-        case lexFLOAT:
-        case lexSHORT:
-        case UNSIGNED:
-        case SIGNED:
-        case lexVOID:
-        case lexCLASS:
-        case TYPEDEFname:
-            token << wxT(" ") << _U(m_tokenScanner->YYText());
+        case T_IDENTIFIER:
+        case ',':
+        case T_DOUBLE:
+        case T_INT:
+        case T_STRUCT:
+        case T_LONG:
+        case T_ENUM:
+        case T_CHAR:
+        case T_UNION:
+        case T_FLOAT:
+        case T_SHORT:
+        case T_UNSIGNED:
+        case T_SIGNED:
+        case T_VOID:
+        case T_CLASS:
+        case T_TYPEDEF:
+            token << " " << tok.text;
             break;
         default:
             break;
         }
 
         if(collectingFuncArgList && depth) {
-            funcArgList << wxString::From8BitData(m_tokenScanner->YYText());
+            funcArgList << tok.text;
         }
     }
 
     if(token.IsEmpty() == false && depth == 0) {
         if(delim.IsEmpty()) {
-            delim = wxT(".");
+            delim = ".";
             return true;
         }
     }
@@ -370,7 +388,7 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
     SetAdditionalScopes(additionalScopes, fn.GetFullPath());
 
     // get next token using the tokenscanner object
-    m_tokenScanner->SetText(_C(statement));
+    m_tokenScanner.Reset(statement);
 
     // By default we keep the head of the list to the top
     // of the chain
@@ -2024,7 +2042,7 @@ void Language::DoFixTokensFromVariable(TokenContainer* tokeContainer, const wxSt
 
     wxString newTextToParse;
     newTextToParse << variableDecl << op;
-    m_tokenScanner->SetText(newTextToParse.To8BitData());
+    m_tokenScanner.Reset(newTextToParse);
     ParsedToken* newToken = ParseTokens(scopeName);
     if(newToken) {
         // copy the subscript operator from the local variable token to the

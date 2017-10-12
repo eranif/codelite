@@ -10,6 +10,7 @@
   <VirtualDirectory Name="Tests">
     <File Name="Tests/test_cxx_local_variables.h"/>
     <File Name="Tests/test_cxx_normalize_signature.h"/>
+    <File Name="Tests/test_cxx_c11_template.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

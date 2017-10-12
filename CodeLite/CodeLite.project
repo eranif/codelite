@@ -266,6 +266,8 @@
       <File Name="CxxVariableScanner.h"/>
       <File Name="CxxVariable.h"/>
       <File Name="CxxVariable.cpp"/>
+      <File Name="CxxTokenizer.h"/>
+      <File Name="CxxTokenizer.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="RefactorEngine">

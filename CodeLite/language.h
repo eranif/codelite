@@ -41,6 +41,7 @@
 #include <set>
 #include "CxxVariable.h"
 #include "macros.h"
+#include "CxxTokenizer.h"
 
 enum SearchFlags {
     PartialMatch = 0x00000001,
@@ -97,7 +98,7 @@ private:
     std::vector<wxString> m_delimArr;
     wxString m_expression;
     CppScannerPtr m_scanner;
-    CppScannerPtr m_tokenScanner;
+    CxxTokenizer m_tokenScanner;
     TagsManager* m_tm;
     wxString m_visibleScope;
     wxString m_lastFunctionSignature;

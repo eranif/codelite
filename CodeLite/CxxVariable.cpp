@@ -6,12 +6,17 @@ CxxVariable::CxxVariable() {}
 
 CxxVariable::~CxxVariable() {}
 
-wxString CxxVariable::GetTypeAsString() const
+wxString CxxVariable::GetTypeAsString(CxxVariable::eStandard standard) const
 {
     wxString s;
     std::for_each(m_type.begin(), m_type.end(), [&](const CxxVariable::LexerToken& tok) {
         s << tok.text;
         switch(tok.type) {
+        case '<':
+            if(standard == kCxx03) {
+                s << " ";
+            }
+            break;
         case T_AUTO:
         case T_BOOL:
         case T_CHAR:
@@ -32,10 +37,22 @@ wxString CxxVariable::GetTypeAsString() const
         case T_VOID:
         case T_WCHAR_T:
         case ',':
-        case '>':
             s << " ";
             break;
         }
     });
     return s;
+}
+
+wxString CxxVariable::ToString(size_t flags, CxxVariable::eStandard standard) const
+{
+    wxString str;
+    str << GetTypeAsString(standard);
+    if(flags & kToString_Name) {
+        str << " " << GetName();
+    }
+    if(flags & kToString_DefaultValue) {
+        str << " = " << GetDefaultValue();
+    }
+    return str;
 }

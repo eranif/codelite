@@ -27,18 +27,19 @@ CxxVariableScanner::CxxVariableScanner(const wxString& buffer)
 
 CxxVariableScanner::~CxxVariableScanner() {}
 
-CxxVariable::List_t CxxVariableScanner::GetVariables()
+CxxVariable::Vec_t CxxVariableScanner::GetVariables()
 {
     wxString strippedBuffer, parenthesisBuffer;
     OptimizeBuffer(strippedBuffer, parenthesisBuffer);
-    CxxVariable::List_t vars = DoGetVariables(strippedBuffer);
-    CxxVariable::List_t args = DoGetVariables(parenthesisBuffer);
+    CxxVariable::Vec_t vars = DoGetVariables(strippedBuffer);
+    CxxVariable::Vec_t args = DoGetVariables(parenthesisBuffer);
     vars.insert(vars.end(), args.begin(), args.end());
-    vars.sort([&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName().CmpNoCase(b->GetName()); });
+    std::sort(vars.begin(), vars.end(),
+              [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName().CmpNoCase(b->GetName()); });
     return vars;
 }
 
-bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::List_t& vartype)
+bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype)
 {
     int depth = 0;
     CxxLexerToken token;
@@ -401,19 +402,19 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
     ::LexerDestroy(&sc);
 }
 
-CxxVariable::List_t CxxVariableScanner::DoGetVariables(const wxString& buffer)
+CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer)
 {
     // First, we strip all parenthesis content from the buffer
     m_scanner = ::LexerNew(buffer);
     m_eof = false;
     m_parenthesisDepth = 0;
-    if(!m_scanner) return CxxVariable::List_t(); // Empty list
+    if(!m_scanner) return CxxVariable::Vec_t(); // Empty list
 
-    CxxVariable::List_t vars;
+    CxxVariable::Vec_t vars;
 
     // Read the variable type
     while(!IsEof()) {
-        CxxVariable::LexerToken::List_t vartype;
+        CxxVariable::LexerToken::Vec_t vartype;
         if(!ReadType(vartype)) continue;
 
         // Get the variable(s) name
@@ -430,7 +431,7 @@ CxxVariable::List_t CxxVariableScanner::DoGetVariables(const wxString& buffer)
                 // This means that the above was a function call
                 // Parse the siganture which is placed inside the varInitialization
                 CxxVariableScanner scanner(varInitialization);
-                CxxVariable::List_t args = scanner.GetVariables();
+                CxxVariable::Vec_t args = scanner.GetVariables();
                 vars.insert(vars.end(), args.begin(), args.end());
                 break;
             }
@@ -442,17 +443,17 @@ CxxVariable::List_t CxxVariableScanner::DoGetVariables(const wxString& buffer)
     return vars;
 }
 
-bool CxxVariableScanner::TypeHasIdentifier(const CxxVariable::LexerToken::List_t& type)
+bool CxxVariableScanner::TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t& type)
 {
     // do we have an identifier in the type?
-    CxxVariable::LexerToken::List_t::const_iterator iter = std::find_if(
+    CxxVariable::LexerToken::Vec_t::const_iterator iter = std::find_if(
         type.begin(), type.end(), [&](const CxxVariable::LexerToken& token) { return (token.type == T_IDENTIFIER); });
     return (iter != type.end());
 }
 
 CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
 {
-    CxxVariable::List_t l = GetVariables();
+    CxxVariable::Vec_t l = GetVariables();
     CxxVariable::Map_t m;
     std::for_each(l.begin(), l.end(), [&](CxxVariable::Ptr_t v) {
         if(m.count(v->GetName()) == 0) {
@@ -462,9 +463,10 @@ CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
     return m;
 }
 
-bool CxxVariableScanner::HasTypeInList(const CxxVariable::LexerToken::List_t& type) const
+bool CxxVariableScanner::HasTypeInList(const CxxVariable::LexerToken::Vec_t& type) const
 {
-    CxxVariable::LexerToken::List_t::const_iterator iter = std::find_if(type.begin(), type.end(),
-        [&](const CxxVariable::LexerToken& token) { return m_nativeTypes.count(token.type) != 0; });
+    CxxVariable::LexerToken::Vec_t::const_iterator iter =
+        std::find_if(type.begin(), type.end(),
+                     [&](const CxxVariable::LexerToken& token) { return m_nativeTypes.count(token.type) != 0; });
     return (iter != type.end());
 }

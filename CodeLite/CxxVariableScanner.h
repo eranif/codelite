@@ -4,7 +4,7 @@
 #include "codelite_exports.h"
 #include "CxxLexerAPI.h"
 #include "CxxVariable.h"
-#include <set>
+#include <unordered_set>
 #include "macros.h"
 
 class WXDLLIMPEXP_CL CxxVariableScanner
@@ -13,7 +13,7 @@ class WXDLLIMPEXP_CL CxxVariableScanner
     wxString m_buffer;
     bool m_eof;
     int m_parenthesisDepth;
-    std::set<int> m_nativeTypes;
+    std::unordered_set<int> m_nativeTypes;
     
     enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor };
 
@@ -21,14 +21,14 @@ protected:
     bool GetNextToken(CxxLexerToken& token);
     bool IsEof() const { return m_eof; }
     void OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer);
-    bool TypeHasIdentifier(const CxxVariable::LexerToken::List_t& type);
-    bool HasTypeInList(const CxxVariable::LexerToken::List_t& type) const;
+    bool TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t& type);
+    bool HasTypeInList(const CxxVariable::LexerToken::Vec_t& type) const;
     
 protected:
     /**
      * @brief read the variable type
      */
-    bool ReadType(CxxVariable::LexerToken::List_t& vartype);
+    bool ReadType(CxxVariable::LexerToken::Vec_t& vartype);
     /**
      * @brief read the variable name. Return true if there are more variables
      * for the current type
@@ -42,7 +42,7 @@ protected:
 
     int ReadUntil(const std::set<int>& delims, CxxLexerToken& token, wxString& consumed);
 
-    CxxVariable::List_t DoGetVariables(const wxString& buffer);
+    CxxVariable::Vec_t DoGetVariables(const wxString& buffer);
 
 public:
     CxxVariableScanner(const wxString& buffer);
@@ -52,7 +52,7 @@ public:
      * @brief parse the buffer and return list of variables
      * @return 
      */
-    CxxVariable::List_t GetVariables();
+    CxxVariable::Vec_t GetVariables();
     
     /**
      * @brief parse the buffer and return a unique set of variables

@@ -199,13 +199,14 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add("_LIBCPP_INLINE_VISIBILITY");
     m_tokens.Add("_LIBCPP_BEGIN_NAMESPACE_STD=namespace std{");
     m_tokens.Add("_LIBCPP_END_NAMESPACE_STD=}");
-
     m_types.Add(wxT("std::vector::reference=_Tp"));
     m_types.Add(wxT("std::vector::const_reference=_Tp"));
     m_types.Add(wxT("std::vector::iterator=_Tp"));
     m_types.Add(wxT("std::vector::const_iterator=_Tp"));
     m_types.Add(wxT("std::queue::reference=_Tp"));
     m_types.Add(wxT("std::queue::const_reference=_Tp"));
+    m_types.Add(wxT("std::priority_queue::reference=_Tp"));
+    m_types.Add(wxT("std::priority_queue::const_reference=_Tp"));
     m_types.Add(wxT("std::set::const_iterator=_Key"));
     m_types.Add(wxT("std::set::iterator=_Key"));
     m_types.Add(wxT("std::unordered_set::const_iterator=_Key"));

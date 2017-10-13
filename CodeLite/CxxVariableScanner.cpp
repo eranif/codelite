@@ -191,6 +191,7 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
                 s_validLocalTerminators.insert((int)';');
                 s_validLocalTerminators.insert((int)')');
                 s_validLocalTerminators.insert((int)'(');
+                s_validLocalTerminators.insert((int)'{'); // C++11 initialization, e.g: vector<int> v {1,2,3};
             }
             
             // Now that we got the name, check if have more variables to expect
@@ -253,10 +254,10 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
         // Read the initialization
         std::set<int> delims;
         delims.insert(')');
-        consumed = "(";
         if(ReadUntil(delims, token, consumed) == wxNOT_FOUND) {
             return;
         }
+        consumed.Prepend("(");
         // Now read until the delimiter
         delims.clear();
         delims.insert(';');
@@ -268,22 +269,20 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
         // Read the initialization
         std::set<int> delims;
         delims.insert('}');
-        consumed = "{";
         if(ReadUntil(delims, token, consumed) == wxNOT_FOUND) {
             return;
         }
+        consumed.Prepend("{");
         // Now read until the delimiter
         delims.clear();
         delims.insert(';');
         delims.insert(',');
-        delims.insert('{');
         type = ReadUntil(delims, token, dummy);
 
     } else if(tokType == '=') {
         std::set<int> delims;
         delims.insert(';');
         delims.insert(',');
-        delims.insert('{');
         type = ReadUntil(delims, token, consumed);
     } else {
         ::LexerUnget(m_scanner);
@@ -295,7 +294,7 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
         type = ReadUntil(delims, token, dummy);
     }
 
-    if(type == ',' || type == '{') {
+    if(type == ',' || type == (int)'{') {
         ::LexerUnget(m_scanner);
     }
 }

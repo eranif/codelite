@@ -53,7 +53,7 @@
     <Project Name="PHPRefactoring" Path="PHPRefactoring/PHPRefactoring.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
-    <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
+    <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="SDK">
     <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
@@ -67,8 +67,14 @@
     <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UnitTests">
-    <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
-    <Project Name="CxxParserTests" Path="CxxParserTests/CxxParserTests.project" Active="No"/>
+    <VirtualDirectory Name="CXX">
+      <Project Name="CxxParserTests" Path="CxxParserTests/CxxParserTests.project" Active="No"/>
+      <Project Name="CCTest" Path="CodeCompletionsTests/CCTest/CCTest.project" Active="Yes"/>
+      <Project Name="SampleWorksapce" Path="CodeCompletionsTests/SampleWorkspace/SampleWorksapce.project"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="PHP">
+      <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Project Name="codelite_vim" Path="codelite_vim/codelite_vim.project" Active="No"/>
   <BuildMatrix>
@@ -126,6 +132,8 @@
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="CxxParserTests" ConfigName="Debug"/>
+      <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="SampleWorksapce" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -182,6 +190,8 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
       <Project Name="CxxParserTests" ConfigName="Debug"/>
+      <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="SampleWorksapce" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -238,6 +248,8 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
       <Project Name="CxxParserTests" ConfigName="Debug"/>
+      <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="SampleWorksapce" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -294,6 +306,8 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
       <Project Name="CxxParserTests" ConfigName="Debug"/>
+      <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="SampleWorksapce" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
@@ -350,6 +364,8 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
       <Project Name="CxxParserTests" ConfigName="Debug"/>
+      <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="SampleWorksapce" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment/>
@@ -405,8 +421,10 @@
       <Project Name="wxFormBuilder" ConfigName="Win_x64_Release"/>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
+      <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="SampleWorksapce" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
       <Environment/>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
@@ -461,6 +479,8 @@
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x64_Debug"/>
       <Project Name="CxxParserTests" ConfigName="Debug"/>
+      <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="SampleWorksapce" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

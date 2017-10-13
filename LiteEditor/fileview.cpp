@@ -74,6 +74,8 @@
 #include "fileutils.h"
 #include <algorithm>
 #include <wx/colordlg.h>
+#include <wx/filedlg.h>
+#include <wx/msgdlg.h>
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -835,8 +837,9 @@ void FileViewTree::OnAddExistingItem(wxCommandEvent& WXUNUSED(event))
         return;
     }
 
-    const wxString ALL(wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
-                       wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
+    const wxString ALL(
+        wxT("All Files (*)|*|") wxT("C/C++ Source Files (*.c;*.cpp;*.cxx;*.cc)|*.c;*.cpp;*.cxx;*.cc|")
+            wxT("C/C++ Header Files (*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc)|*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
 
     wxString vdPath = GetItemPath(item);
     wxString project, vd;
@@ -1225,8 +1228,8 @@ void FileViewTree::DoRemoveProject(const wxString& name)
 int FileViewTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
 {
     // used for SortChildren, reroute to our sort routine
-    FilewViewTreeItemData* a = (FilewViewTreeItemData*)GetItemData(item1),
-                           *b = (FilewViewTreeItemData*)GetItemData(item2);
+    FilewViewTreeItemData *a = (FilewViewTreeItemData *)GetItemData(item1),
+                          *b = (FilewViewTreeItemData *)GetItemData(item2);
     if(a && b) return OnCompareItems(a, b);
 
     return 0;
@@ -2707,7 +2710,9 @@ void FileViewTree::ShowWorkspaceFolderContextMenu()
     menu.Append(XRCID("workspace_folder_new"), _("New Workspace Folder"));
     menu.Append(XRCID("workspace_folder_delete"), _("Delete"));
     menu.AppendSeparator();
-    menu.Append(XRCID("new_cxx_project"), _("New Project"));
+    menu.Append(XRCID("new_cxx_project"), _("New Project..."));
+    menu.AppendSeparator();
+    menu.Append(XRCID("add_existing_cxx_project"), _("Add an Existing Project..."));
 
     menu.Bind(wxEVT_MENU, &FileViewTree::OnWorkspaceFolderNewFolder, this, XRCID("workspace_folder_new"));
     menu.Bind(wxEVT_MENU, &FileViewTree::OnWorkspaceFolderDelete, this, XRCID("workspace_folder_delete"));
@@ -2786,6 +2791,7 @@ void FileViewTree::DoBindEvents()
     wxFrame* frame = EventNotifier::Get()->TopFrame();
     frame->Bind(wxEVT_MENU, &FileViewTree::OnWorkspaceNewWorkspaceFolder, this, XRCID("add_workspace_folder"));
     frame->Bind(wxEVT_MENU, &FileViewTree::OnNewProject, this, XRCID("new_cxx_project"));
+    frame->Bind(wxEVT_MENU, &FileViewTree::OnAddProjectToWorkspaceFolder, this, XRCID("add_existing_cxx_project"));
 }
 
 void FileViewTree::DoUnbindEvents()
@@ -2794,6 +2800,8 @@ void FileViewTree::DoUnbindEvents()
         wxFrame* frame = EventNotifier::Get()->TopFrame();
         frame->Unbind(wxEVT_MENU, &FileViewTree::OnWorkspaceNewWorkspaceFolder, this, XRCID("add_workspace_folder"));
         frame->Unbind(wxEVT_MENU, &FileViewTree::OnNewProject, this, XRCID("new_cxx_project"));
+        frame->Unbind(wxEVT_MENU, &FileViewTree::OnAddProjectToWorkspaceFolder, this,
+                      XRCID("add_existing_cxx_project"));
         m_eventsBound = false;
     }
 }
@@ -2934,4 +2942,30 @@ void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
 
     // Update the local settings
     LocalWorkspaceST::Get()->SetFolderColours(coloursMap);
+}
+
+void FileViewTree::OnAddProjectToWorkspaceFolder(wxCommandEvent& evt)
+{
+    wxUnusedVar(evt);
+    wxTreeItemId item = GetSingleSelection();
+    CHECK_ITEM_RET(item);
+
+    FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
+    CHECK_PTR_RET(data);
+
+    if(data->GetData().GetKind() != ProjectItem::TypeWorkspaceFolder) return;
+    wxString workspaceFolder = data->GetData().Key();
+    const wxString ALL(wxT("CodeLite Projects (*.project)|*.project|") wxT("All Files (*)|*"));
+    wxFileDialog dlg(this, _("Open Project"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+                     wxDefaultPosition);
+    if(dlg.ShowModal() == wxID_OK) {
+        wxString errmsg;
+        if(!clCxxWorkspaceST::Get()->AddProject(dlg.GetPath(), workspaceFolder, errmsg)) {
+            ::wxMessageBox(errmsg, "CodeLite", wxICON_ERROR | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
+        }
+    }
+    
+    // Fire "Project-Added" event
+    clCommandEvent evtProjectAdded(wxEVT_PROJ_ADDED);
+    EventNotifier::Get()->AddPendingEvent(evtProjectAdded);
 }

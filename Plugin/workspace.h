@@ -39,6 +39,7 @@
 #include "optionsconfig.h"
 #include "localworkspace.h"
 #include "codelite_exports.h"
+#include "wxStringHash.h"
 
 #define WORKSPACE_XML_VERSION "10.0.0"
 
@@ -62,12 +63,12 @@ public:
     virtual wxString GetProjectFromFile(const wxFileName& filename) const;
 
 public:
-    typedef std::map<wxString, ProjectPtr> ProjectMap_t;
+    typedef std::unordered_map<wxString, ProjectPtr> ProjectMap_t;
 
 protected:
     wxXmlDocument m_doc;
     wxFileName m_fileName;
-    clCxxWorkspace::ProjectMap_t m_projects;
+    ProjectMap_t m_projects;
     wxString m_startupDir;
     time_t m_modifyTime;
     bool m_saveOnExit;
@@ -85,7 +86,6 @@ public:
     wxString GetVersion() const;
 
 private:
-    
     void DoUpdateBuildMatrix();
     /**
      * @brief mark all projects as non-active
@@ -235,7 +235,7 @@ public:
      * true on success false otherwise
      */
     bool CreateProject(const wxString& name, const wxString& path, const wxString& type,
-        const wxString& workspaceFolder, bool addToBuildMatrix, wxString& errMsg);
+                       const wxString& workspaceFolder, bool addToBuildMatrix, wxString& errMsg);
 
     /**
      * @brief rename a project
@@ -270,7 +270,10 @@ public:
      * \param errMsg [output] incase an error, report the error to the caller
      */
     bool AddProject(const wxString& path, wxString& errMsg);
-
+    /**
+     * @brief add project to the workspace into a given workspace folder
+     */
+    bool AddProject(const wxString& path, const wxString& workspaceFolder, wxString& errMsg);
     /**
      * Remove project from the workspace. This function does not delete
      * any file related to the project but simply removes it from the workspace
@@ -278,7 +281,7 @@ public:
      * \param errMsg [output] incase an error, report the error to the caller
      * \return true on success false otherwise
      */
-    bool RemoveProject(const wxString& name, wxString& errMsg);
+    bool RemoveProject(const wxString& name, wxString& errMsg, const wxString& workspaceFolder);
 
     /**
      * \return The active project name or wxEmptyString
@@ -455,17 +458,17 @@ public:
      * @brief clear the workspace include path cache (for each project)
      */
     void ClearIncludePathCache();
-    
+
     /**
      * @brief return the underlying file for a given project name
      */
     virtual wxFileName GetProjectFileName(const wxString& projectName) const;
-    
+
     /**
      * @brief return list of projects for this workspace
      */
     virtual wxArrayString GetWorkspaceProjects() const;
-    
+
 private:
     /**
      * Do the actual add project

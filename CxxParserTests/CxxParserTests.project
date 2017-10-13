@@ -11,6 +11,7 @@
     <File Name="Tests/test_cxx_local_variables.h"/>
     <File Name="Tests/test_cxx_normalize_signature.h"/>
     <File Name="Tests/test_cxx_c11_template.h"/>
+    <File Name="Tests/test_cxx_class_method_impl.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

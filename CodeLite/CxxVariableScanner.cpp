@@ -1,6 +1,7 @@
 #include "CxxVariableScanner.h"
 #include "CxxScannerTokens.h"
 #include <algorithm>
+#include <unordered_set>
 #include "file_logger.h"
 
 CxxVariableScanner::CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros)
@@ -175,8 +176,39 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
     while(GetNextToken(token)) {
         if(token.type == T_IDENTIFIER) {
             varname = token.text;
+            
+            // Peek at the next token
+            // We can expect "=", "," "(", ";" or ")"
+            // Examples:
+            // TYPE name = 1;
+            // TYPE name, secondVariable;
+            // TYPE name(10);
+            // TYPE name;
+            static std::unordered_set<int> s_validLocalTerminators;
+            if(s_validLocalTerminators.empty()) {
+                s_validLocalTerminators.insert((int)',');
+                s_validLocalTerminators.insert((int)'=');
+                s_validLocalTerminators.insert((int)';');
+                s_validLocalTerminators.insert((int)')');
+                s_validLocalTerminators.insert((int)'(');
+            }
+            
+            // Now that we got the name, check if have more variables to expect
+            if(!GetNextToken(token)) {
+                varname.Clear();
+                return false;
+            }
+            
+            // Always return the token
+            ::LexerUnget(m_scanner);
+            
+            if(s_validLocalTerminators.count(token.type) == 0) {
+                varname.Clear();
+                return false;
+            }
+            
             ConsumeInitialization(varInitialization);
-
+            
             // Now that we got the name, check if have more variables to expect
             if(!GetNextToken(token)) {
                 return false;

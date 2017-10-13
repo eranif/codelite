@@ -52,6 +52,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -288,4 +289,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
 </CodeLite_Project>

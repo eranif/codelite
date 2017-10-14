@@ -25,7 +25,7 @@ protected:
     bool IsEof() const { return m_eof; }
     void OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer);
     bool TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t& type);
-    bool HasTypeInList(const CxxVariable::LexerToken::Vec_t& type) const;
+    bool HasNativeTypeInList(const CxxVariable::LexerToken::Vec_t& type) const;
 
 protected:
     /**

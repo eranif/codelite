@@ -81,7 +81,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
                 case T_VOID:
                 case T_USING:
                 case T_WCHAR_T: {
-                    vartype.push_back(CxxVariable::LexerToken(token));
+                    vartype.push_back(CxxVariable::LexerToken(token, depth));
                     break;
                 }
                 default:
@@ -96,7 +96,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
                         // We already found the identifier for this type, its probably part of the name
                         ::LexerUnget(m_scanner);
                         return true;
-                    } else if(HasTypeInList(vartype)) {
+                    } else if(HasNativeTypeInList(vartype) && (vartype.back().type != T_DOUBLE_COLONS)) {
                         ::LexerUnget(m_scanner);
                         return true;
                     }
@@ -113,7 +113,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
                     case T_MUTABLE:
                     case T_VOLATILE:
                     case T_STATIC:
-                        vartype.push_back(token);
+                        vartype.push_back(CxxVariable::LexerToken(token, depth));
                         break;
                     default:
                         ::LexerUnget(m_scanner);
@@ -139,13 +139,13 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
                 case T_UNSIGNED:
                 case T_VOID:
                 case T_WCHAR_T: {
-                    vartype.push_back(CxxVariable::LexerToken(token));
+                    vartype.push_back(CxxVariable::LexerToken(token, depth));
                     break;
                 }
                 }
                 case '<':
                 case '[':
-                    vartype.push_back(CxxVariable::LexerToken(token));
+                    vartype.push_back(CxxVariable::LexerToken(token, depth));
                     depth++;
                     break;
                 case '*':
@@ -159,7 +159,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
             }
         } else {
             // Depth > 0
-            vartype.push_back(token);
+            vartype.push_back(CxxVariable::LexerToken(token, depth));
             if(token.type == '>' || token.type == ']') {
                 --depth;
             } else if(token.type == '<' || token.type == '[') {
@@ -176,7 +176,7 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
     while(GetNextToken(token)) {
         if(token.type == T_IDENTIFIER) {
             varname = token.text;
-            
+
             // Peek at the next token
             // We can expect "=", "," "(", ";" or ")"
             // Examples:
@@ -193,39 +193,39 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
                 s_validLocalTerminators.insert((int)'(');
                 s_validLocalTerminators.insert((int)'{'); // C++11 initialization, e.g: vector<int> v {1,2,3};
             }
-            
+
             // Now that we got the name, check if have more variables to expect
             if(!GetNextToken(token)) {
                 varname.Clear();
                 return false;
             }
-            
+
             // Always return the token
             ::LexerUnget(m_scanner);
-            
+
             if(s_validLocalTerminators.count(token.type) == 0) {
                 varname.Clear();
                 return false;
             }
-            
+
             ConsumeInitialization(varInitialization);
-            
+
             // Now that we got the name, check if have more variables to expect
             if(!GetNextToken(token)) {
                 return false;
             }
-            
+
             if((token.type == '{') && !varInitialization.IsEmpty()) {
                 // Don't collect functions and consider them as variables
                 ::LexerUnget(m_scanner);
                 varname.clear();
                 return false;
             }
-            
-            if(!varInitialization.empty()){
+
+            if(!varInitialization.empty()) {
                 varInitialization.RemoveLast();
             }
-            
+
             // If we found comma, return true
             if(token.type == ',') {
                 return true;
@@ -305,7 +305,7 @@ int CxxVariableScanner::ReadUntil(const std::set<int>& delims, CxxLexerToken& to
     CxxVariable::LexerToken::Vec_t v;
     int depth = 0;
     while(GetNextToken(token)) {
-        v.push_back(CxxVariable::LexerToken(token));
+        v.push_back(CxxVariable::LexerToken(token, depth));
         if(depth == 0) {
             if(delims.count(token.type)) {
                 consumed = CxxVariable::PackType(v, m_standard);
@@ -343,18 +343,18 @@ int CxxVariableScanner::ReadUntil(const std::set<int>& delims, CxxLexerToken& to
 bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
 {
     bool res = false;
-    
+
     while(true) {
         res = ::LexerNext(m_scanner, token);
         if(!res) break;
-        
+
         // Ignore any T_IDENTIFIER which is declared as macro
         if((token.type == T_IDENTIFIER) && m_macros.count(token.text)) {
             continue;
         }
         break;
     }
-    
+
     m_eof = !res;
     switch(token.type) {
     case '(':
@@ -520,11 +520,12 @@ CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
     return m;
 }
 
-bool CxxVariableScanner::HasTypeInList(const CxxVariable::LexerToken::Vec_t& type) const
+bool CxxVariableScanner::HasNativeTypeInList(const CxxVariable::LexerToken::Vec_t& type) const
 {
     CxxVariable::LexerToken::Vec_t::const_iterator iter =
-        std::find_if(type.begin(), type.end(),
-                     [&](const CxxVariable::LexerToken& token) { return m_nativeTypes.count(token.type) != 0; });
+        std::find_if(type.begin(), type.end(), [&](const CxxVariable::LexerToken& token) {
+            return ((token._depth == 0) && (m_nativeTypes.count(token.type) != 0));
+        });
     return (iter != type.end());
 }
 

@@ -16,15 +16,21 @@ class WXDLLIMPEXP_CL CxxVariable
 public:
     struct LexerToken {
         int type;
+        int _depth;
         wxString text;
         wxString comment;
 
         LexerToken()
             : type(0)
+            , _depth(0)
         {
         }
 
-        LexerToken(const CxxLexerToken& token) { FromCxxLexerToken(token); }
+        LexerToken(const CxxLexerToken& token, int depth)
+        {
+            FromCxxLexerToken(token);
+            this->_depth = depth;
+        }
 
         void FromCxxLexerToken(const CxxLexerToken& token)
         {

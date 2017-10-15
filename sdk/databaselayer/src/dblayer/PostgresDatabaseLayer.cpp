@@ -394,7 +394,7 @@ bool PostgresDatabaseLayer::TableExists(const wxString& table)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -459,7 +459,7 @@ bool PostgresDatabaseLayer::ViewExists(const wxString& view)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -504,7 +504,7 @@ wxArrayString PostgresDatabaseLayer::GetTables()
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -543,7 +543,7 @@ wxArrayString PostgresDatabaseLayer::GetViews()
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -600,7 +600,7 @@ wxArrayString PostgresDatabaseLayer::GetColumns(const wxString& table)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 

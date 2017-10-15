@@ -276,7 +276,7 @@ void MessagePane::DoPostEvent(ButtonDetails btn)
     }
 }
 
-void MessagePane::SavePreferenceIfNeeded(const MessageDetails msg, int choice)
+void MessagePane::SavePreferenceIfNeeded(const MessageDetails& msg, int choice)
 {
     // If the checkbox is both shown (to cater for random ticks) and checked, save the preference
     if (choice != wxNOT_FOUND && m_DontAnnoyMeCheck->IsShown() && m_DontAnnoyMeCheck->IsChecked()) {

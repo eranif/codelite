@@ -347,7 +347,7 @@ protected:
             m_libs.push_back(lib);
     }
 
-    void parseLibs(const std::string libs) {
+    void parseLibs(const std::string& libs) {
         std::string param = libs;
 
         // if the last parameter doesn't haves a -- switch

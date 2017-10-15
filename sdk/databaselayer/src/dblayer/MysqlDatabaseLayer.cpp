@@ -499,7 +499,7 @@ bool MysqlDatabaseLayer::TableExists(const wxString& table)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -580,7 +580,7 @@ bool MysqlDatabaseLayer::ViewExists(const wxString& view)
       pStatement = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 
@@ -629,7 +629,7 @@ wxArrayString MysqlDatabaseLayer::GetTables()
         pResult = NULL;
       }
 
-      throw e;
+      throw;
     }
 #endif
 
@@ -688,7 +688,7 @@ wxArrayString MysqlDatabaseLayer::GetViews()
         pResult = NULL;
       }
 
-      throw e;
+      throw;
     }
 #endif
 
@@ -729,7 +729,7 @@ wxArrayString MysqlDatabaseLayer::GetColumns(const wxString& table)
       pResult = NULL;
     }
 
-    throw e;
+    throw;
   }
 #endif
 

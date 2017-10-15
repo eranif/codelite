@@ -126,7 +126,7 @@ protected:
     void DoShowNextMessage();
     void DoShowCurrentMessage();
     void DoPostEvent(ButtonDetails btn);
-    void SavePreferenceIfNeeded(const MessageDetails msg, int choice);
+    void SavePreferenceIfNeeded(const MessageDetails &msg, int choice);
 
 public:
     /** Constructor */

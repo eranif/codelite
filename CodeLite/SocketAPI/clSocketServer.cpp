@@ -45,7 +45,7 @@ clSocketServer::~clSocketServer()
     DestroySocket();
 }
 
-void clSocketServer::CreateServer(const std::string &pipePath) throw (clSocketException)
+void clSocketServer::CreateServer(const std::string &pipePath)
 {
 #ifndef __WXMSW__
     unlink(pipePath.c_str());
@@ -84,7 +84,7 @@ void clSocketServer::CreateServer(const std::string &pipePath) throw (clSocketEx
 #endif
 }
 
-clSocketBase::Ptr_t clSocketServer::WaitForNewConnection(long timeout) throw (clSocketException)
+clSocketBase::Ptr_t clSocketServer::WaitForNewConnection(long timeout)
 {
     if ( SelectRead( timeout ) == kTimeout ) {
         return clSocketBase::Ptr_t( NULL );
@@ -97,7 +97,7 @@ clSocketBase::Ptr_t clSocketServer::WaitForNewConnection(long timeout) throw (cl
     return clSocketBase::Ptr_t(new clSocketBase(fd));
 }
 
-void clSocketServer::CreateServer(const std::string &address, int port) throw (clSocketException)
+void clSocketServer::CreateServer(const std::string &address, int port)
 {
     // Create a socket
     if( (m_socket = ::socket(AF_INET , SOCK_STREAM , 0)) == INVALID_SOCKET) {

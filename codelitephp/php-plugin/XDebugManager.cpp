@@ -32,8 +32,6 @@
 #include "XDebugPropertyGetHandler.h"
 #include "xdebugevent.h"
 
-static int ID_XDEBUG_ACCEPT_CONN = ::wxNewId();
-
 #define CHECK_XDEBUG_SESSION_ACTIVE(event) \
     if(!IsConnected()) {                   \
         event.Skip();                      \

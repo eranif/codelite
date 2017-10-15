@@ -470,14 +470,14 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
             m_art->Draw(gcdc, *activeTab.get(), activeTabColours, m_style);
         }
-
+        gcdc.DestroyClippingRegion();
         if(activeTabInex != wxNOT_FOUND) {
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
             if(!(GetStyle() & kNotebook_VerticalButtons)) {
                 DoDrawBottomBox(activeTab, clientRect, gcdc, activeTabColours);
             }
         }
-        gcdc.DestroyClippingRegion();
+        
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             wxCoord chevronX = m_chevronRect.GetTopLeft().x +

@@ -186,9 +186,10 @@ void clTabInfo::CalculateOffsets(size_t style)
         m_bmpCloseX = m_width;
         m_bmpCloseY = ((m_height - 12) / 2) + 2;
         m_width += 12; // X button is 10 pixels in size
+    } else {
+        m_width += m_tabCtrl->GetArt()->xSpacer;
     }
-
-    m_width += m_tabCtrl->GetArt()->xSpacer;
+    
     if(!IS_VERTICAL_TABS(style) || true) {
         m_width += m_tabCtrl->GetArt()->majorCurveWidth;
         m_width += m_tabCtrl->GetArt()->smallCurveWidth;

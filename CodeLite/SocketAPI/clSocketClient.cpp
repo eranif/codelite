@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "clSocketClient.h"
+#include "clConnectionString.h"
 
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -105,4 +106,19 @@ bool clSocketClient::ConnectRemote(const wxString& address, int port, bool& woul
         MakeSocketBlocking(true);
     }
     return rc == 0;
+}
+
+bool clSocketClient::Connect(const wxString& connectionString, bool nonBlockingMode)
+{
+    clConnectionString cs(connectionString);
+    if(!cs.IsOK()) {
+        return false;
+    }
+    if(cs.GetProtocol() == clConnectionString::kUnixLocalSocket) {
+        return ConnectLocal(cs.GetPath());
+    } else {
+        // TCP
+        bool wouldBlock = false;
+        return ConnectRemote(cs.GetHost(), cs.GetPort(), wouldBlock, nonBlockingMode);
+    }
 }

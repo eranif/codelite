@@ -134,7 +134,7 @@ void clTabRendererSquare::DrawBottomRect(
             p1 = activeTab->GetRect().GetTopLeft();
             p2 = activeTab->GetRect().GetTopRight();
             dc.SetPen(markerPen);
-            for(size_t i = 0; i < 3; ++i) {
+            for(size_t i = 0; i < 2; ++i) {
                 DRAW_LINE(p1, p2);
                 p1.y += 1;
                 p2.y += 1;
@@ -144,7 +144,7 @@ void clTabRendererSquare::DrawBottomRect(
             p2 = activeTab->GetRect().GetBottomLeft();
             dc.SetPen(markerPen);
 
-            for(size_t i = 0; i < 3; ++i) {
+            for(size_t i = 0; i < 2; ++i) {
                 DRAW_LINE(p1, p2);
                 p1.x += 1;
                 p2.x += 1;

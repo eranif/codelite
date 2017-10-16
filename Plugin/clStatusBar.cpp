@@ -145,12 +145,12 @@ void clStatusBar::DoUpdateColour()
             art.reset(new wxCustomStatusBarArt("Dark"));
             SetArt(art);
         } else {
-            art.reset(new clStatusBarArtNormal);
+            art.reset(new wxCustomStatusBarArt("Dark"));
             SetArt(art);
         }
     } else {
         // Non editor, set "normal" art
-        art.reset(new clStatusBarArtNormal);
+        art.reset(new wxCustomStatusBarArt("Dark"));
         SetArt(art);
     }
     Refresh();

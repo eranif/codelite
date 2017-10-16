@@ -148,12 +148,13 @@ int CodeLiteLLDBApp::OnExit()
 bool CodeLiteLLDBApp::OnInit()
 {
     try {
+        wxString connectionString;
         if(m_port != wxNOT_FOUND) {
-            m_acceptSocket.CreateServer(m_ip.mb_str(wxConvUTF8).data(), m_port);
-
+            connectionString << "unix://" << m_debuggerSocketPath;
         } else {
-            m_acceptSocket.CreateServer(m_debuggerSocketPath.mb_str(wxConvUTF8).data());
+           connectionString << "tcp://" << m_ip << ":" << m_port;
         }
+        m_acceptSocket.Start(connectionString);
 
     } catch(clSocketException& e) {
         if(m_port == wxNOT_FOUND) {

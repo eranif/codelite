@@ -206,8 +206,8 @@ void clAuiDockArt::DrawCaption(
 
         // Prepare the colours
         wxColour bgColour, penColour, textColour;
-        textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(80);
+        textColour = wxColour(67, 74, 86);
+        bgColour = wxColour(171, 177, 186);
         // Same as the notebook background colour
         penColour = bgColour;
         penColour = m_useDarkColours ? m_darkBgColour : penColour;

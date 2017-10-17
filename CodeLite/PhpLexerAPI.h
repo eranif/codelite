@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CppLexerAPI_H__
-#define CppLexerAPI_H__
+#ifndef PhpLexerAPI_H__
+#define PhpLexerAPI_H__
 
 #include <string>
 #include <vector>
@@ -33,7 +33,7 @@
 #include "codelite_exports.h"
 #include "PHPScannerTokens.h"
 
-enum eLexerOptions {
+enum ePhpLexerOptions {
     kPhpLexerOpt_None = 0x00000000,
     kPhpLexerOpt_ReturnComments = 0x00000001,
     kPhpLexerOpt_ReturnWhitespace = 0x00000002,

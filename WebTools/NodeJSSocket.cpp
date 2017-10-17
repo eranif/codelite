@@ -131,14 +131,15 @@ void NodeJSSocket::ProcessInputBuffer()
                         // breakpoint hit, notify we got control + request for backtrace
                         m_debugger->GotControl(true);
                     } else if(json.namedObject("event").toString() == "exception") {
-                        
+
                         JSONElement body = json.namedObject("body");
                         NodeJSDebuggerException exc;
-                        exc.message =  body.namedObject("exception").namedObject("text").toString();;
+                        exc.message = body.namedObject("exception").namedObject("text").toString();
+                        ;
                         exc.line = body.namedObject("sourceLine").toInt();
                         exc.script = body.namedObject("script").namedObject("name").toString();
                         exc.column = body.namedObject("sourceColumn").toInt();
-                        
+
                         // the vm execution stopped due to an exception
                         m_debugger->ExceptionThrown(exc);
                     }
@@ -152,7 +153,10 @@ void NodeJSSocket::ProcessInputBuffer()
     }
 }
 
-void NodeJSSocket::Connect(const wxString& ip, int port) { m_socket.Connect(ip, port, ""); }
+void NodeJSSocket::Connect(const wxString& ip, int port)
+{
+    m_socket.Connect((wxString() << "tcp://" << ip << ":" << port), "");
+}
 
 void NodeJSSocket::WriteRequest(JSONElement& request, NodeJSHandlerBase::Ptr_t handler)
 {
@@ -182,14 +186,14 @@ wxString NodeJSSocket::GetResponse()
         if(!re.GetMatch(&start, &wholeline_len, 0)) {
             return "";
         }
-        
+
         // Remove anything before the 'start' position
         m_inBuffer = m_inBuffer.Mid(start);
-        
+
         // At this point, start = 0
         start = 0;
         wxString wholine = m_inBuffer.Mid(start, wholeline_len);
-        
+
         // wholine should now contains a string like:
         // Content-Length: 1234
         // Extract the message length

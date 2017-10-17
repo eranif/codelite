@@ -46,6 +46,13 @@ public:
      * incase the connect fails
      */
     bool ConnectRemote(const wxString &address, int port, bool &wouldBlock, bool nonBlockingMode = false);
+    
+    /**
+     * @brief connect using connection string
+     * @param connectionString in the format of unix:///path/to/unix/socket or tcp://127.0.0.1:1234
+     * @return 
+     */
+    bool Connect(const wxString& connectionString, bool nonBlockingMode = false);
 };
 
 #endif // CLSOCKETCLIENT_H

@@ -266,6 +266,8 @@
       <File Name="CxxVariableScanner.h"/>
       <File Name="CxxVariable.h"/>
       <File Name="CxxVariable.cpp"/>
+      <File Name="CxxTokenizer.h"/>
+      <File Name="CxxTokenizer.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="RefactorEngine">
@@ -313,6 +315,8 @@
     <File Name="SocketAPI/clSocketServer.h"/>
     <File Name="SocketAPI/clSocketClientAsync.h"/>
     <File Name="SocketAPI/clSocketClientAsync.cpp"/>
+    <File Name="SocketAPI/clConnectionString.h"/>
+    <File Name="SocketAPI/clConnectionString.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="PhpScanner">
     <File Name="PhpLexer.cpp"/>

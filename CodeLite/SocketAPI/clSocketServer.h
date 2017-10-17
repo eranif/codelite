@@ -35,14 +35,26 @@ public:
     clSocketServer();
     virtual ~clSocketServer();
 
+protected:
     /**
      * @brief On Windows, the 'pipePath' is a string containing the port number.
      * LocalSocket is implemented under Windows with TCP/IP with IP always set to 127.0.0.1
      * @param pipePath
+     * @throw clSocketException
      */
-    void CreateServer(const std::string &pipePath) throw (clSocketException);
-    void CreateServer(const std::string &address, int port) throw (clSocketException);
-    clSocketBase::Ptr_t WaitForNewConnection( long timeout = -1 ) throw (clSocketException);
+    void CreateServer(const std::string& pipePath);
+    /**
+     * @throw clSocketException
+     */
+    void CreateServer(const std::string& address, int port);
+
+public:
+    /**
+     * @brief Create server using connection string
+     * @throw clSocketException
+     */
+    void Start(const wxString& connectionString);
+    clSocketBase::Ptr_t WaitForNewConnection(long timeout = -1);
 };
 
 #endif // CLSOCKETSERVER_H

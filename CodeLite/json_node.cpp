@@ -226,8 +226,7 @@ void JSONElement::append(const JSONElement& element)
         break;
 
     case cJSON_String:
-        cJSON_AddStringToObject(_json,
-                                element.getName().mb_str(wxConvUTF8).data(),
+        cJSON_AddStringToObject(_json, element.getName().mb_str(wxConvUTF8).data(),
                                 element.getValue().GetString().mb_str(wxConvUTF8).data());
         break;
 
@@ -296,10 +295,10 @@ char* JSONElement::FormatRawString(bool formatted) const
     if(!_json) {
         return NULL;
     }
-    
+
     if(formatted) {
         return cJSON_Print(_json);
-        
+
     } else {
         return cJSON_PrintUnformatted(_json);
     }
@@ -506,12 +505,12 @@ void JSONElement::removeProperty(const wxString& name)
     cJSON_DeleteItemFromObject(_json, name.mb_str(wxConvUTF8).data());
 }
 
-JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement::wxStringMap_t& stringMap)
+JSONElement& JSONElement::addProperty(const wxString& name, const wxStringMap_t& stringMap)
 {
     if(!_json) return *this;
 
     JSONElement arr = JSONElement::createArray(name);
-    JSONElement::wxStringMap_t::const_iterator iter = stringMap.begin();
+    wxStringMap_t::const_iterator iter = stringMap.begin();
     for(; iter != stringMap.end(); ++iter) {
         JSONElement obj = JSONElement::createObject();
         obj.addProperty("key", iter->first);
@@ -522,9 +521,9 @@ JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement::w
     return *this;
 }
 
-JSONElement::wxStringMap_t JSONElement::toStringMap() const
+wxStringMap_t JSONElement::toStringMap() const
 {
-    JSONElement::wxStringMap_t res;
+    wxStringMap_t res;
     if(!_json) {
         return res;
     }

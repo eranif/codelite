@@ -54,9 +54,8 @@ public:
 
 protected:
     wxEvtHandler* m_sink;
-    wxString m_host;
     wxString m_keepAliveMessage;
-    int m_port;
+    wxString m_connectionString;
     wxMessageQueue<MyRequest> m_queue;
 
 public:
@@ -85,9 +84,7 @@ public:
         }
     }
 
-    clSocketClientAsyncHelperThread(wxEvtHandler* sink,
-                                    const wxString& host,
-                                    int port,
+    clSocketClientAsyncHelperThread(wxEvtHandler* sink, const wxString& connectionString,
                                     const wxString& keepAliveMessage = "");
     virtual ~clSocketClientAsyncHelperThread();
 };
@@ -101,7 +98,10 @@ public:
     clSocketClientAsync(wxEvtHandler* owner);
     ~clSocketClientAsync();
 
-    void Connect(const wxString& host, int port, const wxString& keepAliveMessage = "");
+    /**
+     * @brief connect using connection string
+     */
+    void Connect(const wxString& connectionString, const wxString& keepAliveMessage = "");
     void Send(const wxString& buffer);
     void Disconnect();
 };

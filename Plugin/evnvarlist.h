@@ -32,64 +32,59 @@
 
 class WXDLLIMPEXP_SDK EnvMap
 {
-	wxArrayString m_keys;
-	wxArrayString m_values;
+    wxArrayString m_keys;
+    wxArrayString m_values;
 
 public:
-	EnvMap();
-	~EnvMap();
+    EnvMap();
+    ~EnvMap();
 
-	void     Put(const wxString &key, const wxString &val);
-	bool     Get(const wxString& key, wxString& val);
-	void     Clear();
-	size_t   GetCount();
-	bool     Get(size_t index, wxString &key, wxString &val);
-	bool     Contains(const wxString &key);
-	wxString String();
+    void Put(const wxString& key, const wxString& val);
+    bool Get(const wxString& key, wxString& val);
+    void Clear();
+    size_t GetCount();
+    bool Get(size_t index, wxString& key, wxString& val);
+    bool Contains(const wxString& key);
+    wxString String();
 };
 
 class WXDLLIMPEXP_SDK EvnVarList : public SerializedObject
 {
-	std::map<wxString, wxString> m_envVarSets;
-	wxString                     m_activeSet;
+    wxStringMap_t m_envVarSets;
+    wxString m_activeSet;
 
 protected:
-	wxString DoGetSetVariablesStr(const wxString &setName, wxString &selectedSetName);
+    wxString DoGetSetVariablesStr(const wxString& setName, wxString& selectedSetName);
 
 public:
-	EvnVarList();
-	virtual ~EvnVarList();
+    EvnVarList();
+    virtual ~EvnVarList();
 
-	void SetActiveSet(const wxString& activeSet) {
-		if(activeSet != _("<Use Active Set>") && activeSet != USE_GLOBAL_SETTINGS)
-			this->m_activeSet = activeSet;
-	}
+    void SetActiveSet(const wxString& activeSet)
+    {
+        if(activeSet != _("<Use Active Set>") && activeSet != USE_GLOBAL_SETTINGS) this->m_activeSet = activeSet;
+    }
 
-	const wxString& GetActiveSet() const {
-		return m_activeSet;
-	}
-	void SetEnvVarSets(const std::map<wxString, wxString>& envVarSets) {
-		this->m_envVarSets = envVarSets;
-	}
-	const std::map<wxString, wxString>& GetEnvVarSets() const {
-		return m_envVarSets;
-	}
+    const wxString& GetActiveSet() const { return m_activeSet; }
+    void SetEnvVarSets(const wxStringMap_t& envVarSets) { this->m_envVarSets = envVarSets; }
+    const wxStringMap_t& GetEnvVarSets() const { return m_envVarSets; }
 
-	void   AddVariable        (const wxString &setName, const wxString &name, const wxString &value);
+    void AddVariable(const wxString& setName, const wxString& name, const wxString& value);
 
-	/**
-	 * \brief inser variable into the set. If a variable is already exist with this name, replace it
-	 * \param setName
-	 * \param name
-	 * \param value
-	 */
-	void   InsertVariable(const wxString &setName, const wxString &name, const wxString &value);
+    /**
+     * \brief inser variable into the set. If a variable is already exist with this name, replace it
+     * \param setName
+     * \param name
+     * \param value
+     */
+    void InsertVariable(const wxString& setName, const wxString& name, const wxString& value);
 
-	EnvMap GetVariables(const wxString &setName, bool includeWorkspaceEnvs, const wxString &projectName, const wxString &configName);
-	bool   IsSetExist  (const wxString &setName);
+    EnvMap GetVariables(const wxString& setName, bool includeWorkspaceEnvs, const wxString& projectName,
+                        const wxString& configName);
+    bool IsSetExist(const wxString& setName);
 
 public:
-	virtual void DeSerialize(Archive &arch);
-	virtual void Serialize  (Archive &arch);
+    virtual void DeSerialize(Archive& arch);
+    virtual void Serialize(Archive& arch);
 };
 #endif // __evnvarlist__

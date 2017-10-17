@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="CCTest">
+<CodeLite_Project Name="CCTest" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00040001N0005Debug0000000000000001N0010Debug_Unix0000000000000001N0007Release0000000000000001N0012Release_Unix000000000000]]>
@@ -10,6 +10,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="test_files">	$(PCHFile)
   
+    
+    
     
     
     
@@ -82,6 +84,7 @@
     <File Name="tests/test_parse_variables_simple.h"/>
     <File Name="tests/test_parse_variables_cxx11.h"/>
     <File Name="tests/test_parse_variables_class_members.h"/>
+    <File Name="tests/test_cxx_nested_template.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="TestFramework">
@@ -286,4 +289,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
 </CodeLite_Project>

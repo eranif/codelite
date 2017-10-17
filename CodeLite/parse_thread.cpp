@@ -309,8 +309,8 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
     }
 }
 
-void ParseThread::ParseAndStoreFiles(
-    ParseRequest* req, const wxArrayString& arrFiles, int initalCount, ITagsStoragePtr db)
+void ParseThread::ParseAndStoreFiles(ParseRequest* req, const wxArrayString& arrFiles, int initalCount,
+                                     ITagsStoragePtr db)
 {
     // Loop over the files and parse them
     int totalSymbols(0);
@@ -687,8 +687,8 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
 
         // Now, get the locals
         {
-            CxxVariableScanner scanner(content);
-            CxxVariable::List_t vars = scanner.GetVariables();
+            CxxVariableScanner scanner(content, eCxxStandard::kCxx11, wxStringTable_t());
+            CxxVariable::Vec_t vars = scanner.GetVariables();
 
             std::for_each(vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) {
                 if(var->IsUsing()) {

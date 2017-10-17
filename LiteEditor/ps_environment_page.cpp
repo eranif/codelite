@@ -46,8 +46,8 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
     // Set the environment page
     ///////////////////////////////////////////////////////////////////////////
     m_choiceEnv->Clear();
-    std::map<wxString, wxString> envSets = EnvironmentConfig::Instance()->GetSettings().GetEnvVarSets();
-    std::map<wxString, wxString>::const_iterator iterI = envSets.begin();
+    wxStringMap_t envSets = EnvironmentConfig::Instance()->GetSettings().GetEnvVarSets();
+    wxStringMap_t::const_iterator iterI = envSets.begin();
     int useActiveSetIndex = m_choiceEnv->Append(wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET));
 
     for(; iterI != envSets.end(); iterI++) {

@@ -665,7 +665,7 @@ bool Manager::RemoveProject(const wxString& name, bool notify)
     ProjectPtr proj = GetProject(name);
 
     wxString errMsg;
-    bool res = clCxxWorkspaceST::Get()->RemoveProject(name, errMsg);
+    bool res = clCxxWorkspaceST::Get()->RemoveProject(name, errMsg, proj->GetWorkspaceFolder());
     if(!res) {
         wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
         return false;

@@ -108,7 +108,7 @@ class GitEntry : public clConfigItem
     wxColour m_colourDiffFile;
     wxString m_pathGIT;
     wxString m_pathGITK;
-    JSONElement::wxStringMap_t m_entries;
+    wxStringMap_t m_entries;
     GitCommandsEntriesMap_t m_commandsMap;
     size_t m_flags;
     int m_gitDiffDlgSashPos;
@@ -163,9 +163,9 @@ public:
     int GetGitCommitDlgVSashPos() const { return m_gitCommitDlgVSashPos; }
     void SetGitDiffDlgSashPos(int gitDiffDlgSashPos) { this->m_gitDiffDlgSashPos = gitDiffDlgSashPos; }
     int GetGitDiffDlgSashPos() const { return m_gitDiffDlgSashPos; }
-    void SetEntries(const JSONElement::wxStringMap_t& entries) { this->m_entries = entries; }
+    void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
     void SetFlags(size_t flags) { this->m_flags = flags; }
-    const JSONElement::wxStringMap_t& GetEntries() const { return m_entries; }
+    const wxStringMap_t& GetEntries() const { return m_entries; }
     size_t GetFlags() const { return m_flags; }
     void SetEntry(const wxString& workspace, const wxString& repo) { this->m_entries[workspace] = repo; }
     void DeleteEntry(const wxString& workspace);

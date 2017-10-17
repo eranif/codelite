@@ -15,10 +15,10 @@ clSocketClientAsync::clSocketClientAsync(wxEvtHandler* owner)
 
 clSocketClientAsync::~clSocketClientAsync() { Disconnect(); }
 
-void clSocketClientAsync::Connect(const wxString& host, int port, const wxString& keepAliveMessage)
+void clSocketClientAsync::Connect(const wxString& connectionString, const wxString& keepAliveMessage)
 {
     Disconnect();
-    m_thread = new clSocketClientAsyncHelperThread(m_owner, host, port, keepAliveMessage);
+    m_thread = new clSocketClientAsyncHelperThread(m_owner, connectionString, keepAliveMessage);
     m_thread->Start();
 }
 
@@ -43,15 +43,12 @@ void clSocketClientAsync::Send(const wxString& buffer)
 //-----------------------------------------------------------------------------------------------
 // The helper thread
 //-----------------------------------------------------------------------------------------------
-clSocketClientAsyncHelperThread::clSocketClientAsyncHelperThread(wxEvtHandler* sink,
-                                                                 const wxString& host,
-                                                                 int port,
+clSocketClientAsyncHelperThread::clSocketClientAsyncHelperThread(wxEvtHandler* sink, const wxString& connectionString,
                                                                  const wxString& keepAliveMessage)
     : wxThread(wxTHREAD_JOINABLE)
     , m_sink(sink)
-    , m_host(host)
     , m_keepAliveMessage(keepAliveMessage)
-    , m_port(port)
+    , m_connectionString(connectionString)
 {
 }
 
@@ -63,12 +60,11 @@ void* clSocketClientAsyncHelperThread::Entry()
     clSocketClient* client = new clSocketClient();
     clSocketBase::Ptr_t socket(client);
 
-    bool wouldBlock;
     bool connected = false;
 
     // Try to connect and wait up to 5 seconds
     for(size_t i = 0; i < 10; ++i) {
-        connected = client->ConnectRemote(m_host, m_port, wouldBlock);
+        connected = client->Connect(m_connectionString, false);
         if(connected) {
             break;
         }
@@ -88,8 +84,6 @@ void* clSocketClientAsyncHelperThread::Entry()
         m_sink->AddPendingEvent(event);
         return NULL;
     }
-
-    wxUnusedVar(wouldBlock);
 
     // Notify about connection successful
     clCommandEvent event(wxEVT_ASYNC_SOCKET_CONNECTED);

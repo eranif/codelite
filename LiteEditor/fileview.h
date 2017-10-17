@@ -199,6 +199,7 @@ protected:
     void OnNewProject(wxCommandEvent& evt);
     // Called from the workspace context menu
     void OnWorkspaceFolderNewFolder(wxCommandEvent& evt);
+    void OnAddProjectToWorkspaceFolder(wxCommandEvent& evt);
 
     void OnWorkspaceFolderDelete(wxCommandEvent& evt);
 

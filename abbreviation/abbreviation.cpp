@@ -162,8 +162,8 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
             bitmaps.push_back(bmp);
 
             // search for the old item
-            const JSONElement::wxStringMap_t& entries = jsonData.GetEntries();
-            JSONElement::wxStringMap_t::const_iterator iter = entries.begin();
+            const wxStringMap_t& entries = jsonData.GetEntries();
+            wxStringMap_t::const_iterator iter = entries.begin();
             for(; iter != entries.end(); ++iter) {
                 ccEntries.push_back(wxCodeCompletionBoxEntry::New(iter->first, 0));
             }
@@ -201,7 +201,7 @@ void AbbreviationPlugin::InitDefaults()
     // search for the old item
     if(jsonData.GetEntries().empty()) {
         // fill some default abbreviations
-        JSONElement::wxStringMap_t entries;
+        wxStringMap_t entries;
         entries["main"] = wxT("int main(int argc, char **argv) {\n    |\n}\n");
         entries["while"] = wxT("while(|) {\n    \n}\n");
         entries["dowhile"] = wxT("do {\n    \n} while( | );\n");
@@ -235,8 +235,8 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
     }
 
     // search for the old item
-    const JSONElement::wxStringMap_t& entries = jsonData.GetEntries();
-    JSONElement::wxStringMap_t::const_iterator iter = entries.find(abbreviation);
+    const wxStringMap_t& entries = jsonData.GetEntries();
+    wxStringMap_t::const_iterator iter = entries.find(abbreviation);
 
     if(iter != entries.end()) {
 

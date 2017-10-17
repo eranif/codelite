@@ -80,8 +80,8 @@ void EvnVarList::InsertVariable(const wxString& setName, const wxString& name, c
     m_envVarSets[actualSetName] = set.String();
 }
 
-EnvMap EvnVarList::GetVariables(
-    const wxString& setName, bool includeWorkspaceEnvs, const wxString& projectName, const wxString& configName)
+EnvMap EvnVarList::GetVariables(const wxString& setName, bool includeWorkspaceEnvs, const wxString& projectName,
+                                const wxString& configName)
 {
     EnvMap variables;
     wxString actualSetName;
@@ -133,7 +133,7 @@ wxString EvnVarList::DoGetSetVariablesStr(const wxString& setName, wxString& sel
     wxString currentValueStr;
 
     selectedSetName = setName;
-    std::map<wxString, wxString>::iterator iter = m_envVarSets.find(setName);
+    wxStringMap_t::iterator iter = m_envVarSets.find(setName);
     if(iter != m_envVarSets.end())
         currentValueStr = iter->second;
     else {

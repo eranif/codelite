@@ -29,7 +29,10 @@
 #include <wx/stdpaths.h>
 #include <wx/intl.h>
 #include <map>
+#include <unordered_map>
+#include <unordered_set>
 #include <set>
+#include "wxStringHash.h"
 
 //-------------------------------------------------------
 // wxWidgets Connect macros
@@ -129,11 +132,6 @@
 #define RecentFilesSubMenuID 23600
 #define RecentWorkspaceSubMenuID 23650
 
-// ----------------------------- usefule typedefs -------------------------------
-typedef std::map<wxString, bool> wxStringBoolMap_t;
-typedef std::set<wxString> wxStringSet_t;
-typedef std::map<wxString, wxString> wxStringMap_t;
-
 // Useful macros
 #define CHECK_PTR_RET(p) \
     if(!p) return
@@ -168,5 +166,11 @@ typedef std::map<wxString, wxString> wxStringMap_t;
 #else
 #define clPATH_SEPARATOR ":"
 #endif
+
+// ----------------------------- usefule typedefs -------------------------------
+typedef std::unordered_map<wxString, bool> wxStringBoolMap_t;
+typedef std::unordered_map<wxString, wxString> wxStringTable_t;
+typedef std::unordered_set<wxString> wxStringSet_t;
+typedef wxStringTable_t wxStringMap_t; // aliases
 
 #endif // MACROS_H

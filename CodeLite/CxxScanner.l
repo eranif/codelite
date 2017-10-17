@@ -180,7 +180,6 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>"++"                { return T_PLUS_PLUS; }
 <INITIAL>"--"                { return T_MINUS_MINUS; }
 <INITIAL>"<<"                { return T_LS; }
-<INITIAL>">>"                { return T_RS; }
 <INITIAL>"<="                { return T_LE; }
 <INITIAL>">="                { return T_GE; }
 <INITIAL>"=="                { return T_EQUAL; }

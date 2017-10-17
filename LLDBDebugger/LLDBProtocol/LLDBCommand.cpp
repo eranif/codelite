@@ -135,7 +135,7 @@ char** LLDBCommand::GetEnvArray() const
 
     char **penv = new char*[m_env.size()+1];
 
-    JSONElement::wxStringMap_t::const_iterator iter = m_env.begin();
+    wxStringMap_t::const_iterator iter = m_env.begin();
     size_t index(0);
     for(; iter != m_env.end(); ++iter ) {
         // Convert the environment into C-array

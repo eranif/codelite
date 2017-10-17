@@ -156,8 +156,8 @@ void AbbreviationsSettingsDlg::DoPopulateItems()
 {
     m_listBoxAbbreviations->Clear();
     m_stc->ClearAll();
-    std::map<wxString, wxString> entries = m_data.GetEntries();
-    std::map<wxString, wxString>::iterator iter = entries.begin();
+    wxStringMap_t entries = m_data.GetEntries();
+    wxStringMap_t::iterator iter = entries.begin();
     for(; iter != entries.end(); ++iter) {
         m_listBoxAbbreviations->Append(iter->first);
     }
@@ -181,8 +181,8 @@ void AbbreviationsSettingsDlg::DoSelectItem(int item)
 
         m_textCtrlName->SetValue(name);
 
-        std::map<wxString, wxString> entries = m_data.GetEntries();
-        std::map<wxString, wxString>::iterator iter = entries.find(name);
+        wxStringMap_t entries = m_data.GetEntries();
+        wxStringMap_t::iterator iter = entries.find(name);
         if(iter != entries.end()) {
             m_stc->SetText(iter->second);
         }
@@ -197,8 +197,8 @@ void AbbreviationsSettingsDlg::DoSaveCurrent()
     }
 
     // search for the old item
-    std::map<wxString, wxString> entries = m_data.GetEntries();
-    std::map<wxString, wxString>::iterator iter = entries.find(m_activeItemName);
+    wxStringMap_t entries = m_data.GetEntries();
+    wxStringMap_t::iterator iter = entries.find(m_activeItemName);
     if(iter != entries.end()) {
         entries.erase( iter );
     }
@@ -219,8 +219,8 @@ void AbbreviationsSettingsDlg::DoSaveCurrent()
 void AbbreviationsSettingsDlg::DoDeleteEntry(const wxString &name)
 {
     // search for the old item
-    std::map<wxString, wxString> entries = m_data.GetEntries();
-    std::map<wxString, wxString>::iterator iter = entries.find(name);
+    wxStringMap_t entries = m_data.GetEntries();
+    wxStringMap_t::iterator iter = entries.find(name);
     if(iter != entries.end()) {
         entries.erase( iter );
     }
@@ -269,10 +269,10 @@ void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
         ::wxMessageBox(_("The file does not seem to contain a valid abbreviations entries"), "wxCrafter", wxOK|wxICON_WARNING|wxCENTER);
         return;
     }
-    const JSONElement::wxStringMap_t &newEntries = data.GetEntries();
-    const JSONElement::wxStringMap_t &curEntries = m_data.GetEntries();
+    const wxStringMap_t &newEntries = data.GetEntries();
+    const wxStringMap_t &curEntries = m_data.GetEntries();
     
-    JSONElement::wxStringMap_t merged = m_config.MergeStringMaps(newEntries, curEntries);
+    wxStringMap_t merged = m_config.MergeStringMaps(newEntries, curEntries);
     m_data.SetEntries( merged );
     m_config.WriteItem( &m_data );
     m_dirty = false;

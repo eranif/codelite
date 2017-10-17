@@ -29,6 +29,7 @@
 #include "job.h"
 #include "serialized_object.h"
 #include "project.h"
+#include "macros.h"
 
 // Define the events needed by this job
 extern const wxEventType wxEVT_CPPCHECKJOB_STATUS_MESSAGE;
@@ -40,8 +41,6 @@ class wxCheckListBox;
 
 class CppCheckSettings : public SerializedObject
 {
-    typedef std::map<wxString, wxString> StrStrMap;
-
     bool m_Style;
     bool m_Performance;
     bool m_Portability;
@@ -55,10 +54,10 @@ class CppCheckSettings : public SerializedObject
     int m_Jobs;
     bool m_CheckConfig;
     wxArrayString m_excludeFiles;
-    StrStrMap m_SuppressedWarnings0;     // The items unchecked in the checklistbox
-    StrStrMap m_SuppressedWarnings1;     // The checked ones
-    StrStrMap m_SuppressedWarningsOrig0; // Ditto, containing the original values
-    StrStrMap m_SuppressedWarningsOrig1;
+    wxStringMap_t m_SuppressedWarnings0;     // The items unchecked in the checklistbox
+    wxStringMap_t m_SuppressedWarnings1;     // The checked ones
+    wxStringMap_t m_SuppressedWarningsOrig0; // Ditto, containing the original values
+    wxStringMap_t m_SuppressedWarningsOrig1;
     bool m_saveSuppressedWarnings;
     wxArrayString m_IncludeDirs;
     bool m_SuppressSystemIncludes;
@@ -82,8 +81,8 @@ public:
     int GetJobs() const { return m_Jobs; }
     bool GetCheckConfig() const { return m_CheckConfig; }
     const wxArrayString& GetExcludeFiles() const { return m_excludeFiles; }
-    const StrStrMap* GetSuppressedWarningsStrings0() const { return &m_SuppressedWarnings0; }
-    const StrStrMap* GetSuppressedWarningsStrings1() const { return &m_SuppressedWarnings1; }
+    const wxStringMap_t* GetSuppressedWarningsStrings0() const { return &m_SuppressedWarnings0; }
+    const wxStringMap_t* GetSuppressedWarningsStrings1() const { return &m_SuppressedWarnings1; }
     const wxArrayString& GetIncludeDirs() const { return m_IncludeDirs; }
     bool GetSuppressSystemIncludes() const { return m_SuppressSystemIncludes; }
     bool GetSaveIncludeDirs() const { return m_saveIncludeDirs; }

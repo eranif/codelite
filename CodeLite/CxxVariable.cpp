@@ -2,15 +2,62 @@
 #include <algorithm>
 #include "CxxScannerTokens.h"
 
-CxxVariable::CxxVariable() {}
+CxxVariable::CxxVariable(eCxxStandard standard)
+    : m_standard(standard)
+    , m_isAuto(false)
+{
+}
 
 CxxVariable::~CxxVariable() {}
 
-wxString CxxVariable::GetTypeAsString() const
+wxString CxxVariable::GetTypeAsString() const { return PackType(m_type, m_standard); }
+wxString CxxVariable::GetTypeAsCxxString() const { return PackType(m_type, m_standard, true); }
+
+wxString CxxVariable::ToString(size_t flags) const
 {
+    wxString str;
+    str << GetTypeAsString();
+
+    if(!GetPointerOrReference().IsEmpty()) {
+        str << GetPointerOrReference();
+    }
+
+    if(flags & kToString_Name) {
+        str << " " << GetName();
+    }
+
+    if((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty()) {
+        str << " = " << GetDefaultValue();
+    }
+    return str;
+}
+
+wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard, bool omitClassKeyword)
+{
+    // Example:
+    // const std::vector<std::pair<int, int> >& v
+    // "strcut stat buff" if we pass "omitClassKeyword" as true, the type is set to "stat" only
     wxString s;
-    std::for_each(m_type.begin(), m_type.end(), [&](const CxxVariable::LexerToken& tok) {
+    std::for_each(type.begin(), type.end(), [&](const CxxVariable::LexerToken& tok) {
+        // "strcut stat buff" if we pass "omitClassKeyword" as true, the type is set to "stat" only
+        // we do the same for class, enum and struct
+        if(s.empty() && (tok.type == T_CLASS || tok.type == T_STRUCT || tok.type == T_ENUM) && omitClassKeyword)
+            return;
+            
+        if((!s.empty() && s.Last() == ' ') &&
+           ((tok.type == ',') || (tok.type == '>') || tok.type == '(' || tok.type == ')')) {
+            s.RemoveLast();
+        }
         s << tok.text;
+
+        if(standard == eCxxStandard::kCxx03 && (tok.type == '>')) {
+            if(s.length() > 1 && s.EndsWith(">>")) {
+                s.RemoveLast(2);
+                s << "> >";
+            }
+        }
+        
+
         switch(tok.type) {
         case T_AUTO:
         case T_BOOL:
@@ -37,5 +84,8 @@ wxString CxxVariable::GetTypeAsString() const
             break;
         }
     });
+    if(!s.empty() && s.EndsWith(" ")) {
+        s.RemoveLast();
+    }
     return s;
 }

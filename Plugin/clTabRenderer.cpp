@@ -4,6 +4,7 @@
 #include <wx/settings.h>
 #include "Notebook.h"
 #include "editor_config.h"
+#include "clTabRendererSquare.h"
 
 #if CL_BUILD
 #include "drawingutils.h"
@@ -54,19 +55,19 @@ void clTabColours::InitFromColours(const wxColour& baseColour, const wxColour& t
 void clTabColours::InitDarkColours()
 {
     activeTabTextColour = "WHITE";
-    activeTabBgColour = wxColour("rgb(80,80,80)");
+    activeTabBgColour = *wxBLACK;
     activeTabPenColour = activeTabBgColour.ChangeLightness(110);
-    activeTabInnerPenColour = activeTabBgColour; // wxColour("#343131");
+    activeTabInnerPenColour = activeTabBgColour;
 
     inactiveTabTextColour = wxColour("rgb(200, 200, 200)");
-    inactiveTabBgColour = wxColour("rgb(50,49,48)");
-    inactiveTabPenColour = wxColour("#100f0f");
-    inactiveTabInnerPenColour = inactiveTabBgColour; // wxColour("#535252");
+    inactiveTabBgColour = activeTabBgColour.ChangeLightness(130);
+    inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
+    inactiveTabInnerPenColour = inactiveTabBgColour;
 
 #ifdef __WXOSX__
     tabAreaColour = *wxBLACK;
 #else
-    tabAreaColour = wxColour("rgb(37,22,22)"); //.ChangeLightness(115);
+    tabAreaColour = inactiveTabBgColour.ChangeLightness(115);
 #endif
     // markerColour = wxColour("rgb(255, 128, 0)");
     markerColour = wxColour("rgb(105, 193, 240)");
@@ -137,7 +138,8 @@ void clTabInfo::CalculateOffsets(size_t style)
     wxMemoryDC memDC(b);
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
-
+    
+    bool isMinimalTheme = (dynamic_cast<clTabRendererSquare*>(m_tabCtrl->GetArt().get()) != nullptr);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     memDC.SetFont(font);
 
@@ -176,18 +178,27 @@ void clTabInfo::CalculateOffsets(size_t style)
 
     // Text
     m_textX = m_width;
+    if(isMinimalTheme) {
+        m_textX +=  m_tabCtrl->GetArt()->xSpacer;
+        m_width += m_tabCtrl->GetArt()->xSpacer;
+    }
     m_textY = ((m_height - sz.y) / 2);
     m_width += sz.x;
 
     // x button
     if((style & kNotebook_CloseButtonOnActiveTab)) {
         m_width += m_tabCtrl->GetArt()->xSpacer;
+        m_width += m_tabCtrl->GetArt()->xSpacer;
         m_bmpCloseX = m_width;
-        m_bmpCloseY = ((m_height - 12) / 2);
+        m_bmpCloseY = ((m_height - 12) / 2) + 2;
         m_width += 12; // X button is 10 pixels in size
+        if(isMinimalTheme) {
+            m_width += m_tabCtrl->GetArt()->xSpacer;
+        }
+    } else {
+        m_width += m_tabCtrl->GetArt()->xSpacer;
     }
-
-    m_width += m_tabCtrl->GetArt()->xSpacer;
+    
     if(!IS_VERTICAL_TABS(style) || true) {
         m_width += m_tabCtrl->GetArt()->majorCurveWidth;
         m_width += m_tabCtrl->GetArt()->smallCurveWidth;
@@ -238,7 +249,7 @@ clTabRenderer::clTabRenderer()
     , smallCurveWidth(0)
     , overlapWidth(0)
     , verticalOverlapWidth(0)
-    , xSpacer(5)
+    , xSpacer(10)
 {
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }

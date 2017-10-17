@@ -133,7 +133,7 @@ void TagsStorageSQLite::CreateSchema()
 
         wxString trigger2 = wxT("CREATE TRIGGER IF NOT EXISTS tags_insert AFTER INSERT ON tags ")
             wxT("FOR EACH ROW WHEN NEW.scope = '<global>' ") wxT("BEGIN ")
-            wxT("    INSERT INTO global_tags (id, name, tag_id) VALUES (NULL, NEW.name, NEW.id);") wxT("END;");
+                wxT("    INSERT INTO global_tags (id, name, tag_id) VALUES (NULL, NEW.name, NEW.id);") wxT("END;");
         m_db->ExecuteUpdate(trigger2);
 
         // Create unique index on tags table
@@ -389,13 +389,13 @@ void TagsStorageSQLite::GetFilesForCC(const wxString& userTyped, wxArrayString& 
             // Keep the part from where the user typed and until the end of the file name
             wxString matchedFile = res.GetString(1);
             matchedFile.Replace("\\", "/");
-            
+
             int where = matchedFile.Find(pattern);
             if(where == wxNOT_FOUND) continue;
             matchedFile = matchedFile.Mid(where);
             matches.Add(matchedFile);
         }
-        
+
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
@@ -570,17 +570,16 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags)
 {
-
     if(GetUseCache()) {
-        CL_DEBUG1(wxT("Testing cache for: %s"), sql);
+        clDEBUG1() << "Testing cache for" << sql << clEndl;
         if(m_cache.Get(sql, tags) == true) {
-            CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql);
+            clDEBUG1() << "[CACHED ITEMS]" << sql << clEndl;
             return;
         }
     }
 
-    CL_DEBUG1(wxT("Entry not found in cache: %s"), sql);
-    CL_DEBUG1("Fetching from disk...");
+    clDEBUG1() << "Entry not found in cache" << sql << clEndl;
+    clDEBUG1() << "Fetching from disk..." << clEndl;
     tags.reserve(500);
     try {
         wxSQLite3ResultSet ex_rs;
@@ -597,11 +596,11 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
-    CL_DEBUG1("Fetching from disk...done");
+    clDEBUG1() << "Fetching from disk...done" << clEndl;
     if(GetUseCache()) {
-        CL_DEBUG1("Updating cache");
+        clDEBUG1() << "Updating cache" << clEndl;
         m_cache.Store(sql, tags);
-        CL_DEBUG1("Updating cache...done");
+        clDEBUG1() << "Updating cache...done" << clEndl;
     }
 }
 
@@ -645,9 +644,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
     }
 }
 
-void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope,
-                                              const wxString& name,
-                                              bool partialNameAllowed,
+void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,
                                               std::vector<TagEntryPtr>& tags)
 {
     if(name.IsEmpty()) return;
@@ -682,9 +679,7 @@ void TagsStorageSQLite::GetTagsByScope(const wxString& scope, std::vector<TagEnt
     DoFetchTags(sql, tags);
 }
 
-void TagsStorageSQLite::GetTagsByKind(const wxArrayString& kinds,
-                                      const wxString& orderingColumn,
-                                      int order,
+void TagsStorageSQLite::GetTagsByKind(const wxArrayString& kinds, const wxString& orderingColumn, int order,
                                       std::vector<TagEntryPtr>& tags)
 {
     wxString sql;
@@ -728,8 +723,8 @@ void TagsStorageSQLite::GetTagsByPath(const wxArrayString& path, std::vector<Tag
     DoFetchTags(sql, tags);
 }
 
-void
-TagsStorageSQLite::GetTagsByNameAndParent(const wxString& name, const wxString& parent, std::vector<TagEntryPtr>& tags)
+void TagsStorageSQLite::GetTagsByNameAndParent(const wxString& name, const wxString& parent,
+                                               std::vector<TagEntryPtr>& tags)
 {
     wxString sql;
     sql << wxT("select * from tags where name='") << name << wxT("' LIMIT ") << GetSingleSearchLimit();
@@ -745,8 +740,7 @@ TagsStorageSQLite::GetTagsByNameAndParent(const wxString& name, const wxString& 
     }
 }
 
-void TagsStorageSQLite::GetTagsByKindAndPath(const wxArrayString& kinds,
-                                             const wxString& path,
+void TagsStorageSQLite::GetTagsByKindAndPath(const wxArrayString& kinds, const wxString& path,
                                              std::vector<TagEntryPtr>& tags)
 {
     if(kinds.empty()) {
@@ -778,10 +772,8 @@ TagEntryPtr TagsStorageSQLite::GetTagAboveFileAndLine(const wxString& file, int 
     return NULL;
 }
 
-void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope,
-                                              const wxArrayString& kinds,
-                                              std::vector<TagEntryPtr>& tags,
-                                              bool applyLimit)
+void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds,
+                                              std::vector<TagEntryPtr>& tags, bool applyLimit)
 {
     if(kinds.empty()) {
         return;
@@ -795,11 +787,8 @@ void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope,
     DoFetchTags(sql, tags, kinds);
 }
 
-void TagsStorageSQLite::GetTagsByKindAndFile(const wxArrayString& kind,
-                                             const wxString& fileName,
-                                             const wxString& orderingColumn,
-                                             int order,
-                                             std::vector<TagEntryPtr>& tags)
+void TagsStorageSQLite::GetTagsByKindAndFile(const wxArrayString& kind, const wxString& fileName,
+                                             const wxString& orderingColumn, int order, std::vector<TagEntryPtr>& tags)
 {
     if(kind.empty()) {
         return;
@@ -1059,10 +1048,8 @@ void TagsStorageSQLite::GetScopesFromFileAsc(const wxFileName& fileName, std::ve
     }
 }
 
-void TagsStorageSQLite::GetTagsByFileScopeAndKind(const wxFileName& fileName,
-                                                  const wxString& scopeName,
-                                                  const wxArrayString& kind,
-                                                  std::vector<TagEntryPtr>& tags)
+void TagsStorageSQLite::GetTagsByFileScopeAndKind(const wxFileName& fileName, const wxString& scopeName,
+                                                  const wxArrayString& kind, std::vector<TagEntryPtr>& tags)
 {
     wxString sql;
     sql << wxT("select * from tags where file = '") << fileName.GetFullPath() << wxT("' ") << wxT(" and scope='")
@@ -1126,8 +1113,7 @@ void TagsStorageSQLite::GetTagsNames(const wxArrayString& kind, wxArrayString& n
     }
 }
 
-void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes,
-                                               const wxArrayString& kinds,
+void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds,
                                                std::vector<TagEntryPtr>& tags)
 {
     if(kinds.empty() || scopes.empty()) {
@@ -1145,8 +1131,7 @@ void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes,
     DoFetchTags(sql, tags, kinds);
 }
 
-void TagsStorageSQLite::GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes,
-                                                      const wxArrayString& kinds,
+void TagsStorageSQLite::GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes, const wxArrayString& kinds,
                                                       std::vector<TagEntryPtr>& tags)
 {
     if(kinds.empty() || scopes.empty()) {
@@ -1164,8 +1149,7 @@ void TagsStorageSQLite::GetTagsByScopesAndKindNoLimit(const wxArrayString& scope
     DoFetchTags(sql, tags, kinds);
 }
 
-void TagsStorageSQLite::GetTagsByTyperefAndKind(const wxArrayString& typerefs,
-                                                const wxArrayString& kinds,
+void TagsStorageSQLite::GetTagsByTyperefAndKind(const wxArrayString& typerefs, const wxArrayString& kinds,
                                                 std::vector<TagEntryPtr>& tags)
 {
     if(kinds.empty() || typerefs.empty()) {
@@ -1192,9 +1176,7 @@ void TagsStorageSQLite::GetTagsByPath(const wxString& path, std::vector<TagEntry
     DoFetchTags(sql, tags);
 }
 
-void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope,
-                                              const wxString& name,
-                                              bool partialNameAllowed,
+void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const wxString& name, bool partialNameAllowed,
                                               std::vector<TagEntryPtr>& tags)
 {
     if(scope.empty()) return;
@@ -1250,8 +1232,7 @@ void TagsStorageSQLite::GetTagsByFiles(const wxArrayString& files, std::vector<T
     DoFetchTags(sql, tags);
 }
 
-void TagsStorageSQLite::GetTagsByFilesAndScope(const wxArrayString& files,
-                                               const wxString& scope,
+void TagsStorageSQLite::GetTagsByFilesAndScope(const wxArrayString& files, const wxString& scope,
                                                std::vector<TagEntryPtr>& tags)
 {
     if(files.IsEmpty()) return;
@@ -1268,10 +1249,8 @@ void TagsStorageSQLite::GetTagsByFilesAndScope(const wxArrayString& files,
     DoFetchTags(sql, tags);
 }
 
-void TagsStorageSQLite::GetTagsByFilesKindAndScope(const wxArrayString& files,
-                                                   const wxArrayString& kinds,
-                                                   const wxString& scope,
-                                                   std::vector<TagEntryPtr>& tags)
+void TagsStorageSQLite::GetTagsByFilesKindAndScope(const wxArrayString& files, const wxArrayString& kinds,
+                                                   const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
     if(files.IsEmpty()) return;
 
@@ -1287,10 +1266,8 @@ void TagsStorageSQLite::GetTagsByFilesKindAndScope(const wxArrayString& files,
     DoFetchTags(sql, tags, kinds);
 }
 
-void TagsStorageSQLite::GetTagsByFilesScopeTyperefAndKind(const wxArrayString& files,
-                                                          const wxArrayString& kinds,
-                                                          const wxString& scope,
-                                                          const wxString& typeref,
+void TagsStorageSQLite::GetTagsByFilesScopeTyperefAndKind(const wxArrayString& files, const wxArrayString& kinds,
+                                                          const wxString& scope, const wxString& typeref,
                                                           std::vector<TagEntryPtr>& tags)
 {
     if(files.IsEmpty()) return;
@@ -1308,12 +1285,8 @@ void TagsStorageSQLite::GetTagsByFilesScopeTyperefAndKind(const wxArrayString& f
     DoFetchTags(sql, tags, kinds);
 }
 
-void TagsStorageSQLite::GetTagsByKindLimit(const wxArrayString& kinds,
-                                           const wxString& orderingColumn,
-                                           int order,
-                                           int limit,
-                                           const wxString& partName,
-                                           std::vector<TagEntryPtr>& tags)
+void TagsStorageSQLite::GetTagsByKindLimit(const wxArrayString& kinds, const wxString& orderingColumn, int order,
+                                           int limit, const wxString& partName, std::vector<TagEntryPtr>& tags)
 {
     wxString sql;
     sql << wxT("select * from tags where kind in (");
@@ -1424,7 +1397,7 @@ void TagsStorageSQLiteCache::Store(const wxString& sql, const wxArrayString& kin
 
 bool TagsStorageSQLiteCache::DoGet(const wxString& key, std::vector<TagEntryPtr>& tags)
 {
-    std::map<wxString, std::vector<TagEntryPtr> >::iterator iter = m_cache.find(key);
+    std::unordered_map<wxString, std::vector<TagEntryPtr> >::iterator iter = m_cache.find(key);
     if(iter != m_cache.end()) {
         // Append the results to the output tags
         tags.insert(tags.end(), iter->second.begin(), iter->second.end());
@@ -1470,7 +1443,7 @@ void TagsStorageSQLite::StoreMacros(const std::map<wxString, PPToken>& table)
             m_db->GetPrepareStatement(wxT("insert or replace into SIMPLE_MACROS values(NULL, ?, ?)"));
 
         std::map<wxString, PPToken>::const_iterator iter = table.begin();
-        for(; iter != table.end(); iter++) {
+        for(; iter != table.end(); ++iter) {
             wxString replac = iter->second.replacement;
             replac.Trim().Trim(false);
 
@@ -1502,8 +1475,7 @@ void TagsStorageSQLite::StoreMacros(const std::map<wxString, PPToken>& table)
     }
 }
 
-void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files,
-                                         const std::set<wxString>& usedMacros,
+void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, const std::set<wxString>& usedMacros,
                                          wxArrayString& defMacros)
 {
     if(files.empty() || usedMacros.empty()) {

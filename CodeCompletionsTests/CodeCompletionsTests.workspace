@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="CodeCompletionsTests" Database="./CodeCompletionsTests.tags">
+<CodeLite_Workspace Name="CodeCompletionsTests" Database="./CodeCompletionsTests.tags" Version="10.0.0">
   <Project Name="CCTest" Path="CCTest/CCTest.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">

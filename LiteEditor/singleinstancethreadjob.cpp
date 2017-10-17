@@ -43,9 +43,11 @@ clSingleInstanceThread::~clSingleInstanceThread() { Stop(); }
 void* clSingleInstanceThread::Entry()
 {
     try {
-        m_serverSocket.CreateServer("127.0.0.1", SINGLE_INSTANCE_PORT);
-        CL_DEBUG("clSingleInstanceThread: created socket server on port: %d", SINGLE_INSTANCE_PORT);
-        
+        wxString connectionString;
+        connectionString << "tcp://127.0.0.1:" << SINGLE_INSTANCE_PORT;
+        m_serverSocket.Start(connectionString);
+        clDEBUG() << "clSingleInstanceThread: starting on:" << connectionString << clEndl;
+
         while(!TestDestroy()) {
             // wait for a new connection
             clSocketBase::Ptr_t client = m_serverSocket.WaitForNewConnection(1);
@@ -54,7 +56,7 @@ void* clSingleInstanceThread::Entry()
             wxString message;
             if(client->ReadMessage(message, 3) == clSocketBase::kTimeout) continue;
             CL_DEBUG("clSingleInstanceThread: received new message: %s", message);
-            
+
             JSONRoot root(message);
             wxArrayString args = root.toElement().namedObject("args").toArrayString();
 

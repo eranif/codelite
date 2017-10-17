@@ -35,6 +35,7 @@
 #include <set>
 #include "codelite_exports.h"
 #include <wx/font.h>
+#include "macros.h"
 
 class wxXmlNode;
 class SerializedObject;
@@ -81,8 +82,8 @@ public:
     bool Write(const wxString& name, const wxColour& colour);
     bool Write(const wxString& name, std::vector<TabInfo>& _vTabInfoArr);
     bool Write(const wxString& name, std::vector<int>& _vInt);
-    bool Write(const wxString& name, const std::map<wxString, wxString>& strinMap);
-    bool Write(const wxString& name, const std::set<wxString>& s);
+    bool Write(const wxString& name, const wxStringMap_t& strinMap);
+    bool Write(const wxString& name, const wxStringSet_t& s);
     bool Write(const wxString& name, const wxFont& font);
     bool WriteCData(const wxString& name, const wxString& value);
 
@@ -103,8 +104,8 @@ public:
     bool Read(const wxString& name, wxColour& colour);
     bool Read(const wxString& name, std::vector<TabInfo>& _vTabInfoArr);
     bool Read(const wxString& name, std::vector<int>& _vInt);
-    bool Read(const wxString& name, std::map<wxString, wxString>& strinMap);
-    bool Read(const wxString& name, std::set<wxString>& s);
+    bool Read(const wxString& name, wxStringMap_t& strinMap);
+    bool Read(const wxString& name, wxStringSet_t& s);
     bool ReadCData(const wxString& name, wxString& value);
     bool Read(const wxString& name, wxFont& font, const wxFont& defaultFont = wxNullFont);
 

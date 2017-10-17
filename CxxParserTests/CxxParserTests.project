@@ -13,6 +13,9 @@
     <File Name="Tests/test_cxx_c11_template.h"/>
     <File Name="Tests/test_cxx_class_method_impl.h"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -33,7 +36,7 @@
         <Library Value="libcodeliteud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/CxxLocalVariabls" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=C:\src\codelite\lib\gcc_lib;$WXWIN/lib/gcc_dll;$PATH
@@ -46,15 +49,16 @@ CODELITE_DIR=C:\src\codelite]]>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
-      <CustomBuild Enabled="no">
+      <CustomBuild Enabled="yes">
+        <Target Name="install">make install</Target>
         <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
+        <CleanCommand>make -j4 clean</CleanCommand>
+        <BuildCommand>make -j4</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory>$(WorkspacePath)/build-debug</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
@@ -112,7 +116,4 @@ CODELITE_DIR=..\]]>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug">
-    <Project Name="libCodeLite"/>
-  </Dependencies>
 </CodeLite_Project>

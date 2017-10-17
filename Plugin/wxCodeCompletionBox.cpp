@@ -165,7 +165,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
     wxRect rect = GetClientRect();
     m_scrollArea = wxRect(rect.GetWidth() - SCROLLBAR_WIDTH + rect.GetTopLeft().x, rect.GetTopLeft().y, SCROLLBAR_WIDTH,
-        rect.GetHeight());
+                          rect.GetHeight());
 
     dc.SetFont(m_ccFont);
     int singleLineHeight = GetSingleLineHeight();
@@ -339,11 +339,11 @@ void wxCodeCompletionBox::StcCharAdded(wxStyledTextEvent& event)
 {
     event.Skip();
     int keychar = m_stc->GetCharAt(m_stc->PositionBefore(m_stc->GetCurrentPos()));
-    if(((keychar >= 65) && (keychar <= 90)) ||   // A-Z
-        ((keychar >= 97) && (keychar <= 122)) || // a-z
-        ((keychar >= 48) && (keychar <= 57)) ||  // 0-9
-        (keychar == 95) ||                       // _
-        (keychar == 33))                         // !
+    if(((keychar >= 65) && (keychar <= 90)) ||  // A-Z
+       ((keychar >= 97) && (keychar <= 122)) || // a-z
+       ((keychar >= 48) && (keychar <= 57)) ||  // 0-9
+       (keychar == 95) ||                       // _
+       (keychar == 33))                         // !
     {
         DoUpdateList();
     } else {
@@ -621,16 +621,7 @@ void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
     // Separate the scrollbar area into 2 big buttons: up and down
     m_scrollBottomRect =
         wxRect(wxPoint(scrollRect.GetTopLeft().x, scrollRect.GetTopLeft().y + scrollRect.GetHeight() / 2),
-            wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
-#if 0
-    wxPoint topRight;
-    topRight = m_scrollBottomRect.GetTopRight();
-    topRight.x += 1;
-
-    dc.SetPen(m_lightBorder);
-    dc.DrawLine(m_scrollBottomRect.GetTopLeft(), topRight);
-#endif
-
+               wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
     // Draw the up arrow
     wxCoord x, y;
     x = m_scrollBottomRect.x + ((m_scrollBottomRect.GetWidth() - m_bmpDown.GetWidth()) / 2);
@@ -648,14 +639,6 @@ void wxCodeCompletionBox::DoDrawTopScrollButton(wxDC& dc)
 
     // Separate the scrollbar area into 2 big buttons: up and down
     m_scrollTopRect = wxRect(scrollRect.GetTopLeft(), wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
-#if 0
-    wxPoint bottomRight;
-    bottomRight = m_scrollTopRect.GetBottomRight();
-    bottomRight.x += 1;
-
-    dc.SetPen(m_darkBorder);
-    dc.DrawLine(m_scrollTopRect.GetBottomLeft(), bottomRight);
-#endif
 
     // Draw the up arrow
     wxCoord x, y;

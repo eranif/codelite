@@ -22,6 +22,7 @@ protected:
 
 protected:
     bool GetNextToken(CxxLexerToken& token);
+    void UngetToken(const CxxLexerToken& token);
     bool IsEof() const { return m_eof; }
     void OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer);
     bool TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t& type);

@@ -391,10 +391,12 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
                 case '(':
                     depth++;
                     strippedBuffer << "(";
-                    if((lastToken.type == T_FOR) && false) {
+                    if((lastToken.type == T_FOR)) {
                         state = kInForLoop;
                     } else if(lastToken.type == T_CATCH) {
                         state = kInCatch;
+                    } else if(lastToken.type == T_DECLTYPE) {
+                        state = kInDecltype;
                     } else {
                         state = kInParen;
                         parenthesisBuffer << "(";
@@ -423,6 +425,21 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
             default:
                 parenthesisBuffer << tok.text << " ";
                 break;
+            }
+        } else if(state == kInDecltype) {
+            strippedBuffer << tok.text;
+            switch(tok.type) {
+                case '(':
+                    ++depth;
+                    break;
+                case ')':
+                    --depth;
+                    if(depth == 0) {
+                        state = kNormal;
+                    }
+                    break;
+                default:
+                    break;
             }
         } else if((state == kInForLoop) || (state == kInCatch)) {
             // 'for' and 'catch' parenthesis content is kept in the strippedBuffer

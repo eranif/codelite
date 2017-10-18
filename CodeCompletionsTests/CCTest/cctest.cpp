@@ -72,7 +72,11 @@ TEST_FUNC(testMacros)
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "simple_tests.h"), 1,
                                                  wxT("wxTheClipboard->"), LoadFile(GetTestsDir() + "simple_tests.h"),
                                                  tags);
+#ifdef __WXMSW__
     CHECK_SIZE(tags.size(), 65);
+#else
+    CHECK_SIZE(tags.size(), 55);
+#endif
 
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "simple_tests.h"), 1, wxT("wxTheApp->"),
                                                  LoadFile(GetTestsDir() + "simple_tests.h"), tags);

@@ -7,12 +7,7 @@
     <File Name="tester.cpp"/>
     <File Name="tester.h"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="Tests">
-    <File Name="Tests/test_cxx_local_variables.h"/>
-    <File Name="Tests/test_cxx_normalize_signature.h"/>
-    <File Name="Tests/test_cxx_c11_template.h"/>
-    <File Name="Tests/test_cxx_class_method_impl.h"/>
-  </VirtualDirectory>
+  <VirtualDirectory Name="Tests"/>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>
   </Dependencies>

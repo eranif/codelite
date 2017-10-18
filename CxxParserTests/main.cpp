@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "tester.h"
-#include "FileUtils.h"
+#include "fileutils.h"
 #include <wx/init.h>
 #include <iostream>
 #include "ctags_manager.h"

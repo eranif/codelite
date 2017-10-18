@@ -44,7 +44,8 @@ class WXDLLIMPEXP_CL wxCodeCompletionBoxEntry
     wxRect m_itemRect;
     friend class wxCodeCompletionBox;
     TagEntryPtr m_tag; // Internal
-    
+    int m_weight;
+
 public:
     typedef wxSharedPtr<wxCodeCompletionBoxEntry> Ptr_t;
     typedef std::vector<wxCodeCompletionBoxEntry::Ptr_t> Vec_t;
@@ -54,6 +55,7 @@ public:
         : m_text(text)
         , m_imgIndex(imgId)
         , m_clientData(userData)
+        , m_weight(0)
     {
     }
 
@@ -66,15 +68,16 @@ public:
 
     /**
      * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
-     * @return
      */
-    static wxCodeCompletionBoxEntry::Ptr_t
-    New(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = NULL)
+    static wxCodeCompletionBoxEntry::Ptr_t New(const wxString& text, int imgId = wxNOT_FOUND,
+                                               wxClientData* userData = NULL)
     {
         wxCodeCompletionBoxEntry::Ptr_t pEntry(new wxCodeCompletionBoxEntry(text, imgId, userData));
         return pEntry;
     }
 
+    void SetWeight(int weight) { this->m_weight = weight; }
+    int GetWeight() const { return m_weight; }
     void SetImgIndex(int imgIndex) { this->m_imgIndex = imgIndex; }
     void SetText(const wxString& text) { this->m_text = text; }
     int GetImgIndex() const { return m_imgIndex; }
@@ -92,4 +95,5 @@ public:
     void SetComment(const wxString& comment) { this->m_comment = comment; }
     const wxString& GetComment() const { return m_comment; }
 };
+
 #endif // WXCODECOMPLETIONBOXENTRY_H

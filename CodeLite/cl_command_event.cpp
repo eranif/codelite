@@ -110,7 +110,6 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
     // Call parent operator =
     clCommandEvent::operator=(src);
     // Implement our copy c tor
-    m_tags = src.m_tags;
     m_editor = src.m_editor;
     m_word = src.m_word;
     m_position = src.m_position;
@@ -118,6 +117,7 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
     m_insideCommentOrString = src.m_insideCommentOrString;
     m_entry = src.m_entry;
     m_definitions = src.m_definitions;
+    m_entries = src.m_entries;
     return *this;
 }
 

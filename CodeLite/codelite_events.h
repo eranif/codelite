@@ -278,6 +278,11 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE, clCodeCompletio
 // The selected string can be retrieved by calling: event.GetWord()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SELECTION_MADE, clCodeCompletionEvent);
 
+// Code completion box is about to be shown. Let the plugins access the list before it is shown
+// to the user. Call event.Skip(false) if you modify the list. The modified list should be set
+// via the event.SetEntries();
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SHOWING, clCodeCompletionEvent);
+
 // A function calltip is requesed
 // clientData is set to the client data set by the user
 // the plugin returns the tooltip to the IDE using the:

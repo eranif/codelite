@@ -273,7 +273,8 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     RemoveDuplicateEntries();
     // Filter results based on user input
     FilterResults();
-
+    
+    
     // If we got a single match - insert it
     if((m_entries.size() == 1) && (m_flags & kInsertSingleMatch)) {
         // single match
@@ -282,6 +283,14 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
         return;
     }
 
+    // Let the plugins modify the list of the entries
+    clCodeCompletionEvent ccEvent(wxEVT_CCBOX_SHOWING);
+    ccEvent.SetEntries(m_allEntries);
+    ccEvent.SetEventObject(this);
+    if(EventNotifier::Get()->ProcessEvent(ccEvent)) {
+        m_allEntries.swap(ccEvent.GetEntries());
+    }
+    
     if(m_entries.empty()) {
         // no entries to display
         DoDestroy();

@@ -273,8 +273,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     RemoveDuplicateEntries();
     // Filter results based on user input
     FilterResults();
-    
-    
+
     // If we got a single match - insert it
     if((m_entries.size() == 1) && (m_flags & kInsertSingleMatch)) {
         // single match
@@ -284,13 +283,18 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     }
 
     // Let the plugins modify the list of the entries
+    int start = m_startPos;
+    int end = m_stc->GetCurrentPos();
+
+    wxString word = m_stc->GetTextRange(start, end); // the current word
+
     clCodeCompletionEvent ccEvent(wxEVT_CCBOX_SHOWING);
     ccEvent.SetEntries(m_allEntries);
     ccEvent.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(ccEvent)) {
         m_allEntries.swap(ccEvent.GetEntries());
     }
-    
+
     if(m_entries.empty()) {
         // no entries to display
         DoDestroy();
@@ -426,10 +430,7 @@ int wxCodeCompletionBox::GetSingleLineHeight() const
 
 bool wxCodeCompletionBox::FilterResults()
 {
-    int start = m_startPos;
-    int end = m_stc->GetCurrentPos();
-
-    wxString word = m_stc->GetTextRange(start, end); // the current word
+    wxString word = GetFilter();
     if(word.IsEmpty()) {
         m_entries = m_allEntries;
         return false;
@@ -442,7 +443,6 @@ bool wxCodeCompletionBox::FilterResults()
     // Exact matches
     // Starts with
     // Contains
-
     wxCodeCompletionBoxEntry::Vec_t exactMatches, exactMatchesI, startsWith, startsWithI, contains, containsI;
     for(size_t i = 0; i < m_allEntries.size(); ++i) {
         wxString entryText = m_allEntries.at(i)->GetText().BeforeFirst('(');
@@ -796,4 +796,13 @@ void wxCodeCompletionBox::DoMouseScroll(wxMouseEvent& event)
     } else {
         DoScrollUp();
     }
+}
+
+wxString wxCodeCompletionBox::GetFilter()
+{
+    if(!m_stc) return "";
+    int start = m_startPos;
+    int end = m_stc->GetCurrentPos();
+
+    return m_stc->GetTextRange(start, end);
 }

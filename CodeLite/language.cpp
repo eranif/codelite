@@ -103,16 +103,154 @@ Language::Language()
 /// Destructor
 Language::~Language() {}
 
+#define SCP_STATE_NORMAL 0
+#define SCP_STATE_IN_IF 1
+#define SCP_STATE_IN_WHILE 2
+#define SCP_STATE_IN_FOR 3
+#define SCP_STATE_IN_CATCH 4
+#define SCP_STATE_IN_FOR_NO_SEMICOLON 5
+
 /// Return the visible scope until pchStopWord is encountered
 wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wxString& localsScope)
 {
-    std::string out, locals;
-    const wxCharBuffer inp = srcString.mb_str(wxConvUTF8);
-    ::OptimizeScope(inp.data(), out, lastFuncLine, locals);
+    CxxTokenizer tokenizer;
+    std::stack<wxString> scopes;
+    tokenizer.Reset(srcString);
 
-    wxString scope = _U(out.c_str());
-    localsScope = wxString(locals.c_str(), wxConvUTF8);
-    return scope;
+    CxxLexerToken token;
+    wxString currentScope;
+    int parenthesisDepth = 0;
+    int state = SCP_STATE_NORMAL;
+    while(tokenizer.NextToken(token)) {
+        switch(state) {
+        case SCP_STATE_NORMAL:
+            switch(token.type) {
+            case '{':
+                currentScope << "{";
+                scopes.push(currentScope);
+                currentScope.clear();
+                break;
+            case '}':
+                if(scopes.empty()) return ""; // Invalid braces count
+                currentScope = scopes.top();
+                scopes.pop();
+                currentScope << "} ";
+                break;
+            case T_IF:
+                state = SCP_STATE_IN_IF;
+                currentScope << " if ";
+                break;
+            case T_WHILE:
+                state = SCP_STATE_IN_WHILE;
+                currentScope << " while ";
+                break;
+            case T_FOR:
+                state = SCP_STATE_IN_FOR_NO_SEMICOLON;
+                currentScope << ";";
+                break;
+            case T_CATCH:
+                state = SCP_STATE_IN_CATCH;
+                currentScope << ";";
+                break;
+            case '(':
+                parenthesisDepth++;
+                currentScope << "(";
+                break;
+            case ')':
+                parenthesisDepth--;
+                currentScope << ")";
+                break;
+            default:
+                if(parenthesisDepth == 0) {
+                    currentScope << " " << token.text;
+                }
+                break;
+            }
+            break;
+        case SCP_STATE_IN_WHILE:
+        case SCP_STATE_IN_IF:
+            switch(token.type) {
+            case '(':
+                parenthesisDepth++;
+                currentScope << "(";
+                break;
+            case ')':
+                parenthesisDepth--;
+                currentScope << ")";
+                if(parenthesisDepth == 0) {
+                    state = SCP_STATE_NORMAL;
+                }
+                break;
+            }
+            break;
+        case SCP_STATE_IN_FOR_NO_SEMICOLON:
+            switch(token.type) {
+            case '(':
+                parenthesisDepth++;
+                currentScope << "(";
+                break;
+            case ')':
+                parenthesisDepth--;
+                currentScope << ")";
+                if(parenthesisDepth == 0) {
+                    state = SCP_STATE_NORMAL;
+                }
+                break;
+            case ';':
+                currentScope << ";";
+                state = SCP_STATE_IN_FOR;
+                break;
+            default:
+                currentScope << " " << token.text;
+                break;
+            }
+            break;
+        case SCP_STATE_IN_FOR:
+            switch(token.type) {
+            case '(':
+                parenthesisDepth++;
+                currentScope << "(";
+                break;
+            case ')':
+                parenthesisDepth--;
+                currentScope << ")";
+                if(parenthesisDepth == 0) {
+                    state = SCP_STATE_NORMAL;
+                }
+                break;
+            default:
+                break;
+            }
+            break;
+        case SCP_STATE_IN_CATCH:
+            switch(token.type) {
+            case '(':
+                parenthesisDepth++;
+                break;
+            case ')':
+                parenthesisDepth--;
+                if(parenthesisDepth == 0) {
+                    state = SCP_STATE_NORMAL;
+                }
+                break;
+            default:
+                currentScope << " " << token.text;
+                break;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    
+    wxString s;
+    while(!scopes.empty()) {
+        s.Prepend(scopes.top());
+        scopes.pop();
+    }
+    s << currentScope;
+    localsScope = s;
+    return s;
 }
 
 ParsedToken* Language::ParseTokens(const wxString& scopeName)
@@ -366,13 +504,13 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
     }
     CL_DEBUG(wxT("Getting function signature from the database... done"));
 
-    CL_DEBUG(wxT("Optimizing scope..."));
+    clDEBUG() << "Optimizing scope..." << clEndl;
     int lastFuncLine = tag ? tag->GetLine() : -1;
     wxString textAfterTokensReplacements;
     textAfterTokensReplacements = ApplyCtagsReplacementTokens(text);
     visibleScope = this->OptimizeScope(textAfterTokensReplacements, lastFuncLine, localsBody);
-    CL_DEBUG(wxT("Optimizing scope...done"));
-
+    clDEBUG() << "Optimizing scope...done:" << clEndl;
+    clDEBUG1() << visibleScope << clEndl;
     std::vector<wxString> additionalScopes;
 
     CL_DEBUG(wxT("Obtaining the scope name..."));
@@ -1291,10 +1429,7 @@ bool Language::FunctionFromPattern(TagEntryPtr tag, clFunction& foo)
 
 void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& tags, const wxString& name, size_t flags)
 {
-    VariableList li;
-    Variable var;
     wxString pattern(in);
-
     pattern = pattern.Trim().Trim(false);
 
     if(flags & ReplaceTokens) {
@@ -1302,28 +1437,14 @@ void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& t
         pattern = ApplyCtagsReplacementTokens(in);
     }
 
-    const wxCharBuffer patbuf = _C(pattern);
-    li.clear();
+    CxxVariableScanner scanner(pattern, eCxxStandard::kCxx11, GetTagsManager()->GetCtagsOptions().GetTokensWxMap());
+    CxxVariable::Vec_t locals = scanner.GetVariables(false);
 
-    TagsManager* mgr = GetTagsManager();
-    std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
-
-    // incase the 'in' string starts with '(' it is most likely that the input string is the
-    // function signature in that case we pass 'true' as the fourth parameter to get_variables(..)
-    get_variables(patbuf.data(), li, ignoreTokens, pattern.StartsWith(wxT("(")));
-
-    VariableList::iterator iter = li.begin();
-    for(; iter != li.end(); iter++) {
-        var = (*iter);
-        if(var.m_name.empty()) {
-            continue;
-        }
-
-        wxString tagName = _U(var.m_name.c_str());
+    std::for_each(locals.begin(), locals.end(), [&](CxxVariable::Ptr_t local) {
+        wxString tagName = local->GetName();
 
         // if we have name, collect only tags that matches name
-        if(name.IsEmpty() == false) {
-
+        if(!name.IsEmpty()) {
             // incase CaseSensitive is not required, make both string lower case
             wxString tmpName(name);
             wxString tmpTagName(tagName);
@@ -1332,30 +1453,21 @@ void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& t
                 tmpTagName.MakeLower();
             }
 
-            if(flags & PartialMatch && !tmpTagName.StartsWith(tmpName)) continue;
+            if((flags & PartialMatch) && !tmpTagName.StartsWith(tmpName)) return;
             // Don't suggest what we have typed so far
-            if(flags & PartialMatch && tmpTagName == tmpName) continue;
-            if(flags & ExactMatch && tmpTagName != tmpName) continue;
-
+            if((flags & PartialMatch) && tmpTagName == tmpName) return;
+            if((flags & ExactMatch) && tmpTagName != tmpName) return;
         } // else no name is specified, collect all tags
 
         TagEntryPtr tag(new TagEntry());
         tag->SetName(tagName);
         tag->SetKind(wxT("variable"));
         tag->SetParent(wxT("<local>"));
-
-        wxString scope;
-        if(var.m_typeScope.empty() == false) {
-            scope << wxString(var.m_typeScope.c_str(), wxConvUTF8) << wxT("::");
-        }
-        if(var.m_type.empty() == false) {
-            scope << wxString(var.m_type.c_str(), wxConvUTF8);
-        }
-        tag->SetScope(scope);
-        tag->SetAccess(wxT("public"));
-        tag->SetPattern(_U(var.m_pattern.c_str()));
+        tag->SetScope(local->GetTypeAsCxxString());
+        tag->SetAccess("public");
+        tag->SetPattern(local->GetTypeAsCxxString() + " " + local->GetName());
         tags.push_back(tag);
-    }
+    });
 }
 
 bool Language::OnArrowOperatorOverloading(ParsedToken* token)
@@ -2421,7 +2533,8 @@ void Language::InsertFunctionImpl(const wxString& clsname, const wxString& funct
 int Language::GetBestLineForForwardDecl(const wxString& fileContent) const
 {
     // Locating the place for adding forward declaration is one line on top of the first non comment/preprocessor
-    // code. So basically we constrcut our lexer and call yylex() once (it will skip all whitespaces/comments/pp... )
+    // code. So basically we constrcut our lexer and call yylex() once (it will skip all whitespaces/comments/pp...
+    // )
     CppLexer lexer(fileContent.mb_str(wxConvISO8859_1).data());
 
     while(true) {

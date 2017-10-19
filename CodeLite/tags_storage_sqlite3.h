@@ -622,7 +622,8 @@ public:
      * symbols that are not part of the workspace. A symbol must be in the tags database and its type
      * should be in the 'kinds' array
      */
-    void RemoveNonWorkspaceSymbols(wxArrayString& symbols, const wxArrayString& kinds);
+    void RemoveNonWorkspaceSymbols(const std::vector<wxString>& symbols, std::vector<wxString>& workspaceSymbols,
+                                   std::vector<wxString>& nonWorkspaceSymbols);
 };
 
 #endif // CODELITE_TAGS_DATABASE_H

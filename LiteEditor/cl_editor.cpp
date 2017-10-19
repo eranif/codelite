@@ -5024,24 +5024,19 @@ void LEditor::OnTimer(wxTimerEvent& event)
                 if(textMatches) {
                     // No markers set yet
                     DoHighlightWord();
-                    clDEBUG1() << "Highlighting word" << clEndl;
 
                 } else if(!textMatches) {
                     // clear markers if the text does not match
                     HighlightWord(false);
-                    clDEBUG1() << "Clearing word highlight" << clEndl;
                 }
             } else {
                 // we got the markers on, check that they still matches the highlighted word
                 if(selectedText != m_highlightedWordInfo.GetWord()) {
-                    clDEBUG1() << "Clearing the markers" << clEndl;
                     HighlightWord(false);
                 } else {
                     // clDEBUG1() << "Markers are valid - nothing more to be done" << clEndl;
                 }
             }
-        } else {
-            clDEBUG1() << "highlight_word is OFF" << clEndl;
         }
     }
     GetContext()->ProcessIdleActions();

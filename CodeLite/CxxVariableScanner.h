@@ -9,7 +9,7 @@
 
 class WXDLLIMPEXP_CL CxxVariableScanner
 {
-    enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor, kInDecltype };
+    enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor, kInDecltype, kInWhile };
 
 protected:
     Scanner_t m_scanner;

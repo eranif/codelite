@@ -170,7 +170,8 @@ protected:
     bool FilterResults();
     void RemoveDuplicateEntries();
     void InsertSelection();
-
+    wxString GetFilter();
+    
     // For backward compatability, we support initializing the list with TagEntryPtrVector_t
     // These 2 functions provide conversion between wxCodeCompletionBoxEntry and TagEntryPtr
     wxCodeCompletionBoxEntry::Vec_t TagsToEntries(const TagEntryPtrVector_t& tags);

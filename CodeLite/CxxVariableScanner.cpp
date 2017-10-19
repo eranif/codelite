@@ -380,6 +380,7 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
     CxxLexerToken tok;
     CxxLexerToken lastToken;
 
+    bool lookingForFirstSemiColon = true;
     eState state = kNormal;
     while(::LexerNext(sc, tok)) {
         if(state == kNormal) {
@@ -393,10 +394,14 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
                     strippedBuffer << "(";
                     if((lastToken.type == T_FOR)) {
                         state = kInForLoop;
+                        lookingForFirstSemiColon = true;
                     } else if(lastToken.type == T_CATCH) {
                         state = kInCatch;
                     } else if(lastToken.type == T_DECLTYPE) {
                         state = kInDecltype;
+                    } else if(lastToken.type == T_WHILE) {
+                        state = kInWhile;
+                        parenthesisBuffer << "();";
                     } else {
                         state = kInParen;
                         parenthesisBuffer << "(";
@@ -406,6 +411,20 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
                     strippedBuffer << tok.text << " ";
                     break;
                 }
+            }
+        } else if(state == kInWhile) {
+            switch(tok.type) {
+            case '(':
+                depth++;
+                break;
+            case ')':
+                depth--;
+                if(depth == 0) {
+                    state = kNormal;
+                }
+                break;
+            default:
+                break;
             }
         } else if(state == kInParen) {
             switch(tok.type) {
@@ -429,19 +448,19 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
         } else if(state == kInDecltype) {
             strippedBuffer << tok.text;
             switch(tok.type) {
-                case '(':
-                    ++depth;
-                    break;
-                case ')':
-                    --depth;
-                    if(depth == 0) {
-                        state = kNormal;
-                    }
-                    break;
-                default:
-                    break;
+            case '(':
+                ++depth;
+                break;
+            case ')':
+                --depth;
+                if(depth == 0) {
+                    state = kNormal;
+                }
+                break;
+            default:
+                break;
             }
-        } else if((state == kInForLoop) || (state == kInCatch)) {
+        } else if(state == kInCatch) {
             // 'for' and 'catch' parenthesis content is kept in the strippedBuffer
             switch(tok.type) {
             case '(':
@@ -457,6 +476,30 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
                 break;
             default:
                 strippedBuffer << tok.text << " ";
+                break;
+            }
+        } else if(state == kInForLoop) {
+            // 'for' and 'catch' parenthesis content is kept in the strippedBuffer
+            switch(tok.type) {
+            case '(':
+                depth++;
+                strippedBuffer << "(";
+                break;
+            case ')':
+                depth--;
+                strippedBuffer << ")";
+                if(depth == 0) {
+                    state = kNormal;
+                }
+                break;
+            case ';':
+                lookingForFirstSemiColon = false;
+                strippedBuffer << ";";
+                break;
+            default:
+                if(lookingForFirstSemiColon) {
+                    strippedBuffer << tok.text << " ";
+                }
                 break;
             }
         } else if(state == kPreProcessor) {
@@ -581,7 +624,7 @@ CxxVariable::Vec_t CxxVariableScanner::ParseFunctionArguments() { return DoParse
 void CxxVariableScanner::UngetToken(const CxxLexerToken& token)
 {
     ::LexerUnget(m_scanner);
-    
+
     // Fix the depth if needed
     if(token.type == '(') {
         --m_parenthesisDepth;

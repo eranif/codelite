@@ -40,6 +40,7 @@
 #include "cl_command_event.h"
 #include <tags_options_data.h>
 #include "CxxVariableScanner.h"
+#include "CxxScannerTokens.h"
 
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 
@@ -633,7 +634,7 @@ void ParseThread::DoNotifyReady(wxEvtHandler* caller, int requestType)
 
 void ParseThread::ProcessColourRequest(ParseRequest* req)
 {
-    CppScanner scanner;
+    CxxTokenizer tokenizer;
     // read the file content
     wxFFile fp(req->getFile(), "rb");
     if(fp.IsOpened()) {
@@ -642,75 +643,45 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
         fp.ReadAll(&content);
         fp.Close();
 
+        tokenizer.Reset(content);
+
         // lex the file and collect all tokens of type IDENTIFIER
-        scanner.SetText(content.mb_str(wxConvUTF8).data());
-        std::set<wxString> tokens;
-
-        int type = scanner.yylex();
-
-        while(type != 0) {
-            if(type == IDENTIFIER) {
-                tokens.insert(scanner.YYText());
+        wxStringSet_t tokens;
+        CxxLexerToken tok;
+        while(tokenizer.NextToken(tok)) {
+            if(tok.type == T_IDENTIFIER) {
+                tokens.insert(tok.text);
             }
-            type = scanner.yylex();
         }
 
-        // Convert the set into array
-        wxArrayString tokensArr;
-        std::set<wxString>::iterator iter = tokens.begin();
-        for(; iter != tokens.end(); ++iter) {
-            tokensArr.Add(*iter);
-        }
+        std::vector<wxString> tokensArr;
+        std::for_each(tokens.begin(), tokens.end(), [&](const wxString& str) { tokensArr.push_back(str); });
+        std::sort(tokensArr.begin(), tokensArr.end());
 
         // did we find anything?
-        if(tokensArr.IsEmpty()) return;
+        if(tokensArr.empty()) return;
 
-        tokensArr.Sort();
         // Open the database
         ITagsStoragePtr db(new TagsStorageSQLite());
         db->OpenDatabase(req->getDbfile());
 
-        wxArrayString kinds;
-        const size_t colourOptions = TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags();
-        if(colourOptions & CC_COLOUR_CLASS) kinds.Add("class");
-        if(colourOptions & CC_COLOUR_ENUM) kinds.Add("enum");
-        if(colourOptions & CC_COLOUR_ENUMERATOR) kinds.Add("enumerator");
-        if(colourOptions & CC_COLOUR_FUNCTION) kinds.Add("prototype");
-        if(colourOptions & CC_COLOUR_MACRO) kinds.Add("macro");
-        if(colourOptions & CC_COLOUR_MEMBER) kinds.Add("member");
-        if(colourOptions & CC_COLOUR_NAMESPACE) kinds.Add("namespace");
-        if(colourOptions & CC_COLOUR_PROTOTYPE) kinds.Add("prototype");
-        if(colourOptions & CC_COLOUR_STRUCT) kinds.Add("struct");
-        if(colourOptions & CC_COLOUR_TYPEDEF) kinds.Add("typedef");
-
-        db->RemoveNonWorkspaceSymbols(tokensArr, kinds);
-
-        // Now, get the locals
-        {
-            CxxVariableScanner scanner(content, eCxxStandard::kCxx11, wxStringTable_t());
-            CxxVariable::Vec_t vars = scanner.GetVariables();
-
-            std::for_each(vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) {
-                if(var->IsUsing()) {
-                    tokensArr.Add(var->GetName());
-                } else {
-                    flatStrLocals << var->GetName() << " ";
-                }
-            });
-        }
-
-        // Convert the class types into a flat string
-        tokensArr.Sort();
+        std::vector<wxString> nonWorkspaceSymbols, workspaceSymbols;
+        db->RemoveNonWorkspaceSymbols(tokensArr, workspaceSymbols, nonWorkspaceSymbols);
 
         // Convert the output to a space delimited array
-        std::for_each(tokensArr.begin(), tokensArr.end(), [&](const wxString& token) { flatClasses << token << " "; });
+        std::for_each(workspaceSymbols.begin(), workspaceSymbols.end(),
+                      [&](const wxString& token) { flatClasses << token << " "; });
+        std::for_each(nonWorkspaceSymbols.begin(), nonWorkspaceSymbols.end(),
+                      [&](const wxString& token) { flatStrLocals << token << " "; });
+        clDEBUG1() << "The following local variables were found:\n" << flatStrLocals << clEndl;
+        clDEBUG1() << "The following classes were found:\n" << flatClasses << clEndl;
 
         if(req->_evtHandler) {
             clCommandEvent event(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS);
-            tokensArr.clear();
-            tokensArr.Add(flatClasses);
-            tokensArr.Add(flatStrLocals);
-            event.SetStrings(tokensArr);
+            wxArrayString res;
+            res.Add(flatClasses);
+            res.Add(flatStrLocals);
+            event.SetStrings(res);
             event.SetFileName(req->getFile());
             req->_evtHandler->AddPendingEvent(event);
         }

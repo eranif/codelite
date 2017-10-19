@@ -80,7 +80,18 @@ TEST_FUNC(test_cxx_decltype_template_variable)
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
     CHECK_BOOL(vars.count("queue") == 1);
     CxxVariable::Ptr_t var = vars["queue"];
-    std::cout << "Type:" << var->GetTypeAsCxxString() << std::endl;
+    //    std::cout << "Type:" << var->GetTypeAsCxxString() << std::endl;
+    return true;
+}
+
+TEST_FUNC(test_cxx_locals_in_for_loop)
+{
+    wxString buffer = "for(int i=0; i<100; ++i) {\n"
+                      "   wxString sql;";
+
+    CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t());
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_BOOL(vars.count("sql") == 1);
     return true;
 }
 

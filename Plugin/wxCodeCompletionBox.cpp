@@ -291,6 +291,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     clCodeCompletionEvent ccEvent(wxEVT_CCBOX_SHOWING);
     ccEvent.SetEntries(m_allEntries);
     ccEvent.SetEventObject(this);
+    ccEvent.SetWord(GetFilter());
     if(EventNotifier::Get()->ProcessEvent(ccEvent)) {
         m_allEntries.swap(ccEvent.GetEntries());
     }

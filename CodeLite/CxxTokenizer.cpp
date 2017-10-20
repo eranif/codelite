@@ -15,6 +15,7 @@ CxxTokenizer::~CxxTokenizer()
 bool CxxTokenizer::NextToken(CxxLexerToken& token)
 {
     if(!m_scanner) return false;
+    m_lastToken = token;
     return ::LexerNext(m_scanner, token);
 }
 
@@ -34,6 +35,10 @@ bool CxxTokenizer::ReadUntilClosingBracket(int delim, wxString& bufferRead)
     CxxLexerToken tok;
     int depth = 0;
     while(NextToken(tok)) {
+        if(tok.IsPreProcessor()) {
+            // pre-processor tokens
+            continue;
+        }
         switch(tok.type) {
         case '<':
         case '(':

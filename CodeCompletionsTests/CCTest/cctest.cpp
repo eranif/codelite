@@ -424,6 +424,15 @@ TEST_FUNC(test_cxx_nested_template)
     return true;
 }
 
+TEST_FUNC(testLambdaArgs)
+{
+    std::vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "test_lambda_args.h"), 3, wxT("str."),
+                                                 LoadFile(GetTestsDir() + "test_lambda_args.h"), tags);
+    CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
+    return true;
+}
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////

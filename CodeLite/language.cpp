@@ -155,6 +155,12 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
+                // Handle lambda
+                // If we are enterting lamda function defenition, collect the locals
+                // this is exactly what we in 'catch' hence the state change to SCP_STATE_IN_CATCH
+                if(tokenizer.GetLastToken().type == ']') {
+                    state = SCP_STATE_IN_CATCH;
+                }
                 break;
             case ')':
                 parenthesisDepth--;

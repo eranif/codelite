@@ -65,13 +65,9 @@ enum eLexerOptions {
     kLexerOpt_DontCollectMacrosDefinedInThisFile = 0x00000008,
 };
 
-enum class eCxxStandard {
-    kCxx03,
-    kCxx11
-};
+enum class eCxxStandard { kCxx03, kCxx11 };
 
-struct WXDLLIMPEXP_CL CxxLexerException
-{
+struct WXDLLIMPEXP_CL CxxLexerException {
     wxString message;
     CxxLexerException(const wxString& msg)
         : message(msg)
@@ -79,18 +75,33 @@ struct WXDLLIMPEXP_CL CxxLexerException
     }
 };
 
-struct WXDLLIMPEXP_CL CxxLexerToken
-{
+struct WXDLLIMPEXP_CL CxxLexerToken {
     int lineNumber;
     int column;
     char* text;
     int type;
     wxString comment;
+
+private:
+    bool m_owned;
+
+private:
+    void deleteText()
+    {
+        if(m_owned && text) {
+            free(text);
+        }
+        m_owned = false;
+        text = nullptr;
+    }
+
+public:
     CxxLexerToken()
         : lineNumber(0)
         , column(0)
         , text(NULL)
         , type(0)
+        , m_owned(false)
     {
     }
 
@@ -99,14 +110,39 @@ struct WXDLLIMPEXP_CL CxxLexerToken
         , column(0)
         , text(NULL)
         , type(tokenType)
+        , m_owned(false)
     {
     }
+
+    CxxLexerToken(const CxxLexerToken& other)
+    {
+        if(this == &other) return;
+        *this = other;
+    }
+
+    CxxLexerToken& operator=(const CxxLexerToken& other)
+    {
+        deleteText();
+        lineNumber = other.lineNumber;
+        column = other.column;
+        type = other.type;
+        if(other.text) {
+            m_owned = true;
+            text = ::strdup(other.text);
+        }
+        return *this;
+    }
+
+    ~CxxLexerToken() { deleteText(); }
+
+    bool IsPreProcessor() const { return ((type >= 400) && (type < 500)); }
+    bool IsEOF() const { return type == 0; }
+
     typedef std::vector<CxxLexerToken> Vect_t;
     typedef std::list<CxxLexerToken> List_t;
 };
 
-struct WXDLLIMPEXP_CL CxxPreProcessorToken
-{
+struct WXDLLIMPEXP_CL CxxPreProcessorToken {
     wxString name;
     wxString value;
     bool deleteOnExit;
@@ -119,8 +155,7 @@ struct WXDLLIMPEXP_CL CxxPreProcessorToken
 /**
  * @class CppLexerUserData
  */
-struct WXDLLIMPEXP_CL CppLexerUserData
-{
+struct WXDLLIMPEXP_CL CppLexerUserData {
 private:
     size_t m_flags;
     wxString m_comment;

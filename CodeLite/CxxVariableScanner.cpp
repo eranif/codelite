@@ -402,6 +402,9 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
                     } else if(lastToken.type == T_WHILE) {
                         state = kInWhile;
                         parenthesisBuffer << "();";
+                    } else if(lastToken.type == ']') {
+                        // Lambda?
+                        state = kInCatch; // similar as "catch" - collect everything
                     } else {
                         state = kInParen;
                         parenthesisBuffer << "(";
@@ -461,7 +464,7 @@ void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& pare
                 break;
             }
         } else if(state == kInCatch) {
-            // 'for' and 'catch' parenthesis content is kept in the strippedBuffer
+            // lambda and 'catch' parenthesis content is kept in the strippedBuffer
             switch(tok.type) {
             case '(':
                 depth++;

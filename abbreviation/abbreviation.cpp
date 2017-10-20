@@ -152,11 +152,11 @@ void AbbreviationPlugin::AddAbbreviations(clCodeCompletionEvent& e)
         // search for the old item
         const wxStringMap_t& entries = jsonData.GetEntries();
         std::for_each(entries.begin(), entries.end(), [&](const wxStringMap_t::value_type& vt) {
-            // Prepend our entries
+            // Append our entries
             wxString textHelp;
-            textHelp << "Template:<hr><br>" << vt.second;
-            e.GetEntries().insert(e.GetEntries().begin(),
-                                  wxCodeCompletionBoxEntry::New(vt.first, textHelp, bmp, new AbbreviationClientData()));
+            textHelp << "<strong>Abbreviation entry</strong>\n<hr><code>" << vt.second << "</code>";
+            e.GetEntries().push_back(
+                wxCodeCompletionBoxEntry::New(vt.first, textHelp, bmp, new AbbreviationClientData()));
         });
     }
 }

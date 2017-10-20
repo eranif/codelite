@@ -172,7 +172,7 @@ void AbbreviationPlugin::OnAbbrevSelected(clCodeCompletionEvent& e)
     if(!cd) {
         e.Skip();
         return;
-    }
+    }2
     InsertExpansion(e.GetWord());
 }
 

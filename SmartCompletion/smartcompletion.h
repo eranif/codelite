@@ -10,7 +10,7 @@
 
 class SmartCompletion : public IPlugin
 {
-    std::unordered_map<wxString, int> m_weight;
+    std::unordered_map<wxString, int>* m_pWeight;
     typedef std::pair<TagEntryPtr, int> QueueElement_t;
     SmartCompletionsConfig m_config;
 

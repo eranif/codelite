@@ -1205,8 +1205,10 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName& fileName, int lineno,
 
     } else {
         wxString oper, dummy;
+        clDEBUG1() << "Calling ProcessExpression(" << expression << ")" << clEndl;
         bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
         if(!res) {
+            clDEBUG1() << "Calling ProcessExpression(" << expression << ") - returned FALSE" << clEndl;
             return NULL;
         }
 
@@ -1216,10 +1218,11 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName& fileName, int lineno,
             scope << typeName;
         else
             scope << typeScope << wxT("::") << typeName;
-
+        
         // this function will retrieve the ineherited tags as well
         std::vector<TagEntryPtr> tmpCandidates;
         TagsByScopeAndName(scope, word, tmpCandidates, ExactMatch);
+        clDEBUG1() << "Building Calltip from tags, size:" << tmpCandidates.size() << clEndl;
         GetFunctionTipFromTags(tmpCandidates, word, tips);
     }
 

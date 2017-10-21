@@ -38,6 +38,7 @@ SmartCompletion::SmartCompletion(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &SmartCompletion::OnCodeCompletionSelectionMade, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SHOWING, &SmartCompletion::OnCodeCompletionShowing, this);
     m_config.Load();
+    m_pWeight = &m_config.GetWeightTable();
 }
 
 SmartCompletion::~SmartCompletion() {}
@@ -82,7 +83,7 @@ void SmartCompletion::OnCodeCompletionSelectionMade(clCodeCompletionEvent& event
     if(tag) {
         // we have an associated tag
         wxString k = tag->GetScope() + "::" + tag->GetName();
-        m_weight[k]++;
+        (*m_pWeight)[k]++;
     }
 }
 
@@ -102,8 +103,8 @@ void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
         wxCodeCompletionBoxEntry::Ptr_t entry = (*iter);
         if(entry->GetTag()) {
             wxString k = entry->GetTag()->GetScope() + "::" + entry->GetTag()->GetName();
-            if(m_weight.count(k)) {
-                entry->SetWeight(m_weight[k]);
+            if(m_pWeight->count(k)) {
+                entry->SetWeight((*m_pWeight)[k]);
                 importantEntries.push_back(entry);
                 iter = entries.erase(iter); // erase and skip to the next iterator
             }

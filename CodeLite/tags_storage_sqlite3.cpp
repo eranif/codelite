@@ -595,13 +595,13 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         }
         ex_rs.Finalize();
     } catch(wxSQLite3Exception& e) {
-        wxUnusedVar(e);
+        clWARNING() << "TagsStorageSQLite::DoFetchTags() error:" << e.GetMessage() << clEndl;
     }
     clDEBUG1() << "Fetching from disk...done" << clEndl;
     if(GetUseCache()) {
         clDEBUG1() << "Updating cache" << clEndl;
         m_cache.Store(sql, tags);
-        clDEBUG1() << "Updating cache...done" << clEndl;
+        clDEBUG1() << "Updating cache...done (" << tags.size() << "entries)" << clEndl;
     }
 }
 

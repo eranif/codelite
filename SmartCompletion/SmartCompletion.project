@@ -7,6 +7,8 @@
     <File Name="SmartCompletionsConfig.cpp"/>
     <File Name="SmartCompletionsSettingsDlg.h"/>
     <File Name="SmartCompletionsSettingsDlg.cpp"/>
+    <File Name="SmartCompletionUsageDB.h"/>
+    <File Name="SmartCompletionUsageDB.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CMake">
     <File Name="CMakeLists.txt"/>

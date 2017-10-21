@@ -4,6 +4,7 @@
 #include "cl_config.h"
 #include <unordered_map>
 #include "wxStringHash.h"
+#include "SmartCompletionUsageDB.h"
 
 class SmartCompletionsConfig : public clConfigItem
 {
@@ -18,7 +19,8 @@ public:
 protected:
     size_t m_flags;
     std::unordered_map<wxString, int> m_weight;
-
+    SmartCompletionUsageDB m_db;
+    
 public:
     SmartCompletionsConfig();
     virtual ~SmartCompletionsConfig();

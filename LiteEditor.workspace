@@ -51,6 +51,7 @@
     <Project Name="EditorConfigPlugin" Path="EditorConfigPlugin/EditorConfigPlugin.project" Active="No"/>
     <Project Name="codelite_vim" Path="codelite_vim/codelite_vim.project" Active="No"/>
     <Project Name="PHPRefactoring" Path="PHPRefactoring/PHPRefactoring.project" Active="No"/>
+    <Project Name="SmartCompletion" Path="SmartCompletion/SmartCompletion.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
@@ -134,6 +135,7 @@
       <Project Name="CxxParserTests" ConfigName="Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
+      <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -192,6 +194,7 @@
       <Project Name="CxxParserTests" ConfigName="Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
+      <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -250,6 +253,7 @@
       <Project Name="CxxParserTests" ConfigName="Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
+      <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -308,6 +312,7 @@
       <Project Name="CxxParserTests" ConfigName="Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
+      <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
@@ -366,6 +371,7 @@
       <Project Name="CxxParserTests" ConfigName="Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
+      <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment/>
@@ -423,6 +429,7 @@
       <Project Name="wxFormBuilder" ConfigName="Win_x64_Release"/>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
+      <Project Name="SmartCompletion" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment/>
@@ -460,6 +467,7 @@
       <Project Name="QMakePlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="SFTP" ConfigName="Win_x64_Debug"/>
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
+      <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
       <Project Name="SpellCheck" ConfigName="Win_x64_Debug"/>
       <Project Name="Subversion2" ConfigName="Win_x64_Debug"/>
       <Project Name="Tail" ConfigName="Win_x64_Debug"/>

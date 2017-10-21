@@ -87,7 +87,12 @@ public:
         m_imgIndex = wxNOT_FOUND;
         m_text.Clear();
     }
-
+    
+    /**
+     * @brief return the associated tag (might be null)
+     */
+    TagEntryPtr GetTag() const { return m_tag; }
+    
     /**
      * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
      */

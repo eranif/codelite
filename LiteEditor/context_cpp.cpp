@@ -2005,8 +2005,7 @@ void ContextCpp::OnFileSaved()
         VALIDATE_WORKSPACE();
 
         // if there is nothing to color, go ahead and return
-        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS) &&
-           !(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS)) {
+        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS)) {
             return;
         }
 
@@ -3216,7 +3215,7 @@ void ContextCpp::ColourContextTokens(const wxString& workspaceTokensStr, const w
     //------------------------------------------
     // Classes
     //------------------------------------------
-    wxString flatStrClasses = cc_flags & CC_COLOUR_WORKSPACE_TAGS ? workspaceTokensStr : "";
+    wxString flatStrClasses = cc_flags & CC_COLOUR_VARS ? workspaceTokensStr : "";
     ctrl.SetKeyWords(1, flatStrClasses);
     ctrl.SetKeywordClasses(flatStrClasses);
 

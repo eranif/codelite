@@ -67,7 +67,7 @@ static bool _IsCppKeyword(const wxString& word)
 TagsOptionsData::TagsOptionsData()
     : clConfigItem("code-completion")
     , m_ccFlags(CC_DISP_FUNC_CALLTIP | CC_CPP_KEYWORD_ASISST | CC_COLOUR_VARS | CC_ACCURATE_SCOPE_RESOLVING |
-                CC_COLOUR_WORKSPACE_TAGS | CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING | CC_WORD_ASSIST)
+                CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING | CC_WORD_ASSIST)
     , m_ccColourFlags(CC_COLOUR_DEFAULT)
     , m_fileSpec(wxT("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hxx;*.h++"))
     , m_minWordLen(3)

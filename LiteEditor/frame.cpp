@@ -2483,7 +2483,6 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
     wxUnusedVar(event);
 
     bool colVars(false);
-    bool colTags(false);
     bool newColVars(false);
     bool newColTags(false);
     bool caseSensitive(false);
@@ -2491,7 +2490,6 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
     size_t colourTypes(0);
 
     colVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
-    colTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
     colourTypes = m_tagsOptionsData.GetCcColourFlags();
 
     wxArrayString pathsBefore = m_tagsOptionsData.GetParserSearchPaths();
@@ -2535,7 +2533,6 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
         }
 
         newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
-        newColTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
         caseSensitive = (m_tagsOptionsData.GetFlags() & CC_IS_CASE_SENSITIVE);
 
         TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
@@ -2551,7 +2548,7 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
         TagsManagerST::Get()->GetDatabase()->SetMaxWorkspaceTagToColour(m_tagsOptionsData.GetMaxItemToColour());
 
         // do we need to colourise?
-        if(newColTags != colTags || newColVars != colVars || colourTypes != m_tagsOptionsData.GetCcColourFlags()) {
+        if((newColVars != colVars) || (colourTypes != m_tagsOptionsData.GetCcColourFlags())) {
             GetMainBook()->UpdateColours();
         }
 

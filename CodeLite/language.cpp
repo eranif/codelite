@@ -231,10 +231,12 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
         case SCP_STATE_IN_CATCH:
             switch(token.type) {
             case '(':
+                currentScope << "(";
                 parenthesisDepth++;
                 break;
             case ')':
                 parenthesisDepth--;
+                currentScope << ")";
                 if(parenthesisDepth == 0) {
                     state = SCP_STATE_NORMAL;
                 }

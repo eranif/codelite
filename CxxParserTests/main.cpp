@@ -107,6 +107,18 @@ TEST_FUNC(test_cxx_lambda_args)
     return true;
 }
 
+TEST_FUNC(test_cxx_lambda_locals)
+{
+    wxString buffer = "std::for_each(a.begin(), b.end(), [&](const wxString& lambdaArg){\n"
+                      "wxString myStr;";
+
+    CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t());
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_BOOL(vars.count("myStr") == 1);
+    CHECK_WXSTRING(vars["myStr"]->GetName(), "myStr");
+    return true;
+}
+
 int main(int argc, char** argv)
 {
     wxInitializer initializer(argc, argv);

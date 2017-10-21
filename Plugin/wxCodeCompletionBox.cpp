@@ -607,6 +607,7 @@ wxCodeCompletionBoxEntry::Ptr_t wxCodeCompletionBox::TagToEntry(TagEntryPtr tag)
     wxString text = tag->GetDisplayName().Trim().Trim(false);
     int imgIndex = GetImageId(tag);
     wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
+    entry->m_tag = tag;
     return entry;
 }
 

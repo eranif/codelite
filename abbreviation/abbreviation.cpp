@@ -60,7 +60,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Abbreviation"));
     info.SetDescription(_("Abbreviation plugin"));
-    info.SetVersion(wxT("v1.0"));
+    info.SetVersion(wxT("v1.1"));
     return &info;
 }
 
@@ -99,17 +99,11 @@ void AbbreviationPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(menu, XRCID("abbrev_insert"), _("Insert Expansion"), _("Insert Expansion"), wxITEM_NORMAL);
-    menu->Append(item);
-
-    menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("abbrev_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     menu->Append(item);
 
     pluginsMenu->Append(wxID_ANY, wxT("Abbreviation"), menu);
-
-    m_topWindow->Connect(XRCID("abbrev_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(AbbreviationPlugin::OnSettings), NULL, this);
+    m_topWindow->Bind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
 }
 
 void AbbreviationPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
@@ -120,8 +114,7 @@ void AbbreviationPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void AbbreviationPlugin::UnPlug()
 {
-    m_topWindow->Disconnect(XRCID("abbrev_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(AbbreviationPlugin::OnSettings), NULL, this);
+    m_topWindow->Unbind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SHOWING, &AbbreviationPlugin::OnCompletionBoxShowing, this);
 }

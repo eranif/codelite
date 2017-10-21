@@ -81,6 +81,7 @@
 #include "clEditorStateLocker.h"
 #include "clSelectSymbolDialog.h"
 #include "CxxVariableScanner.h"
+#include "file_logger.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -2540,7 +2541,7 @@ wxString ContextCpp::CallTipContent()
 void ContextCpp::DoCodeComplete(long pos)
 {
     CHECK_JS_RETURN_VOID();
-
+    clDEBUG1() << "ContextCpp::DoCodeComplete(" << pos << ") is called" << clEndl;
     long currentPosition = pos;
     bool showFuncProto = false;
     int pos1, pos2, end;
@@ -2553,6 +2554,7 @@ void ContextCpp::DoCodeComplete(long pos)
     }
 
     // Search for first non-whitespace wxChar
+    clDEBUG1() << "Triggering char is:" << ch << clEndl;
     switch(ch) {
     case '.':
         // Class / Struct completion
@@ -2638,6 +2640,7 @@ void ContextCpp::DoCodeComplete(long pos)
     }
 
     if(showFuncProto) {
+        clDEBUG1() << "Function prototype is requested..." << clEndl; 
         // for function prototype, the last char entered was '(', this will break
         // the logic of the Getexpression() method to workaround this, we search for
         // expression one char before the current position
@@ -2649,6 +2652,7 @@ void ContextCpp::DoCodeComplete(long pos)
 
         // get the token
         wxString word = editor.GetTextRange(word_start, word_end);
+        clDEBUG1() << "Function prototype is requested for:" << expr << "|" << word << clEndl;
         CodeCompletionManager::Get().Calltip(&editor, line, expr, text, word);
 
     } else {

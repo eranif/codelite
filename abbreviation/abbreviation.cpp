@@ -41,6 +41,7 @@
 #include "wxCodeCompletionBoxEntry.h"
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/clntdata.h>
+#include "globals.h"
 
 static AbbreviationPlugin* thePlugin = NULL;
 
@@ -146,8 +147,8 @@ void AbbreviationPlugin::AddAbbreviations(clCodeCompletionEvent& e)
         jsonData.SetEntries(data.GetEntries());
         m_config.WriteItem(&jsonData);
     }
-
-    static wxBitmap bmp = LoadBitmapFile(wxT("abbrev.png"));
+    
+    wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("replace-blue");
     if(bmp.IsOk()) {
         // search for the old item
         const wxStringMap_t& entries = jsonData.GetEntries();

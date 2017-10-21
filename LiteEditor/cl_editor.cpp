@@ -3990,12 +3990,14 @@ int LEditor::GetEOLByOS()
 
 void LEditor::ShowFunctionTipFromCurrentPos()
 {
+    clDEBUG1() << "Calling ShowFunctionTipFromCurrentPos..." << clEndl;
     if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
 
         if(EventNotifier::Get()->IsEventsDiabled()) return;
 
         int pos = DoGetOpenBracePos();
-
+        clDEBUG1() << "Brace open position is:" << pos << clEndl;
+        clDEBUG1() << "Firing wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP event..." << clEndl;
         // see if any of the plugins want to handle it
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
         evt.SetEventObject(this);
@@ -4005,6 +4007,7 @@ void LEditor::ShowFunctionTipFromCurrentPos()
         if(EventNotifier::Get()->ProcessEvent(evt)) return;
 
         if(pos != wxNOT_FOUND) {
+            clDEBUG1() << "Using default behavior for wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP event" << clEndl;
             m_context->CodeComplete(pos);
         }
     }

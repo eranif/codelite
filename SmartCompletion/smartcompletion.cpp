@@ -75,7 +75,7 @@ void SmartCompletion::OnCodeCompletionSelectionMade(clCodeCompletionEvent& event
 {
     event.Skip();
     if(!m_config.IsEnabled()) return;
-    
+
     CHECK_PTR_RET(event.GetEntry());
 
     // Collect info about this match
@@ -92,14 +92,14 @@ void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
 {
     event.Skip();
     if(!m_config.IsEnabled()) return;
-    
+
     // Sort the entries by their weight
     wxCodeCompletionBoxEntry::Vec_t& entries = event.GetEntries();
 
     // We dont want to mess with the default sorting. We just want to place the onse with weight at the top
     // so we split the list into 2: entries with weight geater than 0 and 0
     wxCodeCompletionBoxEntry::Vec_t importantEntries;
-    wxCodeCompletionBoxEntry::Vec_t normalImmportantEntries;
+    wxCodeCompletionBoxEntry::Vec_t normalEntries;
     wxCodeCompletionBoxEntry::Vec_t::iterator iter = entries.begin();
     for(; iter != entries.end(); ++iter) {
         wxCodeCompletionBoxEntry::Ptr_t entry = (*iter);
@@ -109,12 +109,14 @@ void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
                 entry->SetWeight((*m_pWeight)[k]);
                 importantEntries.push_back(entry);
             } else {
-                normalImmportantEntries.push_back(entry);
+                normalEntries.push_back(entry);
             }
+        } else {
+            normalEntries.push_back(entry);
         }
     }
-    
-    entries.swap(normalImmportantEntries);
+
+    entries.swap(normalEntries);
     // Step 2: sort the important entries, based on their weight
     std::sort(importantEntries.begin(), importantEntries.end(),
               [&](wxCodeCompletionBoxEntry::Ptr_t a, wxCodeCompletionBoxEntry::Ptr_t b) {

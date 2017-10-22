@@ -617,7 +617,7 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(WordCompletion)
     add_subdirectory(HelpPlugin)
     add_subdirectory(WebTools)
-    add_subdirectory(SmartCompletions)
+    add_subdirectory(SmartCompletion)
 
     if(UNIX AND NOT APPLE)
         ## Add valgrind plugin

@@ -31,6 +31,10 @@ public:
     bool ReadUntilClosingBracket(int delim, wxString& bufferRead);
     
     const CxxLexerToken& GetLastToken() const { return m_lastToken; }
+    /**
+     * @brief peek at the next token and return its type
+     */
+    int PeekToken(wxString& text);
 };
 
 #endif // CXXTOKENIZER_H

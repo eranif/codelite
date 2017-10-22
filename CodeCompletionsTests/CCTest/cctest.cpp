@@ -78,9 +78,9 @@ TEST_FUNC(testMacros)
     CHECK_SIZE(tags.size(), 55);
 #endif
 
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "simple_tests.h"), 1, wxT("wxTheApp->"),
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "simple_tests.h"), 1, wxT("GET_APP->"),
                                                  LoadFile(GetTestsDir() + "simple_tests.h"), tags);
-    CHECK_SIZE(tags.size(), 316);
+    CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "simple_tests.h"), 1, wxT("EG(name)."),
                                                  LoadFile(GetTestsDir() + "simple_tests.h"), tags);
     CHECK_SIZE(tags.size(), 169);
@@ -430,6 +430,15 @@ TEST_FUNC(testLambdaArgs)
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "test_lambda_args.h"), 3, wxT("str."),
                                                  LoadFile(GetTestsDir() + "test_lambda_args.h"), tags);
     CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
+    return true;
+}
+
+TEST_FUNC(testDeclTypeInTemplate)
+{
+    std::vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "test_decl_type.h"), 2, wxT("q."),
+                                                 LoadFile(GetTestsDir() + "test_decl_type.h"), tags);
+    CHECK_SIZE(tags.size(), 14);
     return true;
 }
 

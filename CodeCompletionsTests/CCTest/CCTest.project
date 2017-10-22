@@ -56,6 +56,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -89,6 +90,7 @@
     <File Name="tests/test_parse_variables_class_members.h"/>
     <File Name="tests/test_cxx_nested_template.h"/>
     <File Name="tests/test_lambda_args.h"/>
+    <File Name="tests/test_decl_type.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="TestFramework">

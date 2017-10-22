@@ -129,7 +129,7 @@ public:
     int GetMember8() const { return member8; }
     int GetMember9() const { return member9; }
 };
-
+#define GET_APP static_cast<ClassWithMembers*>(ClassWithMembers::Instance())
 typedef std::vector<ClassWithMembers> VectorTypedef_t;
 
 // Template class with static member

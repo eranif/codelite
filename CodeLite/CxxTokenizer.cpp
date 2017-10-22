@@ -51,12 +51,12 @@ bool CxxTokenizer::ReadUntilClosingBracket(int delim, wxString& bufferRead)
         case ')':
         case ']':
         case '}':
+            depth--;
+            bufferRead << tok.text << " ";
             if((tok.type == delim) && (depth == 0)) {
                 ::LexerUnget(m_scanner);
                 return true;
             }
-            depth--;
-            bufferRead << tok.text << " ";
             break;
         default:
             bufferRead << tok.text << " ";
@@ -64,4 +64,16 @@ bool CxxTokenizer::ReadUntilClosingBracket(int delim, wxString& bufferRead)
         }
     }
     return false;
+}
+
+int CxxTokenizer::PeekToken(wxString& text)
+{
+    CxxLexerToken tok;
+    if(!NextToken(tok)) {
+        return false;
+    }
+    text = tok.text;
+    int type = tok.type;
+    ::LexerUnget(m_scanner);
+    return type;
 }

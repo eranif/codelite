@@ -250,7 +250,7 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
             break;
         }
     }
-    
+
     wxString s;
     while(!scopes.empty()) {
         s.Prepend(scopes.top());
@@ -363,8 +363,8 @@ ParsedToken* Language::ParseTokens(const wxString& scopeName)
 
 bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperator, wxString& funcArgList)
 {
-    int type(0);
     int depth(0);
+    int parenthesisDepth(0);
     bool collectingFuncArgList = true;
 
     subscriptOperator = false;
@@ -373,21 +373,40 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
     CxxLexerToken tok;
     while(m_tokenScanner.NextToken(tok)) {
         switch(tok.type) {
+        case T_DECLTYPE: {
+            if(m_tokenScanner.GetLastToken().type == ',') {
+                token.RemoveLast();
+            }
+            wxString dummy;
+            if(m_tokenScanner.ReadUntilClosingBracket(')', dummy)) {
+                m_tokenScanner.NextToken(tok); // Consume the closing parent
+            }
+            break;
+        }
         case T_STATIC_CAST:
         case T_DYNAMIC_CAST:
         case T_REINTERPRET_CAST:
         case T_CONST_CAST: {
             // We expect now: "<"
-            if(!m_tokenScanner.NextToken(tok) || (tok.type != '<')) return false;
+            wxString txt;
+            if(m_tokenScanner.PeekToken(txt) != '<') return false;
             wxString typestr;
             if(!m_tokenScanner.ReadUntilClosingBracket('>', typestr)) return false;
             token.swap(typestr);
-            if(!m_tokenScanner.NextToken(tok) || (tok.type != '>')) return false;
-            if(!m_tokenScanner.NextToken(tok) || (tok.type != '(')) return false;
+
+            // Consume the closing angle bracket
+            m_tokenScanner.NextToken(tok);
+
+            // Peek at the next token
+            if(m_tokenScanner.PeekToken(txt) != '(') return false;
             if(!m_tokenScanner.ReadUntilClosingBracket(')', typestr)) return false;
-            if(!m_tokenScanner.NextToken(tok) || (tok.type != ')')) return false;
+            // Consume the closing parenthessis
+            m_tokenScanner.NextToken(tok);
             token.Replace("*", "");
             token.Replace("&", "");
+            token.Trim().Trim(false);
+            token.Remove(0, 1).RemoveLast();
+            token.Trim().Trim(false);
             break;
         }
         case T_THIS:
@@ -414,35 +433,28 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
                 // simply ignore the parenthessis
                 break;
             }
-        // fall through
+            token << tok.text;
+            parenthesisDepth++;
+            break;
         case '<':
         case '{':
             depth++;
             token << " " << tok.text;
             break;
         case ')':
-            if(depth == 0) {
-                // ignore this closing brace
-                // since it might have been here because of an extra open brace at the beginig of token
-
-                // in cases like:
-                // ((wxString))::
-                // or:
-                // wxString str;
-                // ((str)).
-                break;
+            parenthesisDepth--;
+            if(collectingFuncArgList) {
+                funcArgList << ')';
             }
-        // fall through
+
+            if(parenthesisDepth == 0) {
+                collectingFuncArgList = false;
+            }
+            break;
         case '>':
         case ']':
         case '}':
             depth--;
-            if((depth == 0) && (type == ')')) {
-                // we have found closing brace, disable siganture collection
-                funcArgList << ')';
-                collectingFuncArgList = false;
-            }
-
             token << " " << tok.text;
             break;
         case T_IDENTIFIER:
@@ -467,8 +479,8 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
             break;
         }
 
-        if(collectingFuncArgList && depth) {
-            funcArgList << tok.text;
+        if(collectingFuncArgList && parenthesisDepth) {
+            funcArgList << tok.text << " ";
         }
     }
 

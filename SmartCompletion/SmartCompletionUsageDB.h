@@ -30,12 +30,12 @@ public:
     /**
      * @brief load the weight table from the database
      */
-    void LoadUsage(std::unordered_map<wxString, int>& weightTable);
+    void LoadUsageTable(std::unordered_map<wxString, int>& weightTable);
     
     /**
      * @brief write the usage to the database
      */
-    void StoreUsage(const std::unordered_map<wxString, int>& weightTable);
+    void StoreUsage(const wxString& key, int weight);
 };
 
 #endif // SMARTCOMPLETIONUSAGEDB_H

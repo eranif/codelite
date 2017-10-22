@@ -32,6 +32,8 @@ public:
     void SetEnabled(bool b) { b ? m_flags |= kEnabled : m_flags &= ~kEnabled; }
     std::unordered_map<wxString, int>& GetWeightTable() { return m_weight; }
     
+    SmartCompletionUsageDB& GetUsageDb() { return m_db; }
+    
 };
 
 #endif // SMARTCOMPLETIONSCONFIG_H

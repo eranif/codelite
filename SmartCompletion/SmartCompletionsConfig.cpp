@@ -13,7 +13,7 @@ SmartCompletionsConfig& SmartCompletionsConfig::Load()
     clConfig conf("SmartCompletions.conf");
     conf.ReadItem(this);
     m_db.Open();
-    m_db.LoadUsage(m_weight);
+    m_db.LoadUsageTable(m_weight);
     return *this;
 }
 
@@ -21,7 +21,6 @@ SmartCompletionsConfig& SmartCompletionsConfig::Save()
 {
     clConfig conf("SmartCompletions.conf");
     conf.WriteItem(this);
-    m_db.StoreUsage(m_weight);
     return *this;
 }
 

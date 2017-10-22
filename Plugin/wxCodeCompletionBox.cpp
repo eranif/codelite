@@ -270,7 +270,15 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_index = 0;
     m_stc = ctrl;
     m_allEntries = entries;
-
+    
+    // Fire "Showing" event
+    clCodeCompletionEvent ccEvent(wxEVT_CCBOX_SHOWING);
+    ccEvent.SetEntries(m_allEntries);
+    ccEvent.SetEventObject(this);
+    ccEvent.SetWord(GetFilter());
+    EventNotifier::Get()->ProcessEvent(ccEvent);
+    m_allEntries.swap(ccEvent.GetEntries());
+    
     // Keep the start position
     if(m_startPos == wxNOT_FOUND) {
         m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
@@ -294,15 +302,6 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     int end = m_stc->GetCurrentPos();
 
     wxString word = m_stc->GetTextRange(start, end); // the current word
-    
-    // Fire "Showing" event
-    clCodeCompletionEvent ccEvent(wxEVT_CCBOX_SHOWING);
-    ccEvent.SetEntries(m_allEntries);
-    ccEvent.SetEventObject(this);
-    ccEvent.SetWord(GetFilter());
-    EventNotifier::Get()->ProcessEvent(ccEvent);
-    m_allEntries.swap(ccEvent.GetEntries());
-    
     if(m_entries.empty()) {
         // no entries to display
         DoDestroy();

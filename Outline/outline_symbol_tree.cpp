@@ -242,7 +242,7 @@ void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxStr
 
     // If the editor has folds and the target line is above the current position,
     // the stc doesn't scroll back far enough to show the target. So:
-    CallAfter(&svSymbolTree::CenterEditorLine);
+    //CallAfter(&svSymbolTree::CenterEditorLine);
 }
 
 void svSymbolTree::CenterEditorLine()

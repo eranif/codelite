@@ -6,6 +6,7 @@
 #include <queue>
 #include "SmartCompletionsSettingsDlg.h"
 #include <wx/menu.h>
+#include <algorithm>
 
 static SmartCompletion* thePlugin = NULL;
 

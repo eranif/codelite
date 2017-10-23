@@ -47,6 +47,7 @@ public:
     void UpdateFailedBar(size_t amount, const wxString& msg);
     void UpdatePassedBar(size_t amount, const wxString& msg);
     void Clear();
+
 protected:
     virtual void OnClearReport(wxCommandEvent& event);
 };

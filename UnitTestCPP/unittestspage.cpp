@@ -48,14 +48,14 @@ UnitTestsPage::UnitTestsPage(wxWindow* parent, IManager* mgr)
     : UnitTestsBasePage(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), 0)
     , m_mgr(mgr)
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL,
+                                  this);
 }
 
 UnitTestsPage::~UnitTestsPage()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed),
+                                     NULL, this);
 }
 
 void UnitTestsPage::UpdateFailedBar(size_t amount, const wxString& msg) { m_progressFailed->Update(amount, msg); }

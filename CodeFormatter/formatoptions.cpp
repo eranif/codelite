@@ -27,7 +27,6 @@
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
 #include "file_logger.h"
-#include "file_logger.h"
 #include "globals.h"
 #include "json_node.h"
 #include "phpoptions.h"

@@ -128,7 +128,7 @@ void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
 
 void AbbreviationPlugin::AddAbbreviations(clCodeCompletionEvent& e)
 {
-    wxString filter = e.GetWord();
+    wxString filter = e.GetWord().Lower();
 
     AbbreviationJSONEntry jsonData;
     if(!m_config.ReadItem(&jsonData)) {
@@ -140,17 +140,21 @@ void AbbreviationPlugin::AddAbbreviations(clCodeCompletionEvent& e)
         jsonData.SetEntries(data.GetEntries());
         m_config.WriteItem(&jsonData);
     }
-    
+
     wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("replace-blue");
     if(bmp.IsOk()) {
         // search for the old item
         const wxStringMap_t& entries = jsonData.GetEntries();
         std::for_each(entries.begin(), entries.end(), [&](const wxStringMap_t::value_type& vt) {
-            // Append our entries
-            wxString textHelp;
-            textHelp << "<strong>Abbreviation entry</strong>\n<hr><code>" << vt.second << "</code>";
-            e.GetEntries().push_back(
-                wxCodeCompletionBoxEntry::New(vt.first, textHelp, bmp, new AbbreviationClientData()));
+            // Only add matching entries (entries that "starts_with")
+            wxString lcAbbv = vt.first.Lower();
+            if(filter.IsEmpty() || lcAbbv.StartsWith(filter)) {
+                // Append our entries
+                wxString textHelp;
+                textHelp << "<strong>Abbreviation entry</strong>\n<hr><code>" << vt.second << "</code>";
+                e.GetEntries().push_back(
+                    wxCodeCompletionBoxEntry::New(vt.first, textHelp, bmp, new AbbreviationClientData()));
+            }
         });
     }
 }

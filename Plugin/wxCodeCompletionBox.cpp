@@ -271,6 +271,11 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_stc = ctrl;
     m_allEntries = entries;
     
+    // Keep the start position
+    if(m_startPos == wxNOT_FOUND) {
+        m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
+    }
+
     // Fire "Showing" event
     clCodeCompletionEvent ccEvent(wxEVT_CCBOX_SHOWING);
     ccEvent.SetEntries(m_allEntries);
@@ -279,13 +284,9 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     EventNotifier::Get()->ProcessEvent(ccEvent);
     m_allEntries.swap(ccEvent.GetEntries());
     
-    // Keep the start position
-    if(m_startPos == wxNOT_FOUND) {
-        m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
-    }
-
     // Filter all duplicate entries from the list (based on simple string match)
     RemoveDuplicateEntries();
+    
     // Filter results based on user input
     FilterResults();
 

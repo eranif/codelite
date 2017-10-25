@@ -54,7 +54,7 @@
     <Project Name="SmartCompletion" Path="SmartCompletion/SmartCompletion.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
-    <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="No"/>
+    <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
   </VirtualDirectory>
   <VirtualDirectory Name="SDK">
     <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
@@ -70,7 +70,7 @@
   <VirtualDirectory Name="UnitTests">
     <VirtualDirectory Name="CXX">
       <Project Name="CxxParserTests" Path="CxxParserTests/CxxParserTests.project" Active="No"/>
-      <Project Name="CCTest" Path="CodeCompletionsTests/CCTest/CCTest.project" Active="Yes"/>
+      <Project Name="CCTest" Path="CodeCompletionsTests/CCTest/CCTest.project" Active="No"/>
       <Project Name="SampleWorksapce" Path="CodeCompletionsTests/SampleWorkspace/SampleWorksapce.project" Active="No"/>
     </VirtualDirectory>
     <VirtualDirectory Name="PHP">

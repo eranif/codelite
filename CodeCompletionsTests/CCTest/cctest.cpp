@@ -451,7 +451,7 @@ void testCC()
 {
     // Load the tags database that is used during the test.
     std::cout << "Tests Dir is set to: " << GetTestsDir() << std::endl;
-    
+
     wxFileName fn(GetTestsDir() + "../../SampleWorkspace/.codelite/SampleWorkspace.tags");
     TagsManagerST::Get()->OpenDatabase(fn);
 
@@ -546,8 +546,24 @@ int main(int argc, char** argv)
 {
     // Initialize the wxWidgets library
     wxInitializer initializer;
+    TagsManagerST::Get()->SetCodeLiteIndexerPath("C:/Program Files/CodeLite/codelite_indexer.exe");
+    TagsManagerST::Get()->StartCodeLiteIndexer();
+    TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer("enum class FooShort : short {"
+                                                                 "    short_apple,"
+                                                                 "    short_banana,"
+                                                                 "    short_orange,"
+                                                                 "};");
+    tags = TagsManagerST::Get()->ParseBuffer("class MyClass {"
+                                             "    enum Foo {"
+                                             "        apple,"
+                                             "        banana,"
+                                             "        orange,"
+                                             "    };"
+                                             "};");
+
     // testRetagWorkspace();
     // testStringSearcher();
     testCC();
+    TagsManagerST::Free();
     return 0;
 }

@@ -78,6 +78,18 @@ void foo_bar(struct wxString* s) {
 }
 } // Namespace Baz
 
+enum NormalEnum {
+    kApple,
+    kBanana,
+    kOrange,
+};
+
+enum class ClassEnum : int {
+    kRed,
+    kGreen,
+    kBlue
+};
+
 class ClassWithTemplateFunction
 {
 public:

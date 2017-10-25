@@ -66,6 +66,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_tagImgMap[wxT("function_public")] = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
     m_tagImgMap[wxT("function_protected")] = bmpLoader->LoadBitmap(wxT("cc/16/function_protected"));
     m_tagImgMap[wxT("enum")] = bmpLoader->LoadBitmap(wxT("cc/16/enum"));
+    m_tagImgMap[wxT("cenum")] = bmpLoader->LoadBitmap(wxT("cc/16/enum"));
     m_tagImgMap[wxT("enumerator")] = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
     m_tagImgMap[wxT("cpp")] = bmpLoader->LoadBitmap(wxT("mime-cpp"));
     m_tagImgMap[wxT("h")] = bmpLoader->LoadBitmap(wxT("mime-h"));
@@ -106,7 +107,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
             }
         }
     }
-    
+
     wxString lastStringTyped = clConfig::Get().Read("OpenResourceDialog/SearchString", wxString());
     // Set the initial selection
     // We use here 'SetValue' so an event will get fired and update the control
@@ -133,7 +134,7 @@ OpenResourceDialog::~OpenResourceDialog()
 {
     m_timer->Stop();
     wxDELETE(m_timer);
-    
+
     // Store current values
     clConfig::Get().Write("OpenResourceDialog/ShowFiles", m_checkBoxFiles->IsChecked());
     clConfig::Get().Write("OpenResourceDialog/ShowSymbols", m_checkBoxShowSymbols->IsChecked());
@@ -238,22 +239,18 @@ void OpenResourceDialog::DoPopulateTags()
         wxDataViewItem item;
         wxString fullname;
         if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype")) {
-            fullname = wxString::Format(
-                wxT("%s::%s%s"), tag->GetScope().c_str(), tag->GetName().c_str(), tag->GetSignature().c_str());
-            item = DoAppendLine(tag->GetName(),
-                                fullname,
-                                (tag->GetKind() == wxT("function")),
-                                new OpenResourceDialogItemData(
-                                    tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
+            fullname = wxString::Format(wxT("%s::%s%s"), tag->GetScope().c_str(), tag->GetName().c_str(),
+                                        tag->GetSignature().c_str());
+            item = DoAppendLine(tag->GetName(), fullname, (tag->GetKind() == wxT("function")),
+                                new OpenResourceDialogItemData(tag->GetFile(), tag->GetLine(), tag->GetPattern(),
+                                                               tag->GetName(), tag->GetScope()),
                                 DoGetTagImg(tag));
         } else {
 
             fullname = wxString::Format(wxT("%s::%s"), tag->GetScope().c_str(), tag->GetName().c_str());
-            item = DoAppendLine(tag->GetName(),
-                                fullname,
-                                false,
-                                new OpenResourceDialogItemData(
-                                    tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
+            item = DoAppendLine(tag->GetName(), fullname, false,
+                                new OpenResourceDialogItemData(tag->GetFile(), tag->GetLine(), tag->GetPattern(),
+                                                               tag->GetName(), tag->GetScope()),
                                 DoGetTagImg(tag));
         }
 
@@ -267,11 +264,11 @@ void OpenResourceDialog::DoPopulateTags()
 void OpenResourceDialog::DoPopulateWorkspaceFile()
 {
     // do we need to include files?
-    if(!m_filters.IsEmpty() && m_filters.Index(TagEntry::KIND_FILE) == wxNOT_FOUND) return;
+    if(!m_filters.IsEmpty() && m_filters.Index(KIND_FILE) == wxNOT_FOUND) return;
 
     if(!m_userFilters.IsEmpty()) {
 
-        std::multimap<wxString, wxString>::iterator iter = m_files.begin();
+        std::unordered_multimap<wxString, wxString>::iterator iter = m_files.begin();
         const int maxFileSize = 100;
         int counter = 0;
         for(; (iter != m_files.end()) && (counter < maxFileSize); iter++) {
@@ -301,9 +298,7 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
             default:
                 break;
             }
-            DoAppendLine(fn.GetFullName(),
-                         fn.GetFullPath(),
-                         false,
+            DoAppendLine(fn.GetFullName(), fn.GetFullPath(), false,
                          new OpenResourceDialogItemData(fn.GetFullPath(), -1, wxT(""), fn.GetFullName(), wxT("")),
                          imgId);
             ++counter;
@@ -349,11 +344,11 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
         wxDataViewItemArray selections;
         wxDataViewItem selection;
         m_dataview->GetSelections(selections);
-        
+
         if(!selections.IsEmpty()) {
             selection = selections.Item(0);
         }
-        
+
         if(!selection.IsOk()) {
             // No selection, select the first
             DoSelectItem(children.Item(0));
@@ -381,10 +376,7 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
 
 void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
 
-void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dataview->GetSelectedItemsCount());
-}
+void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_dataview->GetSelectedItemsCount()); }
 
 bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false; }
 
@@ -396,11 +388,8 @@ void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
     m_dataview->EnsureVisible(item);
 }
 
-wxDataViewItem OpenResourceDialog::DoAppendLine(const wxString& name,
-                                                const wxString& fullname,
-                                                bool boldFont,
-                                                OpenResourceDialogItemData* clientData,
-                                                const wxBitmap& bmp)
+wxDataViewItem OpenResourceDialog::DoAppendLine(const wxString& name, const wxString& fullname, bool boldFont,
+                                                OpenResourceDialogItemData* clientData, const wxBitmap& bmp)
 {
     wxString prefix;
     clientData->m_impl = boldFont;

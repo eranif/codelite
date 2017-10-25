@@ -81,6 +81,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_bitmaps.push_back(bmpLoader->LoadBitmap("mime/16/h"));                // 15
     m_bitmaps.push_back(bmpLoader->LoadBitmap("mime/16/text"));             // 16
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/cpp_keyword"));        // 17
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 18
 
     InitializeDefaultBitmaps();
 
@@ -270,7 +271,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_index = 0;
     m_stc = ctrl;
     m_allEntries = entries;
-    
+
     // Keep the start position
     if(m_startPos == wxNOT_FOUND) {
         m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
@@ -283,10 +284,10 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     ccEvent.SetWord(GetFilter());
     EventNotifier::Get()->ProcessEvent(ccEvent);
     m_allEntries.swap(ccEvent.GetEntries());
-    
+
     // Filter all duplicate entries from the list (based on simple string match)
     RemoveDuplicateEntries();
-    
+
     // Filter results based on user input
     FilterResults();
 
@@ -575,6 +576,7 @@ int wxCodeCompletionBox::GetImageId(TagEntryPtr entry)
     if(kind == wxT("enum")) return 12;
     if(kind == wxT("enumerator")) return 13;
     if(kind == wxT("cpp_keyword")) return 17;
+    if(kind == "cenum") return 18;
     return wxNOT_FOUND;
 }
 
@@ -765,6 +767,7 @@ void wxCodeCompletionBox::InitializeDefaultBitmaps()
         m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("mime/16/h"));                // 15
         m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("mime/16/text"));             // 16
         m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/cpp_keyword"));        // 17
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 18
     }
 }
 

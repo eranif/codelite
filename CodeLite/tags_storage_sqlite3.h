@@ -35,8 +35,6 @@
 #include "codelite_exports.h"
 #include "wxStringHash.h"
 
-const wxString gTagsDatabaseVersion(wxT("CodeLite Version 7.0"));
-
 /**
  * TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
  * It allows caller to query and populate the SQLite database for tags with a set of convinient functions.
@@ -347,7 +345,7 @@ public:
      * Return the current version of the database library .
      * @return current version of the database library
      */
-    const wxString& GetVersion() const { return gTagsDatabaseVersion; }
+    const wxString& GetVersion() const;
 
     /**
      * Schema version as appears in TAGS_VERSION table

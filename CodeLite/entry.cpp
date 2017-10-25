@@ -175,7 +175,7 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
             }
         }
     }
-    
+
     if(!path.IsEmpty()) {
         SetScope(path);
     } else {
@@ -532,35 +532,47 @@ void TagEntry::FromLine(const wxString& line)
     fileName = fileName.Trim();
     pattern = pattern.Trim();
 
-//    if(kind == wxT("enumerator")) {
-//        // enums are specials, they are a scope, when they declared as "enum class ..." (C++11),
-//        // but not a scope when declared as "enum ...". So, for "enum class ..." declaration
-//        //(and anonymous enums) we appear enumerators when typed:
-//        // enumName::
-//        // Is global scope there aren't appears. For "enum ..." declaration we appear
-//        // enumerators when typed:
-//        // enumName::
-//        // and when it global (or same namespace) scope.
-//        wxStringMap_t::iterator enumField = extFields.find(wxT("enum"));
-//        if(enumField != extFields.end()) {
-//            wxString enumName = enumField->second;
-//            bool isAnonymous = enumName.AfterLast(wxT(':')).StartsWith(wxT("__anon"));
-//
-//            bool isInEnumNamespace = false;
-//            wxStringMap_t::const_iterator isInEnumNamespaceField = extFields.find(wxT("isInEnumNamespace"));
-//            if(isInEnumNamespaceField != extFields.end()) {
-//                wxString isInEnumNamespaceValue = isInEnumNamespaceField->second;
-//                isInEnumNamespace = isInEnumNamespaceValue.AfterLast(wxT(':')) == wxT("1") ? true : false;
-//            }
-//
-//            if(!isInEnumNamespace) {
-//                enumField->second = enumField->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
-//                if(!isAnonymous) {
-//                    extFields[wxT("typeref")] = enumName;
-//                }
-//            }
-//        }
-//    }
+    if(kind == "enumerator" && extFields.count("enum")) {
+        // Remove the last parent
+        wxString& scope = extFields["enum"];
+        size_t where = scope.rfind("::");
+        if(where != wxString::npos) {
+            scope = scope.Mid(0, where);
+        } else {
+            // Global enum, remove this ext field
+            extFields.erase("enum");
+        }
+    }
+
+    //    if(kind == wxT("enumerator")) {
+    //        // enums are specials, they are a scope, when they declared as "enum class ..." (C++11),
+    //        // but not a scope when declared as "enum ...". So, for "enum class ..." declaration
+    //        //(and anonymous enums) we appear enumerators when typed:
+    //        // enumName::
+    //        // Is global scope there aren't appears. For "enum ..." declaration we appear
+    //        // enumerators when typed:
+    //        // enumName::
+    //        // and when it global (or same namespace) scope.
+    //        wxStringMap_t::iterator enumField = extFields.find(wxT("enum"));
+    //        if(enumField != extFields.end()) {
+    //            wxString enumName = enumField->second;
+    //            bool isAnonymous = enumName.AfterLast(wxT(':')).StartsWith(wxT("__anon"));
+    //
+    //            bool isInEnumNamespace = false;
+    //            wxStringMap_t::const_iterator isInEnumNamespaceField = extFields.find(wxT("isInEnumNamespace"));
+    //            if(isInEnumNamespaceField != extFields.end()) {
+    //                wxString isInEnumNamespaceValue = isInEnumNamespaceField->second;
+    //                isInEnumNamespace = isInEnumNamespaceValue.AfterLast(wxT(':')) == wxT("1") ? true : false;
+    //            }
+    //
+    //            if(!isInEnumNamespace) {
+    //                enumField->second = enumField->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
+    //                if(!isAnonymous) {
+    //                    extFields[wxT("typeref")] = enumName;
+    //                }
+    //            }
+    //        }
+    //    }
 
     this->Create(fileName, name, lineNumber, pattern, kind, extFields);
 }

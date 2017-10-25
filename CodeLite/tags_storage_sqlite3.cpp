@@ -134,7 +134,7 @@ void TagsStorageSQLite::CreateSchema()
 
         wxString trigger2 = wxT("CREATE TRIGGER IF NOT EXISTS tags_insert AFTER INSERT ON tags ")
             wxT("FOR EACH ROW WHEN NEW.scope = '<global>' ") wxT("BEGIN ")
-            wxT("    INSERT INTO global_tags (id, name, tag_id) VALUES (NULL, NEW.name, NEW.id);") wxT("END;");
+                wxT("    INSERT INTO global_tags (id, name, tag_id) VALUES (NULL, NEW.name, NEW.id);") wxT("END;");
         m_db->ExecuteUpdate(trigger2);
 
         // Create unique index on tags table
@@ -927,7 +927,7 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& sc
             wxString scopeFounded(rs.GetString(0));
             wxString kindFounded(rs.GetString(1));
 
-            bool containerKind = kindFounded == wxT("struct") || kindFounded == wxT("class");
+            bool containerKind = kindFounded == wxT("struct") || kindFounded == wxT("class") || kindFounded == "cenum";
             if(scopeFounded == combinedScope && containerKind) {
                 scope = combinedScope;
                 typeName = typeNameNoScope;
@@ -1633,7 +1633,8 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
         // an example query
         // SELECT distinct name FROM 'main'.'tags' where name in ('LoadList')
         wxString kindSQL;
-        kindSQL << " AND KIND IN ('class', 'enum', 'prototype', 'macro', 'namespace', 'function', 'struct','typedef')";
+        kindSQL << " AND KIND IN ('class', 'enum', 'cenum', 'prototype', 'macro', 'namespace', 'function', "
+                   "'struct','typedef')";
 
         // Split the input vector into arrays of up to 500 elements each
         std::vector<std::vector<wxString> > v;
@@ -1681,4 +1682,10 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
     } catch(wxSQLite3Exception& e) {
         clDEBUG() << "SplitSymbols error:" << e.GetMessage() << clEndl;
     }
+}
+
+const wxString& TagsStorageSQLite::GetVersion() const
+{
+    static const wxString gTagsDatabaseVersion(wxT("CodeLite Version 11.1"));
+    return gTagsDatabaseVersion;
 }

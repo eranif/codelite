@@ -133,10 +133,8 @@
     <File Name="network/cl_indexer_macros.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix"/>
-  <Dependencies Name="Debug_Win"/>
   <Dependencies Name="ReleaseDebug_Win"/>
   <Dependencies Name="Release_Unix"/>
-  <Dependencies Name="Release_Win"/>
   <Dependencies Name="Win_x64_Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -447,4 +445,10 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug_Win">
+    <Project Name="indexer_client"/>
+  </Dependencies>
+  <Dependencies Name="Release_Win">
+    <Project Name="indexer_client"/>
+  </Dependencies>
 </CodeLite_Project>

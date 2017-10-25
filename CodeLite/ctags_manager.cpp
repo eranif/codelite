@@ -404,16 +404,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
         tags = wxString::From8BitData(reply.getTags().c_str());
     }
 
-    AddEnumClassData(tags);
-
     clDEBUG1() << "Tags:\n" << tags << clEndl;
-
-#if 0
-    wxFFile fff(clStandardPaths::Get().GetUserDataDir() + wxT("\\tmp_tags"), wxT("w+"));
-    if(fff.IsOpened()) {
-        fff.Write(tags);
-    }
-#endif
 }
 
 TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int& count)
@@ -1218,7 +1209,7 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName& fileName, int lineno,
             scope << typeName;
         else
             scope << typeScope << wxT("::") << typeName;
-        
+
         // this function will retrieve the ineherited tags as well
         std::vector<TagEntryPtr> tmpCandidates;
         TagsByScopeAndName(scope, word, tmpCandidates, ExactMatch);
@@ -2895,46 +2886,6 @@ void TagsManager::DoSortByVisibility(TagEntryPtrVector_t& tags)
     tags.insert(tags.end(), publicTags.begin(), publicTags.end());
     tags.insert(tags.end(), protectedTags.begin(), protectedTags.end());
     tags.insert(tags.end(), privateTags.begin(), privateTags.end());
-}
-
-void TagsManager::AddEnumClassData(wxString& tags)
-{
-    // Add tisInEnumNamespace flag for enums. For declaration "enum class ..." (C++11)
-    size_t startIndex = tags.find(TagEntry::KIND_ENUM + wxT(" "), 0);
-    while(startIndex != (size_t)wxNOT_FOUND) {
-        size_t patternEndIndex = tags.find(wxT("$/"), startIndex);
-        wxString pattern = tags.substr(startIndex, patternEndIndex - startIndex);
-        if(pattern.Contains(TagEntry::KIND_CLASS)) {
-
-            wxString enumName = pattern.AfterLast(wxT(' '));
-
-            // Get namespace
-            wxString enumNamespace = wxT("");
-            size_t endIndex = tags.find(wxT("\n"), startIndex);
-            wxString line = tags.substr(startIndex, endIndex - startIndex);
-            size_t namespaceStartIndex = line.find(TagEntry::KIND_NAMESPACE, 0);
-            if(namespaceStartIndex != (size_t)wxNOT_FOUND) {
-                size_t namespaceNameStartIndex = line.find(wxT(":"), namespaceStartIndex);
-                if(namespaceNameStartIndex != (size_t)wxNOT_FOUND) {
-                    namespaceNameStartIndex++;
-                    size_t namespaceNameEndIndex = line.find_first_of(wxT("\t\r"), namespaceNameStartIndex);
-                    enumNamespace =
-                        line.substr(namespaceNameStartIndex, namespaceNameEndIndex - namespaceNameStartIndex);
-                }
-            }
-
-            wxString fullName = enumNamespace.IsEmpty() ? enumName : enumNamespace + wxT("::") + enumName;
-            wxString parametersFrom = TagEntry::KIND_ENUM + wxT(":") + fullName + wxT("\r");
-            wxString parametersTo =
-                TagEntry::KIND_ENUM + wxT(":") + fullName + wxT("\tisInEnumNamespace:1") + wxT("\r");
-            size_t lengthBefore = tags.Length();
-            tags.Replace(parametersFrom, parametersTo, true);
-            startIndex += tags.Length() - lengthBefore;
-        }
-
-        startIndex += TagEntry::KIND_ENUM.Length();
-        startIndex = tags.find(TagEntry::KIND_ENUM + wxT(" "), startIndex);
-    }
 }
 
 void TagsManager::GetScopesByScopeName(const wxString& scopeName, wxArrayString& scopes)

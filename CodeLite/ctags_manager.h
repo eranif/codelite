@@ -904,7 +904,6 @@ protected:
     wxArrayString BreakToOuterScopes(const wxString& scope);
     wxString DoReplaceMacrosFromDatabase(const wxString& name);
     void DoSortByVisibility(TagEntryPtrVector_t& tags);
-    void AddEnumClassData(wxString& tags);
     void GetScopesByScopeName(const wxString& scopeName, wxArrayString& scopes);
 };
 

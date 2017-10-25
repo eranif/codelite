@@ -32,10 +32,26 @@
 #include <vector>
 #include "smart_ptr.h"
 #include "codelite_exports.h"
+#include "macros.h"
 
 class TagEntry;
 typedef SmartPtr<TagEntry> TagEntryPtr;
 typedef std::vector<TagEntryPtr> TagEntryPtrVector_t;
+
+#define KIND_CLASS "class"
+#define KIND_ENUM "enum"
+#define KIND_CLASS_ENUM "cenum"
+#define KIND_ENUMERATOR "enumerator"
+#define KIND_FUNCTION "function"
+#define KIND_PROTOTYPE "prototype"
+#define KIND_MEMBER "member"
+#define KIND_NAMESPACE "namespace"
+#define KIND_VARIABLE "variable"
+#define KIND_UNION "union"
+#define KIND_TYPEDEF "typedef"
+#define KIND_MACRO "macro"
+#define KIND_STRUCT "struct"
+#define KIND_FILE "file"
 
 /**
  * TagEntry is a persistent object which is capable of storing and loading itself from
@@ -53,15 +69,15 @@ typedef std::vector<TagEntryPtr> TagEntryPtrVector_t;
  */
 class WXDLLIMPEXP_CL TagEntry
 {
-    wxString m_path;                          ///< Tag full path
-    wxString m_file;                          ///< File this tag is found
-    int m_lineNumber;                         ///< Line number
-    wxString m_pattern;                       ///< A pattern that can be used to locate the tag in the file
-    wxString m_kind;                          ///< Member, function, class, typedef etc.
-    wxString m_parent;                        ///< Direct parent
-    wxTreeItemId m_hti;                       ///< Handle to tree item, not persistent item
-    wxString m_name;                          ///< Tag name (short name, excluding any scope names)
-    std::map<wxString, wxString> m_extFields; ///< Additional extension fields
+    wxString m_path;           ///< Tag full path
+    wxString m_file;           ///< File this tag is found
+    int m_lineNumber;          ///< Line number
+    wxString m_pattern;        ///< A pattern that can be used to locate the tag in the file
+    wxString m_kind;           ///< Member, function, class, typedef etc.
+    wxString m_parent;         ///< Direct parent
+    wxTreeItemId m_hti;        ///< Handle to tree item, not persistent item
+    wxString m_name;           ///< Tag name (short name, excluding any scope names)
+    wxStringMap_t m_extFields; ///< Additional extension fields
     long m_id;
     wxString m_scope;
     bool m_differOnByLineNumber;
@@ -70,26 +86,12 @@ class WXDLLIMPEXP_CL TagEntry
     wxString m_comment; // This member is not saved into the database
     wxString m_formattedComment;
     bool m_isCommentForamtted;
-    
+
 public:
     enum {
         Tag_No_Signature_Format = 0x00000001, // Do not attempt to format the signature. Use the GetSignature() as is
         Tag_No_Return_Value_Eval = 0x00000002 // Do not evaluate the return value. Use GetReturnValue() instead
     };
-
-    static wxString KIND_CLASS;
-    static wxString KIND_ENUM;
-    static wxString KIND_ENUMERATOR;
-    static wxString KIND_FUNCTION;
-    static wxString KIND_PROTOTYPE;
-    static wxString KIND_MEMBER;
-    static wxString KIND_NAMESPACE;
-    static wxString KIND_VARIABLE;
-    static wxString KIND_UNION;
-    static wxString KIND_TYPEDEF;
-    static wxString KIND_MACRO;
-    static wxString KIND_STRUCT;
-    static wxString KIND_FILE;
 
     // Used by std::for_each to copy elements which are constructors
     class ForEachCopyIfCtor
@@ -149,12 +151,12 @@ public:
      *	Destructor
      */
     virtual ~TagEntry();
-    
+
     /**
      * @brief return if this tag entry is a function tempalte
      */
     bool IsTemplateFunction() const;
-    
+
     /**
      * Construct a TagEntry from tagEntry struct.
      * \param entry Tag entry
@@ -171,12 +173,8 @@ public:
      * \param extFields Map of extenstion fields (key:value)
      * \param project Project name
      */
-    void Create(const wxString& fileName,
-                const wxString& name,
-                int lineNumber,
-                const wxString& pattern,
-                const wxString& kind,
-                std::map<wxString, wxString>& extFields);
+    void Create(const wxString& fileName, const wxString& name, int lineNumber, const wxString& pattern,
+                const wxString& kind, wxStringMap_t& extFields);
 
     /**
      * Test if this entry has been initialised.
@@ -236,7 +234,7 @@ public:
      * @brief return the entry pattern without the regex prefix/suffix
      */
     wxString GetPatternClean() const;
-    
+
     void SetPattern(const wxString& pattern) { m_pattern = pattern; }
 
     wxString GetKind() const;
@@ -311,7 +309,7 @@ public:
     //------------------------------------------
     wxString GetExtField(const wxString& extField) const
     {
-        std::map<wxString, wxString>::const_iterator iter = m_extFields.find(extField);
+        wxStringMap_t::const_iterator iter = m_extFields.find(extField);
         if(iter == m_extFields.end()) return wxEmptyString;
         return iter->second;
     }
@@ -336,24 +334,21 @@ public:
      * @brief return 0 if the values are the same. < 0 if a < b and > 0 if a > b
      */
     int CompareDisplayString(const TagEntryPtr& rhs) const;
-    
+
     /**
      * @brief format a comment for this tag. The format uses codelite's syntax formatting
      * that can be used later on in the various tooltip windows
      */
     wxString FormatComment();
-    
+
 private:
     /**
      * Update the path with full path (e.g. namespace::class)
      * \param path path to add
      */
     void UpdatePath(wxString& path);
-    bool TypedefFromPattern(const wxString& tagPattern,
-                            const wxString& typedefName,
-                            wxString& name,
-                            wxString& templateInit,
-                            bool nameIncludeTemplate = false);
+    bool TypedefFromPattern(const wxString& tagPattern, const wxString& typedefName, wxString& name,
+                            wxString& templateInit, bool nameIncludeTemplate = false);
 };
 
 #endif // CODELITE_ENTRY_H

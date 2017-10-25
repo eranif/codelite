@@ -2,6 +2,7 @@
 #include <wx/settings.h>
 #include <wx/font.h>
 #include "drawingutils.h"
+#include <wx/dcmemory.h>
 
 #define DRAW_LINE(__p1, __p2) \
     dc.DrawLine(__p1, __p2);  \

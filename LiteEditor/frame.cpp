@@ -2484,7 +2484,6 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
 
     bool colVars(false);
     bool newColVars(false);
-    bool newColTags(false);
     bool caseSensitive(false);
 
     size_t colourTypes(0);

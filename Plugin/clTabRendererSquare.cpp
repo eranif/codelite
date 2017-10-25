@@ -66,13 +66,9 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
         memDC.DrawRectangle(rotatedRect);
         memDC.SetFont(font);
         memDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
-
-        memDC.SetPen(penColour);
-        memDC.SetBrush(bgColour);
-        memDC.DrawText(tabInfo.m_label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY);
-        memDC.SetPen(bgColour);
+        memDC.DrawText(tabInfo.m_label, tabInfo.m_textY, tabInfo.m_textX);
         if(tabInfo.GetBitmap().IsOk()) {
-            memDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpX, tabInfo.m_bmpY);
+            memDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX);
         }
         memDC.SelectObject(wxNullBitmap);
         wxImage img = bmp.ConvertToImage();

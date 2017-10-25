@@ -1668,7 +1668,7 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
                 wxString name = res.GetString(0);
                 wxString kind = res.GetString(1);
                 allSymbols.push_back(name);
-                if((kind != "function") && (kind != "prototype")) {
+                if((kind != "function") && (kind != "prototype") && (kind != "macro")) {
                     workspaceSymbols.push_back(name);
                 }
             }

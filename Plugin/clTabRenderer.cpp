@@ -135,28 +135,21 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl)
 void clTabInfo::CalculateOffsets(size_t style)
 {
     wxBitmap b(1, 1);
-    wxMemoryDC memDC(b);
+    wxMemoryDC memoryDC(b);
+    wxGCDC gcdc(memoryDC);
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
-    
-    bool isMinimalTheme = (dynamic_cast<clTabRendererSquare*>(m_tabCtrl->GetArt().get()) != nullptr);
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    memDC.SetFont(font);
 
-    wxSize sz = memDC.GetTextExtent(m_label);
-    wxSize fixedHeight = memDC.GetTextExtent("Tp");
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    gcdc.SetFont(font);
+    
+    wxSize sz = gcdc.GetTextExtent(m_label);
+    wxSize fixedHeight = gcdc.GetTextExtent("Tp");
     if(IS_VERTICAL_TABS(style)) {
         m_height = fixedHeight.GetHeight() + (5 * m_tabCtrl->GetArt()->ySpacer);
     } else {
         m_height = fixedHeight.GetHeight() + (4 * m_tabCtrl->GetArt()->ySpacer);
     }
-
-    //#ifdef __WXGTK__
-    //    // On GTK, limit the tab height
-    //    if(m_height >= 30) {
-    //        m_height = 30;
-    //    }
-    //#endif
 
     m_width = 0;
     if(!IS_VERTICAL_TABS(style) || true) {
@@ -178,10 +171,6 @@ void clTabInfo::CalculateOffsets(size_t style)
 
     // Text
     m_textX = m_width;
-    if(isMinimalTheme) {
-        m_textX +=  m_tabCtrl->GetArt()->xSpacer;
-        m_width += m_tabCtrl->GetArt()->xSpacer;
-    }
     m_textY = ((m_height - sz.y) / 2);
     m_width += sz.x;
 
@@ -192,13 +181,9 @@ void clTabInfo::CalculateOffsets(size_t style)
         m_bmpCloseX = m_width;
         m_bmpCloseY = ((m_height - 12) / 2) + 2;
         m_width += 12; // X button is 10 pixels in size
-        if(isMinimalTheme) {
-            m_width += m_tabCtrl->GetArt()->xSpacer;
-        }
-    } else {
-        m_width += m_tabCtrl->GetArt()->xSpacer;
     }
-    
+    m_width += m_tabCtrl->GetArt()->xSpacer;
+
     if(!IS_VERTICAL_TABS(style) || true) {
         m_width += m_tabCtrl->GetArt()->majorCurveWidth;
         m_width += m_tabCtrl->GetArt()->smallCurveWidth;

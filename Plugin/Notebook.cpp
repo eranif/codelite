@@ -380,7 +380,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
                 m_chevronRect.x -= 2;
             }
             m_chevronRect.SetWidth(m_chevronRect.GetWidth() - GetArt()->bottomAreaHeight);
-            rect.SetHeight(rect.GetHeight() + 16);
+            rect.y = m_chevronRect.GetBottomLeft().y;
         } else {
             // Reduce the length of the tabs bitmap by 16 pixels (we will draw there the drop down
             // button)
@@ -389,6 +389,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             if(GetStyle() & kNotebook_BottomTabs) {
                 m_chevronRect.y += GetArt()->bottomAreaHeight;
             }
+            m_chevronRect.SetWidth(m_chevronRect.GetWidth() + 2);
             m_chevronRect.SetHeight(m_chevronRect.GetHeight() - GetArt()->bottomAreaHeight);
             rect.SetWidth(rect.GetWidth() + 16);
         }
@@ -484,8 +485,13 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
-            wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                               ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+            wxCoord chevronX;
+            if(IsVerticalTabs()) {
+                chevronX = m_chevronRect.GetTopLeft().x +
+                           ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
+            } else {
+                chevronX = m_chevronRect.GetTopLeft().x;
+            }
             wxCoord chevronY = m_chevronRect.GetTopLeft().y +
                                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
             dc.DrawBitmap(m_colours.chevronDown, chevronX, chevronY);
@@ -500,7 +506,7 @@ void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 {
     int majorDimension = GetArt()->majorCurveWidth ? 5 : 0;
     if(IsVerticalTabs()) {
-        majorDimension = 0;
+        majorDimension = (GetStyle() & kNotebook_ShowFileListButton) ? 20 : 0;
     }
 
     for(size_t i = 0; i < tabs.size(); ++i) {

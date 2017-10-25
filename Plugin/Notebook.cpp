@@ -861,11 +861,20 @@ void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, wxA
         clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
         wxRect r(tab->GetRect());
         if(r.Contains(pt)) {
-            if(pt.x > ((r.GetWidth() / 2) + r.GetX())) {
-                // the point is on the RIGHT side
-                align = wxALIGN_RIGHT;
+            if(IsVerticalTabs()) {
+                if(pt.y > ((r.GetHeight() / 2) + r.GetY())) {
+                    // the point is on the RIGHT side
+                    align = wxALIGN_TOP;
+                } else {
+                    align = wxALIGN_BOTTOM;
+                }
             } else {
-                align = wxALIGN_LEFT;
+                if(pt.x > ((r.GetWidth() / 2) + r.GetX())) {
+                    // the point is on the RIGHT side
+                    align = wxALIGN_RIGHT;
+                } else {
+                    align = wxALIGN_LEFT;
+                }
             }
             tabHit = i;
             realPosition = DoGetPageIndex(tab->GetWindow());
@@ -1200,7 +1209,7 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex, wxAlignment align)
     bool movingTabRight;
     if(align == wxALIGN_INVALID) {
         movingTabRight = (newIndex > activeTabInex);
-    } else if(align == wxALIGN_RIGHT) {
+    } else if((align == wxALIGN_RIGHT) || (align == wxALIGN_TOP)) {
         movingTabRight = true;
     } else {
         movingTabRight = false;

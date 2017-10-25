@@ -40,9 +40,7 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
 
     dc.SetBrush(bgColour);
     dc.SetPen(penColour);
-    // if(!tabInfo.IsActive()) {
     dc.SetPen(*wxTRANSPARENT_PEN);
-    // }
     dc.DrawRectangle(rr);
 
     // Restore the pen
@@ -58,18 +56,28 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
         }
         // dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
 
-    } else if(style & kNotebook_LeftTabs) {
-        dc.DrawRotatedText(tabInfo.m_label, tabInfo.m_textX, rr.GetY() + rr.GetHeight() - tabInfo.m_textY, 90.0);
-        // dc.DrawLine(rr.GetBottomLeft(), rr.GetBottomRight());
-        dc.SetPen(bgColour);
-        DRAW_LINE(rr.GetTopLeft(), rr.GetBottomLeft());
+    } else if(IS_VERTICAL_TABS(style)) {
+        wxRect rotatedRect(0, 0, tabInfo.m_rect.GetHeight(), tabInfo.m_rect.GetWidth());
+        wxBitmap bmp(rotatedRect.GetSize());
+        wxMemoryDC memDC(bmp);
+        memDC.SetPen(colours.tabAreaColour);
+        memDC.SetBrush(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
+        memDC.DrawRectangle(rotatedRect);
+        memDC.SetFont(font);
+        memDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
 
-    } else if(style & kNotebook_RightTabs) {
-        dc.DrawRotatedText(tabInfo.m_label, tabInfo.m_textX, rr.GetY() + rr.GetHeight() - tabInfo.m_textY, 90);
-        // dc.DrawLine(rr.GetBottomLeft(), rr.GetBottomRight());
-        dc.SetPen(bgColour);
-        DRAW_LINE(rr.GetTopRight(), rr.GetBottomRight());
-
+        memDC.SetPen(penColour);
+        memDC.SetBrush(bgColour);
+        memDC.DrawText(tabInfo.m_label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY);
+        memDC.SetPen(bgColour);
+        if(tabInfo.GetBitmap().IsOk()) {
+            memDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpX, tabInfo.m_bmpY);
+        }
+        memDC.SelectObject(wxNullBitmap);
+        wxImage img = bmp.ConvertToImage();
+        img = img.Rotate90((style & kNotebook_RightTabs));
+        bmp = wxBitmap(img);
+        dc.DrawBitmap(bmp, tabInfo.m_rect.GetTopLeft());
     } else {
         // Draw bitmap
         if(tabInfo.GetBitmap().IsOk()) {

@@ -35,6 +35,7 @@
 #include <wx/event.h>
 #include "cl_command_event.h"
 #include <wx/font.h>
+#include "wxStringHash.h"
 
 // When the version is 0, it means that we need to upgrade the colours for the line numbers
 // and for the default state
@@ -47,7 +48,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_UPGRADE_LEXERS_PROGRESS, clComma
 class WXDLLIMPEXP_SDK ColoursAndFontsManager : public wxEvtHandler
 {
     typedef std::vector<LexerConf::Ptr_t> Vec_t;
-    typedef std::map<wxString, ColoursAndFontsManager::Vec_t> Map_t;
+    typedef std::unordered_map<wxString, ColoursAndFontsManager::Vec_t> Map_t;
 
 protected:
     bool m_initialized;

@@ -200,27 +200,27 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     wxString themeName = lexer->GetThemeName();
     themeName = themeName.Mid(0, 1).Capitalize() + themeName.Mid(1);
     lexer->SetThemeName(themeName);
-    
+
     if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
     }
-    
+
     // Add C++ keyword "override"
     if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("override")) {
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " override", 0);
     }
-    
+
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
         lexer->SetFileSpec("*.java");
     }
-    
+
     // Append *.sqlite to the SQL lexer if missing
     if(lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.sqlite");
     }
-    
+
     // Hack2: since we now provide our own PHP and javaScript lexer, remove the PHP/JS extensions from
     // the HTML lexer
     if(lexer->GetName() == "html" && (lexer->GetFileSpec().Contains(".php") || lexer->GetFileSpec().Contains("*.js"))) {
@@ -240,16 +240,16 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-    
+
     if(lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
         lexer->SetKeyWords(lexer->GetKeyWords(4) + " <?php <? ", 4);
     }
-    
+
     // Add wxcp file extension to the JavaScript lexer
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
     }
-    
+
     // Add *.scss file extension to the css lexer
     if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".scss")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.scss");
@@ -259,7 +259,21 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".less")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.less");
     }
-    
+
+    // Set the JavaScript keywords
+    if(lexer->GetName() == "php" && !lexer->GetKeyWords(1).Contains("instanceof")) {
+        lexer->SetKeyWords(
+            "break do instanceof typeof case else new var catch finally return void continue for switch while "
+            "debugger function this with default if throw delete in try abstract  export interface  static "
+            "boolean  extends "
+            "long super"
+            "byte final native synchronized char float package throws class goto private transient const "
+            "implements  protected "
+            " volatile double import  public enum "
+            "int short null true false",
+            1);
+    }
+
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 
@@ -277,8 +291,8 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(iter != vec.end()) {
         vec.erase(iter);
     }
-    iter = std::find_if(
-        m_allLexers.begin(), m_allLexers.end(), LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
+    iter = std::find_if(m_allLexers.begin(), m_allLexers.end(),
+                        LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
     if(iter != m_allLexers.end()) {
         m_allLexers.erase(iter);
     }
@@ -505,8 +519,8 @@ void ColoursAndFontsManager::SaveGlobalSettings()
     EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
 }
 
-LexerConf::Ptr_t
-ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName, const wxString& sourceTheme)
+LexerConf::Ptr_t ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName,
+                                                   const wxString& sourceTheme)
 {
     LexerConf::Ptr_t sourceLexer = GetLexer(lexerName, sourceTheme);
     CHECK_PTR_RET_NULL(sourceLexer);
@@ -558,10 +572,10 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
 
     defaultLexersFileName.AppendDir("lexers");
     defaultLexersFileName.SetFullName("lexers.json");
-    
+
     wxString str_defaultLexersFileName = defaultLexersFileName.GetFullPath();
     wxUnusedVar(str_defaultLexersFileName);
-    
+
     m_allLexers.clear();
     m_lexersMap.clear();
 
@@ -675,7 +689,7 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
             }
         }
     }
-    
+
     if(force || m_lexersVersion < 5) {
         // Indentation guides (style #37)
         StyleProperty& indentGuides = lexer->GetProperty(37);
@@ -739,15 +753,15 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     lexer->SetThemeName(themeName);
 
     CL_DEBUG("Loading lexer: %s [%s]", lexerName, lexer->GetName());
-    
+
     if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
     }
-    
+
     if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("override")) {
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " override", 0);
     }
-    
+
     // Add Arduino sketches files as C++ (*.ino)
     if(lexer->GetName() == "c++" && !lexer->GetFileSpec().Contains(".ino")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ino");
@@ -758,7 +772,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
         lexer->SetFileSpec("*.java");
     }
-    
+
     // Append *.sqlite to the SQL lexer if missing
     if(lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.sqlite");
@@ -779,25 +793,25 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".qml")) {
         lexer->SetFileSpec("*.js;*.javascript;*.qml;*.json");
     }
-    
+
     // Hack5: all the remove *.scss from the css lexer (it now has its own lexer)
     if(lexer->GetName() == "css" && lexer->GetFileSpec().Contains(".scss")) {
         lexer->SetFileSpec("*.css");
     }
-    
+
     // Add *.less file extension to the css lexer
     if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".less")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.less");
     }
-    
+
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-    
+
     if(lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
         lexer->SetKeyWords(lexer->GetKeyWords(4) + " <?php <? ", 4);
     }
-    
+
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".php5")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.php5");
     }
@@ -810,7 +824,19 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
     }
-
+    // Set the JavaScript keywords
+    if(lexer->GetName() == "php" && !lexer->GetKeyWords(1).Contains("instanceof")) {
+        lexer->SetKeyWords(
+            "break do instanceof typeof case else new var catch finally return void continue for switch while "
+            "debugger function this with default if throw delete in try abstract  export interface  static "
+            "boolean  extends "
+            "long super"
+            "byte final native synchronized char float package throws class goto private transient const "
+            "implements  protected "
+            " volatile double import  public enum "
+            "int short null true false",
+            1);
+    }
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 
@@ -829,8 +855,8 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
         vec.erase(iter);
     }
 
-    iter = std::find_if(
-        m_allLexers.begin(), m_allLexers.end(), LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
+    iter = std::find_if(m_allLexers.begin(), m_allLexers.end(),
+                        LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
     if(iter != m_allLexers.end()) {
         m_allLexers.erase(iter);
     }
@@ -848,7 +874,7 @@ void ColoursAndFontsManager::AddLexer(LexerConf::Ptr_t lexer)
 void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
 {
     this->m_globalFont = font;
-    
+
     // Loop for every lexer and update the font per style
     std::for_each(m_allLexers.begin(), m_allLexers.end(), [&](LexerConf::Ptr_t lexer) {
         StyleProperty::Map_t& props = lexer->GetLexerProperties();

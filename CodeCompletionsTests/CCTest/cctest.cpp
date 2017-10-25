@@ -152,7 +152,7 @@ TEST_FUNC(testTtp)
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "smart_ptr_of_template.h"), 3,
                                                  wxT("ttp->GetRoot()->GetData()."),
                                                  LoadFile(GetTestsDir() + "smart_ptr_of_template.h"), tags);
-    CHECK_SIZE(tags.size(), 101);
+    CHECK_SIZE(tags.size(), 88);
 
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "smart_ptr_of_template.h"), 3,
                                                  wxT("ttp->GetRoot()->GetKey()."),
@@ -186,7 +186,7 @@ TEST_FUNC(testStdVectorOfTagEntryPtr)
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "std_vec_tag_entry_ptr.h"), 3,
                                                  wxT("tags.at(0)->"),
                                                  LoadFile(GetTestsDir() + "std_vec_tag_entry_ptr.h"), tags);
-    CHECK_SIZE(tags.size(), 101);
+    CHECK_SIZE(tags.size(), 88);
 
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "std_vec_tag_entry_ptr.h"), 3,
                                                  wxT("tags.at(0)."),

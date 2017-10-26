@@ -60,15 +60,11 @@ void clTabColours::InitDarkColours()
     activeTabInnerPenColour = activeTabBgColour;
 
     inactiveTabTextColour = wxColour("rgb(200, 200, 200)");
-    inactiveTabBgColour = activeTabBgColour.ChangeLightness(130);
+    inactiveTabBgColour = activeTabBgColour.ChangeLightness(140);
     inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
     inactiveTabInnerPenColour = inactiveTabBgColour;
-
-#ifdef __WXOSX__
-    tabAreaColour = *wxBLACK;
-#else
-    tabAreaColour = inactiveTabBgColour.ChangeLightness(115);
-#endif
+    tabAreaColour = inactiveTabBgColour.ChangeLightness(120);
+    
     // markerColour = wxColour("rgb(255, 128, 0)");
     markerColour = wxColour("rgb(105, 193, 240)");
 
@@ -147,6 +143,7 @@ void clTabInfo::CalculateOffsets(size_t style)
     wxSize fixedHeight = gcdc.GetTextExtent("Tp");
     if(IS_VERTICAL_TABS(style)) {
         m_height = fixedHeight.GetHeight() + (5 * m_tabCtrl->GetArt()->ySpacer);
+        m_height += 2;
     } else {
         m_height = fixedHeight.GetHeight() + (4 * m_tabCtrl->GetArt()->ySpacer);
     }

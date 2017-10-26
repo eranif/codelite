@@ -77,7 +77,8 @@ void MainBook::CreateGuiControls()
                  kNotebook_MouseMiddleClickFireEvent | // instead of closing the tab, fire an event
                  kNotebook_ShowFileListButton |        // show drop down list of all open tabs
                  kNotebook_EnableNavigationEvent |     // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
-                 kNotebook_UnderlineActiveTab;         // Mark active tab with dedicated coloured line
+                 kNotebook_UnderlineActiveTab |        // Mark active tab with dedicated coloured line
+                 kNotebook_DynamicColours;             // The tabs colour adjust to the editor's theme
 
     if(EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
         style |= (kNotebook_CloseButtonOnActiveTabFireEvent | kNotebook_CloseButtonOnActiveTab);
@@ -1144,9 +1145,6 @@ void MainBook::DoUpdateNotebookTheme()
                 style &= ~kNotebook_DarkTabs;
                 style |= kNotebook_LightTabs;
             }
-        } else {
-            style &= ~kNotebook_DarkTabs;
-            style |= kNotebook_LightTabs;
         }
     } else if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         style &= ~kNotebook_LightTabs;
@@ -1161,6 +1159,7 @@ void MainBook::DoUpdateNotebookTheme()
     } else {
         style |= (kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);
     }
+    
     if(initialStyle != style) {
         m_book->SetStyle(style);
     }
@@ -1266,7 +1265,7 @@ void MainBook::OnDetachedEditorClosed(clCommandEvent& e)
     e.Skip();
     IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
     DoEraseDetachedEditor(editor);
-    
+
     wxString alternateText = (editor && editor->IsModified()) ? editor->GetCtrl()->GetText() : "";
     // Open the file again in the main book
     CallAfter(&MainBook::DoOpenFile, e.GetFileName(), alternateText);
@@ -1409,6 +1408,8 @@ void MainBook::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
     DoUpdateNotebookTheme();
+    // force a redrawing of the main notebook
+    m_book->SetStyle(m_book->GetStyle());
 }
 
 void MainBook::OnEditorSettingsChanged(wxCommandEvent& e)

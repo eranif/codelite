@@ -61,8 +61,12 @@ enum NotebookStyle {
     /// When scrolling with the mouse button when hovering the tab control, switch between tabs
     kNotebook_MouseScrollSwitchTabs = (1 << 15),
 
+    /// The notebook colours are changing based on the current editor theme
+    kNotebook_DynamicColours = (1 << 16),
+
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
+
 };
 
 #define IS_VERTICAL_TABS(style) ((style & kNotebook_RightTabs) || (style & kNotebook_LeftTabs))

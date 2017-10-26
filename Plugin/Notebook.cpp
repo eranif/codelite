@@ -28,6 +28,8 @@
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "editor_config.h"
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
 #endif
 
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
@@ -909,6 +911,23 @@ void clTabCtrl::SetStyle(size_t style)
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         m_tabs.at(i)->CalculateOffsets(GetStyle());
     }
+    
+#if CL_BUILD
+    if(m_style & kNotebook_DynamicColours) {
+        wxString globalTheme = ColoursAndFontsManager::Get().GetGlobalTheme();
+        if(!globalTheme.IsEmpty()) {
+            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", globalTheme);
+            if(lexer && lexer->IsDark()) {
+                // Dark theme
+                m_colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
+                m_colours.activeTabInnerPenColour = m_colours.activeTabBgColour;
+                m_colours.activeTabPenColour = m_colours.activeTabBgColour.ChangeLightness(120);
+                m_colours.activeTabTextColour = *wxWHITE;
+            }
+        }
+    }
+#endif
+
     m_visibleTabs.clear();
     Layout();
     Refresh();

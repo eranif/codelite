@@ -92,67 +92,51 @@ void clTabRendererSquare::DrawBottomRect(
     clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours, size_t style)
 {
     const int penWidth = 1;
-    wxPen pen(colours.activeTabPenColour, penWidth);
     wxPen markerPen(colours.markerColour, penWidth);
-
-    wxPoint p1, p2;
-    dc.SetPen(pen);
-    
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawRectangle(activeTab->GetRect());
-    
-    if(style & kNotebook_BottomTabs) {
-        // draw a single line at the top
-        dc.DrawLine(clientRect.GetBottomLeft(), clientRect.GetBottomRight());
-        
-    } else {
-        // draw a single line at the top
-        dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
-
-        p1 = activeTab->GetRect().GetTopLeft();
-        p2 = activeTab->GetRect().GetTopRight();
-    }
-
     bool underlineTab = (style & kNotebook_UnderlineActiveTab);
-
-    pen = wxPen(colours.activeTabBgColour, penWidth);
     
     if(!IS_VERTICAL_TABS(style)) {
-        wxPoint delPt1, delPt2;
-        if(style & kNotebook_BottomTabs) {
-            delPt1 = activeTab->GetRect().GetBottomLeft();
-            delPt2 = activeTab->GetRect().GetBottomRight();
-            
-        } else {
-            delPt1 = activeTab->GetRect().GetTopLeft();
-            delPt2 = activeTab->GetRect().GetTopRight();
-        }
-        delPt2.x -= penWidth;
+        wxPoint pt1, pt2;
         dc.SetPen(colours.activeTabBgColour);
-        DRAW_LINE(delPt1, delPt2);
+        if(style & kNotebook_BottomTabs) {
+            // bottom tabs
+            pt1 = clientRect.GetTopLeft();
+            pt2 = clientRect.GetTopRight();
+            DRAW_LINE(pt1, pt2);
+
+        } else {
+            // Top tabs
+            pt1 = clientRect.GetBottomLeft();
+            pt2 = clientRect.GetBottomRight();
+            DRAW_LINE(pt1, pt2);
+            
+            pt1.y -= 1;
+            pt2.y -= 1;
+            DRAW_LINE(pt1, pt2);
+        }
     }
     
     // Draw marker line if needed
     if(underlineTab) {
-
+        wxPoint pt1, pt2;
         if((style & kNotebook_LeftTabs) || (style & kNotebook_RightTabs)) {
-            p1 = activeTab->GetRect().GetTopLeft();
-            p2 = activeTab->GetRect().GetTopRight();
+            pt1 = activeTab->GetRect().GetTopLeft();
+            pt2 = activeTab->GetRect().GetTopRight();
             dc.SetPen(markerPen);
             for(size_t i = 0; i < 2; ++i) {
-                DRAW_LINE(p1, p2);
-                p1.y += 1;
-                p2.y += 1;
+                DRAW_LINE(pt1, pt2);
+                pt1.y += 1;
+                pt2.y += 1;
             }
         } else {
-            p1 = activeTab->GetRect().GetTopLeft();
-            p2 = activeTab->GetRect().GetBottomLeft();
+            pt1 = activeTab->GetRect().GetTopLeft();
+            pt2 = activeTab->GetRect().GetBottomLeft();
             dc.SetPen(markerPen);
 
             for(size_t i = 0; i < 2; ++i) {
-                DRAW_LINE(p1, p2);
-                p1.x += 1;
-                p2.x += 1;
+                DRAW_LINE(pt1, pt2);
+                pt1.x += 1;
+                pt2.x += 1;
             }
         }
     }

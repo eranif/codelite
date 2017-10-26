@@ -103,21 +103,25 @@ void ThemeHandlerHelper::DoUpdateColours(wxWindow* win, const wxColour& bg, cons
 void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
 {
     // wxTextCtrl needs some extra special handling
+
     if(dynamic_cast<Notebook*>(win)) {
         Notebook* book = dynamic_cast<Notebook*>(win);
-        if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
-            clTabRenderer::Ptr_t art(new clTabRendererSquare);
-            book->SetArt(art);
-
-        } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleTRAPEZOID) {
-            clTabRenderer::Ptr_t art(new clTabRendererCurved);
-            book->SetArt(art);
-
+        if(book->GetStyle() & kNotebook_RightTabs || book->GetStyle() & kNotebook_LeftTabs) {
+            // Vertical tabs, change the art provider to use the square shape
+            book->SetArt(clTabRenderer::Ptr_t(new clTabRendererSquare()));
         } else {
-            clTabRenderer::Ptr_t art(new clTabRendererClassic);
-            book->SetArt(art);
+            // Else, use the settings
+            size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
+            if(options & OptionsConfig::Opt_TabStyleMinimal) {
+                book->SetArt(clTabRenderer::Ptr_t(new clTabRendererSquare()));
+            } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
+                book->SetArt(clTabRenderer::Ptr_t(new clTabRendererCurved()));
+            } else {
+                // the default
+                book->SetArt(clTabRenderer::Ptr_t(new clTabRendererClassic()));
+            }
         }
-        
+
         // Enable tab switching using the mouse scrollbar
         book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
                           EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());

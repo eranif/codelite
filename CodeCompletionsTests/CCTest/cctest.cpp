@@ -347,14 +347,10 @@ TEST_FUNC(testTypedefIteratorInsideClass)
 TEST_FUNC(testStrcutDelcratorInFuncArgument)
 {
     std::vector<TagEntryPtr> tags;
-    wxString codeliteHome;
-    wxGetEnv(wxT("CL_HOME"), &codeliteHome);
-    wxString headerFile;
-    headerFile << codeliteHome << wxT("/SampleWorkspace/header.h");
-    wxFileName fn(headerFile);
-    fn.MakeAbsolute();
-    headerFile = fn.GetFullPath();
-    TagsManagerST::Get()->AutoCompleteCandidates(headerFile, 77, wxT("s->"), wxEmptyString, tags);
+    wxFileName fn(GetTestsDir() + "/../../SampleWorkspace/header.h");
+    fn.Normalize();
+    std::cout << "Opening file: " << fn.GetFullPath() << std::endl;
+    TagsManagerST::Get()->AutoCompleteCandidates(fn, 77, wxT("pString->"), wxEmptyString, tags);
     CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
     return true;
 }

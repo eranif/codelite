@@ -5,6 +5,7 @@
 #include <iostream>
 #include "ctags_manager.h"
 #include "CxxVariableScanner.h"
+#include "CxxTokenizer.h"
 
 static wxString InputFile(const wxString& name)
 {
@@ -116,6 +117,19 @@ TEST_FUNC(test_cxx_lambda_locals)
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
     CHECK_BOOL(vars.count("myStr") == 1);
     CHECK_WXSTRING(vars["myStr"]->GetName(), "myStr");
+    return true;
+}
+
+
+TEST_FUNC(test_optimize_scope)
+{
+    wxString buffer = "#define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false\n"
+                      "void MyClass::FooBar(){";
+
+    CxxTokenizer tokenizer;
+    wxString visibleScope = tokenizer.GetVisibleScope(buffer);
+    visibleScope.Trim().Trim(false);
+    CHECK_WXSTRING(visibleScope,  "void MyClass :: FooBar(){");
     return true;
 }
 

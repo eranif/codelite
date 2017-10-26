@@ -73,7 +73,7 @@ public:
 // Test the 'testStructDeclaratorInFuncArgument
 //////////////////////////////////////////////////////////////
 
-void foo_bar(struct wxString* s) {
+void foo_bar(struct wxString* pString) {
     
 }
 } // Namespace Baz

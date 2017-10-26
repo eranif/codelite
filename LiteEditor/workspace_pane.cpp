@@ -52,6 +52,9 @@
 #include <algorithm>
 #include "pluginmanager.h"
 #include "clTabTogglerHelper.h"
+#include "clTabRendererClassic.h"
+#include "clTabRendererSquare.h"
+#include "clTabRendererCurved.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -102,6 +105,9 @@ void WorkspacePane::CreateGUIControls()
     }
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
+    bool verticalTabs = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxRIGHT ||
+                        EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxLEFT;
+    m_book->SetArt(GetNotebookRenderer());
 
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
@@ -401,6 +407,8 @@ void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
+    m_book->SetArt(GetNotebookRenderer());
+
     if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         m_book->SetStyle((m_book->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
@@ -430,6 +438,25 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
         int where = GetNotebook()->GetPageIndex(t.m_label);
         if(where != wxNOT_FOUND) {
             GetNotebook()->RemovePage(where);
+        }
+    }
+}
+
+clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer()
+{
+    if(m_book->GetStyle() & kNotebook_RightTabs || m_book->GetStyle() & kNotebook_LeftTabs) {
+        // Vertical tabs, change the art provider to use the square shape
+        return clTabRenderer::Ptr_t(new clTabRendererSquare());
+    } else {
+        // Else, use the settings
+        size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
+        if(options & OptionsConfig::Opt_TabStyleMinimal) {
+            return clTabRenderer::Ptr_t(new clTabRendererSquare);
+        } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
+            return clTabRenderer::Ptr_t(new clTabRendererCurved());
+        } else {
+            // the default
+            return clTabRenderer::Ptr_t(new clTabRendererClassic);
         }
     }
 }

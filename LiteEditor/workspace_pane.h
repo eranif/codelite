@@ -32,6 +32,7 @@
 #include "clAuiCaptionEnabler.h"
 #include <map>
 #include <wx/bitmap.h>
+#include "clTabRenderer.h"
 
 // Forward Declarations
 class FileViewTree;
@@ -58,7 +59,6 @@ private:
     FileExplorer* m_explorer;
     WorkspaceTab* m_workspaceTab;
     clAuiCaptionEnabler m_captionEnabler;
-
 protected:
     struct Tab {
         wxString m_label;
@@ -88,6 +88,7 @@ protected:
     void OnInitDone(wxCommandEvent& event);
     void OnSettingsChanged(wxCommandEvent& event);
     void OnToggleWorkspaceTab(clCommandEvent& event);
+    clTabRenderer::Ptr_t GetNotebookRenderer();
 
 public:
     WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr);

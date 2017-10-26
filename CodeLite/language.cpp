@@ -122,6 +122,7 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
     int parenthesisDepth = 0;
     int state = SCP_STATE_NORMAL;
     while(tokenizer.NextToken(token)) {
+        if(token.IsPreProcessor()) continue;
         switch(state) {
         case SCP_STATE_NORMAL:
             switch(token.type) {

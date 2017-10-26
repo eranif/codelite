@@ -81,13 +81,11 @@ void OutputPane::CreateGUIControls()
     if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxBOTTOM) {
         style |= kNotebook_BottomTabs;
     } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxLEFT) {
-
 #ifdef __WXOSX__
         style &= ~(kNotebook_BottomTabs | kNotebook_LeftTabs | kNotebook_RightTabs);
 #else
         style |= kNotebook_LeftTabs;
 #endif
-
     } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxRIGHT) {
 #ifdef __WXOSX__
         style |= kNotebook_BottomTabs;

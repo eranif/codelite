@@ -921,7 +921,7 @@ void clTabCtrl::SetStyle(size_t style)
                 // Dark theme
                 m_colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
                 m_colours.activeTabInnerPenColour = m_colours.activeTabBgColour;
-                m_colours.activeTabPenColour = m_colours.activeTabBgColour.ChangeLightness(120);
+                m_colours.activeTabPenColour = m_colours.activeTabBgColour.ChangeLightness(110);
                 m_colours.activeTabTextColour = *wxWHITE;
             }
         }

@@ -247,7 +247,7 @@ void clTabRendererCurved::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
 void clTabRendererCurved::DrawBottomRect(
     clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours, size_t style)
 {
-#ifdef __WXOSX__
+#if 0
     if(!IS_VERTICAL_TABS(style)) {
         wxPoint pt1, pt2;
         dc.SetPen(colours.activeTabBgColour);

@@ -88,34 +88,13 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
     }
 }
 
-void clTabRendererSquare::DrawBottomRect(
-    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours, size_t style)
+void clTabRendererSquare::DrawBottomRect(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
+                                         const clTabColours& colours, size_t style)
 {
     const int penWidth = 1;
     wxPen markerPen(colours.markerColour, penWidth);
     bool underlineTab = (style & kNotebook_UnderlineActiveTab);
-    
-    if(!IS_VERTICAL_TABS(style)) {
-        wxPoint pt1, pt2;
-        dc.SetPen(colours.activeTabBgColour);
-        if(style & kNotebook_BottomTabs) {
-            // bottom tabs
-            pt1 = clientRect.GetTopLeft();
-            pt2 = clientRect.GetTopRight();
-            DRAW_LINE(pt1, pt2);
 
-        } else {
-            // Top tabs
-            pt1 = clientRect.GetBottomLeft();
-            pt2 = clientRect.GetBottomRight();
-            DRAW_LINE(pt1, pt2);
-            
-            pt1.y -= 1;
-            pt2.y -= 1;
-            DRAW_LINE(pt1, pt2);
-        }
-    }
-    
     // Draw marker line if needed
     if(underlineTab) {
         wxPoint pt1, pt2;
@@ -138,6 +117,26 @@ void clTabRendererSquare::DrawBottomRect(
                 pt1.x += 1;
                 pt2.x += 1;
             }
+        }
+    }
+    if(!IS_VERTICAL_TABS(style)) {
+        wxPoint pt1, pt2;
+        dc.SetPen(colours.activeTabBgColour);
+        if(style & kNotebook_BottomTabs) {
+            // bottom tabs
+            pt1 = clientRect.GetTopLeft();
+            pt2 = clientRect.GetTopRight();
+            DRAW_LINE(pt1, pt2);
+
+        } else {
+            // Top tabs
+            pt1 = clientRect.GetBottomLeft();
+            pt2 = clientRect.GetBottomRight();
+            DRAW_LINE(pt1, pt2);
+
+            pt1.y -= 1;
+            pt2.y -= 1;
+            DRAW_LINE(pt1, pt2);
         }
     }
 }

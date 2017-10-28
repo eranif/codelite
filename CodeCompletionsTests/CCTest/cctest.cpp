@@ -438,6 +438,18 @@ TEST_FUNC(testDeclTypeInTemplate)
     return true;
 }
 
+TEST_FUNC(testWxArrayStringWitArrayInt)
+{
+    wxString buffer = "wxArrayInt choices;\n"
+                      "wxArrayString lexers;\n"
+                      "for(size_t i = 0; i < choices.GetCount(); ++i) {\n"
+                      "    lexers.Item(choices.Item(i)).";
+    std::vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName("dummy.h"), 4, "lexers.Item(choices.Item(i)).", buffer, tags);
+    CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
+    return true;
+}
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -461,28 +473,6 @@ void testCC()
     Tester::Release();
     TagsManagerST::Free();
     LanguageST::Free();
-}
-
-void testStringSearcher()
-{
-#if 0
-    int      pos(0);
-    int      match_len(0);
-    wxString m_word  = wxT("clMainFrame");
-    size_t   offset = 0;
-    wxString m_str = LoadFile(wxT("/home/eran/devl/codelite/LiteEditor/frame.cpp"));
-
-    const wchar_t* pin   = m_str.c_str().AsWChar();
-    const wchar_t* pword = m_word.c_str().AsWChar();
-    while ( StringFindReplacer::Search(pin, offset, pword, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len) ) {
-        // add result
-        std::pair<int, int> match;
-        match.first = pos;
-        match.second = match_len;
-
-        offset = pos + match_len;
-    }
-#endif
 }
 
 void testRetagWorkspace()

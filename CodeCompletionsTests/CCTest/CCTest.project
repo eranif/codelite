@@ -58,6 +58,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>

@@ -74,7 +74,7 @@ public:
 //////////////////////////////////////////////////////////////
 
 void foo_bar(struct wxString* pString) {
-    
+   
 }
 } // Namespace Baz
 

@@ -12,6 +12,7 @@ public:
     virtual ~SmartCompletionsSettingsDlg();
 
 protected:
+    virtual void OnClearStats(wxCommandEvent& event);
     virtual void OnOK(wxCommandEvent& event);
 };
 #endif // SMARTCOMPLETIONSSETTINGSDLG_H

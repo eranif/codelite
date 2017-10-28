@@ -19,3 +19,9 @@ void SmartCompletionsSettingsDlg::OnOK(wxCommandEvent& event)
     m_config.SetEnabled(m_checkBoxEnabled->IsChecked());
     m_config.Save();
 }
+
+void SmartCompletionsSettingsDlg::OnClearStats(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_config.GetUsageDb().Clear();
+}

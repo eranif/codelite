@@ -36,6 +36,11 @@ public:
      * @brief write the usage to the database
      */
     void StoreUsage(const wxString& key, int weight);
+    
+    /**
+     * @brief clear the content of the database
+     */
+    void Clear();
 };
 
 #endif // SMARTCOMPLETIONUSAGEDB_H

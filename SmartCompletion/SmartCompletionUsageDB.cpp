@@ -33,17 +33,17 @@ void SmartCompletionUsageDB::CreateScheme()
 
         sql = wxT("PRAGMA temp_store = MEMORY;");
         m_db.ExecuteUpdate(sql);
-        
+
         sql.Clear();
         sql << "CREATE TABLE IF NOT EXISTS CC_USAGE(ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
             << "NAME TEXT, " // The scope type: 0 for namespace, 1 for class
             << "WEIGHT INTEGER)";
         m_db.ExecuteUpdate(sql);
-        
+
         sql.Clear();
         sql << "CREATE UNIQUE INDEX IF NOT EXISTS CC_USAGE_IDX1 ON CC_USAGE(NAME)";
         m_db.ExecuteUpdate(sql);
-        
+
     } catch(wxSQLite3Exception& e) {
         clWARNING() << "SmartCompletionUsageDB::CreateScheme():" << e.GetMessage() << clEndl;
     }
@@ -86,5 +86,15 @@ void SmartCompletionUsageDB::Close()
         } catch(wxSQLite3Exception& e) {
             clWARNING() << "SQLite 3 error:" << e.GetMessage() << clEndl;
         }
+    }
+}
+
+void SmartCompletionUsageDB::Clear()
+{
+    try {
+        wxString sql = "delete from CC_USAGE";
+        m_db.ExecuteUpdate(sql);
+    } catch(wxSQLite3Exception& e) {
+        clWARNING() << "SQLite 3 error:" << e.GetMessage() << clEndl;
     }
 }

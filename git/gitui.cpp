@@ -289,12 +289,12 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     bSizer11->Add(m_listBox, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_panel2 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterInner, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitterInner->SplitVertically(m_panel1, m_panel2, 0);
+    m_splitterInner->SplitVertically(m_panel1, m_panel2, 100);
     
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer9);
     
-    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1,-1)), 0);
+    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(600,400)), 0);
     // Configure the fold margin
     m_stcDiff->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcDiff->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -333,7 +333,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     bSizer9->Add(m_stcDiff, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_panel4 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterMain, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitterMain->SplitHorizontally(m_panel3, m_panel4, 0);
+    m_splitterMain->SplitHorizontally(m_panel3, m_panel4, 150);
     
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer13);
@@ -761,8 +761,8 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     this->SetSizer(bSizer17);
     
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
-    m_splitter->SetSashGravity(0.5);
-    m_splitter->SetMinimumPaneSize(10);
+    m_splitter->SetSashGravity(0);
+    m_splitter->SetMinimumPaneSize(100);
     
     bSizer17->Add(m_splitter, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
@@ -781,7 +781,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     boxSizer62->Add(m_fileListBox, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
     m_splitterPageDiff = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    m_splitter->SplitVertically(m_splitterPageFiles, m_splitterPageDiff, 0);
+    m_splitter->SplitVertically(m_splitterPageFiles, m_splitterPageDiff, 100);
     
     wxBoxSizer* boxSizer64 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageDiff->SetSizer(boxSizer64);
@@ -803,7 +803,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_sdbSizer1->Realize();
     
     SetName(wxT("GitDiffDlgBase"));
-    SetSize(879,600);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

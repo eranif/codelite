@@ -59,7 +59,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner811->SetText(_("Development Profile"), _("Select the profile that best describes you"));
     m_banner811->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     
-    boxSizer89->Add(m_banner811, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
+    boxSizer89->Add(m_banner811, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer93 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -74,7 +74,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_radioBoxProfileArr.Add(_("Both C/C++ and Web development"));
     m_radioBoxProfileArr.Add(_("C/C++ development"));
     m_radioBoxProfileArr.Add(_("Web development (PHP, JS etc)"));
-    m_radioBoxProfile = new wxRadioBox(m_wizardPagePlugins, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1,-1)), m_radioBoxProfileArr, 1, 0);
+    m_radioBoxProfile = new wxRadioBox(m_wizardPagePlugins, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1,-1)), m_radioBoxProfileArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxProfile->SetSelection(0);
     
     boxSizer114->Add(m_radioBoxProfile, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));

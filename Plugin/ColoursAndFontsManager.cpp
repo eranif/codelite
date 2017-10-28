@@ -894,7 +894,7 @@ void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
 
 const wxFont& ColoursAndFontsManager::GetGlobalFont() const { return this->m_globalFont; }
 
-bool ColoursAndFontsManager::ExportLexersToFile(const wxFileName& outputFile, const wxArrayString& names) const
+bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, const wxArrayString& names) const
 {
     wxStringSet_t M;
     for(size_t i = 0; i < names.size(); ++i) {
@@ -905,7 +905,7 @@ bool ColoursAndFontsManager::ExportLexersToFile(const wxFileName& outputFile, co
     JSONElement arr = root.toElement();
     std::vector<LexerConf::Ptr_t> Lexers;
     std::for_each(m_allLexers.begin(), m_allLexers.end(), [&](LexerConf::Ptr_t lexer) {
-        if(M.empty() || M.count(lexer->GetName().Lower())) {
+        if(M.empty() || M.count(lexer->GetThemeName().Lower())) {
             Lexers.push_back(lexer);
         }
     });
@@ -946,11 +946,19 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
         Vec_t& v = m_lexersMap[lexer->GetName()];
         Vec_t::iterator iter = std::find_if(
             v.begin(), v.end(), [&](LexerConf::Ptr_t l) { return l->GetThemeName() == lexer->GetThemeName(); });
-        if(iter != v.end()) {
-            // erase old lexer
-            v.erase(iter);
+        if(prompt) {
+            // Override this theme with the new one
+            if(iter != v.end()) {
+                // erase old lexer
+                v.erase(iter);
+            }
+            v.push_back(lexer);
+        } else {
+            // We dont have this theme, add it
+            if(iter == v.end()) {
+                v.push_back(lexer);
+            }
         }
-        v.push_back(lexer);
     });
 
     // Rebuild "m_allLexers" after the merge
@@ -962,4 +970,14 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
     Save();
     Reload();
     return true;
+}
+
+wxArrayString ColoursAndFontsManager::GetAllThemes() const
+{
+    wxStringSet_t themes;
+    std::for_each(m_allLexers.begin(), m_allLexers.end(),
+                  [&](LexerConf::Ptr_t lexer) { themes.insert(lexer->GetThemeName()); });
+    wxArrayString arr;
+    std::for_each(themes.begin(), themes.end(), [&](const wxString& name) { arr.push_back(name); });
+    return arr;
 }

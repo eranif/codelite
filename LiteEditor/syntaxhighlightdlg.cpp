@@ -604,9 +604,9 @@ void SyntaxHighlightDlg::OnImport(wxCommandEvent& event)
 void SyntaxHighlightDlg::OnExportSelective(wxCommandEvent& event)
 {
     // Get list of choices
-    wxArrayString lexers = ColoursAndFontsManager::Get().GetAllLexersNames();
+    wxArrayString lexers = ColoursAndFontsManager::Get().GetAllThemes();
     wxArrayInt choices;
-    if(::wxGetSelectedChoices(choices, _("Select which lexers you wish to export"), _("Export Lexers"), lexers, this) ==
+    if(::wxGetSelectedChoices(choices, _("Select which themes to export:"), _("Export Themes"), lexers, this) ==
        wxNOT_FOUND) {
         return;
     }
@@ -733,7 +733,7 @@ void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
     jsonFile.SetFullName("lexers.json");
     // Delete the file when done
     FileUtils::Deleter deleter(jsonFile);
-    if(!ColoursAndFontsManager::Get().ExportLexersToFile(jsonFile, lexers)) {
+    if(!ColoursAndFontsManager::Get().ExportThemesToFile(jsonFile, lexers)) {
         return;
     }
 

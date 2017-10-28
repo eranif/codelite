@@ -74,7 +74,16 @@ private:
 
 public:
     static ColoursAndFontsManager& Get();
-
+    /**
+     * @brief Export the lexers into a JSON file.
+     */
+    bool ExportLexersToFile(const wxFileName& outputFile, const wxArrayString& names = wxArrayString()) const;
+    
+    /**
+     * @brief import lexers from configuration file
+     */
+    bool ImportLexersFile(const wxFileName& inputFile, bool prompt = true);
+    
     /**
      * @brief save the global settings
      */

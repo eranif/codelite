@@ -1013,10 +1013,6 @@ ExpressionResult Language::ParseExpression(const wxString& in)
 
 bool Language::ProcessToken(TokenContainer* tokeContainer)
 {
-    // try local scope
-    VariableList li;
-    FunctionList fooList;
-
     // first we try to match the current scope
     std::vector<TagEntryPtr> tags;
 
@@ -1110,7 +1106,6 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
             // or global variable or member
             // for the last two cases, we need to handle this as if we did not find a match in the
             // database
-            li.clear();
             TagEntryPtr tag = tags.at(0);
             if(tag->GetKind() == wxT("member") || tag->GetKind() == wxT("variable")) {
                 CxxVariable::Ptr_t pVar =
@@ -1124,7 +1119,6 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
             }
 
         } else {
-            li.clear();
 
             // if we are a "member" or " variable"
             // try to locate the template initialization list

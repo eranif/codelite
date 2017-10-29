@@ -161,7 +161,7 @@ public:
     wxSplitterWindow* GetSplitterMain() { return m_splitterMain; }
     wxButton* GetButtonOK() { return m_buttonOK; }
     wxButton* GetButtonCancel() { return m_buttonCancel; }
-    GitCommitDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    GitCommitDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitCommitDlgBase();
 };
 

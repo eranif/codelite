@@ -2177,7 +2177,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "800,-1"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -2844,7 +2844,7 @@
                     }, {
                      "type": "string",
                      "m_label": "Size:",
-                     "m_value": "300,300"
+                     "m_value": "-1,-1"
                     }, {
                      "type": "string",
                      "m_label": "Minimum Size:",

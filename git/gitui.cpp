@@ -294,7 +294,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer9);
     
-    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(300,300)), 0);
+    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_stcDiff->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcDiff->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -410,7 +410,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     boxSizer372->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("GitCommitDlgBase"));
-    SetSize(800,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

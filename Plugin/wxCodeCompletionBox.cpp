@@ -278,13 +278,14 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     }
 
     // Fire "Showing" event
-    clCodeCompletionEvent ccEvent(wxEVT_CCBOX_SHOWING);
-    ccEvent.SetEntries(m_allEntries);
-    ccEvent.SetEventObject(this);
-    ccEvent.SetWord(GetFilter());
-    EventNotifier::Get()->ProcessEvent(ccEvent);
-    m_allEntries.swap(ccEvent.GetEntries());
-
+    if(!(m_flags & kNoShowingEvent)) {
+        clCodeCompletionEvent ccEvent(wxEVT_CCBOX_SHOWING);
+        ccEvent.SetEntries(m_allEntries);
+        ccEvent.SetEventObject(this);
+        ccEvent.SetWord(GetFilter());
+        EventNotifier::Get()->ProcessEvent(ccEvent);
+        m_allEntries.swap(ccEvent.GetEntries());
+    }
     // Filter all duplicate entries from the list (based on simple string match)
     RemoveDuplicateEntries();
 

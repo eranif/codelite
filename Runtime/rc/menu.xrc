@@ -196,6 +196,9 @@
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="complete_word">
+                <label>Code Comple&amp;te</label>
+            </object>
+            <object class="wxMenuItem" name="simple_word_completion">
                 <label>Complete &amp;Word</label>
             </object>
             <object class="wxMenuItem" name="function_call_tip">

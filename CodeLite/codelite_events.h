@@ -283,6 +283,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SELECTION_MADE, clCodeCompl
 // via the event.SetEntries();
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SHOWING, clCodeCompletionEvent);
 
+/// User asked for "word completion" (non context code completion event)
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_WORD_COMPLETE, clCodeCompletionEvent);
+
 // A function calltip is requesed
 // clientData is set to the client data set by the user
 // the plugin returns the tooltip to the IDE using the:

@@ -35,6 +35,7 @@
 #include <wx/menu.h>
 #include <wx/event.h>
 #include "macros.h"
+#include "wxStringHash.h"
 
 struct WXDLLIMPEXP_SDK MenuItemData {
     wxString resourceID;
@@ -56,8 +57,8 @@ struct WXDLLIMPEXP_SDK MenuItemData {
     };
 };
 
-typedef std::map<wxString, MenuItemData> MenuItemDataMap_t;
-typedef std::map<int, MenuItemData> MenuItemDataIntMap_t;
+typedef std::unordered_map<wxString, MenuItemData> MenuItemDataMap_t;
+typedef std::unordered_map<int, MenuItemData> MenuItemDataIntMap_t;
 
 struct WXDLLIMPEXP_SDK clKeyboardShortcut {
     bool m_ctrl;

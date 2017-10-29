@@ -54,6 +54,7 @@ public:
         kNone = 0,
         kInsertSingleMatch = (1 << 0),
         kRefreshOnKeyType = (1 << 1),
+        kNoShowingEvent = (1 << 2), // Dont send the wxEVT_CCBOX_SHOWING event
     };
 
 protected:
@@ -115,7 +116,7 @@ protected:
     static void InitializeDefaultBitmaps();
     void DoPgUp();
     void DoPgDown();
-    
+
 public:
     /**
      * @brief return the bitamp associated with this tag entry
@@ -155,12 +156,12 @@ public:
 
     void SetStartPos(int startPos) { this->m_startPos = startPos; }
     int GetStartPos() const { return m_startPos; }
-    
+
     void ScrollDown() { DoScrollDown(); }
     void ScrollUp() { DoScrollUp(); }
-    
+
     void DoMouseScroll(wxMouseEvent& event);
-    
+
 protected:
     int GetSingleLineHeight() const;
     /**
@@ -171,7 +172,7 @@ protected:
     void RemoveDuplicateEntries();
     void InsertSelection();
     wxString GetFilter();
-    
+
     // For backward compatability, we support initializing the list with TagEntryPtrVector_t
     // These 2 functions provide conversion between wxCodeCompletionBoxEntry and TagEntryPtr
     wxCodeCompletionBoxEntry::Vec_t TagsToEntries(const TagEntryPtrVector_t& tags);

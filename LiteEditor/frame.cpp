@@ -69,6 +69,7 @@
 #include "cl_aui_tool_stickness.h"
 #include "clMainFrameHelper.h"
 #include "app.h"
+#include "wxCodeCompletionBoxManager.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -255,7 +256,8 @@ EVT_MENU(XRCID("to_upper"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("to_lower"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("match_brace"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("select_to_brace"), clMainFrame::DispatchCommandEvent)
-EVT_MENU(XRCID("complete_word"), clMainFrame::OnCompleteWord)
+EVT_MENU(XRCID("complete_word"), clMainFrame::OnCodeComplete)
+EVT_MENU(XRCID("simple_word_completion"), clMainFrame::OnWordComplete)
 EVT_MENU(XRCID("complete_word_refresh_list"), clMainFrame::OnCompleteWordRefreshList)
 EVT_MENU(XRCID("function_call_tip"), clMainFrame::OnFunctionCalltip)
 EVT_MENU(XRCID("convert_eol_win"), clMainFrame::OnConvertEol)
@@ -285,6 +287,7 @@ EVT_UPDATE_UI(XRCID("to_lower"), clMainFrame::DispatchUpdateUIEvent)
 EVT_UPDATE_UI(XRCID("match_brace"), clMainFrame::DispatchUpdateUIEvent)
 EVT_UPDATE_UI(XRCID("select_to_brace"), clMainFrame::DispatchUpdateUIEvent)
 EVT_UPDATE_UI(XRCID("complete_word"), clMainFrame::OnCompleteWordUpdateUI)
+EVT_UPDATE_UI(XRCID("simple_word_completion"), clMainFrame::OnCompleteWordUpdateUI)
 EVT_UPDATE_UI(XRCID("function_call_tip"), clMainFrame::OnFunctionCalltipUI)
 EVT_UPDATE_UI(XRCID("convert_eol_win"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("convert_eol_unix"), clMainFrame::OnFileExistUpdateUI)
@@ -2251,7 +2254,7 @@ void clMainFrame::OnCompleteWordRefreshList(wxCommandEvent& event)
     }
 }
 
-void clMainFrame::OnCompleteWord(wxCommandEvent& event)
+void clMainFrame::OnCodeComplete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
@@ -3363,11 +3366,11 @@ void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     const wxString ALL(wxT("All Solution File (*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace)|")
-                           wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
-                               wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
-                                   wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
-                                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
-                                           wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
+                       wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
+                       wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
+                       wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
+                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
+                       wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
 
     wxFileDialog dlg(this, _("Open IDE Solution/Workspace File"), wxEmptyString, wxEmptyString, ALL,
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
@@ -5751,8 +5754,8 @@ void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
     e.Skip();
     if(e.GetInt() == 0) {
         // start
-        wxLogMessage(wxString() << "Initializing refactoring database for workspace: "
-                                << clCxxWorkspaceST::Get()->GetName());
+        wxLogMessage(
+            wxString() << "Initializing refactoring database for workspace: " << clCxxWorkspaceST::Get()->GetName());
     } else {
         wxLogMessage(wxString() << "Initializing refactoring database for workspace: "
                                 << clCxxWorkspaceST::Get()->GetName() << "... done");
@@ -6233,4 +6236,29 @@ void clMainFrame::OnEnvironmentVariablesModified(clCommandEvent& e)
             }
         }
     }
+}
+
+void clMainFrame::OnWordComplete(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
+    CHECK_PTR_RET(editor);
+
+    // Get the filter
+    wxStyledTextCtrl* stc = editor->GetCtrl();
+    int curPos = stc->GetCurrentPos();
+    int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
+    if(curPos < start) return;
+    clCodeCompletionEvent ccEvent(wxEVT_CC_WORD_COMPLETE);
+    ccEvent.SetEditor(editor);
+    ccEvent.SetEventObject(this);
+    ccEvent.SetWord(stc->GetTextRange(start, curPos));
+    EventNotifier::Get()->ProcessEvent(ccEvent);
+
+    const wxCodeCompletionBoxEntry::Vec_t& entries = ccEvent.GetEntries();
+    if(entries.empty()) return;
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        editor->GetCtrl(), entries,
+        wxCodeCompletionBox::kNoShowingEvent, // Don't fire the "wxEVT_CCBOX_SHOWING event
+        wxNOT_FOUND);
 }

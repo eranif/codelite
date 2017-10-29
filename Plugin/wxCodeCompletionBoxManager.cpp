@@ -111,7 +111,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 {
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
-    CHECK_COND_RET(!entries.empty());
+    //CHECK_COND_RET(!entries.empty());
 
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetBitmaps(bitmaps);

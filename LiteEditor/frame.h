@@ -77,7 +77,8 @@ extern const wxEventType wxEVT_LOAD_PERSPECTIVE;
 extern const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU;
 extern const wxEventType wxEVT_ACTIVATE_EDITOR;
 
-struct StartPageData {
+struct StartPageData
+{
     wxString name;
     wxString file_path;
     wxString action;
@@ -315,8 +316,8 @@ public:
 private:
     // make our frame's constructor private
     clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
-        long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER |
-            wxCLIP_CHILDREN);
+                long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU |
+                             wxRESIZE_BORDER | wxCLIP_CHILDREN);
     wxString CreateWorkspaceTable();
     wxString CreateFilesTable();
     void StartTimer();
@@ -393,7 +394,8 @@ protected:
     void OnFileLoadTabGroup(wxCommandEvent& event);
     void OnNativeTBUnRedoDropdown(wxCommandEvent& event);
     void OnTBUnRedo(wxAuiToolBarEvent& event);
-    void OnCompleteWord(wxCommandEvent& event);
+    void OnCodeComplete(wxCommandEvent& event);
+    void OnWordComplete(wxCommandEvent& event);
     void OnCompleteWordRefreshList(wxCommandEvent& event);
     void OnFunctionCalltip(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
@@ -493,7 +495,7 @@ protected:
     void OnGrepWordUI(wxUpdateUIEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
     void OnEnvironmentVariablesModified(clCommandEvent& e);
-    
+
     // handle symbol tree events
     void OnParsingThreadMessage(wxCommandEvent& e);
     void OnDatabaseUpgrade(wxCommandEvent& e);

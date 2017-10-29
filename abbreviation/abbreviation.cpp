@@ -83,6 +83,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager* manager)
     m_topWindow = m_mgr->GetTheApp();
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SHOWING, &AbbreviationPlugin::OnCompletionBoxShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_WORD_COMPLETE, &AbbreviationPlugin::OnWordComplete, this);
     InitDefaults();
 }
 
@@ -117,6 +118,7 @@ void AbbreviationPlugin::UnPlug()
     m_topWindow->Unbind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SHOWING, &AbbreviationPlugin::OnCompletionBoxShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_WORD_COMPLETE, &AbbreviationPlugin::OnWordComplete, this);
 }
 
 void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
@@ -309,4 +311,10 @@ void AbbreviationPlugin::OnCompletionBoxShowing(clCodeCompletionEvent& event)
 {
     AddAbbreviations(event);
     event.Skip();
+}
+
+void AbbreviationPlugin::OnWordComplete(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    AddAbbreviations(event);
 }

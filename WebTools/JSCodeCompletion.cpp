@@ -156,7 +156,7 @@ bool JSCodeCompletion::IsEnabled() const
 void JSCodeCompletion::TriggerWordCompletion()
 {
     // trigger word completion
-    wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
+    wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("simple_word_completion"));
     wxTheApp->ProcessEvent(wordCompleteEvent);
 }
 

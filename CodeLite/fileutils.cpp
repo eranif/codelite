@@ -234,8 +234,12 @@ void FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& conne
     if(puttyClient.Contains(" ")) {
         puttyClient.Prepend("\"").Append("\"");
     }
-
-    command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << " -pw " << password << "\"";
+    
+    if(password.IsEmpty()) {
+        command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << "\"";
+    } else {
+        command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << " -pw " << password << "\"";
+    }
     ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_HIDE_CONSOLE);
 
 #elif defined(__WXGTK__)

@@ -274,7 +274,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     
     m_splitterInner = new wxSplitterWindow(m_panel3, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitterInner->SetSashGravity(0);
-    m_splitterInner->SetMinimumPaneSize(100);
+    m_splitterInner->SetMinimumPaneSize(150);
     
     bSizer12->Add(m_splitterInner, 1, wxEXPAND, WXC_FROM_DIP(5));
     
@@ -289,12 +289,12 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     bSizer11->Add(m_listBox, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_panel2 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterInner, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitterInner->SplitVertically(m_panel1, m_panel2, 100);
+    m_splitterInner->SplitVertically(m_panel1, m_panel2, 150);
     
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer9);
     
-    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(600,400)), 0);
+    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(300,300)), 0);
     // Configure the fold margin
     m_stcDiff->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcDiff->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -410,7 +410,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     boxSizer372->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("GitCommitDlgBase"));
-    SetSize(-1,-1);
+    SetSize(800,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -419,13 +419,6 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
     this->Connect(ID_TOGGLE_CHECKALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnToggleCheckAll), NULL, this);

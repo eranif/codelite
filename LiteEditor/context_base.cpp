@@ -209,7 +209,7 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
             // the plugins... we take comfort in the fact that it
             // merely fires an event and not calling it directly
             wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("simple_word_completion"));
-            wxTheApp->ProcessEvent(wordCompleteEvent);
+            EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(wordCompleteEvent);
         }
     }
 }

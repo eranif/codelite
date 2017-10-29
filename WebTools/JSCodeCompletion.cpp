@@ -21,6 +21,7 @@
 #include <wx/msgdlg.h>
 #include <wx/menu.h>
 #include "navigationmanager.h"
+#include "event_notifier.h"
 
 #ifdef __WXMSW__
 #define ZIP_NAME "javascript-win.zip"
@@ -157,7 +158,7 @@ void JSCodeCompletion::TriggerWordCompletion()
 {
     // trigger word completion
     wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("simple_word_completion"));
-    wxTheApp->ProcessEvent(wordCompleteEvent);
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(wordCompleteEvent);
 }
 
 void JSCodeCompletion::FindDefinition(IEditor* editor)

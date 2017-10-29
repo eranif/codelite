@@ -71,7 +71,7 @@ void XMLCodeCompletion::XmlCodeComplete(IEditor* editor)
         // CC was triggered by "<"
         // In this case, we simply trigger the word completion
         wxCommandEvent event(wxEVT_MENU, XRCID("simple_word_completion"));
-        wxTheApp->AddPendingEvent(event);
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event);
     }
 }
 

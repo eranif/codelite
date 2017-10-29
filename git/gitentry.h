@@ -38,6 +38,7 @@
 #include <vector>
 #include <map>
 #include "cl_config.h"
+#include "wxStringHash.h"
 
 struct GitLabelCommand {
     GitLabelCommand() {}
@@ -99,7 +100,7 @@ public:
     void SetLastUsedCommandIndex(int index) { m_lastUsed = index; }
 };
 
-typedef std::map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t;
+typedef std::unordered_map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t;
 
 
 class GitWorkspace {
@@ -120,7 +121,7 @@ protected:
     wxStringMap_t m_projectData;
 };
 
-typedef std::map<wxString, GitWorkspace> GitWorkspaceMap_t;
+typedef std::unordered_map<wxString, GitWorkspace> GitWorkspaceMap_t;
 
 extern const wxEventType wxEVT_GIT_CONFIG_CHANGED;
 class GitEntry : public clConfigItem

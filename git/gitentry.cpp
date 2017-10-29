@@ -355,7 +355,7 @@ void GitEntry::DeleteEntry(const wxString& workspace)
 wxString GitEntry::GetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName)
 {
     wxString path; 
-    wxCHECK_MSG(!workspaceName.empty() && !projectName.empty(), path, "Need valid workspace and project names");
+    if(workspaceName.empty() || projectName.empty()) return "";
 
     GitWorkspaceMap_t::iterator iter;
     
@@ -375,7 +375,7 @@ wxString GitEntry::GetProjectLastRepoPath(const wxString& workspaceName, const w
 
 void GitEntry::SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName, const wxString& lastRepoPath)
 {
-    wxCHECK_RET(!workspaceName.empty() && !projectName.empty(), "Need valid workspace and project names");
+    if(workspaceName.empty() || projectName.empty()) return;
 
     GitWorkspaceMap_t::iterator iter;
     

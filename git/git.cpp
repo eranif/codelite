@@ -482,6 +482,13 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
         }
     }
 
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    wxString workspaceName(GetWorkspaceFileName().GetName());
+    wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
+    wxString lastRepoPath = data.GetProjectLastRepoPath(workspaceName, projectName);
+
     if(!dir.IsEmpty()) {
         // we were given a path, scan the folder and its parent
         // searching for .git folder, when we find one - its our git root
@@ -500,11 +507,18 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
         }
 
         if(!fnDir.GetDirCount()) {
-            // scanned the entire folders, no match...
-            return;
+            // Not found. Use any previously-set repo path outside the project
+            dir = lastRepoPath;
+            if (dir.empty()) {
+                return;
+            }
         }
 
         m_repositoryDirectory = dir;
+        data.SetProjectLastRepoPath(workspaceName, projectName, m_repositoryDirectory);
+        conf.WriteItem(&data);
+        conf.Save();
+
         GIT_MESSAGE("Git repo path is now set to '%s'", m_repositoryDirectory);
 
         // Update the status bar icon to reflect that we are using "Git"

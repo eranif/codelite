@@ -149,7 +149,7 @@ bool CodeLiteLLDBApp::OnInit()
 {
     try {
         wxString connectionString;
-        if(m_port != wxNOT_FOUND) {
+        if(m_port == wxNOT_FOUND) {
             connectionString << "unix://" << m_debuggerSocketPath;
         } else {
            connectionString << "tcp://" << m_ip << ":" << m_port;

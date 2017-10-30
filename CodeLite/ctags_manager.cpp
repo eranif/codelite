@@ -2677,7 +2677,7 @@ CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int
     CppTokensMap l;
     scanner.Match(word.mb_str().data(), l, from, to);
 
-    std::list<CppToken> tokens;
+    std::vector<CppToken> tokens;
     l.findTokens(word.mb_str().data(), tokens);
     if(tokens.empty()) return CppToken();
 
@@ -2921,7 +2921,7 @@ void TagsManager::GetFilesForCC(const wxString& userTyped, wxArrayString& matche
     GetDatabase()->GetFilesForCC(userTyped, matches);
 }
 
-void TagsManager::GetCXXKeywords(std::set<wxString>& words)
+void TagsManager::GetCXXKeywords(wxStringSet_t& words)
 {
     wxArrayString arr;
     GetCXXKeywords(arr);

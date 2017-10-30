@@ -55,11 +55,11 @@ static bool _IsValidCppIndetifier(const wxString& id)
 
 static bool _IsCppKeyword(const wxString& word)
 {
-    static std::set<wxString> words;
+    static wxStringSet_t words;
     if(words.empty()) {
         TagsManager::GetCXXKeywords(words);
     }
-    return words.find(word) != words.end();
+    return words.count(word);
 }
 
 //---------------------------------------------------------

@@ -46,6 +46,8 @@
 #include "istorage.h"
 #include "codelite_exports.h"
 #include "cl_command_event.h"
+#include "wxStringHash.h"
+#include "macros.h"
 
 #ifdef USE_TRACE
 #include <wx/stopwatch.h>
@@ -153,7 +155,7 @@ private:
     wxString m_cachedFile;
     bool m_enableCaching;
     wxEvtHandler* m_evtHandler;
-    std::set<wxString> m_CppIgnoreKeyWords;
+    wxStringSet_t m_CppIgnoreKeyWords;
     wxArrayString m_projectPaths;
     wxFontEncoding m_encoding;
     wxFileName m_dbFile;
@@ -166,7 +168,7 @@ public:
     /**
      * @brief return a set of CXX keywords
      */
-    static void GetCXXKeywords(std::set<wxString>& words);
+    static void GetCXXKeywords(wxStringSet_t& words);
 
     /**
      * @brief return an array of CXX keywords

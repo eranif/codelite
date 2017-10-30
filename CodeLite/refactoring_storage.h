@@ -79,11 +79,11 @@ protected:
     
 public:
     bool IsCacheReady() const { return m_cacheStatus == CACHE_READY; }
-    void StoreTokens(const wxString& filename, const CppToken::List_t& tokens, bool startTx);
+    void StoreTokens(const wxString& filename, const CppToken::Vec_t& tokens, bool startTx);
     void Match(const wxString& symname, const wxString& filename, CppTokensMap& matches);
     void InitializeCache(const wxFileList_t& files);
     wxFileList_t FilterUpToDateFiles(const wxFileList_t& files);
-    CppToken::List_t GetTokens(const wxString& symname, const wxFileList_t& filelist = wxFileList_t());
+    CppToken::Vec_t GetTokens(const wxString& symname, const wxFileList_t& filelist = wxFileList_t());
 };
 
 #endif // REFACTORINGSTORAGE_H

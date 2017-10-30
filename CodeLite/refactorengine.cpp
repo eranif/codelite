@@ -51,10 +51,7 @@ void RefactoringEngine::Clear()
     m_candidates.clear();
 }
 
-void RefactoringEngine::RenameGlobalSymbol(const wxString& symname,
-                                           const wxFileName& fn,
-                                           int line,
-                                           int pos,
+void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos,
                                            const wxFileList_t& files)
 {
     DoFindReferences(symname, fn, line, pos, files, false);
@@ -93,7 +90,7 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
     CppTokensMap l;
     scanner.Match(symname, l, from, to);
 
-    CppToken::List_t tokens;
+    CppToken::Vec_t tokens;
     l.findTokens(symname, tokens);
     if(tokens.empty()) return;
 
@@ -101,7 +98,7 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
     // Incase we did manage to resolve the word, it means that it is NOT a local variable (DoResolveWord only wors for
     // globals NOT for locals)
     RefactorSource target;
-    std::list<CppToken>::iterator iter = tokens.begin();
+    std::vector<CppToken>::iterator iter = tokens.begin();
     for(; iter != tokens.end(); iter++) {
         wxFileName f(iter->getFilename());
         if(!DoResolveWord(states, wxFileName(iter->getFilename()), iter->getOffset(), line, symname, &target)) {
@@ -110,12 +107,8 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
     }
 }
 
-bool RefactoringEngine::DoResolveWord(TextStatesPtr states,
-                                      const wxFileName& fn,
-                                      int pos,
-                                      int line,
-                                      const wxString& word,
-                                      RefactorSource* rs)
+bool RefactoringEngine::DoResolveWord(TextStatesPtr states, const wxFileName& fn, int pos, int line,
+                                      const wxString& word, RefactorSource* rs)
 {
     std::vector<TagEntryPtr> tags;
 
@@ -124,11 +117,11 @@ bool RefactoringEngine::DoResolveWord(TextStatesPtr states,
 
     // sanity
     if(states->text.length() < (size_t)pos + 1) return false;
-    
+
     // Hack:
     // disable sqlite3.c
     if(fn.GetFullName() == "sqlite3.c") return false;
-    
+
     // get the scope
     // Optimize the text for large files
     wxString text(states->text.substr(0, pos + 1));
@@ -315,21 +308,14 @@ clProgressDlg* RefactoringEngine::CreateProgressDialog(const wxString& title, in
     return prgDlg;
 }
 
-void RefactoringEngine::FindReferences(const wxString& symname,
-                                       const wxFileName& fn,
-                                       int line,
-                                       int pos,
+void RefactoringEngine::FindReferences(const wxString& symname, const wxFileName& fn, int line, int pos,
                                        const wxFileList_t& files)
 {
     DoFindReferences(symname, fn, line, pos, files, true);
 }
 
-void RefactoringEngine::DoFindReferences(const wxString& symname,
-                                         const wxFileName& fn,
-                                         int line,
-                                         int pos,
-                                         const wxFileList_t& files,
-                                         bool onlyDefiniteMatches)
+void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileName& fn, int line, int pos,
+                                         const wxFileList_t& files, bool onlyDefiniteMatches)
 {
     // Clear previous results
     Clear();
@@ -386,14 +372,14 @@ void RefactoringEngine::DoFindReferences(const wxString& symname,
         prgDlg->Destroy();
     }
     // load all tokens, first we need to parse the workspace files...
-    CppToken::List_t tokens = m_storage.GetTokens(symname, files);
+    CppToken::Vec_t tokens = m_storage.GetTokens(symname, files);
     if(tokens.empty()) return;
 
     // sort the tokens
-    tokens.sort();
+    std::sort(tokens.begin(), tokens.end());
 
     RefactorSource target;
-    std::list<CppToken>::iterator iter = tokens.begin();
+    CppToken::Vec_t::iterator iter = tokens.begin();
     int counter(0);
 
     TextStatesPtr statesPtr(NULL);
@@ -426,11 +412,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname,
 
         if(!statesPtr) continue;
 
-        if(DoResolveWord(statesPtr,
-                         wxFileName(iter->getFilename()),
-                         iter->getOffset(),
-                         iter->getLineNumber(),
-                         symname,
+        if(DoResolveWord(statesPtr, wxFileName(iter->getFilename()), iter->getOffset(), iter->getLineNumber(), symname,
                          &target)) {
 
             // set the line number
@@ -462,12 +444,8 @@ void RefactoringEngine::DoFindReferences(const wxString& symname,
     prgDlg->Destroy();
 }
 
-TagEntryPtr RefactoringEngine::SyncSignature(const wxFileName& fn,
-                                             int line,
-                                             int pos,
-                                             const wxString& word,
-                                             const wxString& text,
-                                             const wxString& expr)
+TagEntryPtr RefactoringEngine::SyncSignature(const wxFileName& fn, int line, int pos, const wxString& word,
+                                             const wxString& text, const wxString& expr)
 {
     TagEntryPtr func = TagsManagerST::Get()->FunctionFromFileLine(fn, line);
     if(!func) return NULL;

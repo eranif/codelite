@@ -132,15 +132,15 @@ void clTabInfo::CalculateOffsets(size_t style)
 {
     wxBitmap b(1, 1);
     wxMemoryDC memoryDC(b);
-    wxGCDC gcdc(memoryDC);
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
 
+    wxDC& dc = memoryDC;
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    gcdc.SetFont(font);
+    dc.SetFont(font);
     
-    wxSize sz = gcdc.GetTextExtent(m_label);
-    wxSize fixedHeight = gcdc.GetTextExtent("Tp");
+    wxSize sz = dc.GetTextExtent(m_label);
+    wxSize fixedHeight = dc.GetTextExtent("Tp");
     if(IS_VERTICAL_TABS(style)) {
         m_height = fixedHeight.GetHeight() + (5 * m_tabCtrl->GetArt()->ySpacer);
         m_height += 2;

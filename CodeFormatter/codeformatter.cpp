@@ -122,7 +122,9 @@ CodeFormatter::CodeFormatter(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
 
     m_optionsPhp.Load();
-    m_mgr->GetConfigTool()->ReadObject("FormatterOptions", &m_options);
+    if(!m_mgr->GetConfigTool()->ReadObject("FormatterOptions", &m_options)) {
+        m_options.AutodetectSettings();
+    }
 }
 
 CodeFormatter::~CodeFormatter()

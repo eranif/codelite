@@ -35,7 +35,7 @@ center_line_roll|Edit|Center Line in Editor|
 wxID_SELECTALL|Edit|Select All|Ctrl-A
 match_brace|Edit|Match Brace|Ctrl-]
 select_to_brace|Edit|Select to Brace|Ctrl-Shift-E
-word_complete|Edit|Code Complete|Ctrl-SPACE
+complete_word|Edit|Code Complete|Ctrl-SPACE
 simple_word_completion|Edit|Complete Word|Ctrl-ENTER
 function_call_tip|Edit|Display Function Calltip|Ctrl-Shift-SPACE
 convert_eol_win|Edit|Convert to Windows Format|

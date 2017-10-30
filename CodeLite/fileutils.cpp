@@ -35,6 +35,8 @@
 #include <map>
 #include <wx/msgdlg.h>
 #include "cl_standard_paths.h"
+#include "wxStringHash.h"
+#include "macros.h"
 
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
@@ -234,7 +236,7 @@ void FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& conne
     if(puttyClient.Contains(" ")) {
         puttyClient.Prepend("\"").Append("\"");
     }
-    
+
     if(password.IsEmpty()) {
         command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << "\"";
     } else {
@@ -314,57 +316,63 @@ bool FileUtils::WildMatch(const wxString& mask, const wxString& filename)
 
 wxString FileUtils::DecodeURI(const wxString& uri)
 {
-    wxString name = uri;
-    name.Replace("%20", " ");
-    name.Replace("%21", "!");
-    name.Replace("%23", "#");
-    name.Replace("%24", "$");
-    name.Replace("%26", "&");
-    name.Replace("%27", "'");
-    name.Replace("%28", "(");
-    name.Replace("%29", ")");
-    name.Replace("%2A", "*");
-    name.Replace("%2B", "+");
-    name.Replace("%2C", ",");
-    name.Replace("%3B", ";");
-    name.Replace("%3D", "=");
-    name.Replace("%3F", "?");
-    name.Replace("%40", "@");
-    name.Replace("%5B", "[");
-    name.Replace("%5D", "]");
-    return name;
+    static wxStringMap_t T = { { "%20", " " }, { "%21", "!" }, { "%23", "#" }, { "%24", "$" }, { "%26", "&" },
+                               { "%27", "'" }, { "%28", "(" }, { "%29", ")" }, { "%2A", "*" }, { "%2B", "+" },
+                               { "%2C", "," }, { "%3B", ";" }, { "%3D", "=" }, { "%3F", "?" }, { "%40", "@" },
+                               { "%5B", "[" }, { "%5D", "]" } };
+    wxString decodedString;
+    wxString escapeSeq;
+    int state = 0;
+    for(size_t i = 0; i < uri.size(); ++i) {
+        wxChar ch = uri[i];
+        switch(state) {
+        case 0: // Normal
+            switch(ch) {
+            case '%':
+                state = 1;
+                escapeSeq << ch;
+                break;
+            default:
+                decodedString << ch;
+                break;
+            }
+            break;
+        case 1: // Escaping mode
+            escapeSeq << ch;
+            if(escapeSeq.size() == 3) {
+                // Try to decode it
+                wxStringMap_t::iterator iter = T.find(escapeSeq);
+                if(iter != T.end()) {
+                    decodedString << iter->second;
+                } else {
+                    decodedString << escapeSeq;
+                }
+                state = 0;
+                escapeSeq.Clear();
+            }
+            break;
+        }
+    }
+    return decodedString;
 }
 
 wxString FileUtils::EncodeURI(const wxString& uri)
 {
-    static std::map<int, wxString> sEncodeMap;
-    if(sEncodeMap.empty()) {
-        sEncodeMap['!'] = "%21";
-        sEncodeMap['#'] = "%23";
-        sEncodeMap['$'] = "%24";
-        sEncodeMap['&'] = "%26";
-        sEncodeMap['\''] = "%27";
-        sEncodeMap['('] = "%28";
-        sEncodeMap[')'] = "%29";
-        sEncodeMap['*'] = "%2A";
-        sEncodeMap['+'] = "%2B";
-        sEncodeMap[','] = "%2C";
-        sEncodeMap[';'] = "%3B";
-        sEncodeMap['='] = "%3D";
-        sEncodeMap['?'] = "%3F";
-        sEncodeMap['@'] = "%40";
-        sEncodeMap['['] = "%5B";
-        sEncodeMap[']'] = "%5D";
-        sEncodeMap[' '] = "%20";
-    }
+    static std::unordered_map<int, wxString> sEncodeMap = {
+        { (int)'!', "%21" }, { (int)'#', "%23" }, { (int)'$', "%24" }, { (int)'&', "%26" }, { (int)'\'', "%27" },
+        { (int)'(', "%28" }, { (int)')', "%29" }, { (int)'*', "%2A" }, { (int)'+', "%2B" }, { (int)',', "%2C" },
+        { (int)';', "%3B" }, { (int)'=', "%3D" }, { (int)'?', "%3F" }, { (int)'@', "%40" }, { (int)'[', "%5B" },
+        { (int)']', "%5D" }, { (int)' ', "%20" }
+    };
 
     wxString encoded;
     for(size_t i = 0; i < uri.length(); ++i) {
-        std::map<int, wxString>::iterator iter = sEncodeMap.find(uri.at(i));
+        wxChar ch = uri[i];
+        std::unordered_map<int, wxString>::iterator iter = sEncodeMap.find((int)ch);
         if(iter != sEncodeMap.end()) {
             encoded << iter->second;
         } else {
-            encoded << uri.at(i);
+            encoded << ch;
         }
     }
     return encoded;

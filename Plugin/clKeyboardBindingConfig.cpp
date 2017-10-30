@@ -34,6 +34,8 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
             } else if(binding.resourceID == "complete_word") {
                 // The "action" was changed
                 binding.action = "Code Complete";
+            } else if(binding.resourceID == "word_complete") {
+                binding.resourceID = "complete_word";
             }
             m_bindings.insert(std::make_pair(binding.resourceID, binding));
         }

@@ -66,7 +66,7 @@ void clTabRendererClassic::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabC
 
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxFont font = GetTabFont();
     dc.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     dc.SetFont(font);
 

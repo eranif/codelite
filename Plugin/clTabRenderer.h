@@ -197,6 +197,10 @@ public:
     virtual void Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style) = 0;
     virtual void DrawBottomRect(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;
+    /**
+     * @brief reutrn font suitable for drawing the tab label
+     */
+    static wxFont GetTabFont();
 };
 
 #endif // CLTABRENDERER_H

@@ -21,8 +21,8 @@ clTabRendererSquare::clTabRendererSquare()
     smallCurveWidth = 0;
     overlapWidth = 2;
     verticalOverlapWidth = 2;
-    xSpacer = 10;
-    ySpacer = 4;
+    xSpacer = 15;
+    ySpacer = 5;
 }
 
 clTabRendererSquare::~clTabRendererSquare() {}
@@ -33,7 +33,7 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
 
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : inactiveTabPenColour);
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxFont font = GetTabFont();
     dc.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     dc.SetFont(font);
 
@@ -55,7 +55,7 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
             dc.DrawBitmap(colours.closeButton, tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY);
         }
-        // dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
+        dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
 
     } else if(IS_VERTICAL_TABS(style)) {
         wxRect rotatedRect(0, 0, tabInfo.m_rect.GetHeight(), tabInfo.m_rect.GetWidth());
@@ -84,7 +84,7 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
             dc.DrawBitmap(colours.closeButton, tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY);
         }
-        // dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
+        dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
     }
 }
 

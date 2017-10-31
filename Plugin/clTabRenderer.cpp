@@ -61,10 +61,10 @@ void clTabColours::InitDarkColours()
 
     inactiveTabTextColour = wxColour("rgb(200, 200, 200)");
     inactiveTabBgColour = activeTabBgColour.ChangeLightness(140);
-    inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
+    
     inactiveTabInnerPenColour = inactiveTabBgColour;
     tabAreaColour = inactiveTabBgColour.ChangeLightness(120);
-    
+    inactiveTabPenColour = tabAreaColour;
     // markerColour = wxColour("rgb(255, 128, 0)");
     markerColour = wxColour("rgb(105, 193, 240)");
 
@@ -87,7 +87,7 @@ void clTabColours::InitLightColours()
 
     inactiveTabBgColour = tabAreaColour.ChangeLightness(120);
     inactiveTabInnerPenColour = inactiveTabBgColour;
-    inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(75); // The outline is a bit darker
+    inactiveTabPenColour = tabAreaColour;
 #ifdef __WXOSX__
     activeTabPenColour = activeTabBgColour;
 #else
@@ -136,7 +136,7 @@ void clTabInfo::CalculateOffsets(size_t style)
     m_bmpCloseY = wxNOT_FOUND;
 
     wxDC& dc = memoryDC;
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxFont font = clTabRenderer::GetTabFont();
     dc.SetFont(font);
     
     wxSize sz = dc.GetTextExtent(m_label);
@@ -234,4 +234,11 @@ clTabRenderer::clTabRenderer()
     , xSpacer(10)
 {
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
+}
+
+wxFont clTabRenderer::GetTabFont()
+{
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    font.SetPointSize(font.GetPointSize()-2);
+    return font;
 }

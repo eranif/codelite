@@ -429,7 +429,7 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
         // Insert the page
         int where = clTabTogglerHelper::IsTabInNotebook(GetNotebook(), t.m_label);
         if(where == wxNOT_FOUND) {
-            GetNotebook()->InsertPage(0, t.m_window, t.m_label, true, t.m_bmp);
+            GetNotebook()->AddPage(t.m_window, t.m_label, false, t.m_bmp);
         } else {
             GetNotebook()->SetSelection(where);
         }

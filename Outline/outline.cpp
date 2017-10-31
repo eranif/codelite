@@ -141,7 +141,7 @@ void SymbolViewPlugin::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, m_view, _("Outline"), true);
+        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_view, _("Outline"), false);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("Outline"));
         if(where != wxNOT_FOUND) {

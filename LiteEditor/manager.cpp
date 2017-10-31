@@ -98,6 +98,7 @@
 #include "code_completion_manager.h"
 #include "CompileCommandsCreateor.h"
 #include "CompilersModifiedDlg.h"
+#include "clProfileHandler.h"
 #include "fileutils.h"
 #include "NewProjectWizard.h"
 #include "clFileSystemEvent.h"
@@ -217,6 +218,9 @@ Manager::Manager(void)
 
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
+    
+    // Instantiate the profile manager
+    clProfileHandler::Get();
 }
 
 Manager::~Manager(void)

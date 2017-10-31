@@ -383,7 +383,7 @@ void CMakePlugin::OnToggleHelpTab(clCommandEvent& event)
         // show it
         cmakeImages images;
         const wxBitmap& bmp = images.Bitmap("cmake_16");
-        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, m_helpTab, HELP_TAB_NAME, true, bmp);
+        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_helpTab, HELP_TAB_NAME, false, bmp);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(HELP_TAB_NAME);
         if(where != wxNOT_FOUND) {

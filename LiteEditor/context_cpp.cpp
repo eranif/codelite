@@ -1482,8 +1482,8 @@ int ContextCpp::FindLineToAddInclude()
     LEditor& ctrl = GetCtrl();
 
     int maxLineToScan = ctrl.GetLineCount();
-    if(maxLineToScan > 100) {
-        maxLineToScan = 100;
+    if(maxLineToScan > 500) {
+        maxLineToScan = 500;
     }
 
     int lineno = wxNOT_FOUND;

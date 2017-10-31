@@ -244,32 +244,12 @@ void clTabRendererCurved::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
     }
 }
 
-void clTabRendererCurved::DrawBottomRect(
-    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours, size_t style)
+void clTabRendererCurved::DrawBottomRect(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
+                                         const clTabColours& colours, size_t style)
 {
-#if 0
     if(!IS_VERTICAL_TABS(style)) {
         wxPoint pt1, pt2;
-        dc.SetPen(colours.activeTabBgColour);
-        if(style & kNotebook_BottomTabs) {
-            // bottom tabs
-            pt1 = clientRect.GetTopLeft();
-            pt2 = clientRect.GetTopRight();
-            DRAW_LINE(pt1, pt2);
-
-        } else {
-            // Top tabs
-            pt1 = clientRect.GetBottomLeft();
-            pt2 = clientRect.GetBottomRight();
-            pt1.y -= 1;
-            pt2.y -= 1;
-            DRAW_LINE(pt1, pt2);
-        }
-    }
-#else
-    if(!IS_VERTICAL_TABS(style)) {
-        wxPoint pt1, pt2;
-        dc.SetPen(colours.activeTabBgColour);
+        dc.SetPen(colours.activeTabPenColour);
         if(style & kNotebook_BottomTabs) {
             // bottom tabs
             pt1 = clientRect.GetTopLeft();
@@ -281,11 +261,8 @@ void clTabRendererCurved::DrawBottomRect(
             pt1 = clientRect.GetBottomLeft();
             pt2 = clientRect.GetBottomRight();
             DRAW_LINE(pt1, pt2);
-            
-            pt1.y -= 1;
-            pt2.y -= 1;
-            DRAW_LINE(pt1, pt2);
         }
+
+        ClearActiveTabExtraLine(activeTab, dc, colours, style);
     }
-#endif
 }

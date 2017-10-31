@@ -54,47 +54,42 @@ void clTabColours::InitFromColours(const wxColour& baseColour, const wxColour& t
 
 void clTabColours::InitDarkColours()
 {
+    InitLightColours();
     activeTabTextColour = "WHITE";
     activeTabBgColour = *wxBLACK;
-    activeTabPenColour = activeTabBgColour.ChangeLightness(110);
-    activeTabInnerPenColour = activeTabBgColour;
-
-    inactiveTabTextColour = wxColour("rgb(200, 200, 200)");
-    inactiveTabBgColour = activeTabBgColour.ChangeLightness(140);
-    
-    inactiveTabInnerPenColour = inactiveTabBgColour;
-    tabAreaColour = inactiveTabBgColour.ChangeLightness(120);
+    tabAreaColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
+    inactiveTabBgColour = tabAreaColour;
     inactiveTabPenColour = tabAreaColour;
-    // markerColour = wxColour("rgb(255, 128, 0)");
-    markerColour = wxColour("rgb(105, 193, 240)");
-
+    inactiveTabInnerPenColour = tabAreaColour;
+    
+    //markerColour = wxColour("rgb(105, 193, 240)");
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
-    chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-grey");
+    chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");
 }
 
 void clTabColours::InitLightColours()
 {
-    activeTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).ChangeLightness(110);
-    activeTabBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour faceColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    activeTabTextColour = textColour;
+    activeTabPenColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    inactiveTabTextColour = textColour.ChangeLightness(110);
+    activeTabBgColour = *wxWHITE;
     activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
 
     //#endif
-    tabAreaColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(80);
+    tabAreaColour = faceColour;
 
     markerColour = wxColour("rgb(227, 125, 9)");
-
-    inactiveTabBgColour = tabAreaColour.ChangeLightness(120);
-    inactiveTabInnerPenColour = inactiveTabBgColour;
-    inactiveTabPenColour = tabAreaColour;
-#ifdef __WXOSX__
-    activeTabPenColour = activeTabBgColour;
-#else
-    activeTabPenColour = inactiveTabPenColour;
-#endif
-
-    // The active tab pen colour is darker than the Inactive one
+    
+    inactiveTabBgColour = tabAreaColour;
+    inactiveTabPenColour = tabAreaColour.ChangeLightness(95);
+    inactiveTabInnerPenColour = tabAreaColour;
+    
+    inactiveTabBgColour = faceColour;
+    inactiveTabInnerPenColour = faceColour;
+    inactiveTabPenColour = faceColour;
 
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");
@@ -138,7 +133,7 @@ void clTabInfo::CalculateOffsets(size_t style)
     wxDC& dc = memoryDC;
     wxFont font = clTabRenderer::GetTabFont();
     dc.SetFont(font);
-    
+
     wxSize sz = dc.GetTextExtent(m_label);
     wxSize fixedHeight = dc.GetTextExtent("Tp");
     if(IS_VERTICAL_TABS(style)) {
@@ -239,6 +234,50 @@ clTabRenderer::clTabRenderer()
 wxFont clTabRenderer::GetTabFont()
 {
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    font.SetPointSize(font.GetPointSize()-2);
+    font.SetPointSize(font.GetPointSize() - 1);
     return font;
+}
+
+#define DRAW_LINE(__p1, __p2) \
+    dc.DrawLine(__p1, __p2);  \
+    dc.DrawLine(__p1, __p2);  \
+    dc.DrawLine(__p1, __p2);  \
+    dc.DrawLine(__p1, __p2);
+    
+void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours,
+                                            size_t style)
+{
+    wxPoint pt1, pt2;
+    dc.SetPen(colours.activeTabPenColour);
+    if(style & kNotebook_LeftTabs) {
+        dc.SetPen(colours.activeTabBgColour);
+        pt1 = activeTab->GetRect().GetTopRight();
+        pt2 = activeTab->GetRect().GetBottomRight();
+        DRAW_LINE(pt1, pt2);
+
+        pt1.x -= 1;
+        pt2.x -= 1;
+        DRAW_LINE(pt1, pt2);
+
+    } else if(style & kNotebook_RightTabs) {
+        // Right tabs
+        dc.SetPen(colours.activeTabBgColour);
+        pt1 = activeTab->GetRect().GetTopLeft();
+        pt2 = activeTab->GetRect().GetBottomLeft();
+        DRAW_LINE(pt1, pt2);
+
+    } else if(style & kNotebook_BottomTabs) {
+        // bottom tabs
+        dc.SetPen(colours.activeTabBgColour);
+        pt1 = activeTab->GetRect().GetTopLeft();
+        pt2 = activeTab->GetRect().GetTopRight();
+        DRAW_LINE(pt1, pt2);
+
+    } else {
+        // Top tabs
+        dc.SetPen(colours.activeTabBgColour);
+        pt1 = activeTab->GetRect().GetBottomLeft();
+        pt2 = activeTab->GetRect().GetBottomRight();
+        DRAW_LINE(pt1, pt2);
+    }
 }

@@ -191,6 +191,9 @@ public:
     int xSpacer;
     int ySpacer;
 
+protected:
+    void ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours, size_t style);
+
 public:
     clTabRenderer();
     virtual ~clTabRenderer() {}

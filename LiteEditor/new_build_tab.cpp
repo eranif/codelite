@@ -831,7 +831,7 @@ void NewBuildTab::OnStyleNeeded(wxStyledTextEvent& event)
     wxString text = m_view->GetTextRange(startPos, endPos);
 #if wxCHECK_VERSION(3, 1, 1)
         // The scintilla syntax in e.g. wx3.1.1 changed
-        m_view->StartStyling(startPos, 0);
+        m_view->StartStyling(startPos);
 #else
         m_view->StartStyling(startPos, 0x1f);
 #endif
@@ -977,7 +977,7 @@ void NewBuildTab::ColourOutput()
 
 #if wxCHECK_VERSION(3, 1, 1)
             // The scintilla syntax in e.g. wx3.1.1 changed
-            m_view->StartStyling(startPos, 0);
+            m_view->StartStyling(startPos);
 #else
             m_view->StartStyling(startPos, 0x1f);
 #endif

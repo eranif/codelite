@@ -151,8 +151,7 @@ void OutlineTab::OnActiveEditorChanged(wxCommandEvent& e)
 
     // Use the lexer to determine if we can show outline
     if(editor && cxxLexer && FileUtils::WildMatch(cxxLexer->GetFileSpec(), editor->GetFileName())) {
-        m_tree->Clear();
-        m_tree->BuildTree(editor->GetFileName());
+        m_tree->BuildTree(editor->GetFileName(), false);
         m_simpleBook->SetSelection(OUTLINE_TAB_CXX);
         m_textCtrlSearch->Enable(true);
 
@@ -205,7 +204,7 @@ void OutlineTab::OnFilesTagged(wxCommandEvent& e)
     if(editor) {
 
         wxWindow* oldFocusedWindow = wxWindow::FindFocus();
-        m_tree->BuildTree(editor->GetFileName());
+        m_tree->BuildTree(editor->GetFileName(), false);
         wxWindow* focusedWindow = wxWindow::FindFocus();
         if(oldFocusedWindow != focusedWindow && oldFocusedWindow) {
             // restore the focus back the old window
@@ -322,5 +321,5 @@ void OutlineTab::DoRefreshCxxView()
 {
     wxFileName fn = m_tree->GetFilename();
     m_tree->Clear();
-    m_tree->BuildTree(fn);
+    m_tree->BuildTree(fn, true);
 }

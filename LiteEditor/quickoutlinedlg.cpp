@@ -51,8 +51,8 @@ extern wxImageList* CreateSymbolTreeImages();
 // EVT_TEXT(wxID_ANY, QuickOutlineDlg::OnTextEntered)
 // END_EVENT_TABLE()
 
-QuickOutlineDlg::QuickOutlineDlg(
-    wxWindow* parent, const wxString& fileName, int id, wxString title, wxPoint pos, wxSize size, int style)
+QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int id, wxString title, wxPoint pos,
+                                 wxSize size, int style)
     : wxDialog(parent, id, title, pos, size, style | wxRESIZE_BORDER)
     , m_fileName(fileName)
 {
@@ -89,10 +89,7 @@ QuickOutlineDlg::QuickOutlineDlg(
     SetMinClientSize(wxSize(500, 400));
     Layout();
 
-    // no hidden root
-    m_treeOutline->BuildTree(m_fileName, TagEntryPtrVector_t());
-    m_treeOutline->ExpandAll();
-    m_treeOutline->CallAfter(&CppSymbolTree::SetFocus);
+    CallAfter(&QuickOutlineDlg::DoParseActiveBuffer);
 
     WindowAttrManager::Load(this);
     CentreOnParent();
@@ -116,4 +113,15 @@ void QuickOutlineDlg::OnKeyDown(wxKeyEvent& e)
     if(e.GetKeyCode() == WXK_ESCAPE) {
         Close();
     }
+}
+
+void QuickOutlineDlg::DoParseActiveBuffer()
+{
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(!editor) return;
+
+    TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(editor->GetCtrl()->GetText());
+    m_treeOutline->BuildTree(m_fileName, TagEntryPtrVector_t());
+    m_treeOutline->ExpandAll();
+    m_treeOutline->CallAfter(&CppSymbolTree::SetFocus);
 }

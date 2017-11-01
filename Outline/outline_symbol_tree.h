@@ -49,7 +49,7 @@ public:
     /// destructor
     virtual ~svSymbolTree(){};
 
-    virtual void BuildTree(const wxFileName& fn);
+    virtual void BuildTree(const wxFileName& fn, bool force);
 
     // activate the selected item.
     // If there is no selection, retun false,

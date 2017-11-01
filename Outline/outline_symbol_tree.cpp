@@ -76,16 +76,11 @@ wxImageList* svSymbolTree::CreateSymbolTreeImages()
     return images;
 }
 
-svSymbolTree::svSymbolTree()
-    : m_uid(0)
-{
-    m_sortByLineNumber = true;
-}
+svSymbolTree::svSymbolTree() { m_sortByLineNumber = true; }
 
-svSymbolTree::svSymbolTree(
-    wxWindow* parent, IManager* manager, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+svSymbolTree::svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID id, const wxPoint& pos,
+                           const wxSize& size, long style)
     : SymbolTree(parent, id, pos, size, style)
-    , m_uid(0)
 {
     m_sortByLineNumber = true;
     m_manager = manager;
@@ -93,7 +88,10 @@ svSymbolTree::svSymbolTree(
     Connect(GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler(svSymbolTree::OnMouseDblClick));
     Connect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(svSymbolTree::OnItemActivated));
     Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(svSymbolTree::OnMouseDblClick), NULL, this);
-    Connect(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, wxCommandEventHandler(svSymbolTree::OnIncludeStatements), NULL, this);
+
+    // Prase thread events
+    Bind(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, &svSymbolTree::OnIncludeStatements, this);
+    Bind(wxEVT_PARSE_THREAD_SOURCE_TAGS, &svSymbolTree::OnSourceToTags, this);
     MSWSetNativeTheme(this);
     // SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
@@ -242,60 +240,39 @@ void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxStr
 
     // If the editor has folds and the target line is above the current position,
     // the stc doesn't scroll back far enough to show the target. So:
-    //CallAfter(&svSymbolTree::CenterEditorLine);
+    // CallAfter(&svSymbolTree::CenterEditorLine);
 }
 
 void svSymbolTree::CenterEditorLine()
 {
     IEditor* editor = m_manager->GetActiveEditor();
-    if (editor) {
+    if(editor) {
         int lineno = editor->GetCurrentLine();
         editor->CenterLine(lineno);
     }
 }
 
-void svSymbolTree::BuildTree(const wxFileName& fn, bool forceBuild)
+void svSymbolTree::BuildTree(const wxFileName& fn)
 {
-    TagEntryPtrVector_t newTags;
-    ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
-    if(!db) {
-        return;
-    }
-
-    db->SelectTagsByFile(fn.GetFullPath(), newTags);
-    if(!forceBuild && TagsManagerST::Get()->AreTheSame(newTags, m_currentTags)) return;
-
-    if(m_sortByLineNumber) {
-        std::sort(newTags.begin(), newTags.end(),
-            [&](TagEntryPtr t1, TagEntryPtr t2) { return t1->GetLine() > t2->GetLine(); });
-    }
-    wxWindowUpdateLocker locker(this);
-    SymbolTree::BuildTree(fn, newTags, forceBuild);
-
     // Request from the parsing thread list of include files
-    ++m_uid;
-
-    ParseRequest* req = new ParseRequest(this);
-    req->setFile(fn.GetFullPath());
-    req->setType(ParseRequest::PR_PARSE_INCLUDE_STATEMENTS);
-    req->_uid = m_uid; // Identifies this request
-    ParseThreadST::Get()->Add(req);
-
-    wxTreeItemId root = GetRootItem();
-    if(root.IsOk() && ItemHasChildren(root)) {
-        wxTreeItemIdValue cookie;
-        wxTreeItemId child = GetFirstChild(root, cookie);
-        while(child.IsOk()) {
-            Expand(child);
-            child = GetNextChild(root, cookie);
-        }
+    m_currentFile = fn.GetFullPath();
+    {
+        ParseRequest* req = new ParseRequest(this);
+        req->setFile(fn.GetFullPath());
+        req->setType(ParseRequest::PR_SOURCE_TO_TAGS);
+        ParseThreadST::Get()->Add(req);
+    }
+    {
+        ParseRequest* req = new ParseRequest(this);
+        req->setFile(fn.GetFullPath());
+        req->setType(ParseRequest::PR_PARSE_INCLUDE_STATEMENTS);
+        ParseThreadST::Get()->Add(req);
     }
 }
 
 wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileOpener::List_t& includes)
 {
     wxTreeItemId root = GetRootItem();
-
     if(root.IsOk() == false) return wxTreeItemId();
 
     if(root.IsOk() && ItemHasChildren(root)) {
@@ -316,8 +293,8 @@ wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileO
 
     wxTreeItemId item;
     if(ItemHasChildren(root)) {
-        item = InsertItem(
-            root, 0, INCLUDE_FILES_NODE_TEXT, 2, 2, new MyTreeItemData(INCLUDE_FILES_NODE_TEXT, wxEmptyString));
+        item = InsertItem(root, 0, INCLUDE_FILES_NODE_TEXT, 2, 2,
+                          new MyTreeItemData(INCLUDE_FILES_NODE_TEXT, wxEmptyString));
 
     } else {
         item =
@@ -359,23 +336,16 @@ wxString svSymbolTree::GetSelectedIncludeFile() const
 void svSymbolTree::Clear()
 {
     SymbolTree::Clear();
-    m_uid++;
+    m_currentFile.Clear();
 }
 
 void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
 {
     fcFileOpener::List_t* includes = (fcFileOpener::List_t*)e.GetClientData();
     if(includes) {
-        if(m_uid == e.GetInt()) {
+        if(GetActiveEditorFile() != m_currentFile) {
             wxWindowUpdateLocker locker(this);
-            wxTreeItemId item = DoAddIncludeFiles(m_fileName, *includes);
-            wxUnusedVar(item);
-            // if(item.IsOk()) {
-            //     //                if(ItemHasChildren(item)) {
-            //     //                    Expand(item);
-            //     //                }
-            //     ScrollTo(item);
-            // }
+            DoAddIncludeFiles(m_fileName, *includes);
         }
         includes->clear();
         delete includes;
@@ -383,3 +353,47 @@ void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
 }
 
 void svSymbolTree::ClearCache() { m_currentTags.clear(); }
+
+void svSymbolTree::OnSourceToTags(clCommandEvent& e)
+{
+    if(GetActiveEditorFile() != m_currentFile) return;
+    TagEntryPtrVector_t newTags;
+    // Convert the string into array of tags
+    wxArrayString lines = ::wxStringTokenize(e.GetString(), "\n", wxTOKEN_STRTOK);
+    for(size_t i = 0; i < lines.size(); ++i) {
+        wxString& strLine = lines.Item(i);
+        strLine.Trim().Trim(false);
+        if(strLine.IsEmpty()) continue;
+
+        TagEntryPtr tag(new TagEntry());
+        tag->FromLine(strLine);
+        newTags.push_back(tag);
+    }
+    if(!m_sortByLineNumber) {
+        std::sort(newTags.begin(), newTags.end(), [&](TagEntryPtr t1, TagEntryPtr t2) {
+            return t1->GetDisplayName().Lower() < t2->GetDisplayName().Lower();
+        });
+    }
+    if(TagsManagerST::Get()->AreTheSame(m_currentTags, newTags)) return;
+
+    wxFileName fn(e.GetFileName());
+    wxWindowUpdateLocker locker(this);
+    SymbolTree::BuildTree(fn, newTags, false);
+
+    wxTreeItemId root = GetRootItem();
+    if(root.IsOk() && ItemHasChildren(root)) {
+        wxTreeItemIdValue cookie;
+        wxTreeItemId child = GetFirstChild(root, cookie);
+        while(child.IsOk()) {
+            Expand(child);
+            child = GetNextChild(root, cookie);
+        }
+    }
+}
+
+wxString svSymbolTree::GetActiveEditorFile() const
+{
+    wxString currentEditor =
+        clGetManager()->GetActiveEditor() ? clGetManager()->GetActiveEditor()->GetFileName().GetFullPath() : "";
+    return currentEditor;
+}

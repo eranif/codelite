@@ -105,8 +105,6 @@ void WorkspacePane::CreateGUIControls()
     }
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
-    bool verticalTabs = EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxRIGHT ||
-                        EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxLEFT;
     m_book->SetArt(GetNotebookRenderer());
 
     // Calculate the widest tab (the one with the 'Workspace' label)

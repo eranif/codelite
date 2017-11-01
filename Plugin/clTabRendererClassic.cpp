@@ -25,15 +25,16 @@ clTabRendererClassic::~clTabRendererClassic() {}
 void clTabRendererClassic::InitDarkColours(clTabColours& colours)
 {
     colours.activeTabTextColour = "WHITE";
-    colours.activeTabBgColour = wxColour("#211e1e");
-    colours.activeTabPenColour = wxColour("#0e0d0d");
-    colours.activeTabInnerPenColour = wxColour("#343131");
+    colours.activeTabBgColour = wxColour("rgb(52, 61, 70)");
+    colours.activeTabPenColour = wxColour("rgb(75, 81, 88)");
+    colours.activeTabInnerPenColour = wxColour("rgb(46, 55, 63)");
     colours.inactiveTabTextColour = wxColour("rgb(200, 200, 200)");
-    colours.inactiveTabBgColour = wxColour("#393838");
-    colours.inactiveTabPenColour = wxColour("#100f0f");
-    colours.inactiveTabInnerPenColour = wxColour("#535252");
-    colours.tabAreaColour = colours.inactiveTabBgColour.ChangeLightness(110);
+    colours.inactiveTabBgColour = wxColour("rgb(77, 85, 92)");
+    colours.inactiveTabPenColour = wxColour("rgb(88,95,101)");
+    colours.inactiveTabInnerPenColour = wxColour("rgb(73,81,87)");
+    colours.tabAreaColour = wxColour("rgb(117, 123, 129)");
 }
+
 
 void clTabRendererClassic::InitLightColours(clTabColours& colours)
 {
@@ -52,9 +53,6 @@ void clTabRendererClassic::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabC
     const int TOP_SMALL_HEIGHT = 2;
 
     clTabColours colours;
-    // Copy the bitmaps
-    colours.closeButton = colors.closeButton;
-    colours.chevronDown = colors.chevronDown;
 
     // Initialise the colours
     if(colors.IsDarkColours()) {
@@ -215,7 +213,8 @@ void clTabRendererClassic::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabC
 
         tmpDC.DrawText(tabInfo.m_label, tabInfo.m_textY, tabInfo.m_textX);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-            tmpDC.DrawBitmap(colours.closeButton, tabInfo.m_bmpCloseY, tabInfo.m_bmpCloseX);
+            DrawButton(tmpDC, wxRect(tabInfo.m_bmpCloseY, tabInfo.m_bmpCloseX, CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE),
+                       colours, eButtonState::kNormal);
         }
         tmpDC.SelectObject(wxNullBitmap);
         wxImage img = b.ConvertToImage();
@@ -281,19 +280,17 @@ void clTabRendererClassic::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabC
         }
         dc.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-            dc.DrawBitmap(colours.closeButton, tabInfo.m_bmpCloseX + tabInfo.m_rect.GetX(), tabInfo.m_bmpCloseY);
+            DrawButton(dc, wxRect(tabInfo.m_bmpCloseX + tabInfo.m_rect.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE,
+                                  CLOSE_BUTTON_SIZE),
+                       colours, eButtonState::kNormal);
         }
     }
 }
 
-void clTabRendererClassic::DrawBottomRect(
-    clTabInfo::Ptr_t tabInfo, const wxRect& clientRect, wxDC& dc, const clTabColours& colors, size_t style)
+void clTabRendererClassic::DrawBottomRect(clTabInfo::Ptr_t tabInfo, const wxRect& clientRect, wxDC& dc,
+                                          const clTabColours& colors, size_t style)
 {
     clTabColours colours;
-
-    // Copy the bitmaps
-    colours.closeButton = colors.closeButton;
-    colours.chevronDown = colors.chevronDown;
 
     // Initialise the colours
     if(colors.IsDarkColours()) {

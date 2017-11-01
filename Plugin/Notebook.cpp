@@ -288,10 +288,10 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 {
     wxRect clientRect(GetClientRect());
     if((GetStyle() & kNotebook_ShowFileListButton) && !IsVerticalTabs()) {
-        clientRect.SetWidth(clientRect.GetWidth() - m_chevronRect.GetWidth());
+        clientRect.SetWidth(clientRect.GetWidth() - CHEVRON_SIZE);
     } else if((GetStyle() & kNotebook_ShowFileListButton) && IsVerticalTabs()) {
         // Vertical tabs
-        clientRect.SetHeight(clientRect.GetHeight() - m_chevronRect.GetWidth());
+        clientRect.SetHeight(clientRect.GetHeight() - CHEVRON_SIZE);
     }
 
     for(size_t i = 0; i < tabs.size(); ++i) {
@@ -374,26 +374,14 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     if((GetStyle() & kNotebook_ShowFileListButton)) {
         if(IsVerticalTabs()) {
-            rect.SetHeight(rect.GetHeight() - 16);
-            m_chevronRect = wxRect(rect.GetTopLeft(), wxSize(rect.GetWidth(), 20));
-            if(GetStyle() & kNotebook_RightTabs) {
-                m_chevronRect.x += GetArt()->bottomAreaHeight;
-            } else {
-                m_chevronRect.x -= 2;
-            }
-            m_chevronRect.SetWidth(m_chevronRect.GetWidth() - GetArt()->bottomAreaHeight);
+            m_chevronRect = wxRect(rect.GetTopLeft(), wxSize(rect.GetWidth(), CHEVRON_SIZE));
             rect.y = m_chevronRect.GetBottomLeft().y;
+            rect.SetHeight(rect.GetHeight() - m_chevronRect.GetHeight());
         } else {
-            // Reduce the length of the tabs bitmap by 16 pixels (we will draw there the drop down
-            // button)
-            rect.SetWidth(rect.GetWidth() - 16);
-            m_chevronRect = wxRect(rect.GetTopRight(), wxSize(20, rect.GetHeight()));
-            if(GetStyle() & kNotebook_BottomTabs) {
-                m_chevronRect.y += GetArt()->bottomAreaHeight;
-            }
-            m_chevronRect.SetWidth(m_chevronRect.GetWidth() + 2);
-            m_chevronRect.SetHeight(m_chevronRect.GetHeight() - GetArt()->bottomAreaHeight);
-            rect.SetWidth(rect.GetWidth() + 16);
+            wxPoint rightPoint = rect.GetRightTop();
+            rightPoint.x -= CHEVRON_SIZE;
+            m_chevronRect = wxRect(rightPoint, wxSize(CHEVRON_SIZE, rect.GetHeight()));
+            rect.SetWidth(rect.GetWidth() - CHEVRON_SIZE);
         }
     }
 
@@ -438,8 +426,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         wxGCDC gcdc(dc);
         PrepareDC(gcdc);
         if(!IsVerticalTabs()) {
-            gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - m_chevronRect.GetWidth(),
-                                   clientRect.height);
+            gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - CHEVRON_SIZE, clientRect.height);
         }
         gcdc.SetPen(tabAreaBgCol);
         gcdc.SetBrush(tabAreaBgCol);
@@ -487,16 +474,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
-            wxCoord chevronX;
-            if(IsVerticalTabs()) {
-                chevronX = m_chevronRect.GetTopLeft().x +
-                           ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
-            } else {
-                chevronX = m_chevronRect.GetTopLeft().x;
-            }
-            wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                               ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
-            dc.DrawBitmap(m_colours.chevronDown, chevronX, chevronY);
+            m_art->DrawChevron(gcdc, m_chevronRect, m_colours);
         }
 
     } else {
@@ -911,7 +889,7 @@ void clTabCtrl::SetStyle(size_t style)
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         m_tabs.at(i)->CalculateOffsets(GetStyle());
     }
-    
+
 #if CL_BUILD
     if(m_style & kNotebook_DynamicColours) {
         wxString globalTheme = ColoursAndFontsManager::Get().GetGlobalTheme();

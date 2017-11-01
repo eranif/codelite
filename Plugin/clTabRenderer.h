@@ -23,6 +23,9 @@
 #include <wx/sharedptr.h>
 #include <vector>
 
+#define CHEVRON_SIZE 16
+#define CLOSE_BUTTON_SIZE 12
+
 class clTabCtrl;
 enum NotebookStyle {
     /// Use the built-in light tab colours
@@ -89,12 +92,6 @@ public:
 
     // the tab area colours
     wxColour tabAreaColour;
-
-    // close button bitmaps (MUST be 12x12)
-    wxBitmap closeButton;
-
-    /// Chevron down arrow used as the button for showing tab list
-    wxBitmap chevronDown;
 
     /// Marker colour
     wxColour markerColour;
@@ -176,6 +173,11 @@ public:
     void SetTooltip(const wxString& tooltip) { this->m_tooltip = tooltip; }
     const wxString& GetTooltip() const { return m_tooltip; }
 };
+enum class eButtonState {
+    kNormal,
+    kPressed,
+    kHover,
+};
 
 class WXDLLIMPEXP_SDK clTabRenderer
 {
@@ -204,6 +206,16 @@ public:
      * @brief reutrn font suitable for drawing the tab label
      */
     static wxFont GetTabFont();
+    
+    /**
+     * @brief draw a button in a given state at a give location
+     */
+    static void DrawButton(wxDC& dc, const wxRect& rect, const clTabColours& colours, eButtonState state);
+    
+    /**
+     * @brief draw cheveron button
+     */
+    static void DrawChevron(wxDC& dc, const wxRect& rect, const clTabColours& colours);
 };
 
 #endif // CLTABRENDERER_H

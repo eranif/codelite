@@ -117,7 +117,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
     wxString text = ctrl->GetTextRange(startPos, endPos);
 #if wxCHECK_VERSION(3, 1, 1)
         // The scintilla syntax in wx3.1.1 changed
-        ctrl->StartStyling(startPos, 0);
+        ctrl->StartStyling(startPos);
 #else
         ctrl->StartStyling(startPos, 0x1f);
 #endif

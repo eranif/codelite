@@ -27,9 +27,6 @@ void clTabColours::InitFromColours(const wxColour& baseColour, const wxColour& t
         inactiveTabInnerPenColour = inactiveTabPenColour; // inactiveTabBgColour.ChangeLightness(120);
 
         tabAreaColour = baseColour.ChangeLightness(130);
-        // 12x12 bitmap
-        closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
-        chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-grey");
     } else {
         activeTabTextColour = "BLACK";
         activeTabBgColour = baseColour;
@@ -42,9 +39,6 @@ void clTabColours::InitFromColours(const wxColour& baseColour, const wxColour& t
         inactiveTabInnerPenColour = inactiveTabPenColour; // baseColour;
 
         tabAreaColour = baseColour.ChangeLightness(130);
-        // 12x12 bitmap
-        closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");
-        chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");
     }
 #else
     wxUnusedVar(baseColour);
@@ -61,11 +55,6 @@ void clTabColours::InitDarkColours()
     inactiveTabBgColour = tabAreaColour;
     inactiveTabPenColour = tabAreaColour;
     inactiveTabInnerPenColour = tabAreaColour;
-    
-    //markerColour = wxColour("rgb(105, 193, 240)");
-    // 12x12 bitmap
-    closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
-    chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");
 }
 
 void clTabColours::InitLightColours()
@@ -82,18 +71,14 @@ void clTabColours::InitLightColours()
     tabAreaColour = faceColour;
 
     markerColour = wxColour("rgb(227, 125, 9)");
-    
+
     inactiveTabBgColour = tabAreaColour;
     inactiveTabPenColour = tabAreaColour.ChangeLightness(95);
     inactiveTabInnerPenColour = tabAreaColour;
-    
+
     inactiveTabBgColour = faceColour;
     inactiveTabInnerPenColour = faceColour;
     inactiveTabPenColour = faceColour;
-
-    // 12x12 bitmap
-    closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");
-    chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");
 }
 
 bool clTabColours::IsDarkColours() const { return DrawingUtils::IsDark(activeTabBgColour); }
@@ -243,7 +228,7 @@ wxFont clTabRenderer::GetTabFont()
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
-    
+
 void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours,
                                             size_t style)
 {
@@ -280,4 +265,49 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         pt2 = activeTab->GetRect().GetBottomRight();
         DRAW_LINE(pt1, pt2);
     }
+}
+
+void clTabRenderer::DrawButton(wxDC& dc, const wxRect& rect, const clTabColours& colours, eButtonState state)
+{
+    // Calculate the circle radius:
+    wxRect innerRect(rect);
+    innerRect.Deflate(1);
+    wxColour darkPenColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
+    wxCoord radiusLen = (innerRect.GetWidth() / 2);
+    wxPoint radiusPt = wxPoint(rect.GetTopLeft().x + rect.GetWidth() / 2, rect.GetTopLeft().y + rect.GetHeight() / 2);
+    if(state == eButtonState::kPressed) {
+        dc.SetPen(darkPenColour);
+        dc.SetBrush(darkPenColour);
+        dc.DrawCircle(radiusPt, radiusLen);
+    }
+
+    // Draw the 'x'
+    dc.SetPen(wxPen(colours.markerColour, 2));
+    dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
+    dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
+}
+
+void clTabRenderer::DrawChevron(wxDC& dc, const wxRect& rect, const clTabColours& colours)
+{
+    wxCoord small = wxMin(rect.GetWidth(), rect.GetHeight());
+    wxPoint pt;
+    pt.x = (rect.GetWidth() - small) / 2 + rect.x;
+    pt.y = (rect.GetHeight() - small) / 2 + rect.y;
+    
+    wxRect rr(pt, wxSize(small, small));
+    rr.Deflate(3);
+    
+    dc.SetPen(colours.inactiveTabTextColour);
+    dc.SetBrush(colours.inactiveTabTextColour);
+
+    wxPointList pl;
+    wxPoint p1 = rr.GetTopLeft();
+    wxPoint p2 = rr.GetTopRight();
+    wxPoint p3 = rr.GetBottomLeft();
+    p3.x += (rr.GetWidth() / 2);
+    p1 = rr.GetTopLeft();
+    pl.Append(&p1);
+    pl.Append(&p2);
+    pl.Append(&p3);
+    dc.DrawPolygon(&pl);
 }

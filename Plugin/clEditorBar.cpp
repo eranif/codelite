@@ -65,7 +65,7 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
     if(!m_function.IsEmpty()) {
         fulltext << m_function;
     }
-    
+
     wxSize spacer = dc.GetTextExtent("wwww");
     wxCoord textX = 5;
     wxSize fullsize = dc.GetTextExtent(fulltext);
@@ -129,9 +129,9 @@ void clEditorBar::DoRefreshColoursAndFonts()
     if(editor) {
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
         if(lexer) {
-            m_defaultColour = lexer->GetProperty(wxSTC_C_DEFAULT).GetFgColour(); // 0
-            m_classColour = lexer->GetProperty(16).GetFgColour();                // Workspsace tags colour
-            m_functionColour = lexer->GetProperty(19).GetFgColour();             // Local variable colour
+            m_defaultColour = lexer->GetProperty(11).GetFgColour();  // Identifier
+            m_classColour = lexer->GetProperty(16).GetFgColour();    // Workspsace tags colour
+            m_functionColour = lexer->GetProperty(11).GetFgColour(); // Identifier
             m_textFont = lexer->GetFontForSyle(wxSTC_C_DEFAULT);
             m_bgColour = lexer->GetProperty(wxSTC_C_DEFAULT).GetBgColour();
             m_textFont.SetPointSize(m_textFont.GetPointSize() - 1);

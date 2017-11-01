@@ -11,15 +11,20 @@
 #include "cl_command_event.h"
 #include <wx/sharedptr.h>
 
+class SourceToTagsThread;
 class WXDLLIMPEXP_CL clCxxFileCacheSymbols : public wxEvtHandler
 {
     std::unordered_map<wxString, std::vector<TagEntryPtr> > m_cache;
+    std::unordered_set<wxString> m_pendingFiles;
     wxCriticalSection m_cs;
+    SourceToTagsThread* m_helperThread;
 
 protected:
     void OnFileSave(clCommandEvent& e);
     void OnWorkspaceAction(wxCommandEvent& e);
-    void OnPraseCompleted(clCommandEvent& e);
+
+public:
+    void OnPraseCompleted(const wxString& filename, const wxString& strTags);
 
 public:
     enum eFilter {
@@ -37,12 +42,12 @@ public:
     void Clear();
     void Update(const wxFileName& filename, const TagEntryPtrVector_t& tags);
     void Delete(const wxFileName& filename);
-    
+
     /**
      * @brief fetch from the cache, apply "flags" on the result. See eFilter
      */
     bool Find(const wxFileName& filename, TagEntryPtrVector_t& tags, size_t flags = 0);
-    
+
     /**
      * @brief Request parsing of a file from the parser thread. The results will be cached
      * and an event 'clCommandEvent' is fired to notify that the cache was updated

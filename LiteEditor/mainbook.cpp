@@ -310,7 +310,7 @@ void MainBook::UpdateNavBar(LEditor* editor)
                     }
                     // we got a match
                     tag = (*iter);
-                } else {
+                } else if(!tags.empty()) {
                     // take the last element
                     tag = tags.back();
                 }

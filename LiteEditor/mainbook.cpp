@@ -70,8 +70,6 @@ void MainBook::CreateGuiControls()
     m_messagePane = new MessagePane(this);
     sz->Add(m_messagePane, 0, wxALL | wxEXPAND, 5, NULL);
 
-    m_navBar = new NavBar(this);
-    sz->Add(m_navBar, 0, wxEXPAND);
     long style = kNotebook_AllowDnD |                  // Allow tabs to move
                  kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
                  kNotebook_MouseMiddleClickFireEvent | // instead of closing the tab, fire an event
@@ -91,6 +89,9 @@ void MainBook::CreateGuiControls()
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     sz->Add(m_book, 1, wxEXPAND);
+
+    m_navBar = new clEditorBar(this);
+    sz->Add(m_navBar, 0, wxEXPAND);
 
     m_quickFindBar = new QuickFindBar(this);
     DoPositionFindBar(2);
@@ -123,6 +124,7 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &MainBook::OnCacheUpdated, this);
 }
 
 MainBook::~MainBook()
@@ -153,6 +155,7 @@ MainBook::~MainBook()
 
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &MainBook::OnCacheUpdated, this);
 }
 
 void MainBook::OnMouseDClick(wxBookCtrlEvent& e)
@@ -286,12 +289,40 @@ void MainBook::GetRecentlyOpenedFiles(wxArrayString& files) { files = clConfig::
 
 void MainBook::UpdateNavBar(LEditor* editor)
 {
+    TagEntryPtr tag = NULL;
     if(m_navBar->IsShown()) {
-        TagEntryPtr tag = NULL;
         if(editor && !editor->GetProject().IsEmpty()) {
-            tag = TagsManagerST::Get()->FunctionFromFileLine(editor->GetFileName(), editor->GetCurrentLine() + 1);
+            TagEntryPtrVector_t tags;
+            if(TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags,
+                                                          clCxxFileCacheSymbols::kFunctions)) {
+                // the tags are already sorted by line
+                // find the entry that is closest to the current line
+
+                // lower_bound: find the first entry that !(entry < val)
+                TagEntryPtr dummy(new TagEntry());
+                dummy->SetLine(editor->GetCurrentLine() + 2);
+                TagEntryPtrVector_t::iterator iter =
+                    std::lower_bound(tags.begin(), tags.end(), dummy,
+                                     [&](TagEntryPtr a, TagEntryPtr b) { return a->GetLine() < b->GetLine(); });
+                if(iter != tags.end()) {
+                    if(iter != tags.begin()) {
+                        std::advance(iter, -1); // we want the previous match
+                    }
+                    // we got a match
+                    tag = (*iter);
+                } else {
+                    // take the last element
+                    tag = tags.back();
+                }
+            } else {
+                TagsManagerST::Get()->GetFileCache()->RequestSymbols(editor->GetFileName());
+            }
         }
-        m_navBar->UpdateScope(tag);
+        if(tag) {
+            m_navBar->SetMessage(tag->GetScope(), tag->GetName());
+        } else {
+            m_navBar->SetMessage("", "");
+        }
     }
 }
 
@@ -926,9 +957,7 @@ bool MainBook::CloseAll(bool cancellable)
     m_quickFindBar->SetEditor(NULL);
     ShowQuickBar(false);
 
-    // Clear the Navigation Bar if it is not empty
-    TagEntryPtr tag = NULL;
-    m_navBar->UpdateScope(tag);
+    clGetManager()->SetStatusMessage("");
 
     // Update the frame's title
     clMainFrame::Get()->SetFrameTitle(NULL);
@@ -1096,6 +1125,7 @@ bool MainBook::DoSelectPage(wxWindow* win)
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
         event.SetClientData((void*)dynamic_cast<IEditor*>(editor));
         EventNotifier::Get()->AddPendingEvent(event);
+        UpdateNavBar(editor);
     }
 
     return true;
@@ -1159,7 +1189,7 @@ void MainBook::DoUpdateNotebookTheme()
     } else {
         style |= (kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);
     }
-    
+
     if(initialStyle != style) {
         m_book->SetStyle(style);
     }
@@ -1482,4 +1512,10 @@ void MainBook::DoOpenFile(const wxString& filename, const wxString& content)
     if(editor && !content.IsEmpty()) {
         editor->SetText(content);
     }
+}
+
+void MainBook::OnCacheUpdated(clCommandEvent& e)
+{
+    e.Skip();
+    UpdateNavBar(GetActiveEditor());
 }

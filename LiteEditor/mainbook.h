@@ -28,13 +28,13 @@
 #include <set>
 #include <wx/panel.h>
 #include "sessionmanager.h"
-#include "navbar.h"
 #include "quickfindbar.h"
 #include "Notebook.h"
 #include "filehistory.h"
 #include "message_pane.h"
 #include "cl_command_event.h"
 #include "editorframe.h"
+#include "clEditorBar.h"
 
 class FilesModifiedDlg;
 enum OF_extra { OF_None = 0x00000001, OF_AddJump = 0x00000002, OF_PlaceNextToCurrent = 0x00000004 };
@@ -44,7 +44,7 @@ class MainBook : public wxPanel
 {
 private:
     FileHistory m_recentFiles;
-    NavBar* m_navBar;
+    clEditorBar* m_navBar;
     Notebook* m_book;
     QuickFindBar* m_quickFindBar;
     MessagePane* m_messagePane;
@@ -93,12 +93,12 @@ private:
     void OnWorkspaceReloadStarted(clCommandEvent& e);
     void OnWorkspaceReloadEnded(clCommandEvent& e);
     void OnEditorSettingsChanged(wxCommandEvent& e);
-    
+    void OnCacheUpdated(clCommandEvent& e);
     /**
      * @brief open file and set an alternate content
      */
     void DoOpenFile(const wxString& filename, const wxString& content = "");
-    
+
 public:
     MainBook(wxWindow* parent);
     ~MainBook();
@@ -114,8 +114,8 @@ public:
     void ShowQuickBar(const wxString& findWhat, bool replaceBar = false) { m_quickFindBar->Show(findWhat, replaceBar); }
     void ShowQuickReplaceBar(bool show) { m_quickFindBar->ShowReplacebar(show); }
     void ShowMessage(const wxString& message, bool showHideButton = true, const wxBitmap& bmp = wxNullBitmap,
-        const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(),
-        const ButtonDetails& btn3 = ButtonDetails(), const CheckboxDetails& cb = CheckboxDetails());
+                     const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(),
+                     const ButtonDetails& btn3 = ButtonDetails(), const CheckboxDetails& cb = CheckboxDetails());
 
     void ShowTabBar(bool b);
     void ShowNavBar(bool s = true);
@@ -159,8 +159,8 @@ public:
     LEditor* NewEditor();
 
     LEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
-        long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
-        const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
+                      long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
+                      const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
     LEditor* OpenFile(const BrowseRecord& rec)
     {
         return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, OF_None, false);
@@ -175,11 +175,11 @@ public:
     }
 
     bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString,
-        const wxBitmap& bmp = wxNullBitmap, bool selected = false, int insert_at_index = wxNOT_FOUND);
+                 const wxBitmap& bmp = wxNullBitmap, bool selected = false, int insert_at_index = wxNOT_FOUND);
     bool SelectPage(wxWindow* win);
 
     bool UserSelectFiles(std::vector<std::pair<wxFileName, bool> >& files, const wxString& title,
-        const wxString& caption, bool cancellable = true);
+                         const wxString& caption, bool cancellable = true);
 
     bool SaveAll(bool askUser, bool includeUntitled);
 

@@ -19,6 +19,13 @@ class WXDLLIMPEXP_CL clCxxFileCacheSymbols : public wxEvtHandler
 protected:
     void OnFileSave(clCommandEvent& e);
     void OnWorkspaceAction(wxCommandEvent& e);
+    void OnPraseCompleted(clCommandEvent& e);
+
+public:
+    enum eFilter {
+        kAllSymbols = 0,
+        kFunctions = (1 << 0),
+    };
 
 public:
     typedef wxSharedPtr<clCxxFileCacheSymbols> Ptr_t;
@@ -30,7 +37,18 @@ public:
     void Clear();
     void Update(const wxFileName& filename, const TagEntryPtrVector_t& tags);
     void Delete(const wxFileName& filename);
-    bool Find(const wxFileName& filename, TagEntryPtrVector_t& tags);
+    
+    /**
+     * @brief fetch from the cache, apply "flags" on the result. See eFilter
+     */
+    bool Find(const wxFileName& filename, TagEntryPtrVector_t& tags, size_t flags = 0);
+    
+    /**
+     * @brief Request parsing of a file from the parser thread. The results will be cached
+     * and an event 'clCommandEvent' is fired to notify that the cache was updated
+     */
+    void RequestSymbols(const wxFileName& filename);
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CXX_SYMBOLS_CACHE_UPDATED, clCommandEvent);
 #endif // CLCXXFILECACHESYMBOLS_H

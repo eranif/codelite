@@ -510,8 +510,6 @@
     <File Name="checktreectrl.h"/>
     <File Name="quickfindbar.h"/>
     <File Name="quickfindbar.cpp"/>
-    <File Name="navbar.h"/>
-    <File Name="navbar.cpp"/>
     <File Name="filechecklist.cpp"/>
     <File Name="filechecklist.h"/>
     <File Name="filechecklistbase.cpp"/>

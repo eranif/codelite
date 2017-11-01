@@ -35,6 +35,7 @@
 #include "outline_symbol_tree.h"
 #include <algorithm>
 #include "imanager.h"
+#include "event_notifier.h"
 
 //#include "manager.h"
 //#include "frame.h"
@@ -91,7 +92,7 @@ svSymbolTree::svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID
 
     // Prase thread events
     Bind(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, &svSymbolTree::OnIncludeStatements, this);
-    Bind(wxEVT_PARSE_THREAD_SOURCE_TAGS, &svSymbolTree::OnSourceToTags, this);
+    EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &svSymbolTree::OnCacheUpdated, this);
     MSWSetNativeTheme(this);
     // SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
@@ -260,21 +261,11 @@ void svSymbolTree::BuildTree(const wxFileName& fn, bool force)
 
     TagEntryPtrVector_t tags;
     if(!TagsManagerST::Get()->GetFileCache()->Find(fn, tags)) {
-
-        ParseRequest* req = new ParseRequest(this);
-        req->setFile(fn.GetFullPath());
-        req->setType(ParseRequest::PR_SOURCE_TO_TAGS);
-        ParseThreadST::Get()->Add(req);
+        // Ask to generate cache entry for this file
+        TagsManagerST::Get()->GetFileCache()->RequestSymbols(fn);
     } else {
         DoBuildTree(tags, fn);
     }
-
-    //{
-    //    ParseRequest* req = new ParseRequest(this);
-    //    req->setFile(fn.GetFullPath());
-    //    req->setType(ParseRequest::PR_PARSE_INCLUDE_STATEMENTS);
-    //    ParseThreadST::Get()->Add(req);
-    //}
 }
 
 wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileOpener::List_t& includes)
@@ -348,6 +339,7 @@ void svSymbolTree::Clear()
 
 void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
 {
+    wxUnusedVar(e);
     //    fcFileOpener::List_t* includes = (fcFileOpener::List_t*)e.GetClientData();
     //    if(includes) {
     //        if(GetActiveEditorFile() != m_currentFile) {
@@ -361,27 +353,16 @@ void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
 
 void svSymbolTree::ClearCache() { m_currentTags.clear(); }
 
-void svSymbolTree::OnSourceToTags(clCommandEvent& e)
+void svSymbolTree::OnCacheUpdated(clCommandEvent& e)
 {
+    e.Skip();
     if(GetActiveEditorFile() != e.GetFileName()) return;
-    TagEntryPtrVector_t newTags;
-    // Convert the string into array of tags
-    wxArrayString lines = ::wxStringTokenize(e.GetString(), "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.size(); ++i) {
-        wxString& strLine = lines.Item(i);
-        strLine.Trim().Trim(false);
-        if(strLine.IsEmpty()) continue;
 
-        TagEntryPtr tag(new TagEntry());
-        tag->FromLine(strLine);
-        newTags.push_back(tag);
-    }
+    TagEntryPtrVector_t tags;
+    if(!TagsManagerST::Get()->GetFileCache()->Find(e.GetFileName(), tags)) return;
 
-    // Update the cache
-    TagsManagerST::Get()->GetFileCache()->Update(e.GetFileName(), newTags);
-    
     // Build the tree
-    DoBuildTree(newTags, e.GetFileName());
+    DoBuildTree(tags, e.GetFileName());
 }
 
 wxString svSymbolTree::GetActiveEditorFile() const

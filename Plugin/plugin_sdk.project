@@ -340,6 +340,8 @@
       <File Name="clBitmapOverlayCtrl.cpp"/>
       <File Name="clTreeCtrlColourHelper.h"/>
       <File Name="clTreeCtrlColourHelper.cpp"/>
+      <File Name="clEditorBar.h"/>
+      <File Name="clEditorBar.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>

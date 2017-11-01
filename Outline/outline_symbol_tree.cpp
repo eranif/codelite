@@ -257,13 +257,18 @@ void svSymbolTree::BuildTree(const wxFileName& fn, bool force)
     if(!force && (m_currentFile == fn.GetFullPath())) return; // same file
     Clear();
     // Request from the parsing thread list of include files
-    {
+
+    TagEntryPtrVector_t tags;
+    if(!TagsManagerST::Get()->GetFileCache()->Find(fn, tags)) {
+
         ParseRequest* req = new ParseRequest(this);
         req->setFile(fn.GetFullPath());
         req->setType(ParseRequest::PR_SOURCE_TO_TAGS);
         ParseThreadST::Get()->Add(req);
+    } else {
+        DoBuildTree(tags, fn);
     }
-    
+
     //{
     //    ParseRequest* req = new ParseRequest(this);
     //    req->setFile(fn.GetFullPath());
@@ -343,15 +348,15 @@ void svSymbolTree::Clear()
 
 void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
 {
-//    fcFileOpener::List_t* includes = (fcFileOpener::List_t*)e.GetClientData();
-//    if(includes) {
-//        if(GetActiveEditorFile() != m_currentFile) {
-//            wxWindowUpdateLocker locker(this);
-//            DoAddIncludeFiles(m_fileName, *includes);
-//        }
-//        includes->clear();
-//        delete includes;
-//    }
+    //    fcFileOpener::List_t* includes = (fcFileOpener::List_t*)e.GetClientData();
+    //    if(includes) {
+    //        if(GetActiveEditorFile() != m_currentFile) {
+    //            wxWindowUpdateLocker locker(this);
+    //            DoAddIncludeFiles(m_fileName, *includes);
+    //        }
+    //        includes->clear();
+    //        delete includes;
+    //    }
 }
 
 void svSymbolTree::ClearCache() { m_currentTags.clear(); }
@@ -371,16 +376,32 @@ void svSymbolTree::OnSourceToTags(clCommandEvent& e)
         tag->FromLine(strLine);
         newTags.push_back(tag);
     }
+
+    // Update the cache
+    TagsManagerST::Get()->GetFileCache()->Update(e.GetFileName(), newTags);
+    
+    // Build the tree
+    DoBuildTree(newTags, e.GetFileName());
+}
+
+wxString svSymbolTree::GetActiveEditorFile() const
+{
+    wxString currentEditor =
+        clGetManager()->GetActiveEditor() ? clGetManager()->GetActiveEditor()->GetFileName().GetFullPath() : "";
+    return currentEditor;
+}
+
+void svSymbolTree::DoBuildTree(TagEntryPtrVector_t& tags, const wxFileName& filename)
+{
     if(!m_sortByLineNumber) {
-        std::sort(newTags.begin(), newTags.end(), [&](TagEntryPtr t1, TagEntryPtr t2) {
+        std::sort(tags.begin(), tags.end(), [&](TagEntryPtr t1, TagEntryPtr t2) {
             return t1->GetDisplayName().Lower() < t2->GetDisplayName().Lower();
         });
     }
-    if(TagsManagerST::Get()->AreTheSame(m_currentTags, newTags)) return;
+    if(TagsManagerST::Get()->AreTheSame(m_currentTags, tags)) return;
 
-    wxFileName fn(e.GetFileName());
     wxWindowUpdateLocker locker(this);
-    SymbolTree::BuildTree(fn, newTags, false);
+    SymbolTree::BuildTree(filename, tags, false);
 
     wxTreeItemId root = GetRootItem();
     if(root.IsOk() && ItemHasChildren(root)) {
@@ -391,12 +412,5 @@ void svSymbolTree::OnSourceToTags(clCommandEvent& e)
             child = GetNextChild(root, cookie);
         }
     }
-    m_currentFile = e.GetFileName();
-}
-
-wxString svSymbolTree::GetActiveEditorFile() const
-{
-    wxString currentEditor =
-        clGetManager()->GetActiveEditor() ? clGetManager()->GetActiveEditor()->GetFileName().GetFullPath() : "";
-    return currentEditor;
+    m_currentFile = filename.GetFullPath();
 }

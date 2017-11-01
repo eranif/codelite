@@ -120,8 +120,13 @@ void QuickOutlineDlg::DoParseActiveBuffer()
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(!editor) return;
 
-    TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(editor->GetCtrl()->GetText());
-    m_treeOutline->BuildTree(m_fileName, TagEntryPtrVector_t());
+    TagEntryPtrVector_t tags;
+    if(!TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags)) {
+        // Parse and update the cache
+        tags = TagsManagerST::Get()->ParseBuffer(editor->GetCtrl()->GetText());
+        TagsManagerST::Get()->GetFileCache()->Update(editor->GetFileName(), tags);
+    }
+    m_treeOutline->BuildTree(m_fileName, tags);
     m_treeOutline->ExpandAll();
     m_treeOutline->CallAfter(&CppSymbolTree::SetFocus);
 }

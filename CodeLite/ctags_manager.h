@@ -48,6 +48,7 @@
 #include "cl_command_event.h"
 #include "wxStringHash.h"
 #include "macros.h"
+#include "clCxxFileCacheSymbols.h"
 
 #ifdef USE_TRACE
 #include <wx/stopwatch.h>
@@ -163,6 +164,7 @@ private:
 #if USE_TAGS_SQLITE3
     ITagsStoragePtr m_db;
 #endif
+    clCxxFileCacheSymbols::Ptr_t m_symbolsCache;
 
 public:
     /**
@@ -174,7 +176,12 @@ public:
      * @brief return an array of CXX keywords
      */
     static void GetCXXKeywords(wxArrayString& words);
-
+    
+    /**
+     * @brief get the file-symbols cache
+     */
+    clCxxFileCacheSymbols::Ptr_t GetFileCache() { return m_symbolsCache; }
+    
     void SetLanguage(Language* lang);
     Language* GetLanguage();
     void SetEvtHandler(wxEvtHandler* handler) { m_evtHandler = handler; }

@@ -160,10 +160,12 @@ TagsManager::TagsManager()
     m_CppIgnoreKeyWords.insert(wxT("if"));
     m_CppIgnoreKeyWords.insert(wxT("for"));
     m_CppIgnoreKeyWords.insert(wxT("switch"));
+    m_symbolsCache.reset(new clCxxFileCacheSymbols());
 }
 
 TagsManager::~TagsManager()
 {
+    m_symbolsCache.reset(nullptr);
     if(m_codeliteIndexerProcess) {
 
         // Dont kill the indexer process, just terminate the

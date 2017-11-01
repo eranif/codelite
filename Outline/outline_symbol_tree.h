@@ -69,6 +69,8 @@ public:
     void ClearCache();
 
 protected:
+    void DoBuildTree(TagEntryPtrVector_t& tags, const wxFileName& filename);
+    
     wxString GetActiveEditorFile() const;
     void OnIncludeStatements(wxCommandEvent& e);
     void OnSourceToTags(clCommandEvent& e);

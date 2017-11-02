@@ -904,6 +904,7 @@ clEditorBarBase::clEditorBarBase(wxWindow* parent, wxWindowID id, const wxPoint&
     this->Connect(wxEVT_PAINT, wxPaintEventHandler(clEditorBarBase::OnPaint), NULL, this);
     this->Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(clEditorBarBase::OnEraseBG), NULL, this);
     this->Connect(wxEVT_SIZE, wxSizeEventHandler(clEditorBarBase::OnEditorSize), NULL, this);
+    this->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clEditorBarBase::OnLeftDown), NULL, this);
     
 }
 
@@ -912,5 +913,6 @@ clEditorBarBase::~clEditorBarBase()
     this->Disconnect(wxEVT_PAINT, wxPaintEventHandler(clEditorBarBase::OnPaint), NULL, this);
     this->Disconnect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(clEditorBarBase::OnEraseBG), NULL, this);
     this->Disconnect(wxEVT_SIZE, wxSizeEventHandler(clEditorBarBase::OnEditorSize), NULL, this);
+    this->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clEditorBarBase::OnLeftDown), NULL, this);
     
 }

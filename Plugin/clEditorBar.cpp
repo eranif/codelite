@@ -15,6 +15,8 @@
 #include "IWorkspace.h"
 #include <wx/dcgraph.h>
 #include "clTabRenderer.h"
+#include <wx/menu.h>
+#include "fileutils.h"
 
 #define X_SPACER 10
 #define Y_SPACER 5
@@ -105,12 +107,12 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
         wxRect chevronRect(textX, textY, 16, 16);
         clTabRenderer::DrawChevron(gcdc, chevronRect, colors);
         textX += 16;
-        
+
         // Draw a rectangle around the file name + the drop down button
-        wxRect closingRect(breadcrumbsTextX - 5, breadcrumbsTextY - 3, textX + 5, breadcumbsTextSize.GetHeight() + 6);
+        m_filenameRect = wxRect(0, breadcrumbsTextY - 3, textX + 5, breadcumbsTextSize.GetHeight() + 6);
         gcdc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
         gcdc.SetBrush(*wxTRANSPARENT_BRUSH);
-        gcdc.DrawRoundedRectangle(closingRect, 2);
+        gcdc.DrawRectangle(m_filenameRect);
 
         // Move the X coordinate forward for drawing the class::func section
         textX += (3 * X_SPACER);
@@ -208,7 +210,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
         // Build the Breadcrumbs
         if(!m_filenameRelative.IsEmpty()) {
             // m_breadcrumbs.push_back(m_projectName);
-            //m_breadcrumbs.push_back(m_filenameRelative);
+            // m_breadcrumbs.push_back(m_filenameRelative);
             m_breadcrumbs.push_back(m_filename);
         } else {
             m_breadcrumbs.push_back(m_filename);
@@ -224,4 +226,59 @@ void clEditorBar::OnEditorSize(wxSizeEvent& event)
 {
     event.Skip();
     DoRefreshColoursAndFonts();
+}
+
+void clEditorBar::OnLeftDown(wxMouseEvent& event)
+{
+    if(m_filenameRect.Contains(event.GetPosition())) {
+        wxMenu menu;
+        wxString text;
+
+        text << _("Copy '") << m_filename << _("' to the clipboard");
+        wxMenuItem* idCopyFullPath = menu.Append(wxID_ANY, text);
+
+        text.Clear();
+        text << _("Copy '") << wxFileName(m_filename).GetFullName() << _("' to the clipboard");
+        wxMenuItem* idCopyName = menu.Append(wxID_ANY, text);
+
+        text.Clear();
+        text << _("Copy '") << wxFileName(m_filename).GetPath() << _("' to the clipboard");
+        wxMenuItem* idCopyPath = menu.Append(wxID_ANY, text);
+
+        menu.AppendSeparator();
+        wxMenuItem *idOpenExplorer, *idOpenShell;
+        {
+            idOpenShell = new wxMenuItem(NULL, wxID_ANY, _("Open Shell"), _("Open Shell"));
+            idOpenShell->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("console"));
+            menu.Append(idOpenShell);
+        }
+
+        {
+            idOpenExplorer = new wxMenuItem(NULL, wxID_ANY, _("Open Containing Folder"), _("Open Containing Folder"));
+            idOpenExplorer->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("folder-yellow"));
+            menu.Append(idOpenExplorer);
+        }
+
+        int selection = GetPopupMenuSelectionFromUser(menu, m_filenameRect.GetBottomLeft());
+        if(selection == wxID_NONE) return;
+
+        text.Clear();
+        if(selection == idCopyFullPath->GetId()) {
+            text = m_filename;
+        } else if(selection == idCopyName->GetId()) {
+            text = wxFileName(m_filename).GetFullName();
+        } else if(selection == idCopyPath->GetId()) {
+            text = wxFileName(m_filename).GetPath();
+        } else if(selection == idOpenExplorer->GetId()) {
+            FileUtils::OpenFileExplorerAndSelect(wxFileName(m_filename).GetFullPath());
+        } else if(selection == idOpenShell->GetId()) {
+            FileUtils::OpenTerminal(wxFileName(m_filename).GetPath());
+        }
+
+        // Clipboard action?
+        if(!text.IsEmpty()) {
+            ::CopyToClipboard(text);
+            clGetManager()->SetStatusMessage((wxString() << "'" << text << _("' copied!")), 2);
+        }
+    }
 }

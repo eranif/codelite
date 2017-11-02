@@ -43,9 +43,12 @@ class SymbolViewPlugin : public IPlugin
 {
 protected:
     OutlineTab* m_view;
+
+protected:
     bool IsPaneDetached();
     int DoFindTabIndex();
     void OnToggleTab(clCommandEvent& event);
+    void OnPageChanged(wxBookCtrlEvent& e);
 
 public:
     //--------------------------------------------

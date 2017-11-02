@@ -89,13 +89,13 @@ bool clCxxFileCacheSymbols::Contains(const wxFileName& filename) { return Contai
 
 bool clCxxFileCacheSymbols::Contains(const wxString& filename)
 {
-    wxCriticalSectionLocker locker(m_cs);
+    //wxCriticalSectionLocker locker(m_cs);
     return (m_cache.count(filename) > 0);
 }
 
 void clCxxFileCacheSymbols::Clear()
 {
-    wxCriticalSectionLocker locker(m_cs);
+    //wxCriticalSectionLocker locker(m_cs);
     m_cache.clear();
     m_pendingFiles.clear();
     clDEBUG1() << "Symbols cache cleared" << clEndl;
@@ -103,7 +103,7 @@ void clCxxFileCacheSymbols::Clear()
 
 void clCxxFileCacheSymbols::Update(const wxFileName& filename, const TagEntryPtrVector_t& tags)
 {
-    wxCriticalSectionLocker locker(m_cs);
+    //wxCriticalSectionLocker locker(m_cs);
     if(m_cache.count(filename.GetFullPath())) {
         m_cache.erase(filename.GetFullPath());
     }
@@ -113,7 +113,7 @@ void clCxxFileCacheSymbols::Update(const wxFileName& filename, const TagEntryPtr
 
 void clCxxFileCacheSymbols::Delete(const wxFileName& filename)
 {
-    wxCriticalSectionLocker locker(m_cs);
+    //wxCriticalSectionLocker locker(m_cs);
     m_cache.erase(filename.GetFullPath());
     clDEBUG1() << "Deleting Symbols cache for file:" << filename << clEndl;
 }
@@ -121,7 +121,7 @@ void clCxxFileCacheSymbols::Delete(const wxFileName& filename)
 bool clCxxFileCacheSymbols::Find(const wxFileName& filename, TagEntryPtrVector_t& tags, size_t flags)
 {
     {
-        wxCriticalSectionLocker locker(m_cs);
+        //wxCriticalSectionLocker locker(m_cs);
         if(m_cache.count(filename.GetFullPath())) {
             tags = m_cache[filename.GetFullPath()];
             clDEBUG1() << "Symbols fetched from cache for file:" << filename << clEndl;

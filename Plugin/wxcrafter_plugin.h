@@ -323,6 +323,7 @@ protected:
     virtual void OnPaint(wxPaintEvent& event) { event.Skip(); }
     virtual void OnEraseBG(wxEraseEvent& event) { event.Skip(); }
     virtual void OnEditorSize(wxSizeEvent& event) { event.Skip(); }
+    virtual void OnLeftDown(wxMouseEvent& event) { event.Skip(); }
 
 public:
     clEditorBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);

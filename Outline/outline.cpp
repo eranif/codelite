@@ -94,13 +94,14 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
             new DockablePane(book->GetParent()->GetParent(), book, _("Outline"), false, wxNullBitmap, wxSize(200, 200));
         m_view = new OutlineTab(cp, m_mgr);
         cp->SetChildNoReparent(m_view);
-
+        m_view->m_isEnabled = true; // Enabled when detached
     } else {
         m_view = new OutlineTab(book, m_mgr);
         book->AddPage(m_view, _("Outline"), false);
     }
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &SymbolViewPlugin::OnToggleTab, this);
     m_mgr->AddWorkspaceTab(_("Outline"));
+    m_mgr->GetWorkspacePaneNotebook()->Bind(wxEVT_BOOK_PAGE_CHANGED, &SymbolViewPlugin::OnPageChanged, this);
 }
 
 SymbolViewPlugin::~SymbolViewPlugin() { thePlugin = NULL; }
@@ -112,6 +113,7 @@ void SymbolViewPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(plugi
 void SymbolViewPlugin::UnPlug()
 {
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &SymbolViewPlugin::OnToggleTab, this);
+    m_mgr->GetWorkspacePaneNotebook()->Unbind(wxEVT_BOOK_PAGE_CHANGED, &SymbolViewPlugin::OnPageChanged, this);
     int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_view);
     if(where != wxNOT_FOUND) {
         // this window might be floating
@@ -147,5 +149,24 @@ void SymbolViewPlugin::OnToggleTab(clCommandEvent& event)
         if(where != wxNOT_FOUND) {
             m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
         }
+    }
+}
+
+void SymbolViewPlugin::OnPageChanged(wxBookCtrlEvent& e)
+{
+    e.Skip();
+    m_view->m_isEnabled = false;
+    int sel = m_mgr->GetWorkspacePaneNotebook()->GetSelection();
+    if(sel != wxNOT_FOUND) {
+        wxString seletionText = m_mgr->GetWorkspacePaneNotebook()->GetPageText(sel);
+        bool oldState = m_view->m_isEnabled;
+        m_view->m_isEnabled = (seletionText == _("Outline"));
+        if(oldState != m_view->m_isEnabled) {
+            // Refresh the view
+            m_view->EditorChanged();
+        }
+    } else {
+        // the page is detached
+        m_view->m_isEnabled = true; // just mark as active
     }
 }

@@ -6037,6 +6037,13 @@
      "m_functionNameAndSignature": "OnEditorSize(wxSizeEvent& event)",
      "m_description": "Process a wxEVT_SIZE event",
      "m_noBody": false
+    }, {
+     "m_eventName": "wxEVT_LEFT_DOWN",
+     "m_eventClass": "wxMouseEvent",
+     "m_eventHandler": "wxMouseEventHandler",
+     "m_functionNameAndSignature": "OnLeftDown(wxMouseEvent& event)",
+     "m_description": "Process a wxEVT_LEFT_DOWN event. The handler of this event should normally call event.Skip() to allow the default processing to take place as otherwise the window under mouse wouldn't get the focus.",
+     "m_noBody": false
     }],
    "m_children": []
   }]

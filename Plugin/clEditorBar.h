@@ -21,6 +21,8 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxString m_projectName;
     wxArrayString m_breadcrumbs;
 
+    wxRect m_filenameRect;
+
 private:
     void DoRefreshColoursAndFonts();
 
@@ -31,6 +33,7 @@ public:
     void DoShow(bool s);
 
 protected:
+    virtual void OnLeftDown(wxMouseEvent& event);
     virtual void OnEditorSize(wxSizeEvent& event);
     virtual void OnEraseBG(wxEraseEvent& event);
     virtual void OnPaint(wxPaintEvent& event);

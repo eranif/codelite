@@ -659,7 +659,9 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
         db->OpenDatabase(req->getDbfile());
 
         std::vector<wxString> nonWorkspaceSymbols, workspaceSymbols;
+        clDEBUG1() << "Parse Thread: removing non workspace symbols" << clEndl;
         db->RemoveNonWorkspaceSymbols(tokensArr, workspaceSymbols, nonWorkspaceSymbols);
+        clDEBUG1() << "Parse Thread: removing non workspace symbols...done" << clEndl;
 
         // Convert the output to a space delimited array
         std::for_each(workspaceSymbols.begin(), workspaceSymbols.end(),
@@ -687,10 +689,10 @@ void ParseThread::ProcessSourceToTags(ParseRequest* req)
     if(TagsManagerST::Get()->IsBinaryFile(filename.GetFullPath())) {
         return;
     }
-    
+
     wxString strTags;
     TagsManagerST::Get()->SourceToTags(filename, strTags);
-    
+
     // Fire the event
     clCommandEvent event(wxEVT_PARSE_THREAD_SOURCE_TAGS);
     event.SetFileName(filename.GetFullPath());

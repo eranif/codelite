@@ -76,19 +76,19 @@ public:
         ID_SHOW_OVERVIEW_BAR = 1001,
         ID_SHOW_LINENUMBERS = 1002,
         ID_DIFF_TOOL_IGNORE_WHITESPACE = 1003,
-        ID_DIFF_TOOL_VIEW = 1004,
-        ID_DIFF_VERTICAL_VIEW = 1005,
-        ID_DIFF_TOOL_USE_RIGHT = 1006,
-        ID_DIFF_TOOL_VIEW_HORIZONTAL = 1007,
-        ID_DIFF_TOOL_USE_LEFT = 1008,
-        ID_DIFF_TOOL_COPY_ALL = 1009,
+        ID_DIFF_TOOL_PREV = 1004,
+        ID_DIFF_TOOL_VIEW_HORIZONTAL = 1005,
+        ID_DIFF_TOOL_USE_LEFT = 1006,
+        ID_DIFF_TOOL_VIEW_SINGLE = 1007,
+        ID_DIFF_TOOL_SAVE = 1008,
+        ID_DIFF_TOOL_NEXT = 1009,
         ID_DIFF_TOOL_COPY_LEFT = 1010,
-        ID_DIFF_TOOL_COPY_RIGHT = 1011,
-        ID_DIFF_TOOL_PREV = 1012,
-        ID_DIFF_TOOL_NEXT = 1013,
-        ID_DIFF_TOOL_VIEW_SINGLE = 1014,
-        ID_DIFF_TOOL_SAVE = 1015,
-        ID_DIFF_TOOL_REFRESH = 1016,
+        ID_DIFF_TOOL_REFRESH = 1011,
+        ID_DIFF_TOOL_COPY_RIGHT = 1012,
+        ID_DIFF_TOOL_COPY_ALL = 1013,
+        ID_DIFF_VERTICAL_VIEW = 1014,
+        ID_DIFF_TOOL_USE_RIGHT = 1015,
+        ID_DIFF_TOOL_VIEW = 1016,
     };
 protected:
     wxAuiToolBar* m_auibar242;
@@ -322,6 +322,7 @@ protected:
 protected:
     virtual void OnPaint(wxPaintEvent& event) { event.Skip(); }
     virtual void OnEraseBG(wxEraseEvent& event) { event.Skip(); }
+    virtual void OnEditorSize(wxSizeEvent& event) { event.Skip(); }
 
 public:
     clEditorBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);

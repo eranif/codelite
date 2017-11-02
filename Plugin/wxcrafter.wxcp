@@ -6030,6 +6030,13 @@
      "m_functionNameAndSignature": "OnEraseBG(wxEraseEvent& event)",
      "m_description": "Process a wxEVT_ERASE_BACKGROUND event.",
      "m_noBody": false
+    }, {
+     "m_eventName": "wxEVT_SIZE",
+     "m_eventClass": "wxSizeEvent",
+     "m_eventHandler": "wxSizeEventHandler",
+     "m_functionNameAndSignature": "OnEditorSize(wxSizeEvent& event)",
+     "m_description": "Process a wxEVT_SIZE event",
+     "m_noBody": false
     }],
    "m_children": []
   }]

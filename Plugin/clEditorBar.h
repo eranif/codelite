@@ -24,6 +24,7 @@ public:
     void DoShow(bool s);
 
 protected:
+    virtual void OnEditorSize(wxSizeEvent& event);
     virtual void OnEraseBG(wxEraseEvent& event);
     virtual void OnPaint(wxPaintEvent& event);
     void OnEditorChanged(wxCommandEvent& event);

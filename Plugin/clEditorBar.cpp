@@ -10,6 +10,7 @@
 #include "ColoursAndFontsManager.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
+#include "drawingutils.h"
 
 clEditorBar::clEditorBar(wxWindow* parent)
     : clEditorBarBase(parent)
@@ -66,14 +67,9 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
         fulltext << m_function;
     }
 
-    wxSize spacer = dc.GetTextExtent("wwww");
-    wxCoord textX = 5;
-    wxSize fullsize = dc.GetTextExtent(fulltext);
-    fullsize.x += spacer.x;
-    textX = rect.GetWidth() - fullsize.x;
-
     // Draw the text
     wxSize textSize;
+    wxCoord textX = 10;
     wxCoord textY = ((rect.GetHeight() - dc.GetTextExtent("Tp").GetY()) / 2);
     if(!m_classname.IsEmpty()) {
         textSize = dc.GetTextExtent(m_classname);
@@ -129,12 +125,13 @@ void clEditorBar::DoRefreshColoursAndFonts()
     if(editor) {
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
         if(lexer) {
-            m_defaultColour = lexer->GetProperty(11).GetFgColour();  // Identifier
-            m_classColour = lexer->GetProperty(16).GetFgColour();    // Workspsace tags colour
-            m_functionColour = lexer->GetProperty(11).GetFgColour(); // Identifier
-            m_textFont = lexer->GetFontForSyle(wxSTC_C_DEFAULT);
-            m_bgColour = lexer->GetProperty(wxSTC_C_DEFAULT).GetBgColour();
-            m_textFont.SetPointSize(m_textFont.GetPointSize() - 1);
+            wxColour m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+            bool darkBG = DrawingUtils::IsDark(m_bgColour);
+            m_defaultColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            m_classColour = darkBG ? "rgb(224, 108, 117)" : "rgb(0, 64, 128)";
+            m_functionColour = m_defaultColour;
+            m_textFont = lexer->GetFontForSyle(0); // Default font
+            m_textFont.SetPointSize(m_textFont.GetPointSize() - 2);
         }
     } else {
         m_classname.clear();
@@ -142,4 +139,10 @@ void clEditorBar::DoRefreshColoursAndFonts()
         m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     }
     Refresh();
+}
+
+void clEditorBar::OnEditorSize(wxSizeEvent& event)
+{
+    event.Skip();
+    DoRefreshColoursAndFonts();
 }

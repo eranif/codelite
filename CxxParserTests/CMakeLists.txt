@@ -1,7 +1,7 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 2.8)
 
-project(CxxLocalVariabls)
+project(CxxLocalVariables)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
@@ -38,14 +38,14 @@ endif()
 FILE(GLOB SRCS "*.cpp")
 
 # Define the output
-add_executable(CxxLocalVariabls ${SRCS})
+add_executable(CxxLocalVariables ${SRCS})
 
 # Remove the "lib" prefix from the plugin name
-target_link_libraries(CxxLocalVariabls
+target_link_libraries(CxxLocalVariables
                       ${LINKER_OPTIONS}
                       ${wxWidgets_LIBRARIES}
                       libcodelite
                       plugin
                       )
 add_definitions(-DCXX_TEST_DIR=\"${CL_SRC_ROOT}/CxxParserTests/Test/\")
-CL_INSTALL_EXECUTABLE(CxxLocalVariabls)
+CL_INSTALL_EXECUTABLE(CxxLocalVariables)

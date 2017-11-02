@@ -6,6 +6,7 @@
     <File Name="main.cpp"/>
     <File Name="tester.cpp"/>
     <File Name="tester.h"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Tests"/>
   <Dependencies Name="Debug">

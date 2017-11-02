@@ -14,6 +14,13 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxColour m_bgColour;
     wxFont m_textFont;
 
+    // Breadcrumbs
+    wxString m_filename;
+    wxString m_filenameRelative;
+    wxString m_projectFile;
+    wxString m_projectName;
+    wxArrayString m_breadcrumbs;
+
 private:
     void DoRefreshColoursAndFonts();
 

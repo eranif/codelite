@@ -291,8 +291,8 @@ void clTabRenderer::DrawChevron(wxDC& dc, const wxRect& rect, const clTabColours
 {
     wxCoord small = wxMin(rect.GetWidth(), rect.GetHeight());
     wxPoint pt;
-    pt.x = (rect.GetWidth() - small) / 2 + rect.x;
-    pt.y = (rect.GetHeight() - small) / 2 + rect.y;
+    pt.x = ((rect.GetWidth() - small) / 2) + rect.x;
+    pt.y = (((rect.GetHeight() - small) / 2) + rect.y) + 2;
     
     wxRect rr(pt, wxSize(small, small));
     rr.Deflate(3);

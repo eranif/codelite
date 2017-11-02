@@ -11,6 +11,13 @@
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
+#include "clWorkspaceManager.h"
+#include "IWorkspace.h"
+#include <wx/dcgraph.h>
+#include "clTabRenderer.h"
+
+#define X_SPACER 10
+#define Y_SPACER 5
 
 clEditorBar::clEditorBar(wxWindow* parent)
     : clEditorBarBase(parent)
@@ -35,7 +42,7 @@ clEditorBar::clEditorBar(wxWindow* parent)
 
     memDC.SetFont(m_textFont);
     wxSize sz = memDC.GetTextExtent("Tp");
-    sz.y += 6; // 2*3 pixels
+    sz.y += 2 * Y_SPACER; // 2*3 pixels
     SetSizeHints(wxSize(-1, sz.y));
 }
 
@@ -52,12 +59,13 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
 {
     wxAutoBufferedPaintDC bdc(this);
     PrepareDC(bdc);
-    wxDC& dc = bdc;
+    wxGCDC gcdc(bdc);
+    PrepareDC(gcdc);
+
     wxRect rect(GetClientRect());
-    dc.SetPen(m_bgColour);
-    dc.SetBrush(m_bgColour);
-    dc.DrawRectangle(rect);
-    dc.SetFont(m_textFont);
+    gcdc.SetPen(m_bgColour);
+    gcdc.SetBrush(m_bgColour);
+    gcdc.DrawRectangle(rect);
 
     wxString fulltext;
     if(!m_classname.IsEmpty()) {
@@ -67,26 +75,66 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
         fulltext << m_function;
     }
 
+    gcdc.SetFont(m_textFont);
+    fulltext << "wwww"; // spacer
+    // wxSize fulltextSize = gcdc.GetTextExtent(fulltext);
+    wxSize breadcumbsTextSize(0, 0);
+    wxCoord textY = ((rect.GetHeight() - gcdc.GetTextExtent("Tp").GetHeight()) / 2);
+
+    wxCoord breadcrumbsTextX = X_SPACER;
+    wxCoord breadcrumbsTextY = 0;
+    wxCoord textX = breadcrumbsTextX;
+
+    if(!m_breadcrumbs.IsEmpty()) {
+        wxString breadcumbsText;
+        for(size_t i = 0; i < m_breadcrumbs.size(); ++i) {
+            breadcumbsText << m_breadcrumbs.Item(i) << " / ";
+        }
+        breadcumbsText.RemoveLast(3);
+        wxFont guiFont = clTabRenderer::GetTabFont();
+        gcdc.SetFont(guiFont);
+        breadcumbsTextSize = gcdc.GetTextExtent(breadcumbsText);
+        breadcrumbsTextY = (rect.GetHeight() - breadcumbsTextSize.GetHeight()) / 2;
+
+        gcdc.DrawText(breadcumbsText, breadcrumbsTextX, breadcrumbsTextY);
+
+        // Draw the drop down button
+        textX = breadcrumbsTextX + breadcumbsTextSize.GetWidth() + X_SPACER;
+        clTabColours colors;
+        colors.InitLightColours();
+        wxRect chevronRect(textX, textY, 16, 16);
+        clTabRenderer::DrawChevron(gcdc, chevronRect, colors);
+        textX += 16;
+        
+        // Draw a rectangle around the file name + the drop down button
+        wxRect closingRect(breadcrumbsTextX - 5, breadcrumbsTextY - 3, textX + 5, breadcumbsTextSize.GetHeight() + 6);
+        gcdc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+        gcdc.SetBrush(*wxTRANSPARENT_BRUSH);
+        gcdc.DrawRoundedRectangle(closingRect, 2);
+
+        // Move the X coordinate forward for drawing the class::func section
+        textX += (3 * X_SPACER);
+    }
+
     // Draw the text
+    gcdc.SetFont(m_textFont);
     wxSize textSize;
-    wxCoord textX = 10;
-    wxCoord textY = ((rect.GetHeight() - dc.GetTextExtent("Tp").GetY()) / 2);
     if(!m_classname.IsEmpty()) {
-        textSize = dc.GetTextExtent(m_classname);
-        dc.SetTextForeground(m_classColour);
-        dc.DrawText(m_classname, textX, textY);
+        textSize = gcdc.GetTextExtent(m_classname);
+        gcdc.SetTextForeground(m_classColour);
+        gcdc.DrawText(m_classname, textX, textY);
         textX += textSize.x;
 
-        textSize = dc.GetTextExtent("::");
-        dc.SetTextForeground(m_defaultColour);
-        dc.DrawText("::", textX, textY);
+        textSize = gcdc.GetTextExtent("::");
+        gcdc.SetTextForeground(m_defaultColour);
+        gcdc.DrawText("::", textX, textY);
         textX += textSize.x;
     }
 
     if(!m_function.IsEmpty()) {
-        textSize = dc.GetTextExtent(m_function);
-        dc.SetTextForeground(m_functionColour);
-        dc.DrawText(m_function, textX, textY);
+        textSize = gcdc.GetTextExtent(m_function);
+        gcdc.SetTextForeground(m_functionColour);
+        gcdc.DrawText(m_function, textX, textY);
         textX += textSize.x;
     }
 }
@@ -121,6 +169,14 @@ void clEditorBar::OnThemeChanged(wxCommandEvent& event)
 
 void clEditorBar::DoRefreshColoursAndFonts()
 {
+    // Set the defaults
+    m_filename.clear();
+    m_projectFile.clear();
+    m_projectName.clear();
+    m_filenameRelative.clear();
+    m_breadcrumbs.clear();
+    m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
@@ -133,10 +189,33 @@ void clEditorBar::DoRefreshColoursAndFonts()
             m_textFont = lexer->GetFontForSyle(0); // Default font
             m_textFont.SetPointSize(m_textFont.GetPointSize() - 2);
         }
+
+        m_filename = editor->GetFileName().GetFullPath();
+        if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            IWorkspace* workspace = clWorkspaceManager::Get().GetWorkspace();
+            wxFileName fn(m_filename);
+            fn.MakeRelativeTo(workspace->GetFileName().GetPath());
+            m_filenameRelative = fn.GetFullPath(wxPATH_UNIX);
+            //            m_projectName = workspace->GetProjectFromFile(m_filename);
+            //            if(!m_projectName.IsEmpty()) {
+            //                m_projectFile = workspace->GetProjectFileName(m_projectName).GetFullPath();
+            //                wxFileName fn(m_filename);
+            //                fn.MakeRelativeTo(wxFileName(m_projectFile).GetPath());
+            //                m_filenameRelative = fn.GetFullPath();
+            //            }
+        }
+
+        // Build the Breadcrumbs
+        if(!m_filenameRelative.IsEmpty()) {
+            // m_breadcrumbs.push_back(m_projectName);
+            //m_breadcrumbs.push_back(m_filenameRelative);
+            m_breadcrumbs.push_back(m_filename);
+        } else {
+            m_breadcrumbs.push_back(m_filename);
+        }
     } else {
         m_classname.clear();
         m_function.clear();
-        m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     }
     Refresh();
 }

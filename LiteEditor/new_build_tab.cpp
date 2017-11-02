@@ -829,7 +829,7 @@ void NewBuildTab::OnStyleNeeded(wxStyledTextEvent& event)
     int startPos = m_view->GetEndStyled();
     int endPos = event.GetPosition();
     wxString text = m_view->GetTextRange(startPos, endPos);
-#if wxCHECK_VERSION(3, 1, 1)
+#ifdef __WXMSW__
         // The scintilla syntax in e.g. wx3.1.1 changed
         m_view->StartStyling(startPos);
 #else
@@ -975,7 +975,7 @@ void NewBuildTab::ColourOutput()
         int startPos = m_view->PositionFromLine(i);
         int lineEndPos = m_view->GetLineEndPosition(i);
 
-#if wxCHECK_VERSION(3, 1, 1)
+#ifdef __WXMSW__
             // The scintilla syntax in e.g. wx3.1.1 changed
             m_view->StartStyling(startPos);
 #else

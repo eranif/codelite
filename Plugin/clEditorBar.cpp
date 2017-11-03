@@ -104,7 +104,11 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
         textX = breadcrumbsTextX + breadcumbsTextSize.GetWidth() + X_SPACER;
         clTabColours colors;
         colors.InitLightColours();
+#ifdef __WXOSX__
+        wxRect chevronRect(textX, breadcrumbsTextY - 3, 16, 16);
+#else
         wxRect chevronRect(textX, textY, 16, 16);
+#endif
         clTabRenderer::DrawChevron(gcdc, chevronRect, colors);
         textX += 16;
 
@@ -259,7 +263,12 @@ void clEditorBar::OnLeftDown(wxMouseEvent& event)
             menu.Append(idOpenExplorer);
         }
 
-        int selection = GetPopupMenuSelectionFromUser(menu, m_filenameRect.GetBottomLeft());
+        wxPoint menuPoint = m_filenameRect.GetBottomLeft();
+        
+#ifdef __WXOSX__
+        menuPoint.y += 5;
+#endif
+        int selection = GetPopupMenuSelectionFromUser(menu, menuPoint);
         if(selection == wxID_NONE) return;
 
         text.Clear();

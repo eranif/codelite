@@ -132,7 +132,57 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     // Hackishly prevent assertions on linux
     if(tmpRect.GetHeight() == 0) tmpRect.SetHeight(1);
     if(tmpRect.GetWidth() == 0) tmpRect.SetWidth(1);
+#ifdef __WXOSX__
+    tmpRect = rect;
+    window->PrepareDC(dc);
 
+    // Prepare the colours
+    wxColour bgColour, penColour, textColour;
+    textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+
+    penColour = bgColour;
+    // Same as the notebook background colour?
+    penColour = m_useDarkColours ? m_darkBgColour : penColour;
+    bgColour = m_useDarkColours ? m_darkBgColour : bgColour;
+    textColour = m_useDarkColours ? "WHITE" : textColour;
+
+    wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    dc.SetFont(f);
+    dc.SetPen(penColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRectangle(tmpRect);
+
+    // Fill the caption to look like OSX caption
+    if(!m_useDarkColours) {
+        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        dc.DrawRectangle(tmpRect);
+    }
+    int caption_offset = 0;
+    if(pane.icon.IsOk()) {
+        DrawIcon(dc, tmpRect, pane);
+        caption_offset += pane.icon.GetWidth() + 3;
+    } else {
+        caption_offset = 3;
+    }
+    dc.SetTextForeground(textColour);
+    wxCoord w, h;
+    dc.GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
+
+    wxRect clip_rect = tmpRect;
+    clip_rect.width -= 3; // text offset
+    clip_rect.width -= 2; // button padding
+    if(pane.HasCloseButton()) clip_rect.width -= m_buttonSize;
+    if(pane.HasPinButton()) clip_rect.width -= m_buttonSize;
+    if(pane.HasMaximizeButton()) clip_rect.width -= m_buttonSize;
+
+    wxString draw_text = wxAuiChopText(dc, text, clip_rect.width);
+    wxSize textSize = dc.GetTextExtent(draw_text);
+
+    dc.SetTextForeground(textColour);
+    dc.DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
+#else
     wxBitmap bmp(tmpRect.GetSize());
     {
         wxMemoryDC memDc;
@@ -196,6 +246,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         memDc.SelectObject(wxNullBitmap);
     }
     dc.DrawBitmap(bmp, rect.x, rect.y, true);
+#endif
 }
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)

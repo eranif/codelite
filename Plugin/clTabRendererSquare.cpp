@@ -103,6 +103,9 @@ void clTabRendererSquare::DrawBottomRect(clTabInfo::Ptr_t activeTab, const wxRec
         if((style & kNotebook_LeftTabs) || (style & kNotebook_RightTabs)) {
             pt1 = activeTab->GetRect().GetTopLeft();
             pt2 = activeTab->GetRect().GetTopRight();
+#ifdef __WXOSX__
+            pt2.x += 1;
+#endif
             dc.SetPen(markerPen);
             for(size_t i = 0; i < 3; ++i) {
                 DRAW_LINE(pt1, pt2);
@@ -112,6 +115,9 @@ void clTabRendererSquare::DrawBottomRect(clTabInfo::Ptr_t activeTab, const wxRec
         } else {
             pt1 = activeTab->GetRect().GetTopLeft();
             pt2 = activeTab->GetRect().GetBottomLeft();
+#ifdef __WXOSX__
+            pt2.y += 2;
+#endif
             dc.SetPen(markerPen);
 
             for(size_t i = 0; i < 3; ++i) {

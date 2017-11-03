@@ -139,7 +139,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     // Prepare the colours
     wxColour bgColour, penColour, textColour;
     textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+    bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
 
     penColour = bgColour;
     // Same as the notebook background colour?
@@ -156,7 +156,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     // Fill the caption to look like OSX caption
     if(!m_useDarkColours) {
         dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-        dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        dc.SetBrush(bgColour);
         dc.DrawRectangle(tmpRect);
     }
     int caption_offset = 0;

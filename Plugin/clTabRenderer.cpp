@@ -5,6 +5,7 @@
 #include "Notebook.h"
 #include "editor_config.h"
 #include "clTabRendererSquare.h"
+#include <wx/renderer.h>
 
 #if CL_BUILD
 #include "drawingutils.h"
@@ -266,6 +267,9 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopLeft();
         pt2 = activeTab->GetRect().GetTopRight();
+#ifdef __WXOSX__
+        pt2.x -= 1;
+#endif
         DRAW_LINE(pt1, pt2);
 
     } else {
@@ -276,6 +280,9 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         if(isSquareStyle) {
             pt1.x += 3;
         }
+#ifdef __WXOSX__
+        pt2.x -= 1;
+#endif
         DRAW_LINE(pt1, pt2);
 
         pt1.y += 1;
@@ -306,6 +313,9 @@ void clTabRenderer::DrawButton(wxDC& dc, const wxRect& rect, const clTabColours&
 
 void clTabRenderer::DrawChevron(wxDC& dc, const wxRect& rect, const clTabColours& colours)
 {
+#ifdef __WXOSX__
+    wxRendererNative::Get().DrawDropArrow(dc.GetWindow(), dc, rect, wxCONTROL_CURRENT);
+#else
     wxCoord small = wxMin(rect.GetWidth(), rect.GetHeight());
     wxPoint pt;
     pt.x = ((rect.GetWidth() - small) / 2) + rect.x;
@@ -327,4 +337,5 @@ void clTabRenderer::DrawChevron(wxDC& dc, const wxRect& rect, const clTabColours
     pl.Append(&p2);
     pl.Append(&p3);
     dc.DrawPolygon(&pl);
+#endif
 }

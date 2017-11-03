@@ -104,16 +104,12 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
         textX = breadcrumbsTextX + breadcumbsTextSize.GetWidth() + X_SPACER;
         clTabColours colors;
         colors.InitLightColours();
-#ifdef __WXOSX__
-        wxRect chevronRect(textX, breadcrumbsTextY - 3, 16, 16);
-#else
-        wxRect chevronRect(textX, textY, 16, 16);
-#endif
+        wxRect chevronRect(textX, 2, 16, rect.GetHeight() - 4);
         clTabRenderer::DrawChevron(gcdc, chevronRect, colors);
         textX += 16;
 
         // Draw a rectangle around the file name + the drop down button
-        m_filenameRect = wxRect(0, breadcrumbsTextY - 3, textX + 5, breadcumbsTextSize.GetHeight() + 6);
+        m_filenameRect = wxRect(0, 2, textX + 5, rect.GetHeight() - 4);
         gcdc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
         gcdc.SetBrush(*wxTRANSPARENT_BRUSH);
         gcdc.DrawRectangle(m_filenameRect);
@@ -263,11 +259,12 @@ void clEditorBar::OnLeftDown(wxMouseEvent& event)
             menu.Append(idOpenExplorer);
         }
 
-        wxPoint menuPoint = m_filenameRect.GetBottomLeft();
-        
-#ifdef __WXOSX__
-        menuPoint.y += 5;
-#endif
+        wxPoint menuPoint = m_filenameRect.GetTopLeft();
+
+        //#ifdef __WXOSX__
+        //        menuPoint.y -= 5;
+        //#endif
+
         int selection = GetPopupMenuSelectionFromUser(menu, menuPoint);
         if(selection == wxID_NONE) return;
 

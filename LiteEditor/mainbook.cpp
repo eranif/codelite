@@ -337,7 +337,7 @@ void MainBook::ShowNavBar(bool s)
     // Update the navigation bar
     clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
     evtUpdateNavBar.SetEditor(editor);
-    evtUpdateNavBar.SetPosition(editor->GetCtrl()->GetCurrentLine());
+    evtUpdateNavBar.SetLineNumber(editor->GetCtrl()->GetCurrentLine());
     EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
 }
 
@@ -1537,7 +1537,10 @@ void MainBook::OnUpdateNavigationBar(clCodeCompletionEvent& e)
 
     LEditor* activeEditor = GetActiveEditor();
     if(editor != activeEditor) return;
-
+    
+    // This event is no longer valid
+    if(activeEditor->GetCurrentLine() != e.GetLineNumber()) return;
+    
     FileExtManager::FileType ft = FileExtManager::GetTypeFromExtension(editor->GetFileName());
     if((ft != FileExtManager::TypeSourceC) && (ft != FileExtManager::TypeSourceCpp) &&
        (ft != FileExtManager::TypeHeader))

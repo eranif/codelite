@@ -1277,7 +1277,7 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
         lastLine = curLine;
         clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
         evtUpdateNavBar.SetEditor(this);
-        evtUpdateNavBar.SetPosition(pos);
+        evtUpdateNavBar.SetPosition(curLine);
         EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
     }
 

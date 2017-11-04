@@ -337,7 +337,7 @@ void MainBook::ShowNavBar(bool s)
     // Update the navigation bar
     clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
     evtUpdateNavBar.SetEditor(editor);
-    evtUpdateNavBar.SetPosition(editor->GetCtrl()->GetCurrentPos());
+    evtUpdateNavBar.SetPosition(editor->GetCtrl()->GetCurrentLine());
     EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
 }
 

@@ -40,6 +40,7 @@ class FilesModifiedDlg;
 enum OF_extra { OF_None = 0x00000001, OF_AddJump = 0x00000002, OF_PlaceNextToCurrent = 0x00000004 };
 
 class MessagePane;
+class clEditorBar;
 class MainBook : public wxPanel
 {
 private:
@@ -121,7 +122,7 @@ public:
     void ShowNavBar(bool s = true);
     void UpdateNavBar(LEditor* editor);
     bool IsNavBarShown() { return m_navBar->IsShown(); }
-
+    clEditorBar* GetEditorBar() { return m_navBar; }
     void SaveSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
     void RestoreSession(SessionEntry& session);
     /**

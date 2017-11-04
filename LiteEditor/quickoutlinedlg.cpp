@@ -124,12 +124,7 @@ void QuickOutlineDlg::DoParseActiveBuffer()
     TagEntryPtrVector_t tags;
     if(!TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags)) {
         // Parse and update the cache
-        tags = TagsManagerST::Get()->ParseBuffer(editor->GetCtrl()->GetText());
-        // Before we store the tags into the cache, update the file name
-        // ParseBuffer create a temporary file
-        std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr tag){
-            tag->SetFile(filename);
-        });
+        tags = TagsManagerST::Get()->ParseBuffer(editor->GetCtrl()->GetText(), editor->GetFileName().GetFullPath());
         TagsManagerST::Get()->GetFileCache()->Update(editor->GetFileName(), tags);
     }
     m_treeOutline->BuildTree(m_fileName, tags);

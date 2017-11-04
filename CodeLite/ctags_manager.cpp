@@ -3022,7 +3022,7 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
     words.Add("xor_eq");
 }
 
-TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content)
+TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename)
 {
     if(!m_codeliteIndexerProcess) {
         return TagEntryPtrVector_t();
@@ -3052,7 +3052,12 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content)
 
         TagEntryPtr tag(new TagEntry());
         tag->FromLine(line);
-
+        
+        // If the caller provided a filename, set it
+        if(!filename.IsEmpty()) {
+            tag->SetFile(filename);
+        }
+        
         if(tag->GetKind() != "local") {
             tagsVec.push_back(tag);
         }

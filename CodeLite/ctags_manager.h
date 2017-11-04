@@ -262,8 +262,9 @@ public:
 
     /**
      * @brief parse source file (from memory) and return list of tags
+     * If "filename" is passed, each returned TagEntryPtr will have it as its "FileName" attribute
      */
-    TagEntryPtrVector_t ParseBuffer(const wxString& content);
+    TagEntryPtrVector_t ParseBuffer(const wxString& content, const wxString& filename = "");
 
     /**
      * load all symbols of fileName from the database and return them

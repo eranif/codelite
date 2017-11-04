@@ -1384,16 +1384,6 @@ void ContextCpp::OnSciUpdateUI(wxStyledTextEvent& event)
 
         // update the calltip highlighting if needed
         DoUpdateCalltipHighlight();
-
-        // update navigation bar, but do this only if it visible
-        if(!clMainFrame::Get()->GetMainBook()->IsNavBarShown()) return;
-
-        // we know that the position position has changed, make sure that the line
-        // number has changed also
-        if(ctrl.LineFromPosition(curpos) != lastLine) {
-            lastLine = ctrl.LineFromPosition(curpos);
-            clMainFrame::Get()->GetMainBook()->UpdateNavBar(&ctrl);
-        }
     }
 }
 

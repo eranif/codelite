@@ -326,6 +326,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL, clCodeCompletionE
 // Use event.SetTooltip(...) to provide the doxygen block comment
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_GENERATE_DOXY_BLOCK, clCodeCompletionEvent);
 
+// An update to the navigation bar is required
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_UPDATE_NAVBAR, clCodeCompletionEvent);
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 // Code completion events - END

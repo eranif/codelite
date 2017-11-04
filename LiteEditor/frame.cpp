@@ -3366,11 +3366,11 @@ void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     const wxString ALL(wxT("All Solution File (*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace)|")
-                       wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
-                       wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
-                       wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
-                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
-                       wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
+                           wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
+                               wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
+                                   wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
+                                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
+                                           wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
 
     wxFileDialog dlg(this, _("Open IDE Solution/Workspace File"), wxEmptyString, wxEmptyString, ALL,
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
@@ -5754,8 +5754,8 @@ void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
     e.Skip();
     if(e.GetInt() == 0) {
         // start
-        wxLogMessage(
-            wxString() << "Initializing refactoring database for workspace: " << clCxxWorkspaceST::Get()->GetName());
+        wxLogMessage(wxString() << "Initializing refactoring database for workspace: "
+                                << clCxxWorkspaceST::Get()->GetName());
     } else {
         wxLogMessage(wxString() << "Initializing refactoring database for workspace: "
                                 << clCxxWorkspaceST::Get()->GetName() << "... done");
@@ -5777,6 +5777,11 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     e.Skip();
     SetFrameTitle(GetMainBook()->GetActiveEditor());
     ShowOrHideCaptions();
+
+    LEditor::Vec_t editors;
+    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
+
+    std::for_each(editors.begin(), editors.end(), [&](LEditor* editor) { editor->PreferencesChanged(); });
 }
 
 void clMainFrame::OnDetachEditor(wxCommandEvent& e) { GetMainBook()->DetachActiveEditor(); }

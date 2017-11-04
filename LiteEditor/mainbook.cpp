@@ -66,10 +66,10 @@ void MainBook::CreateGuiControls()
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
-    
+
     m_messagePane = new MessagePane(this);
     sz->Add(m_messagePane, 0, wxALL | wxEXPAND, 5, NULL);
-    
+
     long style = kNotebook_AllowDnD |                  // Allow tabs to move
                  kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
                  kNotebook_MouseMiddleClickFireEvent | // instead of closing the tab, fire an event
@@ -89,7 +89,7 @@ void MainBook::CreateGuiControls()
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     sz->Add(m_book, 1, wxEXPAND);
-    
+
     m_navBar = new clEditorBar(this);
     sz->Add(m_navBar, 0, wxEXPAND);
 
@@ -125,6 +125,7 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &MainBook::OnCacheUpdated, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_UPDATE_NAVBAR, &MainBook::OnUpdateNavigationBar, this);
 }
 
 MainBook::~MainBook()
@@ -156,6 +157,7 @@ MainBook::~MainBook()
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &MainBook::OnCacheUpdated, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &MainBook::OnUpdateNavigationBar, this);
 }
 
 void MainBook::OnMouseDClick(wxBookCtrlEvent& e)
@@ -329,7 +331,14 @@ void MainBook::UpdateNavBar(LEditor* editor)
 void MainBook::ShowNavBar(bool s)
 {
     m_navBar->DoShow(s);
-    UpdateNavBar(GetActiveEditor());
+    LEditor* editor = GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    // Update the navigation bar
+    clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
+    evtUpdateNavBar.SetEditor(editor);
+    evtUpdateNavBar.SetPosition(editor->GetCtrl()->GetCurrentPos());
+    EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
 }
 
 void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { CreateSession(session, excludeArr); }
@@ -1518,4 +1527,23 @@ void MainBook::OnCacheUpdated(clCommandEvent& e)
 {
     e.Skip();
     UpdateNavBar(GetActiveEditor());
+}
+
+void MainBook::OnUpdateNavigationBar(clCodeCompletionEvent& e)
+{
+    e.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
+    CHECK_PTR_RET(editor);
+
+    LEditor* activeEditor = GetActiveEditor();
+    if(editor != activeEditor) return;
+
+    FileExtManager::FileType ft = FileExtManager::GetTypeFromExtension(editor->GetFileName());
+    if((ft != FileExtManager::TypeSourceC) && (ft != FileExtManager::TypeSourceCpp) &&
+       (ft != FileExtManager::TypeHeader))
+        return;
+
+    // A C++ file :)
+    e.Skip(false);
+    UpdateNavBar(activeEditor);
 }

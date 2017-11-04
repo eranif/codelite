@@ -3029,18 +3029,18 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxSt
     }
 
     // Write the content into temporary file
-    wxString filename = wxFileName::CreateTempFileName("ctagstemp");
-    wxFFile fp(filename, "w+b");
+    wxString tmpfilename = wxFileName::CreateTempFileName("ctagstemp");
+    wxFFile fp(tmpfilename, "w+b");
     if(!fp.IsOpened()) return TagEntryPtrVector_t();
     fp.Write(content, wxConvUTF8);
     fp.Close();
 
     wxString tags;
-    SourceToTags(filename, tags);
+    SourceToTags(tmpfilename, tags);
 
     {
         wxLogNull noLog;
-        ::wxRemoveFile(filename);
+        ::wxRemoveFile(tmpfilename);
     }
 
     TagEntryPtrVector_t tagsVec;

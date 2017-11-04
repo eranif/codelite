@@ -103,7 +103,7 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
         m_filenameRect = wxRect(0, 2, breadcumbsTextSize.GetWidth() + (4*X_SPACER), rect.GetHeight() - 4);
     
         // Draw the drop down button
-        wxRendererNative::Get().DrawComboBox(gcdc.GetWindow(), gcdc, m_filenameRect, wxCONTROL_CURRENT);
+        wxRendererNative::Get().DrawComboBox(this, gcdc, m_filenameRect, wxCONTROL_CURRENT);
         gcdc.DrawText(breadcumbsText, breadcrumbsTextX, breadcrumbsTextY);
 
 //        clTabColours colors;

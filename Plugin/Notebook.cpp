@@ -374,7 +374,11 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     if((GetStyle() & kNotebook_ShowFileListButton)) {
         if(IsVerticalTabs()) {
-            m_chevronRect = wxRect(rect.GetTopLeft(), wxSize(rect.GetWidth(), CHEVRON_SIZE));
+            int width = rect.GetWidth() > CHEVRON_SIZE ? CHEVRON_SIZE : rect.GetWidth();
+            int x = (rect.GetWidth() - width) / 2;
+            wxPoint topLeft = rect.GetTopLeft();
+            topLeft.x = x;
+            m_chevronRect = wxRect(topLeft, wxSize(width, CHEVRON_SIZE));
             rect.y = m_chevronRect.GetBottomLeft().y;
             rect.SetHeight(rect.GetHeight() - m_chevronRect.GetHeight());
         } else {
@@ -474,7 +478,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
-            m_art->DrawChevron(gcdc, m_chevronRect, m_colours);
+            m_art->DrawChevron(this, gcdc, m_chevronRect, m_colours);
         }
 
     } else {

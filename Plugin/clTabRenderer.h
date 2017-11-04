@@ -23,7 +23,7 @@
 #include <wx/sharedptr.h>
 #include <vector>
 
-#define CHEVRON_SIZE 16
+#define CHEVRON_SIZE 20
 #define CLOSE_BUTTON_SIZE 12
 
 class clTabCtrl;
@@ -215,7 +215,7 @@ public:
     /**
      * @brief draw cheveron button
      */
-    static void DrawChevron(wxDC& dc, const wxRect& rect, const clTabColours& colours);
+    static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
 };
 
 #endif // CLTABRENDERER_H

@@ -311,10 +311,10 @@ void clTabRenderer::DrawButton(wxDC& dc, const wxRect& rect, const clTabColours&
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
 }
 
-void clTabRenderer::DrawChevron(wxDC& dc, const wxRect& rect, const clTabColours& colours)
+void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)
 {
-#ifdef __WXOSX__
-    wxRendererNative::Get().DrawDropArrow(dc.GetWindow(), dc, rect, wxCONTROL_CURRENT);
+#if 1
+    wxRendererNative::Get().DrawDropArrow(win, dc, rect, wxCONTROL_CURRENT);
 #else
     wxCoord small = wxMin(rect.GetWidth(), rect.GetHeight());
     wxPoint pt;

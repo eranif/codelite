@@ -884,7 +884,24 @@ void PHPCodeCompletion::OnUpdateNavigationBar(clCodeCompletionEvent& e)
     IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
     if(!editor || !active_editor || editor != active_editor) return;
     if(FileExtManager::GetTypeFromExtension(editor->GetFileName()) != FileExtManager::TypePhp) return;
-    
+
     // TODO:: update the navigation bar here
     e.Skip(false);
+
+    // Fetch the function closest to the current file
+    PHPEntityBase::Ptr_t func = m_lookupTable.FindFunctionNearLine(editor->GetFileName(), e.GetLineNumber());
+    if(!func) return;
+    wxString className, functionName;
+    functionName = func->GetShortName();
+
+    wxString fullname = func->GetFullName();
+    int where = fullname.rfind(functionName);
+    if(where != wxNOT_FOUND) {
+        fullname.RemoveLast(functionName.size());
+        if(fullname.EndsWith("\\")) {
+            fullname.RemoveLast();
+        }
+        className.swap(fullname);
+    }
+    clGetManager()->GetNavigationBar()->SetMessage(className, functionName);
 }

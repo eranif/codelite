@@ -27,7 +27,8 @@ clTabRendererSquare::clTabRendererSquare()
 
 clTabRendererSquare::~clTabRendererSquare() {}
 
-void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style)
+void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
+                               size_t style)
 {
     wxColour inactiveTabPenColour = colours.inactiveTabPenColour;
 
@@ -90,8 +91,8 @@ void clTabRendererSquare::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
     }
 }
 
-void clTabRendererSquare::DrawBottomRect(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
-                                         const clTabColours& colours, size_t style)
+void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect,
+                                         wxDC& dc, const clTabColours& colours, size_t style)
 {
     const int penWidth = 1;
     wxPen markerPen(colours.markerColour, penWidth);

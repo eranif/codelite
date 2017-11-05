@@ -20,7 +20,8 @@ clTabRendererCurved::clTabRendererCurved()
 
 clTabRendererCurved::~clTabRendererCurved() {}
 
-void clTabRendererCurved::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style)
+void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
+                               size_t style)
 {
     const int TOP_SMALL_HEIGHT = 0;
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
@@ -247,8 +248,8 @@ void clTabRendererCurved::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
     }
 }
 
-void clTabRendererCurved::DrawBottomRect(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
-                                         const clTabColours& colours, size_t style)
+void clTabRendererCurved::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect,
+                                         wxDC& dc, const clTabColours& colours, size_t style)
 {
     if(!IS_VERTICAL_TABS(style)) {
         wxPoint pt1, pt2;

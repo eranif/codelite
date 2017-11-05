@@ -199,19 +199,20 @@ protected:
 public:
     clTabRenderer();
     virtual ~clTabRenderer() {}
-    virtual void Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style) = 0;
-    virtual void DrawBottomRect(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
+    virtual void Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
+                      size_t style) = 0;
+    virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;
     /**
      * @brief reutrn font suitable for drawing the tab label
      */
     static wxFont GetTabFont();
-    
+
     /**
      * @brief draw a button in a given state at a give location
      */
     static void DrawButton(wxDC& dc, const wxRect& rect, const clTabColours& colours, eButtonState state);
-    
+
     /**
      * @brief draw cheveron button
      */

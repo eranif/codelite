@@ -35,7 +35,6 @@ void clTabRendererClassic::InitDarkColours(clTabColours& colours)
     colours.tabAreaColour = wxColour("rgb(117, 123, 129)");
 }
 
-
 void clTabRendererClassic::InitLightColours(clTabColours& colours)
 {
     colours.activeTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
@@ -48,7 +47,8 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours)
     colours.tabAreaColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(80);
 }
 
-void clTabRendererClassic::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colors, size_t style)
+void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colors,
+                                size_t style)
 {
     const int TOP_SMALL_HEIGHT = 2;
 
@@ -287,8 +287,8 @@ void clTabRendererClassic::Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabC
     }
 }
 
-void clTabRendererClassic::DrawBottomRect(clTabInfo::Ptr_t tabInfo, const wxRect& clientRect, wxDC& dc,
-                                          const clTabColours& colors, size_t style)
+void clTabRendererClassic::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect,
+                                          wxDC& dc, const clTabColours& colors, size_t style)
 {
     clTabColours colours;
 

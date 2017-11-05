@@ -29,6 +29,7 @@ UninstallDisplayIcon={app}\codelite.exe,0
 #define CODELITE_ROOT "C:\src\codelite"
 #define WXWIN "D:\src\wxWidgets.git"
 #define BINUTILS_DIR "D:\bin"
+#define MINGW_DIR "D:\software\MinGW-w64\mingw64\bin"
 
 
 [Languages]
@@ -58,6 +59,11 @@ Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_richtext_gcc_cl.dll"; DestDir: "{app}"; 
 Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_ribbon_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+
+;; ---- MinGW64 Dlls
+Source: "{#MINGW_DIR}\libgcc_s_seh-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#MINGW_DIR}\libstdc++-6.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#MINGW_DIR}\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- Binaries needed by CodeLite
 Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; 
@@ -138,7 +144,7 @@ Source: "{#CODELITE_ROOT}\lib\gcc_lib\libplugin_sdku.dll"; DestDir: "{app}"; Fla
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\clang\lib\libclang64.dll"; DestDir: "{app}\"; DestName: "libclang.dll"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh64.dll"; DestDir: "{app}\"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh64.dll"; DestDir: "{app}\"; DestName: "libssh.dll"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\libssh\lib\zlib64.dll"; DestDir: "{app}\"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\clang\lib\clang-format-64.exe"; DestDir: "{app}\"; DestName: "codelite-clang-format.exe"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; 

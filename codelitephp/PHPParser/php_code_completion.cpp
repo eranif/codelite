@@ -890,7 +890,10 @@ void PHPCodeCompletion::OnUpdateNavigationBar(clCodeCompletionEvent& e)
 
     // Fetch the function closest to the current file
     PHPEntityBase::Ptr_t func = m_lookupTable.FindFunctionNearLine(editor->GetFileName(), e.GetLineNumber());
-    if(!func) return;
+    if(!func) {
+        clGetManager()->GetNavigationBar()->SetMessage("", "");
+        return;
+    }
     wxString className, functionName;
     functionName = func->GetShortName();
 

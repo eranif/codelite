@@ -451,20 +451,20 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             if((GetStyle() & kNotebook_EnableColourCustomization) && EventNotifier::Get()->ProcessEvent(colourEvent)) {
                 clTabColours colours;
                 colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
-                m_art->Draw(gcdc, *tab.get(), colours, m_style);
+                m_art->Draw(this, gcdc, *tab.get(), colours, m_style);
             } else {
-                m_art->Draw(gcdc, *tab.get(), m_colours, m_style);
+                m_art->Draw(this, gcdc, *tab.get(), m_colours, m_style);
             }
 
 #else
-            m_art->Draw(gcdc, *tab.get(), m_colours, m_style);
+            m_art->Draw(this, gcdc, *tab.get(), m_colours, m_style);
 #endif
         }
 
         // Redraw the active tab
         if(activeTabInex != wxNOT_FOUND) {
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-            m_art->Draw(gcdc, *activeTab.get(), activeTabColours, m_style);
+            m_art->Draw(this, gcdc, *activeTab.get(), activeTabColours, m_style);
         }
         if(!IsVerticalTabs()) {
             gcdc.DestroyClippingRegion();
@@ -1324,7 +1324,7 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
 void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours)
 {
-    GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
+    GetArt()->DrawBottomRect(this, activeTab, clientRect, dc, colours, GetStyle());
 }
 
 bool clTabCtrl::IsVerticalTabs() const { return (m_style & kNotebook_RightTabs) || (m_style & kNotebook_LeftTabs); }

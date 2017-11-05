@@ -245,6 +245,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         if(isSquareStyle) {
             pt1.y += 3;
         }
+        pt2.y -= 1;
         DRAW_LINE(pt1, pt2);
 
         pt1.x -= 1;
@@ -259,7 +260,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         if(isSquareStyle) {
             pt1.y += 3;
         }
-
+        pt2.y -= 1;
         DRAW_LINE(pt1, pt2);
 
     } else if(style & kNotebook_BottomTabs) {
@@ -267,9 +268,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopLeft();
         pt2 = activeTab->GetRect().GetTopRight();
-#ifdef __WXOSX__
         pt2.x -= 1;
-#endif
         DRAW_LINE(pt1, pt2);
 
     } else {
@@ -280,9 +279,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         if(isSquareStyle) {
             pt1.x += 3;
         }
-#ifdef __WXOSX__
         pt2.x -= 1;
-#endif
         DRAW_LINE(pt1, pt2);
 
         pt1.y += 1;

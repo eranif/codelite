@@ -65,7 +65,7 @@ bool CxxPreProcessorScanner::ConsumeBlock()
     return false;
 }
 
-void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
+void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) 
 {
     CxxLexerToken token;
     bool searchingForBranch = false;
@@ -389,7 +389,7 @@ bool CxxPreProcessorScanner::ConsumeCurrentBranch()
     return false;
 }
 
-void CxxPreProcessorScanner::ReadUntilMatch(int type, CxxLexerToken& token) throw(CxxLexerException)
+void CxxPreProcessorScanner::ReadUntilMatch(int type, CxxLexerToken& token) 
 {
     while(m_scanner && ::LexerNext(m_scanner, token)) {
         if(token.type == type) {

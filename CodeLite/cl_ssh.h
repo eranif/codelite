@@ -69,8 +69,8 @@ public:
 protected:
     void OnCheckRemoteOutut(wxTimerEvent& event);
     void DoCloseChannel();
-    void DoOpenChannel()  throw(clException);
-    void DoConnectWithRetries(int retries) throw(clException);
+    void DoOpenChannel()  ;
+    void DoConnectWithRetries(int retries) ;
     
 public:
     clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);
@@ -83,7 +83,7 @@ public:
     /**
      * @brief connect to the remote server
      */
-    void Connect(int seconds = 10) throw(clException);
+    void Connect(int seconds = 10) ;
 
     /**
      * @brief authenticate the server
@@ -91,38 +91,38 @@ public:
      * @return true if the server could be authenticated, otherwise return false.
      * In case an error occurs, throw a clException
      */
-    bool AuthenticateServer(wxString& message) throw(clException);
+    bool AuthenticateServer(wxString& message) ;
 
     /**
      * @brief accepts the server authentication and add it to the "known_hosts"
      */
-    void AcceptServerAuthentication() throw(clException);
+    void AcceptServerAuthentication() ;
 
     /**
      * @brief login to the server with the user credentials
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
-    bool LoginPassword(bool throwExc = true) throw(clException);
+    bool LoginPassword(bool throwExc = true) ;
 
     /**
      * @brief login using public key
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
-    bool LoginPublicKey(bool throwExc = true) throw(clException);
+    bool LoginPublicKey(bool throwExc = true) ;
 
     /**
      * @brief login using interactive-keyboard method
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
-    bool LoginInteractiveKBD(bool throwExc = true) throw(clException);
+    bool LoginInteractiveKBD(bool throwExc = true) ;
 
     /**
      * @brief try to login using all the methods we support (interactive-kbd, user/pass and public key)
      */
-    void Login() throw(clException);
+    void Login() ;
 
     /**
      * @brief close the SSH session
@@ -133,7 +133,7 @@ public:
     /**
      * @brief execute a remote command and return the output. open the shell if no is opened
      */
-    void ExecuteShellCommand(wxEvtHandler* owner, const wxString& command) throw(clException);
+    void ExecuteShellCommand(wxEvtHandler* owner, const wxString& command) ;
 
     SSHSession_t GetSession() { return m_session; }
 

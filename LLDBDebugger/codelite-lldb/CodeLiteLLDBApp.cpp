@@ -692,7 +692,7 @@ void CodeLiteLLDBApp::Interrupt(const LLDBCommand& command)
     m_target.GetProcess().SendAsyncInterrupt();
 }
 
-void CodeLiteLLDBApp::AcceptNewConnection() throw(clSocketException)
+void CodeLiteLLDBApp::AcceptNewConnection() 
 {
     m_replySocket.reset(NULL);
     wxPrintf("codelite-lldb: waiting for new connection\n");

@@ -75,7 +75,7 @@ public:
     /**
      * @brief intialize the scp over ssh
      */
-    void Initialize() throw(clException);
+    void Initialize() ;
 
     /**
      * @brief close the scp channel
@@ -89,20 +89,20 @@ public:
      */
     void Write(const wxFileName& localFile,
                const wxString& remotePath,
-               SFTPAttribute::Ptr_t attributes = SFTPAttribute::Ptr_t(NULL)) throw(clException);
+               SFTPAttribute::Ptr_t attributes = SFTPAttribute::Ptr_t(NULL)) ;
 
     /**
      * @brief write the content of 'fileContent' into the remote file represented by remotePath
      */
     void Write(const wxMemoryBuffer& fileContent,
                const wxString& remotePath,
-               SFTPAttribute::Ptr_t attributes = SFTPAttribute::Ptr_t(NULL)) throw(clException);
+               SFTPAttribute::Ptr_t attributes = SFTPAttribute::Ptr_t(NULL)) ;
 
     /**
      * @brief read remote file and return its content
      * @return the file content + the file attributes
      */
-    SFTPAttribute::Ptr_t Read(const wxString& remotePath, wxMemoryBuffer& buffer) throw(clException);
+    SFTPAttribute::Ptr_t Read(const wxString& remotePath, wxMemoryBuffer& buffer) ;
 
     /**
      * @brief list the content of a folder
@@ -111,20 +111,20 @@ public:
      * @param filter filter out files that do not match the filter
      * @throw clException incase an error occurred
      */
-    SFTPAttribute::List_t List(const wxString& folder, size_t flags, const wxString& filter = "") throw(clException);
+    SFTPAttribute::List_t List(const wxString& folder, size_t flags, const wxString& filter = "") ;
 
     /**
      * @brief create a directory
      * @param dirname
      */
-    void CreateDir(const wxString& dirname) throw(clException);
+    void CreateDir(const wxString& dirname) ;
 
     /**
      * @brief create a file. This function also creates the path to the file (by calling internally to Mkpath)
      */
     void CreateRemoteFile(const wxString& remoteFullPath,
                           const wxString& content,
-                          SFTPAttribute::Ptr_t attr) throw(clException);
+                          SFTPAttribute::Ptr_t attr) ;
 
     /**
      * @brief this version create a copy of the local file on the remote server. Similar to the previous
@@ -132,46 +132,46 @@ public:
      */
     void CreateRemoteFile(const wxString& remoteFullPath,
                           const wxFileName& localFile,
-                          SFTPAttribute::Ptr_t attr) throw(clException);
+                          SFTPAttribute::Ptr_t attr) ;
 
     /**
      * @brief create path . If the directory does not exist, create it (all sub paths if needed)
      */
-    void Mkpath(const wxString& remoteDirFullpath) throw(clException);
+    void Mkpath(const wxString& remoteDirFullpath) ;
 
     /**
      * @brief Remove a directoy.
      * @param dirname
      */
-    void RemoveDir(const wxString& dirname) throw(clException);
+    void RemoveDir(const wxString& dirname) ;
 
     /**
      * @brief Unlink (delete) a file.
      * @param dirname
      */
-    void UnlinkFile(const wxString& path) throw(clException);
+    void UnlinkFile(const wxString& path) ;
 
     /**
      * @brief Rename or move a file or directory
      * @param oldpath
      * @param newpath
      */
-    void Rename(const wxString& oldpath, const wxString& newpath) throw(clException);
+    void Rename(const wxString& oldpath, const wxString& newpath) ;
     /**
      * @brief cd up and list the content of the directory
      * @return
      */
-    SFTPAttribute::List_t CdUp(size_t flags, const wxString& filter) throw(clException);
+    SFTPAttribute::List_t CdUp(size_t flags, const wxString& filter) ;
 
     /**
      * @brief stat the path
      */
-    SFTPAttribute::Ptr_t Stat(const wxString& path) throw(clException);
+    SFTPAttribute::Ptr_t Stat(const wxString& path) ;
 
     /**
      * @brief change remote file permissions
      */
-    void Chmod(const wxString& remotePath, size_t permissions) throw(clException);
+    void Chmod(const wxString& remotePath, size_t permissions) ;
 
     /**
      * @brief return the current folder

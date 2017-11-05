@@ -17,7 +17,7 @@ clPatch::clPatch()
 clPatch::~clPatch() {}
 
 void
-clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirectory, const wxString& args) throw(clException)
+clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirectory, const wxString& args) 
 {
     // Sanity
     if(!m_patch.FileExists()) {

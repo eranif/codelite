@@ -47,7 +47,7 @@ protected:
 public:
     wxTextCtrl* GetTextCtrl8() { return m_textCtrl8; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    GotoAnythingBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Goto Anything"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    GotoAnythingBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Goto Anything"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GotoAnythingBaseDlg();
 };
 

@@ -208,6 +208,8 @@
     <File Name="cProjectDependecySorter.cpp"/>
     <File Name="clProfileHandler.h"/>
     <File Name="clProfileHandler.cpp"/>
+    <File Name="clGotoAnythingManager.h"/>
+    <File Name="clGotoAnythingManager.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>
@@ -371,6 +373,8 @@
       <File Name="clSelectSymbolDialog.cpp"/>
       <File Name="nameanddescdlg.wxcp"/>
       <File Name="envvar_table_dlg.wxcp"/>
+      <File Name="GotoAnythingDlg.cpp"/>
+      <File Name="GotoAnythingDlg.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="drawingutils.cpp"/>
@@ -517,8 +521,6 @@
     <File Name="clSelectSymbolDialogBase.wxcp"/>
     <File Name="MacrosBaseDlg.wxcp"/>
     <File Name="GotoAnythingBaseUI.wxcp"/>
-    <File Name="GotoAnythingDlg.h"/>
-    <File Name="GotoAnythingDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="sftp_ui">
     <File Name="AddSSHAcountDlg.cpp"/>

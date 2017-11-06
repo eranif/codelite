@@ -34,14 +34,14 @@ GotoAnythingBaseDlg::GotoAnythingBaseDlg(wxWindow* parent, wxWindowID id, const 
     
     boxSizer2->Add(m_textCtrl8, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400,400)), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(200,100)), wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer2->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_dvListCtrl->AppendTextColumn(_("Matches"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
     
     SetName(wxT("GotoAnythingBaseDlg"));
-    SetSize(500,300);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

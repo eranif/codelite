@@ -5,25 +5,25 @@
 #include "codelite_exports.h"
 #include <vector>
 
-class WXDLLIMPEXP_SDK GotoAnythingItemData
-{
-public:
-    wxString m_desc;
-    GotoAnythingItemData(const wxString& desc)
-        : m_desc(desc)
-    {
-    }
-    ~GotoAnythingItemData() {}
-};
-
+// class WXDLLIMPEXP_SDK GotoAnythingItemData
+// {
+// public:
+//     wxString m_desc;
+//     GotoAnythingItemData(const wxString& desc)
+//         : m_desc(desc)
+//     {
+//     }
+//     ~GotoAnythingItemData() {}
+// };
+//
 class WXDLLIMPEXP_SDK GotoAnythingDlg : public GotoAnythingBaseDlg
 {
-    std::vector<std::pair<wxString, GotoAnythingItemData*> > m_allEntries;
+    std::vector<wxString> m_allEntries;
     wxString m_currentFilter;
 
 protected:
-    GotoAnythingItemData* GetSelectedItemData();
-    void DoPopulate(std::vector<std::pair<wxString, GotoAnythingItemData*> >& entries);
+    //GotoAnythingItemData* GetSelectedItemData();
+    void DoPopulate(const std::vector<wxString>& entries);
     void DoExecuteActionAndClose();
 
 public:

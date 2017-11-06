@@ -483,6 +483,7 @@
       <File Name="nameanddescdlg_plugin_bitmaps.cpp"/>
       <File Name="MacrosBaseDlg_plugin_bitmaps.cpp"/>
       <File Name="EnvironmentVariablesDlgBaseBitmaps.cpp"/>
+      <File Name="GotoAnythingBaseUI_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
@@ -505,6 +506,8 @@
       <File Name="clSelectSymbolDialogBase.cpp"/>
       <File Name="EnvironmentVariablesDlgBase.h"/>
       <File Name="EnvironmentVariablesDlgBase.cpp"/>
+      <File Name="GotoAnythingBaseUI.h"/>
+      <File Name="GotoAnythingBaseUI.cpp"/>
     </VirtualDirectory>
     <File Name="openresourcedialogbase.wxcp"/>
     <File Name="plugin_general_wxcp.wxcp"/>
@@ -513,6 +516,9 @@
     <File Name="WSImporterDlgs.wxcp"/>
     <File Name="clSelectSymbolDialogBase.wxcp"/>
     <File Name="MacrosBaseDlg.wxcp"/>
+    <File Name="GotoAnythingBaseUI.wxcp"/>
+    <File Name="GotoAnythingDlg.h"/>
+    <File Name="GotoAnythingDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="sftp_ui">
     <File Name="AddSSHAcountDlg.cpp"/>

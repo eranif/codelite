@@ -146,6 +146,11 @@ public:
     static void Initialize(bool loadLastSession);
 
     /**
+     * @brief goto anything..
+     */
+    void OnGotoAnything(wxCommandEvent& e);
+
+    /**
      * @brief Return CodeLite App object
      */
     CodeLiteApp* GetTheApp();
@@ -315,7 +320,11 @@ public:
 
 private:
     // make our frame's constructor private
-    clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
+    clMainFrame(wxWindow* pParent,
+                wxWindowID id,
+                const wxString& title,
+                const wxPoint& pos,
+                const wxSize& size,
                 long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU |
                              wxRESIZE_BORDER | wxCLIP_CHILDREN);
     wxString CreateWorkspaceTable();

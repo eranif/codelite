@@ -23,57 +23,61 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#define __PERFORMANCE 
+#define __PERFORMANCE
 #include "performance.h"
 
 #ifdef __WXMSW__
 
-#include <vector>
-#include <string>
-#include <stdio.h>
-#include <windows.h>
 #include <assert.h>
+#include <stdio.h>
+#include <string>
+#include <vector>
+#include <windows.h>
 
-static FILE * dbgFile(NULL);
+#if 0
+static FILE* dbgFile(NULL);
 static std::string output = "";
 static std::vector<std::pair<DWORD, DWORD> > tickCounts;
-
-void PERF_OUTPUT(const char *path) {
-	output = path;
+#endif
+void PERF_OUTPUT(const char* path) 
+{ 
+#if 0
+    output = path; 
+#endif
 }
 
-void PERF_START(const char* func_name) {
-	if (!dbgFile) {
+void PERF_START(const char* func_name)
+{
+#if 0
+    if(!dbgFile) {
         dbgFile = fopen(output.c_str(), "w+");
         assert(dbgFile != 0);
     }
-	fprintf(dbgFile, "%*c<block name=\"%s\">\n", 4*tickCounts.size(), ' ', func_name);
-    fflush(dbgFile);	
-	tickCounts.push_back(std::make_pair(DWORD(GetTickCount()), DWORD(0)));    
+    fprintf(dbgFile, "%*c<block name=\"%s\">\n", 4 * tickCounts.size(), ' ', func_name);
+    fflush(dbgFile);
+    tickCounts.push_back(std::make_pair(DWORD(GetTickCount()), DWORD(0)));
+#endif
 }
 
-void PERF_END() {
-	assert(dbgFile != 0);
-    if (tickCounts.empty())
-        return;
+void PERF_END()
+{
+#if 0
+    assert(dbgFile != 0);
+    if(tickCounts.empty()) { return; }
+    DWORD tickCount = GetTickCount();
+    DWORD elapsed = tickCount - tickCounts.back().first;
+    DWORD unaccounted = elapsed - tickCounts.back().second;
 
-	DWORD tickCount   = GetTickCount();
-    DWORD elapsed     = tickCount - tickCounts.back().first;
-    DWORD unaccounted = elapsed   - tickCounts.back().second;
-    
-    fprintf(dbgFile, "%*c<elapsed time=\"%ld\"", 4*tickCounts.size(), ' ', elapsed);
-    if (0 < unaccounted && unaccounted < elapsed) {
-        fprintf(dbgFile, " unaccounted=\"%ld\"", unaccounted);
-    }
+    fprintf(dbgFile, "%*c<elapsed time=\"%ld\"", 4 * tickCounts.size(), ' ', elapsed);
+    if(0 < unaccounted && unaccounted < elapsed) { fprintf(dbgFile, " unaccounted=\"%ld\"", unaccounted); }
     fprintf(dbgFile, "/>\n");
 
     tickCounts.pop_back();
-    if (!tickCounts.empty()) {
-        tickCounts.back().second += elapsed;
-    }
-    
-    fprintf(dbgFile, "%*c</block>\n", 4*tickCounts.size(), ' ');
-	fflush(dbgFile);	
+    if(!tickCounts.empty()) { tickCounts.back().second += elapsed; }
+
+    fprintf(dbgFile, "%*c</block>\n", 4 * tickCounts.size(), ' ');
+    fflush(dbgFile);
+#endif
 }
 
 #endif

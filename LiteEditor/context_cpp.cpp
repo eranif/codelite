@@ -1375,7 +1375,6 @@ void ContextCpp::OnSciUpdateUI(wxStyledTextEvent& event)
     LEditor& ctrl = GetCtrl();
 
     static long lastPos(wxNOT_FOUND);
-    static long lastLine(wxNOT_FOUND);
 
     // get the current position
     long curpos = ctrl.GetCurrentPos();

@@ -106,7 +106,10 @@ void clGotoAnythingManager::Initialise()
                     entry.SetKeyboardShortcut(menuItem->GetAccel()->ToString());
                 }
                 entry.SetResourceID(menuItem->GetId());
-                m_actions[entry.GetDesc()] = entry;
+                if(!entry.GetDesc().IsEmpty()) {
+                    // Dont add empty entries
+                    m_actions[entry.GetDesc()] = entry;
+                }
             }
         }
     }

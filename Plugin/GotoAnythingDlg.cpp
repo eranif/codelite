@@ -1,5 +1,5 @@
 #include "GotoAnythingDlg.h"
-#include "clGotoAnythingManager.h"
+#include "clAnagram.h"
 #include "clKeyboardManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -7,7 +7,6 @@
 #include "windowattrmanager.h"
 #include <algorithm>
 #include <wx/app.h>
-#include "clAnagram.h"
 
 GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent)
     : GotoAnythingBaseDlg(parent)
@@ -22,9 +21,23 @@ GotoAnythingDlg::~GotoAnythingDlg() { m_allEntries.clear(); }
 void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();
-    if(event.GetUnicodeKey() == WXK_ESCAPE) {
+    if(event.GetKeyCode() == WXK_ESCAPE) {
         event.Skip(false);
         EndModal(wxID_CANCEL);
+    } else if(event.GetKeyCode() == WXK_DOWN) {
+        event.Skip(false);
+        int row = m_dvListCtrl->GetSelectedRow();
+        if((row + 1) < m_dvListCtrl->GetItemCount()) {
+            row++;
+            m_dvListCtrl->SelectRow(row);
+        }
+    } else if(event.GetKeyCode() == WXK_UP) {
+        event.Skip(false);
+        int row = m_dvListCtrl->GetSelectedRow();
+        if((row - 1) >= 0) {
+            row--;
+            m_dvListCtrl->SelectRow(row);
+        }
     }
 }
 
@@ -34,12 +47,13 @@ void GotoAnythingDlg::OnEnter(wxCommandEvent& event)
     DoExecuteActionAndClose();
 }
 
-void GotoAnythingDlg::DoPopulate(const std::vector<wxString>& entries)
+void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries)
 {
     m_dvListCtrl->DeleteAllItems();
-    std::for_each(entries.begin(), entries.end(), [&](const wxString& action) {
+    std::for_each(entries.begin(), entries.end(), [&](const clGotoEntry& entry) {
         wxVector<wxVariant> cols;
-        cols.push_back(action);
+        cols.push_back(entry.GetDesc());
+        cols.push_back(entry.GetKeyboardShortcut());
         m_dvListCtrl->AppendItem(cols);
     });
 
@@ -77,9 +91,9 @@ void GotoAnythingDlg::OnIdle(wxIdleEvent& e)
 
         // Filter the list
         clAnagram anagram(filter);
-        std::vector<wxString> matchedEntries;
-        std::for_each(m_allEntries.begin(), m_allEntries.end(), [&](const wxString& str) {
-            if(anagram.Matches(str)) { matchedEntries.push_back(str); }
+        std::vector<clGotoEntry> matchedEntries;
+        std::for_each(m_allEntries.begin(), m_allEntries.end(), [&](const clGotoEntry& entry) {
+            if(anagram.MatchesInOrder(entry.GetDesc())) { matchedEntries.push_back(entry); }
         });
 
         // And populate the list

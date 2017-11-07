@@ -1,5 +1,6 @@
 #include "GotoAnythingDlg.h"
 #include "clGotoAnythingManager.h"
+#include "clKeyboardManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include <algorithm>
@@ -8,14 +9,16 @@
 clGotoAnythingManager::clGotoAnythingManager()
 {
     // Register the common actions
-    m_coreActions[_("Preferences")] = wxID_PREFERENCES;
-    m_coreActions[_("Colours and Fonts")] = XRCID("syntax_highlight");
-    m_coreActions[_("Keyboard Shortcuts")] = XRCID("configure_accelerators");
-    m_coreActions[_("Environment Variables")] = XRCID("add_envvar");
-    m_coreActions[_("Build Settings")] = XRCID("advance_settings");
-    m_coreActions[_("GDB settings")] = XRCID("debuger_settings");
-    m_coreActions[_("Code Completion Settings")] = XRCID("tags_options");
+    MenuItemDataMap_t accels;
+    clKeyboardManager::Get()->GetAllAccelerators(accels);
 
+    std::for_each(accels.begin(), accels.end(), [&](const MenuItemDataMap_t::value_type& vt) {
+        const MenuItemData& itemData = vt.second;
+        if(itemData.parentMenu != "Edit" && !itemData.parentMenu.IsEmpty()) {
+            m_actions[itemData.action] =
+                clGotoEntry(itemData.action, itemData.accel, wxXmlResource::GetXRCID(itemData.resourceID, wxNOT_FOUND));
+        }
+    });
     EventNotifier::Get()->Bind(wxEVT_GOTO_ANYTHING_SELECTED, &clGotoAnythingManager::OnActionSelected, this);
 }
 
@@ -24,9 +27,16 @@ clGotoAnythingManager::~clGotoAnythingManager()
     EventNotifier::Get()->Unbind(wxEVT_GOTO_ANYTHING_SELECTED, &clGotoAnythingManager::OnActionSelected, this);
 }
 
-void clGotoAnythingManager::Add(const wxString& entry) { m_pluginActions.insert(entry); }
+void clGotoAnythingManager::Add(const clGotoEntry& entry)
+{
+    Delete(entry);
+    m_actions[entry.GetDesc()] = entry;
+}
 
-void clGotoAnythingManager::Delete(const wxString& entry) { m_pluginActions.erase(entry); }
+void clGotoAnythingManager::Delete(const clGotoEntry& entry)
+{
+    if(m_actions.count(entry.GetDesc())) { m_actions.erase(entry.GetDesc()); }
+}
 
 clGotoAnythingManager& clGotoAnythingManager::Get()
 {
@@ -37,11 +47,11 @@ clGotoAnythingManager& clGotoAnythingManager::Get()
 void clGotoAnythingManager::OnActionSelected(clCommandEvent& e)
 {
     e.Skip();
-    if(m_coreActions.count(e.GetString())) {
+    if(m_actions.count(e.GetString())) {
         e.Skip(false);
 
         // Trigger the action
-        wxCommandEvent evtAction(wxEVT_MENU, m_coreActions[e.GetString()]);
+        wxCommandEvent evtAction(wxEVT_MENU, m_actions[e.GetString()].GetResourceID());
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtAction);
     }
 }
@@ -52,13 +62,13 @@ void clGotoAnythingManager::ShowDialog()
     dlg.ShowModal();
 }
 
-std::vector<wxString> clGotoAnythingManager::GetActions() const
+std::vector<clGotoEntry> clGotoAnythingManager::GetActions() const
 {
-    std::vector<wxString> actions;
-    std::for_each(m_coreActions.begin(), m_coreActions.end(),
-                  [&](const std::unordered_map<wxString, int>::value_type& vt) { actions.push_back(vt.first); });
-    std::for_each(m_pluginActions.begin(), m_pluginActions.end(),
-                  [&](const wxString& action) { actions.push_back(action); });
-    std::sort(actions.begin(), actions.end());
+    std::vector<clGotoEntry> actions;
+    std::for_each(
+        m_actions.begin(), m_actions.end(),
+        [&](const std::unordered_map<wxString, clGotoEntry>::value_type& vt) { actions.push_back(vt.second); });
+    std::sort(actions.begin(), actions.end(),
+              [&](const clGotoEntry& a, const clGotoEntry& b) { return a.GetDesc() < b.GetDesc(); });
     return actions;
 }

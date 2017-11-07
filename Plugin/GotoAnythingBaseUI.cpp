@@ -38,7 +38,8 @@ GotoAnythingBaseDlg::GotoAnythingBaseDlg(wxWindow* parent, wxWindowID id, const 
     
     boxSizer2->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl->AppendTextColumn(_("Matches"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Matches"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(300), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Shortcut"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
     
     SetName(wxT("GotoAnythingBaseDlg"));
     SetSize(-1,-1);

@@ -4,6 +4,7 @@
 #include "GotoAnythingBaseUI.h"
 #include "codelite_exports.h"
 #include <vector>
+#include "clGotoAnythingManager.h"
 
 // class WXDLLIMPEXP_SDK GotoAnythingItemData
 // {
@@ -18,12 +19,12 @@
 //
 class WXDLLIMPEXP_SDK GotoAnythingDlg : public GotoAnythingBaseDlg
 {
-    std::vector<wxString> m_allEntries;
+    std::vector<clGotoEntry> m_allEntries;
     wxString m_currentFilter;
 
 protected:
     //GotoAnythingItemData* GetSelectedItemData();
-    void DoPopulate(const std::vector<wxString>& entries);
+    void DoPopulate(const std::vector<clGotoEntry>& entries);
     void DoExecuteActionAndClose();
 
 public:

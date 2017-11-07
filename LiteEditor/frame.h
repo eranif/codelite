@@ -55,6 +55,7 @@
 #include "clMainFrameHelper.h"
 
 // forward decls
+class WebUpdateJob;
 class CodeLiteApp;
 class clSingleInstanceThread;
 class wxCustomStatusBar;
@@ -131,7 +132,8 @@ class clMainFrame : public wxFrame
     wxPrintDialogData m_printDlgData;
     wxToolBar* m_mainToolBar;
     clMainFrameHelper::Ptr_t m_frameHelper;
-
+    WebUpdateJob *m_webUpdate;
+    
 public:
     static bool m_initCompleted;
 

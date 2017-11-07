@@ -1,5 +1,5 @@
-#include "clSocketClientAsync.h"
 #include "SocketAPI/clSocketClient.h"
+#include "clSocketClientAsync.h"
 
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, clCommandEvent);
@@ -18,7 +18,14 @@ clSocketClientAsync::~clSocketClientAsync() { Disconnect(); }
 void clSocketClientAsync::Connect(const wxString& connectionString, const wxString& keepAliveMessage)
 {
     Disconnect();
-    m_thread = new clSocketClientAsyncHelperThread(m_owner, connectionString, keepAliveMessage);
+    m_thread = new clSocketClientAsyncHelperThread(m_owner, connectionString, false, keepAliveMessage);
+    m_thread->Start();
+}
+
+void clSocketClientAsync::ConnectNonBlocking(const wxString& connectionString, const wxString& keepAliveMessage)
+{
+    Disconnect();
+    m_thread = new clSocketClientAsyncHelperThread(m_owner, connectionString, true, keepAliveMessage);
     m_thread->Start();
 }
 
@@ -44,11 +51,12 @@ void clSocketClientAsync::Send(const wxString& buffer)
 // The helper thread
 //-----------------------------------------------------------------------------------------------
 clSocketClientAsyncHelperThread::clSocketClientAsyncHelperThread(wxEvtHandler* sink, const wxString& connectionString,
-                                                                 const wxString& keepAliveMessage)
+                                                                 bool nonBlockingMode, const wxString& keepAliveMessage)
     : wxThread(wxTHREAD_JOINABLE)
     , m_sink(sink)
     , m_keepAliveMessage(keepAliveMessage)
     , m_connectionString(connectionString)
+    , m_nonBlockingMode(nonBlockingMode)
 {
 }
 
@@ -63,17 +71,39 @@ void* clSocketClientAsyncHelperThread::Entry()
     bool connected = false;
 
     // Try to connect and wait up to 5 seconds
-    for(size_t i = 0; i < 10; ++i) {
-        connected = client->Connect(m_connectionString, false);
-        if(connected) {
-            break;
+    if(!m_nonBlockingMode) {
+        for(size_t i = 0; i < 10; ++i) {
+            connected = client->Connect(m_connectionString, false);
+            if(connected) { break; }
+            if(TestDestroy()) {
+                // We were requested to go down during connect phase
+                return NULL;
+            }
+            ::wxMilliSleep(500);
         }
-
-        if(TestDestroy()) {
-            // We were requested to go down during connect phase
-            return NULL;
+    } else {
+        bool wouldBlock = false;
+        connected = client->ConnectNonBlocking(m_connectionString, wouldBlock);
+        if(!connected && wouldBlock) {
+            // We should select here (wait for the socket to be writable)
+            for(size_t i = 0; i < 5; ++i) {
+                int rc = client->SelectWrite(1);
+                if(rc == clSocketBase::kSuccess) {
+                    // we are connected
+                    connected = true;
+                    break;
+                } else if(rc == clSocketBase::kError) {
+                    // an error occured
+                    break;
+                } else {
+                    // Timeout
+                    // Loop again
+                }
+                
+                // Test for thread shutdown before we continue
+                if(TestDestroy()) { break; }
+            }
         }
-        ::wxMilliSleep(500);
     }
 
     // Connected?

@@ -23,14 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "precompiled_header.h"
 #include "autoversion.h"
-#include <wx/url.h>
-#include <wx/tokenzr.h>
-#include "webupdatethread.h"
-#include "procutils.h"
-#include "json_node.h"
 #include "file_logger.h"
+#include "json_node.h"
+#include "precompiled_header.h"
+#include "procutils.h"
+#include "webupdatethread.h"
+#include <wx/tokenzr.h>
+#include <wx/url.h>
 
 const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE = wxNewEventType();
 const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
@@ -70,14 +70,12 @@ struct CodeLiteVersion {
 
         if((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
             bool res = (m_version > nVersionNumber);
-            if(res) {
-                clDEBUG() << "Found new version!" << clEndl;
-            }
+            if(res) { clDEBUG() << "Found new version!" << clEndl; }
             return res;
         }
         return false;
     }
-    
+
     bool IsReleaseVersion() const { return m_isReleaseVersion; }
     const wxString& GetArch() const { return m_arch; }
     const wxString& GetCodename() const { return m_codename; }
@@ -87,98 +85,20 @@ struct CodeLiteVersion {
 };
 
 WebUpdateJob::WebUpdateJob(wxEvtHandler* parent, bool userRequest, bool onlyRelease)
-    : Job(parent)
+    : m_parent(parent)
+    , m_socket(this)
     , m_userRequest(userRequest)
     , m_onlyRelease(onlyRelease)
+    , m_eventsConnected(true)
 {
+    Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &WebUpdateJob::OnConnected, this);
+    Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &WebUpdateJob::OnConnectionLost, this);
+    Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &WebUpdateJob::OnConnectionError, this);
+    Bind(wxEVT_ASYNC_SOCKET_ERROR, &WebUpdateJob::OnSocketError, this);
+    Bind(wxEVT_ASYNC_SOCKET_INPUT, &WebUpdateJob::OnSocketInput, this);
 }
 
-WebUpdateJob::~WebUpdateJob() {}
-
-void WebUpdateJob::Process(wxThread* thread)
-{
-#ifndef __WXMSW__
-    wxFileName fn(wxT("/tmp/codelite-packages.json"));
-    wxString command;
-#ifdef __WXMAC__
-    command << wxT("curl http://www.codelite.org/packages.json  --output ") << fn.GetFullPath()
-            << wxT(" > /dev/null 2>&1");
-#else
-    command << "wget http://www.codelite.org/packages.json --output-file=/dev/null -O " << fn.GetFullPath()
-            << wxT(" > /dev/null 2>&1");
-#endif
-    {
-        wxLogNull noLog;
-        ::wxRemoveFile(fn.GetFullPath());
-    }
-
-    wxArrayString outputArr;
-    ProcUtils::SafeExecuteCommand(command, outputArr);
-
-    if(fn.FileExists()) {
-
-        wxFFile fp(fn.GetFullPath(), wxT("rb"));
-        if(fp.IsOpened()) {
-
-            m_dataRead.Clear();
-            fp.ReadAll(&m_dataRead, wxConvUTF8);
-
-            ParseFile();
-        }
-    }
-
-#else
-    wxURL url(wxT("http://www.codelite.org/packages.json"));
-    if(url.GetError() == wxURL_NOERR) {
-
-        wxInputStream* in_stream = url.GetInputStream();
-        if(!in_stream) {
-            return;
-        }
-        bool shutdownRequest(false);
-
-        unsigned char buffer[DLBUFSIZE + 1];
-        do {
-
-            in_stream->Read(buffer, DLBUFSIZE);
-            size_t bytes_read = in_stream->LastRead();
-            if(bytes_read > 0) {
-
-                buffer[bytes_read] = 0;
-                wxString buffRead((const char*)buffer, wxConvUTF8);
-                m_dataRead.Append(buffRead);
-            }
-
-            // Check termination request from time to time
-            if(thread->TestDestroy()) {
-                shutdownRequest = true;
-                break;
-            }
-
-        } while(!in_stream->Eof());
-
-        if(shutdownRequest == false) {
-            delete in_stream;
-            ParseFile();
-        }
-    }
-#endif
-}
-
-size_t WebUpdateJob::WriteData(void* buffer, size_t size, size_t nmemb, void* obj)
-{
-    WebUpdateJob* job = reinterpret_cast<WebUpdateJob*>(obj);
-    if(job) {
-        char* data = new char[size * nmemb + 1];
-        memcpy(data, buffer, size * nmemb);
-        data[size * nmemb] = 0;
-
-        job->m_dataRead.Append(_U(data));
-        delete[] data;
-        return size * nmemb;
-    }
-    return static_cast<size_t>(-1);
-}
+WebUpdateJob::~WebUpdateJob() { Clear(); }
 
 void WebUpdateJob::ParseFile()
 {
@@ -199,22 +119,20 @@ void WebUpdateJob::ParseFile()
             // skip weekly builds
             continue;
         }
-        
+
         if(v.IsNewer(os, codename, arch)) {
             clDEBUG() << "A new version of CodeLite found" << clEndl;
             wxCommandEvent event(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-            event.SetClientData(new WebUpdateJobData(
-                "https://codelite.org/support.php", v.GetUrl(), CODELITE_VERSION_STRING, "", false, true));
+            event.SetClientData(new WebUpdateJobData("https://codelite.org/support.php", v.GetUrl(),
+                                                     CODELITE_VERSION_STRING, "", false, true));
             m_parent->AddPendingEvent(event);
             return;
         }
     }
 
-    if(m_userRequest) {
-        // If we got here, then the version is up to date
-        wxCommandEvent event(wxEVT_CMD_VERSION_UPTODATE);
-        m_parent->AddPendingEvent(event);
-    }
+    // If we got here, then the version is up to date
+    wxCommandEvent event(wxEVT_CMD_VERSION_UPTODATE);
+    m_parent->AddPendingEvent(event);
 }
 
 void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString& arch) const
@@ -258,4 +176,66 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
     arch = "i386";
 #endif
 #endif
+}
+
+void WebUpdateJob::OnConnected(clCommandEvent& e)
+{
+    wxString message;
+    message << "GET /packages.json HTTP/1.1\r\n"
+            << "Host: www.codelite.org\r\n"
+            << "\r\n";
+    m_socket.Send(message);
+}
+
+void WebUpdateJob::OnConnectionLost(clCommandEvent& e)
+{
+    clDEBUG() << "WebUpdateJob: Connection lost:" << e.GetString() << clEndl;
+    m_socket.Disconnect();
+}
+
+void WebUpdateJob::OnConnectionError(clCommandEvent& e)
+{
+    clDEBUG() << "WebUpdateJob: Connection error:" << e.GetString() << clEndl;
+    m_socket.Disconnect();
+}
+
+void WebUpdateJob::OnSocketError(clCommandEvent& e)
+{
+    clDEBUG() << "WebUpdateJob: socket error:" << e.GetString() << clEndl;
+    m_socket.Disconnect();
+}
+
+void WebUpdateJob::OnSocketInput(clCommandEvent& e)
+{
+    m_dataRead << e.GetString();
+    int where = m_dataRead.Find("\r\n\r\n");
+    if(where != wxNOT_FOUND) {
+        wxString headers = m_dataRead.Mid(0, where);
+        m_dataRead = m_dataRead.Mid(where + 4);
+        ParseFile();
+        Clear();
+    }
+}
+
+void WebUpdateJob::Check()
+{
+    // Connect to the remote host
+    wxIPV4address address;
+    address.Hostname("www.codelite.org");
+    wxString connectionString;
+    connectionString << "tcp://" << address.IPAddress() << ":80";
+    m_socket.ConnectNonBlocking(connectionString);
+}
+
+void WebUpdateJob::Clear()
+{
+    if(m_eventsConnected) {
+        Unbind(wxEVT_ASYNC_SOCKET_CONNECTED, &WebUpdateJob::OnConnected, this);
+        Unbind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &WebUpdateJob::OnConnectionLost, this);
+        Unbind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &WebUpdateJob::OnConnectionError, this);
+        Unbind(wxEVT_ASYNC_SOCKET_ERROR, &WebUpdateJob::OnSocketError, this);
+        Unbind(wxEVT_ASYNC_SOCKET_INPUT, &WebUpdateJob::OnSocketInput, this);
+        m_eventsConnected = false;
+    }
+    m_socket.Disconnect();
 }

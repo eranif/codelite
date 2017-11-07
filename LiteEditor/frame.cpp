@@ -700,6 +700,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
 #ifdef __WXGTK__
     , m_isWaylandSession(false)
 #endif
+    , m_webUpdate(NULL)
 {
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -830,6 +831,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
 clMainFrame::~clMainFrame(void)
 {
     wxDELETE(m_singleInstanceThread);
+    wxDELETE(m_webUpdate);
 
 #ifndef __WXMSW__
     m_zombieReaper.Stop();
@@ -2928,8 +2930,8 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
     if(::clIsCygwinEnvironment()) { wxLogMessage("Running under Cygwin environment"); }
 
     if(clConfig::Get().Read(kConfigCheckForNewVersion, true)) {
-        JobQueueSingleton::Instance()->PushJob(
-            new WebUpdateJob(this, false, clConfig::Get().Read("PromptForNewReleaseOnly", false)));
+        m_webUpdate = new WebUpdateJob(this, false, clConfig::Get().Read("PromptForNewReleaseOnly", false));
+        m_webUpdate->Check();
     }
 
     // enable/disable plugins toolbar functionality
@@ -3958,7 +3960,9 @@ void clMainFrame::OnSingleInstanceRaise(clCommandEvent& e)
 
 void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
 {
-    if(e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE) {
+    clDEBUG() << "clMainFrame::OnNewVersionAvailable called:"
+              << (e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE ? "up-to-date" : "new version found") << clEndl;
+    if((e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE) && m_webUpdate->IsUserRequest()) {
         // All is up to date
         wxMessageBox(_("You already have the latest version of CodeLite"), "CodeLite", wxOK | wxCENTRE, this);
     } else {
@@ -3973,6 +3977,7 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
             wxDELETE(data);
         }
     }
+    wxDELETE(m_webUpdate);
 }
 
 void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
@@ -4865,8 +4870,10 @@ void clMainFrame::UpdateTagsOptions(const TagsOptionsData& tod)
 
 void clMainFrame::OnCheckForUpdate(wxCommandEvent& e)
 {
-    JobQueueSingleton::Instance()->PushJob(
-        new WebUpdateJob(this, true, clConfig::Get().Read("PromptForNewReleaseOnly", false)));
+    if(!m_webUpdate) {
+        m_webUpdate = new WebUpdateJob(this, true, clConfig::Get().Read("PromptForNewReleaseOnly", false));
+        m_webUpdate->Check();
+    }
 }
 
 void clMainFrame::OnShowActiveProjectSettings(wxCommandEvent& e)

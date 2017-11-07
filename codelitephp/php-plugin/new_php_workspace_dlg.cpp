@@ -53,7 +53,16 @@ void NewPHPWorkspaceDlg::OnBrowse(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector(_("select a folder"), m_textCtrlPath->GetValue());
     if(!path.IsEmpty()) {
-        m_textCtrlPath->ChangeValue(path);
+        m_textCtrlPath->SetValue(path); // we want event here
         m_textCtrlPreview->ChangeValue(GetWorkspacePath());
     }
+}
+
+void NewPHPWorkspaceDlg::OnFolderSelected(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxFileName fn(m_textCtrlPath->GetValue());
+    
+    // Use the last folder path as the project name
+    m_textCtrlName->ChangeValue(fn.GetName());
 }

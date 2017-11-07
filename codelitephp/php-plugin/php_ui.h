@@ -85,12 +85,11 @@ public:
 class NewPHPWorkspaceBaseDlg : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText2;
-    wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText3;
     wxTextCtrl* m_textCtrlPath;
     wxButton* m_button49;
-    wxCheckBox* m_checkBoxAddProjectFromSources;
+    wxStaticText* m_staticText2;
+    wxTextCtrl* m_textCtrlName;
     wxCheckBox* m_checkBoxCreateInSeparateDir;
     wxTextCtrl* m_textCtrlPreview;
     wxStdDialogButtonSizer* m_stdBtnSizer685;
@@ -98,19 +97,19 @@ protected:
     wxButton* m_button689;
 
 protected:
-    virtual void OnNameUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFolderSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNameUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckMakeSeparateDir(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText2() { return m_staticText2; }
-    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
     wxTextCtrl* GetTextCtrlPath() { return m_textCtrlPath; }
     wxButton* GetButton49() { return m_button49; }
-    wxCheckBox* GetCheckBoxAddProjectFromSources() { return m_checkBoxAddProjectFromSources; }
+    wxStaticText* GetStaticText2() { return m_staticText2; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxCheckBox* GetCheckBoxCreateInSeparateDir() { return m_checkBoxCreateInSeparateDir; }
     wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
     NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

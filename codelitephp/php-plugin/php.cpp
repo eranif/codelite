@@ -62,10 +62,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 
-CL_PLUGIN_API int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 PhpPlugin::PhpPlugin(IManager* manager)
     : IPlugin(manager)
@@ -146,8 +143,8 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
-    //EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
-    
+    // EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
+
     CallAfter(&PhpPlugin::FinalizeStartup);
 
     // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
@@ -267,10 +264,10 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
-    
+
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
-    //EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
-    
+    // EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &PhpPlugin::OnFileAction, this);
+
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");
     SafelyDetachAndDestroyPane(m_xdebugEvalPane, "XDebugEval");
@@ -326,7 +323,7 @@ void PhpPlugin::OnNewWorkspace(clCommandEvent& e)
                 return;
             }
             PHPWorkspace::Get()->Create(newWspDlg.GetWorkspacePath());
-            DoOpenWorkspace(newWspDlg.GetWorkspacePath(), false /* create if missing */, newWspDlg.IsCreateProject());
+            DoOpenWorkspace(newWspDlg.GetWorkspacePath(), false /* create if missing */, false);
         }
     }
 }
@@ -559,8 +556,7 @@ void PhpPlugin::OnMenuCommand(wxCommandEvent& e)
     case wxID_PHP_SETTINGS: {
         PHPSettingsDlg dlg(FRAME);
         dlg.ShowModal();
-    }
-    break;
+    } break;
     default:
         e.Skip();
         break;
@@ -628,10 +624,7 @@ void PhpPlugin::OnXDebugDeleteAllBreakpoints(clDebugEvent& e)
     EventNotifier::Get()->AddPendingEvent(eventDelAllBP);
 }
 
-void PhpPlugin::OnXDebugShowBreakpointsWindow(wxCommandEvent& e)
-{
-    DoEnsureXDebugPanesVisible(_("Breakpoints"));
-}
+void PhpPlugin::OnXDebugShowBreakpointsWindow(wxCommandEvent& e) { DoEnsureXDebugPanesVisible(_("Breakpoints")); }
 
 void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
 {
@@ -727,10 +720,7 @@ void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
     }
 }
 
-void PhpPlugin::SetEditorActive(IEditor* editor)
-{
-    editor->SetActive();
-}
+void PhpPlugin::SetEditorActive(IEditor* editor) { editor->SetActive(); }
 
 void PhpPlugin::RunXDebugDiagnostics()
 {
@@ -778,13 +768,13 @@ void PhpPlugin::FinalizeStartup()
     m_debuggerPane = new PHPDebugPane(parent);
     m_mgr->GetDockingManager()->AddPane(m_debuggerPane,
                                         wxAuiPaneInfo()
-                                        .Name("XDebug")
-                                        .Caption("Call Stack & Breakpoints")
-                                        .Hide()
-                                        .CloseButton()
-                                        .MaximizeButton()
-                                        .Bottom()
-                                        .Position(3));
+                                            .Name("XDebug")
+                                            .Caption("Call Stack & Breakpoints")
+                                            .Hide()
+                                            .CloseButton()
+                                            .MaximizeButton()
+                                            .Bottom()
+                                            .Position(3));
 
     m_xdebugLocalsView = new LocalsView(parent);
     m_mgr->GetDockingManager()->AddPane(
@@ -802,10 +792,7 @@ void PhpPlugin::FinalizeStartup()
     data.Load();
 }
 
-void PhpPlugin::OnGoingDown(clCommandEvent& event)
-{
-    event.Skip();
-}
+void PhpPlugin::OnGoingDown(clCommandEvent& event) { event.Skip(); }
 
 void PhpPlugin::OnFindInFilesDismissed(clCommandEvent& e)
 {

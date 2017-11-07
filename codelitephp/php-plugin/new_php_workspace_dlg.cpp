@@ -21,9 +21,6 @@ wxString NewPHPWorkspaceDlg::GetWorkspacePath() const
     }
 
     wxFileName filepath(m_textCtrlPath->GetValue(), m_textCtrlName->GetValue());
-    if(m_checkBoxCreateInSeparateDir->IsChecked()) {
-        filepath.AppendDir(filepath.GetName());
-    }
     filepath.SetExt(PHPStrings::PHP_WORKSPACE_EXT);
     return filepath.GetFullPath();
 }

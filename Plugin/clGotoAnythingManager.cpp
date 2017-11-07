@@ -78,7 +78,7 @@ void clGotoAnythingManager::Initialise()
     if(!mb) return;
 
     // Get list of menu entries
-    std::queue<std::pair<wxString, wxMenu*>> q;
+    std::queue<std::pair<wxString, wxMenu*> > q;
     for(size_t i = 0; i < mb->GetMenuCount(); ++i) {
         q.push(std::make_pair("", mb->GetMenu(i)));
     }
@@ -87,12 +87,16 @@ void clGotoAnythingManager::Initialise()
         wxMenu* menu = q.front().second;
         wxString prefix = q.front().first;
         q.pop();
-        
+
         const wxMenuItemList& L = menu->GetMenuItems();
         wxMenuItemList::const_iterator iter = L.begin();
         for(; iter != L.end(); ++iter) {
             wxMenuItem* menuItem = *iter;
             if(menuItem->GetSubMenu()) {
+                wxString labelText = menuItem->GetItemLabelText();
+                if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) {
+                    continue;
+                }
                 q.push(std::make_pair(menuItem->GetItemLabelText() + " > ", menuItem->GetSubMenu()));
             } else if(menuItem->GetId() != wxNOT_FOUND) {
                 clGotoEntry entry;

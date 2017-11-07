@@ -98,7 +98,7 @@ void clGotoAnythingManager::Initialise()
                     continue;
                 }
                 q.push(std::make_pair(menuItem->GetItemLabelText() + " > ", menuItem->GetSubMenu()));
-            } else if(menuItem->GetId() != wxNOT_FOUND) {
+            } else if((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR)) {
                 clGotoEntry entry;
                 wxString desc = menuItem->GetItemLabelText();
                 entry.SetDesc(prefix + desc);

@@ -45,6 +45,9 @@ class WXDLLIMPEXP_SDK clGotoAnythingManager : public wxEvtHandler
 protected:
     void OnActionSelected(clCommandEvent& e);
 
+private:
+    void Initialise();
+    
 public:
     static clGotoAnythingManager& Get();
 

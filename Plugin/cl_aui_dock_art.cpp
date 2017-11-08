@@ -99,8 +99,8 @@ clAuiDockArt::~clAuiDockArt()
 }
 
 #define AUI_BUTTON_SIZE 12
-void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
-                                  wxAuiPaneInfo& pane)
+void clAuiDockArt::DrawPaneButton(
+    wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect, wxAuiPaneInfo& pane)
 {
     int xx = _rect.GetTopLeft().x + ((_rect.GetWidth() - AUI_BUTTON_SIZE) / 2);
     int yy = _rect.GetTopLeft().y + ((_rect.GetHeight() - AUI_BUTTON_SIZE) / 2);
@@ -124,8 +124,8 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
     }
 }
 
-void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect,
-                               wxAuiPaneInfo& pane)
+void
+clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
 {
     wxRect tmpRect(wxPoint(0, 0), rect.GetSize());
 

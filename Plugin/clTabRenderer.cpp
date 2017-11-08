@@ -220,7 +220,7 @@ clTabRenderer::clTabRenderer()
 wxFont clTabRenderer::GetTabFont()
 {
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#ifndef __WXOSX__
+#ifdef __WXMSW__
     font.SetPointSize(font.GetPointSize() - 1);
 #endif
     return font;

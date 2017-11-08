@@ -18,6 +18,7 @@
 #include <wx/menu.h>
 #include "fileutils.h"
 #include <wx/renderer.h>
+#include "drawingutils.h"
 
 #define X_SPACER 10
 #define Y_SPACER 5
@@ -27,11 +28,11 @@ clEditorBar::clEditorBar(wxWindow* parent)
 {
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
-    m_defaultColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    m_functionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    m_classColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_defaultColour = DrawingUtils::GetMenuBarTextColour();
+    m_functionColour = DrawingUtils::GetMenuBarTextColour();
+    m_classColour = DrawingUtils::GetMenuBarTextColour();
+    m_bgColour = DrawingUtils::GetMenuBarBgColour();
+    m_textFont = m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     LexerConf::Ptr_t defaultLexer = ColoursAndFontsManager::Get().GetLexer("default");
     if(defaultLexer) {
         m_textFont = defaultLexer->GetFontForSyle(0);
@@ -84,11 +85,8 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
     wxSize breadcumbsTextSize(0, 0);
     wxCoord textY = ((rect.GetHeight() - gcdc.GetTextExtent("Tp").GetHeight()) / 2);
 
-    wxCoord breadcrumbsTextX = X_SPACER;
-    wxCoord breadcrumbsTextY = 0;
-    wxCoord textX = breadcrumbsTextX;
-
     if(!m_breadcrumbs.IsEmpty()) {
+        wxCoord breadcrumbsTextY = 0;
         wxString breadcumbsText;
         for(size_t i = 0; i < m_breadcrumbs.size(); ++i) {
             breadcumbsText << m_breadcrumbs.Item(i) << " / ";
@@ -96,33 +94,23 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
         breadcumbsText.RemoveLast(3);
         wxFont guiFont = clTabRenderer::GetTabFont();
         gcdc.SetFont(guiFont);
+        gcdc.SetTextForeground(m_defaultColour);
         breadcumbsTextSize = gcdc.GetTextExtent(breadcumbsText);
         breadcrumbsTextY = (rect.GetHeight() - breadcumbsTextSize.GetHeight()) / 2;
         
         // Geometry
         m_filenameRect = wxRect(0, 2, breadcumbsTextSize.GetWidth() + (4*X_SPACER), rect.GetHeight() - 4);
-    
-        // Draw the drop down button
-        wxRendererNative::Get().DrawComboBox(this, gcdc, m_filenameRect, wxCONTROL_CURRENT);
-        gcdc.DrawText(breadcumbsText, breadcrumbsTextX, breadcrumbsTextY);
-
-//        clTabColours colors;
-//        colors.InitLightColours();
-//        wxRect chevronRect(textX, 2, 16, rect.GetHeight() - 4);
-//        clTabRenderer::DrawChevron(gcdc, chevronRect, colors);
-//        textX += 16;
-
-        // Draw a rectangle around the file name + the drop down button
+        m_filenameRect.SetX(rect.GetWidth()-m_filenameRect.GetWidth()-X_SPACER);
         
-        //gcdc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-        //gcdc.SetBrush(*wxTRANSPARENT_BRUSH);
-        //gcdc.DrawRectangle(m_filenameRect);
-
-        // Move the X coordinate forward for drawing the class::func section
-        textX = m_filenameRect.GetWidth() + (3 * X_SPACER);
+        // Draw the drop down button
+        bool darkBG = DrawingUtils::IsDark(m_bgColour);
+        gcdc.SetPen(darkBG ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+        wxRendererNative::Get().DrawComboBox(this, gcdc, m_filenameRect, wxCONTROL_CURRENT);
+        gcdc.DrawText(breadcumbsText, m_filenameRect.GetX() + X_SPACER, breadcrumbsTextY);
     }
 
     // Draw the text
+    wxCoord textX = X_SPACER;
     gcdc.SetFont(m_textFont);
     wxSize textSize;
     if(!m_classname.IsEmpty()) {
@@ -181,15 +169,15 @@ void clEditorBar::DoRefreshColoursAndFonts()
     m_projectName.clear();
     m_filenameRelative.clear();
     m_breadcrumbs.clear();
-    m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    m_bgColour = DrawingUtils::GetMenuBarBgColour();
 
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
         if(lexer) {
-            wxColour m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+            wxColour m_bgColour = DrawingUtils::GetMenuBarBgColour();
             bool darkBG = DrawingUtils::IsDark(m_bgColour);
-            m_defaultColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+            m_defaultColour = DrawingUtils::GetMenuBarTextColour();
             m_classColour = darkBG ? "rgb(224, 108, 117)" : "rgb(0, 64, 128)";
             m_functionColour = m_defaultColour;
             m_textFont = lexer->GetFontForSyle(0); // Default font

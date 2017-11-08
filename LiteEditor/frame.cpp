@@ -70,6 +70,7 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
+#include "theme_handler_helper.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -3269,6 +3270,9 @@ void clMainFrame::CreateWelcomePage()
 
     welcomePage->SetPage(content);*/
     WelcomePage* welcomePage = new WelcomePage(GetMainBook());
+    ThemeHandlerHelper helper(welcomePage);
+    helper.UpdateColours(welcomePage);
+    
     GetMainBook()->AddPage(welcomePage, _("Welcome!"), wxEmptyString, wxNullBitmap, true);
 
     GetMainBook()->Layout();

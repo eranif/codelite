@@ -185,6 +185,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_closeButtonClickedIndex(wxNOT_FOUND)
     , m_contextMenu(NULL)
 {
+    SetBackgroundColour(DrawingUtils::GetMenuBarBgColour());
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     bool isClassicLook = false;
 #if CL_BUILD
@@ -391,8 +392,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     if(m_tabs.empty()) {
         // Draw the default bg colour
-        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-        dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        dc.SetPen(DrawingUtils::GetMenuBarBgColour());
+        dc.SetBrush(DrawingUtils::GetMenuBarBgColour());
         dc.DrawRectangle(GetClientRect());
         return;
     }

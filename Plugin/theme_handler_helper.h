@@ -42,7 +42,7 @@ private:
     void DoUpdateNotebookStyle(wxWindow* win);
 
 public:
-    void UpdateColours();
+    void UpdateColours(wxWindow* topWindow);
 
 public:
     ThemeHandlerHelper(wxWindow* win);

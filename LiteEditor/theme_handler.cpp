@@ -71,7 +71,7 @@ void ThemeHandler::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
     m_helper.reset(new ThemeHandlerHelper(clMainFrame::Get()));
-    m_helper->UpdateColours();
+    m_helper->UpdateColours(clMainFrame::Get());
     // Fire "wxEVT_EDITOR_SETTINGS_CHANGED" to ensure that the notebook appearance is in sync with the settings
     PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
 }

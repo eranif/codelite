@@ -202,8 +202,14 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
 
         // Prepare the colours
         wxColour bgColour, penColour, textColour;
-        textColour = DrawingUtils::GetMenuBarTextColour();
-        bgColour = DrawingUtils::GetMenuBarBgColour();
+        if(!DrawingUtils::IsDark(DrawingUtils::GetMenuBarBgColour())) {
+            textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT);
+            bgColour = DrawingUtils::GetCaptionColour();
+        } else {
+            textColour = DrawingUtils::GetMenuBarTextColour();
+            bgColour = DrawingUtils::GetMenuBarBgColour().ChangeLightness(50);
+        }
+        
         // Same as the notebook background colour
         penColour = bgColour;
         penColour = m_useDarkColours ? m_darkBgColour : penColour;

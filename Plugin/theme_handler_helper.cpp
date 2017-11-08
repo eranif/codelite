@@ -42,6 +42,7 @@
 #include <wx/textctrl.h>
 #include <wx/listbox.h>
 #include <wx/listctrl.h>
+#include <wx/button.h>
 
 #define IS_TYPEOF(Type, Win) (dynamic_cast<Type*>(Win))
 
@@ -68,16 +69,16 @@ void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
         return;
     }
 
-    UpdateColours();
+    UpdateColours(m_window);
 }
 
-void ThemeHandlerHelper::UpdateColours()
+void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
 {
     // Collect all toolbars
     std::queue<wxWindow*> q;
     std::vector<wxAuiToolBar*> toolbars;
     std::vector<wxWindow*> candidateWindows;
-    q.push(m_window);
+    q.push(topWindow);
 
     wxColour systemBgColour = DrawingUtils::GetMenuBarBgColour();
     wxColour systemFgColour = DrawingUtils::GetMenuBarTextColour();
@@ -111,6 +112,10 @@ void ThemeHandlerHelper::UpdateColours()
                    IS_TYPEOF(wxTextCtrl, w) || IS_TYPEOF(wxListCtrl, w)) {
                     w->SetBackgroundColour(bgColour);
                     w->SetForegroundColour(fgColour);
+                    w->Refresh();
+                } else if(IS_TYPEOF(wxPanel, w) || IS_TYPEOF(wxButton, w)) {
+                    w->SetBackgroundColour(systemBgColour);
+                    w->SetForegroundColour(systemFgColour);
                     w->Refresh();
                 }
             }

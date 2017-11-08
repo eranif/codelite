@@ -42,6 +42,7 @@ public:
 class WXDLLIMPEXP_SDK clGotoAnythingManager : public wxEvtHandler
 {
     std::unordered_map<wxString, clGotoEntry> m_actions;
+    std::unordered_map<wxString, clGotoEntry> m_pluginActions;
 
     clGotoAnythingManager();
     virtual ~clGotoAnythingManager();
@@ -49,12 +50,14 @@ class WXDLLIMPEXP_SDK clGotoAnythingManager : public wxEvtHandler
 protected:
     void OnActionSelected(clCommandEvent& e);
 
-private:
-    void Initialise();
-
 public:
     static clGotoAnythingManager& Get();
-
+    
+    /**
+     * @brief fill the gotomanager with all the menu entries
+     */
+    void Initialise();
+    
     /**
      * @brief add action to the "Goto Anything"
      */
@@ -72,7 +75,7 @@ public:
     /**
      * @brief return list of all available actions
      */
-    std::vector<clGotoEntry> GetActions() const;
+    std::vector<clGotoEntry> GetActions();
 };
 
 #endif // CLGOTOANYTHINGMANAGER_H

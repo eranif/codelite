@@ -3668,6 +3668,8 @@ void clMainFrame::CompleteInitialization()
         quickDebugEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(quickDebugEvent);
     }
+
+    clGotoAnythingManager::Get().Initialise();
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)

@@ -6,6 +6,7 @@
 #include "macros.h"
 #include <map>
 #include <vector>
+#include <wx/bitmap.h>
 #include <wx/event.h>
 
 class WXDLLIMPEXP_SDK clGotoEntry
@@ -14,6 +15,7 @@ private:
     wxString m_desc;
     wxString m_keyboardShortcut;
     int m_resourceID;
+    wxBitmap m_bitmap;
 
 public:
     clGotoEntry(const wxString& desc, const wxString& shortcut, int id)
@@ -33,6 +35,8 @@ public:
     const wxString& GetDesc() const { return m_desc; }
     const wxString& GetKeyboardShortcut() const { return m_keyboardShortcut; }
     int GetResourceID() const { return m_resourceID; }
+    const wxBitmap& GetBitmap() const { return m_bitmap; }
+    void SetBitmap(const wxBitmap& bitmap) { m_bitmap = bitmap; }
 };
 
 class WXDLLIMPEXP_SDK clGotoAnythingManager : public wxEvtHandler
@@ -47,7 +51,7 @@ protected:
 
 private:
     void Initialise();
-    
+
 public:
     static clGotoAnythingManager& Get();
 

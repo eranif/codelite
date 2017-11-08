@@ -1,12 +1,15 @@
 #include "GotoAnythingDlg.h"
+#include "bitmap_loader.h"
 #include "clGotoAnythingManager.h"
 #include "clKeyboardManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "globals.h"
+#include "imanager.h"
 #include <algorithm>
 #include <queue>
-#include <wx/xrc/xmlres.h>
 #include <wx/menu.h>
+#include <wx/xrc/xmlres.h>
 
 clGotoAnythingManager::clGotoAnythingManager()
 {
@@ -27,9 +30,7 @@ void clGotoAnythingManager::Add(const clGotoEntry& entry)
 
 void clGotoAnythingManager::Delete(const clGotoEntry& entry)
 {
-    if(m_actions.count(entry.GetDesc())) {
-        m_actions.erase(entry.GetDesc());
-    }
+    if(m_actions.count(entry.GetDesc())) { m_actions.erase(entry.GetDesc()); }
 }
 
 clGotoAnythingManager& clGotoAnythingManager::Get()
@@ -60,12 +61,10 @@ std::vector<clGotoEntry> clGotoAnythingManager::GetActions() const
 {
     std::vector<clGotoEntry> actions;
     std::for_each(
-        m_actions.begin(), m_actions.end(), [&](const std::unordered_map<wxString, clGotoEntry>::value_type& vt) {
-            actions.push_back(vt.second);
-        });
-    std::sort(actions.begin(), actions.end(), [&](const clGotoEntry& a, const clGotoEntry& b) {
-        return a.GetDesc() < b.GetDesc();
-    });
+        m_actions.begin(), m_actions.end(),
+        [&](const std::unordered_map<wxString, clGotoEntry>::value_type& vt) { actions.push_back(vt.second); });
+    std::sort(actions.begin(), actions.end(),
+              [&](const clGotoEntry& a, const clGotoEntry& b) { return a.GetDesc() < b.GetDesc(); });
     return actions;
 }
 
@@ -83,6 +82,7 @@ void clGotoAnythingManager::Initialise()
         q.push(std::make_pair("", mb->GetMenu(i)));
     }
 
+    static wxBitmap defaultBitmap = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
     while(!q.empty()) {
         wxMenu* menu = q.front().second;
         wxString prefix = q.front().first;
@@ -94,18 +94,15 @@ void clGotoAnythingManager::Initialise()
             wxMenuItem* menuItem = *iter;
             if(menuItem->GetSubMenu()) {
                 wxString labelText = menuItem->GetItemLabelText();
-                if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) {
-                    continue;
-                }
+                if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) { continue; }
                 q.push(std::make_pair(menuItem->GetItemLabelText() + " > ", menuItem->GetSubMenu()));
             } else if((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR)) {
                 clGotoEntry entry;
                 wxString desc = menuItem->GetItemLabelText();
                 entry.SetDesc(prefix + desc);
-                if(menuItem->GetAccel()) {
-                    entry.SetKeyboardShortcut(menuItem->GetAccel()->ToString());
-                }
+                if(menuItem->GetAccel()) { entry.SetKeyboardShortcut(menuItem->GetAccel()->ToString()); }
                 entry.SetResourceID(menuItem->GetId());
+                entry.SetBitmap(menuItem->GetBitmap().IsOk() ? menuItem->GetBitmap() : defaultBitmap);
                 if(!entry.GetDesc().IsEmpty()) {
                     // Dont add empty entries
                     m_actions[entry.GetDesc()] = entry;

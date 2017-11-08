@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 10,
+  "m_objCounter": 13,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterp2zZ39InitBitmapResources",
   "m_bitmapsFile": "GotoAnythingBaseUI_plugin_bitmaps.cpp",
@@ -181,7 +181,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_textCtrl8"
+         "m_value": "m_textCtrlSearch"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -274,7 +274,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "200,100"
+         "m_value": "300,100"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -331,6 +331,13 @@
          "m_functionNameAndSignature": "OnKeyDown(wxKeyEvent& event)",
          "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
          "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+         "m_eventClass": "wxDataViewEvent",
+         "m_eventHandler": "wxDataViewEventHandler",
+         "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
+         "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
+         "m_noBody": false
         }],
        "m_children": [{
          "m_type": 4472,
@@ -347,11 +354,11 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "300"
+           "m_value": "400"
           }, {
            "type": "choice",
            "m_label": "Column Type",
-           "m_selection": 2,
+           "m_selection": 3,
            "m_options": ["bitmap", "check", "text", "icontext", "progress", "choice"]
           }, {
            "type": "multi-string",

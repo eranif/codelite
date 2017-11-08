@@ -2,9 +2,9 @@
 #define GOTOANYTHINGDLG_H
 
 #include "GotoAnythingBaseUI.h"
+#include "clGotoAnythingManager.h"
 #include "codelite_exports.h"
 #include <vector>
-#include "clGotoAnythingManager.h"
 
 // class WXDLLIMPEXP_SDK GotoAnythingItemData
 // {
@@ -23,9 +23,12 @@ class WXDLLIMPEXP_SDK GotoAnythingDlg : public GotoAnythingBaseDlg
     wxString m_currentFilter;
 
 protected:
-    //GotoAnythingItemData* GetSelectedItemData();
-    void DoPopulate(const std::vector<clGotoEntry>& entries);
+    virtual void OnItemActivated(wxDataViewEvent& event);
+    // GotoAnythingItemData* GetSelectedItemData();
+    void DoPopulate(const std::vector<clGotoEntry>& entries, const std::vector<int>& indexes = std::vector<int>());
     void DoExecuteActionAndClose();
+    void UpdateLastSearch();
+    void ApplyFilter();
 
 public:
     GotoAnythingDlg(wxWindow* parent);

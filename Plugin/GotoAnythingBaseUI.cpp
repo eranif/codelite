@@ -26,19 +26,19 @@ GotoAnythingBaseDlg::GotoAnythingBaseDlg(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    m_textCtrl8 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
-    m_textCtrl8->SetFocus();
+    m_textCtrlSearch = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
+    m_textCtrlSearch->SetFocus();
     #if wxVERSION_NUMBER >= 3000
-    m_textCtrl8->SetHint(_("Search..."));
+    m_textCtrlSearch->SetHint(_("Search..."));
     #endif
     
-    boxSizer2->Add(m_textCtrl8, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer2->Add(m_textCtrlSearch, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(200,100)), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,100)), wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer2->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl->AppendTextColumn(_("Matches"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(300), wxALIGN_LEFT);
+    m_dvListCtrl->AppendIconTextColumn(_("Matches"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT);
     m_dvListCtrl->AppendTextColumn(_("Shortcut"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
     
     SetName(wxT("GotoAnythingBaseDlg"));
@@ -60,17 +60,19 @@ GotoAnythingBaseDlg::GotoAnythingBaseDlg(wxWindow* parent, wxWindowID id, const 
 #endif
     // Connect events
     this->Connect(wxEVT_IDLE, wxIdleEventHandler(GotoAnythingBaseDlg::OnIdle), NULL, this);
-    m_textCtrl8->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(GotoAnythingBaseDlg::OnKeyDown), NULL, this);
-    m_textCtrl8->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GotoAnythingBaseDlg::OnEnter), NULL, this);
+    m_textCtrlSearch->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(GotoAnythingBaseDlg::OnKeyDown), NULL, this);
+    m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GotoAnythingBaseDlg::OnEnter), NULL, this);
     m_dvListCtrl->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(GotoAnythingBaseDlg::OnKeyDown), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GotoAnythingBaseDlg::OnItemActivated), NULL, this);
     
 }
 
 GotoAnythingBaseDlg::~GotoAnythingBaseDlg()
 {
     this->Disconnect(wxEVT_IDLE, wxIdleEventHandler(GotoAnythingBaseDlg::OnIdle), NULL, this);
-    m_textCtrl8->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(GotoAnythingBaseDlg::OnKeyDown), NULL, this);
-    m_textCtrl8->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GotoAnythingBaseDlg::OnEnter), NULL, this);
+    m_textCtrlSearch->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(GotoAnythingBaseDlg::OnKeyDown), NULL, this);
+    m_textCtrlSearch->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GotoAnythingBaseDlg::OnEnter), NULL, this);
     m_dvListCtrl->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(GotoAnythingBaseDlg::OnKeyDown), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GotoAnythingBaseDlg::OnItemActivated), NULL, this);
     
 }

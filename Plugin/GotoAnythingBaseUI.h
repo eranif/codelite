@@ -36,16 +36,17 @@
 class GotoAnythingBaseDlg : public wxDialog
 {
 protected:
-    wxTextCtrl* m_textCtrl8;
+    wxTextCtrl* m_textCtrlSearch;
     wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
     virtual void OnIdle(wxIdleEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxTextCtrl* GetTextCtrl8() { return m_textCtrl8; }
+    wxTextCtrl* GetTextCtrlSearch() { return m_textCtrlSearch; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     GotoAnythingBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Goto Anything"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GotoAnythingBaseDlg();

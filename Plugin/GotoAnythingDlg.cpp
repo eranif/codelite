@@ -1,9 +1,11 @@
 #include "GotoAnythingDlg.h"
 #include "clAnagram.h"
 #include "clKeyboardManager.h"
+#include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "globals.h"
 #include "windowattrmanager.h"
 #include <algorithm>
 #include <wx/app.h>
@@ -13,10 +15,15 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent)
 {
     m_allEntries = clGotoAnythingManager::Get().GetActions();
     DoPopulate(m_allEntries);
+    CallAfter(&GotoAnythingDlg::UpdateLastSearch);
     WindowAttrManager::Load(this);
 }
 
-GotoAnythingDlg::~GotoAnythingDlg() { m_allEntries.clear(); }
+GotoAnythingDlg::~GotoAnythingDlg()
+{
+    m_allEntries.clear();
+    clConfig::Get().Write("GotoAnything/LastSearch", m_textCtrlSearch->GetValue());
+}
 
 void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
 {
@@ -47,16 +54,16 @@ void GotoAnythingDlg::OnEnter(wxCommandEvent& event)
     DoExecuteActionAndClose();
 }
 
-void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries)
+void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const std::vector<int>& indexes)
 {
     m_dvListCtrl->DeleteAllItems();
-    std::for_each(entries.begin(), entries.end(), [&](const clGotoEntry& entry) {
+    for(size_t i = 0; i < entries.size(); ++i) {
+        const clGotoEntry& entry = entries[i];
         wxVector<wxVariant> cols;
-        cols.push_back(entry.GetDesc());
+        cols.push_back(::MakeIconText(entry.GetDesc(), entry.GetBitmap()));
         cols.push_back(entry.GetKeyboardShortcut());
-        m_dvListCtrl->AppendItem(cols);
-    });
-
+        m_dvListCtrl->AppendItem(cols, indexes.empty() ? i : indexes[i]);
+    }
     if(!entries.empty()) { m_dvListCtrl->SelectRow(0); }
 }
 
@@ -66,12 +73,12 @@ void GotoAnythingDlg::DoExecuteActionAndClose()
     if(row == wxNOT_FOUND) return;
 
     // Execute the action
-    wxVariant v;
-    m_dvListCtrl->GetValue(v, row, 0);
-    clDEBUG() << "GotoAnythingDlg: action selected:" << v.GetString() << clEndl;
+    int index = m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(row));
+    const clGotoEntry& entry = m_allEntries[index];
+    clDEBUG() << "GotoAnythingDlg: action selected:" << entry.GetDesc() << clEndl;
 
     clCommandEvent evtAction(wxEVT_GOTO_ANYTHING_SELECTED);
-    evtAction.SetString(v.GetString());
+    evtAction.SetString(entry.GetDesc());
     EventNotifier::Get()->AddPendingEvent(evtAction);
     EndModal(wxID_OK);
 }
@@ -79,8 +86,23 @@ void GotoAnythingDlg::DoExecuteActionAndClose()
 void GotoAnythingDlg::OnIdle(wxIdleEvent& e)
 {
     e.Skip();
+    ApplyFilter();
+}
+
+void GotoAnythingDlg::UpdateLastSearch()
+{
+    wxString lastSearch = clConfig::Get().Read("GotoAnything/LastSearch", wxString());
+    if(!lastSearch.IsEmpty()) {
+        m_textCtrlSearch->ChangeValue(lastSearch);
+        m_textCtrlSearch->SelectAll();
+        ApplyFilter();
+    }
+}
+
+void GotoAnythingDlg::ApplyFilter()
+{
     // Create a list the matches the typed text
-    wxString filter = m_textCtrl8->GetValue();
+    wxString filter = m_textCtrlSearch->GetValue();
     if(m_currentFilter == filter) return;
 
     // Update the last applied filter
@@ -92,11 +114,22 @@ void GotoAnythingDlg::OnIdle(wxIdleEvent& e)
         // Filter the list
         clAnagram anagram(filter);
         std::vector<clGotoEntry> matchedEntries;
-        std::for_each(m_allEntries.begin(), m_allEntries.end(), [&](const clGotoEntry& entry) {
-            if(anagram.MatchesInOrder(entry.GetDesc())) { matchedEntries.push_back(entry); }
-        });
+        std::vector<int> matchedEntriesIndex;
+        for(size_t i = 0; i < m_allEntries.size(); ++i) {
+            const clGotoEntry& entry = m_allEntries[i];
+            if(anagram.MatchesInOrder(entry.GetDesc())) {
+                matchedEntries.push_back(entry);
+                matchedEntriesIndex.push_back(i);
+            }
+        }
 
         // And populate the list
-        DoPopulate(matchedEntries);
+        DoPopulate(matchedEntries, matchedEntriesIndex);
     }
+}
+
+void GotoAnythingDlg::OnItemActivated(wxDataViewEvent& event)
+{
+    wxUnusedVar(event);
+    DoExecuteActionAndClose();
 }

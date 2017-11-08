@@ -23,9 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "fileutils.h"
 #include "sftp_settings.h"
 #include <algorithm>
-#include "fileutils.h"
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
 #include <wx/volume.h>
@@ -123,16 +123,23 @@ void SFTPSettings::MSWImportPuTTYAccounts()
             bool res = regPutty.GetFirstKey(strKeyName, index);
             while(res) {
                 wxString hostname;
+                wxString username;
                 long port = wxNOT_FOUND;
                 wxRegKey rk(wxRegKey::HKCU, "Software\\SimonTatham\\PuTTY\\Sessions\\" + strKeyName);
                 if(rk.Exists()) {
                     rk.QueryValue("HostName", hostname);
+                    int where = hostname.Find('@');
+                    if(where != wxNOT_FOUND) {
+                        hostname = hostname.Mid(where + 1);
+                        username = hostname.Mid(where);
+                    }
                     rk.QueryValue("PortNumber", &port);
                     if(!hostname.IsEmpty() && port != wxNOT_FOUND) {
                         SSHAccountInfo acc;
                         acc.SetAccountName(FileUtils::DecodeURI(strKeyName));
                         acc.SetHost(hostname);
                         acc.SetPort(port);
+                        acc.SetUsername(username);
                         puttyAccounts.push_back(acc);
                     }
                 }
@@ -151,16 +158,23 @@ void SFTPSettings::MSWImportPuTTYAccounts()
             bool res = regPutty.GetFirstKey(strKeyName, index);
             while(res) {
                 wxString hostname;
+                wxString username;
                 long port = wxNOT_FOUND;
                 wxRegKey rk(wxRegKey::HKCU, "Software\\Wow6432Node\\SimonTatham\\PuTTY\\Sessions\\" + strKeyName);
                 if(rk.Exists()) {
                     rk.QueryValue("HostName", hostname);
+                    int where = hostname.Find('@');
+                    if(where != wxNOT_FOUND) {
+                        hostname = hostname.Mid(where + 1);
+                        username = hostname.Mid(where);
+                    }
                     rk.QueryValue("PortNumber", &port);
                     if(!hostname.IsEmpty() && port != wxNOT_FOUND) {
                         SSHAccountInfo acc;
                         acc.SetAccountName(FileUtils::DecodeURI(strKeyName));
                         acc.SetHost(hostname);
                         acc.SetPort(port);
+                        acc.SetUsername(username);
                         puttyAccounts.push_back(acc);
                     }
                 }

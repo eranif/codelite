@@ -66,6 +66,7 @@ public:
     static wxColour GetGradient();
     
     static wxFont GetDefaultFixedFont();
+    static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp);
     
     /**
      * @brief return basic colour palette based on the current editor

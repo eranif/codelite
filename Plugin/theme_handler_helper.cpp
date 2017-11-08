@@ -23,23 +23,38 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "theme_handler_helper.h"
+#include "Notebook.h"
+#include "clTabRendererClassic.h"
+#include "clTabRendererCurved.h"
+#include "clTabRendererSquare.h"
+#include "editor_config.h"
 #include "event_notifier.h"
 #include "plugin.h"
-#include "editor_config.h"
-#include <wx/treectrl.h>
-#include <wx/listbox.h>
+#include "theme_handler_helper.h"
+#include <wx/aui/auibar.h>
+#include <wx/bitmap.h>
 #include <wx/dataview.h>
-#include <wx/textctrl.h>
 #include <wx/html/htmlwin.h>
-#include "Notebook.h"
-#include "clTabRendererSquare.h"
-#include "clTabRendererCurved.h"
-#include "clTabRendererClassic.h"
+#include <wx/listbox.h>
+#include <wx/textctrl.h>
+#include <wx/treectrl.h>
 
 class wxDataViewCtrl;
 class wxTextCtrl;
 class wxListBox;
+
+static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp)
+{
+    wxImage img = bmp.ConvertToImage();
+    img = img.ConvertToGreyscale();
+    wxBitmap greyBmp(img);
+    if(DrawingUtils::IsThemeDark()) {
+        return greyBmp.ConvertToDisabled(70);
+
+    } else {
+        return greyBmp.ConvertToDisabled(150);
+    }
+}
 
 ThemeHandlerHelper::ThemeHandlerHelper(wxWindow* win)
     : m_window(win)
@@ -64,11 +79,36 @@ void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
     wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
     wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
 
-    if(!bgColour.IsOk() || !fgColour.IsOk()) {
-        return;
-    }
+    if(!bgColour.IsOk() || !fgColour.IsOk()) { return; }
 
     DoUpdateColours(m_window, bgColour, fgColour);
+
+    // Collect all toolbars
+    std::queue<wxWindow*> q;
+    std::vector<wxAuiToolBar*> toolbars;
+    q.push(m_window);
+
+    while(!q.empty()) {
+        wxWindow* win = q.front();
+        q.pop();
+        if(dynamic_cast<wxAuiToolBar*>(win)) {
+            toolbars.push_back(dynamic_cast<wxAuiToolBar*>(win));
+        } else {
+            wxWindowList::compatibility_iterator iter = win->GetChildren().GetFirst();
+            while(iter) {
+                q.push(iter->GetData());
+                iter = iter->GetNext();
+            }
+        }
+    }
+
+    std::for_each(toolbars.begin(), toolbars.end(), [&](wxAuiToolBar* tb) {
+        wxAuiToolBarItem* tbItem = nullptr;
+        for(size_t i = 0; i < tb->GetToolCount(); ++i) {
+            tbItem = tb->FindToolByIndex(i);
+            if(tbItem->GetBitmap().IsOk()) { tbItem->SetDisabledBitmap(CreateDisabledBitmap(tbItem->GetBitmap())); }
+        }
+    });
 }
 
 void ThemeHandlerHelper::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg)
@@ -86,7 +126,7 @@ void ThemeHandlerHelper::DoUpdateColours(wxWindow* win, const wxColour& bg, cons
     if(dynamic_cast<wxTreeCtrl*>(win) || dynamic_cast<wxListBox*>(win) || dynamic_cast<wxDataViewCtrl*>(win) ||
        dynamic_cast<wxTextCtrl*>(win) /*||
    dynamic_cast<wxHtmlWindow*>(win) */
-       ) {
+    ) {
         win->SetBackgroundColour(bg);
         win->SetForegroundColour(fg);
         win->Refresh();

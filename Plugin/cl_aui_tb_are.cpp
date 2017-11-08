@@ -67,7 +67,7 @@ void CLMainAuiTBArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& 
     bool darkTb = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
     wxUnusedVar(wnd);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(darkTb ? wxColour("rgb(80,80,80)") : DrawingUtils::GetAUIPaneBGColour());
+    dc.SetBrush(DrawingUtils::GetMenuBarBgColour());
     dc.DrawRectangle(rect);
 }
 

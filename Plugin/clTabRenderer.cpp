@@ -52,7 +52,6 @@ void clTabColours::InitDarkColours()
     InitLightColours();
     activeTabTextColour = "WHITE";
     activeTabBgColour = *wxBLACK;
-    tabAreaColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
     inactiveTabBgColour = tabAreaColour;
     inactiveTabPenColour = tabAreaColour;
     inactiveTabInnerPenColour = tabAreaColour;
@@ -60,26 +59,25 @@ void clTabColours::InitDarkColours()
 
 void clTabColours::InitLightColours()
 {
-    wxColour faceColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    wxColour faceColour = DrawingUtils::GetMenuBarBgColour();
+    wxColour textColour = DrawingUtils::GetMenuBarTextColour();
     activeTabTextColour = textColour;
-    activeTabPenColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-    inactiveTabTextColour = textColour.ChangeLightness(110);
-    activeTabBgColour = *wxWHITE;
+    inactiveTabTextColour = textColour;
+    activeTabPenColour = faceColour.ChangeLightness(90);
+    activeTabBgColour = faceColour.ChangeLightness(90);
     activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
 
     //#endif
     tabAreaColour = faceColour;
-
-    markerColour = wxColour("rgb(227, 125, 9)");
+    markerColour = DrawingUtils::GetCaptionColour();
 
     inactiveTabBgColour = tabAreaColour;
-    inactiveTabPenColour = tabAreaColour.ChangeLightness(95);
+    inactiveTabPenColour = tabAreaColour;
     inactiveTabInnerPenColour = tabAreaColour;
 
-    inactiveTabBgColour = faceColour;
-    inactiveTabInnerPenColour = faceColour;
-    inactiveTabPenColour = faceColour;
+    inactiveTabBgColour = tabAreaColour;
+    inactiveTabInnerPenColour = tabAreaColour;
+    inactiveTabPenColour = tabAreaColour;
 }
 
 bool clTabColours::IsDarkColours() const { return DrawingUtils::IsDark(activeTabBgColour); }
@@ -232,8 +230,8 @@ wxFont clTabRenderer::GetTabFont()
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours,
-                                            size_t style)
+void
+clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours, size_t style)
 {
     bool isSquareStyle = (dynamic_cast<clTabRendererSquare*>(this)) != nullptr;
     wxPoint pt1, pt2;

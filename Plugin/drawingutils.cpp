@@ -496,6 +496,7 @@ wxColor DrawingUtils::GetMenuBarBgColour()
 {
 #ifdef __WXGTK__
     static bool intitialized(false);
+    // initialise default colour
     static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
 
     if(!intitialized) {
@@ -521,6 +522,39 @@ wxColor DrawingUtils::GetMenuBarBgColour()
     return textColour;
 #else
     return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+#endif
+}
+
+wxColor DrawingUtils::GetMenuBarTextColour()
+{
+#ifdef __WXGTK__
+    static bool intitialized(false);
+    // initialise default colour
+    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT));
+
+    if(!intitialized) {
+        // try to get the background colour from a menu
+        GtkWidget* menuBar = gtk_menu_bar_new();
+#ifdef __WXGTK3__
+        GdkRGBA col;
+        GtkStyleContext* context = gtk_widget_get_style_context(menuBar);
+        gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
+        textColour = wxColour(col);
+#else
+        GtkStyle* def = gtk_rc_get_style(menuBar);
+        if(!def) def = gtk_widget_get_default_style();
+
+        if(def) {
+            GdkColor col = def->fg[GTK_STATE_NORMAL];
+            textColour = wxColour(col);
+        }
+#endif
+        gtk_widget_destroy(menuBar);
+        intitialized = true;
+    }
+    return textColour;
+#else
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
 #endif
 }
 
@@ -623,15 +657,16 @@ bool DrawingUtils::GetGCDC(wxDC& dc, wxGCDC& gdc)
 
 wxColour DrawingUtils::GetAUIPaneBGColour()
 {
-    // Now set the bg colour. It must be done after setting
-    // the pen colour
-    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    if(!DrawingUtils::IsDark(bgColour)) {
-        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    } else {
-        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
-    }
-    return bgColour;
+    return GetMenuBarBgColour();
+//    // Now set the bg colour. It must be done after setting
+//    // the pen colour
+//    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+//    if(!DrawingUtils::IsDark(bgColour)) {
+//        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+//    } else {
+//        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
+//    }
+//    return bgColour;
 }
 
 wxBrush DrawingUtils::GetStippleBrush()

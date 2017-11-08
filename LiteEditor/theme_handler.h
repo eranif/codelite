@@ -35,11 +35,6 @@ class ThemeHandler : public wxEvtHandler
 {
     ThemeHandlerHelper::Ptr m_helper;
 
-protected:
-    void DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg);
-    void DoUpdateAuiToolBars(wxWindow* win);
-    void DoUpdateSTCBgColour(wxStyledTextCtrl* stc);
-
 public:
     ThemeHandler();
     virtual ~ThemeHandler();

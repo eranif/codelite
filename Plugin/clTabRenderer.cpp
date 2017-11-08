@@ -63,11 +63,22 @@ void clTabColours::InitLightColours()
     wxColour textColour = DrawingUtils::GetMenuBarTextColour();
     activeTabTextColour = textColour;
     inactiveTabTextColour = textColour;
-    activeTabPenColour = faceColour.ChangeLightness(90);
-    activeTabBgColour = faceColour.ChangeLightness(90);
+    if(DrawingUtils::IsDark(faceColour)) {
+        // Make the active tab draker
+        activeTabBgColour = faceColour.ChangeLightness(60);
+        activeTabPenColour = activeTabBgColour;
+        
+    } else {
+        // Make it lighter
+        activeTabBgColour = faceColour.ChangeLightness(150);
+        activeTabPenColour = faceColour.ChangeLightness(70);
+    }
+    
     activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
-
-    //#endif
+    if(DrawingUtils::IsDark(activeTabBgColour)) {
+        activeTabTextColour = *wxWHITE;
+    }
+    
     tabAreaColour = faceColour;
     markerColour = DrawingUtils::GetCaptionColour();
 

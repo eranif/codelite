@@ -765,9 +765,17 @@ wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
     img = img.ConvertToGreyscale();
     wxBitmap greyBmp(img);
     if(bDarkBG) {
-        return greyBmp.ConvertToDisabled(70);
+        return greyBmp.ConvertToDisabled(20);
 
     } else {
         return greyBmp.ConvertToDisabled(255);
     }
+}
+
+wxBitmap DrawingUtils::CreateGrayBitmap(const wxBitmap& bmp)
+{
+    wxImage img = bmp.ConvertToImage();
+    img = img.ConvertToGreyscale();
+    wxBitmap greyBmp(img);
+    return greyBmp;
 }

@@ -52,7 +52,8 @@ protected:
     void OnTextEntered(wxCommandEvent& e);
     void OnItemSelected(wxCommandEvent& e);
     void OnKeyDown(wxKeyEvent& e);
-
+    void DoParseActiveBuffer();
+    
 public:
     QuickOutlineDlg(wxWindow* parent,
                     const wxString& fileName,

@@ -537,7 +537,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
     }
 
     // Make sure we delete the reply at the end...
-    std::auto_ptr<ClangThreadReply> ap(reply);
+    std::shared_ptr<ClangThreadReply> ap(reply);
 
     // Delete the fake file...
     DoDeleteTempFile(reply->filename);

@@ -9,7 +9,7 @@
 
 class WXDLLIMPEXP_CL CxxVariableScanner
 {
-    enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor };
+    enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor, kInDecltype, kInWhile };
 
 protected:
     Scanner_t m_scanner;
@@ -22,6 +22,7 @@ protected:
 
 protected:
     bool GetNextToken(CxxLexerToken& token);
+    void UngetToken(const CxxLexerToken& token);
     bool IsEof() const { return m_eof; }
     void OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer);
     bool TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t& type);

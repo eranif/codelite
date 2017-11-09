@@ -510,8 +510,6 @@
     <File Name="checktreectrl.h"/>
     <File Name="quickfindbar.h"/>
     <File Name="quickfindbar.cpp"/>
-    <File Name="navbar.h"/>
-    <File Name="navbar.cpp"/>
     <File Name="filechecklist.cpp"/>
     <File Name="filechecklist.h"/>
     <File Name="filechecklistbase.cpp"/>
@@ -528,6 +526,8 @@
     <File Name="quickfindbarbase_liteeditor_bitmaps.cpp"/>
     <File Name="DefaultWorkspacePage.h"/>
     <File Name="DefaultWorkspacePage.cpp"/>
+    <File Name="clConfigurationSelectionCtrl.cpp"/>
+    <File Name="clConfigurationSelectionCtrl.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>
@@ -1188,6 +1188,98 @@
     <Project Name="Copyright"/>
     <Project Name="UnitTestPP"/>
   </Dependencies>
+  <Dependencies Name="Win_x86_Release">
+    <Project Name="PCH"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="databaselayer_sqlite"/>
+    <Project Name="wxshapeframework"/>
+    <Project Name="libCodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
+    <Project Name="Subversion2"/>
+    <Project Name="Outline"/>
+    <Project Name="git"/>
+    <Project Name="DatabaseExplorer"/>
+    <Project Name="CallGraph"/>
+    <Project Name="ZoomNavigator"/>
+    <Project Name="SFTP"/>
+    <Project Name="Tweaks"/>
+    <Project Name="CMakePlugin"/>
+    <Project Name="CodeLiteDiff"/>
+    <Project Name="hunspell"/>
+    <Project Name="SpellCheck"/>
+    <Project Name="PHPParser"/>
+    <Project Name="PHPPlugin"/>
+    <Project Name="WordCompletion"/>
+    <Project Name="WebTools"/>
+    <Project Name="HelpPlugin"/>
+    <Project Name="AutoSave"/>
+    <Project Name="EditorConfigPlugin"/>
+    <Project Name="Tail"/>
+    <Project Name="codelite_vim"/>
+    <Project Name="PHPRefactoring"/>
+    <Project Name="PHPLint"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="databaselayer_sqlite"/>
+    <Project Name="wxshapeframework"/>
+    <Project Name="libCodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
+    <Project Name="Subversion2"/>
+    <Project Name="Outline"/>
+    <Project Name="git"/>
+    <Project Name="DatabaseExplorer"/>
+    <Project Name="CallGraph"/>
+    <Project Name="ZoomNavigator"/>
+    <Project Name="SFTP"/>
+    <Project Name="Tweaks"/>
+    <Project Name="CMakePlugin"/>
+    <Project Name="CodeLiteDiff"/>
+    <Project Name="hunspell"/>
+    <Project Name="LLDBProtocol"/>
+    <Project Name="LLDBDebugger"/>
+    <Project Name="SpellCheck"/>
+    <Project Name="PHPParser"/>
+    <Project Name="PHPPlugin"/>
+    <Project Name="WordCompletion"/>
+    <Project Name="WebTools"/>
+    <Project Name="AutoSave"/>
+    <Project Name="Tail"/>
+    <Project Name="EditorConfigPlugin"/>
+    <Project Name="codelite_vim"/>
+    <Project Name="PHPLint"/>
+    <Project Name="PHPRefactoring"/>
+    <Project Name="HelpPlugin"/>
+    <Project Name="SmartCompletion"/>
+  </Dependencies>
   <Dependencies Name="Win_x64_Release">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
@@ -1236,6 +1328,7 @@
     <Project Name="codelite_vim"/>
     <Project Name="PHPLint"/>
     <Project Name="PHPRefactoring"/>
+    <Project Name="SmartCompletion"/>
   </Dependencies>
   <Dependencies Name="Win_x64_Debug">
     <Project Name="sqlite3"/>
@@ -1282,97 +1375,7 @@
     <Project Name="PHPLint"/>
     <Project Name="PHPRefactoring"/>
     <Project Name="HelpPlugin"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="databaselayer_sqlite"/>
-    <Project Name="wxshapeframework"/>
-    <Project Name="libCodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="QMakePlugin"/>
-    <Project Name="CppChecker"/>
-    <Project Name="Subversion2"/>
-    <Project Name="Outline"/>
-    <Project Name="git"/>
-    <Project Name="DatabaseExplorer"/>
-    <Project Name="CallGraph"/>
-    <Project Name="ZoomNavigator"/>
-    <Project Name="SFTP"/>
-    <Project Name="Tweaks"/>
-    <Project Name="CMakePlugin"/>
-    <Project Name="CodeLiteDiff"/>
-    <Project Name="hunspell"/>
-    <Project Name="LLDBProtocol"/>
-    <Project Name="LLDBDebugger"/>
-    <Project Name="SpellCheck"/>
-    <Project Name="PHPParser"/>
-    <Project Name="PHPPlugin"/>
-    <Project Name="WordCompletion"/>
-    <Project Name="WebTools"/>
-    <Project Name="AutoSave"/>
-    <Project Name="Tail"/>
-    <Project Name="EditorConfigPlugin"/>
-    <Project Name="codelite_vim"/>
-    <Project Name="PHPLint"/>
-    <Project Name="PHPRefactoring"/>
-    <Project Name="HelpPlugin"/>
-  </Dependencies>
-  <Dependencies Name="Win_x86_Release">
-    <Project Name="PCH"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="databaselayer_sqlite"/>
-    <Project Name="wxshapeframework"/>
-    <Project Name="libCodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="QMakePlugin"/>
-    <Project Name="CppChecker"/>
-    <Project Name="Subversion2"/>
-    <Project Name="Outline"/>
-    <Project Name="git"/>
-    <Project Name="DatabaseExplorer"/>
-    <Project Name="CallGraph"/>
-    <Project Name="ZoomNavigator"/>
-    <Project Name="SFTP"/>
-    <Project Name="Tweaks"/>
-    <Project Name="CMakePlugin"/>
-    <Project Name="CodeLiteDiff"/>
-    <Project Name="hunspell"/>
-    <Project Name="SpellCheck"/>
-    <Project Name="PHPParser"/>
-    <Project Name="PHPPlugin"/>
-    <Project Name="WordCompletion"/>
-    <Project Name="WebTools"/>
-    <Project Name="HelpPlugin"/>
-    <Project Name="AutoSave"/>
-    <Project Name="EditorConfigPlugin"/>
-    <Project Name="Tail"/>
-    <Project Name="codelite_vim"/>
-    <Project Name="PHPRefactoring"/>
-    <Project Name="PHPLint"/>
+    <Project Name="SmartCompletion"/>
   </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -1613,6 +1616,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
       <PostBuild/>
       <CustomBuild Enabled="yes">
         <Target Name="package">rm -f *.deb &amp;&amp; make package</Target>
+        <Target Name="install">sudo make install</Target>
         <Target Name="cmake">cmake -DCMAKE_BUILD_TYPE=Release  .. -DMAKE_DEB=1 -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCOPY_WX_LIBS=1</Target>
         <RebuildCommand>make clean &amp;&amp; make -j4</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
@@ -1627,7 +1631,8 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -1976,8 +1981,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>

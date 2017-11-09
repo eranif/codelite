@@ -206,6 +206,10 @@
     <File Name="clStatusBarMessage.cpp"/>
     <File Name="cProjectDependecySorter.h"/>
     <File Name="cProjectDependecySorter.cpp"/>
+    <File Name="clProfileHandler.h"/>
+    <File Name="clProfileHandler.cpp"/>
+    <File Name="clGotoAnythingManager.h"/>
+    <File Name="clGotoAnythingManager.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>
@@ -338,6 +342,8 @@
       <File Name="clBitmapOverlayCtrl.cpp"/>
       <File Name="clTreeCtrlColourHelper.h"/>
       <File Name="clTreeCtrlColourHelper.cpp"/>
+      <File Name="clEditorBar.h"/>
+      <File Name="clEditorBar.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>
@@ -367,6 +373,8 @@
       <File Name="clSelectSymbolDialog.cpp"/>
       <File Name="nameanddescdlg.wxcp"/>
       <File Name="envvar_table_dlg.wxcp"/>
+      <File Name="GotoAnythingDlg.cpp"/>
+      <File Name="GotoAnythingDlg.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="drawingutils.cpp"/>
@@ -479,6 +487,7 @@
       <File Name="nameanddescdlg_plugin_bitmaps.cpp"/>
       <File Name="MacrosBaseDlg_plugin_bitmaps.cpp"/>
       <File Name="EnvironmentVariablesDlgBaseBitmaps.cpp"/>
+      <File Name="GotoAnythingBaseUI_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
@@ -501,6 +510,8 @@
       <File Name="clSelectSymbolDialogBase.cpp"/>
       <File Name="EnvironmentVariablesDlgBase.h"/>
       <File Name="EnvironmentVariablesDlgBase.cpp"/>
+      <File Name="GotoAnythingBaseUI.h"/>
+      <File Name="GotoAnythingBaseUI.cpp"/>
     </VirtualDirectory>
     <File Name="openresourcedialogbase.wxcp"/>
     <File Name="plugin_general_wxcp.wxcp"/>
@@ -509,6 +520,7 @@
     <File Name="WSImporterDlgs.wxcp"/>
     <File Name="clSelectSymbolDialogBase.wxcp"/>
     <File Name="MacrosBaseDlg.wxcp"/>
+    <File Name="GotoAnythingBaseUI.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="sftp_ui">
     <File Name="AddSSHAcountDlg.cpp"/>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="SmartCompletion" Version="10.0.0">
+  <VirtualDirectory Name="src">
+    <File Name="smartcompletion.cpp"/>
+    <File Name="smartcompletion.h"/>
+    <File Name="SmartCompletionsConfig.h"/>
+    <File Name="SmartCompletionsConfig.cpp"/>
+    <File Name="SmartCompletionsSettingsDlg.h"/>
+    <File Name="SmartCompletionsSettingsDlg.cpp"/>
+    <File Name="SmartCompletionUsageDB.h"/>
+    <File Name="SmartCompletionUsageDB.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="CMake">
+    <File Name="CMakeLists.txt"/>
+  </VirtualDirectory>
+  <Dependencies/>
+  <Settings Type="Dynamic Library">
+    <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/SmartCompletion-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode"/>
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs std,stc --unicode=yes);">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdkud.dll"/>
+        <Library Value="libcodeliteud.dll"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\SmartCompletion-dbg.dll" ..\Runtime\plugins</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/SmartCompletion.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --debug=no) -O2" PCHFlagsPolicy="0"/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.dll"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libwxsqlite3u.dll"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\SmartCompletion.dll" ..\Runtime\plugins</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="SmartCompletionsUI.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="SmartCompletionsUI_smartcompletion_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="SmartCompletionsUI.h"/>
+      <File Name="SmartCompletionsUI.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+</CodeLite_Project>

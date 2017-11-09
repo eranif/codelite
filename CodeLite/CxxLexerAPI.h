@@ -58,17 +58,17 @@
 #endif
 
 enum eLexerOptions {
-    kLexerOpt_None = 0x00000000,
-    kLexerOpt_ReturnComments = 0x00000001,
-    kLexerOpt_ReturnWhitespace = 0x00000002,
-    kLexerOpt_CollectMacroValueNumbers = 0x00000004,
-    kLexerOpt_DontCollectMacrosDefinedInThisFile = 0x00000008,
+    /// Options
+    kLexerOpt_None = 0,
+    kLexerOpt_ReturnComments = (1 << 0),
+    kLexerOpt_ReturnWhitespace = (1 << 1),
+    kLexerOpt_CollectMacroValueNumbers = (1 << 2),
+    kLexerOpt_DontCollectMacrosDefinedInThisFile = (1 << 3),
+    /// states
+    kLexerState_InPreProcessor = (1 << 10),
 };
 
-enum class eCxxStandard {
-    kCxx03,
-    kCxx11
-};
+enum class eCxxStandard { kCxx03, kCxx11 };
 
 struct WXDLLIMPEXP_CL CxxLexerException
 {
@@ -86,11 +86,27 @@ struct WXDLLIMPEXP_CL CxxLexerToken
     char* text;
     int type;
     wxString comment;
+
+private:
+    bool m_owned;
+
+private:
+    void deleteText()
+    {
+        if(m_owned && text) {
+            free(text);
+        }
+        m_owned = false;
+        text = nullptr;
+    }
+
+public:
     CxxLexerToken()
         : lineNumber(0)
         , column(0)
         , text(NULL)
         , type(0)
+        , m_owned(false)
     {
     }
 
@@ -99,8 +115,32 @@ struct WXDLLIMPEXP_CL CxxLexerToken
         , column(0)
         , text(NULL)
         , type(tokenType)
+        , m_owned(false)
     {
     }
+
+    CxxLexerToken(const CxxLexerToken& other)
+    {
+        if(this == &other) return;
+        *this = other;
+    }
+
+    CxxLexerToken& operator=(const CxxLexerToken& other)
+    {
+        deleteText();
+        lineNumber = other.lineNumber;
+        column = other.column;
+        type = other.type;
+        if(other.text) {
+            m_owned = true;
+            text = ::strdup(other.text);
+        }
+        return *this;
+    }
+
+    ~CxxLexerToken() { deleteText(); }
+    bool IsEOF() const { return type == 0; }
+
     typedef std::vector<CxxLexerToken> Vect_t;
     typedef std::list<CxxLexerToken> List_t;
 };
@@ -157,6 +197,12 @@ public:
      */
     bool IsCollectingComments() const { return m_flags & kLexerOpt_ReturnComments; }
     bool IsCollectingWhitespace() const { return m_flags & kLexerOpt_ReturnWhitespace; }
+    bool IsInPreProcessorSection() const { return m_flags & kLexerState_InPreProcessor; }
+    void SetPreProcessorSection(bool b)
+    {
+        b ? m_flags |= kLexerState_InPreProcessor : m_flags &= ~kLexerState_InPreProcessor;
+    }
+
     //==--------------------
     // Comment management
     //==--------------------

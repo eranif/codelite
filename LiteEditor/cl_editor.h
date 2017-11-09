@@ -57,15 +57,15 @@
 #define MARKER_FIND_BAR_WORD_HIGHLIGHT 5
 #define MARKER_CONTEXT_WORD_HIGHLIGHT 6
 
-#if (wxVERSION_NUMBER < 3101) || defined(__WXOSX__)
+#if(wxVERSION_NUMBER < 3101) || defined(__WXOSX__)
 // Some wxSTC keycodes names were altered in 311, & the old versions deprecated
 // So, to avoid deprecation-warning spam, #define for older versions
-    #define wxSTC_KEYMOD_NORM wxSTC_SCMOD_NORM
-    #define wxSTC_KEYMOD_SHIFT wxSTC_SCMOD_SHIFT
-    #define wxSTC_KEYMOD_CTRL wxSTC_SCMOD_CTRL
-    #define wxSTC_KEYMOD_ALT wxSTC_SCMOD_ALT
-    #define wxSTC_KEYMOD_SUPER wxSTC_SCMOD_SUPER
-    #define wxSTC_KEYMOD_META wxSTC_SCMOD_META
+#define wxSTC_KEYMOD_NORM wxSTC_SCMOD_NORM
+#define wxSTC_KEYMOD_SHIFT wxSTC_SCMOD_SHIFT
+#define wxSTC_KEYMOD_CTRL wxSTC_SCMOD_CTRL
+#define wxSTC_KEYMOD_ALT wxSTC_SCMOD_ALT
+#define wxSTC_KEYMOD_SUPER wxSTC_SCMOD_SUPER
+#define wxSTC_KEYMOD_META wxSTC_SCMOD_META
 #endif
 
 class wxRichToolTip;
@@ -197,6 +197,13 @@ private:
         const wxString& GetWord() const { return m_word; }
     };
 
+    enum eStatusBarFields {
+        kShowLine = (1 << 0),
+        kShowColumn = (1 << 1),
+        kShowPosition = (1 << 2),
+        kShowLen = (1 << 3),
+    };
+
 protected:
     wxFileName m_fileName;
     wxString m_project;
@@ -251,6 +258,7 @@ protected:
     /// A space delimited list of all the variables in this editor
     wxString m_keywordLocals;
     wxBitmap m_editorBitmap;
+    size_t m_statusBarFields;
 
 public:
     static bool m_ccShowPrivateMembers;
@@ -262,6 +270,10 @@ public:
     IManager* GetManager() { return m_mgr; }
 
     /**
+     * @brief CodeLite preferences updated
+     */
+    void PreferencesChanged();
+    /**
      * @brief are the CC annotations visible?
      */
     bool IsHasCCAnnotation() const { return m_hasCCAnnotation; }
@@ -269,7 +281,7 @@ public:
 
     void SetEditorBitmap(const wxBitmap& editorBitmap) { this->m_editorBitmap = editorBitmap; }
     const wxBitmap& GetEditorBitmap() const { return m_editorBitmap; }
-    
+
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 
@@ -542,10 +554,10 @@ public:
      */
     void ToggleAllFoldsInSelection();
     void DoRecursivelyExpandFolds(bool expand, int startline,
-        int endline); // Helper function for ToggleAllFoldsInSelection()
-                      /**
-                       *  Find the topmost fold level within the selection, and toggle all selected folds of that level
-                       */
+                                  int endline); // Helper function for ToggleAllFoldsInSelection()
+                                                /**
+                                                 *  Find the topmost fold level within the selection, and toggle all selected folds of that level
+                                                 */
     void ToggleTopmostFoldsInSelection();
     /**
      * Load collapsed folds from a vector
@@ -574,19 +586,19 @@ public:
      * @brief find all occurances of the selected text and select
      */
     void QuickFindAll();
-    
+
     bool FindAndSelect();
     bool FindAndSelect(const FindReplaceData& data);
     bool FindAndSelect(const wxString& pattern, const wxString& name);
     void FindAndSelectV(const wxString& pattern, const wxString& name, int pos = 0,
-        NavMgr* unused = NULL); // The same but returns void, so usable with CallAfter()
+                        NavMgr* unused = NULL); // The same but returns void, so usable with CallAfter()
     void DoFindAndSelectV(const wxArrayString& strings, int pos); // Called with CallAfter()
 
     bool Replace();
     bool Replace(const FindReplaceData& data);
 
     void RecalcHorizontalScrollbar();
-    
+
     /**
      * Get editor options. Takes any workspace/project overrides into account
      */
@@ -670,7 +682,7 @@ public:
      * Optionally make it temporary, disabled or conditional
      */
     void AddBreakpoint(int lineno = -1, const wxString& conditions = wxT(""), const bool is_temp = false,
-        const bool is_disabled = false);
+                       const bool is_disabled = false);
 
     /**
      * Delete the breakpoint at the current line & file, or lineno if from ToggleBreakpoint()
@@ -698,8 +710,8 @@ public:
     //--------------------------------
     // breakpoint visualisation
     //--------------------------------
-    virtual void SetBreakpointMarker(
-        int lineno, BreakpointType bptype, bool is_disabled, const std::vector<BreakpointInfo>& li);
+    virtual void SetBreakpointMarker(int lineno, BreakpointType bptype, bool is_disabled,
+                                     const std::vector<BreakpointInfo>& li);
     virtual void DelAllBreakpointMarkers();
 
     virtual void HighlightLine(int lineno);
@@ -884,12 +896,12 @@ public:
     virtual int PositionAfterPos(int pos);
     virtual int PositionBeforePos(int pos);
     virtual int GetCharAtPos(int pos);
-    
+
     /**
      * @brief apply editor configuration (TAB vs SPACES, tab size, EOL mode etc)
      */
     virtual void ApplyEditorConfig();
-    
+
     /**
      * @brief return true if the current editor is detached from the mainbook
      */

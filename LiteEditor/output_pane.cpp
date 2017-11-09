@@ -81,13 +81,11 @@ void OutputPane::CreateGUIControls()
     if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxBOTTOM) {
         style |= kNotebook_BottomTabs;
     } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxLEFT) {
-
 #ifdef __WXOSX__
         style &= ~(kNotebook_BottomTabs | kNotebook_LeftTabs | kNotebook_RightTabs);
 #else
         style |= kNotebook_LeftTabs;
 #endif
-
     } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxRIGHT) {
 #ifdef __WXOSX__
         style |= kNotebook_BottomTabs;
@@ -308,7 +306,7 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
         // Insert the page
         int where = clTabTogglerHelper::IsTabInNotebook(GetNotebook(), t.m_label);
         if(where == wxNOT_FOUND) {
-            GetNotebook()->InsertPage(0, t.m_window, t.m_label, true, t.m_bmp);
+            GetNotebook()->AddPage(t.m_window, t.m_label, false, t.m_bmp);
         } else {
             GetNotebook()->SetSelection(where);
         }

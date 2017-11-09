@@ -70,8 +70,8 @@ void XMLCodeCompletion::XmlCodeComplete(IEditor* editor)
     } else {
         // CC was triggered by "<"
         // In this case, we simply trigger the word completion
-        wxCommandEvent event(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
-        wxTheApp->AddPendingEvent(event);
+        wxCommandEvent event(wxEVT_MENU, XRCID("simple_word_completion"));
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event);
     }
 }
 

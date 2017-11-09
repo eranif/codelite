@@ -2,4 +2,4 @@
 
 void func_with_args(const wxString &path)
 {
-	p.
+	path.

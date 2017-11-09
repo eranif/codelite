@@ -30,7 +30,7 @@
 #include <wx/xml/xml.h>
 #include "json_node.h"
 
-std::map<wxString, FileExtManager::FileType> FileExtManager::m_map;
+std::unordered_map<wxString, FileExtManager::FileType> FileExtManager::m_map;
 std::vector<FileExtManager::Matcher::Ptr_t> FileExtManager::m_matchers;
 
 void FileExtManager::Init()
@@ -171,7 +171,7 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
     e.MakeLower();
     e.Trim().Trim(false);
 
-    std::map<wxString, FileType>::iterator iter = m_map.find(e);
+    std::unordered_map<wxString, FileType>::iterator iter = m_map.find(e);
     if(iter == m_map.end()) {
         // try to see if the file is a makefile
         if(fn.GetFullName().CmpNoCase(wxT("makefile")) == 0) {
@@ -213,7 +213,7 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
             return false;
         }
     }
-    return ft == TypeSourceC || ft == TypeSourceCpp || ft == TypeHeader;
+    return (ft == TypeSourceC) || (ft == TypeSourceCpp) || (ft == TypeHeader);
 }
 
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
@@ -252,3 +252,10 @@ bool FileExtManager::IsJavascriptFile(const wxString& filename) { return FileExt
 bool FileExtManager::IsPHPFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypePhp); }
 
 bool FileExtManager::IsJavaFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypeJava); }
+
+FileExtManager::FileType FileExtManager::GetTypeFromExtension(const wxFileName& filename)
+{
+    std::unordered_map<wxString, FileExtManager::FileType>::iterator iter = m_map.find(filename.GetExt().Lower());
+    if(iter == m_map.end()) return TypeOther;
+    return iter->second;
+}

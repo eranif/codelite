@@ -39,6 +39,7 @@
 #include "debugger.h"
 #include "clStatusBar.h"
 
+class clEditorBar;
 class clWorkspaceView;
 class TagsManager;
 class clCxxWorkspace;
@@ -177,20 +178,26 @@ public:
     virtual clStatusBar* GetStatusBar() = 0;
 
     /**
+     * @brief return the navigation bar (the one that contains the "File Name" + class::func location at the bottom of
+     * the editor)
+     * @return
+     */
+    virtual clEditorBar* GetNavigationBar() = 0;
+    /**
      * @brief open file and make it the active editor
      * @param fileName the file to open - use absolute path
      * @param projectName project to associate this file - can be wxEmptyString
      * @param lineno if lineno is not wxNOT_FOUD, the caret will placed on this line number
      * @return true if file opened
      */
-    virtual IEditor* OpenFile(
-        const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
+    virtual IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString,
+                              int lineno = wxNOT_FOUND) = 0;
 
     /**
      * @brief open a file with a given tooltip and bitmap
      */
-    virtual IEditor* OpenFile(
-        const wxString& fileName, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString) = 0;
+    virtual IEditor* OpenFile(const wxString& fileName, const wxBitmap& bmp,
+                              const wxString& tooltip = wxEmptyString) = 0;
 
     /**
      * @brief Open file using browsing record
@@ -501,7 +508,7 @@ public:
      * @brief add a page to the mainbook
      */
     virtual bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString,
-        const wxBitmap& bmp = wxNullBitmap, bool selected = false) = 0;
+                         const wxBitmap& bmp = wxNullBitmap, bool selected = false) = 0;
 
     /**
      * @brief select a window in mainbook

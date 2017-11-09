@@ -348,6 +348,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_richTooltip(NULL)
 {
     DoUpdateOptions();
+    PreferencesChanged();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
     m_commandsProcessor.SetParent(this);
 
@@ -530,7 +531,7 @@ void LEditor::SetProperties()
     UsePopUp(0);
 #endif
     SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-    
+
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
@@ -1244,16 +1245,16 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     int curLine = LineFromPosition(mainSelectionPos);
 
     wxString message;
-    if(clConfig::Get().Read(kConfigStatusbarShowLine, true)) {
+    if(m_statusBarFields & kShowLine) {
         message << "Ln " << curLine + 1;
     }
-    if(clConfig::Get().Read(kConfigStatusbarShowColumn, true)) {
+    if(m_statusBarFields & kShowColumn) {
         message << (!message.empty() ? ", " : "") << "Col " << GetColumn(mainSelectionPos);
     }
-    if(clConfig::Get().Read(kConfigStatusbarShowPosition, false)) {
+    if(m_statusBarFields & kShowPosition) {
         message << (!message.empty() ? ", " : "") << "Pos " << mainSelectionPos;
     }
-    if(clConfig::Get().Read(kConfigStatusbarShowLength, false)) {
+    if(m_statusBarFields & kShowLen) {
         message << (!message.empty() ? ", " : "") << "Len " << GetLength();
     }
     // Always update the status bar with event, calling it directly causes performance degredation
@@ -1268,6 +1269,18 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     }
 
     RecalcHorizontalScrollbar();
+
+    static int lastLine(wxNOT_FOUND);
+
+    // get the current position
+    if((curLine != lastLine) && clMainFrame::Get()->GetMainBook()->IsNavBarShown()) {
+        lastLine = curLine;
+        clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
+        evtUpdateNavBar.SetEditor(this);
+        evtUpdateNavBar.SetLineNumber(curLine);
+        EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
+    }
+
     // let the context handle this as well
     m_context->OnSciUpdateUI(event);
 }
@@ -3731,7 +3744,6 @@ void LEditor::UpdateColours()
     SetKeywordLocals("");
 
     if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS ||
-       TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS ||
        TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_MACRO_BLOCKS) {
         m_context->OnFileSaved();
 
@@ -3991,12 +4003,14 @@ int LEditor::GetEOLByOS()
 
 void LEditor::ShowFunctionTipFromCurrentPos()
 {
+    clDEBUG1() << "Calling ShowFunctionTipFromCurrentPos..." << clEndl;
     if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
 
         if(EventNotifier::Get()->IsEventsDiabled()) return;
 
         int pos = DoGetOpenBracePos();
-
+        clDEBUG1() << "Brace open position is:" << pos << clEndl;
+        clDEBUG1() << "Firing wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP event..." << clEndl;
         // see if any of the plugins want to handle it
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
         evt.SetEventObject(this);
@@ -4006,6 +4020,7 @@ void LEditor::ShowFunctionTipFromCurrentPos()
         if(EventNotifier::Get()->ProcessEvent(evt)) return;
 
         if(pos != wxNOT_FOUND) {
+            clDEBUG1() << "Using default behavior for wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP event" << clEndl;
             m_context->CodeComplete(pos);
         }
     }
@@ -5024,24 +5039,19 @@ void LEditor::OnTimer(wxTimerEvent& event)
                 if(textMatches) {
                     // No markers set yet
                     DoHighlightWord();
-                    clDEBUG1() << "Highlighting word" << clEndl;
 
                 } else if(!textMatches) {
                     // clear markers if the text does not match
                     HighlightWord(false);
-                    clDEBUG1() << "Clearing word highlight" << clEndl;
                 }
             } else {
                 // we got the markers on, check that they still matches the highlighted word
                 if(selectedText != m_highlightedWordInfo.GetWord()) {
-                    clDEBUG1() << "Clearing the markers" << clEndl;
                     HighlightWord(false);
                 } else {
                     // clDEBUG1() << "Markers are valid - nothing more to be done" << clEndl;
                 }
             }
-        } else {
-            clDEBUG1() << "highlight_word is OFF" << clEndl;
         }
     }
     GetContext()->ProcessIdleActions();
@@ -5499,8 +5509,25 @@ void LEditor::ReloadFromDisk(bool keepUndoHistory)
         EmptyUndoBuffer();
         GetCommandsProcessor().Reset();
     }
-    
+
     SetReloadingFile(false);
+}
+
+void LEditor::PreferencesChanged()
+{
+    m_statusBarFields = 0;
+    if(clConfig::Get().Read(kConfigStatusbarShowLine, true)) {
+        m_statusBarFields |= kShowLine;
+    }
+    if(clConfig::Get().Read(kConfigStatusbarShowColumn, true)) {
+        m_statusBarFields |= kShowColumn;
+    }
+    if(clConfig::Get().Read(kConfigStatusbarShowPosition, false)) {
+        m_statusBarFields |= kShowPosition;
+    }
+    if(clConfig::Get().Read(kConfigStatusbarShowLength, false)) {
+        m_statusBarFields |= kShowLen;
+    }
 }
 
 // ----------------------------------

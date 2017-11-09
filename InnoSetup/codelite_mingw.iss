@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=11.0.1
+AppVersion=11.0.5
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-x86-11.0.1
+OutputBaseFilename=codelite-x86-11.0.5
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -130,6 +130,7 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\EditorConfigPlugin.dll"; DestDir: "{ap
 Source: "{#CODELITE_ROOT}\Runtime\plugins\codelite_vim.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\PHPLint.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\PHPRefactoring.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
+Source: "{#CODELITE_ROOT}\Runtime\plugins\SmartCompletion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion 

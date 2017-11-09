@@ -30,27 +30,27 @@
 
 class wxToggleButton;
 
-
 class TaskPanel : public FindResultsTab
 {
 private:
     wxArrayString m_extensions;
-	wxButton *m_findWhat;
-    wxChoice *m_scope;
-    wxChoice *m_choiceEncoding;
-    
+    wxButton* m_findWhat;
+    wxChoice* m_scope;
+    wxChoice* m_choiceEncoding;
+
 protected:
-    SearchData DoGetSearchData   ();
-    void       OnFindWhat        (wxCommandEvent  &e);
-	void       OnSearch          (wxCommandEvent  &e);
-    void       OnSearchUI        (wxUpdateUIEvent &e);
-	void       OnRepeatOutput    (wxCommandEvent  &e);
-	void       OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-	void       OnEncodingSelected(wxCommandEvent& e);
+    SearchData DoGetSearchData();
+    void OnFindWhat(wxCommandEvent& e);
+    void OnSearch(wxCommandEvent& e);
+    void OnSearchUI(wxUpdateUIEvent& e);
+    void OnRepeatOutput(wxCommandEvent& e);
+    void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
+    void OnEncodingSelected(wxCommandEvent& e);
+    void OnSearchStart(wxCommandEvent& e);
     DECLARE_EVENT_TABLE()
 
 public:
-	TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name);
+    TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name);
     ~TaskPanel();
 };
 

@@ -4,13 +4,13 @@
 #include "codelite_exports.h"
 #include <wx/stc/stc.h>
 #include <wx/string.h>
-#include <set>
+#include "wxStringHash.h"
 
 class WXDLLIMPEXP_SDK clEditorXmlHelper
 {
     wxStyledTextCtrl* m_stc;
     wxString m_wordChars;
-    std::set<int> m_chars;
+    std::unordered_set<int> m_chars;
 
 protected:
     int GetCharAt(int pos) const;

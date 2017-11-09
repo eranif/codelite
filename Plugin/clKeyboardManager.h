@@ -35,6 +35,7 @@
 #include <wx/menu.h>
 #include <wx/event.h>
 #include "macros.h"
+#include "wxStringHash.h"
 
 struct WXDLLIMPEXP_SDK MenuItemData {
     wxString resourceID;
@@ -56,8 +57,8 @@ struct WXDLLIMPEXP_SDK MenuItemData {
     };
 };
 
-typedef std::map<wxString, MenuItemData> MenuItemDataMap_t;
-typedef std::map<int, MenuItemData> MenuItemDataIntMap_t;
+typedef std::unordered_map<wxString, MenuItemData> MenuItemDataMap_t;
+typedef std::unordered_map<int, MenuItemData> MenuItemDataIntMap_t;
 
 struct WXDLLIMPEXP_SDK clKeyboardShortcut {
     bool m_ctrl;
@@ -107,7 +108,8 @@ protected:
     void DoUpdateMenu(wxMenu* menu, MenuItemDataIntMap_t& accels, std::vector<wxAcceleratorEntry>& table);
     void DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& accels);
     void DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuItemDataIntMap_t& intMap);
-
+    MenuItemDataMap_t DoLoadDefaultAccelerators();
+    
     clKeyboardManager();
     virtual ~clKeyboardManager();
 
@@ -117,7 +119,7 @@ protected:
 public:
     static void Release();
     static clKeyboardManager* Get();
-
+    
     /**
      * @brief return an array of all unassigned keyboard shortcuts
      */

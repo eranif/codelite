@@ -196,6 +196,9 @@
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="complete_word">
+                <label>Code Comple&amp;te</label>
+            </object>
+            <object class="wxMenuItem" name="simple_word_completion">
                 <label>Complete &amp;Word</label>
             </object>
             <object class="wxMenuItem" name="function_call_tip">
@@ -423,6 +426,9 @@
             </object>
             <object class="wxMenuItem" name="goto_definition">
                 <label>Find &amp;Symbol</label>
+            </object>
+            <object class="wxMenuItem" name="ID_GOTO_ANYTHING">
+                <label>Goto Anything</label>
             </object>
             <!-- An ID range for bookmark types. 15 is overkill, but future-proof... -->
             <ids-range name="BookmarkTypes" size="15"/>

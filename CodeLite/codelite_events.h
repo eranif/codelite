@@ -278,6 +278,14 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE, clCodeCompletio
 // The selected string can be retrieved by calling: event.GetWord()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SELECTION_MADE, clCodeCompletionEvent);
 
+// Code completion box is about to be shown. Let the plugins access the list before it is shown
+// to the user. Call event.Skip(false) if you modify the list. The modified list should be set
+// via the event.SetEntries();
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SHOWING, clCodeCompletionEvent);
+
+/// User asked for "word completion" (non context code completion event)
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_WORD_COMPLETE, clCodeCompletionEvent);
+
 // A function calltip is requesed
 // clientData is set to the client data set by the user
 // the plugin returns the tooltip to the IDE using the:
@@ -317,6 +325,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL, clCodeCompletionE
 // after the user has typed "/**" followed by ENTER
 // Use event.SetTooltip(...) to provide the doxygen block comment
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_GENERATE_DOXY_BLOCK, clCodeCompletionEvent);
+
+// An update to the navigation bar is required
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_UPDATE_NAVBAR, clCodeCompletionEvent);
 
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
@@ -768,5 +779,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_CONFIG_LOADING, clEditorCo
 
 // Sent when PHP settings have been saved to the file system
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PHP_SETTINGS_CHANGED, clCommandEvent);
+
+// Goto Anything item was selected
+// Use: clCommandEvent::GetString to get the selected item
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SELECTED, clCommandEvent);
+
+// Build configuration for the workspace has changed
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_BUILD_CONFIG_CHANGED, clCommandEvent);
 
 #endif // CODELITE_EVENTS_H

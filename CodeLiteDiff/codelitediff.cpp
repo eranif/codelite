@@ -65,6 +65,7 @@ CodeLiteDiff::CodeLiteDiff(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_TAB_LABEL, &CodeLiteDiff::OnTabContextMenu, this);
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "diff_new_comparison", "Ctrl-Shift-C", "Plugins::Diff Tool::New File Comparison");
+    wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &CodeLiteDiff::OnNewDiff, this, XRCID("diff_new_comparison"));
 }
 
 CodeLiteDiff::~CodeLiteDiff() {}
@@ -80,12 +81,12 @@ void CodeLiteDiff::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu;
     menu->Append(XRCID("diff_new_comparison"), _("New Diff.."), _("Start new diff"));
-    menu->Bind(wxEVT_COMMAND_MENU_SELECTED, &CodeLiteDiff::OnNewDiff, this, XRCID("diff_new_comparison"));
     pluginsMenu->Append(wxID_ANY, _("Diff Tool"), menu);
 }
 
 void CodeLiteDiff::UnPlug()
 {
+    wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &CodeLiteDiff::OnNewDiff, this, XRCID("diff_new_comparison"));
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_TAB_LABEL, &CodeLiteDiff::OnTabContextMenu, this);
     Unbind(wxEVT_MENU, &CodeLiteDiff::OnDiff, this, XRCID("diff_compare_with"));
 }

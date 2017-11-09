@@ -1,1 +1,0 @@
-const std::map<int, int>& m = std::map<int, int>(), int number = -1, const std::vector<std::pair<int, int> >& v

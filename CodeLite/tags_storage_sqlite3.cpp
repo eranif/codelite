@@ -27,6 +27,7 @@
 #include <wx/longlong.h>
 #include "tags_storage_sqlite3.h"
 #include <wx/tokenzr.h>
+#include <algorithm>
 
 //-------------------------------------------------
 // Tags database class implementation
@@ -594,13 +595,13 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         }
         ex_rs.Finalize();
     } catch(wxSQLite3Exception& e) {
-        wxUnusedVar(e);
+        clWARNING() << "TagsStorageSQLite::DoFetchTags() error:" << e.GetMessage() << clEndl;
     }
     clDEBUG1() << "Fetching from disk...done" << clEndl;
     if(GetUseCache()) {
         clDEBUG1() << "Updating cache" << clEndl;
         m_cache.Store(sql, tags);
-        clDEBUG1() << "Updating cache...done" << clEndl;
+        clDEBUG1() << "Updating cache...done (" << tags.size() << "entries)" << clEndl;
     }
 }
 
@@ -926,7 +927,7 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& sc
             wxString scopeFounded(rs.GetString(0));
             wxString kindFounded(rs.GetString(1));
 
-            bool containerKind = kindFounded == wxT("struct") || kindFounded == wxT("class");
+            bool containerKind = kindFounded == wxT("struct") || kindFounded == wxT("class") || kindFounded == "cenum";
             if(scopeFounded == combinedScope && containerKind) {
                 scope = combinedScope;
                 typeName = typeNameNoScope;
@@ -1618,68 +1619,73 @@ void TagsStorageSQLite::GetTagsByPartName(const wxString& partname, std::vector<
     }
 }
 
-void TagsStorageSQLite::RemoveNonWorkspaceSymbols(wxArrayString& symbols, const wxArrayString& kinds)
+void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& symbols,
+                                                  std::vector<wxString>& workspaceSymbols,
+                                                  std::vector<wxString>& nonWorkspaceSymbols)
 {
     try {
-        wxArrayString workspaceSymbols;
-
-        if(symbols.IsEmpty()) {
-            return;
-        }
-
-        if(kinds.IsEmpty()) {
-            symbols.Clear();
+        workspaceSymbols.clear();
+        nonWorkspaceSymbols.clear();
+        if(symbols.empty()) {
             return;
         }
 
         // an example query
         // SELECT distinct name FROM 'main'.'tags' where name in ('LoadList')
+        wxString kindSQL;
+        kindSQL << " AND KIND IN ('class', 'enum', 'cenum', 'prototype', 'macro', 'namespace', 'function', "
+                   "'struct','typedef')";
 
         // Split the input vector into arrays of up to 500 elements each
-        std::vector<wxArrayString> v;
-        wxArrayString tmp;
-        for(size_t i = 0; i < symbols.GetCount(); ++i) {
-            tmp.Add(symbols.Item(i));
-            if(tmp.GetCount() % 500 == 0) {
-                v.push_back(tmp);
-                tmp.Clear();
-            }
+        std::vector<std::vector<wxString> > v;
+        int chunks = (symbols.size() / 500) + 1;
+        int offset = 0;
+        int left = symbols.size();
+        for(int i = 0; i < chunks; ++i) {
+            int amountToCopy = left > 500 ? 500 : left;
+            left -= amountToCopy;
+            std::vector<wxString> vChunk(symbols.begin() + offset, symbols.begin() + (offset + amountToCopy));
+            offset += 500;
+            v.push_back(vChunk);
         }
 
-        if(!tmp.IsEmpty()) {
-            v.push_back(tmp);
-            tmp.Clear();
-        }
-
+        std::vector<wxString> allSymbols;
         for(size_t i = 0; i < v.size(); ++i) {
             wxString sql;
-            sql << "SELECT distinct name FROM tags where name in (";
-            for(size_t n = 0; n < v.at(i).GetCount(); ++n) {
-                sql << "'" << v.at(i).Item(n) << "',";
+            sql << "SELECT distinct name,kind FROM tags where name in (";
+            for(size_t n = 0; n < v[i].size(); ++n) {
+                sql << "'" << v[i][n] << "',";
             }
 
-            // remove the last comma
-            sql.RemoveLast();
-            sql << ") AND KIND IN (";
-
-            for(size_t n = 0; n < kinds.GetCount(); ++n) {
-                sql << "'" << kinds.Item(n) << "',";
-            }
             // remove the last comma
             sql.RemoveLast();
             sql << ")";
+            sql << kindSQL;
 
             // Run the query
             wxSQLite3ResultSet res = m_db->ExecuteQuery(sql);
             while(res.NextRow()) {
-                workspaceSymbols.Add(res.GetString(0));
+                wxString name = res.GetString(0);
+                wxString kind = res.GetString(1);
+                allSymbols.push_back(name);
+                if((kind != "function") && (kind != "prototype") && (kind != "macro")) {
+                    workspaceSymbols.push_back(name);
+                }
             }
         }
 
-        workspaceSymbols.Sort();
-        symbols.swap(workspaceSymbols);
+        std::sort(workspaceSymbols.begin(), workspaceSymbols.end());
+        std::sort(allSymbols.begin(), allSymbols.end());
+        std::set_difference(symbols.begin(), symbols.end(), allSymbols.begin(), allSymbols.end(),
+                            std::back_inserter(nonWorkspaceSymbols));
 
     } catch(wxSQLite3Exception& e) {
-        CL_DEBUG("SplitSymbols error: %s", e.GetMessage());
+        clDEBUG() << "SplitSymbols error:" << e.GetMessage() << clEndl;
     }
+}
+
+const wxString& TagsStorageSQLite::GetVersion() const
+{
+    static const wxString gTagsDatabaseVersion(wxT("CodeLite Version 11.1"));
+    return gTagsDatabaseVersion;
 }

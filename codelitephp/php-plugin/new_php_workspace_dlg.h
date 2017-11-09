@@ -44,9 +44,9 @@ public:
     virtual ~NewPHPWorkspaceDlg();
     //// end generated class members
     wxString GetWorkspacePath() const;
-    bool IsCreateProject() const { return m_checkBoxAddProjectFromSources->IsChecked(); }
 
 protected:
+    virtual void OnFolderSelected(wxCommandEvent& event);
     virtual void OnBrowse(wxCommandEvent& event);
     virtual void OnCheckMakeSeparateDir(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);

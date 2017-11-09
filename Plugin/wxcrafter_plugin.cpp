@@ -376,7 +376,6 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_button290->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseLeftFile), NULL, this);
     m_stcLeft->Connect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcPainted), NULL, this);
     m_stcLeft->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
-    m_stcLeft->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcUpdateUI), NULL, this);
     m_panelOverviewL->Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewEraseBackground), NULL, this);
     m_panelOverviewL->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewLeftDown), NULL, this);
     m_textCtrlRightFile->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
@@ -427,7 +426,6 @@ DiffSideBySidePanelBase::~DiffSideBySidePanelBase()
     m_button290->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DiffSideBySidePanelBase::OnBrowseLeftFile), NULL, this);
     m_stcLeft->Disconnect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcPainted), NULL, this);
     m_stcLeft->Disconnect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(DiffSideBySidePanelBase::OnMouseWheel), NULL, this);
-    m_stcLeft->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcUpdateUI), NULL, this);
     m_panelOverviewL->Disconnect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewEraseBackground), NULL, this);
     m_panelOverviewL->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DiffSideBySidePanelBase::OnPaneloverviewLeftDown), NULL, this);
     m_textCtrlRightFile->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnRightPickerUI), NULL, this);
@@ -885,4 +883,36 @@ clResizableTooltipBase::~clResizableTooltipBase()
     m_timerCheckMousePos->Stop();
     wxDELETE( m_timerCheckMousePos );
 
+}
+
+clEditorBarBase::clEditorBarBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC9D6CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    SetName(wxT("clEditorBarBase"));
+    SetSize(-1,-1);
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
+    // Connect events
+    this->Connect(wxEVT_PAINT, wxPaintEventHandler(clEditorBarBase::OnPaint), NULL, this);
+    this->Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(clEditorBarBase::OnEraseBG), NULL, this);
+    this->Connect(wxEVT_SIZE, wxSizeEventHandler(clEditorBarBase::OnEditorSize), NULL, this);
+    this->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clEditorBarBase::OnLeftDown), NULL, this);
+    
+}
+
+clEditorBarBase::~clEditorBarBase()
+{
+    this->Disconnect(wxEVT_PAINT, wxPaintEventHandler(clEditorBarBase::OnPaint), NULL, this);
+    this->Disconnect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(clEditorBarBase::OnEraseBG), NULL, this);
+    this->Disconnect(wxEVT_SIZE, wxSizeEventHandler(clEditorBarBase::OnEditorSize), NULL, this);
+    this->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clEditorBarBase::OnLeftDown), NULL, this);
+    
 }

@@ -38,6 +38,7 @@
 #include <map>
 #include "plugindata.h"
 
+class clEditorBar;
 class wxBookCtrlBase;
 class EnvironmentConfig;
 class JobQueue;
@@ -160,10 +161,10 @@ public:
     void ShowOutputPane(const wxString& selectedWindow = "");
     void ToggleOutputPane(const wxString& selectedWindow = "");
     clStatusBar* GetStatusBar();
+    clEditorBar* GetNavigationBar();
     clWorkspaceView* GetWorkspaceView();
     bool IsToolBarShown() const;
     void ShowToolBar(bool show = true);
-
     //------------------------------------
     // End of IManager interface
     //------------------------------------

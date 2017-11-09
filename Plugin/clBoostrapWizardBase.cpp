@@ -56,10 +56,10 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     m_banner811 = new wxBannerWindow(m_wizardPagePlugins, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1,-1)), 0);
     m_banner811->SetBitmap(wxNullBitmap);
-    m_banner811->SetText(_("Plugins"), _("Select the plugins to enable"));
+    m_banner811->SetText(_("Development Profile"), _("Select the profile that best describes you"));
     m_banner811->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     
-    boxSizer89->Add(m_banner811, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
+    boxSizer89->Add(m_banner811, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer93 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -69,69 +69,15 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer93->Add(boxSizer114, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrlPlugins = new wxDataViewListCtrl(m_wizardPagePlugins, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1,-1)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    wxArrayString m_radioBoxProfileArr;
+    m_radioBoxProfileArr.Add(_("Default (Don't change the current settings)"));
+    m_radioBoxProfileArr.Add(_("Both C/C++ and Web development"));
+    m_radioBoxProfileArr.Add(_("C/C++ development"));
+    m_radioBoxProfileArr.Add(_("Web development (PHP, JS etc)"));
+    m_radioBoxProfile = new wxRadioBox(m_wizardPagePlugins, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1,-1)), m_radioBoxProfileArr, 1, wxRA_SPECIFY_COLS);
+    m_radioBoxProfile->SetSelection(0);
     
-    boxSizer114->Add(m_dvListCtrlPlugins, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_dvListCtrlPlugins->AppendToggleColumn(_("X"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(30), wxALIGN_LEFT);
-    m_dvListCtrlPlugins->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-1), wxALIGN_LEFT);
-    m_stcPluginDesc = new wxStyledTextCtrl(m_wizardPagePlugins, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1,-1)), 0);
-    // Configure the fold margin
-    m_stcPluginDesc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stcPluginDesc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
-    m_stcPluginDesc->SetMarginSensitive(4, true);
-    m_stcPluginDesc->SetMarginWidth    (4, 0);
-    
-    // Configure the tracker margin
-    m_stcPluginDesc->SetMarginWidth(1, 0);
-    
-    // Configure the symbol margin
-    m_stcPluginDesc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stcPluginDesc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_stcPluginDesc->SetMarginWidth(2, 0);
-    m_stcPluginDesc->SetMarginSensitive(2, true);
-    
-    // Configure the line numbers margin
-    m_stcPluginDesc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcPluginDesc->SetMarginWidth(0,0);
-    
-    // Configure the line symbol margin
-    m_stcPluginDesc->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_stcPluginDesc->SetMarginMask(3, 0);
-    m_stcPluginDesc->SetMarginWidth(3,0);
-    // Select the lexer
-    m_stcPluginDesc->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_stcPluginDesc->StyleClearAll();
-    m_stcPluginDesc->SetWrapMode(0);
-    m_stcPluginDesc->SetIndentationGuides(0);
-    m_stcPluginDesc->SetKeyWords(0, wxT(""));
-    m_stcPluginDesc->SetKeyWords(1, wxT(""));
-    m_stcPluginDesc->SetKeyWords(2, wxT(""));
-    m_stcPluginDesc->SetKeyWords(3, wxT(""));
-    m_stcPluginDesc->SetKeyWords(4, wxT(""));
-    
-    boxSizer114->Add(m_stcPluginDesc, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    wxBoxSizer* boxSizer97 = new wxBoxSizer(wxVERTICAL);
-    
-    boxSizer93->Add(boxSizer97, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_button99 = new wxButton(m_wizardPagePlugins, wxID_ANY, _("Select All"), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1,-1)), 0);
-    m_button99->SetDefault();
-    m_button99->SetToolTip(_("Check all plugins"));
-    
-    boxSizer97->Add(m_button99, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_button101 = new wxButton(m_wizardPagePlugins, wxID_ANY, _("Clear"), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1,-1)), 0);
-    m_button101->SetToolTip(_("uncheck all plugins"));
-    
-    boxSizer97->Add(m_button101, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_button103 = new wxButton(m_wizardPagePlugins, wxID_ANY, _("Toggle C++\nPlugins"), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1,-1)), 0);
-    m_button103->SetToolTip(_("Toggle C++ plugins"));
-    
-    boxSizer97->Add(m_button103, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer114->Add(m_radioBoxProfile, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_wizardPageCompilers = new clBoostrapWizardPageCompilers(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageCompilers);
@@ -281,12 +227,6 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     // Connect events
     this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(clBoostrapWizardBase::OnFinish), NULL, this);
     m_cmdLnkBtn107->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnCancelWizard), NULL, this);
-    m_dvListCtrlPlugins->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(clBoostrapWizardBase::OnPluginSelectionChanged), NULL, this);
-    m_button99->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnCheckAllPlugins), NULL, this);
-    m_button99->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clBoostrapWizardBase::OnCheckAllPluginsUI), NULL, this);
-    m_button101->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnUnCheckAllPlugins), NULL, this);
-    m_button101->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clBoostrapWizardBase::OnUnCheckAllPluginsUI), NULL, this);
-    m_button103->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnToggleCxxPlugins), NULL, this);
     m_cmdLnkBtnScanForCompilers->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnScanForCompilers), NULL, this);
     m_cmdLnkBtnDownloadCompiler->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clBoostrapWizardBase::OnInstallCompilerUI), NULL, this);
     m_cmdLnkBtnDownloadCompiler->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnInstallCompiler), NULL, this);
@@ -298,12 +238,6 @@ clBoostrapWizardBase::~clBoostrapWizardBase()
 {
     this->Disconnect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(clBoostrapWizardBase::OnFinish), NULL, this);
     m_cmdLnkBtn107->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnCancelWizard), NULL, this);
-    m_dvListCtrlPlugins->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(clBoostrapWizardBase::OnPluginSelectionChanged), NULL, this);
-    m_button99->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnCheckAllPlugins), NULL, this);
-    m_button99->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clBoostrapWizardBase::OnCheckAllPluginsUI), NULL, this);
-    m_button101->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnUnCheckAllPlugins), NULL, this);
-    m_button101->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clBoostrapWizardBase::OnUnCheckAllPluginsUI), NULL, this);
-    m_button103->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnToggleCxxPlugins), NULL, this);
     m_cmdLnkBtnScanForCompilers->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnScanForCompilers), NULL, this);
     m_cmdLnkBtnDownloadCompiler->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clBoostrapWizardBase::OnInstallCompilerUI), NULL, this);
     m_cmdLnkBtnDownloadCompiler->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnInstallCompiler), NULL, this);

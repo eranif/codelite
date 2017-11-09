@@ -46,6 +46,9 @@
 #include "istorage.h"
 #include "codelite_exports.h"
 #include "cl_command_event.h"
+#include "wxStringHash.h"
+#include "macros.h"
+#include "clCxxFileCacheSymbols.h"
 
 #ifdef USE_TRACE
 #include <wx/stopwatch.h>
@@ -153,7 +156,7 @@ private:
     wxString m_cachedFile;
     bool m_enableCaching;
     wxEvtHandler* m_evtHandler;
-    std::set<wxString> m_CppIgnoreKeyWords;
+    wxStringSet_t m_CppIgnoreKeyWords;
     wxArrayString m_projectPaths;
     wxFontEncoding m_encoding;
     wxFileName m_dbFile;
@@ -161,18 +164,24 @@ private:
 #if USE_TAGS_SQLITE3
     ITagsStoragePtr m_db;
 #endif
+    clCxxFileCacheSymbols::Ptr_t m_symbolsCache;
 
 public:
     /**
      * @brief return a set of CXX keywords
      */
-    static void GetCXXKeywords(std::set<wxString>& words);
+    static void GetCXXKeywords(wxStringSet_t& words);
 
     /**
      * @brief return an array of CXX keywords
      */
     static void GetCXXKeywords(wxArrayString& words);
-
+    
+    /**
+     * @brief get the file-symbols cache
+     */
+    clCxxFileCacheSymbols::Ptr_t GetFileCache() { return m_symbolsCache; }
+    
     void SetLanguage(Language* lang);
     Language* GetLanguage();
     void SetEvtHandler(wxEvtHandler* handler) { m_evtHandler = handler; }
@@ -253,8 +262,9 @@ public:
 
     /**
      * @brief parse source file (from memory) and return list of tags
+     * If "filename" is passed, each returned TagEntryPtr will have it as its "FileName" attribute
      */
-    TagEntryPtrVector_t ParseBuffer(const wxString& content);
+    TagEntryPtrVector_t ParseBuffer(const wxString& content, const wxString& filename = "");
 
     /**
      * load all symbols of fileName from the database and return them
@@ -904,7 +914,6 @@ protected:
     wxArrayString BreakToOuterScopes(const wxString& scope);
     wxString DoReplaceMacrosFromDatabase(const wxString& name);
     void DoSortByVisibility(TagEntryPtrVector_t& tags);
-    void AddEnumClassData(wxString& tags);
     void GetScopesByScopeName(const wxString& scopeName, wxArrayString& scopes);
 };
 

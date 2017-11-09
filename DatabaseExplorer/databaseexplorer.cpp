@@ -33,6 +33,8 @@
 #include "event_notifier.h"
 #include "clKeyboardManager.h"
 #include "SqlCommandPanel.h"
+#include "globals.h"
+#include "imanager.h"
 
 //#ifdef DBL_USE_MYSQL
 #include "MySqlDbAdapter.h"
@@ -296,11 +298,11 @@ void DatabaseExplorer::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, m_dbViewerPanel, _("DbExplorer"), true);
+        clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_dbViewerPanel, _("DbExplorer"), false);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("DbExplorer"));
         if(where != wxNOT_FOUND) {
-            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+            clGetManager()->GetWorkspacePaneNotebook()->RemovePage(where);
         }
     }
 }

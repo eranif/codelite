@@ -127,7 +127,6 @@ typedef void (wxEvtHandler::*clCommandEventFunction)(clCommandEvent&);
 /// a clCodeCompletionEvent
 class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
 {
-    TagEntryPtrVector_t m_tags;
     wxObject* m_editor;
     wxString m_word;
     int m_position;
@@ -135,6 +134,7 @@ class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
     bool m_insideCommentOrString;
     wxCodeCompletionBoxEntry::Ptr_t m_entry;
     wxArrayString m_definitions;
+    wxCodeCompletionBoxEntry::Vec_t m_entries;
 
 public:
     clCodeCompletionEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -151,9 +151,11 @@ public:
     void SetInsideCommentOrString(bool insideCommentOrString) { this->m_insideCommentOrString = insideCommentOrString; }
 
     bool IsInsideCommentOrString() const { return m_insideCommentOrString; }
-    void SetTags(const TagEntryPtrVector_t& tags) { this->m_tags = tags; }
-    const TagEntryPtrVector_t& GetTags() const { return m_tags; }
     void SetEditor(wxObject* editor) { this->m_editor = editor; }
+    void SetEntries(const wxCodeCompletionBoxEntry::Vec_t& entries) { this->m_entries = entries; }
+    const wxCodeCompletionBoxEntry::Vec_t& GetEntries() const { return m_entries; }
+    wxCodeCompletionBoxEntry::Vec_t& GetEntries() { return m_entries; }
+    
     /**
      * @brief return the Editor object
      */

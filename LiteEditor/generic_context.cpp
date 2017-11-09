@@ -94,7 +94,7 @@ void ContextGeneric::ProcessIdleActions()
         if(reOpenHtmlTag.Matches(word)) {
             searchWhat = reOpenHtmlTag.GetMatch(word, 1);
             closeTag << "</" << searchWhat << ">";
-            wxRegEx reOpenTag("<" + searchWhat + "[ \t>]+");
+            wxRegEx reOpenTag("<" + searchWhat + "[>]?", wxRE_ADVANCED | wxRE_ICASE);
 
             int pos = endPos;
             int depth = 0;
@@ -125,7 +125,7 @@ void ContextGeneric::ProcessIdleActions()
             searchWhat = reCloseHtmlTag.GetMatch(word, 1);
             closeTag << "</" << searchWhat << ">";
             
-            wxString reString = "<" + searchWhat + "[ \t>]?";
+            wxString reString = "<" + searchWhat + "[>]?";
             wxRegEx reOpenTag(reString, wxRE_DEFAULT | wxRE_ICASE);
             if(!reOpenTag.IsValid()) {
                 clDEBUG() << "Invalid regex:" << reString << clEndl;

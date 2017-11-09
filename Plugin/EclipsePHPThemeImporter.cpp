@@ -11,6 +11,16 @@ EclipsePHPThemeImporter::EclipsePHPThemeImporter()
                  "return static stdclass string switch true unset use var while xor __class__ __file__ __function__ "
                  "__line__ __sleep __namespace__ __trait__ __wakeup public protected private trait interface namespace "
                  "final throw extends try catch self yield");
+    
+    // Javascript keywords
+    SetKeywords1("break do instanceof  typeof case else new var catch finally return void continue for switch while "
+                 "debugger function this with default if throw delete in try abstract  export interface  static "
+                 "boolean  extends "
+                 "long super"
+                 "byte final native synchronized char float package throws class goto private transient const "
+                 "implements  protected "
+                 " volatile double import  public enum "
+                 "int short null true false");
     SetFileExtensions("*.php;*.php3;*.phtml;*.inc;*.php5");
 }
 

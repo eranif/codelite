@@ -30,7 +30,7 @@
 #include <wx/bitmap.h>
 #include "ICompilerLocator.h"
 
-class WXDLLIMPEXP_SDK clBootstrapData 
+class WXDLLIMPEXP_SDK clBootstrapData
 {
 public:
     wxString selectedTheme;
@@ -42,27 +42,23 @@ public:
 class WXDLLIMPEXP_SDK clBootstrapWizard : public clBoostrapWizardBase
 {
     ICompilerLocator::CompilerVec_t m_compilers;
+
 public:
     static wxBitmap GenerateBitmap(size_t labelIndex);
+    int m_developmentProfile;
 
 public:
     clBootstrapWizard(wxWindow* parent);
     virtual ~clBootstrapWizard();
     clBootstrapData GetData();
     wxArrayString GetSelectedPlugins();
-    wxArrayString GetUnSelectedPlugins();
-        
+    bool GetUnSelectedPlugins(wxArrayString& plugins);
+
     bool IsRestartRequired();
-    
+
 protected:
-    virtual void OnPluginSelectionChanged(wxDataViewEvent& event);
     virtual void OnCancelWizard(wxCommandEvent& event);
     virtual void OnFinish(wxWizardEvent& event);
-    virtual void OnCheckAllPlugins(wxCommandEvent& event);
-    virtual void OnCheckAllPluginsUI(wxUpdateUIEvent& event);
-    virtual void OnToggleCxxPlugins(wxCommandEvent& event);
-    virtual void OnUnCheckAllPlugins(wxCommandEvent& event);
-    virtual void OnUnCheckAllPluginsUI(wxUpdateUIEvent& event);
     virtual void OnInstallCompiler(wxCommandEvent& event);
     virtual void OnInstallCompilerUI(wxUpdateUIEvent& event);
     virtual void OnScanForCompilers(wxCommandEvent& event);

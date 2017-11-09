@@ -283,6 +283,8 @@ horizontal_white [ ]|{h_tab}
 }
 <INITIAL>"#" { 
     BEGIN(PREPR);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->SetPreProcessorSection(true);
 }
 <INITIAL>. { 
     return yytext[0];
@@ -299,6 +301,8 @@ horizontal_white [ ]|{h_tab}
 }
 <PREPR>"\n" { 
     BEGIN(INITIAL);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->SetPreProcessorSection(false);
     return T_PP_STATE_EXIT;
 }
 <PREPR>"define" { 
@@ -376,6 +380,8 @@ horizontal_white [ ]|{h_tab}
 }
 <INCLUDE>\n {
     BEGIN(INITIAL);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->SetPreProcessorSection(false);
     return T_PP_STATE_EXIT;
 }
 <INCLUDE>[ \t]* { RETURN_WHITESPACE(); }

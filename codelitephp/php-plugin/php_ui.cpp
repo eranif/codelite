@@ -72,29 +72,15 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
     
-    bSizer3->Add(fgSizer1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(10));
-    
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer1->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlName->SetToolTip(_("Set here the workspace name"));
-    m_textCtrlName->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlName->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_textCtrlName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    fgSizer1->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
+    bSizer3->Add(fgSizer1, 1, wxALL|wxEXPAND, WXC_FROM_DIP(10));
     
     m_staticText3 = new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
     fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_textCtrlPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,-1)), 0);
     m_textCtrlPath->SetToolTip(_("The workspace path. This path must exist"));
+    m_textCtrlPath->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlPath->SetHint(wxT(""));
     #endif
@@ -106,25 +92,19 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     
     fgSizer1->Add(m_button49, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
+    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    
+    fgSizer1->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_textCtrlName->SetToolTip(_("Set here the workspace name"));
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlName->SetHint(wxT(""));
+    #endif
+    
+    fgSizer1->Add(m_textCtrlName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
     fgSizer1->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxAddProjectFromSources = new wxCheckBox(this, wxID_ANY, _("Create a project from the source files under the workspace path"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    m_checkBoxAddProjectFromSources->SetValue(false);
-    m_checkBoxAddProjectFromSources->SetToolTip(_("When checked, CodeLite will create a PHP project that contains all the source files located\nunder the workspace directory"));
-    
-    fgSizer1->Add(m_checkBoxAddProjectFromSources, 0, wxALL, WXC_FROM_DIP(5));
-    
-    fgSizer1->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-    
-    fgSizer1->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxCreateInSeparateDir = new wxCheckBox(this, wxID_ANY, _("Create the workspace in a separate directory"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    m_checkBoxCreateInSeparateDir->SetValue(false);
-    m_checkBoxCreateInSeparateDir->SetToolTip(_("When enabled, create the workspace in a sub directory"));
-    
-    fgSizer1->Add(m_checkBoxCreateInSeparateDir, 0, wxALL, WXC_FROM_DIP(5));
-    
-    bSizer3->Add(0, 0, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_textCtrlPreview = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_READONLY);
     #if wxVERSION_NUMBER >= 3000
@@ -146,7 +126,6 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer685->Realize();
     
     SetName(wxT("NewPHPWorkspaceBaseDlg"));
-    SetMinClientSize(wxSize(500,300));
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
@@ -164,9 +143,9 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     }
 #endif
     // Connect events
-    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated), NULL, this);
+    m_textCtrlPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnFolderSelected), NULL, this);
     m_button49->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnBrowse), NULL, this);
-    m_checkBoxCreateInSeparateDir->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnCheckMakeSeparateDir), NULL, this);
+    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated), NULL, this);
     m_button687->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnOK), NULL, this);
     m_button687->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPWorkspaceBaseDlg::OnOKUI), NULL, this);
     
@@ -174,9 +153,9 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
 
 NewPHPWorkspaceBaseDlg::~NewPHPWorkspaceBaseDlg()
 {
-    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated), NULL, this);
+    m_textCtrlPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnFolderSelected), NULL, this);
     m_button49->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnBrowse), NULL, this);
-    m_checkBoxCreateInSeparateDir->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnCheckMakeSeparateDir), NULL, this);
+    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated), NULL, this);
     m_button687->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnOK), NULL, this);
     m_button687->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPWorkspaceBaseDlg::OnOKUI), NULL, this);
     

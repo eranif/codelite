@@ -99,6 +99,10 @@
     <File Name="clEditorConfig.cpp"/>
     <File Name="commentconfigdata.cpp"/>
     <File Name="commentconfigdata.h"/>
+    <File Name="clCxxFileCacheSymbols.h"/>
+    <File Name="clCxxFileCacheSymbols.cpp"/>
+    <File Name="clAnagram.h"/>
+    <File Name="clAnagram.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

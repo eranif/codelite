@@ -43,6 +43,7 @@
 #include <wx/listbox.h>
 #include <wx/listctrl.h>
 #include <wx/button.h>
+#include <algorithm>
 
 #define IS_TYPEOF(Type, Win) (dynamic_cast<Type*>(Win))
 

@@ -333,7 +333,7 @@ void WorkspaceTab::OnWorkspaceConfig(wxCommandEvent& e)
 void WorkspaceTab::OnConfigurationManager(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    ConfigurationManagerDlg dlg(this);
+    ConfigurationManagerDlg dlg(EventNotifier::Get()->TopFrame());
     dlg.ShowModal();
 
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();

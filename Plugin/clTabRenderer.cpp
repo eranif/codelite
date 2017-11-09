@@ -59,8 +59,8 @@ void clTabColours::InitDarkColours()
 
 void clTabColours::InitLightColours()
 {
-    wxColour faceColour = DrawingUtils::GetMenuBarBgColour();
-    wxColour textColour = DrawingUtils::GetMenuBarTextColour();
+    wxColour faceColour = DrawingUtils::GetPanelBgColour();
+    wxColour textColour = DrawingUtils::GetPanelTextColour();
     activeTabTextColour = textColour;
     inactiveTabTextColour = textColour;
     if(DrawingUtils::IsDark(faceColour)) {

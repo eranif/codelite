@@ -77,26 +77,18 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     std::vector<wxWindow*> candidateWindows;
     q.push(topWindow);
 
-    wxColour systemBgColour = DrawingUtils::GetMenuBarBgColour();
-    wxColour systemFgColour = DrawingUtils::GetMenuBarTextColour();
-
     wxColour userbgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
     wxColour userFgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
 
-    bool isDarkSystemTheme = DrawingUtils::IsDark(systemBgColour);
-    if(isDarkSystemTheme) {
-        systemBgColour = systemBgColour.ChangeLightness(110);
-    }
-    
-    wxColour bgColour = isDarkSystemTheme ? systemBgColour : userbgColour;
-    wxColour fgColour = isDarkSystemTheme ? systemFgColour : userFgColour;
+    wxColour bgColour = userbgColour;
+    wxColour fgColour = userFgColour;
     while(!q.empty()) {
         wxWindow* w = q.front();
         q.pop();
         if(dynamic_cast<wxAuiToolBar*>(w)) {
             toolbars.push_back(dynamic_cast<wxAuiToolBar*>(w));
         } else {
-            if(isDarkSystemTheme) {
+            if(/*isDarkSystemTheme*/false) {
                 if(IS_TYPEOF(wxTextCtrl, w)) {
                     w->SetBackgroundColour(bgColour);
                     wxTextCtrl* txt = static_cast<wxTextCtrl*>(w);
@@ -143,12 +135,12 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
                     }
                 }
 
-#ifdef __WXGTK__
-                if(IS_TYPEOF(wxPanel, w) || IS_TYPEOF(wxButton, w)) {
-                    w->SetBackgroundColour(systemBgColour);
-                    w->SetForegroundColour(systemFgColour);
-                }
-#endif
+//#ifdef __WXGTK__
+//                if(IS_TYPEOF(wxPanel, w) || IS_TYPEOF(wxButton, w)) {
+//                    w->SetBackgroundColour(systemBgColour);
+//                    w->SetForegroundColour(systemFgColour);
+//                }
+//#endif
                 w->Refresh();
             }
             wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
@@ -160,7 +152,11 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     }
 
     std::for_each(toolbars.begin(), toolbars.end(), [&](wxAuiToolBar* tb) {
-        tb->SetArtProvider(new CLMainAuiTBArt());
+        // Update the art if needed
+        CLMainAuiTBArt* art = dynamic_cast<CLMainAuiTBArt*>(tb->GetArtProvider());
+        if(!art) {
+            tb->SetArtProvider(new CLMainAuiTBArt());
+        }
         wxAuiToolBarItem* tbItem = nullptr;
         for(size_t i = 0; i < tb->GetToolCount(); ++i) {
             tbItem = tb->FindToolByIndex(i);

@@ -28,10 +28,10 @@ clEditorBar::clEditorBar(wxWindow* parent)
 {
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
-    m_defaultColour = DrawingUtils::GetMenuBarTextColour();
-    m_functionColour = DrawingUtils::GetMenuBarTextColour();
-    m_classColour = DrawingUtils::GetMenuBarTextColour();
-    m_bgColour = DrawingUtils::GetMenuBarBgColour();
+    m_defaultColour = DrawingUtils::GetPanelTextColour();
+    m_functionColour = DrawingUtils::GetPanelTextColour();
+    m_classColour = DrawingUtils::GetPanelTextColour();
+    m_bgColour = DrawingUtils::GetPanelBgColour();
     m_textFont = m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     LexerConf::Ptr_t defaultLexer = ColoursAndFontsManager::Get().GetLexer("default");
     if(defaultLexer) { m_textFont = defaultLexer->GetFontForSyle(0); }
@@ -162,15 +162,15 @@ void clEditorBar::DoRefreshColoursAndFonts()
     m_projectName.clear();
     m_filenameRelative.clear();
     m_breadcrumbs.clear();
-    m_bgColour = DrawingUtils::GetMenuBarBgColour();
+    m_bgColour = DrawingUtils::GetPanelBgColour();
 
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
         if(lexer) {
-            wxColour m_bgColour = DrawingUtils::GetMenuBarBgColour();
+            wxColour m_bgColour = DrawingUtils::GetPanelBgColour();
             bool darkBG = DrawingUtils::IsDark(m_bgColour);
-            m_defaultColour = DrawingUtils::GetMenuBarTextColour();
+            m_defaultColour = DrawingUtils::GetPanelTextColour();
             m_classColour = darkBG ? "rgb(224, 108, 117)" : "rgb(0, 64, 128)";
             m_functionColour = m_defaultColour;
             m_textFont = lexer->GetFontForSyle(0); // Default font

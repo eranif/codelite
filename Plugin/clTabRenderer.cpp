@@ -1,11 +1,11 @@
-#include "clTabRenderer.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/dcmemory.h>
-#include <wx/settings.h>
 #include "Notebook.h"
-#include "editor_config.h"
+#include "clTabRenderer.h"
 #include "clTabRendererSquare.h"
+#include "editor_config.h"
+#include <wx/dcmemory.h>
 #include <wx/renderer.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
 
 #if CL_BUILD
 #include "drawingutils.h"
@@ -67,18 +67,16 @@ void clTabColours::InitLightColours()
         // Make the active tab draker
         activeTabBgColour = faceColour.ChangeLightness(60);
         activeTabPenColour = activeTabBgColour;
-        
+
     } else {
         // Make it lighter
         activeTabBgColour = faceColour.ChangeLightness(150);
         activeTabPenColour = faceColour.ChangeLightness(70);
     }
-    
+
     activeTabInnerPenColour = activeTabBgColour; //"#ffffff";
-    if(DrawingUtils::IsDark(activeTabBgColour)) {
-        activeTabTextColour = *wxWHITE;
-    }
-    
+    if(DrawingUtils::IsDark(activeTabBgColour)) { activeTabTextColour = *wxWHITE; }
+
     tabAreaColour = faceColour;
     markerColour = DrawingUtils::GetCaptionColour();
 
@@ -226,14 +224,7 @@ clTabRenderer::clTabRenderer()
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }
 
-wxFont clTabRenderer::GetTabFont()
-{
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#ifdef __WXMSW__
-    font.SetPointSize(font.GetPointSize() - 1);
-#endif
-    return font;
-}
+wxFont clTabRenderer::GetTabFont() { return DrawingUtils::GetDefaultGuiFont(); }
 
 #define DRAW_LINE(__p1, __p2) \
     dc.DrawLine(__p1, __p2);  \
@@ -241,8 +232,8 @@ wxFont clTabRenderer::GetTabFont()
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-void
-clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours, size_t style)
+void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours,
+                                            size_t style)
 {
     bool isSquareStyle = (dynamic_cast<clTabRendererSquare*>(this)) != nullptr;
     wxPoint pt1, pt2;
@@ -251,9 +242,7 @@ clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, con
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopRight();
         pt2 = activeTab->GetRect().GetBottomRight();
-        if(isSquareStyle) {
-            pt1.y += 3;
-        }
+        if(isSquareStyle) { pt1.y += 3; }
         pt2.y -= 1;
         DRAW_LINE(pt1, pt2);
 
@@ -266,9 +255,7 @@ clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, con
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopLeft();
         pt2 = activeTab->GetRect().GetBottomLeft();
-        if(isSquareStyle) {
-            pt1.y += 3;
-        }
+        if(isSquareStyle) { pt1.y += 3; }
         pt2.y -= 1;
         DRAW_LINE(pt1, pt2);
 
@@ -285,9 +272,7 @@ clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, con
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetBottomLeft();
         pt2 = activeTab->GetRect().GetBottomRight();
-        if(isSquareStyle) {
-            pt1.x += 3;
-        }
+        if(isSquareStyle) { pt1.x += 3; }
         pt2.x -= 1;
         DRAW_LINE(pt1, pt2);
 

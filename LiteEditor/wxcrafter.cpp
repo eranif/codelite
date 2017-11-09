@@ -760,35 +760,9 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_auibar->AddTool(ID_TOOL_LINK_EDITOR, _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("16-link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
     m_auibar->Realize();
     
-    m_splitter = new wxSplitterWindow(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
-    m_splitter->SetToolTip(_("Resize the configuration bar"));
-    m_splitter->SetSashGravity(0);
-    m_splitter->SetMinimumPaneSize(100);
+    m_configChangeCtrl = new clConfigurationSelectionCtrl(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
-    boxSizer505->Add(m_splitter, 0, wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_splitterPage308 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    
-    wxBoxSizer* boxSizer314 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage308->SetSizer(boxSizer314);
-    
-    wxArrayString m_choiceActiveProjectArr;
-    m_choiceActiveProject = new wxChoice(m_splitterPage308, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage308, wxSize(-1,-1)), m_choiceActiveProjectArr, 0);
-    m_choiceActiveProject->SetToolTip(_("Select the active project"));
-    
-    boxSizer314->Add(m_choiceActiveProject, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_splitterPage312 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    m_splitter->SplitVertically(m_splitterPage308, m_splitterPage312, 0);
-    
-    wxBoxSizer* boxSizer316 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage312->SetSizer(boxSizer316);
-    
-    wxArrayString m_workspaceConfigArr;
-    m_workspaceConfig = new wxChoice(m_splitterPage312, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage312, wxSize(-1,-1)), m_workspaceConfigArr, 0);
-    m_workspaceConfig->SetToolTip(_("Select the workspace build configuration"));
-    
-    boxSizer316->Add(m_workspaceConfig, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer505->Add(m_configChangeCtrl, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_fileView = new FileViewTree(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxTR_HAS_BUTTONS|wxBORDER_NONE);
     
@@ -808,10 +782,6 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     this->Connect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnProjectSettingsUI), NULL, this);
     this->Connect(ID_TOOL_LINK_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnLinkEditor), NULL, this);
     this->Connect(ID_TOOL_LINK_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnLinkEditorUI), NULL, this);
-    m_choiceActiveProject->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnChoiceActiveProject), NULL, this);
-    m_choiceActiveProject->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnChoiceActiveProjectUI), NULL, this);
-    m_workspaceConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnConfigurationManagerChoice), NULL, this);
-    m_workspaceConfig->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnConfigurationManagerChoiceUI), NULL, this);
     
 }
 
@@ -825,10 +795,6 @@ WorkspaceTabBase::~WorkspaceTabBase()
     this->Disconnect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnProjectSettingsUI), NULL, this);
     this->Disconnect(ID_TOOL_LINK_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnLinkEditor), NULL, this);
     this->Disconnect(ID_TOOL_LINK_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnLinkEditorUI), NULL, this);
-    m_choiceActiveProject->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnChoiceActiveProject), NULL, this);
-    m_choiceActiveProject->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnChoiceActiveProjectUI), NULL, this);
-    m_workspaceConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnConfigurationManagerChoice), NULL, this);
-    m_workspaceConfig->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnConfigurationManagerChoiceUI), NULL, this);
     
 }
 

@@ -34,6 +34,7 @@
 #include <wx/graphics.h>
 #include <wx/image.h>
 #include <wx/panel.h>
+#include <wx/renderer.h>
 #include <wx/stc/stc.h>
 
 #ifdef __WXMSW__
@@ -778,4 +779,84 @@ wxBitmap DrawingUtils::CreateGrayBitmap(const wxBitmap& bmp)
     img = img.ConvertToGreyscale();
     wxBitmap greyBmp(img);
     return greyBmp;
+}
+
+#define DROPDOWN_ARROW_SIZE 20
+
+void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const wxString& label, eButtonKind kind,
+                              eButtonState state)
+{
+    // Draw the background
+    wxRect clientRect = rect;
+    wxColour baseColour = GetMenuBarBgColour();
+    dc.SetPen(baseColour);
+    dc.SetBrush(baseColour);
+    dc.DrawRectangle(clientRect);
+
+    // Now, draw the border
+    // Now draw the border around this control
+    clientRect.Deflate(1);
+
+    wxColour penColour = baseColour.ChangeLightness(80);
+
+    int bgLightness = 95; // kNormal
+    switch(state) {
+    case eButtonState::kHover:
+        bgLightness = 120;
+        break;
+    case eButtonState::kPressed:
+        bgLightness = 80;
+        break;
+    default:
+    case eButtonState::kNormal:
+        bgLightness = 95;
+        break;
+    }
+
+    wxColour bgColour = baseColour.ChangeLightness(bgLightness);
+    dc.SetPen(penColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRectangle(clientRect);
+
+    clientRect.Deflate(1);
+    wxRect textRect, arrowRect;
+    textRect = clientRect;
+    if(kind == eButtonKind::kDropDown) {
+        // we need to save space for the drop down arrow
+        int xx = textRect.x + (textRect.GetWidth() - DROPDOWN_ARROW_SIZE);
+        int yy = textRect.y + ((textRect.GetHeight() - DROPDOWN_ARROW_SIZE) / 2);
+        textRect.SetWidth(textRect.GetWidth() - DROPDOWN_ARROW_SIZE);
+        arrowRect = wxRect(xx, yy, DROPDOWN_ARROW_SIZE, DROPDOWN_ARROW_SIZE);
+    }
+
+    // Draw the label
+    wxSize textSize = dc.GetTextExtent(label);
+    int textX = textRect.GetX() + 5;
+    int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
+    dc.SetClippingRegion(textRect);
+    dc.SetFont(GetDefaultGuiFont());
+    dc.SetTextForeground(GetMenuBarTextColour());
+    dc.DrawText(label, textX, textY);
+    dc.DestroyClippingRegion();
+
+    // Draw the drop down button
+    if(kind == eButtonKind::kDropDown) { wxRendererNative::Get().DrawDropArrow(win, dc, arrowRect, wxCONTROL_CURRENT); }
+}
+
+wxFont DrawingUtils::GetDefaultGuiFont()
+{
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    //    font.SetPointSize(font.GetPointSize() - 1);
+    return font;
+}
+
+wxSize DrawingUtils::GetBestSize(const wxString& label, int xspacer, int yspacer)
+{
+    wxBitmap bmp(1, 1);
+    wxMemoryDC memDC(bmp);
+    memDC.SetFont(GetDefaultGuiFont());
+    wxSize size = memDC.GetTextExtent(label);
+    size.SetWidth(size.GetWidth() + (2 * xspacer));
+    size.SetHeight(size.GetHeight() + (2 * yspacer));
+    return size;
 }

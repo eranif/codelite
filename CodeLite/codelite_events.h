@@ -784,4 +784,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PHP_SETTINGS_CHANGED, clCommandEv
 // Use: clCommandEvent::GetString to get the selected item
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SELECTED, clCommandEvent);
 
+// Build configuration for the workspace has changed
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_BUILD_CONFIG_CHANGED, clCommandEvent);
+
 #endif // CODELITE_EVENTS_H

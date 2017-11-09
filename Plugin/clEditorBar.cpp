@@ -1,30 +1,30 @@
-#include "clEditorBar.h"
-#include <wx/dcmemory.h>
-#include <wx/bitmap.h>
-#include <wx/dcbuffer.h>
-#include "globals.h"
-#include "imanager.h"
-#include "ieditor.h"
-#include <wx/settings.h>
-#include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
-#include "event_notifier.h"
+#include "IWorkspace.h"
+#include "clEditorBar.h"
+#include "clTabRenderer.h"
+#include "clWorkspaceManager.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
-#include "clWorkspaceManager.h"
-#include "IWorkspace.h"
-#include <wx/dcgraph.h>
-#include "clTabRenderer.h"
-#include <wx/menu.h>
+#include "event_notifier.h"
 #include "fileutils.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include "lexer_configuration.h"
+#include <wx/bitmap.h>
+#include <wx/dcbuffer.h>
+#include <wx/dcgraph.h>
+#include <wx/dcmemory.h>
+#include <wx/menu.h>
 #include <wx/renderer.h>
-#include "drawingutils.h"
+#include <wx/settings.h>
 
 #define X_SPACER 10
 #define Y_SPACER 5
 
 clEditorBar::clEditorBar(wxWindow* parent)
     : clEditorBarBase(parent)
+    , m_state(eButtonState::kNormal)
 {
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
@@ -34,9 +34,7 @@ clEditorBar::clEditorBar(wxWindow* parent)
     m_bgColour = DrawingUtils::GetMenuBarBgColour();
     m_textFont = m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     LexerConf::Ptr_t defaultLexer = ColoursAndFontsManager::Get().GetLexer("default");
-    if(defaultLexer) {
-        m_textFont = defaultLexer->GetFontForSyle(0);
-    }
+    if(defaultLexer) { m_textFont = defaultLexer->GetFontForSyle(0); }
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
@@ -48,6 +46,10 @@ clEditorBar::clEditorBar(wxWindow* parent)
     wxSize sz = memDC.GetTextExtent("Tp");
     sz.y += 2 * Y_SPACER; // 2*3 pixels
     SetSizeHints(wxSize(-1, sz.y));
+
+    Bind(wxEVT_ENTER_WINDOW, &clEditorBar::OnEnterWindow, this);
+    Bind(wxEVT_LEAVE_WINDOW, &clEditorBar::OnLeaveWindow, this);
+    Bind(wxEVT_LEFT_UP, &clEditorBar::OnLeftUp, this);
 }
 
 clEditorBar::~clEditorBar()
@@ -56,10 +58,13 @@ clEditorBar::~clEditorBar()
     EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clEditorBar::OnThemeChanged, this);
+    Unbind(wxEVT_ENTER_WINDOW, &clEditorBar::OnEnterWindow, this);
+    Unbind(wxEVT_LEAVE_WINDOW, &clEditorBar::OnLeaveWindow, this);
+    Unbind(wxEVT_LEFT_UP, &clEditorBar::OnLeftUp, this);
 }
 
-void clEditorBar::OnEraseBG(wxEraseEvent& event) { wxUnusedVar(event); }
-void clEditorBar::OnPaint(wxPaintEvent& event)
+void clEditorBar::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
+void clEditorBar::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC bdc(this);
     PrepareDC(bdc);
@@ -72,12 +77,8 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
     gcdc.DrawRectangle(rect);
 
     wxString fulltext;
-    if(!m_classname.IsEmpty()) {
-        fulltext << m_classname << "::";
-    }
-    if(!m_function.IsEmpty()) {
-        fulltext << m_function;
-    }
+    if(!m_classname.IsEmpty()) { fulltext << m_classname << "::"; }
+    if(!m_function.IsEmpty()) { fulltext << m_function; }
 
     gcdc.SetFont(m_textFont);
     fulltext << "wwww"; // spacer
@@ -86,7 +87,8 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
     wxCoord textY = ((rect.GetHeight() - gcdc.GetTextExtent("Tp").GetHeight()) / 2);
 
     if(!m_breadcrumbs.IsEmpty()) {
-        wxCoord breadcrumbsTextY = 0;
+
+        // wxCoord breadcrumbsTextY = 0;
         wxString breadcumbsText;
         for(size_t i = 0; i < m_breadcrumbs.size(); ++i) {
             breadcumbsText << m_breadcrumbs.Item(i) << " / ";
@@ -94,19 +96,12 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
         breadcumbsText.RemoveLast(3);
         wxFont guiFont = clTabRenderer::GetTabFont();
         gcdc.SetFont(guiFont);
-        gcdc.SetTextForeground(m_defaultColour);
         breadcumbsTextSize = gcdc.GetTextExtent(breadcumbsText);
-        breadcrumbsTextY = (rect.GetHeight() - breadcumbsTextSize.GetHeight()) / 2;
-        
         // Geometry
-        m_filenameRect = wxRect(0, 2, breadcumbsTextSize.GetWidth() + (4*X_SPACER), rect.GetHeight() - 4);
-        m_filenameRect.SetX(rect.GetWidth()-m_filenameRect.GetWidth()-X_SPACER);
-        
-        // Draw the drop down button
-        bool darkBG = DrawingUtils::IsDark(m_bgColour);
-        gcdc.SetPen(darkBG ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-        wxRendererNative::Get().DrawComboBox(this, gcdc, m_filenameRect, wxCONTROL_CURRENT);
-        gcdc.DrawText(breadcumbsText, m_filenameRect.GetX() + X_SPACER, breadcrumbsTextY);
+        m_filenameRect = wxRect(0, 2, breadcumbsTextSize.GetWidth() + (4 * X_SPACER), rect.GetHeight() - 4);
+        m_filenameRect.SetX(rect.GetWidth() - m_filenameRect.GetWidth() - X_SPACER);
+
+        DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, eButtonKind::kDropDown, m_state);
     }
 
     // Draw the text
@@ -133,9 +128,9 @@ void clEditorBar::OnPaint(wxPaintEvent& event)
     }
 }
 
-void clEditorBar::OnEditorChanged(wxCommandEvent& event)
+void clEditorBar::OnEditorChanged(wxCommandEvent& e)
 {
-    event.Skip();
+    e.Skip();
     DoRefreshColoursAndFonts();
 }
 
@@ -150,14 +145,12 @@ void clEditorBar::SetMessage(const wxString& className, const wxString& function
 
 void clEditorBar::DoShow(bool s)
 {
-    if(Show(s)) {
-        GetParent()->GetSizer()->Layout();
-    }
+    if(Show(s)) { GetParent()->GetSizer()->Layout(); }
 }
 
-void clEditorBar::OnThemeChanged(wxCommandEvent& event)
+void clEditorBar::OnThemeChanged(wxCommandEvent& e)
 {
-    event.Skip();
+    e.Skip();
     DoRefreshColoursAndFonts();
 }
 
@@ -190,13 +183,6 @@ void clEditorBar::DoRefreshColoursAndFonts()
             wxFileName fn(m_filename);
             fn.MakeRelativeTo(workspace->GetFileName().GetPath());
             m_filenameRelative = fn.GetFullPath(wxPATH_UNIX);
-            //            m_projectName = workspace->GetProjectFromFile(m_filename);
-            //            if(!m_projectName.IsEmpty()) {
-            //                m_projectFile = workspace->GetProjectFileName(m_projectName).GetFullPath();
-            //                wxFileName fn(m_filename);
-            //                fn.MakeRelativeTo(wxFileName(m_projectFile).GetPath());
-            //                m_filenameRelative = fn.GetFullPath();
-            //            }
         }
 
         // Build the Breadcrumbs
@@ -220,9 +206,9 @@ void clEditorBar::OnEditorSize(wxSizeEvent& event)
     DoRefreshColoursAndFonts();
 }
 
-void clEditorBar::OnLeftDown(wxMouseEvent& event)
+void clEditorBar::OnLeftDown(wxMouseEvent& e)
 {
-    if(m_filenameRect.Contains(event.GetPosition())) {
+    if(m_filenameRect.Contains(e.GetPosition())) {
         wxMenu menu;
         wxString text;
 
@@ -279,4 +265,22 @@ void clEditorBar::OnLeftDown(wxMouseEvent& event)
             clGetManager()->SetStatusMessage((wxString() << "'" << text << _("' copied!")), 2);
         }
     }
+}
+
+void clEditorBar::OnLeftUp(wxMouseEvent& e)
+{
+    m_state = eButtonState::kNormal;
+    Refresh();
+}
+
+void clEditorBar::OnEnterWindow(wxMouseEvent& e)
+{
+    m_state = eButtonState::kHover;
+    Refresh();
+}
+
+void clEditorBar::OnLeaveWindow(wxMouseEvent& e)
+{
+    m_state = eButtonState::kNormal;
+    Refresh();
 }

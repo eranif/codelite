@@ -33,16 +33,14 @@
 #include "theme_handler_helper.h"
 #include <wx/aui/auibar.h>
 #include <wx/bitmap.h>
+#include <wx/button.h>
 #include <wx/dataview.h>
 #include <wx/html/htmlwin.h>
 #include <wx/listbox.h>
+#include <wx/listctrl.h>
+#include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/treectrl.h>
-#include <wx/dataview.h>
-#include <wx/textctrl.h>
-#include <wx/listbox.h>
-#include <wx/listctrl.h>
-#include <wx/button.h>
 
 #define IS_TYPEOF(Type, Win) (dynamic_cast<Type*>(Win))
 
@@ -65,9 +63,7 @@ void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
     wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
     wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
 
-    if(!bgColour.IsOk() || !fgColour.IsOk()) {
-        return;
-    }
+    if(!bgColour.IsOk() || !fgColour.IsOk()) { return; }
 
     UpdateColours(m_window);
 }
@@ -102,6 +98,16 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
                     wxTextAttr attr = txt->GetDefaultStyle();
                     attr.SetTextColour(fgColour);
                     txt->SetDefaultStyle(attr);
+
+                } else if(IS_TYPEOF(wxStyledTextCtrl, w)) {
+                    // wxSTC requires different method
+                    wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
+                    if(stc->GetLexer() == wxSTC_LEX_NULL) {
+                        // Only modify text lexers
+                        stc->StyleSetBackground(0, bgColour);
+                        stc->StyleSetForeground(0, fgColour);
+                        stc->Refresh();
+                    }
                 } else {
                     w->SetForegroundColour(fgColour);
                     w->SetBackgroundColour(bgColour);
@@ -109,15 +115,34 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
                 w->Refresh();
             } else {
                 if(IS_TYPEOF(wxTreeCtrl, w) || IS_TYPEOF(wxListBox, w) || IS_TYPEOF(wxDataViewCtrl, w) ||
-                   IS_TYPEOF(wxTextCtrl, w) || IS_TYPEOF(wxListCtrl, w)) {
+                   IS_TYPEOF(wxListCtrl, w)) {
                     w->SetBackgroundColour(bgColour);
                     w->SetForegroundColour(fgColour);
-                    w->Refresh();
-                } else if(IS_TYPEOF(wxPanel, w) || IS_TYPEOF(wxButton, w)) {
+
+                } else if(IS_TYPEOF(wxTextCtrl, w)) {
+                    w->SetBackgroundColour(bgColour);
+                    wxTextCtrl* txt = static_cast<wxTextCtrl*>(w);
+                    wxTextAttr attr = txt->GetDefaultStyle();
+                    attr.SetTextColour(fgColour);
+                    txt->SetDefaultStyle(attr);
+
+                } else if(IS_TYPEOF(wxStyledTextCtrl, w)) {
+                    // wxSTC requires different method
+                    wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
+                    if(stc->GetLexer() == wxSTC_LEX_NULL) {
+                        // Only modify text lexers
+                        stc->StyleSetBackground(0, bgColour);
+                        stc->StyleSetForeground(0, fgColour);
+                    }
+                }
+
+#ifdef __WXGTK__
+                if(IS_TYPEOF(wxPanel, w) || IS_TYPEOF(wxButton, w)) {
                     w->SetBackgroundColour(systemBgColour);
                     w->SetForegroundColour(systemFgColour);
-                    w->Refresh();
                 }
+#endif
+                w->Refresh();
             }
             wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
             while(iter) {
@@ -140,7 +165,7 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
         }
         tb->Refresh();
     });
-    
+
     DoUpdateNotebookStyle(m_window);
 }
 

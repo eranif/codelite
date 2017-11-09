@@ -49,9 +49,6 @@ protected:
 
 protected:
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
-    virtual void OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event);
-    virtual void OnChoiceActiveProject(wxCommandEvent& event);
-    virtual void OnChoiceActiveProjectUI(wxUpdateUIEvent& event);
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
 
     void OnFolderDropped(clCommandEvent& event);
@@ -80,6 +77,7 @@ protected:
     void OnWorkspaceConfig(wxCommandEvent& e);
     void OnConfigurationManagerChoice(wxCommandEvent& e);
     void OnConfigurationManager(wxCommandEvent& e);
+    void OnConfigChanged(clCommandEvent &e);
     void OnActiveProjectChanged(clProjectSettingsEvent& e);
 
 public:

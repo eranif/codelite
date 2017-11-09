@@ -1,8 +1,9 @@
 #ifndef CLEDITORBAR_H
 #define CLEDITORBAR_H
+#include "drawingutils.h"
 #include "wxcrafter_plugin.h"
-#include <wx/font.h>
 #include <wx/colour.h>
+#include <wx/font.h>
 
 class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
 {
@@ -22,6 +23,7 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxArrayString m_breadcrumbs;
 
     wxRect m_filenameRect;
+    eButtonState m_state;
 
 private:
     void DoRefreshColoursAndFonts();
@@ -33,11 +35,14 @@ public:
     void DoShow(bool s);
 
 protected:
-    virtual void OnLeftDown(wxMouseEvent& event);
-    virtual void OnEditorSize(wxSizeEvent& event);
-    virtual void OnEraseBG(wxEraseEvent& event);
-    virtual void OnPaint(wxPaintEvent& event);
-    void OnEditorChanged(wxCommandEvent& event);
-    void OnThemeChanged(wxCommandEvent& event);
+    virtual void OnEditorSize(wxSizeEvent& e);
+    virtual void OnEraseBG(wxEraseEvent& e);
+    virtual void OnPaint(wxPaintEvent& e);
+    void OnEditorChanged(wxCommandEvent& e);
+    void OnLeftDown(wxMouseEvent& e);
+    void OnLeftUp(wxMouseEvent& e);
+    void OnThemeChanged(wxCommandEvent& e);
+    void OnEnterWindow(wxMouseEvent& e);
+    void OnLeaveWindow(wxMouseEvent& e);
 };
 #endif // CLEDITORBAR_H

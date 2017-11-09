@@ -469,7 +469,7 @@ wxColour DrawingUtils::GetPanelTextColour()
 {
 #ifdef __WXGTK__
     static bool intitialized(false);
-    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
     if(!intitialized) {
         // try to get the background colour from a menu
@@ -845,7 +845,7 @@ wxColour DrawingUtils::GetButtonBgColour()
     }
     return bgColour;
 #else
-    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
 #endif
 }
 
@@ -854,7 +854,7 @@ wxColour DrawingUtils::GetButtonTextColour()
 #ifdef __WXGTK__
     static bool intitialized(false);
     // initialise default colour
-    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
 
     if(!intitialized) {
         // try to get the background colour from a menu
@@ -864,6 +864,6 @@ wxColour DrawingUtils::GetButtonTextColour()
     }
     return textColour;
 #else
-    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
 #endif
 }

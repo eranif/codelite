@@ -157,6 +157,9 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("Q_OBJECT"));
     m_tokens.Add(wxT("Q_PACKED"));
     m_tokens.Add(wxT("Q_GADGET"));
+    m_tokens.Add(wxT("QT_BEGIN_NAMESPACE"));
+    m_tokens.Add(wxT("QT_END_NAMESPACE"));
+    m_tokens.Add(wxT("Q_GADGET"));
     m_tokens.Add(wxT("QT_BEGIN_HEADER"));
     m_tokens.Add(wxT("QT_END_HEADER"));
     m_tokens.Add(wxT("Q_REQUIRED_RESULT"));

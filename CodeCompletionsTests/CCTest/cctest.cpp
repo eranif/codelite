@@ -477,6 +477,7 @@ void testCC()
 
 void testRetagWorkspace()
 {
+#if 0
     // load the workspace file list
     wxArrayString inclPath;
     wxArrayString exclPath;
@@ -523,6 +524,7 @@ void testRetagWorkspace()
     ParseThreadST::Free();
     TagsManagerST::Free();
     LanguageST::Free();
+#endif
 }
 
 /**

@@ -54,7 +54,8 @@ public:
     static wxColor GetOutputPaneBgColour();
     static wxColor GetMenuTextColour();
     static wxColor GetMenuBarBgColour();
-
+    static wxColor GetMenuBarTextColour();
+    
     static void TruncateText(const wxString& text, int maxWidth, wxDC& dc, wxString& fixedText);
     static void PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor, const wxColour& endColor, bool vertical);
     static void DrawVerticalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover = false);
@@ -65,6 +66,8 @@ public:
     static wxColour GetGradient();
     
     static wxFont GetDefaultFixedFont();
+    static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp);
+    static wxBitmap CreateGrayBitmap(const wxBitmap& bmp);
     
     /**
      * @brief return basic colour palette based on the current editor

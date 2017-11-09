@@ -73,11 +73,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_indentUsesTabs(true)
     , m_indentWidth(4)
     , m_tabWidth(4)
-#ifdef __WXGTK__
     , m_iconsSize(16)
-#else
-    , m_iconsSize(24)
-#endif
     , m_showWhitspaces(0 /*wxSCI_WS_INVISIBLE*/)
     , m_foldCompact(false)
     , m_foldAtElse(false)

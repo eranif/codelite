@@ -73,10 +73,22 @@ public:
 // Test the 'testStructDeclaratorInFuncArgument
 //////////////////////////////////////////////////////////////
 
-void foo_bar(struct wxString* s) {
-    
+void foo_bar(struct wxString* pString) {
+   
 }
 } // Namespace Baz
+
+enum NormalEnum {
+    kApple,
+    kBanana,
+    kOrange,
+};
+
+enum class ClassEnum : int {
+    kRed,
+    kGreen,
+    kBlue
+};
 
 class ClassWithTemplateFunction
 {

@@ -14,6 +14,7 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
@@ -36,16 +37,23 @@
 class SmartCompletionsSettingsBaseDlg : public wxDialog
 {
 protected:
+    wxStaticText* m_staticText22;
     wxCheckBox* m_checkBoxEnabled;
+    wxStaticText* m_staticText18;
+    wxButton* m_buttonClear;
     wxStdDialogButtonSizer* m_stdBtnSizer6;
     wxButton* m_buttonOK;
     wxButton* m_button10;
 
 protected:
+    virtual void OnClearStats(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText22() { return m_staticText22; }
     wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
+    wxStaticText* GetStaticText18() { return m_staticText18; }
+    wxButton* GetButtonClear() { return m_buttonClear; }
     SmartCompletionsSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Smart Completions"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~SmartCompletionsSettingsBaseDlg();
 };

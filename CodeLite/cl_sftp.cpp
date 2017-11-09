@@ -53,7 +53,7 @@ clSFTP::clSFTP(clSSH::Ptr_t ssh)
 
 clSFTP::~clSFTP() { Close(); }
 
-void clSFTP::Initialize() throw(clException)
+void clSFTP::Initialize() 
 {
     if(m_sftp) return;
 
@@ -82,7 +82,7 @@ void clSFTP::Close()
 
 void clSFTP::Write(const wxFileName& localFile,
                    const wxString& remotePath,
-                   SFTPAttribute::Ptr_t attributes) throw(clException)
+                   SFTPAttribute::Ptr_t attributes) 
 {
     if(!m_connected) {
         throw clException("scp is not initialized!");
@@ -115,7 +115,7 @@ void clSFTP::Write(const wxFileName& localFile,
 
 void clSFTP::Write(const wxMemoryBuffer& fileContent,
                    const wxString& remotePath,
-                   SFTPAttribute::Ptr_t attributes) throw(clException)
+                   SFTPAttribute::Ptr_t attributes) 
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -180,7 +180,7 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent,
     }
 }
 
-SFTPAttribute::List_t clSFTP::List(const wxString& folder, size_t flags, const wxString& filter) throw(clException)
+SFTPAttribute::List_t clSFTP::List(const wxString& folder, size_t flags, const wxString& filter) 
 {
     sftp_dir dir;
     sftp_attributes attributes;
@@ -231,7 +231,7 @@ SFTPAttribute::List_t clSFTP::List(const wxString& folder, size_t flags, const w
     return files;
 }
 
-SFTPAttribute::List_t clSFTP::CdUp(size_t flags, const wxString& filter) throw(clException)
+SFTPAttribute::List_t clSFTP::CdUp(size_t flags, const wxString& filter) 
 {
     wxString curfolder = m_currentFolder;
     curfolder << "/../"; // Force a cd up
@@ -241,7 +241,7 @@ SFTPAttribute::List_t clSFTP::CdUp(size_t flags, const wxString& filter) throw(c
     return List(fn.GetPath(false, wxPATH_UNIX), flags, filter);
 }
 
-SFTPAttribute::Ptr_t clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& buffer) throw(clException)
+SFTPAttribute::Ptr_t clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& buffer) 
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -287,7 +287,7 @@ SFTPAttribute::Ptr_t clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& bu
     return fileAttr;
 }
 
-void clSFTP::CreateDir(const wxString& dirname) throw(clException)
+void clSFTP::CreateDir(const wxString& dirname) 
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -303,7 +303,7 @@ void clSFTP::CreateDir(const wxString& dirname) throw(clException)
     }
 }
 
-void clSFTP::Rename(const wxString& oldpath, const wxString& newpath) throw(clException)
+void clSFTP::Rename(const wxString& oldpath, const wxString& newpath) 
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -318,7 +318,7 @@ void clSFTP::Rename(const wxString& oldpath, const wxString& newpath) throw(clEx
     }
 }
 
-void clSFTP::RemoveDir(const wxString& dirname) throw(clException)
+void clSFTP::RemoveDir(const wxString& dirname) 
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -334,7 +334,7 @@ void clSFTP::RemoveDir(const wxString& dirname) throw(clException)
     }
 }
 
-void clSFTP::UnlinkFile(const wxString& path) throw(clException)
+void clSFTP::UnlinkFile(const wxString& path) 
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -350,7 +350,7 @@ void clSFTP::UnlinkFile(const wxString& path) throw(clException)
     }
 }
 
-SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path) throw(clException)
+SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path) 
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -367,14 +367,14 @@ SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path) throw(clException)
 
 void clSFTP::CreateRemoteFile(const wxString& remoteFullPath,
                               const wxString& content,
-                              SFTPAttribute::Ptr_t attr) throw(clException)
+                              SFTPAttribute::Ptr_t attr) 
 {
     // Create the path to the file
     Mkpath(wxFileName(remoteFullPath).GetPath());
     Write(content, remoteFullPath, attr);
 }
 
-void clSFTP::Mkpath(const wxString& remoteDirFullpath) throw(clException)
+void clSFTP::Mkpath(const wxString& remoteDirFullpath) 
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -408,13 +408,13 @@ void clSFTP::Mkpath(const wxString& remoteDirFullpath) throw(clException)
 
 void clSFTP::CreateRemoteFile(const wxString& remoteFullPath,
                               const wxFileName& localFile,
-                              SFTPAttribute::Ptr_t attr) throw(clException)
+                              SFTPAttribute::Ptr_t attr) 
 {
     Mkpath(wxFileName(remoteFullPath).GetPath());
     Write(localFile, remoteFullPath, attr);
 }
 
-void clSFTP::Chmod(const wxString& remotePath, size_t permissions) throw(clException)
+void clSFTP::Chmod(const wxString& remotePath, size_t permissions) 
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");

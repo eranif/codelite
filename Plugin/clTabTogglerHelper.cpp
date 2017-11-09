@@ -5,8 +5,8 @@
 #include "imanager.h"
 #include "Notebook.h"
 
-clTabTogglerHelper::clTabTogglerHelper(
-    const wxString& outputTabName, wxWindow* outputTab, const wxString& workspaceTabName, wxWindow* workspaceTab)
+clTabTogglerHelper::clTabTogglerHelper(const wxString& outputTabName, wxWindow* outputTab,
+                                       const wxString& workspaceTabName, wxWindow* workspaceTab)
     : m_outputTabName(outputTabName)
     , m_outputTab(outputTab)
     , m_workspaceTabName(workspaceTabName)
@@ -45,7 +45,7 @@ void clTabTogglerHelper::OnToggleOutputTab(clCommandEvent& event)
         int where = IsTabInNotebook(book, m_outputTabName);
         if(where == wxNOT_FOUND) {
             // Only show it if it does not exists in the notebook
-            clGetManager()->GetOutputPaneNotebook()->InsertPage(0, m_outputTab, m_outputTabName, true, m_outputTabBmp);
+            clGetManager()->GetOutputPaneNotebook()->AddPage(m_outputTab, m_outputTabName, false, m_outputTabBmp);
         } else {
             clGetManager()->GetOutputPaneNotebook()->SetSelection(where);
         }
@@ -70,8 +70,8 @@ void clTabTogglerHelper::OnToggleWorkspaceTab(clCommandEvent& event)
         int where = IsTabInNotebook(book, m_workspaceTabName);
         if(where == wxNOT_FOUND) {
             // Only show it if it does not exists in the notebook
-            clGetManager()->GetWorkspacePaneNotebook()->InsertPage(
-                0, m_workspaceTab, m_workspaceTabName, true, m_workspaceTabBmp);
+            clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_workspaceTab, m_workspaceTabName, false,
+                                                                m_workspaceTabBmp);
         } else {
             // The tab already in the notebook, just select it
             clGetManager()->GetWorkspacePaneNotebook()->SetSelection(where);

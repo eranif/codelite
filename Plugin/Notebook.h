@@ -43,6 +43,14 @@ class Notebook;
 class wxMenu;
 class clTabCtrl;
 
+enum class eDirection {
+    kInvalid = -1,
+    kRight = 0,
+    kLeft = 1,
+    kUp = 2,
+    kDown = 3,
+};
+
 // DnD support of tabs
 class WXDLLIMPEXP_SDK clTabCtrlDropTarget : public wxTextDropTarget
 {
@@ -180,13 +188,13 @@ public:
      * @param leftSide [output] if the point is on the LEFT side of the tab's rect, then return wxALIGN_LEFT, otherwise
      * return wxALIGN_RIGHT. Another possible value is wxALIGN_INVALID
      */
-    void TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, wxAlignment& align);
+    void TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, eDirection& align);
 
     /**
      * @brief Move the active tab to a new position
      * @param newIndex the new position. 0-based index in the m_tabs array
      */
-    bool MoveActiveToIndex(int newIndex, wxAlignment align = wxALIGN_INVALID);
+    bool MoveActiveToIndex(int newIndex, eDirection direction);
 
     /**
      * @brief return true if index is in the tabs vector range
@@ -254,12 +262,8 @@ public:
     /**
      * Constructor
      */
-    Notebook(wxWindow* parent,
-             wxWindowID id = wxID_ANY,
-             const wxPoint& pos = wxDefaultPosition,
-             const wxSize& size = wxDefaultSize,
-             long style = 0,
-             const wxString& name = wxEmptyString);
+    Notebook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+             const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
 
     /**
      * @brief update the notebook art class and refresh
@@ -300,8 +304,8 @@ public:
     /**
      * @brief insert page at a specified position
      */
-    bool InsertPage(
-        size_t index, wxWindow* page, const wxString& label, bool selected = false, const wxBitmap& bmp = wxNullBitmap);
+    bool InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected = false,
+                    const wxBitmap& bmp = wxNullBitmap);
 
     /**
      * @brief return the currently selected page or null

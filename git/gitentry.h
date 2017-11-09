@@ -38,6 +38,7 @@
 #include <vector>
 #include <map>
 #include "cl_config.h"
+#include "wxStringHash.h"
 
 struct GitLabelCommand {
     GitLabelCommand() {}
@@ -99,7 +100,28 @@ public:
     void SetLastUsedCommandIndex(int index) { m_lastUsed = index; }
 };
 
-typedef std::map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t;
+typedef std::unordered_map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t;
+
+
+class GitWorkspace {
+public:
+    GitWorkspace() {}
+    GitWorkspace(const wxString& name) : m_name(name) {}
+
+    const wxString& GetWorkspaceName() const { return m_name; }
+    void SetWorkspaceName(const wxString& name) { m_name = name; }
+    const wxString GetProjectLastRepoPath(const wxString& projectName);
+    void SetProjectLastRepoPath(const wxString& projectName, const wxString& lastRepoPath);
+
+    void FromJSON(const JSONElement& json);
+    void ToJSON(JSONElement& arr) const;
+
+protected:
+    wxString m_name;
+    wxStringMap_t m_projectData;
+};
+
+typedef std::unordered_map<wxString, GitWorkspace> GitWorkspaceMap_t;
 
 extern const wxEventType wxEVT_GIT_CONFIG_CHANGED;
 class GitEntry : public clConfigItem
@@ -110,6 +132,7 @@ class GitEntry : public clConfigItem
     wxString m_pathGITK;
     wxStringMap_t m_entries;
     GitCommandsEntriesMap_t m_commandsMap;
+    GitWorkspaceMap_t m_workspacesMap;
     size_t m_flags;
     int m_gitDiffDlgSashPos;
     int m_gitConsoleSashPos;
@@ -197,6 +220,9 @@ public:
 
     void AddGitCommandsEntry(GitCommandsEntries& entries, const wxString& entryName);
     void DeleteGitCommandsEntry(const wxString& entryName) { m_commandsMap.erase(entryName); }
+
+    wxString GetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName);
+    void SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName, const wxString& lastRepoPath);
 
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;

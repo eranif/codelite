@@ -26,12 +26,12 @@
 #ifndef CLSOCKETCLIENTASYNC_H
 #define CLSOCKETCLIENTASYNC_H
 
+#include "SocketAPI/clSocketClient.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "worker_thread.h"
-#include <wx/msgqueue.h>
 #include <wx/event.h>
-#include "SocketAPI/clSocketClient.h"
+#include <wx/msgqueue.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_CONNECTED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_CONNECTION_LOST, clCommandEvent);
@@ -57,6 +57,7 @@ protected:
     wxString m_keepAliveMessage;
     wxString m_connectionString;
     wxMessageQueue<MyRequest> m_queue;
+    bool m_nonBlockingMode;
 
 public:
     virtual void AddRequest(const MyRequest& req) { m_queue.Post(req); }
@@ -84,7 +85,7 @@ public:
         }
     }
 
-    clSocketClientAsyncHelperThread(wxEvtHandler* sink, const wxString& connectionString,
+    clSocketClientAsyncHelperThread(wxEvtHandler* sink, const wxString& connectionString, bool nonBlockingMode,
                                     const wxString& keepAliveMessage = "");
     virtual ~clSocketClientAsyncHelperThread();
 };
@@ -102,6 +103,7 @@ public:
      * @brief connect using connection string
      */
     void Connect(const wxString& connectionString, const wxString& keepAliveMessage = "");
+    void ConnectNonBlocking(const wxString& connectionString, const wxString& keepAliveMessage = "");
     void Send(const wxString& buffer);
     void Disconnect();
 };

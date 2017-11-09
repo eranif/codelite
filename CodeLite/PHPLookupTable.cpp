@@ -218,7 +218,7 @@ void PHPLookupTable::Open(const wxFileName& dbfile)
         m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
         m_filename = dbfile;
         CreateSchema();
-        
+
     } catch(wxSQLite3Exception& e) {
         clWARNING() << "PHPLookupTable::Open" << e.GetMessage() << clEndl;
     }
@@ -827,7 +827,7 @@ void PHPLookupTable::Close()
         }
         m_filename.Clear();
         m_allClasses.clear();
-        
+
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::Close: %s", e.GetMessage());
     }
@@ -1345,4 +1345,31 @@ void PHPLookupTable::RebuildClassCache()
     }
     clDEBUG() << "Loading" << count << "class names into the cache" << clEndl;
     clDEBUG() << "Rebuilding PHP class cache...done" << clEndl;
+}
+
+PHPEntityBase::Ptr_t PHPLookupTable::FindFunctionNearLine(const wxFileName& filename, int lineNumber)
+{
+    try {
+        wxString sql;
+
+        // limit by 2 for performance reason
+        // we will return NULL incase the number of matches is greater than 1...
+        // SELECT * from FUNCTION_TABLE WHERE
+        sql << "SELECT * from FUNCTION_TABLE WHERE FILE_NAME='" << filename.GetFullPath()
+            << "' AND LINE_NUMBER <=" << lineNumber << " order by LINE_NUMBER DESC LIMIT 1";
+
+        wxSQLite3Statement st = m_db.PrepareStatement(sql);
+        wxSQLite3ResultSet res = st.ExecuteQuery();
+        PHPEntityBase::Ptr_t match(NULL);
+
+        if(res.NextRow()) {
+            match.Reset(new PHPEntityFunction());
+            match->FromResultSet(res);
+        }
+        return match;
+
+    } catch(wxSQLite3Exception& e) {
+        clWARNING() << "PHPLookupTable::FindFunctionNearLine:" << e.GetMessage() << clEndl;
+    }
+    return PHPEntityBase::Ptr_t(NULL);
 }

@@ -32,6 +32,7 @@
 #include <wx/arrstr.h>
 #include <wx/timer.h>
 #include "codelite_exports.h"
+#include "wxStringHash.h"
 
 class IManager;
 class wxTimer;
@@ -77,10 +78,10 @@ public:
 class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
 {
     IManager* m_manager;
-    std::multimap<wxString, wxString> m_files;
+    std::unordered_multimap<wxString, wxString> m_files;
     wxTimer* m_timer;
     bool m_needRefresh;
-    std::map<wxString, wxBitmap> m_tagImgMap;
+    std::unordered_map<wxString, wxBitmap> m_tagImgMap;
     wxArrayString m_filters;
     wxArrayString m_userFilters;
     long m_lineNumber;

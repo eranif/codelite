@@ -122,6 +122,7 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
     int parenthesisDepth = 0;
     int state = SCP_STATE_NORMAL;
     while(tokenizer.NextToken(token)) {
+        if(tokenizer.IsInPreProcessorSection()) continue;
         switch(state) {
         case SCP_STATE_NORMAL:
             switch(token.type) {
@@ -372,118 +373,131 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
 
     CxxLexerToken tok;
     while(m_tokenScanner.NextToken(tok)) {
-        switch(tok.type) {
-        case T_DECLTYPE: {
-            if(m_tokenScanner.GetLastToken().type == ',') {
-                token.RemoveLast();
-            }
-            wxString dummy;
-            if(m_tokenScanner.ReadUntilClosingBracket(')', dummy)) {
-                m_tokenScanner.NextToken(tok); // Consume the closing parent
-            }
-            break;
-        }
-        case T_STATIC_CAST:
-        case T_DYNAMIC_CAST:
-        case T_REINTERPRET_CAST:
-        case T_CONST_CAST: {
-            // We expect now: "<"
-            wxString txt;
-            if(m_tokenScanner.PeekToken(txt) != '<') return false;
-            wxString typestr;
-            if(!m_tokenScanner.ReadUntilClosingBracket('>', typestr)) return false;
-            token.swap(typestr);
-
-            // Consume the closing angle bracket
-            m_tokenScanner.NextToken(tok);
-
-            // Peek at the next token
-            if(m_tokenScanner.PeekToken(txt) != '(') return false;
-            if(!m_tokenScanner.ReadUntilClosingBracket(')', typestr)) return false;
-            // Consume the closing parenthessis
-            m_tokenScanner.NextToken(tok);
-            token.Replace("*", "");
-            token.Replace("&", "");
-            token.Trim().Trim(false);
-            token.Remove(0, 1).RemoveLast();
-            token.Trim().Trim(false);
-            break;
-        }
-        case T_THIS:
-            token << "this";
-            break;
-        case T_DOUBLE_COLONS:
-        case '.':
-        case T_ARROW:
-            if(depth == 0) {
-                delim = tok.text;
-                return true;
-            } else {
-                token << " " << tok.text;
-            }
-            break;
-        case '[':
-            subscriptOperator = true;
-            depth++;
-            token << " " << tok.text;
-            break;
-        case '(':
-            if(token.IsEmpty()) {
-                // casting like expression, (type)->
-                // simply ignore the parenthessis
+        if(parenthesisDepth) {
+            switch(tok.type) {
+            case '(':
+                ++parenthesisDepth;
+                if(collectingFuncArgList) {
+                    funcArgList << "(";
+                }
+                break;
+            case ')':
+                --parenthesisDepth;
+                if(collectingFuncArgList) {
+                    funcArgList << ")";
+                }
+                break;
+            default:
+                if(collectingFuncArgList) {
+                    funcArgList << " " << tok.text;
+                }
                 break;
             }
-            token << tok.text;
-            parenthesisDepth++;
-            break;
-        case '<':
-        case '{':
-            depth++;
-            token << " " << tok.text;
-            break;
-        case ')':
-            parenthesisDepth--;
-            if(collectingFuncArgList) {
-                funcArgList << ')';
+        } else {
+            switch(tok.type) {
+            case T_DECLTYPE: {
+                if(m_tokenScanner.GetLastToken().type == ',') {
+                    token.RemoveLast();
+                }
+                wxString dummy;
+                if(m_tokenScanner.ReadUntilClosingBracket(')', dummy)) {
+                    m_tokenScanner.NextToken(tok); // Consume the closing parent
+                }
+                break;
             }
+            case T_STATIC_CAST:
+            case T_DYNAMIC_CAST:
+            case T_REINTERPRET_CAST:
+            case T_CONST_CAST: {
+                // We expect now: "<"
+                wxString txt;
+                if(m_tokenScanner.PeekToken(txt) != '<') return false;
+                wxString typestr;
+                if(!m_tokenScanner.ReadUntilClosingBracket('>', typestr)) return false;
+                token.swap(typestr);
 
-            if(parenthesisDepth == 0) {
-                collectingFuncArgList = false;
+                // Consume the closing angle bracket
+                m_tokenScanner.NextToken(tok);
+
+                // Peek at the next token
+                if(m_tokenScanner.PeekToken(txt) != '(') return false;
+                if(!m_tokenScanner.ReadUntilClosingBracket(')', typestr)) return false;
+                // Consume the closing parenthessis
+                m_tokenScanner.NextToken(tok);
+                token.Replace("*", "");
+                token.Replace("&", "");
+                token.Trim().Trim(false);
+                token.Remove(0, 1).RemoveLast();
+                token.Trim().Trim(false);
+                break;
             }
-            break;
-        case '>':
-        case ']':
-        case '}':
-            depth--;
-            token << " " << tok.text;
-            break;
-        case T_IDENTIFIER:
-        case ',':
-        case T_DOUBLE:
-        case T_INT:
-        case T_STRUCT:
-        case T_LONG:
-        case T_ENUM:
-        case T_CHAR:
-        case T_UNION:
-        case T_FLOAT:
-        case T_SHORT:
-        case T_UNSIGNED:
-        case T_SIGNED:
-        case T_VOID:
-        case T_CLASS:
-        case T_TYPEDEF:
-            token << " " << tok.text;
-            break;
-        default:
-            break;
-        }
-
-        if(collectingFuncArgList && parenthesisDepth) {
-            funcArgList << tok.text << " ";
+            case T_THIS:
+                token << "this";
+                break;
+            case T_DOUBLE_COLONS:
+            case '.':
+            case T_ARROW:
+                if(depth == 0) {
+                    delim = tok.text;
+                    return true;
+                } else {
+                    token << " " << tok.text;
+                }
+                break;
+            case '[':
+                subscriptOperator = true;
+                depth++;
+                token << " " << tok.text;
+                break;
+            case '(':
+                if(!token.IsEmpty()) {
+                    // If the token is empty, we ignore this parenthessis.
+                    // The reason is that it is probably from an expression like casting:
+                    // (wxClipboard*) 
+                    parenthesisDepth++;
+                    if(collectingFuncArgList) {
+                        token << tok.text;
+                    }
+                }
+                break;
+            case ')':
+                // Closing brace on this leve, means that their partner (the open brace)
+                // was ignored (see above) so we should ignore this one as well
+                break;
+            case '<':
+            case '{':
+                depth++;
+                token << " " << tok.text;
+                break;
+            case '>':
+            case ']':
+            case '}':
+                depth--;
+                token << " " << tok.text;
+                break;
+            case T_IDENTIFIER:
+            case ',':
+            case T_DOUBLE:
+            case T_INT:
+            case T_STRUCT:
+            case T_LONG:
+            case T_ENUM:
+            case T_CHAR:
+            case T_UNION:
+            case T_FLOAT:
+            case T_SHORT:
+            case T_UNSIGNED:
+            case T_SIGNED:
+            case T_VOID:
+            case T_CLASS:
+            case T_TYPEDEF:
+                token << " " << tok.text;
+                break;
+            default:
+                break;
+            }
         }
     }
-
     if(token.IsEmpty() == false && depth == 0) {
         if(delim.IsEmpty()) {
             delim = ".";
@@ -999,10 +1013,6 @@ ExpressionResult Language::ParseExpression(const wxString& in)
 
 bool Language::ProcessToken(TokenContainer* tokeContainer)
 {
-    // try local scope
-    VariableList li;
-    FunctionList fooList;
-
     // first we try to match the current scope
     std::vector<TagEntryPtr> tags;
 
@@ -1096,7 +1106,6 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
             // or global variable or member
             // for the last two cases, we need to handle this as if we did not find a match in the
             // database
-            li.clear();
             TagEntryPtr tag = tags.at(0);
             if(tag->GetKind() == wxT("member") || tag->GetKind() == wxT("variable")) {
                 CxxVariable::Ptr_t pVar =
@@ -1110,7 +1119,6 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
             }
 
         } else {
-            li.clear();
 
             // if we are a "member" or " variable"
             // try to locate the template initialization list

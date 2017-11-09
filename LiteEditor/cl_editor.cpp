@@ -348,6 +348,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_richTooltip(NULL)
 {
     DoUpdateOptions();
+    PreferencesChanged();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
     m_commandsProcessor.SetParent(this);
 
@@ -530,7 +531,7 @@ void LEditor::SetProperties()
     UsePopUp(0);
 #endif
     SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-    
+
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
@@ -1244,16 +1245,16 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     int curLine = LineFromPosition(mainSelectionPos);
 
     wxString message;
-    if(clConfig::Get().Read(kConfigStatusbarShowLine, true)) {
+    if(m_statusBarFields & kShowLine) {
         message << "Ln " << curLine + 1;
     }
-    if(clConfig::Get().Read(kConfigStatusbarShowColumn, true)) {
+    if(m_statusBarFields & kShowColumn) {
         message << (!message.empty() ? ", " : "") << "Col " << GetColumn(mainSelectionPos);
     }
-    if(clConfig::Get().Read(kConfigStatusbarShowPosition, false)) {
+    if(m_statusBarFields & kShowPosition) {
         message << (!message.empty() ? ", " : "") << "Pos " << mainSelectionPos;
     }
-    if(clConfig::Get().Read(kConfigStatusbarShowLength, false)) {
+    if(m_statusBarFields & kShowLen) {
         message << (!message.empty() ? ", " : "") << "Len " << GetLength();
     }
     // Always update the status bar with event, calling it directly causes performance degredation
@@ -1268,6 +1269,18 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     }
 
     RecalcHorizontalScrollbar();
+
+    static int lastLine(wxNOT_FOUND);
+
+    // get the current position
+    if((curLine != lastLine) && clMainFrame::Get()->GetMainBook()->IsNavBarShown()) {
+        lastLine = curLine;
+        clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
+        evtUpdateNavBar.SetEditor(this);
+        evtUpdateNavBar.SetLineNumber(curLine);
+        EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
+    }
+
     // let the context handle this as well
     m_context->OnSciUpdateUI(event);
 }
@@ -5496,8 +5509,25 @@ void LEditor::ReloadFromDisk(bool keepUndoHistory)
         EmptyUndoBuffer();
         GetCommandsProcessor().Reset();
     }
-    
+
     SetReloadingFile(false);
+}
+
+void LEditor::PreferencesChanged()
+{
+    m_statusBarFields = 0;
+    if(clConfig::Get().Read(kConfigStatusbarShowLine, true)) {
+        m_statusBarFields |= kShowLine;
+    }
+    if(clConfig::Get().Read(kConfigStatusbarShowColumn, true)) {
+        m_statusBarFields |= kShowColumn;
+    }
+    if(clConfig::Get().Read(kConfigStatusbarShowPosition, false)) {
+        m_statusBarFields |= kShowPosition;
+    }
+    if(clConfig::Get().Read(kConfigStatusbarShowLength, false)) {
+        m_statusBarFields |= kShowLen;
+    }
 }
 
 // ----------------------------------

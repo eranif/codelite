@@ -83,6 +83,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager* manager)
     m_topWindow = m_mgr->GetTheApp();
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SHOWING, &AbbreviationPlugin::OnCompletionBoxShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_WORD_COMPLETE, &AbbreviationPlugin::OnWordComplete, this);
     InitDefaults();
 }
 
@@ -117,6 +118,7 @@ void AbbreviationPlugin::UnPlug()
     m_topWindow->Unbind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SHOWING, &AbbreviationPlugin::OnCompletionBoxShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_WORD_COMPLETE, &AbbreviationPlugin::OnWordComplete, this);
 }
 
 void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
@@ -128,7 +130,7 @@ void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
 
 void AbbreviationPlugin::AddAbbreviations(clCodeCompletionEvent& e)
 {
-    wxString filter = e.GetWord();
+    wxString filter = e.GetWord().Lower();
 
     AbbreviationJSONEntry jsonData;
     if(!m_config.ReadItem(&jsonData)) {
@@ -140,17 +142,21 @@ void AbbreviationPlugin::AddAbbreviations(clCodeCompletionEvent& e)
         jsonData.SetEntries(data.GetEntries());
         m_config.WriteItem(&jsonData);
     }
-    
+
     wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("replace-blue");
     if(bmp.IsOk()) {
         // search for the old item
         const wxStringMap_t& entries = jsonData.GetEntries();
         std::for_each(entries.begin(), entries.end(), [&](const wxStringMap_t::value_type& vt) {
-            // Append our entries
-            wxString textHelp;
-            textHelp << "<strong>Abbreviation entry</strong>\n<hr><code>" << vt.second << "</code>";
-            e.GetEntries().push_back(
-                wxCodeCompletionBoxEntry::New(vt.first, textHelp, bmp, new AbbreviationClientData()));
+            // Only add matching entries (entries that "starts_with")
+            wxString lcAbbv = vt.first.Lower();
+            if(lcAbbv.StartsWith(filter)) {
+                // Append our entries
+                wxString textHelp;
+                textHelp << "<strong>Abbreviation entry</strong>\n<hr><code>" << vt.second << "</code>";
+                e.GetEntries().push_back(
+                    wxCodeCompletionBoxEntry::New(vt.first, textHelp, bmp, new AbbreviationClientData()));
+            }
         });
     }
 }
@@ -305,4 +311,10 @@ void AbbreviationPlugin::OnCompletionBoxShowing(clCodeCompletionEvent& event)
 {
     AddAbbreviations(event);
     event.Skip();
+}
+
+void AbbreviationPlugin::OnWordComplete(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    AddAbbreviations(event);
 }

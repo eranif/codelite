@@ -36,6 +36,7 @@
 #include "clStatusBar.h"
 #include <wx/xrc/xmlres.h>
 #include "codelite_events.h"
+#include "clTabRenderer.h"
 
 // --------------------------------------------
 
@@ -123,8 +124,8 @@ void clAuiDockArt::DrawPaneButton(
     }
 }
 
-void clAuiDockArt::DrawCaption(
-    wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
+void
+clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
 {
     wxRect tmpRect(wxPoint(0, 0), rect.GetSize());
 
@@ -138,7 +139,7 @@ void clAuiDockArt::DrawCaption(
     // Prepare the colours
     wxColour bgColour, penColour, textColour;
     textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+    bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
 
     penColour = bgColour;
     // Same as the notebook background colour?
@@ -154,12 +155,8 @@ void clAuiDockArt::DrawCaption(
 
     // Fill the caption to look like OSX caption
     if(!m_useDarkColours) {
-        wxColour topColour("#d3d2d3");
-        wxColour bottomColour("#e8e8e8");
-        dc.GradientFillLinear(tmpRect, topColour, bottomColour, wxNORTH);
-
-        dc.SetPen(penColour);
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        dc.SetBrush(bgColour);
         dc.DrawRectangle(tmpRect);
     }
     int caption_offset = 0;
@@ -186,7 +183,6 @@ void clAuiDockArt::DrawCaption(
     dc.SetTextForeground(textColour);
     dc.DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
 #else
-    // Windows and Linux
     wxBitmap bmp(tmpRect.GetSize());
     {
         wxMemoryDC memDc;
@@ -206,15 +202,21 @@ void clAuiDockArt::DrawCaption(
 
         // Prepare the colours
         wxColour bgColour, penColour, textColour;
-        textColour = wxColour(67, 74, 86);
-        bgColour = wxColour(171, 177, 186);
+        if(!DrawingUtils::IsDark(DrawingUtils::GetMenuBarBgColour())) {
+            textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT);
+            bgColour = DrawingUtils::GetCaptionColour();
+        } else {
+            textColour = DrawingUtils::GetMenuBarTextColour();
+            bgColour = DrawingUtils::GetMenuBarBgColour().ChangeLightness(50);
+        }
+        
         // Same as the notebook background colour
         penColour = bgColour;
         penColour = m_useDarkColours ? m_darkBgColour : penColour;
         bgColour = m_useDarkColours ? m_darkBgColour : bgColour;
         textColour = m_useDarkColours ? "WHITE" : textColour;
 
-        wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        wxFont f = clTabRenderer::GetTabFont();
         pDC->SetFont(f);
         pDC->SetPen(penColour);
         pDC->SetBrush(bgColour);
@@ -255,52 +257,21 @@ void clAuiDockArt::DrawCaption(
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-#if 0
-    wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
-#else
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(m_useDarkColours ? m_notebookTabAreaDarkBgColour : DrawingUtils::GetAUIPaneBGColour());
+    dc.SetBrush(m_useDarkColours ? m_notebookTabAreaDarkBgColour : DrawingUtils::GetMenuBarBgColour());
     dc.DrawRectangle(rect);
-#endif
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
-    wxColour penColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+    wxColour penColour = DrawingUtils::GetMenuBarBgColour();
     penColour = m_useDarkColours ? m_notebookTabAreaDarkBgColour : penColour;
     dc.SetPen(penColour);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(rect);
 }
-
-#if 0
-static wxBrush GetStippleBrush(const wxColour& colour)
-{
-    wxMemoryDC memDC;
-    wxColour bgColour = colour;
-    wxBitmap bmpStipple(3, 3);
-    wxColour lightPen = DrawingUtils::DarkColour(bgColour, 5.0);
-    wxColour darkPen = DrawingUtils::LightColour(bgColour, 3.0);
-    memDC.SelectObject(bmpStipple);
-    memDC.SetBrush(bgColour);
-    memDC.SetPen(bgColour);
-    memDC.DrawRectangle(wxPoint(0, 0), bmpStipple.GetSize());
-
-    /// Draw all the light points, we have 3 of them
-    memDC.SetPen(lightPen);
-    memDC.DrawPoint(0, 2);
-    memDC.DrawPoint(2, 0);
-
-    /// and 2 dark points
-    memDC.SetPen(darkPen);
-    memDC.DrawPoint(0, 1);
-
-    memDC.SelectObject(wxNullBitmap);
-    return wxBrush(bmpStipple);
-}
-#endif
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
@@ -311,7 +282,11 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
         dc.SetBrush(m_notebookTabAreaDarkBgColour);
         dc.DrawRectangle(rect);
     } else {
-        wxAuiDefaultDockArt::DrawSash(dc, window, orientation, rect);
+        wxUnusedVar(window);
+        wxUnusedVar(orientation);
+        dc.SetPen(*wxTRANSPARENT_PEN);
+        dc.SetBrush(DrawingUtils::GetMenuBarBgColour());
+        dc.DrawRectangle(rect);
     }
 }
 
@@ -319,7 +294,7 @@ void clAuiDockArt::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_useDarkColours = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
-    
+
     // update the bitmaps
     if(m_useDarkColours) {
         m_dockCloseBmp = wxXmlResource::Get()->LoadBitmap("aui-close-white");

@@ -41,6 +41,7 @@ protected:
     void InitDefaults();
     bool InsertExpansion(const wxString& abbreviation);
     void OnCompletionBoxShowing(clCodeCompletionEvent& event);
+    void OnWordComplete(clCodeCompletionEvent& event);
 
 public:
     AbbreviationPlugin(IManager* manager);

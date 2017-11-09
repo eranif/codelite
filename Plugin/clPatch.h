@@ -21,7 +21,7 @@ public:
      */
     void Patch(const wxFileName& patchFile,
                const wxString& workingDirectory = "",
-               const wxString& args = "") throw(clException);
+               const wxString& args = "") ;
 };
 
 #endif // CLPATCH_H

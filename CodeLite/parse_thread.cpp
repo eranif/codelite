@@ -53,26 +53,16 @@
     }
 
 // ClientData is set to wxString* which must be deleted by the handler
-const wxEventType wxEVT_PARSE_THREAD_MESSAGE = XRCID("parse_thread_update_status_bar");
-
+wxDEFINE_EVENT(wxEVT_PARSE_THREAD_MESSAGE, wxCommandEvent);
 // ClientData is set to std::set<std::string> *newSet which must deleted by the handler
-const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE = XRCID("parse_thread_scan_includes_done");
-
-const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE = XRCID("parse_thread_clear_tags_cache");
-
-const wxEventType wxEVT_PARSE_THREAD_RETAGGING_PROGRESS = XRCID("parse_thread_clear_retagging_progress");
-
-// ClientData might contains std::vector<std::string>*, if it is, handler must delete it
-const wxEventType wxEVT_PARSE_THREAD_RETAGGING_COMPLETED = XRCID("parse_thread_clear_retagging_compelted");
-
-// ClientData is set to fcFileOpeneer::List_t* which must be deleted by the handler
-const wxEventType wxEVT_PARSE_INCLUDE_STATEMENTS_DONE = XRCID("wxEVT_PARSE_INCLUDE_STATEMENTS_DONE");
-
-// Send a "Ready" event
-const wxEventType wxEVT_PARSE_THREAD_READY = XRCID("wxEVT_PARSE_THREAD_READY");
-
-// Event type: clCommandEvent
-const wxEventType wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS = XRCID("wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS");
+wxDEFINE_EVENT(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_PARSE_THREAD_READY, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_PARSE_THREAD_SOURCE_TAGS, clCommandEvent);
 
 ParseThread::ParseThread()
     : WorkerThread()
@@ -108,6 +98,9 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
     default:
     case ParseRequest::PR_FILESAVED:
         ProcessSimple(req);
+        break;
+    case ParseRequest::PR_SOURCE_TO_TAGS:
+        ProcessSourceToTags(req);
         break;
     }
 
@@ -666,7 +659,9 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
         db->OpenDatabase(req->getDbfile());
 
         std::vector<wxString> nonWorkspaceSymbols, workspaceSymbols;
+        clDEBUG1() << "Parse Thread: removing non workspace symbols" << clEndl;
         db->RemoveNonWorkspaceSymbols(tokensArr, workspaceSymbols, nonWorkspaceSymbols);
+        clDEBUG1() << "Parse Thread: removing non workspace symbols...done" << clEndl;
 
         // Convert the output to a space delimited array
         std::for_each(workspaceSymbols.begin(), workspaceSymbols.end(),
@@ -686,4 +681,22 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
             req->_evtHandler->AddPendingEvent(event);
         }
     }
+}
+
+void ParseThread::ProcessSourceToTags(ParseRequest* req)
+{
+    wxFileName filename(req->getFile());
+    if(TagsManagerST::Get()->IsBinaryFile(filename.GetFullPath())) {
+        return;
+    }
+
+    wxString strTags;
+    TagsManagerST::Get()->SourceToTags(filename, strTags);
+
+    // Fire the event
+    clCommandEvent event(wxEVT_PARSE_THREAD_SOURCE_TAGS);
+    event.SetFileName(filename.GetFullPath());
+    event.SetString(strTags);
+    event.SetInt(req->_uid); // send back the unique ID
+    req->_evtHandler->AddPendingEvent(event);
 }

@@ -102,7 +102,7 @@ clSSH::clSSH()
 
 clSSH::~clSSH() { Close(); }
 
-void clSSH::Connect(int seconds) throw(clException)
+void clSSH::Connect(int seconds) 
 {
     m_session = ssh_new();
     if(!m_session) {
@@ -125,7 +125,7 @@ void clSSH::Connect(int seconds) throw(clException)
     ssh_set_blocking(m_session, 1);
 }
 
-bool clSSH::AuthenticateServer(wxString& message) throw(clException)
+bool clSSH::AuthenticateServer(wxString& message) 
 {
     int state;
     unsigned char* hash = NULL;
@@ -188,7 +188,7 @@ bool clSSH::AuthenticateServer(wxString& message) throw(clException)
     return false;
 }
 
-void clSSH::AcceptServerAuthentication() throw(clException)
+void clSSH::AcceptServerAuthentication() 
 {
     if(!m_session) {
         throw clException("NULL SSH session");
@@ -202,7 +202,7 @@ void clSSH::AcceptServerAuthentication() throw(clException)
     }                           \
     return false;
 
-bool clSSH::LoginPassword(bool throwExc) throw(clException)
+bool clSSH::LoginPassword(bool throwExc) 
 {
     if(!m_session) {
         THROW_OR_FALSE("NULL SSH session");
@@ -223,7 +223,7 @@ bool clSSH::LoginPassword(bool throwExc) throw(clException)
     return false;
 }
 
-bool clSSH::LoginInteractiveKBD(bool throwExc) throw(clException)
+bool clSSH::LoginInteractiveKBD(bool throwExc) 
 {
     if(!m_session) {
         THROW_OR_FALSE("NULL SSH session");
@@ -266,7 +266,7 @@ bool clSSH::LoginInteractiveKBD(bool throwExc) throw(clException)
     return false;
 }
 
-bool clSSH::LoginPublicKey(bool throwExc) throw(clException)
+bool clSSH::LoginPublicKey(bool throwExc) 
 {
     if(!m_session) {
         THROW_OR_FALSE("NULL SSH session");
@@ -301,7 +301,7 @@ void clSSH::Close()
     m_channel = NULL;
 }
 
-void clSSH::Login() throw(clException)
+void clSSH::Login() 
 {
     int rc;
 
@@ -326,7 +326,7 @@ void clSSH::Login() throw(clException)
     }
 }
 
-void clSSH::ExecuteShellCommand(wxEvtHandler* owner, const wxString& command) throw(clException)
+void clSSH::ExecuteShellCommand(wxEvtHandler* owner, const wxString& command) 
 {
     DoOpenChannel();
 
@@ -391,7 +391,7 @@ void clSSH::DoCloseChannel()
     m_channel = NULL;
 }
 
-void clSSH::DoOpenChannel() throw(clException)
+void clSSH::DoOpenChannel() 
 {
     if(m_channel) return;
 
@@ -421,7 +421,7 @@ void clSSH::DoOpenChannel() throw(clException)
     }
 }
 
-void clSSH::DoConnectWithRetries(int retries) throw(clException)
+void clSSH::DoConnectWithRetries(int retries) 
 {
     while(retries) {
         int rc = ssh_connect(m_session);

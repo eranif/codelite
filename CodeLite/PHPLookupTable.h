@@ -155,27 +155,31 @@ private:
      * @brief check the database disk image to see if it corrupted
      */
     bool CheckDiskImage(wxSQLite3Database& db, const wxFileName& filename);
-    
+
 public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
-    
+
     /**
      * @brief rebuild the class cache
      */
     void RebuildClassCache();
-    
+    /**
+     * @brief return the function closest to a given function and line number
+     */
+    PHPEntityBase::Ptr_t FindFunctionNearLine(const wxFileName& filename, int lineNumber);
+
     /**
      * @brief add class name to the class cache
      * @param classname
      */
     void UpdateClassCache(const wxString& classname);
-    
+
     /**
      * @brief check if a class exists in the cache
      */
     bool ClassExists(const wxString& classname) const;
-    
+
     void SetSizeLimit(size_t sizeLimit) { this->m_sizeLimit = sizeLimit; }
     /**
      * @brief return the entity at a given file/line
@@ -291,7 +295,7 @@ public:
      * @param parentId the function database ID
      */
     PHPEntityBase::List_t LoadFunctionArguments(wxLongLong parentId);
-    
+
     /**
      * @brief return reference to the underlying database
      */
@@ -313,7 +317,7 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
 
         wxStopWatch sw;
         sw.Start();
-        
+
         m_allClasses.clear(); // clear the cache
         m_db.Begin();
         for(size_t i = 0; i < files.GetCount(); ++i) {

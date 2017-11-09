@@ -2229,7 +2229,7 @@
     }, {
      "type": "bool",
      "m_label": "Enable Window Persistency:",
-     "m_value": true
+     "m_value": false
     }, {
      "type": "string",
      "m_label": "Title:",
@@ -2237,7 +2237,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": ""
+     "m_path": "git:UI"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -2384,7 +2384,7 @@
         }, {
          "type": "string",
          "m_label": "Sash Position:",
-         "m_value": "0"
+         "m_value": "150"
         }],
        "m_events": [],
        "m_children": [{
@@ -2556,11 +2556,11 @@
               }, {
                "type": "string",
                "m_label": "Minimum Pane Size:",
-               "m_value": "100"
+               "m_value": "150"
               }, {
                "type": "string",
                "m_label": "Sash Position:",
-               "m_value": "0"
+               "m_value": "150"
               }],
              "m_events": [],
              "m_children": [{
@@ -6013,7 +6013,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "879,600"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -6073,7 +6073,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": ""
+     "m_path": "git:UI"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -6082,11 +6082,11 @@
     }, {
      "type": "string",
      "m_label": "Inherited Class",
-     "m_value": ""
+     "m_value": "GitDiffDlg"
     }, {
      "type": "string",
      "m_label": "File:",
-     "m_value": ""
+     "m_value": "gitDiffDlg"
     }, {
      "type": "string",
      "m_label": "Class Decorator",
@@ -6212,15 +6212,15 @@
         }, {
          "type": "string",
          "m_label": "Sash Gravity:",
-         "m_value": "0.5"
+         "m_value": "0"
         }, {
          "type": "string",
          "m_label": "Minimum Pane Size:",
-         "m_value": "10"
+         "m_value": "100"
         }, {
          "type": "string",
          "m_label": "Sash Position:",
-         "m_value": "0"
+         "m_value": "100"
         }],
        "m_events": [],
        "m_children": [{
@@ -6658,7 +6658,7 @@
               }, {
                "type": "string",
                "m_label": "Size:",
-               "m_value": ""
+               "m_value": "600,400"
               }, {
                "type": "string",
                "m_label": "Minimum Size:",

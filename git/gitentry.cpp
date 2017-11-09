@@ -115,6 +115,14 @@ void GitEntry::FromJSON(const JSONElement& json)
         entry.FromJSON(arrCommands.arrayItem(i));
         m_commandsMap.insert(std::make_pair(entry.GetCommandname(), entry));
     }
+
+    // Load the workspace info: each known workspace name & its known projects' repo paths
+    JSONElement arrWorkspaces = json.namedObject("Workspaces");
+    for(int i = 0; i < arrWorkspaces.arraySize(); ++i) {
+        GitWorkspace workspace;
+        workspace.FromJSON(arrWorkspaces.arrayItem(i));
+        m_workspacesMap.insert(std::make_pair(workspace.GetWorkspaceName(), workspace));
+    }
 }
 
 JSONElement GitEntry::ToJSON() const
@@ -150,6 +158,13 @@ JSONElement GitEntry::ToJSON() const
     GitCommandsEntriesMap_t::const_iterator iter = m_commandsMap.begin();
     for(; iter != m_commandsMap.end(); ++iter) {
         iter->second.ToJSON(arrCommands);
+    }
+    // and the workspace info
+    JSONElement arrWorkspaces = JSONElement::createArray("Workspaces");
+    json.append(arrWorkspaces);
+    GitWorkspaceMap_t::const_iterator it = m_workspacesMap.begin();
+    for(; it != m_workspacesMap.end(); ++it) {
+        it->second.ToJSON(arrWorkspaces);
     }
     return json;
 }
@@ -337,6 +352,46 @@ void GitEntry::DeleteEntry(const wxString& workspace)
     }
 }
 
+wxString GitEntry::GetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName)
+{
+    wxString path; 
+    if(workspaceName.empty() || projectName.empty()) return "";
+
+    GitWorkspaceMap_t::iterator iter;
+    
+    if (!m_workspacesMap.count(workspaceName)) {
+        // A new workspace so add it
+        GitWorkspace workspace(workspaceName);
+        m_workspacesMap.insert(std::make_pair(workspaceName, workspace));
+    }
+    iter = m_workspacesMap.find(workspaceName);
+    wxCHECK_MSG(iter != m_workspacesMap.end(), path, "Failed to add a workspace to the entry");
+
+    GitWorkspace workspace = iter->second;
+    path = workspace.GetProjectLastRepoPath(projectName);
+
+    return path;
+}
+
+void GitEntry::SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName, const wxString& lastRepoPath)
+{
+    if(workspaceName.empty() || projectName.empty()) return;
+
+    GitWorkspaceMap_t::iterator iter;
+    
+    if (!m_workspacesMap.count(workspaceName)) {
+        // A new workspace so add it
+        GitWorkspace workspace(workspaceName);
+        m_workspacesMap.insert(std::make_pair(workspaceName, workspace));
+    }
+    iter = m_workspacesMap.find(workspaceName);
+    wxCHECK_RET(iter != m_workspacesMap.end(), "Failed to add a workspace to the entry");
+
+    GitWorkspace& workspace = iter->second;
+    workspace.SetProjectLastRepoPath(projectName, lastRepoPath);
+}
+
+
 void GitCommandsEntries::FromJSON(const JSONElement& json)
 {
     m_commands.clear();
@@ -369,4 +424,31 @@ void GitCommandsEntries::ToJSON(JSONElement& arr) const
         commandsArr.arrayAppend(e);
     }
     arr.arrayAppend(obj);
+}
+
+const wxString GitWorkspace::GetProjectLastRepoPath(const wxString& projectName)
+{
+    return m_projectData[projectName];
+}
+
+void GitWorkspace::SetProjectLastRepoPath(const wxString& projectName, const wxString& lastRepoPath)
+{
+    m_projectData[projectName] = lastRepoPath;
+}
+
+void GitWorkspace::FromJSON(const JSONElement& json)
+{
+    m_projectData.clear();
+    SetWorkspaceName(json.namedObject("m_workspaceName").toString());
+    m_projectData = json.namedObject("m_projectData").toStringMap();
+}
+
+void GitWorkspace::ToJSON(JSONElement& arr) const
+{
+    if (!GetWorkspaceName().empty()) {
+        JSONElement json = JSONElement::createObject(GetWorkspaceName());
+        json.addProperty("m_workspaceName", GetWorkspaceName());
+        json.addProperty("m_projectData", m_projectData);
+        arr.arrayAppend(json);
+    }
 }

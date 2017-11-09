@@ -56,7 +56,6 @@ protected:
     virtual void OnToolExportAll(wxAuiToolBarEvent& event);
     virtual void OnExportSelective(wxCommandEvent& event);
     virtual void OnImport(wxCommandEvent& event);
-    virtual void OnExport(wxCommandEvent& event);
     virtual void OnNewTheme(wxCommandEvent& event);
     virtual void OnSelTextFgChanged(wxColourPickerEvent& event);
     virtual void OnUseCustomFgTextColour(wxCommandEvent& event);
@@ -94,6 +93,7 @@ protected:
     void DoUpdatePreview();
     void DoSetGlobalBgColour(const wxColour& colour);
     void DoShowTooltipForGlobalBgColourChanged();
+    void DoExport(const wxArrayString& lexers = wxArrayString());
 
 public:
     /** Constructor */

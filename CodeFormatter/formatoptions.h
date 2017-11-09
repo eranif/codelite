@@ -205,7 +205,6 @@ private:
      * editor settings (namely: tab vs spaces, and tab width)
      */
     wxString ClangGlobalSettings() const;
-    void AutodetectSettings();
 
     /**
      * @brief Check if there is a file of the given name in any of the parent directories of the input file
@@ -216,6 +215,7 @@ public:
     FormatOptions();
     virtual ~FormatOptions();
 
+    void AutodetectSettings();
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
     bool HasFlag(eCF_GeneralOptions flag) const

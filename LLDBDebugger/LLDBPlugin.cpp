@@ -146,6 +146,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL, this);
     Bind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
+    wxTheApp->Bind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
 }
 
 void LLDBPlugin::UnPlug()
@@ -206,6 +207,7 @@ void LLDBPlugin::UnPlug()
         wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(LLDBPlugin::OnDebugNextInst), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL, this);
+    wxTheApp->Unbind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
 }
 
 LLDBPlugin::~LLDBPlugin() {}
@@ -231,7 +233,6 @@ void LLDBPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
             settingsMenu = mb->GetMenu(menuPos);
             if(settingsMenu) {
                 settingsMenu->Append(XRCID("lldb_settings"), _("LLDB Settings..."));
-                settingsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
             }
         }
     }

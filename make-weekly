@@ -3,168 +3,54 @@
 # Clear old installers
 os_name=`uname -s`
 no_upload=$1
-is_32_bit_windows=`uname -a|grep i686|wc -l`
 
-if [ "${is_32_bit_windows}" = "1" ]; then
-    echo "Windows 32 bit detected"
+cd build-release
+curdir=`pwd`
+builddir=`basename ${curdir}`
+if [ ${builddir} != "build-release" ]; then
+    echo "You must run this script from CodeLite root folder"
+    exit -1
 fi
 
-if [ ${os_name} = "CYGWIN_NT-6.1" ] || [ ${os_name} = "CYGWIN_NT-6.3-WOW" ]; then
-    echo Building CodeLite for Windows...
-    # Windows
-    cd /cygdrive/c/src/codelite
-    # Update our source tree
-    echo "Pulling CodeLite changes..."
-    git pull --rebase 
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-    
-    echo "Pulling wxCrafter changes..."
-    cd wxcrafter
-    git pull --rebase
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-    cd ..
-
-    # Initiate the build
-    if [ "${is_32_bit_windows}" = "1" ]; then
-        export PATH=/cygdrive/c/Program\ Files\ \(x86\)/CodeLite:/cygdrive/c/Program\ Files\ \(x86\)/Inno\ Setup\ 5/:$PATH
-        export WXCFG=gcc_dll/mswu
-        export WXWIN=C:/src/wxWidgets.git
-
-        cmd /c "C:\Program Files (x86)\CodeLite\codelite-make.exe"  \
-            --workspace=LiteEditor.workspace                        \
-            --project=CodeLiteIDE --config=Win_x86_Release --execute
-        
-        # Build wxCrafter
-        echo Building wxCrafter for Windows...
-        cd /cygdrive/c/src/codelite/wxcrafter
-        
-        # Initiate the build
-        cmd /c "C:\Program Files (x86)\CodeLite\codelite-make.exe"  \
-            --workspace=wxcrafter.workspace                         \
-            --project=wxcrafter --config=Win_x64_Release --execute
-        
-        # Build wxCrafter
-        echo Building Utils for Windows...
-        cd /cygdrive/c/src/codelite/codelite_utils
-        
-        # Initiate the build
-        cmd /c "C:\Program Files (x86)\CodeLite\codelite-make.exe"  \
-            --workspace=codelite_utils.workspace                    \
-            --project=build_all --config=Win_x64_Release --execute
-        # Package
-        cd /cygdrive/c/src/codelite/InnoSetup
-        rm -f output/*.exe
-        # Compile
-        iscc codelite_mingw.iss
-    else
-        export PATH=/cygdrive/c/Program\ Files/CodeLite:/cygdrive/d/software/Inno\ Setup\ 5/:$PATH
-        export WXCFG=gcc_dll/mswu
-        export WXWIN=D:/src/wxWidgets.git
-
-        cmd /c "C:\Program Files/CodeLite/codelite-make.exe"        \
-            --workspace=LiteEditor.workspace                        \
-            --project=CodeLiteIDE --config=Win_x64_Release --execute
-        
-        # Build wxCrafter
-        echo Building wxCrafter for Windows...
-        cd /cygdrive/c/src/codelite/wxcrafter
-        
-        # Initiate the build
-        cmd /c "C:\Program Files/CodeLite/codelite-make.exe"        \
-            --workspace=wxcrafter.workspace                         \
-            --project=wxcrafter --config=Win_x64_Release --execute
-        
-        # Build wxCrafter
-        echo Building Utils for Windows...
-        cd /cygdrive/c/src/codelite/codelite_utils
-        
-        # Initiate the build
-        cmd /c "C:\Program Files/CodeLite/codelite-make.exe"                                     \
-            --workspace=codelite_utils.workspace                    \
-            --project=build_all --config=Win_x64_Release --execute
-            
-        # Package
-        cd /cygdrive/c/src/codelite/InnoSetup
-        rm -f output/*.exe
-    
-        # Compile
-        iscc codelite64_mingw.iss
-    fi
-    
-    # upload the binaries
-    if [ "${no_upload}" != "--no-upload" ]; then
-        cd output
-        ./finalize-upload.sh
-        #output_file=`ls -l *.exe |awk '{print $9;}'`
-        #output_file_7z="${output_file%.*}"
-        #output_file_7z=${output_file_7z}.7z
-        #
-        ## Zip it
-        #echo `pwd`
-        #echo "Generating 7z file and uploading it..."
-        #echo /usr/bin/7za a ${output_file_7z} ${output_file}
-        #7za a ${output_file_7z} ${output_file}
-        #scp ${output_file_7z} root@codelite.org:/var/www/html/downloads/codelite/wip
-        #
-        ## update the owner
-        #ssh root@codelite.org 'chown -R www-data:www-data /var/www/html/downloads/codelite/wip'
-        #
-        #echo "Generating 7z file and uploading it...done"
-    fi
-    
+# Clear old installers
+os_name=`uname -s`
+if [ ${os_name} == "Darwin" ]; then
+    echo rm -f codelite.app.tar.gz
+    rm -f codelite.app.tar.gz
 else
-    cd build-release
-    curdir=`pwd`
-    builddir=`basename ${curdir}`
-    if [ ${builddir} != "build-release" ]; then
-        echo "You must run this script from CodeLite root folder"
-        exit -1
-    fi
+    echo rm -fr *.deb
+    rm -fr *.deb
+fi
 
-    # Clear old installers
-    os_name=`uname -s`
-    if [ ${os_name} == "Darwin" ]; then
-        echo rm -f codelite.app.tar.gz
-        rm -f codelite.app.tar.gz
-    else
-        echo rm -fr *.deb
-        rm -fr *.deb
-    fi
+# Update our source tree
+echo "Pulling CodeLite changes..."
+git pull --rebase 
+if [ $? -ne 0 ]; then
+    exit $?
+fi
 
-    # Update our source tree
-    echo "Pulling CodeLite changes..."
-    git pull --rebase 
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+echo "Pulling wxCrafter changes..."
+cd ../wxcrafter
+git pull --rebase
+if [ $? -ne 0 ]; then
+    exit $?
+fi
+cd ../build-release
 
-    echo "Pulling wxCrafter changes..."
-    cd ../wxcrafter
-    git pull --rebase
-    if [ $? -ne 0 ]; then
-        exit $?
+# Build and upload
+if [ ${os_name} == "Darwin" ]; then
+    cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
+    make -j4 && make install
+    if [ "${no_upload}" != "--no-upload" ]; then
+        tar cvfz codelite.app.tar.gz codelite.app/*
+        scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
-    cd ../build-release
-
-    # Build and upload
-    if [ ${os_name} == "Darwin" ]; then
-        cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
-        make -j4 && make install
-        if [ "${no_upload}" != "--no-upload" ]; then
-            tar cvfz codelite.app.tar.gz codelite.app/*
-            scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
-        fi
-    else
-        cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
-        make -j4 && make package
-        if [ "${no_upload}" != "--no-upload" ]; then
-            deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
-            echo Uploading deb file ${deb_file}
-            scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/wip
-        fi
+else
+    cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+    make -j4 && make package
+    if [ "${no_upload}" != "--no-upload" ]; then
+        deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
+        echo Uploading deb file ${deb_file}
+        scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
 fi

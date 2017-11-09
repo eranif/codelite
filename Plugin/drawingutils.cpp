@@ -22,17 +22,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/app.h>
-#include <wx/panel.h>
-#include "wx/settings.h"
 #include "drawingutils.h"
 #include "editor_config.h"
-#include "wx/dc.h"
-#include <wx/graphics.h>
-#include <wx/dcclient.h>
-#include <wx/dcmemory.h>
 #include "globals.h"
 #include "ieditor.h"
+#include "wx/dc.h"
+#include "wx/settings.h"
+#include <wx/app.h>
+#include <wx/dcclient.h>
+#include <wx/dcmemory.h>
+#include <wx/graphics.h>
+#include <wx/image.h>
+#include <wx/panel.h>
 #include <wx/stc/stc.h>
 
 #ifdef __WXMSW__
@@ -41,13 +42,13 @@
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
-#define DEFAULT_FONT_SIZE 11
+#define DEFAULT_FONT_SIZE 12
 #elif defined(__WXMAC__)
 #define DEFAULT_FACE_NAME "monaco"
 #define DEFAULT_FONT_SIZE 12
 #else // GTK, FreeBSD etc
 #define DEFAULT_FACE_NAME "monospace"
-#define DEFAULT_FONT_SIZE 11
+#define DEFAULT_FONT_SIZE 12
 #endif
 
 #ifdef __WXGTK20__
@@ -182,9 +183,7 @@ static void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 
 wxColor DrawingUtils::LightColour(const wxColour& color, float percent)
 {
-    if(percent == 0) {
-        return color;
-    }
+    if(percent == 0) { return color; }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -230,8 +229,8 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
     }
 }
 
-void DrawingUtils::PaintStraightGradientBox(
-    wxDC& dc, const wxRect& rect, const wxColour& startColor, const wxColour& endColor, bool vertical)
+void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor,
+                                            const wxColour& endColor, bool vertical)
 {
     int rd, gd, bd, high = 0;
     rd = endColor.Red() - startColor.Red();
@@ -268,8 +267,8 @@ void DrawingUtils::PaintStraightGradientBox(
     dc.SetBrush(savedBrush);
 }
 
-void DrawingUtils::DrawVerticalButton(
-    wxDC& dc, const wxRect& rect, const bool& focus, const bool& leftTabs, bool vertical, bool hover)
+void DrawingUtils::DrawVerticalButton(wxDC& dc, const wxRect& rect, const bool& focus, const bool& leftTabs,
+                                      bool vertical, bool hover)
 {
     wxColour lightGray = GetGradient();
 
@@ -305,8 +304,8 @@ void DrawingUtils::DrawVerticalButton(
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
 }
 
-void DrawingUtils::DrawHorizontalButton(
-    wxDC& dc, const wxRect& rect, const bool& focus, const bool& upperTabs, bool vertical, bool hover)
+void DrawingUtils::DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool& focus, const bool& upperTabs,
+                                        bool vertical, bool hover)
 {
     wxColour lightGray = GetGradient();
     wxColour topStartColor(wxT("WHITE"));
@@ -381,9 +380,7 @@ wxColour DrawingUtils::GetGradient()
 
 wxColor DrawingUtils::DarkColour(const wxColour& color, float percent)
 {
-    if(percent == 0) {
-        return color;
-    }
+    if(percent == 0) { return color; }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -496,6 +493,7 @@ wxColor DrawingUtils::GetMenuBarBgColour()
 {
 #ifdef __WXGTK__
     static bool intitialized(false);
+    // initialise default colour
     static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
 
     if(!intitialized) {
@@ -521,6 +519,39 @@ wxColor DrawingUtils::GetMenuBarBgColour()
     return textColour;
 #else
     return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+#endif
+}
+
+wxColor DrawingUtils::GetMenuBarTextColour()
+{
+#ifdef __WXGTK__
+    static bool intitialized(false);
+    // initialise default colour
+    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT));
+
+    if(!intitialized) {
+        // try to get the background colour from a menu
+        GtkWidget* menuBar = gtk_menu_bar_new();
+#ifdef __WXGTK3__
+        GdkRGBA col;
+        GtkStyleContext* context = gtk_widget_get_style_context(menuBar);
+        gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
+        textColour = wxColour(col);
+#else
+        GtkStyle* def = gtk_rc_get_style(menuBar);
+        if(!def) def = gtk_widget_get_default_style();
+
+        if(def) {
+            GdkColor col = def->fg[GTK_STATE_NORMAL];
+            textColour = wxColour(col);
+        }
+#endif
+        gtk_widget_destroy(menuBar);
+        intitialized = true;
+    }
+    return textColour;
+#else
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
 #endif
 }
 
@@ -554,9 +585,7 @@ wxColor DrawingUtils::GetTextCtrlBgColour()
 wxColor DrawingUtils::GetOutputPaneFgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    if(col.IsEmpty()) {
-        return GetTextCtrlTextColour();
-    }
+    if(col.IsEmpty()) { return GetTextCtrlTextColour(); }
 
     return wxColour(col);
 }
@@ -564,9 +593,7 @@ wxColor DrawingUtils::GetOutputPaneFgColour()
 wxColor DrawingUtils::GetOutputPaneBgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    if(col.IsEmpty()) {
-        return GetTextCtrlBgColour();
-    }
+    if(col.IsEmpty()) { return GetTextCtrlBgColour(); }
 
     return wxColour(col);
 }
@@ -623,15 +650,16 @@ bool DrawingUtils::GetGCDC(wxDC& dc, wxGCDC& gdc)
 
 wxColour DrawingUtils::GetAUIPaneBGColour()
 {
-    // Now set the bg colour. It must be done after setting
-    // the pen colour
-    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    if(!DrawingUtils::IsDark(bgColour)) {
-        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    } else {
-        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
-    }
-    return bgColour;
+    return GetMenuBarBgColour();
+    //    // Now set the bg colour. It must be done after setting
+    //    // the pen colour
+    //    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+    //    if(!DrawingUtils::IsDark(bgColour)) {
+    //        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    //    } else {
+    //        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
+    //    }
+    //    return bgColour;
 }
 
 wxBrush DrawingUtils::GetStippleBrush()
@@ -728,4 +756,26 @@ clColourPalette DrawingUtils::GetColourPalette()
         }
     }
     return palette;
+}
+
+wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
+{
+    bool bDarkBG = IsDark(GetMenuBarBgColour());
+    wxImage img = bmp.ConvertToImage();
+    img = img.ConvertToGreyscale();
+    wxBitmap greyBmp(img);
+    if(bDarkBG) {
+        return greyBmp.ConvertToDisabled(20);
+
+    } else {
+        return greyBmp.ConvertToDisabled(255);
+    }
+}
+
+wxBitmap DrawingUtils::CreateGrayBitmap(const wxBitmap& bmp)
+{
+    wxImage img = bmp.ConvertToImage();
+    img = img.ConvertToGreyscale();
+    wxBitmap greyBmp(img);
+    return greyBmp;
 }

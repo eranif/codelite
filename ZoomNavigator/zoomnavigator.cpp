@@ -89,13 +89,10 @@ ZoomNavigator::ZoomNavigator(IManager* manager)
     m_topWindow->Connect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
-    m_topWindow->Connect(XRCID("zn_settings"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(ZoomNavigator::OnSettings),
-                         NULL,
-                         this);
+    EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged),
+                                  NULL, this);
+    m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &ZoomNavigator::OnToggleTab, this);
     DoInitialize();
 }
@@ -105,16 +102,13 @@ ZoomNavigator::~ZoomNavigator() {}
 void ZoomNavigator::UnPlug()
 {
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged),
+                                     NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
 
     m_topWindow->Disconnect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
-    m_topWindow->Disconnect(XRCID("zn_settings"),
-                            wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(ZoomNavigator::OnSettings),
-                            NULL,
-                            this);
+    m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &ZoomNavigator::OnToggleTab, this);
 
     // Remove the tab if it's actually docked in the workspace pane
@@ -155,8 +149,8 @@ void ZoomNavigator::DoInitialize()
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
     if(IsZoomPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(
-            book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, false, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, false, wxNullBitmap,
+                                            wxSize(200, 200));
         zoompane = new wxPanel(cp);
         cp->SetChildNoReparent(zoompane);
 
@@ -177,8 +171,8 @@ void ZoomNavigator::DoInitialize()
     cbEnablePlugin->SetValue(data.IsEnabled());
     bs->Add(cbEnablePlugin, 0, wxEXPAND);
 
-    cbEnablePlugin->Connect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ZoomNavigator::OnEnablePlugin), NULL, this);
+    cbEnablePlugin->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ZoomNavigator::OnEnablePlugin), NULL,
+                            this);
     zoompane->SetSizer(bs);
 }
 
@@ -371,7 +365,7 @@ void ZoomNavigator::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, zoompane, ZOOM_PANE_TITLE, true);
+        m_mgr->GetWorkspacePaneNotebook()->AddPage(zoompane, ZOOM_PANE_TITLE, false);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(ZOOM_PANE_TITLE);
         if(where != wxNOT_FOUND) {

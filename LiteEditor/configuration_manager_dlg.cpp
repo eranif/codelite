@@ -101,6 +101,7 @@ void ConfigurationManagerDlg::AddEntry(const wxString& projectName, const wxStri
 
 void ConfigurationManagerDlg::PopulateConfigurations()
 {
+    m_pgMgr->GetGrid()->Clear();
     // popuplate the configurations
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
     if(!matrix) {
@@ -135,7 +136,6 @@ void ConfigurationManagerDlg::PopulateConfigurations()
     wxArrayString projects;
     ManagerST::Get()->GetProjectList(projects);
     projects.Sort(wxStringCmpFunc);
-
     for(size_t i = 0; i < projects.GetCount(); i++) {
         wxString selConf = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), projects.Item(i));
         AddEntry(projects.Item(i), selConf);

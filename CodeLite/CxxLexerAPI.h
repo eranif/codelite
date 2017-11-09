@@ -58,16 +58,20 @@
 #endif
 
 enum eLexerOptions {
-    kLexerOpt_None = 0x00000000,
-    kLexerOpt_ReturnComments = 0x00000001,
-    kLexerOpt_ReturnWhitespace = 0x00000002,
-    kLexerOpt_CollectMacroValueNumbers = 0x00000004,
-    kLexerOpt_DontCollectMacrosDefinedInThisFile = 0x00000008,
+    /// Options
+    kLexerOpt_None = 0,
+    kLexerOpt_ReturnComments = (1 << 0),
+    kLexerOpt_ReturnWhitespace = (1 << 1),
+    kLexerOpt_CollectMacroValueNumbers = (1 << 2),
+    kLexerOpt_DontCollectMacrosDefinedInThisFile = (1 << 3),
+    /// states
+    kLexerState_InPreProcessor = (1 << 10),
 };
 
 enum class eCxxStandard { kCxx03, kCxx11 };
 
-struct WXDLLIMPEXP_CL CxxLexerException {
+struct WXDLLIMPEXP_CL CxxLexerException
+{
     wxString message;
     CxxLexerException(const wxString& msg)
         : message(msg)
@@ -75,7 +79,8 @@ struct WXDLLIMPEXP_CL CxxLexerException {
     }
 };
 
-struct WXDLLIMPEXP_CL CxxLexerToken {
+struct WXDLLIMPEXP_CL CxxLexerToken
+{
     int lineNumber;
     int column;
     char* text;
@@ -134,15 +139,14 @@ public:
     }
 
     ~CxxLexerToken() { deleteText(); }
-
-    bool IsPreProcessor() const { return ((type >= 400) && (type < 500)); }
     bool IsEOF() const { return type == 0; }
 
     typedef std::vector<CxxLexerToken> Vect_t;
     typedef std::list<CxxLexerToken> List_t;
 };
 
-struct WXDLLIMPEXP_CL CxxPreProcessorToken {
+struct WXDLLIMPEXP_CL CxxPreProcessorToken
+{
     wxString name;
     wxString value;
     bool deleteOnExit;
@@ -155,7 +159,8 @@ struct WXDLLIMPEXP_CL CxxPreProcessorToken {
 /**
  * @class CppLexerUserData
  */
-struct WXDLLIMPEXP_CL CppLexerUserData {
+struct WXDLLIMPEXP_CL CppLexerUserData
+{
 private:
     size_t m_flags;
     wxString m_comment;
@@ -192,6 +197,12 @@ public:
      */
     bool IsCollectingComments() const { return m_flags & kLexerOpt_ReturnComments; }
     bool IsCollectingWhitespace() const { return m_flags & kLexerOpt_ReturnWhitespace; }
+    bool IsInPreProcessorSection() const { return m_flags & kLexerState_InPreProcessor; }
+    void SetPreProcessorSection(bool b)
+    {
+        b ? m_flags |= kLexerState_InPreProcessor : m_flags &= ~kLexerState_InPreProcessor;
+    }
+
     //==--------------------
     // Comment management
     //==--------------------

@@ -38,8 +38,7 @@
 #include "php_event.h"
 #include "PHPExpression.h"
 
-struct PHPLocation
-{
+struct PHPLocation {
     wxString what;     // Token name
     wxString filename; // file name (absolute path)
     int linenumber;    // line number within filename
@@ -98,13 +97,13 @@ private:
     void OnInsertDoxyBlock(clCodeCompletionEvent& e);
     void OnRetagWorkspace(wxCommandEvent& event);
     void OnParseEnded(clParseEvent& event);
-    
+    void OnUpdateNavigationBar(clCodeCompletionEvent& e);
     // Workspace events
     void OnFileSaved(clCommandEvent& event);
     void DoSelectInEditor(IEditor* editor, const wxString& what, int from);
 
     void DoOpenEditorForEntry(PHPEntityBase::Ptr_t entry);
-    
+
 public:
     /**
      * @brief go to the definition of the word starting at pos

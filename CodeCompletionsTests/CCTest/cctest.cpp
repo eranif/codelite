@@ -152,7 +152,7 @@ TEST_FUNC(testTtp)
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "smart_ptr_of_template.h"), 3,
                                                  wxT("ttp->GetRoot()->GetData()."),
                                                  LoadFile(GetTestsDir() + "smart_ptr_of_template.h"), tags);
-    CHECK_SIZE(tags.size(), 101);
+    CHECK_SIZE(tags.size(), 88);
 
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "smart_ptr_of_template.h"), 3,
                                                  wxT("ttp->GetRoot()->GetKey()."),
@@ -186,7 +186,7 @@ TEST_FUNC(testStdVectorOfTagEntryPtr)
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "std_vec_tag_entry_ptr.h"), 3,
                                                  wxT("tags.at(0)->"),
                                                  LoadFile(GetTestsDir() + "std_vec_tag_entry_ptr.h"), tags);
-    CHECK_SIZE(tags.size(), 101);
+    CHECK_SIZE(tags.size(), 88);
 
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "std_vec_tag_entry_ptr.h"), 3,
                                                  wxT("tags.at(0)."),
@@ -347,14 +347,10 @@ TEST_FUNC(testTypedefIteratorInsideClass)
 TEST_FUNC(testStrcutDelcratorInFuncArgument)
 {
     std::vector<TagEntryPtr> tags;
-    wxString codeliteHome;
-    wxGetEnv(wxT("CL_HOME"), &codeliteHome);
-    wxString headerFile;
-    headerFile << codeliteHome << wxT("/SampleWorkspace/header.h");
-    wxFileName fn(headerFile);
-    fn.MakeAbsolute();
-    headerFile = fn.GetFullPath();
-    TagsManagerST::Get()->AutoCompleteCandidates(headerFile, 77, wxT("s->"), wxEmptyString, tags);
+    wxFileName fn(GetTestsDir() + "/../../SampleWorkspace/header.h");
+    fn.Normalize();
+    std::cout << "Opening file: " << fn.GetFullPath() << std::endl;
+    TagsManagerST::Get()->AutoCompleteCandidates(fn, 77, wxT("pString->"), wxEmptyString, tags);
     CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
     return true;
 }
@@ -442,6 +438,18 @@ TEST_FUNC(testDeclTypeInTemplate)
     return true;
 }
 
+TEST_FUNC(testWxArrayStringWitArrayInt)
+{
+    wxString buffer = "wxArrayInt choices;\n"
+                      "wxArrayString lexers;\n"
+                      "for(size_t i = 0; i < choices.GetCount(); ++i) {\n"
+                      "    lexers.Item(choices.Item(i)).";
+    std::vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName("dummy.h"), 4, "lexers.Item(choices.Item(i)).", buffer, tags);
+    CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
+    return true;
+}
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -451,7 +459,7 @@ void testCC()
 {
     // Load the tags database that is used during the test.
     std::cout << "Tests Dir is set to: " << GetTestsDir() << std::endl;
-    
+
     wxFileName fn(GetTestsDir() + "../../SampleWorkspace/.codelite/SampleWorkspace.tags");
     TagsManagerST::Get()->OpenDatabase(fn);
 
@@ -465,28 +473,6 @@ void testCC()
     Tester::Release();
     TagsManagerST::Free();
     LanguageST::Free();
-}
-
-void testStringSearcher()
-{
-#if 0
-    int      pos(0);
-    int      match_len(0);
-    wxString m_word  = wxT("clMainFrame");
-    size_t   offset = 0;
-    wxString m_str = LoadFile(wxT("/home/eran/devl/codelite/LiteEditor/frame.cpp"));
-
-    const wchar_t* pin   = m_str.c_str().AsWChar();
-    const wchar_t* pword = m_word.c_str().AsWChar();
-    while ( StringFindReplacer::Search(pin, offset, pword, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len) ) {
-        // add result
-        std::pair<int, int> match;
-        match.first = pos;
-        match.second = match_len;
-
-        offset = pos + match_len;
-    }
-#endif
 }
 
 void testRetagWorkspace()
@@ -546,8 +532,24 @@ int main(int argc, char** argv)
 {
     // Initialize the wxWidgets library
     wxInitializer initializer;
+    TagsManagerST::Get()->SetCodeLiteIndexerPath("C:/Program Files/CodeLite/codelite_indexer.exe");
+    TagsManagerST::Get()->StartCodeLiteIndexer();
+    TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer("enum class FooShort : short {"
+                                                                 "    short_apple,"
+                                                                 "    short_banana,"
+                                                                 "    short_orange,"
+                                                                 "};");
+    tags = TagsManagerST::Get()->ParseBuffer("class MyClass {"
+                                             "    enum Foo {"
+                                             "        apple,"
+                                             "        banana,"
+                                             "        orange,"
+                                             "    };"
+                                             "};");
+
     // testRetagWorkspace();
     // testStringSearcher();
     testCC();
+    TagsManagerST::Free();
     return 0;
 }

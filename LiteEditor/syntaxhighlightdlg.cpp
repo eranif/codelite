@@ -54,27 +54,27 @@
 #include <wx/utils.h>
 #include "cl_config.h"
 #include <wx/richtooltip.h>
+#include "fileutils.h"
 
 #define CXX_AND_JAVASCRIPT "c++"
 
 bool SyntaxHighlightDlg::m_globalBgColourChangedTooltipShown = false;
 
-const wxString sampleText =
-    "class Demo {\n"
-    "private:\n"
-    "    std::string m_str;\n"
-    "    int m_integer;\n"
-    "    \n"
-    "public:\n"
-    "    /**\n"
-    "     * Creates a new demo.\n"
-    "     * @param o The object\n"
-    "     */\n"
-    "    Demo(const Demo &other) {\n"
-    "        m_str = other.m_str;\n"
-    "        m_integer = other.m_integer;\n"
-    "    }\n"
-    "}";
+const wxString sampleText = "class Demo {\n"
+                            "private:\n"
+                            "    std::string m_str;\n"
+                            "    int m_integer;\n"
+                            "    \n"
+                            "public:\n"
+                            "    /**\n"
+                            "     * Creates a new demo.\n"
+                            "     * @param o The object\n"
+                            "     */\n"
+                            "    Demo(const Demo &other) {\n"
+                            "        m_str = other.m_str;\n"
+                            "        m_integer = other.m_integer;\n"
+                            "    }\n"
+                            "}";
 
 SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     : SyntaxHighlightBaseDlg(parent)
@@ -389,7 +389,7 @@ void SyntaxHighlightDlg::OnItemSelected(wxCommandEvent& event)
             bool bold = p.IsBold();
 
             wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, p.GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
-                bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, p.GetUnderlined(), face);
+                                 bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, p.GetUnderlined(), face);
             m_fontPicker->SetSelectedFont(font);
             m_bgColourPicker->SetColour(bgColour);
             m_colourPicker->SetColour(colour);
@@ -482,7 +482,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
         wxString face = p.GetFaceName();
         bool bold = p.IsBold();
         initialFont = wxFont(size, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL,
-            bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, false, face);
+                             bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, false, face);
     }
     initialStyleWithinPreProcessor = m_lexer->GetStyleWithinPreProcessor();
     const StyleProperty& defaultStyle = m_lexer->GetProperty(0);
@@ -583,32 +583,6 @@ void SyntaxHighlightDlg::OnNewTheme(wxCommandEvent& event)
     }
 }
 
-void SyntaxHighlightDlg::OnExport(wxCommandEvent& event)
-{
-    // Get list of choices
-    wxArrayString lexers = ColoursAndFontsManager::Get().GetAllLexersNames();
-    wxArrayInt choices;
-    if(::wxGetSelectedChoices(choices, _("Select which lexers you wish to export"), _("Export Lexers"), lexers, this) ==
-        wxNOT_FOUND) {
-        return;
-    }
-
-    // Select the 'save' path
-    wxString path = ::wxFileSelector(
-        _("Save as"), "", "MySettings.zip", "", wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-    if(path.IsEmpty()) return;
-
-    clZipWriter zw(path);
-    for(size_t i = 0; i < choices.GetCount(); ++i) {
-        wxString file;
-        file << "lexer_" << lexers.Item(choices.Item(i)).Lower() << "_*.xml";
-        zw.AddDirectory(clStandardPaths::Get().GetUserLexersDir(), file);
-    }
-    zw.Close();
-
-    ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
-}
-
 void SyntaxHighlightDlg::OnImport(wxCommandEvent& event)
 {
     wxString path = ::wxFileSelector(_("Select file"), "", "", "", "Zip Files (*.zip)|*.zip", wxFD_OPEN);
@@ -616,42 +590,44 @@ void SyntaxHighlightDlg::OnImport(wxCommandEvent& event)
 
     wxFileName fn(path);
     clZipReader zr(fn);
-    zr.Extract("*", clStandardPaths::Get().GetUserLexersDir());
+    zr.Extract("lexers.json", clStandardPaths::Get().GetTempDir());
 
-    // reload the settings
-    ColoursAndFontsManager::Get().Reload();
-    EndModal(wxID_OK);
-
-    // relaunch the dialog
-    wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
+    wxFileName fileToImport(clStandardPaths::Get().GetTempDir(), "lexers.json");
+    if(ColoursAndFontsManager::Get().ImportLexersFile(fileToImport, true)) {
+        EndModal(wxID_OK);
+        // relaunch the dialog
+        wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
+        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
+    }
 }
 
-void SyntaxHighlightDlg::OnExportSelective(wxCommandEvent& event) { OnExport(event); }
-
-void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event)
+void SyntaxHighlightDlg::OnExportSelective(wxCommandEvent& event)
 {
     // Get list of choices
-    wxArrayString lexers = ColoursAndFontsManager::Get().GetAllLexersNames();
-    // Select the 'save' path
-    wxString path = ::wxFileSelector(
-        _("Save as"), "", "MySettings.zip", "", wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-    if(path.IsEmpty()) return;
-
-    clZipWriter zw(path);
-    zw.AddDirectory(clStandardPaths::Get().GetUserLexersDir(), "*.json");
-    zw.Close();
-
-    ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
+    wxArrayString lexers = ColoursAndFontsManager::Get().GetAllThemes();
+    wxArrayInt choices;
+    if(::wxGetSelectedChoices(choices, _("Select which themes to export:"), _("Export Themes"), lexers, this) ==
+       wxNOT_FOUND) {
+        return;
+    }
+    wxArrayString lexersToExport;
+    for(size_t i = 0; i < choices.GetCount(); ++i) {
+        wxString lexerName = lexers.Item(choices.Item(i)).Lower();
+        lexersToExport.push_back(lexerName);
+    }
+    DoExport(lexersToExport);
 }
 
-void SyntaxHighlightDlg::OnToolExportAll(wxAuiToolBarEvent& event) { OnExportAll(event); }
+void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event) { DoExport(); }
+
+void SyntaxHighlightDlg::OnToolExportAll(wxAuiToolBarEvent& event) { DoExport(); }
+
 void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 {
     // Ask for confirmation
     if(::wxMessageBox(_("Are you sure you want to restore colours to factory defaults?\nBy choosing 'Yes', you will "
                         "lose all your local modifications"),
-           _("Confirm"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER, this) == wxYES) {
+                      _("Confirm"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER, this) == wxYES) {
         // Restore defaults
         ColoursAndFontsManager::Get().RestoreDefaults();
         // Dismiss the dialog
@@ -665,7 +641,7 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
 {
     wxFileDialog selector(this, _("Select eclipse XML theme file"), "", "", "Eclipse Theme Files (*.xml)|*.xml",
-        wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+                          wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
     if(selector.ShowModal() == wxID_OK) {
         wxArrayString files;
         selector.GetPaths(files);
@@ -703,8 +679,8 @@ void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
         LexerConf::Ptr_t lexerText =
             ColoursAndFontsManager::Get().GetLexer("text", m_choiceGlobalTheme->GetStringSelection());
         CHECK_PTR_RET(lexerText);
-        wxColour bgColour = lexerText->IsDark() ? wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) :
-                                                  wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+        wxColour bgColour = lexerText->IsDark() ? wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
+                                                : wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         m_colourPickerOutputPanesBgColour->SetColour(bgColour);
         CallAfter(&SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged);
     }
@@ -735,11 +711,36 @@ void SyntaxHighlightDlg::DoSetGlobalBgColour(const wxColour& colour)
 void SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged()
 {
     if(!m_globalBgColourChangedTooltipShown) {
-        wxRichToolTip tip(
-            _("Global Background Colour Adjusted"), _("Notice that CodeLite altered the global output panes\n"
-                                                      "background colour to match the theme background colour"));
+        wxRichToolTip tip(_("Global Background Colour Adjusted"),
+                          _("Notice that CodeLite altered the global output panes\n"
+                            "background colour to match the theme background colour"));
         tip.SetIcon(wxICON_INFORMATION);
         tip.ShowFor(m_colourPickerOutputPanesBgColour);
         m_globalBgColourChangedTooltipShown = true;
     }
+}
+
+void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
+{
+    // Select the 'save' path
+    wxString path = ::wxFileSelector(_("Save as"), "", "MySettings.zip", "", wxFileSelectorDefaultWildcardStr,
+                                     wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    if(path.IsEmpty()) {
+        return;
+    }
+
+    wxFileName jsonFile(path);
+    jsonFile.SetFullName("lexers.json");
+    // Delete the file when done
+    FileUtils::Deleter deleter(jsonFile);
+    if(!ColoursAndFontsManager::Get().ExportThemesToFile(jsonFile, lexers)) {
+        return;
+    }
+
+    // Add the file to the zip
+    clZipWriter zw(path);
+    zw.Add(jsonFile);
+    zw.Close();
+
+    ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
 }

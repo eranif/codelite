@@ -54,7 +54,7 @@ void clSocketBase::Initialize()
 }
 
 // Read API
-int clSocketBase::Read(wxMemoryBuffer& content, long timeout) throw(clSocketException)
+int clSocketBase::Read(wxMemoryBuffer& content, long timeout) 
 {
     content.Clear();
 
@@ -88,7 +88,7 @@ int clSocketBase::Read(wxMemoryBuffer& content, long timeout) throw(clSocketExce
     return kTimeout;
 }
 
-int clSocketBase::Read(wxString& content, const wxMBConv& conv, long timeout) throw(clSocketException)
+int clSocketBase::Read(wxString& content, const wxMBConv& conv, long timeout) 
 {
     wxMemoryBuffer mb;
     int rc = Read(mb, timeout);
@@ -98,7 +98,7 @@ int clSocketBase::Read(wxString& content, const wxMBConv& conv, long timeout) th
     return rc;
 }
 
-int clSocketBase::Read(char* buffer, size_t bufferSize, size_t& bytesRead, long timeout) throw(clSocketException)
+int clSocketBase::Read(char* buffer, size_t bufferSize, size_t& bytesRead, long timeout) 
 {
     if(SelectRead(timeout) == kTimeout) {
         return kTimeout;
@@ -108,7 +108,7 @@ int clSocketBase::Read(char* buffer, size_t bufferSize, size_t& bytesRead, long 
     return kSuccess;
 }
 
-int clSocketBase::SelectRead(long seconds) throw(clSocketException)
+int clSocketBase::SelectRead(long seconds) 
 {
     if(seconds == -1) {
         return kSuccess;
@@ -139,7 +139,7 @@ int clSocketBase::SelectRead(long seconds) throw(clSocketException)
 }
 
 // Send API
-void clSocketBase::Send(const wxString& msg, const wxMBConv& conv) throw(clSocketException)
+void clSocketBase::Send(const wxString& msg, const wxMBConv& conv) 
 {
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
@@ -150,7 +150,7 @@ void clSocketBase::Send(const wxString& msg, const wxMBConv& conv) throw(clSocke
     Send(mb);
 }
 
-void clSocketBase::Send(const std::string& msg) throw(clSocketException)
+void clSocketBase::Send(const std::string& msg) 
 {
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
@@ -160,7 +160,7 @@ void clSocketBase::Send(const std::string& msg) throw(clSocketException)
     Send(mb);
 }
 
-void clSocketBase::Send(const wxMemoryBuffer& msg) throw(clSocketException)
+void clSocketBase::Send(const wxMemoryBuffer& msg) 
 {
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
@@ -221,7 +221,7 @@ void clSocketBase::DestroySocket()
     m_socket = INVALID_SOCKET;
 }
 
-int clSocketBase::ReadMessage(wxString& message, int timeout) throw(clSocketException)
+int clSocketBase::ReadMessage(wxString& message, int timeout) 
 {
     // send the length in string form to avoid binary / arch differences between remote and local machine
     char msglen[11];
@@ -268,7 +268,7 @@ int clSocketBase::ReadMessage(wxString& message, int timeout) throw(clSocketExce
     return kSuccess;
 }
 
-void clSocketBase::WriteMessage(const wxString& message) throw(clSocketException)
+void clSocketBase::WriteMessage(const wxString& message) 
 {
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
@@ -313,7 +313,7 @@ void clSocketBase::MakeSocketBlocking(bool blocking)
 #endif
 }
 
-int clSocketBase::SelectWriteMS(long milliSeconds) throw(clSocketException)
+int clSocketBase::SelectWriteMS(long milliSeconds) 
 {
     if(milliSeconds == -1) {
         return kSuccess;
@@ -346,7 +346,7 @@ int clSocketBase::SelectWriteMS(long milliSeconds) throw(clSocketException)
     }
 }
 
-int clSocketBase::SelectWrite(long seconds) throw(clSocketException)
+int clSocketBase::SelectWrite(long seconds) 
 {
     if(seconds == -1) {
         return kSuccess;
@@ -377,7 +377,7 @@ int clSocketBase::SelectWrite(long seconds) throw(clSocketException)
     }
 }
 
-int clSocketBase::SelectReadMS(long milliSeconds) throw(clSocketException)
+int clSocketBase::SelectReadMS(long milliSeconds) 
 {
     if(milliSeconds == -1) {
         return kSuccess;

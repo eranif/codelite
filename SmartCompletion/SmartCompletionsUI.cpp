@@ -26,10 +26,30 @@ SmartCompletionsSettingsBaseDlg::SmartCompletionsSettingsBaseDlg(wxWindow* paren
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    m_checkBoxEnabled = new wxCheckBox(this, wxID_ANY, _("Enable"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    wxFlexGridSizer* flexGridSizer16 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer16->SetFlexibleDirection( wxBOTH );
+    flexGridSizer16->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer16->AddGrowableCol(1);
+    
+    boxSizer2->Add(flexGridSizer16, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText22 = new wxStaticText(this, wxID_ANY, _("Enable:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    flexGridSizer16->Add(m_staticText22, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_checkBoxEnabled = new wxCheckBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_checkBoxEnabled->SetValue(true);
     
-    boxSizer2->Add(m_checkBoxEnabled, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer16->Add(m_checkBoxEnabled, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText18 = new wxStaticText(this, wxID_ANY, _("Clear statistics"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    flexGridSizer16->Add(m_staticText18, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_buttonClear = new wxButton(this, wxID_CLEAR, _("Clear"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_buttonClear->SetToolTip(_("Clear statistics gathtered"));
+    
+    flexGridSizer16->Add(m_buttonClear, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer6 = new wxStdDialogButtonSizer();
     
@@ -61,12 +81,14 @@ SmartCompletionsSettingsBaseDlg::SmartCompletionsSettingsBaseDlg(wxWindow* paren
     }
 #endif
     // Connect events
+    m_buttonClear->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SmartCompletionsSettingsBaseDlg::OnClearStats), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SmartCompletionsSettingsBaseDlg::OnOK), NULL, this);
     
 }
 
 SmartCompletionsSettingsBaseDlg::~SmartCompletionsSettingsBaseDlg()
 {
+    m_buttonClear->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SmartCompletionsSettingsBaseDlg::OnClearStats), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SmartCompletionsSettingsBaseDlg::OnOK), NULL, this);
     
 }

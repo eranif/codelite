@@ -37,19 +37,19 @@ class svSymbolTree : public SymbolTree
 {
     std::stack<wxTreeItemId> m_itemsStack;
     IManager* m_manager;
-    int m_uid;
+    wxString m_currentFile;
 
 public:
     svSymbolTree();
 
     /// Nothing special here, just call our parent constructor
     svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
+                 const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
 
     /// destructor
     virtual ~svSymbolTree(){};
 
-    virtual void BuildTree(const wxFileName& fn, bool forceBuild);
+    virtual void BuildTree(const wxFileName& fn, bool force);
 
     // activate the selected item.
     // If there is no selection, retun false,
@@ -69,8 +69,11 @@ public:
     void ClearCache();
 
 protected:
+    void DoBuildTree(TagEntryPtrVector_t& tags, const wxFileName& filename);
+    
+    wxString GetActiveEditorFile() const;
     void OnIncludeStatements(wxCommandEvent& e);
-
+    void OnCacheUpdated(clCommandEvent& e);
     virtual void OnMouseDblClick(wxMouseEvent& event);
     virtual void OnMouseRightUp(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);

@@ -203,8 +203,8 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
         // Prepare the colours
         wxColour bgColour, penColour, textColour;
         if(!DrawingUtils::IsDark(DrawingUtils::GetMenuBarBgColour())) {
-            textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT);
-            bgColour = DrawingUtils::GetCaptionColour();
+            bgColour = DrawingUtils::GetMenuBarBgColour().ChangeLightness(90);
+            textColour = DrawingUtils::GetMenuBarTextColour();
         } else {
             textColour = DrawingUtils::GetMenuBarTextColour();
             bgColour = DrawingUtils::GetMenuBarBgColour().ChangeLightness(50);

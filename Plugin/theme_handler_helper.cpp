@@ -83,6 +83,10 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     wxColour userFgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
 
     bool isDarkSystemTheme = DrawingUtils::IsDark(systemBgColour);
+    if(isDarkSystemTheme) {
+        systemBgColour = systemBgColour.ChangeLightness(110);
+    }
+    
     wxColour bgColour = isDarkSystemTheme ? systemBgColour : userbgColour;
     wxColour fgColour = isDarkSystemTheme ? systemFgColour : userFgColour;
     while(!q.empty()) {
@@ -104,14 +108,14 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
                     wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
                     if(stc->GetLexer() == wxSTC_LEX_NULL) {
                         // Only modify text lexers
-                        stc->StyleSetBackground(0, bgColour);
-                        stc->StyleSetForeground(0, fgColour);
-                        stc->Refresh();
+                        for(int i = 0; i < wxSTC_STYLE_MAX; i++) {
+                            stc->StyleSetBackground(i, bgColour);
+                            stc->StyleSetForeground(i, fgColour);
+                        }
                     }
-                } else {
-                    w->SetForegroundColour(fgColour);
-                    w->SetBackgroundColour(bgColour);
                 }
+                w->SetForegroundColour(fgColour);
+                w->SetBackgroundColour(bgColour);
                 w->Refresh();
             } else {
                 if(IS_TYPEOF(wxTreeCtrl, w) || IS_TYPEOF(wxListBox, w) || IS_TYPEOF(wxDataViewCtrl, w) ||
@@ -131,8 +135,10 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
                     wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
                     if(stc->GetLexer() == wxSTC_LEX_NULL) {
                         // Only modify text lexers
-                        stc->StyleSetBackground(0, bgColour);
-                        stc->StyleSetForeground(0, fgColour);
+                        for(int i = 0; i < wxSTC_STYLE_MAX; i++) {
+                            stc->StyleSetBackground(i, bgColour);
+                            stc->StyleSetForeground(i, fgColour);
+                        }
                     }
                 }
 

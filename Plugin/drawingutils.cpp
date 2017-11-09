@@ -797,19 +797,19 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     // Now draw the border around this control
     clientRect.Deflate(1);
 
-    wxColour penColour = baseColour.ChangeLightness(80);
+    wxColour penColour = baseColour.ChangeLightness(90);
 
-    int bgLightness = 95; // kNormal
+    int bgLightness = 105; // kNormal
     switch(state) {
     case eButtonState::kHover:
-        bgLightness = 120;
+        bgLightness = 115;
         break;
     case eButtonState::kPressed:
         bgLightness = 80;
         break;
     default:
     case eButtonState::kNormal:
-        bgLightness = 95;
+        bgLightness = 105;
         break;
     }
 

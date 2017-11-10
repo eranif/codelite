@@ -17,11 +17,12 @@
 #define WXDLLIMPEXP_SDK
 #endif
 
-#include <wx/colour.h>
+#include "drawingutils.h"
+#include <vector>
 #include <wx/bitmap.h>
+#include <wx/colour.h>
 #include <wx/dc.h>
 #include <wx/sharedptr.h>
-#include <vector>
 
 #define CHEVRON_SIZE 20
 #define CLOSE_BUTTON_SIZE 12
@@ -172,11 +173,6 @@ public:
     int GetWidth() const { return m_width; }
     void SetTooltip(const wxString& tooltip) { this->m_tooltip = tooltip; }
     const wxString& GetTooltip() const { return m_tooltip; }
-};
-enum class eButtonState {
-    kNormal,
-    kPressed,
-    kHover,
 };
 
 class WXDLLIMPEXP_SDK clTabRenderer

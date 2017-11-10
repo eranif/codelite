@@ -34,6 +34,7 @@
 #include <wx/graphics.h>
 #include <wx/image.h>
 #include <wx/panel.h>
+#include <wx/renderer.h>
 #include <wx/stc/stc.h>
 
 #ifdef __WXMSW__
@@ -181,9 +182,11 @@ static void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 // helper functions
 //-------------------------------------------------------------------------------------------------
 
-wxColor DrawingUtils::LightColour(const wxColour& color, float percent)
+wxColour DrawingUtils::LightColour(const wxColour& color, float percent)
 {
-    if(percent == 0) { return color; }
+    if(percent == 0) {
+        return color;
+    }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -253,7 +256,7 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const 
         int g = startColor.Green() + ((i * gd * 100) / high) / 100;
         int b = startColor.Blue() + ((i * bd * 100) / high) / 100;
 
-        wxPen p(wxColor(r, g, b));
+        wxPen p(wxColour(r, g, b));
         dc.SetPen(p);
 
         if(vertical)
@@ -378,9 +381,11 @@ wxColour DrawingUtils::GetGradient()
     //#endif
 }
 
-wxColor DrawingUtils::DarkColour(const wxColour& color, float percent)
+wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
 {
-    if(percent == 0) { return color; }
+    if(percent == 0) {
+        return color;
+    }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -392,31 +397,66 @@ wxColor DrawingUtils::DarkColour(const wxColour& color, float percent)
     HSL_2_RGB(h, s, l, &r, &g, &b);
     return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
+//------------------------------------------------
+// GTK Help to get colours from GTK widget
+//------------------------------------------------
+#ifdef __WXGTK__
+static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
+{
+    wxColour bgColour = defaultColour;
+#ifdef __WXGTK3__
+    GdkRGBA col;
+    GtkStyleContext* context = gtk_widget_get_style_context(widget);
+    gtk_style_context_get_background_color(context, GTK_STATE_FLAG_NORMAL, &col);
+    bgColour = wxColour(col);
+#else
+    GtkStyle* def = gtk_rc_get_style(widget);
+    if(!def) {
+        def = gtk_widget_get_default_style();
+    }
 
-wxColor DrawingUtils::GetPanelBgColour()
+    if(def) {
+        GdkColor col = def->bg[GTK_STATE_NORMAL];
+        bgColour = wxColour(col);
+    }
+#endif
+    gtk_widget_destroy(widget);
+    return bgColour;
+}
+
+static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
+{
+    wxColour textColour = defaultColour;
+#ifdef __WXGTK3__
+    GdkRGBA col;
+    GtkStyleContext* context = gtk_widget_get_style_context(widget);
+    gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
+    textColour = wxColour(col);
+#else
+    GtkStyle* def = gtk_rc_get_style(widget);
+    if(!def) {
+        def = gtk_widget_get_default_style();
+    }
+
+    if(def) {
+        GdkColor col = def->fg[GTK_STATE_NORMAL];
+        textColour = wxColour(col);
+    }
+#endif
+    gtk_widget_destroy(widget);
+    return textColour;
+}
+#endif
+
+wxColour DrawingUtils::GetPanelBgColour()
 {
 #ifdef __WXGTK__
     static bool intitialized(false);
     static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-
     if(!intitialized) {
         // try to get the background colour from a menu
-        GtkWidget* menu = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#ifdef __WXGTK3__
-        GdkRGBA col;
-        GtkStyleContext* context = gtk_widget_get_style_context(menu);
-        gtk_style_context_get_background_color(context, GTK_STATE_FLAG_NORMAL, &col);
-        bgColour = wxColour(col);
-#else
-        GtkStyle* def = gtk_rc_get_style(menu);
-        if(!def) def = gtk_widget_get_default_style();
-
-        if(def) {
-            GdkColor col = def->bg[GTK_STATE_NORMAL];
-            bgColour = wxColour(col);
-        }
-#endif
-        gtk_widget_destroy(menu);
+        GtkWidget* label = gtk_label_new("stam");
+        bgColour = GtkGetBgColourFromWidget(label, bgColour);
         intitialized = true;
     }
     return bgColour;
@@ -425,30 +465,16 @@ wxColor DrawingUtils::GetPanelBgColour()
 #endif
 }
 
-wxColor DrawingUtils::GetTextCtrlTextColour()
+wxColour DrawingUtils::GetPanelTextColour()
 {
 #ifdef __WXGTK__
     static bool intitialized(false);
     static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
     if(!intitialized) {
-        // try to get the text colour from a textctrl
-        GtkWidget* textCtrl = gtk_text_view_new();
-#ifdef __WXGTK3__
-        GdkRGBA col;
-        GtkStyleContext* context = gtk_widget_get_style_context(textCtrl);
-        gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
-        textColour = wxColour(col);
-#else
-        GtkStyle* def = gtk_rc_get_style(textCtrl);
-        if(!def) def = gtk_widget_get_default_style();
-
-        if(def) {
-            GdkColor col = def->text[GTK_STATE_NORMAL];
-            textColour = wxColour(col);
-        }
-#endif
-        gtk_widget_destroy(textCtrl);
+        // try to get the background colour from a menu
+        GtkWidget* label = gtk_label_new("stam");
+        textColour = GtkGetTextColourFromWidget(label, textColour);
         intitialized = true;
     }
     return textColour;
@@ -457,7 +483,25 @@ wxColor DrawingUtils::GetTextCtrlTextColour()
 #endif
 }
 
-wxColor DrawingUtils::GetMenuTextColour()
+wxColour DrawingUtils::GetTextCtrlTextColour()
+{
+#ifdef __WXGTK__
+    static bool intitialized(false);
+    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+
+    if(!intitialized) {
+        // try to get the text colour from a textctrl
+        GtkWidget* textCtrl = gtk_text_view_new();
+        textColour = GtkGetTextColourFromWidget(textCtrl, textColour);
+        intitialized = true;
+    }
+    return textColour;
+#else
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+#endif
+}
+
+wxColour DrawingUtils::GetMenuTextColour()
 {
 #ifdef __WXGTK__
     static bool intitialized(false);
@@ -466,21 +510,7 @@ wxColor DrawingUtils::GetMenuTextColour()
     if(!intitialized) {
         // try to get the text colour from a menu
         GtkWidget* menuBar = gtk_menu_new();
-#ifdef __WXGTK3__
-        GdkRGBA col;
-        GtkStyleContext* context = gtk_widget_get_style_context(menuBar);
-        gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
-        textColour = wxColour(col);
-#else
-        GtkStyle* def = gtk_rc_get_style(menuBar);
-        if(!def) def = gtk_widget_get_default_style();
-
-        if(def) {
-            GdkColor col = def->text[GTK_STATE_NORMAL];
-            textColour = wxColour(col);
-        }
-#endif
-        gtk_widget_destroy(menuBar);
+        textColour = GtkGetTextColourFromWidget(menuBar, textColour);
         intitialized = true;
     }
     return textColour;
@@ -489,40 +519,26 @@ wxColor DrawingUtils::GetMenuTextColour()
 #endif
 }
 
-wxColor DrawingUtils::GetMenuBarBgColour()
+wxColour DrawingUtils::GetMenuBarBgColour()
 {
 #ifdef __WXGTK__
     static bool intitialized(false);
     // initialise default colour
-    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+    static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
 
     if(!intitialized) {
         // try to get the background colour from a menu
         GtkWidget* menuBar = gtk_menu_bar_new();
-#ifdef __WXGTK3__
-        GdkRGBA col;
-        GtkStyleContext* context = gtk_widget_get_style_context(menuBar);
-        gtk_style_context_get_background_color(context, GTK_STATE_FLAG_NORMAL, &col);
-        textColour = wxColour(col);
-#else
-        GtkStyle* def = gtk_rc_get_style(menuBar);
-        if(!def) def = gtk_widget_get_default_style();
-
-        if(def) {
-            GdkColor col = def->bg[GTK_STATE_NORMAL];
-            textColour = wxColour(col);
-        }
-#endif
-        gtk_widget_destroy(menuBar);
+        bgColour = GtkGetBgColourFromWidget(menuBar, bgColour);
         intitialized = true;
     }
-    return textColour;
+    return bgColour;
 #else
     return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
 #endif
 }
 
-wxColor DrawingUtils::GetMenuBarTextColour()
+wxColour DrawingUtils::GetMenuBarTextColour()
 {
 #ifdef __WXGTK__
     static bool intitialized(false);
@@ -532,21 +548,7 @@ wxColor DrawingUtils::GetMenuBarTextColour()
     if(!intitialized) {
         // try to get the background colour from a menu
         GtkWidget* menuBar = gtk_menu_bar_new();
-#ifdef __WXGTK3__
-        GdkRGBA col;
-        GtkStyleContext* context = gtk_widget_get_style_context(menuBar);
-        gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
-        textColour = wxColour(col);
-#else
-        GtkStyle* def = gtk_rc_get_style(menuBar);
-        if(!def) def = gtk_widget_get_default_style();
-
-        if(def) {
-            GdkColor col = def->fg[GTK_STATE_NORMAL];
-            textColour = wxColour(col);
-        }
-#endif
-        gtk_widget_destroy(menuBar);
+        textColour = GtkGetTextColourFromWidget(menuBar, textColour);
         intitialized = true;
     }
     return textColour;
@@ -555,45 +557,24 @@ wxColor DrawingUtils::GetMenuBarTextColour()
 #endif
 }
 
-wxColor DrawingUtils::GetTextCtrlBgColour()
-{
-#ifdef __WXGTK__
-    // static bool     intitialized(false);
-    static wxColour bgCol(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+wxColour DrawingUtils::GetTextCtrlBgColour() { return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW); }
 
-    //	if( !intitialized ) {
-    //		// try to get the background colour from a textctrl
-    //		GtkWidget *textCtrl = gtk_text_view_new();
-    //		GtkStyle   *def = gtk_rc_get_style( textCtrl );
-    //		if(!def)
-    //			def = gtk_widget_get_default_style();
-    //
-    //		if(def) {
-    //			GdkColor col = def->bg[GTK_STATE_NORMAL];
-    //			bgCol = wxColour(col);
-    //		}
-    //		gtk_widget_destroy( textCtrl );
-    //		intitialized = true;
-    //	}
-    return bgCol;
-
-#else
-    return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-#endif
-}
-
-wxColor DrawingUtils::GetOutputPaneFgColour()
+wxColour DrawingUtils::GetOutputPaneFgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    if(col.IsEmpty()) { return GetTextCtrlTextColour(); }
+    if(col.IsEmpty()) {
+        return GetTextCtrlTextColour();
+    }
 
     return wxColour(col);
 }
 
-wxColor DrawingUtils::GetOutputPaneBgColour()
+wxColour DrawingUtils::GetOutputPaneBgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    if(col.IsEmpty()) { return GetTextCtrlBgColour(); }
+    if(col.IsEmpty()) {
+        return GetTextCtrlBgColour();
+    }
 
     return wxColour(col);
 }
@@ -648,19 +629,7 @@ bool DrawingUtils::GetGCDC(wxDC& dc, wxGCDC& gdc)
     return true;
 }
 
-wxColour DrawingUtils::GetAUIPaneBGColour()
-{
-    return GetMenuBarBgColour();
-    //    // Now set the bg colour. It must be done after setting
-    //    // the pen colour
-    //    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    //    if(!DrawingUtils::IsDark(bgColour)) {
-    //        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    //    } else {
-    //        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
-    //    }
-    //    return bgColour;
-}
+wxColour DrawingUtils::GetAUIPaneBGColour() { return GetPanelBgColour(); }
 
 wxBrush DrawingUtils::GetStippleBrush()
 {
@@ -760,7 +729,7 @@ clColourPalette DrawingUtils::GetColourPalette()
 
 wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 {
-    bool bDarkBG = IsDark(GetMenuBarBgColour());
+    bool bDarkBG = IsDark(GetPanelBgColour());
     wxImage img = bmp.ConvertToImage();
     img = img.ConvertToGreyscale();
     wxBitmap greyBmp(img);
@@ -778,4 +747,123 @@ wxBitmap DrawingUtils::CreateGrayBitmap(const wxBitmap& bmp)
     img = img.ConvertToGreyscale();
     wxBitmap greyBmp(img);
     return greyBmp;
+}
+
+#define DROPDOWN_ARROW_SIZE 20
+
+void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const wxString& label, eButtonKind kind,
+                              eButtonState state)
+{
+    // Draw the background
+    wxRect clientRect = rect;
+    dc.SetPen(GetPanelBgColour());
+    dc.SetBrush(GetPanelBgColour());
+    dc.DrawRectangle(clientRect);
+
+    // Now, draw the border
+    // Now draw the border around this control
+    clientRect.Deflate(1);
+
+    wxColour baseColour = GetButtonBgColour();
+    wxColour penColour = baseColour.ChangeLightness(80);
+
+    int bgLightness = 105; // kNormal
+    switch(state) {
+    case eButtonState::kHover:
+        bgLightness = 115;
+        break;
+    case eButtonState::kPressed:
+        bgLightness = 80;
+        break;
+    default:
+    case eButtonState::kNormal:
+        bgLightness = 105;
+        break;
+    }
+
+    wxColour bgColour = baseColour.ChangeLightness(bgLightness);
+    dc.SetPen(penColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRoundedRectangle(clientRect, 2.0);
+
+    clientRect.Deflate(1);
+    wxRect textRect, arrowRect;
+    textRect = clientRect;
+    if(kind == eButtonKind::kDropDown) {
+        // we need to save space for the drop down arrow
+        int xx = textRect.x + (textRect.GetWidth() - DROPDOWN_ARROW_SIZE);
+        int yy = textRect.y + ((textRect.GetHeight() - DROPDOWN_ARROW_SIZE) / 2);
+        textRect.SetWidth(textRect.GetWidth() - DROPDOWN_ARROW_SIZE);
+        arrowRect = wxRect(xx, yy, DROPDOWN_ARROW_SIZE, DROPDOWN_ARROW_SIZE);
+    }
+
+    // Draw the label
+    wxSize textSize = dc.GetTextExtent(label);
+    int textX = textRect.GetX() + 5;
+    int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
+    dc.SetClippingRegion(textRect);
+    dc.SetFont(GetDefaultGuiFont());
+    dc.SetTextForeground(GetButtonTextColour());
+    dc.DrawText(label, textX, textY);
+    dc.DestroyClippingRegion();
+
+    // Draw the drop down button
+    if(kind == eButtonKind::kDropDown) {
+        wxRendererNative::Get().DrawDropArrow(win, dc, arrowRect, wxCONTROL_CURRENT);
+    }
+}
+
+wxFont DrawingUtils::GetDefaultGuiFont()
+{
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    return font;
+}
+
+wxSize DrawingUtils::GetBestSize(const wxString& label, int xspacer, int yspacer)
+{
+    wxBitmap bmp(1, 1);
+    wxMemoryDC memDC(bmp);
+    memDC.SetFont(GetDefaultGuiFont());
+    wxSize size = memDC.GetTextExtent(label);
+    size.SetWidth(size.GetWidth() + (2 * xspacer));
+    size.SetHeight(size.GetHeight() + (2 * yspacer));
+    return size;
+}
+
+wxColour DrawingUtils::GetButtonBgColour()
+{
+#ifdef __WXGTK__
+    static bool intitialized(false);
+    // initialise default colour
+    static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    if(!intitialized) {
+        // try to get the background colour from a menu
+        GtkWidget* btn = gtk_button_new();
+        bgColour = GtkGetBgColourFromWidget(btn, bgColour);
+        intitialized = true;
+    }
+    return bgColour;
+#else
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+#endif
+}
+
+wxColour DrawingUtils::GetButtonTextColour()
+{
+#ifdef __WXGTK__
+    static bool intitialized(false);
+    // initialise default colour
+    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+
+    if(!intitialized) {
+        // try to get the background colour from a menu
+        GtkWidget* btn = gtk_button_new();
+        textColour = GtkGetTextColourFromWidget(btn, textColour);
+        intitialized = true;
+    }
+    return textColour;
+#else
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+#endif
 }

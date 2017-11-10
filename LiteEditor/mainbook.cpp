@@ -69,6 +69,10 @@ void MainBook::CreateGuiControls()
 
     m_messagePane = new MessagePane(this);
     sz->Add(m_messagePane, 0, wxALL | wxEXPAND, 5, NULL);
+    
+    m_navBar = new clEditorBar(this);
+    sz->Add(m_navBar, 0, wxEXPAND);
+
 
     long style = kNotebook_AllowDnD |                  // Allow tabs to move
                  kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
@@ -89,9 +93,6 @@ void MainBook::CreateGuiControls()
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     sz->Add(m_book, 1, wxEXPAND);
-
-    m_navBar = new clEditorBar(this);
-    sz->Add(m_navBar, 0, wxEXPAND);
 
     m_quickFindBar = new QuickFindBar(this);
     DoPositionFindBar(2);

@@ -185,7 +185,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_closeButtonClickedIndex(wxNOT_FOUND)
     , m_contextMenu(NULL)
 {
-    SetBackgroundColour(DrawingUtils::GetMenuBarBgColour());
+    SetBackgroundColour(DrawingUtils::GetPanelBgColour());
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     bool isClassicLook = false;
 #if CL_BUILD
@@ -392,8 +392,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     if(m_tabs.empty()) {
         // Draw the default bg colour
-        dc.SetPen(DrawingUtils::GetMenuBarBgColour());
-        dc.SetBrush(DrawingUtils::GetMenuBarBgColour());
+        dc.SetPen(DrawingUtils::GetPanelBgColour());
+        dc.SetBrush(DrawingUtils::GetPanelBgColour());
         dc.DrawRectangle(GetClientRect());
         return;
     }
@@ -901,7 +901,7 @@ void clTabCtrl::SetStyle(size_t style)
         if(!globalTheme.IsEmpty()) {
             LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", globalTheme);
             if(lexer && lexer->IsDark()) {
-                // Dark theme
+                // Dark theme, update all the colours
                 m_colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
                 m_colours.activeTabInnerPenColour = m_colours.activeTabBgColour;
                 m_colours.activeTabPenColour = m_colours.activeTabBgColour.ChangeLightness(110);

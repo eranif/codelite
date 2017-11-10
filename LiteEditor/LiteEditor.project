@@ -526,6 +526,8 @@
     <File Name="quickfindbarbase_liteeditor_bitmaps.cpp"/>
     <File Name="DefaultWorkspacePage.h"/>
     <File Name="DefaultWorkspacePage.cpp"/>
+    <File Name="clConfigurationSelectionCtrl.cpp"/>
+    <File Name="clConfigurationSelectionCtrl.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

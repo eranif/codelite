@@ -94,7 +94,7 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         }
 
     } else {
-        wxColour paneColour = DrawingUtils::GetMenuBarBgColour();
+        wxColour paneColour = DrawingUtils::GetButtonBgColour();
         wxColour bgColour = paneColour;
         wxColour penColour = paneColour.ChangeLightness(90);
 
@@ -114,7 +114,7 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         }
     }
 
-    SetTextFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    SetTextFont(DrawingUtils::GetDefaultGuiFont());
     if(size != wxDefaultSize) {
         SetMinSize(size);
     } else {
@@ -379,11 +379,11 @@ bool wxFlatButton::Enable(bool enable)
 wxColour wxFlatButton::GetBarBgColour(wxFlatButton::eTheme theme)
 {
     wxUnusedVar(theme);
-    return DrawingUtils::GetMenuBarBgColour();
+    return DrawingUtils::GetPanelBgColour();
 }
 
 wxColour wxFlatButton::GetBarTextColour(wxFlatButton::eTheme theme)
 {
     wxUnusedVar(theme);
-    return DrawingUtils::GetMenuBarTextColour();
+    return DrawingUtils::GetPanelTextColour();
 }

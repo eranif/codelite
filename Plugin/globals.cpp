@@ -2238,7 +2238,8 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
             cmd << "-";
         }
         cmd << processID;
-        system(cmd.mb_str(wxConvUTF8).data());
+        int rc = system(cmd.mb_str(wxConvUTF8).data());
+        wxUnusedVar(rc);
     } else {
         ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
     }

@@ -9,6 +9,7 @@
 #include "windowattrmanager.h"
 #include <algorithm>
 #include <wx/app.h>
+#include "macros.h"
 
 GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent)
     : GotoAnythingBaseDlg(parent)
@@ -36,14 +37,14 @@ void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
         int row = m_dvListCtrl->GetSelectedRow();
         if((row + 1) < m_dvListCtrl->GetItemCount()) {
             row++;
-            m_dvListCtrl->SelectRow(row);
+            DoSelectItem(m_dvListCtrl->RowToItem(row));
         }
     } else if(event.GetKeyCode() == WXK_UP) {
         event.Skip(false);
         int row = m_dvListCtrl->GetSelectedRow();
         if((row - 1) >= 0) {
             row--;
-            m_dvListCtrl->SelectRow(row);
+            DoSelectItem(m_dvListCtrl->RowToItem(row));
         }
     }
 }
@@ -132,4 +133,12 @@ void GotoAnythingDlg::OnItemActivated(wxDataViewEvent& event)
 {
     wxUnusedVar(event);
     DoExecuteActionAndClose();
+}
+
+void GotoAnythingDlg::DoSelectItem(const wxDataViewItem& item)
+{
+    CHECK_ITEM_RET(item);
+    m_dvListCtrl->UnselectAll();
+    m_dvListCtrl->Select(item);
+    m_dvListCtrl->EnsureVisible(item);
 }

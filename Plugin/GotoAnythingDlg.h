@@ -38,6 +38,7 @@ protected:
     virtual void OnEnter(wxCommandEvent& event);
     virtual void OnKeyDown(wxKeyEvent& event);
     void OnIdle(wxIdleEvent& e);
+    void DoSelectItem(const wxDataViewItem& item);
 };
 
 #endif // GOTOANYTHINGDLG_H

@@ -272,7 +272,6 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetBottomLeft();
         pt2 = activeTab->GetRect().GetBottomRight();
-        if(isSquareStyle) { pt1.x += 3; }
         pt2.x -= 1;
         DRAW_LINE(pt1, pt2);
 

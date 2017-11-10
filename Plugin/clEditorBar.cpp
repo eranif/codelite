@@ -237,12 +237,10 @@ void clEditorBar::OnLeftDown(wxMouseEvent& e)
             menu.Append(idOpenExplorer);
         }
 
-        wxPoint menuPoint = m_filenameRect.GetTopLeft();
-
-        //#ifdef __WXOSX__
-        //        menuPoint.y -= 5;
-        //#endif
-
+        wxPoint menuPoint = m_filenameRect.GetBottomLeft();
+#ifdef __WXOSX__
+        menuPoint.y += 5;
+#endif
         int selection = GetPopupMenuSelectionFromUser(menu, menuPoint);
         if(selection == wxID_NONE) return;
 

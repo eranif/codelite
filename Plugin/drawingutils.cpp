@@ -729,6 +729,9 @@ clColourPalette DrawingUtils::GetColourPalette()
 
 wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 {
+#ifdef __WXOSW__
+    return bmp.ConvertToDisabled(255);
+#else
     bool bDarkBG = IsDark(GetPanelBgColour());
     wxImage img = bmp.ConvertToImage();
     img = img.ConvertToGreyscale();
@@ -739,6 +742,7 @@ wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
     } else {
         return greyBmp.ConvertToDisabled(255);
     }
+#endif
 }
 
 wxBitmap DrawingUtils::CreateGrayBitmap(const wxBitmap& bmp)

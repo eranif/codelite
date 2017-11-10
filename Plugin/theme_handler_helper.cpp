@@ -157,6 +157,7 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
         if(!art) {
             tb->SetArtProvider(new CLMainAuiTBArt());
         }
+#ifndef __WXOSX__
         wxAuiToolBarItem* tbItem = nullptr;
         for(size_t i = 0; i < tb->GetToolCount(); ++i) {
             tbItem = tb->FindToolByIndex(i);
@@ -166,6 +167,7 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
                 tbItem->SetDisabledBitmap(DrawingUtils::CreateDisabledBitmap(tbItem->GetBitmap()));
             }
         }
+#endif
         tb->Refresh();
     });
 

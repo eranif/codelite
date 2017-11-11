@@ -31,6 +31,7 @@
 #include "event_notifier.h"
 #include "plugin.h"
 #include "theme_handler_helper.h"
+#include <algorithm>
 #include <wx/aui/auibar.h>
 #include <wx/bitmap.h>
 #include <wx/button.h>

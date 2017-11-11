@@ -1,19 +1,11 @@
-#include <stdio.h>
-#include "tester.h"
-#include "fileutils.h"
-#include <wx/init.h>
-#include <iostream>
-#include "ctags_manager.h"
-#include "CxxVariableScanner.h"
 #include "CxxTokenizer.h"
-
-static wxString InputFile(const wxString& name)
-{
-    wxFileName fn("../Tests", name);
-    wxString content;
-    FileUtils::ReadFileContent(fn, content);
-    return content;
-}
+#include "CxxVariableScanner.h"
+#include "ctags_manager.h"
+#include "fileutils.h"
+#include "tester.h"
+#include <iostream>
+#include <stdio.h>
+#include <wx/init.h>
 
 TEST_FUNC(test_cxx_normalize_signature)
 {
@@ -98,8 +90,7 @@ TEST_FUNC(test_cxx_locals_in_for_loop)
 
 TEST_FUNC(test_cxx_lambda_args)
 {
-    wxString buffer = "std::for_each(a.begin(), b.end(), [&](const wxString& lambdaArg){\n"
-                      "});";
+    wxString buffer = "std::for_each(a.begin(), b.end(), [&](const wxString& lambdaArg){\n";
 
     CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t());
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
@@ -120,7 +111,6 @@ TEST_FUNC(test_cxx_lambda_locals)
     return true;
 }
 
-
 TEST_FUNC(test_optimize_scope)
 {
     wxString buffer = "#define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false\n"
@@ -129,7 +119,19 @@ TEST_FUNC(test_optimize_scope)
     CxxTokenizer tokenizer;
     wxString visibleScope = tokenizer.GetVisibleScope(buffer);
     visibleScope.Trim().Trim(false);
-    CHECK_WXSTRING(visibleScope,  "void MyClass :: FooBar(){");
+    CHECK_WXSTRING(visibleScope, "void MyClass :: FooBar(){");
+    return true;
+}
+
+TEST_FUNC(test_locals_inside_for_inside_lambda)
+{
+    wxString buffer = "std :: for_each(a.begin(), b.end(), [&]( wxAuiToolBar * tb) {"
+                      "    for(size_t i = 0; i < tb->GetToolCount(); ++i) {"
+                      "        wxAuiToolBarItem* tbItem = nullptr;"
+                      "        tbItem->";
+    CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t());
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_BOOL(vars.count("tbItem") == 1);
     return true;
 }
 
@@ -137,5 +139,6 @@ int main(int argc, char** argv)
 {
     wxInitializer initializer(argc, argv);
     Tester::Instance()->RunTests();
+    //    fgetc(stdin);
     return 0;
 }

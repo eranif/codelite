@@ -1,14 +1,14 @@
 #ifndef CXXVARIABLE_H
 #define CXXVARIABLE_H
 
+#include "CxxLexerAPI.h"
 #include "codelite_exports.h"
 #include "smart_ptr.h"
-#include <vector>
-#include <set>
 #include <map>
+#include <set>
 #include <unordered_map>
+#include <vector>
 #include <wx/string.h>
-#include "CxxLexerAPI.h"
 #include <wxStringHash.h>
 
 class WXDLLIMPEXP_CL CxxVariable

@@ -313,7 +313,7 @@
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
       <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
+    <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>

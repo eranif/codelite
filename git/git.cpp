@@ -1071,9 +1071,6 @@ void GitPlugin::ProcessGitActionQueue()
 
     wxString command = m_pathGITExecutable;
     
-    // Ensure that the git window is opened
-    clGetManager()->ShowOutputPane("Git");
-    
     // Wrap the executable with quotes if needed
     command.Trim().Trim(false);
     ::WrapWithQuotes(command);

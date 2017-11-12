@@ -550,6 +550,9 @@
             <object class="wxMenuItem" name="dbg_stepin">
                 <label>Step &amp;Into</label>
             </object>
+            <object class="wxMenuItem" name="dbg_stepi">
+                <label>Step Into &amp;Instruction</label>
+            </object>
             <object class="wxMenuItem" name="dbg_next">
                 <label>Ne&amp;xt</label>
             </object>

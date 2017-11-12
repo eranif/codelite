@@ -2267,6 +2267,11 @@ void Manager::DbgDoSimpleCommand(int cmd)
             clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
             dbgr->StepIn();
             break;
+        case DBG_STEPI:
+            clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
+            clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
+            dbgr->StepInInstruction();
+            break;
         case DBG_STEPOUT:
             clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
             clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();

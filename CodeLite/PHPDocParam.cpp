@@ -14,7 +14,6 @@ const PHPDocParam::Vec_t& PHPDocParam::Parse()
 {
     wxString sname;
     wxString stype;
-    int offset = 0;
     m_params.clear();
 
     wxStringTokenizer tokenizer(m_comment, " \n\r", wxTOKEN_STRTOK);

@@ -1,13 +1,13 @@
 #include "PHPDocComment.h"
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
-#include <set>
+#include "wxStringHash.h"
 
 PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
     : m_sourceFile(sourceFile)
     , m_comment(comment)
 {
-    static std::set<wxString> nativeTypes;
+    static std::unordered_set<wxString> nativeTypes;
     if(nativeTypes.empty()) {
         nativeTypes.insert("int");
         nativeTypes.insert("integer");
@@ -48,9 +48,9 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
     }
     
     // @var Type 
-    static wxRegEx reVarType(wxT("@(var|variable)[ \t]+([\\a-zA-Z_]{1}[\\a-zA-Z0-9_]*)"));
+    static wxRegEx reVarType(wxT("@([variable]+)[ \t]+([\\a-zA-Z_]{1}[\\a-zA-Z0-9_]*)"));
     // @var $Name Type
-    static wxRegEx reVarType3(wxT("@(var|variable)[ \t]+([$]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\a-zA-Z0-9_]+)"));
+    static wxRegEx reVarType3(wxT("@([variable]+)[ \t]+([$]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\a-zA-Z0-9_]+)"));
     if(reVarType.IsValid() && reVarType.Matches(m_comment)) {
         m_varType = reVarType.GetMatch(m_comment, 2);
         m_varType = sourceFile.MakeIdentifierAbsolute(m_varType);
@@ -64,7 +64,7 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
 
     // @param <TYPE> <NAME>
     if(m_comment.Contains("@param")) {
-        static wxRegEx reParam2(wxT("@(param|parameter)[ \t]+([\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"),
+        static wxRegEx reParam2(wxT("@([parameter]+)[ \t]+([\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"),
                                 wxRE_ADVANCED);
         wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
         for(size_t i = 0; i < lines2.GetCount(); i++) {

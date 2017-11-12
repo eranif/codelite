@@ -8,7 +8,7 @@ PHPDocVar::PHPDocVar(PHPSourceFile& sourceFile, const wxString& doc)
 {
     // @var Type $name
     static wxRegEx reVarType(
-        wxT("@(var|variable)[ \t]+([\\a-zA-Z_]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"));
+        wxT("@([variable]+)[ \t]+([\\a-zA-Z_]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"));
     if(reVarType.IsValid() && reVarType.Matches(doc)) {
         m_type = reVarType.GetMatch(doc, 2);
         m_type = sourceFile.MakeIdentifierAbsolute(m_type);
@@ -17,9 +17,9 @@ PHPDocVar::PHPDocVar(PHPSourceFile& sourceFile, const wxString& doc)
     }
 
     // @var Type
-    static wxRegEx reVarType1(wxT("@(var|variable)[ \t]+([\\a-zA-Z0-9_]+))"));
+    static wxRegEx reVarType1(wxT("@([variable]+)[ \t]+([\\a-zA-Z0-9_]+))"));
     // @var $Name Type
-    static wxRegEx reVarType2(wxT("@(var|variable)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)[ \t]+([\\a-zA-Z0-9_]+)"));
+    static wxRegEx reVarType2(wxT("@([variable]+)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)[ \t]+([\\a-zA-Z0-9_]+)"));
     if(reVarType1.IsValid() && reVarType1.Matches(doc)) {
         m_type = reVarType1.GetMatch(doc, 2);
         m_type = sourceFile.MakeIdentifierAbsolute(m_type);

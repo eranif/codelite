@@ -19,6 +19,9 @@ class WXDLLIMPEXP_CL PHPDocVar
     wxFileName m_filename;
     int m_lineNumber;
 
+private:
+    void Parse(PHPSourceFile& sourceFile, const wxString& doc);
+
 public:
     typedef SmartPtr<PHPDocVar> Ptr_t;
     typedef std::list<PHPDocVar::Ptr_t> List_t;
@@ -48,7 +51,7 @@ public:
     void SetLineNumber(int lineNumber) { this->m_lineNumber = lineNumber; }
     const wxFileName& GetFilename() const { return m_filename; }
     int GetLineNumber() const { return m_lineNumber; }
-    
+
     // Database API
     void Store(wxSQLite3Database& db, wxLongLong parentDdId);
     void FromResultSet(wxSQLite3ResultSet& res);

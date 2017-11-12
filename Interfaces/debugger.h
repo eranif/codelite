@@ -40,6 +40,7 @@ enum DebuggerCommands {
     DBG_PAUSE = 0,
     DBG_NEXT,
     DBG_STEPIN,
+    DBG_STEPI,
     DBG_STEPOUT,
     DBG_SHOW_CURSOR,
     DBG_NEXTI,
@@ -746,6 +747,11 @@ public:
      * \return true on success, false otherwise
      */
     virtual bool StepIn() = 0;
+    /**
+     * \brief step into method
+     * \return true on success, false otherwise
+     */
+    virtual bool StepInInstruction() = 0;
     /**
      * \brief step out the current method (gdb's 'finish' command)
      * \return true on success, false otherwise

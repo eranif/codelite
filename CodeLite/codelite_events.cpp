@@ -103,6 +103,7 @@ wxDEFINE_EVENT(wxEVT_DBG_UI_START, clDebugEvent);
 wxDEFINE_EVENT(wxEVT_DBG_UI_CONTINUE, clDebugEvent);    
 wxDEFINE_EVENT(wxEVT_DBG_UI_STOP, clDebugEvent);        
 wxDEFINE_EVENT(wxEVT_DBG_UI_STEP_IN, clDebugEvent);     
+wxDEFINE_EVENT(wxEVT_DBG_UI_STEP_I, clDebugEvent);  
 wxDEFINE_EVENT(wxEVT_DBG_UI_STEP_OUT, clDebugEvent);    
 wxDEFINE_EVENT(wxEVT_DBG_UI_NEXT, clDebugEvent);        
 wxDEFINE_EVENT(wxEVT_DBG_UI_NEXT_INST, clDebugEvent);   

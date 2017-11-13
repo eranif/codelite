@@ -1441,7 +1441,6 @@ void clMainFrame::CreateToolbars24()
                 _("Show Current Line"));
     tb->AddSeparator();
     tb->AddTool(XRCID("dbg_stepin"), _("Step Into"), bmpLoader.LoadBitmap(wxT("step_in"), 24), _("Step In"));
-    tb->AddTool(XRCID("dbg_stepi"), _("Step Into Instruction"), bmpLoader.LoadBitmap(wxT("step_i"), 24), _("Step Into Instruction"));
     tb->AddTool(XRCID("dbg_next"), _("Next"), bmpLoader.LoadBitmap(wxT("next"), 24), _("Next"));
     tb->AddTool(XRCID("dbg_stepout"), _("Step Out"), bmpLoader.LoadBitmap(wxT("step_out"), 24), _("Step Out"));
     tb->AddSeparator();
@@ -1548,7 +1547,6 @@ void clMainFrame::CreateNativeToolbar16()
                 _("Show Current Line"));
     tb->AddSeparator();
     tb->AddTool(XRCID("dbg_stepin"), _("Step Into"), bmpLoader.LoadBitmap(wxT("step_in")), _("Step In"));
-    tb->AddTool(XRCID("dbg_stepi"), _("Step Into Instruction"), bmpLoader.LoadBitmap(wxT("step_i")), _("Step Into Instruction"));
     tb->AddTool(XRCID("dbg_next"), _("Next"), bmpLoader.LoadBitmap(wxT("next")), _("Next"));
     tb->AddTool(XRCID("dbg_stepout"), _("Step Out"), bmpLoader.LoadBitmap(wxT("step_out")), _("Step Out"));
     tb->AddSeparator();
@@ -1635,7 +1633,6 @@ void clMainFrame::CreateNativeToolbar24()
     tb->AddTool(XRCID("show_cursor"), _("Show Current Line"), bmpLoader.LoadBitmap(wxT("show_current_line"), 24),
                 _("Show Current Line"));
     tb->AddTool(XRCID("dbg_stepin"), _("Step Into"), bmpLoader.LoadBitmap(wxT("step_in"), 24), _("Step In"));
-    tb->AddTool(XRCID("dbg_stepi"), _("Step Into Instruction"), bmpLoader.LoadBitmap(wxT("step_i"), 24), _("Step Into Instruction"));
     tb->AddTool(XRCID("dbg_next"), _("Next"), bmpLoader.LoadBitmap(wxT("next"), 24), _("Next"));
     tb->AddTool(XRCID("dbg_stepout"), _("Step Out"), bmpLoader.LoadBitmap(wxT("step_out"), 24), _("Step Out"));
     tb->AddSeparator();

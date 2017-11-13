@@ -387,21 +387,21 @@ void CxxVariableScanner::OptimizeBuffer(const wxString& buffer, wxString& stripp
         case T_PP_STATE_EXIT:
             break;
         case T_FOR:
-            if(!OnForLoop(sc)) return;
+            OnForLoop(sc);
             break;
         case T_CATCH:
-            if(!OnCatch(sc)) return;
+            OnCatch(sc);
             break;
         case T_DECLTYPE:
-            if(!OnDeclType(sc)) return;
+            OnDeclType(sc);
             break;
         case T_WHILE:
-            if(!OnWhile(sc)) return;
+            OnWhile(sc);
             break;
         case '(':
             buffer << tok.text;
             if(lastToken.type == ']') {
-                if(!OnLambda(sc)) return;
+                OnLambda(sc);
             } else {
                 ++parenthesisDepth;
                 PushBuffer();

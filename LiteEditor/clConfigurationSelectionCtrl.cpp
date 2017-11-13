@@ -75,7 +75,7 @@ void clConfigurationSelectionCtrl::OnLeftDown(wxMouseEvent& e)
     }
     menu.AppendSeparator();
     wxMenuItem* openConfig = new wxMenuItem(NULL, wxID_ANY, OPEN_CONFIG_MGR_STR, "", wxITEM_CHECK);
-    openConfig->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("cog"));
+    //openConfig->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("cog"));
     openConfig = menu.Append(openConfig);
     M[openConfig->GetId()] = OPEN_CONFIG_MGR_STR;
 

@@ -21,8 +21,13 @@
 #include <ctags_manager.h>
 #include <wx/crt.h>
 
-#define WX_STRING_MEMBERS_COUNT 453
-#define CLASS_WITH_MEMBERS_COUNT 31
+#ifdef __WXGTK__
+#   define WX_STRING_MEMBERS_COUNT 446
+#   define CLASS_WITH_MEMBERS_COUNT 31
+#else
+#   define WX_STRING_MEMBERS_COUNT 453
+#   define CLASS_WITH_MEMBERS_COUNT 31
+#endif
 
 wxString LoadFile(const wxString& filename)
 {
@@ -86,7 +91,7 @@ TEST_FUNC(testMacros)
 #ifdef __WXMSW__
     CHECK_SIZE(tags.size(), 195);
 #else
-    CHECK_SIZE(tags.size(), 169);
+    CHECK_SIZE(tags.size(), 155);
 #endif
     return true;
 }

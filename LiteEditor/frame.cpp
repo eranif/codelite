@@ -25,7 +25,6 @@
 
 #include "ColoursAndFontsManager.h"
 #include "CompilersFoundDlg.h"
-#include "GotoAnythingDlg.h"
 #include "NewProjectWizard.h"
 #include "WelcomePage.h"
 #include "app.h"

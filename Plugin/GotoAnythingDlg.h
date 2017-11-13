@@ -19,7 +19,7 @@
 //
 class WXDLLIMPEXP_SDK GotoAnythingDlg : public GotoAnythingBaseDlg
 {
-    std::vector<clGotoEntry> m_allEntries;
+    const std::vector<clGotoEntry>& m_allEntries;
     wxString m_currentFilter;
 
 protected:
@@ -31,7 +31,7 @@ protected:
     void ApplyFilter();
 
 public:
-    GotoAnythingDlg(wxWindow* parent);
+    GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry>& entries);
     virtual ~GotoAnythingDlg();
 
 protected:

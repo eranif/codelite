@@ -103,6 +103,8 @@
     <File Name="clCxxFileCacheSymbols.cpp"/>
     <File Name="clAnagram.h"/>
     <File Name="clAnagram.cpp"/>
+    <File Name="clGotoEntry.h"/>
+    <File Name="clGotoEntry.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

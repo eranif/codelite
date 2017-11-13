@@ -34,6 +34,7 @@
 #include <vector>
 #include "wxCodeCompletionBoxEntry.h"
 #include "clEditorConfig.h"
+#include "clGotoEntry.h"
 
 // Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
 enum {
@@ -155,7 +156,7 @@ public:
     void SetEntries(const wxCodeCompletionBoxEntry::Vec_t& entries) { this->m_entries = entries; }
     const wxCodeCompletionBoxEntry::Vec_t& GetEntries() const { return m_entries; }
     wxCodeCompletionBoxEntry::Vec_t& GetEntries() { return m_entries; }
-    
+
     /**
      * @brief return the Editor object
      */
@@ -309,7 +310,8 @@ typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);
 class WXDLLIMPEXP_CL clNewProjectEvent : public clCommandEvent
 {
 public:
-    struct Template {
+    struct Template
+    {
         wxString m_category;
         wxString m_categoryPng;
         wxString m_template;
@@ -373,6 +375,27 @@ public:
 
 typedef void (wxEvtHandler::*clCompilerEventFunction)(clCompilerEvent&);
 #define clCompilerEventHandler(func) wxEVENT_HANDLER_CAST(clCompilerEventFunction, func)
+
+// --------------------------------------------------------------
+// GotoAnything event
+// --------------------------------------------------------------
+class WXDLLIMPEXP_CL clGotoEvent : public clCommandEvent
+{
+    clGotoEntry::Vec_t m_entries;
+
+public:
+    clGotoEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clGotoEvent(const clGotoEvent& src);
+    clGotoEvent& operator=(const clGotoEvent& src);
+    virtual ~clGotoEvent();
+    virtual wxEvent* Clone() const { return new clGotoEvent(*this); }
+    const clGotoEntry::Vec_t& GetEntries() const { return m_entries; }
+    clGotoEntry::Vec_t& GetEntries() { return m_entries; }
+    void SetEntries(const clGotoEntry::Vec_t& entries) { m_entries = entries; }
+};
+
+typedef void (wxEvtHandler::*clGotoEventFunction)(clGotoEvent&);
+#define clGotoEventHandler(func) wxEVENT_HANDLER_CAST(clGotoEventFunction, func)
 
 // --------------------------------------------------------------
 // Processs event

@@ -11,20 +11,16 @@
 #include <wx/app.h>
 #include "macros.h"
 
-GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent)
+GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry>& entries)
     : GotoAnythingBaseDlg(parent)
+    , m_allEntries(entries)
 {
-    m_allEntries = clGotoAnythingManager::Get().GetActions();
     DoPopulate(m_allEntries);
     CallAfter(&GotoAnythingDlg::UpdateLastSearch);
     WindowAttrManager::Load(this);
 }
 
-GotoAnythingDlg::~GotoAnythingDlg()
-{
-    m_allEntries.clear();
-    clConfig::Get().Write("GotoAnything/LastSearch", m_textCtrlSearch->GetValue());
-}
+GotoAnythingDlg::~GotoAnythingDlg() { clConfig::Get().Write("GotoAnything/LastSearch", m_textCtrlSearch->GetValue()); }
 
 void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
 {
@@ -57,6 +53,10 @@ void GotoAnythingDlg::OnEnter(wxCommandEvent& event)
 
 void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const std::vector<int>& indexes)
 {
+    clGotoEvent evtShowing(wxEVT_GOTO_ANYTHING_SHOWING);
+    evtShowing.SetEntries(entries);
+    EventNotifier::Get()->ProcessEvent(evtShowing);
+
     m_dvListCtrl->DeleteAllItems();
     for(size_t i = 0; i < entries.size(); ++i) {
         const clGotoEntry& entry = entries[i];
@@ -65,7 +65,9 @@ void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const 
         cols.push_back(entry.GetKeyboardShortcut());
         m_dvListCtrl->AppendItem(cols, indexes.empty() ? i : indexes[i]);
     }
-    if(!entries.empty()) { m_dvListCtrl->SelectRow(0); }
+    if(!entries.empty()) {
+        m_dvListCtrl->SelectRow(0);
+    }
 }
 
 void GotoAnythingDlg::DoExecuteActionAndClose()
@@ -78,7 +80,7 @@ void GotoAnythingDlg::DoExecuteActionAndClose()
     const clGotoEntry& entry = m_allEntries[index];
     clDEBUG() << "GotoAnythingDlg: action selected:" << entry.GetDesc() << clEndl;
 
-    clCommandEvent evtAction(wxEVT_GOTO_ANYTHING_SELECTED);
+    clGotoEvent evtAction(wxEVT_GOTO_ANYTHING_SELECTED);
     evtAction.SetString(entry.GetDesc());
     EventNotifier::Get()->AddPendingEvent(evtAction);
     EndModal(wxID_OK);

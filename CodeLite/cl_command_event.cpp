@@ -412,3 +412,25 @@ clEditorConfigEvent& clEditorConfigEvent::operator=(const clEditorConfigEvent& s
     m_editorConfigSection = src.m_editorConfigSection;
     return *this;
 }
+
+// --------------------------------------------------------------
+// Compiler event
+// --------------------------------------------------------------
+clGotoEvent::clGotoEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clGotoEvent::clGotoEvent(const clGotoEvent& src) { *this = src; }
+
+clGotoEvent::~clGotoEvent() {}
+
+clGotoEvent& clGotoEvent::operator=(const clGotoEvent& src)
+{
+    if(this == &src) {
+        return *this;
+    }
+    clCommandEvent::operator=(src);
+    m_entries = src.m_entries;
+    return *this;
+}

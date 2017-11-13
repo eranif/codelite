@@ -5,6 +5,7 @@
 #include "wxStringHash.h"
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
+#include <algorithm>
 
 PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
     : m_sourceFile(sourceFile)

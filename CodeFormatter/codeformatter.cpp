@@ -53,9 +53,9 @@
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
 extern "C" char* STDCALL AStyleMain(const char* pSourceIn,
-    const char* pOptions,
-    void(STDCALL* fpError)(int, const char*),
-    char*(STDCALL* fpAlloc)(unsigned long));
+                                    const char* pOptions,
+                                    void(STDCALL* fpError)(int, const char*),
+                                    char*(STDCALL* fpAlloc)(unsigned long));
 
 //------------------------------------------------------------------------
 // Astyle functions required by AStyleLib
@@ -113,9 +113,9 @@ CodeFormatter::CodeFormatter(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_FORMAT_FILE, clSourceFormatEventHandler(CodeFormatter::OnFormatFile), NULL, this);
     m_mgr->GetTheApp()->Connect(ID_TOOL_SOURCE_CODE_FORMATTER, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
+                                wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
     m_mgr->GetTheApp()->Connect(XRCID("format_files"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(CodeFormatter::OnFormatFiles), NULL, this);
+                                wxCommandEventHandler(CodeFormatter::OnFormatFiles), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
     EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &CodeFormatter::OnPhpSettingsChanged, this);
@@ -145,19 +145,19 @@ clToolBar* CodeFormatter::CreateToolBar(wxWindow* parent)
         tb->AddTool(
             XRCID("format_source"), _("Format Source"), bmpLoader->LoadBitmap("format", size), _("Format Source Code"));
         tb->AddTool(XRCID("formatter_options"), _("Format Options"), bmpLoader->LoadBitmap("cog", size),
-            _("Source Code Formatter Options..."));
+                    _("Source Code Formatter Options..."));
         tb->Realize();
     }
 
     // Connect the events to us
     m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
+                                wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("formatter_options"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
+                                wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
+                                wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("formatter_options"), wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
+                                wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
     return tb;
 }
 
@@ -380,7 +380,7 @@ void CodeFormatter::DoFormatSelection(IEditor* editor,
 {
     if(engine == kFormatEngineAStyle) {
         DoFormatWithAstyle(content, false);
-        wxString content = editor->FormatTextKeepIndent(
+        content = editor->FormatTextKeepIndent(
                                content, selStart, Format_Text_Indent_Prev_Line | Format_Text_Save_Empty_Lines);
     } else if(engine == kFormatEngineClangFormat) {
         content = editor->GetEditorText();
@@ -451,10 +451,10 @@ void CodeFormatter::DoFormatWithClang(const wxFileName& fileName)
 }
 
 void CodeFormatter::DoFormatWithClang(wxString& content,
-    const wxFileName& fileName,
-    int& cursorPosition,
-    const int& selStart,
-    const int& selEnd)
+                                      const wxFileName& fileName,
+                                      int& cursorPosition,
+                                      const int& selStart,
+                                      const int& selEnd)
 {
     if(m_options.GetClangFormatExe().IsEmpty()) {
         clWARNING() << "CodeFormatter: Missing clang_format exec" << clEndl;
@@ -546,10 +546,10 @@ void CodeFormatter::DoFormatWithWxXmlDocument(const wxFileName& fileName)
 }
 
 void CodeFormatter::OverwriteEditorText(IEditor*& editor,
-    const wxString& content,
-    const int& cursorPosition,
-    const int& selStart,
-    const int& selEnd)
+                                        const wxString& content,
+                                        const int& cursorPosition,
+                                        const int& selStart,
+                                        const int& selEnd)
 {
     wxString editroContent;
     if(selStart == wxNOT_FOUND) {
@@ -625,17 +625,17 @@ void CodeFormatter::HookPopupMenu(wxMenu* menu, MenuType type)
 void CodeFormatter::UnPlug()
 {
     m_mgr->GetTheApp()->Disconnect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
+                                   wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
+                                   wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("format_source"), wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
+                                   wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"), wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
+                                   wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(ID_TOOL_SOURCE_CODE_FORMATTER, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
+                                   wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
     m_mgr->GetTheApp()->Disconnect(XRCID("format_files"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(CodeFormatter::OnFormatFiles), NULL, this);
+                                   wxCommandEventHandler(CodeFormatter::OnFormatFiles), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_FORMAT_STRING, clSourceFormatEventHandler(CodeFormatter::OnFormatString), NULL, this);
     EventNotifier::Get()->Disconnect(

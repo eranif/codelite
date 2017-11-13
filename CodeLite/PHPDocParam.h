@@ -1,11 +1,11 @@
 #ifndef PHPDOCPARAM_H
 #define PHPDOCPARAM_H
 
-#include "codelite_exports.h"
-#include <vector>
-#include "wxStringHash.h"
-#include <wx/string.h>
 #include "PHPSourceFile.h"
+#include "codelite_exports.h"
+#include "wxStringHash.h"
+#include <vector>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL PHPDocParam
 {

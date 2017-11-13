@@ -1,9 +1,10 @@
 #include "PHPDocComment.h"
+#include "PHPDocParam.h"
+#include "PHPDocProperty.h"
+#include "PHPDocVar.h"
+#include "wxStringHash.h"
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
-#include "wxStringHash.h"
-#include "PHPDocParam.h"
-#include "PHPDocVar.h"
 #include <algorithm>
 
 PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
@@ -55,7 +56,7 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
         m_varType = var.GetType();
         m_varName = var.GetName();
     }
-    
+
     // @param <TYPE> <NAME>
     if(m_comment.Contains("@param")) {
         PHPDocParam params(sourceFile, m_comment);
@@ -68,37 +69,15 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
 
     // @property-read, @property-write, @property
     if(m_comment.Contains("@property")) {
-        static wxRegEx reProprety("@property[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)",
-                                  wxRE_EXTENDED);
-        static wxRegEx rePropretyRead("@property\\-read[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)",
-                                      wxRE_EXTENDED);
-        static wxRegEx rePropretyWrite("@property\\-write[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)",
-                                       wxRE_EXTENDED);
-        wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
-        for(size_t i = 0; i < lines2.GetCount(); i++) {
-            wxString line = lines2.Item(i).Trim().Trim(false);
-            if(reProprety.IsValid() && reProprety.Matches(line)) {
-                PHPDocComment::Property prop;
-                prop.type = sourceFile.MakeIdentifierAbsolute(reProprety.GetMatch(line, 1));
-                prop.name = reProprety.GetMatch(line, 2);
-                prop.desc = reProprety.GetMatch(line, 3);
-                m_properties.insert(std::make_pair(prop.name, prop));
-
-            } else if(rePropretyRead.IsValid() && rePropretyRead.Matches(line)) {
-                PHPDocComment::Property prop;
-                prop.type = sourceFile.MakeIdentifierAbsolute(rePropretyRead.GetMatch(line, 1));
-                prop.name = rePropretyRead.GetMatch(line, 2);
-                prop.desc = rePropretyRead.GetMatch(line, 3);
-                m_properties.insert(std::make_pair(prop.name, prop));
-
-            } else if(rePropretyWrite.IsValid() && rePropretyWrite.Matches(line)) {
-                PHPDocComment::Property prop;
-                prop.type = sourceFile.MakeIdentifierAbsolute(rePropretyWrite.GetMatch(line, 1));
-                prop.name = rePropretyWrite.GetMatch(line, 2);
-                prop.desc = rePropretyWrite.GetMatch(line, 3);
-                m_properties.insert(std::make_pair(prop.name, prop));
-            }
-        }
+        PHPDocProperty prop(sourceFile, m_comment);
+        const PHPDocProperty::Tuple_t& properties = prop.ParseParams();
+        std::for_each(properties.begin(), properties.end(), [&](const PHPDocProperty::Tuple_t::value_type& vt) {
+            PHPDocComment::Property property;
+            property.type = std::get<0>(vt);
+            property.name = std::get<1>(vt);
+            property.desc = std::get<2>(vt);
+            m_properties.insert(std::make_pair(property.name, property));
+        });
     }
 
     // Attempt to parse and resolve @method entries in the PHPDoc
@@ -131,18 +110,6 @@ const wxString& PHPDocComment::GetParam(const wxString& name) const
 
 void PHPDocComment::ProcessMethods()
 {
-    if(!m_comment.Contains("@method")) return;
-    wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines2.GetCount(); ++i) {
-        wxString ll = lines2.Item(i).Trim().Trim(false);
-        if(ll.Contains("@method")) {
-            ProcessMethod(ll);
-        }
-    }
-}
-
-void PHPDocComment::ProcessMethod(wxString& strLine)
-{
     // The phpdoc for method does not confirm to the PHP syntax.
     // We need to alter the signature so we can use our parse to parse
     // the signature
@@ -150,41 +117,28 @@ void PHPDocComment::ProcessMethod(wxString& strLine)
     // @method [return type] [name]([[type] [parameter]<, ...>]) [<description>]
     // While PHP's syntax is:
     // function [name] ([[type] [parameter]<, ...>]) [ : return_type ]
+    PHPDocProperty property(m_sourceFile, m_comment);
+    const PHPDocProperty::Tuple_t& methods = property.ParseMethods();
+    std::for_each(methods.begin(), methods.end(), [&](const PHPDocProperty::Tuple_t::value_type& vt) {
+        wxString returnType = std::get<0>(vt);
+        wxString methodName = std::get<1>(vt);
+        wxString signature = std::get<2>(vt);
 
-    static wxRegEx reMethodWithReturnType("@method[ \t]+([\\a-zA-Z0-9_]+)[\t ]+([\\a-zA-Z0-9_]+)[ \t]*(\\(.*?\\))",
-                                          wxRE_EXTENDED);
-    static wxRegEx reMethodNoReturnType("@method[ \t]+([\\a-zA-Z0-9_]+)[ \t]*(\\(.*?\\))", wxRE_EXTENDED);
+        wxString strBuffer;
+        strBuffer << "<?php function " << methodName << signature;
+        if(!returnType.IsEmpty()) { strBuffer << " : " << returnType << " "; }
+        strBuffer << " {} ";
 
-    wxString returnType;
-    wxString methodName;
-    wxString signature;
-    if(reMethodWithReturnType.IsValid() && reMethodWithReturnType.Matches(strLine)) {
-        returnType = reMethodWithReturnType.GetMatch(strLine, 1);
-        methodName = reMethodWithReturnType.GetMatch(strLine, 2);
-        signature = reMethodWithReturnType.GetMatch(strLine, 3);
-    } else if(reMethodNoReturnType.IsValid() && reMethodNoReturnType.Matches(strLine)) {
-        methodName = reMethodNoReturnType.GetMatch(strLine, 1);
-        signature = reMethodNoReturnType.GetMatch(strLine, 2);
-    }
+        PHPSourceFile buffer(strBuffer, NULL);
+        buffer.SetTypeAbsoluteConverter(&m_sourceFile);
+        buffer.Parse();
 
-    wxString strBuffer;
-    strBuffer << "<?php function " << methodName << signature;
-    if(!returnType.IsEmpty()) {
-        strBuffer << " : " << returnType << " ";
-    }
-    strBuffer << " {} ";
-
-    PHPSourceFile buffer(strBuffer, NULL);
-    buffer.SetTypeAbsoluteConverter(&m_sourceFile);
-    buffer.Parse();
-
-    if(!buffer.CurrentScope()->GetChildren().empty()) {
-        PHPEntityBase::Ptr_t func = *buffer.CurrentScope()->GetChildren().begin();
-        if(func && func->Is(kEntityTypeFunction)) {
-            if(func->Parent()) {
-                func->Parent()->RemoveChild(func);
+        if(!buffer.CurrentScope()->GetChildren().empty()) {
+            PHPEntityBase::Ptr_t func = *buffer.CurrentScope()->GetChildren().begin();
+            if(func && func->Is(kEntityTypeFunction)) {
+                if(func->Parent()) { func->Parent()->RemoveChild(func); }
+                m_methods.push_back(func);
             }
-            m_methods.push_back(func);
         }
-    }
+    });
 }

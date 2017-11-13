@@ -359,6 +359,8 @@
     <File Name="PHPDocVar.cpp"/>
     <File Name="PHPDocParam.h"/>
     <File Name="PHPDocParam.cpp"/>
+    <File Name="PHPDocProperty.h"/>
+    <File Name="PHPDocProperty.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="TerminalEmulatorUI.wxcp"/>

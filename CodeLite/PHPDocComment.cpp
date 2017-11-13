@@ -4,6 +4,7 @@
 #include "wxStringHash.h"
 #include "PHPDocParam.h"
 #include "PHPDocVar.h"
+#include <algorithm>
 
 PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
     : m_sourceFile(sourceFile)

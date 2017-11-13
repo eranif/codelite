@@ -264,7 +264,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopLeft();
         pt2 = activeTab->GetRect().GetTopRight();
-        if(style & kNotebook_UnderlineActiveTab) {
+        if(style & kNotebook_UnderlineActiveTab && isSquareStyle) {
             pt1.x += 3;
         } else {
             pt1.x += 1;
@@ -277,7 +277,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetBottomLeft();
         pt2 = activeTab->GetRect().GetBottomRight();
-        if(style & kNotebook_UnderlineActiveTab) {
+        if(style & kNotebook_UnderlineActiveTab && isSquareStyle) {
             pt1.x += 3;
         } else {
             pt1.x += 1;

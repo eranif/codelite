@@ -61,11 +61,6 @@ protected:
      */
     void ProcessMethods();
 
-    /**
-     * @brief process a line that starts with @method
-     */
-    void ProcessMethod(wxString& strLine);
-
 public:
     PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment);
     virtual ~PHPDocComment();

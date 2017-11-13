@@ -24,8 +24,6 @@ void PHPDocVar::Parse(PHPSourceFile& sourceFile, const wxString& doc)
     wxString sname;
     wxString stype;
     wxString word;
-    int offset = 0;
-    
     m_isOk = false;
     wxStringTokenizer tokenizer(doc, " \n\r", wxTOKEN_STRTOK);
     while(tokenizer.HasMoreTokens()) {

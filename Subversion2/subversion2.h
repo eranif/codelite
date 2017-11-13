@@ -107,7 +107,8 @@ protected:
     void OnFolderDeleted(clFileSystemEvent& event);
     void OnFolderContextMenu(clContextMenuEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
-        
+    void OnGotoAnythingShowing(clGotoEvent& e);
+    
     wxMenu* CreateFileExplorerPopMenu(bool isFile);
     bool IsSubversionViewDetached();
     wxMenu* CreateProjectPopMenu();

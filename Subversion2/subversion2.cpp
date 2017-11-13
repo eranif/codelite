@@ -202,10 +202,10 @@ Subversion2::Subversion2(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &Subversion2::OnFileContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_DELETED, &Subversion2::OnFileDeleted, this);
     EventNotifier::Get()->Bind(wxEVT_FOLDER_DELETED, &Subversion2::OnFolderDeleted, this);
-
+    EventNotifier::Get()->Bind(wxEVT_GOTO_ANYTHING_SHOWING, &Subversion2::OnGotoAnythingShowing, this);
     // Register common SVN actins into the "Goto Anything" manager
-    //clGotoAnythingManager::Get().Add(clGotoEntry("Svn > Commit", "", XRCID("svn_commit")));
-    //clGotoAnythingManager::Get().Add(clGotoEntry("Svn > Update", "", XRCID("svn_update")));
+    // clGotoAnythingManager::Get().Add(clGotoEntry("Svn > Commit", "", XRCID("svn_commit")));
+    // clGotoAnythingManager::Get().Add(clGotoEntry("Svn > Update", "", XRCID("svn_update")));
 }
 
 Subversion2::~Subversion2() {}
@@ -319,6 +319,7 @@ void Subversion2::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &Subversion2::OnFileContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_DELETED, &Subversion2::OnFileDeleted, this);
     EventNotifier::Get()->Unbind(wxEVT_FOLDER_DELETED, &Subversion2::OnFolderDeleted, this);
+    EventNotifier::Get()->Unbind(wxEVT_GOTO_ANYTHING_SHOWING, &Subversion2::OnGotoAnythingShowing, this);
 
     m_tabToggler.reset(NULL);
     GetManager()->GetTheApp()->Disconnect(XRCID("subversion2_settings"), wxEVT_COMMAND_MENU_SELECTED,
@@ -1576,4 +1577,12 @@ void Subversion2::ShowRecentChangesDialog(const SvnShowDiffChunk::List_t& change
     if(changes.empty()) return;
     SvnShowRecentChangesDlg dlg(EventNotifier::Get()->TopFrame(), changes);
     dlg.ShowModal();
+}
+
+void Subversion2::OnGotoAnythingShowing(clGotoEvent& e)
+{
+    e.Skip();
+    // Add our entries 
+    e.GetEntries().push_back(clGotoEntry("Svn > Commit", "", XRCID("svn_commit")));
+    e.GetEntries().push_back(clGotoEntry("Svn > Update", "", XRCID("svn_update")));
 }

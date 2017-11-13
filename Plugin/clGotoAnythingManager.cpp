@@ -48,8 +48,13 @@ void clGotoAnythingManager::ShowDialog()
     clGotoEvent evtShowing(wxEVT_GOTO_ANYTHING_SHOWING);
     evtShowing.SetEntries(GetActions());
     EventNotifier::Get()->ProcessEvent(evtShowing);
+    
+    // Let the plugins sort the content
+    clGotoEvent evtSort(wxEVT_GOTO_ANYTHING_SORT_NEEDED);
+    evtSort.GetEntries().swap(evtShowing.GetEntries());
+    EventNotifier::Get()->ProcessEvent(evtSort);
 
-    std::vector<clGotoEntry> entries = evtShowing.GetEntries();
+    std::vector<clGotoEntry> entries = evtSort.GetEntries();
     GotoAnythingDlg dlg(EventNotifier::Get()->TopFrame(), entries);
     dlg.ShowModal();
 }

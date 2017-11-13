@@ -787,6 +787,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SELECTED, clGotoEve
 // Goto Anything dialog is about to be shown
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SHOWING, clGotoEvent);
 
+// This event is sent to allow plugins and other modules to sort the entries before
+// they are displayed to the user
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SORT_NEEDED, clGotoEvent);
+
 // Build configuration for the workspace has changed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_BUILD_CONFIG_CHANGED, clCommandEvent);
 

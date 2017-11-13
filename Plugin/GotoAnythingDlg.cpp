@@ -1,4 +1,5 @@
 #include "GotoAnythingDlg.h"
+#include "bitmap_loader.h"
 #include "clAnagram.h"
 #include "clKeyboardManager.h"
 #include "cl_config.h"
@@ -6,10 +7,11 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
+#include "imanager.h"
+#include "macros.h"
 #include "windowattrmanager.h"
 #include <algorithm>
 #include <wx/app.h>
-#include "macros.h"
 
 GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry>& entries)
     : GotoAnythingBaseDlg(parent)
@@ -53,21 +55,16 @@ void GotoAnythingDlg::OnEnter(wxCommandEvent& event)
 
 void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const std::vector<int>& indexes)
 {
-    clGotoEvent evtShowing(wxEVT_GOTO_ANYTHING_SHOWING);
-    evtShowing.SetEntries(entries);
-    EventNotifier::Get()->ProcessEvent(evtShowing);
-
     m_dvListCtrl->DeleteAllItems();
+    static wxBitmap placeHolderBmp = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
     for(size_t i = 0; i < entries.size(); ++i) {
         const clGotoEntry& entry = entries[i];
         wxVector<wxVariant> cols;
-        cols.push_back(::MakeIconText(entry.GetDesc(), entry.GetBitmap()));
+        cols.push_back(::MakeIconText(entry.GetDesc(), entry.GetBitmap().IsOk() ? entry.GetBitmap() : placeHolderBmp));
         cols.push_back(entry.GetKeyboardShortcut());
         m_dvListCtrl->AppendItem(cols, indexes.empty() ? i : indexes[i]);
     }
-    if(!entries.empty()) {
-        m_dvListCtrl->SelectRow(0);
-    }
+    if(!entries.empty()) { m_dvListCtrl->SelectRow(0); }
 }
 
 void GotoAnythingDlg::DoExecuteActionAndClose()

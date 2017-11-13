@@ -83,31 +83,15 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
     gcdc.SetFont(m_textFont);
     fulltext << "wwww"; // spacer
     // wxSize fulltextSize = gcdc.GetTextExtent(fulltext);
-    wxSize breadcumbsTextSize(0, 0);
-    wxCoord textY = ((rect.GetHeight() - gcdc.GetTextExtent("Tp").GetHeight()) / 2);
-
-    if(!m_breadcrumbs.IsEmpty()) {
-
-        // wxCoord breadcrumbsTextY = 0;
-        wxString breadcumbsText;
-        for(size_t i = 0; i < m_breadcrumbs.size(); ++i) {
-            breadcumbsText << m_breadcrumbs.Item(i) << " / ";
-        }
-        breadcumbsText.RemoveLast(3);
-        wxFont guiFont = clTabRenderer::GetTabFont();
-        gcdc.SetFont(guiFont);
-        breadcumbsTextSize = gcdc.GetTextExtent(breadcumbsText);
-        // Geometry
-        m_filenameRect = wxRect(0, 2, breadcumbsTextSize.GetWidth() + (4 * X_SPACER), rect.GetHeight() - 4);
-        m_filenameRect.SetX(rect.GetWidth() - m_filenameRect.GetWidth() - X_SPACER);
-
-        DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, eButtonKind::kDropDown, m_state);
-    }
 
     // Draw the text
     wxCoord textX = X_SPACER;
     gcdc.SetFont(m_textFont);
     wxSize textSize;
+    wxCoord textY = ((rect.GetHeight() - gcdc.GetTextExtent("Tp").GetHeight()) / 2);
+
+    const int filenameButtonWidth = 400 + (4 * X_SPACER);
+
     if(!m_classname.IsEmpty()) {
         textSize = gcdc.GetTextExtent(m_classname);
         gcdc.SetTextForeground(m_classColour);
@@ -125,6 +109,22 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         gcdc.SetTextForeground(m_functionColour);
         gcdc.DrawText(m_function, textX, textY);
         textX += textSize.x;
+    }
+
+    if(!m_breadcrumbs.IsEmpty()) {
+        wxString breadcumbsText;
+        for(size_t i = 0; i < m_breadcrumbs.size(); ++i) {
+            breadcumbsText << m_breadcrumbs.Item(i) << " / ";
+        }
+        breadcumbsText.RemoveLast(3);
+        wxFont guiFont = clTabRenderer::GetTabFont();
+        gcdc.SetFont(guiFont);
+        // Geometry
+        m_filenameRect =
+            wxRect(GetClientRect().GetWidth() - filenameButtonWidth - X_SPACER, 0, filenameButtonWidth, rect.GetHeight());
+        DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, eButtonKind::kDropDown, m_state);
+        textX += filenameButtonWidth;
+        textX += (2 * X_SPACER);
     }
 }
 
@@ -174,7 +174,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
             m_classColour = darkBG ? "rgb(224, 108, 117)" : "rgb(0, 64, 128)";
             m_functionColour = m_defaultColour;
             m_textFont = lexer->GetFontForSyle(0); // Default font
-            m_textFont.SetPointSize(m_textFont.GetPointSize() - 2);
+            // m_textFont.SetPointSize(m_textFont.GetPointSize() - 1);
         }
 
         m_filename = editor->GetFileName().GetFullPath();

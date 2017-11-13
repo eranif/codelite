@@ -13,7 +13,7 @@ SmartCompletionsConfig& SmartCompletionsConfig::Load()
     clConfig conf("SmartCompletions.conf");
     conf.ReadItem(this);
     m_db.Open();
-    m_db.LoadUsageTable(m_weight);
+    m_db.LoadCCUsageTable(m_CCweight);
     return *this;
 }
 

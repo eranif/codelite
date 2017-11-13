@@ -184,9 +184,7 @@ static void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 
 wxColour DrawingUtils::LightColour(const wxColour& color, float percent)
 {
-    if(percent == 0) {
-        return color;
-    }
+    if(percent == 0) { return color; }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -203,7 +201,7 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
 {
     int textH, textW;
     int rectSize = maxWidth + 4; // error size
-    int textLen = (int)text.Length();
+    // int textLen = (int)text.Length();
     wxString tempText = text;
 
     fixedText = wxT("");
@@ -220,15 +218,17 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
     dc.GetTextExtent(suffix, &w, &h);
     rectSize -= w;
 
-    for(int i = textLen; i >= 0; i--) {
-        dc.GetTextExtent(tempText, &textW, &textH);
-        if(rectSize > textW) {
-            fixedText = tempText;
-            fixedText.RemoveLast(2); // remove last 2 chars, make room for the ".."
-            fixedText += wxT("..");
-            return;
-        }
-        tempText = tempText.RemoveLast();
+    int mid = (text.size() / 2);
+    wxString text1 = text.Mid(0, mid);
+    wxString text2 = text.Mid(mid);
+    int min = std::min(text1.size(), text2.size());
+    for(int i = 0; i < min; ++i) {
+        text1.RemoveLast();
+        text2.Remove(0, 1);
+
+        fixedText = text1 + suffix + text2;
+        dc.GetTextExtent(fixedText, &textW, &textH);
+        if(rectSize >= textW) { return; }
     }
 }
 
@@ -383,9 +383,7 @@ wxColour DrawingUtils::GetGradient()
 
 wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
 {
-    if(percent == 0) {
-        return color;
-    }
+    if(percent == 0) { return color; }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -411,9 +409,7 @@ static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defa
     bgColour = wxColour(col);
 #else
     GtkStyle* def = gtk_rc_get_style(widget);
-    if(!def) {
-        def = gtk_widget_get_default_style();
-    }
+    if(!def) { def = gtk_widget_get_default_style(); }
 
     if(def) {
         GdkColor col = def->bg[GTK_STATE_NORMAL];
@@ -434,9 +430,7 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
     textColour = wxColour(col);
 #else
     GtkStyle* def = gtk_rc_get_style(widget);
-    if(!def) {
-        def = gtk_widget_get_default_style();
-    }
+    if(!def) { def = gtk_widget_get_default_style(); }
 
     if(def) {
         GdkColor col = def->fg[GTK_STATE_NORMAL];
@@ -562,9 +556,7 @@ wxColour DrawingUtils::GetTextCtrlBgColour() { return wxSystemSettings::GetColou
 wxColour DrawingUtils::GetOutputPaneFgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    if(col.IsEmpty()) {
-        return GetTextCtrlTextColour();
-    }
+    if(col.IsEmpty()) { return GetTextCtrlTextColour(); }
 
     return wxColour(col);
 }
@@ -572,9 +564,7 @@ wxColour DrawingUtils::GetOutputPaneFgColour()
 wxColour DrawingUtils::GetOutputPaneBgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    if(col.IsEmpty()) {
-        return GetTextCtrlBgColour();
-    }
+    if(col.IsEmpty()) { return GetTextCtrlBgColour(); }
 
     return wxColour(col);
 }
@@ -771,17 +761,25 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     wxColour baseColour = GetButtonBgColour();
     wxColour penColour = baseColour.ChangeLightness(80);
 
-    int bgLightness = 105; // kNormal
+    int bgLightness = 100;
     switch(state) {
     case eButtonState::kHover:
+#ifdef __WXMSW__
+        bgLightness = 140;
+#else
         bgLightness = 115;
+#endif
         break;
     case eButtonState::kPressed:
         bgLightness = 80;
         break;
     default:
     case eButtonState::kNormal:
+#ifdef __WXMSW__
+        bgLightness = 120;
+#else
         bgLightness = 105;
+#endif
         break;
     }
 
@@ -802,18 +800,22 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     }
 
     // Draw the label
+    wxString truncatedText;
+    TruncateText(label, textRect.GetWidth() - 5, dc, truncatedText);
     wxSize textSize = dc.GetTextExtent(label);
     int textX = textRect.GetX() + 5;
     int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
     dc.SetClippingRegion(textRect);
     dc.SetFont(GetDefaultGuiFont());
     dc.SetTextForeground(GetButtonTextColour());
-    dc.DrawText(label, textX, textY);
+    dc.DrawText(truncatedText, textX, textY);
     dc.DestroyClippingRegion();
 
     // Draw the drop down button
     if(kind == eButtonKind::kDropDown) {
         wxRendererNative::Get().DrawDropArrow(win, dc, arrowRect, wxCONTROL_CURRENT);
+        dc.SetPen(penColour);
+        dc.DrawLine(arrowRect.GetX(), clientRect.GetTopLeft().y, arrowRect.GetX(), clientRect.GetBottomLeft().y);
     }
 }
 

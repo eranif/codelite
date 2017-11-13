@@ -34,8 +34,6 @@ void clGotoAnythingManager::OnActionSelected(clGotoEvent& e)
 {
     e.Skip();
     if(m_actions.count(e.GetString())) {
-        e.Skip(false);
-
         // Trigger the action
         wxCommandEvent evtAction(wxEVT_MENU, m_actions[e.GetString()].GetResourceID());
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtAction);

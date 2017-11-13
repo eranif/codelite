@@ -22,7 +22,10 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
     WindowAttrManager::Load(this);
 }
 
-GotoAnythingDlg::~GotoAnythingDlg() { clConfig::Get().Write("GotoAnything/LastSearch", m_textCtrlSearch->GetValue()); }
+GotoAnythingDlg::~GotoAnythingDlg()
+{
+    // clConfig::Get().Write("GotoAnything/LastSearch", m_textCtrlSearch->GetValue());
+}
 
 void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
 {
@@ -91,12 +94,12 @@ void GotoAnythingDlg::OnIdle(wxIdleEvent& e)
 
 void GotoAnythingDlg::UpdateLastSearch()
 {
-    wxString lastSearch = clConfig::Get().Read("GotoAnything/LastSearch", wxString());
-    if(!lastSearch.IsEmpty()) {
-        m_textCtrlSearch->ChangeValue(lastSearch);
-        m_textCtrlSearch->SelectAll();
-        ApplyFilter();
-    }
+    // wxString lastSearch = clConfig::Get().Read("GotoAnything/LastSearch", wxString());
+    // if(!lastSearch.IsEmpty()) {
+    //    m_textCtrlSearch->ChangeValue(lastSearch);
+    //    m_textCtrlSearch->SelectAll();
+    //    ApplyFilter();
+    //}
 }
 
 void GotoAnythingDlg::ApplyFilter()

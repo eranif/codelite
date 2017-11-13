@@ -219,6 +219,7 @@ TagsOptionsData::TagsOptionsData()
     m_types.Add(wxT("std::map::iterator=std::pair<_Key, _Tp>"));
     m_types.Add(wxT("std::map::const_iterator=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("std::unordered_map::iterator=std::pair<_Key, _Tp>"));
+    m_types.Add(wxT("std::unordered_map::mapped_type=_Tp"));
     m_types.Add(wxT("std::unordered_map::const_iterator=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("std::unordered_map::value_type=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("std::multimap::iterator=std::pair<_Key,_Tp>"));

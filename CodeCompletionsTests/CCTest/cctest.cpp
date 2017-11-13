@@ -1,24 +1,24 @@
 
 #define USE_CLI_EVENTS 1
 
+#include "tester.h"
+#include <algorithm>
+#include <cpptoken.h>
+#include <cppwordscanner.h>
+#include <memory>
+#include <parse_thread.h>
+#include <refactorengine.h>
+#include <stringsearcher.h>
+#include <vector>
+#include <wx/event.h>
+#include <wx/ffile.h>
 #include <wx/init.h>   //wxInitializer
 #include <wx/string.h> //wxString
-#include "tester.h"
-#include <wx/ffile.h>
-#include <wx/event.h>
-#include <memory>
-#include <vector>
-#include <cpptoken.h>
-#include <refactorengine.h>
-#include <cppwordscanner.h>
-#include <stringsearcher.h>
-#include <parse_thread.h>
 #include <wx/tokenzr.h>
-#include <algorithm>
 
 // CodeLite includes
-#include <ctags_manager.h>
 #include <CxxVariableScanner.h>
+#include <ctags_manager.h>
 #include <wx/crt.h>
 
 #define WX_STRING_MEMBERS_COUNT 453
@@ -83,7 +83,11 @@ TEST_FUNC(testMacros)
     CHECK_SIZE(tags.size(), CLASS_WITH_MEMBERS_COUNT);
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "simple_tests.h"), 1, wxT("EG(name)."),
                                                  LoadFile(GetTestsDir() + "simple_tests.h"), tags);
+#ifdef __WXMSW__
+    CHECK_SIZE(tags.size(), 195);
+#else
     CHECK_SIZE(tags.size(), 169);
+#endif
     return true;
 }
 
@@ -313,7 +317,7 @@ TEST_FUNC(testGotoDeclInsideNamespace)
     CHECK_STRING(tags.at(0)->GetName().mb_str(wxConvUTF8).data(), "Tada");
     return true;
 }
-
+#if 0
 TEST_FUNC(testGotoDeclOfFuncArgUsingTheMethodScope)
 {
     std::vector<TagEntryPtr> tags;
@@ -324,6 +328,7 @@ TEST_FUNC(testGotoDeclOfFuncArgUsingTheMethodScope)
     CHECK_STRING(tags.at(0)->GetName().mb_str(wxConvUTF8).data(), "Tada");
     return true;
 }
+#endif
 
 TEST_FUNC(testScopeResolving1)
 {
@@ -349,8 +354,7 @@ TEST_FUNC(testStrcutDelcratorInFuncArgument)
     std::vector<TagEntryPtr> tags;
     wxFileName fn(GetTestsDir() + "/../../SampleWorkspace/header.h");
     fn.Normalize();
-    std::cout << "Opening file: " << fn.GetFullPath() << std::endl;
-    TagsManagerST::Get()->AutoCompleteCandidates(fn, 77, wxT("pString->"), wxEmptyString, tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(fn, 77, wxT("pString->"), LoadFile(fn.GetFullPath()), tags);
     CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
     return true;
 }
@@ -377,7 +381,7 @@ TEST_FUNC(testBoostSharedPtr)
 TEST_FUNC(testVariablesParserSimple)
 {
     wxString content = LoadFile(GetTestsDir() + "test_parse_variables_simple.h");
-    CxxVariableScanner scanner(content, eCxxStandard::kCxx11, wxStringTable_t());
+    CxxVariableScanner scanner(content, eCxxStandard::kCxx11, wxStringTable_t(), false);
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
     CHECK_SIZE(vars.size(), 1); // a,b,c,d,e,f,g,str,stringMap,nNumber
     CHECK_CONDITION(vars.count("delims"), "variable 'delims' was not found");
@@ -387,8 +391,20 @@ TEST_FUNC(testVariablesParserSimple)
 TEST_FUNC(testVariablesParserCxx11)
 {
     wxString content = LoadFile(GetTestsDir() + "test_parse_variables_cxx11.h");
-    CxxVariableScanner scanner(content, eCxxStandard::kCxx11, wxStringTable_t());
-    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    wxString funcSignature = "(int32_t const arg1, int32_t const arg2)";
+
+    CxxVariable::Map_t vars;
+    {
+        CxxVariableScanner scanner(content, eCxxStandard::kCxx11, wxStringTable_t(), false);
+        vars = scanner.GetVariablesMap();
+    }
+
+    {
+        CxxVariableScanner scanner(funcSignature, eCxxStandard::kCxx11, wxStringTable_t(), true);
+        CxxVariable::Map_t M = scanner.GetVariablesMap();
+        vars.insert(M.begin(), M.end());
+    }
+
     CHECK_SIZE(vars.size(), 4);
     CHECK_CONDITION(vars.count("var1"), "variable 'var1' was not found");
     CHECK_CONDITION(vars.count("var2"), "variable 'var2' was not found");
@@ -403,7 +419,7 @@ TEST_FUNC(testVariablesParserClassMembers)
 
     // Ignore table: WXDLLEXPORT => ""
     wxStringTable_t t{ { "WXDLLEXPORT", "" } };
-    CxxVariableScanner scanner(content, eCxxStandard::kCxx11, t);
+    CxxVariableScanner scanner(content, eCxxStandard::kCxx11, t, false);
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
     CHECK_SIZE(vars.size(), 2);
     return true;
@@ -434,7 +450,11 @@ TEST_FUNC(testDeclTypeInTemplate)
     std::vector<TagEntryPtr> tags;
     TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(GetTestsDir() + "test_decl_type.h"), 2, wxT("q."),
                                                  LoadFile(GetTestsDir() + "test_decl_type.h"), tags);
+#ifdef __WXMSW__
+    CHECK_SIZE(tags.size(), 20);
+#else
     CHECK_SIZE(tags.size(), 14);
+#endif
     return true;
 }
 
@@ -445,7 +465,18 @@ TEST_FUNC(testWxArrayStringWitArrayInt)
                       "for(size_t i = 0; i < choices.GetCount(); ++i) {\n"
                       "    lexers.Item(choices.Item(i)).";
     std::vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName("dummy.h"), 4, "lexers.Item(choices.Item(i)).", buffer, tags);
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName("dummy.h"), 4, "lexers.Item(choices.Item(i)).", buffer,
+                                                 tags);
+    CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
+    return true;
+}
+
+TEST_FUNC(testUnorderedMapIterator)
+{
+    wxString buffer = "std::unordered_map<int, wxString> M;\n"
+                      "M[0].";
+    std::vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName("dummy.h"), 4, "M[0].", buffer, tags);
     CHECK_SIZE(tags.size(), WX_STRING_MEMBERS_COUNT);
     return true;
 }
@@ -474,10 +505,9 @@ void testCC()
     TagsManagerST::Free();
     LanguageST::Free();
 }
-
-void testRetagWorkspace()
-{
 #if 0
+void InitialiseTags()
+{
     // load the workspace file list
     wxArrayString inclPath;
     wxArrayString exclPath;
@@ -524,8 +554,8 @@ void testRetagWorkspace()
     ParseThreadST::Free();
     TagsManagerST::Free();
     LanguageST::Free();
-#endif
 }
+#endif
 
 /**
  * @brief call the test framework
@@ -534,6 +564,7 @@ int main(int argc, char** argv)
 {
     // Initialize the wxWidgets library
     wxInitializer initializer;
+#ifdef __WXMSW__
     TagsManagerST::Get()->SetCodeLiteIndexerPath("C:/Program Files/CodeLite/codelite_indexer.exe");
     TagsManagerST::Get()->StartCodeLiteIndexer();
     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer("enum class FooShort : short {"
@@ -541,16 +572,8 @@ int main(int argc, char** argv)
                                                                  "    short_banana,"
                                                                  "    short_orange,"
                                                                  "};");
-    tags = TagsManagerST::Get()->ParseBuffer("class MyClass {"
-                                             "    enum Foo {"
-                                             "        apple,"
-                                             "        banana,"
-                                             "        orange,"
-                                             "    };"
-                                             "};");
+#endif
 
-    // testRetagWorkspace();
-    // testStringSearcher();
     testCC();
     TagsManagerST::Free();
     return 0;

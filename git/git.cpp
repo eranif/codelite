@@ -752,6 +752,7 @@ void GitPlugin::OnCommit(wxCommandEvent& e)
     wxUnusedVar(e);
     gitAction ga(gitDiffRepoCommit, wxT(""));
     m_gitActionQueue.push_back(ga);
+    m_mgr->ShowOutputPane("Git");
     ProcessGitActionQueue();
 }
 
@@ -803,6 +804,7 @@ void GitPlugin::OnPush(wxCommandEvent& e)
         }
         gitAction ga(gitPush, remote + wxT(" ") + m_currentBranch);
         m_gitActionQueue.push_back(ga);
+        m_mgr->ShowOutputPane("Git");
         ProcessGitActionQueue();
     }
 }
@@ -834,6 +836,7 @@ void GitPlugin::OnPull(wxCommandEvent& e)
             m_gitActionQueue.push_back(ga);
         }
         AddDefaultActions();
+        m_mgr->ShowOutputPane("Git");
         ProcessGitActionQueue();
     }
 }
@@ -941,6 +944,7 @@ void GitPlugin::OnRefresh(wxCommandEvent& e)
     gitAction ga(gitListAll, wxT(""));
     m_gitActionQueue.push_back(ga);
     AddDefaultActions();
+    m_mgr->ShowOutputPane("Git");
     ProcessGitActionQueue();
 }
 /*******************************************************************************/
@@ -1008,7 +1012,6 @@ void GitPlugin::OnFileSaved(clCommandEvent& e)
     gitAction ga(gitListModified, wxT(""));
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
-
     RefreshFileListView();
 }
 
@@ -1070,7 +1073,7 @@ void GitPlugin::ProcessGitActionQueue()
     }
 
     wxString command = m_pathGITExecutable;
-
+    
     // Wrap the executable with quotes if needed
     command.Trim().Trim(false);
     ::WrapWithQuotes(command);

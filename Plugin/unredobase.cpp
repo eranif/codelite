@@ -25,6 +25,7 @@
 
 
 #include "unredobase.h"
+#include <algorithm>
 #include <wx/menu.h>
 #include <wx/app.h>
 #include <wx/xrc/xmlres.h>

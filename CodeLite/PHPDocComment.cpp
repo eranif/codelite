@@ -1,13 +1,15 @@
 #include "PHPDocComment.h"
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
-#include <set>
+#include "wxStringHash.h"
+#include "PHPDocParam.h"
+#include "PHPDocVar.h"
 
 PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
     : m_sourceFile(sourceFile)
     , m_comment(comment)
 {
-    static std::set<wxString> nativeTypes;
+    static std::unordered_set<wxString> nativeTypes;
     if(nativeTypes.empty()) {
         nativeTypes.insert("int");
         nativeTypes.insert("integer");
@@ -46,47 +48,31 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
             m_returnValue = sourceFile.MakeIdentifierAbsolute(types.Item(0));
         }
     }
-    
-    // @var Type 
-    static wxRegEx reVarType(wxT("@(var|variable)[ \t]+([\\a-zA-Z_]{1}[\\a-zA-Z0-9_]*)"));
-    // @var $Name Type
-    static wxRegEx reVarType3(wxT("@(var|variable)[ \t]+([$]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\a-zA-Z0-9_]+)"));
-    if(reVarType.IsValid() && reVarType.Matches(m_comment)) {
-        m_varType = reVarType.GetMatch(m_comment, 2);
-        m_varType = sourceFile.MakeIdentifierAbsolute(m_varType);
-        m_varName.Clear();
-        
-    } else if(reVarType3.IsValid() && reVarType3.Matches(m_comment)) {
-        m_varType = reVarType3.GetMatch(m_comment, 3);
-        m_varType = sourceFile.MakeIdentifierAbsolute(m_varType);
-        m_varName = reVarType3.GetMatch(m_comment, 2);
-    }
 
+    PHPDocVar var(sourceFile, m_comment);
+    if(var.IsOk()) {
+        m_varType = var.GetType();
+        m_varName = var.GetName();
+    }
+    
     // @param <TYPE> <NAME>
     if(m_comment.Contains("@param")) {
-        static wxRegEx reParam2(wxT("@(param|parameter)[ \t]+([\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"),
-                                wxRE_ADVANCED);
-        wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
-        for(size_t i = 0; i < lines2.GetCount(); i++) {
-            wxString line = lines2.Item(i).Trim().Trim(false);
-            if(reParam2.IsValid() && reParam2.Matches(line)) {
-                wxString paramName, paramHint;
-                paramHint = sourceFile.MakeIdentifierAbsolute(reParam2.GetMatch(line, 2));
-                paramName = reParam2.GetMatch(line, 3);
-                m_paramsArr.Add(paramHint);
-                m_params.insert(std::make_pair(paramName, paramHint));
-            }
-        }
+        PHPDocParam params(sourceFile, m_comment);
+        const PHPDocParam::Vec_t& paramsVec = params.Parse();
+        std::for_each(paramsVec.begin(), paramsVec.end(), [&](const std::pair<wxString, wxString>& p) {
+            m_paramsArr.Add(p.second);
+            m_params.insert(p);
+        });
     }
 
     // @property-read, @property-write, @property
     if(m_comment.Contains("@property")) {
         static wxRegEx reProprety("@property[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)",
-                                  wxRE_ADVANCED);
+                                  wxRE_EXTENDED);
         static wxRegEx rePropretyRead("@property\\-read[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)",
-                                      wxRE_ADVANCED);
+                                      wxRE_EXTENDED);
         static wxRegEx rePropretyWrite("@property\\-write[ \t]+([\\a-zA-Z0-9_]*)[ \t]*([\\$]{1}[\\a-zA-Z0-9_]*)(.*?)",
-                                       wxRE_ADVANCED);
+                                       wxRE_EXTENDED);
         wxArrayString lines2 = ::wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
         for(size_t i = 0; i < lines2.GetCount(); i++) {
             wxString line = lines2.Item(i).Trim().Trim(false);
@@ -165,8 +151,8 @@ void PHPDocComment::ProcessMethod(wxString& strLine)
     // function [name] ([[type] [parameter]<, ...>]) [ : return_type ]
 
     static wxRegEx reMethodWithReturnType("@method[ \t]+([\\a-zA-Z0-9_]+)[\t ]+([\\a-zA-Z0-9_]+)[ \t]*(\\(.*?\\))",
-                                          wxRE_ADVANCED);
-    static wxRegEx reMethodNoReturnType("@method[ \t]+([\\a-zA-Z0-9_]+)[ \t]*(\\(.*?\\))", wxRE_ADVANCED);
+                                          wxRE_EXTENDED);
+    static wxRegEx reMethodNoReturnType("@method[ \t]+([\\a-zA-Z0-9_]+)[ \t]*(\\(.*?\\))", wxRE_EXTENDED);
 
     wxString returnType;
     wxString methodName;

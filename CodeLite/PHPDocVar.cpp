@@ -1,37 +1,13 @@
 #include "PHPDocVar.h"
 #include <wx/regex.h>
+#include <wx/tokenzr.h>
 
 PHPDocVar::PHPDocVar(PHPSourceFile& sourceFile, const wxString& doc)
     : m_isOk(false)
     , m_dbId(wxNOT_FOUND)
     , m_lineNumber(wxNOT_FOUND)
 {
-    // @var Type $name
-    static wxRegEx reVarType(
-        wxT("@(var|variable)[ \t]+([\\a-zA-Z_]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"));
-    if(reVarType.IsValid() && reVarType.Matches(doc)) {
-        m_type = reVarType.GetMatch(doc, 2);
-        m_type = sourceFile.MakeIdentifierAbsolute(m_type);
-        m_name = reVarType.GetMatch(doc, 3);
-        m_isOk = true;
-    }
-
-    // @var Type
-    static wxRegEx reVarType1(wxT("@(var|variable)[ \t]+([\\a-zA-Z0-9_]+))"));
-    // @var $Name Type
-    static wxRegEx reVarType2(wxT("@(var|variable)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)[ \t]+([\\a-zA-Z0-9_]+)"));
-    if(reVarType1.IsValid() && reVarType1.Matches(doc)) {
-        m_type = reVarType1.GetMatch(doc, 2);
-        m_type = sourceFile.MakeIdentifierAbsolute(m_type);
-        m_name = reVarType1.GetMatch(doc, 3);
-        m_isOk = true;
-    } else if(reVarType2.IsValid() && reVarType2.Matches(doc)) {
-        m_type = reVarType2.GetMatch(doc, 3);
-        m_type = sourceFile.MakeIdentifierAbsolute(m_type);
-        m_name = reVarType2.GetMatch(doc, 2);
-        m_isOk = true;
-    }
-    m_filename = sourceFile.GetFilename();
+    Parse(sourceFile, doc);
 }
 
 PHPDocVar::PHPDocVar()
@@ -42,6 +18,51 @@ PHPDocVar::PHPDocVar()
 }
 
 PHPDocVar::~PHPDocVar() {}
+
+void PHPDocVar::Parse(PHPSourceFile& sourceFile, const wxString& doc)
+{
+    wxString sname;
+    wxString stype;
+    wxString word;
+    int offset = 0;
+    
+    m_isOk = false;
+    wxStringTokenizer tokenizer(doc, " \n\r", wxTOKEN_STRTOK);
+    while(tokenizer.HasMoreTokens()) {
+        wxString word = tokenizer.GetNextToken();
+        
+        // @var Type $name
+        // @var Type
+        // @var $Name Type
+        if(word == "@var") {
+            // Next word should be the type
+            if(!tokenizer.HasMoreTokens()) { break; }
+            word = tokenizer.GetNextToken();
+            if(word[0] == '$') {
+                // Found the name
+                m_name = word;
+                // Look for the type name
+                if(!tokenizer.HasMoreTokens()) {
+                    m_name.Clear();
+                    break;
+                }
+                 word = tokenizer.GetNextToken();
+                m_type = sourceFile.MakeIdentifierAbsolute(word);
+                m_isOk = true;
+            } else {
+                // Got the type
+                m_type = sourceFile.MakeIdentifierAbsolute(word);
+                m_isOk = true;
+                
+                // Get the name (optionally)
+                if(!tokenizer.HasMoreTokens()) {
+                    break;
+                }
+                m_name = tokenizer.GetNextToken();
+            }
+        }
+    }
+}
 
 void PHPDocVar::Store(wxSQLite3Database& db, wxLongLong parentDdId)
 {

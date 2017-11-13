@@ -216,8 +216,6 @@ void WorkspaceTab::OnProjectSettingsUI(wxUpdateUIEvent& e)
     e.Enable(!ManagerST::Get()->GetActiveProjectName().IsEmpty());
 }
 
-static int wxStringCmpFunc(const wxString& item1, const wxString& item2) { return item1.CmpNoCase(item2); }
-
 void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 {
     LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();

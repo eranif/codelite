@@ -96,7 +96,8 @@ void clGotoAnythingManager::Initialise()
                 wxString labelText = menuItem->GetItemLabelText();
                 if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) { continue; }
                 q.push(std::make_pair(menuItem->GetItemLabelText() + " > ", menuItem->GetSubMenu()));
-            } else if((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR)) {
+            } else if((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR) &&
+                      (menuItem->GetKind() != wxITEM_CHECK)) {
                 clGotoEntry entry;
                 wxString desc = menuItem->GetItemLabelText();
                 entry.SetDesc(prefix + desc);

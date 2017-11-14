@@ -2,6 +2,7 @@
 #include "bitmap_loader.h"
 #include "clGotoAnythingManager.h"
 #include "clKeyboardManager.h"
+#include "cl_command_event.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -11,8 +12,6 @@
 #include <queue>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
-#include "cl_command_event.h"
-#include "codelite_events.h"
 
 clGotoAnythingManager::clGotoAnythingManager()
 {
@@ -34,8 +33,10 @@ void clGotoAnythingManager::OnActionSelected(clGotoEvent& e)
 {
     e.Skip();
     // Trigger the action
-    wxCommandEvent evtAction(wxEVT_MENU, e.GetInt());
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtAction);
+    if(e.GetInt() != wxID_ANY) {
+        wxCommandEvent evtAction(wxEVT_MENU, e.GetInt());
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtAction);
+    }
 }
 
 void clGotoAnythingManager::ShowDialog()
@@ -44,7 +45,7 @@ void clGotoAnythingManager::ShowDialog()
     clGotoEvent evtShowing(wxEVT_GOTO_ANYTHING_SHOWING);
     evtShowing.SetEntries(GetActions());
     EventNotifier::Get()->ProcessEvent(evtShowing);
-    
+
     // Let the plugins sort the content
     clGotoEvent evtSort(wxEVT_GOTO_ANYTHING_SORT_NEEDED);
     evtSort.GetEntries().swap(evtShowing.GetEntries());
@@ -74,7 +75,7 @@ void clGotoAnythingManager::Initialise()
 
     wxMenuBar* mb = EventNotifier::Get()->TopFrame()->GetMenuBar();
     if(!mb) return;
-    clDEBUG() << "clGotoAnythingManager::Initialise called." << (wxUIntPtr) this << clEndl;
+    clDEBUG() << "clGotoAnythingManager::Initialise called." << (wxUIntPtr)this << clEndl;
     // Get list of menu entries
     std::queue<std::pair<wxString, wxMenu*> > q;
     for(size_t i = 0; i < mb->GetMenuCount(); ++i) {
@@ -93,17 +94,13 @@ void clGotoAnythingManager::Initialise()
             wxMenuItem* menuItem = *iter;
             if(menuItem->GetSubMenu()) {
                 wxString labelText = menuItem->GetItemLabelText();
-                if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) {
-                    continue;
-                }
+                if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) { continue; }
                 q.push(std::make_pair(menuItem->GetItemLabelText() + " > ", menuItem->GetSubMenu()));
             } else if((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR)) {
                 clGotoEntry entry;
                 wxString desc = menuItem->GetItemLabelText();
                 entry.SetDesc(prefix + desc);
-                if(menuItem->GetAccel()) {
-                    entry.SetKeyboardShortcut(menuItem->GetAccel()->ToString());
-                }
+                if(menuItem->GetAccel()) { entry.SetKeyboardShortcut(menuItem->GetAccel()->ToString()); }
                 entry.SetResourceID(menuItem->GetId());
                 entry.SetBitmap(menuItem->GetBitmap().IsOk() ? menuItem->GetBitmap() : defaultBitmap);
                 if(!entry.GetDesc().IsEmpty()) {

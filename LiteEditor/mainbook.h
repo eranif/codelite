@@ -25,16 +25,16 @@
 #ifndef MAINBOOK_H
 #define MAINBOOK_H
 
-#include <set>
-#include <wx/panel.h>
-#include "sessionmanager.h"
-#include "quickfindbar.h"
 #include "Notebook.h"
-#include "filehistory.h"
-#include "message_pane.h"
+#include "clEditorBar.h"
 #include "cl_command_event.h"
 #include "editorframe.h"
-#include "clEditorBar.h"
+#include "filehistory.h"
+#include "message_pane.h"
+#include "quickfindbar.h"
+#include "sessionmanager.h"
+#include <set>
+#include <wx/panel.h>
 
 class FilesModifiedDlg;
 enum OF_extra { OF_None = 0x00000001, OF_AddJump = 0x00000002, OF_PlaceNextToCurrent = 0x00000004 };
@@ -69,6 +69,7 @@ private:
     void ConnectEvents();
     void DoUpdateNotebookTheme();
     void DoOpenImageViewer(const wxFileName& filename);
+    void DoUpdateEditorsThemes();
 
     void OnMouseDClick(wxBookCtrlEvent& e);
     void OnTabDClicked(wxBookCtrlEvent& e);
@@ -87,6 +88,7 @@ private:
     void OnInitDone(wxCommandEvent& e);
     void OnDetachedEditorClosed(clCommandEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
+    void OnColoursAndFontsChanged(clCommandEvent& e);
     bool DoSelectPage(wxWindow* win);
     void DoPositionFindBar(int where);
     void DoHandleFrameMenu(LEditor* editor);

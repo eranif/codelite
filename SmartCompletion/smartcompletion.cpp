@@ -85,7 +85,7 @@ void SmartCompletion::OnCodeCompletionSelectionMade(clCodeCompletionEvent& event
     // Collect info about this match
     TagEntryPtr tag = event.GetEntry()->GetTag();
     if(tag) {
-        WeightTable_t& T = *m_pGTAWeight;
+        WeightTable_t& T = *m_pCCWeight;
         // we have an associated tag
         wxString k = tag->GetScope() + "::" + tag->GetName();
         if(T.count(k) == 0) {

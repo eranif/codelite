@@ -82,6 +82,7 @@ void GotoAnythingDlg::DoExecuteActionAndClose()
 
     clGotoEvent evtAction(wxEVT_GOTO_ANYTHING_SELECTED);
     evtAction.SetString(entry.GetDesc());
+    evtAction.SetInt(entry.GetResourceID());
     EventNotifier::Get()->AddPendingEvent(evtAction);
     EndModal(wxID_OK);
 }

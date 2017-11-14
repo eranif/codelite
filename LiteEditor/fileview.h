@@ -140,7 +140,12 @@ public:
      * @param event
      */
     void FolderDropped(const wxArrayString& folders);
-
+    
+    /**
+     * @brief return the current tree selections
+     */
+    size_t GetSelections(wxArrayTreeItemIds& selections) const;
+    
 protected:
     virtual void OnPopupMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);

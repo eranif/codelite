@@ -1,5 +1,5 @@
-#include "lintoptions.h"
 #include "cl_standard_paths.h"
+#include "lintoptions.h"
 #ifndef __WXMSW__
 #include "globals.h"
 #endif
@@ -7,7 +7,7 @@
 LintOptions::LintOptions()
     : clConfigItem("phplint")
     , m_lintOnFileLoad(false)
-    , m_lintOnFileSave(false)
+    , m_lintOnFileSave(true)
     , m_phpcsPhar("")
     , m_phpmdPhar("")
     , m_phpmdRules("")
@@ -47,14 +47,14 @@ void LintOptions::FromJSON(const JSONElement& json)
     // Find an installed version of phpcs
     if(m_phpcsPhar.IsEmpty()) {
         wxFileName phpcsFile;
-        clFindExecutable("phpcs", phpcsFile);
+        ::clFindExecutable("phpcs", phpcsFile);
         SetPhpcsPhar(phpcsFile);
     }
 
     // Find an installed version of phpmd
     if(m_phpmdPhar.IsEmpty()) {
         wxFileName phpmdFile;
-        clFindExecutable("phpmd", phpmdFile);
+        ::clFindExecutable("phpmd", phpmdFile);
         SetPhpmdPhar(phpmdFile);
     }
 #endif

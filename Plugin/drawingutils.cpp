@@ -758,7 +758,13 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     // Now draw the border around this control
     clientRect.Deflate(1);
 
+#if 0
+    wxColour baseColour = GetMenuBarBgColour();
+    wxColour textColour = GetMenuBarTextColour();
+#else
     wxColour baseColour = GetButtonBgColour();
+    wxColour textColour = GetButtonTextColour();
+#endif
     wxColour penColour = baseColour.ChangeLightness(80);
 
     int bgLightness = 100;
@@ -807,12 +813,14 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
     dc.SetClippingRegion(textRect);
     dc.SetFont(GetDefaultGuiFont());
-    dc.SetTextForeground(GetButtonTextColour());
+    dc.SetTextForeground(textColour);
     dc.DrawText(truncatedText, textX, textY);
     dc.DestroyClippingRegion();
 
     // Draw the drop down button
     if(kind == eButtonKind::kDropDown) {
+        dc.SetPen(penColour);
+        dc.SetBrush(baseColour);
         wxRendererNative::Get().DrawDropArrow(win, dc, arrowRect, wxCONTROL_CURRENT);
         dc.SetPen(penColour);
         dc.DrawLine(arrowRect.GetX(), clientRect.GetTopLeft().y, arrowRect.GetX(), clientRect.GetBottomLeft().y);

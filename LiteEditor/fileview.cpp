@@ -2881,7 +2881,7 @@ void FileViewTree::OnAddProjectToWorkspaceFolder(wxCommandEvent& evt)
 
 size_t FileViewTree::GetSelections(wxArrayTreeItemIds& selections) const
 {
-#ifdef __WXMSW__
+#if defined(__WXMSW__)|| defined(__WXGTK__)
     selections.Clear();
     std::queue<wxTreeItemId> Q;
 

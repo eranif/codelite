@@ -33,8 +33,12 @@ void clGotoAnythingManager::OnActionSelected(clGotoEvent& e)
 {
     e.Skip();
     // Trigger the action
-    if(e.GetInt() != wxID_ANY) {
-        wxCommandEvent evtAction(wxEVT_MENU, e.GetInt());
+    const clGotoEntry& entry = e.GetEntry();
+    if(entry.GetResourceID() != wxID_ANY) {
+        wxCommandEvent evtAction(wxEVT_MENU, entry.GetResourceID());
+        if(entry.IsCheckable()) {
+            evtAction.SetInt(entry.IsChecked() ? 0 : 1); // Set the opposite value
+        }
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtAction);
     }
 }
@@ -73,7 +77,8 @@ void clGotoAnythingManager::Initialise()
     // Register the core actions
     m_actions.clear();
 
-    wxMenuBar* mb = EventNotifier::Get()->TopFrame()->GetMenuBar();
+    wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
+    wxMenuBar* mb = mainFrame->GetMenuBar();
     if(!mb) return;
     clDEBUG() << "clGotoAnythingManager::Initialise called." << (wxUIntPtr)this << clEndl;
     // Get list of menu entries
@@ -88,6 +93,9 @@ void clGotoAnythingManager::Initialise()
         wxString prefix = q.front().first;
         q.pop();
 
+        // Call this to ensure that any checkable items are marked as "checked" if needed
+        menu->UpdateUI(mainFrame->GetEventHandler());
+
         const wxMenuItemList& L = menu->GetMenuItems();
         wxMenuItemList::const_iterator iter = L.begin();
         for(; iter != L.end(); ++iter) {
@@ -96,11 +104,14 @@ void clGotoAnythingManager::Initialise()
                 wxString labelText = menuItem->GetItemLabelText();
                 if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) { continue; }
                 q.push(std::make_pair(menuItem->GetItemLabelText() + " > ", menuItem->GetSubMenu()));
-            } else if((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR) &&
-                      (menuItem->GetKind() != wxITEM_CHECK)) {
+            } else if((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR)) {
                 clGotoEntry entry;
                 wxString desc = menuItem->GetItemLabelText();
                 entry.SetDesc(prefix + desc);
+                if(menuItem->IsCheck()) {
+                    entry.SetFlags(clGotoEntry::kItemCheck);
+                    entry.SetChecked(menuItem->IsChecked());
+                }
                 if(menuItem->GetAccel()) { entry.SetKeyboardShortcut(menuItem->GetAccel()->ToString()); }
                 entry.SetResourceID(menuItem->GetId());
                 entry.SetBitmap(menuItem->GetBitmap().IsOk() ? menuItem->GetBitmap() : defaultBitmap);

@@ -81,8 +81,7 @@ void GotoAnythingDlg::DoExecuteActionAndClose()
     clDEBUG() << "GotoAnythingDlg: action selected:" << entry.GetDesc() << clEndl;
 
     clGotoEvent evtAction(wxEVT_GOTO_ANYTHING_SELECTED);
-    evtAction.SetString(entry.GetDesc());
-    evtAction.SetInt(entry.GetResourceID());
+    evtAction.SetEntry(entry);
     EventNotifier::Get()->AddPendingEvent(evtAction);
     EndModal(wxID_OK);
 }
@@ -93,15 +92,7 @@ void GotoAnythingDlg::OnIdle(wxIdleEvent& e)
     ApplyFilter();
 }
 
-void GotoAnythingDlg::UpdateLastSearch()
-{
-    // wxString lastSearch = clConfig::Get().Read("GotoAnything/LastSearch", wxString());
-    // if(!lastSearch.IsEmpty()) {
-    //    m_textCtrlSearch->ChangeValue(lastSearch);
-    //    m_textCtrlSearch->SelectAll();
-    //    ApplyFilter();
-    //}
-}
+void GotoAnythingDlg::UpdateLastSearch() {}
 
 void GotoAnythingDlg::ApplyFilter()
 {

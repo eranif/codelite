@@ -581,16 +581,18 @@ void clStatusBar::OnGotoAnythingShowing(clGotoEvent& e)
 void clStatusBar::OnActionSelected(clGotoEvent& e)
 {
     e.Skip();
-    if(m_gotoAnythingTableSyntax.count(e.GetString())) {
+    const clGotoEntry& entry = e.GetEntry();
+    const wxString& desc = entry.GetDesc();
+    if(m_gotoAnythingTableSyntax.count(desc)) {
         IEditor* editor = clGetManager()->GetActiveEditor();
         CHECK_PTR_RET(editor);
         wxBusyCursor bc;
-        const wxString& lang = m_gotoAnythingTableSyntax[e.GetString()];
+        const wxString& lang = m_gotoAnythingTableSyntax[desc];
 
         editor->SetSyntaxHighlight(lang);
         SetLanguage(lang.Upper());
-    } else if(m_gotoAnythingTableThemes.count(e.GetString())) {
-        ColoursAndFontsManager::Get().SetTheme(m_gotoAnythingTableThemes[e.GetString()]);
+    } else if(m_gotoAnythingTableThemes.count(desc)) {
+        ColoursAndFontsManager::Get().SetTheme(m_gotoAnythingTableThemes[desc]);
         ColoursAndFontsManager::Get().Save();
     }
 }

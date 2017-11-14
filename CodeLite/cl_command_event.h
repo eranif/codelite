@@ -26,15 +26,15 @@
 #ifndef CLCOMMANDEVENT_H
 #define CLCOMMANDEVENT_H
 
-#include <wx/event.h>
-#include <wx/sharedptr.h>
-#include "codelite_exports.h"
-#include "entry.h"
-#include <wx/arrstr.h>
-#include <vector>
-#include "wxCodeCompletionBoxEntry.h"
 #include "clEditorConfig.h"
 #include "clGotoEntry.h"
+#include "codelite_exports.h"
+#include "entry.h"
+#include "wxCodeCompletionBoxEntry.h"
+#include <vector>
+#include <wx/arrstr.h>
+#include <wx/event.h>
+#include <wx/sharedptr.h>
 
 // Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
 enum {
@@ -310,8 +310,7 @@ typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);
 class WXDLLIMPEXP_CL clNewProjectEvent : public clCommandEvent
 {
 public:
-    struct Template
-    {
+    struct Template {
         wxString m_category;
         wxString m_categoryPng;
         wxString m_template;
@@ -382,6 +381,7 @@ typedef void (wxEvtHandler::*clCompilerEventFunction)(clCompilerEvent&);
 class WXDLLIMPEXP_CL clGotoEvent : public clCommandEvent
 {
     clGotoEntry::Vec_t m_entries;
+    clGotoEntry m_entry;
 
 public:
     clGotoEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -392,6 +392,8 @@ public:
     const clGotoEntry::Vec_t& GetEntries() const { return m_entries; }
     clGotoEntry::Vec_t& GetEntries() { return m_entries; }
     void SetEntries(const clGotoEntry::Vec_t& entries) { m_entries = entries; }
+    void SetEntry(const clGotoEntry& entry) { this->m_entry = entry; }
+    const clGotoEntry& GetEntry() const { return m_entry; }
 };
 
 typedef void (wxEvtHandler::*clGotoEventFunction)(clGotoEvent&);

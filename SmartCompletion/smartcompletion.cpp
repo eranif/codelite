@@ -187,7 +187,7 @@ void SmartCompletion::OnGotoAnythingSelectionMade(clGotoEvent& event)
     // Collect info about this match
     WeightTable_t& T = *m_pGTAWeight;
 
-    const wxString& key = event.GetString();
+    const wxString& key = event.GetEntry().GetDesc();
     if(T.count(key) == 0) {
         T[key] = 1;
     } else {

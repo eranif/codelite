@@ -427,10 +427,9 @@ clGotoEvent::~clGotoEvent() {}
 
 clGotoEvent& clGotoEvent::operator=(const clGotoEvent& src)
 {
-    if(this == &src) {
-        return *this;
-    }
+    if(this == &src) { return *this; }
     clCommandEvent::operator=(src);
     m_entries = src.m_entries;
+    m_entry = src.m_entry;
     return *this;
 }

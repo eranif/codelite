@@ -1583,6 +1583,6 @@ void Subversion2::OnGotoAnythingShowing(clGotoEvent& e)
 {
     e.Skip();
     // Add our entries 
-    e.GetEntries().push_back(clGotoEntry("Svn > Commit", "", XRCID("svn_commit")));
-    e.GetEntries().push_back(clGotoEntry("Svn > Update", "", XRCID("svn_update")));
+    e.GetEntries().push_back(clGotoEntry("Svn > Commit", "", XRCID("gotoanything_svn_commit")));
+    e.GetEntries().push_back(clGotoEntry("Svn > Update", "", XRCID("gotoanything_svn_update")));
 }

@@ -136,6 +136,8 @@ protected:
 
     // Svn events
     void OnCommit(wxCommandEvent& event);
+    void OnCommitGotoAnything(wxCommandEvent& event);
+    void OnUpdateGotoAnything(wxCommandEvent& event);
     void OnUpdate(wxCommandEvent& event);
     void OnRevert(wxCommandEvent& event);
     void OnAdd(wxCommandEvent& event);

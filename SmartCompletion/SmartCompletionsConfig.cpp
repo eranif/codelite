@@ -14,6 +14,7 @@ SmartCompletionsConfig& SmartCompletionsConfig::Load()
     conf.ReadItem(this);
     m_db.Open();
     m_db.LoadCCUsageTable(m_CCweight);
+    m_db.LoadGTAUsageTable(m_GTAweight);
     return *this;
 }
 

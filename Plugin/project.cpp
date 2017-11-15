@@ -114,7 +114,6 @@ bool Project::Create(const wxString& name, const wxString& description, const wx
 bool Project::Load(const wxString& path)
 {
     if(!m_doc.Load(path)) { return false; }
-    DoBuildCacheFromXml();
 
     // ConvertToUnixFormat(m_doc.GetRoot());
 
@@ -128,6 +127,7 @@ bool Project::Load(const wxString& path)
     m_fileName.MakeAbsolute();
     m_projectPath = m_fileName.GetPath();
 
+    DoBuildCacheFromXml();
     SetModified(true);
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
 
@@ -1664,7 +1664,7 @@ void Project::GetFilesAsVector(clProjectFile::Vec_t& files) const
 void Project::GetFilesAsStringArray(wxArrayString& files, bool absPath) const
 {
     if(m_filesTable.empty()) { return; }
-    files.Alloc(m_filesTable.size());
+    files.reserve(m_filesTable.size());
     std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
         files.Add(absPath ? vt.second->GetFilename() : vt.second->GetFilenameRelpath());
     });

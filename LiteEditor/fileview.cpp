@@ -2877,10 +2877,9 @@ size_t FileViewTree::GetSelections(wxArrayTreeItemIds& selections) const
 #if defined(__WXMSW__) || defined(__WXGTK__)
     selections.Clear();
     std::queue<wxTreeItemId> Q;
-
-    // Fill the queue with its children.
-    // We do this to avoid checking if an item is the root in the main loop
-    {
+    if(!HasFlag(wxTR_HIDE_ROOT)) {
+        Q.push(GetRootItem());
+    } else {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = GetFirstChild(GetRootItem(), cookie);
         while(child.IsOk()) {

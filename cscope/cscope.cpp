@@ -350,7 +350,7 @@ wxString Cscope::DoCreateListFile(bool force)
         wxString content;
         for(size_t i = 0; i < files.size(); i++) {
             wxFileName fn(files.at(i));
-            content << fn.GetFullPath() << wxT("\n");
+            content << fn.GetFullPath(wxPATH_UNIX) << wxT("\n");
         }
 
         file.Write(content);

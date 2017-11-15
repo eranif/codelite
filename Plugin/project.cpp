@@ -48,10 +48,6 @@
 #include <wx/regex.h>
 #include "macromanager.h"
 
-const wxString Project::STATIC_LIBRARY = wxT("Static Library");
-const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");
-const wxString Project::EXECUTABLE = wxT("Executable");
-
 static wxStringMap_t s_backticks;
 
 #define EXCLUDE_FROM_BUILD_FOR_CONFIG "ExcludeProjConfig"
@@ -69,16 +65,10 @@ Project::Project()
     m_settings.Reset(new ProjectSettings(NULL));
 }
 
-Project::~Project()
-{
-    m_vdCache.clear();
-    m_settings.Reset(NULL);
-}
+Project::~Project() { m_settings.Reset(NULL); }
 
 bool Project::Create(const wxString& name, const wxString& description, const wxString& path, const wxString& projType)
 {
-    m_vdCache.clear();
-
     m_fileName = wxFileName(path, name);
     m_fileName.SetExt("project");
     m_fileName.MakeAbsolute();
@@ -97,7 +87,7 @@ bool Project::Create(const wxString& name, const wxString& description, const wx
     m_doc.GetRoot()->AddChild(descNode);
 
     // Create the default virtual directories
-    wxXmlNode *srcNode = NULL, *headNode = NULL;
+    wxXmlNode* srcNode = NULL, *headNode = NULL;
 
     srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
     srcNode->AddProperty(wxT("Name"), wxT("src"));
@@ -135,8 +125,6 @@ bool Project::Load(const wxString& path)
     GetAllPluginsData(pluginsData);
     SetAllPluginsData(pluginsData, false);
 
-    m_vdCache.clear();
-
     m_fileName = path;
     m_fileName.MakeAbsolute();
     m_projectPath = m_fileName.GetPath();
@@ -145,35 +133,16 @@ bool Project::Load(const wxString& path)
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
 
     DoUpdateProjectSettings();
-
+    DoBuildCacheFromXml();
     return true;
 }
 
 wxXmlNode* Project::GetVirtualDir(const wxString& vdFullPath)
 {
-    wxArrayString paths = wxStringTokenize(vdFullPath, ":", wxTOKEN_STRTOK);
-
-    // test the cache
-    std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
-    if(iter != m_vdCache.end()) {
-        return iter->second;
+    if(m_virtualFoldersTable.count(vdFullPath) == 0) {
+        return nullptr;
     }
-
-    wxString filename = m_fileName.GetFullPath();
-
-    wxXmlNode* parent = m_doc.GetRoot();
-    for(size_t i = 0; i < paths.GetCount(); ++i) {
-        wxString curpath = paths.Item(i);
-        parent = XmlUtils::FindNodeByName(parent, wxT("VirtualDirectory"), curpath);
-        if(!parent) {
-            m_vdCache[vdFullPath] = NULL;
-            return NULL;
-        }
-    }
-
-    // cache the result
-    m_vdCache[vdFullPath] = parent;
-    return parent;
+    return m_virtualFoldersTable[vdFullPath]->GetXmlNode();
 }
 
 wxXmlNode* Project::CreateVD(const wxString& vdFullPath, bool mkpath)
@@ -186,62 +155,33 @@ wxXmlNode* Project::CreateVD(const wxString& vdFullPath, bool mkpath)
 
     wxStringTokenizer tkz(vdFullPath, wxT(":"));
 
-    wxXmlNode* parent = m_doc.GetRoot();
     size_t count = tkz.CountTokens();
-    for(size_t i = 0; i < count - 1; i++) {
-        wxString token = tkz.NextToken();
-        wxXmlNode* p = XmlUtils::FindNodeByName(parent, wxT("VirtualDirectory"), token);
-        if(!p) {
+    clProjectFolder::Ptr_t currentFolder = GetRootFolder();
+    for(size_t i = 0; i < (count - 1); ++i) {
+        wxString token = tkz.GetNextToken();
+        if(!currentFolder->IsFolderExists(this, token)) {
             if(mkpath) {
-
-                // add the node
-                p = new wxXmlNode(parent, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
-                p->AddProperty(wxT("Name"), token);
-
+                // Create the child folder
+                currentFolder = currentFolder->AddFolder(this, token);
             } else {
-                return NULL;
+                // Don't create it, return nullptr
+                return nullptr;
             }
+        } else {
+            // Move to the next folder
+            currentFolder = currentFolder->GetChild(this, token);
         }
-        parent = p;
     }
-
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
-    node->AddProperty(wxT("Name"), tkz.GetNextToken());
-
-    parent->AddChild(node);
+    currentFolder = currentFolder->AddFolder(this, tkz.GetNextToken());
 
     // if not in transaction save the changes
     if(!InTransaction()) {
         SaveXmlFile();
     }
-
-    // cache the result
-    m_vdCache[vdFullPath] = node;
-
-    return node;
+    return currentFolder->GetXmlNode();
 }
 
-bool Project::IsFileExist(const wxString& fileName)
-{
-    // find the file under this node
-    // Convert the file path to be relative to
-    // the project path
-    DirSaver ds;
-
-    ::wxSetWorkingDirectory(m_fileName.GetPath());
-    wxFileName tmp(fileName);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-
-    std::vector<wxFileName> files;
-    GetFiles(files);
-
-    for(size_t i = 0; i < files.size(); i++) {
-        if(files.at(i).GetFullPath().Cmp(tmp.GetFullPath(wxPATH_UNIX)) == 0) {
-            return true;
-        }
-    }
-    return false;
-}
+bool Project::IsFileExist(const wxString& fileName) { return m_filesTable.count(fileName); }
 
 bool Project::AddFile(const wxString& fileName, const wxString& virtualDirPath)
 {
@@ -318,7 +258,7 @@ bool Project::RemoveFile(const wxString& fileName, const wxString& virtualDir)
             delete node;
 
         } else {
-        wxLogMessage(wxT("Failed to remove file %s from project"), tmp.GetFullPath(wxPATH_UNIX).c_str());
+            wxLogMessage(wxT("Failed to remove file %s from project"), tmp.GetFullPath(wxPATH_UNIX).c_str());
         }
     }
     SetModified(true);
@@ -370,8 +310,8 @@ void Project::RecursiveAdd(wxXmlNode* xmlNode, ProjectTreePtr& ptp, ProjectTreeN
             ProjectItem(key, xmlNode->GetPropVal(wxT("Name"), wxEmptyString), wxEmptyString, ProjectItem::TypeProject);
 
     } else if(xmlNode->GetName() == wxT("VirtualDirectory")) {
-        item = ProjectItem(
-            key, xmlNode->GetPropVal(wxT("Name"), wxEmptyString), wxEmptyString, ProjectItem::TypeVirtualDirectory);
+        item = ProjectItem(key, xmlNode->GetPropVal(wxT("Name"), wxEmptyString), wxEmptyString,
+                           ProjectItem::TypeVirtualDirectory);
 
     } else if(xmlNode->GetName() == wxT("File")) {
         wxFileName filename(xmlNode->GetPropVal(wxT("Name"), wxEmptyString));
@@ -446,63 +386,6 @@ void Project::GetFilesByVirtualDir(const wxString& vdFullPath, wxArrayString& fi
             }
             child = child->GetNext();
         }
-    }
-}
-
-wxString Project::GetFiles(bool absPath)
-{
-    std::vector<wxFileName> files;
-    GetFiles(files, absPath);
-
-    wxString temp;
-    for(size_t i = 0; i < files.size(); i++) temp << wxT("\"") << files.at(i).GetFullPath() << wxT("\" ");
-
-    if(temp.IsEmpty() == false) temp.RemoveLast();
-
-    return temp;
-}
-
-void Project::GetFiles(wxStringSet_t& files)
-{
-    DirSaver ds;
-    FileNameVector_t v;
-    ::wxSetWorkingDirectory(m_fileName.GetPath());
-    GetFiles(m_doc.GetRoot(), v, true);
-    for(size_t i = 0; i < v.size(); i++) {
-        files.insert(v.at(i).GetFullPath());
-    }
-}
-
-void Project::GetFiles(std::vector<wxFileName>& files, bool absPath)
-{
-    if(absPath) {
-        GetFiles(m_doc.GetRoot(), files, true);
-
-    } else {
-        GetFiles(m_doc.GetRoot(), files, false);
-    }
-}
-
-void Project::GetFiles(wxXmlNode* parent, std::vector<wxFileName>& files, bool absPath)
-{
-    if(!parent) {
-        return;
-    }
-
-    wxXmlNode* child = parent->GetChildren();
-    while(child) {
-        if(child->GetName() == wxT("File")) {
-            wxString fileName = child->GetPropVal(wxT("Name"), wxEmptyString);
-            wxFileName tmp(fileName);
-            if(absPath) {
-                tmp.MakeAbsolute(GetProjectPath());
-            }
-
-            files.push_back(tmp);
-        } else if(child->GetChildren()) { // we could also add a check for VirtualDirectory only
-            GetFiles(child, files, absPath);
-        }
-        child = child->GetNext();
     }
 }
 
@@ -694,6 +577,61 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
     doc.Save(newFile.GetFullPath());
 }
 
+clProjectFile::Ptr_t Project::FileFromXml(wxXmlNode* node, const wxString& vd)
+{
+    clProjectFile::Ptr_t file(new clProjectFile());
+
+    // files are kept relative to the project file
+    wxString fileName = node->GetAttribute(wxT("Name"), wxEmptyString);
+    wxFileName tmp(fileName);
+    tmp.MakeAbsolute(GetProjectPath());
+
+    file->SetFilenameRelpath(fileName);
+    file->SetFilename(tmp.GetFullPath());
+    file->SetFlags(XmlUtils::ReadLong(node, "Flags", 0));
+    file->SetXmlNode(node);
+
+    wxString excludeConfigs = XmlUtils::ReadString(node, EXCLUDE_FROM_BUILD_FOR_CONFIG);
+    file->SetExcludeConfigs(::wxStringTokenize(excludeConfigs, ";", wxTOKEN_STRTOK));
+    file->SetVirtualFolder(vd);
+    return file;
+}
+
+void Project::DoBuildCacheFromXml()
+{
+    m_filesTable.clear();
+    m_virtualFoldersTable.clear();
+
+    // Update the cache from the XML
+    std::queue<std::pair<wxXmlNode*, Folder::Ptr_t> > Q;
+    Q.push({ m_doc.GetRoot(), nullptr });
+    while(!Q.empty()) {
+        wxXmlNode* node = Q.front().first;
+        Folder::Ptr_t folder = Q.front().second;
+        Q.pop();
+
+        wxXmlNode* child = node->GetChildren();
+        while(child) {
+            if(child->GetName() == "File" && folder) {
+                File::Ptr_t file = FileFromXml(child, folder->GetFullpath());
+                // Cache the file
+                m_filesTable.insert({ file->GetFilename(), file });
+                // Add this file to the folder
+                folder->GetFiles().insert(file->GetFilename());
+
+            } else if(child->GetName() == "VirtualDirectory") {
+                wxString folderName = child->GetPropVal("Name", wxEmptyString);
+                Folder::Ptr_t newFolder(
+                    new Folder(folder ? folder->GetFullpath() + ":" + folderName : folderName, child));
+                // Cache this folder
+                m_virtualFoldersTable.insert({ newFolder->GetFullpath(), newFolder });
+                Q.push({ child, newFolder });
+            }
+            child = child->GetNext();
+        }
+    }
+}
+
 void Project::SetFiles(ProjectPtr src)
 {
     // first remove all the virtual directories from this project
@@ -704,6 +642,8 @@ void Project::SetFiles(ProjectPtr src)
         delete vd;
         vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
     }
+    m_filesTable.clear();
+    m_virtualFoldersTable.clear();
 
     // sanity
     if(!src || !src->m_doc.GetRoot()) return;
@@ -719,94 +659,39 @@ void Project::SetFiles(ProjectPtr src)
         child = child->GetNext();
     }
     SaveXmlFile();
+    DoBuildCacheFromXml();
 }
 
 bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, const wxString& newName)
 {
-    wxXmlNode* vd = GetVirtualDir(virtualDir);
-    if(!vd) {
+    if(m_virtualFoldersTable.count(virtualDir) == 0) {
         return false;
     }
+    clProjectFolder::Ptr_t folder = m_virtualFoldersTable[virtualDir];
+    folder->RenameFile(this, oldName, newName);
 
-    // Convert the file path to be relative to
-    // the project path
-    DirSaver ds;
-
-    ::wxSetWorkingDirectory(m_fileName.GetPath());
-    wxFileName tmp(oldName);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-
-    wxXmlNode* node = XmlUtils::FindNodeByName(vd, wxT("File"), tmp.GetFullPath(wxPATH_UNIX));
-    if(node) {
-        // update the new name
-        tmp.SetFullName(newName);
-        XmlUtils::UpdateProperty(node, wxT("Name"), tmp.GetFullPath(wxPATH_UNIX));
-    }
-
-    SetModified(true);
-
-    if(InTransaction())
+    if(InTransaction()) {
         return true;
-    else
+    } else {
         return SaveXmlFile();
+    }
 }
 
 wxString Project::GetVDByFileName(const wxString& file)
 {
-    // find the file under this node
-    // Convert the file path to be relative to
-    // the project path
-    DirSaver ds;
-
-    ::wxSetWorkingDirectory(m_fileName.GetPath());
-    wxFileName tmp(file);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-
-    wxString path(wxEmptyString);
-    wxXmlNode* fileNode = FindFile(m_doc.GetRoot(), tmp.GetFullPath(wxPATH_UNIX));
-
-    if(fileNode) {
-        wxXmlNode* parent = fileNode->GetParent();
-        while(parent) {
-            if(parent->GetName() == wxT("VirtualDirectory")) {
-                path.Prepend(parent->GetPropVal(wxT("Name"), wxEmptyString));
-                path.Prepend(wxT(":"));
-            } else {
-                break;
-            }
-            parent = parent->GetParent();
-        }
+    if(m_virtualFoldersTable.count(file) == 0) {
+        return "";
     }
-    wxString trunc_path(path);
-    path.StartsWith(wxT(":"), &trunc_path);
-    return trunc_path;
-}
-
-wxXmlNode* Project::FindFile(wxXmlNode* parent, const wxString& file)
-{
-    wxXmlNode* child = parent->GetChildren();
-    while(child) {
-        wxString name = child->GetName();
-        if(name == wxT("File") && child->GetPropVal(wxT("Name"), wxEmptyString) == file) {
-            return child;
-        }
-
-        if(child->GetName() == wxT("VirtualDirectory")) {
-            wxXmlNode* n = FindFile(child, file);
-            if(n) {
-                return n;
-            }
-        }
-        child = child->GetNext();
-    }
-    return NULL;
+    return m_virtualFoldersTable[file]->GetName();
 }
 
 bool Project::RenameVirtualDirectory(const wxString& oldVdPath, const wxString& newName)
 {
-    wxXmlNode* vdNode = GetVirtualDir(oldVdPath);
-    if(vdNode) {
-        XmlUtils::UpdateProperty(vdNode, wxT("Name"), newName);
+    if(m_virtualFoldersTable.count(oldVdPath) == 0) {
+        return false;
+    }
+    clProjectFolder::Ptr_t folder = m_virtualFoldersTable[oldVdPath];
+    if(folder->Rename(this, newName)) {
         return SaveXmlFile();
     }
     return false;
@@ -869,39 +754,6 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
     SetModified(true);
 }
 
-void Project::GetFiles(std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles)
-{
-    DirSaver ds;
-    ::wxSetWorkingDirectory(m_fileName.GetPath());
-    GetFiles(m_doc.GetRoot(), files, absFiles);
-}
-
-void Project::GetFiles(wxXmlNode* parent, std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles)
-{
-    if(!parent) {
-        return;
-    }
-
-    wxXmlNode* child = parent->GetChildren();
-    while(child) {
-        if(child->GetName() == wxT("File")) {
-            wxString fileName = child->GetPropVal(wxT("Name"), wxEmptyString);
-            wxFileName tmp(fileName);
-
-            // append the file as it appears
-            files.push_back(tmp);
-
-            // convert to absolute path
-            tmp.MakeAbsolute();
-            absFiles.push_back(tmp);
-
-        } else if(child->GetChildren()) { // we could also add a check for VirtualDirectory only
-            GetFiles(child, files, absFiles);
-        }
-        child = child->GetNext();
-    }
-}
-
 bool Project::FastAddFile(const wxString& fileName, const wxString& virtualDir)
 {
     wxXmlNode* vd = GetVirtualDir(virtualDir);
@@ -950,8 +802,8 @@ void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, Visu
     }
 }
 
-TreeNode<wxString, VisualWorkspaceNode>* Project::GetVirtualDirectories(
-    TreeNode<wxString, VisualWorkspaceNode>* workspace)
+TreeNode<wxString, VisualWorkspaceNode>*
+Project::GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode>* workspace)
 {
     VisualWorkspaceNode data;
     data.name = GetName();
@@ -1250,8 +1102,8 @@ wxArrayString Project::GetIncludePaths()
         wxArrayString projectCCompileOptionsArr = wxStringTokenize(projectCCompileOptions, wxT(";"), wxTOKEN_STRTOK);
 
         // Append the C options to the C++ options
-        projectCompileOptionsArr.insert(
-            projectCompileOptionsArr.end(), projectCCompileOptionsArr.begin(), projectCCompileOptionsArr.end());
+        projectCompileOptionsArr.insert(projectCompileOptionsArr.end(), projectCCompileOptionsArr.begin(),
+                                        projectCCompileOptionsArr.end());
         for(size_t i = 0; i < projectCompileOptionsArr.GetCount(); i++) {
 
             wxString cmpOption(projectCompileOptionsArr.Item(i));
@@ -1323,7 +1175,7 @@ void Project::ClearAllVirtDirs()
 wxString Project::GetProjectIconName() const { return m_doc.GetRoot()->GetPropVal(wxT("IconIndex"), "gear16"); }
 
 void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& ignoreFiles,
-    wxArrayString& excludePaths, wxArrayString& regexes)
+                                    wxArrayString& excludePaths, wxArrayString& regexes)
 {
     if(!m_doc.IsOk()) {
         return;
@@ -1362,7 +1214,8 @@ void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions,
 }
 
 void Project::SetReconciliationData(const wxString& toplevelDir, const wxString& extensions,
-    const wxArrayString& ignoreFiles, const wxArrayString& excludePaths, wxArrayString& regexes)
+                                    const wxArrayString& ignoreFiles, const wxArrayString& excludePaths,
+                                    wxArrayString& regexes)
 {
     if(!m_doc.IsOk()) {
         return;
@@ -1423,46 +1276,6 @@ void Project::SetReconciliationData(const wxString& toplevelDir, const wxString&
         XmlUtils::SetNodeContent(itemnode, regexes.Item(n));
     }
     SaveXmlFile();
-}
-
-void Project::GetFilesMetadata(Project::FileInfoVector_t& files) const
-{
-    std::queue<wxXmlNode*> elements;
-    if(!m_doc.IsOk() || !m_doc.GetRoot()) return;
-
-    elements.push(m_doc.GetRoot());
-    files.reserve(1000); // make room for at least for 1000 files (should be enough for most projects)
-
-    while(!elements.empty()) {
-        wxXmlNode* element = elements.front();
-        elements.pop();
-
-        while(element) {
-            if(element->GetName() == wxT("File")) {
-
-                // files are kept relative to the project file
-                wxString fileName = element->GetAttribute(wxT("Name"), wxEmptyString);
-                wxFileName tmp(fileName);
-                tmp.MakeAbsolute(GetProjectPath());
-                FileInfo fi;
-                fi.SetFilenameRelpath(fileName);
-                fi.SetFilename(tmp.GetFullPath());
-                fi.SetFlags(XmlUtils::ReadLong(element, "Flags", 0));
-
-                wxString excludeConfigs = XmlUtils::ReadString(element, EXCLUDE_FROM_BUILD_FOR_CONFIG);
-                fi.SetExcludeConfigs(::wxStringTokenize(excludeConfigs, ";", wxTOKEN_STRTOK));
-                fi.SetVirtualFolder(DoFormatVirtualFolderName(element));
-                files.push_back(fi);
-
-            } else if(element->GetChildren()) {
-                elements.push(element->GetChildren());
-            }
-            element = element->GetNext();
-        }
-    }
-
-    // releaes any un-needed memory
-    Project::FileInfoVector_t(files).swap(files);
 }
 
 wxString Project::DoFormatVirtualFolderName(const wxXmlNode* node) const
@@ -1551,8 +1364,8 @@ wxArrayString Project::GetExcludeConfigForFile(const wxString& filename, const w
     return configs;
 }
 
-void Project::SetExcludeConfigForFile(
-    const wxString& filename, const wxString& virtualDirPath, const wxArrayString& configs)
+void Project::SetExcludeConfigForFile(const wxString& filename, const wxString& virtualDirPath,
+                                      const wxArrayString& configs)
 {
     wxXmlNode* vdNode = GetVirtualDir(virtualDirPath);
     if(!vdNode) {
@@ -1961,10 +1774,10 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
                 break;
             }
         }
-        
+
         // remove duplicate entries
         wxArrayString uniqueVars;
-        for(size_t i=0; i<vars.size(); ++i) {
+        for(size_t i = 0; i < vars.size(); ++i) {
             if(uniqueVars.Index(vars.Item(i)) == wxNOT_FOUND) {
                 uniqueVars.Add(vars.Item(i));
             }
@@ -2024,4 +1837,138 @@ wxArrayString Project::DoGetUnPreProcessors(bool clearCache, const wxString& cmp
         }
     }
     return pps;
+}
+
+wxString Project::GetFilesAsString(bool absPath) const
+{
+    wxString str;
+    std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
+        if(absPath) {
+            str << vt.first << " ";
+        } else {
+            str << vt.second->GetFilenameRelpath() << " ";
+        }
+    });
+
+    if(!str.IsEmpty()) {
+        str.RemoveLast();
+    }
+    return str;
+}
+
+void Project::GetFilesAsVector(clProjectFile::Vec_t& files) const
+{
+    std::for_each(m_filesTable.begin(), m_filesTable.end(),
+                  [&](const FilesMap_t::value_type& vt) { files.push_back(vt.second); });
+}
+
+void Project::GetFilesAsStringArray(wxArrayString& files) const
+{
+    std::for_each(m_filesTable.begin(), m_filesTable.end(),
+                  [&](const FilesMap_t::value_type& vt) { files.push_back(vt.first); });
+}
+
+clProjectFolder::Ptr_t Project::GetRootFolder()
+{
+    if(m_virtualFoldersTable.count("") == 0) {
+        m_virtualFoldersTable[""] = clProjectFolder("", m_doc.GetRoot());
+    }
+    return m_virtualFoldersTable[""];
+}
+
+bool clProjectFolder::RenameFile(Project* project, const wxString& fullpath, const wxString& newName)
+{
+    if(!project) {
+        return false;
+    }
+    if(GetXmlNode()) {
+        return false;
+    }
+
+    // Locate the file in this virtual folder
+    if(m_files.count(fullpath) == 0) {
+        return false;
+    }
+
+    // Check that this file exists in the project
+    if(project->m_filesTable.count(fullpath) == 0) {
+        return false;
+    }
+
+    clProjectFile::Ptr_t file = project->m_filesTable[fullpath];
+    file->Rename(newName);
+
+    // Remove the old file from the folder and insert the new one
+    m_files.erase(fullpath);
+    m_files.insert(file->GetFilename());
+
+    // Update the project files table
+    project->m_filesTable.erase(fullpath);
+    project->m_filesTable.insert({ file->GetFilename(), file });
+}
+
+bool clProjectFolder::Rename(Project* project, const wxString& newName)
+{
+    if(m_xmlNode) {
+        wxString oldnameFullpath = m_fullpath;
+        XmlUtils::UpdateProperty(m_xmlNode, "Name", newName);
+        // Update the new name
+        m_name = newName;
+        size_t where = m_fullpath.rfind(':');
+        if(where != wxString::npos) {
+            // Remove the last part
+            m_fullpath = m_fullpath.Mid(where);
+            m_fullpath << ":" << newName;
+        } else {
+            // Not found, replace it entirely
+            m_fullpath = newName;
+        }
+
+        // Update the cache
+
+        // Update all the files that are related to this folder
+        std::for_each(m_files.begin(), m_files.end(), [&](const wxString& filename) {
+            if(project->m_filesTable.count(filename)) {
+                clProjectFile::Ptr_t file = project->m_filesTable[filename];
+                file->SetVirtualFolder(GetFullpath());
+            }
+        });
+
+        // Next, the folder path in the cache
+        clProjectFolder::Ptr_t p = project->m_virtualFoldersTable[oldnameFullpath];
+        project->m_virtualFoldersTable.erase(oldnameFullpath);
+        project->m_virtualFoldersTable[m_fullpath] = p;
+        return true;
+    }
+    return false;
+}
+
+clProjectFolder::Ptr_t clProjectFolder::AddFolder(Project* project, const wxString& name)
+{
+    wxString fullpath = GetFullpath() + ":" name;
+    if(project->m_virtualFoldersTable.count(fullpath)) {
+        return project->m_virtualFoldersTable[fullpath];
+    }
+
+    wxXmlNode* node = new wxXmlNode(m_xmlNode, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
+    node->AddProperty("Name", name);
+
+    clProjectFolder::Ptr_t childFolder(new clProjectFolder(fullpath, node));
+    project->m_virtualFoldersTable[fullpath] = childFolder;
+    return childFolder;
+}
+
+bool clProjectFolder::IsFolderExists(Project* project, const wxString& name) const
+{
+    wxString fullpath = GetFullpath() + ":" name;
+    return (project->m_virtualFoldersTable.count(fullpath) > 0);
+}
+
+clProjectFolder::Ptr_t clProjectFolder::GetChild(Project* project, const wxString& name) const
+{
+    wxString fullpath = GetFullpath() + ":" name;
+    if(project->m_virtualFoldersTable.count(fullpath)) {
+        return project->m_virtualFoldersTable[fullpath];
+    }
+    return nullptr;
 }

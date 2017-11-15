@@ -38,7 +38,7 @@
 class WXDLLIMPEXP_SDK BuilderGnuMake : public Builder
 {
     size_t m_objectChunks;
-    Project::FileInfoVector_t m_projectFilesMetadata;
+    Project::FilesMap_t m_projectFilesMetadata;
 
 public:
     BuilderGnuMake();

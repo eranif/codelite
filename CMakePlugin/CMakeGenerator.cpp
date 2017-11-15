@@ -545,11 +545,11 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     // Get project type
     {
         wxString type = buildConf->GetProjectType();
-        if(type == Project::EXECUTABLE) {
+        if(type == PROJECT_TYPE_EXECUTABLE) {
             content << "add_executable(" << project->GetName() << " ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})\n";
             content << "target_link_libraries(" << project->GetName() << " ${LINK_OPTIONS})\n\n";
 
-        } else if(type == Project::DYNAMIC_LIBRARY) {
+        } else if(type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
             content << "add_library(" << project->GetName() << " SHARED ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})\n";
             content << "target_link_libraries(" << project->GetName() << " ${LINK_OPTIONS})\n\n";
 

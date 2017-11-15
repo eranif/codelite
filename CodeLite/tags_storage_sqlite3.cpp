@@ -1638,14 +1638,14 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
 
         // Split the input vector into arrays of up to 500 elements each
         std::vector<std::vector<wxString> > v;
-        int chunks = (symbols.size() / 500) + 1;
+        int chunks = (symbols.size() / 250) + 1;
         int offset = 0;
         int left = symbols.size();
         for(int i = 0; i < chunks; ++i) {
-            int amountToCopy = left > 500 ? 500 : left;
+            int amountToCopy = left > 250 ? 250 : left;
             left -= amountToCopy;
             std::vector<wxString> vChunk(symbols.begin() + offset, symbols.begin() + (offset + amountToCopy));
-            offset += 500;
+            offset += 250;
             v.push_back(vChunk);
         }
 

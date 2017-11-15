@@ -104,7 +104,7 @@ bool QMakeProFileGenerator::Generate()
 
 	// incase we are building library, set the template back the lib
 	wxString type = p->GetSettings()->GetProjectType( bldConf->GetName() );
-	if ( type == Project::DYNAMIC_LIBRARY || type == Project::STATIC_LIBRARY ) {
+	if ( type == PROJECT_TYPE_DYNAMIC_LIBRARY || type == PROJECT_TYPE_STATIC_LIBRARY ) {
 		pro_file << wxT("TEMPLATE       = lib\n");
 	}
 
@@ -152,11 +152,11 @@ void QMakeProFileGenerator::SetVariables(wxString& pro_file, BuildConfigPtr bldC
 	// since LIBS does not add the -L, we need to add it ourselves here
 	CompilerPtr cmp = m_manager->GetBuildSettingsConfigManager()->GetCompiler(bldConf->GetCompilerType());
 
-	if ( type == Project::EXECUTABLE ) {
+	if ( type == PROJECT_TYPE_EXECUTABLE ) {
 		pro_file << wxT("TEMPLATE       = app\n");
 		pro_file << wxT("CONFIG         = release qt lex yacc uic resources warn_on precompile_header\n");
 
-	} else if ( type == Project::DYNAMIC_LIBRARY ) {
+	} else if ( type == PROJECT_TYPE_DYNAMIC_LIBRARY ) {
 		pro_file << wxT("TEMPLATE       = lib\n");
 		pro_file << wxT("CONFIG         = release qt dll lex yacc uic resources warn_on precompile_header\n");
 

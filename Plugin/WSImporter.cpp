@@ -51,14 +51,14 @@ bool WSImporter::Import(wxString& errMsg)
 
                     switch(cfgType) {
                     case GenericCfgType::DYNAMIC_LIBRARY:
-                        projectType = Project::DYNAMIC_LIBRARY;
+                        projectType = PROJECT_TYPE_DYNAMIC_LIBRARY;
                         break;
                     case GenericCfgType::STATIC_LIBRARY:
-                        projectType = Project::STATIC_LIBRARY;
+                        projectType = PROJECT_TYPE_STATIC_LIBRARY;
                         break;
                     case GenericCfgType::EXECUTABLE:
                     default:
-                        projectType = Project::EXECUTABLE;
+                        projectType = PROJECT_TYPE_EXECUTABLE;
                         break;
                     }
 
@@ -185,14 +185,14 @@ bool WSImporter::Import(wxString& errMsg)
 
                         switch(cfgType) {
                         case GenericCfgType::DYNAMIC_LIBRARY:
-                            buildConfigType = Project::DYNAMIC_LIBRARY;
+                            buildConfigType = PROJECT_TYPE_DYNAMIC_LIBRARY;
                             break;
                         case GenericCfgType::STATIC_LIBRARY:
-                            buildConfigType = Project::STATIC_LIBRARY;
+                            buildConfigType = PROJECT_TYPE_STATIC_LIBRARY;
                             break;
                         case GenericCfgType::EXECUTABLE:
                         default:
-                            buildConfigType = Project::EXECUTABLE;
+                            buildConfigType = PROJECT_TYPE_EXECUTABLE;
                             break;
                         }
 

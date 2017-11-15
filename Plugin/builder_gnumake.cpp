@@ -940,7 +940,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToB
         text << wxT("\t") << wxT("$(RM) ") << imd << "*$(DependSuffix)" << wxT("\n");
         // delete the output file as well
         wxString exeExt(wxEmptyString);
-        if(proj->GetSettings()->GetProjectType(bldConf->GetName()) == Project::EXECUTABLE) {
+        if(proj->GetSettings()->GetProjectType(bldConf->GetName()) == PROJECT_TYPE_EXECUTABLE) {
             // under windows, g++ automatically adds the .exe extension to executable
             // make sure we delete it as well
             exeExt = wxT(".exe");
@@ -1018,7 +1018,7 @@ void BuilderGnuMake::CreateLinkTargets(const wxString& type,
         depsRules << wxT("\n\n");
     }
 
-    if(type == Project::EXECUTABLE || type == Project::DYNAMIC_LIBRARY) {
+    if(type == PROJECT_TYPE_EXECUTABLE || type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         text << wxT("all: ");
         text << wxT("$(OutputFile)\n\n");
 
@@ -1037,7 +1037,7 @@ void BuilderGnuMake::CreateLinkTargets(const wxString& type,
     if(bldConf->IsLinkerRequired()) {
         CreateTargets(type, bldConf, text, projName);
 
-        if(type == Project::EXECUTABLE || type == Project::DYNAMIC_LIBRARY) {
+        if(type == PROJECT_TYPE_EXECUTABLE || type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
             if(depsRules.IsEmpty() == false) {
                 text << wxT("\n") << depsRules << wxT("\n");
             }
@@ -1063,7 +1063,7 @@ BuilderGnuMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, wxSt
         text << "\t@echo $(Objects" << i << ") " << oper << " $(ObjectsFileList)\n";
     }
 
-    if(type == Project::STATIC_LIBRARY) {
+    if(type == PROJECT_TYPE_STATIC_LIBRARY) {
         // create a static library
         // In any case add the 'objects_file' target here
         text << wxT("\t") << wxT("$(AR) $(ArchiveOutputSwitch)$(OutputFile)");
@@ -1073,7 +1073,7 @@ BuilderGnuMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, wxSt
             text << wxT(" $(Objects) $(ArLibs)\n");
         }
 
-    } else if(type == Project::DYNAMIC_LIBRARY) {
+    } else if(type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         // create a shared library
         text << wxT("\t") << wxT("$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile)");
         if(cmp && cmp->GetReadObjectFilesFromList()) {
@@ -1083,7 +1083,7 @@ BuilderGnuMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, wxSt
         }
         text << wxT("$(LibPath) $(Libs) $(LinkOptions)\n");
 
-    } else if(type == Project::EXECUTABLE) {
+    } else if(type == PROJECT_TYPE_EXECUTABLE) {
         // create an executable
         text << wxT("\t") << wxT("$(LinkerName) $(OutputSwitch)$(OutputFile)");
         if(cmp && cmp->GetReadObjectFilesFromList()) {
@@ -1213,7 +1213,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << wxT("## ") << name << wxT("\n");
 
     wxString outputFile = bldConf->GetOutputFileName();
-    if(OS_WINDOWS && (bldConf->GetProjectType() == Project::EXECUTABLE || bldConf->GetProjectType().IsEmpty())) {
+    if(OS_WINDOWS && (bldConf->GetProjectType() == PROJECT_TYPE_EXECUTABLE || bldConf->GetProjectType().IsEmpty())) {
         outputFile.Trim().Trim(false);
     }
 

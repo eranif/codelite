@@ -529,16 +529,16 @@ bool clCxxWorkspace::RemoveProject(const wxString& name, wxString& errMsg, const
     }
 
     // update the xml file
-    // Incase we got a workspace folder, the project node will exists under the 
+    // Incase we got a workspace folder, the project node will exists under the
     // workspace folder node and not under the root
-    wxXmlNode* root = m_doc.GetRoot() ;
+    wxXmlNode* root = m_doc.GetRoot();
     if(!workspaceFolder.IsEmpty()) {
-        wxXmlNode *node = DoGetWorkspaceFolderXmlNode(workspaceFolder);
+        wxXmlNode* node = DoGetWorkspaceFolderXmlNode(workspaceFolder);
         if(node) {
             root = node;
         }
     }
-    
+
     wxXmlNode* child = root->GetChildren();
     while(child) {
         if(child->GetName() == wxT("Project") && child->GetPropVal(wxT("Name"), wxEmptyString) == name) {
@@ -1172,34 +1172,31 @@ wxString clCxxWorkspace::GetProjectFromFile(const wxFileName& filename) const
     wxString filenameFP = filename.GetFullPath();
     clCxxWorkspace::ProjectMap_t::const_iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); ++iter) {
-        wxStringSet_t allFiles;
-        iter->second->GetFiles(allFiles);
-        if(allFiles.count(filenameFP)) {
+        if(iter->second->GetFiles().count(filenameFP)) {
             return iter->first;
         }
     }
     return "";
 }
+
 void clCxxWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString& files) const
 {
     ProjectPtr p = GetProject(projectName.IsEmpty() ? GetActiveProjectName() : projectName);
     CHECK_PTR_RET(p);
 
-    wxStringSet_t setFiles;
-    p->GetFiles(setFiles);
-
-    // Convert the set wxArrayString
-    std::for_each(setFiles.begin(), setFiles.end(), [&](const wxString& file) { files.Add(file); });
+    const Project::FilesMap_t& filesMap = p->GetFiles();
+    std::for_each(filesMap.begin(), filesMap.end(),
+                  [&](const Project::FilesMap_t::value_type& vt) { files.Add(vt.first); });
 }
 
 void clCxxWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
     std::for_each(m_projects.begin(), m_projects.end(), [&](const clCxxWorkspace::ProjectMap_t::value_type& v) {
-        wxStringSet_t setFiles;
-        v.second->GetFiles(setFiles);
+        const Project::FilesMap_t& filesMap = v.second->GetFiles();
 
         // Convert the set wxArrayString
-        std::for_each(setFiles.begin(), setFiles.end(), [&](const wxString& file) { files.Add(file); });
+        std::for_each(filesMap.begin(), filesMap.end(),
+                      [&](const Project::FilesMap_t::value_type& vt) { files.Add(vt.first); });
     });
 }
 
@@ -1392,9 +1389,9 @@ bool clCxxWorkspace::DoLoadWorkspace(const wxString& fileName, wxString& errMsg)
 wxXmlNode* clCxxWorkspace::DoGetProjectXmlNode(const wxString& projectName)
 {
     std::list<wxXmlNode*> xmls = DoGetProjectsXmlNodes();
-    std::list<wxXmlNode*>::iterator iter = std::find_if(xmls.begin(), xmls.end(), [&](wxXmlNode* node) {
-        return (node->GetAttribute("Name", wxEmptyString) == projectName);
-    });
+    std::list<wxXmlNode*>::iterator iter =
+        std::find_if(xmls.begin(), xmls.end(),
+                     [&](wxXmlNode* node) { return (node->GetAttribute("Name", wxEmptyString) == projectName); });
 
     if(iter == xmls.end()) return NULL;
     return (*iter);

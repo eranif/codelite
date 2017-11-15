@@ -45,7 +45,7 @@ ProjectSettings::ProjectSettings(wxXmlNode* node)
         }
     } else {
         // create new settings with default values
-        m_projectType = Project::EXECUTABLE;
+        m_projectType = PROJECT_TYPE_EXECUTABLE;
         BuildConfig *conf(NULL);
         
         conf = new BuildConfig(NULL);

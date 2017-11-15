@@ -106,14 +106,14 @@ void BuilderGnuMakeOneStep::CreateTargets(const wxString& type, BuildConfigPtr b
     // these patterns below should be all set and loadable from configuration file.
     // compilerName is tool that does single stage construction srcs -> exe/lib
 
-    if(type == Project::STATIC_LIBRARY) {
+    if(type == PROJECT_TYPE_STATIC_LIBRARY) {
         // create a static library
         text << wxT("\t")
              << wxT("$(CXX) $(ArchiveOutputSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
-    } else if(type == Project::DYNAMIC_LIBRARY) {
+    } else if(type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         // create a shared library
         text << wxT("\t") << wxT("$(CXX) $(ObjectSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
-    } else if(type == Project::EXECUTABLE) {
+    } else if(type == PROJECT_TYPE_EXECUTABLE) {
         // create an executable
         text << wxT("\t") << wxT("$(CXX) $(SourceSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
     }

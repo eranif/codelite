@@ -671,19 +671,17 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
     ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject(selectedItem.m_text);
     CHECK_PTR_RET(pProj);
 
-    Project::FileInfoVector_t allFiles;
-    pProj->GetFilesMetadata(allFiles);
+    const Project::FilesMap_t& allFiles = pProj->GetFiles();
 
     std::vector<wxFileName> filesToFormat;
 
-    for(size_t i = 0; i < allFiles.size(); ++i) {
-        FormatterEngine engine = FindFormatter(allFiles.at(i).GetFilename());
-        if(engine == kFormatEngineNone) { continue; }
-
-        // TODO skip files based on size, 4.5MB as the default
-        filesToFormat.push_back(allFiles.at(i).GetFilename());
-    }
-
+    std::for_each(allFiles.begin(), allFiles.end(), [&](const Project::FilesMap_t::value_type& vt) {
+        FormatterEngine engine = FindFormatter(vt.second->GetFilename());
+        if(engine != kFormatEngineNone) {
+            // TODO skip files based on size, 4.5MB as the default
+            filesToFormat.push_back(vt.second->GetFilename());
+        }
+    });
     BatchFormat(filesToFormat);
 }
 

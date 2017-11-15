@@ -1662,19 +1662,11 @@ void FileViewTree::DoImportFolder(ProjectPtr proj, const wxString& baseDir, cons
         clProgressDlg* prgDlg = new clProgressDlg(NULL, _("Importing files ..."), wxT(""), (int)files.GetCount());
 
         // get list of files
-        std::vector<wxFileName> vExistingFiles;
-        wxArrayString existingFiles;
-
-        proj->GetFiles(vExistingFiles, true);
-        for(size_t i = 0; i < vExistingFiles.size(); i++) {
-            existingFiles.Add(vExistingFiles.at(i).GetFullPath());
-        }
-
         for(size_t i = 0; i < files.GetCount(); i++) {
             wxFileName fn(files.Item(i));
 
             // if the file already exist, skip it
-            if(existingFiles.Index(fn.GetFullPath()) != wxNOT_FOUND) { continue; }
+            if(proj->IsFileExist(fn.GetFullPath())) { continue; }
 
             FileViewItem fvitem;
             fvitem.fullpath = fn.GetFullPath();
@@ -1711,6 +1703,7 @@ void FileViewTree::DoImportFolder(ProjectPtr proj, const wxString& baseDir, cons
     // Reload the view
     CallAfter(&FileViewTree::BuildTree);
 }
+
 void FileViewTree::OnReconcileProject(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -2881,7 +2874,7 @@ void FileViewTree::OnAddProjectToWorkspaceFolder(wxCommandEvent& evt)
 
 size_t FileViewTree::GetSelections(wxArrayTreeItemIds& selections) const
 {
-#if defined(__WXMSW__)|| defined(__WXGTK__)
+#if defined(__WXMSW__) || defined(__WXGTK__)
     selections.Clear();
     std::queue<wxTreeItemId> Q;
 

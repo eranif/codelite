@@ -364,7 +364,7 @@ void CppCheckPlugin::OnCheckWorkspaceItem(wxCommandEvent& e)
         for(size_t i = 0; i < projects.GetCount(); i++) {
             ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
             if(proj) {
-                proj->GetFiles(tmpfiles, true);
+                proj->GetFilesAsVectorOfFileName(tmpfiles);
             }
         }
 
@@ -411,7 +411,7 @@ void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
 
     // retrieve complete list of source files of the workspace
     std::vector<wxFileName> tmpfiles;
-    proj->GetFiles(tmpfiles, true);
+    proj->GetFilesAsVectorOfFileName(tmpfiles);
 
     // only C/C++ files
     for(size_t i = 0; i < tmpfiles.size(); i++) {

@@ -401,7 +401,7 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
     if(proj) {
         std::vector<wxFileName> files;
-        proj->GetFiles(files, true);
+        proj->GetFilesAsVectorOfFileName(files);
 
         // Search the target file, if it is already exist in the project, open the file
         // and return
@@ -436,7 +436,7 @@ wxFileName UnitTestPP::FindBestSourceFile(ProjectPtr proj, const wxFileName& fil
     if(filename.IsOk() == false) {
         // no such file
         std::vector<wxFileName> files;
-        proj->GetFiles(files, true);
+        proj->GetFilesAsVectorOfFileName(files);
 
         // Search the target file, if it is already exist in the project, open the file
         // and return

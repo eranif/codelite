@@ -202,7 +202,7 @@ wxString MacroManager::DoExpand(
                 }
 
                 if(expandedString.Find(wxT("$(ProjectFiles)")) != wxNOT_FOUND)
-                    expandedString.Replace(wxT("$(ProjectFiles)"), proj->GetFilesAsString());
+                    expandedString.Replace(wxT("$(ProjectFiles)"), proj->GetFilesAsString(false));
 
                 if(expandedString.Find(wxT("$(ProjectFilesAbs)")) != wxNOT_FOUND)
                     expandedString.Replace(wxT("$(ProjectFilesAbs)"), proj->GetFilesAsString(true));

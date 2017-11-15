@@ -25,34 +25,32 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include "wx/treectrl.h"
-#include "wx/string.h"
-#include <wx/xml/xml.h>
 #include "codelite_exports.h"
-#include "wx/filename.h"
-#include <tree.h>
-#include "codelite_exports.h"
-#include "smart_ptr.h"
-#include <list>
-#include "serialized_object.h"
-#include "project_settings.h"
-#include "optionsconfig.h"
-#include "localworkspace.h"
-#include <set>
-#include <vector>
-#include <queue>
-#include "macros.h"
 #include "json_node.h"
-#include <wx/sharedptr.h>
+#include "localworkspace.h"
+#include "macros.h"
+#include "optionsconfig.h"
+#include "project_settings.h"
+#include "serialized_object.h"
+#include "smart_ptr.h"
+#include "wx/filename.h"
+#include "wx/string.h"
+#include "wx/treectrl.h"
 #include "xmlutils.h"
+#include <list>
+#include <queue>
+#include <set>
+#include <tree.h>
+#include <vector>
+#include <wx/sharedptr.h>
+#include <wx/xml/xml.h>
 
 #define PROJECT_TYPE_STATIC_LIBRARY "Static Library"
 #define PROJECT_TYPE_DYNAMIC_LIBRARY "Dynamic Library"
 #define PROJECT_TYPE_EXECUTABLE "Executable"
 
 class Project;
-struct VisualWorkspaceNode
-{
+struct VisualWorkspaceNode {
     wxString name;
     int type;
     wxTreeItemId itemId;
@@ -104,9 +102,7 @@ public:
 
     ProjectItem& operator=(const ProjectItem& item)
     {
-        if(this == &item) {
-            return *this;
-        }
+        if(this == &item) { return *this; }
 
         m_key = item.m_key;
         m_displayName = item.m_displayName;
@@ -185,25 +181,13 @@ public:
      * @brief return true if this file should be execluded from the build of a specific configuration
      */
     bool IsExcludeFromConfiguration(const wxString& config) const { return m_excludeConfigs.count(config); }
-    void Rename(const wxString& newName)
-    {
-        {
-            wxFileName fn(m_filename);
-            fn.SetFullName(newName);
-            m_filename = fn.GetFullPath();
-        }
-        {
-            wxFileName fn(m_filenameRelpath);
-            fn.SetFullName(newName);
-            m_filenameRelpath = fn.GetFullPath(wxPATH_UNIX);
-        }
+    void Rename(const wxString& newName);
 
-        // Update the XML
-        if(m_xmlNode) {
-            // update the new name
-            XmlUtils::UpdateProperty(m_xmlNode, wxT("Name"), m_filenameRelpath);
-        }
-    }
+    /**
+     * @brief delete this file
+     * @param project
+     */
+    void Delete(Project* project, bool deleteXml = false);
 
     typedef wxSharedPtr<clProjectFile> Ptr_t;
     typedef std::vector<clProjectFile::Ptr_t> Vec_t;
@@ -255,16 +239,36 @@ public:
      * @return
      */
     clProjectFolder::Ptr_t AddFolder(Project* project, const wxString& name);
-
+    
+    /**
+     * @brief add file to this folder
+     */
+    clProjectFile::Ptr_t AddFile(Project* project, const wxString& fullpath);
+    
     /**
      * @brief return true if this folder has a child folder with a given name
      */
     bool IsFolderExists(Project* project, const wxString& name) const;
-    
+
     /**
      * @brief reutrn child folder. Can be nullptr
      */
     clProjectFolder::Ptr_t GetChild(Project* project, const wxString& name) const;
+
+    /**
+     * @brief return list of all subfolders from this folder
+     */
+    wxArrayString GetAllSubFolders() const;
+
+    /**
+     * @brief delete this folder and all its children
+     */
+    void DeleteRecursive(Project* project);
+
+    /**
+     * @brief delete all files from this folder
+     */
+    void DeleteAllFiles(Project* project);
 };
 
 /**
@@ -322,6 +326,8 @@ private:
     wxArrayString DoGetUnPreProcessors(bool clearCache, const wxString& cmpOptions);
 
     clProjectFolder::Ptr_t GetRootFolder();
+    clProjectFolder::Ptr_t GetFolder(const wxString& vdFullPath) const;
+    clProjectFile::Ptr_t GetFile(const wxString& fullpath) const;
 
 public:
     /**
@@ -496,12 +502,18 @@ public:
      * are in fullpath
      */
     const FilesMap_t& GetFiles() const { return m_filesTable; }
+    FilesMap_t& GetFiles() { return m_filesTable; }
 
     /**
      * @brief return the files as vector
      */
     void GetFilesAsVector(clProjectFile::Vec_t& files) const;
-
+    
+    /**
+     * @brief return the files as vector of wxFileName
+     */
+    void GetFilesAsVectorOfFileName(std::vector<wxFileName>& files, bool absPath = true) const;
+    
     /**
      * @brief return list of files space separated
      */
@@ -510,7 +522,7 @@ public:
     /**
      * @brief return list of files as wxArrayString
      */
-    void GetFilesAsStringArray(wxArrayString& files) const;
+    void GetFilesAsStringArray(wxArrayString& files, bool absPath = true) const;
 
     /**
      * Return a node pointing to any project-wide editor preferences

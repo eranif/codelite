@@ -515,10 +515,10 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
                 }
 
                 if(output.Find(wxT("$(ProjectFiles)")) != wxNOT_FOUND)
-                    output.Replace(wxT("$(ProjectFiles)"), proj->GetFiles());
+                    output.Replace(wxT("$(ProjectFiles)"), proj->GetFilesAsString(false));
 
                 if(output.Find(wxT("$(ProjectFilesAbs)")) != wxNOT_FOUND)
-                    output.Replace(wxT("$(ProjectFilesAbs)"), proj->GetFiles(true));
+                    output.Replace(wxT("$(ProjectFilesAbs)"), proj->GetFilesAsString(true));
             }
         }
 

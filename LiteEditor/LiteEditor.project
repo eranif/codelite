@@ -709,6 +709,7 @@
     <Project Name="UnitTestPP"/>
   </Dependencies>
   <VirtualDirectory Name="scripts">
+    <File Name="res/convert-svgs.sh"/>
     <File Name="../Runtime/update.bat"/>
     <File Name="../make_src_targz.sh"/>
     <File Name="../mac-build.sh"/>
@@ -950,7 +951,6 @@
     <File Name="new_virtual_folder.wxcp"/>
     <File Name="quickfindbarbase.wxcp"/>
     <File Name="CompilersFoundDlg.wxcp"/>
-    <File Name="ReplaceInFilesPageBase.wxcp"/>
     <File Name="CodeLiteUpgradeFrame.wxcp"/>
     <File Name="ConfigManagerBaseDlg.wxcp"/>
   </VirtualDirectory>

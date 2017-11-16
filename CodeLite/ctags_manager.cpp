@@ -48,6 +48,7 @@
 #include "wx/filename.h"
 #include "wx/timer.h"
 #include "wx/tokenzr.h"
+#include "wxStringHash.h"
 #include <algorithm>
 #include <set>
 #include <sstream>
@@ -1248,6 +1249,7 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName>& projectFiles)
 void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType type, wxEvtHandler* cb)
 {
     wxArrayString strFiles;
+    strFiles.Alloc(files.size()); // At most files.size() entries
     // step 1: remove all non-tags files
     for(size_t i = 0; i < files.size(); i++) {
         if(!IsValidCtagsFile(files.at(i).GetFullPath())) { continue; }
@@ -2224,7 +2226,7 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITags
 {
     std::vector<FileEntryPtr> files_entries;
     db->GetFiles(files_entries);
-    std::set<wxString> files_set;
+    std::unordered_set<wxString> files_set;
 
     for(size_t i = 0; i < strFiles.GetCount(); i++) {
         files_set.insert(strFiles.Item(i));
@@ -2234,7 +2236,7 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITags
         FileEntryPtr fe = files_entries.at(i);
 
         // does the file exist in both lists?
-        std::set<wxString>::iterator iter = files_set.find(fe->GetFile());
+        std::unordered_set<wxString>::iterator iter = files_set.find(fe->GetFile());
         if(iter != files_set.end()) {
             // get the actual modifiaction time of the file from the disk
             struct stat buff;
@@ -2249,8 +2251,9 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITags
     }
 
     // copy back the files to the array
-    std::set<wxString>::iterator iter = files_set.begin();
+    std::unordered_set<wxString>::iterator iter = files_set.begin();
     strFiles.Clear();
+    strFiles.Alloc(files_set.size());
     for(; iter != files_set.end(); iter++) {
         strFiles.Add(*iter);
     }

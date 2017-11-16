@@ -1252,7 +1252,7 @@ wxString Project::GetCompileLineForCXXFile(const wxString& filenamePlaceholder, 
     EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
     // Clear the backticks cache
-    s_backticks.clear();
+//    s_backticks.clear();
 
     // Get the compile options
     wxString projectCompileOptions = cxxFile ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();

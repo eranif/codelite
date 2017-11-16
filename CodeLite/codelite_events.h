@@ -782,7 +782,14 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PHP_SETTINGS_CHANGED, clCommandEv
 
 // Goto Anything item was selected
 // Use: clCommandEvent::GetString to get the selected item
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SELECTED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SELECTED, clGotoEvent);
+
+// Goto Anything dialog is about to be shown
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SHOWING, clGotoEvent);
+
+// This event is sent to allow plugins and other modules to sort the entries before
+// they are displayed to the user
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SORT_NEEDED, clGotoEvent);
 
 // Build configuration for the workspace has changed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_BUILD_CONFIG_CHANGED, clCommandEvent);

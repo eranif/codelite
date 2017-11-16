@@ -1,10 +1,10 @@
 #ifndef SMARTCOMPLETIONSCONFIG_H
 #define SMARTCOMPLETIONSCONFIG_H
 
-#include "cl_config.h"
-#include <unordered_map>
-#include "wxStringHash.h"
 #include "SmartCompletionUsageDB.h"
+#include "cl_config.h"
+#include "wxStringHash.h"
+#include <unordered_map>
 
 class SmartCompletionsConfig : public clConfigItem
 {
@@ -18,9 +18,10 @@ public:
 
 protected:
     size_t m_flags;
-    std::unordered_map<wxString, int> m_weight;
+    std::unordered_map<wxString, int> m_CCweight;
+    std::unordered_map<wxString, int> m_GTAweight;
     SmartCompletionUsageDB m_db;
-    
+
 public:
     SmartCompletionsConfig();
     virtual ~SmartCompletionsConfig();
@@ -30,10 +31,9 @@ public:
 
     bool IsEnabled() const { return m_flags & kEnabled; }
     void SetEnabled(bool b) { b ? m_flags |= kEnabled : m_flags &= ~kEnabled; }
-    std::unordered_map<wxString, int>& GetWeightTable() { return m_weight; }
-    
+    std::unordered_map<wxString, int>& GetCCWeightTable() { return m_CCweight; }
+    std::unordered_map<wxString, int>& GetGTAWeightTable() { return m_GTAweight; }
     SmartCompletionUsageDB& GetUsageDb() { return m_db; }
-    
 };
 
 #endif // SMARTCOMPLETIONSCONFIG_H

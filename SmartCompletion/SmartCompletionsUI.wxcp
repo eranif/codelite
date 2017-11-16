@@ -449,7 +449,7 @@
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
-           "m_value": "Clear statistics gathtered"
+           "m_value": "Clear statistics gathered"
           }, {
            "type": "colour",
            "m_label": "Bg Colour:",

@@ -29,6 +29,7 @@
 #include <Plugin/workspace.h>
 #include <set>
 #include <boost/smart_ptr/shared_ptr.hpp>
+#include <unordered_map>
 
 struct ST {
     std::string name;

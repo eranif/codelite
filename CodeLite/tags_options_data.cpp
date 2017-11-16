@@ -157,6 +157,9 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("Q_OBJECT"));
     m_tokens.Add(wxT("Q_PACKED"));
     m_tokens.Add(wxT("Q_GADGET"));
+    m_tokens.Add(wxT("QT_BEGIN_NAMESPACE"));
+    m_tokens.Add(wxT("QT_END_NAMESPACE"));
+    m_tokens.Add(wxT("Q_GADGET"));
     m_tokens.Add(wxT("QT_BEGIN_HEADER"));
     m_tokens.Add(wxT("QT_END_HEADER"));
     m_tokens.Add(wxT("Q_REQUIRED_RESULT"));
@@ -216,6 +219,7 @@ TagsOptionsData::TagsOptionsData()
     m_types.Add(wxT("std::map::iterator=std::pair<_Key, _Tp>"));
     m_types.Add(wxT("std::map::const_iterator=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("std::unordered_map::iterator=std::pair<_Key, _Tp>"));
+    m_types.Add(wxT("std::unordered_map::mapped_type=_Tp"));
     m_types.Add(wxT("std::unordered_map::const_iterator=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("std::unordered_map::value_type=std::pair<_Key,_Tp>"));
     m_types.Add(wxT("std::multimap::iterator=std::pair<_Key,_Tp>"));

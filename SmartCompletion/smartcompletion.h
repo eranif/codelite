@@ -1,22 +1,26 @@
 #ifndef __SmartCompletion__
 #define __SmartCompletion__
 
-#include "plugin.h"
-#include "cl_command_event.h"
-#include <unordered_map>
-#include "wxStringHash.h"
-#include "entry.h"
 #include "SmartCompletionsConfig.h"
+#include "cl_command_event.h"
+#include "entry.h"
+#include "plugin.h"
+#include "wxStringHash.h"
+#include <unordered_map>
 
 class SmartCompletion : public IPlugin
 {
-    std::unordered_map<wxString, int>* m_pWeight;
+    typedef std::unordered_map<wxString, int> WeightTable_t;
+    WeightTable_t* m_pCCWeight;
+    WeightTable_t* m_pGTAWeight;
     typedef std::pair<TagEntryPtr, int> QueueElement_t;
     SmartCompletionsConfig m_config;
 
 protected:
     void OnCodeCompletionSelectionMade(clCodeCompletionEvent& event);
     void OnCodeCompletionShowing(clCodeCompletionEvent& event);
+    void OnGotoAnythingSort(clGotoEvent& event);
+    void OnGotoAnythingSelectionMade(clGotoEvent& event);
     void OnSettings(wxCommandEvent& e);
 
 public:

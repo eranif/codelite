@@ -237,6 +237,8 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         int selEnd = editor->WordEndPos(editor->GetCurrentPosition(), true);
         int curPos = editor->GetCurrentPosition();
         int typedWordLen = curPos - selStart;
+        wxString textOrig;
+        wxString textLeadingSpaces;
 
         if(typedWordLen < 0) {
             typedWordLen = 0;
@@ -248,10 +250,15 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
             appendEol = true;
         }
 
+        textOrig = text;
+        text.Trim(false);
+        textLeadingSpaces = textOrig.Left(textOrig.length() - text.length());
+
         text = editor->FormatTextKeepIndent(text, selStart, Format_Text_Save_Empty_Lines);
 
         // remove the first line indenation that might have been placed by CL
         text.Trim(false).Trim();
+        text = textLeadingSpaces + text;
 
         if(appendEol) {
             wxString eol;

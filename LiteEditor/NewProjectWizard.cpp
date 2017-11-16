@@ -24,19 +24,19 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "NewProjectWizard.h"
-#include "globals.h"
-#include "editor_config.h"
-#include "pluginmanager.h"
 #include "build_settings_config.h"
-#include "compiler.h"
-#include "workspace.h"
-#include "debuggermanager.h"
-#include <wx/filename.h>
-#include <wx/dirdlg.h>
-#include <wx/msgdlg.h>
-#include "cl_config.h"
 #include "buildmanager.h"
+#include "cl_config.h"
+#include "compiler.h"
+#include "debuggermanager.h"
+#include "editor_config.h"
+#include "globals.h"
+#include "pluginmanager.h"
 #include "windowattrmanager.h"
+#include "workspace.h"
+#include <wx/dirdlg.h>
+#include <wx/filename.h>
+#include <wx/msgdlg.h>
 
 class NewProjectDlgData : public SerializedObject
 {
@@ -89,7 +89,7 @@ class NewProjectClientData : public wxClientData
 
 public:
     NewProjectClientData(ProjectPtr project, const wxString& templateName = wxEmptyString, bool isPluginManaged = false,
-        bool canUseSeparateFolder = true)
+                         bool canUseSeparateFolder = true)
         : m_templateName(templateName)
         , m_isPluginManaged(isPluginManaged)
         , m_canUseSeparateFolder(canUseSeparateFolder)
@@ -144,21 +144,15 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
 
         // Add the category if not exists
         const clNewProjectEvent::Template& newTemplate = m_additionalTemplates.at(i);
-        if(!newTemplate.m_toolchain.IsEmpty()) {
-            compilerChoices.Add(newTemplate.m_toolchain);
-        }
+        if(!newTemplate.m_toolchain.IsEmpty()) { compilerChoices.Add(newTemplate.m_toolchain); }
 
-        if(!newTemplate.m_debugger.IsEmpty()) {
-            debuggerChoices.Add(newTemplate.m_debugger);
-        }
+        if(!newTemplate.m_debugger.IsEmpty()) { debuggerChoices.Add(newTemplate.m_debugger); }
 
         wxString category = newTemplate.m_category;
         if(categoryMap.count(category) == 0) {
             wxVector<wxVariant> cols;
             wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(newTemplate.m_categoryPng);
-            if(!bmp.IsOk()) {
-                bmp = images.Bitmap("gear16");
-            }
+            if(!bmp.IsOk()) { bmp = images.Bitmap("gear16"); }
             cols.push_back(DVTemplatesModel::CreateIconTextVariant(category, bmp));
             categoryMap[category] = m_dataviewTemplatesModel->AppendItem(wxDataViewItem(0), cols);
             projectsPerCategory.insert(std::make_pair(category, wxStringSet_t()));
@@ -174,11 +168,10 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
 
             wxVector<wxVariant> cols;
             wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(newTemplate.m_templatePng);
-            if(!bmp.IsOk()) {
-                bmp = images.Bitmap("gear16");
-            }
+            if(!bmp.IsOk()) { bmp = images.Bitmap("gear16"); }
             cols.push_back(DVTemplatesModel::CreateIconTextVariant(newTemplate.m_template, bmp));
-            m_dataviewTemplatesModel->AppendItem(categoryMap[category], cols,
+            m_dataviewTemplatesModel->AppendItem(
+                categoryMap[category], cols,
                 new NewProjectClientData(NULL, newTemplate.m_template, true, newTemplate.m_allowSeparateFolder));
         }
     }
@@ -224,9 +217,7 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
         cols.push_back(v);
         wxDataViewItem item =
             m_dataviewTemplatesModel->AppendItem(categoryMap[internalType], cols, new NewProjectClientData(*iter));
-        if((*iter)->GetName() == info.GetLastSelection()) {
-            selection = item;
-        }
+        if((*iter)->GetName() == info.GetLastSelection()) { selection = item; }
     }
 
     // Get list of compilers from configuration file
@@ -238,9 +229,7 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
     }
 
     m_choiceCompiler->Append(compilerChoices);
-    if(compilerChoices.IsEmpty() == false) {
-        m_choiceCompiler->SetSelection(0);
-    }
+    if(compilerChoices.IsEmpty() == false) { m_choiceCompiler->SetSelection(0); }
 
     m_textCtrlProjectPath->SetValue(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath());
 
@@ -248,21 +237,17 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
     wxArrayString knownDebuggers = DebuggerMgr::Get().GetAvailableDebuggers();
     debuggerChoices.insert(debuggerChoices.end(), knownDebuggers.begin(), knownDebuggers.end());
     m_choiceDebugger->Append(debuggerChoices);
-    if(!m_choiceDebugger->IsEmpty()) {
-        m_choiceDebugger->SetSelection(0);
-    }
+    if(!m_choiceDebugger->IsEmpty()) { m_choiceDebugger->SetSelection(0); }
 
     {
         // build system
         std::list<wxString> builders;
         wxArrayString knownBuilders;
         BuildManagerST::Get()->GetBuilders(builders);
-        std::for_each(
-            builders.begin(), builders.end(), [&](const wxString& builderName) { knownBuilders.Add(builderName); });
+        std::for_each(builders.begin(), builders.end(),
+                      [&](const wxString& builderName) { knownBuilders.Add(builderName); });
         m_choiceBuildSystem->Append(knownBuilders);
-        if(!m_choiceBuildSystem->IsEmpty()) {
-            m_choiceBuildSystem->SetSelection(0);
-        }
+        if(!m_choiceBuildSystem->IsEmpty()) { m_choiceBuildSystem->SetSelection(0); }
     }
 
     m_cbSeparateDir->SetValue(info.GetFlags() & NewProjectDlgData::NpSeparateDirectory);
@@ -273,9 +258,7 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
         m_dataviewTemplates->EnsureVisible(selection);
         NewProjectClientData* cd =
             dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(selection));
-        if(cd) {
-            m_projectData.m_srcProject = cd->getProject();
-        }
+        if(cd) { m_projectData.m_srcProject = cd->getProject(); }
     }
 
     UpdateProjectPage();
@@ -362,23 +345,17 @@ void NewProjectWizard::UpdateProjectPage()
     wxString lastBuilder = clConfig::Get().Read("CxxWizard/BuildSystem", wxString("Default"));
     if(!lastDebugger.IsEmpty()) {
         int where = m_choiceDebugger->FindString(lastDebugger);
-        if(where != wxNOT_FOUND) {
-            m_choiceDebugger->SetSelection(where);
-        }
+        if(where != wxNOT_FOUND) { m_choiceDebugger->SetSelection(where); }
     }
 
     if(!lastCompiler.IsEmpty()) {
         int where = m_choiceCompiler->FindString(lastCompiler);
-        if(where != wxNOT_FOUND) {
-            m_choiceCompiler->SetSelection(where);
-        }
+        if(where != wxNOT_FOUND) { m_choiceCompiler->SetSelection(where); }
     }
 
     {
         int where = m_choiceBuildSystem->FindString(lastBuilder);
-        if(where != wxNOT_FOUND) {
-            m_choiceBuildSystem->SetSelection(where);
-        }
+        if(where != wxNOT_FOUND) { m_choiceBuildSystem->SetSelection(where); }
     }
 }
 
@@ -394,10 +371,8 @@ void NewProjectWizard::OnBrowseProjectPath(wxCommandEvent& event)
         if(new_path.find_first_of(INVALID_CHARS) != wxString::npos) {
             int answer = ::wxMessageBox(wxString() << _("The selected project path '") << new_path
                                                    << _("'\ncontains some invalid characters\nContinue anyway?"),
-                "CodeLite", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
-            if(answer != wxYES) {
-                return;
-            }
+                                        "CodeLite", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
+            if(answer != wxYES) { return; }
         }
         m_textCtrlProjectPath->SetValue(new_path);
     }
@@ -438,7 +413,7 @@ void NewProjectWizard::OnFinish(wxWizardEvent& event)
         ProjectPtr p = m_projectData.m_srcProject;
         wxString base_dir(fn.GetPath());
         std::vector<wxFileName> files;
-        p->GetFiles(files);
+        p->GetFilesAsVectorOfFileName(files);
 
         for(size_t i = 0; i < files.size(); ++i) {
             wxFileName f = files.at(i);
@@ -508,7 +483,7 @@ void NewProjectWizard::OnPageChanging(wxWizardEvent& event)
                 ProjectPtr p = m_projectData.m_srcProject;
                 wxString base_dir(fn.GetPath());
                 std::vector<wxFileName> files;
-                p->GetFiles(files);
+                p->GetFilesAsVectorOfFileName(files);
 
                 for(size_t i = 0; i < files.size(); ++i) {
                     wxFileName f = files.at(i);
@@ -539,7 +514,7 @@ bool NewProjectWizard::CheckProjectName()
     projectName.Trim().Trim(false);
     if(!::clIsVaidProjectName(projectName) || projectName.IsEmpty()) {
         wxMessageBox(_("Project names may contain only the following characters [a-z0-9_-]"), "CodeLite",
-            wxOK | wxICON_WARNING | wxCENTER, this);
+                     wxOK | wxICON_WARNING | wxCENTER, this);
         return false;
     }
     return true;
@@ -549,8 +524,8 @@ bool NewProjectWizard::CheckProjectPath()
 {
     wxFileName fn(m_textCtrlProjectPath->GetValue());
     if(!fn.Exists()) {
-        wxMessageBox(
-            _("Invalid project path selected: ") + fn.GetPath(), "CodeLite", wxOK | wxICON_WARNING | wxCENTER, this);
+        wxMessageBox(_("Invalid project path selected: ") + fn.GetPath(), "CodeLite", wxOK | wxICON_WARNING | wxCENTER,
+                     this);
         return false;
     }
     return true;

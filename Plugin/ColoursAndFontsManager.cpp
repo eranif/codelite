@@ -708,7 +708,7 @@ void ColoursAndFontsManager::SetTheme(const wxString& themeName)
     bool isDark = lexer->IsDark();
     wxString fallbackTheme;
     if(isDark) {
-        fallbackTheme = "Zmrok-like";
+        fallbackTheme = "One Dark Like";
     } else {
         fallbackTheme = "Default";
     }

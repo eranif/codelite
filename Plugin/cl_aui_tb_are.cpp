@@ -30,27 +30,8 @@
 #include "event_notifier.h"
 #include <wx/settings.h>
 
-// these constants were copied from src/aui/auibar.cpp
-const int BUTTON_DROPDOWN_WIDTH = 10;
-static const unsigned char DISABLED_TEXT_GREY_HUE = wxColour::AlphaBlend(0, 255, 0.4);
-const wxColour DISABLED_TEXT_COLOR(DISABLED_TEXT_GREY_HUE, DISABLED_TEXT_GREY_HUE, DISABLED_TEXT_GREY_HUE);
-
-#if 0
-static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp)
-{
-    wxImage img = bmp.ConvertToImage();
-    img = img.ConvertToGreyscale();
-    wxBitmap greyBmp(img);
-    if(DrawingUtils::IsThemeDark()) {
-        return greyBmp.ConvertToDisabled(70);
-
-    } else {
-        return greyBmp.ConvertToDisabled(150);
-    }
-}
-#endif
-
-CLMainAuiTBArt::CLMainAuiTBArt()
+CLMainAuiTBArt::CLMainAuiTBArt(bool isMainBook)
+    : m_isMainBook(isMainBook)
 {
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CLMainAuiTBArt::OnThemeChanged), NULL,
                                   this);
@@ -65,8 +46,8 @@ CLMainAuiTBArt::~CLMainAuiTBArt()
 void CLMainAuiTBArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
     wxUnusedVar(wnd);
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(DrawingUtils::GetMenuBarBgColour());
+    dc.SetPen(DrawingUtils::GetPanelBgColour());
+    dc.SetBrush(DrawingUtils::GetPanelBgColour());
     dc.DrawRectangle(rect);
 }
 

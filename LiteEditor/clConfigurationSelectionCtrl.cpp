@@ -67,12 +67,15 @@ void clConfigurationSelectionCtrl::OnLeftDown(wxMouseEvent& e)
     wxMenu menu;
     std::unordered_map<int, wxString> M;
     for(size_t i = 0; i < m_configurations.GetCount(); ++i) {
-        wxMenuItem* item = menu.Append(wxID_ANY, m_configurations.Item(i));
+        wxMenuItem* item = menu.Append(wxID_ANY, m_configurations.Item(i), "", wxITEM_CHECK);
+        if(m_configurations.Item(i) == m_activeConfiguration) {
+            item->Check();
+        }
         M[item->GetId()] = m_configurations.Item(i);
     }
     menu.AppendSeparator();
-    wxMenuItem* openConfig = new wxMenuItem(NULL, wxID_ANY, OPEN_CONFIG_MGR_STR);
-    openConfig->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("cog"));
+    wxMenuItem* openConfig = new wxMenuItem(NULL, wxID_ANY, OPEN_CONFIG_MGR_STR, "", wxITEM_CHECK);
+    //openConfig->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("cog"));
     openConfig = menu.Append(openConfig);
     M[openConfig->GetId()] = OPEN_CONFIG_MGR_STR;
 

@@ -25,7 +25,6 @@
 
 #include "ColoursAndFontsManager.h"
 #include "CompilersFoundDlg.h"
-#include "GotoAnythingDlg.h"
 #include "NewProjectWizard.h"
 #include "WelcomePage.h"
 #include "app.h"
@@ -1324,7 +1323,7 @@ void clMainFrame::CreateToolbars24()
     clToolBar* tb =
         new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->SetToolBitmapSize(wxSize(24, 24));
-    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetArtProvider(new CLMainAuiTBArt(true));
 
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
     tb->AddTool(XRCID("new_file"), _("New"), bmpLoader.LoadBitmap(wxT("file_new"), 24), _("New File"));
@@ -1364,7 +1363,7 @@ void clMainFrame::CreateToolbars24()
     //----------------------------------------------
     info = wxAuiPaneInfo();
     tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
-    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetArtProvider(new CLMainAuiTBArt(true));
     tb->SetToolBitmapSize(wxSize(24, 24));
 
     tb->AddTool(wxID_FIND, _("Find"), bmpLoader.LoadBitmap(wxT("find"), 24), _("Find"));
@@ -1392,7 +1391,7 @@ void clMainFrame::CreateToolbars24()
     // create the build toolbar
     //----------------------------------------------
     tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
-    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetArtProvider(new CLMainAuiTBArt(true));
     tb->SetToolBitmapSize(wxSize(24, 24));
 
     tb->AddTool(XRCID("build_active_project"), wxEmptyString, bmpLoader.LoadBitmap(wxT("build"), 24),
@@ -1423,7 +1422,7 @@ void clMainFrame::CreateToolbars24()
     // create the debugger toolbar
     //----------------------------------------------
     tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
-    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetArtProvider(new CLMainAuiTBArt(true));
     tb->SetToolBitmapSize(wxSize(24, 24));
 
     tb->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
@@ -1652,7 +1651,7 @@ void clMainFrame::CreateToolbars16()
 
     clToolBar* tb =
         new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
-    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetArtProvider(new CLMainAuiTBArt(true));
 
     wxAuiPaneInfo info;
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
@@ -1698,7 +1697,7 @@ void clMainFrame::CreateToolbars16()
     info = wxAuiPaneInfo();
 
     tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
-    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetArtProvider(new CLMainAuiTBArt(true));
     tb->SetToolBitmapSize(wxSize(16, 16));
 
     tb->AddTool(wxID_FIND, _("Find"), bmpLoader.LoadBitmap(wxT("find")), _("Find"));
@@ -1727,7 +1726,7 @@ void clMainFrame::CreateToolbars16()
     // create the build toolbar
     //----------------------------------------------
     tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
-    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetArtProvider(new CLMainAuiTBArt(true));
     tb->SetToolBitmapSize(wxSize(16, 16));
 
     tb->AddTool(XRCID("build_active_project"), wxEmptyString, bmpLoader.LoadBitmap(wxT("build")),
@@ -1757,7 +1756,7 @@ void clMainFrame::CreateToolbars16()
     // create the debugger toolbar
     //----------------------------------------------
     tb = new clToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
-    tb->SetArtProvider(new CLMainAuiTBArt());
+    tb->SetArtProvider(new CLMainAuiTBArt(true));
     tb->SetToolBitmapSize(wxSize(16, 16));
 
     tb->AddTool(XRCID("start_debugger"), _("Start / Continue debugger"), bmpLoader.LoadBitmap(wxT("debugger_start")),

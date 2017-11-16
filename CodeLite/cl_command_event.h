@@ -26,14 +26,15 @@
 #ifndef CLCOMMANDEVENT_H
 #define CLCOMMANDEVENT_H
 
-#include <wx/event.h>
-#include <wx/sharedptr.h>
+#include "clEditorConfig.h"
+#include "clGotoEntry.h"
 #include "codelite_exports.h"
 #include "entry.h"
-#include <wx/arrstr.h>
-#include <vector>
 #include "wxCodeCompletionBoxEntry.h"
-#include "clEditorConfig.h"
+#include <vector>
+#include <wx/arrstr.h>
+#include <wx/event.h>
+#include <wx/sharedptr.h>
 
 // Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
 enum {
@@ -155,7 +156,7 @@ public:
     void SetEntries(const wxCodeCompletionBoxEntry::Vec_t& entries) { this->m_entries = entries; }
     const wxCodeCompletionBoxEntry::Vec_t& GetEntries() const { return m_entries; }
     wxCodeCompletionBoxEntry::Vec_t& GetEntries() { return m_entries; }
-    
+
     /**
      * @brief return the Editor object
      */
@@ -373,6 +374,30 @@ public:
 
 typedef void (wxEvtHandler::*clCompilerEventFunction)(clCompilerEvent&);
 #define clCompilerEventHandler(func) wxEVENT_HANDLER_CAST(clCompilerEventFunction, func)
+
+// --------------------------------------------------------------
+// GotoAnything event
+// --------------------------------------------------------------
+class WXDLLIMPEXP_CL clGotoEvent : public clCommandEvent
+{
+    clGotoEntry::Vec_t m_entries;
+    clGotoEntry m_entry;
+
+public:
+    clGotoEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clGotoEvent(const clGotoEvent& src);
+    clGotoEvent& operator=(const clGotoEvent& src);
+    virtual ~clGotoEvent();
+    virtual wxEvent* Clone() const { return new clGotoEvent(*this); }
+    const clGotoEntry::Vec_t& GetEntries() const { return m_entries; }
+    clGotoEntry::Vec_t& GetEntries() { return m_entries; }
+    void SetEntries(const clGotoEntry::Vec_t& entries) { m_entries = entries; }
+    void SetEntry(const clGotoEntry& entry) { this->m_entry = entry; }
+    const clGotoEntry& GetEntry() const { return m_entry; }
+};
+
+typedef void (wxEvtHandler::*clGotoEventFunction)(clGotoEvent&);
+#define clGotoEventHandler(func) wxEVENT_HANDLER_CAST(clGotoEventFunction, func)
 
 // --------------------------------------------------------------
 // Processs event

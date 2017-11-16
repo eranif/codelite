@@ -39,6 +39,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_ccFont = DrawingUtils::GetDefaultFixedFont();
+    m_ccFont.SetPointSize(m_ccFont.GetPointSize() - 2);
     SetCursor(wxCURSOR_HAND);
 
     // Update the BOX_WIDTH to contains at least 30 chars

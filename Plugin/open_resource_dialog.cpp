@@ -41,6 +41,7 @@
 #include <vector>
 #include <codelite_events.h>
 #include "event_notifier.h"
+#include <algorithm>
 
 BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
 EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
@@ -92,18 +93,14 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
         m_manager->GetWorkspace()->GetProjectList(projects);
 
         for(size_t i = 0; i < projects.GetCount(); i++) {
-            std::vector<wxFileName> fileNames;
-            wxString errmsg;
-            ProjectPtr p = m_manager->GetWorkspace()->FindProjectByName(projects.Item(i), errmsg);
-
+            ProjectPtr p = m_manager->GetWorkspace()->GetProject(projects.Item(i));
             if(p) {
-                p->GetFiles(fileNames, true);
-
+                const Project::FilesMap_t& files = p->GetFiles();
                 // convert std::vector to wxArrayString
-                for(std::vector<wxFileName>::iterator it = fileNames.begin(); it != fileNames.end(); it++) {
-                    wxString name = it->GetFullName().MakeLower();
-                    m_files.insert(std::make_pair(name, it->GetFullPath()));
-                }
+                std::for_each(files.begin(), files.end(), [&](const Project::FilesMap_t::value_type& vt) {
+                    wxFileName fn(vt.second->GetFilename());
+                    m_files.insert(std::make_pair(fn.GetFullName(), fn.GetFullPath()));
+                });
             }
         }
     }

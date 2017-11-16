@@ -155,18 +155,22 @@ void SymbolViewPlugin::OnToggleTab(clCommandEvent& event)
 void SymbolViewPlugin::OnPageChanged(wxBookCtrlEvent& e)
 {
     e.Skip();
-    m_view->m_isEnabled = false;
-    int sel = m_mgr->GetWorkspacePaneNotebook()->GetSelection();
-    if(sel != wxNOT_FOUND) {
-        wxString seletionText = m_mgr->GetWorkspacePaneNotebook()->GetPageText(sel);
-        bool oldState = m_view->m_isEnabled;
-        m_view->m_isEnabled = (seletionText == _("Outline"));
-        if(oldState != m_view->m_isEnabled) {
-            // Refresh the view
-            m_view->EditorChanged();
-        }
+    if(IsPaneDetached()) {
+        m_view->m_isEnabled = true;
     } else {
-        // the page is detached
-        m_view->m_isEnabled = true; // just mark as active
+        m_view->m_isEnabled = false;
+        int sel = m_mgr->GetWorkspacePaneNotebook()->GetSelection();
+        if(sel != wxNOT_FOUND) {
+            wxString seletionText = m_mgr->GetWorkspacePaneNotebook()->GetPageText(sel);
+            bool oldState = m_view->m_isEnabled;
+            m_view->m_isEnabled = (seletionText == _("Outline"));
+            if(oldState != m_view->m_isEnabled) {
+                // Refresh the view
+                m_view->EditorChanged();
+            }
+        } else {
+            // the page is detached
+            m_view->m_isEnabled = true; // just mark as active
+        }
     }
 }

@@ -80,7 +80,7 @@ Copyright::Copyright(IManager* manager)
 {
     m_longName = _("Copyright Plugin - Place copyright block on top of your source files");
     m_shortName = wxT("Copyright");
-    
+
     // connect events
     wxTheApp->Bind(wxEVT_MENU, &Copyright::OnOptions, this, XRCID("CR_copyrights_options"));
     wxTheApp->Bind(wxEVT_MENU, &Copyright::OnInsertCopyrights, this, XRCID("CR_insert_copyrights"));
@@ -216,20 +216,19 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
         dlg.GetProjects(projects);
 
         // expand constants
-        wxString err_msg;
         std::vector<wxFileName> files;
         std::vector<wxFileName> filtered_files;
         // loop over the project and collect list of files to work with
         for(size_t i = 0; i < projects.size(); i++) {
-            ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
-            if(p) { p->GetFiles(files, true); }
+            ProjectPtr p = m_mgr->GetWorkspace()->GetProject(projects.Item(i));
+            if(p) { p->GetFilesAsVectorOfFileName(files); }
         }
 
         wxString mask(data.GetFileMasking());
         mask.Replace(wxT("*."), wxEmptyString);
         mask = mask.Trim().Trim(false);
 
-        wxArrayString exts = wxStringTokenize(mask, wxT(";"));
+        wxArrayString exts = ::wxStringTokenize(mask, wxT(";"));
 
         // filter out non-matching files (according to masking)
         for(size_t i = 0; i < files.size(); i++) {
@@ -268,10 +267,10 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
     std::vector<wxFileName> files;
     std::vector<wxFileName> filtered_files;
     // loop over the project and collect list of files to work with
-    ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(project_name, err_msg);
+    ProjectPtr p = m_mgr->GetWorkspace()->GetProject(project_name);
     if(!p) { return; }
 
-    p->GetFiles(files, true);
+    p->GetFilesAsVectorOfFileName(files);
 
     // filter non matched files
     wxString mask(data.GetFileMasking());

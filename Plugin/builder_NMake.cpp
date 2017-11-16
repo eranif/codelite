@@ -110,7 +110,6 @@ BuilderNMake::~BuilderNMake() {}
 bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
                           bool isProjectOnly, bool force, wxString& errMsg)
 {
-    m_projectFilesMetadata.clear();
     if(project.IsEmpty()) {
         return false;
     }
@@ -527,9 +526,9 @@ void BuilderNMake::GenerateMakefile(ProjectPtr proj, const wxString& confToBuild
     }
 
     // Load the current project files
-    m_projectFilesMetadata.clear();
-    proj->GetFilesMetadata(m_projectFilesMetadata);
-
+    m_allFiles.clear();
+    proj->GetFilesAsVector(m_allFiles);
+    
     // generate the selected configuration for this project
     // wxTextOutputStream text(output);
     wxString text;
@@ -620,14 +619,15 @@ void BuilderNMake::CreateMakeDirsTarget(ProjectPtr proj, BuildConfigPtr bldConf,
 void BuilderNMake::CreateSrcList(ProjectPtr proj, const wxString& confToBuild, wxString& text)
 {
     std::vector<wxFileName> files;
+    const Project::FilesMap_t& all_files = proj->GetFiles();
 
-    Project::FileInfoVector_t::const_iterator iterFile = m_projectFilesMetadata.begin();
-    for(; iterFile != m_projectFilesMetadata.end(); ++iterFile) {
-        // Include only files that don't have the 'exclude from build' flag set
-        if(!iterFile->IsExcludeFromConfiguration(confToBuild)) {
-            files.push_back(wxFileName(iterFile->GetFilenameRelpath()));
+    // Remove excluded files
+    std::for_each(all_files.begin(), all_files.end(), [&](const Project::FilesMap_t::value_type& vt) {
+        clProjectFile::Ptr_t f = vt.second;
+        if(!f->IsExcludeFromConfiguration(confToBuild)) {
+            files.push_back(wxFileName(f->GetFilenameRelpath()));
         }
-    }
+    });
 
     text << wxT("Srcs=");
 
@@ -673,13 +673,12 @@ void BuilderNMake::CreateObjectList(ProjectPtr proj, const wxString& confToBuild
     m_objectChunks = 1;
     std::vector<wxFileName> files;
 
-    Project::FileInfoVector_t::const_iterator iterFile = m_projectFilesMetadata.begin();
-    for(; iterFile != m_projectFilesMetadata.end(); ++iterFile) {
+    std::for_each(m_allFiles.begin(), m_allFiles.end(), [&](clProjectFile::Ptr_t file) {
         // Include only files that don't have the 'exclude from build' flag set
-        if(!iterFile->IsExcludeFromConfiguration(confToBuild)) {
-            files.push_back(wxFileName(iterFile->GetFilename()));
+        if(!file->IsExcludeFromConfiguration(confToBuild)) {
+            files.push_back(wxFileName(file->GetFilename()));
         }
-    }
+    });
 
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     wxString cmpType = bldConf->GetCompilerType();
@@ -751,8 +750,7 @@ void BuilderNMake::CreateObjectList(ProjectPtr proj, const wxString& confToBuild
     }
 
     text << "\n\nObjects=";
-    for(size_t i = 0; i < objCounter; ++i)
-        text << "$(Objects" << i << ") ";
+    for(size_t i = 0; i < objCounter; ++i) text << "$(Objects" << i << ") ";
 
     text << wxT("\n\n");
     m_objectChunks = objCounter;
@@ -771,16 +769,16 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
         !cmp->GetSwitch(wxT("PreprocessOnly")).IsEmpty() && !cmp->GetPreprocessSuffix().IsEmpty();
 
     std::vector<wxFileName> abs_files, rel_paths;
+    
+    abs_files.reserve(m_allFiles.size());
+    rel_paths.reserve(m_allFiles.size());
 
-    abs_files.reserve(m_projectFilesMetadata.size());
-    rel_paths.reserve(m_projectFilesMetadata.size());
-
-    Project::FileInfoVector_t::const_iterator iterFile = m_projectFilesMetadata.begin();
-    for(; iterFile != m_projectFilesMetadata.end(); ++iterFile) {
+    clProjectFile::Vec_t::const_iterator iterFile = m_allFiles.begin();
+    for(; iterFile != m_allFiles.end(); ++iterFile) {
         // Include only files that don't have the 'exclude from build' flag set
-        if(!iterFile->IsExcludeFromConfiguration(confToBuild)) {
-            abs_files.push_back(wxFileName(iterFile->GetFilename()));
-            rel_paths.push_back(wxFileName(iterFile->GetFilenameRelpath()));
+        if(!(*iterFile)->IsExcludeFromConfiguration(confToBuild)) {
+            abs_files.push_back(wxFileName((*iterFile)->GetFilename()));
+            rel_paths.push_back(wxFileName((*iterFile)->GetFilenameRelpath()));
         }
     }
 
@@ -945,7 +943,7 @@ void BuilderNMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToBui
         text << wxT("\t") << wxT("@del /Q ") << imd << "*$(DependSuffix)" << wxT("\n");
         // delete the output file as well
         wxString exeExt(wxEmptyString);
-        if(proj->GetSettings()->GetProjectType(bldConf->GetName()) == Project::EXECUTABLE) {
+        if(proj->GetSettings()->GetProjectType(bldConf->GetName()) == PROJECT_TYPE_EXECUTABLE) {
             // under windows, g++ automatically adds the .exe extension to executable
             // make sure we delete it as well
             exeExt = wxT(".exe");
@@ -995,7 +993,7 @@ void BuilderNMake::CreateLinkTargets(const wxString& type, BuildConfigPtr bldCon
         depsRules << wxT("\n\n");
     }
 
-    if(type == Project::EXECUTABLE || type == Project::DYNAMIC_LIBRARY) {
+    if(type == PROJECT_TYPE_EXECUTABLE || type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         text << wxT("all: ");
         text << wxT("$(OutputFile)\n\n");
 
@@ -1014,7 +1012,7 @@ void BuilderNMake::CreateLinkTargets(const wxString& type, BuildConfigPtr bldCon
     if(bldConf->IsLinkerRequired()) {
         CreateTargets(type, bldConf, text, projName);
 
-        if(type == Project::EXECUTABLE || type == Project::DYNAMIC_LIBRARY) {
+        if(type == PROJECT_TYPE_EXECUTABLE || type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
             if(depsRules.IsEmpty() == false) {
                 text << wxT("\n") << depsRules << wxT("\n");
             }
@@ -1044,7 +1042,7 @@ void BuilderNMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, w
         text << "\t@echo $(Objects" << i << ") " << oper << " $(ObjectsFileList)\n";
     }
 
-    if(type == Project::STATIC_LIBRARY) {
+    if(type == PROJECT_TYPE_STATIC_LIBRARY) {
         // create a static library
         // In any case add the 'objects_file' target here
         text << wxT("\t") << wxT("$(AR) $(ArchiveOutputSwitch)$(OutputFile)");
@@ -1054,7 +1052,7 @@ void BuilderNMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, w
             text << wxT(" $(Objects) $(ArLibs)\n");
         }
 
-    } else if(type == Project::DYNAMIC_LIBRARY) {
+    } else if(type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         // create a shared library
         text << wxT("\t") << wxT("$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile)");
         if(cmp && cmp->GetReadObjectFilesFromList()) {
@@ -1064,7 +1062,7 @@ void BuilderNMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, w
         }
         text << wxT("$(LibPath) $(Libs) $(LinkOptions)\n");
 
-    } else if(type == Project::EXECUTABLE) {
+    } else if(type == PROJECT_TYPE_EXECUTABLE) {
         // create an executable
         text << wxT("\t") << wxT("$(LinkerName) $(OutputSwitch)$(OutputFile)");
         if(cmp && cmp->GetReadObjectFilesFromList()) {
@@ -1195,7 +1193,7 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     text << wxT("## ") << name << wxT("\n");
 
     wxString outputFile = bldConf->GetOutputFileName();
-    if(OS_WINDOWS && (bldConf->GetProjectType() == Project::EXECUTABLE || bldConf->GetProjectType().IsEmpty())) {
+    if(OS_WINDOWS && (bldConf->GetProjectType() == PROJECT_TYPE_EXECUTABLE || bldConf->GetProjectType().IsEmpty())) {
         outputFile.Trim().Trim(false);
         outputFile.Replace(wxT("/"), wxT("\\"));
     }

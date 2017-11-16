@@ -230,7 +230,7 @@ public:
      * project path
      *
      * \param type
-     * Can be Project::EXECUTABLE, Project::STATIC_LIBRARY or Project::DYNAMIC_LIBRARY
+     * Can be PROJECT_TYPE_EXECUTABLE, PROJECT_TYPE_STATIC_LIBRARY or PROJECT_TYPE_DYNAMIC_LIBRARY
      * \returns
      * true on success false otherwise
      */

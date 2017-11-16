@@ -1,4 +1,5 @@
 #include "GotoAnythingDlg.h"
+#include "bitmap_loader.h"
 #include "clAnagram.h"
 #include "clKeyboardManager.h"
 #include "cl_config.h"
@@ -6,14 +7,16 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
+#include "imanager.h"
+#include "macros.h"
 #include "windowattrmanager.h"
 #include <algorithm>
 #include <wx/app.h>
 
-GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent)
+GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry>& entries)
     : GotoAnythingBaseDlg(parent)
+    , m_allEntries(entries)
 {
-    m_allEntries = clGotoAnythingManager::Get().GetActions();
     DoPopulate(m_allEntries);
     CallAfter(&GotoAnythingDlg::UpdateLastSearch);
     WindowAttrManager::Load(this);
@@ -21,8 +24,7 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent)
 
 GotoAnythingDlg::~GotoAnythingDlg()
 {
-    m_allEntries.clear();
-    clConfig::Get().Write("GotoAnything/LastSearch", m_textCtrlSearch->GetValue());
+    // clConfig::Get().Write("GotoAnything/LastSearch", m_textCtrlSearch->GetValue());
 }
 
 void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
@@ -36,14 +38,14 @@ void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
         int row = m_dvListCtrl->GetSelectedRow();
         if((row + 1) < m_dvListCtrl->GetItemCount()) {
             row++;
-            m_dvListCtrl->SelectRow(row);
+            DoSelectItem(m_dvListCtrl->RowToItem(row));
         }
     } else if(event.GetKeyCode() == WXK_UP) {
         event.Skip(false);
         int row = m_dvListCtrl->GetSelectedRow();
         if((row - 1) >= 0) {
             row--;
-            m_dvListCtrl->SelectRow(row);
+            DoSelectItem(m_dvListCtrl->RowToItem(row));
         }
     }
 }
@@ -57,10 +59,11 @@ void GotoAnythingDlg::OnEnter(wxCommandEvent& event)
 void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const std::vector<int>& indexes)
 {
     m_dvListCtrl->DeleteAllItems();
+    static wxBitmap placeHolderBmp = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
     for(size_t i = 0; i < entries.size(); ++i) {
         const clGotoEntry& entry = entries[i];
         wxVector<wxVariant> cols;
-        cols.push_back(::MakeIconText(entry.GetDesc(), entry.GetBitmap()));
+        cols.push_back(::MakeIconText(entry.GetDesc(), entry.GetBitmap().IsOk() ? entry.GetBitmap() : placeHolderBmp));
         cols.push_back(entry.GetKeyboardShortcut());
         m_dvListCtrl->AppendItem(cols, indexes.empty() ? i : indexes[i]);
     }
@@ -77,8 +80,8 @@ void GotoAnythingDlg::DoExecuteActionAndClose()
     const clGotoEntry& entry = m_allEntries[index];
     clDEBUG() << "GotoAnythingDlg: action selected:" << entry.GetDesc() << clEndl;
 
-    clCommandEvent evtAction(wxEVT_GOTO_ANYTHING_SELECTED);
-    evtAction.SetString(entry.GetDesc());
+    clGotoEvent evtAction(wxEVT_GOTO_ANYTHING_SELECTED);
+    evtAction.SetEntry(entry);
     EventNotifier::Get()->AddPendingEvent(evtAction);
     EndModal(wxID_OK);
 }
@@ -89,15 +92,7 @@ void GotoAnythingDlg::OnIdle(wxIdleEvent& e)
     ApplyFilter();
 }
 
-void GotoAnythingDlg::UpdateLastSearch()
-{
-    wxString lastSearch = clConfig::Get().Read("GotoAnything/LastSearch", wxString());
-    if(!lastSearch.IsEmpty()) {
-        m_textCtrlSearch->ChangeValue(lastSearch);
-        m_textCtrlSearch->SelectAll();
-        ApplyFilter();
-    }
-}
+void GotoAnythingDlg::UpdateLastSearch() {}
 
 void GotoAnythingDlg::ApplyFilter()
 {
@@ -132,4 +127,12 @@ void GotoAnythingDlg::OnItemActivated(wxDataViewEvent& event)
 {
     wxUnusedVar(event);
     DoExecuteActionAndClose();
+}
+
+void GotoAnythingDlg::DoSelectItem(const wxDataViewItem& item)
+{
+    CHECK_ITEM_RET(item);
+    m_dvListCtrl->UnselectAll();
+    m_dvListCtrl->Select(item);
+    m_dvListCtrl->EnsureVisible(item);
 }

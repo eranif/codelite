@@ -55,16 +55,19 @@ enum class eButtonKind {
 class WXDLLIMPEXP_SDK DrawingUtils
 {
 public:
-    static wxColor LightColour(const wxColour& color, float percent);
-    static wxColor DarkColour(const wxColour& color, float percent);
-    static wxColor GetPanelBgColour();
-    static wxColor GetTextCtrlTextColour();
-    static wxColor GetTextCtrlBgColour();
-    static wxColor GetOutputPaneFgColour();
-    static wxColor GetOutputPaneBgColour();
-    static wxColor GetMenuTextColour();
-    static wxColor GetMenuBarBgColour();
-    static wxColor GetMenuBarTextColour();
+    static wxColour LightColour(const wxColour& color, float percent);
+    static wxColour DarkColour(const wxColour& color, float percent);
+    static wxColour GetPanelBgColour();
+    static wxColour GetPanelTextColour();
+    static wxColour GetButtonBgColour();
+    static wxColour GetButtonTextColour();
+    static wxColour GetTextCtrlTextColour();
+    static wxColour GetTextCtrlBgColour();
+    static wxColour GetOutputPaneFgColour();
+    static wxColour GetOutputPaneBgColour();
+    static wxColour GetMenuTextColour();
+    static wxColour GetMenuBarBgColour();
+    static wxColour GetMenuBarTextColour();
 
     static void TruncateText(const wxString& text, int maxWidth, wxDC& dc, wxString& fixedText);
     static void PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor,

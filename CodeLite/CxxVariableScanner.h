@@ -1,15 +1,15 @@
 #ifndef CXXVARIABLESCANNER_H
 #define CXXVARIABLESCANNER_H
 
-#include "codelite_exports.h"
 #include "CxxLexerAPI.h"
 #include "CxxVariable.h"
-#include <unordered_set>
+#include "codelite_exports.h"
 #include "macros.h"
+#include "wxStringHash.h"
+#include <stack>
 
 class WXDLLIMPEXP_CL CxxVariableScanner
 {
-    enum eState { kNormal, kInParen, kInForLoop, kInCatch, kPreProcessor, kInDecltype, kInWhile };
 
 protected:
     Scanner_t m_scanner;
@@ -19,14 +19,25 @@ protected:
     std::unordered_set<int> m_nativeTypes;
     eCxxStandard m_standard;
     wxStringTable_t m_macros;
+    std::vector<wxString> m_buffers;
+    bool m_isFuncSignature;
 
 protected:
     bool GetNextToken(CxxLexerToken& token);
     void UngetToken(const CxxLexerToken& token);
     bool IsEof() const { return m_eof; }
-    void OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer);
     bool TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t& type);
     bool HasNativeTypeInList(const CxxVariable::LexerToken::Vec_t& type) const;
+
+    wxString& Buffer();
+    wxString& PushBuffer();
+    wxString& PopBuffer();
+
+    bool OnForLoop(Scanner_t scanner);
+    bool OnCatch(Scanner_t scanner);
+    bool OnWhile(Scanner_t scanner);
+    bool OnDeclType(Scanner_t scanner);
+    bool OnLambda(Scanner_t scanner);
 
 protected:
     /**
@@ -44,14 +55,20 @@ protected:
      */
     void ConsumeInitialization(wxString& consumed);
 
-    int ReadUntil(const std::set<int>& delims, CxxLexerToken& token, wxString& consumed);
+    int ReadUntil(const std::unordered_set<int>& delims, CxxLexerToken& token, wxString& consumed);
 
     CxxVariable::Vec_t DoGetVariables(const wxString& buffer, bool sort);
     CxxVariable::Vec_t DoParseFunctionArguments(const wxString& buffer);
 
 public:
-    CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros);
+    CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros,
+                       bool isFuncSignature);
     virtual ~CxxVariableScanner();
+
+    /**
+     * @brief strip buffer from unreachable code blocks (assuming the caret is at the last position of the bufer)
+     */
+    void OptimizeBuffer(const wxString& buffer, wxString& strippedBuffer);
 
     /**
      * @brief parse the buffer and return list of variables

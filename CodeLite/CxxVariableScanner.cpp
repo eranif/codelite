@@ -1,17 +1,20 @@
-#include "CxxVariableScanner.h"
 #include "CxxScannerTokens.h"
+#include "CxxVariableScanner.h"
+#include "file_logger.h"
 #include <algorithm>
 #include <unordered_set>
-#include "file_logger.h"
 
-CxxVariableScanner::CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros)
+CxxVariableScanner::CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros,
+                                       bool isFuncSignature)
     : m_scanner(NULL)
     , m_buffer(buffer)
     , m_eof(false)
     , m_parenthesisDepth(0)
     , m_standard(standard)
     , m_macros(macros)
+    , m_isFuncSignature(isFuncSignature)
 {
+    if(!m_buffer.IsEmpty() && m_buffer[0] == '(') { m_buffer.Remove(0, 1); }
     m_nativeTypes.insert(T_AUTO);
     m_nativeTypes.insert(T_BOOL);
     m_nativeTypes.insert(T_CHAR);
@@ -32,11 +35,9 @@ CxxVariableScanner::~CxxVariableScanner() {}
 
 CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
 {
-    wxString strippedBuffer, parenthesisBuffer;
-    OptimizeBuffer(strippedBuffer, parenthesisBuffer);
+    wxString strippedBuffer;
+    OptimizeBuffer(m_buffer, strippedBuffer);
     CxxVariable::Vec_t vars = DoGetVariables(strippedBuffer, sort);
-    CxxVariable::Vec_t args = DoGetVariables(parenthesisBuffer, sort);
-    vars.insert(vars.end(), args.begin(), args.end());
     if(sort) {
         std::sort(vars.begin(), vars.end(),
                   [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName() < b->GetName(); });
@@ -211,9 +212,7 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
             ConsumeInitialization(varInitialization);
 
             // Now that we got the name, check if have more variables to expect
-            if(!GetNextToken(token)) {
-                return false;
-            }
+            if(!GetNextToken(token)) { return false; }
 
             if((token.type == '{') && !varInitialization.IsEmpty()) {
                 // Don't collect functions and consider them as variables
@@ -222,12 +221,10 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
                 return false;
             }
 
-            if(!varInitialization.empty()) {
-                varInitialization.RemoveLast();
-            }
+            if(!varInitialization.empty()) { varInitialization.RemoveLast(); }
 
-            // If we found comma, return true
-            if(token.type == ',') {
+            // If we found comma, return true. Unless we are parsing a function signature
+            if(!m_isFuncSignature && (token.type == ',')) {
                 return true;
             } else {
                 UngetToken(token);
@@ -252,11 +249,9 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
     int tokType = token.type;
     if(tokType == '(') {
         // Read the initialization
-        std::set<int> delims;
+        std::unordered_set<int> delims;
         delims.insert(')');
-        if(ReadUntil(delims, token, consumed) == wxNOT_FOUND) {
-            return;
-        }
+        if(ReadUntil(delims, token, consumed) == wxNOT_FOUND) { return; }
         consumed.Prepend("(");
         // Now read until the delimiter
         delims.clear();
@@ -267,11 +262,9 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
 
     } else if(tokType == '{') {
         // Read the initialization
-        std::set<int> delims;
+        std::unordered_set<int> delims;
         delims.insert('}');
-        if(ReadUntil(delims, token, consumed) == wxNOT_FOUND) {
-            return;
-        }
+        if(ReadUntil(delims, token, consumed) == wxNOT_FOUND) { return; }
         consumed.Prepend("{");
         // Now read until the delimiter
         delims.clear();
@@ -280,26 +273,24 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
         type = ReadUntil(delims, token, dummy);
 
     } else if(tokType == '=') {
-        std::set<int> delims;
+        std::unordered_set<int> delims;
         delims.insert(';');
         delims.insert(',');
         type = ReadUntil(delims, token, consumed);
     } else {
         UngetToken(token);
         consumed.clear();
-        std::set<int> delims;
+        std::unordered_set<int> delims;
         delims.insert(';');
         delims.insert(',');
         delims.insert('{');
         type = ReadUntil(delims, token, dummy);
     }
 
-    if(type == ',' || type == (int)'{') {
-        UngetToken(token);
-    }
+    if(type == ',' || type == (int)'{' || type == ';') { UngetToken(token); }
 }
 
-int CxxVariableScanner::ReadUntil(const std::set<int>& delims, CxxLexerToken& token, wxString& consumed)
+int CxxVariableScanner::ReadUntil(const std::unordered_set<int>& delims, CxxLexerToken& token, wxString& consumed)
 {
     // loop until we find the open brace
     CxxVariable::LexerToken::Vec_t v;
@@ -349,9 +340,7 @@ bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
         if(!res) break;
 
         // Ignore any T_IDENTIFIER which is declared as macro
-        if((token.type == T_IDENTIFIER) && m_macros.count(token.text)) {
-            continue;
-        }
+        if((token.type == T_IDENTIFIER) && m_macros.count(token.text)) { continue; }
         break;
     }
 
@@ -369,154 +358,85 @@ bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
     return res;
 }
 
-void CxxVariableScanner::OptimizeBuffer(wxString& strippedBuffer, wxString& parenthesisBuffer)
+void CxxVariableScanner::OptimizeBuffer(const wxString& buffer, wxString& stripped_buffer)
 {
-    Scanner_t sc = ::LexerNew(m_buffer);
+    stripped_buffer.Clear();
+    Scanner_t sc = ::LexerNew(buffer);
     if(!sc) {
         clWARNING() << "CxxVariableScanner::OptimizeBuffer(): failed to create Scanner_t" << clEndl;
         return; // Failed to allocate scanner
     }
-    int depth = 0;
+
+    CppLexerUserData* userData = ::LexerGetUserData(sc);
     CxxLexerToken tok;
     CxxLexerToken lastToken;
 
-    bool lookingForFirstSemiColon = true;
-    eState state = kNormal;
+    // Cleanup
+    m_buffers.clear();
+    PushBuffer();
+    int parenthesisDepth = 0;
     while(::LexerNext(sc, tok)) {
-        if(state == kNormal) {
-            if((tok.type >= T_PP_DEFINE) && (tok.type <= T_PP_LTEQ)) {
-                // In PreProcessor state
-                state = kPreProcessor;
+        // Skip prep processing state
+        if(userData && userData->IsInPreProcessorSection()) { continue; }
+
+        // Return the working buffer, which depends on the current state
+        wxString& buffer = Buffer();
+
+        // Outer switch: state based
+        switch(tok.type) {
+        case T_PP_STATE_EXIT:
+            break;
+        case T_FOR:
+            OnForLoop(sc);
+            break;
+        case T_CATCH:
+            OnCatch(sc);
+            break;
+        case T_DECLTYPE:
+            OnDeclType(sc);
+            break;
+        case T_WHILE:
+            OnWhile(sc);
+            break;
+        case '(':
+            buffer << tok.text;
+            if(lastToken.type == ']') {
+                OnLambda(sc);
             } else {
-                switch(tok.type) {
-                case '(':
-                    depth++;
-                    strippedBuffer << "(";
-                    if((lastToken.type == T_FOR)) {
-                        state = kInForLoop;
-                        lookingForFirstSemiColon = true;
-                    } else if(lastToken.type == T_CATCH) {
-                        state = kInCatch;
-                    } else if(lastToken.type == T_DECLTYPE) {
-                        state = kInDecltype;
-                    } else if(lastToken.type == T_WHILE) {
-                        state = kInWhile;
-                        parenthesisBuffer << "();";
-                    } else if(lastToken.type == ']') {
-                        // Lambda?
-                        state = kInCatch; // similar as "catch" - collect everything
-                    } else {
-                        state = kInParen;
-                        parenthesisBuffer << "(";
-                    }
-                    break;
-                default:
-                    strippedBuffer << tok.text << " ";
-                    break;
-                }
+                ++parenthesisDepth;
+                PushBuffer();
             }
-        } else if(state == kInWhile) {
-            switch(tok.type) {
-            case '(':
-                depth++;
-                break;
-            case ')':
-                depth--;
-                if(depth == 0) {
-                    state = kNormal;
-                }
-                break;
-            default:
-                break;
+            break;
+        case '{':
+            buffer << tok.text;
+            PushBuffer();
+            break;
+        case '}':
+            buffer = PopBuffer();
+            // The closing curly bracket is added *after* we switch buffers
+            buffer << tok.text;
+            break;
+        case ')':
+            --parenthesisDepth;
+            buffer = PopBuffer();
+            // The closing curly bracket is added *after* we switch buffers
+            if(parenthesisDepth == 0) {
+                buffer << tok.text;
+            } else {
+                buffer << ";";
             }
-        } else if(state == kInParen) {
-            switch(tok.type) {
-            case '(':
-                depth++;
-                parenthesisBuffer << "(";
-                break;
-            case ')':
-                depth--;
-                parenthesisBuffer << ")";
-                if(depth == 0) {
-                    parenthesisBuffer << ";"; // Needed to help the parser
-                    state = kNormal;
-                    strippedBuffer << ")";
-                }
-                break;
-            default:
-                parenthesisBuffer << tok.text << " ";
-                break;
-            }
-        } else if(state == kInDecltype) {
-            strippedBuffer << tok.text;
-            switch(tok.type) {
-            case '(':
-                ++depth;
-                break;
-            case ')':
-                --depth;
-                if(depth == 0) {
-                    state = kNormal;
-                }
-                break;
-            default:
-                break;
-            }
-        } else if(state == kInCatch) {
-            // lambda and 'catch' parenthesis content is kept in the strippedBuffer
-            switch(tok.type) {
-            case '(':
-                depth++;
-                strippedBuffer << "(";
-                break;
-            case ')':
-                depth--;
-                strippedBuffer << ")";
-                if(depth == 0) {
-                    state = kNormal;
-                }
-                break;
-            default:
-                strippedBuffer << tok.text << " ";
-                break;
-            }
-        } else if(state == kInForLoop) {
-            // 'for' and 'catch' parenthesis content is kept in the strippedBuffer
-            switch(tok.type) {
-            case '(':
-                depth++;
-                strippedBuffer << "(";
-                break;
-            case ')':
-                depth--;
-                strippedBuffer << ")";
-                if(depth == 0) {
-                    state = kNormal;
-                }
-                break;
-            case ';':
-                lookingForFirstSemiColon = false;
-                strippedBuffer << ";";
-                break;
-            default:
-                if(lookingForFirstSemiColon) {
-                    strippedBuffer << tok.text << " ";
-                }
-                break;
-            }
-        } else if(state == kPreProcessor) {
-            switch(tok.type) {
-            case T_PP_STATE_EXIT:
-                state = kNormal;
-                break;
-            default:
-                break;
-            }
+            break;
+        default:
+            buffer << tok.text << " ";
+            break;
         }
         lastToken = tok;
     }
     ::LexerDestroy(&sc);
+
+    // Merge the buffers
+    stripped_buffer.Clear();
+    std::for_each(m_buffers.rbegin(), m_buffers.rend(), [&](const wxString& buffer) { stripped_buffer << buffer; });
 }
 
 CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bool sort)
@@ -551,7 +471,7 @@ CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bo
             } else if(!varInitialization.IsEmpty()) {
                 // This means that the above was a function call
                 // Parse the siganture which is placed inside the varInitialization
-                CxxVariableScanner scanner(varInitialization, m_standard, m_macros);
+                CxxVariableScanner scanner(varInitialization, m_standard, m_macros, true);
                 CxxVariable::Vec_t args = scanner.GetVariables(sort);
                 vars.insert(vars.end(), args.begin(), args.end());
                 break;
@@ -576,9 +496,7 @@ CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
     CxxVariable::Vec_t l = GetVariables(true);
     CxxVariable::Map_t m;
     std::for_each(l.begin(), l.end(), [&](CxxVariable::Ptr_t v) {
-        if(m.count(v->GetName()) == 0) {
-            m.insert(std::make_pair(v->GetName(), v));
-        }
+        if(m.count(v->GetName()) == 0) { m.insert(std::make_pair(v->GetName(), v)); }
     });
     return m;
 }
@@ -634,4 +552,169 @@ void CxxVariableScanner::UngetToken(const CxxLexerToken& token)
     } else if(token.type == ')') {
         ++m_parenthesisDepth;
     }
+}
+
+wxString& CxxVariableScanner::Buffer() { return m_buffers[0]; }
+
+bool CxxVariableScanner::OnForLoop(Scanner_t scanner)
+{
+    CxxLexerToken tok;
+
+    // The next token must be '('
+    if(!::LexerNext(scanner, tok)) return false;
+
+    // Parser error
+    if(tok.type != '(') return false;
+
+    int depth(1);
+    wxString& buffer = Buffer();
+    bool lookingForFirstSemiColon = true;
+    while(::LexerNext(scanner, tok)) {
+        // Skip prep processing state
+        // 'for' and 'catch' parenthesis content is kept in the buffer
+        switch(tok.type) {
+        case '(':
+            depth++;
+            if(lookingForFirstSemiColon) { buffer << "("; }
+            break;
+        case ')':
+            depth--;
+            if(lookingForFirstSemiColon) { buffer << ")"; }
+            if(depth == 0) return true;
+            break;
+        case ';':
+            if(lookingForFirstSemiColon) { buffer << ";"; }
+            lookingForFirstSemiColon = false;
+            break;
+        default:
+            if(lookingForFirstSemiColon) { buffer << tok.text << " "; }
+            break;
+        }
+    }
+    return false;
+}
+
+bool CxxVariableScanner::OnCatch(Scanner_t scanner)
+{
+    CxxLexerToken tok;
+
+    // The next token must be '('
+    if(!::LexerNext(scanner, tok)) return false;
+
+    // Parser error
+    if(tok.type != '(') return false;
+    int depth(1);
+    wxString& buffer = Buffer();
+    buffer << ";"; // Help the parser
+    while(::LexerNext(scanner, tok)) {
+        switch(tok.type) {
+        case '(':
+            ++depth;
+            buffer << tok.text;
+            break;
+        case ')':
+            --depth;
+            buffer << tok.text;
+            if(depth == 0) { return true; }
+            break;
+        default:
+            buffer << tok.text << " ";
+            break;
+        }
+    }
+    return false;
+}
+
+bool CxxVariableScanner::OnWhile(Scanner_t scanner)
+{
+
+    CxxLexerToken tok;
+
+    // The next token must be '('
+    if(!::LexerNext(scanner, tok)) return false;
+
+    // Parser error
+    if(tok.type != '(') return false;
+    int depth(1);
+    while(::LexerNext(scanner, tok)) {
+        switch(tok.type) {
+        case '(':
+            ++depth;
+            break;
+        case ')':
+            --depth;
+            if(depth == 0) return true;
+            break;
+        default:
+            break;
+        }
+    }
+    return false;
+}
+
+bool CxxVariableScanner::OnDeclType(Scanner_t scanner)
+{
+    CxxLexerToken tok;
+    wxString& buffer = Buffer();
+
+    // The next token must be '('
+    if(!::LexerNext(scanner, tok)) return false;
+
+    // Parser error
+    if(tok.type != '(') return false;
+    int depth(1);
+    buffer << "decltype(";
+    while(::LexerNext(scanner, tok)) {
+        switch(tok.type) {
+        case '(':
+            ++depth;
+            buffer << tok.text;
+            break;
+        case ')':
+            --depth;
+            buffer << ")";
+            if(depth == 0) { return true; }
+            break;
+        default:
+            break;
+        }
+    }
+    return false;
+}
+
+wxString& CxxVariableScanner::PushBuffer()
+{
+    wxString buffer;
+    m_buffers.insert(m_buffers.begin(), buffer);
+    return m_buffers[0];
+}
+
+wxString& CxxVariableScanner::PopBuffer()
+{
+    if(m_buffers.size() > 1) { m_buffers.erase(m_buffers.begin()); }
+    return m_buffers[0];
+}
+
+bool CxxVariableScanner::OnLambda(Scanner_t scanner)
+{
+    CxxLexerToken tok;
+    int depth(1);
+    wxString& buffer = Buffer();
+    while(::LexerNext(scanner, tok)) {
+        switch(tok.type) {
+        case '(':
+            ++depth;
+            buffer << tok.text;
+            break;
+        case ')':
+            --depth;
+            buffer << tok.text;
+            if(depth == 0) { return true; }
+            break;
+        default:
+            buffer << tok.text << " ";
+            break;
+        }
+    }
+    return false;
 }

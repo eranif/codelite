@@ -103,6 +103,8 @@
     <File Name="clCxxFileCacheSymbols.cpp"/>
     <File Name="clAnagram.h"/>
     <File Name="clAnagram.cpp"/>
+    <File Name="clGotoEntry.h"/>
+    <File Name="clGotoEntry.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>
@@ -357,6 +359,10 @@
     <File Name="PHPEntityFunctionAlias.cpp"/>
     <File Name="PHPDocVar.h"/>
     <File Name="PHPDocVar.cpp"/>
+    <File Name="PHPDocParam.h"/>
+    <File Name="PHPDocParam.cpp"/>
+    <File Name="PHPDocProperty.h"/>
+    <File Name="PHPDocProperty.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="TerminalEmulatorUI.wxcp"/>

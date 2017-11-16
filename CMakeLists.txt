@@ -109,7 +109,7 @@ endif()
 message("-- OS name ${OS_NAME}")
 
 if ( APPLE )
-  set(WX_COMPONENTS "std")
+  set(WX_COMPONENTS "std aui propgrid ribbon")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 else ( APPLE )
   set(WX_COMPONENTS "std aui propgrid stc ribbon")

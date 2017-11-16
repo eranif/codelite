@@ -25,23 +25,23 @@
 #ifndef CODELITE_LANGUAGE_H
 #define CODELITE_LANGUAGE_H
 
-#include "tokenizer.h"
-#include "cpp_scanner.h"
-#include "y.tab.h"
-#include "singleton.h"
-#include "entry.h"
-#include <wx/filename.h>
-#include "expression_result.h"
-#include "parsedtoken.h"
-#include "variable.h"
-#include "function.h"
-#include "comment.h"
-#include <vector>
-#include "codelite_exports.h"
-#include <set>
-#include "CxxVariable.h"
-#include "macros.h"
 #include "CxxTokenizer.h"
+#include "CxxVariable.h"
+#include "codelite_exports.h"
+#include "comment.h"
+#include "cpp_scanner.h"
+#include "entry.h"
+#include "expression_result.h"
+#include "function.h"
+#include "macros.h"
+#include "parsedtoken.h"
+#include "singleton.h"
+#include "tokenizer.h"
+#include "variable.h"
+#include "y.tab.h"
+#include <set>
+#include <vector>
+#include <wx/filename.h>
 
 enum SearchFlags {
     PartialMatch = 0x00000001,
@@ -106,14 +106,13 @@ private:
     std::map<wxString, std::vector<wxString> > m_additionalScopesCache; // collected by parsing 'using namespace XXX'
     TemplateHelper m_templateHelper;
     std::set<wxString> m_templateArgs;
+    CxxVariable::Map_t m_locals;
 
 protected:
     void SetVisibleScope(const wxString& visibleScope) { this->m_visibleScope = visibleScope; }
     const wxString& GetVisibleScope() const { return m_visibleScope; }
-    CxxVariable::Ptr_t FindVariableInScope(const wxString& buffer, const wxStringTable_t& ignoreTokens,
-                                           const wxString& name);
-    CxxVariable::Ptr_t FindVariableInScopes(const std::vector<wxString>& buffers, const wxStringTable_t& ignoreTokens,
-                                            const wxString& name);
+    CxxVariable::Ptr_t FindLocalVariable(const wxString& name);
+    CxxVariable::Ptr_t FindVariableInScope(const wxString& scope, const wxString& name);
 
 public:
     /**
@@ -251,8 +250,8 @@ public:
      *			   'variable' with public access
      * \param name optional name to look for (name can be partial).
      */
-    void GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& tags, const wxString& name = wxEmptyString,
-                           size_t flag = PartialMatch);
+    void GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& tags, bool isFuncSignature,
+                           const wxString& name = wxEmptyString, size_t flag = PartialMatch);
 
     wxString ApplyCtagsReplacementTokens(const wxString& in);
 
@@ -345,7 +344,7 @@ private:
      * @brief run the user defined types as they appear in the 'Types' replacement table
      * @param token current token
      */
-    void ExcuteUserTypes(ParsedToken* token, const wxString& entryPath = wxEmptyString);
+    bool RunUserTypes(ParsedToken* token, const wxString& entryPath = wxEmptyString);
 
     void ParseTemplateArgs(const wxString& argListStr, wxArrayString& argsList);
     void ParseTemplateInitList(const wxString& argListStr, wxArrayString& argsList);

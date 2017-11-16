@@ -27,44 +27,45 @@
 #define __editorsettingslocal__
 
 #include "editorsettingslocalbase.h"
-#include "optionsconfig.h"
+#include "globals.h"
 #include "localworkspace.h"
+#include "optionsconfig.h"
 
 class EditorSettingsLocal : public LocalEditorSettingsbase
 {
 public:
-	EditorSettingsLocal( OptionsConfigPtr higherOptions, wxXmlNode* node, enum prefsLevel level = pLevel_dunno, wxWindow* parent = NULL, wxWindowID id = wxID_ANY, const wxString& title = _("Local Preferences"));
-	~EditorSettingsLocal();
+    EditorSettingsLocal(OptionsConfigPtr higherOptions, wxXmlNode* node, enum prefsLevel level = pLevel_dunno,
+                        wxWindow* parent = NULL, wxWindowID id = wxID_ANY,
+                        const wxString& title = _("Local Preferences"));
+    ~EditorSettingsLocal();
 
-	LocalOptionsConfigPtr GetLocalOpts() const {
-		return localOptions;
-	}
+    LocalOptionsConfigPtr GetLocalOpts() const { return localOptions; }
 
 protected:
-	void DisplayHigherValues( const OptionsConfigPtr options );
-	void DisplayLocalValues( const LocalOptionsConfigPtr options );
+    void DisplayHigherValues(const OptionsConfigPtr options);
+    void DisplayLocalValues(const LocalOptionsConfigPtr options);
 
-	void indentsUsesTabsUpdateUI( wxUpdateUIEvent& event );
-	void indentWidthUpdateUI( wxUpdateUIEvent& event );
-	void tabWidthUpdateUI( wxUpdateUIEvent& event );
-	void displayBookmarkMarginUpdateUI( wxUpdateUIEvent& event );
-	void checkBoxDisplayFoldMarginUpdateUI( wxUpdateUIEvent& event );
-	void checkBoxHideChangeMarkerMarginUpdateUI( wxUpdateUIEvent& event );
-	void displayLineNumbersUpdateUI( wxUpdateUIEvent& event );
-	void showIndentationGuideLinesUpdateUI( wxUpdateUIEvent& event );
-	void highlightCaretLineUpdateUI( wxUpdateUIEvent& event );
-	void checkBoxTrimLineUpdateUI( wxUpdateUIEvent& event );
-	void checkBoxAppendLFUpdateUI( wxUpdateUIEvent& event );
-	void whitespaceStyleUpdateUI( wxUpdateUIEvent& event );
-	void choiceEOLUpdateUI( wxUpdateUIEvent& event );
-	void fileEncodingUpdateUI( wxUpdateUIEvent& event );
+    void indentsUsesTabsUpdateUI(wxUpdateUIEvent& event);
+    void indentWidthUpdateUI(wxUpdateUIEvent& event);
+    void tabWidthUpdateUI(wxUpdateUIEvent& event);
+    void displayBookmarkMarginUpdateUI(wxUpdateUIEvent& event);
+    void checkBoxDisplayFoldMarginUpdateUI(wxUpdateUIEvent& event);
+    void checkBoxHideChangeMarkerMarginUpdateUI(wxUpdateUIEvent& event);
+    void displayLineNumbersUpdateUI(wxUpdateUIEvent& event);
+    void showIndentationGuideLinesUpdateUI(wxUpdateUIEvent& event);
+    void highlightCaretLineUpdateUI(wxUpdateUIEvent& event);
+    void checkBoxTrimLineUpdateUI(wxUpdateUIEvent& event);
+    void checkBoxAppendLFUpdateUI(wxUpdateUIEvent& event);
+    void whitespaceStyleUpdateUI(wxUpdateUIEvent& event);
+    void choiceEOLUpdateUI(wxUpdateUIEvent& event);
+    void fileEncodingUpdateUI(wxUpdateUIEvent& event);
 
-	void OnOK( wxCommandEvent& event );
+    void OnOK(wxCommandEvent& event);
 
-	StringManager m_EOLstringManager;
-	StringManager m_WSstringManager;
-	LocalOptionsConfigPtr localOptions;
-	OptionsConfigPtr higherOptions;
-	wxXmlNode* node;
+    StringManager m_EOLstringManager;
+    StringManager m_WSstringManager;
+    LocalOptionsConfigPtr localOptions;
+    OptionsConfigPtr higherOptions;
+    wxXmlNode* node;
 };
 #endif // __editorsettingslocal__

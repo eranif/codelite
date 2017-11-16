@@ -26,29 +26,29 @@
 #ifndef CODELITE_CTAGS_MANAGER_H
 #define CODELITE_CTAGS_MANAGER_H
 
-#include "wx/event.h"
-#include <wx/timer.h>
-#include <wx/stopwatch.h>
-#include "wx/process.h"
-#include "cl_process.h"
-#include "tree.h"
-#include "entry.h"
-#include "cpptoken.h"
-#include <wx/thread.h>
-#include "singleton.h"
-#include "cl_calltip.h"
-#include "comment.h"
-#include "tags_options_data.h"
-#include "setters_getters_data.h"
-#include "extdbdata.h"
-#include "language.h"
-#include <set>
-#include "istorage.h"
-#include "codelite_exports.h"
-#include "cl_command_event.h"
-#include "wxStringHash.h"
-#include "macros.h"
 #include "clCxxFileCacheSymbols.h"
+#include "cl_calltip.h"
+#include "cl_command_event.h"
+#include "cl_process.h"
+#include "codelite_exports.h"
+#include "comment.h"
+#include "cpptoken.h"
+#include "entry.h"
+#include "extdbdata.h"
+#include "istorage.h"
+#include "language.h"
+#include "macros.h"
+#include "setters_getters_data.h"
+#include "singleton.h"
+#include "tags_options_data.h"
+#include "tree.h"
+#include "wx/event.h"
+#include "wx/process.h"
+#include "wxStringHash.h"
+#include <set>
+#include <wx/stopwatch.h>
+#include <wx/thread.h>
+#include <wx/timer.h>
 
 #ifdef USE_TRACE
 #include <wx/stopwatch.h>
@@ -176,12 +176,12 @@ public:
      * @brief return an array of CXX keywords
      */
     static void GetCXXKeywords(wxArrayString& words);
-    
+
     /**
      * @brief get the file-symbols cache
      */
     clCxxFileCacheSymbols::Ptr_t GetFileCache() { return m_symbolsCache; }
-    
+
     void SetLanguage(Language* lang);
     Language* GetLanguage();
     void SetEvtHandler(wxEvtHandler* handler) { m_evtHandler = handler; }
@@ -897,7 +897,7 @@ protected:
     void DoFilterCtorDtorIfNeeded(std::vector<TagEntryPtr>& tags, const wxString& oper);
     void RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
     void GetGlobalTags(const wxString& name, std::vector<TagEntryPtr>& tags, size_t flags = PartialMatch);
-    void GetLocalTags(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags,
+    void GetLocalTags(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags, bool isFuncSignature,
                       size_t flags = PartialMatch);
     void TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word, std::vector<wxString>& tips);
     bool ProcessExpression(const wxFileName& filename, int lineno, const wxString& expr, const wxString& scopeText,

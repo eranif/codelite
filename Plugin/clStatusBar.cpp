@@ -1,22 +1,22 @@
+#include "ColoursAndFontsManager.h"
+#include "bitmap_loader.h"
 #include "clStatusBar.h"
-#include "macros.h"
+#include "codelite_events.h"
+#include "drawingutils.h"
+#include "editor_config.h"
 #include "event_notifier.h"
+#include "fileextmanager.h"
+#include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "drawingutils.h"
-#include <wx/settings.h>
-#include "codelite_events.h"
-#include <wx/stc/stc.h>
-#include "fileextmanager.h"
-#include <wx/xrc/xmlres.h>
-#include "editor_config.h"
-#include "ColoursAndFontsManager.h"
+#include "macros.h"
 #include <algorithm>
-#include "globals.h"
-#include <wx/menu.h>
-#include "bitmap_loader.h"
 #include <wx/fontenc.h>
 #include <wx/fontmap.h>
+#include <wx/menu.h>
+#include <wx/settings.h>
+#include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 #define STATUSBAR_SCM_IDX 0
 #define STATUSBAR_LINE_COL_IDX 1
@@ -75,6 +75,9 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clStatusBar::OnEditorSettingsChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_GOTO_ANYTHING_SHOWING, &clStatusBar::OnGotoAnythingShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_GOTO_ANYTHING_SELECTED, &clStatusBar::OnActionSelected, this);
+
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 
     wxCustomStatusBarField::Ptr_t sourceControl(new wxCustomStatusBarBitmapField(this, clGetScaledSize(30)));
@@ -117,6 +120,8 @@ clStatusBar::~clStatusBar()
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clStatusBar::OnEditorSettingsChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_GOTO_ANYTHING_SHOWING, &clStatusBar::OnGotoAnythingShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_GOTO_ANYTHING_SELECTED, &clStatusBar::OnActionSelected, this);
     Unbind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 }
 
@@ -247,214 +252,7 @@ void clStatusBar::StopAnimation()
     field->SetTooltip("");
 }
 
-void clStatusBar::OnFieldClicked(clCommandEvent& event)
-{
-    if(event.GetInt() == STATUSBAR_SCM_IDX) {
-        if(m_sourceControlTabName.IsEmpty()) return;
-        wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_SCM_IDX);
-        CHECK_PTR_RET(field);
-        // Open the output view only if the bitmap is valid
-        if(field->Cast<wxCustomStatusBarBitmapField>()->GetBitmap().IsOk()) {
-            m_mgr->ToggleOutputPane(m_sourceControlTabName);
-        }
-    } else if(event.GetInt() == STATUSBAR_ICON_COL_IDX) {
-        wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ICON_COL_IDX);
-        CHECK_PTR_RET(field);
-        // Open the output view only if the bitmap is valid
-        if(field->Cast<wxCustomStatusBarBitmapField>()->GetBitmap().IsOk()) {
-            m_mgr->ToggleOutputPane("Build");
-        }
-    } else if(event.GetInt() == STATUSBAR_ANIMATION_COL_IDX) {
-        wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ANIMATION_COL_IDX);
-        CHECK_PTR_RET(field);
-        // Open the output view only if the bitmap is valid
-        if(field->Cast<wxCustomStatusBarAnimationField>()->IsRunning()) {
-            m_mgr->ToggleOutputPane("Build");
-        }
-    } else if(event.GetInt() == STATUSBAR_ENCODING_COL_IDX) {
-        // Show encoding menu
-        wxMenu menu;
-        wxFontEncoding fontEnc;
-        OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-        size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
-        std::map<int, wxString> encodingMenuItems;
-        for(size_t i = 0; i < iEncCnt; i++) {
-            fontEnc = wxFontMapper::GetEncoding(i);
-            if(wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
-                continue;
-            }
-
-            wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
-            wxMenuItem* itemEnc = menu.Append(wxID_ANY, encodingName, "", wxITEM_CHECK);
-            itemEnc->Check(fontEnc == options->GetFileFontEncoding());
-            encodingMenuItems.insert(std::make_pair(itemEnc->GetId(), encodingName));
-        }
-        int selectedId = GetPopupMenuSelectionFromUser(menu);
-        if(encodingMenuItems.count(selectedId) == 0) return;
-
-        // Change the encoding
-        wxString selectedEncodingName = encodingMenuItems.find(selectedId)->second;
-        ::clSetEditorFontEncoding(selectedEncodingName);
-        // Update the status bar
-        SetEncoding(selectedEncodingName);
-
-    } else if(event.GetInt() == STATUSBAR_LANG_COL_IDX) {
-        if(m_mgr->GetActiveEditor()) {
-            wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LANG_COL_IDX);
-            CHECK_PTR_RET(field);
-
-            IEditor* editor = m_mgr->GetActiveEditor();
-            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
-            if(lexer) {
-                wxMenu menu;
-                wxMenu* themesMenu = new wxMenu();
-                wxMenu* langMenu = new wxMenu();
-
-                // Create the themes menu
-                std::map<int, wxString> themesMap;
-                std::map<int, wxString> langsMap;
-                wxArrayString themesArr = ColoursAndFontsManager::Get().GetAvailableThemesForLexer(lexer->GetName());
-                for(size_t i = 0; i < themesArr.size(); ++i) {
-                    wxMenuItem* itemTheme = themesMenu->Append(wxID_ANY, themesArr.Item(i), "", wxITEM_CHECK);
-                    itemTheme->Check(themesArr.Item(i) == lexer->GetThemeName());
-                    themesMap.insert(std::make_pair(itemTheme->GetId(), themesArr.Item(i)));
-                }
-
-                // Create the language menu
-                wxArrayString langs = ColoursAndFontsManager::Get().GetAllLexersNames();
-                for(size_t i = 0; i < langs.size(); ++i) {
-                    wxMenuItem* itemLang = langMenu->Append(wxID_ANY, langs.Item(i), "", wxITEM_CHECK);
-                    itemLang->Check(langs.Item(i) == lexer->GetName());
-                    langsMap.insert(std::make_pair(itemLang->GetId(), langs.Item(i)));
-                }
-                menu.Append(wxID_ANY, _("Language"), langMenu);
-                menu.Append(wxID_ANY, _("Colour Themes"), themesMenu);
-                int selectedId = GetPopupMenuSelectionFromUser(menu);
-                if(themesMap.count(selectedId)) {
-                    // change the colour theme
-                    wxBusyCursor bc;
-                    ColoursAndFontsManager::Get().SetActiveTheme(lexer->GetName(), themesMap.find(selectedId)->second);
-                    ColoursAndFontsManager::Get().Save();
-
-                    // Update the colours
-                    IEditor::List_t editors;
-                    clGetManager()->GetAllEditors(editors);
-                    std::for_each(editors.begin(), editors.end(), [&](IEditor* e) {
-                        // get the lexer associated with this editor
-                        // and re-apply the syntax highlight
-                        LexerConf::Ptr_t editorLexer =
-                            ColoursAndFontsManager::Get().GetLexerForFile(e->GetFileName().GetFullPath());
-                        if(editorLexer) {
-                            e->SetSyntaxHighlight(editorLexer->GetName());
-                        }
-                    });
-
-                    // We need to force an update to ensure that the colours also affects
-                    // the tab drawing area
-                    clGetManager()->GetDockingManager()->Update();
-
-                } else if(langsMap.count(selectedId)) {
-                    // change the syntax highlight for the file
-                    wxBusyCursor bc;
-                    editor->SetSyntaxHighlight(langsMap.find(selectedId)->second);
-                    SetLanguage(langsMap.find(selectedId)->second.Upper());
-                }
-            }
-        }
-    } else if(event.GetInt() == STATUSBAR_WHITESPACE_INFO_IDX) {
-        if(m_mgr->GetActiveEditor()) {
-            // show a popup menu when clicking on the TABS/SPACES
-            // field
-            wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_WHITESPACE_INFO_IDX);
-            CHECK_PTR_RET(field);
-            wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetCtrl();
-            wxMenu menu;
-            wxMenuItem* idConvertToTabs = menu.Append(wxID_ANY, "Convert Indentations to Tabs");
-            wxMenuItem* idConvertToSpaces = menu.Append(wxID_ANY, "Convert Indentations to Spaces");
-            menu.AppendSeparator();
-            wxMenuItem* idUseTabs = menu.Append(wxID_ANY, "Use Tabs", "", wxITEM_CHECK);
-            wxMenuItem* idUseSpaces = menu.Append(wxID_ANY, "Use Spaces", "", wxITEM_CHECK);
-
-            // Check the proper tabs vs spaces option
-            menu.Check(idUseSpaces->GetId(), !stc->GetUseTabs());
-            menu.Check(idUseTabs->GetId(), stc->GetUseTabs());
-            int selectedId = GetPopupMenuSelectionFromUser(menu);
-            if(selectedId == wxID_NONE) return;
-
-            if(selectedId == idConvertToTabs->GetId()) {
-                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_tabs"));
-                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
-            } else if(selectedId == idConvertToSpaces->GetId()) {
-                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_spaces"));
-                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
-            } else if(selectedId == idUseSpaces->GetId()) {
-                stc->SetUseTabs(false);
-
-                // Update the configuration
-                OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-                options->SetIndentUsesTabs(false);
-                EditorConfigST::Get()->SetOptions(options);
-
-            } else if(selectedId == idUseTabs->GetId()) {
-                stc->SetUseTabs(true);
-
-                // Update the configuration
-                OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-                options->SetIndentUsesTabs(true);
-                EditorConfigST::Get()->SetOptions(options);
-            }
-            SetWhitespaceInfo();
-        }
-    } else if(event.GetInt() == STATUSBAR_EOL_COL_IDX) {
-        if(m_mgr->GetActiveEditor()) {
-            // show a popup menu
-            wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_EOL_COL_IDX);
-            CHECK_PTR_RET(field);
-
-            wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetCtrl();
-            wxMenu menu;
-
-            wxMenuItem* idDisplayEOL = menu.Append(wxID_ANY, _("Display EOL"), "", wxITEM_CHECK);
-            menu.AppendSeparator();
-
-            wxMenuItem* idUseLf = menu.Append(wxID_ANY, _("Use Linux Format (LF)"), "", wxITEM_CHECK);
-            wxMenuItem* idUseCrLf = menu.Append(wxID_ANY, _("Use Windows Format (CRLF)"), "", wxITEM_CHECK);
-            menu.AppendSeparator();
-
-            wxMenuItem* idConvertToCrLF = menu.Append(wxID_ANY, _("Convert to Windows Format"));
-            wxMenuItem* idConvertToLf = menu.Append(wxID_ANY, _("Convert to Linux Format"));
-
-            // Check the proper tabs vs spaces option
-            menu.Check(idUseLf->GetId(), stc->GetEOLMode() == wxSTC_EOL_LF);
-            menu.Check(idUseCrLf->GetId(), stc->GetEOLMode() == wxSTC_EOL_CRLF);
-            menu.Check(idDisplayEOL->GetId(), stc->GetViewEOL());
-
-            int selectedId = GetPopupMenuSelectionFromUser(menu);
-            if(selectedId == wxID_NONE) return;
-
-            if(selectedId == idConvertToCrLF->GetId()) {
-                // This will also change the EOL mode to CRLF
-                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_eol_win"));
-                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
-            } else if(selectedId == idConvertToLf->GetId()) {
-                // This will also change the EOL mode to LF
-                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_eol_unix"));
-                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
-            } else if(selectedId == idUseLf->GetId()) {
-                stc->SetEOLMode(wxSTC_EOL_LF);
-            } else if(selectedId == idUseCrLf->GetId()) {
-                stc->SetEOLMode(wxSTC_EOL_CRLF);
-            } else if(selectedId == idDisplayEOL->GetId()) {
-                wxCommandEvent evt(wxEVT_MENU, XRCID("display_eol"));
-                evt.SetInt(stc->GetViewEOL() ? 0 : 1);
-                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
-            }
-
-            // Update the whitespace info
-            CallAfter(&clStatusBar::SetWhitespaceInfo);
-        }
-    }
-}
+void clStatusBar::OnFieldClicked(clCommandEvent& event) { DoFieldClicked(event.GetInt()); }
 
 void clStatusBar::SetWhitespaceInfo()
 {
@@ -540,9 +338,7 @@ void clStatusBar::DoUpdateView()
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
-        if(lexer) {
-            language = lexer->GetName().Upper();
-        }
+        if(lexer) { language = lexer->GetName().Upper(); }
     }
 
     SetLanguage(language);
@@ -550,4 +346,253 @@ void clStatusBar::DoUpdateView()
     wxString encodingName = wxFontMapper::GetEncodingName(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
     SetEncoding(encodingName);
     SetWhitespaceInfo();
+}
+
+void clStatusBar::DoFieldClicked(int fieldIndex)
+{
+    if(fieldIndex == STATUSBAR_SCM_IDX) {
+        if(m_sourceControlTabName.IsEmpty()) return;
+        wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_SCM_IDX);
+        CHECK_PTR_RET(field);
+        // Open the output view only if the bitmap is valid
+        if(field->Cast<wxCustomStatusBarBitmapField>()->GetBitmap().IsOk()) {
+            m_mgr->ToggleOutputPane(m_sourceControlTabName);
+        }
+    } else if(fieldIndex == STATUSBAR_ICON_COL_IDX) {
+        wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ICON_COL_IDX);
+        CHECK_PTR_RET(field);
+        // Open the output view only if the bitmap is valid
+        if(field->Cast<wxCustomStatusBarBitmapField>()->GetBitmap().IsOk()) { m_mgr->ToggleOutputPane("Build"); }
+    } else if(fieldIndex == STATUSBAR_ANIMATION_COL_IDX) {
+        wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ANIMATION_COL_IDX);
+        CHECK_PTR_RET(field);
+        // Open the output view only if the bitmap is valid
+        if(field->Cast<wxCustomStatusBarAnimationField>()->IsRunning()) { m_mgr->ToggleOutputPane("Build"); }
+    } else if(fieldIndex == STATUSBAR_ENCODING_COL_IDX) {
+        // Show encoding menu
+        wxMenu menu;
+        wxFontEncoding fontEnc;
+        OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+        size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
+        std::map<int, wxString> encodingMenuItems;
+        for(size_t i = 0; i < iEncCnt; i++) {
+            fontEnc = wxFontMapper::GetEncoding(i);
+            if(wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+                continue;
+            }
+
+            wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
+            wxMenuItem* itemEnc = menu.Append(wxID_ANY, encodingName, "", wxITEM_CHECK);
+            itemEnc->Check(fontEnc == options->GetFileFontEncoding());
+            encodingMenuItems.insert(std::make_pair(itemEnc->GetId(), encodingName));
+        }
+        int selectedId = GetPopupMenuSelectionFromUser(menu);
+        if(encodingMenuItems.count(selectedId) == 0) return;
+
+        // Change the encoding
+        wxString selectedEncodingName = encodingMenuItems.find(selectedId)->second;
+        ::clSetEditorFontEncoding(selectedEncodingName);
+        // Update the status bar
+        SetEncoding(selectedEncodingName);
+
+    } else if(fieldIndex == STATUSBAR_LANG_COL_IDX) {
+        if(m_mgr->GetActiveEditor()) {
+            wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LANG_COL_IDX);
+            CHECK_PTR_RET(field);
+
+            IEditor* editor = m_mgr->GetActiveEditor();
+            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
+            if(lexer) {
+                wxMenu menu;
+                wxMenu* themesMenu = new wxMenu();
+                wxMenu* langMenu = new wxMenu();
+
+                // Create the themes menu
+                std::map<int, wxString> themesMap;
+                std::map<int, wxString> langsMap;
+                wxArrayString themesArr = ColoursAndFontsManager::Get().GetAvailableThemesForLexer(lexer->GetName());
+                for(size_t i = 0; i < themesArr.size(); ++i) {
+                    wxMenuItem* itemTheme = themesMenu->Append(wxID_ANY, themesArr.Item(i), "", wxITEM_CHECK);
+                    itemTheme->Check(themesArr.Item(i) == lexer->GetThemeName());
+                    themesMap.insert(std::make_pair(itemTheme->GetId(), themesArr.Item(i)));
+                }
+
+                // Create the language menu
+                wxArrayString langs = ColoursAndFontsManager::Get().GetAllLexersNames();
+                for(size_t i = 0; i < langs.size(); ++i) {
+                    wxMenuItem* itemLang = langMenu->Append(wxID_ANY, langs.Item(i), "", wxITEM_CHECK);
+                    itemLang->Check(langs.Item(i) == lexer->GetName());
+                    langsMap.insert(std::make_pair(itemLang->GetId(), langs.Item(i)));
+                }
+                menu.Append(wxID_ANY, _("Language"), langMenu);
+                menu.Append(wxID_ANY, _("Colour Themes"), themesMenu);
+                int selectedId = GetPopupMenuSelectionFromUser(menu);
+                if(themesMap.count(selectedId)) {
+                    // change the colour theme
+                    wxBusyCursor bc;
+                    ColoursAndFontsManager::Get().SetGlobalTheme(themesMap.find(selectedId)->second);
+                    ColoursAndFontsManager::Get().Save();
+
+                    // Update the colours
+                    IEditor::List_t editors;
+                    clGetManager()->GetAllEditors(editors);
+                    std::for_each(editors.begin(), editors.end(), [&](IEditor* e) {
+                        // get the lexer associated with this editor
+                        // and re-apply the syntax highlight
+                        LexerConf::Ptr_t editorLexer =
+                            ColoursAndFontsManager::Get().GetLexerForFile(e->GetFileName().GetFullPath());
+                        if(editorLexer) { e->SetSyntaxHighlight(editorLexer->GetName()); }
+                    });
+
+                    // We need to force an update to ensure that the colours also affects
+                    // the tab drawing area
+                    clGetManager()->GetDockingManager()->Update();
+
+                } else if(langsMap.count(selectedId)) {
+                    // change the syntax highlight for the file
+                    wxBusyCursor bc;
+                    editor->SetSyntaxHighlight(langsMap.find(selectedId)->second);
+                    SetLanguage(langsMap.find(selectedId)->second.Upper());
+                }
+            }
+        }
+    } else if(fieldIndex == STATUSBAR_WHITESPACE_INFO_IDX) {
+        if(m_mgr->GetActiveEditor()) {
+            // show a popup menu when clicking on the TABS/SPACES
+            // field
+            wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_WHITESPACE_INFO_IDX);
+            CHECK_PTR_RET(field);
+            wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetCtrl();
+            wxMenu menu;
+            wxMenuItem* idConvertToTabs = menu.Append(wxID_ANY, "Convert Indentations to Tabs");
+            wxMenuItem* idConvertToSpaces = menu.Append(wxID_ANY, "Convert Indentations to Spaces");
+            menu.AppendSeparator();
+            wxMenuItem* idUseTabs = menu.Append(wxID_ANY, "Use Tabs", "", wxITEM_CHECK);
+            wxMenuItem* idUseSpaces = menu.Append(wxID_ANY, "Use Spaces", "", wxITEM_CHECK);
+
+            // Check the proper tabs vs spaces option
+            menu.Check(idUseSpaces->GetId(), !stc->GetUseTabs());
+            menu.Check(idUseTabs->GetId(), stc->GetUseTabs());
+            int selectedId = GetPopupMenuSelectionFromUser(menu);
+            if(selectedId == wxID_NONE) return;
+
+            if(selectedId == idConvertToTabs->GetId()) {
+                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_tabs"));
+                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
+            } else if(selectedId == idConvertToSpaces->GetId()) {
+                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_spaces"));
+                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
+            } else if(selectedId == idUseSpaces->GetId()) {
+                stc->SetUseTabs(false);
+
+                // Update the configuration
+                OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+                options->SetIndentUsesTabs(false);
+                EditorConfigST::Get()->SetOptions(options);
+
+            } else if(selectedId == idUseTabs->GetId()) {
+                stc->SetUseTabs(true);
+
+                // Update the configuration
+                OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+                options->SetIndentUsesTabs(true);
+                EditorConfigST::Get()->SetOptions(options);
+            }
+            SetWhitespaceInfo();
+        }
+    } else if(fieldIndex == STATUSBAR_EOL_COL_IDX) {
+        if(m_mgr->GetActiveEditor()) {
+            // show a popup menu
+            wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_EOL_COL_IDX);
+            CHECK_PTR_RET(field);
+
+            wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetCtrl();
+            wxMenu menu;
+
+            wxMenuItem* idDisplayEOL = menu.Append(wxID_ANY, _("Display EOL"), "", wxITEM_CHECK);
+            menu.AppendSeparator();
+
+            wxMenuItem* idUseLf = menu.Append(wxID_ANY, _("Use Linux Format (LF)"), "", wxITEM_CHECK);
+            wxMenuItem* idUseCrLf = menu.Append(wxID_ANY, _("Use Windows Format (CRLF)"), "", wxITEM_CHECK);
+            menu.AppendSeparator();
+
+            wxMenuItem* idConvertToCrLF = menu.Append(wxID_ANY, _("Convert to Windows Format"));
+            wxMenuItem* idConvertToLf = menu.Append(wxID_ANY, _("Convert to Linux Format"));
+
+            // Check the proper tabs vs spaces option
+            menu.Check(idUseLf->GetId(), stc->GetEOLMode() == wxSTC_EOL_LF);
+            menu.Check(idUseCrLf->GetId(), stc->GetEOLMode() == wxSTC_EOL_CRLF);
+            menu.Check(idDisplayEOL->GetId(), stc->GetViewEOL());
+
+            int selectedId = GetPopupMenuSelectionFromUser(menu);
+            if(selectedId == wxID_NONE) return;
+
+            if(selectedId == idConvertToCrLF->GetId()) {
+                // This will also change the EOL mode to CRLF
+                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_eol_win"));
+                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
+            } else if(selectedId == idConvertToLf->GetId()) {
+                // This will also change the EOL mode to LF
+                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_eol_unix"));
+                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
+            } else if(selectedId == idUseLf->GetId()) {
+                stc->SetEOLMode(wxSTC_EOL_LF);
+            } else if(selectedId == idUseCrLf->GetId()) {
+                stc->SetEOLMode(wxSTC_EOL_CRLF);
+            } else if(selectedId == idDisplayEOL->GetId()) {
+                wxCommandEvent evt(wxEVT_MENU, XRCID("display_eol"));
+                evt.SetInt(stc->GetViewEOL() ? 0 : 1);
+                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
+            }
+
+            // Update the whitespace info
+            CallAfter(&clStatusBar::SetWhitespaceInfo);
+        }
+    }
+}
+
+void clStatusBar::OnGotoAnythingShowing(clGotoEvent& e)
+{
+    e.Skip();
+    const wxBitmap& defaultBitmap = clGetManager()->GetStdIcons()->LoadBitmap("colour-pallette");
+    m_gotoAnythingTableSyntax.clear();
+    m_gotoAnythingTableThemes.clear();
+    // Get list of languages
+    wxArrayString langs = ColoursAndFontsManager::Get().GetAllLexersNames();
+    for(size_t i = 0; i < langs.size(); ++i) {
+        wxString text;
+        text << _("Set Syntax: ") << langs.Item(i);
+        m_gotoAnythingTableSyntax[text] = langs.Item(i);
+        clGotoEntry entry(text, "", wxID_ANY);
+        e.GetEntries().push_back(entry);
+    }
+
+    wxArrayString themes = ColoursAndFontsManager::Get().GetAllThemes();
+    for(size_t i = 0; i < themes.size(); ++i) {
+        wxString text;
+        text << _("Select Theme: ") << themes.Item(i);
+        m_gotoAnythingTableThemes[text] = themes.Item(i);
+        clGotoEntry entry(text, "", wxID_ANY);
+        entry.SetBitmap(defaultBitmap);
+        e.GetEntries().push_back(entry);
+    }
+}
+
+void clStatusBar::OnActionSelected(clGotoEvent& e)
+{
+    e.Skip();
+    const clGotoEntry& entry = e.GetEntry();
+    const wxString& desc = entry.GetDesc();
+    if(m_gotoAnythingTableSyntax.count(desc)) {
+        IEditor* editor = clGetManager()->GetActiveEditor();
+        CHECK_PTR_RET(editor);
+        wxBusyCursor bc;
+        const wxString& lang = m_gotoAnythingTableSyntax[desc];
+
+        editor->SetSyntaxHighlight(lang);
+        SetLanguage(lang.Upper());
+    } else if(m_gotoAnythingTableThemes.count(desc)) {
+        ColoursAndFontsManager::Get().SetTheme(m_gotoAnythingTableThemes[desc]);
+        ColoursAndFontsManager::Get().Save();
+    }
 }

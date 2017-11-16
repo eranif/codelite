@@ -348,10 +348,9 @@ void ReconcileProjectDlg::DoFindFiles()
         }
     });
 
-    std::vector<wxString> result;
-    std::set_difference(m_allfiles.begin(), m_allfiles.end(), projectfilesSet.begin(), projectfilesSet.end(),
-                        std::back_inserter(result));
-    m_newfiles.insert(result.begin(), result.end());
+    std::for_each(m_allfiles.begin(), m_allfiles.end(), [&](const wxString& file) {
+        if(projectfilesSet.count(file) == 0) { m_newfiles.insert(file); }
+    });
 }
 
 wxBitmap ReconcileProjectDlg::GetBitmap(const wxString& filename) const

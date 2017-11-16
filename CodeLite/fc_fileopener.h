@@ -29,67 +29,66 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <stack>
 #include <stdio.h>
 #include <list>
 #include "codelite_exports.h"
 #include <wx/string.h>
+#include "wxStringHash.h"
 
-typedef struct yy_buffer_state *BufferState;
-struct fcState {
+typedef struct yy_buffer_state* BufferState;
+struct fcState
+{
     BufferState buffer;
-    wxString    filename;
+    wxString filename;
 };
 
 class WXDLLIMPEXP_CL fcFileOpener
 {
 public:
-    typedef std::list<wxString>   List_t;
-    typedef std::set<wxString>    Set_t;
+    typedef std::unordered_set<wxString> Set_t;
     typedef std::vector<wxString> Vector_t;
-    typedef std::list<fcState>    Stack_t;
+    typedef std::stack<fcState> Stack_t;
 
 protected:
-    static fcFileOpener* ms_instance       ;
+    static fcFileOpener* ms_instance;
 
-    fcFileOpener::Vector_t _searchPath       ;
-    fcFileOpener::Vector_t _excludePaths     ;
-    fcFileOpener::Set_t    _matchedfiles     ;
-    fcFileOpener::Set_t    _scannedfiles     ;
-    int                    _depth            ;
-    int                    _maxDepth         ;
-    fcFileOpener::Set_t    _namespaces       ;
-    fcFileOpener::Set_t    _namespaceAliases ;
-    fcFileOpener::List_t   _includeStatements;
-    fcFileOpener::Stack_t  _states;
-    wxString               _cwd;
+    fcFileOpener::Vector_t _searchPath;
+    fcFileOpener::Vector_t _excludePaths;
+    fcFileOpener::Set_t _matchedfiles;
+    fcFileOpener::Set_t _scannedfiles;
+    int _depth;
+    int _maxDepth;
+    fcFileOpener::Set_t _namespaces;
+    fcFileOpener::Set_t _namespaceAliases;
+    fcFileOpener::Set_t _includeStatements;
+    fcFileOpener::Stack_t _states;
+    wxString _cwd;
 
 public:
     static fcFileOpener* Get();
     static void Release();
 
-    FILE* try_open(const wxString &path, const wxString &name, wxString &filepath);
+    FILE* try_open(const wxString& path, const wxString& name, wxString& filepath);
 
     // Flex buffer states
     BufferState PopBufferState();
-    void PushBufferState(BufferState buffer, const wxString &filename);
-    bool IsStateStackEmpty() const {
-        return _states.empty();
-    }
+    void PushBufferState(BufferState buffer, const wxString& filename);
+    bool IsStateStackEmpty() const { return _states.empty(); }
 
-    void SetCwd(const wxString& _cwd) {
-        this->_cwd = _cwd;
-    }
-    void AddSearchPath(const wxString &path);
-    void AddExcludePath(const wxString &path);
+    void SetCwd(const wxString& _cwd) { this->_cwd = _cwd; }
+    void AddSearchPath(const wxString& path);
+    void AddExcludePath(const wxString& path);
 
     /**
      * @brief open a file based on the include paths and return a pointer to it.
      * @param include_path the string as appears inside the #include statement
      * @param filepath [output] the file that was opened
      */
-    FILE *OpenFile(const wxString &include_path, wxString &filepath);
+    FILE* OpenFile(const wxString& include_path, wxString& filepath);
 
-    void ClearResults() {
+    void ClearResults()
+    {
         _matchedfiles.clear();
         _scannedfiles.clear();
         _namespaces.clear();
@@ -97,72 +96,54 @@ public:
         _includeStatements.clear();
         _depth = 0;
         _cwd.Clear();
-        _states.clear();
+        while(!_states.empty()) {
+            _states.pop();
+        }
     }
 
-    void ClearSearchPath() {
+    void ClearSearchPath()
+    {
         _searchPath.clear();
         _excludePaths.clear();
     }
 
-    void incDepth() {
-        _depth++;
-    }
+    void incDepth() { _depth++; }
 
-    void decDepth() {
+    void decDepth()
+    {
         _depth--;
-        if ( _depth < 0) {
+        if(_depth < 0) {
             _depth = 0;
         }
     }
 
-    int  getDepth() {
-        return _depth;
-    }
+    int getDepth() { return _depth; }
 
-    void setMaxDepth(const int& _maxDepth) {
-        this->_maxDepth = _maxDepth;
-    }
+    void setMaxDepth(const int& _maxDepth) { this->_maxDepth = _maxDepth; }
 
-    const int& getMaxDepth() const {
-        return _maxDepth;
-    }
+    const int& getMaxDepth() const { return _maxDepth; }
 
     // getters
-    const fcFileOpener::Set_t& GetResults() const {
-        return _matchedfiles;
-    }
+    const fcFileOpener::Set_t& GetResults() const { return _matchedfiles; }
 
     ////////////////////////////////////////////////////
     // Using namespace support
-    const fcFileOpener::Set_t& GetNamespaces() const {
-        return _namespaces;
-    }
+    const fcFileOpener::Set_t& GetNamespaces() const { return _namespaces; }
 
-    void ClearNamespace() {
-        _namespaces.clear();
-    }
+    void ClearNamespace() { _namespaces.clear(); }
     void AddNamespace(const char* ns);
 
     ////////////////////////////////////////////////////
     // Namespace aliasing
-    const fcFileOpener::Set_t& GetNamespaceAliases() const {
-        return _namespaceAliases;
-    }
-    void ClearNamespaceAliases() {
-        _namespaceAliases.clear();
-    }
-    void AddNamespaceAlias(const char* alias) {
-        _namespaceAliases.insert(alias);
-    }
+    const fcFileOpener::Set_t& GetNamespaceAliases() const { return _namespaceAliases; }
+    void ClearNamespaceAliases() { _namespaceAliases.clear(); }
+    void AddNamespaceAlias(const char* alias) { _namespaceAliases.insert(alias); }
     void AddIncludeStatement(const wxString& statement);
-    const fcFileOpener::List_t& GetIncludeStatements() const {
-        return _includeStatements;
-    }
+    const fcFileOpener::Set_t& GetIncludeStatements() const { return _includeStatements; }
+    fcFileOpener::Set_t& GetIncludeStatements() { return _includeStatements; }
+
 private:
     fcFileOpener();
     virtual ~fcFileOpener();
-
-
 };
 #endif // __fcfileopener__

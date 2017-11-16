@@ -291,16 +291,14 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
         // Before using the 'crawlerScan' we lock it, since it is not mt-safe
         crawlerScan(cfile.data());
     }
-
-    std::set<wxString> fileSet = fcFileOpener::Get()->GetResults();
-    std::set<wxString>::iterator iter = fileSet.begin();
-    for(; iter != fileSet.end(); iter++) {
-        wxFileName fn(*iter);
+    
+    const fcFileOpener::Set_t& fileSet = fcFileOpener::Get()->GetResults();
+    arrFiles.Alloc(fileSet.size()); // Make enough room
+    std::for_each(fileSet.begin(), fileSet.end(), [&](const wxString& file){
+        wxFileName fn(file);
         fn.MakeAbsolute();
-        if(arrFiles.Index(fn.GetFullPath()) == wxNOT_FOUND) {
-            arrFiles.Add(fn.GetFullPath());
-        }
-    }
+        arrFiles.Add(fn.GetFullPath());
+    });
 }
 
 void ParseThread::ParseAndStoreFiles(ParseRequest* req, const wxArrayString& arrFiles, int initalCount,
@@ -594,17 +592,21 @@ void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
 
 void ParseThread::ProcessIncludeStatements(ParseRequest* req)
 {
-    fcFileOpener::List_t* matches = new fcFileOpener::List_t;
+    fcFileOpener::Set_t* matches = new fcFileOpener::Set_t;
     {
         wxString file = req->getFile();
         // Retrieve the "include" files on this file only
         wxCriticalSectionLocker locker(TagsManagerST::Get()->m_crawlerLocker);
+        // Cleanup
         fcFileOpener::Get()->ClearResults();
         fcFileOpener::Get()->ClearSearchPath();
         crawlerScan(file.mb_str(wxConvUTF8).data());
 
-        const fcFileOpener::List_t& incls = fcFileOpener::Get()->GetIncludeStatements();
-        matches->insert(matches->end(), incls.begin(), incls.end());
+        fcFileOpener::Set_t& incls = fcFileOpener::Get()->GetIncludeStatements();
+        matches->swap(incls);
+        // Cleanup
+        fcFileOpener::Get()->ClearResults();
+        fcFileOpener::Get()->ClearSearchPath();
     }
 
     if(req->_evtHandler) {

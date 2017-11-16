@@ -268,7 +268,7 @@ void svSymbolTree::BuildTree(const wxFileName& fn, bool force)
     }
 }
 
-wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileOpener::List_t& includes)
+wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileOpener::Set_t& includes)
 {
     wxTreeItemId root = GetRootItem();
     if(root.IsOk() == false) return wxTreeItemId();
@@ -298,12 +298,10 @@ wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileO
         item =
             AppendItem(root, INCLUDE_FILES_NODE_TEXT, 2, 2, new MyTreeItemData(INCLUDE_FILES_NODE_TEXT, wxEmptyString));
     }
-
-    fcFileOpener::List_t::const_iterator iter = includes.begin();
-    for(; iter != includes.end(); ++iter) {
-        wxString displayName(*iter);
-        AppendItem(item, displayName, 16, 16, new MyTreeItemData(displayName, displayName));
-    }
+    
+    std::for_each(includes.begin(), includes.end(), [&](const wxString& incl){
+        AppendItem(item, incl, 16, 16, new MyTreeItemData(incl, incl));
+    });
     return item;
 }
 
@@ -340,7 +338,7 @@ void svSymbolTree::Clear()
 void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    //    fcFileOpener::List_t* includes = (fcFileOpener::List_t*)e.GetClientData();
+    //    fcFileOpener::Set_t* includes = (fcFileOpener::Set_t*)e.GetClientData();
     //    if(includes) {
     //        if(GetActiveEditorFile() != m_currentFile) {
     //            wxWindowUpdateLocker locker(this);

@@ -44,13 +44,11 @@ fcFileOpener::fcFileOpener()
 {
 }
 
-fcFileOpener::~fcFileOpener()
-{
-}
+fcFileOpener::~fcFileOpener() {}
 
 fcFileOpener* fcFileOpener::Get()
 {
-    if (ms_instance == 0) {
+    if(ms_instance == 0) {
         ms_instance = new fcFileOpener();
     }
     return ms_instance;
@@ -58,7 +56,7 @@ fcFileOpener* fcFileOpener::Get()
 
 void fcFileOpener::Release()
 {
-    if (ms_instance) {
+    if(ms_instance) {
         delete ms_instance;
     }
     ms_instance = 0;
@@ -66,71 +64,70 @@ void fcFileOpener::Release()
 
 void fcFileOpener::AddSearchPath(const wxString& path)
 {
-    wxFileName fn( path, "" );
-    if ( !wxFileName::DirExists( fn.GetPath() ) )
-        return;
-    _searchPath.push_back( fn.GetPath() );
+    wxFileName fn(path, "");
+    if(!wxFileName::DirExists(fn.GetPath())) return;
+    _searchPath.push_back(fn.GetPath());
 }
 
-FILE* fcFileOpener::OpenFile(const wxString& include_path, wxString &filepath)
+FILE* fcFileOpener::OpenFile(const wxString& include_path, wxString& filepath)
 {
     filepath.Clear();
-    if ( include_path.empty() ) {
+    if(include_path.empty()) {
         return NULL;
     }
 
-    wxString mod_path ( include_path );
+    wxString mod_path(include_path);
 
     static wxString trimString("\"<> \t");
 
     mod_path.erase(0, mod_path.find_first_not_of(trimString));
-    mod_path.erase(mod_path.find_last_not_of    (trimString)+1);
+    mod_path.erase(mod_path.find_last_not_of(trimString) + 1);
 
-    if ( _scannedfiles.find(mod_path) != _scannedfiles.end() ) {
+    if(_scannedfiles.count(mod_path)) {
         // we already scanned this file
         filepath.Clear();
         return NULL;
     }
 
-    FILE *fp (NULL);
-    
+    FILE* fp(NULL);
+
     // first try to cwd
     fp = try_open(_cwd, mod_path, filepath);
-    if ( fp ) {
+    if(fp) {
         return fp;
     }
-    
+
     // Now try the search directories
-    for (size_t i=0; i<_searchPath.size(); ++i) {
+    for(size_t i = 0; i < _searchPath.size(); ++i) {
         fp = try_open(_searchPath.at(i), mod_path, filepath);
-        if ( fp ) return fp;
+        if(fp) return fp;
     }
-    
-    _scannedfiles.insert( mod_path );
+
+    _scannedfiles.insert(mod_path);
     filepath.Clear();
     return NULL;
 }
 
-FILE* fcFileOpener::try_open(const wxString &path, const wxString &name, wxString &filepath)
+FILE* fcFileOpener::try_open(const wxString& path, const wxString& name, wxString& filepath)
 {
-    wxString fullpath ( path + FC_PATH_SEP + name );
+    wxString fullpath(path + FC_PATH_SEP + name);
     wxFileName fn(fullpath);
-    
-    fullpath = fn.GetFullPath();
-    FILE *fp = wxFopen(fullpath, "rb");
-    if ( fp ) {
 
-        _scannedfiles.insert( name );
+    fullpath = fn.GetFullPath();
+    FILE* fp = wxFopen(fullpath, "rb");
+    if(fp) {
+
+        _scannedfiles.insert(name);
         wxString pathPart = fn.GetPath();
 
-        for(size_t i=0; i<_excludePaths.size(); ++i) {
-            if ( pathPart.StartsWith(_excludePaths.at(i) ) ) {
-                ::fclose( fp );
+        for(size_t i = 0; i < _excludePaths.size(); ++i) {
+            if(pathPart.StartsWith(_excludePaths.at(i))) {
+                ::fclose(fp);
                 return NULL;
             }
         }
 
-        _matchedfiles.insert( fullpath );
+        _matchedfiles.insert(fullpath);
         filepath = fullpath;
         return fp;
     }
@@ -139,48 +136,44 @@ FILE* fcFileOpener::try_open(const wxString &path, const wxString &name, wxStrin
 
 void fcFileOpener::AddExcludePath(const wxString& path)
 {
-    wxFileName fn( path, "" );
-    if ( !wxFileName::DirExists( fn.GetPath() ) )
-        return;
-    _excludePaths.push_back( fn.GetPath() );
+    wxFileName fn(path, "");
+    if(!wxFileName::DirExists(fn.GetPath())) return;
+    _excludePaths.push_back(fn.GetPath());
 }
 
-void fcFileOpener::AddNamespace(const char* ns)
-{
-    _namespaces.insert(ns);
-}
+void fcFileOpener::AddNamespace(const char* ns) { _namespaces.insert(ns); }
 
 void fcFileOpener::AddIncludeStatement(const wxString& statement)
 {
-    if( std::find(_includeStatements.begin(), _includeStatements.end(), statement) == _includeStatements.end()) {
-        _includeStatements.push_back(statement);
+    if(_includeStatements.count(statement) == 0) {
+        _includeStatements.insert(statement);
     }
 }
 
 BufferState fcFileOpener::PopBufferState()
 {
-    if ( _states.empty() ) {
+    if(_states.empty()) {
         return NULL;
     }
-    
-    fcState curstate = _states.back();
+
+    fcState curstate = _states.top();
     BufferState state = curstate.buffer;
-    
+
     // update the current directory
     _cwd = wxFileName(curstate.filename).GetPath();
-    
-    _states.pop_back();
+
+    _states.pop();
     decDepth();
     return state;
 }
 
-void fcFileOpener::PushBufferState(BufferState buffer, const wxString &filename)
+void fcFileOpener::PushBufferState(BufferState buffer, const wxString& filename)
 {
     fcState curstate;
     curstate.buffer = buffer;
     curstate.filename = filename;
-    _states.push_back( curstate );
-    
+    _states.push(curstate);
+
     // update the current directory
     _cwd = wxFileName(curstate.filename).GetPath();
     incDepth();

@@ -80,7 +80,7 @@ protected:
     bool DoItemActivated(wxTreeItemId item, wxEvent& event, bool notify);
     void FindAndSelect(IEditor* editor, wxString& pattern, const wxString& name);
     void CenterEditorLine();
-    wxTreeItemId DoAddIncludeFiles(const wxFileName& fn, const fcFileOpener::List_t& includes);
+    wxTreeItemId DoAddIncludeFiles(const wxFileName& fn, const fcFileOpener::Set_t& includes);
 
     wxTreeItemId TryGetPrevItem(wxTreeItemId item);
 

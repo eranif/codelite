@@ -42,6 +42,7 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/treectrl.h>
+#include <algorithm>
 
 #define IS_TYPEOF(Type, Win) (dynamic_cast<Type*>(Win))
 

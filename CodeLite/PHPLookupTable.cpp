@@ -1,18 +1,18 @@
-#include "PHPLookupTable.h"
-#include <wx/filename.h>
-#include "file_logger.h"
-#include "PHPEntityNamespace.h"
 #include "PHPEntityClass.h"
-#include "PHPEntityVariable.h"
 #include "PHPEntityFunction.h"
-#include "event_notifier.h"
-#include "fileutils.h"
-#include <wx/stopwatch.h>
-#include <wx/log.h>
 #include "PHPEntityFunctionAlias.h"
-#include <wx/tokenzr.h>
+#include "PHPEntityNamespace.h"
+#include "PHPEntityVariable.h"
+#include "PHPLookupTable.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include <algorithm>
+#include <wx/filename.h>
+#include <wx/log.h>
+#include <wx/stopwatch.h>
+#include <wx/tokenzr.h>
 
 wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
@@ -197,9 +197,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindScope(const wxString& fullname)
 {
     wxString scopeName = fullname;
     scopeName.Trim().Trim(false);
-    if(scopeName.EndsWith("\\") && scopeName.length() > 1) {
-        scopeName.RemoveLast();
-    }
+    if(scopeName.EndsWith("\\") && scopeName.length() > 1) { scopeName.RemoveLast(); }
     return DoFindScope(scopeName);
 }
 
@@ -252,9 +250,7 @@ void PHPLookupTable::CreateSchema()
             m_db.PrepareStatement("select SCHEMA_VERSION from METADATA_TABLE where SCHEMA_NAME=:SCHEMA_NAME");
         st.Bind(st.GetParamIndex(":SCHEMA_NAME"), "CODELITEPHP");
         wxSQLite3ResultSet res = st.ExecuteQuery();
-        if(res.NextRow()) {
-            schemaVersion = res.GetString("SCHEMA_VERSION");
-        }
+        if(res.NextRow()) { schemaVersion = res.GetString("SCHEMA_VERSION"); }
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
@@ -504,9 +500,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const
 void PHPLookupTable::DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls, std::vector<wxLongLong>& parents,
                                                std::set<wxLongLong>& parentsVisited, bool excludeSelf)
 {
-    if(!excludeSelf) {
-        parents.push_back(cls->GetDbId());
-    }
+    if(!excludeSelf) { parents.push_back(cls->GetDbId()); }
 
     parentsVisited.insert(cls->GetDbId());
     wxArrayString parentsArr = cls->Cast<PHPEntityClass>()->GetInheritanceArray();
@@ -527,9 +521,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(const wxString& fullname, ePhpS
         // limit by 2 for performance reason
         // we will return NULL incase the number of matches is greater than 1...
         sql << "SELECT * from SCOPE_TABLE WHERE FULLNAME='" << fullname << "'";
-        if(scopeType != kPhpScopeTypeAny) {
-            sql << " AND SCOPE_TYPE = " << static_cast<int>(scopeType);
-        }
+        if(scopeType != kPhpScopeTypeAny) { sql << " AND SCOPE_TYPE = " << static_cast<int>(scopeType); }
         sql << " LIMIT 2 ";
 
         wxSQLite3Statement st = m_db.PrepareStatement(sql);
@@ -574,9 +566,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(wxLongLong id, ePhpScopeType sc
         // limit by 2 for performance reason
         // we will return NULL incase the number of matches is greater than 1...
         sql << "SELECT * from SCOPE_TABLE WHERE ID=" << id;
-        if(scopeType != kPhpScopeTypeAny) {
-            sql << " AND SCOPE_TYPE = " << static_cast<int>(scopeType);
-        }
+        if(scopeType != kPhpScopeTypeAny) { sql << " AND SCOPE_TYPE = " << static_cast<int>(scopeType); }
         sql << " LIMIT 1";
 
         wxSQLite3Statement st = m_db.PrepareStatement(sql);
@@ -676,9 +666,7 @@ void PHPLookupTable::DoAddNameFilter(wxString& sql, const wxString& nameHint, si
 
     if(name.IsEmpty()) {
         sql.Trim();
-        if(sql.EndsWith("AND") || sql.EndsWith("and")) {
-            sql.RemoveLast(3);
-        }
+        if(sql.EndsWith("AND") || sql.EndsWith("and")) { sql.RemoveLast(3); }
         sql << " ";
         return;
     }
@@ -698,13 +686,11 @@ void PHPLookupTable::LoadAllByFilter(PHPEntityBase::List_t& matches, const wxStr
 {
     try {
         // Split the nameHint to spaces/tabs
-        wxArrayString parts = ::wxStringTokenize(nameHint, " \t", wxTOKEN_STRTOK);
-        for(size_t i = 0; i < parts.size(); ++i) {
-            LoadFromTableByNameHint(matches, "SCOPE_TABLE", parts.Item(i), flags);
-            LoadFromTableByNameHint(matches, "FUNCTION_TABLE", parts.Item(i), flags);
-        }
+        LoadFromTableByNameHint(matches, "SCOPE_TABLE", nameHint, flags);
+        LoadFromTableByNameHint(matches, "FUNCTION_TABLE", nameHint, flags);
+
     } catch(wxSQLite3Exception& e) {
-        CL_WARNING("PHPLookupTable::LoadAllByFilter: %s", e.GetMessage());
+        clWARNING() << "PHPLookupTable::LoadAllByFilter:" << e.GetMessage() << clEndl;
     }
 }
 
@@ -726,13 +712,18 @@ PHPEntityBase::Ptr_t PHPLookupTable::NewEntity(const wxString& tableName, ePhpSc
 void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches, const wxString& tableName,
                                              const wxString& nameHint, eLookupFlags flags)
 {
-    wxString trimmedNameHint(nameHint);
-    trimmedNameHint.Trim().Trim(false);
-    if(trimmedNameHint.IsEmpty()) return;
+    wxArrayString parts = ::wxStringTokenize(nameHint, " \t", wxTOKEN_STRTOK);
+    if(parts.IsEmpty()) { return; }
 
+    // Build the filter query
+    wxString filterQuery = "where ";
     wxString sql;
-    sql << "SELECT * from " << tableName << " WHERE ";
-    DoAddNameFilter(sql, trimmedNameHint, flags);
+    for(size_t i = 0; i < parts.size(); ++i) {
+        wxString tmpName = parts.Item(i);
+        tmpName.Replace(wxT("_"), wxT("^_"));
+        filterQuery << "fullname like '%%" << tmpName << "%%' " << ((i == (parts.size() - 1)) ? "" : "AND ");
+    }
+    sql << "select * from " << tableName << " " << filterQuery << " ESCAPE '^' ";
     DoAddLimit(sql);
 
     try {
@@ -753,7 +744,7 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches, con
             }
         }
     } catch(wxSQLite3Exception& e) {
-        CL_WARNING("PHPLookupTable::LoadFromTableByNameHint: %s", e.GetMessage());
+        clWARNING() << "PHPLookupTable::LoadFromTableByNameHint:" << sql << ":" << e.GetMessage() << clEndl;
     }
 }
 
@@ -822,9 +813,7 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
 void PHPLookupTable::Close()
 {
     try {
-        if(m_db.IsOpen()) {
-            m_db.Close();
-        }
+        if(m_db.IsOpen()) { m_db.Close(); }
         m_filename.Clear();
         m_allClasses.clear();
 
@@ -877,9 +866,7 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches, wxLongLong p
 
                 } else {
                     // Non static function.
-                    if(!(flags & kLookupFlags_Static)) {
-                        matches.push_back(match);
-                    }
+                    if(!(flags & kLookupFlags_Static)) { matches.push_back(match); }
                 }
             }
         }
@@ -932,9 +919,7 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches, wxLongLong p
                 bool isStatic = match->Cast<PHPEntityVariable>()->IsStatic();
                 bool bAddIt = ((isStatic || isConst) && CollectingStatics(flags)) ||
                               (!isStatic && !isConst && !CollectingStatics(flags));
-                if(bAddIt) {
-                    matches.push_back(match);
-                }
+                if(bAddIt) { matches.push_back(match); }
             }
             DoFixVarsDocComment(matches, parentId);
         }
@@ -951,9 +936,7 @@ wxLongLong PHPLookupTable::GetFileLastParsedTimestamp(const wxFileName& filename
             m_db.PrepareStatement("SELECT LAST_UPDATED FROM FILES_TABLE WHERE FILE_NAME=:FILE_NAME");
         st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
         wxSQLite3ResultSet res = st.ExecuteQuery();
-        if(res.NextRow()) {
-            return res.GetInt64("LAST_UPDATED");
-        }
+        if(res.NextRow()) { return res.GetInt64("LAST_UPDATED"); }
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::FindChildren: %s", e.GetMessage());
     }
@@ -1110,9 +1093,7 @@ PHPEntityBase::List_t PHPLookupTable::FindNamespaces(const wxString& fullnameSta
 
         wxString fullpath = fullnameStartsWith;
         if(!shortNameContains.IsEmpty()) {
-            if(!fullpath.EndsWith("\\")) {
-                fullpath << "\\";
-            }
+            if(!fullpath.EndsWith("\\")) { fullpath << "\\"; }
             fullpath << shortNameContains;
         }
 
@@ -1306,9 +1287,7 @@ void PHPLookupTable::DoFixVarsDocComment(PHPEntityBase::List_t& matches, wxLongL
         if(match->Is(kEntityTypeVariable)) {
             if(docs.count(match->GetShortName())) {
                 PHPDocVar::Ptr_t docvar = docs.find(match->GetShortName())->second;
-                if(!docvar->GetType().IsEmpty()) {
-                    match->Cast<PHPEntityVariable>()->SetTypeHint(docvar->GetType());
-                }
+                if(!docvar->GetType().IsEmpty()) { match->Cast<PHPEntityVariable>()->SetTypeHint(docvar->GetType()); }
             }
         }
     });
@@ -1316,9 +1295,7 @@ void PHPLookupTable::DoFixVarsDocComment(PHPEntityBase::List_t& matches, wxLongL
 
 void PHPLookupTable::UpdateClassCache(const wxString& classname)
 {
-    if(m_allClasses.count(classname) == 0) {
-        m_allClasses.insert(classname);
-    }
+    if(m_allClasses.count(classname) == 0) { m_allClasses.insert(classname); }
 }
 
 bool PHPLookupTable::ClassExists(const wxString& classname) const { return m_allClasses.count(classname) != 0; }

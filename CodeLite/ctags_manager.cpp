@@ -3026,3 +3026,8 @@ void TagsManager::DoFilterCtorDtorIfNeeded(std::vector<TagEntryPtr>& tags, const
         tags.swap(candidatesNoCtorDtor);
     }
 }
+
+void TagsManager::GetTagsByPartialNames(const wxArrayString& partialNames, std::vector<TagEntryPtr>& tags)
+{
+    GetDatabase()->GetTagsByPartName(partialNames, tags);
+}

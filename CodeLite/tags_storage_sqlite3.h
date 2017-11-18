@@ -614,6 +614,10 @@ public:
      */
     TagEntryPtr GetTagsByNameLimitOne(const wxString& name);
     void GetTagsByPartName(const wxString& partname, std::vector<TagEntryPtr>& tags);
+    /**
+     * @brief same as above, but allow multiple name parts
+     */
+    void GetTagsByPartName(const wxArrayString& parts, std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief this function takes as input argument array of symbols and removes from it all the

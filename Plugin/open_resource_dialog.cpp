@@ -214,22 +214,21 @@ void OpenResourceDialog::DoPopulateTags()
     TagEntryPtrVector_t tags;
     if(m_userFilters.IsEmpty()) return;
 
-    m_manager->GetTagsManager()->GetTagsByPartialName(m_userFilters.Item(0), tags);
-
+    m_manager->GetTagsManager()->GetTagsByPartialNames(m_userFilters, tags);
     for(size_t i = 0; i < tags.size(); i++) {
         TagEntryPtr tag = tags.at(i);
 
         // Filter out non relevanting entries
         if(!m_filters.IsEmpty() && m_filters.Index(tag->GetKind()) == wxNOT_FOUND) continue;
 
-        if(!MatchesFilter(tag->GetName())) continue;
+        if(!MatchesFilter(tag->GetFullDisplayName())) { continue; }
 
         wxString name(tag->GetName());
 
         // keep the fullpath
         wxDataViewItem item;
         wxString fullname;
-        if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype")) {
+        if(tag->IsMethod()) {
             fullname = wxString::Format(wxT("%s::%s%s"), tag->GetScope().c_str(), tag->GetName().c_str(),
                                         tag->GetSignature().c_str());
             item = DoAppendLine(tag->GetName(), fullname, (tag->GetKind() == wxT("function")),
@@ -263,13 +262,8 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
         const int maxFileSize = 100;
         int counter = 0;
         for(; (iter != m_files.end()) && (counter < maxFileSize); iter++) {
-            
             const wxString& fullpath = iter->second;
-            if(fullpath.Contains("CMakeLists") && fullpath.Contains("LiteEditor")) {
-                int ii = 0;
-                ++ii;
-            }
-            if(!MatchesFilter(iter->second)) continue;
+            if(!MatchesFilter(fullpath)) continue;
 
             wxFileName fn(iter->second);
             FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName());

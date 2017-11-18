@@ -493,6 +493,11 @@ public:
      * @brief return list of tags for a given partial name
      */
     virtual void GetTagsByPartName(const wxString& partname, std::vector<TagEntryPtr>& tags) = 0;
+    
+    /**
+     * @brief same as above, but allow multiple name parts
+     */
+    virtual void GetTagsByPartName(const wxArrayString& parts, std::vector<TagEntryPtr>& tags) = 0;
 
     /**
      * @brief search for a single match in the database for an entry with a given name

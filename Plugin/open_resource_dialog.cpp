@@ -23,25 +23,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "open_resource_dialog.h"
 #include "bitmap_loader.h"
-#include <wx/imaglist.h>
-#include <wx/xrc/xmlres.h>
-#include "globals.h"
-#include "window_locker.h"
-#include "editor_config.h"
-#include "ieditor.h"
 #include "ctags_manager.h"
-#include <wx/filefn.h>
-#include "project.h"
-#include "workspace.h"
-#include <wx/wupdlock.h>
-#include "imanager.h"
-#include "windowattrmanager.h"
-#include <vector>
-#include <codelite_events.h>
+#include "editor_config.h"
 #include "event_notifier.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include "open_resource_dialog.h"
+#include "project.h"
+#include "window_locker.h"
+#include "windowattrmanager.h"
+#include "workspace.h"
 #include <algorithm>
+#include <codelite_events.h>
+#include <vector>
+#include <wx/filefn.h>
+#include <wx/imaglist.h>
+#include <wx/wupdlock.h>
+#include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
 EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
@@ -146,6 +146,7 @@ void OpenResourceDialog::OnText(wxCommandEvent& event)
 
     wxString filter = m_textCtrlResourceName->GetValue();
     filter.Trim().Trim(false);
+    m_filter.Reset(filter, (size_t)eAnagramFlag::kIgnoreWhitespace);
 
     if(filter.IsEmpty()) {
         // The filter content is cleared, delete all entries
@@ -171,18 +172,14 @@ void OpenResourceDialog::OnEntryActivated(wxDataViewEvent& event)
     m_dataviewModel->GetClientObject(event.GetItem());
     OpenResourceDialogItemData* data =
         dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(event.GetItem()));
-    if(data) {
-        EndModal(wxID_OK);
-    }
+    if(data) { EndModal(wxID_OK); }
 }
 
 void OpenResourceDialog::DoPopulateList()
 {
     wxString name = m_textCtrlResourceName->GetValue();
     name.Trim().Trim(false);
-    if(name.IsEmpty()) {
-        return;
-    }
+    if(name.IsEmpty()) { return; }
 
     Clear();
 
@@ -203,13 +200,10 @@ void OpenResourceDialog::DoPopulateList()
         m_userFilters.Item(i).MakeLower();
     }
 
-    if(m_checkBoxFiles->IsChecked()) {
-        DoPopulateWorkspaceFile();
-    }
-
-    if(m_checkBoxShowSymbols->IsChecked() && (nLineNumber == -1)) {
-        DoPopulateTags();
-    }
+    // Build the filter class
+    m_filter.Reset(name, (size_t)eAnagramFlag::kIgnoreWhitespace);
+    if(m_checkBoxFiles->IsChecked()) { DoPopulateWorkspaceFile(); }
+    if(m_checkBoxShowSymbols->IsChecked() && (nLineNumber == -1)) { DoPopulateTags(); }
 }
 
 void OpenResourceDialog::DoPopulateTags()
@@ -269,7 +263,12 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
         const int maxFileSize = 100;
         int counter = 0;
         for(; (iter != m_files.end()) && (counter < maxFileSize); iter++) {
-
+            
+            const wxString& fullpath = iter->second;
+            if(fullpath.Contains("CMakeLists") && fullpath.Contains("LiteEditor")) {
+                int ii = 0;
+                ++ii;
+            }
             if(!MatchesFilter(iter->second)) continue;
 
             wxFileName fn(iter->second);
@@ -342,9 +341,7 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
         wxDataViewItem selection;
         m_dataview->GetSelections(selections);
 
-        if(!selections.IsEmpty()) {
-            selection = selections.Item(0);
-        }
+        if(!selections.IsEmpty()) { selection = selections.Item(0); }
 
         if(!selection.IsOk()) {
             // No selection, select the first
@@ -360,9 +357,7 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
 
             if(curIndex != wxNOT_FOUND) {
                 down ? ++curIndex : --curIndex;
-                if((curIndex >= 0) && (curIndex < (int)children.size())) {
-                    DoSelectItem(children.Item(curIndex));
-                }
+                if((curIndex >= 0) && (curIndex < (int)children.size())) { DoSelectItem(children.Item(curIndex)); }
             }
         }
 
@@ -399,7 +394,7 @@ wxDataViewItem OpenResourceDialog::DoAppendLine(const wxString& name, const wxSt
 
 void OpenResourceDialog::OnTimer(wxTimerEvent& event)
 {
-    if(m_needRefresh) DoPopulateList();
+    if(m_needRefresh) { DoPopulateList(); }
 
     m_needRefresh = false;
 
@@ -409,9 +404,7 @@ void OpenResourceDialog::OnTimer(wxTimerEvent& event)
         wxDataViewItemArray children;
         m_dataviewModel->GetChildren(wxDataViewItem(0), children);
 
-        if(children.size() == 1) {
-            DoSelectItem(children.Item(0));
-        }
+        if(children.size() == 1) { DoSelectItem(children.Item(0)); }
     }
 }
 
@@ -456,18 +449,8 @@ wxBitmap OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)
     return bmp;
 }
 
-bool OpenResourceDialog::MatchesFilter(const wxString& name)
-{
-    wxString tmpname = name;
-    tmpname.MakeLower();
+bool OpenResourceDialog::MatchesFilter(const wxString& name) { return m_filter.MatchesInOrder(name); }
 
-    if(m_userFilters.IsEmpty()) return false;
-
-    for(size_t i = 0; i < m_userFilters.GetCount(); ++i) {
-        if(!tmpname.Contains(m_userFilters.Item(i))) return false;
-    }
-    return true;
-}
 void OpenResourceDialog::OnCheckboxfilesCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
 void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
 
@@ -484,17 +467,13 @@ std::vector<OpenResourceDialogItemData*> OpenResourceDialog::GetSelections() con
     std::vector<OpenResourceDialogItemData*> selections;
     wxDataViewItemArray items;
     m_dataview->GetSelections(items);
-    if(items.IsEmpty()) {
-        return selections;
-    }
+    if(items.IsEmpty()) { return selections; }
 
     for(size_t i = 0; i < items.GetCount(); ++i) {
         OpenResourceDialogItemData* data =
             dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(items.Item(i)));
         if(data) {
-            if(m_lineNumber != wxNOT_FOUND) {
-                data->m_line = m_lineNumber;
-            }
+            if(m_lineNumber != wxNOT_FOUND) { data->m_line = m_lineNumber; }
             selections.push_back(data);
         }
     }

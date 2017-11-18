@@ -68,7 +68,7 @@ class WXDLLIMPEXP_SDK ProjectItem
 {
 public:
     // The visible items
-    enum { TypeVirtualDirectory, TypeProject, TypeFile, TypeWorkspace, TypeWorkspaceFolder };
+    enum { TypeInvalid = -1, TypeVirtualDirectory, TypeProject, TypeFile, TypeWorkspace, TypeWorkspaceFolder };
 
 public:
     wxString m_key;
@@ -125,6 +125,14 @@ public:
     //------------------------------------------
     // operations
     const wxString& Key() const { return m_key; }
+    
+    // Aliases
+    bool IsProject() const { return m_kind == TypeProject; }
+    bool IsFile() const { return m_kind == TypeFile; }
+    bool IsVirtualFolder() const { return m_kind == TypeVirtualDirectory; }
+    bool IsInvalid() const { return m_kind == TypeInvalid; }
+    bool IsWorkspaceFolder() const { return m_kind == TypeWorkspaceFolder; }
+    bool IsWorkspace() const { return m_kind == TypeWorkspace; }
 };
 
 // useful typedefs
@@ -239,12 +247,12 @@ public:
      * @return
      */
     clProjectFolder::Ptr_t AddFolder(Project* project, const wxString& name);
-    
+
     /**
      * @brief add file to this folder
      */
     clProjectFile::Ptr_t AddFile(Project* project, const wxString& fullpath);
-    
+
     /**
      * @brief return true if this folder has a child folder with a given name
      */
@@ -258,7 +266,7 @@ public:
     /**
      * @brief return list of all subfolders from this folder
      */
-    wxArrayString GetAllSubFolders() const;
+    void GetSubfolders(wxArrayString& folders, bool recursive = true) const;
 
     /**
      * @brief delete this folder and all its children
@@ -340,6 +348,24 @@ public:
      * @brief return the XML version
      */
     wxString GetVersion() const;
+
+    /**
+     * @brief return true if this project has children (virtual folders or files)
+     */
+    bool IsEmpty() const;
+    
+    /**
+     * @brief return true if a virtual directory is empty
+     */
+    bool IsVirtualDirectoryEmpty(const wxString& vdFullPath) const;
+    
+    void GetFolders(const wxString& vdFullPath, wxArrayString& folders);
+
+    /**
+     * @brief get list of files under a given folder
+     * @param parentFolder
+     */
+    void GetFiles(const wxString& vdFullPath, wxArrayString& files);
 
     /**
      * @brief clear the include path cache
@@ -508,12 +534,12 @@ public:
      * @brief return the files as vector
      */
     void GetFilesAsVector(clProjectFile::Vec_t& files) const;
-    
+
     /**
      * @brief return the files as vector of wxFileName
      */
     void GetFilesAsVectorOfFileName(std::vector<wxFileName>& files, bool absPath = true) const;
-    
+
     /**
      * @brief return list of files space separated
      */

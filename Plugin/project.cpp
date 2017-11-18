@@ -627,8 +627,8 @@ bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, co
 
 wxString Project::GetVDByFileName(const wxString& file)
 {
-    if(m_virtualFoldersTable.count(file) == 0) { return ""; }
-    return m_virtualFoldersTable[file]->GetName();
+    if(m_filesTable.count(file) == 0) { return ""; }
+    return m_filesTable[file]->GetVirtualFolder();
 }
 
 bool Project::RenameVirtualDirectory(const wxString& oldVdPath, const wxString& newName)
@@ -1252,7 +1252,7 @@ wxString Project::GetCompileLineForCXXFile(const wxString& filenamePlaceholder, 
     EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
     // Clear the backticks cache
-//    s_backticks.clear();
+    //    s_backticks.clear();
 
     // Get the compile options
     wxString projectCompileOptions = cxxFile ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
@@ -1699,6 +1699,41 @@ void Project::GetFilesAsVectorOfFileName(std::vector<wxFileName>& files, bool ab
     });
 }
 
+bool Project::IsEmpty() const { return m_virtualFoldersTable.empty() && m_filesTable.empty(); }
+
+void Project::GetFolders(const wxString& vdFullPath, wxArrayString& folders)
+{
+    folders.Clear();
+    clProjectFolder::Ptr_t parentFolder = vdFullPath.IsEmpty() ? GetRootFolder() : GetFolder(vdFullPath);
+    if(!parentFolder) return;
+
+    clProjectFolder::Vect_t res;
+    parentFolder->GetSubfolders(folders, false);
+}
+
+void Project::GetFiles(const wxString& vdFullPath, wxArrayString& files)
+{
+    files.Clear();
+    clProjectFolder::Ptr_t parentFolder = vdFullPath.IsEmpty() ? GetRootFolder() : GetFolder(vdFullPath);
+    if(!parentFolder) return;
+    const wxStringSet_t& filesSet = parentFolder->GetFiles();
+    files.Alloc(filesSet.size());
+    std::for_each(filesSet.begin(), filesSet.end(), [&](const wxString& s) { files.Add(s); });
+}
+
+bool Project::IsVirtualDirectoryEmpty(const wxString& vdFullPath) const
+{
+    clProjectFolder::Ptr_t folder = GetFolder(vdFullPath);
+    if(!folder) { return true; }
+    
+    // Its faster to check first the files list
+    if(!folder->GetFiles().empty()) { return false; }
+    
+    wxArrayString folders;
+    folder->GetSubfolders(folders, false);
+    return folders.IsEmpty();
+}
+
 bool clProjectFolder::RenameFile(Project* project, const wxString& fullpath, const wxString& newName)
 {
     if(!project) { return false; }
@@ -1785,11 +1820,12 @@ clProjectFolder::Ptr_t clProjectFolder::GetChild(Project* project, const wxStrin
     return clProjectFolder::Ptr_t(nullptr);
 }
 
-wxArrayString clProjectFolder::GetAllSubFolders() const
+void clProjectFolder::GetSubfolders(wxArrayString& folders, bool recursive) const
 {
-    wxArrayString folders;
-    if(!m_xmlNode) return folders;
+    folders.Clear();
+    if(!m_xmlNode) { return; }
 
+    std::vector<wxString> foldersV;
     std::queue<std::pair<wxXmlNode*, wxString> > q;
     q.push({ m_xmlNode, GetFullpath() });
 
@@ -1805,18 +1841,21 @@ wxArrayString clProjectFolder::GetAllSubFolders() const
             if(child->GetName() == "VirtualDirectory") {
                 wxString name = child->GetPropVal("Name", "");
                 wxString childpath = prefix.IsEmpty() ? (name) : (prefix + ":" + name);
-                folders.Add(childpath);
-                q.push({ child, childpath });
+                foldersV.push_back(childpath);
+                if(recursive) { q.push({ child, childpath }); }
             }
             child = child->GetNext();
         }
     }
-    return folders;
+
+    folders.Alloc(foldersV.size());
+    std::for_each(foldersV.begin(), foldersV.end(), [&](const wxString& s) { folders.Add(s); });
 }
 
 void clProjectFolder::DeleteRecursive(Project* project)
 {
-    wxArrayString folders = GetAllSubFolders();
+    wxArrayString folders;
+    GetSubfolders(folders);
     for(size_t i = 0; i < folders.size(); ++i) {
         clProjectFolder::Ptr_t folder = project->GetFolder(folders.Item(i));
         if(folder) {

@@ -1774,7 +1774,6 @@ void clMainFrame::CreateToolbars16()
                 _("Show Current Line"));
     tb->AddSeparator();
     tb->AddTool(XRCID("dbg_stepin"), _("Step Into"), bmpLoader.LoadBitmap("step_in"), _("Step In"));
-    tb->AddTool(XRCID("dbg_stepi"), _("Step Into Instruction"), bmpLoader.LoadBitmap("step_i"), _("Step Into Instruction"));
     tb->AddTool(XRCID("dbg_next"), _("Next"), bmpLoader.LoadBitmap("next"), _("Next"));
     tb->AddTool(XRCID("dbg_stepout"), _("Step Out"), bmpLoader.LoadBitmap("step_out"), _("Step Out"));
     tb->AddSeparator();

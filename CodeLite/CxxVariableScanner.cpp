@@ -54,7 +54,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
         if(depth == 0) {
             if(vartype.empty()) {
                 // a type can start the following tokens
-                switch(token.type) {
+                switch(token.GetType()) {
                 case T_AUTO:
                     isAuto = true;
                 // fall
@@ -91,7 +91,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
                 }
             } else {
                 const CxxVariable::LexerToken& lastToken = vartype.back();
-                switch(token.type) {
+                switch(token.GetType()) {
                 case T_IDENTIFIER: {
                     if(TypeHasIdentifier(vartype) && (vartype.back().type != T_DOUBLE_COLONS)) {
                         // We already found the identifier for this type, its probably part of the name
@@ -161,9 +161,9 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
         } else {
             // Depth > 0
             vartype.push_back(CxxVariable::LexerToken(token, depth));
-            if(token.type == '>' || token.type == ']') {
+            if(token.GetType() == '>' || token.GetType() == ']') {
                 --depth;
-            } else if(token.type == '<' || token.type == '[') {
+            } else if(token.GetType() == '<' || token.GetType() == '[') {
                 ++depth;
             }
         }
@@ -175,8 +175,8 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
 {
     CxxLexerToken token;
     while(GetNextToken(token)) {
-        if(token.type == T_IDENTIFIER) {
-            varname = token.text;
+        if(token.GetType() == T_IDENTIFIER) {
+            varname = token.GetWXString();
 
             // Peek at the next token
             // We can expect "=", "," "(", ";" or ")"
@@ -204,7 +204,7 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
             // Always return the token
             UngetToken(token);
 
-            if(s_validLocalTerminators.count(token.type) == 0) {
+            if(s_validLocalTerminators.count(token.GetType()) == 0) {
                 varname.Clear();
                 return false;
             }
@@ -214,7 +214,7 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
             // Now that we got the name, check if have more variables to expect
             if(!GetNextToken(token)) { return false; }
 
-            if((token.type == '{') && !varInitialization.IsEmpty()) {
+            if((token.GetType() == '{') && !varInitialization.IsEmpty()) {
                 // Don't collect functions and consider them as variables
                 UngetToken(token);
                 varname.clear();
@@ -224,15 +224,15 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
             if(!varInitialization.empty()) { varInitialization.RemoveLast(); }
 
             // If we found comma, return true. Unless we are parsing a function signature
-            if(!m_isFuncSignature && (token.type == ',')) {
+            if(!m_isFuncSignature && (token.GetType() == ',')) {
                 return true;
             } else {
                 UngetToken(token);
                 return false;
             }
 
-        } else if(token.type == '*' || token.type == '&') {
-            pointerOrRef << token.text;
+        } else if(token.GetType() == '*' || token.GetType() == '&') {
+            pointerOrRef << token.GetWXString();
         } else {
             return false;
         }
@@ -246,7 +246,7 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
     wxString dummy;
     if(!GetNextToken(token)) return;
     int type = wxNOT_FOUND;
-    int tokType = token.type;
+    int tokType = token.GetType();
     if(tokType == '(') {
         // Read the initialization
         std::unordered_set<int> delims;
@@ -298,11 +298,11 @@ int CxxVariableScanner::ReadUntil(const std::unordered_set<int>& delims, CxxLexe
     while(GetNextToken(token)) {
         v.push_back(CxxVariable::LexerToken(token, depth));
         if(depth == 0) {
-            if(delims.count(token.type)) {
+            if(delims.count(token.GetType())) {
                 consumed = CxxVariable::PackType(v, m_standard);
-                return token.type;
+                return token.GetType();
             } else {
-                switch(token.type) {
+                switch(token.GetType()) {
                 case '<':
                 case '{':
                 case '[':
@@ -315,7 +315,7 @@ int CxxVariableScanner::ReadUntil(const std::unordered_set<int>& delims, CxxLexe
                 }
             }
         } else {
-            switch(token.type) {
+            switch(token.GetType()) {
             case '>':
             case '}':
             case ']':
@@ -340,12 +340,12 @@ bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
         if(!res) break;
 
         // Ignore any T_IDENTIFIER which is declared as macro
-        if((token.type == T_IDENTIFIER) && m_macros.count(token.text)) { continue; }
+        if((token.GetType() == T_IDENTIFIER) && m_macros.count(token.GetWXString())) { continue; }
         break;
     }
 
     m_eof = !res;
-    switch(token.type) {
+    switch(token.GetType()) {
     case '(':
         ++m_parenthesisDepth;
         break;
@@ -383,7 +383,7 @@ void CxxVariableScanner::OptimizeBuffer(const wxString& buffer, wxString& stripp
         wxString& buffer = Buffer();
 
         // Outer switch: state based
-        switch(tok.type) {
+        switch(tok.GetType()) {
         case T_PP_STATE_EXIT:
             break;
         case T_FOR:
@@ -399,8 +399,8 @@ void CxxVariableScanner::OptimizeBuffer(const wxString& buffer, wxString& stripp
             OnWhile(sc);
             break;
         case '(':
-            buffer << tok.text;
-            if(lastToken.type == ']') {
+            buffer << tok.GetWXString();
+            if(lastToken.GetType() == ']') {
                 OnLambda(sc);
             } else {
                 ++parenthesisDepth;
@@ -408,26 +408,26 @@ void CxxVariableScanner::OptimizeBuffer(const wxString& buffer, wxString& stripp
             }
             break;
         case '{':
-            buffer << tok.text;
+            buffer << tok.GetWXString();
             PushBuffer();
             break;
         case '}':
             buffer = PopBuffer();
             // The closing curly bracket is added *after* we switch buffers
-            buffer << tok.text;
+            buffer << tok.GetWXString();
             break;
         case ')':
             --parenthesisDepth;
             buffer = PopBuffer();
             // The closing curly bracket is added *after* we switch buffers
             if(parenthesisDepth == 0) {
-                buffer << tok.text;
+                buffer << tok.GetWXString();
             } else {
                 buffer << ";";
             }
             break;
         default:
-            buffer << tok.text << " ";
+            buffer << tok.GetWXString() << " ";
             break;
         }
         lastToken = tok;
@@ -487,7 +487,7 @@ bool CxxVariableScanner::TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t&
 {
     // do we have an identifier in the type?
     CxxVariable::LexerToken::Vec_t::const_iterator iter = std::find_if(
-        type.begin(), type.end(), [&](const CxxVariable::LexerToken& token) { return (token.type == T_IDENTIFIER); });
+        type.begin(), type.end(), [&](const CxxVariable::LexerToken& token) { return (token.GetType() == T_IDENTIFIER); });
     return (iter != type.end());
 }
 
@@ -505,7 +505,7 @@ bool CxxVariableScanner::HasNativeTypeInList(const CxxVariable::LexerToken::Vec_
 {
     CxxVariable::LexerToken::Vec_t::const_iterator iter =
         std::find_if(type.begin(), type.end(), [&](const CxxVariable::LexerToken& token) {
-            return ((token._depth == 0) && (m_nativeTypes.count(token.type) != 0));
+            return ((token._depth == 0) && (m_nativeTypes.count(token.GetType()) != 0));
         });
     return (iter != type.end());
 }
@@ -547,9 +547,9 @@ void CxxVariableScanner::UngetToken(const CxxLexerToken& token)
     ::LexerUnget(m_scanner);
 
     // Fix the depth if needed
-    if(token.type == '(') {
+    if(token.GetType() == '(') {
         --m_parenthesisDepth;
-    } else if(token.type == ')') {
+    } else if(token.GetType() == ')') {
         ++m_parenthesisDepth;
     }
 }
@@ -564,7 +564,7 @@ bool CxxVariableScanner::OnForLoop(Scanner_t scanner)
     if(!::LexerNext(scanner, tok)) return false;
 
     // Parser error
-    if(tok.type != '(') return false;
+    if(tok.GetType() != '(') return false;
 
     int depth(1);
     wxString& buffer = Buffer();
@@ -572,7 +572,7 @@ bool CxxVariableScanner::OnForLoop(Scanner_t scanner)
     while(::LexerNext(scanner, tok)) {
         // Skip prep processing state
         // 'for' and 'catch' parenthesis content is kept in the buffer
-        switch(tok.type) {
+        switch(tok.GetType()) {
         case '(':
             depth++;
             if(lookingForFirstSemiColon) { buffer << "("; }
@@ -587,7 +587,7 @@ bool CxxVariableScanner::OnForLoop(Scanner_t scanner)
             lookingForFirstSemiColon = false;
             break;
         default:
-            if(lookingForFirstSemiColon) { buffer << tok.text << " "; }
+            if(lookingForFirstSemiColon) { buffer << tok.GetWXString() << " "; }
             break;
         }
     }
@@ -602,23 +602,23 @@ bool CxxVariableScanner::OnCatch(Scanner_t scanner)
     if(!::LexerNext(scanner, tok)) return false;
 
     // Parser error
-    if(tok.type != '(') return false;
+    if(tok.GetType() != '(') return false;
     int depth(1);
     wxString& buffer = Buffer();
     buffer << ";"; // Help the parser
     while(::LexerNext(scanner, tok)) {
-        switch(tok.type) {
+        switch(tok.GetType()) {
         case '(':
             ++depth;
-            buffer << tok.text;
+            buffer << tok.GetWXString();
             break;
         case ')':
             --depth;
-            buffer << tok.text;
+            buffer << tok.GetWXString();
             if(depth == 0) { return true; }
             break;
         default:
-            buffer << tok.text << " ";
+            buffer << tok.GetWXString() << " ";
             break;
         }
     }
@@ -634,10 +634,10 @@ bool CxxVariableScanner::OnWhile(Scanner_t scanner)
     if(!::LexerNext(scanner, tok)) return false;
 
     // Parser error
-    if(tok.type != '(') return false;
+    if(tok.GetType() != '(') return false;
     int depth(1);
     while(::LexerNext(scanner, tok)) {
-        switch(tok.type) {
+        switch(tok.GetType()) {
         case '(':
             ++depth;
             break;
@@ -661,14 +661,14 @@ bool CxxVariableScanner::OnDeclType(Scanner_t scanner)
     if(!::LexerNext(scanner, tok)) return false;
 
     // Parser error
-    if(tok.type != '(') return false;
+    if(tok.GetType() != '(') return false;
     int depth(1);
     buffer << "decltype(";
     while(::LexerNext(scanner, tok)) {
-        switch(tok.type) {
+        switch(tok.GetType()) {
         case '(':
             ++depth;
-            buffer << tok.text;
+            buffer << tok.GetWXString();
             break;
         case ')':
             --depth;
@@ -701,18 +701,18 @@ bool CxxVariableScanner::OnLambda(Scanner_t scanner)
     int depth(1);
     wxString& buffer = Buffer();
     while(::LexerNext(scanner, tok)) {
-        switch(tok.type) {
+        switch(tok.GetType()) {
         case '(':
             ++depth;
-            buffer << tok.text;
+            buffer << tok.GetWXString();
             break;
         case ')':
             --depth;
-            buffer << tok.text;
+            buffer << tok.GetWXString();
             if(depth == 0) { return true; }
             break;
         default:
-            buffer << tok.text << " ";
+            buffer << tok.GetWXString() << " ";
             break;
         }
     }

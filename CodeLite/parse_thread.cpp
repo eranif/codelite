@@ -644,8 +644,8 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
         wxStringSet_t tokens;
         CxxLexerToken tok;
         while(tokenizer.NextToken(tok)) {
-            if(tok.type == T_IDENTIFIER) {
-                tokens.insert(tok.text);
+            if(tok.GetType() == T_IDENTIFIER) {
+                tokens.insert(tok.GetWXString());
             }
         }
 

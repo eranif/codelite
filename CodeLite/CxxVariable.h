@@ -31,12 +31,13 @@ public:
             FromCxxLexerToken(token);
             this->_depth = depth;
         }
-
+        
+        int GetType() const { return type; }
         void FromCxxLexerToken(const CxxLexerToken& token)
         {
-            this->type = token.type;
-            this->comment = token.comment;
-            this->text = token.text;
+            this->type = token.GetType();
+            this->comment = token.GetWXComment();
+            this->text = token.GetWXString();
         }
         typedef std::vector<CxxVariable::LexerToken> Vec_t;
     };

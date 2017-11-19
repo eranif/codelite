@@ -48,27 +48,27 @@ bool CxxTokenizer::ReadUntilClosingBracket(int delim, wxString& bufferRead)
             // pre-processor tokens
             continue;
         }
-        switch(tok.type) {
+        switch(tok.GetType()) {
         case '<':
         case '(':
         case '[':
         case '{':
             depth++;
-            bufferRead << tok.text << " ";
+            bufferRead << tok.GetWXString() << " ";
             break;
         case '>':
         case ')':
         case ']':
         case '}':
             depth--;
-            bufferRead << tok.text << " ";
-            if((tok.type == delim) && (depth == 0)) {
+            bufferRead << tok.GetWXString() << " ";
+            if((tok.GetType() == delim) && (depth == 0)) {
                 ::LexerUnget(m_scanner);
                 return true;
             }
             break;
         default:
-            bufferRead << tok.text << " ";
+            bufferRead << tok.GetWXString() << " ";
             break;
         }
     }
@@ -81,8 +81,8 @@ int CxxTokenizer::PeekToken(wxString& text)
     if(!NextToken(tok)) {
         return false;
     }
-    text = tok.text;
-    int type = tok.type;
+    text = tok.GetWXString();
+    int type = tok.GetType();
     ::LexerUnget(m_scanner);
     return type;
 }
@@ -104,7 +104,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
         }
         switch(state) {
         case SCP_STATE_NORMAL:
-            switch(token.type) {
+            switch(token.GetType()) {
             case T_PP_STATE_EXIT:
                 break;
             case '{':
@@ -140,7 +140,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
                 // Handle lambda
                 // If we are enterting lamda function defenition, collect the locals
                 // this is exactly what we in 'catch' hence the state change to SCP_STATE_IN_CATCH
-                if(GetLastToken().type == ']') {
+                if(GetLastToken().GetType() == ']') {
                     state = SCP_STATE_IN_CATCH;
                 }
                 break;
@@ -150,14 +150,14 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
                 break;
             default:
                 if(parenthesisDepth == 0) {
-                    currentScope << " " << token.text;
+                    currentScope << " " << token.GetWXString();
                 }
                 break;
             }
             break;
         case SCP_STATE_IN_WHILE:
         case SCP_STATE_IN_IF:
-            switch(token.type) {
+            switch(token.GetType()) {
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
@@ -172,7 +172,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
             }
             break;
         case SCP_STATE_IN_FOR_NO_SEMICOLON:
-            switch(token.type) {
+            switch(token.GetType()) {
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
@@ -189,12 +189,12 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
                 state = SCP_STATE_IN_FOR;
                 break;
             default:
-                currentScope << " " << token.text;
+                currentScope << " " << token.GetWXString();
                 break;
             }
             break;
         case SCP_STATE_IN_FOR:
-            switch(token.type) {
+            switch(token.GetType()) {
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
@@ -211,7 +211,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
             }
             break;
         case SCP_STATE_IN_CATCH:
-            switch(token.type) {
+            switch(token.GetType()) {
             case '(':
                 currentScope << "(";
                 parenthesisDepth++;
@@ -224,7 +224,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
                 }
                 break;
             default:
-                currentScope << " " << token.text;
+                currentScope << " " << token.GetWXString();
                 break;
             }
             break;

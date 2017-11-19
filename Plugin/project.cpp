@@ -1185,47 +1185,27 @@ size_t Project::GetFileFlags(const wxString& fileName, const wxString& virtualDi
     return XmlUtils::ReadLong(fileNode, "Flags", 0);
 }
 
-wxArrayString Project::GetExcludeConfigForFile(const wxString& filename, const wxString& virtualDirPath)
+const wxStringSet_t& Project::GetExcludeConfigForFile(const wxString& filename) const
 {
-    wxArrayString configs;
-    wxXmlNode* vdNode = GetVirtualDir(virtualDirPath);
-    if(!vdNode) { return configs; }
-
-    // locate our file
-    wxFileName tmp(filename);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
-    wxXmlNode* fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
-    if(!fileNode) { return configs; }
-
-    wxString excludeConfigs = XmlUtils::ReadString(fileNode, EXCLUDE_FROM_BUILD_FOR_CONFIG);
-    configs = ::wxStringTokenize(excludeConfigs, ";", wxTOKEN_STRTOK);
-    return configs;
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    if(!pfile) {
+        static wxStringSet_t emptySet;
+        return emptySet;
+    }
+    return pfile->GetExcludeConfigs();
 }
 
-void Project::SetExcludeConfigForFile(const wxString& filename, const wxString& virtualDirPath,
-                                      const wxArrayString& configs)
+void Project::SetExcludeConfigsForFile(const wxString& filename, const wxStringSet_t& configs)
 {
-    wxXmlNode* vdNode = GetVirtualDir(virtualDirPath);
-    if(!vdNode) { return; }
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    if(!pfile) { return; }
 
-    // locate our file
-    wxFileName tmp(filename);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
-    wxXmlNode* fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
-    if(!fileNode) { return; }
+    pfile->SetExcludeConfigs(configs);
+    wxXmlNode* fileNode = pfile->GetXmlNode();
 
-    // Make sure the list is unique
-    wxStringSet_t unique_set;
-    unique_set.insert(configs.begin(), configs.end());
-    wxArrayString uniqueArr;
-    wxStringSet_t::iterator iter = unique_set.begin();
-    for(; iter != unique_set.end(); ++iter) {
-        uniqueArr.Add(*iter);
-    }
-
-    wxString excludeConfigs = ::wxJoin(uniqueArr, ';');
+    // Convert to string and update the XML
+    wxString excludeConfigs;
+    std::for_each(configs.begin(), configs.end(), [&](const wxString& config) { excludeConfigs << config << ";"; });
     XmlUtils::UpdateProperty(fileNode, EXCLUDE_FROM_BUILD_FOR_CONFIG, excludeConfigs);
     SaveXmlFile();
 }
@@ -1725,13 +1705,47 @@ bool Project::IsVirtualDirectoryEmpty(const wxString& vdFullPath) const
 {
     clProjectFolder::Ptr_t folder = GetFolder(vdFullPath);
     if(!folder) { return true; }
-    
+
     // Its faster to check first the files list
     if(!folder->GetFiles().empty()) { return false; }
-    
+
     wxArrayString folders;
     folder->GetSubfolders(folders, false);
     return folders.IsEmpty();
+}
+
+bool Project::IsFileExcludedFromConfig(const wxString& filename, const wxString& configName) const
+{
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    BuildConfigPtr buildConf = GetBuildConfiguration(configName);
+    if(!pfile || !buildConf) { return false; }
+    return (pfile->GetExcludeConfigs().count(buildConf->GetName()) > 0);
+}
+
+void Project::RemoveExcludeConfigForFile(const wxString& filename, const wxString& configName)
+{
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    BuildConfigPtr buildConf = GetBuildConfiguration(configName);
+    if(!pfile || !buildConf) { return; }
+    wxStringSet_t& excludeConfigs = pfile->GetExcludeConfigs();
+    if(excludeConfigs.count(buildConf->GetName())) {
+        excludeConfigs.erase(buildConf->GetName());
+        // Update the xml
+        SetExcludeConfigsForFile(filename, excludeConfigs);
+    }
+}
+
+void Project::AddExcludeConfigForFile(const wxString& filename, const wxString& configName)
+{
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    BuildConfigPtr buildConf = GetBuildConfiguration(configName);
+    if(!pfile || !buildConf) { return; }
+    wxStringSet_t& excludeConfigs = pfile->GetExcludeConfigs();
+    if(excludeConfigs.count(buildConf->GetName()) == 0) {
+        excludeConfigs.insert(buildConf->GetName());
+        // Update the xml
+        SetExcludeConfigsForFile(filename, excludeConfigs);
+    }
 }
 
 bool clProjectFolder::RenameFile(Project* project, const wxString& fullpath, const wxString& newName)

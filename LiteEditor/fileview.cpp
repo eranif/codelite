@@ -2151,36 +2151,18 @@ void FileViewTree::OnExcludeFromBuild(wxCommandEvent& e)
     for(size_t selectionIndex = 0; selectionIndex < count; selectionIndex++) {
         wxTreeItemId item = selections[selectionIndex];
         if(item.IsOk()) {
-            FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
-            if(data->GetData().GetKind() == ProjectItem::TypeFile) {
-                Manager* mgr = ManagerST::Get();
-                wxTreeItemId parent = GetItemParent(item);
-                if(parent.IsOk()) {
-                    wxString path = GetItemPath(parent);
-                    wxString proj = path.BeforeFirst(wxT(':'));
-                    ProjectPtr p = mgr->GetProject(proj);
-                    if(p) {
-                        wxString vdPath = path.AfterFirst(':');
-                        wxString filename = data->GetData().GetFile();
+            FilewViewTreeItemData* data = ItemData(item);
+            if(data && data->GetData().IsFile()) {
+                const ProjectItem& pi = data->GetData();
+                ProjectPtr proj = ManagerST::Get()->GetProject(pi.Key().BeforeFirst(':'));
+                if(proj) {
+                    if(e.IsChecked()) {
+                        proj->AddExcludeConfigForFile(pi.GetFile());
+                        SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
 
-                        BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj, "");
-                        if(!buildConf) { return; }
-
-                        wxString current_build_config = buildConf->GetName();
-
-                        wxArrayString configs = p->GetExcludeConfigForFile(filename, vdPath);
-
-                        if(e.IsChecked()) {
-                            configs.Add(current_build_config);
-                            SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-
-                        } else {
-                            int where = configs.Index(current_build_config);
-                            if(where != wxNOT_FOUND) { configs.RemoveAt(where); }
-
-                            SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour());
-                        }
-                        p->SetExcludeConfigForFile(filename, vdPath, configs);
+                    } else {
+                        proj->RemoveExcludeConfigForFile(pi.GetFile());
+                        SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour());
                     }
                 }
             }
@@ -2196,26 +2178,14 @@ void FileViewTree::OnExcludeFromBuildUI(wxUpdateUIEvent& event)
 
 bool FileViewTree::IsFileExcludedFromBuild(const wxTreeItemId& item) const
 {
-    if(item.IsOk()) {
-        FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
-        if(data->GetData().GetKind() == ProjectItem::TypeFile) {
-            Manager* mgr = ManagerST::Get();
-            wxTreeItemId parent = GetItemParent(item);
-            if(parent.IsOk()) {
-                wxString path = GetItemPath(parent);
-                wxString proj = path.BeforeFirst(wxT(':'));
-                ProjectPtr p = mgr->GetProject(proj);
-                if(p) {
-
-                    BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj, "");
-                    if(!buildConf) { return false; }
-
-                    wxString vdPath = path.AfterFirst(':');
-                    wxString filename = data->GetData().GetFile();
-                    wxArrayString configs = p->GetExcludeConfigForFile(filename, vdPath);
-
-                    return configs.Index(buildConf->GetName()) != wxNOT_FOUND;
-                }
+    if(item.IsOk() && clCxxWorkspaceST::Get()->IsOpen()) {
+        FilewViewTreeItemData* data = ItemData(item);
+        const ProjectItem& pi = data->GetData();
+        if(pi.IsFile()) {
+            wxString projectName = pi.Key().BeforeFirst(':');
+            if(!projectName.IsEmpty()) {
+                ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(projectName);
+                if(proj) { return proj->IsFileExcludedFromConfig(pi.GetFile()); }
             }
         }
     }
@@ -2974,10 +2944,14 @@ void FileViewTree::DoAddChildren(const wxTreeItemId& parentItem)
         }
     }
 
+    BuildConfigPtr buildConf = proj->GetBuildConfiguration();
+    wxString buildConfName = buildConf ? buildConf->GetName() : "";
+
     for(size_t i = 0; i < files.size(); ++i) {
         const wxString& filepath = files.Item(i);
         wxFileName fn(filepath);
         ProjectItem fileItem(vdFullPath + ":" + fn.GetFullName(), fn.GetFullName(), filepath, ProjectItem::TypeFile);
+
         int iconIndex = GetIconIndex(fileItem);
         wxTreeItemId hti = AppendItem(parentItem,                // parent
                                       fileItem.GetDisplayName(), // display name
@@ -2985,6 +2959,13 @@ void FileViewTree::DoAddChildren(const wxTreeItemId& parentItem)
                                       iconIndex,                 // selected item image
                                       new FilewViewTreeItemData(fileItem));
         DoSetItemBackgroundColour(hti, coloursList, fileItem);
+
+        // If the file is disabled for the current build configuration, mark it as such
+        clProjectFile::Ptr_t fileInfo = proj->GetFile(fn.GetFullPath());
+        if(fileInfo && !buildConfName.IsEmpty() && fileInfo->IsExcludeFromConfiguration(buildConfName)) {
+            // Set the item text with disabled colour
+            SetItemTextColour(hti, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+        }
     }
 
     // Now, add the files

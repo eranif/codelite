@@ -2453,7 +2453,7 @@ int yyFlexLexer::yy_top_state()
 void yyFlexLexer::LexerError( yyconst char msg[] )
 {
 	std::cerr << msg << '\n';
-	exit( YY_EXIT_FAILURE );
+	
 }
 
 

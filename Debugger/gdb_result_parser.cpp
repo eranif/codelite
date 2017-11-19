@@ -444,7 +444,7 @@ void cleanup()
 
 void gdbConsumeList()
 {
-    printf("Consume List is called\n");
+    //printf("Consume List is called\n");
     int depth = 1;
     while(depth > 0) {
         int ch = gdb_result_lex();
@@ -626,7 +626,7 @@ case 3:
 break;
 case 5:
 {
-                printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
+                //printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
                 }
 break;
 case 7:

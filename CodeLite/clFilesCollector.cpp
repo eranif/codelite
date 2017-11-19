@@ -11,9 +11,9 @@ clFilesScanner::clFilesScanner() {}
 clFilesScanner::~clFilesScanner() {}
 
 size_t clFilesScanner::Scan(const wxString& rootFolder,
-                                 std::vector<wxString>& filesOutput,
-                                 const wxString& filespec,
-                                 const wxStringSet_t& excludeFolders)
+                            std::vector<wxString>& filesOutput,
+                            const wxString& filespec,
+                            const wxStringSet_t& excludeFolders)
 {
     filesOutput.clear();
     if(!wxFileName::DirExists(rootFolder)) {

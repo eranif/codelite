@@ -27,8 +27,8 @@ void CxxPreProcessorScanner::GetRestOfPPLine(wxString& rest, bool collectNumberO
     bool numberFound = false;
     while(m_scanner && ::LexerNext(m_scanner, token) && token.GetType() != T_PP_STATE_EXIT) {
         if(!numberFound && collectNumberOnly) {
-            if(token.GetType() == T_PP_DEC_NUMBER || token.GetType() == T_PP_OCTAL_NUMBER || token.GetType() == T_PP_HEX_NUMBER ||
-               token.GetType() == T_PP_FLOAT_NUMBER) {
+            if(token.GetType() == T_PP_DEC_NUMBER || token.GetType() == T_PP_OCTAL_NUMBER ||
+               token.GetType() == T_PP_HEX_NUMBER || token.GetType() == T_PP_FLOAT_NUMBER) {
                 rest = token.GetWXString();
                 numberFound = true;
             }
@@ -48,7 +48,6 @@ bool CxxPreProcessorScanner::ConsumeBlock()
         case T_PP_ENDIF:
             depth--;
             if(depth == 0) {
-                DEBUGMSG("=> ConsumeBlock until line %d (after 'endif')\n", token.lineNumber);
                 return true;
             }
             break;
@@ -65,7 +64,7 @@ bool CxxPreProcessorScanner::ConsumeBlock()
     return false;
 }
 
-void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) 
+void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
 {
     CxxLexerToken token;
     bool searchingForBranch = false;
@@ -97,12 +96,10 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
             // read the identifier
             ReadUntilMatch(T_PP_IDENTIFIER, token);
             if(IsTokenExists(ppTable, token)) {
-                DEBUGMSG("=> ifdef condition is TRUE (line: %d)\n", token.lineNumber);
                 searchingForBranch = false;
                 // condition is true
                 Parse(pp);
             } else {
-                DEBUGMSG("=> ifdef condition is FALSE (line: %d)\n", token.lineNumber);
                 // skip until we find the next:
                 // else, elif, endif (but do not consume these tokens)
                 if(!ConsumeCurrentBranch()) return;
@@ -114,12 +111,10 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
             // read the identifier
             ReadUntilMatch(T_PP_IDENTIFIER, token);
             if(!IsTokenExists(ppTable, token)) {
-                DEBUGMSG("=> ifndef condition is TRUE (line: %d)\n", token.lineNumber);
                 searchingForBranch = false;
                 // condition is true
                 Parse(pp);
             } else {
-                DEBUGMSG("=> ifndef condition is FALSE (line: %d)\n", token.lineNumber);
                 // skip until we find the next:
                 // else, elif, endif (but do not consume these tokens)
                 if(!ConsumeCurrentBranch()) return;
@@ -132,13 +127,11 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
             if(searchingForBranch) {
                 // We expect a condition
                 if(!CheckIf(ppTable)) {
-                    DEBUGMSG("=> if condition is FALSE (line: %d)\n", token.lineNumber);
                     // skip until we find the next:
                     // else, elif, endif (but do not consume these tokens)
                     if(!ConsumeCurrentBranch()) return;
 
                 } else {
-                    DEBUGMSG("=> if condition is TRUE (line: %d)\n", token.lineNumber);
                     searchingForBranch = false;
                     // condition is true
                     Parse(pp);
@@ -184,7 +177,6 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
             pp.value = macroValue;
             // mark this token for deletion when the entire TU parsing is done
             pp.deleteOnExit = (m_options & kLexerOpt_DontCollectMacrosDefinedInThisFile);
-            DEBUGMSG("=> Adding macro: %s=%s (line %d)\n", pp.name, pp.value, token.lineNumber);
             ppTable.insert(std::make_pair(pp.name, pp));
             break;
         }
@@ -218,7 +210,8 @@ bool CxxPreProcessorScanner::CheckIfDefined(const CxxPreProcessorToken::Map_t& t
     else                                \
         cur->SetValue((double)v);
 
-struct ExpressionLocker {
+struct ExpressionLocker
+{
     CxxPreProcessorExpression* m_expr;
     ExpressionLocker(CxxPreProcessorExpression* expr)
         : m_expr(expr)
@@ -254,41 +247,19 @@ bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)
             break;
 
         case T_PP_DEC_NUMBER: {
-            // long v(0);
-            // wxString text = token.GetWXString();
-            // bool res = text.ToCLong(&v);
-            // if(!res) {
-            //     SET_CUR_EXPR_VALUE_RET_FALSE(0);
-            // } else {
-            //     SET_CUR_EXPR_VALUE_RET_FALSE(v);
-            // }
-            SET_CUR_EXPR_VALUE_RET_FALSE(atol(token.GetWXString()));
+            SET_CUR_EXPR_VALUE_RET_FALSE(atol(token.GetText()));
             break;
         }
         case T_PP_OCTAL_NUMBER: {
-            SET_CUR_EXPR_VALUE_RET_FALSE(atol(token.GetWXString()));
+            SET_CUR_EXPR_VALUE_RET_FALSE(atol(token.GetText()));
             break;
         }
         case T_PP_HEX_NUMBER: {
-            SET_CUR_EXPR_VALUE_RET_FALSE(atol(token.GetWXString()));
-            // long v(0);
-            // bool res = token.GetWXString().ToCLong(&v, 16);
-            // if(!res) {
-            //     SET_CUR_EXPR_VALUE_RET_FALSE(0);
-            // } else {
-            //     SET_CUR_EXPR_VALUE_RET_FALSE(v);
-            // }
+            SET_CUR_EXPR_VALUE_RET_FALSE(atol(token.GetText()));
             break;
         }
         case T_PP_FLOAT_NUMBER: {
-            // double v(0);
-            // bool res = token.GetWXString().ToCDouble(&v);
-            // if(!res) {
-            //    SET_CUR_EXPR_VALUE_RET_FALSE(0.0);
-            // } else {
-            //    SET_CUR_EXPR_VALUE_RET_FALSE(v);
-            // }
-            SET_CUR_EXPR_VALUE_RET_FALSE(atof(token.GetWXString()));
+            SET_CUR_EXPR_VALUE_RET_FALSE(atof(token.GetText()));
             break;
         }
         case T_PP_IDENTIFIER: {
@@ -369,7 +340,6 @@ bool CxxPreProcessorScanner::ConsumeCurrentBranch()
             break;
         case T_PP_ENDIF:
             if(depth == 1) {
-                DEBUGMSG("=> ConsumeCurrentBranch until line %d (before token '%s')\n", token.lineNumber, token.GetWXString());
                 return true;
             }
             depth--;
@@ -377,7 +347,6 @@ bool CxxPreProcessorScanner::ConsumeCurrentBranch()
         case T_PP_ELIF:
         case T_PP_ELSE:
             if(depth == 1) {
-                DEBUGMSG("=> ConsumeCurrentBranch until line %d (before token '%s')\n", token.lineNumber, token.GetWXString());
                 ::LexerUnget(m_scanner);
                 return true;
             }
@@ -389,7 +358,7 @@ bool CxxPreProcessorScanner::ConsumeCurrentBranch()
     return false;
 }
 
-void CxxPreProcessorScanner::ReadUntilMatch(int type, CxxLexerToken& token) 
+void CxxPreProcessorScanner::ReadUntilMatch(int type, CxxLexerToken& token)
 {
     while(m_scanner && ::LexerNext(m_scanner, token)) {
         if(token.GetType() == type) {

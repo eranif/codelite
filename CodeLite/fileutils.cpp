@@ -483,3 +483,29 @@ wxString FileUtils::GetOSXTerminalCommand(const wxString& command, const wxStrin
     clDEBUG() << "GetOSXTerminalCommand returned:" << cmd << clEndl;
     return cmd;
 }
+
+wxString FileUtils::NormaliseName(const wxString& name)
+{
+    static bool initialised = false;
+    static int invalidChars[256];
+    if(!initialised) {
+        memset(invalidChars, 0, sizeof(invalidChars));
+        std::vector<int> V = { '@', '-', '^', '%', '&', '$', '#', '@', '!', '(',
+                               ')', '{', '}', '[', ']', '+', '=', ';', ',', '.' };
+        for(size_t i = 0; i < V.size(); ++i) {
+            invalidChars[V[i]] = 1;
+        }
+        initialised = true;
+    }
+
+    wxString normalisedName;
+    for(size_t i = 0; i < name.size(); ++i) {
+        if(invalidChars[name[i]]) {
+            // an invalid char was found
+            normalisedName << "_";
+        } else {
+            normalisedName << name[i];
+        }
+    }
+    return normalisedName;
+}

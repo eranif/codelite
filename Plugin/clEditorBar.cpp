@@ -120,8 +120,8 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         wxFont guiFont = clTabRenderer::GetTabFont();
         gcdc.SetFont(guiFont);
         // Geometry
-        m_filenameRect =
-            wxRect(GetClientRect().GetWidth() - filenameButtonWidth - X_SPACER, 0, filenameButtonWidth, rect.GetHeight());
+        m_filenameRect = wxRect(GetClientRect().GetWidth() - filenameButtonWidth - X_SPACER, 0, filenameButtonWidth,
+                                rect.GetHeight() - 2);
         DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, eButtonKind::kDropDown, m_state);
         textX += filenameButtonWidth;
         textX += (2 * X_SPACER);

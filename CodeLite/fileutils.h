@@ -25,8 +25,8 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
-#include "wx/filename.h"
 #include "codelite_exports.h"
+#include "wx/filename.h"
 #include <wx/filename.h>
 #include <wx/log.h>
 
@@ -82,8 +82,8 @@ public:
      * @param password the password
      * @param port ssh port
      */
-    static void
-    OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password, int port = 22);
+    static void OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password,
+                                int port = 22);
 
     /**
      * @brief OSX only: open Terminal and return its TTY
@@ -91,12 +91,12 @@ public:
      * @param [output] tty the TTY of the launched terminal
      */
     static void OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString& tty, long& pid);
-    
+
     /**
      * @brief return the command needed to open OSX terminal at a given directory and launch a command
      */
     static wxString GetOSXTerminalCommand(const wxString& command, const wxString& workingDirectory);
-    
+
     /**
      * @brief file masking search
      */
@@ -127,12 +127,12 @@ public:
      * @brief encode URI using percent encoding
      */
     static wxString EncodeURI(const wxString& uri);
-    
+
     /**
      * @brief escape string. Each space and double quotes marker is escaped with backslash
      */
     static wxString EscapeString(const wxString& str);
-    
+
     /**
      * @brief is the file or folder a hidden file?
      */
@@ -151,15 +151,24 @@ public:
      * @brief get file permissions
      */
     static bool GetFilePermissions(const wxFileName& filename, mode_t& perm);
-    
+
     /**
      * @brief return the file modification time
      */
     static time_t GetFileModificationTime(const wxFileName& filename);
-    
+
     /**
      * @brief return the file size, in bytes
      */
     static size_t GetFileSize(const wxFileName& filename);
+
+    /**
+     * @brief replace any unwanted characters with underscore
+     * The chars that we replace are:
+     * @-^%&$#@!(){}[]+=;,.
+     * @param name
+     * @return modified name excluding the above chars (will be replaced with _)
+     */
+    static wxString NormaliseName(const wxString& name);
 };
 #endif // FILEUTILS_H

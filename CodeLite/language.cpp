@@ -123,7 +123,7 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
         if(tokenizer.IsInPreProcessorSection()) continue;
         switch(state) {
         case SCP_STATE_NORMAL:
-            switch(token.type) {
+            switch(token.GetType()) {
             case '{':
                 currentScope << "{";
                 scopes.push(currentScope);
@@ -157,20 +157,20 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
                 // Handle lambda
                 // If we are enterting lamda function defenition, collect the locals
                 // this is exactly what we in 'catch' hence the state change to SCP_STATE_IN_CATCH
-                if(tokenizer.GetLastToken().type == ']') { state = SCP_STATE_IN_CATCH; }
+                if(tokenizer.GetLastToken().GetType() == ']') { state = SCP_STATE_IN_CATCH; }
                 break;
             case ')':
                 parenthesisDepth--;
                 currentScope << ")";
                 break;
             default:
-                if(parenthesisDepth == 0) { currentScope << " " << token.text; }
+                if(parenthesisDepth == 0) { currentScope << " " << token.GetWXString(); }
                 break;
             }
             break;
         case SCP_STATE_IN_WHILE:
         case SCP_STATE_IN_IF:
-            switch(token.type) {
+            switch(token.GetType()) {
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
@@ -183,7 +183,7 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
             }
             break;
         case SCP_STATE_IN_FOR_NO_SEMICOLON:
-            switch(token.type) {
+            switch(token.GetType()) {
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
@@ -198,12 +198,12 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
                 state = SCP_STATE_IN_FOR;
                 break;
             default:
-                currentScope << " " << token.text;
+                currentScope << " " << token.GetWXString();
                 break;
             }
             break;
         case SCP_STATE_IN_FOR:
-            switch(token.type) {
+            switch(token.GetType()) {
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
@@ -218,7 +218,7 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
             }
             break;
         case SCP_STATE_IN_CATCH:
-            switch(token.type) {
+            switch(token.GetType()) {
             case '(':
                 currentScope << "(";
                 parenthesisDepth++;
@@ -229,7 +229,7 @@ wxString Language::OptimizeScope(const wxString& srcString, int lastFuncLine, wx
                 if(parenthesisDepth == 0) { state = SCP_STATE_NORMAL; }
                 break;
             default:
-                currentScope << " " << token.text;
+                currentScope << " " << token.GetWXString();
                 break;
             }
             break;
@@ -360,7 +360,7 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
     CxxLexerToken tok;
     while(m_tokenScanner.NextToken(tok)) {
         if(parenthesisDepth) {
-            switch(tok.type) {
+            switch(tok.GetType()) {
             case '(':
                 ++parenthesisDepth;
                 if(collectingFuncArgList) { funcArgList << "("; }
@@ -370,13 +370,13 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
                 if(collectingFuncArgList) { funcArgList << ")"; }
                 break;
             default:
-                if(collectingFuncArgList) { funcArgList << " " << tok.text; }
+                if(collectingFuncArgList) { funcArgList << " " << tok.GetWXString(); }
                 break;
             }
         } else {
-            switch(tok.type) {
+            switch(tok.GetType()) {
             case T_DECLTYPE: {
-                if(m_tokenScanner.GetLastToken().type == ',') { token.RemoveLast(); }
+                if(m_tokenScanner.GetLastToken().GetType() == ',') { token.RemoveLast(); }
                 wxString dummy;
                 if(m_tokenScanner.ReadUntilClosingBracket(')', dummy)) {
                     m_tokenScanner.NextToken(tok); // Consume the closing parent
@@ -416,16 +416,16 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
             case '.':
             case T_ARROW:
                 if(depth == 0) {
-                    delim = tok.text;
+                    delim = tok.GetWXString();
                     return true;
                 } else {
-                    token << " " << tok.text;
+                    token << " " << tok.GetWXString();
                 }
                 break;
             case '[':
                 subscriptOperator = true;
                 depth++;
-                token << " " << tok.text;
+                token << " " << tok.GetWXString();
                 break;
             case '(':
                 if(!token.IsEmpty()) {
@@ -433,7 +433,7 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
                     // The reason is that it is probably from an expression like casting:
                     // (wxClipboard*)
                     parenthesisDepth++;
-                    if(collectingFuncArgList) { token << tok.text; }
+                    if(collectingFuncArgList) { token << tok.GetWXString(); }
                 }
                 break;
             case ')':
@@ -443,13 +443,13 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
             case '<':
             case '{':
                 depth++;
-                token << " " << tok.text;
+                token << " " << tok.GetWXString();
                 break;
             case '>':
             case ']':
             case '}':
                 depth--;
-                token << " " << tok.text;
+                token << " " << tok.GetWXString();
                 break;
             case T_IDENTIFIER:
             case ',':
@@ -467,7 +467,7 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
             case T_VOID:
             case T_CLASS:
             case T_TYPEDEF:
-                token << " " << tok.text;
+                token << " " << tok.GetWXString();
                 break;
             default:
                 break;
@@ -1437,73 +1437,6 @@ bool Language::OnArrowOperatorOverloading(ParsedToken* token)
     GetTagsManager()->GetDereferenceOperator(token->GetPath(), tags);
 
     if(tags.size() == 1) {
-#if 0
-        wxString pattern = tags.at(0)->GetPattern();
-        // strip the pattern from ctags regex chars
-        pattern = pattern.BeforeLast(wxT('$'));
-        pattern = pattern.AfterFirst(wxT('^'));
-
-        Scanner_t cppScanner = ::LexerNew(pattern);
-        bool cont = true;
-        int depth = 0;
-        CxxLexerToken lexerToken;
-        std::vector<wxString> parts;
-        while(cont && ::LexerNext(cppScanner, lexerToken)) {
-            switch(lexerToken.type) {
-            case T_OPERATOR:
-                cont = false;
-                break;
-            case T_IDENTIFIER:
-                if(depth == 0) {
-                    parts.push_back(lexerToken.text);
-                }
-                break;
-            // Dont collect these keywords
-            case T_TYPENAME:
-            case T_CLASS:
-            case T_STRUCT:
-            case T_EXPLICIT:
-            case T_UNION:
-            case T_NAMESPACE:
-                break;
-            case '<':
-                depth++;
-                break;
-            case '>':
-                depth--;
-                break;
-            default:
-                if(depth == 0) {
-                    parts.push_back(lexerToken.text);
-                }
-                break;
-            }
-        }
-        ::LexerDestroy(&cppScanner);
-        if(parts.empty()) {
-            return false;
-        }
-
-        typeName = parts.back();
-        parts.pop_back();
-        if(!parts.empty()) {
-            parts.pop_back(); // remove the '::'
-        }
-
-        typeScope.clear();
-        // Convert the vector to string
-        for(size_t i = 0; i < parts.size(); ++i) {
-            typeScope << parts.at(i);
-        }
-        if(typeScope.IsEmpty()) {
-            typeScope = token->GetPath();
-        }
-
-        token->SetTypeName(typeName);
-        token->SetTypeScope(typeScope);
-        DoIsTypeAndScopeExist(token);
-        ret = true;
-#else
         // loop over the tags and scan for operator -> overloading
         // we found our overloading operator
         // extract the 'real' type from the pattern
@@ -1521,7 +1454,6 @@ bool Language::OnArrowOperatorOverloading(ParsedToken* token)
             DoIsTypeAndScopeExist(token);
             ret = true;
         }
-#endif
     }
     return ret;
 }

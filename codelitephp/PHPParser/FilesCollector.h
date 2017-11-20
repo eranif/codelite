@@ -26,30 +26,33 @@
 #ifndef FILESCOLLECTOR_H
 #define FILESCOLLECTOR_H
 
-#include <wx/dir.h>
-#include <wx/arrstr.h>
-#include <wx/progdlg.h>
 #include "macros.h"
+#include <wx/arrstr.h>
+#include <wx/dir.h>
+#include <wx/progdlg.h>
 
 #define FOLDER_MARKER "folder.marker"
 
-class FilesCollector : public wxDirTraverser
+class FilesCollector
 {
     wxArrayString m_specArray;
-    wxArrayString m_filesAndFolders;
+    wxArrayString& m_filesAndFolders;
     wxProgressDialog* m_progress;
     wxStringSet_t m_excludeFolders;
 
 public:
-    FilesCollector(const wxString& filespec, const wxString& excludeFolders = "", wxProgressDialog* progress = NULL);
+    FilesCollector(wxArrayString& filesAndFolders, const wxString& filespec, const wxString& excludeFolders = "",
+                   wxProgressDialog* progress = NULL);
     virtual ~FilesCollector();
 
-    const wxArrayString& GetFilesAndFolders() const { return m_filesAndFolders; }
-    wxArrayString& GetFilesAndFolders() { return m_filesAndFolders; }
+    /**
+     * @brief collect all files and folder starting from a given root
+     * @param rootFolder
+     */
+    void Collect(const wxString& rootFolder);
 
-public:
-    virtual wxDirTraverseResult OnDir(const wxString& dirname);
-    virtual wxDirTraverseResult OnFile(const wxString& filename);
+private:
+    bool IsFileOK(const wxString& filename) const;
 };
 
 #endif // FILESCOLLECTOR_H

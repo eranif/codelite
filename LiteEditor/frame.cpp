@@ -503,6 +503,7 @@ EVT_MENU(XRCID("stop_debugger"), clMainFrame::OnDebugStop)
 EVT_MENU(XRCID("dbg_run_to_cursor"), clMainFrame::OnDebugRunToCursor)
 EVT_MENU(XRCID("dbg_jump_cursor"), clMainFrame::OnDebugJumpToCursor)
 EVT_MENU(XRCID("dbg_stepin"), clMainFrame::OnDebugCmd)
+EVT_MENU(XRCID("dbg_stepi"), clMainFrame::OnDebugCmd)
 EVT_MENU(XRCID("dbg_stepout"), clMainFrame::OnDebugCmd)
 EVT_MENU(XRCID("dbg_enable_reverse_debug"), clMainFrame::OnToggleReverseDebugging)
 EVT_MENU(XRCID("dbg_start_recording"), clMainFrame::OnToggleReverseDebuggingRecording)
@@ -530,6 +531,7 @@ EVT_UPDATE_UI(XRCID("start_debugger"), clMainFrame::OnDebugUI)
 EVT_UPDATE_UI(XRCID("restart_debugger"), clMainFrame::OnDebugRestartUI)
 EVT_UPDATE_UI(XRCID("stop_debugger"), clMainFrame::OnDebugStopUI)
 EVT_UPDATE_UI(XRCID("dbg_stepin"), clMainFrame::OnDebugCmdUI)
+EVT_UPDATE_UI(XRCID("dbg_stepi"), clMainFrame::OnDebugCmdUI)
 EVT_UPDATE_UI(XRCID("dbg_stepout"), clMainFrame::OnDebugCmdUI)
 EVT_UPDATE_UI(XRCID("dbg_next"), clMainFrame::OnDebugCmdUI)
 
@@ -3465,6 +3467,10 @@ void clMainFrame::OnDebugCmd(wxCommandEvent& e)
         cmd = DBG_STEPIN;
         eventId = wxEVT_DBG_UI_STEP_IN;
 
+    } else if(e.GetId() == XRCID("dbg_stepi")) {
+        cmd = DBG_STEPI;
+        eventId = wxEVT_DBG_UI_STEP_I;
+
     } else if(e.GetId() == XRCID("dbg_stepout")) {
         cmd = DBG_STEPOUT;
         eventId = wxEVT_DBG_UI_STEP_OUT;
@@ -3496,7 +3502,7 @@ void clMainFrame::OnDebugCmdUI(wxUpdateUIEvent& e)
     clDebugEvent eventIsRunning(wxEVT_DBG_IS_RUNNING);
     EventNotifier::Get()->ProcessEvent(eventIsRunning);
 
-    if(e.GetId() == XRCID("pause_debugger") || e.GetId() == XRCID("dbg_stepin") || e.GetId() == XRCID("dbg_stepout") ||
+    if(e.GetId() == XRCID("pause_debugger") || e.GetId() == XRCID("dbg_stepin") || e.GetId() == XRCID("dbg_stepi") || e.GetId() == XRCID("dbg_stepout") ||
        e.GetId() == XRCID("dbg_next") || e.GetId() == XRCID("dbg_nexti") || e.GetId() == XRCID("show_cursor")) {
         IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
         e.Enable(eventIsRunning.IsAnswer() || (dbgr && dbgr->IsRunning()));

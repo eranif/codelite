@@ -44,13 +44,13 @@ void CxxPreProcessorCache::Clear() { m_impl.clear(); }
 wxString CxxPreProcessorCache::GetPreamble(const wxString& filename) const
 {
     Scanner_t scanner = ::LexerNew(filename, 0);
-    if(!scanner) return "";
+    if(!scanner) return { "" };
 
     CxxLexerToken token;
     wxString preamble;
     while(::LexerNext(scanner, token)) {
-        if(token.type == T_PP_INCLUDE_FILENAME) {
-            preamble << token.text << "\n";
+        if(token.GetType() == T_PP_INCLUDE_FILENAME) {
+            preamble << token.GetText() << "\n";
         }
     }
     ::LexerDestroy(&scanner);

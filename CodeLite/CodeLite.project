@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="clFilesCollector.cpp"/>
+    <File Name="clFilesCollector.h"/>
     <File Name="worker_thread.cpp"/>
     <File Name="tokenizer.cpp"/>
     <File Name="tag_tree.cpp"/>

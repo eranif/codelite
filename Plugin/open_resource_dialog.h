@@ -26,13 +26,14 @@
 #ifndef __open_resource_dialog__
 #define __open_resource_dialog__
 
-#include "openresourcedialogbase.h"
-#include <vector>
+#include "clAnagram.h"
+#include "codelite_exports.h"
 #include "entry.h"
+#include "openresourcedialogbase.h"
+#include "wxStringHash.h"
+#include <vector>
 #include <wx/arrstr.h>
 #include <wx/timer.h>
-#include "codelite_exports.h"
-#include "wxStringHash.h"
 
 class IManager;
 class wxTimer;
@@ -58,8 +59,8 @@ public:
     {
     }
 
-    OpenResourceDialogItemData(
-        const wxString& file, int line, const wxString& pattern, const wxString& name, const wxString& scope)
+    OpenResourceDialogItemData(const wxString& file, int line, const wxString& pattern, const wxString& name,
+                               const wxString& scope)
         : m_file(file)
         , m_line(line)
         , m_pattern(pattern)
@@ -85,6 +86,7 @@ class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
     wxArrayString m_filters;
     wxArrayString m_userFilters;
     long m_lineNumber;
+    clAnagram m_filter;
 
 protected:
     virtual void OnEnter(wxCommandEvent& event);
@@ -98,11 +100,8 @@ protected:
     void DoPopulateTags();
     void DoSelectItem(const wxDataViewItem& item);
     void Clear();
-    wxDataViewItem DoAppendLine(const wxString& name,
-                                const wxString& fullname,
-                                bool boldFont,
-                                OpenResourceDialogItemData* clientData,
-                                const wxBitmap& bmp);
+    wxDataViewItem DoAppendLine(const wxString& name, const wxString& fullname, bool boldFont,
+                                OpenResourceDialogItemData* clientData, const wxBitmap& bmp);
     wxBitmap DoGetTagImg(TagEntryPtr tag);
 
 protected:

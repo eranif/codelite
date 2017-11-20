@@ -122,9 +122,10 @@ attach_debugger|Debugger|Attach to process...|
 pause_debugger|Debugger|Pause debugger|
 stop_debugger|Debugger|Stop debugger|Shift-F5
 dbg_stepin|Debugger|Step Into|F11
+dbg_stepout|Debugger|Step Out|Shift-F11
+dbg_stepi|Debugger|Step Into Instruction|
 dbg_next|Debugger|Next|F10
 dbg_nexti|Debugger|Next Instruction|Ctrl-F10
-dbg_stepout|Debugger|Step Out|Shift-F11
 show_cursor|Debugger|Show Cursor|
 dbg_run_to_cursor|Debugger|Run to Caret Line|
 dbg_jump_cursor|Debugger|Jump to Caret Line|

@@ -107,6 +107,7 @@ protected:
     void OnDebugEnableAllBreakpoints(clDebugEvent& event);
     void OnDebugDisableAllBreakpoints(clDebugEvent& event);
     void OnDebugNextInst(clDebugEvent& event);
+    void OnDebugVOID(clDebugEvent& event);
     void OnDebugShowCursor(clDebugEvent& event);
 
     void OnBuildStarting(clBuildEvent& event);

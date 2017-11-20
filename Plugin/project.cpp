@@ -627,8 +627,8 @@ bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, co
 
 wxString Project::GetVDByFileName(const wxString& file)
 {
-    if(m_virtualFoldersTable.count(file) == 0) { return ""; }
-    return m_virtualFoldersTable[file]->GetName();
+    if(m_filesTable.count(file) == 0) { return ""; }
+    return m_filesTable[file]->GetVirtualFolder();
 }
 
 bool Project::RenameVirtualDirectory(const wxString& oldVdPath, const wxString& newName)
@@ -1185,47 +1185,27 @@ size_t Project::GetFileFlags(const wxString& fileName, const wxString& virtualDi
     return XmlUtils::ReadLong(fileNode, "Flags", 0);
 }
 
-wxArrayString Project::GetExcludeConfigForFile(const wxString& filename, const wxString& virtualDirPath)
+const wxStringSet_t& Project::GetExcludeConfigForFile(const wxString& filename) const
 {
-    wxArrayString configs;
-    wxXmlNode* vdNode = GetVirtualDir(virtualDirPath);
-    if(!vdNode) { return configs; }
-
-    // locate our file
-    wxFileName tmp(filename);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
-    wxXmlNode* fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
-    if(!fileNode) { return configs; }
-
-    wxString excludeConfigs = XmlUtils::ReadString(fileNode, EXCLUDE_FROM_BUILD_FOR_CONFIG);
-    configs = ::wxStringTokenize(excludeConfigs, ";", wxTOKEN_STRTOK);
-    return configs;
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    if(!pfile) {
+        static wxStringSet_t emptySet;
+        return emptySet;
+    }
+    return pfile->GetExcludeConfigs();
 }
 
-void Project::SetExcludeConfigForFile(const wxString& filename, const wxString& virtualDirPath,
-                                      const wxArrayString& configs)
+void Project::SetExcludeConfigsForFile(const wxString& filename, const wxStringSet_t& configs)
 {
-    wxXmlNode* vdNode = GetVirtualDir(virtualDirPath);
-    if(!vdNode) { return; }
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    if(!pfile) { return; }
 
-    // locate our file
-    wxFileName tmp(filename);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
-    wxXmlNode* fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
-    if(!fileNode) { return; }
+    pfile->SetExcludeConfigs(configs);
+    wxXmlNode* fileNode = pfile->GetXmlNode();
 
-    // Make sure the list is unique
-    wxStringSet_t unique_set;
-    unique_set.insert(configs.begin(), configs.end());
-    wxArrayString uniqueArr;
-    wxStringSet_t::iterator iter = unique_set.begin();
-    for(; iter != unique_set.end(); ++iter) {
-        uniqueArr.Add(*iter);
-    }
-
-    wxString excludeConfigs = ::wxJoin(uniqueArr, ';');
+    // Convert to string and update the XML
+    wxString excludeConfigs;
+    std::for_each(configs.begin(), configs.end(), [&](const wxString& config) { excludeConfigs << config << ";"; });
     XmlUtils::UpdateProperty(fileNode, EXCLUDE_FROM_BUILD_FOR_CONFIG, excludeConfigs);
     SaveXmlFile();
 }
@@ -1252,7 +1232,7 @@ wxString Project::GetCompileLineForCXXFile(const wxString& filenamePlaceholder, 
     EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
     // Clear the backticks cache
-//    s_backticks.clear();
+    //    s_backticks.clear();
 
     // Get the compile options
     wxString projectCompileOptions = cxxFile ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
@@ -1699,6 +1679,75 @@ void Project::GetFilesAsVectorOfFileName(std::vector<wxFileName>& files, bool ab
     });
 }
 
+bool Project::IsEmpty() const { return m_virtualFoldersTable.empty() && m_filesTable.empty(); }
+
+void Project::GetFolders(const wxString& vdFullPath, wxArrayString& folders)
+{
+    folders.Clear();
+    clProjectFolder::Ptr_t parentFolder = vdFullPath.IsEmpty() ? GetRootFolder() : GetFolder(vdFullPath);
+    if(!parentFolder) return;
+
+    clProjectFolder::Vect_t res;
+    parentFolder->GetSubfolders(folders, false);
+}
+
+void Project::GetFiles(const wxString& vdFullPath, wxArrayString& files)
+{
+    files.Clear();
+    clProjectFolder::Ptr_t parentFolder = vdFullPath.IsEmpty() ? GetRootFolder() : GetFolder(vdFullPath);
+    if(!parentFolder) return;
+    const wxStringSet_t& filesSet = parentFolder->GetFiles();
+    files.Alloc(filesSet.size());
+    std::for_each(filesSet.begin(), filesSet.end(), [&](const wxString& s) { files.Add(s); });
+}
+
+bool Project::IsVirtualDirectoryEmpty(const wxString& vdFullPath) const
+{
+    clProjectFolder::Ptr_t folder = GetFolder(vdFullPath);
+    if(!folder) { return true; }
+
+    // Its faster to check first the files list
+    if(!folder->GetFiles().empty()) { return false; }
+
+    wxArrayString folders;
+    folder->GetSubfolders(folders, false);
+    return folders.IsEmpty();
+}
+
+bool Project::IsFileExcludedFromConfig(const wxString& filename, const wxString& configName) const
+{
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    BuildConfigPtr buildConf = GetBuildConfiguration(configName);
+    if(!pfile || !buildConf) { return false; }
+    return (pfile->GetExcludeConfigs().count(buildConf->GetName()) > 0);
+}
+
+void Project::RemoveExcludeConfigForFile(const wxString& filename, const wxString& configName)
+{
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    BuildConfigPtr buildConf = GetBuildConfiguration(configName);
+    if(!pfile || !buildConf) { return; }
+    wxStringSet_t& excludeConfigs = pfile->GetExcludeConfigs();
+    if(excludeConfigs.count(buildConf->GetName())) {
+        excludeConfigs.erase(buildConf->GetName());
+        // Update the xml
+        SetExcludeConfigsForFile(filename, excludeConfigs);
+    }
+}
+
+void Project::AddExcludeConfigForFile(const wxString& filename, const wxString& configName)
+{
+    clProjectFile::Ptr_t pfile = GetFile(filename);
+    BuildConfigPtr buildConf = GetBuildConfiguration(configName);
+    if(!pfile || !buildConf) { return; }
+    wxStringSet_t& excludeConfigs = pfile->GetExcludeConfigs();
+    if(excludeConfigs.count(buildConf->GetName()) == 0) {
+        excludeConfigs.insert(buildConf->GetName());
+        // Update the xml
+        SetExcludeConfigsForFile(filename, excludeConfigs);
+    }
+}
+
 bool clProjectFolder::RenameFile(Project* project, const wxString& fullpath, const wxString& newName)
 {
     if(!project) { return false; }
@@ -1785,11 +1834,12 @@ clProjectFolder::Ptr_t clProjectFolder::GetChild(Project* project, const wxStrin
     return clProjectFolder::Ptr_t(nullptr);
 }
 
-wxArrayString clProjectFolder::GetAllSubFolders() const
+void clProjectFolder::GetSubfolders(wxArrayString& folders, bool recursive) const
 {
-    wxArrayString folders;
-    if(!m_xmlNode) return folders;
+    folders.Clear();
+    if(!m_xmlNode) { return; }
 
+    std::vector<wxString> foldersV;
     std::queue<std::pair<wxXmlNode*, wxString> > q;
     q.push({ m_xmlNode, GetFullpath() });
 
@@ -1805,18 +1855,21 @@ wxArrayString clProjectFolder::GetAllSubFolders() const
             if(child->GetName() == "VirtualDirectory") {
                 wxString name = child->GetPropVal("Name", "");
                 wxString childpath = prefix.IsEmpty() ? (name) : (prefix + ":" + name);
-                folders.Add(childpath);
-                q.push({ child, childpath });
+                foldersV.push_back(childpath);
+                if(recursive) { q.push({ child, childpath }); }
             }
             child = child->GetNext();
         }
     }
-    return folders;
+
+    folders.Alloc(foldersV.size());
+    std::for_each(foldersV.begin(), foldersV.end(), [&](const wxString& s) { folders.Add(s); });
 }
 
 void clProjectFolder::DeleteRecursive(Project* project)
 {
-    wxArrayString folders = GetAllSubFolders();
+    wxArrayString folders;
+    GetSubfolders(folders);
     for(size_t i = 0; i < folders.size(); ++i) {
         clProjectFolder::Ptr_t folder = project->GetFolder(folders.Item(i));
         if(folder) {

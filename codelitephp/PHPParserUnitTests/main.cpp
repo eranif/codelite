@@ -833,7 +833,7 @@ TEST_FUNC(test_function_arg_type_hint_and_php_doc)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     
-    CHECK_STRING(resolved->GetFullName(), "\\test_function_arg_type_hint_and_php_doc");
+    CHECK_STRING(resolved->GetFullName().ToUTF8(), "\\test_function_arg_type_hint_and_php_doc");
     return true;
 }
 

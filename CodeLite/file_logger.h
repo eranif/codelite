@@ -116,6 +116,23 @@ public:
     }
 
     /**
+     * @brief special wxString printing
+     * Without this overload operator, on some compilers, the "clDEBUG()<< wxString" might be "going" to the one
+     * that handles wxFileName...
+     */
+    inline FileLogger& operator<<(const wxString& str)
+    {
+        if(GetRequestedLogLevel() > m_verbosity) {
+            return *this;
+        }
+        if(!m_buffer.IsEmpty()) {
+            m_buffer << " ";
+        }
+        m_buffer << str;
+        return *this;
+    }
+    
+    /**
      * @brief special wxFileName printing
      */
     inline FileLogger& operator<<(const wxFileName& fn)

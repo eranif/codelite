@@ -86,7 +86,6 @@ class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
     wxArrayString m_filters;
     wxArrayString m_userFilters;
     long m_lineNumber;
-    clAnagram m_filter;
 
 protected:
     virtual void OnEnter(wxCommandEvent& event);

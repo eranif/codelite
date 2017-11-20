@@ -27,6 +27,7 @@
 #include "ctags_manager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
@@ -146,16 +147,7 @@ void OpenResourceDialog::OnText(wxCommandEvent& event)
 
     wxString filter = m_textCtrlResourceName->GetValue();
     filter.Trim().Trim(false);
-    m_filter.Reset(filter, (size_t)eAnagramFlag::kIgnoreWhitespace);
-
-    if(filter.IsEmpty()) {
-        // The filter content is cleared, delete all entries
-        Clear();
-        m_needRefresh = false;
-
-    } else {
-        m_needRefresh = true;
-    }
+    m_needRefresh = true;
 }
 
 void OpenResourceDialog::OnUsePartialMatching(wxCommandEvent& event)
@@ -201,7 +193,6 @@ void OpenResourceDialog::DoPopulateList()
     }
 
     // Build the filter class
-    m_filter.Reset(name, (size_t)eAnagramFlag::kIgnoreWhitespace);
     if(m_checkBoxFiles->IsChecked()) { DoPopulateWorkspaceFile(); }
     if(m_checkBoxShowSymbols->IsChecked() && (nLineNumber == -1)) { DoPopulateTags(); }
 }
@@ -443,7 +434,11 @@ wxBitmap OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)
     return bmp;
 }
 
-bool OpenResourceDialog::MatchesFilter(const wxString& name) { return m_filter.MatchesInOrder(name); }
+bool OpenResourceDialog::MatchesFilter(const wxString& name)
+{
+    wxString filter = m_textCtrlResourceName->GetValue();
+    return FileUtils::FuzzyMatch(filter, name);
+}
 
 void OpenResourceDialog::OnCheckboxfilesCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
 void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }

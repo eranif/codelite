@@ -26,6 +26,7 @@
 #define FILEUTILS_H
 
 #include "codelite_exports.h"
+#include "macros.h"
 #include "wx/filename.h"
 #include <wx/filename.h>
 #include <wx/log.h>
@@ -117,6 +118,28 @@ public:
      * @param haystack the string to search on
      */
     static bool FuzzyMatch(const wxString& needle, const wxString& haystack);
+
+    /**
+     * @brief an efficient way to tokenize string into words (separated by SPACE and/or TAB)
+     * @code
+     * wxString str = "My String That Requires Tokenize";
+     * wxString word; // The output
+     * size_t offset = 0;
+     * while(clNextWord(str, offset, word)) {
+     *      // Do something with "word" here
+     * }
+     * @codeend
+     * @param str the string to tokenize
+     * @param offset used internally, allocate one on the stack and initialise it to 0
+     * @param word [output]
+     * @return true if a word was found
+     */
+    static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
+
+    /**
+     * @brief split a string by whitespace
+     */
+    static size_t SplitWords(const wxString& str, wxStringSet_t& outputSet, bool makeLower = false);
 
     /**
      * @brief decode URI using percent encoding

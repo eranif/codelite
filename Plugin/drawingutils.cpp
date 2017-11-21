@@ -22,10 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "ColoursAndFontsManager.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "globals.h"
 #include "ieditor.h"
+#include "lexer_configuration.h"
 #include "wx/dc.h"
 #include "wx/settings.h"
 #include <wx/app.h>
@@ -704,20 +706,24 @@ clColourPalette DrawingUtils::GetColourPalette()
     p.textColour = DrawingUtils::GetPanelTextColour();
     p.selecteTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     p.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-    
+
     IManager* manager = ::clGetManager();
     if(manager) {
         IEditor* editor = manager->GetActiveEditor();
         if(editor) {
-            wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-            if(DrawingUtils::IsDark(bgColour)) {
+            ColoursAndFontsManager& mgr = ColoursAndFontsManager::Get();
+            LexerConf::Ptr_t lexer = mgr.GetLexer("C++", mgr.GetGlobalTheme());
+            if(lexer && lexer->IsDark()) {
                 // Dark colour
-                wxColour baseColour = bgColour.ChangeLightness(105);
-                p.bgColour = baseColour;
-                p.penColour = p.bgColour.ChangeLightness(110);
-                p.textColour = *wxWHITE;
-                p.selecteTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-                p.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+                if(lexer) {
+                    wxColour bgColour = lexer->GetProperty(wxSTC_C_IDENTIFIER).GetBgColour();
+                    wxColour baseColour = bgColour.ChangeLightness(105);
+                    p.bgColour = baseColour;
+                    p.penColour = p.bgColour.ChangeLightness(110);
+                    p.textColour = lexer->GetProperty(wxSTC_C_IDENTIFIER).GetFgColour();
+                    p.selecteTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+                    p.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+                }
             }
         }
     }
@@ -893,8 +899,9 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     wxColour bgColour = GetButtonBgColour();
     wxColour bgColourDark = GetButtonBgColour().ChangeLightness(90);
 
-    //wxCoord radiusLen = (innerRect.GetWidth() / 2);
-    //wxPoint radiusPt = wxPoint(rect.GetTopLeft().x + rect.GetWidth() / 2, rect.GetTopLeft().y + rect.GetHeight() / 2);
+    // wxCoord radiusLen = (innerRect.GetWidth() / 2);
+    // wxPoint radiusPt = wxPoint(rect.GetTopLeft().x + rect.GetWidth() / 2, rect.GetTopLeft().y + rect.GetHeight() /
+    // 2);
     switch(state) {
     case eButtonState::kHover:
         dc.SetPen(bgColour);

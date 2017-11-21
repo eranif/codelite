@@ -10719,7 +10719,7 @@ msgid "That accelerator already exists"
 msgstr "zkratka již existuje"
 
 #: QmakePlugin/qmakesettingsbasedlg.cpp:19
-msgid "Add / modfiy qmake configurations:"
+msgid "Add / modify qmake configurations:"
 msgstr "Přidat / změnit nastavení konfigurace qmake:"
 
 #: QmakePlugin/qmakesettingsbasedlg.cpp:39

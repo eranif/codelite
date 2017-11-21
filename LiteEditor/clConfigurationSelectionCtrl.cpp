@@ -44,7 +44,8 @@ void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
     // Build the text to draw
     wxString label;
     label << m_activeProject << " :: " << m_activeConfiguration;
-    DrawingUtils::DrawButton(gcdc, this, GetClientRect(), label, eButtonKind::kDropDown, eButtonState::kNormal);
+    DrawingUtils::DrawButton(gcdc, this, GetClientRect(), label, wxNullBitmap, eButtonKind::kDropDown,
+                             eButtonState::kNormal);
 }
 
 void clConfigurationSelectionCtrl::OnEraseBG(wxEraseEvent& e) {}
@@ -68,14 +69,12 @@ void clConfigurationSelectionCtrl::OnLeftDown(wxMouseEvent& e)
     std::unordered_map<int, wxString> M;
     for(size_t i = 0; i < m_configurations.GetCount(); ++i) {
         wxMenuItem* item = menu.Append(wxID_ANY, m_configurations.Item(i), "", wxITEM_CHECK);
-        if(m_configurations.Item(i) == m_activeConfiguration) {
-            item->Check();
-        }
+        if(m_configurations.Item(i) == m_activeConfiguration) { item->Check(); }
         M[item->GetId()] = m_configurations.Item(i);
     }
     menu.AppendSeparator();
     wxMenuItem* openConfig = new wxMenuItem(NULL, wxID_ANY, OPEN_CONFIG_MGR_STR, "", wxITEM_CHECK);
-    //openConfig->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("cog"));
+    // openConfig->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("cog"));
     openConfig = menu.Append(openConfig);
     M[openConfig->GetId()] = OPEN_CONFIG_MGR_STR;
 

@@ -745,8 +745,8 @@ wxBitmap DrawingUtils::CreateGrayBitmap(const wxBitmap& bmp)
 
 #define DROPDOWN_ARROW_SIZE 20
 
-void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const wxString& label, eButtonKind kind,
-                              eButtonState state)
+void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const wxString& label, const wxBitmap& bmp,
+                              eButtonKind kind, eButtonState state)
 {
     // Draw the background
     wxRect clientRect = rect;
@@ -758,13 +758,8 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     // Now draw the border around this control
     clientRect.Deflate(1);
 
-#if 0
-    wxColour baseColour = GetMenuBarBgColour();
-    wxColour textColour = GetMenuBarTextColour();
-#else
     wxColour baseColour = GetButtonBgColour();
     wxColour textColour = GetButtonTextColour();
-#endif
     wxColour penColour = baseColour.ChangeLightness(80);
 
     int bgLightness = 100;
@@ -821,7 +816,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     if(kind == eButtonKind::kDropDown) {
         dc.SetPen(penColour);
         dc.SetBrush(baseColour);
-        wxRendererNative::Get().DrawDropArrow(win, dc, arrowRect, wxCONTROL_CURRENT);
+        DrawDropDownArrow(win, dc, arrowRect, textColour);
         dc.SetPen(penColour);
         dc.DrawLine(arrowRect.GetX(), clientRect.GetTopLeft().y, arrowRect.GetX(), clientRect.GetBottomLeft().y);
     }
@@ -880,4 +875,42 @@ wxColour DrawingUtils::GetButtonTextColour()
 #else
     return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
 #endif
+}
+
+void DrawingUtils::DrawButtonX(wxDC& dc, wxWindowMSW* win, const wxRect& rect, const wxColour& penColour,
+                               eButtonState state)
+{
+    // Calculate the circle radius:
+    wxRect innerRect(rect);
+    innerRect.Deflate(1);
+    wxColour bgColour = GetButtonBgColour();
+    wxColour bgColourDark = GetButtonBgColour().ChangeLightness(90);
+
+    //wxCoord radiusLen = (innerRect.GetWidth() / 2);
+    //wxPoint radiusPt = wxPoint(rect.GetTopLeft().x + rect.GetWidth() / 2, rect.GetTopLeft().y + rect.GetHeight() / 2);
+    switch(state) {
+    case eButtonState::kHover:
+        dc.SetPen(bgColour);
+        dc.SetBrush(bgColour);
+        dc.DrawRoundedRectangle(rect, 1.5);
+        break;
+    case eButtonState::kPressed:
+        dc.SetPen(bgColourDark);
+        dc.SetBrush(bgColourDark);
+        dc.DrawRoundedRectangle(rect, 1.5);
+        break;
+    default:
+        break;
+    }
+
+    // Draw the 'x'
+    dc.SetPen(wxPen(penColour, 2));
+    dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
+    dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
+}
+
+void DrawingUtils::DrawDropDownArrow(wxWindowMSW* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
+{
+    wxUnusedVar(colour);
+    wxRendererNative::Get().DrawDropArrow(win, dc, rect, wxCONTROL_CURRENT);
 }

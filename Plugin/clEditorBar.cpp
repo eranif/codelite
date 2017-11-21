@@ -122,7 +122,8 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         // Geometry
         m_filenameRect = wxRect(GetClientRect().GetWidth() - filenameButtonWidth - X_SPACER, 0, filenameButtonWidth,
                                 rect.GetHeight() - 2);
-        DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, eButtonKind::kDropDown, m_state);
+        DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, wxNullBitmap, eButtonKind::kDropDown,
+                                 m_state);
         textX += filenameButtonWidth;
         textX += (2 * X_SPACER);
     }

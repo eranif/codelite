@@ -697,24 +697,31 @@ wxFont DrawingUtils::GetDefaultFixedFont()
 clColourPalette DrawingUtils::GetColourPalette()
 {
     // basic dark colours
-    clColourPalette palette;
-    palette.bgColour = wxColour("rgb(64, 64, 64)");
-    palette.penColour = wxColour("rgb(100, 100, 100)");
-    palette.selecteTextColour = *wxWHITE;
-    palette.selectionBgColour = wxColour("rgb(87, 87, 87)");
-    palette.textColour = wxColour("rgb(200, 200, 200)");
-
-    if(::clGetManager()) {
-        IEditor* editor = ::clGetManager()->GetActiveEditor();
-        if(editor && !IsDark(editor->GetCtrl()->StyleGetBackground(0))) {
-            palette.bgColour = wxColour("rgb(230, 230, 230)");
-            palette.penColour = wxColour("rgb(207, 207, 207)");
-            palette.selecteTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-            palette.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-            palette.textColour = wxColour("rgb(0, 0, 0)");
+    clColourPalette p;
+    wxColour baseColour = DrawingUtils::GetPanelBgColour();
+    p.bgColour = baseColour;
+    p.penColour = p.bgColour.ChangeLightness(95);
+    p.textColour = DrawingUtils::GetPanelTextColour();
+    p.selecteTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+    p.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+    
+    IManager* manager = ::clGetManager();
+    if(manager) {
+        IEditor* editor = manager->GetActiveEditor();
+        if(editor) {
+            wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
+            if(DrawingUtils::IsDark(bgColour)) {
+                // Dark colour
+                wxColour baseColour = bgColour.ChangeLightness(105);
+                p.bgColour = baseColour;
+                p.penColour = p.bgColour.ChangeLightness(110);
+                p.textColour = *wxWHITE;
+                p.selecteTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+                p.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+            }
         }
     }
-    return palette;
+    return p;
 }
 
 wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)

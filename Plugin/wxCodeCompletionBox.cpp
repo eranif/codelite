@@ -97,26 +97,25 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     // Default colorus (dark theme)
     clColourPalette palette = DrawingUtils::GetColourPalette();
 
-    m_lightBorder = wxColour("rgb(77, 77, 77)");
-    m_darkBorder = wxColour("rgb(54, 54, 54)");
-    m_penColour = palette.penColour;
+    // Default colours
+    wxColour baseColour = DrawingUtils::GetPanelBgColour();
     m_bgColour = palette.bgColour;
+    m_penColour = palette.penColour;
+    m_separatorColour = m_bgColour.ChangeLightness(98);
     m_textColour = palette.textColour;
     m_selectedTextColour = palette.selecteTextColour;
-    m_selection = palette.selectionBgColour;
-    m_scrollBgColour = wxColour("rgb(50, 50, 50)");
+    m_selectedTextBgColour = palette.selectionBgColour;
+    m_useLightColours = true;
 
     IManager* manager = ::clGetManager();
     if(manager) {
         IEditor* editor = manager->GetActiveEditor();
         if(editor) {
             wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-            if(!DrawingUtils::IsDark(bgColour)) {
-                m_useLightColours = true;
-                // Need bright colours
-                m_lightBorder = *wxWHITE;
-                m_darkBorder = wxColour("rgb(207, 207, 207)");
-                m_scrollBgColour = wxColour("rgb(198, 198, 198)");
+            if(DrawingUtils::IsDark(bgColour)) {
+                // Dark colour
+                m_separatorColour = m_bgColour.ChangeLightness(102);
+                m_useLightColours = false;
             }
         }
     }
@@ -174,7 +173,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
     m_canvas->PrepareDC(dc);
     // Draw the entire box with single solid colour
-    dc.SetBrush(m_useLightColours ? m_bgColour : m_lightBorder);
+    dc.SetBrush(m_bgColour);
     dc.SetPen(m_penColour);
 #ifdef __WXOSX__
     rect.Inflate(1, 1);
@@ -183,7 +182,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
     // Shrink the rectangle by 2 to provide a 2 pixle
     // border
-    rect.Deflate(2, 2);
+    rect.Deflate(1, 1);
     dc.SetBrush(m_bgColour);
     dc.SetPen(m_bgColour);
     dc.DrawRectangle(rect);
@@ -204,24 +203,23 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     }
 
     // Paint the entries, starting from m_index => m_index + 7
-    wxCoord y = 0; // Initial coord for drawing the first line
+    wxCoord y = 1; // Initial coord for drawing the first line
     wxCoord textX = m_bitmaps.empty() ? 2 : clGetScaledSize(20);
     wxCoord bmpX = clGetScaledSize(2);
 
     // Draw all items from firstIndex => lastIndex
     for(int i = firstIndex; i < lastIndex; ++i) {
         bool isSelected = (i == m_index);
+        bool isLast = ((firstIndex + 1) == lastIndex);
         wxRect itemRect(0, y, rect.GetWidth(), singleLineHeight);
         if(isSelected) {
             // highlight the selection
-            dc.SetBrush(m_selection);
-            dc.SetPen(m_selection);
+            dc.SetBrush(m_selectedTextBgColour);
+            dc.SetPen(m_selectedTextBgColour);
             dc.DrawRectangle(itemRect);
         }
 
-        dc.SetTextForeground(isSelected ? m_selectedTextColour : m_textColour);
-        dc.SetPen(m_lightBorder);
-        dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
+        dc.SetPen(m_separatorColour);
 
         // If this item has a bitmap, draw it
         wxCodeCompletionBoxEntry::Ptr_t entry = m_entries.at(i);
@@ -247,11 +245,14 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
         wxSize itemTextSize = dc.GetTextExtent(choppedText);
         wxCoord textY = ((singleLineHeight - itemTextSize.GetHeight()) / 2) + itemRect.y;
+        dc.SetTextForeground(isSelected ? m_selectedTextColour : m_textColour);
         dc.DrawText(choppedText, textX, textY);
         dc.DestroyClippingRegion();
         y += singleLineHeight;
-        dc.SetPen(m_darkBorder);
-        dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
+        dc.SetPen(m_separatorColour);
+        if(!isLast) {
+            dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
+        }
         entry->m_itemRect = itemRect;
     }
 
@@ -260,9 +261,9 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     //===================--------------------------------------
 
     wxRect scrollRect = m_scrollArea;
-    scrollRect.Deflate(0, 2);
-    scrollRect.SetWidth(scrollRect.GetWidth() - 2);
-    dc.GradientFillLinear(scrollRect, m_scrollBgColour, m_scrollBgColour);
+    dc.SetPen(m_penColour);
+    dc.SetBrush(m_penColour);
+    dc.DrawRectangle(scrollRect);
     DoDrawBottomScrollButton(dc);
     DoDrawTopScrollButton(dc);
 }
@@ -638,8 +639,6 @@ void wxCodeCompletionBox::DoDestroy() { wxCodeCompletionBoxManager::Get().Destro
 void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
 {
     wxRect scrollRect = m_scrollArea;
-    scrollRect.Deflate(0, 2);
-    scrollRect.SetWidth(scrollRect.GetWidth() - 2);
 
     // Separate the scrollbar area into 2 big buttons: up and down
     m_scrollBottomRect =
@@ -657,8 +656,6 @@ void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
 void wxCodeCompletionBox::DoDrawTopScrollButton(wxDC& dc)
 {
     wxRect scrollRect = m_scrollArea;
-    scrollRect.Deflate(0, 2);
-    scrollRect.SetWidth(scrollRect.GetWidth() - 2);
 
     // Separate the scrollbar area into 2 big buttons: up and down
     m_scrollTopRect = wxRect(scrollRect.GetTopLeft(), wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));

@@ -26,33 +26,33 @@
 #if HAS_LIBCLANG
 
 #include "clang_code_completion.h"
-#include "pluginmanager.h"
-#include "shell_command.h"
+#include "clang_compilation_db_thread.h"
 #include "compilation_database.h"
 #include "compiler_command_line_parser.h"
-#include "clang_compilation_db_thread.h"
-#include "parse_thread.h"
-#include "event_notifier.h"
 #include "ctags_manager.h"
-#include "tags_options_data.h"
-#include "includepathlocator.h"
 #include "environmentconfig.h"
+#include "event_notifier.h"
 #include "file_logger.h"
-#include "processreaderthread.h"
-#include "globals.h"
-#include "jobqueue.h"
 #include "fileextmanager.h"
-#include <wx/tokenzr.h>
+#include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "workspace.h"
-#include "project.h"
-#include <wx/filename.h>
-#include <wx/dir.h>
-#include <wx/arrstr.h>
-#include "procutils.h"
+#include "includepathlocator.h"
+#include "jobqueue.h"
 #include "manager.h"
+#include "parse_thread.h"
+#include "pluginmanager.h"
+#include "processreaderthread.h"
+#include "procutils.h"
+#include "project.h"
+#include "shell_command.h"
+#include "tags_options_data.h"
+#include "workspace.h"
 #include <memory>
+#include <wx/arrstr.h>
+#include <wx/dir.h>
+#include <wx/filename.h>
+#include <wx/tokenzr.h>
 
 #define CHECK_CLANG_ENABLED_RET() \
     if(!(TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & CC_CLANG_ENABLED)) return;
@@ -62,53 +62,49 @@ ClangCodeCompletion* ClangCodeCompletion::ms_instance = 0;
 ClangCodeCompletion::ClangCodeCompletion()
     : m_allEditorsAreClosing(false)
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_FILE_SAVED, clCommandEventHandler(ClangCodeCompletion::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_ALL_EDITORS_CLOSING, wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_BUILD_STARTING, clBuildEventHandler(ClangCodeCompletion::OnBuildStarting), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_BUILD_ENDED, clBuildEventHandler(ClangCodeCompletion::OnBuildEnded), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded),
+                                  NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ClangCodeCompletion::OnFileSaved), NULL,
+                                  this);
+    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSING,
+                                  wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED,
+                                  wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(ClangCodeCompletion::OnBuildStarting), NULL,
+                                  this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(ClangCodeCompletion::OnBuildEnded), NULL,
+                                  this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed),
+                                  NULL, this);
 }
 
 ClangCodeCompletion::~ClangCodeCompletion()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_FILE_SAVED, clCommandEventHandler(ClangCodeCompletion::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ALL_EDITORS_CLOSING, wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_BUILD_STARTING, clBuildEventHandler(ClangCodeCompletion::OnBuildStarting), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_BUILD_ENDED, clBuildEventHandler(ClangCodeCompletion::OnBuildEnded), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
+                                     wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ClangCodeCompletion::OnFileSaved), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSING,
+                                     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED,
+                                     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(ClangCodeCompletion::OnBuildStarting),
+                                     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(ClangCodeCompletion::OnBuildEnded), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,
+                                     wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed), NULL, this);
 }
 
 ClangCodeCompletion* ClangCodeCompletion::Instance()
 {
-    if(ms_instance == 0) {
-        ms_instance = new ClangCodeCompletion();
-    }
+    if(ms_instance == 0) { ms_instance = new ClangCodeCompletion(); }
     return ms_instance;
 }
 
 void ClangCodeCompletion::Release()
 {
-    if(ms_instance) {
-        delete ms_instance;
-    }
+    if(ms_instance) { delete ms_instance; }
     ms_instance = 0;
 }
 
@@ -192,8 +188,8 @@ void ClangCodeCompletion::OnFileSaved(clCommandEvent& e)
     e.Skip();
     CHECK_CLANG_ENABLED_RET();
 
-    if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & ::CC_DISABLE_AUTO_PARSING) {
-        CL_DEBUG(wxT("ClangCodeCompletion::OnFileSaved: Auto-parsing of saved files is disabled"));
+    if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) {
+        clDEBUG1() << "ClangCodeCompletion::OnFileSaved: Auto-parsing of saved files is disabled";
         return;
     }
 

@@ -877,7 +877,7 @@ wxColour DrawingUtils::GetButtonTextColour()
 #endif
 }
 
-void DrawingUtils::DrawButtonX(wxDC& dc, wxWindowMSW* win, const wxRect& rect, const wxColour& penColour,
+void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
                                eButtonState state)
 {
     // Calculate the circle radius:
@@ -909,7 +909,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindowMSW* win, const wxRect& rect, c
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
 }
 
-void DrawingUtils::DrawDropDownArrow(wxWindowMSW* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
+void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
 {
     wxUnusedVar(colour);
     wxRendererNative::Get().DrawDropArrow(win, dc, rect, wxCONTROL_CURRENT);

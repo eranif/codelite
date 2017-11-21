@@ -101,7 +101,7 @@ public:
     /**
      * @brief draw a close button
      */
-    static void DrawButtonX(wxDC& dc, wxWindowMSW* win, const wxRect& rect, const wxColour& penColour,
+    static void DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
                             eButtonState state);
     
     /**

@@ -428,7 +428,16 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     return cmpArgs;
 }
 
-void ClangDriver::ClearCache() { m_pchMakerThread.ClearCache(); }
+void ClangDriver::ClearCache()
+{
+    m_pchMakerThread.ClearCache();
+    wxLogNull NoLog;
+    std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const wxStringMap_t::value_type& vt) {
+        // Delete the temp files (the keys in the cache)
+        clDEBUG() << "Clang: deleting temp file:" << vt.first;
+        ::wxRemoveFile(vt.first);
+    });
+}
 
 bool ClangDriver::IsCacheEmpty() { return m_pchMakerThread.IsCacheEmpty(); }
 
@@ -516,9 +525,10 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 
     // Replace "filename" with the real file
     if(m_filesTable.count(reply->filename)) {
-        clDEBUG() << "Clang: setting real file name:" << reply->filename << "->" << m_filesTable[reply->filename];
-        reply->filename = m_filesTable[reply->filename];
-        m_filesTable.erase(reply->filename);
+        wxString tempFileName = reply->filename;
+        clDEBUG() << "Clang: setting real file name:" << tempFileName << "->" << m_filesTable[tempFileName];
+        reply->filename = m_filesTable[tempFileName];
+        m_filesTable.erase(tempFileName);
     }
 
     // Just a notification without real info?

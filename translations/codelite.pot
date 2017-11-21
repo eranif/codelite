@@ -5789,7 +5789,7 @@ msgid ""
 msgstr ""
 
 #: QmakePlugin/qmakesettingsbasedlg.cpp:29
-msgid "Add / modfiy qmake configurations:"
+msgid "Add / modify qmake configurations:"
 msgstr ""
 
 #: QmakePlugin/qmakesettingsbasedlg.cpp:50

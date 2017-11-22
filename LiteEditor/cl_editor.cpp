@@ -2700,7 +2700,10 @@ size_t LEditor::GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarks
         wxString snippet = GetLine(nFoundLine);
         snippet.Trim().Trim(false);
         if(!snippet.IsEmpty()) {
-            snippet = snippet.Mid(0, snippet.size() > 20 ? 20 : snippet.size());
+            snippet = snippet.Mid(0, snippet.size() > 40 ? 40 : snippet.size());
+            if(snippet.size() == 40) {
+                snippet << "...";
+            }
         }
         bookmarksVector.push_back({ nFoundLine + 1, snippet });
         ++nFoundLine;

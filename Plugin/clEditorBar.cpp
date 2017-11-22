@@ -107,15 +107,6 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         fulltext << m_function;
     }
 
-    if(!fulltext.IsEmpty()) {
-        int scopeButtonWidth = gcdc.GetTextExtent("W" + fulltext + "W").GetWidth();
-        m_scopeRect = wxRect(textX, 0, scopeButtonWidth + 20, rect.GetHeight() - 2);
-        DrawingUtils::DrawButton(gcdc, this, m_scopeRect, fulltext, wxNullBitmap, eButtonKind::kDropDown,
-                                 m_scopeButtonState);
-        textX += m_scopeRect.GetWidth();
-    }
-
-    textX += X_SPACER;
     if(!m_breadcrumbs.IsEmpty()) {
         wxString breadcumbsText;
         for(size_t i = 0; i < m_breadcrumbs.size(); ++i) {
@@ -127,10 +118,11 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         int filenameButtonWidth = gcdc.GetTextExtent("W" + breadcumbsText + "W").GetWidth();
 
         // Geometry
-        m_filenameRect = wxRect(textX, 0, filenameButtonWidth, rect.GetHeight() - 2);
+        // We add 20 since its the drop down button size
+        m_filenameRect = wxRect(textX, 0, filenameButtonWidth + 20, rect.GetHeight() - 2);
         DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, wxNullBitmap, eButtonKind::kDropDown,
                                  m_state);
-        textX += filenameButtonWidth;
+        textX += m_filenameRect.GetWidth();
         textX += X_SPACER;
 
         wxString bookmarksLabel = _("Bookmarks");
@@ -140,6 +132,17 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         m_bookmarksRect = wxRect(textX, 0, bookmarksTextSize.GetWidth() + 60, rect.GetHeight() - 2);
         DrawingUtils::DrawButton(gcdc, this, m_bookmarksRect, bookmarksLabel, m_bookmarksBmp, eButtonKind::kDropDown,
                                  m_bookmarksButtonState);
+                                 
+        textX += m_bookmarksRect.GetWidth();
+        textX += X_SPACER;
+    }
+
+    if(!fulltext.IsEmpty()) {
+        int scopeButtonWidth = gcdc.GetTextExtent("W" + fulltext + "W").GetWidth();
+        m_scopeRect = wxRect(textX, 0, scopeButtonWidth + 20, rect.GetHeight() - 2);
+        DrawingUtils::DrawButton(gcdc, this, m_scopeRect, fulltext, wxNullBitmap, eButtonKind::kDropDown,
+                                 m_scopeButtonState);
+        textX += m_scopeRect.GetWidth();
     }
 }
 
@@ -290,7 +293,7 @@ void clEditorBar::OnLeftUp(wxMouseEvent& e)
             wxMenu menu;
             std::unordered_map<int, int> M;
             std::for_each(V.begin(), V.end(), [&](const std::pair<int, wxString>& p) {
-                wxString text = wxString::Format(wxT("Line %5u: "), p.first);
+                wxString text = wxString::Format(wxT("Ln %5u: "), p.first);
                 text << p.second;
                 M[menu.Append(wxID_ANY, text)->GetId()] = p.first; // Make the menu item ID with the line number
             });

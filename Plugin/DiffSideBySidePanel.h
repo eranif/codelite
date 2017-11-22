@@ -104,8 +104,6 @@ protected:
     int m_cur_sequence;
 
     size_t m_flags;
-    wxString m_leftCaption;
-    wxString m_rightCaption;
     DiffConfig m_config;
     bool m_ignoreWhitespaceDiffs;
     bool m_showLinenos;

@@ -98,6 +98,8 @@ protected:
     
     bool m_darkTheme;
 
+    bool m_storeFilepaths;
+
     std::vector<std::pair<int, int> > m_sequences; // start-line - end-line pairs
     int m_cur_sequence;
 
@@ -194,6 +196,13 @@ public:
      * @brief set the initial files to diff
      * Once set, you should call Diff() function
      */
-    void SetFilesDetails(const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile);
+    void SetFilesDetails(const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile);    
+
+    /**
+     * @brief set whether to store the diff's filepaths for later reload
+     */
+    void SetSaveFilepaths(bool save) {
+        m_storeFilepaths = save;
+    }
 };
 #endif // DIFFSIDEBYSIDEPANEL_H

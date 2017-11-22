@@ -24,7 +24,7 @@ void NewFileComparison::OnBrowse(wxCommandEvent& event)
     wxString initialPath;
     m_textCtrlFileName->IsEmpty() ? initialPath = lastPath : initialPath =
                                                                  wxFileName(m_textCtrlFileName->GetValue()).GetPath();
-    wxString file = wxFileSelector(wxT("Select file:"), initialPath);
+    wxString file = wxFileSelector(_("Select file:"), initialPath);
     if(!file.IsEmpty()) {
         wxFileName selectedFile(file);
         lastPath = selectedFile.GetPath();
@@ -35,7 +35,7 @@ void NewFileComparison::OnBrowse(wxCommandEvent& event)
 void NewFileComparison::OnOKUI(wxUpdateUIEvent& event)
 {
     wxFileName fn(m_textCtrlFileName->GetValue());
-    event.Enable(fn.Exists());
+    event.Enable(fn.Exists() || m_textCtrlFileName->GetValue().StartsWith("Untitled"));
 }
 
 void NewFileComparison::OnFileSelected(wxCommandEvent& event)

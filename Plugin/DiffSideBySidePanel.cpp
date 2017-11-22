@@ -59,6 +59,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     , m_ignoreWhitespaceDiffs(false)
     , m_showLinenos(false)
     , m_showOverviewBar(true)
+    , m_storeFilepaths(true)
 {
     Hide();
     m_config.Load();
@@ -101,6 +102,11 @@ DiffSideBySidePanel::~DiffSideBySidePanel()
 
     // save the configuration
     m_config.Save();
+
+    // Clean up any temporary files
+    wxString tpath(wxFileName::GetTempDir());
+    tpath << wxFileName::GetPathSeparator() << "CLdiff";
+    wxFileName::Rmdir(tpath, wxPATH_RMDIR_RECURSIVE);
 
     EventNotifier::Get()->Disconnect(
         wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
@@ -725,7 +731,9 @@ void DiffSideBySidePanel::DiffNew()
 {
     m_staticTextLeft->Hide();
     m_staticTextRight->Hide();
-    m_flags = kSavePaths; // store the paths on exit
+    if (m_storeFilepaths) {
+        m_flags = kSavePaths; // store the paths on exit
+    }
     m_config.SetViewMode(DiffConfig::kViewVerticalSplit);
     m_splitter->Unsplit();
     m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight);
@@ -752,7 +760,9 @@ void DiffSideBySidePanel::DiffNew(const wxFileName& left, const wxFileName& righ
 
     m_staticTextLeft->Hide();
     m_staticTextRight->Hide();
-    m_flags = kSavePaths; // store the paths on exit
+    if (m_storeFilepaths) {
+        m_flags = kSavePaths; // store the paths on exit
+    }
     m_config.SetViewMode(DiffConfig::kViewVerticalSplit);
     m_splitter->Unsplit();
     m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight);

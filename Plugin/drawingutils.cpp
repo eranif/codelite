@@ -813,17 +813,36 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
         arrowRect = wxRect(xx, yy, DROPDOWN_ARROW_SIZE, DROPDOWN_ARROW_SIZE);
     }
 
+    if(bmp.IsOk()) {
+        if(label.IsEmpty()) {
+            // There is no label, draw the bitmap centred
+            // Bitmaps are drawn to the _left_ of the text
+            int bmpX = textRect.GetX() + ((textRect.GetWidth() - bmp.GetScaledWidth()) / 2);
+            int bmpY = textRect.GetY() + ((textRect.GetHeight() - bmp.GetScaledHeight()) / 2);
+            dc.DrawBitmap(bmp, bmpX, bmpY);
+        } else {
+            // Bitmaps are drawn to the _left_ of the text
+            int xx = textRect.GetX();
+            xx += 5;
+            int bmpY = textRect.GetY() + ((textRect.GetHeight() - bmp.GetScaledHeight()) / 2);
+            dc.DrawBitmap(bmp, xx, bmpY);
+            xx += bmp.GetScaledWidth();
+            textRect.SetX(xx);
+        }
+    }
+
     // Draw the label
-    wxString truncatedText;
-    TruncateText(label, textRect.GetWidth() - 5, dc, truncatedText);
-    wxSize textSize = dc.GetTextExtent(label);
-    int textX = textRect.GetX() + 5;
-    int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
-    dc.SetClippingRegion(textRect);
-    dc.SetFont(GetDefaultGuiFont());
-    dc.SetTextForeground(textColour);
-    dc.DrawText(truncatedText, textX, textY);
-    dc.DestroyClippingRegion();
+    if(!label.IsEmpty()) {
+        wxString truncatedText;
+        TruncateText(label, textRect.GetWidth() - 5, dc, truncatedText);
+        wxSize textSize = dc.GetTextExtent(label);
+        int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
+        dc.SetClippingRegion(textRect);
+        dc.SetFont(GetDefaultGuiFont());
+        dc.SetTextForeground(textColour);
+        dc.DrawText(truncatedText, textRect.GetX() + 5, textY);
+        dc.DestroyClippingRegion();
+    }
 
     // Draw the drop down button
     if(kind == eButtonKind::kDropDown) {

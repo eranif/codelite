@@ -1,7 +1,8 @@
 #ifndef CLEDITORBAR_H
 #define CLEDITORBAR_H
-#include "drawingutils.h"
+
 #include "wxcrafter_plugin.h"
+#include "drawingutils.h"
 #include <wx/colour.h>
 #include <wx/font.h>
 
@@ -14,7 +15,9 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxColour m_defaultColour;
     wxColour m_bgColour;
     wxFont m_textFont;
-
+    wxRect m_scopeRect;
+    eButtonState m_scopeButtonState;
+    
     // Breadcrumbs
     wxString m_filename;
     wxString m_filenameRelative;
@@ -25,15 +28,21 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxRect m_filenameRect;
     eButtonState m_state;
 
+    // Bookmarks button
+    wxBitmap m_bookmarksBmp;
+    wxRect m_bookmarksRect;
+    eButtonState m_bookmarksButtonState;
+
 private:
     void DoRefreshColoursAndFonts();
+    void DoRefresh();
 
 public:
     clEditorBar(wxWindow* parent);
     virtual ~clEditorBar();
     void SetMessage(const wxString& className, const wxString& function);
     void DoShow(bool s);
-
+    
 protected:
     virtual void OnEditorSize(wxSizeEvent& e);
     virtual void OnEraseBG(wxEraseEvent& e);
@@ -42,7 +51,6 @@ protected:
     void OnLeftDown(wxMouseEvent& e);
     void OnLeftUp(wxMouseEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
-    void OnEnterWindow(wxMouseEvent& e);
-    void OnLeaveWindow(wxMouseEvent& e);
+    void OnIdle(wxIdleEvent& e);
 };
 #endif // CLEDITORBAR_H

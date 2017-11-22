@@ -1,5 +1,6 @@
 #include "ColoursAndFontsManager.h"
 #include "IWorkspace.h"
+#include "bitmap_loader.h"
 #include "clEditorBar.h"
 #include "clTabRenderer.h"
 #include "clWorkspaceManager.h"
@@ -24,31 +25,44 @@
 
 clEditorBar::clEditorBar(wxWindow* parent)
     : clEditorBarBase(parent)
+    , m_scopeButtonState(eButtonState::kNormal)
     , m_state(eButtonState::kNormal)
+    , m_bookmarksButtonState(eButtonState::kNormal)
 {
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memDC(bmp);
-    m_defaultColour = DrawingUtils::GetPanelTextColour();
-    m_functionColour = DrawingUtils::GetPanelTextColour();
-    m_classColour = DrawingUtils::GetPanelTextColour();
-    m_bgColour = DrawingUtils::GetPanelBgColour();
-    m_textFont = m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    LexerConf::Ptr_t defaultLexer = ColoursAndFontsManager::Get().GetLexer("default");
-    if(defaultLexer) { m_textFont = defaultLexer->GetFontForSyle(0); }
+    {
+        wxBitmap bmp(1, 1);
+        wxMemoryDC memDC(bmp);
+        m_defaultColour = DrawingUtils::GetPanelTextColour();
+        m_functionColour = DrawingUtils::GetPanelTextColour();
+        m_classColour = DrawingUtils::GetPanelTextColour();
+        m_bgColour = DrawingUtils::GetPanelBgColour();
+        m_textFont = m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        LexerConf::Ptr_t defaultLexer = ColoursAndFontsManager::Get().GetLexer("default");
+        if(defaultLexer) { m_textFont = defaultLexer->GetFontForSyle(0); }
 
-    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditorBar::OnEditorChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clEditorBar::OnThemeChanged, this);
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
+        EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditorBar::OnEditorChanged, this);
+        EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
+        EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
+        EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clEditorBar::OnThemeChanged, this);
+        SetBackgroundStyle(wxBG_STYLE_PAINT);
 
-    memDC.SetFont(m_textFont);
-    wxSize sz = memDC.GetTextExtent("Tp");
-    sz.y += 2 * Y_SPACER; // 2*3 pixels
-    SetSizeHints(wxSize(-1, sz.y));
+        memDC.SetFont(m_textFont);
+        wxSize sz = memDC.GetTextExtent("Tp");
+        sz.y += (2 * Y_SPACER); // 2*3 pixels
+        SetSizeHints(wxSize(-1, sz.y));
+    }
 
-    Bind(wxEVT_ENTER_WINDOW, &clEditorBar::OnEnterWindow, this);
-    Bind(wxEVT_LEAVE_WINDOW, &clEditorBar::OnLeaveWindow, this);
+    {
+        m_bookmarksBmp = wxBitmap(16, 16);
+        wxMemoryDC memDC(m_bookmarksBmp);
+        wxColour c("rgb(255, 128, 64)");
+        memDC.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+        memDC.SetBrush(wxColour(c));
+        memDC.DrawRectangle(0, 0, 16, 16);
+        memDC.SelectObject(wxNullBitmap);
+    }
+
+    Bind(wxEVT_IDLE, &clEditorBar::OnIdle, this);
     Bind(wxEVT_LEFT_UP, &clEditorBar::OnLeftUp, this);
 }
 
@@ -58,8 +72,7 @@ clEditorBar::~clEditorBar()
     EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clEditorBar::OnThemeChanged, this);
-    Unbind(wxEVT_ENTER_WINDOW, &clEditorBar::OnEnterWindow, this);
-    Unbind(wxEVT_LEAVE_WINDOW, &clEditorBar::OnLeaveWindow, this);
+    Unbind(wxEVT_IDLE, &clEditorBar::OnIdle, this);
     Unbind(wxEVT_LEFT_UP, &clEditorBar::OnLeftUp, this);
 }
 
@@ -70,62 +83,54 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
     PrepareDC(bdc);
     wxGCDC gcdc(bdc);
     PrepareDC(gcdc);
-
+    
+    wxFont guiFont = clTabRenderer::GetTabFont();
     wxRect rect(GetClientRect());
     gcdc.SetPen(m_bgColour);
     gcdc.SetBrush(m_bgColour);
     gcdc.DrawRectangle(rect);
 
+    // Draw the text
+    wxCoord textX = X_SPACER;
+    gcdc.SetFont(guiFont);
+
     wxString fulltext;
     if(!m_classname.IsEmpty()) { fulltext << m_classname << "::"; }
     if(!m_function.IsEmpty()) { fulltext << m_function; }
 
-    gcdc.SetFont(m_textFont);
-    fulltext << "wwww"; // spacer
-    // wxSize fulltextSize = gcdc.GetTextExtent(fulltext);
-
-    // Draw the text
-    wxCoord textX = X_SPACER;
-    gcdc.SetFont(m_textFont);
-    wxSize textSize;
-    wxCoord textY = ((rect.GetHeight() - gcdc.GetTextExtent("Tp").GetHeight()) / 2);
-
-    const int filenameButtonWidth = 400 + (4 * X_SPACER);
-
-    if(!m_classname.IsEmpty()) {
-        textSize = gcdc.GetTextExtent(m_classname);
-        gcdc.SetTextForeground(m_classColour);
-        gcdc.DrawText(m_classname, textX, textY);
-        textX += textSize.x;
-
-        textSize = gcdc.GetTextExtent("::");
-        gcdc.SetTextForeground(m_defaultColour);
-        gcdc.DrawText("::", textX, textY);
-        textX += textSize.x;
+    if(!fulltext.IsEmpty()) {
+        int scopeButtonWidth = gcdc.GetTextExtent("W" + fulltext + "W").GetWidth();
+        m_scopeRect = wxRect(textX, 0, scopeButtonWidth + 20, rect.GetHeight() - 2);
+        DrawingUtils::DrawButton(gcdc, this, m_scopeRect, fulltext, wxNullBitmap, eButtonKind::kDropDown,
+                                 m_scopeButtonState);
+        textX += m_scopeRect.GetWidth();
     }
-
-    if(!m_function.IsEmpty()) {
-        textSize = gcdc.GetTextExtent(m_function);
-        gcdc.SetTextForeground(m_functionColour);
-        gcdc.DrawText(m_function, textX, textY);
-        textX += textSize.x;
-    }
-
+    
+    textX += X_SPACER;
     if(!m_breadcrumbs.IsEmpty()) {
         wxString breadcumbsText;
         for(size_t i = 0; i < m_breadcrumbs.size(); ++i) {
             breadcumbsText << m_breadcrumbs.Item(i) << " / ";
         }
+
         breadcumbsText.RemoveLast(3);
-        wxFont guiFont = clTabRenderer::GetTabFont();
         gcdc.SetFont(guiFont);
+        int filenameButtonWidth = gcdc.GetTextExtent("W" + breadcumbsText + "W").GetWidth();
+
         // Geometry
-        m_filenameRect = wxRect(GetClientRect().GetWidth() - filenameButtonWidth - X_SPACER, 0, filenameButtonWidth,
-                                rect.GetHeight() - 2);
+        m_filenameRect = wxRect(textX, 0, filenameButtonWidth, rect.GetHeight() - 2);
         DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, wxNullBitmap, eButtonKind::kDropDown,
                                  m_state);
         textX += filenameButtonWidth;
-        textX += (2 * X_SPACER);
+        textX += X_SPACER;
+
+        wxString bookmarksLabel = _("Bookmarks");
+        wxSize bookmarksTextSize = gcdc.GetTextExtent(bookmarksLabel);
+
+        // Add 60 (about 40 for the image and 20 needed for the drop down button
+        m_bookmarksRect = wxRect(textX, 0, bookmarksTextSize.GetWidth() + 60, rect.GetHeight() - 2);
+        DrawingUtils::DrawButton(gcdc, this, m_bookmarksRect, bookmarksLabel, m_bookmarksBmp, eButtonKind::kDropDown,
+                                 m_bookmarksButtonState);
     }
 }
 
@@ -207,8 +212,11 @@ void clEditorBar::OnEditorSize(wxSizeEvent& event)
     DoRefreshColoursAndFonts();
 }
 
-void clEditorBar::OnLeftDown(wxMouseEvent& e)
+void clEditorBar::OnLeftDown(wxMouseEvent& e) { e.Skip(); }
+
+void clEditorBar::OnLeftUp(wxMouseEvent& e)
 {
+    e.Skip();
     if(m_filenameRect.Contains(e.GetPosition())) {
         wxMenu menu;
         wxString text;
@@ -263,23 +271,28 @@ void clEditorBar::OnLeftDown(wxMouseEvent& e)
             ::CopyToClipboard(text);
             clGetManager()->SetStatusMessage((wxString() << "'" << text << _("' copied!")), 2);
         }
+    } else if(m_bookmarksRect.Contains(e.GetPosition())) {
+        // TODO: show bookmarks menu here
+    } else if(m_scopeRect.Contains(e.GetPosition())) {
+        // TODO: show scope menu here
     }
 }
 
-void clEditorBar::OnLeftUp(wxMouseEvent& e)
-{
-    m_state = eButtonState::kNormal;
-    Refresh();
-}
+void clEditorBar::DoRefresh() { Refresh(); }
 
-void clEditorBar::OnEnterWindow(wxMouseEvent& e)
+void clEditorBar::OnIdle(wxIdleEvent& e)
 {
-    m_state = eButtonState::kHover;
-    Refresh();
-}
-
-void clEditorBar::OnLeaveWindow(wxMouseEvent& e)
-{
-    m_state = eButtonState::kNormal;
-    Refresh();
+    e.Skip();
+    wxPoint pos = ScreenToClient(::wxGetMousePosition());
+    if(GetClientRect().Contains(pos)) {
+        m_state = m_bookmarksButtonState = m_scopeButtonState = eButtonState::kNormal;
+        if(m_filenameRect.Contains(pos)) {
+            m_state = eButtonState::kHover;
+        } else if(m_bookmarksRect.Contains(pos)) {
+            m_bookmarksButtonState = eButtonState::kHover;
+        } else if(m_scopeRect.Contains(pos)) {
+            m_scopeButtonState = eButtonState::kHover;
+        }
+        CallAfter(&clEditorBar::DoRefresh);
+    }
 }

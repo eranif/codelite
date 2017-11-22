@@ -303,7 +303,7 @@ void clEditorBar::OnLeftUp(wxMouseEvent& e)
             int selection = GetPopupMenuSelectionFromUser(menu, menuPoint);
             if(selection == wxID_NONE) return;
             if(M.count(selection)) {
-                int lineNumber = M[selection];
+                int lineNumber = M[selection] - 1;
                 editor->CenterLine(lineNumber);
                 editor->GetCtrl()->EnsureVisible(lineNumber);
                 editor->GetCtrl()->EnsureCaretVisible();

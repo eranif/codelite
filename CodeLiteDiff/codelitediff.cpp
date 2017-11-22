@@ -147,6 +147,25 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
             }
             secondFile = rightFn.GetFullPath();
         }
+
+        // Check that we're not trying to diff an editor against itself
+        // If we are and it's been edited, diff against the unaltered version
+        if (m_leftFile.GetFullPath() == secondFile) {
+            IEditor* editor = m_mgr->FindEditor(secondFile);
+            if (editor && editor->IsModified()) {
+                wxFileName rightFn = SaveEditorToTmpfile(editor);
+                if (!rightFn.IsOk()) {
+                    CL_DEBUG("CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile");
+                    return;
+                }
+                secondFile = rightFn.GetFullPath();
+
+            } else {
+                CL_DEBUG("CodeLiteDiff::OnDiff: trying to diff an editor against itself");
+                return;
+            }
+        }
+        
         DiffSideBySidePanel* diff = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
         if (tempfile) {
             diff->SetSaveFilepaths(false); // We don't want to store temporary filepaths

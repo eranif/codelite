@@ -509,6 +509,14 @@ public:
      * @brief apply editor configuration (TAB vs SPACES, tab size, EOL mode etc)
      */
     virtual void ApplyEditorConfig() = 0;
+    
+    /**
+     * @brief return list of bookmarks for a given editor
+     * @param editor the editor
+     * @param bookmarksVector output, contains pairs of: LINE:SNIPPET
+     * @return number of bookmarks found
+     */
+    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector) = 0;
 };
 
 #endif // IEDITOR_H

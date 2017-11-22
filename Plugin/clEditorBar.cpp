@@ -21,6 +21,7 @@
 #include <wx/menu.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
+#include "bookmark_manager.h"
 
 #define X_SPACER 10
 #define Y_SPACER 5
@@ -40,7 +41,9 @@ clEditorBar::clEditorBar(wxWindow* parent)
         m_bgColour = DrawingUtils::GetPanelBgColour();
         m_textFont = m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
         LexerConf::Ptr_t defaultLexer = ColoursAndFontsManager::Get().GetLexer("default");
-        if(defaultLexer) { m_textFont = defaultLexer->GetFontForSyle(0); }
+        if(defaultLexer) {
+            m_textFont = defaultLexer->GetFontForSyle(0);
+        }
 
         EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditorBar::OnEditorChanged, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
@@ -97,8 +100,12 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
     gcdc.SetFont(guiFont);
 
     wxString fulltext;
-    if(!m_classname.IsEmpty()) { fulltext << m_classname << "::"; }
-    if(!m_function.IsEmpty()) { fulltext << m_function; }
+    if(!m_classname.IsEmpty()) {
+        fulltext << m_classname << "::";
+    }
+    if(!m_function.IsEmpty()) {
+        fulltext << m_function;
+    }
 
     if(!fulltext.IsEmpty()) {
         int scopeButtonWidth = gcdc.GetTextExtent("W" + fulltext + "W").GetWidth();
@@ -153,7 +160,9 @@ void clEditorBar::SetMessage(const wxString& className, const wxString& function
 
 void clEditorBar::DoShow(bool s)
 {
-    if(Show(s)) { GetParent()->GetSizer()->Layout(); }
+    if(Show(s)) {
+        GetParent()->GetSizer()->Layout();
+    }
 }
 
 void clEditorBar::OnThemeChanged(wxCommandEvent& e)
@@ -182,7 +191,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
             m_classColour = darkBG ? "rgb(224, 108, 117)" : "rgb(0, 64, 128)";
             m_functionColour = m_defaultColour;
             m_textFont = lexer->GetFontForSyle(0); // Default font
-            // m_textFont.SetPointSize(m_textFont.GetPointSize() - 1);
+                                                   // m_textFont.SetPointSize(m_textFont.GetPointSize() - 1);
         }
 
         m_filename = editor->GetFileName().GetFullPath();
@@ -235,7 +244,7 @@ void clEditorBar::OnLeftUp(wxMouseEvent& e)
         wxMenuItem* idCopyPath = menu.Append(wxID_ANY, text);
 
         menu.AppendSeparator();
-        wxMenuItem *idOpenExplorer, *idOpenShell;
+        wxMenuItem* idOpenExplorer, *idOpenShell;
         {
             idOpenShell = new wxMenuItem(NULL, wxID_ANY, _("Open Shell"), _("Open Shell"));
             idOpenShell->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("console"));
@@ -274,7 +283,34 @@ void clEditorBar::OnLeftUp(wxMouseEvent& e)
             clGetManager()->SetStatusMessage((wxString() << "'" << text << _("' copied!")), 2);
         }
     } else if(m_bookmarksRect.Contains(e.GetPosition())) {
-        // TODO: show bookmarks menu here
+        IEditor* editor = clGetManager()->GetActiveEditor();
+        std::vector<std::pair<int, wxString> > V;
+        if(editor && editor->GetFindMarkers(V)) {
+            // Show bookmarks menu
+            wxMenu menu;
+            std::unordered_map<int, int> M;
+            std::for_each(V.begin(), V.end(), [&](const std::pair<int, wxString>& p) {
+                wxString text = wxString::Format(wxT("Line %5u: "), p.first);
+                text << p.second;
+                M[menu.Append(wxID_ANY, text)->GetId()] = p.first; // Make the menu item ID with the line number
+            });
+
+            // We got something to display
+            wxPoint menuPoint = m_bookmarksRect.GetBottomLeft();
+#ifdef __WXOSX__
+            menuPoint.y += 5;
+#endif
+            int selection = GetPopupMenuSelectionFromUser(menu, menuPoint);
+            if(selection == wxID_NONE) return;
+            if(M.count(selection)) {
+                int lineNumber = M[selection];
+                editor->CenterLine(lineNumber);
+                editor->GetCtrl()->EnsureVisible(lineNumber);
+                editor->GetCtrl()->EnsureCaretVisible();
+                editor->GetCtrl()->CallAfter(&wxStyledTextCtrl::SetFocus);
+            }
+        }
+
     } else if(m_scopeRect.Contains(e.GetPosition())) {
         wxMenu menu;
         clContextMenuEvent menuEvent(wxEVT_NAVBAR_SCOPE_MENU_SHOWING);

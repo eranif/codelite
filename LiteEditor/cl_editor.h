@@ -504,7 +504,12 @@ public:
     void FindNextMarker();
     // Find previous marker and move cursor to that line
     void FindPrevMarker();
-
+    
+    /**
+     * @brief return list of bookmarks (active type)
+     */
+    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector);
+    
     /**
      * Sets whether the currently-active bookmark level is Find', or the current standard-bookmark type
      */

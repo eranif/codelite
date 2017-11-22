@@ -92,7 +92,7 @@
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
 #undef EVT_STC_CALLTIP_CLICK
-#define EVT_STC_CALLTIP_CLICK(id, fn) \
+#define EVT_STC_CALLTIP_CLICK(id, fn)                                                                         \
     DECLARE_EVENT_TABLE_ENTRY(wxEVT_STC_CALLTIP_CLICK, id, wxID_ANY, (wxObjectEventFunction)(wxEventFunction) \
                               wxStaticCastEvent(wxStyledTextEventFunction, &fn),                              \
                               (wxObject*)NULL),
@@ -556,8 +556,8 @@ void LEditor::SetProperties()
     }
 
     SetVirtualSpaceOptions(options->GetOptions() & OptionsConfig::Opt_AllowCaretAfterEndOfLine ? 2 : 1);
-    SetCaretStyle(options->GetOptions() & OptionsConfig::Opt_UseBlockCaret ? wxSTC_CARETSTYLE_BLOCK
-                                                                           : wxSTC_CARETSTYLE_LINE);
+    SetCaretStyle(options->GetOptions() & OptionsConfig::Opt_UseBlockCaret ? wxSTC_CARETSTYLE_BLOCK :
+                                                                             wxSTC_CARETSTYLE_LINE);
     SetWrapMode(options->GetWordWrap() ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
     SetViewWhiteSpace(options->GetShowWhitspaces());
     SetMouseDwellTime(500);
@@ -2500,8 +2500,8 @@ void LEditor::FoldAll()
         int level = GetFoldLevel(line);
         // If we're skipping an all-encompassing fold, we use wxSTC_FOLDLEVELBASE+1
         if((level & wxSTC_FOLDLEVELHEADERFLAG) &&
-           (expanded ? ((level & wxSTC_FOLDLEVELNUMBERMASK) == (wxSTC_FOLDLEVELBASE + SkipTopFold))
-                     : ((level & wxSTC_FOLDLEVELNUMBERMASK) >= wxSTC_FOLDLEVELBASE))) {
+           (expanded ? ((level & wxSTC_FOLDLEVELNUMBERMASK) == (wxSTC_FOLDLEVELBASE + SkipTopFold)) :
+                       ((level & wxSTC_FOLDLEVELNUMBERMASK) >= wxSTC_FOLDLEVELBASE))) {
             if(GetFoldExpanded(line) == expanded) ToggleFold(line);
         }
     }
@@ -2686,6 +2686,26 @@ bool LEditor::HasCompilerMarkers()
     int mask = mmt_compiler;
     int nFoundLine = MarkerNext(0, mask);
     return nFoundLine >= 0;
+}
+
+size_t LEditor::GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector)
+{
+    int nPos = 0;
+    int nFoundLine = LineFromPosition(nPos);
+    while(nFoundLine < GetLineCount()) {
+        nFoundLine = MarkerNext(nFoundLine, GetActiveBookmarkMask());
+        if(nFoundLine == wxNOT_FOUND) {
+            break;
+        }
+        wxString snippet = GetLine(nFoundLine);
+        snippet.Trim().Trim(false);
+        if(!snippet.IsEmpty()) {
+            snippet = snippet.Mid(0, snippet.size() > 20 ? 20 : snippet.size());
+        }
+        bookmarksVector.push_back({ nFoundLine + 1, snippet });
+        ++nFoundLine;
+    }
+    return bookmarksVector.size();
 }
 
 void LEditor::FindNextMarker()
@@ -5533,7 +5553,8 @@ void LEditor::PreferencesChanged()
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------
-struct SelectorSorter {
+struct SelectorSorter
+{
     bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
 };
 

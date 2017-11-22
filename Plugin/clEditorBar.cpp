@@ -4,6 +4,7 @@
 #include "clEditorBar.h"
 #include "clTabRenderer.h"
 #include "clWorkspaceManager.h"
+#include "cl_command_event.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
@@ -12,6 +13,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "lexer_configuration.h"
+#include <unordered_map>
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
@@ -83,7 +85,7 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
     PrepareDC(bdc);
     wxGCDC gcdc(bdc);
     PrepareDC(gcdc);
-    
+
     wxFont guiFont = clTabRenderer::GetTabFont();
     wxRect rect(GetClientRect());
     gcdc.SetPen(m_bgColour);
@@ -105,7 +107,7 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
                                  m_scopeButtonState);
         textX += m_scopeRect.GetWidth();
     }
-    
+
     textX += X_SPACER;
     if(!m_breadcrumbs.IsEmpty()) {
         wxString breadcumbsText;
@@ -274,7 +276,37 @@ void clEditorBar::OnLeftUp(wxMouseEvent& e)
     } else if(m_bookmarksRect.Contains(e.GetPosition())) {
         // TODO: show bookmarks menu here
     } else if(m_scopeRect.Contains(e.GetPosition())) {
-        // TODO: show scope menu here
+        wxMenu menu;
+        clContextMenuEvent menuEvent(wxEVT_NAVBAR_SCOPE_MENU_SHOWING);
+        menuEvent.SetMenu(&menu);
+        EventNotifier::Get()->ProcessEvent(menuEvent);
+
+        if(menu.GetMenuItemCount()) {
+            // We got something to display
+            wxPoint menuPoint = m_scopeRect.GetBottomLeft();
+#ifdef __WXOSX__
+            menuPoint.y += 5;
+#endif
+
+            // Keep track of the menu items
+            std::unordered_map<int, wxString> M;
+            const wxMenuItemList& list = menu.GetMenuItems();
+            wxMenuItemList::const_iterator iter = list.begin();
+            for(; iter != list.end(); ++iter) {
+                wxMenuItem* menuItem = *iter;
+                M[menuItem->GetId()] = menuItem->GetItemLabel();
+            }
+
+            // Popup the menu
+            int selection = GetPopupMenuSelectionFromUser(menu, menuPoint);
+            if(selection == wxID_NONE) return;
+            if(M.count(selection)) {
+                // Fire selection made event
+                clCommandEvent selectionEvent(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE);
+                selectionEvent.SetString(M[selection]);
+                EventNotifier::Get()->AddPendingEvent(selectionEvent);
+            }
+        }
     }
 }
 

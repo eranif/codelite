@@ -802,4 +802,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_NAVBAR_SCOPE_MENU_SHOWING, clCont
 // User selected an entry from the scope drop down menu. GetString() contains the selected string
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, clCommandEvent);
 
+// A marker was added/removed from an editor. clCommandEvent::GetFileName() will return the relevant file name
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_MARKER_CHANGED, clCommandEvent);
+
+
 #endif // CODELITE_EVENTS_H

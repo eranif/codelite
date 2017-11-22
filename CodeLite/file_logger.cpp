@@ -67,7 +67,7 @@ void FileLogger::AddLogLine(const wxString& msg, int verbosity)
 void FileLogger::SetVerbosity(int level)
 {
     if(level > FileLogger::Warning) {
-        clSYSTEM() << "Log verbosity is now set to:" << FileLogger::GetVerbosityAsString(m_verbosity) << clEndl;
+        clSYSTEM() << "Log verbosity is now set to:" << FileLogger::GetVerbosityAsString(level) << clEndl;
     }
     m_verbosity = level;
 }

@@ -25,6 +25,7 @@
 #include <wx/menu.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
+#include <algorithm>
 
 #define X_SPACER 10
 #define Y_SPACER 5

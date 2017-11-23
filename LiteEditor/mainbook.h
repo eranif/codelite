@@ -33,6 +33,7 @@
 #include "message_pane.h"
 #include "quickfindbar.h"
 #include "sessionmanager.h"
+#include "wxStringHash.h"
 #include <set>
 #include <wx/panel.h>
 
@@ -54,6 +55,7 @@ private:
     bool m_isWorkspaceReloading;
     bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
     FilesModifiedDlg* m_filesModifiedDlg;
+    std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
 
 public:
     enum {
@@ -98,6 +100,9 @@ private:
     void OnEditorSettingsChanged(wxCommandEvent& e);
     void OnCacheUpdated(clCommandEvent& e);
     void OnUpdateNavigationBar(clCodeCompletionEvent& e);
+    void OnNavigationBarMenuShowing(clContextMenuEvent& e);
+    void OnNavigationBarMenuSelectionMade(clCommandEvent& e);
+
     /**
      * @brief open file and set an alternate content
      */

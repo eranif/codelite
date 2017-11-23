@@ -125,6 +125,9 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &MainBook::OnCacheUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_CC_UPDATE_NAVBAR, &MainBook::OnUpdateNavigationBar, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, &MainBook::OnNavigationBarMenuSelectionMade,
+                               this);
 }
 
 MainBook::~MainBook()
@@ -158,6 +161,9 @@ MainBook::~MainBook()
     EventNotifier::Get()->Unbind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &MainBook::OnCacheUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &MainBook::OnUpdateNavigationBar, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, &MainBook::OnNavigationBarMenuSelectionMade,
+                                 this);
 }
 
 void MainBook::OnMouseDClick(wxBookCtrlEvent& e)
@@ -1504,4 +1510,41 @@ void MainBook::DoUpdateEditorsThemes()
     for(size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
     }
+}
+
+void MainBook::OnNavigationBarMenuShowing(clContextMenuEvent& e)
+{
+    e.Skip();
+    m_currentNavBarTags.clear();
+    IEditor* editor = GetActiveEditor(true);
+    if(m_navBar->IsShown() && editor) {
+        TagEntryPtrVector_t tags;
+        if(!TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags,
+                                                       clCxxFileCacheSymbols::kFunctions) ||
+           tags.empty()) {
+            return;
+        }
+        wxMenu* menu = e.GetMenu();
+        std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr tag) {
+            wxString fullname = tag->GetFullDisplayName();
+            menu->Append(wxID_ANY, fullname);
+            m_currentNavBarTags.insert({ fullname, tag });
+        });
+    }
+}
+
+void MainBook::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
+{
+    e.Skip();
+    const wxString& selection = e.GetString();
+    if(m_currentNavBarTags.count(selection) == 0) { return; }
+
+    TagEntryPtr tag = m_currentNavBarTags[selection];
+    // Ours to handle
+    e.Skip(false);
+
+    IEditor* editor = GetActiveEditor(true);
+    if(!editor) { return; }
+
+    editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1), nullptr);
 }

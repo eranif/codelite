@@ -98,7 +98,6 @@ protected:
     
     bool m_darkTheme;
 
-    bool m_storeFilepaths;
 
     std::vector<std::pair<int, int> > m_sequences; // start-line - end-line pairs
     int m_cur_sequence;
@@ -108,6 +107,7 @@ protected:
     bool m_ignoreWhitespaceDiffs;
     bool m_showLinenos;
     bool m_showOverviewBar;
+    bool m_storeFilepaths;
 
 protected:
     wxString DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const;

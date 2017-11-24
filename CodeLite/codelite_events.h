@@ -795,4 +795,15 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SORT_NEEDED, clGoto
 // Build configuration for the workspace has changed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_BUILD_CONFIG_CHANGED, clCommandEvent);
 
+// The navigation bar is about show the scope drop down menu
+// Build the menu using clContextMenuEvent::GetMenu()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_NAVBAR_SCOPE_MENU_SHOWING, clContextMenuEvent);
+
+// User selected an entry from the scope drop down menu. GetString() contains the selected string
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, clCommandEvent);
+
+// A marker was added/removed from an editor. clCommandEvent::GetFileName() will return the relevant file name
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_MARKER_CHANGED, clCommandEvent);
+
+
 #endif // CODELITE_EVENTS_H

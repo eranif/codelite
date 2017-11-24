@@ -368,7 +368,9 @@ void PluginManager::Load()
 IEditor* PluginManager::GetActiveEditor()
 {
     if(clMainFrame::Get() && clMainFrame::Get()->GetMainBook()) {
-        return (IEditor*)clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
+        LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
+        if(!editor) { return nullptr; }
+        return dynamic_cast<IEditor*>(editor);
     }
     return NULL;
 }

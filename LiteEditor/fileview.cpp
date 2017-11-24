@@ -61,6 +61,7 @@
 #include "workspacesettingsdlg.h"
 #include "workspacetab.h"
 #include "wx/imaglist.h"
+#include "wxStringHash.h"
 #include <algorithm>
 #include <deque>
 #include <project.h>
@@ -1672,7 +1673,7 @@ void FileViewTree::DoImportFolder(ProjectPtr proj, const wxString& baseDir, cons
                 // root folder
                 relativePath = rootPath.GetName();
             }
-            relativePath.Append(wxT(":"));
+            // relativePath.Append(wxT(":"));
 
             fvitem.virtualDir = relativePath;
             DoAddItem(proj, fvitem);
@@ -2298,11 +2299,14 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
             }
         }
 
-        workspaceFileName.SetName(workspaceFileName.GetDirs().Last());
+        wxString project_name = workspaceFileName.GetDirs().Last();
+        project_name = FileUtils::NormaliseName(project_name);
+
+        workspaceFileName.SetName(project_name);
         workspaceFileName.SetExt("workspace");
 
         // Create an empty workspace
-        if(!clCxxWorkspaceST::Get()->CreateWorkspace(fnWorkspace.GetDirs().Last(), folder, errMsg)) {
+        if(!clCxxWorkspaceST::Get()->CreateWorkspace(project_name, folder, errMsg)) {
             ::wxMessageBox(_("Failed to create workspace:\n") + errMsg, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
@@ -2316,7 +2320,7 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
             pd.m_cmpType = "gnu g++"; // Default :/
         }
 
-        pd.m_name = fnWorkspace.GetDirs().Last();
+        pd.m_name = project_name;
         pd.m_path = folder;
 
         // Set a default empty project

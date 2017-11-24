@@ -25,29 +25,28 @@
 #ifndef LITEEDITOR_EDITOR_H
 #define LITEEDITOR_EDITOR_H
 
-#include <wx/stc/stc.h>
+#include "bookmark_manager.h"
+#include "browse_record.h"
+#include "clEditorStateLocker.h"
+#include "cl_calltip.h"
+#include "cl_defs.h"
+#include "cl_unredo.h"
+#include "context_base.h"
+#include "debuggermanager.h"
+#include "entry.h"
+#include "findreplacedlg.h"
+#include "globals.h"
+#include "navigationmanager.h"
+#include "plugin.h"
+#include "stringhighlighterjob.h"
+#include "wx/filename.h"
+#include "wx/menu.h"
+#include <map>
 #include <stack>
 #include <vector>
-#include <map>
-#include "entry.h"
-#include "stringhighlighterjob.h"
-#include "cl_calltip.h"
-#include "wx/filename.h"
-#include "findreplacedlg.h"
-#include "context_base.h"
-#include "wx/menu.h"
-#include "browse_record.h"
-#include "navigationmanager.h"
-#include "debuggermanager.h"
-#include "breakpointsmgr.h"
-#include "plugin.h"
-#include "globals.h"
-#include "cl_defs.h"
-#include "bookmark_manager.h"
-#include "cl_unredo.h"
-#include "clEditorStateLocker.h"
-#include <wx/cmndata.h>
 #include <wx/bitmap.h>
+#include <wx/cmndata.h>
+#include <wx/stc/stc.h>
 
 #define DEBUGGER_INDICATOR 11
 #define MATCH_INDICATOR 10
@@ -82,9 +81,9 @@ enum sci_annotation_styles { eAnnotationStyleError = 128, eAnnotationStyleWarnin
 /**************** NB: enum sci_marker_types has now moved to bookmark_manager.h ****************/
 
 /**
-* @class BPtoMarker
-* Holds which marker and mask are associated with each breakpoint type
-*/
+ * @class BPtoMarker
+ * Holds which marker and mask are associated with each breakpoint type
+ */
 typedef struct _BPtoMarker {
     enum BreakpointType bp_type; // An enum of possible break/watchpoint types. In debugger.h
     sci_marker_types marker;
@@ -281,6 +280,8 @@ public:
 
     void SetEditorBitmap(const wxBitmap& editorBitmap) { this->m_editorBitmap = editorBitmap; }
     const wxBitmap& GetEditorBitmap() const { return m_editorBitmap; }
+
+    void NotifyMarkerChanged(int lineNumber = wxNOT_FOUND);
 
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
@@ -504,6 +505,11 @@ public:
     void FindNextMarker();
     // Find previous marker and move cursor to that line
     void FindPrevMarker();
+
+    /**
+     * @brief return list of bookmarks (active type)
+     */
+    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector);
 
     /**
      * Sets whether the currently-active bookmark level is Find', or the current standard-bookmark type

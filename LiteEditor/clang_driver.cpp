@@ -25,44 +25,40 @@
 
 #if HAS_LIBCLANG
 
-#include "clang_driver.h"
-#include "clang_code_completion.h"
-#include "compilation_database.h"
-#include "pluginmanager.h"
-#include <wx/regex.h>
-#include "clangpch_cache.h"
 #include "asyncprocess.h"
-#include "frame.h"
-#include "processreaderthread.h"
-#include "navigationmanager.h"
-#include "compiler_command_line_parser.h"
-#include "file_logger.h"
-#include "pluginmanager.h"
-#include "macromanager.h"
-#include "includepathlocator.h"
-#include "frame.h"
-#include "macromanager.h"
-#include <memory>
-#include "environmentconfig.h"
-#include "tags_options_data.h"
-#include "ctags_manager.h"
-#include <wx/tokenzr.h>
-#include "processreaderthread.h"
-#include "manager.h"
-#include "project.h"
-#include "configuration_mapping.h"
-#include "procutils.h"
-#include "localworkspace.h"
-#include "fileextmanager.h"
-#include "globals.h"
-#include <set>
-#include "event_notifier.h"
-#include "plugin.h"
 #include "browse_record.h"
-#include "mainbook.h"
+#include "clang_code_completion.h"
+#include "clang_driver.h"
+#include "clangpch_cache.h"
+#include "compilation_database.h"
+#include "compiler_command_line_parser.h"
+#include "configuration_mapping.h"
+#include "ctags_manager.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
+#include "fileutils.h"
+#include "frame.h"
+#include "globals.h"
+#include "includepathlocator.h"
+#include "localworkspace.h"
 #include "macromanager.h"
+#include "mainbook.h"
+#include "manager.h"
+#include "navigationmanager.h"
+#include "plugin.h"
+#include "pluginmanager.h"
+#include "processreaderthread.h"
+#include "procutils.h"
+#include "project.h"
+#include "tags_options_data.h"
 #include "wxCodeCompletionBoxManager.h"
 #include <algorithm>
+#include <memory>
+#include <set>
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
 
 static bool wxIsWhitespace(wxChar ch)
 {
@@ -84,27 +80,27 @@ ClangDriver::ClangDriver()
 #ifdef __WXMSW__
     m_clangCleanerThread.Start();
 #endif
-    EventNotifier::Get()->Connect(
-        wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CLANG_TU_CREATE_ERROR, wxCommandEventHandler(ClangDriver::OnTUCreateError), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(ClangDriver::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded),
+                                  NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),
+                                  NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CLANG_TU_CREATE_ERROR, wxCommandEventHandler(ClangDriver::OnTUCreateError),
+                                  NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(ClangDriver::OnWorkspaceLoaded), NULL,
+                                  this);
 }
 
 ClangDriver::~ClangDriver()
 {
     // Disconnect all events before we perform anything elase
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CLANG_TU_CREATE_ERROR, wxCommandEventHandler(ClangDriver::OnTUCreateError), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(ClangDriver::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded),
+                                     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),
+                                     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CLANG_TU_CREATE_ERROR, wxCommandEventHandler(ClangDriver::OnTUCreateError),
+                                     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(ClangDriver::OnWorkspaceLoaded),
+                                     NULL, this);
 
     m_pchMakerThread.Stop();
     m_pchMakerThread.ClearCache(); // clear cache and dispose all translation units
@@ -118,25 +114,29 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 {
     /////////////////////////////////////////////////////////////////
     // Prepare all the buffers required by the thread
-    wxString fileName = editor->GetFileName().GetFullPath();
+    const wxFileName& fnFileName = editor->GetFileName();
 
+    wxFileName tmpFileName(fnFileName);
+    tmpFileName.SetFullName(tmpFileName.GetName() + "-clang." + tmpFileName.GetExt());
+    tmpFileName.SetPath(clStandardPaths::Get().GetTempDir());
+
+    // Create a temporary file with the same content as our file
     wxString currentBuffer = editor->GetTextRange(0, editor->GetLength());
     wxString filterWord;
+
+    // Copy the content of current editor to the temp file
+    if(!FileUtils::WriteFileContent(tmpFileName, currentBuffer)) {
+        clWARNING() << "Clang: Unable to create temporary file:" << tmpFileName;
+        return nullptr;
+    }
 
     // Move backward until we found our -> or :: or .
     m_position = editor->GetCurrentPosition();
     wxString tmpBuffer = editor->GetTextRange(0, editor->GetCurrentPosition());
     while(!tmpBuffer.IsEmpty()) {
-
         // Context word complete and we found a whitespace - break the search
-        if((context == CTX_WordCompletion || context == CTX_Calltip) && wxIsWhitespace(tmpBuffer.Last())) {
-            break;
-        }
-
-        if(context == CTX_WordCompletion && !IsValidCppIndetifier(tmpBuffer.Last())) {
-            break;
-        }
-
+        if((context == CTX_WordCompletion || context == CTX_Calltip) && wxIsWhitespace(tmpBuffer.Last())) { break; }
+        if(context == CTX_WordCompletion && !IsValidCppIndetifier(tmpBuffer.Last())) { break; }
         if(tmpBuffer.EndsWith(wxT("->")) || tmpBuffer.EndsWith(wxT(".")) || tmpBuffer.EndsWith(wxT("::"))) {
             break;
 
@@ -181,31 +181,26 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
     }
 
     wxString projectPath;
-    FileTypeCmpArgs_t compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), fileName, projectPath);
-    wxFileName source_file(fileName);
-    ClangThreadRequest* request = new ClangThreadRequest(m_index,
-                                                         fileName,
-                                                         currentBuffer,
-                                                         compileFlags,
-                                                         filterWord,
-                                                         context,
-                                                         lineNumber,
-                                                         column,
-                                                         DoCreateListOfModifiedBuffers(editor));
-    request->SetFileName(source_file.GetFullPath());
+    FileTypeCmpArgs_t compileFlags =
+        DoPrepareCompilationArgs(editor->GetProjectName(), fnFileName.GetFullPath(), projectPath);
+    ClangThreadRequest* request =
+        new ClangThreadRequest(m_index, tmpFileName.GetFullPath(), currentBuffer, compileFlags, filterWord, context,
+                               lineNumber, column, DoCreateListOfModifiedBuffers(editor));
+    request->SetFileName(tmpFileName.GetFullPath());
+
+    // Keep the real file name
+    if(m_filesTable.count(tmpFileName.GetFullPath())) { m_filesTable.erase(tmpFileName.GetFullPath()); }
+    m_filesTable.insert({ tmpFileName.GetFullPath(), fnFileName.GetFullPath() });
     return request;
 }
 
 void ClangDriver::CodeCompletion(IEditor* editor)
 {
-    if(m_isBusy) {
-        return;
-    }
-
-    CL_DEBUG(wxT(" ==========> ClangDriver::CodeCompletion() started <=============="));
+    if(m_isBusy) { return; }
+    clDEBUG() << " ==========> ClangDriver::CodeCompletion() started <==============";
 
     if(!editor) {
-        CL_WARNING(wxT("ClangDriver::CodeCompletion() called with NULL editor!"));
+        clWARNING() << "ClangDriver::CodeCompletion() called with NULL editor!";
         return;
     }
 
@@ -228,8 +223,7 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 
 void ClangDriver::Abort() { DoCleanup(); }
 
-FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
-                                                        const wxString& sourceFile,
+FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wxString& sourceFile,
                                                         wxString& projectPath)
 {
     FileTypeCmpArgs_t cmpArgs;
@@ -256,17 +250,12 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
             << _("This file should be created automatically for you.\nIf you don't have it, please run a full rebuild "
                  "of your workspace\n\n")
             << _("If this is a custom build project (i.e. project that uses a custom makefile),\nplease set the CXX "
-                 "and CC environment variables like this:\n") << _("CXX=codelite-cc g++\n")
-            << _("CC=codelite-cc gcc\n\n");
+                 "and CC environment variables like this:\n")
+            << _("CXX=codelite-cc g++\n") << _("CC=codelite-cc gcc\n\n");
 
         clMainFrame::Get()->GetMainBook()->ShowMessage(
-            msg,
-            true,
-            PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
-            ButtonDetails(),
-            ButtonDetails(),
-            ButtonDetails(),
-            CheckboxDetails(wxT("CodeCompletionMissingCompilationDB")));
+            msg, true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")), ButtonDetails(),
+            ButtonDetails(), ButtonDetails(), CheckboxDetails(wxT("CodeCompletionMissingCompilationDB")));
 
     } else {
         cdb.Open();
@@ -361,14 +350,12 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         });
 
         wxArrayString cUndefMacros = proj->GetCUnPreProcessors();
-        std::for_each(cUndefMacros.begin(), cUndefMacros.end(), [&](const wxString& macro) {
-            cCompileArgs.Add(wxString::Format(wxT("-U%s"), macro.c_str()));
-        });
+        std::for_each(cUndefMacros.begin(), cUndefMacros.end(),
+                      [&](const wxString& macro) { cCompileArgs.Add(wxString::Format(wxT("-U%s"), macro.c_str())); });
 
         wxArrayString cxxUndefMacros = proj->GetCxxUnPreProcessors();
-        std::for_each(cxxUndefMacros.begin(), cxxUndefMacros.end(), [&](const wxString& macro) {
-            cppCompileArgs.Add(wxString::Format(wxT("-U%s"), macro.c_str()));
-        });
+        std::for_each(cxxUndefMacros.begin(), cxxUndefMacros.end(),
+                      [&](const wxString& macro) { cppCompileArgs.Add(wxString::Format(wxT("-U%s"), macro.c_str())); });
     }
 
     BuildConfigPtr buildConf = ManagerST::Get()->GetCurrentBuildConf();
@@ -378,8 +365,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         wxString projSearchPaths = buildConf->GetCcSearchPaths();
         wxArrayString projectIncludePaths = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
         for(size_t i = 0; i < projectIncludePaths.GetCount(); i++) {
-            wxFileName fn(MacroManager::Instance()->Expand(projectIncludePaths.Item(i),
-                                                           PluginManager::Get(),
+            wxFileName fn(MacroManager::Instance()->Expand(projectIncludePaths.Item(i), PluginManager::Get(),
                                                            ManagerST::Get()->GetActiveProjectName()),
                           wxT(""));
             fn.MakeAbsolute(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath());
@@ -396,14 +382,10 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         }
 
         // Enale C++11?
-        if(buildConf->IsClangC11()) {
-            cppCompileArgs.Add(wxT("-std=c++11"));
-        }
+        if(buildConf->IsClangC11()) { cppCompileArgs.Add(wxT("-std=c++11")); }
 
         // Enale C++14?
-        if(buildConf->IsClangC14()) {
-            cppCompileArgs.Add(wxT("-std=c++14"));
-        }
+        if(buildConf->IsClangC14()) { cppCompileArgs.Add(wxT("-std=c++14")); }
     }
 
     cppCompileArgs.insert(cppCompileArgs.end(), args.begin(), args.end());
@@ -446,7 +428,16 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     return cmpArgs;
 }
 
-void ClangDriver::ClearCache() { m_pchMakerThread.ClearCache(); }
+void ClangDriver::ClearCache()
+{
+    m_pchMakerThread.ClearCache();
+    wxLogNull NoLog;
+    std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const wxStringMap_t::value_type& vt) {
+        // Delete the temp files (the keys in the cache)
+        clDEBUG() << "Clang: deleting temp file:" << vt.first;
+        ::wxRemoveFile(vt.first);
+    });
+}
 
 bool ClangDriver::IsCacheEmpty() { return m_pchMakerThread.IsCacheEmpty(); }
 
@@ -456,12 +447,8 @@ void ClangDriver::DoCleanup()
     m_activeEditor = NULL;
 }
 
-void ClangDriver::DoParseCompletionString(CXCompletionString str,
-                                          int depth,
-                                          wxString& entryName,
-                                          wxString& signature,
-                                          wxString& completeString,
-                                          wxString& returnValue)
+void ClangDriver::DoParseCompletionString(CXCompletionString str, int depth, wxString& entryName, wxString& signature,
+                                          wxString& completeString, wxString& returnValue)
 {
 
     bool collectingSignature = false;
@@ -490,9 +477,7 @@ void ClangDriver::DoParseCompletionString(CXCompletionString str,
             wxString dummy;
             // Once we hit the 'Optional Chunk' only the 'completeString' is matter
             DoParseCompletionString(optStr, depth + 1, dummy, dummy, optionalString, dummy);
-            if(collectingSignature) {
-                signature += optionalString;
-            }
+            if(collectingSignature) { signature += optionalString; }
             completeString += optionalString;
         } break;
         case CXCompletionChunk_LeftParen:
@@ -508,9 +493,7 @@ void ClangDriver::DoParseCompletionString(CXCompletionString str,
             break;
 
         default:
-            if(collectingSignature) {
-                signature += wxString(clang_getCString(chunkText), wxConvUTF8);
-            }
+            if(collectingSignature) { signature += wxString(clang_getCString(chunkText), wxConvUTF8); }
             completeString += wxString(clang_getCString(chunkText), wxConvUTF8);
             break;
         }
@@ -532,9 +515,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 
     // Sanity
     ClangThreadReply* reply = (ClangThreadReply*)e.GetClientData();
-    if(!reply) {
-        return;
-    }
+    if(!reply) { return; }
 
     // Make sure we delete the reply at the end...
     std::shared_ptr<ClangThreadReply> ap(reply);
@@ -542,16 +523,22 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
     // Delete the fake file...
     DoDeleteTempFile(reply->filename);
 
-    // Just a notification without real info?
-    if(reply->context == CTX_None) {
-        return;
+    // Replace "filename" with the real file
+    if(m_filesTable.count(reply->filename)) {
+        wxString tempFileName = reply->filename;
+        clDEBUG() << "Clang: setting real file name:" << tempFileName << "->" << m_filesTable[tempFileName];
+        reply->filename = m_filesTable[tempFileName];
+        m_filesTable.erase(tempFileName);
     }
+
+    // Just a notification without real info?
+    if(reply->context == CTX_None) { return; }
 
     if(reply->context == ::CTX_CachePCH || reply->context == ::CTX_ReparseTU) {
         return; // Nothing more to be done
     }
 
-    if(reply->context == CTX_GotoDecl || reply->context == CTX_GotoImpl) {
+    if((reply->context == CTX_GotoDecl) || (reply->context == CTX_GotoImpl)) {
         // Unlike other context's the 'filename' specified here
         // does not belong to an editor (it could, but it is not necessarily true)
         DoGotoDefinition(reply);
@@ -561,7 +548,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
     // Adjust the activeEditor to fit the filename
     IEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(reply->filename);
     if(!editor) {
-        CL_DEBUG(wxT("Could not find an editor for file %s"), reply->filename.c_str());
+        clDEBUG() << "Could not find an editor for file:" << reply->filename;
         return;
     }
 
@@ -577,7 +564,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
     }
 
     if(!reply->results) {
-        if (!reply->errorMessage.IsEmpty()) {
+        if(!reply->errorMessage.IsEmpty()) {
             // Notify about this error
             clCommandEvent event(wxEVT_CLANG_CODE_COMPLETE_MESSAGE);
             event.SetString(reply->errorMessage);
@@ -650,9 +637,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 #if HAS_LIBCLANG_BRIEFCOMMENTS
         CXString BriefComment = clang_getCompletionBriefComment(str);
         const char* comment = clang_getCString(BriefComment);
-        if(comment && comment[0] != '\0') {
-            tag->SetComment(wxString(comment, wxConvUTF8));
-        }
+        if(comment && comment[0] != '\0') { tag->SetComment(wxString(comment, wxConvUTF8)); }
 
         clang_disposeString(BriefComment);
 #endif
@@ -714,8 +699,8 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         m_activeEditor->ShowCalltip(new clCallTip(tips));
 
     } else {
-        wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-            m_activeEditor->GetCtrl(), tags, wxCodeCompletionBox::kNone, wxNOT_FOUND);
+        wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_activeEditor->GetCtrl(), tags, wxCodeCompletionBox::kNone,
+                                                            wxNOT_FOUND);
     }
 }
 
@@ -730,48 +715,12 @@ void ClangDriver::QueueRequest(IEditor* editor, WorkingContext context)
         CL_DEBUG(wxT("Context %d id not allowed to be queued"), (int)context);
         return;
     }
-
     m_pchMakerThread.Add(DoMakeClangThreadRequest(editor, context));
 }
 
-void ClangDriver::ReparseFile(const wxString& filename)
-{
-    // CHECK_CLANG_ENABLED();
-    //
-    // ClangThreadRequest *req = new ClangThreadRequest(m_index, filename, wxT(""), wxArrayString(), wxT(""),
-    // ::CTX_ReparseTU, 0, 0);
-    // m_pchMakerThread.Add( req );
-    // CL_DEBUG(wxT("Queued request to re-parse file: %s"), filename.c_str());
-}
+void ClangDriver::ReparseFile(const wxString& filename) { wxUnusedVar(filename); }
 
-void ClangDriver::OnCacheCleared(wxCommandEvent& e)
-{
-    e.Skip();
-
-    /*
-    CHECK_CLANG_ENABLED();
-
-    // Reparse the current file
-    IEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(editor) {
-        CL_DEBUG( "Preparing clang thread request..." );
-        wxString outputProjectPath, pchFile;
-        ClangThreadRequest *req = new ClangThreadRequest(m_index,
-                editor->GetFileName().GetFullPath(),
-                editor->GetEditorText(),
-                DoPrepareCompilationArgs(editor->GetProjectName(), editor->GetFileName().GetFullPath(),
-    outputProjectPath, pchFile),
-                wxT(""),
-                ::CTX_CachePCH, 0, 0, DoCreateListOfModifiedBuffers(editor));
-
-        req->SetPchFile(pchFile);
-        m_pchMakerThread.Add( req );
-        CL_DEBUG( "Preparing clang thread request... done" );
-        CL_DEBUG(wxT("OnCacheCleared:: Queued request to build TU for file: %s"),
-    editor->GetFileName().GetFullPath().c_str());
-    }
-    */
-}
+void ClangDriver::OnCacheCleared(wxCommandEvent& e) { e.Skip(); }
 
 void ClangDriver::DoGotoDefinition(ClangThreadReply* reply)
 {
@@ -794,10 +743,7 @@ void ClangDriver::OnTUCreateError(wxCommandEvent& e)
     DoCleanup();
 }
 
-void ClangDriver::OnWorkspaceLoaded(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void ClangDriver::OnWorkspaceLoaded(wxCommandEvent& event) { event.Skip(); }
 
 ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* excludeEditor)
 {
@@ -806,14 +752,16 @@ ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* e
     std::vector<LEditor*> editors;
     clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for(size_t i = 0; i < editors.size(); i++) {
-
-        if(editors.at(i) == excludeEditor || !editors.at(i)->IsModified()) continue;
-
-        modifiedBuffers.push_back(std::make_pair(editors.at(i)->GetFileName().GetFullPath(), editors.at(i)->GetText()));
+        if(editors.at(i) == excludeEditor || !editors.at(i)->IsModified()) { continue; }
+        modifiedBuffers.push_back({ editors.at(i)->GetFileName().GetFullPath(), editors.at(i)->GetText() });
     }
     return modifiedBuffers;
 }
 
-void ClangDriver::DoDeleteTempFile(const wxString& fileName) { wxUnusedVar(fileName); }
+void ClangDriver::DoDeleteTempFile(const wxString& fileName)
+{
+    wxLogNull noLog;
+    ::wxRemoveFile(fileName);
+}
 
 #endif // HAS_LIBCLANG

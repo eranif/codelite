@@ -28,20 +28,21 @@
 #include "plugin.h"
 #include "editor_config.h"
 #include "wx/xrc/xmlres.h"
+#include "ieditor.h"
 
 BookmarkManager::BookmarkManager()
     : m_activeBookmarkType(smt_bookmark1)
 {
     wxCommandEvent dummy;
     OnEditorSettingsChanged(dummy);
-    EventNotifier::Get()->Connect(
-        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(BookmarkManager::OnEditorSettingsChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_EDITOR_SETTINGS_CHANGED,
+                                  wxCommandEventHandler(BookmarkManager::OnEditorSettingsChanged), NULL, this);
 }
 
 BookmarkManager::~BookmarkManager()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(BookmarkManager::OnEditorSettingsChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_SETTINGS_CHANGED,
+                                     wxCommandEventHandler(BookmarkManager::OnEditorSettingsChanged), NULL, this);
 }
 
 BookmarkManager& BookmarkManager::Get()
@@ -85,8 +86,8 @@ wxMenu* BookmarkManager::CreateBookmarksSubmenu(wxMenu* parentMenu)
     static int bmktypes = smt_LAST_BMK_TYPE - smt_FIRST_BMK_TYPE + 1;
 
     int current = BookmarkManager::Get().GetActiveBookmarkType();
-    wxCHECK_MSG(
-        current >= smt_FIRST_BMK_TYPE && current < smt_find_bookmark, menu, "Out-of-range standard bookmarktype");
+    wxCHECK_MSG(current >= smt_FIRST_BMK_TYPE && current < smt_find_bookmark, menu,
+                "Out-of-range standard bookmarktype");
 
     for(int bmt = 1; bmt < bmktypes; ++bmt) { // Not <= as we don't want smt_find_bookmark here
         wxMenuItem* item = submenu->AppendRadioItem(XRCID("BookmarkTypes[start]") + bmt,
@@ -96,8 +97,8 @@ wxMenu* BookmarkManager::CreateBookmarksSubmenu(wxMenu* parentMenu)
         }
     }
 
-    wxMenuItem* item = new wxMenuItem(
-        menu, XRCID("change_active_bookmark_type"), _("Change Active Bookmark Type..."), "", wxITEM_NORMAL, submenu);
+    wxMenuItem* item = new wxMenuItem(menu, XRCID("change_active_bookmark_type"), _("Change Active Bookmark Type..."),
+                                      "", wxITEM_NORMAL, submenu);
     menu->Append(item);
 
     menu->AppendSeparator();

@@ -1611,9 +1611,11 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
         for(int i = 0; i < chunks; ++i) {
             int amountToCopy = left > 250 ? 250 : left;
             left -= amountToCopy;
-            std::vector<wxString> vChunk(symbols.begin() + offset, symbols.begin() + (offset + amountToCopy));
-            offset += 250;
-            v.push_back(vChunk);
+            if(amountToCopy > 0) {
+                std::vector<wxString> vChunk(symbols.begin() + offset, symbols.begin() + (offset + amountToCopy));
+                offset += amountToCopy;
+                v.push_back(vChunk);
+            }
         }
 
         std::vector<wxString> allSymbols;

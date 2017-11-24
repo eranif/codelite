@@ -86,7 +86,7 @@ public:
     static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp);
     static wxBitmap CreateGrayBitmap(const wxBitmap& bmp);
     static wxSize GetBestSize(const wxString& label, int xspacer = 5, int yspacer = 5);
-    
+
     /**
      * @brief return basic colour palette based on the current editor
      */
@@ -95,9 +95,20 @@ public:
     /**
      * @brief draw a button
      */
-    static void DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const wxString& label, eButtonKind kind,
-                           eButtonState state);
+    static void DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const wxString& label, const wxBitmap& bmp,
+                           eButtonKind kind, eButtonState state);
 
+    /**
+     * @brief draw a close button
+     */
+    static void DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
+                            eButtonState state);
+    
+    /**
+     * @brief draw a drop down arrow
+     */
+    static void DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour);
+    
     /// -------------------------------------------------------------
     /// New theme related API
     /// -------------------------------------------------------------

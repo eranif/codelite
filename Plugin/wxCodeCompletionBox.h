@@ -87,14 +87,13 @@ protected:
     wxRect m_scrollBottomRect;
 
     /// Colours used by this class
-    wxColour m_lightBorder;
-    wxColour m_darkBorder;
+    wxColour m_penColour;
     wxColour m_bgColour;
+    wxColour m_separatorColour;
     wxColour m_textColour;
     wxColour m_selectedTextColour;
-    wxColour m_selection;
-    wxColour m_penColour;
-    wxColour m_scrollBgColour;
+    wxColour m_selectedTextBgColour;
+    
     /// Scrollbar bitmaps
     wxBitmap m_bmpUp;
     wxBitmap m_bmpDown;

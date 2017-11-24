@@ -430,23 +430,8 @@ void clStatusBar::DoFieldClicked(int fieldIndex)
                 if(themesMap.count(selectedId)) {
                     // change the colour theme
                     wxBusyCursor bc;
-                    ColoursAndFontsManager::Get().SetGlobalTheme(themesMap.find(selectedId)->second);
+                    ColoursAndFontsManager::Get().SetTheme(themesMap.find(selectedId)->second);
                     ColoursAndFontsManager::Get().Save();
-
-                    // Update the colours
-                    IEditor::List_t editors;
-                    clGetManager()->GetAllEditors(editors);
-                    std::for_each(editors.begin(), editors.end(), [&](IEditor* e) {
-                        // get the lexer associated with this editor
-                        // and re-apply the syntax highlight
-                        LexerConf::Ptr_t editorLexer =
-                            ColoursAndFontsManager::Get().GetLexerForFile(e->GetFileName().GetFullPath());
-                        if(editorLexer) { e->SetSyntaxHighlight(editorLexer->GetName()); }
-                    });
-
-                    // We need to force an update to ensure that the colours also affects
-                    // the tab drawing area
-                    clGetManager()->GetDockingManager()->Update();
 
                 } else if(langsMap.count(selectedId)) {
                     // change the syntax highlight for the file

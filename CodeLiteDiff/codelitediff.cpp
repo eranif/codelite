@@ -25,12 +25,14 @@
 
 #include "codelitediff.h"
 #include <wx/xrc/xmlres.h>
+#include <wx/ffile.h>
 #include "DiffSideBySidePanel.h"
 #include "wx/menu.h"
 #include "clKeyboardManager.h"
 #include "macros.h"
 #include "event_notifier.h"
 #include "NewFileComparison.h"
+#include "file_logger.h"
 
 static CodeLiteDiff* thePlugin = NULL;
 
@@ -119,11 +121,83 @@ void CodeLiteDiff::DoClear() { m_leftFile.Clear(); }
 
 void CodeLiteDiff::OnDiff(wxCommandEvent& event)
 {
+    bool tempfile(false);
     NewFileComparison dlg(EventNotifier::Get()->TopFrame(), m_leftFile);
     if(dlg.ShowModal() == wxID_OK) {
+        if (m_leftFile.GetName().StartsWith("Untitled")) {
+            tempfile = true;
+            m_leftFile = SaveEditorToTmpfile(m_mgr->GetActiveEditor());
+            if (!m_leftFile.IsOk()) {
+                CL_DEBUG("CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for m_leftFile");
+                return;
+            }
+        }
         wxString secondFile = dlg.GetTextCtrlFileName()->GetValue();
+        if (secondFile.StartsWith("Untitled")) {
+            tempfile = true;
+            IEditor* editor = m_mgr->FindEditor(secondFile);
+            if (!editor) {
+                CL_DEBUG("CodeLiteDiff::OnDiff: call to FindEditor() failed");
+                return;
+            }
+            wxFileName rightFn = SaveEditorToTmpfile(editor);
+            if (!rightFn.IsOk()) {
+                CL_DEBUG("CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile");
+                return;
+            }
+            secondFile = rightFn.GetFullPath();
+        }
+
+        // Check that we're not trying to diff an editor against itself
+        // If we are and it's been edited, diff against the unaltered version
+        if (m_leftFile.GetFullPath() == secondFile) {
+            IEditor* editor = m_mgr->FindEditor(secondFile);
+            if (editor && editor->IsModified()) {
+                wxFileName rightFn = SaveEditorToTmpfile(editor);
+                if (!rightFn.IsOk()) {
+                    CL_DEBUG("CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile");
+                    return;
+                }
+                secondFile = rightFn.GetFullPath();
+
+            } else {
+                CL_DEBUG("CodeLiteDiff::OnDiff: trying to diff an editor against itself");
+                return;
+            }
+        }
+        
         DiffSideBySidePanel* diff = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
+        if (tempfile) {
+            diff->SetSaveFilepaths(false); // We don't want to store temporary filepaths
+        }
         diff->DiffNew(m_leftFile, secondFile);
         m_mgr->AddPage(diff, _("Diff"), wxEmptyString, wxNullBitmap, true);
     }
+}
+
+wxFileName CodeLiteDiff::SaveEditorToTmpfile(IEditor* editor) const
+{
+    wxString content = editor->GetEditorText();
+    if (content.empty()) {
+        return wxFileName(); // Nothing to diff
+    }
+
+    wxString tpath(wxFileName::GetTempDir());
+    tpath << wxFileName::GetPathSeparator() << "CLdiff" << wxFileName::GetPathSeparator();
+    wxFileName::Mkdir(tpath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    wxFileName tmpFile(wxFileName::CreateTempFileName(tpath + editor->GetFileName().GetName()));
+    if (!tmpFile.IsOk()) {
+        return wxFileName();
+    }
+
+    tmpFile.SetExt(editor->GetFileName().GetExt());
+    wxFFile fp(tmpFile.GetFullPath(), "w+b");
+    if(fp.IsOpened()) {
+        fp.Write(content);
+        fp.Close();
+    } else {
+        return wxFileName();
+    }
+    
+    return tmpFile;
 }

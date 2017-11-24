@@ -31,19 +31,21 @@
 #include <wx/crt.h>
 #include "cl_standard_paths.h"
 
-static FileLogger theLogger;
-static bool initialized = false;
+int FileLogger::m_verbosity = FileLogger::Error;
+wxString FileLogger::m_logfile;
 
-FileLogger::FileLogger()
-    : m_verbosity(FileLogger::Error)
-    , _requestedLogLevel(FileLogger::Developer)
+FileLogger::FileLogger(int requestedVerbo)
+    : _requestedLogLevel(requestedVerbo)
     , m_fp(NULL)
 {
+    m_fp = wxFopen(m_logfile, wxT("a+"));
 }
 
 FileLogger::~FileLogger()
 {
     if(m_fp) {
+        // flush any content that remain
+        Flush();
         fclose(m_fp);
         m_fp = NULL;
     }
@@ -61,8 +63,6 @@ void FileLogger::AddLogLine(const wxString& msg, int verbosity)
         fflush(m_fp);
     }
 }
-
-FileLogger& FileLogger::Get() { return theLogger; }
 
 void FileLogger::SetVerbosity(int level)
 {
@@ -114,17 +114,13 @@ wxString FileLogger::GetVerbosityAsString(int verbosity)
     }
 }
 
-void FileLogger::SetVerbosity(const wxString& verbosity) { SetVerbosity(FileLogger::GetVerbosityAsNumber(verbosity)); }
+void FileLogger::SetVerbosity(const wxString& verbosity) { SetVerbosity(GetVerbosityAsNumber(verbosity)); }
 
 void FileLogger::OpenLog(const wxString& fullName, int verbosity)
 {
-    if(!initialized) {
-        wxString filename;
-        filename << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << fullName;
-        theLogger.m_fp = wxFopen(filename, wxT("a+"));
-        theLogger.m_verbosity = verbosity;
-        initialized = true;
-    }
+    m_logfile.Clear();
+    m_logfile << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << fullName;
+    m_verbosity = verbosity;
 }
 
 void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
@@ -144,7 +140,7 @@ void FileLogger::Flush()
     m_buffer.Clear();
 }
 
-wxString FileLogger::Prefix(int verbosity) const
+wxString FileLogger::Prefix(int verbosity)
 {
     wxString prefix;
 
@@ -153,7 +149,6 @@ wxString FileLogger::Prefix(int verbosity) const
     int ms = (int)tim.tv_usec / 1000.0;
 
     wxString msStr = wxString::Format(wxT("%03d"), ms);
-
     prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
 
     switch(verbosity) {

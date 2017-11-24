@@ -36,7 +36,7 @@ bool clAnagram::MatchesInOrder(const wxString& haystack) const
     for(size_t i = 0; i < haystack.size(); ++i) {
         wxChar ch = haystack[i];
         ch = wxTolower(ch);
-        if(ch == m_needle[index]){ ++index; }
+        if(ch == m_needle[index]) { ++index; }
         if(maxIndex == index) { return true; }
     }
     return false;

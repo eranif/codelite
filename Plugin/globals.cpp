@@ -2228,26 +2228,4 @@ int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
     return wxNOT_FOUND;
 }
 
-bool clNextWord(const wxString& str, size_t& offset, wxString& word)
-{
-    if(offset == str.size()) { return false; }
-    size_t start = wxString::npos;
-    for(; offset < str.size(); ++offset) {
-        bool isWhitespace = (str[offset] == ' ') || (str[offset] == '\t');
-        if(isWhitespace && (start != wxString::npos)) {
-            // we found a trailing whitespace
-            break;
-        } else if(isWhitespace && (start == wxString::npos)) {
-            // skip leading whitespace
-            continue;
-        } else if(start == wxString::npos) {
-            start = offset;
-        }
-    }
-
-    if((start != wxString::npos) && (offset > start)) {
-        word = str.Mid(start, offset - start);
-        return true;
-    }
-    return false;
-}
+bool clNextWord(const wxString& str, size_t& offset, wxString& word) { return FileUtils::NextWord(str, offset, word); }

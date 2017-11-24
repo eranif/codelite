@@ -475,7 +475,7 @@
     <File Name="FindInFilesLocationsDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
-    <File Name="app.cpp"/>
+    <File Name="app.cpp" ExcludeProjConfig=""/>
     <File Name="app.h"/>
     <File Name="frame.h"/>
     <File Name="stack_walker.h"/>

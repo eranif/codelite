@@ -3,6 +3,7 @@
 #include <wx/font.h>
 #include "drawingutils.h"
 #include <wx/dcmemory.h>
+#include "editor_config.h"
 
 #define DRAW_LINE(__p1, __p2) \
     dc.DrawLine(__p1, __p2);  \
@@ -22,7 +23,7 @@ clTabRendererSquare::clTabRendererSquare()
     overlapWidth = 2;
     verticalOverlapWidth = 2;
     xSpacer = 15;
-    ySpacer = 5;
+    ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }
 
 clTabRendererSquare::~clTabRendererSquare() {}

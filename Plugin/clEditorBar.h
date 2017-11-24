@@ -1,7 +1,9 @@
 #ifndef CLEDITORBAR_H
 #define CLEDITORBAR_H
+
 #include "drawingutils.h"
 #include "wxcrafter_plugin.h"
+#include <vector>
 #include <wx/colour.h>
 #include <wx/font.h>
 
@@ -14,6 +16,8 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxColour m_defaultColour;
     wxColour m_bgColour;
     wxFont m_textFont;
+    wxRect m_scopeRect;
+    eButtonState m_scopeButtonState;
 
     // Breadcrumbs
     wxString m_filename;
@@ -25,8 +29,15 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxRect m_filenameRect;
     eButtonState m_state;
 
+    // Bookmarks button
+    wxBitmap m_bookmarksBmp;
+    wxRect m_bookmarksRect;
+    eButtonState m_bookmarksButtonState;
+    std::vector<std::pair<int, wxString> > m_bookmarks;
+
 private:
     void DoRefreshColoursAndFonts();
+    void DoRefresh();
 
 public:
     clEditorBar(wxWindow* parent);
@@ -35,14 +46,14 @@ public:
     void DoShow(bool s);
 
 protected:
-    virtual void OnEditorSize(wxSizeEvent& e);
-    virtual void OnEraseBG(wxEraseEvent& e);
-    virtual void OnPaint(wxPaintEvent& e);
+    void OnMarkerChanged(clCommandEvent& event);
+    void OnEditorSize(wxSizeEvent& e);
+    void OnEraseBG(wxEraseEvent& e);
+    void OnPaint(wxPaintEvent& e);
     void OnEditorChanged(wxCommandEvent& e);
     void OnLeftDown(wxMouseEvent& e);
     void OnLeftUp(wxMouseEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
-    void OnEnterWindow(wxMouseEvent& e);
-    void OnLeaveWindow(wxMouseEvent& e);
+    void OnIdle(wxIdleEvent& event);
 };
 #endif // CLEDITORBAR_H

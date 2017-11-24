@@ -26,22 +26,22 @@
 #ifndef PHPLOOKUPTABLE_H
 #define PHPLOOKUPTABLE_H
 
-#include "codelite_exports.h"
-#include <wx/string.h>
 #include "PHPEntityBase.h"
-#include "wx/wxsqlite3.h"
 #include "PHPSourceFile.h"
-#include <vector>
-#include <set>
-#include <wx/longlong.h>
 #include "cl_command_event.h"
-#include "smart_ptr.h"
+#include "codelite_exports.h"
 #include "event_notifier.h"
-#include <wx/stopwatch.h>
+#include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
-#include "file_logger.h"
+#include "smart_ptr.h"
+#include "wx/wxsqlite3.h"
+#include <set>
 #include <unordered_set>
+#include <vector>
+#include <wx/longlong.h>
+#include <wx/stopwatch.h>
+#include <wx/string.h>
 #include <wxStringHash.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_STARTED, clParseEvent);
@@ -187,6 +187,11 @@ public:
     PHPEntityBase::Ptr_t FindFunctionByLineAndFile(const wxFileName& filename, int line);
 
     /**
+     * @brief return list of functiosn from a given file
+     */
+    size_t FindFunctionsByFile(const wxFileName& filename, PHPEntityBase::List_t& functions);
+
+    /**
      * @brief open the lookup table database
      */
     void Open(const wxString& workspacePath);
@@ -321,9 +326,7 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
         m_allClasses.clear(); // clear the cache
         m_db.Begin();
         for(size_t i = 0; i < files.GetCount(); ++i) {
-            if(pFuncGoingDown()) {
-                break;
-            }
+            if(pFuncGoingDown()) { break; }
             {
                 clParseEvent event(wxPHP_PARSE_PROGRESS);
                 event.SetTotalFiles(files.GetCount());
@@ -344,21 +347,15 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
                 } else {
                     time_t lastModifiedOnDisk = fnFile.GetModificationTime().GetTicks();
                     wxLongLong lastModifiedInDB = GetFileLastParsedTimestamp(fnFile);
-                    if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
-                        reParseNeeded = false;
-                    }
+                    if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) { reParseNeeded = false; }
                 }
             }
 
             // Ensure that the file exists
-            if(!fnFile.Exists()) {
-                reParseNeeded = false;
-            }
+            if(!fnFile.Exists()) { reParseNeeded = false; }
 
             // Parse only valid PHP files
-            if(FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) {
-                reParseNeeded = false;
-            }
+            if(FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) { reParseNeeded = false; }
 
             if(reParseNeeded) {
                 // For performance reaons, load the file into memory and then parse it

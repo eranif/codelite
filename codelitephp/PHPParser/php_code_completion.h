@@ -26,17 +26,18 @@
 #ifndef PHPCODECOMPLETION_H
 #define PHPCODECOMPLETION_H
 
-#include "precompiled_header.h"
-#include "ieditor.h"
-#include <vector>
-#include <smart_ptr.h>
-#include <cl_command_event.h>
-#include <cc_box_tip_window.h>
 #include "PHPEntityBase.h"
+#include "PHPExpression.h"
 #include "PHPLookupTable.h"
 #include "cl_command_event.h"
+#include "ieditor.h"
 #include "php_event.h"
-#include "PHPExpression.h"
+#include "precompiled_header.h"
+#include "wxStringHash.h"
+#include <cc_box_tip_window.h>
+#include <cl_command_event.h>
+#include <smart_ptr.h>
+#include <vector>
 
 struct PHPLocation {
     wxString what;     // Token name
@@ -67,6 +68,7 @@ protected:
     IManager* m_manager;
     CCBoxTipWindow* m_typeInfoTooltip;
     PHPLookupTable m_lookupTable;
+    std::unordered_map<wxString, PHPEntityBase::Ptr_t> m_currentNavBarFunctions;
 
     static bool CanCodeComplete(clCodeCompletionEvent& e);
     void DoShowCompletionBox(const PHPEntityBase::List_t& entries, PHPExpression::Ptr_t expr);
@@ -98,6 +100,9 @@ private:
     void OnRetagWorkspace(wxCommandEvent& event);
     void OnParseEnded(clParseEvent& event);
     void OnUpdateNavigationBar(clCodeCompletionEvent& e);
+    void OnNavigationBarMenuSelectionMade(clCommandEvent& e);
+    void OnNavigationBarMenuShowing(clContextMenuEvent& e);
+
     // Workspace events
     void OnFileSaved(clCommandEvent& event);
     void DoSelectInEditor(IEditor* editor, const wxString& what, int from);

@@ -205,9 +205,6 @@
     <Project Name="libCodeLite"/>
     <Project Name="PHPParser"/>
   </Dependencies>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="PHPParser"/>
-  </Dependencies>
   <Dependencies Name="Win_x86_Release">
     <Project Name="PHPParser"/>
   </Dependencies>
@@ -540,4 +537,8 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="libCodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
 </CodeLite_Project>

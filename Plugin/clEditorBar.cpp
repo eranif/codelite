@@ -51,7 +51,8 @@ clEditorBar::clEditorBar(wxWindow* parent)
 
     memDC.SetFont(m_textFont);
     wxSize sz = memDC.GetTextExtent("Tp");
-    wxCoord baseY = wxMax(sz.y, m_functionBmp.GetScaledHeight());
+    //wxCoord baseY = wxMax(sz.y, m_functionBmp.GetScaledHeight());
+    wxCoord baseY = sz.y;
     baseY += (2 * Y_SPACER); // 2*3 pixels
     SetSizeHints(wxSize(-1, baseY));
 

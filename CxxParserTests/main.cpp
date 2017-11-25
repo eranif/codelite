@@ -41,6 +41,15 @@ TEST_FUNC(test_cxx_class_method_impl)
     return true;
 }
 
+TEST_FUNC(test_array_variables)
+{
+    wxString buffer = "wxString arr[10];";
+    CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t(), false);
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_BOOL(vars.count("arr") == 1);
+    return true;
+}
+
 TEST_FUNC(test_cxx_c11_template)
 {
     wxString buffer = "std::vector<std::pair<int, int>> v;";

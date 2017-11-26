@@ -33,8 +33,8 @@ aaaaa ICON "res/codelite-logo.ico"
 ///////////////////////////////////////////////////////////////////////////////
 // Version information
 VS_VERSION_INFO    VERSIONINFO
-FILEVERSION      11,0,6,0
-PRODUCTVERSION   11,0,6,0
+FILEVERSION      11,0,7,0
+PRODUCTVERSION   11,0,7,0
 FILEFLAGSMASK    0x3fL // VS_FFI_FILEFLAGSMASK
 FILEFLAGS        0x0L  // final version
 FILEOS           VOS_NT_WINDOWS32
@@ -48,7 +48,7 @@ FILESUBTYPE      VFT2_UNKNOWN { // not used
             VALUE "CompanyName",      "Eran Ifrah"
             VALUE "Developer",        "Eran Ifrah"
             VALUE "FileDescription",  "CodeLite, an Open Source cross platform C,C++,PHP and Node.js IDE"
-            VALUE "FileVersion",      "11.0.6"
+            VALUE "FileVersion",      "11.0.7"
             VALUE "InternalName",     "CodeLite"
             VALUE "LegalCopyright",   "Copyright (C) 2007-2017 Eran Ifrah"
             VALUE "LegalTrademarks",  "All rights reserved."
@@ -56,9 +56,9 @@ FILESUBTYPE      VFT2_UNKNOWN { // not used
             VALUE "PrivateBuild",     ""
             VALUE "ProductName",      "CodeLite"
 #if WIN64
-            VALUE "ProductVersion",   "11.0.6 (64BIT)"
+            VALUE "ProductVersion",   "11.0.7 (64BIT)"
 #else
-            VALUE "ProductVersion",   "11.0.6 (32BIT)"
+            VALUE "ProductVersion",   "11.0.7 (32BIT)"
 #endif
             VALUE "SpecialBuild",     ""
             VALUE "Support",          "https://forums.codelite.org"

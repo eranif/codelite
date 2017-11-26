@@ -151,6 +151,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
                     break;
                 case '*':
                 case '&':
+                case '@': // AngelScript
                     // Part of the name
                     UngetToken(token);
                     return true;
@@ -175,7 +176,18 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
 {
     CxxLexerToken token;
     while(GetNextToken(token)) {
-        if(token.GetType() == T_IDENTIFIER) {
+        if(token.GetType() == '@') {
+            // AngelScript. @ is similar to * in C/C++
+            // @see https://github.com/eranif/codelite/issues/1839
+            if(!GetNextToken(token) || token.GetType() != T_IDENTIFIER) {
+                varname.Clear();
+                return false;
+            }
+            varname = token.GetWXString();
+            varInitialization.Clear();
+            pointerOrRef = "@";
+            return true;
+        } else if(token.GetType() == T_IDENTIFIER) {
             varname = token.GetWXString();
 
             // Peek at the next token
@@ -231,7 +243,6 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
                 UngetToken(token);
                 return false;
             }
-
         } else if(token.GetType() == '*' || token.GetType() == '&') {
             pointerOrRef << token.GetWXString();
         } else {
@@ -260,7 +271,7 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
         delims.insert(',');
         delims.insert('{');
         type = ReadUntil(delims, token, dummy);
-        
+
     } else if(tokType == '[') {
         // Array
         std::unordered_set<int> delims;

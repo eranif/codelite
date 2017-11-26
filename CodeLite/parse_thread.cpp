@@ -22,25 +22,25 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "precompiled_header.h"
-#include "tags_storage_sqlite3.h"
+#include "CxxScannerTokens.h"
+#include "CxxVariableScanner.h"
+#include "cl_command_event.h"
+#include "cpp_scanner.h"
+#include "crawler_include.h"
+#include "ctags_manager.h"
+#include "file_logger.h"
+#include "istorage.h"
+#include "parse_thread.h"
 #include "pp_include.h"
 #include "pptable.h"
-#include "file_logger.h"
-#include <wx/tokenzr.h>
-#include "crawler_include.h"
-#include "parse_thread.h"
-#include "ctags_manager.h"
-#include "istorage.h"
-#include <wx/stopwatch.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/ffile.h>
-#include "cpp_scanner.h"
+#include "precompiled_header.h"
+#include "tags_storage_sqlite3.h"
 #include <set>
-#include "cl_command_event.h"
 #include <tags_options_data.h>
-#include "CxxVariableScanner.h"
-#include "CxxScannerTokens.h"
+#include <wx/ffile.h>
+#include <wx/stopwatch.h>
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 
@@ -259,9 +259,7 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 
 void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& arrFiles)
 {
-    if(!this->IsCrawlerEnabled()) {
-        return;
-    }
+    if(!this->IsCrawlerEnabled()) { return; }
 
     {
         wxCriticalSectionLocker locker(TagsManagerST::Get()->m_crawlerLocker);
@@ -291,10 +289,10 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
         // Before using the 'crawlerScan' we lock it, since it is not mt-safe
         crawlerScan(cfile.data());
     }
-    
+
     const fcFileOpener::Set_t& fileSet = fcFileOpener::Get()->GetResults();
     arrFiles.Alloc(fileSet.size()); // Make enough room
-    std::for_each(fileSet.begin(), fileSet.end(), [&](const wxString& file){
+    std::for_each(fileSet.begin(), fileSet.end(), [&](const wxString& file) {
         wxFileName fn(file);
         fn.MakeAbsolute();
         arrFiles.Add(fn.GetFullPath());
@@ -315,9 +313,7 @@ void ParseThread::ParseAndStoreFiles(ParseRequest* req, const wxArrayString& arr
         wxString tags; // output
         TagsManagerST::Get()->SourceToTags(arrFiles.Item(i), tags);
 
-        if(tags.IsEmpty() == false) {
-            DoStoreTags(tags, arrFiles.Item(i), totalSymbols, db);
-        }
+        if(tags.IsEmpty() == false) { DoStoreTags(tags, arrFiles.Item(i), totalSymbols, db); }
     }
 
     DEBUG_MESSAGE(wxString(wxT("Done")));
@@ -374,16 +370,12 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 
     // convert the file to tags
     double maxVal = (double)req->_workspaceFiles.size();
-    if(maxVal == 0.0) {
-        return;
-    }
+    if(maxVal == 0.0) { return; }
 
     // we report every 10%
     double reportingPoint = maxVal / 100.0;
     reportingPoint = ceil(reportingPoint);
-    if(reportingPoint == 0.0) {
-        reportingPoint = 1.0;
-    }
+    if(reportingPoint == 0.0) { reportingPoint = 1.0; }
 
     ITagsStoragePtr db(new TagsStorageSQLite());
     db->OpenDatabase(dbfile);
@@ -509,9 +501,7 @@ void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<wxString>* newSe
         for(size_t i = 0; i < filteredFileList.GetCount(); i++) {
             const wxCharBuffer cfile = filteredFileList.Item(i).mb_str(wxConvUTF8);
             crawlerScan(cfile.data());
-            if(TestDestroy()) {
-                return;
-            }
+            if(TestDestroy()) { return; }
         }
         newSet->insert(fcFileOpener::Get()->GetResults().begin(), fcFileOpener::Get()->GetResults().end());
     }
@@ -526,9 +516,7 @@ void ParseRequest::setTags(const wxString& tags) { _tags = tags.c_str(); }
 
 ParseRequest::ParseRequest(const ParseRequest& rhs)
 {
-    if(this == &rhs) {
-        return;
-    }
+    if(this == &rhs) { return; }
     *this = rhs;
 }
 
@@ -550,9 +538,7 @@ static ParseThread* gs_theParseThread = NULL;
 
 void ParseThreadST::Free()
 {
-    if(gs_theParseThread) {
-        delete gs_theParseThread;
-    }
+    if(gs_theParseThread) { delete gs_theParseThread; }
     gs_theParseThread = NULL;
 }
 
@@ -644,17 +630,16 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
         wxStringSet_t tokens;
         CxxLexerToken tok;
         while(tokenizer.NextToken(tok)) {
-            if(tok.GetType() == T_IDENTIFIER) {
-                tokens.insert(tok.GetWXString());
-            }
+            if(tok.GetType() == T_IDENTIFIER) { tokens.insert(tok.GetWXString()); }
         }
 
         std::vector<wxString> tokensArr;
+        tokensArr.reserve(tokens.size());
         std::for_each(tokens.begin(), tokens.end(), [&](const wxString& str) { tokensArr.push_back(str); });
         std::sort(tokensArr.begin(), tokensArr.end());
 
         // did we find anything?
-        if(tokensArr.empty()) return;
+        if(tokensArr.empty()) { return; }
 
         // Open the database
         ITagsStoragePtr db(new TagsStorageSQLite());
@@ -688,9 +673,7 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
 void ParseThread::ProcessSourceToTags(ParseRequest* req)
 {
     wxFileName filename(req->getFile());
-    if(TagsManagerST::Get()->IsBinaryFile(filename.GetFullPath())) {
-        return;
-    }
+    if(TagsManagerST::Get()->IsBinaryFile(filename.GetFullPath())) { return; }
 
     wxString strTags;
     TagsManagerST::Get()->SourceToTags(filename, strTags);

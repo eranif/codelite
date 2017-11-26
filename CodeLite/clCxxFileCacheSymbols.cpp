@@ -1,12 +1,12 @@
 #include "clCxxFileCacheSymbols.h"
-#include "event_notifier.h"
 #include "codelite_events.h"
+#include "ctags_manager.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "parse_thread.h"
-#include <wx/tokenzr.h>
-#include <algorithm>
 #include "worker_thread.h"
-#include "ctags_manager.h"
+#include <algorithm>
+#include <wx/tokenzr.h>
 
 wxDEFINE_EVENT(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, clCommandEvent);
 
@@ -47,9 +47,7 @@ public:
         while(true) {
             wxString filename;
             if(m_queue.ReceiveTimeout(50, filename) == wxMSGQUEUE_NO_ERROR) {
-                if(TagsManagerST::Get()->IsBinaryFile(filename)) {
-                    continue;
-                }
+                if(TagsManagerST::Get()->IsBinaryFile(filename)) { continue; }
 
                 wxString strTags;
                 TagsManagerST::Get()->SourceToTags(filename, strTags);
@@ -85,17 +83,17 @@ clCxxFileCacheSymbols::~clCxxFileCacheSymbols()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clCxxFileCacheSymbols::OnWorkspaceAction, this);
 }
 
-bool clCxxFileCacheSymbols::Contains(const wxFileName& filename) { return Contains(filename.GetFullPath()); }
+bool clCxxFileCacheSymbols::Contains(const wxFileName& filename) const { return Contains(filename.GetFullPath()); }
 
-bool clCxxFileCacheSymbols::Contains(const wxString& filename)
+bool clCxxFileCacheSymbols::Contains(const wxString& filename) const
 {
-    //wxCriticalSectionLocker locker(m_cs);
+    // wxCriticalSectionLocker locker(m_cs);
     return (m_cache.count(filename) > 0);
 }
 
 void clCxxFileCacheSymbols::Clear()
 {
-    //wxCriticalSectionLocker locker(m_cs);
+    // wxCriticalSectionLocker locker(m_cs);
     m_cache.clear();
     m_pendingFiles.clear();
     clDEBUG1() << "Symbols cache cleared" << clEndl;
@@ -103,17 +101,15 @@ void clCxxFileCacheSymbols::Clear()
 
 void clCxxFileCacheSymbols::Update(const wxFileName& filename, const TagEntryPtrVector_t& tags)
 {
-    //wxCriticalSectionLocker locker(m_cs);
-    if(m_cache.count(filename.GetFullPath())) {
-        m_cache.erase(filename.GetFullPath());
-    }
+    // wxCriticalSectionLocker locker(m_cs);
+    if(m_cache.count(filename.GetFullPath())) { m_cache.erase(filename.GetFullPath()); }
     m_cache[filename.GetFullPath()] = tags;
     clDEBUG1() << "Updating Symbols cache for file:" << filename << clEndl;
 }
 
 void clCxxFileCacheSymbols::Delete(const wxFileName& filename)
 {
-    //wxCriticalSectionLocker locker(m_cs);
+    // wxCriticalSectionLocker locker(m_cs);
     m_cache.erase(filename.GetFullPath());
     clDEBUG1() << "Deleting Symbols cache for file:" << filename << clEndl;
 }
@@ -121,7 +117,7 @@ void clCxxFileCacheSymbols::Delete(const wxFileName& filename)
 bool clCxxFileCacheSymbols::Find(const wxFileName& filename, TagEntryPtrVector_t& tags, size_t flags)
 {
     {
-        //wxCriticalSectionLocker locker(m_cs);
+        // wxCriticalSectionLocker locker(m_cs);
         if(m_cache.count(filename.GetFullPath())) {
             tags = m_cache[filename.GetFullPath()];
             clDEBUG1() << "Symbols fetched from cache for file:" << filename << clEndl;
@@ -132,15 +128,16 @@ bool clCxxFileCacheSymbols::Find(const wxFileName& filename, TagEntryPtrVector_t
     }
 
     // Apply the flags
-    if(flags & kFunctions) {
-        // Return only functions
-        TagEntryPtrVector_t functions;
-        std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr tag) {
-            if(tag->IsMethod()) {
-                functions.push_back(tag);
+    if((flags & kFunctions) && !tags.empty()) {
+        // Remove all non functions
+        TagEntryPtrVector_t::iterator iter = tags.begin();
+        for(; iter != tags.end();) {
+            if(!(*iter)->IsMethod()) {
+                iter = tags.erase(iter);
+            } else {
+                ++iter;
             }
-        });
-        tags.swap(functions);
+        }
     }
     return true;
 }

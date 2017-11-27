@@ -8,7 +8,7 @@
     <key>CFBundleExecutable</key>
     <string>codelite</string>
     <key>CFBundleInfoDictionaryVersion</key>
-    <string>11.0.6</string>
+    <string>11.0.7</string>
     <key>CFBundleName</key>
     <string>CodeLite</string>
     <key>CFBundleIconFile</key>
@@ -18,9 +18,9 @@
     <key>CFBundleIdentifier</key>
     <string>com.eranif.codelite</string>
     <key>CFBundleVersion</key>
-    <string>CodeLite IDE version 11.0.6</string>
+    <string>CodeLite IDE version 11.0.7</string>
     <key>CFBundleShortVersionString</key>
-    <string>CodeLite IDE version 11.0.6</string>
+    <string>CodeLite IDE version 11.0.7</string>
     <key>CSResourcesFileMapped</key>
     <true/>
     <key>CFBundleDocumentTypes</key>

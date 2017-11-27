@@ -8,6 +8,7 @@
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
+#include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -15,6 +16,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "lexer_configuration.h"
+#include "optionsconfig.h"
 #include <unordered_map>
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
@@ -34,34 +36,28 @@ clEditorBar::clEditorBar(wxWindow* parent)
     , m_state(eButtonState::kNormal)
     , m_bookmarksButtonState(eButtonState::kNormal)
 {
-    {
-        wxBitmap bmp(1, 1);
-        wxMemoryDC memDC(bmp);
-        m_defaultColour = DrawingUtils::GetPanelTextColour();
-        m_functionColour = DrawingUtils::GetPanelTextColour();
-        m_classColour = DrawingUtils::GetPanelTextColour();
-        m_bgColour = DrawingUtils::GetPanelBgColour();
-        m_textFont = m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        LexerConf::Ptr_t defaultLexer = ColoursAndFontsManager::Get().GetLexer("default");
-        if(defaultLexer) { m_textFont = defaultLexer->GetFontForSyle(0); }
+    wxBitmap bmp(1, 1);
+    wxMemoryDC memDC(bmp);
+    m_defaultColour = DrawingUtils::GetPanelTextColour();
+    m_functionColour = DrawingUtils::GetPanelTextColour();
+    m_classColour = DrawingUtils::GetPanelTextColour();
+    m_bgColour = DrawingUtils::GetPanelBgColour();
+    m_textFont = m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    LexerConf::Ptr_t defaultLexer = ColoursAndFontsManager::Get().GetLexer("default");
+    if(defaultLexer) { m_textFont = defaultLexer->GetFontForSyle(0); }
 
-        SetBackgroundStyle(wxBG_STYLE_PAINT);
+    m_functionBmp = clGetManager()->GetStdIcons()->LoadBitmap("function_public", 16);
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
 
-        memDC.SetFont(m_textFont);
-        wxSize sz = memDC.GetTextExtent("Tp");
-        sz.y += (2 * Y_SPACER); // 2*3 pixels
-        SetSizeHints(wxSize(-1, sz.y));
-    }
+    memDC.SetFont(m_textFont);
+    wxSize sz = memDC.GetTextExtent("Tp");
+    //wxCoord baseY = wxMax(sz.y, m_functionBmp.GetScaledHeight());
+    wxCoord baseY = sz.y;
+    baseY += (2 * Y_SPACER); // 2*3 pixels
+    SetSizeHints(wxSize(-1, baseY));
 
-    {
-        m_bookmarksBmp = wxBitmap(16, 16);
-        wxMemoryDC memDC(m_bookmarksBmp);
-        wxColour c("rgb(255, 128, 64)");
-        memDC.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-        memDC.SetBrush(wxColour(c));
-        memDC.DrawRectangle(0, 0, 16, 16);
-        memDC.SelectObject(wxNullBitmap);
-    }
+    CreateBookmarksBitmap();
+
     Bind(wxEVT_LEFT_UP, &clEditorBar::OnLeftUp, this);
     Bind(wxEVT_IDLE, &clEditorBar::OnIdle, this);
 
@@ -111,7 +107,8 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
     if(!m_function.IsEmpty()) { fulltext << m_function; }
 
     if(!fulltext.IsEmpty()) {
-        int scopeButtonWidth = gcdc.GetTextExtent("W" + fulltext + "W").GetWidth();
+        int scopeButtonWidth =
+            /*m_functionBmp.GetScaledWidth() + */ gcdc.GetTextExtent("W" + fulltext + "W").GetWidth();
         m_scopeRect = wxRect(textX, 0, scopeButtonWidth + 20, rect.GetHeight() - 2);
         DrawingUtils::DrawButton(gcdc, this, m_scopeRect, fulltext, wxNullBitmap, eButtonKind::kDropDown,
                                  m_scopeButtonState);
@@ -141,6 +138,8 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         textX = GetClientRect().GetWidth() - total_width;
 
         if(!m_bookmarks.empty()) {
+            // Update the bookmarks bitmap according to the user settings
+            CreateBookmarksBitmap();
             // Draw the bookmarks button
             // Add 60 (about 40 for the image and 20 needed for the drop down button
             m_bookmarksRect = wxRect(textX, 0, bookmarksTextSize.GetWidth() + 60, rect.GetHeight() - 2);
@@ -397,4 +396,17 @@ void clEditorBar::OnMarkerChanged(clCommandEvent& event)
     m_bookmarks.clear();
     if(editor) { editor->GetFindMarkers(m_bookmarks); }
     Refresh();
+}
+
+void clEditorBar::CreateBookmarksBitmap()
+{
+    m_bookmarksBmp = wxBitmap(16, 16);
+    wxMemoryDC memDC(m_bookmarksBmp);
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    wxColour bgColour = options->GetBookmarkBgColour(0);
+    wxColour fgColour = options->GetBookmarkFgColour(0);
+    memDC.SetPen(fgColour);
+    memDC.SetBrush(bgColour);
+    memDC.DrawRectangle(0, 0, 16, 16);
+    memDC.SelectObject(wxNullBitmap);
 }

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <wx/init.h>
+#include <wx/log.h>
 
 TEST_FUNC(test_cxx_normalize_signature)
 {
@@ -38,6 +39,15 @@ TEST_FUNC(test_cxx_class_method_impl)
     CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t(), false);
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
     CHECK_BOOL(vars.count("MainFrame") == 0);
+    return true;
+}
+
+TEST_FUNC(test_array_variables)
+{
+    wxString buffer = "wxString arr[10];";
+    CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t(), false);
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_BOOL(vars.count("arr") == 1);
     return true;
 }
 
@@ -145,9 +155,19 @@ TEST_FUNC(test_locals_inside_while)
     return true;
 }
 
+TEST_FUNC(test_angel_script_locals)
+{
+    wxString buffer = "MyType@ var;";
+    CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t(), false);
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_BOOL(vars.count("var") == 1);
+    return true;
+}
+
 int main(int argc, char** argv)
 {
     wxInitializer initializer(argc, argv);
+    wxLogNull NOLOG;
     Tester::Instance()->RunTests();
     //    fgetc(stdin);
     return 0;

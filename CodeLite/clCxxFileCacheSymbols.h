@@ -1,15 +1,15 @@
 #ifndef CLCXXFILECACHESYMBOLS_H
 #define CLCXXFILECACHESYMBOLS_H
 
-#include "codelite_exports.h"
-#include "wxStringHash.h"
-#include "entry.h"
-#include <vector>
-#include <wx/filename.h>
-#include <wx/thread.h>
-#include <wx/event.h>
 #include "cl_command_event.h"
+#include "codelite_exports.h"
+#include "entry.h"
+#include "wxStringHash.h"
+#include <vector>
+#include <wx/event.h>
+#include <wx/filename.h>
 #include <wx/sharedptr.h>
+#include <wx/thread.h>
 
 class SourceToTagsThread;
 class WXDLLIMPEXP_CL clCxxFileCacheSymbols : public wxEvtHandler
@@ -37,8 +37,8 @@ public:
     clCxxFileCacheSymbols();
     virtual ~clCxxFileCacheSymbols();
 
-    bool Contains(const wxFileName& filename);
-    bool Contains(const wxString& filename);
+    bool Contains(const wxFileName& filename) const;
+    bool Contains(const wxString& filename) const;
     void Clear();
     void Update(const wxFileName& filename, const TagEntryPtrVector_t& tags);
     void Delete(const wxFileName& filename);

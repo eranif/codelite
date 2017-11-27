@@ -18,7 +18,8 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxFont m_textFont;
     wxRect m_scopeRect;
     eButtonState m_scopeButtonState;
-
+    wxBitmap m_functionBmp;
+    
     // Breadcrumbs
     wxString m_filename;
     wxString m_filenameRelative;
@@ -38,6 +39,7 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
 private:
     void DoRefreshColoursAndFonts();
     void DoRefresh();
+    void CreateBookmarksBitmap();
 
 public:
     clEditorBar(wxWindow* parent);

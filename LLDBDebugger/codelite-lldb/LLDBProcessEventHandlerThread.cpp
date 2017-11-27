@@ -29,14 +29,12 @@
 #include <lldb/API/SBEvent.h>
 #include <wx/wxcrtvararg.h>
 
-LLDBProcessEventHandlerThread::LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app,
-        lldb::SBDebugger& debugger,
-        lldb::SBProcess process,
-        eLLDBDebugSessionType sessionType)
+LLDBProcessEventHandlerThread::LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app, lldb::SBDebugger& debugger,
+                                                             lldb::SBProcess process, eLLDBDebugSessionType sessionType)
     : wxThread(wxTHREAD_JOINABLE)
     , m_app(app)
     , m_process(process)
-    , m_debugger( debugger )
+    , m_debugger(debugger)
     , m_sessionType(sessionType)
 {
     m_listener = m_debugger.GetListener();
@@ -45,7 +43,7 @@ LLDBProcessEventHandlerThread::LLDBProcessEventHandlerThread(CodeLiteLLDBApp* ap
 LLDBProcessEventHandlerThread::~LLDBProcessEventHandlerThread()
 {
     wxPrintf("codelite-lldb: Process Event Handler thread is going down...\n");
-    if ( IsAlive() ) {
+    if(IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
@@ -59,12 +57,13 @@ void* LLDBProcessEventHandlerThread::Entry()
 {
     bool first_time_stopped = true;
     DEBUG_MSG("LLDB Thread: started");
-    //m_listener.StartListeningForEventClass(m_debugger, lldb::SBTarget::GetBroadcasterClassName(), lldb::SBTarget::eBroadcastBitBreakpointChanged);
-    while ( !TestDestroy() ) {
+    // m_listener.StartListeningForEventClass(m_debugger, lldb::SBTarget::GetBroadcasterClassName(),
+    // lldb::SBTarget::eBroadcastBitBreakpointChanged);
+    while(!TestDestroy()) {
         lldb::SBEvent event;
-        if ( m_listener.WaitForEvent(1, event) && event.IsValid() ) {
-            lldb::StateType state = m_process.GetStateFromEvent( event );
-            switch ( state ) {
+        if(m_listener.WaitForEvent(1, event) && event.IsValid()) {
+            lldb::StateType state = m_process.GetStateFromEvent(event);
+            switch(state) {
             case lldb::eStateInvalid:
                 DEBUG_MSG("LLDBHandlerThread: eStateInvalid");
                 break;
@@ -74,15 +73,15 @@ void* LLDBProcessEventHandlerThread::Entry()
                 break;
 
             case lldb::eStateStopped:
-                if ( first_time_stopped && m_sessionType != kDebugSessionTypeCore ) {
+                if(first_time_stopped && m_sessionType != kDebugSessionTypeCore) {
                     first_time_stopped = false;
                     DEBUG_MSG("LLDBHandlerThread: eStateStopped - first time");
-                    m_app->CallAfter( &CodeLiteLLDBApp::NotifyStoppedOnFirstEntry );
+                    m_app->CallAfter(&CodeLiteLLDBApp::NotifyStoppedOnFirstEntry);
 
                 } else {
                     DEBUG_MSG("LLDBHandlerThread: eStateStopped");
-                    m_app->CallAfter( &CodeLiteLLDBApp::NotifyStopped );
-                    m_app->CallAfter( &CodeLiteLLDBApp::NotifyBreakpointsUpdated );
+                    m_app->CallAfter(&CodeLiteLLDBApp::NotifyStopped);
+                    m_app->CallAfter(&CodeLiteLLDBApp::NotifyBreakpointsUpdated);
                 }
                 break;
 
@@ -95,13 +94,13 @@ void* LLDBProcessEventHandlerThread::Entry()
                 break;
 
             case lldb::eStateRunning:
-                m_app->CallAfter( &CodeLiteLLDBApp::NotifyRunning );
+                m_app->CallAfter(&CodeLiteLLDBApp::NotifyRunning);
                 DEBUG_MSG("LLDBHandlerThread: eStateRunning");
                 break;
 
             case lldb::eStateExited:
                 DEBUG_MSG("LLDBHandlerThread: eStateExited");
-                m_app->CallAfter( &CodeLiteLLDBApp::NotifyExited );
+                m_app->CallAfter(&CodeLiteLLDBApp::NotifyExited);
                 break;
 
             case lldb::eStateAttaching:

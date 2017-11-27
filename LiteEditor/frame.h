@@ -601,6 +601,7 @@ protected:
     void OnConfigureAccelerators(wxCommandEvent& e);
     void OnStartPageEvent(wxCommandEvent& e);
     void OnNewVersionAvailable(wxCommandEvent& e);
+    void OnVersionCheckError(wxCommandEvent& e);
     void OnGotoCodeLiteDownloadPage(wxCommandEvent& e);
     void OnBatchBuild(wxCommandEvent& e);
     void OnBatchBuildUI(wxUpdateUIEvent& e);

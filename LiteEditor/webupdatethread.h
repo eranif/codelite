@@ -29,8 +29,9 @@
 #include "SocketAPI/clSocketClientAsync.h"
 #include "cl_command_event.h"
 
-extern const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE;
-extern const wxEventType wxEVT_CMD_VERSION_UPTODATE;
+wxDECLARE_EVENT(wxEVT_CMD_NEW_VERSION_AVAILABLE, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_CMD_VERSION_UPTODATE, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_CMD_VERSION_CHECK_ERROR, wxCommandEvent);
 
 class WebUpdateJobData
 {
@@ -74,6 +75,8 @@ class WebUpdateJob : public wxEvtHandler
     bool m_userRequest;
     bool m_onlyRelease;
     bool m_eventsConnected;
+    clSocketClientAsync m_testSocket;
+    bool m_testingConnection;
 
 protected:
     /**
@@ -87,12 +90,20 @@ protected:
     void OnSocketInput(clCommandEvent& e);
 
     void Clear();
+    void NotifyError(const wxString& errmsg);
 
 public:
     WebUpdateJob(wxEvtHandler* parent, bool userRequest, bool onlyRelease);
     virtual ~WebUpdateJob();
     void ParseFile();
     bool IsUserRequest() const { return m_userRequest; }
+
+protected:
+    /**
+     * @brief check the connectivity to the internet
+     */
+    void CheckConnectivity();
+    void RealCheck();
 
 public:
     virtual void Check();

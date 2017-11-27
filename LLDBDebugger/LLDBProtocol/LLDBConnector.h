@@ -81,7 +81,8 @@ protected:
     bool m_attachedToProcess;
     bool m_goingDown;
     LLDBPivot m_pivot;
-
+    wxString m_debugserver;
+    
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
 
@@ -317,13 +318,13 @@ public:
      * @brief step over to next instruction
      */
     void ShowCurrentFileLine();
-    
+
     /**
      * @brief send text command (typed by the user) to the debugger command line
      * interperter
      */
-    void SendInterperterCommand(const wxString &command);
-    
+    void SendInterperterCommand(const wxString& command);
+
 protected:
     /**
      * @brief establish connection to codelite-lldb server

@@ -680,6 +680,7 @@ EVT_MENU(XRCID("goto_codelite_download_url"), clMainFrame::OnGotoCodeLiteDownloa
 
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, clMainFrame::OnNewVersionAvailable)
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, clMainFrame::OnNewVersionAvailable)
+EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_CHECK_ERROR, clMainFrame::OnVersionCheckError)
 
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE, clMainFrame::OnNewDetachedPane)
 EVT_COMMAND(wxID_ANY, wxEVT_LOAD_PERSPECTIVE, clMainFrame::OnLoadPerspective)
@@ -6109,3 +6110,9 @@ void clMainFrame::OnWordComplete(wxCommandEvent& event)
 }
 
 void clMainFrame::OnGotoAnything(wxCommandEvent& e) { clGotoAnythingManager::Get().ShowDialog(); }
+
+void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
+{
+    ::wxMessageBox(e.GetString(), "CodeLite", wxICON_ERROR | wxOK, this);
+    wxDELETE(m_webUpdate);
+}

@@ -293,6 +293,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 #endif
 
 #ifdef __WXMSW__
+    ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
     ctrl->SetDoubleBuffered(true);
 #endif
 
@@ -310,7 +311,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         // Enable SCSS property (will tell the lexer to search for variables)
         ctrl->SetProperty("lexer.css.scss.language", "1");
     }
-    ctrl->SetUseAntiAliasing(true);
 
     // Find the default style
     wxFont defaultFont;

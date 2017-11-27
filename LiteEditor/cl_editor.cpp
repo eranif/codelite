@@ -512,8 +512,7 @@ void LEditor::SetProperties()
 #else
     UsePopUp(0);
 #endif
-    SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-
+    
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();

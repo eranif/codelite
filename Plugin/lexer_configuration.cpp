@@ -293,7 +293,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 #endif
 
 #ifdef __WXMSW__
-    ctrl->SetUseAntiAliasing(true);
+    ctrl->SetDoubleBuffered(true);
 #endif
 
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();

@@ -608,6 +608,7 @@ bool CxxVariableScanner::OnForLoop(Scanner_t scanner)
             if(depth == 0) return true;
             break;
         case ';':
+        case ':': // C++11 ranged for
             if(lookingForFirstSemiColon) { buffer << ";"; }
             lookingForFirstSemiColon = false;
             break;

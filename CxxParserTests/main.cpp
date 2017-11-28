@@ -164,6 +164,15 @@ TEST_FUNC(test_angel_script_locals)
     return true;
 }
 
+TEST_FUNC(test_ranged_forloop)
+{
+    wxString buffer = "for(const wxString& str : myArr) {";
+    CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t(), false);
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_BOOL(vars.count("str") == 1);
+    return true;
+}
+
 int main(int argc, char** argv)
 {
     wxInitializer initializer(argc, argv);

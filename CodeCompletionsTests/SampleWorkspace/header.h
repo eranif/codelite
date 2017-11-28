@@ -74,8 +74,8 @@ public:
 // Test the 'testStructDeclaratorInFuncArgument
 //////////////////////////////////////////////////////////////
 
-void foo_bar(struct wxString* pString) {
-   
+void foo_bar(struct wxString* pString, const std::string& secondArg) {
+
 }
 } // Namespace Baz
 

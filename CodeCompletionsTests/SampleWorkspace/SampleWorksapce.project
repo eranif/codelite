@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="SampleWorksapce" InternalType="">
+<CodeLite_Project Name="SampleWorksapce" InternalType="" Version="10.0.0">
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp]]>
+    </Extensions>
+    <Topleveldir>/src/codelite/CodeCompletionsTests/SampleWorkspace</Topleveldir>
+  </Reconciliation>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00010001N0005Debug000000000000]]>
@@ -21,7 +30,6 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="header.h"/>
-    <File Name="main.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

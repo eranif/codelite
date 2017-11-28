@@ -195,6 +195,8 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("_GLIBCXX_DEPRECATED"));
     m_tokens.Add("LLDB_API");
     m_tokens.Add("PYTHON_API");
+    m_tokens.Add("__cpp_deduction_guides=0");
+    
     // libcpp macros
     m_tokens.Add("_LIBCPP_TYPE_VIS_ONLY");
     m_tokens.Add("_LIBCPP_CONSTEXPR");

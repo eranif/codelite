@@ -118,9 +118,10 @@ bool ReconcileProjectDlg::LoadData()
 
         clFilesScanner scanner;
         std::vector<wxString> filesOutput;
-        wxStringSet_t excludeFolders;
-        excludeFolders.insert(excludeFolders.begin(), excludeFolders.end());
-        if(scanner.Scan(toplevelDir, filesOutput, filespec, ignorefilespec, excludeFolders)) {
+        wxStringSet_t excludeFoldersSet;
+        std::for_each(excludeFolders.begin(), excludeFolders.end(), 
+            [&](const wxString& folder) { excludeFoldersSet.insert(folder); });
+        if(scanner.Scan(toplevelDir, filesOutput, filespec, ignorefilespec, excludeFoldersSet)) {
             m_allfiles.insert(filesOutput.begin(), filesOutput.end());
             DoFindFiles();
         }

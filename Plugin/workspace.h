@@ -468,7 +468,12 @@ public:
      * @brief return list of projects for this workspace
      */
     virtual wxArrayString GetWorkspaceProjects() const;
-
+    
+    /**
+     * @brief return list of files that are exluded for a given workspace configuration
+     */
+    size_t GetExcludeFilesForConfig(std::vector<wxString>& files, const wxString& workspaceConfigName = "");
+    
 private:
     /**
      * Do the actual add project

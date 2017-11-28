@@ -103,7 +103,7 @@ public:
     virtual ~ReconcileProjectFiletypesDlg();
 
     void SetData();
-    void GetData(wxString& toplevelDir, wxString& types, wxArrayString& ignoreFiles, wxArrayString& excludePaths,
+    void GetData(wxString& toplevelDir, wxString& types, wxString& ignoreFiles, wxArrayString& excludePaths,
                  wxArrayString& regexes) const;
 
 protected:

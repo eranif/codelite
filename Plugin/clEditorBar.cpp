@@ -243,6 +243,14 @@ void clEditorBar::OnEditorSize(wxSizeEvent& event)
 
 void clEditorBar::OnLeftDown(wxMouseEvent& e) { e.Skip(); }
 
+#ifdef __WXOSX__
+#define MENU_POINT(rect, menuPoint)           \
+    menuPoint = rect.GetTopLeft(); \
+    menuPoint.y -= 5;
+#else
+#define MENU_POINT(rect, menuPoint) menuPoint = rect.GetTopLeft();
+#endif
+
 void clEditorBar::OnLeftUp(wxMouseEvent& e)
 {
     e.Skip();
@@ -275,10 +283,9 @@ void clEditorBar::OnLeftUp(wxMouseEvent& e)
             menu.Append(idOpenExplorer);
         }
 
-        wxPoint menuPoint = m_filenameRect.GetBottomLeft();
-#ifdef __WXOSX__
-        menuPoint.y += 5;
-#endif
+        wxPoint menuPoint;
+        MENU_POINT(m_filenameRect, menuPoint);
+        
         int selection = GetPopupMenuSelectionFromUser(menu, menuPoint);
         if(selection == wxID_NONE) return;
 
@@ -314,10 +321,9 @@ void clEditorBar::OnLeftUp(wxMouseEvent& e)
             });
 
             // We got something to display
-            wxPoint menuPoint = m_bookmarksRect.GetBottomLeft();
-#ifdef __WXOSX__
-            menuPoint.y += 5;
-#endif
+            wxPoint menuPoint;
+            MENU_POINT(m_bookmarksRect, menuPoint);
+            
             int selection = GetPopupMenuSelectionFromUser(menu, menuPoint);
             if(selection == wxID_NONE) return;
             if(M.count(selection)) {
@@ -337,10 +343,8 @@ void clEditorBar::OnLeftUp(wxMouseEvent& e)
 
         if(menu.GetMenuItemCount()) {
             // We got something to display
-            wxPoint menuPoint = m_scopeRect.GetBottomLeft();
-#ifdef __WXOSX__
-            menuPoint.y += 5;
-#endif
+            wxPoint menuPoint;
+            MENU_POINT(m_scopeRect, menuPoint);
 
             // Keep track of the menu items
             std::unordered_map<int, wxString> M;

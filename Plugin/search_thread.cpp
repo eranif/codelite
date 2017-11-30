@@ -464,7 +464,8 @@ void SearchThread::DoSearchLine(const wxString& line,
             result.SetColumnInChars(col);
             result.SetColumn(iCorrectedCol);
             result.SetLineNumber(lineNum);
-            result.SetPattern(line);
+            // Dont use match pattern larger than 500 chars
+            result.SetPattern(line.length() > 500 ? line.Mid(0, 500) : line);
             result.SetFileName(fileName);
             result.SetLenInChars((int)findWhat.Length());
             result.SetLen(iCorrectedLen);

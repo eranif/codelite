@@ -800,7 +800,11 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     wxColour bgColour = baseColour.ChangeLightness(bgLightness);
     dc.SetPen(penColour);
     dc.SetBrush(bgColour);
+#ifdef __WXMSW__
+    dc.DrawRectangle(clientRect);
+#else
     dc.DrawRoundedRectangle(clientRect, 2.0);
+#endif
 
     clientRect.Deflate(1);
     wxRect textRect, arrowRect;

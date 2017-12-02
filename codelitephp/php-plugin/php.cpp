@@ -139,6 +139,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_RENAMED, &PhpPlugin::OnFileRenamed, this);
 
     // Menu bar actions
     wxTheApp->Bind(wxEVT_MENU, &PhpPlugin::OnRunXDebugDiagnostics, this, wxID_PHP_RUN_XDEBUG_DIAGNOSTICS);
@@ -261,6 +262,8 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
 
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_RENAMED, &PhpPlugin::OnFileRenamed, this);
+
     // Menu bar actions
     wxTheApp->Unbind(wxEVT_MENU, &PhpPlugin::OnRunXDebugDiagnostics, this, wxID_PHP_RUN_XDEBUG_DIAGNOSTICS);
     wxTheApp->Unbind(wxEVT_MENU, &PhpPlugin::OnMenuCommand, this, wxID_PHP_SETTINGS);
@@ -825,4 +828,35 @@ void PhpPlugin::OnFileAction(clCommandEvent& e)
 {
     e.Skip();
     if(PHPWorkspace::Get()->IsOpen()) { DoSyncFileWithRemote(e.GetFileName()); }
+}
+
+void PhpPlugin::OnFileRenamed(clFileSystemEvent& e)
+{
+    e.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        const wxString& oldPath = e.GetPath();
+        SSHWorkspaceSettings settings;
+        settings.Load();
+
+        if(settings.IsRemoteUploadSet() && settings.IsRemoteUploadEnabled()) {
+            // Post an event to the SFTP plugin and ask it to save our file
+            wxFileName fnLocalFile = oldPath;
+
+            fnLocalFile.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
+            fnLocalFile.MakeAbsolute(wxFileName(settings.GetRemoteFolder(), "", wxPATH_UNIX).GetPath());
+
+            wxString remoteFile = fnLocalFile.GetFullPath(wxPATH_UNIX);
+            fnLocalFile.SetFullName(wxFileName(e.GetNewpath()).GetFullName());
+
+            wxString remoteNew = fnLocalFile.GetFullPath(wxPATH_UNIX);
+            clDEBUG() << "PHP SFTP: Renaming:" << remoteFile << "->" << remoteNew;
+
+            // Fire this event, if the sftp plugin is ON, it will handle it
+            clSFTPEvent eventRename(wxEVT_SFTP_RENAME_FILE);
+            eventRename.SetAccount(settings.GetAccount());
+            eventRename.SetRemoteFile(remoteFile);
+            eventRename.SetNewRemoteFile(remoteNew);
+            EventNotifier::Get()->AddPendingEvent(eventRename);
+        }
+    }
 }

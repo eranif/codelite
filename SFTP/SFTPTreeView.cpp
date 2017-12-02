@@ -889,7 +889,7 @@ void SFTPTreeView::OnMenuOpenWithDefaultApplication(wxCommandEvent& event)
         remoteFile.SetRemoteFile(cd->GetFullPath());
 
         SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
-        req->SetDirection(SFTPThreadRequet::kDownloadAndOpenWithDefaultApp);
+        req->SetAction(eSFTPActions::kDownloadAndOpenWithDefaultApp);
         SFTPWorkerThread::Instance()->Add(req);
     }
 }
@@ -911,7 +911,7 @@ void SFTPTreeView::OnMenuOpenContainingFolder(wxCommandEvent& event)
         remoteFile.SetRemoteFile(cd->GetFullPath());
 
         SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
-        req->SetDirection(SFTPThreadRequet::kDownloadAndOpenContainingFolder);
+        req->SetAction(eSFTPActions::kDownloadAndOpenContainingFolder);
         SFTPWorkerThread::Instance()->Add(req);
     }
 }

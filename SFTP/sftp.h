@@ -26,14 +26,14 @@
 #ifndef __SFTP__
 #define __SFTP__
 
-#include "plugin.h"
-#include "sftp_workspace_settings.h"
-#include "cl_command_event.h"
-#include "macros.h"
-#include "remote_file_info.h"
 #include "clFileSystemEvent.h"
 #include "clSFTPEvent.h"
 #include "clTabTogglerHelper.h"
+#include "cl_command_event.h"
+#include "macros.h"
+#include "plugin.h"
+#include "remote_file_info.h"
+#include "sftp_workspace_settings.h"
 
 class SFTPStatusPage;
 class SFTPTreeView;
@@ -87,6 +87,8 @@ protected:
     void OnWorkspaceOpened(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent& e);
     void OnFileSaved(clCommandEvent& e);
+    void OnFileRenamed(clFileSystemEvent& e);
+    void OnFileDeleted(clFileSystemEvent& e);
     void OnEditorClosed(wxCommandEvent& e);
     void MSWInitiateConnection();
 
@@ -98,6 +100,11 @@ protected:
 
     // API calls
     void OnSaveFile(clSFTPEvent& e);
+    void OnRenameFile(clSFTPEvent& e);
+    void OnDeleteFile(clSFTPEvent& e);
+
+private:
+    bool IsCxxWorkspaceMirrorEnabled() const;
 
 public:
     //--------------------------------------------

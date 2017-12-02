@@ -135,6 +135,7 @@ public:
     void OnSaveSession(clCommandEvent& event);
     void OnReplaceInFiles(clFileSystemEvent& e);
     void OnFileAction(clCommandEvent& e);
+    void OnFileRenamed(clFileSystemEvent& e);
 };
 
 #endif // PHP

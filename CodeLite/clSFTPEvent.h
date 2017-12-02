@@ -34,6 +34,7 @@ protected:
     wxString m_account;
     wxString m_localFile;
     wxString m_remoteFile;
+    wxString m_newRemoteFile;
 
 public:
     clSFTPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -49,10 +50,14 @@ public:
     const wxString& GetAccount() const { return m_account; }
     const wxString& GetLocalFile() const { return m_localFile; }
     const wxString& GetRemoteFile() const { return m_remoteFile; }
+    void SetNewRemoteFile(const wxString& newRemoteFile) { this->m_newRemoteFile = newRemoteFile; }
+    const wxString& GetNewRemoteFile() const { return m_newRemoteFile; }
 };
 
 typedef void (wxEvtHandler::*clSFTPEventFunction)(clSFTPEvent&);
 #define clSFTPEventHandler(func) wxEVENT_HANDLER_CAST(clSFTPEventFunction, func)
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_SAVE_FILE, clSFTPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_RENAME_FILE, clSFTPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_DELETE_FILE, clSFTPEvent);
 #endif // CLSFTPEVENT_H

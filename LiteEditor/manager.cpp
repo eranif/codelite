@@ -1178,7 +1178,7 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
     // Notify the plugins, maybe they want to override the
     // default behavior (e.g. Subversion plugin)
     clFileSystemEvent renameEvent(wxEVT_FILE_RENAMED);
-    renameEvent.SetOldName(origName);
+    renameEvent.SetPath(origName);
     renameEvent.SetNewpath(newName);
     if(!EventNotifier::Get()->ProcessEvent(renameEvent)) {
         // rename the file on filesystem

@@ -99,8 +99,19 @@ protected:
     bool IsPaneDetached(const wxString& name) const;
 
     // API calls
+
+    // Save remote file content to match the content of a local file
+    // e.GetLocalFile() -> the local file
+    // e.GetRemoteFile() -> the target file
     void OnSaveFile(clSFTPEvent& e);
+    
+    // Rename a remote file
+    // e.GetRemoteFile() -> the "old" remote file path
+    // e.GetNewRemoteFile() -> the "new" remote file path
     void OnRenameFile(clSFTPEvent& e);
+    
+    // Delete a remote file
+    // e.GetRemoteFile() -> the file to be deleted
     void OnDeleteFile(clSFTPEvent& e);
 
 private:

@@ -103,12 +103,18 @@ void PhpSFTPHandler::OnFileDeleted(clFileSystemEvent& e)
 
     SSHWorkspaceSettings settings;
     settings.Load();
-    wxString remotePath = GetRemotePath(settings, e.GetPath());
-    if(remotePath.IsEmpty()) { return; }
     
-    // Fire this event, if the sftp plugin is ON, it will handle it
-    clSFTPEvent eventDelete(wxEVT_SFTP_DELETE_FILE);
-    eventDelete.SetAccount(settings.GetAccount());
-    eventDelete.SetRemoteFile(remotePath);
-    EventNotifier::Get()->AddPendingEvent(eventDelete);
+    const wxArrayString& paths = e.GetPaths();
+    if(paths.IsEmpty()) { return; }
+    
+    for(size_t i = 0; i < paths.size(); ++i) {
+        wxString remotePath = GetRemotePath(settings, paths.Item(i));
+        if(remotePath.IsEmpty()) { return; }
+        
+        // Fire this event, if the sftp plugin is ON, it will handle it
+        clSFTPEvent eventDelete(wxEVT_SFTP_DELETE_FILE);
+        eventDelete.SetAccount(settings.GetAccount());
+        eventDelete.SetRemoteFile(remotePath);
+        EventNotifier::Get()->AddPendingEvent(eventDelete);
+    }
 }

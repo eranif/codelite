@@ -80,6 +80,9 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
         msg.Clear();
         try {
             switch(req->GetAction()) {
+            case eSFTPActions::kConnect:
+                // We don't really need this case. Just make the compiler silence
+                return;
             case eSFTPActions::kUpload: {
                 DoReportStatusBarMessage(wxString() << _("Uploading file: ") << req->GetRemoteFile());
                 SFTPAttribute::Ptr_t attr(new SFTPAttribute(NULL));
@@ -135,7 +138,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 DoReportStatusBarMessage(wxString() << _("Deleting: ") << req->GetRemoteFile());
                 m_sftp->UnlinkFile(req->GetRemoteFile());
                 wxString msg;
-                msg << _("Deleted ") << req->GetRemoteFile() << " -> " << req->GetNewRemoteFile();
+                msg << _("Deleted ") << req->GetRemoteFile();
                 DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
                 break;
             }
@@ -248,8 +251,8 @@ SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxSt
 
 SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& fileToDelete)
     : m_account(accountInfo)
-    , m_action(eSFTPActions::kDelete)
     , m_remoteFile(fileToDelete)
+    , m_action(eSFTPActions::kDelete)
 {
 }
 

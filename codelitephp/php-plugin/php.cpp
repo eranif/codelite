@@ -126,8 +126,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
                                   wxCommandEventHandler(PhpPlugin::OnGetActiveProjectFiles), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
                                   clCommandEventHandler(PhpPlugin::OnFindInFilesDismissed), NULL, this);
-
-    EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpPlugin::OnReplaceInFiles, this);
     EventNotifier::Get()->Connect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(PhpPlugin::OnAllEditorsClosed), NULL,
                                   this);
@@ -138,8 +136,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_RENAMED, &PhpPlugin::OnFileRenamed, this);
 
     // Menu bar actions
     wxTheApp->Bind(wxEVT_MENU, &PhpPlugin::OnRunXDebugDiagnostics, this, wxID_PHP_RUN_XDEBUG_DIAGNOSTICS);
@@ -181,8 +177,11 @@ PhpPlugin::PhpPlugin(IManager* manager)
             }
         }
     } else {
-        CL_WARNING("PHP: Could not locate PHP resources 'PHP.zip' => '%s'", phpResources.GetFullPath());
+        clWARNING() << "PHP: Could not locate PHP resources 'PHP.zip' =>" << phpResources.GetFullPath();
     }
+
+    // Allocate SFTP handler
+    m_sftpHandler.reset(new PhpSFTPHandler());
 }
 
 PhpPlugin::~PhpPlugin() {}
@@ -221,6 +220,7 @@ void PhpPlugin::UnHookPopupMenu(wxMenu* menu, MenuType type)
 
 void PhpPlugin::UnPlug()
 {
+    m_sftpHandler.reset(nullptr);
     XDebugManager::Free();
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS,
                                      clDebugEventHandler(PhpPlugin::OnXDebugDeleteAllBreakpoints), NULL, this);
@@ -250,7 +250,6 @@ void PhpPlugin::UnPlug()
                                      wxCommandEventHandler(PhpPlugin::OnGetCurrentFileProjectFiles), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_GET_ACTIVE_PROJECT_FILES,
                                      wxCommandEventHandler(PhpPlugin::OnGetActiveProjectFiles), NULL, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpPlugin::OnReplaceInFiles, this);
     EventNotifier::Get()->Disconnect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(PhpPlugin::OnAllEditorsClosed),
                                      NULL, this);
@@ -260,9 +259,6 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
-
-    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &PhpPlugin::OnFileAction, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_RENAMED, &PhpPlugin::OnFileRenamed, this);
 
     // Menu bar actions
     wxTheApp->Unbind(wxEVT_MENU, &PhpPlugin::OnRunXDebugDiagnostics, this, wxID_PHP_RUN_XDEBUG_DIAGNOSTICS);
@@ -779,84 +775,5 @@ void PhpPlugin::OnSaveSession(clCommandEvent& event)
         m_mgr->StoreWorkspaceSession(PHPWorkspace::Get()->GetFilename());
     } else {
         event.Skip();
-    }
-}
-
-void PhpPlugin::DoSyncFileWithRemote(const wxFileName& localFile)
-{
-    // Check to see if we got a remote-upload setup
-    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProjectForFile(localFile);
-    if(!pProject) {
-        // Not a workspace file
-        clDEBUG() << localFile << "is not a PHP workspace file, will not sync it with remote" << clEndl;
-        return;
-    }
-
-    SSHWorkspaceSettings settings;
-    settings.Load();
-
-    if(settings.IsRemoteUploadSet() && settings.IsRemoteUploadEnabled()) {
-        // Post an event to the SFTP plugin and ask it to save our file
-        wxFileName fnLocalFile = localFile;
-
-        fnLocalFile.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
-        fnLocalFile.MakeAbsolute(wxFileName(settings.GetRemoteFolder(), "", wxPATH_UNIX).GetPath());
-
-        wxString remoteFile = fnLocalFile.GetFullPath(wxPATH_UNIX);
-
-        // Fire this event, if the sftp plugin is ON, it will handle it
-        clSFTPEvent eventSave(wxEVT_SFTP_SAVE_FILE);
-        eventSave.SetAccount(settings.GetAccount());
-        eventSave.SetLocalFile(localFile.GetFullPath());
-        eventSave.SetRemoteFile(remoteFile);
-        EventNotifier::Get()->AddPendingEvent(eventSave);
-    }
-}
-
-void PhpPlugin::OnReplaceInFiles(clFileSystemEvent& e)
-{
-    e.Skip();
-    if(PHPWorkspace::Get()->IsOpen()) {
-        const wxArrayString& files = e.GetStrings();
-        for(size_t i = 0; i < files.size(); ++i) {
-            DoSyncFileWithRemote(files.Item(i));
-        }
-    }
-}
-
-void PhpPlugin::OnFileAction(clCommandEvent& e)
-{
-    e.Skip();
-    if(PHPWorkspace::Get()->IsOpen()) { DoSyncFileWithRemote(e.GetFileName()); }
-}
-
-void PhpPlugin::OnFileRenamed(clFileSystemEvent& e)
-{
-    e.Skip();
-    if(PHPWorkspace::Get()->IsOpen()) {
-        const wxString& oldPath = e.GetPath();
-        SSHWorkspaceSettings settings;
-        settings.Load();
-
-        if(settings.IsRemoteUploadSet() && settings.IsRemoteUploadEnabled()) {
-            // Post an event to the SFTP plugin and ask it to save our file
-            wxFileName fnLocalFile = oldPath;
-
-            fnLocalFile.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
-            fnLocalFile.MakeAbsolute(wxFileName(settings.GetRemoteFolder(), "", wxPATH_UNIX).GetPath());
-
-            wxString remoteFile = fnLocalFile.GetFullPath(wxPATH_UNIX);
-            fnLocalFile.SetFullName(wxFileName(e.GetNewpath()).GetFullName());
-
-            wxString remoteNew = fnLocalFile.GetFullPath(wxPATH_UNIX);
-            clDEBUG() << "PHP SFTP: Renaming:" << remoteFile << "->" << remoteNew;
-
-            // Fire this event, if the sftp plugin is ON, it will handle it
-            clSFTPEvent eventRename(wxEVT_SFTP_RENAME_FILE);
-            eventRename.SetAccount(settings.GetAccount());
-            eventRename.SetRemoteFile(remoteFile);
-            eventRename.SetNewRemoteFile(remoteNew);
-            EventNotifier::Get()->AddPendingEvent(eventRename);
-        }
     }
 }

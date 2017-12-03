@@ -433,13 +433,8 @@ void SFTP::DoFileSaved(const wxString& filename)
         // Not a remote file, see if have a sychronization setup between this workspace and a remote one
         // ----------------------------------------------------------------------------------------------
 
-        // check if we got a workspace file opened
-        if(!IsCxxWorkspaceMirrorEnabled()) { return; }
-
-        wxFileName file(filename);
-        file.MakeRelativeTo(m_workspaceFile.GetPath());
-        file.MakeAbsolute(wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
-        wxString remoteFile = file.GetFullPath(wxPATH_UNIX);
+        wxString remoteFile = GetRemotePath(filename);
+        if(remoteFile.IsEmpty()) { return; }
 
         SFTPSettings settings;
         settings.Load();
@@ -476,20 +471,11 @@ void SFTP::OpenContainingFolder(const wxString& localFileName) { FileUtils::Open
 void SFTP::OnFileRenamed(clFileSystemEvent& e)
 {
     e.Skip();
-
-    // check if we got a workspace file opened and reflect the change on the remote server
-    if(!IsCxxWorkspaceMirrorEnabled()) { return; }
-
-    wxFileName remoteOldPath(e.GetPath());
-    remoteOldPath.MakeRelativeTo(m_workspaceFile.GetPath());
-    remoteOldPath.MakeAbsolute(wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
-
-    wxFileName localNewFile(e.GetNewpath());
-    wxFileName remoteNewFile(remoteOldPath);
-    remoteNewFile.SetFullName(localNewFile.GetFullName());
-
-    wxString remoteFile = remoteOldPath.GetFullPath(wxPATH_UNIX);
-    wxString remoteNew = remoteNewFile.GetFullPath(wxPATH_UNIX);
+    
+    // Convert local paths to remote paths
+    wxString remoteFile = GetRemotePath(e.GetPath());
+    wxString remoteNew = GetRemotePath(e.GetNewpath());
+    if(remoteFile.IsEmpty() || remoteNew.IsEmpty()) { return; }
 
     SFTPSettings settings;
     settings.Load();
@@ -512,7 +498,14 @@ void SFTP::OnFileRenamed(clFileSystemEvent& e)
     }
 }
 
-void SFTP::OnFileDeleted(clFileSystemEvent& e) { e.Skip(); }
+void SFTP::OnFileDeleted(clFileSystemEvent& e)
+{
+    e.Skip();
+    const wxArrayString& files = e.GetPaths();
+    for(size_t i = 0; i < files.size(); ++i) {
+        DoFileDeleted(files.Item(i));
+    }
+}
 
 bool SFTP::IsCxxWorkspaceMirrorEnabled() const { return m_workspaceFile.IsOk() && m_workspaceSettings.IsOk(); }
 
@@ -554,4 +547,38 @@ void SFTP::OnDeleteFile(clSFTPEvent& e)
         msg << _("Failed to delete remote file '") << path << _("'\nCould not locate account: ") << accName;
         ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
     }
+}
+
+void SFTP::DoFileDeleted(const wxString& filepath)
+{
+    wxString remoteFile = GetRemotePath(filepath);
+    if(remoteFile.IsEmpty()) { return; }
+
+    SFTPSettings settings;
+    settings.Load();
+
+    SSHAccountInfo account;
+    if(settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile));
+
+    } else {
+
+        wxString msg;
+        msg << _("Failed to delete remote file: ") << remoteFile << "'\n"
+            << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
+        ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
+
+        // Disable the workspace mirroring for this workspace
+        m_workspaceSettings.Clear();
+        SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
+    }
+}
+
+wxString SFTP::GetRemotePath(const wxString& localpath) const
+{
+    if(!IsCxxWorkspaceMirrorEnabled()) { return ""; }
+    wxFileName file(localpath);
+    file.MakeRelativeTo(m_workspaceFile.GetPath());
+    file.MakeAbsolute(wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
+    return file.GetFullPath(wxPATH_UNIX);
 }

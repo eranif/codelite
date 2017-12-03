@@ -105,6 +105,8 @@ protected:
 
 private:
     bool IsCxxWorkspaceMirrorEnabled() const;
+    void DoFileDeleted(const wxString& filepath);
+    wxString GetRemotePath(const wxString& localpath) const;
 
 public:
     //--------------------------------------------

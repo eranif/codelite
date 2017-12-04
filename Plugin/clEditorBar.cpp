@@ -84,7 +84,12 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC bdc(this);
     PrepareDC(bdc);
+#ifdef __WXGTK__
+    wxDC &gcdc = bdc;
+#else
     wxGCDC gcdc(bdc);
+#endif
+
     PrepareDC(gcdc);
 
     // Clear the rects

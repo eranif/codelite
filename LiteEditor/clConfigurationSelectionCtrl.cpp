@@ -38,8 +38,12 @@ void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
 
+#ifdef __WXGTK__
+    wxDC &gcdc = dc;
+#else
     wxGCDC gcdc(dc);
     PrepareDC(gcdc);
+#endif
 
     // Build the text to draw
     wxString label;

@@ -413,8 +413,12 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     if(rect.GetSize().x > 0 && rect.GetSize().y > 0) {
+#ifdef __WXGTK__
+        wxDC &gcdc = dc;
+#else
         wxGCDC gcdc(dc);
         PrepareDC(gcdc);
+#endif
         if(!IsVerticalTabs()) {
             gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - CHEVRON_SIZE, clientRect.height);
         }

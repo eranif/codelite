@@ -767,9 +767,8 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     dc.SetBrush(GetPanelBgColour());
     dc.DrawRectangle(clientRect);
 
-    // Now, draw the border
     // Now draw the border around this control
-    clientRect.Deflate(1);
+    clientRect.Deflate(2);
 
     wxColour baseColour = GetButtonBgColour();
     wxColour textColour = GetButtonTextColour();

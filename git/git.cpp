@@ -755,9 +755,11 @@ void GitPlugin::OnCommitList(wxCommandEvent& e)
 void GitPlugin::OnShowDiffs(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    gitAction ga(gitDiffRepoShow, wxT(""));
+/*    gitAction ga(gitDiffRepoShow, wxT(""));
     m_gitActionQueue.push_back(ga);
-    ProcessGitActionQueue();
+    ProcessGitActionQueue();*/
+    GitDiffDlg dlg(m_topWindow, m_repositoryDirectory, this);
+    dlg.ShowModal();
 }
 
 /*******************************************************************************/
@@ -1567,9 +1569,10 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         if(m_gitBlameDlg) { m_gitBlameDlg->OnRevListOutput(m_commandOutput, ga.arguments); }
 
     } else if(ga.action == gitDiffRepoShow) {
-        GitDiffDlg dlg(m_topWindow, m_repositoryDirectory);
-        dlg.SetDiff(m_commandOutput);
-        dlg.ShowModal();
+        // This is now dealt with by GitDiffDlg itself
+//        GitDiffDlg dlg(m_topWindow, m_repositoryDirectory, this);
+//        dlg.SetDiff(m_commandOutput);
+//        dlg.ShowModal();
 
     } else if(ga.action == gitResetFile || ga.action == gitApplyPatch) {
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);

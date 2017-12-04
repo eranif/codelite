@@ -38,6 +38,8 @@
     <File Name="gitCommitListDlg.h"/>
     <File Name="gitDiffDlg.cpp"/>
     <File Name="gitDiffDlg.h"/>
+    <File Name="git/gitdiffchoosecommitishdlg.cpp"/>
+    <File Name="git/gitdiffchoosecommitishdlg.h"/>
     <File Name="gitFileDiffDlg.cpp"/>
     <File Name="gitFileDiffDlg.h"/>
     <File Name="gitentry.cpp"/>

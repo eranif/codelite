@@ -85,6 +85,10 @@ void GitEntry::FromJSON(const JSONElement& json)
     m_pathGITK = json.namedObject("m_pathGITK").toString(m_pathGITK);
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
     m_gitDiffDlgSashPos = json.namedObject("m_gitDiffDlgSashPos").toInt(m_gitDiffDlgSashPos);
+    m_gitDiffChooseDlgRadioSel1 = json.namedObject("m_gitDiffChooseDlgRadioSel1").toInt(m_gitDiffChooseDlgRadioSel1);
+    m_gitDiffChooseDlgRadioSel2 = json.namedObject("m_gitDiffChooseDlgRadioSel2").toInt(m_gitDiffChooseDlgRadioSel2);
+    m_gitDiffChooseDlgCBoxValues1 = json.namedObject("m_gitDiffChooseDlgCBoxValues1").toArrayString();
+    m_gitDiffChooseDlgCBoxValues2 = json.namedObject("m_gitDiffChooseDlgCBoxValues2").toArrayString();
     m_gitConsoleSashPos = json.namedObject("m_gitConsoleSashPos").toInt(m_gitConsoleSashPos);
     m_gitCommitDlgHSashPos = json.namedObject("m_gitCommitDlgHSashPos").toInt(m_gitCommitDlgHSashPos);
     m_gitCommitDlgVSashPos = json.namedObject("m_gitCommitDlgVSashPos").toInt(m_gitCommitDlgVSashPos);
@@ -141,6 +145,10 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_pathGITK", m_pathGITK);
     json.addProperty("m_flags", m_flags);
     json.addProperty("m_gitDiffDlgSashPos", m_gitDiffDlgSashPos);
+    json.addProperty("m_gitDiffChooseDlgRadioSel1", m_gitDiffChooseDlgRadioSel1);
+    json.addProperty("m_gitDiffChooseDlgRadioSel2", m_gitDiffChooseDlgRadioSel2);
+    json.addProperty("m_gitDiffChooseDlgCBoxValues1", m_gitDiffChooseDlgCBoxValues1);
+    json.addProperty("m_gitDiffChooseDlgCBoxValues2", m_gitDiffChooseDlgCBoxValues2);
     json.addProperty("m_gitConsoleSashPos", m_gitConsoleSashPos);
     json.addProperty("m_gitCommitDlgHSashPos", m_gitCommitDlgHSashPos);
     json.addProperty("m_gitCommitDlgVSashPos", m_gitCommitDlgVSashPos);

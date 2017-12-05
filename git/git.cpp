@@ -2598,3 +2598,10 @@ void GitPlugin::OnFileGitBlame(wxCommandEvent& event)
 
     DoGitBlame(fn.GetFullPath());
 }
+
+void GitPlugin::DisplayMessage(const wxString& message) const
+{
+    if (!message.empty()) {
+        GIT_MESSAGE(message);
+    }
+}

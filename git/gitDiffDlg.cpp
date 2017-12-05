@@ -78,6 +78,7 @@ void GitDiffDlg::CreateDiff()
     m_commandOutput.Empty(); // There might be stale contents from a previous run
 
     wxString command = PrepareCommand();
+    m_plugin->DisplayMessage("GitDiff: " + command);
     m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
 }
 

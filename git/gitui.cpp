@@ -922,6 +922,7 @@ GitDiffChooseCommitishDlgBase::GitDiffChooseCommitishDlgBase(wxWindow* parent, w
     
     wxArrayString m_choiceCommit1Arr;
     m_choiceCommit1 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceCommit1Arr, 0);
+    m_choiceCommit1->SetToolTip(_("Here you can choose one of the last 1000 commits to diff against.\nThey will normally be from the currently checked-out branch. However if you select a different branch above, that branch's commits will be shown instead."));
     
     flexGridSizer60413->Add(m_choiceCommit1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
@@ -977,6 +978,7 @@ GitDiffChooseCommitishDlgBase::GitDiffChooseCommitishDlgBase(wxWindow* parent, w
     
     wxArrayString m_choiceCommit2Arr;
     m_choiceCommit2 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceCommit2Arr, 0);
+    m_choiceCommit2->SetToolTip(_("Here you can choose one of the last 1000 commits to diff against.\nThey will normally be from the currently checked-out branch. However if you select a different branch above, that branch's commits will be shown instead."));
     
     flexGridSizer604->Add(m_choiceCommit2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     

@@ -113,7 +113,9 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
     command = m_gitPath + " --no-pager tag";
     m_process = CreateAsyncProcessCB(this, new GitDiffCmdHandler(m_choiceTag1, m_choiceTag2), command, IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
 
-    command = m_gitPath + " --no-pager log --format=\"%h %<(60,trunc)%s\"";
+    // Restrict the commits to 1000: filling a wxChoice with many more froze CodeLite for several minutes
+    // and in any case, selecting one particular commit out of hundreds is not easy!
+    command = m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\"";
     m_process = CreateAsyncProcessCB(this, new GitDiffCmdHandler(m_choiceCommit1, m_choiceCommit2), command, IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
 }
 
@@ -267,7 +269,7 @@ void GitDiffChooseCommitishDlg::OnBranch1Changed(wxCommandEvent& event)
     if (newBranch.StartsWith("* ")) {
         newBranch = newBranch.Mid(2); // Remove the 'active branch' marker
     }
-    wxString command = m_gitPath + " --no-pager log --format=\"%h %<(60,trunc)%s\" " + newBranch;
+    wxString command = m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch;
     m_process = CreateAsyncProcessCB(this, new GitDiffCmdHandler(m_choiceCommit1, NULL), command, IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
 }
 void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
@@ -276,6 +278,6 @@ void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
     if (newBranch.StartsWith("* ")) {
         newBranch = newBranch.Mid(2); // Remove the 'active branch' marker
     }
-    wxString command = m_gitPath + " --no-pager log --format=\"%h %<(60,trunc)%s\" " + newBranch;
+    wxString command = m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch;
     m_process = CreateAsyncProcessCB(this, new GitDiffCmdHandler(NULL, m_choiceCommit2), command, IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
 }

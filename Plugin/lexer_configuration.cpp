@@ -294,7 +294,14 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 
 #ifdef __WXMSW__
     ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+#endif
+
+#if defined(__WXMSW__) || defined(__WXGTK3__)
     ctrl->SetDoubleBuffered(true);
+#endif
+
+#if defined(__WXGTK3__)
+    ctrl->SetTwoPhaseDraw(true);
 #endif
 
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();

@@ -405,10 +405,12 @@ static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defa
 {
     wxColour bgColour = defaultColour;
 #ifdef __WXGTK3__
-    GdkRGBA col;
-    GtkStyleContext* context = gtk_widget_get_style_context(widget);
-    gtk_style_context_get_background_color(context, GTK_STATE_FLAG_NORMAL, &col);
-    bgColour = wxColour(col);
+    //GdkRGBA col;
+    //GtkStyleContext* context = gtk_widget_get_style_context(widget);
+    //gtk_style_context_get_background_color(context, GTK_STATE_FLAG_NORMAL, &col);
+    //bgColour = wxColour(col);
+    return defaultColour;
+    
 #else
     GtkStyle* def = gtk_rc_get_style(widget);
     if(!def) { def = gtk_widget_get_default_style(); }
@@ -426,10 +428,11 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
 {
     wxColour textColour = defaultColour;
 #ifdef __WXGTK3__
-    GdkRGBA col;
-    GtkStyleContext* context = gtk_widget_get_style_context(widget);
-    gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
-    textColour = wxColour(col);
+    //GdkRGBA col;
+    //GtkStyleContext* context = gtk_widget_get_style_context(widget);
+    //gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
+    //textColour = wxColour(col);
+    return defaultColour;
 #else
     GtkStyle* def = gtk_rc_get_style(widget);
     if(!def) { def = gtk_widget_get_default_style(); }
@@ -687,7 +690,11 @@ wxColour DrawingUtils::GetCaptionColour()
         return wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
     }
 #else
+#ifdef __WXGTK3__
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+#else
     return wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+#endif
 #endif
 }
 

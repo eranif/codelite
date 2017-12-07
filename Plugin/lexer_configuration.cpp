@@ -291,10 +291,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     
 #ifndef __WXMSW__
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
-    ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
 #endif
 
 #if defined(__WXMSW__)
+    ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
     ctrl->SetDoubleBuffered(true);
 #endif
 

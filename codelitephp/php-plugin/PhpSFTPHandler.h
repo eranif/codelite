@@ -7,6 +7,7 @@
 #include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
+#include "ssh_workspace_settings.h"
 
 class PhpSFTPHandler : public wxEvtHandler
 {
@@ -16,7 +17,8 @@ public:
 protected:
     void DoSyncFileWithRemote(const wxFileName& localFile);
     wxString GetRemotePath(const SSHWorkspaceSettings& sshSettings, const wxString& localpath) const;
-
+    bool EnsureAccountExists(SSHWorkspaceSettings& workspaceSettings);
+    
 public:
     PhpSFTPHandler();
     virtual ~PhpSFTPHandler();

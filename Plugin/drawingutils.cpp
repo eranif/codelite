@@ -432,13 +432,13 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
 
 wxColour DrawingUtils::GetPanelBgColour()
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
     static bool intitialized(false);
     static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     if(!intitialized) {
         // try to get the background colour from a menu
-        GtkWidget* label = gtk_label_new("stam");
-        bgColour = GtkGetBgColourFromWidget(label, bgColour);
+        GtkWidget *buttonbox = gtk_button_box_new(GTK_ORIENTATION_VERTICAL);
+        bgColour = GtkGetBgColourFromWidget(buttonbox, bgColour);
         intitialized = true;
     }
     return bgColour;
@@ -503,7 +503,7 @@ wxColour DrawingUtils::GetMenuTextColour()
 
 wxColour DrawingUtils::GetMenuBarBgColour()
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
     static bool intitialized(false);
     // initialise default colour
     static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
@@ -764,7 +764,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     wxColour textColour = GetButtonTextColour();
     wxColour penColour = baseColour.ChangeLightness(80);
 
-    int bgLightness = 100;
+    int bgLightness = 0;
     switch(state) {
     case eButtonState::kHover:
 #ifdef __WXMSW__
@@ -778,11 +778,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
         break;
     default:
     case eButtonState::kNormal:
-#ifdef __WXMSW__
-        bgLightness = 120;
-#else
-        bgLightness = 105;
-#endif
+        bgLightness = 100;
         break;
     }
 
@@ -866,7 +862,7 @@ wxSize DrawingUtils::GetBestSize(const wxString& label, int xspacer, int yspacer
 
 wxColour DrawingUtils::GetButtonBgColour()
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
     static bool intitialized(false);
     // initialise default colour
     static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));

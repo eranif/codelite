@@ -64,9 +64,7 @@ void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
     wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
     wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
 
-    if(!bgColour.IsOk() || !fgColour.IsOk()) {
-        return;
-    }
+    if(!bgColour.IsOk() || !fgColour.IsOk()) { return; }
 
     UpdateColours(m_window);
 }
@@ -90,11 +88,7 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
         if(dynamic_cast<wxAuiToolBar*>(w)) {
             toolbars.push_back(dynamic_cast<wxAuiToolBar*>(w));
         } else {
-            if(
-#ifndef __WXGTK3__
-            IS_TYPEOF(wxTreeCtrl, w) ||
-#endif
-            IS_TYPEOF(wxListBox, w) || IS_TYPEOF(wxDataViewCtrl, w) ||
+            if(IS_TYPEOF(wxTreeCtrl, w) || IS_TYPEOF(wxListBox, w) || IS_TYPEOF(wxDataViewCtrl, w) ||
                IS_TYPEOF(wxListCtrl, w)) {
                 w->SetBackgroundColour(bgColour);
                 w->SetForegroundColour(fgColour);
@@ -129,9 +123,7 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     std::for_each(toolbars.begin(), toolbars.end(), [&](wxAuiToolBar* tb) {
         // Update the art if needed
         CLMainAuiTBArt* art = dynamic_cast<CLMainAuiTBArt*>(tb->GetArtProvider());
-        if(!art) {
-            tb->SetArtProvider(new CLMainAuiTBArt());
-        }
+        if(!art) { tb->SetArtProvider(new CLMainAuiTBArt()); }
 
 #ifndef __WXOSX__
         for(size_t i = 0; i < tb->GetToolCount(); ++i) {

@@ -404,14 +404,6 @@ wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
 static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
 {
     wxColour bgColour = defaultColour;
-#ifdef __WXGTK3__
-    //GdkRGBA col;
-    //GtkStyleContext* context = gtk_widget_get_style_context(widget);
-    //gtk_style_context_get_background_color(context, GTK_STATE_FLAG_NORMAL, &col);
-    //bgColour = wxColour(col);
-    return defaultColour;
-    
-#else
     GtkStyle* def = gtk_rc_get_style(widget);
     if(!def) { def = gtk_widget_get_default_style(); }
 
@@ -419,7 +411,6 @@ static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defa
         GdkColor col = def->bg[GTK_STATE_NORMAL];
         bgColour = wxColour(col);
     }
-#endif
     gtk_widget_destroy(widget);
     return bgColour;
 }
@@ -427,13 +418,6 @@ static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defa
 static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
 {
     wxColour textColour = defaultColour;
-#ifdef __WXGTK3__
-    //GdkRGBA col;
-    //GtkStyleContext* context = gtk_widget_get_style_context(widget);
-    //gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
-    //textColour = wxColour(col);
-    return defaultColour;
-#else
     GtkStyle* def = gtk_rc_get_style(widget);
     if(!def) { def = gtk_widget_get_default_style(); }
 
@@ -441,7 +425,6 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
         GdkColor col = def->fg[GTK_STATE_NORMAL];
         textColour = wxColour(col);
     }
-#endif
     gtk_widget_destroy(widget);
     return textColour;
 }
@@ -466,9 +449,9 @@ wxColour DrawingUtils::GetPanelBgColour()
 
 wxColour DrawingUtils::GetPanelTextColour()
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
     static bool intitialized(false);
-    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
 
     if(!intitialized) {
         // try to get the background colour from a menu
@@ -478,13 +461,13 @@ wxColour DrawingUtils::GetPanelTextColour()
     }
     return textColour;
 #else
-    return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
 #endif
 }
 
 wxColour DrawingUtils::GetTextCtrlTextColour()
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
     static bool intitialized(false);
     static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
@@ -502,7 +485,7 @@ wxColour DrawingUtils::GetTextCtrlTextColour()
 
 wxColour DrawingUtils::GetMenuTextColour()
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
     static bool intitialized(false);
     static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT));
 
@@ -539,7 +522,7 @@ wxColour DrawingUtils::GetMenuBarBgColour()
 
 wxColour DrawingUtils::GetMenuBarTextColour()
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
     static bool intitialized(false);
     // initialise default colour
     static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT));
@@ -902,7 +885,7 @@ wxColour DrawingUtils::GetButtonBgColour()
 
 wxColour DrawingUtils::GetButtonTextColour()
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
     static bool intitialized(false);
     // initialise default colour
     static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));

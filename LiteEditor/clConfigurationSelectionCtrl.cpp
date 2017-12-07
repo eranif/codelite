@@ -44,7 +44,12 @@ void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
     wxGCDC gcdc(dc);
     PrepareDC(gcdc);
 #endif
-
+    
+    wxRect rect = GetClientRect();
+    dc.SetPen(DrawingUtils::GetPanelBgColour());
+    dc.SetBrush(DrawingUtils::GetPanelBgColour());
+    dc.DrawRectangle(rect);
+    
     // Build the text to draw
     wxString label;
     label << m_activeProject << " :: " << m_activeConfiguration;

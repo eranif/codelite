@@ -437,8 +437,8 @@ wxColour DrawingUtils::GetPanelBgColour()
     static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     if(!intitialized) {
         // try to get the background colour from a menu
-        GtkWidget *buttonbox = gtk_button_box_new(GTK_ORIENTATION_VERTICAL);
-        bgColour = GtkGetBgColourFromWidget(buttonbox, bgColour);
+        GtkWidget *label = gtk_label_new("Label");
+        bgColour = GtkGetBgColourFromWidget(label, bgColour);
         intitialized = true;
     }
     return bgColour;

@@ -1,37 +1,30 @@
 #!/bin/bash
 
+# Keep the current folder
+curdir=`pwd`
+
 # Clear old installers
 os_name=`uname -s`
 no_upload=$1
 
-cd build-release
-curdir=`pwd`
-builddir=`basename ${curdir}`
-if [ ${builddir} != "build-release" ]; then
-    echo "You must run this script from CodeLite root folder"
-    exit -1
-fi
-
 # Clear old installers
 os_name=`uname -s`
 if [ ${os_name} == "Darwin" ]; then
-    echo rm -f codelite.app.tar.gz
-    rm -f codelite.app.tar.gz
-else
-    echo rm -fr *.deb
-    rm -fr *.deb
+    echo rm -f $curdir/build-release/codelite.app.tar.gz
+    rm -f $curdir/build-release/codelite.app.tar.gz
 fi
 
 # Update our source tree
 cd $curdir
 echo "Pulling CodeLite changes..."
+echo `pwd`
 git pull --rebase 
 if [ $? -ne 0 ]; then
     exit $?
 fi
 
 echo "Pulling wxCrafter changes..."
-cd ../wxcrafter
+cd $curdir/wxcrafter
 git pull --rebase
 if [ $? -ne 0 ]; then
     exit $?
@@ -40,6 +33,9 @@ cd $curdir
 
 linux_build() {
     cd $curdir/$1 # cd to the build folder
+    echo rm -fr *.deb
+    rm -fr *.deb
+
     PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
     make -j4 && make package
     if [ "${no_upload}" != "--no-upload" ]; then

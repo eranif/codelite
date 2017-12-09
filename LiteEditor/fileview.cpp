@@ -3055,7 +3055,7 @@ void FileViewTree::ExcludeFileFromBuildUI(const wxTreeItemId& item, bool exclude
     }
 }
 
-bool FileViewTree::IsItemExcludedFromBuild(const wxTreeItemId& item, const wxString& configName) const {}
+bool FileViewTree::IsItemExcludedFromBuild(const wxTreeItemId& item, const wxString& configName) const { return false;}
 
 void FileViewTree::OnBuildConfigChanged(wxCommandEvent& e)
 {

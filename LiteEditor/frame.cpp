@@ -3229,54 +3229,8 @@ void clMainFrame::OnBackwardForwardUI(wxUpdateUIEvent& event)
 
 void clMainFrame::CreateWelcomePage()
 {
-    /*
-    Manager *mgr = ManagerST::Get();
-    //load the template
-    wxFileName fn(mgr->GetStartupDirectory(), wxT("index.html"));
-    wxFFile file(fn.GetFullPath(), wxT("r"));
-    if (!file.IsOpened()) {
-        return;
-    }
-    wxHtmlWindow *welcomePage = new wxHtmlWindow(GetMainBook(), wxID_ANY);
-
-    wxString content;
-    file.ReadAll(&content);
-    file.Close();
-
-    //replace $(InstallPath)
-    content.Replace(wxT("$(InstallPath)"), mgr->GetStartupDirectory());
-
-    //replace the $(FilesTable) & $(WorkspaceTable)
-    wxString workspaceTable = CreateWorkspaceTable();
-    wxString filesTable = CreateFilesTable();
-
-    content.Replace(wxT("$(WorkspaceTable)"), workspaceTable);
-    content.Replace(wxT("$(FilesTable)"), filesTable);
-
-    //replace the HTML colours with platfroms correct colours
-    wxColour active_caption     = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-    wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-
-    active_caption = DrawingUtils::LightColour(active_caption, 11.0);
-
-    content.Replace(wxT("$(ACTIVE_CAPTION)"), active_caption.GetAsString());
-    content.Replace(wxT("$(ACTIVE_CAPTION_TEXT)"), active_caption_txt.GetAsString());
-
-    content.Replace(wxT("$(QuickLinks)"), _("Quick Links:"));
-    content.Replace(wxT("$(CodeLiteWiki)"), _("CodeLite Wiki"));
-    content.Replace(wxT("$(CodeLiteForums)"), _("CodeLite Forums"));
-    content.Replace(wxT("$(CreateNewWorkspace)"), _("Create a New Workspace"));
-    content.Replace(wxT("$(OpenWorkspace)"), _("Open a Workspace"));
-    content.Replace(wxT("$(RecentWorkspaces)"), _("Recently opened workspaces:"));
-    content.Replace(wxT("$(RecentFiles)"), _("Recently opened files:"));
-
-    welcomePage->SetPage(content);*/
     WelcomePage* welcomePage = new WelcomePage(GetMainBook());
-    ThemeHandlerHelper helper(welcomePage);
-    helper.UpdateColours(welcomePage);
-    
     GetMainBook()->AddPage(welcomePage, _("Welcome!"), wxEmptyString, wxNullBitmap, true);
-
     GetMainBook()->Layout();
     // This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first
     SendSizeEvent(wxSEND_EVENT_POST);

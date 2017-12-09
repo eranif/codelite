@@ -27,30 +27,26 @@
 #define WXCLLOGTEXTCTRL_H
 
 #include <wx/log.h>
-#include <wx/textctrl.h>
+#include <wx/stc/stc.h>
 
 class wxclTextCtrl : public wxLog
 {
 public:
-    wxclTextCtrl(wxTextCtrl* text);
+    wxclTextCtrl(wxStyledTextCtrl* stc);
     virtual ~wxclTextCtrl();
-    void Reset() ;
+    void Reset();
 
-    wxTextCtrl* GetPTextCtrl() {
-        return m_pTextCtrl;
-    }
+    wxStyledTextCtrl* GetCtrl() { return m_stc; }
+
 protected:
     void DoInit();
 
     // implement sink function
-    virtual void DoLogText(const wxString& msg) {
-        m_pTextCtrl->AppendText(msg + wxS("\n"));
-    }
+    virtual void DoLogText(const wxString& msg) ;
 
 private:
     // the control we use
-    wxTextCtrl *m_pTextCtrl;
+    wxStyledTextCtrl* m_stc;
 };
-
 
 #endif // WXCLLOGTEXTCTRL_H

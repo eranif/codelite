@@ -4691,6 +4691,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -4729,6 +4733,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -4767,6 +4775,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -4805,6 +4817,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -6146,7 +6162,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
+       "m_styles": ["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -6743,11 +6759,11 @@
        "m_events": [],
        "m_children": [{
          "m_type": 4416,
-         "proportion": 0,
+         "proportion": 1,
          "border": 5,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": [],
+         "m_styles": ["wxRA_SPECIFY_COLS"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
          "m_properties": [{
            "type": "winid",
@@ -12402,7 +12418,7 @@
              "border": 2,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxBORDER_THEME"],
+             "m_styles": ["wxDV_NO_HEADER", "wxDV_MULTIPLE", "wxBORDER_THEME"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -12519,6 +12535,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []

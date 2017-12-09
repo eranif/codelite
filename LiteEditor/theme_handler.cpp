@@ -43,21 +43,18 @@
 #endif
 
 #define CHECK_POINTER(p) \
-    if(!p)               \
-        return;
+    if(!p) return;
 
 ThemeHandler::ThemeHandler()
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandler::OnEditorThemeChanged), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(ThemeHandler::OnInitDone), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ThemeHandler::OnEditorThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ThemeHandler::OnInitDone, this);
 }
 
 ThemeHandler::~ThemeHandler()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandler::OnEditorThemeChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(ThemeHandler::OnInitDone), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ThemeHandler::OnEditorThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &ThemeHandler::OnInitDone, this);
 }
 
 void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)

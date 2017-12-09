@@ -77,11 +77,10 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     std::vector<wxWindow*> candidateWindows;
     q.push(topWindow);
 
-    wxColour userbgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    wxColour userFgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
 
-    wxColour bgColour = userbgColour;
-    wxColour fgColour = userFgColour;
+    LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
     while(!q.empty()) {
         wxWindow* w = q.front();
         q.pop();
@@ -104,10 +103,15 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
                 // wxSTC requires different method
                 wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
                 if(stc->GetLexer() == wxSTC_LEX_NULL) {
-                    // Only modify text lexers
-                    for(int i = 0; i < wxSTC_STYLE_MAX; i++) {
-                        stc->StyleSetBackground(i, bgColour);
-                        stc->StyleSetForeground(i, fgColour);
+                    if(!textLexer) {
+                        // Only modify text lexers
+                        for(int i = 0; i < wxSTC_STYLE_MAX; i++) {
+                            stc->StyleSetBackground(i, bgColour);
+                            stc->StyleSetForeground(i, fgColour);
+                        }
+
+                    } else {
+                        textLexer->Apply(stc);
                     }
                 }
                 w->Refresh();

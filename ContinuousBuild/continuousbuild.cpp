@@ -23,34 +23,32 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "continuousbuild.h"
-#include "event_notifier.h"
-#include "buildmanager.h"
-#include "globals.h"
-#include "builder.h"
-#include "file_logger.h"
-#include "processreaderthread.h"
-#include "fileextmanager.h"
 #include "build_settings_config.h"
-#include "workspace.h"
-#include "custombuildrequest.h"
-#include "compile_request.h"
-#include <wx/app.h>
-#include "environmentconfig.h"
-#include "continousbuildpane.h"
-#include <wx/xrc/xmlres.h>
-#include "continousbuildconf.h"
-#include <wx/log.h>
-#include <wx/imaglist.h>
+#include "builder.h"
+#include "buildmanager.h"
 #include "cl_command_event.h"
+#include "compile_request.h"
+#include "continousbuildconf.h"
+#include "continousbuildpane.h"
+#include "continuousbuild.h"
+#include "custombuildrequest.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
+#include "globals.h"
+#include "processreaderthread.h"
+#include "workspace.h"
+#include <wx/app.h>
+#include <wx/imaglist.h>
+#include <wx/log.h>
+#include <wx/xrc/xmlres.h>
 
 static ContinuousBuild* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new ContinuousBuild(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new ContinuousBuild(manager); }
     return thePlugin;
 }
 
@@ -83,10 +81,10 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
 
     m_topWin = m_mgr->GetTheApp();
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_FILE_SAVE_BY_BUILD_END, wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVE_BY_BUILD_START,
+                                  wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVE_BY_BUILD_END,
+                                  wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &ContinuousBuild::OnBuildProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &ContinuousBuild::OnBuildProcessEnded, this);
 }
@@ -121,19 +119,19 @@ void ContinuousBuild::UnPlug()
     m_view->Destroy();
 
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_FILE_SAVE_BY_BUILD_END, wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVE_BY_BUILD_START,
+                                     wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVE_BY_BUILD_END,
+                                     wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
 }
 
 void ContinuousBuild::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
-    CL_DEBUG(wxT("ContinuousBuild::OnFileSaved\n"));
+    clDEBUG1() << "ContinuousBuild::OnFileSaved";
     // Dont build while the main build is in progress
     if(m_buildInProgress) {
-        CL_DEBUG(wxT("Build already in progress, skipping\n"));
+        clDEBUG() << "Build already in progress, skipping";
         return;
     }
 
@@ -143,16 +141,16 @@ void ContinuousBuild::OnFileSaved(clCommandEvent& e)
     if(conf.GetEnabled()) {
         DoBuild(e.GetString());
     } else {
-        CL_DEBUG(wxT("ContinuousBuild is disabled\n"));
+        clDEBUG1() << "ContinuousBuild is disabled";
     }
 }
 
 void ContinuousBuild::DoBuild(const wxString& fileName)
 {
-    CL_DEBUG(wxT("DoBuild\n"));
+    clDEBUG() << "ContinuousBuild::DoBuild is called";
     // Make sure a workspace is opened
     if(!m_mgr->IsWorkspaceOpen()) {
-        CL_DEBUG(wxT("No workspace opened!\n"));
+        clDEBUG() << "ContinuousBuild::DoBuild: No workspace opened!";
         return;
     }
 
@@ -165,21 +163,21 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
         break;
 
     default: {
-        CL_DEBUG(wxT("Non source file\n"));
+        clDEBUG1() << "ContinuousBuild::DoBuild: Non source file";
         return;
     }
     }
 
     wxString projectName = m_mgr->GetProjectNameByFile(fileName);
     if(projectName.IsEmpty()) {
-        CL_DEBUG(wxT("Project name is empty\n"));
+        clDEBUG() << "ContinuousBuild::DoBuild: project name is empty";
         return;
     }
 
     wxString errMsg;
     ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
     if(!project) {
-        CL_DEBUG(wxT("Could not find project for file\n"));
+        clDEBUG() << "Could not find project for file";
         return;
     }
 

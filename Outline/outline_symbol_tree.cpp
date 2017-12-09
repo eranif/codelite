@@ -22,26 +22,26 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "precompiled_header.h"
-#include <wx/thread.h>
-#include "globals.h"
 #include "crawler_include.h"
-#include "stringsearcher.h"
+#include "fc_fileopener.h"
+#include "globals.h"
+#include "macros.h"
+#include "precompiled_header.h"
 #include "stringsearcher.h"
 #include <wx/stc/stc.h>
-#include "fc_fileopener.h"
-#include "macros.h"
+#include <wx/thread.h>
 
+#include "event_notifier.h"
+#include "imanager.h"
 #include "outline_symbol_tree.h"
 #include <algorithm>
-#include "imanager.h"
-#include "event_notifier.h"
+#include "file_logger.h"
 
 //#include "manager.h"
 //#include "frame.h"
 #include "bitmap_loader.h"
-#include <wx/xrc/xmlres.h>
 #include <wx/imaglist.h>
+#include <wx/xrc/xmlres.h>
 
 #define INCLUDE_FILES_NODE_TEXT _("Include Files")
 
@@ -93,6 +93,7 @@ svSymbolTree::svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID
     // Prase thread events
     Bind(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, &svSymbolTree::OnIncludeStatements, this);
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &svSymbolTree::OnCacheUpdated, this);
+    EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_INVALIDATED, &svSymbolTree::OnCacheInvalidated, this);
     MSWSetNativeTheme(this);
     // SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
@@ -184,9 +185,7 @@ void svSymbolTree::OnItemActivated(wxTreeEvent& event)
 void svSymbolTree::AdvanceSelection(bool forward)
 {
     wxTreeItemId item = GetSelection();
-    if(!item.IsOk()) {
-        return;
-    }
+    if(!item.IsOk()) { return; }
 
     wxTreeItemId nextItem;
     if(forward) {
@@ -198,9 +197,7 @@ void svSymbolTree::AdvanceSelection(bool forward)
         nextItem = TryGetPrevItem(item);
     }
 
-    if(nextItem.IsOk()) {
-        SelectItem(nextItem);
-    }
+    if(nextItem.IsOk()) { SelectItem(nextItem); }
 }
 
 wxTreeItemId svSymbolTree::TryGetPrevItem(wxTreeItemId item)
@@ -209,9 +206,7 @@ wxTreeItemId svSymbolTree::TryGetPrevItem(wxTreeItemId item)
 
     // find out the starting point
     wxTreeItemId prevItem = GetPrevSibling(item);
-    if(!prevItem.IsOk()) {
-        prevItem = GetItemParent(item);
-    }
+    if(!prevItem.IsOk()) { prevItem = GetItemParent(item); }
 
     // from there we must be able to navigate until this item
     while(prevItem.IsOk()) {
@@ -255,15 +250,14 @@ void svSymbolTree::CenterEditorLine()
 
 void svSymbolTree::BuildTree(const wxFileName& fn, bool force)
 {
-    if(!force && (m_currentFile == fn.GetFullPath())) return; // same file
-    Clear();
-    // Request from the parsing thread list of include files
-
+    if(!force && (m_currentFile == fn.GetFullPath())) { return; } // same file
     TagEntryPtrVector_t tags;
     if(!TagsManagerST::Get()->GetFileCache()->Find(fn, tags)) {
         // Ask to generate cache entry for this file
+        clDEBUG() << "Outline: symbols not found, building cache...";
         TagsManagerST::Get()->GetFileCache()->RequestSymbols(fn);
     } else {
+        clDEBUG() << "Outline: symbols found in cache, building tree...";
         DoBuildTree(tags, fn);
     }
 }
@@ -338,25 +332,31 @@ void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     fcFileOpener::Set_t* includes = (fcFileOpener::Set_t*)e.GetClientData();
-    if(includes) {
-        //        if(GetActiveEditorFile() != m_currentFile) {
-        //            wxWindowUpdateLocker locker(this);
-        //            DoAddIncludeFiles(m_fileName, *includes);
-        //        }
-        //        includes->clear();
-        delete includes;
-    }
+    if(includes) { delete includes; }
 }
 
 void svSymbolTree::ClearCache() { m_currentTags.clear(); }
 
+void svSymbolTree::OnCacheInvalidated(clCommandEvent& e)
+{
+    e.Skip();
+    clDEBUG() << "Outline: symbols for file" << e.GetFileName() << "were invalidated";
+    clDEBUG() << "Outline: Rebuilding cache for file:" << e.GetFileName();
+    TagsManagerST::Get()->GetFileCache()->RequestSymbols(e.GetFileName());
+}
+
 void svSymbolTree::OnCacheUpdated(clCommandEvent& e)
 {
     e.Skip();
-    if(GetActiveEditorFile() != e.GetFileName()) return;
+    clDEBUG() << "Outline: symbols cache updated for file:" << e.GetFileName();
+    if(GetActiveEditorFile() != e.GetFileName()) {
+        clDEBUG() << "Outline: active editor does not match the current event filename:" << GetActiveEditorFile()
+                  << "vs" << e.GetFileName();
+        return;
+    }
 
     TagEntryPtrVector_t tags;
-    if(!TagsManagerST::Get()->GetFileCache()->Find(e.GetFileName(), tags)) return;
+    if(!TagsManagerST::Get()->GetFileCache()->Find(e.GetFileName(), tags)) { return; }
 
     // Build the tree
     DoBuildTree(tags, e.GetFileName());
@@ -376,8 +376,11 @@ void svSymbolTree::DoBuildTree(TagEntryPtrVector_t& tags, const wxFileName& file
             return t1->GetDisplayName().Lower() < t2->GetDisplayName().Lower();
         });
     }
-    if(TagsManagerST::Get()->AreTheSame(m_currentTags, tags)) return;
-
+    clDEBUG() << "Outline: DoBuildTree is called";
+    if(TagsManagerST::Get()->AreTheSame(m_currentTags, tags)) {
+        clDEBUG() << "Outline: symbols are the same, DoBuildTree will do nothing";
+        return;
+    }
     wxWindowUpdateLocker locker(this);
     SymbolTree::BuildTree(filename, tags, false);
 

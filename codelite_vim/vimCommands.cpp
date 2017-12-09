@@ -345,6 +345,7 @@ bool VimCommand::Command_call()
         break;
     case COMMANDVI::_$:
         m_ctrl->LineEnd();
+        m_ctrl->CharLeft();
         this->m_saveCommand = false;
         break;
     case COMMANDVI::w:

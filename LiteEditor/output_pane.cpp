@@ -31,15 +31,16 @@
 #include "findusagetab.h"
 #include "frame.h"
 #include "new_build_tab.h"
-#include "output_pane.h"
 #include "pluginmanager.h"
 #include "replaceinfilespanel.h"
 #include "shelltab.h"
 #include "taskpanel.h"
 #include "wxcl_log_text_ctrl.h"
+#include "output_pane.h"
 #include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/aui/framemanager.h>
 
 #if HAS_LIBCLANG
 #include "ClangOutputTab.h"

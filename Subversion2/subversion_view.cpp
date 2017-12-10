@@ -69,6 +69,7 @@
 #include <wx/textdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "clDiffFrame.h"
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 EVT_UPDATE_UI(XRCID("svn_stop"), SubversionView::OnStopUI)
@@ -186,7 +187,9 @@ void SubversionView::OnChangeRootDir(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString newPath = ::wxDirSelector(_("Choose directory"));
-    if(!newPath.IsEmpty()) { DoRootDirChanged(newPath); }
+    if(!newPath.IsEmpty()) {
+        DoRootDirChanged(newPath);
+    }
 }
 
 void SubversionView::OnTreeMenu(wxTreeEvent& event)
@@ -328,7 +331,9 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 
     WorkspaceSvnSettings conf(m_workspaceFile);
     wxString customizedRepo = conf.Load().GetRepoPath();
-    if(!customizedRepo.IsEmpty()) { path.swap(customizedRepo); }
+    if(!customizedRepo.IsEmpty()) {
+        path.swap(customizedRepo);
+    }
 
     if(!m_plugin->IsPathUnderSvn(path)) {
         DoCloseView();
@@ -382,7 +387,9 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
         DoAddNode(svnLOCKED_FILES, LOCKED_IMG_ID, SvnTreeData::SvnNodeTypeLockedRoot, lockedFiles);
         DoAddNode(svnUNVERSIONED_FILES, UNVERSIONED_IMG_ID, SvnTreeData::SvnNodeTypeUnversionedRoot, unversionedFiles);
 
-        if(m_treeCtrl->ItemHasChildren(root)) { m_treeCtrl->Expand(root); }
+        if(m_treeCtrl->ItemHasChildren(root)) {
+            m_treeCtrl->Expand(root);
+        }
 
         DoLinkEditor();
     }
@@ -420,7 +427,9 @@ void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
             wxTreeItemIdValue cookie;
             wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
             while(child.IsOk()) {
-                if(m_treeCtrl->ItemHasChildren(child)) { m_treeCtrl->Expand(child); }
+                if(m_treeCtrl->ItemHasChildren(child)) {
+                    m_treeCtrl->Expand(child);
+                }
                 child = m_treeCtrl->GetNextChild(parent, cookie);
             }
         }
@@ -595,7 +604,9 @@ void SubversionView::CreateRootMenu(wxMenu* menu)
 
 void SubversionView::DoGetPaths(const wxTreeItemId& parent, wxArrayString& paths)
 {
-    if(m_treeCtrl->ItemHasChildren(parent) == false) { return; }
+    if(m_treeCtrl->ItemHasChildren(parent) == false) {
+        return;
+    }
 
     wxTreeItemIdValue cookie;
     wxTreeItemId item = m_treeCtrl->GetFirstChild(parent, cookie);
@@ -627,7 +638,9 @@ void SubversionView::OnUpdate(wxCommandEvent& event)
 {
     wxString command;
     wxString loginString;
-    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) { return; }
+    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
+        return;
+    }
     command << m_plugin->GetSvnExeName() << loginString << wxT(" update ");
     m_plugin->AddCommandLineOption(command, Subversion2::kOpt_ForceInteractive);
 
@@ -651,7 +664,9 @@ void SubversionView::OnAdd(wxCommandEvent& event)
 {
     wxString command;
     wxString loginString;
-    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) { return; }
+    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
+        return;
+    }
 
     command << m_plugin->GetSvnExeName() << loginString << wxT(" add ");
 
@@ -698,7 +713,9 @@ void SubversionView::OnBranch(wxCommandEvent& event)
 
     command.Clear();
     wxString loginString;
-    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) { return; }
+    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
+        return;
+    }
 
     // Prompt user for URLs + comment
     SvnCopyDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
@@ -729,7 +746,9 @@ void SubversionView::OnTag(wxCommandEvent& event)
     // Prompt the login dialog now
     command.Clear();
     wxString loginString;
-    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) { return; }
+    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
+        return;
+    }
 
     // Prompt user for URLs + comment
     SvnCopyDialog dlg(m_plugin->GetManager()->GetTheApp()->GetTopWindow());
@@ -753,7 +772,9 @@ void SubversionView::OnDelete(wxCommandEvent& event)
 {
     wxString command;
     wxString loginString;
-    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) { return; }
+    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
+        return;
+    }
     command << m_plugin->GetSvnExeName() << loginString << wxT(" --force delete ");
 
     if(::wxMessageBox(_("Delete the selected files?"), _("Confirm"),
@@ -774,7 +795,9 @@ void SubversionView::OnResolve(wxCommandEvent& event)
 {
     wxString command;
     wxString loginString;
-    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) { return; }
+    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
+        return;
+    }
 
     command << m_plugin->GetSvnExeName() << loginString << wxT(" resolved ");
 
@@ -790,14 +813,18 @@ void SubversionView::OnResolve(wxCommandEvent& event)
 void SubversionView::OnDiff(wxCommandEvent& event)
 {
     wxString loginString;
-    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) { return; }
+    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
+        return;
+    }
 
     DiffDialog dlg(this, m_plugin->GetManager());
     if(dlg.ShowModal() == wxID_OK) {
         wxString from = dlg.GetFromRevision();
         wxString to = dlg.GetToRevision();
 
-        if(to.IsEmpty() == false) { to.Prepend(wxT(":")); }
+        if(to.IsEmpty() == false) {
+            to.Prepend(wxT(":"));
+        }
 
         // Simple diff
         wxString diff_cmd;
@@ -809,7 +836,9 @@ void SubversionView::OnDiff(wxCommandEvent& event)
         }
         diff_cmd << " diff ";
 
-        if(dlg.IgnoreWhitespaces() && !(ssd.GetFlags() & SvnUseExternalDiff)) { diff_cmd << " -x -w "; }
+        if(dlg.IgnoreWhitespaces() && !(ssd.GetFlags() & SvnUseExternalDiff)) {
+            diff_cmd << " -x -w ";
+        }
 
         diff_cmd << " -r " << from << to << " ";
 
@@ -917,7 +946,7 @@ void SubversionView::OnFileRenamed(clFileSystemEvent& event)
         command << m_plugin->GetSvnExeName() << wxT(" rename \"") << oldName << wxT("\" \"") << newName << wxT("\"");
         m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(),
                                         new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
-        
+
         // We need to fire this event again. This time we set the event-object to 'this'
         // so the fired event won't get handled by this handler
         clFileSystemEvent e(wxEVT_FILE_RENAMED);
@@ -958,7 +987,9 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
     }
 
     wxString loginString;
-    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) { return; }
+    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
+        return;
+    }
 
     // Simple diff
     wxString command;
@@ -1187,7 +1218,9 @@ void SubversionView::OnUnLock(wxCommandEvent& event)
 
 void SubversionView::DoChangeRootPathUI(const wxString& path)
 {
-    if(path == wxEmptyString) { ClearAll(); }
+    if(path == wxEmptyString) {
+        ClearAll();
+    }
     m_curpath = path;
 }
 
@@ -1203,7 +1236,9 @@ void SubversionView::DoRootDirChanged(const wxString& path)
 
         const wxArrayString& repos = ssd.GetRepos();
         wxArrayString modDirs = repos;
-        if(modDirs.Index(path) == wxNOT_FOUND) { modDirs.Add(path); }
+        if(modDirs.Index(path) == wxNOT_FOUND) {
+            modDirs.Add(path);
+        }
 
         ssd.SetRepos(modDirs);
         m_plugin->SetSettings(ssd);
@@ -1243,7 +1278,9 @@ wxTreeItemId SubversionView::DoFindChild(const wxTreeItemId& parent, const wxStr
     wxTreeItemIdValue cookie;
     wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
     while(child.IsOk()) {
-        if(m_treeCtrl->GetItemText(child) == name) { return child; }
+        if(m_treeCtrl->GetItemText(child) == name) {
+            return child;
+        }
         child = m_treeCtrl->GetNextChild(parent, cookie);
     }
     // if we reached here, we did not find a tree node for this name
@@ -1270,13 +1307,17 @@ wxString SubversionView::DoGetCurRepoPath() const { return m_curpath; }
 
 wxTreeItemId SubversionView::DoFindFile(const wxTreeItemId& parent, const wxString& basepath, const wxString& fullpath)
 {
-    if(parent.IsOk() == false) { return wxTreeItemId(); }
+    if(parent.IsOk() == false) {
+        return wxTreeItemId();
+    }
 
     SvnTreeData* data = static_cast<SvnTreeData*>(m_treeCtrl->GetItemData(parent));
     if(data && data->GetType() == SvnTreeData::SvnNodeTypeFile) {
         wxFileName fn(data->GetFilepath());
         fn.MakeAbsolute(basepath);
-        if(fn.GetFullPath() == fullpath) { return parent; }
+        if(fn.GetFullPath() == fullpath) {
+            return parent;
+        }
     }
 
     if(m_treeCtrl->ItemHasChildren(parent)) {
@@ -1284,7 +1325,9 @@ wxTreeItemId SubversionView::DoFindFile(const wxTreeItemId& parent, const wxStri
         wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
         while(child.IsOk()) {
             wxTreeItemId fileId = DoFindFile(child, basepath, fullpath);
-            if(fileId.IsOk()) { return fileId; }
+            if(fileId.IsOk()) {
+                return fileId;
+            }
             child = m_treeCtrl->GetNextChild(parent, cookie);
         }
     }
@@ -1317,15 +1360,10 @@ void SubversionView::FinishDiff(wxString output, wxFileName fileBeingDiffed)
     title_right = _("Working copy");
     title_left = _("HEAD version");
 
-    DiffSideBySidePanel* diffPanel = new DiffSideBySidePanel(EventNotifier::Get()->TopFrame());
     DiffSideBySidePanel::FileInfo l(leftFile, title_left, true);
     DiffSideBySidePanel::FileInfo r(rightFile, title_right, false);
-    diffPanel->SetFilesDetails(l, r);
-    diffPanel->Diff();
-    diffPanel->SetOriginSourceControl();
-    m_plugin->GetManager()->AddPage(diffPanel, _("Svn Diff: ") + fileBeingDiffed.GetFullName(),
-                                    _("Svn Diff: ") + fileBeingDiffed.GetFullPath(), wxNullBitmap, true);
-
+    clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), l, r, true);
+    diffView->Show();
     wxDELETE(m_codeliteEcho);
 }
 void SubversionView::OnSciStcChange(wxStyledTextEvent& event)
@@ -1352,7 +1390,9 @@ void SubversionView::DoCloseView()
 
 void SubversionView::OnCommitGotoAnything(wxCommandEvent& event)
 {
-    if(m_treeCtrl->IsEmpty()) { return; }
+    if(m_treeCtrl->IsEmpty()) {
+        return;
+    }
     wxArrayString paths;
     DoGetPaths(m_treeCtrl->GetRootItem(), paths);
     m_plugin->DoCommit(paths, DoGetCurRepoPath(), event);
@@ -1362,7 +1402,9 @@ void SubversionView::OnUpdateGotoAnything(wxCommandEvent& event)
 {
     wxString command;
     wxString loginString;
-    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) { return; }
+    if(m_plugin->LoginIfNeeded(event, DoGetCurRepoPath(), loginString) == false) {
+        return;
+    }
     command << m_plugin->GetSvnExeName() << loginString << wxT(" update ");
     m_plugin->AddCommandLineOption(command, Subversion2::kOpt_ForceInteractive);
     m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(), new SvnUpdateHandler(m_plugin, event.GetId(), this),

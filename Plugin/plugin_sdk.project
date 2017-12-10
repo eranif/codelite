@@ -542,6 +542,8 @@
     <File Name="SSHTerminal.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Diff">
+    <File Name="clDiffFrame.cpp"/>
+    <File Name="clDiffFrame.h"/>
     <VirtualDirectory Name="dtl">
       <File Name="dtl/Diff.hpp"/>
       <File Name="dtl/Diff3.hpp"/>

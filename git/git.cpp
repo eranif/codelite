@@ -65,6 +65,7 @@
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/utils.h>
+#include "clDiffFrame.h"
 
 #ifdef __WXGTK__
 #include <sys/wait.h>
@@ -2204,15 +2205,13 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
         fp.Write(headFile);
         fp.Close();
     }
-    DiffSideBySidePanel* p = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
+    
+    // Show diff frame
     DiffSideBySidePanel::FileInfo l(tmpFilePath, _("HEAD version"), true);
     l.deleteOnExit = true;
     DiffSideBySidePanel::FileInfo r(fnWorkingCopy.GetFullPath(), _("Working copy"), false);
-    p->SetFilesDetails(l, r);
-    p->Diff();
-    p->SetOriginSourceControl();
-    m_mgr->AddPage(p, _("Git Diff: ") + fnWorkingCopy.GetFullName(), _("Git Diff: ") + fnWorkingCopy.GetFullPath(),
-                   wxNullBitmap, true);
+    clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), l, r, true);
+    diffView->Show();
 }
 
 void GitPlugin::OnRebase(wxCommandEvent& e)

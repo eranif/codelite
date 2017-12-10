@@ -1598,7 +1598,7 @@ resources.cpp: resources.xrc
       <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/build-debug-gtk3/bin/codelite" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[PATH=.:$PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>
@@ -1856,7 +1856,8 @@ resources.cpp: resources.xrc
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[SUDO_ASKPASS=/usr/bin/ssh-askpass
-LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
+LD_LIBRARY_PATH=/home/eran/root/lib/codelite/
+PATH=.:$PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>

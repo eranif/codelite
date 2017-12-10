@@ -233,9 +233,9 @@ class WorkspaceTabBase : public wxPanel
 {
 public:
     enum {
-        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8001,
-        ID_TOOL_GOTO_ACTIVE_PROJECT = 8002,
-        ID_TOOL_LINK_EDITOR = 8003,
+        ID_TOOL_LINK_EDITOR = 8001,
+        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8002,
+        ID_TOOL_GOTO_ACTIVE_PROJECT = 8003,
         ID_TOOL_COLLAPSE_ALL = 8004,
     };
 protected:

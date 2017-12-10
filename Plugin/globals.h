@@ -25,20 +25,20 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include <wx/ctrlsub.h>
-#include <wx/string.h>
-#include <wx/colour.h>
-#include <wx/arrstr.h>
 #include "codelite_exports.h"
+#include "macros.h"
 #include "window_locker.h"
 #include "workspace.h"
-#include <wx/variant.h>
+#include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/brush.h>
-#include <wx/dcgraph.h>
+#include <wx/colour.h>
+#include <wx/ctrlsub.h>
 #include <wx/dc.h>
-#include "macros.h"
+#include <wx/dcgraph.h>
 #include <wx/propgrid/propgrid.h>
+#include <wx/string.h>
+#include <wx/variant.h>
 
 class IManager;
 class wxStyledTextCtrl;
@@ -366,8 +366,8 @@ public:
  * @param maxsize the maximum number of items allowed in the arraystring. 0 means no maximum
  * @return the amended entries
  */
-WXDLLIMPEXP_SDK wxArrayString
-    ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize);
+WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str,
+                                                        const size_t maxsize);
 
 /**
  * @brief return true if filename is a symbolic link
@@ -462,12 +462,10 @@ WXDLLIMPEXP_SDK wxStandardID PromptForYesNoCancelDialogWithCheckbox(
  * @param checkboxInitialValue
  * @return wxRichMessageDialog::ShowModal() return value
  */
-WXDLLIMPEXP_SDK wxStandardID
-    PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& dlgId,
-                                     const wxString& yesLabel = _("Yes"), const wxString& noLabel = _("No"),
-                                     const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
-                                     long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT,
-                                     bool checkboxInitialValue = false);
+WXDLLIMPEXP_SDK wxStandardID PromptForYesNoDialogWithCheckbox(
+    const wxString& message, const wxString& dlgId, const wxString& yesLabel = _("Yes"),
+    const wxString& noLabel = _("No"), const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
+    long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT, bool checkboxInitialValue = false);
 
 /**
  * @brief wrap string with quotes if needed
@@ -583,5 +581,22 @@ WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name, wxFileName& exepath,
  * @return return the position or wxNOT_FOUND
  */
 WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
+
+/**
+ * @brief an efficient way to tokenize string into words (separated by SPACE and/or TAB)
+ * @code
+ * wxString str = "My String That Requires Tokenize";
+ * wxString word; // The output
+ * size_t offset = 0;
+ * while(clNextWord(str, offset, word)) {
+ *      // Do something with "word" here
+ * }
+ * @codeend
+ * @param str the string to tokenize
+ * @param offset used internally, allocate one on the stack and initialise it to 0
+ * @param word [output]
+ * @return true if a word was found
+ */
+WXDLLIMPEXP_SDK bool clNextWord(const wxString& str, size_t& offset, wxString& word);
 
 #endif // GLOBALS_H

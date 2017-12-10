@@ -23,11 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "sftp_worker_thread.h"
-#include <libssh/sftp.h>
+#include "SFTPStatusPage.h"
 #include "cl_ssh.h"
 #include "sftp.h"
-#include "SFTPStatusPage.h"
+#include "sftp_worker_thread.h"
+#include <libssh/sftp.h>
 #include <wx/ffile.h>
 
 SFTPWorkerThread* SFTPWorkerThread::ms_instance = 0;
@@ -42,9 +42,7 @@ SFTPWorkerThread::~SFTPWorkerThread() {}
 
 SFTPWorkerThread* SFTPWorkerThread::Instance()
 {
-    if(ms_instance == 0) {
-        ms_instance = new SFTPWorkerThread();
-    }
+    if(ms_instance == 0) { ms_instance = new SFTPWorkerThread(); }
     return ms_instance;
 }
 
@@ -69,7 +67,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
         DoConnect(req);
     }
 
-    if(req->GetDirection() == SFTPThreadRequet::kConnect) {
+    if(req->GetAction() == eSFTPActions::kConnect) {
         // Nothing more to be done here
         // Disconnect
         m_sftp.reset(NULL);
@@ -79,11 +77,13 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
     wxString msg;
     wxString accountName = req->GetAccount().GetAccountName();
     if(m_sftp && m_sftp->IsConnected()) {
-
+        msg.Clear();
         try {
-
-            msg.Clear();
-            if(req->GetDirection() == SFTPThreadRequet::kUpload) {
+            switch(req->GetAction()) {
+            case eSFTPActions::kConnect:
+                // We don't really need this case. Just make the compiler silence
+                return;
+            case eSFTPActions::kUpload: {
                 DoReportStatusBarMessage(wxString() << _("Uploading file: ") << req->GetRemoteFile());
                 SFTPAttribute::Ptr_t attr(new SFTPAttribute(NULL));
                 attr->SetPermissions(req->GetPermissions());
@@ -91,10 +91,11 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 msg << "Successfully uploaded file: " << req->GetLocalFile() << " -> " << req->GetRemoteFile();
                 DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
                 DoReportStatusBarMessage("");
-
-            } else if(req->GetDirection() == SFTPThreadRequet::kDownload ||
-                      req->GetDirection() == SFTPThreadRequet::kDownloadAndOpenContainingFolder ||
-                      req->GetDirection() == SFTPThreadRequet::kDownloadAndOpenWithDefaultApp) {
+                break;
+            }
+            case eSFTPActions::kDownload:
+            case eSFTPActions::kDownloadAndOpenContainingFolder:
+            case eSFTPActions::kDownloadAndOpenWithDefaultApp: {
                 DoReportStatusBarMessage(wxString() << _("Downloading file: ") << req->GetRemoteFile());
                 wxMemoryBuffer buffer;
                 SFTPAttribute::Ptr_t fileAttr = m_sftp->Read(req->GetRemoteFile(), buffer);
@@ -109,21 +110,39 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 DoReportStatusBarMessage("");
 
                 // We should also notify the parent window about download completed
-                if(req->GetDirection() == SFTPThreadRequet::kDownload) {
+                if(req->GetAction() == eSFTPActions::kDownload) {
                     SFTPClientData cd;
                     cd.SetLocalPath(req->GetLocalFile());
                     cd.SetRemotePath(req->GetRemoteFile());
                     cd.SetPermissions(fileAttr ? fileAttr->GetPermissions() : 0);
                     m_plugin->CallAfter(&SFTP::FileDownloadedSuccessfully, cd);
 
-                } else if(req->GetDirection() == SFTPThreadRequet::kDownloadAndOpenContainingFolder) {
+                } else if(req->GetAction() == eSFTPActions::kDownloadAndOpenContainingFolder) {
                     m_plugin->CallAfter(&SFTP::OpenContainingFolder, req->GetLocalFile());
 
                 } else {
                     m_plugin->CallAfter(&SFTP::OpenWithDefaultApp, req->GetLocalFile());
                 }
+                break;
             }
-
+            case eSFTPActions::kRename: {
+                DoReportStatusBarMessage(wxString() << _("Renaming: ") << req->GetRemoteFile() << " -> "
+                                                    << req->GetNewRemoteFile());
+                m_sftp->Rename(req->GetRemoteFile(), req->GetNewRemoteFile());
+                wxString msg;
+                msg << _("Renamed ") << req->GetRemoteFile() << " -> " << req->GetNewRemoteFile();
+                DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
+                break;
+            }
+            case eSFTPActions::kDelete: {
+                DoReportStatusBarMessage(wxString() << _("Deleting: ") << req->GetRemoteFile());
+                m_sftp->UnlinkFile(req->GetRemoteFile());
+                wxString msg;
+                msg << _("Deleted ") << req->GetRemoteFile();
+                DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
+                break;
+            }
+            }
         } catch(clException& e) {
 
             msg.Clear();
@@ -150,18 +169,14 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
 void SFTPWorkerThread::DoConnect(SFTPThreadRequet* req)
 {
     wxString accountName = req->GetAccount().GetAccountName();
-    clSSH::Ptr_t ssh(new clSSH(req->GetAccount().GetHost(),
-                               req->GetAccount().GetUsername(),
-                               req->GetAccount().GetPassword(),
-                               req->GetAccount().GetPort()));
+    clSSH::Ptr_t ssh(new clSSH(req->GetAccount().GetHost(), req->GetAccount().GetUsername(),
+                               req->GetAccount().GetPassword(), req->GetAccount().GetPort()));
     try {
         wxString message;
         DoReportStatusBarMessage(wxString() << _("Connecting to ") << accountName);
         DoReportMessage(accountName, "Connecting...", SFTPThreadMessage::STATUS_NONE);
         ssh->Connect();
-        if(!ssh->AuthenticateServer(message)) {
-            ssh->AcceptServerAuthentication();
-        }
+        if(!ssh->AuthenticateServer(message)) { ssh->AcceptServerAuthentication(); }
 
         ssh->Login();
         m_sftp.reset(new clSFTP(ssh));
@@ -202,16 +217,12 @@ void SFTPWorkerThread::DoReportStatusBarMessage(const wxString& message)
 // SFTPWriterThreadRequet
 // -----------------------------------------
 
-SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo,
-                                   const wxString& remoteFile,
-                                   const wxString& localFile,
-                                   size_t persmissions)
+SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile,
+                                   const wxString& localFile, size_t persmissions)
     : m_account(accountInfo)
     , m_remoteFile(remoteFile)
     , m_localFile(localFile)
-    , m_retryCounter(0)
-    , m_uploadSuccess(false)
-    , m_direction(kUpload)
+    , m_action(eSFTPActions::kUpload)
     , m_permissions(persmissions)
 {
 }
@@ -220,19 +231,28 @@ SFTPThreadRequet::SFTPThreadRequet(const RemoteFileInfo& remoteFile)
     : m_account(remoteFile.GetAccount())
     , m_remoteFile(remoteFile.GetRemoteFile())
     , m_localFile(remoteFile.GetLocalFile())
-    , m_retryCounter(0)
-    , m_uploadSuccess(false)
-    , m_direction(kDownload)
-    , m_permissions(0)
+    , m_action(eSFTPActions::kDownload)
 {
 }
 
 SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo)
     : m_account(accountInfo)
-    , m_retryCounter(0)
-    , m_uploadSuccess(false)
-    , m_direction(kConnect)
-    , m_permissions(0)
+    , m_action(eSFTPActions::kConnect)
+{
+}
+
+SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& oldName, const wxString& newName)
+    : m_account(accountInfo)
+    , m_remoteFile(oldName)
+    , m_action(eSFTPActions::kRename)
+    , m_newRemoteFile(newName)
+{
+}
+
+SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& fileToDelete)
+    : m_account(accountInfo)
+    , m_remoteFile(fileToDelete)
+    , m_action(eSFTPActions::kDelete)
 {
 }
 
@@ -249,7 +269,7 @@ SFTPThreadRequet& SFTPThreadRequet::operator=(const SFTPThreadRequet& other)
     m_localFile = other.m_localFile;
     m_retryCounter = other.m_retryCounter;
     m_uploadSuccess = other.m_uploadSuccess;
-    m_direction = other.m_direction;
+    m_action = other.m_action;
     m_permissions = other.m_permissions;
     return *this;
 }

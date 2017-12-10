@@ -300,7 +300,8 @@ bool PHPLint::IsWarning(wxXmlNode* violation, const wxString& linter)
     if(linter == "pmd") {
         wxString priority = violation->GetAttribute("priority", "1");
         long nPriority(wxNOT_FOUND);
-        return priority.ToCLong(&nPriority) > 2;
+        priority.ToCLong(&nPriority);
+        return (nPriority > 2);
     }
 
     return violation->GetName() == "warning";

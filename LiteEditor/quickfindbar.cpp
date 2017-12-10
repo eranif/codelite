@@ -46,6 +46,7 @@
 #include "imanager.h"
 #include "bitmap_loader.h"
 #include <wx/wupdlock.h>
+#include "drawingutils.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -84,6 +85,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_regexType(kRegexNone)
     , m_disableTextUpdateEvent(false)
 {
+    SetBackgroundColour(DrawingUtils::GetPanelBgColour());
     m_bar = new wxFlatButtonBar(this, wxFlatButton::kThemeNormal, 0, 10);
 
     //-------------------------------------------------------------

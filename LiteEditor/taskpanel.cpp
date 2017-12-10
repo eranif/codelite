@@ -32,6 +32,9 @@
 #include "manager.h"
 #include "macros.h"
 #include "taskpanel.h"
+#include "clWorkspaceManager.h"
+#include "event_notifier.h"
+#include "clStrings.h"
 
 BEGIN_EVENT_TABLE(TaskPanel, FindResultsTab)
 EVT_BUTTON(wxID_FIND, TaskPanel::OnSearch)
@@ -44,14 +47,9 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
     : FindResultsTab(parent, id, name)
     , m_scope(NULL)
 {
-    wxArrayString scopes;
-    scopes.Add(wxGetTranslation(SEARCH_IN_PROJECT));
-    scopes.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
-    scopes.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
-
     wxArrayString filters;
     filters.Add(wxString(wxT("C/C++ ")) + _("Sources"));
-    m_extensions.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc;*.hh"));
+    m_extensions.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc;*.hh;*.js;*.php;*.phtml"));
     filters.Add(_("All Files"));
     m_extensions.Add(wxT("*.*"));
 
@@ -67,11 +65,6 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
     m_findWhat = new wxButton(this, XRCID("find_what"), _("Find What..."));
     verticalPanelSizer->Add(m_findWhat, 0, wxEXPAND | wxALL, 5);
     verticalPanelSizer->Add(new wxStaticLine(this), 0, wxEXPAND | wxALL, 5);
-
-    m_scope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, scopes);
-    m_scope->SetSelection(1);
-    m_scope->SetToolTip(_("Select the scope of the search"));
-    verticalPanelSizer->Add(m_scope, 0, wxEXPAND | wxALL, 5);
 
     m_choiceEncoding = new wxChoice(this, wxID_ANY);
     verticalPanelSizer->Add(m_choiceEncoding, 0, wxEXPAND | wxALL, 5);
@@ -100,8 +93,8 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
     m_choiceEncoding->Append(astrEncodings);
     if(m_choiceEncoding->IsEmpty() == false) m_choiceEncoding->SetSelection(selection);
 
-    m_choiceEncoding->Connect(
-        wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(TaskPanel::OnEncodingSelected), NULL, this);
+    m_choiceEncoding->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(TaskPanel::OnEncodingSelected), NULL,
+                              this);
 
     wxBoxSizer* hSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -117,8 +110,8 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
 
 TaskPanel::~TaskPanel()
 {
-    m_choiceEncoding->Disconnect(
-        wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(TaskPanel::OnEncodingSelected), NULL, this);
+    m_choiceEncoding->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(TaskPanel::OnEncodingSelected),
+                                 NULL, this);
 }
 
 SearchData TaskPanel::DoGetSearchData()
@@ -137,7 +130,7 @@ SearchData TaskPanel::DoGetSearchData()
     TasksPanelData d;
     EditorConfigST::Get()->ReadObject(wxT("TasksPanelData"), &d);
 
-    std::map<wxString, wxString>::const_iterator iter = d.GetTasks().begin();
+    wxStringMap_t::const_iterator iter = d.GetTasks().begin();
     for(; iter != d.GetTasks().end(); iter++) {
         wxString name = iter->first;
         wxString regex = iter->second;
@@ -152,24 +145,11 @@ SearchData TaskPanel::DoGetSearchData()
 
     data.SetFindString(sfind);
 
-    wxString rootDir = m_scope->GetStringSelection();
+    wxString rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
     wxArrayString rootDirs;
     rootDirs.push_back(rootDir);
     data.SetRootDirs(rootDirs);
-
-    wxArrayString files;
-    if(rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) {
-        ManagerST::Get()->GetWorkspaceFiles(files);
-
-    } else if(rootDir == wxGetTranslation(SEARCH_IN_PROJECT)) {
-        ManagerST::Get()->GetActiveProjectFiles(files);
-
-    } else if(rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) {
-        ManagerST::Get()->GetActiveFileProjectFiles(files);
-    }
-    data.SetFiles(files);
     data.SetExtensions(wxT("*.*"));
-
     return data;
 }
 
@@ -180,7 +160,7 @@ void TaskPanel::OnSearch(wxCommandEvent& e)
     SearchThreadST::Get()->PerformSearch(sd);
 }
 
-void TaskPanel::OnSearchUI(wxUpdateUIEvent& e) { e.Enable(true); }
+void TaskPanel::OnSearchUI(wxUpdateUIEvent& e) { e.Enable(clWorkspaceManager::Get().IsWorkspaceOpened()); }
 
 void TaskPanel::OnRepeatOutput(wxCommandEvent& e) { OnSearch(e); }
 
@@ -216,4 +196,20 @@ void TaskPanel::OnEncodingSelected(wxCommandEvent& e)
 
     d.SetEncoding(m_choiceEncoding->GetStringSelection());
     EditorConfigST::Get()->WriteObject(wxT("TasksPanelData"), &d);
+}
+
+void TaskPanel::OnSearchStart(wxCommandEvent& e)
+{
+    m_searchInProgress = true;
+    Clear();
+    SetStyles(m_sci);
+    SearchData* data = (SearchData*)e.GetClientData();
+    wxDELETE(data);
+
+    // Make sure that the Output view & the "Replace" tab
+    // are visible
+
+    clCommandEvent event(wxEVT_SHOW_OUTPUT_TAB);
+    event.SetSelected(true).SetString(TASKS);
+    EventNotifier::Get()->AddPendingEvent(event);
 }

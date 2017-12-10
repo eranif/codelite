@@ -51,7 +51,7 @@ class SvnSettingsData : public SerializedObject
     wxArrayString m_urls;
     wxString m_revisionMacroName;
     int m_svnTabIndex;
-    std::map<wxString, wxString> m_workspaceRepoPath;
+    wxStringMap_t m_workspaceRepoPath;
     wxArrayString m_repos;
     int m_commitDlgSashPos;
     int m_commitDlgHSashPos;
@@ -134,11 +134,8 @@ public:
     const wxString& GetSshClientArgs() const { return m_sshClientArgs; }
     void SetUrls(const wxArrayString& urls) { this->m_urls = urls; }
     const wxArrayString& GetUrls() const { return m_urls; }
-    void SetWorkspaceRepoPath(const std::map<wxString, wxString>& workspaceRepoPath)
-    {
-        this->m_workspaceRepoPath = workspaceRepoPath;
-    }
-    std::map<wxString, wxString>& GetWorkspaceRepoPath() { return m_workspaceRepoPath; }
+    void SetWorkspaceRepoPath(const wxStringMap_t& workspaceRepoPath) { this->m_workspaceRepoPath = workspaceRepoPath; }
+    wxStringMap_t& GetWorkspaceRepoPath() { return m_workspaceRepoPath; }
 };
 
 #endif // SVNSETTINGSDATA_H

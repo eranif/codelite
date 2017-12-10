@@ -19,7 +19,7 @@
 
 size_t FindAuthorLine(wxArrayString& blameArr, size_t n, wxString* author) // Helper function
 {
-    for(n; n < blameArr.GetCount(); ++n) {
+    for(; n < blameArr.GetCount(); ++n) {
         if(blameArr.Item(n).StartsWith("author ", author)) {
             break;
         }
@@ -479,7 +479,7 @@ void GitBlameDlg::OnProcessTerminated(clProcessEvent& event)
         }
         ++index;
     }
-    for(std::map<wxString, wxString>::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
+    for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
     }
 

@@ -66,9 +66,9 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     m_pgPropWorkingDirectory->SetValue(buildConf->GetWorkingDirectory());
     // Project type
     wxPGChoices choices;
-    choices.Add(Project::STATIC_LIBRARY);
-    choices.Add(Project::DYNAMIC_LIBRARY);
-    choices.Add(Project::EXECUTABLE);
+    choices.Add(PROJECT_TYPE_STATIC_LIBRARY);
+    choices.Add(PROJECT_TYPE_DYNAMIC_LIBRARY);
+    choices.Add(PROJECT_TYPE_EXECUTABLE);
     m_pgPropProjectType->SetChoices(choices);
 
     int sel = choices.Index(buildConf->GetProjectType());

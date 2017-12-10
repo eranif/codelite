@@ -40,14 +40,14 @@ public:
     ~RenameSymbolData() {}
 };
 
-RenameSymbol::RenameSymbol( wxWindow* parent, const CppToken::List_t& candidates, const CppToken::List_t &possCandidates, const wxString& oldname )
+RenameSymbol::RenameSymbol( wxWindow* parent, const CppToken::Vec_t& candidates, const CppToken::Vec_t &possCandidates, const wxString& oldname )
     : RenameSymbolBase( parent )
 {
     m_preview->SetReadOnly(true);
     EditorConfigST::Get()->GetLexer("C++")->Apply( m_preview, true );
     m_tokens.clear();
 
-    CppToken::List_t::const_iterator iter = candidates.begin();
+    CppToken::Vec_t::const_iterator iter = candidates.begin();
     for (; iter != candidates.end(); ++iter) {
         AddMatch(*iter, true);
         m_tokens.push_back(*iter);
@@ -96,7 +96,7 @@ void RenameSymbol::OnButtonOK(wxCommandEvent& e)
     EndModal(wxID_OK);
 }
 
-void RenameSymbol::GetMatches(CppToken::List_t& matches)
+void RenameSymbol::GetMatches(CppToken::Vec_t& matches)
 {
     wxVariant v;
     for (int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {

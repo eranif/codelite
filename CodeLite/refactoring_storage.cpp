@@ -107,10 +107,10 @@ public:
             wxString fullpath = iter->GetFullPath();
             if(!storage.IsFileUpToDate(fullpath)) {
                 CppWordScanner scanner(fullpath);
-                CppToken::List_t tokens = scanner.tokenize();
+                CppToken::Vec_t tokens = scanner.tokenize();
 
                 if(false) {
-                    CppToken::List_t::iterator tokIter = tokens.begin();
+                    CppToken::Vec_t::iterator tokIter = tokens.begin();
                     for(; tokIter != tokens.end(); ++tokIter) {
                         wxPrintf("%s | %s | %d\n",
                                  tokIter->getFilename().c_str(),
@@ -164,7 +164,7 @@ RefactoringStorage::~RefactoringStorage()
     }
 }
 
-void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::List_t& tokens, bool startTx)
+void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::Vec_t& tokens, bool startTx)
 {
     if(!IsCacheReady() || !m_db.IsOpen()) {
         return;
@@ -184,7 +184,7 @@ void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::L
         
         // Insert a match to the FILES table
         fileId = DoUpdateFileTimestamp(filename);
-        CppToken::List_t::const_iterator iter = tokens.begin();
+        CppToken::Vec_t::const_iterator iter = tokens.begin();
         for(; iter != tokens.end(); ++iter) {
             iter->store(&m_db, fileId);
         }
@@ -321,13 +321,13 @@ void RefactoringStorage::Match(const wxString& symname, const wxString& filename
     if(!IsFileUpToDate(filename)) {
         // update the cache
         CppWordScanner tmpScanner(filename);
-        CppToken::List_t tokens_list = tmpScanner.tokenize();
+        CppToken::Vec_t tokens_list = tmpScanner.tokenize();
         StoreTokens(filename, tokens_list, true);
     }
     
     wxLongLong fileID = GetFileID(filename);
     if(fileID == wxNOT_FOUND) return;
-    CppToken::List_t list = CppToken::loadByNameAndFile(&m_db, symname, fileID);
+    CppToken::Vec_t list = CppToken::loadByNameAndFile(&m_db, symname, fileID);
     matches.addToken(symname, list);
 }
 
@@ -383,13 +383,13 @@ wxFileList_t RefactoringStorage::FilterUpToDateFiles(const wxFileList_t& files)
     return res;
 }
 
-CppToken::List_t RefactoringStorage::GetTokens(const wxString& symname, const wxFileList_t& filelist)
+CppToken::Vec_t RefactoringStorage::GetTokens(const wxString& symname, const wxFileList_t& filelist)
 {
     if(!IsCacheReady() || !m_db.IsOpen()) {
-        return CppToken::List_t();
+        return CppToken::Vec_t();
     }
 
-    CppToken::List_t tokens = CppToken::loadByName(&m_db, symname);
+    CppToken::Vec_t tokens = CppToken::loadByName(&m_db, symname);
 
     // Include only tokens which belongs to the current list of files
     // unless the filelist is empty and in this case, we ignore this filter
@@ -397,7 +397,7 @@ CppToken::List_t RefactoringStorage::GetTokens(const wxString& symname, const wx
         return tokens;
     }
 
-    CppToken::List_t::iterator iter = std::remove_if(tokens.begin(), tokens.end(), CppToken::RemoveIfNotIn(filelist));
+    CppToken::Vec_t::iterator iter = std::remove_if(tokens.begin(), tokens.end(), CppToken::RemoveIfNotIn(filelist));
     tokens.resize(std::distance(tokens.begin(), iter));
     return tokens;
 }

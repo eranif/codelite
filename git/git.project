@@ -28,6 +28,8 @@
   </Plugins>
   <Dependencies/>
   <VirtualDirectory Name="git">
+    <File Name="gitdiffchoosecommitishdlg.h"/>
+    <File Name="gitdiffchoosecommitishdlg.cpp"/>
     <File Name="git.cpp"/>
     <File Name="git.h"/>
     <File Name="gitCommitDlg.cpp"/>

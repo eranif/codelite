@@ -25,11 +25,11 @@
 #ifndef WINDOWSTACK_H
 #define WINDOWSTACK_H
 
-#include <set>
-#include <vector>
+#include "codelite_exports.h"
 #include "wx/panel.h"
 #include "wx/sizer.h"
-#include "codelite_exports.h"
+#include <set>
+#include <vector>
 
 class WXDLLIMPEXP_SDK WindowStack : public wxPanel
 {
@@ -38,6 +38,10 @@ class WXDLLIMPEXP_SDK WindowStack : public wxPanel
     wxWindow* m_selection;
 
     void DoSelect(wxWindow* win);
+
+protected:
+    void OnPaint(wxPaintEvent& evt);
+    void OnEraseBG(wxEraseEvent& evt);
 
 public:
     WindowStack(wxWindow* parent, wxWindowID id = wxID_ANY);

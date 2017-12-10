@@ -29,6 +29,7 @@
 #include "manager.h"
 #include <wx/choicebk.h>
 #include "macros.h"
+#include "cProjectDependecySorter.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -114,4 +115,8 @@ void DependenciesDlg::DoSelectProject()
     if(sel != wxNOT_FOUND) {
         m_book->ChangeSelection(sel);
     }
+    
+    //clProjectDependecySorter sorter;
+    //wxArrayString buildOrder;
+    //sorter.GetProjectBuildOrder(m_projectName, "Win_x64_Release", buildOrder);;
 }

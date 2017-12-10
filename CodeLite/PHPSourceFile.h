@@ -32,6 +32,8 @@
 #include "PHPEntityBase.h"
 #include <vector>
 
+class WXDLLIMPEXP_CL PHPLookupTable;
+
 class WXDLLIMPEXP_CL PHPSourceFile
 {
     wxString m_text;
@@ -47,6 +49,7 @@ class WXDLLIMPEXP_CL PHPSourceFile
     // aliases defined by the 'use' operator
     std::map<wxString, wxString> m_aliases;
     PHPSourceFile* m_converter;
+    PHPLookupTable* m_lookup;
 
 public:
     typedef wxSharedPtr<PHPSourceFile> Ptr_t;
@@ -107,12 +110,12 @@ protected:
      * @brief read the type
      */
     wxString ReadType();
-    
+
     /**
      * @brief PHP7 style: read the return value
      */
     wxString ReadFunctionReturnValueFromSignature();
-    
+
     /**
      * @brief read the value that comes after the 'extends' keyword
      */
@@ -223,19 +226,21 @@ protected:
      */
     void PhaseTwo();
 
+    wxString DoMakeIdentifierAbsolute(const wxString& type, bool exactMatch);
+
 public:
-    PHPSourceFile(const wxFileName& filename);
-    PHPSourceFile(const wxString& content);
+    PHPSourceFile(const wxFileName& filename, PHPLookupTable* lookup);
+    PHPSourceFile(const wxString& content, PHPLookupTable* lookup);
 
     virtual ~PHPSourceFile();
-    
+
     /**
-     * @brief use a different PHPSourceFile class for converting types to their 
+     * @brief use a different PHPSourceFile class for converting types to their
      * absolute path
      * @param converter
      */
     void SetTypeAbsoluteConverter(PHPSourceFile* converter) { m_converter = converter; }
-    
+
     /**
      * @brief check if we are inside a PHP block at the end of the given buffer
      */
@@ -255,6 +260,16 @@ public:
      * @brief attempt to resolve 'type' to its full path
      */
     wxString MakeIdentifierAbsolute(const wxString& type);
+
+    /**
+     * @brief attempt to resolve 'type' to its full path
+     */
+    wxString MakeTypehintAbsolute(const wxString& type);
+
+    /**
+     * @brief prepend the current scope to the class name (or trait, interface...)
+     */
+    wxString PrependCurrentScope(const wxString& className);
 
     /**
      * @brief return the source file text

@@ -1,5 +1,5 @@
 
-#line 3 "/home/eran/devl/codelite/CodeLite/CxxLexer.cpp"
+#line 3 "CxxLexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -367,8 +367,8 @@ static void yy_fatal_error (yyconst char msg[] ,yyscan_t yyscanner );
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 167
-#define YY_END_OF_BUFFER 168
+#define YY_NUM_RULES 166
+#define YY_END_OF_BUFFER 167
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -379,76 +379,76 @@ struct yy_trans_info
 static yyconst flex_int16_t yy_accept[644] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-      165,  165,  168,  132,   87,   89,   88,  132,  132,  131,
-      132,  132,  132,  132,  132,  132,  132,  132,   91,   90,
-      132,  132,  132,  132,  130,  130,  132,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  132,  163,  135,
-      136,  163,  163,  163,  163,  163,  159,  158,  153,  151,
-      162,  162,  163,  162,  162,  162,  162,  162,  162,  163,
-      167,  129,  128,  129,  124,  123,  124,  165,  164,  167,
-       87,   89,    0,   88,  105,    0,  120,    0,  110,  106,
+      164,  164,  167,  131,   87,   89,   88,  131,  131,  130,
+      131,  131,  131,  131,  131,  131,  131,  131,   91,   90,
+      131,  131,  131,  131,  129,  129,  131,  129,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  129,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  131,  162,  134,
+      135,  162,  162,  162,  162,  162,  158,  157,  152,  150,
+      161,  161,  162,  161,  161,  161,  161,  161,  161,  162,
+      166,  128,  127,  128,  123,  122,  123,  164,  163,  166,
+       87,   89,    0,   88,  104,    0,  119,    0,  109,  105,
 
-      115,    0,    0,  108,   98,  111,   99,  112,   96,   94,
-        0,   93,  121,  125,  109,   93,   91,    0,    0,   91,
-       91,    0,   90,   90,   90,   95,  100,  102,  104,  103,
-      101,  130,    0,    0,  116,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,   25,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,   39,  130,
-      130,  130,  130,  130,  130,  130,  130,   51,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  117,  107,  135,
-        0,  157,    0,  149,    0,    0,  161,  161,  159,    0,
+      114,    0,    0,  107,   98,  110,   99,  111,   96,   94,
+        0,   93,  120,  124,  108,   93,   91,    0,    0,   91,
+       91,    0,   90,   90,   90,   95,  100,  101,  103,  102,
+        0,  129,    0,    0,  115,  129,  129,  129,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,   25,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  129,   39,  129,
+      129,  129,  129,  129,  129,  129,  129,   51,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  129,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  116,  106,  134,
+        0,  156,    0,  148,    0,    0,  160,  160,  158,    0,
 
-        0,  159,  159,    0,  158,  158,  158,  154,  152,  162,
-        0,    0,  133,    0,  162,  162,  162,  162,  139,  162,
-      162,  162,  162,  150,  126,    0,  122,  165,    0,    0,
-        0,  119,    0,    0,   97,  118,    0,   93,    0,   93,
-       91,   92,   90,  113,  114,  130,    3,    5,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-       36,  130,  130,  130,   41,  130,  130,  130,   45,  130,
-       47,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
+        0,  158,  158,    0,  157,  157,  157,  153,  151,  161,
+        0,    0,  132,    0,  161,  161,  161,  161,  138,  161,
+      161,  161,  161,  149,  125,    0,  121,  164,    0,    0,
+        0,  118,    0,    0,   97,  117,    0,   93,    0,   93,
+       91,   92,   90,  112,  113,  129,    3,    5,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  129,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  129,  129,  129,
+       36,  129,  129,  129,   41,  129,  129,  129,   45,  129,
+       47,  129,  129,  129,  129,  129,  129,  129,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  129,  129,  129,
 
-      130,   73,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,   85,    0,    0,  156,    0,    0,    0,  161,    0,
-      161,  159,  160,  158,  134,  162,  162,  162,  162,  162,
-      162,  162,  162,  162,  162,  162,  127,  166,    0,    0,
-        0,    0,    0,   93,   92,   92,  130,  130,    6,  130,
-      130,    9,  130,   11,  130,   13,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,   28,   29,  130,  130,  130,
-      130,  130,  130,  130,   38,  130,   42,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,   69,  130,
+      129,   73,  129,  129,  129,  129,  129,  129,  129,  129,
+      129,   85,    0,    0,  155,    0,    0,    0,  160,    0,
+      160,  158,  159,  157,  133,  161,  161,  161,  161,  161,
+      161,  161,  161,  161,  161,  161,  126,  165,    0,    0,
+        0,    0,    0,   93,   92,   92,  129,  129,    6,  129,
+      129,    9,  129,   11,  129,   13,  129,  129,  129,  129,
+      129,  129,  129,  129,  129,   28,   29,  129,  129,  129,
+      129,  129,  129,  129,   38,  129,   42,  129,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  129,  129,  129,
+      129,  129,  129,  129,  129,  129,  129,  129,   69,  129,
 
-      130,   72,  130,  130,  130,  130,  130,   81,  130,  130,
-      130,  130,    0,    0,    0,    0,    0,  161,  160,  160,
-      162,  143,  142,  162,  162,  162,  162,  162,  145,  162,
-      162,    0,    0,    0,    0,   92,  130,  130,  130,    8,
-       10,   12,  130,  130,   16,   17,   18,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,   33,   34,   35,  130,
-      130,  130,  130,  130,  130,  130,  130,   52,  130,  130,
-      130,  130,  130,  130,  130,   60,  130,  130,  130,  130,
-      130,  130,  130,   71,  130,  130,  130,   77,  130,   79,
-      130,  130,  130,   84,  130,    0,    0,    0,    0,  160,
+      129,   72,  129,  129,  129,  129,  129,   81,  129,  129,
+      129,  129,    0,    0,    0,    0,    0,  160,  159,  159,
+      161,  142,  141,  161,  161,  161,  161,  161,  144,  161,
+      161,    0,    0,    0,    0,   92,  129,  129,  129,    8,
+       10,   12,  129,  129,   16,   17,   18,  129,  129,  129,
+      129,  129,  129,  129,  129,  129,   33,   34,   35,  129,
+      129,  129,  129,  129,  129,  129,  129,   52,  129,  129,
+      129,  129,  129,  129,  129,   60,  129,  129,  129,  129,
+      129,  129,  129,   71,  129,  129,  129,   77,  129,   79,
+      129,  129,  129,   84,  129,    0,    0,    0,    0,  159,
 
-      162,  144,  148,  140,  162,  162,  162,  147,  130,  130,
-        4,    7,  130,  130,  130,  130,  130,  130,  130,   24,
-       26,  130,  130,   31,   32,   37,   40,  130,  130,  130,
-       48,  130,  130,  130,  130,  130,   56,  130,  130,   59,
-       61,   62,   63,   66,   67,  130,  130,  130,   75,  130,
-      130,  130,  130,  130,   86,  137,  141,  162,  146,    1,
-        2,  130,  130,  130,  130,  130,  130,   23,  130,  130,
-       43,  130,  130,   49,  130,  130,   54,  130,  130,  130,
-      130,  130,  130,   74,  130,  130,   80,  130,   83,  138,
-      155,   14,   15,  130,  130,   21,   22,  130,   30,  130,
+      161,  143,  147,  139,  161,  161,  161,  146,  129,  129,
+        4,    7,  129,  129,  129,  129,  129,  129,  129,   24,
+       26,  129,  129,   31,   32,   37,   40,  129,  129,  129,
+       48,  129,  129,  129,  129,  129,   56,  129,  129,   59,
+       61,   62,   63,   66,   67,  129,  129,  129,   75,  129,
+      129,  129,  129,  129,   86,  136,  140,  161,  145,    1,
+        2,  129,  129,  129,  129,  129,  129,   23,  129,  129,
+       43,  129,  129,   49,  129,  129,   54,  129,  129,  129,
+      129,  129,  129,   74,  129,  129,   80,  129,   83,  137,
+      154,   14,   15,  129,  129,   21,   22,  129,   30,  129,
 
-       46,   50,   53,  130,   57,  130,  130,  130,   68,  130,
-       76,   78,   82,  130,   19,  130,   44,   55,  130,  130,
-      130,  130,   20,  130,  130,  130,  130,  130,  130,  130,
-      130,   65,  130,   27,  130,  130,   70,  130,   64,  130,
-      130,   58,    0
+       46,   50,   53,  129,   57,  129,  129,  129,   68,  129,
+       76,   78,   82,  129,   19,  129,   44,   55,  129,  129,
+      129,  129,   20,  129,  129,  129,  129,  129,  129,  129,
+      129,   65,  129,   27,  129,  129,   70,  129,   64,  129,
+      129,   58,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -947,7 +947,7 @@ static yyconst flex_int16_t yy_chk[1317] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static yyconst flex_int32_t yy_rule_can_match_eol[168] =
+static yyconst flex_int32_t yy_rule_can_match_eol[167] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -955,9 +955,9 @@ static yyconst flex_int32_t yy_rule_can_match_eol[168] =
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 1, 0, 0, 0,     };
+    0, 0, 0, 1, 0, 0, 0,     };
 
 /* The intent behind this definition is that it'll catch
  * any uses of REJECT which flex missed.
@@ -990,7 +990,7 @@ extern "C" int yywrap(void*) { return 1; }
 #define YY_FATAL_ERROR(x)
 #define YYSTYPE char*
 #define ECHO
-#define P(s) fprintf(stderr, "%s\n", s)
+#define P(s) 
 
 #define YY_NO_UNISTD_H
 #define YY_USER_ACTION  yycolumn += yyleng;
@@ -1737,75 +1737,77 @@ YY_RULE_SETUP
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-{ return T_RS; }
+{ return T_LE; }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-{ return T_LE; }
+{ return T_GE; }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-{ return T_GE; }
+{ return T_EQUAL; }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-{ return T_EQUAL; }
+{ return T_NOT_EQUAL; }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-{ return T_NOT_EQUAL; }
+{ return T_AND_AND;}
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-{ return T_AND_AND;}
+{ return T_OR_OR;}
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-{ return T_OR_OR;}
+{ return T_STAR_EQUAL;}
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-{ return T_STAR_EQUAL;}
+{ return T_SLASH_EQUAL;}
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-{ return T_SLASH_EQUAL;}
+{ return T_DIV_EQUAL;}
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-{ return T_DIV_EQUAL;}
+{ return T_PLUS_EQUAL;}
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-{ return T_PLUS_EQUAL;}
+{ return T_MINUS_EQUAL;}
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-{ return T_MINUS_EQUAL;}
+{ return T_LS_ASSIGN;}
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-{ return T_LS_ASSIGN;}
+{ return T_RS_ASSIGN;}
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-{ return T_RS_ASSIGN;}
+{ return T_AND_EQUAL;}
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-{ return T_AND_EQUAL;}
+{ return T_POW_EQUAL;}
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-{ return T_POW_EQUAL;}
+{ return T_OR_EQUAL;}
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-{ return T_OR_EQUAL;}
+{ return T_3_DOTS;}
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-{ return T_3_DOTS;}
+{
+    return T_STRING;
+}
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
@@ -1814,12 +1816,6 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 120:
-YY_RULE_SETUP
-{
-    return T_STRING;
-}
-	YY_BREAK
-case 121:
 YY_RULE_SETUP
 {
     // Clear the comment collected
@@ -1833,7 +1829,7 @@ YY_RULE_SETUP
     }
 }
 	YY_BREAK
-case 122:
+case 121:
 YY_RULE_SETUP
 {
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
@@ -1847,8 +1843,8 @@ YY_RULE_SETUP
     }
 }
 	YY_BREAK
-case 123:
-/* rule 123 can match eol */
+case 122:
+/* rule 122 can match eol */
 YY_RULE_SETUP
 { 
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
@@ -1857,7 +1853,7 @@ YY_RULE_SETUP
     }
 }
 	YY_BREAK
-case 124:
+case 123:
 YY_RULE_SETUP
 {
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
@@ -1866,7 +1862,7 @@ YY_RULE_SETUP
     }
 }
 	YY_BREAK
-case 125:
+case 124:
 YY_RULE_SETUP
 {
     int oldState = yyg->yy_start;
@@ -1882,8 +1878,8 @@ YY_RULE_SETUP
     }
 }
 	YY_BREAK
-case 126:
-/* rule 126 can match eol */
+case 125:
+/* rule 125 can match eol */
 YY_RULE_SETUP
 { 
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
@@ -1892,8 +1888,8 @@ YY_RULE_SETUP
     } 
 }
 	YY_BREAK
-case 127:
-/* rule 127 can match eol */
+case 126:
+/* rule 126 can match eol */
 YY_RULE_SETUP
 { 
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
@@ -1902,8 +1898,8 @@ YY_RULE_SETUP
     } 
 }
 	YY_BREAK
-case 128:
-/* rule 128 can match eol */
+case 127:
+/* rule 127 can match eol */
 YY_RULE_SETUP
 {
     BEGIN INITIAL;
@@ -1914,7 +1910,7 @@ YY_RULE_SETUP
     }
 }
 	YY_BREAK
-case 129:
+case 128:
 YY_RULE_SETUP
 { 
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
@@ -1923,22 +1919,31 @@ YY_RULE_SETUP
     }
 }
 	YY_BREAK
-case 130:
+case 129:
 YY_RULE_SETUP
 { 
     return T_IDENTIFIER;
 }
 	YY_BREAK
-case 131:
+case 130:
 YY_RULE_SETUP
 { 
     BEGIN(PREPR);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->SetPreProcessorSection(true);
 }
 	YY_BREAK
-case 132:
+case 131:
 YY_RULE_SETUP
 { 
     return yytext[0];
+}
+	YY_BREAK
+case 132:
+/* rule 132 can match eol */
+YY_RULE_SETUP
+{
+    /* keep the current state */ 
 }
 	YY_BREAK
 case 133:
@@ -1949,139 +1954,140 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 134:
-/* rule 134 can match eol */
-YY_RULE_SETUP
-{
-    /* keep the current state */ 
-}
-	YY_BREAK
-case 135:
 YY_RULE_SETUP
 {
     /* do nothing */
     RETURN_WHITESPACE();
 }
 	YY_BREAK
-case 136:
-/* rule 136 can match eol */
+case 135:
+/* rule 135 can match eol */
 YY_RULE_SETUP
 { 
     BEGIN(INITIAL);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->SetPreProcessorSection(false);
     return T_PP_STATE_EXIT;
 }
 	YY_BREAK
-case 137:
+case 136:
 YY_RULE_SETUP
 { 
     return T_PP_DEFINE;
 }
 	YY_BREAK
-case 138:
+case 137:
 YY_RULE_SETUP
 { 
     return T_PP_DEFINED;
 }
 	YY_BREAK
-case 139:
+case 138:
 YY_RULE_SETUP
 { 
     return T_PP_IF;
 }
 	YY_BREAK
-case 140:
+case 139:
 YY_RULE_SETUP
 { 
     return T_PP_IFDEF;
 }
 	YY_BREAK
-case 141:
+case 140:
 YY_RULE_SETUP
 {
     return T_PP_IFNDEF;
 }
 	YY_BREAK
-case 142:
+case 141:
 YY_RULE_SETUP
 { 
     return T_PP_ELSE;
 }
 	YY_BREAK
-case 143:
+case 142:
 YY_RULE_SETUP
 { 
     return T_PP_ELIF;
 }
 	YY_BREAK
-case 144:
+case 143:
 YY_RULE_SETUP
 { 
     return T_PP_ENDIF;
 }
 	YY_BREAK
-case 145:
+case 144:
 YY_RULE_SETUP
 { 
     return T_PP_LINE;
 }
 	YY_BREAK
-case 146:
+case 145:
 YY_RULE_SETUP
 { 
     return T_PP_PRAGMA;
 }
 	YY_BREAK
-case 147:
+case 146:
 YY_RULE_SETUP
 { 
     return T_PP_UNDEF;
 }
 	YY_BREAK
-case 148:
+case 147:
 YY_RULE_SETUP
 { 
     return T_PP_ERROR;
 }
 	YY_BREAK
-case 149:
+case 148:
 YY_RULE_SETUP
 { 
     return T_PP_AND;
 }
 	YY_BREAK
-case 150:
+case 149:
 YY_RULE_SETUP
 { 
     return T_PP_OR;
 }
 	YY_BREAK
-case 151:
+case 150:
 YY_RULE_SETUP
 { 
     return T_PP_GT;
 }
 	YY_BREAK
-case 152:
+case 151:
 YY_RULE_SETUP
 { 
     return T_PP_GTEQ;
 }
 	YY_BREAK
-case 153:
+case 152:
 YY_RULE_SETUP
 { 
     return T_PP_LT;
 }
 	YY_BREAK
-case 154:
+case 153:
 YY_RULE_SETUP
 { 
     return T_PP_LTEQ;
 }
 	YY_BREAK
-case 155:
+case 154:
 YY_RULE_SETUP
 { 
     BEGIN(INCLUDE);
+}
+	YY_BREAK
+case 155:
+YY_RULE_SETUP
+{
+    return T_PP_STRING;
 }
 	YY_BREAK
 case 156:
@@ -2092,57 +2098,53 @@ YY_RULE_SETUP
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-{
-    return T_PP_STRING;
-}
+{ return T_PP_DEC_NUMBER;}
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-{ return T_PP_DEC_NUMBER;}
+{ return T_PP_OCTAL_NUMBER;}
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-{ return T_PP_OCTAL_NUMBER;}
+{ return T_PP_HEX_NUMBER; }
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
-{ return T_PP_HEX_NUMBER; }
-	YY_BREAK
-case 161:
-YY_RULE_SETUP
 { return T_PP_FLOAT_NUMBER;}
 	YY_BREAK
-case 162:
+case 161:
 YY_RULE_SETUP
 { 
     return T_PP_IDENTIFIER;
 }
 	YY_BREAK
-case 163:
+case 162:
 YY_RULE_SETUP
 { 
     return yytext[0];
 }
 	YY_BREAK
-case 164:
-/* rule 164 can match eol */
+case 163:
+/* rule 163 can match eol */
 YY_RULE_SETUP
 {
     BEGIN(INITIAL);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->SetPreProcessorSection(false);
     return T_PP_STATE_EXIT;
 }
 	YY_BREAK
-case 165:
+case 164:
 YY_RULE_SETUP
 { RETURN_WHITESPACE(); }
 	YY_BREAK
-case 166:
+case 165:
 YY_RULE_SETUP
 { /* got the include file name */
     return T_PP_INCLUDE_FILENAME;
 }
 	YY_BREAK
-case 167:
+case 166:
 YY_RULE_SETUP
 ECHO;
 	YY_BREAK
@@ -2969,7 +2971,7 @@ YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, int  _yybytes_len , yysc
 static void yy_fatal_error (yyconst char* msg , yyscan_t yyscanner)
 {
     	(void) fprintf( stderr, "%s\n", msg );
-	exit( YY_EXIT_FAILURE );
+	
 }
 
 /* Redefine yyless() so it works in section 3 code. */
@@ -3314,7 +3316,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 // API methods implementation
 //=============-------------------------------
 
-void* LexerNew(const wxString& buffer, size_t options )
+void* LexerNew(const wxString& content, size_t options )
 {
     yyscan_t scanner;
     yylex_init(&scanner);
@@ -3325,7 +3327,7 @@ void* LexerNew(const wxString& buffer, size_t options )
     userData->SetCurrentPF(NULL);
     yyg->yyextra_r = userData;
     
-    wxCharBuffer cb = buffer.mb_str(wxConvUTF8);
+    wxCharBuffer cb = content.mb_str(wxConvUTF8);
     yy_switch_to_buffer(yy_scan_string(cb.data(),scanner),scanner);
     yycolumn = 1;
     return scanner;
@@ -3375,36 +3377,36 @@ void LexerUnget(void* scanner)
 
 bool LexerNext(void* scanner, CxxLexerToken& token)
 {
-    token.column = 0;
-    token.type = yylex(scanner);
-    if(token.type != 0) {
+    token.SetColumn(0);
+    token.SetType(yylex(scanner));
+    if(!token.IsEOF()) {
         struct yyguts_t * yyg = (struct yyguts_t*)scanner;
         CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
-        switch(token.type) {
+        switch(token.GetType()) {
         case T_CXX_COMMENT:
             // One line up for CXX comments
-            token.lineNumber = userData->GetCommentStartLine();
-            token.comment = userData->GetComment();
+            token.SetLineNumber(userData->GetCommentStartLine());
+            token.SetComment(userData->GetComment());
             userData->ClearComment();
             break;
         case T_C_COMMENT:
-            token.comment = userData->GetComment();
+            token.SetComment(userData->GetComment());
             userData->ClearComment();
-            token.lineNumber = userData->GetCommentStartLine();
+            token.SetLineNumber(userData->GetCommentStartLine());
             break;
         default:
-            token.lineNumber = yylineno;
-            token.text = yytext;
-            token.column = yycolumn;
+            token.SetLineNumber(yylineno);
+            token.SetText(yytext);
+            token.SetColumn(yycolumn);
             break;
         }
 
     } else {
-        token.text = NULL;
-        token.lineNumber = 0;
-        token.column = 0;
+        token.SetText(NULL);
+        token.SetLineNumber(0);
+        token.SetColumn(0);
     }
-    return token.type != 0;
+    return !token.IsEOF();
 }
 
 wxString LexerCurrentToken(void* scanner)

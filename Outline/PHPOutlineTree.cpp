@@ -85,7 +85,7 @@ int PHPOutlineTree::GetImageId(PHPEntityBase::Ptr_t entry)
 void PHPOutlineTree::BuildTree(const wxFileName& filename)
 {
     m_filename = filename;
-    PHPSourceFile sourceFile(filename);
+    PHPSourceFile sourceFile(filename, NULL);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     wxWindowUpdateLocker locker(this);

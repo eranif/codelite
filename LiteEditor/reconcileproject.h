@@ -26,11 +26,11 @@
 #ifndef RECONCILEPROJECT_CLASSES_H
 #define RECONCILEPROJECT_CLASSES_H
 
-#include "reconcileprojectbase.h"
+#include "bitmap_loader.h"
 #include "project.h"
+#include "reconcileprojectbase.h"
 #include <deque>
 #include <vector>
-#include "bitmap_loader.h"
 
 class VirtualDirectoryTree;
 
@@ -50,24 +50,24 @@ protected:
     virtual void OnAutoSuggest(wxCommandEvent& event);
     virtual void OnUndoSelectedFiles(wxCommandEvent& event);
     virtual void OnUndoSelectedFilesUI(wxUpdateUIEvent& event);
-    void OnDeleteSelectedNewFiles(wxCommandEvent &e);
-    
+    void OnDeleteSelectedNewFiles(wxCommandEvent& e);
+
     void OnDVLCContextMenu(wxDataViewEvent& event);
 
-    wxString      m_projname;
+    wxString m_projname;
     wxArrayString m_regexes;
-    wxStringSet_t   m_newfiles;
-    Project::FileInfoVector_t m_stalefiles;
-    wxStringSet_t   m_allfiles;
+    wxStringSet_t m_newfiles;
+    Project::FilesMap_t m_stalefiles;
+    wxStringSet_t m_allfiles;
     BitmapLoader::BitmapMap_t m_bitmaps;
-    wxString      m_toplevelDir;
-    bool          m_projectModified;
+    wxString m_toplevelDir;
+    bool m_projectModified;
 
     typedef std::multimap<wxString, wxString> StringMultimap_t;
 
 protected:
     void DoFindFiles();
-    wxBitmap GetBitmap(const wxString &filename) const;
+    wxBitmap GetBitmap(const wxString& filename) const;
     bool GuessNewVirtualDirName(wxString& suggestedPath, wxString& suggestedName) const;
 
 public:
@@ -103,11 +103,13 @@ public:
     virtual ~ReconcileProjectFiletypesDlg();
 
     void SetData();
-    void GetData(wxString& toplevelDir, wxString& types, wxArrayString& ignoreFiles, wxArrayString& excludePaths, wxArrayString& regexes) const;
+    void GetData(wxString& toplevelDir, wxString& types, wxString& ignoreFiles, wxArrayString& excludePaths,
+                 wxArrayString& regexes) const;
 
 protected:
-    void SetRegex(const wxString& regex);   // Takes a VD|regex string, splits and inserts into listctrl cols
-    wxArrayString GetRegexes() const;       // Extracts the regex and VD data from listctrl, joins each to VD|regex string, and puts in arraystring
+    void SetRegex(const wxString& regex); // Takes a VD|regex string, splits and inserts into listctrl cols
+    wxArrayString GetRegexes()
+        const; // Extracts the regex and VD data from listctrl, joins each to VD|regex string, and puts in arraystring
     virtual void OnIgnoreBrowse(wxCommandEvent& event);
     virtual void OnIgnoreRemove(wxCommandEvent& event);
     virtual void OnIgnoreFileBrowse(wxCommandEvent& event);
@@ -127,9 +129,7 @@ public:
     ReconcileByRegexDlg(wxWindow* parent, const wxString& projname);
     virtual ~ReconcileByRegexDlg();
 
-    wxString GetRegex() {
-        return m_textCtrlVirtualFolder->GetValue() + '|' + m_textCtrlRegex->GetValue();
-    }
+    wxString GetRegex() { return m_textCtrlVirtualFolder->GetValue() + '|' + m_textCtrlRegex->GetValue(); }
 
 protected:
     virtual void OnTextEnter(wxCommandEvent& event);
@@ -142,17 +142,26 @@ protected:
 class VirtualDirectoryTree
 {
     typedef std::deque<VirtualDirectoryTree*> dBranches;
-public:  
-    VirtualDirectoryTree() : m_parent(NULL) {}
+
+public:
+    VirtualDirectoryTree()
+        : m_parent(NULL)
+    {
+    }
     VirtualDirectoryTree(const VirtualDirectoryTree* parent, const wxString& displayname, const wxString& vdPath)
-                                    : m_parent(parent), m_displayName(displayname), m_vdPath(vdPath){}
+        : m_parent(parent)
+        , m_displayName(displayname)
+        , m_vdPath(vdPath)
+    {
+    }
     void BuildTree(const wxString& projName);
     wxString FindBestMatchVDir(const wxString& path, const wxString& ext) const;
     wxString GetDisplayname() const { return m_displayName; }
     wxString GetVPath() const { return m_vdPath; }
-    
+
 protected:
-    VirtualDirectoryTree* FindParent(const wxString& vdChildPath); // Used by root in the initial construction of the tree
+    VirtualDirectoryTree*
+    FindParent(const wxString& vdChildPath); // Used by root in the initial construction of the tree
     void StoreChild(const wxString& displayname, const wxString& vdPath);
 
     dBranches m_children;

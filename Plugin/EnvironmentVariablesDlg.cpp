@@ -22,7 +22,7 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
 {
     EvnVarList vars;
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-    std::map<wxString, wxString> envSets = vars.GetEnvVarSets();
+    wxStringMap_t envSets = vars.GetEnvVarSets();
     wxString activePage = vars.GetActiveSet();
 
     wxStyledTextCtrl* sci = m_textCtrlDefault;
@@ -32,7 +32,7 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     }
 
     SetName("EnvVarsTableDlg");
-    std::map<wxString, wxString>::iterator iter = envSets.begin();
+    wxStringMap_t::iterator iter = envSets.begin();
     for(; iter != envSets.end(); iter++) {
         wxString name = iter->first;
         wxString content = iter->second;
@@ -79,7 +79,7 @@ void EnvironmentVariablesDlg::OnButtonOk(wxCommandEvent& event)
 {
     EvnVarList vars;
 
-    std::map<wxString, wxString> envSets;
+    wxStringMap_t envSets;
 
     wxString content = m_textCtrlDefault->GetText();
     wxString name = wxT("Default");
@@ -114,10 +114,8 @@ void EnvironmentVariablesDlg::OnDeleteSet(wxCommandEvent& event)
     if(selection == wxNOT_FOUND) return;
 
     wxString name = m_book->GetPageText((size_t)selection);
-    if(wxMessageBox(wxString::Format(wxT("Delete environment variables set\n'%s' ?"), name.c_str()),
-                    wxT("Confirm"),
-                    wxYES_NO | wxICON_QUESTION,
-                    this) != wxYES)
+    if(wxMessageBox(wxString::Format(wxT("Delete environment variables set\n'%s' ?"), name.c_str()), wxT("Confirm"),
+                    wxYES_NO | wxICON_QUESTION, this) != wxYES)
         return;
     m_book->DeletePage((size_t)selection);
 }
@@ -163,9 +161,7 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
     wxFFile fp(fn.GetFullPath(), wxT("w+b"));
     if(fp.IsOpened() == false) {
         wxMessageBox(wxString::Format(_("Failed to open file: '%s' for write"), fn.GetFullPath().c_str()),
-                     wxT("CodeLite"),
-                     wxOK | wxCENTER | wxICON_WARNING,
-                     this);
+                     wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING, this);
         return;
     }
 
@@ -196,10 +192,8 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
         fp.Write(sLine);
     }
 
-    wxMessageBox(wxString::Format(_("Environment exported to: '%s' successfully"), fn.GetFullPath()),
-                 wxT("CodeLite"),
-                 wxOK | wxCENTRE,
-                 this);
+    wxMessageBox(wxString::Format(_("Environment exported to: '%s' successfully"), fn.GetFullPath()), wxT("CodeLite"),
+                 wxOK | wxCENTRE, this);
 }
 
 void EnvironmentVariablesDlg::OnNewSet(wxCommandEvent& event) { CallAfter(&EnvironmentVariablesDlg::DoAddNewSet); }

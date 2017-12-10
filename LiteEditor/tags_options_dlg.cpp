@@ -77,17 +77,16 @@ TagsOptionsDlg::TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data)
     m_checkCppKeywordAssist->SetValue(m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
     m_checkDisableParseOnSave->SetValue(m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
     m_checkBoxretagWorkspaceOnStartup->SetValue(m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
-    m_checkBoxDeepUsingNamespaceResolving->SetValue(
-        m_data.GetFlags() & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING ? true : false);
+    m_checkBoxDeepUsingNamespaceResolving->SetValue(m_data.GetFlags() & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING ? true
+                                                                                                               : false);
     m_checkBoxEnableCaseSensitiveCompletion->SetValue(m_data.GetFlags() & CC_IS_CASE_SENSITIVE ? true : false);
     m_checkBoxKeepFunctionSignature->SetValue(m_data.GetFlags() & CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED);
     m_spinCtrlNumberOfCCItems->ChangeValue(::wxIntToString(m_data.GetCcNumberOfDisplayItems()));
     m_textCtrlFileSpec->ChangeValue(m_data.GetFileSpec());
-    
+
     //------------------------------------------------------------------
     // Colouring
     //------------------------------------------------------------------
-    m_pgPropColourWorkspaceSymbols->SetValueFromInt(m_data.GetCcColourFlags());
     m_pgPropColourLocalVariables->SetValue(m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
     m_pgPropTrackPreProcessors->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS ? true : false);
 
@@ -160,7 +159,7 @@ void TagsOptionsDlg::CopyData()
     SetFlag(CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED, m_checkBoxKeepFunctionSignature->IsChecked());
     m_data.SetCcNumberOfDisplayItems(::wxStringToInt(m_spinCtrlNumberOfCCItems->GetValue(), 100));
     m_data.SetFileSpec(m_textCtrlFileSpec->GetValue());
-    
+
     //----------------------------------------------------
     // Colouring
     //----------------------------------------------------
@@ -243,7 +242,8 @@ void TagsOptionsDlg::Parse()
 
     // Clear the PreProcessor table
     PPTable::Instance()->Clear();
-    for(size_t i = 0; i < fullpathsArr.size(); i++) PPScan(fullpathsArr.Item(i), true);
+    for(size_t i = 0; i < fullpathsArr.size(); i++)
+        PPScan(fullpathsArr.Item(i), true);
 
     // Open an editor and print out the results
     IEditor* editor = PluginManager::Get()->NewEditor();
@@ -351,7 +351,7 @@ void TagsOptionsDlg::DoSuggest(wxStyledTextCtrl* textCtrl)
     wxArrayString compilerNames;
     std::for_each(allCompilers.begin(), allCompilers.end(), [&](CompilerPtr c) {
         if(c->GetCompilerFamily() == COMPILER_FAMILY_CLANG || c->GetCompilerFamily() == COMPILER_FAMILY_MINGW ||
-            c->GetCompilerFamily() == COMPILER_FAMILY_GCC) {
+           c->GetCompilerFamily() == COMPILER_FAMILY_GCC) {
             compilerNames.Add(c->GetName());
         } else if(::clIsCygwinEnvironment() && c->GetCompilerFamily() == COMPILER_FAMILY_CYGWIN) {
             compilerNames.Add(c->GetName());
@@ -386,7 +386,7 @@ void TagsOptionsDlg::DoSuggest(wxStyledTextCtrl* textCtrl)
     suggestedPaths.Trim().Trim(false);
     if(!suggestedPaths.IsEmpty()) {
         if(::wxMessageBox(_("Accepting this suggestion will replace your old search paths with these paths\nContinue?"),
-               "CodeLite", wxYES_NO | wxYES_DEFAULT | wxCANCEL | wxICON_QUESTION) != wxYES) {
+                          "CodeLite", wxYES_NO | wxYES_DEFAULT | wxCANCEL | wxICON_QUESTION) != wxYES) {
             return;
         }
         textCtrl->Clear();
@@ -398,15 +398,10 @@ void TagsOptionsDlg::OnColouringPropertyValueChanged(wxPropertyGridEvent& event)
     // Enable the local variables colouring feature
     SetFlag(CC_COLOUR_VARS, m_pgPropColourLocalVariables->GetValue().GetBool());
 
-    // if any of the types is selected, enable this feature
-    size_t ccColourFlags(0);
-    ccColourFlags = m_pgPropColourWorkspaceSymbols->GetValue().GetInteger();
-    m_data.SetCcColourFlags(ccColourFlags);
-    SetFlag(CC_COLOUR_WORKSPACE_TAGS, (ccColourFlags > 0));
-
     // Enable pre processor tracking (must come after we set the flags above)
     SetColouringFlag(CC_COLOUR_MACRO_BLOCKS, m_pgPropTrackPreProcessors->GetValue().GetBool());
 }
+
 void TagsOptionsDlg::OnButtonCancel(wxCommandEvent& event)
 {
     event.Skip();

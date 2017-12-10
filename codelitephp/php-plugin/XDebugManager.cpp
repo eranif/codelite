@@ -1,38 +1,33 @@
+#include "PHPDebugStartDlg.h"
+#include "XDebugCommThread.h"
+#include "XDebugEvalCmdHandler.h"
 #include "XDebugManager.h"
-#include <plugin.h>
-#include <event_notifier.h>
-#include "php_workspace.h"
-#include <wx/sckaddr.h>
-#include <wx/msgdlg.h>
-#include <xmlutils.h>
-#include <wx/sstream.h>
-#include <file_logger.h>
-#include <wx/uri.h>
-#include <bookmark_manager.h>
+#include "XDebugUnknownCommand.h"
 #include "php.h"
-#include <wx/stc/stc.h>
 #include "php_configuration_data.h"
-#include <wx/stc/stc.h>
+#include "php_utils.h"
+#include "php_workspace.h"
 #include "ssh_workspace_settings.h"
+#include <bookmark_manager.h>
+#include <event_notifier.h>
+#include <file_logger.h>
+#include <plugin.h>
 #include <wx/msgdlg.h>
 #include <wx/richmsgdlg.h>
+#include <wx/sckaddr.h>
+#include <wx/sstream.h>
+#include <wx/stc/stc.h>
+#include <wx/uri.h>
 #include <xmlutils.h>
-#include "XDebugEvalCmdHandler.h"
-#include "php_utils.h"
-#include "XDebugCommThread.h"
-#include "XDebugUnknownCommand.h"
-#include "PHPDebugStartDlg.h"
 
 // Handlers
-#include "XDebugRunCmdHandler.h"
-#include "XDebugStopCmdHandler.h"
 #include "XDebugBreakpointCmdHandler.h"
-#include "XDebugStackGetCmdHandler.h"
 #include "XDebugContextGetCmdHandler.h"
 #include "XDebugPropertyGetHandler.h"
+#include "XDebugRunCmdHandler.h"
+#include "XDebugStackGetCmdHandler.h"
+#include "XDebugStopCmdHandler.h"
 #include "xdebugevent.h"
-
-static int ID_XDEBUG_ACCEPT_CONN = ::wxNewId();
 
 #define CHECK_XDEBUG_SESSION_ACTIVE(event) \
     if(!IsConnected()) {                   \
@@ -47,24 +42,17 @@ XDebugManager::XDebugManager()
     , m_connected(false)
 {
     // Connect CodeLite's debugger events to XDebugManager
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_START, clDebugEventHandler(XDebugManager::OnDebugStartOrContinue), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_CONTINUE, clDebugEventHandler(XDebugManager::OnDebugStartOrContinue), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_STOP, clDebugEventHandler(XDebugManager::OnStopDebugger), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_IS_RUNNING, clDebugEventHandler(XDebugManager::OnDebugIsRunning), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(XDebugManager::OnToggleBreakpoint), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(XDebugManager::OnDebugNext), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(XDebugManager::OnVoid), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_STEP_IN, clDebugEventHandler(XDebugManager::OnDebugStepIn), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(XDebugManager::OnDebugStepOut), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(XDebugManager::OnTooltip), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(XDebugManager::OnCanInteract), NULL, this);
-
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &XDebugManager::OnDebugStartOrContinue, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &XDebugManager::OnDebugStartOrContinue, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &XDebugManager::OnDebugIsRunning, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &XDebugManager::OnToggleBreakpoint, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &XDebugManager::OnDebugNext, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT_INST, &XDebugManager::OnVoid, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_IN, &XDebugManager::OnDebugStepIn, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_I, &XDebugManager::OnVoid, this); // Not supported
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_OUT, &XDebugManager::OnDebugStepOut, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_EXPR_TOOLTIP, &XDebugManager::OnTooltip, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_CAN_INTERACT, &XDebugManager::OnCanInteract, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_IDE_GOT_CONTROL, &XDebugManager::OnGotFocusFromXDebug, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_STOPPED, &XDebugManager::OnXDebugStopped, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_STACK_TRACE_ITEM_ACTIVATED, &XDebugManager::OnStackTraceItemActivated, this);
@@ -77,24 +65,17 @@ XDebugManager::XDebugManager()
 
 XDebugManager::~XDebugManager()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_START, clDebugEventHandler(XDebugManager::OnDebugStartOrContinue), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_CONTINUE, clDebugEventHandler(XDebugManager::OnDebugStartOrContinue), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_IS_RUNNING, clDebugEventHandler(XDebugManager::OnDebugIsRunning), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(XDebugManager::OnToggleBreakpoint), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(XDebugManager::OnDebugNext), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(XDebugManager::OnVoid), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_STEP_IN, clDebugEventHandler(XDebugManager::OnDebugStepIn), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(XDebugManager::OnDebugStepOut), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(XDebugManager::OnTooltip), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(XDebugManager::OnCanInteract), NULL, this);
-
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &XDebugManager::OnDebugStartOrContinue, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &XDebugManager::OnDebugStartOrContinue, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &XDebugManager::OnDebugIsRunning, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &XDebugManager::OnToggleBreakpoint, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &XDebugManager::OnDebugNext, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT_INST, &XDebugManager::OnVoid, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_IN, &XDebugManager::OnDebugStepIn, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_I, &XDebugManager::OnVoid, this); // Not supported
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_OUT, &XDebugManager::OnDebugStepOut, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_EXPR_TOOLTIP, &XDebugManager::OnTooltip, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_CAN_INTERACT, &XDebugManager::OnCanInteract, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_IDE_GOT_CONTROL, &XDebugManager::OnGotFocusFromXDebug, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_STOPPED, &XDebugManager::OnXDebugStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_STACK_TRACE_ITEM_ACTIVATED, &XDebugManager::OnStackTraceItemActivated, this);
@@ -134,12 +115,10 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
     CHECK_COND_RET(PHPWorkspace::Get()->GetActiveProject());
 
     // Test which file we want to debug
-    PHPDebugStartDlg debugDlg(
-        EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_plugin->GetManager());
+    PHPDebugStartDlg debugDlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(),
+                              m_plugin->GetManager());
     if(ideInitiate) {
-        if(debugDlg.ShowModal() != wxID_OK) {
-            return;
-        }
+        if(debugDlg.ShowModal() != wxID_OK) { return; }
     }
     wxDELETE(m_readerThread);
     m_readerThread = new XDebugComThread(this, GetPort(), GetHost(), ideInitiate ? 5 : -1);
@@ -158,8 +137,8 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
         message << _("This project has no file mapping defined. This may result in breakpoints not applied\n")
                 << _("To fix this, set file mapping from Project Settings -> Debug");
 
-        wxRichMessageDialog dlg(
-            EventNotifier::Get()->TopFrame(), message, "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCANCEL);
+        wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(), message, "CodeLite",
+                                wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCANCEL);
         dlg.ShowCheckBox(_("Remember my answer and don't show this message again"));
         dlg.SetOKCancelLabels(_("OK, Continue to Debug"), _("Stop the debugger"));
         int dlgResult = dlg.ShowModal();
@@ -278,9 +257,7 @@ void XDebugManager::DoApplyBreakpoints()
     for(; iter != breakpoints.end(); ++iter) {
 
         // apply only breakpoints without xdebug-id attached to them
-        if(iter->IsApplied()) {
-            continue;
-        }
+        if(iter->IsApplied()) { continue; }
 
         wxStringMap_t sftpMapping;
         SSHWorkspaceSettings sftpSettings;
@@ -324,9 +301,7 @@ void XDebugManager::DoHandleResponse(wxXmlNode* xml)
         doc.SetRoot(xml);
 
         wxStringOutputStream sos;
-        if(doc.Save(sos)) {
-            CL_DEBUG(sos.GetString());
-        }
+        if(doc.Save(sos)) { CL_DEBUG(sos.GetString()); }
         doc.DetachRoot();
     }
 }
@@ -355,9 +330,7 @@ xInitStruct XDebugManager::ParseInitXML(wxXmlNode* init)
 
 void XDebugManager::AddHandler(XDebugCommandHandler::Ptr_t handler)
 {
-    if(m_handlers.count(handler->GetTransactionId())) {
-        m_handlers.erase(handler->GetTransactionId());
-    }
+    if(m_handlers.count(handler->GetTransactionId())) { m_handlers.erase(handler->GetTransactionId()); }
     m_handlers.insert(std::make_pair(handler->GetTransactionId(), handler));
 }
 
@@ -448,12 +421,9 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
 
     // Make sure codelite is "Raised"
     wxFrame* frame = EventNotifier::Get()->TopFrame();
-    if(frame->IsIconized() || !frame->IsShown()) {
-        frame->Raise();
-    }
+    if(frame->IsIconized() || !frame->IsShown()) { frame->Raise(); }
 
-    CL_DEBUG("CodeLite: opening file %s:%d",
-             e.GetFileName(),
+    CL_DEBUG("CodeLite: opening file %s:%d", e.GetFileName(),
              e.GetLineNumber() + 1); // The user sees the line number from 1 (while scintilla counts them from 0)
 
     // Mark the debugger line / file
@@ -521,9 +491,7 @@ void XDebugManager::OnXDebugStopped(XDebugEvent& e)
 
 void XDebugManager::DoRefreshDebuggerViews(int requestedStack)
 {
-    if(!m_readerThread) {
-        return;
-    }
+    if(!m_readerThread) { return; }
 
     // We execute here 2 commands in a row
     {
@@ -552,9 +520,7 @@ void XDebugManager::DoRefreshDebuggerViews(int requestedStack)
 static XDebugManager* s_xdebugManager = NULL;
 XDebugManager& XDebugManager::Get()
 {
-    if(!s_xdebugManager) {
-        s_xdebugManager = new XDebugManager();
-    }
+    if(!s_xdebugManager) { s_xdebugManager = new XDebugManager(); }
     return *s_xdebugManager;
 }
 
@@ -621,9 +587,7 @@ void XDebugManager::OnDeleteAllBreakpoints(PHPEvent& e)
     const XDebugBreakpoint::List_t& bps = m_breakpointsMgr.GetBreakpoints();
     XDebugBreakpoint::List_t::const_iterator iter = bps.begin();
     for(; iter != bps.end(); ++iter) {
-        if(iter->IsApplied()) {
-            DoDeleteBreakpoint(iter->GetBreakpointId());
-        }
+        if(iter->IsApplied()) { DoDeleteBreakpoint(iter->GetBreakpointId()); }
     }
 
     // Delete them from the manager
@@ -642,9 +606,7 @@ void XDebugManager::OnDeleteBreakpoint(PHPEvent& e)
         DoDeleteBreakpoint(bpid);
     }
     IEditor* editor = m_plugin->GetManager()->FindEditor(filename);
-    if(editor) {
-        editor->GetCtrl()->MarkerDelete(line - 1, smt_breakpoint);
-    }
+    if(editor) { editor->GetCtrl()->MarkerDelete(line - 1, smt_breakpoint); }
     m_breakpointsMgr.DeleteBreakpoint(filename, line);
 }
 
@@ -737,14 +699,10 @@ void XDebugManager::OnCommThreadTerminated()
 
 void XDebugManager::XDebugNotConnecting()
 {
-    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
-                            _("XDebug did not connect in a timely manner"),
-                            "CodeLite",
-                            wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
+    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(), _("XDebug did not connect in a timely manner"),
+                            "CodeLite", wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
     dlg.SetOKCancelLabels(_("Run XDebug Test"), _("OK"));
-    if(dlg.ShowModal() == wxID_OK) {
-        m_plugin->CallAfter(&PhpPlugin::RunXDebugDiagnostics);
-    }
+    if(dlg.ShowModal() == wxID_OK) { m_plugin->CallAfter(&PhpPlugin::RunXDebugDiagnostics); }
     DoStopDebugger();
 }
 

@@ -26,113 +26,106 @@ TestClassBaseDlg::TestClassBaseDlg(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(2, 4, 0, 0);
-    fgSizer1->SetFlexibleDirection( wxBOTH );
-    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer1->AddGrowableCol(1);
-    
-    bSizer1->Add(fgSizer1, 0, wxEXPAND, 5);
-    
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Class name:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer1->Add(m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlClassName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_textCtrlClassName->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlClassName->SetHint(_("Type the class name or click the button"));
-    #endif
-    
-    fgSizer1->Add(m_textCtrlClassName, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonClass = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    m_buttonClass->SetToolTip(_("Select the class to test from a list of classes"));
-    
-    fgSizer1->Add(m_buttonClass, 0, wxALL, 5);
-    
-    m_buttonRefresh = new wxButton(this, wxID_ANY, _("&Show Functions..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonRefresh->SetToolTip(_("Display the selected class functions in the list view below"));
-    
-    fgSizer1->Add(m_buttonRefresh, 0, wxALL, 5);
-    
-    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer2->SetFlexibleDirection( wxBOTH );
     fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer2->AddGrowableCol(1);
     
-    bSizer1->Add(fgSizer2, 0, wxEXPAND, 5);
+    bSizer1->Add(fgSizer2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Fixture (optional):"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText16 = new wxStaticText(this, wxID_ANY, _("Class Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    fgSizer2->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer2->Add(m_staticText16, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlFixtureName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlClassName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_textCtrlClassName->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlClassName->SetHint(_("Class Name..."));
+    #endif
+    
+    fgSizer2->Add(m_textCtrlClassName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_buttonClass = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_buttonClass->SetToolTip(_("Select the class to test from a list of classes"));
+    
+    fgSizer2->Add(m_buttonClass, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Fixture (optional):"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    
+    fgSizer2->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_textCtrlFixtureName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlFixtureName->SetHint(wxT(""));
     #endif
     
-    fgSizer2->Add(m_textCtrlFixtureName, 0, wxALL|wxEXPAND, 5);
+    fgSizer2->Add(m_textCtrlFixtureName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Output file (optional):"), wxDefaultPosition, wxSize(-1, -1), 0);
+    fgSizer2->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    fgSizer2->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Output file (optional):"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    m_textCtrlFileName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    fgSizer2->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_textCtrlFileName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textCtrlFileName->SetToolTip(_("The name of the file of which CodeLite will generate the test code.\nWhen left empty, CodeLite will use the first available source file in target project"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlFileName->SetHint(wxT(""));
     #endif
     
-    fgSizer2->Add(m_textCtrlFileName, 0, wxALL|wxEXPAND, 5);
+    fgSizer2->Add(m_textCtrlFileName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("UnitTest++ Project:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    fgSizer2->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    fgSizer2->Add(m_staticText5, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    m_staticText5 = new wxStaticText(this, wxID_ANY, _("UnitTest++ Project:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    
+    fgSizer2->Add(m_staticText5, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceProjectsArr;
-    m_choiceProjects = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceProjectsArr, 0);
+    m_choiceProjects = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceProjectsArr, 0);
     
-    fgSizer2->Add(m_choiceProjects, 0, wxALL|wxEXPAND, 5);
+    fgSizer2->Add(m_choiceProjects, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText6 = new wxStaticText(this, wxID_ANY, _("Functions to test:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    fgSizer2->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    bSizer1->Add(m_staticText6, 0, wxALL, 5);
+    m_staticText6 = new wxStaticText(this, wxID_ANY, _("Functions to test:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    
+    bSizer1->Add(m_staticText6, 0, wxALL, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(bSizer5, 1, wxEXPAND, 5);
+    bSizer1->Add(bSizer5, 1, wxEXPAND, WXC_FROM_DIP(5));
     
     wxArrayString m_checkListMethodsArr;
-    m_checkListMethods = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_checkListMethodsArr, 0);
+    m_checkListMethods = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_checkListMethodsArr, 0);
     
-    bSizer5->Add(m_checkListMethods, 1, wxALL|wxEXPAND, 5);
+    bSizer5->Add(m_checkListMethods, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer5->Add(bSizer6, 0, wxEXPAND, 5);
+    bSizer5->Add(bSizer6, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_buttonCheckAll = new wxButton(this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCheckAll = new wxButton(this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer6->Add(m_buttonCheckAll, 0, wxALL, 5);
+    bSizer6->Add(m_buttonCheckAll, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_buttonUnCheckAll = new wxButton(this, wxID_ANY, _("Clear"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonUnCheckAll = new wxButton(this, wxID_ANY, _("Clear"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer6->Add(m_buttonUnCheckAll, 0, wxALL, 5);
+    bSizer6->Add(m_buttonUnCheckAll, 0, wxALL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
     
-    bSizer1->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    bSizer1->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_button4 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button4 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button4->SetDefault();
     m_stdBtnSizer2->AddButton(m_button4);
     
-    m_button6 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button6 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer2->AddButton(m_button6);
     m_stdBtnSizer2->Realize();
     
     SetName(wxT("TestClassBaseDlg"));
-    SetMinClientSize(wxSize(500,300));
     SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
@@ -150,9 +143,8 @@ TestClassBaseDlg::TestClassBaseDlg(wxWindow* parent, wxWindowID id, const wxStri
     }
 #endif
     // Connect events
+    m_textCtrlClassName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(TestClassBaseDlg::OnClassNameUpdated), NULL, this);
     m_buttonClass->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnShowClassListDialog), NULL, this);
-    m_buttonRefresh->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnRefreshFunctions), NULL, this);
-    m_buttonRefresh->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TestClassBaseDlg::OnRefreshButtonUI), NULL, this);
     m_buttonCheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnCheckAll), NULL, this);
     m_buttonUnCheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnUnCheckAll), NULL, this);
     m_button4->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnButtonOk), NULL, this);
@@ -161,9 +153,8 @@ TestClassBaseDlg::TestClassBaseDlg(wxWindow* parent, wxWindowID id, const wxStri
 
 TestClassBaseDlg::~TestClassBaseDlg()
 {
+    m_textCtrlClassName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(TestClassBaseDlg::OnClassNameUpdated), NULL, this);
     m_buttonClass->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnShowClassListDialog), NULL, this);
-    m_buttonRefresh->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnRefreshFunctions), NULL, this);
-    m_buttonRefresh->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TestClassBaseDlg::OnRefreshButtonUI), NULL, this);
     m_buttonCheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnCheckAll), NULL, this);
     m_buttonUnCheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnUnCheckAll), NULL, this);
     m_button4->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnButtonOk), NULL, this);

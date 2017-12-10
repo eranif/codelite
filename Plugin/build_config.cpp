@@ -266,7 +266,7 @@ BuildConfig::BuildConfig(wxXmlNode* node)
         m_linkerRequired = true;
         m_intermediateDirectory = wxT("./Debug");
         m_workingDirectory = wxT("./Debug");
-        m_projectType = Project::EXECUTABLE;
+        m_projectType = PROJECT_TYPE_EXECUTABLE;
         m_enableCustomBuild = false;
         m_customBuildCmd = wxEmptyString;
         m_customCleanCmd = wxEmptyString;

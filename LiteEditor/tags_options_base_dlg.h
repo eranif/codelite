@@ -72,7 +72,6 @@ protected:
     wxPropertyGridManager* m_pgMgrColouring;
     wxPGProperty* m_pgPropTrackPreProcessors;
     wxPGProperty* m_pgPropColourLocalVariables;
-    wxPGProperty* m_pgPropColourWorkspaceSymbols;
     wxPanel* m_paneTriggering;
     wxCheckBox* m_checkWordAssist;
     wxStaticText* m_staticTextMinWordLen;

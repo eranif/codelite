@@ -57,7 +57,8 @@ void PHPParserThread::ParseFiles(PHPParserThreadRequest* request)
     // Open the database
     PHPLookupTable lookuptable;
     lookuptable.Open(fnWorkspaceFile.GetPath());
-
+    lookuptable.RebuildClassCache();
+    
     for(size_t i = 0; i < request->frameworksPaths.GetCount(); ++i) {
         if(ms_goingDown) {
             ms_goingDown = false;
@@ -93,7 +94,7 @@ void PHPParserThread::ParseFile(PHPParserThreadRequest* request)
     lookuptable.Open(fnWorkspaceFile.GetPath());
 
     // Parse the source file
-    PHPSourceFile sourceFile(wxFileName(request->file));
+    PHPSourceFile sourceFile(wxFileName(request->file), &lookuptable);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
 

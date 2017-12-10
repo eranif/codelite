@@ -38,6 +38,7 @@
 #include <vector>
 #include <map>
 #include "cl_config.h"
+#include "wxStringHash.h"
 
 struct GitLabelCommand {
     GitLabelCommand() {}
@@ -99,7 +100,28 @@ public:
     void SetLastUsedCommandIndex(int index) { m_lastUsed = index; }
 };
 
-typedef std::map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t;
+typedef std::unordered_map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t;
+
+
+class GitWorkspace {
+public:
+    GitWorkspace() {}
+    GitWorkspace(const wxString& name) : m_name(name) {}
+
+    const wxString& GetWorkspaceName() const { return m_name; }
+    void SetWorkspaceName(const wxString& name) { m_name = name; }
+    const wxString GetProjectLastRepoPath(const wxString& projectName);
+    void SetProjectLastRepoPath(const wxString& projectName, const wxString& lastRepoPath);
+
+    void FromJSON(const JSONElement& json);
+    void ToJSON(JSONElement& arr) const;
+
+protected:
+    wxString m_name;
+    wxStringMap_t m_projectData;
+};
+
+typedef std::unordered_map<wxString, GitWorkspace> GitWorkspaceMap_t;
 
 extern const wxEventType wxEVT_GIT_CONFIG_CHANGED;
 class GitEntry : public clConfigItem
@@ -108,10 +130,15 @@ class GitEntry : public clConfigItem
     wxColour m_colourDiffFile;
     wxString m_pathGIT;
     wxString m_pathGITK;
-    JSONElement::wxStringMap_t m_entries;
+    wxStringMap_t m_entries;
     GitCommandsEntriesMap_t m_commandsMap;
+    GitWorkspaceMap_t m_workspacesMap;
     size_t m_flags;
     int m_gitDiffDlgSashPos;
+    int m_gitDiffChooseDlgRadioSel1;
+    int m_gitDiffChooseDlgRadioSel2;
+    wxArrayString m_gitDiffChooseDlgCBoxValues1;
+    wxArrayString m_gitDiffChooseDlgCBoxValues2;
     int m_gitConsoleSashPos;
     int m_gitCommitDlgHSashPos;
     int m_gitCommitDlgVSashPos;
@@ -163,9 +190,17 @@ public:
     int GetGitCommitDlgVSashPos() const { return m_gitCommitDlgVSashPos; }
     void SetGitDiffDlgSashPos(int gitDiffDlgSashPos) { this->m_gitDiffDlgSashPos = gitDiffDlgSashPos; }
     int GetGitDiffDlgSashPos() const { return m_gitDiffDlgSashPos; }
-    void SetEntries(const JSONElement::wxStringMap_t& entries) { this->m_entries = entries; }
+    void SetGitDiffChooseDlgRadioSel1(int sel) { this->m_gitDiffChooseDlgRadioSel1 = sel; }
+    int GetGitDiffChooseDlgRadioSel1() const { return m_gitDiffChooseDlgRadioSel1; }
+    void SetGitDiffChooseDlgRadioSel2(int sel) { this->m_gitDiffChooseDlgRadioSel2 = sel; }
+    int GetGitDiffChooseDlgRadioSel2() const { return m_gitDiffChooseDlgRadioSel2; }
+    void SetGitDiffChooseDlgCBoxValues1(const wxArrayString& arr) { this->m_gitDiffChooseDlgCBoxValues1 = arr; }
+    wxArrayString& GetGitDiffChooseDlgCBoxValues1() { return m_gitDiffChooseDlgCBoxValues1; }
+    void SetGitDiffChooseDlgCBoxValues2(const wxArrayString& arr) { this->m_gitDiffChooseDlgCBoxValues2 = arr; }
+    wxArrayString& GetGitDiffChooseDlgCBoxValues2() { return m_gitDiffChooseDlgCBoxValues2; }
+    void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
     void SetFlags(size_t flags) { this->m_flags = flags; }
-    const JSONElement::wxStringMap_t& GetEntries() const { return m_entries; }
+    const wxStringMap_t& GetEntries() const { return m_entries; }
     size_t GetFlags() const { return m_flags; }
     void SetEntry(const wxString& workspace, const wxString& repo) { this->m_entries[workspace] = repo; }
     void DeleteEntry(const wxString& workspace);
@@ -197,6 +232,9 @@ public:
 
     void AddGitCommandsEntry(GitCommandsEntries& entries, const wxString& entryName);
     void DeleteGitCommandsEntry(const wxString& entryName) { m_commandsMap.erase(entryName); }
+
+    wxString GetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName);
+    void SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName, const wxString& lastRepoPath);
 
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;

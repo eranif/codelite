@@ -173,7 +173,7 @@ private:
      * \param li
      * \return
      */
-    void ReplaceInFiles(const wxString& word, const std::list<CppToken>& li);
+    void ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li);
 
     /**
      * @brief format editor

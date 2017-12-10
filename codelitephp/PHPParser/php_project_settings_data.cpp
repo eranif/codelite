@@ -138,7 +138,7 @@ wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath,
     fullMapping.insert(additionalMapping.begin(), additionalMapping.end());
 
     wxString sourceFullPath = fnSource.GetFullPath();
-    JSONElement::wxStringMap_t::const_iterator iter = fullMapping.begin();
+    wxStringMap_t::const_iterator iter = fullMapping.begin();
     for(; iter != fullMapping.end(); ++iter) {
         if(sourceFullPath.StartsWith(iter->first)) {
             sourceFullPath.Remove(0, iter->first.length());

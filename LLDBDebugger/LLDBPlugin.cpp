@@ -23,33 +23,31 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "LLDBPlugin.h"
-#include <wx/xrc/xmlres.h>
-#include "globals.h"
-#include "event_notifier.h"
-#include "LLDBProtocol/LLDBEvent.h"
-#include "console_frame.h"
-#include <wx/aui/framemanager.h>
-#include <wx/filename.h>
-#include <wx/stc/stc.h>
-#include "file_logger.h"
-#include "environmentconfig.h"
-#include "clcommandlineparser.h"
-#include "dirsaver.h"
-#include "bookmark_manager.h"
-#include <wx/msgdlg.h>
+#include "FolderMappingDlg.h"
 #include "LLDBCallStack.h"
-#include "LLDBProtocol/LLDBSettings.h"
-#include "bookmark_manager.h"
-#include "LLDBOutputView.h"
 #include "LLDBLocalsView.h"
-#include "json_node.h"
-#include <wx/msgdlg.h>
+#include "LLDBOutputView.h"
+#include "LLDBPlugin.h"
+#include "LLDBProtocol/LLDBEvent.h"
+#include "LLDBProtocol/LLDBSettings.h"
 #include "LLDBSettingDialog.h"
 #include "LLDBThreadsView.h"
 #include "LLDBTooltip.h"
+#include "bookmark_manager.h"
+#include "clcommandlineparser.h"
+#include "console_frame.h"
+#include "dirsaver.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "json_node.h"
+#include <wx/aui/framemanager.h>
+#include <wx/filename.h>
+#include <wx/msgdlg.h>
 #include <wx/platinfo.h>
-#include "FolderMappingDlg.h"
+#include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 static LLDBPlugin* thePlugin = NULL;
 
@@ -68,9 +66,7 @@ static LLDBPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new LLDBPlugin(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new LLDBPlugin(manager); }
     return thePlugin;
 }
 
@@ -109,10 +105,11 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     m_connector.Bind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBPlugin::OnLLDBDeletedAllBreakpoints, this);
     m_connector.Bind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBPlugin::OnLLDBBreakpointsUpdated, this);
     m_connector.Bind(wxEVT_LLDB_EXPRESSION_EVALUATED, &LLDBPlugin::OnLLDBExpressionEvaluated, this);
+    m_connector.Bind(wxEVT_LLDB_LAUNCH_SUCCESS, &LLDBPlugin::OnLLDBLaunchSuccess, this);
 
     // UI events
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBPlugin::OnIsDebugger), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBPlugin::OnIsDebugger), NULL,
+                                  this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_START, clDebugEventHandler(LLDBPlugin::OnDebugStart), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_CONTINUE, clDebugEventHandler(LLDBPlugin::OnDebugContinue), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(LLDBPlugin::OnDebugNext), NULL, this);
@@ -120,32 +117,33 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(LLDBPlugin::OnDebugStepOut), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_STOP, clDebugEventHandler(LLDBPlugin::OnDebugStop), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBPlugin::OnDebugIsRunning), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBPlugin::OnDebugCanInteract), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBPlugin::OnToggleBreakpoint), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBPlugin::OnToggleInerrupt), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBPlugin::OnDebugCanInteract), NULL,
+                                  this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBPlugin::OnToggleBreakpoint),
+                                  NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBPlugin::OnToggleInerrupt), NULL,
+                                  this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBPlugin::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(LLDBPlugin::OnDebugTooltip), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugDeleteAllBreakpoints), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_ATTACH_TO_PROCESS, clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS,
-                                  clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints),
-                                  NULL,
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL,
                                   this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS,
+                                  clDebugEventHandler(LLDBPlugin::OnDebugDeleteAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_ATTACH_TO_PROCESS,
+                                  clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS,
+                                  clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS,
+                                  clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(LLDBPlugin::OnDebugNextInst), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_I, &LLDBPlugin::OnDebugVOID, this); // not supported
+
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL,
+                                  this);
     Bind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
+    wxTheApp->Bind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
 }
 
 void LLDBPlugin::UnPlug()
@@ -163,49 +161,50 @@ void LLDBPlugin::UnPlug()
     m_connector.Unbind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBPlugin::OnLLDBDeletedAllBreakpoints, this);
     m_connector.Unbind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBPlugin::OnLLDBBreakpointsUpdated, this);
     m_connector.Unbind(wxEVT_LLDB_EXPRESSION_EVALUATED, &LLDBPlugin::OnLLDBExpressionEvaluated, this);
+    m_connector.Unbind(wxEVT_LLDB_LAUNCH_SUCCESS, &LLDBPlugin::OnLLDBLaunchSuccess, this);
 
     // UI events
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBPlugin::OnIsDebugger), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBPlugin::OnIsDebugger), NULL,
+                                     this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_START, clDebugEventHandler(LLDBPlugin::OnDebugStart), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_CONTINUE, clDebugEventHandler(LLDBPlugin::OnDebugContinue), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_CONTINUE, clDebugEventHandler(LLDBPlugin::OnDebugContinue), NULL,
+                                     this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(LLDBPlugin::OnDebugNext), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STOP, clDebugEventHandler(LLDBPlugin::OnDebugStop), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBPlugin::OnDebugIsRunning), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBPlugin::OnDebugCanInteract), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_IN, clDebugEventHandler(LLDBPlugin::OnDebugStepIn), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(LLDBPlugin::OnDebugStepOut), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBPlugin::OnToggleBreakpoint), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBPlugin::OnToggleInerrupt), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBPlugin::OnBuildStarting), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(LLDBPlugin::OnDebugTooltip), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugDeleteAllBreakpoints), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_ATTACH_TO_PROCESS, clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS,
-                                     clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints),
-                                     NULL,
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBPlugin::OnDebugIsRunning), NULL,
                                      this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(LLDBPlugin::OnDebugNextInst), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBPlugin::OnDebugCanInteract), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_IN, clDebugEventHandler(LLDBPlugin::OnDebugStepIn), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(LLDBPlugin::OnDebugStepOut), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT,
+                                     clDebugEventHandler(LLDBPlugin::OnToggleBreakpoint), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBPlugin::OnToggleInerrupt), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBPlugin::OnBuildStarting), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(LLDBPlugin::OnDebugTooltip), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS,
+                                     clDebugEventHandler(LLDBPlugin::OnDebugDeleteAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_ATTACH_TO_PROCESS,
+                                     clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS,
+                                     clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS,
+                                     clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_I, &LLDBPlugin::OnDebugVOID, this); // Not supported
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(LLDBPlugin::OnDebugNextInst), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL,
+                                     this);
+    wxTheApp->Unbind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
 }
 
 LLDBPlugin::~LLDBPlugin() {}
@@ -229,10 +228,7 @@ void LLDBPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
         int menuPos = mb->FindMenu(_("Settings"));
         if(menuPos != wxNOT_FOUND) {
             settingsMenu = mb->GetMenu(menuPos);
-            if(settingsMenu) {
-                settingsMenu->Append(XRCID("lldb_settings"), _("LLDB Settings..."));
-                settingsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
-            }
+            if(settingsMenu) { settingsMenu->Append(XRCID("lldb_settings"), _("LLDB Settings...")); }
         }
     }
 }
@@ -309,8 +305,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
         wxString errMsg;
         ProjectPtr pProject = clCxxWorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
         if(!pProject) {
-            ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(),
-                           "LLDB Debugger",
+            ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(), "LLDB Debugger",
                            wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
@@ -324,8 +319,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
         BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(pProject->GetName(), wxEmptyString);
         if(!bldConf) {
-            ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"),
-                           "LLDB Debugger",
+            ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"), "LLDB Debugger",
                            wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
@@ -344,9 +338,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
         if(!settings.IsUsingRemoteProxy()) {
             // Not using a remote proxy, launch the debug server
-            if(!m_connector.LaunchLocalDebugServer()) {
-                return;
-            }
+            if(!m_connector.LaunchLocalDebugServer()) { return; }
         }
 
         // Determine the executable to debug, working directory and arguments
@@ -368,9 +360,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
             DirSaver ds;
             ::wxSetWorkingDirectory(workingDirectory);
             wxFileName execToDebug(exepath);
-            if(execToDebug.IsRelative()) {
-                execToDebug.MakeAbsolute();
-            }
+            if(execToDebug.IsRelative()) { execToDebug.MakeAbsolute(); }
 
             //////////////////////////////////////////////////////////////////////
             // Launch terminal for IO redirection
@@ -390,15 +380,13 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 } else {
                     // Failed to launch it...
                     DoCleanup();
-                    ::wxMessageBox(
-                        _("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+                    ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite",
+                                   wxICON_ERROR | wxOK | wxCENTER);
                     return;
                 }
             }
 
-            if(!isWindows) {
-                workingDirectory = ::wxGetCwd();
-            }
+            if(!isWindows) { workingDirectory = ::wxGetCwd(); }
 
             CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
             CL_DEBUG("LLDB: Working directory: " + workingDirectory);
@@ -441,8 +429,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 DoCleanup();
                 wxString message;
                 message << _("Could not connect to codelite-lldb at '")
-                        << (settings.IsUsingRemoteProxy() ? settings.GetTcpConnectString() :
-                                                            m_connector.GetConnectString()) << "'";
+                        << (settings.IsUsingRemoteProxy() ? settings.GetTcpConnectString()
+                                                          : m_connector.GetConnectString())
+                        << "'";
                 ::wxMessageBox(message, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
@@ -523,9 +512,7 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
 
     if(event.GetInterruptReason() == kInterruptReasonNone) {
 
-        if(m_raisOnBpHit) {
-            EventNotifier::Get()->TopFrame()->Raise();
-        }
+        if(m_raisOnBpHit) { EventNotifier::Get()->TopFrame()->Raise(); }
 
         // Mark the debugger line / file
         IEditor* editor = m_mgr->FindEditor(event.GetFileName());
@@ -659,9 +646,7 @@ void LLDBPlugin::LoadLLDBPerspective()
 
     // Hide the output pane
     wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane("Output View");
-    if(pi.IsOk() && pi.IsShown()) {
-        pi.Hide();
-    }
+    if(pi.IsOk() && pi.IsShown()) { pi.Hide(); }
     m_mgr->GetDockingManager()->Update();
 }
 
@@ -670,13 +655,9 @@ void LLDBPlugin::ShowLLDBPane(const wxString& paneName, bool show)
     wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(paneName);
     if(pi.IsOk()) {
         if(show) {
-            if(!pi.IsShown()) {
-                pi.Show();
-            }
+            if(!pi.IsShown()) { pi.Show(); }
         } else {
-            if(pi.IsShown()) {
-                pi.Hide();
-            }
+            if(pi.IsShown()) { pi.Hide(); }
         }
     }
 }
@@ -686,34 +667,26 @@ void LLDBPlugin::DestroyUI()
     // Destroy the callstack window
     if(m_callstack) {
         wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(LLDB_CALLSTACK_PANE_NAME);
-        if(pi.IsOk()) {
-            m_mgr->GetDockingManager()->DetachPane(m_callstack);
-        }
+        if(pi.IsOk()) { m_mgr->GetDockingManager()->DetachPane(m_callstack); }
         m_callstack->Destroy();
         m_callstack = NULL;
     }
     if(m_breakpointsView) {
         wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(LLDB_BREAKPOINTS_PANE_NAME);
-        if(pi.IsOk()) {
-            m_mgr->GetDockingManager()->DetachPane(m_breakpointsView);
-        }
+        if(pi.IsOk()) { m_mgr->GetDockingManager()->DetachPane(m_breakpointsView); }
         m_breakpointsView->Destroy();
         m_breakpointsView = NULL;
     }
     if(m_localsView) {
         wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(LLDB_LOCALS_PANE_NAME);
-        if(pi.IsOk()) {
-            m_mgr->GetDockingManager()->DetachPane(m_localsView);
-        }
+        if(pi.IsOk()) { m_mgr->GetDockingManager()->DetachPane(m_localsView); }
         m_localsView->Destroy();
         m_localsView = NULL;
     }
 
     if(m_threadsView) {
         wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(LLDB_THREADS_PANE_NAME);
-        if(pi.IsOk()) {
-            m_mgr->GetDockingManager()->DetachPane(m_threadsView);
-        }
+        if(pi.IsOk()) { m_mgr->GetDockingManager()->DetachPane(m_threadsView); }
         m_threadsView->Destroy();
         m_threadsView = NULL;
     }
@@ -730,22 +703,25 @@ void LLDBPlugin::InitializeUI()
     wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
     if(!m_breakpointsView) {
         m_breakpointsView = new LLDBOutputView(parent, this);
-        m_mgr->GetDockingManager()->AddPane(
-            m_breakpointsView,
-            wxAuiPaneInfo().MinSize(200, 200).Right().Position(1).Layer(10).CloseButton().Caption("Breakpoints").Name(
-                LLDB_BREAKPOINTS_PANE_NAME));
+        m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo()
+                                                                   .MinSize(200, 200)
+                                                                   .Right()
+                                                                   .Position(1)
+                                                                   .Layer(10)
+                                                                   .CloseButton()
+                                                                   .Caption("Breakpoints")
+                                                                   .Name(LLDB_BREAKPOINTS_PANE_NAME));
     }
     if(!m_callstack) {
         m_callstack = new LLDBCallStackPane(parent, &m_connector);
-        m_mgr->GetDockingManager()->AddPane(m_callstack,
-                                            wxAuiPaneInfo()
-                                                .MinSize(200, 200)
-                                                .Right()
-                                                .Position(2) // top one
-                                                .Layer(10)   // outer layer
-                                                .CloseButton()
-                                                .Caption("Callstack")
-                                                .Name(LLDB_CALLSTACK_PANE_NAME));
+        m_mgr->GetDockingManager()->AddPane(m_callstack, wxAuiPaneInfo()
+                                                             .MinSize(200, 200)
+                                                             .Right()
+                                                             .Position(2) // top one
+                                                             .Layer(10)   // outer layer
+                                                             .CloseButton()
+                                                             .Caption("Callstack")
+                                                             .Name(LLDB_CALLSTACK_PANE_NAME));
     }
 
     if(!m_threadsView) {
@@ -840,9 +816,7 @@ void LLDBPlugin::OnLLDBBreakpointsUpdated(LLDBEvent& event)
 void LLDBPlugin::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
-    if(m_connector.IsRunning()) {
-        m_connector.Stop();
-    }
+    if(m_connector.IsRunning()) { m_connector.Stop(); }
     m_connector.Cleanup();
 }
 
@@ -863,17 +837,14 @@ void LLDBPlugin::OnToggleInerrupt(clDebugEvent& event)
     CHECK_IS_LLDB_SESSION();
     event.Skip();
     CL_DEBUG("CODELITE: interrupting debuggee");
-    if(!m_connector.IsCanInteract()) {
-        m_connector.Interrupt(kInterruptReasonNone);
-    }
+    if(!m_connector.IsCanInteract()) { m_connector.Interrupt(kInterruptReasonNone); }
 }
 
 void LLDBPlugin::OnBuildStarting(clBuildEvent& event)
 {
     if(m_connector.IsRunning()) {
         // lldb session is active, prompt the user
-        if(::wxMessageBox(_("A debug session is running\nCancel debug session and continue building?"),
-                          "CodeLite",
+        if(::wxMessageBox(_("A debug session is running\nCancel debug session and continue building?"), "CodeLite",
                           wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT | wxCENTER) == wxYES) {
             clDebugEvent dummy;
             OnDebugStop(dummy);
@@ -891,9 +862,7 @@ void LLDBPlugin::OnSettings(wxCommandEvent& event)
 {
     event.Skip();
     LLDBSettingDialog dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() == wxID_OK) {
-        dlg.Save();
-    }
+    if(dlg.ShowModal() == wxID_OK) { dlg.Save(); }
 }
 
 void LLDBPlugin::OnInitDone(wxCommandEvent& event) { event.Skip(); }
@@ -915,18 +884,14 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
 
     // hide any tooltip
     if(!event.GetVariables().empty() && m_mgr->GetActiveEditor()) {
-        if(!m_tooltip) {
-            m_tooltip = new LLDBTooltip(this);
-        }
+        if(!m_tooltip) { m_tooltip = new LLDBTooltip(this); }
         m_tooltip->Show(event.GetExpression(), event.GetVariables().at(0));
     }
 }
 
 void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 {
-    if(!DoInitializeDebugger(event, true)) {
-        return;
-    }
+    if(!DoInitializeDebugger(event, true)) { return; }
 
     LLDBConnectReturnObject retObj;
     LLDBSettings settings;
@@ -978,14 +943,12 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
     }
 
 #ifdef __WXMSW__
-    ::wxMessageBox(
-        _("Debug core file with LLDB is not supported under Windows"), "CodeLite", wxOK | wxCENTER | wxICON_WARNING);
+    ::wxMessageBox(_("Debug core file with LLDB is not supported under Windows"), "CodeLite",
+                   wxOK | wxCENTER | wxICON_WARNING);
     return;
 #endif
 
-    if(!DoInitializeDebugger(event, false)) {
-        return;
-    }
+    if(!DoInitializeDebugger(event, false)) { return; }
 
     LLDBConnectReturnObject retObj;
     LLDBSettings settings;
@@ -1026,8 +989,7 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
 
     if(m_connector.IsRunning()) {
         // Another debug session is already in progress
-        ::wxMessageBox(_("Another debug session is already in progress. Please stop it first"),
-                       "CodeLite",
+        ::wxMessageBox(_("Another debug session is already in progress. Please stop it first"), "CodeLite",
                        wxOK | wxCENTER | wxICON_WARNING);
         return false;
     }
@@ -1038,8 +1000,8 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
     bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
     if(redirectOutput && !isWindows) {
         wxString realPts;
-        ::LaunchTerminalForDebugger(
-            terminalTitle.IsEmpty() ? event.GetExecutableName() : terminalTitle, m_terminalTTY, realPts, m_terminalPID);
+        ::LaunchTerminalForDebugger(terminalTitle.IsEmpty() ? event.GetExecutableName() : terminalTitle, m_terminalTTY,
+                                    realPts, m_terminalPID);
 
         if(m_terminalPID != wxNOT_FOUND) {
             CL_DEBUG("Successfully launched terminal");
@@ -1071,8 +1033,8 @@ void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
     }
 
 #ifdef __WXMSW__
-    ::wxMessageBox(
-        _("Attach to process with LLDB is not supported under Windows"), "CodeLite", wxOK | wxCENTER | wxICON_WARNING);
+    ::wxMessageBox(_("Attach to process with LLDB is not supported under Windows"), "CodeLite",
+                   wxOK | wxCENTER | wxICON_WARNING);
     return;
 #endif
 
@@ -1121,20 +1083,17 @@ void LLDBPlugin::OnDebugDisableAllBreakpoints(clDebugEvent& event) { event.Skip(
 
 void LLDBPlugin::OnDebugEnableAllBreakpoints(clDebugEvent& event) { event.Skip(); }
 
+void LLDBPlugin::OnDebugVOID(clDebugEvent& event) { CHECK_IS_LLDB_SESSION(); }
 void LLDBPlugin::OnDebugNextInst(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
-    if(m_connector.IsCanInteract()) {
-        m_connector.NextInstruction();
-    }
+    if(m_connector.IsCanInteract()) { m_connector.NextInstruction(); }
 }
 
 void LLDBPlugin::OnDebugShowCursor(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
-    if(m_connector.IsCanInteract()) {
-        m_connector.ShowCurrentFileLine();
-    }
+    if(m_connector.IsCanInteract()) { m_connector.ShowCurrentFileLine(); }
 }
 
 void LLDBPlugin::DestroyTooltip()
@@ -1148,9 +1107,7 @@ void LLDBPlugin::DestroyTooltip()
 
         // If we destroyed the tooltip, set the focus back to the active editor
         IEditor* editor = m_mgr->GetActiveEditor();
-        if(editor) {
-            editor->SetActive();
-        }
+        if(editor) { editor->SetActive(); }
     }
 }
 
@@ -1163,9 +1120,7 @@ void LLDBPlugin::SetupPivotFolder(const LLDBConnectReturnObject& ret)
 
     FolderMappingDlg dlg(NULL);
     LLDBPivot pivot;
-    if(dlg.ShowModal() == wxID_OK) {
-        m_connector.SetPivot(dlg.GetPivot());
-    }
+    if(dlg.ShowModal() == wxID_OK) { m_connector.SetPivot(dlg.GetPivot()); }
     // Now that we got the pivot - start the network thread
     m_connector.StartNetworkThread();
 }
@@ -1176,4 +1131,15 @@ void LLDBPlugin::OnDestroyTip(clCommandEvent& e)
         m_tooltip->Destroy();
         m_tooltip = NULL;
     }
+}
+
+void LLDBPlugin::OnLLDBLaunchSuccess(LLDBEvent& event)
+{
+    event.Skip();
+    m_connector.SetCanInteract(true);
+    m_connector.SetIsRunning(true);
+
+    CL_DEBUG("CODELITE>> Applying breakpoints...");
+    m_connector.ApplyBreakpoints();
+    m_connector.Next();
 }

@@ -216,7 +216,7 @@
         }, {
          "type": "multi-string",
          "m_label": "Label:",
-         "m_value": "Add / modfiy qmake configurations:"
+         "m_value": "Add / modify qmake configurations:"
         }, {
          "type": "string",
          "m_label": "Wrap:",

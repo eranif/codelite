@@ -40,6 +40,7 @@
 #include "globals.h"
 #include <algorithm>
 #include "fileutils.h"
+#include "clFilesCollector.h"
 
 const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND = wxNewEventType();
@@ -119,14 +120,14 @@ void SearchThread::ProcessRequest(ThreadRequest* req)
     SearchData* sd = (SearchData*)req;
     m_summary.SetFindWhat(sd->GetFindString());
     m_summary.SetReplaceWith(sd->GetReplaceWith());
-    
+
     // Send search end event
     SendEvent(wxEVT_SEARCH_THREAD_SEARCHEND, sd->GetOwner());
 }
 
 void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
 {
-    std::set<wxString> scannedFiles;
+    wxStringSet_t scannedFiles;
 
     const wxArrayString& rootDirs = data->GetRootDirs();
     files = data->GetFiles();
@@ -139,20 +140,15 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
 
     for(size_t i = 0; i < rootDirs.size(); ++i) {
         // make sure it's really a dir (not a fifo, etc.)
-        DirTraverser traverser(data->GetExtensions());
-        wxDir dir(rootDirs.Item(i));
-        dir.Traverse(traverser);
-        wxArrayString& someFiles = traverser.GetFiles();
-
-        for(size_t j = 0; j < someFiles.Count(); ++j) {
-            if(scannedFiles.count(someFiles.Item(j)) == 0) {
-                files.Add(someFiles.Item(j));
-                scannedFiles.insert(someFiles.Item(j));
-            }
+        clFilesScanner scanner;
+        std::vector<wxString> filesV;
+        if(scanner.Scan(rootDirs.Item(i), filesV, data->GetExtensions())) {
+            std::for_each(filesV.begin(), filesV.end(), [&](const wxString& file) { scannedFiles.insert(file); });
         }
     }
 
     files.clear();
+    files.Alloc(scannedFiles.size());
     std::for_each(scannedFiles.begin(), scannedFiles.end(), [&](const wxString& file) { files.Add(file); });
 }
 
@@ -417,7 +413,7 @@ void SearchThread::DoSearchLine(const wxString& line,
         pos = modLine.Find(findWhat);
         if(pos != wxNOT_FOUND) {
             col += pos;
-            
+
             // Pipe support
             bool allFiltersOK = true;
             if(!filters.IsEmpty()) {
@@ -426,10 +422,10 @@ void SearchThread::DoSearchLine(const wxString& line,
                     allFiltersOK = (modLine.Find(filters.Item(i)) != wxNOT_FOUND);
                 }
             }
-            
+
             // Pipe filtes OK?
             if(!allFiltersOK) return;
-            
+
             // we have a match
             if(data->IsMatchWholeWord()) {
 
@@ -468,7 +464,8 @@ void SearchThread::DoSearchLine(const wxString& line,
             result.SetColumnInChars(col);
             result.SetColumn(iCorrectedCol);
             result.SetLineNumber(lineNum);
-            result.SetPattern(line);
+            // Dont use match pattern larger than 500 chars
+            result.SetPattern(line.length() > 500 ? line.Mid(0, 500) : line);
             result.SetFileName(fileName);
             result.SetLenInChars((int)findWhat.Length());
             result.SetLen(iCorrectedLen);

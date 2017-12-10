@@ -38,12 +38,12 @@ class IManager;
 /** Implementing AbbreviationsSettingsBase */
 class AbbreviationsSettingsDlg : public AbbreviationsSettingsBase
 {
-    IManager *            m_mgr;
+    IManager* m_mgr;
     AbbreviationJSONEntry m_data;
-    bool                  m_dirty;
-    wxString              m_activeItemName;
-    int                   m_currSelection;
-    clConfig              m_config;
+    bool m_dirty;
+    wxString m_activeItemName;
+    int m_currSelection;
+    clConfig m_config;
 
 protected:
     virtual void OnImmediateInsert(wxCommandEvent& event);
@@ -53,21 +53,21 @@ protected:
     virtual void OnMarkDirty(wxStyledTextEvent& event);
     virtual void OnSaveUI(wxUpdateUIEvent& event);
     // Handlers for AbbreviationsSettingsBase events.
-    void OnItemSelected( wxCommandEvent& event );
-    void OnNew(wxCommandEvent &e);
-    void OnDelete( wxCommandEvent& event );
-    void OnDeleteUI( wxUpdateUIEvent& event );
-    void OnSave( wxCommandEvent& event );
+    void OnItemSelected(wxCommandEvent& event);
+    void OnNew(wxCommandEvent& e);
+    void OnDelete(wxCommandEvent& event);
+    void OnDeleteUI(wxUpdateUIEvent& event);
+    void OnSave(wxCommandEvent& event);
 
 private:
     void DoPopulateItems();
     void DoSelectItem(int item);
     void DoSaveCurrent();
-    void DoDeleteEntry(const wxString &name);
+    void DoDeleteEntry(const wxString& name);
 
 public:
     /** Constructor */
-    AbbreviationsSettingsDlg( wxWindow* parent, IManager *mgr );
+    AbbreviationsSettingsDlg(wxWindow* parent, IManager* mgr);
     virtual ~AbbreviationsSettingsDlg();
 };
 

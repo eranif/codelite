@@ -38,7 +38,7 @@ class WordCompletionPlugin : public IPlugin
     WordCompletionDictionary* m_dictionary;
 
 public:
-    void OnWordComplete(wxCommandEvent& event);
+    void OnWordComplete(clCodeCompletionEvent& event);
     void OnSettings(wxCommandEvent& event);
 
 public:

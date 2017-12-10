@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "windowstack.h"
+#include <wx/dcbuffer.h>
+#include "drawingutils.h"
 
 WindowStack::WindowStack(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
@@ -31,9 +33,17 @@ WindowStack::WindowStack(wxWindow* parent, wxWindowID id)
     m_mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(m_mainSizer);
     m_windows.clear();
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    Bind(wxEVT_PAINT, &WindowStack::OnPaint, this);
+    Bind(wxEVT_ERASE_BACKGROUND, &WindowStack::OnEraseBG, this);
 }
 
-WindowStack::~WindowStack() { Clear(); }
+WindowStack::~WindowStack()
+{
+    Clear();
+    Unbind(wxEVT_PAINT, &WindowStack::OnPaint, this);
+    Unbind(wxEVT_ERASE_BACKGROUND, &WindowStack::OnEraseBG, this);
+}
 
 void WindowStack::DoSelect(wxWindow* win)
 {
@@ -80,11 +90,11 @@ bool WindowStack::Remove(wxWindow* win)
     m_windows.erase(win);
 
     if(win == m_selection) {
-        //GetParent()->Freeze();
-        //m_mainSizer->Detach(m_selection);
-        //m_mainSizer->Layout();
-        //m_selection = NULL;
-        //GetParent()->Thaw();
+        // GetParent()->Freeze();
+        // m_mainSizer->Detach(m_selection);
+        // m_mainSizer->Layout();
+        // m_selection = NULL;
+        // GetParent()->Thaw();
         SelectNone();
     }
     return true;
@@ -112,7 +122,14 @@ bool WindowStack::Add(wxWindow* win, bool select)
     return true;
 }
 
-bool WindowStack::Contains(wxWindow* win)
+bool WindowStack::Contains(wxWindow* win) { return m_windows.count(win); }
+
+void WindowStack::OnPaint(wxPaintEvent& evt)
 {
-    return m_windows.count(win);
+    wxBufferedPaintDC dc(this);
+    dc.SetBrush(DrawingUtils::GetPanelBgColour());
+    dc.SetPen(DrawingUtils::GetPanelBgColour());
+    dc.DrawRectangle(GetClientRect());
 }
+
+void WindowStack::OnEraseBG(wxEraseEvent& evt) { wxUnusedVar(evt); }

@@ -26,8 +26,8 @@
 #ifndef np_connections_server_h__
 #define np_connections_server_h__
 
-
 #include "named_pipe.h"
+#include <string>
 
 class clNamedPipeConnectionsServer
 {
@@ -49,7 +49,7 @@ protected:
 private:
 	PIPE_HANDLE initNewInstance();
 	NP_SERVER_ERRORS _lastError;
-	char* _pipePath;
+	std::string _pipePath;
 	PIPE_HANDLE _listenHandle;
 };
 

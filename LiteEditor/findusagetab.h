@@ -28,8 +28,9 @@
 
 #include "outputtabwindow.h" // Base class OutputTabWindow
 #include "cpptoken.h"
+#include "wxStringHash.h"
 
-typedef std::map<int, CppToken> UsageResultsMap;
+typedef std::unordered_map<int, CppToken> UsageResultsMap;
 
 class FindUsageTab : public OutputTabWindow
 {
@@ -53,7 +54,7 @@ public:
     void OnWorkspaceClosed(wxCommandEvent& event);
 
 public:
-    void ShowUsage(const std::list<CppToken>& matches, const wxString& searchWhat);
+    void ShowUsage(const CppToken::Vec_t& matches, const wxString& searchWhat);
 };
 
 #endif // FINDUSAGETAB_H

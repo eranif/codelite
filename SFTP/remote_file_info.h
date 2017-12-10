@@ -30,6 +30,7 @@
 #include <wx/filename.h>
 #include <map>
 #include <wx/clntdata.h>
+#include "wxStringHash.h"
 
 class RemoteFileInfo : public wxClientData
 {
@@ -39,7 +40,7 @@ class RemoteFileInfo : public wxClientData
     size_t m_premissions;
 
 public:
-    typedef std::map<wxString, RemoteFileInfo> Map_t;
+    typedef std::unordered_map<wxString, RemoteFileInfo> Map_t;
 
 public:
     RemoteFileInfo();

@@ -205,7 +205,6 @@ private:
      * editor settings (namely: tab vs spaces, and tab width)
      */
     wxString ClangGlobalSettings() const;
-    void AutodetectSettings();
 
     /**
      * @brief Check if there is a file of the given name in any of the parent directories of the input file
@@ -216,6 +215,7 @@ public:
     FormatOptions();
     virtual ~FormatOptions();
 
+    void AutodetectSettings();
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
     bool HasFlag(eCF_GeneralOptions flag) const
@@ -257,10 +257,8 @@ public:
     wxString AstyleOptionsAsString() const;
 
     // Clang
-    wxString ClangFormatCommand(const wxFileName& fileName,
-                                const bool& formatInline = true,
-                                const int& cursorPosition = wxNOT_FOUND,
-                                const int& selStart = wxNOT_FOUND,
+    wxString ClangFormatCommand(const wxFileName& fileName, wxString originalFileName = "",
+                                const int& cursorPosition = wxNOT_FOUND, const int& selStart = wxNOT_FOUND,
                                 const int& selEnd = wxNOT_FOUND) const;
     wxString GetClangFormatStyleAsString(const wxFileName& fileName) const;
     void SetClangFormatExe(const wxString& clangFormatExe)

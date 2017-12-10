@@ -53,7 +53,7 @@ public:
      * @return
      */
     wxString GetScope() const;
-    virtual void Store(wxSQLite3Database& db);
+    virtual void Store(PHPLookupTable* lookup);
     virtual void PrintStdout(int indent) const;
 
     /**

@@ -9,6 +9,8 @@
 #include "PHPEntityClass.h"
 #include "PHPDocVisitor.h"
 #include "PHPEntityFunctionAlias.h"
+#include <unordered_set>
+#include "PHPLookupTable.h"
 
 #define NEXT_TOKEN_BREAK_IF_NOT(t, action) \
     {                                      \
@@ -19,22 +21,24 @@
         }                                  \
     }
 
-PHPSourceFile::PHPSourceFile(const wxString& content)
+PHPSourceFile::PHPSourceFile(const wxString& content, PHPLookupTable* lookup)
     : m_text(content)
     , m_parseFunctionBody(false)
     , m_depth(0)
     , m_reachedEOF(false)
     , m_converter(NULL)
+    , m_lookup(lookup)
 {
     m_scanner = ::phpLexerNew(content, kPhpLexerOpt_ReturnComments);
 }
 
-PHPSourceFile::PHPSourceFile(const wxFileName& filename)
+PHPSourceFile::PHPSourceFile(const wxFileName& filename, PHPLookupTable* lookup)
     : m_filename(filename)
     , m_parseFunctionBody(false)
     , m_depth(0)
     , m_reachedEOF(false)
     , m_converter(NULL)
+    , m_lookup(lookup)
 {
     // Filename is kept in absolute path
     m_filename.MakeAbsolute();
@@ -359,8 +363,8 @@ void PHPSourceFile::OnFunction()
     ParseFunctionSignature(funcDepth);
     func->SetFlags(LookBackForFunctionFlags());
     if(LookBackTokensContains(kPHP_T_ABSTRACT) || // The 'abstract modifier was found for this this function
-        (funcPtr->Parent() && funcPtr->Parent()->Is(kEntityTypeClass) &&
-            funcPtr->Parent()->Cast<PHPEntityClass>()->IsInterface())) // We are inside an interface
+       (funcPtr->Parent() && funcPtr->Parent()->Is(kEntityTypeClass) &&
+        funcPtr->Parent()->Cast<PHPEntityClass>()->IsInterface())) // We are inside an interface
     {
         // Mark this function as an abstract function
         func->SetFlags(func->GetFlags() | kFunc_Abstract);
@@ -526,6 +530,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
             defaultValue.Clear();
             collectingDefaultValue = false;
             break;
+        case kPHP_T_NS_SEPARATOR:
         case kPHP_T_IDENTIFIER:
             if(!var) {
                 // PHP-7 type hinting function arguments
@@ -616,37 +621,8 @@ void PHPSourceFile::ParseFunctionBody()
             OnCatch();
             break;
         case kPHP_T_VARIABLE: {
-            var.Reset(new PHPEntityVariable());
-            var->SetFullName(token.Text());
-            var->SetFilename(m_filename.GetFullPath());
-            var->SetLine(token.lineNumber);
-            CurrentScope()->AddChild(var);
-
-            // Peek at the next token
-            if(!NextToken(token)) return; // EOF
-            if(token.type != '=') {
-                m_lookBackTokens.clear();
-                var.Reset(NULL);
-                UngetToken(token);
-
-            } else {
-
-                wxString expr;
-                if(!ReadExpression(expr)) return; // EOF
-
-                // Optimize 'new ClassName(..)' expression
-                if(expr.StartsWith("new")) {
-                    expr = expr.Mid(3);
-                    expr.Trim().Trim(false);
-                    expr = expr.BeforeFirst('(');
-                    expr.Trim().Trim(false);
-                    var->Cast<PHPEntityVariable>()->SetTypeHint(MakeIdentifierAbsolute(expr));
-
-                } else {
-                    // keep the expression
-                    var->Cast<PHPEntityVariable>()->SetExpressionHint(expr);
-                }
-            }
+            OnVariable(token);
+            break;
         } break;
         default:
             break;
@@ -678,7 +654,7 @@ wxString PHPSourceFile::ReadType()
         }
     }
 
-    type = MakeIdentifierAbsolute(type);
+    type = MakeTypehintAbsolute(type);
     return type;
 }
 
@@ -747,70 +723,7 @@ bool PHPSourceFile::NextToken(phpLexerToken& token)
     return res;
 }
 
-wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
-{
-    if(m_converter) {
-        return m_converter->MakeIdentifierAbsolute(type);
-    }
-
-    wxString typeWithNS(type);
-    typeWithNS.Trim().Trim(false);
-
-    if(typeWithNS == "string" || typeWithNS == "array" || typeWithNS == "mixed" || typeWithNS == "bool" ||
-        typeWithNS == "int" || typeWithNS == "integer" || typeWithNS == "boolean" || typeWithNS == "double" ||
-        typeWithNS == "float" || typeWithNS == "void") {
-        // primitives, don't bother...
-        return typeWithNS;
-    }
-
-    if(typeWithNS.IsEmpty()) return "";
-
-    // A fully qualified type? don't touch it
-    if(typeWithNS.StartsWith("\\")) {
-        return typeWithNS;
-    }
-
-    // Handle 'use' cases:
-    // use Zend\Form; // create an alias entry: Form => Zend\Form
-    // class A extends Form\Form {}
-    // The extends should be expanded to Zend\Form\Form
-    if(typeWithNS.Contains("\\")) {
-        wxString scopePart = typeWithNS.BeforeLast('\\');
-        wxString className = typeWithNS.AfterLast('\\');
-        if(m_aliases.find(scopePart) != m_aliases.end()) {
-            typeWithNS.clear();
-            typeWithNS << m_aliases.find(scopePart)->second << "\\" << className;
-            // Remove duplicate NS separators
-            typeWithNS.Replace("\\\\", "\\");
-            if(!typeWithNS.StartsWith("\\")) {
-                typeWithNS << "\\";
-            }
-            return typeWithNS;
-        }
-    }
-
-    // If the symbol contains namespace separator
-    // Convert it full path and return (prepend namespace separator)
-    if(typeWithNS.Contains("\\")) {
-        if(!typeWithNS.StartsWith("\\")) {
-            typeWithNS.Prepend("\\");
-        }
-        return typeWithNS;
-    }
-
-    // Use the alias table first
-    if(m_aliases.find(type) != m_aliases.end()) {
-        return m_aliases.find(type)->second;
-    }
-
-    wxString ns = Namespace()->GetFullName();
-    if(!ns.EndsWith("\\")) {
-        ns << "\\";
-    }
-
-    typeWithNS.Prepend(ns);
-    return typeWithNS;
-}
+wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type) { return DoMakeIdentifierAbsolute(type, false); }
 
 void PHPSourceFile::OnClass(const phpLexerToken& tok)
 {
@@ -845,7 +758,7 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
     pClass->SetIsInterface(tok.type == kPHP_T_INTERFACE);
     pClass->SetIsAbstractClass(isAbstractClass);
     pClass->SetIsTrait(tok.type == kPHP_T_TRAIT);
-    pClass->SetFullName(MakeIdentifierAbsolute(token.Text()));
+    pClass->SetFullName(PrependCurrentScope(token.Text()));
     pClass->SetLine(token.lineNumber);
 
     while(NextToken(token)) {
@@ -856,7 +769,6 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
             wxString extends = ReadExtends();
             if(extends.IsEmpty()) return;
             // No need to call 'MakeIdentifierAbsolute' it was called internally by
-            // ReadType()
             pClass->SetExtends(extends);
         } break;
         case kPHP_T_IMPLEMENTS: {
@@ -936,6 +848,9 @@ bool PHPSourceFile::ReadExpression(wxString& expression)
         }
 
         switch(token.type) {
+        case kPHP_T_FUNCTION:
+            OnFunction();
+            break;
         case kPHP_T_REQUIRE:
         case kPHP_T_REQUIRE_ONCE:
             expression.clear();
@@ -1505,4 +1420,88 @@ wxString PHPSourceFile::ReadFunctionReturnValueFromSignature()
 
     type = MakeIdentifierAbsolute(type);
     return type;
+}
+
+wxString PHPSourceFile::PrependCurrentScope(const wxString& className)
+{
+    wxString currentScope = Namespace()->GetFullName();
+    if(!currentScope.EndsWith("\\")) {
+        currentScope << "\\";
+    }
+    return currentScope + className;
+}
+
+wxString PHPSourceFile::MakeTypehintAbsolute(const wxString& type) { return DoMakeIdentifierAbsolute(type, true); }
+
+wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exactMatch)
+{
+    if(m_converter) {
+        return m_converter->MakeIdentifierAbsolute(type);
+    }
+
+    static std::unordered_set<std::string> phpKeywords;
+    if(phpKeywords.empty()) {
+        phpKeywords.insert("string");
+        phpKeywords.insert("array");
+        phpKeywords.insert("mixed");
+        phpKeywords.insert("bool");
+        phpKeywords.insert("integer");
+        phpKeywords.insert("boolean");
+        phpKeywords.insert("double");
+        phpKeywords.insert("float");
+        phpKeywords.insert("float");
+        phpKeywords.insert("void");
+    }
+    wxString typeWithNS(type);
+    typeWithNS.Trim().Trim(false);
+
+    if(phpKeywords.count(type.ToStdString())) {
+        // primitives, don't bother...
+        return typeWithNS;
+    }
+
+    if(typeWithNS.IsEmpty()) return "";
+
+    // A fully qualified type? don't touch it
+    if(typeWithNS.StartsWith("\\")) {
+        return typeWithNS;
+    }
+
+    // Handle 'use' cases:
+    // use Zend\Form; // create an alias entry: Form => Zend\Form
+    // class A extends Form\Form {}
+    // The extends should be expanded to Zend\Form\Form
+    if(typeWithNS.Contains("\\")) {
+        wxString scopePart = typeWithNS.BeforeLast('\\');
+        wxString className = typeWithNS.AfterLast('\\');
+        if(m_aliases.find(scopePart) != m_aliases.end()) {
+            typeWithNS.clear();
+            typeWithNS << m_aliases.find(scopePart)->second << "\\" << className;
+            // Remove duplicate NS separators
+            typeWithNS.Replace("\\\\", "\\");
+            if(!typeWithNS.StartsWith("\\")) {
+                typeWithNS << "\\";
+            }
+            return typeWithNS;
+        }
+    }
+
+    // Use the alias table first
+    if(m_aliases.find(type) != m_aliases.end()) {
+        return m_aliases.find(type)->second;
+    }
+
+    wxString ns = Namespace()->GetFullName();
+    if(!ns.EndsWith("\\")) {
+        ns << "\\";
+    }
+
+    if(exactMatch && m_lookup && !typeWithNS.Contains("\\") && !m_lookup->ClassExists(ns + typeWithNS)) {
+        // Only when "exactMatch" apply this logic, otherwise, we might be getting a partialy typed string
+        // which we will not find by calling FindChild()
+        typeWithNS.Prepend("\\"); // Use the global NS
+    } else {
+        typeWithNS.Prepend(ns);
+    }
+    return typeWithNS;
 }

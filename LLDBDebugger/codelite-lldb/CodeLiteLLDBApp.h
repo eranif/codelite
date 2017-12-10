@@ -81,7 +81,7 @@ protected:
 
 private:
     void Cleanup();
-    void AcceptNewConnection() throw(clSocketException);
+    void AcceptNewConnection() ;
     bool InitializeLLDB(const LLDBCommand& command);
     void DoInitializeApp();
     void DoExecutueShellCommand(const wxString& command, bool printOutput = true);
@@ -93,6 +93,7 @@ public:
     void NotifyAborted();
     void NotifyStarted(eLLDBDebugSessionType sessionType);
     void NotifyRunning();
+    void NotifyLaunchSuccess();
     void NotifyBreakpointsUpdated();
     void NotifyAllBreakpointsDeleted();
 

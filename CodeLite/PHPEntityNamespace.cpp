@@ -1,5 +1,6 @@
 #include "PHPEntityNamespace.h"
 #include <wx/tokenzr.h>
+#include "PHPLookupTable.h"
 
 PHPEntityNamespace::PHPEntityNamespace() {}
 
@@ -16,13 +17,14 @@ void PHPEntityNamespace::PrintStdout(int indent) const
     }
 }
 
-void PHPEntityNamespace::Store(wxSQLite3Database& db)
+void PHPEntityNamespace::Store(PHPLookupTable* lookup)
 {
     try {
         // A namespace, unlike other PHP entities, can be defined in various files
         // and in multiple locations. This means, that by definition, there can be multiple entries
         // for the same namespace, however, since our relations in the database is ID based,
         // we try to locate the namespace in the DB before we attempt to insert it
+        wxSQLite3Database& db = lookup->Database();
         {
             wxSQLite3Statement statement =
                 db.PrepareStatement("SELECT * FROM SCOPE_TABLE WHERE FULLNAME=:FULLNAME LIMIT 1");

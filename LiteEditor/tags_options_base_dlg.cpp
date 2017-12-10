@@ -146,37 +146,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_pgPropTrackPreProcessors = m_pgMgrColouring->Append(  new wxBoolProperty( _("Track PreProcessor blocks"), wxPG_LABEL, 0) );
     m_pgPropTrackPreProcessors->SetHelpString(_("Track Pre Processor blocks in the code and colour unreachable code with grey text (\"disabled text\")"));
     
-    m_pgPropColourLocalVariables = m_pgMgrColouring->Append(  new wxBoolProperty( _("Colour local variables"), wxPG_LABEL, 1) );
-    m_pgPropColourLocalVariables->SetHelpString(_("Local variables inside functions will use their own colour to diffrentiate them from other code\nThe colour can be selected from the 'Colours and Fonts' menu"));
-    
-    m_pgMgrColouringArr.Clear();
-    m_pgMgrColouringIntArr.Clear();
-    m_pgMgrColouringArr.Add(_("class"));
-    m_pgMgrColouringArr.Add(_("struct"));
-    m_pgMgrColouringArr.Add(_("function"));
-    m_pgMgrColouringArr.Add(_("enum"));
-    m_pgMgrColouringArr.Add(_("enumerator"));
-    m_pgMgrColouringArr.Add(_("union"));
-    m_pgMgrColouringArr.Add(_("prototype"));
-    m_pgMgrColouringArr.Add(_("typedef"));
-    m_pgMgrColouringArr.Add(_("macro"));
-    m_pgMgrColouringArr.Add(_("namespace"));
-    m_pgMgrColouringArr.Add(_("member"));
-    m_pgMgrColouringArr.Add(_("variable"));
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_CLASS);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_STRUCT);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_FUNCTION);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_ENUM);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_ENUMERATOR);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_UNION);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_PROTOTYPE);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_TYPEDEF);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_MACRO);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_NAMESPACE);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_MEMBER);
-    m_pgMgrColouringIntArr.Add(CC_COLOUR_VARIABLE);
-    m_pgPropColourWorkspaceSymbols = m_pgMgrColouring->Append(  new wxFlagsProperty( _("Colour workspace symbols"), wxPG_LABEL, m_pgMgrColouringArr, m_pgMgrColouringIntArr, 0) );
-    m_pgPropColourWorkspaceSymbols->SetHelpString(_("Select from the list below which symbols type should be coloured by codelite with different colour.\nThe colour is configurable from the 'Colours and Fonts' dialog"));
+    m_pgPropColourLocalVariables = m_pgMgrColouring->Append(  new wxBoolProperty( _("Apply context aware colouring"), wxPG_LABEL, 1) );
+    m_pgPropColourLocalVariables->SetHelpString(_("When enabled, CodeLite will colour classes, enums, local variables etc\nwith their own custom colour to diferentiate them from the rest of the code"));
     
     m_paneTriggering = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook87, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_paneTriggering, _("Triggering"), false);

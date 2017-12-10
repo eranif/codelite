@@ -39,6 +39,7 @@ protected:
     void OnTabContextMenu(clContextMenuEvent& event);
     void OnDiff(wxCommandEvent& event);
     void DoClear();
+    wxFileName SaveEditorToTmpfile(IEditor* editor) const;
 
 public:
     CodeLiteDiff(IManager* manager);

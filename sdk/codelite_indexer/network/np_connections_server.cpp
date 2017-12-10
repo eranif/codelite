@@ -65,15 +65,12 @@ static PIPE_HANDLE createNamedPipe(const char* pipeName, SECURITY_ATTRIBUTES sa)
 clNamedPipeConnectionsServer::clNamedPipeConnectionsServer(const char* pipeName)
 		: _listenHandle(INVALID_PIPE_HANDLE)
 {
-	_pipePath = strdup(pipeName);
+	_pipePath = pipeName;
 }
 
 clNamedPipeConnectionsServer::~clNamedPipeConnectionsServer()
 {
-	if (_pipePath) {
-		free(_pipePath);
-		_pipePath = NULL;
-	}
+	_pipePath.clear();
 	_listenHandle = INVALID_PIPE_HANDLE;
 }
 
@@ -86,7 +83,7 @@ PIPE_HANDLE clNamedPipeConnectionsServer::initNewInstance()
 	sa.bInheritHandle = TRUE;
 	sa.lpSecurityDescriptor = NULL;
 
-	HANDLE hPipe = createNamedPipe(_pipePath, sa);
+	HANDLE hPipe = createNamedPipe(_pipePath.c_str(), sa);
 	if (!hPipe) {
 		this->setLastError(NP_SERVER_UNKNOWN_ERROR);
 		return INVALID_PIPE_HANDLE;
@@ -95,7 +92,7 @@ PIPE_HANDLE clNamedPipeConnectionsServer::initNewInstance()
 #else
 	if (_listenHandle == INVALID_PIPE_HANDLE) {
 
-		unlink(_pipePath);
+		unlink(_pipePath.c_str());
 		struct sockaddr_un server;
 
 		_listenHandle = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -105,7 +102,7 @@ PIPE_HANDLE clNamedPipeConnectionsServer::initNewInstance()
 		}
 
 		server.sun_family = AF_UNIX;
-		strcpy(server.sun_path, _pipePath);
+		strcpy(server.sun_path, _pipePath.c_str());
 		if (bind(_listenHandle, (struct sockaddr *) &server, sizeof(struct sockaddr_un))) {
 			perror("ERROR: binding stream socket");
 			return INVALID_PIPE_HANDLE;
@@ -118,11 +115,7 @@ PIPE_HANDLE clNamedPipeConnectionsServer::initNewInstance()
 
 bool clNamedPipeConnectionsServer::shutdown()
 {
-	if (_pipePath) {
-		free(_pipePath);
-		_pipePath = NULL;
-	}
-
+	_pipePath.clear();
 #ifndef __WXMSW__
 	close(_listenHandle);
 #endif
@@ -158,7 +151,7 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 		DWORD res = WaitForSingleObject(ov.hEvent, timeout) ;
 		switch (res) {
 		case WAIT_OBJECT_0 : {
-			clNamedPipeServer *conn = new clNamedPipeServer(_pipePath);
+			clNamedPipeServer *conn = new clNamedPipeServer(_pipePath.c_str());
 			conn->setHandle(hConn);
 			return conn;
 		}
@@ -182,7 +175,7 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 	}
 
 	case ERROR_PIPE_CONNECTED: {
-		clNamedPipeServer *conn = new clNamedPipeServer(_pipePath);
+		clNamedPipeServer *conn = new clNamedPipeServer(_pipePath.c_str());
 		conn->setHandle(hConn);
 		return conn;
 	}
@@ -218,7 +211,7 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 
 		PIPE_HANDLE fd = ::accept(hConn, 0, 0);
 		if (fd > 0) {
-			clNamedPipeServer *conn = new clNamedPipeServer(_pipePath);
+			clNamedPipeServer *conn = new clNamedPipeServer(_pipePath.c_str());
 			conn->setHandle(fd);
 			return conn;
 		} else {

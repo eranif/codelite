@@ -75,7 +75,7 @@ bool LLDBConnector::ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int tim
 #ifndef __WXMSW__
     clSocketClient* client = new clSocketClient();
     m_socket.reset(client);
-    CL_DEBUG("Connecting to codelite-lldb on %s", GetDebugServerPath());
+    clDEBUG() << "Connecting to codelite-lldb on:" << GetDebugServerPath();
 
     long msTimeout = timeout * 1000;
     long retriesCount = msTimeout / 250; // We try every 250 ms to connect
@@ -100,10 +100,10 @@ bool LLDBConnector::ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int tim
     m_pivot.Clear();
     m_thread = new LLDBNetworkListenerThread(this, m_pivot, fd);
     m_thread->Start();
-    CL_DEBUG("Successfully connected to codelite-lldb");
+    clDEBUG() << "Successfully connected to codelite-lldb";
     return true;
 #else
-    CL_WARNING("LLDB Debugger: can't connect to local debugger - this is not support on MSW");
+    clWARNING() << "LLDB Debugger: can't connect to local debugger - this is not support on MSW";
     return false;
 #endif
 }
@@ -113,7 +113,7 @@ bool LLDBConnector::ConnectToRemoteDebugger(const wxString& ip, int port, LLDBCo
     m_socket.reset(NULL);
     clSocketClient* client = new clSocketClient();
     m_socket.reset(client);
-    CL_DEBUG("Connecting to codelite-lldb on %s:%d", ip, port);
+    clDEBUG() << "Connecting to codelite-lldb on" << ip << ":" << port;
 
     try {
         bool would_block = false;
@@ -130,7 +130,7 @@ bool LLDBConnector::ConnectToRemoteDebugger(const wxString& ip, int port, LLDBCo
                     return false;
                 }
             } catch(clSocketException& e) {
-                CL_DEBUG("SelectWrite error: %s", e.what());
+                clDEBUG() << "SelectWrite error:" << e.what();
             }
         }
 
@@ -147,11 +147,11 @@ bool LLDBConnector::ConnectToRemoteDebugger(const wxString& ip, int port, LLDBCo
         ret.SetPivotNeeded(handshake.GetHost() != ::wxGetHostName());
 
     } catch(clSocketException& e) {
-        CL_WARNING("LLDBConnector::ConnectToRemoteDebugger: %s", e.what());
+        clWARNING() << "LLDBConnector::ConnectToRemoteDebugger:" << e.what();
         m_socket.reset(NULL);
         return false;
     }
-    CL_DEBUG("Successfully connected to codelite-lldb");
+    clDEBUG() << "Successfully connected to codelite-lldb";
     return true;
 }
 
@@ -438,7 +438,7 @@ const LLDBBreakpoint::Vec_t& LLDBConnector::GetAllBreakpoints() const { return m
 void LLDBConnector::OnProcessOutput(clProcessEvent& event)
 {
     wxString output = event.GetOutput();
-    
+
     wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
     for(size_t i = 0; i < lines.GetCount(); ++i) {
         CL_DEBUG("%s", lines.Item(i).Trim());
@@ -463,13 +463,13 @@ bool LLDBConnector::LaunchLocalDebugServer()
 {
 #if !BUILD_CODELITE_LLDB
     // Not supported :(
-    ::wxMessageBox(_("Locally debugging with LLDB on Windows is not supported by LLDB"),
-                   "CodeLite",
+    ::wxMessageBox(_("Locally debugging with LLDB on Windows is not supported by LLDB"), "CodeLite",
                    wxICON_WARNING | wxOK | wxCENTER);
     return false;
-#endif 
+#endif
 
-    CL_DEBUG("Launching codelite-lldb");
+    clDEBUG() << "Launching codelite-lldb";
+
     // Start the debugger
     if(m_process) {
         // another debugger process is already running
@@ -477,28 +477,23 @@ bool LLDBConnector::LaunchLocalDebugServer()
     }
 
     // Apply the environment before we start
-    wxStringMap_t om;
-
-#ifdef __WXMAC__
     // set the LLDB_DEBUGSERVER_PATH env variable
-    wxFileName debugserver(clStandardPaths::Get().GetBinaryFullPath("debugserver"));
-    om["LLDB_DEBUGSERVER_PATH"] = debugserver.GetFullPath();
-#endif
+    wxStringMap_t om;
+    om["LLDB_DEBUGSERVER_PATH"] = m_debugserver;
 
     EnvSetter es(NULL, &om);
-
     wxFileName fnCodeLiteLLDB(clStandardPaths::Get().GetBinaryFullPath("codelite-lldb"));
 
     wxString command;
     command << fnCodeLiteLLDB.GetFullPath() << " -s " << GetDebugServerPath();
-
+    clDEBUG() << "LLDB_DEBUGSERVER_PATH is set to" << m_debugserver;
     m_process = ::CreateAsyncProcess(this, command);
     if(!m_process) {
-        CL_ERROR("LLDBConnector: failed to launch codelite-lldb: %s", fnCodeLiteLLDB.GetFullPath());
+        clERROR() << "LLDBConnector: failed to launch codelite-lldb:" << fnCodeLiteLLDB.GetFullPath();
         return false;
 
     } else {
-        CL_DEBUG("codelite-lldb launched successfully. PID=%d\n", m_process->GetPid());
+        clDEBUG() << "codelite-lldb launched successfully. PID=" << m_process->GetPid();
     }
     return true;
 }
@@ -625,6 +620,7 @@ wxString LLDBConnector::GetConnectString() const
 bool LLDBConnector::Connect(LLDBConnectReturnObject& ret, const LLDBSettings& settings, int timeout)
 {
     ret.Clear();
+    m_debugserver = settings.GetDebugserver();
     if(settings.IsUsingRemoteProxy()) {
         return ConnectToRemoteDebugger(settings.GetProxyIp(), settings.GetProxyPort(), ret, timeout);
 

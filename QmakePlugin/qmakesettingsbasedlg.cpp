@@ -26,7 +26,7 @@ QMakeSettingsBaseDlg::QMakeSettingsBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Add / modfiy qmake configurations:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Add / modify qmake configurations:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     mainSizer->Add(m_staticText5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     

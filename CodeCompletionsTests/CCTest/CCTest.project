@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="CCTest">
+<CodeLite_Project Name="CCTest" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00040001N0005Debug0000000000000001N0010Debug_Unix0000000000000001N0007Release0000000000000001N0012Release_Unix000000000000]]>
@@ -7,9 +7,17 @@
   </Plugins>
   <VirtualDirectory Name="src">
     <File Name="cctest.cpp"/>
+    <File Name="../CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test_files">	$(PCHFile)
   
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -82,6 +90,9 @@
     <File Name="tests/test_parse_variables_simple.h"/>
     <File Name="tests/test_parse_variables_cxx11.h"/>
     <File Name="tests/test_parse_variables_class_members.h"/>
+    <File Name="tests/test_cxx_nested_template.h"/>
+    <File Name="tests/test_lambda_args.h"/>
+    <File Name="tests/test_decl_type.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="TestFramework">
@@ -89,6 +100,9 @@
     <File Name="tester.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix"/>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -99,7 +113,57 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="CMake_Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" C_Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="$(CL_HOME)/CodeLite"/>
+        <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
+        <IncludePath Value="$(CL_HOME)/Plugin"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes --static=no --universal=no );" Required="yes">
+        <LibraryPath Value="$(CL_HOME)/lib/gcc_lib"/>
+        <Library Value="libCodeLiteud.dll"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+      </Linker>
+      <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/CCTest" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/CxxCCTests" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[CL_HOME=../../
+PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <Target Name="install">make install</Target>
+        <RebuildCommand/>
+        <CleanCommand>cd CodeCompletionsTests &amp;&amp; make clean</CleanCommand>
+        <BuildCommand>make -j4</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)/build-debug</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" C_Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
@@ -115,6 +179,7 @@
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/CCTest" IntermediateDirectory="./Debug" Command="./CCTest" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[CL_HOME=../../
 PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
@@ -162,6 +227,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/CCTest" IntermediateDirectory="./Debug" Command="./CCTest" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="Default">
         <![CDATA[]]>
       </Environment>
@@ -208,6 +274,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/CCTest" IntermediateDirectory="./Release" Command="./CCTest" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[CL_HOME=../../
 PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
@@ -254,6 +321,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/CCTest" IntermediateDirectory="./Release" Command="./CCTest" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

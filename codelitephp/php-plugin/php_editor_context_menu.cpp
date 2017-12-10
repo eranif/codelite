@@ -532,7 +532,7 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
         // determine the scope name at the current position
         // Parse until the current position
         wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
-        PHPSourceFile sourceFile(text);
+        PHPSourceFile sourceFile(text, NULL);
         sourceFile.SetParseFunctionBody(true);
         sourceFile.SetFilename(editor->GetFileName());
         sourceFile.Parse();

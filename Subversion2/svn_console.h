@@ -77,7 +77,6 @@ protected:
     virtual void OnCharAdded(wxStyledTextEvent& event);
     virtual void OnUpdateUI(wxStyledTextEvent& event);
     virtual void OnKeyDown(wxKeyEvent& event);
-    void OnThemeChanged(wxCommandEvent& e);
 
     void DoInitializeFontsAndColours();
     void DoExecute(const wxString& cmd,

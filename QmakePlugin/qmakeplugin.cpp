@@ -444,21 +444,21 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
 
         if(kind == wxT("Static Library")) {
 
-            type = Project::STATIC_LIBRARY;
+            type = PROJECT_TYPE_STATIC_LIBRARY;
 
         } else if(kind == wxT("Dynamic Library")) {
 
-            type = Project::DYNAMIC_LIBRARY;
+            type = PROJECT_TYPE_DYNAMIC_LIBRARY;
 
         } else if(kind == wxT("Console")) {
 
-            type = Project::EXECUTABLE;
+            type = PROJECT_TYPE_EXECUTABLE;
             configRelease = wxT("0017CONFIG += console");
             config = wxT("0023CONFIG += console debug");
 
         } else {
 
-            type = Project::EXECUTABLE;
+            type = PROJECT_TYPE_EXECUTABLE;
             config = wxT("0015CONFIG += debug");
             configRelease = wxT("0000");
         }

@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=10.0.7
+AppVersion=11.0.7
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-x86-10.0.7
+OutputBaseFilename=codelite-x86-11.0.7
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -27,7 +27,7 @@ UninstallDisplayIcon={app}\codelite.exe,0
 ;; 32 bit setup
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
-#define WXWIN "C:\src\wxWidgets"
+#define WXWIN "C:\src\wxWidgets.git"
 #define RUNTIME_MINGW "C:\MinGW-4.8.1"
 #define RUNTIME_MINGW32 "C:\MinGW-4.8.1"
 #define BINUTILS_DIR "C:\bin"
@@ -47,7 +47,18 @@ Source: "{#CODELITE_ROOT}\Runtime\codelite-terminal.exe"; DestDir: "{app}"; Flag
 Source: "{#CODELITE_ROOT}\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 
 ;; ---- wxWidgets DLLs
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw310u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#WXWIN}\lib\gcc_dll\wxbase311u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase311u_net_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase311u_xml_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_adv_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_aui_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_core_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_ribbon_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ; ---- Binaries needed by codelite
 Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion 
@@ -119,6 +130,7 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\EditorConfigPlugin.dll"; DestDir: "{ap
 Source: "{#CODELITE_ROOT}\Runtime\plugins\codelite_vim.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\PHPLint.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\PHPRefactoring.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
+Source: "{#CODELITE_ROOT}\Runtime\plugins\SmartCompletion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion 
@@ -143,14 +155,16 @@ Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ign
 Source: "{#CODELITE_ROOT}\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "{#RUNTIME_MINGW32}\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#RUNTIME_MINGW32}\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\libiconv-2.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\libintl-8.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#RUNTIME_MINGW32}\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#RUNTIME_MINGW32}\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\which.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#BINUTILS_DIR}\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs 
 Source: "{#CODELITE_ROOT}\Runtime\gdb_printers\*"; DestDir: "{app}\gdb_printers"; Flags: recursesubdirs 
 Source: "{#CODELITE_ROOT}\Runtime\wxgui.zip";  DestDir: "{app}"; Flags: ignoreversion

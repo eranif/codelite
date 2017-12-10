@@ -41,14 +41,9 @@ WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
     m_longName = _("Suggest completion based on words typed in the editor");
     m_shortName = wxT("Word Completion");
 
-    wxTheApp->Bind(wxEVT_MENU, &WordCompletionPlugin::OnWordComplete, this, XRCID("text_word_complete"));
-    wxTheApp->Bind(wxEVT_MENU, &WordCompletionPlugin::OnWordComplete, this, XRCID("word_complete_no_single_insert"));
     wxTheApp->Bind(wxEVT_MENU, &WordCompletionPlugin::OnSettings, this, XRCID("text_word_complete_settings"));
-
+    EventNotifier::Get()->Bind(wxEVT_CC_WORD_COMPLETE, &WordCompletionPlugin::OnWordComplete, this);
     m_dictionary = new WordCompletionDictionary();
-
-    clKeyboardManager::Get()->AddGlobalAccelerator(
-        "text_word_complete", "Ctrl-ENTER", "Plugins::Word Completion::Show word completion");
 }
 
 WordCompletionPlugin::~WordCompletionPlugin() {}
@@ -63,8 +58,6 @@ clToolBar* WordCompletionPlugin::CreateToolBar(wxWindow* parent)
 void WordCompletionPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu;
-    menu->Append(XRCID("text_word_complete"), _("Show Word Completion"));
-    menu->AppendSeparator();
     menu->Append(XRCID("text_word_complete_settings"), _("Settings"));
     pluginsMenu->Append(wxID_ANY, GetShortName(), menu);
 }
@@ -72,37 +65,38 @@ void WordCompletionPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 void WordCompletionPlugin::UnPlug()
 {
     wxDELETE(m_dictionary);
-    wxTheApp->Unbind(wxEVT_MENU, &WordCompletionPlugin::OnWordComplete, this, XRCID("text_word_complete"));
-    wxTheApp->Unbind(wxEVT_MENU, &WordCompletionPlugin::OnWordComplete, this, XRCID("word_complete_no_single_insert"));
+    EventNotifier::Get()->Unbind(wxEVT_CC_WORD_COMPLETE, &WordCompletionPlugin::OnWordComplete, this);
     wxTheApp->Unbind(wxEVT_MENU, &WordCompletionPlugin::OnSettings, this, XRCID("text_word_complete_settings"));
 }
 
-void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
+void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
 {
-    event.Skip();
-    IEditor* activeEditor = m_mgr->GetActiveEditor();
+    event.Skip(); // Always skip this
+
+    IEditor* activeEditor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(activeEditor);
 
     WordCompletionSettings settings;
     settings.Load();
 
     // Enabled?
-    if(!settings.IsEnabled()) return;
+    if(!settings.IsEnabled()) {
+        return;
+    }
 
     // Build the suggetsion list
-    wxString suggestString;
-    wxCodeCompletionBoxEntry::Vec_t entries;
-    wxCodeCompletionBox::BmpVec_t bitmaps;
-    bitmaps.push_back(m_mgr->GetStdIcons()->LoadBitmap("word"));
+    static wxBitmap sBmp = wxNullBitmap;
+    if(!sBmp.IsOk()) {
+        sBmp = m_mgr->GetStdIcons()->LoadBitmap("word");
+    }
 
     // Filter (what the user has typed so far)
-    wxStyledTextCtrl* stc = activeEditor->GetCtrl();
-    int curPos = stc->GetCurrentPos();
-    int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
-    if(curPos < start) return;
+    // wxStyledTextCtrl* stc = activeEditor->GetCtrl();
+    // int curPos = stc->GetCurrentPos();
+    // int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
+    // if(curPos < start) return;
 
-    wxString filter = stc->GetTextRange(start, curPos);
-    wxString lcFilter = filter.Lower();
+    wxString filter = event.GetWord().Lower(); // stc->GetTextRange(start, curPos);
 
     wxStringSet_t words = m_dictionary->GetWords();
     // Parse the current bufer (if modified), to include non saved words
@@ -110,9 +104,10 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
         // For performance (this parsing is done in the main thread)
         // only parse the visible area of the document
         wxStringSet_t unsavedBufferWords;
+        wxStyledTextCtrl* stc = activeEditor->GetCtrl();
         int startPos = stc->PositionFromLine(stc->GetFirstVisibleLine());
         int endPos = stc->GetCurrentPos();
-        
+
         wxString buffer = stc->GetTextRange(startPos, endPos);
         WordCompletionThread::ParseBuffer(buffer, unsavedBufferWords);
 
@@ -132,31 +127,28 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     }
 
     wxStringSet_t filterdSet;
-    if(lcFilter.IsEmpty()) {
+    if(filter.IsEmpty()) {
         filterdSet.swap(words);
     } else {
         for(wxStringSet_t::iterator iter = words.begin(); iter != words.end(); ++iter) {
             wxString word = *iter;
             wxString lcWord = word.Lower();
             if(settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
-                if(lcWord.StartsWith(lcFilter) && filter != word) {
+                if(lcWord.StartsWith(filter) && filter != word) {
                     filterdSet.insert(word);
                 }
             } else {
-                if(lcWord.Contains(lcFilter) && filter != word) {
+                if(lcWord.Contains(filter) && filter != word) {
                     filterdSet.insert(word);
                 }
             }
         }
     }
+    wxCodeCompletionBoxEntry::Vec_t entries;
     for(wxStringSet_t::iterator iter = filterdSet.begin(); iter != filterdSet.end(); ++iter) {
-        entries.push_back(wxCodeCompletionBoxEntry::New(*iter, 0));
+        entries.push_back(wxCodeCompletionBoxEntry::New(*iter, sBmp));
     }
-
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(activeEditor->GetCtrl(), entries, bitmaps,
-        event.GetId() == XRCID("text_word_complete") ? wxCodeCompletionBox::kInsertSingleMatch :
-                                                       wxCodeCompletionBox::kNone,
-        wxNOT_FOUND);
+    event.GetEntries().insert(event.GetEntries().end(), entries.begin(), entries.end());
 }
 
 void WordCompletionPlugin::OnSettings(wxCommandEvent& event)

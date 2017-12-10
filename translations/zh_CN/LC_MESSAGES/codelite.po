@@ -13187,7 +13187,7 @@ msgid "Failed to create .project file '%s'"
 msgstr "未能创建项目文件“%s”"
 
 #: QmakePlugin/qmakesettingsbasedlg.cpp:29
-msgid "Add / modfiy qmake configurations:"
+msgid "Add / modify qmake configurations:"
 msgstr "添加/修改 qmake 配置："
 
 #: QmakePlugin/qmakesettingsbasedlg.cpp:51

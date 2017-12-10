@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CL_LLDBDEBUGGER_UI_BASE_CLASSES_H
-#define CL_LLDBDEBUGGER_UI_BASE_CLASSES_H
+#ifndef _CODELITE_LLDBDEBUGGER_UI_BASE_CLASSES_H
+#define _CODELITE_LLDBDEBUGGER_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -40,6 +40,16 @@
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -157,6 +167,7 @@ protected:
     wxPropertyGridManager* m_pgMgrAdvanced;
     wxPGProperty* m_pgProp165;
     wxPGProperty* m_pgPropProxyType;
+    wxPGProperty* m_pgPropDebugServer;
     wxPGProperty* m_pgProp169;
     wxPGProperty* m_pgPropProxyIP;
     wxPGProperty* m_pgPropProxyPort;

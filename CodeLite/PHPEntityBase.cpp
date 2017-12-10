@@ -43,13 +43,14 @@ PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrep
     return PHPEntityBase::Ptr_t(NULL);
 }
 
-void PHPEntityBase::StoreRecursive(wxSQLite3Database& db)
+void PHPEntityBase::StoreRecursive(PHPLookupTable* lookup)
 {
-    Store(db);
+    Store(lookup);
+    
     // save the children
     PHPEntityBase::List_t::iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {
-        (*iter)->StoreRecursive(db);
+        (*iter)->StoreRecursive(lookup);
     }
 }
 

@@ -62,12 +62,18 @@ public:
      * @brief format function signature
      */
     wxString GetSignature() const;
-
+    
+    /**
+     * @brief return the full path for this function
+     * Example: \path\toClass::functionName($a, $b)
+     */
+    wxString GetFullPath() const;
+    
     /**
      * @brief write this object into the database
      * @param db
      */
-    virtual void Store(wxSQLite3Database& db);
+    virtual void Store(PHPLookupTable* lookup);
 };
 
 #endif // PHPENTITYFUNCTION_H

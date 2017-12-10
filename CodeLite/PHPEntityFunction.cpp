@@ -1,7 +1,8 @@
 #include "PHPEntityFunction.h"
 #include "PHPEntityVariable.h"
-#include "file_logger.h"
+#include "PHPLookupTable.h"
 #include "commentconfigdata.h"
+#include "file_logger.h"
 
 PHPEntityFunction::PHPEntityFunction() {}
 
@@ -38,22 +39,20 @@ wxString PHPEntityFunction::GetSignature() const
                 break;
             }
         }
-        if(strSignature.EndsWith(", ")) {
-            strSignature.RemoveLast(2);
-        }
+        if(strSignature.EndsWith(", ")) { strSignature.RemoveLast(2); }
         strSignature << ")";
         return strSignature;
     }
 }
 
-void PHPEntityFunction::Store(wxSQLite3Database& db)
+void PHPEntityFunction::Store(PHPLookupTable* lookup)
 {
     wxString fullname;
     fullname << GetScope() << "\\" << GetShortName();
-    while(fullname.Replace("\\\\", "\\")) {
-    }
+    while(fullname.Replace("\\\\", "\\")) {}
 
     try {
+        wxSQLite3Database& db = lookup->Database();
         wxSQLite3Statement statement = db.PrepareStatement(
             "INSERT OR REPLACE INTO FUNCTION_TABLE VALUES(NULL, :SCOPE_ID, :NAME, :FULLNAME, :SCOPE, :SIGNATURE, "
             ":RETURN_VALUE, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
@@ -90,9 +89,7 @@ void PHPEntityFunction::FromResultSet(wxSQLite3ResultSet& res)
 
 wxString PHPEntityFunction::GetScope() const
 {
-    if(Parent()) {
-        return Parent()->GetFullName();
-    }
+    if(Parent()) { return Parent()->GetFullName(); }
     return "";
 }
 
@@ -115,4 +112,23 @@ wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
     doc << " * @return " << GetReturnValue() << " \n";
     doc << " */";
     return doc;
+}
+
+wxString PHPEntityFunction::GetFullPath() const
+{
+    wxString fullpath = GetFullName();
+    size_t where = fullpath.rfind(GetShortName());
+    if(where != wxString::npos) {
+        if(where > 0) {
+            fullpath = fullpath.Mid(0, where - 1);
+            if(fullpath.IsEmpty()) {
+                fullpath << "\\";
+            } else {
+                fullpath << "::";
+            }
+        }
+        fullpath << GetShortName();
+    }
+    fullpath << GetSignature();
+    return fullpath;
 }

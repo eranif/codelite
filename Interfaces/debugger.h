@@ -40,6 +40,7 @@ enum DebuggerCommands {
     DBG_PAUSE = 0,
     DBG_NEXT,
     DBG_STEPIN,
+    DBG_STEPI,
     DBG_STEPOUT,
     DBG_SHOW_CURSOR,
     DBG_NEXTI,
@@ -440,6 +441,7 @@ public:
     wxString cygwinPathCommand;
     bool charArrAsPtr;
     bool enableGDBPrettyPrinting;
+    bool defaultHexDisplay;
     size_t flags; // see eGdbFlags
 
 public:
@@ -464,6 +466,7 @@ public:
         , whenBreakpointHitRaiseCodelite(true)
         , charArrAsPtr(false)
         , enableGDBPrettyPrinting(true)
+        , defaultHexDisplay(false)
         , flags(0)
     {
     }
@@ -493,6 +496,7 @@ public:
         arch.Write(wxT("cygwinPathCommand"), cygwinPathCommand);
         arch.Write(wxT("charArrAsPtr"), charArrAsPtr);
         arch.Write(wxT("enableGDBPrettyPrinting"), enableGDBPrettyPrinting);
+        arch.Write(wxT("defaultHexDisplay"), defaultHexDisplay);
         arch.Write("flags", flags);
     }
 
@@ -525,6 +529,7 @@ public:
         arch.Read(wxT("cygwinPathCommand"), cygwinPathCommand);
         arch.Read(wxT("charArrAsPtr"), charArrAsPtr);
         arch.Read(wxT("enableGDBPrettyPrinting"), enableGDBPrettyPrinting);
+        arch.Read(wxT("defaultHexDisplay"), defaultHexDisplay);
         arch.Read("flags", flags);
     }
 };
@@ -742,6 +747,11 @@ public:
      * \return true on success, false otherwise
      */
     virtual bool StepIn() = 0;
+    /**
+     * \brief step into method
+     * \return true on success, false otherwise
+     */
+    virtual bool StepInInstruction() = 0;
     /**
      * \brief step out the current method (gdb's 'finish' command)
      * \return true on success, false otherwise

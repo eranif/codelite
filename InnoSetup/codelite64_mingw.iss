@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=10.0.7
+AppVersion=11.0.7
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf64}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-amd64-10.0.7
+OutputBaseFilename=codelite-amd64-11.0.7
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -27,8 +27,9 @@ UninstallDisplayIcon={app}\codelite.exe,0
 ;; 64 bit setup
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
-#define WXWIN "D:\src\wxWidgets"
+#define WXWIN "D:\src\wx-src"
 #define BINUTILS_DIR "D:\bin"
+#define MINGW_DIR "D:\software\MinGW-w64\mingw64\bin"
 
 
 [Languages]
@@ -46,7 +47,23 @@ Source: "{#CODELITE_ROOT}\Runtime\codelite-terminal.exe"; DestDir: "{app}"; Flag
 Source: "{#CODELITE_ROOT}\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; 
 
 ;; ---- wxWidgets DLLs
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw310u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#WXWIN}\lib\gcc_dll\wxbase311u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase311u_net_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase311u_xml_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_adv_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_aui_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_core_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_ribbon_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+
+;; ---- MinGW64 Dlls
+Source: "{#MINGW_DIR}\libgcc_s_seh-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#MINGW_DIR}\libstdc++-6.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#MINGW_DIR}\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- Binaries needed by CodeLite
 Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; 
@@ -119,6 +136,7 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\EditorConfigPlugin.dll"; DestDir: "{ap
 Source: "{#CODELITE_ROOT}\Runtime\plugins\codelite_vim.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\PHPLint.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\PHPRefactoring.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
+Source: "{#CODELITE_ROOT}\Runtime\plugins\SmartCompletion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
@@ -126,7 +144,7 @@ Source: "{#CODELITE_ROOT}\lib\gcc_lib\libplugin_sdku.dll"; DestDir: "{app}"; Fla
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\clang\lib\libclang64.dll"; DestDir: "{app}\"; DestName: "libclang.dll"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh64.dll"; DestDir: "{app}\"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh64.dll"; DestDir: "{app}\"; DestName: "libssh.dll"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\libssh\lib\zlib64.dll"; DestDir: "{app}\"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\clang\lib\clang-format-64.exe"; DestDir: "{app}\"; DestName: "codelite-clang-format.exe"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; 

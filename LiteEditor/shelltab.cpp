@@ -390,6 +390,7 @@ void OutputTab::OnDebugStarted(clDebugEvent& event)
 {
     event.Skip();
     m_outputDebugStringActive = true;
+    m_autoAppear = false;
     DoSetCollecting(true);
 }
 
@@ -398,6 +399,7 @@ void OutputTab::OnDebugStopped(clDebugEvent& event)
     event.Skip();
     m_outputDebugStringActive = false;
     DoSetCollecting(false);
+    m_autoAppear = true;
 }
 
 void OutputTab::OnProcStarted(wxCommandEvent& e)

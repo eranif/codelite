@@ -40,7 +40,7 @@ LLDBSettingDialog::LLDBSettingDialog(wxWindow* parent)
     m_pgPropProxyPort->SetValue(settings.GetProxyPort());
     m_pgPropProxyIP->SetValue(settings.GetProxyIp());
     m_pgPropProxyType->SetChoiceSelection(settings.IsUsingRemoteProxy() ? 1 : 0);
-
+    m_pgPropDebugServer->SetValue(settings.GetDebugserver());
     m_stcTypes->SetText(settings.GetTypes());
     m_stcTypes->SetModified(false);
     SetName("LLDBSettingDialog");
@@ -60,6 +60,7 @@ void LLDBSettingDialog::Save()
     settings.SetProxyIp(m_pgPropProxyIP->GetValue().GetString());
     settings.SetProxyPort(m_pgPropProxyPort->GetValue().GetInteger());
     settings.SetTypes(m_stcTypes->GetText());
+    settings.SetDebugserver(m_pgPropDebugServer->GetValue().GetString());
     settings.Save();
     m_modified = false;
     m_stcTypes->SetModified(false);

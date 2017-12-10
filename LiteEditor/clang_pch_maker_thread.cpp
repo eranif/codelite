@@ -25,23 +25,23 @@
 
 #if HAS_LIBCLANG
 
-#include <wx/app.h>
 #include "clang_pch_maker_thread.h"
-#include <wx/thread.h>
 #include "clang_unsaved_files.h"
-#include <wx/stdpaths.h>
-#include "event_notifier.h"
-#include <wx/regex.h>
-#include <wx/tokenzr.h>
-#include "y.tab.h"
-#include "cpp_scanner.h"
-#include "file_logger.h"
-#include "globals.h"
-#include "procutils.h"
-#include "fileextmanager.h"
-#include <wx/xrc/xmlres.h>
 #include "clang_utils.h"
 #include "codelite_events.h"
+#include "cpp_scanner.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
+#include "globals.h"
+#include "procutils.h"
+#include "y.tab.h"
+#include <wx/app.h>
+#include <wx/regex.h>
+#include <wx/stdpaths.h>
+#include <wx/thread.h>
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
 #define cstr(x) x.mb_str(wxConvUTF8).data()
 
@@ -50,14 +50,9 @@ const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED = XRCID("clang_pch_cache_ended");
 const wxEventType wxEVT_CLANG_PCH_CACHE_CLEARED = XRCID("clang_pch_cache_cleared");
 const wxEventType wxEVT_CLANG_TU_CREATE_ERROR = XRCID("clang_pch_create_error");
 
-ClangWorkerThread::ClangWorkerThread()
-{
-    clang_toggleCrashRecovery(1);
-}
+ClangWorkerThread::ClangWorkerThread() { clang_toggleCrashRecovery(1); }
 
-ClangWorkerThread::~ClangWorkerThread()
-{
-}
+ClangWorkerThread::~ClangWorkerThread() {}
 
 void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 {
@@ -113,8 +108,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
         } else {
 
             CL_DEBUG(wxT("An error occurred during reparsing of the TU for file %s. TU: %p"),
-                     task->GetFileName().c_str(),
-                     (void*)TU);
+                     task->GetFileName().c_str(), (void*)TU);
 
             // The only thing that left to be done here, is to dispose the TU
             clang_disposeTranslationUnit(TU);
@@ -152,18 +146,13 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
         ClangUnsavedFiles usf(usList);
 
         CL_DEBUG(wxT("Location: %s:%u:%u"), task->GetFileName().c_str(), task->GetLine(), task->GetColumn());
-        reply->results = clang_codeCompleteAt(TU,
-                                              cstr(task->GetFileName()),
-                                              task->GetLine(),
-                                              task->GetColumn(),
-                                              usf.GetUnsavedFiles(),
-                                              usf.GetCount(),
+        reply->results = clang_codeCompleteAt(TU, cstr(task->GetFileName()), task->GetLine(), task->GetColumn(),
+                                              usf.GetUnsavedFiles(), usf.GetCount(),
                                               clang_defaultCodeCompleteOptions()
 #if HAS_LIBCLANG_BRIEFCOMMENTS
-                                                  |
-                                                  CXCodeComplete_IncludeBriefComments
+                                                  | CXCodeComplete_IncludeBriefComments
 #endif
-                                              );
+        );
 
         cacheEntry.lastReparse = time(NULL);
 
@@ -178,9 +167,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
             for(unsigned i = 0; i < errorCount; i++) {
                 CXDiagnostic diag = clang_codeCompleteGetDiagnostic(reply->results, i);
                 CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
-                if(!hasErrors) {
-                    hasErrors = (severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal);
-                }
+                if(!hasErrors) { hasErrors = (severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal); }
 
                 if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Note) {
                     CXString diagStr = clang_getDiagnosticSpelling(diag);
@@ -207,7 +194,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
             // Send back the error messages
             reply->errorMessage << "clang: " << displayTip;
             reply->errorMessage.RemoveLast();
-            
+
             // Free the results
             clang_disposeCodeCompleteResults(reply->results);
             reply->results = NULL;
@@ -235,8 +222,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
             usList.push_back(std::make_pair(task->GetFileName(), task->GetDirtyBuffer()));
             ClangUnsavedFiles usf(usList);
 
-            if(clang_reparseTranslationUnit(
-                   TU, usf.GetCount(), usf.GetUnsavedFiles(), clang_defaultReparseOptions(TU)) != 0) {
+            if(clang_reparseTranslationUnit(TU, usf.GetCount(), usf.GetUnsavedFiles(),
+                                            clang_defaultReparseOptions(TU)) != 0) {
                 // Failed to reparse
                 cr.SetCancelled(true); // cancel the re-caching of the TU
 
@@ -263,9 +250,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
         } else {
             DoSetStatusMsg(wxT("clang: no matches were found"));
             CL_DEBUG(wxT("Clang Goto Decl/Impl: could not find a cursor matching for position %s:%d:%d"),
-                     task->GetFileName().c_str(),
-                     (int)task->GetLine(),
-                     (int)task->GetColumn());
+                     task->GetFileName().c_str(), (int)task->GetLine(), (int)task->GetColumn());
 
             // Failed, delete the 'reply' allocatd earlier
             wxDELETE(reply);
@@ -442,9 +427,9 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
                 CXTranslationUnit_Incomplete | CXTranslationUnit_DetailedPreprocessingRecord |
                 CXTranslationUnit_CXXChainedPCH;
     } else {
-        flags = CXTranslationUnit_Incomplete | 
+        flags = CXTranslationUnit_Incomplete |
 #if HAS_LIBCLANG_BRIEFCOMMENTS
-		CXTranslationUnit_SkipFunctionBodies |
+                CXTranslationUnit_SkipFunctionBodies |
 #endif
                 CXTranslationUnit_DetailedPreprocessingRecord;
     }
@@ -462,8 +447,7 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
 
         } else {
             CL_DEBUG(wxT("An error occurred during reparsing of the TU for file %s. TU: %p"),
-                     task->GetFileName().c_str(),
-                     (void*)TU);
+                     task->GetFileName().c_str(), (void*)TU);
 
             // The only thing that left to be done here, is to dispose the TU
             clang_disposeTranslationUnit(TU);

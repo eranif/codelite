@@ -25,14 +25,15 @@
 #ifndef FILE_VIEW_TREE_H
 #define FILE_VIEW_TREE_H
 
-#include "wx/treectrl.h"
-#include "project.h"
-#include "pluginmanager.h"
+#include "clTreeCtrlColourHelper.h"
+#include "clTreeKeyboardInput.h"
 #include "imanager.h"
 #include "map"
-#include "clTreeKeyboardInput.h"
+#include "pluginmanager.h"
+#include "project.h"
+#include "wx/treectrl.h"
+#include "wxStringHash.h"
 #include <VirtualDirectoryColour.h>
-#include "clTreeCtrlColourHelper.h"
 
 class wxMenu;
 
@@ -46,12 +47,13 @@ class FileViewTree : public wxTreeCtrl
 {
     DECLARE_DYNAMIC_CLASS()
 
-    std::map<void*, bool> m_itemsToSort;
+    std::unordered_map<void*, bool> m_itemsToSort;
     wxArrayTreeItemIds m_draggedFiles;
     wxArrayTreeItemIds m_draggedProjects;
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
-    std::map<wxString, wxTreeItemId> m_workspaceFolders;
-    std::map<wxString, wxTreeItemId> m_projectsMap;
+    std::unordered_map<wxString, wxTreeItemId> m_workspaceFolders;
+    std::unordered_map<wxString, wxTreeItemId> m_projectsMap;
+    std::unordered_map<wxString, wxTreeItemId> m_excludeBuildFiles;
     bool m_eventsBound;
     clTreeCtrlColourHelper::Ptr_t m_colourHelper;
 
@@ -61,6 +63,11 @@ protected:
     void DoUnbindEvents();
     void DoFilesEndDrag(wxTreeItemId& itemDst);
     void DoProjectsEndDrag(wxTreeItemId& itemDst);
+    void DoSetItemBackgroundColour(const wxTreeItemId& item, const FolderColour::List_t& colours,
+                                   const ProjectItem& projectItem);
+
+    void ExcludeFileFromBuildUI(const wxTreeItemId& item, bool exclude);
+    bool IsItemExcludedFromBuild(const wxTreeItemId& item, const wxString& configName) const;
 
 public:
     /**
@@ -136,12 +143,23 @@ public:
     ProjectPtr GetSelectedProject() const;
 
     /**
+     * @brief find the parent project of a given item
+     */
+    ProjectPtr GetItemProject(const wxTreeItemId& item) const;
+
+    /**
      * @brief public access to the "OnFolderDropped" function
      * @param event
      */
     void FolderDropped(const wxArrayString& folders);
 
+    /**
+     * @brief return the current tree selections
+     */
+    size_t GetSelections(wxArrayTreeItemIds& selections) const;
+
 protected:
+    void OnItemExpanding(wxTreeEvent& e);
     virtual void OnPopupMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnMouseDblClick(wxMouseEvent& event);
@@ -199,6 +217,7 @@ protected:
     void OnNewProject(wxCommandEvent& evt);
     // Called from the workspace context menu
     void OnWorkspaceFolderNewFolder(wxCommandEvent& evt);
+    void OnAddProjectToWorkspaceFolder(wxCommandEvent& evt);
 
     void OnWorkspaceFolderDelete(wxCommandEvent& evt);
 
@@ -215,16 +234,24 @@ protected:
     // internal
     void OnBuildProjectOnlyInternal(wxCommandEvent& e);
     void OnCleanProjectOnlyInternal(wxCommandEvent& e);
-
+    void OnBuildConfigChanged(wxCommandEvent& e);
+    
     /**
      * @brief clear the "active" marker from all the projects
      */
     void UnselectAllProject();
 
+    /**
+     * @brief return the item data for an item
+     */
+    FilewViewTreeItemData* ItemData(const wxTreeItemId& item) const;
+
 private:
     // Build project node
     void BuildProjectNode(const wxString& projectName);
     void DoClear();
+    void DoAddChildren(const wxTreeItemId& parentItem);
+    void DoBuildSubTreeIfNeeded(const wxTreeItemId& parent);
 
     /**
      * @brief add a workspace folder

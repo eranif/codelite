@@ -141,12 +141,12 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
         }
         ++index;
     }
-    for(std::map<wxString, wxString>::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
+    for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
     }
 
     if(m_diffMap.size() != 0) {
-        std::map<wxString, wxString>::iterator it = m_diffMap.begin();
+        wxStringMap_t::iterator it = m_diffMap.begin();
         m_stcDiff->SetText((*it).second);
         m_fileListBox->Select(0);
     }
@@ -167,7 +167,7 @@ void GitCommitListDlg::OnSelectionChanged(wxDataViewEvent& event)
 
     m_dvListCtrlCommitList->GetValue(v, m_dvListCtrlCommitList->ItemToRow(event.GetItem()), 0);
     wxString commitID = v.GetString();
-    wxString command = wxString::Format(wxT("%s --no-pager show %s"), m_gitPath.c_str(), commitID.c_str());
+    wxString command = wxString::Format(wxT("%s --no-pager show --first-parent %s"), m_gitPath.c_str(), commitID.c_str());
     m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_workingDir);
 }
 

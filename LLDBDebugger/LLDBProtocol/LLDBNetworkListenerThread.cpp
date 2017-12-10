@@ -86,7 +86,14 @@ void* LLDBNetworkListenerThread::Entry()
                     m_owner->AddPendingEvent(event);
                     break;
                 }
-
+                
+                case kReplyTypeLaunchSuccess: {
+                    // notify debugger exited
+                    LLDBEvent event(wxEVT_LLDB_LAUNCH_SUCCESS);
+                    m_owner->AddPendingEvent(event);
+                    break;
+                }
+                
                 case kReplyTypeDebuggerStoppedOnFirstEntry: {
                     // notify debugger exited
                     LLDBEvent event(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY);

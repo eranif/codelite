@@ -29,24 +29,26 @@
 #include "codelite_exports.h"
 #include <wx/string.h>
 #include <wx/arrstr.h>
-#include <map>
 #include "PHPSourceFile.h"
 #include "macros.h"
+#include "wxStringHash.h"
+#include "PHPDocParam.h"
 
 class WXDLLIMPEXP_CL PHPDocComment
 {
 public:
-    struct Property {
+    struct Property
+    {
         wxString name;
         wxString type;
         wxString desc;
-        typedef std::map<wxString, PHPDocComment::Property> Map_t;
+        typedef std::unordered_map<wxString, PHPDocComment::Property> Map_t;
     };
 
 protected:
     PHPSourceFile& m_sourceFile;
     wxString m_comment;
-    std::map<wxString, wxString> m_params;
+    std::unordered_map<wxString, wxString> m_params;
     wxArrayString m_paramsArr;
     wxString m_returnValue;
     wxString m_varType;
@@ -58,11 +60,6 @@ protected:
      * @brief process @method php doc
      */
     void ProcessMethods();
-
-    /**
-     * @brief process a line that starts with @method
-     */
-    void ProcessMethod(wxString& strLine);
 
 public:
     PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment);

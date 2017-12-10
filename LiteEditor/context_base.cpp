@@ -208,8 +208,8 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
             // This is ugly, since CodeLite should not be calling
             // the plugins... we take comfort in the fact that it
             // merely fires an event and not calling it directly
-            wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
-            wxTheApp->ProcessEvent(wordCompleteEvent);
+            wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("simple_word_completion"));
+            EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(wordCompleteEvent);
         }
     }
 }

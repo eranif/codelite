@@ -45,6 +45,9 @@ protected:
     clTreeKeyboardInput::Ptr_t m_cxxKeyboardHelper;
     bool m_sortCxxTreeAlphabetically;
 
+public:
+    bool m_isEnabled;
+
 protected:
     virtual void OnSortAlpha(wxCommandEvent& event);
     virtual void OnSortAlphaUI(wxUpdateUIEvent& event);
@@ -59,7 +62,8 @@ public:
     virtual ~OutlineTab();
     void OnSearchSymbol(wxCommandEvent& event);
     void OnSearchEnter(wxCommandEvent& event);
-
+    void EditorChanged();
+    
     // Event Handlers
     ////////////////////////////////////////////////
     void OnWorkspaceClosed(wxCommandEvent& e);

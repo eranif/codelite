@@ -25,18 +25,19 @@
 #ifndef SEARCH_THREAD_H
 #define SEARCH_THREAD_H
 
-#include <deque>
-#include <list>
-#include <wx/string.h>
-#include <map>
+#include "codelite_exports.h"
+#include "cppwordscanner.h"
 #include "singleton.h"
+#include "stringsearcher.h"
+#include "worker_thread.h"
 #include "wx/event.h"
 #include "wx/filename.h"
-#include "cppwordscanner.h"
+#include "wxStringHash.h"
+#include <deque>
+#include <list>
+#include <map>
 #include <wx/regex.h>
-#include "worker_thread.h"
-#include "stringsearcher.h"
-#include "codelite_exports.h"
+#include <wx/string.h>
 
 class wxEvtHandler;
 class SearchResult;
@@ -322,7 +323,7 @@ class WXDLLIMPEXP_SDK SearchThread : public WorkerThread
 {
     friend class SearchThreadST;
     wxString m_wordChars;
-    std::map<wxChar, bool> m_wordCharsMap; //< Internal
+    std::unordered_map<wxChar, bool> m_wordCharsMap; //< Internal
     SearchResultList m_results;
     bool m_stopSearch;
     SearchSummary m_summary;
@@ -395,22 +396,13 @@ private:
     void DoSearchFile(const wxString& fileName, const SearchData* data);
 
     // Perform search on a line
-    void DoSearchLine(const wxString& line,
-                      const int lineNum,
-                      const int lineOffset,
-                      const wxString& fileName,
-                      const SearchData* data,
-                      const wxString& findWhat,
-                      const wxArrayString& filters,
+    void DoSearchLine(const wxString& line, const int lineNum, const int lineOffset, const wxString& fileName,
+                      const SearchData* data, const wxString& findWhat, const wxArrayString& filters,
                       TextStatesPtr statesPtr);
 
     // Perform search on a line using regular expression
-    void DoSearchLineRE(const wxString& line,
-                        const int lineNum,
-                        const int lineOffset,
-                        const wxString& fileName,
-                        const SearchData* data,
-                        TextStatesPtr statesPtr);
+    void DoSearchLineRE(const wxString& line, const int lineNum, const int lineOffset, const wxString& fileName,
+                        const SearchData* data, TextStatesPtr statesPtr);
 
     // Send an event to the notified window
     void SendEvent(wxEventType type, wxEvtHandler* owner);

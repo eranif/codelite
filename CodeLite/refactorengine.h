@@ -65,8 +65,8 @@ extern WXDLLIMPEXP_CL const wxEventType wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZ
 
 class WXDLLIMPEXP_CL RefactoringEngine
 {
-    std::list<CppToken> m_candidates;
-    std::list<CppToken> m_possibleCandidates;
+    CppToken::Vec_t m_candidates;
+    CppToken::Vec_t m_possibleCandidates;
     wxEvtHandler* m_evtHandler;
     RefactoringStorage m_storage;
 
@@ -75,33 +75,25 @@ public:
 
 protected:
     clProgressDlg* CreateProgressDialog(const wxString& title, int maxValue);
-    void DoFindReferences(const wxString& symname,
-                          const wxFileName& fn,
-                          int line,
-                          int pos,
-                          const wxFileList_t& files,
+    void DoFindReferences(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files,
                           bool onlyDefiniteMatches);
 
 private:
     RefactoringEngine();
     ~RefactoringEngine();
-    bool DoResolveWord(TextStatesPtr states,
-                       const wxFileName& fn,
-                       int pos,
-                       int line,
-                       const wxString& word,
+    bool DoResolveWord(TextStatesPtr states, const wxFileName& fn, int pos, int line, const wxString& word,
                        RefactorSource* rs);
 
 public:
     void InitializeCache(const wxFileList_t& files) { m_storage.InitializeCache(files); }
     bool IsCacheInitialized() const;
-    void SetCandidates(const std::list<CppToken>& candidates) { this->m_candidates = candidates; }
-    void SetPossibleCandidates(const std::list<CppToken>& possibleCandidates)
+    void SetCandidates(const CppToken::Vec_t& candidates) { this->m_candidates = candidates; }
+    void SetPossibleCandidates(const CppToken::Vec_t& possibleCandidates)
     {
         this->m_possibleCandidates = possibleCandidates;
     }
-    const std::list<CppToken>& GetCandidates() const { return m_candidates; }
-    const std::list<CppToken>& GetPossibleCandidates() const { return m_possibleCandidates; }
+    const CppToken::Vec_t& GetCandidates() const { return m_candidates; }
+    const CppToken::Vec_t& GetPossibleCandidates() const { return m_possibleCandidates; }
     wxString GetExpression(int pos, TextStatesPtr states);
 
     void Clear();
@@ -122,8 +114,8 @@ public:
      * @param pos at that position
      * @param files perform the refactoring on these files
      */
-    void
-    RenameGlobalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files);
+    void RenameGlobalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos,
+                            const wxFileList_t& files);
 
     /**
      * @param rename local variable
@@ -148,11 +140,7 @@ public:
      * @brief given a location (file:line:pos) use the current location function signature
      * and return the propsed counter-part tag
      */
-    TagEntryPtr SyncSignature(const wxFileName& fn,
-                              int line,
-                              int pos,
-                              const wxString& word,
-                              const wxString& text,
+    TagEntryPtr SyncSignature(const wxFileName& fn, int line, int pos, const wxString& word, const wxString& text,
                               const wxString& expr);
 };
 

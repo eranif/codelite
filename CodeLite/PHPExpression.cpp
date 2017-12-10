@@ -182,7 +182,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
 {
     if(m_expression.empty()) return PHPEntityBase::Ptr_t(NULL);
 
-    m_sourceFile.reset(new PHPSourceFile(m_text));
+    m_sourceFile.reset(new PHPSourceFile(m_text, &lookpTable));
     m_sourceFile->SetParseFunctionBody(true);
     m_sourceFile->SetFilename(sourceFileName);
     m_sourceFile->Parse();

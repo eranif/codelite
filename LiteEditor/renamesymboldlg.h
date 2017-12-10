@@ -25,7 +25,6 @@
 #ifndef __renamesymboldlg__
 #define __renamesymboldlg__
 
-
 #include "cpptoken.h"
 #include <list>
 #include <vector>
@@ -33,24 +32,23 @@
 
 class RenameSymbol : public RenameSymbolBase
 {
-    std::vector<CppToken> m_tokens;
-    wxString              m_filename;
+    CppToken::Vec_t m_tokens;
+    wxString m_filename;
 
 protected:
     virtual void OnCheckAll(wxCommandEvent& event);
     virtual void OnUncheckAll(wxCommandEvent& event);
     virtual void OnSelection(wxDataViewEvent& event);
-    void OnButtonOK    (wxCommandEvent &e);
-    void AddMatch      (const CppToken &token, bool check);
-    void DoSelectFile  (const CppToken &token);
+    void OnButtonOK(wxCommandEvent& e);
+    void AddMatch(const CppToken& token, bool check);
+    void DoSelectFile(const CppToken& token);
 
 public:
-    RenameSymbol( wxWindow* parent, const CppToken::List_t& candidates, const CppToken::List_t& possCandidates, const wxString& oldname = wxEmptyString );
+    RenameSymbol(wxWindow* parent, const CppToken::Vec_t& candidates, const CppToken::Vec_t& possCandidates,
+                 const wxString& oldname = wxEmptyString);
     virtual ~RenameSymbol();
-    void GetMatches(CppToken::List_t& matches);
-    wxString GetWord() const {
-        return m_textCtrlNewName->GetValue();
-    }
+    void GetMatches(CppToken::Vec_t& matches);
+    wxString GetWord() const { return m_textCtrlNewName->GetValue(); }
 };
 
 #endif // __renamesymboldlg__

@@ -125,7 +125,7 @@ bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, cl
     clEditorConfig conf;
     if(!conf.GetSectionForFile(filename, section)) {
         // Update the cache
-        clDEBUG() << "No EditorConfig file found for file:" << filename << clEndl;
+        clDEBUG1() << "No EditorConfig file found for file:" << filename << clEndl;
         return false;
     }
     

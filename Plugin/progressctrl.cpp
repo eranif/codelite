@@ -27,13 +27,14 @@
 #include <wx/dcbuffer.h>
 #include "drawingutils.h"
 
-
 ProgressCtrl::ProgressCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize&, long style)
-    : wxPanel(parent, id, pos, wxSize(-1, 24), style)
+    : wxPanel(parent, id, pos, wxDefaultSize, style)
     , m_maxRange(100)
     , m_currValue(0)
     , m_fillCol(wxT("DARK GREEN"))
 {
+    wxSize sz = wxWindow::GetTextExtent("Tp");
+    SetSizeHints(wxSize(-1, sz.GetHeight() + 2));
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     Bind(wxEVT_PAINT, &ProgressCtrl::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &ProgressCtrl::OnEraseBg, this);
@@ -82,28 +83,13 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
     dc.DrawRectangle(rr);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
-    // dc.SetPen(*wxWHITE_PEN);
-    // dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
-    // dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
-    //
-    // dc.DrawPoint(client_rect.GetBottomRight());
-    // rect.Deflate(1, 1);
-    //
-    // dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    // dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
-    // dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
-    //
-    // dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-    // dc.DrawLine(rect.GetBottomLeft(), rect.GetTopLeft());
-    // dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
-
     // calculate the location to place the string
     wxCoord xx, yy;
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     dc.GetTextExtent(m_msg, &xx, &yy, NULL, NULL, &f);
 
     wxCoord txtYCoord = (rect.GetHeight() - yy) / 2;
-    wxCoord txtXCoord = 5;
+    wxCoord txtXCoord = (rect.GetWidth() - xx) / 2; // text in the middle
 
     // make sure the colour used here is the system default
     dc.SetTextForeground(*wxBLACK);

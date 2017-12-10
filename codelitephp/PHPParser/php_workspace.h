@@ -36,7 +36,6 @@
 #include <macros.h>
 #include "php_project_settings_data.h"
 #include "php_project.h"
-#include "php_folder.h"
 #include <wx/event.h>
 #include "XDebugBreakpoint.h"
 #include "imanager.h"
@@ -233,9 +232,7 @@ public:
     ////////////////////////////////////////////
     // Project execution
     ////////////////////////////////////////////
-    bool RunProject(bool debugging,
-                    const wxString& urlOrFilePath,
-                    const wxString& projectName = wxEmptyString,
+    bool RunProject(bool debugging, const wxString& urlOrFilePath, const wxString& projectName = wxEmptyString,
                     const wxString& xdebugSessionName = wxEmptyString);
     bool IsProjectRunning() const { return m_executor.IsRunning(); }
     void StopExecutedProgram() { m_executor.Stop(); }

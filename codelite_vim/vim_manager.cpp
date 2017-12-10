@@ -121,6 +121,8 @@ void VimManager::OnKeyDown(wxKeyEvent& event)
         CallAfter(&VimManager::SaveCurrentEditor);
         CallAfter(&VimManager::CloseCurrentEditor);
         break;
+    default:
+        break;
     }
 }
 

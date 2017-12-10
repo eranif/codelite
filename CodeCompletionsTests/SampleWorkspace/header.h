@@ -29,6 +29,7 @@
 #include <Plugin/workspace.h>
 #include <set>
 #include <boost/smart_ptr/shared_ptr.hpp>
+#include <unordered_map>
 
 struct ST {
     std::string name;
@@ -73,8 +74,22 @@ public:
 // Test the 'testStructDeclaratorInFuncArgument
 //////////////////////////////////////////////////////////////
 
-void foo_bar(struct wxString* s) {}
+void foo_bar(struct wxString* pString, const std::string& secondArg) {
+
+}
 } // Namespace Baz
+
+enum NormalEnum {
+    kApple,
+    kBanana,
+    kOrange,
+};
+
+enum class ClassEnum : int {
+    kRed,
+    kGreen,
+    kBlue
+};
 
 class ClassWithTemplateFunction
 {
@@ -127,7 +142,7 @@ public:
     int GetMember8() const { return member8; }
     int GetMember9() const { return member9; }
 };
-
+#define GET_APP static_cast<ClassWithMembers*>(ClassWithMembers::Instance())
 typedef std::vector<ClassWithMembers> VectorTypedef_t;
 
 // Template class with static member

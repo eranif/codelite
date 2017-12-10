@@ -35,6 +35,9 @@ class WXDLLIMPEXP_SDK SFTPSettings : public clConfigItem
     SSHAccountInfo::Vect_t m_accounts;
     wxString m_sshClient;
 
+private:
+    void MSWImportPuTTYAccounts();
+
 public:
     SFTPSettings();
     virtual ~SFTPSettings();

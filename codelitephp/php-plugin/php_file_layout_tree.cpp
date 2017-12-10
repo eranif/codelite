@@ -40,7 +40,7 @@ void PHPFileLayoutTree::Construct()
     if(!m_editor || !m_manager) return;
 
     wxString text = m_editor->GetTextRange(0, m_editor->GetLength());
-    PHPSourceFile source(text);
+    PHPSourceFile source(text, NULL);
     source.SetParseFunctionBody(false);
     source.SetFilename(m_editor->GetFileName());
     source.Parse();

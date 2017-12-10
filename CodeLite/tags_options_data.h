@@ -28,8 +28,11 @@
 #include "codelite_exports.h"
 #include <wx/filename.h>
 #include <map>
+#include <unordered_map>
 #include "cl_config.h"
 #include <wx/tokenzr.h>
+#include "wxStringHash.h"
+#include "macros.h"
 
 enum CodeCompletionOpts {
     CC_PARSE_COMMENTS = 0x00000001,
@@ -40,7 +43,6 @@ enum CodeCompletionOpts {
     CC_AUTO_INSERT_SINGLE_CHOICE = 0x00000020,
     CC_PARSE_EXT_LESS_FILES = 0x00000040,
     CC_COLOUR_VARS = 0x00000080,
-    CC_COLOUR_WORKSPACE_TAGS = 0x00000100,
     CC_CPP_KEYWORD_ASISST = 0x00000200,
     CC_WORD_ASSIST = 0x00000400,
     CC_DISABLE_AUTO_PARSING = 0x00000800,
@@ -67,13 +69,8 @@ enum CodeCompletionColourOpts {
     CC_COLOUR_MEMBER = 0x00000800,
     CC_COLOUR_MACRO_BLOCKS = 0x00001000,
     CC_COLOUR_ALL = CC_COLOUR_CLASS | CC_COLOUR_STRUCT | CC_COLOUR_FUNCTION | CC_COLOUR_ENUM | CC_COLOUR_UNION |
-                    CC_COLOUR_PROTOTYPE |
-                    CC_COLOUR_TYPEDEF |
-                    CC_COLOUR_MACRO |
-                    CC_COLOUR_NAMESPACE |
-                    CC_COLOUR_ENUMERATOR |
-                    CC_COLOUR_VARIABLE |
-                    CC_COLOUR_MEMBER,
+                    CC_COLOUR_PROTOTYPE | CC_COLOUR_TYPEDEF | CC_COLOUR_MACRO | CC_COLOUR_NAMESPACE |
+                    CC_COLOUR_ENUMERATOR | CC_COLOUR_VARIABLE | CC_COLOUR_MEMBER,
     CC_COLOUR_DEFAULT = CC_COLOUR_CLASS | CC_COLOUR_STRUCT | CC_COLOUR_NAMESPACE | CC_COLOUR_ENUM | CC_COLOUR_TYPEDEF
 };
 
@@ -86,6 +83,7 @@ enum CodeCompletionClangOptions {
 
 class WXDLLIMPEXP_CL TagsOptionsData : public clConfigItem
 {
+protected:
     size_t m_ccFlags;
     size_t m_ccColourFlags;
     wxArrayString m_tokens;
@@ -97,8 +95,8 @@ class WXDLLIMPEXP_CL TagsOptionsData : public clConfigItem
     wxArrayString m_parserExcludePaths;
     bool m_parserEnabled;
     int m_maxItemToColour;
-    std::map<wxString, wxString> m_tokensWxMap;
-    std::map<wxString, wxString> m_tokensWxMapReversed;
+    wxStringTable_t m_tokensWxMap;
+    wxStringTable_t m_tokensWxMapReversed;
     wxString m_macrosFiles;
     size_t m_clangOptions;
     wxString m_clangBinary;
@@ -173,12 +171,11 @@ public:
     wxString GetTypes() const { return DoJoinArray(m_types); }
 
     std::map<std::string, std::string> GetTokensMap() const;
-    std::map<std::string, std::string> GetTokensReversedMap() const;
 
-    const std::map<wxString, wxString>& GetTokensReversedWxMap() const;
-    const std::map<wxString, wxString>& GetTokensWxMap() const;
+    const wxStringTable_t& GetTokensReversedWxMap() const;
+    const wxStringTable_t& GetTokensWxMap() const;
 
-    std::map<wxString, wxString> GetTypesMap() const;
+    wxStringTable_t GetTypesMap() const;
 
     const size_t& GetFlags() const { return m_ccFlags; }
     const wxString& GetFileSpec() const { return m_fileSpec; }

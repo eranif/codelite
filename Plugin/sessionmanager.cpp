@@ -163,15 +163,15 @@ bool SessionManager::Save(const wxString& name,
 
     if(name.empty()) return false;
 
-    std::auto_ptr<wxXmlNode> child(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag));
+    wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag);
     child->AddProperty(wxT("Name"), name);
 
     Archive arch;
-    arch.SetXmlNode(child.get());
+    arch.SetXmlNode(child);
     session.Serialize(arch);
 
     wxXmlDocument doc;
-    doc.SetRoot(child.release());
+    doc.SetRoot(child);
 
     // If we're saving a tabgroup, suffix will be ".tabgroup", not the default ".session"
     const wxFileName& sessionFileName = GetSessionFileName(name, suffix);

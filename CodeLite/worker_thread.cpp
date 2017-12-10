@@ -30,9 +30,7 @@ WorkerThread::WorkerThread()
 {
 }
 
-WorkerThread::~WorkerThread()
-{
-}
+WorkerThread::~WorkerThread() {}
 
 void* WorkerThread::Entry()
 {
@@ -51,6 +49,7 @@ void* WorkerThread::Entry()
 
 void WorkerThread::Add(ThreadRequest* request)
 {
+    if(!request) { return; }
     m_queue.Post(request);
 }
 

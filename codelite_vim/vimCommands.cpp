@@ -85,6 +85,7 @@ bool VimCommand::OnEscapeDown()
     m_currentCommandPart = COMMAND_PART::REPEAT_NUM;
     m_currentModus = VIM_MODI::NORMAL_MODUS;
     m_tmpbuf.Clear();
+    return true;
 }
 
 /**

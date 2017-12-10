@@ -22,37 +22,36 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/app.h>
-#include "bitmap_loader.h"
-#include "unittestspage.h"
-#include "macros.h"
-#include "unittestdata.h"
-#include "event_notifier.h"
 #include "asyncprocess.h"
-#include "processreaderthread.h"
+#include "bitmap_loader.h"
+#include "codelite_events.h"
 #include "ctags_manager.h"
-#include "unittestcppoutputparser.h"
-#include <wx/tokenzr.h>
-#include "environmentconfig.h"
-#include "pipedprocess.h"
 #include "dirsaver.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "macros.h"
+#include "newunittestdlg.h"
+#include "pipedprocess.h"
+#include "processreaderthread.h"
 #include "procutils.h"
-#include "workspace.h"
 #include "project.h"
 #include "testclassdlg.h"
-#include "newunittestdlg.h"
-#include <wx/ffile.h>
-#include <wx/msgdlg.h>
+#include "unittestcppoutputparser.h"
+#include "unittestdata.h"
 #include "unittestpp.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/menuitem.h>
+#include "unittestspage.h"
+#include "workspace.h"
+#include <wx/app.h>
+#include <wx/ffile.h>
 #include <wx/menu.h>
-#include "codelite_events.h"
+#include <wx/menuitem.h>
 #include <wx/msgdlg.h>
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
-#include <wx/msw/registry.h>
 #include "evnvarlist.h"
+#include <wx/msw/registry.h>
 #endif
 
 static UnitTestPP* thePlugin = NULL;
@@ -60,9 +59,7 @@ static UnitTestPP* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new UnitTestPP(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new UnitTestPP(manager); }
     return thePlugin;
 }
 
@@ -83,23 +80,17 @@ UnitTestPP::UnitTestPP(IManager* manager)
     , m_proc(NULL)
 {
     // Connect the events to us
-    wxTheApp->Connect(XRCID("run_unit_tests"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(UnitTestPP::OnRunUnitTests),
-                      NULL,
-                      (wxEvtHandler*)this);
-    wxTheApp->Connect(XRCID("run_unit_tests"),
-                      wxEVT_UPDATE_UI,
-                      wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI),
-                      NULL,
-                      (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("run_unit_tests"), wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(UnitTestPP::OnRunUnitTests), NULL, (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("run_unit_tests"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI),
+                      NULL, (wxEvtHandler*)this);
 
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(UnitTestPP::OnRunProject), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(UnitTestPP::OnRunProject),
+                                  NULL, this);
 
     m_outputPage = new UnitTestsPage(m_mgr->GetOutputPaneNotebook(), m_mgr);
-    m_mgr->GetOutputPaneNotebook()->AddPage(
-        m_outputPage, _("UnitTest++"), false, m_mgr->GetStdIcons()->LoadBitmap("ok"));
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPage, _("UnitTest++"), false,
+                                            m_mgr->GetStdIcons()->LoadBitmap("ok"));
     m_tabHelper.reset(new clTabTogglerHelper(_("UnitTest++"), m_outputPage, "", NULL));
     m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("ok"));
 
@@ -125,9 +116,7 @@ clToolBar* UnitTestPP::CreateToolBar(wxWindow* parent)
         tb->SetToolBitmapSize(wxSize(size, size));
 
         BitmapLoader& bitmapLoader = *m_mgr->GetStdIcons();
-        tb->AddTool(XRCID("run_unit_tests"),
-                    _("Run Unit tests..."),
-                    bitmapLoader.LoadBitmap("ok", size),
+        tb->AddTool(XRCID("run_unit_tests"), _("Run Unit tests..."), bitmapLoader.LoadBitmap("ok", size),
                     _("Run project as unit test project..."));
         tb->Realize();
     }
@@ -141,12 +130,12 @@ void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(
-        menu, XRCID("unittestpp_new_simple_test"), _("Create new &test..."), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("unittestpp_new_simple_test"), _("Create new &test..."), wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(
-        menu, XRCID("unittestpp_new_class_test"), _("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), _("Create tests for &class..."), wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
 
     menu->AppendSeparator();
@@ -154,28 +143,19 @@ void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("mark_project_as_ut"), _("Mark this project as UnitTest++ project"));
     menu->Append(item);
 
-    item = new wxMenuItem(
-        menu, XRCID("run_unit_tests"), _("Run Project as UnitTest++ and report"), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("run_unit_tests"), _("Run Project as UnitTest++ and report"), wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
 
     pluginsMenu->Append(wxID_ANY, wxT("UnitTest++"), menu);
 
     // connect the events
-    wxTheApp->Connect(XRCID("unittestpp_new_simple_test"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(UnitTestPP::OnNewSimpleTest),
-                      NULL,
-                      (wxEvtHandler*)this);
-    wxTheApp->Connect(XRCID("unittestpp_new_class_test"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(UnitTestPP::OnNewClassTest),
-                      NULL,
-                      (wxEvtHandler*)this);
-    wxTheApp->Connect(XRCID("mark_project_as_ut"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(UnitTestPP::OnMarkProjectAsUT),
-                      NULL,
-                      (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(UnitTestPP::OnNewSimpleTest), NULL, (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("unittestpp_new_class_test"), wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(UnitTestPP::OnNewClassTest), NULL, (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("mark_project_as_ut"), wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(UnitTestPP::OnMarkProjectAsUT), NULL, (wxEvtHandler*)this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &UnitTestPP::OnEditorContextMenu, this);
 }
 
@@ -184,17 +164,11 @@ void UnitTestPP::UnPlug()
     m_tabHelper.reset(NULL);
 
     // Connect the events to us
-    wxTheApp->Disconnect(XRCID("run_unit_tests"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(UnitTestPP::OnRunUnitTests),
-                         NULL,
-                         (wxEvtHandler*)this);
+    wxTheApp->Disconnect(XRCID("run_unit_tests"), wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(UnitTestPP::OnRunUnitTests), NULL, (wxEvtHandler*)this);
 
-    wxTheApp->Disconnect(XRCID("run_unit_tests"),
-                         wxEVT_UPDATE_UI,
-                         wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI),
-                         NULL,
-                         (wxEvtHandler*)this);
+    wxTheApp->Disconnect(XRCID("run_unit_tests"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI),
+                         NULL, (wxEvtHandler*)this);
 
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &UnitTestPP::OnProcessRead, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &UnitTestPP::OnProcessTerminated, this);
@@ -211,12 +185,12 @@ wxMenu* UnitTestPP::CreateEditorPopMenu()
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(
-        menu, XRCID("unittestpp_new_simple_test"), _("Create new &test..."), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("unittestpp_new_simple_test"), _("Create new &test..."), wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(
-        menu, XRCID("unittestpp_new_class_test"), _("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), _("Create tests for &class..."), wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
 
     return menu;
@@ -230,8 +204,7 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
         if(wxMessageBox(
                wxString::Format(
                    _("There are currently no UnitTest project in your workspace\nWould you like to create one now?")),
-               _("CodeLite"),
-               wxYES_NO | wxCANCEL) == wxYES) {
+               _("CodeLite"), wxYES_NO | wxCANCEL) == wxYES) {
             // add new UnitTest project
             wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
             m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
@@ -299,8 +272,7 @@ void UnitTestPP::OnNewSimpleTest(wxCommandEvent& e)
         if(wxMessageBox(
                wxString::Format(
                    _("There are currently no UnitTest project in your workspace\nWould you like to create one now?")),
-               _("CodeLite"),
-               wxYES_NO | wxCANCEL) == wxYES) {
+               _("CodeLite"), wxYES_NO | wxCANCEL) == wxYES) {
             // add new UnitTest project
             wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
             m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
@@ -332,9 +304,7 @@ void UnitTestPP::OnNewSimpleTest(wxCommandEvent& e)
     }
 }
 
-void UnitTestPP::DoCreateFixtureTest(const wxString& name,
-                                     const wxString& fixture,
-                                     const wxString& projectName,
+void UnitTestPP::DoCreateFixtureTest(const wxString& name, const wxString& fixture, const wxString& projectName,
                                      const wxString& filename)
 {
     wxString text;
@@ -344,9 +314,7 @@ void UnitTestPP::DoCreateFixtureTest(const wxString& name,
     text << wxT("}\n");
 
     IEditor* editor = DoAddTestFile(filename, projectName);
-    if(editor) {
-        editor->AppendText(text);
-    }
+    if(editor) { editor->AppendText(text); }
 }
 
 void UnitTestPP::DoCreateSimpleTest(const wxString& name, const wxString& projectName, const wxString& filename)
@@ -367,9 +335,7 @@ void UnitTestPP::DoCreateSimpleTest(const wxString& name, const wxString& projec
     text << wxT("{\n");
     text << wxT("}\n");
 
-    if(editor) {
-        editor->AppendText(text);
-    }
+    if(editor) { editor->AppendText(text); }
 }
 
 void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
@@ -386,8 +352,8 @@ void UnitTestPP::OnRunUnitTestsUI(wxUpdateUIEvent& e)
         e.Enable(false);
 
     } else {
-        ProjectPtr p = m_mgr->GetSelectedProject();
-        e.Enable(p && p->GetProjectInternalType() == wxT("UnitTest++"));
+        e.Enable(clCxxWorkspaceST::Get()->IsOpen() && clCxxWorkspaceST::Get()->GetActiveProject() &&
+                 clCxxWorkspaceST::Get()->GetActiveProject()->GetProjectInternalType() == wxT("UnitTest++"));
     }
 }
 
@@ -399,18 +365,14 @@ std::vector<ProjectPtr> UnitTestPP::GetUnitTestProjects()
     for(size_t i = 0; i < projects.GetCount(); i++) {
         wxString err_msg;
         ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
-        if(proj && IsUnitTestProject(proj)) {
-            ut_projects.push_back(proj);
-        }
+        if(proj && IsUnitTestProject(proj)) { ut_projects.push_back(proj); }
     }
     return ut_projects;
 }
 
 bool UnitTestPP::IsUnitTestProject(ProjectPtr p)
 {
-    if(!p) {
-        return false;
-    }
+    if(!p) { return false; }
     return p->GetProjectInternalType() == wxT("UnitTest++");
 }
 
@@ -422,8 +384,7 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
         // the file does not exist!
         wxFFile file(filename, wxT("wb"));
         if(!file.IsOpened()) {
-            wxMessageBox(wxString::Format(_("Could not create target file '%s'"), filename.c_str()),
-                         _("CodeLite"),
+            wxMessageBox(wxString::Format(_("Could not create target file '%s'"), filename.c_str()), _("CodeLite"),
                          wxICON_WARNING | wxOK);
             return NULL;
         }
@@ -440,7 +401,7 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
     if(proj) {
         std::vector<wxFileName> files;
-        proj->GetFiles(files, true);
+        proj->GetFilesAsVectorOfFileName(files);
 
         // Search the target file, if it is already exist in the project, open the file
         // and return
@@ -465,9 +426,7 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
         // open the file
         m_mgr->OpenFile(fn.GetFullPath());
         editor = m_mgr->GetActiveEditor();
-        if(editor && editor->GetFileName() == fn) {
-            return editor;
-        }
+        if(editor && editor->GetFileName() == fn) { return editor; }
     }
     return NULL;
 }
@@ -477,15 +436,13 @@ wxFileName UnitTestPP::FindBestSourceFile(ProjectPtr proj, const wxFileName& fil
     if(filename.IsOk() == false) {
         // no such file
         std::vector<wxFileName> files;
-        proj->GetFiles(files, true);
+        proj->GetFilesAsVectorOfFileName(files);
 
         // Search the target file, if it is already exist in the project, open the file
         // and return
         for(size_t i = 0; i < files.size(); i++) {
             wxFileName fn = files.at(i);
-            if(IsSourceFile(fn.GetExt())) {
-                return fn;
-            }
+            if(IsSourceFile(fn.GetExt())) { return fn; }
         }
         // no source file were found in the project
         // create a path name of the file which will be located
@@ -506,9 +463,7 @@ wxFileName UnitTestPP::FindBestSourceFile(ProjectPtr proj, const wxFileName& fil
 void UnitTestPP::OnMarkProjectAsUT(wxCommandEvent& e)
 {
     ProjectPtr p = m_mgr->GetSelectedProject();
-    if(!p) {
-        return;
-    }
+    if(!p) { return; }
 
     p->SetProjectInternalType(wxT("UnitTest++"));
     p->Save();
@@ -571,9 +526,7 @@ void UnitTestPP::OnRunProject(clExecuteEvent& e)
     ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject(e.GetTargetName());
     CHECK_PTR_RET(pProj);
 
-    if(pProj->GetProjectInternalType() != "UnitTest++") {
-        return;
-    }
+    if(pProj->GetProjectInternalType() != "UnitTest++") { return; }
 
     // This is our to handle
     e.Skip(false);
@@ -586,10 +539,10 @@ void UnitTestPP::DoRunProject(ProjectPtr project)
     wxString wd;
     wxString cmd = m_mgr->GetProjectExecutionCommand(project->GetName(), wd);
     DirSaver ds;
-    
+
     // Ensure that the ut++ page is shown and selected
     m_mgr->ShowOutputPane("UnitTest++");
-    
+
     // first we need to CD to the project directory
     ::wxSetWorkingDirectory(project->GetFileName().GetPath());
 

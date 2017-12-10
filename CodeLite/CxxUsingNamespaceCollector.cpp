@@ -11,11 +11,11 @@ CxxUsingNamespaceCollector::~CxxUsingNamespaceCollector() {}
 
 void CxxUsingNamespaceCollector::OnToken(CxxLexerToken& token)
 {
-    switch(token.type) {
+    switch(token.GetType()) {
     case T_PP_INCLUDE_FILENAME: {
         // we found an include statement, recurse into it
         wxFileName include;
-        if(m_preProcessor->CanGoDeeper() && m_preProcessor->ExpandInclude(m_filename, token.text, include)) {
+        if(m_preProcessor->CanGoDeeper() && m_preProcessor->ExpandInclude(m_filename, token.GetText(), include)) {
             CxxUsingNamespaceCollector* scanner = new CxxUsingNamespaceCollector(m_preProcessor, include);
             m_preProcessor->IncDepth();
             scanner->Parse();
@@ -42,15 +42,15 @@ void CxxUsingNamespaceCollector::ParseUsingNamespace()
     // Get the next token
     CxxLexerToken token;
     if(!::LexerNext(m_scanner, token)) return;
-    if(token.type != T_NAMESPACE) return;
+    if(token.GetType() != T_NAMESPACE) return;
 
     // Read everything until we find the ';'
     wxString usingNamespace;
     while(::LexerNext(m_scanner, token)) {
-        if(token.type == ';') {
+        if(token.GetType() == ';') {
             break;
         }
-        usingNamespace << token.text;
+        usingNamespace << token.GetText();
     }
     if(!usingNamespace.IsEmpty()) {
         m_usingNamespaces.Add(usingNamespace);

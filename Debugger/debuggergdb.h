@@ -126,6 +126,7 @@ public:
     virtual bool RemoveBreak(double bid);
     virtual bool RemoveAllBreaks();
     virtual bool StepIn();
+    virtual bool StepInInstruction();
     virtual bool StepOut();
     virtual bool Next();
     virtual bool NextInstruction();

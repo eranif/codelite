@@ -58,8 +58,6 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     std::map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
     if(iter != m_toolbarsBitmaps.end()) {
         const wxBitmap& b = iter->second;
-        clDEBUG1() << "Loaded HiRes image:" << newName << clEndl;
-        clDEBUG1() << "Image Size:" << b.GetWidth() << "x" << b.GetHeight() << clEndl;
         return b;
     }
 
@@ -361,5 +359,17 @@ void BitmapLoader::initialize()
                 m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
             }
         }
+
+        // if(DrawingUtils::IsDark(DrawingUtils::GetMenuBarBgColour())) {
+        //     std::map<wxString, wxBitmap> greyBitmaps;
+        //     std::for_each(m_toolbarsBitmaps.begin(),
+        //                   m_toolbarsBitmaps.end(),
+        //                   [&](const std::map<wxString, wxBitmap>::value_type& vt) {
+        //         wxBitmap bmp = DrawingUtils::CreateGrayBitmap(vt.second);
+        //         wxString name = vt.first;
+        //         greyBitmaps[name] = bmp;
+        //     });
+        //     m_toolbarsBitmaps.swap(greyBitmaps);
+        // }
     }
 }

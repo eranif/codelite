@@ -36,6 +36,7 @@
 #include <wx/commandlinkbutton.h>
 #include <wx/dirctrl.h>
 #include <wx/simplebook.h>
+#include "clConfigurationSelectionCtrl.h"
 #include <wx/treectrl.h>
 #include "fileview.h"
 #include <wx/frame.h>
@@ -232,20 +233,16 @@ class WorkspaceTabBase : public wxPanel
 {
 public:
     enum {
-        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8001,
-        ID_TOOL_COLLAPSE_ALL = 8002,
+        ID_TOOL_LINK_EDITOR = 8001,
+        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8002,
         ID_TOOL_GOTO_ACTIVE_PROJECT = 8003,
-        ID_TOOL_LINK_EDITOR = 8004,
+        ID_TOOL_COLLAPSE_ALL = 8004,
     };
 protected:
     wxSimplebook* m_simpleBook;
     wxPanel* m_panelCxx;
     wxAuiToolBar* m_auibar;
-    wxSplitterWindow* m_splitter;
-    wxPanel* m_splitterPage308;
-    wxChoice* m_choiceActiveProject;
-    wxPanel* m_splitterPage312;
-    wxChoice* m_workspaceConfig;
+    clConfigurationSelectionCtrl* m_configChangeCtrl;
     FileViewTree* m_fileView;
 
 protected:
@@ -257,18 +254,10 @@ protected:
     virtual void OnProjectSettingsUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLinkEditor(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnChoiceActiveProject(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnChoiceActiveProjectUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnConfigurationManagerChoice(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxAuiToolBar* GetAuibar() { return m_auibar; }
-    wxChoice* GetChoiceActiveProject() { return m_choiceActiveProject; }
-    wxPanel* GetSplitterPage308() { return m_splitterPage308; }
-    wxChoice* GetWorkspaceConfig() { return m_workspaceConfig; }
-    wxPanel* GetSplitterPage312() { return m_splitterPage312; }
-    wxSplitterWindow* GetSplitter() { return m_splitter; }
+    clConfigurationSelectionCtrl* GetConfigChangeCtrl() { return m_configChangeCtrl; }
     FileViewTree* GetFileView() { return m_fileView; }
     wxPanel* GetPanelCxx() { return m_panelCxx; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }
@@ -293,7 +282,7 @@ protected:
 public:
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxToolBar* GetToolbar() { return m_toolbar; }
-    EditorFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("EditorFrame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,600), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_FLOAT_ON_PARENT);
+    EditorFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("EditorFrame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,600), long style = wxDEFAULT_FRAME_STYLE);
     virtual ~EditorFrameBase();
 };
 
@@ -367,8 +356,8 @@ class ClangOutputTabBase : public wxPanel
 {
 public:
     enum {
-        ID_TOOL_CLEAR_ALL = 8001,
-        ID_TOOL_CLEAR_LOG = 8002,
+        ID_TOOL_CLEAR_LOG = 8001,
+        ID_TOOL_CLEAR_ALL = 8002,
     };
 protected:
     wxAuiToolBar* m_auibar;

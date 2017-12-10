@@ -26,14 +26,14 @@ LLDBCallStackBase::LLDBCallStackBase(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    m_dvListCtrlBacktrace = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlBacktrace = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer2->Add(m_dvListCtrlBacktrace, 1, wxALL|wxEXPAND, 2);
+    boxSizer2->Add(m_dvListCtrlBacktrace, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrlBacktrace->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
-    m_dvListCtrlBacktrace->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dvListCtrlBacktrace->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
-    m_dvListCtrlBacktrace->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlBacktrace->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT);
+    m_dvListCtrlBacktrace->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
+    m_dvListCtrlBacktrace->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(300), wxALIGN_LEFT);
+    m_dvListCtrlBacktrace->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
     
     SetName(wxT("LLDBCallStackBase"));
     SetSize(500,300);
@@ -66,14 +66,14 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer10);
     
-    m_notebook205 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook205 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
     m_notebook205->SetName(wxT("m_notebook205"));
     wxImageList* m_notebook205_il = new wxImageList(16, 16);
     m_notebook205->AssignImageList(m_notebook205_il);
     
-    boxSizer10->Add(m_notebook205, 1, wxEXPAND, 5);
+    boxSizer10->Add(m_notebook205, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_pageBreakpoints = new wxPanel(m_notebook205, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_pageBreakpoints = new wxPanel(m_notebook205, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook205, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_pageBreakpointsImgIndex;
     m_pageBreakpointsImgIndex = m_notebook205_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("breakpoint")));
     m_notebook205->AddPage(m_pageBreakpoints, _("Breakpoints"), true, m_pageBreakpointsImgIndex);
@@ -81,10 +81,10 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer211 = new wxBoxSizer(wxVERTICAL);
     m_pageBreakpoints->SetSizer(boxSizer211);
     
-    m_auibar = new wxAuiToolBar(m_pageBreakpoints, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar = new wxAuiToolBar(m_pageBreakpoints, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_pageBreakpoints, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer211->Add(m_auibar, 0, wxEXPAND, 5);
+    boxSizer211->Add(m_auibar, 0, wxEXPAND, WXC_FROM_DIP(5));
     
     m_auibar->AddTool(wxID_NEW, _("New breakpoint"), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL, _("New breakpoint"), _("New breakpoint"), NULL);
     
@@ -93,19 +93,19 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
     m_auibar->AddTool(wxID_CLEAR, _("Delete All Breakpoints"), wxXmlResource::Get()->LoadBitmap(wxT("16-clean")), wxNullBitmap, wxITEM_NORMAL, _("Delete All Breakpoints"), _("Delete All Breakpoints"), NULL);
     m_auibar->Realize();
     
-    m_dataview = new wxDataViewCtrl(m_pageBreakpoints, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(m_pageBreakpoints, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_pageBreakpoints, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewModel = new LLDBBreakpointModel;
     m_dataviewModel->SetColCount( 4 );
     m_dataview->AssociateModel(m_dataviewModel.get() );
     
-    boxSizer211->Add(m_dataview, 1, wxALL|wxEXPAND, 2);
+    boxSizer211->Add(m_dataview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dataview->AppendTextColumn(_("#"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("File"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Line"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_panelConsole = new wxPanel(m_notebook205, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_dataview->AppendTextColumn(_("#"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("File"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Line"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
+    m_panelConsole = new wxPanel(m_notebook205, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook205, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_panelConsoleImgIndex;
     m_panelConsoleImgIndex = m_notebook205_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-console")));
     m_notebook205->AddPage(m_panelConsole, _("Console"), false, m_panelConsoleImgIndex);
@@ -113,7 +113,7 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer213 = new wxBoxSizer(wxVERTICAL);
     m_panelConsole->SetSizer(boxSizer213);
     
-    m_stcConsole = new wxStyledTextCtrl(m_panelConsole, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stcConsole = new wxStyledTextCtrl(m_panelConsole, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelConsole, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_stcConsole->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcConsole->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -149,15 +149,15 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
     m_stcConsole->SetKeyWords(3, wxT(""));
     m_stcConsole->SetKeyWords(4, wxT(""));
     
-    boxSizer213->Add(m_stcConsole, 1, wxALL|wxEXPAND, 2);
+    boxSizer213->Add(m_stcConsole, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_textCtrlConsoleSend = new wxTextCtrl(m_panelConsole, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlConsoleSend = new wxTextCtrl(m_panelConsole, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panelConsole, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
     m_textCtrlConsoleSend->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlConsoleSend->SetHint(_("Send commands to lldb"));
     #endif
     
-    boxSizer213->Add(m_textCtrlConsoleSend, 0, wxALL|wxEXPAND, 2);
+    boxSizer213->Add(m_textCtrlConsoleSend, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     SetName(wxT("LLDBOutputViewBase"));
     SetSize(500,300);
@@ -207,52 +207,52 @@ LLDBNewBreakpointDlgBase::LLDBNewBreakpointDlgBase(wxWindow* parent, wxWindowID 
     flexGridSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer41->AddGrowableCol(1);
     
-    boxSizer32->Add(flexGridSizer41, 1, wxALL|wxEXPAND, 5);
+    boxSizer32->Add(flexGridSizer41, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxFileLine = new wxCheckBox(this, wxID_ANY, _("File and Line:"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_RIGHT);
+    m_checkBoxFileLine = new wxCheckBox(this, wxID_ANY, _("File and Line:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxALIGN_RIGHT);
     m_checkBoxFileLine->SetValue(false);
     
-    flexGridSizer41->Add(m_checkBoxFileLine, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer41->Add(m_checkBoxFileLine, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlFile = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlFile = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrlFile->SetToolTip(_("File name"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlFile->SetHint(wxT(""));
     #endif
     
-    flexGridSizer41->Add(m_textCtrlFile, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer41->Add(m_textCtrlFile, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlLine = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlLine = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrlLine->SetToolTip(_("Line number"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlLine->SetHint(wxT(""));
     #endif
     
-    flexGridSizer41->Add(m_textCtrlLine, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer41->Add(m_textCtrlLine, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_checkBoxFuncName = new wxCheckBox(this, wxID_ANY, _("Function name:"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_RIGHT);
+    m_checkBoxFuncName = new wxCheckBox(this, wxID_ANY, _("Function name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxALIGN_RIGHT);
     m_checkBoxFuncName->SetValue(false);
     
-    flexGridSizer41->Add(m_checkBoxFuncName, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer41->Add(m_checkBoxFuncName, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlFunctionName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlFunctionName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlFunctionName->SetHint(wxT(""));
     #endif
     
-    flexGridSizer41->Add(m_textCtrlFunctionName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer41->Add(m_textCtrlFunctionName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    flexGridSizer41->Add(0, 0, 1, wxALL, 5);
+    flexGridSizer41->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer34 = new wxStdDialogButtonSizer();
     
-    boxSizer32->Add(m_stdBtnSizer34, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer32->Add(m_stdBtnSizer34, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button36 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button36 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button36->SetDefault();
     m_stdBtnSizer34->AddButton(m_button36);
     
-    m_button38 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button38 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer34->AddButton(m_button38);
     m_stdBtnSizer34->Realize();
     
@@ -305,10 +305,10 @@ LLDBLocalsViewBase::LLDBLocalsViewBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer67 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer67);
     
-    m_auibar199 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar199 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar199->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer67->Add(m_auibar199, 0, wxEXPAND, 5);
+    boxSizer67->Add(m_auibar199, 0, wxEXPAND, WXC_FROM_DIP(5));
     
     m_auibar199->AddTool(wxID_NEW, _("Add Watch..."), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL, _("Add Watch..."), _("Add Watch..."), NULL);
     
@@ -349,12 +349,12 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* boxSizer77 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer77);
     
-    m_notebook87 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook87 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
     m_notebook87->SetName(wxT("m_notebook87"));
     
-    boxSizer77->Add(m_notebook87, 1, wxALL|wxEXPAND, 5);
+    boxSizer77->Add(m_notebook87, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel89 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel89 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook87, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_panel89, _("General"), true);
     
     wxBoxSizer* boxSizer93 = new wxBoxSizer(wxVERTICAL);
@@ -364,9 +364,9 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     wxUnusedVar(m_pgMgrDisplayPropertiesArr);
     wxArrayInt m_pgMgrDisplayPropertiesIntArr;
     wxUnusedVar(m_pgMgrDisplayPropertiesIntArr);
-    m_pgMgrDisplayProperties = new wxPropertyGridManager(m_panel89, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgrDisplayProperties = new wxPropertyGridManager(m_panel89, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel89, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer93->Add(m_pgMgrDisplayProperties, 1, wxALL|wxEXPAND, 5);
+    boxSizer93->Add(m_pgMgrDisplayProperties, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_pgPropCatGeneral = m_pgMgrDisplayProperties->Append(  new wxPropertyCategory( _("Behaviour") ) );
     m_pgPropCatGeneral->SetHelpString(wxT(""));
@@ -383,13 +383,13 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_pgPropCallStackSize = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxIntProperty( _("Backtrace frames"), wxPG_LABEL, 100) );
     m_pgPropCallStackSize->SetHelpString(_("Maximum number of frames to show in the callstack window"));
     
-    m_panel91 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel91 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook87, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_panel91, _("Types"), false);
     
     wxBoxSizer* boxSizer107 = new wxBoxSizer(wxVERTICAL);
     m_panel91->SetSizer(boxSizer107);
     
-    m_stcTypes = new wxStyledTextCtrl(m_panel91, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stcTypes = new wxStyledTextCtrl(m_panel91, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel91, wxSize(-1,-1)), 0);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
     wxFont m_stcTypesFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -438,16 +438,16 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_stcTypes->SetKeyWords(3, wxT(""));
     m_stcTypes->SetKeyWords(4, wxT(""));
     
-    boxSizer107->Add(m_stcTypes, 1, wxALL|wxEXPAND, 5);
+    boxSizer107->Add(m_stcTypes, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_hyperLink111 = new wxHyperlinkCtrl(m_panel91, wxID_ANY, _("Learn more about LLDB types"), wxT("http://lldb.llvm.org/varformats.html"), wxDefaultPosition, wxSize(-1,-1), wxHL_DEFAULT_STYLE);
+    m_hyperLink111 = new wxHyperlinkCtrl(m_panel91, wxID_ANY, _("Learn more about LLDB types"), wxT("http://lldb.llvm.org/varformats.html"), wxDefaultPosition, wxDLG_UNIT(m_panel91, wxSize(-1,-1)), wxHL_DEFAULT_STYLE);
     m_hyperLink111->SetNormalColour(wxColour(wxT("#0000FF")));
     m_hyperLink111->SetHoverColour(wxColour(wxT("#0000FF")));
     m_hyperLink111->SetVisitedColour(wxColour(wxT("#FF0000")));
     
-    boxSizer107->Add(m_hyperLink111, 0, wxALL|wxEXPAND, 5);
+    boxSizer107->Add(m_hyperLink111, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel142 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel142 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook87, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_panel142, _("Advanced"), false);
     
     wxBoxSizer* boxSizer160 = new wxBoxSizer(wxVERTICAL);
@@ -457,9 +457,9 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     wxUnusedVar(m_pgMgrAdvancedArr);
     wxArrayInt m_pgMgrAdvancedIntArr;
     wxUnusedVar(m_pgMgrAdvancedIntArr);
-    m_pgMgrAdvanced = new wxPropertyGridManager(m_panel142, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgrAdvanced = new wxPropertyGridManager(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer160->Add(m_pgMgrAdvanced, 1, wxALL|wxEXPAND, 5);
+    boxSizer160->Add(m_pgMgrAdvanced, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_pgProp165 = m_pgMgrAdvanced->Append(  new wxPropertyCategory( _("Debugger Proxy") ) );
     m_pgProp165->SetHelpString(wxT(""));
@@ -470,6 +470,12 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_pgMgrAdvancedArr.Add(_("Remote proxy process over TCP/IP"));
     m_pgPropProxyType = m_pgMgrAdvanced->AppendIn( m_pgProp165,  new wxEnumProperty( _("Proxy type"), wxPG_LABEL, m_pgMgrAdvancedArr, m_pgMgrAdvancedIntArr, 0) );
     m_pgPropProxyType->SetHelpString(_("Debugging using LLDB is always done over a proxy process (i.e. codelite-lldb)\nHere you can select the type of the proxy to use (local or remote):\n* Local proxy is used by default to debug local processes (this is the default)\n* Remote proxy: use this method to connect to a remote codelite-lldb proxy server over TCP/IP"));
+    
+    m_pgPropDebugServer = m_pgMgrAdvanced->AppendIn( m_pgProp165,  new wxFileProperty( _("Debug Server Path:"), wxPG_LABEL, wxT("")) );
+    #if !defined(__WXOSX__) && !defined(_WIN64)
+    m_pgPropDebugServer->SetAttribute(wxPG_FILE_WILDCARD, wxT(""));
+    #endif // !defined(__WXOSX__) && !defined(_WIN64)
+    m_pgPropDebugServer->SetHelpString(_("The path to lldb's lldb-server.\nThis is a mandatory field"));
     
     m_pgProp169 = m_pgMgrAdvanced->Append(  new wxPropertyCategory( _("Remote proxy settings") ) );
     m_pgProp169->SetHelpString(wxT(""));
@@ -482,16 +488,16 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     
     m_stdBtnSizer79 = new wxStdDialogButtonSizer();
     
-    boxSizer77->Add(m_stdBtnSizer79, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer77->Add(m_stdBtnSizer79, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button81 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button81 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer79->AddButton(m_button81);
     
-    m_button83 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button83 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button83->SetDefault();
     m_stdBtnSizer79->AddButton(m_button83);
     
-    m_button175 = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button175 = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer79->AddButton(m_button175);
     m_stdBtnSizer79->Realize();
     
@@ -553,15 +559,15 @@ LLDBThreadsViewBase::LLDBThreadsViewBase(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer115 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer115);
     
-    m_dvListCtrlThreads = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlThreads = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer115->Add(m_dvListCtrlThreads, 1, wxALL|wxEXPAND, 2);
+    boxSizer115->Add(m_dvListCtrlThreads, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrlThreads->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 70, wxALIGN_LEFT);
-    m_dvListCtrlThreads->AppendTextColumn(_("Stop Reason"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
-    m_dvListCtrlThreads->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
-    m_dvListCtrlThreads->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dvListCtrlThreads->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(70), wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("Stop Reason"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT);
     
     SetName(wxT("LLDBThreadsViewBase"));
     SetSize(500,300);
@@ -592,52 +598,52 @@ FolderMappingBaseDlg::FolderMappingBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer179 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer179);
     
-    m_staticText197 = new wxStaticText(this, wxID_ANY, _("You are debugging on a remote machine. In order for codelite\nto be able to load files into the editor, codelite needs to map the folders on\nyour local machine to the folders on the remote machine"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE);
+    m_staticText197 = new wxStaticText(this, wxID_ANY, _("You are debugging on a remote machine. In order for codelite\nto be able to load files into the editor, codelite needs to map the folders on\nyour local machine to the folders on the remote machine"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxALIGN_CENTRE);
     m_staticText197->SetForegroundColour(wxColour(wxT("rgb(0,64,0)")));
     wxFont m_staticText197Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText197Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText197->SetFont(m_staticText197Font);
     
-    boxSizer179->Add(m_staticText197, 0, wxALL|wxEXPAND, 10);
+    boxSizer179->Add(m_staticText197, 0, wxALL|wxEXPAND, WXC_FROM_DIP(10));
     
     wxFlexGridSizer* flexGridSizer187 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer187->SetFlexibleDirection( wxBOTH );
     flexGridSizer187->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer187->AddGrowableCol(1);
     
-    boxSizer179->Add(flexGridSizer187, 1, wxALL|wxEXPAND, 5);
+    boxSizer179->Add(flexGridSizer187, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText189 = new wxStaticText(this, wxID_ANY, _("Local Folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText189 = new wxStaticText(this, wxID_ANY, _("Local Folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer187->Add(m_staticText189, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer187->Add(m_staticText189, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_dirPickerLocal = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerLocal = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     m_dirPickerLocal->SetToolTip(_("Local Folder"));
     m_dirPickerLocal->SetFocus();
     
-    flexGridSizer187->Add(m_dirPickerLocal, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer187->Add(m_dirPickerLocal, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText193 = new wxStaticText(this, wxID_ANY, _("Remote Folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText193 = new wxStaticText(this, wxID_ANY, _("Remote Folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer187->Add(m_staticText193, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer187->Add(m_staticText193, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlRemote = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlRemote = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrlRemote->SetToolTip(_("Remote Folder"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlRemote->SetHint(wxT(""));
     #endif
     
-    flexGridSizer187->Add(m_textCtrlRemote, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer187->Add(m_textCtrlRemote, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer181 = new wxStdDialogButtonSizer();
     
-    boxSizer179->Add(m_stdBtnSizer181, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    boxSizer179->Add(m_stdBtnSizer181, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_button183 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button183 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button183->SetDefault();
     m_stdBtnSizer181->AddButton(m_button183);
     
-    m_button185 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button185 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer181->AddButton(m_button185);
     m_stdBtnSizer181->Realize();
     

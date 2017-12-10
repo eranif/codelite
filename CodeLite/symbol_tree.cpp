@@ -96,6 +96,7 @@ void SymbolTree::InitialiseSymbolMap()
     m_imagesMap[wxT("macro_protected")] = 12;
     m_imagesMap[wxT("macro_public")] = 12;
     m_imagesMap[wxT("enum")] = 13;
+    m_imagesMap[wxT("cenum")] = 13;
     m_imagesMap[wxT("enum_private")] = 13;
     m_imagesMap[wxT("enum_public")] = 13;
     m_imagesMap[wxT("enum_protected")] = 13;

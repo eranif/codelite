@@ -18,12 +18,11 @@
 #include <wx/sizer.h>
 #include <wx/bannerwindow.h>
 #include <wx/commandlinkbutton.h>
+#include <wx/radiobox.h>
 #include <wx/dataview.h>
-#include <wx/stc/stc.h>
-#include <wx/button.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include <wx/radiobox.h>
+#include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -51,11 +50,7 @@ protected:
     wxCommandLinkButton* m_cmdLnkBtn107;
     clBoostrapWizardPagePlugins* m_wizardPagePlugins;
     wxBannerWindow* m_banner811;
-    wxDataViewListCtrl* m_dvListCtrlPlugins;
-    wxStyledTextCtrl* m_stcPluginDesc;
-    wxButton* m_button99;
-    wxButton* m_button101;
-    wxButton* m_button103;
+    wxRadioBox* m_radioBoxProfile;
     clBoostrapWizardPageCompilers* m_wizardPageCompilers;
     wxBannerWindow* m_banner69;
     wxCommandLinkButton* m_cmdLnkBtnScanForCompilers;
@@ -73,12 +68,6 @@ protected:
 protected:
     virtual void OnFinish(wxWizardEvent& event) { event.Skip(); }
     virtual void OnCancelWizard(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPluginSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnCheckAllPlugins(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCheckAllPluginsUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnUnCheckAllPlugins(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUnCheckAllPluginsUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnToggleCxxPlugins(wxCommandEvent& event) { event.Skip(); }
     virtual void OnScanForCompilers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInstallCompilerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnInstallCompiler(wxCommandEvent& event) { event.Skip(); }
@@ -89,11 +78,7 @@ public:
     wxCommandLinkButton* GetCmdLnkBtn107() { return m_cmdLnkBtn107; }
     clBoostrapWizardPageWelcome* GetWizardPageWelcome() { return m_wizardPageWelcome; }
     wxBannerWindow* GetBanner811() { return m_banner811; }
-    wxDataViewListCtrl* GetDvListCtrlPlugins() { return m_dvListCtrlPlugins; }
-    wxStyledTextCtrl* GetStcPluginDesc() { return m_stcPluginDesc; }
-    wxButton* GetButton99() { return m_button99; }
-    wxButton* GetButton101() { return m_button101; }
-    wxButton* GetButton103() { return m_button103; }
+    wxRadioBox* GetRadioBoxProfile() { return m_radioBoxProfile; }
     clBoostrapWizardPagePlugins* GetWizardPagePlugins() { return m_wizardPagePlugins; }
     wxBannerWindow* GetBanner69() { return m_banner69; }
     wxCommandLinkButton* GetCmdLnkBtnScanForCompilers() { return m_cmdLnkBtnScanForCompilers; }

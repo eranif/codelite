@@ -91,7 +91,7 @@ void FindUsageTab::OnMouseDClick(wxStyledTextEvent& e)
 
 void FindUsageTab::OnClearAllUI(wxUpdateUIEvent& e) { e.Enable(m_sci && m_sci->GetLength()); }
 
-void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString& searchWhat)
+void FindUsageTab::ShowUsage(const CppToken::Vec_t& matches, const wxString& searchWhat)
 {
     Clear();
     int lineNumber(0);
@@ -103,8 +103,8 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
     text = wxString::Format(_("===== Finding references of '%s' =====\n"), searchWhat.c_str());
     lineNumber++;
 
-    std::list<CppToken>::const_iterator iter = matches.begin();
-    for(; iter != matches.end(); iter++) {
+    CppToken::Vec_t::const_iterator iter = matches.begin();
+    for(; iter != matches.end(); ++iter) {
 
         // Print the line number
         wxString file_name(iter->getFilename());

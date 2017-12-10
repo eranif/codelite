@@ -214,7 +214,7 @@ wxString CppCheckSettings::GetOptions() const
     }
 
     // Now add any ticked suppressedwarnings
-    std::map<wxString, wxString>::const_iterator iter = m_SuppressedWarnings1.begin();
+    wxStringMap_t::const_iterator iter = m_SuppressedWarnings1.begin();
     for(; iter != m_SuppressedWarnings1.end(); ++iter) {
         options << wxT(" --suppress=") << (*iter).first << " ";
     }

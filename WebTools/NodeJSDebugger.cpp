@@ -1,31 +1,30 @@
+#include "NodeJSCallstackHandler.h"
+#include "NodeJSContinueHandler.h"
 #include "NodeJSDebugger.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include "macros.h"
-#include "NoteJSWorkspace.h"
-#include <wx/msgdlg.h>
-#include "asyncprocess.h"
 #include "NodeJSDebuggerDlg.h"
-#include "processreaderthread.h"
+#include "NodeJSDebuggerTooltip.h"
+#include "NodeJSEvaluateExprHandler.h"
+#include "NodeJSEvents.h"
+#include "NodeJSGetScriptHandler.h"
+#include "NodeJSLookupHandler.h"
+#include "NodeJSSelectFrameHandler.h"
+#include "NodeJSSetBreakpointHandler.h"
+#include "NodeJSWorkspaceUserConfiguration.h"
+#include "NoteJSWorkspace.h"
+#include "asyncprocess.h"
+#include "bookmark_manager.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "imanager.h"
 #include "ieditor.h"
-#include "NodeJSSetBreakpointHandler.h"
+#include "imanager.h"
+#include "macros.h"
+#include "processreaderthread.h"
 #include <algorithm>
-#include "NodeJSContinueHandler.h"
-#include "NodeJSCallstackHandler.h"
-#include "NodeJSSelectFrameHandler.h"
-#include "NodeJSGetScriptHandler.h"
-#include "NodeJSEvents.h"
-#include "bookmark_manager.h"
-#include "NodeJSWorkspaceUserConfiguration.h"
-#include <wx/log.h>
-#include "NodeJSEvaluateExprHandler.h"
-#include "NodeJSLookupHandler.h"
-#include "NodeJSDebuggerTooltip.h"
 #include <signal.h>
-#include <algorithm>
+#include <wx/log.h>
+#include <wx/msgdlg.h>
 
 #define CHECK_RUNNING() \
     if(!IsConnected()) return
@@ -42,6 +41,7 @@ NodeJSDebugger::NodeJSDebugger()
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &NodeJSDebugger::OnDebugNext, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT_INST, &NodeJSDebugger::OnVoid, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_IN, &NodeJSDebugger::OnDebugStepIn, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_I, &NodeJSDebugger::OnVoid, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_OUT, &NodeJSDebugger::OnDebugStepOut, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_EXPR_TOOLTIP, &NodeJSDebugger::OnTooltip, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_CAN_INTERACT, &NodeJSDebugger::OnCanInteract, this);
@@ -70,6 +70,7 @@ NodeJSDebugger::~NodeJSDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &NodeJSDebugger::OnDebugNext, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT_INST, &NodeJSDebugger::OnVoid, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_IN, &NodeJSDebugger::OnDebugStepIn, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_I, &NodeJSDebugger::OnVoid, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_OUT, &NodeJSDebugger::OnDebugStepOut, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_EXPR_TOOLTIP, &NodeJSDebugger::OnTooltip, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_CAN_INTERACT, &NodeJSDebugger::OnCanInteract, this);
@@ -155,9 +156,9 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
 {
     event.Skip();
     CHECK_COND_RET(NodeJSWorkspace::Get()->IsOpen());
-    
+
     event.SetFeatures(0); // No special features by the NodeJS debugger
-    
+
     // Our to handle
     event.Skip(false);
     if(m_socket && m_socket->IsConnected()) {
@@ -166,9 +167,7 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
     };
 
     NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), NodeJSDebuggerDlg::kDebug);
-    if(dlg.ShowModal() != wxID_OK) {
-        return;
-    }
+    if(dlg.ShowModal() != wxID_OK) { return; }
 
     StartDebugger(dlg.GetCommand(), dlg.GetWorkingDirectory());
 }
@@ -243,9 +242,7 @@ void NodeJSDebugger::OnToggleBreakpoint(clDebugEvent& event)
                 // We have no breakpoint on this file/line (yet)
                 m_bptManager.AddBreakpoint(event.GetFileName(), event.GetInt());
                 bp = m_bptManager.GetBreakpoint(event.GetFileName(), event.GetInt());
-                if(IsConnected()) {
-                    SetBreakpoint(bp);
-                }
+                if(IsConnected()) { SetBreakpoint(bp); }
             }
 
             // Update the UI
@@ -421,9 +418,7 @@ void NodeJSDebugger::GotControl(bool requestBacktrace)
 {
     SetCanInteract(true);
     EventNotifier::Get()->TopFrame()->Raise();
-    if(requestBacktrace) {
-        Callstack();
-    }
+    if(requestBacktrace) { Callstack(); }
 }
 
 void NodeJSDebugger::Callstack()
@@ -463,9 +458,7 @@ void NodeJSDebugger::SetCanInteract(bool canInteract)
     clDebugEvent event(canInteract ? wxEVT_NODEJS_DEBUGGER_CAN_INTERACT : wxEVT_NODEJS_DEBUGGER_LOST_INTERACT);
     EventNotifier::Get()->ProcessEvent(event);
     this->m_canInteract = canInteract;
-    if(!canInteract) {
-        ClearDebuggerMarker();
-    }
+    if(!canInteract) { ClearDebuggerMarker(); }
 }
 
 void NodeJSDebugger::SetDebuggerMarker(IEditor* editor, int lineno)
@@ -487,16 +480,14 @@ void NodeJSDebugger::ClearDebuggerMarker()
 {
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
-    std::for_each(
-        editors.begin(), editors.end(), [&](IEditor* editor) { editor->GetCtrl()->MarkerDeleteAll(smt_indicator); });
+    std::for_each(editors.begin(), editors.end(),
+                  [&](IEditor* editor) { editor->GetCtrl()->MarkerDeleteAll(smt_indicator); });
 }
 
 void NodeJSDebugger::DoHighlightLine(const wxString& filename, int lineNo)
 {
     IEditor* activeEditor = clGetManager()->OpenFile(filename, "", lineNo - 1);
-    if(activeEditor) {
-        SetDebuggerMarker(activeEditor, lineNo - 1);
-    }
+    if(activeEditor) { SetDebuggerMarker(activeEditor, lineNo - 1); }
 }
 
 void NodeJSDebugger::OnHighlightLine(clDebugEvent& event)
@@ -536,8 +527,7 @@ void NodeJSDebugger::ExceptionThrown(const NodeJSDebuggerException& exc)
 
 void NodeJSDebugger::ConnectError(const wxString& errmsg)
 {
-    ::wxMessageBox(wxString::Format(_("Failed to connect to Node.js debugger:\n'%s'"), errmsg),
-                   "CodeLite",
+    ::wxMessageBox(wxString::Format(_("Failed to connect to Node.js debugger:\n'%s'"), errmsg), "CodeLite",
                    wxOK | wxICON_ERROR | wxCENTER);
     m_socket.Reset(NULL);
 }
@@ -597,9 +587,7 @@ void NodeJSDebugger::OnEditorChanged(wxCommandEvent& event)
         }
     });
 
-    if(!closedTempEditors.empty()) {
-        DoDeleteTempFiles(closedTempEditors);
-    }
+    if(!closedTempEditors.empty()) { DoDeleteTempFiles(closedTempEditors); }
 }
 
 void NodeJSDebugger::DoDeleteTempFiles(const wxStringSet_t& files)
@@ -673,8 +661,7 @@ void NodeJSDebugger::OnAttach(clDebugEvent& event)
         return;
     }
     event.Skip(false);
-    ::wxMessageBox(_("Debugging a running Node.js process is only available on Linux / OSX"),
-                   "CodeLite",
+    ::wxMessageBox(_("Debugging a running Node.js process is only available on Linux / OSX"), "CodeLite",
                    wxICON_WARNING | wxCENTER | wxOK);
 #else
 

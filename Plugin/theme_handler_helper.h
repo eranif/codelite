@@ -38,10 +38,12 @@ class WXDLLIMPEXP_SDK ThemeHandlerHelper : public wxEvtHandler
 public:
     typedef wxSharedPtr<ThemeHandlerHelper> Ptr;
 
-protected:
-    void DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg);
+private:
     void DoUpdateNotebookStyle(wxWindow* win);
-    
+
+public:
+    void UpdateColours(wxWindow* topWindow);
+
 public:
     ThemeHandlerHelper(wxWindow* win);
     virtual ~ThemeHandlerHelper();

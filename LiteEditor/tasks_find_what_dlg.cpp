@@ -54,7 +54,7 @@ TasksFindWhatDlg::TasksFindWhatDlg(wxWindow* parent)
     TasksPanelData data;
     EditorConfigST::Get()->ReadObject(wxT("TasksPanelData"), &data);
 
-    std::map<wxString, wxString>::const_iterator iter = data.GetTasks().begin();
+    wxStringMap_t::const_iterator iter = data.GetTasks().begin();
     for(; iter != data.GetTasks().end(); iter++) {
         DoAddLine(iter->first, iter->second, data.GetEnabledItems().Index(iter->first) != wxNOT_FOUND);
     }
@@ -136,7 +136,7 @@ void TasksFindWhatDlg::DoSaveList()
 {
     // Save all items
     TasksPanelData data;
-    std::map<wxString, wxString> items;
+    wxStringMap_t items;
     wxArrayString enabledItems;
 
     for(int i = 0; i < m_list->GetItemCount(); i++) {

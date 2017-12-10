@@ -13,11 +13,11 @@ wxDEFINE_EVENT(wxEVT_STATUSBAR_CLICKED, clCommandEvent);
 wxCustomStatusBarArt::wxCustomStatusBarArt(const wxString& name)
     : m_name(name)
 {
-    m_penColour = wxColour(125, 125, 125);
-    m_bgColour = wxColour(86, 86, 86);
-    m_separatorColour = wxColour(50, 50, 50);
-    m_textColour = *wxWHITE;
-    m_textShadowColour = *wxBLACK;
+    m_bgColour = wxColour(171, 177, 186);
+    m_penColour = m_bgColour;//wxColour(125, 125, 125);
+    m_separatorColour = m_bgColour;//wxColour(50, 50, 50);
+    m_textColour = wxColour(67, 74, 86);
+    m_textShadowColour = m_bgColour;//*wxBLACK;
 }
 
 void wxCustomStatusBarArt::DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text)

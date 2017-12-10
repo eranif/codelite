@@ -81,6 +81,8 @@
     <Topleveldir>../php-plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="PhpSFTPHandler.cpp"/>
+    <File Name="PhpSFTPHandler.h"/>
     <File Name="php.cpp"/>
     <File Name="php_editor_context_menu.cpp"/>
     <File Name="ssh_workspace_settings.h"/>
@@ -195,6 +197,19 @@
     <File Name="new_class.wxcp"/>
     <File Name="php_ui.wxcp"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug_Unix">
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Release_Unix">
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="libCodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Win_x86_Release">
+    <Project Name="PHPParser"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -239,6 +254,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ConfigurationName)/PHP.so" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--with-plugins PHP" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -265,7 +281,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -303,6 +319,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ConfigurationName)/PHP.so" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -329,7 +346,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -361,6 +378,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ConfigurationName)/PHP-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="C:/src/codelite/Runtime/codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple
 PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
@@ -388,7 +406,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -423,6 +441,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="$(ConfigurationName)" Command="./codelite.exe" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -449,7 +468,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="yes">
+      <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -458,7 +477,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
 ../CodeLite</SearchPaths>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x86_Release" CompilerType="MinGW ( CodeLite-4.8.1 )" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x86_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2;-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../Interfaces"/>
@@ -483,6 +502,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="$(ConfigurationName)" Command="./codelite.exe" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -509,7 +529,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="yes">
+      <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -519,20 +539,8 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug_Unix">
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Release_Unix">
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="libCodeLite"/>
-    <Project Name="PHPParser"/>
-  </Dependencies>
   <Dependencies Name="Win_x64_Release">
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Win_x86_Release">
+    <Project Name="libCodeLite"/>
     <Project Name="PHPParser"/>
   </Dependencies>
 </CodeLite_Project>

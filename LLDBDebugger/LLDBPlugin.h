@@ -107,6 +107,7 @@ protected:
     void OnDebugEnableAllBreakpoints(clDebugEvent& event);
     void OnDebugDisableAllBreakpoints(clDebugEvent& event);
     void OnDebugNextInst(clDebugEvent& event);
+    void OnDebugVOID(clDebugEvent& event);
     void OnDebugShowCursor(clDebugEvent& event);
 
     void OnBuildStarting(clBuildEvent& event);
@@ -121,6 +122,7 @@ protected:
     void OnLLDBDeletedAllBreakpoints(LLDBEvent& event);
     void OnLLDBBreakpointsUpdated(LLDBEvent& event);
     void OnLLDBExpressionEvaluated(LLDBEvent& event);
+    void OnLLDBLaunchSuccess(LLDBEvent& event);
     void OnDestroyTip(clCommandEvent& e);
 
 public:

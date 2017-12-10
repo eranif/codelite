@@ -737,3 +737,4 @@ wxArrayString PHPWorkspace::GetWorkspaceProjects() const
     });
     return projectArr;
 }
+

@@ -214,20 +214,20 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
     }
 }
 
-CppToken::List_t CppWordScanner::tokenize()
+CppToken::Vec_t CppWordScanner::tokenize()
 {
     int state(STATE_NORMAL);
     StringAccessor accessor(m_text);
     CppToken token;
     int lineNo(0);
-    CppToken::List_t allTokens;
+    CppToken::Vec_t allTokens;
 
     // set the scan range
     size_t f = 0;
     size_t t = m_text.size();
 
     // sanity
-    if(f > m_text.size() || t > m_text.size()) return CppToken::List_t();
+    if(f > m_text.size() || t > m_text.size()) return CppToken::Vec_t();
 
     for(size_t i = f; i < t; i++) {
         char ch = accessor.safeAt(i);
@@ -349,10 +349,7 @@ CppToken::List_t CppWordScanner::tokenize()
     return allTokens;
 }
 
-void CppWordScanner::doInit()
-{
-    TagsManager::GetCXXKeywords(m_keywords);
-}
+void CppWordScanner::doInit() { TagsManager::GetCXXKeywords(m_keywords); }
 
 TextStatesPtr CppWordScanner::states()
 {

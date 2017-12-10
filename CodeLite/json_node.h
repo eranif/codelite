@@ -36,6 +36,7 @@
 #include "cJSON.h"
 #include <wx/colour.h>
 #include <wx/font.h>
+#include "macros.h"
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -50,9 +51,6 @@ protected:
     // Values
     wxVariant _value;
     cJSON* _walker;
-
-public:
-    typedef std::map<wxString, wxString> wxStringMap_t;
 
 public:
     JSONElement(cJSON* json);
@@ -81,14 +79,14 @@ public:
     wxString toString(const wxString& defaultValue = wxEmptyString) const;
     wxArrayString toArrayString(const wxArrayString& defaultValue = wxArrayString()) const;
     JSONElement arrayItem(int pos) const;
-    
+
     // Retuen the object type
     bool isNull() const;
     bool isBool() const;
     bool isString() const;
     bool isNumber() const;
     bool isArray() const;
-    
+
     wxString format() const;
     /**
      * @brief format the JSON into a raw c string
@@ -104,7 +102,7 @@ public:
     wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
     wxFont toFont(const wxFont& defaultFont = wxNullFont) const;
 
-    JSONElement::wxStringMap_t toStringMap() const;
+    wxStringMap_t toStringMap() const;
 
     // Writers
     ////////////////////////////////////////////////
@@ -134,7 +132,7 @@ public:
     JSONElement& addProperty(const wxString& name, const wxPoint& pt);
     JSONElement& addProperty(const wxString& name, const wxColour& colour);
     JSONElement& addProperty(const wxString& name, const wxArrayString& arr);
-    JSONElement& addProperty(const wxString& name, const JSONElement::wxStringMap_t& stringMap);
+    JSONElement& addProperty(const wxString& name, const wxStringMap_t& stringMap);
     JSONElement& addProperty(const wxString& name, const JSONElement& element);
     JSONElement& addProperty(const wxString& name, const char* value, const wxMBConv& conv = wxConvUTF8);
     JSONElement& addProperty(const wxString& name, const wxFont& font);

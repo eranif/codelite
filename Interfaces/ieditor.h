@@ -134,8 +134,13 @@ public:
      * \brief reload the current file from disk - this function discards all changes made
      * to the  current file
      */
-    virtual void ReloadFile() = 0;
-
+    virtual void OpenFile() = 0;
+    
+    /**
+     * @brief reload file content from the disk
+     * @param keepUndoHistory
+     */
+    virtual void ReloadFromDisk(bool keepUndoHistory = false) = 0;
     /**
      * @brief save the editor
      */
@@ -504,6 +509,14 @@ public:
      * @brief apply editor configuration (TAB vs SPACES, tab size, EOL mode etc)
      */
     virtual void ApplyEditorConfig() = 0;
+    
+    /**
+     * @brief return list of bookmarks for a given editor
+     * @param editor the editor
+     * @param bookmarksVector output, contains pairs of: LINE:SNIPPET
+     * @return number of bookmarks found
+     */
+    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector) = 0;
 };
 
 #endif // IEDITOR_H

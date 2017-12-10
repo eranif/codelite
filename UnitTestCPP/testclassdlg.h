@@ -29,6 +29,8 @@
 #include "testclassbasedlg.h"
 #include "entry.h"
 #include <vector>
+#include "wxStringHash.h"
+#include <unordered_map>
 
 class IManager;
 class UnitTestPP;
@@ -36,10 +38,11 @@ class UnitTestPP;
 class TestClassDlg : public TestClassBaseDlg
 {
     IManager* m_manager;
-    std::vector<TagEntryPtr> m_tags;
     UnitTestPP* m_plugin;
+    std::unordered_map<wxString, TagEntryPtrVector_t> m_tags;
 
 protected:
+    virtual void OnClassNameUpdated(wxCommandEvent& event);
     // Handlers for TestClassBaseDlg events.
     void OnRefreshFunctions(wxCommandEvent& event);
     void OnUseActiveEditor(wxCommandEvent& event);

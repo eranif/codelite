@@ -26,26 +26,29 @@
 #ifndef CODELITE_CTAGS_MANAGER_H
 #define CODELITE_CTAGS_MANAGER_H
 
-#include "wx/event.h"
-#include <wx/timer.h>
-#include <wx/stopwatch.h>
-#include "wx/process.h"
-#include "cl_process.h"
-#include "tree.h"
-#include "entry.h"
-#include "cpptoken.h"
-#include <wx/thread.h>
-#include "singleton.h"
+#include "clCxxFileCacheSymbols.h"
 #include "cl_calltip.h"
-#include "comment.h"
-#include "tags_options_data.h"
-#include "setters_getters_data.h"
-#include "extdbdata.h"
-#include "language.h"
-#include <set>
-#include "istorage.h"
-#include "codelite_exports.h"
 #include "cl_command_event.h"
+#include "cl_process.h"
+#include "codelite_exports.h"
+#include "comment.h"
+#include "cpptoken.h"
+#include "entry.h"
+#include "extdbdata.h"
+#include "istorage.h"
+#include "language.h"
+#include "macros.h"
+#include "setters_getters_data.h"
+#include "singleton.h"
+#include "tags_options_data.h"
+#include "tree.h"
+#include "wx/event.h"
+#include "wx/process.h"
+#include "wxStringHash.h"
+#include <set>
+#include <wx/stopwatch.h>
+#include <wx/thread.h>
+#include <wx/timer.h>
 
 #ifdef USE_TRACE
 #include <wx/stopwatch.h>
@@ -73,8 +76,7 @@ extern WXDLLIMPEXP_CL const wxEventType wxEVT_UPDATE_FILETREE_EVENT;
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_TAGS_DB_UPGRADE;
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_TAGS_DB_UPGRADE_INTER;
 
-struct DoxygenComment
-{
+struct DoxygenComment {
     wxString name;
     wxString comment;
 };
@@ -137,7 +139,7 @@ class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 public:
     enum RetagType { Retag_Full, Retag_Quick, Retag_Quick_No_Scan };
     enum eLanguage { kCxx, kJavaScript };
-    
+
 public:
     wxCriticalSection m_crawlerLocker;
 
@@ -154,7 +156,7 @@ private:
     wxString m_cachedFile;
     bool m_enableCaching;
     wxEvtHandler* m_evtHandler;
-    std::set<wxString> m_CppIgnoreKeyWords;
+    wxStringSet_t m_CppIgnoreKeyWords;
     wxArrayString m_projectPaths;
     wxFontEncoding m_encoding;
     wxFileName m_dbFile;
@@ -162,17 +164,23 @@ private:
 #if USE_TAGS_SQLITE3
     ITagsStoragePtr m_db;
 #endif
+    clCxxFileCacheSymbols::Ptr_t m_symbolsCache;
 
 public:
     /**
      * @brief return a set of CXX keywords
      */
-    static void GetCXXKeywords(std::set<wxString>& words);
-    
+    static void GetCXXKeywords(wxStringSet_t& words);
+
     /**
      * @brief return an array of CXX keywords
      */
     static void GetCXXKeywords(wxArrayString& words);
+
+    /**
+     * @brief get the file-symbols cache
+     */
+    clCxxFileCacheSymbols::Ptr_t GetFileCache() { return m_symbolsCache; }
 
     void SetLanguage(Language* lang);
     Language* GetLanguage();
@@ -251,12 +259,13 @@ public:
      * @param path Database file name
      */
     void Store(TagTreePtr tree, const wxFileName& path = wxFileName());
-    
+
     /**
      * @brief parse source file (from memory) and return list of tags
+     * If "filename" is passed, each returned TagEntryPtr will have it as its "FileName" attribute
      */
-    TagEntryPtrVector_t ParseBuffer(const wxString &content);
-    
+    TagEntryPtrVector_t ParseBuffer(const wxString& content, const wxString& filename = "");
+
     /**
      * load all symbols of fileName from the database and return them
      * to user as tree
@@ -341,9 +350,7 @@ public:
      * @param name partial tag name
      * @param tags [output] vector of tags
      */
-    void TagsByScopeAndName(const wxString& scope,
-                            const wxString& name,
-                            std::vector<TagEntryPtr>& tags,
+    void TagsByScopeAndName(const wxString& scope, const wxString& name, std::vector<TagEntryPtr>& tags,
                             size_t flags = PartialMatch);
 
     /**
@@ -353,10 +360,7 @@ public:
      * @param candidates [output] list of TagEntries that can be displayed in Autucompletion box
      * @return true if candidates.size() is greater than 0
      */
-    bool AutoCompleteCandidates(const wxFileName& fileName,
-                                int lineno,
-                                const wxString& expr,
-                                const wxString& text,
+    bool AutoCompleteCandidates(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& text,
                                 std::vector<TagEntryPtr>& candidates);
 
     /**
@@ -367,12 +371,8 @@ public:
      * @param &candidates [output] list of TagEntries that can be displayed in Autucompletion box
      * @return true if candidates.size() is greater than 0
      */
-    bool WordCompletionCandidates(const wxFileName& fileName,
-                                  int lineno,
-                                  const wxString& expr,
-                                  const wxString& text,
-                                  const wxString& word,
-                                  std::vector<TagEntryPtr>& candidates);
+    bool WordCompletionCandidates(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& text,
+                                  const wxString& word, std::vector<TagEntryPtr>& candidates);
 
     /**
      * Delete all tags related to these files
@@ -412,12 +412,8 @@ public:
      * @param isFunc is token is a function
      * @param tips array of tip strings
      */
-    void GetHoverTip(const wxFileName& fileName,
-                     int lineno,
-                     const wxString& expr,
-                     const wxString& word,
-                     const wxString& text,
-                     std::vector<wxString>& tips);
+    void GetHoverTip(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& word,
+                     const wxString& text, std::vector<wxString>& tips);
 
     /**
      * Return a function call tip object
@@ -426,11 +422,8 @@ public:
      * @param word function name
      * @return call tip object
      */
-    clCallTipPtr GetFunctionTip(const wxFileName& fileName,
-                                int lineno,
-                                const wxString& expression,
-                                const wxString& text,
-                                const wxString& word);
+    clCallTipPtr GetFunctionTip(const wxFileName& fileName, int lineno, const wxString& expression,
+                                const wxString& text, const wxString& word);
 
     /**
      * Return true if comment parsing is enabled, false otherwise
@@ -467,11 +460,8 @@ public:
               it will include the declaration as well
      * @param decl [output] if not null, will contain the declaration part of the functions
      */
-    void GenerateSettersGetters(const wxString& scope,
-                                const SettersGettersData& data,
-                                const std::vector<TagEntryPtr>& tags,
-                                wxString& impl,
-                                wxString* decl = NULL);
+    void GenerateSettersGetters(const wxString& scope, const SettersGettersData& data,
+                                const std::vector<TagEntryPtr>& tags, wxString& impl, wxString* decl = NULL);
 
     /**
      * return tags belongs to given scope and kind
@@ -480,11 +470,8 @@ public:
      * @param tags [ouput] the result vector
      * @param inherits set to true if you want inherited members as well members
      */
-    void TagsByScope(const wxString& scopeName,
-                     const wxString& kind,
-                     std::vector<TagEntryPtr>& tags,
-                     bool includeInherits = false,
-                     bool applyLimit = true);
+    void TagsByScope(const wxString& scopeName, const wxString& kind, std::vector<TagEntryPtr>& tags,
+                     bool includeInherits = false, bool applyLimit = true);
 
     /**
      * return tags belongs to given scope and kind
@@ -494,9 +481,7 @@ public:
      * @param inherits set to true if you want inherited members as well members
      * @param include_anon included anonymous members (of Unions/structs/enums)
      */
-    void TagsByScope(const wxString& scopeName,
-                     const wxArrayString& kind,
-                     std::vector<TagEntryPtr>& tags,
+    void TagsByScope(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags,
                      bool include_anon = false);
 
     /**
@@ -507,9 +492,7 @@ public:
      * @param inherits set to true if you want inherited members as well members
      * @param include_anon included anonymous members (of Unions/structs/enums)
      */
-    void TagsByTyperef(const wxString& scopeName,
-                       const wxArrayString& kind,
-                       std::vector<TagEntryPtr>& tags,
+    void TagsByTyperef(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags,
                        bool include_anon = false);
 
     /**
@@ -520,13 +503,8 @@ public:
      * @param gotoImpl set to true, if you wish that CodeLite will find the implementation, false to declaration
      * @param tags the output
      */
-    void FindImplDecl(const wxFileName& fileName,
-                      int lineno,
-                      const wxString& expr,
-                      const wxString& word,
-                      const wxString& text,
-                      std::vector<TagEntryPtr>& tags,
-                      bool impl = true,
+    void FindImplDecl(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& word,
+                      const wxString& text, std::vector<TagEntryPtr>& tags, bool impl = true,
                       bool workspaceOnly = false);
 
     /**
@@ -538,10 +516,7 @@ public:
      * file's content
      * @return CppToken. Check CppToken::getOffset() != wxString::npos to make sure that this is a valid token
      */
-    CppToken FindLocalVariable(const wxFileName& fileName,
-                               int pos,
-                               int lineNumber,
-                               const wxString& word,
+    CppToken FindLocalVariable(const wxFileName& fileName, int pos, int lineNumber, const wxString& word,
                                const wxString& modifiedText = wxEmptyString);
 
     /**
@@ -622,14 +597,14 @@ public:
      * @param tags
      */
     void TagsFromFileAndScope(const wxFileName& fileName, const wxString& scopeName, std::vector<TagEntryPtr>& tags);
-    
+
     /**
      * @brief return list of tags for the given language
      * @param tags [output]
      * @param lang the requested language
      */
-    void GetKeywordsTagsForLanguage(const wxString &filter, eLanguage lang, std::vector<TagEntryPtr>& tags);
-    
+    void GetKeywordsTagsForLanguage(const wxString& filter, eLanguage lang, std::vector<TagEntryPtr>& tags);
+
     /**
      * @brief
      * @param scope
@@ -667,8 +642,8 @@ public:
      * @param tags
      * @param fileName
      */
-    void
-    GetFunctions(std::vector<TagEntryPtr>& tags, const wxString& fileName = wxEmptyString, bool onlyWorkspace = true);
+    void GetFunctions(std::vector<TagEntryPtr>& tags, const wxString& fileName = wxEmptyString,
+                      bool onlyWorkspace = true);
 
     /**
      * @brief return list of tags by KIND
@@ -676,8 +651,8 @@ public:
      * @param kind the kind of the tags to fetch from the database
      * @param partName name criterion (partial)
      */
-    void
-    GetTagsByKind(std::vector<TagEntryPtr>& tags, const wxArrayString& kind, const wxString& partName = wxEmptyString);
+    void GetTagsByKind(std::vector<TagEntryPtr>& tags, const wxArrayString& kind,
+                       const wxString& partName = wxEmptyString);
 
     /**
      * @brief return list of tags by name
@@ -692,14 +667,17 @@ public:
     void GetTagsByPartialName(const wxString& partialName, std::vector<TagEntryPtr>& tags);
 
     /**
+     * @brief return list of tags by their partial names
+     */
+    void GetTagsByPartialNames(const wxArrayString& partialNames, std::vector<TagEntryPtr>& tags);
+
+    /**
      * @brief return list of tags by KIND
      * @param tags [output]
      * @param kind the kind of the tags to fetch from the database
      * @param partName name criterion (partial)
      */
-    void GetTagsByKindLimit(std::vector<TagEntryPtr>& tags,
-                            const wxArrayString& kind,
-                            int limit,
+    void GetTagsByKindLimit(std::vector<TagEntryPtr>& tags, const wxArrayString& kind, int limit,
                             const wxString& partName = wxEmptyString);
 
     /**
@@ -709,8 +687,8 @@ public:
      * @param scope real function scope to use
      * @return the function impl/decl
      */
-    wxString
-    FormatFunction(TagEntryPtr tag, size_t flags = FunctionFormat_WithVirtual, const wxString& scope = wxEmptyString);
+    wxString FormatFunction(TagEntryPtr tag, size_t flags = FunctionFormat_WithVirtual,
+                            const wxString& scope = wxEmptyString);
 
     /**
      * @brief return true of the tag contains a pure virtual function
@@ -773,8 +751,7 @@ public:
      * set to false
      * @return stripped functions signature
      */
-    wxString NormalizeFunctionSig(const wxString& sig,
-                                  size_t flags = Normalize_Func_Name,
+    wxString NormalizeFunctionSig(const wxString& sig, size_t flags = Normalize_Func_Name,
                                   std::vector<std::pair<int, int> >* paramLen = NULL);
 
     /**
@@ -790,8 +767,7 @@ public:
      * @param scopeName derived class
      * @param protos  [output]
      */
-    void GetUnOverridedParentVirtualFunctions(const wxString& scopeName,
-                                              bool onlyPureVirtual,
+    void GetUnOverridedParentVirtualFunctions(const wxString& scopeName, bool onlyPureVirtual,
                                               std::vector<TagEntryPtr>& protos);
 
     /**
@@ -838,20 +814,15 @@ public:
      * to place the function body. set visibility to 0 for 'pubilc' function, 1 for 'protected' and 2 for private
      * return true if this function succeeded, false otherwise
      */
-    bool InsertFunctionDecl(const wxString& clsname,
-                            const wxString& functionDecl,
-                            wxString& sourceContent,
+    bool InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
                             int visibility = 0);
 
     /**
      * @brief insert functionBody into clsname. This function will search for best location
      * to place the function body
      */
-    void InsertFunctionImpl(const wxString& clsname,
-                            const wxString& functionImpl,
-                            const wxString& filename,
-                            wxString& sourceContent,
-                            int& insertedLine);
+    void InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename,
+                            wxString& sourceContent, int& insertedLine);
 
     /**
      * @brief insert forward declaration statement at the top of the file
@@ -861,11 +832,8 @@ public:
      * @param line [output] line number where to add the forward declaration
      * @param impExpMacro [optional/input] Windows DLL Imp/Exp macro
      */
-    void InsertForwardDeclaration(const wxString& classname,
-                                  const wxString& fileContent,
-                                  wxString& lineToAdd,
-                                  int& line,
-                                  const wxString& impExpMacro = "");
+    void InsertForwardDeclaration(const wxString& classname, const wxString& fileContent, wxString& lineToAdd,
+                                  int& line, const wxString& impExpMacro = "");
 
 protected:
     std::map<wxString, bool> m_typeScopeCache;
@@ -896,9 +864,7 @@ public:
      * @param &derivationList
      * @return
      */
-    bool GetDerivationList(const wxString& path,
-                           TagEntryPtr parentTag,
-                           std::vector<wxString>& derivationList,
+    bool GetDerivationList(const wxString& path, TagEntryPtr parentTag, std::vector<wxString>& derivationList,
                            std::set<wxString>& scannedInherits);
 
     /**
@@ -914,13 +880,13 @@ public:
      */
     wxString WrapLines(const wxString& str);
 
-    void GetVariables(const std::string& in,
-                      VariableList& li,
-                      const std::map<std::string, std::string>& ignoreMap,
-                      bool isUsedWithinFunc);
-    void GetVariables(const wxFileName& filename, wxArrayString& locals);
-    void
-    GetFunctionTipFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word, std::vector<TagEntryPtr>& tips);
+    //    void GetVariables(const std::string& in,
+    //                      VariableList& li,
+    //                      const std::map<std::string, std::string>& ignoreMap,
+    //                      bool isUsedWithinFunc);
+    //    void GetVariables(const wxFileName& filename, wxArrayString& locals);
+    void GetFunctionTipFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word,
+                                std::vector<TagEntryPtr>& tips);
 
     /**
      * @brief create doxygen comment from a tag
@@ -928,7 +894,7 @@ public:
      * @param keyPrefix should we use @ or \\ to prefix doxy keywords?
      */
     DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
-    
+
 protected:
     void DoFindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags);
     void DoFilterDuplicatesByTagID(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
@@ -936,37 +902,23 @@ protected:
     void DoFilterCtorDtorIfNeeded(std::vector<TagEntryPtr>& tags, const wxString& oper);
     void RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
     void GetGlobalTags(const wxString& name, std::vector<TagEntryPtr>& tags, size_t flags = PartialMatch);
-    void GetLocalTags(const wxString& name,
-                      const wxString& scope,
-                      std::vector<TagEntryPtr>& tags,
+    void GetLocalTags(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags, bool isFuncSignature,
                       size_t flags = PartialMatch);
     void TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word, std::vector<wxString>& tips);
-    bool ProcessExpression(const wxFileName& filename,
-                           int lineno,
-                           const wxString& expr,
-                           const wxString& scopeText,
-                           wxString& typeName,
-                           wxString& typeScope,
-                           wxString& oper,
-                           wxString& scopeTempalteInitiList);
+    bool ProcessExpression(const wxFileName& filename, int lineno, const wxString& expr, const wxString& scopeText,
+                           wxString& typeName, wxString& typeScope, wxString& oper, wxString& scopeTempalteInitiList);
     void FilterImplementation(const std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& tags);
     void FilterDeclarations(const std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& tags);
-    wxString DoReplaceMacros(wxString name);
+    wxString DoReplaceMacros(const wxString& name);
     void DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITagsStoragePtr db);
-    void DoGetFunctionTipForEmptyExpression(const wxString& word,
-                                            const wxString& text,
-                                            std::vector<TagEntryPtr>& tips,
+    void DoGetFunctionTipForEmptyExpression(const wxString& word, const wxString& text, std::vector<TagEntryPtr>& tips,
                                             bool globalScopeOnly = false);
-    void TryFindImplDeclUsingNS(const wxString& scope,
-                                const wxString& word,
-                                bool imp,
-                                const std::vector<wxString>& visibleScopes,
-                                std::vector<TagEntryPtr>& tags);
+    void TryFindImplDeclUsingNS(const wxString& scope, const wxString& word, bool imp,
+                                const std::vector<wxString>& visibleScopes, std::vector<TagEntryPtr>& tags);
     void TryReducingScopes(const wxString& scope, const wxString& word, bool imp, std::vector<TagEntryPtr>& tags);
     wxArrayString BreakToOuterScopes(const wxString& scope);
     wxString DoReplaceMacrosFromDatabase(const wxString& name);
     void DoSortByVisibility(TagEntryPtrVector_t& tags);
-    void AddEnumClassData(wxString& tags);
     void GetScopesByScopeName(const wxString& scopeName, wxArrayString& scopes);
 };
 

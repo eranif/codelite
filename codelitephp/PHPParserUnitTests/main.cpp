@@ -26,7 +26,7 @@ void PrintMatches(const PHPEntityBase::List_t& matches)
 PHPLookupTable lookup;
 TEST_FUNC(test_this_operator)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_this_operator.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_this_operator.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -43,7 +43,7 @@ TEST_FUNC(test_this_operator)
 
 TEST_FUNC(test_class_extends)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_extends.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_extends.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -65,7 +65,7 @@ TEST_FUNC(test_class_extends)
 // $a->
 TEST_FUNC(test_use_alias_operator)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_use_alias_operator.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_use_alias_operator.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -85,7 +85,7 @@ TEST_FUNC(test_use_alias_operator)
 // json_de
 TEST_FUNC(test_expression_parser_for_partial_word)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_expression_parser_for_partial_word.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_expression_parser_for_partial_word.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -98,7 +98,7 @@ TEST_FUNC(test_expression_parser_for_partial_word)
 // $a->foo()->bar()->
 TEST_FUNC(test_long_chain)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_long_chain.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_long_chain.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -116,7 +116,7 @@ TEST_FUNC(test_long_chain)
 
 TEST_FUNC(test_parsing_abstract_class)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_parsing_abstract_class.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_parsing_abstract_class.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -134,7 +134,7 @@ TEST_FUNC(test_parsing_abstract_class)
 
 TEST_FUNC(test_abstract_class_with_self)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_abstract_class_with_self.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_abstract_class_with_self.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -154,7 +154,7 @@ TEST_FUNC(test_abstract_class_with_self)
 // part_w + CTRL+SPACE
 TEST_FUNC(test_word_completion)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -176,7 +176,7 @@ TEST_FUNC(test_word_completion)
 // casting
 TEST_FUNC(test_word_completion_after_casting)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_after_casting.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_after_casting.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -195,7 +195,7 @@ TEST_FUNC(test_word_completion_after_casting)
 // part_w + CTRL+SPACE
 TEST_FUNC(test_word_completion_inside_ns)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_inside_ns.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_inside_ns.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -215,7 +215,7 @@ TEST_FUNC(test_word_completion_inside_ns)
 // test completing class members
 TEST_FUNC(test_class_members)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_members.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_members.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -233,7 +233,7 @@ TEST_FUNC(test_class_members)
 
 TEST_FUNC(test_class_member_initialized)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_member_initialized.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_member_initialized.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -247,7 +247,7 @@ TEST_FUNC(test_class_member_initialized)
 // test completing class members, but this time the class is defined inside a namespace
 TEST_FUNC(test_class_with_members_inside_namespace)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_with_members_inside_namespace.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_with_members_inside_namespace.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -267,7 +267,7 @@ TEST_FUNC(test_class_with_members_inside_namespace)
 // and using multiple times
 TEST_FUNC(test_variable_1)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_variable_1.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_variable_1.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -287,7 +287,7 @@ TEST_FUNC(test_variable_1)
 // and using multiple times
 TEST_FUNC(test_variable_2)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_variable_2.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_variable_2.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -307,7 +307,7 @@ TEST_FUNC(test_variable_2)
 // The variable is used within a class method
 TEST_FUNC(test_variable_assigned_from_function)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_variable_assigned_from_function.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_variable_assigned_from_function.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -327,7 +327,7 @@ TEST_FUNC(test_variable_assigned_from_function)
 // The variable is used within a global function
 TEST_FUNC(test_global_variable_assigned_from_function)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_global_variable_assigned_from_function.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_global_variable_assigned_from_function.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -347,7 +347,7 @@ TEST_FUNC(test_global_variable_assigned_from_function)
 // The variable is used within a global function
 TEST_FUNC(test_interface)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_interface.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_interface.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -366,7 +366,7 @@ TEST_FUNC(test_interface)
 // test usage of the parent keyword
 TEST_FUNC(test_parent)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_parent.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_parent.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -385,7 +385,7 @@ TEST_FUNC(test_parent)
 // test code completion for local variables
 TEST_FUNC(test_locals)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_locals.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_locals.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -404,7 +404,7 @@ TEST_FUNC(test_locals)
 // test code completion for local variables
 TEST_FUNC(test_word_complete_of_aliases)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_complete_of_aliases.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_complete_of_aliases.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -423,7 +423,7 @@ TEST_FUNC(test_word_complete_of_aliases)
 // test code completion for local variables
 TEST_FUNC(test_define)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_define.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_define.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -442,7 +442,7 @@ TEST_FUNC(test_define)
 // test code completion for local variables
 TEST_FUNC(test_define_in_namespace)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_define_in_namespace.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_define_in_namespace.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -461,7 +461,7 @@ TEST_FUNC(test_define_in_namespace)
 // test code completion for local variables
 TEST_FUNC(test_define_with_namespace)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_define_with_namespace.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_define_with_namespace.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -480,7 +480,7 @@ TEST_FUNC(test_define_with_namespace)
 // test code completion for local variables
 TEST_FUNC(test_word_completion_local_variale_1)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_local_variale_1.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_local_variale_1.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -499,7 +499,7 @@ TEST_FUNC(test_word_completion_local_variale_1)
 // test code completion for local variables
 TEST_FUNC(test_word_completion_local_variable_2)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_local_variable_2.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_local_variable_2.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -517,7 +517,7 @@ TEST_FUNC(test_word_completion_local_variable_2)
 
 TEST_FUNC(test_var_assigned_from_require)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_var_assigned_from_require.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_var_assigned_from_require.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -535,7 +535,7 @@ TEST_FUNC(test_var_assigned_from_require)
 
 TEST_FUNC(test_simple_trait)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_simple_trait.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_simple_trait.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -547,7 +547,7 @@ TEST_FUNC(test_simple_trait)
 
 TEST_FUNC(test_use_trait)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_use_trait.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_use_trait.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -565,7 +565,7 @@ TEST_FUNC(test_use_trait)
 
 TEST_FUNC(test_goto_def_with_trait)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_goto_def_with_trait.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_goto_def_with_trait.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -583,7 +583,7 @@ TEST_FUNC(test_goto_def_with_trait)
 
 TEST_FUNC(test_trait_alias)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_trait_alias.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_trait_alias.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -604,13 +604,13 @@ TEST_FUNC(test_partial_namespace)
 {
     {
         // parse the helper file first
-        PHPSourceFile sourceFile(wxFileName("../Tests/test_partial_namespace_helper.php"));
+        PHPSourceFile sourceFile(wxFileName("../Tests/test_partial_namespace_helper.php"), &lookup);
         sourceFile.SetParseFunctionBody(false);
         sourceFile.Parse();
         lookup.UpdateSourceFile(sourceFile);
     }
 
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_partial_namespace.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_partial_namespace.php"), &lookup);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -626,9 +626,37 @@ TEST_FUNC(test_partial_namespace)
     return true;
 }
 
+
+TEST_FUNC(test_extends_with_namespace)
+{
+    {
+        // parse the helper file first
+        PHPSourceFile sourceFile(wxFileName("../Tests/test_partial_namespace_helper.php"), &lookup);
+        sourceFile.SetParseFunctionBody(false);
+        sourceFile.Parse();
+        lookup.UpdateSourceFile(sourceFile);
+    }
+
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_extends_with_namespace.php"), &lookup);
+    sourceFile.SetParseFunctionBody(false);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+
+    CHECK_SIZE(matches.size(), 1);
+    CHECK_WXSTRING((*matches.begin())->GetShortName(), "foo");
+    return true;
+}
+
 TEST_FUNC(test_php7_function_return_value)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_php7_function_return_value.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_php7_function_return_value.php"), &lookup);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -642,7 +670,7 @@ TEST_FUNC(test_php7_function_return_value)
 
 TEST_FUNC(test_php7_function_arg_hinting)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_php7_function_arg_hinting.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_php7_function_arg_hinting.php"), &lookup);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -662,7 +690,7 @@ TEST_FUNC(test_php7_function_arg_hinting)
 TEST_FUNC(test_constants)
 {
     // Parse the test file
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_constants.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_constants.php"), &lookup);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -683,7 +711,7 @@ TEST_FUNC(test_constants)
 TEST_FUNC(test_phpdoc_var_in_class)
 {
     // Parse the test file
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_phpdoc_var_in_class.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_phpdoc_var_in_class.php"), &lookup);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -704,7 +732,7 @@ TEST_FUNC(test_phpdoc_var_in_class)
 TEST_FUNC(test_phpdoc_property)
 {
     // Parse the test file
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_phpdoc_property.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_phpdoc_property.php"), &lookup);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -725,7 +753,7 @@ TEST_FUNC(test_phpdoc_property)
 TEST_FUNC(test_phpdoc_method)
 {
     // Parse the test file
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_phpdoc_method.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_phpdoc_method.php"), &lookup);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -746,7 +774,7 @@ TEST_FUNC(test_phpdoc_method)
 TEST_FUNC(test_function_phpdoc)
 {
     // Parse the test file
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_function_phpdoc.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_function_phpdoc.php"), &lookup);
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -766,7 +794,7 @@ TEST_FUNC(test_function_phpdoc)
 
 TEST_FUNC(test_foreach)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_foreach.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_foreach.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -780,7 +808,7 @@ TEST_FUNC(test_foreach)
 
 TEST_FUNC(test_wrong_goto_interface)
 {
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_wrong_goto_interface.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_wrong_goto_interface.php"), &lookup);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
@@ -791,6 +819,40 @@ TEST_FUNC(test_wrong_goto_interface)
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
     
+    return true;
+}
+
+
+TEST_FUNC(test_function_arg_type_hint_and_php_doc)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_function_arg_type_hint_and_php_doc.php"), &lookup);
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    CHECK_STRING(resolved->GetFullName().ToUTF8(), "\\test_function_arg_type_hint_and_php_doc");
+    return true;
+}
+
+TEST_FUNC(test_func_arg_in_lambda_in_assignment)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_func_arg_in_lambda_in_assignment.php"), &lookup);
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+
+    CHECK_SIZE(matches.size(), 1);
+    CHECK_WXSTRING((*matches.begin())->GetFullName(), "$lambdaArg");
     return true;
 }
 

@@ -59,6 +59,7 @@
 #include "sessionmanager.h"
 #include "event_notifier.h"
 #include "detachedpanesinfo.h"
+#include "clEditorBar.h"
 
 PluginManager* PluginManager::Get()
 {
@@ -213,7 +214,7 @@ void PluginManager::Load()
             if(interface_version != PLUGIN_INTERFACE_VERSION) {
                 CL_WARNING(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface "
                                                 "version is '%d', CodeLite interface version is '%d'"),
-                    fileName.c_str(), interface_version, PLUGIN_INTERFACE_VERSION));
+                                            fileName.c_str(), interface_version, PLUGIN_INTERFACE_VERSION));
                 wxDELETE(dl);
                 continue;
             }
@@ -336,7 +337,7 @@ void PluginManager::Load()
         if(!((visibleTabs.size() == 1) && (visibleTabs.Item(0) == "NOT-FOUND"))) {
             for(size_t i = 0; i < tabs.size(); ++i) {
                 if((visibleTabs.Index(tabs.Item(i)) == wxNOT_FOUND) &&
-                    (detachedPanes.Index(tabs.Item(i)) == wxNOT_FOUND)) {
+                   (detachedPanes.Index(tabs.Item(i)) == wxNOT_FOUND)) {
                     // hidden tab - post an event
                     clCommandEvent eventHide(wxEVT_SHOW_WORKSPACE_TAB);
                     eventHide.SetSelected(false).SetString(tabs.Item(i));
@@ -353,7 +354,7 @@ void PluginManager::Load()
         if(!((visibleTabs.size() == 1) && (visibleTabs.Item(0) == "NOT-FOUND"))) {
             for(size_t i = 0; i < tabs.size(); ++i) {
                 if((visibleTabs.Index(tabs.Item(i)) == wxNOT_FOUND) &&
-                    (detachedPanes.Index(tabs.Item(i)) == wxNOT_FOUND)) {
+                   (detachedPanes.Index(tabs.Item(i)) == wxNOT_FOUND)) {
                     // hidden tab - post an event
                     clCommandEvent eventHide(wxEVT_SHOW_OUTPUT_TAB);
                     eventHide.SetSelected(false).SetString(tabs.Item(i));
@@ -367,7 +368,9 @@ void PluginManager::Load()
 IEditor* PluginManager::GetActiveEditor()
 {
     if(clMainFrame::Get() && clMainFrame::Get()->GetMainBook()) {
-        return (IEditor*)clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
+        LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
+        if(!editor) { return nullptr; }
+        return dynamic_cast<IEditor*>(editor);
     }
     return NULL;
 }
@@ -451,8 +454,8 @@ bool PluginManager::AddFilesToVirtualFolder(const wxString& vdFullPath, wxArrayS
 
 bool PluginManager::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths)
 {
-    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(
-        vdFullPath, paths);
+    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(vdFullPath,
+                                                                                                      paths);
 }
 
 void PluginManager::RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files)
@@ -558,7 +561,9 @@ void PluginManager::EnableToolbars()
 
 void PluginManager::SetStatusMessage(const wxString& msg, int seconds_to_live)
 {
-    GetStatusBar()->SetMessage(msg, seconds_to_live);
+    if(GetStatusBar()) {
+        GetStatusBar()->SetMessage(msg, seconds_to_live);
+    }
 }
 
 void PluginManager::ProcessCommandQueue() { ManagerST::Get()->ProcessCommandQueue(); }
@@ -590,8 +595,8 @@ bool PluginManager::ClosePage(const wxFileName& filename)
 
 wxWindow* PluginManager::FindPage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->FindPage(text); }
 
-bool PluginManager::AddPage(
-    wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected)
+bool PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp,
+                            bool selected)
 {
     return clMainFrame::Get()->GetMainBook()->AddPage(win, text, tooltip, bmp, selected);
 }
@@ -602,8 +607,8 @@ IEditor* PluginManager::OpenFile(const BrowseRecord& rec) { return clMainFrame::
 
 NavMgr* PluginManager::GetNavigationMgr() { return NavMgr::Get(); }
 
-void PluginManager::HookProjectSettingsTab(
-    wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
+void PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName,
+                                           const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
     for(; iter != m_plugins.end(); iter++) {
@@ -611,8 +616,8 @@ void PluginManager::HookProjectSettingsTab(
     }
 }
 
-void PluginManager::UnHookProjectSettingsTab(
-    wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
+void PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName,
+                                             const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
     for(; iter != m_plugins.end(); iter++) {
@@ -943,3 +948,5 @@ bool PluginManager::CloseEditor(IEditor* editor, bool prompt)
 {
     return clMainFrame::Get()->GetMainBook()->ClosePage(editor, prompt);
 }
+
+clEditorBar* PluginManager::GetNavigationBar() { return clMainFrame::Get()->GetMainBook()->GetEditorBar(); }

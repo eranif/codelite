@@ -279,6 +279,12 @@ bool CodeLiteApp::OnInit()
     SetAppName(wxT("codelite"));
 #endif
 
+#ifdef __WXGTK__
+    // We need to set the installation prefix on GTK for some reason (mainly debug builds)
+    wxString installationDir(INSTALL_DIR);
+    installationDir.RemoveLast(sizeof("/share/codelite") - 1);
+    wxStandardPaths::Get().SetInstallPrefix(installationDir);
+#endif
 #if defined(__WXGTK__) || defined(__WXMAC__)
 
     // block signal pipe

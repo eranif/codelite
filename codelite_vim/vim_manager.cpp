@@ -15,8 +15,8 @@
 
 VimManager::VimManager(IManager* manager, VimSettings& settings)
     : m_settings(settings)
-    , m_currentCommand()
-    , m_lastCommand()
+    , m_currentCommand(manager)
+    , m_lastCommand(manager)
     , m_tmpBuf()
     , m_editorStates()
     , m_caretInsertStyle(1)
@@ -193,6 +193,9 @@ void VimManager::updateVimMessage()
     case MESSAGES_VIM::SAVE_AND_CLOSE_VIM_MSG:
         m_mgr->GetStatusBar()->SetMessage(_("Saving and Closing"));
         break;
+    case MESSAGES_VIM::SEARCHING_WORD:
+        m_mgr->GetStatusBar()->SetMessage("Searching: " + m_currentCommand.getSearchedWord());
+        break;
     default:
         m_mgr->GetStatusBar()->SetMessage("Unknown Error");
         break;
@@ -237,6 +240,7 @@ void VimManager::OnCharEvt(wxKeyEvent& event)
         switch(ch) {
         case WXK_ESCAPE:
             skip_event = m_currentCommand.OnEscapeDown();
+            if(status_vim->IsShown()) status_vim->Show(false);
             break;
         default:
             skip_event = m_currentCommand.OnNewKeyDown(ch, modifier_key);

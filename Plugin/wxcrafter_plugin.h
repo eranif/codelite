@@ -73,21 +73,21 @@ class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxPanel
 {
 public:
     enum {
-        ID_SHOW_OVERVIEW_BAR = 1001,
-        ID_SHOW_LINENUMBERS = 1002,
+        ID_SHOW_LINENUMBERS = 1001,
+        ID_DIFF_TOOL_VIEW_HORIZONTAL = 1002,
         ID_DIFF_VERTICAL_VIEW = 1003,
-        ID_DIFF_TOOL_VIEW = 1004,
+        ID_DIFF_TOOL_USE_RIGHT = 1004,
         ID_DIFF_TOOL_USE_LEFT = 1005,
-        ID_DIFF_TOOL_USE_RIGHT = 1006,
+        ID_DIFF_TOOL_IGNORE_WHITESPACE = 1006,
         ID_DIFF_TOOL_COPY_ALL = 1007,
         ID_DIFF_TOOL_COPY_LEFT = 1008,
-        ID_DIFF_TOOL_IGNORE_WHITESPACE = 1009,
-        ID_DIFF_TOOL_VIEW_HORIZONTAL = 1010,
-        ID_DIFF_TOOL_COPY_RIGHT = 1011,
+        ID_DIFF_TOOL_VIEW_SINGLE = 1009,
+        ID_DIFF_TOOL_COPY_RIGHT = 1010,
+        ID_SHOW_OVERVIEW_BAR = 1011,
         ID_DIFF_TOOL_PREV = 1012,
-        ID_DIFF_TOOL_VIEW_SINGLE = 1013,
-        ID_DIFF_TOOL_NEXT = 1014,
-        ID_DIFF_TOOL_SAVE = 1015,
+        ID_DIFF_TOOL_SAVE = 1013,
+        ID_DIFF_TOOL_VIEW = 1014,
+        ID_DIFF_TOOL_NEXT = 1015,
         ID_DIFF_TOOL_REFRESH = 1016,
     };
 protected:
@@ -104,15 +104,15 @@ protected:
     wxPanel* m_splitterPageLeft;
     wxTextCtrl* m_textCtrlLeftFile;
     wxButton* m_button290;
-    wxStaticText* m_staticTextLeft;
     wxStyledTextCtrl* m_stcLeft;
     wxPanel* m_panelOverviewL;
+    wxStaticText* m_staticTextLeft;
     wxPanel* m_splitterPageRight;
     wxTextCtrl* m_textCtrlRightFile;
     wxButton* m_button294;
-    wxStaticText* m_staticTextRight;
     wxStyledTextCtrl* m_stcRight;
     wxPanel* m_panelOverviewR;
+    wxStaticText* m_staticTextRight;
     wxPanel* m_panelOverviewFull;
 
 protected:
@@ -158,15 +158,15 @@ public:
     wxAuiToolBar* GetAuibar242() { return m_auibar242; }
     wxTextCtrl* GetTextCtrlLeftFile() { return m_textCtrlLeftFile; }
     wxButton* GetButton290() { return m_button290; }
-    wxStaticText* GetStaticTextLeft() { return m_staticTextLeft; }
     wxStyledTextCtrl* GetStcLeft() { return m_stcLeft; }
     wxPanel* GetPanelOverviewL() { return m_panelOverviewL; }
+    wxStaticText* GetStaticTextLeft() { return m_staticTextLeft; }
     wxPanel* GetSplitterPageLeft() { return m_splitterPageLeft; }
     wxTextCtrl* GetTextCtrlRightFile() { return m_textCtrlRightFile; }
     wxButton* GetButton294() { return m_button294; }
-    wxStaticText* GetStaticTextRight() { return m_staticTextRight; }
     wxStyledTextCtrl* GetStcRight() { return m_stcRight; }
     wxPanel* GetPanelOverviewR() { return m_panelOverviewR; }
+    wxStaticText* GetStaticTextRight() { return m_staticTextRight; }
     wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
     wxPanel* GetPanelOverviewFull() { return m_panelOverviewFull; }

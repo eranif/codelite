@@ -26,39 +26,36 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer4);
     
-    m_panel46 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
+    m_panel46 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
     
-    boxSizer4->Add(m_panel46, 1, wxEXPAND, 5);
+    boxSizer4->Add(m_panel46, 1, wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer48 = new wxBoxSizer(wxVERTICAL);
     m_panel46->SetSizer(boxSizer48);
     
-    m_scrollWin6 = new wxScrolledWindow(m_panel46, wxID_ANY, wxDefaultPosition, wxSize(200,100), wxBORDER_NONE|wxHSCROLL|wxVSCROLL);
+    m_scrollWin6 = new wxScrolledWindow(m_panel46, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel46, wxSize(200,100)), wxBORDER_NONE|wxHSCROLL|wxVSCROLL);
     m_scrollWin6->SetScrollRate(5, 5);
     
-    boxSizer48->Add(m_scrollWin6, 1, wxEXPAND, 2);
+    boxSizer48->Add(m_scrollWin6, 1, wxEXPAND, WXC_FROM_DIP(2));
     
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     m_scrollWin6->SetSizer(bSizer5);
     
-    m_treeCtrl = new wxTreeCtrl(m_scrollWin6, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxBORDER_NONE);
-    m_treeCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-    m_treeCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+    m_treeCtrl = new wxTreeCtrl(m_scrollWin6, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_scrollWin6, wxSize(-1,-1)), wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxBORDER_NONE);
     
-    bSizer5->Add(m_treeCtrl, 1, wxEXPAND, 0);
+    bSizer5->Add(m_treeCtrl, 1, wxEXPAND, WXC_FROM_DIP(0));
     m_scrollWin6->SetMinSize(wxSize(200,100));
     
-    m_panelStatusBar = new wxPanel(m_panel46, wxID_ANY, wxDefaultPosition, wxSize(-1,22), wxTAB_TRAVERSAL);
-    m_panelStatusBar->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_panelStatusBar = new wxPanel(m_panel46, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel46, wxSize(-1,22)), wxTAB_TRAVERSAL);
     
-    boxSizer48->Add(m_panelStatusBar, 0, wxEXPAND, 2);
+    boxSizer48->Add(m_panelStatusBar, 0, wxEXPAND, WXC_FROM_DIP(2));
     
     wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
     m_panelStatusBar->SetSizer(boxSizer42);
     
-    m_staticBitmap44 = new wxStaticBitmap(m_panelStatusBar, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("resize")), wxDefaultPosition, wxSize(16,16), 0 );
+    m_staticBitmap44 = new wxStaticBitmap(m_panelStatusBar, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("resize")), wxDefaultPosition, wxDLG_UNIT(m_panelStatusBar, wxSize(16,16)), 0 );
     
-    boxSizer42->Add(m_staticBitmap44, 0, wxALL|wxALIGN_RIGHT, 5);
+    boxSizer42->Add(m_staticBitmap44, 0, wxALL|wxALIGN_RIGHT, WXC_FROM_DIP(5));
     
     SetName(wxT("clDebuggerTipWindowBase"));
     SetSize(-1,-1);
@@ -105,36 +102,36 @@ clDebuggerEditItemDlgBase::clDebuggerEditItemDlgBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer24 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer24);
     
-    m_panel32 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel32 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
-    boxSizer24->Add(m_panel32, 1, wxALL|wxEXPAND, 5);
+    boxSizer24->Add(m_panel32, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer34 = new wxBoxSizer(wxVERTICAL);
     m_panel32->SetSizer(boxSizer34);
     
-    m_staticText36 = new wxStaticText(m_panel32, wxID_ANY, _("Enter new expression:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText36 = new wxStaticText(m_panel32, wxID_ANY, _("Enter new expression:"), wxDefaultPosition, wxDLG_UNIT(m_panel32, wxSize(-1,-1)), 0);
     
-    boxSizer34->Add(m_staticText36, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer34->Add(m_staticText36, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_textCtrl38 = new wxTextCtrl(m_panel32, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrl38 = new wxTextCtrl(m_panel32, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel32, wxSize(-1,-1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrl38->SetHint(wxT(""));
     #endif
     
-    boxSizer34->Add(m_textCtrl38, 0, wxALL|wxEXPAND, 5);
+    boxSizer34->Add(m_textCtrl38, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer26 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer24->Add(boxSizer26, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer24->Add(boxSizer26, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button28 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button28 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_button28->SetDefault();
     
-    boxSizer26->Add(m_button28, 0, wxALL, 5);
+    boxSizer26->Add(m_button28, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_button30 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button30 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer26->Add(m_button30, 0, wxALL, 5);
+    boxSizer26->Add(m_button30, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("clDebuggerEditItemDlgBase"));
     SetMinClientSize(wxSize(400,-1));

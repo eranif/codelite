@@ -63,6 +63,6 @@ void wxCB786InitBitmapResources()
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$.._icons_resize.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_LiteEditor_newquickwatch_liteeditor_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_LiteEditor_newquickwatch_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$_home_eran_devl_codelite_LiteEditor_newquickwatch_liteeditor_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$_home_eran_devl_codelite_LiteEditor_newquickwatch_liteeditor_bitmaps.xrc"));
 }

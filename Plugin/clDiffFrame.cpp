@@ -19,7 +19,6 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& 
         p->SetOriginSourceControl();
     }
     sz->Add(p, 1, wxEXPAND, 0);
-    GetSizer()->Fit(this);
     WindowAttrManager::Load(this);
 
     wxIconBundle b;
@@ -40,7 +39,6 @@ clDiffFrame::clDiffFrame(wxWindow* parent)
     DiffSideBySidePanel* p = new DiffSideBySidePanel(this);
     sz->Add(p, 1, wxEXPAND, 0);
     p->DiffNew();
-    GetSizer()->Fit(this);
     WindowAttrManager::Load(this);
     wxIconBundle b;
     {
@@ -64,7 +62,6 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileN
     }
     
     p->DiffNew(left, right);
-    GetSizer()->Fit(this);
     WindowAttrManager::Load(this);
     wxIconBundle b;
     {

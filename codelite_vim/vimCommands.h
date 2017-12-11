@@ -35,7 +35,8 @@ enum class MESSAGES_VIM {
     UNBALNCED_PARENTESIS_VIM_MSG,
     SAVED_VIM_MSG,
     SAVE_AND_CLOSE_VIM_MSG,
-    CLOSED_VIM_MSG
+    CLOSED_VIM_MSG,
+    SEARCHING_WORD
 };
 
 /*enumeration of implemented commands*/
@@ -98,7 +99,8 @@ enum class COMMANDVI {
     yb,
     ye,
     J,
-    v
+    v,
+    V
 };
 
 /**
@@ -183,7 +185,7 @@ public:
     };
 
 public:
-    VimCommand();
+    VimCommand(IManager* m_mgr);
     ~VimCommand();
 
     /*~~~~~~~ EVENT HANLDER ~~~~~~~~~~~~~~~~*/
@@ -214,6 +216,7 @@ public:
     void set_current_modus(VIM_MODI modus);
     void reset_repeat_last();
     void ResetCommand();
+    wxString getSearchedWord();
     void set_ctrl(wxStyledTextCtrl* ctrl);
 
 private:
@@ -260,6 +263,7 @@ private:
 
     /*~~~~~~~ EDITOR ~~~~~~~~~*/
     wxStyledTextCtrl* m_ctrl;
+    IManager* m_mgr;
     friend VimBaseCommand;
 };
 

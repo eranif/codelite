@@ -8,7 +8,7 @@
 /*EXPERIMENTAL*/
 #include "wx/uiaction.h"
 
-VimCommand::VimCommand()
+VimCommand::VimCommand(IManager* m_mgr)
     : m_currentCommandPart(COMMAND_PART::REPEAT_NUM)
     , m_currentModus(VIM_MODI::NORMAL_MODUS)
     , m_commandID(COMMANDVI::NO_COMMAND)
@@ -27,6 +27,7 @@ VimCommand::VimCommand()
     , m_message_ID(MESSAGES_VIM::NO_ERROR_VIM_MSG)
 {
     m_ctrl = NULL; /*FIXME: check it*/
+    this->m_mgr = m_mgr;
 }
 
 VimCommand::~VimCommand() {}
@@ -252,8 +253,15 @@ bool VimCommand::OnReturnDown(VimCommand::eAction& action)
         m_tmpbuf.Clear();
         ResetCommand();
         m_currentModus = VIM_MODI::NORMAL_MODUS;
+    } else if (m_currentModus == VIM_MODI::NORMAL_MODUS){
+        m_ctrl->LineDown();
+        skip_event = false;
     }
     return skip_event;
+}
+
+wxString VimCommand::getSearchedWord() {
+    return m_searchWord;
 }
 
 void VimCommand::parse_cmd_string()
@@ -291,13 +299,17 @@ void VimCommand::parse_cmd_string()
     }
 
     if(search_forward && !replace) {
+        m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
         long pos = -1L;
         if(all_file) pos = 0L;
         search_word(SEARCH_DIRECTION::FORWARD, pos);
+        //m_mgr->FindAndSelect(m_searchWord, m_searchWord, pos);
     } else if(search_backward && !replace) {
+        m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
         long pos = -1L;
         if(all_file) pos = 0L;
         search_word(SEARCH_DIRECTION::BACKWARD, pos);
+        //m_mgr->FindAndSelect(m_searchWord, m_searchWord, pos)
     }
 }
 
@@ -753,6 +765,7 @@ bool VimCommand::Command_call()
         m_searchWord = get_text_at_position();
         // m_ctrl->SetCurrentPos( /*FIXME*/ );
         search_word(SEARCH_DIRECTION::BACKWARD);
+        m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
     } break;
     /*
     case COMMANDVI::slesh:
@@ -764,12 +777,14 @@ bool VimCommand::Command_call()
     */
     case COMMANDVI::N:
         search_word(SEARCH_DIRECTION::BACKWARD);
-        break;
+        m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
         this->m_saveCommand = false;
+        break;
 
     case COMMANDVI::n:
         search_word(SEARCH_DIRECTION::FORWARD);
         this->m_saveCommand = false;
+        m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
         break;
 
     /*=============================== PASTE =========================*/
@@ -1151,8 +1166,9 @@ bool VimCommand::search_word(SEARCH_DIRECTION direction, long start_pos)
     } else {
         pos = start_pos;
     }
+    m_mgr->GetStatusBar()->SetMessage("Searching:" + m_searchWord);
     bool found = false;
-    int flag = 3;
+    int flag = 0;
     int pos_prev;
     if(direction == SEARCH_DIRECTION::BACKWARD) {
         pos_prev = m_ctrl->FindText(0, pos, m_searchWord, flag);
@@ -1191,7 +1207,7 @@ bool VimCommand::search_word(SEARCH_DIRECTION direction)
     long pos = m_ctrl->GetCurrentPos();
 
     bool found = false;
-    int flag = 3;
+    int flag = 0;
     int pos_prev;
     if(direction == SEARCH_DIRECTION::BACKWARD) {
         pos_prev = m_ctrl->FindText(0, pos, m_searchWord, flag);

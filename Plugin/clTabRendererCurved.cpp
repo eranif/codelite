@@ -1,4 +1,5 @@
 #include "clTabRendererCurved.h"
+#if !USE_AUI_NOTEBOOK
 #include <wx/font.h>
 #include <wx/settings.h>
 #include <wx/dcmemory.h>
@@ -270,3 +271,4 @@ void clTabRendererCurved::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
         ClearActiveTabExtraLine(activeTab, dc, colours, style);
     }
 }
+#endif

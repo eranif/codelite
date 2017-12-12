@@ -151,6 +151,7 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
 
     if(dynamic_cast<Notebook*>(win)) {
         Notebook* book = dynamic_cast<Notebook*>(win);
+#if !USE_AUI_NOTEBOOK
         if(book->GetStyle() & kNotebook_RightTabs || book->GetStyle() & kNotebook_LeftTabs) {
             // Vertical tabs, change the art provider to use the square shape
             book->SetArt(clTabRenderer::Ptr_t(new clTabRendererSquare()));
@@ -166,7 +167,7 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
                 book->SetArt(clTabRenderer::Ptr_t(new clTabRendererClassic()));
             }
         }
-
+#endif
         // Enable tab switching using the mouse scrollbar
         book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
                           EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());

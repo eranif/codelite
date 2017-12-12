@@ -1,3 +1,4 @@
+#if !USE_AUI_NOTEBOOK
 #include "clTabRendererClassic.h"
 #include "drawingutils.h"
 #include <wx/dcmemory.h>
@@ -410,3 +411,4 @@ void clTabRendererClassic::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tab
         DRAW_LINE(from, to);
     }
 }
+#endif

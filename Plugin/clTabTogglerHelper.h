@@ -33,8 +33,8 @@
 #include "cl_command_event.h"
 #include <wx/bitmap.h>
 #include <wx/sharedptr.h>
+#include "Notebook.h"
 
-class Notebook;
 class WXDLLIMPEXP_SDK clTabTogglerHelper : public wxEvtHandler
 {
     wxString m_outputTabName;

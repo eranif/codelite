@@ -97,7 +97,7 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
     m_filenameRect = wxRect();
     m_bookmarksRect = wxRect();
 
-    wxFont guiFont = clTabRenderer::GetTabFont();
+    wxFont guiFont = DrawingUtils::GetDefaultGuiFont();
     wxRect rect(GetClientRect());
     gcdc.SetPen(m_bgColour);
     gcdc.SetBrush(m_bgColour);

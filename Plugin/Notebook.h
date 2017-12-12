@@ -25,7 +25,10 @@
 
 #ifndef NOTEBOOK_H
 #define NOTEBOOK_H
-
+#if USE_AUI_NOTEBOOK
+#include "clAuiNotebook.h"
+#else
+#include "clTabHistory.h"
 #include <wx/panel.h>
 #include <wx/simplebook.h>
 #include <vector>
@@ -440,5 +443,5 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCt
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
-
+#endif // USE_AUI_NOTEBOOK
 #endif // NOTEBOOK_H

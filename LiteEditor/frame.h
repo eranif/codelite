@@ -62,7 +62,6 @@ class wxCustomStatusBar;
 class TagEntry;
 class WorkspacePane;
 class wxToolBar;
-class Notebook;
 class OpenWindowsPanel;
 class WorkspaceTab;
 class FileExplorer;

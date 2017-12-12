@@ -31,16 +31,16 @@
 #include "findusagetab.h"
 #include "frame.h"
 #include "new_build_tab.h"
+#include "output_pane.h"
 #include "pluginmanager.h"
 #include "replaceinfilespanel.h"
 #include "shelltab.h"
 #include "taskpanel.h"
 #include "wxcl_log_text_ctrl.h"
-#include "output_pane.h"
 #include <algorithm>
+#include <wx/aui/framemanager.h>
 #include <wx/dcbuffer.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/aui/framemanager.h>
 
 #if HAS_LIBCLANG
 #include "ClangOutputTab.h"
@@ -98,7 +98,9 @@ void OutputPane::CreateGUIControls()
         style |= kNotebook_DarkTabs;
     }
     style |= kNotebook_UnderlineActiveTab;
-    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
+    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
+        style |= kNotebook_MouseScrollSwitchTabs;
+    }
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
@@ -192,7 +194,9 @@ void OutputPane::OnEditorFocus(wxCommandEvent& e)
 
         // Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
         int cursel(m_book->GetSelection());
-        if(cursel != wxNOT_FOUND && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) { return; }
+        if(cursel != wxNOT_FOUND && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) {
+            return;
+        }
 
         if(m_buildInProgress) return;
 
@@ -215,10 +219,14 @@ void OutputPane::OnBuildEnded(clBuildEvent& e)
 
 void OutputPane::SaveTabOrder()
 {
+#if USE_AUI_NOTEBOOK
+    wxArrayString panes = m_book->GetAllTabsLabels();
+#else
     wxArrayString panes;
     clTabInfo::Vec_t tabs;
     m_book->GetAllTabs(tabs);
     std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t) { panes.Add(t->GetLabel()); });
+#endif
     clConfig::Get().SetOutputTabOrder(panes, m_book->GetSelection());
 }
 
@@ -238,7 +246,9 @@ void OutputPane::ApplySavedTabOrder() const
     std::vector<tagTabInfo> vTempstore;
     for(size_t t = 0; t < tabs.GetCount(); ++t) {
         wxString title = tabs.Item(t);
-        if(title.empty()) { continue; }
+        if(title.empty()) {
+            continue;
+        }
         for(size_t n = 0; n < m_book->GetPageCount(); ++n) {
             if(title == m_book->GetPageText(n)) {
                 tagTabInfo Tab;
@@ -277,12 +287,24 @@ void OutputPane::ApplySavedTabOrder() const
 void OutputPane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
+#if USE_AUI_NOTEBOOK
+    wxDirection d = EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection();
+    if((d == wxBOTTOM) || (d == wxRIGHT)) {
+        m_book->EnableStyle(wxAUI_NB_BOTTOM, true);
+        m_book->EnableStyle(wxAUI_NB_TOP, false);
+    } else {
+        m_book->EnableStyle(wxAUI_NB_BOTTOM, false);
+        m_book->EnableStyle(wxAUI_NB_TOP, true);
+    }
+    m_book->Refresh();
+#else
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
     if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         m_book->SetStyle((m_book->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_book->SetStyle((m_book->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
     }
+#endif
 }
 
 void OutputPane::OnToggleTab(clCommandEvent& event)
@@ -305,6 +327,8 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
     } else {
         // hide the tab
         int where = GetNotebook()->GetPageIndex(t.m_label);
-        if(where != wxNOT_FOUND) { GetNotebook()->RemovePage(where); }
+        if(where != wxNOT_FOUND) {
+            GetNotebook()->RemovePage(where);
+        }
     }
 }

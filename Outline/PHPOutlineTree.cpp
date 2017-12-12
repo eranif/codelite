@@ -1,15 +1,16 @@
-#include "PHPOutlineTree.h"
-#include <wx/wupdlock.h>
-#include <imanager.h>
-#include <ieditor.h>
-#include <algorithm>
-#include <globals.h>
 #include "PHPEntityFunction.h"
 #include "PHPEntityVariable.h"
+#include "PHPOutlineTree.h"
 #include "PHPSourceFile.h"
-#include "navigationmanager.h"
-#include "globals.h"
+#include "drawingutils.h"
 #include "fileutils.h"
+#include "globals.h"
+#include "navigationmanager.h"
+#include <algorithm>
+#include <globals.h>
+#include <ieditor.h>
+#include <imanager.h>
+#include <wx/wupdlock.h>
 
 #ifndef __WXMSW__
 #include <wx/imaglist.h>
@@ -32,7 +33,7 @@ PHPOutlineTree::PHPOutlineTree(wxWindow* parent, wxWindowID id, const wxPoint& p
     : wxTreeCtrl(parent, id, pos, size, style)
 {
     MSWSetNativeTheme(this);
-    SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    SetFont(DrawingUtils::GetDefaultGuiFont());
 }
 
 PHPOutlineTree::~PHPOutlineTree() {}
@@ -146,10 +147,8 @@ void PHPOutlineTree::ItemSelected(const wxTreeItemId& item, bool focusEditor)
 
     // Define the pattern to search
 
-    editor->FindAndSelect(itemData->m_entry->GetShortName(),
-                          itemData->m_entry->GetShortName(),
-                          editor->PosFromLine(itemData->m_entry->GetLine()),
-                          NavMgr::Get());
+    editor->FindAndSelect(itemData->m_entry->GetShortName(), itemData->m_entry->GetShortName(),
+                          editor->PosFromLine(itemData->m_entry->GetLine()), NavMgr::Get());
     // set the focus to the editor
     if(focusEditor) {
         CallAfter(&PHPOutlineTree::SetEditorActive, editor);

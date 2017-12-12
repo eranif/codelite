@@ -1,4 +1,5 @@
 #include "clTabRendererSquare.h"
+#if !USE_AUI_NOTEBOOK
 #include <wx/settings.h>
 #include <wx/font.h>
 #include "drawingutils.h"
@@ -157,3 +158,4 @@ void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
 
     ClearActiveTabExtraLine(activeTab, dc, colours, style);
 }
+#endif

@@ -377,6 +377,10 @@
       <File Name="GotoAnythingDlg.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
+      <File Name="clTabHistory.cpp"/>
+      <File Name="clTabHistory.h"/>
+      <File Name="clAuiNotebook.cpp"/>
+      <File Name="clAuiNotebook.h"/>
       <File Name="drawingutils.cpp"/>
       <File Name="drawingutils.h"/>
       <File Name="dockablepane.cpp"/>

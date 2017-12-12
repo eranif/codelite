@@ -28,8 +28,8 @@
 
 #include "codelite_exports.h"
 #include <wx/aui/framemanager.h>
+#include "Notebook.h"
 
-class Notebook;
 class WXDLLIMPEXP_SDK clDockingManager : public wxAuiManager
 {
 protected:

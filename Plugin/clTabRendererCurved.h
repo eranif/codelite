@@ -1,6 +1,6 @@
 #ifndef CLTABRENDERERCURVED_H
 #define CLTABRENDERERCURVED_H
-
+#if !USE_AUI_NOTEBOOK
 #include "clTabRenderer.h"
 
 class WXDLLIMPEXP_SDK clTabRendererCurved : public clTabRenderer
@@ -13,5 +13,5 @@ public:
     void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                         const clTabColours& colours, size_t style);
 };
-
+#endif
 #endif // CLTABRENDERERCURVED_H

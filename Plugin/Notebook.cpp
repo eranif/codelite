@@ -1,4 +1,5 @@
 #include "Notebook.h"
+#if !USE_AUI_NOTEBOOK
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
@@ -1319,38 +1320,6 @@ void clTabCtrl::OnMouseScroll(wxMouseEvent& event)
     }
 }
 
-// ----------------------------------------------------------------------
-// clTabHistory
-// ----------------------------------------------------------------------
-
-clTabHistory::clTabHistory() {}
-
-clTabHistory::~clTabHistory() {}
-
-void clTabHistory::Clear() { m_history.clear(); }
-
-void clTabHistory::Pop(wxWindow* page)
-{
-    if(!page) return;
-
-    int where = m_history.Index(page);
-    if(where != wxNOT_FOUND) { m_history.Remove((void*)page); }
-}
-
-wxWindow* clTabHistory::PrevPage()
-{
-    if(m_history.empty()) { return NULL; }
-    // return the top of the heap
-    return static_cast<wxWindow*>(m_history.Item(0));
-}
-
-void clTabHistory::Push(wxWindow* page)
-{
-    if(page == NULL) return;
-    Pop(page);
-    m_history.Insert((void*)page, 0);
-}
-
 // ---------------------------------------------------------------------------
 // DnD
 // ---------------------------------------------------------------------------
@@ -1385,3 +1354,5 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
     m_tabCtrl->MoveActiveToIndex(realPos, align);
     return true;
 }
+
+#endif // USE_AUI_NOTEBOOK

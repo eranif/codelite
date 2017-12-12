@@ -17,6 +17,7 @@
 #define WXDLLIMPEXP_SDK
 #endif
 
+#include "cl_defs.h"
 #include "drawingutils.h"
 #include <vector>
 #include <wx/bitmap.h>

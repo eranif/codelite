@@ -1,8 +1,10 @@
 #ifndef CLAUINOTEBOOK_H
 #define CLAUINOTEBOOK_H
 
+#include "cl_defs.h"
 #if USE_AUI_NOTEBOOK
 
+#include "clTab.h"
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
 #include "codelite_exports.h"
@@ -43,6 +45,11 @@ public:
     int GetPageIndex(wxWindow* page) const;
     clTabHistory::Ptr_t GetHistory() { return m_history; }
     wxArrayString GetAllTabsLabels();
+    void SetTabDirection(wxDirection d);
+    void GetAllTabs(clTab::Vec_t& tabs);
+    
+    bool DeletePage(size_t page);
+    bool RemovePage(size_t page);
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);

@@ -1,8 +1,8 @@
 #ifndef CLTABRENDERERSQUARE_H
 #define CLTABRENDERERSQUARE_H
-#if !USE_AUI_NOTEBOOK
-#include "clTabRenderer.h"
 
+#include "clTabRenderer.h"
+#if !USE_AUI_NOTEBOOK
 class WXDLLIMPEXP_SDK clTabRendererSquare : public clTabRenderer
 {
 public:

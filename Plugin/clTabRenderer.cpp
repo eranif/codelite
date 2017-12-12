@@ -1,3 +1,5 @@
+#include "cl_defs.h"
+
 #if !USE_AUI_NOTEBOOK
 #include "Notebook.h"
 #include "clTabRenderer.h"

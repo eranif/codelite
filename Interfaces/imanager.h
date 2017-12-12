@@ -74,23 +74,6 @@ enum TreeType { TreeFileView = 0, TreeFileExplorer };
 
 enum eOutputPaneTab { kOutputTab_Build, kOutputTab_Output };
 
-// A struct representing a tab in the notebook control
-struct clTab {
-    typedef std::vector<clTab> Vec_t;
-    wxString text;
-    wxWindow* window;
-    wxBitmap bitmap;
-    bool isFile;
-    wxFileName filename;
-    bool isModified;
-    clTab()
-        : window(NULL)
-        , isFile(false)
-        , isModified(false)
-    {
-    }
-};
-
 //------------------------------------------------------------------
 // Defines the interface of the manager
 //------------------------------------------------------------------

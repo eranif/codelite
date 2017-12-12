@@ -290,11 +290,11 @@ void OutputPane::OnSettingsChanged(wxCommandEvent& event)
 #if USE_AUI_NOTEBOOK
     wxDirection d = EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection();
     if((d == wxBOTTOM) || (d == wxRIGHT)) {
-        m_book->EnableStyle(wxAUI_NB_BOTTOM, true);
-        m_book->EnableStyle(wxAUI_NB_TOP, false);
+        m_book->EnableStyle(kNotebook_BottomTabs, true);
+        m_book->EnableStyle(kNotebook_TopTabs, false);
     } else {
-        m_book->EnableStyle(wxAUI_NB_BOTTOM, false);
-        m_book->EnableStyle(wxAUI_NB_TOP, true);
+        m_book->EnableStyle(kNotebook_BottomTabs, false);
+        m_book->EnableStyle(kNotebook_TopTabs, true);
     }
     m_book->Refresh();
 #else

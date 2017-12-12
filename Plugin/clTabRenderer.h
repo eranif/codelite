@@ -73,7 +73,10 @@ enum NotebookStyle {
 
     /// The notebook colours are changing based on the current editor theme
     kNotebook_DynamicColours = (1 << 27),
-
+    
+    // Top tabs
+    kNotebook_TopTabs = wxAUI_NB_TOP,
+    
     /// Default notebook
     kNotebook_Default = wxAUI_NB_DEFAULT_STYLE,
 };

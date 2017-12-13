@@ -3,9 +3,11 @@
 #if USE_AUI_NOTEBOOK
 #include "clAuiMainNotebookTabArt.h"
 #include "codelite_events.h"
+#include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "ieditor.h"
+#include <wx/aui/tabart.h>
 #include <wx/wupdlock.h>
 
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
@@ -34,11 +36,20 @@ clAuiNotebook::clAuiNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     m_history.reset(new clTabHistory());
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clAuiNotebook::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &clAuiNotebook::OnThemeChanged, this);
 
     // Set the art provider
-    clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
-    art->RefreshColours(GetWindowStyle());
-    SetArtProvider(art);
+    size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
+    if(options & OptionsConfig::Opt_TabStyleMinimal) {
+        SetArtProvider(new wxAuiDefaultTabArt());
+    } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
+        SetArtProvider(new wxAuiSimpleTabArt());
+    } else {
+        // the default
+        clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
+        art->RefreshColours(GetWindowStyle());
+        SetArtProvider(art);
+    }
 }
 
 clAuiNotebook::~clAuiNotebook()
@@ -53,6 +64,7 @@ clAuiNotebook::~clAuiNotebook()
     Unbind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiNotebook::OnTabBgDClick, this);
     Unbind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clAuiNotebook::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &clAuiNotebook::OnThemeChanged, this);
 }
 
 void clAuiNotebook::OnAuiPageChanging(wxAuiNotebookEvent& evt)
@@ -108,17 +120,13 @@ void clAuiNotebook::OnTabCloseButton(wxAuiNotebookEvent& evt)
 
 void clAuiNotebook::OnTabMiddleClicked(wxAuiNotebookEvent& evt)
 {
-    if(GetWindowStyle() & kNotebook_MouseMiddleClickClosesTab) {
-        OnTabCloseButton(evt);
-    }
+    if(GetWindowStyle() & kNotebook_MouseMiddleClickClosesTab) { OnTabCloseButton(evt); }
 }
 
 int clAuiNotebook::GetPageIndex(const wxString& label) const
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
-        if(GetPageText(i) == label) {
-            return static_cast<int>(i);
-        }
+        if(GetPageText(i) == label) { return static_cast<int>(i); }
     }
     return wxNOT_FOUND;
 }
@@ -126,18 +134,14 @@ int clAuiNotebook::GetPageIndex(const wxString& label) const
 int clAuiNotebook::GetPageIndex(wxWindow* page) const
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
-        if(GetPage(i) == page) {
-            return static_cast<int>(i);
-        }
+        if(GetPage(i) == page) { return static_cast<int>(i); }
     }
     return wxNOT_FOUND;
 }
 
 wxArrayString clAuiNotebook::GetAllTabsLabels()
 {
-    if(GetPageCount() == 0) {
-        return wxArrayString();
-    }
+    if(GetPageCount() == 0) { return wxArrayString(); }
 
     wxArrayString labels;
     labels.Alloc(GetPageCount());
@@ -229,9 +233,11 @@ void clAuiNotebook::OnThemeChanged(wxCommandEvent& evt)
 {
     evt.Skip();
     // Replace the art provider
-    clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
-    art->RefreshColours(GetWindowStyle());
-    SetArtProvider(art->Clone());
+    if(dynamic_cast<clAuiMainNotebookTabArt*>(GetArtProvider())) {
+        clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
+        art->RefreshColours(GetWindowStyle());
+        SetArtProvider(art->Clone());
+    }
 }
 
 void clAuiNotebook::OnTabBgDClick(wxAuiNotebookEvent& evt)
@@ -252,9 +258,7 @@ void clAuiNotebook::OnNavKey(wxNavigationKeyEvent& evt)
 int clAuiNotebook::FindPage(wxWindow* page) const
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
-        if(GetPage(i) == page) {
-            return (int)i;
-        }
+        if(GetPage(i) == page) { return (int)i; }
     }
     return wxNOT_FOUND;
 }

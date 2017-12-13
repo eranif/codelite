@@ -43,7 +43,7 @@
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
-#define Y_PADDING 5
+#define Y_PADDING_BASE 3
 #define X_PADDING 10
 
 #ifdef __WXMAC__
@@ -51,6 +51,8 @@
 #endif
 
 static int x_button_size = 12;
+static int Y_PADDING = Y_PADDING_BASE;
+
 clAuiMainNotebookTabArt::clAuiMainNotebookTabArt()
     : m_tabRadius(0.0)
 {
@@ -90,7 +92,6 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& wxdc, wxWindow* wnd, const wxAuiNote
 
     wxColour penColour = page.active ? m_activeTabPenColour : m_penColour;
     wxColour bgColour = page.active ? m_activeTabBgColour : m_tabBgColour;
-    
 
     wxSize sz = GetTabSize(dc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
     if(sz.GetHeight() < in_rect.GetHeight()) { sz.SetHeight(in_rect.GetHeight()); }
@@ -286,6 +287,8 @@ void clAuiMainNotebookTabArt::RefreshColours(long style)
         }
     }
     if(DrawingUtils::IsDark(m_activeTabBgColour)) { m_activeTabTextColour = *wxWHITE; }
+    // Update the tab height based on the user settings
+    Y_PADDING = Y_PADDING_BASE + EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }
 
 static int dropdown_button_size = 20;

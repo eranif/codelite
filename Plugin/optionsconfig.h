@@ -26,13 +26,13 @@
 #ifndef OPTIONS_CONFIG_H
 #define OPTIONS_CONFIG_H
 
-#include "wx/string.h"
-#include "wx/xml/xml.h"
+#include "clEditorConfig.h"
+#include "codelite_exports.h"
+#include "configuration_object.h"
 #include "wx/colour.h"
 #include "wx/font.h"
-#include "configuration_object.h"
-#include "codelite_exports.h"
-#include "clEditorConfig.h"
+#include "wx/string.h"
+#include "wx/xml/xml.h"
 
 class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
 {
@@ -195,9 +195,9 @@ public:
     // Setters/Getters
     //-------------------------------------
     void SetTabColourMatchesTheme(bool b) { EnableOption(Opt_TabColourPersistent, !b); }
-    bool IsTabColourMatchesTheme() const { return !HasOption(Opt_TabColourPersistent); }
+    bool IsTabColourMatchesTheme() const;
     void SetTabColourDark(bool b) { EnableOption(Opt_TabColourDark, b); }
-    bool IsTabColourDark() const { return HasOption(Opt_TabColourDark); }
+    bool IsTabColourDark() const;
     void SetTabHasXButton(bool b) { EnableOption(Opt_TabNoXButton, !b); }
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
     bool IsMouseScrollSwitchTabs() const { return HasOption2(Opt2_MouseScrollSwitchTabs); }

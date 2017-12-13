@@ -42,6 +42,10 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/treectrl.h>
+#if USE_AUI_NOTEBOOK
+#include "clAuiMainNotebookTabArt.h"
+#include <wx/aui/tabart.h>
+#endif
 
 #define IS_TYPEOF(Type, Win) (dynamic_cast<Type*>(Win))
 
@@ -166,6 +170,16 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
                 // the default
                 book->SetArt(clTabRenderer::Ptr_t(new clTabRendererClassic()));
             }
+        }
+#else
+        size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
+        if(options & OptionsConfig::Opt_TabStyleMinimal) {
+            book->SetArtProvider(new wxAuiDefaultTabArt());
+        } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
+            book->SetArtProvider(new wxAuiSimpleTabArt());
+        } else {
+            // the default
+            book->SetArtProvider(new clAuiMainNotebookTabArt());
         }
 #endif
         // Enable tab switching using the mouse scrollbar

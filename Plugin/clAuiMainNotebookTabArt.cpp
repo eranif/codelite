@@ -50,16 +50,10 @@
 #include <wx/osx/private.h>
 #endif
 
-static int x_button_size = 16;
+static int x_button_size = 12;
 clAuiMainNotebookTabArt::clAuiMainNotebookTabArt()
     : m_tabRadius(0.0)
 {
-    // Default buttons
-    m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close");
-    m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_hover");
-    m_bmpClosePressed = wxXmlResource::Get()->LoadBitmap("tab_x_close_pressed");
-
-    x_button_size = m_bmpClose.GetScaledWidth();
     RefreshColours(0);
 }
 
@@ -71,6 +65,7 @@ void clAuiMainNotebookTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRe
     dc.SetPen(m_bgColour);
     dc.SetBrush(m_bgColour);
     dc.DrawRectangle(rect);
+    m_windowListButtonRect = wxRect();
 }
 
 #define DRAW_LINE(__p1, __p2) \
@@ -79,22 +74,26 @@ void clAuiMainNotebookTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRe
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-void clAuiMainNotebookTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& in_rect,
+void clAuiMainNotebookTabArt::DrawTab(wxDC& wxdc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& in_rect,
                                       int close_button_state, wxRect* out_tab_rect, wxRect* out_button_rect,
                                       int* x_extent)
 {
-    if(in_rect.GetHeight() == 0) {
-        return;
-    } // Tabs are not visible
+#ifdef __WXMSW__
+    wxGCDC dc;
+    DrawingUtils::GetGCDC(wxdc, dc);
+#else
+    wxDC& dc = wxdc;
+#endif
+
+    if(in_rect.GetHeight() == 0) { return; } // Tabs are not visible
     int curx = 0;
 
     wxColour penColour = page.active ? m_activeTabPenColour : m_penColour;
-    dc.SetPen(penColour);
+    wxColour bgColour = page.active ? m_activeTabBgColour : m_tabBgColour;
+    
 
     wxSize sz = GetTabSize(dc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
-    if(sz.GetHeight() < in_rect.GetHeight()) {
-        sz.SetHeight(in_rect.GetHeight());
-    }
+    if(sz.GetHeight() < in_rect.GetHeight()) { sz.SetHeight(in_rect.GetHeight()); }
 
     wxRect rr(in_rect.GetTopLeft(), sz);
 
@@ -106,23 +105,24 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebo
     curx = rr.x + X_PADDING;
 
     // Set clipping region
-    int clip_width = rr.width;
-    if(rr.x + clip_width > in_rect.x + in_rect.width) {
-        clip_width = (in_rect.x + in_rect.width) - rr.x;
+    bool tabTruncated = false;
+    if(!m_windowListButtonRect.IsEmpty() && (rr.GetTopRight().x >= m_windowListButtonRect.GetX())) {
+        rr.SetWidth(rr.GetWidth() - (rr.GetTopRight().x - m_windowListButtonRect.GetX()));
+        if(rr.GetWidth() < 0) { rr.SetWidth(0); }
+        tabTruncated = true;
     }
 
     dc.SetClippingRegion(rr);
-    dc.SetBrush(m_bgColour);
-
-    if(page.active) {
-        dc.SetBrush(m_activeTabBgColour);
-        dc.DrawRectangle(rr);
-
-    } else {
-        dc.SetBrush(m_bgColour);
-        dc.DrawRectangle(rr);
+    dc.SetPen(penColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRectangle(rr);
+    if(tabTruncated) {
+        // Erase the right side line
+        dc.SetPen(bgColour);
+        dc.DrawLine(rr.GetTopRight(), rr.GetBottomRight());
+        // Restore the pen
+        dc.SetPen(penColour);
     }
-
     if(!page.active) {
         // Draw 2 lines at the bottom rect
         // one with the background colour of the active tab and the second
@@ -130,11 +130,13 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebo
         wxPoint p1, p2;
         p1 = rr.GetBottomLeft();
         p2 = rr.GetBottomRight();
-        
+
         // We reduce 2 pixels that we added earlier (see ~20 line above)
-        p1.x += 1; p1.y -= 2;
-        p2.x -= 1; p2.y -= 2;
-        
+        p1.x += 1;
+        p1.y -= 2;
+        p2.x -= 1;
+        p2.y -= 2;
+
         dc.SetPen(m_penColour);
         dc.DrawLine(p1, p2);
     } else {
@@ -148,30 +150,26 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebo
             p1.y += 1;
             p2.y += 1;
         }
-        
+
         // Mark the active tab
         p1 = rr.GetTopRight();
         p2 = rr.GetTopLeft();
-        
-        // Since the pen width is 2, start the drawing
+
+        // Since the pen width is 3, start the drawing
         // One pixel below
         p1.y += 1;
         p2.y += 1;
-        dc.SetPen(wxPen(m_markerColour, 2));
+        dc.SetPen(wxPen(m_markerColour, 3));
         dc.DrawLine(p1, p2);
     }
 
     wxString caption = page.caption;
-    if(caption.IsEmpty()) {
-        caption = "Tp";
-    }
+    if(caption.IsEmpty()) { caption = "Tp"; }
 
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     dc.SetFont(fnt);
     wxSize ext = dc.GetTextExtent(caption);
-    if(caption == "Tp") {
-        caption.Clear();
-    }
+    if(caption == "Tp") { caption.Clear(); }
 
     /// Draw the bitmap
     if(page.bitmap.IsOk()) {
@@ -234,9 +232,7 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc, wxWindow* WXUNUSED(wnd), co
     tab_height += (2 * Y_PADDING);
 
     // if the close button is showing, add space for it
-    if(close_button_state != wxAUI_BUTTON_STATE_HIDDEN) {
-        tab_width += x_button_size + X_PADDING;
-    }
+    if(close_button_state != wxAUI_BUTTON_STATE_HIDDEN) { tab_width += x_button_size + X_PADDING; }
 
     tab_width += measured_textx;
     tab_width += X_PADDING;
@@ -275,10 +271,6 @@ void clAuiMainNotebookTabArt::RefreshColours(long style)
         m_activeTabPenColour = faceColour.ChangeLightness(70);
     }
 
-    if(DrawingUtils::IsDark(m_activeTabBgColour)) {
-        m_activeTabTextColour = *wxWHITE;
-    }
-
     // Inactive tab colours
     m_tabTextColour = textColour;
     m_tabBgColour = faceColour.ChangeLightness(95);
@@ -290,8 +282,23 @@ void clAuiMainNotebookTabArt::RefreshColours(long style)
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
         if(lexer) {
             m_activeTabBgColour = lexer->GetProperty(0).GetBgColour();
-            m_activeTabTextColour = lexer->GetProperty(0).GetFgColour();
             m_activeTabPenColour = m_activeTabBgColour;
         }
+    }
+    if(DrawingUtils::IsDark(m_activeTabBgColour)) { m_activeTabTextColour = *wxWHITE; }
+}
+
+static int dropdown_button_size = 20;
+void clAuiMainNotebookTabArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxRect& in_rect, int bitmap_id,
+                                         int button_state, int orientation, wxRect* out_rect)
+{
+    if(bitmap_id == wxAUI_BUTTON_WINDOWLIST) {
+        m_windowListButtonRect = wxRect((in_rect.x + in_rect.GetWidth() - dropdown_button_size),
+                                        in_rect.y + ((in_rect.height - dropdown_button_size) / 2), dropdown_button_size,
+                                        dropdown_button_size);
+        DrawingUtils::DrawDropDownArrow(wnd, dc, m_windowListButtonRect, m_markerColour);
+        *out_rect = m_windowListButtonRect;
+    } else {
+        wxAuiDefaultTabArt::DrawButton(dc, wnd, in_rect, bitmap_id, button_state, orientation, out_rect);
     }
 }

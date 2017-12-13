@@ -51,12 +51,13 @@ protected:
     // A singe tab background colour
     wxColour m_activeTabBgColour;
     wxColour m_tabBgColour;
-    
+
     double m_tabRadius;
 
     wxBitmap m_bmpClose;
     wxBitmap m_bmpCloseHover;
     wxBitmap m_bmpClosePressed;
+    wxRect m_windowListButtonRect;
 
 public:
     void RefreshColours(long style);
@@ -73,6 +74,8 @@ public:
                               int closeButtonState, int* xExtent);
 
     int GetAdditionalBorderSpace(wxWindow* wnd) { return 0; }
+    void DrawButton(wxDC& dc, wxWindow* wnd, const wxRect& in_rect, int bitmap_id, int button_state, int orientation,
+                    wxRect* out_rect);
 };
 
 #endif // CLAUIMAINNOTEBOOKTABART_H

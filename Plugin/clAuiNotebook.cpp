@@ -263,7 +263,7 @@ bool clAuiNotebook::AddPage(wxWindow* page, const wxString& caption, bool select
 {
     page->Bind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this);
     m_history->Push(page);
-    return wxAuiNotebook::AddPendingEvent(page, caption, select, bitmap);
+    return wxAuiNotebook::AddPage(page, caption, select, bitmap);
 }
 
 bool clAuiNotebook::InsertPage(size_t pageIdx, wxWindow* page, const wxString& caption, bool select,

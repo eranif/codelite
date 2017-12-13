@@ -2,7 +2,6 @@
 
 #if USE_AUI_NOTEBOOK
 #include "clAuiMainNotebookTabArt.h"
-#include "clAuiNotebookRenderer.h"
 #include "globals.h"
 #include "ieditor.h"
 #include <wx/wupdlock.h>

@@ -93,8 +93,8 @@
     <Ignorefiles/>
     <Regexes/>
     <Excludepaths>
-      <Path>C:\src\codelite\LiteEditor\Win_x64_Release</Path>
       <Path>C:\src\codelite\LiteEditor\Win_x64_Debug</Path>
+      <Path>C:\src\codelite\LiteEditor\Win_x64_Release</Path>
     </Excludepaths>
     <Extensions>
       <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp;*.iss;*.sh]]>

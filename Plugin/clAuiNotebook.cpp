@@ -31,7 +31,7 @@ clAuiNotebook::clAuiNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos
     Bind(wxEVT_AUINOTEBOOK_TAB_MIDDLE_DOWN, &clAuiNotebook::OnTabMiddleClicked, this);
     Bind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiNotebook::OnTabBgDClick, this);
     Bind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this);
-    
+
     m_history.reset(new clTabHistory());
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clAuiNotebook::OnThemeChanged, this);
 
@@ -196,14 +196,15 @@ bool clAuiNotebook::DeletePage(size_t page)
     }
 
     wxWindow* win = GetPage(page);
+    if(win) { win->Unbind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this); }
     m_history->Pop(win);
-    
+
     // Change the selection before the deletion takes place
     wxWindow* tabToSelect = m_history->PrevPage();
     if(tabToSelect && GetPageIndex(tabToSelect) != wxNOT_FOUND) {
         wxAuiNotebook::SetSelection(GetPageIndex(tabToSelect));
     }
-    
+
     bool res = wxAuiNotebook::DeletePage(page);
     if(res) {
         wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSED);
@@ -218,7 +219,9 @@ bool clAuiNotebook::RemovePage(size_t page)
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif
-    m_history->Pop(GetPage(page));
+    wxWindow* win = GetPage(page);
+    if(win) { win->Unbind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this); }
+    m_history->Pop(win);
     return wxAuiNotebook::RemovePage(page);
 }
 
@@ -244,14 +247,30 @@ void clAuiNotebook::OnNavKey(wxNavigationKeyEvent& evt)
     wxBookCtrlEvent event(wxEVT_BOOK_NAVIGATING);
     event.SetEventObject(this);
     GetEventHandler()->AddPendingEvent(event);
-    
 }
 
 int clAuiNotebook::FindPage(wxWindow* page) const
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
-        if(GetPage(i) == page) { return (int)i;}
+        if(GetPage(i) == page) {
+            return (int)i;
+        }
     }
     return wxNOT_FOUND;
+}
+
+bool clAuiNotebook::AddPage(wxWindow* page, const wxString& caption, bool select, const wxBitmap& bitmap)
+{
+    page->Bind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this);
+    m_history->Push(page);
+    return wxAuiNotebook::AddPendingEvent(page, caption, select, bitmap);
+}
+
+bool clAuiNotebook::InsertPage(size_t pageIdx, wxWindow* page, const wxString& caption, bool select,
+                               const wxBitmap& bitmap)
+{
+    page->Bind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this);
+    m_history->Push(page);
+    return wxAuiNotebook::InsertPage(pageIdx, page, caption, select, bitmap);
 }
 #endif

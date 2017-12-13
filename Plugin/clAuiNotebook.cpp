@@ -1,6 +1,9 @@
 #include "clAuiNotebook.h"
 
 #if USE_AUI_NOTEBOOK
+#include "clAuiMainNotebookTabArt.h"
+#include "clAuiNotebookRenderer.h"
+#include "globals.h"
 #include "ieditor.h"
 #include <wx/wupdlock.h>
 
@@ -26,6 +29,7 @@ clAuiNotebook::clAuiNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos
     Bind(wxEVT_AUINOTEBOOK_BUTTON, &clAuiNotebook::OnTabCloseButton, this);
     Bind(wxEVT_AUINOTEBOOK_TAB_MIDDLE_DOWN, &clAuiNotebook::OnTabMiddleClicked, this);
     m_history.reset(new clTabHistory());
+    SetArtProvider(new clAuiMainNotebookTabArt(GetWindowStyle()));
 }
 
 clAuiNotebook::~clAuiNotebook()
@@ -168,7 +172,7 @@ bool clAuiNotebook::DeletePage(size_t page)
             return false;
         }
     }
-    
+
     wxWindow* win = GetPage(page);
     bool res = wxAuiNotebook::DeletePage(page);
     if(res) {

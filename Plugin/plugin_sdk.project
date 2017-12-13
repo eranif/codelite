@@ -377,6 +377,8 @@
       <File Name="GotoAnythingDlg.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
+      <File Name="clAuiNotebookRenderer.cpp"/>
+      <File Name="clAuiNotebookRenderer.h"/>
       <File Name="clTab.h"/>
       <File Name="clTabHistory.cpp"/>
       <File Name="clTabHistory.h"/>

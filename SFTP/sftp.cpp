@@ -111,8 +111,6 @@ SFTP::SFTP(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SFTP_RENAME_FILE, &SFTP::OnRenameFile, this);
     EventNotifier::Get()->Bind(wxEVT_SFTP_DELETE_FILE, &SFTP::OnDeleteFile, this);
 
-    SFTPImages images;
-
     // Add the "SFTP" page to the workspace pane
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
     if(IsPaneDetached(_("SFTP"))) {
@@ -129,16 +127,17 @@ SFTP::SFTP(IManager* manager)
 
     // Add the "SFTP Log" page to the output pane
     book = m_mgr->GetOutputPaneNotebook();
+    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("upload");
     if(IsPaneDetached(_("SFTP Log"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, _("SFTP Log"), false,
-                                            images.Bitmap("sftp_tab"), wxSize(200, 200));
+        DockablePane* cp =
+            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP Log"), false, bmp, wxSize(200, 200));
         m_outputPane = new SFTPStatusPage(cp, this);
         cp->SetChildNoReparent(m_outputPane);
 
     } else {
         m_outputPane = new SFTPStatusPage(book, this);
-        book->AddPage(m_outputPane, _("SFTP Log"), false, images.Bitmap("sftp_tab"));
+        book->AddPage(m_outputPane, _("SFTP Log"), false, bmp);
     }
 
     // Create the helper for adding our tabs in the "more" menu
@@ -471,7 +470,7 @@ void SFTP::OpenContainingFolder(const wxString& localFileName) { FileUtils::Open
 void SFTP::OnFileRenamed(clFileSystemEvent& e)
 {
     e.Skip();
-    
+
     // Convert local paths to remote paths
     wxString remoteFile = GetRemotePath(e.GetPath());
     wxString remoteNew = GetRemotePath(e.GetNewpath());

@@ -24,7 +24,10 @@ protected:
     void OnAuiTabContextMenu(wxAuiNotebookEvent& evt);
     void OnTabCloseButton(wxAuiNotebookEvent& evt);
     void OnTabMiddleClicked(wxAuiNotebookEvent& evt);
-
+    void OnTabBgDClick(wxAuiNotebookEvent& evt);
+    void OnNavKey(wxNavigationKeyEvent& evt);
+    void OnThemeChanged(wxCommandEvent& evt);
+    
 public:
     clAuiNotebook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                   const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
@@ -50,6 +53,7 @@ public:
     
     bool DeletePage(size_t page);
     bool RemovePage(size_t page);
+    int FindPage(wxWindow* page) const;
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);

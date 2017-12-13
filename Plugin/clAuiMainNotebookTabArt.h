@@ -31,28 +31,11 @@
 #include <wx/colour.h>
 #include <wx/dcgraph.h>
 #include <wx/pen.h>
-
-#define TAB_CTRL_HEIGHT 30
-
-class IManager;
-class clAuiMainNotebookTabArt;
-class clAuiNotebookArtHelper : public wxEvtHandler
-{
-    clAuiMainNotebookTabArt* m_art;
-
-protected:
-    void OnThemeChanged(wxCommandEvent& e);
-
-public:
-    clAuiNotebookArtHelper(clAuiMainNotebookTabArt* art);
-    virtual ~clAuiNotebookArtHelper();
-};
+#include <wx/sharedptr.h>
 
 class WXDLLIMPEXP_SDK clAuiMainNotebookTabArt : public wxAuiDefaultTabArt
 {
 protected:
-    long m_style;
-
     // The tab area background colour
     wxColour m_bgColour;
     wxColour m_markerColour;
@@ -68,7 +51,7 @@ protected:
     // A singe tab background colour
     wxColour m_activeTabBgColour;
     wxColour m_tabBgColour;
-
+    
     double m_tabRadius;
 
     wxBitmap m_bmpClose;
@@ -76,10 +59,10 @@ protected:
     wxBitmap m_bmpClosePressed;
 
 public:
-    void RefreshColours();
+    void RefreshColours(long style);
 
 public:
-    clAuiMainNotebookTabArt(long style);
+    clAuiMainNotebookTabArt();
     virtual ~clAuiMainNotebookTabArt();
 
     virtual wxAuiTabArt* Clone() { return new clAuiMainNotebookTabArt(*this); }

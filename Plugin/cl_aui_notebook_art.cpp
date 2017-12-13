@@ -30,7 +30,7 @@
 #include "event_notifier.h"
 
 clAuiGlossyTabArt::clAuiGlossyTabArt()
-    : clAuiMainNotebookTabArt(0)
+    : clAuiMainNotebookTabArt()
 {
 }
 

@@ -44,8 +44,6 @@ enum NotebookStyle {
     kNotebook_AllowDnD = wxAUI_NB_TAB_MOVE,
     /// Draw X button on the active tab
     kNotebook_CloseButtonOnActiveTab = wxAUI_NB_CLOSE_ON_ACTIVE_TAB,
-    /// Mouse middle click closes tab
-    kNotebook_MouseMiddleClickClosesTab = wxAUI_NB_MIDDLE_CLICK_CLOSE,
     /// Show a drop down button for displaying all tabs list
     kNotebook_ShowFileListButton = wxAUI_NB_WINDOWLIST_BUTTON,
     /// Mouse middle click on a tab fires an event
@@ -74,6 +72,9 @@ enum NotebookStyle {
 
     /// The notebook colours are changing based on the current editor theme
     kNotebook_DynamicColours = (1 << 27),
+    
+    /// Mouse middle click closes tab
+    kNotebook_MouseMiddleClickClosesTab = (1 << 28),
     
     // Top tabs
     kNotebook_TopTabs = wxAUI_NB_TOP,

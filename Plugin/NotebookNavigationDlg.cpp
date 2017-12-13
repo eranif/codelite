@@ -112,7 +112,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
 
     if(m_dvListCtrl->GetItemCount() > 1) {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(1));
-    } else {
+    } else if(m_dvListCtrl->GetItemCount() == 1) {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
     }
 

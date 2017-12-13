@@ -44,7 +44,11 @@
 #include <wx/xrc/xmlres.h>
 
 #define Y_PADDING_BASE 3
+#ifdef __WXMSW__
+#define X_PADDING 12
+#else
 #define X_PADDING 10
+#endif
 
 #ifdef __WXMAC__
 #include <wx/osx/private.h>
@@ -202,6 +206,8 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& wxdc, wxWindow* wnd, const wxAuiNote
             break;
         }
         int btny = (rr.y + (rr.height - x_button_size) / 2);
+        btny += 2; // We add 2 more pixels here cause of the marker line
+        
         wxRect xRect = wxRect(curx, btny, x_button_size, x_button_size);
         DrawingUtils::DrawButtonX(dc, wnd, xRect, m_markerColour, btnState);
         *out_button_rect = xRect;
@@ -231,23 +237,21 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc, wxWindow* WXUNUSED(wnd), co
     wxCoord tab_width = X_PADDING;
     wxCoord tab_height = measured_texty;
     tab_height += (2 * Y_PADDING);
-
-    // if the close button is showing, add space for it
-    if(close_button_state != wxAUI_BUTTON_STATE_HIDDEN) { tab_width += x_button_size + X_PADDING; }
-
-    tab_width += measured_textx;
-    tab_width += X_PADDING;
-
+    
     // if there's a bitmap, add space for it
     if(bitmap.IsOk()) {
         tab_width += bitmap.GetWidth();
         tab_width += X_PADDING; // right side bitmap padding
     }
+    
+    tab_width += measured_textx;
+    tab_width += X_PADDING;
+    
+    // if the close button is showing, add space for it
+    if(close_button_state != wxAUI_BUTTON_STATE_HIDDEN) { tab_width += x_button_size + X_PADDING; }
 
     if(m_flags & wxAUI_NB_TAB_FIXED_WIDTH) {
         tab_width = 100;
-    } else {
-        tab_width += X_PADDING;
     }
     *x_extent = tab_width;
     return wxSize(tab_width, tab_height);

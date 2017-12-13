@@ -237,6 +237,7 @@ void clAuiNotebook::OnThemeChanged(wxCommandEvent& evt)
         clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
         art->RefreshColours(GetWindowStyle());
         SetArtProvider(art->Clone());
+        Refresh();
     }
 }
 

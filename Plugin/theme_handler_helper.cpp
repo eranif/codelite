@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
 #include "Notebook.h"
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
@@ -149,6 +150,62 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     DoUpdateNotebookStyle(m_window);
 }
 
+#if USE_AUI_NOTEBOOK
+class MySimpleTabArt : public wxAuiSimpleTabArt
+{
+    wxColour m_activeTabBgColour;
+
+public:
+    MySimpleTabArt() { m_activeTabBgColour = *wxWHITE; }
+    virtual ~MySimpleTabArt() {}
+    wxAuiTabArt* Clone() { return new MySimpleTabArt(*this); }
+
+    void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& pane, const wxRect& inRect, int closeButtonState,
+                 wxRect* outTabRect, wxRect* outButtonRect, int* xExtent)
+    {
+        if(pane.active) {
+            if(DrawingUtils::IsDark(m_activeTabBgColour)) { dc.SetTextForeground(*wxWHITE); }
+        } else {
+            // set the default text colour
+            dc.SetTextForeground(DrawingUtils::GetPanelTextColour());
+        }
+        wxAuiSimpleTabArt::DrawTab(dc, wnd, pane, inRect, closeButtonState, outTabRect, outButtonRect, xExtent);
+    }
+
+    void SetActiveColour(const wxColour& colour)
+    {
+        m_activeTabBgColour = colour;
+        wxAuiSimpleTabArt::SetActiveColour(colour);
+    }
+};
+class MyDefaultTabArt : public wxAuiGenericTabArt
+{
+    wxColour m_activeTabBgColour;
+
+public:
+    MyDefaultTabArt() { m_activeTabBgColour = *wxWHITE; }
+    virtual ~MyDefaultTabArt() {}
+    wxAuiTabArt* Clone() { return new MyDefaultTabArt(*this); }
+
+    void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& pane, const wxRect& inRect, int closeButtonState,
+                 wxRect* outTabRect, wxRect* outButtonRect, int* xExtent)
+    {
+        if(pane.active) {
+            if(DrawingUtils::IsDark(m_activeTabBgColour)) { dc.SetTextForeground(*wxWHITE); }
+        } else {
+            // set the default text colour
+            dc.SetTextForeground(DrawingUtils::GetPanelTextColour());
+        }
+        wxAuiGenericTabArt::DrawTab(dc, wnd, pane, inRect, closeButtonState, outTabRect, outButtonRect, xExtent);
+    }
+
+    void SetActiveColour(const wxColour& colour)
+    {
+        m_activeTabBgColour = colour;
+        wxAuiGenericTabArt::SetActiveColour(colour);
+    }
+};
+#endif
 void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
 {
     // wxTextCtrl needs some extra special handling
@@ -172,14 +229,25 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
             }
         }
 #else
+        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+        wxColour activeTabBgColuor;
+        if(lexer) { activeTabBgColuor = lexer->GetProperty(0).GetBgColour(); }
+
         size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
         if(options & OptionsConfig::Opt_TabStyleMinimal) {
-            book->SetArtProvider(new wxAuiDefaultTabArt());
+            wxAuiTabArt* art = new wxAuiDefaultTabArt();
+            //if(book->GetWindowStyle() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
+            book->SetArtProvider(art);
+
         } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
-            book->SetArtProvider(new wxAuiSimpleTabArt());
+            wxAuiTabArt* art = new MySimpleTabArt();
+            if(book->GetWindowStyle() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
+            book->SetArtProvider(art);
         } else {
             // the default
-            book->SetArtProvider(new clAuiMainNotebookTabArt());
+            clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
+            art->RefreshColours(book->GetWindowStyle());
+            book->SetArtProvider(art);
         }
 #endif
         // Enable tab switching using the mouse scrollbar

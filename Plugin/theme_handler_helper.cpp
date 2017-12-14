@@ -236,17 +236,17 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
         size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
         if(options & OptionsConfig::Opt_TabStyleMinimal) {
             wxAuiTabArt* art = new wxAuiDefaultTabArt();
-            //if(book->GetWindowStyle() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
+            //if(book->GetCustomFlags() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
             book->SetArtProvider(art);
 
         } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
             wxAuiTabArt* art = new MySimpleTabArt();
-            if(book->GetWindowStyle() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
+            if(book->GetCustomFlags() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
             book->SetArtProvider(art);
         } else {
             // the default
             clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
-            art->RefreshColours(book->GetWindowStyle());
+            art->RefreshColours(book->GetCustomFlags());
             book->SetArtProvider(art);
         }
 #endif

@@ -15,6 +15,7 @@ class WXDLLIMPEXP_SDK clAuiNotebook : public wxAuiNotebook
 {
 private:
     clTabHistory::Ptr_t m_history;
+    long m_customFlags;
 
 protected:
     void OnAuiPageChanging(wxAuiNotebookEvent& evt);
@@ -32,7 +33,8 @@ public:
     clAuiNotebook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                   const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
     ~clAuiNotebook();
-
+    long GetCustomFlags() const { return m_customFlags; }
+    
     // Backward compatiblity API
     long GetStyle() const { return GetWindowStyle(); }
     void SetStyle(size_t style) { SetWindowStyle(style); }

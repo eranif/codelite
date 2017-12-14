@@ -20,10 +20,31 @@ wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 
+static int CreateBitmask(int start, int end)
+{
+    int res = 0;
+    for(int i = start; i < end; ++i) {
+        res |= (1 << i);
+    }
+    return res;
+}
+
 clAuiNotebook::clAuiNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                              const wxString& name)
-    : wxAuiNotebook(parent, id, pos, size, (style | wxBORDER_NONE) & ~wxAUI_NB_MIDDLE_CLICK_CLOSE)
 {
+    // wxWidgets style are from 0->18 (excluding)
+    int wxstyle_mask = CreateBitmask(0, 18);
+    int custom_mask = CreateBitmask(18, 32);
+    
+    // The custom flags are from 18->32
+    m_customFlags = (style & custom_mask);
+    style = (style & wxstyle_mask);
+    style |= wxNO_BORDER;
+    style &= ~wxAUI_NB_MIDDLE_CLICK_CLOSE;
+    
+    // Remove the hi-bit styles from the style passed
+    wxAuiNotebook::Create(parent, id, pos, size, style);
+
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGING, &clAuiNotebook::OnAuiPageChanging, this);
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clAuiNotebook::OnAuiPageChanged, this);
     Bind(wxEVT_AUINOTEBOOK_PAGE_CLOSE, &clAuiNotebook::OnAuiPageClosing, this);
@@ -47,7 +68,7 @@ clAuiNotebook::clAuiNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos
     } else {
         // the default
         clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
-        art->RefreshColours(GetWindowStyle());
+        art->RefreshColours(m_customFlags);
         SetArtProvider(art);
     }
 }
@@ -115,12 +136,12 @@ void clAuiNotebook::OnTabCloseButton(wxAuiNotebookEvent& evt)
     wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSE_BUTTON);
     event.SetEventObject(this);
     event.SetSelection(evt.GetSelection());
-    GetEventHandler()->AddPendingEvent(event);
+    GetEventHandler()->ProcessEvent(event);
 }
 
 void clAuiNotebook::OnTabMiddleClicked(wxAuiNotebookEvent& evt)
 {
-    if(GetWindowStyle() & kNotebook_MouseMiddleClickClosesTab) { OnTabCloseButton(evt); }
+    if(m_customFlags & kNotebook_MouseMiddleClickClosesTab) { OnTabCloseButton(evt); }
 }
 
 int clAuiNotebook::GetPageIndex(const wxString& label) const
@@ -133,6 +154,7 @@ int clAuiNotebook::GetPageIndex(const wxString& label) const
 
 int clAuiNotebook::GetPageIndex(wxWindow* page) const
 {
+    if(!page) { return wxNOT_FOUND; }
     for(size_t i = 0; i < GetPageCount(); ++i) {
         if(GetPage(i) == page) { return static_cast<int>(i); }
     }
@@ -185,9 +207,10 @@ void clAuiNotebook::GetAllTabs(clTab::Vec_t& tabs)
 
 bool clAuiNotebook::DeletePage(size_t page)
 {
-#ifdef __WXMSW__
+    wxWindow* win = GetPage(page);
+    // null page?
+    if(!win) { return false; }
     wxWindowUpdateLocker locker(this);
-#endif
     {
         wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSING);
         event.SetEventObject(this);
@@ -199,14 +222,15 @@ bool clAuiNotebook::DeletePage(size_t page)
         }
     }
 
-    wxWindow* win = GetPage(page);
-    if(win) { win->Unbind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this); }
+    win->Unbind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this);
     m_history->Pop(win);
 
     // Change the selection before the deletion takes place
     wxWindow* tabToSelect = m_history->PrevPage();
-    if(tabToSelect && GetPageIndex(tabToSelect) != wxNOT_FOUND) {
-        wxAuiNotebook::SetSelection(GetPageIndex(tabToSelect));
+    int newSelection = GetPageIndex(tabToSelect);
+    if((newSelection != wxNOT_FOUND) && (tabToSelect != win)) {
+        // We need to change the selection
+        wxAuiNotebook::SetSelection(newSelection);
     }
 
     bool res = wxAuiNotebook::DeletePage(page);
@@ -220,9 +244,7 @@ bool clAuiNotebook::DeletePage(size_t page)
 
 bool clAuiNotebook::RemovePage(size_t page)
 {
-#ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
-#endif
     wxWindow* win = GetPage(page);
     if(win) { win->Unbind(wxEVT_NAVIGATION_KEY, &clAuiNotebook::OnNavKey, this); }
     m_history->Pop(win);
@@ -235,7 +257,7 @@ void clAuiNotebook::OnThemeChanged(wxCommandEvent& evt)
     // Replace the art provider
     if(dynamic_cast<clAuiMainNotebookTabArt*>(GetArtProvider())) {
         clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
-        art->RefreshColours(GetWindowStyle());
+        art->RefreshColours(m_customFlags);
         SetArtProvider(art->Clone());
         Refresh();
     }

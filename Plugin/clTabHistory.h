@@ -5,6 +5,7 @@
 #include <vector>
 #include <wx/sharedptr.h>
 #include <wx/window.h>
+#include <algorithm>
 
 class WXDLLIMPEXP_SDK clTabHistory
 {

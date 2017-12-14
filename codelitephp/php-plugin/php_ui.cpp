@@ -1380,7 +1380,7 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     wxBoxSizer* boxSizer255 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer255);
     
-    m_notebook257 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
+    m_notebook257 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxNB_FIXEDWIDTH|wxBK_DEFAULT);
     m_notebook257->SetName(wxT("m_notebook257"));
     
     boxSizer255->Add(m_notebook257, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));

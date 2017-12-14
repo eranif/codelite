@@ -1,10 +1,10 @@
 #include "clTabRendererSquare.h"
 #if !USE_AUI_NOTEBOOK
-#include <wx/settings.h>
-#include <wx/font.h>
 #include "drawingutils.h"
-#include <wx/dcmemory.h>
 #include "editor_config.h"
+#include <wx/dcmemory.h>
+#include <wx/font.h>
+#include <wx/settings.h>
 
 #define DRAW_LINE(__p1, __p2) \
     dc.DrawLine(__p1, __p2);  \
@@ -71,9 +71,7 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabI
         memDC.SetFont(font);
         memDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
         memDC.DrawText(tabInfo.m_label, tabInfo.m_textY, tabInfo.m_textX);
-        if(tabInfo.GetBitmap().IsOk()) {
-            memDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX);
-        }
+        if(tabInfo.GetBitmap().IsOk()) { memDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX); }
         memDC.SelectObject(wxNullBitmap);
         wxImage img = bmp.ConvertToImage();
         img = img.Rotate90((style & kNotebook_RightTabs));
@@ -96,40 +94,34 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabI
 void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect,
                                          wxDC& dc, const clTabColours& colours, size_t style)
 {
-    const int penWidth = 1;
+    const int penWidth = 3;
     wxPen markerPen(colours.markerColour, penWidth);
     bool underlineTab = (style & kNotebook_UnderlineActiveTab);
 
     // Draw marker line if needed
     if(underlineTab) {
-        wxPoint pt1, pt2;
+        wxPoint p1, p2;
         if((style & kNotebook_LeftTabs) || (style & kNotebook_RightTabs)) {
-            pt1 = activeTab->GetRect().GetTopLeft();
-            pt2 = activeTab->GetRect().GetTopRight();
-#ifdef __WXOSX__
-            pt2.x += 1;
-#endif
+            p1 = activeTab->GetRect().GetTopLeft();
+            p2 = activeTab->GetRect().GetBottomLeft();
+            p1.y += 1;
+            p2.y -= 1;
+            p1.x += 1;
+            p2.x += 1;
             dc.SetPen(markerPen);
-            for(size_t i = 0; i < 3; ++i) {
-                DRAW_LINE(pt1, pt2);
-                pt1.y += 1;
-                pt2.y += 1;
-            }
+            dc.DrawLine(p1, p2);
         } else {
-            pt1 = activeTab->GetRect().GetTopLeft();
-            pt2 = activeTab->GetRect().GetBottomLeft();
-#ifdef __WXOSX__
-            pt2.y += 2;
-#endif
+            p1 = activeTab->GetRect().GetTopLeft();
+            p2 = activeTab->GetRect().GetTopRight();
+            p1.x += 1;
+            p2.x -= 1;
+            p1.y += 1;
+            p2.y += 1;
             dc.SetPen(markerPen);
-
-            for(size_t i = 0; i < 3; ++i) {
-                DRAW_LINE(pt1, pt2);
-                pt1.x += 1;
-                pt2.x += 1;
-            }
+            dc.DrawLine(p1, p2);
         }
     }
+
     wxPoint pt1, pt2;
     dc.SetPen(colours.activeTabPenColour);
     if(style & kNotebook_LeftTabs) {

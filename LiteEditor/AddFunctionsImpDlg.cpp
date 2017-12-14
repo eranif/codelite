@@ -74,7 +74,7 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
         TagEntryPtr tag = m_tags.at(i);
         tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig(
             tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro));
-        body << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl | Normalize_Func_Reverse_Macro);
+        body << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
         body << wxT("\n");
         m_dataviewModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData(body));
     }

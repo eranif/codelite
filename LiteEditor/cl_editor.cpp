@@ -1487,10 +1487,10 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     file.Write(buf.data(), strlen(buf.data()));
     file.Close();
 
-    // keep the original file permissions
     wxFileName symlinkedFile = fileName;
     if(wxIsFileSymlink(fileName)) { symlinkedFile = wxReadLink(fileName); }
 
+    // keep the original file permissions
     mode_t origPermissions = 0;
     if(!FileUtils::GetFilePermissions(symlinkedFile, origPermissions)) {
         clWARNING() << "Failed to read file permissions." << fileName << clEndl;

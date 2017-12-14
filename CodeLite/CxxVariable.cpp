@@ -22,7 +22,7 @@ wxString CxxVariable::GetTypeAsCxxString(const wxStringTable_t& table) const
 wxString CxxVariable::ToString(size_t flags, const wxStringTable_t& table) const
 {
     wxString str;
-    str << GetTypeAsString();
+    str << GetTypeAsString(table);
 
     if(!GetPointerOrReference().IsEmpty()) { str << GetPointerOrReference(); }
 

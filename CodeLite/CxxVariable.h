@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include <wx/string.h>
+#include "macros.h"
 #include <wxStringHash.h>
 
 class WXDLLIMPEXP_CL CxxVariable
@@ -31,7 +32,7 @@ public:
             FromCxxLexerToken(token);
             this->_depth = depth;
         }
-        
+
         int GetType() const { return type; }
         void FromCxxLexerToken(const CxxLexerToken& token)
         {
@@ -49,6 +50,8 @@ public:
         // Include the default value
         kToString_DefaultValue = (1 << 1),
         kToString_Default = kToString_Name,
+        // Revert back type->macro (e.g. wxWindowMSW -> wxWindow)
+        kToString_ReverseMacros = (1 << 2),
     };
 
 protected:
@@ -77,11 +80,13 @@ public:
     void SetType(const CxxVariable::LexerToken::Vec_t& type) { this->m_type = type; }
     const wxString& GetName() const { return m_name; }
     const CxxVariable::LexerToken::Vec_t& GetType() const { return m_type; }
-    wxString GetTypeAsString() const;
-    wxString GetTypeAsCxxString() const;
+    // @see ToString() for description about 'table'
+    wxString GetTypeAsString(const wxStringTable_t& table = wxStringTable_t()) const;
+    // @see ToString() for description about 'table'
+    wxString GetTypeAsCxxString(const wxStringTable_t& table = wxStringTable_t()) const;
 
     static wxString PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard,
-                             bool omitClassKeyword = false);
+                             bool omitClassKeyword = false, const wxStringTable_t& table = wxStringTable_t());
 
     /**
      * @brief return true if this variable was constructed from a statement like:
@@ -103,9 +108,11 @@ public:
     /**
      * @brief return a string representation for this variable
      * @param flags see values in eFlags
-     * @param standard format standard
+     * @param table macros table - reversed. i.e. the actual type is the key and the value is the macro name
+     * this table is used when the flag kToString_ReverseMacros is passed
      */
-    wxString ToString(size_t flags = CxxVariable::kToString_Default) const;
+    wxString ToString(size_t flags = CxxVariable::kToString_Default,
+                      const wxStringTable_t& table = wxStringTable_t()) const;
 
     void SetDefaultValue(const wxString& defaultValue) { this->m_defaultValue = defaultValue; }
     const wxString& GetDefaultValue() const { return m_defaultValue; }

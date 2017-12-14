@@ -414,12 +414,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     if(rect.GetSize().x > 0 && rect.GetSize().y > 0) {
-#ifdef __WXGTK__
-        wxDC &gcdc = dc;
-#else
         wxGCDC gcdc(dc);
         PrepareDC(gcdc);
-#endif
+
         if(!IsVerticalTabs()) {
             gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - CHEVRON_SIZE, clientRect.height);
         }
@@ -437,23 +434,38 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             // send event per tab to get their colours
             clColourEvent colourEvent(wxEVT_COLOUR_TAB);
             colourEvent.SetPage(tab->GetWindow());
+            clTabColours* pColours = &m_colours;
+            clTabColours user_colours;
             if((GetStyle() & kNotebook_EnableColourCustomization) && EventNotifier::Get()->ProcessEvent(colourEvent)) {
-                clTabColours colours;
-                colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
-                m_art->Draw(this, gcdc, *tab.get(), colours, m_style);
-            } else {
-                m_art->Draw(this, gcdc, *tab.get(), m_colours, m_style);
+                user_colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
+                pColours = &user_colours;
             }
 
+#ifdef __WXGTK__
+            m_art->Draw(this, gcdc, dc, *tab.get(), (*pColours), m_style);
 #else
-            m_art->Draw(this, gcdc, *tab.get(), m_colours, m_style);
+            m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style);
+#endif
+#else
+            // Under GTK there is a problem with HiDPI screens and wxGCDC for drawing text
+            // the text is rendered too small. Use the wxPaintDC instead of the wxGCDC just for
+            // drawing text
+#ifdef __WXGTK__
+            m_art->Draw(this, gcdc, dc, *tab.get(), m_colours, m_style);
+#else
+            m_art->Draw(this, gcdc, gcdc, *tab.get(), m_colours, m_style);
+#endif
 #endif
         }
 
         // Redraw the active tab
         if(activeTabInex != wxNOT_FOUND) {
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-            m_art->Draw(this, gcdc, *activeTab.get(), activeTabColours, m_style);
+#ifdef __WXGTK__
+            m_art->Draw(this, gcdc, dc, *activeTab.get(), activeTabColours, m_style);
+#else
+            m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style);
+#endif
         }
         if(!IsVerticalTabs()) { gcdc.DestroyClippingRegion(); }
         if(activeTabInex != wxNOT_FOUND) {

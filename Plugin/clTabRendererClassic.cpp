@@ -30,7 +30,7 @@ void clTabRendererClassic::InitDarkColours(clTabColours& colours, const wxColour
     colours.activeTabBgColour = activeTabBGColour;
     colours.activeTabPenColour = activeTabBGColour.ChangeLightness(90);
     colours.activeTabInnerPenColour = activeTabBGColour;
-    
+
     // Inactive tab
     colours.inactiveTabBgColour = activeTabBGColour.ChangeLightness(120);
     colours.inactiveTabTextColour = colours.activeTabTextColour.ChangeLightness(80);
@@ -46,7 +46,7 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
     colours.activeTabBgColour = activeTabBGColour;
     colours.activeTabPenColour = activeTabBGColour.ChangeLightness(80);
     colours.activeTabInnerPenColour = activeTabBGColour.ChangeLightness(110);
-    
+
     // Inactive tab
     colours.inactiveTabBgColour = colours.activeTabBgColour.ChangeLightness(85); // darker
     colours.inactiveTabTextColour = DrawingUtils::GetButtonTextColour();
@@ -55,8 +55,8 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
     colours.tabAreaColour = DrawingUtils::GetPanelBgColour();
 }
 
-void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colors,
-                                size_t style)
+void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
+                                const clTabColours& colors, size_t style)
 {
     const int TOP_SMALL_HEIGHT = 2;
 
@@ -70,8 +70,8 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tab
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
     wxFont font = GetTabFont();
-    dc.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
-    dc.SetFont(font);
+    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
+    fontDC.SetFont(font);
 
     if(style & kNotebook_BottomTabs) {
         // Bottom tabs
@@ -281,7 +281,7 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tab
         if(tabInfo.m_bitmap.IsOk()) {
             dc.DrawBitmap(tabInfo.m_bitmap, tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
         }
-        dc.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
+        fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
             DrawButton(dc,
                        wxRect(tabInfo.m_bmpCloseX + tabInfo.m_rect.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE,

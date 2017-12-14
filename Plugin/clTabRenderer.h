@@ -72,13 +72,13 @@ enum NotebookStyle {
 
     /// The notebook colours are changing based on the current editor theme
     kNotebook_DynamicColours = (1 << 27),
-    
+
     /// Mouse middle click closes tab
     kNotebook_MouseMiddleClickClosesTab = (1 << 28),
-    
+
     // Top tabs
     kNotebook_TopTabs = wxAUI_NB_TOP,
-    
+
     /// Default notebook
     kNotebook_Default = wxAUI_NB_DEFAULT_STYLE,
 };
@@ -251,7 +251,7 @@ protected:
 public:
     clTabRenderer();
     virtual ~clTabRenderer() {}
-    virtual void Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
+    virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
                       size_t style) = 0;
     virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;

@@ -2066,6 +2066,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags,
     if(paramLen) { paramLen->clear(); }
     if(flags & Normalize_Func_Arg_Per_Line && !vars.empty()) { str_output << wxT("\n    "); }
 
+    const wxStringTable_t& macrosTable = GetCtagsOptions().GetTokensReversedWxMap();
     std::for_each(vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) {
         int start_offset = str_output.length();
 
@@ -2074,7 +2075,8 @@ wxString TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags,
         if(flags & Normalize_Func_Name) { toStringFlags |= CxxVariable::kToString_Name; }
         if(flags & Normalize_Func_Default_value) { toStringFlags |= CxxVariable::kToString_DefaultValue; }
 
-        str_output << var->ToString(toStringFlags);
+        str_output << var->ToString(toStringFlags,
+                                    (flags & Normalize_Func_Reverse_Macro) ? macrosTable : wxStringTable_t());
         // keep the length of this argument
         if(paramLen) { paramLen->push_back(std::make_pair(start_offset, str_output.length() - start_offset)); }
         str_output << ", ";

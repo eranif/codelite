@@ -29,22 +29,21 @@ clTabRendererSquare::clTabRendererSquare()
 
 clTabRendererSquare::~clTabRendererSquare() {}
 
-void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
-                               size_t style)
+void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
+                               const clTabColours& colours, size_t style)
 {
     wxColour inactiveTabPenColour = colours.inactiveTabPenColour;
 
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : inactiveTabPenColour);
     wxFont font = GetTabFont();
-    dc.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
-    dc.SetFont(font);
+    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
+    fontDC.SetFont(font);
 
     wxRect rr = tabInfo.m_rect;
 
     dc.SetBrush(bgColour);
     dc.SetPen(penColour);
-    //    dc.SetPen(*wxTRANSPARENT_PEN);
     dc.DrawRectangle(rr);
 
     // Restore the pen
@@ -54,7 +53,7 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabI
         if(tabInfo.GetBitmap().IsOk()) {
             dc.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpX + rr.GetX(), tabInfo.m_bmpY);
         }
-        dc.DrawText(tabInfo.m_label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY);
+        fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
             DrawButton(
                 dc, wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE),
@@ -82,7 +81,7 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabI
         if(tabInfo.GetBitmap().IsOk()) {
             dc.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpX + rr.GetX(), tabInfo.m_bmpY);
         }
-        dc.DrawText(tabInfo.m_label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY);
+        fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
             DrawButton(
                 dc, wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE),

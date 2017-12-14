@@ -12,7 +12,8 @@ public:
 public:
     clTabRendererClassic();
     virtual ~clTabRendererClassic();
-    void Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style);
+    void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
+              size_t style);
     void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect, wxDC& dc,
                         const clTabColours& colours, size_t style);
 };

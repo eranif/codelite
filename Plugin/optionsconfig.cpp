@@ -121,12 +121,12 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_trimOnlyModifiedLines(true)
     , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift | Opt_WrapBrackets |
                 Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock |
-                Opt_WrapCmdWithDoubleQuotes)
+                Opt_WrapCmdWithDoubleQuotes | Opt_TabStyleMinimal)
     , m_options2(0)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
-    , m_nbTabHeight(nbTabHt_Tall)
+    , m_nbTabHeight(nbTabHt_Medium)
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;

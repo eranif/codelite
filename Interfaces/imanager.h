@@ -38,6 +38,7 @@
 #include <vector>
 #include "debugger.h"
 #include "clStatusBar.h"
+#include "clTab.h"
 
 class clEditorBar;
 class clWorkspaceView;

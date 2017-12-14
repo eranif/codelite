@@ -957,7 +957,7 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
     // Choose a new selection, but only if we are deleting the active tab
     nextSelection = NULL;
     if(deletingSelection) {
-        while(!m_history->GetHistory().IsEmpty() && !nextSelection) {
+        while(!m_history->GetHistory().empty() && !nextSelection) {
             nextSelection = m_history->PrevPage();
             if(!GetTabInfo(nextSelection)) {
                 // The history contains a tab that no longer exists

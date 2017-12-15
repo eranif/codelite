@@ -98,6 +98,7 @@ void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
     bool underlineTab = (style & kNotebook_UnderlineActiveTab);
 
     // Draw marker line if needed
+    wxRect confinedRect = parent->GetClientRect();
     if(underlineTab) {
         wxPoint p1, p2;
         if((style & kNotebook_LeftTabs) || (style & kNotebook_RightTabs)) {
@@ -110,9 +111,21 @@ void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
             dc.SetPen(markerPen);
             dc.DrawLine(p1, p2);
         } else {
+
+            int xx = activeTab->GetRect().GetTopRight().x;
+            if((activeTab->GetRect().GetTopRight().x > confinedRect.GetTopRight().x) &&
+               (style & kNotebook_ShowFileListButton)) {
+                // The active tab is only partially drawn
+                // and we have the style "kNotebook_ShowFileListButton":
+                // Ensure that we don't draw our marker on top of the button
+                xx = confinedRect.GetTopRight().x - CHEVRON_SIZE;
+            }
+
             p1 = activeTab->GetRect().GetTopLeft();
             p2 = activeTab->GetRect().GetTopRight();
             p1.x += 1;
+            // Update the ending X coordinate (see above comment for why)
+            if(xx > 0) { p2.x = xx; }
             p2.x -= 1;
             p1.y += 1;
             p2.y += 1;

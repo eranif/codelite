@@ -477,6 +477,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
+            gcdc.SetPen(m_colours.inactiveTabPenColour);
+            gcdc.DrawLine(m_chevronRect.GetTopLeft(), m_chevronRect.GetTopRight());
             m_art->DrawChevron(this, gcdc, m_chevronRect, m_colours);
         }
 

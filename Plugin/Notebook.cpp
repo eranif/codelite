@@ -349,7 +349,7 @@ void clTabCtrl::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
 
 void clTabCtrl::OnPaint(wxPaintEvent& e)
 {
-    wxAutoBufferedPaintDC dc(this);
+    wxBufferedPaintDC dc(this);
     PrepareDC(dc);
 
     wxRect clientRect(GetClientRect());
@@ -402,7 +402,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 #endif
 
     // Draw background
-    dc.SetPen(tabAreaBgCol);
+    dc.SetPen(m_colours.inactiveTabPenColour);
     dc.SetBrush(tabAreaBgCol);
 #ifdef __WXOSX__
     clientRect.Inflate(1, 1);
@@ -420,7 +420,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if(!IsVerticalTabs()) {
             gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - CHEVRON_SIZE, clientRect.height);
         }
-        gcdc.SetPen(tabAreaBgCol);
+        gcdc.SetPen(IsVerticalTabs() ? tabAreaBgCol : m_colours.inactiveTabPenColour);
         gcdc.SetBrush(tabAreaBgCol);
         gcdc.DrawRectangle(rect.GetSize());
         UpdateVisibleTabs();
@@ -478,7 +478,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         if((GetStyle() & kNotebook_ShowFileListButton)) {
             // Draw the chevron
             gcdc.SetPen(m_colours.inactiveTabPenColour);
-            gcdc.DrawLine(m_chevronRect.GetTopLeft(), m_chevronRect.GetTopRight());
+            if(!IS_VERTICAL_TABS(GetStyle())) {
+                gcdc.DrawLine(m_chevronRect.GetTopLeft(), m_chevronRect.GetTopRight());
+            }
             m_art->DrawChevron(this, gcdc, m_chevronRect, m_colours);
         }
 

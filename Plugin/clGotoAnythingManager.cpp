@@ -2,6 +2,7 @@
 #include "bitmap_loader.h"
 #include "clGotoAnythingManager.h"
 #include "clKeyboardManager.h"
+#include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -12,15 +13,18 @@
 #include <queue>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/stc/stc.h>
 
 clGotoAnythingManager::clGotoAnythingManager()
 {
     EventNotifier::Get()->Bind(wxEVT_GOTO_ANYTHING_SELECTED, &clGotoAnythingManager::OnActionSelected, this);
+    EventNotifier::Get()->Bind(wxEVT_GOTO_ANYTHING_SHOWING, &clGotoAnythingManager::OnShowing, this);
 }
 
 clGotoAnythingManager::~clGotoAnythingManager()
 {
     EventNotifier::Get()->Unbind(wxEVT_GOTO_ANYTHING_SELECTED, &clGotoAnythingManager::OnActionSelected, this);
+    EventNotifier::Get()->Unbind(wxEVT_GOTO_ANYTHING_SHOWING, &clGotoAnythingManager::OnShowing, this);
 }
 
 clGotoAnythingManager& clGotoAnythingManager::Get()
@@ -122,4 +126,68 @@ void clGotoAnythingManager::Initialise()
             }
         }
     }
+}
+
+void clGotoAnythingManager::DoAddCurrentTabActions(clGotoEntry::Vec_t& V)
+{
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) {
+        {
+            clGotoEntry entry(_("Current Tab > Close Tabs To The Right"), "", XRCID("close_tabs_to_the_right"));
+            V.push_back(entry);
+        }
+        {
+            clGotoEntry entry(_("Current Tab > Close Other Tabs"), "", XRCID("close_other_tabs"));
+            V.push_back(entry);
+        }
+        {
+            clGotoEntry entry(_("Current Tab > Duplicate Tab"), "", XRCID("duplicate_tab"));
+            V.push_back(entry);
+        }
+        {
+            clGotoEntry entry(_("Current Tab > Make it Read Only"), "", XRCID("mark_readonly"));
+            // This a checkable item
+            entry.SetCheckable(true);
+            entry.SetChecked(editor->GetCtrl()->GetReadOnly());
+            V.push_back(entry);
+        }
+        {
+            clGotoEntry entry(_("Current Tab > Detach"), "", XRCID("ID_DETACH_EDITOR"));
+            V.push_back(entry);
+        }
+        {
+            clGotoEntry entry(_("Current Tab > Open Shell Here"), "", XRCID("open_shell_from_filepath"));
+            V.push_back(entry);
+        }
+        {
+            clGotoEntry entry(_("Current Tab > Open in File Explorer"), "", XRCID("open_file_explorer"));
+            V.push_back(entry);
+        }
+        {
+            clGotoEntry entry(_("Current Tab > Copy file name"), "", XRCID("copy_file_name_only"));
+            V.push_back(entry);
+        }
+        {
+            clGotoEntry entry(_("Current Tab > Copy fullpath (name, extension and directory)"), "",
+                              XRCID("copy_file_name"));
+            V.push_back(entry);
+        }
+        {
+            clGotoEntry entry(_("Current Tab > Copy Path only (directory part only)"), "", XRCID("copy_file_path"));
+            V.push_back(entry);
+        }
+        if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            clGotoEntry entry(_("Current Tab > Copy full path relative to workspace"), "",
+                              XRCID("copy_file_relative_path_to_workspace"));
+            V.push_back(entry);
+        }
+    }
+}
+
+void clGotoAnythingManager::OnShowing(clGotoEvent& e)
+{
+    e.Skip();
+    // Add core actions which are not part of the menu bar
+    clGotoEntry::Vec_t& V = e.GetEntries();
+    DoAddCurrentTabActions(V);
 }

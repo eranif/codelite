@@ -1,6 +1,7 @@
 #ifndef CLGOTOANYTHINGMANAGER_H
 #define CLGOTOANYTHINGMANAGER_H
 
+#include "clGotoEntry.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "macros.h"
@@ -8,7 +9,6 @@
 #include <vector>
 #include <wx/bitmap.h>
 #include <wx/event.h>
-#include "clGotoEntry.h"
 
 class WXDLLIMPEXP_SDK clGotoAnythingManager : public wxEvtHandler
 {
@@ -19,15 +19,18 @@ class WXDLLIMPEXP_SDK clGotoAnythingManager : public wxEvtHandler
 
 protected:
     void OnActionSelected(clGotoEvent& e);
+    void OnShowing(clGotoEvent& e);
+
+    void DoAddCurrentTabActions(clGotoEntry::Vec_t& V);
 
 public:
     static clGotoAnythingManager& Get();
-    
+
     /**
      * @brief fill the gotomanager with all the menu entries
      */
     void Initialise();
-    
+
     /**
      * @brief show the "Goto Anything" dialog
      */

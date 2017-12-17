@@ -49,6 +49,7 @@
 #include <wx/filename.h>
 #include <wx/progdlg.h>
 #include <wx/xrc/xmlres.h>
+#include <algorithm>
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 

@@ -481,7 +481,11 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             if(!IS_VERTICAL_TABS(GetStyle())) {
                 gcdc.DrawLine(m_chevronRect.GetTopLeft(), m_chevronRect.GetTopRight());
             }
+#ifdef __WXGTK__
+            m_art->DrawChevron(this, dc, m_chevronRect, m_colours);
+#else
             m_art->DrawChevron(this, gcdc, m_chevronRect, m_colours);
+#endif
         }
 
     } else {

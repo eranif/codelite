@@ -920,11 +920,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     }
 
     // Draw the 'x'
-#ifdef __WXGTK__
-    dc.SetPen(wxPen(colour, 3));
-#else
     dc.SetPen(wxPen(colour, 2));
-#endif
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
 }

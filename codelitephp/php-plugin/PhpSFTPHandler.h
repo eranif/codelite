@@ -1,6 +1,8 @@
 #ifndef PHPSFTPHANDLER_H
 #define PHPSFTPHANDLER_H
 
+#if USE_SFTP
+
 #include "clFileSystemEvent.h"
 #include "codelite_events.h"
 #include "ssh_workspace_settings.h"
@@ -28,5 +30,7 @@ public:
     void OnReplaceInFiles(clFileSystemEvent& e);
     void OnFileDeleted(clFileSystemEvent& e);
 };
+
+#endif //USE_SFTP
 
 #endif // PHPSFTPHANDLER_H

@@ -1,44 +1,54 @@
 #!/bin/bash
 
+# Keep the current folder
+curdir=`pwd`
+
 # Clear old installers
 os_name=`uname -s`
 no_upload=$1
 
-cd build-release
-curdir=`pwd`
-builddir=`basename ${curdir}`
-if [ ${builddir} != "build-release" ]; then
-    echo "You must run this script from CodeLite root folder"
-    exit -1
-fi
-
 # Clear old installers
 os_name=`uname -s`
 if [ ${os_name} == "Darwin" ]; then
-    echo rm -f codelite.app.tar.gz
-    rm -f codelite.app.tar.gz
-else
-    echo rm -fr *.deb
-    rm -fr *.deb
+    echo rm -f $curdir/build-release/codelite.app.tar.gz
+    rm -f $curdir/build-release/codelite.app.tar.gz
 fi
 
 # Update our source tree
+cd $curdir
 echo "Pulling CodeLite changes..."
+echo `pwd`
 git pull --rebase 
 if [ $? -ne 0 ]; then
     exit $?
 fi
 
 echo "Pulling wxCrafter changes..."
-cd ../wxcrafter
+cd $curdir/wxcrafter
 git pull --rebase
 if [ $? -ne 0 ]; then
     exit $?
 fi
-cd ../build-release
+cd $curdir
+
+linux_build() {
+    cd $curdir/$1 # cd to the build folder
+    echo rm -fr *.deb
+    rm -fr *.deb
+
+    PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+    make -j4 && make package
+    if [ "${no_upload}" != "--no-upload" ]; then
+        deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
+        echo Uploading deb file ${deb_file}
+        scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/wip
+    fi
+    cd $curdir
+}
 
 # Build and upload
 if [ ${os_name} == "Darwin" ]; then
+    cd build-release
     cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
     make -j4 && make install
     if [ "${no_upload}" != "--no-upload" ]; then
@@ -46,11 +56,6 @@ if [ ${os_name} == "Darwin" ]; then
         scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
 else
-    cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
-    make -j4 && make package
-    if [ "${no_upload}" != "--no-upload" ]; then
-        deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
-        echo Uploading deb file ${deb_file}
-        scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/wip
-    fi
+    linux_build build-release
+    linux_build build-release-gtk3
 fi

@@ -105,6 +105,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     m_connector.Bind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBPlugin::OnLLDBDeletedAllBreakpoints, this);
     m_connector.Bind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBPlugin::OnLLDBBreakpointsUpdated, this);
     m_connector.Bind(wxEVT_LLDB_EXPRESSION_EVALUATED, &LLDBPlugin::OnLLDBExpressionEvaluated, this);
+    m_connector.Bind(wxEVT_LLDB_LAUNCH_SUCCESS, &LLDBPlugin::OnLLDBLaunchSuccess, this);
 
     // UI events
     EventNotifier::Get()->Connect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBPlugin::OnIsDebugger), NULL,
@@ -160,6 +161,7 @@ void LLDBPlugin::UnPlug()
     m_connector.Unbind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBPlugin::OnLLDBDeletedAllBreakpoints, this);
     m_connector.Unbind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBPlugin::OnLLDBBreakpointsUpdated, this);
     m_connector.Unbind(wxEVT_LLDB_EXPRESSION_EVALUATED, &LLDBPlugin::OnLLDBExpressionEvaluated, this);
+    m_connector.Unbind(wxEVT_LLDB_LAUNCH_SUCCESS, &LLDBPlugin::OnLLDBLaunchSuccess, this);
 
     // UI events
     EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBPlugin::OnIsDebugger), NULL,
@@ -1129,4 +1131,15 @@ void LLDBPlugin::OnDestroyTip(clCommandEvent& e)
         m_tooltip->Destroy();
         m_tooltip = NULL;
     }
+}
+
+void LLDBPlugin::OnLLDBLaunchSuccess(LLDBEvent& event)
+{
+    event.Skip();
+    m_connector.SetCanInteract(true);
+    m_connector.SetIsRunning(true);
+
+    CL_DEBUG("CODELITE>> Applying breakpoints...");
+    m_connector.ApplyBreakpoints();
+    m_connector.Next();
 }

@@ -61,6 +61,7 @@ enum eReplyType {
     kReplyTypeExprEvaluated,
     kReplyTypeWatchEvaluated,
     kReplyTypeInterperterReply,
+    kReplyTypeLaunchSuccess,
 };
 
 // LLDBCommand types

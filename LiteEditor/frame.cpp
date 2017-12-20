@@ -70,6 +70,7 @@
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
 #include "theme_handler_helper.h"
+#include "cl_defs.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -680,6 +681,7 @@ EVT_MENU(XRCID("goto_codelite_download_url"), clMainFrame::OnGotoCodeLiteDownloa
 
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, clMainFrame::OnNewVersionAvailable)
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, clMainFrame::OnNewVersionAvailable)
+EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_CHECK_ERROR, clMainFrame::OnVersionCheckError)
 
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE, clMainFrame::OnNewDetachedPane)
 EVT_COMMAND(wxID_ANY, wxEVT_LOAD_PERSPECTIVE, clMainFrame::OnLoadPerspective)
@@ -1204,9 +1206,11 @@ void clMainFrame::CreateGUIControls()
 
     Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnChangeActiveBookmarkType), this,
          XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
-
+         
+#if !USE_AUI_NOTEBOOK
     GetWorkspacePane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")));
     GetDebuggerPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_rmenu")));
+#endif
 
     m_mgr.Update();
     SetAutoLayout(true);
@@ -3228,54 +3232,8 @@ void clMainFrame::OnBackwardForwardUI(wxUpdateUIEvent& event)
 
 void clMainFrame::CreateWelcomePage()
 {
-    /*
-    Manager *mgr = ManagerST::Get();
-    //load the template
-    wxFileName fn(mgr->GetStartupDirectory(), wxT("index.html"));
-    wxFFile file(fn.GetFullPath(), wxT("r"));
-    if (!file.IsOpened()) {
-        return;
-    }
-    wxHtmlWindow *welcomePage = new wxHtmlWindow(GetMainBook(), wxID_ANY);
-
-    wxString content;
-    file.ReadAll(&content);
-    file.Close();
-
-    //replace $(InstallPath)
-    content.Replace(wxT("$(InstallPath)"), mgr->GetStartupDirectory());
-
-    //replace the $(FilesTable) & $(WorkspaceTable)
-    wxString workspaceTable = CreateWorkspaceTable();
-    wxString filesTable = CreateFilesTable();
-
-    content.Replace(wxT("$(WorkspaceTable)"), workspaceTable);
-    content.Replace(wxT("$(FilesTable)"), filesTable);
-
-    //replace the HTML colours with platfroms correct colours
-    wxColour active_caption     = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-    wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-
-    active_caption = DrawingUtils::LightColour(active_caption, 11.0);
-
-    content.Replace(wxT("$(ACTIVE_CAPTION)"), active_caption.GetAsString());
-    content.Replace(wxT("$(ACTIVE_CAPTION_TEXT)"), active_caption_txt.GetAsString());
-
-    content.Replace(wxT("$(QuickLinks)"), _("Quick Links:"));
-    content.Replace(wxT("$(CodeLiteWiki)"), _("CodeLite Wiki"));
-    content.Replace(wxT("$(CodeLiteForums)"), _("CodeLite Forums"));
-    content.Replace(wxT("$(CreateNewWorkspace)"), _("Create a New Workspace"));
-    content.Replace(wxT("$(OpenWorkspace)"), _("Open a Workspace"));
-    content.Replace(wxT("$(RecentWorkspaces)"), _("Recently opened workspaces:"));
-    content.Replace(wxT("$(RecentFiles)"), _("Recently opened files:"));
-
-    welcomePage->SetPage(content);*/
     WelcomePage* welcomePage = new WelcomePage(GetMainBook());
-    ThemeHandlerHelper helper(welcomePage);
-    helper.UpdateColours(welcomePage);
-    
     GetMainBook()->AddPage(welcomePage, _("Welcome!"), wxEmptyString, wxNullBitmap, true);
-
     GetMainBook()->Layout();
     // This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first
     SendSizeEvent(wxSEND_EVENT_POST);
@@ -6109,3 +6067,9 @@ void clMainFrame::OnWordComplete(wxCommandEvent& event)
 }
 
 void clMainFrame::OnGotoAnything(wxCommandEvent& e) { clGotoAnythingManager::Get().ShowDialog(); }
+
+void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
+{
+    ::wxMessageBox(e.GetString(), "CodeLite", wxICON_ERROR | wxOK, this);
+    wxDELETE(m_webUpdate);
+}

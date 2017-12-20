@@ -69,6 +69,7 @@
 #include <wx/textdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "clDiffFrame.h"
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 EVT_UPDATE_UI(XRCID("svn_stop"), SubversionView::OnStopUI)
@@ -931,7 +932,8 @@ void SubversionView::OnFileAdded(clCommandEvent& event)
 void SubversionView::OnFileRenamed(clFileSystemEvent& event)
 {
     // If the Svn Client Version is set to 0.0 it means that we dont have SVN client installed
-    if(m_plugin->GetSvnClientVersion() && (m_plugin->GetSettings().GetFlags() & SvnRenameFileInRepo)) {
+    if((event.GetEventObject() != this) && m_plugin->GetSvnClientVersion() &&
+       (m_plugin->GetSettings().GetFlags() & SvnRenameFileInRepo)) {
         wxString oldName = event.GetPath();
         wxString newName = event.GetNewpath();
 
@@ -945,6 +947,13 @@ void SubversionView::OnFileRenamed(clFileSystemEvent& event)
         m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(),
                                         new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
 
+        // We need to fire this event again. This time we set the event-object to 'this'
+        // so the fired event won't get handled by this handler
+        clFileSystemEvent e(wxEVT_FILE_RENAMED);
+        e.SetEventObject(this); // to avoid stackoverflow...
+        e.SetPath(oldName);
+        e.SetNewpath(newName);
+        EventNotifier::Get()->AddPendingEvent(e);
     } else {
         event.Skip();
     }
@@ -1351,15 +1360,10 @@ void SubversionView::FinishDiff(wxString output, wxFileName fileBeingDiffed)
     title_right = _("Working copy");
     title_left = _("HEAD version");
 
-    DiffSideBySidePanel* diffPanel = new DiffSideBySidePanel(EventNotifier::Get()->TopFrame());
     DiffSideBySidePanel::FileInfo l(leftFile, title_left, true);
     DiffSideBySidePanel::FileInfo r(rightFile, title_right, false);
-    diffPanel->SetFilesDetails(l, r);
-    diffPanel->Diff();
-    diffPanel->SetOriginSourceControl();
-    m_plugin->GetManager()->AddPage(diffPanel, _("Svn Diff: ") + fileBeingDiffed.GetFullName(),
-                                    _("Svn Diff: ") + fileBeingDiffed.GetFullPath(), wxNullBitmap, true);
-
+    clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), l, r, true);
+    diffView->Show();
     wxDELETE(m_codeliteEcho);
 }
 void SubversionView::OnSciStcChange(wxStyledTextEvent& event)

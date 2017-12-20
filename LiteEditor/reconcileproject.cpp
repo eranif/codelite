@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "VirtualDirectorySelectorDlg.h"
+#include "clFilesCollector.h"
 #include "event_notifier.h"
 #include "frame.h"
 #include "globals.h"
@@ -79,62 +80,6 @@ public:
 
 // ---------------------------------------------------------
 
-class FindFilesTraverser : public wxDirTraverser
-{
-public:
-    FindFilesTraverser(const wxString types, const wxArrayString& ignorefiles, const wxArrayString& excludes,
-                       const wxString& projFP)
-        : m_ignorefiles(ignorefiles)
-        , m_excludes(excludes)
-        , m_projFP(projFP)
-    {
-        m_types = wxStringTokenize(types, ";,|"); // The tooltip says use ';' but cover all bases
-    }
-
-    virtual wxDirTraverseResult OnFile(const wxString& filename)
-    {
-        wxFileName fn(filename);
-
-        // First check for a matching file-ignore
-        for(size_t n = 0; n < m_ignorefiles.GetCount(); ++n) {
-            if(wxMatchWild(m_ignorefiles.Item(n), fn.GetFullName())) { return wxDIR_CONTINUE; }
-        }
-
-        if(m_types.empty()) {
-            m_results.Add(filename); // No types presumably means everything
-        } else {
-            for(size_t n = 0; n < m_types.GetCount(); ++n) {
-                if(m_types.Item(n) == fn.GetExt() || m_types.Item(n) == "*" ||
-                   m_types.Item(n) == "*.*") { // Other ways to say "Be greedy"
-                    m_results.Add(fn.GetFullPath());
-                    break;
-                }
-            }
-        }
-
-        return wxDIR_CONTINUE;
-    }
-
-    virtual wxDirTraverseResult OnDir(const wxString& dirname)
-    {
-        // Skip this dir if it's found in the list of excludes
-        wxFileName fn = wxFileName::DirName(dirname);
-        if(fn.IsAbsolute()) { fn.MakeRelativeTo(m_projFP); }
-        return (m_excludes.Index(fn.GetFullPath()) == wxNOT_FOUND) ? wxDIR_CONTINUE : wxDIR_IGNORE;
-    }
-
-    const wxArrayString& GetResults() const { return m_results; }
-
-private:
-    wxArrayString m_types;
-    wxArrayString m_results;
-    const wxArrayString m_ignorefiles;
-    const wxArrayString m_excludes;
-    const wxString m_projFP;
-};
-
-// ---------------------------------------------------------
-
 ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projname)
     : ReconcileProjectDlgBaseClass(parent)
     , m_projname(projname)
@@ -156,9 +101,9 @@ bool ReconcileProjectDlg::LoadData()
     ReconcileProjectFiletypesDlg dlg(clMainFrame::Get(), m_projname);
     dlg.SetData();
     if(dlg.ShowModal() != wxID_OK) { return false; }
-    wxString toplevelDir, types;
-    wxArrayString ignorefiles, excludes, regexes;
-    dlg.GetData(toplevelDir, types, ignorefiles, excludes, regexes);
+    wxString toplevelDir, filespec, ignorefilespec;
+    wxArrayString excludeFolders, regexes;
+    dlg.GetData(toplevelDir, filespec, ignorefilespec, excludeFolders, regexes);
     m_regexes = regexes;
 
     wxDir dir(toplevelDir);
@@ -171,10 +116,15 @@ bool ReconcileProjectDlg::LoadData()
         wxBusyInfo wait("Searching for files...", this);
         wxSafeYield();
 
-        FindFilesTraverser traverser(types, ignorefiles, excludes, toplevelDir);
-        dir.Traverse(traverser);
-        m_allfiles.insert(traverser.GetResults().begin(), traverser.GetResults().end());
-        DoFindFiles();
+        clFilesScanner scanner;
+        std::vector<wxString> filesOutput;
+        wxStringSet_t excludeFoldersSet;
+        std::for_each(excludeFolders.begin(), excludeFolders.end(), 
+            [&](const wxString& folder) { excludeFoldersSet.insert(folder); });
+        if(scanner.Scan(toplevelDir, filesOutput, filespec, ignorefilespec, excludeFoldersSet)) {
+            m_allfiles.insert(filesOutput.begin(), filesOutput.end());
+            DoFindFiles();
+        }
     }
 
     if(m_newfiles.empty() && m_stalefiles.empty()) {
@@ -215,70 +165,83 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
     // populate the 'new files' tab
     //---------------------------------------------------------
 
-    m_dataviewAssignedModel->Clear();
-    m_dvListCtrl1Unassigned->DeleteAllItems();
+    {
+        m_dataviewAssignedModel->Clear();
+        m_dvListCtrl1Unassigned->DeleteAllItems();
 
-    wxStringSet_t::const_iterator iter = m_newfiles.begin();
-    for(; iter != m_newfiles.end(); ++iter) {
-        wxString filename = *iter;
-        wxFileName fn(filename);
-        fn.MakeRelativeTo(m_toplevelDir);
+        std::vector<wxString> newFilesV;
+        newFilesV.reserve(m_newfiles.size());
+        newFilesV.insert(newFilesV.end(), m_newfiles.begin(), m_newfiles.end());
+        std::sort(newFilesV.begin(), newFilesV.end()); // Sort the files
+        for(size_t i = 0; i < newFilesV.size(); ++i) {
+            const wxString& filename = newFilesV[i];
+            wxFileName fn(filename);
+            fn.MakeRelativeTo(m_toplevelDir);
 
-        // Even without auto-allocation, apply any regex as that'll be most likely to reflect the user's choice
-        bool bFileAllocated = false;
-        for(size_t i = 0; i < m_regexes.GetCount(); ++i) {
-            wxString virtualFolder(m_regexes.Item(i).BeforeFirst('|'));
-            wxRegEx regex(m_regexes.Item(i).AfterFirst('|'));
-            if(regex.IsValid() && regex.Matches(filename)) {
-                wxVector<wxVariant> cols;
-                cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(filename)));
-                cols.push_back(virtualFolder);
-                ReconcileFileItemData* data = new ReconcileFileItemData(filename, virtualFolder);
-                m_dataviewAssignedModel->AppendItem(wxDataViewItem(0), cols, data);
-                bFileAllocated = true;
-                break;
-            }
-        }
-
-        if(usingAutoallocate) {
-            bool attemptAllocation(true);
-            // First see if we should only process selected files and, if so, was this file selected
-            if(onlySelections) {
-                if(selectedFiles.Index(fn.GetFullPath()) == wxNOT_FOUND) { attemptAllocation = false; }
-            }
-
-            if(attemptAllocation) {
-                wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
-                if(!virtualFolder.empty()) {
+            // Even without auto-allocation, apply any regex as that'll be most likely to reflect the user's choice
+            bool bFileAllocated = false;
+            for(size_t i = 0; i < m_regexes.GetCount(); ++i) {
+                wxString virtualFolder(m_regexes.Item(i).BeforeFirst('|'));
+                wxRegEx regex(m_regexes.Item(i).AfterFirst('|'));
+                if(regex.IsValid() && regex.Matches(filename)) {
                     wxVector<wxVariant> cols;
                     cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(filename)));
                     cols.push_back(virtualFolder);
                     ReconcileFileItemData* data = new ReconcileFileItemData(filename, virtualFolder);
                     m_dataviewAssignedModel->AppendItem(wxDataViewItem(0), cols, data);
                     bFileAllocated = true;
+                    break;
                 }
             }
-        }
 
-        if(!bFileAllocated) {
-            wxVector<wxVariant> cols;
-            cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(filename)));
-            m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)NULL);
+            if(usingAutoallocate) {
+                bool attemptAllocation(true);
+                // First see if we should only process selected files and, if so, was this file selected
+                if(onlySelections) {
+                    if(selectedFiles.Index(fn.GetFullPath()) == wxNOT_FOUND) { attemptAllocation = false; }
+                }
+
+                if(attemptAllocation) {
+                    wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
+                    if(!virtualFolder.empty()) {
+                        wxVector<wxVariant> cols;
+                        cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(filename)));
+                        cols.push_back(virtualFolder);
+                        ReconcileFileItemData* data = new ReconcileFileItemData(filename, virtualFolder);
+                        m_dataviewAssignedModel->AppendItem(wxDataViewItem(0), cols, data);
+                        bFileAllocated = true;
+                    }
+                }
+            }
+
+            if(!bFileAllocated) {
+                wxVector<wxVariant> cols;
+                cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(filename)));
+                m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)NULL);
+            }
         }
     }
-
     //---------------------------------------------------------
     // populate the 'stale files' tab
     //---------------------------------------------------------
-    m_dataviewStaleFilesModel->Clear();
+    {
+        std::vector<clProjectFile::Ptr_t> staleFiles;
+        staleFiles.reserve(m_stalefiles.size());
+        std::for_each(m_stalefiles.begin(), m_stalefiles.end(),
+                      [&](const Project::FilesMap_t::value_type& vt) { staleFiles.push_back(vt.second); });
+        std::sort(staleFiles.begin(), staleFiles.end(), [&](clProjectFile::Ptr_t a, clProjectFile::Ptr_t b) {
+            return a->GetFilename() < b->GetFilename();
+        }); // Sort the files
 
-    std::for_each(m_stalefiles.begin(), m_stalefiles.end(), [&](const Project::FilesMap_t::value_type& vt) {
-        clProjectFile::Ptr_t file = vt.second;
-        wxVector<wxVariant> cols;
-        cols.push_back(::MakeIconText(file->GetFilename(), GetBitmap(file->GetFilename())));
-        m_dataviewStaleFilesModel->AppendItem(wxDataViewItem(0), cols,
-                                              new ReconcileFileItemData(file->GetFilename(), file->GetVirtualFolder()));
-    });
+        m_dataviewStaleFilesModel->Clear();
+
+        std::for_each(staleFiles.begin(), staleFiles.end(), [&](clProjectFile::Ptr_t file) {
+            wxVector<wxVariant> cols;
+            cols.push_back(::MakeIconText(file->GetFilename(), GetBitmap(file->GetFilename())));
+            m_dataviewStaleFilesModel->AppendItem(
+                wxDataViewItem(0), cols, new ReconcileFileItemData(file->GetFilename(), file->GetVirtualFolder()));
+        });
+    }
 }
 
 wxArrayString ReconcileProjectDlg::RemoveStaleFiles(const wxArrayString& StaleFiles) const
@@ -686,23 +649,32 @@ void ReconcileProjectFiletypesDlg::SetData()
     }
 }
 
-void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& types, wxArrayString& ignoreFiles,
+void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& types, wxString& ignoreFiles,
                                            wxArrayString& excludePaths, wxArrayString& regexes) const
 {
     toplevelDir = m_dirPickerToplevel->GetPath();
     types = m_textExtensions->GetValue();
-    ignoreFiles = m_listIgnoreFiles->GetStrings();
+    wxArrayString ignoreFilesArr = m_listIgnoreFiles->GetStrings();
     excludePaths = m_listExclude->GetStrings();
     regexes = GetRegexes();
+
+    // Fix the types to fit a standard mask string
+    wxArrayString typesArr = ::wxStringTokenize(types, "|,;", wxTOKEN_STRTOK);
+    for(size_t i = 0; i < typesArr.size(); ++i) {
+        wxString& fileExt = typesArr.Item(i);
+        if(!fileExt.StartsWith("*")) { fileExt.Prepend("*."); }
+    }
+    types = wxJoin(typesArr, ';');
+
+    // Fix the the ignore files
+    ignoreFiles = wxJoin(ignoreFilesArr, ';');
 
     // While we're here, save the current data
     ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);
     wxCHECK_RET(proj, "Can't find a Project with the supplied name");
 
-    wxFileName relTopLevelDir(toplevelDir);
-    if(relTopLevelDir.IsAbsolute()) { relTopLevelDir.MakeRelativeTo(proj->GetFileName().GetPath()); }
-
-    proj->SetReconciliationData(relTopLevelDir.GetFullPath(wxPATH_UNIX), types, ignoreFiles, excludePaths, regexes);
+    proj->SetReconciliationData(wxFileName(toplevelDir).GetFullPath(wxPATH_UNIX), types, ignoreFilesArr, excludePaths,
+                                regexes);
 }
 
 void ReconcileProjectFiletypesDlg::SetRegex(const wxString& regex)
@@ -742,10 +714,6 @@ void ReconcileProjectFiletypesDlg::OnIgnoreBrowse(wxCommandEvent& WXUNUSED(event
                                          wxDefaultPosition, this);
 
     if(!new_exclude.empty()) {
-        wxFileName fn = wxFileName::DirName(new_exclude);
-        fn.MakeRelativeTo(topleveldir);
-        new_exclude = fn.GetFullPath();
-
         if(m_listExclude->FindString(new_exclude) == wxNOT_FOUND) { m_listExclude->Append(new_exclude); }
     }
 }

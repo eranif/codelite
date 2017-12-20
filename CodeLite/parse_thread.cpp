@@ -25,10 +25,12 @@
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "cl_command_event.h"
+#include "cl_standard_paths.h"
 #include "cpp_scanner.h"
 #include "crawler_include.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "istorage.h"
 #include "parse_thread.h"
 #include "pp_include.h"
@@ -63,6 +65,34 @@ wxDEFINE_EVENT(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_PARSE_THREAD_READY, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_PARSE_THREAD_SOURCE_TAGS, clCommandEvent);
+
+static const wxString& WriteCodeLiteCCHelperFile()
+{
+    // Due to heavy changes to shared_ptr in GCC 7.X and later
+    // we need to simplify the shared_ptr class
+    // we do this by adding our own small shared_ptr class (these entries will be added to the
+    // ones that were actuall parsed from the original std::shared_ptr class as defined by libstd++)
+    // We might expand this hack in the future in favour of other changes
+    static wxString buffer = "namespace std { template<typename _Tp> class shared_ptr {\n"
+                             "    _Tp* operator->();\n"
+                             "    void reset( Y* ptr );\n"
+                             "    void reset( Y* ptr, Deleter d );\n"
+                             "    void reset( Y* ptr, Deleter d, Alloc alloc );\n"
+                             "    _T* get() const;\n"
+                             "};\n"
+                             "} // namespace std\n";
+    static wxString filepath;
+    if(filepath.IsEmpty()) {
+        wxFileName tmpFile(clStandardPaths::Get().GetUserDataDir(), "codelite_templates.hpp");
+        tmpFile.AppendDir("tmp");
+        tmpFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        filepath = tmpFile.GetFullPath();
+    }
+
+    if(wxFileName::FileExists(filepath)) { return filepath; }
+    FileUtils::WriteFileContent(wxFileName(filepath), buffer);
+    return filepath;
+}
 
 ParseThread::ParseThread()
     : WorkerThread()
@@ -177,18 +207,8 @@ void ParseThread::GetSearchPaths(wxArrayString& paths, wxArrayString& excludePat
 
 void ParseThread::ProcessIncludes(ParseRequest* req)
 {
-    DEBUG_MESSAGE(wxString::Format(wxT("ProcessIncludes -> started")));
-
     std::set<wxString>* newSet = new std::set<wxString>();
     FindIncludedFiles(req, newSet);
-
-#ifdef PARSE_THREAD_DBG
-    std::set<wxString>::iterator iter = newSet->begin();
-    for(; iter != newSet->end(); iter++) {
-        wxString fileN((*iter).c_str(), wxConvUTF8);
-        DEBUG_MESSAGE(wxString::Format(wxT("ParseThread::ProcessIncludes -> %s"), fileN.c_str()));
-    }
-#endif
 
     // collect the results
     if(req->_evtHandler) {
@@ -385,6 +405,9 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
     int precent(0);
     int lastPercentageReported(0);
 
+    // Prepend our hack file to the list of files to parse
+    const wxString& hackfile = WriteCodeLiteCCHelperFile();
+    req->_workspaceFiles.insert(req->_workspaceFiles.begin(), hackfile.ToStdString());
     PPTable::Instance()->Clear();
 
     for(size_t i = 0; i < maxVal; i++) {
@@ -398,7 +421,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
             return;
         }
 
-        wxFileName curFile(wxString(req->_workspaceFiles.at(i).c_str(), wxConvUTF8));
+        wxFileName curFile(wxString(req->_workspaceFiles[i].c_str(), wxConvUTF8));
 
         // Skip binary files
         if(TagsManagerST::Get()->IsBinaryFile(curFile.GetFullPath())) {

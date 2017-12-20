@@ -35,26 +35,40 @@
 
 #include <map>
 #include "gitui.h"
+#include "cl_command_event.h"
 
 class GitCommitEditor;
 class IProcess;
+class GitPlugin;
 
 class GitDiffDlg : public GitDiffDlgBase
 {
     std::map<wxString, wxString> m_diffMap;
     wxString m_workingDir;
     wxString m_gitPath;
+    wxString m_commits; // Empty unless the ChooseCommits dialog is used
+    wxString m_commandOutput;
+    GitPlugin* m_plugin;
+    IProcess* m_process;
 
 public:
-    GitDiffDlg(wxWindow* parent, const wxString& workingDir);
+    GitDiffDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* plugin);
     ~GitDiffDlg();
-
-    void SetDiff(const wxString& diff);
 
 private:
     void OnChangeFile(wxCommandEvent& e);
 
     DECLARE_EVENT_TABLE();
+protected:
+    virtual void OnOptionsChanged(wxCommandEvent& event);
+    wxString PrepareCommand() const;
+    void CreateDiff();
+    void SetDiff(const wxString& diff);
+    void OnProcessTerminated(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+
+    virtual void OnChoseCommits(wxCommandEvent& event);
+    virtual void OnClose(wxCommandEvent& event);
 };
 
 #endif //__gitDiffDlg__

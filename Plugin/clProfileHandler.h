@@ -6,8 +6,8 @@
 #include "wxStringHash.h"
 #include "macros.h"
 #include "cl_command_event.h"
+#include "Notebook.h"
 
-class Notebook;
 class WXDLLIMPEXP_SDK clProfileHandler : public wxEvtHandler
 {
     wxStringSet_t m_cxxOutputTabs;

@@ -1,6 +1,6 @@
+#include "CxxScannerTokens.h"
 #include "CxxVariable.h"
 #include <algorithm>
-#include "CxxScannerTokens.h"
 
 CxxVariable::CxxVariable(eCxxStandard standard)
     : m_standard(standard)
@@ -10,29 +10,30 @@ CxxVariable::CxxVariable(eCxxStandard standard)
 
 CxxVariable::~CxxVariable() {}
 
-wxString CxxVariable::GetTypeAsString() const { return PackType(m_type, m_standard); }
-wxString CxxVariable::GetTypeAsCxxString() const { return PackType(m_type, m_standard, true); }
+wxString CxxVariable::GetTypeAsString(const wxStringTable_t& table) const
+{
+    return PackType(m_type, m_standard, false, table);
+}
+wxString CxxVariable::GetTypeAsCxxString(const wxStringTable_t& table) const
+{
+    return PackType(m_type, m_standard, true, table);
+}
 
-wxString CxxVariable::ToString(size_t flags) const
+wxString CxxVariable::ToString(size_t flags, const wxStringTable_t& table) const
 {
     wxString str;
-    str << GetTypeAsString();
+    str << GetTypeAsString(table);
 
-    if(!GetPointerOrReference().IsEmpty()) {
-        str << GetPointerOrReference();
-    }
+    if(!GetPointerOrReference().IsEmpty()) { str << GetPointerOrReference(); }
 
-    if(flags & kToString_Name) {
-        str << " " << GetName();
-    }
+    if(flags & kToString_Name) { str << " " << GetName(); }
 
-    if((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty()) {
-        str << " = " << GetDefaultValue();
-    }
+    if((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty()) { str << " = " << GetDefaultValue(); }
     return str;
 }
 
-wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard, bool omitClassKeyword)
+wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard, bool omitClassKeyword,
+                               const wxStringTable_t& table)
 {
     // Example:
     // const std::vector<std::pair<int, int> >& v
@@ -41,14 +42,19 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
     std::for_each(type.begin(), type.end(), [&](const CxxVariable::LexerToken& tok) {
         // "strcut stat buff" if we pass "omitClassKeyword" as true, the type is set to "stat" only
         // we do the same for class, enum and struct
-        if(s.empty() && (tok.type == T_CLASS || tok.type == T_STRUCT || tok.type == T_ENUM) && omitClassKeyword)
-            return;
-            
+        if(s.empty() && (tok.type == T_CLASS || tok.type == T_STRUCT || tok.type == T_ENUM) && omitClassKeyword) return;
+
         if((!s.empty() && s.Last() == ' ') &&
            ((tok.type == ',') || (tok.type == '>') || tok.type == '(' || tok.type == ')')) {
             s.RemoveLast();
         }
-        s << tok.text;
+
+        // Do we need to revert macros?
+        if((tok.GetType() == T_IDENTIFIER) && !table.empty() && table.count(tok.text)) {
+            s << table.find(tok.text)->second;
+        } else {
+            s << tok.text;
+        }
 
         if(standard == eCxxStandard::kCxx03 && (tok.type == '>')) {
             if(s.length() > 1 && s.EndsWith(">>")) {
@@ -56,7 +62,6 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
                 s << "> >";
             }
         }
-        
 
         switch(tok.type) {
         case T_AUTO:
@@ -84,8 +89,6 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
             break;
         }
     });
-    if(!s.empty() && s.EndsWith(" ")) {
-        s.RemoveLast();
-    }
+    if(!s.empty() && s.EndsWith(" ")) { s.RemoveLast(); }
     return s;
 }

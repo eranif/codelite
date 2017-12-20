@@ -26,26 +26,23 @@
 #ifndef CLAUIMAINNOTEBOOKTABART_H
 #define CLAUIMAINNOTEBOOKTABART_H
 
-#include <wx/aui/auibook.h>
-#include <wx/pen.h>
 #include "codelite_exports.h"
-#include <wx/dcgraph.h>
+#include <wx/aui/auibook.h>
 #include <wx/colour.h>
+#include <wx/dcgraph.h>
+#include <wx/pen.h>
+#include <wx/sharedptr.h>
 
-#define TAB_CTRL_HEIGHT 30
-
-class IManager;
 class WXDLLIMPEXP_SDK clAuiMainNotebookTabArt : public wxAuiDefaultTabArt
 {
 protected:
-    IManager* m_manager;
     // The tab area background colour
     wxColour m_bgColour;
+    wxColour m_markerColour;
 
     // The tab area pen colour (used to mark the tab area borders)
     wxColour m_penColour;
     wxColour m_activeTabPenColour;
-    wxColour m_innerPenColour;
 
     // The text colour
     wxColour m_activeTabTextColour;
@@ -54,43 +51,31 @@ protected:
     // A singe tab background colour
     wxColour m_activeTabBgColour;
     wxColour m_tabBgColour;
-    
+
     double m_tabRadius;
-    
+
     wxBitmap m_bmpClose;
     wxBitmap m_bmpCloseHover;
     wxBitmap m_bmpClosePressed;
+    wxRect m_windowListButtonRect;
 
-protected:
-    virtual void DoSetColours();
-    virtual void DoInitializeColoursFromTheme();
-    
-    void SetDarkColours();
-    void SetLightColours();
-    
 public:
-    clAuiMainNotebookTabArt(IManager* manager);
+    void RefreshColours(long style);
+
+public:
+    clAuiMainNotebookTabArt();
     virtual ~clAuiMainNotebookTabArt();
 
     virtual wxAuiTabArt* Clone() { return new clAuiMainNotebookTabArt(*this); }
     virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
-    virtual void DrawTab(wxDC& dc,
-                         wxWindow* wnd,
-                         const wxAuiNotebookPage& page,
-                         const wxRect& in_rect,
-                         int close_button_state,
-                         wxRect* out_tab_rect,
-                         wxRect* out_button_rect,
-                         int* x_extent);
-    virtual wxSize GetTabSize(wxDC& dc,
-                              wxWindow* wnd,
-                              const wxString& caption,
-                              const wxBitmap& bitmap,
-                              bool active,
-                              int closeButtonState,
-                              int* xExtent);
-                              
+    virtual void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& in_rect,
+                         int close_button_state, wxRect* out_tab_rect, wxRect* out_button_rect, int* x_extent);
+    virtual wxSize GetTabSize(wxDC& dc, wxWindow* wnd, const wxString& caption, const wxBitmap& bitmap, bool active,
+                              int closeButtonState, int* xExtent);
+
     int GetAdditionalBorderSpace(wxWindow* wnd) { return 0; }
+    void DrawButton(wxDC& dc, wxWindow* wnd, const wxRect& in_rect, int bitmap_id, int button_state, int orientation,
+                    wxRect* out_rect);
 };
 
 #endif // CLAUIMAINNOTEBOOKTABART_H

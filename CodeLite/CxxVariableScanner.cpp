@@ -189,7 +189,11 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
             return true;
         } else if(token.GetType() == T_IDENTIFIER) {
             varname = token.GetWXString();
-
+            
+            // When parsing function signature, we don't have multiple arguments 
+            // tied to the same TYPE
+            if(m_isFuncSignature) { return false; }
+            
             // Peek at the next token
             // We can expect "=", "," "(", ";" or ")"
             // Examples:
@@ -210,7 +214,8 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
 
             // Now that we got the name, check if have more variables to expect
             if(!GetNextToken(token)) {
-                varname.Clear();
+                // We reached EOF, but we do got the variable name
+                // se we return false ("don't continue") but we dont clear the name
                 return false;
             }
 
@@ -443,12 +448,12 @@ void CxxVariableScanner::OptimizeBuffer(const wxString& buffer, wxString& stripp
         case ')':
             --parenthesisDepth;
             buffer = PopBuffer();
+            buffer << ")";
             // The closing curly bracket is added *after* we switch buffers
-            if(parenthesisDepth == 0) {
-                buffer << tok.GetWXString();
-            } else {
-                buffer << ";";
-            }
+            // if(parenthesisDepth == 0) {
+            //     buffer << tok.GetWXString();
+            // } else {
+            // }
             break;
         default:
             buffer << tok.GetWXString() << " ";
@@ -608,6 +613,7 @@ bool CxxVariableScanner::OnForLoop(Scanner_t scanner)
             if(depth == 0) return true;
             break;
         case ';':
+        case ':': // C++11 ranged for
             if(lookingForFirstSemiColon) { buffer << ";"; }
             lookingForFirstSemiColon = false;
             break;

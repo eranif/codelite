@@ -29,7 +29,7 @@
 #include <wx/panel.h>
 #include <wx/toolbar.h>
 #include "codelite_exports.h"
-class Notebook;
+#include "Notebook.h"
 
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_CMD_NEW_DOCKPANE;
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_CMD_DELETE_DOCKPANE;

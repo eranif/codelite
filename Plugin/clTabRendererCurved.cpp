@@ -1,7 +1,8 @@
 #include "clTabRendererCurved.h"
+#if !USE_AUI_NOTEBOOK
+#include <wx/dcmemory.h>
 #include <wx/font.h>
 #include <wx/settings.h>
-#include <wx/dcmemory.h>
 
 #define DRAW_LINE(__p1, __p2) \
     dc.DrawLine(__p1, __p2);  \
@@ -20,15 +21,15 @@ clTabRendererCurved::clTabRendererCurved()
 
 clTabRendererCurved::~clTabRendererCurved() {}
 
-void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
-                               size_t style)
+void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
+                               const clTabColours& colours, size_t style)
 {
     const int TOP_SMALL_HEIGHT = 0;
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
     wxFont font = GetTabFont();
-    dc.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
-    dc.SetFont(font);
+    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
+    fontDC.SetFont(font);
 
     if(style & kNotebook_BottomTabs) {
         // Bottom tabs
@@ -168,9 +169,7 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabI
 
         // Vertical tabs
         // Draw bitmap
-        if(tabInfo.GetBitmap().IsOk()) {
-            tmpDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX);
-        }
+        if(tabInfo.GetBitmap().IsOk()) { tmpDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX); }
 
         tmpDC.DrawText(tabInfo.m_label, tabInfo.m_textY, tabInfo.m_textX);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
@@ -239,10 +238,11 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, const clTabInfo& tabI
         if(tabInfo.GetBitmap().IsOk()) {
             dc.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
         }
-        dc.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
+        fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-            DrawButton(dc, wxRect(tabInfo.m_bmpCloseX + tabInfo.m_rect.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE,
-                                  CLOSE_BUTTON_SIZE),
+            DrawButton(dc,
+                       wxRect(tabInfo.m_bmpCloseX + tabInfo.m_rect.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE,
+                              CLOSE_BUTTON_SIZE),
                        colours, eButtonState::kNormal);
         }
     }
@@ -270,3 +270,4 @@ void clTabRendererCurved::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
         ClearActiveTabExtraLine(activeTab, dc, colours, style);
     }
 }
+#endif

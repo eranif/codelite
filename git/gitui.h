@@ -36,11 +36,15 @@
 #include <wx/dataview.h>
 #include <wx/listbox.h>
 #include "gitCommitEditor.h"
+#include <wx/radiobox.h>
+#include <wx/statbox.h>
+#include <wx/radiobut.h>
+#include <wx/choice.h>
+#include <wx/spinctrl.h>
 #include <wx/bitmap.h>
 #include <wx/icon.h>
 #include <wx/gauge.h>
 #include "dataviewfilesmodel.h"
-#include <wx/choice.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -242,11 +246,17 @@ protected:
     wxPanel* m_splitterPageDiff;
     wxStaticText* m_staticText66;
     GitCommitEditor* m_editor;
+    wxRadioBox* m_radioBoxStaged;
+    wxCheckBox* m_checkIgnoreSpace;
+    wxButton* m_buttonDiffDlg;
     wxStdDialogButtonSizer* m_sdbSizer1;
     wxButton* m_button145;
 
 protected:
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOptionsChanged(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChoseCommits(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText68() { return m_staticText68; }
@@ -256,8 +266,95 @@ public:
     GitCommitEditor* GetEditor() { return m_editor; }
     wxPanel* GetSplitterPageDiff() { return m_splitterPageDiff; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
+    wxRadioBox* GetRadioBoxStaged() { return m_radioBoxStaged; }
+    wxCheckBox* GetCheckIgnoreSpace() { return m_checkIgnoreSpace; }
+    wxButton* GetButtonDiffDlg() { return m_buttonDiffDlg; }
     GitDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Current Diffs"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxCAPTION|wxRESIZE_BORDER|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxCLOSE_BOX);
     virtual ~GitDiffDlgBase();
+};
+
+
+class GitDiffChooseCommitishDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText59825;
+    wxStaticText* m_staticText598;
+    wxRadioButton* m_radioBranch1;
+    wxChoice* m_choiceBranch1;
+    wxRadioButton* m_radioTag1;
+    wxChoice* m_choiceTag1;
+    wxRadioButton* m_radioCommit1;
+    wxChoice* m_choiceCommit1;
+    wxRadioButton* m_radioUserEntered1;
+    wxComboBox* m_comboCommitish1;
+    wxRadioButton* m_radioBranch2;
+    wxChoice* m_choiceBranch2;
+    wxRadioButton* m_radioTag2;
+    wxChoice* m_choiceTag2;
+    wxRadioButton* m_radioCommit2;
+    wxChoice* m_choiceCommit2;
+    wxRadioButton* m_radioUserEntered2;
+    wxComboBox* m_comboCommitish2;
+    wxCheckBox* m_checkTripleDot;
+    wxTextCtrl* m_textFirst;
+    wxStaticText* m_staticText598211;
+    wxSpinCtrl* m_spinCtrl1;
+    wxTextCtrl* m_textSecond;
+    wxStaticText* m_staticText59821124;
+    wxSpinCtrl* m_spinCtrl2;
+    wxStdDialogButtonSizer* m_stdBtnSizer429;
+    wxButton* m_button431;
+    wxButton* m_button433;
+
+protected:
+    virtual void OnRadioBranch1Selected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateUIBranch1(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBranch1Changed(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRadioTag1Selected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateUITags1(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnRadioCommit1Selected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateUICommit1(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnRadioUser1Selected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateUICommitish1(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnRadioBranch2Selected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateUIBranch2(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnRadioTag2Selected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateUITags2(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnRadioCommit2Selected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateUICommit2(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnRadioUser2Selected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateUICommitish2(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnTextFirstUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnTextSecondUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText59825() { return m_staticText59825; }
+    wxStaticText* GetStaticText598() { return m_staticText598; }
+    wxRadioButton* GetRadioBranch1() { return m_radioBranch1; }
+    wxChoice* GetChoiceBranch1() { return m_choiceBranch1; }
+    wxRadioButton* GetRadioTag1() { return m_radioTag1; }
+    wxChoice* GetChoiceTag1() { return m_choiceTag1; }
+    wxRadioButton* GetRadioCommit1() { return m_radioCommit1; }
+    wxChoice* GetChoiceCommit1() { return m_choiceCommit1; }
+    wxRadioButton* GetRadioUserEntered1() { return m_radioUserEntered1; }
+    wxComboBox* GetComboCommitish1() { return m_comboCommitish1; }
+    wxRadioButton* GetRadioBranch2() { return m_radioBranch2; }
+    wxChoice* GetChoiceBranch2() { return m_choiceBranch2; }
+    wxRadioButton* GetRadioTag2() { return m_radioTag2; }
+    wxChoice* GetChoiceTag2() { return m_choiceTag2; }
+    wxRadioButton* GetRadioCommit2() { return m_radioCommit2; }
+    wxChoice* GetChoiceCommit2() { return m_choiceCommit2; }
+    wxRadioButton* GetRadioUserEntered2() { return m_radioUserEntered2; }
+    wxComboBox* GetComboCommitish2() { return m_comboCommitish2; }
+    wxCheckBox* GetCheckTripleDot() { return m_checkTripleDot; }
+    wxTextCtrl* GetTextFirst() { return m_textFirst; }
+    wxStaticText* GetStaticText598211() { return m_staticText598211; }
+    wxSpinCtrl* GetSpinCtrl1() { return m_spinCtrl1; }
+    wxTextCtrl* GetTextSecond() { return m_textSecond; }
+    wxStaticText* GetStaticText59821124() { return m_staticText59821124; }
+    wxSpinCtrl* GetSpinCtrl2() { return m_spinCtrl2; }
+    GitDiffChooseCommitishDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Commits to Diff"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~GitDiffChooseCommitishDlgBase();
 };
 
 

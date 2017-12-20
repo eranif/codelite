@@ -1,34 +1,23 @@
-#include "evalpane.h"
+#include "XDebugEvalCmdHandler.h"
 #include "XDebugManager.h"
+#include "evalpane.h"
+#include <editor_config.h>
 #include <event_notifier.h>
 #include <lexer_configuration.h>
-#include <editor_config.h>
-#include "XDebugEvalCmdHandler.h"
 
 EvalPane::EvalPane(wxWindow* parent)
     : EvalPaneBase(parent)
 {
     Hide();
-    EventNotifier::Get()->Bind(wxEVT_XDEBUG_EVAL_EXPRESSION,  &EvalPane::OnExpressionEvaluate, this);
+    EventNotifier::Get()->Bind(wxEVT_XDEBUG_EVAL_EXPRESSION, &EvalPane::OnExpressionEvaluate, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_UNKNOWN_RESPONSE, &EvalPane::OnDBGPCommandEvaluated, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &EvalPane::OnSettingsChanged, this);
-    LexerConf::Ptr_t lex =  EditorConfigST::Get()->GetLexer("text");
-    if ( lex ) {
-        lex->Apply(m_stcOutput);
-    }
-
-    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_notebook257->SetStyle((kNotebook_Default & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
-    } else {
-        m_notebook257->SetStyle(kNotebook_Default);
-    }
+    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("text");
+    if(lex) { lex->Apply(m_stcOutput); }
 
     // Since XDebug replies with XML, use the XML lexer for the output
-    LexerConf::Ptr_t xml_lex =  EditorConfigST::Get()->GetLexer("xml");
-    if ( xml_lex ) {
-        xml_lex->Apply(m_stcOutputXDebug, true);
-    }
-
+    LexerConf::Ptr_t xml_lex = EditorConfigST::Get()->GetLexer("xml");
+    if(xml_lex) { xml_lex->Apply(m_stcOutputXDebug, true); }
     m_stcOutput->SetEditable(false);
 }
 
@@ -41,33 +30,29 @@ EvalPane::~EvalPane()
 
 void EvalPane::OnEnter(wxCommandEvent& event)
 {
-    if ( !m_textCtrlExpression->IsEmpty() ) {
-        OnSend( event );
-    }
+    if(!m_textCtrlExpression->IsEmpty()) { OnSend(event); }
 }
 
 void EvalPane::OnSend(wxCommandEvent& event)
 {
-    XDebugManager::Get().SendEvalCommand( m_textCtrlExpression->GetValue(), XDebugEvalCmdHandler::kEvalForEvalPane );
+    XDebugManager::Get().SendEvalCommand(m_textCtrlExpression->GetValue(), XDebugEvalCmdHandler::kEvalForEvalPane);
 }
 
 void EvalPane::OnSendUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_textCtrlExpression->IsEmpty() && XDebugManager::Get().IsDebugSessionRunning());
+    event.Enable(!m_textCtrlExpression->IsEmpty() && XDebugManager::Get().IsDebugSessionRunning());
 }
 
 void EvalPane::OnExpressionEvaluate(XDebugEvent& e)
 {
-    if ( e.GetEvalReason() == XDebugEvalCmdHandler::kEvalForEvalPane ) {
-        
+    if(e.GetEvalReason() == XDebugEvalCmdHandler::kEvalForEvalPane) {
+
         m_stcOutput->SetEditable(true);
         m_stcOutput->ClearAll();
 
-
         wxString str;
-        if ( !e.IsEvalSucceeded() ) {
-            str << _("*** Error evaluating expression: ") << e.GetString() << "\n"
-                << e.GetErrorString();
+        if(!e.IsEvalSucceeded()) {
+            str << _("*** Error evaluating expression: ") << e.GetString() << "\n" << e.GetErrorString();
         } else {
             str << e.GetString() << " = \n";
             wxString evaluated = e.GetEvaluted();
@@ -80,10 +65,10 @@ void EvalPane::OnExpressionEvaluate(XDebugEvent& e)
             str << evaluated;
         }
 
-        m_stcOutput->AppendText( str );
+        m_stcOutput->AppendText(str);
         m_stcOutput->SetEditable(false);
         m_stcOutput->ScrollToEnd();
-        
+
     } else {
         e.Skip();
     }
@@ -91,12 +76,12 @@ void EvalPane::OnExpressionEvaluate(XDebugEvent& e)
 
 void EvalPane::OnSendXDebugCommand(wxCommandEvent& event)
 {
-    XDebugManager::Get().SendDBGPCommand( m_textCtrlExpressionXdebug->GetValue() );
+    XDebugManager::Get().SendDBGPCommand(m_textCtrlExpressionXdebug->GetValue());
 }
 
 void EvalPane::OnSendXDebugCommandUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_textCtrlExpressionXdebug->IsEmpty() && XDebugManager::Get().IsDebugSessionRunning());
+    event.Enable(!m_textCtrlExpressionXdebug->IsEmpty() && XDebugManager::Get().IsDebugSessionRunning());
 }
 
 void EvalPane::OnDBGPCommandEvaluated(XDebugEvent& e)
@@ -109,11 +94,4 @@ void EvalPane::OnDBGPCommandEvaluated(XDebugEvent& e)
     m_stcOutputXDebug->ScrollToEnd();
 }
 
-void EvalPane::OnSettingsChanged(wxCommandEvent& event) {
-    event.Skip();
-    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_notebook257->SetStyle((m_notebook257->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
-    } else {
-        m_notebook257->SetStyle((m_notebook257->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
-    }
-}
+void EvalPane::OnSettingsChanged(wxCommandEvent& event) { event.Skip(); }

@@ -23,35 +23,33 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
+#include "drawingutils.h"
+#include "lexer_configuration.h"
 #include "wxcl_log_text_ctrl.h"
 #include <wx/settings.h>
-#include "drawingutils.h"
 
-wxclTextCtrl::wxclTextCtrl(wxTextCtrl* text)
-    : m_pTextCtrl(text)
+wxclTextCtrl::wxclTextCtrl(wxStyledTextCtrl* stc)
+    : m_stc(stc)
 {
     DoInit();
 }
 
-wxclTextCtrl::~wxclTextCtrl()
-{
-}
+wxclTextCtrl::~wxclTextCtrl() {}
 
-void wxclTextCtrl::Reset()
-{
-    DoInit();
-}
+void wxclTextCtrl::Reset() { DoInit(); }
 
 void wxclTextCtrl::DoInit()
 {
-    m_pTextCtrl->Clear();
-    wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    f.SetFamily(wxFONTFAMILY_TELETYPE);
-    m_pTextCtrl->SetFont(f);
-    m_pTextCtrl->SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
-    wxTextAttr defaultStyle;
-    defaultStyle.SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
-    defaultStyle.SetTextColour(DrawingUtils::GetOutputPaneFgColour());
-    defaultStyle.SetFont(f);
-    m_pTextCtrl->SetDefaultStyle(defaultStyle);
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) { lexer->Apply(m_stc); }
+}
+
+void wxclTextCtrl::DoLogText(const wxString& msg)
+{
+    m_stc->AppendText(msg + wxS("\n"));
+    m_stc->SetSelectionEnd(m_stc->GetLength());
+    m_stc->SetSelectionStart(m_stc->GetLength());
+    m_stc->SetCurrentPos(m_stc->GetLength());
+    m_stc->EnsureCaretVisible();
 }

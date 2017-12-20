@@ -29,6 +29,7 @@
 
 // Only include the headers we need here
 #include "../CodeLite/MSWPrivate.h"
+#include "../CodeLite/cl_defs.h"
 #include <wx/wx.h>
 #include <wx/app.h>
 #include <wx/frame.h>

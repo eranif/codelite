@@ -521,8 +521,8 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer129->Add(m_dataview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(50), wxALIGN_CENTER);
-    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(300), wxALIGN_LEFT);
+    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(50), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
+    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(300), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer129->Add(boxSizer131, 0, wxEXPAND, WXC_FROM_DIP(5));
@@ -762,11 +762,11 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     m_configChangeCtrl = new clConfigurationSelectionCtrl(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
-    boxSizer505->Add(m_configChangeCtrl, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer505->Add(m_configChangeCtrl, 0, wxEXPAND, WXC_FROM_DIP(5));
     
     m_fileView = new FileViewTree(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxTR_HAS_BUTTONS|wxBORDER_NONE);
     
-    boxSizer505->Add(m_fileView, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer505->Add(m_fileView, 1, wxEXPAND, WXC_FROM_DIP(2));
     
     SetName(wxT("WorkspaceTabBase"));
     SetSize(-1,-1);
@@ -910,7 +910,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer572->Add(m_dataviewTemplates, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dataviewTemplates->AppendIconTextColumn(_("Template"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(450), wxALIGN_LEFT);
+    m_dataviewTemplates->AppendIconTextColumn(_("Template"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(450), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_wizardPageDetails = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageDetails);
     
@@ -1314,7 +1314,7 @@ SelectDropTargetBaseDlg::SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer527->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl->AppendTextColumn(_("View"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("View"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_stdBtnSizer543 = new wxStdDialogButtonSizer();
     
     boxSizer527->Add(m_stdBtnSizer543, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));

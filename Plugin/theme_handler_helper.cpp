@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
 #include "Notebook.h"
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
@@ -42,7 +43,10 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/treectrl.h>
-#include <algorithm>
+#if USE_AUI_NOTEBOOK
+#include "clAuiMainNotebookTabArt.h"
+#include <wx/aui/tabart.h>
+#endif
 
 #define IS_TYPEOF(Type, Win) (dynamic_cast<Type*>(Win))
 
@@ -78,70 +82,43 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     std::vector<wxWindow*> candidateWindows;
     q.push(topWindow);
 
-    wxColour userbgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    wxColour userFgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
 
-    wxColour bgColour = userbgColour;
-    wxColour fgColour = userFgColour;
+    LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
     while(!q.empty()) {
         wxWindow* w = q.front();
         q.pop();
         if(dynamic_cast<wxAuiToolBar*>(w)) {
             toolbars.push_back(dynamic_cast<wxAuiToolBar*>(w));
         } else {
-            if(/*isDarkSystemTheme*/ false) {
-                if(IS_TYPEOF(wxTextCtrl, w)) {
-                    w->SetBackgroundColour(bgColour);
-                    wxTextCtrl* txt = static_cast<wxTextCtrl*>(w);
-                    wxTextAttr attr = txt->GetDefaultStyle();
-                    attr.SetTextColour(fgColour);
-                    txt->SetDefaultStyle(attr);
-
-                } else if(IS_TYPEOF(wxStyledTextCtrl, w)) {
-                    // wxSTC requires different method
-                    wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
-                    if(stc->GetLexer() == wxSTC_LEX_NULL) {
-                        // Only modify text lexers
-                        for(int i = 0; i < wxSTC_STYLE_MAX; i++) {
-                            stc->StyleSetBackground(i, bgColour);
-                            stc->StyleSetForeground(i, fgColour);
-                        }
-                    }
-                }
-                w->SetForegroundColour(fgColour);
+            if(IS_TYPEOF(wxTreeCtrl, w) || IS_TYPEOF(wxListBox, w) || IS_TYPEOF(wxDataViewCtrl, w) ||
+               IS_TYPEOF(wxListCtrl, w)) {
                 w->SetBackgroundColour(bgColour);
+                w->SetForegroundColour(fgColour);
                 w->Refresh();
-            } else {
-                if(IS_TYPEOF(wxTreeCtrl, w) || IS_TYPEOF(wxListBox, w) || IS_TYPEOF(wxDataViewCtrl, w) ||
-                   IS_TYPEOF(wxListCtrl, w)) {
-                    w->SetBackgroundColour(bgColour);
-                    w->SetForegroundColour(fgColour);
-
-                } else if(IS_TYPEOF(wxTextCtrl, w)) {
-                    w->SetBackgroundColour(bgColour);
-                    wxTextCtrl* txt = static_cast<wxTextCtrl*>(w);
-                    wxTextAttr attr = txt->GetDefaultStyle();
-                    attr.SetTextColour(fgColour);
-                    txt->SetDefaultStyle(attr);
-
-                } else if(IS_TYPEOF(wxStyledTextCtrl, w)) {
-                    // wxSTC requires different method
-                    wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
-                    if(stc->GetLexer() == wxSTC_LEX_NULL) {
+            } else if(IS_TYPEOF(wxTextCtrl, w)) {
+                w->SetBackgroundColour(bgColour);
+                wxTextCtrl* txt = static_cast<wxTextCtrl*>(w);
+                wxTextAttr attr = txt->GetDefaultStyle();
+                attr.SetTextColour(fgColour);
+                txt->SetDefaultStyle(attr);
+                w->Refresh();
+            } else if(IS_TYPEOF(wxStyledTextCtrl, w)) {
+                // wxSTC requires different method
+                wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
+                if(stc->GetLexer() == wxSTC_LEX_NULL) {
+                    if(!textLexer) {
                         // Only modify text lexers
                         for(int i = 0; i < wxSTC_STYLE_MAX; i++) {
                             stc->StyleSetBackground(i, bgColour);
                             stc->StyleSetForeground(i, fgColour);
                         }
+
+                    } else {
+                        textLexer->Apply(stc);
                     }
                 }
-
-                //#ifdef __WXGTK__
-                //                if(IS_TYPEOF(wxPanel, w) || IS_TYPEOF(wxButton, w)) {
-                //                    w->SetBackgroundColour(systemBgColour);
-                //                    w->SetForegroundColour(systemFgColour);
-                //                }
-                //#endif
                 w->Refresh();
             }
             wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
@@ -173,12 +150,69 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     DoUpdateNotebookStyle(m_window);
 }
 
+#if USE_AUI_NOTEBOOK
+class MySimpleTabArt : public wxAuiSimpleTabArt
+{
+    wxColour m_activeTabBgColour;
+
+public:
+    MySimpleTabArt() { m_activeTabBgColour = *wxWHITE; }
+    virtual ~MySimpleTabArt() {}
+    wxAuiTabArt* Clone() { return new MySimpleTabArt(*this); }
+
+    void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& pane, const wxRect& inRect, int closeButtonState,
+                 wxRect* outTabRect, wxRect* outButtonRect, int* xExtent)
+    {
+        if(pane.active) {
+            if(DrawingUtils::IsDark(m_activeTabBgColour)) { dc.SetTextForeground(*wxWHITE); }
+        } else {
+            // set the default text colour
+            dc.SetTextForeground(DrawingUtils::GetPanelTextColour());
+        }
+        wxAuiSimpleTabArt::DrawTab(dc, wnd, pane, inRect, closeButtonState, outTabRect, outButtonRect, xExtent);
+    }
+
+    void SetActiveColour(const wxColour& colour)
+    {
+        m_activeTabBgColour = colour;
+        wxAuiSimpleTabArt::SetActiveColour(colour);
+    }
+};
+class MyDefaultTabArt : public wxAuiGenericTabArt
+{
+    wxColour m_activeTabBgColour;
+
+public:
+    MyDefaultTabArt() { m_activeTabBgColour = *wxWHITE; }
+    virtual ~MyDefaultTabArt() {}
+    wxAuiTabArt* Clone() { return new MyDefaultTabArt(*this); }
+
+    void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& pane, const wxRect& inRect, int closeButtonState,
+                 wxRect* outTabRect, wxRect* outButtonRect, int* xExtent)
+    {
+        if(pane.active) {
+            if(DrawingUtils::IsDark(m_activeTabBgColour)) { dc.SetTextForeground(*wxWHITE); }
+        } else {
+            // set the default text colour
+            dc.SetTextForeground(DrawingUtils::GetPanelTextColour());
+        }
+        wxAuiGenericTabArt::DrawTab(dc, wnd, pane, inRect, closeButtonState, outTabRect, outButtonRect, xExtent);
+    }
+
+    void SetActiveColour(const wxColour& colour)
+    {
+        m_activeTabBgColour = colour;
+        wxAuiGenericTabArt::SetActiveColour(colour);
+    }
+};
+#endif
 void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
 {
     // wxTextCtrl needs some extra special handling
 
     if(dynamic_cast<Notebook*>(win)) {
         Notebook* book = dynamic_cast<Notebook*>(win);
+#if !USE_AUI_NOTEBOOK
         if(book->GetStyle() & kNotebook_RightTabs || book->GetStyle() & kNotebook_LeftTabs) {
             // Vertical tabs, change the art provider to use the square shape
             book->SetArt(clTabRenderer::Ptr_t(new clTabRendererSquare()));
@@ -194,7 +228,28 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
                 book->SetArt(clTabRenderer::Ptr_t(new clTabRendererClassic()));
             }
         }
+#else
+        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+        wxColour activeTabBgColuor;
+        if(lexer) { activeTabBgColuor = lexer->GetProperty(0).GetBgColour(); }
 
+        size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
+        if(options & OptionsConfig::Opt_TabStyleMinimal) {
+            wxAuiTabArt* art = new wxAuiDefaultTabArt();
+            //if(book->GetCustomFlags() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
+            book->SetArtProvider(art);
+
+        } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
+            wxAuiTabArt* art = new MySimpleTabArt();
+            if(book->GetCustomFlags() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
+            book->SetArtProvider(art);
+        } else {
+            // the default
+            clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
+            art->RefreshColours(book->GetCustomFlags());
+            book->SetArtProvider(art);
+        }
+#endif
         // Enable tab switching using the mouse scrollbar
         book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
                           EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());

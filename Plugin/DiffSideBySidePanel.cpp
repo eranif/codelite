@@ -61,7 +61,6 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     , m_showOverviewBar(true)
     , m_storeFilepaths(true)
 {
-    Hide();
     m_config.Load();
     m_showLinenos = m_config.ShowLineNumbers();
     m_showOverviewBar = !m_config.HideOverviewBar();

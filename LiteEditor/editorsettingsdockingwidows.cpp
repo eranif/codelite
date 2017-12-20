@@ -23,8 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editorsettingsdockingwidows.h"
+#include "cl_defs.h"
 #include "editor_config.h"
+#include "editorsettingsdockingwidows.h"
 #include "frame.h"
 
 EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
@@ -53,11 +54,9 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_radioBoxHint->SetSelection(options->GetDockingStyle());
     m_checkBoxHideCaptions->SetValue(!options->IsShowDockingWindowCaption());
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
-    m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
-    m_checkBoxUseDarkTabTheme->SetValue(options->IsTabColourDark());
+
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
-    m_checkBoxMouseScrollSwitchTabs->SetValue(options->IsMouseScrollSwitchTabs());
-    
+
     // DEFAULT 0
     // MINIMAL 1
     // TRAPEZOID 2
@@ -69,6 +68,20 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
         // default
         m_choiceTabStyle->SetSelection(0);
     }
+
+#if !USE_AUI_NOTEBOOK
+    m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
+    m_checkBoxUseDarkTabTheme->SetValue(options->IsTabColourDark());
+    m_checkBoxMouseScrollSwitchTabs->SetValue(options->IsMouseScrollSwitchTabs());
+#else
+    m_checkBoxEditorTabsFollowsTheme->SetValue(true);
+    m_checkBoxEditorTabsFollowsTheme->Enable(false);
+    m_checkBoxUseDarkTabTheme->SetValue(false);
+    m_checkBoxUseDarkTabTheme->Enable(false);
+    m_checkBoxMouseScrollSwitchTabs->SetValue(false);
+    m_checkBoxMouseScrollSwitchTabs->Enable(false);
+#endif
+
     int sel(0);
     switch(options->GetNotebookTabHeight()) {
     case OptionsConfig::nbTabHt_Tiny:
@@ -84,15 +97,13 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
         sel = 0;
     }
     m_choiceTabHeight->SetSelection(sel);
-#if 0
-    {
-        wxArrayString tabOptionsArr;
-        tabOptionsArr.Add(wxT("TOP"));
-        tabOptionsArr.Add(wxT("BOTTOM"));
-        m_choiceWorkspaceTabsOrientation->Clear();
-        m_choiceWorkspaceTabsOrientation->Append(tabOptionsArr);
-    }
-#endif
+
+#if USE_AUI_NOTEBOOK
+    m_choiceOutputTabsOrientation->SetSelection(0);
+    m_choiceWorkspaceTabsOrientation->SetSelection(2);
+    m_choiceOutputTabsOrientation->Enable(false);
+    m_choiceWorkspaceTabsOrientation->Enable(false);
+#else
     switch(options->GetOutputTabsDirection()) {
     case wxTOP:
         m_choiceOutputTabsOrientation->SetSelection(0);
@@ -103,22 +114,6 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     default:
         break;
     }
-
-#if 0
-    // On OSX we dont support left-right (due to blurred images)
-    switch(options->GetWorkspaceTabsDirection()) {
-    case wxLEFT:
-    case wxTOP:
-        m_choiceWorkspaceTabsOrientation->SetSelection(0);
-        break;
-    case wxRIGHT:
-    case wxBOTTOM:
-        m_choiceWorkspaceTabsOrientation->SetSelection(1);
-        break;
-    default:
-        break;
-    }
-#else
     switch(options->GetWorkspaceTabsDirection()) {
     case wxLEFT:
         m_choiceWorkspaceTabsOrientation->SetSelection(0);
@@ -137,8 +132,9 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     }
 #endif
 
-    m_checkBoxHideOutputPaneNotIfDebug->Connect(wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI), NULL, this);
+    m_checkBoxHideOutputPaneNotIfDebug->Connect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI), NULL,
+        this);
 }
 
 void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
@@ -164,18 +160,16 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetDockingStyle(m_radioBoxHint->GetSelection());
     options->SetShowDockingWindowCaption(!m_checkBoxHideCaptions->IsChecked());
     options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
+
+#if USE_AUI_NOTEBOOK
+    options->SetTabColourMatchesTheme(true);
+    options->SetTabColourDark(false);
+#else
     options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
     options->SetTabColourDark(m_checkBoxUseDarkTabTheme->IsChecked());
+#endif
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
     options->SetMouseScrollSwitchTabs(m_checkBoxMouseScrollSwitchTabs->IsChecked());
-    
-    // Set the tab style:
-    // DEFAULT 0
-    // MINIMAL 1
-    // TRAPEZOID 2
-    int tabStyleSelection = m_choiceTabStyle->GetSelection();
-    options->EnableOption(OptionsConfig::Opt_TabStyleMinimal, (tabStyleSelection == 1));
-    options->EnableOption(OptionsConfig::Opt_TabStyleTRAPEZOID, (tabStyleSelection == 2));
 
     int ht(0);
     switch(m_choiceTabHeight->GetSelection()) {
@@ -192,6 +186,18 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
         ht = OptionsConfig::nbTabHt_Tall;
     }
     options->SetNotebookTabHeight(ht);
+    int tabStyleSelection = m_choiceTabStyle->GetSelection();
+    options->EnableOption(OptionsConfig::Opt_TabStyleMinimal, (tabStyleSelection == 1));
+    options->EnableOption(OptionsConfig::Opt_TabStyleTRAPEZOID, (tabStyleSelection == 2));
+
+    // Set the tab style:
+    // DEFAULT 0
+    // MINIMAL 1
+    // TRAPEZOID 2
+#if USE_AUI_NOTEBOOK
+    options->SetOutputTabsDirection(wxTOP);
+    options->SetWorkspaceTabsDirection(wxTOP);
+#else
 
     switch(m_choiceOutputTabsOrientation->GetSelection()) {
     case 0:
@@ -219,6 +225,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     default:
         break;
     }
+#endif
 }
 
 void EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)

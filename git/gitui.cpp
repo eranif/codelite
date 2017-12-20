@@ -538,10 +538,10 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer205->Add(m_dvListCtrlCommitList, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrlCommitList->AppendTextColumn(_("Commit"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT);
-    m_dvListCtrlCommitList->AppendTextColumn(_("Author"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT);
-    m_dvListCtrlCommitList->AppendTextColumn(_("Date"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT);
-    m_dvListCtrlCommitList->AppendTextColumn(_("Subject"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(600), wxALIGN_LEFT);
+    m_dvListCtrlCommitList->AppendTextColumn(_("Commit"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlCommitList->AppendTextColumn(_("Author"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlCommitList->AppendTextColumn(_("Date"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlCommitList->AppendTextColumn(_("Subject"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(600), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_splitterPage182 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter174, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter174->SplitHorizontally(m_splitterPage178, m_splitterPage182, 0);
     
@@ -753,7 +753,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
     
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter->SetSashGravity(0);
     m_splitter->SetMinimumPaneSize(100);
     
@@ -786,11 +786,39 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_editor = new GitCommitEditor( m_splitterPageDiff );
     boxSizer64->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
+    wxBoxSizer* boxSizer650 = new wxBoxSizer(wxHORIZONTAL);
+    
+    bSizer17->Add(boxSizer650, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxArrayString m_radioBoxStagedArr;
+    m_radioBoxStagedArr.Add(_("Unstaged"));
+    m_radioBoxStagedArr.Add(_("Staged"));
+    m_radioBoxStagedArr.Add(_("Both"));
+    m_radioBoxStaged = new wxRadioBox(this, wxID_ANY, _("Show changes that are:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_radioBoxStagedArr, 1, wxRA_SPECIFY_COLS);
+    m_radioBoxStaged->SetSelection(2);
+    
+    boxSizer650->Add(m_radioBoxStaged, 1, wxALL, WXC_FROM_DIP(5));
+    
+    m_checkIgnoreSpace = new wxCheckBox(this, wxID_ANY, _("Ignore if whitespace-only"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_checkIgnoreSpace->SetValue(false);
+    m_checkIgnoreSpace->SetToolTip(_("Suppress any lines where the change is only to whitespace. This makes it easier to see the interesting parts of the diff."));
+    
+    boxSizer650->Add(m_checkIgnoreSpace, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    boxSizer650->Add(0, 0, 0, wxLEFT, WXC_FROM_DIP(10));
+    
+    m_buttonDiffDlg = new wxButton(this, wxID_ANY, _("Choose commits"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_buttonDiffDlg->SetToolTip(_("This dialog normally shows only the current difference from HEAD. Click to choose any two commits to diff."));
+    
+    boxSizer650->Add(m_buttonDiffDlg, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    boxSizer650->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+    
     m_sdbSizer1 = new wxStdDialogButtonSizer();
     
-    bSizer17->Add(m_sdbSizer1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer650->Add(m_sdbSizer1, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_button145 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button145 = new wxButton(this, wxID_CLOSE, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button145->SetDefault();
     m_sdbSizer1->AddButton(m_button145);
     m_sdbSizer1->Realize();
@@ -814,12 +842,296 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
 #endif
     // Connect events
     m_fileListBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitDiffDlgBase::OnChangeFile), NULL, this);
+    m_radioBoxStaged->Connect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(GitDiffDlgBase::OnOptionsChanged), NULL, this);
+    m_checkIgnoreSpace->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnOptionsChanged), NULL, this);
+    m_buttonDiffDlg->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnChoseCommits), NULL, this);
+    m_button145->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnClose), NULL, this);
     
 }
 
 GitDiffDlgBase::~GitDiffDlgBase()
 {
     m_fileListBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitDiffDlgBase::OnChangeFile), NULL, this);
+    m_radioBoxStaged->Disconnect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(GitDiffDlgBase::OnOptionsChanged), NULL, this);
+    m_checkIgnoreSpace->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnOptionsChanged), NULL, this);
+    m_buttonDiffDlg->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnChoseCommits), NULL, this);
+    m_button145->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnClose), NULL, this);
+    
+}
+
+GitDiffChooseCommitishDlgBase::GitDiffChooseCommitishDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer420 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer420);
+    
+    m_staticText59825 = new wxStaticText(this, wxID_ANY, _("Choose two commits to diff"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxALIGN_CENTRE);
+    
+    boxSizer420->Add(m_staticText59825, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText598 = new wxStaticText(this, wxID_ANY, _("Either select a branch, tag or commit hash, or enter your own commit-ish.\nOptionally you can then specify the 'n'th parent of each commit,\nand/or use the triple-dot notation for commits where this makes sense."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer420->Add(m_staticText598, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxBoxSizer* boxSizer620 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer420->Add(boxSizer620, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxStaticBoxSizer* staticBoxSizer635 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("First")), wxVERTICAL);
+    
+    boxSizer620->Add(staticBoxSizer635, 1, wxRIGHT|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxFlexGridSizer* flexGridSizer60413 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer60413->SetFlexibleDirection( wxBOTH );
+    flexGridSizer60413->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer60413->AddGrowableCol(1);
+    
+    staticBoxSizer635->Add(flexGridSizer60413, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_radioBranch1 = new wxRadioButton(this, wxID_ANY, _("Branch"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxRB_GROUP);
+    m_radioBranch1->SetValue(0);
+    
+    flexGridSizer60413->Add(m_radioBranch1, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_choiceBranch1Arr;
+    m_choiceBranch1 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceBranch1Arr, 0);
+    
+    flexGridSizer60413->Add(m_choiceBranch1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_radioTag1 = new wxRadioButton(this, wxID_ANY, _("Tag"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_radioTag1->SetValue(0);
+    
+    flexGridSizer60413->Add(m_radioTag1, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_choiceTag1Arr;
+    m_choiceTag1 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceTag1Arr, 0);
+    
+    flexGridSizer60413->Add(m_choiceTag1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_radioCommit1 = new wxRadioButton(this, wxID_ANY, _("Commit"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_radioCommit1->SetValue(1);
+    
+    flexGridSizer60413->Add(m_radioCommit1, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_choiceCommit1Arr;
+    m_choiceCommit1 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceCommit1Arr, 0);
+    m_choiceCommit1->SetToolTip(_("Here you can choose one of the last 1000 commits to diff against.\nThey will normally be from the currently checked-out branch. However if you select a different branch above, that branch's commits will be shown instead."));
+    
+    flexGridSizer60413->Add(m_choiceCommit1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_radioUserEntered1 = new wxRadioButton(this, wxID_ANY, _("Enter commit-ish"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_radioUserEntered1->SetValue(1);
+    
+    flexGridSizer60413->Add(m_radioUserEntered1, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_comboCommitish1Arr;
+    m_comboCommitish1 = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_comboCommitish1Arr, 0);
+    m_comboCommitish1->SetToolTip(_("You can enter any valid commit-ish here. It will not be sanity-checked..."));
+    #if wxVERSION_NUMBER >= 3000
+    m_comboCommitish1->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer60413->Add(m_comboCommitish1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxStaticBoxSizer* staticBoxSizer636 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Second")), wxVERTICAL);
+    
+    boxSizer620->Add(staticBoxSizer636, 1, wxLEFT|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxFlexGridSizer* flexGridSizer604 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer604->SetFlexibleDirection( wxBOTH );
+    flexGridSizer604->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer604->AddGrowableCol(1);
+    
+    staticBoxSizer636->Add(flexGridSizer604, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_radioBranch2 = new wxRadioButton(this, wxID_ANY, _("Branch"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxRB_GROUP);
+    m_radioBranch2->SetValue(0);
+    
+    flexGridSizer604->Add(m_radioBranch2, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_choiceBranch2Arr;
+    m_choiceBranch2 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceBranch2Arr, 0);
+    
+    flexGridSizer604->Add(m_choiceBranch2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_radioTag2 = new wxRadioButton(this, wxID_ANY, _("Tag"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_radioTag2->SetValue(0);
+    
+    flexGridSizer604->Add(m_radioTag2, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_choiceTag2Arr;
+    m_choiceTag2 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceTag2Arr, 0);
+    
+    flexGridSizer604->Add(m_choiceTag2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_radioCommit2 = new wxRadioButton(this, wxID_ANY, _("Commit"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_radioCommit2->SetValue(1);
+    
+    flexGridSizer604->Add(m_radioCommit2, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_choiceCommit2Arr;
+    m_choiceCommit2 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceCommit2Arr, 0);
+    m_choiceCommit2->SetToolTip(_("Here you can choose one of the last 1000 commits to diff against.\nThey will normally be from the currently checked-out branch. However if you select a different branch above, that branch's commits will be shown instead."));
+    
+    flexGridSizer604->Add(m_choiceCommit2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_radioUserEntered2 = new wxRadioButton(this, wxID_ANY, _("Enter commit-ish"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_radioUserEntered2->SetValue(1);
+    
+    flexGridSizer604->Add(m_radioUserEntered2, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxArrayString m_comboCommitish2Arr;
+    m_comboCommitish2 = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_comboCommitish2Arr, 0);
+    m_comboCommitish2->SetToolTip(_("You can enter any valid commit-ish here. It will not be sanity-checked..."));
+    #if wxVERSION_NUMBER >= 3000
+    m_comboCommitish2->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer604->Add(m_comboCommitish2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_checkTripleDot = new wxCheckBox(this, wxID_ANY, _("Use '...'"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxALIGN_RIGHT);
+    m_checkTripleDot->SetValue(false);
+    m_checkTripleDot->SetToolTip(_("Check this to use the 'triple-dot' notation. The resulting diff will show the changes between the merge-base and the second commit-ish. So if the first commit-ish is 'master' and the second the branch 'foo', it will show the changes in foo since it split from master.\nNote that this will not make sense for all commit-ishes."));
+    
+    boxSizer420->Add(m_checkTripleDot, 0, wxALIGN_CENTER, WXC_FROM_DIP(0));
+    
+    wxBoxSizer* boxSizer434 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer420->Add(boxSizer434, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxFlexGridSizer* flexGridSizer61410 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer61410->SetFlexibleDirection( wxBOTH );
+    flexGridSizer61410->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer61410->AddGrowableCol(0);
+    
+    boxSizer434->Add(flexGridSizer61410, 1, wxALL, WXC_FROM_DIP(5));
+    
+    m_textFirst = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_READONLY);
+    m_textFirst->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION));
+    #if wxVERSION_NUMBER >= 3000
+    m_textFirst->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer61410->Add(m_textFirst, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText598211 = new wxStaticText(this, wxID_ANY, _("~"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    flexGridSizer61410->Add(m_staticText598211, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_spinCtrl1 = new wxSpinCtrl(this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_ARROW_KEYS);
+    m_spinCtrl1->SetToolTip(_("If you enter a non-zero value here, the diff will use that parent of the commit instead of the commit itself.\nSo if the commit is HEAD, entering 5 will use HEAD~5, the fifth parent."));
+    m_spinCtrl1->SetRange(0, 999);
+    m_spinCtrl1->SetValue(0);
+    
+    flexGridSizer61410->Add(m_spinCtrl1, 0, wxRIGHT|wxTOP|wxBOTTOM, WXC_FROM_DIP(5));
+    
+    wxFlexGridSizer* flexGridSizer614 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer614->SetFlexibleDirection( wxBOTH );
+    flexGridSizer614->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer614->AddGrowableCol(0);
+    
+    boxSizer434->Add(flexGridSizer614, 1, wxALL, WXC_FROM_DIP(5));
+    
+    m_textSecond = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_READONLY);
+    m_textSecond->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION));
+    #if wxVERSION_NUMBER >= 3000
+    m_textSecond->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer614->Add(m_textSecond, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText59821124 = new wxStaticText(this, wxID_ANY, _("~"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    flexGridSizer614->Add(m_staticText59821124, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_spinCtrl2 = new wxSpinCtrl(this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_ARROW_KEYS);
+    m_spinCtrl2->SetToolTip(_("If you enter a non-zero value here, the diff will use that parent of the commit instead of the commit itself.\nSo if the commit is HEAD, entering 5 will use HEAD~5, the fifth parent."));
+    m_spinCtrl2->SetRange(0, 999);
+    m_spinCtrl2->SetValue(0);
+    
+    flexGridSizer614->Add(m_spinCtrl2, 0, wxRIGHT|wxTOP|wxBOTTOM, WXC_FROM_DIP(5));
+    
+    boxSizer420->Add(0, 0, 1, 0, WXC_FROM_DIP(0));
+    
+    m_stdBtnSizer429 = new wxStdDialogButtonSizer();
+    
+    boxSizer420->Add(m_stdBtnSizer429, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+    
+    m_button431 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer429->AddButton(m_button431);
+    
+    m_button433 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer429->AddButton(m_button433);
+    m_stdBtnSizer429->Realize();
+    
+    SetName(wxT("GitDiffChooseCommitishDlgBase"));
+    SetSize(-1,-1);
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_radioBranch1->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioBranch1Selected), NULL, this);
+    m_choiceBranch1->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUIBranch1), NULL, this);
+    m_choiceBranch1->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnBranch1Changed), NULL, this);
+    m_radioTag1->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioTag1Selected), NULL, this);
+    m_choiceTag1->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUITags1), NULL, this);
+    m_radioCommit1->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioCommit1Selected), NULL, this);
+    m_choiceCommit1->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUICommit1), NULL, this);
+    m_radioUserEntered1->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioUser1Selected), NULL, this);
+    m_comboCommitish1->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUICommitish1), NULL, this);
+    m_radioBranch2->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioBranch2Selected), NULL, this);
+    m_choiceBranch2->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUIBranch2), NULL, this);
+    m_radioTag2->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioTag2Selected), NULL, this);
+    m_choiceTag2->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUITags2), NULL, this);
+    m_radioCommit2->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioCommit2Selected), NULL, this);
+    m_choiceCommit2->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUICommit2), NULL, this);
+    m_radioUserEntered2->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioUser2Selected), NULL, this);
+    m_comboCommitish2->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUICommitish2), NULL, this);
+    m_textFirst->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnTextFirstUI), NULL, this);
+    m_textSecond->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnTextSecondUI), NULL, this);
+    
+}
+
+GitDiffChooseCommitishDlgBase::~GitDiffChooseCommitishDlgBase()
+{
+    m_radioBranch1->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioBranch1Selected), NULL, this);
+    m_choiceBranch1->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUIBranch1), NULL, this);
+    m_choiceBranch1->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnBranch1Changed), NULL, this);
+    m_radioTag1->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioTag1Selected), NULL, this);
+    m_choiceTag1->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUITags1), NULL, this);
+    m_radioCommit1->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioCommit1Selected), NULL, this);
+    m_choiceCommit1->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUICommit1), NULL, this);
+    m_radioUserEntered1->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioUser1Selected), NULL, this);
+    m_comboCommitish1->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUICommitish1), NULL, this);
+    m_radioBranch2->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioBranch2Selected), NULL, this);
+    m_choiceBranch2->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUIBranch2), NULL, this);
+    m_radioTag2->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioTag2Selected), NULL, this);
+    m_choiceTag2->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUITags2), NULL, this);
+    m_radioCommit2->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioCommit2Selected), NULL, this);
+    m_choiceCommit2->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUICommit2), NULL, this);
+    m_radioUserEntered2->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(GitDiffChooseCommitishDlgBase::OnRadioUser2Selected), NULL, this);
+    m_comboCommitish2->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnUpdateUICommitish2), NULL, this);
+    m_textFirst->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnTextFirstUI), NULL, this);
+    m_textSecond->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitDiffChooseCommitishDlgBase::OnTextSecondUI), NULL, this);
     
 }
 
@@ -1827,7 +2139,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTreeView->SetSizer(boxSizer94);
     
-    m_dvFiles = new wxDataViewCtrl(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE|wxBORDER_THEME);
+    m_dvFiles = new wxDataViewCtrl(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_MULTIPLE|wxBORDER_THEME);
     
     m_dvFilesModel = new DataViewFilesModel;
     m_dvFilesModel->SetColCount( 1 );
@@ -1835,7 +2147,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     boxSizer94->Add(m_dvFiles, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvFiles->AppendIconTextColumn(_("File View"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT);
+    m_dvFiles->AppendIconTextColumn(_("File View"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_splitterPage96 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageTreeView, m_splitterPage96, 250);
     

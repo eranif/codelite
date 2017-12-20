@@ -1,10 +1,10 @@
 #ifndef CLFILESCOLLECTOR_H
 #define CLFILESCOLLECTOR_H
 
-#include "macros.h"
-#include <wx/string.h>
-#include <vector>
 #include "codelite_exports.h"
+#include "macros.h"
+#include <vector>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL clFilesScanner
 {
@@ -20,10 +20,8 @@ public:
      * @param excludeFolders list of folder to exclude from the search
      * @return number of files found
      */
-    size_t Scan(const wxString& rootFolder,
-                std::vector<wxString>& filesOutput,
-                const wxString& filespec = "",
-                const wxStringSet_t& excludeFolders = wxStringSet_t());
+    size_t Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec = "",
+                const wxString& excludeFilespec = "", const wxStringSet_t& excludeFolders = wxStringSet_t());
 };
 
 #endif // CLFILESCOLLECTOR_H

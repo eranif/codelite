@@ -119,7 +119,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_auibar242 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar242->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer13->Add(m_auibar242, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer13->Add(m_auibar242, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
     m_auibar242->AddTool(ID_DIFF_TOOL_REFRESH, _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("16-debugger_restart")), wxNullBitmap, wxITEM_NORMAL, _("Refresh"), _("Refresh"), NULL);
     
@@ -211,10 +211,6 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     boxSizer285->Add(m_button290, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticTextLeft = new wxStaticText(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(100,-1)), wxALIGN_CENTRE|wxBORDER_THEME);
-    
-    boxSizer285->Add(m_staticTextLeft, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-    
     wxBoxSizer* boxSizer310 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer111->Add(boxSizer310, 1, wxEXPAND, WXC_FROM_DIP(0));
@@ -261,6 +257,10 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     boxSizer310->Add(m_panelOverviewL, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
+    m_staticTextLeft = new wxStaticText(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(-1,-1)), wxALIGN_CENTRE|wxBORDER_THEME);
+    
+    boxSizer111->Add(m_staticTextLeft, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    
     m_splitterPageRight = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight, 0);
     
@@ -282,10 +282,6 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_button294 = new wxButton(m_splitterPageRight, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(-1,-1)), wxBU_EXACTFIT);
     
     boxSizer286->Add(m_button294, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticTextRight = new wxStaticText(m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(100,-1)), wxALIGN_CENTRE|wxBORDER_THEME);
-    
-    boxSizer286->Add(m_staticTextRight, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
     
     wxBoxSizer* boxSizer307 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -332,6 +328,10 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_panelOverviewR = new wxPanel(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(6,-1)), wxTAB_TRAVERSAL);
     
     boxSizer307->Add(m_panelOverviewR, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    
+    m_staticTextRight = new wxStaticText(m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(-1,-1)), wxALIGN_CENTRE|wxBORDER_THEME);
+    
+    boxSizer113->Add(m_staticTextRight, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
     
     m_panelOverviewFull = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(6,-1)), wxTAB_TRAVERSAL);
     
@@ -591,8 +591,8 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowI
     
     boxSizer163->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrl->AppendBitmapColumn(_("Modified"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(30), wxALIGN_CENTER);
-    m_dvListCtrl->AppendIconTextColumn(_("Text"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrl->AppendBitmapColumn(_("Modified"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(30), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendIconTextColumn(_("Text"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     
     SetName(wxT("NotebookNavigationDlgBase"));
     SetMinClientSize(wxSize(400,200));
@@ -705,7 +705,7 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     
     boxSizer181->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl->AppendTextColumn(_("My Column"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("My Column"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_stdBtnSizer183 = new wxStdDialogButtonSizer();
     
     boxSizer181->Add(m_stdBtnSizer183, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
@@ -805,8 +805,6 @@ clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent,long style)
     this->SetSizer(boxSizer222);
     
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,250)), wxTAB_TRAVERSAL|wxBORDER_THEME);
-    m_mainPanel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-    m_mainPanel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
     boxSizer222->Add(m_mainPanel, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
@@ -814,15 +812,11 @@ clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent,long style)
     m_mainPanel->SetSizer(boxSizer230);
     
     m_treeCtrl = new wxTreeCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1,-1)), wxTR_DEFAULT_STYLE|wxBORDER_NONE);
-    m_treeCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-    m_treeCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
     boxSizer230->Add(m_treeCtrl, 1, wxEXPAND, WXC_FROM_DIP(0));
     m_mainPanel->SetMinSize(wxSize(300,250));
     
     m_panelStatus = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    m_panelStatus->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-    m_panelStatus->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
     boxSizer222->Add(m_panelStatus, 0, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
@@ -832,7 +826,6 @@ clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent,long style)
     boxSizer234->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
     m_staticBitmap240 = new wxStaticBitmap(m_panelStatus, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("resize")), wxDefaultPosition, wxDLG_UNIT(m_panelStatus, wxSize(-1,-1)), 0 );
-    m_staticBitmap240->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     
     boxSizer234->Add(m_staticBitmap240, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     

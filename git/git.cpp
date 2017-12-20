@@ -65,6 +65,7 @@
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/utils.h>
+#include "clDiffFrame.h"
 
 #ifdef __WXGTK__
 #include <sys/wait.h>
@@ -755,9 +756,11 @@ void GitPlugin::OnCommitList(wxCommandEvent& e)
 void GitPlugin::OnShowDiffs(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    gitAction ga(gitDiffRepoShow, wxT(""));
+/*    gitAction ga(gitDiffRepoShow, wxT(""));
     m_gitActionQueue.push_back(ga);
-    ProcessGitActionQueue();
+    ProcessGitActionQueue();*/
+    GitDiffDlg dlg(m_topWindow, m_repositoryDirectory, this);
+    dlg.ShowModal();
 }
 
 /*******************************************************************************/
@@ -1567,9 +1570,10 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         if(m_gitBlameDlg) { m_gitBlameDlg->OnRevListOutput(m_commandOutput, ga.arguments); }
 
     } else if(ga.action == gitDiffRepoShow) {
-        GitDiffDlg dlg(m_topWindow, m_repositoryDirectory);
-        dlg.SetDiff(m_commandOutput);
-        dlg.ShowModal();
+        // This is now dealt with by GitDiffDlg itself
+//        GitDiffDlg dlg(m_topWindow, m_repositoryDirectory, this);
+//        dlg.SetDiff(m_commandOutput);
+//        dlg.ShowModal();
 
     } else if(ga.action == gitResetFile || ga.action == gitApplyPatch) {
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
@@ -2201,15 +2205,13 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
         fp.Write(headFile);
         fp.Close();
     }
-    DiffSideBySidePanel* p = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
+    
+    // Show diff frame
     DiffSideBySidePanel::FileInfo l(tmpFilePath, _("HEAD version"), true);
     l.deleteOnExit = true;
     DiffSideBySidePanel::FileInfo r(fnWorkingCopy.GetFullPath(), _("Working copy"), false);
-    p->SetFilesDetails(l, r);
-    p->Diff();
-    p->SetOriginSourceControl();
-    m_mgr->AddPage(p, _("Git Diff: ") + fnWorkingCopy.GetFullName(), _("Git Diff: ") + fnWorkingCopy.GetFullPath(),
-                   wxNullBitmap, true);
+    clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), l, r, true);
+    diffView->Show();
 }
 
 void GitPlugin::OnRebase(wxCommandEvent& e)
@@ -2594,4 +2596,11 @@ void GitPlugin::OnFileGitBlame(wxCommandEvent& event)
     fn.MakeRelativeTo(CLRealPath(m_repositoryDirectory));
 
     DoGitBlame(fn.GetFullPath());
+}
+
+void GitPlugin::DisplayMessage(const wxString& message) const
+{
+    if (!message.empty()) {
+        GIT_MESSAGE(message);
+    }
 }

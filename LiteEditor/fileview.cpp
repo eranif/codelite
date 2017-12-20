@@ -176,7 +176,11 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
 {
     Create(parent, id, pos, size, style);
     m_colourHelper.Reset(new clTreeCtrlColourHelper(this));
+    
+#ifndef __WXGTK3__
     SetBackgroundColour(wxBG_STYLE_CUSTOM);
+#endif
+
     MSWSetNativeTheme(this);
     m_keyboardHelper.reset(new clTreeKeyboardInput(this));
 
@@ -202,7 +206,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
                                   wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_CLEAN_PROJECT_ONLY,
                                   wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
-
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
     Bind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
     Bind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
 }
@@ -215,6 +219,7 @@ FileViewTree::~FileViewTree()
                                      wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_CLEAN_PROJECT_ONLY,
                                      wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
     Unbind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
     Unbind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
     m_keyboardHelper.reset(NULL);
@@ -968,10 +973,26 @@ void FileViewTree::DoRemoveItems()
                             wxString message(_("An error occurred during file removal. Maybe it has been already "
                                                "deleted or you don't have the necessary permissions"));
                             if(wxDirExists(name)) {
-                                if(!wxRmdir(name)) { wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this); }
-                            } else {
-                                if(wxFileName::FileExists(file_name) && !wxRemoveFile(file_name)) {
+                                if(!wxFileName::Rmdir(name, wxPATH_RMDIR_RECURSIVE)) {
                                     wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
+                                } else {
+                                    // Folder was removed from the disc, notify about it
+                                    clFileSystemEvent rmEvent(wxEVT_FOLDER_DELETED);
+                                    rmEvent.GetPaths().Add(name);
+                                    rmEvent.SetEventObject(this);
+                                    EventNotifier::Get()->AddPendingEvent(rmEvent);
+                                }
+                            } else {
+                                if(wxFileName::FileExists(file_name)) {
+                                    if(!wxRemoveFile(file_name)) {
+                                        wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
+                                    } else {
+                                        // File was removed from the disc, notify about it
+                                        clFileSystemEvent rmEvent(wxEVT_FILE_DELETED);
+                                        rmEvent.GetPaths().Add(file_name);
+                                        rmEvent.SetEventObject(this);
+                                        EventNotifier::Get()->AddPendingEvent(rmEvent);
+                                    }
                                 }
                             }
                         }
@@ -2159,11 +2180,11 @@ void FileViewTree::OnExcludeFromBuild(wxCommandEvent& e)
                 if(proj) {
                     if(e.IsChecked()) {
                         proj->AddExcludeConfigForFile(pi.GetFile());
-                        SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+                        ExcludeFileFromBuildUI(item, true);
 
                     } else {
                         proj->RemoveExcludeConfigForFile(pi.GetFile());
-                        SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour());
+                        ExcludeFileFromBuildUI(item, false);
                     }
                 }
             }
@@ -2570,6 +2591,7 @@ void FileViewTree::DoClear()
     m_itemsToSort.clear();
     m_workspaceFolders.clear();
     m_projectsMap.clear();
+    m_excludeBuildFiles.clear();
 }
 
 void FileViewTree::ShowWorkspaceFolderContextMenu()
@@ -2968,7 +2990,7 @@ void FileViewTree::DoAddChildren(const wxTreeItemId& parentItem)
         clProjectFile::Ptr_t fileInfo = proj->GetFile(fn.GetFullPath());
         if(fileInfo && !buildConfName.IsEmpty() && fileInfo->IsExcludeFromConfiguration(buildConfName)) {
             // Set the item text with disabled colour
-            SetItemTextColour(hti, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+            ExcludeFileFromBuildUI(hti, true);
         }
     }
 
@@ -3011,6 +3033,69 @@ void FileViewTree::DoBuildSubTreeIfNeeded(const wxTreeItemId& parent)
 
             // Append the real items
             DoAddChildren(parent);
+        }
+    }
+}
+
+void FileViewTree::ExcludeFileFromBuildUI(const wxTreeItemId& item, bool exclude)
+{
+    FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
+    CHECK_PTR_RET(data);
+    CHECK_COND_RET(data->GetData().IsFile());
+    const wxString& filename = data->GetData().GetFile();
+    if(exclude && m_excludeBuildFiles.count(filename)) { return; }
+    if(!exclude && m_excludeBuildFiles.count(filename) == 0) { return; }
+
+    if(exclude) {
+        m_excludeBuildFiles.insert({ filename, item });
+        SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+    } else {
+        m_excludeBuildFiles.erase(filename);
+        SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour());
+    }
+}
+
+bool FileViewTree::IsItemExcludedFromBuild(const wxTreeItemId& item, const wxString& configName) const { return false;}
+
+void FileViewTree::OnBuildConfigChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    // Remove the Gray text from the all the "Exclude files"
+    std::for_each(m_excludeBuildFiles.begin(), m_excludeBuildFiles.end(),
+                  [&](const std::unordered_map<wxString, wxTreeItemId>::value_type& vt) {
+                      SetItemTextColour(vt.second, DrawingUtils::GetOutputPaneFgColour());
+                  });
+    m_excludeBuildFiles.clear();
+
+    std::unordered_map<wxString, wxTreeItemId> allFiles;
+    // We need to collect list of all file items from the tree
+    std::queue<wxTreeItemId> Q;
+    Q.push(GetRootItem());
+    while(!Q.empty()) {
+        wxTreeItemId item = Q.front();
+        Q.pop();
+
+        if(!ItemHasChildren(item)) {
+            FilewViewTreeItemData* d = ItemData(item);
+            if(d && d->GetData().IsFile()) { allFiles.insert({ d->GetData().GetFile(), item }); }
+        } else {
+            wxTreeItemIdValue k;
+            wxTreeItemId child = GetFirstChild(item, k);
+            while(child.IsOk()) {
+                Q.push(child);
+                child = GetNextChild(item, k);
+            }
+        }
+    }
+
+    // Get list of all excluded files for this configuration
+    std::vector<wxString> excludeFiles;
+    if(clCxxWorkspaceST::Get()->GetExcludeFilesForConfig(excludeFiles)) {
+        for(size_t i = 0; i < excludeFiles.size(); ++i) {
+            if(allFiles.count(excludeFiles[i])) {
+                // This file was expanded and we have a valid item id for it
+                ExcludeFileFromBuildUI(allFiles[excludeFiles[i]], true);
+            }
         }
     }
 }

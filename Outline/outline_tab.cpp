@@ -78,7 +78,7 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
                                   this);
     EventNotifier::Get()->Connect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL,
                                   this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(OutlineTab::OnEditorSaved), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &OutlineTab::OnEditorSaved, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &OutlineTab::OnActiveEditorChanged, this);
     Connect(wxEVT_SV_GOTO_DEFINITION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL,
             this);
@@ -106,7 +106,7 @@ OutlineTab::~OutlineTab()
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL,
                                      this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(OutlineTab::OnEditorSaved), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &OutlineTab::OnEditorSaved, this);
     Disconnect(wxEVT_SV_GOTO_DEFINITION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL,
                this);
     Disconnect(wxEVT_SV_GOTO_DECLARATION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL,
@@ -160,6 +160,7 @@ void OutlineTab::OnAllEditorsClosed(wxCommandEvent& e)
 {
     e.Skip();
     m_tree->Clear();
+    m_tree->ClearCache();
     m_treeCtrlPhp->Clear();
 }
 
@@ -290,8 +291,12 @@ void OutlineTab::OnEditorSaved(clCommandEvent& event)
     wxFileName filename(event.GetFileName());
     if(FileExtManager::IsPHPFile(filename)) {
         m_treeCtrlPhp->BuildTree(filename);
+    } else if(FileExtManager::IsCxxFile(filename)) {
+        clDEBUG() << "Outline: editor saved";
+        m_tree->BuildTree(filename, true);
     }
 }
+
 void OutlineTab::OnPhpItemActivated(wxTreeEvent& event)
 {
     event.Skip();
@@ -321,10 +326,12 @@ void OutlineTab::EditorChanged()
     IEditor* editor = m_mgr->GetActiveEditor();
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
     LexerConf::Ptr_t cxxLexer = ColoursAndFontsManager::Get().GetLexer("c++");
-
+    
+    clDEBUG() << "Outline: editor changed event";
+    
     // Use the lexer to determine if we can show outline
     if(editor && cxxLexer && FileUtils::WildMatch(cxxLexer->GetFileSpec(), editor->GetFileName())) {
-        m_tree->BuildTree(editor->GetFileName(), false);
+        m_tree->BuildTree(editor->GetFileName(), true);
         m_simpleBook->SetSelection(OUTLINE_TAB_CXX);
         m_textCtrlSearch->Enable(true);
 

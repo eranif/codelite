@@ -181,9 +181,8 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand& command)
     if(!command.GetWorkingDirectory().IsEmpty()) {
         ::wxSetWorkingDirectory(command.GetWorkingDirectory());
     }
-
     wxPrintf("codelite-lldb: working directory is set to %s\n", ::wxGetCwd());
-#ifdef __WXMAC__
+#if defined(__WXOSX__) || defined(__WXGTK__)
     // On OSX, debugserver executable must exists otherwise lldb will not work properly
     // we ensure that it exists by checking the environment variable LLDB_DEBUGSERVER_PATH
     wxString lldbDebugServer;
@@ -244,7 +243,7 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
 
     // In any case, reset the interrupt reason
     m_interruptReason = kInterruptReasonNone;
-
+    
     // Notify codelite that the debugger started successfully
     NotifyStarted(kDebugSessionTypeNormal);
 }
@@ -336,6 +335,15 @@ void CodeLiteLLDBApp::NotifyRunning()
     m_variables.clear();
     LLDBReply reply;
     reply.SetReplyType(kReplyTypeDebuggerRunning);
+    SendReply(reply);
+}
+
+void CodeLiteLLDBApp::NotifyLaunchSuccess()
+{
+    wxPrintf("codelite-lldb: NotifyLaunchSuccess. Target Process ID %d\n", m_debuggeePid);
+    m_variables.clear();
+    LLDBReply reply;
+    reply.SetReplyType(kReplyTypeLaunchSuccess);
     SendReply(reply);
 }
 
@@ -524,7 +532,11 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
 
         } else {
             m_debuggeePid = process.GetProcessID();
+#ifdef __WXGTK__
+            NotifyLaunchSuccess();
+#else
             NotifyRunning();
+#endif
         }
     }
 }

@@ -288,14 +288,17 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
+    
 #ifndef __WXMSW__
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
 #endif
 
-#ifdef __WXMSW__
-    ctrl->SetUseAntiAliasing(true);
+#if defined(__WXMSW__)
+    ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+    //ctrl->SetDoubleBuffered(true);
+    //ctrl->SetFontQuality(wxSTC_EFF_QUALITY_ANTIALIASED);
 #endif
-
+    
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     bool tooltip(false);
 
@@ -310,7 +313,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         // Enable SCSS property (will tell the lexer to search for variables)
         ctrl->SetProperty("lexer.css.scss.language", "1");
     }
-    ctrl->SetUseAntiAliasing(true);
 
     // Find the default style
     wxFont defaultFont;

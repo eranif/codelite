@@ -48,6 +48,7 @@ public:
     const wxString& GetNewpath() const { return m_newpath; }
     void SetPaths(const wxArrayString& paths) { this->m_paths = paths; }
     const wxArrayString& GetPaths() const { return m_paths; }
+    wxArrayString& GetPaths() { return m_paths; }
 };
 
 typedef void (wxEvtHandler::*clFileSystemEventFunction)(clFileSystemEvent&);

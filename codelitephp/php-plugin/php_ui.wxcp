@@ -2241,6 +2241,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -2279,6 +2283,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -2317,6 +2325,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -7613,6 +7625,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -7651,6 +7667,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -9739,6 +9759,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -9777,6 +9801,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -9815,6 +9843,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -9853,6 +9885,10 @@
                  "m_label": "Cell Mode",
                  "m_selection": 0,
                  "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                }, {
+                 "type": "colHeaderFlags",
+                 "m_label": "Column Flags",
+                 "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                 }],
                "m_events": [],
                "m_children": []
@@ -10103,6 +10139,10 @@
                    "m_label": "Cell Mode",
                    "m_selection": 0,
                    "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                  }, {
+                   "type": "colHeaderFlags",
+                   "m_label": "Column Flags",
+                   "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                   }],
                  "m_events": [],
                  "m_children": []
@@ -10141,6 +10181,10 @@
                    "m_label": "Cell Mode",
                    "m_selection": 0,
                    "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                  }, {
+                   "type": "colHeaderFlags",
+                   "m_label": "Column Flags",
+                   "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                   }],
                  "m_events": [],
                  "m_children": []
@@ -10179,6 +10223,10 @@
                    "m_label": "Cell Mode",
                    "m_selection": 0,
                    "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+                  }, {
+                   "type": "colHeaderFlags",
+                   "m_label": "Column Flags",
+                   "stringValue": "wxDATAVIEW_COL_RESIZABLE"
                   }],
                  "m_events": [],
                  "m_children": []
@@ -10627,6 +10675,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -10665,6 +10717,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -10703,6 +10759,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -10741,6 +10801,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -11035,7 +11099,7 @@
        "border": 2,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxBK_DEFAULT"],
+       "m_styles": ["wxNB_FIXEDWIDTH", "wxBK_DEFAULT"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -11084,11 +11148,11 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": "Notebook"
+         "m_value": ""
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": "Notebook.h"
+         "m_value": ""
         }, {
          "type": "string",
          "m_label": "Style:",
@@ -17411,6 +17475,10 @@
            "m_label": "Cell Mode",
            "m_selection": 1,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -17449,6 +17517,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []

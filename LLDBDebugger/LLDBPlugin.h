@@ -122,6 +122,7 @@ protected:
     void OnLLDBDeletedAllBreakpoints(LLDBEvent& event);
     void OnLLDBBreakpointsUpdated(LLDBEvent& event);
     void OnLLDBExpressionEvaluated(LLDBEvent& event);
+    void OnLLDBLaunchSuccess(LLDBEvent& event);
     void OnDestroyTip(clCommandEvent& e);
 
 public:

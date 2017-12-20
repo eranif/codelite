@@ -135,6 +135,10 @@ class GitEntry : public clConfigItem
     GitWorkspaceMap_t m_workspacesMap;
     size_t m_flags;
     int m_gitDiffDlgSashPos;
+    int m_gitDiffChooseDlgRadioSel1;
+    int m_gitDiffChooseDlgRadioSel2;
+    wxArrayString m_gitDiffChooseDlgCBoxValues1;
+    wxArrayString m_gitDiffChooseDlgCBoxValues2;
     int m_gitConsoleSashPos;
     int m_gitCommitDlgHSashPos;
     int m_gitCommitDlgVSashPos;
@@ -186,6 +190,14 @@ public:
     int GetGitCommitDlgVSashPos() const { return m_gitCommitDlgVSashPos; }
     void SetGitDiffDlgSashPos(int gitDiffDlgSashPos) { this->m_gitDiffDlgSashPos = gitDiffDlgSashPos; }
     int GetGitDiffDlgSashPos() const { return m_gitDiffDlgSashPos; }
+    void SetGitDiffChooseDlgRadioSel1(int sel) { this->m_gitDiffChooseDlgRadioSel1 = sel; }
+    int GetGitDiffChooseDlgRadioSel1() const { return m_gitDiffChooseDlgRadioSel1; }
+    void SetGitDiffChooseDlgRadioSel2(int sel) { this->m_gitDiffChooseDlgRadioSel2 = sel; }
+    int GetGitDiffChooseDlgRadioSel2() const { return m_gitDiffChooseDlgRadioSel2; }
+    void SetGitDiffChooseDlgCBoxValues1(const wxArrayString& arr) { this->m_gitDiffChooseDlgCBoxValues1 = arr; }
+    wxArrayString& GetGitDiffChooseDlgCBoxValues1() { return m_gitDiffChooseDlgCBoxValues1; }
+    void SetGitDiffChooseDlgCBoxValues2(const wxArrayString& arr) { this->m_gitDiffChooseDlgCBoxValues2 = arr; }
+    wxArrayString& GetGitDiffChooseDlgCBoxValues2() { return m_gitDiffChooseDlgCBoxValues2; }
     void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
     void SetFlags(size_t flags) { this->m_flags = flags; }
     const wxStringMap_t& GetEntries() const { return m_entries; }

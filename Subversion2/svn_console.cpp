@@ -23,24 +23,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/app.h>
-#include "environmentconfig.h"
+#include "Notebook.h"
 #include "editor_config.h"
-#include <wx/textdlg.h>
-#include "svn_console.h"
-#include "subversion_strings.h"
-#include <wx/tokenzr.h>
-#include <wx/aui/framemanager.h>
-#include <wx/xrc/xmlres.h>
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
+#include "lexer_configuration.h"
 #include "processreaderthread.h"
 #include "subversion2.h"
-#include "lexer_configuration.h"
-#include "Notebook.h"
-#include "event_notifier.h"
+#include "subversion_strings.h"
+#include "svn_console.h"
+#include <wx/app.h>
+#include <wx/aui/framemanager.h>
 #include <wx/regex.h>
 #include <wx/settings.h>
-#include "file_logger.h"
+#include <wx/textdlg.h>
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
+#include "ColoursAndFontsManager.h"
 
 //-------------------------------------------------------------
 SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)
@@ -54,17 +55,11 @@ SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)
     m_sci->SetUndoCollection(false); // dont allow undo/redo
     DoInitializeFontsAndColours();
 
-    EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(SvnConsole::OnThemeChanged), NULL, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnConsole::OnReadProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &SvnConsole::OnProcessEnd, this);
 }
 
-SvnConsole::~SvnConsole()
-{
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(SvnConsole::OnThemeChanged), NULL, this);
-}
+SvnConsole::~SvnConsole() {}
 
 void SvnConsole::OnReadProcessOutput(clProcessEvent& event)
 {
@@ -112,18 +107,15 @@ void SvnConsole::OnProcessEnd(clProcessEvent& event)
     }
 }
 
-void
-SvnConsole::ExecuteURL(const wxString& cmd, const wxString& url, SvnCommandHandler* handler, bool printProcessOutput)
+void SvnConsole::ExecuteURL(const wxString& cmd, const wxString& url, SvnCommandHandler* handler,
+                            bool printProcessOutput)
 {
     DoExecute(cmd, handler, wxT(""), printProcessOutput);
     m_url = url;
 }
 
-void SvnConsole::Execute(const wxString& cmd,
-                         const wxString& workingDirectory,
-                         SvnCommandHandler* handler,
-                         bool printProcessOutput,
-                         bool showConsole)
+void SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler,
+                         bool printProcessOutput, bool showConsole)
 {
     DoExecute(cmd, handler, workingDirectory, printProcessOutput, showConsole);
 }
@@ -204,11 +196,10 @@ void SvnConsole::DoProcessNextCommand()
 
     bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
     EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
-    
+
     clDEBUG() << "Running svn command:" << cmdShell << clEndl;
-    
-    m_process = CreateAsyncProcess(this,
-                                   cmdShell,
+
+    m_process = CreateAsyncProcess(this, cmdShell,
                                    m_currCmd.showConsole ? IProcessCreateConsole : IProcessCreateWithHiddenConsole,
                                    m_currCmd.workingDirectory);
     if(!m_process) {
@@ -218,11 +209,8 @@ void SvnConsole::DoProcessNextCommand()
     m_sci->SetFocus();
 }
 
-void SvnConsole::DoExecute(const wxString& cmd,
-                           SvnCommandHandler* handler,
-                           const wxString& workingDirectory,
-                           bool printProcessOutput,
-                           bool showConsole)
+void SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, const wxString& workingDirectory,
+                           bool printProcessOutput, bool showConsole)
 {
     SvnConsoleCommand* consoleCommand = new SvnConsoleCommand();
     consoleCommand->cmd = cmd.c_str();
@@ -265,17 +253,6 @@ void SvnConsole::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void SvnConsole::DoInitializeFontsAndColours()
 {
-    for(int i = 0; i <= wxSTC_STYLE_DEFAULT; i++) {
-        wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        defFont.SetFamily(wxFONTFAMILY_TELETYPE);
-        m_sci->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
-        m_sci->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
-        m_sci->StyleSetFont(i, defFont);
-    }
-}
-
-void SvnConsole::OnThemeChanged(wxCommandEvent& e)
-{
-    e.Skip();
-    DoInitializeFontsAndColours();
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) { lexer->Apply(m_sci); }
 }

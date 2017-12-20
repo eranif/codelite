@@ -507,12 +507,17 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
     wxString lastFuncSig;
     wxString visibleScope, scopeName, localsBody;
 
-    CL_DEBUG(wxT("Getting function signature from the database..."));
+    clDEBUG() << "Getting function signature from the database...";
     TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
-    if(tag) { lastFuncSig = tag->GetSignature(); }
-    CL_DEBUG(wxT("Getting function signature from the database... done"));
-
-    clDEBUG() << "Optimizing scope..." << clEndl;
+    if(tag) {
+        lastFuncSig = tag->GetSignature();
+        clDEBUG() << "Using function signaure:" << lastFuncSig;
+        lastFuncSig.Trim().Trim(false);
+        if(!lastFuncSig.IsEmpty() && lastFuncSig[0] == '(') { lastFuncSig.Remove(0, 1); }
+        if(!lastFuncSig.IsEmpty() && lastFuncSig[lastFuncSig.size() - 1] == ')') { lastFuncSig.RemoveLast(); }
+    }
+    clDEBUG() << "Getting function signature from the database... done";
+    clDEBUG() << "Optimizing scope...";
     wxString textAfterTokensReplacements;
     textAfterTokensReplacements = ApplyCtagsReplacementTokens(text);
 

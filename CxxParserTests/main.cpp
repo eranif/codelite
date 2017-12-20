@@ -19,7 +19,7 @@ TEST_FUNC(test_cxx_normalize_signature)
 
 TEST_FUNC(test_cxx_local_variables)
 {
-    wxString buffer = "(struct wxString *pstr, const std::string& name)"
+    wxString buffer = "struct wxString *pstr; const std::string& name;"
                       "std::vector<int> numbers = {1,2,3};"
                       "std::vector<int> numbers2 {1,2,3};"
                       "std::vector<std::pair<int, int>>::iterator myIter;";
@@ -161,6 +161,30 @@ TEST_FUNC(test_angel_script_locals)
     CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t(), false);
     CxxVariable::Map_t vars = scanner.GetVariablesMap();
     CHECK_BOOL(vars.count("var") == 1);
+    return true;
+}
+
+TEST_FUNC(test_ranged_forloop)
+{
+    wxString buffer = "for(const wxString& str : myArr) {";
+    CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t(), false);
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_BOOL(vars.count("str") == 1);
+    return true;
+}
+
+TEST_FUNC(test_local_in_std_for_each)
+{
+    wxString buffer = "std::for_each(a.begin(), a.end(), [&](const std::string& str) {"
+                      "        const wxString& confname = conf->GetName();"
+                      "        for(const wxString& filename : excludeFiles) {"
+                      "            clProjectFile::Ptr_t file = proj->GetFile(filename);";
+
+    CxxVariableScanner scanner(buffer, eCxxStandard::kCxx11, wxStringTable_t(), false);
+    CxxVariable::Map_t vars = scanner.GetVariablesMap();
+    CHECK_SIZE(vars.size(), 4);
+    CHECK_BOOL(vars.count("file") == 1);
+    CHECK_BOOL(vars.count("confname") == 1);
     return true;
 }
 

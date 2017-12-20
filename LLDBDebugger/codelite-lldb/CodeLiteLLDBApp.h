@@ -93,6 +93,7 @@ public:
     void NotifyAborted();
     void NotifyStarted(eLLDBDebugSessionType sessionType);
     void NotifyRunning();
+    void NotifyLaunchSuccess();
     void NotifyBreakpointsUpdated();
     void NotifyAllBreakpointsDeleted();
 

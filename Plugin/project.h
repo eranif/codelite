@@ -102,7 +102,9 @@ public:
 
     ProjectItem& operator=(const ProjectItem& item)
     {
-        if(this == &item) { return *this; }
+        if(this == &item) {
+            return *this;
+        }
 
         m_key = item.m_key;
         m_displayName = item.m_displayName;
@@ -167,12 +169,8 @@ public:
     }
     ~clProjectFile() {}
 
-    void SetExcludeConfigs(const wxStringSet_t& excludeConfigs) { this->m_excludeConfigs = excludeConfigs; }
-    void SetExcludeConfigs(const wxArrayString& excludeConfigs)
-    {
-        this->m_excludeConfigs.clear();
-        this->m_excludeConfigs.insert(excludeConfigs.begin(), excludeConfigs.end());
-    }
+    void SetExcludeConfigs(Project* project, const wxStringSet_t& excludeConfigs);
+    void SetExcludeConfigs(Project* project, const wxArrayString& excludeConfigs);
 
     void SetXmlNode(wxXmlNode* xmlNode) { this->m_xmlNode = xmlNode; }
     wxXmlNode* GetXmlNode() { return m_xmlNode; }
@@ -190,7 +188,7 @@ public:
      * @brief return true if this file should be execluded from the build of a specific configuration
      */
     bool IsExcludeFromConfiguration(const wxString& config) const { return m_excludeConfigs.count(config); }
-    void Rename(const wxString& newName);
+    void Rename(Project* project, const wxString& newName);
 
     /**
      * @brief delete this file
@@ -325,6 +323,7 @@ private:
     wxString m_workspaceFolder; // The folder in which this project is contained. Separated by "/"
     FilesMap_t m_filesTable;
     FoldersMap_t m_virtualFoldersTable;
+    wxStringSet_t m_excludeFiles;
 
 private:
     void DoUpdateProjectSettings();
@@ -337,6 +336,11 @@ private:
     clProjectFolder::Ptr_t GetRootFolder();
 
 public:
+    /**
+     * @brief return list of files that are excluded from *any* build configuration
+     */
+    const wxStringSet_t& GetExcludeFiles() const { return m_excludeFiles; }
+    
     /**
      * @brief return the meta data about a file
      */
@@ -799,7 +803,7 @@ public:
      * @brief add an exclude configuration for a file
      */
     void AddExcludeConfigForFile(const wxString& filename, const wxString& configName = "");
-    
+
     /**
      * @brief remove exclude configuration for file
      */

@@ -26,18 +26,23 @@
 #ifndef NOTEBOOK_H
 #define NOTEBOOK_H
 
-#include <wx/panel.h>
-#include <wx/simplebook.h>
-#include <vector>
-#include <list>
-#include <wx/settings.h>
-#include <wx/dcmemory.h>
-#include <wx/sharedptr.h>
-#include <wx/bookctrl.h>
-#include "windowstack.h"
-#include <wx/dynarray.h>
-#include <wx/dnd.h>
+#include "cl_defs.h"
+
+#if USE_AUI_NOTEBOOK
+#include "clAuiNotebook.h"
+#else
+#include "clTabHistory.h"
 #include "clTabRenderer.h"
+#include "windowstack.h"
+#include <list>
+#include <vector>
+#include <wx/bookctrl.h>
+#include <wx/dcmemory.h>
+#include <wx/dnd.h>
+#include <wx/dynarray.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
+#include <wx/sharedptr.h>
 
 class Notebook;
 class wxMenu;
@@ -60,33 +65,6 @@ public:
     clTabCtrlDropTarget(clTabCtrl* tabCtrl);
     virtual ~clTabCtrlDropTarget();
     virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data);
-};
-
-class WXDLLIMPEXP_SDK clTabHistory
-{
-    wxArrayPtrVoid m_history;
-    wxWindow* m_page; /// The page to add to the hisotry
-
-public:
-    typedef wxSharedPtr<clTabHistory> Ptr_t;
-
-public:
-    clTabHistory();
-    virtual ~clTabHistory();
-
-    void Push(wxWindow* page);
-    void Pop(wxWindow* page);
-    wxWindow* PrevPage();
-    /**
-     * @brief clear the history
-     */
-    void Clear();
-
-    /**
-     * @brief return the tabbing history
-     * @return
-     */
-    const wxArrayPtrVoid& GetHistory() const { return m_history; }
 };
 
 /**
@@ -440,5 +418,5 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCt
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
-
+#endif // USE_AUI_NOTEBOOK
 #endif // NOTEBOOK_H

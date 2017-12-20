@@ -22,28 +22,28 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/aui/framemanager.h>
+#include "DebuggerCallstackView.h"
+#include "DebuggerDisassemblyTab.h"
+#include "breakpointdlg.h"
+#include "codelite_events.h"
+#include "debugger.h"
 #include "debuggerasciiviewer.h"
-#include "localstable.h"
+#include "debuggermanager.h"
+#include "debuggerpane.h"
+#include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "editor_config.h"
-#include "detachedpanesinfo.h"
-#include "wx/dcbuffer.h"
-#include "memoryview.h"
-#include "shelltab.h"
-#include "debuggerpane.h"
-#include "simpletable.h"
-#include "DebuggerCallstackView.h"
-#include "wx/xrc/xmlres.h"
-#include "manager.h"
-#include "breakpointdlg.h"
-#include "threadlistpanel.h"
-#include "debuggermanager.h"
-#include "debugger.h"
-#include "DebuggerDisassemblyTab.h"
-#include "plugin_general_wxcp.h"
 #include "event_notifier.h"
-#include "codelite_events.h"
+#include "localstable.h"
+#include "manager.h"
+#include "memoryview.h"
+#include "plugin_general_wxcp.h"
+#include "shelltab.h"
+#include "simpletable.h"
+#include "threadlistpanel.h"
+#include "wx/dcbuffer.h"
+#include "wx/xrc/xmlres.h"
+#include <wx/aui/framemanager.h>
 
 const wxString DebuggerPane::LOCALS = _("Locals");
 const wxString DebuggerPane::WATCHES = _("Watches");
@@ -90,21 +90,21 @@ void DebuggerPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
+#if USE_AUI_NOTEBOOK
+    long style = wxAUI_NB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_TAB_SPLIT;
+#else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
-    if(!EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection()) {
-        style |= kNotebook_BottomTabs;
-    }
+    if(!EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection()) { style |= kNotebook_BottomTabs; }
     if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         style &= ~kNotebook_LightTabs;
         style |= kNotebook_DarkTabs;
     }
-    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
-        style |= kNotebook_MouseScrollSwitchTabs;
-    }
+    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
     style |= kNotebook_UnderlineActiveTab;
-
+#endif
     GeneralImages img;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
 
     // Calculate the widthest tab (the one with the 'Call Stack' label)

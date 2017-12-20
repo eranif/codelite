@@ -40,6 +40,7 @@
 #define clTB_DEFAULT_STYLE_PLUGIN wxAUI_TB_DEFAULT_STYLE
 #endif
 #define USE_AUI_TOOLBAR 1
+#define USE_AUI_NOTEBOOK 0
 
 // Defaults
 #ifdef __WXGTK__

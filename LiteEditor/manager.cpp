@@ -1178,7 +1178,7 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
     // Notify the plugins, maybe they want to override the
     // default behavior (e.g. Subversion plugin)
     clFileSystemEvent renameEvent(wxEVT_FILE_RENAMED);
-    renameEvent.SetOldName(origName);
+    renameEvent.SetPath(origName);
     renameEvent.SetNewpath(newName);
     if(!EventNotifier::Get()->ProcessEvent(renameEvent)) {
         // rename the file on filesystem
@@ -1547,13 +1547,14 @@ bool Manager::ShowOutputPane(wxString focusWin, bool commit)
         if(editor) { editor->SetFocus(); }
     }
 
+#ifndef __WXMSW__
 #if wxVERSION_NUMBER >= 2900
     // This is needed in >=wxGTK-2.9, otherwise the current editor sometimes doesn't notice that the output pane has
     // appeared
     // resulting in an area at the bottom that can't be scrolled to
     clMainFrame::Get()->SendSizeEvent(wxSEND_EVENT_POST);
 #endif
-
+#endif
     return true;
 }
 

@@ -569,15 +569,15 @@ int main(int argc, char** argv)
 {
     // Initialize the wxWidgets library
     wxInitializer initializer;
-#ifdef __WXMSW__
-    TagsManagerST::Get()->SetCodeLiteIndexerPath("C:/Program Files/CodeLite/codelite_indexer.exe");
-    TagsManagerST::Get()->StartCodeLiteIndexer();
-    TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer("enum class FooShort : short {"
-                                                                 "    short_apple,"
-                                                                 "    short_banana,"
-                                                                 "    short_orange,"
-                                                                 "};");
-#endif
+// #ifdef __WXMSW__
+//     TagsManagerST::Get()->SetCodeLiteIndexerPath("C:/Program Files/CodeLite/codelite_indexer.exe");
+//     TagsManagerST::Get()->StartCodeLiteIndexer();
+//     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer("enum class FooShort : short {"
+//                                                                  "    short_apple,"
+//                                                                  "    short_banana,"
+//                                                                  "    short_orange,"
+//                                                                  "};");
+// #endif
 
     testCC();
     TagsManagerST::Free();

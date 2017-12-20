@@ -1,3 +1,6 @@
+#include "cl_defs.h"
+
+#if !USE_AUI_NOTEBOOK
 #include "Notebook.h"
 #include "clTabRenderer.h"
 #include "clTabRendererSquare.h"
@@ -228,14 +231,12 @@ wxFont clTabRenderer::GetTabFont() { return DrawingUtils::GetDefaultGuiFont(); }
 void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours,
                                             size_t style)
 {
-    bool isSquareStyle = (dynamic_cast<clTabRendererSquare*>(this)) != nullptr;
     wxPoint pt1, pt2;
     dc.SetPen(colours.activeTabPenColour);
     if(style & kNotebook_LeftTabs) {
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopRight();
         pt2 = activeTab->GetRect().GetBottomRight();
-        if(isSquareStyle) { pt1.y += 3; }
         pt2.y -= 1;
         DRAW_LINE(pt1, pt2);
 
@@ -248,7 +249,6 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopLeft();
         pt2 = activeTab->GetRect().GetBottomLeft();
-        if(isSquareStyle) { pt1.y += 3; }
         pt2.y -= 1;
         DRAW_LINE(pt1, pt2);
 
@@ -257,11 +257,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopLeft();
         pt2 = activeTab->GetRect().GetTopRight();
-        if(style & kNotebook_UnderlineActiveTab && isSquareStyle) {
-            pt1.x += 3;
-        } else {
-            pt1.x += 1;
-        }
+        pt1.x += 1;
         pt2.x -= 1;
         DRAW_LINE(pt1, pt2);
 
@@ -270,11 +266,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetBottomLeft();
         pt2 = activeTab->GetRect().GetBottomRight();
-        if(style & kNotebook_UnderlineActiveTab && isSquareStyle) {
-            pt1.x += 3;
-        } else {
-            pt1.x += 1;
-        }
+        pt1.x += 1;
         pt2.x -= 1;
         DRAW_LINE(pt1, pt2);
 
@@ -293,3 +285,4 @@ void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, con
 {
     DrawingUtils::DrawDropDownArrow(win, dc, rect, colours.activeTabPenColour);
 }
+#endif

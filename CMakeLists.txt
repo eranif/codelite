@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                          #
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1               #
 ##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                               #
-##      -DGTK_USE_NATIVEBOOK=1|0                   // Under GTK, use the native notebook instead of wxAuiNoteook. Default is set to 0                           #
+##      -DUSE_AUI_NOTEBOOK=1|0                     // use custom Notebook or wxWidgets's wxAuiNotebook (default is 0)                                           #
 ##      -DWITH_WXPATH=<fullpath>                   // Specify a particular wxWidgets build to use. The format must be /path/to/different_wx-config/directory/   #
 ##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                  #
 ##      -DENABLE_SFTP=1|0                          // When set to 1 codelite is built with SFTP support. Default is build _with_ SFTP support                   #
@@ -76,11 +76,11 @@ set( WITH_SFTP 1 )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # Avoid very multiple warnings spam due to deprecated wx methods
 
 if( UNIX AND NOT APPLE)
-	if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-		set(CMAKE_LIBRARY_ARCHITECTURE "x86_64-linux-gnu")
-	else()
-		set(CMAKE_LIBRARY_ARCHITECTURE "i386-linux-gnu")
-	endif()
+    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(CMAKE_LIBRARY_ARCHITECTURE "x86_64-linux-gnu")
+    else()
+        set(CMAKE_LIBRARY_ARCHITECTURE "i386-linux-gnu")
+    endif()
 endif()
 
 if ( UNIX )
@@ -300,16 +300,14 @@ endif()
 message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
 
 ## Allow user to use wxAuiNotebook instead of the native notebook
-if ( GTK_USE_NATIVEBOOK )
-    add_definitions( -DGTK_USE_NATIVEBOOK=1 )
-    message("-- Using wxNotebook")
-
-else ( GTK_USE_NATIVEBOOK )
-    add_definitions( -DGTK_USE_NATIVEBOOK=0 )
-    message("-- Using wxAuiNotebook")
-
-endif ( GTK_USE_NATIVEBOOK )
-unset(GTK_USE_NATIVEBOOK CACHE)
+if ( USE_AUI_NOTEBOOK )
+    add_definitions( -DUSE_AUI_NOTEBOOK=1 )
+    message("-- Using Custom Notebook class")
+else ( USE_AUI_NOTEBOOK )
+    add_definitions( -DUSE_AUI_NOTEBOOK=0 )
+    message("-- Using wxAuiNotebook class")
+endif ( USE_AUI_NOTEBOOK )
+unset(USE_AUI_NOTEBOOK CACHE)
 
 #############################################
 ## Global optimizations
@@ -447,10 +445,17 @@ if ( MAKE_DEB )
         message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64")
         set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
     endif ()
-
+    
+    if (GTK_VERSION EQUAL 3)
+        set(LIBGTK "libgtk-3-dev")
+        set(GTKNAME "gtk3")
+    else()
+        set(LIBGTK "libgtk2.0-dev")
+        set(GTKNAME "gtk2")
+    endif()
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "CodeLite")
-    set(CPACK_PACKAGE_VERSION             "11.0.7")
+    set(CPACK_PACKAGE_VERSION             "11.0.7-${GTKNAME}")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++/PHP and Node.js IDE (Integrated Development Environment)")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")
@@ -459,11 +464,11 @@ if ( MAKE_DEB )
     if(OS_CODENAME STREQUAL "xenial")
         message("-- CPack deps for Ubuntu-Xenial")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS
-            "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.8-dev, clang-format-3.8, liblldb-3.8-dev")
+            "libc6, ${LIBGTK}, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-4.0-dev, clang-format-4.0, python-lldb-4.0, liblldb-4.0-dev")
     else()
         message("-- CPack deps for Ubuntu-Trusty/Debian-Jessie")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS
-            "libc6, libgtk2.0-dev, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.5-dev, clang-format-3.5, liblldb-3.5-dev")
+            "libc6, ${LIBGTK}, libsqlite3-dev, libssh-dev, libedit-dev, libhunspell-dev, libclang-3.5-dev, clang-format-3.5, liblldb-3.5-dev")
     endif()
     set(CPACK_PACKAGE_DESCRIPTION_FILE    "${CL_SRC_ROOT}/DESC")
     set(CPACK_STRIP_FILES TRUE)

@@ -81,6 +81,8 @@
     <Topleveldir>../php-plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="PhpSFTPHandler.cpp"/>
+    <File Name="PhpSFTPHandler.h"/>
     <File Name="php.cpp"/>
     <File Name="php_editor_context_menu.cpp"/>
     <File Name="ssh_workspace_settings.h"/>

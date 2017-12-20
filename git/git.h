@@ -301,6 +301,12 @@ public:
     void UndoAddFiles(const wxArrayString& files);
 
     void RefreshFileListView();
+    /**
+     * @brief display a message in the console
+     * used by outside classes e.g. GitDiffDlg
+     * @param message to display
+     */
+    void DisplayMessage(const wxString& message) const;
 
     void DoGitBlame(const wxString& args);      // Called by OnGitBlame or the git blame dialog
     wxString GetEditorRelativeFilepath() const; // Called by OnGitBlame or the git blame dialog

@@ -35,7 +35,6 @@ extern const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED;
 /// This class represents the GUI tree for the C++ symbols
 class svSymbolTree : public SymbolTree
 {
-    std::stack<wxTreeItemId> m_itemsStack;
     IManager* m_manager;
     wxString m_currentFile;
 
@@ -74,6 +73,7 @@ protected:
     wxString GetActiveEditorFile() const;
     void OnIncludeStatements(wxCommandEvent& e);
     void OnCacheUpdated(clCommandEvent& e);
+    void OnCacheInvalidated(clCommandEvent& e);
     virtual void OnMouseDblClick(wxMouseEvent& event);
     virtual void OnMouseRightUp(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);

@@ -91,8 +91,6 @@
     <File Name="php_project.h"/>
     <File Name="php_workspace.cpp"/>
     <File Name="php_workspace.h"/>
-    <File Name="php_folder.cpp"/>
-    <File Name="php_folder.h"/>
     <File Name="php_project_settings_data.cpp"/>
     <File Name="php_project_settings_data.h"/>
     <File Name="PHPWrokspaceStorageInterface.h"/>

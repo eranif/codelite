@@ -10,6 +10,7 @@
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
+#include "clFileSystemEvent.h"
 
 wxDEFINE_EVENT(wxEVT_PHP_PROJECT_FILES_SYNC_START, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_PHP_PROJECT_FILES_SYNC_END, clCommandEvent);
@@ -175,7 +176,7 @@ void PHPProject::FileRenamed(const wxString& oldname, const wxString& newname, b
     int where = m_files.Index(oldname);
     if(where != wxNOT_FOUND) { m_files.Item(where) = newname; }
 
-    if(notify && where != wxNOT_FOUND) {
+    if(notify && (where != wxNOT_FOUND)) {
         {
             wxArrayString arr;
             arr.Add(oldname);
@@ -190,6 +191,12 @@ void PHPProject::FileRenamed(const wxString& oldname, const wxString& newname, b
             event.SetStrings(arr);
             EventNotifier::Get()->AddPendingEvent(event);
         }
+
+        // And finally notify about rename-event
+        clFileSystemEvent renameEvent(wxEVT_FILE_RENAMED);
+        renameEvent.SetPath(oldname);
+        renameEvent.SetNewpath(newname);
+        EventNotifier::Get()->AddPendingEvent(renameEvent);
     }
 }
 

@@ -123,7 +123,7 @@ EVT_STC_CALLTIP_CLICK(wxID_ANY, LEditor::OnCallTipClick)
 EVT_STC_DWELLEND(wxID_ANY, LEditor::OnDwellEnd)
 EVT_STC_START_DRAG(wxID_ANY, LEditor::OnDragStart)
 EVT_STC_DO_DROP(wxID_ANY, LEditor::OnDragEnd)
-EVT_STC_PAINTED(wxID_ANY, LEditor::OnScnPainted)
+//EVT_STC_PAINTED(wxID_ANY, LEditor::OnScnPainted)
 EVT_STC_UPDATEUI(wxID_ANY, LEditor::OnSciUpdateUI)
 EVT_STC_SAVEPOINTREACHED(wxID_ANY, LEditor::OnSavePoint)
 EVT_STC_SAVEPOINTLEFT(wxID_ANY, LEditor::OnSavePoint)
@@ -512,8 +512,7 @@ void LEditor::SetProperties()
 #else
     UsePopUp(0);
 #endif
-    SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-
+    
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
@@ -1488,10 +1487,10 @@ bool LEditor::SaveToFile(const wxFileName& fileName)
     file.Write(buf.data(), strlen(buf.data()));
     file.Close();
 
-    // keep the original file permissions
     wxFileName symlinkedFile = fileName;
     if(wxIsFileSymlink(fileName)) { symlinkedFile = wxReadLink(fileName); }
 
+    // keep the original file permissions
     mode_t origPermissions = 0;
     if(!FileUtils::GetFilePermissions(symlinkedFile, origPermissions)) {
         clWARNING() << "Failed to read file permissions." << fileName << clEndl;

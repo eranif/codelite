@@ -36,7 +36,6 @@
 #include <macros.h>
 #include "php_project_settings_data.h"
 #include "php_project.h"
-#include "php_folder.h"
 #include <wx/event.h>
 #include "XDebugBreakpoint.h"
 #include "imanager.h"

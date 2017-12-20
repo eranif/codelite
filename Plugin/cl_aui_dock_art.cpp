@@ -216,7 +216,7 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
         bgColour = m_useDarkColours ? m_darkBgColour : bgColour;
         textColour = m_useDarkColours ? "WHITE" : textColour;
 
-        wxFont f = clTabRenderer::GetTabFont();
+        wxFont f = DrawingUtils::GetDefaultGuiFont();
         pDC->SetFont(f);
         pDC->SetPen(penColour);
         pDC->SetBrush(bgColour);

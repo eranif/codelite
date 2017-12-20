@@ -9,6 +9,7 @@
 #include <wx/tokenzr.h>
 
 wxDEFINE_EVENT(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CXX_SYMBOLS_CACHE_INVALIDATED, clCommandEvent);
 
 class SourceToTagsThread : public wxThread
 {
@@ -112,6 +113,11 @@ void clCxxFileCacheSymbols::Delete(const wxFileName& filename)
     // wxCriticalSectionLocker locker(m_cs);
     m_cache.erase(filename.GetFullPath());
     clDEBUG1() << "Deleting Symbols cache for file:" << filename << clEndl;
+
+    // Notify that the symbols for this file were invalidated
+    clCommandEvent event(wxEVT_CXX_SYMBOLS_CACHE_INVALIDATED);
+    event.SetFileName(filename.GetFullPath());
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 bool clCxxFileCacheSymbols::Find(const wxFileName& filename, TagEntryPtrVector_t& tags, size_t flags)

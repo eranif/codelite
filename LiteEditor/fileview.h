@@ -53,6 +53,7 @@ class FileViewTree : public wxTreeCtrl
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     std::unordered_map<wxString, wxTreeItemId> m_workspaceFolders;
     std::unordered_map<wxString, wxTreeItemId> m_projectsMap;
+    std::unordered_map<wxString, wxTreeItemId> m_excludeBuildFiles;
     bool m_eventsBound;
     clTreeCtrlColourHelper::Ptr_t m_colourHelper;
 
@@ -64,6 +65,9 @@ protected:
     void DoProjectsEndDrag(wxTreeItemId& itemDst);
     void DoSetItemBackgroundColour(const wxTreeItemId& item, const FolderColour::List_t& colours,
                                    const ProjectItem& projectItem);
+
+    void ExcludeFileFromBuildUI(const wxTreeItemId& item, bool exclude);
+    bool IsItemExcludedFromBuild(const wxTreeItemId& item, const wxString& configName) const;
 
 public:
     /**
@@ -230,7 +234,8 @@ protected:
     // internal
     void OnBuildProjectOnlyInternal(wxCommandEvent& e);
     void OnCleanProjectOnlyInternal(wxCommandEvent& e);
-
+    void OnBuildConfigChanged(wxCommandEvent& e);
+    
     /**
      * @brief clear the "active" marker from all the projects
      */
@@ -247,7 +252,7 @@ private:
     void DoClear();
     void DoAddChildren(const wxTreeItemId& parentItem);
     void DoBuildSubTreeIfNeeded(const wxTreeItemId& parent);
-    
+
     /**
      * @brief add a workspace folder
      * @param folderPath the path, separated by "/"

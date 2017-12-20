@@ -30,7 +30,6 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     , m_selection(wxNOT_FOUND)
 {
     clTab::Vec_t allTabs;
-    clTabHistory::Ptr_t history = m_book->GetHistory();
     clGetManager()->GetAllTabs(allTabs);
 
     BitmapLoader::BitmapMap_t bmps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
@@ -45,10 +44,11 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
         tabsInfoMap.insert(std::make_pair((void*)allTabs.at(i).window, allTabs.at(i)));
     }
 
-    const wxArrayPtrVoid& windows = history->GetHistory();
+    clTabHistory::Ptr_t history = m_book->GetHistory();
+    const std::vector<wxWindow*>& windows = history->GetHistory();
     // Populate the list
-    for(size_t i = 0; i < windows.GetCount(); ++i) {
-        int index = m_book->FindPage((wxWindow*)windows.Item(i));
+    for(size_t i = 0; i < windows.size(); ++i) {
+        int index = m_book->FindPage(windows[i]);
         if(index != wxNOT_FOUND) {
             wxString label = m_book->GetPageText(index);
             wxBitmap bmp = m_book->GetPageBitmap(index);
@@ -64,7 +64,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
             wxVariant nullBmp;
             unsigned char zeros[] = "\0\0";
             nullBmp << wxBitmap{wxImage{1, 1, zeros, zeros, true}};
-            std::map<void*, clTab>::iterator iter = tabsInfoMap.find(windows.Item(i));
+            std::map<void*, clTab>::iterator iter = tabsInfoMap.find(windows[i]);
             if(iter != tabsInfoMap.end()) {
                 d->isFile = iter->second.isFile;
                 d->filename = iter->second.filename;
@@ -112,7 +112,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
 
     if(m_dvListCtrl->GetItemCount() > 1) {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(1));
-    } else {
+    } else if(m_dvListCtrl->GetItemCount() == 1) {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
     }
 

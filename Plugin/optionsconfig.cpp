@@ -22,14 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "editor_config.h"
-#include "optionsconfig.h"
-#include <wx/intl.h>
-#include <wx/fontmap.h>
-#include "xmlutils.h"
-#include "macros.h"
 #include "cl_defs.h"
+#include "editor_config.h"
+#include "macros.h"
+#include "optionsconfig.h"
 #include "wx_xml_compatibility.h"
+#include "xmlutils.h"
+#include <wx/fontmap.h>
+#include <wx/intl.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
@@ -121,12 +121,12 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_trimOnlyModifiedLines(true)
     , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift | Opt_WrapBrackets |
                 Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock |
-                Opt_WrapCmdWithDoubleQuotes | Opt_TabStyleTRAPEZOID)
+                Opt_WrapCmdWithDoubleQuotes | Opt_TabStyleMinimal)
     , m_options2(0)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
-    , m_nbTabHeight(nbTabHt_Tall)
+    , m_nbTabHeight(nbTabHt_Medium)
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
@@ -134,9 +134,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     int major, minor;
     wxGetOsVersion(&major, &minor);
 
-    if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) {
-        m_mswTheme = true;
-    }
+    if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) { m_mswTheme = true; }
 #endif
 
     // set the default font name to be wxFONTENCODING_UTF8
@@ -213,8 +211,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_trimOnlyModifiedLines = XmlUtils::ReadBool(node, wxT("m_trimOnlyModifiedLines"), m_trimOnlyModifiedLines);
         m_options = XmlUtils::ReadLong(node, wxT("m_options"), m_options);
         m_options2 = XmlUtils::ReadLong(node, wxT("m_options2"), m_options2);
-        m_debuggerMarkerLine = XmlUtils::ReadString(
-            node, wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+        m_debuggerMarkerLine = XmlUtils::ReadString(node, wxT("m_debuggerMarkerLine"),
+                                                    m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
         m_indentedComments = XmlUtils::ReadBool(node, wxT("IndentedComments"), m_indentedComments);
 
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include
@@ -234,9 +232,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
             (wxDirection)XmlUtils::ReadLong(node, "WorkspaceTabsDirection", (int)m_workspaceTabsDirection);
     }
 #ifdef __WXMSW__
-    if(!(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */)) {
-        m_mswTheme = false;
-    }
+    if(!(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */)) { m_mswTheme = false; }
 #endif
 
     // Transitional calls. These checks are relevant for 2 years i.e. until the beginning of 2016
@@ -361,7 +357,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     tmp.Clear();
     tmp << m_options;
     n->AddProperty(wxT("m_options"), tmp);
-    
+
     tmp.Clear();
     tmp << m_options2;
     n->AddProperty(wxT("m_options2"), tmp);
@@ -372,9 +368,7 @@ void OptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
 {
     this->m_fileFontEncoding = wxFontMapper::Get()->CharsetToEncoding(strFileFontEncoding, false);
 
-    if(wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) {
-        this->m_fileFontEncoding = wxFONTENCODING_UTF8;
-    }
+    if(wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) { this->m_fileFontEncoding = wxFONTENCODING_UTF8; }
 }
 
 wxString OptionsConfig::GetEOLAsString() const
@@ -397,9 +391,7 @@ wxColour OptionsConfig::GetBookmarkFgColour(size_t index) const
 {
     wxColour col;
     wxArrayString arr = wxSplit(m_bookmarkFgColours, ';');
-    if(index < arr.GetCount()) {
-        return wxColour(arr.Item(index));
-    }
+    if(index < arr.GetCount()) { return wxColour(arr.Item(index)); }
 
     return col;
 }
@@ -417,9 +409,7 @@ wxColour OptionsConfig::GetBookmarkBgColour(size_t index) const
 {
     wxColour col;
     wxArrayString arr = wxSplit(m_bookmarkBgColours, ';');
-    if(index < arr.GetCount()) {
-        return wxColour(arr.Item(index));
-    }
+    if(index < arr.GetCount()) { return wxColour(arr.Item(index)); }
 
     return col;
 }
@@ -436,9 +426,7 @@ void OptionsConfig::SetBookmarkBgColour(wxColour c, size_t index)
 wxString OptionsConfig::GetBookmarkLabel(size_t index) const
 {
     wxArrayString arr = wxSplit(m_bookmarkLabels, ';');
-    if(index < arr.GetCount()) {
-        return arr.Item(index);
-    }
+    if(index < arr.GetCount()) { return arr.Item(index); }
 
     return "";
 }
@@ -454,9 +442,7 @@ void OptionsConfig::SetBookmarkLabel(const wxString& label, size_t index)
 
 void OptionsConfig::UpdateFromEditorConfig(const clEditorConfigSection& section)
 {
-    if(section.IsInsertFinalNewlineSet()) {
-        this->SetAppendLF(section.IsInsertFinalNewline());
-    }
+    if(section.IsInsertFinalNewlineSet()) { this->SetAppendLF(section.IsInsertFinalNewline()); }
     if(section.IsSetEndOfLineSet()) {
         // Convert .editorconfig to CodeLite strings
         wxString eolMode = "Unix (LF)"; // default
@@ -467,19 +453,29 @@ void OptionsConfig::UpdateFromEditorConfig(const clEditorConfigSection& section)
         }
         this->SetEolMode(eolMode);
     }
-    if(section.IsTabWidthSet()) {
-        this->SetTabWidth(section.GetTabWidth());
-    }
-    if(section.IsIndentStyleSet()) {
-        this->SetIndentUsesTabs(section.GetIndentStyle() == "tab");
-    }
-    if(section.IsTabWidthSet()) {
-        this->SetTabWidth(section.GetTabWidth());
-    }
-    if(section.IsIndentSizeSet()) {
-        this->SetIndentWidth(section.GetIndentSize());
-    }
+    if(section.IsTabWidthSet()) { this->SetTabWidth(section.GetTabWidth()); }
+    if(section.IsIndentStyleSet()) { this->SetIndentUsesTabs(section.GetIndentStyle() == "tab"); }
+    if(section.IsTabWidthSet()) { this->SetTabWidth(section.GetTabWidth()); }
+    if(section.IsIndentSizeSet()) { this->SetIndentWidth(section.GetIndentSize()); }
     if(section.IsCharsetSet()) {
         // TODO: fix the locale here
     }
+}
+
+bool OptionsConfig::IsTabColourDark() const
+{
+#if USE_AUI_NOTEBOOK
+    return false;
+#else
+    return HasOption(Opt_TabColourDark);
+#endif
+}
+
+bool OptionsConfig::IsTabColourMatchesTheme() const
+{
+#if USE_AUI_NOTEBOOK
+    return true;
+#else
+    return !HasOption(Opt_TabColourPersistent);
+#endif
 }

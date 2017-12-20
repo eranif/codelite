@@ -22,25 +22,25 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/xrc/xmlres.h>
-#include "frame.h"
+#include "clStrings.h"
+#include "clTabTogglerHelper.h"
+#include "dockablepanemenumanager.h"
 #include "editor_config.h"
-#include "new_build_tab.h"
-#include <wx/dcbuffer.h>
 #include "event_notifier.h"
-#include "pluginmanager.h"
-#include "output_pane.h"
 #include "findresultstab.h"
 #include "findusagetab.h"
-#include "dockablepanemenumanager.h"
-#include "replaceinfilespanel.h"
+#include "frame.h"
 #include "new_build_tab.h"
+#include "output_pane.h"
+#include "pluginmanager.h"
+#include "replaceinfilespanel.h"
 #include "shelltab.h"
 #include "taskpanel.h"
 #include "wxcl_log_text_ctrl.h"
 #include <algorithm>
-#include "clStrings.h"
-#include "clTabTogglerHelper.h"
+#include <wx/aui/framemanager.h>
+#include <wx/dcbuffer.h>
+#include <wx/xrc/xmlres.h>
 
 #if HAS_LIBCLANG
 #include "ClangOutputTab.h"
@@ -77,16 +77,21 @@ void OutputPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
     SetMinClientSize(wxSize(-1, 250));
+#if USE_AUI_NOTEBOOK
+    long style = wxAUI_NB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_TAB_SPLIT;
+    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
+#else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
-    if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxBOTTOM) {
+    if(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM) {
         style |= kNotebook_BottomTabs;
-    } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxLEFT) {
+    } else if(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxLEFT) {
 #ifdef __WXOSX__
         style &= ~(kNotebook_BottomTabs | kNotebook_LeftTabs | kNotebook_RightTabs);
 #else
         style |= kNotebook_LeftTabs;
 #endif
-    } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxRIGHT) {
+    } else if(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxRIGHT) {
 #ifdef __WXOSX__
         style |= kNotebook_BottomTabs;
 #else
@@ -98,11 +103,9 @@ void OutputPane::CreateGUIControls()
         style |= kNotebook_DarkTabs;
     }
     style |= kNotebook_UnderlineActiveTab;
-    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
-        style |= kNotebook_MouseScrollSwitchTabs;
-    }
+    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-
+#endif
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
     // Calculate the widest tab (the one with the 'Workspace' label) TODO: What happens with translations?
@@ -162,17 +165,15 @@ void OutputPane::CreateGUIControls()
     mgr->AddOutputTab(wxGetTranslation(CLANG_TAB));
 #endif
 
-    wxTextCtrl* text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-                                      wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY | wxHSCROLL);
-
     /////////////////////////////////////
     // Set the trace's font & colors
     /////////////////////////////////////
 
-    m_book->AddPage(text, wxGetTranslation(TRACE_TAB), false, bmpLoader->LoadBitmap("log"));
-    m_logTargetOld = wxLog::SetActiveTarget(new wxclTextCtrl(text));
+    wxStyledTextCtrl* stcLog = new wxStyledTextCtrl(m_book);
+    m_book->AddPage(stcLog, wxGetTranslation(TRACE_TAB), false, bmpLoader->LoadBitmap("log"));
+    m_logTargetOld = wxLog::SetActiveTarget(new wxclTextCtrl(stcLog));
     m_tabs.insert(std::make_pair(wxGetTranslation(TRACE_TAB),
-                                 Tab(wxGetTranslation(TRACE_TAB), text, bmpLoader->LoadBitmap("log"))));
+                                 Tab(wxGetTranslation(TRACE_TAB), stcLog, bmpLoader->LoadBitmap("log"))));
     mgr->AddOutputTab(wxGetTranslation(TRACE_TAB));
 
     // Now that we set up our own log target, re-enable the logging
@@ -196,9 +197,7 @@ void OutputPane::OnEditorFocus(wxCommandEvent& e)
 
         // Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
         int cursel(m_book->GetSelection());
-        if(cursel != wxNOT_FOUND && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) {
-            return;
-        }
+        if(cursel != wxNOT_FOUND && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) { return; }
 
         if(m_buildInProgress) return;
 
@@ -221,10 +220,14 @@ void OutputPane::OnBuildEnded(clBuildEvent& e)
 
 void OutputPane::SaveTabOrder()
 {
+#if USE_AUI_NOTEBOOK
+    wxArrayString panes = m_book->GetAllTabsLabels();
+#else
     wxArrayString panes;
     clTabInfo::Vec_t tabs;
     m_book->GetAllTabs(tabs);
     std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t) { panes.Add(t->GetLabel()); });
+#endif
     clConfig::Get().SetOutputTabOrder(panes, m_book->GetSelection());
 }
 
@@ -244,9 +247,7 @@ void OutputPane::ApplySavedTabOrder() const
     std::vector<tagTabInfo> vTempstore;
     for(size_t t = 0; t < tabs.GetCount(); ++t) {
         wxString title = tabs.Item(t);
-        if(title.empty()) {
-            continue;
-        }
+        if(title.empty()) { continue; }
         for(size_t n = 0; n < m_book->GetPageCount(); ++n) {
             if(title == m_book->GetPageText(n)) {
                 tagTabInfo Tab;
@@ -286,11 +287,13 @@ void OutputPane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
+#if !USE_AUI_NOTEBOOK
     if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         m_book->SetStyle((m_book->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_book->SetStyle((m_book->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
     }
+#endif
 }
 
 void OutputPane::OnToggleTab(clCommandEvent& event)
@@ -313,8 +316,6 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
     } else {
         // hide the tab
         int where = GetNotebook()->GetPageIndex(t.m_label);
-        if(where != wxNOT_FOUND) {
-            GetNotebook()->RemovePage(where);
-        }
+        if(where != wxNOT_FOUND) { GetNotebook()->RemovePage(where); }
     }
 }

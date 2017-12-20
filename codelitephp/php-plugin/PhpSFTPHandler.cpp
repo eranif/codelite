@@ -1,3 +1,5 @@
+#if USE_SFTP
+
 #include "PhpSFTPHandler.h"
 #include "clSFTPEvent.h"
 #include "event_notifier.h"
@@ -154,3 +156,5 @@ bool PhpSFTPHandler::EnsureAccountExists(SSHWorkspaceSettings& workspaceSettings
     }
     return true;
 }
+
+#endif //USE_SFTP

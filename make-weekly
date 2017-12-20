@@ -12,7 +12,11 @@ os_name=`uname -s`
 if [ ${os_name} == "Darwin" ]; then
     echo rm -f $curdir/build-release/codelite.app.tar.gz
     rm -f $curdir/build-release/codelite.app.tar.gz
+    cpu_count=4
+else
+    cpu_count=`grep -c ^processor /proc/cpuinfo`
 fi
+echo "CPU count: ${cpu_count}"
 
 # Update our source tree
 cd $curdir
@@ -37,7 +41,7 @@ linux_build() {
     rm -fr *.deb
 
     PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
-    make -j4 && make package
+    make -j${cpu_count} && make package
     if [ "${no_upload}" != "--no-upload" ]; then
         deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
         echo Uploading deb file ${deb_file}
@@ -50,7 +54,7 @@ linux_build() {
 if [ ${os_name} == "Darwin" ]; then
     cd build-release
     cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
-    make -j4 && make install
+    make -j${cpu_count} && make install
     if [ "${no_upload}" != "--no-upload" ]; then
         tar cvfz codelite.app.tar.gz codelite.app/*
         scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip

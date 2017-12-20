@@ -330,18 +330,19 @@ void OutlineTab::EditorChanged()
     clDEBUG() << "Outline: editor changed event";
     
     // Use the lexer to determine if we can show outline
-    if(editor && cxxLexer && FileUtils::WildMatch(cxxLexer->GetFileSpec(), editor->GetFileName())) {
+    if(editor && cxxLexer && FileExtManager::IsCxxFile(editor->GetFileName())) {
         m_tree->BuildTree(editor->GetFileName(), true);
         m_simpleBook->SetSelection(OUTLINE_TAB_CXX);
         m_textCtrlSearch->Enable(true);
 
-    } else if(editor && phpLexer && FileUtils::WildMatch(phpLexer->GetFileSpec(), editor->GetFileName())) {
+    } else if(editor && phpLexer && FileExtManager::IsPHPFile(editor->GetFileName())) {
         m_tree->Clear();
         m_treeCtrlPhp->BuildTree(editor->GetFileName());
         m_simpleBook->SetSelection(OUTLINE_TAB_PHP);
         m_textCtrlSearch->Enable(true);
 
     } else {
+        if(editor) { clDEBUG() << "Could not match an Outline to file:" << editor->GetFileName(); }
         m_simpleBook->SetSelection(OUTLINE_PLACE_HOLDER_PAGE);
         m_textCtrlSearch->Enable(false);
     }

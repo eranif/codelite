@@ -419,7 +419,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         if(!IsVerticalTabs()) {
             gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - CHEVRON_SIZE, clientRect.height);
+            dc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - CHEVRON_SIZE, clientRect.height);
         }
+        
         gcdc.SetPen(IsVerticalTabs() ? tabAreaBgCol : m_colours.inactiveTabPenColour);
         gcdc.SetBrush(tabAreaBgCol);
         gcdc.DrawRectangle(rect.GetSize());
@@ -467,7 +469,10 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style);
 #endif
         }
-        if(!IsVerticalTabs()) { gcdc.DestroyClippingRegion(); }
+        if(!IsVerticalTabs()) { 
+            gcdc.DestroyClippingRegion(); 
+            dc.DestroyClippingRegion(); 
+        }
         if(activeTabInex != wxNOT_FOUND) {
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
             if(!(GetStyle() & kNotebook_VerticalButtons)) {

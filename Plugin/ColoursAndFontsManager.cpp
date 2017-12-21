@@ -1,29 +1,27 @@
 #include "ColoursAndFontsManager.h"
-#include "cl_standard_paths.h"
-#include <wx/filename.h>
-#include <wx/dir.h>
-#include "xmlutils.h"
-#include <wx/xml/xml.h>
-#include "editor_config.h"
-#include "globals.h"
-#include "event_notifier.h"
-#include <codelite_events.h>
-#include "cl_command_event.h"
-#include "json_node.h"
-#include "file_logger.h"
-#include <algorithm>
-#include "macros.h"
-#include <wx/settings.h>
-#include <wx/tokenzr.h>
 #include "EclipseThemeImporterManager.h"
-#include "fileextmanager.h"
-#include "file_logger.h"
-#include <wx/sstream.h>
 #include "cl_command_event.h"
-#include <wx/busyinfo.h>
+#include "cl_standard_paths.h"
+#include "editor_config.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
 #include "fileutils.h"
+#include "globals.h"
+#include "json_node.h"
+#include "macros.h"
 #include "wxStringHash.h"
+#include "xmlutils.h"
+#include <algorithm>
+#include <codelite_events.h>
+#include <wx/busyinfo.h>
+#include <wx/dir.h>
+#include <wx/filename.h>
 #include <wx/msgdlg.h>
+#include <wx/settings.h>
+#include <wx/sstream.h>
+#include <wx/tokenzr.h>
+#include <wx/xml/xml.h>
 
 // Upgrade macros
 #define LEXERS_VERSION_STRING "LexersVersion"
@@ -667,6 +665,15 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
         }
     }
 
+    if((lexer->GetName() == "c++") && (lexer->GetFileSpec().IsEmpty() || !lexer->GetFileSpec().Contains("*.cpp"))) {
+        lexer->SetFileSpec("*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.ipp;*.hxx;*.h++;*.ino");
+    }
+
+    // Add Arduino sketches files as C++ (*.ino)
+    if(lexer->GetName() == "c++" && !lexer->GetFileSpec().Contains(".ino")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ino");
+    }
+
     // Upgrade CSS colours
     if((force || m_lexersVersion < 4) && lexer->GetName().Lower() == "css") {
         // adjust line numbers
@@ -762,11 +769,6 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
 
     if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("override")) {
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " override", 0);
-    }
-
-    // Add Arduino sketches files as C++ (*.ino)
-    if(lexer->GetName() == "c++" && !lexer->GetFileSpec().Contains(".ino")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ino");
     }
 
     // Hack: fix Java lexer which is using the same

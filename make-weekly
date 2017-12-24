@@ -6,6 +6,7 @@ curdir=`pwd`
 # Clear old installers
 os_name=`uname -s`
 no_upload=$1
+build_gtk3=$2
 
 # Clear old installers
 os_name=`uname -s`
@@ -60,6 +61,15 @@ if [ ${os_name} == "Darwin" ]; then
         scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
 else
+    if [ "${build_gtk3}" == "--with-gtk3" ]; then
+        echo "Building for GTK2 and GTK3"
+    else
+        echo "Building for GTK2 only"
+    fi
     linux_build build-release
-    linux_build build-release-gtk3
+    if [ "${build_gtk3}" == "--with-gtk3" ]; then
+        linux_build build-release-gtk3
+    fi
 fi
+
+

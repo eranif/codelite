@@ -87,8 +87,8 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
 
 DiffSideBySidePanel::~DiffSideBySidePanel()
 {
-    if((m_flags & kDeleteLeftOnExit)) { ::wxRemoveFile(m_textCtrlLeftFile->GetValue()); }
-    if((m_flags & kDeleteRightOnExit)) { ::wxRemoveFile(m_textCtrlRightFile->GetValue()); }
+    if((m_flags & kDeleteLeftOnExit)) { clRemoveFile(m_textCtrlLeftFile->GetValue()); }
+    if((m_flags & kDeleteRightOnExit)) { clRemoveFile(m_textCtrlRightFile->GetValue()); }
 
     if((m_flags & kSavePaths)) {
         m_config.SetLeftFile(m_textCtrlLeftFile->GetValue());

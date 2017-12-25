@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "file_logger.h"
+#include "fileutils.h"
 #include "precompiled_header.h"
 #include "tags_storage_sqlite3.h"
 #include <algorithm>
@@ -201,7 +202,7 @@ void TagsStorageSQLite::RecreateDatabase()
         // Close the database
         m_db->Close();
         wxString filename = m_fileName.GetFullPath();
-        if(wxRemoveFile(m_fileName.GetFullPath()) == false) {
+        if(clRemoveFile(m_fileName.GetFullPath()) == false) {
 
             // re-open the database
             m_fileName.Clear();

@@ -260,7 +260,7 @@ void FileExplorerTab::OnDeleteNode(wxCommandEvent& event)
             // Remove a file
             //////////////////////////////////////////////////
             wxLogNull noLog;
-            ::wxRemoveFile(path);
+            clRemoveFile(path);
         }
     }
 

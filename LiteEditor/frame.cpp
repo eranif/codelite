@@ -4869,7 +4869,7 @@ void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 
     wxFileName oldLayoutFile(file);
     if(oldLayoutFile.FileExists(file)) {
-        wxRemoveFile(oldLayoutFile.GetFullPath());
+        clRemoveFile(oldLayoutFile.GetFullPath());
         wxCommandEvent eventRestoreLayout(wxEVT_COMMAND_MENU_SELECTED, XRCID("restore_layout"));
         eventRestoreLayout.SetEventObject(this);
         GetEventHandler()->ProcessEvent(eventRestoreLayout);

@@ -565,7 +565,7 @@ void clTreeCtrlPanel::OnDeleteSelections(wxCommandEvent& event)
                     deletedFolders.Add(v.at(i).path);
                 }
             } else {
-                if(::wxRemoveFile(v.at(i).path)) {
+                if(clRemoveFile(v.at(i).path)) {
                     deletedItems.Add(v.at(i).item);
                     deletedFiles.Add(v.at(i).path);
                 }

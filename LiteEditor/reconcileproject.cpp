@@ -26,6 +26,7 @@
 #include "VirtualDirectorySelectorDlg.h"
 #include "clFilesCollector.h"
 #include "event_notifier.h"
+#include "fileutils.h"
 #include "frame.h"
 #include "globals.h"
 #include "imanager.h"
@@ -119,8 +120,8 @@ bool ReconcileProjectDlg::LoadData()
         clFilesScanner scanner;
         std::vector<wxString> filesOutput;
         wxStringSet_t excludeFoldersSet;
-        std::for_each(excludeFolders.begin(), excludeFolders.end(), 
-            [&](const wxString& folder) { excludeFoldersSet.insert(folder); });
+        std::for_each(excludeFolders.begin(), excludeFolders.end(),
+                      [&](const wxString& folder) { excludeFoldersSet.insert(folder); });
         if(scanner.Scan(toplevelDir, filesOutput, filespec, ignorefilespec, excludeFoldersSet)) {
             m_allfiles.insert(filesOutput.begin(), filesOutput.end());
             DoFindFiles();
@@ -599,7 +600,7 @@ void ReconcileProjectDlg::OnDeleteSelectedNewFiles(wxCommandEvent& e)
         fn.MakeAbsolute(m_toplevelDir);
 
         wxLogNull NoAnnoyingFileSystemMessages;
-        if(::wxRemoveFile(fn.GetFullPath())) {
+        if(clRemoveFile(fn.GetFullPath())) {
             m_dvListCtrl1Unassigned->DeleteItem(row);
             ++successes;
         }

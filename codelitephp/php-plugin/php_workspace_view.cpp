@@ -813,7 +813,7 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
             wxFileName::Rmdir(itemData->GetFolderPath(), wxPATH_RMDIR_RECURSIVE);
 
         } else {
-            ::wxRemoveFile(itemData->GetFile());
+            clRemoveFile(itemData->GetFile());
             removedFiles.Add(itemData->GetFile());
         }
     }
@@ -1758,7 +1758,7 @@ void PHPWorkspaceView::OnDragEnd(wxTreeEvent& event)
                     }
                 }
                 if(::wxCopyFile(srcfile, newFile.GetFullPath(), true)) {
-                    if(::wxRemoveFile(srcfile)) {
+                    if(clRemoveFile(srcfile)) {
                         syncNeeded = true;
                         clFileSystemEvent rmEvent(wxEVT_FILE_DELETED);
                         rmEvent.GetPaths().Add(srcfile);

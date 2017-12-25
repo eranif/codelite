@@ -31,6 +31,8 @@
 #include <wx/filename.h>
 #include <wx/log.h>
 
+#define clRemoveFile(filename) FileUtils::RemoveFile(filename, (wxString() << __FILE__ << ":" << __LINE__))
+
 class WXDLLIMPEXP_CL FileUtils
 {
 public:
@@ -46,10 +48,7 @@ public:
 
         ~Deleter()
         {
-            if(m_filename.Exists()) {
-                wxLogNull noLog;
-                ::wxRemoveFile(m_filename.GetFullPath());
-            }
+            if(m_filename.Exists()) { clRemoveFile(m_filename); }
         }
     };
 
@@ -193,5 +192,19 @@ public:
      * @return modified name excluding the above chars (will be replaced with _)
      */
     static wxString NormaliseName(const wxString& name);
+
+    /**
+     * @brief remove a file from the file system
+     * @param filename file name to remove
+     * @param context unique context string which will be logged to the log file
+     */
+    static bool RemoveFile(const wxFileName& filename, const wxString& context = "")
+    {
+        return RemoveFile(filename.GetFullPath(), context);
+    }
+    /**
+     * @brief same as above
+     */
+    static bool RemoveFile(const wxString& filename, const wxString& context = "");
 };
 #endif // FILEUTILS_H

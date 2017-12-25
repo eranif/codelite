@@ -24,21 +24,21 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "LLDBConnector.h"
-#include "LLDBNetworkListenerThread.h"
 #include "LLDBEvent.h"
+#include "LLDBNetworkListenerThread.h"
+#include "LLDBRemoteHandshakePacket.h"
+#include "LLDBSettings.h"
+#include "cl_standard_paths.h"
+#include "environmentconfig.h"
 #include "file_logger.h"
+#include "fileutils.h"
+#include "globals.h"
+#include "json_node.h"
 #include "processreaderthread.h"
-#include <wx/tokenzr.h>
-#include "file_logger.h"
 #include <wx/filefn.h>
 #include <wx/log.h>
-#include "environmentconfig.h"
-#include "json_node.h"
 #include <wx/msgdlg.h>
-#include "LLDBSettings.h"
-#include "globals.h"
-#include "LLDBRemoteHandshakePacket.h"
-#include "cl_standard_paths.h"
+#include <wx/tokenzr.h>
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -89,9 +89,7 @@ bool LLDBConnector::ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int tim
         break;
     }
 
-    if(!connected) {
-        return false;
-    }
+    if(!connected) { return false; }
 
     // Start the lldb event thread
     // and start a listener thread which will read replies
@@ -177,9 +175,7 @@ void LLDBConnector::InvalidateBreakpoints()
 
     for(size_t i = 0; i < m_breakpoints.size(); ++i) {
         m_breakpoints.at(i)->Invalidate();
-        if(wxFileName::Exists(m_breakpoints.at(i)->GetFilename())) {
-            updatedList.push_back(m_breakpoints.at(i));
-        }
+        if(wxFileName::Exists(m_breakpoints.at(i)->GetFilename())) { updatedList.push_back(m_breakpoints.at(i)); }
     }
     // we keep only breakpoints with valid filename
     m_breakpoints.swap(updatedList);
@@ -198,9 +194,7 @@ LLDBBreakpoint::Vec_t::iterator LLDBConnector::FindBreakpoint(LLDBBreakpoint::Pt
 {
     LLDBBreakpoint::Vec_t::iterator iter = m_breakpoints.begin();
     for(; iter != m_breakpoints.end(); ++iter) {
-        if((*iter)->SameAs(bp)) {
-            return iter;
-        }
+        if((*iter)->SameAs(bp)) { return iter; }
     }
     return m_breakpoints.end();
 }
@@ -209,9 +203,7 @@ LLDBBreakpoint::Vec_t::const_iterator LLDBConnector::FindBreakpoint(LLDBBreakpoi
 {
     LLDBBreakpoint::Vec_t::const_iterator iter = m_breakpoints.begin();
     for(; iter != m_breakpoints.end(); ++iter) {
-        if((*iter)->SameAs(bp)) {
-            return iter;
-        }
+        if((*iter)->SameAs(bp)) { return iter; }
     }
     return m_breakpoints.end();
 }
@@ -280,9 +272,7 @@ void LLDBConnector::Detach()
 
 void LLDBConnector::MarkBreakpointForDeletion(LLDBBreakpoint::Ptr_t bp)
 {
-    if(!IsBreakpointExists(bp)) {
-        return;
-    }
+    if(!IsBreakpointExists(bp)) { return; }
 
     LLDBBreakpoint::Vec_t::iterator iter = FindBreakpoint(bp);
 
@@ -507,16 +497,14 @@ void LLDBConnector::StopDebugServer()
     }
 
     wxLogNull noLog;
-    wxRemoveFile(GetDebugServerPath());
+    clRemoveFile(GetDebugServerPath());
 }
 
 LLDBBreakpoint::Vec_t LLDBConnector::GetUnappliedBreakpoints()
 {
     LLDBBreakpoint::Vec_t unappliedBreakpoints;
     for(size_t i = 0; i < m_breakpoints.size(); ++i) {
-        if(!m_breakpoints.at(i)->IsApplied()) {
-            unappliedBreakpoints.push_back(m_breakpoints.at(i));
-        }
+        if(!m_breakpoints.at(i)->IsApplied()) { unappliedBreakpoints.push_back(m_breakpoints.at(i)); }
     }
     return unappliedBreakpoints;
 }

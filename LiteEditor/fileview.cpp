@@ -984,7 +984,7 @@ void FileViewTree::DoRemoveItems()
                                 }
                             } else {
                                 if(wxFileName::FileExists(file_name)) {
-                                    if(!wxRemoveFile(file_name)) {
+                                    if(!clRemoveFile(file_name)) {
                                         wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
                                     } else {
                                         // File was removed from the disc, notify about it

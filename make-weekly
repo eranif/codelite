@@ -5,8 +5,16 @@ curdir=`pwd`
 
 # Clear old installers
 os_name=`uname -s`
-no_upload=$1
-build_gtk3=$2
+upload_file="no"
+build_gtk3="no"
+if [ "$1" == "--with-gtk3" ] || [ "$2" == "--with-gtk3" ] ; then
+    build_gtk3="yes"
+fi
+
+if [ "$1" == "--upload" ] || [ "$2" == "--upload" ] ; then
+    upload_file="yes"
+fi
+
 
 # Clear old installers
 os_name=`uname -s`
@@ -17,7 +25,12 @@ if [ ${os_name} == "Darwin" ]; then
 else
     cpu_count=`grep -c ^processor /proc/cpuinfo`
 fi
-echo "CPU count: ${cpu_count}"
+
+echo "Platform     : ${os_name}"
+echo "CPU count    : ${cpu_count}"
+echo "Build GTK2   : yes"
+echo "Build GTK3   : ${build_gtk3}"
+echo "Upload binary: ${upload_file}"
 
 # Update our source tree
 cd $curdir
@@ -43,7 +56,7 @@ linux_build() {
 
     PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
     make -j${cpu_count} && make package
-    if [ "${no_upload}" != "--no-upload" ]; then
+    if [ "${upload_file}" == "yes" ]; then
         deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
         echo Uploading deb file ${deb_file}
         scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/wip
@@ -56,18 +69,18 @@ if [ ${os_name} == "Darwin" ]; then
     cd build-release
     cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1
     make -j${cpu_count} && make install
-    if [ "${no_upload}" != "--no-upload" ]; then
+    if [ "${upload_file}" == "yes" ]; then
         tar cvfz codelite.app.tar.gz codelite.app/*
         scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
 else
-    if [ "${build_gtk3}" == "--with-gtk3" ]; then
+    if [ "${build_gtk3}" == "yes" ]; then
         echo "Building for GTK2 and GTK3"
     else
         echo "Building for GTK2 only"
     fi
     linux_build build-release
-    if [ "${build_gtk3}" == "--with-gtk3" ]; then
+    if [ "${build_gtk3}" == "yes" ]; then
         linux_build build-release-gtk3
     fi
 fi

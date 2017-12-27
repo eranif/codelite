@@ -510,8 +510,10 @@ void clConfig::Write(const wxString& name, const wxFont& value)
 wxColour clConfig::Read(const wxString& name, const wxColour& defaultValue)
 {
     wxString strValue;
-    if(!Read(name, strValue)) return defaultValue;
-
+    strValue = Read(name, wxString());
+    if(strValue.IsEmpty()) {
+        return defaultValue;
+    }
     wxColour col(strValue);
     return col;
 }

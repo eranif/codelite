@@ -18,6 +18,7 @@
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include <wx/clrpicker.h>
 #include <wx/statline.h>
 #include <wx/checkbox.h>
 #include <wx/radiobox.h>
@@ -47,6 +48,8 @@ protected:
     wxChoice* m_choiceTabStyle;
     wxStaticText* m_staticTextTabHeight;
     wxChoice* m_choiceTabHeight;
+    wxStaticText* m_staticText63;
+    wxColourPickerCtrl* m_colourPickerMarker;
     wxStaticText* m_staticText38;
     wxChoice* m_choiceWorkspaceTabsOrientation;
     wxStaticText* m_staticText42;
@@ -90,6 +93,8 @@ public:
     wxChoice* GetChoiceTabStyle() { return m_choiceTabStyle; }
     wxStaticText* GetStaticTextTabHeight() { return m_staticTextTabHeight; }
     wxChoice* GetChoiceTabHeight() { return m_choiceTabHeight; }
+    wxStaticText* GetStaticText63() { return m_staticText63; }
+    wxColourPickerCtrl* GetColourPickerMarker() { return m_colourPickerMarker; }
     wxStaticText* GetStaticText38() { return m_staticText38; }
     wxChoice* GetChoiceWorkspaceTabsOrientation() { return m_choiceWorkspaceTabsOrientation; }
     wxStaticText* GetStaticText42() { return m_staticText42; }

@@ -38,7 +38,6 @@
 #include <wx/filedlg.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
-#include "file_logger.h"
 
 #define RED_MARKER 5
 #define GREEN_MARKER 6

@@ -71,11 +71,8 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
     if(cd && cd->IsFolder()) {
         // Prepare a folder context menu
         wxMenu menu;
-
-        if(IsTopLevelFolder(item)) {
-            menu.Append(wxID_REFRESH, _("Refresh"));
-            menu.AppendSeparator();
-        }
+        menu.Append(wxID_REFRESH, _("Refresh"));
+        menu.AppendSeparator();
 
         menu.Append(XRCID("tree_ctrl_new_folder"), _("New Folder"));
         menu.Append(XRCID("tree_ctrl_new_file"), _("New File"));
@@ -823,22 +820,38 @@ void clTreeCtrlPanel::OnRefresh(wxCommandEvent& event)
     wxArrayString paths, files;
     wxArrayTreeItemIds items, fileItems;
     GetSelections(paths, items, files, fileItems);
-    if(items.IsEmpty()) return;
+    if(items.IsEmpty()) { return; }
 
-    // Close the selected folders
-    std::vector<std::pair<wxString, bool> > topFolders;
+    // If we have a top level folder, ignore any non top level folder
+    bool hasTopLevelFolder = false;
     for(size_t i = 0; i < items.GetCount(); ++i) {
-        topFolders.push_back(std::make_pair(paths.Item(i), GetTreeCtrl()->IsExpanded(items.Item(i))));
-        DoCloseFolder(items.Item(i));
+        if(IsTopLevelFolder(items.Item(i))) {
+            hasTopLevelFolder = true;
+            break;
+        }
     }
 
-    // Re-add them
-    for(size_t i = 0; i < topFolders.size(); ++i) {
-        wxTreeItemId itemFolder = DoAddFolder(GetTreeCtrl()->GetRootItem(), topFolders.at(i).first);
-        DoExpandItem(itemFolder, topFolders.at(i).second);
+    if(!hasTopLevelFolder) {
+        // Non top level folders
+        for(size_t i = 0; i < items.GetCount(); ++i) {
+            RefreshNonTopLevelFolder(items.Item(i));
+        }
+    } else {
+        // Close the selected folders
+        std::vector<std::pair<wxString, bool> > topFolders;
+        for(size_t i = 0; i < items.GetCount(); ++i) {
+            topFolders.push_back(std::make_pair(paths.Item(i), GetTreeCtrl()->IsExpanded(items.Item(i))));
+            DoCloseFolder(items.Item(i));
+        }
+
+        // Re-add them
+        for(size_t i = 0; i < topFolders.size(); ++i) {
+            wxTreeItemId itemFolder = DoAddFolder(GetTreeCtrl()->GetRootItem(), topFolders.at(i).first);
+            DoExpandItem(itemFolder, topFolders.at(i).second);
+        }
+        GetTreeCtrl()->SortChildren(GetTreeCtrl()->GetRootItem());
+        ToggleView();
     }
-    GetTreeCtrl()->SortChildren(GetTreeCtrl()->GetRootItem());
-    ToggleView();
 }
 
 void clTreeCtrlPanel::SetNewFileTemplate(const wxString& newfile, size_t charsToHighlight)
@@ -902,4 +915,28 @@ bool clTreeCtrlPanel::IsFolderOpened() const
     wxArrayTreeItemIds items;
     GetTopLevelFolders(paths, items);
     return !paths.IsEmpty();
+}
+
+void clTreeCtrlPanel::RefreshNonTopLevelFolder(const wxTreeItemId& item)
+{
+    CHECK_ITEM_RET(item);
+    clTreeCtrlData* cd = GetItemData(item);
+    CHECK_PTR_RET(cd);
+    CHECK_COND_RET(cd->IsFolder());
+
+    // Collpase the item if needed
+    bool expandItem = GetTreeCtrl()->IsExpanded(item);
+    if(expandItem) { GetTreeCtrl()->Collapse(item); }
+
+    // Clear the item children
+    GetTreeCtrl()->DeleteChildren(item);
+
+    // Append the dummy item
+    GetTreeCtrl()->AppendItem(item, "Dummy", -1, -1, new clTreeCtrlData(clTreeCtrlData::kDummy));
+
+    // Clear the folder index
+    if(cd->GetIndex()) { cd->GetIndex()->Clear(); }
+    
+    // Re-expand the item
+    if(expandItem) { CallAfter(&clTreeCtrlPanel::DoExpandItem, item, true); }
 }

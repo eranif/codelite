@@ -56,7 +56,8 @@ public:
 
 protected:
     void ToggleView();
-
+    void RefreshNonTopLevelFolder(const wxTreeItemId& item);
+    
 public:
     clTreeCtrlPanel(wxWindow* parent);
     virtual ~clTreeCtrlPanel();

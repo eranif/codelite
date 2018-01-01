@@ -283,9 +283,14 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
-        if(t->IsActive() && ((!IsVerticalTabs() && clientRect.Intersects(t->GetRect())) ||
-                             (IsVerticalTabs() && clientRect.Intersects(t->GetRect()))))
-            return true;
+        if(IsVerticalTabs()) {
+            if(t->IsActive() && clientRect.Contains(t->GetRect())) { return true; }
+        } else {
+            wxRect tabRect = t->GetRect();
+            tabRect.SetWidth(tabRect.GetWidth() *
+                             0.5); // The tab does not need to be fully shown, but at least 50% of it
+            if(t->IsActive() && clientRect.Contains(tabRect)) { return true; }
+        }
     }
     return false;
 }
@@ -421,7 +426,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - CHEVRON_SIZE, clientRect.height);
             dc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - CHEVRON_SIZE, clientRect.height);
         }
-        
+
         gcdc.SetPen(IsVerticalTabs() ? tabAreaBgCol : m_colours.inactiveTabPenColour);
         gcdc.SetBrush(tabAreaBgCol);
         gcdc.DrawRectangle(rect.GetSize());
@@ -469,9 +474,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style);
 #endif
         }
-        if(!IsVerticalTabs()) { 
-            gcdc.DestroyClippingRegion(); 
-            dc.DestroyClippingRegion(); 
+        if(!IsVerticalTabs()) {
+            gcdc.DestroyClippingRegion();
+            dc.DestroyClippingRegion();
         }
         if(activeTabInex != wxNOT_FOUND) {
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);

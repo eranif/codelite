@@ -27,12 +27,12 @@
 #define SFTPTREEVIEW_H
 
 #include "UI.h"
-#include "cl_sftp.h"
 #include "bitmap_loader.h"
+#include "clTreeKeyboardInput.h"
+#include "cl_command_event.h"
+#include "cl_sftp.h"
 #include "ssh_account_info.h"
 #include <vector>
-#include "cl_command_event.h"
-#include "clTreeKeyboardInput.h"
 
 class MyClientData;
 class SFTP;
@@ -75,7 +75,6 @@ protected:
     virtual void OnContextMenu(wxContextMenuEvent& event);
     virtual void OnDisconnect(wxCommandEvent& event);
     virtual void OnDisconnectUI(wxUpdateUIEvent& event);
-    virtual void OnConnectUI(wxUpdateUIEvent& event);
     virtual void OnConnect(wxCommandEvent& event);
     virtual void OnMenuNew(wxCommandEvent& event);
     virtual void OnMenuOpen(wxCommandEvent& event);
@@ -108,6 +107,7 @@ protected:
     MyClientDataVect_t GetSelectionsItemData();
     bool DoOpenFile(const wxTreeItemId& item);
     void DoDeleteColumn(int colIdx);
+    bool GetAccountFromUser(SSHAccountInfo& account);
 
 protected:
     virtual void OnItemActivated(wxTreeEvent& event);

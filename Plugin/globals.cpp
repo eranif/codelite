@@ -1117,7 +1117,7 @@ wxString wxShellExec(const wxString& cmd, const wxString& projectName)
     wxFFile fp(filename, wxT("r"));
     if(fp.IsOpened()) { fp.ReadAll(&content); }
     fp.Close();
-    wxRemoveFile(filename);
+    clRemoveFile(filename);
     return content;
 }
 

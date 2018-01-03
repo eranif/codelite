@@ -25,6 +25,7 @@
 
 #include "SFTPBookmark.h"
 #include "SFTPManageBookmarkDlg.h"
+#include "SFTPQuickConnectDlg.h"
 #include "SFTPSettingsDialog.h"
 #include "SFTPTreeView.h"
 #include "SFTPUploadDialog.h"
@@ -73,18 +74,6 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     SFTPSettings settings;
     settings.Load();
 
-    const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
-    SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
-    for(; iter != accounts.end(); ++iter) {
-        m_choiceAccount->Append(iter->GetAccountName());
-    }
-
-    if(!m_choiceAccount->IsEmpty()) { m_choiceAccount->SetSelection(0); }
-
-    //#ifdef __WXMSW__
-    //    m_treeCtrl->GetDataView()->SetIndent(16);
-    //#endif
-    //    m_treeCtrl->SetItemComparator(new SFTPItemComparator);
     m_treeCtrl->Connect(ID_OPEN, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuOpen), NULL, this);
     m_treeCtrl->Connect(ID_OPEN_WITH_DEFAULT_APP, wxEVT_MENU,
                         wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication), NULL, this);
@@ -189,36 +178,9 @@ void SFTPTreeView::OnOpenAccountManager(wxCommandEvent& event)
 {
     SSHAccountManagerDlg dlg(EventNotifier::Get()->TopFrame());
     if(dlg.ShowModal() == wxID_OK) {
-
         SFTPSettings settings;
-        settings.Load();
-        settings.SetAccounts(dlg.GetAccounts());
+        settings.Load().SetAccounts(dlg.GetAccounts());
         settings.Save();
-
-        // Update the selections at the top
-        wxString curselection = m_choiceAccount->GetStringSelection();
-
-        m_choiceAccount->Clear();
-        const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
-        if(accounts.empty()) {
-            DoCloseSession();
-            return;
-
-        } else {
-            SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
-            for(; iter != accounts.end(); ++iter) {
-                m_choiceAccount->Append(iter->GetAccountName());
-            }
-
-            int where = m_choiceAccount->FindString(curselection);
-            if(where == wxNOT_FOUND) {
-                // Our previous session is no longer available, close the session
-                DoCloseSession();
-                where = 0;
-            }
-
-            m_choiceAccount->SetSelection(where);
-        }
     }
 }
 
@@ -239,11 +201,6 @@ void SFTPTreeView::DoCloseSession()
 
     m_sftp.reset(NULL);
     m_treeCtrl->DeleteAllItems();
-}
-
-void SFTPTreeView::OnConnectUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_choiceAccount->GetStringSelection().IsEmpty() && !m_sftp);
 }
 
 bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
@@ -620,40 +577,27 @@ void SFTPTreeView::OnConnection(wxCommandEvent& event)
         m_auibar->FindTool(ID_SFTP_CONNECT)->SetShortHelp(_("Disconnected. Click to connect"));
     } else {
         DoOpenSession();
-        // Update toobar image
-        m_auibar->FindTool(ID_SFTP_CONNECT)->SetBitmap(images.Bitmap("sftp_connected"));
-        m_auibar->FindTool(ID_SFTP_CONNECT)->SetShortHelp(_("Connected. Click to disconnect"));
+        if(IsConnected()) {
+            // Update toobar image
+            m_auibar->FindTool(ID_SFTP_CONNECT)->SetBitmap(images.Bitmap("sftp_connected"));
+            m_auibar->FindTool(ID_SFTP_CONNECT)->SetShortHelp(_("Connected. Click to disconnect"));
+        }
     }
 }
 
 void SFTPTreeView::DoOpenSession()
 {
     DoCloseSession();
-    wxString accountName = m_choiceAccount->GetStringSelection();
-    if(accountName.IsEmpty()) { return; }
-
-    SFTPSettings settings;
-    settings.Load();
-
-    m_account = SSHAccountInfo();
-    if(!settings.GetAccount(accountName, m_account)) {
-        ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "codelite", wxICON_ERROR | wxOK);
-        return;
-    }
+    if(!GetAccountFromUser(m_account)) { return; }
 
     wxString message;
-#ifndef _WIN64
     wxProgressDialog dlg(_("SFTP"), wxString(' ', 100) + "\n\n", 10);
     dlg.Show();
-    dlg.Update(1, wxString() << _("Connecting to: ") << accountName << "..." << _("\n(this may take a few seconds)"));
-#else
-    wxBusyCursor bc;
-    clGetManager()->SetStatusMessage(wxString() << _("Connecting to: ") << accountName);
-#endif
+    dlg.Update(1, wxString() << _("Connecting to: ") << m_account.GetAccountName() << "..."
+                             << _("\n(this may take a few seconds)"));
 
     // We know that there is a bug that libssh succeeded on connecting only on the second attempt..
     // to workaround it, we issue first connect with 1 second timeout, and then re-open the connection
-
     try {
         clSSH::Ptr_t ssh(
             new clSSH(m_account.GetHost(), m_account.GetUsername(), m_account.GetPassword(), m_account.GetPort()));
@@ -790,24 +734,15 @@ void SFTPTreeView::OnOpenTerminal(wxAuiToolBarEvent& event)
         SFTPTreeViewBase::ShowAuiToolMenu(event);
 
     } else {
-        SFTPSettings settings;
-        settings.Load();
-
-        wxString accountName = m_choiceAccount->GetStringSelection();
-        if(accountName.IsEmpty()) {
-            ::wxMessageBox(_("Please select an account to connect to"), "CodeLite", wxICON_ERROR | wxOK);
-            return;
-        }
-
         SSHAccountInfo account;
-        if(!settings.GetAccount(accountName, account)) {
-            ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "CodeLite", wxICON_ERROR | wxOK);
-            return;
-        }
+        if(!GetAccountFromUser(account)) { return; }
 
         wxString connectString;
         connectString << account.GetUsername() << "@" << account.GetHost();
-
+        
+        SFTPSettings settings;
+        settings.Load();
+        
         const wxString& sshClient = settings.GetSshClient();
         FileUtils::OpenSSHTerminal(sshClient, connectString, account.GetPassword(), account.GetPort());
     }
@@ -911,4 +846,14 @@ void SFTPTreeView::OnFileDropped(clCommandEvent& event)
         }
         SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(m_account, remotePath, localFile.GetFullPath(), 0));
     }
+}
+
+bool SFTPTreeView::GetAccountFromUser(SSHAccountInfo& account)
+{
+    SFTPQuickConnectDlg connectDialog(EventNotifier::Get()->TopFrame());
+    if(connectDialog.ShowModal() != wxID_OK) { return false; }
+
+    // Get the selected account
+    account = connectDialog.GetSelectedAccount();
+    return true;
 }

@@ -23,13 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "perspectivemanager.h"
-#include "frame.h"
-#include "editor_config.h"
-#include <wx/stdpaths.h>
-#include <wx/aui/framemanager.h>
-#include "globals.h"
 #include "debuggerpane.h"
+#include "editor_config.h"
+#include "fileutils.h"
+#include "frame.h"
+#include "globals.h"
+#include "perspectivemanager.h"
+#include <wx/aui/framemanager.h>
+#include <wx/stdpaths.h>
 
 wxString DEBUG_LAYOUT = wxT("debug.layout");
 wxString NORMAL_LAYOUT = wxT("default.layout");
@@ -39,9 +40,7 @@ PerspectiveManager::PerspectiveManager()
     , m_aui(NULL)
 {
     wxString active = EditorConfigST::Get()->GetString(wxT("ActivePerspective"));
-    if(active.IsEmpty() == false) {
-        m_active = active;
-    }
+    if(active.IsEmpty() == false) { m_active = active; }
     ClearIds();
 }
 
@@ -54,16 +53,14 @@ void PerspectiveManager::DeleteAllPerspectives()
 
     wxLogNull noLog;
     for(size_t i = 0; i < files.GetCount(); i++) {
-        ::wxRemoveFile(files.Item(i));
+        clRemoveFile(files.Item(i));
     }
 }
 
 void PerspectiveManager::LoadPerspective(const wxString& name)
 {
     wxString pname = name;
-    if(pname.IsEmpty()) {
-        pname = m_active;
-    }
+    if(pname.IsEmpty()) { pname = m_active; }
 
     wxString file = DoGetPathFromName(pname);
     wxString content;
@@ -73,9 +70,7 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
         m_active = pname;
         EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
 
-        if(pname == DEBUG_LAYOUT) {
-            DoEnsureDebuggerPanesAreVisible();
-        }
+        if(pname == DEBUG_LAYOUT) { DoEnsureDebuggerPanesAreVisible(); }
 
     } else {
         if(pname == DEBUG_LAYOUT) {
@@ -98,9 +93,7 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
 {
     wxString pname = name;
-    if(pname.IsEmpty()) {
-        pname = GetActive();
-    }
+    if(pname.IsEmpty()) { pname = GetActive(); }
 
     WriteFileWithBackup(DoGetPathFromName(pname), clMainFrame::Get()->GetDockingManager().SavePerspective(), false);
     m_active = pname;
@@ -145,9 +138,7 @@ wxString PerspectiveManager::NameFromMenuId(int id)
 {
     std::map<wxString, int>::iterator iter = m_menuIdToName.begin();
     for(; iter != m_menuIdToName.end(); iter++) {
-        if(iter->second == id) {
-            return iter->first;
-        }
+        if(iter->second == id) { return iter->first; }
     }
     return wxT("");
 }
@@ -164,7 +155,7 @@ void PerspectiveManager::Delete(const wxString& name)
 {
     wxLogNull noLog;
     wxString path = DoGetPathFromName(name);
-    wxRemoveFile(path);
+    clRemoveFile(path);
 }
 
 void PerspectiveManager::Rename(const wxString& old, const wxString& new_name)
@@ -182,9 +173,7 @@ wxString PerspectiveManager::DoGetPathFromName(const wxString& name)
     wxString filename = name;
 
     filename.MakeLower();
-    if(!filename.EndsWith(wxT(".layout"))) {
-        filename << wxT(".layout");
-    }
+    if(!filename.EndsWith(wxT(".layout"))) { filename << wxT(".layout"); }
 
     file << clStandardPaths::Get().GetUserDataDir() << wxT("/config/") << filename;
     return file;
@@ -193,9 +182,7 @@ wxString PerspectiveManager::DoGetPathFromName(const wxString& name)
 void PerspectiveManager::SavePerspectiveIfNotExists(const wxString& name)
 {
     wxString file = DoGetPathFromName(name);
-    if(!wxFileName::FileExists(file)) {
-        SavePerspective(name, false);
-    }
+    if(!wxFileName::FileExists(file)) { SavePerspective(name, false); }
 }
 
 bool PerspectiveManager::IsDefaultActive() const { return GetActive().CmpNoCase(NORMAL_LAYOUT) == 0; }
@@ -216,32 +203,26 @@ void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
     DebuggerPaneConfig item;
     conf.ReadItem(&item);
 
-    DoShowPane(item.WindowName(DebuggerPaneConfig::AsciiViewer),
-               (item.GetWindows() & DebuggerPaneConfig::AsciiViewer),
+    DoShowPane(item.WindowName(DebuggerPaneConfig::AsciiViewer), (item.GetWindows() & DebuggerPaneConfig::AsciiViewer),
                needUpdate);
-    DoShowPane(
-        item.WindowName(DebuggerPaneConfig::Threads), (item.GetWindows() & DebuggerPaneConfig::Threads), needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Callstack),
-               (item.GetWindows() & DebuggerPaneConfig::Callstack),
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Threads), (item.GetWindows() & DebuggerPaneConfig::Threads),
                needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Breakpoints),
-               (item.GetWindows() & DebuggerPaneConfig::Breakpoints),
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Callstack), (item.GetWindows() & DebuggerPaneConfig::Callstack),
                needUpdate);
-    DoShowPane(
-        item.WindowName(DebuggerPaneConfig::Watches), (item.GetWindows() & DebuggerPaneConfig::Watches), needUpdate);
-    DoShowPane(
-        item.WindowName(DebuggerPaneConfig::Locals), (item.GetWindows() & DebuggerPaneConfig::Locals), needUpdate);
-    DoShowPane(
-        item.WindowName(DebuggerPaneConfig::Output), (item.GetWindows() & DebuggerPaneConfig::Output), needUpdate);
-    DoShowPane(
-        item.WindowName(DebuggerPaneConfig::Memory), (item.GetWindows() & DebuggerPaneConfig::Memory), needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Disassemble),
-               (item.GetWindows() & DebuggerPaneConfig::Disassemble),
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Breakpoints), (item.GetWindows() & DebuggerPaneConfig::Breakpoints),
+               needUpdate);
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Watches), (item.GetWindows() & DebuggerPaneConfig::Watches),
+               needUpdate);
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Locals), (item.GetWindows() & DebuggerPaneConfig::Locals),
+               needUpdate);
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Output), (item.GetWindows() & DebuggerPaneConfig::Output),
+               needUpdate);
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Memory), (item.GetWindows() & DebuggerPaneConfig::Memory),
+               needUpdate);
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Disassemble), (item.GetWindows() & DebuggerPaneConfig::Disassemble),
                needUpdate);
 
-    if(needUpdate) {
-        clMainFrame::Get()->GetDockingManager().Update();
-    }
+    if(needUpdate) { clMainFrame::Get()->GetDockingManager().Update(); }
 }
 
 void PerspectiveManager::OnPaneClosing(wxAuiManagerEvent& event)
@@ -271,46 +252,46 @@ void PerspectiveManager::ToggleOutputPane(bool hide)
 
     wxAuiPaneInfo& pane_info = m_aui->GetPane(wxT("Output View"));
     if(!pane_info.IsOk()) return;
-    
+
     pane_info.Show(!hide);
     m_aui->Update();
-//    if(hide && pane_info.IsShown()) {
-//        pane_info.Hide();
-//    } else if(!hide && !pane_info.IsShown()) {
-//        
-//    }
-//    m_aui->Update();
-//    if(hide && pane_info.IsShown()) {
-//    } else {
-//        
-//    }
-//    if(pane_info.IsOk() && !pane_info.IsShown()) {
-//        // keep the last perspective where the output view
-//        // was visible
-//        m_buildPerspective = m_aui->SavePerspective();
-//    }
-//
-//    if(pane_info.IsOk() && hide && pane_info.IsShown()) {
-//        pane_info.Hide();
-//        m_aui->Update();
-//
-//    } else if(pane_info.IsOk() && !hide && !pane_info.IsShown()) {
-//        if(!m_buildPerspective.IsEmpty()) {
-//            m_aui->LoadPerspective(m_buildPerspective, true);
-//
-//        } else {
-//            // Else just show it
-//            pane_info.Show();
-//            m_aui->Update();
-//        }
-//    }
+    //    if(hide && pane_info.IsShown()) {
+    //        pane_info.Hide();
+    //    } else if(!hide && !pane_info.IsShown()) {
+    //
+    //    }
+    //    m_aui->Update();
+    //    if(hide && pane_info.IsShown()) {
+    //    } else {
+    //
+    //    }
+    //    if(pane_info.IsOk() && !pane_info.IsShown()) {
+    //        // keep the last perspective where the output view
+    //        // was visible
+    //        m_buildPerspective = m_aui->SavePerspective();
+    //    }
+    //
+    //    if(pane_info.IsOk() && hide && pane_info.IsShown()) {
+    //        pane_info.Hide();
+    //        m_aui->Update();
+    //
+    //    } else if(pane_info.IsOk() && !hide && !pane_info.IsShown()) {
+    //        if(!m_buildPerspective.IsEmpty()) {
+    //            m_aui->LoadPerspective(m_buildPerspective, true);
+    //
+    //        } else {
+    //            // Else just show it
+    //            pane_info.Show();
+    //            m_aui->Update();
+    //        }
+    //    }
 }
 
 void PerspectiveManager::DisconnectEvents()
 {
     if(m_aui) {
-        m_aui->Disconnect(
-            wxEVT_AUI_PANE_BUTTON, wxAuiManagerEventHandler(PerspectiveManager::OnPaneClosing), NULL, this);
+        m_aui->Disconnect(wxEVT_AUI_PANE_BUTTON, wxAuiManagerEventHandler(PerspectiveManager::OnPaneClosing), NULL,
+                          this);
     }
     m_aui = NULL;
 }

@@ -40,17 +40,15 @@
 
 #ifdef __WXGTK__
 #include <signal.h>
-#include <unistd.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #endif
 
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
     // Wrap the path with quotes if needed
     wxString strPath = path;
-    if(strPath.Contains(" ")) {
-        strPath.Prepend("\"").Append("\"");
-    }
+    if(strPath.Contains(" ")) { strPath.Prepend("\"").Append("\""); }
     wxString cmd;
 
 #ifdef __WXMSW__
@@ -94,7 +92,7 @@ static wxString GTKGetTerminal(const wxString& command, TerminalCookie& cookie)
             wxString titlePattern = "-e \"$COMMAND\"";
             Terminals.push_back({ cmd, titlePattern });
         }
-        
+
         if(wxFileName::FileExists("/usr/bin/xterm")) {
             wxString cmd = "xterm";
             wxString titlePattern = "-e \"$COMMAND\"";
@@ -106,11 +104,8 @@ static wxString GTKGetTerminal(const wxString& command, TerminalCookie& cookie)
             wxString titlePattern = "-e \"$COMMAND\"";
             Terminals.push_back({ cmd, titlePattern });
         }
-
     }
-    if(!cookie.IsOk(Terminals)) {
-        return "";
-    }
+    if(!cookie.IsOk(Terminals)) { return ""; }
     wxString cmd = Terminals[cookie.idx].first;
     wxString extra = Terminals[cookie.idx].second;
     ++cookie.idx;
@@ -125,16 +120,12 @@ static wxString GTKGetTerminal(const wxString& command, TerminalCookie& cookie)
 static void GTKOpenTerminal(const wxString& command, const wxString& path)
 {
     DirSaver ds;
-    if(!path.IsEmpty() && wxDirExists(path)) {
-        ::wxSetWorkingDirectory(path);
-    }
+    if(!path.IsEmpty() && wxDirExists(path)) { ::wxSetWorkingDirectory(path); }
 
     TerminalCookie cookie;
     while(true) {
         wxString cmd = GTKGetTerminal(command, cookie);
-        if(cmd.IsEmpty()) {
-            return;
-        }
+        if(cmd.IsEmpty()) { return; }
         clDEBUG() << "Trying terminal" << cmd;
         long PID = ::wxExecute(cmd);
         if(PID != wxNOT_FOUND) {
@@ -158,9 +149,7 @@ static void GTKOpenTerminal(const wxString& command, const wxString& path)
 void FileUtils::OpenTerminal(const wxString& path)
 {
     wxString strPath = path;
-    if(strPath.Contains(" ")) {
-        strPath.Prepend("\"").Append("\"");
-    }
+    if(strPath.Contains(" ")) { strPath.Prepend("\"").Append("\""); }
 
     wxString cmd;
 #ifdef __WXMSW__
@@ -174,9 +163,7 @@ void FileUtils::OpenTerminal(const wxString& path)
 
 #elif defined(__WXMAC__)
     strPath = path;
-    if(strPath.Contains(" ")) {
-        strPath.Prepend("\\\"").Append("\\\"");
-    }
+    if(strPath.Contains(" ")) { strPath.Prepend("\\\"").Append("\\\""); }
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
     cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath << "\"'";
     CL_DEBUG(cmd);
@@ -190,13 +177,9 @@ void FileUtils::OpenTerminal(const wxString& path)
 bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv)
 {
     wxFFile file(fn.GetFullPath(), wxT("w+b"));
-    if(!file.IsOpened()) {
-        return false;
-    }
+    if(!file.IsOpened()) { return false; }
 
-    if(!file.Write(content, conv)) {
-        return false;
-    }
+    if(!file.Write(content, conv)) { return false; }
     return true;
 }
 
@@ -215,9 +198,7 @@ void FileUtils::OpenFileExplorerAndSelect(const wxFileName& filename)
 {
 #ifdef __WXMSW__
     wxString strPath = filename.GetFullPath();
-    if(strPath.Contains(" ")) {
-        strPath.Prepend("\"").Append("\"");
-    }
+    if(strPath.Contains(" ")) { strPath.Prepend("\"").Append("\""); }
     wxString cmd;
     cmd << "explorer /select," << strPath;
     ::wxExecute(cmd);
@@ -232,9 +213,7 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
     wxString command;
     wxString tmpfile;
     wxString escapedPath = path;
-    if(escapedPath.Contains(" ")) {
-        escapedPath.Prepend("\"").Append("\"");
-    }
+    if(escapedPath.Contains(" ")) { escapedPath.Prepend("\"").Append("\""); }
     tmpfile << "/tmp/terminal.tty." << ::wxGetProcessId();
     command << "osascript -e 'tell app \"Terminal\" to do script \"tty > " << tmpfile << " && clear && sleep 12345\"'";
     CL_DEBUG("Executing: %s", command);
@@ -256,8 +235,7 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
         tty.Trim().Trim(false);
 
         // Remove the file
-        wxLogNull noLog;
-        ::wxRemoveFile(ttyFile.GetFullPath());
+        clRemoveFile(ttyFile.GetFullPath());
 
         // Get the parent process ID (we want the parent PID and not
         // the sleep command PID)
@@ -295,9 +273,7 @@ void FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& conne
     }
 
     wxString puttyClient = putty.GetFullPath();
-    if(puttyClient.Contains(" ")) {
-        puttyClient.Prepend("\"").Append("\"");
-    }
+    if(puttyClient.Contains(" ")) { puttyClient.Prepend("\"").Append("\""); }
 
     if(password.IsEmpty()) {
         command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << "\"";
@@ -445,9 +421,7 @@ bool FileUtils::FuzzyMatch(const wxString& needle, const wxString& haystack)
     size_t offset = 0;
     wxString lcHaystack = haystack.Lower();
     while(NextWord(needle, offset, word, true)) {
-        if(!lcHaystack.Contains(word)) {
-            return false;
-        }
+        if(!lcHaystack.Contains(word)) { return false; }
     }
     return true;
 }
@@ -507,18 +481,14 @@ time_t FileUtils::GetFileModificationTime(const wxFileName& filename)
     wxString file = filename.GetFullPath();
     struct stat buff;
     const wxCharBuffer cname = file.mb_str(wxConvUTF8);
-    if(stat(cname.data(), &buff) < 0) {
-        return 0;
-    }
+    if(stat(cname.data(), &buff) < 0) { return 0; }
     return buff.st_mtime;
 }
 
 size_t FileUtils::GetFileSize(const wxFileName& filename)
 {
     wxFFile fp(filename.GetFullPath(), "rb");
-    if(fp.IsOpened()) {
-        return fp.Length();
-    }
+    if(fp.IsOpened()) { return fp.Length(); }
     return 0;
 }
 
@@ -536,9 +506,7 @@ wxString FileUtils::GetOSXTerminalCommand(const wxString& command, const wxStrin
 
     wxString cmd;
     cmd << EscapeString(script.GetFullPath()) << " \"";
-    if(!workingDirectory.IsEmpty()) {
-        cmd << "cd " << EscapeString(workingDirectory) << " && ";
-    }
+    if(!workingDirectory.IsEmpty()) { cmd << "cd " << EscapeString(workingDirectory) << " && "; }
     cmd << EscapeString(command) << "\"";
     clDEBUG() << "GetOSXTerminalCommand returned:" << cmd << clEndl;
     return cmd;
@@ -572,9 +540,7 @@ wxString FileUtils::NormaliseName(const wxString& name)
 
 bool FileUtils::NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower)
 {
-    if(offset == str.size()) {
-        return false;
-    }
+    if(offset == str.size()) { return false; }
     size_t start = wxString::npos;
     word.Clear();
     for(; offset < str.size(); ++offset) {
@@ -589,15 +555,11 @@ bool FileUtils::NextWord(const wxString& str, size_t& offset, wxString& word, bo
         } else if(start == wxString::npos) {
             start = offset;
         }
-        if(makeLower) {
-            ch = wxTolower(ch);
-        }
+        if(makeLower) { ch = wxTolower(ch); }
         word << ch;
     }
 
-    if((start != wxString::npos) && (offset > start)) {
-        return true;
-    }
+    if((start != wxString::npos) && (offset > start)) { return true; }
     return false;
 }
 
@@ -610,4 +572,11 @@ size_t FileUtils::SplitWords(const wxString& str, wxStringSet_t& outputSet, bool
         outputSet.insert(word);
     }
     return outputSet.size();
+}
+
+bool FileUtils::RemoveFile(const wxString& filename, const wxString& context)
+{
+    clSYSTEM() << "Deleting file:" << filename << "(" << context << ")";
+    wxLogNull NOLOG;
+    return ::wxRemoveFile(filename);
 }

@@ -1,4 +1,5 @@
 #include "cl_defs.h"
+#include "cl_config.h"
 
 #if !USE_AUI_NOTEBOOK
 #include "Notebook.h"
@@ -78,7 +79,7 @@ void clTabColours::InitLightColours()
     if(DrawingUtils::IsDark(activeTabBgColour)) { activeTabTextColour = *wxWHITE; }
 
     tabAreaColour = faceColour;
-    markerColour = DrawingUtils::GetCaptionColour();
+    markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#80ccff"));
 
     inactiveTabBgColour = tabAreaColour.ChangeLightness(95);
     inactiveTabPenColour = tabAreaColour.ChangeLightness(85);

@@ -388,7 +388,7 @@ void SFTP::OnEditorClosed(wxCommandEvent& e)
             wxLogNull noLog;
 
             // Remove the file from our cache
-            ::wxRemoveFile(localFile);
+            clRemoveFile(localFile);
             m_remoteFiles.erase(localFile);
         }
     }

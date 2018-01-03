@@ -73,21 +73,21 @@ class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxPanel
 {
 public:
     enum {
-        ID_SHOW_LINENUMBERS = 1001,
-        ID_DIFF_TOOL_VIEW_HORIZONTAL = 1002,
+        ID_SHOW_OVERVIEW_BAR = 1001,
+        ID_SHOW_LINENUMBERS = 1002,
         ID_DIFF_VERTICAL_VIEW = 1003,
-        ID_DIFF_TOOL_USE_RIGHT = 1004,
+        ID_DIFF_TOOL_VIEW = 1004,
         ID_DIFF_TOOL_USE_LEFT = 1005,
-        ID_DIFF_TOOL_IGNORE_WHITESPACE = 1006,
+        ID_DIFF_TOOL_USE_RIGHT = 1006,
         ID_DIFF_TOOL_COPY_ALL = 1007,
         ID_DIFF_TOOL_COPY_LEFT = 1008,
-        ID_DIFF_TOOL_VIEW_SINGLE = 1009,
-        ID_DIFF_TOOL_COPY_RIGHT = 1010,
-        ID_SHOW_OVERVIEW_BAR = 1011,
+        ID_DIFF_TOOL_IGNORE_WHITESPACE = 1009,
+        ID_DIFF_TOOL_VIEW_HORIZONTAL = 1010,
+        ID_DIFF_TOOL_COPY_RIGHT = 1011,
         ID_DIFF_TOOL_PREV = 1012,
-        ID_DIFF_TOOL_SAVE = 1013,
-        ID_DIFF_TOOL_VIEW = 1014,
-        ID_DIFF_TOOL_NEXT = 1015,
+        ID_DIFF_TOOL_VIEW_SINGLE = 1013,
+        ID_DIFF_TOOL_NEXT = 1014,
+        ID_DIFF_TOOL_SAVE = 1015,
         ID_DIFF_TOOL_REFRESH = 1016,
     };
 protected:
@@ -196,15 +196,23 @@ public:
 
 class WXDLLIMPEXP_SDK clTreeCtrlPanelBase : public wxPanel
 {
+public:
+    enum {
+        ID_LINK_TO_EDITOR = 1001,
+    };
 protected:
+    wxToolBar* m_toolbar;
     clFileViewerTreeCtrl* m_treeCtrl;
 
 protected:
+    virtual void OnLinkEditor(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnLinkEditorUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxTreeEvent& event) { event.Skip(); }
 
 public:
+    wxToolBar* GetToolbar() { return m_toolbar; }
     clFileViewerTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~clTreeCtrlPanelBase();

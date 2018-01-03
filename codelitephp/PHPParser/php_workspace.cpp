@@ -520,7 +520,7 @@ void PHPWorkspace::ParseWorkspace(bool full)
         fnDatabaseFile.AppendDir(".codelite");
 
         wxLogNull noLog;
-        bool bRemoved = ::wxRemoveFile(fnDatabaseFile.GetFullPath());
+        bool bRemoved = clRemoveFile(fnDatabaseFile.GetFullPath());
         wxUnusedVar(bRemoved);
 
         // Start the managers again

@@ -7,7 +7,7 @@
 
 clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& left,
                          const DiffSideBySidePanel::FileInfo& right, bool originSourceControl)
-    : wxFrame(parent, wxID_ANY, _("Diff View"), wxDefaultPosition, wxDefaultSize,
+    : wxFrame(parent, wxID_ANY, _("CodeLite - Diff View"), wxDefaultPosition, wxDefaultSize,
               wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT)
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
@@ -31,7 +31,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& 
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent)
-    : wxFrame(parent, wxID_ANY, _("Diff View"), wxDefaultPosition, wxDefaultSize,
+    : wxFrame(parent, wxID_ANY, _("CodeLite - Diff View"), wxDefaultPosition, wxDefaultSize,
               wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT)
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
@@ -50,7 +50,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent)
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileName& right, bool isTempFile)
-    : wxFrame(parent, wxID_ANY, _("Diff View"), wxDefaultPosition, wxDefaultSize,
+    : wxFrame(parent, wxID_ANY, _("CodeLite - Diff View"), wxDefaultPosition, wxDefaultSize,
               wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT)
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);

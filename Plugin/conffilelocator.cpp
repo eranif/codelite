@@ -23,69 +23,60 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_standard_paths.h"
 #include "conffilelocator.h"
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
-#include "cl_standard_paths.h"
+#include "fileutils.h"
 
 ConfFileLocator* ConfFileLocator::ms_instance = 0;
 
-ConfFileLocator::ConfFileLocator()
-{
-}
+ConfFileLocator::ConfFileLocator() {}
 
-ConfFileLocator::~ConfFileLocator()
-{
-}
+ConfFileLocator::~ConfFileLocator() {}
 
 ConfFileLocator* ConfFileLocator::Instance()
 {
-	if(ms_instance == 0){
-		ms_instance = new ConfFileLocator();
-	}
-	return ms_instance;
+    if(ms_instance == 0) { ms_instance = new ConfFileLocator(); }
+    return ms_instance;
 }
 
 void ConfFileLocator::Release()
 {
-	if(ms_instance){
-		delete ms_instance;
-	}
-	ms_instance = 0;
+    if(ms_instance) { delete ms_instance; }
+    ms_instance = 0;
 }
 
 void ConfFileLocator::Initialize(const wxString& installpath, const wxString& startuppath)
 {
-	m_installPath = installpath;
-	m_startupPath = startuppath;
+    m_installPath = installpath;
+    m_startupPath = startuppath;
 }
 
 wxString ConfFileLocator::Locate(const wxString& baseName)
 {
-	wxFileName privateFile(GetLocalCopy(baseName));
-	wxFileName defaultFile(GetDefaultCopy(baseName));
+    wxFileName privateFile(GetLocalCopy(baseName));
+    wxFileName defaultFile(GetDefaultCopy(baseName));
 
-	if(privateFile.FileExists()){
-		return privateFile.GetFullPath();
-	} else {
-		return defaultFile.GetFullPath();
-	}
+    if(privateFile.FileExists()) {
+        return privateFile.GetFullPath();
+    } else {
+        return defaultFile.GetFullPath();
+    }
 }
 
 void ConfFileLocator::DeleteLocalCopy(const wxString& basename)
 {
-	wxFileName privateFile(GetLocalCopy(basename));
-	if(privateFile.FileExists()){
-		wxRemoveFile(privateFile.GetFullPath());
-	}
+    wxFileName privateFile(GetLocalCopy(basename));
+    if(privateFile.FileExists()) { clRemoveFile(privateFile.GetFullPath()); }
 }
 
 wxString ConfFileLocator::GetLocalCopy(const wxString& baseName)
 {
-	return clStandardPaths::Get().GetUserDataDir() + wxT("/") + baseName;
+    return clStandardPaths::Get().GetUserDataDir() + wxT("/") + baseName;
 }
 
 wxString ConfFileLocator::GetDefaultCopy(const wxString& baseName)
 {
-	return m_installPath + wxT("/") + baseName + wxT(".default");
+    return m_installPath + wxT("/") + baseName + wxT(".default");
 }

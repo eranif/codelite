@@ -148,7 +148,7 @@ struct ColoursAndFontsManagerLoaderHelper {
                 }
             }
             xmlFile.Close();
-            wxRemoveFile(files.Item(i));
+            clRemoveFile(files.Item(i));
         }
         CL_DEBUG("Loading users lexers...done");
         m_manager->OnLexerFilesLoaded(userLexers);
@@ -543,7 +543,7 @@ void ColoursAndFontsManager::RestoreDefaults()
         wxLogNull noLog;
         wxFileName fnLexersJSON(clStandardPaths::Get().GetUserLexersDir(), "lexers.json");
         if(fnLexersJSON.Exists()) {
-            ::wxRemoveFile(fnLexersJSON.GetFullPath());
+            clRemoveFile(fnLexersJSON.GetFullPath());
         }
     }
 

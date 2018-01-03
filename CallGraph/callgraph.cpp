@@ -24,30 +24,31 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "callgraph.h"
-#include "uisettingsdlg.h"
-#include "uicallgraphpanel.h"
-#include "toolbaricons.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/artprov.h>
-#include "workspace.h"
-#include "string.h"
-#include <wx/image.h>
 #include "macromanager.h"
-#include <wx/bitmap.h>
+#include "string.h"
+#include "toolbaricons.h"
+#include "uicallgraphpanel.h"
+#include "uisettingsdlg.h"
+#include "workspace.h"
 #include <wx/aboutdlg.h>
+#include <wx/artprov.h>
+#include <wx/bitmap.h>
 #include <wx/datetime.h>
+#include <wx/image.h>
+#include <wx/xrc/xmlres.h>
 
-#include <wx/wfstream.h>
-#include <wx/txtstrm.h>
-#include <wx/sstream.h>
 #include <wx/mstream.h>
+#include <wx/sstream.h>
+#include <wx/txtstrm.h>
+#include <wx/wfstream.h>
 
 #include "file_logger.h"
+#include "fileutils.h"
 #include <wx/msgdlg.h>
 
 /*!
-  * brief Class for include plugin to CodeLite.
-  */
+ * brief Class for include plugin to CodeLite.
+ */
 
 #ifndef nil
 #define nil 0
@@ -60,9 +61,7 @@ CallGraph* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new CallGraph(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new CallGraph(manager); }
     return thePlugin;
 }
 
@@ -109,32 +108,26 @@ CallGraph::CallGraph(IManager* manager)
     m_longName = _("Create application call graph from profiling information provided by gprof tool.");
     m_shortName = wxT("CallGraph");
 
-    m_mgr->GetTheApp()->Connect(
-        XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnSettings), NULL, this);
-    m_mgr->GetTheApp()->Connect(
-        XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnAbout), NULL, this);
+    m_mgr->GetTheApp()->Connect(XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(CallGraph::OnSettings), NULL, this);
+    m_mgr->GetTheApp()->Connect(XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(CallGraph::OnAbout), NULL, this);
 
-    m_mgr->GetTheApp()->Connect(XRCID("cg_show_callgraph"),
-                                wxEVT_COMMAND_TOOL_CLICKED,
-                                wxCommandEventHandler(CallGraph::OnShowCallGraph),
-                                NULL,
-                                this);
+    m_mgr->GetTheApp()->Connect(XRCID("cg_show_callgraph"), wxEVT_COMMAND_TOOL_CLICKED,
+                                wxCommandEventHandler(CallGraph::OnShowCallGraph), NULL, this);
 }
 
 //---- DTOR -------------------------------------------------------------------
 
 CallGraph::~CallGraph()
 {
-    m_mgr->GetTheApp()->Disconnect(
-        XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnSettings), NULL, this);
-    m_mgr->GetTheApp()->Disconnect(
-        XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnAbout), NULL, this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(CallGraph::OnSettings), NULL, this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(CallGraph::OnAbout), NULL, this);
 
-    m_mgr->GetTheApp()->Disconnect(XRCID("cg_show_callgraph"),
-                                   wxEVT_COMMAND_TOOL_CLICKED,
-                                   wxCommandEventHandler(CallGraph::OnShowCallGraph),
-                                   NULL,
-                                   this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("cg_show_callgraph"), wxEVT_COMMAND_TOOL_CLICKED,
+                                   wxCommandEventHandler(CallGraph::OnShowCallGraph), NULL, this);
 
     wxDELETE(m_LogFile);
 }
@@ -161,11 +154,8 @@ void CallGraph::CreatePluginMenu(wxMenu* pluginsMenu)
     // You can use the below code a snippet:
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
-    item = new wxMenuItem(menu,
-                          XRCID("cg_show_callgraph"),
-                          _("Show call graph"),
-                          _("Show call graph for selected/active project"),
-                          wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("cg_show_callgraph"), _("Show call graph"),
+                          _("Show call graph for selected/active project"), wxITEM_NORMAL);
     menu->Append(item);
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("cg_settings"), _("Settings..."), wxEmptyString, wxITEM_NORMAL);
@@ -183,11 +173,8 @@ wxMenu* CallGraph::CreateProjectPopMenu()
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(menu,
-                          XRCID("cg_show_callgraph"),
-                          _("Show call graph"),
-                          _("Show call graph for selected project"),
-                          wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("cg_show_callgraph"), _("Show call graph"),
+                          _("Show call graph for selected project"), wxITEM_NORMAL);
     menu->Append(item);
 
     return menu;
@@ -482,12 +469,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
         dotWriter.SetDotWriterFromDialogSettings(m_mgr);
 
     } else {
-        dotWriter.SetDotWriterFromDetails(conf.GetColorsNode(),
-                                          conf.GetColorsEdge(),
-                                          suggestedThreshold,
-                                          conf.GetTresholdEdge(),
-                                          conf.GetHideParams(),
-                                          conf.GetStripParams(),
+        dotWriter.SetDotWriterFromDetails(conf.GetColorsNode(), conf.GetColorsEdge(), suggestedThreshold,
+                                          conf.GetTresholdEdge(), conf.GetHideParams(), conf.GetStripParams(),
                                           conf.GetHideNamespaces());
 
         wxString suggest_msg = wxString::Format(_("The CallGraph plugin has suggested node threshold %d to speed-up "
@@ -515,7 +498,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     wxString output_png_fn = cfn.GetFullPath();
 
     // delete any existing PNG
-    if(wxFileExists(output_png_fn)) wxRemoveFile(output_png_fn);
+    if(wxFileExists(output_png_fn)) clRemoveFile(output_png_fn);
 
     wxString cmddot_ln;
 
@@ -533,8 +516,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
                           wxICON_INFORMATION);
 
     // show image and create table in the editor tab page
-    uicallgraphpanel* panel = new uicallgraphpanel(
-        m_mgr->GetEditorPaneNotebook(), m_mgr, output_png_fn, base_path, suggestedThreshold, &(pgp.lines));
+    uicallgraphpanel* panel = new uicallgraphpanel(m_mgr->GetEditorPaneNotebook(), m_mgr, output_png_fn, base_path,
+                                                   suggestedThreshold, &(pgp.lines));
 
     wxString tstamp = wxDateTime::Now().Format(wxT(" %Y-%m-%d %H:%M:%S"));
 

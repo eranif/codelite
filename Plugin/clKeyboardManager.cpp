@@ -257,7 +257,7 @@ void clKeyboardManager::Initialize()
 
             if(canDeleteOldSettings) {
                 wxLogNull noLog;
-                ::wxRemoveFile(fnFileToLoad.GetFullPath());
+                clRemoveFile(fnFileToLoad.GetFullPath());
             }
         }
     } else {
@@ -386,11 +386,11 @@ void clKeyboardManager::RestoreDefaults()
 
     wxLogNull nl;
     if(fnOldSettings.Exists()) {
-        ::wxRemoveFile(fnOldSettings.GetFullPath());
+        clRemoveFile(fnOldSettings.GetFullPath());
     }
 
     if(fnNewSettings.Exists()) {
-        ::wxRemoveFile(fnNewSettings.GetFullPath());
+        clRemoveFile(fnNewSettings.GetFullPath());
     }
 
     // Call initialize again

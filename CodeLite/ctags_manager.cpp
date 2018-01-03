@@ -2556,7 +2556,7 @@ void TagsManager::DoParseModifiedText(const wxString& text, std::vector<TagEntry
             tags.push_back(tag);
         }
         // Delete the modified file
-        wxRemoveFile(fileName);
+        clRemoveFile(fileName);
     }
 }
 
@@ -2879,7 +2879,7 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxSt
 
     {
         wxLogNull noLog;
-        ::wxRemoveFile(tmpfilename);
+        clRemoveFile(tmpfilename);
     }
 
     TagEntryPtrVector_t tagsVec;

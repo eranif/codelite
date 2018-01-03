@@ -16,6 +16,7 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
@@ -594,7 +595,7 @@ void NodeJSDebugger::DoDeleteTempFiles(const wxStringSet_t& files)
 {
     std::for_each(files.begin(), files.end(), [&](const wxString& filename) {
         wxLogNull noLog;
-        ::wxRemoveFile(filename);
+        clRemoveFile(filename);
     });
 }
 

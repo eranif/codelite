@@ -27,6 +27,7 @@
 #include "editor_config.h"
 #include "editorsettingsdockingwidows.h"
 #include "frame.h"
+#include "cl_config.h"
 
 EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     : EditorSettingsDockingWindowsBase(parent)
@@ -131,7 +132,8 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
         break;
     }
 #endif
-
+    // Set the marker colour
+    m_colourPickerMarker->SetColour(clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#80ccff")));
     m_checkBoxHideOutputPaneNotIfDebug->Connect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI), NULL,
         this);
@@ -139,6 +141,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
 
 void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
 {
+    clConfig::Get().Write("ActiveTabMarkerColour", m_colourPickerMarker->GetColour());
     options->SetHideOutpuPaneOnUserClick(m_checkBoxHideOutputPaneOnClick->IsChecked());
     options->SetHideOutputPaneNotIfBuild(m_checkBoxHideOutputPaneNotIfBuild->IsChecked());
     options->SetHideOutputPaneNotIfSearch(m_checkBoxHideOutputPaneNotIfSearch->IsChecked());

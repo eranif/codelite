@@ -542,6 +542,16 @@ clTreeCtrlPanelBase::clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer151 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer151);
     
+    m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTB_NODIVIDER|wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer151->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_toolbar->AddStretchableSpace();
+    
+    m_toolbar->AddTool(ID_LINK_TO_EDITOR, _("Link To Editor"), wxXmlResource::Get()->LoadBitmap(wxT("16-link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link To Editor"), wxT(""), NULL);
+    m_toolbar->Realize();
+    
     m_treeCtrl = new clFileViewerTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES);
     
     boxSizer151->Add(m_treeCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
@@ -552,6 +562,8 @@ clTreeCtrlPanelBase::clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id, const 
          GetSizer()->Fit(this);
     }
     // Connect events
+    this->Connect(ID_LINK_TO_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(clTreeCtrlPanelBase::OnLinkEditor), NULL, this);
+    this->Connect(ID_LINK_TO_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clTreeCtrlPanelBase::OnLinkEditorUI), NULL, this);
     m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(clTreeCtrlPanelBase::OnItemExpanding), NULL, this);
     m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(clTreeCtrlPanelBase::OnItemActivated), NULL, this);
     m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(clTreeCtrlPanelBase::OnContextMenu), NULL, this);
@@ -560,6 +572,8 @@ clTreeCtrlPanelBase::clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id, const 
 
 clTreeCtrlPanelBase::~clTreeCtrlPanelBase()
 {
+    this->Disconnect(ID_LINK_TO_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(clTreeCtrlPanelBase::OnLinkEditor), NULL, this);
+    this->Disconnect(ID_LINK_TO_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clTreeCtrlPanelBase::OnLinkEditorUI), NULL, this);
     m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(clTreeCtrlPanelBase::OnItemExpanding), NULL, this);
     m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(clTreeCtrlPanelBase::OnItemActivated), NULL, this);
     m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(clTreeCtrlPanelBase::OnContextMenu), NULL, this);

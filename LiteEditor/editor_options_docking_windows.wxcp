@@ -940,7 +940,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Selection:",
-																	"m_value":	"0"
+																	"m_value":	"2"
 																}],
 															"m_events":	[],
 															"m_children":	[]

@@ -42,6 +42,7 @@
 #include "cl_aui_tool_stickness.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
+#include "cl_defs.h"
 #include "cl_standard_paths.h"
 #include "cl_unredo.h"
 #include "clang_compilation_db_thread.h"
@@ -61,6 +62,7 @@
 #include "refactoring_storage.h"
 #include "save_perspective_as_dlg.h"
 #include "tags_parser_search_path_dlg.h"
+#include "theme_handler_helper.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "wxCustomStatusBar.h"
 #include <CompilersDetectorManager.h>
@@ -69,8 +71,6 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
-#include "theme_handler_helper.h"
-#include "cl_defs.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -921,6 +921,9 @@ clMainFrame::~clMainFrame(void)
 
     // uninitialize AUI manager
     m_mgr.UnInit();
+
+    // Remove the temporary folder and its content
+    clStandardPaths::Get().RemoveTempDir();
 }
 
 void clMainFrame::Initialize(bool loadLastSession)
@@ -1206,7 +1209,7 @@ void clMainFrame::CreateGUIControls()
 
     Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnChangeActiveBookmarkType), this,
          XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
-         
+
 #if !USE_AUI_NOTEBOOK
     GetWorkspacePane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")));
     GetDebuggerPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_rmenu")));
@@ -3460,8 +3463,9 @@ void clMainFrame::OnDebugCmdUI(wxUpdateUIEvent& e)
     clDebugEvent eventIsRunning(wxEVT_DBG_IS_RUNNING);
     EventNotifier::Get()->ProcessEvent(eventIsRunning);
 
-    if(e.GetId() == XRCID("pause_debugger") || e.GetId() == XRCID("dbg_stepin") || e.GetId() == XRCID("dbg_stepi") || e.GetId() == XRCID("dbg_stepout") ||
-       e.GetId() == XRCID("dbg_next") || e.GetId() == XRCID("dbg_nexti") || e.GetId() == XRCID("show_cursor")) {
+    if(e.GetId() == XRCID("pause_debugger") || e.GetId() == XRCID("dbg_stepin") || e.GetId() == XRCID("dbg_stepi") ||
+       e.GetId() == XRCID("dbg_stepout") || e.GetId() == XRCID("dbg_next") || e.GetId() == XRCID("dbg_nexti") ||
+       e.GetId() == XRCID("show_cursor")) {
         IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
         e.Enable(eventIsRunning.IsAnswer() || (dbgr && dbgr->IsRunning()));
     }

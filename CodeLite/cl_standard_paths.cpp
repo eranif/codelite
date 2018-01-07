@@ -24,13 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_standard_paths.h"
-#include <wx/stdpaths.h>
 #include <wx/filename.h>
+#include <wx/stdpaths.h>
 
-clStandardPaths::clStandardPaths()
-{
-    IgnoreAppSubDir("bin");
-}
+clStandardPaths::clStandardPaths() { IgnoreAppSubDir("bin"); }
 
 clStandardPaths::~clStandardPaths() {}
 
@@ -142,7 +139,14 @@ wxString clStandardPaths::GetUserProjectTemplatesDir() const
 
 wxString clStandardPaths::GetExecutablePath() const { return wxStandardPaths::Get().GetExecutablePath(); }
 
-wxString clStandardPaths::GetTempDir() const { return wxStandardPaths::Get().GetTempDir(); }
+wxString clStandardPaths::GetTempDir() const
+{
+#if defined(__WXGTK__) || defined(__WXOSX__)
+    return "/tmp";
+#else
+    return wxStandardPaths::Get().GetTempDir();
+#endif
+}
 
 wxString clStandardPaths::GetDocumentsDir() const
 {
@@ -173,7 +177,7 @@ wxString clStandardPaths::GetInstallDir() const
 #endif
 }
 
-void clStandardPaths::IgnoreAppSubDir(const wxString & subdirPattern)
+void clStandardPaths::IgnoreAppSubDir(const wxString& subdirPattern)
 {
 #ifdef USE_POSIX_LAYOUT
     wxStandardPaths::Get().IgnoreAppSubDir(subdirPattern);

@@ -758,10 +758,6 @@ ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* e
     return modifiedBuffers;
 }
 
-void ClangDriver::DoDeleteTempFile(const wxString& fileName)
-{
-    wxLogNull noLog;
-    clRemoveFile(fileName);
-}
+void ClangDriver::DoDeleteTempFile(const wxString& fileName) { wxUnusedVar(fileName); }
 
 #endif // HAS_LIBCLANG

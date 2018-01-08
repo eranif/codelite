@@ -230,6 +230,10 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
             (wxDirection)XmlUtils::ReadLong(node, "OutputTabsDirection", (int)m_outputTabsDirection);
         m_workspaceTabsDirection =
             (wxDirection)XmlUtils::ReadLong(node, "WorkspaceTabsDirection", (int)m_workspaceTabsDirection);
+#ifdef __WXOSX__
+        if(m_workspaceTabsDirection == wxLEFT) { m_workspaceTabsDirection = wxTOP; }
+        if(m_workspaceTabsDirection == wxRIGHT) { m_workspaceTabsDirection = wxBOTTOM; }
+#endif
     }
 #ifdef __WXMSW__
     if(!(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */)) { m_mswTheme = false; }

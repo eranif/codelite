@@ -609,42 +609,49 @@ void SFTPTreeView::DoOpenSession()
         clSSH::Ptr_t ssh(
             new clSSH(m_account.GetHost(), m_account.GetUsername(), m_account.GetPassword(), m_account.GetPort()));
         ssh->Connect(5);
-#ifndef _WIN64
         dlg.Update(5, _("Connected!"));
         dlg.Update(6, _("Authenticating server..."));
-#endif
 
         if(!ssh->AuthenticateServer(message)) {
             if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
-#ifndef _WIN64
                 dlg.Update(7, _("Accepting server authentication server..."));
-#endif
                 ssh->AcceptServerAuthentication();
             }
         } else {
-#ifndef _WIN64
             dlg.Update(7, _("Server authenticated"));
-#endif
         }
 
-#ifndef _WIN64
-        dlg.Update(8, _("Logging..."));
-#endif
+        dlg.Update(8, _("Logging in.."));
         ssh->Login();
         m_sftp.reset(new clSFTP(ssh));
         m_sftp->Initialize();
         m_sftp->SetAccount(m_account.GetAccountName());
         m_plugin->GetManager()->SetStatusMessage(wxString() << _("Done!"));
 
-#ifndef _WIN64
         dlg.Update(9, _("Fetching directory list..."));
-#endif
         DoBuildTree(m_account.GetDefaultFolder().IsEmpty() ? "/" : m_account.GetDefaultFolder());
-#ifndef _WIN64
         dlg.Update(10, _("Done"));
-#endif
+
+        // If this is a new account, offer the user to save it
+        SFTPSettings s;
+        s.Load();
+        SSHAccountInfo dummy;
+        if(!s.GetAccount(m_account.GetAccountName(), dummy)) {
+            wxString message;
+            message << _("Would you like to save this account?\n") << _("It will be saved as '")
+                    << m_account.GetAccountName() << "'";
+            wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(message, "SFTPQuickConnectSaveDlg");
+            if(res == wxID_YES) {
+                // This 'Connect' was via Quick Connect option
+                SSHAccountInfo::Vect_t accounts = s.GetAccounts();
+                accounts.push_back(m_account);
+                s.SetAccounts(accounts);
+                s.Save();
+            }
+        }
+
     } catch(clException& e) {
-        ::wxMessageBox(e.What(), "codelite", wxICON_ERROR | wxOK);
+        ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK);
         DoCloseSession();
     }
 }
@@ -739,10 +746,10 @@ void SFTPTreeView::OnOpenTerminal(wxAuiToolBarEvent& event)
 
         wxString connectString;
         connectString << account.GetUsername() << "@" << account.GetHost();
-        
+
         SFTPSettings settings;
         settings.Load();
-        
+
         const wxString& sshClient = settings.GetSshClient();
         FileUtils::OpenSSHTerminal(sshClient, connectString, account.GetPassword(), account.GetPort());
     }

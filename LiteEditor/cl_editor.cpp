@@ -612,7 +612,7 @@ void LEditor::SetProperties()
 
     // Show the separator margin only if the fold margin is hidden
     // (otherwise the fold margin is the separator)
-    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, 0);
+    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, GetLexer() == wxSTC_LEX_CPP ? 1 : 0);
 
     // allow everything except for the folding symbols
     SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));

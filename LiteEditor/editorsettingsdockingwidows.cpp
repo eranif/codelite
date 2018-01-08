@@ -115,6 +115,20 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     default:
         break;
     }
+#ifdef __WXOSX__
+    switch(options->GetWorkspaceTabsDirection()) {
+    case wxLEFT:
+    case wxTOP:
+        m_choiceWorkspaceTabsOrientation->SetSelection(2);
+        break;
+    case wxRIGHT:
+    case wxBOTTOM:
+        m_choiceWorkspaceTabsOrientation->SetSelection(3);
+        break;
+    default:
+        break;
+    }
+#else
     switch(options->GetWorkspaceTabsDirection()) {
     case wxLEFT:
         m_choiceWorkspaceTabsOrientation->SetSelection(0);
@@ -131,6 +145,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     default:
         break;
     }
+#endif
 #endif
     // Set the marker colour
     m_colourPickerMarker->SetColour(clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#80ccff")));
@@ -212,6 +227,20 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     default:
         break;
     }
+#ifdef __WXOSX__
+    switch(m_choiceWorkspaceTabsOrientation->GetSelection()) {
+    case 0:
+    case 2:
+        options->SetWorkspaceTabsDirection(wxTOP);
+        break;
+    case 1:
+    case 3:
+        options->SetWorkspaceTabsDirection(wxBOTTOM);
+        break;
+    default:
+        break;
+    }
+#else
     switch(m_choiceWorkspaceTabsOrientation->GetSelection()) {
     case 0:
         options->SetWorkspaceTabsDirection(wxLEFT);
@@ -228,6 +257,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     default:
         break;
     }
+#endif
 #endif
 }
 

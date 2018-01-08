@@ -576,7 +576,7 @@ size_t FileUtils::SplitWords(const wxString& str, wxStringSet_t& outputSet, bool
 
 bool FileUtils::RemoveFile(const wxString& filename, const wxString& context)
 {
-    clSYSTEM() << "Deleting file:" << filename << "(" << context << ")";
+    clDEBUG() << "Deleting file:" << filename << "(" << context << ")";
     wxLogNull NOLOG;
     return ::wxRemoveFile(filename);
 }

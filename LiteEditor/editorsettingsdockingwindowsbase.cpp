@@ -89,7 +89,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_choiceWorkspaceTabsOrientationArr.Add(wxT("TOP"));
     m_choiceWorkspaceTabsOrientationArr.Add(wxT("BOTTOM"));
     m_choiceWorkspaceTabsOrientation = new wxChoice(m_panelTabs, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), m_choiceWorkspaceTabsOrientationArr, 0);
-    m_choiceWorkspaceTabsOrientation->SetSelection(0);
+    m_choiceWorkspaceTabsOrientation->SetSelection(2);
     
     flexGridSizer36->Add(m_choiceWorkspaceTabsOrientation, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     

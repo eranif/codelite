@@ -26,6 +26,7 @@
 #include "cl_standard_paths.h"
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+#include <wx/utils.h>
 
 static wxString __get_user_name()
 {

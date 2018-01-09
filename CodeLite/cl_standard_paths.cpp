@@ -30,7 +30,7 @@
 
 static wxString __get_user_name()
 {
-    wxString squashedname, name = ::wxGetUserName();
+    wxString squashedname, name = wxGetUserName();
 
     // The wx doc says that 'name' may now be e.g. "Mr. John Smith"
     // So try to make it more suitable to be an extension

@@ -27,6 +27,7 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
+#include <wx/datetime.h>
 
 static wxString __get_user_name()
 {
@@ -169,6 +170,7 @@ wxString clStandardPaths::GetTempDir() const
 #else
         tmpdir << wxStandardPaths::Get().GetTempDir() << "\\CodeLite." << username;
 #endif
+        tmpdir << wxDateTime::Now().GetTicks();
         // Create the temp folder
         wxFileName::Mkdir(tmpdir, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         once = false;

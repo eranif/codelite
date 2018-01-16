@@ -1869,7 +1869,7 @@ void Manager::DbgStart(long attachPid)
 #endif
 
     if(attachPid == 1) { // attach to process
-        AttachDbgProcDlg dlg(NULL);
+        AttachDbgProcDlg dlg(EventNotifier::Get()->TopFrame());
         if(dlg.ShowModal() != wxID_OK) { return; }
 
         wxString processId = dlg.GetProcessId();

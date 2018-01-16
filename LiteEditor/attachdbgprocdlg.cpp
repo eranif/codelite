@@ -23,12 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "attachdbgprocdlg.h"
-#include "windowattrmanager.h"
+#include "cl_config.h"
 #include "debuggermanager.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "procutils.h"
+#include "windowattrmanager.h"
 #include <algorithm>
-#include "fileutils.h"
 #include <wx/wupdlock.h>
 
 /// Ascending sorting function
@@ -53,15 +54,15 @@ AttachDbgProcDlg::AttachDbgProcDlg(wxWindow* parent)
         m_choiceDebugger->SetSelection(0);
     }
 
-    RefreshProcessesList(wxEmptyString);
+    wxString filter = clConfig::Get().Read("AttachDebuggerDialog/Filter", wxString());
+    m_textCtrlFilter->ChangeValue(filter);
+    CallAfter(&AttachDbgProcDlg::RefreshProcessesList, filter);
     m_textCtrlFilter->SetFocus();
-    CentreOnParent();
-
     SetName("AttachDbgProcDlg");
     WindowAttrManager::Load(this);
 }
 
-void AttachDbgProcDlg::RefreshProcessesList(wxString filter, int colToSort)
+void AttachDbgProcDlg::RefreshProcessesList(wxString filter)
 {
     wxWindowUpdateLocker locker(m_dvListCtrl);
     m_dvListCtrl->DeleteAllItems();
@@ -71,13 +72,6 @@ void AttachDbgProcDlg::RefreshProcessesList(wxString filter, int colToSort)
     // Populate the list with list of processes
     std::vector<ProcessEntry> proclist;
     ProcUtils::GetProcessList(proclist);
-
-    //    if(colToSort == 0) { // sort by PID
-    //        std::sort(proclist.begin(), proclist.end(), PIDSorter());
-    //
-    //    } else if(colToSort == 1) { // sort by name
-    //        std::sort(proclist.begin(), proclist.end(), NameSorter());
-    //    }
 
     filter.MakeLower();
     for(size_t i = 0; i < proclist.size(); ++i) {
@@ -119,10 +113,15 @@ wxString AttachDbgProcDlg::GetProcessId() const
     return wxEmptyString;
 }
 
+void AttachDbgProcDlg::OnBtnAttachUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dvListCtrl->GetSelectedRow() != wxNOT_FOUND);
+}
 
-void AttachDbgProcDlg::OnBtnAttachUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->GetSelectedRow() != wxNOT_FOUND); }
-
-AttachDbgProcDlg::~AttachDbgProcDlg() {}
+AttachDbgProcDlg::~AttachDbgProcDlg()
+{
+    clConfig::Get().Write("AttachDebuggerDialog/Filter", m_textCtrlFilter->GetValue());
+}
 
 void AttachDbgProcDlg::OnFilter(wxCommandEvent& event)
 {
@@ -138,3 +137,10 @@ void AttachDbgProcDlg::OnRefresh(wxCommandEvent& event)
     RefreshProcessesList(wxEmptyString);
     m_textCtrlFilter->SetFocus();
 }
+void AttachDbgProcDlg::OnEnter(wxCommandEvent& event)
+{
+    if(!GetProcessId().IsEmpty()) {
+        EndModal(wxID_OK);
+    }
+}
+void AttachDbgProcDlg::OnItemActivated(wxDataViewEvent& event) { EndModal(wxID_OK); }

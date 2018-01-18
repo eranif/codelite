@@ -284,7 +284,7 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
         if(IsVerticalTabs()) {
-            if(t->IsActive() && clientRect.Contains(t->GetRect())) { return true; }
+            if(t->IsActive() && clientRect.Intersects(t->GetRect())) { return true; }
         } else {
             wxRect tabRect = t->GetRect();
             tabRect.SetWidth(tabRect.GetWidth() *

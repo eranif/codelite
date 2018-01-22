@@ -45,19 +45,21 @@ TabgroupManager::~TabgroupManager()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &TabgroupManager::OnWorkspaceClosed, this);
 }
 
-vTabGrps& TabgroupManager::GetTabgroups()
+vTabGrps& TabgroupManager::GetTabgroups(bool isGlobal /*=false*/)
 {
-    if(m_tabgroups.empty()) {
-        LoadKnownTabgroups(); // Of course there might just not *be* any, but safer to try loading
+    vTabGrps& tabgrps = (isGlobal ? m_globalTabgroups : m_tabgroups);
+    if(tabgrps.empty()) {
+        LoadKnownTabgroups(isGlobal); // Of course there might just not *be* any, but safer to try loading
     }
-    return m_tabgroups;
+    return tabgrps;
 }
 
-bool TabgroupManager::FindTabgroup(const wxString& tabgroupname, wxArrayString& items)
+bool TabgroupManager::FindTabgroup(bool isGlobal, const wxString& tabgroupname, wxArrayString& items)
 {
     items.Empty();
-    vTabGrps::const_iterator iter = m_tabgroups.begin();
-    for(; iter != m_tabgroups.end(); ++iter) {
+    vTabGrps& tabgrps = (isGlobal ? m_globalTabgroups : m_tabgroups);
+    vTabGrps::const_iterator iter = tabgrps.begin();
+    for(; iter != tabgrps.end(); ++iter) {
         if(iter->first == tabgroupname) {
             items = iter->second;
             return true;
@@ -77,17 +79,20 @@ void TabgroupManager::SetTabgroupDirectory()
     m_tabgroupdir = TabgrpPath.GetPath();
 }
 
-void TabgroupManager::LoadKnownTabgroups()
+void TabgroupManager::LoadKnownTabgroups(bool isGlobal /*=false*/)
 {
     wxArrayString Tabgrpfiles;
+    wxString tabgroupsDir = isGlobal ?
+        clStandardPaths::Get().GetUserDataDir() + "/tabgroups" : GetTabgroupDirectory();
+        
     // Load tabgroups from the tabgroup dir
-    wxDir::GetAllFiles(GetTabgroupDirectory(), &Tabgrpfiles, wxT("*.tabgroup"), wxDIR_FILES);
+    wxDir::GetAllFiles(tabgroupsDir, &Tabgrpfiles, wxT("*.tabgroup"), wxDIR_FILES);
     for(size_t n = 0; n < Tabgrpfiles.GetCount(); ++n) {
-        LoadTabgroupData(Tabgrpfiles.Item(n));
+        LoadTabgroupData(isGlobal, Tabgrpfiles.Item(n));
     }
 }
 
-void TabgroupManager::LoadTabgroupData(const wxString& tabgroup)
+void TabgroupManager::LoadTabgroupData(bool isGlobal, const wxString& tabgroup)
 {
     // 'tabgroup' is the filepath of the tabgroup to load
     if(tabgroup.IsEmpty()) {
@@ -105,7 +110,8 @@ void TabgroupManager::LoadTabgroupData(const wxString& tabgroup)
             tabnames.Add(ti.GetFileName());
         }
         std::pair<wxString, wxArrayString> TabgroupItem(tabgroup, tabnames);
-        m_tabgroups.push_back(TabgroupItem);
+        vTabGrps& tabgrps = (isGlobal ? m_globalTabgroups : m_tabgroups);
+        tabgrps.push_back(TabgroupItem);
     }
 }
 
@@ -184,7 +190,7 @@ void TabgroupManager::OnWorkspaceLoaded(wxCommandEvent& evt)
 
     // Load the tabs directly from here and not by a handler to ensure that the pane
     // does not try to load the items before the manager is initialised properly
-    clMainFrame::Get()->GetWorkspacePane()->GetTabgroupsTab()->DisplayTabgroups();
+    clMainFrame::Get()->GetWorkspacePane()->GetTabgroupsTab()->DisplayTabgroups(false);
 }
 
 void TabgroupManager::OnWorkspaceClosed(wxCommandEvent& evt)

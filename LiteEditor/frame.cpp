@@ -2326,7 +2326,8 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
             }
         }
 
-        wxString path = TabGroupsManager::Get()->GetTabgroupDirectory();
+        wxString path = dlg.GetSaveInWorkspace() ?
+            TabGroupsManager::Get()->GetTabgroupDirectory() : clStandardPaths::Get().GetUserDataDir() + "/tabgroups";
 
         if(path.Right(1) != wxFileName::GetPathSeparator()) { path << wxFileName::GetPathSeparator(); }
         wxString filepath(path + sessionName + wxT(".tabgroup"));
@@ -2344,7 +2345,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
             GetMainBook()->SaveSession(session, &intArr);
             SessionManager::Get().Save(session.GetTabgroupName(), session, "tabgroup", tabgroupTag);
             // Add the new tabgroup to the tabgroup manager and pane
-            GetWorkspacePane()->GetTabgroupsTab()->AddNewTabgroupToTree(filepath);
+            GetWorkspacePane()->GetTabgroupsTab()->AddNewTabgroupToTree(!dlg.GetSaveInWorkspace(), filepath);
 
             // Remove any previous instance of this group from the history, then prepend it and save
             int index = previousgroups.Index(filepath);

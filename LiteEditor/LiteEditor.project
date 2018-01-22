@@ -445,6 +445,7 @@
       <File Name="tabgroupbasedlgs.cpp"/>
       <File Name="tabgroupbasedlgs.h"/>
       <File Name="tabgroupdlg.cpp"/>
+      <File Name="tabgroupbasedlgs.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="LocalSettings">
       <File Name="editorsettingslocal.cpp"/>

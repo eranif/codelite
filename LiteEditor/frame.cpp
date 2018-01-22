@@ -1856,14 +1856,19 @@ void clMainFrame::Bootstrap()
 
     if(!clConfig::Get().Read(kConfigBootstrapCompleted, false)) {
         clConfig::Get().Write(kConfigBootstrapCompleted, true);
-        if(StartSetupWizard()) return;
+        if(StartSetupWizard()) {
+            EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
+            return;
+        }
     }
 
     // Load the session manager
     wxString sessConfFile;
     sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
     SessionManager::Get().Load(sessConfFile);
-
+    
+    EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
+    
     // restore last session if needed
     if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
@@ -2978,7 +2983,6 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
     wxModule::InitializeModules();
 
     // Send initialization end event
-    EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
     CallAfter(&clMainFrame::Bootstrap);
 
     event.Skip();

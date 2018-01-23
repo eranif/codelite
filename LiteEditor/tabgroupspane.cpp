@@ -171,7 +171,7 @@ void TabgroupsPane::AddTreeItem(bool isGlobal, const wxString& tabgroupfpath, co
 
     // Both for the tabgroup and its constituent files, we display the filename but save the filepaths in the
     // TreeItemData
-    wxString tabgroupname = tabgroupfpath.AfterLast(wxFILE_SEP_PATH);
+    wxString tabgroupname = tabgroupfpath.AfterLast(wxFILE_SEP_PATH).BeforeLast('.');
     wxTreeItemId tbnameId;
 
     int folderImgID = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
@@ -563,6 +563,9 @@ void TabgroupsPane::DuplicateTabgroup()
                                          _("Duplicate a tabgroup"), oldfilepath.GetFullName(), this);
     if(newname.IsEmpty() || newname == oldfilepath.GetFullName()) { return; }
 
+    if (!newname.EndsWith(".tabgroup")) {
+        newname << ".tabgroup"; // Otherwise things break
+    }
     wxFileName newfilepath(oldfilepath.GetPath(), newname);
     if(newfilepath.FileExists()) {
         wxMessageBox(_("Sorry, there is already a tabgroup with this name"), _("CodeLite"), wxICON_INFORMATION | wxOK,
@@ -578,7 +581,7 @@ void TabgroupsPane::DuplicateTabgroup()
     wxCHECK_RET(parent.IsOk(), "A parentless tabgroup");
     TabGrpTreeItemData* parentdata = (TabGrpTreeItemData*)m_tree->GetItemData(parent);
     wxCHECK_RET(parentdata, "An unnamed tabgroup parent");
-    bool isGlobal = parentdata->GetFilepath() == _("Global");
+    bool isGlobal = parentdata->GetFilepath().StartsWith(_("Global"));
 
     // Do the rest in a separate method, which is also called by Frame::OnFileSaveTabGroup
     if(AddNewTabgroupToTree(isGlobal, newfilepath.GetFullPath(), selection)) {
@@ -729,7 +732,7 @@ void TabgroupsPane::AddFile(const wxString& filename)
 
 wxTreeItemId TabgroupsPane::GetRootItemForTabgroup(bool global)
 {
-    wxString label = global ? "Global" : "Workspace";
+    wxString label = global ? "Global tabgroups" : "Workspace tabgroups";
 
     // First see if the appropriate tabgroup base-item has already been created
     wxTreeItemIdValue cookie;

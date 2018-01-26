@@ -31,58 +31,58 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg(wxWindow* parent, wxWindowID id, cons
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
     
-    bSizer1->Add(fgSizer1, 0, wxEXPAND, 5);
+    bSizer1->Add(fgSizer1, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Debugger to use:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Debugger to use:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceDebuggerArr;
-    m_choiceDebugger = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceDebuggerArr, 0);
+    m_choiceDebugger = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceDebuggerArr, 0);
     
-    fgSizer1->Add(m_choiceDebugger, 0, wxALL|wxEXPAND, 5);
+    fgSizer1->Add(m_choiceDebugger, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText31 = new wxStaticText(this, wxID_ANY, _("Filter:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText31 = new wxStaticText(this, wxID_ANY, _("Filter:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer1->Add(m_staticText31, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer1->Add(m_staticText31, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlFilter = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlFilter = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
     m_textCtrlFilter->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlFilter->SetHint(wxT(""));
     #endif
     
-    fgSizer1->Add(m_textCtrlFilter, 0, wxALL|wxEXPAND, 5);
+    fgSizer1->Add(m_textCtrlFilter, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Processes:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Processes:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer1->Add(m_staticText4, 0, wxALL, 5);
+    bSizer1->Add(m_staticText4, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,150), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,150)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
-    bSizer1->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 5);
+    bSizer1->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl->AppendTextColumn(_("PID"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("PID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    bSizer1->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_buttonOk = new wxButton(this, wxID_OK, _("&Attach"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOk = new wxButton(this, wxID_OK, _("&Attach"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOk->SetDefault();
     
-    bSizer2->Add(m_buttonOk, 0, wxALL, 5);
+    bSizer2->Add(m_buttonOk, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_button2 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button2 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer2->Add(m_button2, 0, wxALL, 5);
+    bSizer2->Add(m_button2, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_buttonRefresh = new wxButton(this, wxID_REFRESH, _("&Refresh"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonRefresh = new wxButton(this, wxID_REFRESH, _("&Refresh"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer2->Add(m_buttonRefresh, 0, wxALL, 5);
+    bSizer2->Add(m_buttonRefresh, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("AttachDbgProcBaseDlg"));
-    SetSizeHints(-1,-1);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -100,6 +100,8 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg(wxWindow* parent, wxWindowID id, cons
 #endif
     // Connect events
     m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AttachDbgProcBaseDlg::OnFilter), NULL, this);
+    m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(AttachDbgProcBaseDlg::OnEnter), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(AttachDbgProcBaseDlg::OnItemActivated), NULL, this);
     m_buttonOk->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AttachDbgProcBaseDlg::OnBtnAttachUI), NULL, this);
     m_buttonRefresh->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AttachDbgProcBaseDlg::OnRefresh), NULL, this);
     
@@ -108,6 +110,8 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg(wxWindow* parent, wxWindowID id, cons
 AttachDbgProcBaseDlg::~AttachDbgProcBaseDlg()
 {
     m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AttachDbgProcBaseDlg::OnFilter), NULL, this);
+    m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(AttachDbgProcBaseDlg::OnEnter), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(AttachDbgProcBaseDlg::OnItemActivated), NULL, this);
     m_buttonOk->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AttachDbgProcBaseDlg::OnBtnAttachUI), NULL, this);
     m_buttonRefresh->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AttachDbgProcBaseDlg::OnRefresh), NULL, this);
     

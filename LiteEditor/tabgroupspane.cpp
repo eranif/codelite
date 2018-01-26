@@ -111,6 +111,7 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
 
     m_themeHelper = new ThemeHandlerHelper(this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &TabgroupsPane::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &TabgroupsPane::OnInitDone, this);
 }
 
 TabgroupsPane::~TabgroupsPane()
@@ -140,39 +141,47 @@ TabgroupsPane::~TabgroupsPane()
     delete m_node;
 
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &TabgroupsPane::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &TabgroupsPane::OnInitDone, this);
+}
+
+void TabgroupsPane::OnInitDone(wxCommandEvent& e)
+{
+    e.Skip();
+    DisplayTabgroups(true); // Display any Global tabgroups
 }
 
 bool sortfunction(const spTabGrp& x, const spTabGrp& y) { return x.first.CmpNoCase(y.first) < 0; }
 
-void TabgroupsPane::DisplayTabgroups()
+void TabgroupsPane::DisplayTabgroups(bool isGlobal /*=false*/)
 {
-    vTabGrps& tabgroups = TabGroupsManager::Get()->GetTabgroups();
+    vTabGrps& tabgroups = TabGroupsManager::Get()->GetTabgroups(isGlobal);
     std::sort(tabgroups.begin(), tabgroups.end(), sortfunction);
     vTabGrps::const_iterator iter = tabgroups.begin();
     for(; iter != tabgroups.end(); ++iter) {
-        AddTreeItem(iter->first, iter->second);
+        AddTreeItem(isGlobal, iter->first, iter->second);
     }
+    m_tree->Expand(GetRootItemForTabgroup(isGlobal));
     GetSizer()->Layout();
 }
 
-void TabgroupsPane::AddTreeItem(const wxString& tabgroupfpath, const wxArrayString& tabfilepaths,
+void TabgroupsPane::AddTreeItem(bool isGlobal, const wxString& tabgroupfpath, const wxArrayString& tabfilepaths,
                                 const wxTreeItemId insertafter /*=wxTreeItemId()*/)
 {
     wxCHECK_RET(!tabgroupfpath.IsEmpty(), wxT("A tabgroup with an empty name in TabgroupsPane::AddTreeItem"));
 
     // Both for the tabgroup and its constituent files, we display the filename but save the filepaths in the
     // TreeItemData
-    wxString tabgroupname = tabgroupfpath.AfterLast(wxFILE_SEP_PATH);
+    wxString tabgroupname = tabgroupfpath.AfterLast(wxFILE_SEP_PATH).BeforeLast('.');
     wxTreeItemId tbnameId;
 
     int folderImgID = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
     if(insertafter.IsOk()) {
         // There's a valid id to insert after, so..
-        tbnameId = m_tree->InsertItem(m_tree->GetRootItem(), insertafter, tabgroupname, folderImgID, folderImgID,
+        tbnameId = m_tree->InsertItem(GetRootItemForTabgroup(isGlobal), insertafter, tabgroupname, folderImgID, folderImgID,
                                       new TabGrpTreeItemData(tabgroupfpath, TGT_group));
     } else {
         // Otherwise, append
-        tbnameId = m_tree->AppendItem(m_tree->GetRootItem(), tabgroupname, folderImgID, folderImgID,
+        tbnameId = m_tree->AppendItem(GetRootItemForTabgroup(isGlobal), tabgroupname, folderImgID, folderImgID,
                                       new TabGrpTreeItemData(tabgroupfpath, TGT_group));
     }
     wxCHECK_RET(tbnameId.IsOk(), wxT("Failed to add the tabgroup to the tree"));
@@ -554,6 +563,9 @@ void TabgroupsPane::DuplicateTabgroup()
                                          _("Duplicate a tabgroup"), oldfilepath.GetFullName(), this);
     if(newname.IsEmpty() || newname == oldfilepath.GetFullName()) { return; }
 
+    if (!newname.EndsWith(".tabgroup")) {
+        newname << ".tabgroup"; // Otherwise things break
+    }
     wxFileName newfilepath(oldfilepath.GetPath(), newname);
     if(newfilepath.FileExists()) {
         wxMessageBox(_("Sorry, there is already a tabgroup with this name"), _("CodeLite"), wxICON_INFORMATION | wxOK,
@@ -565,20 +577,26 @@ void TabgroupsPane::DuplicateTabgroup()
         wxMessageBox(_("Sorry, duplication of the tabgroup failed :/"), _("CodeLite"), wxICON_ERROR | wxOK, this);
         return;
     }
+    wxTreeItemId parent = m_tree->GetItemParent(selection);
+    wxCHECK_RET(parent.IsOk(), "A parentless tabgroup");
+    TabGrpTreeItemData* parentdata = (TabGrpTreeItemData*)m_tree->GetItemData(parent);
+    wxCHECK_RET(parentdata, "An unnamed tabgroup parent");
+    bool isGlobal = parentdata->GetFilepath().StartsWith(_("Global"));
+
     // Do the rest in a separate method, which is also called by Frame::OnFileSaveTabGroup
-    if(AddNewTabgroupToTree(newfilepath.GetFullPath(), selection)) {
+    if(AddNewTabgroupToTree(isGlobal, newfilepath.GetFullPath(), selection)) {
         clMainFrame::Get()->GetStatusBar()->SetMessage(_("Tabgroup duplicated"));
     }
 }
 
-bool TabgroupsPane::AddNewTabgroupToTree(const wxString& newfilepath, wxTreeItemId selection /*=wxTreeItemId()*/)
+bool TabgroupsPane::AddNewTabgroupToTree(bool isGlobal, const wxString& newfilepath, wxTreeItemId selection /*=wxTreeItemId()*/)
 {
     // Tell TabGroupsManager to load the new group. Probably a good idea anyway, but we'll need it below
-    TabGroupsManager::Get()->LoadTabgroupData(newfilepath);
+    TabGroupsManager::Get()->LoadTabgroupData(isGlobal, newfilepath);
     // Now add the newly-loaded info to the tree
     wxArrayString items;
-    if(TabGroupsManager::Get()->FindTabgroup(newfilepath, items)) {
-        AddTreeItem(newfilepath, items, selection);
+    if(TabGroupsManager::Get()->FindTabgroup(isGlobal, newfilepath, items)) {
+        AddTreeItem(isGlobal, newfilepath, items, selection);
         return true;
     }
 
@@ -676,7 +694,7 @@ int TabgroupsPane::DoGetIconIndex(const wxString& filename)
 void TabgroupsPane::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
-    m_tree->DeleteChildren(m_tree->GetRootItem());
+    m_tree->DeleteChildren(GetRootItemForTabgroup(false));
 }
 
 void TabgroupsPane::FileDropped(const wxString& filename)
@@ -710,4 +728,24 @@ void TabgroupsPane::AddFile(const wxString& filename)
     m_copieditem_filepath = oldcopieditem_filepath;
     wxDELETE(m_node);
     m_node = oldnode;
+}
+
+wxTreeItemId TabgroupsPane::GetRootItemForTabgroup(bool global)
+{
+    wxString label = global ? "Global tabgroups" : "Workspace tabgroups";
+
+    // First see if the appropriate tabgroup base-item has already been created
+    wxTreeItemIdValue cookie;
+    wxTreeItemId child = m_tree->GetFirstChild(m_tree->GetRootItem(), cookie);
+    while (child.IsOk()) {
+        TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(child);
+        if(data && data->GetFilepath() == label) {
+            return child;
+        }
+        child = m_tree->GetNextSibling(child);
+    }
+    // Nope, so create it
+    int folderImgID = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
+    return m_tree->AppendItem(m_tree->GetRootItem(), label, folderImgID, folderImgID,
+                                      new TabGrpTreeItemData(label, TGT_group));
 }

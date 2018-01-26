@@ -69,14 +69,19 @@ public:
     TabgroupsPane() { m_node = NULL; }
     TabgroupsPane(wxWindow* parent, const wxString& caption);
     ~TabgroupsPane();
-    void DisplayTabgroups();
-    bool AddNewTabgroupToTree(const wxString& newfilepath, wxTreeItemId selection = wxTreeItemId());
+    void DisplayTabgroups(bool isGlobal = false);
+    bool AddNewTabgroupToTree(bool isGlobal, const wxString& newfilepath, wxTreeItemId selection = wxTreeItemId());
     void FileDropped(const wxString& filename);
+    /*!
+     * \brief Returns the 'root' item for either Global or Workspace tabgroups
+     */
+    wxTreeItemId GetRootItemForTabgroup(bool global);
     
 protected:
     void AddFile(const wxString& filename);
     
-    void AddTreeItem(const wxString& tabgroupname,
+    void AddTreeItem(bool isGlobal, 
+                     const wxString& tabgroupname,
                      const wxArrayString& tabfilepaths,
                      const wxTreeItemId insertafter = wxTreeItemId());
     void AddTabgroupItem();
@@ -102,6 +107,7 @@ protected:
     void OnBeginDrag(wxTreeEvent& event);
     void OnEndDrag(wxTreeEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnInitDone(wxCommandEvent& e);
     wxTreeCtrl* m_tree;
     /*!
      * \brief Stores the dragged item during DnD

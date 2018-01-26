@@ -49,7 +49,7 @@ protected:
 
 public:
     wxString GetTabgroupDirectory();
-    vTabGrps& GetTabgroups();
+    vTabGrps& GetTabgroups(bool isGlobal = false);
 
     /*!
      * \brief Finds the spTabGrp that matches tabgroupname, returning its TabgroupItems in items
@@ -57,8 +57,8 @@ public:
      * \param items
      * \return true if tabgroup was found
      */
-    bool FindTabgroup(const wxString& tabgroupname, wxArrayString& items);
-    void LoadTabgroupData(const wxString& tabgroup);
+    bool FindTabgroup(bool isGlobal, const wxString& tabgroupname, wxArrayString& items);
+    void LoadTabgroupData(bool isGlobal, const wxString& tabgroup);
 
     wxXmlNode* FindTabgroupItem(wxXmlDocument& doc, const wxString& filepath, const wxString& itemfilepath);
     bool DoAddItemToTabgroup(
@@ -77,12 +77,12 @@ protected:
     TabgroupManager();
     ~TabgroupManager();
 
-    void LoadKnownTabgroups();
-    void TransferKnownTabgroupsToTabgroupDir(const wxString& TabgrpPath); // Transitional code. Remove sometime
+    void LoadKnownTabgroups(bool isGlobal = false);
     void SetTabgroupDirectory();
 
     wxString m_tabgroupdir;
     vTabGrps m_tabgroups;
+    vTabGrps m_globalTabgroups;
 };
 
 typedef Singleton<TabgroupManager> TabGroupsManager;

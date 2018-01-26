@@ -59,7 +59,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner811->SetText(_("Development Profile"), _("Select the profile that best describes you"));
     m_banner811->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     
-    boxSizer89->Add(m_banner811, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer89->Add(m_banner811, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer93 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -105,8 +105,8 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer52->Add(m_dvListCtrlCompilers, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrlCompilers->AppendTextColumn(_("Compiler Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT);
-    m_dvListCtrlCompilers->AppendTextColumn(_("Installation Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrlCompilers->AppendTextColumn(_("Compiler Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlCompilers->AppendTextColumn(_("Installation Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_wizardPageColoursAndFonts = new clBoostrapWizardPageColours(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageColoursAndFonts);
     

@@ -187,18 +187,32 @@ void SFTPTreeView::OnOpenAccountManager(wxCommandEvent& event)
 void SFTPTreeView::DoCloseSession()
 {
     // Check if we have unmodified files belonged to this session
+    // Load the session name
     IEditor::List_t editors;
     IEditor::List_t modeditors;
     clGetManager()->GetAllEditors(editors);
+    
+    // Create a session
+    SFTPSessionInfo sess;
+    wxArrayString remoteFiles;
     std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
-        if(editor->GetClientData("sftp")) {
+        SFTPClientData* pcd = dynamic_cast<SFTPClientData*>(editor->GetClientData("sftp"));
+        if(pcd) {
+            sess.GetFiles().push_back(pcd->GetRemotePath());
             if(!clGetManager()->CloseEditor(editor)) { modeditors.push_back(editor); }
         }
     });
-
+    
     // User cancel to close request, so dont close the session just yet
     if(!modeditors.empty()) { return; }
-
+    
+    // Set the session name
+    if(m_sftp) {
+        sess.SetAccount(m_sftp->GetAccount());
+        sess.SetRootFolder(m_textCtrlQuickJump->GetValue()); // Keep the root folder
+        m_sessions.Load().SetSession(sess).Save();
+    }
+    
     m_sftp.reset(NULL);
     m_treeCtrl->DeleteAllItems();
 }

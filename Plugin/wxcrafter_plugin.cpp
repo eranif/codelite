@@ -119,7 +119,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_auibar242 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar242->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer13->Add(m_auibar242, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer13->Add(m_auibar242, 0, wxEXPAND, WXC_FROM_DIP(5));
     
     m_auibar242->AddTool(ID_DIFF_TOOL_REFRESH, _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("16-debugger_restart")), wxNullBitmap, wxITEM_NORMAL, _("Refresh"), _("Refresh"), NULL);
     
@@ -259,7 +259,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     m_staticTextLeft = new wxStaticText(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(-1,-1)), wxALIGN_CENTRE|wxBORDER_THEME);
     
-    boxSizer111->Add(m_staticTextLeft, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    boxSizer111->Add(m_staticTextLeft, 0, wxALL|wxEXPAND|wxALIGN_LEFT, WXC_FROM_DIP(2));
     
     m_splitterPageRight = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight, 0);
@@ -331,7 +331,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     m_staticTextRight = new wxStaticText(m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(-1,-1)), wxALIGN_CENTRE|wxBORDER_THEME);
     
-    boxSizer113->Add(m_staticTextRight, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    boxSizer113->Add(m_staticTextRight, 0, wxALL|wxEXPAND|wxALIGN_LEFT, WXC_FROM_DIP(2));
     
     m_panelOverviewFull = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(6,-1)), wxTAB_TRAVERSAL);
     

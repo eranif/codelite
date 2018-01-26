@@ -33,6 +33,7 @@
 #include "cl_sftp.h"
 #include "ssh_account_info.h"
 #include <vector>
+#include "SFTPSessionInfo.h"
 
 class MyClientData;
 class SFTP;
@@ -47,6 +48,7 @@ class SFTPTreeView : public SFTPTreeViewBase
     SFTP* m_plugin;
     wxString m_commandOutput;
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
+    SFTPSessionInfoList m_sessions;
 
 public:
     enum {

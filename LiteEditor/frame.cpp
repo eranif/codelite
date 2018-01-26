@@ -1856,14 +1856,19 @@ void clMainFrame::Bootstrap()
 
     if(!clConfig::Get().Read(kConfigBootstrapCompleted, false)) {
         clConfig::Get().Write(kConfigBootstrapCompleted, true);
-        if(StartSetupWizard()) return;
+        if(StartSetupWizard()) {
+            EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
+            return;
+        }
     }
 
     // Load the session manager
     wxString sessConfFile;
     sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
     SessionManager::Get().Load(sessConfFile);
-
+    
+    EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
+    
     // restore last session if needed
     if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
@@ -2321,7 +2326,8 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
             }
         }
 
-        wxString path = TabGroupsManager::Get()->GetTabgroupDirectory();
+        wxString path = dlg.GetSaveInWorkspace() ?
+            TabGroupsManager::Get()->GetTabgroupDirectory() : clStandardPaths::Get().GetUserDataDir() + "/tabgroups";
 
         if(path.Right(1) != wxFileName::GetPathSeparator()) { path << wxFileName::GetPathSeparator(); }
         wxString filepath(path + sessionName + wxT(".tabgroup"));
@@ -2339,7 +2345,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
             GetMainBook()->SaveSession(session, &intArr);
             SessionManager::Get().Save(session.GetTabgroupName(), session, "tabgroup", tabgroupTag);
             // Add the new tabgroup to the tabgroup manager and pane
-            GetWorkspacePane()->GetTabgroupsTab()->AddNewTabgroupToTree(filepath);
+            GetWorkspacePane()->GetTabgroupsTab()->AddNewTabgroupToTree(!dlg.GetSaveInWorkspace(), filepath);
 
             // Remove any previous instance of this group from the history, then prepend it and save
             int index = previousgroups.Index(filepath);
@@ -2978,7 +2984,6 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
     wxModule::InitializeModules();
 
     // Send initialization end event
-    EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
     CallAfter(&clMainFrame::Bootstrap);
 
     event.Skip();

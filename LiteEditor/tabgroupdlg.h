@@ -82,5 +82,9 @@ public:
 	wxString GetTabgroupName() const {
 		return m_textName->GetValue();
 	}
+
+    bool GetSaveInWorkspace() const {
+        return m_radioBoxWorkspaceOrGlobal->IsShown() && m_radioBoxWorkspaceOrGlobal->GetSelection() == 0;
+    }
 };
 #endif // __tabgroupdlg__

@@ -25,6 +25,7 @@
 
 #include "tabgroupdlg.h"
 #include "windowattrmanager.h"
+#include "manager.h"
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/dir.h>
@@ -91,6 +92,8 @@ SaveTabGroupDlg::SaveTabGroupDlg(wxWindow* parent, const wxArrayString& previous
 {
     SetName("SaveTabGroupDlg");
     WindowAttrManager::Load(this);
+    
+    m_radioBoxWorkspaceOrGlobal->Show(ManagerST::Get()->IsWorkspaceOpen());
 }
 
 SaveTabGroupDlg::~SaveTabGroupDlg() {}

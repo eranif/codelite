@@ -56,10 +56,6 @@ LoadTabGroupBaseDlg::LoadTabGroupBaseDlg(wxWindow* parent, wxWindowID id, const 
     
     bSizer2->Add(m_replaceCheck, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_staticline3 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
-    
-    bSizer2->Add(m_staticline3, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer2->Add(bSizer11, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
@@ -148,10 +144,6 @@ SaveTabGroupBaseDlg::SaveTabGroupBaseDlg(wxWindow* parent, wxWindowID id, const 
     
     bSizer13->Add(m_buttonClearAll, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_staticline1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
-    
-    bSizer1->Add(m_staticline1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
     wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
     
     bSizer1->Add(bSizer10, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
@@ -169,16 +161,12 @@ SaveTabGroupBaseDlg::SaveTabGroupBaseDlg(wxWindow* parent, wxWindowID id, const 
     
     wxArrayString m_radioBoxWorkspaceOrGlobalArr;
     m_radioBoxWorkspaceOrGlobalArr.Add(_("Workspace"));
-    m_radioBoxWorkspaceOrGlobalArr.Add(_("Globally"));
-    m_radioBoxWorkspaceOrGlobal = new wxRadioBox(this, wxID_ANY, _("Save in the current Workspace, or Globally"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_radioBoxWorkspaceOrGlobalArr, 1, 0);
+    m_radioBoxWorkspaceOrGlobalArr.Add(_("Global"));
+    m_radioBoxWorkspaceOrGlobal = new wxRadioBox(this, wxID_ANY, _("Save in the current Workspace, or Globally"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_radioBoxWorkspaceOrGlobalArr, 1, wxRA_SPECIFY_ROWS);
     m_radioBoxWorkspaceOrGlobal->SetToolTip(_("Tabgroups are usually specific to a single workspace. However if you want to use one in multiple workspaces, or when a workspace is not open, save it globally."));
     m_radioBoxWorkspaceOrGlobal->SetSelection(0);
     
-    bSizer10->Add(m_radioBoxWorkspaceOrGlobal, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_staticline11 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
-    
-    bSizer1->Add(m_staticline11, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    bSizer10->Add(m_radioBoxWorkspaceOrGlobal, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxHORIZONTAL);
     

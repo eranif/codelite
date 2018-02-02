@@ -575,7 +575,6 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     // tab as the new selection and leave this function
     if(!clickWasOnActiveTab) {
         SetSelection(realPos);
-        return;
     }
 
     // If we clicked on the active and we have a close button - handle it here
@@ -590,10 +589,10 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     }
 
     // We clicked on the active tab, start DnD operation
-    if((m_style & kNotebook_AllowDnD) && clickWasOnActiveTab) {
+    if((m_style & kNotebook_AllowDnD)) {
         // We simply drag the active tab index
         wxString dragText;
-        dragText << "{Class:Notebook,TabIndex:" << GetSelection() << "}{";
+        dragText << "{Class:Notebook,TabIndex:" << realPos << "}{";
 #if CL_BUILD
         IEditor* activeEditor = clGetManager()->GetActiveEditor();
         wxWindow* activePage = NULL;

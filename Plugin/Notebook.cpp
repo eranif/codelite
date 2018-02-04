@@ -184,6 +184,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_style(style)
     , m_closeButtonClickedIndex(wxNOT_FOUND)
     , m_contextMenu(NULL)
+    , m_dragStartTime((time_t)-1)
 {
     SetBackgroundColour(DrawingUtils::GetPanelBgColour());
     SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -588,27 +589,11 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
         }
     }
 
-    // We clicked on the active tab, start DnD operation
+    // We clicked on a tab, so prepare to start DnD operation
     if((m_style & kNotebook_AllowDnD)) {
-        // We simply drag the active tab index
-        wxString dragText;
-        dragText << "{Class:Notebook,TabIndex:" << realPos << "}{";
-#if CL_BUILD
-        IEditor* activeEditor = clGetManager()->GetActiveEditor();
-        wxWindow* activePage = NULL;
-        if(GetSelection() != wxNOT_FOUND) { activePage = GetPage(GetSelection()); }
-
-        if(activeEditor && ((void*)activeEditor->GetCtrl() == (void*)activePage)) {
-            // The current Notebook is the main editor
-            dragText << activeEditor->GetFileName().GetFullPath();
-        }
-        dragText << "}";
-#endif
-        wxTextDataObject dragContent(dragText);
-        wxDropSource dragSource(this);
-        dragSource.SetData(dragContent);
-        wxDragResult result = dragSource.DoDragDrop(true);
-        wxUnusedVar(result);
+        wxCHECK_RET(!m_dragStartTime.IsValid(), "A leftdown event when Tab DnD was already starting/started");
+        m_dragStartTime = wxDateTime::UNow();
+        m_dragStartPos = wxPoint(event.GetX(), event.GetY());
     }
 }
 
@@ -778,6 +763,9 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
 
+    m_dragStartTime.Set((time_t)-1); // Not considering D'n'D so reset any saved values
+    m_dragStartPos = wxPoint();
+
     // First check if the chevron was clicked. We do this because the chevron could overlap the buttons drawing
     // area
     if((GetStyle() & kNotebook_ShowFileListButton) && m_chevronRect.Contains(event.GetPosition())) {
@@ -823,6 +811,15 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
     } else {
         wxString pagetip = m_tabs.at(realPos)->GetTooltip();
         if(pagetip != curtip) { SetToolTip(pagetip); }
+    }
+    
+    if (m_dragStartTime.IsValid()) { // If we're tugging on the tab, consider starting D'n'D
+        wxTimeSpan diff = wxDateTime::UNow() - m_dragStartTime;
+        if (diff.GetMilliseconds() > 100 && // We need to check both x and y distances as tabs may be vertical
+                ((abs(m_dragStartPos.x - event.GetX()) > 10) || (abs(m_dragStartPos.y - event.GetY()) > 10))
+           ) {
+            OnBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
+        }
     }
 }
 
@@ -1353,12 +1350,42 @@ void clTabCtrl::OnMouseScroll(wxMouseEvent& event)
 // DnD
 // ---------------------------------------------------------------------------
 
+
+void clTabCtrl::OnBeginDrag()
+{
+    m_dragStartTime.Set((time_t)-1); // Reset the saved values
+    m_dragStartPos = wxPoint();
+
+
+    // We simply drag the active tab index
+        wxString dragText;
+        dragText << "{Class:Notebook,TabIndex:" << GetSelection() << "}{";
+#if CL_BUILD
+        IEditor* activeEditor = clGetManager()->GetActiveEditor();
+        wxWindow* activePage = NULL;
+        if(GetSelection() != wxNOT_FOUND) { activePage = GetPage(GetSelection()); }
+
+        if(activeEditor && ((void*)activeEditor->GetCtrl() == (void*)activePage)) {
+            // The current Notebook is the main editor
+            dragText << activeEditor->GetFileName().GetFullPath();
+        }
+        dragText << "}";
+#endif
+        wxTextDataObject dragContent(dragText);
+        wxDropSource dragSource(this);
+        dragSource.SetData(dragContent);
+        wxDragResult result = dragSource.DoDragDrop(true);
+        wxUnusedVar(result);
+
+}
+
 clTabCtrlDropTarget::clTabCtrlDropTarget(clTabCtrl* tabCtrl)
     : m_tabCtrl(tabCtrl)
 {
 }
 
 clTabCtrlDropTarget::~clTabCtrlDropTarget() {}
+
 
 bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
 {

@@ -88,6 +88,9 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     wxRect m_chevronRect;
     clTabHistory::Ptr_t m_history;
     clTabRenderer::Ptr_t m_art;
+    
+    wxDateTime m_dragStartTime;
+    wxPoint m_dragStartPos;
 
     void DoChangeSelection(size_t index);
 
@@ -138,6 +141,8 @@ protected:
     void DoDeletePage(size_t page) { RemovePage(page, true, true); }
     void DoShowTabList();
     void DoUpdateXCoordFromPage(wxWindow* page, int diff);
+    
+    void OnBeginDrag();
 
 public:
     clTabCtrl(wxWindow* notebook, size_t style);

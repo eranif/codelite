@@ -226,8 +226,6 @@ void SubversionView::OnTreeMenu(wxTreeEvent& event)
 void SubversionView::CreatGUIControls()
 {
     // Assign the image list
-    BitmapLoader* bmpLoader = m_plugin->GetManager()->GetStdIcons();
-
     // Add toolbar
     // Create the toolbar
     BitmapLoader* bmpLdr = m_plugin->GetManager()->GetStdIcons();
@@ -473,7 +471,7 @@ void SubversionView::DoGetSelectedFiles(wxArrayString& paths)
 
     wxDataViewItemArray items;
     m_dvListCtrl->GetSelections(items);
-    for(int i = 0; i < items.GetCount(); ++i) {
+    for(size_t i = 0; i < items.GetCount(); ++i) {
         SvnTreeData* d = (SvnTreeData*)m_dvListCtrl->GetItemData(items.Item(i));
         paths.Add(d->GetFilepath());
     }

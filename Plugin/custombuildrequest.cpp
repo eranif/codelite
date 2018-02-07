@@ -22,23 +22,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/app.h>
-#include <wx/log.h>
-#include "buildmanager.h"
-#include "event_notifier.h"
 #include "asyncprocess.h"
-#include "imanager.h"
-#include <wx/ffile.h>
-#include "environmentconfig.h"
-#include "globals.h"
-#include "dirsaver.h"
 #include "build_settings_config.h"
+#include "buildmanager.h"
+#include "cl_command_event.h"
 #include "compiler.h"
 #include "custombuildrequest.h"
-#include "workspace.h"
-#include "plugin.h"
+#include "dirsaver.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "imanager.h"
 #include "macros.h"
-#include "cl_command_event.h"
+#include "plugin.h"
+#include "workspace.h"
+#include <wx/app.h>
+#include <wx/ffile.h>
+#include <wx/log.h>
 
 #ifdef __WXMSW__
 #define ECHO_CMD wxT("@echo ")
@@ -91,7 +91,7 @@ void CustomBuildRequest::Process(IManager* manager)
     BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
     if(!bldConf) {
         wxLogMessage(wxString::Format(wxT("Failed to find build configuration for project '%s' and configuration '%s'"),
-            m_info.GetProject().c_str(), m_info.GetConfiguration().c_str()));
+                                      m_info.GetProject().c_str(), m_info.GetConfiguration().c_str()));
         return;
     }
 
@@ -227,8 +227,8 @@ void CustomBuildRequest::Process(IManager* manager)
     }
 }
 
-bool CustomBuildRequest::DoUpdateCommand(
-    IManager* manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf, bool isClean)
+bool CustomBuildRequest::DoUpdateCommand(IManager* manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf,
+                                         bool isClean)
 {
     BuildCommandList preBuildCmds, postBuildCmds;
     wxArrayString pre, post;

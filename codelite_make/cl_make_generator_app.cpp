@@ -117,15 +117,19 @@ bool clMakeGeneratorApp::OnInit()
                           << " is using a custom build - will not generate makefile");
         Notice(wxString() << "Instead, here is the command line to use:");
         wxString command;
+        wxString workingDirectory = MacroManager::Instance()->Expand(
+                       bldConf->GetCustomBuildWorkingDir(), NULL, m_project, bldConf->GetName());
+        if(wxFileName::DirExists(workingDirectory) == false) {
+            Info(wxString() << "-- Creating build directory: " << workingDirectory);
+            wxFileName::Mkdir(workingDirectory, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        }
         command << "cd "
-                << MacroManager::Instance()->Expand(
-                       bldConf->GetCustomBuildWorkingDir(), NULL, m_project, bldConf->GetName())
+                << workingDirectory
                 << " && "
                 << MacroManager::Instance()->Expand(bldConf->GetCustomBuildCmd(), NULL, m_project, bldConf->GetName());
         Out(command);
         if(m_executeCommand) {
             CallAfter(&clMakeGeneratorApp::DoExecCommand, command);
-
         } else {
             CallAfter(&clMakeGeneratorApp::DoExitApp);
         }

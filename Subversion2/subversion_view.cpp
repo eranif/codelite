@@ -357,7 +357,7 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
         ClearAll();
 
         BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-        wxBitmap modifiedBmp = bmpLoader->LoadBitmap(wxT("error"));
+        wxBitmap modifiedBmp = bmpLoader->LoadBitmap(wxT("modified"));
         wxBitmap newBmp = bmpLoader->LoadBitmap(wxT("plus"));
         wxBitmap deletedBmp = bmpLoader->LoadBitmap(wxT("minus"));
         wxBitmap conflictBmp = bmpLoader->LoadBitmap(wxT("warning"));

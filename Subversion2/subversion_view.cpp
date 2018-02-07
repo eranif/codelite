@@ -230,25 +230,31 @@ void SubversionView::CreatGUIControls()
     // Create the toolbar
     BitmapLoader* bmpLdr = m_plugin->GetManager()->GetStdIcons();
     wxAuiToolBar* tb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
-    tb->AddTool(XRCID("svn_link_editor"), _("Link Editor"), bmpLdr->LoadBitmap(wxT("link_editor")), _("Link Editor"),
-                wxITEM_CHECK);
-    tb->ToggleTool(XRCID("svn_link_editor"), m_plugin->GetSettings().GetFlags() & SvnLinkEditor);
     tb->AddTool(XRCID("svn_open_local_repo_browser"), _("Select a Directory to View..."), bmpLdr->LoadBitmap("folder"),
                 _("Select a Directory to View..."), wxITEM_NORMAL);
     tb->AddSeparator();
-
+    
+    // Common svn actions
+    tb->AddTool(XRCID("svn_update"), bmpLdr->LoadBitmap("pull"), _("Svn update"), wxITEM_NORMAL);
+    tb->AddTool(XRCID("svn_commit"), bmpLdr->LoadBitmap("git-commit"), _("Svn commit"), wxITEM_NORMAL);
+    tb->AddTool(XRCID("svn_revert"), bmpLdr->LoadBitmap("undo"), _("Svn revert"), wxITEM_NORMAL);
+    tb->AddSeparator();
+    tb->AddTool(XRCID("svn_refresh"), _("Refresh View"), bmpLdr->LoadBitmap("debugger_restart"), _("Refresh View"));
+    tb->AddTool(XRCID("svn_info"), _("Svn Info"), bmpLdr->LoadBitmap("info"), _("Svn Info"));
+    tb->AddSeparator();
+    
     tb->AddTool(XRCID("svn_stop"), _("Stop current svn process"), bmpLdr->LoadBitmap("stop"),
                 _("Stop current svn process"));
     tb->AddTool(XRCID("svn_cleanup"), _("Svn Cleanup"), bmpLdr->LoadBitmap("clean"), _("Svn Cleanup"));
     tb->AddSeparator();
     tb->AddTool(XRCID("svn_checkout"), _("Svn Checkout"), bmpLdr->LoadBitmap("next"), _("Svn Checkout"));
     tb->AddSeparator();
-    tb->AddTool(XRCID("svn_refresh"), _("Refresh View"), bmpLdr->LoadBitmap("debugger_restart"), _("Refresh View"));
-    tb->AddSeparator();
     tb->AddTool(XRCID("clear_svn_output"), _("Clear Svn Output Tab"), bmpLdr->LoadBitmap("clear"),
                 _("Clear Svn Output Tab"), wxITEM_NORMAL);
     tb->AddTool(XRCID("svn_settings"), _("Svn Settings..."), bmpLdr->LoadBitmap("cog"), _("Svn Settings..."));
-    tb->AddTool(XRCID("svn_info"), _("Svn Info"), bmpLdr->LoadBitmap("info"), _("Svn Info"));
+    tb->AddTool(XRCID("svn_link_editor"), _("Link Editor"), bmpLdr->LoadBitmap(wxT("link_editor")), _("Link Editor"),
+                wxITEM_CHECK);
+    tb->ToggleTool(XRCID("svn_link_editor"), m_plugin->GetSettings().GetFlags() & SvnLinkEditor);
 
     tb->Connect(XRCID("clear_svn_output"), wxEVT_COMMAND_MENU_SELECTED,
                 wxCommandEventHandler(SubversionView::OnClearOuptut), NULL, this);
@@ -262,7 +268,13 @@ void SubversionView::CreatGUIControls()
                 NULL, this);
     tb->Connect(XRCID("svn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnSettings),
                 NULL, this);
-
+    tb->Bind(wxEVT_UPDATE_UI, &SubversionView::OnViewUpdateUI, this, XRCID("svn_update"));
+    tb->Bind(wxEVT_UPDATE_UI, &SubversionView::OnViewUpdateUI, this, XRCID("svn_refresh"));
+    tb->Bind(wxEVT_UPDATE_UI, &SubversionView::OnViewUpdateUI, this, XRCID("svn_commit"));
+    tb->Bind(wxEVT_UPDATE_UI, &SubversionView::OnViewUpdateUI, this, XRCID("svn_revert"));
+    tb->Bind(wxEVT_UPDATE_UI, &SubversionView::OnViewUpdateUI, this, XRCID("svn_cleanup"));
+    tb->Bind(wxEVT_UPDATE_UI, &SubversionView::OnViewUpdateUI, this, XRCID("svn_info"));
+    
     wxSizer* sz = GetSizer();
     sz->Insert(0, tb, 0, wxEXPAND);
     tb->Realize();

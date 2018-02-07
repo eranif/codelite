@@ -235,9 +235,9 @@ void SubversionView::CreatGUIControls()
     tb->AddSeparator();
     
     // Common svn actions
-    tb->AddTool(XRCID("svn_update"), bmpLdr->LoadBitmap("pull"), _("Svn update"), wxITEM_NORMAL);
-    tb->AddTool(XRCID("svn_commit"), bmpLdr->LoadBitmap("git-commit"), _("Svn commit"), wxITEM_NORMAL);
-    tb->AddTool(XRCID("svn_revert"), bmpLdr->LoadBitmap("undo"), _("Svn revert"), wxITEM_NORMAL);
+    tb->AddTool(XRCID("svn_update"), _("Svn update"), bmpLdr->LoadBitmap("pull"), _("Svn update"));
+    tb->AddTool(XRCID("svn_commit"), _("Svn commit"), bmpLdr->LoadBitmap("git-commit"), _("Svn commit"));
+    tb->AddTool(XRCID("svn_revert"), _("Svn revert"), bmpLdr->LoadBitmap("undo"), _("Svn revert"));
     tb->AddSeparator();
     tb->AddTool(XRCID("svn_refresh"), _("Refresh View"), bmpLdr->LoadBitmap("debugger_restart"), _("Refresh View"));
     tb->AddTool(XRCID("svn_info"), _("Svn Info"), bmpLdr->LoadBitmap("info"), _("Svn Info"));

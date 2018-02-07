@@ -156,7 +156,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     GitImages m_images;
     m_images.SetBitmapResolution(clBitmap::ShouldLoadHiResImages() ? "@2x" : "");
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
-    m_modifiedBmp = m_bitmapLoader->LoadBitmap("warning");
+    m_modifiedBmp = m_bitmapLoader->LoadBitmap("modified");
     m_untrackedBmp = m_bitmapLoader->LoadBitmap("info");
     m_folderBmp = m_bitmapLoader->LoadBitmap("folder-yellow");
     m_newBmp = m_bitmapLoader->LoadBitmap("plus");

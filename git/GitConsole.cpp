@@ -592,3 +592,5 @@ void GitConsole::Clear()
     }
     m_dvListCtrl->DeleteAllItems();
 }
+
+void GitConsole::OnUpdateUI(wxUpdateUIEvent& event) { event.Enable(!m_git->GetRepositoryDirectory().IsEmpty()); }

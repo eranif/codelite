@@ -89,6 +89,7 @@ public:
     void FinishDiff(wxString output, wxFileName fileBeingDiffed);
 
 protected:
+    virtual void OnViewUpdateUI(wxUpdateUIEvent& event);
     virtual void OnContextMenu(wxDataViewEvent& event);
     virtual void OnSciStcChange(wxStyledTextEvent& event);
     virtual void OnCharAdded(wxStyledTextEvent& event);

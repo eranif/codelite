@@ -1275,3 +1275,5 @@ void SubversionView::DoGetAllFiles(wxArrayString& paths)
         paths.Add(d->GetFilepath());
     }
 }
+
+void SubversionView::OnViewUpdateUI(wxUpdateUIEvent& event) { event.Enable(!DoGetCurRepoPath().IsEmpty()); }

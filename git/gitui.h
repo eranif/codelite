@@ -466,6 +466,7 @@ protected:
 protected:
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnFileActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnStclogStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 public:

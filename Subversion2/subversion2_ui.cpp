@@ -95,6 +95,7 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     // Connect events
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnContextMenu), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SubversionPageBase::OnViewUpdateUI), NULL, this);
     m_sci->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(SubversionPageBase::OnUpdateUI), NULL, this);
     m_sci->Connect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(SubversionPageBase::OnCharAdded), NULL, this);
     m_sci->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SubversionPageBase::OnKeyDown), NULL, this);
@@ -106,6 +107,7 @@ SubversionPageBase::~SubversionPageBase()
 {
     m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
     m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnContextMenu), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SubversionPageBase::OnViewUpdateUI), NULL, this);
     m_sci->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(SubversionPageBase::OnUpdateUI), NULL, this);
     m_sci->Disconnect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(SubversionPageBase::OnCharAdded), NULL, this);
     m_sci->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(SubversionPageBase::OnKeyDown), NULL, this);

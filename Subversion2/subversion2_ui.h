@@ -64,6 +64,7 @@ protected:
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnViewUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnCharAdded(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }

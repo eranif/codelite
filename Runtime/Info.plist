@@ -6,7 +6,7 @@
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>CFBundleExecutable</key>
-    <string>codelite</string>
+    <string>CodeLite</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>11.0.8</string>
     <key>CFBundleName</key>
@@ -16,7 +16,7 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleIdentifier</key>
-    <string>com.eranif.codelite</string>
+    <string>com.eranif.CodeLite</string>
     <key>CFBundleVersion</key>
     <string>CodeLite IDE version 11.0.8</string>
     <key>CFBundleShortVersionString</key>

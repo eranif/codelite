@@ -37,12 +37,12 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageLeft->SetSizer(boxSizer27);
     
-    m_dvListCtrl = new wxDataViewListCtrl(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(-1,-1)), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_MULTIPLE);
     
     boxSizer27->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrl->AppendBitmapColumn(_("?"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(32), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(32), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendIconTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_splitterPageRight = new wxPanel(m_splitter17, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter17, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter17->SplitVertically(m_splitterPageLeft, m_splitterPageRight, 0);
     

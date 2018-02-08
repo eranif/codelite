@@ -147,6 +147,9 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     , m_fileExplorerLastBaseImgIdx(-1)
     , m_codeliteEcho(NULL)
 {
+    BitmapLoader *bmpLoader = clGetManager()->GetStdIcons();
+    m_standardBitmaps = bmpLoader->MakeStandardMimeMap();
+    
     CreatGUIControls();
     m_themeHelper = new ThemeHandlerHelper(this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),
@@ -368,31 +371,33 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
         wxWindowUpdateLocker locker(m_dvListCtrl);
         ClearAll();
 
-        BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-        wxBitmap modifiedBmp = bmpLoader->LoadBitmap(wxT("modified"));
-        wxBitmap newBmp = bmpLoader->LoadBitmap(wxT("plus"));
-        wxBitmap deletedBmp = bmpLoader->LoadBitmap(wxT("minus"));
-        wxBitmap conflictBmp = bmpLoader->LoadBitmap(wxT("warning"));
-        wxBitmap lockedBmp = bmpLoader->LoadBitmap(wxT("lock"));
+        //BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
+        //wxBitmap modifiedBmp = bmpLoader->LoadBitmap(wxT("modified"));
+        //wxBitmap newBmp = bmpLoader->LoadBitmap(wxT("plus"));
+        //wxBitmap deletedBmp = bmpLoader->LoadBitmap(wxT("minus"));
+        //wxBitmap conflictBmp = bmpLoader->LoadBitmap(wxT("warning"));
+        //wxBitmap lockedBmp = bmpLoader->LoadBitmap(wxT("lock"));
 
-        DoAddNode(modifiedBmp, modifiedFiles);
-        DoAddNode(newBmp, newFiles);
-        DoAddNode(deletedBmp, deletedFiles);
-        DoAddNode(conflictBmp, conflictedFiles);
-        DoAddNode(lockedBmp, lockedFiles);
-        // DoAddNode(svnUNVERSIONED_FILES, UNVERSIONED_IMG_ID, SvnTreeData::SvnNodeTypeUnversionedRoot,
-        // unversionedFiles);
-
-        //        DoLinkEditor();
+        DoAddNode("M", modifiedFiles);
+        DoAddNode("A", newFiles);
+        DoAddNode("D", deletedFiles);
+        DoAddNode("C", conflictedFiles);
+        DoAddNode("L", lockedFiles);
+        //DoLinkEditor();
     }
 }
 
-void SubversionView::DoAddNode(const wxBitmap& bmp, const wxArrayString& files)
+void SubversionView::DoAddNode(const wxString& status, const wxArrayString& files)
 {
     std::for_each(files.begin(), files.end(), [&](const wxString& filepath) {
+        FileExtManager::FileType type = FileExtManager::GetType(filepath, FileExtManager::TypeText);
+        wxBitmap bmp = m_standardBitmaps[FileExtManager::TypeText];
+        if(m_standardBitmaps.count(type)) {
+            bmp = m_standardBitmaps[type];
+        }
         wxVector<wxVariant> cols;
-        cols.push_back(wxVariant(bmp));
-        cols.push_back(filepath);
+        cols.push_back(status);
+        cols.push_back(::MakeIconText(filepath, bmp));
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new SvnTreeData(SvnTreeData::SvnNodeTypeFile, filepath));
     });
 }

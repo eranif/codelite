@@ -349,7 +349,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
 
         if(kind != eGitFile::kUntrackedFile) {
             cols.clear();
-            cols.push_back(wxVariant(statusBmp));
+            cols.push_back(wxString() << chX);
             cols.push_back(MakeIconText(filename, bmp));
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
         }

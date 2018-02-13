@@ -15,7 +15,7 @@ More information can be found here:
  
 ----------
 
-![Linux logo][6] Building CodeLite on Linux
+Building CodeLite on Linux
 ----
 
 To build CodeLite on your computer you will need these packages:
@@ -27,7 +27,7 @@ To build CodeLite on your computer you will need these packages:
  - CMake
  - Git.
 
-You should have wxWidgets 3.0 or later built on your machine. If you don't know how to build (or you're just lazy...) you can [download wxWidgets from CodeLite's repository][7].
+You should have wxWidgets 3.0 or later built on your machine. If you don't know how to build (or you're just lazy...) you can [download wxWidgets from CodeLite's repository][6].
 
 
 On Ubuntu / Debian you can install all of the above (except for wxWidgets 3.0) by typing:
@@ -49,7 +49,7 @@ Run CMake and build CodeLite:
 
 ----------
 
-![Apple logo][8] Building CodeLite on macOS
+Building CodeLite on macOS
 ----
 
 Prerequisites:
@@ -103,15 +103,15 @@ To launch CodeLite:
 
 ----------
 
-![Windows Logo][9] Building CodeLite on Windows
+Building CodeLite on Windows
 ----
 
 Git clone the sources:
 
     git clone https://github.com/eranif/codelite.git
 
- - Download CodeLite installer for Windows from our [Download Page][10]
- - Download wxWidgets 3.0 installer. Also from our [Download Page][11]
+ - Download CodeLite installer for Windows from our [Download Page][8]
+ - Download wxWidgets 3.0 installer. Also from our [Download Page][7]
  - Open the workspace **LiteEditor.workspace** (located in the CodeLite's folder)
  - Make sure that the project **CodeLiteIDE** is selected (the active project uses **bold** font)
  - Select the **Win_x64_Release** or **Win_x86_Release** (depending if you want to build a 32 or 64 bit version of CodeLite) and hit **F7**
@@ -126,9 +126,6 @@ Git clone the sources:
   [3]: https://codelite.org
   [4]: https://codelite.org/support.php
   [5]: http://codelite.org/LiteEditor/Documentation
-  [6]: https://wxcrafter.codelite.org/img/linux.png
-  [7]: http://codelite.org/LiteEditor/WxWidgets30Binaries
-  [8]: https://lh6.googleusercontent.com/-OMHi1w_3gNk/AAAAAAAAAAI/AAAAAAAAAAA/NrDEagpDUQI/s46-c-k-no/photo.jpg
-  [9]: https://wxcrafter.codelite.org/img/windows.png
-  [10]: https://codelite.org/support.php
-  [11]: https://codelite.org/support.php
+  [6]: http://codelite.org/LiteEditor/WxWidgets30Binaries
+  [7]: https://codelite.org/support.php
+  [8]: https://codelite.org/support.php

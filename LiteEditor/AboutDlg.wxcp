@@ -393,7 +393,7 @@
               }, {
                "type": "bitmapPicker",
                "m_label": "Bitmap File:",
-               "m_path": "../art/cl-splash.png"
+               "m_path": "../Runtime/images/splashscreen.png"
               }],
              "m_events": [],
              "m_children": []

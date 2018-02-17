@@ -144,7 +144,7 @@ void WebUpdateJob::ParseFile()
 void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString& arch) const
 {
     static wxStringMap_t linuxVariants;
-//    linuxVariants
+
 #ifdef __WXMSW__
     os = "msw";
     codename = "Windows";

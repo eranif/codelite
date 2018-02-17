@@ -303,7 +303,7 @@ public:
         int secs = m_elapsed / 1000;
         int msecs = m_elapsed % 1000;
 
-        msg << _(", elapsed time: ") << secs << wxT(":") << msecs << _(" seconds") << wxT(" ======");
+        msg << _(", elapsed time: ") << secs << wxT(".") << msecs << _(" seconds") << wxT(" ======");
         if(!m_failedFiles.IsEmpty()) {
             msg << "\n";
             msg << "====== " << _("Failed to open the following files for scan:") << "\n";

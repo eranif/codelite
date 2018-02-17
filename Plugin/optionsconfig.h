@@ -151,7 +151,7 @@ protected:
     wxDirection m_outputTabsDirection;    // Up/Down
     bool m_indentedComments;
     int m_nbTabHeight; // Should notebook tabs be too tall, too short or...
-
+    
 public:
     // Helpers
     void EnableOption(size_t flag, bool b)

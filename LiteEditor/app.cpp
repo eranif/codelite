@@ -275,6 +275,8 @@ bool CodeLiteApp::OnInit()
 {
 #if defined(__WXMSW__) && !defined(NDEBUG)
     SetAppName(wxT("codelite-dbg"));
+#elif defined(__WXOSX__)
+    SetAppName(wxT("CodeLite"));
 #else
     SetAppName(wxT("codelite"));
 #endif

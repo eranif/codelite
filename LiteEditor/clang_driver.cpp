@@ -435,7 +435,7 @@ void ClangDriver::ClearCache()
     std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const wxStringMap_t::value_type& vt) {
         // Delete the temp files (the keys in the cache)
         clDEBUG() << "Clang: deleting temp file:" << vt.first;
-        ::wxRemoveFile(vt.first);
+        clRemoveFile(vt.first);
     });
 }
 
@@ -758,10 +758,6 @@ ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* e
     return modifiedBuffers;
 }
 
-void ClangDriver::DoDeleteTempFile(const wxString& fileName)
-{
-    wxLogNull noLog;
-    ::wxRemoveFile(fileName);
-}
+void ClangDriver::DoDeleteTempFile(const wxString& fileName) { wxUnusedVar(fileName); }
 
 #endif // HAS_LIBCLANG

@@ -45,6 +45,8 @@
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="UI">
+    <File Name="SFTPQuickConnectDlg.cpp"/>
+    <File Name="SFTPQuickConnectDlg.h"/>
     <File Name="SFTPStatusPage.h"/>
     <File Name="SFTPStatusPage.cpp"/>
     <File Name="SFTPTreeView.h"/>

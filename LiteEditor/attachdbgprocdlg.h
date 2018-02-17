@@ -30,7 +30,7 @@
 class AttachDbgProcDlg : public AttachDbgProcBaseDlg
 {
 public:
-    void RefreshProcessesList(wxString filter, int colToSort = -1);
+    void RefreshProcessesList(wxString filter);
 
     AttachDbgProcDlg(wxWindow* parent);
     virtual ~AttachDbgProcDlg();
@@ -39,10 +39,13 @@ public:
     wxString GetExeName() const;
     wxString GetDebugger() const { return m_choiceDebugger->GetStringSelection(); }
 
+protected:
     // events
     virtual void OnBtnAttachUI(wxUpdateUIEvent& event);
     virtual void OnFilter(wxCommandEvent& event);
     virtual void OnRefresh(wxCommandEvent& event);
+    virtual void OnEnter(wxCommandEvent& event);
+    virtual void OnItemActivated(wxDataViewEvent& event);
 };
 
 #endif // __attachdbgprocdlg__

@@ -2139,15 +2139,12 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTreeView->SetSizer(boxSizer94);
     
-    m_dvFiles = new wxDataViewCtrl(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_MULTIPLE|wxBORDER_THEME);
+    m_dvListCtrl = new wxDataViewListCtrl(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1,-1)), wxDV_MULTIPLE);
     
-    m_dvFilesModel = new DataViewFilesModel;
-    m_dvFilesModel->SetColCount( 1 );
-    m_dvFiles->AssociateModel(m_dvFilesModel.get() );
+    boxSizer94->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    boxSizer94->Add(m_dvFiles, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_dvFiles->AppendIconTextColumn(_("File View"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(48), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendIconTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_splitterPage96 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageTreeView, m_splitterPage96, 250);
     
@@ -2199,16 +2196,18 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
          GetSizer()->Fit(this);
     }
     // Connect events
-    m_dvFiles->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
-    m_dvFiles->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnUpdateUI), NULL, this);
     m_stcLog->Connect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(GitConsoleBase::OnStclogStcChange), NULL, this);
     
 }
 
 GitConsoleBase::~GitConsoleBase()
 {
-    m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
-    m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnUpdateUI), NULL, this);
     m_stcLog->Disconnect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(GitConsoleBase::OnStclogStcChange), NULL, this);
     
 }

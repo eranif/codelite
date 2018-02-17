@@ -34,10 +34,6 @@ class GitConsole : public GitConsoleBase
 {
     GitPlugin* m_git;
     bool m_isVerbose;
-    wxDataViewItem m_itemModified;
-    wxDataViewItem m_itemUntracked;
-    wxDataViewItem m_itemNew;
-    wxDataViewItem m_itemDeleted;
     BitmapLoader* m_bitmapLoader;
     BitmapLoader::BitmapMap_t m_bitmaps;
     wxBitmap m_modifiedBmp;
@@ -70,17 +66,18 @@ public:
     void PulseProgress();
 
 protected:
+    virtual void OnUpdateUI(wxUpdateUIEvent& event);
     virtual void OnStclogStcChange(wxStyledTextEvent& event);
     virtual void OnApplyPatch(wxCommandEvent& event);
     virtual void OnFileActivated(wxDataViewEvent& event);
     virtual void OnItemSelectedUI(wxUpdateUIEvent& event);
-    virtual void OnAddFile(wxCommandEvent& event);
     virtual void OnResetFile(wxCommandEvent& event);
     virtual void OnContextMenu(wxDataViewEvent& event);
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnStopGitProcess(wxCommandEvent& event);
+    
     void OnOpenFile(wxCommandEvent& e);
     void OnCloseView(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent& e);
@@ -91,5 +88,6 @@ protected:
 
     void DoOnDropdown(wxAuiToolBarEvent& e, const wxString& commandName, int id);
     void OnDropDownMenuEvent(wxCommandEvent& e);
+    void Clear();
 };
 #endif // GITCONSOLE_H

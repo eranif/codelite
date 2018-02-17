@@ -228,7 +228,7 @@ FileViewTree::~FileViewTree()
 void FileViewTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
     bool multi(true);
-    style |= (wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES | wxBORDER_NONE);
+    style |= (wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES);
     if(multi) style |= wxTR_MULTIPLE;
 
     wxTreeCtrl::Create(parent, id, pos, size, style);
@@ -984,7 +984,7 @@ void FileViewTree::DoRemoveItems()
                                 }
                             } else {
                                 if(wxFileName::FileExists(file_name)) {
-                                    if(!wxRemoveFile(file_name)) {
+                                    if(!clRemoveFile(file_name)) {
                                         wxMessageBox(message, _("Error"), wxOK | wxICON_ERROR, this);
                                     } else {
                                         // File was removed from the disc, notify about it

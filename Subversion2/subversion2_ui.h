@@ -14,7 +14,7 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
-#include <wx/treectrl.h>
+#include <wx/dataview.h>
 #include <wx/stc/stc.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
@@ -57,20 +57,21 @@ class SubversionPageBase : public wxPanel
 protected:
     wxSplitterWindow* m_splitter17;
     wxPanel* m_splitterPageLeft;
-    wxTreeCtrl* m_treeCtrl;
+    wxDataViewListCtrl* m_dvListCtrl;
     wxPanel* m_splitterPageRight;
     wxStyledTextCtrl* m_sci;
 
 protected:
-    virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnTreeMenu(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnViewUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnCharAdded(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnSciStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
-    wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetSplitterPageLeft() { return m_splitterPageLeft; }
     wxStyledTextCtrl* GetSci() { return m_sci; }
     wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }

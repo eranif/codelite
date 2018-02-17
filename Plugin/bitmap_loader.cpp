@@ -24,19 +24,20 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "bitmap_loader.h"
-#include <wx/tokenzr.h>
-#include <wx/stdpaths.h>
-#include <wx/ffile.h>
-#include "globals.h"
-#include "editor_config.h"
-#include "optionsconfig.h"
-#include "cl_standard_paths.h"
-#include <algorithm>
-#include "clZipReader.h"
-#include <wx/dir.h>
-#include "file_logger.h"
-#include <wx/dcscreen.h>
 #include "clBitmap.h"
+#include "clZipReader.h"
+#include "cl_standard_paths.h"
+#include "editor_config.h"
+#include "file_logger.h"
+#include "fileutils.h"
+#include "globals.h"
+#include "optionsconfig.h"
+#include <algorithm>
+#include <wx/dcscreen.h>
+#include <wx/dir.h>
+#include <wx/ffile.h>
+#include <wx/stdpaths.h>
+#include <wx/tokenzr.h>
 
 std::map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::map<wxString, wxString> BitmapLoader::m_manifest;
@@ -62,9 +63,7 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     }
 
     iter = m_toolbarsBitmaps.find(name);
-    if(iter != m_toolbarsBitmaps.end()) {
-        return iter->second;
-    }
+    if(iter != m_toolbarsBitmaps.end()) { return iter->second; }
 
     return wxNullBitmap;
 }
@@ -72,8 +71,8 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
 void BitmapLoader::doLoadManifest()
 {
     wxString targetFile;
-    if(ExtractFileFromZip(
-           m_zipPath.GetFullPath(), wxT("manifest.ini"), clStandardPaths::Get().GetUserDataDir(), targetFile)) {
+    if(ExtractFileFromZip(m_zipPath.GetFullPath(), wxT("manifest.ini"), clStandardPaths::Get().GetUserDataDir(),
+                          targetFile)) {
         // we got the file extracted, read it
         wxFileName manifest(targetFile);
         wxFFile fp(manifest.GetFullPath(), wxT("r"));
@@ -114,9 +113,9 @@ void BitmapLoader::doLoadManifest()
             }
 
             fp.Close();
-            wxRemoveFile(manifest.GetFullPath());
+            clRemoveFile(manifest.GetFullPath());
         }
-        wxRemoveFile(targetFile);
+        clRemoveFile(targetFile);
     }
 }
 
@@ -126,10 +125,10 @@ wxBitmap BitmapLoader::doLoadBitmap(const wxString& filepath)
     if(ExtractFileFromZip(m_zipPath.GetFullPath(), filepath, clStandardPaths::Get().GetUserDataDir(), bitmapFile)) {
         clBitmap bmp;
         if(bmp.LoadFile(bitmapFile, wxBITMAP_TYPE_PNG)) {
-            wxRemoveFile(bitmapFile);
+            clRemoveFile(bitmapFile);
             return bmp;
         }
-        wxRemoveFile(bitmapFile);
+        clRemoveFile(bitmapFile);
     }
     return wxNullBitmap;
 }
@@ -169,9 +168,7 @@ int BitmapLoader::GetMimeImageId(const wxString& filename)
 
     FileExtManager::FileType type = FileExtManager::GetType(filename);
     std::map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
-    if(iter == m_fileIndexMap.end()) {
-        return wxNOT_FOUND;
-    }
+    if(iter == m_fileIndexMap.end()) { return wxNOT_FOUND; }
     return iter->second;
 }
 
@@ -216,10 +213,10 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
     AddImage(imageList->Add(LoadBitmap(wxT("cmake"))), FileExtManager::TypeCMake);
     AddImage(imageList->Add(LoadBitmap(wxT("qt"))), FileExtManager::TypeQMake);
 
-    std::for_each(
-        m_userBitmaps.begin(), m_userBitmaps.end(), [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {
-            AddImage(imageList->Add(GetIcon(p.second)), p.first);
-        });
+    std::for_each(m_userBitmaps.begin(), m_userBitmaps.end(),
+                  [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {
+                      AddImage(imageList->Add(GetIcon(p.second)), p.first);
+                  });
     return imageList;
 }
 
@@ -283,9 +280,7 @@ wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
 void BitmapLoader::RegisterImage(FileExtManager::FileType type, const wxBitmap& bmp)
 {
     BitmapMap_t::iterator iter = m_userBitmaps.find(type);
-    if(iter != m_userBitmaps.end()) {
-        m_userBitmaps.erase(iter);
-    }
+    if(iter != m_userBitmaps.end()) { m_userBitmaps.erase(iter); }
     m_userBitmaps.insert(std::make_pair(type, bmp));
 }
 
@@ -333,9 +328,7 @@ void BitmapLoader::initialize()
         bitmapFolder << "." << clGetUserName();
 
         tmpFolder.AppendDir(bitmapFolder);
-        if(tmpFolder.DirExists()) {
-            tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE);
-        }
+        if(tmpFolder.DirExists()) { tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE); }
 
         tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 

@@ -25,27 +25,24 @@
 
 #if HAS_LIBCLANG
 
-#include <wx/log.h>
-#include <wx/dir.h>
 #include "clangpch_cache.h"
-#include <wx/stdpaths.h>
 #include "file_logger.h"
+#include "fileutils.h"
+#include <wx/dir.h>
+#include <wx/log.h>
+#include <wx/stdpaths.h>
 
 ClangTUCache::ClangTUCache()
     : m_maxItems(10)
 {
 }
 
-ClangTUCache::~ClangTUCache()
-{
-}
+ClangTUCache::~ClangTUCache() {}
 
 ClangCacheEntry ClangTUCache::GetPCH(const wxString& filename)
 {
     std::map<wxString, ClangCacheEntry>::iterator iter = m_cache.find(filename);
-    if(iter == m_cache.end()) {
-        return ClangCacheEntry();
-    }
+    if(iter == m_cache.end()) { return ClangCacheEntry(); }
     // Remove this entry from the cache. It is up to the caller to place it back!
     ClangCacheEntry entry = iter->second;
     m_cache.erase(iter);
@@ -74,7 +71,7 @@ void ClangTUCache::AddPCH(ClangCacheEntry entry)
         wxString key_to_remove;
         for(; it != m_cache.end(); it++) {
             if(it->second.lastAccessed <= oldest_timestamp) {
-                key_to_remove    = it->first;
+                key_to_remove = it->first;
                 oldest_timestamp = it->second.lastAccessed;
             }
         }
@@ -99,7 +96,7 @@ void ClangTUCache::Clear()
     m_cache.clear();
 
     // Clear the TU from the file system
-    //if(WorkspaceST::Get()->IsOpen()) {
+    // if(WorkspaceST::Get()->IsOpen()) {
     //    wxString clangFileSystemCacheDir;
     //    clangFileSystemCacheDir << WorkspaceST::Get()->GetWorkspaceFileName().GetPath()
     //                            << wxFileName::GetPathSeparator()
@@ -116,23 +113,19 @@ void ClangTUCache::RemoveEntry(const wxString& filename)
         clang_disposeTranslationUnit(iter->second.TU);
         {
             wxLogNull nolog;
-            wxRemoveFile(iter->second.fileTU);
+            clRemoveFile(iter->second.fileTU);
         }
         // it is now safe to erase the iter
         m_cache.erase(iter);
     }
 }
 
-bool ClangTUCache::Contains(const wxString& filename) const
-{
-    return m_cache.find(filename) != m_cache.end();
-}
+bool ClangTUCache::Contains(const wxString& filename) const { return m_cache.find(filename) != m_cache.end(); }
 
 wxString ClangTUCache::GetTuFileName(const wxString& sourceFile) const
 {
     std::map<wxString, ClangCacheEntry>::const_iterator iter = m_cache.find(sourceFile);
-    if(iter != m_cache.end())
-        return iter->second.fileTU;
+    if(iter != m_cache.end()) return iter->second.fileTU;
     return wxT("");
 }
 
@@ -145,8 +138,8 @@ void ClangTUCache::DeleteDirectoryContent(const wxString& directory)
     CL_DEBUG(wxT("Clearing clang TU cache from %s"), directory.c_str());
     CL_DEBUG(wxT("Total of %d files"), (int)files.GetCount());
 
-    for(size_t i=0; i<files.GetCount(); i++) {
-        ::wxRemoveFile(files.Item(i));
+    for(size_t i = 0; i < files.GetCount(); i++) {
+        clRemoveFile(files.Item(i));
         CL_DEBUG(wxT("Deleting .. %s"), files.Item(i).c_str());
     }
 }

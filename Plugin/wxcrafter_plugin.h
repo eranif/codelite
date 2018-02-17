@@ -196,15 +196,23 @@ public:
 
 class WXDLLIMPEXP_SDK clTreeCtrlPanelBase : public wxPanel
 {
+public:
+    enum {
+        ID_LINK_TO_EDITOR = 1001,
+    };
 protected:
+    wxToolBar* m_toolbar;
     clFileViewerTreeCtrl* m_treeCtrl;
 
 protected:
+    virtual void OnLinkEditor(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnLinkEditorUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxTreeEvent& event) { event.Skip(); }
 
 public:
+    wxToolBar* GetToolbar() { return m_toolbar; }
     clFileViewerTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~clTreeCtrlPanelBase();

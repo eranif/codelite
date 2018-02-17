@@ -50,7 +50,8 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     bool m_scanInProgress;
     std::unordered_set<wxString> m_pendingSync;
-
+    wxArrayString m_draggedFiles;
+    
 private:
     enum {
         ID_TOGGLE_AUTOMATIC_UPLOAD = wxID_HIGHEST + 1,
@@ -174,7 +175,11 @@ protected:
     void OnWorkspaceSyncStart(clCommandEvent& event);
     void OnWorkspaceSyncEnd(clCommandEvent& event);
     void OnFileSaveAs(clFileSystemEvent& event);
-
+    
+    // DnD
+    void OnDragBegin(wxTreeEvent& event);
+    void OnDragEnd(wxTreeEvent& event);
+    
 public:
     /** Constructor */
     PHPWorkspaceView(wxWindow* parent, IManager* mgr);

@@ -40,6 +40,12 @@ private:
     
 public:
     static clStandardPaths& Get();
+    
+    /**
+     * @brief remove the temp directory and its content
+     */
+    void RemoveTempDir();
+    
     /**
      * @brief return the user local data folder. Usually this is ~/.codelite or %APPDATA%\CodeLite 
      * However, under Linux, this function will return ~/.codelite-dbg to avoid clobbering the release config

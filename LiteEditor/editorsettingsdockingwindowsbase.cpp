@@ -71,6 +71,14 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     flexGridSizer36->Add(m_choiceTabHeight, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
+    m_staticText63 = new wxStaticText(m_panelTabs, wxID_ANY, _("Active Tab Marker Colour:"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
+    
+    flexGridSizer36->Add(m_staticText63, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_colourPickerMarker = new wxColourPickerCtrl(m_panelTabs, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), wxCLRP_DEFAULT_STYLE);
+    
+    flexGridSizer36->Add(m_colourPickerMarker, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
     m_staticText38 = new wxStaticText(m_panelTabs, wxID_ANY, _("Workspace Pane Tabs Orientation:"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
     
     flexGridSizer36->Add(m_staticText38, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -81,7 +89,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_choiceWorkspaceTabsOrientationArr.Add(wxT("TOP"));
     m_choiceWorkspaceTabsOrientationArr.Add(wxT("BOTTOM"));
     m_choiceWorkspaceTabsOrientation = new wxChoice(m_panelTabs, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), m_choiceWorkspaceTabsOrientationArr, 0);
-    m_choiceWorkspaceTabsOrientation->SetSelection(0);
+    m_choiceWorkspaceTabsOrientation->SetSelection(2);
     
     flexGridSizer36->Add(m_choiceWorkspaceTabsOrientation, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     

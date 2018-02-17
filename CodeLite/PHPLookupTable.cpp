@@ -1140,7 +1140,7 @@ void PHPLookupTable::ResetDatabase()
     if(curfile.IsOk() && curfile.Exists()) {
         // Delete it from the file system
         wxLogNull noLog;
-        if(!::wxRemoveFile(curfile.GetFullPath())) {
+        if(!clRemoveFile(curfile.GetFullPath())) {
             // CL_WARNING("PHPLookupTable::ResetDatabase: failed to remove file '%s'", curfile.GetFullPath());
         }
     }
@@ -1176,7 +1176,7 @@ void PHPLookupTable::EnsureIntegrity(const wxFileName& filename)
             // disk image is malformed
             db.Close();
             wxLogNull noLog;
-            ::wxRemoveFile(filename.GetFullPath());
+            clRemoveFile(filename.GetFullPath());
         }
     }
 }

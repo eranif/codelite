@@ -359,13 +359,18 @@ void GitConsole::UpdateTreeView(const wxString& output)
 void GitConsole::OnContextMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
-    menu.Append(XRCID("git_console_open_file"), _("Open File"));
-    menu.AppendSeparator();
-    menu.Append(XRCID("git_console_reset_file"), _("Reset file"));
-    menu.AppendSeparator();
+    bool hasSelection = (m_dvListCtrl->GetSelectedItemsCount() > 0);
+    if(hasSelection) {
+        menu.Append(XRCID("git_console_open_file"), _("Open File"));
+        menu.AppendSeparator();
+        menu.Append(XRCID("git_console_reset_file"), _("Reset file"));
+        menu.AppendSeparator();
+    }
     menu.Append(XRCID("git_console_close_view"), _("Close View"));
 
-    menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file"));
+    if(hasSelection) {
+        menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file"));
+    }
     menu.Bind(wxEVT_MENU, &GitConsole::OnCloseView, this, XRCID("git_console_close_view"));
     m_dvListCtrl->PopupMenu(&menu);
 }

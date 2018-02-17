@@ -581,6 +581,7 @@ void Compiler::AddDefaultGnuComplierOptions()
     AddCompilerOption("-std=c99", "Enable ANSI C99 features");
     AddCompilerOption("-std=c++11", "Enable C++11 features");
     AddCompilerOption("-std=c++14", "Enable C++14 features");
+	AddCompilerOption("-std=c++17", "Enable C++17 features");
 }
 
 void Compiler::AddDefaultGnuLinkerOptions()

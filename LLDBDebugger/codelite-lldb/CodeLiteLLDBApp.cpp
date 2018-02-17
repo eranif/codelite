@@ -243,7 +243,7 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
 
     // In any case, reset the interrupt reason
     m_interruptReason = kInterruptReasonNone;
-    
+
     // Notify codelite that the debugger started successfully
     NotifyStarted(kDebugSessionTypeNormal);
 }
@@ -267,6 +267,15 @@ void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
             // Add the parent breakpoint
             LLDBBreakpoint::Ptr_t mainBreakpoint(new LLDBBreakpoint());
             mainBreakpoint->SetId(bp.GetID());
+
+            lldb::SBBreakpointLocation loc = bp.GetLocationAtIndex(0);
+            lldb::SBFileSpec fileLoc = loc.GetAddress().GetLineEntry().GetFileSpec();
+            wxFileName bpFile(fileLoc.GetDirectory(), fileLoc.GetFilename());
+
+            mainBreakpoint->SetType(LLDBBreakpoint::kFileLine);
+            mainBreakpoint->SetFilename(bpFile.GetFullPath());
+            mainBreakpoint->SetLineNumber(loc.GetAddress().GetLineEntry().GetLine());
+
             if(bp.GetNumLocations() > 1) {
 
                 // add all the children locations to the main breakpoint
@@ -284,16 +293,8 @@ void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
                     new_bp->SetName(loc.GetAddress().GetFunction().GetName());
                     mainBreakpoint->GetChildren().push_back(new_bp);
                 }
-
             } else {
-                lldb::SBBreakpointLocation loc = bp.GetLocationAtIndex(0);
-                lldb::SBFileSpec fileLoc = loc.GetAddress().GetLineEntry().GetFileSpec();
-                wxFileName bpFile(fileLoc.GetDirectory(), fileLoc.GetFilename());
-
-                mainBreakpoint->SetType(LLDBBreakpoint::kFileLine);
                 mainBreakpoint->SetName(loc.GetAddress().GetFunction().GetName());
-                mainBreakpoint->SetFilename(bpFile.GetFullPath());
-                mainBreakpoint->SetLineNumber(loc.GetAddress().GetLineEntry().GetLine());
             }
             breakpoints.push_back(mainBreakpoint);
         }
@@ -704,7 +705,7 @@ void CodeLiteLLDBApp::Interrupt(const LLDBCommand& command)
     m_target.GetProcess().SendAsyncInterrupt();
 }
 
-void CodeLiteLLDBApp::AcceptNewConnection() 
+void CodeLiteLLDBApp::AcceptNewConnection()
 {
     m_replySocket.reset(NULL);
     wxPrintf("codelite-lldb: waiting for new connection\n");

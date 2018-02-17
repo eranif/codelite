@@ -81,6 +81,7 @@ protected:
     wxTextCtrl* m_textCtrlMacros;
     wxCheckBox* m_checkBoxCpp11;
     wxCheckBox* m_checkBoxCpp14;
+    wxCheckBox* m_checkBoxCpp17;
     wxCheckBox* m_checkBoxSWTLW;
 
 protected:
@@ -94,6 +95,7 @@ public:
     wxTextCtrl* GetTextCtrlMacros() { return m_textCtrlMacros; }
     wxCheckBox* GetCheckBoxCpp11() { return m_checkBoxCpp11; }
     wxCheckBox* GetCheckBoxCpp14() { return m_checkBoxCpp14; }
+    wxCheckBox* GetCheckBoxCpp17() { return m_checkBoxCpp17; }
     wxCheckBox* GetCheckBoxSWTLW() { return m_checkBoxSWTLW; }
     wxPanel* GetPanel6() { return m_panel6; }
     wxSplitterWindow* GetSplitter1() { return m_splitter1; }

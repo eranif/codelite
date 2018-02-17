@@ -1,3 +1,5 @@
+Attention : Deprecated branch
+----
 
 What is [CodeLite][2]?
 ====

@@ -412,6 +412,7 @@ protected:
     wxTextCtrl* m_textCtrlMacros;
     wxCheckBox* m_checkBoxC11;
     wxCheckBox* m_checkBoxC14;
+	wxCheckBox* m_checkBoxC17;
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -425,6 +426,7 @@ public:
     wxTextCtrl* GetTextCtrlMacros() { return m_textCtrlMacros; }
     wxCheckBox* GetCheckBoxC11() { return m_checkBoxC11; }
     wxCheckBox* GetCheckBoxC14() { return m_checkBoxC14; }
+	wxCheckBox* GetCheckBoxC17() { return m_checkBoxC17; }
     wxPanel* GetPanel15() { return m_panel15; }
     wxSplitterWindow* GetSplitter1() { return m_splitter1; }
     PSCompletionBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);

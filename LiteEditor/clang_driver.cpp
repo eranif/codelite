@@ -326,6 +326,11 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         cppCompileArgs.Add(wxT("-std=c++14"));
         // cCompileArgs.Add(wxT("-std=c++14"));
     }
+	
+	if(workspaceFlags & LocalWorkspace::EnableCpp17) {
+        cppCompileArgs.Add(wxT("-std=c++17"));
+        // cCompileArgs.Add(wxT("-std=c++14"));
+    }
 
     ///////////////////////////////////////////////////////////////////////
     // Project setting additional flags

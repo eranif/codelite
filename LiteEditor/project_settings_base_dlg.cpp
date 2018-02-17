@@ -1177,6 +1177,12 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_checkBoxC14->SetToolTip(_("If checked, pass -std=c++14 to the clang code completion engine to ensure that all c++14 features are recognized properly"));
     
     bSizer40->Add(m_checkBoxC14, 0, wxALL, 5);
+	
+	m_checkBoxC17 = new wxCheckBox(m_panel15, wxID_ANY, _("Enable C++17 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxC17->SetValue(false);
+    m_checkBoxC17->SetToolTip(_("If checked, pass -std=c++17 to the clang code completion engine to ensure that all c++17 features are recognized properly"));
+    
+    bSizer40->Add(m_checkBoxC17, 0, wxALL, 5);
     
     SetName(wxT("PSCompletionBase"));
     SetSize(-1,-1);
@@ -1189,6 +1195,7 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_textCtrlMacros->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     m_checkBoxC11->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     m_checkBoxC14->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
+	m_checkBoxC17->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     
 }
 
@@ -1199,6 +1206,7 @@ PSCompletionBase::~PSCompletionBase()
     m_textCtrlMacros->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     m_checkBoxC11->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     m_checkBoxC14->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
+    m_checkBoxC17->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     
 }
 

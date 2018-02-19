@@ -246,9 +246,6 @@ void PHPLookupTable::CreateSchema()
         sql = wxT("PRAGMA temp_store = MEMORY;");
         m_db.ExecuteUpdate(sql);
 
-        sql = wxT("PRAGMA locking_mode = EXCLUSIVE;");
-        m_db.ExecuteUpdate(sql);
-
         wxSQLite3Statement st =
             m_db.PrepareStatement("select SCHEMA_VERSION from METADATA_TABLE where SCHEMA_NAME=:SCHEMA_NAME");
         st.Bind(st.GetParamIndex(":SCHEMA_NAME"), "CODELITEPHP");

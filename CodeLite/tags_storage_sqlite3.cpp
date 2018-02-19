@@ -99,6 +99,9 @@ void TagsStorageSQLite::CreateSchema()
 
         sql = wxT("PRAGMA temp_store = MEMORY;");
         m_db->ExecuteUpdate(sql);
+        
+        sql = wxT("PRAGMA locking_mode = EXCLUSIVE;");
+        m_db->ExecuteUpdate(sql);
 
         sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, "
                   "line integer, kind string, access string, signature string, pattern string, parent string, inherits "

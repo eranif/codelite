@@ -812,7 +812,7 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
         wxString pagetip = m_tabs.at(realPos)->GetTooltip();
         if(pagetip != curtip) { SetToolTip(pagetip); }
     }
-    
+
     if (m_dragStartTime.IsValid()) { // If we're tugging on the tab, consider starting D'n'D
         wxTimeSpan diff = wxDateTime::UNow() - m_dragStartTime;
         if (diff.GetMilliseconds() > 100 && // We need to check both x and y distances as tabs may be vertical
@@ -1117,12 +1117,23 @@ void clTabCtrl::DoShowTabList()
 {
     if(m_tabs.empty()) return;
 
-    int curselection = GetSelection();
+    const int curselection = GetSelection();
     wxMenu menu;
     const int firstTabPageID = 13457;
     int pageMenuID = firstTabPageID;
-    for(size_t i = 0; i < m_tabs.size(); ++i) {
-        clTabInfo::Ptr_t tab = m_tabs.at(i);
+
+    // Make a sorted view of tabs.
+    std::vector<size_t> sortedIndexes(m_tabs.size());
+    {
+        // std is C++11 at the moment, so no generalized capture.
+        size_t index = 0;
+        std::generate(sortedIndexes.begin(), sortedIndexes.end(), [&index]() { return index++; });
+    }
+    std::sort(sortedIndexes.begin(), sortedIndexes.end(),
+        [this](size_t i1, size_t i2) { return m_tabs[i1]->m_label.CmpNoCase(m_tabs[i2]->m_label) < 0; });
+
+    for(auto sortedIndex : sortedIndexes) {
+        clTabInfo::Ptr_t tab = m_tabs.at(sortedIndex);
         wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, tab->GetLabel(), "", wxITEM_CHECK);
         menu.Append(item);
         item->Check(tab->IsActive());
@@ -1132,8 +1143,14 @@ void clTabCtrl::DoShowTabList()
     int selection = GetPopupMenuSelectionFromUser(menu, m_chevronRect.GetBottomLeft());
     if(selection != wxID_NONE) {
         selection -= firstTabPageID;
-        // don't change the selection unless the selection is really changing
-        if(curselection != selection) { SetSelection(selection); }
+        if(selection < sortedIndexes.size()) {
+            const int newSelection = sortedIndexes[selection];
+
+            // don't change the selection unless the selection is really changing
+            if(curselection != newSelection) {
+                SetSelection(newSelection);
+            }
+        }
     }
 }
 

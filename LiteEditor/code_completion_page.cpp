@@ -48,7 +48,7 @@ CodeCompletionPage::CodeCompletionPage(wxWindow* parent, int type)
 
         m_checkBoxCpp11->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp11);
         m_checkBoxCpp14->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp14);
-		m_checkBoxCpp17->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp14);
+		m_checkBoxCpp17->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp17);
         m_checkBoxSWTLW->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW);
     }
 }

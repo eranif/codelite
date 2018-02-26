@@ -81,8 +81,39 @@ PHPLintBaseDlg::PHPLintBaseDlg(wxWindow* parent, wxWindowID id, const wxString& 
     m_panelPhpmd = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelPhpmd, _("Mess Detector"), false);
     
+    wxBoxSizer* boxSizer32 = new wxBoxSizer(wxVERTICAL);
+    m_panelPhpmd->SetSizer(boxSizer32);
+    
+    wxFlexGridSizer* flexGridSizer33 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer33->SetFlexibleDirection( wxBOTH );
+    flexGridSizer33->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer33->AddGrowableCol(1);
+    
+    boxSizer32->Add(flexGridSizer33, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText34 = new wxStaticText(m_panelPhpmd, wxID_ANY, _("PHPMD:"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), 0);
+    
+    flexGridSizer33->Add(m_staticText34, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_filePickerPhpmdPhar = new wxFilePickerCtrl(m_panelPhpmd, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerPhpmdPhar->SetToolTip(_("Select the PHPMD phar file location"));
+    
+    flexGridSizer33->Add(m_filePickerPhpmdPhar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText46 = new wxStaticText(m_panelPhpmd, wxID_ANY, _("PHPMD-rules:"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), 0);
+    
+    flexGridSizer33->Add(m_staticText46, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_filePickerPhpmdRules = new wxFilePickerCtrl(m_panelPhpmd, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*.xml"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerPhpmdRules->SetToolTip(_("Select the xml rules file to use with PHPMD"));
+    
+    flexGridSizer33->Add(m_filePickerPhpmdRules, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_panelPhpstan = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelPhpstan, _("PHPStan"), false);
+    
     wxBoxSizer* boxSizer3 = new wxBoxSizer(wxVERTICAL);
-    m_panelPhpmd->SetSizer(boxSizer3);
+    m_panelPhpstan->SetSizer(boxSizer3);
     
     wxFlexGridSizer* flexGridSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer3->SetFlexibleDirection( wxBOTH );
@@ -91,23 +122,23 @@ PHPLintBaseDlg::PHPLintBaseDlg(wxWindow* parent, wxWindowID id, const wxString& 
     
     boxSizer3->Add(flexGridSizer3, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText3 = new wxStaticText(m_panelPhpmd, wxID_ANY, _("PHPMD:"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), 0);
+    m_staticText3 = new wxStaticText(m_panelPhpstan, wxID_ANY, _("Phpstan:"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpstan, wxSize(-1,-1)), 0);
     
     flexGridSizer3->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerPhpmdPhar = new wxFilePickerCtrl(m_panelPhpmd, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPhpmdPhar->SetToolTip(_("Select the PHPMD phar file location"));
+    m_filePickerPhpstanPhar = new wxFilePickerCtrl(m_panelPhpstan, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpstan, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerPhpstanPhar->SetToolTip(_("Select the Phpstan phar file location"));
     
-    flexGridSizer3->Add(m_filePickerPhpmdPhar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer3->Add(m_filePickerPhpstanPhar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText4 = new wxStaticText(m_panelPhpmd, wxID_ANY, _("PHPMD-rules:"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), 0);
+    m_staticText4 = new wxStaticText(m_panelPhpstan, wxID_ANY, _("Phpstan-config:"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpstan, wxSize(-1,-1)), 0);
     
     flexGridSizer3->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerPhpmdRules = new wxFilePickerCtrl(m_panelPhpmd, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*.xml"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpmd, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPhpmdRules->SetToolTip(_("Select the xml rules file to use with PHPMD"));
+    m_filePickerPhpstanConfig = new wxFilePickerCtrl(m_panelPhpstan, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*.neon"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpstan, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerPhpstanConfig->SetToolTip(_("Select the neon rules file to use with Phpstan"));
     
-    flexGridSizer3->Add(m_filePickerPhpmdRules, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer3->Add(m_filePickerPhpstanConfig, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
     

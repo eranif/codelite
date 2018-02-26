@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_PHPLINT_PHPLINTDLG_BASE_CLASSES_H
-#define CODELITE_PHPLINT_PHPLINTDLG_BASE_CLASSES_H
+#ifndef _CODELITE_PHPLINT_PHPLINTDLG_BASE_CLASSES_H
+#define _CODELITE_PHPLINT_PHPLINTDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -49,10 +49,15 @@ protected:
     wxStaticText* m_staticText2;
     wxFilePickerCtrl* m_filePickerPhpcsPhar;
     wxPanel* m_panelPhpmd;
-    wxStaticText* m_staticText3;
+    wxStaticText* m_staticText34;
     wxFilePickerCtrl* m_filePickerPhpmdPhar;
-    wxStaticText* m_staticText4;
+    wxStaticText* m_staticText46;
     wxFilePickerCtrl* m_filePickerPhpmdRules;
+    wxPanel* m_panelPhpstan;
+    wxStaticText* m_staticText3;
+    wxFilePickerCtrl* m_filePickerPhpstanPhar;
+    wxStaticText* m_staticText4;
+    wxFilePickerCtrl* m_filePickerPhpstanConfig;
     wxStdDialogButtonSizer* m_stdBtnSizer;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
@@ -66,11 +71,16 @@ public:
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxFilePickerCtrl* GetFilePickerPhpcsPhar() { return m_filePickerPhpcsPhar; }
     wxPanel* GetPanelPhpcs() { return m_panelPhpcs; }
-    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxStaticText* GetStaticText34() { return m_staticText34; }
     wxFilePickerCtrl* GetFilePickerPhpmdPhar() { return m_filePickerPhpmdPhar; }
-    wxStaticText* GetStaticText4() { return m_staticText4; }
+    wxStaticText* GetStaticText46() { return m_staticText46; }
     wxFilePickerCtrl* GetFilePickerPhpmdRules() { return m_filePickerPhpmdRules; }
     wxPanel* GetPanelPhpmd() { return m_panelPhpmd; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxFilePickerCtrl* GetFilePickerPhpstanPhar() { return m_filePickerPhpstanPhar; }
+    wxStaticText* GetStaticText4() { return m_staticText4; }
+    wxFilePickerCtrl* GetFilePickerPhpstanConfig() { return m_filePickerPhpstanConfig; }
+    wxPanel* GetPanelPhpstan() { return m_panelPhpstan; }
     wxNotebook* GetNotebook() { return m_notebook; }
     PHPLintBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Linter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPLintBaseDlg();

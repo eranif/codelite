@@ -47,6 +47,7 @@ private:
     void RunLint();
     void QueuePhpcsCommand(const wxString& phpPath, const wxString& file);
     void QueuePhpmdCommand(const wxString& phpPath, const wxString& file);
+    void QueuePhpstanCommand(const wxString& phpPath, const wxString& file);
     void OnPhpSettingsChanged(clCommandEvent& event);
 
 protected:

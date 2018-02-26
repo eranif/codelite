@@ -24,6 +24,7 @@ void PHPLintDlg::InitDialog()
     m_filePickerPhpcsPhar->SetPath(settings.GetPhpcsPhar());
     m_filePickerPhpmdPhar->SetPath(settings.GetPhpmdPhar());
     m_filePickerPhpmdRules->SetPath(settings.GetPhpmdRules());
+    m_filePickerPhpstanPhar->SetPath(settings.GetPhpstanPhar());
 
     // General Options
     m_checkBoxLintOnLoad->SetValue(settings.IsLintOnFileLoad());

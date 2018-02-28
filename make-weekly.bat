@@ -28,7 +28,7 @@ GOTO COMMON
 :MAKE_X86
 set PATH=C:\Program Files (x86)\CodeLite;C:\Program Files (x86)\Inno Setup 5;%PATH%
 set WXCFG=gcc_dll/mswu
-set WXWIN=D:\src\wx-src
+set WXWIN=C:/src/wxWidgets.git
 set CL_CONFIG_NAME=Win_x86_Release
 set WXC_CONFIG_NAME=Win_x64_Release
 set UTILS_CONFIG_NAME=Win_x64_Release

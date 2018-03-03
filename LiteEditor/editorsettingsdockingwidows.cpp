@@ -51,6 +51,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxHideOutputPaneNotIfMemCheck->SetValue(options->GetHideOutputPaneNotIfMemCheck());
     m_checkBoxFindBarAtBottom->SetValue(options->GetFindBarAtBottom());
     m_checkBoxDontFoldSearchResults->SetValue(options->GetDontAutoFoldResults());
+    m_checkBoxDontOverrideSearchStringWithSelection->SetValue(options->GetDontOverrideSearchStringWithSelection());
     m_checkBoxShowDebugOnRun->SetValue(options->GetShowDebugOnRun());
     m_radioBoxHint->SetSelection(options->GetDockingStyle());
     m_checkBoxHideCaptions->SetValue(!options->IsShowDockingWindowCaption());
@@ -174,6 +175,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetHideOutputPaneNotIfMemCheck(m_checkBoxHideOutputPaneNotIfMemCheck->IsChecked());
     options->SetFindBarAtBottom(m_checkBoxFindBarAtBottom->IsChecked());
     options->SetDontAutoFoldResults(m_checkBoxDontFoldSearchResults->IsChecked());
+    options->SetDontOverrideSearchStringWithSelection(m_checkBoxDontOverrideSearchStringWithSelection->IsChecked());
     options->SetShowDebugOnRun(m_checkBoxShowDebugOnRun->IsChecked());
     options->SetDockingStyle(m_radioBoxHint->GetSelection());
     options->SetShowDockingWindowCaption(!m_checkBoxHideCaptions->IsChecked());

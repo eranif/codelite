@@ -182,6 +182,12 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     boxSizer20->Add(m_checkBoxDontFoldSearchResults, 0, wxALL, WXC_FROM_DIP(5));
     
+    m_checkBoxDontOverrideSearchStringWithSelection = new wxCheckBox(m_panel14, wxID_ANY, _("Don't override search string with current selection on find next/previous"), wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1, -1)), 0);
+    m_checkBoxDontOverrideSearchStringWithSelection->SetValue(false);
+    m_checkBoxDontOverrideSearchStringWithSelection->SetToolTip(_("By default, the search string is overridden by the current text selection in the editor when doing a find next/previous. Tick this box to prevent this"));
+    
+    boxSizer20->Add(m_checkBoxDontOverrideSearchStringWithSelection, 0, wxALL, WXC_FROM_DIP(5));
+    
     m_panel16 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel16, _("Debug / Output panes"), false);
     

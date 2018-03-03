@@ -66,6 +66,7 @@ protected:
     wxPanel* m_panel14;
     wxCheckBox* m_checkBoxFindBarAtBottom;
     wxCheckBox* m_checkBoxDontFoldSearchResults;
+    wxCheckBox* m_checkBoxDontOverrideSearchStringWithSelection;
     wxPanel* m_panel16;
     wxCheckBox* m_checkBoxHideOutputPaneOnClick;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfBuild;
@@ -111,6 +112,7 @@ public:
     wxPanel* GetPanel12() { return m_panel12; }
     wxCheckBox* GetCheckBoxFindBarAtBottom() { return m_checkBoxFindBarAtBottom; }
     wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }
+    wxCheckBox* GetCheckBoxDontOverrideSearchStringWithSelection() { return m_checkBoxDontOverrideSearchStringWithSelection; }
     wxPanel* GetPanel14() { return m_panel14; }
     wxCheckBox* GetCheckBoxHideOutputPaneOnClick() { return m_checkBoxHideOutputPaneOnClick; }
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfBuild() { return m_checkBoxHideOutputPaneNotIfBuild; }

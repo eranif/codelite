@@ -48,7 +48,7 @@ public:
     wxString GetCurrentWspPath() const { return m_currentWspPath; }
 
     void SetCheckContinuous(bool value);
-    bool GetCheckContinuous() const { return m_checkContinuous; }
+    bool GetCheckContinuous() const { return m_options.GetCheckContinuous(); }
     bool IsTag(const wxString& token);
     IEditor* GetEditor();
     wxMenu* CreateSubMenu();
@@ -87,7 +87,6 @@ protected:
     void ClearIndicatorsFromEditors();
 
 protected:
-    bool m_checkContinuous;
     IHunSpell* m_pEngine;
     wxTimer m_timer;
     wxString m_currentWspPath;

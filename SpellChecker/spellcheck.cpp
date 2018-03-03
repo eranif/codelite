@@ -104,7 +104,11 @@ SpellCheck::~SpellCheck()
     m_timer.Disconnect(wxEVT_TIMER, wxTimerEventHandler(SpellCheck::OnTimer), NULL, this);
     m_topWin->Disconnect(wxEVT_CMD_EDITOR_CONTEXT_MENU, wxCommandEventHandler(SpellCheck::OnContextMenu), NULL, this);
     m_topWin->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SpellCheck::OnWspClosed), NULL, this);
-    if(m_pEngine != NULL) wxDELETE(m_pEngine);
+
+    if(m_pEngine != NULL) {
+        SaveSettings();
+        wxDELETE(m_pEngine);
+    }
 }
 
 // ------------------------------------------------------------
@@ -117,7 +121,6 @@ void SpellCheck::Init()
     m_sepItem = NULL;
     m_pToolbar = NULL;
     m_topWin = wxTheApp;
-    m_checkContinuous = false;
     m_pEngine = new IHunSpell();
     m_currentWspPath = wxEmptyString;
 
@@ -167,6 +170,9 @@ clToolBar* SpellCheck::CreateToolBar(wxWindow* parent)
                     wxCommandEventHandler(SpellCheck::OnContinousCheck),
                     NULL,
                     this);
+
+    SetCheckContinuous(GetCheckContinuous());
+
     return m_pToolbar;
 }
 // ------------------------------------------------------------
@@ -223,8 +229,6 @@ IEditor* SpellCheck::GetEditor()
     IEditor* editor = m_mgr->GetActiveEditor();
 
     if(!editor) {
-        if(GetCheckContinuous()) // switch continuous search off if running
-            SetCheckContinuous(false);
         ::wxMessageBox(s_noEditor, s_codeLite, wxICON_WARNING | wxOK);
         return NULL;
     }
@@ -278,14 +282,14 @@ void SpellCheck::OnCheck(wxCommandEvent& e)
             if(m_mgr->IsWorkspaceOpen()) {
                 m_pEngine->CheckCppSpelling(text);
 
-                if(!m_checkContinuous) {
+                if(!GetCheckContinuous()) {
                     editor->ClearUserIndicators();
                 }
             }
         } break;
         case 1: { // wxSCI_LEX_NULL
             m_pEngine->CheckSpelling(text);
-            if(!m_checkContinuous) {
+            if(!GetCheckContinuous()) {
                 editor->ClearUserIndicators();
             }
         } break;
@@ -319,14 +323,6 @@ void SpellCheck::SaveSettings()
 // ------------------------------------------------------------
 void SpellCheck::OnContinousCheck(wxCommandEvent& e)
 {
-    IEditor* editor = m_mgr->GetActiveEditor();
-
-    if(!editor) { // no current editor, switch continuous search off
-
-        SetCheckContinuous(false);
-        return;
-    }
-
     if(m_pEngine != NULL) {
         if(e.GetInt() == 0) {
             SetCheckContinuous(false);
@@ -335,7 +331,6 @@ void SpellCheck::OnContinousCheck(wxCommandEvent& e)
         }
 
         SetCheckContinuous(true);
-        wxString text = editor->GetEditorText();
 
         // if we don't have a dictionary yet, open settings
         if(!m_pEngine->GetDictionary()) {
@@ -343,17 +338,23 @@ void SpellCheck::OnContinousCheck(wxCommandEvent& e)
             return;
         }
 
-        switch(editor->GetLexerId()) {
-        case 3: { // wxSCI_LEX_CPP
-            if(m_mgr->IsWorkspaceOpen()) {
-                m_pEngine->CheckCppSpelling(text);
+        IEditor* editor = m_mgr->GetActiveEditor();
+
+        if (editor) {
+            wxString text = editor->GetEditorText();
+
+            switch(editor->GetLexerId()) {
+            case 3: { // wxSCI_LEX_CPP
+                if(m_mgr->IsWorkspaceOpen()) {
+                    m_pEngine->CheckCppSpelling(text);
+                }
+            } break;
+            default: { // wxSCI_LEX_NULL
+                m_pEngine->CheckSpelling(text);
+            } break;
             }
-        } break;
-        default: { // wxSCI_LEX_NULL
-            m_pEngine->CheckSpelling(text);
-        } break;
+            m_timer.Start(PARSE_TIME);
         }
-        m_timer.Start(PARSE_TIME);
     }
 }
 // ------------------------------------------------------------
@@ -435,7 +436,7 @@ void SpellCheck::OnContextMenu(wxCommandEvent& e)
 // ------------------------------------------------------------
 void SpellCheck::SetCheckContinuous(bool value)
 {
-    m_checkContinuous = value;
+    m_options.SetCheckContinuous(value);
 
     if(value) {
         m_timer.Start(PARSE_TIME);
@@ -472,7 +473,7 @@ void SpellCheck::OnEditorContextMenuShowing(clContextMenuEvent& e)
 {
     e.Skip();
     wxMenu* menu = CreateSubMenu();
-    menu->Check(XRCID(s_contCheckID.ToUTF8()), m_checkContinuous);
+    menu->Check(XRCID(s_contCheckID.ToUTF8()), GetCheckContinuous());
     e.GetMenu()->Append(IDM_BASE, _("Spell Checker"), menu);
 }
 

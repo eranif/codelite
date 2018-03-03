@@ -44,7 +44,8 @@ SpellCheckerOptions::SpellCheckerOptions()
     m_scanC   = false;
     m_scanD1  = false;
     m_scanD2  = false;
-    
+    m_checkContinuous = false;
+
     wxString defaultDicsDir;
     defaultDicsDir << clStandardPaths::Get().GetDataDir() << wxFILE_SEP_PATH << "dics";
     m_dictionaryPath = defaultDicsDir;
@@ -65,6 +66,7 @@ void SpellCheckerOptions::DeSerialize( Archive& arch )
     arch.Read( wxT( "m_scanC" ), m_scanC );
     arch.Read( wxT( "m_scanD1" ), m_scanD1 );
     arch.Read( wxT( "m_scanD2" ), m_scanD2 );
+    arch.Read( wxT( "m_checkContinuous" ), m_checkContinuous );
 }
 
 // ------------------------------------------------------------
@@ -77,5 +79,6 @@ void SpellCheckerOptions::Serialize( Archive& arch )
     arch.Write( wxT( "m_scanC" ), m_scanC );
     arch.Write( wxT( "m_scanD1" ), m_scanD1 );
     arch.Write( wxT( "m_scanD2" ), m_scanD2 );
+    arch.Write( wxT( "m_checkContinuous" ), m_checkContinuous );
 }
 // ------------------------------------------------------------

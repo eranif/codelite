@@ -54,6 +54,7 @@ public:
 	void            SetScanD1( const bool& scanD1 ) { this->m_scanD1 = scanD1; }
 	void            SetScanD2( const bool& scanD2 ) { this->m_scanD2 = scanD2; }
 	void            SetScanStr( const bool& scanStr ) { this->m_scanStr = scanStr; }
+    void            SetCheckContinuous( const bool& checkContinuous ) { this->m_checkContinuous = checkContinuous; }
 	bool            GetScanC() const { return m_scanC; }
 	bool            GetScanCPP() const { return m_scanCPP; }
 	bool            GetScanD1() const { return m_scanD1; }
@@ -61,6 +62,7 @@ public:
 	bool            GetScanStr() const { return m_scanStr; }
 	const wxString& GetDictionaryPath() const { return m_dictionaryPath; }
 	const wxString& GetDictionaryFileName() const { return m_dictionary; }
+    bool            GetCheckContinuous() const { return m_checkContinuous; }
 
 protected:
 	wxString m_dictionary;
@@ -70,6 +72,7 @@ protected:
 	bool     m_scanC;
 	bool     m_scanD1;
 	bool     m_scanD2;
+    bool     m_checkContinuous;
 };
 //------------------------------------------------------------
 #endif // __spellcheckeroptions__

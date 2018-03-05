@@ -91,6 +91,9 @@ protected:
     wxTimer m_timer;
     wxString m_currentWspPath;
     wxAuiToolBar* m_pToolbar;
+
+    IEditor* m_pLastEditor;             // The editor checked last time the spell check ran.
+    wxUint64 m_lastModificationCount;   // Modification count of the editor last time the spell check ran.
 };
 //------------------------------------------------------------
 #endif // SpellCheck

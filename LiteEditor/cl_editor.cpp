@@ -318,6 +318,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_popupIsOn(false)
     , m_isDragging(false)
     , m_modifyTime(0)
+    , m_modificationCount(0)
     , m_isVisible(true)
     , m_hyperLinkIndicatroStart(wxNOT_FOUND)
     , m_hyperLinkIndicatroEnd(wxNOT_FOUND)
@@ -512,7 +513,7 @@ void LEditor::SetProperties()
 #else
     UsePopUp(0);
 #endif
-    
+
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
@@ -4175,6 +4176,8 @@ void LEditor::SetEOL()
 void LEditor::OnChange(wxStyledTextEvent& event)
 {
     event.Skip();
+    ++m_modificationCount;
+
     bool isCoalesceStart = event.GetModificationType() & wxSTC_STARTACTION;
     bool isInsert = event.GetModificationType() & wxSTC_MOD_INSERTTEXT;
     bool isDelete = event.GetModificationType() & wxSTC_MOD_DELETETEXT;

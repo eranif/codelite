@@ -96,6 +96,11 @@ public:
     virtual bool IsModified() = 0;
 
     /**
+	 * @brief Get the editor's modification count
+	 */
+    virtual wxUint64 GetModificationCount() const = 0;
+
+    /**
      * \brief return the current editor content
      */
     virtual wxString GetEditorText() = 0;
@@ -135,7 +140,7 @@ public:
      * to the  current file
      */
     virtual void OpenFile() = 0;
-    
+
     /**
      * @brief reload file content from the disk
      * @param keepUndoHistory
@@ -145,12 +150,12 @@ public:
      * @brief save the editor
      */
     virtual bool Save() = 0;
-    
+
     /**
      * @brief save the current editor with a different name
      */
     virtual bool SaveAs(const wxString& defaultName = wxEmptyString, const wxString& savePath = wxEmptyString) = 0;
-    
+
     /**
      * \brief return the current position of the caret
      */
@@ -499,17 +504,17 @@ public:
      * @brief return a string representing all the local variables coloured by this editor
      */
     virtual const wxString& GetKeywordLocals() const = 0;
-    
+
     /**
      * @brief get the options associated with this editor
      */
     virtual OptionsConfigPtr GetOptions() = 0;
-    
+
     /**
      * @brief apply editor configuration (TAB vs SPACES, tab size, EOL mode etc)
      */
     virtual void ApplyEditorConfig() = 0;
-    
+
     /**
      * @brief return list of bookmarks for a given editor
      * @param editor the editor

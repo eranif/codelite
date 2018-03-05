@@ -1478,7 +1478,7 @@ void FileViewTree::ExpandToPath(const wxString& project, const wxFileName& fileN
             } else {
                 wxString message;
                 message << _("Failed to find file: ") << fileName.GetFullPath() << _(" in FileView.");
-                wxLogMessage(message);
+                clLogMessage(message);
             }
         }
     }
@@ -1875,13 +1875,13 @@ void FileViewTree::OnRenameVirtualFolder(wxCommandEvent& e)
         path = path.AfterFirst(wxT(':'));
         ProjectPtr p = ManagerST::Get()->GetProject(proj);
         if(!p) {
-            wxLogMessage(_("failed to rename virtual folder: ") + path + _(", reason: could not locate project ") +
+            clLogMessage(_("failed to rename virtual folder: ") + path + _(", reason: could not locate project ") +
                          proj);
             return;
         }
 
         if(!p->RenameVirtualDirectory(path, newName)) {
-            wxLogMessage(_("failed to rename virtual folder: ") + path);
+            clLogMessage(_("failed to rename virtual folder: ") + path);
             return;
         }
         SetItemText(item, newName);

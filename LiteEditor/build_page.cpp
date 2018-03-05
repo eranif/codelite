@@ -105,7 +105,7 @@ void BuildPage::Save()
     // Save current page displayed as 'selected' builder
     int sel = (int)m_bookBuildSystems->GetSelection();
 
-    // wxLogMessage(wxString::Format( wxT("selection:%d"), sel ));
+    // clLogMessage(wxString::Format( wxT("selection:%d"), sel ));
     BuildSystemPage* page = dynamic_cast<BuildSystemPage*>(m_bookBuildSystems->GetPage(sel));
     if(page) {
         page->SetSelected();

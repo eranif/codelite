@@ -84,7 +84,6 @@ void clGotoAnythingManager::Initialise()
     wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
     wxMenuBar* mb = mainFrame->GetMenuBar();
     if(!mb) return;
-    clDEBUG() << "clGotoAnythingManager::Initialise called." << (wxUIntPtr)this << clEndl;
     // Get list of menu entries
     std::queue<std::pair<wxString, wxMenu*> > q;
     for(size_t i = 0; i < mb->GetMenuCount(); ++i) {

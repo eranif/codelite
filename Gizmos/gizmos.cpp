@@ -46,6 +46,7 @@
 #include "codelite_events.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
+#include "file_logger.h"
 
 static wxString MI_NEW_WX_PROJECT = wxT("Create new wxWidgets project...");
 static wxString MI_NEW_CODELITE_PLUGIN = wxT("Create new CodeLite plugin...");
@@ -285,7 +286,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         // Convert the paths provided by user to relative paths
         wxFileName fn(data.GetCodelitePath(), "");
         if(!fn.MakeRelativeTo(wxFileName(data.GetProjectPath()).GetPath())) {
-            wxLogMessage(wxT("Warning: Failed to convert paths to relative path."));
+            clLogMessage(wxT("Warning: Failed to convert paths to relative path."));
         }
 
 #ifdef __WXMSW__

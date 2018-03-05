@@ -1769,7 +1769,7 @@ TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int li
             }
         }
     }
-    return NULL;
+    return foo;
 }
 
 void TagsManager::GetScopesFromFile(const wxFileName& fileName, std::vector<wxString>& scopes)

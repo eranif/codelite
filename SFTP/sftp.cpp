@@ -306,9 +306,9 @@ void SFTP::OnFileSaved(clCommandEvent& e)
     DoFileSaved(local_file);
 }
 
-void SFTP::OnFileWriteOK(const wxString& message) { wxLogMessage(message); }
+void SFTP::OnFileWriteOK(const wxString& message) { clLogMessage(message); }
 
-void SFTP::OnFileWriteError(const wxString& errorMessage) { wxLogMessage(errorMessage); }
+void SFTP::OnFileWriteError(const wxString& errorMessage) { clLogMessage(errorMessage); }
 
 void SFTP::OnDisableWorkspaceMirroring(wxCommandEvent& e)
 {

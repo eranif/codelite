@@ -42,6 +42,7 @@
 #include <wx/msgdlg.h>
 #include <wx/thread.h>
 #include <wx/tokenzr.h>
+#include "file_logger.h"
 
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
@@ -889,7 +890,7 @@ void clCxxWorkspace::ReloadWorkspace()
 
     wxString err_msg;
     if(!OpenWorkspace(m_fileName.GetFullPath(), err_msg)) {
-        wxLogMessage(wxT("Reload workspace: ") + err_msg);
+        clDEBUG() << "Reload workspace:" << err_msg;
     }
 }
 

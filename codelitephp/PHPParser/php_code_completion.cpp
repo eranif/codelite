@@ -625,9 +625,9 @@ void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
     }
 }
 
-void PHPCodeCompletion::OnSymbolsCached() { wxLogMessage("PHP Symbols cached into OS cache"); }
+void PHPCodeCompletion::OnSymbolsCached() { clLogMessage("PHP Symbols cached into OS cache"); }
 
-void PHPCodeCompletion::OnSymbolsCacheError() { wxLogMessage("Error encountered while caching PHP symbols"); }
+void PHPCodeCompletion::OnSymbolsCacheError() { clLogMessage("Error encountered while caching PHP symbols"); }
 
 void PHPCodeCompletion::OnQuickJump(clCodeCompletionEvent& e)
 {

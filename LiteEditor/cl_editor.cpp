@@ -494,7 +494,7 @@ BPtoMarker LEditor::GetMarkerForBreakpt(enum BreakpointType bp_type)
     for(; iter != m_BPstoMarkers.end(); ++iter) {
         if((*iter).bp_type == bp_type) { return *iter; }
     }
-    wxLogMessage(wxT("Breakpoint type not in vector!?"));
+    clLogMessage(wxT("Breakpoint type not in vector!?"));
     return *iter;
 }
 
@@ -3105,7 +3105,7 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
             int wordEnd = WordEndPos(pos, true);
             wxString wordAtMouse = GetTextRange(wordStart, wordEnd);
             if(!wordAtMouse.IsEmpty()) {
-                // wxLogMessage("Event wxEVT_DBG_EXPR_TOOLTIP is fired for string: %s", wordAtMouse);
+                // clLogMessage("Event wxEVT_DBG_EXPR_TOOLTIP is fired for string: %s", wordAtMouse);
                 clDebugEvent tipEvent(wxEVT_DBG_EXPR_TOOLTIP);
                 tipEvent.SetString(wordAtMouse);
                 if(EventNotifier::Get()->ProcessEvent(tipEvent)) { return; }
@@ -4607,7 +4607,7 @@ void LEditor::OnHighlightWordChecked(wxCommandEvent& e)
 // buffered drawing on and off
 #ifdef __WXMAC__
     SetBufferedDraw(e.GetInt() == 1 ? true : false);
-    // wxLogMessage("Settings buffered drawing to: %d", e.GetInt());
+    // clLogMessage("Settings buffered drawing to: %d", e.GetInt());
     if(e.GetInt()) { Refresh(); }
 #endif
 }
@@ -5252,7 +5252,7 @@ void LEditor::Print()
         if(wxPrinter::GetLastError() == wxPRINTER_ERROR) {
             wxLogError(wxT("There was a problem printing. Perhaps your current printer is not set correctly?"));
         } else {
-            wxLogMessage(wxT("You canceled printing"));
+            clLogMessage(wxT("You canceled printing"));
         }
     } else {
         (*g_printData) = printer.GetPrintDialogData().GetPrintData();

@@ -49,7 +49,6 @@
 OutputPane::OutputPane(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250))
     , m_caption(caption)
-    , m_logTargetOld(NULL)
     , m_buildInProgress(false)
 {
     CreateGUIControls();
@@ -63,7 +62,6 @@ OutputPane::OutputPane(wxWindow* parent, const wxString& caption)
 
 OutputPane::~OutputPane()
 {
-    delete wxLog::SetActiveTarget(m_logTargetOld);
     EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), NULL,
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(OutputPane::OnBuildStarted), NULL, this);
@@ -164,20 +162,6 @@ void OutputPane::CreateGUIControls()
                                  Tab(wxGetTranslation(CLANG_TAB), m_clangOutputTab, bmpLoader->LoadBitmap("clang"))));
     mgr->AddOutputTab(wxGetTranslation(CLANG_TAB));
 #endif
-
-    /////////////////////////////////////
-    // Set the trace's font & colors
-    /////////////////////////////////////
-
-    wxStyledTextCtrl* stcLog = new wxStyledTextCtrl(m_book);
-    m_book->AddPage(stcLog, wxGetTranslation(TRACE_TAB), false, bmpLoader->LoadBitmap("log"));
-    m_logTargetOld = wxLog::SetActiveTarget(new wxclTextCtrl(stcLog));
-    m_tabs.insert(std::make_pair(wxGetTranslation(TRACE_TAB),
-                                 Tab(wxGetTranslation(TRACE_TAB), stcLog, bmpLoader->LoadBitmap("log"))));
-    mgr->AddOutputTab(wxGetTranslation(TRACE_TAB));
-
-    // Now that we set up our own log target, re-enable the logging
-    wxLog::EnableLogging(true);
 
     // Tasks panel
     m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));

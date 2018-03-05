@@ -39,6 +39,7 @@
 #include <wx/app.h>
 #include <wx/ffile.h>
 #include <wx/log.h>
+#include "file_logger.h"
 
 #ifdef __WXMSW__
 #define ECHO_CMD wxT("@echo ")
@@ -90,7 +91,7 @@ void CustomBuildRequest::Process(IManager* manager)
 
     BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
     if(!bldConf) {
-        wxLogMessage(wxString::Format(wxT("Failed to find build configuration for project '%s' and configuration '%s'"),
+        clLogMessage(wxString::Format(wxT("Failed to find build configuration for project '%s' and configuration '%s'"),
                                       m_info.GetProject().c_str(), m_info.GetConfiguration().c_str()));
         return;
     }

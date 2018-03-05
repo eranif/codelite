@@ -47,6 +47,7 @@
 #include <wx/regex.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "file_logger.h"
 
 MainBook::MainBook(wxWindow* parent)
     : wxPanel(parent)
@@ -560,7 +561,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectNa
 #endif
 
     if(!IsFileExists(fileName)) {
-        wxLogMessage(wxT("Failed to open: %s: No such file or directory"), fileName.GetFullPath().c_str());
+        clDEBUG() << "Failed to open:" << fileName << ". No such file or directory";
         return NULL;
     }
 
@@ -583,11 +584,11 @@ LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectNa
     if(editor) {
         editor->SetProject(projName);
     } else if(fileName.IsOk() == false) {
-        wxLogMessage(wxT("Invalid file name: ") + fileName.GetFullPath());
+        clLogMessage(wxT("Invalid file name: ") + fileName.GetFullPath());
         return NULL;
 
     } else if(!fileName.FileExists()) {
-        wxLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
+        clLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
         return NULL;
 
     } else {

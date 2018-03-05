@@ -61,7 +61,7 @@ double clClangFormatLocator::GetVersion(const wxString& clangFormat) const
     for(size_t i = 0; i < lines.GetCount(); ++i) {
         if(reClangFormatVersion.Matches(lines.Item(i))) {
             wxString version = reClangFormatVersion.GetMatch(lines.Item(i), 1);
-            // wxLogMessage("clang-format version is %s", version);
+            // clLogMessage("clang-format version is %s", version);
             version.ToCDouble(&double_version);
             return double_version;
         }

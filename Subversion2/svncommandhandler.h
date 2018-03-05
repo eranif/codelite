@@ -29,6 +29,7 @@
 #include <wx/string.h>
 #include <wx/event.h>
 #include <wx/log.h>
+#include "file_logger.h"
 
 class Subversion2;
 class IManager;
@@ -147,10 +148,10 @@ public:
 
         } else {
             if(m_commandId == wxNOT_FOUND) {
-                wxLogMessage(wxT("svn: ProcessLoginRequired: passed m_commandId = wxNOT_FOUND"));
+                clLogMessage(wxT("svn: ProcessLoginRequired: passed m_commandId = wxNOT_FOUND"));
 
             } else if(m_owner == NULL) {
-                wxLogMessage(wxT("svn: ProcessLoginRequired: passed NULL m_owner"));
+                clLogMessage(wxT("svn: ProcessLoginRequired: passed NULL m_owner"));
             }
         }
     }

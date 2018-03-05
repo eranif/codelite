@@ -3855,7 +3855,7 @@ void clTreeListMainWindow::OnMouse(wxMouseEvent& event)
 
     // ---------- DETERMINE EVENT ----------
     /*
-    wxLogMessage("OnMouse: LMR down=<%d, %d, %d> up=<%d, %d, %d> LDblClick=<%d> dragging=<%d>",
+    clLogMessage("OnMouse: LMR down=<%d, %d, %d> up=<%d, %d, %d> LDblClick=<%d> dragging=<%d>",
         event.LeftDown(), event.MiddleDown(), event.RightDown(),
         event.LeftUp(), event.MiddleUp(), event.RightUp(),
         event.LeftDClick(), event.Dragging());

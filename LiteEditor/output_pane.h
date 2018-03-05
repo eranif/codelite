@@ -84,8 +84,6 @@ protected:
 
 private:
     wxString m_caption;
-    wxLog* m_logTargetOld;
-
     Notebook* m_book;
     FindResultsTab* m_findResultsTab;
     ReplaceInFilesPanel* m_replaceResultsTab;

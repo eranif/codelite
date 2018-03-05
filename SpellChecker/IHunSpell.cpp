@@ -36,6 +36,7 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 #include <wx/log.h>
+#include "file_logger.h"
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
@@ -92,23 +93,20 @@ bool IHunSpell::InitEngine()
     wxFileName fna(aff);
 
     if(!fna.FileExists()) {
-        wxLogMessage(_("Could not find aff file!"));
+        clLogMessage(_("Could not find aff file!"));
         return false;
     }
     wxFileName fnd(dict);
 
     if(!fnd.FileExists()) {
-        wxLogMessage(_("Could not find dictionary file!"));
+        clLogMessage(_("Could not find dictionary file!"));
         return false;
     }
     // so far ok, init engine
     m_pSpell = Hunspell_create(affBuffer, dicBuffer);
-
     return true;
-
-    wxLogMessage(_("Could not initialize spelling engine!"));
-    return false;
 }
+
 // ------------------------------------------------------------
 void IHunSpell::CloseEngine()
 {

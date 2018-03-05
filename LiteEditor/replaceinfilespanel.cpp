@@ -38,6 +38,7 @@
 #include "clStrings.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
+#include "file_logger.h"
 
 ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxString& name)
     : FindResultsTab(parent, id, name)
@@ -177,7 +178,7 @@ void ReplaceInFilesPanel::DoSaveResults(
         if(sci->GetModify() && !WriteFileWithBackup(begin->second.GetFileName(), sci->GetText(), false)) {
             wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(), _("CodeLite - Replace"),
                 wxICON_ERROR | wxOK);
-            wxLogMessage(wxT("Replace: Failed to write file ") + begin->second.GetFileName());
+            clDEBUG() << "Replace: Failed to write file" << begin->second.GetFileName();
             ok = false;
         }
 
@@ -208,7 +209,7 @@ wxStyledTextCtrl* ReplaceInFilesPanel::DoGetEditor(const wxString& fileName)
     wxString content;
     if(!ReadFileWithConversion(fileName, content)) {
         wxMessageBox(_("Failed to open file:\n") + fileName, _("CodeLite - Replace"), wxICON_ERROR | wxOK);
-        wxLogMessage(wxT("Replace: Failed to read file ") + fileName);
+        clDEBUG() << "Replace: Failed to read file" << fileName;
         return NULL;
     }
 

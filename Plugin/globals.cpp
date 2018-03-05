@@ -444,7 +444,7 @@ wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspac
 
             if(!found) {
                 // dont replace anything
-                wxLogMessage(wxT("Syntax error in expression: ") + expression + wxT(": expecting '`'"));
+                clLogMessage(wxT("Syntax error in expression: ") + expression + wxT(": expecting '`'"));
                 return expression;
             } else {
                 // expand the backtick statement
@@ -624,7 +624,7 @@ bool WriteFileWithBackup(const wxString& file_name, const wxString& content, boo
         wxString backup_name(file_name);
         backup_name << wxT(".bak");
         if(!wxCopyFile(file_name, backup_name, true)) {
-            wxLogMessage(wxString::Format(wxT("Failed to backup file %s, skipping it"), file_name.c_str()));
+            clLogMessage(wxString::Format(wxT("Failed to backup file %s, skipping it"), file_name.c_str()));
             return false;
         }
     }
@@ -633,7 +633,7 @@ bool WriteFileWithBackup(const wxString& file_name, const wxString& content, boo
     if(file.IsOpened() == false) {
         // Nothing to be done
         wxString msg = wxString::Format(wxT("Failed to open file %s"), file_name.c_str());
-        wxLogMessage(msg);
+        clLogMessage(msg);
         return false;
     }
 
@@ -838,7 +838,7 @@ static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<P
                 ProjectPtr proj(new Project());
                 if(!proj->Load(files.Item(i))) {
                     // corrupted xml file?
-                    wxLogMessage(wxT("Failed to load template project: ") + files.Item(i) + wxT(" (corrupted XML?)"));
+                    clLogMessage(wxT("Failed to load template project: ") + files.Item(i) + wxT(" (corrupted XML?)"));
                     continue;
                 }
                 list.push_back(proj);

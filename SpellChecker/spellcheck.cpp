@@ -83,6 +83,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 // ------------------------------------------------------------
 SpellCheck::SpellCheck(IManager* manager)
     : IPlugin(manager)
+    , m_pLastEditor(nullptr)
 {
     Init();
 }
@@ -237,6 +238,8 @@ IEditor* SpellCheck::GetEditor()
 // ------------------------------------------------------------
 void SpellCheck::OnSettings(wxCommandEvent& e)
 {
+    m_pLastEditor = nullptr;
+
     SpellCheckerSettings dlg(m_mgr->GetTheApp()->GetTopWindow());
     dlg.SetHunspell(m_pEngine);
     dlg.SetScanStrings(m_pEngine->IsScannerType(IHunSpell::kString));
@@ -373,6 +376,14 @@ void SpellCheck::OnTimer(wxTimerEvent& e)
     if(!editor) return;
 
     if(GetCheckContinuous()) {
+        // Only run the checks if we've not run them or the file is modified.
+        const auto modificationCount(editor->GetModificationCount());
+        if ((editor == m_pLastEditor) && (m_lastModificationCount == modificationCount))
+            return;
+
+        m_pLastEditor = editor;
+        m_lastModificationCount = modificationCount;
+
         switch(editor->GetLexerId()) {
         case 3: { // wxSCI_LEX_CPP
             if(m_mgr->IsWorkspaceOpen()) {
@@ -388,6 +399,8 @@ void SpellCheck::OnTimer(wxTimerEvent& e)
 // ------------------------------------------------------------
 void SpellCheck::OnContextMenu(wxCommandEvent& e)
 {
+    m_pLastEditor = nullptr;
+
     IEditor* editor = GetEditor();
 
     if(!editor) {
@@ -443,7 +456,9 @@ void SpellCheck::SetCheckContinuous(bool value)
     m_options.SetCheckContinuous(value);
 
     if(value) {
+        m_pLastEditor = nullptr;
         m_timer.Start(PARSE_TIME);
+
         if(m_pToolbar) {
             m_pToolbar->ToggleTool(XRCID(s_contCheckID.ToUTF8()), true);
             m_pToolbar->Refresh();

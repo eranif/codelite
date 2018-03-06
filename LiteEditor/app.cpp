@@ -282,7 +282,6 @@ bool CodeLiteApp::OnInit()
 #else
     SetAppName(wxT("codelite"));
 #endif
-
 #ifdef __WXGTK__
     // We need to set the installation prefix on GTK for some reason (mainly debug builds)
     wxString installationDir(INSTALL_DIR);
@@ -308,7 +307,10 @@ bool CodeLiteApp::OnInit()
 
 #endif
     wxSocketBase::Initialize();
-
+    
+    // Redirect all error messages to stderr
+    wxLog::SetActiveTarget(new wxLogStderr());
+    
 #if wxUSE_ON_FATAL_EXCEPTION
     // trun on fatal exceptions handler
     wxHandleFatalExceptions(true);

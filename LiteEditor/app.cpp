@@ -271,6 +271,8 @@ CodeLiteApp::~CodeLiteApp(void)
 typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
 #endif
 
+static wxLogNull NO_LOG;
+
 bool CodeLiteApp::OnInit()
 {
 #if defined(__WXMSW__) && !defined(NDEBUG)

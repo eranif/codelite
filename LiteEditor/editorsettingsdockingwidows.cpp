@@ -75,6 +75,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxUseDarkTabTheme->SetValue(options->IsTabColourDark());
     m_checkBoxMouseScrollSwitchTabs->SetValue(options->IsMouseScrollSwitchTabs());
+    m_checkBoxSortTabsDropdownAlphabetically->SetValue(options->IsSortTabsDropdownAlphabetically());
 #else
     m_checkBoxEditorTabsFollowsTheme->SetValue(true);
     m_checkBoxEditorTabsFollowsTheme->Enable(false);
@@ -82,6 +83,8 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxUseDarkTabTheme->Enable(false);
     m_checkBoxMouseScrollSwitchTabs->SetValue(false);
     m_checkBoxMouseScrollSwitchTabs->Enable(false);
+    m_checkBoxSortTabsDropdownAlphabetically->SetValue(false);
+    m_checkBoxSortTabsDropdownAlphabetically->Enable(false);
 #endif
 
     int sel(0);
@@ -190,6 +193,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
 #endif
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
     options->SetMouseScrollSwitchTabs(m_checkBoxMouseScrollSwitchTabs->IsChecked());
+    options->SetSortTabsDropdownAlphabetically(m_checkBoxSortTabsDropdownAlphabetically->IsChecked());
 
     int ht(0);
     switch(m_choiceTabHeight->GetSelection()) {

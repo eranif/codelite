@@ -1122,15 +1122,18 @@ void clTabCtrl::DoShowTabList()
     const int firstTabPageID = 13457;
     int pageMenuID = firstTabPageID;
 
-    // Make a sorted view of tabs.
+    // Optionally make a sorted view of tabs.
     std::vector<size_t> sortedIndexes(m_tabs.size());
     {
         // std is C++11 at the moment, so no generalized capture.
         size_t index = 0;
         std::generate(sortedIndexes.begin(), sortedIndexes.end(), [&index]() { return index++; });
     }
+    
+    if (EditorConfigST::Get()->GetOptions()->IsSortTabsDropdownAlphabetically()) {
     std::sort(sortedIndexes.begin(), sortedIndexes.end(),
         [this](size_t i1, size_t i2) { return m_tabs[i1]->m_label.CmpNoCase(m_tabs[i2]->m_label) < 0; });
+    }
 
     for(auto sortedIndex : sortedIndexes) {
         clTabInfo::Ptr_t tab = m_tabs.at(sortedIndex);

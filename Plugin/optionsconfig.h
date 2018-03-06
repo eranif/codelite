@@ -73,6 +73,7 @@ public:
 
     enum {
         Opt2_MouseScrollSwitchTabs = (1 << 0),
+        Opt2_SortTabsDropdownAlphabetically = (1 << 1),
     };
 
     enum { nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall };
@@ -203,6 +204,8 @@ public:
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
     bool IsMouseScrollSwitchTabs() const { return HasOption2(Opt2_MouseScrollSwitchTabs); }
     void SetMouseScrollSwitchTabs(bool b) { EnableOption2(Opt2_MouseScrollSwitchTabs, b); }
+    bool IsSortTabsDropdownAlphabetically() const { return HasOption2(Opt2_SortTabsDropdownAlphabetically); }
+    void SetSortTabsDropdownAlphabetically(bool b) { EnableOption2(Opt2_SortTabsDropdownAlphabetically, b); }
 
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }

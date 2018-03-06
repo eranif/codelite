@@ -131,6 +131,12 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     boxSizer56->Add(m_checkBoxMouseScrollSwitchTabs, 0, wxALL, WXC_FROM_DIP(5));
     
+    m_checkBoxSortTabsDropdownAlphabetically = new wxCheckBox(m_panelTabs, wxID_ANY, _("Sort the 'More...' dropdown alphabetically"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
+    m_checkBoxSortTabsDropdownAlphabetically->SetValue(false);
+    m_checkBoxSortTabsDropdownAlphabetically->SetToolTip(_("Display the 'More tabs...' dropdown sorted alphabetically, rather than by tab order\n"));
+    
+    boxSizer56->Add(m_checkBoxSortTabsDropdownAlphabetically, 0, wxALL, WXC_FROM_DIP(5));
+    
     m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("Docking"), false);
     

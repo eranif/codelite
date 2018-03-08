@@ -259,7 +259,7 @@ void IHunSpell::CheckSpelling(const wxString& check)
             // look in user list
             if(m_userDict.Index(token) != wxNOT_FOUND) continue;
 
-			// see if hex number 
+			// see if hex number
 			if(rehex.Matches(token)) continue;
 
             pEditor->SetUserIndicator(pos, token.Len());
@@ -350,16 +350,27 @@ bool IHunSpell::LoadUserDict(const wxString& filename)
 bool IHunSpell::SaveUserDict(const wxString& filename)
 {
     wxTextFile tf(filename);
+    std::set<wxString> fileUserDict;
 
     if(!tf.Exists()) {
         if(!tf.Create()) return false;
     } else {
         if(!tf.Open()) return false;
+
+        // Re-read contents from disk in case another CodeLite instance has updated the user dictionary.
+        for(wxUint32 i = 0; i < tf.GetLineCount(); i++) {
+            fileUserDict.insert(tf.GetLine(i));
+        }
+
         tf.Clear();
     }
 
     for(wxUint32 i = 0; i < m_userDict.GetCount(); i++) {
-        tf.AddLine(m_userDict[i]);
+        fileUserDict.insert(m_userDict[i]);
+    }
+
+    for(const auto &word : fileUserDict) {
+        tf.AddLine(word);
     }
     tf.Write();
     tf.Close();
@@ -529,7 +540,7 @@ int IHunSpell::CheckCppType(IEditor* pEditor)
                 // look in user list
                 if(m_userDict.Index(token) != wxNOT_FOUND) continue;
 
-				// see if hex number 
+				// see if hex number
 				if(rehex.Matches(token)) continue;
 
                 pEditor->SetUserIndicator(pos, token.Len());
@@ -615,7 +626,7 @@ int IHunSpell::MarkErrors(IEditor* pEditor)
                 // look in user list
                 if(m_userDict.Index(token) != wxNOT_FOUND) continue;
 
-				// see if hex number 
+				// see if hex number
 				if(rehex.Matches(token)) continue;
 
                 pEditor->SetUserIndicator(pos, token.Len());

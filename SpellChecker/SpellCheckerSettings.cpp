@@ -62,6 +62,8 @@ void SpellCheckerSettings::OnInitDialog(wxInitDialogEvent& event)
 {
     event.Skip();
 
+	m_pCaseSensitiveUserDictionary->SetValue(m_caseSensitiveUserDictionary);
+
     if(m_pHunspell) {
         m_pDirPicker->SetPath(m_dictionaryPath);
 
@@ -101,6 +103,7 @@ void SpellCheckerSettings::OnOk(wxCommandEvent& event)
 {
     event.Skip();
     m_dictionaryPath = m_pDirPicker->GetPath();
+	m_caseSensitiveUserDictionary = m_pCaseSensitiveUserDictionary->GetValue();
 
     if(!wxEndsWithPathSeparator(m_dictionaryPath)) m_dictionaryPath += wxFILE_SEP_PATH;
     ;

@@ -62,6 +62,7 @@ protected:
     bool       m_scanC;
     bool       m_scanD1;
     bool       m_scanD2;
+    bool       m_caseSensitiveUserDictionary;
 
 public:
     const wxString& GetDictionaryPath() const {
@@ -92,6 +93,9 @@ public:
     void            SetScanStrings( const bool& scanStrings ) {
         this->m_scanStrings = scanStrings;
     }
+    void            SetCaseSensitiveUserDictionary( const bool& caseSensitiveUserDictionary ) {
+        this->m_caseSensitiveUserDictionary = caseSensitiveUserDictionary;
+    }
 
     bool GetScanC() const {
         return m_scanC;
@@ -107,6 +111,9 @@ public:
     }
     bool GetScanStrings() const {
         return m_scanStrings;
+    }
+    bool GetCaseSensitiveUserDictionary() const {
+        return m_caseSensitiveUserDictionary;
     }
     /** Constructor */
     SpellCheckerSettings( wxWindow* parent );

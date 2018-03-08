@@ -43,6 +43,7 @@ protected:
     wxCheckBox* m_pC_Comments;
     wxCheckBox* m_pDox1;
     wxCheckBox* m_pDox2;
+    wxCheckBox* m_pCaseSensitiveUserDictionary;
     wxButton* m_buttonClearIgnoreList;
     wxStdDialogButtonSizer* m_stdBtnSizer12;
     wxButton* m_buttonOK;
@@ -68,6 +69,7 @@ public:
     wxCheckBox* GetPC_Comments() { return m_pC_Comments; }
     wxCheckBox* GetPDox1() { return m_pDox1; }
     wxCheckBox* GetPDox2() { return m_pDox2; }
+    wxCheckBox* GetPCaseSensitiveUserDictionary() { return m_pCaseSensitiveUserDictionary; }
     wxButton* GetButtonClearIgnoreList() { return m_buttonClearIgnoreList; }
     SpellCheckerSettings_base(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SpellChecker Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SpellCheckerSettings_base();

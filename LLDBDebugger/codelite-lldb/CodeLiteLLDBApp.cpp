@@ -778,7 +778,8 @@ void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
             wrapper.value = value;
             wrapper.isWatch = true;
             wrapper.expression = m_watches.Item(i);
-            m_variables.insert(std::make_pair(value.GetID(), wrapper));
+            // Always update as a watch may match a local in this frame
+            m_variables[value.GetID()] = wrapper;
             locals.push_back(var);
         }
     }
@@ -1057,7 +1058,7 @@ void CodeLiteLLDBApp::AddWatch(const LLDBCommand& command)
 {
     wxString expr = command.GetExpression();
     wxPrintf("codelite-lldb: adding watch '%s'\n", expr);
-    m_watches.Add(command.GetExpression());
+    m_watches.Add(expr);
 }
 
 void CodeLiteLLDBApp::DeleteWatch(const LLDBCommand& command)

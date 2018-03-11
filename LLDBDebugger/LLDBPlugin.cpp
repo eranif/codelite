@@ -129,7 +129,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL,
                                   this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS,
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS,
                                   clDebugEventHandler(LLDBPlugin::OnDebugDeleteAllBreakpoints), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_ATTACH_TO_PROCESS,
                                   clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);
@@ -191,7 +191,7 @@ void LLDBPlugin::UnPlug()
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL,
                                      this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS,
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS,
                                      clDebugEventHandler(LLDBPlugin::OnDebugDeleteAllBreakpoints), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_ATTACH_TO_PROCESS,
                                      clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);

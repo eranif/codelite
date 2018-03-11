@@ -461,7 +461,7 @@ void DebuggerMenuHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& e
     if(event.GetId() == XRCID("delete_all_breakpoints")) {
 
         // First let the plugins do this thing
-        clDebugEvent event(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS);
+        clDebugEvent event(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS);
         EventNotifier::Get()->AddPendingEvent(event);
 
         // Now clear the manager

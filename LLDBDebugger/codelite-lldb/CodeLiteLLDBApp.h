@@ -47,7 +47,7 @@ struct VariableWrapper
     lldb::SBValue value;
     bool isWatch;
     wxString expression;
-    
+
     VariableWrapper() : isWatch(false) {}
 };
 
@@ -133,6 +133,8 @@ public:
     void StartDebugger(const LLDBCommand& command);
     void RunDebugger(const LLDBCommand& command);
     void Continue(const LLDBCommand& command);
+    void RunTo(const LLDBCommand& command);
+    void JumpTo(const LLDBCommand& command);
     void ApplyBreakpoints(const LLDBCommand& command);
     void StopDebugger(const LLDBCommand& command);
     void DetachDebugger(const LLDBCommand& command);

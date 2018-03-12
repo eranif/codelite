@@ -57,6 +57,15 @@ static LLDBPlugin* thePlugin = NULL;
 #define LLDB_LOCALS_PANE_NAME "LLDB Locals"
 #define LLDB_THREADS_PANE_NAME "LLDB Threads"
 
+namespace
+{
+
+// Reusing gdb ids so global debugger menu and accelerators work.
+const int lldbRunToCursorContextMenuId = XRCID("dbg_run_to_cursor");
+const int lldbJumpToCursorContextMenuId = XRCID("dbg_jump_cursor");
+
+} // namespace
+
 #define CHECK_IS_LLDB_SESSION()    \
     if(!m_connector.IsRunning()) { \
         event.Skip();              \
@@ -144,6 +153,11 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
                                   this);
     Bind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
     wxTheApp->Bind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
+
+    EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnRunToCursor, this,
+        lldbRunToCursorContextMenuId);
+    EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnJumpToCursor, this,
+        lldbJumpToCursorContextMenuId);
 }
 
 void LLDBPlugin::UnPlug()
@@ -205,6 +219,11 @@ void LLDBPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL,
                                      this);
     wxTheApp->Unbind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
+
+    EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnRunToCursor, this,
+        lldbRunToCursorContextMenuId);
+    EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnJumpToCursor, this,
+        lldbJumpToCursorContextMenuId);
 }
 
 LLDBPlugin::~LLDBPlugin() {}
@@ -218,10 +237,10 @@ clToolBar* LLDBPlugin::CreateToolBar(wxWindow* parent)
 
 void LLDBPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
-    // We want to add an entry in the global settings mene
+    // We want to add an entry in the global settings menu
     // Menu Bar > Settings > LLDB Settings
 
-    // Get the main fram's menubar
+    // Get the main frame's menubar
     wxMenuBar* mb = pluginsMenu->GetMenuBar();
     if(mb) {
         wxMenu* settingsMenu(NULL);
@@ -235,8 +254,30 @@ void LLDBPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void LLDBPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    wxUnusedVar(menu);
     wxUnusedVar(type);
+
+    if(!m_connector.IsRunning()) {
+        return;
+    }
+
+    const auto editor = m_mgr->GetActiveEditor();
+    if(!editor) {
+        return;
+    }
+
+    size_t numberOfMenuItems = 0;
+
+    if(m_connector.IsCanInteract()) {
+        menu->Prepend(lldbJumpToCursorContextMenuId, wxT("Jump to Caret Line"));
+        ++numberOfMenuItems;
+
+        menu->Prepend(lldbRunToCursorContextMenuId, wxT("Run to Caret Line"));
+        ++numberOfMenuItems;
+    }
+
+    if(numberOfMenuItems > 0) {
+        menu->InsertSeparator(numberOfMenuItems);
+    }
 }
 
 void LLDBPlugin::UnHookPopupMenu(wxMenu* menu, MenuType type)
@@ -851,6 +892,30 @@ void LLDBPlugin::OnBuildStarting(clBuildEvent& event)
     } else {
         event.Skip();
     }
+}
+
+void LLDBPlugin::OnRunToCursor(wxCommandEvent& event)
+{
+    CHECK_IS_LLDB_SESSION();
+
+    const auto editor = m_mgr->GetActiveEditor();
+    if(!editor) {
+        return;
+    }
+
+    m_connector.RunTo(editor->GetFileName(), editor->GetCurrentLine() + 1);
+}
+
+void LLDBPlugin::OnJumpToCursor(wxCommandEvent& event)
+{
+    CHECK_IS_LLDB_SESSION();
+
+    const auto editor = m_mgr->GetActiveEditor();
+    if(!editor) {
+        return;
+    }
+
+    m_connector.JumpTo(editor->GetFileName(), editor->GetCurrentLine() + 1);
 }
 
 void LLDBPlugin::OnSettings(wxCommandEvent& event)

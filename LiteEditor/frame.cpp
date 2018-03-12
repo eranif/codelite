@@ -3553,7 +3553,7 @@ void clMainFrame::OnDebugCmd(wxCommandEvent& e)
         eventId = wxEVT_DBG_UI_NEXT_INST;
     }
 
-    // ALlow the plugins to handle this command first
+    // Allow the plugins to handle this command first
     clDebugEvent evnt(eventId);
     if(EventNotifier::Get()->ProcessEvent(evnt)) {
         return;
@@ -6186,6 +6186,11 @@ void clMainFrame::OnDebugShowCursorUI(wxUpdateUIEvent& e)
 
 void clMainFrame::OnDebugRunToCursor(wxCommandEvent& e)
 {
+    // Allow the plugins to handle this command first
+    if(EventNotifier::Get()->ProcessEvent(e)) {
+        return;
+    }
+
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor && dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
@@ -6200,6 +6205,11 @@ void clMainFrame::OnDebugRunToCursor(wxCommandEvent& e)
 
 void clMainFrame::OnDebugJumpToCursor(wxCommandEvent& e)
 {
+    // Allow the plugins to handle this command first
+    if(EventNotifier::Get()->ProcessEvent(e)) {
+        return;
+    }
+
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor && dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {

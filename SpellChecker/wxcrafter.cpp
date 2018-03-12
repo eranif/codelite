@@ -108,6 +108,12 @@ SpellCheckerSettings_base::SpellCheckerSettings_base(wxWindow* parent, wxWindowI
 
     bSizer5->Add(m_pCaseSensitiveUserDictionary, 0, wxALL, 5);
 
+    m_pIgnoreSymbolsInTagsDatabase = new wxCheckBox(this, wxID_ANY, _("Ignore symbols in tags database"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_pIgnoreSymbolsInTagsDatabase->SetValue(false);
+    m_pIgnoreSymbolsInTagsDatabase->SetToolTip(_("Don't mark words in the project's tags database as spelling errors"));
+
+    bSizer5->Add(m_pIgnoreSymbolsInTagsDatabase, 0, wxALL, 5);
+
     m_buttonClearIgnoreList = new wxButton(this, wxID_CLEAR, _("Clear ignore list"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_buttonClearIgnoreList->SetToolTip(_("Clear the ignore list"));
 

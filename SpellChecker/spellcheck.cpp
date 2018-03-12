@@ -250,6 +250,7 @@ void SpellCheck::OnSettings(wxCommandEvent& e)
     dlg.SetDictionaryFileName(m_pEngine->GetDictionary());
     dlg.SetDictionaryPath(m_pEngine->GetDictionaryPath());
     dlg.SetCaseSensitiveUserDictionary(m_pEngine->GetCaseSensitiveUserDictionary());
+    dlg.SetIgnoreSymbolsInTagsDatabase(m_pEngine->GetIgnoreSymbolsInTagsDatabase());
 
     if(dlg.ShowModal() == wxID_OK) {
         m_pEngine->EnableScannerType(IHunSpell::kString, dlg.GetScanStrings());
@@ -260,6 +261,7 @@ void SpellCheck::OnSettings(wxCommandEvent& e)
         m_pEngine->SetDictionaryPath(dlg.GetDictionaryPath());
         m_pEngine->ChangeLanguage(dlg.GetDictionaryFileName());
         m_pEngine->SetCaseSensitiveUserDictionary(dlg.GetCaseSensitiveUserDictionary());
+        m_pEngine->SetIgnoreSymbolsInTagsDatabase(dlg.GetIgnoreSymbolsInTagsDatabase());
         SaveSettings();
     }
 }
@@ -313,6 +315,7 @@ void SpellCheck::LoadSettings()
     m_pEngine->EnableScannerType(IHunSpell::kDox1, m_options.GetScanD1());
     m_pEngine->EnableScannerType(IHunSpell::kDox2, m_options.GetScanD2());
     m_pEngine->SetCaseSensitiveUserDictionary(m_options.GetCaseSensitiveUserDictionary());
+    m_pEngine->SetIgnoreSymbolsInTagsDatabase(m_options.GetIgnoreSymbolsInTagsDatabase());
 }
 // ------------------------------------------------------------
 void SpellCheck::SaveSettings()
@@ -325,6 +328,7 @@ void SpellCheck::SaveSettings()
     m_options.SetScanD1(m_pEngine->IsScannerType(IHunSpell::kDox1));
     m_options.SetScanD2(m_pEngine->IsScannerType(IHunSpell::kDox2));
     m_options.SetCaseSensitiveUserDictionary(m_pEngine->GetCaseSensitiveUserDictionary());
+    m_options.SetIgnoreSymbolsInTagsDatabase(m_pEngine->GetIgnoreSymbolsInTagsDatabase());
     m_mgr->GetConfigTool()->WriteObject(s_spOptions, &m_options);
 }
 // ------------------------------------------------------------
@@ -471,14 +475,6 @@ void SpellCheck::SetCheckContinuous(bool value)
             m_pToolbar->Refresh();
         }
     }
-}
-
-// ------------------------------------------------------------
-bool SpellCheck::IsTag(const wxString& token)
-{
-    std::vector<TagEntryPtr> tags;
-    m_mgr->GetTagsManager()->FindSymbol(token, tags);
-    return (tags.size() == 0) ? false : true;
 }
 // ------------------------------------------------------------
 void SpellCheck::OnWspLoaded(wxCommandEvent& e)

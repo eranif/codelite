@@ -91,6 +91,8 @@ enum eCommandType {
     kCommandAddWatch,
     kCommandDeleteWatch,
     kCommandInterperterCommand,
+    kCommandRunTo,
+    kCommandJumpTo
 };
 
 enum eLLDBOptions {

@@ -213,6 +213,16 @@ public:
     void Continue();
 
     /**
+     * @brief Run and break on a specific file and line.
+     */
+    void RunTo(const wxFileName& filename, int line);
+
+    /**
+     * @brief Jump the program counter to a specific file and line.
+     */
+    void JumpTo(const wxFileName& filename, int line);
+
+    /**
      * @brief send request to the debugger to request the local varibles
      */
     void RequestLocals();
@@ -235,6 +245,7 @@ public:
      * at the debug server side
      */
     void RequestVariableChildren(int lldbId);
+
     /**
      * @brief stop the debugger
      */
@@ -342,6 +353,14 @@ protected:
      * @return true on success, false otherwise
      */
     bool ConnectToRemoteDebugger(const wxString& ip, int port, LLDBConnectReturnObject& ret, int timeout = 10);
+
+    /**
+     * @brief Send a breakpoint command with a single breakpoint location to codelite-lldb.
+     * @param commandType the command to send.
+     * @param filename the file to break on.
+     * @param line the line in @a file to break on.
+     */
+    void SendSingleBreakpointCommand(const eCommandType commandType, const wxFileName& filename, const int line);
 };
 
 #endif // LLDBCONNECTOR_H

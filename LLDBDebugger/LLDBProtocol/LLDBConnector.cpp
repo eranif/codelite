@@ -247,6 +247,28 @@ void LLDBConnector::Continue()
     SendCommand(command);
 }
 
+void LLDBConnector::RunTo(const wxFileName& filename, int line)
+{
+    SendSingleBreakpointCommand(kCommandRunTo, filename, line);
+}
+
+void LLDBConnector::JumpTo(const wxFileName& filename, int line)
+{
+    SendSingleBreakpointCommand(kCommandJumpTo, filename, line);
+}
+
+void LLDBConnector::SendSingleBreakpointCommand(const eCommandType commandType, const wxFileName& filename, const int line)
+{
+    if(!IsCanInteract()) {
+        return;
+    }
+
+    LLDBCommand lldbCommand;
+    lldbCommand.SetCommandType(commandType);
+    lldbCommand.SetBreakpoints(LLDBBreakpoint::Vec_t { LLDBBreakpoint::Ptr_t(new LLDBBreakpoint(filename, line)) });
+    SendCommand(lldbCommand);
+}
+
 void LLDBConnector::Stop()
 {
     if(IsAttachedToProcess()) {
@@ -293,7 +315,7 @@ void LLDBConnector::DeleteBreakpoints()
         command.SetCommandType(kCommandDeleteBreakpoint);
         command.SetBreakpoints(m_pendingDeletionBreakpoints);
         SendCommand(command);
-        CL_DEBUGS(wxString() << "codelite: DeleteBreakpoints celar pending deletionbreakpoints queue");
+        CL_DEBUGS(wxString() << "codelite: DeleteBreakpoints clear pending deletionbreakpoints queue");
         m_pendingDeletionBreakpoints.clear();
 
     } else {

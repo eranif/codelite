@@ -396,11 +396,11 @@ void CodeLiteLLDBApp::NotifyStopped()
     // set the selected frame file:line
     if(thread.IsValid() && thread.GetSelectedFrame().IsValid()) {
         lldb::SBFrame frame = thread.GetSelectedFrame();
-        lldb::SBLineEntry lineEntry = thread.GetSelectedFrame().GetLineEntry();
+        lldb::SBLineEntry lineEntry = frame.GetLineEntry();
         if(lineEntry.IsValid()) {
             reply.SetLine(lineEntry.GetLine());
-            lldb::SBFileSpec fileSepc = frame.GetLineEntry().GetFileSpec();
-            reply.SetFilename(wxFileName(fileSepc.GetDirectory(), fileSepc.GetFilename()).GetFullPath());
+            lldb::SBFileSpec fileSpec = lineEntry.GetFileSpec();
+            reply.SetFilename(wxFileName(fileSpec.GetDirectory(), fileSpec.GetFilename()).GetFullPath());
         }
     }
 
@@ -414,7 +414,7 @@ void CodeLiteLLDBApp::NotifyStopped()
         t.SetActive(selectedThreadId == (int)thr.GetThreadID());
         lldb::SBFrame frame = thr.GetSelectedFrame();
         t.SetFunc(frame.GetFunctionName() ? frame.GetFunctionName() : "");
-        lldb::SBLineEntry lineEntry = thr.GetSelectedFrame().GetLineEntry();
+        lldb::SBLineEntry lineEntry = frame.GetLineEntry();
 
         // get the stop reason string
         char buffer[1024];
@@ -425,8 +425,8 @@ void CodeLiteLLDBApp::NotifyStopped()
         wxPrintf("codelite-lldb: thread %d stop reason is %s\n", t.GetId(), t.GetStopReasonString());
         if(lineEntry.IsValid()) {
             t.SetLine(lineEntry.GetLine());
-            lldb::SBFileSpec fileSepc = frame.GetLineEntry().GetFileSpec();
-            t.SetFile(wxFileName(fileSepc.GetDirectory(), fileSepc.GetFilename()).GetFullPath());
+            lldb::SBFileSpec fileSpec = frame.GetLineEntry().GetFileSpec();
+            t.SetFile(wxFileName(fileSpec.GetDirectory(), fileSpec.GetFilename()).GetFullPath());
         }
         threads.push_back(t);
     }
@@ -612,6 +612,59 @@ void CodeLiteLLDBApp::Continue(const LLDBCommand& command)
     CHECK_DEBUG_SESSION_RUNNING();
     if(m_target.GetProcess().IsValid() && m_target.GetProcess().GetState() == lldb::eStateStopped) {
         m_target.GetProcess().Continue();
+    }
+}
+
+void CodeLiteLLDBApp::RunTo(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: RunTo called\n");
+
+    if(m_target.GetProcess().GetState() != lldb::eStateStopped) {
+        return;
+    }
+
+    if(1 != command.GetBreakpoints().size()) {
+        return;
+    }
+
+    const auto &breakpoint = command.GetBreakpoints().at(0);
+    wxPrintf("codelite-lldb: creating one-shot breakpoint by location: %s,%d\n", breakpoint->GetFilename(),
+        breakpoint->GetLineNumber());
+
+    // The second parameter to SBFileSpec ctor is called "resolve" and it looks like it does ~ expansion, etc.
+    const lldb::SBFileSpec fileSpec(breakpoint->GetFilename().mb_str(), true);
+    auto sbBreakPoint = m_target.BreakpointCreateByLocation(fileSpec, breakpoint->GetLineNumber());
+    if(sbBreakPoint.IsValid()) {
+        // Set as one-shot and continue.
+        sbBreakPoint.SetOneShot(true);
+        m_target.GetProcess().Continue();
+    }
+}
+
+void CodeLiteLLDBApp::JumpTo(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: JumpTo called\n");
+
+    if(m_target.GetProcess().GetState() != lldb::eStateStopped) {
+        return;
+    }
+
+    if(1 != command.GetBreakpoints().size()) {
+        return;
+    }
+
+    const auto &breakpoint = command.GetBreakpoints().at(0);
+    wxPrintf("codelite-lldb: jumping to: %s,%d\n", breakpoint->GetFilename(), breakpoint->GetLineNumber());
+
+    // The second parameter is called "resolve" and it looks like it does ~ expansion, etc.
+    lldb::SBFileSpec fileSpec(breakpoint->GetFilename().mb_str(), true);
+    auto thread = m_target.GetProcess().GetSelectedThread();
+    auto error = thread.JumpToLine(fileSpec, breakpoint->GetLineNumber());
+
+    if (error.Success()) {
+        NotifyStopped();
+    } else {
+        wxPrintf("codelite-lldb: jumping failed: %s\n", error.GetCString());
     }
 }
 

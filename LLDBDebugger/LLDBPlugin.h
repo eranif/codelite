@@ -112,6 +112,8 @@ protected:
     void OnDebugShowCursor(clDebugEvent& event);
 
     void OnBuildStarting(clBuildEvent& event);
+    void OnRunToCursor(wxCommandEvent& event);
+    void OnJumpToCursor(wxCommandEvent& event);
 
     // LLDB events
     void OnLLDBCrashed(LLDBEvent& event);

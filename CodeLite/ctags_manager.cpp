@@ -430,6 +430,7 @@ TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int& count)
 
 bool TagsManager::IsValidCtagsFile(const wxFileName& filename) const
 {
+    wxLogNull PreventMissingFileLogErrorMessages;
     return FileExtManager::IsCxxFile(filename) || FileUtils::WildMatch(m_tagsOptions.GetFileSpec(), filename);
 }
 

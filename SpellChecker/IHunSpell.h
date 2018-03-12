@@ -108,8 +108,10 @@ public:
     void CloseEngine();
     /// changes the engines language. Must be in format like 'en_US'. No Close, Init necessary
     bool ChangeLanguage(const wxString& language);
-    /// check spelling for one word. Return 0 if the word was not found, otherwise != 0.
-    int CheckWord(const wxString& word);
+    /// check spelling for one word. Return true if the word was found.
+    bool CheckWord(const wxString& word) const;
+	/// is a word in the tags database?
+    bool IsTag(const wxString& word) const;
     /// returns an array with suggestions for the misspelled word.
     wxArrayString GetSuggestions(const wxString& misspelled);
     /// makes a spell check for the given cpp text. Canceled is set to true when the user cancels.
@@ -130,10 +132,12 @@ public:
     void SetDictionary(const wxString& dictionary) { m_dictionary = dictionary; }
     /// returns the current dictionary base filename
     const wxString& GetDictionary() const { return m_dictionary; }
-    /// sets whether user dictionary and ignored words are case sensitive
     void SetCaseSensitiveUserDictionary(const bool caseSensitiveUserDictionary);
     /// gets whether user dictionary and ignored words are case sensitive
     bool GetCaseSensitiveUserDictionary() const { return m_caseSensitiveUserDictionary; }
+    void SetIgnoreSymbolsInTagsDatabase(const bool ignoreSymbolsInTagsDatabase) { m_ignoreSymbolsInTagsDatabase = ignoreSymbolsInTagsDatabase; }
+    /// gets whether to ignore words that match ctags symbols
+    bool GetIgnoreSymbolsInTagsDatabase() const { return m_ignoreSymbolsInTagsDatabase; }
     ///
     void AddWord(const wxString& word) ;
 
@@ -187,6 +191,7 @@ protected:
     wxString m_dictionary;      // dictionary base filename
     wxString m_userDictPath;    // path to save user dictionary
     bool m_caseSensitiveUserDictionary;
+    bool m_ignoreSymbolsInTagsDatabase;
     Hunhandle* m_pSpell;        // pointer to hunspell
     CustomDictionary m_ignoreList; // ignore list
     CustomDictionary m_userDict;   // user words

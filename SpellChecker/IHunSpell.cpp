@@ -53,11 +53,14 @@
 #include "IHunSpell.h"
 #include "CorrectSpellingDlg.h"
 #include "spellcheck.h"
+#include "ctags_manager.h"
+
 // ------------------------------------------------------------
 #define MIN_TOKEN_LEN 3
 // ------------------------------------------------------------
 IHunSpell::IHunSpell() :
     m_caseSensitiveUserDictionary(true),
+    m_ignoreSymbolsInTagsDatabase(false),
     m_pSpell(nullptr),
     m_pPlugIn(nullptr),
     m_pSpellDlg(nullptr),
@@ -121,7 +124,36 @@ void IHunSpell::CloseEngine()
     m_pSpell = NULL;
 }
 // ------------------------------------------------------------
-int IHunSpell::CheckWord(const wxString& word) { return Hunspell_spell(m_pSpell, word.ToUTF8()); }
+bool IHunSpell::CheckWord(const wxString& word) const
+{
+    static thread_local wxRegEx rehex(s_dectHex, wxRE_ADVANCED);
+
+    // look in ignore list
+    if(m_ignoreList.count(word) != 0)
+        return true;
+
+    // look in user list
+    if(m_userDict.count(word) != 0)
+        return true;
+
+    // see if hex number
+    if(rehex.Matches(word))
+        return true;
+
+    return Hunspell_spell(m_pSpell, word.ToUTF8()) != 0;
+}
+// ------------------------------------------------------------
+bool IHunSpell::IsTag(const wxString& word) const
+{
+    if(GetIgnoreSymbolsInTagsDatabase()) {
+        std::vector<TagEntryPtr> tags;
+        TagsManagerST::Get()->FindSymbol(word, tags);
+        if(!tags.empty())
+            return true;
+    }
+
+    return false;
+}
 // ------------------------------------------------------------
 wxArrayString IHunSpell::GetSuggestions(const wxString& misspelled)
 {
@@ -245,8 +277,6 @@ void IHunSpell::CheckSpelling(const wxString& check)
     m_pSpellDlg->SetPHs(this);
     wxStringTokenizer tkz(text, s_defDelimiters);
 
-	wxRegEx rehex(s_dectHex, wxRE_ADVANCED);
-
     while(tkz.HasMoreTokens()) {
         wxString token = tkz.GetNextToken();
         int pos = tkz.GetPosition() - token.Len() - 1;
@@ -257,15 +287,6 @@ void IHunSpell::CheckSpelling(const wxString& check)
 
         // process token
         if(!CheckWord(token)) {
-            // look in ignore list
-            if(m_ignoreList.count(token) != 0) continue;
-
-            // look in user list
-            if(m_userDict.count(token) != 0) continue;
-
-			// see if hex number
-			if(rehex.Matches(token)) continue;
-
             pEditor->SetUserIndicator(pos, token.Len());
 
             if(!m_pPlugIn->GetCheckContinuous()) {
@@ -493,7 +514,6 @@ void IHunSpell::EnableScannerType(int type, bool state)
 int IHunSpell::CheckCppType(IEditor* pEditor)
 {
     wxStringTokenizer tkz;
-	wxRegEx rehex(s_dectHex, wxRE_ADVANCED);
 
     int retVal = kNoSpellingError;
     int offset = 0;
@@ -533,16 +553,8 @@ int IHunSpell::CheckCppType(IEditor* pEditor)
                 if(line.Find(s_include) != wxNOT_FOUND) continue;
             }
 
+			// Note checking tags database only in continuous mode.
             if(!CheckWord(token)) {
-                // look in ignore list
-                if(m_ignoreList.count(token) != 0) continue;
-
-                // look in user list
-                if(m_userDict.count(token) != 0) continue;
-
-				// see if hex number
-				if(rehex.Matches(token)) continue;
-
                 pEditor->SetUserIndicator(pos, token.Len());
                 pEditor->SetCaretAt(pos);
                 pEditor->SelectText(pos, token.Len());
@@ -580,7 +592,6 @@ int IHunSpell::CheckCppType(IEditor* pEditor)
 int IHunSpell::MarkErrors(IEditor* pEditor)
 {
     wxStringTokenizer tkz;
-	wxRegEx rehex(s_dectHex, wxRE_ADVANCED);
 
     int counter = 0;
     pEditor->ClearUserIndicators();
@@ -616,19 +627,7 @@ int IHunSpell::MarkErrors(IEditor* pEditor)
                     continue;
             }
 
-            //			else if(m_pPlugIn->IsTag(token)) {
-            //				continue;
-            //			}
-            if(!CheckWord(token)) {
-                // look in ignore list
-                if(m_ignoreList.count(token) != 0) continue;
-
-                // look in user list
-                if(m_userDict.count(token) != 0) continue;
-
-				// see if hex number
-				if(rehex.Matches(token)) continue;
-
+            if(!CheckWord(token) && !IsTag(token)) {
                 pEditor->SetUserIndicator(pos, token.Len());
                 counter++;
             }

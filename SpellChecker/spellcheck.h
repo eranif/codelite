@@ -49,7 +49,6 @@ public:
 
     void SetCheckContinuous(bool value);
     bool GetCheckContinuous() const { return m_options.GetCheckContinuous(); }
-    bool IsTag(const wxString& token);
     IEditor* GetEditor();
     wxMenu* CreateSubMenu();
 

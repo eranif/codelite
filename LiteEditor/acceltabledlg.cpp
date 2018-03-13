@@ -153,12 +153,12 @@ void AccelTableDlg::DoItemActivated()
                     cd->m_menuItemData.accel.Clear();
                     int row = m_dvListCtrl->ItemToRow(oldItem);
                     m_dvListCtrl->SetValue(wxString(), row, 2);
-
-                    MenuItemDataMap_t::iterator iter = m_accelMap.find(cd->m_menuItemData.resourceID);
-                    if(iter != m_accelMap.end()) {
-                        iter->second.accel.Clear(); // Clear the accelerator
-                    }
                 }
+            }
+
+            MenuItemDataMap_t::iterator iter = m_accelMap.find(who.resourceID);
+            if(iter != m_accelMap.end()) {
+                iter->second.accel.Clear(); // Clear the accelerator
             }
         }
 

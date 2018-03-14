@@ -86,6 +86,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_autoAdjustHScrollBarWidth(false)
     , m_caretWidth(1)
     , m_caretBlinkPeriod(500)
+    , m_copyLineEmptySelection(true)
     , m_programConsoleCommand(TERMINAL_CMD)
     , m_eolMode(wxT("Default"))
     , m_hideChangeMarkerMargin(false)
@@ -176,6 +177,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
             XmlUtils::ReadBool(node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
         m_caretBlinkPeriod = XmlUtils::ReadLong(node, wxT("CaretBlinkPeriod"), m_caretBlinkPeriod);
         m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
+        m_copyLineEmptySelection = XmlUtils::ReadBool(node, wxT("CopyLineEmptySelection"), m_copyLineEmptySelection);
         m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
         m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
         m_hideChangeMarkerMargin = XmlUtils::ReadBool(node, wxT("HideChangeMarkerMargin"));
@@ -318,6 +320,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("OutputTabsDirection"), wxString() << (int)m_outputTabsDirection);
     n->AddProperty(wxT("WorkspaceTabsDirection"), wxString() << (int)m_workspaceTabsDirection);
     n->AddProperty(wxT("IndentedComments"), BoolToString(m_indentedComments));
+    n->AddProperty(wxT("CopyLineEmptySelection"), BoolToString(m_copyLineEmptySelection));
 
     wxString tmp;
     tmp << m_indentWidth;

@@ -71,6 +71,7 @@ protected:
     wxPGProperty* m_pgPropSmartCurly;
     wxPGProperty* m_pgPropSmartParentheses;
     wxPGProperty* m_pgPropSmartQuotes;
+    wxPGProperty* m_pgPropCopyLineEmptySelection;
     wxPGProperty* m_pgProp16;
     wxPGProperty* m_pgPropWrapQuotes;
     wxPGProperty* m_pgPropWrapBrackets;

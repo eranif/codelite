@@ -138,6 +138,9 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     m_pgPropSmartQuotes = m_pgMgrEdit->AppendIn( m_pgProp8,  new wxBoolProperty( _("Smart quotes"), wxPG_LABEL, 1) );
     m_pgPropSmartQuotes->SetHelpString(_("When typing \" or ', automatically add another one to the right, unless one already exists (in this case, simply move the caret one position to the right)"));
     
+    m_pgPropCopyLineEmptySelection = m_pgMgrEdit->AppendIn( m_pgProp8,  new wxBoolProperty( _("Copying empty selection copies caret line"), wxPG_LABEL, 1) );
+    m_pgPropCopyLineEmptySelection->SetHelpString(_("Whether copying an empty selection to the clipboard copies the entire contents of the caret line, or nothing"));
+    
     m_pgProp16 = m_pgMgrEdit->Append(  new wxPropertyCategory( _("Typing in selection") ) );
     m_pgProp16->SetHelpString(wxT(""));
     

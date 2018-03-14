@@ -110,6 +110,7 @@ protected:
     bool m_autoAdjustHScrollBarWidth;
     int m_caretWidth;
     int m_caretBlinkPeriod;
+    bool m_copyLineEmptySelection;
     wxString m_programConsoleCommand;
     wxString m_eolMode;
     bool m_hideChangeMarkerMargin;
@@ -423,6 +424,9 @@ public:
     void SetCaretWidth(const int& caretWidth) { this->m_caretWidth = caretWidth; }
     const int& GetCaretBlinkPeriod() const { return m_caretBlinkPeriod; }
     const int& GetCaretWidth() const { return m_caretWidth; }
+
+    void SetCopyLineEmptySelection(const bool copyLineEmptySelection) { m_copyLineEmptySelection = copyLineEmptySelection; }
+    bool GetCopyLineEmptySelection() const { return m_copyLineEmptySelection; }
 
     void SetProgramConsoleCommand(const wxString& programConsoleCommand)
     {

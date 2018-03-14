@@ -40,7 +40,10 @@ void EditHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 
     OptionsConfigPtr options = editor->GetOptions();
     if(event.GetId() == wxID_COPY) {
-        editor->CopyAllowLine();
+        if(options->GetCopyLineEmptySelection())
+            editor->CopyAllowLine();
+        else
+            editor->Copy();
 
     } else if(event.GetId() == wxID_CUT) {
         editor->Cut();

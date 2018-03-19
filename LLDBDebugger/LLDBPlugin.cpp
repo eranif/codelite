@@ -364,7 +364,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
             bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
             if(!bldConf->IsGUIProgram() && !isWindows) {
-                m_debuggerTerminal.Launch(execToDebug.GetFullPath());
+                m_debuggerTerminal.Launch(clDebuggerTerminalPOSIX::MakeExeTitle(execToDebug.GetFullPath(), args));
 
                 if(m_debuggerTerminal.IsValid()) {
                     CL_DEBUG("Successfully launched terminal %s", m_debuggerTerminal.GetTty());
@@ -886,7 +886,9 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
 
 void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 {
-    if(!DoInitializeDebugger(event, true)) { return; }
+    if(!DoInitializeDebugger(event, true, clDebuggerTerminalPOSIX::MakeExeTitle(event.GetExecutableName(), event.GetArguments()))) {
+        return;
+    }
 
     LLDBConnectReturnObject retObj;
     LLDBSettings settings;
@@ -943,7 +945,7 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
     return;
 #endif
 
-    if(!DoInitializeDebugger(event, false)) { return; }
+    if(!DoInitializeDebugger(event, false, clDebuggerTerminalPOSIX::MakeCoreTitle(event.GetCoreFile()))) { return; }
 
     LLDBConnectReturnObject retObj;
     LLDBSettings settings;
@@ -994,7 +996,7 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
     // If terminal is required, launch it now
     bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
     if(redirectOutput && !isWindows) {
-        m_debuggerTerminal.Launch(terminalTitle.IsEmpty() ? event.GetExecutableName() : terminalTitle);
+        m_debuggerTerminal.Launch(terminalTitle);
 
         if(m_debuggerTerminal.IsValid()) {
             CL_DEBUG("Successfully launched terminal");
@@ -1031,9 +1033,7 @@ void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
     return;
 #endif
 
-    wxString terminalTitle;
-    terminalTitle << "Console PID " << event.GetInt();
-    if(!DoInitializeDebugger(event, true, terminalTitle)) return;
+    if(!DoInitializeDebugger(event, true, clDebuggerTerminalPOSIX::MakePidTitle(event.GetInt()))) return;
 
     LLDBConnectReturnObject retObj;
     LLDBSettings settings;

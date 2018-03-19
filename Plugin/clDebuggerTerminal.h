@@ -62,6 +62,15 @@ public:
      * making it ready for another use
      */
     void Clear();
+
+    //! Make a console title for debugging an exe.
+    static wxString MakeExeTitle(const wxString &exePath, const wxString &args);
+
+    //! Make a console title for debugging a core file.
+    static wxString MakeCoreTitle(const wxString &coreFile);
+
+    //! Make a console title for debugging a running process.
+    static wxString MakePidTitle(const int pid);
 };
 
 #endif // CLDEBUGGERTERMINAL_H

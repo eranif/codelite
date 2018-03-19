@@ -4469,10 +4469,8 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 
             wxString tty;
 #ifndef __WXMSW__
-            wxString title;
-            title << _("Debugging: ") << exepath << wxT(" ")
-                  << (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : dlg.GetArguments());
-            if(!ManagerST::Get()->StartTTY(title, tty)) {
+            if(!ManagerST::Get()->StartTTY(clDebuggerTerminalPOSIX::MakeExeTitle(exepath,
+                    (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : dlg.GetArguments())), tty)) {
                 wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"),
                              wxOK | wxCENTER | wxICON_ERROR);
             }
@@ -4567,10 +4565,8 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             }
 
             wxString tty;
-            wxString title;
-            title << "Debugging core: " << dlg->GetCore();
 #ifndef __WXMSW__
-            if(!ManagerST::Get()->StartTTY(title, tty)) {
+            if(!ManagerST::Get()->StartTTY(clDebuggerTerminalPOSIX::MakeCoreTitle(dlg->GetCore()), tty)) {
                 wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"),
                              wxOK | wxCENTER | wxICON_ERROR);
             }

@@ -92,6 +92,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     , m_stopReasonPrompted(false)
     , m_raisOnBpHit(false)
     , m_tooltip(NULL)
+    , m_isPerspectiveLoaded(false)
 {
     m_longName = _("LLDB Debugger for CodeLite");
     m_shortName = wxT("LLDBDebuggerPlugin");
@@ -449,10 +450,13 @@ void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
     m_connector.Cleanup();
 
     // Save current perspective before destroying the session
-    m_mgr->SavePerspective("LLDB-debugger");
+    if (m_isPerspectiveLoaded) {
+        m_mgr->SavePerspective("LLDB-debugger");
 
-    // Restore the old perspective
-    m_mgr->LoadPerspective("Default");
+        // Restore the old perspective
+        m_mgr->LoadPerspective("Default");
+        m_isPerspectiveLoaded = false;
+    }
 
     DestroyUI();
 
@@ -637,6 +641,7 @@ void LLDBPlugin::LoadLLDBPerspective()
 
     // Load the LLDB perspective
     m_mgr->LoadPerspective("LLDB-Debugger");
+    m_isPerspectiveLoaded = true;
 
     // Make sure that all the panes are visible
     ShowLLDBPane(LLDB_CALLSTACK_PANE_NAME);

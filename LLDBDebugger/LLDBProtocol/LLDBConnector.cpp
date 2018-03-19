@@ -30,6 +30,7 @@
 #include "LLDBSettings.h"
 #include "cl_standard_paths.h"
 #include "environmentconfig.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
@@ -439,7 +440,9 @@ void LLDBConnector::OnProcessOutput(clProcessEvent& event)
 void LLDBConnector::OnProcessTerminated(clProcessEvent& event)
 {
     wxDELETE(m_process);
-    Cleanup();
+
+    clDebugEvent e2(wxEVT_LLDB_CRASHED);
+    ProcessEvent(e2);
 }
 
 void LLDBConnector::Interrupt(eInterruptReason reason)

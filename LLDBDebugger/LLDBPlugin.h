@@ -33,6 +33,7 @@
 #include "LLDBProtocol/LLDBConnector.h"
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBRemoteConnectReturnObject.h"
+#include "../Plugin/clDebuggerTerminal.h"
 
 class LLDBTooltip;
 class LLDBThreadsView;
@@ -52,8 +53,7 @@ class LLDBPlugin : public IPlugin
     LLDBOutputView* m_breakpointsView;
     LLDBLocalsView* m_localsView;
     LLDBThreadsView* m_threadsView;
-    long m_terminalPID;
-    wxString m_terminalTTY;
+    clDebuggerTerminalPOSIX m_debuggerTerminal;
     bool m_stopReasonPrompted;
     bool m_raisOnBpHit;
     LLDBTooltip* m_tooltip;

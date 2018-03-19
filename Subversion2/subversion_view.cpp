@@ -1216,7 +1216,7 @@ void SubversionView::DoCloseView()
 void SubversionView::OnCommitGotoAnything(wxCommandEvent& event)
 {
     wxArrayString paths;
-    DoGetSelectedFiles(paths);
+    DoGetAllFiles(paths);
     if(paths.IsEmpty()) { return; }
     m_plugin->DoCommit(paths, DoGetCurRepoPath(), event);
 }
@@ -1254,3 +1254,4 @@ void SubversionView::DoGetAllFiles(wxArrayString& paths)
 }
 
 void SubversionView::OnViewUpdateUI(wxUpdateUIEvent& event) { event.Enable(!DoGetCurRepoPath().IsEmpty()); }
+

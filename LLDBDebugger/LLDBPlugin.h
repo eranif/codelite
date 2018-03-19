@@ -57,6 +57,7 @@ class LLDBPlugin : public IPlugin
     bool m_stopReasonPrompted;
     bool m_raisOnBpHit;
     LLDBTooltip* m_tooltip;
+    bool m_isPerspectiveLoaded;
     friend class LLDBTooltip;
 
 public:

@@ -78,7 +78,7 @@ private:
     void InitializeUI();
     void DestroyUI();
     void DoCleanup();
-    bool DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, const wxString& terminalTitle = wxEmptyString);
+    bool DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, const wxString& terminalTitle);
     void DestroyTooltip();
 
 protected:

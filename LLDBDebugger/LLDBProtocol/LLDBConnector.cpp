@@ -449,7 +449,7 @@ void LLDBConnector::Interrupt(eInterruptReason reason)
     SendCommand(command);
 }
 
-bool LLDBConnector::LaunchLocalDebugServer()
+bool LLDBConnector::LaunchLocalDebugServer(const wxString& debugServer)
 {
 #if !BUILD_CODELITE_LLDB
     // Not supported :(
@@ -469,14 +469,14 @@ bool LLDBConnector::LaunchLocalDebugServer()
     // Apply the environment before we start
     // set the LLDB_DEBUGSERVER_PATH env variable
     wxStringMap_t om;
-    om["LLDB_DEBUGSERVER_PATH"] = m_debugserver;
+    om["LLDB_DEBUGSERVER_PATH"] = debugServer;
 
     EnvSetter es(NULL, &om);
     wxFileName fnCodeLiteLLDB(clStandardPaths::Get().GetBinaryFullPath("codelite-lldb"));
 
     wxString command;
     command << fnCodeLiteLLDB.GetFullPath() << " -s " << GetDebugServerPath();
-    clDEBUG() << "LLDB_DEBUGSERVER_PATH is set to" << m_debugserver;
+    clDEBUG() << "LLDB_DEBUGSERVER_PATH is set to" << debugServer;
     m_process = ::CreateAsyncProcess(this, command);
     if(!m_process) {
         clERROR() << "LLDBConnector: failed to launch codelite-lldb:" << fnCodeLiteLLDB.GetFullPath();
@@ -608,7 +608,6 @@ wxString LLDBConnector::GetConnectString() const
 bool LLDBConnector::Connect(LLDBConnectReturnObject& ret, const LLDBSettings& settings, int timeout)
 {
     ret.Clear();
-    m_debugserver = settings.GetDebugserver();
     if(settings.IsUsingRemoteProxy()) {
         return ConnectToRemoteDebugger(settings.GetProxyIp(), settings.GetProxyPort(), ret, timeout);
 

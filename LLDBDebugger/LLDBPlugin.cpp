@@ -338,7 +338,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
         if(!settings.IsUsingRemoteProxy()) {
             // Not using a remote proxy, launch the debug server
-            if(!m_connector.LaunchLocalDebugServer()) { return; }
+            if(!m_connector.LaunchLocalDebugServer(settings.GetDebugserver())) { return; }
         }
 
         // Determine the executable to debug, working directory and arguments
@@ -1017,7 +1017,7 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
     // Launch local server if needed
     LLDBSettings settings;
     settings.Load();
-    if(!settings.IsUsingRemoteProxy() && !m_connector.LaunchLocalDebugServer()) {
+    if(!settings.IsUsingRemoteProxy() && !m_connector.LaunchLocalDebugServer(settings.GetDebugserver())) {
         DoCleanup();
         return false;
     }

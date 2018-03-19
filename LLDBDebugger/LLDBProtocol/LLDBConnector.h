@@ -81,8 +81,7 @@ protected:
     bool m_attachedToProcess;
     bool m_goingDown;
     LLDBPivot m_pivot;
-    wxString m_debugserver;
-    
+
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
 
@@ -133,7 +132,7 @@ public:
     /**
      * @brief start codelite-lldb if not running
      */
-    bool LaunchLocalDebugServer();
+    bool LaunchLocalDebugServer(const wxString& debugServer);
 
     /**
      * @brief terminate the debug server

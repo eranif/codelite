@@ -88,7 +88,6 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     , m_breakpointsView(NULL)
     , m_localsView(NULL)
     , m_threadsView(NULL)
-    , m_terminalPID(wxNOT_FOUND)
     , m_stopReasonPrompted(false)
     , m_raisOnBpHit(false)
     , m_tooltip(NULL)
@@ -268,18 +267,13 @@ void LLDBPlugin::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
 
 void LLDBPlugin::TerminateTerminal()
 {
-    if(m_terminalPID != wxNOT_FOUND) {
-        CL_DEBUG("Killing Terminal Process PID: %d", (int)m_terminalPID);
-        ::wxKill(m_terminalPID, wxSIGKILL);
-        m_terminalPID = wxNOT_FOUND;
-    }
 #ifdef __WXGTK__
-    if(m_terminalTTY.StartsWith("/tmp/pts")) {
+    if(m_debuggerTerminal.GetTty().StartsWith("/tmp/pts")) {
         // this is a fake symlink - remove it
-        ::unlink(m_terminalTTY.mb_str(wxConvUTF8).data());
+        ::unlink(m_debuggerTerminal.GetTty().mb_str(wxConvUTF8).data());
     }
 #endif
-    m_terminalTTY.Clear();
+    m_debuggerTerminal.Clear();
 }
 
 void LLDBPlugin::OnDebugContinue(clDebugEvent& event)
@@ -370,13 +364,10 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
             bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
             if(!bldConf->IsGUIProgram() && !isWindows) {
-                wxString realPts;
-                m_terminalPID = wxNOT_FOUND;
-                ::LaunchTerminalForDebugger(execToDebug.GetFullPath(), m_terminalTTY, realPts, m_terminalPID);
-                wxUnusedVar(realPts);
+                m_debuggerTerminal.Launch(execToDebug.GetFullPath());
 
-                if(!m_terminalTTY.IsEmpty()) {
-                    CL_DEBUG("Successfully launched terminal %s", m_terminalTTY);
+                if(m_debuggerTerminal.IsValid()) {
+                    CL_DEBUG("Successfully launched terminal %s", m_debuggerTerminal.GetTty());
 
                 } else {
                     // Failed to launch it...
@@ -422,7 +413,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 // Since we called 'wxSetWorkingDirectory' earlier, wxGetCwd() should give use the
                 // correct working directory for the debugger
                 startCommand.SetWorkingDirectory(workingDirectory);
-                startCommand.SetRedirectTTY(m_terminalTTY);
+                startCommand.SetRedirectTTY(m_debuggerTerminal.GetTty());
                 m_connector.Start(startCommand);
 
             } else {
@@ -799,7 +790,6 @@ void LLDBPlugin::DoCleanup()
     ClearDebuggerMarker();
     TerminateTerminal();
     m_connector.StopDebugServer();
-    m_terminalTTY.Clear();
     m_stopReasonPrompted = false;
     m_raisOnBpHit = false;
 }
@@ -927,7 +917,7 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
         startCommand.SetCommandArguments(event.GetArguments());
         startCommand.SetWorkingDirectory(event.GetWorkingDirectory());
         startCommand.SetStartupCommands(event.GetStartupCommands());
-        startCommand.SetRedirectTTY(m_terminalTTY);
+        startCommand.SetRedirectTTY(m_debuggerTerminal.GetTty());
         m_connector.Start(startCommand);
 
     } else {
@@ -973,7 +963,7 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
         startCommand.SetExecutable(event.GetExecutableName());
         startCommand.SetCorefile(event.GetCoreFile());
         startCommand.SetWorkingDirectory(event.GetWorkingDirectory());
-        startCommand.SetRedirectTTY(m_terminalTTY);
+        startCommand.SetRedirectTTY(m_debuggerTerminal.GetTty());
         m_connector.OpenCoreFile(startCommand);
     } else {
         // Failed to connect, notify and perform cleanup
@@ -1004,11 +994,9 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
     // If terminal is required, launch it now
     bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
     if(redirectOutput && !isWindows) {
-        wxString realPts;
-        ::LaunchTerminalForDebugger(terminalTitle.IsEmpty() ? event.GetExecutableName() : terminalTitle, m_terminalTTY,
-                                    realPts, m_terminalPID);
+        m_debuggerTerminal.Launch(terminalTitle.IsEmpty() ? event.GetExecutableName() : terminalTitle);
 
-        if(m_terminalPID != wxNOT_FOUND) {
+        if(m_debuggerTerminal.IsValid()) {
             CL_DEBUG("Successfully launched terminal");
 
         } else {

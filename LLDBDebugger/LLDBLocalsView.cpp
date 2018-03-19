@@ -65,7 +65,7 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_VARIABLE_EXPANDED, &LLDBLocalsView::OnLLDBVariableExpanded, this);
 
     m_treeList->Bind(wxEVT_COMMAND_TREE_ITEM_EXPANDING, &LLDBLocalsView::OnItemExpanding, this);
-    m_treeList->Bind(wxEVT_CONTEXT_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
+    m_treeList->Bind(wxEVT_COMMAND_TREE_ITEM_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
     GetSizer()->Layout();
 }
 
@@ -77,7 +77,7 @@ LLDBLocalsView::~LLDBLocalsView()
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_RUNNING, &LLDBLocalsView::OnLLDBRunning, this);
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_VARIABLE_EXPANDED, &LLDBLocalsView::OnLLDBVariableExpanded, this);
     m_treeList->Unbind(wxEVT_COMMAND_TREE_ITEM_EXPANDING, &LLDBLocalsView::OnItemExpanding, this);
-    m_treeList->Unbind(wxEVT_CONTEXT_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
+    m_treeList->Unbind(wxEVT_COMMAND_TREE_ITEM_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
 }
 
 void LLDBLocalsView::OnLLDBExited(LLDBEvent& event)
@@ -276,9 +276,8 @@ void LLDBLocalsView::GetWatchesFromSelections(wxArrayTreeItemIds& items)
     }
 }
 
-void LLDBLocalsView::OnLocalsContextMenu(wxContextMenuEvent& event)
+void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
 {
-
     wxMenu menu;
     menu.Append(wxID_COPY, _("Copy value to clipboard"));
     int selection = GetPopupMenuSelectionFromUser(menu);

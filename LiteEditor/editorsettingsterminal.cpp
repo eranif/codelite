@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editorsettingsterminal.h"
 #include "editor_config.h"
+#include "editorsettingsterminal.h"
 
 EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent)
     : EditorSettingsTerminalBase(parent)
@@ -43,11 +43,7 @@ void EditorSettingsTerminal::Save(OptionsConfigPtr options)
 
 void EditorSettingsTerminal::OnUseCodeLiteTerminalUI(wxUpdateUIEvent& event)
 {
-#if defined(__WXMSW__) || defined(__WXOSX__)
-    event.Enable(false);
-#else
-    event.Enable(!m_checkBoxUseCodeLiteTerminal->IsChecked());
-#endif
+    event.Check(m_checkBoxUseCodeLiteTerminal->IsChecked());
 }
 
 void EditorSettingsTerminal::OnCheckboxmswwrapdoublequotesUpdateUi(wxUpdateUIEvent& event)

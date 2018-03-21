@@ -22,6 +22,7 @@
 #include <wx/statline.h>
 #include <wx/checkbox.h>
 #include <wx/radiobox.h>
+#include <wx/statbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -64,6 +65,7 @@ protected:
     wxRadioBox* m_radioBoxHint;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
+    wxCheckBox* m_checkBoxNavBarTop;
     wxPanel* m_panel14;
     wxCheckBox* m_checkBoxFindBarAtBottom;
     wxCheckBox* m_checkBoxDontFoldSearchResults;
@@ -111,6 +113,7 @@ public:
     wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
+    wxCheckBox* GetCheckBoxNavBarTop() { return m_checkBoxNavBarTop; }
     wxPanel* GetPanel12() { return m_panel12; }
     wxCheckBox* GetCheckBoxFindBarAtBottom() { return m_checkBoxFindBarAtBottom; }
     wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }

@@ -74,6 +74,7 @@ public:
     enum {
         Opt2_MouseScrollSwitchTabs = (1 << 0),
         Opt2_SortTabsDropdownAlphabetically = (1 << 1),
+        Opt2_PlaceNavBarAtTheTop = (1 << 2),
     };
 
     enum { nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall };
@@ -207,7 +208,9 @@ public:
     void SetMouseScrollSwitchTabs(bool b) { EnableOption2(Opt2_MouseScrollSwitchTabs, b); }
     bool IsSortTabsDropdownAlphabetically() const { return HasOption2(Opt2_SortTabsDropdownAlphabetically); }
     void SetSortTabsDropdownAlphabetically(bool b) { EnableOption2(Opt2_SortTabsDropdownAlphabetically, b); }
-
+    bool IsNavBarTop() const { return HasOption2(Opt2_PlaceNavBarAtTheTop); }
+    void SetNavBarTop(bool b) { EnableOption2(Opt2_PlaceNavBarAtTheTop, b); }
+    
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }
     void SetTrimOnlyModifiedLines(bool trimOnlyModifiedLines) { this->m_trimOnlyModifiedLines = trimOnlyModifiedLines; }

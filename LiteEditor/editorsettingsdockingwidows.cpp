@@ -56,7 +56,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_radioBoxHint->SetSelection(options->GetDockingStyle());
     m_checkBoxHideCaptions->SetValue(!options->IsShowDockingWindowCaption());
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
-
+    m_checkBoxNavBarTop->SetValue(options->IsNavBarTop());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
 
     // DEFAULT 0
@@ -183,7 +183,8 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetDockingStyle(m_radioBoxHint->GetSelection());
     options->SetShowDockingWindowCaption(!m_checkBoxHideCaptions->IsChecked());
     options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
-
+    options->SetNavBarTop(m_checkBoxNavBarTop->IsChecked());
+    
 #if USE_AUI_NOTEBOOK
     options->SetTabColourMatchesTheme(true);
     options->SetTabColourDark(false);

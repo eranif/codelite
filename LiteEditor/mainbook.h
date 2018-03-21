@@ -72,7 +72,8 @@ private:
     void DoUpdateNotebookTheme();
     void DoOpenImageViewer(const wxFileName& filename);
     void DoUpdateEditorsThemes();
-
+    void DoPlaceNavigationBar();
+    
     void OnMouseDClick(wxBookCtrlEvent& e);
     void OnTabDClicked(wxBookCtrlEvent& e);
     void OnTabLabelContextMenu(wxBookCtrlEvent& e);
@@ -92,7 +93,7 @@ private:
     void OnThemeChanged(wxCommandEvent& e);
     void OnColoursAndFontsChanged(clCommandEvent& e);
     bool DoSelectPage(wxWindow* win);
-    void DoPositionFindBar(int where);
+    void DoPositionFindBar();
     void DoHandleFrameMenu(LEditor* editor);
     void DoEraseDetachedEditor(IEditor* editor);
     void OnWorkspaceReloadStarted(clCommandEvent& e);
@@ -102,6 +103,7 @@ private:
     void OnUpdateNavigationBar(clCodeCompletionEvent& e);
     void OnNavigationBarMenuShowing(clContextMenuEvent& e);
     void OnNavigationBarMenuSelectionMade(clCommandEvent& e);
+    void OnSettingsChanged(wxCommandEvent& e);
 
     /**
      * @brief open file and set an alternate content

@@ -70,7 +70,8 @@ void MainBook::CreateGuiControls()
 
     m_messagePane = new MessagePane(this);
     sz->Add(m_messagePane, 0, wxALL | wxEXPAND, 5, NULL);
-
+    
+    
 #if USE_AUI_NOTEBOOK
     long style = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_CLOSE_ON_ACTIVE_TAB |
                  wxAUI_NB_WINDOWLIST_BUTTON | kNotebook_DynamicColours | kNotebook_MouseMiddleClickClosesTab;
@@ -92,11 +93,10 @@ void MainBook::CreateGuiControls()
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     sz->Add(m_book, 1, wxEXPAND);
 
-    m_navBar = new clEditorBar(this);
-    sz->Add(m_navBar, 0, wxEXPAND);
-
+    DoPlaceNavigationBar();
+    
     m_quickFindBar = new QuickFindBar(this);
-    DoPositionFindBar(2);
+    DoPositionFindBar();
     sz->Layout();
 }
 
@@ -132,6 +132,7 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
     EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, &MainBook::OnNavigationBarMenuSelectionMade,
                                this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
 }
 
 MainBook::~MainBook()
@@ -168,6 +169,7 @@ MainBook::~MainBook()
     EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, &MainBook::OnNavigationBarMenuSelectionMade,
                                  this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
 }
 
 void MainBook::OnMouseDClick(wxBookCtrlEvent& e)
@@ -990,7 +992,8 @@ void MainBook::ApplySettingsChanges()
     clMainFrame::Get()->ShowOrHideCaptions();
 
     // Last: reposition the findBar
-    DoPositionFindBar(2);
+    DoPositionFindBar();
+    DoPlaceNavigationBar();
 }
 
 void MainBook::UnHighlightAll()
@@ -1192,7 +1195,7 @@ void MainBook::OnClosePage(wxBookCtrlEvent& e)
     if(page) { ClosePage(page); }
 }
 
-void MainBook::DoPositionFindBar(int where)
+void MainBook::DoPositionFindBar()
 {
     clWindowUpdateLocker locker(this);
     // the find bar is already placed on the MainBook, detach it
@@ -1583,4 +1586,43 @@ void MainBook::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
     if(!editor) { return; }
 
     editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1), nullptr);
+}
+
+
+void MainBook::DoPlaceNavigationBar()
+{
+    clWindowUpdateLocker locker(this);
+    if(m_navBar) {
+        // the find bar is already placed on the MainBook, detach it
+        GetSizer()->Detach(m_navBar);
+    } else {
+        m_navBar = new clEditorBar(this);
+    }
+
+    bool placeAtBottom = !EditorConfigST::Get()->GetOptions()->IsNavBarTop();
+    size_t itemCount = GetSizer()->GetItemCount();
+    for(size_t i = 0; i < itemCount; ++i) {
+        wxSizerItem* sizerItem = GetSizer()->GetItem(i);
+        if(!sizerItem) {
+            continue;
+        }
+        if(sizerItem->GetWindow() == m_book) {
+            // we found the main book
+            if(placeAtBottom) {
+                GetSizer()->Insert(i + 1, m_navBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
+            } else {
+                GetSizer()->Insert(i, m_navBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
+            }
+            break;
+        }
+    }
+    GetSizer()->Layout();
+}
+
+void MainBook::OnSettingsChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    // Update the navigation bar position
+    DoPlaceNavigationBar();
+    DoPositionFindBar();
 }

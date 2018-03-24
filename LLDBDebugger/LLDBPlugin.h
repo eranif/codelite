@@ -33,7 +33,7 @@
 #include "LLDBProtocol/LLDBConnector.h"
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBRemoteConnectReturnObject.h"
-#include "../Plugin/clDebuggerTerminal.h"
+#include "clDebuggerTerminal.h"
 
 class LLDBTooltip;
 class LLDBThreadsView;

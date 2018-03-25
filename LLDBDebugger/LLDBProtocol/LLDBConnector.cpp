@@ -75,6 +75,7 @@ bool LLDBConnector::ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int tim
 {
 
 #ifndef __WXMSW__
+    m_goingDown = false;
     clSocketClient* client = new clSocketClient();
     m_socket.reset(client);
     clDEBUG() << "Connecting to codelite-lldb on:" << GetDebugServerPath();
@@ -110,6 +111,7 @@ bool LLDBConnector::ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int tim
 
 bool LLDBConnector::ConnectToRemoteDebugger(const wxString& ip, int port, LLDBConnectReturnObject& ret, int timeout)
 {
+    m_goingDown = false;
     m_socket.reset(NULL);
     clSocketClient* client = new clSocketClient();
     m_socket.reset(client);

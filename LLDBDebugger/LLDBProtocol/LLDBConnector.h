@@ -37,6 +37,8 @@
 #include "LLDBRemoteConnectReturnObject.h"
 #include "LLDBPivot.h"
 
+#include <memory>
+
 class LLDBConnector;
 class LLDBNetworkListenerThread;
 class LLDBTerminalCallback : public IProcessCallback
@@ -70,10 +72,10 @@ public:
 
 protected:
     clSocketClient::Ptr_t m_socket;
-    LLDBNetworkListenerThread* m_thread;
+    std::unique_ptr<LLDBNetworkListenerThread> m_thread;
     LLDBBreakpoint::Vec_t m_breakpoints;
     LLDBBreakpoint::Vec_t m_pendingDeletionBreakpoints;
-    IProcess* m_process;
+    std::unique_ptr<IProcess> m_process;
     bool m_isRunning;
     bool m_canInteract;
     LLDBCommand m_runCommand;

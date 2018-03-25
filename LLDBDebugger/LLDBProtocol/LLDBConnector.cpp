@@ -47,9 +47,7 @@
 #endif
 
 LLDBConnector::LLDBConnector()
-    : m_thread(NULL)
-    , m_process(NULL)
-    , m_isRunning(false)
+    : m_isRunning(false)
     , m_canInteract(false)
     , m_attachedToProcess(false)
     , m_goingDown(false)
@@ -99,7 +97,7 @@ bool LLDBConnector::ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int tim
     // from codelite-lldb and convert them into LLDBEvent
     socket_t fd = m_socket->GetSocket();
     m_pivot.Clear();
-    m_thread = new LLDBNetworkListenerThread(this, m_pivot, fd);
+    m_thread.reset(new LLDBNetworkListenerThread(this, m_pivot, fd));
     m_thread->Start();
     clDEBUG() << "Successfully connected to codelite-lldb";
     return true;
@@ -375,7 +373,7 @@ void LLDBConnector::Cleanup()
 {
     // the order matters here, since both are using the same file descriptor
     // but only m_socket does the actual socket shutdown
-    wxDELETE(m_thread);
+    m_thread = nullptr;
     m_socket.reset(NULL);
     InvalidateBreakpoints();
     m_isRunning = false;
@@ -441,7 +439,7 @@ void LLDBConnector::OnProcessOutput(clProcessEvent& event)
 
 void LLDBConnector::OnProcessTerminated(clProcessEvent& event)
 {
-    wxDELETE(m_process);
+    m_process = nullptr;
 
     clDebugEvent e2(wxEVT_LLDB_CRASHED);
     ProcessEvent(e2);
@@ -483,7 +481,7 @@ bool LLDBConnector::LaunchLocalDebugServer(const wxString& debugServer)
     wxString command;
     command << fnCodeLiteLLDB.GetFullPath() << " -s " << GetDebugServerPath();
     clDEBUG() << "LLDB_DEBUGSERVER_PATH is set to" << debugServer;
-    m_process = ::CreateAsyncProcess(this, command);
+    m_process.reset(::CreateAsyncProcess(this, command));
     if(!m_process) {
         clERROR() << "LLDBConnector: failed to launch codelite-lldb:" << fnCodeLiteLLDB.GetFullPath();
         return false;
@@ -499,7 +497,7 @@ void LLDBConnector::StopDebugServer()
     if(m_process) {
         m_process->SetHardKill(true); // kill -9
         m_process->Terminate();
-        m_process = NULL;
+        m_process = nullptr;
     }
 
     wxLogNull noLog;
@@ -626,7 +624,7 @@ void LLDBConnector::StartNetworkThread()
 {
     if(!m_thread && m_socket) {
         socket_t fd = m_socket->GetSocket();
-        m_thread = new LLDBNetworkListenerThread(this, m_pivot, fd);
+        m_thread.reset(new LLDBNetworkListenerThread(this, m_pivot, fd));
         m_thread->Start();
     }
 }
@@ -659,7 +657,7 @@ void LLDBTerminalCallback::OnProcessOutput(const wxString& str) { wxUnusedVar(st
 
 void LLDBTerminalCallback::OnProcessTerminated()
 {
-    wxDELETE(m_process);
+    m_process = nullptr;
     delete this;
     CL_DEBUG("LLDB terminal process terminated. Cleaning up");
 }

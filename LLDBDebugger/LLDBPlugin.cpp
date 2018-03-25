@@ -822,9 +822,11 @@ void LLDBPlugin::OnLLDBCrashed(LLDBEvent& event)
     event.Skip();
     // Report it as crash only if not going down (i.e. we got an LLDBExit event)
     if(!m_connector.IsGoingDown()) {
+        // SetGoingDown() before displaying message box to cope with reentering this function whilst waiting for OK.
+        m_connector.SetGoingDown(true);
         ::wxMessageBox(_("LLDB crashed! Terminating debug session"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
+        OnLLDBExited(event);
     }
-    OnLLDBExited(event);
 }
 
 void LLDBPlugin::OnToggleInerrupt(clDebugEvent& event)

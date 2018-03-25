@@ -441,8 +441,7 @@ void LLDBConnector::OnProcessTerminated(clProcessEvent& event)
 {
     m_process = nullptr;
 
-    clDebugEvent e2(wxEVT_LLDB_CRASHED);
-    ProcessEvent(e2);
+    AddPendingEvent(LLDBEvent(wxEVT_LLDB_CRASHED));
 }
 
 void LLDBConnector::Interrupt(eInterruptReason reason)

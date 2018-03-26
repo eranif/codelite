@@ -513,9 +513,7 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
         IEditor* editor = m_mgr->FindEditor(event.GetFileName());
         if(!editor && wxFileName::Exists(event.GetFileName())) {
             // Try to open the editor
-            if(m_mgr->OpenFile(event.GetFileName(), "", event.GetLinenumber() - 1)) {
-                editor = m_mgr->GetActiveEditor();
-            }
+            editor = m_mgr->OpenFile(event.GetFileName(), "", event.GetLinenumber() - 1);
         }
 
         if(editor) {

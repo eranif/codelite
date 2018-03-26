@@ -70,8 +70,8 @@ void MainBook::CreateGuiControls()
 
     m_messagePane = new MessagePane(this);
     sz->Add(m_messagePane, 0, wxALL | wxEXPAND, 5, NULL);
-    
-    
+
+
 #if USE_AUI_NOTEBOOK
     long style = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_CLOSE_ON_ACTIVE_TAB |
                  wxAUI_NB_WINDOWLIST_BUTTON | kNotebook_DynamicColours | kNotebook_MouseMiddleClickClosesTab;
@@ -94,7 +94,7 @@ void MainBook::CreateGuiControls()
     sz->Add(m_book, 1, wxEXPAND);
 
     DoPlaceNavigationBar();
-    
+
     m_quickFindBar = new QuickFindBar(this);
     DoPositionFindBar();
     sz->Layout();
@@ -612,11 +612,12 @@ LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectNa
             AddPage(editor, fileName.GetFullName(), tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp);
         }
         editor->SetSyntaxHighlight();
+        ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(editor);
 
-        // mark the editor as read only if neede
+        // mark the editor as read only if needed
         MarkEditorReadOnly(editor);
 
-        // SHow the notebook
+        // Show the notebook
         if(hidden) GetSizer()->Show(m_book);
 
         if(position == wxNOT_FOUND && lineno == wxNOT_FOUND && editor->GetContext()->GetName() == wxT("C++")) {

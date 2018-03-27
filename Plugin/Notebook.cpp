@@ -1146,7 +1146,7 @@ void clTabCtrl::DoShowTabList()
     int selection = GetPopupMenuSelectionFromUser(menu, m_chevronRect.GetBottomLeft());
     if(selection != wxID_NONE) {
         selection -= firstTabPageID;
-        if(selection < sortedIndexes.size()) {
+        if(selection < (int)sortedIndexes.size()) {
             const int newSelection = sortedIndexes[selection];
 
             // don't change the selection unless the selection is really changing

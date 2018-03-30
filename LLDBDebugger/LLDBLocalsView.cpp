@@ -107,6 +107,7 @@ void LLDBLocalsView::OnLLDBLocalsUpdated(LLDBEvent& event)
     wxWindowUpdateLocker locker(m_treeList);
     Enable(true);
 
+    m_pendingExpandItems.clear();
     m_treeList->DeleteChildren(m_treeList->GetRootItem());
     m_pathToItem.clear();
 

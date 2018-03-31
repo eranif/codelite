@@ -6262,6 +6262,6 @@ void clMainFrame::OnGotoAnything(wxCommandEvent& e) { clGotoAnythingManager::Get
 
 void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
 {
-    ::wxMessageBox(e.GetString(), "CodeLite", wxICON_ERROR | wxOK, this);
+    clWARNING() << "New version check failed:" << e.GetString();
     wxDELETE(m_webUpdate);
 }

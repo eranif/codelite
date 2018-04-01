@@ -1406,6 +1406,7 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
 
 void MainBook::OnNavigating(wxBookCtrlEvent& e)
 {
+    if(!EditorConfigST::Get()->GetOptions()->IsCtrlTabEnabled()) { return; }
     if(m_book->GetPageCount() == 0) return;
     NotebookNavigationDlg dlg(EventNotifier::Get()->TopFrame(), m_book);
     if(dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) { m_book->SetSelection(dlg.GetSelection()); }

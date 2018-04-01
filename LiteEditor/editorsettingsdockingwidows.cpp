@@ -86,7 +86,8 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxSortTabsDropdownAlphabetically->SetValue(false);
     m_checkBoxSortTabsDropdownAlphabetically->Enable(false);
 #endif
-
+    m_checkBoxEnableTabSwitchingKey->SetValue(options->IsCtrlTabEnabled());
+    
     int sel(0);
     switch(options->GetNotebookTabHeight()) {
     case OptionsConfig::nbTabHt_Tiny:
@@ -184,6 +185,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetShowDockingWindowCaption(!m_checkBoxHideCaptions->IsChecked());
     options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
     options->SetNavBarTop(m_checkBoxNavBarTop->IsChecked());
+    options->SetCtrlTabEnabled(m_checkBoxEnableTabSwitchingKey->IsChecked());
     
 #if USE_AUI_NOTEBOOK
     options->SetTabColourMatchesTheme(true);

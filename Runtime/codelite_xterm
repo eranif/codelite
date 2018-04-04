@@ -1,26 +1,31 @@
-#!/bin/bash
+#!/bin/bash 
 
-## A wrapper script around the xterm (or other terminal) utility
+## A wrapper script around the xterm (or other terminal) utility 
 ## which allows codelite to export LD_LIBRARY_PATH into the terminal shell
 
-program_title=${1:-"codelite's shell"}
-
-# Customization point for debugger terminal.
-if which codelite-debug-terminal-emulator &>/dev/null; then
-    terminal=$(codelite-debug-terminal-emulator "${program_title}")
+# For (debianish) distros we can probably get the default terminal by:
+if [ -f /usr/bin/x-terminal-emulator ]; then 
+	terminal="x-terminal-emulator"
 else
-    # For (debianish) distros we can probably get the default terminal by:
-    terminal=$(which x-terminal-emulator)
-    if [ $? -ne 0 ]; then
-        # distros that don't have an update-alternatives x-terminal-emulator entry have to put up with:
-        terminal="xterm -sb -sl 1000"
-    fi
+	# distros that don't have an update-alternatives x-terminal-emulator entry have to put up with:
+	terminal="xterm -sb -sl 1000"
 fi
 
-if [ "${LD_LIBRARY_PATH}" = "" ]; then
-    ## LD_LIBRARY_PATH is not defined OR empty
-    ## Run the terminal without the bash wrapper
-    eval ${terminal} "$3" -T \"$program_title\" -e "$2" 2> /dev/null
+program_title=$1
+
+if [ "$program_title" = "" ]; then
+	if [ "${LD_LIBRARY_PATH}" = "" ]; then
+		## LD_LIBRARY_PATH is not defined OR empty
+		## Run the terminal without the bash wrapper
+		${terminal} -T "codelite's shell" 2> /dev/null
+	fi
 else
-    eval ${terminal} "$3" -T \"$program_title\" -e /bin/bash -c 'export LD_LIBRARY_PATH=$0;shift;$@' $LD_LIBRARY_PATH "$@" 2> /dev/null
+	if [ "${LD_LIBRARY_PATH}" = "" ]; then
+		## LD_LIBRARY_PATH is not defined OR empty
+		## Run the terminal without the bash wrapper
+		${terminal} $3 -T "$program_title" -e $2 2> /dev/null
+	else
+		${terminal} $3 -T "$program_title" -e /bin/bash -c 'export LD_LIBRARY_PATH=$0;shift;$@' $LD_LIBRARY_PATH "$@" 2> /dev/null
+	fi
 fi
+

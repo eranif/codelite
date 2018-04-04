@@ -203,7 +203,7 @@ void GitCommitListDlg::OnRevertCommit(wxCommandEvent& e)
     if(::wxMessageBox(_("Are you sure you want to revert commit #") + commitID,
                       "CodeLite",
                       wxYES_NO | wxCANCEL | wxICON_QUESTION,
-                      this) != wxID_YES) {
+                      this) != wxYES) {
         return;
     }
     m_git->CallAfter(&GitPlugin::RevertCommit, commitID);

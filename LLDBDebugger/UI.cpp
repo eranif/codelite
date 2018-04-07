@@ -102,9 +102,9 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer211->Add(m_dataview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     m_dataview->AppendTextColumn(_("#"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("File"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Line"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
     m_panelConsole = new wxPanel(m_notebook205, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook205, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_panelConsoleImgIndex;
     m_panelConsoleImgIndex = m_notebook205_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-console")));

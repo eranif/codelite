@@ -49,6 +49,7 @@ private:
     void Cleanup();
     void GetWatchesFromSelections(wxArrayTreeItemIds& items);
     wxString GetItemPath(const wxTreeItemId& item);
+    void DoDelete();
 
 protected:
     virtual void OnDelete(wxCommandEvent& event);

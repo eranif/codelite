@@ -39,6 +39,11 @@ LLDBThreadsView::LLDBThreadsView(wxWindow* parent, LLDBPlugin* plugin)
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_EXITED,  &LLDBThreadsView::OnLLDBExited,  this);
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_STARTED, &LLDBThreadsView::OnLLDBStarted, this);
     
+    const auto nameColumn = m_dvListCtrlThreads->GetColumn(1);
+    if(nameColumn) {
+        nameColumn->SetHidden(!m_plugin->ShowThreadNames());
+    }
+
     m_model.reset( new ThreadsModel( m_dvListCtrlThreads ) );
     m_dvListCtrlThreads->AssociateModel( m_model.get() );
 }
@@ -91,6 +96,7 @@ void LLDBThreadsView::OnLLDBStopped(LLDBEvent& event)
         }
         wxVector<wxVariant> cols;
         cols.push_back( thr.GetId() == wxNOT_FOUND ? wxString() : wxString() << thr.GetId() );
+        cols.push_back( thr.GetName() );
         cols.push_back( thr.GetStopReasonString() );
         cols.push_back( thr.GetFunc() );
         cols.push_back( thr.GetFile() );

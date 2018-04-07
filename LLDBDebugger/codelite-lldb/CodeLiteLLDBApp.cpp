@@ -412,6 +412,7 @@ void CodeLiteLLDBApp::NotifyStopped()
         t.SetStopReason(thr.GetStopReason());
         t.SetId(thr.GetThreadID());
         t.SetActive(selectedThreadId == (int)thr.GetThreadID());
+        t.SetName(thr.GetName());
         lldb::SBFrame frame = thr.GetSelectedFrame();
         t.SetFunc(frame.GetFunctionName() ? frame.GetFunctionName() : "");
         lldb::SBLineEntry lineEntry = frame.GetLineEntry();

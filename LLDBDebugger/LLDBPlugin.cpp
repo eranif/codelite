@@ -228,6 +228,11 @@ void LLDBPlugin::UnPlug()
 
 LLDBPlugin::~LLDBPlugin() {}
 
+bool LLDBPlugin::ShowThreadNames() const
+{
+    return m_showThreadNames;
+}
+
 clToolBar* LLDBPlugin::CreateToolBar(wxWindow* parent)
 {
     // Create the toolbar to be used by the plugin
@@ -505,6 +510,10 @@ void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
 void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
 {
     event.Skip();
+
+    const auto settings = LLDBSettings().Load();
+    m_showThreadNames = settings.HasFlag(kLLDBOptionShowThreadNames);
+
     InitializeUI();
     LoadLLDBPerspective();
 
@@ -516,16 +525,14 @@ void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
         break;
 
     case kDebugSessionTypeAttach: {
-        LLDBSettings settings;
-        m_raisOnBpHit = settings.Load().IsRaiseWhenBreakpointHit();
+        m_raisOnBpHit = settings.IsRaiseWhenBreakpointHit();
         CL_DEBUG("CODELITE>> LLDB started (attached)");
         m_connector.SetAttachedToProcess(event.GetSessionType() == kDebugSessionTypeAttach);
         // m_connector.Continue();
         break;
     }
     case kDebugSessionTypeNormal: {
-        LLDBSettings settings;
-        m_raisOnBpHit = settings.Load().IsRaiseWhenBreakpointHit();
+        m_raisOnBpHit = settings.IsRaiseWhenBreakpointHit();
         CL_DEBUG("CODELITE>> LLDB started (normal)");
         m_connector.Run();
         break;

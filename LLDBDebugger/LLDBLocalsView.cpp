@@ -72,6 +72,7 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_VARIABLE_EXPANDED, &LLDBLocalsView::OnLLDBVariableExpanded, this);
 
     m_treeList->Bind(wxEVT_COMMAND_TREE_ITEM_EXPANDING, &LLDBLocalsView::OnItemExpanding, this);
+    m_treeList->Bind(wxEVT_COMMAND_TREE_ITEM_COLLAPSED, &LLDBLocalsView::OnItemCollapsed, this);
     m_treeList->Bind(wxEVT_COMMAND_TREE_ITEM_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
     GetSizer()->Layout();
 }
@@ -84,6 +85,7 @@ LLDBLocalsView::~LLDBLocalsView()
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_RUNNING, &LLDBLocalsView::OnLLDBRunning, this);
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_VARIABLE_EXPANDED, &LLDBLocalsView::OnLLDBVariableExpanded, this);
     m_treeList->Unbind(wxEVT_COMMAND_TREE_ITEM_EXPANDING, &LLDBLocalsView::OnItemExpanding, this);
+    m_treeList->Unbind(wxEVT_COMMAND_TREE_ITEM_COLLAPSED, &LLDBLocalsView::OnItemCollapsed, this);
     m_treeList->Unbind(wxEVT_COMMAND_TREE_ITEM_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
 }
 
@@ -108,7 +110,7 @@ void LLDBLocalsView::OnLLDBStarted(LLDBEvent& event)
 
 void LLDBLocalsView::OnLLDBLocalsUpdated(LLDBEvent& event)
 {
-    // FIXME: optimize this to only retrieve the top levle variables
+    // FIXME: optimize this to only retrieve the top level variables
     // the children should be obtained in the 'OnItemExpading' event handler
     event.Skip();
     wxWindowUpdateLocker locker(m_treeList);
@@ -122,15 +124,7 @@ void LLDBLocalsView::OnLLDBLocalsUpdated(LLDBEvent& event)
     DoAddVariableToView(event.GetVariables(), m_treeList->GetRootItem());
 
     // Re-expand all the items
-    std::for_each(m_expandedItems.begin(), m_expandedItems.end(), [&](const wxString& path) {
-        // Locate the item ID
-        if(m_pathToItem.count(path)) {
-            const wxTreeItemId& itemToExpand = m_pathToItem[path];
-            if(m_treeList->HasChildren(itemToExpand)) {
-                m_treeList->Expand(itemToExpand);
-            }
-        }
-    });
+    ExpandPreviouslyExpandedItems();
 }
 
 void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent)
@@ -166,6 +160,20 @@ void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, 
     }
 }
 
+void LLDBLocalsView::ExpandPreviouslyExpandedItems()
+{
+    for(const auto &path : m_expandedItems) {
+        const auto iter = m_pathToItem.find(path);
+        if(iter != m_pathToItem.end()) {
+            const auto &itemToExpand = iter->second;
+
+            if(m_treeList->HasChildren(itemToExpand) && !m_treeList->IsExpanded(itemToExpand)) {
+                m_treeList->Expand(itemToExpand);
+            }
+        }
+    }
+}
+
 void LLDBLocalsView::OnItemExpanding(wxTreeEvent& event)
 {
     wxTreeItemIdValue cookie;
@@ -177,12 +185,27 @@ void LLDBLocalsView::OnItemExpanding(wxTreeEvent& event)
         // query the debugger about the children of this node
         if(m_plugin->GetLLDB()->IsCanInteract()) {
             int variableId = GetItemData(event.GetItem())->GetVariable()->GetLldbId();
-            m_plugin->GetLLDB()->RequestVariableChildren(variableId);
-            m_pendingExpandItems.insert(std::make_pair(variableId, event.GetItem()));
+            if(m_pendingExpandItems.insert(std::make_pair(variableId, event.GetItem())).second) {
+                m_plugin->GetLLDB()->RequestVariableChildren(variableId);
+            }
         }
 
     } else {
         event.Skip();
+    }
+}
+
+void LLDBLocalsView::OnItemCollapsed(wxTreeEvent& event)
+{
+    event.Skip();
+
+    const auto cd = GetItemData(event.GetItem());
+    if(cd) {
+        m_expandedItems.erase(cd->GetPath());
+        const auto variable = cd->GetVariable();
+        if(variable) {
+            m_pendingExpandItems.erase(variable->GetLldbId());
+        }
     }
 }
 
@@ -214,6 +237,9 @@ void LLDBLocalsView::OnLLDBVariableExpanded(LLDBEvent& event)
     wxTreeItemId parentItem = iter->second;
     DoAddVariableToView(event.GetVariables(), parentItem);
     m_pendingExpandItems.erase(iter);
+
+    // Might be able to expand more previously expanded items now.
+    ExpandPreviouslyExpandedItems();
 
     LLDBVariableClientData* cd = GetItemData(parentItem);
     if(cd) {

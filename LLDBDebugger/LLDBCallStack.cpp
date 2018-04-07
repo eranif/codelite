@@ -26,14 +26,16 @@
 #include "LLDBCallStack.h"
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBConnector.h"
+#include "LLDBPlugin.h"
 #include <wx/wupdlock.h>
 #include "macros.h"
 #include "globals.h"
 #include "file_logger.h"
 
-LLDBCallStackPane::LLDBCallStackPane(wxWindow* parent, LLDBConnector* connector)
+LLDBCallStackPane::LLDBCallStackPane(wxWindow* parent, LLDBPlugin& plugin)
     : LLDBCallStackBase(parent)
-    , m_connector(connector)
+    , m_plugin(plugin)
+    , m_connector(plugin.GetLLDB())
     , m_selectedFrame(0)
 {
     m_connector->Bind(wxEVT_LLDB_STOPPED, &LLDBCallStackPane::OnBacktrace, this);
@@ -65,7 +67,7 @@ void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
         const LLDBBacktrace::Entry& entry = entries.at(i);
         cols.push_back(wxString::Format("%d", entry.id));
         cols.push_back(entry.functionName);
-        cols.push_back(entry.filename);
+        cols.push_back(m_plugin.GetFilenameForDisplay(entry.filename));
         cols.push_back(wxString::Format("%d", (int)(entry.line + 1)));
         m_dvListCtrlBacktrace->AppendItem(cols);
     }
@@ -99,7 +101,7 @@ bool CallstackModel::GetAttr(const wxDataViewItem& item, unsigned int col, wxDat
 void LLDBCallStackPane::OnContextMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
-    
+
     menu.Append(11981, _("Copy backtrace"), _("Copy backtrace"));
     int selection = GetPopupMenuSelectionFromUser(menu);
     switch(selection) {

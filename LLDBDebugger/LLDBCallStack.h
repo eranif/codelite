@@ -32,6 +32,7 @@
 
 class LLDBCallStackPane;
 class LLDBConnector;
+class LLDBPlugin;
 
 class CallstackModel : public wxDataViewListStore
 {
@@ -46,6 +47,7 @@ public:
 
 class LLDBCallStackPane : public LLDBCallStackBase
 {
+    LLDBPlugin& m_plugin;
     LLDBConnector* m_connector;
     int m_selectedFrame;
     wxObjectDataPtr<CallstackModel> m_model;
@@ -59,7 +61,7 @@ protected:
     void OnRunning(LLDBEvent &event);
 
 public:
-    LLDBCallStackPane(wxWindow* parent, LLDBConnector* connector);
+    LLDBCallStackPane(wxWindow* parent, LLDBPlugin& plugin);
     virtual ~LLDBCallStackPane();
     
     void SetSelectedFrame(int selectedFrame) {

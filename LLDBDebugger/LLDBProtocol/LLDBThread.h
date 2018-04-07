@@ -39,6 +39,7 @@ class LLDBThread
     bool     m_active;
     int      m_stopReason;
     wxString m_stopReasonString;
+    wxString m_name;
 
 public:
     typedef std::vector<LLDBThread> Vect_t;
@@ -91,6 +92,18 @@ public:
     bool IsActive() const {
         return m_active;
     }
+
+    void SetName(const char *name) {
+        if(nullptr != name) {
+            this->m_name = name;
+        } else {
+            m_name.Clear();
+        }
+    }
+    const wxString &GetName() const {
+        return m_name;
+    }
+
     // Serialization API
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement& json);

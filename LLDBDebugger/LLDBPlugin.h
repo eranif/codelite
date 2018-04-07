@@ -58,6 +58,8 @@ class LLDBPlugin : public IPlugin
     bool m_raisOnBpHit;
     LLDBTooltip* m_tooltip;
     bool m_isPerspectiveLoaded;
+    bool m_showThreadNames;
+
     friend class LLDBTooltip;
 
 public:
@@ -67,6 +69,11 @@ public:
     LLDBConnector* GetLLDB() { return &m_connector; }
 
     IManager* GetManager() { return m_mgr; }
+
+    /**
+     * @brief Should thread name column be shown in thread pane?
+     */
+    bool ShowThreadNames() const;
 
 private:
     void TerminateTerminal();

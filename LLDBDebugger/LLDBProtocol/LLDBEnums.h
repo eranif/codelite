@@ -98,7 +98,8 @@ enum eCommandType {
 enum eLLDBOptions {
     kLLDBOptionRaiseCodeLite = 0x00000001,
     kLLDBOptionUseRemoteProxy = 0x00000002,
-    kLLDBOptionShowThreadNames = 0x00000004
+    kLLDBOptionShowThreadNames = 0x00000004,
+    kLLDBOptionShowFileNamesOnly = 0x00000008
 };
 
 enum eLLDBDebugSessionType {

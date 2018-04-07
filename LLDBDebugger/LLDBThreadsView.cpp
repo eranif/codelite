@@ -38,7 +38,7 @@ LLDBThreadsView::LLDBThreadsView(wxWindow* parent, LLDBPlugin* plugin)
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_STOPPED, &LLDBThreadsView::OnLLDBStopped, this);
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_EXITED,  &LLDBThreadsView::OnLLDBExited,  this);
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_STARTED, &LLDBThreadsView::OnLLDBStarted, this);
-    
+
     const auto nameColumn = m_dvListCtrlThreads->GetColumn(1);
     if(nameColumn) {
         nameColumn->SetHidden(!m_plugin->ShowThreadNames());
@@ -99,7 +99,7 @@ void LLDBThreadsView::OnLLDBStopped(LLDBEvent& event)
         cols.push_back( thr.GetName() );
         cols.push_back( thr.GetStopReasonString() );
         cols.push_back( thr.GetFunc() );
-        cols.push_back( thr.GetFile() );
+        cols.push_back( m_plugin->GetFilenameForDisplay(thr.GetFile()) );
         cols.push_back( thr.GetLine() == wxNOT_FOUND ? wxString() : wxString() << thr.GetLine() );
         m_dvListCtrlThreads->AppendItem( cols, (wxUIntPtr) new LLDBThreadViewClientData(thr) );
     }

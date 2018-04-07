@@ -233,6 +233,15 @@ bool LLDBPlugin::ShowThreadNames() const
     return m_showThreadNames;
 }
 
+wxString LLDBPlugin::GetFilenameForDisplay(const wxString& fileName) const
+{
+    if(m_showFileNamesOnly) {
+	    return wxFileName(fileName).GetFullName();
+	} else {
+        return fileName;
+    }
+}
+
 clToolBar* LLDBPlugin::CreateToolBar(wxWindow* parent)
 {
     // Create the toolbar to be used by the plugin
@@ -513,6 +522,7 @@ void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
 
     const auto settings = LLDBSettings().Load();
     m_showThreadNames = settings.HasFlag(kLLDBOptionShowThreadNames);
+    m_showFileNamesOnly = settings.HasFlag(kLLDBOptionShowFileNamesOnly);
 
     InitializeUI();
     LoadLLDBPerspective();
@@ -755,7 +765,7 @@ void LLDBPlugin::InitializeUI()
                                                                    .Name(LLDB_BREAKPOINTS_PANE_NAME));
     }
     if(!m_callstack) {
-        m_callstack = new LLDBCallStackPane(parent, &m_connector);
+        m_callstack = new LLDBCallStackPane(parent, *this);
         m_mgr->GetDockingManager()->AddPane(m_callstack, wxAuiPaneInfo()
                                                              .MinSize(200, 200)
                                                              .Right()

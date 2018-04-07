@@ -386,6 +386,9 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_pgShowThreadNames = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxBoolProperty( _("Show thread names"), wxPG_LABEL, 0) );
     m_pgShowThreadNames->SetHelpString(_("Whether to show thread names in the thread pane (thread names can be set with, for example, pthread_setname_np() on Linux)."));
     
+    m_pgShowFileNamesOnly = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxBoolProperty( _("Show filenames only"), wxPG_LABEL, 0) );
+    m_pgShowFileNamesOnly->SetHelpString(_("Whether to show complete file paths or just file names in the callstack, breakpoint and thread panes"));
+    
     m_panel91 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook87, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_panel91, _("Types"), false);
     

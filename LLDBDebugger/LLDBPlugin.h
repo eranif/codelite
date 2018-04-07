@@ -59,6 +59,7 @@ class LLDBPlugin : public IPlugin
     LLDBTooltip* m_tooltip;
     bool m_isPerspectiveLoaded;
     bool m_showThreadNames;
+    bool m_showFileNamesOnly;
 
     friend class LLDBTooltip;
 
@@ -74,6 +75,11 @@ public:
      * @brief Should thread name column be shown in thread pane?
      */
     bool ShowThreadNames() const;
+
+    /**
+     * @brief Maybe convert a path to filename only for display.
+     */
+    wxString GetFilenameForDisplay(const wxString& fileName) const;
 
 private:
     void TerminateTerminal();

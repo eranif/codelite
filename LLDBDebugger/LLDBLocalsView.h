@@ -45,6 +45,7 @@ class LLDBLocalsView : public LLDBLocalsViewBase
 
 private:
     void DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent);
+    void ExpandPreviouslyExpandedItems();
     LLDBVariableClientData* GetItemData(const wxTreeItemId& id);
     void Cleanup();
     void GetWatchesFromSelections(wxArrayTreeItemIds& items);
@@ -64,6 +65,7 @@ protected:
 
     // UI events
     void OnItemExpanding(wxTreeEvent& event);
+    void OnItemCollapsed(wxTreeEvent& event);
     void OnLocalsContextMenu(wxTreeEvent& event);
 
 public:

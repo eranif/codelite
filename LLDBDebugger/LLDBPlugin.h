@@ -112,7 +112,7 @@ protected:
     void OnDebugStepIn(clDebugEvent& event);
     void OnDebugStepOut(clDebugEvent& event);
     void OnToggleBreakpoint(clDebugEvent& event);
-    void OnToggleInerrupt(clDebugEvent& event);
+    void OnToggleInterrupt(clDebugEvent& event);
     void OnDebugTooltip(clDebugEvent& event);
     void OnDebugQuickDebug(clDebugEvent& event);
     void OnDebugCoreFile(clDebugEvent& event);
@@ -127,6 +127,8 @@ protected:
     void OnBuildStarting(clBuildEvent& event);
     void OnRunToCursor(wxCommandEvent& event);
     void OnJumpToCursor(wxCommandEvent& event);
+
+    void OnAddWatch(wxCommandEvent& event);
 
     // LLDB events
     void OnLLDBCrashed(LLDBEvent& event);

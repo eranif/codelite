@@ -37,6 +37,13 @@
 #define LOCALS_VIEW_VALUE_COL_IDX 2
 #define LOCALS_VIEW_TYPE_COL_IDX 3
 
+namespace
+{
+
+const int lldbLocalsViewRemoveWatchContextMenuId = XRCID("lldb_locals_view_remove_watch");
+
+}
+
 LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     : LLDBLocalsViewBase(parent)
     , m_plugin(plugin)
@@ -228,25 +235,7 @@ void LLDBLocalsView::OnNewWatch(wxCommandEvent& event)
 
 void LLDBLocalsView::OnDelete(wxCommandEvent& event)
 {
-    wxArrayTreeItemIds items;
-    GetWatchesFromSelections(items);
-    if(items.IsEmpty()) return;
-
-    for(size_t i = 0; i < items.GetCount(); ++i) {
-        wxTreeItemId item = items.Item(i);
-        if(!GetItemData(item)) continue;
-        LLDBVariableClientData* data = GetItemData(item);
-        if(!data) continue;
-
-        LLDBVariable::Ptr_t lldbVar = data->GetVariable();
-        if(!lldbVar) continue;
-
-        if(lldbVar->IsWatch()) {
-            m_plugin->GetLLDB()->DeleteWatch(lldbVar->GetLldbId());
-        }
-    }
-    // Refresh the locals view
-    m_plugin->GetLLDB()->RequestLocals();
+    DoDelete();
 }
 
 void LLDBLocalsView::OnDeleteUI(wxUpdateUIEvent& event)
@@ -281,6 +270,13 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
 {
     wxMenu menu;
     menu.Append(wxID_COPY, _("Copy value to clipboard"));
+
+    wxArrayTreeItemIds items;
+    GetWatchesFromSelections(items);
+    if(items.GetCount()) {
+        menu.Append(lldbLocalsViewRemoveWatchContextMenuId, _("Remove watch"));
+    }
+
     int selection = GetPopupMenuSelectionFromUser(menu);
     if(selection == wxID_COPY) {
         wxString content;
@@ -315,6 +311,9 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
             ::CopyToClipboard(content);
         }
     }
+    else if(selection == lldbLocalsViewRemoveWatchContextMenuId) {
+        DoDelete();
+    }
 }
 
 wxString LLDBLocalsView::GetItemPath(const wxTreeItemId& item)
@@ -332,4 +331,27 @@ wxString LLDBLocalsView::GetItemPath(const wxTreeItemId& item)
         }
     }
     return path;
+}
+
+void LLDBLocalsView::DoDelete()
+{
+    wxArrayTreeItemIds items;
+    GetWatchesFromSelections(items);
+    if(items.IsEmpty()) return;
+
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        wxTreeItemId item = items.Item(i);
+        if(!GetItemData(item)) continue;
+        LLDBVariableClientData* data = GetItemData(item);
+        if(!data) continue;
+
+        LLDBVariable::Ptr_t lldbVar = data->GetVariable();
+        if(!lldbVar) continue;
+
+        if(lldbVar->IsWatch()) {
+            m_plugin->GetLLDB()->DeleteWatch(lldbVar->GetLldbId());
+        }
+    }
+    // Refresh the locals view
+    m_plugin->GetLLDB()->RequestLocals();
 }

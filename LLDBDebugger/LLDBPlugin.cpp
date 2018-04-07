@@ -64,6 +64,22 @@ namespace
 const int lldbRunToCursorContextMenuId = XRCID("dbg_run_to_cursor");
 const int lldbJumpToCursorContextMenuId = XRCID("dbg_jump_cursor");
 
+const int lldbAddWatchContextMenuId = XRCID("lldb_add_watch");
+
+wxString GetWatchWord(IEditor &editor)
+{
+    auto word = editor.GetSelection();
+    if(word.IsEmpty()) {
+        word = editor.GetWordAtCaret();
+    }
+
+    // Remove leading and trailing whitespace.
+    word.Trim(true);
+    word.Trim(false);
+
+    return word;
+}
+
 } // namespace
 
 #define CHECK_IS_LLDB_SESSION()    \
@@ -130,7 +146,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
                                   this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBPlugin::OnToggleBreakpoint),
                                   NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBPlugin::OnToggleInerrupt), NULL,
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBPlugin::OnToggleInterrupt), NULL,
                                   this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBPlugin::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
@@ -158,6 +174,8 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
         lldbRunToCursorContextMenuId);
     EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnJumpToCursor, this,
         lldbJumpToCursorContextMenuId);
+
+    wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnAddWatch, this, lldbAddWatchContextMenuId);
 }
 
 void LLDBPlugin::UnPlug()
@@ -194,7 +212,7 @@ void LLDBPlugin::UnPlug()
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT,
                                      clDebugEventHandler(LLDBPlugin::OnToggleBreakpoint), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBPlugin::OnToggleInerrupt), NULL,
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBPlugin::OnToggleInterrupt), NULL,
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBPlugin::OnBuildStarting), NULL,
                                      this);
@@ -224,6 +242,8 @@ void LLDBPlugin::UnPlug()
         lldbRunToCursorContextMenuId);
     EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnJumpToCursor, this,
         lldbJumpToCursorContextMenuId);
+
+    wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnAddWatch, this, lldbAddWatchContextMenuId);
 }
 
 LLDBPlugin::~LLDBPlugin() {}
@@ -286,6 +306,24 @@ void LLDBPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
         ++numberOfMenuItems;
 
         menu->Prepend(lldbRunToCursorContextMenuId, wxT("Run to Caret Line"));
+        ++numberOfMenuItems;
+    }
+
+    auto word = GetWatchWord(*editor);
+    if(word.Contains("\n")) {
+        // Don't create massive context menu
+        word.Clear();
+    }
+
+    // Truncate the word
+    if(word.length() > 20) {
+        word.Truncate(20);
+        word << "...";
+    }
+
+    if(!word.IsEmpty()) {
+        const auto menuItemText = wxString(wxT("Add Watch")) << wxT(" '") << word << wxT("'");
+        menu->Prepend(lldbAddWatchContextMenuId, menuItemText);
         ++numberOfMenuItems;
     }
 
@@ -809,7 +847,7 @@ void LLDBPlugin::OnLLDBRunning(LLDBEvent& event)
 
 void LLDBPlugin::OnToggleBreakpoint(clDebugEvent& event)
 {
-    // Call Skip() here since we want codelite to manage the breakpoint as well ( in term of serilization in the session
+    // Call Skip() here since we want codelite to manage the breakpoint as well ( in term of serialization in the session
     // file )
     CHECK_IS_LLDB_SESSION();
 
@@ -885,7 +923,7 @@ void LLDBPlugin::OnLLDBCrashed(LLDBEvent& event)
     }
 }
 
-void LLDBPlugin::OnToggleInerrupt(clDebugEvent& event)
+void LLDBPlugin::OnToggleInterrupt(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
     event.Skip();
@@ -909,6 +947,26 @@ void LLDBPlugin::OnBuildStarting(clBuildEvent& event)
     } else {
         event.Skip();
     }
+}
+
+void LLDBPlugin::OnAddWatch(wxCommandEvent& event)
+{
+    CHECK_IS_LLDB_SESSION();
+
+    const auto editor = m_mgr->GetActiveEditor();
+    if(!editor) {
+        return;
+    }
+
+    const auto watchWord = GetWatchWord(*editor);
+    if(watchWord.IsEmpty()) {
+        return;
+    }
+
+    GetLLDB()->AddWatch(watchWord);
+
+    // Refresh the locals view
+    GetLLDB()->RequestLocals();
 }
 
 void LLDBPlugin::OnRunToCursor(wxCommandEvent& event)

@@ -52,10 +52,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+namespace
+{
+
 /**
  * @brief print c-array to the stdout
  */
-static void print_c_array(const char** arr)
+void print_c_array(const char** arr)
 {
     if(arr) {
         size_t index(0);
@@ -66,7 +69,7 @@ static void print_c_array(const char** arr)
     }
 }
 
-static char** _wxArrayStringToCharPtrPtr(const wxArrayString& arr)
+char** _wxArrayStringToCharPtrPtr(const wxArrayString& arr)
 {
     char** argv = new char*[arr.size() + 1]; // for the NULL
     for(size_t i = 0; i < arr.size(); ++i) {
@@ -76,7 +79,7 @@ static char** _wxArrayStringToCharPtrPtr(const wxArrayString& arr)
     return argv;
 }
 
-static void DELETE_CHAR_PTR_PTR(char** argv)
+void DELETE_CHAR_PTR_PTR(char** argv)
 {
     size_t i = 0;
     while(argv[i]) {
@@ -85,6 +88,45 @@ static void DELETE_CHAR_PTR_PTR(char** argv)
     }
     delete[] argv;
 }
+
+int StopReasonToPriority(const lldb::StopReason stopReason)
+{
+    switch(stopReason) {
+    case lldb::eStopReasonInvalid:
+    case lldb::eStopReasonNone:
+        break;
+    // Single instruction step, apparently.
+    case lldb::eStopReasonTrace:
+        return 400;
+    case lldb::eStopReasonBreakpoint:
+        return 900;
+    case lldb::eStopReasonWatchpoint:
+        return 800;
+    case lldb::eStopReasonSignal:
+        return 600;
+    case lldb::eStopReasonException:
+        return 700;
+    case lldb::eStopReasonExec:
+        return 100;
+    // Step complete.
+    case lldb::eStopReasonPlanComplete:
+        return 1000;
+    case lldb::eStopReasonThreadExiting:
+        break;
+    case lldb::eStopReasonInstrumentation:
+        return 300;
+    default:
+        // Why didn't they put an eStopReasonCount in the lldb::StopReason enum, could at least
+        // static_assert() then if it's greater than expected and add the new value(s).
+        wxPrintf("codelite-lldb: unknown lldb::StopReason %d\n", stopReason);
+        assert(false);
+        break;
+    }
+
+    return -1;
+}
+
+} // namespace
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -371,66 +413,94 @@ void CodeLiteLLDBApp::NotifyStarted(eLLDBDebugSessionType sessionType)
 
 void CodeLiteLLDBApp::NotifyStopped()
 {
+    const auto initialThreadID = m_target.GetProcess().GetSelectedThread().GetThreadID();
+    int bestStopReasonPriority = -1;
+
+    NotifyStopped(initialThreadID,
+        [&](lldb::tid_t threadID, lldb::StopReason stopReason)
+        {
+            const auto stopReasonPriority = StopReasonToPriority(stopReason);
+            if(stopReasonPriority > bestStopReasonPriority) {
+                bestStopReasonPriority = stopReasonPriority;
+                return true;
+            } else if ((-1 == bestStopReasonPriority) && (initialThreadID == threadID)) {
+                // No better thread found so far but we've found the current selected thread.
+                return true;
+            } else {
+                return false;
+            }
+        });
+}
+
+template<typename T>
+void CodeLiteLLDBApp::NotifyStopped(const lldb::tid_t initialThreadID, T &&threadSelector)
+{
     m_variables.clear();
     LLDBReply reply;
     wxPrintf("codelite-lldb: NotifyStopped() called. m_interruptReason=%d\n", (int)m_interruptReason);
     reply.SetReplyType(kReplyTypeDebuggerStopped);
     reply.SetInterruptResaon(m_interruptReason);
 
-    // If we find a thread that was stopped due to breakpoint, make it the active one
-    int threadCount = m_target.GetProcess().GetNumThreads();
-    for(int i = 0; i < threadCount; ++i) {
-        lldb::SBThread thr = m_target.GetProcess().GetThreadAtIndex(i);
-        if(thr.GetStopReason() == lldb::eStopReasonBreakpoint) {
-            m_target.GetProcess().SetSelectedThread(thr);
-            break;
-        }
-    }
-
-    lldb::SBThread thread = m_target.GetProcess().GetSelectedThread();
-    LLDBBacktrace bt(thread, m_settings);
-    reply.SetBacktrace(bt);
-
-    int selectedThreadId = thread.GetThreadID();
-
-    // set the selected frame file:line
-    if(thread.IsValid() && thread.GetSelectedFrame().IsValid()) {
-        lldb::SBFrame frame = thread.GetSelectedFrame();
-        lldb::SBLineEntry lineEntry = frame.GetLineEntry();
-        if(lineEntry.IsValid()) {
-            reply.SetLine(lineEntry.GetLine());
-            lldb::SBFileSpec fileSpec = lineEntry.GetFileSpec();
-            reply.SetFilename(wxFileName(fileSpec.GetDirectory(), fileSpec.GetFilename()).GetFullPath());
-        }
-    }
-
     // Prepare list of threads
     LLDBThread::Vect_t threads;
-    for(int i = 0; i < threadCount; ++i) {
+    lldb::SBThread thread;
+    int selectedThreadIndex = -1;
+
+    for(uint32_t i = 0; i < m_target.GetProcess().GetNumThreads(); ++i) {
+        // Find the "best" thread that caused the stop event.
+        auto thr = m_target.GetProcess().GetThreadAtIndex(i);
+        const auto threadID = thr.GetThreadID();
+        const auto stopReason = thr.GetStopReason();
+        if(threadSelector(threadID, stopReason)) {
+            thread = thr;
+            selectedThreadIndex = static_cast<int>(i);
+        }
+
+        // Thread info to pass back to codelite.
         LLDBThread t;
-        lldb::SBThread thr = m_target.GetProcess().GetThreadAtIndex(i);
-        t.SetStopReason(thr.GetStopReason());
-        t.SetId(thr.GetThreadID());
-        t.SetActive(selectedThreadId == (int)thr.GetThreadID());
+        t.SetStopReason(stopReason);
+        t.SetId(threadID);
         t.SetName(thr.GetName());
-        lldb::SBFrame frame = thr.GetSelectedFrame();
-        t.SetFunc(frame.GetFunctionName() ? frame.GetFunctionName() : "");
-        lldb::SBLineEntry lineEntry = frame.GetLineEntry();
+
+        const auto frame = thr.GetSelectedFrame();
+        if(frame.IsValid()) {
+            t.SetFunc(frame.GetFunctionName() ? frame.GetFunctionName() : "");
+            lldb::SBLineEntry lineEntry = frame.GetLineEntry();
+
+            if(lineEntry.IsValid()) {
+                t.SetLine(lineEntry.GetLine());
+                lldb::SBFileSpec fileSpec = frame.GetLineEntry().GetFileSpec();
+                t.SetFile(wxFileName(fileSpec.GetDirectory(), fileSpec.GetFilename()).GetFullPath());
+            }
+        }
 
         // get the stop reason string
         char buffer[1024];
-        memset(buffer, 0x0, sizeof(buffer));
-        thr.GetStopDescription(buffer, sizeof(buffer));
-        t.SetStopReasonString(buffer);
-
+        const auto stopReasonLength = thr.GetStopDescription(buffer, sizeof(buffer));
+        t.SetStopReasonString(wxString(buffer, stopReasonLength));
         wxPrintf("codelite-lldb: thread %d stop reason is %s\n", t.GetId(), t.GetStopReasonString());
-        if(lineEntry.IsValid()) {
-            t.SetLine(lineEntry.GetLine());
-            lldb::SBFileSpec fileSpec = frame.GetLineEntry().GetFileSpec();
-            t.SetFile(wxFileName(fileSpec.GetDirectory(), fileSpec.GetFilename()).GetFullPath());
-        }
-        threads.push_back(t);
+
+        threads.push_back(std::move(t));
     }
+
+    if(-1 == selectedThreadIndex) {
+        // No suitable thread found (probably SelectThread() and the thread exited).
+        return;
+    }
+
+    if(thread.GetThreadID() != initialThreadID) {
+        // Selecting the currently selected thread seems to cause the backtrace to occasionally be
+        // reported incorrectly, so only SetSelectedThread() if we really want to change.
+        m_target.GetProcess().SetSelectedThread(thread);
+    }
+
+    auto &selectedThread = threads[selectedThreadIndex];
+    selectedThread.SetActive(true);
+    LLDBBacktrace bt(thread, m_settings);
+    reply.SetBacktrace(bt);
+
+    reply.SetLine(selectedThread.GetLine());
+    reply.SetFilename(selectedThread.GetFile());
 
     reply.SetThreads(threads);
     SendReply(reply);
@@ -958,14 +1028,16 @@ void CodeLiteLLDBApp::SelectFrame(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::SelectThread(const LLDBCommand& command)
 {
-    wxPrintf("codelite-lldb: selecting thread %d\n", command.GetThreadId());
-    if(CanInteract() && command.GetThreadId() != wxNOT_FOUND) {
-        lldb::SBThread thr = m_target.GetProcess().GetThreadByID(command.GetThreadId());
-        if(thr.IsValid()) {
-            m_target.GetProcess().SetSelectedThread(thr);
-            m_interruptReason = kInterruptReasonNone;
-            NotifyStopped();
-        }
+    const auto selectThreadID = command.GetThreadId();
+    wxPrintf("codelite-lldb: selecting thread %d\n", selectThreadID);
+    if(CanInteract() && selectThreadID != wxNOT_FOUND) {
+        m_interruptReason = kInterruptReasonNone;
+
+        NotifyStopped(m_target.GetProcess().GetSelectedThread().GetThreadID(),
+            [&selectThreadID](const lldb::tid_t threadID, const lldb::StopReason stopReason)
+            {
+                return selectThreadID == threadID;
+            });
     }
 }
 

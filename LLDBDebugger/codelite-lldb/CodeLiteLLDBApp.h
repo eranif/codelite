@@ -86,6 +86,9 @@ private:
     void DoInitializeApp();
     void DoExecutueShellCommand(const wxString& command, bool printOutput = true);
 
+    template<typename T>
+    void NotifyStopped(const lldb::tid_t initialThreadID, T &&threadSelector);
+
 public:
     void NotifyStoppedOnFirstEntry();
     void NotifyStopped();

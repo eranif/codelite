@@ -71,6 +71,13 @@ void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
         cols.push_back(wxString::Format("%d", (int)(entry.line + 1)));
         m_dvListCtrlBacktrace->AppendItem(cols);
     }
+
+    if(!entries.empty()) {
+        const auto item = m_dvListCtrlBacktrace->RowToItem(GetSelectedFrame());
+        if(item.IsOk()) {
+            m_dvListCtrlBacktrace->EnsureVisible(item);
+        }
+    }
 }
 
 void LLDBCallStackPane::OnRunning(LLDBEvent& event)

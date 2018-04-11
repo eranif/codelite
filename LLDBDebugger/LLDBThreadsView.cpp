@@ -103,6 +103,13 @@ void LLDBThreadsView::OnLLDBStopped(LLDBEvent& event)
         cols.push_back( thr.GetLine() == wxNOT_FOUND ? wxString() : wxString() << thr.GetLine() );
         m_dvListCtrlThreads->AppendItem( cols, (wxUIntPtr) new LLDBThreadViewClientData(thr) );
     }
+
+    if(wxNOT_FOUND != m_selectedThread) {
+        const auto item = m_dvListCtrlThreads->RowToItem(m_selectedThread);
+        if (item.IsOk()) {
+            m_dvListCtrlThreads->EnsureVisible(item);
+        }
+    }
 }
 
 void LLDBThreadsView::DoCleanup()

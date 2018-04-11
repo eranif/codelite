@@ -6,6 +6,7 @@
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "ieditor.h"
@@ -80,6 +81,12 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
             menu.AppendSeparator();
             menu.Append(XRCID("tree_ctrl_delete_folder"), _("Delete"));
         }
+
+        if(!IsTopLevelFolder(item)) {
+            menu.AppendSeparator();
+            menu.Append(XRCID("tree_ctrl_rename_folder"), _("Rename..."));
+        }
+
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_find_in_files_folder"), _("Find in Files"));
         menu.AppendSeparator();
@@ -107,6 +114,7 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFolder, this, XRCID("tree_ctrl_new_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFile, this, XRCID("tree_ctrl_new_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_folder"));
+        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFolder, this, XRCID("tree_ctrl_rename_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnFindInFilesFolder, this, XRCID("tree_ctrl_find_in_files_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenContainingFolder, this, XRCID("tree_ctrl_open_containig_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenShellFolder, this, XRCID("tree_ctrl_open_shell_folder"));
@@ -936,7 +944,41 @@ void clTreeCtrlPanel::RefreshNonTopLevelFolder(const wxTreeItemId& item)
 
     // Clear the folder index
     if(cd->GetIndex()) { cd->GetIndex()->Clear(); }
-    
+
     // Re-expand the item
     if(expandItem) { CallAfter(&clTreeCtrlPanel::DoExpandItem, item, true); }
+}
+
+void clTreeCtrlPanel::OnRenameFolder(wxCommandEvent& event)
+{
+    wxArrayString files, folders;
+    wxArrayTreeItemIds fileItems, folderItems;
+    GetSelections(folders, folderItems, files, fileItems);
+
+    if(folderItems.size() != 1) { return; }
+    wxTreeItemId item = folderItems.Item(0);
+    if(IsTopLevelFolder(item)) {
+        clWARNING() << "Renaming of top level folder is not supported";
+        return;
+    }
+
+    clTreeCtrlData* d = GetItemData(item);
+    CHECK_PTR_RET(d);
+    CHECK_COND_RET(d->IsFolder());
+    wxString newName = ::clGetTextFromUser(_("Rename folder"), _("Type the new folder name:"), d->GetName());
+    if((newName == d->GetName()) || newName.IsEmpty()) { return; }
+    wxFileName oldFullPath(d->GetPath(), "");
+    wxFileName newFullPath(oldFullPath);
+    newFullPath.RemoveLastDir();
+    newFullPath.AppendDir(newName);
+    clDEBUG1() << "Renaming:" << oldFullPath.GetPath() << "->" << newFullPath.GetPath();
+    if(::wxRename(oldFullPath.GetPath(), newFullPath.GetPath()) == 0) {
+        // Rename was successful
+        d->SetPath(newFullPath.GetPath());
+        m_treeCtrl->SetItemText(item, newName);
+        CallAfter(&clTreeCtrlPanel::RefreshNonTopLevelFolder, item);
+
+    } else {
+        clWARNING() << "Failed to rename folder:" << oldFullPath << "->" << newFullPath;
+    }
 }

@@ -70,6 +70,7 @@ public:
 #define kConfigStatusbarShowColumn "StatusbarShowColumn"
 #define kConfigStatusbarShowPosition "StatusbarShowPosition"
 #define kConfigStatusbarShowLength "StatusbarShowLength"
+#define kConfigStatusbarShowSelectedChars "StatusbarShowSelChars"
 #define kConfigAutoDetectCompilerOnStartup "AutoDetectCompilerOnStartup"
 #define kConfigBootstrapCompleted "BootstrapCompleted"
 #define kConfigUpdateParserPaths "updateParserPaths"

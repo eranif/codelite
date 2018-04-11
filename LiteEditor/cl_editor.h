@@ -201,6 +201,7 @@ private:
         kShowColumn = (1 << 1),
         kShowPosition = (1 << 2),
         kShowLen = (1 << 3),
+        kShowSelectedChars = (1 << 4),
     };
 
 protected:
@@ -750,8 +751,8 @@ public:
     void SetEditorLastModifiedTime(time_t modificationTime) { m_modifyTime = modificationTime; }
 
     /**
-	 * @brief Get the editor's modification count
-	 */
+     * @brief Get the editor's modification count
+     */
     virtual wxUint64 GetModificationCount() const { return m_modificationCount; }
 
     /**

@@ -104,6 +104,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     m_statusbarShowCol->SetValue(clConfig::Get().Read(kConfigStatusbarShowColumn, true));
     m_statusbarShowPos->SetValue(clConfig::Get().Read(kConfigStatusbarShowPosition, false));
     m_statusbarShowFileLength->SetValue(clConfig::Get().Read(kConfigStatusbarShowLength, false));
+    m_statusBarShowSelChars->SetValue(clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true));
 
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
@@ -145,6 +146,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write(kConfigStatusbarShowColumn, m_statusbarShowCol->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowPosition, m_statusbarShowPos->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowLength, m_statusbarShowFileLength->IsChecked());
+    clConfig::Get().Write(kConfigStatusbarShowSelectedChars, m_statusBarShowSelChars->IsChecked());
     
     bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
     EditorConfigST::Get()->SetInteger(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);

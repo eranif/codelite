@@ -75,6 +75,7 @@ protected:
     wxCheckBox* m_statusbarShowCol;
     wxCheckBox* m_statusbarShowPos;
     wxCheckBox* m_statusbarShowFileLength;
+    wxCheckBox* m_statusBarShowSelChars;
     wxPanel* m_panel2;
     wxStaticText* m_staticText1;
     wxChoice* m_fileEncoding;
@@ -140,6 +141,7 @@ public:
     wxCheckBox* GetStatusbarShowCol() { return m_statusbarShowCol; }
     wxCheckBox* GetStatusbarShowPos() { return m_statusbarShowPos; }
     wxCheckBox* GetStatusbarShowFileLength() { return m_statusbarShowFileLength; }
+    wxCheckBox* GetStatusBarShowSelChars() { return m_statusBarShowSelChars; }
     wxPanel* GetPanel44() { return m_panel44; }
     wxStaticText* GetStaticText1() { return m_staticText1; }
     wxChoice* GetFileEncoding() { return m_fileEncoding; }

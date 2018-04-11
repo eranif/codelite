@@ -123,7 +123,7 @@ EVT_STC_CALLTIP_CLICK(wxID_ANY, LEditor::OnCallTipClick)
 EVT_STC_DWELLEND(wxID_ANY, LEditor::OnDwellEnd)
 EVT_STC_START_DRAG(wxID_ANY, LEditor::OnDragStart)
 EVT_STC_DO_DROP(wxID_ANY, LEditor::OnDragEnd)
-//EVT_STC_PAINTED(wxID_ANY, LEditor::OnScnPainted)
+// EVT_STC_PAINTED(wxID_ANY, LEditor::OnScnPainted)
 EVT_STC_UPDATEUI(wxID_ANY, LEditor::OnSciUpdateUI)
 EVT_STC_SAVEPOINTREACHED(wxID_ANY, LEditor::OnSavePoint)
 EVT_STC_SAVEPOINTLEFT(wxID_ANY, LEditor::OnSavePoint)
@@ -1165,11 +1165,11 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
     int charCurrnt = SafeGetChar(pos);
 
-    bool hasSelection = (GetSelectionStart() != GetSelectionEnd());
+    int selectionSize = std::abs(GetSelectionEnd() - GetSelectionStart());
     if(GetHighlightGuide() != wxNOT_FOUND) { SetHighlightGuide(0); }
 
     if(m_hightlightMatchedBraces) {
-        if(hasSelection) {
+        if(selectionSize) {
             wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
         } else if((charCurrnt == '<' && charAfter == '<') ||    //<<
                   (charCurrnt == '<' && charBefore == '<') ||   //<<
@@ -1209,6 +1209,9 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     }
     if(m_statusBarFields & kShowPosition) { message << (!message.empty() ? ", " : "") << "Pos " << mainSelectionPos; }
     if(m_statusBarFields & kShowLen) { message << (!message.empty() ? ", " : "") << "Len " << GetLength(); }
+    if((m_statusBarFields & kShowSelectedChars) && selectionSize) {
+        message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
+    }
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);
 
@@ -5349,6 +5352,7 @@ void LEditor::PreferencesChanged()
     if(clConfig::Get().Read(kConfigStatusbarShowColumn, true)) { m_statusBarFields |= kShowColumn; }
     if(clConfig::Get().Read(kConfigStatusbarShowPosition, false)) { m_statusBarFields |= kShowPosition; }
     if(clConfig::Get().Read(kConfigStatusbarShowLength, false)) { m_statusBarFields |= kShowLen; }
+    if(clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true)) { m_statusBarFields |= kShowSelectedChars; }
 }
 
 void LEditor::NotifyMarkerChanged(int lineNumber)

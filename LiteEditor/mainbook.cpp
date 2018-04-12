@@ -1651,6 +1651,13 @@ void MainBook::OnNavigationBarMenuShowing(clContextMenuEvent& e)
            tags.empty()) {
             return;
         }
+
+        if(EditorConfigST::Get()->GetOptions()->IsSortNavBarDropdown()) {
+            std::sort(tags.begin(), tags.end(), [](TagEntryPtr pLhs, TagEntryPtr pRhs) {
+                return pLhs->GetFullDisplayName() < pRhs->GetFullDisplayName();
+            });
+        }
+
         wxMenu* menu = e.GetMenu();
         std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr tag) {
             wxString fullname = tag->GetFullDisplayName();

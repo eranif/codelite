@@ -76,6 +76,7 @@ public:
         Opt2_SortTabsDropdownAlphabetically = (1 << 1),
         Opt2_PlaceNavBarAtTheTop = (1 << 2),
         Opt2_DisableCtrlTabForTabSwitching = (1 << 3),
+        Opt2_SortNavBarDropdown = (1 << 4),
     };
 
     enum { nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall };
@@ -214,6 +215,8 @@ public:
     void SetNavBarTop(bool b) { EnableOption2(Opt2_PlaceNavBarAtTheTop, b); }
     bool IsCtrlTabEnabled() const { return !HasOption2(Opt2_DisableCtrlTabForTabSwitching); }
     void SetCtrlTabEnabled(bool b) { EnableOption2(Opt2_DisableCtrlTabForTabSwitching, !b); }
+    bool IsSortNavBarDropdown() const { return HasOption2(Opt2_SortNavBarDropdown); }
+    void SetSortNavBarDropdown(bool b) { EnableOption2(Opt2_SortNavBarDropdown, b); }
 
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }

@@ -190,6 +190,11 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     staticBoxSizer72->Add(m_checkBoxNavBarTop, 0, wxALL, WXC_FROM_DIP(5));
     
+    m_checkBoxNavBarSortDropdown = new wxCheckBox(m_panel12, wxID_ANY, _("Sort dropdown alphabetically"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_checkBoxNavBarSortDropdown->SetValue(false);
+    
+    staticBoxSizer72->Add(m_checkBoxNavBarSortDropdown, 0, wxALL, WXC_FROM_DIP(5));
+    
     m_panel14 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel14, _("Find / Find In Files"), false);
     

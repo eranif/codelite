@@ -67,6 +67,7 @@ protected:
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
     wxCheckBox* m_checkBoxNavBarTop;
+    wxCheckBox* m_checkBoxNavBarSortDropdown;
     wxPanel* m_panel14;
     wxCheckBox* m_checkBoxFindBarAtBottom;
     wxCheckBox* m_checkBoxDontFoldSearchResults;
@@ -116,6 +117,7 @@ public:
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
     wxCheckBox* GetCheckBoxNavBarTop() { return m_checkBoxNavBarTop; }
+    wxCheckBox* GetCheckBoxNavBarSortDropdown() { return m_checkBoxNavBarSortDropdown; }
     wxPanel* GetPanel12() { return m_panel12; }
     wxCheckBox* GetCheckBoxFindBarAtBottom() { return m_checkBoxFindBarAtBottom; }
     wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }

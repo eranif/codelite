@@ -3270,6 +3270,7 @@ BrowseRecord LEditor::CreateBrowseRecord()
     record.lineno = LineFromPosition(GetCurrentPos()) + 1; // scintilla counts from zero, while tagentry from 1
     record.filename = GetFileName().GetFullPath();
     record.project = GetProject();
+    record.firstLineInView = GetFirstVisibleLine();
 
     // if the file is part of the workspace set the project name
     // else, open it with empty project

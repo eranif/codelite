@@ -33,6 +33,7 @@
 #include "editor_config.h"
 #include "editorframe.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "filechecklist.h"
 #include "frame.h"
 #include "globals.h"
@@ -47,7 +48,6 @@
 #include <wx/regex.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
-#include "file_logger.h"
 
 MainBook::MainBook(wxWindow* parent)
     : wxPanel(parent)
@@ -70,7 +70,6 @@ void MainBook::CreateGuiControls()
 
     m_messagePane = new MessagePane(this);
     sz->Add(m_messagePane, 0, wxALL | wxEXPAND, 5, NULL);
-
 
 #if USE_AUI_NOTEBOOK
     long style = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_CLOSE_ON_ACTIVE_TAB |
@@ -1590,7 +1589,6 @@ void MainBook::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
     editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1), nullptr);
 }
 
-
 void MainBook::DoPlaceNavigationBar()
 {
     clWindowUpdateLocker locker(this);
@@ -1605,9 +1603,7 @@ void MainBook::DoPlaceNavigationBar()
     size_t itemCount = GetSizer()->GetItemCount();
     for(size_t i = 0; i < itemCount; ++i) {
         wxSizerItem* sizerItem = GetSizer()->GetItem(i);
-        if(!sizerItem) {
-            continue;
-        }
+        if(!sizerItem) { continue; }
         if(sizerItem->GetWindow() == m_book) {
             // we found the main book
             if(placeAtBottom) {
@@ -1627,4 +1623,21 @@ void MainBook::OnSettingsChanged(wxCommandEvent& e)
     // Update the navigation bar position
     DoPlaceNavigationBar();
     DoPositionFindBar();
+}
+
+LEditor* MainBook::OpenFile(const BrowseRecord& rec)
+{
+    LEditor* editor = OpenFile(rec.filename, rec.project, wxNOT_FOUND, wxNOT_FOUND, OF_None, true);
+    if(editor) {
+        if(rec.firstLineInView != wxNOT_FOUND) { editor->GetCtrl()->SetFirstVisibleLine(rec.firstLineInView); }
+        // Determine the best position for the caret
+        int pos = rec.position;
+        if((pos == wxNOT_FOUND) && (rec.lineno != wxNOT_FOUND)) { pos = editor->PositionFromLine(rec.lineno); }
+        if(pos != wxNOT_FOUND) {
+            editor->SetCurrentPos(rec.position);
+            editor->SetSelectionStart(rec.position);
+            editor->SetSelectionEnd(rec.position);
+        }
+    }
+    return editor;
 }

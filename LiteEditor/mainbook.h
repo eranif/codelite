@@ -73,7 +73,7 @@ private:
     void DoOpenImageViewer(const wxFileName& filename);
     void DoUpdateEditorsThemes();
     void DoPlaceNavigationBar();
-    
+
     void OnMouseDClick(wxBookCtrlEvent& e);
     void OnTabDClicked(wxBookCtrlEvent& e);
     void OnTabLabelContextMenu(wxBookCtrlEvent& e);
@@ -177,10 +177,10 @@ public:
     LEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                       long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
                       const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
-    LEditor* OpenFile(const BrowseRecord& rec)
-    {
-        return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, OF_None, false);
-    }
+    /**
+     * @brief open file based on a browsing record
+     */
+    LEditor* OpenFile(const BrowseRecord& rec);
 
     /**
      * @brief a simpler version: open a file with a given tooltip and bitmap

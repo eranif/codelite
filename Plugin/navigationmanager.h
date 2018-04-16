@@ -25,11 +25,11 @@
 #ifndef NAVIGATIONMANAGER_H
 #define NAVIGATIONMANAGER_H
 
-#include "vector"
 #include "browse_record.h"
+#include "codelite_exports.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "codelite_exports.h"
+#include "vector"
 
 /**
  * @class NavMgr
@@ -39,54 +39,54 @@
  */
 class WXDLLIMPEXP_SDK NavMgr
 {
-	std::vector<BrowseRecord> m_jumps;
-	size_t m_cur;
+    std::vector<BrowseRecord> m_jumps;
+    size_t m_cur;
 
 private:
-	NavMgr();
-	virtual ~NavMgr();
-    
+    NavMgr();
+    virtual ~NavMgr();
+
 public:
-	static NavMgr *Get();
+    static NavMgr* Get();
 
     /**
      * @brief check if a browse record is actually a valid jump location (source or target)
      */
-    bool ValidLocation(const BrowseRecord &rec) const;
+    bool ValidLocation(const BrowseRecord& rec) const;
 
-	/**
-	 * @brief add new jump record to the manager, this new record become the new top of the list
-	 * @param from the starting point of the jump
+    /**
+     * @brief add new jump record to the manager, this new record become the new top of the list
+     * @param from the starting point of the jump
      * @param to the ending point of the jump
-	 */
-	void AddJump(const BrowseRecord &from, const BrowseRecord &to);
+     */
+    void AddJump(const BrowseRecord& from, const BrowseRecord& to);
 
-	/**
-	 * @brief return the next place to visit (destination)
-	 * @return next browsing record
-	 */
-	BrowseRecord GetNext();
+    /**
+     * @brief return the next place to visit (destination)
+     * @return next browsing record
+     */
+    BrowseRecord GetNext();
 
-	/**
-	 * @brief return the previous place we visited (source)
-	 * @return previous browsing record
-	 */
-	BrowseRecord GetPrev();
+    /**
+     * @brief return the previous place we visited (source)
+     * @return previous browsing record
+     */
+    BrowseRecord GetPrev();
 
-	/**
-	 * @brief return true if manager has more next items
-	 * @return
-	 */
-	bool CanNext() const;
+    /**
+     * @brief return true if manager has more next items
+     * @return
+     */
+    bool CanNext() const;
 
-	/**
-	 * @brief return true if manager has more previous items
-	 * @return
-	 */
-	bool CanPrev() const;
+    /**
+     * @brief return true if manager has more previous items
+     * @return
+     */
+    bool CanPrev() const;
 
-    bool NavigateBackward(IManager *mgr);
-    bool NavigateForward(IManager *mgr);
-	void Clear();
+    bool NavigateBackward(IManager* mgr);
+    bool NavigateForward(IManager* mgr);
+    void Clear();
 };
-#endif //NAVIGATIONMANAGER_H
+#endif // NAVIGATIONMANAGER_H

@@ -51,6 +51,8 @@ codelite-make.exe  --workspace=codelite_utils.workspace --project=build_all --co
 
 echo "Packaging..."
 cd C:\src\codelite\InnoSetup
+del /Q output\*.exe
+del /Q output\*.7z
 iscc %ISCC_FILE%
 
 cd C:\src\codelite\InnoSetup\output

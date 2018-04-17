@@ -156,6 +156,7 @@ protected:
     wxDirection m_outputTabsDirection;    // Up/Down
     bool m_indentedComments;
     int m_nbTabHeight; // Should notebook tabs be too tall, too short or...
+    wxString m_webSearchPrefix;
 
 public:
     // Helpers
@@ -213,7 +214,7 @@ public:
     void SetNavBarTop(bool b) { EnableOption2(Opt2_PlaceNavBarAtTheTop, b); }
     bool IsCtrlTabEnabled() const { return !HasOption2(Opt2_DisableCtrlTabForTabSwitching); }
     void SetCtrlTabEnabled(bool b) { EnableOption2(Opt2_DisableCtrlTabForTabSwitching, !b); }
-    
+
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }
     void SetTrimOnlyModifiedLines(bool trimOnlyModifiedLines) { this->m_trimOnlyModifiedLines = trimOnlyModifiedLines; }
@@ -468,6 +469,9 @@ public:
     bool MSWIsWrapCmdWithDoubleQuotes() const { return true; }
     bool IsMouseZoomEnabled() const { return !HasOption(Opt_DisableMouseCtrlZoom); }
     void SetMouseZoomEnabled(bool b) { EnableOption(Opt_DisableMouseCtrlZoom, !b); }
+
+    const wxString& GetWebSearchPrefix() const { return m_webSearchPrefix; }
+    void SetWebSearchPrefix(const wxString& webSearchPrefix) { this->m_webSearchPrefix = webSearchPrefix; }
 
     void UpdateFromEditorConfig(const clEditorConfigSection& section);
 

@@ -124,6 +124,24 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     staticBoxSizer4->Add(m_checkBoxRestoreSession, 0, wxALL, WXC_FROM_DIP(5));
     
+    wxFlexGridSizer* flexGridSizer77 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer77->SetFlexibleDirection( wxBOTH );
+    flexGridSizer77->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer77->AddGrowableCol(1);
+    
+    staticBoxSizer4->Add(flexGridSizer77, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText79 = new wxStaticText(m_panel1, wxID_ANY, _("Web search prefix:"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1,-1)), 0);
+    
+    flexGridSizer77->Add(m_staticText79, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_webSearchPrefix = new wxTextCtrl(m_panel1, wxID_ANY, wxT("https://www.google.com/search?q="), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1,-1)), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_webSearchPrefix->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer77->Add(m_webSearchPrefix, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
     m_panel23 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel23, _("Frame Title"), false);
     

@@ -129,6 +129,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
     , m_nbTabHeight(nbTabHt_Medium)
+    , m_webSearchPrefix(wxT("https://www.google.com/search?q="))
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
@@ -231,6 +232,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         if(m_workspaceTabsDirection == wxLEFT) { m_workspaceTabsDirection = wxTOP; }
         if(m_workspaceTabsDirection == wxRIGHT) { m_workspaceTabsDirection = wxBOTTOM; }
 #endif
+
+        m_webSearchPrefix = XmlUtils::ReadString(node, wxT("m_webSearchPrefix"), m_webSearchPrefix);
     }
 
     // Transitional calls. These checks are relevant for 2 years i.e. until the beginning of 2016
@@ -361,6 +364,9 @@ wxXmlNode* OptionsConfig::ToXml() const
     tmp.Clear();
     tmp << m_options2;
     n->AddProperty(wxT("m_options2"), tmp);
+
+    n->AddProperty(wxT("m_webSearchPrefix"), m_webSearchPrefix);
+
     return n;
 }
 

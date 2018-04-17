@@ -76,6 +76,7 @@ find_next_at_caret|Search::Find and Replace|Find Word At Caret|
 find_previous_at_caret|Search::Find and Replace|Find Word At Caret Backward|
 grep_current_file|Search|Grep Selection in the Current File|Ctrl-Shift-G
 grep_current_workspace|Search|Grep Selection in the Workspace|
+web_search_selection|Search|Search for Selection with default browser|Ctrl-Shift-W
 next_fif_match|Search::Find In Files|Go to Next 'Find In File' Match|F8
 previous_fif_match|Search::Find In Files|Go to Previous 'Find In File' Match|Ctrl-F8
 ID_GOTO_ANYTHING|Search|Goto Anything|Ctrl-Shift-P

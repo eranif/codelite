@@ -237,18 +237,7 @@ void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
 
 void EditorSettingsMiscPanel::OnEnableThemeUI(wxUpdateUIEvent& event)
 {
-#ifdef __WXMSW__
-    int major, minor;
-    wxGetOsVersion(&major, &minor);
-
-    if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) {
-        event.Enable(true);
-    } else {
-        event.Enable(false);
-    }
-#else
     event.Enable(false);
-#endif
 }
 
 void EditorSettingsMiscPanel::LocaleChkUpdateUI(wxUpdateUIEvent& event)

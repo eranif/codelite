@@ -132,13 +132,6 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
-#ifdef __WXMSW__
-    int major, minor;
-    wxGetOsVersion(&major, &minor);
-
-    if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) { m_mswTheme = true; }
-#endif
-
     // set the default font name to be wxFONTENCODING_UTF8
     SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
     if(node) {
@@ -239,9 +232,6 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         if(m_workspaceTabsDirection == wxRIGHT) { m_workspaceTabsDirection = wxBOTTOM; }
 #endif
     }
-#ifdef __WXMSW__
-    if(!(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */)) { m_mswTheme = false; }
-#endif
 
     // Transitional calls. These checks are relevant for 2 years i.e. until the beginning of 2016
     if(m_bookmarkFgColours.empty()) {

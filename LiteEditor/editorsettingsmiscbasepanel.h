@@ -20,8 +20,8 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/checkbox.h>
-#include <wx/bannerwindow.h>
 #include <wx/textctrl.h>
+#include <wx/bannerwindow.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -56,6 +56,8 @@ protected:
     wxCheckBox* m_versionCheckOnStartup;
     wxCheckBox* m_checkBoxPromptReleaseOnly;
     wxCheckBox* m_checkBoxRestoreSession;
+    wxStaticText* m_staticText79;
+    wxTextCtrl* m_webSearchPrefix;
     wxPanel* m_panel23;
     wxBannerWindow* m_banner27;
     wxStaticText* m_staticText31;
@@ -122,6 +124,8 @@ public:
     wxCheckBox* GetVersionCheckOnStartup() { return m_versionCheckOnStartup; }
     wxCheckBox* GetCheckBoxPromptReleaseOnly() { return m_checkBoxPromptReleaseOnly; }
     wxCheckBox* GetCheckBoxRestoreSession() { return m_checkBoxRestoreSession; }
+    wxStaticText* GetStaticText79() { return m_staticText79; }
+    wxTextCtrl* GetWebSearchPrefix() { return m_webSearchPrefix; }
     wxPanel* GetPanel1() { return m_panel1; }
     wxBannerWindow* GetBanner27() { return m_banner27; }
     wxStaticText* GetStaticText31() { return m_staticText31; }

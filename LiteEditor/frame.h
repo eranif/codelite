@@ -132,7 +132,7 @@ class clMainFrame : public wxFrame
     wxToolBar* m_mainToolBar;
     clMainFrameHelper::Ptr_t m_frameHelper;
     WebUpdateJob *m_webUpdate;
-    
+
 public:
     static bool m_initCompleted;
 
@@ -503,6 +503,8 @@ protected:
     void OnPreviousFiFMatchUI(wxUpdateUIEvent& e);
     void OnGrepWord(wxCommandEvent& e);
     void OnGrepWordUI(wxUpdateUIEvent& e);
+    void OnWebSearchSelection(wxCommandEvent& e);
+    void OnWebSearchSelectionUI(wxUpdateUIEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
     void OnEnvironmentVariablesModified(clCommandEvent& e);
 

@@ -370,6 +370,7 @@ EVT_MENU(XRCID("next_fif_match"), clMainFrame::OnNextFiFMatch)
 EVT_MENU(XRCID("previous_fif_match"), clMainFrame::OnPreviousFiFMatch)
 EVT_MENU(XRCID("grep_current_file"), clMainFrame::OnGrepWord)
 EVT_MENU(XRCID("grep_current_workspace"), clMainFrame::OnGrepWord)
+EVT_MENU(XRCID("web_search_selection"), clMainFrame::OnWebSearchSelection)
 EVT_MENU(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("ID_GOTO_ANYTHING"), clMainFrame::OnGotoAnything)
@@ -405,6 +406,7 @@ EVT_UPDATE_UI(XRCID("next_fif_match"), clMainFrame::OnNextFiFMatchUI)
 EVT_UPDATE_UI(XRCID("previous_fif_match"), clMainFrame::OnPreviousFiFMatchUI)
 EVT_UPDATE_UI(XRCID("grep_current_file"), clMainFrame::OnGrepWordUI)
 EVT_UPDATE_UI(XRCID("grep_current_workspace"), clMainFrame::OnGrepWordUI)
+EVT_UPDATE_UI(XRCID("web_search_selection"), clMainFrame::OnWebSearchSelectionUI)
 
 //-------------------------------------------------------
 // Project menu
@@ -5408,6 +5410,34 @@ void clMainFrame::OnGrepWordUI(wxUpdateUIEvent& e)
         // grep in file
         e.Enable(editor && !editor->GetSelectedText().IsEmpty());
     }
+}
+
+void clMainFrame::OnWebSearchSelection(wxCommandEvent& e)
+{
+    CHECK_SHUTDOWN();
+
+    const auto editor = GetMainBook()->GetActiveEditor();
+    if(!editor) {
+        return;
+    }
+
+    const auto text = editor->GetSelectedText();
+    if(text.IsEmpty()) {
+        return;
+    }
+
+    const auto options = EditorConfigST::Get()->GetOptions();
+    if(options) {
+        wxLaunchDefaultBrowser(wxString(options->GetWebSearchPrefix()) << text, wxBROWSER_NOBUSYCURSOR);
+    }
+}
+
+void clMainFrame::OnWebSearchSelectionUI(wxUpdateUIEvent& e)
+{
+    CHECK_SHUTDOWN();
+
+    const auto editor = GetMainBook()->GetActiveEditor();
+    e.Enable(editor && !editor->GetSelectedText().IsEmpty());
 }
 
 void clMainFrame::OnPchCacheEnded(wxCommandEvent& e) { e.Skip(); }

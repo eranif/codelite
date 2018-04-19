@@ -29,6 +29,9 @@
 #include <string>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
+#ifdef __WXOSX__
+#include <sys/errno.h>
+#endif
 #include "codelite_exports.h"
 
 #ifdef _WIN32

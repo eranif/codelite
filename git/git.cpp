@@ -917,11 +917,7 @@ void GitPlugin::OnGitBlameRevList(const wxString& arg, const wxString& filepath,
 void GitPlugin::OnRefresh(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    gitAction ga(gitListAll, wxT(""));
-    m_gitActionQueue.push_back(ga);
-    AddDefaultActions();
-    m_mgr->ShowOutputPane("Git");
-    ProcessGitActionQueue();
+    DoRefreshView();
 }
 /*******************************************************************************/
 void GitPlugin::OnGarbageColletion(wxCommandEvent& e)
@@ -1022,6 +1018,7 @@ void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 
     // Try to set the repo to the workspace path
     DoSetRepoPath(GetWorkspaceFileName().GetPath(), false);
+    CallAfter(&GitPlugin::DoRefreshView);
 }
 
 /*******************************************************************************/
@@ -2603,4 +2600,13 @@ void GitPlugin::DisplayMessage(const wxString& message) const
     if (!message.empty()) {
         GIT_MESSAGE(message);
     }
+}
+
+void GitPlugin::DoRefreshView()
+{
+    gitAction ga(gitListAll, wxT(""));
+    m_gitActionQueue.push_back(ga);
+    AddDefaultActions();
+    m_mgr->ShowOutputPane("Git");
+    ProcessGitActionQueue();
 }

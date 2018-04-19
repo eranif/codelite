@@ -186,7 +186,8 @@ private:
     void ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
     void DoShowCommitDialog(const wxString& diff, wxString& commitArgs);
-
+    void DoRefreshView();
+    
     /// Workspace management
     bool IsWorkspaceOpened() const;
     wxString GetWorkspaceName() const;

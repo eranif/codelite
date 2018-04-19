@@ -317,6 +317,31 @@ public:
     void SelectThread(int threadID);
 
     /**
+     * @brief Suspend a set of threads by ID.
+     */
+    void SuspendThreads(const std::vector<int>& threadIds);
+
+    /**
+     * @brief Suspend threads other than the provided set of thread IDs.
+     */
+    void SuspendOtherThreads(const std::vector<int>& threadIds);
+
+    /**
+     * @brief Resume a set of threads by ID.
+     */
+    void ResumeThreads(const std::vector<int>& threadIds);
+
+    /**
+     * @brief Resume threads other than the provided set of thread IDs.
+     */
+    void ResumeOtherThreads(const std::vector<int>& threadIds);
+
+    /**
+     * @brief Resume all threads.
+     */
+    void ResumeAllThreads();
+
+    /**
      * @brief evaluate an expression
      */
     void EvaluateExpression(const wxString& expression);
@@ -333,7 +358,7 @@ public:
 
     /**
      * @brief send text command (typed by the user) to the debugger command line
-     * interperter
+     * interpreter
      */
     void SendInterperterCommand(const wxString& command);
 
@@ -361,6 +386,13 @@ protected:
      * @param line the line in @a file to break on.
      */
     void SendSingleBreakpointCommand(const eCommandType commandType, const wxFileName& filename, const int line);
+
+	/**
+	 * @brief Send a thread command.
+     * @param commandType the command to send.
+	 * @param threadIds list of thread ids to operate on.
+	 */
+    void SendThreadCommand(const eCommandType commandType, const std::vector<int>& threadIds);
 };
 
 #endif // LLDBCONNECTOR_H

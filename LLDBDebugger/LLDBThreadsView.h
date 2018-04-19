@@ -45,7 +45,7 @@ public:
     const LLDBThread& GetThread() const {
         return m_thread;
     }
-    
+
 };
 
 //-------------------------------------------------------------
@@ -57,14 +57,22 @@ class ThreadsModel : public wxDataViewListStore
 public:
     ThreadsModel(wxDataViewListCtrl* view) : m_view(view){}
     virtual ~ThreadsModel() {}
-    
+
     bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const {
+        bool res = false;
         LLDBThreadViewClientData *cd = reinterpret_cast<LLDBThreadViewClientData*>(m_view->GetItemData(item));
-        if ( cd && cd->GetThread().IsActive() ) {
-            attr.SetBold(true);
-            return true;
+        if (cd) {
+            if(cd->GetThread().IsActive()) {
+                attr.SetBold(true);
+                res = true;
+            }
+
+            if(cd->GetThread().IsSuspended()) {
+                attr.SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+                res = true;
+            }
         }
-        return false;
+        return res;
     }
 };
 
@@ -76,19 +84,21 @@ class LLDBThreadsView : public LLDBThreadsViewBase
     LLDBPlugin *m_plugin;
     int m_selectedThread;
     wxObjectDataPtr<ThreadsModel> m_model;
-    
+
 public:
     LLDBThreadsView(wxWindow* parent, LLDBPlugin* plugin);
     virtual ~LLDBThreadsView();
 private:
     void DoCleanup();
-    
+
+    void OnContextMenu(wxDataViewEvent& event);
+
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event);
-    
+
     void OnLLDBRunning(LLDBEvent &event);
     void OnLLDBStopped(LLDBEvent &event);
-    void OnLLDBExited(LLDBEvent &event); 
+    void OnLLDBExited(LLDBEvent &event);
     void OnLLDBStarted(LLDBEvent &event);
 
 };

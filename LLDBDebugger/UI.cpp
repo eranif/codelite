@@ -565,7 +565,7 @@ LLDBThreadsViewBase::LLDBThreadsViewBase(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer115 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer115);
     
-    m_dvListCtrlThreads = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlThreads = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_MULTIPLE);
     
     boxSizer115->Add(m_dvListCtrlThreads, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     

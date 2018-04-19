@@ -92,7 +92,12 @@ enum eCommandType {
     kCommandDeleteWatch,
     kCommandInterperterCommand,
     kCommandRunTo,
-    kCommandJumpTo
+    kCommandJumpTo,
+    kCommandSuspendThreads,
+    kCommandSuspendOtherThreads,
+    kCommandResumeThreads,
+    kCommandResumeOtherThreads,
+    kCommandResumeAllThreads
 };
 
 enum eLLDBOptions {

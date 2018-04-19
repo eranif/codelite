@@ -89,6 +89,12 @@ private:
     template<typename T>
     void NotifyStopped(const lldb::tid_t initialThreadID, T &&threadSelector);
 
+    template<typename T>
+    void SuspendOrResumeThreads(const char * const type, const std::vector<int>& threadIds, T&& function);
+
+    template<typename T>
+    void SuspendOrResumeOtherThreads(const char * const type, const std::vector<int>& threadIds, T&& function);
+
 public:
     void NotifyStoppedOnFirstEntry();
     void NotifyStopped();
@@ -159,6 +165,11 @@ public:
     void OpenCoreFile(const LLDBCommand& command);
     void AttachProcess(const LLDBCommand& command);
     void ShowCurrentFileLine(const LLDBCommand& command);
+    void SuspendThreads(const LLDBCommand& command);
+    void SuspendOtherThreads(const LLDBCommand& command);
+    void ResumeThreads(const LLDBCommand& command);
+    void ResumeOtherThreads(const LLDBCommand& command);
+    void ResumeAllThreads(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

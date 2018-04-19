@@ -170,6 +170,16 @@ void LLDBConnector::SendCommand(const LLDBCommand& command)
     }
 }
 
+void LLDBConnector::SendThreadCommand(const eCommandType commandType, const std::vector<int>& threadIds)
+{
+    if(IsCanInteract()) {
+        LLDBCommand command;
+        command.SetCommandType(commandType);
+        command.SetThreadIds(threadIds);
+        SendCommand(command);
+    }
+}
+
 void LLDBConnector::InvalidateBreakpoints()
 {
     // mark all the breakpoints as "not-applied" (id=-1)
@@ -573,12 +583,32 @@ void LLDBConnector::SelectFrame(int frameID)
 
 void LLDBConnector::SelectThread(int threadID)
 {
-    if(IsCanInteract()) {
-        LLDBCommand command;
-        command.SetCommandType(kCommandSelectThread);
-        command.SetThreadId(threadID);
-        SendCommand(command);
-    }
+    SendThreadCommand(kCommandSelectThread, std::vector<int> { threadID });
+}
+
+void LLDBConnector::SuspendThreads(const std::vector<int>& threadIds)
+{
+    SendThreadCommand(kCommandSuspendThreads, threadIds);
+}
+
+void LLDBConnector::SuspendOtherThreads(const std::vector<int>& threadIds)
+{
+    SendThreadCommand(kCommandSuspendOtherThreads, threadIds);
+}
+
+void LLDBConnector::ResumeThreads(const std::vector<int>& threadIds)
+{
+    SendThreadCommand(kCommandResumeThreads, threadIds);
+}
+
+void LLDBConnector::ResumeOtherThreads(const std::vector<int>& threadIds)
+{
+    SendThreadCommand(kCommandResumeOtherThreads, threadIds);
+}
+
+void LLDBConnector::ResumeAllThreads()
+{
+    SendThreadCommand(kCommandResumeAllThreads, std::vector<int>());
 }
 
 void LLDBConnector::EvaluateExpression(const wxString& expression)

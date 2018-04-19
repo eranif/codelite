@@ -26,6 +26,17 @@
 #include "LLDBThreadsView.h"
 #include "LLDBPlugin.h"
 
+namespace
+{
+
+const int lldbSuspendThreadIds = XRCID("lldb_suspend_threads");
+const int lldbSuspendOtherThreadIds = XRCID("lldb_suspend_other_threads");
+const int lldbResumeThreadIds = XRCID("lldb_resume_threads");
+const int lldbResumeOtherThreadIds = XRCID("lldb_resume_other_threads");
+const int lldbResumeAllThreadsId = XRCID("lldb_resume_all_threads");
+
+} // namespace
+
 // -------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------
 
@@ -46,6 +57,8 @@ LLDBThreadsView::LLDBThreadsView(wxWindow* parent, LLDBPlugin* plugin)
 
     m_model.reset( new ThreadsModel( m_dvListCtrlThreads ) );
     m_dvListCtrlThreads->AssociateModel( m_model.get() );
+
+    m_dvListCtrlThreads->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &LLDBThreadsView::OnContextMenu, this);
 }
 
 LLDBThreadsView::~LLDBThreadsView()
@@ -54,6 +67,8 @@ LLDBThreadsView::~LLDBThreadsView()
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_STOPPED, &LLDBThreadsView::OnLLDBStopped, this);
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_EXITED,  &LLDBThreadsView::OnLLDBExited,  this);
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_STARTED, &LLDBThreadsView::OnLLDBStarted, this);
+
+    m_dvListCtrlThreads->Unbind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &LLDBThreadsView::OnContextMenu, this);
 }
 
 void LLDBThreadsView::OnItemActivated(wxDataViewEvent& event)
@@ -106,7 +121,7 @@ void LLDBThreadsView::OnLLDBStopped(LLDBEvent& event)
 
     if(wxNOT_FOUND != m_selectedThread) {
         const auto item = m_dvListCtrlThreads->RowToItem(m_selectedThread);
-        if (item.IsOk()) {
+        if(item.IsOk()) {
             m_dvListCtrlThreads->EnsureVisible(item);
         }
     }
@@ -120,4 +135,52 @@ void LLDBThreadsView::DoCleanup()
     }
     m_dvListCtrlThreads->DeleteAllItems();
     m_selectedThread = wxNOT_FOUND;
+}
+
+void LLDBThreadsView::OnContextMenu(wxDataViewEvent& event)
+{
+    wxDataViewItemArray items;
+    m_dvListCtrlThreads->GetSelections(items);
+
+    std::vector<int> threadIds;
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        const auto &item = items.Item(i);
+        const auto cd = reinterpret_cast<LLDBThreadViewClientData*>(m_dvListCtrlThreads->GetItemData(item));
+        if(cd) {
+            const auto threadId = cd->GetThread().GetId();
+            if (threadId != wxNOT_FOUND) {
+                threadIds.push_back(threadId);
+            }
+        }
+    }
+
+    wxMenu menu;
+    if(!threadIds.empty()) {
+        const auto suffix = (threadIds.size() > 1) ? wxT("s") : wxT("");
+        menu.Append(lldbSuspendThreadIds, wxString("Suspend thread") << suffix);
+        menu.Append(lldbSuspendOtherThreadIds, wxString("Suspend other threads"));
+        menu.AppendSeparator();
+        menu.Append(lldbResumeThreadIds, wxString("Resume thread") << suffix);
+        menu.Append(lldbResumeOtherThreadIds, wxString("Resume other threads"));
+    }
+
+    menu.Append(lldbResumeAllThreadsId, wxString("Resume all threads"));
+
+    const auto sel = GetPopupMenuSelectionFromUser(menu);
+
+    if(lldbSuspendThreadIds == sel) {
+        m_plugin->GetLLDB()->SuspendThreads(threadIds);
+    }
+    else if(lldbSuspendOtherThreadIds == sel) {
+        m_plugin->GetLLDB()->SuspendOtherThreads(threadIds);
+    }
+    else if(lldbResumeThreadIds == sel) {
+        m_plugin->GetLLDB()->ResumeThreads(threadIds);
+    }
+    else if(lldbResumeOtherThreadIds == sel) {
+        m_plugin->GetLLDB()->ResumeOtherThreads(threadIds);
+    }
+    else if(lldbResumeAllThreadsId == sel) {
+        m_plugin->GetLLDB()->ResumeAllThreads();
+    }
 }

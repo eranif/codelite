@@ -462,6 +462,7 @@ void CodeLiteLLDBApp::NotifyStopped(const lldb::tid_t initialThreadID, T &&threa
         LLDBThread t;
         t.SetStopReason(stopReason);
         t.SetId(threadID);
+        t.SetSuspended(thr.IsSuspended());
         t.SetName(thr.GetName());
 
         auto frame = thr.GetSelectedFrame();
@@ -1030,7 +1031,12 @@ void CodeLiteLLDBApp::SelectFrame(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::SelectThread(const LLDBCommand& command)
 {
-    const auto selectThreadID = command.GetThreadId();
+    assert(1 == command.GetThreadIds().size());
+    if (1 != command.GetThreadIds().size()) {
+        return;
+    }
+
+    const auto selectThreadID = command.GetThreadIds().front();
     wxPrintf("codelite-lldb: selecting thread %d\n", selectThreadID);
     if(CanInteract() && selectThreadID != wxNOT_FOUND) {
         m_interruptReason = kInterruptReasonNone;
@@ -1227,4 +1233,78 @@ void CodeLiteLLDBApp::ExecuteInterperterCommand(const LLDBCommand& command)
         reply.SetReplyType(kReplyTypeInterperterReply);
         SendReply(reply);
     }
+}
+
+template<typename T>
+void CodeLiteLLDBApp::SuspendOrResumeThreads(const char * const type, const std::vector<int>& threadIds, T&& function)
+{
+    if(!CanInteract() || threadIds.empty()) {
+        return;
+    }
+
+    for(const auto threadId : threadIds) {
+        auto thr = m_target.GetProcess().GetThreadByID(threadId);
+        if(!thr.IsValid()) {
+            continue;
+        }
+
+        wxPrintf("codelite-lldb: %s thread %d\n", type, threadId);
+        function(thr);
+    }
+
+    m_interruptReason = kInterruptReasonNone;
+    NotifyStopped();
+}
+
+template<typename T>
+void CodeLiteLLDBApp::SuspendOrResumeOtherThreads(const char * const type, const std::vector<int>& threadIds, T&& function)
+{
+    if(!CanInteract()) {
+        return;
+    }
+
+    const std::set<int> excludeThreadIds(threadIds.begin(), threadIds.end());
+
+    for(size_t i = 0; i < m_target.GetProcess().GetNumThreads(); ++i) {
+        auto thr = m_target.GetProcess().GetThreadAtIndex(i);
+        if(!thr.IsValid()) {
+            continue;
+        }
+
+        if(0 != excludeThreadIds.count(thr.GetThreadID())) {
+            continue;
+        }
+
+        wxPrintf("codelite-lldb: %s thread %d\n", type, thr.GetThreadID());
+        function(thr);
+    }
+
+    m_interruptReason = kInterruptReasonNone;
+    NotifyStopped();
+}
+
+void CodeLiteLLDBApp::SuspendThreads(const LLDBCommand& command)
+{
+    SuspendOrResumeThreads("suspending", command.GetThreadIds(), [](lldb::SBThread& thr) { thr.Suspend(); });
+}
+
+void CodeLiteLLDBApp::SuspendOtherThreads(const LLDBCommand& command)
+{
+    SuspendOrResumeOtherThreads("suspending", command.GetThreadIds(), [](lldb::SBThread& thr) { thr.Suspend(); });
+}
+
+void CodeLiteLLDBApp::ResumeThreads(const LLDBCommand& command)
+{
+    SuspendOrResumeThreads("resuming", command.GetThreadIds(), [](lldb::SBThread& thr) { thr.Resume(); });
+}
+
+void CodeLiteLLDBApp::ResumeOtherThreads(const LLDBCommand& command)
+{
+    SuspendOrResumeOtherThreads("resuming", command.GetThreadIds(), [](lldb::SBThread& thr) { thr.Resume(); });
+}
+
+void CodeLiteLLDBApp::ResumeAllThreads(const LLDBCommand& command)
+{
+    wxUnusedVar(command);
+    SuspendOrResumeOtherThreads("resuming", std::vector<int>(), [](lldb::SBThread& thr) { thr.Resume(); });
 }

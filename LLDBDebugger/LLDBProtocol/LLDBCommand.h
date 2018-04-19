@@ -47,7 +47,7 @@ protected:
     wxStringMap_t m_env;
     LLDBSettings m_settings;
     int m_frameId;
-    int m_threadId;
+    std::vector<int> m_threadIds;
     wxString m_expression;
     wxString m_startupCommands;
     wxString m_corefile;
@@ -86,11 +86,11 @@ public:
      */
     char** GetEnvArray() const;
 
-    void SetThreadId(int threadId) { this->m_threadId = threadId; }
-    int GetThreadId() const { return m_threadId; }
+    void SetThreadIds(const std::vector<int>& threadIds) { this->m_threadIds = threadIds; }
+    const std::vector<int>& GetThreadIds() const { return m_threadIds; }
     void Clear()
     {
-        m_threadId = wxNOT_FOUND;
+        m_threadIds.clear();
         m_frameId = wxNOT_FOUND;
         m_env.clear();
         m_commandType = kCommandInvalid;

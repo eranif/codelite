@@ -166,6 +166,26 @@ void* LLDBNetworkServerThread::Entry()
                     m_app->CallAfter(&CodeLiteLLDBApp::JumpTo, command);
                     break;
 
+                case kCommandSuspendThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::SuspendThreads, command);
+                    break;
+
+                case kCommandSuspendOtherThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::SuspendOtherThreads, command);
+                    break;
+
+                case kCommandResumeThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::ResumeThreads, command);
+                    break;
+
+                case kCommandResumeOtherThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::ResumeOtherThreads, command);
+                    break;
+
+                case kCommandResumeAllThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::ResumeAllThreads, command);
+                    break;
+
                 default:
                     break;
                 }

@@ -46,25 +46,28 @@ void LLDBCommand::FromJSON(const JSONElement& json)
     m_lldbId = json.namedObject("m_lldbId").toInt(wxNOT_FOUND);
     m_env = json.namedObject("m_env").toStringMap();
     m_frameId = json.namedObject("m_frameId").toInt(wxNOT_FOUND);
-    m_threadId = json.namedObject("m_threadId").toInt(wxNOT_FOUND);
     m_expression = json.namedObject("m_expression").toString();
     m_startupCommands = json.namedObject("m_startupCommands").toString();
-    
 
-    JSONElement arr = json.namedObject("m_breakpoints");
-    for(int i=0; i<arr.arraySize(); ++i) {
+    JSONElement threadIdArr = json.namedObject("m_threadIds");
+    for(int i=0; i<threadIdArr.arraySize(); ++i) {
+        m_threadIds.push_back(threadIdArr.arrayItem(i).toInt());
+    }
+
+    JSONElement bparr = json.namedObject("m_breakpoints");
+    for(int i=0; i<bparr.arraySize(); ++i) {
         LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint() );
-        bp->FromJSON( arr.arrayItem(i) );
+        bp->FromJSON( bparr.arrayItem(i) );
         m_breakpoints.push_back( bp );
     }
 
-    if (    m_commandType == kCommandStart          || 
+    if (    m_commandType == kCommandStart          ||
             m_commandType == kCommandDebugCoreFile  ||
             m_commandType == kCommandAttachProcess  )
     {
         m_settings.FromJSON( json.namedObject("m_settings") );
     }
-    
+
     if ( m_commandType == kCommandDebugCoreFile ) {
         m_corefile = json.namedObject("m_corefile").toString();
     }
@@ -85,7 +88,13 @@ JSONElement LLDBCommand::ToJSON() const
     json.addProperty("m_lldbId", m_lldbId);
     json.addProperty("m_env", m_env);
     json.addProperty("m_frameId", m_frameId);
-    json.addProperty("m_threadId", m_threadId);
+
+    JSONElement threadIdsArr = JSONElement::createArray("m_threadIds");
+    json.append( threadIdsArr );
+    for(const auto threadId : m_threadIds) {
+        threadIdsArr.arrayAppend( JSONElement("", threadId, cJSON_Number) );
+    }
+
     json.addProperty("m_expression", m_expression);
     json.addProperty("m_startupCommands", m_startupCommands);
 
@@ -96,17 +105,17 @@ JSONElement LLDBCommand::ToJSON() const
         bparr.arrayAppend( m_breakpoints.at(i)->ToJSON() );
     }
 
-    if (    m_commandType == kCommandStart          || 
+    if (    m_commandType == kCommandStart          ||
             m_commandType == kCommandDebugCoreFile  ||
             m_commandType == kCommandAttachProcess  )
     {
         json.addProperty("m_settings", m_settings.ToJSON());
     }
-    
+
     if ( m_commandType == kCommandDebugCoreFile ) {
         json.addProperty("m_corefile", m_corefile);
     }
-    
+
     if ( m_commandType == kCommandAttachProcess ) {
         json.addProperty("m_processID", m_processID);
     }
@@ -154,7 +163,7 @@ char** LLDBCommand::GetEnvArray() const
 void LLDBCommand::UpdatePaths(const LLDBPivot& pivot)
 {
     if ( pivot.IsValid() ) {
-        
+
         // Convert all paths:
         // m_workingDirectory
         // m_executable

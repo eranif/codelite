@@ -113,8 +113,10 @@ int StopReasonToPriority(const lldb::StopReason stopReason)
         return 1000;
     case lldb::eStopReasonThreadExiting:
         break;
+#ifndef __WXOSX__
     case lldb::eStopReasonInstrumentation:
         return 300;
+#endif
     default:
         // Why didn't they put an eStopReasonCount in the lldb::StopReason enum, could at least
         // static_assert() then if it's greater than expected and add the new value(s).
@@ -462,7 +464,7 @@ void CodeLiteLLDBApp::NotifyStopped(const lldb::tid_t initialThreadID, T &&threa
         t.SetId(threadID);
         t.SetName(thr.GetName());
 
-        const auto frame = thr.GetSelectedFrame();
+        auto frame = thr.GetSelectedFrame();
         if(frame.IsValid()) {
             t.SetFunc(frame.GetFunctionName() ? frame.GetFunctionName() : "");
             lldb::SBLineEntry lineEntry = frame.GetLineEntry();

@@ -50,7 +50,6 @@ public:
     void SetCheckContinuous(bool value);
     bool GetCheckContinuous() const { return m_options.GetCheckContinuous(); }
     IEditor* GetEditor();
-    wxMenu* CreateSubMenu();
 
     SpellCheck(IManager* manager);
     ~SpellCheck();
@@ -58,32 +57,32 @@ public:
     // --------------------------------------------
     // Abstract methods
     // --------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
-    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnPlug();
+    virtual clToolBar* CreateToolBar(wxWindow* parent) override;
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu) override;
+    virtual void UnPlug() override;
 
     void OnSettings(wxCommandEvent& e);
     void OnCheck(wxCommandEvent& e);
     void OnContinousCheck(wxCommandEvent& e);
-    void OnContextMenu(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& e);
     void OnWspLoaded(wxCommandEvent& e);
     void OnWspClosed(wxCommandEvent& e);
-    void OnEditorContextMenuShowing(clContextMenuEvent& e);
+    void OnSuggestion(wxCommandEvent& e);
+    void OnIgnoreWord(wxCommandEvent& e);
+    void OnAddWord(wxCommandEvent& e);
 
     wxMenuItem* m_sepItem;
     wxEvtHandler* m_topWin;
     SpellCheckerOptions m_options;
     wxWindow* GetTopWnd() { return m_mgr->GetTheApp()->GetTopWindow(); }
-    enum { IDM_BASE = 20500, IDM_SETTINGS };
 
 protected:
     void Init();
     void LoadSettings();
     void SaveSettings();
     void ClearIndicatorsFromEditors();
+    void OnContextMenu(clContextMenuEvent& e);
+    void AppendSubMenuItems(wxMenu& subMenu);
 
 protected:
     IHunSpell* m_pEngine;

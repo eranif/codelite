@@ -84,7 +84,7 @@ void AccelTableDlg::PopulateTable(const wxString& filter)
         wxVector<wxVariant> cols;
         wxString parentMenu = mid.parentMenu.BeforeFirst(':');
         if(parentMenu.IsEmpty()) {
-            parentMenu = "<Global>";
+            parentMenu = "Global Accelerator";
         }
 
         cols.push_back(parentMenu);                // Parent menu

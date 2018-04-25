@@ -38,7 +38,6 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
-wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 
@@ -170,6 +169,11 @@ void Notebook::SetTabDirection(wxDirection d)
     }
 #endif
     SetStyle(flags);
+}
+
+bool Notebook::MoveActivePage(int newIndex) 
+{
+    return m_tabCtrl->MoveActiveToIndex(newIndex, GetSelection() > newIndex ? eDirection::kLeft : eDirection::kRight);
 }
 
 //----------------------------------------------------------
@@ -314,35 +318,7 @@ clTabCtrl::~clTabCtrl()
     GetParent()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
 }
 
-void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event)
-{
-    if(GetStyle() & kNotebook_EnableNavigationEvent) {
-#ifdef __WXOSX__
-        if(event.AltDown())
-#else
-        if(event.CmdDown())
-#endif
-        {
-            switch(event.GetUnicodeKey()) {
-            case WXK_TAB:
-            case WXK_PAGEDOWN:
-            case WXK_PAGEUP: {
-#if CL_BUILD
-                CL_DEBUG("Firing navigation event");
-#endif
-                // Fire the navigation event
-                wxBookCtrlEvent e(wxEVT_BOOK_NAVIGATING);
-                e.SetEventObject(GetParent());
-                GetParent()->GetEventHandler()->AddPendingEvent(e);
-                return;
-            }
-            default:
-                break;
-            }
-        }
-    }
-    event.Skip();
-}
+void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void clTabCtrl::OnSize(wxSizeEvent& event)
 {

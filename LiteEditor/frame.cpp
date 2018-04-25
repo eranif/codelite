@@ -71,6 +71,7 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
+#include <wx/bookctrl.h>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -374,6 +375,10 @@ EVT_MENU(XRCID("web_search_selection"), clMainFrame::OnWebSearchSelection)
 EVT_MENU(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("ID_GOTO_ANYTHING"), clMainFrame::OnGotoAnything)
+EVT_MENU(XRCID("wxEVT_BOOK_NAV_NEXT"), clMainFrame::OnMainBookNavigating)
+EVT_MENU(XRCID("wxEVT_BOOK_NAV_PREV"), clMainFrame::OnMainBookNavigating)
+EVT_MENU(XRCID("wxEVT_BOOK_MOVE_TAB_LEFT"), clMainFrame::OnMainBookMovePage)
+EVT_MENU(XRCID("wxEVT_BOOK_MOVE_TAB_RIGHT"), clMainFrame::OnMainBookMovePage)
 EVT_UPDATE_UI(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::OnFileExistUpdateUI)
 
@@ -935,7 +940,12 @@ void clMainFrame::Initialize(bool loadLastSession)
     // set the revision number in the frame title
     wxString title(_("CodeLite "));
     title << CODELITE_VERSION_STRING;
-
+    
+    clKeyboardManager::Get()->AddGlobalAccelerator("wxEVT_BOOK_NAV_NEXT", "Ctrl-Shift-TAB", _("Switch to Next Tab"));
+    clKeyboardManager::Get()->AddGlobalAccelerator("wxEVT_BOOK_NAV_PREV", "Ctrl-TAB", _("Switch to Previous Tab"));
+    clKeyboardManager::Get()->AddGlobalAccelerator("wxEVT_BOOK_MOVE_TAB_LEFT", "Ctrl-Shift-PGUP", _("Move Tab Left"));
+    clKeyboardManager::Get()->AddGlobalAccelerator("wxEVT_BOOK_MOVE_TAB_RIGHT", "Ctrl-Shift-PGDN", _("Move Tab Right"));
+    
     // initialize the environment variable configuration manager
     EnvironmentConfig::Instance()->Load();
 
@@ -6304,4 +6314,15 @@ void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
 {
     clWARNING() << "New version check failed:" << e.GetString();
     wxDELETE(m_webUpdate);
+}
+
+void clMainFrame::OnMainBookNavigating(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    GetMainBook()->ShowNavigationDialog();
+}
+
+void clMainFrame::OnMainBookMovePage(wxCommandEvent& e)
+{
+    GetMainBook()->MovePage(e.GetId() == XRCID("wxEVT_BOOK_MOVE_TAB_RIGHT"));
 }

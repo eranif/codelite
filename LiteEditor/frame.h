@@ -150,7 +150,17 @@ public:
      * @brief goto anything..
      */
     void OnGotoAnything(wxCommandEvent& e);
-
+    
+    /**
+     * @brief main book page navigation
+     */
+    void OnMainBookNavigating(wxCommandEvent& e);
+    
+    /**
+     * @brief move the active tab right or left
+     */
+    void OnMainBookMovePage(wxCommandEvent& e);
+    
     /**
      * @brief Return CodeLite App object
      */

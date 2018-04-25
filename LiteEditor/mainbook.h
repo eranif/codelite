@@ -81,7 +81,6 @@ private:
     void OnPageClosed(wxBookCtrlEvent& e);
     void OnPageChanged(wxBookCtrlEvent& e);
     void OnClosePage(wxBookCtrlEvent& e);
-    void OnNavigating(wxBookCtrlEvent& e);
     void OnPageChanging(wxBookCtrlEvent& e);
     void OnProjectFileAdded(clCommandEvent& e);
     void OnProjectFileRemoved(clCommandEvent& e);
@@ -121,6 +120,16 @@ public:
     ~MainBook();
 
     static bool AskUserToSave(LEditor* editor);
+    /**
+     * @brief show the navigation dialog
+     */
+    void ShowNavigationDialog();
+    
+    /**
+     * @brief move the active page right or left
+     */
+    void MovePage(bool movePageRight);
+    
     const EditorFrame::List_t& GetDetachedEditors() const { return m_detachedEditors; }
     void DetachActiveEditor();
     void ClearFileHistory();

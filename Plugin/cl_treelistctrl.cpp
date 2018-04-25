@@ -1069,7 +1069,7 @@ bool clEditTextCtrl::Destroy()
     // I don't think this is needed any longer in >=2.9 (and it doesn't compile)
     wxTheApp->GetTraits()->ScheduleForDestroy(this);
 #endif
-    return true;
+    return wxTextCtrl::Destroy();
 }
 
 void clEditTextCtrl::OnChar(wxKeyEvent& event)

@@ -40,6 +40,7 @@
 namespace
 {
 
+const int lldbLocalsViewEditValueMenuId = XRCID("lldb_locals_view_edit_value");
 const int lldbLocalsViewAddWatchContextMenuId = XRCID("lldb_locals_view_add_watch");
 const int lldbLocalsViewRemoveWatchContextMenuId = XRCID("lldb_locals_view_remove_watch");
 
@@ -60,7 +61,7 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
 
     m_treeList->AddColumn(_("Name"), 150);
     m_treeList->AddColumn(_("Summary"), 300);
-    m_treeList->AddColumn(_("Value"), 300);
+    m_treeList->AddColumn(_("Value"), 300, wxALIGN_LEFT, -1, true, true);
     m_treeList->AddColumn(_("Type"), 300);
 
     m_treeList->AddRoot(_("Local Variables"));
@@ -77,6 +78,8 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     m_treeList->Bind(wxEVT_COMMAND_TREE_ITEM_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
     m_treeList->Bind(wxEVT_COMMAND_TREE_BEGIN_DRAG, &LLDBLocalsView::OnBeginDrag, this);
     m_treeList->Bind(wxEVT_COMMAND_TREE_END_DRAG, &LLDBLocalsView::OnEndDrag, this);
+    m_treeList->Bind(wxEVT_COMMAND_TREE_END_LABEL_EDIT, &LLDBLocalsView::OnEndEdit, this);
+    m_treeList->Bind(wxEVT_COMMAND_TREE_KEY_DOWN, &LLDBLocalsView::OnKeyDown, this);
 
     GetSizer()->Layout();
 }
@@ -94,6 +97,8 @@ LLDBLocalsView::~LLDBLocalsView()
     m_treeList->Unbind(wxEVT_COMMAND_TREE_ITEM_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
     m_treeList->Unbind(wxEVT_COMMAND_TREE_BEGIN_DRAG, &LLDBLocalsView::OnBeginDrag, this);
     m_treeList->Unbind(wxEVT_COMMAND_TREE_END_DRAG, &LLDBLocalsView::OnEndDrag, this);
+    m_treeList->Unbind(wxEVT_COMMAND_TREE_END_LABEL_EDIT, &LLDBLocalsView::OnEndEdit, this);
+    m_treeList->Unbind(wxEVT_COMMAND_TREE_KEY_DOWN, &LLDBLocalsView::OnKeyDown, this);
 }
 
 void LLDBLocalsView::OnLLDBExited(LLDBEvent& event)
@@ -306,6 +311,10 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
 
     if(arr.GetCount()) {
         menu.Append(wxID_COPY, wxString::Format("Copy value%s to clipboard", ((1 == selections.GetCount()) ? "" :"s")));
+        if(1 == arr.GetCount()) {
+            menu.Append(lldbLocalsViewEditValueMenuId, _("Edit value"));
+        }
+
         menu.Append(lldbLocalsViewAddWatchContextMenuId, wxString::Format("Add watch%s", ((1 == selections.GetCount()) ? "" :"es")));
 
         wxArrayTreeItemIds items;
@@ -348,6 +357,8 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
         if(!content.IsEmpty()) {
             ::CopyToClipboard(content);
         }
+    } else if(selection == lldbLocalsViewEditValueMenuId) {
+        EditVariable();
     } else if(selection == lldbLocalsViewAddWatchContextMenuId) {
         AddWatch();
     } else if(selection == lldbLocalsViewRemoveWatchContextMenuId) {
@@ -435,6 +446,46 @@ void LLDBLocalsView::OnEndDrag(wxTreeEvent& event)
     if(!event.GetItem().IsOk() && AddWatch(dragItem)) {
         m_plugin->GetLLDB()->RequestLocals();
     }
+}
+
+bool LLDBLocalsView::EditVariable()
+{
+    wxArrayTreeItemIds selections;
+    m_treeList->GetSelections(selections);
+    if(1 != selections.GetCount()) {
+        return false;
+    }
+
+    m_treeList->EditLabel(selections.Item(0), LOCALS_VIEW_VALUE_COL_IDX);
+    return true;
+}
+
+void LLDBLocalsView::OnEndEdit(wxTreeEvent& event)
+{
+    const auto lldbVar = GetVariableFromItem(event.GetItem());
+    if(lldbVar) {
+        m_plugin->GetLLDB()->SetVariableValue(lldbVar->GetLldbId(), event.GetLabel());
+    }
+}
+
+void LLDBLocalsView::OnKeyDown(wxTreeEvent& event)
+{
+    switch(event.GetKeyCode()) {
+    case WXK_F2:
+        if(EditVariable()) {
+            return;
+        }
+        break;
+
+    case WXK_CONTROL_A:
+        m_treeList->SelectAll();
+        return;
+
+    default:
+        break;
+    }
+
+    event.Skip();
 }
 
 LLDBVariable::Ptr_t LLDBLocalsView::GetVariableFromItem(const wxTreeItemId& item) const

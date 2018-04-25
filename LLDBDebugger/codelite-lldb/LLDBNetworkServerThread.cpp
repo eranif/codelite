@@ -186,6 +186,10 @@ void* LLDBNetworkServerThread::Entry()
                     m_app->CallAfter(&CodeLiteLLDBApp::ResumeAllThreads, command);
                     break;
 
+                case kCommandSetVariableValue:
+                    m_app->CallAfter(&CodeLiteLLDBApp::SetVariableValue, command);
+                    break;
+
                 default:
                     break;
                 }

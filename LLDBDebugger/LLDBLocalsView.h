@@ -55,6 +55,7 @@ private:
     void DoDelete();
     void AddWatch();
     bool AddWatch(const wxTreeItemId& item);
+    bool EditVariable();
     LLDBVariable::Ptr_t GetVariableFromItem(const wxTreeItemId& item) const;
 
 protected:
@@ -74,6 +75,8 @@ protected:
     void OnLocalsContextMenu(wxTreeEvent& event);
     void OnBeginDrag(wxTreeEvent& event);
     void OnEndDrag(wxTreeEvent& event);
+    void OnEndEdit(wxTreeEvent& event);
+    void OnKeyDown(wxTreeEvent& event);
 
 public:
     LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin);

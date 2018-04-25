@@ -97,7 +97,8 @@ enum eCommandType {
     kCommandSuspendOtherThreads,
     kCommandResumeThreads,
     kCommandResumeOtherThreads,
-    kCommandResumeAllThreads
+    kCommandResumeAllThreads,
+    kCommandSetVariableValue
 };
 
 enum eLLDBOptions {

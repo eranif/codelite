@@ -1307,3 +1307,31 @@ void CodeLiteLLDBApp::ResumeAllThreads(const LLDBCommand& command)
     wxUnusedVar(command);
     SuspendOrResumeOtherThreads("resuming", std::vector<int>(), [](lldb::SBThread& thr) { thr.Resume(); });
 }
+
+void CodeLiteLLDBApp::SetVariableValue(const LLDBCommand& command)
+{
+    DoVariableAction(command.GetLldbId(),
+        [&command](lldb::SBValue& sbValue)
+        {
+            (void) sbValue.SetValueFromCString(command.GetExpression().c_str());
+        });
+
+    // NB: refreshing even if failed to set value in order to get UI back in sync.
+    LocalVariables(command);
+}
+
+template<typename T>
+void CodeLiteLLDBApp::DoVariableAction(const int variableId, T &&action)
+{
+    if(!CanInteract()) {
+        return;
+    }
+
+    const auto iter = m_variables.find(variableId);
+    if(iter == m_variables.end()) {
+        return;
+    }
+
+    auto &sbValue = iter->second.value;
+    action(sbValue);
+}

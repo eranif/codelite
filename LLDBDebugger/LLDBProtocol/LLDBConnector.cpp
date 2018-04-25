@@ -563,6 +563,17 @@ void LLDBConnector::RequestVariableChildren(int lldbId)
     }
 }
 
+void LLDBConnector::SetVariableValue(const int lldbId, const wxString& value)
+{
+    if(IsCanInteract()) {
+        LLDBCommand lldbCommand;
+        lldbCommand.SetCommandType(kCommandSetVariableValue);
+        lldbCommand.SetLldbId(lldbId);
+        lldbCommand.SetExpression(value);
+        SendCommand(lldbCommand);
+    }
+}
+
 wxString LLDBConnector::GetDebugServerPath() const
 {
     wxString path;

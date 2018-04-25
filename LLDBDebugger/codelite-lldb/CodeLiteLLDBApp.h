@@ -95,6 +95,9 @@ private:
     template<typename T>
     void SuspendOrResumeOtherThreads(const char * const type, const std::vector<int>& threadIds, T&& function);
 
+    template<typename T>
+    void DoVariableAction(const int variableId, T &&action);
+
 public:
     void NotifyStoppedOnFirstEntry();
     void NotifyStopped();
@@ -170,6 +173,7 @@ public:
     void ResumeThreads(const LLDBCommand& command);
     void ResumeOtherThreads(const LLDBCommand& command);
     void ResumeAllThreads(const LLDBCommand& command);
+    void SetVariableValue(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

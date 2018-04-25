@@ -247,6 +247,13 @@ public:
     void RequestVariableChildren(int lldbId);
 
     /**
+     * @brief Set the value of a variable.
+     * @param lldbId
+     * @param value
+     */
+    void SetVariableValue(const int lldbId, const wxString& value);
+
+    /**
      * @brief stop the debugger
      */
     void Stop();

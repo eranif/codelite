@@ -39,6 +39,7 @@ class LLDBLocalsView : public LLDBLocalsViewBase
 
     LLDBPlugin* m_plugin;
     clTreeListCtrl* m_treeList;
+    wxTreeItemId m_dragItem;
     LLDBLocalsView::IntItemMap_t m_pendingExpandItems;
     wxStringSet_t m_expandedItems;
     std::map<wxString, wxTreeItemId> m_pathToItem;
@@ -46,11 +47,15 @@ class LLDBLocalsView : public LLDBLocalsViewBase
 private:
     void DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent);
     void ExpandPreviouslyExpandedItems();
-    LLDBVariableClientData* GetItemData(const wxTreeItemId& id);
+    LLDBVariableClientData* GetItemData(const wxTreeItemId& id) const;
     void Cleanup();
-    void GetWatchesFromSelections(wxArrayTreeItemIds& items);
+    void GetWatchesFromSelections(wxArrayTreeItemIds& items) const;
+    void GetWatchesFromSelections(const wxArrayTreeItemIds& selections, wxArrayTreeItemIds& items) const;
     wxString GetItemPath(const wxTreeItemId& item);
     void DoDelete();
+    void AddWatch();
+    bool AddWatch(const wxTreeItemId& item);
+    LLDBVariable::Ptr_t GetVariableFromItem(const wxTreeItemId& item) const;
 
 protected:
     virtual void OnDelete(wxCommandEvent& event);
@@ -67,6 +72,8 @@ protected:
     void OnItemExpanding(wxTreeEvent& event);
     void OnItemCollapsed(wxTreeEvent& event);
     void OnLocalsContextMenu(wxTreeEvent& event);
+    void OnBeginDrag(wxTreeEvent& event);
+    void OnEndDrag(wxTreeEvent& event);
 
 public:
     LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin);

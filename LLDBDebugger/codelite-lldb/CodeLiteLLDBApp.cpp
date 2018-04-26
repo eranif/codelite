@@ -913,7 +913,7 @@ void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
     NotifyLocals(locals);
 }
 
-void CodeLiteLLDBApp::NotifyLocals(LLDBVariable::Vect_t locals)
+void CodeLiteLLDBApp::NotifyLocals(const LLDBVariable::Vect_t& locals)
 {
     wxPrintf("codelite-lldb: NotifyLocals called with %d locals\n", (int)locals.size());
     LLDBReply reply;
@@ -1216,7 +1216,6 @@ void CodeLiteLLDBApp::DeleteWatch(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::ExecuteInterperterCommand(const LLDBCommand& command)
 {
-
     lldb::SBCommandReturnObject ret;
     std::string c_command = command.GetExpression().mb_str(wxConvUTF8).data();
     wxPrintf("codelite-lldb: ExecuteInterperterCommand: '%s'\n", c_command.c_str());

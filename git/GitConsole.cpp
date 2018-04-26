@@ -354,7 +354,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
         }
     }
-    m_dvListCtrl->GetColumn(1)->SetWidth(-2); // adjust the width to the text
+    m_dvListCtrl->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE); // adjust the width to the text
 }
 
 void GitConsole::OnContextMenu(wxDataViewEvent& event)

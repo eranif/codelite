@@ -190,6 +190,10 @@ void* LLDBNetworkServerThread::Entry()
                     m_app->CallAfter(&CodeLiteLLDBApp::SetVariableValue, command);
                     break;
 
+                case kCommandSetVariableDisplayFormat:
+                    m_app->CallAfter(&CodeLiteLLDBApp::SetVariableDisplayFormat, command);
+                    break;
+
                 default:
                     break;
                 }

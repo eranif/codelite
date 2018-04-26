@@ -254,6 +254,13 @@ public:
     void SetVariableValue(const int lldbId, const wxString& value);
 
     /**
+     * @brief Set the display format for a variable.
+     * @param lldbId
+     * @param format
+     */
+    void SetVariableDisplayFormat(const int lldbId, const lldb::Format format);
+
+    /**
      * @brief stop the debugger
      */
     void Stop();

@@ -1320,6 +1320,19 @@ void CodeLiteLLDBApp::SetVariableValue(const LLDBCommand& command)
     LocalVariables(command);
 }
 
+void CodeLiteLLDBApp::SetVariableDisplayFormat(const LLDBCommand& command)
+{
+    DoVariableAction(command.GetLldbId(),
+        [&command](lldb::SBValue& sbValue)
+        {
+            // HACK using frameId in the command to store lldb format type.
+            sbValue.SetFormat(static_cast<lldb::Format>(command.GetFrameId()));
+        });
+
+    // NB: not refreshing; might be a multi-select so LLDBLocalsView will ask for a refresh
+    // once it's sent all commands.
+}
+
 template<typename T>
 void CodeLiteLLDBApp::DoVariableAction(const int variableId, T &&action)
 {

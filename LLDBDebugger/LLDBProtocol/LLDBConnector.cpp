@@ -574,6 +574,18 @@ void LLDBConnector::SetVariableValue(const int lldbId, const wxString& value)
     }
 }
 
+void LLDBConnector::SetVariableDisplayFormat(const int lldbId, const lldb::Format format)
+{
+    if(IsCanInteract()) {
+        LLDBCommand command;
+        command.SetCommandType(kCommandSetVariableDisplayFormat);
+        command.SetLldbId(lldbId);
+        // HACK using frameId in the command to store lldb format type.
+        command.SetFrameId(static_cast<int>(format));
+        SendCommand(command);
+    }
+}
+
 wxString LLDBConnector::GetDebugServerPath() const
 {
     wxString path;

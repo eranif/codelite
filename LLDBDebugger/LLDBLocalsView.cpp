@@ -44,6 +44,29 @@ const int lldbLocalsViewEditValueMenuId = XRCID("lldb_locals_view_edit_value");
 const int lldbLocalsViewAddWatchContextMenuId = XRCID("lldb_locals_view_add_watch");
 const int lldbLocalsViewRemoveWatchContextMenuId = XRCID("lldb_locals_view_remove_watch");
 
+struct VariableDisplayFormat
+{
+    lldb::Format    m_format;
+    const char *    m_name;
+};
+
+constexpr VariableDisplayFormat lldbVariableDisplayFormats[] = {
+    {   lldb::eFormatDefault,           "Default"           },
+    {   lldb::eFormatDecimal,           "Decimal"           },
+    {   lldb::eFormatHex,               "Hex"               },
+    {   lldb::eFormatOctal,             "Octal"             },
+    {   lldb::eFormatBinary,            "Binary"            },
+    {   lldb::eFormatFloat,             "Float"             },
+    {   lldb::eFormatComplex,           "Complex"           },
+    {   lldb::eFormatBoolean,           "Boolean"           },
+    {   lldb::eFormatBytes,             "Bytes"             },
+    {   lldb::eFormatBytesWithASCII,    "Bytes (with text)" },
+    {   lldb::eFormatCString,           "C-string"          },
+    {   lldb::eFormatPointer,           "Pointer"           }
+};
+constexpr size_t lldbNumberOfVariableDisplayFormats = sizeof(lldbVariableDisplayFormats) / sizeof(lldbVariableDisplayFormats[0]);
+const int lldbLocalsViewVariableDisplayFormatId = wxWindow::NewControlId(lldbNumberOfVariableDisplayFormats);
+
 }
 
 LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
@@ -304,28 +327,38 @@ void LLDBLocalsView::GetWatchesFromSelections(const wxArrayTreeItemIds& selectio
 
 void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
 {
-    wxMenu menu;
-
-    wxArrayTreeItemIds arr;
-    m_treeList->GetSelections(arr);
-
-    if(arr.GetCount()) {
-        menu.Append(wxID_COPY, wxString::Format("Copy value%s to clipboard", ((1 == selections.GetCount()) ? "" :"s")));
-        if(1 == arr.GetCount()) {
-            menu.Append(lldbLocalsViewEditValueMenuId, _("Edit value"));
-        }
-
-        menu.Append(lldbLocalsViewAddWatchContextMenuId, wxString::Format("Add watch%s", ((1 == selections.GetCount()) ? "" :"es")));
-
-        wxArrayTreeItemIds items;
-        GetWatchesFromSelections(arr, items);
-        if(items.GetCount()) {
-            menu.Append(lldbLocalsViewRemoveWatchContextMenuId,
-                wxString::Format("Remove watch%s", ((1 == watches.GetCount()) ? "" :"es")));
-        }
+    wxArrayTreeItemIds selections;
+    m_treeList->GetSelections(selections);
+    if(0 == selections.GetCount()) {
+        return;
     }
 
-    int selection = GetPopupMenuSelectionFromUser(menu);
+    wxMenu menu;
+    menu.Append(wxID_COPY, wxString::Format("Copy value%s to clipboard", ((1 == selections.GetCount()) ? "" :"s")));
+    if(1 == selections.GetCount()) {
+        menu.Append(lldbLocalsViewEditValueMenuId, _("Edit value"));
+    }
+    menu.Append(lldbLocalsViewAddWatchContextMenuId, wxString::Format("Add watch%s", ((1 == selections.GetCount()) ? "" :"es")));
+
+    wxArrayTreeItemIds watches;
+    GetWatchesFromSelections(watches);
+    if(watches.GetCount()) {
+        menu.Append(lldbLocalsViewRemoveWatchContextMenuId,
+            wxString::Format("Remove watch%s", ((1 == watches.GetCount()) ? "" :"es")));
+    }
+
+    if(wxID_NONE != lldbLocalsViewVariableDisplayFormatId) {
+        const auto pSubMenu = new wxMenu;
+        int id = lldbLocalsViewVariableDisplayFormatId;
+
+        for(auto& displayFormat : lldbVariableDisplayFormats) {
+            pSubMenu->Append(id++, displayFormat.m_name);
+        }
+
+	    menu.AppendSubMenu(pSubMenu, _("Display as"));
+    }
+
+    const int selection = GetPopupMenuSelectionFromUser(menu);
     if(selection == wxID_COPY) {
         wxString content;
         wxArrayTreeItemIds arr;
@@ -363,6 +396,9 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
         AddWatch();
     } else if(selection == lldbLocalsViewRemoveWatchContextMenuId) {
         DoDelete();
+    } else if((wxID_NONE != lldbLocalsViewVariableDisplayFormatId) && (selection >= lldbLocalsViewVariableDisplayFormatId) &&
+        (selection < (lldbLocalsViewVariableDisplayFormatId + lldbNumberOfVariableDisplayFormats))) {
+        SetVariableDisplayFormat(lldbVariableDisplayFormats[selection - lldbLocalsViewVariableDisplayFormatId].m_format);
     }
 }
 
@@ -486,6 +522,26 @@ void LLDBLocalsView::OnKeyDown(wxTreeEvent& event)
     }
 
     event.Skip();
+}
+
+void LLDBLocalsView::SetVariableDisplayFormat(const lldb::Format format)
+{
+    bool shouldRefresh = false;
+
+    wxArrayTreeItemIds selections;
+    m_treeList->GetSelections(selections);
+
+    for(size_t i = 0; i < selections.GetCount(); ++i) {
+        const auto lldbVar = GetVariableFromItem(selections.Item(i));
+        if(lldbVar) {
+            m_plugin->GetLLDB()->SetVariableDisplayFormat(lldbVar->GetLldbId(), format);
+            shouldRefresh = true;
+        }
+    }
+
+    if(shouldRefresh) {
+        m_plugin->GetLLDB()->RequestLocals();
+    }
 }
 
 LLDBVariable::Ptr_t LLDBLocalsView::GetVariableFromItem(const wxTreeItemId& item) const

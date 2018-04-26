@@ -174,6 +174,7 @@ public:
     void ResumeOtherThreads(const LLDBCommand& command);
     void ResumeAllThreads(const LLDBCommand& command);
     void SetVariableValue(const LLDBCommand& command);
+    void SetVariableDisplayFormat(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

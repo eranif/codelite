@@ -106,7 +106,7 @@ public:
     void NotifyBreakpointsUpdated();
     void NotifyAllBreakpointsDeleted();
 
-    void NotifyLocals(LLDBVariable::Vect_t locals);
+    void NotifyLocals(const LLDBVariable::Vect_t& locals);
 
     void SendReply(const LLDBReply& reply);
     bool CanInteract();

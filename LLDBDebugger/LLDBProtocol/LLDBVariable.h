@@ -48,6 +48,7 @@ protected:
     wxString m_value;
     wxString m_summary;
     wxString m_type;
+    wxString m_expression;
     bool m_valueChanged;
     int m_lldbId;
     bool m_hasChildren;
@@ -86,6 +87,9 @@ public:
     void SetType(const wxString& type) { this->m_type = type; }
     const wxString& GetType() const { return m_type; }
 
+    void SetExpression(const wxString& expression) { this->m_expression = expression; }
+    const wxString &GetExpression() const { return m_expression; }
+
     void SetName(const wxString& name) { this->m_name = name; }
 
     void SetValue(const wxString& value) { this->m_value = value; }
@@ -98,6 +102,7 @@ public:
 
     void SetIsWatch(bool isWatch) { this->m_isWatch = isWatch; }
     bool IsWatch() const { return m_isWatch; }
+
     wxString ToString(const wxString& alternateName = wxEmptyString) const;
 };
 
@@ -112,7 +117,7 @@ public:
     {
     }
     LLDBVariable::Ptr_t GetVariable() const { return m_variable; }
-    
+
     void SetPath(const wxString& path) { this->m_path = path; }
     const wxString& GetPath() const { return m_path; }
 };

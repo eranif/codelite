@@ -104,12 +104,12 @@ protected:
     // e.GetLocalFile() -> the local file
     // e.GetRemoteFile() -> the target file
     void OnSaveFile(clSFTPEvent& e);
-    
+
     // Rename a remote file
     // e.GetRemoteFile() -> the "old" remote file path
     // e.GetNewRemoteFile() -> the "new" remote file path
     void OnRenameFile(clSFTPEvent& e);
-    
+
     // Delete a remote file
     // e.GetRemoteFile() -> the file to be deleted
     void OnDeleteFile(clSFTPEvent& e);
@@ -126,7 +126,6 @@ public:
     virtual clToolBar* CreateToolBar(wxWindow* parent);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
     IManager* GetManager() { return m_mgr; }
 

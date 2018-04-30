@@ -201,12 +201,6 @@ bool SFTP::IsPaneDetached(const wxString& name) const
     return detachedPanes.Index(name) != wxNOT_FOUND;
 }
 
-void SFTP::UnHookPopupMenu(wxMenu* menu, MenuType type)
-{
-    wxUnusedVar(menu);
-    wxUnusedVar(type);
-}
-
 void SFTP::UnPlug()
 {
     // Find our page and release it

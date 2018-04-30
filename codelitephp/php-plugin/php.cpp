@@ -214,12 +214,6 @@ void PhpPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
     wxUnusedVar(type);
 }
 
-void PhpPlugin::UnHookPopupMenu(wxMenu* menu, MenuType type)
-{
-    wxUnusedVar(menu);
-    wxUnusedVar(type);
-}
-
 void PhpPlugin::UnPlug()
 {
 #if USE_SFTP

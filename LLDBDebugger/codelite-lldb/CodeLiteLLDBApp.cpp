@@ -72,7 +72,7 @@ static std::unordered_map<int, int> FormatTable = {
 static lldb::Format LLDBFormat_To_LLDB(const eLLDBForamt& format)
 {
     if(FormatTable.count((int)format) == 0) { return lldb::eFormatDefault; }
-    return static_cast<lldb::Format>(FormatTable[format]);
+    return static_cast<lldb::Format>(FormatTable[(int)format]);
 };
 
 namespace

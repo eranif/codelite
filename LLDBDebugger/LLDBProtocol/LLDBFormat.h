@@ -17,7 +17,9 @@ class LLDBFormat
 public:
     LLDBFormat();
     virtual ~LLDBFormat();
-
+    
+    static void Initialise();
+    
     static wxString GetName(eLLDBForamt foramt);
     static size_t GetCount() { return m_formats.size(); }
     /**

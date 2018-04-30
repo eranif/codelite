@@ -48,6 +48,7 @@
 #include <wx/platinfo.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
+#include "LLDBProtocol/LLDBFormat.h"
 
 static LLDBPlugin* thePlugin = NULL;
 
@@ -176,6 +177,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
         lldbJumpToCursorContextMenuId);
 
     wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnAddWatch, this, lldbAddWatchContextMenuId);
+    LLDBFormat::Initialise();
 }
 
 void LLDBPlugin::UnPlug()

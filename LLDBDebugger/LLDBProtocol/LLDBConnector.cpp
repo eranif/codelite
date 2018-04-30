@@ -267,15 +267,14 @@ void LLDBConnector::JumpTo(const wxFileName& filename, int line)
     SendSingleBreakpointCommand(kCommandJumpTo, filename, line);
 }
 
-void LLDBConnector::SendSingleBreakpointCommand(const eCommandType commandType, const wxFileName& filename, const int line)
+void LLDBConnector::SendSingleBreakpointCommand(const eCommandType commandType, const wxFileName& filename,
+                                                const int line)
 {
-    if(!IsCanInteract()) {
-        return;
-    }
+    if(!IsCanInteract()) { return; }
 
     LLDBCommand lldbCommand;
     lldbCommand.SetCommandType(commandType);
-    lldbCommand.SetBreakpoints(LLDBBreakpoint::Vec_t { LLDBBreakpoint::Ptr_t(new LLDBBreakpoint(filename, line)) });
+    lldbCommand.SetBreakpoints(LLDBBreakpoint::Vec_t{ LLDBBreakpoint::Ptr_t(new LLDBBreakpoint(filename, line)) });
     SendCommand(lldbCommand);
 }
 
@@ -574,14 +573,13 @@ void LLDBConnector::SetVariableValue(const int lldbId, const wxString& value)
     }
 }
 
-void LLDBConnector::SetVariableDisplayFormat(const int lldbId, const lldb::Format format)
+void LLDBConnector::SetVariableDisplayFormat(const int lldbId, const eLLDBForamt format)
 {
     if(IsCanInteract()) {
         LLDBCommand command;
         command.SetCommandType(kCommandSetVariableDisplayFormat);
         command.SetLldbId(lldbId);
-        // HACK using frameId in the command to store lldb format type.
-        command.SetFrameId(static_cast<int>(format));
+        command.SetDisplayFormat(format);
         SendCommand(command);
     }
 }
@@ -606,7 +604,7 @@ void LLDBConnector::SelectFrame(int frameID)
 
 void LLDBConnector::SelectThread(int threadID)
 {
-    SendThreadCommand(kCommandSelectThread, std::vector<int> { threadID });
+    SendThreadCommand(kCommandSelectThread, std::vector<int>{ threadID });
 }
 
 void LLDBConnector::SuspendThreads(const std::vector<int>& threadIds)
@@ -629,10 +627,7 @@ void LLDBConnector::ResumeOtherThreads(const std::vector<int>& threadIds)
     SendThreadCommand(kCommandResumeOtherThreads, threadIds);
 }
 
-void LLDBConnector::ResumeAllThreads()
-{
-    SendThreadCommand(kCommandResumeAllThreads, std::vector<int>());
-}
+void LLDBConnector::ResumeAllThreads() { SendThreadCommand(kCommandResumeAllThreads, std::vector<int>()); }
 
 void LLDBConnector::EvaluateExpression(const wxString& expression)
 {

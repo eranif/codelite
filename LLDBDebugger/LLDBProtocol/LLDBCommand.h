@@ -26,12 +26,12 @@
 #ifndef LLDBCOMMAND_H
 #define LLDBCOMMAND_H
 
-#include <wx/string.h>
-#include "json_node.h"
-#include "LLDBEnums.h"
 #include "LLDBBreakpoint.h"
-#include "LLDBSettings.h"
+#include "LLDBEnums.h"
 #include "LLDBPivot.h"
+#include "LLDBSettings.h"
+#include "json_node.h"
+#include <wx/string.h>
 
 class LLDBCommand
 {
@@ -52,6 +52,7 @@ protected:
     wxString m_startupCommands;
     wxString m_corefile;
     int m_processID;
+    int m_displayFormat;
 
 public:
     // Serialization API
@@ -63,6 +64,7 @@ public:
         , m_interruptReason(kInterruptReasonNone)
         , m_lldbId(0)
         , m_processID(wxNOT_FOUND)
+        , m_displayFormat((int)eLLDBForamt::kFormatDefault)
     {
     }
     LLDBCommand(const wxString& jsonString);
@@ -70,6 +72,8 @@ public:
 
     void UpdatePaths(const LLDBPivot& pivot);
 
+    void SetDisplayFormat(const eLLDBForamt& displayFormat) { this->m_displayFormat = (int)displayFormat; }
+    eLLDBForamt GetDisplayFormat() const { return static_cast<eLLDBForamt>(m_displayFormat); }
     void SetProcessID(int processID) { this->m_processID = processID; }
     int GetProcessID() const { return m_processID; }
     void SetCorefile(const wxString& corefile) { this->m_corefile = corefile; }

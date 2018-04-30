@@ -127,4 +127,21 @@ enum eLLDBStopReason {
     kStopReasonPlanComplete,
     kStopReasonThreadExiting,
 };
+
+enum class eLLDBForamt {
+    kFormatInvalid = -1,
+    kFormatDefault,
+    kFormatDecimal,       
+    kFormatHex,           
+    kFormatOctal,         
+    kFormatBinary,        
+    kFormatFloat,         
+    kFormatComplex,       
+    kFormatBoolean,       
+    kFormatBytes,         
+    kFormatBytesWithASCII,
+    kFormatCString,       
+    kFormatPointer,       
+};
+
 #endif

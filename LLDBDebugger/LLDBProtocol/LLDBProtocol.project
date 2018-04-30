@@ -38,6 +38,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="LLDBProtocol">
+    <File Name="LLDBFormat.cpp"/>
+    <File Name="LLDBFormat.h"/>
     <File Name="CMakeLists.txt"/>
     <File Name="LLDBBacktrace.cpp"/>
     <File Name="LLDBBacktrace.h"/>

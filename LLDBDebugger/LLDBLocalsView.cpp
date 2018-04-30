@@ -26,11 +26,12 @@
 #include "LLDBLocalsView.h"
 #include "LLDBPlugin.h"
 #include "file_logger.h"
-#include <wx/treelist.h>
-#include <wx/wupdlock.h>
-#include <wx/textdlg.h>
 #include "globals.h"
 #include <algorithm>
+#include <wx/textdlg.h>
+#include <wx/treelist.h>
+#include <wx/wupdlock.h>
+#include "LLDBProtocol/LLDBFormat.h"
 
 #define LOCALS_VIEW_NAME_COL_IDX 0
 #define LOCALS_VIEW_SUMMARY_COL_IDX 1
@@ -39,44 +40,16 @@
 
 namespace
 {
-
 const int lldbLocalsViewEditValueMenuId = XRCID("lldb_locals_view_edit_value");
 const int lldbLocalsViewAddWatchContextMenuId = XRCID("lldb_locals_view_add_watch");
 const int lldbLocalsViewRemoveWatchContextMenuId = XRCID("lldb_locals_view_remove_watch");
-
-struct VariableDisplayFormat
-{
-    lldb::Format    m_format;
-    const char *    m_name;
-};
-
-constexpr VariableDisplayFormat lldbVariableDisplayFormats[] = {
-    {   lldb::eFormatDefault,           "Default"           },
-    {   lldb::eFormatDecimal,           "Decimal"           },
-    {   lldb::eFormatHex,               "Hex"               },
-    {   lldb::eFormatOctal,             "Octal"             },
-    {   lldb::eFormatBinary,            "Binary"            },
-    {   lldb::eFormatFloat,             "Float"             },
-    {   lldb::eFormatComplex,           "Complex"           },
-    {   lldb::eFormatBoolean,           "Boolean"           },
-    {   lldb::eFormatBytes,             "Bytes"             },
-    {   lldb::eFormatBytesWithASCII,    "Bytes (with text)" },
-    {   lldb::eFormatCString,           "C-string"          },
-    {   lldb::eFormatPointer,           "Pointer"           }
-};
-constexpr size_t lldbNumberOfVariableDisplayFormats = sizeof(lldbVariableDisplayFormats) / sizeof(lldbVariableDisplayFormats[0]);
-const int lldbLocalsViewVariableDisplayFormatId = wxWindow::NewControlId(lldbNumberOfVariableDisplayFormats);
-
-}
+} // namespace
 
 LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     : LLDBLocalsViewBase(parent)
     , m_plugin(plugin)
 {
-    m_treeList = new clTreeListCtrl(this,
-                                    wxID_ANY,
-                                    wxDefaultPosition,
-                                    wxDefaultSize,
+    m_treeList = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                     wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_COLUMN_LINES |
                                         wxTR_ROW_LINES | wxTR_TWIST_BUTTONS | wxTR_MULTIPLE);
     m_treeList->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
@@ -169,8 +142,7 @@ void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, 
         LLDBVariable::Ptr_t variable = variables.at(i);
         LLDBVariableClientData* cd = new LLDBVariableClientData(variable);
         wxTreeItemId item = m_treeList->AppendItem(parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, cd);
-        m_treeList->SetItemText(item,
-                                LOCALS_VIEW_SUMMARY_COL_IDX,
+        m_treeList->SetItemText(item, LOCALS_VIEW_SUMMARY_COL_IDX,
                                 variable->GetSummary().IsEmpty() ? variable->GetValue() : variable->GetSummary());
         cd->SetPath(GetItemPath(item));
 
@@ -180,26 +152,22 @@ void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, 
 
         m_treeList->SetItemText(item, LOCALS_VIEW_VALUE_COL_IDX, variable->GetValue());
         m_treeList->SetItemText(item, LOCALS_VIEW_TYPE_COL_IDX, variable->GetType());
-        if(variable->IsValueChanged()) {
-            m_treeList->SetItemTextColour(item, "RED");
-        }
+        if(variable->IsValueChanged()) { m_treeList->SetItemTextColour(item, "RED"); }
         if(variable->HasChildren()) {
             // insert dummy item here
             m_treeList->AppendItem(item, "<dummy>");
         }
     }
 
-    if(!variables.empty()) {
-        m_treeList->Expand(parent);
-    }
+    if(!variables.empty()) { m_treeList->Expand(parent); }
 }
 
 void LLDBLocalsView::ExpandPreviouslyExpandedItems()
 {
-    for(const auto &path : m_expandedItems) {
+    for(const auto& path : m_expandedItems) {
         const auto iter = m_pathToItem.find(path);
         if(iter != m_pathToItem.end()) {
-            const auto &itemToExpand = iter->second;
+            const auto& itemToExpand = iter->second;
 
             if(m_treeList->HasChildren(itemToExpand) && !m_treeList->IsExpanded(itemToExpand)) {
                 m_treeList->Expand(itemToExpand);
@@ -237,9 +205,7 @@ void LLDBLocalsView::OnItemCollapsed(wxTreeEvent& event)
     if(cd) {
         m_expandedItems.erase(cd->GetPath());
         const auto variable = cd->GetVariable();
-        if(variable) {
-            m_pendingExpandItems.erase(variable->GetLldbId());
-        }
+        if(variable) { m_pendingExpandItems.erase(variable->GetLldbId()); }
     }
 }
 
@@ -276,27 +242,20 @@ void LLDBLocalsView::OnLLDBVariableExpanded(LLDBEvent& event)
     ExpandPreviouslyExpandedItems();
 
     LLDBVariableClientData* cd = GetItemData(parentItem);
-    if(cd) {
-        m_expandedItems.insert(cd->GetPath());
-    }
+    if(cd) { m_expandedItems.insert(cd->GetPath()); }
 }
 
 void LLDBLocalsView::OnNewWatch(wxCommandEvent& event)
 {
     wxString watch = ::wxGetTextFromUser(_("Expression to watch:"), _("Add New Watch"), "");
-    if(watch.IsEmpty()) {
-        return;
-    }
+    if(watch.IsEmpty()) { return; }
     m_plugin->GetLLDB()->AddWatch(watch);
 
     // Refresh the locals view
     m_plugin->GetLLDB()->RequestLocals();
 }
 
-void LLDBLocalsView::OnDelete(wxCommandEvent& event)
-{
-    DoDelete();
-}
+void LLDBLocalsView::OnDelete(wxCommandEvent& event) { DoDelete(); }
 
 void LLDBLocalsView::OnDeleteUI(wxUpdateUIEvent& event)
 {
@@ -319,9 +278,7 @@ void LLDBLocalsView::GetWatchesFromSelections(const wxArrayTreeItemIds& selectio
     for(size_t i = 0; i < selections.GetCount(); ++i) {
         const auto item = selections.Item(i);
         const auto lldbVar = GetVariableFromItem(item);
-        if (lldbVar && lldbVar->IsWatch()) {
-            items.Add(item);
-        }
+        if(lldbVar && lldbVar->IsWatch()) { items.Add(item); }
     }
 }
 
@@ -329,34 +286,23 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
 {
     wxArrayTreeItemIds selections;
     m_treeList->GetSelections(selections);
-    if(0 == selections.GetCount()) {
-        return;
-    }
+    if(0 == selections.GetCount()) { return; }
 
     wxMenu menu;
-    menu.Append(wxID_COPY, wxString::Format("Copy value%s to clipboard", ((1 == selections.GetCount()) ? "" :"s")));
-    if(1 == selections.GetCount()) {
-        menu.Append(lldbLocalsViewEditValueMenuId, _("Edit value"));
-    }
-    menu.Append(lldbLocalsViewAddWatchContextMenuId, wxString::Format("Add watch%s", ((1 == selections.GetCount()) ? "" :"es")));
+    menu.Append(wxID_COPY, wxString::Format("Copy value%s to clipboard", ((1 == selections.GetCount()) ? "" : "s")));
+    if(1 == selections.GetCount()) { menu.Append(lldbLocalsViewEditValueMenuId, _("Edit value")); }
+    menu.Append(lldbLocalsViewAddWatchContextMenuId,
+                wxString::Format("Add watch%s", ((1 == selections.GetCount()) ? "" : "es")));
 
     wxArrayTreeItemIds watches;
     GetWatchesFromSelections(watches);
     if(watches.GetCount()) {
         menu.Append(lldbLocalsViewRemoveWatchContextMenuId,
-            wxString::Format("Remove watch%s", ((1 == watches.GetCount()) ? "" :"es")));
+                    wxString::Format("Remove watch%s", ((1 == watches.GetCount()) ? "" : "es")));
     }
 
-    if(wxID_NONE != lldbLocalsViewVariableDisplayFormatId) {
-        const auto pSubMenu = new wxMenu;
-        int id = lldbLocalsViewVariableDisplayFormatId;
-
-        for(auto& displayFormat : lldbVariableDisplayFormats) {
-            pSubMenu->Append(id++, displayFormat.m_name);
-        }
-
-	    menu.AppendSubMenu(pSubMenu, _("Display as"));
-    }
+    wxMenu* pSubMenu = LLDBFormat::CreateMenu();
+    menu.AppendSubMenu(pSubMenu, _("Display as"));
 
     const int selection = GetPopupMenuSelectionFromUser(menu);
     if(selection == wxID_COPY) {
@@ -366,13 +312,9 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
         for(size_t i = 0; i < arr.GetCount(); ++i) {
             wxString itemValue;
             const auto lldbVar = GetVariableFromItem(arr.Item(i));
-            if(!lldbVar) {
-                continue;
-            }
+            if(!lldbVar) { continue; }
 
-            if(!lldbVar->GetValue().IsEmpty()) {
-                itemValue << lldbVar->GetValue();
-            }
+            if(!lldbVar->GetValue().IsEmpty()) { itemValue << lldbVar->GetValue(); }
 
             if(!lldbVar->GetSummary().IsEmpty()) {
                 if(!itemValue.IsEmpty()) itemValue << " ";
@@ -380,25 +322,20 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
             }
 
             if(!itemValue.IsEmpty()) {
-                if(!content.IsEmpty()) {
-                    content << "\n";
-                }
+                if(!content.IsEmpty()) { content << "\n"; }
                 content << itemValue;
             }
         }
 
-        if(!content.IsEmpty()) {
-            ::CopyToClipboard(content);
-        }
+        if(!content.IsEmpty()) { ::CopyToClipboard(content); }
     } else if(selection == lldbLocalsViewEditValueMenuId) {
         EditVariable();
     } else if(selection == lldbLocalsViewAddWatchContextMenuId) {
         AddWatch();
     } else if(selection == lldbLocalsViewRemoveWatchContextMenuId) {
         DoDelete();
-    } else if((wxID_NONE != lldbLocalsViewVariableDisplayFormatId) && (selection >= lldbLocalsViewVariableDisplayFormatId) &&
-        (selection < (lldbLocalsViewVariableDisplayFormatId + lldbNumberOfVariableDisplayFormats))) {
-        SetVariableDisplayFormat(lldbVariableDisplayFormats[selection - lldbLocalsViewVariableDisplayFormatId].m_format);
+    } else if(LLDBFormat::GetFormatID(selection) != eLLDBForamt::kFormatInvalid) {
+        SetVariableDisplayFormat(LLDBFormat::GetFormatID(selection));
     }
 }
 
@@ -411,22 +348,16 @@ void LLDBLocalsView::AddWatch()
 
     for(size_t i = 0; i < arr.GetCount(); ++i) {
         const auto item = arr.Item(i);
-        if(AddWatch(item)) {
-            shouldRefresh = true;
-        }
+        if(AddWatch(item)) { shouldRefresh = true; }
     }
 
-    if(shouldRefresh) {
-        m_plugin->GetLLDB()->RequestLocals();
-    }
+    if(shouldRefresh) { m_plugin->GetLLDB()->RequestLocals(); }
 }
 
 bool LLDBLocalsView::AddWatch(const wxTreeItemId& item)
 {
     const auto lldbVar = GetVariableFromItem(item);
-    if(!lldbVar) {
-        return false;
-    }
+    if(!lldbVar) { return false; }
 
     m_plugin->GetLLDB()->AddWatch(lldbVar->GetExpression());
     return true;
@@ -440,9 +371,7 @@ wxString LLDBLocalsView::GetItemPath(const wxTreeItemId& item)
         LLDBVariableClientData* cd = GetItemData(currentItem);
         currentItem = m_treeList->GetItemParent(currentItem);
         if(cd) {
-            if(!path.IsEmpty()) {
-                path.Prepend(".");
-            }
+            if(!path.IsEmpty()) { path.Prepend("."); }
             path.Prepend(cd->GetVariable()->GetName());
         }
     }
@@ -463,15 +392,10 @@ void LLDBLocalsView::DoDelete()
         }
     }
 
-    if(shouldRefresh) {
-        m_plugin->GetLLDB()->RequestLocals();
-    }
+    if(shouldRefresh) { m_plugin->GetLLDB()->RequestLocals(); }
 }
 
-void LLDBLocalsView::OnBeginDrag(wxTreeEvent& event)
-{
-    m_dragItem = event.GetItem();
-}
+void LLDBLocalsView::OnBeginDrag(wxTreeEvent& event) { m_dragItem = event.GetItem(); }
 
 void LLDBLocalsView::OnEndDrag(wxTreeEvent& event)
 {
@@ -479,18 +403,14 @@ void LLDBLocalsView::OnEndDrag(wxTreeEvent& event)
     m_dragItem.Unset();
 
     // Only allow dropping into empty space in order to create a watch (VS style).
-    if(!event.GetItem().IsOk() && AddWatch(dragItem)) {
-        m_plugin->GetLLDB()->RequestLocals();
-    }
+    if(!event.GetItem().IsOk() && AddWatch(dragItem)) { m_plugin->GetLLDB()->RequestLocals(); }
 }
 
 bool LLDBLocalsView::EditVariable()
 {
     wxArrayTreeItemIds selections;
     m_treeList->GetSelections(selections);
-    if(1 != selections.GetCount()) {
-        return false;
-    }
+    if(1 != selections.GetCount()) { return false; }
 
     m_treeList->EditLabel(selections.Item(0), LOCALS_VIEW_VALUE_COL_IDX);
     return true;
@@ -499,18 +419,14 @@ bool LLDBLocalsView::EditVariable()
 void LLDBLocalsView::OnEndEdit(wxTreeEvent& event)
 {
     const auto lldbVar = GetVariableFromItem(event.GetItem());
-    if(lldbVar) {
-        m_plugin->GetLLDB()->SetVariableValue(lldbVar->GetLldbId(), event.GetLabel());
-    }
+    if(lldbVar) { m_plugin->GetLLDB()->SetVariableValue(lldbVar->GetLldbId(), event.GetLabel()); }
 }
 
 void LLDBLocalsView::OnKeyDown(wxTreeEvent& event)
 {
     switch(event.GetKeyCode()) {
     case WXK_F2:
-        if(EditVariable()) {
-            return;
-        }
+        if(EditVariable()) { return; }
         break;
 
     case WXK_CONTROL_A:
@@ -524,7 +440,7 @@ void LLDBLocalsView::OnKeyDown(wxTreeEvent& event)
     event.Skip();
 }
 
-void LLDBLocalsView::SetVariableDisplayFormat(const lldb::Format format)
+void LLDBLocalsView::SetVariableDisplayFormat(const eLLDBForamt format)
 {
     bool shouldRefresh = false;
 
@@ -539,21 +455,15 @@ void LLDBLocalsView::SetVariableDisplayFormat(const lldb::Format format)
         }
     }
 
-    if(shouldRefresh) {
-        m_plugin->GetLLDB()->RequestLocals();
-    }
+    if(shouldRefresh) { m_plugin->GetLLDB()->RequestLocals(); }
 }
 
 LLDBVariable::Ptr_t LLDBLocalsView::GetVariableFromItem(const wxTreeItemId& item) const
 {
-    if(!item.IsOk()) {
-        return LLDBVariable::Ptr_t();
-    }
+    if(!item.IsOk()) { return LLDBVariable::Ptr_t(); }
 
     const auto data = GetItemData(item);
-    if(!data) {
-        return LLDBVariable::Ptr_t();
-    }
+    if(!data) { return LLDBVariable::Ptr_t(); }
 
     return data->GetVariable();
 }

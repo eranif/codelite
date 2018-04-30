@@ -24,33 +24,56 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CodeLiteLLDBApp.h"
-#include <iostream>
-#include <wx/sckaddr.h>
-#include "LLDBProtocol/LLDBReply.h"
-#include "SocketAPI/clSocketServer.h"
 #include "LLDBProtocol/LLDBEnums.h"
-#include "clcommandlineparser.h"
-#include <lldb/API/SBBreakpointLocation.h>
-#include <lldb/API/SBFileSpec.h>
-#include <lldb/API/SBCommandReturnObject.h>
-#include <lldb/API/SBCommandInterpreter.h>
-#include <lldb/API/SBFrame.h>
-#include <lldb/API/SBExpressionOptions.h>
-#include <wx/socket.h>
-#include "LLDBProtocol/LLDBVariable.h"
-#include <wx/msgqueue.h>
-#include <wx/wxcrtvararg.h>
-#include <wx/tokenzr.h>
-#include <lldb/API/SBError.h>
-#include <lldb/API/SBTypeSummary.h>
-#include <lldb/API/SBTypeNameSpecifier.h>
-#include <lldb/API/SBTypeCategory.h>
-#include <wx/filename.h>
 #include "LLDBProtocol/LLDBRemoteHandshakePacket.h"
+#include "LLDBProtocol/LLDBReply.h"
+#include "LLDBProtocol/LLDBVariable.h"
+#include "SocketAPI/clSocketServer.h"
+#include "clcommandlineparser.h"
+#include "wxStringHash.h"
+#include <iostream>
+#include <lldb/API/SBBreakpointLocation.h>
+#include <lldb/API/SBCommandInterpreter.h>
+#include <lldb/API/SBCommandReturnObject.h>
+#include <lldb/API/SBError.h>
+#include <lldb/API/SBExpressionOptions.h>
+#include <lldb/API/SBFileSpec.h>
+#include <lldb/API/SBFrame.h>
 #include <lldb/API/SBThread.h>
+#include <lldb/API/SBTypeCategory.h>
+#include <lldb/API/SBTypeNameSpecifier.h>
+#include <lldb/API/SBTypeSummary.h>
+#include <wx/filename.h>
+#include <wx/msgqueue.h>
+#include <wx/sckaddr.h>
+#include <wx/socket.h>
+#include <wx/tokenzr.h>
+#include <wx/wxcrtvararg.h>
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+static std::unordered_map<int, int> FormatTable = {
+    { (int)eLLDBForamt::kFormatDefault, (int)lldb::eFormatDefault },
+    { (int)eLLDBForamt::kFormatDecimal, (int)lldb::eFormatDecimal },
+    { (int)eLLDBForamt::kFormatHex, (int)lldb::eFormatHex },
+    { (int)eLLDBForamt::kFormatOctal, (int)lldb::eFormatOctal },
+    { (int)eLLDBForamt::kFormatBinary, (int)lldb::eFormatBinary },
+    { (int)eLLDBForamt::kFormatFloat, (int)lldb::eFormatFloat },
+    { (int)eLLDBForamt::kFormatComplex, (int)lldb::eFormatComplex },
+    { (int)eLLDBForamt::kFormatBoolean, (int)lldb::eFormatBoolean },
+    { (int)eLLDBForamt::kFormatBytes, (int)lldb::eFormatBytes },
+    { (int)eLLDBForamt::kFormatBytesWithASCII, (int)lldb::eFormatBytesWithASCII },
+    { (int)eLLDBForamt::kFormatCString, (int)lldb::eFormatCString },
+    { (int)eLLDBForamt::kFormatPointer, (int)lldb::eFormatPointer },
+};
+
+// Convert CodeLite's format into LLDB format
+static lldb::Format LLDBFormat_To_LLDB(const eLLDBForamt& format)
+{
+    if(FormatTable.count((int)format) == 0) { return lldb::eFormatDefault; }
+    return static_cast<lldb::Format>(FormatTable[format]);
+};
 
 namespace
 {
@@ -178,13 +201,9 @@ CodeLiteLLDBApp::~CodeLiteLLDBApp()
 
 int CodeLiteLLDBApp::OnExit()
 {
-    if(m_target.IsValid() && m_debugger.IsValid()) {
-        m_debugger.DeleteTarget(m_target);
-    }
+    if(m_target.IsValid() && m_debugger.IsValid()) { m_debugger.DeleteTarget(m_target); }
 
-    if(m_debugger.IsValid()) {
-        lldb::SBDebugger::Destroy(m_debugger);
-    }
+    if(m_debugger.IsValid()) { lldb::SBDebugger::Destroy(m_debugger); }
     lldb::SBDebugger::Terminate();
     return TRUE;
 }
@@ -196,7 +215,7 @@ bool CodeLiteLLDBApp::OnInit()
         if(m_port == wxNOT_FOUND) {
             connectionString << "unix://" << m_debuggerSocketPath;
         } else {
-           connectionString << "tcp://" << m_ip << ":" << m_port;
+            connectionString << "tcp://" << m_ip << ":" << m_port;
         }
         m_acceptSocket.Start(connectionString);
 
@@ -208,7 +227,7 @@ bool CodeLiteLLDBApp::OnInit()
         } else {
             wxPrintf("codelite-lldb: caught exception: %s\n", e.what());
             wxPrintf("codelite-lldb: failed to create server on %s. %s\n", (wxString() << m_ip << ":" << m_port),
-                strerror(errno));
+                     strerror(errno));
         }
         return false;
     }
@@ -222,18 +241,15 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand& command)
         return false;
     }
 
-    if(!command.GetWorkingDirectory().IsEmpty()) {
-        ::wxSetWorkingDirectory(command.GetWorkingDirectory());
-    }
+    if(!command.GetWorkingDirectory().IsEmpty()) { ::wxSetWorkingDirectory(command.GetWorkingDirectory()); }
     wxPrintf("codelite-lldb: working directory is set to %s\n", ::wxGetCwd());
 #if defined(__WXOSX__) || defined(__WXGTK__)
     // On OSX, debugserver executable must exists otherwise lldb will not work properly
     // we ensure that it exists by checking the environment variable LLDB_DEBUGSERVER_PATH
     wxString lldbDebugServer;
     if(!::wxGetEnv("LLDB_DEBUGSERVER_PATH", &lldbDebugServer) || !wxFileName::Exists(lldbDebugServer)) {
-        wxPrintf(
-            "codelite-lldb: LLDB_DEBUGSERVER_PATH environment does not exist or contains a path to a non existent "
-            "file\n");
+        wxPrintf("codelite-lldb: LLDB_DEBUGSERVER_PATH environment does not exist or contains a path to a non existent "
+                 "file\n");
         NotifyExited();
         return false;
     }
@@ -246,7 +262,7 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand& command)
     m_target = m_debugger.CreateTarget(command.GetExecutable().mb_str().data(), NULL, NULL, true, lldbError);
     if(!m_target.IsValid()) {
         wxPrintf("codelite-lldb: could not create target for file %s. %s\n", command.GetExecutable(),
-            lldbError.GetCString());
+                 lldbError.GetCString());
         NotifyExited();
         return false;
     }
@@ -276,9 +292,7 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand& command)
 void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
 {
     wxPrintf("codelite-lldb: StartDebugger Called\n");
-    if(!InitializeLLDB(command)) {
-        return;
-    }
+    if(!InitializeLLDB(command)) { return; }
 
     // Launch the thread that will handle the LLDB process events
     m_lldbProcessEventThread =
@@ -418,24 +432,21 @@ void CodeLiteLLDBApp::NotifyStopped()
     const auto initialThreadID = m_target.GetProcess().GetSelectedThread().GetThreadID();
     int bestStopReasonPriority = -1;
 
-    NotifyStopped(initialThreadID,
-        [&](lldb::tid_t threadID, lldb::StopReason stopReason)
-        {
-            const auto stopReasonPriority = StopReasonToPriority(stopReason);
-            if(stopReasonPriority > bestStopReasonPriority) {
-                bestStopReasonPriority = stopReasonPriority;
-                return true;
-            } else if ((-1 == bestStopReasonPriority) && (initialThreadID == threadID)) {
-                // No better thread found so far but we've found the current selected thread.
-                return true;
-            } else {
-                return false;
-            }
-        });
+    NotifyStopped(initialThreadID, [&](lldb::tid_t threadID, lldb::StopReason stopReason) {
+        const auto stopReasonPriority = StopReasonToPriority(stopReason);
+        if(stopReasonPriority > bestStopReasonPriority) {
+            bestStopReasonPriority = stopReasonPriority;
+            return true;
+        } else if((-1 == bestStopReasonPriority) && (initialThreadID == threadID)) {
+            // No better thread found so far but we've found the current selected thread.
+            return true;
+        } else {
+            return false;
+        }
+    });
 }
 
-template<typename T>
-void CodeLiteLLDBApp::NotifyStopped(const lldb::tid_t initialThreadID, T &&threadSelector)
+template <typename T> void CodeLiteLLDBApp::NotifyStopped(const lldb::tid_t initialThreadID, T&& threadSelector)
 {
     m_variables.clear();
     LLDBReply reply;
@@ -497,7 +508,7 @@ void CodeLiteLLDBApp::NotifyStopped(const lldb::tid_t initialThreadID, T &&threa
         m_target.GetProcess().SetSelectedThread(thread);
     }
 
-    auto &selectedThread = threads[selectedThreadIndex];
+    auto& selectedThread = threads[selectedThreadIndex];
     selectedThread.SetActive(true);
     LLDBBacktrace bt(thread, m_settings);
     reply.SetBacktrace(bt);
@@ -550,9 +561,7 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
 
         std::string tty_c;
         std::string workingDirectory;
-        if(!command.GetRedirectTTY().IsEmpty()) {
-            tty_c = command.GetRedirectTTY().mb_str(wxConvUTF8).data();
-        }
+        if(!command.GetRedirectTTY().IsEmpty()) { tty_c = command.GetRedirectTTY().mb_str(wxConvUTF8).data(); }
 
         if(!command.GetWorkingDirectory().IsEmpty()) {
             workingDirectory = command.GetWorkingDirectory().mb_str(wxConvUTF8).data();
@@ -662,9 +671,9 @@ void CodeLiteLLDBApp::ApplyBreakpoints(const LLDBCommand& command)
                 }
                 case LLDBBreakpoint::kFileLine: {
                     wxPrintf("codelite-lldb: creating breakpoint by location: %s,%d\n", breakPoint->GetFilename(),
-                        breakPoint->GetLineNumber());
-                    m_target.BreakpointCreateByLocation(
-                        breakPoint->GetFilename().mb_str().data(), breakPoint->GetLineNumber());
+                             breakPoint->GetLineNumber());
+                    m_target.BreakpointCreateByLocation(breakPoint->GetFilename().mb_str().data(),
+                                                        breakPoint->GetLineNumber());
                     break;
                 }
                 }
@@ -693,17 +702,13 @@ void CodeLiteLLDBApp::RunTo(const LLDBCommand& command)
 {
     wxPrintf("codelite-lldb: RunTo called\n");
 
-    if(m_target.GetProcess().GetState() != lldb::eStateStopped) {
-        return;
-    }
+    if(m_target.GetProcess().GetState() != lldb::eStateStopped) { return; }
 
-    if(1 != command.GetBreakpoints().size()) {
-        return;
-    }
+    if(1 != command.GetBreakpoints().size()) { return; }
 
-    const auto &breakpoint = command.GetBreakpoints().at(0);
+    const auto& breakpoint = command.GetBreakpoints().at(0);
     wxPrintf("codelite-lldb: creating one-shot breakpoint by location: %s,%d\n", breakpoint->GetFilename(),
-        breakpoint->GetLineNumber());
+             breakpoint->GetLineNumber());
 
     // The second parameter to SBFileSpec ctor is called "resolve" and it looks like it does ~ expansion, etc.
     const lldb::SBFileSpec fileSpec(breakpoint->GetFilename().mb_str(), true);
@@ -719,15 +724,11 @@ void CodeLiteLLDBApp::JumpTo(const LLDBCommand& command)
 {
     wxPrintf("codelite-lldb: JumpTo called\n");
 
-    if(m_target.GetProcess().GetState() != lldb::eStateStopped) {
-        return;
-    }
+    if(m_target.GetProcess().GetState() != lldb::eStateStopped) { return; }
 
-    if(1 != command.GetBreakpoints().size()) {
-        return;
-    }
+    if(1 != command.GetBreakpoints().size()) { return; }
 
-    const auto &breakpoint = command.GetBreakpoints().at(0);
+    const auto& breakpoint = command.GetBreakpoints().at(0);
     wxPrintf("codelite-lldb: jumping to: %s,%d\n", breakpoint->GetFilename(), breakpoint->GetLineNumber());
 
     // The second parameter is called "resolve" and it looks like it does ~ expansion, etc.
@@ -735,7 +736,7 @@ void CodeLiteLLDBApp::JumpTo(const LLDBCommand& command)
     auto thread = m_target.GetProcess().GetSelectedThread();
     auto error = thread.JumpToLine(fileSpec, breakpoint->GetLineNumber());
 
-    if (error.Success()) {
+    if(error.Success()) {
         NotifyStopped();
     } else {
         wxPrintf("codelite-lldb: jumping failed: %s\n", error.GetCString());
@@ -767,9 +768,7 @@ void CodeLiteLLDBApp::DeleteBreakpoints(const LLDBCommand& command)
     CHECK_DEBUG_SESSION_RUNNING();
 
     const LLDBBreakpoint::Vec_t& bps = command.GetBreakpoints();
-    if(bps.empty()) {
-        return;
-    }
+    if(bps.empty()) { return; }
 
     wxPrintf("codelite-lldb: DeleteBreakpoints called\n");
     if(m_target.GetProcess().GetState() == lldb::eStateStopped) {
@@ -839,9 +838,7 @@ void CodeLiteLLDBApp::AcceptNewConnection()
     try {
         while(true) {
             m_replySocket = m_acceptSocket.WaitForNewConnection(1);
-            if(m_replySocket) {
-                break;
-            }
+            if(m_replySocket) { break; }
         }
 
         // Remote connection, send the 'handshake' packet
@@ -927,9 +924,7 @@ void CodeLiteLLDBApp::NotifyLocals(const LLDBVariable::Vect_t& locals)
 void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
 {
     int variableId = command.GetLldbId();
-    if(variableId == wxNOT_FOUND) {
-        return;
-    }
+    if(variableId == wxNOT_FOUND) { return; }
 
     LLDBVariable::Vect_t children;
     std::map<int, VariableWrapper>::iterator iter = m_variables.find(variableId);
@@ -1005,15 +1000,13 @@ void CodeLiteLLDBApp::MainLoop()
                 got_something = true;
             }
 
-            if(!got_something) {
-                wxThread::Sleep(10);
-            }
+            if(!got_something) { wxThread::Sleep(10); }
         }
         wxPrintf("codelite-lldb: terminating\n");
 
     } catch(clSocketException& e) {
-        wxPrintf(
-            "codelite-lldb: an error occurred during MainLoop(). %s. strerror=%s\n", e.what().c_str(), strerror(errno));
+        wxPrintf("codelite-lldb: an error occurred during MainLoop(). %s. strerror=%s\n", e.what().c_str(),
+                 strerror(errno));
         // exit now
         exit(0);
     }
@@ -1032,9 +1025,7 @@ void CodeLiteLLDBApp::SelectFrame(const LLDBCommand& command)
 void CodeLiteLLDBApp::SelectThread(const LLDBCommand& command)
 {
     assert(1 == command.GetThreadIds().size());
-    if (1 != command.GetThreadIds().size()) {
-        return;
-    }
+    if(1 != command.GetThreadIds().size()) { return; }
 
     const auto selectThreadID = command.GetThreadIds().front();
     wxPrintf("codelite-lldb: selecting thread %d\n", selectThreadID);
@@ -1042,10 +1033,9 @@ void CodeLiteLLDBApp::SelectThread(const LLDBCommand& command)
         m_interruptReason = kInterruptReasonNone;
 
         NotifyStopped(m_target.GetProcess().GetSelectedThread().GetThreadID(),
-            [&selectThreadID](const lldb::tid_t threadID, const lldb::StopReason stopReason)
-            {
-                return selectThreadID == threadID;
-            });
+                      [&selectThreadID](const lldb::tid_t threadID, const lldb::StopReason stopReason) {
+                          return selectThreadID == threadID;
+                      });
     }
 }
 
@@ -1084,9 +1074,7 @@ void CodeLiteLLDBApp::OpenCoreFile(const LLDBCommand& command)
     wxPrintf("codeite-lldb: debugging core file '%s'\n", command.GetCorefile());
     wxPrintf("codeite-lldb: executable file '%s'\n", command.GetExecutable());
 
-    if(!InitializeLLDB(command)) {
-        return;
-    }
+    if(!InitializeLLDB(command)) { return; }
 
     lldb::SBProcess process = m_target.LoadCore(command.GetCorefile().mb_str(wxConvUTF8).data());
     if(!process.IsValid()) {
@@ -1114,9 +1102,7 @@ void CodeLiteLLDBApp::OpenCoreFile(const LLDBCommand& command)
 void CodeLiteLLDBApp::AttachProcess(const LLDBCommand& command)
 {
     wxPrintf("codeite-lldb: attaching to process with PID %d\n", command.GetProcessID());
-    if(!InitializeLLDB(command)) {
-        return;
-    }
+    if(!InitializeLLDB(command)) { return; }
 
     lldb::SBError errorCode;
     lldb::SBListener listener;
@@ -1165,9 +1151,7 @@ void CodeLiteLLDBApp::NextInstruction(const LLDBCommand& command)
 void CodeLiteLLDBApp::ShowCurrentFileLine(const LLDBCommand& command)
 {
     wxPrintf("codelite-lldb: ShowCurrentFileLine called\n");
-    if(m_target.GetProcess().IsValid() && m_target.GetProcess().GetState() == lldb::eStateStopped) {
-        NotifyStopped();
-    }
+    if(m_target.GetProcess().IsValid() && m_target.GetProcess().GetState() == lldb::eStateStopped) { NotifyStopped(); }
 }
 
 void CodeLiteLLDBApp::DoExecutueShellCommand(const wxString& command, bool printOutput)
@@ -1182,9 +1166,7 @@ void CodeLiteLLDBApp::DoExecutueShellCommand(const wxString& command, bool print
     if(printOutput && ret.GetOutput()) {
         wxString cmdOutput = ret.GetOutput();
         cmdOutput.Trim().Trim(false);
-        if(!cmdOutput.IsEmpty()) {
-            wxPrintf("codelite-lldb: output of command '%s':\n%s\n", command, cmdOutput);
-        }
+        if(!cmdOutput.IsEmpty()) { wxPrintf("codelite-lldb: output of command '%s':\n%s\n", command, cmdOutput); }
     }
 }
 
@@ -1209,9 +1191,7 @@ void CodeLiteLLDBApp::DeleteWatch(const LLDBCommand& command)
 
     // remove it from the watch list
     int where = m_watches.Index(expression);
-    if(where != wxNOT_FOUND) {
-        m_watches.RemoveAt(where);
-    }
+    if(where != wxNOT_FOUND) { m_watches.RemoveAt(where); }
 }
 
 void CodeLiteLLDBApp::ExecuteInterperterCommand(const LLDBCommand& command)
@@ -1234,18 +1214,14 @@ void CodeLiteLLDBApp::ExecuteInterperterCommand(const LLDBCommand& command)
     }
 }
 
-template<typename T>
-void CodeLiteLLDBApp::SuspendOrResumeThreads(const char * const type, const std::vector<int>& threadIds, T&& function)
+template <typename T>
+void CodeLiteLLDBApp::SuspendOrResumeThreads(const char* const type, const std::vector<int>& threadIds, T&& function)
 {
-    if(!CanInteract() || threadIds.empty()) {
-        return;
-    }
+    if(!CanInteract() || threadIds.empty()) { return; }
 
     for(const auto threadId : threadIds) {
         auto thr = m_target.GetProcess().GetThreadByID(threadId);
-        if(!thr.IsValid()) {
-            continue;
-        }
+        if(!thr.IsValid()) { continue; }
 
         wxPrintf("codelite-lldb: %s thread %d\n", type, threadId);
         function(thr);
@@ -1255,24 +1231,19 @@ void CodeLiteLLDBApp::SuspendOrResumeThreads(const char * const type, const std:
     NotifyStopped();
 }
 
-template<typename T>
-void CodeLiteLLDBApp::SuspendOrResumeOtherThreads(const char * const type, const std::vector<int>& threadIds, T&& function)
+template <typename T>
+void CodeLiteLLDBApp::SuspendOrResumeOtherThreads(const char* const type, const std::vector<int>& threadIds,
+                                                  T&& function)
 {
-    if(!CanInteract()) {
-        return;
-    }
+    if(!CanInteract()) { return; }
 
     const std::set<int> excludeThreadIds(threadIds.begin(), threadIds.end());
 
     for(size_t i = 0; i < m_target.GetProcess().GetNumThreads(); ++i) {
         auto thr = m_target.GetProcess().GetThreadAtIndex(i);
-        if(!thr.IsValid()) {
-            continue;
-        }
+        if(!thr.IsValid()) { continue; }
 
-        if(0 != excludeThreadIds.count(thr.GetThreadID())) {
-            continue;
-        }
+        if(0 != excludeThreadIds.count(thr.GetThreadID())) { continue; }
 
         wxPrintf("codelite-lldb: %s thread %d\n", type, thr.GetThreadID());
         function(thr);
@@ -1310,11 +1281,9 @@ void CodeLiteLLDBApp::ResumeAllThreads(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::SetVariableValue(const LLDBCommand& command)
 {
-    DoVariableAction(command.GetLldbId(),
-        [&command](lldb::SBValue& sbValue)
-        {
-            (void) sbValue.SetValueFromCString(command.GetExpression().c_str());
-        });
+    DoVariableAction(command.GetLldbId(), [&command](lldb::SBValue& sbValue) {
+        (void)sbValue.SetValueFromCString(command.GetExpression().c_str());
+    });
 
     // NB: refreshing even if failed to set value in order to get UI back in sync.
     LocalVariables(command);
@@ -1322,29 +1291,20 @@ void CodeLiteLLDBApp::SetVariableValue(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::SetVariableDisplayFormat(const LLDBCommand& command)
 {
-    DoVariableAction(command.GetLldbId(),
-        [&command](lldb::SBValue& sbValue)
-        {
-            // HACK using frameId in the command to store lldb format type.
-            sbValue.SetFormat(static_cast<lldb::Format>(command.GetFrameId()));
-        });
-
+    DoVariableAction(command.GetLldbId(), [&command](lldb::SBValue& sbValue) {
+        sbValue.SetFormat(LLDBFormat_To_LLDB(command.GetDisplayFormat()));
+    });
     // NB: not refreshing; might be a multi-select so LLDBLocalsView will ask for a refresh
     // once it's sent all commands.
 }
 
-template<typename T>
-void CodeLiteLLDBApp::DoVariableAction(const int variableId, T &&action)
+template <typename T> void CodeLiteLLDBApp::DoVariableAction(const int variableId, T&& action)
 {
-    if(!CanInteract()) {
-        return;
-    }
+    if(!CanInteract()) { return; }
 
     const auto iter = m_variables.find(variableId);
-    if(iter == m_variables.end()) {
-        return;
-    }
+    if(iter == m_variables.end()) { return; }
 
-    auto &sbValue = iter->second.value;
+    auto& sbValue = iter->second.value;
     action(sbValue);
 }

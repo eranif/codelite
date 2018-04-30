@@ -56,7 +56,7 @@ private:
     void AddWatch();
     bool AddWatch(const wxTreeItemId& item);
     bool EditVariable();
-    void SetVariableDisplayFormat(const lldb::Format format);
+    void SetVariableDisplayFormat(const eLLDBForamt format);
     LLDBVariable::Ptr_t GetVariableFromItem(const wxTreeItemId& item) const;
 
 protected:

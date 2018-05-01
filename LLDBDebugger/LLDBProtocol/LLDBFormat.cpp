@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "LLDBFormat.h"
 #include <wx/xrc/xmlres.h>
 

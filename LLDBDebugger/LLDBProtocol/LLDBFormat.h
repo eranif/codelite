@@ -1,6 +1,7 @@
 #ifndef LLDBFORMAT_H
 #define LLDBFORMAT_H
 
+#include <algorithm>
 #include "LLDBEnums.h"
 #include "wxStringHash.h"
 #include <wx/string.h>

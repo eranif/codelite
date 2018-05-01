@@ -72,7 +72,7 @@ void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
         m_dvListCtrlBacktrace->AppendItem(cols);
     }
 
-    if(!entries.empty()) {
+    if(!entries.empty() && (m_dvListCtrlBacktrace->GetItemCount() > GetSelectedFrame())) {
         const auto item = m_dvListCtrlBacktrace->RowToItem(GetSelectedFrame());
         if(item.IsOk()) {
             m_dvListCtrlBacktrace->EnsureVisible(item);

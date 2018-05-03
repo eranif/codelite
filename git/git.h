@@ -186,7 +186,7 @@ private:
     void ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
     void DoShowCommitDialog(const wxString& diff, wxString& commitArgs);
-    void DoRefreshView();
+    void DoRefreshView(bool ensureVisible);
     
     /// Workspace management
     bool IsWorkspaceOpened() const;
@@ -251,7 +251,8 @@ private:
     void OnOpenMSYSGit(wxCommandEvent& e);
     void OnActiveProjectChanged(clProjectSettingsEvent& event);
     void OnFileGitBlame(wxCommandEvent& event);
-
+    void OnAppActivated(wxCommandEvent& event);
+    
 #if 0
     void OnBisectStart(wxCommandEvent& e);
     void OnBisectGood(wxCommandEvent& e);
@@ -275,7 +276,12 @@ public:
 
     void StoreWorkspaceRepoDetails();
     void WorkspaceClosed();
-
+    
+    /**
+     * @brief is git enabled for the current workspace?
+     */
+    bool IsGitEnabled() const;
+    
     /**
      * @brief fetch the next 100 commits (skip 'skip' first commits)
      * and show them in the commit list dialog

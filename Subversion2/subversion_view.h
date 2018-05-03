@@ -132,7 +132,8 @@ protected:
     void OnSettings(wxCommandEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnOpenFile(wxCommandEvent& event);
-
+    void OnAppActivated(wxCommandEvent &event);
+    
     // Svn events
     void OnCommit(wxCommandEvent& event);
     void OnCommitGotoAnything(wxCommandEvent& event);

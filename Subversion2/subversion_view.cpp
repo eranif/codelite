@@ -163,6 +163,8 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,
                                   wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
 
+    EventNotifier::Get()->Bind(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, &SubversionView::OnAppActivated, this);
+
     ::clRecalculateSTCHScrollBar(m_sci);
 
     wxTheApp->Bind(wxEVT_MENU, &SubversionView::OnCommit, this, XRCID("svn_commit"));
@@ -1019,6 +1021,7 @@ void SubversionView::DisconnectEvents()
     EventNotifier::Get()->Unbind(wxEVT_FILE_RENAMED, &SubversionView::OnFileRenamed, this);
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
                                      wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, &SubversionView::OnAppActivated, this);
     wxTheApp->Unbind(wxEVT_MENU, &SubversionView::OnCommit, this, XRCID("svn_commit"));
     wxTheApp->Unbind(wxEVT_MENU, &SubversionView::OnCommit, this, XRCID("svn_file_commit"));
     wxTheApp->Unbind(wxEVT_MENU, &SubversionView::OnUpdate, this, XRCID("svn_update"));
@@ -1255,3 +1258,7 @@ void SubversionView::DoGetAllFiles(wxArrayString& paths)
 
 void SubversionView::OnViewUpdateUI(wxUpdateUIEvent& event) { event.Enable(!DoGetCurRepoPath().IsEmpty()); }
 
+void SubversionView::OnAppActivated(wxCommandEvent& event)
+{
+    if(!m_curpath.IsEmpty()) { CallAfter(&SubversionView::BuildTree); }
+}

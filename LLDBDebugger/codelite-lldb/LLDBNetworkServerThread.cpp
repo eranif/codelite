@@ -194,6 +194,14 @@ void* LLDBNetworkServerThread::Entry()
                     m_app->CallAfter(&CodeLiteLLDBApp::SetVariableDisplayFormat, command);
                     break;
 
+                case kCommandGetMemory:
+                    m_app->CallAfter(&CodeLiteLLDBApp::GetMemory, command);
+                    break;
+
+                case kCommandSetMemory:
+                    m_app->CallAfter(&CodeLiteLLDBApp::SetMemory, command);
+                    break;
+
                 default:
                     break;
                 }

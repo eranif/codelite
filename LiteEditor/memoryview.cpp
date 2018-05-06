@@ -141,12 +141,12 @@ void MemoryView::SetViewString(const wxString& text)
     m_textCtrlMemory->Thaw();
 }
 
-void MemoryView::OnUpdate(wxCommandEvent& e)
+bool MemoryView::GetMemoryString(wxString& memory)
 {
     static wxRegEx reHex(wxT("[0][x][0-9a-fA-F][0-9a-fA-F]"));
 
     // extract the text memory from the text control and pass it to the debugger
-    wxString memory;
+    memory.Clear();
     wxArrayString lines = wxStringTokenize(m_textCtrlMemory->GetValue(), wxT("\n"), wxTOKEN_STRTOK);
     for (size_t i=0; i<lines.GetCount(); i++) {
         wxString line = lines.Item(i).AfterFirst(wxT(':')).BeforeFirst(wxT(':')).Trim().Trim(false);
@@ -157,10 +157,8 @@ void MemoryView::OnUpdate(wxCommandEvent& e)
                 // OK
                 continue;
             } else {
-                wxMessageBox(wxString::Format(_("Invalid memory value: %s"), hex), _("CodeLite"), wxICON_WARNING|wxOK);
-                // update the pane to old value
-                ManagerST::Get()->UpdateDebuggerPane();
-                return;
+                memory = hex;
+                return false;
             }
         }
 
@@ -171,7 +169,18 @@ void MemoryView::OnUpdate(wxCommandEvent& e)
 
     // set the new memory
     memory = memory.Trim().Trim(false);
-    ManagerST::Get()->SetMemory(m_textCtrlExpression->GetValue(), GetSize(), memory);
+    return true;
+}
+
+void MemoryView::OnUpdate(wxCommandEvent& e)
+{
+    wxString memory;
+    if(!GetMemoryString(memory)) {
+        wxMessageBox(wxString::Format(_("Invalid memory value: %s"), memory), _("CodeLite"), wxICON_WARNING|wxOK);
+        // update the pane to old value
+        ManagerST::Get()->UpdateDebuggerPane();
+        return;
+    }
 
     // update the view
     ManagerST::Get()->UpdateDebuggerPane();

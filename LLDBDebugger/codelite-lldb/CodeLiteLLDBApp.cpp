@@ -43,6 +43,7 @@
 #include <lldb/API/SBTypeCategory.h>
 #include <lldb/API/SBTypeNameSpecifier.h>
 #include <lldb/API/SBTypeSummary.h>
+#include <wx/base64.h>
 #include <wx/filename.h>
 #include <wx/msgqueue.h>
 #include <wx/sckaddr.h>
@@ -1307,4 +1308,68 @@ template <typename T> void CodeLiteLLDBApp::DoVariableAction(const int variableI
 
     auto& sbValue = iter->second.value;
     action(sbValue);
+}
+
+void CodeLiteLLDBApp::GetMemory(const LLDBCommand& command)
+{
+    if(!CanInteract()) {
+        return;
+    }
+
+    const auto &expression = command.GetExpression();
+    // HACK frameId has size.
+    const auto numberOfBytes = static_cast<size_t>(command.GetFrameId());
+
+    wxPrintf("codelite-lldb: getting %u bytes from %s\n", static_cast<unsigned int>(numberOfBytes), expression.c_str());
+
+    // Try as an expression and if that fails, parse as a number.
+    auto value = m_target.GetProcess().GetSelectedThread().GetSelectedFrame().GetValueForVariablePath(expression.c_str());
+    wxULongLong_t address;
+    if(value.IsValid()) {
+        address = static_cast<wxULongLong_t>(value.GetLoadAddress());
+    }
+    else if(!expression.ToULongLong(&address, 0)) {
+        return;
+    }
+
+    SendMemoryView(address, numberOfBytes);
+}
+
+void CodeLiteLLDBApp::SetMemory(const LLDBCommand& command)
+{
+    if(!CanInteract()) {
+        return;
+    }
+
+    const auto memoryView = ::wxBase64Decode(command.GetExpression());
+    if(memoryView.IsEmpty()) {
+        return;
+    }
+
+    lldb::SBError error;
+    (void) m_target.GetProcess().WriteMemory(command.GetAddress(), memoryView.GetData(),
+        memoryView.GetDataLen(), error);
+
+    // Always send reply, even on failure (in order to refresh the MemoryView UI back to the correct values).
+    SendMemoryView(command.GetAddress(), memoryView.GetDataLen());
+
+    // Refresh locals if success, as may have been watching something in the memory area modified.
+    if(error.Success()) {
+        LocalVariables(command);
+    }
+}
+
+void CodeLiteLLDBApp::SendMemoryView(const lldb::addr_t address, const size_t numberOfBytes)
+{
+    char buff[numberOfBytes];
+    lldb::SBError error;
+    const auto bytesRead = m_target.GetProcess().ReadMemory(address, buff, numberOfBytes, error);
+    if(error.Success()) {
+        auto base64String = ::wxBase64Encode(buff, bytesRead);
+        LLDBReply reply;
+        reply.SetText(base64String);
+        reply.SetAddress(address);
+        reply.SetReplyType(kReplyTypeMemory);
+        SendReply(reply);
+    }
 }

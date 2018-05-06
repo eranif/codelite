@@ -76,7 +76,7 @@ public:
 
     int GetLldbId() const { return m_lldbId; }
 
-    // Seriliazation API
+    // Serialization API
     void FromJSON(const JSONElement& json);
     JSONElement ToJSON() const;
 

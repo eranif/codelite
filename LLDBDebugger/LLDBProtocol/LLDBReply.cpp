@@ -44,7 +44,8 @@ void LLDBReply::FromJSON(const JSONElement& json)
     m_expression = json.namedObject("m_expression").toString();
     m_debugSessionType = json.namedObject("m_debugSessionType").toInt(kDebugSessionTypeNormal);
     m_text = json.namedObject("m_text").toString();
-    
+    json.namedObject("m_address").toString().ToULongLong(&m_address);
+
     m_breakpoints.clear();
     JSONElement arr = json.namedObject("m_breakpoints");
     for(int i = 0; i < arr.arraySize(); ++i) {
@@ -80,6 +81,8 @@ JSONElement LLDBReply::ToJSON() const
     json.addProperty("m_expression", m_expression);
     json.addProperty("m_debugSessionType", m_debugSessionType);
     json.addProperty("m_text", m_text);
+    // int might not be sufficiently long, so convert address to a string.
+    json.addProperty("m_address", wxString() << m_address);
     JSONElement bparr = JSONElement::createArray("m_breakpoints");
     json.append(bparr);
     for(size_t i = 0; i < m_breakpoints.size(); ++i) {

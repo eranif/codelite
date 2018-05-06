@@ -41,6 +41,7 @@ class LLDBSettings
     wxString m_lastLocalFolder;
     wxString m_lastRemoteFolder;
     wxString m_debugserver;
+    size_t m_memoryViewColumns;
 
 public:
     LLDBSettings();
@@ -114,6 +115,9 @@ public:
     const wxString& GetDebugserver() const { return m_debugserver; }
     size_t GetFlags() const { return m_flags; }
     size_t GetStackFrames() const { return m_stackFrames; }
+
+    size_t GetMemoryViewColumns() const { return m_memoryViewColumns; }
+    void SetMemoryViewColumns(const size_t memoryViewColumns) { this->m_memoryViewColumns = memoryViewColumns; }
 };
 
 #endif // LLDBSETTINGS_H

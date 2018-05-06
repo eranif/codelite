@@ -26,6 +26,7 @@
 #include "FolderMappingDlg.h"
 #include "LLDBCallStack.h"
 #include "LLDBLocalsView.h"
+#include "LLDBMemoryView.h"
 #include "LLDBOutputView.h"
 #include "LLDBPlugin.h"
 #include "LLDBProtocol/LLDBEvent.h"
@@ -57,6 +58,7 @@ static LLDBPlugin* thePlugin = NULL;
 #define LLDB_BREAKPOINTS_PANE_NAME "LLDB Breakpoints"
 #define LLDB_LOCALS_PANE_NAME "LLDB Locals"
 #define LLDB_THREADS_PANE_NAME "LLDB Threads"
+#define LLDB_MEMORY_PANE_NAME "LLDB Memory"
 
 namespace
 {
@@ -114,6 +116,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     , m_breakpointsView(NULL)
     , m_localsView(NULL)
     , m_threadsView(NULL)
+    , m_memoryView(NULL)
     , m_stopReasonPrompted(false)
     , m_raisOnBpHit(false)
     , m_tooltip(NULL)
@@ -564,7 +567,7 @@ void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
     m_showThreadNames = settings.HasFlag(kLLDBOptionShowThreadNames);
     m_showFileNamesOnly = settings.HasFlag(kLLDBOptionShowFileNamesOnly);
 
-    InitializeUI();
+    InitializeUI(settings);
     LoadLLDBPerspective();
 
     // If this is a normal debug session, a start notification
@@ -782,6 +785,24 @@ void LLDBPlugin::DestroyUI()
         m_threadsView->Destroy();
         m_threadsView = NULL;
     }
+    if(m_memoryView) {
+        wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(LLDB_MEMORY_PANE_NAME);
+        if(pi.IsOk()) {
+            m_mgr->GetDockingManager()->DetachPane(m_memoryView);
+        }
+
+        // Save memory view width if it's been modified.
+        const auto memoryViewColumns = m_memoryView->GetColumns();
+        LLDBSettings settings;
+        settings.Load();
+        if(memoryViewColumns != settings.GetMemoryViewColumns()) {
+            settings.SetMemoryViewColumns(memoryViewColumns);
+            settings.Save();
+        }
+
+        m_memoryView->Destroy();
+        m_memoryView = NULL;
+    }
     if(m_tooltip) {
         m_tooltip->Destroy();
         m_tooltip = NULL;
@@ -790,7 +811,7 @@ void LLDBPlugin::DestroyUI()
     m_mgr->GetDockingManager()->Update();
 }
 
-void LLDBPlugin::InitializeUI()
+void LLDBPlugin::InitializeUI(const LLDBSettings& settings)
 {
     wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
     if(!m_breakpointsView) {
@@ -835,6 +856,18 @@ void LLDBPlugin::InitializeUI()
                                                 .CloseButton()
                                                 .Caption("Locals & Watches")
                                                 .Name(LLDB_LOCALS_PANE_NAME));
+    }
+    if(!m_memoryView) {
+        m_memoryView = new LLDBMemoryView(parent, *this, settings.GetMemoryViewColumns());
+        m_mgr->GetDockingManager()->AddPane(m_memoryView,
+                                            wxAuiPaneInfo()
+                                                .MinSize(200, 200)
+                                                .Bottom()
+                                                .Layer(10) // outer, but not on the same layer as the left side pane
+                                                .Position(1)
+                                                .CloseButton()
+                                                .Caption("Memory")
+                                                .Name(LLDB_MEMORY_PANE_NAME));
     }
 }
 

@@ -62,6 +62,7 @@ enum eReplyType {
     kReplyTypeWatchEvaluated,
     kReplyTypeInterperterReply,
     kReplyTypeLaunchSuccess,
+    kReplyTypeMemory
 };
 
 // LLDBCommand types
@@ -99,7 +100,9 @@ enum eCommandType {
     kCommandResumeOtherThreads,
     kCommandResumeAllThreads,
     kCommandSetVariableValue,
-    kCommandSetVariableDisplayFormat
+    kCommandSetVariableDisplayFormat,
+    kCommandGetMemory,
+    kCommandSetMemory
 };
 
 enum eLLDBOptions {

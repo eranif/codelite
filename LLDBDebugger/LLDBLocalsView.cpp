@@ -41,6 +41,7 @@
 namespace
 {
 const int lldbLocalsViewEditValueMenuId = XRCID("lldb_locals_view_edit_value");
+const int lldbLocalsViewDisplayMemory = XRCID("lldb_locals_view_display_memory");
 const int lldbLocalsViewAddWatchContextMenuId = XRCID("lldb_locals_view_add_watch");
 const int lldbLocalsViewRemoveWatchContextMenuId = XRCID("lldb_locals_view_remove_watch");
 } // namespace
@@ -290,7 +291,10 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
 
     wxMenu menu;
     menu.Append(wxID_COPY, wxString::Format("Copy value%s to clipboard", ((1 == selections.GetCount()) ? "" : "s")));
-    if(1 == selections.GetCount()) { menu.Append(lldbLocalsViewEditValueMenuId, _("Edit value")); }
+    if(1 == selections.GetCount()) {
+        menu.Append(lldbLocalsViewEditValueMenuId, _("Edit value"));
+        menu.Append(lldbLocalsViewDisplayMemory, _("Display in memory view"));
+    }
     menu.Append(lldbLocalsViewAddWatchContextMenuId,
                 wxString::Format("Add watch%s", ((1 == selections.GetCount()) ? "" : "es")));
 
@@ -330,6 +334,8 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
         if(!content.IsEmpty()) { ::CopyToClipboard(content); }
     } else if(selection == lldbLocalsViewEditValueMenuId) {
         EditVariable();
+    } else if(selection == lldbLocalsViewDisplayMemory) {
+        SendToMemoryView();
     } else if(selection == lldbLocalsViewAddWatchContextMenuId) {
         AddWatch();
     } else if(selection == lldbLocalsViewRemoveWatchContextMenuId) {
@@ -466,4 +472,24 @@ LLDBVariable::Ptr_t LLDBLocalsView::GetVariableFromItem(const wxTreeItemId& item
     if(!data) { return LLDBVariable::Ptr_t(); }
 
     return data->GetVariable();
+}
+
+void LLDBLocalsView::SendToMemoryView() const
+{
+    wxArrayTreeItemIds selections;
+    m_treeList->GetSelections(selections);
+
+    if(1 != selections.GetCount()) {
+        return;
+    }
+
+    const auto lldbVar = GetVariableFromItem(selections.Item(0));
+    if(!lldbVar) {
+        return;
+    }
+
+    // Event to be processed by LLDBMemoryView.
+    LLDBEvent lldbEvent(wxEVT_LLDB_MEMORY_VIEW_EXPRESSION);
+    lldbEvent.SetExpression(lldbVar->GetExpression());
+    m_plugin->ProcessEvent(lldbEvent);
 }

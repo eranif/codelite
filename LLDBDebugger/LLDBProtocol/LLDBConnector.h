@@ -376,6 +376,16 @@ public:
      */
     void SendInterperterCommand(const wxString& command);
 
+    /**
+     * @brief Get base64 encoded string of @a numberOfBytes memory at location @a expression.
+     */
+    void GetMemoryView(const wxString& expression, const size_t numberOfBytes);
+
+    /**
+     * @brief Set memory at location @a address to the decoded base64 string @a base64Memory.
+     */
+    void SetMemoryView(const wxULongLong_t address, const wxString& base64Memory);
+
 protected:
     /**
      * @brief establish connection to codelite-lldb server

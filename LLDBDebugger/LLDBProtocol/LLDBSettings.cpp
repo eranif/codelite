@@ -49,6 +49,7 @@ LLDBSettings::LLDBSettings()
     , m_flags(kLLDBOptionRaiseCodeLite)
     , m_proxyIp("127.0.0.1")
     , m_proxyPort(13610)
+    , m_memoryViewColumns(16)
 {
     m_types = s_DefaultTypes;
     wxFileName exePath;
@@ -117,6 +118,7 @@ void LLDBSettings::FromJSON(const JSONElement& json)
     m_lastLocalFolder = json.namedObject("m_lastLocalFolder").toString();
     m_lastRemoteFolder = json.namedObject("m_lastRemoteFolder").toString();
     m_debugserver = json.namedObject("m_debugserver").toString(m_debugserver);
+    m_memoryViewColumns = json.namedObject("m_memoryViewColumns").toSize_t(m_memoryViewColumns);
 }
 
 JSONElement LLDBSettings::ToJSON() const
@@ -131,6 +133,7 @@ JSONElement LLDBSettings::ToJSON() const
     json.addProperty("m_lastLocalFolder", m_lastLocalFolder);
     json.addProperty("m_lastRemoteFolder", m_lastRemoteFolder);
     json.addProperty("m_debugserver", m_debugserver);
+    json.addProperty("m_memoryViewColumns", m_memoryViewColumns);
     return json;
 }
 

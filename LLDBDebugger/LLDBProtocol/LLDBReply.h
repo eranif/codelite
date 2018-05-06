@@ -49,6 +49,7 @@ protected:
     wxString m_expression;
     int m_debugSessionType;
     wxString m_text; // free text
+    wxULongLong_t m_address;
 
 public:
     LLDBReply()
@@ -57,6 +58,7 @@ public:
         , m_line(wxNOT_FOUND)
         , m_lldbId(wxNOT_FOUND)
         , m_debugSessionType(kDebugSessionTypeNormal)
+        , m_address(0)
     {
     }
 
@@ -88,6 +90,8 @@ public:
     const wxString& GetFilename() const { return m_filename; }
     int GetLine() const { return m_line; }
     int GetInterruptResaon() const { return m_interruptResaon; }
+    void SetAddress(const wxULongLong_t address) { this->m_address = address; }
+    wxULongLong_t GetAddress() const { return m_address; }
     // Serialization API
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement& json);

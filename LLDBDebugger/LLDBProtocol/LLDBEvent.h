@@ -46,6 +46,7 @@ class LLDBEvent : public clCommandEvent
     LLDBThread::Vect_t m_threads;
     wxString m_expression;
     int m_sessionType;
+    wxULongLong_t m_address;
 
 public:
     LLDBEvent(wxEventType eventType, int winid = 0);
@@ -89,6 +90,9 @@ public:
     void SetInterruptReason(int stopReason) { this->m_interruptReason = stopReason; }
     void SetBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints) { this->m_breakpoints = breakpoints; }
     const LLDBBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
+
+    void SetAddress(const wxULongLong_t address) { this->m_address = address; }
+    wxULongLong_t GetAddress() const { return m_address; }
 };
 
 wxDECLARE_EVENT(wxEVT_LLDB_STOPPED, LLDBEvent);
@@ -106,6 +110,8 @@ wxDECLARE_EVENT(wxEVT_LLDB_VARIABLE_EXPANDED, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_EXPRESSION_EVALUATED, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_INTERPERTER_REPLY, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_LAUNCH_SUCCESS, LLDBEvent);
+wxDECLARE_EVENT(wxEVT_LLDB_MEMORY_VIEW_EXPRESSION, LLDBEvent);
+wxDECLARE_EVENT(wxEVT_LLDB_MEMORY_VIEW_RESPONSE, LLDBEvent);
 
 typedef void (wxEvtHandler::*LLDBEventFunction)(LLDBEvent&);
 #define LLDBEventHandler(func) wxEVENT_HANDLER_CAST(LLDBEventFunction, func)

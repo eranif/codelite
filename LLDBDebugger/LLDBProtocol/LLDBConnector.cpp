@@ -722,6 +722,26 @@ void LLDBConnector::SendInterperterCommand(const wxString& command)
     SendCommand(lldbCommand);
 }
 
+void LLDBConnector::GetMemoryView(const wxString& expression, const size_t numberOfBytes)
+{
+    LLDBCommand lldbCommand;
+    lldbCommand.SetCommandType(kCommandGetMemory);
+    lldbCommand.SetExpression(expression);
+    // HACK using frameId to pass size.
+    lldbCommand.SetFrameId(static_cast<int>(numberOfBytes));
+    SendCommand(lldbCommand);
+}
+
+void LLDBConnector::SetMemoryView(const wxULongLong_t address, const wxString& base64Memory)
+{
+    LLDBCommand lldbCommand;
+    lldbCommand.SetCommandType(kCommandSetMemory);
+    lldbCommand.SetAddress(address);
+    // HACK using expression to carry base64 string.
+    lldbCommand.SetExpression(base64Memory);
+    SendCommand(lldbCommand);
+}
+
 void LLDBTerminalCallback::OnProcessOutput(const wxString& str) { wxUnusedVar(str); }
 
 void LLDBTerminalCallback::OnProcessTerminated()

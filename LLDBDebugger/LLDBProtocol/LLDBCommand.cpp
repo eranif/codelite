@@ -67,6 +67,8 @@ void LLDBCommand::FromJSON(const JSONElement& json)
 
     if(m_commandType == kCommandDebugCoreFile) { m_corefile = json.namedObject("m_corefile").toString(); }
     if(m_commandType == kCommandAttachProcess) { m_processID = json.namedObject("m_processID").toInt(); }
+
+    json.namedObject("m_address").toString().ToULongLong(&m_address);
 }
 
 JSONElement LLDBCommand::ToJSON() const
@@ -106,6 +108,10 @@ JSONElement LLDBCommand::ToJSON() const
 
     if(m_commandType == kCommandDebugCoreFile) { json.addProperty("m_corefile", m_corefile); }
     if(m_commandType == kCommandAttachProcess) { json.addProperty("m_processID", m_processID); }
+
+    // int might not be sufficiently long, so convert address to a string.
+    json.addProperty("m_address", wxString() << m_address);
+
     return json;
 }
 

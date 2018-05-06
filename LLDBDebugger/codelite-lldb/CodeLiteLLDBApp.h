@@ -98,6 +98,8 @@ private:
     template<typename T>
     void DoVariableAction(const int variableId, T &&action);
 
+    void SendMemoryView(const lldb::addr_t address, const size_t numberOfBytes);
+
 public:
     void NotifyStoppedOnFirstEntry();
     void NotifyStopped();
@@ -175,6 +177,8 @@ public:
     void ResumeAllThreads(const LLDBCommand& command);
     void SetVariableValue(const LLDBCommand& command);
     void SetVariableDisplayFormat(const LLDBCommand& command);
+    void GetMemory(const LLDBCommand& command);
+    void SetMemory(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

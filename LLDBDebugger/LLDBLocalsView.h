@@ -58,6 +58,7 @@ private:
     bool EditVariable();
     void SetVariableDisplayFormat(const eLLDBForamt format);
     LLDBVariable::Ptr_t GetVariableFromItem(const wxTreeItemId& item) const;
+    void SendToMemoryView() const;
 
 protected:
     virtual void OnDelete(wxCommandEvent& event);

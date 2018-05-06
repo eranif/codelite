@@ -53,6 +53,7 @@ protected:
     wxString m_corefile;
     int m_processID;
     int m_displayFormat;
+    wxULongLong_t m_address;
 
 public:
     // Serialization API
@@ -65,6 +66,7 @@ public:
         , m_lldbId(0)
         , m_processID(wxNOT_FOUND)
         , m_displayFormat((int)eLLDBForamt::kFormatDefault)
+        , m_address(0)
     {
     }
     LLDBCommand(const wxString& jsonString);
@@ -109,6 +111,8 @@ public:
         m_startupCommands.Clear();
         m_corefile.Clear();
         m_processID = wxNOT_FOUND;
+        m_displayFormat = (int)eLLDBForamt::kFormatDefault;
+        m_address = 0;
     }
 
     void SetFrameId(int frameId) { this->m_frameId = frameId; }
@@ -133,6 +137,8 @@ public:
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
     void SetBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints) { this->m_breakpoints = breakpoints; }
     const LLDBBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
+    void SetAddress(const wxULongLong_t address) { this->m_address = address; }
+    wxULongLong_t GetAddress() const { return m_address; }
 };
 
 #endif // LLDBCOMMAND_H

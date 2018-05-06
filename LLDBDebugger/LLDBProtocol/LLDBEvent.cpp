@@ -40,6 +40,8 @@ wxDEFINE_EVENT(wxEVT_LLDB_VARIABLE_EXPANDED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_EXPRESSION_EVALUATED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_INTERPERTER_REPLY, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_LAUNCH_SUCCESS, LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_MEMORY_VIEW_EXPRESSION, LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_MEMORY_VIEW_RESPONSE, LLDBEvent);
 
 LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
     : clCommandEvent(eventType, windid)
@@ -47,6 +49,7 @@ LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
     , m_frameId(0)
     , m_threadId(0)
     , m_sessionType(kDebugSessionTypeNormal)
+    , m_address(0)
 {
 }
 
@@ -69,6 +72,7 @@ LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
     m_variables = src.m_variables;
     m_threads = src.m_threads;
     m_expression = src.m_expression;
+    m_address = src.m_address;
     return *this;
 }
 

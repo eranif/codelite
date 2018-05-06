@@ -41,6 +41,7 @@ class LLDBLocalsView;
 class LLDBOutputView;
 class ConsoleFrame;
 class LLDBCallStackPane;
+class LLDBMemoryView;
 class LLDBPlugin : public IPlugin
 {
     LLDBConnector m_connector;
@@ -53,6 +54,7 @@ class LLDBPlugin : public IPlugin
     LLDBOutputView* m_breakpointsView;
     LLDBLocalsView* m_localsView;
     LLDBThreadsView* m_threadsView;
+    LLDBMemoryView* m_memoryView;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
     bool m_stopReasonPrompted;
     bool m_raisOnBpHit;
@@ -88,7 +90,7 @@ private:
     void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
     void LoadLLDBPerspective();
     void ShowLLDBPane(const wxString& paneName, bool show = true);
-    void InitializeUI();
+    void InitializeUI(const LLDBSettings& settings);
     void DestroyUI();
     void DoCleanup();
     bool DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, const wxString& terminalTitle);

@@ -57,19 +57,34 @@ void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
 
     SetSelectedFrame(0); // Clear the selected frame
     wxWindowUpdateLocker locker(m_dvListCtrlBacktrace);
-    m_dvListCtrlBacktrace->DeleteAllItems();
+    const size_t initialNumberOfItems = m_dvListCtrlBacktrace->GetItemCount();
     const LLDBBacktrace& bt = event.GetBacktrace();
     SetSelectedFrame(bt.GetSelectedFrameId());
 
     const LLDBBacktrace::EntryVec_t& entries = bt.GetCallstack();
     for(size_t i = 0; i < entries.size(); ++i) {
-        wxVector<wxVariant> cols;
         const LLDBBacktrace::Entry& entry = entries.at(i);
+
+        wxVector<wxVariant> cols;
         cols.push_back(wxString::Format("%d", entry.id));
         cols.push_back(entry.functionName);
         cols.push_back(m_plugin.GetFilenameForDisplay(entry.filename));
         cols.push_back(wxString::Format("%d", (int)(entry.line + 1)));
-        m_dvListCtrlBacktrace->AppendItem(cols);
+
+        if(i < initialNumberOfItems) {
+            // Update existing entry in place. Makes browsing a callstack nicer as the display
+            // won't shift each time a frame is selected.
+            for(unsigned int j = 0; j < cols.size(); ++j) {
+                m_dvListCtrlBacktrace->SetTextValue(cols[j], static_cast<unsigned int>(i), j);
+            }
+        }
+        else {
+            m_dvListCtrlBacktrace->AppendItem(cols);
+        }
+    }
+
+    while(m_dvListCtrlBacktrace->GetItemCount() > entries.size()) {
+        m_dvListCtrlBacktrace->DeleteItem(m_dvListCtrlBacktrace->GetItemCount() - 1);
     }
 
     if(!entries.empty() && (m_dvListCtrlBacktrace->GetItemCount() > GetSelectedFrame())) {

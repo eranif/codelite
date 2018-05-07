@@ -54,22 +54,22 @@
 //////////////////////////////////////////////////////////////////////////////
 
 static std::unordered_map<int, int> FormatTable = {
-    { (int)eLLDBForamt::kFormatDefault, (int)lldb::eFormatDefault },
-    { (int)eLLDBForamt::kFormatDecimal, (int)lldb::eFormatDecimal },
-    { (int)eLLDBForamt::kFormatHex, (int)lldb::eFormatHex },
-    { (int)eLLDBForamt::kFormatOctal, (int)lldb::eFormatOctal },
-    { (int)eLLDBForamt::kFormatBinary, (int)lldb::eFormatBinary },
-    { (int)eLLDBForamt::kFormatFloat, (int)lldb::eFormatFloat },
-    { (int)eLLDBForamt::kFormatComplex, (int)lldb::eFormatComplex },
-    { (int)eLLDBForamt::kFormatBoolean, (int)lldb::eFormatBoolean },
-    { (int)eLLDBForamt::kFormatBytes, (int)lldb::eFormatBytes },
-    { (int)eLLDBForamt::kFormatBytesWithASCII, (int)lldb::eFormatBytesWithASCII },
-    { (int)eLLDBForamt::kFormatCString, (int)lldb::eFormatCString },
-    { (int)eLLDBForamt::kFormatPointer, (int)lldb::eFormatPointer },
+    { (int)eLLDBFormat::kFormatDefault, (int)lldb::eFormatDefault },
+    { (int)eLLDBFormat::kFormatDecimal, (int)lldb::eFormatDecimal },
+    { (int)eLLDBFormat::kFormatHex, (int)lldb::eFormatHex },
+    { (int)eLLDBFormat::kFormatOctal, (int)lldb::eFormatOctal },
+    { (int)eLLDBFormat::kFormatBinary, (int)lldb::eFormatBinary },
+    { (int)eLLDBFormat::kFormatFloat, (int)lldb::eFormatFloat },
+    { (int)eLLDBFormat::kFormatComplex, (int)lldb::eFormatComplex },
+    { (int)eLLDBFormat::kFormatBoolean, (int)lldb::eFormatBoolean },
+    { (int)eLLDBFormat::kFormatBytes, (int)lldb::eFormatBytes },
+    { (int)eLLDBFormat::kFormatBytesWithASCII, (int)lldb::eFormatBytesWithASCII },
+    { (int)eLLDBFormat::kFormatCString, (int)lldb::eFormatCString },
+    { (int)eLLDBFormat::kFormatPointer, (int)lldb::eFormatPointer },
 };
 
 // Convert CodeLite's format into LLDB format
-static lldb::Format LLDBFormat_To_LLDB(const eLLDBForamt& format)
+static lldb::Format LLDBFormat_To_LLDB(const eLLDBFormat& format)
 {
     if(FormatTable.count((int)format) == 0) { return lldb::eFormatDefault; }
     return static_cast<lldb::Format>(FormatTable[(int)format]);

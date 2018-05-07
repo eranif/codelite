@@ -64,7 +64,7 @@ public:
         , m_interruptReason(kInterruptReasonNone)
         , m_lldbId(0)
         , m_processID(wxNOT_FOUND)
-        , m_displayFormat((int)eLLDBForamt::kFormatDefault)
+        , m_displayFormat((int)eLLDBFormat::kFormatDefault)
     {
     }
     LLDBCommand(const wxString& jsonString);
@@ -72,8 +72,8 @@ public:
 
     void UpdatePaths(const LLDBPivot& pivot);
 
-    void SetDisplayFormat(const eLLDBForamt& displayFormat) { this->m_displayFormat = (int)displayFormat; }
-    eLLDBForamt GetDisplayFormat() const { return static_cast<eLLDBForamt>(m_displayFormat); }
+    void SetDisplayFormat(const eLLDBFormat& displayFormat) { this->m_displayFormat = (int)displayFormat; }
+    eLLDBFormat GetDisplayFormat() const { return static_cast<eLLDBFormat>(m_displayFormat); }
     void SetProcessID(int processID) { this->m_processID = processID; }
     int GetProcessID() const { return m_processID; }
     void SetCorefile(const wxString& corefile) { this->m_corefile = corefile; }
@@ -109,6 +109,7 @@ public:
         m_startupCommands.Clear();
         m_corefile.Clear();
         m_processID = wxNOT_FOUND;
+        m_displayFormat = (int)eLLDBFormat::kFormatDefault;
     }
 
     void SetFrameId(int frameId) { this->m_frameId = frameId; }

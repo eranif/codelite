@@ -10,22 +10,22 @@ LLDBFormat::LLDBFormat() {}
 
 LLDBFormat::~LLDBFormat() {}
 
-wxString LLDBFormat::GetName(eLLDBForamt foramt)
+wxString LLDBFormat::GetName(eLLDBFormat foramt)
 {
     if(m_formats.count((int)foramt)) { return m_formats[(int)foramt]; }
     return "";
 }
 
-int LLDBFormat::GetFormatMenuID(eLLDBForamt format)
+int LLDBFormat::GetFormatMenuID(eLLDBFormat format)
 {
     if(m_formatToMenuId.count((int)format) == 0) { return wxNOT_FOUND; }
     return m_formatToMenuId[(int)format];
 }
 
-eLLDBForamt LLDBFormat::GetFormatID(int menuID)
+eLLDBFormat LLDBFormat::GetFormatID(int menuID)
 {
-    if(m_menuIdToFormat.count(menuID) == 0) { return eLLDBForamt::kFormatInvalid; }
-    return static_cast<eLLDBForamt>(m_menuIdToFormat[menuID]);
+    if(m_menuIdToFormat.count(menuID) == 0) { return eLLDBFormat::kFormatInvalid; }
+    return static_cast<eLLDBFormat>(m_menuIdToFormat[menuID]);
 }
 
 wxMenu* LLDBFormat::CreateMenu()
@@ -43,32 +43,32 @@ void LLDBFormat::Initialise()
                             { "Float" },    { "Complex" }, { "Boolean" }, { "Bytes" }, { "Bytes (with text)" },
                             { "C-string" }, { "Pointer" } };
 
-        m_formats = { { (int)eLLDBForamt::kFormatDefault, "Default" },
-                      { (int)eLLDBForamt::kFormatDecimal, "Decimal" },
-                      { (int)eLLDBForamt::kFormatHex, "Hex" },
-                      { (int)eLLDBForamt::kFormatOctal, "Octal" },
-                      { (int)eLLDBForamt::kFormatBinary, "Binary" },
-                      { (int)eLLDBForamt::kFormatFloat, "Float" },
-                      { (int)eLLDBForamt::kFormatComplex, "Complex" },
-                      { (int)eLLDBForamt::kFormatBoolean, "Boolean" },
-                      { (int)eLLDBForamt::kFormatBytes, "Bytes" },
-                      { (int)eLLDBForamt::kFormatBytesWithASCII, "Bytes (with text)" },
-                      { (int)eLLDBForamt::kFormatCString, "C-string" },
-                      { (int)eLLDBForamt::kFormatPointer, "Pointer" } };
+        m_formats = { { (int)eLLDBFormat::kFormatDefault, "Default" },
+                      { (int)eLLDBFormat::kFormatDecimal, "Decimal" },
+                      { (int)eLLDBFormat::kFormatHex, "Hex" },
+                      { (int)eLLDBFormat::kFormatOctal, "Octal" },
+                      { (int)eLLDBFormat::kFormatBinary, "Binary" },
+                      { (int)eLLDBFormat::kFormatFloat, "Float" },
+                      { (int)eLLDBFormat::kFormatComplex, "Complex" },
+                      { (int)eLLDBFormat::kFormatBoolean, "Boolean" },
+                      { (int)eLLDBFormat::kFormatBytes, "Bytes" },
+                      { (int)eLLDBFormat::kFormatBytesWithASCII, "Bytes (with text)" },
+                      { (int)eLLDBFormat::kFormatCString, "C-string" },
+                      { (int)eLLDBFormat::kFormatPointer, "Pointer" } };
 
         // Map between Foramt ID -> wxMenuItem ID
-        m_formatToMenuId = { { (int)eLLDBForamt::kFormatDefault, wxXmlResource::GetXRCID("Default") },
-                             { (int)eLLDBForamt::kFormatDecimal, wxXmlResource::GetXRCID("Decimal") },
-                             { (int)eLLDBForamt::kFormatHex, wxXmlResource::GetXRCID("Hex") },
-                             { (int)eLLDBForamt::kFormatOctal, wxXmlResource::GetXRCID("Octal") },
-                             { (int)eLLDBForamt::kFormatBinary, wxXmlResource::GetXRCID("Binary") },
-                             { (int)eLLDBForamt::kFormatFloat, wxXmlResource::GetXRCID("Float") },
-                             { (int)eLLDBForamt::kFormatComplex, wxXmlResource::GetXRCID("Complex") },
-                             { (int)eLLDBForamt::kFormatBoolean, wxXmlResource::GetXRCID("Boolean") },
-                             { (int)eLLDBForamt::kFormatBytes, wxXmlResource::GetXRCID("Bytes") },
-                             { (int)eLLDBForamt::kFormatBytesWithASCII, wxXmlResource::GetXRCID("Bytes (with text)") },
-                             { (int)eLLDBForamt::kFormatCString, wxXmlResource::GetXRCID("C-string") },
-                             { (int)eLLDBForamt::kFormatPointer, wxXmlResource::GetXRCID("Pointer") } };
+        m_formatToMenuId = { { (int)eLLDBFormat::kFormatDefault, wxXmlResource::GetXRCID("Default") },
+                             { (int)eLLDBFormat::kFormatDecimal, wxXmlResource::GetXRCID("Decimal") },
+                             { (int)eLLDBFormat::kFormatHex, wxXmlResource::GetXRCID("Hex") },
+                             { (int)eLLDBFormat::kFormatOctal, wxXmlResource::GetXRCID("Octal") },
+                             { (int)eLLDBFormat::kFormatBinary, wxXmlResource::GetXRCID("Binary") },
+                             { (int)eLLDBFormat::kFormatFloat, wxXmlResource::GetXRCID("Float") },
+                             { (int)eLLDBFormat::kFormatComplex, wxXmlResource::GetXRCID("Complex") },
+                             { (int)eLLDBFormat::kFormatBoolean, wxXmlResource::GetXRCID("Boolean") },
+                             { (int)eLLDBFormat::kFormatBytes, wxXmlResource::GetXRCID("Bytes") },
+                             { (int)eLLDBFormat::kFormatBytesWithASCII, wxXmlResource::GetXRCID("Bytes (with text)") },
+                             { (int)eLLDBFormat::kFormatCString, wxXmlResource::GetXRCID("C-string") },
+                             { (int)eLLDBFormat::kFormatPointer, wxXmlResource::GetXRCID("Pointer") } };
 
         // Map between wxMenuItem ID -> Foramt ID
         std::for_each(

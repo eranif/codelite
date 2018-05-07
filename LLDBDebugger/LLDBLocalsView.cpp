@@ -378,7 +378,7 @@ wxString LLDBLocalsView::GetItemPath(const wxTreeItemId& item)
     return path;
 }
 
-void LLDBLocalsView::DoDelete()
+bool LLDBLocalsView::DoDelete()
 {
     bool shouldRefresh = false;
     wxArrayTreeItemIds items;
@@ -393,6 +393,8 @@ void LLDBLocalsView::DoDelete()
     }
 
     if(shouldRefresh) { m_plugin->GetLLDB()->RequestLocals(); }
+
+    return shouldRefresh;
 }
 
 void LLDBLocalsView::OnBeginDrag(wxTreeEvent& event) { m_dragItem = event.GetItem(); }
@@ -432,6 +434,12 @@ void LLDBLocalsView::OnKeyDown(wxTreeEvent& event)
     case WXK_CONTROL_A:
         m_treeList->SelectAll();
         return;
+
+    case WXK_DELETE:
+        if(DoDelete()) {
+            return;
+        }
+        break;
 
     default:
         break;

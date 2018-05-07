@@ -52,7 +52,7 @@ private:
     void GetWatchesFromSelections(wxArrayTreeItemIds& items) const;
     void GetWatchesFromSelections(const wxArrayTreeItemIds& selections, wxArrayTreeItemIds& items) const;
     wxString GetItemPath(const wxTreeItemId& item);
-    void DoDelete();
+    bool DoDelete();
     void AddWatch();
     bool AddWatch(const wxTreeItemId& item);
     bool EditVariable();

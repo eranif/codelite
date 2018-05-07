@@ -573,7 +573,7 @@ void LLDBConnector::SetVariableValue(const int lldbId, const wxString& value)
     }
 }
 
-void LLDBConnector::SetVariableDisplayFormat(const int lldbId, const eLLDBForamt format)
+void LLDBConnector::SetVariableDisplayFormat(const int lldbId, const eLLDBFormat format)
 {
     if(IsCanInteract()) {
         LLDBCommand command;

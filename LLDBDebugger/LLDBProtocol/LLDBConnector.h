@@ -258,7 +258,7 @@ public:
      * @param lldbId
      * @param format
      */
-    void SetVariableDisplayFormat(const int lldbId, const eLLDBForamt format);
+    void SetVariableDisplayFormat(const int lldbId, const eLLDBFormat format);
 
     /**
      * @brief stop the debugger

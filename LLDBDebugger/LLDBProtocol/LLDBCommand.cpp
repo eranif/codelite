@@ -46,7 +46,7 @@ void LLDBCommand::FromJSON(const JSONElement& json)
     m_frameId = json.namedObject("m_frameId").toInt(wxNOT_FOUND);
     m_expression = json.namedObject("m_expression").toString();
     m_startupCommands = json.namedObject("m_startupCommands").toString();
-    m_displayFormat = json.namedObject("m_displayFormat").toInt((int)eLLDBForamt::kFormatDefault);
+    m_displayFormat = json.namedObject("m_displayFormat").toInt((int)eLLDBFormat::kFormatDefault);
 
     JSONElement threadIdArr = json.namedObject("m_threadIds");
     for(int i = 0; i < threadIdArr.arraySize(); ++i) {

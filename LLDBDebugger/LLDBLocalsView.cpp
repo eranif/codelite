@@ -334,7 +334,7 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
         AddWatch();
     } else if(selection == lldbLocalsViewRemoveWatchContextMenuId) {
         DoDelete();
-    } else if(LLDBFormat::GetFormatID(selection) != eLLDBForamt::kFormatInvalid) {
+    } else if(LLDBFormat::GetFormatID(selection) != eLLDBFormat::kFormatInvalid) {
         SetVariableDisplayFormat(LLDBFormat::GetFormatID(selection));
     }
 }
@@ -440,7 +440,7 @@ void LLDBLocalsView::OnKeyDown(wxTreeEvent& event)
     event.Skip();
 }
 
-void LLDBLocalsView::SetVariableDisplayFormat(const eLLDBForamt format)
+void LLDBLocalsView::SetVariableDisplayFormat(const eLLDBFormat format)
 {
     bool shouldRefresh = false;
 

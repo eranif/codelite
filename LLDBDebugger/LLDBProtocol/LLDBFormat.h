@@ -21,16 +21,16 @@ public:
     
     static void Initialise();
     
-    static wxString GetName(eLLDBForamt foramt);
+    static wxString GetName(eLLDBFormat foramt);
     static size_t GetCount() { return m_formats.size(); }
     /**
      * @brief return the menu ID from the foramt
      */
-    static int GetFormatMenuID(eLLDBForamt format);
+    static int GetFormatMenuID(eLLDBFormat format);
     /**
      * @brief return the format ID from the menu ID
      */
-    static eLLDBForamt GetFormatID(int menuID);
+    static eLLDBFormat GetFormatID(int menuID);
     
     /**
      * @brief Create a menu for the various formats

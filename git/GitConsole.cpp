@@ -352,9 +352,16 @@ void GitConsole::UpdateTreeView(const wxString& output)
             cols.push_back(wxString() << chX);
             cols.push_back(MakeIconText(filename, bmp));
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
+        } else {
+            cols.clear();
+            cols.push_back(MakeIconText(fn.GetFullName(), bmp));
+            cols.push_back(fn.GetFullPath());
+            m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
         }
     }
     m_dvListCtrl->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE); // adjust the width to the text
+    m_notebook672->SetPageText(1, wxString()
+                                      << _("Unversioned files (") << m_dvListCtrlUnversioned->GetItemCount() << ")");
 }
 
 void GitConsole::OnContextMenu(wxDataViewEvent& event)
@@ -369,9 +376,7 @@ void GitConsole::OnContextMenu(wxDataViewEvent& event)
     }
     menu.Append(XRCID("git_console_close_view"), _("Close View"));
 
-    if(hasSelection) {
-        menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file"));
-    }
+    if(hasSelection) { menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file")); }
     menu.Bind(wxEVT_MENU, &GitConsole::OnCloseView, this, XRCID("git_console_close_view"));
     m_dvListCtrl->PopupMenu(&menu);
 }
@@ -591,12 +596,73 @@ void GitConsole::OnCloseView(wxCommandEvent& e)
 
 void GitConsole::Clear()
 {
-    int count = m_dvListCtrl->GetItemCount();
-    for(int i = 0; i < count; ++i) {
-        GitClientData* cd = GIT_ITEM_DATA(m_dvListCtrl->RowToItem(i));
-        if(cd) { wxDELETE(cd); }
+    {
+        int count = m_dvListCtrl->GetItemCount();
+        for(int i = 0; i < count; ++i) {
+            GitClientData* cd = GIT_ITEM_DATA(m_dvListCtrl->RowToItem(i));
+            if(cd) { wxDELETE(cd); }
+        }
+        m_dvListCtrl->DeleteAllItems();
     }
-    m_dvListCtrl->DeleteAllItems();
+    {
+        int count = m_dvListCtrlUnversioned->GetItemCount();
+        for(int i = 0; i < count; ++i) {
+            GitClientData* cd = reinterpret_cast<GitClientData*>(
+                m_dvListCtrlUnversioned->GetItemData(m_dvListCtrlUnversioned->RowToItem(i)));
+            if(cd) { wxDELETE(cd); }
+        }
+        m_dvListCtrlUnversioned->DeleteAllItems();
+    }
 }
 
 void GitConsole::OnUpdateUI(wxUpdateUIEvent& event) { event.Enable(!m_git->GetRepositoryDirectory().IsEmpty()); }
+
+void GitConsole::OnUnversionedFileActivated(wxDataViewEvent& event)
+{
+    CHECK_ITEM_RET(event.GetItem());
+    GitClientData* cd = reinterpret_cast<GitClientData*>(m_dvListCtrlUnversioned->GetItemData(event.GetItem()));
+    CHECK_PTR_RET(cd);
+    clGetManager()->OpenFile(cd->GetPath());
+}
+
+void GitConsole::OnUnversionedFileContextMenu(wxDataViewEvent& event)
+{
+    wxMenu menu;
+    menu.Append(wxID_OPEN);
+    menu.Append(wxID_ADD);
+    menu.Bind(wxEVT_MENU, &GitConsole::OnOpenUnversionedFiles, this, wxID_OPEN);
+    menu.Bind(wxEVT_MENU, &GitConsole::OnAddUnversionedFiles, this, wxID_ADD);
+    m_dvListCtrlUnversioned->PopupMenu(&menu);
+}
+
+wxArrayString GitConsole::GetSelectedUnversionedFiles() const
+{
+    if(m_dvListCtrlUnversioned->GetSelectedItemsCount() == 0) { return wxArrayString(); }
+    wxArrayString paths;
+    wxDataViewItemArray items;
+    int count = m_dvListCtrlUnversioned->GetSelections(items);
+    for(int i = 0; i < count; i++) {
+        wxDataViewItem item = items.Item(i);
+        if(item.IsOk() == false) { continue; }
+
+        GitClientData* cd = reinterpret_cast<GitClientData*>(m_dvListCtrlUnversioned->GetItemData(item));
+        if(cd && cd->GetKind() == eGitFile::kUntrackedFile) { paths.Add(cd->GetPath()); }
+    }
+    return paths;
+}
+
+void GitConsole::OnOpenUnversionedFiles(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxArrayString paths = GetSelectedUnversionedFiles();
+    if(paths.IsEmpty()) { return; }
+    std::for_each(paths.begin(), paths.end(), [&](const wxString& filepath) {
+        if(!wxDirExists(filepath)) { clGetManager()->OpenFile(filepath); }
+    });
+}
+
+void GitConsole::OnAddUnversionedFiles(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_git->AddFiles(GetSelectedUnversionedFiles());
+}

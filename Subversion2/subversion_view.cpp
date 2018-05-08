@@ -400,7 +400,7 @@ void SubversionView::DoAddUnVersionedFiles(const wxArrayString& files)
         cols.push_back(filepath);
         m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new SvnTreeData(SvnTreeData::SvnNodeTypeFile, filepath));
     });
-    m_notebook80->SetPageText(1, wxString() << _("Unversioned Files (") << files.size() << ")");
+    m_notebook80->SetPageText(1, wxString() << _("Unversioned files (") << files.size() << ")");
 }
 
 void SubversionView::DoAddChangedFiles(const wxString& status, const wxArrayString& files)
@@ -1297,7 +1297,7 @@ void SubversionView::OnUnversionedItemsContextMenu(wxDataViewEvent& event)
     wxMenu menu;
     menu.Append(wxID_ADD);
     menu.Append(wxID_OPEN);
-    PopupMenu(&menu);
+    m_dvListCtrlUnversioned->PopupMenu(&menu);
 }
 
 wxArrayString SubversionView::GetSelectedUnversionedFiles() const

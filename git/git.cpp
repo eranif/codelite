@@ -2018,6 +2018,7 @@ void GitPlugin::OnClone(wxCommandEvent& e)
 
 void GitPlugin::DoAddFiles(const wxArrayString& files)
 {
+    if(files.IsEmpty()) { return; }
     m_addedFiles = true;
 
     wxString filesToAdd;

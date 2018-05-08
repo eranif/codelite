@@ -44,6 +44,7 @@
 #include <wx/bitmap.h>
 #include <wx/icon.h>
 #include <wx/gauge.h>
+#include <wx/notebook.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -459,7 +460,11 @@ protected:
     wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageTreeView;
+    wxNotebook* m_notebook672;
+    wxPanel* m_panel674;
     wxDataViewListCtrl* m_dvListCtrl;
+    wxPanel* m_panelUnversioned;
+    wxDataViewListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_splitterPage96;
     wxStyledTextCtrl* m_stcLog;
 
@@ -467,12 +472,18 @@ protected:
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnFileActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUnversionedFileActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnUnversionedFileContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnStclogStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     wxGauge* GetGauge() { return m_gauge; }
     wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxPanel* GetPanel674() { return m_panel674; }
+    wxDataViewListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
+    wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
+    wxNotebook* GetNotebook672() { return m_notebook672; }
     wxPanel* GetSplitterPageTreeView() { return m_splitterPageTreeView; }
     wxStyledTextCtrl* GetStcLog() { return m_stcLog; }
     wxPanel* GetSplitterPage96() { return m_splitterPage96; }

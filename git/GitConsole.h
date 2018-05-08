@@ -66,6 +66,8 @@ public:
     void PulseProgress();
 
 protected:
+    virtual void OnUnversionedFileActivated(wxDataViewEvent& event);
+    virtual void OnUnversionedFileContextMenu(wxDataViewEvent& event);
     virtual void OnUpdateUI(wxUpdateUIEvent& event);
     virtual void OnStclogStcChange(wxStyledTextEvent& event);
     virtual void OnApplyPatch(wxCommandEvent& event);
@@ -77,6 +79,8 @@ protected:
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnStopGitProcess(wxCommandEvent& event);
+    virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
+    virtual void OnAddUnversionedFiles(wxCommandEvent& event);
     
     void OnOpenFile(wxCommandEvent& e);
     void OnCloseView(wxCommandEvent& e);
@@ -89,5 +93,6 @@ protected:
     void DoOnDropdown(wxAuiToolBarEvent& e, const wxString& commandName, int id);
     void OnDropDownMenuEvent(wxCommandEvent& e);
     void Clear();
+    wxArrayString GetSelectedUnversionedFiles() const;
 };
 #endif // GITCONSOLE_H

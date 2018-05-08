@@ -14,6 +14,8 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
 #include <wx/dataview.h>
 #include <wx/stc/stc.h>
 #include <wx/dialog.h>
@@ -22,7 +24,6 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/treebook.h>
-#include <wx/imaglist.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/combobox.h>
@@ -57,7 +58,11 @@ class SubversionPageBase : public wxPanel
 protected:
     wxSplitterWindow* m_splitter17;
     wxPanel* m_splitterPageLeft;
+    wxNotebook* m_notebook80;
+    wxPanel* m_panel82;
     wxDataViewListCtrl* m_dvListCtrl;
+    wxPanel* m_panelUnversioned;
+    wxDataViewListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_splitterPageRight;
     wxStyledTextCtrl* m_sci;
 
@@ -65,6 +70,8 @@ protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnViewUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUnversionedItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnUnversionedItemsContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnCharAdded(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
@@ -72,6 +79,10 @@ protected:
 
 public:
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxPanel* GetPanel82() { return m_panel82; }
+    wxDataViewListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
+    wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
+    wxNotebook* GetNotebook80() { return m_notebook80; }
     wxPanel* GetSplitterPageLeft() { return m_splitterPageLeft; }
     wxStyledTextCtrl* GetSci() { return m_sci; }
     wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }

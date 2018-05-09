@@ -247,8 +247,6 @@ void ZoomNavigator::PatchUpHighlights(const int first, const int last)
 
 void ZoomNavigator::HookPopupMenu(wxMenu* menu, MenuType type) {}
 
-void ZoomNavigator::UnHookPopupMenu(wxMenu* menu, MenuType type) {}
-
 void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
 {
     IEditor* curEditor = m_mgr->GetActiveEditor();

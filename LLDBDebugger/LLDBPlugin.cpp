@@ -334,12 +334,6 @@ void LLDBPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
     }
 }
 
-void LLDBPlugin::UnHookPopupMenu(wxMenu* menu, MenuType type)
-{
-    wxUnusedVar(menu);
-    wxUnusedVar(type);
-}
-
 void LLDBPlugin::ClearDebuggerMarker()
 {
     IEditor::List_t editors;

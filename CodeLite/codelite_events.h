@@ -445,7 +445,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_REBUILD_WORKSPACE_TREE, wxCommand
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ACTIVE_PROJECT_CHANGED, clProjectSettingsEvent);
 
 // This event is fired by CodeLite before the find bar is shown
-// The handler can pass a wxStyledTextCtrl class pointer to be associated with the 
+// The handler can pass a wxStyledTextCtrl class pointer to be associated with the
 // find bar by using the clFindEvent::SetCtrl() method
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FINDBAR_ABOUT_TO_SHOW, clFindEvent);
 
@@ -779,7 +779,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PAGE_MODIFIED_UPDATE_UI, clComman
 // Send a clEditorConfig event. This event is sent whenever an editor requires
 // to update its properties (tabs vs spaces, EOL style etc)
 // A plugin may capture the event and send back EditorConfig data by doing the following:
-// Call: 
+// Call:
 // 1. event.Skip(false)
 // 2. Set the data using event.SetEditorConfig(...) method
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_CONFIG_LOADING, clEditorConfigEvent);

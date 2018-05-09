@@ -39,6 +39,7 @@ MemoryViewBase::MemoryViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     m_textCtrlExpression = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
     m_textCtrlExpression->SetToolTip(_("Address or pointer to watch"));
+    m_textCtrlExpression->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlExpression->SetHint(wxT(""));
     #endif

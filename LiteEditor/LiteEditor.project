@@ -666,10 +666,6 @@
     <File Name="shelltab.cpp"/>
     <File Name="workspacetab.cpp"/>
     <File Name="workspacetab.h"/>
-    <File Name="memoryviewbase.h"/>
-    <File Name="memoryview.cpp"/>
-    <File Name="memoryview.h"/>
-    <File Name="memoryviewbase.cpp"/>
     <File Name="debuggerasciiviewerbase.cpp"/>
     <File Name="debuggerasciiviewerbase.h"/>
     <File Name="debuggerasciiviewer.h"/>
@@ -752,7 +748,6 @@
     <File Name="DebuggerSettings.wxcp"/>
     <File Name="DebuggerDisassemblyTab.h"/>
     <File Name="DebuggerDisassemblyTab.cpp"/>
-    <File Name="memoryviewbase.wxcp"/>
     <File Name="../formbuilder/quickdebug.wxcp"/>
     <File Name="ThreadListPanelBase.wxcp"/>
   </VirtualDirectory>
@@ -931,7 +926,6 @@
       <File Name="editor_options_misc_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_caret_liteeditor_bitmaps.cpp"/>
       <File Name="plugindlgbase_liteeditor_bitmaps.cpp"/>
-      <File Name="memoryviewbase_liteeditor_bitmaps.cpp"/>
       <File Name="advance_settings_liteeditor_bitmaps.cpp"/>
       <File Name="depend_dlg_page_liteeditor_bitmaps.cpp"/>
       <File Name="filechecklistbase_liteeditor_bitmaps.cpp"/>

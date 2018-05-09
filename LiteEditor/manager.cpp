@@ -210,7 +210,7 @@ Manager::Manager(void)
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
                                   clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
-    
+
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
     // Add new workspace type
@@ -234,7 +234,7 @@ Manager::~Manager(void)
                                      clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
-    
+
     // stop background processes
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
 
@@ -953,9 +953,7 @@ void Manager::RetagFile(const wxString& filename)
         clLogMessage(wxString::Format(wxT("Workspace in being closed, skipping re-tag for file %s"), filename.c_str()));
         return;
     }
-    if(!TagsManagerST::Get()->IsValidCtagsFile(wxFileName(filename))) {
-        return;
-    }
+    if(!TagsManagerST::Get()->IsValidCtagsFile(wxFileName(filename))) { return; }
 
     wxFileName absFile(filename);
     absFile.MakeAbsolute();
@@ -3589,11 +3587,19 @@ void Manager::ShowNewProjectWizard(const wxString& workspaceFolder)
 
 void Manager::OnUpdateDebuggerActiveView(clDebugEvent& event)
 {
-    event.Skip();
-    UpdateDebuggerPane();
+    if(DebuggerMgr::Get().IsNativeDebuggerRunning()) {
+        UpdateDebuggerPane();
+
+    } else {
+        event.Skip();
+    }
 }
 
 void Manager::OnDebuggerSetMemory(clDebugEvent& event)
 {
-    SetMemory(event.GetMemoryAddress(), event.GetMemoryBlockSize(), event.GetMemoryBlockValue());
+    if(DebuggerMgr::Get().IsNativeDebuggerRunning()) {
+        SetMemory(event.GetMemoryAddress(), event.GetMemoryBlockSize(), event.GetMemoryBlockValue());
+    } else {
+        event.Skip();
+    }
 }

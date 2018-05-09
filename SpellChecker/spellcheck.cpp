@@ -484,7 +484,7 @@ void SpellCheck::OnSuggestion(wxCommandEvent& e)
         return;
     }
 
-    editor->ReplaceSelection(pMenuItem->GetText());
+    editor->ReplaceSelection(pMenuItem->GetItemLabel());
 }
 // ------------------------------------------------------------
 void SpellCheck::OnIgnoreWord(wxCommandEvent& e)

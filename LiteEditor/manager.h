@@ -147,7 +147,8 @@ public:
     void OnCmdRestart(wxCommandEvent& event);
     void GenerateCompileCommands();
     void OnFindInFilesDismissed(clCommandEvent &event);
-    
+    void OnUpdateDebuggerActiveView(clDebugEvent &event);
+    void OnDebuggerSetMemory(clDebugEvent &event);
     
 protected:
     void DoRestartCodeLite();

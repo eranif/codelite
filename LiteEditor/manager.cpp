@@ -210,7 +210,9 @@ Manager::Manager(void)
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
                                   clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
-
+    
+    EventNotifier::Get()->Bind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
 
@@ -230,6 +232,9 @@ Manager::~Manager(void)
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
                                      clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
+    
     // stop background processes
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
 
@@ -3580,4 +3585,15 @@ void Manager::ShowNewProjectWizard(const wxString& workspaceFolder)
         // Carry on with the default behaviour
         CreateProject(data, workspaceFolder);
     }
+}
+
+void Manager::OnUpdateDebuggerActiveView(clDebugEvent& event)
+{
+    event.Skip();
+    UpdateDebuggerPane();
+}
+
+void Manager::OnDebuggerSetMemory(clDebugEvent& event)
+{
+    SetMemory(event.GetMemoryAddress(), event.GetMemoryBlockSize(), event.GetMemoryBlockValue());
 }

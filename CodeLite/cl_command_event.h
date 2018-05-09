@@ -260,6 +260,9 @@ class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
     wxString m_arguments;        // wxEVT_DBG_UI_QUICK_DEBUG
     wxString m_startupCommands;  // wxEVT_DBG_UI_QUICK_DEBUG
     size_t m_features;
+    wxString m_memoryAddress;    // wxEVT_DEBUGGER_SET_MEMORY
+    wxString m_memoryBlockValue; // wxEVT_DEBUGGER_SET_MEMORY
+    size_t m_memoryBlockSize;    // wxEVT_DEBUGGER_SET_MEMORY
 
 public:
     // Special features not available by all the debuggers
@@ -299,6 +302,12 @@ public:
     void SetProjectName(const wxString& projectName) { this->m_projectName = projectName; }
     const wxString& GetConfigurationName() const { return m_configurationName; }
     const wxString& GetProjectName() const { return m_projectName; }
+    void SetMemoryAddress(const wxString& memoryAddress) { this->m_memoryAddress = memoryAddress; }
+    void SetMemoryBlockSize(size_t memoryBlockSize) { this->m_memoryBlockSize = memoryBlockSize; }
+    void SetMemoryBlockValue(const wxString& memoryBlockValue) { this->m_memoryBlockValue = memoryBlockValue; }
+    const wxString& GetMemoryAddress() const { return m_memoryAddress; }
+    size_t GetMemoryBlockSize() const { return m_memoryBlockSize; }
+    const wxString& GetMemoryBlockValue() const { return m_memoryBlockValue; }
 };
 
 typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);

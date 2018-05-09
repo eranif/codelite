@@ -23,26 +23,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/tokenzr.h>
-#include <wx/regex.h>
-#include "manager.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include "memoryview.h"
-#include "frame.h"
+#include <wx/msgdlg.h>
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
 
-MemoryView::MemoryView( wxWindow* parent )
-    : MemoryViewBase( parent )
+MemoryView::MemoryView(wxWindow* parent)
+    : MemoryViewBase(parent)
 {
-    m_buttonUpdate->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MemoryView::OnUpdateUI ), NULL, this );
-    m_textCtrlExpression->Connect( wxEVT_COMMAND_TEXT_ENTER, wxTextEventHandler( MemoryView::OnEvaluate ), NULL, this );
+    m_buttonUpdate->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemoryView::OnUpdateUI), NULL, this);
+    m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxTextEventHandler(MemoryView::OnEvaluate), NULL, this);
 }
 
-void MemoryView::OnEvaluate( wxCommandEvent& event )
+void MemoryView::OnEvaluate(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    ManagerST::Get()->UpdateDebuggerPane();
+    UpdateDebuggerPane();
 }
 
-void MemoryView::OnEvaluateUI( wxUpdateUIEvent& event )
+void MemoryView::OnEvaluateUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_textCtrlExpression->GetValue().IsEmpty() == false);
 }
@@ -81,7 +83,7 @@ void MemoryView::SetViewString(const wxString& text)
     // set the new value
     m_textCtrlMemory->SetValue(text);
 
-    if (newAddr == oldAddr) {
+    if(newAddr == oldAddr) {
 
         size_t shortLen = text.Length() < oldValue.Length() ? text.Length() : oldValue.Length();
 
@@ -93,12 +95,12 @@ void MemoryView::SetViewString(const wxString& text)
         bool needColouring(false);
         long possibleStart(0);
 
-        for (size_t i=0; i<shortLen; i++) {
+        for(size_t i = 0; i < shortLen; i++) {
 
             // reset word
-            if ((text.GetChar(i) == wxT(' ') || text.GetChar(i) == wxT('\n')) && needColouring) {
+            if((text.GetChar(i) == wxT(' ') || text.GetChar(i) == wxT('\n')) && needColouring) {
 
-                if (text.GetChar(i) != wxT('\n')) {
+                if(text.GetChar(i) != wxT('\n')) {
                     m_textCtrlMemory->SetStyle(start, (long)i, style);
                 }
 
@@ -106,13 +108,13 @@ void MemoryView::SetViewString(const wxString& text)
                 needColouring = false;
             }
 
-            if (text.GetChar(i) == wxT(' ') || text.GetChar(i) == wxT('\n')) {
+            if(text.GetChar(i) == wxT(' ') || text.GetChar(i) == wxT('\n')) {
                 possibleStart = (long)i;
             }
 
-            if (text.GetChar(i) != oldValue.GetChar(i)) {
+            if(text.GetChar(i) != oldValue.GetChar(i)) {
                 needColouring = true;
-                if (start == wxNOT_FOUND) {
+                if(start == wxNOT_FOUND) {
                     start = possibleStart;
                 }
             }
@@ -129,9 +131,9 @@ void MemoryView::SetViewString(const wxString& text)
     addrAttr.SetFont(addrFont);
 
     wxArrayString lines = wxStringTokenize(text, wxT("\n"), wxTOKEN_STRTOK);
-    for (size_t i=0; i<lines.GetCount(); i++) {
+    for(size_t i = 0; i < lines.GetCount(); i++) {
         long addr_end = lines.Item(i).Find(wxT(':'));
-        if (addr_end != wxNOT_FOUND) {
+        if(addr_end != wxNOT_FOUND) {
             long pos = m_textCtrlMemory->XYToPosition(0, (long)i);
             m_textCtrlMemory->SetStyle(pos, pos + addr_end, addrAttr);
         }
@@ -148,56 +150,62 @@ void MemoryView::OnUpdate(wxCommandEvent& e)
     // extract the text memory from the text control and pass it to the debugger
     wxString memory;
     wxArrayString lines = wxStringTokenize(m_textCtrlMemory->GetValue(), wxT("\n"), wxTOKEN_STRTOK);
-    for (size_t i=0; i<lines.GetCount(); i++) {
+    for(size_t i = 0; i < lines.GetCount(); i++) {
         wxString line = lines.Item(i).AfterFirst(wxT(':')).BeforeFirst(wxT(':')).Trim().Trim(false);
         wxArrayString hexValues = wxStringTokenize(line, wxT(" "), wxTOKEN_STRTOK);
-        for (size_t y=0; y<hexValues.GetCount(); y++) {
+        for(size_t y = 0; y < hexValues.GetCount(); y++) {
             wxString hex = hexValues.Item(y);
-            if (reHex.Matches( hex ) && hex.Len() == 4) {
+            if(reHex.Matches(hex) && hex.Len() == 4) {
                 // OK
                 continue;
             } else {
-                wxMessageBox(wxString::Format(_("Invalid memory value: %s"), hex), _("CodeLite"), wxICON_WARNING|wxOK);
+                wxMessageBox(wxString::Format(_("Invalid memory value: %s"), hex), _("CodeLite"),
+                             wxICON_WARNING | wxOK);
                 // update the pane to old value
-                ManagerST::Get()->UpdateDebuggerPane();
+                UpdateDebuggerPane();
                 return;
             }
         }
 
-        if (line.IsEmpty() == false) {
+        if(line.IsEmpty() == false) {
             memory << line << wxT(" ");
         }
     }
 
     // set the new memory
     memory = memory.Trim().Trim(false);
-    ManagerST::Get()->SetMemory(m_textCtrlExpression->GetValue(), GetSize(), memory);
+    clDebugEvent memoryEvent(wxEVT_DEBUGGER_SET_MEMORY);
+    memoryEvent.SetMemoryAddress(m_textCtrlExpression->GetValue());
+    memoryEvent.SetMemoryBlockSize(GetSize());
+    memoryEvent.SetMemoryBlockValue(memory);
+    EventNotifier::Get()->AddPendingEvent(memoryEvent);
 
     // update the view
-    ManagerST::Get()->UpdateDebuggerPane();
+    UpdateDebuggerPane();
 }
 
-void MemoryView::OnUpdateUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_textCtrlMemory->IsModified());
-}
+void MemoryView::OnUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_textCtrlMemory->IsModified()); }
 
 void MemoryView::OnMemorySize(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    ManagerST::Get()->UpdateDebuggerPane();
+    UpdateDebuggerPane();
 }
 
 void MemoryView::OnNumberOfRows(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    ManagerST::Get()->UpdateDebuggerPane();
+    UpdateDebuggerPane();
 }
-void MemoryView::OnTextDClick(wxMouseEvent& event)
-{
-}
+void MemoryView::OnTextDClick(wxMouseEvent& event) {}
 void MemoryView::OnTextEntered(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    ManagerST::Get()->UpdateDebuggerPane();
+    UpdateDebuggerPane();
+}
+
+void MemoryView::UpdateDebuggerPane()
+{
+    clDebugEvent dbgevent(wxEVT_DEBUGGER_REFRESH_PANE);
+    EventNotifier::Get()->AddPendingEvent(dbgevent);
 }

@@ -1195,9 +1195,9 @@ void GitPlugin::ProcessGitActionQueue()
         break;
 
     case gitBranchCurrent:
-        GIT_MESSAGE(wxT("Get current branch"));
+        GIT_MESSAGE1(wxT("Get current branch"));
         command << wxT(" --no-pager branch --no-color");
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitBranchList:
@@ -1392,7 +1392,7 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
     }
 
     if(!m_currentBranch.IsEmpty()) {
-        GIT_MESSAGE(wxT("Current branch ") + m_currentBranch);
+        GIT_MESSAGE1(wxT("Current branch ") + m_currentBranch);
         m_mgr->GetDockingManager()
             ->GetPane(wxT("Workspace View"))
             .Caption(wxT("Workspace View [") + m_currentBranch + wxT("]"));
@@ -1682,7 +1682,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     gitAction ga;
     if(!m_gitActionQueue.empty()) { ga = m_gitActionQueue.front(); }
 
-    if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) m_console->AddRawText(output);
+    if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) { m_console->AddRawText(output); }
     m_commandOutput.Append(output);
 
     // Handle password required

@@ -99,7 +99,7 @@ protected:
     void DoAddChangedFiles(const wxString& status, const wxArrayString& files);
     void DoAddUnVersionedFiles(const wxArrayString& files);
     int DoGetIconIndex(const wxString& filename);
-    void DoGetSelectedFiles(wxArrayString& paths);
+    void DoGetSelectedFiles(wxArrayString& paths, bool absPath = false);
     void DoGetAllFiles(wxArrayString& paths);
     void DoLinkEditor();
     void DoChangeRootPathUI(const wxString& path);

@@ -492,7 +492,7 @@ void SubversionView::CreateRootMenu(wxMenu* menu)
     menu->Append(menuItem);
 }
 
-void SubversionView::DoGetSelectedFiles(wxArrayString& paths)
+void SubversionView::DoGetSelectedFiles(wxArrayString& paths, bool absPath)
 {
     paths.Clear();
     if(m_dvListCtrl->GetSelectedItemsCount() == 0) { return; }
@@ -502,7 +502,13 @@ void SubversionView::DoGetSelectedFiles(wxArrayString& paths)
     m_dvListCtrl->GetSelections(items);
     for(size_t i = 0; i < items.GetCount(); ++i) {
         SvnTreeData* d = (SvnTreeData*)m_dvListCtrl->GetItemData(items.Item(i));
-        paths.Add(d->GetFilepath());
+        if(absPath) {
+            wxFileName fn(d->GetFilepath());
+            fn.MakeAbsolute(DoGetCurRepoPath());
+            paths.Add(fn.GetFullPath());
+        } else {
+            paths.Add(d->GetFilepath());
+        }
     }
 }
 
@@ -576,21 +582,21 @@ void SubversionView::OnAdd(wxCommandEvent& event)
 
 void SubversionView::OnRevert(wxCommandEvent& event)
 {
-    wxString command;
-
+    wxArrayString paths;
+    DoGetSelectedFiles(paths);
+    
+    if(paths.IsEmpty()) { return; }
+    
     if(wxMessageBox(_("You are about to revert all your changes\nAre you sure?"), "CodeLite",
                     wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER) != wxYES) {
         return;
     }
 
     // Svn revert does not require login string
+    wxString command;
     command << m_plugin->GetSvnExeName() << wxT(" revert --recursive ");
 
     if(event.GetId() == XRCID("svn_file_revert")) {
-        wxArrayString paths;
-        DoGetSelectedFiles(paths);
-        if(paths.IsEmpty()) return;
-
         // Concatenate list of files to be updated
         for(size_t i = 0; i < paths.GetCount(); i++) {
             ::WrapWithQuotes(paths.Item(i));

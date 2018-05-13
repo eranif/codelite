@@ -105,18 +105,14 @@ void OptionsDlg2::DoSave()
 
 void OptionsDlg2::Initialize()
 {
-    m_treeBook->AddPage(0, _("Editor"));
-    AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook), _("Guides"), true);
-    AddSubPage(new EditorOptionsGeneralEdit(m_treeBook), _("Edit"), false);
-    AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), _("Indentation"));
-    AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), _("Right Margin Indicator"));
-    AddSubPage(new EditorSettingsCaret(m_treeBook), _("Caret & Scrolling"));
-    AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook), _("Save Options"));
-
-    m_treeBook->AddPage(0, wxT("Tweaks"));
-    AddSubPage(new EditorSettingsComments(m_treeBook), _("Code"));
-    AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), _("Doxygen"));
-
+    AddPage(new EditorOptionsGeneralGuidesPanel(m_treeBook), _("Guides"), true);
+    AddPage(new EditorOptionsGeneralEdit(m_treeBook), _("Edit"), false);
+    AddPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), _("Indentation"));
+    AddPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), _("Right Margin Indicator"));
+    AddPage(new EditorSettingsCaret(m_treeBook), _("Caret & Scrolling"));
+    AddPage(new EditorOptionsGeneralSavePanel(m_treeBook), _("Save Options"));
+    AddPage(new EditorSettingsComments(m_treeBook), _("Code"));
+    AddPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), _("Documentation"));
     AddPage(new EditorSettingsFolding(m_treeBook), _("Folding"));
     AddPage(new EditorSettingsBookmarksPanel(m_treeBook), _("Bookmarks"));
     AddPage(new EditorSettingsDockingWindows(m_treeBook), _("Windows & Tabs"));
@@ -124,6 +120,5 @@ void OptionsDlg2::Initialize()
     // the Terminal page should NOT be added under Windows
     AddPage(new EditorSettingsTerminal(m_treeBook), _("Terminal"));
     AddPage(new EditorSettingsMiscPanel(m_treeBook), _("Misc"));
-
     SetMinSize(wxSize(300, 200));
 }

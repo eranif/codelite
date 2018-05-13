@@ -305,7 +305,7 @@ if ( USE_AUI_NOTEBOOK )
     message("-- Using Custom Notebook class")
 else ( USE_AUI_NOTEBOOK )
     add_definitions( -DUSE_AUI_NOTEBOOK=0 )
-    message("-- Using wxAuiNotebook class")
+    message("-- Using wxAuiNotebook class is disabled")
 endif ( USE_AUI_NOTEBOOK )
 unset(USE_AUI_NOTEBOOK CACHE)
 

@@ -231,13 +231,12 @@ TagsOptionsData::TagsOptionsData()
     m_types.Add(wxT("boost::shared_ptr::type=T"));
     m_types.Add(wxT("std::unique_ptr::pointer=_Tp"));
 
-    DoUpdateTokensWxMap();
-    DoUpdateTokensWxMapReversed();
+    SyncData();
 }
 
 TagsOptionsData::~TagsOptionsData() {}
 
-wxString TagsOptionsData::ToString()
+wxString TagsOptionsData::ToString() const
 {
     wxString options(wxEmptyString);
 
@@ -251,7 +250,6 @@ wxString TagsOptionsData::ToString()
         }
     }
 
-    DoUpdateTokensWxMap();
     const wxStringTable_t& tokensMap = GetTokensWxMap();
     wxStringTable_t::const_iterator iter = tokensMap.begin();
 
@@ -451,4 +449,10 @@ void TagsOptionsData::Merge(const TagsOptionsData& tod)
         m_ccNumberOfDisplayItems = tod.m_ccNumberOfDisplayItems;
     }
     m_version = TagsOptionsData::CURRENT_VERSION;
+}
+
+void TagsOptionsData::SyncData()
+{
+    DoUpdateTokensWxMap();
+    DoUpdateTokensWxMapReversed();
 }

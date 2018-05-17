@@ -2535,14 +2535,13 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
     colourTypes = m_tagsOptionsData.GetCcColourFlags();
 
     wxArrayString pathsBefore = m_tagsOptionsData.GetParserSearchPaths();
-    TagsOptionsDlg dlg(this, m_tagsOptionsData);
+    CodeCompletionSettingsDialog dlg(this, m_tagsOptionsData);
     if(dlg.ShowModal() == wxID_OK) {
         m_tagsOptionsData = dlg.GetData();
-
-        // We call here to ToString() only because ToString() internally
+        
         // writes the content into the ctags.replacements file (used by
         // codelite_indexer)
-        m_tagsOptionsData.ToString();
+        m_tagsOptionsData.SyncData();
 
         wxArrayString pathsAfter = m_tagsOptionsData.GetParserSearchPaths();
         wxArrayString removedPaths;

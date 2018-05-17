@@ -2741,7 +2741,7 @@ void clMainFrame::ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event)
 
 void clMainFrame::OnViewOptions(wxCommandEvent& WXUNUSED(event))
 {
-    OptionsDlg2 dlg(this);
+    PreferencesDialog dlg(this);
     dlg.ShowModal();
 
     if(dlg.restartRquired) {

@@ -3029,10 +3029,8 @@ void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)
     e.SetEventObject(this);
     e.SetAnswer(false);
     EventNotifier::Get()->ProcessEvent(e);
-
-    bool normalCondition = ManagerST::Get()->GetActiveProjectName().IsEmpty() == false &&
-                           !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->IsProgramRunning();
-    event.Enable(normalCondition || !e.IsAnswer());
+    bool somethingIsRunning = ManagerST::Get()->IsProgramRunning() || e.IsAnswer();
+    event.Enable(!somethingIsRunning);
 }
 
 void clMainFrame::OnTimer(wxTimerEvent& event)

@@ -25,7 +25,8 @@ protected:
     void OnEventProxy(wxBookCtrlEvent& event);
 
 public:
-    clMultiBook(wxWindow* parent);
+    clMultiBook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
     virtual ~clMultiBook();
 
     /**

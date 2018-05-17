@@ -464,7 +464,10 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
     wxStyledTextCtrl* editor(NULL);
     if(tab.isFile) {
         title = tab.filename.GetFullName();
-        editor = dynamic_cast<wxStyledTextCtrl*>(tab.window);
+        IEditor* i_editor = clGetManager()->FindEditor(tab.filename.GetFullPath());
+        if(i_editor) {
+            editor = i_editor->GetCtrl();
+        }
     } else {
         title = tab.text;
     }

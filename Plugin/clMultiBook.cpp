@@ -3,9 +3,10 @@
 #include <algorithm>
 #include <wx/wupdlock.h>
 
-clMultiBook::clMultiBook(wxWindow* parent)
-    : wxPanel(parent)
-    , m_style(0)
+clMultiBook::clMultiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+                         const wxString& name)
+    : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL, name)
+    , m_style(style)
     , m_selection(wxNOT_FOUND)
 {
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
@@ -63,14 +64,15 @@ void clMultiBook::UpdateView()
             ++iter;
         }
     }
+    if(GetPageCount() == 0) {
+        m_selection = wxNOT_FOUND;
+    }
 }
 
 int clMultiBook::BookIndexToGlobalIndex(size_t bookIndex, size_t pageIndex) const
 {
     // Sanity
-    if(bookIndex >= m_books.size()) {
-        return wxNOT_FOUND;
-    }
+    if(bookIndex >= m_books.size()) { return wxNOT_FOUND; }
 
     int globalIndex = pageIndex;
     for(size_t i = 0; i < bookIndex; ++i) {
@@ -93,9 +95,7 @@ int clMultiBook::BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const
     }
 
     // Sanity
-    if(!found) {
-        return wxNOT_FOUND;
-    }
+    if(!found) { return wxNOT_FOUND; }
     return globalIndex;
 }
 
@@ -107,9 +107,7 @@ void clMultiBook::MoveRight(size_t pageIndex)
     Notebook* srcBook = nullptr;
     size_t srcBookIndex;
     size_t modPageIndex;
-    if(!GetBookByPageIndex(pageIndex, &srcBook, srcBookIndex, modPageIndex)) {
-        return;
-    }
+    if(!GetBookByPageIndex(pageIndex, &srcBook, srcBookIndex, modPageIndex)) { return; }
 
     Notebook* destBook = nullptr;
     size_t destBookIndex = (srcBookIndex + 1);
@@ -126,9 +124,7 @@ void clMultiBook::MoveLeft(size_t pageIndex) {}
 
 void clMultiBook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
 {
-    if(m_books.empty()) {
-        AddNotebook();
-    }
+    if(m_books.empty()) { AddNotebook(); }
     m_books[0]->AddPage(page, label, selected, bmp);
 }
 
@@ -157,9 +153,7 @@ wxWindow* clMultiBook::GetPage(size_t index) const
     Notebook* book;
     size_t modIndex;
     size_t bookIndex;
-    if(!GetBookByPageIndex(index, &book, bookIndex, modIndex)) {
-        return nullptr;
-    }
+    if(!GetBookByPageIndex(index, &book, bookIndex, modIndex)) { return nullptr; }
     return book->GetPage(modIndex);
 }
 
@@ -168,9 +162,7 @@ bool clMultiBook::DeletePage(size_t page, bool notify)
     Notebook* book;
     size_t modIndex;
     size_t bookIndex;
-    if(!GetBookByPageIndex(page, &book, bookIndex, modIndex)) {
-        return false;
-    }
+    if(!GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return false; }
     bool res = book->DeletePage(modIndex, notify);
     UpdateView();
     return res;
@@ -180,9 +172,7 @@ wxWindow* clMultiBook::GetCurrentPage() const
 {
     Notebook* book;
     size_t bookIndex;
-    if(GetActiveBook(&book, bookIndex)) {
-        return book->GetCurrentPage();
-    }
+    if(GetActiveBook(&book, bookIndex)) { return book->GetCurrentPage(); }
     return nullptr;
 }
 
@@ -213,9 +203,7 @@ bool clMultiBook::SetPageToolTip(size_t page, const wxString& tooltip)
     Notebook* book;
     size_t bookIndex;
     size_t modIndex;
-    if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) {
-        return book->SetPageToolTip(modIndex, tooltip);
-    }
+    if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return book->SetPageToolTip(modIndex, tooltip); }
     return false;
 }
 
@@ -224,8 +212,11 @@ int clMultiBook::SetSelection(size_t tabIdx)
     Notebook* book;
     size_t bookIndex;
     size_t modIndex;
-    if(GetBookByPageIndex(tabIdx, &book, bookIndex, modIndex)) {
-        return book->SetSelection(modIndex);
+    if(GetBookByPageIndex(tabIdx, &book, bookIndex, modIndex)) 
+    { 
+        // Update the current selection
+        m_selection = tabIdx;
+        return book->SetSelection(modIndex); 
     }
     return wxNOT_FOUND;
 }
@@ -235,9 +226,7 @@ bool clMultiBook::SetPageText(size_t page, const wxString& text)
     Notebook* book;
     size_t bookIndex;
     size_t modIndex;
-    if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) {
-        return book->SetPageText(modIndex, text);
-    }
+    if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return book->SetPageText(modIndex, text); }
     return false;
 }
 
@@ -246,9 +235,7 @@ wxString clMultiBook::GetPageText(size_t page) const
     Notebook* book;
     size_t bookIndex;
     size_t modIndex;
-    if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) {
-        return book->GetPageText(modIndex);
-    }
+    if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return book->GetPageText(modIndex); }
     return wxEmptyString;
 }
 
@@ -271,9 +258,7 @@ int clMultiBook::GetPageIndex(wxWindow* window) const
 {
     for(size_t i = 0; i < m_books.size(); ++i) {
         int index = m_books[i]->GetPageIndex(window);
-        if(index != wxNOT_FOUND) {
-            return BookIndexToGlobalIndex(i, index);
-        }
+        if(index != wxNOT_FOUND) { return BookIndexToGlobalIndex(i, index); }
     }
     return wxNOT_FOUND;
 }
@@ -282,9 +267,7 @@ int clMultiBook::GetPageIndex(const wxString& label) const
 {
     for(size_t i = 0; i < m_books.size(); ++i) {
         int index = m_books[i]->GetPageIndex(label);
-        if(index != wxNOT_FOUND) {
-            return BookIndexToGlobalIndex(i, index);
-        }
+        if(index != wxNOT_FOUND) { return BookIndexToGlobalIndex(i, index); }
     }
     return wxNOT_FOUND;
 }
@@ -294,9 +277,7 @@ void clMultiBook::SetPageBitmap(size_t index, const wxBitmap& bmp)
     Notebook* book;
     size_t bookIndex;
     size_t modIndex;
-    if(GetBookByPageIndex(index, &book, bookIndex, modIndex)) {
-        book->SetPageBitmap(modIndex, bmp);
-    }
+    if(GetBookByPageIndex(index, &book, bookIndex, modIndex)) { book->SetPageBitmap(modIndex, bmp); }
 }
 
 bool clMultiBook::RemovePage(size_t page, bool notify)
@@ -315,6 +296,7 @@ bool clMultiBook::RemovePage(size_t page, bool notify)
 bool clMultiBook::MoveActivePage(int newIndex)
 {
     // FIXME: implement this
+    return false;
 }
 
 Notebook* clMultiBook::AddNotebook()
@@ -339,6 +321,11 @@ Notebook* clMultiBook::AddNotebook()
 
 void clMultiBook::OnEventProxy(wxBookCtrlEvent& event)
 {
+    if(event.GetEventObject() == this) {
+        // Avoid loops
+        event.Skip();
+        return;
+    }
     int selection = event.GetSelection();
     int oldSelection = event.GetOldSelection();
 
@@ -353,15 +340,17 @@ void clMultiBook::OnEventProxy(wxBookCtrlEvent& event)
     proxyEvent.SetEventObject(this);
     proxyEvent.SetSelection(wxNOT_FOUND);
     proxyEvent.SetOldSelection(wxNOT_FOUND);
-    if(selection != wxNOT_FOUND) {
-        proxyEvent.SetSelection(BookIndexToGlobalIndex(book, selection));
-    }
-    if(oldSelection != wxNOT_FOUND) {
-        proxyEvent.SetOldSelection(BookIndexToGlobalIndex(book, oldSelection));
-    }
+    if(selection != wxNOT_FOUND) { proxyEvent.SetSelection(BookIndexToGlobalIndex(book, selection)); }
+    if(oldSelection != wxNOT_FOUND) { proxyEvent.SetOldSelection(BookIndexToGlobalIndex(book, oldSelection)); }
+
     // Process the event
-    if(event.GetEventType() == wxEVT_BOOK_PAGE_CLOSING || event.GetEventType() == wxEVT_BOOK_PAGE_CLOSING) {
-        // Handle with ProcessEvent
+    if((event.GetEventType() == wxEVT_BOOK_TAB_CONTEXT_MENU) || (event.GetEventType() == wxEVT_BOOK_PAGE_CHANGED)) {
+        // Use ProcessEvent
+        GetEventHandler()->ProcessEvent(proxyEvent);
+    } else if((event.GetEventType() == wxEVT_BOOK_PAGE_CLOSING) || (event.GetEventType() == wxEVT_BOOK_PAGE_CHANGING)) {
+        // Handle with ProcessEvent with Veto option
+        GetEventHandler()->ProcessEvent(proxyEvent);
+        if(!proxyEvent.IsAllowed()) { event.Veto(); }
     } else {
         // Handle with AddPendingEvent
         GetEventHandler()->AddPendingEvent(proxyEvent);

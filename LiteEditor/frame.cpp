@@ -2769,7 +2769,7 @@ void clMainFrame::OnAdvanceSettings(wxCommandEvent& event)
         selected_page = 1;
     }
 
-    AdvancedDlg dlg(this, selected_page);
+    BuildSettingsDialog dlg(this, selected_page);
     if(dlg.ShowModal() == wxID_OK) {
         // mark the whole workspace as dirty so makefile generation will take place
         // force makefile generation upon configuration change

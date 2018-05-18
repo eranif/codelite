@@ -226,6 +226,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     } else {
         m_colours.InitLightColours();
     }
+    SetStyle(m_style);
     // The history object
     m_history.reset(new clTabHistory());
 }

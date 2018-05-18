@@ -1,9 +1,13 @@
 #include "clMultiBook.h"
+#include "clTabRendererClassic.h"
+#include "clTabRendererCurved.h"
+#include "clTabRendererSquare.h"
 #include "file_logger.h"
 #include "macros.h"
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/wupdlock.h>
+#include "editor_config.h"
 
 clMultiBook::clMultiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                          const wxString& name)
@@ -210,11 +214,11 @@ bool clMultiBook::DeletePage(size_t page, bool notify)
     size_t modIndex;
     size_t bookIndex;
     if(!GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return false; }
-    
+
     // Update the history
     wxWindow* pageToDelete = book->GetPage(modIndex);
     m_history->Pop(pageToDelete);
-    
+
     // Delete the page
     bool res = book->DeletePage(modIndex, notify);
     UpdateView();
@@ -268,12 +272,12 @@ int clMultiBook::SetSelection(size_t tabIdx)
     if(GetBookByPageIndex(tabIdx, &book, bookIndex, modIndex)) {
         // Update the current selection
         m_selection = tabIdx;
-        
+
         // Update the history
         wxWindow* focusedPage = book->GetPage(modIndex);
         m_history->Pop(focusedPage);
         m_history->Push(focusedPage);
-        
+
         // And perform the actual selection change
         return book->SetSelection(modIndex);
     }
@@ -374,6 +378,8 @@ Notebook* clMultiBook::AddNotebook()
     wxWindowUpdateLocker locker(this);
 
     Notebook* book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_style);
+    book->SetStyle(m_style);
+
     m_books.push_back(book);
     GetSizer()->Add(book, 1, wxEXPAND, 0);
 

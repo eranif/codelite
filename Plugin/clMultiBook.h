@@ -5,12 +5,14 @@
 #include <codelite_exports.h>
 #include <vector>
 #include <wx/bitmap.h>
+#include "clTabHistory.h"
 
 class WXDLLIMPEXP_SDK clMultiBook : public wxPanel
 {
     std::vector<Notebook*> m_books;
     size_t m_style;
     int m_selection;
+    clTabHistory::Ptr_t m_history;
 
 protected:
     bool GetActiveBook(Notebook** book, size_t& bookIndex) const;
@@ -31,7 +33,9 @@ public:
     clMultiBook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
     virtual ~clMultiBook();
-
+    
+    clTabHistory::Ptr_t GetHistory() { return m_history; }
+    
     /**
      * @brief move page one notebook right
      */
@@ -116,6 +120,13 @@ public:
      * @brief Returns the string for the given page
      */
     wxString GetPageText(size_t page) const;
+    /**
+     * @brief return the page bitmap
+     * @param page
+     * @return 
+     */
+    wxBitmap GetPageBitmap(size_t page) const;
+    
     /**
      * @brief Deletes all pages
      */

@@ -13,6 +13,7 @@ clMultiBook::clMultiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
 {
     wxTheApp->Bind(wxEVT_SET_FOCUS, &clMultiBook::OnFocus, this);
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    m_history.reset(new clTabHistory());
 }
 
 clMultiBook::~clMultiBook() { wxTheApp->Unbind(wxEVT_SET_FOCUS, &clMultiBook::OnFocus, this); }
@@ -56,11 +57,14 @@ void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* 
 
     srcbook->RemovePage(index, false);
     destbook->AddPage(page, text, true, bmp);
+
+    // Make the newly added tab the focused one
+    page->CallAfter(&wxWindow::SetFocus);
 }
 
 void clMultiBook::UpdateView()
 {
-    //wxWindowUpdateLocker locker(this);
+    wxWindowUpdateLocker locker(this);
     std::vector<Notebook*>::iterator iter = m_books.begin();
     while(iter != m_books.end()) {
         Notebook* b = *iter;
@@ -166,6 +170,7 @@ void clMultiBook::AddPage(wxWindow* page, const wxString& label, bool selected, 
 {
     if(m_books.empty()) { AddNotebook(); }
     m_books[0]->AddPage(page, label, selected, bmp);
+    m_history->Push(page);
 }
 
 bool clMultiBook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
@@ -179,7 +184,9 @@ bool clMultiBook::InsertPage(size_t index, wxWindow* page, const wxString& label
         size_t modindex;
         size_t bookindex;
         if(GetBookByPageIndex(index, &b, bookindex, modindex)) {
-            return b->InsertPage(modindex, page, label, selected, bmp);
+            bool res = b->InsertPage(modindex, page, label, selected, bmp);
+            if(res) { m_history->Push(page); }
+            return res;
         } else {
             AddPage(page, label, selected, bmp);
             return true;
@@ -203,6 +210,12 @@ bool clMultiBook::DeletePage(size_t page, bool notify)
     size_t modIndex;
     size_t bookIndex;
     if(!GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return false; }
+    
+    // Update the history
+    wxWindow* pageToDelete = book->GetPage(modIndex);
+    m_history->Pop(pageToDelete);
+    
+    // Delete the page
     bool res = book->DeletePage(modIndex, notify);
     UpdateView();
     return res;
@@ -255,6 +268,13 @@ int clMultiBook::SetSelection(size_t tabIdx)
     if(GetBookByPageIndex(tabIdx, &book, bookIndex, modIndex)) {
         // Update the current selection
         m_selection = tabIdx;
+        
+        // Update the history
+        wxWindow* focusedPage = book->GetPage(modIndex);
+        m_history->Pop(focusedPage);
+        m_history->Push(focusedPage);
+        
+        // And perform the actual selection change
         return book->SetSelection(modIndex);
     }
     return wxNOT_FOUND;
@@ -281,6 +301,8 @@ wxString clMultiBook::GetPageText(size_t page) const
 bool clMultiBook::DeleteAllPages()
 {
     std::for_each(m_books.begin(), m_books.end(), [&](Notebook* book) { book->DeleteAllPages(); });
+    // Update the history
+    m_history->Clear();
     UpdateView();
     return true;
 }
@@ -329,6 +351,10 @@ bool clMultiBook::RemovePage(size_t page, bool notify)
         // it has a valid parent (UpdateView() below might destory its parent
         // Notebook control)
         wxWindow* removedPage = book->GetPage(modIndex);
+
+        // Update the history
+        m_history->Pop(removedPage);
+
         removedPage->Reparent(this);
         bool res = book->RemovePage(modIndex, notify);
         UpdateView();
@@ -441,4 +467,13 @@ bool clMultiBook::IsOurNotebook(Notebook* book) const
         if(book == m_books[i]) { return true; }
     }
     return false;
+}
+
+wxBitmap clMultiBook::GetPageBitmap(size_t page) const
+{
+    Notebook* book;
+    size_t bookIndex;
+    size_t modIndex;
+    if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return book->GetPageBitmap(modIndex); }
+    return wxNullBitmap;
 }

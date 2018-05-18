@@ -1082,7 +1082,7 @@ void clTabCtrl::OnContextMenu(wxContextMenuEvent& event)
         } else {
             // fire an event for the selected tab
             wxBookCtrlEvent menuEvent(wxEVT_BOOK_TAB_CONTEXT_MENU);
-            menuEvent.SetEventObject(this);
+            menuEvent.SetEventObject(GetParent());
             menuEvent.SetSelection(realPos);
             GetParent()->GetEventHandler()->ProcessEvent(menuEvent);
         }

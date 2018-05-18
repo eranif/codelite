@@ -15,14 +15,17 @@ class WXDLLIMPEXP_SDK clMultiBook : public wxPanel
 protected:
     bool GetActiveBook(Notebook** book, size_t& bookIndex) const;
     bool GetBookByPageIndex(size_t pageIndex, Notebook** book, size_t& bookIndex, size_t& modPageIndex) const;
+    bool GetActivePageBook(Notebook** book, size_t& bookIndex, size_t& modPageIndex) const;
     void MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* destbook);
     void UpdateView();
     int BookIndexToGlobalIndex(size_t bookIndex, size_t pageIndex) const;
     int BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const;
     Notebook* AddNotebook();
+    bool IsOurNotebook(Notebook* book) const;
 
 protected:
     void OnEventProxy(wxBookCtrlEvent& event);
+    void OnFocus(wxFocusEvent& e);
 
 public:
     clMultiBook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
@@ -32,12 +35,22 @@ public:
     /**
      * @brief move page one notebook right
      */
-    void MoveRight(size_t pageIndex);
+    void MoveToRightTabGroup();
 
     /**
      * @brief move page one notebook left
      */
-    void MoveLeft(size_t pageIndex);
+    void MoveToLeftTabGroup();
+
+    /**
+     * @brief can we move the active tab to left tab group?
+     */
+    bool CanMoveToTabGroupLeft() const;
+
+    /**
+     * @brief can we move the active tab to the right tab group?
+     */
+    bool CanMoveToTabGroupRight() const;
 
     //----------------------------
     // Notebook compatiblity API

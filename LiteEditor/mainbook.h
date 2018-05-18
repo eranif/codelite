@@ -27,6 +27,7 @@
 
 #include "Notebook.h"
 #include "clEditorBar.h"
+#include "clMultiBook.h"
 #include "cl_command_event.h"
 #include "editorframe.h"
 #include "filehistory.h"
@@ -47,7 +48,7 @@ class MainBook : public wxPanel
 private:
     FileHistory m_recentFiles;
     clEditorBar* m_navBar;
-    Notebook* m_book;
+    clMultiBook* m_book;
     QuickFindBar* m_quickFindBar;
     MessagePane* m_messagePane;
     bool m_useBuffereLimit;
@@ -118,18 +119,30 @@ private:
 public:
     MainBook(wxWindow* parent);
     ~MainBook();
-
+    
+    /**
+     * @brief move the active tab to another tab group (notebook). To the left
+     */
+    void MoveActiveTabToLeftTabGroup();
+    /**
+     * @brief move the active tab to another tab group (notebook). To the right
+     */
+    void MoveActiveTabToRIghtTabGroup();
+    
+    bool CanMoveActiveTabToRIghtTabGroup() const;
+    bool CanMoveActiveTabToLeftTabGroup() const;
+    
     static bool AskUserToSave(LEditor* editor);
     /**
      * @brief show the navigation dialog
      */
     void ShowNavigationDialog();
-    
+
     /**
      * @brief move the active page right or left
      */
     void MovePage(bool movePageRight);
-    
+
     const EditorFrame::List_t& GetDetachedEditors() const { return m_detachedEditors; }
     void DetachActiveEditor();
     void ClearFileHistory();

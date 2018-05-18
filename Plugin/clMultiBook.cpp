@@ -1,6 +1,8 @@
 #include "clMultiBook.h"
 #include "file_logger.h"
+#include "macros.h"
 #include <algorithm>
+#include <wx/app.h>
 #include <wx/wupdlock.h>
 
 clMultiBook::clMultiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
@@ -9,10 +11,11 @@ clMultiBook::clMultiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     , m_style(style)
     , m_selection(wxNOT_FOUND)
 {
+    wxTheApp->Bind(wxEVT_SET_FOCUS, &clMultiBook::OnFocus, this);
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 }
 
-clMultiBook::~clMultiBook() {}
+clMultiBook::~clMultiBook() { wxTheApp->Unbind(wxEVT_SET_FOCUS, &clMultiBook::OnFocus, this); }
 
 //-------------------------------------
 // Helper functions
@@ -37,6 +40,11 @@ bool clMultiBook::GetBookByPageIndex(size_t pageIndex, Notebook** book, size_t& 
         pageIndex -= b->GetPageCount();
     }
     return false;
+}
+
+bool clMultiBook::GetActivePageBook(Notebook** book, size_t& bookIndex, size_t& modPageIndex) const
+{
+    return GetBookByPageIndex(m_selection, book, bookIndex, modPageIndex);
 }
 
 void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* destbook)
@@ -64,9 +72,8 @@ void clMultiBook::UpdateView()
             ++iter;
         }
     }
-    if(GetPageCount() == 0) {
-        m_selection = wxNOT_FOUND;
-    }
+    if(GetPageCount() == 0) { m_selection = wxNOT_FOUND; }
+    GetSizer()->Layout();
 }
 
 int clMultiBook::BookIndexToGlobalIndex(size_t bookIndex, size_t pageIndex) const
@@ -102,12 +109,32 @@ int clMultiBook::BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const
 //-----------------------------------------
 // API
 //-----------------------------------------
-void clMultiBook::MoveRight(size_t pageIndex)
+bool clMultiBook::CanMoveToTabGroupLeft() const
 {
+    Notebook* book;
+    size_t bookIndex;
+    size_t modPageIndex;
+    if(!GetActivePageBook(&book, bookIndex, modPageIndex)) { return false; }
+    // Allow moving left only if we already have a notebook to the left
+    return ((book->GetPageCount() > 1) && (bookIndex > 0));
+}
+
+bool clMultiBook::CanMoveToTabGroupRight() const
+{
+    Notebook* book;
+    size_t bookIndex;
+    size_t modPageIndex;
+    if(!GetActivePageBook(&book, bookIndex, modPageIndex)) { return false; };
+    return book->GetPageCount() > 1; // Only allow to move if we have more than one tab in this notebook
+}
+
+void clMultiBook::MoveToRightTabGroup()
+{
+    if(!CanMoveToTabGroupRight()) { return; }
     Notebook* srcBook = nullptr;
     size_t srcBookIndex;
     size_t modPageIndex;
-    if(!GetBookByPageIndex(pageIndex, &srcBook, srcBookIndex, modPageIndex)) { return; }
+    if(!GetBookByPageIndex(m_selection, &srcBook, srcBookIndex, modPageIndex)) { return; }
 
     Notebook* destBook = nullptr;
     size_t destBookIndex = (srcBookIndex + 1);
@@ -115,12 +142,25 @@ void clMultiBook::MoveRight(size_t pageIndex)
         destBook = m_books[destBookIndex];
     } else {
         destBook = AddNotebook();
-        m_books.push_back(destBook);
     }
     MovePageToNotebook(srcBook, modPageIndex, destBook);
 }
 
-void clMultiBook::MoveLeft(size_t pageIndex) {}
+void clMultiBook::MoveToLeftTabGroup()
+{
+    if(!CanMoveToTabGroupLeft()) { return; }
+    Notebook* srcBook = nullptr;
+    size_t srcBookIndex;
+    size_t modPageIndex;
+    if(!GetBookByPageIndex(m_selection, &srcBook, srcBookIndex, modPageIndex)) { return; }
+
+    Notebook* destBook = nullptr;
+    int destBookIndex = (srcBookIndex - 1);
+    if(destBookIndex < 0) { return; }
+    // destBookIndex must be valid (it is checked in
+    destBook = m_books[destBookIndex];
+    MovePageToNotebook(srcBook, modPageIndex, destBook);
+}
 
 void clMultiBook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
 {
@@ -212,11 +252,10 @@ int clMultiBook::SetSelection(size_t tabIdx)
     Notebook* book;
     size_t bookIndex;
     size_t modIndex;
-    if(GetBookByPageIndex(tabIdx, &book, bookIndex, modIndex)) 
-    { 
+    if(GetBookByPageIndex(tabIdx, &book, bookIndex, modIndex)) {
         // Update the current selection
         m_selection = tabIdx;
-        return book->SetSelection(modIndex); 
+        return book->SetSelection(modIndex);
     }
     return wxNOT_FOUND;
 }
@@ -286,6 +325,11 @@ bool clMultiBook::RemovePage(size_t page, bool notify)
     size_t bookIndex;
     size_t modIndex;
     if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) {
+        // Make sure that after we remove the page from its notebook
+        // it has a valid parent (UpdateView() below might destory its parent
+        // Notebook control)
+        wxWindow* removedPage = book->GetPage(modIndex);
+        removedPage->Reparent(this);
         bool res = book->RemovePage(modIndex, notify);
         UpdateView();
         return res;
@@ -355,4 +399,42 @@ void clMultiBook::OnEventProxy(wxBookCtrlEvent& event)
         // Handle with AddPendingEvent
         GetEventHandler()->AddPendingEvent(proxyEvent);
     }
+}
+
+void clMultiBook::OnFocus(wxFocusEvent& e)
+{
+    e.Skip();
+    wxWindow* focusedWindow = wxWindow::FindFocus();
+    CHECK_PTR_RET(focusedWindow);
+
+    wxWindow* parent = focusedWindow->GetParent();
+    while(parent) {
+        Notebook* book = dynamic_cast<Notebook*>(parent);
+        if(book && IsOurNotebook(book)) {
+            // This book is one of ours...
+            int index = book->GetSelection();
+            if(index != wxNOT_FOUND) {
+                int oldSelection = m_selection;
+                m_selection = BookIndexToGlobalIndex(book, index);
+                if((m_selection != wxNOT_FOUND) && (m_selection != oldSelection)) {
+                    // Selection has changed, notify about this
+                    wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
+                    event.SetEventObject(this);
+                    event.SetSelection(m_selection);
+                    event.SetOldSelection(oldSelection);
+                    GetEventHandler()->ProcessEvent(event);
+                }
+            }
+            break;
+        }
+        parent = parent->GetParent();
+    }
+}
+
+bool clMultiBook::IsOurNotebook(Notebook* book) const
+{
+    for(size_t i = 0; i < m_books.size(); ++i) {
+        if(book == m_books[i]) { return true; }
+    }
+    return false;
 }

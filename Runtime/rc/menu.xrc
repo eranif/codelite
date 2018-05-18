@@ -770,6 +770,13 @@
             <label>Detach Editor</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="ID_EDITOR_TO_RIGHT_TAB_CTRL">
+            <label>Move Editor to Right Tab Group</label>
+        </object>
+        <object class="wxMenuItem" name="ID_EDITOR_TO_LEFT_TAB_CTRL">
+            <label>Move Editor to Left Tab Group</label>
+        </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_shell_from_filepath">
             <label>Open Shell</label>
         </object>

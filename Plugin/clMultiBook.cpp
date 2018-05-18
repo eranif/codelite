@@ -60,7 +60,7 @@ void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* 
 
 void clMultiBook::UpdateView()
 {
-    wxWindowUpdateLocker locker(this);
+    //wxWindowUpdateLocker locker(this);
     std::vector<Notebook*>::iterator iter = m_books.begin();
     while(iter != m_books.end()) {
         Notebook* b = *iter;
@@ -398,6 +398,10 @@ void clMultiBook::OnEventProxy(wxBookCtrlEvent& event)
     } else {
         // Handle with AddPendingEvent
         GetEventHandler()->AddPendingEvent(proxyEvent);
+        if(event.GetEventType() == wxEVT_BOOK_PAGE_CLOSED) {
+            // A page was closed
+            CallAfter(&clMultiBook::UpdateView);
+        }
     }
 }
 

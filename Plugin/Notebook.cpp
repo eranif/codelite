@@ -597,11 +597,7 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
 
 int clTabCtrl::SetSelection(size_t tabIdx)
 {
-#if defined(__WXMSW__)||defined(__WXOSX__)
     DoChangeSelection(tabIdx);
-#else
-    CallAfter(&clTabCtrl::DoChangeSelection, tabIdx);
-#endif
     return wxNOT_FOUND;
 }
 

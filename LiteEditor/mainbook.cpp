@@ -1469,7 +1469,7 @@ void MainBook::OnTabLabelContextMenu(wxBookCtrlEvent& e)
         } else {
             // Make this tab the active one and requeue the context menu event
             m_book->SetSelection(e.GetSelection());
-            CallAfter(&MainBook::DoShowTabLabelContextMenu);
+            DoShowTabLabelContextMenu();
         }
     }
 }

@@ -2,12 +2,12 @@
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
+#include "editor_config.h"
 #include "file_logger.h"
 #include "macros.h"
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/wupdlock.h>
-#include "editor_config.h"
 
 clMultiBook::clMultiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                          const wxString& name)
@@ -61,9 +61,12 @@ void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* 
 
     srcbook->RemovePage(index, false);
     destbook->AddPage(page, text, true, bmp);
-
+    
     // Make the newly added tab the focused one
     page->CallAfter(&wxWindow::SetFocus);
+    
+    // Update the view if the source notebook is now empty
+    if(srcbook->GetPageCount() == 0) { CallAfter(&clMultiBook::UpdateView); }
 }
 
 void clMultiBook::UpdateView()
@@ -123,8 +126,7 @@ bool clMultiBook::CanMoveToTabGroupLeft() const
     size_t bookIndex;
     size_t modPageIndex;
     if(!GetActivePageBook(&book, bookIndex, modPageIndex)) { return false; }
-    // Allow moving left only if we already have a notebook to the left
-    return ((book->GetPageCount() > 1) && (bookIndex > 0));
+    return (bookIndex > 0); // We are not the right most notebook
 }
 
 bool clMultiBook::CanMoveToTabGroupRight() const
@@ -165,7 +167,6 @@ void clMultiBook::MoveToLeftTabGroup()
     Notebook* destBook = nullptr;
     int destBookIndex = (srcBookIndex - 1);
     if(destBookIndex < 0) { return; }
-    // destBookIndex must be valid (it is checked in
     destBook = m_books[destBookIndex];
     MovePageToNotebook(srcBook, modPageIndex, destBook);
 }

@@ -272,15 +272,44 @@ int clMultiBook::SetSelection(size_t tabIdx)
     size_t modIndex;
     if(GetBookByPageIndex(tabIdx, &book, bookIndex, modIndex)) {
         // Update the current selection
-        m_selection = tabIdx;
+        bool pageChanged = (m_selection != (int)tabIdx);
 
-        // Update the history
+        // Grab a pointer of the page we want to make active
         wxWindow* focusedPage = book->GetPage(modIndex);
-        m_history->Pop(focusedPage);
-        m_history->Push(focusedPage);
 
         // And perform the actual selection change
-        return book->SetSelection(modIndex);
+        int oldSelection = book->GetSelection();
+        if(oldSelection != (int)modIndex) {
+            m_selection = tabIdx;
+            m_history->Pop(focusedPage);
+            m_history->Push(focusedPage);
+            return book->SetSelection(modIndex);
+        } else {
+            // There is no point on calling Notebook::SetSelection since it is already selected
+            // However, in the term of 'multi book' control, we might need to generate the events ourselves here
+            // But only if we actually modified the selection
+            if(pageChanged) {
+                wxBookCtrlEvent changingEvent(wxEVT_BOOK_PAGE_CHANGING);
+                changingEvent.SetEventObject(this);
+                changingEvent.SetOldSelection(m_selection);
+                changingEvent.SetSelection(tabIdx);
+                GetEventHandler()->ProcessEvent(changingEvent);
+                if(!changingEvent.IsAllowed()) { return wxNOT_FOUND; } // User vetoed
+                
+                // Update the history
+                m_history->Pop(focusedPage);
+                m_history->Push(focusedPage);
+                
+                // Update the selection before we fire the event again
+                // Or we might end up with stackoverflow...
+                m_selection = tabIdx;
+                wxBookCtrlEvent changedEvent(wxEVT_BOOK_PAGE_CHANGED);
+                changedEvent.SetEventObject(this);
+                changedEvent.SetOldSelection(m_selection);
+                changedEvent.SetSelection(tabIdx);
+                GetEventHandler()->ProcessEvent(changedEvent);
+            }
+        }
     }
     return wxNOT_FOUND;
 }

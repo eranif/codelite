@@ -68,6 +68,7 @@ public:
 
 private:
     FilesModifiedDlg* GetFilesModifiedDlg();
+    void DoShowTabLabelContextMenu();
     void CreateGuiControls();
     void ConnectEvents();
     void DoUpdateNotebookTheme();

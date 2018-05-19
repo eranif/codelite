@@ -1461,19 +1461,16 @@ void MainBook::OnTabLabelContextMenu(wxBookCtrlEvent& e)
 {
     e.Skip();
     wxWindow* book = static_cast<wxWindow*>(e.GetEventObject());
-    if((e.GetSelection() == m_book->GetSelection()) && (book == m_book)) {
-        // we only show context menu for the active tab
+    if(book == m_book) {
         e.Skip(false);
-        wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
-
-        // Notify the plugins about the tab label context menu
-        clContextMenuEvent event(wxEVT_CONTEXT_MENU_TAB_LABEL);
-        event.SetMenu(contextMenu);
-        EventNotifier::Get()->ProcessEvent(event);
-
-        contextMenu = event.GetMenu();
-        book->PopupMenu(contextMenu);
-        wxDELETE(contextMenu);
+        if(e.GetSelection() == m_book->GetSelection()) {
+            // The tab requested for context menu is the active one
+            DoShowTabLabelContextMenu();
+        } else {
+            // Make this tab the active one and requeue the context menu event
+            m_book->SetSelection(e.GetSelection());
+            CallAfter(&MainBook::DoShowTabLabelContextMenu);
+        }
     }
 }
 
@@ -1668,3 +1665,17 @@ void MainBook::MoveActiveTabToRIghtTabGroup() { m_book->MoveToRightTabGroup(); }
 bool MainBook::CanMoveActiveTabToRIghtTabGroup() const { return m_book->CanMoveToTabGroupRight(); }
 
 bool MainBook::CanMoveActiveTabToLeftTabGroup() const { return m_book->CanMoveToTabGroupLeft(); }
+
+void MainBook::DoShowTabLabelContextMenu()
+{
+    wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
+
+    // Notify the plugins about the tab label context menu
+    clContextMenuEvent event(wxEVT_CONTEXT_MENU_TAB_LABEL);
+    event.SetMenu(contextMenu);
+    EventNotifier::Get()->ProcessEvent(event);
+
+    contextMenu = event.GetMenu();
+    m_book->PopupMenu(contextMenu);
+    wxDELETE(contextMenu);
+}

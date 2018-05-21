@@ -95,7 +95,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     m_pgPropDebuggerLineColour->SetHelpString(_("Debugger line background colour"));
     
     SetName(wxT("EditorOptionsGeneralGuidesPanelBase"));
-    SetSize(500,500);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
@@ -124,7 +124,7 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     wxUnusedVar(m_pgMgrEditIntArr);
     m_pgMgrEdit = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer4->Add(m_pgMgrEdit, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer4->Add(m_pgMgrEdit, 1, wxEXPAND, WXC_FROM_DIP(5));
     
     m_pgProp8 = m_pgMgrEdit->Append(  new wxPropertyCategory( _("Edit") ) );
     m_pgProp8->SetHelpString(wxT(""));
@@ -163,7 +163,7 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     m_pgPropCommentsIndented->SetHelpString(_("Indent line comments (C++-style comments) according to the indentation of the selected fragmant of the text"));
     
     SetName(wxT("EditorOptionsGeneralEditBase"));
-    SetSize(500,300);
+    SetSize(-1,-1);
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }

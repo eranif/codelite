@@ -57,9 +57,10 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     Initialize();
     SetName("PreferencesDialog");
     WindowAttrManager::Load(this);
-    CenterOnParent();
     MSWSetNativeTheme(m_treeBook->GetTreeCtrl());
+    GetSizer()->Fit(this);
     GetSizer()->Layout();
+    CenterOnParent();
 }
 
 PreferencesDialog::~PreferencesDialog() {}

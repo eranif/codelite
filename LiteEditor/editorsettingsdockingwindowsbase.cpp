@@ -29,7 +29,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
     m_notebook10->SetName(wxT("m_notebook10"));
     
-    mainSizer->Add(m_notebook10, 1, wxEXPAND, WXC_FROM_DIP(5));
+    mainSizer->Add(m_notebook10, 1, wxEXPAND, WXC_FROM_DIP(0));
     
     m_panelTabs = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panelTabs, _("Tabs"), true);

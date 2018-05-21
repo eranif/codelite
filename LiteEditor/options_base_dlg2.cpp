@@ -30,7 +30,7 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
     
     mainSizer->Add(innerSizer, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_treeBook = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500,400)), wxBK_DEFAULT);
+    m_treeBook = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
     m_treeBook->SetFocus();
     m_treeBook->SetName(wxT("m_treeBook"));
     

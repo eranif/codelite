@@ -355,7 +355,7 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     int selection = m_btnAddPath->GetPopupMenuSelectionFromUser(menu, menuPos);
 
     if(selection == wxID_NONE) return;
-    if(selection == (firstItem + 5)) {
+    if(selection == (firstItem + 6)) {
         wxString folder = ::wxDirSelector();
         if(folder.IsEmpty()) return;
         DoAddSearchPath(folder);

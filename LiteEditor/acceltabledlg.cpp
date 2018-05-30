@@ -164,7 +164,7 @@ void AccelTableDlg::DoItemActivated()
                 if(cd) {
                     cd->m_menuItemData.accel.Clear();
                     int row = m_dvListCtrl->ItemToRow(oldItem);
-                    m_dvListCtrl->SetValue(wxString(), row, 2);
+                    m_dvListCtrl->SetValue(wxString(), row, 0);
                 }
             }
 

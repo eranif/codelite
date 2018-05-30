@@ -30,12 +30,11 @@ WindowStack::WindowStack(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
     , m_selection(NULL)
 {
-    m_mainSizer = new wxBoxSizer(wxVERTICAL);
-    SetSizer(m_mainSizer);
     m_windows.clear();
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     Bind(wxEVT_PAINT, &WindowStack::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &WindowStack::OnEraseBG, this);
+    Bind(wxEVT_SIZE, &WindowStack::OnSize, this);
 }
 
 WindowStack::~WindowStack()
@@ -43,24 +42,23 @@ WindowStack::~WindowStack()
     Clear();
     Unbind(wxEVT_PAINT, &WindowStack::OnPaint, this);
     Unbind(wxEVT_ERASE_BACKGROUND, &WindowStack::OnEraseBG, this);
+    Unbind(wxEVT_SIZE, &WindowStack::OnSize, this);
 }
 
 void WindowStack::DoSelect(wxWindow* win)
 {
     Freeze();
-    // remove the old selection
     if(m_selection) {
-        m_mainSizer->Detach(m_selection);
         m_selection->Hide();
     }
     if(win) {
-        m_mainSizer->Add(win, 1, wxEXPAND);
-        win->Show();
         m_selection = win;
+        wxRect clientSize = GetClientRect();
+        m_selection->SetSize(0, 0, clientSize.GetWidth(), clientSize.GetHeight());
+        m_selection->Show();
     } else {
         m_selection = NULL;
     }
-    m_mainSizer->Layout();
     Thaw();
 }
 
@@ -133,3 +131,12 @@ void WindowStack::OnPaint(wxPaintEvent& evt)
 }
 
 void WindowStack::OnEraseBG(wxEraseEvent& evt) { wxUnusedVar(evt); }
+
+void WindowStack::OnSize(wxSizeEvent& evt)
+{
+    evt.Skip();
+    if(m_selection) {
+        wxRect clientSize = GetClientRect();
+        m_selection->SetSize(0, 0, clientSize.GetWidth(), clientSize.GetHeight());
+    }
+}

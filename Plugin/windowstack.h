@@ -34,7 +34,6 @@
 class WXDLLIMPEXP_SDK WindowStack : public wxPanel
 {
     std::set<wxWindow*> m_windows;
-    wxBoxSizer* m_mainSizer;
     wxWindow* m_selection;
 
     void DoSelect(wxWindow* win);
@@ -42,6 +41,7 @@ class WXDLLIMPEXP_SDK WindowStack : public wxPanel
 protected:
     void OnPaint(wxPaintEvent& evt);
     void OnEraseBG(wxEraseEvent& evt);
+    void OnSize(wxSizeEvent& evt);
 
 public:
     WindowStack(wxWindow* parent, wxWindowID id = wxID_ANY);

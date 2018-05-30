@@ -6,10 +6,13 @@
 #include <vector>
 #include <wx/bitmap.h>
 #include "clTabHistory.h"
+#include <wx/splitter.h>
 
 class WXDLLIMPEXP_SDK clMultiBook : public wxPanel
 {
-    std::vector<Notebook*> m_books;
+    Notebook* m_leftBook;
+    Notebook* m_rightBook;
+    wxSplitterWindow* m_splitter;
     size_t m_style;
     int m_selection;
     clTabHistory::Ptr_t m_history;
@@ -22,7 +25,8 @@ protected:
     void UpdateView();
     int BookIndexToGlobalIndex(size_t bookIndex, size_t pageIndex) const;
     int BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const;
-    Notebook* AddNotebook();
+    //Notebook* AddNotebook();
+    Notebook* CreateNotebook(wxWindow* parent);
     bool IsOurNotebook(Notebook* book) const;
 
 protected:

@@ -164,7 +164,7 @@ void AccelTableDlg::DoItemActivated()
                 if(cd) {
                     cd->m_menuItemData.accel.Clear();
                     int row = m_dvListCtrl->ItemToRow(oldItem);
-                    m_dvListCtrl->SetValue(wxString(), row, 2);
+                    m_dvListCtrl->SetValue(wxString(), row, 0);
                 }
             }
 
@@ -180,7 +180,7 @@ void AccelTableDlg::DoItemActivated()
         // Update the UI
         int row = m_dvListCtrl->ItemToRow(sel);
         if(row == wxNOT_FOUND) return;
-        m_dvListCtrl->SetValue(mid.accel, row, 2);
+        m_dvListCtrl->SetValue(mid.accel, row, 0);
 
         // and update the map
         MenuItemDataMap_t::iterator iter = m_accelMap.find(itemData->m_menuItemData.resourceID);

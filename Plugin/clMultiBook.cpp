@@ -157,7 +157,7 @@ void clMultiBook::MoveToRightTabGroup()
 void clMultiBook::MoveToLeftTabGroup()
 {
     if(!CanMoveToTabGroupLeft()) { return; }
-    MovePageToNotebook(m_rightBook, m_rightBook->GetSelection() + m_leftBook->GetPageCount(), m_leftBook);
+    MovePageToNotebook(m_rightBook, m_rightBook->GetSelection(), m_leftBook);
 }
 
 void clMultiBook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)

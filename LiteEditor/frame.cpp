@@ -5229,7 +5229,7 @@ void clMainFrame::OnGrepWord(wxCommandEvent& e)
         mask << editor->GetFileName().GetFullName(); // this will ensure that this file is scanned
 
     } else {
-        rootDirs.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
+        rootDirs.Add(wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER));
         ManagerST::Get()->GetWorkspaceFiles(files);
         wxStringSet_t masks;
         // Build a mask that matches the workspace content

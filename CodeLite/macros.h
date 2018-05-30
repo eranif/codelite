@@ -102,6 +102,7 @@
 #define SEARCH_IN_CURR_FILE_PROJECT "<Current File's Project>"
 #define SEARCH_IN_CURRENT_FILE "<Current File>"
 #define SEARCH_IN_OPEN_FILES "<Open Files>"
+#define SEARCH_IN_WORKSPACE_FOLDER "<Workspace Folder>"
 #define USE_WORKSPACE_ENV_VAR_SET _("<Use Defaults>")
 #define USE_GLOBAL_SETTINGS _("<Use Defaults>")
 

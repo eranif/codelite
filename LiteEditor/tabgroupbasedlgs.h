@@ -18,7 +18,6 @@
 #include <wx/button.h>
 #include <wx/listbox.h>
 #include <wx/checkbox.h>
-#include <wx/statline.h>
 #include <wx/checklst.h>
 #include <wx/textctrl.h>
 #include <wx/radiobox.h>
@@ -46,7 +45,6 @@ protected:
     wxButton* m_buttonBrowse;
     wxListBox* m_listBox;
     wxCheckBox* m_replaceCheck;
-    wxStaticLine* m_staticline3;
     wxButton* m_button6;
     wxButton* m_button5;
 
@@ -59,7 +57,6 @@ public:
     wxButton* GetButtonBrowse() { return m_buttonBrowse; }
     wxListBox* GetListBox() { return m_listBox; }
     wxCheckBox* GetReplaceCheck() { return m_replaceCheck; }
-    wxStaticLine* GetStaticline3() { return m_staticline3; }
     wxButton* GetButton6() { return m_button6; }
     wxButton* GetButton5() { return m_button5; }
     LoadTabGroupBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Load a tab group"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
@@ -74,11 +71,9 @@ protected:
     wxCheckListBox* m_ListTabs;
     wxButton* m_buttonCheckAll;
     wxButton* m_buttonClearAll;
-    wxStaticLine* m_staticline1;
     wxStaticText* m_staticText4;
     wxTextCtrl* m_textName;
     wxRadioBox* m_radioBoxWorkspaceOrGlobal;
-    wxStaticLine* m_staticline11;
     wxButton* m_button6;
     wxButton* m_button5;
 
@@ -93,11 +88,9 @@ public:
     wxCheckListBox* GetListTabs() { return m_ListTabs; }
     wxButton* GetButtonCheckAll() { return m_buttonCheckAll; }
     wxButton* GetButtonClearAll() { return m_buttonClearAll; }
-    wxStaticLine* GetStaticline1() { return m_staticline1; }
     wxStaticText* GetStaticText4() { return m_staticText4; }
     wxTextCtrl* GetTextName() { return m_textName; }
     wxRadioBox* GetRadioBoxWorkspaceOrGlobal() { return m_radioBoxWorkspaceOrGlobal; }
-    wxStaticLine* GetStaticline11() { return m_staticline11; }
     wxButton* GetButton6() { return m_button6; }
     wxButton* GetButton5() { return m_button5; }
     SaveTabGroupBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Save a tab group"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

@@ -51,6 +51,7 @@
 #include "GitLocator.h"
 #include "bitmap_loader.h"
 #include "clCommandProcessor.h"
+#include "clDiffFrame.h"
 #include "clStatusBar.h"
 #include "clWorkspaceManager.h"
 #include "dirsaver.h"
@@ -65,7 +66,6 @@
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/utils.h>
-#include "clDiffFrame.h"
 
 #ifdef __WXGTK__
 #include <sys/wait.h>
@@ -155,6 +155,7 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, &GitPlugin::OnAppActivated, this);
 
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
@@ -426,6 +427,7 @@ void GitPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED,
                                      wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, &GitPlugin::OnAppActivated, this);
 
     /*Context Menu*/
     m_eventHandler->Disconnect(XRCID("git_add_file"), wxEVT_COMMAND_MENU_SELECTED,
@@ -756,9 +758,9 @@ void GitPlugin::OnCommitList(wxCommandEvent& e)
 void GitPlugin::OnShowDiffs(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-/*    gitAction ga(gitDiffRepoShow, wxT(""));
-    m_gitActionQueue.push_back(ga);
-    ProcessGitActionQueue();*/
+    /*    gitAction ga(gitDiffRepoShow, wxT(""));
+        m_gitActionQueue.push_back(ga);
+        ProcessGitActionQueue();*/
     GitDiffDlg dlg(m_topWindow, m_repositoryDirectory, this);
     dlg.ShowModal();
 }
@@ -917,11 +919,7 @@ void GitPlugin::OnGitBlameRevList(const wxString& arg, const wxString& filepath,
 void GitPlugin::OnRefresh(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    gitAction ga(gitListAll, wxT(""));
-    m_gitActionQueue.push_back(ga);
-    AddDefaultActions();
-    m_mgr->ShowOutputPane("Git");
-    ProcessGitActionQueue();
+    DoRefreshView(true);
 }
 /*******************************************************************************/
 void GitPlugin::OnGarbageColletion(wxCommandEvent& e)
@@ -1022,6 +1020,7 @@ void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 
     // Try to set the repo to the workspace path
     DoSetRepoPath(GetWorkspaceFileName().GetPath(), false);
+    CallAfter(&GitPlugin::DoRefreshView, false);
 }
 
 /*******************************************************************************/
@@ -1196,9 +1195,9 @@ void GitPlugin::ProcessGitActionQueue()
         break;
 
     case gitBranchCurrent:
-        GIT_MESSAGE(wxT("Get current branch"));
+        GIT_MESSAGE1(wxT("Get current branch"));
         command << wxT(" --no-pager branch --no-color");
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitBranchList:
@@ -1393,7 +1392,7 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
     }
 
     if(!m_currentBranch.IsEmpty()) {
-        GIT_MESSAGE(wxT("Current branch ") + m_currentBranch);
+        GIT_MESSAGE1(wxT("Current branch ") + m_currentBranch);
         m_mgr->GetDockingManager()
             ->GetPane(wxT("Workspace View"))
             .Caption(wxT("Workspace View [") + m_currentBranch + wxT("]"));
@@ -1571,9 +1570,9 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 
     } else if(ga.action == gitDiffRepoShow) {
         // This is now dealt with by GitDiffDlg itself
-//        GitDiffDlg dlg(m_topWindow, m_repositoryDirectory, this);
-//        dlg.SetDiff(m_commandOutput);
-//        dlg.ShowModal();
+        //        GitDiffDlg dlg(m_topWindow, m_repositoryDirectory, this);
+        //        dlg.SetDiff(m_commandOutput);
+        //        dlg.ShowModal();
 
     } else if(ga.action == gitResetFile || ga.action == gitApplyPatch) {
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
@@ -1683,7 +1682,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     gitAction ga;
     if(!m_gitActionQueue.empty()) { ga = m_gitActionQueue.front(); }
 
-    if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) m_console->AddRawText(output);
+    if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) { m_console->AddRawText(output); }
     m_commandOutput.Append(output);
 
     // Handle password required
@@ -2019,6 +2018,7 @@ void GitPlugin::OnClone(wxCommandEvent& e)
 
 void GitPlugin::DoAddFiles(const wxArrayString& files)
 {
+    if(files.IsEmpty()) { return; }
     m_addedFiles = true;
 
     wxString filesToAdd;
@@ -2205,7 +2205,7 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
         fp.Write(headFile);
         fp.Close();
     }
-    
+
     // Show diff frame
     DiffSideBySidePanel::FileInfo l(tmpFilePath, _("HEAD version"), true);
     l.deleteOnExit = true;
@@ -2370,8 +2370,7 @@ void GitPlugin::OnCommandEnded(clCommandEvent& event)
     m_commandProcessor = NULL;
 
     // Perform a tree refresh
-    wxCommandEvent dummy;
-    OnRefresh(dummy);
+    DoRefreshView(false);
 }
 
 void GitPlugin::OnCommandOutput(clCommandEvent& event)
@@ -2600,7 +2599,22 @@ void GitPlugin::OnFileGitBlame(wxCommandEvent& event)
 
 void GitPlugin::DisplayMessage(const wxString& message) const
 {
-    if (!message.empty()) {
-        GIT_MESSAGE(message);
-    }
+    if(!message.empty()) { GIT_MESSAGE(message); }
 }
+
+void GitPlugin::DoRefreshView(bool ensureVisible)
+{
+    gitAction ga(gitListAll, wxT(""));
+    m_gitActionQueue.push_back(ga);
+    AddDefaultActions();
+    if(ensureVisible) { m_mgr->ShowOutputPane("Git"); }
+    ProcessGitActionQueue();
+}
+
+void GitPlugin::OnAppActivated(wxCommandEvent& event)
+{
+    event.Skip();
+    if(IsGitEnabled()) { CallAfter(&GitPlugin::DoRefreshView, false); }
+}
+
+bool GitPlugin::IsGitEnabled() const { return !m_repositoryDirectory.IsEmpty(); }

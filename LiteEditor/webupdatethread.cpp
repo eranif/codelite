@@ -143,6 +143,8 @@ void WebUpdateJob::ParseFile()
 
 void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString& arch) const
 {
+    static wxStringMap_t linuxVariants;
+
 #ifdef __WXMSW__
     os = "msw";
     codename = "Windows";
@@ -170,12 +172,15 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
     // Test for common code names that we support on Linux
     if(content.Contains("Ubuntu 14.04")) {
         codename = "Ubuntu 14.04";
+    } else if(content.Contains("Ubuntu 16.04")) {
+        codename = "Ubuntu 16.04";
+    } else if(content.Contains("Ubuntu 18.04")) {
+        codename = "Ubuntu 18.04";
     } else if(content.Contains("Debian GNU/Linux 8")) {
         codename = "Debian GNU/Linux 8";
     } else {
         codename = "others";
     }
-
 #if __LP64__
     arch = "x86_64";
 #else

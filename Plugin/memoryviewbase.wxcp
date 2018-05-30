@@ -9,6 +9,8 @@
   "m_outputFileName": "",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -22,7 +24,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "596,300"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -297,7 +299,7 @@
           }, {
            "type": "bool",
            "m_label": "Focused",
-           "m_value": false
+           "m_value": true
           }, {
            "type": "string",
            "m_label": "Class Name:",

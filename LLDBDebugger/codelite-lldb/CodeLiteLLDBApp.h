@@ -47,7 +47,7 @@ struct VariableWrapper
     lldb::SBValue value;
     bool isWatch;
     wxString expression;
-    
+
     VariableWrapper() : isWatch(false) {}
 };
 
@@ -86,6 +86,18 @@ private:
     void DoInitializeApp();
     void DoExecutueShellCommand(const wxString& command, bool printOutput = true);
 
+    template<typename T>
+    void NotifyStopped(const lldb::tid_t initialThreadID, T &&threadSelector);
+
+    template<typename T>
+    void SuspendOrResumeThreads(const char * const type, const std::vector<int>& threadIds, T&& function);
+
+    template<typename T>
+    void SuspendOrResumeOtherThreads(const char * const type, const std::vector<int>& threadIds, T&& function);
+
+    template<typename T>
+    void DoVariableAction(const int variableId, T &&action);
+
 public:
     void NotifyStoppedOnFirstEntry();
     void NotifyStopped();
@@ -97,7 +109,7 @@ public:
     void NotifyBreakpointsUpdated();
     void NotifyAllBreakpointsDeleted();
 
-    void NotifyLocals(LLDBVariable::Vect_t locals);
+    void NotifyLocals(const LLDBVariable::Vect_t& locals);
 
     void SendReply(const LLDBReply& reply);
     bool CanInteract();
@@ -133,6 +145,8 @@ public:
     void StartDebugger(const LLDBCommand& command);
     void RunDebugger(const LLDBCommand& command);
     void Continue(const LLDBCommand& command);
+    void RunTo(const LLDBCommand& command);
+    void JumpTo(const LLDBCommand& command);
     void ApplyBreakpoints(const LLDBCommand& command);
     void StopDebugger(const LLDBCommand& command);
     void DetachDebugger(const LLDBCommand& command);
@@ -154,6 +168,13 @@ public:
     void OpenCoreFile(const LLDBCommand& command);
     void AttachProcess(const LLDBCommand& command);
     void ShowCurrentFileLine(const LLDBCommand& command);
+    void SuspendThreads(const LLDBCommand& command);
+    void SuspendOtherThreads(const LLDBCommand& command);
+    void ResumeThreads(const LLDBCommand& command);
+    void ResumeOtherThreads(const LLDBCommand& command);
+    void ResumeAllThreads(const LLDBCommand& command);
+    void SetVariableValue(const LLDBCommand& command);
+    void SetVariableDisplayFormat(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

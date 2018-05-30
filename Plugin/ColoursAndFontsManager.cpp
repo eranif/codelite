@@ -761,7 +761,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     themeName = themeName.Mid(0, 1).Capitalize() + themeName.Mid(1);
     lexer->SetThemeName(themeName);
 
-    CL_DEBUG("Loading lexer: %s [%s]", lexerName, lexer->GetName());
+    clDEBUG1() << "Loading lexer:" << lexerName;
 
     if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);

@@ -1,6 +1,7 @@
 #include "SFTPSessionInfo.h"
 
 #if USE_SFTP
+#include "file_logger.h"
 #include <algorithm>
 
 SFTPSessionInfo::SFTPSessionInfo() {}
@@ -25,6 +26,35 @@ JSONElement SFTPSessionInfo::ToJSON() const
     json.addProperty("rootFolder", m_rootFolder);
     json.addProperty("files", files);
     return json;
+}
+
+void SFTPSessionInfo::Clear()
+{
+    m_files.clear();
+    m_account.Clear();
+    m_rootFolder.Clear();
+}
+
+bool SFTPSessionInfo::IsOk() const { return !m_account.IsEmpty(); }
+
+void SFTPSessionInfo::RemoveFile(const wxString& path)
+{
+    std::vector<wxString>::iterator iter =
+        std::find_if(m_files.begin(), m_files.end(), [&](const wxString& file) { return path == file; });
+    if(iter != m_files.end()) {
+        clDEBUG() << "SFTP session: removing file:" << path << "from session:" << GetAccount();
+        m_files.erase(iter);
+    }
+}
+
+void SFTPSessionInfo::AddFile(const wxString& path)
+{
+    std::vector<wxString>::iterator iter =
+        std::find_if(m_files.begin(), m_files.end(), [&](const wxString& file) { return path == file; });
+    if(iter == m_files.end()) {
+        clDEBUG() << "SFTP session: adding file:" << path << "to session:" << GetAccount();
+        m_files.push_back(path);
+    }
 }
 
 //-------------------------------------------------------------
@@ -72,24 +102,20 @@ SFTPSessionInfoList& SFTPSessionInfoList::Save()
     return *this;
 }
 
-bool SFTPSessionInfoList::GetSession(const wxString& accountName, SFTPSessionInfo& sess) const
+SFTPSessionInfo& SFTPSessionInfoList::GetSession(const wxString& accountName)
 {
-    SFTPSessionInfo::Map_t::const_iterator iter = m_sessions.find(accountName);
+    SFTPSessionInfo::Map_t::iterator iter = m_sessions.find(accountName);
     if(iter == m_sessions.end()) {
-        return false;
+        static SFTPSessionInfo NullSession;
+        return NullSession;
     }
-    sess = iter->second;
-    return true;
+    return iter->second;
 }
 
 SFTPSessionInfoList& SFTPSessionInfoList::SetSession(const SFTPSessionInfo& sess)
 {
-    if(sess.GetAccount().IsEmpty()) {
-        return *this;
-    }
-    if(m_sessions.count(sess.GetAccount())) {
-        m_sessions.erase(sess.GetAccount());
-    }
+    if(sess.GetAccount().IsEmpty()) { return *this; }
+    if(m_sessions.count(sess.GetAccount())) { m_sessions.erase(sess.GetAccount()); }
     m_sessions[sess.GetAccount()] = sess;
     return *this;
 }

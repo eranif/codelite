@@ -27,6 +27,7 @@
 
 #include "Notebook.h"
 #include "clEditorBar.h"
+#include "clMultiBook.h"
 #include "cl_command_event.h"
 #include "editorframe.h"
 #include "filehistory.h"
@@ -47,7 +48,7 @@ class MainBook : public wxPanel
 private:
     FileHistory m_recentFiles;
     clEditorBar* m_navBar;
-    Notebook* m_book;
+    clMultiBook* m_book;
     QuickFindBar* m_quickFindBar;
     MessagePane* m_messagePane;
     bool m_useBuffereLimit;
@@ -67,11 +68,13 @@ public:
 
 private:
     FilesModifiedDlg* GetFilesModifiedDlg();
+    void DoShowTabLabelContextMenu();
     void CreateGuiControls();
     void ConnectEvents();
     void DoUpdateNotebookTheme();
     void DoOpenImageViewer(const wxFileName& filename);
     void DoUpdateEditorsThemes();
+    void DoPlaceNavigationBar();
 
     void OnMouseDClick(wxBookCtrlEvent& e);
     void OnTabDClicked(wxBookCtrlEvent& e);
@@ -80,7 +83,6 @@ private:
     void OnPageClosed(wxBookCtrlEvent& e);
     void OnPageChanged(wxBookCtrlEvent& e);
     void OnClosePage(wxBookCtrlEvent& e);
-    void OnNavigating(wxBookCtrlEvent& e);
     void OnPageChanging(wxBookCtrlEvent& e);
     void OnProjectFileAdded(clCommandEvent& e);
     void OnProjectFileRemoved(clCommandEvent& e);
@@ -92,7 +94,7 @@ private:
     void OnThemeChanged(wxCommandEvent& e);
     void OnColoursAndFontsChanged(clCommandEvent& e);
     bool DoSelectPage(wxWindow* win);
-    void DoPositionFindBar(int where);
+    void DoPositionFindBar();
     void DoHandleFrameMenu(LEditor* editor);
     void DoEraseDetachedEditor(IEditor* editor);
     void OnWorkspaceReloadStarted(clCommandEvent& e);
@@ -102,6 +104,7 @@ private:
     void OnUpdateNavigationBar(clCodeCompletionEvent& e);
     void OnNavigationBarMenuShowing(clContextMenuEvent& e);
     void OnNavigationBarMenuSelectionMade(clCommandEvent& e);
+    void OnSettingsChanged(wxCommandEvent& e);
 
     /**
      * @brief open file and set an alternate content
@@ -117,8 +120,30 @@ private:
 public:
     MainBook(wxWindow* parent);
     ~MainBook();
-
+    
+    /**
+     * @brief move the active tab to another tab group (notebook). To the left
+     */
+    void MoveActiveTabToLeftTabGroup();
+    /**
+     * @brief move the active tab to another tab group (notebook). To the right
+     */
+    void MoveActiveTabToRIghtTabGroup();
+    
+    bool CanMoveActiveTabToRIghtTabGroup() const;
+    bool CanMoveActiveTabToLeftTabGroup() const;
+    
     static bool AskUserToSave(LEditor* editor);
+    /**
+     * @brief show the navigation dialog
+     */
+    void ShowNavigationDialog();
+
+    /**
+     * @brief move the active page right or left
+     */
+    void MovePage(bool movePageRight);
+
     const EditorFrame::List_t& GetDetachedEditors() const { return m_detachedEditors; }
     void DetachActiveEditor();
     void ClearFileHistory();
@@ -175,10 +200,10 @@ public:
     LEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                       long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
                       const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
-    LEditor* OpenFile(const BrowseRecord& rec)
-    {
-        return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, OF_None, false);
-    }
+    /**
+     * @brief open file based on a browsing record
+     */
+    LEditor* OpenFile(const BrowseRecord& rec);
 
     /**
      * @brief a simpler version: open a file with a given tooltip and bitmap

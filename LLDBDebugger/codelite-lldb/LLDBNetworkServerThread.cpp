@@ -66,7 +66,7 @@ void* LLDBNetworkServerThread::Entry()
                 case kCommandInterperterCommand:
                     m_app->CallAfter(&CodeLiteLLDBApp::ExecuteInterperterCommand, command);
                     break;
-                    
+
                 case kCommandAddWatch:
                     m_app->CallAfter(&CodeLiteLLDBApp::AddWatch, command);
                     break;
@@ -156,6 +156,42 @@ void* LLDBNetworkServerThread::Entry()
 
                 case kCommandEvalExpression:
                     m_app->CallAfter(&CodeLiteLLDBApp::EvalExpression, command);
+                    break;
+
+                case kCommandRunTo:
+                    m_app->CallAfter(&CodeLiteLLDBApp::RunTo, command);
+                    break;
+
+                case kCommandJumpTo:
+                    m_app->CallAfter(&CodeLiteLLDBApp::JumpTo, command);
+                    break;
+
+                case kCommandSuspendThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::SuspendThreads, command);
+                    break;
+
+                case kCommandSuspendOtherThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::SuspendOtherThreads, command);
+                    break;
+
+                case kCommandResumeThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::ResumeThreads, command);
+                    break;
+
+                case kCommandResumeOtherThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::ResumeOtherThreads, command);
+                    break;
+
+                case kCommandResumeAllThreads:
+                    m_app->CallAfter(&CodeLiteLLDBApp::ResumeAllThreads, command);
+                    break;
+
+                case kCommandSetVariableValue:
+                    m_app->CallAfter(&CodeLiteLLDBApp::SetVariableValue, command);
+                    break;
+
+                case kCommandSetVariableDisplayFormat:
+                    m_app->CallAfter(&CodeLiteLLDBApp::SetVariableDisplayFormat, command);
                     break;
 
                 default:

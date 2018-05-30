@@ -25,34 +25,34 @@
 #ifndef LITEEDITOR_FRAME_H
 #define LITEEDITOR_FRAME_H
 
-#include "wx/combobox.h"
-#include "generalinfo.h"
-#include <wx/dcbuffer.h>
-#include <wx/process.h>
-#include "wx/aui/aui.h"
-#include "wx/frame.h"
-#include "cl_editor.h"
-#include "output_pane.h"
-#include "cl_process.h"
 #include "EnvironmentVariablesDlg.h"
-#include "wx/choice.h"
-#include "wx/timer.h"
-#include "parse_thread.h"
-#include "tags_options_dlg.h"
-#include <wx/html/htmlwin.h>
-#include "debuggerpane.h"
 #include "Notebook.h"
-#include "mainbook.h"
-#include <set>
-#include "theme_handler.h"
-#include "cl_command_event.h"
 #include "ZombieReaperPOSIX.h"
-#include "macros.h"
-#include <wx/splash.h>
-#include "clStatusBar.h"
-#include <wx/cmndata.h>
 #include "clDockingManager.h"
 #include "clMainFrameHelper.h"
+#include "clStatusBar.h"
+#include "cl_command_event.h"
+#include "cl_editor.h"
+#include "cl_process.h"
+#include "debuggerpane.h"
+#include "generalinfo.h"
+#include "macros.h"
+#include "mainbook.h"
+#include "output_pane.h"
+#include "parse_thread.h"
+#include "tags_options_dlg.h"
+#include "theme_handler.h"
+#include "wx/aui/aui.h"
+#include "wx/choice.h"
+#include "wx/combobox.h"
+#include "wx/frame.h"
+#include "wx/timer.h"
+#include <set>
+#include <wx/cmndata.h>
+#include <wx/dcbuffer.h>
+#include <wx/html/htmlwin.h>
+#include <wx/process.h>
+#include <wx/splash.h>
 
 // forward decls
 class WebUpdateJob;
@@ -77,8 +77,7 @@ extern const wxEventType wxEVT_LOAD_PERSPECTIVE;
 extern const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU;
 extern const wxEventType wxEVT_ACTIVATE_EDITOR;
 
-struct StartPageData
-{
+struct StartPageData {
     wxString name;
     wxString file_path;
     wxString action;
@@ -131,8 +130,8 @@ class clMainFrame : public wxFrame
     wxPrintDialogData m_printDlgData;
     wxToolBar* m_mainToolBar;
     clMainFrameHelper::Ptr_t m_frameHelper;
-    WebUpdateJob *m_webUpdate;
-    
+    WebUpdateJob* m_webUpdate;
+
 public:
     static bool m_initCompleted;
 
@@ -150,6 +149,16 @@ public:
      * @brief goto anything..
      */
     void OnGotoAnything(wxCommandEvent& e);
+
+    /**
+     * @brief main book page navigation
+     */
+    void OnMainBookNavigating(wxCommandEvent& e);
+
+    /**
+     * @brief move the active tab right or left
+     */
+    void OnMainBookMovePage(wxCommandEvent& e);
 
     /**
      * @brief Return CodeLite App object
@@ -321,11 +330,7 @@ public:
 
 private:
     // make our frame's constructor private
-    clMainFrame(wxWindow* pParent,
-                wxWindowID id,
-                const wxString& title,
-                const wxPoint& pos,
-                const wxSize& size,
+    clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
                 long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU |
                              wxRESIZE_BORDER | wxCLIP_CHILDREN);
     wxString CreateWorkspaceTable();
@@ -431,7 +436,9 @@ protected:
     void OnPrint(wxCommandEvent& event);
     void OnPageSetup(wxCommandEvent& event);
     void OnRecentWorkspaceUI(wxUpdateUIEvent& e);
-
+    void OnMoveEditorToLeftGroup(wxCommandEvent& e);
+    void OnMoveEditorToRightGroup(wxCommandEvent& e);
+    void OnMoveEditorToGroupUI(wxUpdateUIEvent& e);
     void OnViewOptions(wxCommandEvent& event);
     void OnToggleMainTBars(wxCommandEvent& event);
     void OnTogglePluginTBars(wxCommandEvent& event);
@@ -503,6 +510,8 @@ protected:
     void OnPreviousFiFMatchUI(wxUpdateUIEvent& e);
     void OnGrepWord(wxCommandEvent& e);
     void OnGrepWordUI(wxUpdateUIEvent& e);
+    void OnWebSearchSelection(wxCommandEvent& e);
+    void OnWebSearchSelectionUI(wxUpdateUIEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
     void OnEnvironmentVariablesModified(clCommandEvent& e);
 

@@ -37,6 +37,8 @@
 #include "LLDBRemoteConnectReturnObject.h"
 #include "LLDBPivot.h"
 
+#include <memory>
+
 class LLDBConnector;
 class LLDBNetworkListenerThread;
 class LLDBTerminalCallback : public IProcessCallback
@@ -70,10 +72,10 @@ public:
 
 protected:
     clSocketClient::Ptr_t m_socket;
-    LLDBNetworkListenerThread* m_thread;
+    std::unique_ptr<LLDBNetworkListenerThread> m_thread;
     LLDBBreakpoint::Vec_t m_breakpoints;
     LLDBBreakpoint::Vec_t m_pendingDeletionBreakpoints;
-    IProcess* m_process;
+    std::unique_ptr<IProcess> m_process;
     bool m_isRunning;
     bool m_canInteract;
     LLDBCommand m_runCommand;
@@ -81,8 +83,7 @@ protected:
     bool m_attachedToProcess;
     bool m_goingDown;
     LLDBPivot m_pivot;
-    wxString m_debugserver;
-    
+
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
 
@@ -133,7 +134,7 @@ public:
     /**
      * @brief start codelite-lldb if not running
      */
-    bool LaunchLocalDebugServer();
+    bool LaunchLocalDebugServer(const wxString& debugServer);
 
     /**
      * @brief terminate the debug server
@@ -212,6 +213,16 @@ public:
     void Continue();
 
     /**
+     * @brief Run and break on a specific file and line.
+     */
+    void RunTo(const wxFileName& filename, int line);
+
+    /**
+     * @brief Jump the program counter to a specific file and line.
+     */
+    void JumpTo(const wxFileName& filename, int line);
+
+    /**
      * @brief send request to the debugger to request the local varibles
      */
     void RequestLocals();
@@ -234,6 +245,21 @@ public:
      * at the debug server side
      */
     void RequestVariableChildren(int lldbId);
+
+    /**
+     * @brief Set the value of a variable.
+     * @param lldbId
+     * @param value
+     */
+    void SetVariableValue(const int lldbId, const wxString& value);
+
+    /**
+     * @brief Set the display format for a variable.
+     * @param lldbId
+     * @param format
+     */
+    void SetVariableDisplayFormat(const int lldbId, const eLLDBFormat format);
+
     /**
      * @brief stop the debugger
      */
@@ -305,6 +331,31 @@ public:
     void SelectThread(int threadID);
 
     /**
+     * @brief Suspend a set of threads by ID.
+     */
+    void SuspendThreads(const std::vector<int>& threadIds);
+
+    /**
+     * @brief Suspend threads other than the provided set of thread IDs.
+     */
+    void SuspendOtherThreads(const std::vector<int>& threadIds);
+
+    /**
+     * @brief Resume a set of threads by ID.
+     */
+    void ResumeThreads(const std::vector<int>& threadIds);
+
+    /**
+     * @brief Resume threads other than the provided set of thread IDs.
+     */
+    void ResumeOtherThreads(const std::vector<int>& threadIds);
+
+    /**
+     * @brief Resume all threads.
+     */
+    void ResumeAllThreads();
+
+    /**
      * @brief evaluate an expression
      */
     void EvaluateExpression(const wxString& expression);
@@ -321,7 +372,7 @@ public:
 
     /**
      * @brief send text command (typed by the user) to the debugger command line
-     * interperter
+     * interpreter
      */
     void SendInterperterCommand(const wxString& command);
 
@@ -341,6 +392,21 @@ protected:
      * @return true on success, false otherwise
      */
     bool ConnectToRemoteDebugger(const wxString& ip, int port, LLDBConnectReturnObject& ret, int timeout = 10);
+
+    /**
+     * @brief Send a breakpoint command with a single breakpoint location to codelite-lldb.
+     * @param commandType the command to send.
+     * @param filename the file to break on.
+     * @param line the line in @a file to break on.
+     */
+    void SendSingleBreakpointCommand(const eCommandType commandType, const wxFileName& filename, const int line);
+
+	/**
+	 * @brief Send a thread command.
+     * @param commandType the command to send.
+	 * @param threadIds list of thread ids to operate on.
+	 */
+    void SendThreadCommand(const eCommandType commandType, const std::vector<int>& threadIds);
 };
 
 #endif // LLDBCONNECTOR_H

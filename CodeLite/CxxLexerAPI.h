@@ -27,6 +27,7 @@
 #define CppLexerAPI_H__
 
 #include <wx/filename.h>
+#include <string.h>
 #include <wx/string.h>
 #include <wx/variant.h>
 #include <map>
@@ -150,7 +151,11 @@ public:
         type = other.type;
         if(other.text) {
             m_owned = true;
-            text = ::strdup(other.text);
+#ifdef __WXMSW__
+            text = _strdup(other.text);
+#else
+            text = strdup(other.text);
+#endif
         }
         return *this;
     }

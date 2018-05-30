@@ -33,10 +33,10 @@
 #include "clEditorEditEventsHandler.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class TagsOptionsDlg
+/// Class CodeCompletionSettingsDialog
 ///////////////////////////////////////////////////////////////////////////////
 class wxStyledTextCtrl;
-class TagsOptionsDlg : public TagsOptionsBaseDlg
+class CodeCompletionSettingsDialog : public TagsOptionsBaseDlg
 {
     TagsOptionsData m_data;
     std::vector<clEditEventsHandler::Ptr_t> m_handlers;
@@ -69,8 +69,8 @@ public:
     void Parse();
 
 public:
-    TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data);
-    virtual ~TagsOptionsDlg();
+    CodeCompletionSettingsDialog(wxWindow* parent, const TagsOptionsData& data);
+    virtual ~CodeCompletionSettingsDialog();
     TagsOptionsData& GetData() { return m_data; }
 };
 

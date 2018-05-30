@@ -102,9 +102,9 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer211->Add(m_dataview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     m_dataview->AppendTextColumn(_("#"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("File"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Line"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
     m_panelConsole = new wxPanel(m_notebook205, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook205, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_panelConsoleImgIndex;
     m_panelConsoleImgIndex = m_notebook205_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-console")));
@@ -383,6 +383,12 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_pgPropCallStackSize = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxIntProperty( _("Backtrace frames"), wxPG_LABEL, 100) );
     m_pgPropCallStackSize->SetHelpString(_("Maximum number of frames to show in the callstack window"));
     
+    m_pgShowThreadNames = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxBoolProperty( _("Show thread names"), wxPG_LABEL, 0) );
+    m_pgShowThreadNames->SetHelpString(_("Whether to show thread names in the thread pane (thread names can be set with, for example, pthread_setname_np() on Linux)."));
+    
+    m_pgShowFileNamesOnly = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxBoolProperty( _("Show filenames only"), wxPG_LABEL, 0) );
+    m_pgShowFileNamesOnly->SetHelpString(_("Whether to show complete file paths or just file names in the callstack, breakpoint and thread panes"));
+    
     m_panel91 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook87, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_panel91, _("Types"), false);
     
@@ -559,11 +565,12 @@ LLDBThreadsViewBase::LLDBThreadsViewBase(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer115 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer115);
     
-    m_dvListCtrlThreads = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlThreads = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_MULTIPLE);
     
     boxSizer115->Add(m_dvListCtrlThreads, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     m_dvListCtrlThreads->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(70), wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-1), wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("Stop Reason"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);

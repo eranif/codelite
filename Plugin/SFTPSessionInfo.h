@@ -32,6 +32,10 @@ public:
     const wxString& GetRootFolder() const { return m_rootFolder; }
     void SetAccount(const wxString& account) { this->m_account = account; }
     const wxString& GetAccount() const { return m_account; }
+    void Clear();
+    bool IsOk() const;
+    void RemoveFile(const wxString& path);
+    void AddFile(const wxString& path);
 };
 
 class WXDLLIMPEXP_SDK SFTPSessionInfoList : public clConfigItem
@@ -43,14 +47,14 @@ public:
     virtual ~SFTPSessionInfoList();
     void FromJSON(const JSONElement& json);
     JSONElement ToJSON() const;
-    
+
     SFTPSessionInfoList& Load();
     SFTPSessionInfoList& Save();
-    
+
     /**
      * @brief load session for the given account
      */
-    bool GetSession(const wxString& accountName, SFTPSessionInfo& sess) const;
+    SFTPSessionInfo& GetSession(const wxString& accountName);
     /**
      * @brief add session. If a session with this name already exists, overwrite it
      */

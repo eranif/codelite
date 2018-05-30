@@ -211,6 +211,8 @@ Manager::Manager(void)
     EventNotifier::Get()->Connect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
                                   clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
 
+    EventNotifier::Get()->Bind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
 
@@ -230,6 +232,9 @@ Manager::~Manager(void)
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
                                      clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
+
     // stop background processes
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
 
@@ -693,7 +698,7 @@ ProjectPtr Manager::GetProject(const wxString& name) const
     wxString errMsg;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(name, errMsg);
     if(!proj) {
-        wxLogMessage(errMsg);
+        clLogMessage(errMsg);
         return NULL;
     }
     return proj;
@@ -945,13 +950,10 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
 void Manager::RetagFile(const wxString& filename)
 {
     if(IsWorkspaceClosing()) {
-        wxLogMessage(wxString::Format(wxT("Workspace in being closed, skipping re-tag for file %s"), filename.c_str()));
+        clLogMessage(wxString::Format(wxT("Workspace in being closed, skipping re-tag for file %s"), filename.c_str()));
         return;
     }
-    if(!TagsManagerST::Get()->IsValidCtagsFile(wxFileName(filename))) {
-        wxLogMessage(wxT("Not a valid C tags file type: %s. Skipping."), filename.c_str());
-        return;
-    }
+    if(!TagsManagerST::Get()->IsValidCtagsFile(wxFileName(filename))) { return; }
 
     wxFileName absFile(filename);
     absFile.MakeAbsolute();
@@ -1367,7 +1369,7 @@ ProjectSettingsPtr Manager::GetProjectSettings(const wxString& projectName) cons
     wxString errMsg;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(projectName, errMsg);
     if(!proj) {
-        wxLogMessage(errMsg);
+        clLogMessage(errMsg);
         return NULL;
     }
 
@@ -1379,7 +1381,7 @@ void Manager::SetProjectSettings(const wxString& projectName, ProjectSettingsPtr
     wxString errMsg;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(projectName, errMsg);
     if(!proj) {
-        wxLogMessage(errMsg);
+        clLogMessage(errMsg);
         return;
     }
 
@@ -1391,7 +1393,7 @@ void Manager::SetProjectGlobalSettings(const wxString& projectName, BuildConfigC
     wxString errMsg;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(projectName, errMsg);
     if(!proj) {
-        wxLogMessage(errMsg);
+        clLogMessage(errMsg);
         return;
     }
 
@@ -1402,7 +1404,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 {
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
     if(!bldConf) {
-        wxLogMessage(wxT("failed to find project configuration for project '") + projectName + wxT("'"));
+        clLogMessage(wxT("failed to find project configuration for project '") + projectName + wxT("'"));
         return wxEmptyString;
     }
 
@@ -2029,7 +2031,7 @@ void Manager::DbgStart(long attachPid)
     if(bldConf && !bldConf->IsGUIProgram()) { // debugging a project and the project is not considered a "GUI" program
         m_debuggerTerminal.Clear();
 #ifndef __WXMSW__
-        m_debuggerTerminal.Launch(wxString() << _("Debugging: ") << exepath << wxT(" ") << args);
+        m_debuggerTerminal.Launch(clDebuggerTerminalPOSIX::MakeExeTitle(exepath, args));
         if(!m_debuggerTerminal.IsValid()) {
             ::wxMessageBox(_("Could not launch terminal for debugger"), "CodeLite", wxOK | wxCENTER | wxICON_ERROR,
                            clMainFrame::Get());
@@ -3306,7 +3308,7 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 #if !USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
     long end = sw.Time();
     clMainFrame::Get()->SetStatusMessage(_("Done"), 0);
-    wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end) / 1000,
+    clLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end) / 1000,
                  projectFiles.size());
     SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&projectFiles);
 #endif
@@ -3338,7 +3340,7 @@ void Manager::OnProjectSettingsModified(clProjectSettingsEvent& event)
     clMainFrame::Get()->SelectBestEnvSet();
 }
 
-void Manager::OnDbContentCacherLoaded(wxCommandEvent& event) { wxLogMessage(event.GetString()); }
+void Manager::OnDbContentCacherLoaded(wxCommandEvent& event) { clLogMessage(event.GetString()); }
 
 void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
 {
@@ -3580,5 +3582,24 @@ void Manager::ShowNewProjectWizard(const wxString& workspaceFolder)
 
         // Carry on with the default behaviour
         CreateProject(data, workspaceFolder);
+    }
+}
+
+void Manager::OnUpdateDebuggerActiveView(clDebugEvent& event)
+{
+    if(DebuggerMgr::Get().IsNativeDebuggerRunning()) {
+        UpdateDebuggerPane();
+
+    } else {
+        event.Skip();
+    }
+}
+
+void Manager::OnDebuggerSetMemory(clDebugEvent& event)
+{
+    if(DebuggerMgr::Get().IsNativeDebuggerRunning()) {
+        SetMemory(event.GetMemoryAddress(), event.GetMemoryBlockSize(), event.GetMemoryBlockValue());
+    } else {
+        event.Skip();
     }
 }

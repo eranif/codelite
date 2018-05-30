@@ -187,7 +187,12 @@ public:
 
     // Serialization API
 
-    wxString ToString();
+    wxString ToString() const;
+    
+    /**
+     * @brief Sync the data stored in this object with the file system 
+     */
+    void SyncData();
 
     void SetCcColourFlags(const size_t& ccColourFlags) { this->m_ccColourFlags = ccColourFlags; }
 

@@ -46,9 +46,8 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer4->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl->AppendTextColumn(_("Menu"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Description"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Keyboard Shortcut"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Keyboard Shortcut"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("Description"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrl->SetMinSize(wxSize(300,200));
     
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);

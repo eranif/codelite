@@ -271,14 +271,17 @@ CodeLiteApp::~CodeLiteApp(void)
 typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
 #endif
 
+static wxLogNull NO_LOG;
+
 bool CodeLiteApp::OnInit()
 {
 #if defined(__WXMSW__) && !defined(NDEBUG)
     SetAppName(wxT("codelite-dbg"));
+#elif defined(__WXOSX__)
+    SetAppName(wxT("CodeLite"));
 #else
     SetAppName(wxT("codelite"));
 #endif
-
 #ifdef __WXGTK__
     // We need to set the installation prefix on GTK for some reason (mainly debug builds)
     wxString installationDir(INSTALL_DIR);
@@ -304,7 +307,10 @@ bool CodeLiteApp::OnInit()
 
 #endif
     wxSocketBase::Initialize();
-
+    
+    // Redirect all error messages to stderr
+    wxLog::SetActiveTarget(new wxLogStderr());
+    
 #if wxUSE_ON_FATAL_EXCEPTION
     // trun on fatal exceptions handler
     wxHandleFatalExceptions(true);
@@ -725,8 +731,8 @@ bool CodeLiteApp::OnInit()
         }
     }
 
-    wxLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
-    wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStartupDirectory().c_str()));
+    clLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
+    clLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStartupDirectory().c_str()));
 
 #ifdef __WXGTK__
     // Needed on GTK

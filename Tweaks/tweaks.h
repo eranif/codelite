@@ -36,10 +36,10 @@ class Tweaks : public IPlugin
     typedef std::map<wxString, int> ProjectIconMap_t;
     TweaksSettings m_settings;
     ProjectIconMap_t m_project2Icon;
-    
+
 protected:
     IEditor* FindEditorByPage( wxWindow* page );
-    
+
 public:
     Tweaks(IManager *manager);
     ~Tweaks();
@@ -50,9 +50,8 @@ public:
     virtual clToolBar *CreateToolBar(wxWindow *parent);
     virtual void CreatePluginMenu(wxMenu *pluginsMenu);
     virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
     virtual void UnPlug();
-    
+
     // Event handlers
     void OnSettings(wxCommandEvent &e);
     void OnColourTab(clColourEvent& e);

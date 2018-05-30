@@ -51,12 +51,14 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxHideOutputPaneNotIfMemCheck->SetValue(options->GetHideOutputPaneNotIfMemCheck());
     m_checkBoxFindBarAtBottom->SetValue(options->GetFindBarAtBottom());
     m_checkBoxDontFoldSearchResults->SetValue(options->GetDontAutoFoldResults());
+    m_checkBoxDontOverrideSearchStringWithSelection->SetValue(options->GetDontOverrideSearchStringWithSelection());
     m_checkBoxShowDebugOnRun->SetValue(options->GetShowDebugOnRun());
     m_radioBoxHint->SetSelection(options->GetDockingStyle());
     m_checkBoxHideCaptions->SetValue(!options->IsShowDockingWindowCaption());
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
-
+    m_checkBoxNavBarTop->SetValue(options->IsNavBarTop());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
+    m_checkBoxNavBarSortDropdown->SetValue(options->IsSortNavBarDropdown());
 
     // DEFAULT 0
     // MINIMAL 1
@@ -74,6 +76,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxUseDarkTabTheme->SetValue(options->IsTabColourDark());
     m_checkBoxMouseScrollSwitchTabs->SetValue(options->IsMouseScrollSwitchTabs());
+    m_checkBoxSortTabsDropdownAlphabetically->SetValue(options->IsSortTabsDropdownAlphabetically());
 #else
     m_checkBoxEditorTabsFollowsTheme->SetValue(true);
     m_checkBoxEditorTabsFollowsTheme->Enable(false);
@@ -81,7 +84,10 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxUseDarkTabTheme->Enable(false);
     m_checkBoxMouseScrollSwitchTabs->SetValue(false);
     m_checkBoxMouseScrollSwitchTabs->Enable(false);
+    m_checkBoxSortTabsDropdownAlphabetically->SetValue(false);
+    m_checkBoxSortTabsDropdownAlphabetically->Enable(false);
 #endif
+    m_checkBoxEnableTabSwitchingKey->SetValue(options->IsCtrlTabEnabled());
 
     int sel(0);
     switch(options->GetNotebookTabHeight()) {
@@ -174,10 +180,14 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetHideOutputPaneNotIfMemCheck(m_checkBoxHideOutputPaneNotIfMemCheck->IsChecked());
     options->SetFindBarAtBottom(m_checkBoxFindBarAtBottom->IsChecked());
     options->SetDontAutoFoldResults(m_checkBoxDontFoldSearchResults->IsChecked());
+    options->SetDontOverrideSearchStringWithSelection(m_checkBoxDontOverrideSearchStringWithSelection->IsChecked());
     options->SetShowDebugOnRun(m_checkBoxShowDebugOnRun->IsChecked());
     options->SetDockingStyle(m_radioBoxHint->GetSelection());
     options->SetShowDockingWindowCaption(!m_checkBoxHideCaptions->IsChecked());
     options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
+    options->SetNavBarTop(m_checkBoxNavBarTop->IsChecked());
+    options->SetCtrlTabEnabled(m_checkBoxEnableTabSwitchingKey->IsChecked());
+    options->SetSortNavBarDropdown(m_checkBoxNavBarSortDropdown->IsChecked());
 
 #if USE_AUI_NOTEBOOK
     options->SetTabColourMatchesTheme(true);
@@ -188,6 +198,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
 #endif
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
     options->SetMouseScrollSwitchTabs(m_checkBoxMouseScrollSwitchTabs->IsChecked());
+    options->SetSortTabsDropdownAlphabetically(m_checkBoxSortTabsDropdownAlphabetically->IsChecked());
 
     int ht(0);
     switch(m_choiceTabHeight->GetSelection()) {

@@ -6,9 +6,9 @@
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>CFBundleExecutable</key>
-    <string>codelite</string>
+    <string>CodeLite</string>
     <key>CFBundleInfoDictionaryVersion</key>
-    <string>11.0.8</string>
+    <string>12.0.0</string>
     <key>CFBundleName</key>
     <string>CodeLite</string>
     <key>CFBundleIconFile</key>
@@ -16,11 +16,11 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleIdentifier</key>
-    <string>com.eranif.codelite</string>
+    <string>com.eranif.CodeLite</string>
     <key>CFBundleVersion</key>
-    <string>CodeLite IDE version 11.0.8</string>
+    <string>CodeLite IDE version 12.0.0</string>
     <key>CFBundleShortVersionString</key>
-    <string>CodeLite IDE version 11.0.8</string>
+    <string>CodeLite IDE version 12.0.0</string>
     <key>CSResourcesFileMapped</key>
     <true/>
     <key>CFBundleDocumentTypes</key>

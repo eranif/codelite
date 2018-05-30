@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "Notebook.h"
 #include <wx/menu.h>
+#include <wx/aui/floatpane.h>
 #include <map>
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -16,12 +17,14 @@ clDockingManager::clDockingManager()
 {
     Bind(wxEVT_AUI_PANE_BUTTON, &clDockingManager::OnButtonClicked, this);
     Bind(wxEVT_AUI_RENDER, &clDockingManager::OnRender, this);
+    Bind(wxEVT_AUI_PANE_ACTIVATED, &clDockingManager::OnAuiPaneActivated, this);
 }
 
 clDockingManager::~clDockingManager()
 {
     Unbind(wxEVT_AUI_PANE_BUTTON, &clDockingManager::OnButtonClicked, this);
     Unbind(wxEVT_AUI_RENDER, &clDockingManager::OnRender, this);
+    Unbind(wxEVT_AUI_PANE_ACTIVATED, &clDockingManager::OnAuiPaneActivated, this);
 }
 
 void clDockingManager::OnRender(wxAuiManagerEvent& event) { event.Skip(); }
@@ -39,6 +42,25 @@ void clDockingManager::OnButtonClicked(wxAuiManagerEvent& event)
         CallAfter(&clDockingManager::ShowOutputViewOpenTabMenu);
     } else {
         CallAfter(&clDockingManager::ShowWorkspaceOpenTabMenu);
+    }
+}
+
+void clDockingManager::OnAuiPaneActivated(wxAuiManagerEvent& e)
+{
+    e.Skip();
+
+    // If a pane is floating, copy the accelerator table to it.
+    const auto pane = e.GetPane();
+    if(pane && pane->frame && pane->IsFloating()) {
+        // wxGetRealTopLevelParent(pane->frame) doesn't work since the detached pane
+        // has IsTopLevel() == true, so wxGetRealTopLevelParent() returns the parameter.
+        const auto parent = ::clGetManager()->GetTheApp()->GetTopWindow();
+        if(parent) {
+            const auto accelTable = parent->GetAcceleratorTable();
+            if(accelTable) {
+                pane->frame->SetAcceleratorTable(*accelTable);
+            }
+        }
     }
 }
 
@@ -71,7 +93,7 @@ wxString clDockingManager::ShowMenu(wxWindow* win, const wxArrayString& tabs, No
 {
     DetachedPanesInfo dpi;
     EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
-    
+
     std::map<int, wxString> tabsIds;
     wxMenu menu(_("Toggle Tabs"));
     for(size_t i = 0; i < tabs.size(); ++i) {
@@ -81,7 +103,7 @@ wxString clDockingManager::ShowMenu(wxWindow* win, const wxArrayString& tabs, No
         wxMenuItem* item = new wxMenuItem(&menu, tabId, label, "", wxITEM_CHECK);
         menu.Append(item);
         item->Check((book->GetPageIndex(label) != wxNOT_FOUND));
-        
+
         // Output pane does not support "detach"
         if((book != clGetManager()->GetOutputPaneNotebook()) && dpi.GetPanes().Index(label) != wxNOT_FOUND) {
             item->Enable(false);

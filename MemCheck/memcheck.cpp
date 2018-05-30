@@ -229,12 +229,6 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
     }
 }
 
-void MemCheckPlugin::UnHookPopupMenu(wxMenu* menu, MenuType type)
-{
-    wxUnusedVar(menu);
-    wxUnusedVar(type);
-}
-
 void MemCheckPlugin::UnPlug()
 {
     m_tabHelper.reset(NULL);

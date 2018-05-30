@@ -86,7 +86,7 @@ bool PHPExecutor::DoRunCLI(
         wd = data.GetWorkingDirectory();
     }
 
-    wxLogMessage(cmd);
+    clLogMessage(cmd);
 
     // Apply the environment variables
     // export XDEBUG_CONFIG="idekey=session_name remote_host=localhost profiler_enable=1"

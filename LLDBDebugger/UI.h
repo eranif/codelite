@@ -160,6 +160,8 @@ protected:
     wxPGProperty* m_pgProp138;
     wxPGProperty* m_pgPropArraySize;
     wxPGProperty* m_pgPropCallStackSize;
+    wxPGProperty* m_pgShowThreadNames;
+    wxPGProperty* m_pgShowFileNamesOnly;
     wxPanel* m_panel91;
     wxStyledTextCtrl* m_stcTypes;
     wxHyperlinkCtrl* m_hyperLink111;

@@ -91,11 +91,22 @@ enum eCommandType {
     kCommandAddWatch,
     kCommandDeleteWatch,
     kCommandInterperterCommand,
+    kCommandRunTo,
+    kCommandJumpTo,
+    kCommandSuspendThreads,
+    kCommandSuspendOtherThreads,
+    kCommandResumeThreads,
+    kCommandResumeOtherThreads,
+    kCommandResumeAllThreads,
+    kCommandSetVariableValue,
+    kCommandSetVariableDisplayFormat
 };
 
 enum eLLDBOptions {
     kLLDBOptionRaiseCodeLite = 0x00000001,
     kLLDBOptionUseRemoteProxy = 0x00000002,
+    kLLDBOptionShowThreadNames = 0x00000004,
+    kLLDBOptionShowFileNamesOnly = 0x00000008
 };
 
 enum eLLDBDebugSessionType {
@@ -116,4 +127,21 @@ enum eLLDBStopReason {
     kStopReasonPlanComplete,
     kStopReasonThreadExiting,
 };
+
+enum class eLLDBFormat {
+    kFormatInvalid = -1,
+    kFormatDefault,
+    kFormatDecimal,       
+    kFormatHex,           
+    kFormatOctal,         
+    kFormatBinary,        
+    kFormatFloat,         
+    kFormatComplex,       
+    kFormatBoolean,       
+    kFormatBytes,         
+    kFormatBytesWithASCII,
+    kFormatCString,       
+    kFormatPointer,       
+};
+
 #endif

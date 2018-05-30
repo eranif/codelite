@@ -31,24 +31,25 @@ MemoryViewBase::MemoryViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     flexGridSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer6->AddGrowableCol(1);
     
-    bSizer1->Add(flexGridSizer6, 0, wxALL|wxEXPAND, 5);
+    bSizer1->Add(flexGridSizer6, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Address:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Address:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    flexGridSizer6->Add(m_staticText2, 0, wxLEFT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer6->Add(m_staticText2, 0, wxLEFT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlExpression = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
+    m_textCtrlExpression = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
     m_textCtrlExpression->SetToolTip(_("Address or pointer to watch"));
+    m_textCtrlExpression->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlExpression->SetHint(wxT(""));
     #endif
     
-    flexGridSizer6->Add(m_textCtrlExpression, 1, wxALL|wxEXPAND, 5);
+    flexGridSizer6->Add(m_textCtrlExpression, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Size:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Size:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_staticText1->SetToolTip(_("Memory size to view"));
     
-    flexGridSizer6->Add(m_staticText1, 0, wxLEFT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer6->Add(m_staticText1, 0, wxLEFT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceSizeArr;
     m_choiceSizeArr.Add(wxT("32"));
@@ -59,32 +60,32 @@ MemoryViewBase::MemoryViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_choiceSizeArr.Add(wxT("1024"));
     m_choiceSizeArr.Add(wxT("2048"));
     m_choiceSizeArr.Add(wxT("4096"));
-    m_choiceSize = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceSizeArr, 0);
+    m_choiceSize = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceSizeArr, 0);
     m_choiceSize->SetToolTip(_("Memory size to view"));
     m_choiceSize->SetSelection(0);
     
-    flexGridSizer6->Add(m_choiceSize, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer6->Add(m_choiceSize, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText8 = new wxStaticText(this, wxID_ANY, _("Number of columns:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText8 = new wxStaticText(this, wxID_ANY, _("Number of columns:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer6->Add(m_staticText8, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer6->Add(m_staticText8, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceColsArr;
     m_choiceColsArr.Add(wxT("4"));
     m_choiceColsArr.Add(wxT("8"));
     m_choiceColsArr.Add(wxT("16"));
     m_choiceColsArr.Add(wxT("32"));
-    m_choiceCols = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceColsArr, 0);
+    m_choiceCols = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceColsArr, 0);
     m_choiceCols->SetToolTip(_("Number of columns to use per row"));
     m_choiceCols->SetSelection(2);
     
-    flexGridSizer6->Add(m_choiceCols, 0, wxALL, 5);
+    flexGridSizer6->Add(m_choiceCols, 0, wxALL, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(bSizer3, 1, wxEXPAND, 5);
+    bSizer1->Add(bSizer3, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCtrlMemory = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_MULTILINE|wxTE_DONTWRAP);
+    m_textCtrlMemory = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_RICH2|wxTE_MULTILINE|wxTE_DONTWRAP);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlMemoryFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -95,29 +96,28 @@ MemoryViewBase::MemoryViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     #endif
     m_textCtrlMemory->SetFont(m_textCtrlMemoryFont);
     
-    bSizer3->Add(m_textCtrlMemory, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    bSizer3->Add(m_textCtrlMemory, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer3->Add(bSizer4, 0, 0, 5);
+    bSizer3->Add(bSizer4, 0, 0, WXC_FROM_DIP(5));
     
-    m_buttonEvaluate = new wxButton(this, wxID_ANY, _("Evaluate"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonEvaluate = new wxButton(this, wxID_ANY, _("Evaluate"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonEvaluate->SetDefault();
     m_buttonEvaluate->SetToolTip(_("Evaluate the expression in the \"Address\" field"));
     
-    bSizer4->Add(m_buttonEvaluate, 0, wxALL|wxEXPAND, 5);
+    bSizer4->Add(m_buttonEvaluate, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_buttonUpdate = new wxButton(this, wxID_ANY, _("Update"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonUpdate = new wxButton(this, wxID_ANY, _("Update"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonUpdate->SetToolTip(_("Update the memory in the main display area to apply your changes"));
     
-    bSizer4->Add(m_buttonUpdate, 0, wxALL|wxEXPAND, 5);
+    bSizer4->Add(m_buttonUpdate, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     SetName(wxT("MemoryViewBase"));
-    SetSizeHints(596,300);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(MemoryViewBase::OnTextEntered), NULL, this);
     m_choiceSize->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MemoryViewBase::OnMemorySize), NULL, this);

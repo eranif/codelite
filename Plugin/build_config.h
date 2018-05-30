@@ -140,6 +140,7 @@ private:
     wxString m_ccPCH;
     bool m_clangC11;
     bool m_clangC14;
+	bool m_clangC17;
     wxArrayString m_debuggerSearchPaths;
     bool m_isGUIProgram;
     bool m_isProjectEnabled;
@@ -171,6 +172,8 @@ public:
     bool IsClangC11() const { return m_clangC11; }
     void SetClangC14(bool clangC14) { this->m_clangC14 = clangC14; }
     bool IsClangC14() const { return m_clangC14; }
+	void SetClangC17(bool clangC17) { this->m_clangC17 = clangC17; }
+    bool IsClangC17() const { return m_clangC17; }
     void SetClangCcPCH(const wxString& ccPCH) { this->m_ccPCH = ccPCH; }
     const wxString& GetClangCcPCH() const { return m_ccPCH; }
     void SetCcSearchPaths(const wxString& ccSearchPaths) { this->m_ccSearchPaths = ccSearchPaths; }

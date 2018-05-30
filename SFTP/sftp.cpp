@@ -201,12 +201,6 @@ bool SFTP::IsPaneDetached(const wxString& name) const
     return detachedPanes.Index(name) != wxNOT_FOUND;
 }
 
-void SFTP::UnHookPopupMenu(wxMenu* menu, MenuType type)
-{
-    wxUnusedVar(menu);
-    wxUnusedVar(type);
-}
-
 void SFTP::UnPlug()
 {
     // Find our page and release it
@@ -306,9 +300,9 @@ void SFTP::OnFileSaved(clCommandEvent& e)
     DoFileSaved(local_file);
 }
 
-void SFTP::OnFileWriteOK(const wxString& message) { wxLogMessage(message); }
+void SFTP::OnFileWriteOK(const wxString& message) { clLogMessage(message); }
 
-void SFTP::OnFileWriteError(const wxString& errorMessage) { wxLogMessage(errorMessage); }
+void SFTP::OnFileWriteError(const wxString& errorMessage) { clLogMessage(errorMessage); }
 
 void SFTP::OnDisableWorkspaceMirroring(wxCommandEvent& e)
 {

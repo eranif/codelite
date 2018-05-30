@@ -33,6 +33,7 @@
 #include "editor_config.h"
 #include "editorframe.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "filechecklist.h"
 #include "frame.h"
 #include "globals.h"
@@ -88,14 +89,13 @@ void MainBook::CreateGuiControls()
 #endif
 
     // load the notebook style from the configuration settings
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_book = new clMultiBook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     sz->Add(m_book, 1, wxEXPAND);
 
-    m_navBar = new clEditorBar(this);
-    sz->Add(m_navBar, 0, wxEXPAND);
+    DoPlaceNavigationBar();
 
     m_quickFindBar = new QuickFindBar(this);
-    DoPositionFindBar(2);
+    DoPositionFindBar();
     sz->Layout();
 }
 
@@ -106,7 +106,6 @@ void MainBook::ConnectEvents()
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &MainBook::OnPageChanged, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
-    m_book->Bind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
     m_book->Bind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
     m_book->Bind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
     m_book->Bind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
@@ -131,6 +130,7 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
     EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, &MainBook::OnNavigationBarMenuSelectionMade,
                                this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
 }
 
 MainBook::~MainBook()
@@ -141,7 +141,6 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &MainBook::OnPageChanged, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
-    m_book->Unbind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
     m_book->Unbind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
     m_book->Unbind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
     m_book->Unbind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
@@ -167,6 +166,7 @@ MainBook::~MainBook()
     EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, &MainBook::OnNavigationBarMenuSelectionMade,
                                  this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
 }
 
 void MainBook::OnMouseDClick(wxBookCtrlEvent& e)
@@ -560,7 +560,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectNa
 #endif
 
     if(!IsFileExists(fileName)) {
-        wxLogMessage(wxT("Failed to open: %s: No such file or directory"), fileName.GetFullPath().c_str());
+        clDEBUG() << "Failed to open:" << fileName << ". No such file or directory";
         return NULL;
     }
 
@@ -583,11 +583,11 @@ LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectNa
     if(editor) {
         editor->SetProject(projName);
     } else if(fileName.IsOk() == false) {
-        wxLogMessage(wxT("Invalid file name: ") + fileName.GetFullPath());
+        clLogMessage(wxT("Invalid file name: ") + fileName.GetFullPath());
         return NULL;
 
     } else if(!fileName.FileExists()) {
-        wxLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
+        clLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
         return NULL;
 
     } else {
@@ -609,11 +609,12 @@ LEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectNa
             AddPage(editor, fileName.GetFullName(), tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp);
         }
         editor->SetSyntaxHighlight();
+        ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(editor);
 
-        // mark the editor as read only if neede
+        // mark the editor as read only if needed
         MarkEditorReadOnly(editor);
 
-        // SHow the notebook
+        // Show the notebook
         if(hidden) GetSizer()->Show(m_book);
 
         if(position == wxNOT_FOUND && lineno == wxNOT_FOUND && editor->GetContext()->GetName() == wxT("C++")) {
@@ -989,7 +990,8 @@ void MainBook::ApplySettingsChanges()
     clMainFrame::Get()->ShowOrHideCaptions();
 
     // Last: reposition the findBar
-    DoPositionFindBar(2);
+    DoPositionFindBar();
+    DoPlaceNavigationBar();
 }
 
 void MainBook::UnHighlightAll()
@@ -1191,7 +1193,7 @@ void MainBook::OnClosePage(wxBookCtrlEvent& e)
     if(page) { ClosePage(page); }
 }
 
-void MainBook::DoPositionFindBar(int where)
+void MainBook::DoPositionFindBar()
 {
     clWindowUpdateLocker locker(this);
     // the find bar is already placed on the MainBook, detach it
@@ -1399,11 +1401,32 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
 #endif
 }
 
-void MainBook::OnNavigating(wxBookCtrlEvent& e)
+void MainBook::ShowNavigationDialog()
 {
-    if(m_book->GetPageCount() == 0) return;
+    if(!EditorConfigST::Get()->GetOptions()->IsCtrlTabEnabled()) { return; }
+
+    if(m_book->GetPageCount() == 0) { return; }
+
+    // FIXME
     NotebookNavigationDlg dlg(EventNotifier::Get()->TopFrame(), m_book);
     if(dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) { m_book->SetSelection(dlg.GetSelection()); }
+}
+
+void MainBook::MovePage(bool movePageRight)
+{
+    // Determine the new index
+    int newIndex = wxNOT_FOUND;
+
+    // Sanity
+    if(m_book->GetPageCount() == 0) { return; }
+
+    int pageCount = static_cast<int>(m_book->GetPageCount());
+    if(movePageRight && ((m_book->GetSelection() + 1) < pageCount)) {
+        newIndex = m_book->GetSelection() + 1;
+    } else if(!movePageRight && (m_book->GetSelection() > 0)) {
+        newIndex = m_book->GetSelection() - 1;
+    }
+    if(newIndex != wxNOT_FOUND) { m_book->MoveActivePage(newIndex); }
 }
 
 void MainBook::OnThemeChanged(wxCommandEvent& e)
@@ -1437,26 +1460,17 @@ void MainBook::DoOpenImageViewer(const wxFileName& filename)
 void MainBook::OnTabLabelContextMenu(wxBookCtrlEvent& e)
 {
     e.Skip();
-    wxWindow* tabCtrl = static_cast<wxWindow*>(e.GetEventObject());
-    if((e.GetSelection() == m_book->GetSelection()) &&
-#if USE_AUI_NOTEBOOK
-       (tabCtrl == m_book)
-#else
-       (tabCtrl->GetParent() == m_book)
-#endif
-    ) {
-        // we only show context menu for the active tab
+    wxWindow* book = static_cast<wxWindow*>(e.GetEventObject());
+    if(book == m_book) {
         e.Skip(false);
-        wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
-
-        // Notify the plugins about the tab label context menu
-        clContextMenuEvent event(wxEVT_CONTEXT_MENU_TAB_LABEL);
-        event.SetMenu(contextMenu);
-        EventNotifier::Get()->ProcessEvent(event);
-
-        contextMenu = event.GetMenu();
-        tabCtrl->PopupMenu(contextMenu);
-        wxDELETE(contextMenu);
+        if(e.GetSelection() == m_book->GetSelection()) {
+            // The tab requested for context menu is the active one
+            DoShowTabLabelContextMenu();
+        } else {
+            // Make this tab the active one and requeue the context menu event
+            m_book->SetSelection(e.GetSelection());
+            DoShowTabLabelContextMenu();
+        }
     }
 }
 
@@ -1559,6 +1573,13 @@ void MainBook::OnNavigationBarMenuShowing(clContextMenuEvent& e)
            tags.empty()) {
             return;
         }
+
+        if(EditorConfigST::Get()->GetOptions()->IsSortNavBarDropdown()) {
+            std::sort(tags.begin(), tags.end(), [](TagEntryPtr pLhs, TagEntryPtr pRhs) {
+                return pLhs->GetFullDisplayName() < pRhs->GetFullDisplayName();
+            });
+        }
+
         wxMenu* menu = e.GetMenu();
         std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr tag) {
             wxString fullname = tag->GetFullDisplayName();
@@ -1582,4 +1603,79 @@ void MainBook::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
     if(!editor) { return; }
 
     editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1), nullptr);
+}
+
+void MainBook::DoPlaceNavigationBar()
+{
+    clWindowUpdateLocker locker(this);
+    if(m_navBar) {
+        // the find bar is already placed on the MainBook, detach it
+        GetSizer()->Detach(m_navBar);
+    } else {
+        m_navBar = new clEditorBar(this);
+    }
+
+    bool placeAtBottom = !EditorConfigST::Get()->GetOptions()->IsNavBarTop();
+    size_t itemCount = GetSizer()->GetItemCount();
+    for(size_t i = 0; i < itemCount; ++i) {
+        wxSizerItem* sizerItem = GetSizer()->GetItem(i);
+        if(!sizerItem) { continue; }
+        if(sizerItem->GetWindow() == m_book) {
+            // we found the main book
+            if(placeAtBottom) {
+                GetSizer()->Insert(i + 1, m_navBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
+            } else {
+                GetSizer()->Insert(i, m_navBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
+            }
+            break;
+        }
+    }
+    GetSizer()->Layout();
+}
+
+void MainBook::OnSettingsChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    // Update the navigation bar position
+    DoPlaceNavigationBar();
+    DoPositionFindBar();
+}
+
+LEditor* MainBook::OpenFile(const BrowseRecord& rec)
+{
+    LEditor* editor = OpenFile(rec.filename, rec.project, wxNOT_FOUND, wxNOT_FOUND, OF_None, true);
+    if(editor) {
+        if(rec.firstLineInView != wxNOT_FOUND) { editor->GetCtrl()->SetFirstVisibleLine(rec.firstLineInView); }
+        // Determine the best position for the caret
+        int pos = rec.position;
+        if((pos == wxNOT_FOUND) && (rec.lineno != wxNOT_FOUND)) { pos = editor->PositionFromLine(rec.lineno); }
+        if(pos != wxNOT_FOUND) {
+            editor->SetCurrentPos(rec.position);
+            editor->SetSelectionStart(rec.position);
+            editor->SetSelectionEnd(rec.position);
+        }
+    }
+    return editor;
+}
+
+void MainBook::MoveActiveTabToLeftTabGroup() { m_book->MoveToLeftTabGroup(); }
+
+void MainBook::MoveActiveTabToRIghtTabGroup() { m_book->MoveToRightTabGroup(); }
+
+bool MainBook::CanMoveActiveTabToRIghtTabGroup() const { return m_book->CanMoveToTabGroupRight(); }
+
+bool MainBook::CanMoveActiveTabToLeftTabGroup() const { return m_book->CanMoveToTabGroupLeft(); }
+
+void MainBook::DoShowTabLabelContextMenu()
+{
+    wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
+
+    // Notify the plugins about the tab label context menu
+    clContextMenuEvent event(wxEVT_CONTEXT_MENU_TAB_LABEL);
+    event.SetMenu(contextMenu);
+    EventNotifier::Get()->ProcessEvent(event);
+
+    contextMenu = event.GetMenu();
+    m_book->PopupMenu(contextMenu);
+    wxDELETE(contextMenu);
 }

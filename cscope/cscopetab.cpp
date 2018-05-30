@@ -39,6 +39,7 @@
 #include <set>
 #include "drawingutils.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 
 CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     : CscopeTabBase(parent)
@@ -233,7 +234,7 @@ void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
             wxString wsp_path = clCxxWorkspaceST::Get()->GetPrivateFolder();
             wxFileName fn(iter->second.GetFile());
             if(!fn.MakeAbsolute(wsp_path)) {
-                wxLogMessage(wxT("CScope: failed to convert file to absolute path"));
+                clLogMessage(wxT("CScope: failed to convert file to absolute path"));
                 return;
             }
             m_mgr->OpenFile(fn.GetFullPath(), "", iter->second.GetLine() - 1);

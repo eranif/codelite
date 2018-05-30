@@ -909,14 +909,13 @@ void Subversion2::DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString& workingDire
     wxArrayString xmlArr;
     ::WrapInShell(svnInfoCommand);
 
-    wxLog::EnableLogging(false);
     IProcess::Ptr_t proc(::CreateSyncProcess(svnInfoCommand, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
     if(proc) {
         proc->WaitForTerminate(xmlStr);
         SvnXML::GetSvnInfo(xmlStr, svnInfo);
     }
 
-    wxLog::EnableLogging(true);
+    
 }
 
 bool Subversion2::IsPathUnderSvn(const wxString& path)
@@ -1136,7 +1135,6 @@ wxArrayString Subversion2::DoGetSvnStatusQuiet(const wxString& wd)
 
     wxArrayString lines;
 
-    wxLog::EnableLogging(false);
     ProcUtils::ExecuteCommand(command, lines);
 
     for(size_t i = 0; i < lines.GetCount(); i++) {
@@ -1149,7 +1147,7 @@ wxArrayString Subversion2::DoGetSvnStatusQuiet(const wxString& wd)
 
     modFiles.insert(modFiles.end(), newFiles.begin(), newFiles.end());
     modFiles.insert(modFiles.end(), deletedFiles.begin(), deletedFiles.end());
-    wxLog::EnableLogging(true);
+    
     return modFiles;
 }
 
@@ -1181,8 +1179,7 @@ std::vector<wxString> Subversion2::GetLocalAddsDels(const wxString& wd)
     command << GetSvnExeName() << wxT(" status -q ");
     command << wxT("\"") << wd << wxT("\"");
 
-    wxLog::EnableLogging(false);
-
+    
     std::vector<wxString> aryFiles;
     wxArrayString lines;
 
@@ -1199,7 +1196,7 @@ std::vector<wxString> Subversion2::GetLocalAddsDels(const wxString& wd)
         }
     }
 
-    wxLog::EnableLogging(true);
+    
     return aryFiles;
 }
 
@@ -1210,8 +1207,7 @@ std::vector<wxString> Subversion2::GetFilesMarkedBinary(const wxString& wd)
     command << GetSvnExeName() << wxT(" propget svn:mime-type -R ");
     command << wxT("\"") << wd << wxT("\"");
 
-    wxLog::EnableLogging(false);
-
+    
     std::vector<wxString> aryFiles;
     wxArrayString lines;
 
@@ -1223,7 +1219,7 @@ std::vector<wxString> Subversion2::GetFilesMarkedBinary(const wxString& wd)
         if(lines.Item(i1).EndsWith(_(" - application/octet-stream"), &fileName)) { aryFiles.push_back(fileName); }
     }
 
-    wxLog::EnableLogging(true);
+    
     return aryFiles;
 }
 
@@ -1296,7 +1292,7 @@ void Subversion2::OnSync(wxCommandEvent& event)
     excludeExtensions = dlg.GetExcludeExtensions();
     excludeBinary = dlg.GetExcludeBin();
 
-    wxLogMessage("excludeBinary=%d\n", excludeBinary);
+    clDEBUG() << "excludeBinary=" << excludeBinary;
 
     // attempt to update the project files
     wxString workDir(dlg.GetRootDir());
@@ -1368,7 +1364,7 @@ void Subversion2::FinishSyncProcess(ProjectPtr& proj, const wxString& workDir, b
             excludeBinTF = _("false");
         }
         wxString rawData = excludeBinTF + delim + workDir + delim + excludeExtensions;
-        wxLogMessage("rawData=%s\n", rawData.c_str());
+        clDEBUG() << "rawData=" << rawData;
         projRefreshed->SetPluginData("subversion2", rawData);
     }
 }

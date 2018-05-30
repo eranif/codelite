@@ -24,16 +24,18 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ImportFilesDialogNew.h"
-#include <wx/dir.h>
-#include <wx/filefn.h>
-#include "pluginmanager.h"
 #include "bitmap_loader.h"
-#include "importfilessettings.h"
 #include "ctags_manager.h"
+#include "editor_config.h"
+#include "importfilessettings.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"
-#include "editor_config.h"
+#include <tuple>
+#include <vector>
+#include <wx/dir.h>
 #include <wx/dirdlg.h>
+#include <wx/filefn.h>
+#include <algorithm>
 
 class ImportFilesDlgData : public wxClientData
 {
@@ -111,16 +113,26 @@ void ImportFilesDialogNew::DoBuildTree(const wxDataViewItem& parent, const wxDir
     wxString path;
     bool cont = dir.GetFirst(&path, "", wxDIR_DIRS);
     wxBitmap folderBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap("mime/16/folder-yellow");
-    while(cont) {
 
+    // Collect list of directories
+    std::vector<wxString> D;
+    while(cont) {
+        D.push_back(dir.GetNameWithSep() + path);
+        cont = dir.GetNext(&path);
+    }
+
+    // Sort the directories
+    std::sort(D.begin(), D.end());
+    
+    // Now build the tree
+    std::for_each(D.begin(), D.end(), [&](const wxString& path) {
+        wxDir childDir(path);
         wxVector<wxVariant> cols;
         cols.push_back(initialState);
-        cols.push_back(MakeIconText(path, folderBmp));
-
-        wxDir childDir(dir.GetNameWithSep() + path);
+        cols.push_back(MakeIconText(wxFileName(path, "").GetDirs().Last(), folderBmp));
+        
         wxDataViewItem child =
             m_dataviewModel->AppendItem(parent, cols, new ImportFilesDlgData(childDir.GetName(), initialState));
-
         // Add dummy columns
         if(childDir.IsOpened() && childDir.HasSubDirs()) {
             wxVector<wxVariant> dummyCols;
@@ -128,8 +140,7 @@ void ImportFilesDialogNew::DoBuildTree(const wxDataViewItem& parent, const wxDir
             dummyCols.push_back(MakeIconText("dummy", folderBmp));
             m_dataviewModel->AppendItem(child, dummyCols, new ImportFilesDlgData("", false, true));
         }
-        cont = dir.GetNext(&path);
-    }
+    });
 }
 
 void ImportFilesDialogNew::OnDirChanged(wxCommandEvent& event)

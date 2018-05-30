@@ -30,9 +30,9 @@ EditorSettingsCommentsDoxygenPanelBase::EditorSettingsCommentsDoxygenPanelBase(w
     wxUnusedVar(m_pgMgrDoxyArr);
     wxArrayInt m_pgMgrDoxyIntArr;
     wxUnusedVar(m_pgMgrDoxyIntArr);
-    m_pgMgrDoxy = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,300)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgrDoxy = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    bSizer1->Add(m_pgMgrDoxy, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    bSizer1->Add(m_pgMgrDoxy, 1, wxEXPAND, WXC_FROM_DIP(5));
     
     m_pgProp10 = m_pgMgrDoxy->Append(  new wxPropertyCategory( _("General") ) );
     m_pgProp10->SetHelpString(wxT(""));

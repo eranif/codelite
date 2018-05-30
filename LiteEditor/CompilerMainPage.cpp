@@ -928,18 +928,18 @@ void CompilerMainPage::OnCmdModify(wxCommandEvent& event)
 }
 void CompilerMainPage::OnAddExistingCompiler(wxCommandEvent& event)
 {
-    AdvancedDlg* dlg = dynamic_cast<AdvancedDlg*>(wxGetTopLevelParent(this));
-    dlg->CallAfter(&AdvancedDlg::OnAddExistingCompiler);
+    BuildSettingsDialog* dlg = dynamic_cast<BuildSettingsDialog*>(wxGetTopLevelParent(this));
+    dlg->CallAfter(&BuildSettingsDialog::OnAddExistingCompiler);
 }
 
 void CompilerMainPage::OnCloneCompiler(wxCommandEvent& event)
 {
-    AdvancedDlg* dlg = dynamic_cast<AdvancedDlg*>(wxGetTopLevelParent(this));
-    dlg->CallAfter(&AdvancedDlg::OnButtonNewClicked);
+    BuildSettingsDialog* dlg = dynamic_cast<BuildSettingsDialog*>(wxGetTopLevelParent(this));
+    dlg->CallAfter(&BuildSettingsDialog::OnButtonNewClicked);
 }
 
 void CompilerMainPage::OnScanCompilers(wxCommandEvent& event)
 {
-    AdvancedDlg* dlg = dynamic_cast<AdvancedDlg*>(wxGetTopLevelParent(this));
-    dlg->CallAfter(&AdvancedDlg::OnScanAndSuggestCompilers);
+    BuildSettingsDialog* dlg = dynamic_cast<BuildSettingsDialog*>(wxGetTopLevelParent(this));
+    dlg->CallAfter(&BuildSettingsDialog::OnScanAndSuggestCompilers);
 }

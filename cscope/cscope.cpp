@@ -45,6 +45,7 @@
 #include <wx/stdpaths.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
+#include "file_logger.h"
 
 static Cscope* thePlugin = NULL;
 
@@ -342,7 +343,7 @@ wxString Cscope::DoCreateListFile(bool force)
         // create temporary file and save the file there
         wxFFile file(list_file.GetFullPath(), wxT("w+b"));
         if(!file.IsOpened()) {
-            wxLogMessage(wxT("Failed to open temporary file ") + list_file.GetFullPath());
+            clDEBUG() << "Failed to open temporary file:" << list_file;
             return wxEmptyString;
         }
 

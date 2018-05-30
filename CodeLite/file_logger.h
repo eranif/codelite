@@ -197,4 +197,7 @@ template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
 #define clWARNING() FileLogger(FileLogger::Warning) << FileLogger::Prefix(FileLogger::Warning)
 #define clSYSTEM() FileLogger(FileLogger::System) << FileLogger::Prefix(FileLogger::System)
 
+// A replacement for wxLogMessage
+#define clLogMessage(msg) clDEBUG() << msg
+
 #endif // FILELOGGER_H

@@ -123,12 +123,6 @@ void Tweaks::HookPopupMenu(wxMenu* menu, MenuType type)
     wxUnusedVar(type);
 }
 
-void Tweaks::UnHookPopupMenu(wxMenu* menu, MenuType type)
-{
-    wxUnusedVar(menu);
-    wxUnusedVar(type);
-}
-
 void Tweaks::OnSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);

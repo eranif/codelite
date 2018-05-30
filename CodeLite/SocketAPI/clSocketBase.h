@@ -29,6 +29,9 @@
 #include <string>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
+#ifdef __WXOSX__
+#include <sys/errno.h>
+#endif
 #include "codelite_exports.h"
 
 #ifdef _WIN32
@@ -72,7 +75,15 @@ public:
         kError = 3,
     };
 
-    std::string error() const;
+#ifdef _WIN32
+    static const int eWouldBlock = WSAEWOULDBLOCK;
+#else
+    static const int eWouldBlock = EWOULDBLOCK;
+#endif
+
+    static int GetLastError();
+    static std::string error();
+    static std::string error(const int errorCode);
 
 public:
     /**
@@ -117,7 +128,7 @@ public:
      * @param timeout seconds to wait
      */
     int Read(wxString& content, const wxMBConv& conv = wxConvUTF8, long timeout = -1) ;
-    
+
     /**
      * @brief read a buffer from the socket
      * @param content [output]
@@ -131,20 +142,20 @@ public:
      * @return
      */
     int SelectRead(long seconds = -1) ;
-    
+
     /**
      * @brief select for read. Same as above, but use milli seconds instead
      * @param milliSeconds number of _milliseconds_ to wait
-     * @return 
+     * @return
      */
     int SelectReadMS(long milliSeconds = -1) ;
-    
+
     /**
      * @brief select for write
      * @return
      */
     int SelectWrite(long seconds = -1) ;
-    
+
     /**
      * @brief select for write (milli seconds version)
      * @return

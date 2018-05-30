@@ -37,7 +37,7 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer3);
     
-    m_bitmap = new wxStaticBitmap(m_panel1, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("cl-splash")), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0 );
+    m_bitmap = new wxStaticBitmap(m_panel1, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("splashscreen")), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0 );
     
     bSizer3->Add(m_bitmap, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     

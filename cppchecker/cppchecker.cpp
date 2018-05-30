@@ -304,7 +304,7 @@ wxMenu* CppCheckPlugin::CreateWorkspacePopMenu()
 void CppCheckPlugin::OnCheckFileEditorItem(wxCommandEvent& e)
 {
     if(m_cppcheckProcess) {
-        wxLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
+        clLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
         return;
     }
 
@@ -324,7 +324,7 @@ void CppCheckPlugin::OnCheckFileEditorItem(wxCommandEvent& e)
 void CppCheckPlugin::OnCheckFileExplorerItem(wxCommandEvent& e)
 {
     if(m_cppcheckProcess) {
-        wxLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
+        clLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
         return;
     }
 
@@ -344,7 +344,7 @@ void CppCheckPlugin::OnCheckFileExplorerItem(wxCommandEvent& e)
 void CppCheckPlugin::OnCheckWorkspaceItem(wxCommandEvent& e)
 {
     if(m_cppcheckProcess) {
-        wxLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
+        clLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
         return;
     }
 
@@ -400,7 +400,7 @@ ProjectPtr CppCheckPlugin::FindSelectedProject()
 void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
 {
     if(m_cppcheckProcess) {
-        wxLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
+        clLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
         return;
     }
 

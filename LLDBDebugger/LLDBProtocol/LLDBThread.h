@@ -37,8 +37,10 @@ class LLDBThread
     wxString m_file;
     int      m_line;
     bool     m_active;
+    bool     m_suspended;
     int      m_stopReason;
     wxString m_stopReasonString;
+    wxString m_name;
 
 public:
     typedef std::vector<LLDBThread> Vect_t;
@@ -91,6 +93,25 @@ public:
     bool IsActive() const {
         return m_active;
     }
+
+    void SetSuspended(bool suspended) {
+        this->m_suspended = suspended;
+    }
+    bool IsSuspended() const {
+        return m_suspended;
+    }
+
+    void SetName(const char *name) {
+        if(nullptr != name) {
+            this->m_name = name;
+        } else {
+            m_name.Clear();
+        }
+    }
+    const wxString &GetName() const {
+        return m_name;
+    }
+
     // Serialization API
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement& json);

@@ -416,6 +416,9 @@
             <object class="wxMenuItem" name="grep_current_workspace">
                 <label>Grep Selection in the Workspace</label>
             </object>
+            <object class="wxMenuItem" name="web_search_selection">
+                <label>Search for Selection with default browser</label>
+            </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="find_resource">
                 <label>Find &amp;Resource...</label>
@@ -767,6 +770,13 @@
             <label>Detach Editor</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="ID_EDITOR_TO_RIGHT_TAB_CTRL">
+            <label>Move Editor to Right Tab Group</label>
+        </object>
+        <object class="wxMenuItem" name="ID_EDITOR_TO_LEFT_TAB_CTRL">
+            <label>Move Editor to Left Tab Group</label>
+        </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_shell_from_filepath">
             <label>Open Shell</label>
         </object>
@@ -788,6 +798,9 @@
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="grep_current_workspace">
             <label>Search for selected text in workspace</label>
+        </object>
+        <object class="wxMenuItem" name="web_search_selection">
+            <label>Search for selected text with default browser</label>
         </object>
         <object class="wxMenu" name="editor_search">
             <label>Search</label>
@@ -949,7 +962,7 @@
             <label>Clear Background Colour</label>
         </object>
     </object>
-    
+
     <!-- Workspace popup menu -->
     <object class="wxMenu" name="workspace_popup_menu">
         <object class="wxMenu" name="wxID_ANY">
@@ -1091,10 +1104,10 @@
             </object>
         </object>
     </object>    //File explorer
-    
-    
-    
-    
+
+
+
+
     <object class="wxMenu" name="file_explorer_menu">
         <object class="wxMenuItem" name="refresh_node">
             <label>Refresh</label>

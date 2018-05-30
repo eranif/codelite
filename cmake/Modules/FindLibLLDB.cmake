@@ -6,6 +6,8 @@ if (UNIX)
                      HINTS  
                      /usr/lib 
                      /usr/local/lib 
+                     /usr/lib/llvm-6.0/lib
+                     /usr/lib/llvm-5.0/lib
                      /usr/lib/llvm-4.2/lib
                      /usr/lib/llvm-4.1/lib
                      /usr/lib/llvm-4.0/lib
@@ -23,6 +25,8 @@ if (UNIX)
 
         find_path(LIBLLDB_INCLUDE_T NAMES lldb/API/SBDebugger.h
                   HINTS 
+                  /usr/lib/llvm-6.0/include
+                  /usr/lib/llvm-5.0/include
                   /usr/lib/llvm-4.2/include 
                   /usr/lib/llvm-4.1/include 
                   /usr/lib/llvm-4.0/include 

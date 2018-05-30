@@ -153,11 +153,11 @@ DbgGdb::DbgGdb()
     } else {
         // we dont have DebugBreakProcess, try to work with Control handlers
         if(SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE) == FALSE) {
-            wxLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
+            clLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
         }
     }
     if(SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE) == FALSE) {
-        wxLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
+        clLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
     }
 #endif
 
@@ -1441,7 +1441,7 @@ bool DbgGdb::Attach(const DebugSessionInfo& si)
     m_attachedMode = true;
     m_debuggeePid = si.PID;
     cmd << wxT(" --pid=") << m_debuggeePid;
-    wxLogMessage(cmd);
+    clLogMessage(cmd);
 
     m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
     m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), wxGetCwd().c_str()));

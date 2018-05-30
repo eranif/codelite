@@ -261,6 +261,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_ENDED, clDebugEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_EDITOR_GOT_CONTROL, wxCommandEvent);
 
+// Notify the debugger to update the active pane
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_REFRESH_PANE, clDebugEvent);
+
+// Instruct the debugger to update the memory 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_SET_MEMORY, clDebugEvent);
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 // Code completion events
@@ -439,7 +445,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_REBUILD_WORKSPACE_TREE, wxCommand
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ACTIVE_PROJECT_CHANGED, clProjectSettingsEvent);
 
 // This event is fired by CodeLite before the find bar is shown
-// The handler can pass a wxStyledTextCtrl class pointer to be associated with the 
+// The handler can pass a wxStyledTextCtrl class pointer to be associated with the
 // find bar by using the clFindEvent::SetCtrl() method
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FINDBAR_ABOUT_TO_SHOW, clFindEvent);
 
@@ -563,7 +569,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_CORE_FILE,
     clDebugEvent); // User selected to debug a core file. Event type is clDebugEvent
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_ATTACH_TO_PROCESS,
     clDebugEvent); // Attach to process. Use clDebugEvent::GetInt() to get the process ID
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS, clDebugEvent);   // Delete all breakpoints
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, clDebugEvent);   // Delete all breakpoints
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEvent);  // Enable all breakpoints
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, clDebugEvent); // Disable all breakpoints
 
@@ -773,7 +779,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PAGE_MODIFIED_UPDATE_UI, clComman
 // Send a clEditorConfig event. This event is sent whenever an editor requires
 // to update its properties (tabs vs spaces, EOL style etc)
 // A plugin may capture the event and send back EditorConfig data by doing the following:
-// Call: 
+// Call:
 // 1. event.Skip(false)
 // 2. Set the data using event.SetEditorConfig(...) method
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_CONFIG_LOADING, clEditorConfigEvent);

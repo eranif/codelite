@@ -201,6 +201,7 @@ private:
         kShowColumn = (1 << 1),
         kShowPosition = (1 << 2),
         kShowLen = (1 << 3),
+        kShowSelectedChars = (1 << 4),
     };
 
 protected:
@@ -218,6 +219,7 @@ protected:
     bool m_popupIsOn;
     bool m_isDragging;
     time_t m_modifyTime;
+    wxUint64 m_modificationCount;
     std::map<int, wxString> m_customCmds;
     bool m_isVisible;
     int m_hyperLinkIndicatroStart;
@@ -747,6 +749,11 @@ public:
      */
     time_t GetEditorLastModifiedTime() const { return m_modifyTime; }
     void SetEditorLastModifiedTime(time_t modificationTime) { m_modifyTime = modificationTime; }
+
+    /**
+     * @brief Get the editor's modification count
+     */
+    virtual wxUint64 GetModificationCount() const { return m_modificationCount; }
 
     /**
      * \brief run through the file content and update colours for the

@@ -375,8 +375,13 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
 void PHPRefactoring::OnContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
+    wxMenu *menu = new wxMenu();
+    menu->Append(wxID_RENAME_CLASS_AND_NAMESPACES, _("Rename Class and Namespaces"));
+    wxMenuItem* item = new wxMenuItem(event.GetMenu(), wxID_ANY, wxT("PHP Refactoring"));
+    item->SetSubMenu(menu);
+    item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("php-workspace"));
     event.GetMenu()->AppendSeparator();
-    event.GetMenu()->Append(wxID_RENAME_CLASS_AND_NAMESPACES, _("Rename Class and Namespaces"));
+    event.GetMenu()->Append(item);
     m_selectedFolder = event.GetPath();
 }
 

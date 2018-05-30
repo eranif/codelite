@@ -123,7 +123,7 @@ EVT_STC_CALLTIP_CLICK(wxID_ANY, LEditor::OnCallTipClick)
 EVT_STC_DWELLEND(wxID_ANY, LEditor::OnDwellEnd)
 EVT_STC_START_DRAG(wxID_ANY, LEditor::OnDragStart)
 EVT_STC_DO_DROP(wxID_ANY, LEditor::OnDragEnd)
-//EVT_STC_PAINTED(wxID_ANY, LEditor::OnScnPainted)
+// EVT_STC_PAINTED(wxID_ANY, LEditor::OnScnPainted)
 EVT_STC_UPDATEUI(wxID_ANY, LEditor::OnSciUpdateUI)
 EVT_STC_SAVEPOINTREACHED(wxID_ANY, LEditor::OnSavePoint)
 EVT_STC_SAVEPOINTLEFT(wxID_ANY, LEditor::OnSavePoint)
@@ -318,6 +318,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_popupIsOn(false)
     , m_isDragging(false)
     , m_modifyTime(0)
+    , m_modificationCount(0)
     , m_isVisible(true)
     , m_hyperLinkIndicatroStart(wxNOT_FOUND)
     , m_hyperLinkIndicatroEnd(wxNOT_FOUND)
@@ -494,7 +495,7 @@ BPtoMarker LEditor::GetMarkerForBreakpt(enum BreakpointType bp_type)
     for(; iter != m_BPstoMarkers.end(); ++iter) {
         if((*iter).bp_type == bp_type) { return *iter; }
     }
-    wxLogMessage(wxT("Breakpoint type not in vector!?"));
+    clLogMessage(wxT("Breakpoint type not in vector!?"));
     return *iter;
 }
 
@@ -512,7 +513,7 @@ void LEditor::SetProperties()
 #else
     UsePopUp(0);
 #endif
-    
+
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
@@ -1164,11 +1165,11 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
     int charCurrnt = SafeGetChar(pos);
 
-    bool hasSelection = (GetSelectionStart() != GetSelectionEnd());
+    int selectionSize = std::abs(GetSelectionEnd() - GetSelectionStart());
     if(GetHighlightGuide() != wxNOT_FOUND) { SetHighlightGuide(0); }
 
     if(m_hightlightMatchedBraces) {
-        if(hasSelection) {
+        if(selectionSize) {
             wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
         } else if((charCurrnt == '<' && charAfter == '<') ||    //<<
                   (charCurrnt == '<' && charBefore == '<') ||   //<<
@@ -1208,6 +1209,9 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     }
     if(m_statusBarFields & kShowPosition) { message << (!message.empty() ? ", " : "") << "Pos " << mainSelectionPos; }
     if(m_statusBarFields & kShowLen) { message << (!message.empty() ? ", " : "") << "Len " << GetLength(); }
+    if((m_statusBarFields & kShowSelectedChars) && selectionSize) {
+        message << (!message.empty() ? ", " : "") << "Sel " << selectionSize;
+    }
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);
 
@@ -3105,7 +3109,7 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
             int wordEnd = WordEndPos(pos, true);
             wxString wordAtMouse = GetTextRange(wordStart, wordEnd);
             if(!wordAtMouse.IsEmpty()) {
-                // wxLogMessage("Event wxEVT_DBG_EXPR_TOOLTIP is fired for string: %s", wordAtMouse);
+                // clLogMessage("Event wxEVT_DBG_EXPR_TOOLTIP is fired for string: %s", wordAtMouse);
                 clDebugEvent tipEvent(wxEVT_DBG_EXPR_TOOLTIP);
                 tipEvent.SetString(wordAtMouse);
                 if(EventNotifier::Get()->ProcessEvent(tipEvent)) { return; }
@@ -3266,6 +3270,7 @@ BrowseRecord LEditor::CreateBrowseRecord()
     record.lineno = LineFromPosition(GetCurrentPos()) + 1; // scintilla counts from zero, while tagentry from 1
     record.filename = GetFileName().GetFullPath();
     record.project = GetProject();
+    record.firstLineInView = GetFirstVisibleLine();
 
     // if the file is part of the workspace set the project name
     // else, open it with empty project
@@ -4175,6 +4180,8 @@ void LEditor::SetEOL()
 void LEditor::OnChange(wxStyledTextEvent& event)
 {
     event.Skip();
+    ++m_modificationCount;
+
     bool isCoalesceStart = event.GetModificationType() & wxSTC_STARTACTION;
     bool isInsert = event.GetModificationType() & wxSTC_MOD_INSERTTEXT;
     bool isDelete = event.GetModificationType() & wxSTC_MOD_DELETETEXT;
@@ -4607,7 +4614,7 @@ void LEditor::OnHighlightWordChecked(wxCommandEvent& e)
 // buffered drawing on and off
 #ifdef __WXMAC__
     SetBufferedDraw(e.GetInt() == 1 ? true : false);
-    // wxLogMessage("Settings buffered drawing to: %d", e.GetInt());
+    // clLogMessage("Settings buffered drawing to: %d", e.GetInt());
     if(e.GetInt()) { Refresh(); }
 #endif
 }
@@ -5252,7 +5259,7 @@ void LEditor::Print()
         if(wxPrinter::GetLastError() == wxPRINTER_ERROR) {
             wxLogError(wxT("There was a problem printing. Perhaps your current printer is not set correctly?"));
         } else {
-            wxLogMessage(wxT("You canceled printing"));
+            clLogMessage(wxT("You canceled printing"));
         }
     } else {
         (*g_printData) = printer.GetPrintDialogData().GetPrintData();
@@ -5346,6 +5353,7 @@ void LEditor::PreferencesChanged()
     if(clConfig::Get().Read(kConfigStatusbarShowColumn, true)) { m_statusBarFields |= kShowColumn; }
     if(clConfig::Get().Read(kConfigStatusbarShowPosition, false)) { m_statusBarFields |= kShowPosition; }
     if(clConfig::Get().Read(kConfigStatusbarShowLength, false)) { m_statusBarFields |= kShowLen; }
+    if(clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true)) { m_statusBarFields |= kShowSelectedChars; }
 }
 
 void LEditor::NotifyMarkerChanged(int lineNumber)

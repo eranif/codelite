@@ -5,6 +5,8 @@ if (UNIX)
                      HINTS  
                      /usr/lib 
                      /usr/local/lib 
+                     /usr/lib/llvm-6.0/lib
+                     /usr/lib/llvm-5.0/lib
                      /usr/lib/llvm-4.2/lib
                      /usr/lib/llvm-4.1/lib
                      /usr/lib/llvm-4.0/lib
@@ -22,6 +24,8 @@ if (UNIX)
 
         find_path(LIBCLANG_INCLUDE_T NAMES clang-c/Index.h
                   HINTS 
+                  /usr/lib/llvm-6.0/include 
+                  /usr/lib/llvm-5.0/include 
                   /usr/lib/llvm-4.2/include 
                   /usr/lib/llvm-4.1/include 
                   /usr/lib/llvm-4.0/include 

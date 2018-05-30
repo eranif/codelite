@@ -104,6 +104,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     m_statusbarShowCol->SetValue(clConfig::Get().Read(kConfigStatusbarShowColumn, true));
     m_statusbarShowPos->SetValue(clConfig::Get().Read(kConfigStatusbarShowPosition, false));
     m_statusbarShowFileLength->SetValue(clConfig::Get().Read(kConfigStatusbarShowLength, false));
+    m_statusBarShowSelChars->SetValue(clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true));
 
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
@@ -111,6 +112,8 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
 
     m_redirectLogOutput->SetValue(clConfig::Get().Read(kConfigRedirectLogOutput, true));
     m_checkBoxPromptReleaseOnly->SetValue(clConfig::Get().Read("PromptForNewReleaseOnly", false));
+
+    GetWebSearchPrefix()->ChangeValue(options->GetWebSearchPrefix());
 }
 
 void EditorSettingsMiscPanel::OnClearButtonClick(wxCommandEvent&)
@@ -145,7 +148,8 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write(kConfigStatusbarShowColumn, m_statusbarShowCol->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowPosition, m_statusbarShowPos->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowLength, m_statusbarShowFileLength->IsChecked());
-    
+    clConfig::Get().Write(kConfigStatusbarShowSelectedChars, m_statusBarShowSelChars->IsChecked());
+
     bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
     EditorConfigST::Get()->SetInteger(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
 
@@ -223,6 +227,8 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write("PromptForNewReleaseOnly", m_checkBoxPromptReleaseOnly->IsChecked());
     options->SetOptions(flags);
     m_restartRequired = ((oldIconFlags != newIconFlags) || m_restartRequired);
+
+    options->SetWebSearchPrefix(GetWebSearchPrefix()->GetValue());
 }
 
 void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
@@ -235,18 +241,7 @@ void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
 
 void EditorSettingsMiscPanel::OnEnableThemeUI(wxUpdateUIEvent& event)
 {
-#ifdef __WXMSW__
-    int major, minor;
-    wxGetOsVersion(&major, &minor);
-
-    if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) {
-        event.Enable(true);
-    } else {
-        event.Enable(false);
-    }
-#else
     event.Enable(false);
-#endif
 }
 
 void EditorSettingsMiscPanel::LocaleChkUpdateUI(wxUpdateUIEvent& event)

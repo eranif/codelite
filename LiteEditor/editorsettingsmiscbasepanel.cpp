@@ -124,6 +124,24 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     staticBoxSizer4->Add(m_checkBoxRestoreSession, 0, wxALL, WXC_FROM_DIP(5));
     
+    wxFlexGridSizer* flexGridSizer77 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer77->SetFlexibleDirection( wxBOTH );
+    flexGridSizer77->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer77->AddGrowableCol(1);
+    
+    staticBoxSizer4->Add(flexGridSizer77, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText79 = new wxStaticText(m_panel1, wxID_ANY, _("Web search prefix:"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1,-1)), 0);
+    
+    flexGridSizer77->Add(m_staticText79, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_webSearchPrefix = new wxTextCtrl(m_panel1, wxID_ANY, wxT("https://www.google.com/search?q="), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1,-1)), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_webSearchPrefix->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer77->Add(m_webSearchPrefix, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
     m_panel23 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel23, _("Frame Title"), false);
     
@@ -212,28 +230,34 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     m_staticText70 = new wxStaticText(m_panel44, wxID_ANY, _("What statistics to show in the status bar about an editor's text:"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
     
-    boxSizer115->Add(m_staticText70, 0, wxALL, WXC_FROM_DIP(10));
+    boxSizer115->Add(m_staticText70, 0, wxALL, WXC_FROM_DIP(5));
     
     m_statusbarShowLine = new wxCheckBox(m_panel44, wxID_ANY, _("Show current line"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
     m_statusbarShowLine->SetValue(true);
     
-    boxSizer115->Add(m_statusbarShowLine, 0, wxALL, WXC_FROM_DIP(10));
+    boxSizer115->Add(m_statusbarShowLine, 0, wxALL, WXC_FROM_DIP(5));
     
     m_statusbarShowCol = new wxCheckBox(m_panel44, wxID_ANY, _("Show current column"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
     m_statusbarShowCol->SetValue(true);
     
-    boxSizer115->Add(m_statusbarShowCol, 0, wxALL, WXC_FROM_DIP(10));
+    boxSizer115->Add(m_statusbarShowCol, 0, wxALL, WXC_FROM_DIP(5));
     
     m_statusbarShowPos = new wxCheckBox(m_panel44, wxID_ANY, _("Show current position within the file"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
     m_statusbarShowPos->SetValue(false);
     m_statusbarShowPos->SetToolTip(_("e.g. character 1234 in the file"));
     
-    boxSizer115->Add(m_statusbarShowPos, 0, wxALL, WXC_FROM_DIP(10));
+    boxSizer115->Add(m_statusbarShowPos, 0, wxALL, WXC_FROM_DIP(5));
     
     m_statusbarShowFileLength = new wxCheckBox(m_panel44, wxID_ANY, _("Show total length of the file"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
     m_statusbarShowFileLength->SetValue(false);
     
-    boxSizer115->Add(m_statusbarShowFileLength, 0, wxALL, WXC_FROM_DIP(10));
+    boxSizer115->Add(m_statusbarShowFileLength, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_statusBarShowSelChars = new wxCheckBox(m_panel44, wxID_ANY, _("Show number of selected chars"), wxDefaultPosition, wxDLG_UNIT(m_panel44, wxSize(-1,-1)), 0);
+    m_statusBarShowSelChars->SetValue(false);
+    m_statusBarShowSelChars->SetToolTip(_("Show the number of selected chars in the editor"));
+    
+    boxSizer115->Add(m_statusBarShowSelChars, 0, wxALL, WXC_FROM_DIP(5));
     
     m_panel2 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel2, _("Encoding & Locale"), false);

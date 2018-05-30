@@ -92,7 +92,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnSelectAll, this, wxID_SELECTALL);
     wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnUndo, this, wxID_UNDO);
     wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnRedo, this, wxID_REDO);
-
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &SFTPTreeView::OnEditorClosing, this);
     m_treeCtrl->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
 
@@ -102,6 +102,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
 
 SFTPTreeView::~SFTPTreeView()
 {
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &SFTPTreeView::OnEditorClosing, this);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnCopy, this, wxID_COPY);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnCut, this, wxID_CUT);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnPaste, this, wxID_PASTE);
@@ -157,15 +158,7 @@ void SFTPTreeView::OnItemActivated(wxTreeEvent& event)
         }
 
     } else {
-
-        RemoteFileInfo remoteFile;
-        remoteFile.SetAccount(m_account);
-        remoteFile.SetRemoteFile(cd->GetFullPath());
-
-        SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
-        SFTPWorkerThread::Instance()->Add(req);
-
-        m_plugin->AddRemoteFile(remoteFile);
+        DoOpenFile(cd->GetFullPath());
     }
 }
 
@@ -191,7 +184,7 @@ void SFTPTreeView::DoCloseSession()
     IEditor::List_t editors;
     IEditor::List_t modeditors;
     clGetManager()->GetAllEditors(editors);
-    
+
     // Create a session
     SFTPSessionInfo sess;
     wxArrayString remoteFiles;
@@ -202,17 +195,17 @@ void SFTPTreeView::DoCloseSession()
             if(!clGetManager()->CloseEditor(editor)) { modeditors.push_back(editor); }
         }
     });
-    
+
     // User cancel to close request, so dont close the session just yet
     if(!modeditors.empty()) { return; }
-    
+
     // Set the session name
     if(m_sftp) {
         sess.SetAccount(m_sftp->GetAccount());
         sess.SetRootFolder(m_textCtrlQuickJump->GetValue()); // Keep the root folder
         m_sessions.Load().SetSession(sess).Save();
     }
-    
+
     m_sftp.reset(NULL);
     m_treeCtrl->DeleteAllItems();
 }
@@ -646,6 +639,8 @@ void SFTPTreeView::DoOpenSession()
         DoBuildTree(m_account.GetDefaultFolder().IsEmpty() ? "/" : m_account.GetDefaultFolder());
         dlg.Update(10, _("Done"));
 
+        CallAfter(&SFTPTreeView::DoLoadSession);
+
         // If this is a new account, offer the user to save it
         SFTPSettings s;
         s.Load();
@@ -877,4 +872,72 @@ bool SFTPTreeView::GetAccountFromUser(SSHAccountInfo& account)
     // Get the selected account
     account = connectDialog.GetSelectedAccount();
     return true;
+}
+
+void SFTPTreeView::DoOpenFile(const wxString& path)
+{
+    RemoteFileInfo remoteFile;
+    remoteFile.SetAccount(m_account);
+    remoteFile.SetRemoteFile(path);
+
+    SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
+    SFTPWorkerThread::Instance()->Add(req);
+
+    m_plugin->AddRemoteFile(remoteFile);
+    // Update the session
+    SFTPSessionInfo& sess = GetSession(false);
+    if(sess.IsOk()) {
+        sess.AddFile(path);
+        m_sessions.Save();
+    }
+}
+
+void SFTPTreeView::OnEditorClosing(wxCommandEvent& evt)
+{
+    evt.Skip();
+    IEditor* editor = (IEditor*)evt.GetClientData();
+    SFTPClientData* pcd = dynamic_cast<SFTPClientData*>(editor->GetClientData("sftp"));
+    if(pcd) {
+        // A file opened by SFTP, remove it from the current session
+        SFTPSessionInfo& sess = GetSession(false);
+        if(sess.IsOk()) {
+            sess.RemoveFile(pcd->GetRemotePath());
+            m_sessions.Save();
+        }
+    }
+}
+
+SFTPSessionInfo& SFTPTreeView::GetSession(bool createIfMissing)
+{
+    SFTPSessionInfo& sess = m_sessions.GetSession(m_account.GetAccountName());
+    if(!sess.IsOk() && createIfMissing) {
+        SFTPSessionInfo s;
+        s.SetAccount(m_account.GetAccountName());
+        m_sessions.SetSession(s).Save();
+        return m_sessions.GetSession(m_account.GetAccountName());
+    }
+    return sess;
+}
+
+void SFTPTreeView::DoLoadSession()
+{
+    // Now that we have successfully opened the connection, try to load the last saved session for this account
+    const SFTPSessionInfo& sess = GetSession(true);
+    if(sess.IsOk()) {
+        wxString msg;
+        msg << _("Would you like to load the saved session for this account?");
+        wxStandardID ans = ::PromptForYesNoCancelDialogWithCheckbox(msg, "sftp-load-session-dlg");
+        if(ans == wxID_YES) {
+            // we have a session for this account, load it
+            // Load the files
+            const std::vector<wxString>& files = sess.GetFiles();
+            std::for_each(files.begin(), files.end(), [&](const wxString& path) { DoOpenFile(path); });
+
+            const wxString& rootFolder = sess.GetRootFolder();
+            if(!rootFolder.IsEmpty()) {
+                m_textCtrlQuickJump->ChangeValue(rootFolder);
+                CallAfter(&SFTPTreeView::DoBuildTree, rootFolder);
+            }
+        }
+    }
 }

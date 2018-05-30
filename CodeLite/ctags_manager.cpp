@@ -430,6 +430,7 @@ TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int& count)
 
 bool TagsManager::IsValidCtagsFile(const wxFileName& filename) const
 {
+    wxLogNull PreventMissingFileLogErrorMessages;
     return FileExtManager::IsCxxFile(filename) || FileUtils::WildMatch(m_tagsOptions.GetFileSpec(), filename);
 }
 
@@ -1769,7 +1770,7 @@ TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int li
             }
         }
     }
-    return NULL;
+    return foo;
 }
 
 void TagsManager::GetScopesFromFile(const wxFileName& fileName, std::vector<wxString>& scopes)

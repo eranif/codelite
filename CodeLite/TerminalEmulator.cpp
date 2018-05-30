@@ -5,6 +5,7 @@
 #include "macros.h"
 #include <algorithm>
 #include "dirsaver.h"
+#include "file_logger.h"
 
 #ifndef __WXMSW__
 #include <signal.h>
@@ -111,17 +112,17 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
 
 #endif
     if(consoleCommand.IsEmpty()) return false;
-    wxLogMessage(consoleCommand);
+    clLogMessage(consoleCommand);
 
     // Create the process as group leader, this way we make sure that killing it
     // will also kill all the children processes
     DirSaver ds;
     if(!workingDirectory.IsEmpty()) {
         wxSetWorkingDirectory(workingDirectory);
-        wxLogMessage("Working directory is now: " + ::wxGetCwd());
+        clLogMessage("Working directory is now: " + ::wxGetCwd());
     }
     
-    wxLogMessage(consoleCommand);
+    clLogMessage(consoleCommand);
     m_pid = ::wxExecute(consoleCommand, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, new MyProcess(this));
     return (m_pid != 0);
 }
@@ -210,7 +211,7 @@ bool TerminalEmulator::ExecuteNoConsole(const wxString& commandToRun, const wxSt
     tmpCmd.Replace("'", "\\'");
     command << tmpCmd << "'";
 #endif
-    wxLogMessage("TerminalEmulator::ExecuteNoConsole: %s", command);
+    clLogMessage("TerminalEmulator::ExecuteNoConsole: " + command);
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateWithHiddenConsole, workingDirectory);
     return m_process != NULL;
 }

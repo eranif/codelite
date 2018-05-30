@@ -38,7 +38,6 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
-wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 
@@ -172,6 +171,11 @@ void Notebook::SetTabDirection(wxDirection d)
     SetStyle(flags);
 }
 
+bool Notebook::MoveActivePage(int newIndex) 
+{
+    return m_tabCtrl->MoveActiveToIndex(newIndex, GetSelection() > newIndex ? eDirection::kLeft : eDirection::kRight);
+}
+
 //----------------------------------------------------------
 // Notebook header
 //----------------------------------------------------------
@@ -184,6 +188,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_style(style)
     , m_closeButtonClickedIndex(wxNOT_FOUND)
     , m_contextMenu(NULL)
+    , m_dragStartTime((time_t)-1)
 {
     SetBackgroundColour(DrawingUtils::GetPanelBgColour());
     SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -221,6 +226,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     } else {
         m_colours.InitLightColours();
     }
+    SetStyle(m_style);
     // The history object
     m_history.reset(new clTabHistory());
 }
@@ -313,35 +319,7 @@ clTabCtrl::~clTabCtrl()
     GetParent()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
 }
 
-void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event)
-{
-    if(GetStyle() & kNotebook_EnableNavigationEvent) {
-#ifdef __WXOSX__
-        if(event.AltDown())
-#else
-        if(event.CmdDown())
-#endif
-        {
-            switch(event.GetUnicodeKey()) {
-            case WXK_TAB:
-            case WXK_PAGEDOWN:
-            case WXK_PAGEUP: {
-#if CL_BUILD
-                CL_DEBUG("Firing navigation event");
-#endif
-                // Fire the navigation event
-                wxBookCtrlEvent e(wxEVT_BOOK_NAVIGATING);
-                e.SetEventObject(GetParent());
-                GetParent()->GetEventHandler()->AddPendingEvent(e);
-                return;
-            }
-            default:
-                break;
-            }
-        }
-    }
-    event.Skip();
-}
+void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void clTabCtrl::OnSize(wxSizeEvent& event)
 {
@@ -575,7 +553,6 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     // tab as the new selection and leave this function
     if(!clickWasOnActiveTab) {
         SetSelection(realPos);
-        return;
     }
 
     // If we clicked on the active and we have a close button - handle it here
@@ -589,27 +566,11 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
         }
     }
 
-    // We clicked on the active tab, start DnD operation
-    if((m_style & kNotebook_AllowDnD) && clickWasOnActiveTab) {
-        // We simply drag the active tab index
-        wxString dragText;
-        dragText << "{Class:Notebook,TabIndex:" << GetSelection() << "}{";
-#if CL_BUILD
-        IEditor* activeEditor = clGetManager()->GetActiveEditor();
-        wxWindow* activePage = NULL;
-        if(GetSelection() != wxNOT_FOUND) { activePage = GetPage(GetSelection()); }
-
-        if(activeEditor && ((void*)activeEditor->GetCtrl() == (void*)activePage)) {
-            // The current Notebook is the main editor
-            dragText << activeEditor->GetFileName().GetFullPath();
-        }
-        dragText << "}";
-#endif
-        wxTextDataObject dragContent(dragText);
-        wxDropSource dragSource(this);
-        dragSource.SetData(dragContent);
-        wxDragResult result = dragSource.DoDragDrop(true);
-        wxUnusedVar(result);
+    // We clicked on a tab, so prepare to start DnD operation
+    if((m_style & kNotebook_AllowDnD)) {
+        wxCHECK_RET(!m_dragStartTime.IsValid(), "A leftdown event when Tab DnD was already starting/started");
+        m_dragStartTime = wxDateTime::UNow();
+        m_dragStartPos = wxPoint(event.GetX(), event.GetY());
     }
 }
 
@@ -636,11 +597,7 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
 
 int clTabCtrl::SetSelection(size_t tabIdx)
 {
-#ifdef __WXMSW__
     DoChangeSelection(tabIdx);
-#else
-    CallAfter(&clTabCtrl::DoChangeSelection, tabIdx);
-#endif
     return wxNOT_FOUND;
 }
 
@@ -779,6 +736,9 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
 
+    m_dragStartTime.Set((time_t)-1); // Not considering D'n'D so reset any saved values
+    m_dragStartPos = wxPoint();
+
     // First check if the chevron was clicked. We do this because the chevron could overlap the buttons drawing
     // area
     if((GetStyle() & kNotebook_ShowFileListButton) && m_chevronRect.Contains(event.GetPosition())) {
@@ -824,6 +784,15 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
     } else {
         wxString pagetip = m_tabs.at(realPos)->GetTooltip();
         if(pagetip != curtip) { SetToolTip(pagetip); }
+    }
+
+    if (m_dragStartTime.IsValid()) { // If we're tugging on the tab, consider starting D'n'D
+        wxTimeSpan diff = wxDateTime::UNow() - m_dragStartTime;
+        if (diff.GetMilliseconds() > 100 && // We need to check both x and y distances as tabs may be vertical
+                ((abs(m_dragStartPos.x - event.GetX()) > 10) || (abs(m_dragStartPos.y - event.GetY()) > 10))
+           ) {
+            OnBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
+        }
     }
 }
 
@@ -1110,7 +1079,7 @@ void clTabCtrl::OnContextMenu(wxContextMenuEvent& event)
         } else {
             // fire an event for the selected tab
             wxBookCtrlEvent menuEvent(wxEVT_BOOK_TAB_CONTEXT_MENU);
-            menuEvent.SetEventObject(this);
+            menuEvent.SetEventObject(GetParent());
             menuEvent.SetSelection(realPos);
             GetParent()->GetEventHandler()->ProcessEvent(menuEvent);
         }
@@ -1121,12 +1090,26 @@ void clTabCtrl::DoShowTabList()
 {
     if(m_tabs.empty()) return;
 
-    int curselection = GetSelection();
+    const int curselection = GetSelection();
     wxMenu menu;
     const int firstTabPageID = 13457;
     int pageMenuID = firstTabPageID;
-    for(size_t i = 0; i < m_tabs.size(); ++i) {
-        clTabInfo::Ptr_t tab = m_tabs.at(i);
+
+    // Optionally make a sorted view of tabs.
+    std::vector<size_t> sortedIndexes(m_tabs.size());
+    {
+        // std is C++11 at the moment, so no generalized capture.
+        size_t index = 0;
+        std::generate(sortedIndexes.begin(), sortedIndexes.end(), [&index]() { return index++; });
+    }
+    
+    if (EditorConfigST::Get()->GetOptions()->IsSortTabsDropdownAlphabetically()) {
+    std::sort(sortedIndexes.begin(), sortedIndexes.end(),
+        [this](size_t i1, size_t i2) { return m_tabs[i1]->m_label.CmpNoCase(m_tabs[i2]->m_label) < 0; });
+    }
+
+    for(auto sortedIndex : sortedIndexes) {
+        clTabInfo::Ptr_t tab = m_tabs.at(sortedIndex);
         wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, tab->GetLabel(), "", wxITEM_CHECK);
         menu.Append(item);
         item->Check(tab->IsActive());
@@ -1136,8 +1119,14 @@ void clTabCtrl::DoShowTabList()
     int selection = GetPopupMenuSelectionFromUser(menu, m_chevronRect.GetBottomLeft());
     if(selection != wxID_NONE) {
         selection -= firstTabPageID;
-        // don't change the selection unless the selection is really changing
-        if(curselection != selection) { SetSelection(selection); }
+        if(selection < (int)sortedIndexes.size()) {
+            const int newSelection = sortedIndexes[selection];
+
+            // don't change the selection unless the selection is really changing
+            if(curselection != newSelection) {
+                SetSelection(newSelection);
+            }
+        }
     }
 }
 
@@ -1354,12 +1343,42 @@ void clTabCtrl::OnMouseScroll(wxMouseEvent& event)
 // DnD
 // ---------------------------------------------------------------------------
 
+
+void clTabCtrl::OnBeginDrag()
+{
+    m_dragStartTime.Set((time_t)-1); // Reset the saved values
+    m_dragStartPos = wxPoint();
+
+
+    // We simply drag the active tab index
+        wxString dragText;
+        dragText << "{Class:Notebook,TabIndex:" << GetSelection() << "}{";
+#if CL_BUILD
+        IEditor* activeEditor = clGetManager()->GetActiveEditor();
+        wxWindow* activePage = NULL;
+        if(GetSelection() != wxNOT_FOUND) { activePage = GetPage(GetSelection()); }
+
+        if(activeEditor && ((void*)activeEditor->GetCtrl() == (void*)activePage)) {
+            // The current Notebook is the main editor
+            dragText << activeEditor->GetFileName().GetFullPath();
+        }
+        dragText << "}";
+#endif
+        wxTextDataObject dragContent(dragText);
+        wxDropSource dragSource(this);
+        dragSource.SetData(dragContent);
+        wxDragResult result = dragSource.DoDragDrop(true);
+        wxUnusedVar(result);
+
+}
+
 clTabCtrlDropTarget::clTabCtrlDropTarget(clTabCtrl* tabCtrl)
     : m_tabCtrl(tabCtrl)
 {
 }
 
 clTabCtrlDropTarget::~clTabCtrlDropTarget() {}
+
 
 bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
 {

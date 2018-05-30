@@ -58,7 +58,7 @@ protected:
 
 public:
     wxPropertyGridManager* GetPgMgrGeneral() { return m_pgMgrGeneral; }
-    EditorOptionsGeneralGuidesPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,500), long style = wxTAB_TRAVERSAL);
+    EditorOptionsGeneralGuidesPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorOptionsGeneralGuidesPanelBase();
 };
 
@@ -71,6 +71,7 @@ protected:
     wxPGProperty* m_pgPropSmartCurly;
     wxPGProperty* m_pgPropSmartParentheses;
     wxPGProperty* m_pgPropSmartQuotes;
+    wxPGProperty* m_pgPropCopyLineEmptySelection;
     wxPGProperty* m_pgProp16;
     wxPGProperty* m_pgPropWrapQuotes;
     wxPGProperty* m_pgPropWrapBrackets;
@@ -84,7 +85,7 @@ protected:
 
 public:
     wxPropertyGridManager* GetPgMgrEdit() { return m_pgMgrEdit; }
-    EditorOptionsGeneralEditBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    EditorOptionsGeneralEditBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorOptionsGeneralEditBase();
 };
 

@@ -31,6 +31,7 @@
 #include "breakpointpropertiesdlg.h"
 #include "breakpointdlg.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 
 //---------------------------------------------------------
 
@@ -535,7 +536,7 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
             return;
         }
     }
-    wxLogMessage(wxT("SetBreakpointDebuggerID(): Failed to match internal_id to debugger_id"));
+    clLogMessage(wxT("SetBreakpointDebuggerID(): Failed to match internal_id to debugger_id"));
 }
 
 // Set a breakpoint's ignore count
@@ -593,7 +594,7 @@ void BreakptMgr::EditBreakpoint(int index, bool& bpExist)
     // sanity
     bpExist = true;
     if(index < 0 || index >= (int)m_bps.size()) {
-        wxLogMessage(wxT("BreakptMgr::EditBreakpoint: Insane index"));
+        clLogMessage(wxT("BreakptMgr::EditBreakpoint: Insane index"));
         bpExist = false;
         return;
     }

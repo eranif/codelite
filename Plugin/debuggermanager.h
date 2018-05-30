@@ -129,7 +129,11 @@ public:
     // get/set debugger information
     void SetDebuggerInformation(const wxString& name, const DebuggerInformation& info);
     bool GetDebuggerInformation(const wxString& name, DebuggerInformation& info);
-
+    
+    /**
+     * @brief do we have an active debugger which is running?
+     */
+    bool IsNativeDebuggerRunning() const;
     static DebuggerMgr& Get();
     static void Free();
 };

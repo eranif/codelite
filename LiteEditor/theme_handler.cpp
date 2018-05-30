@@ -60,8 +60,6 @@ ThemeHandler::~ThemeHandler()
 void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    wxclTextCtrl* log = dynamic_cast<wxclTextCtrl*>(wxLog::GetActiveTarget());
-    if(log) { log->Reset(); }
 }
 
 void ThemeHandler::OnInitDone(wxCommandEvent& e)

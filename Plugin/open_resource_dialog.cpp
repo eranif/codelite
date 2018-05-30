@@ -437,6 +437,9 @@ wxBitmap OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)
 bool OpenResourceDialog::MatchesFilter(const wxString& name)
 {
     wxString filter = m_textCtrlResourceName->GetValue();
+    if(filter.Contains(':') == true) {
+        filter = filter.BeforeLast(':');
+    }
     return FileUtils::FuzzyMatch(filter, name);
 }
 

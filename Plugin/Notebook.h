@@ -88,6 +88,9 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     wxRect m_chevronRect;
     clTabHistory::Ptr_t m_history;
     clTabRenderer::Ptr_t m_art;
+    
+    wxDateTime m_dragStartTime;
+    wxPoint m_dragStartPos;
 
     void DoChangeSelection(size_t index);
 
@@ -138,6 +141,8 @@ protected:
     void DoDeletePage(size_t page) { RemovePage(page, true, true); }
     void DoShowTabList();
     void DoUpdateXCoordFromPage(wxWindow* page, int diff);
+    
+    void OnBeginDrag();
 
 public:
     clTabCtrl(wxWindow* notebook, size_t style);
@@ -407,6 +412,11 @@ public:
      * @return
      */
     clTabHistory::Ptr_t GetHistory() const { return m_tabCtrl->GetHistory(); }
+    
+    /**
+     * @brief move the active page and place it in the new nexIndex
+     */
+    bool MoveActivePage(int newIndex);
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
@@ -416,7 +426,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEven
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 #endif // USE_AUI_NOTEBOOK
 #endif // NOTEBOOK_H

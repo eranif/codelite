@@ -29,7 +29,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
     m_notebook10->SetName(wxT("m_notebook10"));
     
-    mainSizer->Add(m_notebook10, 1, wxEXPAND, WXC_FROM_DIP(5));
+    mainSizer->Add(m_notebook10, 1, wxEXPAND, WXC_FROM_DIP(0));
     
     m_panelTabs = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panelTabs, _("Tabs"), true);
@@ -131,6 +131,17 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     boxSizer56->Add(m_checkBoxMouseScrollSwitchTabs, 0, wxALL, WXC_FROM_DIP(5));
     
+    m_checkBoxSortTabsDropdownAlphabetically = new wxCheckBox(m_panelTabs, wxID_ANY, _("Sort the 'More...' dropdown alphabetically"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
+    m_checkBoxSortTabsDropdownAlphabetically->SetValue(false);
+    m_checkBoxSortTabsDropdownAlphabetically->SetToolTip(_("Display the 'More tabs...' dropdown sorted alphabetically, rather than by tab order\n"));
+    
+    boxSizer56->Add(m_checkBoxSortTabsDropdownAlphabetically, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_checkBoxEnableTabSwitchingKey = new wxCheckBox(m_panelTabs, wxID_ANY, _("Enable tab switching with Ctrl-TAB key shortcut"), wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1,-1)), 0);
+    m_checkBoxEnableTabSwitchingKey->SetValue(true);
+    
+    boxSizer56->Add(m_checkBoxEnableTabSwitchingKey, 0, wxALL, WXC_FROM_DIP(5));
+    
     m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("Docking"), false);
     
@@ -141,6 +152,10 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     boxSizer22->Add(bSizer2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
+    wxBoxSizer* boxSizer70 = new wxBoxSizer(wxVERTICAL);
+    
+    bSizer2->Add(boxSizer70, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
+    
     wxArrayString m_radioBoxHintArr;
     m_radioBoxHintArr.Add(_("Transparent hint"));
     m_radioBoxHintArr.Add(_("Rectangle hint"));
@@ -148,22 +163,37 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_radioBoxHint = new wxRadioBox(m_panel12, wxID_ANY, _("Docking Style:"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)), m_radioBoxHintArr, 1, wxRA_SPECIFY_ROWS);
     m_radioBoxHint->SetSelection(0);
     
-    bSizer2->Add(m_radioBoxHint, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer70->Add(m_radioBoxHint, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
     
-    wxBoxSizer* boxSizer25 = new wxBoxSizer(wxVERTICAL);
+    wxStaticBoxSizer* staticBoxSizer69 = new wxStaticBoxSizer( new wxStaticBox(m_panel12, wxID_ANY, _("Docking Panes")), wxVERTICAL);
     
-    bSizer2->Add(boxSizer25, 0, wxALL, WXC_FROM_DIP(10));
+    bSizer2->Add(staticBoxSizer69, 0, wxALL|wxEXPAND, WXC_FROM_DIP(10));
     
     m_checkBoxHideCaptions = new wxCheckBox(m_panel12, wxID_ANY, _("Hide Docking Windows captions"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
     m_checkBoxHideCaptions->SetValue(false);
     
-    boxSizer25->Add(m_checkBoxHideCaptions, 0, wxALL, WXC_FROM_DIP(5));
+    staticBoxSizer69->Add(m_checkBoxHideCaptions, 0, wxALL, WXC_FROM_DIP(5));
     
     m_checkBoxEnsureCaptionsVisible = new wxCheckBox(m_panel12, wxID_ANY, _("Ensure captions are visible on mouse hover"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
     m_checkBoxEnsureCaptionsVisible->SetValue(false);
     m_checkBoxEnsureCaptionsVisible->SetToolTip(_("When the option 'Hide Docking Windows captions' is enabled, ensure captions are visible on mouse hover. This is useful so the user can still move around the docking  windows"));
     
-    boxSizer25->Add(m_checkBoxEnsureCaptionsVisible, 0, wxALL, WXC_FROM_DIP(5));
+    staticBoxSizer69->Add(m_checkBoxEnsureCaptionsVisible, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxStaticBoxSizer* staticBoxSizer72 = new wxStaticBoxSizer( new wxStaticBox(m_panel12, wxID_ANY, _("Navigation Bar")), wxVERTICAL);
+    
+    bSizer2->Add(staticBoxSizer72, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_checkBoxNavBarTop = new wxCheckBox(m_panel12, wxID_ANY, _("Place above the editor"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_checkBoxNavBarTop->SetValue(false);
+    m_checkBoxNavBarTop->SetToolTip(_("Place the navigation bar above the editor"));
+    
+    staticBoxSizer72->Add(m_checkBoxNavBarTop, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_checkBoxNavBarSortDropdown = new wxCheckBox(m_panel12, wxID_ANY, _("Sort dropdown alphabetically"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_checkBoxNavBarSortDropdown->SetValue(false);
+    
+    staticBoxSizer72->Add(m_checkBoxNavBarSortDropdown, 0, wxALL, WXC_FROM_DIP(5));
     
     m_panel14 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel14, _("Find / Find In Files"), false);
@@ -181,6 +211,12 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_checkBoxDontFoldSearchResults->SetToolTip(_("By default, all but the first results of 'Search' are automatically folded; you have to click on each subsequent file to see its contained matches. Tick this box to prevent this.\nYou can still fold and unfold results with the button in the output pane toolbar."));
     
     boxSizer20->Add(m_checkBoxDontFoldSearchResults, 0, wxALL, WXC_FROM_DIP(5));
+    
+    m_checkBoxDontOverrideSearchStringWithSelection = new wxCheckBox(m_panel14, wxID_ANY, _("Don't override search string with current selection on find next/previous"), wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1, -1)), 0);
+    m_checkBoxDontOverrideSearchStringWithSelection->SetValue(false);
+    m_checkBoxDontOverrideSearchStringWithSelection->SetToolTip(_("By default, the search string is overridden by the current text selection in the editor when doing a find next/previous. Tick this box to prevent this"));
+    
+    boxSizer20->Add(m_checkBoxDontOverrideSearchStringWithSelection, 0, wxALL, WXC_FROM_DIP(5));
     
     m_panel16 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel16, _("Debug / Output panes"), false);

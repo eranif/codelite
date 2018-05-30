@@ -33,6 +33,7 @@
 #include "LLDBProtocol/LLDBConnector.h"
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBRemoteConnectReturnObject.h"
+#include "clDebuggerTerminal.h"
 
 class LLDBTooltip;
 class LLDBThreadsView;
@@ -52,11 +53,14 @@ class LLDBPlugin : public IPlugin
     LLDBOutputView* m_breakpointsView;
     LLDBLocalsView* m_localsView;
     LLDBThreadsView* m_threadsView;
-    long m_terminalPID;
-    wxString m_terminalTTY;
+    clDebuggerTerminalPOSIX m_debuggerTerminal;
     bool m_stopReasonPrompted;
     bool m_raisOnBpHit;
     LLDBTooltip* m_tooltip;
+    bool m_isPerspectiveLoaded;
+    bool m_showThreadNames;
+    bool m_showFileNamesOnly;
+
     friend class LLDBTooltip;
 
 public:
@@ -66,6 +70,16 @@ public:
     LLDBConnector* GetLLDB() { return &m_connector; }
 
     IManager* GetManager() { return m_mgr; }
+
+    /**
+     * @brief Should thread name column be shown in thread pane?
+     */
+    bool ShowThreadNames() const;
+
+    /**
+     * @brief Maybe convert a path to filename only for display.
+     */
+    wxString GetFilenameForDisplay(const wxString& fileName) const;
 
 private:
     void TerminateTerminal();
@@ -77,7 +91,7 @@ private:
     void InitializeUI();
     void DestroyUI();
     void DoCleanup();
-    bool DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, const wxString& terminalTitle = wxEmptyString);
+    bool DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, const wxString& terminalTitle);
     void DestroyTooltip();
 
 protected:
@@ -98,7 +112,7 @@ protected:
     void OnDebugStepIn(clDebugEvent& event);
     void OnDebugStepOut(clDebugEvent& event);
     void OnToggleBreakpoint(clDebugEvent& event);
-    void OnToggleInerrupt(clDebugEvent& event);
+    void OnToggleInterrupt(clDebugEvent& event);
     void OnDebugTooltip(clDebugEvent& event);
     void OnDebugQuickDebug(clDebugEvent& event);
     void OnDebugCoreFile(clDebugEvent& event);
@@ -111,6 +125,10 @@ protected:
     void OnDebugShowCursor(clDebugEvent& event);
 
     void OnBuildStarting(clBuildEvent& event);
+    void OnRunToCursor(wxCommandEvent& event);
+    void OnJumpToCursor(wxCommandEvent& event);
+
+    void OnAddWatch(wxCommandEvent& event);
 
     // LLDB events
     void OnLLDBCrashed(LLDBEvent& event);
@@ -132,7 +150,6 @@ public:
     virtual clToolBar* CreateToolBar(wxWindow* parent);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
 };
 

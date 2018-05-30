@@ -37,6 +37,8 @@ LLDBSettingDialog::LLDBSettingDialog(wxWindow* parent)
     m_pgPropArraySize->SetValue((int)settings.GetMaxArrayElements());
     m_pgPropCallStackSize->SetValue((int)settings.GetMaxCallstackFrames());
     m_pgPropRaiseCodeLite->SetValue(settings.IsRaiseWhenBreakpointHit());
+    m_pgShowThreadNames->SetValue(settings.HasFlag(kLLDBOptionShowThreadNames));
+    m_pgShowFileNamesOnly->SetValue(settings.HasFlag(kLLDBOptionShowFileNamesOnly));
     m_pgPropProxyPort->SetValue(settings.GetProxyPort());
     m_pgPropProxyIP->SetValue(settings.GetProxyIp());
     m_pgPropProxyType->SetChoiceSelection(settings.IsUsingRemoteProxy() ? 1 : 0);
@@ -56,6 +58,8 @@ void LLDBSettingDialog::Save()
     settings.SetMaxArrayElements(m_pgPropArraySize->GetValue().GetInteger());
     settings.SetMaxCallstackFrames(m_pgPropCallStackSize->GetValue().GetInteger());
     settings.EnableFlag(kLLDBOptionRaiseCodeLite, m_pgPropRaiseCodeLite->GetValue().GetBool());
+    settings.EnableFlag(kLLDBOptionShowThreadNames, m_pgShowThreadNames->GetValue().GetBool());
+    settings.EnableFlag(kLLDBOptionShowFileNamesOnly, m_pgShowFileNamesOnly->GetValue().GetBool());
     settings.SetUseRemoteProxy(m_pgPropProxyType->GetChoiceSelection() == 1 ? true : false);
     settings.SetProxyIp(m_pgPropProxyIP->GetValue().GetString());
     settings.SetProxyPort(m_pgPropProxyPort->GetValue().GetInteger());

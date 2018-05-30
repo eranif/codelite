@@ -40,7 +40,10 @@ void EditHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 
     OptionsConfigPtr options = editor->GetOptions();
     if(event.GetId() == wxID_COPY) {
-        editor->CopyAllowLine();
+        if(options->GetCopyLineEmptySelection())
+            editor->CopyAllowLine();
+        else
+            editor->Copy();
 
     } else if(event.GetId() == wxID_CUT) {
         editor->Cut();
@@ -458,7 +461,7 @@ void DebuggerMenuHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& e
     if(event.GetId() == XRCID("delete_all_breakpoints")) {
 
         // First let the plugins do this thing
-        clDebugEvent event(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS);
+        clDebugEvent event(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS);
         EventNotifier::Get()->AddPendingEvent(event);
 
         // Now clear the manager

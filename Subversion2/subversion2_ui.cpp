@@ -37,10 +37,35 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageLeft->SetSizer(boxSizer27);
     
-    m_treeCtrl = new wxTreeCtrl(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE);
+    m_notebook80 = new wxNotebook(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(-1,-1)), wxBK_DEFAULT);
+    m_notebook80->SetName(wxT("m_notebook80"));
     
-    boxSizer27->Add(m_treeCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer27->Add(m_notebook80, 1, wxEXPAND, WXC_FROM_DIP(5));
     
+    m_panel82 = new wxPanel(m_notebook80, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook80, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebook80->AddPage(m_panel82, _("Changes"), false);
+    
+    wxBoxSizer* boxSizer86 = new wxBoxSizer(wxVERTICAL);
+    m_panel82->SetSizer(boxSizer86);
+    
+    m_dvListCtrl = new wxDataViewListCtrl(m_panel82, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel82, wxSize(-1,-1)), wxDV_MULTIPLE);
+    
+    boxSizer86->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    
+    m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(32), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_panelUnversioned = new wxPanel(m_notebook80, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook80, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebook80->AddPage(m_panelUnversioned, _("Unversioned Files"), false);
+    
+    wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
+    m_panelUnversioned->SetSizer(boxSizer88);
+    
+    m_dvListCtrlUnversioned = new wxDataViewListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelUnversioned, wxSize(-1,-1)), wxDV_MULTIPLE);
+    
+    boxSizer88->Add(m_dvListCtrlUnversioned, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    
+    m_dvListCtrlUnversioned->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_splitterPageRight = new wxPanel(m_splitter17, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter17, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter17->SplitVertically(m_splitterPageLeft, m_splitterPageRight, 0);
     
@@ -91,8 +116,11 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
          GetSizer()->Fit(this);
     }
     // Connect events
-    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
-    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(SubversionPageBase::OnTreeMenu), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnContextMenu), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SubversionPageBase::OnViewUpdateUI), NULL, this);
+    m_dvListCtrlUnversioned->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemActivated), NULL, this);
+    m_dvListCtrlUnversioned->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemsContextMenu), NULL, this);
     m_sci->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(SubversionPageBase::OnUpdateUI), NULL, this);
     m_sci->Connect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(SubversionPageBase::OnCharAdded), NULL, this);
     m_sci->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SubversionPageBase::OnKeyDown), NULL, this);
@@ -102,8 +130,11 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
 
 SubversionPageBase::~SubversionPageBase()
 {
-    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
-    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(SubversionPageBase::OnTreeMenu), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnContextMenu), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SubversionPageBase::OnViewUpdateUI), NULL, this);
+    m_dvListCtrlUnversioned->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemActivated), NULL, this);
+    m_dvListCtrlUnversioned->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemsContextMenu), NULL, this);
     m_sci->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(SubversionPageBase::OnUpdateUI), NULL, this);
     m_sci->Disconnect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(SubversionPageBase::OnCharAdded), NULL, this);
     m_sci->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(SubversionPageBase::OnKeyDown), NULL, this);

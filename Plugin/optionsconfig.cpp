@@ -83,9 +83,10 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_edgeColour(wxColour(wxT("LIGHT GREY")))
     , m_highlightMatchedBraces(true)
     , m_foldBgColour(wxColour(240, 240, 240))
-    , m_autoAdjustHScrollBarWidth(true)
+    , m_autoAdjustHScrollBarWidth(false)
     , m_caretWidth(1)
     , m_caretBlinkPeriod(500)
+    , m_copyLineEmptySelection(true)
     , m_programConsoleCommand(TERMINAL_CMD)
     , m_eolMode(wxT("Default"))
     , m_hideChangeMarkerMargin(false)
@@ -112,6 +113,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_disableSemicolonShift(false)
     , m_caretLineAlpha(30)
     , m_dontAutoFoldResults(true)
+    , m_dontOverrideSearchStringWithSelection(false)
     , m_showDebugOnRun(true)
     , m_caretUseCamelCase(true)
     , m_wordWrap(false)
@@ -127,16 +129,10 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
     , m_nbTabHeight(nbTabHt_Medium)
+    , m_webSearchPrefix(wxT("https://www.google.com/search?q="))
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
-#ifdef __WXMSW__
-    int major, minor;
-    wxGetOsVersion(&major, &minor);
-
-    if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) { m_mswTheme = true; }
-#endif
-
     // set the default font name to be wxFONTENCODING_UTF8
     SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
     if(node) {
@@ -175,6 +171,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
             XmlUtils::ReadBool(node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
         m_caretBlinkPeriod = XmlUtils::ReadLong(node, wxT("CaretBlinkPeriod"), m_caretBlinkPeriod);
         m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
+        m_copyLineEmptySelection = XmlUtils::ReadBool(node, wxT("CopyLineEmptySelection"), m_copyLineEmptySelection);
         m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
         m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
         m_hideChangeMarkerMargin = XmlUtils::ReadBool(node, wxT("HideChangeMarkerMargin"));
@@ -200,6 +197,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_disableSemicolonShift = XmlUtils::ReadBool(node, wxT("DisableSemicolonShift"), m_disableSemicolonShift);
         m_caretLineAlpha = XmlUtils::ReadLong(node, wxT("CaretLineAlpha"), m_caretLineAlpha);
         m_dontAutoFoldResults = XmlUtils::ReadBool(node, wxT("DontAutoFoldResults"), m_dontAutoFoldResults);
+        m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(node, wxT("DontOverrideSearchStringWithSelection"), m_dontOverrideSearchStringWithSelection);
         m_showDebugOnRun = XmlUtils::ReadBool(node, wxT("ShowDebugOnRun"), m_showDebugOnRun);
         m_caretUseCamelCase = XmlUtils::ReadBool(node, wxT("m_caretUseCamelCase"), m_caretUseCamelCase);
         m_wordWrap = XmlUtils::ReadBool(node, wxT("m_wordWrap"), m_wordWrap);
@@ -234,10 +232,9 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         if(m_workspaceTabsDirection == wxLEFT) { m_workspaceTabsDirection = wxTOP; }
         if(m_workspaceTabsDirection == wxRIGHT) { m_workspaceTabsDirection = wxBOTTOM; }
 #endif
+
+        m_webSearchPrefix = XmlUtils::ReadString(node, wxT("m_webSearchPrefix"), m_webSearchPrefix);
     }
-#ifdef __WXMSW__
-    if(!(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */)) { m_mswTheme = false; }
-#endif
 
     // Transitional calls. These checks are relevant for 2 years i.e. until the beginning of 2016
     if(m_bookmarkFgColours.empty()) {
@@ -300,6 +297,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("DisableSmartIndent"), BoolToString(m_disableSmartIndent));
     n->AddProperty(wxT("DisableSemicolonShift"), BoolToString(m_disableSemicolonShift));
     n->AddProperty(wxT("DontAutoFoldResults"), BoolToString(m_dontAutoFoldResults));
+    n->AddProperty(wxT("DontOverrideSearchStringWithSelection"), BoolToString(m_dontOverrideSearchStringWithSelection));
     n->AddProperty(wxT("ShowDebugOnRun"), BoolToString(m_showDebugOnRun));
     n->AddProperty(wxT("ConsoleCommand"), m_programConsoleCommand);
     n->AddProperty(wxT("EOLMode"), m_eolMode);
@@ -315,6 +313,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("OutputTabsDirection"), wxString() << (int)m_outputTabsDirection);
     n->AddProperty(wxT("WorkspaceTabsDirection"), wxString() << (int)m_workspaceTabsDirection);
     n->AddProperty(wxT("IndentedComments"), BoolToString(m_indentedComments));
+    n->AddProperty(wxT("CopyLineEmptySelection"), BoolToString(m_copyLineEmptySelection));
 
     wxString tmp;
     tmp << m_indentWidth;
@@ -365,6 +364,9 @@ wxXmlNode* OptionsConfig::ToXml() const
     tmp.Clear();
     tmp << m_options2;
     n->AddProperty(wxT("m_options2"), tmp);
+
+    n->AddProperty(wxT("m_webSearchPrefix"), m_webSearchPrefix);
+
     return n;
 }
 

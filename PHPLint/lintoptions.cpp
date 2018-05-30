@@ -11,6 +11,7 @@ LintOptions::LintOptions()
     , m_phpcsPhar("")
     , m_phpmdPhar("")
     , m_phpmdRules("")
+    , m_phpstanPhar("")
 {
     wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
                                wxFileName::GetPathSeparator() + "phplint.conf";
@@ -42,6 +43,7 @@ void LintOptions::FromJSON(const JSONElement& json)
     m_phpcsPhar = json.namedObject("phpcsPhar").toString(m_phpcsPhar);
     m_phpmdPhar = json.namedObject("phpmdPhar").toString(m_phpmdPhar);
     m_phpmdRules = json.namedObject("phpmdRules").toString(m_phpmdRules);
+    m_phpstanPhar = json.namedObject("phpstanPhar").toString(m_phpstanPhar);
 
 #ifndef __WXMSW__
     // Find an installed version of phpcs
@@ -57,6 +59,13 @@ void LintOptions::FromJSON(const JSONElement& json)
         ::clFindExecutable("phpmd", phpmdFile);
         SetPhpmdPhar(phpmdFile);
     }
+
+    // Find an installed version of phpstan
+    if(m_phpstanPhar.IsEmpty()) {
+        wxFileName phpstanFile;
+        ::clFindExecutable("phpstan", phpstanFile);
+        SetPhpstanPhar(phpstanFile);
+    }
 #endif
 }
 
@@ -68,6 +77,7 @@ JSONElement LintOptions::ToJSON() const
     element.addProperty("phpcsPhar", m_phpcsPhar);
     element.addProperty("phpmdPhar", m_phpmdPhar);
     element.addProperty("phpmdRules", m_phpmdRules);
+    element.addProperty("phpstanPhar", m_phpstanPhar);
     return element;
 }
 

@@ -10,6 +10,7 @@ class LintOptions : public clConfigItem
     wxString m_phpcsPhar;
     wxString m_phpmdPhar;
     wxString m_phpmdRules;
+    wxString m_phpstanPhar;
 
 public:
     LintOptions();
@@ -46,12 +47,18 @@ public:
         this->m_phpmdRules = PhpmdRules.GetFullPath();
         return *this;
     }
+    LintOptions& SetPhpstanPhar(const wxFileName& PhpstanPhar)
+    {
+        this->m_phpstanPhar = PhpstanPhar.GetFullPath();
+        return *this;
+    }
 
     bool IsLintOnFileLoad() const { return m_lintOnFileLoad; }
     bool IsLintOnFileSave() const { return m_lintOnFileSave; }
     const wxString& GetPhpcsPhar() const { return m_phpcsPhar; }
     const wxString& GetPhpmdPhar() const { return m_phpmdPhar; }
     const wxString& GetPhpmdRules() const { return m_phpmdRules; }
+    const wxString& GetPhpstanPhar() const { return m_phpstanPhar; }
 };
 
 #endif // LINTOPTIONS_H

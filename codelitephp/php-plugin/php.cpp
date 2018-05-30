@@ -100,7 +100,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     // Connect events
     EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_OUTLINE,
                                   clCodeCompletionEventHandler(PhpPlugin::OnShowQuickOutline), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS,
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS,
                                   clDebugEventHandler(PhpPlugin::OnXDebugDeleteAllBreakpoints), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_CREATE_NEW_WORKSPACE, clCommandEventHandler(PhpPlugin::OnNewWorkspace),
                                   NULL, this);
@@ -214,19 +214,13 @@ void PhpPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
     wxUnusedVar(type);
 }
 
-void PhpPlugin::UnHookPopupMenu(wxMenu* menu, MenuType type)
-{
-    wxUnusedVar(menu);
-    wxUnusedVar(type);
-}
-
 void PhpPlugin::UnPlug()
 {
 #if USE_SFTP
     m_sftpHandler.reset(nullptr);
 #endif //USE_SFTP
     XDebugManager::Free();
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS,
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS,
                                      clDebugEventHandler(PhpPlugin::OnXDebugDeleteAllBreakpoints), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_SHOW_QUICK_OUTLINE,
                                      clCodeCompletionEventHandler(PhpPlugin::OnShowQuickOutline), NULL, this);

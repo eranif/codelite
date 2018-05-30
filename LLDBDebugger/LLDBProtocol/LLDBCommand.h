@@ -26,12 +26,12 @@
 #ifndef LLDBCOMMAND_H
 #define LLDBCOMMAND_H
 
-#include <wx/string.h>
-#include "json_node.h"
-#include "LLDBEnums.h"
 #include "LLDBBreakpoint.h"
-#include "LLDBSettings.h"
+#include "LLDBEnums.h"
 #include "LLDBPivot.h"
+#include "LLDBSettings.h"
+#include "json_node.h"
+#include <wx/string.h>
 
 class LLDBCommand
 {
@@ -47,11 +47,12 @@ protected:
     wxStringMap_t m_env;
     LLDBSettings m_settings;
     int m_frameId;
-    int m_threadId;
+    std::vector<int> m_threadIds;
     wxString m_expression;
     wxString m_startupCommands;
     wxString m_corefile;
     int m_processID;
+    int m_displayFormat;
 
 public:
     // Serialization API
@@ -63,6 +64,7 @@ public:
         , m_interruptReason(kInterruptReasonNone)
         , m_lldbId(0)
         , m_processID(wxNOT_FOUND)
+        , m_displayFormat((int)eLLDBFormat::kFormatDefault)
     {
     }
     LLDBCommand(const wxString& jsonString);
@@ -70,6 +72,8 @@ public:
 
     void UpdatePaths(const LLDBPivot& pivot);
 
+    void SetDisplayFormat(const eLLDBFormat& displayFormat) { this->m_displayFormat = (int)displayFormat; }
+    eLLDBFormat GetDisplayFormat() const { return static_cast<eLLDBFormat>(m_displayFormat); }
     void SetProcessID(int processID) { this->m_processID = processID; }
     int GetProcessID() const { return m_processID; }
     void SetCorefile(const wxString& corefile) { this->m_corefile = corefile; }
@@ -86,11 +90,11 @@ public:
      */
     char** GetEnvArray() const;
 
-    void SetThreadId(int threadId) { this->m_threadId = threadId; }
-    int GetThreadId() const { return m_threadId; }
+    void SetThreadIds(const std::vector<int>& threadIds) { this->m_threadIds = threadIds; }
+    const std::vector<int>& GetThreadIds() const { return m_threadIds; }
     void Clear()
     {
-        m_threadId = wxNOT_FOUND;
+        m_threadIds.clear();
         m_frameId = wxNOT_FOUND;
         m_env.clear();
         m_commandType = kCommandInvalid;
@@ -105,6 +109,7 @@ public:
         m_startupCommands.Clear();
         m_corefile.Clear();
         m_processID = wxNOT_FOUND;
+        m_displayFormat = (int)eLLDBFormat::kFormatDefault;
     }
 
     void SetFrameId(int frameId) { this->m_frameId = frameId; }

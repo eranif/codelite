@@ -78,7 +78,7 @@ void SetActive(LEditor* editor)
 struct AnnotationInfo {
     int line;
     LINE_SEVERITY severity;
-    wxString text;
+    std::set<wxString> text;
 };
 typedef std::map<int, AnnotationInfo> AnnotationInfoByLineMap_t;
 
@@ -435,23 +435,25 @@ void NewBuildTab::MarkEditor(LEditor* editor)
 
         if(!text.IsEmpty()) {
             if(bli && (bli->GetSeverity() == SV_ERROR || bli->GetSeverity() == SV_WARNING)) {
-                if(annotations.count(bli->GetLineNumber())) {
+                const auto annotationIter = annotations.lower_bound(bli->GetLineNumber());
+                if ((annotationIter == annotations.end()) || (annotationIter->first != bli->GetLineNumber()))
+                {
+                    // insert new one
+                    AnnotationInfo info;
+                    info.line = bli->GetLineNumber();
+                    info.severity = bli->GetSeverity();
+                    info.text.emplace(std::move(text));
+                    annotations.emplace_hint(annotationIter, bli->GetLineNumber(), std::move(info));
+                }
+                else {
                     // we already have an error on this line, concatenate the message
-                    AnnotationInfo& info = annotations[bli->GetLineNumber()];
-                    info.text << "\n" << text;
+                    AnnotationInfo& info = annotationIter->second;
+                    info.text.emplace(std::move(text));
 
                     if(bli->GetSeverity() == SV_ERROR) {
                         // override the severity to ERROR
                         info.severity = SV_ERROR;
                     }
-
-                } else {
-                    // insert new one
-                    AnnotationInfo info;
-                    info.line = bli->GetLineNumber();
-                    info.severity = bli->GetSeverity();
-                    info.text = text;
-                    annotations.insert(std::make_pair(bli->GetLineNumber(), info));
                 }
             }
         }
@@ -459,10 +461,17 @@ void NewBuildTab::MarkEditor(LEditor* editor)
 
     AnnotationInfoByLineMap_t::iterator annIter = annotations.begin();
     for(; annIter != annotations.end(); ++annIter) {
+        wxString concatText;
+        for (auto &text : annIter->second.text) {
+            if (!concatText.IsEmpty())
+                concatText << "\n";
+            concatText << text;
+        }
+
         if(annIter->second.severity == SV_ERROR) {
-            editor->SetErrorMarker(annIter->first, annIter->second.text);
+            editor->SetErrorMarker(annIter->first, concatText);
         } else {
-            editor->SetWarningMarker(annIter->first, annIter->second.text);
+            editor->SetWarningMarker(annIter->first, concatText);
         }
     }
     // now place the errors
@@ -478,7 +487,7 @@ void NewBuildTab::DoSearchForDirectory(const wxString& line)
 
         // Collect the m_baseDir
         m_directories.Add(currentDir);
-        
+
     } else if(line.Contains(wxT("Entering directory '"))) {
         wxString currentDir = line.AfterFirst(wxT('\''));
         currentDir = currentDir.BeforeLast(wxT('\''));

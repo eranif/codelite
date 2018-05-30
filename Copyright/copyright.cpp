@@ -45,6 +45,7 @@
 #include "copyrightsconfigdata.h"
 #include "event_notifier.h"
 #include "globals.h"
+#include "file_logger.h"
 
 static Copyright* thePlugin = NULL;
 
@@ -179,7 +180,7 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 
     if(ignoreString.IsEmpty() == false) {
         if(editor->GetEditorText().Find(data.GetIgnoreString()) != wxNOT_FOUND) {
-            wxLogMessage(_("File contains ignore string, skipping it"));
+            clLogMessage(_("File contains ignore string, skipping it"));
             return;
         }
     }

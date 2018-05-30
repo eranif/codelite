@@ -21,8 +21,6 @@ void XDebugComThread::Stop()
 
 void* XDebugComThread::Entry()
 {
-    wxLog::EnableLogging(false);
-
     clDEBUG() << "CodeLite >>> XDebugComThread started" << clEndl;
     //----------------------------------------------------------------
     // Start the debugger server and wait for XDebug to connect to us

@@ -666,10 +666,6 @@
     <File Name="shelltab.cpp"/>
     <File Name="workspacetab.cpp"/>
     <File Name="workspacetab.h"/>
-    <File Name="memoryviewbase.h"/>
-    <File Name="memoryview.cpp"/>
-    <File Name="memoryview.h"/>
-    <File Name="memoryviewbase.cpp"/>
     <File Name="debuggerasciiviewerbase.cpp"/>
     <File Name="debuggerasciiviewerbase.h"/>
     <File Name="debuggerasciiviewer.h"/>
@@ -752,7 +748,6 @@
     <File Name="DebuggerSettings.wxcp"/>
     <File Name="DebuggerDisassemblyTab.h"/>
     <File Name="DebuggerDisassemblyTab.cpp"/>
-    <File Name="memoryviewbase.wxcp"/>
     <File Name="../formbuilder/quickdebug.wxcp"/>
     <File Name="ThreadListPanelBase.wxcp"/>
   </VirtualDirectory>
@@ -903,6 +898,7 @@
       <File Name="ConfigManagerBaseDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
+      <File Name="tabgroupbasedlgs_liteeditor_bitmaps.cpp"/>
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
       <File Name="editorsettingslocalbase_formbuilder_bitmaps.cpp"/>
       <File Name="findinfiles_dlg_formbuilder_bitmaps.cpp"/>
@@ -930,7 +926,6 @@
       <File Name="editor_options_misc_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_caret_liteeditor_bitmaps.cpp"/>
       <File Name="plugindlgbase_liteeditor_bitmaps.cpp"/>
-      <File Name="memoryviewbase_liteeditor_bitmaps.cpp"/>
       <File Name="advance_settings_liteeditor_bitmaps.cpp"/>
       <File Name="depend_dlg_page_liteeditor_bitmaps.cpp"/>
       <File Name="filechecklistbase_liteeditor_bitmaps.cpp"/>
@@ -1192,51 +1187,6 @@
     <Project Name="Copyright"/>
     <Project Name="UnitTestPP"/>
   </Dependencies>
-  <Dependencies Name="Win_x86_Release">
-    <Project Name="PCH"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="databaselayer_sqlite"/>
-    <Project Name="wxshapeframework"/>
-    <Project Name="libCodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="QMakePlugin"/>
-    <Project Name="CppChecker"/>
-    <Project Name="Subversion2"/>
-    <Project Name="Outline"/>
-    <Project Name="git"/>
-    <Project Name="DatabaseExplorer"/>
-    <Project Name="CallGraph"/>
-    <Project Name="ZoomNavigator"/>
-    <Project Name="SFTP"/>
-    <Project Name="Tweaks"/>
-    <Project Name="CMakePlugin"/>
-    <Project Name="CodeLiteDiff"/>
-    <Project Name="hunspell"/>
-    <Project Name="SpellCheck"/>
-    <Project Name="PHPParser"/>
-    <Project Name="PHPPlugin"/>
-    <Project Name="WordCompletion"/>
-    <Project Name="WebTools"/>
-    <Project Name="HelpPlugin"/>
-    <Project Name="AutoSave"/>
-    <Project Name="EditorConfigPlugin"/>
-    <Project Name="Tail"/>
-    <Project Name="codelite_vim"/>
-    <Project Name="PHPRefactoring"/>
-    <Project Name="PHPLint"/>
-  </Dependencies>
   <Dependencies Name="Win_x64_Debug">
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
@@ -1379,6 +1329,52 @@
     <Project Name="PHPLint"/>
     <Project Name="PHPRefactoring"/>
     <Project Name="HelpPlugin"/>
+    <Project Name="SmartCompletion"/>
+  </Dependencies>
+  <Dependencies Name="Win_x86_Release">
+    <Project Name="PCH"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="databaselayer_sqlite"/>
+    <Project Name="wxshapeframework"/>
+    <Project Name="libCodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
+    <Project Name="Subversion2"/>
+    <Project Name="Outline"/>
+    <Project Name="git"/>
+    <Project Name="DatabaseExplorer"/>
+    <Project Name="CallGraph"/>
+    <Project Name="ZoomNavigator"/>
+    <Project Name="SFTP"/>
+    <Project Name="Tweaks"/>
+    <Project Name="CMakePlugin"/>
+    <Project Name="CodeLiteDiff"/>
+    <Project Name="hunspell"/>
+    <Project Name="SpellCheck"/>
+    <Project Name="PHPParser"/>
+    <Project Name="PHPPlugin"/>
+    <Project Name="WordCompletion"/>
+    <Project Name="WebTools"/>
+    <Project Name="HelpPlugin"/>
+    <Project Name="AutoSave"/>
+    <Project Name="EditorConfigPlugin"/>
+    <Project Name="Tail"/>
+    <Project Name="codelite_vim"/>
+    <Project Name="PHPRefactoring"/>
+    <Project Name="PHPLint"/>
     <Project Name="SmartCompletion"/>
   </Dependencies>
   <Settings Type="Executable">
@@ -2058,7 +2054,7 @@ resources.cpp: resources.xrc
         <Library Value="libclang64.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="Default" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
@@ -2090,7 +2086,8 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>

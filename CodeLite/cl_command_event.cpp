@@ -183,6 +183,7 @@ clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
 clDebugEvent::clDebugEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
     , m_features(kAllFeatures)
+    , m_memoryBlockSize(32)
 {
 }
 
@@ -203,6 +204,9 @@ clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
     m_workingDirectory = other.m_workingDirectory; // wxEVT_DBG_UI_CORE_FILE, wxEVT_DBG_UI_QUICK_DEBUG
     m_arguments = other.m_arguments;               // wxEVT_DBG_UI_QUICK_DEBUG
     m_startupCommands = other.m_startupCommands;   // wxEVT_DBG_UI_QUICK_DEBUG
+    m_memoryBlockSize = other.m_memoryBlockSize;
+    m_memoryAddress = other.m_memoryAddress;
+    m_memoryBlockValue = other.m_memoryBlockValue;
     return *this;
 }
 

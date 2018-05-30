@@ -24,7 +24,7 @@ struct TabData {
     }
 };
 
-NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
+NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clMultiBook* book)
     : NotebookNavigationDlgBase(parent)
     , m_book(book)
     , m_selection(wxNOT_FOUND)
@@ -48,7 +48,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     const std::vector<wxWindow*>& windows = history->GetHistory();
     // Populate the list
     for(size_t i = 0; i < windows.size(); ++i) {
-        int index = m_book->FindPage(windows[i]);
+        int index = m_book->GetPageIndex(windows[i]);
         if(index != wxNOT_FOUND) {
             wxString label = m_book->GetPageText(index);
             wxBitmap bmp = m_book->GetPageBitmap(index);
@@ -117,6 +117,8 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     }
 
     m_dvListCtrl->CallAfter(&wxDataViewCtrl::SetFocus);
+    m_dvListCtrl->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    
     SetMinClientSize(wxSize(500, 300));
 #ifdef __WXOSX__
     SetSize(wxSize(500, 300));

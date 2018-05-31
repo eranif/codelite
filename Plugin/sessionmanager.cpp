@@ -30,6 +30,8 @@
 #include <memory>
 #include "wx_xml_compatibility.h"
 #include "cl_standard_paths.h"
+#include "cl_config.h"
+#include "clWorkspaceManager.h"
 
 // Session entry
 SessionEntry::SessionEntry() {}
@@ -41,8 +43,10 @@ void SessionEntry::DeSerialize(Archive& arch)
     arch.Read(wxT("m_selectedTab"), m_selectedTab);
     arch.Read(wxT("m_tabs"), m_tabs);
     arch.Read(wxT("m_workspaceName"), m_workspaceName);
-    arch.Read(wxT("TabInfoArray"), m_vTabInfoArr);
     arch.Read(wxT("m_breakpoints"), (SerializedObject*)&m_breakpoints);
+    arch.Read(wxT("m_findInFilesMask"), m_findInFilesMask);
+    
+    arch.Read(wxT("TabInfoArray"), m_vTabInfoArr);
     // initialize tab info array from m_tabs if in config file wasn't yet tab info array
     if(m_vTabInfoArr.size() == 0 && m_tabs.GetCount() > 0) {
         for(size_t i = 0; i < m_tabs.GetCount(); i++) {
@@ -64,6 +68,7 @@ void SessionEntry::Serialize(Archive& arch)
     arch.Write(wxT("m_workspaceName"), m_workspaceName);
     arch.Write(wxT("TabInfoArray"), m_vTabInfoArr);
     arch.Write(wxT("m_breakpoints"), (SerializedObject*)&m_breakpoints);
+    arch.Write("m_findInFilesMask", m_findInFilesMask);
 }
 
 //---------------------------------------------
@@ -223,4 +228,28 @@ wxString SessionManager::GetLastSession()
         node = node->GetNext();
     }
     return defaultSessionName;
+}
+
+void SessionManager::UpdateFindInFilesMaskForCurrentWorkspace(const wxString& mask)
+{
+    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        wxFileName fn = clWorkspaceManager::Get().GetWorkspace()->GetFileName();
+        SessionEntry s;
+        if(GetSession(fn.GetFullPath(), s)) {
+            s.SetFindInFilesMask(mask);
+            Save(fn.GetFullPath(), s);
+        }
+    }
+}
+
+wxString SessionManager::GetFindInFilesMaskForCurrentWorkspace()
+{
+    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        wxFileName fn = clWorkspaceManager::Get().GetWorkspace()->GetFileName();
+        SessionEntry s;
+        if(GetSession(fn.GetFullPath(), s)) {
+            return s.GetFindInFilesMask();
+        }
+    }
+    return "";
 }

@@ -48,6 +48,7 @@
 #include <wx/regex.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "findreplacedlg.h"
 
 MainBook::MainBook(wxWindow* parent)
     : wxPanel(parent)
@@ -1360,6 +1361,12 @@ void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
         vTabInfoArr.push_back(oTabInfo);
     }
     session.SetTabInfoArr(vTabInfoArr);
+    
+    // Set the "Find In Files" file mask for this workspace
+    FindReplaceData frd;
+    frd.SetName("FindInFilesData");
+    clConfig::Get().ReadItem(&frd);
+    session.SetFindInFilesMask(frd.GetSelectedMask());
 }
 
 void MainBook::ShowTabBar(bool b) { wxUnusedVar(b); }

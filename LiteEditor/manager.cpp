@@ -414,6 +414,8 @@ void Manager::CloseWorkspace()
     SessionEntry session;
     session.SetWorkspaceName(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
     clMainFrame::Get()->GetMainBook()->SaveSession(session);
+    
+    // Store the session
     GetBreakpointsMgr()->SaveSession(session);
     SessionManager::Get().Save(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session);
 

@@ -273,7 +273,7 @@ void ContextBase::AutoAddComment()
                     }
 
                     // Join the lines back
-                    wxString doxyBlock = ::wxJoin(lines, '\n');
+                    wxString doxyBlock = ::clJoinLinesWithEOL(lines, rCtrl.GetEOL());
 
                     rCtrl.SetSelection(startPos, curpos);
                     rCtrl.ReplaceSelection(doxyBlock);

@@ -2235,3 +2235,27 @@ int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
 }
 
 bool clNextWord(const wxString& str, size_t& offset, wxString& word) { return FileUtils::NextWord(str, offset, word); }
+
+wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
+{
+    wxString glue = "\n";
+    switch(eol) {
+    case wxSTC_EOL_CRLF:
+        glue = "\r\n";
+        break;
+    case wxSTC_EOL_CR:
+        glue = "\r";
+        break;
+    default:
+        glue = "\n";
+        break;
+    }
+    wxString result;
+    for(size_t i = 0; i < lines.size(); ++i) {
+        if(!result.IsEmpty()) {
+            result << glue;
+        }
+        result << lines.Item(i);
+    }
+    return result;
+}

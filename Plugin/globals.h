@@ -599,4 +599,10 @@ WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
  */
 WXDLLIMPEXP_SDK bool clNextWord(const wxString& str, size_t& offset, wxString& word);
 
+/**
+ * @brief join strings with "\n" or "\r\n" (depends on eol)
+ * eol can be wxSTC_EOL_CRLF, wxSTC_EOL_LF etc
+ */
+WXDLLIMPEXP_SDK wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol);
+
 #endif // GLOBALS_H

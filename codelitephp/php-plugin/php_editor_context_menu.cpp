@@ -498,8 +498,8 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
             }
 
             // Glue the lines back together
-            wxString doxyBlock = ::wxJoin(lines, '\n');
-            doxyBlock << "\n";
+            wxString doxyBlock = ::clJoinLinesWithEOL(lines, ctrl->GetEOLMode());
+            doxyBlock << (ctrl->GetEOLMode() == wxSTC_EOL_CRLF ? "\r\n" : "\n");
 
             // Insert the text
             ctrl->InsertText(lineStartPos, doxyBlock);

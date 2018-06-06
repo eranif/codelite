@@ -81,8 +81,8 @@ void clTabColours::InitLightColours()
     tabAreaColour = faceColour;
     markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#80ccff"));
 
-    inactiveTabBgColour = tabAreaColour.ChangeLightness(95);
-    inactiveTabPenColour = tabAreaColour.ChangeLightness(85);
+    inactiveTabBgColour = tabAreaColour.ChangeLightness(90);
+    inactiveTabPenColour = tabAreaColour.ChangeLightness(70);
     inactiveTabInnerPenColour = tabAreaColour;
 }
 

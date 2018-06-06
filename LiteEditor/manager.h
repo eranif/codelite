@@ -44,6 +44,7 @@
 #include "clKeyboardManager.h"
 
 class LEditor;
+class IProcess;
 
 // ====================================================================
 // The Manager class
@@ -95,7 +96,7 @@ protected:
     wxString m_originalCwd;
     FileHistory m_recentWorkspaces;
     ShellCommand* m_shellProcess;
-    AsyncExeCmd* m_asyncExeCmd;
+    IProcess* m_programProcess;
     BreakptMgr* m_breakptsmgr;
     bool m_isShutdown;
     bool m_workspceClosing;
@@ -564,7 +565,8 @@ public:
     void KillProgram();
 
 protected:
-    void OnProcessEnd(wxProcessEvent& event);
+    void OnProcessEnd(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
     void OnBuildEnded(clBuildEvent& event);
 
     /**

@@ -106,6 +106,7 @@
 #include "workspace_pane.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
+#include "processreaderthread.h"
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -182,7 +183,7 @@ static wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
 
 Manager::Manager(void)
     : m_shellProcess(NULL)
-    , m_asyncExeCmd(NULL)
+    , m_programProcess(NULL)
     , m_breakptsmgr(new BreakptMgr)
     , m_isShutdown(false)
     , m_workspceClosing(false)
@@ -196,6 +197,9 @@ Manager::Manager(void)
 {
     m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
     Bind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
+    
     Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
 
     Connect(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
@@ -223,6 +227,9 @@ Manager::Manager(void)
 Manager::~Manager(void)
 {
     Unbind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
+
     Disconnect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
 
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
@@ -1655,12 +1662,12 @@ void Manager::UpdateMenuAccelerators(wxFrame* frame)
 
 //--------------------------- Run Program (No Debug) -----------------------------
 
-bool Manager::IsProgramRunning() const { return (m_asyncExeCmd && m_asyncExeCmd->IsBusy()); }
+bool Manager::IsProgramRunning() const { return m_programProcess; }
 
 void Manager::ExecuteNoDebug(const wxString& projectName)
 {
     // an instance is already running
-    if(m_asyncExeCmd && m_asyncExeCmd->IsBusy()) { return; }
+    if(IsProgramRunning()) { return; }
     wxString wd;
 
     // we call it here once for the 'wd'
@@ -1678,14 +1685,6 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     // print the current directory
     ::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 
-    // now set the working directory according to working directory field from the
-    // project settings
-    ::wxSetWorkingDirectory(wd);
-
-    // execute the command line
-    // the a sync command is a one time executable object,
-    m_asyncExeCmd = new AsyncExeCmd(clMainFrame::Get()->GetOutputPane()->GetOutputWindow());
-
     // execute the program:
     //- no hiding the console
     //- no redirection of the stdin/out
@@ -1697,35 +1696,23 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     // call it again here to get the actual exection line - we do it here since
     // the environment has been applied
     execLine = GetProjectExecutionCommand(projectName, wd, true);
-    m_asyncExeCmd->Execute(execLine, false, false);
-
-    if(m_asyncExeCmd->GetProcess()) {
-        m_asyncExeCmd->GetProcess()->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL,
-                                             this);
-    }
+    m_programProcess = ::CreateAsyncProcess(this, execLine, IProcessCreateDefault, wd);
 }
 
 void Manager::KillProgram()
 {
     if(!IsProgramRunning()) return;
-
-    m_asyncExeCmd->Terminate();
+    m_programProcess->Terminate();
 }
 
-void Manager::OnProcessEnd(wxProcessEvent& event)
+void Manager::OnProcessOutput(clProcessEvent& event)
 {
-    m_asyncExeCmd->ProcessEnd(event);
-    m_asyncExeCmd->GetProcess()->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL,
-                                            this);
+    clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(event.GetString());
+}
 
-#ifdef __WXMSW__
-    // On Windows, sometimes killing the DOS Windows, does not kill the children
-    m_asyncExeCmd->Terminate();
-#endif
-
-    delete m_asyncExeCmd;
-    m_asyncExeCmd = NULL;
-
+void Manager::OnProcessEnd(clProcessEvent& event)
+{
+    wxDELETE(m_programProcess);
     // return the focus back to the editor
     if(clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
         clMainFrame::Get()->GetMainBook()->GetActiveEditor()->SetActive();

@@ -14,7 +14,7 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/treebook.h>
+#include <wx/notebook.h>
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
@@ -24,7 +24,6 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/checkbox.h>
-#include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/spinctrl.h>
 #include <wx/statbox.h>
@@ -58,17 +57,17 @@
 class DebuggerSettingsBaseDlg : public wxDialog
 {
 protected:
-    wxTreebook* m_treebook2;
+    wxNotebook* m_notebook;
+    wxStdDialogButtonSizer* m_stdBtnSizer92;
     wxButton* m_buttonOK;
-    wxButton* m_buttonCancel;
+    wxButton* m_button96;
 
 protected:
+    virtual void OnOk(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxTreebook* GetTreebook2() { return m_treebook2; }
-    wxButton* GetButtonOK() { return m_buttonOK; }
-    wxButton* GetButtonCancel() { return m_buttonCancel; }
+    wxNotebook* GetNotebook() { return m_notebook; }
     DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~DebuggerSettingsBaseDlg();
 };
@@ -157,6 +156,7 @@ protected:
     wxCheckBox* m_catchThrow;
     wxCheckBox* m_raiseOnBpHit;
     wxCheckBox* m_checkBoxRunAsSuperuser;
+    wxCheckBox* m_checkBoxDefaultHexDisplay;
     wxPanel* m_panelTooltip;
     wxCheckBox* m_showTooltipsRequiresControl;
     wxCheckBox* m_checkBoxAutoExpand;
@@ -167,7 +167,7 @@ protected:
     wxCheckBox* m_checkBoxCharArrAsPtr;
     wxCheckBox* m_checkBoxUsePrettyPrinting;
     wxCheckBox* m_checkBoxPrintObjectOn;
-    wxCheckBox* m_checkBoxDefaultHexDisplay;
+
 protected:
     virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSuperuserUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -182,6 +182,7 @@ public:
     wxCheckBox* GetCatchThrow() { return m_catchThrow; }
     wxCheckBox* GetRaiseOnBpHit() { return m_raiseOnBpHit; }
     wxCheckBox* GetCheckBoxRunAsSuperuser() { return m_checkBoxRunAsSuperuser; }
+    wxCheckBox* GetCheckBoxDefaultHexDisplay() { return m_checkBoxDefaultHexDisplay; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
     wxCheckBox* GetShowTooltipsRequiresControl() { return m_showTooltipsRequiresControl; }
     wxCheckBox* GetCheckBoxAutoExpand() { return m_checkBoxAutoExpand; }
@@ -192,7 +193,6 @@ public:
     wxCheckBox* GetCheckBoxCharArrAsPtr() { return m_checkBoxCharArrAsPtr; }
     wxCheckBox* GetCheckBoxUsePrettyPrinting() { return m_checkBoxUsePrettyPrinting; }
     wxCheckBox* GetCheckBoxPrintObjectOn() { return m_checkBoxPrintObjectOn; }
-    wxCheckBox* GetCheckBoxDefaultHexDisplay() { return m_checkBoxDefaultHexDisplay; }
     wxPanel* GetPanelDisplay() { return m_panelDisplay; }
     wxNotebook* GetNotebook73() { return m_notebook73; }
     wxPanel* GetPanel6() { return m_panel6; }

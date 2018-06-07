@@ -26,30 +26,33 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    m_treebook2 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
-    m_treebook2->SetName(wxT("m_treebook2"));
+    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
+    m_notebook->SetName(wxT("m_notebook"));
     
-    bSizer1->Add(m_treebook2, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    bSizer1->Add(m_notebook, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer1->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer92 = new wxStdDialogButtonSizer();
+    
+    bSizer2->Add(m_stdBtnSizer92, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
+    m_stdBtnSizer92->AddButton(m_buttonOK);
     
-    bSizer2->Add(m_buttonOK, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    bSizer2->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
+    m_button96 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer92->AddButton(m_button96);
+    m_stdBtnSizer92->Realize();
     
     
     #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_treebook2)){
-        wxPersistenceManager::Get().RegisterAndRestore(m_treebook2);
+    if(!wxPersistenceManager::Get().Find(m_notebook)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
     } else {
-        wxPersistenceManager::Get().Restore(m_treebook2);
+        wxPersistenceManager::Get().Restore(m_notebook);
     }
     #endif
     
@@ -71,13 +74,15 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     }
 #endif
     // Connect events
-    m_buttonCancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnButtonCancel), NULL, this);
+    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnOk), NULL, this);
+    m_button96->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnButtonCancel), NULL, this);
     
 }
 
 DebuggerSettingsBaseDlg::~DebuggerSettingsBaseDlg()
 {
-    m_buttonCancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnButtonCancel), NULL, this);
+    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnOk), NULL, this);
+    m_button96->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnButtonCancel), NULL, this);
     
 }
 
@@ -391,6 +396,11 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer86->Add(m_checkBoxRunAsSuperuser, 0, wxALL, WXC_FROM_DIP(5));
     
+    m_checkBoxDefaultHexDisplay = new wxCheckBox(m_panelGeneral, wxID_ANY, _("Use default Hex Display"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1,-1)), 0);
+    m_checkBoxDefaultHexDisplay->SetValue(false);
+    
+    boxSizer86->Add(m_checkBoxDefaultHexDisplay, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
     m_panelTooltip = new wxPanel(m_notebook73, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook73, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook73->AddPage(m_panelTooltip, _("Tooltip"), false);
     
@@ -459,13 +469,6 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     m_checkBoxPrintObjectOn->SetToolTip(_("When displaying a pointer to an object, identify the actual (derived) type of the object rather than the declared type, using the virtual function table."));
     
     fgSizer21->Add(m_checkBoxPrintObjectOn, 0, wxALL, WXC_FROM_DIP(5));
-    
-    fgSizer21->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxDefaultHexDisplay = new wxCheckBox(m_panelDisplay, wxID_ANY, _("Default Hex Display"), wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1,-1)), 0);
-    m_checkBoxDefaultHexDisplay->SetValue(false);
-    m_checkBoxDefaultHexDisplay->SetToolTip(_("Debugger value display default to use Hex, easier for driver/rtos debugging."));
-    fgSizer21->Add(m_checkBoxDefaultHexDisplay, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("DbgPageGeneralBase"));
     SetSize(-1,-1);
@@ -746,10 +749,10 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     
     boxSizer63->Add(m_dvListCtrlRegisters, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrlRegisters->AppendTextColumn(_("Register"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(80), wxALIGN_LEFT);
-    m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT);
-    m_dvListCtrlRegisters->AppendTextColumn(_("Register"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(80), wxALIGN_LEFT);
-    m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT);
+    m_dvListCtrlRegisters->AppendTextColumn(_("Register"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(80), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlRegisters->AppendTextColumn(_("Register"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(80), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     
     SetName(wxT("DebuggerDisassemblyTabBase"));
     SetSize(500,300);
@@ -794,7 +797,7 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_auibar31->AddTool(ID_SORT_LOCALS, _("Sort Items"), wxXmlResource::Get()->LoadBitmap(wxT("sort")), wxNullBitmap, wxITEM_NORMAL, _("Sort Items"), _("Sort Items"), NULL);
     m_auibar31->Realize();
     
-    m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_MULTIPLE|wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS|wxTR_NO_LINES);
+    m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS|wxTR_TWIST_BUTTONS|wxTR_NO_LINES);
     
     boxSizer29->Add(m_listTable, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     

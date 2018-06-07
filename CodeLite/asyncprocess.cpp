@@ -82,8 +82,15 @@ void IProcess::SetProcessExitCode(int pid, int exitCode)
 
 void IProcess::WaitForTerminate(wxString& output)
 {
-    wxString buff;
-    while(Read(buff)) {
-        output << buff;
+    if(IsRedirect()) {
+        wxString buff;
+        while(Read(buff)) {
+            output << buff;
+        }
+    } else {
+        // Just wait for the process to terminate in a busy loop
+        while(IsAlive()) {
+            wxThread::Sleep(10);
+        }
     }
 }

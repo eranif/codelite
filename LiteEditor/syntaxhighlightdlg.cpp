@@ -231,9 +231,6 @@ void SyntaxHighlightDlg::SaveChanges()
     // Now save the changes to the file system
     ColoursAndFontsManager::Get().Save();
 
-    wxString oldFg = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    wxString oldBg = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-
     wxString newFg = m_colourPickerOutputPanesFgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
     EditorConfigST::Get()->SetCurrentOutputviewFgColour(newFg);
 
@@ -646,17 +643,6 @@ void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
 {
     m_globalThemeChanged = true;
     m_isModified = true;
-    if(!m_globalBgColourChanged) {
-        // If the user did not alter the global bg colour, select a proper bg colour
-        // for him/her
-        LexerConf::Ptr_t lexerText =
-            ColoursAndFontsManager::Get().GetLexer("text", m_choiceGlobalTheme->GetStringSelection());
-        CHECK_PTR_RET(lexerText);
-        wxColour bgColour =
-            lexerText->IsDark() ? DrawingUtils::GetPanelBgColour() : wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-        m_colourPickerOutputPanesBgColour->SetColour(bgColour);
-        // CallAfter(&SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged);
-    }
     DoUpdatePreview();
 }
 

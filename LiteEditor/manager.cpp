@@ -94,6 +94,7 @@
 #include "new_build_tab.h"
 #include "parse_thread.h"
 #include "pluginmanager.h"
+#include "processreaderthread.h"
 #include "reconcileproject.h"
 #include "refactorengine.h"
 #include "search_thread.h"
@@ -106,7 +107,6 @@
 #include "workspace_pane.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
-#include "processreaderthread.h"
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -199,7 +199,7 @@ Manager::Manager(void)
     Bind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
-    
+
     Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
 
     Connect(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
@@ -421,7 +421,7 @@ void Manager::CloseWorkspace()
     SessionEntry session;
     session.SetWorkspaceName(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
     clMainFrame::Get()->GetMainBook()->SaveSession(session);
-    
+
     // Store the session
     GetBreakpointsMgr()->SaveSession(session);
     SessionManager::Get().Save(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session);
@@ -1505,6 +1505,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
                 execLine = newCommand;
             } else if(bldConf->GetPauseWhenExecEnds()) {
                 execLine.Prepend("le_exec.exe ");
+                ::WrapInShell(execLine);
             }
         }
 #endif
@@ -1695,8 +1696,13 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
 
     // call it again here to get the actual exection line - we do it here since
     // the environment has been applied
+    size_t createProcessFlags = IProcessCreateDefault;
+    if(!bldConf->IsGUIProgram()) {
+        createProcessFlags = IProcessNoRedirect | IProcessCreateConsole;
+    }
+    
     execLine = GetProjectExecutionCommand(projectName, wd, true);
-    m_programProcess = ::CreateAsyncProcess(this, execLine, IProcessCreateDefault, wd);
+    m_programProcess = ::CreateAsyncProcess(this, execLine, createProcessFlags, wd);
 }
 
 void Manager::KillProgram()
@@ -1707,7 +1713,7 @@ void Manager::KillProgram()
 
 void Manager::OnProcessOutput(clProcessEvent& event)
 {
-    clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(event.GetString());
+    clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(event.GetOutput());
 }
 
 void Manager::OnProcessEnd(clProcessEvent& event)

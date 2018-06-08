@@ -66,7 +66,7 @@ static const unsigned char* dbp;
 static boolean tail (const char *cp)
 {
 	boolean result = FALSE;
-	register int len = 0;
+	 int len = 0;
 
 	while (*cp != '\0' && tolower ((int) *cp) == tolower ((int) dbp [len]))
 		cp++, len++;

@@ -48,7 +48,7 @@
 
 static void freeargv(char** vector)
 {
-    register char** scan;
+    char** scan;
 
     if(vector != NULL) {
         for(scan = vector; *scan != NULL; scan++) {

@@ -623,9 +623,9 @@ void get_functions(const std::string &in, FunctionList &li, const std::map<std::
 int
 yyparse()
 {
-    register int yym, yyn, yystate;
+     int yym, yyn, yystate;
 #if YYDEBUG
-    register char *yys;
+     char *yys;
     extern char *getenv();
 
     if (yys = getenv("YYDEBUG"))

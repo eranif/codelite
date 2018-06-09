@@ -26,8 +26,8 @@
 #ifndef SFTPSTATUSPAGE_H
 #define SFTPSTATUSPAGE_H
 
-#include <wx/menu.h>
 #include "UI.h"
+#include <wx/menu.h>
 
 class SFTPThreadMessage;
 class SFTP;
@@ -36,18 +36,20 @@ class SFTPStatusPage : public SFTPStatusPageBase
 {
     SFTPImages m_bitmaps;
     SFTP* m_plugin;
-    
+
 public:
     SFTPStatusPage(wxWindow* parent, SFTP* plugin);
     virtual ~SFTPStatusPage();
-    
-    void AddLine( SFTPThreadMessage* message );
+
+    void AddLine(SFTPThreadMessage* message);
     void ShowContextMenu();
-    void SetStatusBarMessage( const wxString &message );
-    
+    void SetStatusBarMessage(const wxString& message);
+
 protected:
-    virtual void OnContentMenu(wxDataViewEvent& event);
+    virtual void OnContentMenu(wxContextMenuEvent& event);
     virtual void OnClearLog(wxCommandEvent& event);
-    
+    virtual void OnCopy(wxCommandEvent& event);
+    virtual void OnSelectAll(wxCommandEvent& event);
+    void OnThemeChanged(wxCommandEvent &event);
 };
 #endif // SFTPSTATUSPAGE_H

@@ -26,14 +26,43 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,200)), wxDV_SINGLE);
+    m_stcOutput = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    // Configure the fold margin
+    m_stcOutput->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcOutput->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcOutput->SetMarginSensitive(4, true);
+    m_stcOutput->SetMarginWidth    (4, 0);
     
-    boxSizer2->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    // Configure the tracker margin
+    m_stcOutput->SetMarginWidth(1, 0);
     
-    m_dvListCtrl->AppendTextColumn(_("Time"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendBitmapColumn(_("Status"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Account"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(600), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    // Configure the symbol margin
+    m_stcOutput->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcOutput->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcOutput->SetMarginWidth(2, 0);
+    m_stcOutput->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcOutput->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcOutput->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcOutput->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcOutput->SetMarginMask(3, 0);
+    m_stcOutput->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcOutput->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcOutput->StyleClearAll();
+    m_stcOutput->SetWrapMode(0);
+    m_stcOutput->SetIndentationGuides(0);
+    m_stcOutput->SetKeyWords(0, wxT(""));
+    m_stcOutput->SetKeyWords(1, wxT(""));
+    m_stcOutput->SetKeyWords(2, wxT(""));
+    m_stcOutput->SetKeyWords(3, wxT(""));
+    m_stcOutput->SetKeyWords(4, wxT(""));
+    
+    boxSizer2->Add(m_stcOutput, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
     SetName(wxT("SFTPStatusPageBase"));
     SetSize(-1,-1);
@@ -41,13 +70,13 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
          GetSizer()->Fit(this);
     }
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SFTPStatusPageBase::OnContentMenu), NULL, this);
+    m_stcOutput->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SFTPStatusPageBase::OnContentMenu), NULL, this);
     
 }
 
 SFTPStatusPageBase::~SFTPStatusPageBase()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SFTPStatusPageBase::OnContentMenu), NULL, this);
+    m_stcOutput->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SFTPStatusPageBase::OnContentMenu), NULL, this);
     
 }
 

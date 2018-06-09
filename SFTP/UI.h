@@ -13,7 +13,7 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/dataview.h>
+#include <wx/stc/stc.h>
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
@@ -54,13 +54,13 @@
 class SFTPStatusPageBase : public wxPanel
 {
 protected:
-    wxDataViewListCtrl* m_dvListCtrl;
+    wxStyledTextCtrl* m_stcOutput;
 
 protected:
-    virtual void OnContentMenu(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnContentMenu(wxContextMenuEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxStyledTextCtrl* GetStcOutput() { return m_stcOutput; }
     SFTPStatusPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~SFTPStatusPageBase();
 };
@@ -101,9 +101,9 @@ public:
     enum {
         ID_SFTP_CUSTOMIZE = 1001,
         ID_SSH_OPEN_TERMINAL = 1002,
-        ID_ADD_BOOKMARK = 1003,
-        ID_SFTP_CONNECT = 1004,
-        ID_OPEN_ACCOUNT_MANAGER = 1005,
+        ID_OPEN_ACCOUNT_MANAGER = 1003,
+        ID_ADD_BOOKMARK = 1004,
+        ID_SFTP_CONNECT = 1005,
     };
 protected:
     wxAuiToolBar* m_auibar;

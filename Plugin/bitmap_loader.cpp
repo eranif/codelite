@@ -39,8 +39,8 @@
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 
-std::map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
-std::map<wxString, wxString> BitmapLoader::m_manifest;
+std::unordered_map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
+std::unordered_map<wxString, wxString> BitmapLoader::m_manifest;
 BitmapLoader::BitmapMap_t BitmapLoader::m_userBitmaps;
 
 BitmapLoader::~BitmapLoader() {}
@@ -56,7 +56,7 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     // try to load a new bitmap first
     wxString newName;
     newName << requestedSize << "-" << name.AfterLast('/');
-    std::map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
+    std::unordered_map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
     if(iter != m_toolbarsBitmaps.end()) {
         const wxBitmap& b = iter->second;
         return b;
@@ -135,7 +135,7 @@ wxBitmap BitmapLoader::doLoadBitmap(const wxString& filepath)
 
 void BitmapLoader::doLoadBitmaps()
 {
-    std::map<wxString, wxString>::iterator iter = m_manifest.begin();
+    std::unordered_map<wxString, wxString>::iterator iter = m_manifest.begin();
     for(; iter != m_manifest.end(); iter++) {
         wxString key = iter->first;
         key = key.BeforeLast(wxT('/'));
@@ -152,7 +152,7 @@ int BitmapLoader::GetMimeImageId(FileExtManager::FileType type)
         wxImageList* il = MakeStandardMimeImageList();
         wxDELETE(il);
     }
-    std::map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
+    std::unordered_map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
     if(iter == m_fileIndexMap.end()) return wxNOT_FOUND;
     return iter->second;
 }
@@ -167,7 +167,7 @@ int BitmapLoader::GetMimeImageId(const wxString& filename)
     }
 
     FileExtManager::FileType type = FileExtManager::GetType(filename);
-    std::map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
+    std::unordered_map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
     if(iter == m_fileIndexMap.end()) { return wxNOT_FOUND; }
     return iter->second;
 }
@@ -222,7 +222,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
 
 void BitmapLoader::AddImage(int index, FileExtManager::FileType type)
 {
-    std::map<FileExtManager::FileType, int>::iterator iter = m_fileIndexMap.find(type);
+    std::unordered_map<FileExtManager::FileType, int>::iterator iter = m_fileIndexMap.find(type);
     if(iter != m_fileIndexMap.end()) m_fileIndexMap.erase(iter);
     m_fileIndexMap.insert(std::make_pair(type, index));
 }
@@ -354,10 +354,10 @@ void BitmapLoader::initialize()
         }
 
         // if(DrawingUtils::IsDark(DrawingUtils::GetMenuBarBgColour())) {
-        //     std::map<wxString, wxBitmap> greyBitmaps;
+        //     std::unordered_map<wxString, wxBitmap> greyBitmaps;
         //     std::for_each(m_toolbarsBitmaps.begin(),
         //                   m_toolbarsBitmaps.end(),
-        //                   [&](const std::map<wxString, wxBitmap>::value_type& vt) {
+        //                   [&](const std::unordered_map<wxString, wxBitmap>::value_type& vt) {
         //         wxBitmap bmp = DrawingUtils::CreateGrayBitmap(vt.second);
         //         wxString name = vt.first;
         //         greyBitmaps[name] = bmp;

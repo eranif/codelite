@@ -1339,6 +1339,7 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
 
 void clMainFrame::CreateToolbars24()
 {
+    wxWindowUpdateLocker locker(this);
     wxAuiPaneInfo info;
     wxWindow* toolbar_parent(m_mainPanel);
 
@@ -1672,6 +1673,7 @@ void clMainFrame::CreateToolbars16()
     //----------------------------------------------
     // create the standard toolbar
     //----------------------------------------------
+    wxWindowUpdateLocker locker(this);
     wxWindow* toolbar_parent(m_mainPanel);
 
     clToolBar* tb =

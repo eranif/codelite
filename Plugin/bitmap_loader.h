@@ -34,6 +34,17 @@
 #include <wx/filename.h>
 #include <wx/imaglist.h>
 
+#ifndef __WXMSW__
+namespace std
+{
+    template <>
+    struct hash<FileExtManager::FileType>
+    {
+        std::size_t operator()(const FileExtManager::FileType& t) const { return hash<int>{}((int)t); }
+    };
+}
+#endif
+
 class WXDLLIMPEXP_SDK BitmapLoader
 {
 public:

@@ -15,14 +15,14 @@ clMultiBook::clMultiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     , m_style(style)
     , m_selection(wxNOT_FOUND)
 {
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH | wxSP_LIVE_UPDATE);
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
     GetSizer()->Add(m_splitter, 1, wxEXPAND, 0);
-    
+
     // Create the books
     m_leftBook = CreateNotebook(m_splitter);
     m_rightBook = CreateNotebook(m_splitter);
-    
+
     // Hide the right book and initialise the splitter
     m_rightBook->Show(false);
     m_splitter->Initialize(m_leftBook);
@@ -66,7 +66,7 @@ bool clMultiBook::GetActivePageBook(Notebook** book, size_t& bookIndex, size_t& 
 void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* destbook)
 {
     if(!srcbook || !destbook) return;
-    
+
     bool updateViewNeeded = (destbook->GetPageCount() == 0);
     wxString text = srcbook->GetPageText(index);
     wxBitmap bmp = srcbook->GetPageBitmap(index);
@@ -74,10 +74,10 @@ void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* 
 
     srcbook->RemovePage(index, false);
     destbook->AddPage(page, text, true, bmp);
-    
+
     // Make the newly added tab the focused one
     page->CallAfter(&wxWindow::SetFocus);
-    
+
     // If we add the first page to the destination notebook or removing the last page from the source notebook
     // a view update is required
     if(updateViewNeeded || (srcbook->GetPageCount() == 0)) { CallAfter(&clMultiBook::UpdateView); }
@@ -86,10 +86,8 @@ void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* 
 void clMultiBook::UpdateView()
 {
     if(m_rightBook->GetPageCount() == 0) {
-        if(m_splitter->IsSplit()) {
-            m_splitter->Unsplit();
-        }
-    } else if(!m_splitter->IsSplit()){
+        if(m_splitter->IsSplit()) { m_splitter->Unsplit(); }
+    } else if(!m_splitter->IsSplit()) {
         m_splitter->SplitVertically(m_leftBook, m_rightBook);
     }
 }
@@ -111,7 +109,7 @@ int clMultiBook::BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const
 {
     bool found = false;
     int globalIndex = pageIndex;
-    
+
     std::vector<Notebook*> books = { m_leftBook, m_rightBook };
     for(size_t i = 0; i < books.size(); ++i) {
         if(book == books[i]) {
@@ -215,11 +213,7 @@ wxWindow* clMultiBook::GetCurrentPage() const
     return nullptr;
 }
 
-size_t clMultiBook::GetPageCount() const
-{
-    size_t count = 0;
-    return m_leftBook->GetPageCount() + m_rightBook->GetPageCount();
-}
+size_t clMultiBook::GetPageCount() const { return m_leftBook->GetPageCount() + m_rightBook->GetPageCount(); }
 
 int clMultiBook::GetSelection() const { return m_selection; }
 
@@ -276,11 +270,11 @@ int clMultiBook::SetSelection(size_t tabIdx)
                 changingEvent.SetSelection(tabIdx);
                 GetEventHandler()->ProcessEvent(changingEvent);
                 if(!changingEvent.IsAllowed()) { return wxNOT_FOUND; } // User vetoed
-                
+
                 // Update the history
                 m_history->Pop(focusedPage);
                 m_history->Push(focusedPage);
-                
+
                 // Update the selection before we fire the event again
                 // Or we might end up with stackoverflow...
                 m_selection = tabIdx;
@@ -399,11 +393,11 @@ Notebook* clMultiBook::CreateNotebook(wxWindow* parent)
     book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &clMultiBook::OnEventProxy, this);
     book->Bind(wxEVT_BOOK_TABAREA_DCLICKED, &clMultiBook::OnEventProxy, this);
     book->Bind(wxEVT_BOOK_TAB_DCLICKED, &clMultiBook::OnEventProxy, this);
-    book->Bind(wxEVT_BOOK_TAB_CONTEXT_MENU, &clMultiBook::OnEventProxy, this); 
+    book->Bind(wxEVT_BOOK_TAB_CONTEXT_MENU, &clMultiBook::OnEventProxy, this);
     return book;
 }
 
-//Notebook* clMultiBook::AddNotebook()
+// Notebook* clMultiBook::AddNotebook()
 //{
 //    wxWindowUpdateLocker locker(this);
 //    Notebook* book = CreateNotebook(this);

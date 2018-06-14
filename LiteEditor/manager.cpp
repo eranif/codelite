@@ -1683,9 +1683,19 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
 
     DirSaver ds;
 
-    // print the current directory
-    ::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-
+    // Build the working directory
+    // Expand macros
+    wd = MacroManager::Instance()->Expand(wd, NULL, projectName);
+    wd = wd.Trim().Trim(false);
+    if(!wd.IsEmpty()) {
+        wxFileName projectWd(wd, "");
+        if(!projectWd.IsAbsolute()) { projectWd.MakeAbsolute(proj->GetFileName().GetPath()); }
+        wd = projectWd.GetPath();
+    } else {
+        // Set the working directory to the project path
+        wd = proj->GetFileName().GetPath();
+    }
+    
     // execute the program:
     //- no hiding the console
     //- no redirection of the stdin/out
@@ -1697,12 +1707,18 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     // call it again here to get the actual exection line - we do it here since
     // the environment has been applied
     size_t createProcessFlags = IProcessCreateDefault;
-    if(!bldConf->IsGUIProgram()) {
-        createProcessFlags = IProcessNoRedirect | IProcessCreateConsole;
-    }
-    
-    execLine = GetProjectExecutionCommand(projectName, wd, true);
+    if(!bldConf->IsGUIProgram()) { createProcessFlags = IProcessNoRedirect | IProcessCreateConsole; }
+
+    wxString dummy;
+    execLine = GetProjectExecutionCommand(projectName, dummy, true);
+    wxUnusedVar(dummy);
+
     m_programProcess = ::CreateAsyncProcess(this, execLine, createProcessFlags, wd);
+    if(m_programProcess) {
+        clGetManager()->AppendOutputTabText(kOutputTab_Output, wxString()
+                                                                   << _("Working directory is set to: ") << wd << "\n");
+        clGetManager()->AppendOutputTabText(kOutputTab_Output, wxString() << _("Executing: ") << execLine << "\n");
+    }
 }
 
 void Manager::KillProgram()

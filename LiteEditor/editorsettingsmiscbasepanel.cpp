@@ -73,17 +73,6 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     fgSizer4->Add(m_toolbarIconSize, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_useSingleToolbar = new wxCheckBox(m_panel1, wxID_ANY, _("Use Native Toolbar"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
-    m_useSingleToolbar->SetValue(false);
-    m_useSingleToolbar->SetToolTip(_("Using the OS native toolbar instead of the generic toolbar\nWhen enabling this option, CodeLite will not be able to display all plugins\nTools"));
-    
-    staticBoxSizer3->Add(m_useSingleToolbar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_checkBoxEnableMSWTheme = new wxCheckBox(m_panel1, wxID_ANY, _("Enable Windows(R) theme for Vista / Windows 7"), wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
-    m_checkBoxEnableMSWTheme->SetValue(false);
-    
-    staticBoxSizer3->Add(m_checkBoxEnableMSWTheme, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
     wxStaticBoxSizer* staticBoxSizer4 = new wxStaticBoxSizer( new wxStaticBox(m_panel1, wxID_ANY, _("Other:")), wxVERTICAL);
     
     bSizer2->Add(staticBoxSizer4, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
@@ -393,7 +382,6 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
          GetSizer()->Fit(this);
     }
     // Connect events
-    m_checkBoxEnableMSWTheme->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnEnableThemeUI), NULL, this);
     m_checkBoxPromptReleaseOnly->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnPromptStableReleaseUI), NULL, this);
     m_SetLocale->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChkUpdateUI), NULL, this);
     m_staticTextLocale->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleStaticUpdateUI), NULL, this);
@@ -409,7 +397,6 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
 
 EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
 {
-    m_checkBoxEnableMSWTheme->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnEnableThemeUI), NULL, this);
     m_checkBoxPromptReleaseOnly->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnPromptStableReleaseUI), NULL, this);
     m_SetLocale->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChkUpdateUI), NULL, this);
     m_staticTextLocale->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleStaticUpdateUI), NULL, this);

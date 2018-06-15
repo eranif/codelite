@@ -49,8 +49,6 @@ protected:
     wxChoice* m_choiceIconSet;
     wxStaticText* m_staticText8;
     wxChoice* m_toolbarIconSize;
-    wxCheckBox* m_useSingleToolbar;
-    wxCheckBox* m_checkBoxEnableMSWTheme;
     wxCheckBox* m_showSplashScreen;
     wxCheckBox* m_singleAppInstance;
     wxCheckBox* m_versionCheckOnStartup;
@@ -100,7 +98,6 @@ protected:
     wxCheckBox* m_redirectLogOutput;
 
 protected:
-    virtual void OnEnableThemeUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPromptStableReleaseUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleChkUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleStaticUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -117,8 +114,6 @@ public:
     wxChoice* GetChoiceIconSet() { return m_choiceIconSet; }
     wxStaticText* GetStaticText8() { return m_staticText8; }
     wxChoice* GetToolbarIconSize() { return m_toolbarIconSize; }
-    wxCheckBox* GetUseSingleToolbar() { return m_useSingleToolbar; }
-    wxCheckBox* GetCheckBoxEnableMSWTheme() { return m_checkBoxEnableMSWTheme; }
     wxCheckBox* GetShowSplashScreen() { return m_showSplashScreen; }
     wxCheckBox* GetSingleAppInstance() { return m_singleAppInstance; }
     wxCheckBox* GetVersionCheckOnStartup() { return m_versionCheckOnStartup; }

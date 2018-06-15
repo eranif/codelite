@@ -23,18 +23,18 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_config.h"
+#include "ctags_manager.h"
 #include "editorsettingsmiscpanel.h"
-#include "generalinfo.h"
+#include "file_logger.h"
 #include "frame.h"
+#include "generalinfo.h"
+#include "globals.h"
 #include "manager.h"
 #include "pluginmanager.h"
-#include "file_logger.h"
 #include "wx/wxprec.h"
-#include <wx/intl.h>
 #include <wx/fontmap.h>
-#include "ctags_manager.h"
-#include "globals.h"
-#include "cl_config.h"
+#include <wx/intl.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
@@ -62,17 +62,13 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     else
         m_choiceIconSet->SetSelection(0); // Default
 
-    m_checkBoxEnableMSWTheme->SetValue(options->GetMswTheme());
-    m_useSingleToolbar->SetValue(!PluginManager::Get()->AllowToolbar());
-
+    
     m_oldSetLocale = options->GetUseLocale();
     m_SetLocale->SetValue(m_oldSetLocale);
     m_oldpreferredLocale = options->GetPreferredLocale();
     // Load the available locales and feed them to the wxchoice
     int select = FindAvailableLocales();
-    if(select != wxNOT_FOUND) {
-        m_AvailableLocales->SetSelection(select);
-    }
+    if(select != wxNOT_FOUND) { m_AvailableLocales->SetSelection(select); }
 
     wxArrayString astrEncodings;
     wxFontEncoding fontEnc;
@@ -84,9 +80,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
             continue;
         }
         astrEncodings.Add(wxFontMapper::GetEncodingName(fontEnc));
-        if(fontEnc == options->GetFileFontEncoding()) {
-            iCurrSelId = i;
-        }
+        if(fontEnc == options->GetFileFontEncoding()) { iCurrSelId = i; }
     }
 
     m_fileEncoding->Append(astrEncodings);
@@ -108,8 +102,6 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
 
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
-    m_oldMswUseTheme = m_checkBoxEnableMSWTheme->IsChecked();
-
     m_redirectLogOutput->SetValue(clConfig::Get().Read(kConfigRedirectLogOutput, true));
     m_checkBoxPromptReleaseOnly->SetValue(clConfig::Get().Read("PromptForNewReleaseOnly", false));
 
@@ -131,13 +123,6 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
         clMainFrame::Get()->SetFrameFlag(false, CL_SHOW_SPLASH);
     }
 
-    // Set the theme support.
-    // This option requires a restart of codelite
-    options->SetMswTheme(m_checkBoxEnableMSWTheme->IsChecked());
-    if(m_oldMswUseTheme != m_checkBoxEnableMSWTheme->IsChecked()) {
-        m_restartRequired = true;
-    }
-
     clConfig::Get().Write(kConfigSingleInstance, m_singleAppInstance->IsChecked());
     clConfig::Get().Write(kConfigCheckForNewVersion, m_versionCheckOnStartup->IsChecked());
     clConfig::Get().Write(kConfigMaxItemsInFindReplaceDialog, ::wxStringToInt(m_maxItemsFindReplace->GetValue(), 15));
@@ -151,20 +136,15 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write(kConfigStatusbarShowSelectedChars, m_statusBarShowSelChars->IsChecked());
 
     bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
-    EditorConfigST::Get()->SetInteger(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
 
     // check to see of the icon size was modified
     int oldIconSize(24);
 
     OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();
-    if(oldOptions) {
-        oldIconSize = oldOptions->GetIconsSize();
-    }
+    if(oldOptions) { oldIconSize = oldOptions->GetIconsSize(); }
 
     int iconSize(24);
-    if(m_toolbarIconSize->GetSelection() == 0) {
-        iconSize = 16;
-    }
+    if(m_toolbarIconSize->GetSelection() == 0) { iconSize = 16; }
     options->SetIconsSize(iconSize);
 
     bool setlocale = m_SetLocale->IsChecked();
@@ -173,15 +153,13 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     // I don't think we should check if newLocaleString is empty; that's still useful information
     newLocaleString = newLocaleString.BeforeFirst(wxT(':')); // Store it as "fr_FR", not "fr_FR: French"
     options->SetPreferredLocale(newLocaleString);
-    if((setlocale != m_oldSetLocale) || (newLocaleString != m_oldpreferredLocale)) {
-        m_restartRequired = true;
-    }
+    if((setlocale != m_oldSetLocale) || (newLocaleString != m_oldpreferredLocale)) { m_restartRequired = true; }
 
     // save file font encoding
     options->SetFileFontEncoding(m_fileEncoding->GetStringSelection());
     TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
 
-    if(oldIconSize != iconSize || oldUseSingleToolbar != m_useSingleToolbar->IsChecked()) {
+    if(oldIconSize != iconSize) {
         EditorConfigST::Get()->SetInteger(wxT("LoadSavedPrespective"), 0);
         // notify the user
         m_restartRequired = true;
@@ -239,10 +217,7 @@ void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
     e.Enable(!a1.IsEmpty() && !a2.IsEmpty());
 }
 
-void EditorSettingsMiscPanel::OnEnableThemeUI(wxUpdateUIEvent& event)
-{
-    event.Enable(false);
-}
+void EditorSettingsMiscPanel::OnEnableThemeUI(wxUpdateUIEvent& event) { event.Enable(false); }
 
 void EditorSettingsMiscPanel::LocaleChkUpdateUI(wxUpdateUIEvent& event)
 {

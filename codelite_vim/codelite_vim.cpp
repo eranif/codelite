@@ -1,24 +1,22 @@
-#include <iostream>
+#include "VimSettings.h"
+#include "VimSettingsDlg.h"
 #include "codelite_vim.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/app.h>
-#include <wx/menu.h>
-#include <wx/settings.h>
-#include <wx/dialog.h>
+#include "event_notifier.h"
 #include "macros.h"
 #include "vim_manager.h"
-#include "VimSettingsDlg.h"
-#include "event_notifier.h"
-#include "VimSettings.h"
+#include <iostream>
+#include <wx/app.h>
+#include <wx/dialog.h>
+#include <wx/menu.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
 
 static CodeliteVim* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new CodeliteVim(manager);
-    }
+    if(thePlugin == NULL) { thePlugin = new CodeliteVim(manager); }
     return thePlugin;
 }
 
@@ -41,21 +39,15 @@ CodeliteVim::CodeliteVim(IManager* manager)
     m_shortName = wxT("CodeLite Vim");
 
     wxTheApp->Bind(wxEVT_MENU, &CodeliteVim::onVimSetting, this, XRCID("vim_settings"));
-    
-    // Load the settings from the file system    
+
+    // Load the settings from the file system
     m_settings.Load();
     m_vimM = new VimManager(manager, m_settings);
 }
 
 CodeliteVim::~CodeliteVim() {}
 
-clToolBar* CodeliteVim::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-
-    return tb;
-}
+void CodeliteVim::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void CodeliteVim::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -71,7 +63,7 @@ void CodeliteVim::UnPlug()
     wxDELETE(m_vimM);
 }
 
-void CodeliteVim::onVimSetting(wxCommandEvent& event) 
+void CodeliteVim::onVimSetting(wxCommandEvent& event)
 {
     VimSettingsDlg dlg(EventNotifier::Get()->TopFrame());
     if(dlg.ShowModal() == wxID_OK) {

@@ -29,6 +29,7 @@
 #include "LLDBOutputView.h"
 #include "LLDBPlugin.h"
 #include "LLDBProtocol/LLDBEvent.h"
+#include "LLDBProtocol/LLDBFormat.h"
 #include "LLDBProtocol/LLDBSettings.h"
 #include "LLDBSettingDialog.h"
 #include "LLDBThreadsView.h"
@@ -48,7 +49,6 @@
 #include <wx/platinfo.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
-#include "LLDBProtocol/LLDBFormat.h"
 
 static LLDBPlugin* thePlugin = NULL;
 
@@ -67,12 +67,10 @@ const int lldbJumpToCursorContextMenuId = XRCID("dbg_jump_cursor");
 
 const int lldbAddWatchContextMenuId = XRCID("lldb_add_watch");
 
-wxString GetWatchWord(IEditor &editor)
+wxString GetWatchWord(IEditor& editor)
 {
     auto word = editor.GetSelection();
-    if(word.IsEmpty()) {
-        word = editor.GetWordAtCaret();
-    }
+    if(word.IsEmpty()) { word = editor.GetWordAtCaret(); }
 
     // Remove leading and trailing whitespace.
     word.Trim(true);
@@ -172,9 +170,9 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
 
     EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnRunToCursor, this,
-        lldbRunToCursorContextMenuId);
+                               lldbRunToCursorContextMenuId);
     EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnJumpToCursor, this,
-        lldbJumpToCursorContextMenuId);
+                               lldbJumpToCursorContextMenuId);
 
     wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnAddWatch, this, lldbAddWatchContextMenuId);
     LLDBFormat::Initialise();
@@ -241,35 +239,27 @@ void LLDBPlugin::UnPlug()
     wxTheApp->Unbind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
 
     EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnRunToCursor, this,
-        lldbRunToCursorContextMenuId);
+                                 lldbRunToCursorContextMenuId);
     EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnJumpToCursor, this,
-        lldbJumpToCursorContextMenuId);
+                                 lldbJumpToCursorContextMenuId);
 
     wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnAddWatch, this, lldbAddWatchContextMenuId);
 }
 
 LLDBPlugin::~LLDBPlugin() {}
 
-bool LLDBPlugin::ShowThreadNames() const
-{
-    return m_showThreadNames;
-}
+bool LLDBPlugin::ShowThreadNames() const { return m_showThreadNames; }
 
 wxString LLDBPlugin::GetFilenameForDisplay(const wxString& fileName) const
 {
     if(m_showFileNamesOnly) {
-	    return wxFileName(fileName).GetFullName();
-	} else {
+        return wxFileName(fileName).GetFullName();
+    } else {
         return fileName;
     }
 }
 
-clToolBar* LLDBPlugin::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void LLDBPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void LLDBPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -292,14 +282,10 @@ void LLDBPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     wxUnusedVar(type);
 
-    if(!m_connector.IsRunning()) {
-        return;
-    }
+    if(!m_connector.IsRunning()) { return; }
 
     const auto editor = m_mgr->GetActiveEditor();
-    if(!editor) {
-        return;
-    }
+    if(!editor) { return; }
 
     size_t numberOfMenuItems = 0;
 
@@ -329,9 +315,7 @@ void LLDBPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
         ++numberOfMenuItems;
     }
 
-    if(numberOfMenuItems > 0) {
-        menu->InsertSeparator(numberOfMenuItems);
-    }
+    if(numberOfMenuItems > 0) { menu->InsertSeparator(numberOfMenuItems); }
 }
 
 void LLDBPlugin::ClearDebuggerMarker()
@@ -530,7 +514,7 @@ void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
     m_connector.Cleanup();
 
     // Save current perspective before destroying the session
-    if (m_isPerspectiveLoaded) {
+    if(m_isPerspectiveLoaded) {
         m_mgr->SavePerspective("LLDB-debugger");
 
         // Restore the old perspective
@@ -843,8 +827,8 @@ void LLDBPlugin::OnLLDBRunning(LLDBEvent& event)
 
 void LLDBPlugin::OnToggleBreakpoint(clDebugEvent& event)
 {
-    // Call Skip() here since we want codelite to manage the breakpoint as well ( in term of serialization in the session
-    // file )
+    // Call Skip() here since we want codelite to manage the breakpoint as well ( in term of serialization in the
+    // session file )
     CHECK_IS_LLDB_SESSION();
 
     // check to see if we are removing a breakpoint or adding one
@@ -950,14 +934,10 @@ void LLDBPlugin::OnAddWatch(wxCommandEvent& event)
     CHECK_IS_LLDB_SESSION();
 
     const auto editor = m_mgr->GetActiveEditor();
-    if(!editor) {
-        return;
-    }
+    if(!editor) { return; }
 
     const auto watchWord = GetWatchWord(*editor);
-    if(watchWord.IsEmpty()) {
-        return;
-    }
+    if(watchWord.IsEmpty()) { return; }
 
     GetLLDB()->AddWatch(watchWord);
 
@@ -970,9 +950,7 @@ void LLDBPlugin::OnRunToCursor(wxCommandEvent& event)
     CHECK_IS_LLDB_SESSION();
 
     const auto editor = m_mgr->GetActiveEditor();
-    if(!editor) {
-        return;
-    }
+    if(!editor) { return; }
 
     m_connector.RunTo(editor->GetFileName(), editor->GetCurrentLine() + 1);
 }
@@ -982,9 +960,7 @@ void LLDBPlugin::OnJumpToCursor(wxCommandEvent& event)
     CHECK_IS_LLDB_SESSION();
 
     const auto editor = m_mgr->GetActiveEditor();
-    if(!editor) {
-        return;
-    }
+    if(!editor) { return; }
 
     m_connector.JumpTo(editor->GetFileName(), editor->GetCurrentLine() + 1);
 }
@@ -1022,7 +998,8 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
 
 void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 {
-    if(!DoInitializeDebugger(event, true, clDebuggerTerminalPOSIX::MakeExeTitle(event.GetExecutableName(), event.GetArguments()))) {
+    if(!DoInitializeDebugger(event, true,
+                             clDebuggerTerminalPOSIX::MakeExeTitle(event.GetExecutableName(), event.GetArguments()))) {
         return;
     }
 

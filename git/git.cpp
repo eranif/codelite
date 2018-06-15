@@ -185,11 +185,7 @@ GitPlugin::GitPlugin(IManager* manager)
 GitPlugin::~GitPlugin() { delete m_gitBlameDlg; }
 
 /*******************************************************************************/
-clToolBar* GitPlugin::CreateToolBar(wxWindow* parent)
-{
-    wxUnusedVar(parent);
-    return NULL;
-}
+void GitPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 /*******************************************************************************/
 void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)

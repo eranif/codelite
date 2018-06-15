@@ -183,7 +183,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
 #if USE_SFTP
     // Allocate SFTP handler
     m_sftpHandler.reset(new PhpSFTPHandler());
-#endif //USE_SFTP
+#endif // USE_SFTP
 }
 
 PhpPlugin::~PhpPlugin() {}
@@ -196,12 +196,7 @@ bool PhpPlugin::IsWorkspaceViewDetached()
     return detachedPanes.Index(PHPStrings::PHP_WORKSPACE_VIEW_TITLE) != wxNOT_FOUND;
 }
 
-clToolBar* PhpPlugin::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void PhpPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void PhpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -218,7 +213,7 @@ void PhpPlugin::UnPlug()
 {
 #if USE_SFTP
     m_sftpHandler.reset(nullptr);
-#endif //USE_SFTP
+#endif // USE_SFTP
     XDebugManager::Free();
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS,
                                      clDebugEventHandler(PhpPlugin::OnXDebugDeleteAllBreakpoints), NULL, this);

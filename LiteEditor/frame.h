@@ -55,6 +55,7 @@
 #include <wx/splash.h>
 
 // forward decls
+class clToolBar;
 class WebUpdateJob;
 class CodeLiteApp;
 class clSingleInstanceThread;
@@ -128,9 +129,9 @@ class clMainFrame : public wxFrame
 
     // Printing
     wxPrintDialogData m_printDlgData;
-    wxToolBar* m_mainToolBar;
     clMainFrameHelper::Ptr_t m_frameHelper;
     WebUpdateJob* m_webUpdate;
+    clToolBar* m_toolbar;
 
 public:
     static bool m_initCompleted;
@@ -144,7 +145,7 @@ protected:
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
-
+    
     /**
      * @brief goto anything..
      */
@@ -360,14 +361,8 @@ private:
     void OnSplitSelectionUI(wxUpdateUIEvent& event);
 
     /// Toolbar management
-    void CreateToolbars24();
-    void CreateToolbars16();
-    void CreateNativeToolbar24();
-    void CreateNativeToolbar16();
+    void CreateToolBar(int toolSize);
     void ToggleToolBars(bool all);
-
-    void SetToolBar(wxToolBar* tb);
-
     void ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event);
     void CreateRecentlyOpenedFilesMenu();
     void CreateWelcomePage();
@@ -386,7 +381,7 @@ private:
 public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
-    wxToolBar* GetMainToolBar() const { return m_mainToolBar; }
+    clToolBar* GetMainToolBar() const { return m_toolbar; }
 
 protected:
     //----------------------------------------------------

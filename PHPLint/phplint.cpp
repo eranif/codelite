@@ -1,8 +1,8 @@
-#include "phplint.h"
 #include "asyncprocess.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "lintoptions.h"
+#include "phplint.h"
 #include "phplintdlg.h"
 #include "phpoptions.h"
 #include "processreaderthread.h"
@@ -17,9 +17,7 @@ static PHPLint* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new PHPLint(manager);
-    }
+    if(thePlugin == NULL) { thePlugin = new PHPLint(manager); }
     return thePlugin;
 }
 
@@ -58,12 +56,7 @@ PHPLint::PHPLint(IManager* manager)
 
 PHPLint::~PHPLint() {}
 
-clToolBar* PHPLint::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void PHPLint::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void PHPLint::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -114,9 +107,7 @@ void PHPLint::OnLoadFile(clCommandEvent& e)
 {
     e.Skip();
 
-    if(!m_settings.IsLintOnFileLoad()) {
-        return;
-    }
+    if(!m_settings.IsLintOnFileLoad()) { return; }
 
     RunLint();
 }
@@ -125,9 +116,7 @@ void PHPLint::OnSaveFile(clCommandEvent& e)
 {
     e.Skip();
 
-    if(!m_settings.IsLintOnFileSave()) {
-        return;
-    }
+    if(!m_settings.IsLintOnFileSave()) { return; }
 
     RunLint();
 }
@@ -138,9 +127,7 @@ void PHPLint::RunLint()
     CHECK_PTR_RET(editor);
 
     if(FileExtManager::IsPHPFile(editor->GetFileName())) {
-        if(m_mgr->GetActiveEditor()) {
-            m_mgr->GetActiveEditor()->DelAllCompilerMarkers();
-        }
+        if(m_mgr->GetActiveEditor()) { m_mgr->GetActiveEditor()->DelAllCompilerMarkers(); }
         PHPLint::DoCheckFile(editor->GetFileName());
     }
 }
@@ -193,9 +180,7 @@ void PHPLint::QueuePhpmdCommand(const wxString& phpPath, const wxString& file)
     ::WrapWithQuotes(phpmdPath);
 
     wxString phpmdRules(m_settings.GetPhpmdRules());
-    if(phpmdRules.IsEmpty()) {
-        phpmdRules = "cleancode,codesize,controversial,design,naming,unusedcode";
-    }
+    if(phpmdRules.IsEmpty()) { phpmdRules = "cleancode,codesize,controversial,design,naming,unusedcode"; }
     ::WrapWithQuotes(phpmdRules);
 
     m_queue.push_back(phpPath + " " + phpmdPath + " " + file + " xml " + phpmdRules);
@@ -303,9 +288,7 @@ void PHPLint::ProcessXML(const wxString& lintOutput)
     wxXmlNode* violation = file->GetChildren();
     while(violation) {
         wxString errorMessage = violation->GetNodeContent();
-        if (errorMessage.IsEmpty()) {
-            errorMessage = violation->GetAttribute("message");
-        }
+        if(errorMessage.IsEmpty()) { errorMessage = violation->GetAttribute("message"); }
         wxString strLine = violation->GetAttribute(linter == "pmd" ? "beginline" : "line");
         bool isWarning = IsWarning(violation, linter);
         MarkError(errorMessage, strLine, editor, isWarning);

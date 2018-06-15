@@ -45,12 +45,7 @@ SmartCompletion::SmartCompletion(IManager* manager)
 
 SmartCompletion::~SmartCompletion() {}
 
-clToolBar* SmartCompletion::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void SmartCompletion::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void SmartCompletion::CreatePluginMenu(wxMenu* pluginsMenu)
 {

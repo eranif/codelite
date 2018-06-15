@@ -37,7 +37,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     /**
      * @brief Add plugin menu to the "Plugins" menu item in the menu bar
      */

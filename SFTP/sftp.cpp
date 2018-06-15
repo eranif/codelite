@@ -151,12 +151,7 @@ SFTP::SFTP(IManager* manager)
 
 SFTP::~SFTP() {}
 
-clToolBar* SFTP::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void SFTP::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void SFTP::CreatePluginMenu(wxMenu* pluginsMenu)
 {

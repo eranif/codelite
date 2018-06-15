@@ -200,7 +200,7 @@ public:
      *
      * @return Codelite tool bar or NULL.
      */
-    clToolBar* CreateToolBar(wxWindow* parent);
+    void CreateToolBar(clToolBar* toolbar);
 
     /**
      * @brief Creates a menu for plugin.

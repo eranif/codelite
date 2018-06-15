@@ -210,11 +210,7 @@ Subversion2::Subversion2(IManager* manager)
 
 Subversion2::~Subversion2() {}
 
-clToolBar* Subversion2::CreateToolBar(wxWindow* parent)
-{
-    wxUnusedVar(parent);
-    return NULL;
-}
+void Subversion2::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void Subversion2::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -914,8 +910,6 @@ void Subversion2::DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString& workingDire
         proc->WaitForTerminate(xmlStr);
         SvnXML::GetSvnInfo(xmlStr, svnInfo);
     }
-
-    
 }
 
 bool Subversion2::IsPathUnderSvn(const wxString& path)
@@ -1147,7 +1141,7 @@ wxArrayString Subversion2::DoGetSvnStatusQuiet(const wxString& wd)
 
     modFiles.insert(modFiles.end(), newFiles.begin(), newFiles.end());
     modFiles.insert(modFiles.end(), deletedFiles.begin(), deletedFiles.end());
-    
+
     return modFiles;
 }
 
@@ -1179,7 +1173,6 @@ std::vector<wxString> Subversion2::GetLocalAddsDels(const wxString& wd)
     command << GetSvnExeName() << wxT(" status -q ");
     command << wxT("\"") << wd << wxT("\"");
 
-    
     std::vector<wxString> aryFiles;
     wxArrayString lines;
 
@@ -1196,7 +1189,6 @@ std::vector<wxString> Subversion2::GetLocalAddsDels(const wxString& wd)
         }
     }
 
-    
     return aryFiles;
 }
 
@@ -1207,7 +1199,6 @@ std::vector<wxString> Subversion2::GetFilesMarkedBinary(const wxString& wd)
     command << GetSvnExeName() << wxT(" propget svn:mime-type -R ");
     command << wxT("\"") << wd << wxT("\"");
 
-    
     std::vector<wxString> aryFiles;
     wxArrayString lines;
 
@@ -1219,7 +1210,6 @@ std::vector<wxString> Subversion2::GetFilesMarkedBinary(const wxString& wd)
         if(lines.Item(i1).EndsWith(_(" - application/octet-stream"), &fileName)) { aryFiles.push_back(fileName); }
     }
 
-    
     return aryFiles;
 }
 
@@ -1578,7 +1568,7 @@ void Subversion2::ShowRecentChangesDialog(const SvnShowDiffChunk::List_t& change
 void Subversion2::OnGotoAnythingShowing(clGotoEvent& e)
 {
     e.Skip();
-    // Add our entries 
+    // Add our entries
     e.GetEntries().push_back(clGotoEntry("Svn > Commit", "", XRCID("gotoanything_svn_commit")));
     e.GetEntries().push_back(clGotoEntry("Svn > Update", "", XRCID("gotoanything_svn_update")));
 }

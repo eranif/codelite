@@ -284,6 +284,7 @@
                 <checkable>1</checkable>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+<!--
             <object class="wxMenu" name="toolbars_menu">
                 <label>Tool&amp;bars</label>
                 <style>wxMENU_TEAROFF</style>
@@ -315,6 +316,7 @@
                 <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+-->
             <object class="wxMenuItem" name="toggle_panes">
                 <label>&amp;Toggle All Panes</label>
             </object>

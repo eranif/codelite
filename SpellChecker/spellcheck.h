@@ -36,10 +36,10 @@
 #ifndef __SpellCheck__
 #define __SpellCheck__
 //------------------------------------------------------------
+#include "cl_command_event.h"
 #include "plugin.h"
 #include "spellcheckeroptions.h"
 #include <wx/timer.h>
-#include "cl_command_event.h"
 //------------------------------------------------------------
 class IHunSpell;
 class SpellCheck : public IPlugin
@@ -57,7 +57,7 @@ public:
     // --------------------------------------------
     // Abstract methods
     // --------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent) override;
+    virtual void CreateToolBar(clToolBar* toolbar) override;
     virtual void CreatePluginMenu(wxMenu* pluginsMenu) override;
     virtual void UnPlug() override;
 
@@ -88,10 +88,9 @@ protected:
     IHunSpell* m_pEngine;
     wxTimer m_timer;
     wxString m_currentWspPath;
-    wxAuiToolBar* m_pToolbar;
 
-    IEditor* m_pLastEditor;             // The editor checked last time the spell check ran.
-    wxUint64 m_lastModificationCount;   // Modification count of the editor last time the spell check ran.
+    IEditor* m_pLastEditor;           // The editor checked last time the spell check ran.
+    wxUint64 m_lastModificationCount; // Modification count of the editor last time the spell check ran.
 };
 //------------------------------------------------------------
 #endif // SpellCheck

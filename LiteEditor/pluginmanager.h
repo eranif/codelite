@@ -38,6 +38,7 @@
 #include <map>
 #include "plugindata.h"
 
+class clToolBar;
 class clEditorBar;
 class wxBookCtrlBase;
 class EnvironmentConfig;
@@ -79,6 +80,7 @@ public:
     //------------------------------------
     void EnableClangCodeCompletion(bool b);
     IEditor* GetActiveEditor();
+    clToolBar* GetToolBar();
     IConfigTool* GetConfigTool();
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type);
     wxTreeCtrl* GetTree(TreeType type);

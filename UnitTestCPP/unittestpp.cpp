@@ -104,23 +104,13 @@ UnitTestPP::UnitTestPP(IManager* manager)
 
 UnitTestPP::~UnitTestPP() {}
 
-clToolBar* UnitTestPP::CreateToolBar(wxWindow* parent)
+void UnitTestPP::CreateToolBar(clToolBar* toolbar)
 {
-    // support both toolbars icon size
-    clToolBar* tb(NULL);
+    int size = m_mgr->GetToolbarIconSize();
 
-    if(m_mgr->AllowToolbar()) {
-        int size = m_mgr->GetToolbarIconSize();
-
-        tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
-        tb->SetToolBitmapSize(wxSize(size, size));
-
-        BitmapLoader& bitmapLoader = *m_mgr->GetStdIcons();
-        tb->AddTool(XRCID("run_unit_tests"), _("Run Unit tests..."), bitmapLoader.LoadBitmap("ok", size),
-                    _("Run project as unit test project..."));
-        tb->Realize();
-    }
-    return tb;
+    BitmapLoader& bitmapLoader = *m_mgr->GetStdIcons();
+    toolbar->AddTool(XRCID("run_unit_tests"), _("Run Unit tests..."), bitmapLoader.LoadBitmap("ok", size),
+                     _("Run project as unit test project..."));
 }
 
 void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)

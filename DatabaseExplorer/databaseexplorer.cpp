@@ -23,18 +23,18 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/aboutdlg.h>
+#include "ErdPanel.h"
+#include "SqlCommandPanel.h"
+#include "clKeyboardManager.h"
 #include "databaseexplorer.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
-#include "ErdPanel.h"
-#include <wx/xrc/xmlres.h>
-#include "wx/wxsf/AutoLayout.h"
 #include "event_notifier.h"
-#include "clKeyboardManager.h"
-#include "SqlCommandPanel.h"
 #include "globals.h"
 #include "imanager.h"
+#include "wx/wxsf/AutoLayout.h"
+#include <wx/aboutdlg.h>
+#include <wx/xrc/xmlres.h>
 
 //#ifdef DBL_USE_MYSQL
 #include "MySqlDbAdapter.h"
@@ -84,9 +84,7 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new DatabaseExplorer(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new DatabaseExplorer(manager); }
     return thePlugin;
 }
 
@@ -110,13 +108,13 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
     wxWindow* editorBook = m_mgr->GetEditorPaneNotebook();
 
-    EventNotifier::Get()->Connect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED,
+                                  clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
     if(IsDbViewDetached()) {
-        DockablePane* cp = new DockablePane(
-            book->GetParent()->GetParent(), book, _("DbExplorer"), false, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, _("DbExplorer"), false, wxNullBitmap,
+                                            wxSize(200, 200));
         m_dbViewerPanel = new DbViewerPanel(cp, editorBook, m_mgr);
         cp->SetChildNoReparent(m_dbViewerPanel);
 
@@ -151,12 +149,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
 
 DatabaseExplorer::~DatabaseExplorer() { wxSFAutoLayout::CleanUp(); }
 
-clToolBar* DatabaseExplorer::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void DatabaseExplorer::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void DatabaseExplorer::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -169,8 +162,8 @@ void DatabaseExplorer::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("wxEVT_EXECUTE_SQL"), _("Execute SQL"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("Database Explorer"), menu);
-    m_mgr->GetTheApp()->Connect(
-        XRCID("dbe_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DatabaseExplorer::OnAbout), NULL, this);
+    m_mgr->GetTheApp()->Connect(XRCID("dbe_about"), wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(DatabaseExplorer::OnAbout), NULL, this);
 }
 
 void DatabaseExplorer::HookPopupMenu(wxMenu* menu, MenuType type)
@@ -184,19 +177,17 @@ void DatabaseExplorer::OnExecuteSQL(wxCommandEvent& event)
     wxUnusedVar(event);
     SQLCommandPanel* panel = dynamic_cast<SQLCommandPanel*>(m_mgr->GetActivePage());
     CHECK_PTR_RET(panel);
-    
+
     panel->ExecuteSql();
 }
 
 void DatabaseExplorer::UnPlug()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_TREE_ITEM_FILE_ACTIVATED,
+                                     clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
     int index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_dbViewerPanel);
-    if(index != wxNOT_FOUND) {
-        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index);
-    }
+    if(index != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(index); }
     wxTheApp->Unbind(wxEVT_MENU, &DatabaseExplorer::OnExecuteSQL, this, XRCID("wxEVT_EXECUTE_SQL"));
     wxDELETE(m_dbViewerPanel);
 }
@@ -301,8 +292,6 @@ void DatabaseExplorer::OnToggleTab(clCommandEvent& event)
         clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_dbViewerPanel, _("DbExplorer"), false);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("DbExplorer"));
-        if(where != wxNOT_FOUND) {
-            clGetManager()->GetWorkspacePaneNotebook()->RemovePage(where);
-        }
+        if(where != wxNOT_FOUND) { clGetManager()->GetWorkspacePaneNotebook()->RemovePage(where); }
     }
 }

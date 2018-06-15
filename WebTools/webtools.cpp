@@ -1,36 +1,34 @@
-#include "webtools.h"
-#include <wx/xrc/xmlres.h>
-#include "fileextmanager.h"
-#include <wx/stc/stc.h>
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include "WebToolsSettings.h"
-#include <wx/menu.h>
-#include "NoteJSWorkspace.h"
-#include "NodeJSWorkspaceView.h"
-#include "clWorkspaceManager.h"
-#include "globals.h"
-#include "clWorkspaceView.h"
-#include <wx/dirdlg.h>
-#include "tags_options_data.h"
-#include "ctags_manager.h"
-#include "PhpLexerAPI.h"
-#include "PHPSourceFile.h"
 #include "NodeJSDebuggerPane.h"
-#include "WebToolsConfig.h"
-#include "fileutils.h"
 #include "NodeJSEvents.h"
+#include "NodeJSWorkspaceView.h"
+#include "NoteJSWorkspace.h"
+#include "PHPSourceFile.h"
+#include "PhpLexerAPI.h"
 #include "WebToolsBase.h"
+#include "WebToolsConfig.h"
+#include "WebToolsSettings.h"
 #include "bitmap_loader.h"
+#include "clWorkspaceManager.h"
+#include "clWorkspaceView.h"
+#include "codelite_events.h"
+#include "ctags_manager.h"
+#include "event_notifier.h"
+#include "fileextmanager.h"
+#include "fileutils.h"
+#include "globals.h"
+#include "tags_options_data.h"
+#include "webtools.h"
+#include <wx/dirdlg.h>
+#include <wx/menu.h>
+#include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 static WebTools* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new WebTools(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new WebTools(manager); }
     return thePlugin;
 }
 
@@ -98,7 +96,7 @@ WebTools::WebTools(IManager* manager)
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
     m_cssCodeComplete.Reset(new CSSCodeCompletion());
     m_jsctags.Reset(new clJSCTags());
-    
+
     // Connect the timer
     m_timer = new wxTimer(this);
     m_timer->Start(3000);
@@ -109,12 +107,7 @@ WebTools::WebTools(IManager* manager)
 
 WebTools::~WebTools() { NodeJSWorkspace::Free(); }
 
-clToolBar* WebTools::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void WebTools::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void WebTools::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -133,8 +126,8 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
-    EventNotifier::Get()->Unbind(
-        wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip,
+                                 this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
@@ -157,9 +150,7 @@ void WebTools::UnPlug()
 
 void WebTools::DoRefreshColours(const wxString& filename)
 {
-    if(FileExtManager::GetType(filename) == FileExtManager::TypeJS) {
-        m_jsColourThread->QueueFile(filename);
-    }
+    if(FileExtManager::GetType(filename) == FileExtManager::TypeJS) { m_jsColourThread->QueueFile(filename); }
 }
 
 void WebTools::ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply)
@@ -283,9 +274,7 @@ bool WebTools::IsJavaScriptFile(IEditor* editor)
     if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         wxStyledTextCtrl* ctrl = editor->GetCtrl();
         int styleAtCurPos = ctrl->GetStyleAt(ctrl->GetCurrentPos());
-        if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
-            return true;
-        }
+        if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) { return true; }
     }
     return false;
 }
@@ -297,13 +286,13 @@ bool WebTools::InsideJSComment(IEditor* editor)
     if(FileExtManager::IsJavascriptFile(editor->GetFileName())) {
         // Use the Cxx macros
         return styleAtCurPos == wxSTC_C_COMMENT || styleAtCurPos == wxSTC_C_COMMENTLINE ||
-            styleAtCurPos == wxSTC_C_COMMENTDOC || styleAtCurPos == wxSTC_C_COMMENTLINEDOC ||
-            styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORD || styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORDERROR ||
-            styleAtCurPos == wxSTC_C_PREPROCESSORCOMMENT;
+               styleAtCurPos == wxSTC_C_COMMENTDOC || styleAtCurPos == wxSTC_C_COMMENTLINEDOC ||
+               styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORD || styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORDERROR ||
+               styleAtCurPos == wxSTC_C_PREPROCESSORCOMMENT;
     } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return styleAtCurPos == wxSTC_HJ_COMMENT || styleAtCurPos == wxSTC_HJ_COMMENTLINE ||
-                styleAtCurPos == wxSTC_HJ_COMMENTDOC;
+                   styleAtCurPos == wxSTC_HJ_COMMENTDOC;
         }
     }
     return false;
@@ -316,12 +305,12 @@ bool WebTools::InsideJSString(IEditor* editor)
     if(FileExtManager::IsJavascriptFile(editor->GetFileName())) {
         // Use the Cxx macros
         return styleAtCurPos == wxSTC_C_STRING || styleAtCurPos == wxSTC_C_CHARACTER ||
-            styleAtCurPos == wxSTC_C_STRINGEOL || styleAtCurPos == wxSTC_C_STRINGRAW ||
-            styleAtCurPos == wxSTC_C_HASHQUOTEDSTRING;
+               styleAtCurPos == wxSTC_C_STRINGEOL || styleAtCurPos == wxSTC_C_STRINGRAW ||
+               styleAtCurPos == wxSTC_C_HASHQUOTEDSTRING;
     } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return styleAtCurPos == wxSTC_HJ_DOUBLESTRING || styleAtCurPos == wxSTC_HJ_SINGLESTRING ||
-                styleAtCurPos == wxSTC_HJ_STRINGEOL;
+                   styleAtCurPos == wxSTC_HJ_STRINGEOL;
         }
     }
     return false;
@@ -392,9 +381,7 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
     wxString layout;
     wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs.layout");
     fnNodeJSLayout.AppendDir("config");
-    if(FileUtils::ReadFileContent(fnNodeJSLayout, layout)) {
-        m_mgr->GetDockingManager()->LoadPerspective(layout);
-    }
+    if(FileUtils::ReadFileContent(fnNodeJSLayout, layout)) { m_mgr->GetDockingManager()->LoadPerspective(layout); }
     EnsureAuiPaneIsVisible("nodejs_debugger", true);
 
     m_hideToolBarOnDebugStop = false;
@@ -418,20 +405,14 @@ void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
         m_savePerspective.clear();
     }
 
-    if(m_hideToolBarOnDebugStop) {
-        m_mgr->ShowToolBar(false);
-    }
+    if(m_hideToolBarOnDebugStop) { m_mgr->ShowToolBar(false); }
 }
 
 void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
 {
     wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(paneName);
-    if(pi.IsOk() && !pi.IsShown()) {
-        pi.Show();
-    }
-    if(update) {
-        m_mgr->GetDockingManager()->Update();
-    }
+    if(pi.IsOk() && !pi.IsShown()) { pi.Show(); }
+    if(update) { m_mgr->GetDockingManager()->Update(); }
 }
 
 void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)

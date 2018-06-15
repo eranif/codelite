@@ -31,15 +31,6 @@
 //-----------------------------------
 #include <wx/version.h>
 
-#define clToolBar wxAuiToolBar
-#ifdef __WXMSW__
-#define clTB_DEFAULT_STYLE wxAUI_TB_PLAIN_BACKGROUND
-#define clTB_DEFAULT_STYLE_PLUGIN wxAUI_TB_PLAIN_BACKGROUND
-#else
-#define clTB_DEFAULT_STYLE wxAUI_TB_DEFAULT_STYLE
-#define clTB_DEFAULT_STYLE_PLUGIN wxAUI_TB_DEFAULT_STYLE
-#endif
-#define USE_AUI_TOOLBAR 1
 #define USE_AUI_NOTEBOOK 0
 
 // Defaults

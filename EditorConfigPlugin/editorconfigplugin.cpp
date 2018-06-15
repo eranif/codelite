@@ -1,22 +1,20 @@
-#include "editorconfigplugin.h"
-#include <wx/xrc/xmlres.h>
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include <wx/filename.h>
-#include "cl_config.h"
-#include "EditorConfigSettingsDlg.h"
 #include "EditorConfigSettings.h"
-#include <wx/menu.h>
+#include "EditorConfigSettingsDlg.h"
+#include "cl_config.h"
+#include "codelite_events.h"
+#include "editorconfigplugin.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include <wx/filename.h>
+#include <wx/menu.h>
+#include <wx/xrc/xmlres.h>
 
 static EditorConfigPlugin* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new EditorConfigPlugin(manager);
-    }
+    if(thePlugin == NULL) { thePlugin = new EditorConfigPlugin(manager); }
     return thePlugin;
 }
 
@@ -37,10 +35,10 @@ EditorConfigPlugin::EditorConfigPlugin(IManager* manager)
 {
     m_longName = _("Support for .editorconfig files in CodeLite");
     m_shortName = wxT("EditorConfig");
-    
+
     // Load the settings
     m_settings.Load();
-    
+
     // Bind events
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_LOADING, &EditorConfigPlugin::OnEditorConfigLoading, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &EditorConfigPlugin::OnActiveEditorChanged, this);
@@ -48,12 +46,7 @@ EditorConfigPlugin::EditorConfigPlugin(IManager* manager)
 
 EditorConfigPlugin::~EditorConfigPlugin() {}
 
-clToolBar* EditorConfigPlugin::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void EditorConfigPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void EditorConfigPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -76,12 +69,10 @@ void EditorConfigPlugin::OnEditorConfigLoading(clEditorConfigEvent& event)
         clDEBUG() << "EditorConfig is disabled." << clEndl;
         return;
     }
-    
+
     clEditorConfigSection section;
     wxFileName fn(event.GetFileName());
-    if(!DoGetEditorConfigForFile(fn, section)) {
-        return;
-    }
+    if(!DoGetEditorConfigForFile(fn, section)) { return; }
 
     event.Skip(false);
     event.SetEditorConfig(section);
@@ -94,7 +85,7 @@ void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
         clDEBUG1() << "EditorConfig is disabled." << clEndl;
         return;
     }
-    
+
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
@@ -128,7 +119,7 @@ bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, cl
         clDEBUG1() << "No EditorConfig file found for file:" << filename << clEndl;
         return false;
     }
-    
+
     m_cache.Add(filename, section);
     return true;
 }

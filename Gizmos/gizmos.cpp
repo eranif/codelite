@@ -22,31 +22,30 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "gizmos.h"
-#include <wx/app.h>
-#include <wx/menu.h>
-#include <wx/log.h>
-#include "editor_config.h"
-#include "event_notifier.h"
-#include <wx/msgdlg.h>
-#include "workspace.h"
-#include "ctags_manager.h"
-#include "newplugindata.h"
-#include "entry.h"
-#include <wx/xrc/xmlres.h>
-#include "globals.h"
-#include "dirsaver.h"
-#include "workspace.h"
-#include "wx/ffile.h"
-#include "newclassdlg.h"
-#include "newwxprojectdlg.h"
-#include <algorithm>
 #include "PluginWizard.h"
 #include "cl_command_event.h"
-#include "codelite_events.h"
 #include "cl_standard_paths.h"
-#include "fileutils.h"
+#include "codelite_events.h"
+#include "ctags_manager.h"
+#include "dirsaver.h"
+#include "editor_config.h"
+#include "entry.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
+#include "gizmos.h"
+#include "globals.h"
+#include "newclassdlg.h"
+#include "newplugindata.h"
+#include "newwxprojectdlg.h"
+#include "workspace.h"
+#include "wx/ffile.h"
+#include <algorithm>
+#include <wx/app.h>
+#include <wx/log.h>
+#include <wx/menu.h>
+#include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 static wxString MI_NEW_WX_PROJECT = wxT("Create new wxWidgets project...");
 static wxString MI_NEW_CODELITE_PLUGIN = wxT("Create new CodeLite plugin...");
@@ -59,9 +58,7 @@ static WizardsPlugin* theGismos = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(theGismos == 0) {
-        theGismos = new WizardsPlugin(manager);
-    }
+    if(theGismos == 0) { theGismos = new WizardsPlugin(manager); }
     return theGismos;
 }
 
@@ -70,9 +67,8 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Wizards"));
-    info.SetDescription(
-        _("Wizards Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets "
-          "Wizard, new Plugin Wizard"));
+    info.SetDescription(_("Wizards Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets "
+                          "Wizard, new Plugin Wizard"));
     info.SetVersion(wxT("v1.1"));
     return &info;
 }
@@ -109,7 +105,7 @@ static void ExpandVariables(wxString& content, const NewWxProjectInfo& info)
     content.Replace(wxT("$(MWindowsFlag)"), info.GetFlags() & wxWidgetsSetMWindows ? wxT("-mwindows") : wxEmptyString);
     content.Replace(wxT("$(PCHFlag)"), info.GetFlags() & wxWidgetsPCH ? wxT("WX_PRECOMP") : wxEmptyString);
     content.Replace(wxT("$(PCHCmpOptions)"),
-        info.GetFlags() & wxWidgetsPCH ? wxT("-Winvalid-pch;-include wx_pch.h") : wxEmptyString);
+                    info.GetFlags() & wxWidgetsPCH ? wxT("-Winvalid-pch;-include wx_pch.h") : wxEmptyString);
     content.Replace(wxT("$(PCHFileName)"), info.GetFlags() & wxWidgetsPCH ? wxT("wx_pch.h") : wxEmptyString);
 
     if(info.GetFlags() & wxWidgetsWinRes) content.Replace(wxT("$(WinResFile)"), wxT("<File Name=\"resources.rc\" />"));
@@ -147,9 +143,7 @@ static void ExpandVariables(wxString& content, const NewWxProjectInfo& info)
 static void WriteFile(const wxString& fileName, const wxString& content)
 {
     wxFFile file;
-    if(!file.Open(fileName, wxT("w+b"))) {
-        return;
-    }
+    if(!file.Open(fileName, wxT("w+b"))) { return; }
 
     file.Write(content);
     file.Close();
@@ -171,65 +165,39 @@ WizardsPlugin::WizardsPlugin(IManager* manager)
 
 WizardsPlugin::~WizardsPlugin() {}
 
-clToolBar* WizardsPlugin::CreateToolBar(wxWindow* parent)
+void WizardsPlugin::CreateToolBar(clToolBar* toolbar)
 {
-    clToolBar* tb(NULL);
-//	if (m_mgr->AllowToolbar()) {
-//		//support both toolbars icon size
-//		int size = m_mgr->GetToolbarIconSize();
-//
-//
-//		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
-//		tb->SetToolBitmapSize(wxSize(size, size));
-//
-//		if (size == 24) {
-//			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."),
-// wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("Open Gizmos quick menu"));
-//		} else {
-//			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."),
-// wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("Open Gizmos quick menu"));
-//		}
-//
-//		// When using AUI, make this toolitem a dropdown button
-//#if USE_AUI_TOOLBAR
-//		tb->SetToolDropDown(XRCID("gizmos_options"), true);
-//		m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN,
-// wxAuiToolBarEventHandler(WizardsPlugin::OnGizmosAUI), NULL, (wxEvtHandler*)this);
-//#endif
-//		tb->Realize();
-//	}
-//
-// Connect the events to us
+    wxUnusedVar(toolbar);
+    // Connect the events to us
 #if !USE_AUI_TOOLBAR
     m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(WizardsPlugin::OnGizmos), NULL, (wxEvtHandler*)this);
+                                wxCommandEventHandler(WizardsPlugin::OnGizmos), NULL, (wxEvtHandler*)this);
 #endif
     m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
+                                wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(WizardsPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
+                                wxCommandEventHandler(WizardsPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(WizardsPlugin::OnNewPluginUI), NULL, (wxEvtHandler*)this);
+                                wxUpdateUIEventHandler(WizardsPlugin::OnNewPluginUI), NULL, (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(WizardsPlugin::OnNewClass), NULL, (wxEvtHandler*)this);
+                                wxCommandEventHandler(WizardsPlugin::OnNewClass), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI), NULL, (wxEvtHandler*)this);
+                                wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI), NULL, (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(WizardsPlugin::OnNewWxProject), NULL, (wxEvtHandler*)this);
+                                wxCommandEventHandler(WizardsPlugin::OnNewWxProject), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(WizardsPlugin::OnNewWxProjectUI), NULL, (wxEvtHandler*)this);
-    return tb;
+                                wxUpdateUIEventHandler(WizardsPlugin::OnNewWxProjectUI), NULL, (wxEvtHandler*)this);
 }
 
 void WizardsPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
-    item = new wxMenuItem(
-        menu, ID_MI_NEW_CODELITE_PLUGIN, _("New CodeLite Plugin Wizard..."), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, ID_MI_NEW_CODELITE_PLUGIN, _("New CodeLite Plugin Wizard..."), wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
     item = new wxMenuItem(menu, ID_MI_NEW_NEW_CLASS, _("New Class Wizard..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
@@ -258,9 +226,9 @@ void WizardsPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 void WizardsPlugin::UnPlug()
 {
     m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED,
-        wxCommandEventHandler(WizardsPlugin::OnGizmos), NULL, (wxEvtHandler*)this);
+                                   wxCommandEventHandler(WizardsPlugin::OnGizmos), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,
-        wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
+                                   wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
 }
 
 void WizardsPlugin::OnNewPlugin(wxCommandEvent& e)
@@ -279,9 +247,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         // actual values provided by user
         wxString filename(m_mgr->GetStartupDirectory() + wxT("/templates/gizmos/liteeditor-plugin.project.wizard"));
         wxString content;
-        if(!ReadFileWithConversion(filename, content)) {
-            return;
-        }
+        if(!ReadFileWithConversion(filename, content)) { return; }
 
         // Convert the paths provided by user to relative paths
         wxFileName fn(data.GetCodelitePath(), "");
@@ -298,9 +264,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         wxString clpath = fn.GetFullPath();
         fn.Normalize(); // Remove all .. and . from the path
 
-        if(clpath.EndsWith("/") || clpath.EndsWith("\\")) {
-            clpath.RemoveLast();
-        }
+        if(clpath.EndsWith("/") || clpath.EndsWith("\\")) { clpath.RemoveLast(); }
 
         content.Replace(wxT("$(CodeLitePath)"), clpath);
         content.Replace(wxT("$(DllExt)"), dllExt);
@@ -318,9 +282,7 @@ void WizardsPlugin::DoCreateNewPlugin()
             ::wxMkdir(wxFileName(data.GetProjectPath()).GetPath());
         }
         wxFFile file;
-        if(!file.Open(projectFileName, wxT("w+b"))) {
-            return;
-        }
+        if(!file.Open(projectFileName, wxT("w+b"))) { return; }
 
         file.Write(content);
         file.Close();
@@ -456,9 +418,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     }
 
     wxString separator(wxT("\t"));
-    if(!options->GetIndentUsesTabs()) {
-        separator = wxString(wxT(' '), wxMax(1, options->GetTabWidth()));
-    }
+    if(!options->GetIndentUsesTabs()) { separator = wxString(wxT(' '), wxMax(1, options->GetTabWidth())); }
 
     wxString blockGuard(info.blockGuard);
     if(blockGuard.IsEmpty()) {
@@ -514,9 +474,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     }
 
     // Open namespace
-    if(!info.namespacesList.IsEmpty()) {
-        WriteNamespacesDeclaration(info.namespacesList, header);
-    }
+    if(!info.namespacesList.IsEmpty()) { WriteNamespacesDeclaration(info.namespacesList, header); }
 
     header << wxT("class ") << info.name;
 
@@ -530,9 +488,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     }
     header << wxT("\n{\n");
 
-    if(info.isSingleton) {
-        header << separator << wxT("static ") << info.name << wxT("* ms_instance;\n\n");
-    }
+    if(info.isSingleton) { header << separator << wxT("static ") << info.name << wxT("* ms_instance;\n\n"); }
 
     if(info.isAssingable == false) {
         // declare copy constructor & assingment operator as private
@@ -717,18 +673,10 @@ void WizardsPlugin::CreateWxProject(NewWxProjectInfo& info)
         if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/mainframe.h.wizard"), mainFrameHContent)) {
             return;
         }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/app.h.wizard"), apphConent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/app.cpp.wizard"), appCppConent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/resources.rc.wizard"), rcContent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wx_pch.h.wizard"), pchContent)) {
-            return;
-        }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/app.h.wizard"), apphConent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/app.cpp.wizard"), appCppConent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/resources.rc.wizard"), rcContent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wx_pch.h.wizard"), pchContent)) { return; }
 
         ExpandVariables(projectConent, info);
         ExpandVariables(mainFrameCppContent, info);
@@ -779,21 +727,13 @@ void WizardsPlugin::CreateWxProject(NewWxProjectInfo& info)
         if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/gui-dialog.h.wizard"), mainFrameHContent)) {
             return;
         }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main-dialog.h.wizard"), apphContent)) {
-            return;
-        }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main-dialog.h.wizard"), apphContent)) { return; }
         if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main-dialog.cpp.wizard"), appCppContent)) {
             return;
         }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/gui-dialog.fbp.wizard"), fbContent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/resources.rc.wizard"), rcContent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wx_pch.h.wizard"), pchContent)) {
-            return;
-        }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/gui-dialog.fbp.wizard"), fbContent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/resources.rc.wizard"), rcContent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wx_pch.h.wizard"), pchContent)) { return; }
 
         ExpandVariables(projectContent, info);
         ExpandVariables(mainFrameCppContent, info);
@@ -844,21 +784,11 @@ void WizardsPlugin::CreateWxProject(NewWxProjectInfo& info)
         if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/gui-frame.h.wizard"), mainFrameHContent)) {
             return;
         }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main-frame.h.wizard"), apphContent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main-frame.cpp.wizard"), appCppContent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/gui-frame.fbp.wizard"), fbContent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/resources.rc.wizard"), rcContent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wx_pch.h.wizard"), pchContent)) {
-            return;
-        }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main-frame.h.wizard"), apphContent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main-frame.cpp.wizard"), appCppContent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/gui-frame.fbp.wizard"), fbContent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/resources.rc.wizard"), rcContent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wx_pch.h.wizard"), pchContent)) { return; }
 
         ExpandVariables(projectContent, info);
         ExpandVariables(mainFrameCppContent, info);
@@ -896,18 +826,10 @@ void WizardsPlugin::CreateWxProject(NewWxProjectInfo& info)
         wxString pchContent;
         wxString rcContent;
 
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wxmain.project.wizard"), projectConent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main.cpp.wizard"), appCppConent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/resources.rc.wizard"), rcContent)) {
-            return;
-        }
-        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wx_pch.h.wizard"), pchContent)) {
-            return;
-        }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wxmain.project.wizard"), projectConent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main.cpp.wizard"), appCppConent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/resources.rc.wizard"), rcContent)) { return; }
+        if(!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wx_pch.h.wizard"), pchContent)) { return; }
 
         ExpandVariables(projectConent, info);
         ExpandVariables(appCppConent, info);
@@ -960,9 +882,7 @@ wxString WizardsPlugin::DoGetVirtualFuncImpl(const NewClassInfo& info)
             collect = m_mgr->GetTagsManager()->IsPureVirtual(tt);
         }
 
-        if(collect) {
-            tags.push_back(tt);
-        }
+        if(collect) { tags.push_back(tt); }
     }
 
     wxString impl;
@@ -1054,9 +974,7 @@ void WizardsPlugin::GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::v
             // we already got an instance of this method,
             // incase we have default values in the this Tag, keep this
             // TagEntryPtr, otherwise keep the previous tag
-            if(hasDefaultValues != wxNOT_FOUND) {
-                uniqueSet[key] = src.at(i);
-            }
+            if(hasDefaultValues != wxNOT_FOUND) { uniqueSet[key] = src.at(i); }
 
         } else {
             // First time

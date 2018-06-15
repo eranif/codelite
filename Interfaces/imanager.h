@@ -53,6 +53,7 @@ class BuildSettingsConfig;
 class NavMgr;
 class IMacroManager;
 class wxAuiManager;
+class clToolBar;
 
 //--------------------------
 // Auxulary class
@@ -124,7 +125,9 @@ public:
             m_outputTabs.Add(tabLabel);
         }
     }
-
+    
+    virtual clToolBar* GetToolBar() = 0;
+    
     /**
      * @brief show the output pane and if provided, select 'selectedWindow'
      * @param selectWindow tab within the 'Output Pane' to select, if empty don't change

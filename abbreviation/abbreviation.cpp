@@ -89,10 +89,9 @@ AbbreviationPlugin::AbbreviationPlugin(IManager* manager)
 
 AbbreviationPlugin::~AbbreviationPlugin() {}
 
-clToolBar* AbbreviationPlugin::CreateToolBar(wxWindow* parent)
+void AbbreviationPlugin::CreateToolBar(clToolBar* toolbar)
 {
-    wxUnusedVar(parent);
-    return NULL;
+    wxUnusedVar(toolbar);
 }
 
 void AbbreviationPlugin::CreatePluginMenu(wxMenu* pluginsMenu)

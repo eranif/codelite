@@ -282,7 +282,6 @@ public:
      */
     void CompleteInitialization();
 
-    void RegisterToolbar(int menuItemId, const wxString& name);
     void RegisterDockWindow(int menuItemId, const wxString& name);
 
     const GeneralInfo& GetFrameGeneralInfo() const { return m_frameGeneralInfo; }
@@ -464,7 +463,7 @@ protected:
     void OnCtagsOptions(wxCommandEvent& event);
     void OnBuildProject(wxCommandEvent& event);
     void OnBuildProjectOnly(wxCommandEvent& event);
-    void OnShowAuiBuildMenu(wxAuiToolBarEvent& e);
+    void OnShowBuildMenu(wxCommandEvent& e);
     void OnBuildAndRunProject(wxCommandEvent& event);
     void OnRebuildProject(wxCommandEvent& event);
     void OnRetagWorkspace(wxCommandEvent& event);
@@ -630,12 +629,10 @@ protected:
     // Misc
     void OnActivateEditor(wxCommandEvent& e);
     void OnActiveEditorChanged(wxCommandEvent& e);
-    void OnUpdateCustomTargetsDropDownMenu(wxCommandEvent& e);
     void OnWorkspaceLoaded(wxCommandEvent& e);
     void OnRefactoringCacheStatus(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent& e);
     void OnChangeActiveBookmarkType(wxCommandEvent& e);
-    void OnShowBookmarkMenu(wxAuiToolBarEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
     void OnEditMenuOpened(wxMenuEvent& e);
     void OnProjectRenamed(clCommandEvent& event);

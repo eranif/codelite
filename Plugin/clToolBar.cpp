@@ -106,7 +106,7 @@ void clToolBar::OnLeftUp(wxMouseEvent& event)
                 } else {
                     wxCommandEvent clicked(wxEVT_TOOL_DROPDOWN, btn->GetId());
                     clicked.SetEventObject(this);
-                    GetEventHandler()->AddPendingEvent(clicked);
+                    GetEventHandler()->ProcessEvent(clicked);
                 }
             } else {
                 wxCommandEvent clicked(wxEVT_TOOL, btn->GetId());

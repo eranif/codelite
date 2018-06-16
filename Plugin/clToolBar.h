@@ -28,7 +28,7 @@ protected:
     void OnMotion(wxMouseEvent& event);
     void OnEnterWindow(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
-    virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) wxOVERRIDE;
+    virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) override;
     void DoIdleUpdate();
     wxRect CalculateRect(wxDC& dc) const;
     void EnableFlag(eFlags f, bool b)

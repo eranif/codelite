@@ -5,6 +5,7 @@
 #include <wx/bitmap.h>
 #include <wx/dc.h>
 #include <wx/string.h>
+#include <wx/settings.h>
 
 #define CL_TOOL_BAR_X_MARGIN 5
 #define CL_TOOL_BAR_Y_MARGIN 5

@@ -1411,11 +1411,20 @@ void Manager::SetProjectGlobalSettings(const wxString& projectName, BuildConfigC
 
 wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxString& wd, bool considerPauseWhenExecuting)
 {
-    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-    if(!bldConf) {
-        clLogMessage(wxT("failed to find project configuration for project '") + projectName + wxT("'"));
+    ProjectPtr proj = GetProject(projectName);
+    if(!proj) {
+        clWARNING() << "Manager::GetProjectExecutionCommand(): could not find project:" << projectName;
         return wxEmptyString;
     }
+
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+    if(!bldConf) {
+        clWARNING() << "Manager::GetProjectExecutionCommand(): failed to find project configuration for project:"
+                    << projectName;
+        return wxEmptyString;
+    }
+
+    wxString projectPath = proj->GetFileName().GetPath();
 
     // expand variables
     wxString cmd = bldConf->GetCommand();
@@ -1425,10 +1434,33 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
     cmdArgs = MacroManager::Instance()->Expand(cmdArgs, NULL, projectName);
 
     // Execute command & cmdArgs
-    wxString execLine(cmd + wxT(" ") + cmdArgs);
-    execLine.Trim().Trim(false);
     wd = bldConf->GetWorkingDirectory();
     wd = MacroManager::Instance()->Expand(wd, NULL, projectName);
+
+    wxFileName workingDir(wd, "");
+    if(workingDir.IsRelative()) { workingDir.MakeAbsolute(projectPath); }
+
+    wxFileName fileExe(cmd);
+    if(fileExe.IsRelative()) { fileExe.MakeAbsolute(workingDir.GetPath()); }
+    fileExe.Normalize();
+
+#ifdef __WXMSW__
+    if(!fileExe.Exists() && fileExe.GetExt().IsEmpty()) {
+        // Try with .exe
+        wxFileName withExe(fileExe);
+        withExe.SetExt("exe");
+        if(withExe.Exists()) { fileExe = withExe; }
+    }
+#endif
+    wd = workingDir.GetPath();
+    cmd = fileExe.GetFullPath();
+    ::WrapWithQuotes(cmd);
+
+    clDEBUG() << "Command to execute:" << cmd;
+    clDEBUG() << "Working directory:" << wd;
+
+    wxString execLine(cmd + wxT(" ") + cmdArgs);
+    execLine.Trim().Trim(false);
 
     wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
     fnCodeliteTerminal.SetFullName("codelite-terminal");
@@ -1440,8 +1472,6 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 
     // change directory to the working directory
     if(considerPauseWhenExecuting && !bldConf->IsGUIProgram()) {
-
-        ProjectPtr proj = GetProject(projectName);
 
 #if defined(__WXMAC__)
         wxFileName fnWD(wd, "");
@@ -1695,7 +1725,7 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
         // Set the working directory to the project path
         wd = proj->GetFileName().GetPath();
     }
-    
+
     // execute the program:
     //- no hiding the console
     //- no redirection of the stdin/out
@@ -1708,6 +1738,9 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     // the environment has been applied
     size_t createProcessFlags = IProcessCreateDefault;
     if(!bldConf->IsGUIProgram()) { createProcessFlags = IProcessNoRedirect | IProcessCreateConsole; }
+#ifdef __WXMSW__
+    createProcessFlags |= IProcessCreateConsole;
+#endif
 
     wxString dummy;
     execLine = GetProjectExecutionCommand(projectName, dummy, true);

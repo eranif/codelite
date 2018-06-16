@@ -8,6 +8,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
+#include "globals.h"
 
 static wxColour GetMenuBarColour() { return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR); }
 

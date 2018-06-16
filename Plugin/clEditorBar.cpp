@@ -118,6 +118,7 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         DrawingUtils::DrawButton(gcdc, this, m_scopeRect, fulltext, wxNullBitmap, eButtonKind::kDropDown,
                                  m_scopeButtonState);
         textX += m_scopeRect.GetWidth();
+        textX += X_SPACER;
     }
 
     if(!m_breadcrumbs.IsEmpty()) {
@@ -133,15 +134,20 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         wxString bookmarksLabel = _("Bookmarks");
         wxSize bookmarksTextSize = gcdc.GetTextExtent(bookmarksLabel);
 
-        int total_width = filenameButtonWidth + 20; // The file name button width
-        if(!m_bookmarks.empty()) {
-            total_width += X_SPACER +                     // Separator between the buttons
-                           bookmarksTextSize.GetWidth() + // The bookmarks button size
-                           60; // Add 60 (40 for the image and 20 needed for the drop down button)
-        }
-
-        textX = GetClientRect().GetWidth() - total_width;
-
+        // int total_width = filenameButtonWidth + 20; // The file name button width
+        // if(!m_bookmarks.empty()) {
+        //     total_width += X_SPACER +                     // Separator between the buttons
+        //                    bookmarksTextSize.GetWidth() + // The bookmarks button size
+        //                    60; // Add 60 (40 for the image and 20 needed for the drop down button)
+        // }
+        // Draw the file name button
+        // We add 20 since its the drop down button size
+        m_filenameRect = wxRect(textX, 0, filenameButtonWidth + 20, rect.GetHeight() - 2);
+        DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, wxNullBitmap, eButtonKind::kDropDown,
+                                 m_state);
+        textX += m_filenameRect.GetWidth();
+        textX += X_SPACER;
+        
         if(!m_bookmarks.empty()) {
             // Update the bookmarks bitmap according to the user settings
             CreateBookmarksBitmap();
@@ -154,14 +160,6 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
             textX += m_bookmarksRect.GetWidth();
             textX += X_SPACER;
         }
-
-        // Draw the file name button
-        // We add 20 since its the drop down button size
-        m_filenameRect = wxRect(textX, 0, filenameButtonWidth + 20, rect.GetHeight() - 2);
-        DrawingUtils::DrawButton(gcdc, this, m_filenameRect, breadcumbsText, wxNullBitmap, eButtonKind::kDropDown,
-                                 m_state);
-        textX += m_filenameRect.GetWidth();
-        textX += X_SPACER;
     }
 }
 
@@ -250,10 +248,10 @@ void clEditorBar::OnLeftDown(wxMouseEvent& e) { e.Skip(); }
 
 #ifdef __WXOSX__
 #define MENU_POINT(rect, menuPoint)           \
-    menuPoint = rect.GetTopLeft(); \
+    menuPoint = rect.GetBottomLeft(); \
     menuPoint.y -= 5;
 #else
-#define MENU_POINT(rect, menuPoint) menuPoint = rect.GetTopLeft();
+#define MENU_POINT(rect, menuPoint) menuPoint = rect.GetBottomLeft();
 #endif
 
 void clEditorBar::OnLeftUp(wxMouseEvent& e)

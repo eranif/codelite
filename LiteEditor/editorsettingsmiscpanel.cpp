@@ -135,8 +135,6 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write(kConfigStatusbarShowLength, m_statusbarShowFileLength->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowSelectedChars, m_statusBarShowSelChars->IsChecked());
 
-    bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
-
     // check to see of the icon size was modified
     int oldIconSize(24);
 

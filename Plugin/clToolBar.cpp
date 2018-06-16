@@ -11,8 +11,6 @@
 #include "globals.h"
 #include "drawingutils.h"
 
-static wxColour GetMenuBarColour() { return DrawingUtils::GetMenuBarBgColour(); }
-
 clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
                      const wxString& name)
     : wxPanel(parent, winid, pos, size, style, name)

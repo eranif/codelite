@@ -515,11 +515,25 @@ wxColour DrawingUtils::GetMenuBarBgColour()
         intitialized = true;
     }
     return bgColour;
+#elif defined(__WXOSX__)
+    return wxColour("rgb(209, 209, 209)");
 #else
     return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
 #endif
 }
 
+void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
+{
+#ifdef __WXOSX__
+    wxColour startColour("rgb(231, 229, 231)");
+    wxColour endColour("rgb(180, 180, 180)");
+    dc.GradientFillLinear(rect, startColour, endColour, wxSOUTH);
+#else
+    dc.SetPen(GetMenuBarBgColour());
+    dc.SetBrush(GetMenuBarBgColour());
+    dc.DrawRectangle(rect);
+#endif
+}
 wxColour DrawingUtils::GetMenuBarTextColour()
 {
 #if defined(__WXGTK__) && !defined(__WXGTK3__)

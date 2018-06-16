@@ -9,8 +9,9 @@
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
 #include "globals.h"
+#include "drawingutils.h"
 
-static wxColour GetMenuBarColour() { return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR); }
+static wxColour GetMenuBarColour() { return DrawingUtils::GetMenuBarBgColour(); }
 
 clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
                      const wxString& name)
@@ -47,10 +48,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
 {
     wxBufferedPaintDC dc(this);
     wxRect clientRect = GetClientRect();
-    dc.SetBrush(GetMenuBarColour());
-    dc.SetPen(GetMenuBarColour());
-    dc.DrawRectangle(clientRect);
-
+    DrawingUtils::FillMenuBarBgColour(dc, clientRect);
     int xx = 0;
     std::for_each(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* button) {
         wxSize buttonSize = button->CalculateSize(dc);
@@ -215,7 +213,12 @@ void clToolBar::ShowMenuForButton(wxWindowID buttonID, wxMenu* menu)
     if(iter == m_buttons.end()) { return; }
     clToolBarButtonBase* button = *iter;
     m_popupShown = true;
-    PopupMenu(menu, button->GetButtonRect().GetBottomLeft());
+    wxPoint menuPos = button->GetButtonRect().GetBottomLeft();
+#ifdef __WXOSX__
+    menuPos.y += 5;
+#endif
+
+    PopupMenu(menu, menuPos);
     m_popupShown = false;
 
     wxPoint pt = ::wxGetMousePosition();

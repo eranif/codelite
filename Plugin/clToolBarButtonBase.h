@@ -8,8 +8,11 @@
 
 #define CL_TOOL_BAR_X_MARGIN 5
 #define CL_TOOL_BAR_Y_MARGIN 5
+#ifdef __WXOSX__
+#define CL_TOOL_BAR_DROPDOWN_ARROW_SIZE 5
+#else
 #define CL_TOOL_BAR_DROPDOWN_ARROW_SIZE 8
-
+#endif
 class WXDLLIMPEXP_SDK clToolBarButtonBase
 {
 protected:

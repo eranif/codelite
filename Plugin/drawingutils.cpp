@@ -738,11 +738,23 @@ wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 #endif
 }
 
+#ifdef __WXOSX__
+double wxOSXGetMainScreenContentScaleFactor();
+#endif
+
 wxBitmap DrawingUtils::CreateGrayBitmap(const wxBitmap& bmp)
 {
     wxImage img = bmp.ConvertToImage();
     img = img.ConvertToGreyscale();
+#ifdef __WXOSX__
+    double scale = 1.0;
+    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) {
+        scale = 2.0;
+    }
+    wxBitmap greyBmp(img, -1, scale);
+#else
     wxBitmap greyBmp(img);
+#endif
     return greyBmp;
 }
 

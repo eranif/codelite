@@ -13,7 +13,11 @@
 static wxBitmap MakeDisabledBitmap(const wxBitmap& bmp)
 {
 #ifdef CL_BUILD
+#ifdef __WXOSX__
+    return DrawingUtils::CreateGrayBitmap(bmp);
+#else
     return DrawingUtils::CreateDisabledBitmap(bmp);
+#endif
 #else
     return bmp.ConvertToDisabled(255);
 #endif

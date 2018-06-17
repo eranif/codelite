@@ -63,9 +63,9 @@ void clToolBar::OnPaint(wxPaintEvent& event)
         } else {
             wxRect r(xx, 0, buttonSize.GetWidth(), clientRect.GetHeight());
             button->Render(dc, r);
-            xx += buttonSize.GetWidth();
             m_visibleButtons.push_back(button);
         }
+        xx += buttonSize.GetWidth();
     });
 
     dc.DestroyClippingRegion();

@@ -7,7 +7,16 @@ static wxBitmap MakeDisabledBitmap(const wxBitmap& bmp)
 #ifdef __WXOSX__
     return DrawingUtils::CreateGrayBitmap(bmp);
 #else
-    return DrawingUtils::CreateDisabledBitmap(bmp);
+    bool bDarkBG = DrawingUtils::IsDark(DrawingUtils::GetMenuBarBgColour());
+    wxImage img = bmp.ConvertToImage();
+    img = img.ConvertToGreyscale();
+    wxBitmap greyBmp(img);
+    if(bDarkBG) {
+        return greyBmp.ConvertToDisabled(20);
+
+    } else {
+        return greyBmp.ConvertToDisabled(255);
+    }
 #endif
 }
 

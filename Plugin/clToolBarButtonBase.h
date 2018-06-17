@@ -32,6 +32,7 @@ public:
         kToggleButton = (1 << 1),
         kChecked = (1 << 2),
         kDisabled = (1 << 3),
+        kSeparator = (1 << 4),
     };
 
     enum eRenderFlags {
@@ -110,6 +111,7 @@ public:
     bool IsChecked() const { return (m_flags & kChecked); }
     void Check(bool b) { EnableFlag(kChecked, b); }
     bool IsToggle() const { return (m_flags & kToggleButton); }
+    bool IsSeparator() const { return m_flags & kSeparator; }
     bool IsEnabled() const { return !(m_flags & kDisabled); }
     void Enable(bool b) { EnableFlag(kDisabled, !b); }
     template <typename T>

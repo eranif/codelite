@@ -11,10 +11,13 @@ class clToolBarButtonBase;
 class WXDLLIMPEXP_SDK clToolBar : public wxPanel
 {
     std::vector<clToolBarButtonBase*> m_buttons;
+    std::vector<clToolBarButtonBase*> m_overflowButtons;
+    std::vector<clToolBarButtonBase*> m_visibleButtons;
     std::unordered_map<int, wxMenu*> m_menus;
     bool m_popupShown;
     size_t m_flags;
-
+    wxRect m_chevronRect;
+    
 public:
     enum eFlags {
         kShowLabels = (1 << 0),
@@ -28,6 +31,7 @@ protected:
     void OnMotion(wxMouseEvent& event);
     void OnEnterWindow(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
+    void OnOverflowItem(wxCommandEvent& event);
     virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) override;
     void DoIdleUpdate();
     wxRect CalculateRect(wxDC& dc) const;
@@ -39,7 +43,8 @@ protected:
             m_flags &= ~f;
         }
     }
-
+    void DoShowOverflowMenu();
+    
 public:
     clToolBar(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,

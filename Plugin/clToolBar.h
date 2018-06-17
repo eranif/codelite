@@ -17,7 +17,7 @@ class WXDLLIMPEXP_SDK clToolBar : public wxPanel
     bool m_popupShown;
     size_t m_flags;
     wxRect m_chevronRect;
-    
+
 public:
     enum eFlags {
         kShowLabels = (1 << 0),
@@ -32,6 +32,7 @@ protected:
     void OnEnterWindow(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
     void OnOverflowItem(wxCommandEvent& event);
+    void OnSize(wxSizeEvent& event);
     virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) override;
     void DoIdleUpdate();
     wxRect CalculateRect(wxDC& dc) const;
@@ -44,7 +45,7 @@ protected:
         }
     }
     void DoShowOverflowMenu();
-    
+
 public:
     clToolBar(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
@@ -111,8 +112,7 @@ public:
     }
 
     void ToggleTool(wxWindowID buttonID, bool toggle);
-    
-    
+
     /**
      * @brief This function should be called after you have added tools.
      */

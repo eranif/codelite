@@ -150,9 +150,7 @@ void clToolBar::OnLeftDown(wxMouseEvent& event)
     wxPoint pos = event.GetPosition();
     for(size_t i = 0; i < m_visibleButtons.size(); ++i) {
         m_visibleButtons[i]->ClearRenderFlags();
-        if(m_visibleButtons[i]->Contains(pos)) {
-            m_visibleButtons[i]->SetPressed(true);
-        }
+        if(m_visibleButtons[i]->Contains(pos)) { m_visibleButtons[i]->SetPressed(true); }
     }
     Refresh();
 }
@@ -177,9 +175,7 @@ void clToolBar::OnMotion(wxMouseEvent& event)
             m_visibleButtons[i]->ClearRenderFlags();
         }
     }
-    if(refreshNeeded) {
-        Refresh();
-    }
+    if(refreshNeeded) { Refresh(); }
 }
 
 void clToolBar::OnEnterWindow(wxMouseEvent& event) { OnMotion(event); }
@@ -216,9 +212,7 @@ clToolBarButtonBase* clToolBar::InsertBefore(wxWindowID where, clToolBarButtonBa
 {
     std::vector<clToolBarButtonBase*>::iterator iter =
         std::find_if(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* b) { return (b->GetId() == where); });
-    if(iter == m_buttons.end()) {
-        return NULL;
-    }
+    if(iter == m_buttons.end()) { return NULL; }
     m_buttons.insert(iter, button);
     return button;
 }
@@ -227,9 +221,7 @@ clToolBarButtonBase* clToolBar::InsertAfter(wxWindowID where, clToolBarButtonBas
 {
     std::vector<clToolBarButtonBase*>::iterator iter =
         std::find_if(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* b) { return (b->GetId() == where); });
-    if(iter == m_buttons.end()) {
-        return NULL;
-    }
+    if(iter == m_buttons.end()) { return NULL; }
     ++iter; // can be end()
     m_buttons.insert(iter, button);
     return button;
@@ -245,9 +237,7 @@ void clToolBar::ShowMenuForButton(wxWindowID buttonID, wxMenu* menu)
 {
     std::vector<clToolBarButtonBase*>::iterator iter = std::find_if(
         m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* b) { return (b->GetId() == buttonID); });
-    if(iter == m_buttons.end()) {
-        return;
-    }
+    if(iter == m_buttons.end()) { return; }
     clToolBarButtonBase* button = *iter;
     m_popupShown = true;
     wxPoint menuPos = button->GetButtonRect().GetBottomLeft();
@@ -270,9 +260,7 @@ clToolBarButtonBase* clToolBar::FindById(wxWindowID id) const
 {
     std::vector<clToolBarButtonBase*>::const_iterator iter =
         std::find_if(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* b) { return (b->GetId() == id); });
-    if(iter == m_buttons.end()) {
-        return NULL;
-    }
+    if(iter == m_buttons.end()) { return NULL; }
     return (*iter);
 }
 
@@ -280,9 +268,7 @@ bool clToolBar::DeleteById(wxWindowID id)
 {
     std::vector<clToolBarButtonBase*>::iterator iter =
         std::find_if(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* b) { return (b->GetId() == id); });
-    if(iter == m_buttons.end()) {
-        return false;
-    }
+    if(iter == m_buttons.end()) { return false; }
     clToolBarButtonBase* button = (*iter);
     delete button;
     m_buttons.erase(iter);
@@ -309,17 +295,13 @@ wxMenu* clToolBar::FindMenuById(wxWindowID buttonID) const
 void clToolBar::ToggleTool(wxWindowID buttonID, bool toggle)
 {
     clToolBarButtonBase* button = FindById(buttonID);
-    if(button) {
-        button->Check(toggle);
-    }
+    if(button) { button->Check(toggle); }
 }
 
 void clToolBar::UpdateWindowUI(long flags)
 {
     // Call update UI event per button
-    if(flags & wxUPDATE_UI_FROMIDLE) {
-        DoIdleUpdate();
-    }
+    if(flags & wxUPDATE_UI_FROMIDLE) { DoIdleUpdate(); }
 
     wxPanel::UpdateWindowUI(flags);
 }
@@ -348,12 +330,8 @@ void clToolBar::DoShowOverflowMenu()
         } else {
             wxMenuItem* menuItem = new wxMenuItem(&menu, button->GetId(), button->GetLabel(), button->GetLabel(),
                                                   button->IsToggle() ? wxITEM_CHECK : wxITEM_NORMAL);
-            if(button->GetBmp().IsOk()) {
-                menuItem->SetBitmap(button->GetBmp());
-            }
-            if(button->IsToggle() && button->IsChecked()) {
-                checkedItems.push_back(button->GetId());
-            }
+            if(button->GetBmp().IsOk()) { menuItem->SetBitmap(button->GetBmp()); }
+            if(button->IsToggle() && button->IsChecked()) { checkedItems.push_back(button->GetId()); }
             menu.Append(menuItem);
         }
     }
@@ -364,7 +342,7 @@ void clToolBar::DoShowOverflowMenu()
 #ifdef __WXOSX__
     menuPos.y += 5;
 #endif
-    for(size_t i=0; i<checkedItems.size(); ++i) {
+    for(size_t i = 0; i < checkedItems.size(); ++i) {
         menu.Check(checkedItems[i], true);
     }
     menu.Bind(wxEVT_MENU, &clToolBar::OnOverflowItem, this, wxID_ANY);
@@ -384,10 +362,14 @@ void clToolBar::OnOverflowItem(wxCommandEvent& event)
 {
     // Update our button
     clToolBarButtonBase* button = FindById(event.GetId());
-    if(button && button->IsToggle()) {
-        button->Check(event.IsChecked());
-    }
-    
+    if(button && button->IsToggle()) { button->Check(event.IsChecked()); }
+
     // Call the default action
     event.Skip();
+}
+
+void clToolBar::OnSize(wxSizeEvent& event)
+{
+    event.Skip();
+    Refresh();
 }

@@ -457,7 +457,6 @@ class GitConsoleBase : public wxPanel
 {
 protected:
     wxGauge* m_gauge;
-    wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageTreeView;
     wxNotebook* m_notebook672;
@@ -478,7 +477,6 @@ protected:
 
 public:
     wxGauge* GetGauge() { return m_gauge; }
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel674() { return m_panel674; }
     wxDataViewListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }

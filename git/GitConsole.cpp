@@ -28,6 +28,7 @@
 #include "bitmap_loader.h"
 #include "clBitmap.h"
 #include "clCommandProcessor.h"
+#include "clToolBar.h"
 #include "cl_aui_tool_stickness.h"
 #include "cl_config.h"
 #include "drawingutils.h"
@@ -79,8 +80,8 @@ public:
 };
 
 // ---------------------------------------------------------------------
-void PopulateAuiToolbarOverflow(
-    wxAuiToolBarItemArray& append_items,
+void PopulateToolbarOverflow(
+    clToolBar* toolbar,
     const GitImages& images) // Helper function, partly because there's no convenient wxAuiToolBarItem ctor
 {
     static const char* labels[] = { wxTRANSLATE("Create local branch"),
@@ -132,12 +133,9 @@ void PopulateAuiToolbarOverflow(
 
     for(size_t n = 0; n < IDsize; ++n) {
         if(IDs[n] != 0) {
-            item.SetId(IDs[n]);
-            item.SetBitmap(images.Bitmap(bitmapnames[n]));
-            item.SetLabel(labels[n]);
-            append_items.Add(item);
+            toolbar->AddTool(IDs[n], labels[n], images.Bitmap(bitmapnames[n]));
         } else {
-            append_items.Add(separator);
+            toolbar->AddSeparator();
         }
     }
 }
@@ -174,58 +172,50 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
 
     // Toolbar
-    // clGetManager()->Get
-    BitmapLoader* bmps = clGetManager()->GetStdIcons();
+    m_toolbar = new clToolBar(this, wxID_ANY);
+    m_toolbar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), m_bitmapLoader->LoadBitmap("clear"),
+                       _("Clear Git Log"));
+    m_toolbar->AddTool(XRCID("git_stop_process"), _("Terminate Git Process"),
+                       m_bitmapLoader->LoadBitmap("execute_stop"), _("Terminate Git Process"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("git_console_add_file"), _("Add File"), m_bitmapLoader->LoadBitmap("plus"), _("Add File"));
+    m_toolbar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), m_bitmapLoader->LoadBitmap("undo"),
+                       _("Reset File"));
 
-    m_auibar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), bmps->LoadBitmap("clear"), _("Clear Git Log"));
-    m_auibar->AddTool(XRCID("git_stop_process"), _("Terminate Git Process"), bmps->LoadBitmap("execute_stop"),
-                      _("Terminate Git Process"));
-    m_auibar->AddSeparator();
-    m_auibar->AddTool(XRCID("git_console_add_file"), _("Add File"), bmps->LoadBitmap("plus"), _("Add File"));
-    m_auibar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), bmps->LoadBitmap("undo"), _("Reset File"));
+    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), m_images.Bitmap("gitResetRepo"),
+                       _("Reset repository"));
+    m_toolbar->AddSeparator();
 
-    m_auibar->AddTool(XRCID("git_reset_repository"), _("Reset"), m_images.Bitmap("gitResetRepo"),
-                      _("Reset repository"));
-    m_auibar->AddSeparator();
+    m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), m_images.Bitmap("gitPull"), _("Pull remote changes"),
+                       wxITEM_DROPDOWN);
 
-    m_auibar->AddTool(XRCID("git_pull"), _("Pull"), m_images.Bitmap("gitPull"), _("Pull remote changes"));
-    m_auibar->SetToolDropDown(XRCID("git_pull"), true);
-    m_auibar->AddTool(XRCID("git_commit"), _("Commit"), m_images.Bitmap("gitCommitLocal"), _("Commit local changes"));
-    m_auibar->AddTool(XRCID("git_push"), _("Push"), m_images.Bitmap("gitPush"), _("Push local changes"));
-    m_auibar->AddTool(XRCID("git_rebase"), _("Rebase"), m_images.Bitmap("gitRebase"), _("Rebase"));
-    m_auibar->SetToolDropDown(XRCID("git_rebase"), true);
-    m_auibar->AddSeparator();
-    m_auibar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
-    m_auibar->AddTool(XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"),
-                      _("Browse commit history"));
-    m_auibar->AddTool(XRCID("git_blame"), _("Blame"), m_images.Bitmap("gitBlame"), _("Git blame"));
+    m_toolbar->AddTool(XRCID("git_commit"), _("Commit"), m_images.Bitmap("gitCommitLocal"), _("Commit local changes"));
+    m_toolbar->AddTool(XRCID("git_push"), _("Push"), m_images.Bitmap("gitPush"), _("Push local changes"));
+    m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), m_images.Bitmap("gitRebase"), _("Rebase"), wxITEM_DROPDOWN);
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
+    m_toolbar->AddTool(XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"),
+                       _("Browse commit history"));
+    m_toolbar->AddTool(XRCID("git_blame"), _("Blame"), m_images.Bitmap("gitBlame"), _("Git blame"));
 
 #ifdef __WXMSW__
-    m_auibar->AddSeparator();
-    m_auibar->AddTool(XRCID("git_msysgit"), _("Open MSYS Git"), m_images.Bitmap("msysgit"),
-                      _("Open MSYS Git at the current file location"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("git_msysgit"), _("Open MSYS Git"), m_images.Bitmap("msysgit"),
+                       _("Open MSYS Git at the current file location"));
 #endif
 
     // Bind the events
-    Bind(wxEVT_MENU, &GitConsole::OnClearGitLog, this, XRCID("git_clear_log"));
-    Bind(wxEVT_UPDATE_UI, &GitConsole::OnClearGitLogUI, this, XRCID("git_clear_log"));
-    Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
-    Bind(wxEVT_MENU, &GitConsole::OnStopGitProcess, this, XRCID("git_stop_process"));
-    Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
+    m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnClearGitLog, this, XRCID("git_clear_log"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnClearGitLogUI, this, XRCID("git_clear_log"));
+    m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
+    m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnStopGitProcess, this, XRCID("git_stop_process"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
 
-    wxAuiToolBarItemArray append_items;
-    PopulateAuiToolbarOverflow(append_items, m_images);
-    m_auibar->AddSeparator();
-    for(size_t i = 0; i < append_items.GetCount(); ++i) {
-        const wxAuiToolBarItem& item = append_items.Item(i);
-        m_auibar->AddTool(item.GetId(), item.GetLabel(), item.GetBitmap(), item.GetLabel(), (wxItemKind)item.GetKind());
-    }
-    m_auibar->Realize();
-
-    Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(GitConsole::OnGitPullDropdown), this,
-         XRCID("git_pull"));
-    Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(GitConsole::OnGitRebaseDropdown), this,
-         XRCID("git_rebase"));
+    PopulateToolbarOverflow(m_toolbar, m_images);
+    m_toolbar->Realize();
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
 
     // Adjust the h-scrollbar of git log
     ::clRecalculateSTCHScrollBar(m_stcLog);
@@ -243,8 +233,8 @@ GitConsole::~GitConsole()
                                      wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL,
                                      this);
-    Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(GitConsole::OnGitPullDropdown), this,
-           XRCID("git_pull"));
+    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
+    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
 }
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event) { m_stcLog->ClearAll(); }
@@ -468,14 +458,8 @@ struct GitCommandData : public wxObject {
     int id;            // Holds the id of the command e.g. XRCID("git_pull")
 };
 
-void GitConsole::DoOnDropdown(wxAuiToolBarEvent& e, const wxString& commandName, int id)
+void GitConsole::DoOnDropdown(const wxString& commandName, int id)
 {
-
-    if(!e.IsDropDownClicked()) {
-        e.Skip();
-        return;
-    }
-
     GitEntry data;
     {
         clConfig conf("git.conf");
@@ -492,19 +476,12 @@ void GitConsole::DoOnDropdown(wxAuiToolBarEvent& e, const wxString& commandName,
         item->Check(n == (size_t)lastUsed);
         arr.Add(entries.at(n).command);
     }
-    menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnDropDownMenuEvent), this, 0,
-              arr.GetCount(), new GitCommandData(arr, commandName, id));
+    menu.Bind(wxEVT_MENU, wxCommandEventHandler(GitConsole::OnDropDownMenuEvent), this, 0, arr.GetCount(),
+              new GitCommandData(arr, commandName, id));
 
-    wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(e.GetEventObject());
-    if(auibar) {
-        clAuiToolStickness ts(auibar, e.GetToolId());
-        wxRect rect = auibar->GetToolRect(e.GetId());
-        wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
-        pt = ScreenToClient(pt);
-        PopupMenu(&menu, pt);
-    }
-    menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnDropDownMenuEvent), this, 0,
-                arr.GetCount(), new GitCommandData(arr, commandName, id));
+    m_toolbar->ShowMenuForButton(id, &menu);
+    menu.Unbind(wxEVT_MENU, wxCommandEventHandler(GitConsole::OnDropDownMenuEvent), this, 0, arr.GetCount(),
+                new GitCommandData(arr, commandName, id));
 }
 
 void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)

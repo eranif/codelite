@@ -715,6 +715,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
 #endif
     , m_webUpdate(NULL)
     , m_toolbar(NULL)
+    , m_noSavePerspectivePrompt(false)
 {
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -1408,6 +1409,11 @@ bool clMainFrame::StartSetupWizard()
         }
 
         if(wiz.IsRestartRequired()) {
+            // Don't annoy the user by showing the 'Save Perspective' dialog,
+            // especially as he hasn't yet had a chance to set it!
+            // Also, the dialog would probably get hidden behind the new CL instance
+            SetNoSavePerspectivePrompt(true);
+
             clCommandEvent restartEvent(wxEVT_RESTART_CODELITE);
             ManagerST::Get()->AddPendingEvent(restartEvent);
             return true;
@@ -1593,23 +1599,26 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
-    // Prompt before exit
-    wxStandardID ans =
-        PromptForYesNoCancelDialogWithCheckbox(_("Closing CodeLite\n\nSave perspective and exit?"), "SaveAndExit",
-                                               "Save and Exit", "Exit without saving", "Don't Exit");
-    if(ans == wxID_CANCEL) {
-        event.Veto();
-        event.Skip(false);
-        return;
-    }
-
-    if(ans == wxID_YES) {
-        if(!SaveLayoutAndSession()) {
+    // Prompt before exit, but not if we're coming from the Setup Wizard
+    if (!GetAndResetNoSavePerspectivePrompt()) {
+        wxStandardID ans =
+            PromptForYesNoCancelDialogWithCheckbox(_("Closing CodeLite\n\nSave perspective and exit?"), "SaveAndExit",
+                                                   "Save and Exit", "Exit without saving", "Don't Exit");
+        if(ans == wxID_CANCEL) {
             event.Veto();
             event.Skip(false);
             return;
         }
+
+        if(ans == wxID_YES) {
+            if(!SaveLayoutAndSession()) {
+                event.Veto();
+                event.Skip(false);
+                return;
+            }
+        }
     }
+    
     SaveGeneralSettings();
 
     event.Skip();

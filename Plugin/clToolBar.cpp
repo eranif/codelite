@@ -310,9 +310,10 @@ void clToolBar::DoIdleUpdate()
 {
     for(size_t i = 0; i < m_visibleButtons.size(); ++i) {
         wxUpdateUIEvent event(m_visibleButtons[i]->GetId());
+        event.Enable(true);
         if(GetEventHandler()->ProcessEvent(event)) {
-            m_visibleButtons[i]->Enable(event.GetEnabled());
             m_visibleButtons[i]->Check(event.GetChecked());
+            m_visibleButtons[i]->Enable(event.GetEnabled());
         }
     }
     Refresh();

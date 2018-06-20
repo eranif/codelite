@@ -30,7 +30,7 @@
 #include "theme_handler_helper.h"
 #include "clFindResultsStyler.h"
 
-class wxAuiToolBar;
+class clToolBar;
 class wxBoxSizer;
 
 class QuickFindBar;
@@ -38,7 +38,7 @@ class OutputTabWindow : public wxPanel
 {
 protected:
     wxString m_name;
-    wxAuiToolBar* m_tb;
+    clToolBar* m_tb;
     wxStyledTextCtrl* m_sci;
     bool m_outputScrolls;
     bool m_autoAppear;

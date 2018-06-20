@@ -80,8 +80,8 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     mainSizer->Detach(m_sci);
     vertSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
 
-    m_tb->DeleteTool(XRCID("repeat_output"));
-    m_tb->DeleteTool(XRCID("recent_searches"));
+    m_tb->DeleteById(XRCID("repeat_output"));
+    m_tb->DeleteById(XRCID("recent_searches"));
     m_tb->Realize();
 
 #ifdef __WXMAC__

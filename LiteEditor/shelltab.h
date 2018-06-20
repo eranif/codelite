@@ -100,7 +100,7 @@ protected:
 public:
     DebugTab(wxWindow* parent, wxWindowID id, const wxString& name);
     virtual ~DebugTab();
-    wxAuiToolBar* GetToolBar() { return m_tb; }
+    clToolBar* GetToolBar() { return m_tb; }
     void AppendLine(const wxString& line);
 };
 

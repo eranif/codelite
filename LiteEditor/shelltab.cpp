@@ -22,19 +22,19 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "editor_config.h"
 #include <wx/xrc/xmlres.h>
-#include "editor_config.h"
 
-#include "macros.h"
-#include "async_executable_cmd.h"
-#include "manager.h"
-#include "frame.h"
-#include "shelltab.h"
-#include "pluginmanager.h"
-#include "editor_config.h"
-#include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
+#include "async_executable_cmd.h"
+#include "editor_config.h"
 #include "event_notifier.h"
+#include "frame.h"
+#include "lexer_configuration.h"
+#include "macros.h"
+#include "manager.h"
+#include "pluginmanager.h"
+#include "shelltab.h"
 
 BEGIN_EVENT_TABLE(ShellTab, OutputTabWindow)
 EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, ShellTab::OnProcStarted)
@@ -107,9 +107,7 @@ bool ShellTab::DoSendInput(const wxString& line)
 
 void ShellTab::OnProcStarted(wxCommandEvent& e)
 {
-    if(m_cmd && m_cmd->IsBusy()) {
-        return;
-    }
+    if(m_cmd && m_cmd->IsBusy()) { return; }
     m_cmd = (AsyncExeCmd*)e.GetEventObject();
     AppendText("\n");
     AppendText(e.GetString());
@@ -154,9 +152,7 @@ void ShellTab::OnSendInput(wxCommandEvent& e)
 
     wxString line = m_input->GetValue();
     if(DoSendInput(line)) {
-        if(m_input->FindString(line) == wxNOT_FOUND) {
-            m_input->Append(line);
-        }
+        if(m_input->FindString(line) == wxNOT_FOUND) { m_input->Append(line); }
         m_input->SetValue(wxEmptyString);
         m_input->SetFocus(); // in case lost by editor changing
     }
@@ -166,9 +162,7 @@ void ShellTab::OnStopProc(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
-    if(m_cmd && m_cmd->IsBusy()) {
-        m_cmd->Terminate();
-    }
+    if(m_cmd && m_cmd->IsBusy()) { m_cmd->Terminate(); }
 }
 
 void ShellTab::OnUpdateUI(wxUpdateUIEvent& e) { e.Enable(m_cmd && m_cmd->IsBusy()); }
@@ -216,15 +210,14 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
         m_sci->StyleSetForeground(wxSTC_STYLE_LINENUMBER, wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     }
 
-    m_tb->DeleteTool(XRCID("collapse_all"));
-    m_tb->DeleteTool(XRCID("repeat_output"));
-
-    wxCheckBox* cb = new wxCheckBox(m_tb, wxID_ANY, _("Enable debugger full logging"));
-    m_tb->AddControl(cb);
+    m_tb->DeleteById(XRCID("collapse_all"));
+    m_tb->DeleteById(XRCID("repeat_output"));
+    m_tb->AddTool(XRCID("debugger_log"), _("Enable Log"), clGetManager()->GetStdIcons()->LoadBitmap("log"),
+                  _("Enable Log"), wxITEM_CHECK);
     m_tb->Realize();
 
-    cb->Bind(wxEVT_CHECKBOX, &DebugTab::OnEnableDbgLog, this);
-    cb->Bind(wxEVT_UPDATE_UI, &DebugTab::OnEnableDbgLogUI, this);
+    m_tb->Bind(wxEVT_MENU, &DebugTab::OnEnableDbgLog, this);
+    m_tb->Bind(wxEVT_UPDATE_UI, &DebugTab::OnEnableDbgLogUI, this);
 
     m_autoAppear = false;
     Connect(XRCID("hold_pane_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebugTab::OnHoldOpenUpdateUI), NULL, this);
@@ -238,9 +231,7 @@ bool DebugTab::DoSendInput(const wxString& cmd)
     if(!dbgr || !dbgr->IsRunning()) return false;
     bool contIsNeeded = ManagerST::Get()->GetBreakpointsMgr()->PauseDebuggerIfNeeded();
     dbgr->ExecuteCmd(cmd);
-    if(contIsNeeded) {
-        ManagerST::Get()->DbgContinue();
-    }
+    if(contIsNeeded) { ManagerST::Get()->DbgContinue(); }
     return true;
 }
 
@@ -249,9 +240,7 @@ void DebugTab::OnStopProc(wxCommandEvent& e)
     wxUnusedVar(e);
 
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(dbgr && dbgr->IsRunning()) {
-        ManagerST::Get()->DbgDoSimpleCommand(DBG_PAUSE);
-    }
+    if(dbgr && dbgr->IsRunning()) { ManagerST::Get()->DbgDoSimpleCommand(DBG_PAUSE); }
 }
 
 void DebugTab::AppendLine(const wxString& line)
@@ -282,7 +271,6 @@ void DebugTab::OnEnableDbgLog(wxCommandEvent& event)
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(dbgr) {
         dbgr->EnableLogging(event.IsChecked());
-
         DebuggerInformation info = dbgr->GetDebuggerInformation();
         info.enableDebugLog = event.IsChecked();
         DebuggerMgr::Get().SetDebuggerInformation(dbgr->GetName(), info);
@@ -303,9 +291,7 @@ void DebugTab::OnEnableDbgLogUI(wxUpdateUIEvent& event)
 void ShellTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
     int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
-    if(clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
-        return;
-    }
+    if(clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) { return; }
 
     if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
         e.Enable(true);
@@ -327,9 +313,7 @@ void ShellTab::OnThemeChanged(wxCommandEvent& e)
 void DebugTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
     int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
-    if(clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
-        return;
-    }
+    if(clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) { return; }
 
     if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
         e.Enable(true);

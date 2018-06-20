@@ -41,7 +41,7 @@ FindUsageTab::FindUsageTab(wxWindow* parent, const wxString& name)
     m_styler->SetStyles(m_sci);
     m_sci->HideSelection(true);
     m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindUsageTab::OnStyleNeeded), NULL, this);
-    m_tb->DeleteTool(XRCID("repeat_output"));
+    m_tb->DeleteById(XRCID("repeat_output"));
     m_tb->Realize();
     EventNotifier::Get()->Connect(
         wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindUsageTab::OnThemeChanged), NULL, this);

@@ -53,8 +53,8 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
     filters.Add(_("All Files"));
     m_extensions.Add(wxT("*.*"));
 
-    m_tb->DeleteTool(XRCID("repeat_output"));
-    m_tb->DeleteTool(XRCID("recent_searches"));
+    m_tb->DeleteById(XRCID("repeat_output"));
+    m_tb->DeleteById(XRCID("recent_searches"));
     m_tb->Realize();
 
     wxBoxSizer* verticalPanelSizer = new wxBoxSizer(wxVERTICAL);

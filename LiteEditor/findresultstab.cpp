@@ -455,12 +455,8 @@ void FindResultsTab::OnRecentSearches(wxCommandEvent& e)
     menu.AppendSeparator();
     int clearHistory = ::wxNewId();
     menu.Append(clearHistory, _("Clear History"));
-    wxPoint pt = button->GetButtonRect().GetBottomLeft();
-#ifdef __WXOSX__
-    pt.y += 5;
-#endif
-    int sel = GetPopupMenuSelectionFromUser(menu, pt);
-    if(sel == wxID_NONE) return;
+    int sel = m_tb->GetMenuSelectionFromUser(XRCID("recent_searches"), &menu);
+    if(sel == wxID_NONE) { return; }
     if(sel == clearHistory) {
         m_history.Clear();
 

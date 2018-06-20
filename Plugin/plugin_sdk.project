@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="plugin_sdk" Version="10.0.0">
-  <VirtualDirectory Name="clToolBar">
-    <File Name="clToolBarToggleButton.h"/>
-    <File Name="clToolBarToggleButton.cpp"/>
-    <File Name="clToolBarSeparator.h"/>
-    <File Name="clToolBarSeparator.cpp"/>
-    <File Name="clToolBarMenuButton.h"/>
-    <File Name="clToolBarMenuButton.cpp"/>
-    <File Name="clToolBarButtonBase.h"/>
-    <File Name="clToolBarButtonBase.cpp"/>
-    <File Name="clToolBarButton.h"/>
-    <File Name="clToolBarButton.cpp"/>
-    <File Name="clToolBar.h"/>
-    <File Name="clToolBar.cpp"/>
-  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00060001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
@@ -58,6 +44,22 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="clToolBar">
+    <File Name="cLToolBarControl.h"/>
+    <File Name="cLToolBarControl.cpp"/>
+    <File Name="clToolBarToggleButton.h"/>
+    <File Name="clToolBarToggleButton.cpp"/>
+    <File Name="clToolBarSeparator.h"/>
+    <File Name="clToolBarSeparator.cpp"/>
+    <File Name="clToolBarMenuButton.h"/>
+    <File Name="clToolBarMenuButton.cpp"/>
+    <File Name="clToolBarButtonBase.h"/>
+    <File Name="clToolBarButtonBase.cpp"/>
+    <File Name="clToolBarButton.h"/>
+    <File Name="clToolBarButton.cpp"/>
+    <File Name="clToolBar.h"/>
+    <File Name="clToolBar.cpp"/>
+  </VirtualDirectory>
   <Reconciliation>
     <Regexes/>
     <Excludepaths/>

@@ -1,13 +1,134 @@
 #include "clToolBarButtonBase.h"
 #include <wx/settings.h>
-#include "drawingutils.h"
+
+#ifdef __WXGTK20__
+// We need this ugly hack to workaround a gtk2-wxGTK name-clash^M
+// See http://trac.wxwidgets.org/ticket/10883^M
+#define GSocket GlibGSocket
+#include <gtk/gtk.h>
+#undef GSocket
+#endif
+
+//----------------------------------------------------------
+// Helper methods
+//----------------------------------------------------------
+static void RGBtoHSB(int r, int g, int b, float* h, float* s, float* br)
+{
+    float hue, saturation, brightness;
+    int cmax = (r > g) ? r : g;
+    if(b > cmax) cmax = b;
+    int cmin = (r < g) ? r : g;
+    if(b < cmin) cmin = b;
+
+    brightness = ((float)cmax) / 255.0f;
+    if(cmax != 0)
+        saturation = ((float)(cmax - cmin)) / ((float)cmax);
+    else
+        saturation = 0;
+    if(saturation == 0)
+        hue = 0;
+    else {
+        float redc = ((float)(cmax - r)) / ((float)(cmax - cmin));
+        float greenc = ((float)(cmax - g)) / ((float)(cmax - cmin));
+        float bluec = ((float)(cmax - b)) / ((float)(cmax - cmin));
+        if(r == cmax)
+            hue = bluec - greenc;
+        else if(g == cmax)
+            hue = 2.0f + redc - bluec;
+        else
+            hue = 4.0f + greenc - redc;
+        hue = hue / 6.0f;
+        if(hue < 0) hue = hue + 1.0f;
+    }
+    (*h) = hue;
+    (*s) = saturation;
+    (*br) = brightness;
+}
+
+static bool IsDark(const wxColour& color)
+{
+    float h, s, b;
+    RGBtoHSB(color.Red(), color.Green(), color.Blue(), &h, &s, &b);
+    return (b < 0.5);
+}
+
+static wxColour GetMenuBarBgColour()
+{
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
+    static bool intitialized(false);
+    // initialise default colour
+    static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+
+    if(!intitialized) {
+        // try to get the background colour from a menu
+        GtkWidget* menuBar = gtk_menu_bar_new();
+        bgColour = GtkGetBgColourFromWidget(menuBar, bgColour);
+        intitialized = true;
+    }
+    return bgColour;
+#elif defined(__WXOSX__)
+    return wxColour("rgb(209, 209, 209)");
+#else
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+#endif
+}
+
+#ifdef __WXGTK__
+static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
+{
+    wxColour bgColour = defaultColour;
+    GtkStyle* def = gtk_rc_get_style(widget);
+    if(!def) { def = gtk_widget_get_default_style(); }
+
+    if(def) {
+        GdkColor col = def->bg[GTK_STATE_NORMAL];
+        bgColour = wxColour(col);
+    }
+    gtk_widget_destroy(widget);
+    return bgColour;
+}
+
+static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
+{
+    wxColour textColour = defaultColour;
+    GtkStyle* def = gtk_rc_get_style(widget);
+    if(!def) { def = gtk_widget_get_default_style(); }
+
+    if(def) {
+        GdkColor col = def->fg[GTK_STATE_NORMAL];
+        textColour = wxColour(col);
+    }
+    gtk_widget_destroy(widget);
+    return textColour;
+}
+#endif
+
+#ifdef __WXOSX__
+double wxOSXGetMainScreenContentScaleFactor();
+#endif
+
+static wxBitmap CreateGrayBitmap(const wxBitmap& bmp)
+{
+    wxImage img = bmp.ConvertToImage();
+    img = img.ConvertToGreyscale();
+#ifdef __WXOSX__
+    double scale = 1.0;
+    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) {
+        scale = 2.0;
+    }
+    wxBitmap greyBmp(img, -1, scale);
+#else
+    wxBitmap greyBmp(img);
+#endif
+    return greyBmp;
+}
 
 static wxBitmap MakeDisabledBitmap(const wxBitmap& bmp)
 {
 #ifdef __WXOSX__
-    return DrawingUtils::CreateGrayBitmap(bmp);
+    return CreateGrayBitmap(bmp);
 #else
-    bool bDarkBG = DrawingUtils::IsDark(DrawingUtils::GetMenuBarBgColour());
+    bool bDarkBG = IsDark(GetMenuBarBgColour());
     wxImage img = bmp.ConvertToImage();
     img = img.ConvertToGreyscale();
     wxBitmap greyBmp(img);
@@ -20,6 +141,9 @@ static wxBitmap MakeDisabledBitmap(const wxBitmap& bmp)
 #endif
 }
 
+// -----------------------------------------------
+// Button base
+// -----------------------------------------------
 clToolBarButtonBase::clToolBarButtonBase(clToolBar* parent, wxWindowID id, const wxBitmap& bmp, const wxString& label,
                                          size_t flags)
     : m_toolbar(parent)
@@ -32,6 +156,19 @@ clToolBarButtonBase::clToolBarButtonBase(clToolBar* parent, wxWindowID id, const
 }
 
 clToolBarButtonBase::~clToolBarButtonBase() {}
+
+void clToolBarButtonBase::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
+{
+#ifdef __WXOSX__
+    wxColour startColour("rgb(231, 229, 231)");
+    wxColour endColour("rgb(180, 180, 180)");
+    dc.GradientFillLinear(rect, startColour, endColour, wxSOUTH);
+#else
+    dc.SetPen(GetMenuBarBgColour());
+    dc.SetBrush(GetMenuBarBgColour());
+    dc.DrawRectangle(rect);
+#endif
+}
 
 void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
 {
@@ -48,7 +185,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
 #else
     wxColour bgHighlightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 #endif
-    DrawingUtils::FillMenuBarBgColour(dc, rect);
+    FillMenuBarBgColour(dc, rect);
 
     if(IsEnabled() && (IsHover() || IsPressed() || IsChecked())) {
         penColour = bgHighlightColour;

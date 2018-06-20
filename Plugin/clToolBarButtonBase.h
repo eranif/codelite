@@ -4,8 +4,8 @@
 #include "clToolBar.h"
 #include <wx/bitmap.h>
 #include <wx/dc.h>
-#include <wx/string.h>
 #include <wx/settings.h>
+#include <wx/string.h>
 
 #define CL_TOOL_BAR_X_MARGIN 5
 #define CL_TOOL_BAR_Y_MARGIN 5
@@ -33,6 +33,7 @@ public:
         kChecked = (1 << 2),
         kDisabled = (1 << 3),
         kSeparator = (1 << 4),
+        kControl = (1 << 5),
     };
 
     enum eRenderFlags {
@@ -78,6 +79,8 @@ protected:
     }
 
 public:
+    static void FillMenuBarBgColour(wxDC& dc, const wxRect& rect);
+
     void SetBmp(const wxBitmap& bmp) { this->m_bmp = bmp; }
     void SetLabel(const wxString& label) { this->m_label = label; }
     const wxBitmap& GetBmp() const { return m_bmp; }
@@ -113,6 +116,7 @@ public:
     bool IsToggle() const { return (m_flags & kToggleButton); }
     bool IsSeparator() const { return m_flags & kSeparator; }
     bool IsEnabled() const { return !(m_flags & kDisabled); }
+    bool IsControl() const { return m_flags & kControl; }
     void Enable(bool b) { EnableFlag(kDisabled, !b); }
     template <typename T>
     T* Cast()

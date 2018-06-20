@@ -16,13 +16,9 @@
 #include <wx/splitter.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
-#include <wx/toolbar.h>
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
+#include <map>
 #include <wx/icon.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
@@ -36,6 +32,10 @@
 #include <wx/commandlinkbutton.h>
 #include <wx/dirctrl.h>
 #include <wx/simplebook.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <wx/menu.h>
+#include <wx/toolbar.h>
 #include "clConfigurationSelectionCtrl.h"
 #include <wx/treectrl.h>
 #include "fileview.h"
@@ -85,31 +85,6 @@ public:
     wxSplitterWindow* GetSplitter() { return m_splitter; }
     NavBarControlBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW);
     virtual ~NavBarControlBaseClass();
-};
-
-
-class BuildTabTopPanelBaseClass : public wxPanel
-{
-protected:
-    wxAuiToolBar* m_auibar48;
-
-protected:
-    virtual void OnToolPinCommandToolClicked(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnAutoScroll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnAutoScrollUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClearBuildOutput(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearBuildOutputUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSaveBuildOutput(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSaveBuildOutputUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCopyBuildOutput(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCopyBuildOutputUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnPaste(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPasteUI(wxUpdateUIEvent& event) { event.Skip(); }
-
-public:
-    wxAuiToolBar* GetAuibar48() { return m_auibar48; }
-    BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
-    virtual ~BuildTabTopPanelBaseClass();
 };
 
 
@@ -233,10 +208,10 @@ class WorkspaceTabBase : public wxPanel
 {
 public:
     enum {
-        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8001,
-        ID_TOOL_GOTO_ACTIVE_PROJECT = 8002,
-        ID_TOOL_LINK_EDITOR = 8003,
-        ID_TOOL_COLLAPSE_ALL = 8004,
+        ID_TOOL_LINK_EDITOR = 8001,
+        ID_TOOL_COLLAPSE_ALL = 8002,
+        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8003,
+        ID_TOOL_GOTO_ACTIVE_PROJECT = 8004,
     };
 protected:
     wxSimplebook* m_simpleBook;

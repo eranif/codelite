@@ -366,7 +366,10 @@ void GitConsole::OnContextMenu(wxDataViewEvent& event)
     }
     menu.Append(XRCID("git_console_close_view"), _("Close View"));
 
-    if(hasSelection) { menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file")); }
+    if(hasSelection) { 
+        menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file")); 
+        menu.Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file")); 
+    }
     menu.Bind(wxEVT_MENU, &GitConsole::OnCloseView, this, XRCID("git_console_close_view"));
     m_dvListCtrl->PopupMenu(&menu);
 }
@@ -378,7 +381,7 @@ void GitConsole::OnResetFile(wxCommandEvent& event)
     wxArrayString filesToRevert, filesToRemove;
 
     for(size_t i = 0; i < items.GetCount(); ++i) {
-        GitClientData* gcd = reinterpret_cast<GitClientData*>(m_dvListCtrl->GetItemData(items.Item(i)));
+        GitClientData* gcd = GIT_ITEM_DATA(items.Item(i));
         if(gcd) {
             if(gcd->GetKind() == eGitFile::kNewFile) {
                 filesToRemove.push_back(gcd->GetPath());

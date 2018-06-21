@@ -213,6 +213,7 @@ NewToolBase::NewToolBase(wxWindow* parent, wxWindowID id, const wxString& title,
     m_buttonBrowseIcon24->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonBrowseIcon24), NULL, this);
     m_buttonBrowseIcon16->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonBrowseIcon16), NULL, this);
     m_button4->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonOk), NULL, this);
+    m_button4->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewToolBase::OnButtonOkUI), NULL, this);
     m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonCancel), NULL, this);
     m_button8->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonHelp), NULL, this);
     
@@ -226,6 +227,7 @@ NewToolBase::~NewToolBase()
     m_buttonBrowseIcon24->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonBrowseIcon24), NULL, this);
     m_buttonBrowseIcon16->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonBrowseIcon16), NULL, this);
     m_button4->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonOk), NULL, this);
+    m_button4->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewToolBase::OnButtonOkUI), NULL, this);
     m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonCancel), NULL, this);
     m_button8->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewToolBase::OnButtonHelp), NULL, this);
     

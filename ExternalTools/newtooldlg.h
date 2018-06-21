@@ -35,6 +35,7 @@ class NewToolDlg : public NewToolBase
     IManager* m_mgr;
 
 protected:
+    virtual void OnButtonOkUI(wxUpdateUIEvent& event);
     virtual void OnIdSelected(wxCommandEvent& event);
     // Handlers for NewToolBase events.
     void OnButtonBrowsePath(wxCommandEvent& event);

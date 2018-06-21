@@ -23,15 +23,15 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/msgdlg.h>
 #include "externaltooldlg.h"
 #include "externaltoolsdata.h"
+#include "macrosdlg.h"
 #include "newtooldlg.h"
+#include "windowattrmanager.h"
+#include "workspace.h"
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
-#include "macrosdlg.h"
-#include "workspace.h"
-#include "windowattrmanager.h"
+#include <wx/msgdlg.h>
 
 NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
     : NewToolBase(parent)
@@ -66,8 +66,8 @@ void NewToolDlg::OnButtonBrowsePath(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString path = m_textCtrlPath->GetValue();
-    wxString new_path = wxFileSelector(
-        _("Select a program:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
+    wxString new_path = wxFileSelector(_("Select a program:"), path.c_str(), wxT(""), wxT(""),
+                                       wxFileSelectorDefaultWildcardStr, 0, this);
     if(new_path.IsEmpty() == false) {
         m_textCtrlPath->SetValue(new_path);
     }
@@ -134,3 +134,9 @@ void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
 NewToolDlg::~NewToolDlg() {}
 
 void NewToolDlg::OnIdSelected(wxCommandEvent& event) {}
+
+void NewToolDlg::OnButtonOkUI(wxUpdateUIEvent& event)
+{
+    event.Enable((m_choiceId->GetSelection() != wxNOT_FOUND) && !m_textCtrlName->IsEmpty() &&
+                 !m_textCtrlPath->IsEmpty());
+}

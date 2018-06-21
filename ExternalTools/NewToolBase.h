@@ -74,6 +74,7 @@ protected:
     virtual void OnButtonBrowseIcon24(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonBrowseIcon16(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonOkUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonHelp(wxCommandEvent& event) { event.Skip(); }
 

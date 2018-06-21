@@ -184,6 +184,9 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     penColour = bgHighlightColour;
 #else
     wxColour bgHighlightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    if(IsDark(bgHighlightColour)) {
+        bgHighlightColour = bgHighlightColour.ChangeLightness(140);
+    }
 #endif
     FillMenuBarBgColour(dc, rect);
 

@@ -52,26 +52,6 @@ static bool IsDark(const wxColour& color)
     return (b < 0.5);
 }
 
-static wxColour GetMenuBarBgColour()
-{
-#if defined(__WXGTK__) && !defined(__WXGTK3__)
-    static bool intitialized(false);
-    // initialise default colour
-    static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
-
-    if(!intitialized) {
-        // try to get the background colour from a menu
-        GtkWidget* menuBar = gtk_menu_bar_new();
-        bgColour = GtkGetBgColourFromWidget(menuBar, bgColour);
-        intitialized = true;
-    }
-    return bgColour;
-#elif defined(__WXOSX__)
-    return wxColour("rgb(209, 209, 209)");
-#else
-    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
-#endif
-}
 
 #ifdef __WXGTK__
 static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
@@ -102,6 +82,26 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
     return textColour;
 }
 #endif
+static wxColour GetMenuBarBgColour()
+{
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
+	static bool intitialized(false);
+	// initialise default colour
+	static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+
+	if(!intitialized) {
+		// try to get the background colour from a menu
+		GtkWidget* menuBar = gtk_menu_bar_new();
+		bgColour = GtkGetBgColourFromWidget(menuBar, bgColour);
+		intitialized = true;
+	}
+	return bgColour;
+#elif defined(__WXOSX__)
+	return wxColour("rgb(209, 209, 209)");
+#else
+	return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+#endif
+}
 
 #ifdef __WXOSX__
 double wxOSXGetMainScreenContentScaleFactor();

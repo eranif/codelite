@@ -1,13 +1,16 @@
-#include "TailPanel.h"
-#include <wx/filedlg.h>
-#include "fileutils.h"
-#include <wx/ffile.h>
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
+#include "TailPanel.h"
 #include "cl_config.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
+#include "fileutils.h"
+#include "lexer_configuration.h"
 #include "tail.h"
+#include <wx/ffile.h>
+#include <wx/filedlg.h>
+#include "globals.h"
+#include <imanager.h>
+#include "bitmap_loader.h"
 
 TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     : TailPanelBase(parent)
@@ -15,6 +18,7 @@ TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     , m_plugin(plugin)
     , m_isDetached(false)
 {
+    DoBuildToolbar();
     m_fileWatcher.reset(new clFileSystemWatcher());
     m_fileWatcher->SetOwner(this);
     Bind(wxEVT_FILE_MODIFIED, &TailPanel::OnFileModified, this);
@@ -62,9 +66,7 @@ void TailPanel::OnFileModified(clFileSystemEvent& event)
     wxFFile fp(m_file.GetFullPath(), "rb");
     if(fp.IsOpened() && fp.Seek(m_lastPos)) {
         wxString content;
-        if(fp.ReadAll(&content)) {
-            DoAppendText(content);
-        }
+        if(fp.ReadAll(&content)) { DoAppendText(content); }
         m_lastPos = cursize;
     }
 }
@@ -84,9 +86,7 @@ void TailPanel::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip(); // must call this to allow other handlers to work
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
-        lexer->Apply(m_stc);
-    }
+    if(lexer) { lexer->Apply(m_stc); }
 }
 
 void TailPanel::OnClear(wxCommandEvent& event)
@@ -101,25 +101,21 @@ void TailPanel::OnClearUI(wxUpdateUIEvent& event) { event.Enable(!m_stc->IsEmpty
 void TailPanel::OnClose(wxCommandEvent& event) { DoClear(); }
 
 void TailPanel::OnCloseUI(wxUpdateUIEvent& event) { event.Enable(m_file.IsOk()); }
-void TailPanel::OnOpen(wxAuiToolBarEvent& event)
+
+void TailPanel::OnOpen(wxCommandEvent& event)
 {
-    if(event.IsDropDownClicked()) {
-        wxPoint pt = event.GetItemRect().GetBottomLeft();
-        pt.y++;
+    wxString filepath = ::wxFileSelector();
+    if(filepath.IsEmpty() || !wxFileName::Exists(filepath)) { return; }
 
-        wxMenu menu;
-        DoPrepareRecentItemsMenu(menu);
-        m_auibar->PopupMenu(&menu, pt);
+    DoClear();
+    DoOpen(filepath);
+}
 
-    } else {
-        wxString filepath = ::wxFileSelector();
-        if(filepath.IsEmpty() || !wxFileName::Exists(filepath)) {
-            return;
-        }
-
-        DoClear();
-        DoOpen(filepath);
-    }
+void TailPanel::OnOpenMenu(wxCommandEvent& event)
+{
+    wxMenu menu;
+    DoPrepareRecentItemsMenu(menu);
+    m_toolbar->ShowMenuForButton(XRCID("tail_open"), &menu);
 }
 
 void TailPanel::DoOpen(const wxString& filename)
@@ -211,7 +207,37 @@ wxString TailPanel::GetTailTitle() const
 void TailPanel::SetFrameTitle()
 {
     wxFrame* parent = dynamic_cast<wxFrame*>(GetParent());
-    if(parent) {
-        parent->SetLabel(GetTailTitle());
-    }
+    if(parent) { parent->SetLabel(GetTailTitle()); }
+}
+
+void TailPanel::DoBuildToolbar()
+{
+    m_toolbar = new clToolBar(this);
+    m_toolbar->AddTool(XRCID("tail_open"), _("Open file"), clGetManager()->GetStdIcons()->LoadBitmap("folder"), "",
+                       wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("tail_close"), _("Close file"), clGetManager()->GetStdIcons()->LoadBitmap("file_close"));
+    m_toolbar->AddTool(XRCID("tail_clear"), _("Clear"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("tail_pause"), _("Pause"), clGetManager()->GetStdIcons()->LoadBitmap("interrupt"));
+    m_toolbar->AddTool(XRCID("tail_play"), _("Pause"), clGetManager()->GetStdIcons()->LoadBitmap("interrupt"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("tail_detach"), _("Detach window"), clGetManager()->GetStdIcons()->LoadBitmap("windows"));
+
+    // Bind events
+    m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnOpen, this, XRCID("tail_open"));
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &TailPanel::OnOpenMenu, this, XRCID("tail_open"));
+    m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnClose, this, XRCID("tail_close"));
+    m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnClear, this, XRCID("tail_clear"));
+    m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnPause, this, XRCID("tail_pause"));
+    m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnPlay, this, XRCID("tail_play"));
+    m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnDetachWindow, this, XRCID("tail_detach"));
+
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &TailPanel::OnCloseUI, this, XRCID("tail_close"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &TailPanel::OnClearUI, this, XRCID("tail_clear"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &TailPanel::OnPauseUI, this, XRCID("tail_pause"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &TailPanel::OnPlayUI, this, XRCID("tail_play"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &TailPanel::OnDetachWindowUI, this, XRCID("tail_detach"));
+    m_toolbar->Realize();
+
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 }

@@ -13,13 +13,8 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
-#include <wx/toolbar.h>
-#include <wx/stattext.h>
 #include <wx/stc/stc.h>
+#include <wx/stattext.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
 #if wxVERSION_NUMBER >= 2900
@@ -41,40 +36,15 @@
 
 class TailPanelBase : public wxPanel
 {
-public:
-    enum {
-        ID_TAIL_CLEAR = 10001,
-        ID_TAIL_CLOSE = 10002,
-        ID_TAIL_DETACH = 10003,
-        ID_TAIL_OPEN = 10004,
-        ID_TAIL_PAUSE = 10005,
-        ID_TAIL_PLAY = 10006,
-    };
 protected:
-    wxAuiToolBar* m_auibar;
-    std::map<int, wxMenu*> m_dropdownMenus;
-    wxStaticText* m_staticTextFileName;
     wxStyledTextCtrl* m_stc;
+    wxStaticText* m_staticTextFileName;
 
 protected:
-    virtual void OnOpen(wxAuiToolBarEvent& event) { event.Skip(); }
-    virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCloseUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnPause(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPauseUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnPlay(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPlayUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnDetachWindow(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDetachWindowUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-
-    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
-    wxStaticText* GetStaticTextFileName() { return m_staticTextFileName; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
+    wxStaticText* GetStaticTextFileName() { return m_staticTextFileName; }
     TailPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~TailPanelBase();
 };

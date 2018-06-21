@@ -47,7 +47,7 @@ BuildTabTopPanel::BuildTabTopPanel(wxWindow* parent)
     m_toolbar->AddTool(XRCID("build_tool_pin"), _("Pin build view"), bmps->LoadBitmap("ToolPin"), _("Pin build view"),
                        wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("build_tool_scroll_view"), _("Scroll to last line"), bmps->LoadBitmap("link_editor"),
-                       _("Scroll to last line"));
+                       _("Scroll to last line"), wxITEM_CHECK);
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("build_tool_clear"), _("Clear view"), bmps->LoadBitmap("clear"), _("Clear view"));
     m_toolbar->AddTool(XRCID("build_tool_save"), _("Save build log"), bmps->LoadBitmap("file_save"),

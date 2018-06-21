@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 576,
+  "m_objCounter": 578,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC3F25InitBitmapResources",
   "m_bitmapsFile": "wxcrafter_liteeditor_bitmaps.cpp",
@@ -4021,6 +4021,18 @@
        "type": "string",
        "m_label": "Separator Size:",
        "m_value": "5"
+      }, {
+       "type": "string",
+       "m_label": "Class Name:",
+       "m_value": ""
+      }, {
+       "type": "string",
+       "m_label": "Include File:",
+       "m_value": ""
+      }, {
+       "type": "string",
+       "m_label": "Style:",
+       "m_value": ""
       }],
      "m_events": [],
      "m_children": [{
@@ -6554,13 +6566,13 @@
       }],
      "m_events": [],
      "m_children": [{
-       "m_type": 4463,
+       "m_type": 4461,
        "proportion": 0,
-       "border": 0,
+       "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+       "m_styles": ["wxTB_FLAT"],
+       "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",
@@ -6572,7 +6584,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_auibar"
+         "m_value": "m_toolbar578"
         }, {
          "type": "string",
          "m_label": "Tooltip:",
@@ -6585,6 +6597,26 @@
          "type": "string",
          "m_label": "Margins:",
          "m_value": "-1,-1"
+        }, {
+         "type": "string",
+         "m_label": "Padding:",
+         "m_value": "1"
+        }, {
+         "type": "string",
+         "m_label": "Separator Size:",
+         "m_value": "5"
+        }, {
+         "type": "string",
+         "m_label": "Class Name:",
+         "m_value": "clToolBar"
+        }, {
+         "type": "string",
+         "m_label": "Include File:",
+         "m_value": "clToolBar.h"
+        }, {
+         "type": "string",
+         "m_label": "Style:",
+         "m_value": "0"
         }],
        "m_events": [],
        "m_children": [{
@@ -6897,7 +6929,7 @@
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": ["wxBORDER_STATIC"],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+       "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",

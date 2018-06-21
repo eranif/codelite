@@ -1021,25 +1021,25 @@ ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer424 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer424);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar->SetToolBitmapSize(wxSize(16,16));
+    m_toolbar578 = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    m_toolbar578->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer424->Add(m_auibar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(0));
+    boxSizer424->Add(m_toolbar578, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxEnableClang = new wxCheckBox(m_auibar, wxID_ANY, _("Enable Clang"), wxDefaultPosition, wxDLG_UNIT(m_auibar, wxSize(-1,-1)), 0);
+    m_checkBoxEnableClang = new wxCheckBox(m_toolbar578, wxID_ANY, _("Enable Clang"), wxDefaultPosition, wxDLG_UNIT(m_toolbar578, wxSize(-1,-1)), 0);
     m_checkBoxEnableClang->SetValue(false);
     m_checkBoxEnableClang->SetToolTip(_("Enable Clang code completion"));
-    m_auibar->AddControl(m_checkBoxEnableClang);
+    m_toolbar578->AddControl(m_checkBoxEnableClang);
     
-    m_checkBoxShowErrors = new wxCheckBox(m_auibar, wxID_ANY, _("Inline Errors"), wxDefaultPosition, wxDLG_UNIT(m_auibar, wxSize(-1,-1)), 0);
+    m_checkBoxShowErrors = new wxCheckBox(m_toolbar578, wxID_ANY, _("Inline Errors"), wxDefaultPosition, wxDLG_UNIT(m_toolbar578, wxSize(-1,-1)), 0);
     m_checkBoxShowErrors->SetValue(false);
     m_checkBoxShowErrors->SetToolTip(_("Display Clang errors as text annotations inside the editor (i.e. as an inline messages)"));
-    m_auibar->AddControl(m_checkBoxShowErrors);
+    m_toolbar578->AddControl(m_checkBoxShowErrors);
     
-    m_auibar->AddTool(ID_TOOL_CLEAR_ALL, _("Clear Clang Cache"), wxXmlResource::Get()->LoadBitmap(wxT("16-clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear Clang Cache"), _("Clear Clang Cache"), NULL);
+    m_toolbar578->AddTool(ID_TOOL_CLEAR_ALL, _("Clear Clang Cache"), wxXmlResource::Get()->LoadBitmap(wxT("16-clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear Clang Cache"), _("Clear Clang Cache"), NULL);
     
-    m_auibar->AddTool(ID_TOOL_CLEAR_LOG, _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
-    m_auibar->Realize();
+    m_toolbar578->AddTool(ID_TOOL_CLEAR_LOG, _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("16-clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
+    m_toolbar578->Realize();
     
     m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBORDER_STATIC);
     // Configure the fold margin
@@ -1077,7 +1077,7 @@ ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wx
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
     
-    boxSizer424->Add(m_stc, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer424->Add(m_stc, 1, wxEXPAND, WXC_FROM_DIP(2));
     
     SetName(wxT("ClangOutputTabBase"));
     SetSize(-1,-1);

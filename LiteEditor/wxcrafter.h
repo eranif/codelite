@@ -46,6 +46,7 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
+#include "clToolBar.h"
 #include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -208,10 +209,10 @@ class WorkspaceTabBase : public wxPanel
 {
 public:
     enum {
-        ID_TOOL_LINK_EDITOR = 8001,
-        ID_TOOL_COLLAPSE_ALL = 8002,
-        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8003,
-        ID_TOOL_GOTO_ACTIVE_PROJECT = 8004,
+        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8001,
+        ID_TOOL_GOTO_ACTIVE_PROJECT = 8002,
+        ID_TOOL_LINK_EDITOR = 8003,
+        ID_TOOL_COLLAPSE_ALL = 8004,
     };
 protected:
     wxSimplebook* m_simpleBook;
@@ -335,7 +336,7 @@ public:
         ID_TOOL_CLEAR_ALL = 8002,
     };
 protected:
-    wxAuiToolBar* m_auibar;
+    clToolBar* m_toolbar578;
     wxCheckBox* m_checkBoxEnableClang;
     wxCheckBox* m_checkBoxShowErrors;
     wxStyledTextCtrl* m_stc;
@@ -353,7 +354,7 @@ protected:
 public:
     wxCheckBox* GetCheckBoxEnableClang() { return m_checkBoxEnableClang; }
     wxCheckBox* GetCheckBoxShowErrors() { return m_checkBoxShowErrors; }
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
+    clToolBar* GetToolbar578() { return m_toolbar578; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
     ClangOutputTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~ClangOutputTabBase();

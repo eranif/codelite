@@ -94,13 +94,13 @@ public:
     clToolBarButtonBase* AddMenuButton(wxWindowID id, const wxBitmap& bmp, const wxString& label = "");
     clToolBarButtonBase* AddToggleButton(wxWindowID id, const wxBitmap& bmp, const wxString& label = "");
     clToolBarButtonBase* AddSeparator();
-        
+
     /**
      * @brief add control to the toolbar
      * @param control
      */
     clToolBarButtonBase* AddControl(wxWindow* control);
-    
+
     // Compatibility API with wxToolBar
     clToolBarButtonBase* AddTool(wxWindowID id, const wxString& label, const wxBitmap& bmp,
                                  const wxString& helpString = "", wxItemKind kind = wxITEM_NORMAL)
@@ -117,6 +117,19 @@ public:
         }
     }
 
+    clToolBarButtonBase* AddTool(wxWindowID id, const wxString& label, const wxBitmap& bitmap,
+                                 const wxBitmap& bmpDisabled, wxItemKind kind = wxITEM_NORMAL,
+                                 const wxString& shortHelp = wxEmptyString, const wxString& longHelp = wxEmptyString,
+                                 wxObject* data = NULL)
+    {
+        wxUnusedVar(bmpDisabled);
+        wxUnusedVar(longHelp);
+        wxUnusedVar(data);
+        return AddTool(id, label, bitmap, shortHelp, kind);
+    }
+
+    void SetToolBitmapSize(const wxSize& size) { wxUnusedVar(size); }
+    
     void ToggleTool(wxWindowID buttonID, bool toggle);
 
     /**
@@ -128,12 +141,12 @@ public:
      * @brief show a drop down menu for a button
      */
     void ShowMenuForButton(wxWindowID buttonID, wxMenu* menu);
-    
+
     /**
      * @brief display a menu for a button and return the user selected menu item ID
      */
     int GetMenuSelectionFromUser(wxWindowID buttonID, wxMenu* menu);
-    
+
     /**
      * @brief find a button by ID
      */
@@ -147,7 +160,6 @@ public:
     bool DeleteById(wxWindowID id);
     // Compatibility API
     bool DeleteTool(wxWindowID id) { return DeleteById(id); }
-
 };
 
 #endif // CLTOOLBAR_H

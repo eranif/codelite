@@ -107,6 +107,7 @@ static wxColour GetMenuBarBgColour()
 double wxOSXGetMainScreenContentScaleFactor();
 #endif
 
+#ifdef __WXOSX__
 static wxBitmap CreateGrayBitmap(const wxBitmap& bmp)
 {
     wxImage img = bmp.ConvertToImage();
@@ -122,6 +123,7 @@ static wxBitmap CreateGrayBitmap(const wxBitmap& bmp)
 #endif
     return greyBmp;
 }
+#endif
 
 static wxBitmap MakeDisabledBitmap(const wxBitmap& bmp)
 {

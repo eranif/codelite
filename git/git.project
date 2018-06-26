@@ -61,6 +61,8 @@
     <File Name="gitui.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
+    <File Name="GitUserEmailDialog.cpp"/>
+    <File Name="GitUserEmailDialog.h"/>
     <File Name="gitui.cpp"/>
     <File Name="gitui.h"/>
     <File Name="gitCloneDlg.h"/>

@@ -9,6 +9,8 @@
   "m_outputFileName": "",
   "m_firstWindowId": 10000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -22,7 +24,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "389,188"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -87,11 +89,11 @@
     }, {
      "type": "string",
      "m_label": "Inherited Class",
-     "m_value": ""
+     "m_value": "ContinousBuildPane"
     }, {
      "type": "string",
      "m_label": "File:",
-     "m_value": ""
+     "m_value": "continousbuildpane.h"
     }, {
      "type": "string",
      "m_label": "Class Decorator",
@@ -417,7 +419,7 @@
            "gbSpan": ",",
            "gbPosition": ",",
            "m_styles": [],
-           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+           "m_sizerFlags": ["wxEXPAND"],
            "m_properties": [{
              "type": "winid",
              "m_label": "ID:",

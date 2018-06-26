@@ -137,6 +137,7 @@ class GitPlugin : public IPlugin
         gitRevertCommit,
         gitStash,
         gitStashPop,
+        gitConfig,
     };
 
     wxArrayString m_localBranchList;

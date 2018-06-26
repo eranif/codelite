@@ -66,6 +66,7 @@
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/utils.h>
+#include "GitUserEmailDialog.h"
 
 #ifdef __WXGTK__
 #include <sys/wait.h>
@@ -1247,7 +1248,10 @@ void GitPlugin::ProcessGitActionQueue()
         command << wxT(" --no-pager rebase ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-
+    case gitConfig:
+        command << wxT(" --no-pager config ") << ga.arguments;
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
+        break;
     case gitGarbageCollection:
         GIT_MESSAGE(wxT("Clean database.."));
         ShowProgress(wxT("Cleaning git database. This may take some time..."), false);
@@ -1705,8 +1709,23 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
 
         } else if(tmpOutput.Contains("*** please tell me who you are")) {
             m_process->Terminate();
-            ::wxMessageBox(output, "Git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
-
+            GitUserEmailDialog userEmailDialog(EventNotifier::Get()->TopFrame());
+            if(userEmailDialog.ShowModal() == wxID_OK) {
+                wxString username = userEmailDialog.GetUsername();
+                wxString emaiil = userEmailDialog.GetEmail();
+                {
+                    wxString args;
+                    args << " user.email \"" << emaiil << "\"";
+                    gitAction act(gitConfig, args);
+                    m_gitActionQueue.push_back(act);
+                }
+                {
+                    wxString args;
+                    args << " user.name \"" << username << "\"";
+                    gitAction act(gitConfig, args);
+                    m_gitActionQueue.push_back(act);
+                }
+            }
         } else if(tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for")) {
 
             // Password is required

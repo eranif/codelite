@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_GIT_GITUI_BASE_CLASSES_H
-#define _CODELITE_GIT_GITUI_BASE_CLASSES_H
+#ifndef _GIT_GITUI_BASE_CLASSES_H
+#define _GIT_GITUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -612,6 +612,32 @@ public:
     wxButton* GetButtonCancel() { return m_buttonCancel; }
     GitResetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Reset Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxMAXIMIZE_BOX);
     virtual ~GitResetDlgBase();
+};
+
+
+class GitUserEmailDialogBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText704;
+    wxStaticText* m_staticText696;
+    wxTextCtrl* m_textCtrlName;
+    wxStaticText* m_staticText700;
+    wxTextCtrl* m_textCtrlEmail;
+    wxStdDialogButtonSizer* m_stdBtnSizer688;
+    wxButton* m_button690;
+    wxButton* m_button692;
+
+protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText704() { return m_staticText704; }
+    wxStaticText* GetStaticText696() { return m_staticText696; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText700() { return m_staticText700; }
+    wxTextCtrl* GetTextCtrlEmail() { return m_textCtrlEmail; }
+    GitUserEmailDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git User"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~GitUserEmailDialogBase();
 };
 
 #endif

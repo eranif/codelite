@@ -26,10 +26,10 @@ UninstallDisplayIcon={app}\codelite.exe,0
 ;;==================================
 ;; 64 bit setup
 ;;==================================
-#define CODELITE_ROOT "C:\src\codelite"
-#define WXWIN "D:\src\wx-src"
-#define BINUTILS_DIR "D:\bin"
-#define MINGW_DIR "D:\software\MinGW-w64\mingw64\bin"
+#define CODELITE_ROOT "C:\codelite"
+#define WXWIN "C:\wxWidgets"
+#define BINUTILS_DIR "C:\Program Files\CodeLite"
+#define MINGW_DIR "C:\mingw64\bin"
 
 
 [Languages]

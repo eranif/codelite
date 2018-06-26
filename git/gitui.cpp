@@ -2728,3 +2728,89 @@ GitResetDlgBase::~GitResetDlgBase()
     this->Disconnect(ID_TOGGLE_CHECKALL_REMOVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitResetDlgBase::OnToggleAllRemoveUI), NULL, this);
     
 }
+
+GitUserEmailDialogBase::GitUserEmailDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer686 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer686);
+    
+    m_staticText704 = new wxStaticText(this, wxID_ANY, _("Please tell me who you are:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer686->Add(m_staticText704, 0, wxALL, WXC_FROM_DIP(5));
+    
+    wxFlexGridSizer* flexGridSizer694 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer694->SetFlexibleDirection( wxBOTH );
+    flexGridSizer694->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer694->AddGrowableCol(1);
+    
+    boxSizer686->Add(flexGridSizer694, 1, wxALL|wxEXPAND|wxALIGN_TOP, WXC_FROM_DIP(5));
+    
+    m_staticText696 = new wxStaticText(this, wxID_ANY, _("Username:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    flexGridSizer694->Add(m_staticText696, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlName->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer694->Add(m_textCtrlName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_staticText700 = new wxStaticText(this, wxID_ANY, _("Email:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    flexGridSizer694->Add(m_staticText700, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_textCtrlEmail = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlEmail->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer694->Add(m_textCtrlEmail, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_stdBtnSizer688 = new wxStdDialogButtonSizer();
+    
+    boxSizer686->Add(m_stdBtnSizer688, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    
+    m_button690 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button690->SetDefault();
+    m_stdBtnSizer688->AddButton(m_button690);
+    
+    m_button692 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer688->AddButton(m_button692);
+    m_stdBtnSizer688->Realize();
+    
+    SetName(wxT("GitUserEmailDialogBase"));
+    SetSize(-1,-1);
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_button690->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitUserEmailDialogBase::OnOKUI), NULL, this);
+    
+}
+
+GitUserEmailDialogBase::~GitUserEmailDialogBase()
+{
+    m_button690->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitUserEmailDialogBase::OnOKUI), NULL, this);
+    
+}

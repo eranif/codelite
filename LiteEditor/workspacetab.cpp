@@ -92,20 +92,39 @@ WorkspaceTab::~WorkspaceTab()
     wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(WorkspaceTab::OnProjectSettingsUI), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_BUILD_CONFIG_CHANGED, &WorkspaceTab::OnConfigChanged, this);
+    m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnCollapseAll, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
+    m_toolbar580->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnCollapseAllUI, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
+    m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnLinkEditor, this, XRCID("ID_TOOL_LINK_EDITOR"));
+    m_toolbar580->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnLinkEditorUI, this, XRCID("ID_TOOL_LINK_EDITOR"));
+    m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnProjectSettings, this, XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
+    m_toolbar580->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnProjectSettingsUI, this,
+                         XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
+    m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnGoHome, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
+    m_toolbar580->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnGoHomeUI, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
 }
 
 void WorkspaceTab::CreateGUIControls()
 {
-    //// Construct the tree
     int index = m_simpleBook->FindPage(m_panelCxx);
     if(index != wxNOT_FOUND) {
         // set the C++ workspace view name to fit its workspace type
+        //// Construct the tree
         m_simpleBook->SetPageText(index, clCxxWorkspaceST::Get()->GetWorkspaceType());
     }
     m_view = new clWorkspaceView(m_simpleBook);
     m_view->AddPage(new DefaultWorkspacePage(m_simpleBook), _("Default"));
     m_view->SelectPage(_("Default"));
     m_view->SetDefaultPage(_("Default"));
+    BitmapLoader* bmps = clGetManager()->GetStdIcons();
+    m_toolbar580->AddTool(XRCID("ID_TOOL_COLLAPSE_ALL"), _("Collapse All"), bmps->LoadBitmap("fold"));
+    m_toolbar580->AddTool(XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"), _("Goto Active Project"), bmps->LoadBitmap("home"));
+    m_toolbar580->AddTool(XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"),
+                          _("Open selected project settings. If there is no project selected, open the parent project "
+                            "of the seleced item in the tree"),
+                          bmps->LoadBitmap("cog"));
+    m_toolbar580->AddSeparator();
+    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), bmps->LoadBitmap("link_editor"));
+    m_toolbar580->Realize();
 }
 
 void WorkspaceTab::FreezeThaw(bool freeze /*=true*/)
@@ -154,6 +173,15 @@ void WorkspaceTab::ConnectEvents()
                       wxCommandEventHandler(WorkspaceTab::OnConfigurationManager), NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,
                       wxUpdateUIEventHandler(WorkspaceTab::OnProjectSettingsUI), NULL, this);
+    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnCollapseAll, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
+    m_toolbar580->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnCollapseAllUI, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
+    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnLinkEditor, this, XRCID("ID_TOOL_LINK_EDITOR"));
+    m_toolbar580->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnLinkEditorUI, this, XRCID("ID_TOOL_LINK_EDITOR"));
+    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnProjectSettings, this, XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
+    m_toolbar580->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnProjectSettingsUI, this,
+                       XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
+    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnGoHome, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
+    m_toolbar580->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnGoHomeUI, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
 }
 
 void WorkspaceTab::OnLinkEditor(wxCommandEvent& e)

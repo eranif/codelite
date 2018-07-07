@@ -32,10 +32,8 @@
 #include <wx/commandlinkbutton.h>
 #include <wx/dirctrl.h>
 #include <wx/simplebook.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <wx/menu.h>
 #include <wx/toolbar.h>
+#include "clToolBar.h"
 #include "clConfigurationSelectionCtrl.h"
 #include <wx/treectrl.h>
 #include "fileview.h"
@@ -46,7 +44,6 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
-#include "clToolBar.h"
 #include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -207,32 +204,17 @@ public:
 
 class WorkspaceTabBase : public wxPanel
 {
-public:
-    enum {
-        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8001,
-        ID_TOOL_GOTO_ACTIVE_PROJECT = 8002,
-        ID_TOOL_LINK_EDITOR = 8003,
-        ID_TOOL_COLLAPSE_ALL = 8004,
-    };
 protected:
     wxSimplebook* m_simpleBook;
     wxPanel* m_panelCxx;
-    wxAuiToolBar* m_auibar;
+    clToolBar* m_toolbar580;
     clConfigurationSelectionCtrl* m_configChangeCtrl;
     FileViewTree* m_fileView;
 
 protected:
-    virtual void OnCollapseAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCollapseAllUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnGoHome(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnGoHomeUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnProjectSettings(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnProjectSettingsUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnLinkEditor(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnLinkEditorUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
+    clToolBar* GetToolbar580() { return m_toolbar580; }
     clConfigurationSelectionCtrl* GetConfigChangeCtrl() { return m_configChangeCtrl; }
     FileViewTree* GetFileView() { return m_fileView; }
     wxPanel* GetPanelCxx() { return m_panelCxx; }

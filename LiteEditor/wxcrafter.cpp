@@ -675,21 +675,10 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer505 = new wxBoxSizer(wxVERTICAL);
     m_panelCxx->SetSizer(boxSizer505);
     
-    m_auibar = new wxAuiToolBar(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar->SetToolBitmapSize(wxSize(16,16));
+    m_toolbar580 = new clToolBar(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxTB_NODIVIDER|wxTB_FLAT);
+    m_toolbar580->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer505->Add(m_auibar, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_auibar->AddTool(ID_TOOL_COLLAPSE_ALL, _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("16-fold")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
-    
-    m_auibar->AddTool(ID_TOOL_GOTO_ACTIVE_PROJECT, _("Goto Active Project"), wxXmlResource::Get()->LoadBitmap(wxT("16-home")), wxNullBitmap, wxITEM_NORMAL, _("Goto Active Project"), _("Goto Active Project"), NULL);
-    
-    m_auibar->AddTool(ID_TOOL_ACTIVE_PROJECT_SETTINGS, _("Project Settings"), wxXmlResource::Get()->LoadBitmap(wxT("16-cog")), wxNullBitmap, wxITEM_NORMAL, _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), NULL);
-    
-    m_auibar->AddStretchSpacer(1);
-    
-    m_auibar->AddTool(ID_TOOL_LINK_EDITOR, _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("16-link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
-    m_auibar->Realize();
+    boxSizer505->Add(m_toolbar580, 0, wxEXPAND, WXC_FROM_DIP(5));
     
     m_configChangeCtrl = new clConfigurationSelectionCtrl(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
@@ -704,29 +693,10 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    // Connect events
-    this->Connect(ID_TOOL_COLLAPSE_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnCollapseAll), NULL, this);
-    this->Connect(ID_TOOL_COLLAPSE_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnCollapseAllUI), NULL, this);
-    this->Connect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnGoHome), NULL, this);
-    this->Connect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnGoHomeUI), NULL, this);
-    this->Connect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnProjectSettings), NULL, this);
-    this->Connect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnProjectSettingsUI), NULL, this);
-    this->Connect(ID_TOOL_LINK_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnLinkEditor), NULL, this);
-    this->Connect(ID_TOOL_LINK_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnLinkEditorUI), NULL, this);
-    
 }
 
 WorkspaceTabBase::~WorkspaceTabBase()
 {
-    this->Disconnect(ID_TOOL_COLLAPSE_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnCollapseAll), NULL, this);
-    this->Disconnect(ID_TOOL_COLLAPSE_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnCollapseAllUI), NULL, this);
-    this->Disconnect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnGoHome), NULL, this);
-    this->Disconnect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnGoHomeUI), NULL, this);
-    this->Disconnect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnProjectSettings), NULL, this);
-    this->Disconnect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnProjectSettingsUI), NULL, this);
-    this->Disconnect(ID_TOOL_LINK_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnLinkEditor), NULL, this);
-    this->Disconnect(ID_TOOL_LINK_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnLinkEditorUI), NULL, this);
-    
 }
 
 EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)

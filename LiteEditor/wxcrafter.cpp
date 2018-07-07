@@ -682,7 +682,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     m_configChangeCtrl = new clConfigurationSelectionCtrl(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
-    boxSizer505->Add(m_configChangeCtrl, 0, wxBOTTOM|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer505->Add(m_configChangeCtrl, 0, wxTOP|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(2));
     
     m_fileView = new FileViewTree(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxTR_HAS_BUTTONS);
     

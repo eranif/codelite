@@ -52,7 +52,6 @@ static bool IsDark(const wxColour& color)
     return (b < 0.5);
 }
 
-
 #ifdef __WXGTK__
 static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
 {
@@ -85,21 +84,21 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
 static wxColour GetMenuBarBgColour()
 {
 #if defined(__WXGTK__) && !defined(__WXGTK3__)
-	static bool intitialized(false);
-	// initialise default colour
-	static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+    static bool intitialized(false);
+    // initialise default colour
+    static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
 
-	if(!intitialized) {
-		// try to get the background colour from a menu
-		GtkWidget* menuBar = gtk_menu_bar_new();
-		bgColour = GtkGetBgColourFromWidget(menuBar, bgColour);
-		intitialized = true;
-	}
-	return bgColour;
+    if(!intitialized) {
+        // try to get the background colour from a menu
+        GtkWidget* menuBar = gtk_menu_bar_new();
+        bgColour = GtkGetBgColourFromWidget(menuBar, bgColour);
+        intitialized = true;
+    }
+    return bgColour;
 #elif defined(__WXOSX__)
-	return wxColour("rgb(209, 209, 209)");
+    return wxColour("rgb(209, 209, 209)");
 #else
-	return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
 #endif
 }
 
@@ -114,9 +113,7 @@ static wxBitmap CreateGrayBitmap(const wxBitmap& bmp)
     img = img.ConvertToGreyscale();
 #ifdef __WXOSX__
     double scale = 1.0;
-    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) {
-        scale = 2.0;
-    }
+    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) { scale = 2.0; }
     wxBitmap greyBmp(img, -1, scale);
 #else
     wxBitmap greyBmp(img);
@@ -165,6 +162,9 @@ void clToolBarButtonBase::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
     wxColour startColour("rgb(231, 229, 231)");
     wxColour endColour("rgb(180, 180, 180)");
     dc.GradientFillLinear(rect, startColour, endColour, wxSOUTH);
+    endColour = endColour.ChangeLightness(70);
+    dc.SetPen(endColour);
+    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 #else
     dc.SetPen(GetMenuBarBgColour());
     dc.SetBrush(GetMenuBarBgColour());
@@ -186,13 +186,13 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     penColour = bgHighlightColour;
 #else
     wxColour bgHighlightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    if(IsDark(bgHighlightColour)) {
-        bgHighlightColour = bgHighlightColour.ChangeLightness(140);
-    }
+    if(IsDark(bgHighlightColour)) { bgHighlightColour = bgHighlightColour.ChangeLightness(140); }
 #endif
-    FillMenuBarBgColour(dc, rect);
+    // FillMenuBarBgColour(dc, rect);
 
     if(IsEnabled() && (IsHover() || IsPressed() || IsChecked())) {
+        wxRect highlightRect = rect;
+        highlightRect.Deflate(0, 1);
         penColour = bgHighlightColour;
         if(IsHover() || IsChecked()) {
             bgColour = bgHighlightColour;
@@ -201,7 +201,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         }
         dc.SetBrush(bgColour);
         dc.SetPen(penColour);
-        dc.DrawRectangle(rect);
+        dc.DrawRectangle(highlightRect);
         textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     } else if(!IsEnabled()) {
         // A disabled button
@@ -213,9 +213,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
 
     if(m_bmp.IsOk()) {
         wxBitmap bmp(m_bmp);
-        if(!IsEnabled()) {
-            bmp = MakeDisabledBitmap(m_bmp);
-        }
+        if(!IsEnabled()) { bmp = MakeDisabledBitmap(m_bmp); }
         yy = (rect.GetHeight() - bmp.GetScaledHeight()) / 2 + rect.GetY();
         dc.DrawBitmap(bmp, wxPoint(xx, yy));
         xx += bmp.GetScaledWidth();
@@ -236,8 +234,8 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         // draw a drop down menu
         m_dropDownArrowRect =
             wxRect(xx, rect.GetY(), (2 * CL_TOOL_BAR_X_MARGIN) + CL_TOOL_BAR_DROPDOWN_ARROW_SIZE, rect.GetHeight());
-        if(IsPressed() || IsHover()) {
-            dc.DrawLine(wxPoint(xx, rect.GetY()), wxPoint(xx, rect.GetY() + rect.GetHeight()));
+        if((IsPressed() || IsHover()) && IsEnabled()) {
+            dc.DrawLine(wxPoint(xx, rect.GetY() + 2), wxPoint(xx, rect.GetY() + rect.GetHeight() - 2));
         }
         xx += CL_TOOL_BAR_X_MARGIN;
 

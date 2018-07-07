@@ -14,7 +14,7 @@ wxSize clToolBarSeparator::CalculateSize(wxDC& dc) const
 
 void clToolBarSeparator::Render(wxDC& dc, const wxRect& rect)
 {
-    FillMenuBarBgColour(dc, rect);
+    //FillMenuBarBgColour(dc, rect);
     wxCoord xx = rect.GetX();
     xx += CL_TOOL_BAR_X_MARGIN;
 

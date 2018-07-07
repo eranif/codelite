@@ -437,7 +437,7 @@ wxColour DrawingUtils::GetPanelBgColour()
     static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     if(!intitialized) {
         // try to get the background colour from a menu
-        GtkWidget *label = gtk_label_new("Label");
+        GtkWidget* label = gtk_label_new("Label");
         bgColour = GtkGetBgColourFromWidget(label, bgColour);
         intitialized = true;
     }
@@ -524,12 +524,12 @@ wxColour DrawingUtils::GetMenuBarBgColour()
 
 void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
 {
-#ifdef __WXOSX__
+#if defined(__WXOSX__) || defined(__WXMSW__)
     wxColour startColour("rgb(231, 229, 231)");
     wxColour endColour("rgb(180, 180, 180)");
     dc.GradientFillLinear(rect, startColour, endColour, wxSOUTH);
-    endColour = endColour.ChangeLightness(70);
-    dc.SetPen(wxPen(endColour, 2));
+    endColour = endColour.ChangeLightness(80);
+    dc.SetPen(endColour);
     dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 #else
     dc.SetPen(GetMenuBarBgColour());
@@ -765,9 +765,7 @@ wxBitmap DrawingUtils::CreateGrayBitmap(const wxBitmap& bmp)
     img = img.ConvertToGreyscale();
 #ifdef __WXOSX__
     double scale = 1.0;
-    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) {
-        scale = 2.0;
-    }
+    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) { scale = 2.0; }
     wxBitmap greyBmp(img, -1, scale);
 #else
     wxBitmap greyBmp(img);
@@ -787,7 +785,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     dc.DrawRectangle(clientRect);
 
     // Now draw the border around this control
-    //clientRect.Deflate(2);
+    // clientRect.Deflate(2);
 
     wxColour baseColour = GetButtonBgColour();
     wxColour textColour = GetButtonTextColour();
@@ -933,7 +931,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     // Calculate the circle radius:
     wxRect innerRect(rect);
     wxColour colour = penColour;
-    
+
     // Default state: "normal"
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
 

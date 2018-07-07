@@ -23,20 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "clStatusBar.h"
+#include "clTabRenderer.h"
 #include "cl_aui_dock_art.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
+#include "drawingutils.h"
+#include "event_notifier.h"
+#include "globals.h"
 #include "imanager.h"
+#include <editor_config.h>
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
-#include <editor_config.h>
-#include "globals.h"
-#include "cl_command_event.h"
-#include "event_notifier.h"
-#include "drawingutils.h"
-#include "imanager.h"
-#include "clStatusBar.h"
 #include <wx/xrc/xmlres.h>
-#include "codelite_events.h"
-#include "clTabRenderer.h"
 
 // --------------------------------------------
 
@@ -99,8 +98,8 @@ clAuiDockArt::~clAuiDockArt()
 }
 
 #define AUI_BUTTON_SIZE 12
-void clAuiDockArt::DrawPaneButton(
-    wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect, wxAuiPaneInfo& pane)
+void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
+                                  wxAuiPaneInfo& pane)
 {
     int xx = _rect.GetTopLeft().x + ((_rect.GetWidth() - AUI_BUTTON_SIZE) / 2);
     int yy = _rect.GetTopLeft().y + ((_rect.GetHeight() - AUI_BUTTON_SIZE) / 2);
@@ -124,41 +123,26 @@ void clAuiDockArt::DrawPaneButton(
     }
 }
 
-void
-clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
+void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect,
+                               wxAuiPaneInfo& pane)
 {
     wxRect tmpRect(wxPoint(0, 0), rect.GetSize());
 
     // Hackishly prevent assertions on linux
     if(tmpRect.GetHeight() == 0) tmpRect.SetHeight(1);
     if(tmpRect.GetWidth() == 0) tmpRect.SetWidth(1);
-#ifdef __WXOSX__
+
+#if defined(__WXOSX__) || defined(__WXMSW__)
     tmpRect = rect;
     window->PrepareDC(dc);
 
     // Prepare the colours
-    wxColour bgColour, penColour, textColour;
+    wxColour textColour;
     textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
-
-    penColour = bgColour;
-    // Same as the notebook background colour?
-    penColour = m_useDarkColours ? m_darkBgColour : penColour;
-    bgColour = m_useDarkColours ? m_darkBgColour : bgColour;
-    textColour = m_useDarkColours ? "WHITE" : textColour;
-
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     dc.SetFont(f);
-    dc.SetPen(penColour);
-    dc.SetBrush(bgColour);
-    dc.DrawRectangle(tmpRect);
+    DrawingUtils::FillMenuBarBgColour(dc, tmpRect);
 
-    // Fill the caption to look like OSX caption
-    if(!m_useDarkColours) {
-        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-        dc.SetBrush(bgColour);
-        dc.DrawRectangle(tmpRect);
-    }
     int caption_offset = 0;
     if(pane.icon.IsOk()) {
         DrawIcon(dc, tmpRect, pane);
@@ -173,9 +157,9 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
     wxRect clip_rect = tmpRect;
     clip_rect.width -= 3; // text offset
     clip_rect.width -= 2; // button padding
-    if(pane.HasCloseButton()) clip_rect.width -= m_buttonSize;
-    if(pane.HasPinButton()) clip_rect.width -= m_buttonSize;
-    if(pane.HasMaximizeButton()) clip_rect.width -= m_buttonSize;
+    if(pane.HasCloseButton()) { clip_rect.width -= m_buttonSize; }
+    if(pane.HasPinButton()) { clip_rect.width -= m_buttonSize; }
+    if(pane.HasMaximizeButton()) { clip_rect.width -= m_buttonSize; }
 
     wxString draw_text = wxAuiChopText(dc, text, clip_rect.width);
     wxSize textSize = dc.GetTextExtent(draw_text);
@@ -209,7 +193,7 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
             textColour = DrawingUtils::GetPanelTextColour();
             bgColour = DrawingUtils::GetPanelBgColour().ChangeLightness(50);
         }
-        
+
         // Same as the notebook background colour
         penColour = bgColour;
         penColour = m_useDarkColours ? m_darkBgColour : penColour;
@@ -220,11 +204,12 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
         pDC->SetFont(f);
         pDC->SetPen(penColour);
         pDC->SetBrush(bgColour);
-        pDC->DrawRectangle(tmpRect);
+        DrawingUtils::FillMenuBarBgColour(*pDC, tmpRect);
+        // pDC->DrawRectangle(tmpRect);
 
-        pDC->SetPen(penColour);
-        pDC->SetBrush(*wxTRANSPARENT_BRUSH);
-        pDC->DrawRectangle(tmpRect);
+        // pDC->SetPen(penColour);
+        // pDC->SetBrush(*wxTRANSPARENT_BRUSH);
+        // pDC->DrawRectangle(tmpRect);
 
         int caption_offset = 0;
         if(pane.icon.IsOk()) {

@@ -528,7 +528,7 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
     wxColour startColour("rgb(231, 229, 231)");
     wxColour endColour("rgb(180, 180, 180)");
     dc.GradientFillLinear(rect, startColour, endColour, wxSOUTH);
-    endColour = endColour.ChangeLightness(80);
+    endColour = endColour.ChangeLightness(90);
     dc.SetPen(endColour);
     dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 #else

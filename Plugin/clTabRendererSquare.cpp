@@ -192,5 +192,6 @@ void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
             }
         }
     }
+    ClearActiveTabExtraLine(activeTab, dc, colours, style);
 }
 #endif

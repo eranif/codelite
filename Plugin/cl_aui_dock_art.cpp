@@ -142,8 +142,6 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     window->PrepareDC(dc);
 
     // Prepare the colours
-    wxColour textColour;
-    textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     dc.SetFont(f);
 
@@ -151,7 +149,6 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         dc.SetPen(m_captionColour);
         dc.SetBrush(m_captionColour);
         dc.DrawRectangle(tmpRect);
-        textColour = m_captionTextColour
     } else {
         DrawingUtils::FillMenuBarBgColour(dc, tmpRect);
     }
@@ -163,7 +160,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     } else {
         caption_offset = 3;
     }
-    dc.SetTextForeground(textColour);
+    dc.SetTextForeground(m_captionTextColour);
     wxCoord w, h;
     dc.GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
 
@@ -177,7 +174,6 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     wxString draw_text = wxAuiChopText(dc, text, clip_rect.width);
     wxSize textSize = dc.GetTextExtent(draw_text);
 
-    dc.SetTextForeground(textColour);
     dc.DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
 #else
     wxBitmap bmp(tmpRect.GetSize());

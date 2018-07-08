@@ -36,6 +36,7 @@
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
+#include "cl_config.h"
 
 // --------------------------------------------
 
@@ -71,6 +72,8 @@ clAuiDockArt::clAuiDockArt(IManager* manager)
 {
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
     m_useDarkColours = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
+    m_markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+    
     m_darkBgColour = wxColour("rgb(80,80,80)");
 #ifdef __WXOSX__
     m_notebookTabAreaDarkBgColour = *wxBLACK;
@@ -132,7 +135,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     if(tmpRect.GetHeight() == 0) tmpRect.SetHeight(1);
     if(tmpRect.GetWidth() == 0) tmpRect.SetWidth(1);
 
-#if defined(__WXOSX__) || defined(__WXMSW__)
+#if defined(__WXOSX__)
     tmpRect = rect;
     window->PrepareDC(dc);
 
@@ -203,9 +206,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         wxFont f = DrawingUtils::GetDefaultGuiFont();
         pDC->SetFont(f);
         pDC->SetPen(penColour);
-        pDC->SetBrush(bgColour);
-        DrawingUtils::FillMenuBarBgColour(*pDC, tmpRect);
-        // pDC->DrawRectangle(tmpRect);
+        pDC->SetBrush(m_markerColour);
+        pDC->DrawRectangle(tmpRect);
 
         // pDC->SetPen(penColour);
         // pDC->SetBrush(*wxTRANSPARENT_BRUSH);
@@ -279,7 +281,8 @@ void clAuiDockArt::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_useDarkColours = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
-
+    m_markerColour = clConfig::Get().Read("ActiveTabMarkerColour", m_markerColour);
+    
     // update the bitmaps
     if(m_useDarkColours) {
         m_dockCloseBmp = wxXmlResource::Get()->LoadBitmap("aui-close-white");

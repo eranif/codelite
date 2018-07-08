@@ -46,7 +46,8 @@ class WXDLLIMPEXP_SDK clAuiDockArt : public wxEvtHandler, public wxAuiDefaultDoc
     bool m_useDarkColours;
     wxColour m_darkBgColour;
     wxColour m_notebookTabAreaDarkBgColour;
-
+    wxColour m_markerColour;
+    
 public:
     void OnSettingsChanged(wxCommandEvent& event);
 

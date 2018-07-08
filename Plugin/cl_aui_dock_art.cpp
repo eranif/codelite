@@ -144,8 +144,16 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     dc.SetFont(f);
-    DrawingUtils::FillMenuBarBgColour(dc, tmpRect);
-
+    
+    if(clConfig::Get().Read("UseCustomCaptionsColour", false)) {
+        dc.SetPen(DrawingUtils::GetCaptionColour());
+        dc.SetBrush(DrawingUtils::GetCaptionColour());
+        dc.DrawRectangle(tmpRect);
+        textColour = DrawingUtils::GetCaptionTextColour();
+    } else {
+        DrawingUtils::FillMenuBarBgColour(dc, tmpRect);
+    }
+    
     int caption_offset = 0;
     if(pane.icon.IsOk()) {
         DrawIcon(dc, tmpRect, pane);

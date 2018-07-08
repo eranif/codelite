@@ -157,6 +157,11 @@ public:
      * @brief get the caption colour
      */
     static wxColour GetCaptionColour();
+    
+    /**
+     * @brief return the colour suitable for drawing on the caption
+     */
+    static wxColour GetCaptionTextColour();
 
     /**
      * @brief stipple brush used for painting on various wxPanels

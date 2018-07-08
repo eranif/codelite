@@ -169,6 +169,22 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     bSizer2->Add(staticBoxSizer69, 0, wxALL|wxEXPAND, WXC_FROM_DIP(10));
     
+    wxFlexGridSizer* flexGridSizer82 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer82->SetFlexibleDirection( wxBOTH );
+    flexGridSizer82->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer82->AddGrowableCol(1);
+    
+    staticBoxSizer69->Add(flexGridSizer82, 1, wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_checkBoxCustomCaptionColour = new wxCheckBox(m_panel12, wxID_ANY, _("Use custom caption colour"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
+    m_checkBoxCustomCaptionColour->SetValue(false);
+    
+    flexGridSizer82->Add(m_checkBoxCustomCaptionColour, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_cpCaptionColour = new wxColourPickerCtrl(m_panel12, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), wxCLRP_DEFAULT_STYLE);
+    
+    flexGridSizer82->Add(m_cpCaptionColour, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
     m_checkBoxHideCaptions = new wxCheckBox(m_panel12, wxID_ANY, _("Hide Docking Windows captions"), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1,-1)), 0);
     m_checkBoxHideCaptions->SetValue(false);
     
@@ -336,6 +352,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
          GetSizer()->Fit(this);
     }
     // Connect events
+    m_cpCaptionColour->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUseCustomCaptionColourUI), NULL, this);
     m_checkBoxEnsureCaptionsVisible->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnEnsureCaptionsVisibleUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfBuild->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfSearch->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);
@@ -356,6 +373,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
 
 EditorSettingsDockingWindowsBase::~EditorSettingsDockingWindowsBase()
 {
+    m_cpCaptionColour->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUseCustomCaptionColourUI), NULL, this);
     m_checkBoxEnsureCaptionsVisible->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnEnsureCaptionsVisibleUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfBuild->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfSearch->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);

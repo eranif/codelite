@@ -72,7 +72,7 @@ clAuiDockArt::clAuiDockArt(IManager* manager)
 {
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
     m_useDarkColours = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
-    m_markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+    m_markerColour = DrawingUtils::GetCaptionColour();
     
     m_darkBgColour = wxColour("rgb(80,80,80)");
 #ifdef __WXOSX__
@@ -191,9 +191,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         wxColour bgColour, penColour, textColour;
         if(!DrawingUtils::IsDark(DrawingUtils::GetPanelBgColour())) {
             bgColour = DrawingUtils::GetPanelBgColour().ChangeLightness(90);
-            textColour = DrawingUtils::GetPanelTextColour();
         } else {
-            textColour = DrawingUtils::GetPanelTextColour();
             bgColour = DrawingUtils::GetPanelBgColour().ChangeLightness(50);
         }
 
@@ -201,17 +199,13 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         penColour = bgColour;
         penColour = m_useDarkColours ? m_darkBgColour : penColour;
         bgColour = m_useDarkColours ? m_darkBgColour : bgColour;
-        textColour = m_useDarkColours ? "WHITE" : textColour;
+        textColour = DrawingUtils::GetCaptionTextColour();
 
         wxFont f = DrawingUtils::GetDefaultGuiFont();
         pDC->SetFont(f);
         pDC->SetPen(penColour);
         pDC->SetBrush(m_markerColour);
         pDC->DrawRectangle(tmpRect);
-
-        // pDC->SetPen(penColour);
-        // pDC->SetBrush(*wxTRANSPARENT_BRUSH);
-        // pDC->DrawRectangle(tmpRect);
 
         int caption_offset = 0;
         if(pane.icon.IsOk()) {
@@ -220,8 +214,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         } else {
             caption_offset = 3;
         }
-        pDC->SetTextForeground(textColour);
         wxCoord w, h;
+        pDC->SetFont(f);
         pDC->GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
 
         wxRect clip_rect = tmpRect;
@@ -281,7 +275,7 @@ void clAuiDockArt::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_useDarkColours = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
-    m_markerColour = clConfig::Get().Read("ActiveTabMarkerColour", m_markerColour);
+    m_markerColour = DrawingUtils::GetCaptionColour();
     
     // update the bitmaps
     if(m_useDarkColours) {

@@ -64,6 +64,8 @@ protected:
     wxCheckBox* m_checkBoxEnableTabSwitchingKey;
     wxPanel* m_panel12;
     wxRadioBox* m_radioBoxHint;
+    wxCheckBox* m_checkBoxCustomCaptionColour;
+    wxColourPickerCtrl* m_cpCaptionColour;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
     wxCheckBox* m_checkBoxNavBarTop;
@@ -91,6 +93,7 @@ protected:
     wxCheckBox* m_checkBoxShowDebugOnRun;
 
 protected:
+    virtual void OnUseCustomCaptionColourUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnEnsureCaptionsVisibleUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
 
@@ -114,6 +117,8 @@ public:
     wxCheckBox* GetCheckBoxEnableTabSwitchingKey() { return m_checkBoxEnableTabSwitchingKey; }
     wxPanel* GetPanelTabs() { return m_panelTabs; }
     wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
+    wxCheckBox* GetCheckBoxCustomCaptionColour() { return m_checkBoxCustomCaptionColour; }
+    wxColourPickerCtrl* GetCpCaptionColour() { return m_cpCaptionColour; }
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
     wxCheckBox* GetCheckBoxNavBarTop() { return m_checkBoxNavBarTop; }

@@ -28,6 +28,7 @@
 #include "editorsettingsdockingwidows.h"
 #include "frame.h"
 #include "cl_config.h"
+#include "drawingutils.h"
 
 EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     : EditorSettingsDockingWindowsBase(parent)
@@ -59,7 +60,9 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxNavBarTop->SetValue(options->IsNavBarTop());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
     m_checkBoxNavBarSortDropdown->SetValue(options->IsSortNavBarDropdown());
-
+    m_checkBoxCustomCaptionColour->SetValue(clConfig::Get().Read("UseCustomCaptionsColour", false));
+    m_cpCaptionColour->SetColour(DrawingUtils::GetCaptionColour());
+    
     // DEFAULT 0
     // MINIMAL 1
     // TRAPEZOID 2
@@ -163,6 +166,9 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
 void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
 {
     clConfig::Get().Write("ActiveTabMarkerColour", m_colourPickerMarker->GetColour());
+    clConfig::Get().Write("UseCustomCaptionsColour", m_checkBoxCustomCaptionColour->IsChecked());
+    clConfig::Get().Write("CustomCaptionColour", m_cpCaptionColour->GetColour());
+    
     options->SetHideOutpuPaneOnUserClick(m_checkBoxHideOutputPaneOnClick->IsChecked());
     options->SetHideOutputPaneNotIfBuild(m_checkBoxHideOutputPaneNotIfBuild->IsChecked());
     options->SetHideOutputPaneNotIfSearch(m_checkBoxHideOutputPaneNotIfSearch->IsChecked());
@@ -286,4 +292,9 @@ void EditorSettingsDockingWindows::OnEnsureCaptionsVisibleUI(wxUpdateUIEvent& ev
     event.Enable(false);
     event.Check(false);
 #endif
+}
+
+void EditorSettingsDockingWindows::OnUseCustomCaptionColourUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_checkBoxCustomCaptionColour->IsChecked());
 }

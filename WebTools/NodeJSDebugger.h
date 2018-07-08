@@ -82,6 +82,7 @@ protected:
 
     // Process event
     void OnNodeTerminated(clProcessEvent& event);
+    void OnNodeOutput(clProcessEvent& event);
     void OnHighlightLine(clDebugEvent& event);
     void OnEvalExpression(clDebugEvent& event);
 

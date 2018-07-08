@@ -58,6 +58,7 @@ NodeJSDebugger::NodeJSDebugger()
 
     Bind(wxEVT_TOOLTIP_DESTROY, &NodeJSDebugger::OnDestroyTip, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSDebugger::OnNodeTerminated, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSDebugger::OnNodeOutput, this);
 }
 
 NodeJSDebugger::~NodeJSDebugger()
@@ -84,6 +85,7 @@ NodeJSDebugger::~NodeJSDebugger()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSDebugger::OnEditorChanged, this);
 
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSDebugger::OnNodeTerminated, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSDebugger::OnNodeOutput, this);
     Unbind(wxEVT_TOOLTIP_DESTROY, &NodeJSDebugger::OnDestroyTip, this);
 
     m_bptManager.Save();
@@ -641,7 +643,7 @@ void NodeJSDebugger::StartDebugger(const wxString& command, const wxString& work
         ::wxMessageBox(_("An instance of NodeJS is already running"));
         return;
     }
-    m_nodeProcess = ::CreateAsyncProcess(this, command, IProcessCreateConsole | IProcessNoRedirect);
+    m_nodeProcess = ::CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
     if(!m_nodeProcess) {
         ::wxMessageBox(wxString() << _("Failed to launch NodeJS: ") << command);
         DoCleanup();
@@ -669,4 +671,12 @@ void NodeJSDebugger::DoCleanup()
 
     // Clear the debugger markers
     ClearDebuggerMarker();
+}
+
+void NodeJSDebugger::OnNodeOutput(clProcessEvent& event)
+{
+    clDEBUG1() << "[Node debugger]" << event.GetOutput();
+    clDebugEvent eventLog(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG);
+    eventLog.SetString(event.GetOutput());
+    EventNotifier::Get()->AddPendingEvent(eventLog);
 }

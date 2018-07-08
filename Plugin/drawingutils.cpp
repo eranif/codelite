@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "ColoursAndFontsManager.h"
+#include "cl_config.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "globals.h"
@@ -38,7 +39,6 @@
 #include <wx/panel.h>
 #include <wx/renderer.h>
 #include <wx/stc/stc.h>
-#include "cl_config.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
@@ -678,31 +678,14 @@ bool DrawingUtils::DrawStippleBackground(const wxRect& rect, wxDC& dc)
 wxColour DrawingUtils::GetCaptionColour()
 {
     wxColour defaultCaptionColour;
-#ifdef __WXMSW__
-    wxRegKey re(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\DWM");
-
-    unsigned long colVal = -1;
-    if(re.Exists() && re.QueryValue("ColorizationColor", (long*)&colVal)) {
-        // Colour format is: 0xAARRGGBB
-        int r = (colVal >> 16) & 0xff;
-        int g = (colVal >> 8) & 0xff;
-        int b = colVal & 0xff;
-        defaultCaptionColour = wxColour(r, g, b);
-    } else {
-        defaultCaptionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-    }
-#else
 #ifdef __WXGTK3__
     defaultCaptionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
 #else
     defaultCaptionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 #endif
-#endif
     wxColour captionColour = defaultCaptionColour;
     bool useCustomCaptionColour = clConfig::Get().Read("UseCustomCaptionsColour", false);
-    if(useCustomCaptionColour) {
-        captionColour = clConfig::Get().Read("CustomCaptionColour", captionColour);
-    }
+    if(useCustomCaptionColour) { captionColour = clConfig::Get().Read("CustomCaptionColour", captionColour); }
     return captionColour;
 }
 

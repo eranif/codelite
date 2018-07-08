@@ -709,13 +709,13 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     , m_highlightWord(false)
     , m_workspaceRetagIsRequired(false)
     , m_bookmarksDropDownMenu(NULL)
+    , m_noSavePerspectivePrompt(false)
     , m_singleInstanceThread(NULL)
 #ifdef __WXGTK__
     , m_isWaylandSession(false)
 #endif
     , m_webUpdate(NULL)
     , m_toolbar(NULL)
-    , m_noSavePerspectivePrompt(false)
 {
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the

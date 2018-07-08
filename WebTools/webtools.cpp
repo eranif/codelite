@@ -13,6 +13,7 @@
 #include "codelite_events.h"
 #include "ctags_manager.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
 #include "globals.h"
@@ -395,6 +396,8 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
 void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
 {
     event.Skip();
+
+    clDEBUG1() << "Saving NodeJS debugger perspective";
 
     wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs.layout");
     fnNodeJSLayout.AppendDir("config");

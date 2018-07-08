@@ -64,7 +64,8 @@ public:
 
 protected:
     virtual void OnSftpSettings(wxCommandEvent& event);
-    virtual void OnOpenTerminal(wxAuiToolBarEvent& event);
+    virtual void OnOpenTerminal(wxCommandEvent& event);
+    virtual void OnOpenTerminalMenu(wxCommandEvent& event);
     virtual void OnOpenTerminalUI(wxUpdateUIEvent& event);
     virtual void OnConnection(wxCommandEvent& event);
     virtual void OnSelectionChanged(wxTreeEvent& event);
@@ -72,7 +73,8 @@ protected:
     virtual void OnChoiceAccountUI(wxUpdateUIEvent& event);
     virtual void OnGotoLocation(wxCommandEvent& event);
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event);
-    virtual void OnAddBookmark(wxAuiToolBarEvent& event);
+    virtual void OnAddBookmark(wxCommandEvent& event);
+    virtual void OnAddBookmarkMenu(wxCommandEvent& event);
     virtual void OnAddBookmarkUI(wxUpdateUIEvent& event);
     virtual void OnContextMenu(wxContextMenuEvent& event);
     virtual void OnDisconnect(wxCommandEvent& event);

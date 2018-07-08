@@ -81,12 +81,7 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
     m_vertSizer = new wxBoxSizer(wxVERTICAL);
     m_vertSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
     m_vertSizer->Add(m_inputSizer, 0, wxEXPAND | wxALL, 1);
-
-#ifdef __WXMAC__
-    mainSizer->Insert(0, m_vertSizer, 1, wxEXPAND | wxALL, 1);
-#else
     mainSizer->Add(m_vertSizer, 1, wxEXPAND | wxALL, 1);
-#endif
 
     mainSizer->Layout();
     InitStyle(m_sci);
@@ -132,7 +127,6 @@ void ShellTab::OnProcError(wxCommandEvent& e)
         return;
     }
     AppendText(e.GetString());
-    // TODO: mark line
 }
 
 void ShellTab::OnProcEnded(wxCommandEvent& e)
@@ -216,8 +210,8 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
                   _("Enable Log"), wxITEM_CHECK);
     m_tb->Realize();
 
-    m_tb->Bind(wxEVT_MENU, &DebugTab::OnEnableDbgLog, this);
-    m_tb->Bind(wxEVT_UPDATE_UI, &DebugTab::OnEnableDbgLogUI, this);
+    m_tb->Bind(wxEVT_MENU, &DebugTab::OnEnableDbgLog, this, XRCID("debugger_log"));
+    m_tb->Bind(wxEVT_UPDATE_UI, &DebugTab::OnEnableDbgLogUI, this, XRCID("debugger_log"));
 
     m_autoAppear = false;
     Connect(XRCID("hold_pane_open"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebugTab::OnHoldOpenUpdateUI), NULL, this);

@@ -261,35 +261,10 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar->SetToolBitmapSize(wxSize(16,16));
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer16->Add(m_auibar, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_auibar->AddTool(ID_OPEN_ACCOUNT_MANAGER, _("Open account manager..."), wxXmlResource::Get()->LoadBitmap(wxT("16-folder-users")), wxNullBitmap, wxITEM_NORMAL, _("Open account manager..."), _("Open account manager..."), NULL);
-    
-    m_auibar->AddTool(ID_SFTP_CONNECT, _("Disconnected. Click to connect"), wxXmlResource::Get()->LoadBitmap(wxT("16-disconnected")), wxNullBitmap, wxITEM_NORMAL, _("Disconnected. Click to connect"), _("Disconnected. Click to connect"), NULL);
-    
-    m_auibar->AddTool(ID_ADD_BOOKMARK, _("Add Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("16-bookmark")), wxNullBitmap, wxITEM_NORMAL, _("Add Bookmark"), _("Select a folder from the tree view and add it as a bookmark"), NULL);
-    wxAuiToolBarItem* m_toolbarItemAddBookmark = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
-    if (m_toolbarItemAddBookmark) {
-        m_toolbarItemAddBookmark->SetHasDropDown(true);
-        m_menu115 = new wxMenu;
-        
-        m_dropdownMenus.insert(std::make_pair( m_toolbarItemAddBookmark->GetId(), m_menu115) );
-    }
-    
-    m_auibar->AddTool(ID_SSH_OPEN_TERMINAL, _("Open Terminal"), wxXmlResource::Get()->LoadBitmap(wxT("16-console")), wxNullBitmap, wxITEM_NORMAL, _("Open Terminal"), _("Open Terminal"), NULL);
-    wxAuiToolBarItem* m_toolbarItemTerminal = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
-    if (m_toolbarItemTerminal) {
-        m_toolbarItemTerminal->SetHasDropDown(true);
-        m_menu96 = new wxMenu;
-        m_menuItemCustomize = new wxMenuItem(m_menu96, ID_SFTP_CUSTOMIZE, _("SFTP Settings..."), _("SFTP Settings..."), wxITEM_NORMAL);
-        m_menu96->Append(m_menuItemCustomize);
-        
-        m_dropdownMenus.insert(std::make_pair( m_toolbarItemTerminal->GetId(), m_menu96) );
-    }
-    m_auibar->Realize();
+    boxSizer16->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
     
     wxFlexGridSizer* flexGridSizer43 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer43->SetFlexibleDirection( wxBOTH );
@@ -320,13 +295,6 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
          GetSizer()->Fit(this);
     }
     // Connect events
-    this->Connect(ID_OPEN_ACCOUNT_MANAGER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnOpenAccountManager), NULL, this);
-    this->Connect(ID_SFTP_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnConnection), NULL, this);
-    this->Connect(ID_ADD_BOOKMARK, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnAddBookmark), NULL, this);
-    this->Connect(ID_ADD_BOOKMARK, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnAddBookmarkUI), NULL, this);
-    this->Connect(ID_SSH_OPEN_TERMINAL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnOpenTerminalUI), NULL, this);
-    this->Connect(ID_SSH_OPEN_TERMINAL, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnOpenTerminal), NULL, this);
-    this->Connect(m_menuItemCustomize->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeViewBase::OnSftpSettings), NULL, this);
     m_staticText49->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_textCtrlQuickJump->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation), NULL, this);
     m_textCtrlQuickJump->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
@@ -334,18 +302,10 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
     m_treeCtrl->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
     
-    this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::ShowAuiToolMenu), NULL, this);
 }
 
 SFTPTreeViewBase::~SFTPTreeViewBase()
 {
-    this->Disconnect(ID_OPEN_ACCOUNT_MANAGER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnOpenAccountManager), NULL, this);
-    this->Disconnect(ID_SFTP_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnConnection), NULL, this);
-    this->Disconnect(ID_ADD_BOOKMARK, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnAddBookmark), NULL, this);
-    this->Disconnect(ID_ADD_BOOKMARK, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnAddBookmarkUI), NULL, this);
-    this->Disconnect(ID_SSH_OPEN_TERMINAL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnOpenTerminalUI), NULL, this);
-    this->Disconnect(ID_SSH_OPEN_TERMINAL, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnOpenTerminal), NULL, this);
-    this->Disconnect(m_menuItemCustomize->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeViewBase::OnSftpSettings), NULL, this);
     m_staticText49->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_textCtrlQuickJump->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation), NULL, this);
     m_textCtrlQuickJump->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
@@ -353,35 +313,8 @@ SFTPTreeViewBase::~SFTPTreeViewBase()
     m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
     m_treeCtrl->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
     
-    std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
-    for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
-        wxDELETE( menuIter->second );
-    }
-    m_dropdownMenus.clear();
-
-    this->Disconnect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::ShowAuiToolMenu), NULL, this);
 }
 
-
-void SFTPTreeViewBase::ShowAuiToolMenu(wxAuiToolBarEvent& event)
-{
-    event.Skip();
-    if (event.IsDropDownClicked()) {
-        wxAuiToolBar* toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
-        if (toolbar) {
-            wxAuiToolBarItem* item = toolbar->FindTool(event.GetId());
-            if (item) {
-                std::map<int, wxMenu*>::iterator iter = m_dropdownMenus.find(item->GetId());
-                if (iter != m_dropdownMenus.end()) {
-                    event.Skip(false);
-                    wxPoint pt = event.GetItemRect().GetBottomLeft();
-                    pt.y++;
-                    toolbar->PopupMenu(iter->second, pt);
-                }
-            }
-        }
-    }
-}
 SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {

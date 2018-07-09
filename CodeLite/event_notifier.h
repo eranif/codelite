@@ -27,7 +27,9 @@
 #define EVENTNOTIFIER_H
 
 #include <wx/event.h>
+#if wxUSE_GUI
 #include <wx/frame.h>
+#endif
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL EventNotifier : public wxEvtHandler
@@ -52,8 +54,9 @@ public:
     bool IsEventsDiabled() const {
         return _eventsDiabled;
     }
-
+#if wxUSE_GUI
     wxFrame* TopFrame();
+#endif
     bool SendCommandEvent(int eventId, void *clientData);
     void PostCommandEvent(int eventId, void *clientData);
     bool SendCommandEvent(int eventId, void *clientData, const wxString &s);

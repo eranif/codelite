@@ -55,16 +55,18 @@
 #include <wx/app.h>
 #include <wx/busyinfo.h>
 #include <wx/file.h>
+#if wxUSE_GUI
 #include <wx/frame.h>
-#include <wx/log.h>
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/sizer.h>
+#endif
+#include <wx/log.h>
 #include <wx/stdpaths.h>
 #include <wx/string.h>
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
-#include <wx/xrc/xmlres.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -75,9 +77,8 @@
 #define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
 #endif
 
-const wxEventType wxEVT_UPDATE_FILETREE_EVENT = XRCID("update_file_tree_event");
-const wxEventType wxEVT_TAGS_DB_UPGRADE = XRCID("tags_db_upgraded");
-const wxEventType wxEVT_TAGS_DB_UPGRADE_INTER = XRCID("tags_db_upgraded_now");
+wxDEFINE_EVENT(wxEVT_TAGS_DB_UPGRADE, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_TAGS_DB_UPGRADE_INTER, wxCommandEvent);
 
 //---------------------------------------------------------------------------
 // Misc
@@ -211,11 +212,12 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
             m_evtHandler->ProcessEvent(event);
         }
     }
-
+#if wxUSE_GUI
     if(retagIsRequired && m_evtHandler) {
         wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
         m_evtHandler->AddPendingEvent(e);
     }
+#endif
 }
 
 TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<CommentPtr>* comments)
@@ -1260,11 +1262,13 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
 
     // If there are no files to tag - send the 'end' event
     if(strFiles.IsEmpty()) {
+#if wxUSE_GUI
         wxFrame* frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
         if(frame) {
             wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
             frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
         }
+#endif        
         return;
     }
 
@@ -1273,11 +1277,13 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
 
     // If there are no files to tag - send the 'end' event
     if(strFiles.IsEmpty()) {
+#if wxUSE_GUI
         wxFrame* frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
         if(frame) {
             wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
             frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
         }
+#endif
         return;
     }
 

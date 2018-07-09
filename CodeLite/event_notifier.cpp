@@ -76,7 +76,9 @@ void EventNotifier::PostCommandEvent(int eventId, void* clientData)
     AddPendingEvent(evt);
 }
 
+#if wxUSE_GUI
 wxFrame* EventNotifier::TopFrame() { return static_cast<wxFrame*>(wxTheApp->GetTopWindow()); }
+#endif
 
 void EventNotifier::PostFileSavedEvent(const wxString& filename)
 {

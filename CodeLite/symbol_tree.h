@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #ifndef CODELITE_SYMBOL_TREE_H
 #define CODELITE_SYMBOL_TREE_H
-
+#if wxUSE_GUI
 #include "ctags_manager.h"
 #include "parse_thread.h"
 #include "wx/filename.h"
@@ -223,4 +223,5 @@ protected:
      */
     void UpdateGuiItem(TagEntry& data, const wxString& key);
 };
+#endif // LIBCODELITE_BASE
 #endif // CODELITE_SYMBOL_TREE_H

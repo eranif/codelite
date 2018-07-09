@@ -72,9 +72,8 @@ class IProcess;
 #define USE_TAGS_SQLITE3 1
 
 // send this event whenever the a tags file needs to be updated
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_UPDATE_FILETREE_EVENT;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_TAGS_DB_UPGRADE;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_TAGS_DB_UPGRADE_INTER;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TAGS_DB_UPGRADE, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TAGS_DB_UPGRADE_INTER, wxCommandEvent);
 
 struct DoxygenComment {
     wxString name;

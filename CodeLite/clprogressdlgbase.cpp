@@ -31,7 +31,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "clprogressdlgbase.h"
-
+#if wxUSE_GUI
 ///////////////////////////////////////////////////////////////////////////
 
 clProgressDlgBase::clProgressDlgBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -59,3 +59,4 @@ clProgressDlgBase::clProgressDlgBase( wxWindow* parent, wxWindowID id, const wxS
 clProgressDlgBase::~clProgressDlgBase()
 {
 }
+#endif // #if wxUSE_GUI

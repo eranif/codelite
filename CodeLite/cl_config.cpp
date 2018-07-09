@@ -474,7 +474,7 @@ wxArrayString clConfig::DoGetRecentItems(const wxString& propName) const
     }
     return recentItems;
 }
-
+#if wxUSE_GUI
 wxFont clConfig::Read(const wxString& name, const wxFont& defaultValue)
 {
     JSONElement general = GetGeneralSetting();
@@ -524,3 +524,4 @@ void clConfig::Write(const wxString& name, const wxColour& value)
     Write(name, strValue);
     Save();
 }
+#endif

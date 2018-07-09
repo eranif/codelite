@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
 #include "fileutils.h"
-
+#if wxUSE_GUI
 #ifdef __VISUALC__
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -477,3 +477,4 @@ bool SymbolTree::Matches(const wxTreeItemId& item, const wxString& patter)
     }
     return false;
 }
+#endif // LIBCODELITE_BASE

@@ -61,7 +61,7 @@ struct RefactorSource {
 };
 
 //-----------------------------------------------------------------------------------
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEvent);
 
 class WXDLLIMPEXP_CL RefactoringEngine
 {
@@ -74,7 +74,10 @@ public:
     static RefactoringEngine* Instance();
 
 protected:
+#if wxUSE_GUI
     clProgressDlg* CreateProgressDialog(const wxString& title, int maxValue);
+#endif
+
     void DoFindReferences(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files,
                           bool onlyDefiniteMatches);
 

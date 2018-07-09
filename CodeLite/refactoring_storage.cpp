@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "refactoring_storage.h"
+#include "cl_command_event.h"
 #include "event_notifier.h"
 #include <wx/filename.h>
 #include <wx/log.h>
@@ -137,29 +138,18 @@ RefactoringStorage::RefactoringStorage()
     , m_thread(NULL)
 {
     if(wxThread::IsMain()) {
-        EventNotifier::Get()->Connect(
-            wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(RefactoringStorage::OnWorkspaceLoaded), NULL, this);
-        EventNotifier::Get()->Connect(
-            wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(RefactoringStorage::OnWorkspaceClosed), NULL, this);
-        EventNotifier::Get()->Connect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING,
-                                      wxCommandEventHandler(RefactoringStorage::OnThreadStatus),
-                                      NULL,
-                                      this);
+        EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &RefactoringStorage::OnWorkspaceLoaded, this);
+        EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &RefactoringStorage::OnWorkspaceClosed, this);
+        EventNotifier::Get()->Bind(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING,&RefactoringStorage::OnThreadStatus, this);
     }
 }
 
 RefactoringStorage::~RefactoringStorage()
 {
     if(wxThread::IsMain()) {
-        EventNotifier::Get()->Disconnect(
-            wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(RefactoringStorage::OnWorkspaceLoaded), NULL, this);
-        EventNotifier::Get()->Disconnect(
-            wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(RefactoringStorage::OnWorkspaceClosed), NULL, this);
-        EventNotifier::Get()->Disconnect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING,
-                                         wxCommandEventHandler(RefactoringStorage::OnThreadStatus),
-                                         NULL,
-                                         this);
-
+        EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &RefactoringStorage::OnWorkspaceLoaded, this);
+        EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &RefactoringStorage::OnWorkspaceClosed, this);
+        EventNotifier::Get()->Unbind(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING,&RefactoringStorage::OnThreadStatus, this);
         JoinWorkerThread();
     }
 }

@@ -41,6 +41,99 @@ enum {
     kEventImportingFolder = 0x00000001,
 };
 
+#if !wxUSE_GUI
+// To allow building libcodelite without UI we need these 2 event types (wxCommandEvent and wxNotifyEvent)
+class WXDLLIMPEXP_CL wxCommandEvent : public wxEvent, public wxEventBasicPayloadMixin
+{
+public:
+    wxCommandEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
+        : wxEvent(winid, commandType)
+    {
+        m_clientData = NULL;
+        m_clientObject = NULL;
+        m_isCommandEvent = true;
+
+        // the command events are propagated upwards by default
+        m_propagationLevel = wxEVENT_PROPAGATE_MAX;
+    }
+
+    wxCommandEvent(const wxCommandEvent& event)
+        : wxEvent(event)
+        , wxEventBasicPayloadMixin(event)
+        , m_clientData(event.m_clientData)
+        , m_clientObject(event.m_clientObject)
+    {
+        // Because GetString() can retrieve the string text only on demand, we
+        // need to copy it explicitly.
+        if(m_cmdString.empty()) m_cmdString = event.GetString();
+    }
+    
+    virtual ~wxCommandEvent() {}
+    
+    // Set/Get client data from controls
+    void SetClientData(void* clientData) { m_clientData = clientData; }
+    void* GetClientData() const { return m_clientData; }
+
+    // Set/Get client object from controls
+    void SetClientObject(wxClientData* clientObject) { m_clientObject = clientObject; }
+    wxClientData* GetClientObject() const { return m_clientObject; }
+
+    // Note: this shadows wxEventBasicPayloadMixin::GetString(), because it does some
+    // GUI-specific hacks
+    wxString GetString() const { return m_cmdString; }
+
+    // Get listbox selection if single-choice
+    int GetSelection() const { return m_commandInt; }
+
+    // Get checkbox value
+    bool IsChecked() const { return m_commandInt != 0; }
+
+    // true if the listbox event was a selection.
+    bool IsSelection() const { return (m_extraLong != 0); }
+
+    virtual wxEvent* Clone() const wxOVERRIDE { return new wxCommandEvent(*this); }
+    virtual wxEventCategory GetEventCategory() const wxOVERRIDE { return wxEVT_CATEGORY_USER_INPUT; }
+
+protected:
+    void* m_clientData;           // Arbitrary client data
+    wxClientData* m_clientObject; // Arbitrary client object
+};
+
+// this class adds a possibility to react (from the user) code to a control
+// notification: allow or veto the operation being reported.
+class WXDLLIMPEXP_CL wxNotifyEvent : public wxCommandEvent
+{
+public:
+    wxNotifyEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
+        : wxCommandEvent(commandType, winid)
+    {
+        m_bAllow = true;
+    }
+
+    wxNotifyEvent(const wxNotifyEvent& event)
+        : wxCommandEvent(event)
+    {
+        m_bAllow = event.m_bAllow;
+    }
+
+    // veto the operation (usually it's allowed by default)
+    void Veto() { m_bAllow = false; }
+
+    // allow the operation if it was disabled by default
+    void Allow() { m_bAllow = true; }
+
+    // for implementation code only: is the operation allowed?
+    bool IsAllowed() const { return m_bAllow; }
+
+    virtual wxEvent* Clone() const wxOVERRIDE { return new wxNotifyEvent(*this); }
+
+private:
+    bool m_bAllow;
+
+};
+
+#endif // !wxUSE_GUI
+
 /// a wxCommandEvent that takes ownership of the clientData
 class WXDLLIMPEXP_CL clCommandEvent : public wxCommandEvent
 {
@@ -181,10 +274,12 @@ typedef void (wxEvtHandler::*clCodeCompletionEventFunction)(clCodeCompletionEven
 
 class WXDLLIMPEXP_CL clColourEvent : public clCommandEvent
 {
+#if wxUSE_GUI
     wxColour m_bgColour;
     wxColour m_fgColour;
     wxColour m_borderColour;
     wxWindow* m_page;
+#endif
     bool m_isActiveTab;
 
 public:
@@ -194,6 +289,7 @@ public:
     virtual ~clColourEvent();
     virtual wxEvent* Clone() const { return new clColourEvent(*this); };
 
+#if wxUSE_GUI
     void SetBorderColour(const wxColour& borderColour) { this->m_borderColour = borderColour; }
     const wxColour& GetBorderColour() const { return m_borderColour; }
     void SetPage(wxWindow* page) { this->m_page = page; }
@@ -202,6 +298,7 @@ public:
     void SetFgColour(const wxColour& fgColour) { this->m_fgColour = fgColour; }
     const wxColour& GetBgColour() const { return m_bgColour; }
     const wxColour& GetFgColour() const { return m_fgColour; }
+#endif
     void SetIsActiveTab(bool isActiveTab) { this->m_isActiveTab = isActiveTab; }
     bool IsActiveTab() const { return m_isActiveTab; }
 };
@@ -461,7 +558,9 @@ typedef void (wxEvtHandler::*clSourceFormatEventFunction)(clSourceFormatEvent&);
 //---------------------------------------------------------------
 class WXDLLIMPEXP_CL clContextMenuEvent : public clCommandEvent
 {
+#if wxUSE_GUI
     wxMenu* m_menu;
+#endif
     wxObject* m_editor;
     wxString m_path;
 
@@ -471,8 +570,10 @@ public:
     clContextMenuEvent& operator=(const clContextMenuEvent& src);
     virtual ~clContextMenuEvent();
     virtual wxEvent* Clone() const { return new clContextMenuEvent(*this); }
+#if wxUSE_GUI
     void SetMenu(wxMenu* menu) { this->m_menu = menu; }
     wxMenu* GetMenu() { return m_menu; }
+#endif
     void SetEditor(wxObject* editor) { this->m_editor = editor; }
     wxObject* GetEditor() { return m_editor; }
     const wxString& GetPath() const { return m_path; }

@@ -25,7 +25,7 @@
 
 #ifndef TERMINALEMULATORFRAME_H
 #define TERMINALEMULATORFRAME_H
-
+#if wxUSE_GUI
 #include "TerminalEmulatorUIBase.h"
 #include "TerminalEmulatorUI.h"
 
@@ -37,4 +37,5 @@ public:
     virtual ~TerminalEmulatorFrame();
     TerminalEmulatorUI* GetTerminalUI() { return m_terminal; }
 };
+#endif // wxUSE_GUI
 #endif // TERMINALEMULATORFRAME_H

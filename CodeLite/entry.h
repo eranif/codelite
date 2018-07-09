@@ -25,7 +25,10 @@
 #ifndef CODELITE_ENTRY_H
 #define CODELITE_ENTRY_H
 
+#if wxUSE_GUI
 #include <wx/treectrl.h>
+#endif
+
 #include "readtags.h"
 #include <wx/string.h>
 #include <map>
@@ -75,7 +78,9 @@ class WXDLLIMPEXP_CL TagEntry
     wxString m_pattern;        ///< A pattern that can be used to locate the tag in the file
     wxString m_kind;           ///< Member, function, class, typedef etc.
     wxString m_parent;         ///< Direct parent
+#if wxUSE_GUI
     wxTreeItemId m_hti;        ///< Handle to tree item, not persistent item
+#endif
     wxString m_name;           ///< Tag name (short name, excluding any scope names)
     wxStringMap_t m_extFields; ///< Additional extension fields
     long m_id;
@@ -242,9 +247,10 @@ public:
 
     const wxString& GetParent() const { return m_parent; }
     void SetParent(const wxString& parent) { m_parent = parent; }
-
+#if wxUSE_GUI
     wxTreeItemId& GetTreeItemId() { return m_hti; }
     void SetTreeItemId(wxTreeItemId& hti) { m_hti = hti; }
+#endif
 
     wxString GetAccess() const { return GetExtField(_T("access")); }
     void SetAccess(const wxString& access) { m_extFields[wxT("access")] = access; }

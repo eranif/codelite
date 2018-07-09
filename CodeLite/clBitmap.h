@@ -1,6 +1,7 @@
 #ifndef CLBITMAP_H
 #define CLBITMAP_H
 
+#if wxUSE_GUI
 #include <wx/bitmap.h> // Base class: wxBitmap
 #include "codelite_exports.h"
 
@@ -16,5 +17,5 @@ public:
 
     virtual bool LoadFile(const wxString& name, wxBitmapType type = wxBITMAP_DEFAULT_TYPE);
 };
-
+#endif
 #endif // CLBITMAP_H

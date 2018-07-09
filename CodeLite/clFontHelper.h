@@ -27,6 +27,7 @@
 #define CLFONTHELPER_H
 
 #include "codelite_exports.h"
+#if wxUSE_GUI
 #include <wx/font.h>
 
 class WXDLLIMPEXP_CL clFontHelper
@@ -42,5 +43,5 @@ public:
      */
     static wxFont FromString(const wxString& str);
 };
-
+#endif
 #endif // CLFONTHELPER_H

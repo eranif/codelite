@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "progress_dialog.h"
-
+#if wxUSE_GUI
 #ifdef __WXMSW__
 
 clProgressDlg::clProgressDlg( wxWindow* parent, const wxString &title, const wxString& msg, int maxValue )
@@ -86,5 +86,5 @@ bool clProgressDlg::Pulse(const wxString &msg)
 {
 	return wxProgressDialog::Pulse(msg, NULL);
 }
-
+#endif // #if wxUSE_GUI
 #endif

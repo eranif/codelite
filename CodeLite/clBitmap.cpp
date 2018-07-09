@@ -1,4 +1,5 @@
 #include "clBitmap.h"
+#if wxUSE_GUI
 #include <wx/dcscreen.h>
 #include <wx/filename.h>
 #include <wx/window.h>
@@ -60,3 +61,4 @@ bool clBitmap::ShouldLoadHiResImages()
     }
     return shouldLoad;
 }
+#endif // LIBCODELITE_WITH_UI

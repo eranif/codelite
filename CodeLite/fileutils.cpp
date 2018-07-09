@@ -33,7 +33,9 @@
 #include <map>
 #include <wx/ffile.h>
 #include <wx/log.h>
+#if wxUSE_GUI
 #include <wx/msgdlg.h>
+#endif
 #include <wx/strconv.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
@@ -268,7 +270,9 @@ void FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& conne
     wxString command;
     wxFileName putty(sshClient);
     if(!putty.Exists()) {
+#if wxUSE_GUI
         wxMessageBox(_("Can't launch PuTTY. Don't know where it is ...."), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
+#endif
         return;
     }
 

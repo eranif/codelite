@@ -1,5 +1,6 @@
 #include "SocketAPI/clSocketClient.h"
 #include "clSocketClientAsync.h"
+#include <wx/utils.h>
 
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, clCommandEvent);

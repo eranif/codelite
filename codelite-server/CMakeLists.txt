@@ -32,7 +32,7 @@ message("${WX_CXX_FLAGS}")
 
 # prepare list of files
 FILE(GLOB SRCS  "*.cpp"  
-                "SocketAPI/*.cpp"
+                "${CL_SRC_ROOT}/CodeLite/SocketAPI/*.cpp"
                 "${CL_SRC_ROOT}/sdk/wxsqlite3/src/*.cpp"
                 "${CL_SRC_ROOT}/CodeLite/*.c"
                 "${CL_SRC_ROOT}/CodeLite/*.cpp"

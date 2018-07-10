@@ -83,7 +83,7 @@ void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
         }
     }
 
-    while(m_dvListCtrlBacktrace->GetItemCount() > entries.size()) {
+    while(m_dvListCtrlBacktrace->GetItemCount() > (int)entries.size()) {
         m_dvListCtrlBacktrace->DeleteItem(m_dvListCtrlBacktrace->GetItemCount() - 1);
     }
 

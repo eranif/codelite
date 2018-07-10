@@ -28,6 +28,7 @@
 
 #include <string>
 #include <wx/sharedptr.h>
+#include <wx/msgqueue.h>
 #include <wx/string.h>
 #ifdef __WXOSX__
 #include <sys/errno.h>
@@ -68,7 +69,8 @@ protected:
 
 public:
     typedef wxSharedPtr<clSocketBase> Ptr_t;
-
+    typedef wxMessageQueue<clSocketBase::Ptr_t> Queue_t;
+    
     enum {
         kSuccess = 1,
         kTimeout = 2,

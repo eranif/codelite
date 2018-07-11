@@ -5,7 +5,6 @@
       <![CDATA[00010001N0013Debug_Windows000000000000]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="src"/>
   <VirtualDirectory Name="wxsqlite3">
     <File Name="sqlite3.h"/>
     <File Name="sqlite3.c"/>

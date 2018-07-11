@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 2.6.2)
 set(CL_SRC_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CL_SRC_ROOT}/cmake/Modules/")
+set(BUILD_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/lib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/bin")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/lib")
 
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles. 
@@ -31,13 +35,15 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WX_CXX_FLAGS}")
 message("${WX_CXX_FLAGS}")
 
 # prepare list of files
-FILE(GLOB SRCS  "*.cpp"  
-                "${CL_SRC_ROOT}/CodeLite/SocketAPI/*.cpp"
-                "${CL_SRC_ROOT}/sdk/wxsqlite3/src/*.cpp"
-                "${CL_SRC_ROOT}/CodeLite/*.c"
-                "${CL_SRC_ROOT}/CodeLite/*.cpp"
-                "${CL_SRC_ROOT}/sdk/codelite_indexer/network/*.cpp" 
-                )
+FILE(GLOB CODELITELIB_SRCS
+          "${CL_SRC_ROOT}/CodeLite/SocketAPI/*.cpp"
+          "${CL_SRC_ROOT}/sdk/wxsqlite3/src/*.cpp"
+          "${CL_SRC_ROOT}/CodeLite/*.c"
+          "${CL_SRC_ROOT}/CodeLite/*.cpp"
+          "${CL_SRC_ROOT}/sdk/codelite_indexer/network/*.cpp" 
+          )
+
+FILE(GLOB CODELITESERVER_SRCS "*.cpp")
 
 # and finally prepare list of includes directories
 include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
@@ -45,9 +51,16 @@ include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include"
                     "${CL_SRC_ROOT}/sdk/codelite_indexer/network")
 
 # Define the output
-add_executable(codelite-server ${SRCS})
+add_library(codelitelib STATIC ${CODELITELIB_SRCS})
+add_executable(codelite-server ${CODELITESERVER_SRCS})
+
 set(UTIL_LIB "-lsqlite3")
 if(UNIX)
     set(UTIL_LIB "${UTIL_LIB} -lutil")
 endif(UNIX)
-target_link_libraries(codelite-server ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${UTIL_LIB} ${SQLITE3_LIBRARY})
+target_link_libraries(codelite-server 
+                        codelitelib
+                        ${LINKER_OPTIONS} 
+                        ${wxWidgets_LIBRARIES} 
+                        ${UTIL_LIB} 
+                        ${SQLITE3_LIBRARY})

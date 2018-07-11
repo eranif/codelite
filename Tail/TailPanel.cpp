@@ -229,7 +229,7 @@ void TailPanel::DoBuildToolbar()
     m_toolbar->AddTool(XRCID("tail_clear"), _("Clear"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("tail_pause"), _("Pause"), clGetManager()->GetStdIcons()->LoadBitmap("interrupt"));
-    m_toolbar->AddTool(XRCID("tail_play"), _("Pause"), clGetManager()->GetStdIcons()->LoadBitmap("interrupt"));
+    m_toolbar->AddTool(XRCID("tail_play"), _("Play"), clGetManager()->GetStdIcons()->LoadBitmap("debugger_start"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("tail_detach"), _("Detach window"), clGetManager()->GetStdIcons()->LoadBitmap("windows"));
 

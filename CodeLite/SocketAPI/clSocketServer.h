@@ -55,6 +55,10 @@ public:
      */
     void Start(const wxString& connectionString);
     clSocketBase::Ptr_t WaitForNewConnection(long timeout = -1);
+    /**
+     * @brief same as above, however, return a pointer to the connection that should be freed by the caller
+     */
+    clSocketBase* WaitForNewConnectionRaw(long timeout = -1);
 };
 
 #endif // CLSOCKETSERVER_H

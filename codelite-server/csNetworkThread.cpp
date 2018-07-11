@@ -35,16 +35,13 @@ void* csNetworkThread::Entry()
             clDEBUG() << "[csNetworkThread] going down";
             break;
         }
-        clSocketBase::Ptr_t conn = server.WaitForNewConnection(1);
+        clSocketBasePtr_t conn = server.WaitForNewConnectionRaw(1);
         if(conn) {
             clDEBUG() << "[csNetworkThread] Received new connection";
-            clSocketBasePtr_t pConn = conn.get();
-
             // Call reset with a dummy Deleter
             // so we can get the raw pointer without destroying it
-            conn.reset(nullptr, [&](void* p) {});
             clCommandEvent newConnEvent(wxEVT_SOCKET_CONNECTION_READY);
-            newConnEvent.SetClientData(static_cast<void*>(pConn));
+            newConnEvent.SetClientData(static_cast<void*>(conn));
             m_manager->AddPendingEvent(newConnEvent);
         }
     }

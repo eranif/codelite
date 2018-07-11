@@ -14,6 +14,7 @@ csNetworkReaderThread::~csNetworkReaderThread() { wxDELETE(m_conn); }
 
 void* csNetworkReaderThread::Entry()
 {
+    clDEBUG() << "[csNetworkReaderThread] reader thread started";
     while(true) {
         try {
             wxString message;
@@ -31,7 +32,7 @@ void* csNetworkReaderThread::Entry()
             break;
         }
     }
-
+    clDEBUG() << "[csNetworkReaderThread] going down";
     NotifyGoingDown();
     return nullptr;
 }

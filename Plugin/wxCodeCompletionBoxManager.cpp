@@ -12,6 +12,11 @@
 #include <wx/app.h>
 #include "event_notifier.h"
 
+static bool wxIsWhitespace(wxChar ch)
+{
+    return ch == wxT(' ') || ch == wxT('\t') || ch == wxT('\r') || ch == wxT('\n');
+}
+
 struct wxCodeCompletionClientData : public wxClientData {
     bool m_connected;
     wxCodeCompletionClientData()
@@ -130,6 +135,8 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
     if(editor) {
         wxStyledTextCtrl* ctrl = editor->GetCtrl();
         bool addParens(false);
+        bool moveCaretRight = false;
+        bool moveCaretLeft = false;
         int start = wxNOT_FOUND, end = wxNOT_FOUND;
         std::vector<std::pair<int, int> > ranges;
         if(ctrl->GetSelections() > 1) {
@@ -142,13 +149,17 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
                 return e1.first < e2.first;
             });
         } else {
-            // Default behviour: remove the partial text from teh editor and replace it
+            // Default behviour: remove the partial text from the editor and replace it
             // with the selection
             start = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
             end = ctrl->GetCurrentPos();
             ctrl->SetSelection(start, end);
-            if(ctrl->GetCharAt(end) != '(') {
+            wxChar endChar = ctrl->GetCharAt(end);
+                if((ctrl->GetCharAt(end) != '(') && wxIsWhitespace(endChar)) {
                 addParens = true;
+                moveCaretLeft = true;
+            } else if(endChar == '(') {
+                moveCaretRight = true;
             }
         }
 
@@ -162,8 +173,8 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
             funcSig = funcSig.BeforeLast(')');
             funcSig.Trim().Trim(false);
 
-            CL_DEBUG("Inserting selection: %s", textToInsert);
-            CL_DEBUG("Signature is: %s", funcSig);
+            clDEBUG() << "Inserting selection:" << textToInsert;
+            clDEBUG() << "Signature is:" << funcSig;
 
             // Check if already have an open paren, don't add another
             if(addParens) {
@@ -191,12 +202,15 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
 
                     // Place the caret between the parenthesis
                     int caretPos(wxNOT_FOUND);
-                    if(addParens) {
+                    if(moveCaretLeft) {
                         caretPos = start + textToInsert.length() - 1;
-                    } else {
+                    } else if(moveCaretRight) {
                         // Move the caret one char to the right
                         caretPos = start + textToInsert.length() + 1;
+                    } else {
+                        caretPos = start + textToInsert.length();
                     }
+                    
                     ctrl->SetCurrentPos(caretPos);
                     ctrl->SetSelection(caretPos, caretPos);
 

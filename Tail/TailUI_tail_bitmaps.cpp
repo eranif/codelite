@@ -164,6 +164,6 @@ void wxCB60EInitBitmapResources()
 
     XRC_ADD_FILE(wxT("XRC_resource/TailUI_tail_bitmaps.cpp$.._bitmaps_16-find.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/TailUI_tail_bitmaps.cpp$.._bitmaps_16-find@2x.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/TailUI_tail_bitmaps.cpp$C__src_codelite_Tail_TailUI_tail_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/TailUI_tail_bitmaps.cpp$C__src_codelite_Tail_TailUI_tail_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/TailUI_tail_bitmaps.cpp$_home_eran_devl_codelite_Tail_TailUI_tail_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/TailUI_tail_bitmaps.cpp$_home_eran_devl_codelite_Tail_TailUI_tail_bitmaps.xrc"));
 }

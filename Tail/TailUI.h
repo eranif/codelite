@@ -58,7 +58,7 @@ protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
 
 public:
-    TailFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_FLOAT_ON_PARENT);
+    TailFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_FRAME_STYLE);
     virtual ~TailFrameBase();
 };
 

@@ -30,6 +30,8 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="libCodeLite">
+    <File Name="../CodeLite/clNetworkMessage.cpp"/>
+    <File Name="../CodeLite/clNetworkMessage.h"/>
     <VirtualDirectory Name="SocketAPI">
       <File Name="../CodeLite/SocketAPI/clSocketServer.h"/>
       <File Name="../CodeLite/SocketAPI/clSocketServer.cpp"/>

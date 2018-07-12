@@ -12,10 +12,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/lib")
 # visual studio, and in our makefiles. 
 project(codelite-server)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-add_definitions(-DwxUSE_GUI=0)
+
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS base xml REQUIRED)
-include(FindSqlite3)
 include("${wxWidgets_USE_FILE}")
 
 if(APPLE)
@@ -40,7 +39,8 @@ FILE(GLOB CODELITELIB_SRCS
           "${CL_SRC_ROOT}/sdk/wxsqlite3/src/*.cpp"
           "${CL_SRC_ROOT}/CodeLite/*.c"
           "${CL_SRC_ROOT}/CodeLite/*.cpp"
-          "${CL_SRC_ROOT}/sdk/codelite_indexer/network/*.cpp" 
+          "${CL_SRC_ROOT}/sdk/codelite_indexer/network/*.cpp"
+          "${CL_SRC_ROOT}/codelite-server/sqlite.c"
           )
 
 FILE(GLOB CODELITESERVER_SRCS "*.cpp")
@@ -52,15 +52,19 @@ include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include"
 
 # Define the output
 add_library(codelitelib STATIC ${CODELITELIB_SRCS})
-add_executable(codelite-server ${CODELITESERVER_SRCS})
+target_compile_definitions(codelitelib PRIVATE wxUSE_GUI=0)
 
-set(UTIL_LIB "-lsqlite3")
+add_executable(codelite-server ${CODELITESERVER_SRCS})
+target_compile_definitions(codelite-server PRIVATE wxUSE_GUI=0)
+
+set(UTIL_LIB "")
 if(UNIX)
-    set(UTIL_LIB "${UTIL_LIB} -lutil")
+    set(UTIL_LIB "-lutil")
 endif(UNIX)
+
 target_link_libraries(codelite-server 
                         codelitelib
                         ${LINKER_OPTIONS} 
                         ${wxWidgets_LIBRARIES} 
-                        ${UTIL_LIB} 
-                        ${SQLITE3_LIBRARY})
+                        ${UTIL_LIB})
+add_subdirectory(codelite-client)

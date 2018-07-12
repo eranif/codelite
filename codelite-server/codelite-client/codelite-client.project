@@ -18,6 +18,7 @@
     <File Name="wxcrafter.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
+    <File Name="CMakeLists.txt"/>
     <File Name="wxcrafter.wxcp"/>
     <File Name="win_resources.rc"/>
   </VirtualDirectory>

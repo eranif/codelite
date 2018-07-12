@@ -678,8 +678,8 @@ bool DrawingUtils::DrawStippleBackground(const wxRect& rect, wxDC& dc)
 wxColour DrawingUtils::GetCaptionColour()
 {
     wxColour defaultCaptionColour;
-#ifdef __WXGTK3__
-    defaultCaptionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+#ifdef __WXGTK__
+    defaultCaptionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
 #else
     defaultCaptionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 #endif

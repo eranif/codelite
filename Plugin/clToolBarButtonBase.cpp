@@ -111,13 +111,9 @@ static wxBitmap CreateGrayBitmap(const wxBitmap& bmp)
 {
     wxImage img = bmp.ConvertToImage();
     img = img.ConvertToGreyscale();
-#ifdef __WXOSX__
     double scale = 1.0;
     if(wxOSXGetMainScreenContentScaleFactor() > 1.9) { scale = 2.0; }
     wxBitmap greyBmp(img, -1, scale);
-#else
-    wxBitmap greyBmp(img);
-#endif
     return greyBmp;
 }
 #endif
@@ -127,7 +123,7 @@ static wxBitmap MakeDisabledBitmap(const wxBitmap& bmp)
 #ifdef __WXOSX__
     return CreateGrayBitmap(bmp);
 #else
-    bool bDarkBG = IsDark(GetMenuBarBgColour());
+    bool bDarkBG = IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     wxImage img = bmp.ConvertToImage();
     img = img.ConvertToGreyscale();
     wxBitmap greyBmp(img);
@@ -166,8 +162,8 @@ void clToolBarButtonBase::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
     dc.SetPen(endColour);
     dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 #else
-    dc.SetPen(GetMenuBarBgColour());
-    dc.SetBrush(GetMenuBarBgColour());
+    dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     dc.DrawRectangle(rect);
 #endif
 }

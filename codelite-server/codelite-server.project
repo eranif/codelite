@@ -24,6 +24,10 @@
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
+  <Dependencies Name="Debug_Windows">
+    <Project Name="codelitelib"/>
+    <Project Name="codelite-client"/>
+  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -40,7 +44,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs) " Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/codelite-server/build-debug/codelite-server" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/codelite-server/build-debug/bin/codelite-server" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -162,8 +166,4 @@ $(WorkspacePath)/../CodeLite/SocketAPI</SearchPaths>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug_Windows">
-    <Project Name="codelitelib"/>
-    <Project Name="codelite-client"/>
-  </Dependencies>
 </CodeLite_Project>

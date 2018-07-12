@@ -17,6 +17,8 @@ public:
     void OnAbout(wxCommandEvent& event);
 
 protected:
+    virtual void OnDisconnect(wxCommandEvent& event);
+    virtual void OnDisconnectUI(wxUpdateUIEvent& event);
     virtual void OnConnection(clCommandEvent& event);
     virtual void OnConnect(wxCommandEvent& event);
     virtual void OnConnectUI(wxUpdateUIEvent& event);

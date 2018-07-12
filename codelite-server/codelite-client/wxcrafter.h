@@ -39,7 +39,7 @@ class MainFrameBaseClass : public wxFrame
 {
 public:
     enum {
-        wxID_LIST = 10001,
+        wxID_DISCONNECT = 10001,
         wxID_CONNECT = 10002,
     };
 protected:
@@ -56,6 +56,8 @@ protected:
 protected:
     virtual void OnConnect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConnectUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDisconnect(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDisconnectUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
 

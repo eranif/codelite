@@ -42,3 +42,12 @@ void MainFrame::OnConnection(clCommandEvent& event)
     m_stc->AppendText("Connection estabilshed successfully\n");
     m_connected = true;
 }
+void MainFrame::OnDisconnect(wxCommandEvent& event) 
+{
+    if(m_connected) {
+        m_socket->Disconnect();
+        m_connected = false;
+        m_stc->AppendText("Disconnected\n");
+    }
+}
+void MainFrame::OnDisconnectUI(wxUpdateUIEvent& event) { event.Enable(m_connected); }

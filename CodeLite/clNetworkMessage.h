@@ -5,6 +5,7 @@
 #include <wx/string.h>
 #include "wxStringHash.h"
 #include "SocketAPI/clSocketBase.h"
+#include "SocketAPI/clSocketClientAsync.h"
 
 class WXDLLIMPEXP_CL clNetworkMessage
 {
@@ -42,6 +43,7 @@ public:
      * @brief send this message over the network
      */
     void SendMessage(clSocketBase* socket) throw(clSocketException);
+    void SendMessage(clSocketClientAsync* socket) throw(clSocketException);
 };
 
 #endif // CLNETWORKMESSAGE_H

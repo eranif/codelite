@@ -40,7 +40,7 @@ FILE(GLOB CODELITELIB_SRCS
           "${CL_SRC_ROOT}/CodeLite/*.c"
           "${CL_SRC_ROOT}/CodeLite/*.cpp"
           "${CL_SRC_ROOT}/sdk/codelite_indexer/network/*.cpp"
-          "${CL_SRC_ROOT}/codelite-server/sqlite.c"
+          "${CL_SRC_ROOT}/codelite-server/sqlite3.c"
           )
 
 FILE(GLOB CODELITESERVER_SRCS "*.cpp")
@@ -59,7 +59,7 @@ target_compile_definitions(codelite-server PRIVATE wxUSE_GUI=0)
 
 set(UTIL_LIB "")
 if(UNIX)
-    set(UTIL_LIB "-lutil")
+    set(UTIL_LIB "-lutil -ldl")
 endif(UNIX)
 
 target_link_libraries(codelite-server 

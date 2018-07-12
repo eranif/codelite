@@ -45,9 +45,13 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     flexGridSizer15->Add(m_buttonConnect, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_button21 = new wxButton(m_mainPanel, wxID_DISCONNECT, _("Disconnect"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1,-1)), 0);
+    m_buttonDisconnect = new wxButton(m_mainPanel, wxID_DISCONNECT, _("Disconnect"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1,-1)), 0);
     
-    flexGridSizer15->Add(m_button21, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer15->Add(m_buttonDisconnect, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_buttonList = new wxButton(m_mainPanel, wxID_LIST, _("List folders"), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1,-1)), 0);
+    
+    flexGridSizer15->Add(m_buttonList, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stc = new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1,-1)), 0);
     // Configure the fold margin
@@ -131,8 +135,10 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     // Connect events
     m_buttonConnect->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnConnect), NULL, this);
     m_buttonConnect->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnConnectUI), NULL, this);
-    m_button21->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnDisconnect), NULL, this);
-    m_button21->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnDisconnectUI), NULL, this);
+    m_buttonDisconnect->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnDisconnect), NULL, this);
+    m_buttonDisconnect->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnDisconnectUI), NULL, this);
+    m_buttonList->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnList), NULL, this);
+    m_buttonList->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnListUI), NULL, this);
     this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     
@@ -142,8 +148,10 @@ MainFrameBaseClass::~MainFrameBaseClass()
 {
     m_buttonConnect->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnConnect), NULL, this);
     m_buttonConnect->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnConnectUI), NULL, this);
-    m_button21->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnDisconnect), NULL, this);
-    m_button21->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnDisconnectUI), NULL, this);
+    m_buttonDisconnect->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnDisconnect), NULL, this);
+    m_buttonDisconnect->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnDisconnectUI), NULL, this);
+    m_buttonList->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnList), NULL, this);
+    m_buttonList->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnListUI), NULL, this);
     this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     

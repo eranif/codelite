@@ -39,13 +39,15 @@ class MainFrameBaseClass : public wxFrame
 {
 public:
     enum {
-        wxID_DISCONNECT = 10001,
-        wxID_CONNECT = 10002,
+        wxID_LIST = 10001,
+        wxID_DISCONNECT = 10002,
+        wxID_CONNECT = 10003,
     };
 protected:
     wxPanel* m_mainPanel;
     wxButton* m_buttonConnect;
-    wxButton* m_button21;
+    wxButton* m_buttonDisconnect;
+    wxButton* m_buttonList;
     wxStyledTextCtrl* m_stc;
     wxMenuBar* m_menuBar;
     wxMenu* m_name6;
@@ -58,12 +60,15 @@ protected:
     virtual void OnConnectUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDisconnect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDisconnectUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnList(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnListUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxButton* GetButtonConnect() { return m_buttonConnect; }
-    wxButton* GetButton21() { return m_button21; }
+    wxButton* GetButtonDisconnect() { return m_buttonDisconnect; }
+    wxButton* GetButtonList() { return m_buttonList; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxMenuBar* GetMenuBar() { return m_menuBar; }

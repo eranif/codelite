@@ -306,7 +306,10 @@ void clSocketBase::WriteMessage(const wxString& message)
     char msglen[11];
     memset(msglen, 0, sizeof(msglen));
     sprintf(msglen, "%010d", len);
-    ::send(m_socket, msglen, sizeof(msglen) - 1, 0); // send it without the NULL byte
+    // send it without the NULL byte
+    if(::send(m_socket, msglen, sizeof(msglen) - 1, 0) < 0) {
+        throw clSocketException("Send error: " + error(errno));
+    }
 
     // now send the actual data
     Send(c_str);

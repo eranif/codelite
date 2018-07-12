@@ -12,8 +12,8 @@ clNetworkMessage::clNetworkMessage(const wxString& str)
     JSONElement e = root.toElement();
     JSONElement iter = e.firstChild();
     while(iter.isOk()) {
-        m_values.insert({ iter.getName(), iter.getValue().GetString() });
-        iter = iter.nextChild();
+        m_values.insert({ iter.getName(), iter.toString() });
+        iter = e.nextChild();
     }
 }
 
@@ -25,7 +25,15 @@ wxString clNetworkMessage::ToString() const
     JSONElement e = root.toElement();
     std::for_each(m_values.begin(), m_values.end(),
                   [&](const wxStringMap_t::value_type& vt) { e.addProperty(vt.first, vt.second); });
-    return e.format();
+    char* data = e.FormatRawString(false);
+    if(data) {
+        wxString s(data);
+        free(data);
+        return s;
+    }
+    return "";
 }
 
 void clNetworkMessage::SendMessage(clSocketBase* socket) throw(clSocketException) { socket->WriteMessage(ToString()); }
+
+void clNetworkMessage::SendMessage(clSocketClientAsync* socket) throw(clSocketException) { socket->Send(ToString()); }

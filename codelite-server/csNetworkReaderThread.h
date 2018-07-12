@@ -19,7 +19,7 @@ public:
 
 protected:
     void* Entry();
-    bool ProcessCommand(const wxString& message);
+    bool ProcessCommand(const wxString& str);
 };
 
 #endif // CSNETWORKREADERTHREAD_H

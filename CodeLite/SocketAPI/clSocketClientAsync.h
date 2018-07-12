@@ -26,6 +26,7 @@
 #ifndef CLSOCKETCLIENTASYNC_H
 #define CLSOCKETCLIENTASYNC_H
 
+#include "SocketAPI/clSocketBase.h"
 #include "SocketAPI/clSocketClient.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -58,6 +59,11 @@ protected:
     wxString m_connectionString;
     wxMessageQueue<MyRequest> m_queue;
     bool m_nonBlockingMode;
+    bool m_messageMode;
+    
+protected:
+    void MessageLoop(clSocketBase::Ptr_t socket);
+    void BufferLoop(clSocketBase::Ptr_t socket);
 
 public:
     virtual void AddRequest(const MyRequest& req) { m_queue.Post(req); }
@@ -85,8 +91,8 @@ public:
         }
     }
 
-    clSocketClientAsyncHelperThread(wxEvtHandler* sink, const wxString& connectionString, bool nonBlockingMode,
-                                    const wxString& keepAliveMessage = "");
+    clSocketClientAsyncHelperThread(wxEvtHandler* sink, bool messageMode, const wxString& connectionString,
+                                    bool nonBlockingMode, const wxString& keepAliveMessage = "");
     virtual ~clSocketClientAsyncHelperThread();
 };
 
@@ -94,9 +100,10 @@ class WXDLLIMPEXP_CL clSocketClientAsync
 {
     wxEvtHandler* m_owner;
     clSocketClientAsyncHelperThread* m_thread;
+    bool m_messageMode;
 
 public:
-    clSocketClientAsync(wxEvtHandler* owner);
+    clSocketClientAsync(wxEvtHandler* owner, bool messageMode = false);
     ~clSocketClientAsync();
 
     /**

@@ -23,16 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "file_logger.h"
-#include <wx/filename.h>
-#include <wx/stdpaths.h>
-#include <sys/time.h>
-#include <wx/log.h>
-#include <wx/crt.h>
 #include "cl_standard_paths.h"
+#include "file_logger.h"
+#include <sys/time.h>
+#include <wx/crt.h>
+#include <wx/filename.h>
+#include <wx/log.h>
+#include <wx/stdpaths.h>
+#include <wx/utils.h>
 
 int FileLogger::m_verbosity = FileLogger::Error;
 wxString FileLogger::m_logfile;
+std::unordered_map<wxThreadIdType, wxString> FileLogger::m_threads;
+wxCriticalSection FileLogger::m_cs;
 
 FileLogger::FileLogger(int requestedVerbo)
     : _requestedLogLevel(requestedVerbo)
@@ -132,9 +135,7 @@ void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
 
 void FileLogger::Flush()
 {
-    if(m_buffer.IsEmpty()) {
-        return;
-    }
+    if(m_buffer.IsEmpty()) { return; }
     wxFprintf(m_fp, "%s\n", m_buffer);
     fflush(m_fp);
     m_buffer.Clear();
@@ -143,14 +144,12 @@ void FileLogger::Flush()
 wxString FileLogger::Prefix(int verbosity)
 {
     wxString prefix;
-
     timeval tim;
     gettimeofday(&tim, NULL);
     int ms = (int)tim.tv_usec / 1000.0;
 
     wxString msStr = wxString::Format(wxT("%03d"), ms);
     prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
-
     switch(verbosity) {
     case System:
         prefix << wxT(" SYS]");
@@ -172,5 +171,34 @@ wxString FileLogger::Prefix(int verbosity)
         prefix << wxT(" DVL]");
         break;
     }
+    
+    wxString thread_name = GetCurrentThreadName();
+    if(!thread_name.IsEmpty()) {
+        prefix << " [" << thread_name << "]";
+    }
     return prefix;
+}
+
+wxString FileLogger::GetCurrentThreadName()
+{
+    if(wxThread::IsMain()) { return "Main"; }
+    wxCriticalSectionLocker locker(m_cs);
+    std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(wxThread::GetCurrentId());
+    if(iter != m_threads.end()) { return iter->second; }
+    return "";
+}
+
+void FileLogger::RegisterThread(wxThreadIdType id, const wxString& name)
+{
+    wxCriticalSectionLocker locker(m_cs);
+    std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(id);
+    if(iter != m_threads.end()) { m_threads.erase(iter); }
+    m_threads[id] = name;
+}
+
+void FileLogger::UnRegisterThread(wxThreadIdType id)
+{
+    wxCriticalSectionLocker locker(m_cs);
+    std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(id);
+    if(iter != m_threads.end()) { m_threads.erase(iter); }
 }

@@ -383,7 +383,6 @@
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
         <IncludePath Value="$(CL_HOME)/sdk/codelite_indexer/network"/>
-        <Preprocessor Value="wxUSE_GUI=0"/>
       </Compiler>
       <Linker Options="-O0" Required="yes">
         <LibraryPath Value="."/>

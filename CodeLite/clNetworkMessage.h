@@ -41,9 +41,14 @@ public:
     
     /**
      * @brief send this message over the network
+     * @throw clSocketException
      */
-    void SendMessage(clSocketBase* socket) throw(clSocketException);
-    void SendMessage(clSocketClientAsync* socket) throw(clSocketException);
+    void SendMessage(clSocketBase* socket);
+    /**
+     * @brief send this message over the network
+     * @throw clSocketException
+     */
+    void SendMessage(clSocketClientAsync* socket);
 };
 
 #endif // CLNETWORKMESSAGE_H

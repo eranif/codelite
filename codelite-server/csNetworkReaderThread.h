@@ -1,6 +1,7 @@
 #ifndef CSNETWORKREADERTHREAD_H
 #define CSNETWORKREADERTHREAD_H
 
+#include "csCommandHandlerManager.h"
 #include "csJoinableThread.h"
 #include <cl_command_event.h>
 #include <wx/event.h>
@@ -11,6 +12,7 @@ class clSocketBase;
 class csNetworkReaderThread : public csJoinableThread
 {
     clSocketBase* m_conn;
+    csCommandHandlerManager m_handlers;
 
 public:
     csNetworkReaderThread(wxEvtHandler* manager, clSocketBase* conn);
@@ -19,7 +21,7 @@ public:
 
 protected:
     void* Entry();
-    bool ProcessCommand(const wxString& str);
+    void ProcessCommand(const wxString& str);
 };
 
 #endif // CSNETWORKREADERTHREAD_H

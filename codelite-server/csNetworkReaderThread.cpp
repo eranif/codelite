@@ -1,5 +1,7 @@
 #include "SocketAPI/clSocketBase.h"
 #include "clNetworkMessage.h"
+#include "csCommandHandlerBase.h"
+#include "csListCommandHandler.h"
 #include "csNetworkReaderThread.h"
 #include "json_node.h"
 #include <file_logger.h>
@@ -11,59 +13,43 @@ csNetworkReaderThread::csNetworkReaderThread(wxEvtHandler* manager, clSocketBase
     : csJoinableThread(manager)
     , m_conn(conn)
 {
+    m_handlers.Register("list", csCommandHandlerBase::Ptr_t(new csListCommandHandler()));
 }
 
 csNetworkReaderThread::~csNetworkReaderThread() { wxDELETE(m_conn); }
 
 void* csNetworkReaderThread::Entry()
 {
-    clDEBUG() << "[csNetworkReaderThread] reader thread started";
+    FileLoggerNameRegistrar logName("Reader");
+    clDEBUG() << "Reader thread started";
     while(true) {
         try {
             wxString message;
             if(m_conn->ReadMessage(message, 1) == clSocketBase::kTimeout) {
-                if(TestDestroy()) {
-                    clDEBUG() << "[csNetworkReaderThread] going down";
-                    break;
-                }
+                if(TestDestroy()) { break; }
             } else {
                 // Success
-                if(!message.IsEmpty() && !ProcessCommand(message)) {
-                    break;
-                }
+                if(!message.IsEmpty()) { ProcessCommand(message); }
             }
         } catch(clSocketException& e) {
-            clERROR() << "[csNetworkReaderThread] " << e.what();
+            clERROR() << e.what();
             break;
         }
     }
-    clDEBUG() << "[csNetworkReaderThread] going down";
+    clDEBUG() << "Reader thread is going down";
     NotifyGoingDown();
     return nullptr;
 }
 
-bool csNetworkReaderThread::ProcessCommand(const wxString& str)
+void csNetworkReaderThread::ProcessCommand(const wxString& str)
 {
-    clDEBUG() << "[csNetworkReaderThread] read:" << str;
+    clDEBUG() << "Read:" << str;
     clNetworkMessage message(str);
     const wxString& command = message["command"];
-    if(command == "list") {
-        const wxString& folder = message["folder"];
-        wxDir dir(folder);
-        wxString filename;
-        bool cont = dir.GetFirst(&filename);
-        JSONRoot json(cJSON_Array);
-        JSONElement arr = json.toElement();
-        while(cont) {
-            wxFileName fn(folder, filename);
-            JSONElement entry = JSONElement::createObject();
-            wxString fullpath = fn.GetFullPath();
-            entry.addProperty("path", fn.GetFullPath());
-            entry.addProperty("type", wxFileName::DirExists(fullpath) ? "dir" : "file");
-            arr.arrayAppend(entry);
-            cont = dir.GetNext(&filename);
-        }
-        m_conn->WriteMessage(arr.FormatRawString(false));
+    csCommandHandlerBase::Ptr_t handler = m_handlers.FindHandler(command);
+    if(handler) {
+        handler->Process(message, m_conn);
+    } else {
+        clWARNING() << "Don't know how to handle command:" << command;
     }
-    return true;
 }

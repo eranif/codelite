@@ -8,6 +8,14 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <VirtualDirectory Name="Handlers">
+      <File Name="csCommandHandlerManager.cpp"/>
+      <File Name="csCommandHandlerManager.h"/>
+      <File Name="csListCommandHandler.cpp"/>
+      <File Name="csListCommandHandler.h"/>
+      <File Name="csCommandHandlerBase.h"/>
+      <File Name="csCommandHandlerBase.cpp"/>
+    </VirtualDirectory>
     <File Name="csJoinableThread.cpp"/>
     <File Name="csJoinableThread.h"/>
     <File Name="csNetworkReaderThread.cpp"/>
@@ -85,9 +93,8 @@ $(WorkspacePath)/../CodeLite/SocketAPI</SearchPaths>
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
         <IncludePath Value="$(CL_HOME)/sdk/codelite_indexer/network"/>
-        <Preprocessor Value="wxUSE_GUI=0"/>
       </Compiler>
-      <Linker Options="-O0;$(shell wx-config --libs base,xml)" Required="yes">
+      <Linker Options="-O0;$(shell wx-config --libs base,xml,core)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/lib"/>
         <Library Value="codelitelib.a"/>
       </Linker>

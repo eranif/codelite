@@ -6,9 +6,7 @@ clNetworkMessage::clNetworkMessage() {}
 clNetworkMessage::clNetworkMessage(const wxString& str)
 {
     JSONRoot root(str);
-    if(!root.isOk()) {
-        return;
-    }
+    if(!root.isOk()) { return; }
     JSONElement e = root.toElement();
     JSONElement iter = e.firstChild();
     while(iter.isOk()) {
@@ -34,6 +32,6 @@ wxString clNetworkMessage::ToString() const
     return "";
 }
 
-void clNetworkMessage::SendMessage(clSocketBase* socket) throw(clSocketException) { socket->WriteMessage(ToString()); }
+void clNetworkMessage::SendMessage(clSocketBase* socket) { socket->WriteMessage(ToString()); }
 
-void clNetworkMessage::SendMessage(clSocketClientAsync* socket) throw(clSocketException) { socket->Send(ToString()); }
+void clNetworkMessage::SendMessage(clSocketClientAsync* socket) { socket->Send(ToString()); }

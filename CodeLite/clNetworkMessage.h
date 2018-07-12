@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 #include <wx/string.h>
 #include "wxStringHash.h"
+#include "SocketAPI/clSocketBase.h"
 
 class WXDLLIMPEXP_CL clNetworkMessage
 {
@@ -11,6 +12,7 @@ class WXDLLIMPEXP_CL clNetworkMessage
 
 public:
     clNetworkMessage();
+    clNetworkMessage(const wxString& str);
     virtual ~clNetworkMessage();
 
     wxString& operator[](const wxString& index)
@@ -35,6 +37,11 @@ public:
      * @brief serialize the message into a string
      */
     wxString ToString() const;
+    
+    /**
+     * @brief send this message over the network
+     */
+    void SendMessage(clSocketBase* socket) throw(clSocketException);
 };
 
 #endif // CLNETWORKMESSAGE_H

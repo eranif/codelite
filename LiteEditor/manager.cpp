@@ -56,6 +56,7 @@
 #include "DebuggerCallstackView.h"
 #include "NewProjectWizard.h"
 #include "WSImporter.h"
+#include "asyncprocess.h"
 #include "attachdbgprocdlg.h"
 #include "breakpointdlg.h"
 #include "build_settings_config.h"

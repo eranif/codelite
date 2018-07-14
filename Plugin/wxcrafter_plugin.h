@@ -17,11 +17,8 @@
 #include <wx/stc/stc.h>
 #include <wx/button.h>
 #include <wx/panel.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
 #include <wx/toolbar.h>
+#include "clToolBar.h"
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
 #include <wx/stattext.h>
@@ -71,35 +68,8 @@ public:
 
 class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxPanel
 {
-public:
-    enum {
-        ID_SHOW_LINENUMBERS = 1001,
-        ID_DIFF_TOOL_VIEW_HORIZONTAL = 1002,
-        ID_DIFF_VERTICAL_VIEW = 1003,
-        ID_DIFF_TOOL_USE_RIGHT = 1004,
-        ID_DIFF_TOOL_USE_LEFT = 1005,
-        ID_DIFF_TOOL_IGNORE_WHITESPACE = 1006,
-        ID_DIFF_TOOL_COPY_ALL = 1007,
-        ID_DIFF_TOOL_COPY_LEFT = 1008,
-        ID_DIFF_TOOL_VIEW_SINGLE = 1009,
-        ID_DIFF_TOOL_COPY_RIGHT = 1010,
-        ID_SHOW_OVERVIEW_BAR = 1011,
-        ID_DIFF_TOOL_PREV = 1012,
-        ID_DIFF_TOOL_SAVE = 1013,
-        ID_DIFF_TOOL_VIEW = 1014,
-        ID_DIFF_TOOL_NEXT = 1015,
-        ID_DIFF_TOOL_REFRESH = 1016,
-    };
 protected:
-    wxAuiToolBar* m_auibar242;
-    std::map<int, wxMenu*> m_dropdownMenus;
-    wxMenu* m_menu257;
-    wxMenuItem* m_menuItem271;
-    wxMenuItem* m_menuItem273;
-    wxMenu* m_menu278;
-    wxMenuItem* m_singleView;
-    wxMenuItem* m_vView;
-    wxMenuItem* m_hView;
+    clToolBar* m_toolbar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageLeft;
     wxTextCtrl* m_textCtrlLeftFile;
@@ -116,32 +86,6 @@ protected:
     wxPanel* m_panelOverviewFull;
 
 protected:
-    virtual void OnRefreshDiff(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRefreshDiffUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSaveChanges(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSaveChangesUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnNextDiffSequence(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnNextDiffUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnPrevDiffSequence(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPrevDiffUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCopyLeftToRightUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCopyLeftToRight(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCopyRightToLeftUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCopyRightToLeft(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCopyFileLeftToRight(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCopyFileFromRight(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSingleView(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSingleUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnVerticalUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnVertical(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnHorizontal(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnHorizontalUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnIgnoreWhitespaceClicked(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnShowLinenosClicked(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnShowLinenosUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnShowOverviewBarUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnShowOverviewBarClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBrowseLeftFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
@@ -153,9 +97,7 @@ protected:
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
-
-    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
-    wxAuiToolBar* GetAuibar242() { return m_auibar242; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxTextCtrl* GetTextCtrlLeftFile() { return m_textCtrlLeftFile; }
     wxButton* GetButton290() { return m_button290; }
     wxStyledTextCtrl* GetStcLeft() { return m_stcLeft; }

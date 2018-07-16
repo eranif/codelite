@@ -16,6 +16,7 @@ protected:
      * @return true on success, false otherwise
      */
     bool DoParseCommandLine(wxCmdLineParser& parser);
+    void PrintUsage(const wxCmdLineParser& parser);
 
 public:
     MainApp();

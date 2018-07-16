@@ -5,9 +5,9 @@
 class csListCommandHandler : public csCommandHandlerBase
 {
 public:
-    csListCommandHandler();
+    csListCommandHandler(wxEvtHandler* sink);
     virtual ~csListCommandHandler();
-    virtual void Process(const clNetworkMessage& message, clSocketBase* conn);
+    virtual void Process(const wxString& message);
 };
 
 #endif // CSLISTCOMMANDHANDLER_H

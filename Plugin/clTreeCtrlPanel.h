@@ -33,6 +33,7 @@
 #include "wxcrafter_plugin.h"
 #include <imanager.h>
 
+class clToolBar;
 class clTreeCtrlPanelDefaultPage;
 class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
 {
@@ -46,7 +47,8 @@ protected:
     wxString m_newfileTemplate;
     size_t m_newfileTemplateHighlightLen;
     int m_options;
-
+    clToolBar* m_toolbar;
+    
 public:
     enum {
         kShowHiddenFiles = (1 << 0),

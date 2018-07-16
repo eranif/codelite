@@ -17,8 +17,6 @@
 #include <wx/stc/stc.h>
 #include <wx/button.h>
 #include <wx/panel.h>
-#include <wx/toolbar.h>
-#include "clToolBar.h"
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
 #include <wx/stattext.h>
@@ -69,7 +67,6 @@ public:
 class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxPanel
 {
 protected:
-    clToolBar* m_toolbar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageLeft;
     wxTextCtrl* m_textCtrlLeftFile;
@@ -97,7 +94,6 @@ protected:
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetToolbar() { return m_toolbar; }
     wxTextCtrl* GetTextCtrlLeftFile() { return m_textCtrlLeftFile; }
     wxButton* GetButton290() { return m_button290; }
     wxStyledTextCtrl* GetStcLeft() { return m_stcLeft; }
@@ -138,23 +134,15 @@ public:
 
 class WXDLLIMPEXP_SDK clTreeCtrlPanelBase : public wxPanel
 {
-public:
-    enum {
-        ID_LINK_TO_EDITOR = 1001,
-    };
 protected:
-    wxToolBar* m_toolbar;
     clFileViewerTreeCtrl* m_treeCtrl;
 
 protected:
-    virtual void OnLinkEditor(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnLinkEditorUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxTreeEvent& event) { event.Skip(); }
 
 public:
-    wxToolBar* GetToolbar() { return m_toolbar; }
     clFileViewerTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~clTreeCtrlPanelBase();

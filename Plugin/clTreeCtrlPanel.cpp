@@ -21,6 +21,7 @@
 #include <wx/richmsgdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "clToolBar.h"
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
@@ -36,6 +37,15 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     m_options = GetConfig()->Read("FileExplorer/Options", m_options);
     GetTreeCtrl()->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 
+    m_toolbar = new clToolBar(this);
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
+    m_toolbar->AddTool(XRCID("link_editor"), _("Link Editor"), m_bmpLoader->LoadBitmap("link_editor"), "",
+                       wxITEM_CHECK);
+    m_toolbar->Realize();
+    
+    m_toolbar->Bind(wxEVT_TOOL, &clTreeCtrlPanel::OnLinkEditor, this, XRCID("link_editor"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &clTreeCtrlPanel::OnLinkEditorUI, this, XRCID("link_editor"));
+    
     // Allow DnD
     SetDropTarget(new clFileOrFolderDropTarget(this));
     GetTreeCtrl()->SetDropTarget(new clFileOrFolderDropTarget(this));
@@ -54,6 +64,8 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
 clTreeCtrlPanel::~clTreeCtrlPanel()
 {
     Unbind(wxEVT_DND_FOLDER_DROPPED, &clTreeCtrlPanel::OnFolderDropped, this);
+    m_toolbar->Unbind(wxEVT_TOOL, &clTreeCtrlPanel::OnLinkEditor, this, XRCID("link_editor"));
+    m_toolbar->Unbind(wxEVT_UPDATE_UI, &clTreeCtrlPanel::OnLinkEditorUI, this, XRCID("link_editor"));
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &clTreeCtrlPanel::OnFindInFilesShowing, this);
@@ -246,7 +258,9 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent, bool expand)
     // Sort the parent
     if(GetTreeCtrl()->ItemHasChildren(parent)) {
         GetTreeCtrl()->SortChildren(parent);
-        if(expand) { GetTreeCtrl()->Expand(parent); }
+        if(expand) {
+            GetTreeCtrl()->Expand(parent);
+        }
         SelectItem(parent);
     }
 }
@@ -270,7 +284,9 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
 {
     wxFileName filename(path);
     clTreeCtrlData* parentData = GetItemData(parent);
-    if(!parentData) { return wxTreeItemId(); }
+    if(!parentData) {
+        return wxTreeItemId();
+    }
     if(parentData->GetIndex()) {
         wxTreeItemId cachedItem = parentData->GetIndex()->Find(filename.GetFullName());
         if(cachedItem.IsOk()) {
@@ -283,10 +299,14 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
     cd->SetPath(filename.GetFullPath());
 
     int imgIdx = m_bmpLoader->GetMimeImageId(filename.GetFullName());
-    if(imgIdx == wxNOT_FOUND) { imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeText); }
+    if(imgIdx == wxNOT_FOUND) {
+        imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeText);
+    }
     wxTreeItemId fileItem = GetTreeCtrl()->AppendItem(parent, filename.GetFullName(), imgIdx, imgIdx, cd);
     // Add this entry to the index
-    if(parentData->GetIndex()) { parentData->GetIndex()->Add(filename.GetFullName(), fileItem); }
+    if(parentData->GetIndex()) {
+        parentData->GetIndex()->Add(filename.GetFullName(), fileItem);
+    }
     return fileItem;
 }
 
@@ -297,7 +317,9 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
     wxArrayTreeItemIds topFoldersItems;
     GetTopLevelFolders(topFolders, topFoldersItems);
     int where = topFolders.Index(path);
-    if(where != wxNOT_FOUND) { return topFoldersItems.Item(where); }
+    if(where != wxNOT_FOUND) {
+        return topFoldersItems.Item(where);
+    }
 
     wxFileName filename(path, "");
     wxString displayName;
@@ -308,7 +330,9 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
     }
 
     clTreeCtrlData* parentData = GetItemData(parent);
-    if(!parentData) { return wxTreeItemId(); }
+    if(!parentData) {
+        return wxTreeItemId();
+    }
 
     // Check the index before adding new folder
     if(parentData->GetIndex()) {
@@ -327,7 +351,9 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
     wxTreeItemId itemFolder = GetTreeCtrl()->AppendItem(parent, displayName, imgIdx, imgIdx, cd);
 
     // Add this entry to the index
-    if(parentData->GetIndex()) { parentData->GetIndex()->Add(displayName, itemFolder); }
+    if(parentData->GetIndex()) {
+        parentData->GetIndex()->Add(displayName, itemFolder);
+    }
 
     // Append the dummy item
     GetTreeCtrl()->AppendItem(itemFolder, "Dummy", -1, -1, new clTreeCtrlData(clTreeCtrlData::kDummy));
@@ -337,7 +363,9 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
         wxArrayString pinnedFolders;
         pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
         int where = pinnedFolders.Index(cd->GetPath());
-        if(where == wxNOT_FOUND) { pinnedFolders.Add(cd->GetPath()); }
+        if(where == wxNOT_FOUND) {
+            pinnedFolders.Add(cd->GetPath());
+        }
         GetConfig()->Write("ExplorerFolders", pinnedFolders);
     }
     return itemFolder;
@@ -654,7 +682,9 @@ bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
                 DoExpandItem(closestItem, true);
                 // Try again
                 child = d->GetIndex()->Find(parts.Item(0));
-                if(!child.IsOk()) { return false; }
+                if(!child.IsOk()) {
+                    return false;
+                }
             }
         }
         closestItem = child;
@@ -700,7 +730,9 @@ void clTreeCtrlPanel::UpdateItemDeleted(const wxTreeItemId& item)
     wxString text = GetTreeCtrl()->GetItemText(item);
 
     // Update the parent cache
-    if(parentData->GetIndex()) { parentData->GetIndex()->Delete(text); }
+    if(parentData->GetIndex()) {
+        parentData->GetIndex()->Delete(text);
+    }
 }
 
 void clTreeCtrlPanel::DoRenameItem(const wxTreeItemId& item, const wxString& oldname, const wxString& newname)
@@ -798,7 +830,9 @@ void clTreeCtrlPanel::DoCloseFolder(const wxTreeItemId& item)
         pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
         clTreeCtrlData* d = GetItemData(item);
         int where = pinnedFolders.Index(d->GetPath());
-        if(where != wxNOT_FOUND) { pinnedFolders.RemoveAt(where); }
+        if(where != wxNOT_FOUND) {
+            pinnedFolders.RemoveAt(where);
+        }
         GetConfig()->Write("ExplorerFolders", pinnedFolders);
     }
     // Now, delete the item
@@ -828,7 +862,9 @@ void clTreeCtrlPanel::OnRefresh(wxCommandEvent& event)
     wxArrayString paths, files;
     wxArrayTreeItemIds items, fileItems;
     GetSelections(paths, items, files, fileItems);
-    if(items.IsEmpty()) { return; }
+    if(items.IsEmpty()) {
+        return;
+    }
 
     // If we have a top level folder, ignore any non top level folder
     bool hasTopLevelFolder = false;
@@ -934,7 +970,9 @@ void clTreeCtrlPanel::RefreshNonTopLevelFolder(const wxTreeItemId& item)
 
     // Collpase the item if needed
     bool expandItem = GetTreeCtrl()->IsExpanded(item);
-    if(expandItem) { GetTreeCtrl()->Collapse(item); }
+    if(expandItem) {
+        GetTreeCtrl()->Collapse(item);
+    }
 
     // Clear the item children
     GetTreeCtrl()->DeleteChildren(item);
@@ -943,10 +981,14 @@ void clTreeCtrlPanel::RefreshNonTopLevelFolder(const wxTreeItemId& item)
     GetTreeCtrl()->AppendItem(item, "Dummy", -1, -1, new clTreeCtrlData(clTreeCtrlData::kDummy));
 
     // Clear the folder index
-    if(cd->GetIndex()) { cd->GetIndex()->Clear(); }
+    if(cd->GetIndex()) {
+        cd->GetIndex()->Clear();
+    }
 
     // Re-expand the item
-    if(expandItem) { CallAfter(&clTreeCtrlPanel::DoExpandItem, item, true); }
+    if(expandItem) {
+        CallAfter(&clTreeCtrlPanel::DoExpandItem, item, true);
+    }
 }
 
 void clTreeCtrlPanel::OnRenameFolder(wxCommandEvent& event)
@@ -955,7 +997,9 @@ void clTreeCtrlPanel::OnRenameFolder(wxCommandEvent& event)
     wxArrayTreeItemIds fileItems, folderItems;
     GetSelections(folders, folderItems, files, fileItems);
 
-    if(folderItems.size() != 1) { return; }
+    if(folderItems.size() != 1) {
+        return;
+    }
     wxTreeItemId item = folderItems.Item(0);
     if(IsTopLevelFolder(item)) {
         clWARNING() << "Renaming of top level folder is not supported";
@@ -966,7 +1010,9 @@ void clTreeCtrlPanel::OnRenameFolder(wxCommandEvent& event)
     CHECK_PTR_RET(d);
     CHECK_COND_RET(d->IsFolder());
     wxString newName = ::clGetTextFromUser(_("Rename folder"), _("Type the new folder name:"), d->GetName());
-    if((newName == d->GetName()) || newName.IsEmpty()) { return; }
+    if((newName == d->GetName()) || newName.IsEmpty()) {
+        return;
+    }
     wxFileName oldFullPath(d->GetPath(), "");
     wxFileName newFullPath(oldFullPath);
     newFullPath.RemoveLastDir();

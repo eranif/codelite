@@ -32,6 +32,7 @@
 #include <vector>
 #include <wx/filename.h>
 
+class clToolBar;
 class WXDLLIMPEXP_SDK DiffSideBySidePanel : public DiffSideBySidePanelBase
 {
     enum {
@@ -74,21 +75,6 @@ public:
     };
 
 protected:
-    virtual void OnBrowseLeftFile(wxCommandEvent& event);
-    virtual void OnBrowseRightFile(wxCommandEvent& event);
-    virtual void OnMouseWheel(wxMouseEvent& event);
-    virtual void OnSingleUI(wxUpdateUIEvent& event);
-    virtual void OnSingleView(wxCommandEvent& event);
-    virtual void OnLeftPickerUI(wxUpdateUIEvent& event);
-    virtual void OnRightPickerUI(wxUpdateUIEvent& event);
-    virtual void OnPaneloverviewLeftDown(wxMouseEvent& event);
-
-    void OnMenuCopyLeft2Right(wxCommandEvent& event);
-    void OnMenuCopyRight2Left(wxCommandEvent& event);
-    void OnCopyAllMenu(wxCommandEvent& event);
-    void OnViewMenu(wxCommandEvent& event);
-    void OnPreferences(wxCommandEvent& event);
-
     Markers_t m_leftRedMarkers;
     Markers_t m_leftGreenMarkers;
     Markers_t m_leftPlaceholdersMarkers;
@@ -107,6 +93,23 @@ protected:
     size_t m_flags;
     DiffConfig m_config;
     bool m_storeFilepaths;
+    clToolBar* m_toolbar;
+    
+protected:
+    virtual void OnBrowseLeftFile(wxCommandEvent& event);
+    virtual void OnBrowseRightFile(wxCommandEvent& event);
+    virtual void OnMouseWheel(wxMouseEvent& event);
+    virtual void OnSingleUI(wxUpdateUIEvent& event);
+    virtual void OnSingleView(wxCommandEvent& event);
+    virtual void OnLeftPickerUI(wxUpdateUIEvent& event);
+    virtual void OnRightPickerUI(wxUpdateUIEvent& event);
+    virtual void OnPaneloverviewLeftDown(wxMouseEvent& event);
+
+    void OnMenuCopyLeft2Right(wxCommandEvent& event);
+    void OnMenuCopyRight2Left(wxCommandEvent& event);
+    void OnCopyAllMenu(wxCommandEvent& event);
+    void OnViewMenu(wxCommandEvent& event);
+    void OnPreferences(wxCommandEvent& event);
 
 protected:
     wxString DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const;

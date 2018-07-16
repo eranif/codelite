@@ -38,6 +38,7 @@
 #include <wx/filedlg.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
+#include "clToolBar.h"
 
 #define RED_MARKER 5
 #define GREEN_MARKER 6

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="codelite-server" Database="" Version="10.0.0">
-  <Project Name="codelite-server" Path="codelite-server.project" Active="Yes"/>
+<CodeLite_Workspace Name="codelite-cli" Database="" Version="10.0.0">
+  <Project Name="codelite-cli" Path="codelite-cli.project" Active="Yes"/>
   <Project Name="codelitelib" Path="codelitelib.project" Active="No"/>
   <Project Name="codelite-client" Path="codelite-client/codelite-client.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
-      <Project Name="codelite-server" ConfigName="Debug"/>
+      <Project Name="codelite-cli" ConfigName="Debug"/>
       <Project Name="codelitelib" ConfigName="Debug"/>
       <Project Name="codelite-client" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_Windows" Selected="no">
+    <WorkspaceConfiguration Name="Debug_Windows" Selected="yes">
       <Environment>CL_HOME=$(WorkspacePath)/..</Environment>
       <Project Name="codelite-client" ConfigName="Debug_Windows"/>
-      <Project Name="codelite-server" ConfigName="Debug_Windows"/>
+      <Project Name="codelite-cli" ConfigName="Debug_Windows"/>
       <Project Name="codelitelib" ConfigName="Debug_Windows"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

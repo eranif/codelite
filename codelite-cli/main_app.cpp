@@ -3,15 +3,15 @@
 #include "file_logger.h"
 #include "main_app.h"
 #include <SocketAPI/clSocketServer.h>
-#include <wx/filename.h>
 #include <iostream>
+#include <wx/filename.h>
 
 IMPLEMENT_APP_CONSOLE(MainApp)
 
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
     { wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "c", "command", "command to execute", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
+    { wxCMD_LINE_OPTION, "c", "command", "command to execute", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_OPTION, "o", "options", "the command optinos, in JSON format", wxCMD_LINE_VAL_STRING,
       wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_NONE }
@@ -33,7 +33,10 @@ int MainApp::OnExit()
 
 bool MainApp::OnInit()
 {
-    SetAppName("codelite-server");
+    SetAppName("codelite-cli");
+    
+    // Make sure that the 'local' folder exists
+    wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
     // Mainly needed for Windows
     clSocketBase::Initialize();
@@ -47,11 +50,9 @@ bool MainApp::OnInit()
         return false;
     }
 
-    // Make sure that the 'local' folder exists
-    wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
     // Open the log file
-    FileLogger::OpenLog("codelite-server.log", FileLogger::Developer);
+    FileLogger::OpenLog("codelite-cli.log", FileLogger::Developer);
 
     // Startup
     return m_manager->Startup();
@@ -60,16 +61,16 @@ bool MainApp::OnInit()
 bool MainApp::DoParseCommandLine(wxCmdLineParser& parser)
 {
     parser.SetDesc(cmdLineDesc);
-    if(parser.Parse(false) != 0) {
-        return false;
-    }
+    if(parser.Parse(false) != 0) { return false; }
 
-    if(!parser.Found("c", &m_manager->GetCommand())) {
-        return false;
-    }
-    
-    // read the options
+    parser.Found("c", &m_manager->GetCommand());
     parser.Found("o", &m_manager->GetOptions());
+
+    if(m_manager->GetCommand().IsEmpty()) {
+        // Try to fetch the options from the INI file
+        m_manager->LoadCommandFromINI();
+        if(m_manager->GetCommand().IsEmpty()) { return false; }
+    }
     return true;
 }
 

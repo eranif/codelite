@@ -195,8 +195,10 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
     ITagsStoragePtr db;
     db = m_db;
 
+#if wxUSE_GUI
     bool retagIsRequired = false;
     if(fileName.FileExists() == false) { retagIsRequired = true; }
+#endif
 
     db->OpenDatabase(fileName);
     db->SetEnableCaseInsensitive(!(m_tagsOptions.GetFlags() & CC_IS_CASE_SENSITIVE));

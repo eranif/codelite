@@ -30,6 +30,10 @@ public:
 
     wxString& GetCommand() { return m_command; }
     wxString& GetOptions() { return m_options; }
+    const wxString& GetCommand() const { return m_command; }
+    const wxString& GetOptions() const { return m_options; }
+    const csConfig& GetConfig() const { return m_config; }
+    void LoadCommandFromINI();
 
 protected:
     // The handler completed

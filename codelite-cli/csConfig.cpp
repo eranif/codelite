@@ -10,8 +10,10 @@ csConfig::~csConfig() {}
 
 void csConfig::Load()
 {
-    wxFileName iniPath(clStandardPaths::Get().GetUserDataDir(), "codelite-server.ini");
+    wxFileName iniPath(clStandardPaths::Get().GetUserDataDir(), "codelite-cli.ini");
     clIniFile ini(iniPath);
-    ini.Read("connection_string", &m_connectionString, "tcp://127.0.0.1:5555");
-    clDEBUG() << "connection_string =" << m_connectionString;
+    ini.Read("command", &m_command, "");
+    clDEBUG() << "command =" << m_command;
+    ini.Read("options", &m_options, "");
+    clDEBUG() << "options =" << m_options;
 }

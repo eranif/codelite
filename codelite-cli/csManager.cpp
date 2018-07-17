@@ -19,6 +19,7 @@ csManager::csManager()
 
     SearchThreadST::Get()->Start();
     SearchThreadST::Get()->SetNotifyWindow(this);
+    m_config.Load();
 }
 
 csManager::~csManager()
@@ -45,7 +46,6 @@ csManager::~csManager()
 
 bool csManager::Startup()
 {
-    m_config.Load();
     Bind(wxEVT_COMMAND_PROCESSED, &csManager::OnCommandProcessedCompleted, this);
     // Search thread events
     Bind(wxEVT_SEARCH_THREAD_MATCHFOUND, &csManager::OnSearchThreadMatch, this);
@@ -96,4 +96,10 @@ void csManager::OnSearchThreadEneded(wxCommandEvent& event)
     wxDELETE(summary);
     std::cout << m_findInFilesMatches->toElement().format(true) << std::endl;
     wxExit();
+}
+
+void csManager::LoadCommandFromINI()
+{
+    m_command = m_config.GetCommand();
+    m_options = m_config.GetOptions();
 }

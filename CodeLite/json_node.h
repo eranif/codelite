@@ -89,7 +89,7 @@ public:
     bool isNumber() const;
     bool isArray() const;
 
-    wxString format() const;
+    wxString format(bool formatted = true) const;
     /**
      * @brief format the JSON into a raw c string
      * The caller should free the pointer (using free())

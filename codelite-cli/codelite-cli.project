@@ -8,6 +8,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="csFindInFilesResults.cpp"/>
+    <File Name="csFindInFilesResults.h"/>
     <VirtualDirectory Name="Handlers">
       <File Name="csFindInFilesCommandHandler.cpp"/>
       <File Name="csFindInFilesCommandHandler.h"/>
@@ -53,7 +55,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs) " Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/codelite-cli/build-debug/bin/codelite-cli" CommandArguments="--command=list" UseSeparateDebugArgs="yes" DebugArguments="--command=list --options='{&quot;folder&quot;: &quot;/home/eran&quot;}'" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/codelite-cli/build-debug/bin/codelite-cli" CommandArguments="--command=list" UseSeparateDebugArgs="yes" DebugArguments="--command=find --options='{&quot;folder&quot;: &quot;/home/eran&quot;}'" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

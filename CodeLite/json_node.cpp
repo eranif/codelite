@@ -304,13 +304,13 @@ char* JSONElement::FormatRawString(bool formatted) const
     }
 }
 
-wxString JSONElement::format() const
+wxString JSONElement::format(bool formatted) const
 {
     if(!_json) {
         return wxT("");
     }
-
-    char* p = cJSON_Print(_json);
+    
+    char* p = formatted ? cJSON_Print(_json) : cJSON_PrintUnformatted(_json);
     wxString output(p, wxConvUTF8);
     free(p);
     return output;

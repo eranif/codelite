@@ -21,6 +21,7 @@ class csManager : public wxEvtHandler
     wxString m_command;
     wxString m_options;
     bool m_startupCalled;
+    wxSharedPtr<JSONRoot> m_findInFilesMatches;
 
 public:
     csManager();
@@ -33,7 +34,7 @@ public:
 protected:
     // The handler completed
     void OnCommandProcessedCompleted(clCommandEvent& event);
-    
+
     // Search events
     void OnSearchThreadMatch(wxCommandEvent& event);
     void OnSearchThreadStarted(wxCommandEvent& event);

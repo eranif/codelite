@@ -30,7 +30,9 @@ protected:
 public:
     csCommandHandlerBase(wxEvtHandler* sink);
     virtual ~csCommandHandlerBase();
-
+    
+    wxEvtHandler* GetSink() { return m_sink; }
+    
     /**
      * @brief process a request from the command line and print the result to the stdout
      * @param the handler options

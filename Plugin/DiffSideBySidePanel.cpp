@@ -62,6 +62,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     m_config.Load();
 
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
+    m_toolbar = new clToolBar(this);
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_REFRESH"), _("Refresh"), bmps->LoadBitmap("debugger_restart"));
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SAVE"), _("Save"), bmps->LoadBitmap("file_save"));
     m_toolbar->AddSeparator();
@@ -76,6 +77,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SETTINGS"), _("Preferences"), bmps->LoadBitmap("cog"), "", wxITEM_DROPDOWN);
     m_toolbar->Realize();
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 
     m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnRefreshDiff, this, XRCID("ID_DIFF_TOOL_REFRESH"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnRefreshDiffUI, this, XRCID("ID_DIFF_TOOL_REFRESH"));

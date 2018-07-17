@@ -37,6 +37,7 @@
 #include <map>
 #include <wx/regex.h>
 #include <wx/string.h>
+#include "json_node.h"
 
 class wxEvtHandler;
 class SearchResult;
@@ -207,7 +208,10 @@ public:
         m_scope = rhs.m_scope.c_str();
         return *this;
     }
-
+    
+    JSONElement ToJSON() const;
+    void FromJSON(const JSONElement& json);
+    
     //------------------------------------------------------
     // Setters/getters
 
@@ -276,7 +280,7 @@ public:
     }
 
     virtual ~SearchSummary() {}
-
+    
     SearchSummary(const SearchSummary& rhs) { *this = rhs; }
 
     SearchSummary& operator=(const SearchSummary& rhs)
@@ -291,7 +295,10 @@ public:
         m_replaceWith = rhs.m_replaceWith;
         return *this;
     }
-
+    
+    JSONElement ToJSON() const;
+    void FromJSON(const JSONElement& json);
+    
     void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat; }
     void SetReplaceWith(const wxString& replaceWith) { this->m_replaceWith = replaceWith; }
     const wxString& GetFindWhat() const { return m_findWhat; }

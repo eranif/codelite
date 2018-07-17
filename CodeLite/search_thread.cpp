@@ -217,7 +217,9 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
 {
     // Process single lines
     int lineNumber = 1;
-    if(!wxFileName::FileExists(fileName)) { return; }
+    if(!wxFileName::FileExists(fileName)) {
+        return;
+    }
 
     wxFFile thefile(fileName, wxT("rb"));
     if(!thefile.IsOpened()) {
@@ -295,7 +297,9 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
             }
         }
 
-        if(!data->IsMatchCase()) { findString.MakeLower(); }
+        if(!data->IsMatchCase()) {
+            findString.MakeLower();
+        }
 
         while(tkz.HasMoreTokens()) {
 
@@ -307,7 +311,9 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         }
     }
 
-    if(m_results.empty() == false) { SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner()); }
+    if(m_results.empty() == false) {
+        SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner());
+    }
 }
 void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const int lineOffset,
                                   const wxString& fileName, const SearchData* data, TextStatesPtr statesPtr)
@@ -397,7 +403,9 @@ void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const i
 {
     wxString modLine = line;
 
-    if(!data->IsMatchCase()) { modLine.MakeLower(); }
+    if(!data->IsMatchCase()) {
+        modLine.MakeLower();
+    }
 
     int pos = 0;
     int col = 0;
@@ -509,7 +517,9 @@ void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const i
                 m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
             }
 
-            if(!AdjustLine(modLine, pos, findWhat)) { break; }
+            if(!AdjustLine(modLine, pos, findWhat)) {
+                break;
+            }
             col += (int)findWhat.Length();
         }
     }
@@ -547,15 +557,12 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
         counter++;
         wxThread::Sleep(10);
 
-    } else if(type == wxEVT_SEARCH_THREAD_SEARCHEND) {
+    } else if((type == wxEVT_SEARCH_THREAD_SEARCHEND) || (type == wxEVT_SEARCH_THREAD_SEARCHCANCELED)) {
         // search eneded, if we got any matches "buffed" send them before the
         // the summary event
         if(m_results.empty() == false) {
             wxCommandEvent evt(wxEVT_SEARCH_THREAD_MATCHFOUND, GetId());
             evt.SetClientData(new SearchResultList(m_results));
-            m_results.clear();
-            counter = 0;
-
             if(owner) {
                 wxPostEvent(owner, evt);
             } else if(m_notifiedWindow) {
@@ -563,17 +570,11 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
             }
         }
 
-        // Now send the summary event
-        event.SetClientData(new SearchSummary(m_summary));
-        SEND_ST_EVENT();
-
-    } else if(type == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
-        // search cancelled, we dont care about any matches which haven't
-        // been reported yet
-        event.SetClientData(new wxString(wxT("Search cancelled by user")));
         m_results.clear();
         counter = 0;
-
+        
+        // Now send the summary event
+        event.SetClientData(type == wxEVT_SEARCH_THREAD_SEARCHEND ? new SearchSummary(m_summary) : nullptr);
         SEND_ST_EVENT();
     }
 }
@@ -586,7 +587,9 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
     std::for_each(files.begin(), files.end(), [&](wxString& filename) {
         if(uniqueFiles.count(filename)) return;
         uniqueFiles.insert(filename);
-        if(FileUtils::WildMatch(mask, filename)) { tmpFiles.Add(filename); }
+        if(FileUtils::WildMatch(mask, filename)) {
+            tmpFiles.Add(filename);
+        }
     });
     files.swap(tmpFiles);
 }
@@ -594,7 +597,9 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 static SearchThread* gs_SearchThread = NULL;
 void SearchThreadST::Free()
 {
-    if(gs_SearchThread) { delete gs_SearchThread; }
+    if(gs_SearchThread) {
+        delete gs_SearchThread;
+    }
     gs_SearchThread = NULL;
 }
 
@@ -602,4 +607,60 @@ SearchThread* SearchThreadST::Get()
 {
     if(gs_SearchThread == NULL) gs_SearchThread = new SearchThread;
     return gs_SearchThread;
+}
+
+JSONElement SearchResult::ToJSON() const
+{
+    JSONElement json = JSONElement::createObject();
+    json.addProperty("file", m_fileName);
+    json.addProperty("line", m_lineNumber);
+    json.addProperty("col", m_column);
+    json.addProperty("pos", m_position);
+    json.addProperty("findWhat", m_findWhat);
+    json.addProperty("pattern", m_pattern);
+    json.addProperty("len", m_len);
+    json.addProperty("flags", m_flags);
+    json.addProperty("columnInChars", m_columnInChars);
+    json.addProperty("lenInChars", m_lenInChars);
+    json.addProperty("matchState", (int)m_matchState);
+    json.addProperty("scope", m_scope);
+    return json;
+}
+
+void SearchResult::FromJSON(const JSONElement& json)
+{
+    m_position = json.namedObject("pos").toInt(m_position);
+    m_column = json.namedObject("col").toInt(m_column);
+    m_lineNumber = json.namedObject("line").toInt(m_lineNumber);
+    m_pattern = json.namedObject("pattern").toString(m_pattern);
+    m_fileName = json.namedObject("file").toString(m_fileName);
+    m_len = json.namedObject("len").toInt(m_len);
+    m_findWhat = json.namedObject("findWhat").toString(m_findWhat);
+    m_flags = json.namedObject("flags").toSize_t(m_flags);
+    m_columnInChars = json.namedObject("columnInChars").toInt(m_columnInChars);
+    m_lenInChars = json.namedObject("lenInChars").toInt(m_lenInChars);
+    m_matchState = json.namedObject("matchState").toInt(m_matchState);
+    m_scope = json.namedObject("scope").toString(m_scope);
+}
+
+JSONElement SearchSummary::ToJSON() const
+{
+    JSONElement json = JSONElement::createObject();
+    json.addProperty("filesScanned", m_fileScanned);
+    json.addProperty("matchesFound", m_matchesFound);
+    json.addProperty("elapsed", m_elapsed);
+    json.addProperty("failedFiles", m_failedFiles);
+    json.addProperty("findWhat", m_findWhat);
+    json.addProperty("replaceWith", m_replaceWith);
+    return json;
+}
+
+void SearchSummary::FromJSON(const JSONElement& json)
+{
+    m_fileScanned = json.namedObject("filesScanned").toInt(m_fileScanned);
+    m_matchesFound = json.namedObject("matchesFound").toInt(m_matchesFound);
+    m_elapsed = json.namedObject("elapsed").toInt(m_elapsed);
+    m_failedFiles = json.namedObject("failedFiles").toArrayString();
+    m_findWhat = json.namedObject("findWhat").toString();
+    m_replaceWith = json.namedObject("replaceWith").toString();
 }

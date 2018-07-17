@@ -231,7 +231,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
         }
     }
 
-    delete summary;
+    wxDELETE(summary);
     SaveSearchData();
 
     // We need to tell all editors that there's been a (new) search
@@ -247,12 +247,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 
 void FindResultsTab::OnSearchCancel(wxCommandEvent& e)
 {
-    m_searchInProgress = false;
-    wxString* str = (wxString*)e.GetClientData();
-    if(!str) return;
-    AppendText((*str) + wxT("\n"));
-    SaveSearchData();
-    wxDELETE(str);
+    AppendText(_("====== Search cancelled by user ======\n"));
 }
 
 void FindResultsTab::OnClearAll(wxCommandEvent& e)

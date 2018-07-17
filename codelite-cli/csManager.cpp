@@ -4,8 +4,10 @@
 #include "csNetworkReaderThread.h"
 #include "csNetworkThread.h"
 #include "file_logger.h"
+#include "json_node.h"
 #include "search_thread.h"
 #include <algorithm>
+#include <iostream>
 #include <wx/app.h>
 
 csManager::csManager()
@@ -73,16 +75,25 @@ void csManager::OnCommandProcessedCompleted(clCommandEvent& event) { wxExit(); }
 
 void csManager::OnSearchThreadMatch(wxCommandEvent& event)
 {
+    SearchResultList* res = reinterpret_cast<SearchResultList*>(event.GetClientData());
+    SearchResultList::iterator iter = res->begin();
+    JSONElement arr = m_findInFilesMatches->toElement();
+    while(iter != res->end()) {
+        arr.arrayAppend(iter->ToJSON());
+        ++iter;
+    }
+    wxDELETE(res);
 }
 
-void csManager::OnSearchThreadStarted(wxCommandEvent& event)
-{
-}
+void csManager::OnSearchThreadStarted(wxCommandEvent& event) { m_findInFilesMatches.reset(new JSONRoot(cJSON_Array)); }
 
-void csManager::OnSearchThreadCancelled(wxCommandEvent& event)
-{
-}
+void csManager::OnSearchThreadCancelled(wxCommandEvent& event) { OnSearchThreadEneded(event); }
 
 void csManager::OnSearchThreadEneded(wxCommandEvent& event)
 {
+    SearchSummary* summary = reinterpret_cast<SearchSummary*>(event.GetClientData());
+    m_findInFilesMatches->toElement().arrayAppend(summary->ToJSON());
+    wxDELETE(summary);
+    std::cout << m_findInFilesMatches->toElement().format(true) << std::endl;
+    wxExit();
 }

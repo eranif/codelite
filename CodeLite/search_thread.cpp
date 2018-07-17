@@ -22,25 +22,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <set>
-#include "editor_config.h"
+#include "clFilesCollector.h"
+#include "cppwordscanner.h"
+#include "dirtraverser.h"
+#include "fileutils.h"
+#include "macros.h"
 #include "search_thread.h"
 #include "wx/event.h"
-#include <wx/txtstrm.h>
-#include <wx/wfstream.h>
-#include "cppwordscanner.h"
+#include <algorithm>
 #include <iostream>
-#include <wx/tokenzr.h>
+#include <set>
 #include <wx/dir.h>
 #include <wx/fontmap.h>
 #include <wx/log.h>
-#include "dirtraverser.h"
-#include "macros.h"
-#include "workspace.h"
-#include "globals.h"
-#include <algorithm>
-#include "fileutils.h"
-#include "clFilesCollector.h"
+#include <wx/tokenzr.h>
+#include <wx/txtstrm.h>
+#include <wx/wfstream.h>
 
 const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND = wxNewEventType();
@@ -214,9 +211,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
 {
     // Process single lines
     int lineNumber = 1;
-    if(!wxFileName::FileExists(fileName)) {
-        return;
-    }
+    if(!wxFileName::FileExists(fileName)) { return; }
 
     wxFFile thefile(fileName, wxT("rb"));
     if(!thefile.IsOpened()) {
@@ -288,9 +283,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
             }
         }
 
-        if(!data->IsMatchCase()) {
-            findString.MakeLower();
-        }
+        if(!data->IsMatchCase()) { findString.MakeLower(); }
 
         while(tkz.HasMoreTokens()) {
 
@@ -304,12 +297,8 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
 
     if(m_results.empty() == false) SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner());
 }
-void SearchThread::DoSearchLineRE(const wxString& line,
-                                  const int lineNum,
-                                  const int lineOffset,
-                                  const wxString& fileName,
-                                  const SearchData* data,
-                                  TextStatesPtr statesPtr)
+void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const int lineOffset,
+                                  const wxString& fileName, const SearchData* data, TextStatesPtr statesPtr)
 {
     wxRegEx& re = GetRegex(data->GetFindString(), data->IsMatchCase());
     size_t col = 0;
@@ -324,8 +313,8 @@ void SearchThread::DoSearchLineRE(const wxString& line,
 
             // Notify our match
             // correct search Pos and Length owing to non plain ASCII multibyte characters
-            iCorrectedCol = clUTF8Length(line.c_str(), col);
-            iCorrectedLen = clUTF8Length(line.c_str(), col + len) - iCorrectedCol;
+            iCorrectedCol = FileUtils::UTF8Length(line.c_str(), col);
+            iCorrectedLen = FileUtils::UTF8Length(line.c_str(), col + len) - iCorrectedCol;
             SearchResult result;
             result.SetPosition(lineOffset + col);
             result.SetColumnInChars((int)col);
@@ -390,20 +379,13 @@ void SearchThread::DoSearchLineRE(const wxString& line,
     }
 }
 
-void SearchThread::DoSearchLine(const wxString& line,
-                                const int lineNum,
-                                const int lineOffset,
-                                const wxString& fileName,
-                                const SearchData* data,
-                                const wxString& findWhat,
-                                const wxArrayString& filters,
+void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const int lineOffset, const wxString& fileName,
+                                const SearchData* data, const wxString& findWhat, const wxArrayString& filters,
                                 TextStatesPtr statesPtr)
 {
     wxString modLine = line;
 
-    if(!data->IsMatchCase()) {
-        modLine.MakeLower();
-    }
+    if(!data->IsMatchCase()) { modLine.MakeLower(); }
 
     int pos = 0;
     int col = 0;
@@ -457,8 +439,8 @@ void SearchThread::DoSearchLine(const wxString& line,
 
             // Notify our match
             // correct search Pos and Length owing to non plain ASCII multibyte characters
-            iCorrectedCol = clUTF8Length(line.c_str(), col);
-            iCorrectedLen = clUTF8Length(findWhat.c_str(), findWhat.Length());
+            iCorrectedCol = FileUtils::UTF8Length(line.c_str(), col);
+            iCorrectedLen = FileUtils::UTF8Length(findWhat.c_str(), findWhat.Length());
             SearchResult result;
             result.SetPosition(lineOffset + col);
             result.SetColumnInChars(col);
@@ -515,9 +497,7 @@ void SearchThread::DoSearchLine(const wxString& line,
                 m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
             }
 
-            if(!AdjustLine(modLine, pos, findWhat)) {
-                break;
-            }
+            if(!AdjustLine(modLine, pos, findWhat)) { break; }
             col += (int)findWhat.Length();
         }
     }
@@ -594,9 +574,7 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
     std::for_each(files.begin(), files.end(), [&](wxString& filename) {
         if(uniqueFiles.count(filename)) return;
         uniqueFiles.insert(filename);
-        if(FileUtils::WildMatch(mask, filename)) {
-            tmpFiles.Add(filename);
-        }
+        if(FileUtils::WildMatch(mask, filename)) { tmpFiles.Add(filename); }
     });
     files.swap(tmpFiles);
 }
@@ -604,9 +582,7 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 static SearchThread* gs_SearchThread = NULL;
 void SearchThreadST::Free()
 {
-    if(gs_SearchThread) {
-        delete gs_SearchThread;
-    }
+    if(gs_SearchThread) { delete gs_SearchThread; }
     gs_SearchThread = NULL;
 }
 

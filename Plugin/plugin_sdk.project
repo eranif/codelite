@@ -81,7 +81,6 @@
     <File Name="project.cpp"/>
     <File Name="project_settings.cpp"/>
     <File Name="regex_processor.cpp"/>
-    <File Name="search_thread.cpp"/>
     <File Name="workspace.cpp"/>
     <File Name="stringsearcher.cpp"/>
     <File Name="stringsearcher.h"/>
@@ -192,7 +191,6 @@
     <File Name="project.h"/>
     <File Name="project_settings.h"/>
     <File Name="regex_processor.h"/>
-    <File Name="search_thread.h"/>
     <File Name="workspace.h"/>
     <File Name="queuecommand.cpp"/>
     <File Name="queuecommand.h"/>

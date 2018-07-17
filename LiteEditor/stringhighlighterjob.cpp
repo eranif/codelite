@@ -22,8 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "stringsearcher.h"
+#include "search_thread.h"
 #include "stringhighlighterjob.h"
+#include "stringsearcher.h"
 #include <vector>
 
 StringHighlighterJob::StringHighlighterJob(const wxString& str, const wxString& word, int offset)
@@ -44,9 +45,7 @@ void StringHighlighterJob::Set(const wxString& str, const wxString& word, int of
 
 void StringHighlighterJob::Process()
 {
-    if(m_str.IsEmpty() || m_word.IsEmpty()) {
-        return;
-    }
+    if(m_str.IsEmpty() || m_word.IsEmpty()) { return; }
 
     int pos(0);
     int match_len(0);

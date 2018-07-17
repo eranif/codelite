@@ -206,5 +206,7 @@ public:
      * @brief same as above
      */
     static bool RemoveFile(const wxString& filename, const wxString& context = "");
+    
+    static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
 };
 #endif // FILEUTILS_H

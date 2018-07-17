@@ -22,11 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "globals.h"
+#include "search_thread.h"
 #include "stringsearcher.h"
-#include <wx/regex.h>
 #include <algorithm>
 #include <string>
-#include "globals.h"
+#include <wx/regex.h>
 
 static std::wstring Reverse(const std::wstring& str)
 {
@@ -43,27 +44,21 @@ static std::wstring Reverse(const std::wstring& str)
 
 wxString StringFindReplacer::GetString(const wxString& input, int from, bool search_up)
 {
-    if(from < 0) {
-        from = 0;
-    }
+    if(from < 0) { from = 0; }
 
     if(!search_up) {
 
-        if(from >= (int)input.Len()) {
-            return wxEmptyString;
-        }
+        if(from >= (int)input.Len()) { return wxEmptyString; }
         return input.Mid((size_t)from);
 
     } else {
-        if(from >= (int)input.Len()) {
-            from = (int)input.Len();
-        }
+        if(from >= (int)input.Len()) { from = (int)input.Len(); }
         return input.Mid(0, (size_t)from);
     }
 }
 
-bool StringFindReplacer::DoWildcardSearch(
-    const wxString& input, int startOffset, const wxString& find_what, size_t flags, int& pos, int& matchLen)
+bool StringFindReplacer::DoWildcardSearch(const wxString& input, int startOffset, const wxString& find_what,
+                                          size_t flags, int& pos, int& matchLen)
 {
     // Conver the wildcard to regex
     wxString regexPattern = find_what;
@@ -84,13 +79,11 @@ bool StringFindReplacer::DoWildcardSearch(
     return DoRESearch(input, startOffset, regexPattern, flags, pos, matchLen);
 }
 
-bool StringFindReplacer::DoRESearch(
-    const wxString& input, int startOffset, const wxString& find_what, size_t flags, int& pos, int& matchLen)
+bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, const wxString& find_what, size_t flags,
+                                    int& pos, int& matchLen)
 {
     wxString str = GetString(input, startOffset, flags & wxSD_SEARCH_BACKWARD ? true : false);
-    if(str.IsEmpty()) {
-        return false;
-    }
+    if(str.IsEmpty()) { return false; }
 
 #ifndef __WXMAC__
     int re_flags = wxRE_ADVANCED;
@@ -104,9 +97,7 @@ bool StringFindReplacer::DoRESearch(
     re.Compile(find_what, re_flags);
 
     // incase we are scanning NOT backwared, set the offset
-    if(!(flags & wxSD_SEARCH_BACKWARD)) {
-        pos = startOffset;
-    }
+    if(!(flags & wxSD_SEARCH_BACKWARD)) { pos = startOffset; }
 
     if(re.IsValid()) {
         if(flags & wxSD_SEARCH_BACKWARD) {
@@ -121,17 +112,13 @@ bool StringFindReplacer::DoRESearch(
                     break;
                 }
                 pos += start;
-                if(matched) {
-                    pos += matchLen;
-                }
+                if(matched) { pos += matchLen; }
                 matchLen = len;
                 matched = true;
                 str = str.Mid(start + len);
             }
 
-            if(matched) {
-                return true;
-            }
+            if(matched) { return true; }
 
         } else if(re.Matches(str)) {
             size_t start, len;
@@ -144,17 +131,15 @@ bool StringFindReplacer::DoRESearch(
     return false;
 }
 
-bool StringFindReplacer::DoSimpleSearch(
-    const wchar_t* pinput, int startOffset, const wchar_t* pfind_what, size_t flags, int& pos, int& matchLen)
+bool StringFindReplacer::DoSimpleSearch(const wchar_t* pinput, int startOffset, const wchar_t* pfind_what, size_t flags,
+                                        int& pos, int& matchLen)
 {
 #if wxVERSION_NUMBER >= 2900
     std::wstring input(pinput);
     std::wstring find_what(pfind_what);
 
     int from = startOffset;
-    if(from < 0) {
-        from = 0;
-    }
+    if(from < 0) { from = 0; }
     std::wstring str;
     bool search_up = flags & wxSD_SEARCH_BACKWARD;
     if(!search_up) {
@@ -166,9 +151,7 @@ bool StringFindReplacer::DoSimpleSearch(
         str = input.substr((size_t)from);
 
     } else {
-        if(from >= (int)input.length()) {
-            from = (int)input.length();
-        }
+        if(from >= (int)input.length()) { from = (int)input.length(); }
         str = input.substr(0, (size_t)from);
     }
 #else
@@ -179,9 +162,7 @@ bool StringFindReplacer::DoSimpleSearch(
 
     size_t init_size = str.length();
 
-    if(str.empty()) {
-        return false;
-    }
+    if(str.empty()) { return false; }
 
     std::wstring find_str(find_what);
     size_t offset(0);
@@ -253,14 +234,8 @@ bool StringFindReplacer::DoSimpleSearch(
     return false;
 }
 
-bool StringFindReplacer::Search(const wchar_t* input,
-                                int startOffset,
-                                const wchar_t* find_what,
-                                size_t flags,
-                                int& pos,
-                                int& matchLen,
-                                int& posInChars,
-                                int& matchLenInChars)
+bool StringFindReplacer::Search(const wchar_t* input, int startOffset, const wchar_t* find_what, size_t flags, int& pos,
+                                int& matchLen, int& posInChars, int& matchLenInChars)
 {
     // adjust startOffset due to it is in bytes but should be in chars
     int iSO = startOffset;
@@ -270,7 +245,8 @@ bool StringFindReplacer::Search(const wchar_t* input,
         isUTF8 = (utfLen != iSO);
     }
 
-    while(isUTF8 && (iSO > 0) && ((int)clUTF8Length(input, iSO) > startOffset)) iSO--;
+    while(isUTF8 && (iSO > 0) && ((int)clUTF8Length(input, iSO) > startOffset))
+        iSO--;
     startOffset = iSO;
 
     bool bResult = false;
@@ -297,8 +273,8 @@ bool StringFindReplacer::Search(const wchar_t* input,
     return bResult;
 }
 
-bool StringFindReplacer::Search(
-    const wchar_t* input, int startOffset, const wchar_t* find_what, size_t flags, int& pos, int& matchLen)
+bool StringFindReplacer::Search(const wchar_t* input, int startOffset, const wchar_t* find_what, size_t flags, int& pos,
+                                int& matchLen)
 {
     int posInChars(0), matchLenInChars(0);
     return StringFindReplacer::Search(input, startOffset, find_what, flags, pos, matchLen, posInChars, matchLenInChars);

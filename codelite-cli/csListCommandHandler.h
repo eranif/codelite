@@ -7,7 +7,7 @@ class csListCommandHandler : public csCommandHandlerBase
 public:
     csListCommandHandler(wxEvtHandler* sink);
     virtual ~csListCommandHandler();
-    virtual void Process(const wxString& message);
+    virtual void Process(const JSONElement& options);
 };
 
 #endif // CSLISTCOMMANDHANDLER_H

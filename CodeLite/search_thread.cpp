@@ -33,11 +33,17 @@
 #include <iostream>
 #include <set>
 #include <wx/dir.h>
+#if wxUSE_GUI
 #include <wx/fontmap.h>
+#endif
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
+
+#if !wxUSE_GUI
+#include "cl_command_event.h" // Needed for the definition of wxCommandEvent
+#endif
 
 wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_MATCHFOUND, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHEND, wxCommandEvent);
@@ -224,6 +230,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
     wxString fileData;
     fileData.Alloc(size);
 
+#if wxUSE_GUI
     // support for other encoding
     wxFontEncoding enc = wxFontMapper::GetEncodingFromName(data->GetEncoding().c_str());
     wxCSConv fontEncConv(enc);
@@ -231,7 +238,12 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         m_summary.GetFailedFiles().Add(fileName);
         return;
     }
-
+#else
+    if(!thefile.ReadAll(&fileData, wxConvLibc)) {
+        m_summary.GetFailedFiles().Add(fileName);
+        return;
+    }
+#endif
     // take a wild guess and see if we really need to construct
     // a TextStatesPtr object (it is quite an expensive operation)
     bool shouldCreateStates(true);

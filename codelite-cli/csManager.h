@@ -31,10 +31,14 @@ public:
     wxString& GetOptions() { return m_options; }
 
 protected:
-    void OnWorkerThreadTerminated(clCommandEvent& event);
-    void OnServerError(clCommandEvent& event);
-    void OnNewConnection(clCommandEvent& event);
-    void OnCommandProcessedCompleted(clCommandEvent &event);
+    // The handler completed
+    void OnCommandProcessedCompleted(clCommandEvent& event);
+    
+    // Search events
+    void OnSearchThreadMatch(wxCommandEvent& event);
+    void OnSearchThreadStarted(wxCommandEvent& event);
+    void OnSearchThreadCancelled(wxCommandEvent& event);
+    void OnSearchThreadEneded(wxCommandEvent& event);
 };
 
 #endif // CSMANAGER_H

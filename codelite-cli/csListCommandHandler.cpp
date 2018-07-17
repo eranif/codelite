@@ -11,17 +11,12 @@ csListCommandHandler::csListCommandHandler(wxEvtHandler* sink)
 
 csListCommandHandler::~csListCommandHandler() {}
 
-void csListCommandHandler::Process(const wxString& message)
+void csListCommandHandler::Process(const JSONElement& options)
 {
     clDEBUG() << "Processing list command...";
-    JSONRoot command(message);
-    JSONElement e = command.toElement();
-    if(!e.hasNamedObject("folder")) {
-        clERROR() << "list command must include the 'folder' parameter";
-        NotifyCompletion();
-        return;
-    }
-    wxString folder = e.namedObject("folder").toString();
+    CHECK_OPTION("folder");
+    
+    wxString folder = options.namedObject("folder").toString();
 
     // Prepare the output
     wxDir dir(folder);

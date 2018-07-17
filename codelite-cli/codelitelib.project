@@ -30,6 +30,8 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="libCodeLite">
+    <File Name="../CodeLite/search_thread.h"/>
+    <File Name="../CodeLite/search_thread.cpp"/>
     <File Name="../CodeLite/clNetworkMessage.cpp"/>
     <File Name="../CodeLite/clNetworkMessage.h"/>
     <VirtualDirectory Name="SocketAPI">
@@ -383,6 +385,7 @@
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
         <IncludePath Value="$(CL_HOME)/sdk/codelite_indexer/network"/>
+        <Preprocessor Value="wxUSE_GUI=0"/>
       </Compiler>
       <Linker Options="-O0" Required="yes">
         <LibraryPath Value="."/>

@@ -9,6 +9,8 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="Handlers">
+      <File Name="csFindInFilesCommandHandler.cpp"/>
+      <File Name="csFindInFilesCommandHandler.h"/>
       <File Name="csCommandHandlerManager.cpp"/>
       <File Name="csCommandHandlerManager.h"/>
       <File Name="csListCommandHandler.cpp"/>
@@ -32,6 +34,9 @@
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
+  <Dependencies Name="Debug_Windows">
+    <Project Name="codelitelib"/>
+  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -89,6 +94,7 @@ $(WorkspacePath)/../CodeLite/SocketAPI</SearchPaths>
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
         <IncludePath Value="$(CL_HOME)/sdk/codelite_indexer/network"/>
+        <Preprocessor Value="wxUSE_GUI=0"/>
       </Compiler>
       <Linker Options="-O0;$(shell wx-config --libs base,xml,core)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/lib"/>
@@ -169,7 +175,4 @@ $(WorkspacePath)/../CodeLite/SocketAPI</SearchPaths>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug_Windows">
-    <Project Name="codelitelib"/>
-  </Dependencies>
 </CodeLite_Project>

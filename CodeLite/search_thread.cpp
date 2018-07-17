@@ -39,10 +39,10 @@
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
 
-const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND = wxNewEventType();
-const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND = wxNewEventType();
-const wxEventType wxEVT_SEARCH_THREAD_SEARCHCANCELED = wxNewEventType();
-const wxEventType wxEVT_SEARCH_THREAD_SEARCHSTARTED = wxNewEventType();
+wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_MATCHFOUND, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHEND, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHCANCELED, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHSTARTED, wxCommandEvent);
 
 #define SEND_ST_EVENT()                       \
     if(owner) {                               \
@@ -295,7 +295,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         }
     }
 
-    if(m_results.empty() == false) SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner());
+    if(m_results.empty() == false) { SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner()); }
 }
 void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const int lineOffset,
                                   const wxString& fileName, const SearchData* data, TextStatesPtr statesPtr)

@@ -12,8 +12,8 @@ csParseFolderHandler::~csParseFolderHandler() {}
 
 void csParseFolderHandler::DoProcessCommand(const JSONElement& options)
 {
-    CHECK_STR_OPTION("lang", m_language);
-    CHECK_STR_OPTION("path", m_path);
+    CHECK_STR_PARAM("lang", m_language);
+    CHECK_STR_PARAM("path", m_path);
 
     bool isDir = wxDirExists(m_path);
     wxString handlerName;

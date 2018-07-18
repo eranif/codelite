@@ -11,11 +11,11 @@ csFindInFilesCommandHandler::~csFindInFilesCommandHandler() {}
 void csFindInFilesCommandHandler::DoProcessCommand(const JSONElement& options)
 {
     // Extract the options
-    CHECK_STR_OPTION("path", m_folder);
-    CHECK_STR_OPTION("what", m_what);
-    CHECK_STR_OPTION("mask", m_mask);
-    CHECK_BOOL_OPTION("case", m_case);
-    CHECK_BOOL_OPTION("word", m_word);
+    CHECK_STR_PARAM("path", m_folder);
+    CHECK_STR_PARAM("what", m_what);
+    CHECK_STR_PARAM("mask", m_mask);
+    CHECK_BOOL_PARAM("case", m_case);
+    CHECK_BOOL_PARAM("word", m_word);
 
     if(m_folder.IsEmpty() || !wxFileName::DirExists(m_folder)) {
         clERROR() << "Invalid input directory:" << m_folder;

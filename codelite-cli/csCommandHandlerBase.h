@@ -10,7 +10,7 @@
 
 wxDECLARE_EVENT(wxEVT_COMMAND_PROCESSED, clCommandEvent);
 
-#define CHECK_STR_OPTION(str_option, sVal)                      \
+#define CHECK_STR_PARAM(str_option, sVal)                       \
     if(!options.hasNamedObject(str_option)) {                   \
         clERROR() << "Command is missing field:" << str_option; \
         NotifyCompletion();                                     \
@@ -18,7 +18,7 @@ wxDECLARE_EVENT(wxEVT_COMMAND_PROCESSED, clCommandEvent);
     }                                                           \
     sVal = options.namedObject(str_option).toString();
 
-#define CHECK_INT_OPTION(str_option, iVal)                      \
+#define CHECK_INT_PARAM(str_option, iVal)                       \
     if(!options.hasNamedObject(str_option)) {                   \
         clERROR() << "Command is missing field:" << str_option; \
         NotifyCompletion();                                     \
@@ -26,7 +26,7 @@ wxDECLARE_EVENT(wxEVT_COMMAND_PROCESSED, clCommandEvent);
     }                                                           \
     iVal = options.namedObject(str_option).toInt();
 
-#define CHECK_BOOL_OPTION(str_option, bVal)                     \
+#define CHECK_BOOL_PARAM(str_option, bVal)                      \
     if(!options.hasNamedObject(str_option)) {                   \
         clERROR() << "Command is missing field:" << str_option; \
         NotifyCompletion();                                     \
@@ -34,13 +34,25 @@ wxDECLARE_EVENT(wxEVT_COMMAND_PROCESSED, clCommandEvent);
     }                                                           \
     bVal = options.namedObject(str_option).toBool();
 
-#define CHECK_ARRSTR_OPTION(str_option, arrVal)                 \
+#define CHECK_ARRSTR_PARAM(str_option, arrVal)                  \
     if(!options.hasNamedObject(str_option)) {                   \
         clERROR() << "Command is missing field:" << str_option; \
         NotifyCompletion();                                     \
         return;                                                 \
     }                                                           \
     arrVal = options.namedObject(str_option).toArrayString();
+
+#define CHECK_STR_PARAM_OPTIONAL(str_option, sVal) \
+    if(options.hasNamedObject(str_option)) { sVal = options.namedObject(str_option).toString(); }
+
+#define CHECK_INT_PARAM_OPTIONAL(str_option, iVal) \
+    if(options.hasNamedObject(str_option)) { iVal = options.namedObject(str_option).toInt(); }
+
+#define CHECK_BOOL_PARAM_OPTIONAL(str_option, bVal) \
+    if(options.hasNamedObject(str_option)) { bVal = options.namedObject(str_option).toBool(); }
+
+#define CHECK_ARRSTR_PARAM_OPTIONAL(str_option, arrVal) \
+    if(options.hasNamedObject(str_option)) { arrVal = options.namedObject(str_option).toArrayString(); }
 
 class csCommandHandlerBase
 {
@@ -54,7 +66,7 @@ public:
 protected:
     void NotifyCompletion();
     void SetNotifyCompletion(bool b) { m_notifyOnExit = b; }
-    
+
 public:
     /**
      * @brief process a request from the command line and print the result to the stdout

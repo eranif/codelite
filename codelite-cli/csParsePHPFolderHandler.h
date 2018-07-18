@@ -8,6 +8,7 @@ class csParsePHPFolderHandler : public csCommandHandlerBase
 {
     wxString m_folder;
     wxString m_mask;
+    wxString m_dbpath;
 
 protected:
     virtual void DoProcessCommand(const JSONElement& options);

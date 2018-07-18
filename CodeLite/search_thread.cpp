@@ -616,14 +616,14 @@ JSONElement SearchResult::ToJSON() const
     json.addProperty("line", m_lineNumber);
     json.addProperty("col", m_column);
     json.addProperty("pos", m_position);
-    json.addProperty("findWhat", m_findWhat);
     json.addProperty("pattern", m_pattern);
     json.addProperty("len", m_len);
     json.addProperty("flags", m_flags);
     json.addProperty("columnInChars", m_columnInChars);
     json.addProperty("lenInChars", m_lenInChars);
-    json.addProperty("matchState", (int)m_matchState);
-    json.addProperty("scope", m_scope);
+    //json.addProperty("findWhat", m_findWhat);
+    //json.addProperty("matchState", (int)m_matchState);
+    //json.addProperty("scope", m_scope);
     return json;
 }
 
@@ -635,12 +635,12 @@ void SearchResult::FromJSON(const JSONElement& json)
     m_pattern = json.namedObject("pattern").toString(m_pattern);
     m_fileName = json.namedObject("file").toString(m_fileName);
     m_len = json.namedObject("len").toInt(m_len);
-    m_findWhat = json.namedObject("findWhat").toString(m_findWhat);
     m_flags = json.namedObject("flags").toSize_t(m_flags);
     m_columnInChars = json.namedObject("columnInChars").toInt(m_columnInChars);
     m_lenInChars = json.namedObject("lenInChars").toInt(m_lenInChars);
-    m_matchState = json.namedObject("matchState").toInt(m_matchState);
-    m_scope = json.namedObject("scope").toString(m_scope);
+    //m_findWhat = json.namedObject("findWhat").toString(m_findWhat);
+    //m_matchState = json.namedObject("matchState").toInt(m_matchState);
+    //m_scope = json.namedObject("scope").toString(m_scope);
 }
 
 JSONElement SearchSummary::ToJSON() const

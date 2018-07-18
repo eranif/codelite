@@ -11,21 +11,19 @@ csListCommandHandler::csListCommandHandler(wxEvtHandler* sink)
 
 csListCommandHandler::~csListCommandHandler() {}
 
-void csListCommandHandler::Process(const JSONElement& options)
+void csListCommandHandler::ProcessCommand(const JSONElement& options)
 {
     clDEBUG() << "Processing list command...";
-    CHECK_OPTION("folder");
+    CHECK_STR_OPTION("folder", m_folder);
     
-    wxString folder = options.namedObject("folder").toString();
-
     // Prepare the output
-    wxDir dir(folder);
+    wxDir dir(m_folder);
     wxString filename;
     bool cont = dir.GetFirst(&filename);
     JSONRoot json(cJSON_Array);
     JSONElement arr = json.toElement();
     while(cont) {
-        wxFileName fn(folder, filename);
+        wxFileName fn(m_folder, filename);
         JSONElement entry = JSONElement::createObject();
         wxString fullpath = fn.GetFullPath();
         entry.addProperty("path", fn.GetFullPath());
@@ -37,6 +35,4 @@ void csListCommandHandler::Process(const JSONElement& options)
     clDEBUG() << result;
     std::cout << result << std::endl;
     free(result);
-
-    NotifyCompletion();
 }

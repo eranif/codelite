@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iostream>
 #include <wx/app.h>
+#include "csParsePHPFolderHandler.h"
 
 csManager::csManager()
     : m_networkThread(nullptr)
@@ -16,6 +17,7 @@ csManager::csManager()
 {
     m_handlers.Register("list", csCommandHandlerBase::Ptr_t(new csListCommandHandler(this)));
     m_handlers.Register("find", csCommandHandlerBase::Ptr_t(new csFindInFilesCommandHandler(this)));
+    m_handlers.Register("parse-php-folder", csCommandHandlerBase::Ptr_t(new csParsePHPFolderHandler(this)));
 
     SearchThreadST::Get()->Start();
     SearchThreadST::Get()->SetNotifyWindow(this);
@@ -85,7 +87,11 @@ void csManager::OnSearchThreadMatch(wxCommandEvent& event)
     wxDELETE(res);
 }
 
-void csManager::OnSearchThreadStarted(wxCommandEvent& event) { m_findInFilesMatches.reset(new JSONRoot(cJSON_Array)); }
+void csManager::OnSearchThreadStarted(wxCommandEvent& event)
+{
+    clDEBUG() << "Search started";
+    m_findInFilesMatches.reset(new JSONRoot(cJSON_Array));
+}
 
 void csManager::OnSearchThreadCancelled(wxCommandEvent& event) { OnSearchThreadEneded(event); }
 
@@ -94,7 +100,10 @@ void csManager::OnSearchThreadEneded(wxCommandEvent& event)
     SearchSummary* summary = reinterpret_cast<SearchSummary*>(event.GetClientData());
     m_findInFilesMatches->toElement().arrayAppend(summary->ToJSON());
     wxDELETE(summary);
-    std::cout << m_findInFilesMatches->toElement().format(true) << std::endl;
+    wxString output = m_findInFilesMatches->toElement().format(false);
+    std::cout << output << std::endl;
+    clDEBUG1() << output;
+    clDEBUG() << "Search completed";
     wxExit();
 }
 

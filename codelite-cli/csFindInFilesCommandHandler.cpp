@@ -8,39 +8,36 @@ csFindInFilesCommandHandler::csFindInFilesCommandHandler(wxEvtHandler* sink)
 
 csFindInFilesCommandHandler::~csFindInFilesCommandHandler() {}
 
-void csFindInFilesCommandHandler::Process(const JSONElement& options)
+void csFindInFilesCommandHandler::ProcessCommand(const JSONElement& options)
 {
     // Extract the options
-    CHECK_OPTION("folder");
-    CHECK_OPTION("what");
-    CHECK_OPTION("mask");
-    CHECK_OPTION("case");
-    CHECK_OPTION("word");
+    CHECK_STR_OPTION("folder", m_folder);
+    CHECK_STR_OPTION("what", m_what);
+    CHECK_STR_OPTION("mask", m_mask);
+    CHECK_BOOL_OPTION("case", m_case);
+    CHECK_BOOL_OPTION("word", m_word);
 
-    wxString folder = options.namedObject("folder").toString();
-    wxString what = options.namedObject("what").toString();
-    wxString mask = options.namedObject("mask").toString();
-    bool caseSensitive = options.namedObject("case").toBool(false);
-    bool word = options.namedObject("word").toBool(false);
-
-    if(folder.IsEmpty() || !wxFileName::DirExists(folder)) {
-        clERROR() << "Invalid input directory:" << folder;
-        NotifyCompletion();
+    if(m_folder.IsEmpty() || !wxFileName::DirExists(m_folder)) {
+        clERROR() << "Invalid input directory:" << m_folder;
         return;
     }
-    if(what.IsEmpty()) {
+    if(m_what.IsEmpty()) {
         clERROR() << "what field is empty";
-        NotifyCompletion();
         return;
     }
 
+    // Since we use a background thread to process the data for us
+    // we don't want that the base class will notify-completion until the background thread
+    // has completed the search. We will do it ourself when the search thread complete its task
+    SetNotifyCompletion(false);
+    
     SearchData* req = new SearchData();
-    req->SetExtensions(mask);
-    req->SetFindString(what);
-    req->SetMatchCase(caseSensitive);
-    req->SetMatchWholeWord(word);
+    req->SetExtensions(m_mask);
+    req->SetFindString(m_what);
+    req->SetMatchCase(m_case);
+    req->SetMatchWholeWord(m_word);
     wxArrayString folders;
-    folders.Add(folder);
+    folders.Add(m_folder);
     req->SetRootDirs(folders);
     req->SetOwner(GetSink());
     SearchThreadST::Get()->Add(req);

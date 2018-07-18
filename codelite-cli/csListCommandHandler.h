@@ -8,8 +8,8 @@ class csListCommandHandler : public csCommandHandlerBase
 {
     wxString m_folder;
 
-protected:
-    virtual void ProcessCommand(const JSONElement& options);
+public:
+    virtual void DoProcessCommand(const JSONElement& options);
 
 public:
     csListCommandHandler(wxEvtHandler* sink);

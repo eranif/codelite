@@ -3,11 +3,10 @@
 
 class csFindInFilesResults
 {
-    
+
 public:
     csFindInFilesResults();
     virtual ~csFindInFilesResults();
-
 };
 
 #endif // CSFINDINFILESRESULTS_H

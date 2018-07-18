@@ -11,11 +11,11 @@ csListCommandHandler::csListCommandHandler(wxEvtHandler* sink)
 
 csListCommandHandler::~csListCommandHandler() {}
 
-void csListCommandHandler::ProcessCommand(const JSONElement& options)
+void csListCommandHandler::DoProcessCommand(const JSONElement& options)
 {
     clDEBUG() << "Processing list command...";
-    CHECK_STR_OPTION("folder", m_folder);
-    
+    CHECK_STR_OPTION("path", m_folder);
+
     // Prepare the output
     wxDir dir(m_folder);
     wxString filename;

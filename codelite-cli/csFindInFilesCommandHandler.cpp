@@ -8,10 +8,10 @@ csFindInFilesCommandHandler::csFindInFilesCommandHandler(wxEvtHandler* sink)
 
 csFindInFilesCommandHandler::~csFindInFilesCommandHandler() {}
 
-void csFindInFilesCommandHandler::ProcessCommand(const JSONElement& options)
+void csFindInFilesCommandHandler::DoProcessCommand(const JSONElement& options)
 {
     // Extract the options
-    CHECK_STR_OPTION("folder", m_folder);
+    CHECK_STR_OPTION("path", m_folder);
     CHECK_STR_OPTION("what", m_what);
     CHECK_STR_OPTION("mask", m_mask);
     CHECK_BOOL_OPTION("case", m_case);
@@ -30,7 +30,7 @@ void csFindInFilesCommandHandler::ProcessCommand(const JSONElement& options)
     // we don't want that the base class will notify-completion until the background thread
     // has completed the search. We will do it ourself when the search thread complete its task
     SetNotifyCompletion(false);
-    
+
     SearchData* req = new SearchData();
     req->SetExtensions(m_mask);
     req->SetFindString(m_what);

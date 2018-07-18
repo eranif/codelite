@@ -1,8 +1,8 @@
+#include "csNetworkReaderThread.h"
 #include "SocketAPI/clSocketBase.h"
 #include "clNetworkMessage.h"
 #include "csCommandHandlerBase.h"
 #include "csListCommandHandler.h"
-#include "csNetworkReaderThread.h"
 #include "json_node.h"
 #include <file_logger.h>
 #include <wx/dir.h>
@@ -13,7 +13,7 @@ csNetworkReaderThread::csNetworkReaderThread(wxEvtHandler* manager, clSocketBase
     : csJoinableThread(manager)
     , m_conn(conn)
 {
-    //m_handlers.Register("list", csCommandHandlerBase::Ptr_t(new csListCommandHandler()));
+    // m_handlers.Register("list", csCommandHandlerBase::Ptr_t(new csListCommandHandler()));
 }
 
 csNetworkReaderThread::~csNetworkReaderThread() { wxDELETE(m_conn); }
@@ -44,13 +44,13 @@ void* csNetworkReaderThread::Entry()
 void csNetworkReaderThread::ProcessCommand(const wxString& str)
 {
     wxUnusedVar(str);
-//    clDEBUG() << "Read:" << str;
-//    clNetworkMessage message(str);
-//    const wxString& command = message["command"];
-//    csCommandHandlerBase::Ptr_t handler = m_handlers.FindHandler(command);
-//    if(handler) {
-//        handler->Process(message, m_conn);
-//    } else {
-//        clWARNING() << "Don't know how to handle command:" << command;
-//    }
+    //    clDEBUG() << "Read:" << str;
+    //    clNetworkMessage message(str);
+    //    const wxString& command = message["command"];
+    //    csCommandHandlerBase::Ptr_t handler = m_handlers.FindHandler(command);
+    //    if(handler) {
+    //        handler->Process(message, m_conn);
+    //    } else {
+    //        clWARNING() << "Don't know how to handle command:" << command;
+    //    }
 }

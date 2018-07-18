@@ -1,6 +1,6 @@
+#include "csConfig.h"
 #include "clIniFile.h"
 #include "cl_standard_paths.h"
-#include "csConfig.h"
 #include "file_logger.h"
 #include <wx/filename.h>
 

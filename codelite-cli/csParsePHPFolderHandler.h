@@ -10,7 +10,7 @@ class csParsePHPFolderHandler : public csCommandHandlerBase
     wxString m_mask;
 
 protected:
-    virtual void ProcessCommand(const JSONElement& options);
+    virtual void DoProcessCommand(const JSONElement& options);
 
 public:
     csParsePHPFolderHandler(wxEvtHandler* sink);

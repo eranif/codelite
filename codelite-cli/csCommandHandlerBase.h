@@ -41,13 +41,13 @@ wxDECLARE_EVENT(wxEVT_COMMAND_PROCESSED, clCommandEvent);
         return;                                                 \
     }                                                           \
     arrVal = options.namedObject(str_option).toArrayString();
-    
+
 class csCommandHandlerBase
 {
 protected:
     wxEvtHandler* m_sink;
     bool m_notifyOnExit;
-    
+
 public:
     typedef wxSharedPtr<csCommandHandlerBase> Ptr_t;
 
@@ -55,12 +55,13 @@ protected:
     void NotifyCompletion();
     void SetNotifyCompletion(bool b) { m_notifyOnExit = b; }
     
+public:
     /**
      * @brief process a request from the command line and print the result to the stdout
      * @param the handler options
      */
-    virtual void ProcessCommand(const JSONElement& options) = 0;
-    
+    virtual void DoProcessCommand(const JSONElement& options) = 0;
+
 public:
     csCommandHandlerBase(wxEvtHandler* sink);
     virtual ~csCommandHandlerBase();

@@ -12,7 +12,7 @@ public:
     csConfig();
     virtual ~csConfig();
     void Load();
-    
+
     void SetCommand(const wxString& command) { this->m_command = command; }
     void SetOptions(const wxString& options) { this->m_options = options; }
     const wxString& GetCommand() const { return m_command; }

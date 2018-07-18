@@ -11,6 +11,8 @@
     <File Name="csFindInFilesResults.cpp"/>
     <File Name="csFindInFilesResults.h"/>
     <VirtualDirectory Name="Handlers">
+      <File Name="csParseFolderHandler.cpp"/>
+      <File Name="csParseFolderHandler.h"/>
       <File Name="csParsePHPFolderHandler.cpp"/>
       <File Name="csParsePHPFolderHandler.h"/>
       <File Name="csFindInFilesCommandHandler.cpp"/>

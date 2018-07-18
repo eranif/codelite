@@ -17,7 +17,7 @@ void csCommandHandlerBase::NotifyCompletion()
 
 void csCommandHandlerBase::Process(const JSONElement& options)
 {
-    ProcessCommand(options);
+    DoProcessCommand(options);
     if(m_notifyOnExit) {
         // Make sure we call 'NotifyCompletion' here if needed
         NotifyCompletion();

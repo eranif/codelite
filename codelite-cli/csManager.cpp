@@ -3,21 +3,20 @@
 #include "csManager.h"
 #include "csNetworkReaderThread.h"
 #include "csNetworkThread.h"
+#include "csParseFolderHandler.h"
 #include "file_logger.h"
 #include "json_node.h"
 #include "search_thread.h"
 #include <algorithm>
 #include <iostream>
 #include <wx/app.h>
-#include "csParsePHPFolderHandler.h"
 
 csManager::csManager()
-    : m_networkThread(nullptr)
-    , m_startupCalled(false)
+    : m_startupCalled(false)
 {
     m_handlers.Register("list", csCommandHandlerBase::Ptr_t(new csListCommandHandler(this)));
     m_handlers.Register("find", csCommandHandlerBase::Ptr_t(new csFindInFilesCommandHandler(this)));
-    m_handlers.Register("parse-php-folder", csCommandHandlerBase::Ptr_t(new csParsePHPFolderHandler(this)));
+    m_handlers.Register("parse", csCommandHandlerBase::Ptr_t(new csParseFolderHandler(this)));
 
     SearchThreadST::Get()->Start();
     SearchThreadST::Get()->SetNotifyWindow(this);
@@ -35,14 +34,6 @@ csManager::~csManager()
         Unbind(wxEVT_SEARCH_THREAD_SEARCHCANCELED, &csManager::OnSearchThreadCancelled, this);
         Unbind(wxEVT_SEARCH_THREAD_SEARCHEND, &csManager::OnSearchThreadEneded, this);
     }
-
-    // Now delete the threads
-    wxDELETE(m_networkThread);
-
-    // Delete all remaining threads
-    std::for_each(m_threads.begin(), m_threads.end(), [&](csJoinableThread* thr) { wxDELETE(thr); });
-    m_threads.clear();
-
     SearchThreadST::Get()->Stop();
 }
 

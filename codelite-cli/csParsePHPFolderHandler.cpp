@@ -1,5 +1,5 @@
-#include "PHPLookupTable.h"
 #include "csParsePHPFolderHandler.h"
+#include "PHPLookupTable.h"
 #include <wx/filename.h>
 
 csParsePHPFolderHandler::csParsePHPFolderHandler(wxEvtHandler* sink)
@@ -9,9 +9,9 @@ csParsePHPFolderHandler::csParsePHPFolderHandler(wxEvtHandler* sink)
 
 csParsePHPFolderHandler::~csParsePHPFolderHandler() {}
 
-void csParsePHPFolderHandler::ProcessCommand(const JSONElement& options)
+void csParsePHPFolderHandler::DoProcessCommand(const JSONElement& options)
 {
-    CHECK_STR_OPTION("folder", m_folder);
+    CHECK_STR_OPTION("path", m_folder);
     CHECK_STR_OPTION("mask", m_mask);
     PHPLookupTable lookup;
     wxFileName dbpath(m_folder, "phpsymbols.db");

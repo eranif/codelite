@@ -11,7 +11,7 @@ class csCommandHandlerManager
 public:
     csCommandHandlerManager();
     virtual ~csCommandHandlerManager();
-    
+
     void Register(const wxString& command, csCommandHandlerBase::Ptr_t handler);
     csCommandHandlerBase::Ptr_t FindHandler(const wxString& command) const;
 };

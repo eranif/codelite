@@ -9,13 +9,9 @@
 #include <unordered_set>
 #include <wx/event.h>
 
-class csJoinableThread;
-class csNetworkThread;
 class csManager : public wxEvtHandler
 {
     csConfig m_config;
-    csNetworkThread* m_networkThread;
-    std::unordered_set<csJoinableThread*> m_threads;
     csCommandHandlerManager m_handlers;
 
     wxString m_command;

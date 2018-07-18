@@ -11,9 +11,9 @@ class csFindInFilesCommandHandler : public csCommandHandlerBase
     wxString m_mask;
     bool m_case;
     bool m_word;
-    
-protected:
-    virtual void ProcessCommand(const JSONElement& options);
+
+public:
+    virtual void DoProcessCommand(const JSONElement& options);
 
 public:
     csFindInFilesCommandHandler(wxEvtHandler* sink);

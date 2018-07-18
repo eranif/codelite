@@ -1,7 +1,7 @@
+#include "main_app.h"
 #include "cl_standard_paths.h"
 #include "csConfig.h"
 #include "file_logger.h"
-#include "main_app.h"
 #include <SocketAPI/clSocketServer.h>
 #include <iostream>
 #include <wx/filename.h>
@@ -34,7 +34,7 @@ int MainApp::OnExit()
 bool MainApp::OnInit()
 {
     SetAppName("codelite-cli");
-    
+
     // Make sure that the 'local' folder exists
     wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
@@ -49,7 +49,6 @@ bool MainApp::OnInit()
         PrintUsage(parser);
         return false;
     }
-
 
     // Open the log file
     FileLogger::OpenLog("codelite-cli.log", FileLogger::Developer);

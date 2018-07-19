@@ -39,7 +39,6 @@ class LLDBTooltip;
 class LLDBThreadsView;
 class LLDBLocalsView;
 class LLDBOutputView;
-class ConsoleFrame;
 class LLDBCallStackPane;
 class LLDBPlugin : public IPlugin
 {

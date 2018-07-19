@@ -30,36 +30,57 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
 #include "wxterminalbase.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
-wxTerminalBase::wxTerminalBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+wxTerminalBase::wxTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
 {
-	wxBoxSizer* mainSizer;
-	mainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* mainSizer;
+    mainSizer = new wxBoxSizer(wxVERTICAL);
 
-	m_textCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_AUTO_URL|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
-	m_textCtrl->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+    m_textCtrl = new wxStyledTextCtrl(this);
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        lexer->Apply(m_textCtrl);
+    }
+    mainSizer->Add(m_textCtrl, 1, wxEXPAND, 0);
+    this->SetSizer(mainSizer);
+    this->Layout();
+    mainSizer->Fit(this);
 
-	mainSizer->Add( m_textCtrl, 4, wxEXPAND, 5 );
-
-	this->SetSizer( mainSizer );
-	this->Layout();
-	mainSizer->Fit( this );
-
-	// Connect Events
-	m_textCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( wxTerminalBase::OnKey ), NULL, this );
-	m_textCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( wxTerminalBase::OnText ), NULL, this );
-	m_textCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( wxTerminalBase::OnEnter ), NULL, this );
-	m_textCtrl->Connect( wxEVT_COMMAND_TEXT_URL, wxTextUrlEventHandler( wxTerminalBase::OnURL ), NULL, this );
+    // Connect Events
+    m_textCtrl->Bind(wxEVT_KEY_DOWN, &wxTerminalBase::OnKey, this);
 }
 
 wxTerminalBase::~wxTerminalBase()
 {
-	// Disconnect Events
-	m_textCtrl->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( wxTerminalBase::OnKey ), NULL, this );
-	m_textCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( wxTerminalBase::OnText ), NULL, this );
-	m_textCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( wxTerminalBase::OnEnter ), NULL, this );
-	m_textCtrl->Disconnect( wxEVT_COMMAND_TEXT_URL, wxTextUrlEventHandler( wxTerminalBase::OnURL ), NULL, this );
+    m_textCtrl->Unbind(wxEVT_KEY_DOWN, &wxTerminalBase::OnKey, this);
+}
+
+void wxTerminalBase::OnKey(wxKeyEvent& event)
+{
+    switch(event.GetKeyCode()) {
+    case WXK_DOWN:
+        OnDown(event);
+        break;
+    case WXK_UP:
+        OnUp(event);
+        break;
+    case WXK_RIGHT:
+        OnRight(event);
+        break;
+    case WXK_LEFT:
+        OnLeft(event);
+        break;
+    case WXK_NUMPAD_ENTER:
+    case WXK_RETURN:
+        OnEnter(event);
+        break;
+    default:
+        event.Skip();
+    }
 }

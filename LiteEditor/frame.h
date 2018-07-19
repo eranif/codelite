@@ -180,11 +180,6 @@ public:
 
     DockablePaneMenuManager* GetDockablePaneMenuManager() { return m_DPmenuMgr; }
     //--------------------- debuger---------------------------------
-    /**
-     * @brief launch TTY
-     */
-    wxString StartTTY(const wxString& title);
-
     //---------------------------------------------------------------
 
     /**

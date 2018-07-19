@@ -4701,34 +4701,6 @@ void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
     event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) || e.IsAnswer());
 }
 
-wxString clMainFrame::StartTTY(const wxString& title)
-{
-#ifndef __WXMSW__
-
-    // Create a new TTY Console and place it in the AUI
-    ConsoleFrame* console = new ConsoleFrame(this, PluginManager::Get());
-    wxAuiPaneInfo paneInfo;
-    paneInfo.Name(wxT("Debugger Console")).Caption(title).Dockable().FloatingSize(300, 200).CloseButton(false);
-    m_mgr.AddPane(console, paneInfo);
-
-    // Re-set the title (it might be modified by 'LoadPerspective'
-    wxAuiPaneInfo& pi = m_mgr.GetPane(wxT("Debugger Console"));
-    if(pi.IsOk()) { pi.Caption(title); }
-
-    wxAuiPaneInfo& info = m_mgr.GetPane(wxT("Debugger Console"));
-    if(info.IsShown() == false) {
-        info.Show();
-        m_mgr.Update();
-    }
-    return console->StartTTY();
-
-#else
-
-    return wxT("");
-
-#endif
-}
-
 void clMainFrame::OnViewWordWrap(wxCommandEvent& e)
 {
     CHECK_SHUTDOWN();

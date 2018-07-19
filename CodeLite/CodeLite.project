@@ -477,6 +477,7 @@
         <IncludePath Value="../PCH"/>
         <IncludePath Value="../sdk/libssh/include"/>
         <Preprocessor Value="USE_SFTP=1"/>
+        <Preprocessor Value="wxUSE_GUI=1"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc --debug=yes --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
@@ -519,7 +520,8 @@ PhpLexer.cpp: PhpLexer.l
 JSLexer.cpp: JSLexer.l
 	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
 XmlLexer.cpp: XMLLexer.l
-	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -636,8 +638,7 @@ XmlLexer.cpp: XMLLexer.l
 CxxLexer.cpp: CxxScanner.l
 	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
-	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
-</CustomPreBuild>
+	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>

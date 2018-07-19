@@ -32,6 +32,8 @@
 #ifndef CODELITE_CODELITE_TERMINALEMULATORUI_BASE_CLASSES_H
 #define CODELITE_CODELITE_TERMINALEMULATORUI_BASE_CLASSES_H
 
+#include <wx/setup.h>
+
 #if wxUSE_GUI
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

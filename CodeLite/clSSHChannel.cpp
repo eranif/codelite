@@ -25,7 +25,7 @@ public:
     {
         while(!TestDestroy()) {
             // First, poll the channel
-            int bytes = ssh_channel_poll_timeout(m_channel, 100, 0);
+            int bytes = ssh_channel_poll_timeout(m_channel, 500, 0);
             if(bytes == SSH_ERROR) {
                 // an error
                 clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);

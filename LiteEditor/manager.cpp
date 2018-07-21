@@ -1777,7 +1777,10 @@ void Manager::OnProcessEnd(clProcessEvent& event)
 
 //--------------------------- Debugger Support -----------------------------
 
-static void DebugMessage(wxString msg) { clMainFrame::Get()->GetDebuggerPane()->GetDebugWindow()->AppendLine(msg); }
+static void DebugMessage(const wxString& msg)
+{
+    clMainFrame::Get()->GetDebuggerPane()->GetDebugWindow()->AppendLine(msg);
+}
 
 void Manager::UpdateDebuggerPane()
 {

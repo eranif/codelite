@@ -29,36 +29,24 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "wxterminalbase.h"
+#include <queue>
 #include <set>
 #include <vector>
 
+class clTerminalHistory;
 class IProcess;
 
-class wxTerminalHistory
-{
-    std::vector<wxString> m_history;
-    int m_where;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_EXECUTE_COMMAND, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_C, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_KILL_INFERIOR, clCommandEvent);
 
-public:
-    wxTerminalHistory();
-    ~wxTerminalHistory();
-
-    void Add(const wxString& command);
-    wxString ArrowUp();
-    wxString ArrowDown();
-};
-
-/** Implementing wxTerminalBase */
 class WXDLLIMPEXP_SDK wxTerminal : public wxTerminalBase
 {
 protected:
     IProcess* m_process;
     wxString m_workingDir;
-    wxTextAttr m_defaultStyle;
-    wxTextAttr m_promptStyle;
     bool m_exitWhenProcessDies;
     bool m_exitOnKey;
-    long m_inferiorEnd;
 #if defined(__WXGTK__) || defined(__WXMAC__)
     wxString m_tty;
     IProcess* m_dummyProcess;
@@ -66,13 +54,12 @@ protected:
 #endif
     bool m_interactive;
     wxString m_outputBuffer;
-    wxTerminalHistory m_history;
+    clTerminalHistory* m_history;
 
 protected:
     void DoProcessCommand(const wxString& command);
     void DoCtrlC();
     void DoFlushOutputBuffer();
-    void CaretToEnd();
     void InsertCommandText(const wxString& command);
     wxString GetCommandText();
 
@@ -92,19 +79,30 @@ protected:
     void OnUp(wxKeyEvent& event);
     void OnLeft(wxKeyEvent& event);
     void OnRight(wxKeyEvent& event);
-    void OnEnter(wxKeyEvent& event);
+    void OnEnter();
+    void OnCtrlC(wxKeyEvent& event);
+
+    // Theme
+    void OnThemeChanged(wxCommandEvent& event);
 
 public:
-    /** Constructor */
     wxTerminal(wxWindow* parent);
     virtual ~wxTerminal();
 
+    void Focus() { m_textCtrl->SetFocus(); }
     void SetInteractive(bool interactive) { this->m_interactive = interactive; }
     bool IsInteractive() const { return m_interactive; }
     void Execute(const wxString& command, bool exitWhenDone = false, const wxString& workingDir = wxT(""));
     void KillInferior();
     bool IsRunning();
     void Clear();
+    bool IsEmpty() const { return m_textCtrl->IsEmpty(); }
+    // Give access to the text control
+    wxStyledTextCtrl* GetCtrl() { return m_textCtrl; }
+
+    // Add text with the EOL at the end
+    void AddTextWithEOL(const wxString& text);
+
 #if defined(__WXGTK__) || defined(__WXMAC__)
     wxString StartTTY();
     wxString GetTTY() const { return m_tty; }

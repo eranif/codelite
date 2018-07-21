@@ -11,6 +11,9 @@ class WXDLLIMPEXP_CL clSSHChannel
     clSSH::Ptr_t m_ssh;
     SSHChannel_t m_channel;
 
+public:
+    typedef wxSharedPtr<clSSHChannel> Ptr_t;
+
 protected:
     wxString BuildError(const wxString& prefix) const;
     /**
@@ -53,7 +56,7 @@ public:
      * @brief execute remote command
      */
     void Execute(const wxString& command);
-    
+
     /**
      * @brief send an eof on the channel
      * this is needed after the remote execution is done

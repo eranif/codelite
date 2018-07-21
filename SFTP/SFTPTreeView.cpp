@@ -35,6 +35,7 @@
 #include "clFileOrFolderDropTarget.h"
 #include "clToolBarButtonBase.h"
 #include "cl_config.h"
+#include "console_frame.h"
 #include "event_notifier.h"
 #include "fileutils.h"
 #include "globals.h"
@@ -86,7 +87,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     m_treeCtrl->Connect(ID_NEW_FILE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNewFile), NULL, this);
     m_treeCtrl->Connect(ID_REFRESH_FOLDER, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder), NULL,
                         this);
-
+    m_treeCtrl->Bind(wxEVT_MENU, &SFTPTreeView::OnExecuteCommand, this, ID_EXECUTE_COMMAND);
     wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnCopy, this, wxID_COPY);
     wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnCut, this, wxID_CUT);
     wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnPaste, this, wxID_PASTE);
@@ -336,6 +337,8 @@ void SFTPTreeView::OnContextMenu(wxContextMenuEvent& event)
             menu.Append(ID_NEW_FILE, _("Create new file..."));
             menu.AppendSeparator();
             menu.Append(ID_REFRESH_FOLDER, _("Refresh"));
+            menu.AppendSeparator();
+            menu.Append(ID_EXECUTE_COMMAND, _("Execute command..."));
             menu.AppendSeparator();
         }
         menu.Append(ID_DELETE, _("Delete"));
@@ -960,5 +963,24 @@ void SFTPTreeView::DoLoadSession()
                 CallAfter(&SFTPTreeView::DoBuildTree, rootFolder);
             }
         }
+    }
+}
+
+void SFTPTreeView::OnExecuteCommand(wxCommandEvent& event)
+{
+    wxArrayTreeItemIds items;
+    m_treeCtrl->GetSelections(items);
+    if(items.GetCount() != 1) return;
+
+    try {
+
+        MyClientData* cd = GetItemData(items.Item(0));
+        if(!cd) { return; } // ??
+        if(!m_sftp || !m_sftp->GetSsh()) { return; }
+        ConsoleFrame* frame = new ConsoleFrame(EventNotifier::Get()->TopFrame(), m_sftp->GetSsh());
+        frame->Show();
+
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);
     }
 }

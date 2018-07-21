@@ -88,6 +88,7 @@ protected:
     virtual void OnMenuOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnMenuOpenContainingFolder(wxCommandEvent& event);
     virtual void OnMenuRefreshFolder(wxCommandEvent& event);
+    virtual void OnExecuteCommand(wxCommandEvent& event);
     void OnFileDropped(clCommandEvent& event);
     void OnEditorClosing(wxCommandEvent& evt);
 

@@ -60,8 +60,12 @@ protected:
     virtual void OnUp(wxKeyEvent& event) { event.Skip(); }
     virtual void OnLeft(wxKeyEvent& event) { event.Skip(); }
     virtual void OnRight(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnEnter(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnEnter() {}
+    virtual void OnCtrlC(wxKeyEvent& event) { event.Skip(); }
     void OnKey(wxKeyEvent& event);
+    void OnCharAdded(wxStyledTextEvent& event);
+    void AddMarker();
+    void CaretToEnd();
 
 public:
     wxTerminalBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

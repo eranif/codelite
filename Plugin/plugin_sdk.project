@@ -489,6 +489,8 @@
     <File Name="renamefilebasedlg.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Terminal">
+    <File Name="clTerminalHistory.cpp"/>
+    <File Name="clTerminalHistory.h"/>
     <File Name="wxterminalbase.h"/>
     <File Name="wxterminal.cpp"/>
     <File Name="wxterminal.h"/>

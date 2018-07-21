@@ -30,57 +30,67 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#include <wx/app.h>
 #include "console_frame.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
-#include "plugin.h"
-#include "windowattrmanager.h"
 #include "globals.h"
 #include "imanager.h"
+#include "plugin.h"
+#include "windowattrmanager.h"
+#include <wx/app.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
-ConsoleFrame::ConsoleFrame(wxWindow* parent, IManager* manager, wxWindowID id)
-    : wxPanel(parent, id, wxDefaultPosition, wxSize(300, 200))
-    , m_manager(manager)
+ConsoleFrame::ConsoleFrame(wxWindow* parent)
+    : wxFrame(parent, wxID_ANY, _("Console"))
+{
+    CreateGUIControls();
+}
+#if USE_SFTP
+ConsoleFrame::ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh)
+    : wxFrame(parent, wxID_ANY, _("Console"))
+    , m_ssh(ssh)
+{
+    CreateGUIControls();
+    m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &ConsoleFrame::OnExecuteRemoteCommand, this);
+    m_channel.reset(new clSSHChannel(m_ssh));
+}
+#endif
+
+ConsoleFrame::~ConsoleFrame() {}
+
+void ConsoleFrame::CreateGUIControls()
 {
     wxBoxSizer* bSizer1;
     bSizer1 = new wxBoxSizer(wxVERTICAL);
-
-    SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
     m_terminal = new wxTerminal(this);
-    bSizer1->Add(m_terminal, 1, wxEXPAND | wxALL);
+    m_terminal->SetInteractive(true);
+    bSizer1->Add(m_terminal, 1, wxEXPAND);
 
     this->SetSizer(bSizer1);
     this->Layout();
-
-    // Connect Events
-    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &ConsoleFrame::OnDebuggerEnded, this);
+    m_terminal->Focus();
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    GetSizer()->Fit(this);
+    SetName("ConsoleFrame");
+    CenterOnScreen();
+    WindowAttrManager::Load(this);
 }
 
-ConsoleFrame::~ConsoleFrame()
+#if USE_SFTP
+void ConsoleFrame::OnExecuteRemoteCommand(clCommandEvent& event)
 {
-    // Disconnect Events
-    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &ConsoleFrame::OnDebuggerEnded, this);
+    try {
+        if(!m_channel->IsOpen()) { m_channel->Open(); }
+        m_channel->Execute(event.GetString());
+        wxString output;
+        m_channel->ReadAll(output, -1);
+        m_terminal->AddTextWithEOL(output);
+        m_channel->SendEOF();
+        m_channel->Close();
+        
+    } catch(clException& e) {
+        m_terminal->AddTextWithEOL(e.What());
+    }
 }
-
-wxString ConsoleFrame::StartTTY()
-{
-#ifndef __WXMSW__
-    wxString tty = m_terminal->StartTTY();
-    return tty;
-#else
-    return wxT("");
 #endif
-}
-
-void ConsoleFrame::OnDebuggerEnded(clDebugEvent& e)
-{
-#ifndef __WXMSW__
-    m_manager->GetDockingManager()->DetachPane(this);
-    Destroy();
-    m_manager->GetDockingManager()->Update();
-#endif
-    e.Skip();
-}

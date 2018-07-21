@@ -6,10 +6,16 @@
 #include "cl_ssh.h"
 #include "codelite_exports.h"
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_READ_ERROR, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_READ_OUTPUT, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_CLOSED, clCommandEvent);
+
+class clJoinableThread;
 class WXDLLIMPEXP_CL clSSHChannel
 {
     clSSH::Ptr_t m_ssh;
     SSHChannel_t m_channel;
+    clJoinableThread* m_readerThread;
 
 public:
     typedef wxSharedPtr<clSSHChannel> Ptr_t;
@@ -54,14 +60,9 @@ public:
 
     /**
      * @brief execute remote command
+     * The reply will be returned to 'sink' object in form of events
      */
-    void Execute(const wxString& command);
-
-    /**
-     * @brief send an eof on the channel
-     * this is needed after the remote execution is done
-     */
-    void SendEOF();
+    void Execute(const wxString& command, wxEvtHandler* sink);
 };
 #endif
 #endif // CLSSHCHANNEL_H

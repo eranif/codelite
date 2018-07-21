@@ -65,9 +65,9 @@ protected:
     void OnKey(wxKeyEvent& event);
     void OnCharAdded(wxStyledTextEvent& event);
     void AddMarker();
-    void CaretToEnd();
 
 public:
+    void CaretToEnd();
     wxTerminalBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~wxTerminalBase();

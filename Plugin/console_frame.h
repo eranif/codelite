@@ -58,6 +58,9 @@ protected:
     void CreateGUIControls();
 #if USE_SFTP
     void OnExecuteRemoteCommand(clCommandEvent& event);
+    void OnChannelReadError(clCommandEvent& event);
+    void OnChannelRead(clCommandEvent& event);
+    void OnChannelClosed(clCommandEvent& event);
 #endif
 
 public:

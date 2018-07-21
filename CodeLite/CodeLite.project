@@ -49,6 +49,8 @@
     <File Name="clNetworkMessage.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="clJoinableThread.h"/>
+    <File Name="clJoinableThread.cpp"/>
     <File Name="search_thread.h"/>
     <File Name="search_thread.cpp"/>
     <File Name="clFilesCollector.cpp"/>

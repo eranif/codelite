@@ -102,6 +102,7 @@ public:
 
     // Add text with the EOL at the end
     void AddTextWithEOL(const wxString& text);
+    void AddTextRaw(const wxString& text);
 
 #if defined(__WXGTK__) || defined(__WXMAC__)
     wxString StartTTY();

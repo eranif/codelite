@@ -54,6 +54,9 @@ ConsoleFrame::ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh)
     CreateGUIControls();
     m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &ConsoleFrame::OnExecuteRemoteCommand, this);
     m_channel.reset(new clSSHChannel(m_ssh));
+    Bind(wxEVT_SSH_CHANNEL_CLOSED, &ConsoleFrame::OnChannelClosed, this);
+    Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &ConsoleFrame::OnChannelReadError, this);
+    Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &ConsoleFrame::OnChannelRead, this);
 }
 #endif
 
@@ -81,16 +84,34 @@ void ConsoleFrame::CreateGUIControls()
 void ConsoleFrame::OnExecuteRemoteCommand(clCommandEvent& event)
 {
     try {
+        if(m_channel->IsOpen()) { return; }
         if(!m_channel->IsOpen()) { m_channel->Open(); }
-        m_channel->Execute(event.GetString());
-        wxString output;
-        m_channel->ReadAll(output, -1);
-        m_terminal->AddTextWithEOL(output);
-        m_channel->SendEOF();
-        m_channel->Close();
-        
+        m_channel->Execute(event.GetString(), this);
+
     } catch(clException& e) {
         m_terminal->AddTextWithEOL(e.What());
     }
+}
+
+void ConsoleFrame::OnChannelReadError(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_terminal->AddTextRaw("\n");
+    m_terminal->CaretToEnd();
+    m_channel->Close();
+}
+
+void ConsoleFrame::OnChannelRead(clCommandEvent& event) 
+{
+    m_terminal->AddTextRaw(event.GetString());
+    m_terminal->CaretToEnd();
+}
+
+void ConsoleFrame::OnChannelClosed(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_terminal->AddTextRaw("\n");
+    m_terminal->CaretToEnd();
+    m_channel->Close();
 }
 #endif

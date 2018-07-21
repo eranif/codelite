@@ -392,3 +392,11 @@ void wxTerminal::AddTextWithEOL(const wxString& text)
     m_textCtrl->AppendText(textToAdd);
     m_textCtrl->GotoPos(m_textCtrl->GetLastPosition());
 }
+
+void wxTerminal::AddTextRaw(const wxString& text)
+{
+    m_textCtrl->AppendText(text);
+    m_textCtrl->ScrollToEnd();
+    m_textCtrl->ClearSelections();
+    m_textCtrl->GotoPos(m_textCtrl->GetLength());
+}

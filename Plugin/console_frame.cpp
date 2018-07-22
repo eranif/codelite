@@ -46,6 +46,7 @@ ConsoleFrame::ConsoleFrame(wxWindow* parent)
 {
     CreateGUIControls();
 }
+
 #if USE_SFTP
 ConsoleFrame::ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh)
     : wxFrame(parent, wxID_ANY, _("Console"))
@@ -60,7 +61,11 @@ ConsoleFrame::ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh)
 }
 #endif
 
-ConsoleFrame::~ConsoleFrame() {}
+ConsoleFrame::~ConsoleFrame()
+{
+    m_terminal->Unbind(wxEVT_TERMINAL_EXIT_WHEN_DONE, &ConsoleFrame::OnExitWhenDone, this);
+    m_terminal->Unbind(wxEVT_TERMINAL_CTRL_C, &ConsoleFrame::OnTerminalCtrlC, this);
+}
 
 void ConsoleFrame::CreateGUIControls()
 {
@@ -74,18 +79,23 @@ void ConsoleFrame::CreateGUIControls()
     this->Layout();
     m_terminal->Focus();
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    GetSizer()->Fit(this);
     SetName("ConsoleFrame");
     CenterOnScreen();
     WindowAttrManager::Load(this);
+    m_terminal->Bind(wxEVT_TERMINAL_EXIT_WHEN_DONE, &ConsoleFrame::OnExitWhenDone, this);
+    m_terminal->Bind(wxEVT_TERMINAL_CTRL_C, &ConsoleFrame::OnTerminalCtrlC, this);
 }
 
 #if USE_SFTP
 void ConsoleFrame::OnExecuteRemoteCommand(clCommandEvent& event)
 {
     try {
-        if(m_channel->IsOpen()) { return; }
-        if(!m_channel->IsOpen()) { m_channel->Open(); }
+        if(m_channel->IsOpen()) {
+            return;
+        }
+        if(!m_channel->IsOpen()) {
+            m_channel->Open();
+        }
         m_channel->Execute(event.GetString(), this);
 
     } catch(clException& e) {
@@ -101,7 +111,7 @@ void ConsoleFrame::OnChannelReadError(clCommandEvent& event)
     m_channel->Close();
 }
 
-void ConsoleFrame::OnChannelRead(clCommandEvent& event) 
+void ConsoleFrame::OnChannelRead(clCommandEvent& event)
 {
     m_terminal->AddTextRaw(event.GetString());
     m_terminal->CaretToEnd();
@@ -115,3 +125,23 @@ void ConsoleFrame::OnChannelClosed(clCommandEvent& event)
     m_channel->Close();
 }
 #endif
+
+void ConsoleFrame::Execute(const wxString& command, const wxString& wd) { m_terminal->Execute(command, true, wd); }
+
+void ConsoleFrame::OnExitWhenDone(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    Close();
+}
+
+void ConsoleFrame::OnTerminalCtrlC(clCommandEvent& event)
+{
+    event.Skip();
+#if USE_SFTP
+    if(m_channel->IsOpen()) {
+        m_channel->Close();
+        m_terminal->AddTextWithEOL(_("\nInterrupted"));
+        event.Skip(false); // No need for the default action
+    }
+#endif
+}

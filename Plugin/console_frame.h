@@ -26,7 +26,6 @@
 #ifndef __console_frame__
 #define __console_frame__
 
-#include <wx/intl.h>
 #include "clSSHChannel.h"
 #include "cl_command_event.h"
 #include "cl_ssh.h"
@@ -36,6 +35,7 @@
 #include <wx/font.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
+#include <wx/intl.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
@@ -62,6 +62,8 @@ protected:
     void OnChannelRead(clCommandEvent& event);
     void OnChannelClosed(clCommandEvent& event);
 #endif
+    void OnExitWhenDone(clCommandEvent& event);
+    void OnTerminalCtrlC(clCommandEvent& event);
 
 public:
     ConsoleFrame(wxWindow* parent);
@@ -69,6 +71,7 @@ public:
     ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh);
 #endif
     virtual ~ConsoleFrame();
+    void Execute(const wxString& command, const wxString& wd);
 };
 
 #endif //__console_frame__

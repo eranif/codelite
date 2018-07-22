@@ -39,6 +39,7 @@ class IProcess;
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_EXECUTE_COMMAND, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_C, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_KILL_INFERIOR, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_EXIT_WHEN_DONE, clCommandEvent);
 
 class WXDLLIMPEXP_SDK wxTerminal : public wxTerminalBase
 {
@@ -62,7 +63,8 @@ protected:
     void DoFlushOutputBuffer();
     void InsertCommandText(const wxString& command);
     wxString GetCommandText();
-
+    void OnKey(wxKeyEvent& event);
+    
 protected:
     // Handlers for wxTerminalBase events.
     virtual void OnReadProcessOutput(clProcessEvent& event);

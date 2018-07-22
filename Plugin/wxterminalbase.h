@@ -62,7 +62,7 @@ protected:
     virtual void OnRight(wxKeyEvent& event) { event.Skip(); }
     virtual void OnEnter() {}
     virtual void OnCtrlC(wxKeyEvent& event) { event.Skip(); }
-    void OnKey(wxKeyEvent& event);
+    virtual void OnKey(wxKeyEvent& event);
     void OnCharAdded(wxStyledTextEvent& event);
     void AddMarker();
 

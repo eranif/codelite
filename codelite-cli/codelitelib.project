@@ -30,6 +30,8 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="libCodeLite">
+    <File Name="../CodeLite/clJoinableThread.h"/>
+    <File Name="../CodeLite/clJoinableThread.cpp"/>
     <File Name="../CodeLite/search_thread.h"/>
     <File Name="../CodeLite/search_thread.cpp"/>
     <File Name="../CodeLite/clNetworkMessage.cpp"/>

@@ -73,6 +73,7 @@
 wxDEFINE_EVENT(wxEVT_TERMINAL_EXECUTE_COMMAND, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_C, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_TERMINAL_KILL_INFERIOR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_EXIT_WHEN_DONE, clCommandEvent);
 
 #define MARKER_ID 1
 
@@ -124,7 +125,9 @@ void wxTerminal::OnEnter()
 {
     if(m_interactive) {
         wxString lineText = GetCommandText();
-        if(lineText.IsEmpty()) { return; }
+        if(lineText.IsEmpty()) {
+            return;
+        }
         clCommandEvent event(wxEVT_TERMINAL_EXECUTE_COMMAND);
         event.SetEventObject(this);
         event.SetString(lineText);
@@ -153,8 +156,7 @@ void wxTerminal::OnProcessEnd(clProcessEvent& event)
     DoFlushOutputBuffer();
 
     if(m_exitWhenProcessDies) {
-        m_textCtrl->SetInsertionPointEnd();
-        m_textCtrl->AppendText(wxString(wxT("\n")) + _("Press any key to continue..."));
+        AddTextWithEOL(_("\nPress any key to continue..."));
         m_exitOnKey = true;
     }
 }
@@ -201,13 +203,11 @@ void wxTerminal::DoProcessCommand(const wxString& command)
 
     } else {
         m_process = NULL;
-        m_textCtrl->SetInsertionPointEnd();
-        m_textCtrl->AppendText(wxString::Format(_("Failed to execute command: %s\nWorking Directory: %s\n"),
-                                                cmdShell.c_str(), m_workingDir.c_str()));
+        AddTextWithEOL(wxString() << _("\nFailed to execute command: ") << cmdShell << _("\nWorking directory")
+                                  << m_workingDir);
 
         if(m_exitWhenProcessDies) {
-            CaretToEnd();
-            m_textCtrl->AppendText(wxString(wxT("\n")) + _("Press any key to continue..."));
+            AddTextWithEOL(_("\nPress any key to continue..."));
             m_exitOnKey = true;
         }
     }
@@ -236,7 +236,9 @@ wxString wxTerminal::StartTTY()
     m_process = NULL;
     // Open the master side of a pseudo terminal
     int master = ::posix_openpt(O_RDWR | O_NOCTTY);
-    if(master < 0) { return ""; }
+    if(master < 0) {
+        return "";
+    }
 
     // Grant access to the slave pseudo terminal
     if(::grantpt(master) < 0) {
@@ -288,9 +290,10 @@ void wxTerminal::DoFlushOutputBuffer()
 {
     if(!m_outputBuffer.IsEmpty()) {
         CaretToEnd();
-        if(!m_outputBuffer.EndsWith("\n")) { m_outputBuffer << "\n"; }
-        m_textCtrl->AppendText(m_outputBuffer);
-        CaretToEnd();
+        if(!m_outputBuffer.EndsWith("\n")) {
+            m_outputBuffer << "\n";
+        }
+        AddTextRaw(m_outputBuffer);
         m_outputBuffer.Clear();
     }
 }
@@ -301,7 +304,9 @@ void wxTerminal::OnCopy(wxCommandEvent& event)
         event.Skip();
         return;
     }
-    if(m_textCtrl->CanCopy()) { m_textCtrl->Copy(); }
+    if(m_textCtrl->CanCopy()) {
+        m_textCtrl->Copy();
+    }
 }
 
 void wxTerminal::OnCut(wxCommandEvent& event)
@@ -310,7 +315,9 @@ void wxTerminal::OnCut(wxCommandEvent& event)
         event.Skip();
         return;
     }
-    if(m_textCtrl->CanCut()) { m_textCtrl->Cut(); }
+    if(m_textCtrl->CanCut()) {
+        m_textCtrl->Cut();
+    }
 }
 
 void wxTerminal::OnSelectAll(wxCommandEvent& event)
@@ -332,18 +339,24 @@ void wxTerminal::OnDown(wxKeyEvent& event)
 void wxTerminal::OnLeft(wxKeyEvent& event)
 {
     // Don't allow moving LEFT when at the begin of a line
-    if(m_textCtrl->GetColumn(m_textCtrl->GetCurrentPos()) == 0) { return; }
+    if(m_textCtrl->GetColumn(m_textCtrl->GetCurrentPos()) == 0) {
+        return;
+    }
 
     // Right / Left movement is allowed only on the last line
     int curline = m_textCtrl->GetCurrentLine();
-    if(curline == (m_textCtrl->GetLineCount() - 1)) { event.Skip(); }
+    if(curline == (m_textCtrl->GetLineCount() - 1)) {
+        event.Skip();
+    }
 }
 
 void wxTerminal::OnRight(wxKeyEvent& event)
 {
     // Right / Left movement is allowed only on the last line
     int curline = m_textCtrl->GetCurrentLine();
-    if(curline == (m_textCtrl->GetLineCount() - 1)) { event.Skip(); }
+    if(curline == (m_textCtrl->GetLineCount() - 1)) {
+        event.Skip();
+    }
 }
 
 void wxTerminal::InsertCommandText(const wxString& command)
@@ -387,16 +400,34 @@ void wxTerminal::AddTextWithEOL(const wxString& text)
 {
     wxString textToAdd = text;
     textToAdd.Trim().Trim(false);
-    if(textToAdd.IsEmpty()) { return; }
-    if(!textToAdd.EndsWith("\n")) { textToAdd << "\n"; }
+    if(textToAdd.IsEmpty()) {
+        return;
+    }
+    if(!textToAdd.EndsWith("\n")) {
+        textToAdd << "\n";
+    }
+    m_textCtrl->SetReadOnly(false);
     m_textCtrl->AppendText(textToAdd);
     m_textCtrl->GotoPos(m_textCtrl->GetLastPosition());
+    m_textCtrl->SetReadOnly(true);
 }
 
 void wxTerminal::AddTextRaw(const wxString& text)
 {
+    m_textCtrl->SetReadOnly(false);
     m_textCtrl->AppendText(text);
     m_textCtrl->ScrollToEnd();
     m_textCtrl->ClearSelections();
     m_textCtrl->GotoPos(m_textCtrl->GetLength());
+    m_textCtrl->SetReadOnly(true);
+}
+
+void wxTerminal::OnKey(wxKeyEvent& event)
+{
+    if(m_exitOnKey) {
+        clCommandEvent event(wxEVT_TERMINAL_EXIT_WHEN_DONE);
+        GetEventHandler()->AddPendingEvent(event);
+    } else {
+        wxTerminalBase::OnKey(event);
+    }
 }

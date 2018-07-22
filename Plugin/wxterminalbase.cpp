@@ -53,7 +53,9 @@ wxTerminalBase::wxTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_textCtrl->MarkerAdd(0, MARKER_ID);
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_textCtrl); }
+    if(lexer) {
+        lexer->Apply(m_textCtrl);
+    }
     mainSizer->Add(m_textCtrl, 1, wxEXPAND, 0);
     this->SetSizer(mainSizer);
     this->Layout();
@@ -63,9 +65,12 @@ wxTerminalBase::wxTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_textCtrl->Bind(wxEVT_KEY_DOWN, &wxTerminalBase::OnKey, this);
     m_textCtrl->Bind(wxEVT_STC_CHARADDED, &wxTerminalBase::OnCharAdded, this);
     m_textCtrl->Bind(wxEVT_LEFT_UP, [&](wxMouseEvent& event) {
-        if(m_textCtrl->GetSelectedText().IsEmpty()) { this->CallAfter(&wxTerminalBase::CaretToEnd); }
+        if(m_textCtrl->GetSelectedText().IsEmpty()) {
+            this->CallAfter(&wxTerminalBase::CaretToEnd);
+        }
         event.Skip();
     });
+    m_textCtrl->SetReadOnly(true);
 }
 
 wxTerminalBase::~wxTerminalBase()
@@ -76,6 +81,8 @@ wxTerminalBase::~wxTerminalBase()
 
 void wxTerminalBase::OnKey(wxKeyEvent& event)
 {
+    bool isLastLine = (m_textCtrl->LineFromPosition(m_textCtrl->GetCurrentPos()) == (m_textCtrl->GetLineCount() - 1));
+    m_textCtrl->SetReadOnly(!isLastLine);
     switch(event.GetKeyCode()) {
     case WXK_BACK: {
         if(m_textCtrl->GetColumn(m_textCtrl->GetCurrentPos()) == 0) {
@@ -122,7 +129,7 @@ void wxTerminalBase::OnCharAdded(wxStyledTextEvent& event)
 void wxTerminalBase::AddMarker()
 {
     int lastLine = m_textCtrl->LineFromPosition(m_textCtrl->GetLastPosition());
-    //m_textCtrl->MarkerDeleteAll(MARKER_ID);
+    // m_textCtrl->MarkerDeleteAll(MARKER_ID);
     m_textCtrl->MarkerAdd(lastLine, MARKER_ID);
 }
 

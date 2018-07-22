@@ -5,7 +5,7 @@
 Note that this project is set to work with the GNU toolchain (gdb, g++)
 	</Description>
   <Settings Type="Executable">
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+    <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;-O0;-Wall">
         <IncludePath Value="."/>
@@ -27,7 +27,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-O2;-Wall">
         <IncludePath Value="."/>

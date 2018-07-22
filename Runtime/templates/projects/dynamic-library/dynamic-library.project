@@ -9,7 +9,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
   <VirtualDirectory Name="include"/>
   <Dependencies/>
   <Settings Type="Dynamic Library">
-	<Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+	<Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).so" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
@@ -23,7 +23,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
         <BuildCommand></BuildCommand>
       </CustomBuild>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).so" IntermediateDirectory="./Release" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="">
         <IncludePath Value="."/>

@@ -81,6 +81,8 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
     return textColour;
 }
 #endif
+
+#ifndef __WXMSW__
 static wxColour GetMenuBarBgColour()
 {
 #if defined(__WXGTK__) && !defined(__WXGTK3__)
@@ -101,6 +103,7 @@ static wxColour GetMenuBarBgColour()
     return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
 #endif
 }
+#endif
 
 #ifdef __WXOSX__
 double wxOSXGetMainScreenContentScaleFactor();
@@ -192,6 +195,9 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         penColour = bgHighlightColour;
         if(IsHover() || IsChecked()) {
             bgColour = bgHighlightColour;
+        } else if(IsPressed()){
+            bgColour = bgHighlightColour.ChangeLightness(90);
+            penColour = bgColour;
         } else {
             bgColour = penColour;
         }

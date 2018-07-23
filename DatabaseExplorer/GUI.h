@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CL_DATABASEEXPLORER_GUI_BASE_CLASSES_H
-#define CL_DATABASEEXPLORER_GUI_BASE_CLASSES_H
+#ifndef _CODELITE_DATABASEEXPLORER_GUI_BASE_CLASSES_H
+#define _CODELITE_DATABASEEXPLORER_GUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -21,11 +21,6 @@
 #include <wx/radiobut.h>
 #include <wx/checkbox.h>
 #include <wx/panel.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
-#include <wx/toolbar.h>
 #include <wx/splitter.h>
 #include <wx/stc/stc.h>
 #include <wx/grid.h>
@@ -35,11 +30,16 @@
 #include <wx/filepicker.h>
 #include <wx/listctrl.h>
 #include <wx/listbox.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/gbsizer.h>
 #include <wx/radiobox.h>
 #include <wx/infobar.h>
+#include <wx/toolbar.h>
 #include <wx/dataview.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -47,6 +47,16 @@
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
 
 class _ImageExportDialog : public wxDialog
 {
@@ -94,16 +104,7 @@ public:
 
 class _SqlCommandPanel : public wxPanel
 {
-public:
-    enum {
-        ID_INSERT_TEMPLATE = 1001,
-        ID_SQL_HISTORY = 1002,
-    };
 protected:
-    wxAuiToolBar* m_auibar167;
-    std::map<int, wxMenu*> m_dropdownMenus;
-    wxMenu* m_menu183;
-    wxMenu* m_menu184;
     wxSplitterWindow* m_splitter1;
     wxPanel* m_panel13;
     wxStyledTextCtrl* m_scintillaSQL;
@@ -112,17 +113,9 @@ protected:
     wxStaticText* m_labelStatus;
 
 protected:
-    virtual void OnLoadClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSaveClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnExecuteClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnTemplatesBtnClick(wxAuiToolBarEvent& event) { event.Skip(); }
-    virtual void OnHistoryToolClicked(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnGridCellRightClick(wxGridEvent& event) { event.Skip(); }
 
 public:
-
-    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
-    wxAuiToolBar* GetAuibar167() { return m_auibar167; }
     wxStyledTextCtrl* GetScintillaSQL() { return m_scintillaSQL; }
     wxPanel* GetPanel13() { return m_panel13; }
     wxGrid* GetGridTable() { return m_gridTable; }
@@ -158,7 +151,6 @@ public:
 class _DbViewerPanel : public wxPanel
 {
 protected:
-    wxAuiToolBar* m_auibar;
     wxTreeCtrl* m_treeDatabases;
 
 protected:
@@ -169,7 +161,6 @@ protected:
     virtual void OnItemRightClick(wxTreeEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxTreeCtrl* GetTreeDatabases() { return m_treeDatabases; }
     _DbViewerPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(200,100), long style = wxTAB_TRAVERSAL);
     virtual ~_DbViewerPanel();

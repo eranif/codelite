@@ -28,6 +28,7 @@
 
 #include "../Interfaces/imanager.h"
 #include "GUI.h" // Base class: _DbExplorerPanel
+#include "clToolBar.h"
 #include "theme_handler_helper.h"
 // database
 #include <wx/dblayer/include/DatabaseLayer.h>
@@ -39,27 +40,27 @@
 #include <wx/wxsf/wxShapeFramework.h>
 
 // wx classes
-#include <wx/wx.h>
-#include <wx/hashmap.h>
 #include <wx/aui/aui.h>
+#include <wx/hashmap.h>
 #include <wx/textdlg.h>
 #include <wx/txtstrm.h>
+#include <wx/wx.h>
 
 // other
 #include "IDbItem.h"
 
 #include "DnDTableShape.h"
-#include "dbconnection.h"
-#include "database.h"
-#include "table.h"
-#include "column.h"
-#include "view.h"
-#include "dumpclass.h"
 #include "IDbAdapter.h"
+#include "column.h"
+#include "database.h"
+#include "dbconnection.h"
+#include "dumpclass.h"
+#include "table.h"
+#include "view.h"
 //#include "MySqlDbAdapter.h"
-#include "dbitem.h"
-#include "LogDialog.h"
 #include "ClassGenerateDialog.h"
+#include "LogDialog.h"
+#include "dbitem.h"
 
 WX_DECLARE_HASH_MAP(wxString, wxTreeItemId, wxStringHash, wxStringEqual, TableHashMap);
 
@@ -69,7 +70,7 @@ class DbViewerPanel : public _DbViewerPanel
 {
 protected:
     virtual void OnContextMenu(wxTreeEvent& event);
-    
+
 private:
     xsSerializable* m_pConnections;
     IDbAdapter* m_pDbAdapter;
@@ -86,6 +87,7 @@ private:
     wxWindow* m_pPrevPanel;
     bool m_SuppressUpdate;
     ThemeHandlerHelper* m_themeHelper;
+    clToolBar* m_toolbar;
 
 public:
     DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pManager);
@@ -114,7 +116,7 @@ public:
     void OnPageClosing(wxBookCtrlEvent& event);
     void OnPageChanged(wxBookCtrlEvent& event);
 
-    void OnERDSelected(wxAuiToolBarEvent& event);
+    void OnERDSelected(wxCommandEvent& event);
 
     void OnPopupClick(wxCommandEvent& evt);
     void RefreshDbView();

@@ -58,10 +58,9 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
         }
         fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-            DrawingUtils::DrawButtonX(
-                dc, parent,
-                wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE),
-                colours.markerColour, eButtonState::kNormal);
+            DrawingUtils::DrawButtonX(dc, parent, wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY,
+                                                         CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE),
+                                      colours.markerColour, eButtonState::kNormal);
         }
 
         // Draw the separator line
@@ -88,7 +87,9 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
         memDC.SetFont(font);
         memDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
         memDC.DrawText(tabInfo.m_label, tabInfo.m_textY, tabInfo.m_textX);
-        if(tabInfo.GetBitmap().IsOk()) { memDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX); }
+        if(tabInfo.GetBitmap().IsOk()) {
+            memDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX);
+        }
 
         // Draw the separator line
         memDC.SetPen(separatorColour);
@@ -165,31 +166,11 @@ void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
                 // Ensure that we don't draw our marker on top of the button
                 xx = confinedRect.GetTopRight().x - CHEVRON_SIZE;
             }
-
-            if((style & kNotebook_BottomTabs)) {
-                // Bottom tabs
-                p1 = activeTab->GetRect().GetBottomLeft();
-                p2 = activeTab->GetRect().GetBottomRight();
-                p1.x += 1;
-                // Update the ending X coordinate (see above comment for why)
-                if(xx > 0) { p2.x = xx; }
-                p2.x -= 1;
-                p1.y -= 1;
-                p2.y -= 1;
-                dc.SetPen(markerPen);
-                dc.DrawLine(p1, p2);
-            } else {
-                p1 = activeTab->GetRect().GetTopLeft();
-                p2 = activeTab->GetRect().GetTopRight();
-                p1.x += 1;
-                // Update the ending X coordinate (see above comment for why)
-                if(xx > 0) { p2.x = xx; }
-                p2.x -= 1;
-                p1.y += 1;
-                p2.y += 1;
-                dc.SetPen(markerPen);
-                dc.DrawLine(p1, p2);
-            }
+            // Bottom tabs
+            p1 = activeTab->GetRect().GetTopLeft();
+            p2 = activeTab->GetRect().GetBottomLeft();
+            dc.SetPen(markerPen);
+            dc.DrawLine(p1, p2);
         }
     }
     ClearActiveTabExtraLine(activeTab, dc, colours, style);

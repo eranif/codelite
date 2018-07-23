@@ -26,67 +26,67 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_staticText34 = new wxStaticText(this, wxID_ANY, _("Output file:"), wxDefaultPosition, wxSize(400,-1), 0);
+    m_staticText34 = new wxStaticText(this, wxID_ANY, _("Output file:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(400,-1)), 0);
     
-    mainSizer->Add(m_staticText34, 0, wxALL, 5);
+    mainSizer->Add(m_staticText34, 0, wxALL, WXC_FROM_DIP(5));
     m_staticText34->SetMinSize(wxSize(400,-1));
     
     wxBoxSizer* fpSizer = new wxBoxSizer(wxHORIZONTAL);
     
-    mainSizer->Add(fpSizer, 0, wxEXPAND, 5);
+    mainSizer->Add(fpSizer, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCtrlPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_READONLY);
+    m_textCtrlPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlPath->SetHint(wxT(""));
     #endif
     
-    fpSizer->Add(m_textCtrlPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fpSizer->Add(m_textCtrlPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_button29 = new wxButton(this, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button29 = new wxButton(this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fpSizer->Add(m_button29, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fpSizer->Add(m_button29, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxStaticBoxSizer* scaleSizer = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Scale")), wxVERTICAL);
     
-    mainSizer->Add(scaleSizer, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(scaleSizer, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_radioBtnDefaultScale = new wxRadioButton(this, wxID_ANY, _("Current canvas scale"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_radioBtnDefaultScale = new wxRadioButton(this, wxID_ANY, _("Current canvas scale"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_radioBtnDefaultScale->SetValue(0);
     
-    scaleSizer->Add(m_radioBtnDefaultScale, 0, wxALL, 5);
+    scaleSizer->Add(m_radioBtnDefaultScale, 0, wxALL, WXC_FROM_DIP(5));
     
     wxBoxSizer* customScaleSizer = new wxBoxSizer(wxHORIZONTAL);
     
-    scaleSizer->Add(customScaleSizer, 0, wxEXPAND, 5);
+    scaleSizer->Add(customScaleSizer, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_radioBtnScaleCustom = new wxRadioButton(this, wxID_ANY, _("Custom scale"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_radioBtnScaleCustom = new wxRadioButton(this, wxID_ANY, _("Custom scale"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_radioBtnScaleCustom->SetValue(0);
     
-    customScaleSizer->Add(m_radioBtnScaleCustom, 0, wxALL|wxEXPAND, 5);
+    customScaleSizer->Add(m_radioBtnScaleCustom, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCtrlScale = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(100,-1), 0);
+    m_textCtrlScale = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(100,-1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlScale->SetHint(wxT(""));
     #endif
     
-    customScaleSizer->Add(m_textCtrlScale, 1, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    customScaleSizer->Add(m_textCtrlScale, 1, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     m_textCtrlScale->SetMinSize(wxSize(100,-1));
     
-    m_checkBoxBackground = new wxCheckBox(this, wxID_ANY, _("Export canvas background"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxBackground = new wxCheckBox(this, wxID_ANY, _("Export canvas background"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxBackground->SetValue(false);
     
-    mainSizer->Add(m_checkBoxBackground, 0, wxALL, 5);
+    mainSizer->Add(m_checkBoxBackground, 0, wxALL, WXC_FROM_DIP(5));
     
-    mainSizer->Add(0, 0, 1, wxALL|wxEXPAND, 5);
+    mainSizer->Add(0, 0, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_sdbSizer2 = new wxStdDialogButtonSizer();
     
-    mainSizer->Add(m_sdbSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    mainSizer->Add(m_sdbSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button126 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button126 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_sdbSizer2->AddButton(m_button126);
     
-    m_button127 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button127 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_sdbSizer2->AddButton(m_button127);
     m_sdbSizer2->Realize();
     
@@ -163,54 +163,22 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     fgSizer3->AddGrowableRow(1);
     this->SetSizer(fgSizer3);
     
-    m_auibar167 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar167->SetToolBitmapSize(wxSize(16,16));
-    
-    fgSizer3->Add(m_auibar167, 0, wxEXPAND, 5);
-    
-    m_auibar167->AddTool(wxID_ANY, _("Load..."), wxXmlResource::Get()->LoadBitmap(wxT("16-file_open")), wxNullBitmap, wxITEM_NORMAL, _("Load..."), _("Load..."), NULL);
-    
-    m_auibar167->AddTool(XRCID("IDC_DBE_SQL_SAVE"), _("Save..."), wxXmlResource::Get()->LoadBitmap(wxT("16-file_save")), wxNullBitmap, wxITEM_NORMAL, _("Save..."), _("Save..."), NULL);
-    
-    m_auibar167->AddTool(XRCID("IDC_DBE_SQL_EXEC"), _("Execute SQL"), wxXmlResource::Get()->LoadBitmap(wxT("16-executable")), wxNullBitmap, wxITEM_NORMAL, _("Execute SQL"), wxT(""), NULL);
-    
-    m_auibar167->AddSeparator();
-    
-    m_auibar167->AddTool(ID_INSERT_TEMPLATE, _("Insert template"), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL, _("Insert template"), _("Insert template"), NULL);
-    wxAuiToolBarItem* m_toolbarItemTemplates = m_auibar167->FindToolByIndex(m_auibar167->GetToolCount()-1);
-    if (m_toolbarItemTemplates) {
-        m_toolbarItemTemplates->SetHasDropDown(true);
-        m_menu183 = new wxMenu;
-        
-        m_dropdownMenus.insert(std::make_pair( m_toolbarItemTemplates->GetId(), m_menu183) );
-    }
-    
-    m_auibar167->AddTool(ID_SQL_HISTORY, _("SQL History"), wxXmlResource::Get()->LoadBitmap(wxT("16-history")), wxNullBitmap, wxITEM_NORMAL, _("SQL History"), _("SQL History"), NULL);
-    wxAuiToolBarItem* m_toolHistory = m_auibar167->FindToolByIndex(m_auibar167->GetToolCount()-1);
-    if (m_toolHistory) {
-        m_toolHistory->SetHasDropDown(true);
-        m_menu184 = new wxMenu;
-        
-        m_dropdownMenus.insert(std::make_pair( m_toolHistory->GetId(), m_menu184) );
-    }
-    m_auibar167->Realize();
-    
-    m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH|wxBORDER_NONE);
-    m_splitter1->SetSashGravity(0);
+    m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH|wxBORDER_NONE);
+    m_splitter1->SetSashGravity(0.5);
     m_splitter1->SetMinimumPaneSize(0);
     
-    fgSizer3->Add(m_splitter1, 1, wxEXPAND, 5);
+    fgSizer3->Add(m_splitter1, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel13 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panel13 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* bSizer23 = new wxBoxSizer(wxVERTICAL);
     m_panel13->SetSizer(bSizer23);
     
     wxBoxSizer* bSizer25 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer23->Add(bSizer25, 1, wxEXPAND, 5);
+    bSizer23->Add(bSizer25, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_scintillaSQL = new wxStyledTextCtrl(m_panel13, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_scintillaSQL = new wxStyledTextCtrl(m_panel13, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_scintillaSQL->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_scintillaSQL->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -246,15 +214,15 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     m_scintillaSQL->SetKeyWords(3, wxT(""));
     m_scintillaSQL->SetKeyWords(4, wxT(""));
     
-    bSizer25->Add(m_scintillaSQL, 1, wxALL|wxEXPAND, 2);
+    bSizer25->Add(m_scintillaSQL, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_panel14 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    m_splitter1->SplitHorizontally(m_panel13, m_panel14, 163);
+    m_panel14 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter1->SplitHorizontally(m_panel13, m_panel14, 0);
     
     wxBoxSizer* bSizer24 = new wxBoxSizer(wxVERTICAL);
     m_panel14->SetSizer(bSizer24);
     
-    m_gridTable = new wxGrid(m_panel14, wxID_ANY, wxDefaultPosition, wxSize(-1,200), wxBORDER_THEME);
+    m_gridTable = new wxGrid(m_panel14, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1,200)), wxBORDER_THEME);
     m_gridTable->CreateGrid(0, 0);
     m_gridTable->SetRowLabelAlignment(wxALIGN_RIGHT, wxALIGN_CENTRE);
     m_gridTable->SetColLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
@@ -263,11 +231,11 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     #endif
     m_gridTable->EnableEditing(true);
     
-    bSizer24->Add(m_gridTable, 1, wxALL|wxEXPAND, 2);
+    bSizer24->Add(m_gridTable, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_labelStatus = new wxStaticText(m_panel14, wxID_ANY, _("Result:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_labelStatus = new wxStaticText(m_panel14, wxID_ANY, _("Result:"), wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1, -1)), 0);
     
-    bSizer24->Add(m_labelStatus, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
+    bSizer24->Add(m_labelStatus, 0, wxALL|wxEXPAND|wxALIGN_LEFT, WXC_FROM_DIP(5));
     
     SetName(wxT("_SqlCommandPanel"));
     SetSize(-1,-1);
@@ -275,54 +243,16 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
          GetSizer()->Fit(this);
     }
     // Connect events
-    this->Connect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnLoadClick), NULL, this);
-    this->Connect(XRCID("IDC_DBE_SQL_SAVE"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
-    this->Connect(XRCID("IDC_DBE_SQL_EXEC"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnExecuteClick), NULL, this);
-    this->Connect(ID_INSERT_TEMPLATE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnTemplatesBtnClick), NULL, this);
-    this->Connect(ID_SQL_HISTORY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnHistoryToolClicked), NULL, this);
     m_gridTable->Connect(wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler(_SqlCommandPanel::OnGridCellRightClick), NULL, this);
     
-    this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::ShowAuiToolMenu), NULL, this);
 }
 
 _SqlCommandPanel::~_SqlCommandPanel()
 {
-    this->Disconnect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnLoadClick), NULL, this);
-    this->Disconnect(XRCID("IDC_DBE_SQL_SAVE"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
-    this->Disconnect(XRCID("IDC_DBE_SQL_EXEC"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnExecuteClick), NULL, this);
-    this->Disconnect(ID_INSERT_TEMPLATE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnTemplatesBtnClick), NULL, this);
-    this->Disconnect(ID_SQL_HISTORY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnHistoryToolClicked), NULL, this);
     m_gridTable->Disconnect(wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler(_SqlCommandPanel::OnGridCellRightClick), NULL, this);
     
-    std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
-    for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
-        wxDELETE( menuIter->second );
-    }
-    m_dropdownMenus.clear();
-
-    this->Disconnect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::ShowAuiToolMenu), NULL, this);
 }
 
-
-void _SqlCommandPanel::ShowAuiToolMenu(wxAuiToolBarEvent& event)
-{
-    event.Skip();
-    if (event.IsDropDownClicked()) {
-        wxAuiToolBar* toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
-        if (toolbar) {
-            wxAuiToolBarItem* item = toolbar->FindTool(event.GetId());
-            if (item) {
-                std::map<int, wxMenu*>::iterator iter = m_dropdownMenus.find(item->GetId());
-                if (iter != m_dropdownMenus.end()) {
-                    event.Skip(false);
-                    wxPoint pt = event.GetItemRect().GetBottomLeft();
-                    pt.y++;
-                    toolbar->PopupMenu(iter->second, pt);
-                }
-            }
-        }
-    }
-}
 _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
@@ -336,19 +266,19 @@ _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer9);
     
-    m_btnSqlite = new wxButton(this, wxID_ANY, _("SQLite"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_btnSqlite = new wxButton(this, wxID_ANY, _("SQLite"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_btnSqlite->SetDefault();
     m_btnSqlite->SetFocus();
     
-    bSizer9->Add(m_btnSqlite, 1, wxALL|wxEXPAND, 5);
+    bSizer9->Add(m_btnSqlite, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_btnMySql = new wxButton(this, wxID_ANY, _("MySql"), wxDefaultPosition, wxSize(175,-1), 0);
+    m_btnMySql = new wxButton(this, wxID_ANY, _("MySql"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(175,-1)), 0);
     
-    bSizer9->Add(m_btnMySql, 1, wxALL|wxEXPAND, 5);
+    bSizer9->Add(m_btnMySql, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_button24 = new wxButton(this, wxID_ANY, _("PostgreSQL"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button24 = new wxButton(this, wxID_ANY, _("PostgreSQL"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer9->Add(m_button24, 1, wxALL|wxEXPAND, 5);
+    bSizer9->Add(m_button24, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     SetName(wxT("_AdapterSelectDlg"));
     SetSize(-1,-1);
@@ -388,14 +318,9 @@ _DbViewerPanel::_DbViewerPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* bSizer28 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer28);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar->SetToolBitmapSize(wxSize(16,16));
+    m_treeDatabases = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_LINES_AT_ROOT);
     
-    bSizer28->Add(m_auibar, 0, wxEXPAND, 5);
-    
-    m_treeDatabases = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_LINES_AT_ROOT);
-    
-    bSizer28->Add(m_treeDatabases, 1, wxEXPAND, 5);
+    bSizer28->Add(m_treeDatabases, 1, wxEXPAND, WXC_FROM_DIP(5));
     
     SetName(wxT("_DbViewerPanel"));
     SetSize(200,100);
@@ -434,12 +359,12 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
     
-    m_notebook2 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+    m_notebook2 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_notebook2->SetName(wxT("m_notebook2"));
     
-    bSizer4->Add(m_notebook2, 1, wxALL|wxEXPAND, 5);
+    bSizer4->Add(m_notebook2, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_Sqlite = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_Sqlite = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_Sqlite, _("Sqlite"), true);
     
     wxBoxSizer* bSizer27 = new wxBoxSizer(wxVERTICAL);
@@ -451,22 +376,22 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     fgSizer41->AddGrowableCol(1);
     fgSizer41->AddGrowableRow(0);
     
-    bSizer27->Add(fgSizer41, 0, wxEXPAND, 5);
+    bSizer27->Add(fgSizer41, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText11 = new wxStaticText(m_Sqlite, wxID_ANY, _("Database file:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText11 = new wxStaticText(m_Sqlite, wxID_ANY, _("Database file:"), wxDefaultPosition, wxDLG_UNIT(m_Sqlite, wxSize(-1, -1)), 0);
     
-    fgSizer41->Add(m_staticText11, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer41->Add(m_staticText11, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerSqlite = new wxFilePickerCtrl(m_Sqlite, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All Files (*)|*|Database file (*.sqlite;*.tags;*.db)|*.sqlite;*.tags;*.db"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_SMALL|wxFLP_OPEN);
+    m_filePickerSqlite = new wxFilePickerCtrl(m_Sqlite, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All Files (*)|*|Database file (*.sqlite;*.tags;*.db)|*.sqlite;*.tags;*.db"), wxDefaultPosition, wxDLG_UNIT(m_Sqlite, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL|wxFLP_OPEN);
     m_filePickerSqlite->SetFocus();
     
-    fgSizer41->Add(m_filePickerSqlite, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer41->Add(m_filePickerSqlite, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_listCtrlRecentFiles = new wxListCtrl(m_Sqlite, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
+    m_listCtrlRecentFiles = new wxListCtrl(m_Sqlite, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_Sqlite, wxSize(-1, -1)), wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
     
-    bSizer27->Add(m_listCtrlRecentFiles, 1, wxALL|wxEXPAND, 5);
+    bSizer27->Add(m_listCtrlRecentFiles, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_MySqlPanel = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_MySqlPanel = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_MySqlPanel, _("MySql"), false);
     
     wxBoxSizer* boxSizer182 = new wxBoxSizer(wxVERTICAL);
@@ -477,64 +402,64 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer4->AddGrowableCol(1);
     
-    boxSizer182->Add(fgSizer4, 1, wxEXPAND, 5);
+    boxSizer182->Add(fgSizer4, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText10 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Connection name:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText10 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Connection name:"), wxDefaultPosition, wxDLG_UNIT(m_MySqlPanel, wxSize(-1, -1)), 0);
     
-    fgSizer4->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer4->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txName = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_txName = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_MySqlPanel, wxSize(-1, -1)), 0);
     m_txName->SetToolTip(_("Name for this connection"));
     m_txName->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_txName->SetHint(wxT(""));
     #endif
     
-    fgSizer4->Add(m_txName, 1, wxALL|wxEXPAND, 5);
+    fgSizer4->Add(m_txName, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText1 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Server:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText1 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Server:"), wxDefaultPosition, wxDLG_UNIT(m_MySqlPanel, wxSize(-1, -1)), 0);
     m_staticText1->SetToolTip(_("Host name / IP of the server hosting the MySQL server"));
     
-    fgSizer4->Add(m_staticText1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer4->Add(m_staticText1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txServer = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), 0);
+    m_txServer = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_MySqlPanel, wxSize(150,-1)), 0);
     m_txServer->SetToolTip(_("Host name / IP of the server hosting the MySQL server"));
     #if wxVERSION_NUMBER >= 3000
     m_txServer->SetHint(wxT(""));
     #endif
     
-    fgSizer4->Add(m_txServer, 1, wxALL|wxEXPAND, 5);
+    fgSizer4->Add(m_txServer, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText2 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("User name:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText2 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("User name:"), wxDefaultPosition, wxDLG_UNIT(m_MySqlPanel, wxSize(-1, -1)), 0);
     
-    fgSizer4->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer4->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txUserName = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), 0);
+    m_txUserName = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_MySqlPanel, wxSize(150,-1)), 0);
     m_txUserName->SetToolTip(_("Database user name"));
     #if wxVERSION_NUMBER >= 3000
     m_txUserName->SetHint(wxT(""));
     #endif
     
-    fgSizer4->Add(m_txUserName, 1, wxALL|wxEXPAND, 5);
+    fgSizer4->Add(m_txUserName, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText3 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText3 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDLG_UNIT(m_MySqlPanel, wxSize(-1, -1)), 0);
     
-    fgSizer4->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer4->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txPassword = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), wxTE_PASSWORD);
+    m_txPassword = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_MySqlPanel, wxSize(150,-1)), wxTE_PASSWORD);
     m_txPassword->SetToolTip(_("Database password"));
     #if wxVERSION_NUMBER >= 3000
     m_txPassword->SetHint(wxT(""));
     #endif
     
-    fgSizer4->Add(m_txPassword, 0, wxALL|wxEXPAND, 5);
+    fgSizer4->Add(m_txPassword, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxArrayString m_listBox2Arr;
-    m_listBox2 = new wxListBox(m_MySqlPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,100), m_listBox2Arr, 0);
+    m_listBox2 = new wxListBox(m_MySqlPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_MySqlPanel, wxSize(-1,100)), m_listBox2Arr, 0);
     
-    boxSizer182->Add(m_listBox2, 1, wxALL|wxEXPAND, 5);
+    boxSizer182->Add(m_listBox2, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_PostgrePanel = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_PostgrePanel = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_PostgrePanel, _("PostgreSQL"), false);
     
     wxBoxSizer* bSizer_1 = new wxBoxSizer(wxVERTICAL);
@@ -545,92 +470,92 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     fgSizer42->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer42->AddGrowableCol(1);
     
-    bSizer_1->Add(fgSizer42, 0, wxEXPAND, 5);
+    bSizer_1->Add(fgSizer42, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText101 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText101 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1, -1)), 0);
     
-    fgSizer42->Add(m_staticText101, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText101, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txPgName = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_txPgName = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1, -1)), 0);
     m_txPgName->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_txPgName->SetHint(wxT(""));
     #endif
     
-    fgSizer42->Add(m_txPgName, 1, wxALL|wxEXPAND, 5);
+    fgSizer42->Add(m_txPgName, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText12 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Server:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText12 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Server:"), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1, -1)), 0);
     
-    fgSizer42->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txPgServer = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), 0);
+    m_txPgServer = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(150,-1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_txPgServer->SetHint(wxT(""));
     #endif
     
-    fgSizer42->Add(m_txPgServer, 1, wxALL|wxEXPAND, 5);
+    fgSizer42->Add(m_txPgServer, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText35 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Port:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText35 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Port:"), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1, -1)), 0);
     
-    fgSizer42->Add(m_staticText35, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText35, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txPgPort = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT("5432"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_txPgPort = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT("5432"), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_txPgPort->SetHint(wxT(""));
     #endif
     
-    fgSizer42->Add(m_txPgPort, 1, wxALL|wxEXPAND, 5);
+    fgSizer42->Add(m_txPgPort, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText21 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("User name:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText21 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("User name:"), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1, -1)), 0);
     
-    fgSizer42->Add(m_staticText21, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText21, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txPgUserName = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), 0);
+    m_txPgUserName = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(150,-1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_txPgUserName->SetHint(wxT(""));
     #endif
     
-    fgSizer42->Add(m_txPgUserName, 1, wxALL|wxEXPAND, 5);
+    fgSizer42->Add(m_txPgUserName, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText31 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText31 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1, -1)), 0);
     
-    fgSizer42->Add(m_staticText31, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText31, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txPgPassword = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), wxTE_PASSWORD);
+    m_txPgPassword = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(150,-1)), wxTE_PASSWORD);
     #if wxVERSION_NUMBER >= 3000
     m_txPgPassword->SetHint(wxT(""));
     #endif
     
-    fgSizer42->Add(m_txPgPassword, 0, wxALL|wxEXPAND, 5);
+    fgSizer42->Add(m_txPgPassword, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText24 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Default database:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText24 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Default database:"), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1, -1)), 0);
     
-    fgSizer42->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txPgDatabase = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT("postgres"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_txPgDatabase = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT("postgres"), wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_txPgDatabase->SetHint(wxT(""));
     #endif
     
-    fgSizer42->Add(m_txPgDatabase, 1, wxALL|wxEXPAND, 5);
+    fgSizer42->Add(m_txPgDatabase, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxArrayString m_listBoxPgArr;
-    m_listBoxPg = new wxListBox(m_PostgrePanel, wxID_ANY, wxDefaultPosition, wxSize(-1,100), m_listBoxPgArr, 0);
+    m_listBoxPg = new wxListBox(m_PostgrePanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_PostgrePanel, wxSize(-1,100)), m_listBoxPgArr, 0);
     
-    bSizer_1->Add(m_listBoxPg, 1, wxALL|wxEXPAND, 5);
+    bSizer_1->Add(m_listBoxPg, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer28 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer4->Add(bSizer28, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer4->Add(bSizer28, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button36 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button36 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer28->Add(m_button36, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer28->Add(m_button36, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_button35 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button35 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button35->SetDefault();
     
-    bSizer28->Add(m_button35, 0, wxALL, 5);
+    bSizer28->Add(m_button35, 0, wxALL, WXC_FROM_DIP(5));
     
     
     #if wxVERSION_NUMBER >= 2900
@@ -704,10 +629,10 @@ _ErdPanel::_ErdPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     wxBoxSizer* erdSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(erdSizer);
     
-    m_toolBarErd = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_toolBarErd = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_toolBarErd->SetToolBitmapSize(wxSize(16,16));
     
-    erdSizer->Add(m_toolBarErd, 0, wxEXPAND, 5);
+    erdSizer->Add(m_toolBarErd, 0, wxEXPAND, WXC_FROM_DIP(5));
     
     SetName(wxT("_ErdPanel"));
     SetSize(640,480);
@@ -745,100 +670,100 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     
     wxStaticBoxSizer* sbSizer7 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
-    fgSizer12->Add(sbSizer7, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    fgSizer12->Add(sbSizer7, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText15 = new wxStaticText(this, wxID_ANY, _("Referencing table:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText15 = new wxStaticText(this, wxID_ANY, _("Referencing table:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    sbSizer7->Add(m_staticText15, 0, wxALL, 5);
+    sbSizer7->Add(m_staticText15, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_txSrcTable = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), wxTE_READONLY);
+    m_txSrcTable = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(150,-1)), wxTE_READONLY);
     #if wxVERSION_NUMBER >= 3000
     m_txSrcTable->SetHint(wxT(""));
     #endif
     
-    sbSizer7->Add(m_txSrcTable, 0, wxALL|wxEXPAND, 5);
+    sbSizer7->Add(m_txSrcTable, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText17 = new wxStaticText(this, wxID_ANY, _("Column:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText17 = new wxStaticText(this, wxID_ANY, _("Column:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    sbSizer7->Add(m_staticText17, 0, wxALL, 5);
+    sbSizer7->Add(m_staticText17, 0, wxALL, WXC_FROM_DIP(5));
     
     wxArrayString m_cmbSrcColArr;
-    m_cmbSrcCol = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_cmbSrcColArr, 0);
+    m_cmbSrcCol = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_cmbSrcColArr, 0);
     
-    sbSizer7->Add(m_cmbSrcCol, 0, wxALL|wxEXPAND, 5);
+    sbSizer7->Add(m_cmbSrcCol, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxGridBagSizer* gbSizer1 = new wxGridBagSizer(0, 0);
     
-    fgSizer12->Add(gbSizer1, 1, wxEXPAND, 5);
+    fgSizer12->Add(gbSizer1, 1, wxEXPAND, WXC_FROM_DIP(5));
     
     wxArrayString m_radioRelationArr;
     m_radioRelationArr.Add(_("N :1"));
     m_radioRelationArr.Add(_("N : M"));
-    m_radioRelation = new wxRadioBox(this, wxID_ANY, _("Relation"), wxDefaultPosition, wxSize(-1, -1), m_radioRelationArr, 1, wxRA_SPECIFY_ROWS);
+    m_radioRelation = new wxRadioBox(this, wxID_ANY, _("Relation"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_radioRelationArr, 1, wxRA_SPECIFY_ROWS);
     m_radioRelation->SetSelection(0);
     
-    gbSizer1->Add(m_radioRelation, wxGBPosition(0,0), wxGBSpan(1,2), wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    gbSizer1->Add(m_radioRelation, wxGBPosition(0,0), wxGBSpan(1,2), wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
     wxArrayString m_radioOnDeleteArr;
     m_radioOnDeleteArr.Add(_("restrict"));
     m_radioOnDeleteArr.Add(_("cascade"));
     m_radioOnDeleteArr.Add(_("set null"));
     m_radioOnDeleteArr.Add(_("no action"));
-    m_radioOnDelete = new wxRadioBox(this, wxID_ANY, _("OnDelete"), wxDefaultPosition, wxSize(-1, -1), m_radioOnDeleteArr, 1, wxRA_SPECIFY_COLS);
+    m_radioOnDelete = new wxRadioBox(this, wxID_ANY, _("OnDelete"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_radioOnDeleteArr, 1, wxRA_SPECIFY_COLS);
     m_radioOnDelete->SetSelection(0);
     
-    gbSizer1->Add(m_radioOnDelete, wxGBPosition(1,0), wxGBSpan(1,1), wxALL, 5);
+    gbSizer1->Add(m_radioOnDelete, wxGBPosition(1,0), wxGBSpan(1,1), wxALL, WXC_FROM_DIP(5));
     
     wxArrayString m_radioOnUpdateArr;
     m_radioOnUpdateArr.Add(_("restrict"));
     m_radioOnUpdateArr.Add(_("cascade"));
     m_radioOnUpdateArr.Add(_("set null"));
     m_radioOnUpdateArr.Add(_("no action"));
-    m_radioOnUpdate = new wxRadioBox(this, wxID_ANY, _("OnUpdate"), wxDefaultPosition, wxSize(-1, -1), m_radioOnUpdateArr, 1, wxRA_SPECIFY_COLS);
+    m_radioOnUpdate = new wxRadioBox(this, wxID_ANY, _("OnUpdate"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_radioOnUpdateArr, 1, wxRA_SPECIFY_COLS);
     m_radioOnUpdate->SetSelection(0);
     
-    gbSizer1->Add(m_radioOnUpdate, wxGBPosition(1,1), wxGBSpan(1,1), wxALL, 5);
+    gbSizer1->Add(m_radioOnUpdate, wxGBPosition(1,1), wxGBSpan(1,1), wxALL, WXC_FROM_DIP(5));
     gbSizer1->AddGrowableCol(0);
     gbSizer1->AddGrowableRow(0);
     wxStaticBoxSizer* sbSizer8 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
-    fgSizer12->Add(sbSizer8, 1, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    fgSizer12->Add(sbSizer8, 1, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText16 = new wxStaticText(this, wxID_ANY, _("Referenced table:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText16 = new wxStaticText(this, wxID_ANY, _("Referenced table:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    sbSizer8->Add(m_staticText16, 0, wxALL, 5);
+    sbSizer8->Add(m_staticText16, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_txDstTable = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), wxTE_READONLY);
+    m_txDstTable = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(150,-1)), wxTE_READONLY);
     #if wxVERSION_NUMBER >= 3000
     m_txDstTable->SetHint(wxT(""));
     #endif
     
-    sbSizer8->Add(m_txDstTable, 0, wxALL|wxEXPAND, 5);
+    sbSizer8->Add(m_txDstTable, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText18 = new wxStaticText(this, wxID_ANY, _("Column:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText18 = new wxStaticText(this, wxID_ANY, _("Column:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    sbSizer8->Add(m_staticText18, 0, wxALL, 5);
+    sbSizer8->Add(m_staticText18, 0, wxALL, WXC_FROM_DIP(5));
     
     wxArrayString m_cmbDstColArr;
-    m_cmbDstCol = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_cmbDstColArr, 0);
+    m_cmbDstCol = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_cmbDstColArr, 0);
     
-    sbSizer8->Add(m_cmbDstCol, 0, wxALL|wxEXPAND, 5);
+    sbSizer8->Add(m_cmbDstCol, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    fgSizer12->Add(0, 0, 1, wxEXPAND, 5);
+    fgSizer12->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    fgSizer12->Add(0, 0, 1, wxEXPAND, 5);
+    fgSizer12->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer12 = new wxBoxSizer(wxHORIZONTAL);
     
-    fgSizer12->Add(bSizer12, 1, wxEXPAND|wxALIGN_RIGHT, 5);
+    fgSizer12->Add(bSizer12, 1, wxEXPAND|wxALIGN_RIGHT, WXC_FROM_DIP(5));
     
-    m_btnCancel = new wxButton(this, wxID_ANY, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_btnCancel = new wxButton(this, wxID_ANY, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer12->Add(m_btnCancel, 1, wxALL|wxEXPAND, 5);
+    bSizer12->Add(m_btnCancel, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_btnOK = new wxButton(this, wxID_ANY, _("OK"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_btnOK = new wxButton(this, wxID_ANY, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer12->Add(m_btnOK, 1, wxALL|wxEXPAND, 5);
+    bSizer12->Add(m_btnOK, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     SetName(wxT("_CreateForeignKey"));
     SetSize(-1,-1);
@@ -891,20 +816,20 @@ _LogDialog::_LogDialog(wxWindow* parent, wxWindowID id, const wxString& title, c
     
     wxStaticBoxSizer* sbSizer9 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Log")), wxVERTICAL);
     
-    fgSizer13->Add(sbSizer9, 1, wxALL|wxEXPAND, 5);
+    fgSizer13->Add(sbSizer9, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCtrl11 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(600,350), wxTE_READONLY|wxTE_MULTILINE);
+    m_textCtrl11 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(600,350)), wxTE_READONLY|wxTE_MULTILINE);
     
-    sbSizer9->Add(m_textCtrl11, 1, wxALL|wxEXPAND, 5);
+    sbSizer9->Add(m_textCtrl11, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     m_textCtrl11->SetMinSize(wxSize(600,350));
     
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     
-    fgSizer13->Add(bSizer13, 1, wxBOTTOM|wxEXPAND, 5);
+    fgSizer13->Add(bSizer13, 1, wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_button18 = new wxButton(this, wxID_ANY, _("Close"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button18 = new wxButton(this, wxID_ANY, _("Close"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer13->Add(m_button18, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT, 5);
+    bSizer13->Add(m_button18, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT, WXC_FROM_DIP(5));
     
     SetName(wxT("_LogDialog"));
     SetMinClientSize(wxSize(640,460));
@@ -956,24 +881,24 @@ _ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& ti
     fgSizer14->AddGrowableCol(0);
     fgSizer14->AddGrowableRow(1);
     
-    bSizer15->Add(fgSizer14, 1, wxEXPAND, 5);
+    bSizer15->Add(fgSizer14, 1, wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer14 = new wxBoxSizer(wxHORIZONTAL);
     
-    fgSizer14->Add(bSizer14, 1, wxEXPAND, 5);
+    fgSizer14->Add(bSizer14, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText19 = new wxStaticText(this, wxID_ANY, _("View name:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText19 = new wxStaticText(this, wxID_ANY, _("View name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer14->Add(m_staticText19, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer14->Add(m_staticText19, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_txName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_txName->SetHint(wxT(""));
     #endif
     
-    bSizer14->Add(m_txName, 1, wxALL, 5);
+    bSizer14->Add(m_txName, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_scintilla2 = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_scintilla2 = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_scintilla2->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_scintilla2->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -1018,11 +943,11 @@ _ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& ti
     m_scintilla2->SetKeyWords(3, wxT(""));
     m_scintilla2->SetKeyWords(4, wxT(""));
     
-    fgSizer14->Add(m_scintilla2, 1, wxALL|wxEXPAND, 5);
+    fgSizer14->Add(m_scintilla2, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_btnOK = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_btnOK = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer14->Add(m_btnOK, 0, wxALL|wxALIGN_RIGHT, 5);
+    fgSizer14->Add(m_btnOK, 0, wxALL|wxALIGN_RIGHT, WXC_FROM_DIP(5));
     
     SetName(wxT("_ViewSettings"));
     SetMinClientSize(wxSize(650,450));
@@ -1070,95 +995,95 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     fgSizer19->SetFlexibleDirection( wxBOTH );
     fgSizer19->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
-    bSizer22->Add(fgSizer19, 1, wxEXPAND, 5);
+    bSizer22->Add(fgSizer19, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText30 = new wxStaticText(this, wxID_ANY, _("Class prefix:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText30 = new wxStaticText(this, wxID_ANY, _("Class prefix:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer19->Add(m_staticText30, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer19->Add(m_staticText30, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txPrefix = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_txPrefix = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_txPrefix->SetHint(wxT(""));
     #endif
     
-    fgSizer19->Add(m_txPrefix, 0, wxALL|wxEXPAND, 5);
+    fgSizer19->Add(m_txPrefix, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText31 = new wxStaticText(this, wxID_ANY, _("Class postfix:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText31 = new wxStaticText(this, wxID_ANY, _("Class postfix:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer19->Add(m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer19->Add(m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_txPostfix = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_txPostfix = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_txPostfix->SetHint(wxT(""));
     #endif
     
-    fgSizer19->Add(m_txPostfix, 0, wxALL|wxEXPAND, 5);
+    fgSizer19->Add(m_txPostfix, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText28 = new wxStaticText(this, wxID_ANY, _("Folder:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText28 = new wxStaticText(this, wxID_ANY, _("Folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer19->Add(m_staticText28, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer19->Add(m_staticText28, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1, -1), wxDIRP_DEFAULT_STYLE);
+    m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxDIRP_DEFAULT_STYLE);
     
-    fgSizer19->Add(m_dirPicker, 0, wxALL|wxEXPAND, 5);
+    fgSizer19->Add(m_dirPicker, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText34 = new wxStaticText(this, wxID_ANY, _("Virtual folder:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText34 = new wxStaticText(this, wxID_ANY, _("Virtual folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer19->Add(m_staticText34, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer19->Add(m_staticText34, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxFlexGridSizer* fgSizer26 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer26->SetFlexibleDirection( wxBOTH );
     fgSizer26->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer26->AddGrowableCol(0);
     
-    fgSizer19->Add(fgSizer26, 1, wxEXPAND, 5);
+    fgSizer19->Add(fgSizer26, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_txVirtualDir = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_txVirtualDir = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_txVirtualDir->SetHint(wxT(""));
     #endif
     
-    fgSizer26->Add(m_txVirtualDir, 0, wxALL|wxEXPAND, 5);
+    fgSizer26->Add(m_txVirtualDir, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_btnBrowseVirtualDir = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(40,-1), 0);
+    m_btnBrowseVirtualDir = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(40,-1)), 0);
     
-    fgSizer26->Add(m_btnBrowseVirtualDir, 0, wxALL, 5);
+    fgSizer26->Add(m_btnBrowseVirtualDir, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_staticText36 = new wxStaticText(this, wxID_ANY, _("Template:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText36 = new wxStaticText(this, wxID_ANY, _("Template:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer19->Add(m_staticText36, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer19->Add(m_staticText36, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceTemplatesArr;
     m_choiceTemplatesArr.Add(wxT("DatabaseLayer (wxWidgets)"));
     m_choiceTemplatesArr.Add(wxT("Debea (STL)"));
     m_choiceTemplatesArr.Add(wxT("wxDebea (wxWidgets)"));
     m_choiceTemplatesArr.Add(wxT("Generic classes (STL)"));
-    m_choiceTemplates = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceTemplatesArr, 0);
+    m_choiceTemplates = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceTemplatesArr, 0);
     m_choiceTemplates->SetSelection(0);
     
-    fgSizer19->Add(m_choiceTemplates, 0, wxALL|wxEXPAND, 5);
+    fgSizer19->Add(m_choiceTemplates, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText29 = new wxStaticText(this, wxID_ANY, _("Log:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText29 = new wxStaticText(this, wxID_ANY, _("Log:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    fgSizer19->Add(m_staticText29, 0, wxALL, 5);
+    fgSizer19->Add(m_staticText29, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_textLog = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,250), wxTE_READONLY|wxTE_MULTILINE);
+    m_textLog = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,250)), wxTE_READONLY|wxTE_MULTILINE);
     
-    fgSizer19->Add(m_textLog, 1, wxALL|wxEXPAND, 5);
+    fgSizer19->Add(m_textLog, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    fgSizer19->Add(0, 0, 1, wxEXPAND, 5);
+    fgSizer19->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* bSizer20 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer22->Add(bSizer20, 0, wxALIGN_RIGHT, 5);
+    bSizer22->Add(bSizer20, 0, wxALIGN_RIGHT, WXC_FROM_DIP(5));
     
-    m_button26 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button26 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer20->Add(m_button26, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer20->Add(m_button26, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_button25 = new wxButton(this, XRCID("IDC_DBE_CG_GENERATE"), _("Generate"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button25 = new wxButton(this, XRCID("IDC_DBE_CG_GENERATE"), _("Generate"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    bSizer20->Add(m_button25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer20->Add(m_button25, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     SetName(wxT("_ClassGenerateDialog"));
     SetSize(-1,-1);
@@ -1205,7 +1130,7 @@ _CodePreviewDialog::_CodePreviewDialog(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer10);
     
-    m_scintilla3 = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_scintilla3 = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_scintilla3->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_scintilla3->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -1250,11 +1175,11 @@ _CodePreviewDialog::_CodePreviewDialog(wxWindow* parent, wxWindowID id, const wx
     m_scintilla3->SetKeyWords(3, wxT(""));
     m_scintilla3->SetKeyWords(4, wxT(""));
     
-    boxSizer10->Add(m_scintilla3, 1, wxALL|wxEXPAND, 5);
+    boxSizer10->Add(m_scintilla3, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_button14 = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button14 = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer10->Add(m_button14, 0, wxALL|wxALIGN_RIGHT, 5);
+    boxSizer10->Add(m_button14, 0, wxALL|wxALIGN_RIGHT, WXC_FROM_DIP(5));
     
     SetName(wxT("_CodePreviewDialog"));
     SetMinClientSize(wxSize(500,470));
@@ -1299,44 +1224,44 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     this->SetSizer(boxSizer19);
     
     m_infobar = new wxInfoBar(this, wxID_ANY);
-    m_infobar->SetSize(wxSize(-1,-1));
+    m_infobar->SetSize(wxDLG_UNIT(this, wxSize(-1,-1)));
     
-    boxSizer19->Add(m_infobar, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer19->Add(m_infobar, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer21 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer19->Add(boxSizer21, 0, wxALL|wxEXPAND, 5);
+    boxSizer19->Add(boxSizer21, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText23 = new wxStaticText(this, wxID_ANY, _("Table name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText23 = new wxStaticText(this, wxID_ANY, _("Table name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer21->Add(m_staticText23, 0, wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer21->Add(m_staticText23, 0, wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textName->SetHint(wxT(""));
     #endif
     
-    boxSizer21->Add(m_textName, 1, wxTOP|wxBOTTOM, 5);
+    boxSizer21->Add(m_textName, 1, wxTOP|wxBOTTOM, WXC_FROM_DIP(5));
     
-    m_splitter27 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitter27 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter27->SetSashGravity(0.5);
     m_splitter27->SetMinimumPaneSize(10);
     
-    boxSizer19->Add(m_splitter27, 1, wxEXPAND, 5);
+    boxSizer19->Add(m_splitter27, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPage31 = new wxPanel(m_splitter27, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage31 = new wxPanel(m_splitter27, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter27, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer37 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage31->SetSizer(boxSizer37);
     
-    m_staticText55 = new wxStaticText(m_splitterPage31, wxID_ANY, _("Columns:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText55 = new wxStaticText(m_splitterPage31, wxID_ANY, _("Columns:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage31, wxSize(-1,-1)), 0);
     
-    boxSizer37->Add(m_staticText55, 0, wxLEFT|wxRIGHT|wxTOP, 5);
+    boxSizer37->Add(m_staticText55, 0, wxLEFT|wxRIGHT|wxTOP, WXC_FROM_DIP(5));
     
-    m_auibar39 = new wxAuiToolBar(m_splitterPage31, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar39 = new wxAuiToolBar(m_splitterPage31, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage31, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar39->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer37->Add(m_auibar39, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer37->Add(m_auibar39, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
     
     m_auibar39->AddTool(XRCID("IDT_DBE_TS_ADD_COLUMN"), _("Add column"), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL, _("Add new column"), wxT(""), NULL);
     
@@ -1349,30 +1274,30 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     m_auibar39->AddTool(XRCID("IDT_DBE_TS_MOVE_DOWN"), _("Move column down"), wxXmlResource::Get()->LoadBitmap(wxT("16-down")), wxNullBitmap, wxITEM_NORMAL, _("Move selected column down"), wxT(""), NULL);
     m_auibar39->Realize();
     
-    m_dvColumns = new wxDataViewListCtrl(m_splitterPage31, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvColumns = new wxDataViewListCtrl(m_splitterPage31, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage31, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer37->Add(m_dvColumns, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    boxSizer37->Add(m_dvColumns, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvColumns->AppendTextColumn(_("Column name"), wxDATAVIEW_CELL_EDITABLE, -2, wxALIGN_LEFT);
-    m_dvColumns->AppendTextColumn(_("Type"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvColumns->AppendTextColumn(_("Size"), wxDATAVIEW_CELL_EDITABLE, -2, wxALIGN_LEFT);
-    m_dvColumns->AppendToggleColumn(_("Not null"), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
-    m_dvColumns->AppendToggleColumn(_("Autoincrement"), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
-    m_dvColumns->AppendToggleColumn(_("Primary key"), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
-    m_splitterPage35 = new wxPanel(m_splitter27, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_dvColumns->AppendTextColumn(_("Column name"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvColumns->AppendTextColumn(_("Type"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvColumns->AppendTextColumn(_("Size"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvColumns->AppendToggleColumn(_("Not null"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvColumns->AppendToggleColumn(_("Autoincrement"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvColumns->AppendToggleColumn(_("Primary key"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_splitterPage35 = new wxPanel(m_splitter27, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter27, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter27->SplitHorizontally(m_splitterPage31, m_splitterPage35, 0);
     
     wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage35->SetSizer(boxSizer43);
     
-    m_staticText57 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Foreign keys:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText57 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Foreign keys:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), 0);
     
-    boxSizer43->Add(m_staticText57, 0, wxLEFT|wxRIGHT|wxTOP, 5);
+    boxSizer43->Add(m_staticText57, 0, wxLEFT|wxRIGHT|wxTOP, WXC_FROM_DIP(5));
     
-    m_auibar45 = new wxAuiToolBar(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar45 = new wxAuiToolBar(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar45->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer43->Add(m_auibar45, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer43->Add(m_auibar45, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
     
     m_auibar45->AddTool(XRCID("IDT_DBE_TS_ADD_KEY"), _("Add foreign key"), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL, _("Add new foreign key"), wxT(""), NULL);
     
@@ -1385,82 +1310,82 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     flexGridSizer143->AddGrowableCol(0);
     flexGridSizer143->AddGrowableRow(0);
     
-    boxSizer43->Add(flexGridSizer143, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    boxSizer43->Add(flexGridSizer143, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvKeys = new wxDataViewListCtrl(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvKeys = new wxDataViewListCtrl(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    flexGridSizer143->Add(m_dvKeys, 1, wxEXPAND, 5);
+    flexGridSizer143->Add(m_dvKeys, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvKeys->AppendTextColumn(_("Key name"), wxDATAVIEW_CELL_EDITABLE, -2, wxALIGN_LEFT);
+    m_dvKeys->AppendTextColumn(_("Key name"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer163 = new wxBoxSizer(wxVERTICAL);
     
-    flexGridSizer143->Add(boxSizer163, 1, wxALL|wxEXPAND, 5);
+    flexGridSizer143->Add(boxSizer163, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxFlexGridSizer* flexGridSizer147 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer147->SetFlexibleDirection( wxBOTH );
     flexGridSizer147->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer147->AddGrowableCol(1);
     
-    boxSizer163->Add(flexGridSizer147, 0, wxEXPAND, 5);
+    boxSizer163->Add(flexGridSizer147, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText125 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Local column:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText125 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Local column:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), 0);
     
-    flexGridSizer147->Add(m_staticText125, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_staticText125, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceLocalColArr;
-    m_choiceLocalCol = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceLocalColArr, 0);
+    m_choiceLocalCol = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), m_choiceLocalColArr, 0);
     
-    flexGridSizer147->Add(m_choiceLocalCol, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_choiceLocalCol, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText131 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Ref. table:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText131 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Ref. table:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), 0);
     
-    flexGridSizer147->Add(m_staticText131, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_staticText131, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceRefTableArr;
-    m_choiceRefTable = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceRefTableArr, 0);
+    m_choiceRefTable = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), m_choiceRefTableArr, 0);
     
-    flexGridSizer147->Add(m_choiceRefTable, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_choiceRefTable, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText135 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Ref. column:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText135 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Ref. column:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), 0);
     
-    flexGridSizer147->Add(m_staticText135, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_staticText135, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceRefColArr;
-    m_choiceRefCol = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceRefColArr, 0);
+    m_choiceRefCol = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), m_choiceRefColArr, 0);
     
-    flexGridSizer147->Add(m_choiceRefCol, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_choiceRefCol, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_radioOnUpdateArr;
     m_radioOnUpdateArr.Add(_("restrict"));
     m_radioOnUpdateArr.Add(_("cascade"));
     m_radioOnUpdateArr.Add(_("set null"));
     m_radioOnUpdateArr.Add(_("no action"));
-    m_radioOnUpdate = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On update"), wxDefaultPosition, wxSize(-1,-1), m_radioOnUpdateArr, 1, wxRA_SPECIFY_ROWS);
+    m_radioOnUpdate = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On update"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), m_radioOnUpdateArr, 1, wxRA_SPECIFY_ROWS);
     m_radioOnUpdate->SetSelection(0);
     
-    boxSizer163->Add(m_radioOnUpdate, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer163->Add(m_radioOnUpdate, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
     
     wxArrayString m_radioOnDeleteArr;
     m_radioOnDeleteArr.Add(_("restrict"));
     m_radioOnDeleteArr.Add(_("cascade"));
     m_radioOnDeleteArr.Add(_("set null"));
     m_radioOnDeleteArr.Add(_("no action"));
-    m_radioOnDelete = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On delete"), wxDefaultPosition, wxSize(-1,-1), m_radioOnDeleteArr, 1, wxRA_SPECIFY_ROWS);
+    m_radioOnDelete = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On delete"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage35, wxSize(-1,-1)), m_radioOnDeleteArr, 1, wxRA_SPECIFY_ROWS);
     m_radioOnDelete->SetSelection(0);
     
-    boxSizer163->Add(m_radioOnDelete, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer163->Add(m_radioOnDelete, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer19->Add(boxSizer49, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer19->Add(boxSizer49, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_button51 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button51 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer49->Add(m_button51, 0, wxALL, 5);
+    boxSizer49->Add(m_button51, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_button53 = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button53 = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer49->Add(m_button53, 0, wxALL, 5);
+    boxSizer49->Add(m_button53, 0, wxALL, WXC_FROM_DIP(5));
     
     SetName(wxT("_TableSettings"));
     SetMinClientSize(wxSize(600,-1));

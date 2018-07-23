@@ -38,11 +38,10 @@ $(PluginName)::~$(PluginName)()
 {
 }
 
-clToolBar *$(PluginName)::CreateToolBar(wxWindow *parent)
+void $(PluginName)::CreateToolBar(clToolBar* toolbar)
 {
-    // Create the toolbar to be used by the plugin
-    clToolBar *tb(NULL);
-    return tb;
+    // You can add items to the main toolbar here
+    wxUnusedVar(toolbar);
 }
 
 void $(PluginName)::CreatePluginMenu(wxMenu *pluginsMenu)

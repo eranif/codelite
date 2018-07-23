@@ -63,7 +63,12 @@ protected:
 public:
     clTreeCtrlPanel(wxWindow* parent);
     virtual ~clTreeCtrlPanel();
-
+    
+    /**
+     * @brief getter for the toolbar
+     */
+    clToolBar* GetToolBar() { return m_toolbar; }
+    
     /**
      * @brief set the tree options
      */

@@ -2524,6 +2524,11 @@ void LEditor::AddMarker()
 {
     int nPos = GetCurrentPos();
     int nLine = LineFromPosition(nPos);
+    int nBits = MarkerGet(nLine);
+    if(nBits & mmt_standard_bookmarks) {
+        clDEBUG() << "Marker already exists in" << GetFileName() << ":" << nLine;
+        return;
+    }
     MarkerAdd(nLine, GetActiveBookmarkType());
 
     // Notify about marker changes

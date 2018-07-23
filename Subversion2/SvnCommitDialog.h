@@ -26,9 +26,10 @@
 #ifndef SVNCOMMITDIALOG_H
 #define SVNCOMMITDIALOG_H
 
-#include "wxcrafter.h"
-#include "macros.h"
+#include "clEditorEditEventsHandler.h"
 #include "cl_command_event.h"
+#include "macros.h"
+#include "wxcrafter.h"
 
 class Subversion2;
 class IProcess;
@@ -41,16 +42,15 @@ class SvnCommitDialog : public SvnCommitDialogBaseClass
     wxString m_output;
     wxStringMap_t m_cache;
     wxString m_currentFile;
+    clEditEventsHandler::Ptr_t m_stcMessageHelper;
+    clEditEventsHandler::Ptr_t m_stcDiffHelper;
 
 public:
     static wxString NormalizeMessage(const wxString& message);
 
 public:
     SvnCommitDialog(wxWindow* parent, Subversion2* plugin);
-    SvnCommitDialog(wxWindow* parent,
-                    const wxArrayString& paths,
-                    const wxString& url,
-                    Subversion2* plugin,
+    SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin,
                     const wxString& repoPath);
     virtual ~SvnCommitDialog();
 

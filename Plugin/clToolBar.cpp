@@ -137,6 +137,8 @@ void clToolBar::OnLeftUp(wxMouseEvent& event)
                     wxCommandEvent clicked(wxEVT_TOOL, btn->GetId());
                     clicked.SetEventObject(this);
                     GetEventHandler()->AddPendingEvent(clicked);
+                    btn->ClearRenderFlags();
+                    Refresh();
                 }
                 break;
             }

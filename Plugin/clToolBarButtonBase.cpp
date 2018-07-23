@@ -113,7 +113,7 @@ double wxOSXGetMainScreenContentScaleFactor();
 static wxBitmap CreateGrayBitmap(const wxBitmap& bmp)
 {
     wxImage img = bmp.ConvertToImage();
-    img = img.ConvertToGreyscale();
+    img = img.ConvertToDisabled();
     double scale = 1.0;
     if(wxOSXGetMainScreenContentScaleFactor() > 1.9) { scale = 2.0; }
     wxBitmap greyBmp(img, -1, scale);

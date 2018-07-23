@@ -48,27 +48,28 @@ protected:
     size_t m_newfileTemplateHighlightLen;
     int m_options;
     clToolBar* m_toolbar;
-    
+
 public:
     enum {
         kShowHiddenFiles = (1 << 0),
         kShowHiddenFolders = (1 << 1),
         kLinkToEditor = (1 << 2),
+        kShowRootFullPath = (1 << 3),
     };
 
 protected:
     void ToggleView();
     void RefreshNonTopLevelFolder(const wxTreeItemId& item);
-    
+
 public:
     clTreeCtrlPanel(wxWindow* parent);
     virtual ~clTreeCtrlPanel();
-    
+
     /**
      * @brief getter for the toolbar
      */
     clToolBar* GetToolBar() { return m_toolbar; }
-    
+
     /**
      * @brief set the tree options
      */
@@ -117,12 +118,12 @@ public:
      * @brief select a given filename in the tree. Expand the tree if needed
      */
     bool ExpandToFile(const wxFileName& filename);
-    
+
     /**
      * @brief return true if a folder is opened in this view
      */
     bool IsFolderOpened() const;
-    
+
 protected:
     void UpdateItemDeleted(const wxTreeItemId& item);
     void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items) const;

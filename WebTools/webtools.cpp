@@ -370,6 +370,7 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
     if(!m_nodejsDebuggerPane) {
         m_nodejsDebuggerPane = new NodeJSDebuggerPane(parent);
         clGetManager()->GetDockingManager()->AddPane(m_nodejsDebuggerPane, wxAuiPaneInfo()
+                                                                               .MinSize(wxSize(-1, 300))
                                                                                .Layer(5)
                                                                                .Name("nodejs_debugger")
                                                                                .Caption("Node.js Debugger")

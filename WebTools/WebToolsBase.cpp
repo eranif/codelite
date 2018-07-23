@@ -26,36 +26,36 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
     m_notebook10->SetName(wxT("m_notebook10"));
     
-    boxSizer2->Add(m_notebook10, 1, wxALL|wxEXPAND, 5);
+    boxSizer2->Add(m_notebook10, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel56 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel56 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel56, _("Code Completion"), true);
     
     wxBoxSizer* boxSizer58 = new wxBoxSizer(wxVERTICAL);
     m_panel56->SetSizer(boxSizer58);
     
-    m_checkBoxEnableJsCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable JavaScript code completion"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEnableJsCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable JavaScript code completion"), wxDefaultPosition, wxDLG_UNIT(m_panel56, wxSize(-1,-1)), 0);
     m_checkBoxEnableJsCC->SetValue(true);
     m_checkBoxEnableJsCC->SetToolTip(_("Enable JavaScript code completion"));
     
-    boxSizer58->Add(m_checkBoxEnableJsCC, 0, wxALL, 5);
+    boxSizer58->Add(m_checkBoxEnableJsCC, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxEnableXmlCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable XML code completion"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEnableXmlCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable XML code completion"), wxDefaultPosition, wxDLG_UNIT(m_panel56, wxSize(-1,-1)), 0);
     m_checkBoxEnableXmlCC->SetValue(true);
     m_checkBoxEnableXmlCC->SetToolTip(_("Enable XML code completion"));
     
-    boxSizer58->Add(m_checkBoxEnableXmlCC, 0, wxALL, 5);
+    boxSizer58->Add(m_checkBoxEnableXmlCC, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxEnableHtmlCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable HTML code completion"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEnableHtmlCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable HTML code completion"), wxDefaultPosition, wxDLG_UNIT(m_panel56, wxSize(-1,-1)), 0);
     m_checkBoxEnableHtmlCC->SetValue(true);
     m_checkBoxEnableHtmlCC->SetToolTip(_("Enable HTML code completion"));
     
-    boxSizer58->Add(m_checkBoxEnableHtmlCC, 0, wxALL, 5);
+    boxSizer58->Add(m_checkBoxEnableHtmlCC, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("JavaScript"), false);
     
     wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
@@ -65,9 +65,9 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(m_panel12, wxID_ANY, wxDefaultPosition, wxSize(300,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgr = new wxPropertyGridManager(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(300,400)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer22->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
+    boxSizer22->Add(m_pgMgr, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_pgProp26 = m_pgMgr->Append(  new wxPropertyCategory( _("General") ) );
     m_pgProp26->SetHelpString(wxT(""));
@@ -120,7 +120,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropRequireJS = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("RequireJS"), wxPG_LABEL, 1) );
     m_pgPropRequireJS->SetHelpString(_("This plugin (\"requirejs\") teaches the server to understand RequireJS-style dependency management. It defines the global functions define and requirejs, and will do its best to resolve dependencies and give them their proper types"));
     
-    m_panel237 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel237 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel237, _("Node.js"), false);
     
     wxBoxSizer* boxSizer239 = new wxBoxSizer(wxVERTICAL);
@@ -131,46 +131,46 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer241->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer241->AddGrowableCol(1);
     
-    boxSizer239->Add(flexGridSizer241, 1, wxALL|wxEXPAND, 5);
+    boxSizer239->Add(flexGridSizer241, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText243 = new wxStaticText(m_panel237, wxID_ANY, _("nodejs path:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText243 = new wxStaticText(m_panel237, wxID_ANY, _("nodejs path:"), wxDefaultPosition, wxDLG_UNIT(m_panel237, wxSize(-1,-1)), 0);
     
-    flexGridSizer241->Add(m_staticText243, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer241->Add(m_staticText243, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerNodeJS = new wxFilePickerCtrl(m_panel237, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerNodeJS = new wxFilePickerCtrl(m_panel237, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panel237, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     m_filePickerNodeJS->SetToolTip(_("Set the path to Node.js executable"));
     m_filePickerNodeJS->SetFocus();
     
-    flexGridSizer241->Add(m_filePickerNodeJS, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer241->Add(m_filePickerNodeJS, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText247 = new wxStaticText(m_panel237, wxID_ANY, _("npm path:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText247 = new wxStaticText(m_panel237, wxID_ANY, _("npm path:"), wxDefaultPosition, wxDLG_UNIT(m_panel237, wxSize(-1,-1)), 0);
     
-    flexGridSizer241->Add(m_staticText247, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer241->Add(m_staticText247, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerNpm = new wxFilePickerCtrl(m_panel237, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerNpm = new wxFilePickerCtrl(m_panel237, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panel237, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     m_filePickerNpm->SetToolTip(_("Set the path to npm executable"));
     
-    flexGridSizer241->Add(m_filePickerNpm, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer241->Add(m_filePickerNpm, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    flexGridSizer241->Add(0, 0, 1, wxALL, 5);
+    flexGridSizer241->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_buttonSuugest = new wxButton(m_panel237, wxID_ANY, _("Suggest..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonSuugest = new wxButton(m_panel237, wxID_ANY, _("Suggest..."), wxDefaultPosition, wxDLG_UNIT(m_panel237, wxSize(-1,-1)), 0);
     m_buttonSuugest->SetToolTip(_("Auto detect Node.js & npm binaries"));
     
-    flexGridSizer241->Add(m_buttonSuugest, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer241->Add(m_buttonSuugest, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     
-    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer4->AddButton(m_buttonCancel);
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer4->AddButton(m_buttonOK);
     
-    m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer4->AddButton(m_buttonApply);
     m_stdBtnSizer4->Realize();
     
@@ -266,51 +266,51 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     flexGridSizer76->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer76->AddGrowableCol(1);
     
-    boxSizer68->Add(flexGridSizer76, 0, wxALL|wxEXPAND, 5);
+    boxSizer68->Add(flexGridSizer76, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText78 = new wxStaticText(this, wxID_ANY, _("Node.js executable:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText78 = new wxStaticText(this, wxID_ANY, _("Node.js executable:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer76->Add(m_staticText78, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer76->Add(m_staticText78, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerNodeJS = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerNodeJS = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     m_filePickerNodeJS->SetToolTip(_("Select Node.js executable"));
     m_filePickerNodeJS->SetFocus();
     
-    flexGridSizer76->Add(m_filePickerNodeJS, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer76->Add(m_filePickerNodeJS, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticTextScript = new wxStaticText(this, wxID_ANY, _("Script to debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticTextScript = new wxStaticText(this, wxID_ANY, _("Script to debug:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer76->Add(m_staticTextScript, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer76->Add(m_staticTextScript, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerScript = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerScript = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     m_filePickerScript->SetToolTip(_("Select the script to execute"));
     
-    flexGridSizer76->Add(m_filePickerScript, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer76->Add(m_filePickerScript, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText257 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText257 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer76->Add(m_staticText257, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer76->Add(m_staticText257, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_dirPickerWorkingDirectory = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerWorkingDirectory = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     
-    flexGridSizer76->Add(m_dirPickerWorkingDirectory, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer76->Add(m_dirPickerWorkingDirectory, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticTextDebuggerPort = new wxStaticText(this, wxID_ANY, _("Debugger port:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticTextDebuggerPort = new wxStaticText(this, wxID_ANY, _("Debugger port:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer76->Add(m_staticTextDebuggerPort, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer76->Add(m_staticTextDebuggerPort, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlPort = new wxTextCtrl(this, wxID_ANY, wxT("5858"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlPort = new wxTextCtrl(this, wxID_ANY, wxT("5858"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlPort->SetHint(wxT(""));
     #endif
     
-    flexGridSizer76->Add(m_textCtrlPort, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer76->Add(m_textCtrlPort, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText132 = new wxStaticText(this, wxID_ANY, _("Command line arguments:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText132 = new wxStaticText(this, wxID_ANY, _("Command line arguments:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer68->Add(m_staticText132, 0, wxALL, 5);
+    boxSizer68->Add(m_staticText132, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_stcCommandLineArguments = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stcCommandLineArguments = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_stcCommandLineArguments->SetToolTip(_("Pass command line arguments to Node.js\nPlace each argument on its own line"));
     // Configure the fold margin
     m_stcCommandLineArguments->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
@@ -347,17 +347,17 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     m_stcCommandLineArguments->SetKeyWords(3, wxT(""));
     m_stcCommandLineArguments->SetKeyWords(4, wxT(""));
     
-    boxSizer68->Add(m_stcCommandLineArguments, 1, wxALL|wxEXPAND, 5);
+    boxSizer68->Add(m_stcCommandLineArguments, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer70 = new wxStdDialogButtonSizer();
     
-    boxSizer68->Add(m_stdBtnSizer70, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    boxSizer68->Add(m_stdBtnSizer70, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer70->AddButton(m_buttonOK);
     
-    m_button74 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button74 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer70->AddButton(m_button74);
     m_stdBtnSizer70->Realize();
     
@@ -402,129 +402,83 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer88);
     
-    m_splitter104 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitter104 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE);
     m_splitter104->SetSashGravity(0.33);
     m_splitter104->SetMinimumPaneSize(10);
     
-    boxSizer88->Add(m_splitter104, 1, wxALL|wxEXPAND, 0);
+    boxSizer88->Add(m_splitter104, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
-    m_splitterPage112 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage112 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter104, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer120 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage112->SetSizer(boxSizer120);
     
-    m_dataviewLocals = new wxDataViewCtrl(m_splitterPage112, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SIMPLE);
+    m_dataviewLocals = new wxDataViewCtrl(m_splitterPage112, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage112, wxSize(-1,-1)), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SIMPLE);
     
     m_dataviewLocalsModel = new m_dataview126Model;
     m_dataviewLocalsModel->SetColCount( 3 );
     m_dataviewLocals->AssociateModel(m_dataviewLocalsModel.get() );
     
-    boxSizer120->Add(m_dataviewLocals, 1, wxALL|wxEXPAND, 2);
+    boxSizer120->Add(m_dataviewLocals, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dataviewLocals->AppendTextColumn(_("Name"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dataviewLocals->AppendTextColumn(_("Type"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
-    m_dataviewLocals->AppendTextColumn(_("Value"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
-    m_splitterPage108 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_dataviewLocals->AppendTextColumn(_("Name"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dataviewLocals->AppendTextColumn(_("Type"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dataviewLocals->AppendTextColumn(_("Value"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(500), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_splitterPage108 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter104, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter104->SplitVertically(m_splitterPage112, m_splitterPage108, 0);
     
     wxBoxSizer* boxSizer118 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage108->SetSizer(boxSizer118);
     
-    m_splitter168 = new wxSplitterWindow(m_splitterPage108, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitter168 = new wxSplitterWindow(m_splitterPage108, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage108, wxSize(-1,-1)), wxSP_LIVE_UPDATE);
     m_splitter168->SetSashGravity(0.5);
     m_splitter168->SetMinimumPaneSize(10);
     
-    boxSizer118->Add(m_splitter168, 1, wxEXPAND, 5);
+    boxSizer118->Add(m_splitter168, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPage172 = new wxPanel(m_splitter168, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage172 = new wxPanel(m_splitter168, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter168, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer178 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage172->SetSizer(boxSizer178);
     
-    m_dvListCtrlCallstack = new wxDataViewListCtrl(m_splitterPage172, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SIMPLE);
+    m_dvListCtrlCallstack = new wxDataViewListCtrl(m_splitterPage172, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage172, wxSize(-1,-1)), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SIMPLE);
     
-    boxSizer178->Add(m_dvListCtrlCallstack, 1, wxALL|wxEXPAND, 2);
+    boxSizer178->Add(m_dvListCtrlCallstack, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrlCallstack->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
-    m_dvListCtrlCallstack->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dvListCtrlCallstack->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
-    m_dvListCtrlCallstack->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 50, wxALIGN_LEFT);
-    m_splitterPage176 = new wxPanel(m_splitter168, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_dvListCtrlCallstack->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlCallstack->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlCallstack->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(300), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlCallstack->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(50), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_splitterPage176 = new wxPanel(m_splitter168, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter168, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter168->SplitVertically(m_splitterPage172, m_splitterPage176, 0);
     
     wxBoxSizer* boxSizer180 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage176->SetSizer(boxSizer180);
     
-    m_notebook = new Notebook(m_splitterPage176, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook = new Notebook(m_splitterPage176, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage176, wxSize(-1,-1)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
     
-    boxSizer180->Add(m_notebook, 1, wxALL|wxEXPAND, 2);
+    boxSizer180->Add(m_notebook, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_panelConsoleLog = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panelConsoleLog = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelConsoleLog, _("Console"), true);
     
     wxBoxSizer* boxSizer188 = new wxBoxSizer(wxVERTICAL);
     m_panelConsoleLog->SetSizer(boxSizer188);
     
-    m_consoleLog = new wxStyledTextCtrl(m_panelConsoleLog, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
-    // Configure the fold margin
-    m_consoleLog->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_consoleLog->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
-    m_consoleLog->SetMarginSensitive(4, true);
-    m_consoleLog->SetMarginWidth    (4, 0);
-    
-    // Configure the tracker margin
-    m_consoleLog->SetMarginWidth(1, 0);
-    
-    // Configure the symbol margin
-    m_consoleLog->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_consoleLog->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_consoleLog->SetMarginWidth(2, 0);
-    m_consoleLog->SetMarginSensitive(2, true);
-    
-    // Configure the line numbers margin
-    m_consoleLog->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_consoleLog->SetMarginWidth(0,0);
-    
-    // Configure the line symbol margin
-    m_consoleLog->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_consoleLog->SetMarginMask(3, 0);
-    m_consoleLog->SetMarginWidth(3,0);
-    // Select the lexer
-    m_consoleLog->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_consoleLog->StyleClearAll();
-    m_consoleLog->SetWrapMode(0);
-    m_consoleLog->SetIndentationGuides(0);
-    m_consoleLog->SetKeyWords(0, wxT(""));
-    m_consoleLog->SetKeyWords(1, wxT(""));
-    m_consoleLog->SetKeyWords(2, wxT(""));
-    m_consoleLog->SetKeyWords(3, wxT(""));
-    m_consoleLog->SetKeyWords(4, wxT(""));
-    
-    boxSizer188->Add(m_consoleLog, 1, wxALL|wxEXPAND, 2);
-    
-    m_textCtrlExpression = new wxTextCtrl(m_panelConsoleLog, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
-    m_textCtrlExpression->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlExpression->SetHint(_("Evaluate expression"));
-    #endif
-    
-    boxSizer188->Add(m_textCtrlExpression, 0, wxALL|wxEXPAND, 2);
-    
-    m_panelBreakpoints = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panelBreakpoints = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelBreakpoints, _("Breakpoints"), false);
     
     wxBoxSizer* boxSizer190 = new wxBoxSizer(wxVERTICAL);
     m_panelBreakpoints->SetSizer(boxSizer190);
     
-    m_dvListCtrlBreakpoints = new wxDataViewListCtrl(m_panelBreakpoints, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlBreakpoints = new wxDataViewListCtrl(m_panelBreakpoints, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelBreakpoints, wxSize(-1,-1)), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer190->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, 2);
+    boxSizer190->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 50, wxALIGN_LEFT);
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 250, wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(40), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(50), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(250), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     
     SetName(wxT("NodeJSDebuggerPaneBase"));
     SetSize(500,250);
@@ -535,7 +489,6 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_dataviewLocals->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnLocalExpanding), NULL, this);
     m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
     m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
-    m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(NodeJSDebuggerPaneBase::OnEvaluateExpression), NULL, this);
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     
@@ -546,7 +499,6 @@ NodeJSDebuggerPaneBase::~NodeJSDebuggerPaneBase()
     m_dataviewLocals->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnLocalExpanding), NULL, this);
     m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
     m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
-    m_textCtrlExpression->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(NodeJSDebuggerPaneBase::OnEvaluateExpression), NULL, this);
     m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     
@@ -570,49 +522,49 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
     flexGridSizer148->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer148->AddGrowableCol(1);
     
-    boxSizer140->Add(flexGridSizer148, 1, wxALL|wxEXPAND, 5);
+    boxSizer140->Add(flexGridSizer148, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText160 = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText160 = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer148->Add(m_staticText160, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer148->Add(m_staticText160, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrllName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrllName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_textCtrllName->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrllName->SetHint(wxT(""));
     #endif
     
-    flexGridSizer148->Add(m_textCtrllName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer148->Add(m_textCtrllName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText150 = new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText150 = new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer148->Add(m_staticText150, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer148->Add(m_staticText150, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_dirPickerFolder = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerFolder = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     
-    flexGridSizer148->Add(m_dirPickerFolder, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer148->Add(m_dirPickerFolder, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    flexGridSizer148->Add(0, 0, 1, wxALL, 5);
+    flexGridSizer148->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxNewFolder = new wxCheckBox(this, wxID_ANY, _("Create the workspace in a separate directory"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxNewFolder = new wxCheckBox(this, wxID_ANY, _("Create the workspace in a separate directory"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_checkBoxNewFolder->SetValue(true);
     
-    flexGridSizer148->Add(m_checkBoxNewFolder, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer148->Add(m_checkBoxNewFolder, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticTextPreview = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE);
+    m_staticTextPreview = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxALIGN_CENTRE);
     m_staticTextPreview->SetForegroundColour(wxColour(wxT("rgb(21,144,18)")));
     
-    boxSizer140->Add(m_staticTextPreview, 0, wxALL|wxEXPAND, 5);
+    boxSizer140->Add(m_staticTextPreview, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_stdBtnSizer142 = new wxStdDialogButtonSizer();
     
-    boxSizer140->Add(m_stdBtnSizer142, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    boxSizer140->Add(m_stdBtnSizer142, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_button144 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button144 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button144->SetDefault();
     m_stdBtnSizer142->AddButton(m_button144);
     
-    m_button146 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button146 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer142->AddButton(m_button146);
     m_stdBtnSizer142->Realize();
     
@@ -652,6 +604,8 @@ NodeJSNewWorkspaceDlgBase::~NodeJSNewWorkspaceDlgBase()
 
 WebToolsImages::WebToolsImages()
     : wxImageList(16, 16, true)
+    , m_imagesWidth(16)
+    , m_imagesHeight(16)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
@@ -664,9 +618,25 @@ WebToolsImages::WebToolsImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpNodeJS"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("m_bmpNodeJS"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpNodeJS"), bmp));
+        }
+    }
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpNodeJS@2x"));
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("m_bmpNodeJS@2x"), bmp));
+        }
     }
     
 }

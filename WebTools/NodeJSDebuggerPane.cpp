@@ -1,20 +1,21 @@
-#include "NodeJSDebuggerPane.h"
-#include "event_notifier.h"
-#include "json_node.h"
-#include "macros.h"
-#include <map>
 #include "ColoursAndFontsManager.h"
-#include <wx/wupdlock.h>
-#include <wx/msgdlg.h>
-#include "globals.h"
 #include "NodeJSDebugger.h"
-#include "NoteJSWorkspace.h"
-#include "imanager.h"
+#include "NodeJSDebuggerPane.h"
 #include "NodeJSOuptutParser.h"
-#include <algorithm>
-#include "lexer_configuration.h"
+#include "NoteJSWorkspace.h"
 #include "bookmark_manager.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "imanager.h"
+#include "json_node.h"
+#include "lexer_configuration.h"
+#include "macros.h"
+#include "wxterminal.h"
+#include <algorithm>
 #include <editor_config.h>
+#include <map>
+#include <wx/msgdlg.h>
+#include <wx/wupdlock.h>
 
 class NodeJSLocalClientData : public wxClientData
 {
@@ -36,8 +37,8 @@ public:
 NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     : NodeJSDebuggerPaneBase(parent)
 {
-    EventNotifier::Get()->Bind(
-        wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated,
+                               this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeJSDebuggerPane::OnUpdateCallstack, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOCALS_LOOKUP, &NodeJSDebuggerPane::OnLookup, this);
@@ -46,20 +47,16 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeJSDebuggerPane::OnSessionStopped, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebuggerPane::OnFrameSelected, this);
-    EventNotifier::Get()->Bind(
-        wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView,
+                               this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &NodeJSDebuggerPane::OnSettingsChanged, this);
 
-    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         m_notebook->SetStyle((kNotebook_Default & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_notebook->SetStyle(kNotebook_Default);
     }
 
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
-        lexer->Apply(m_consoleLog);
-    }
     m_dataviewLocals->SetIndent(16);
     m_dataviewLocals->GetColumn(0)->SetWidth(150);
     m_dataviewLocals->GetColumn(1)->SetWidth(100);
@@ -69,20 +66,26 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     m_dvListCtrlCallstack->GetColumn(1)->SetWidth(200);
     m_dvListCtrlCallstack->GetColumn(2)->SetWidth(300);
     m_dvListCtrlCallstack->GetColumn(3)->SetWidth(100);
+
+    m_terminal = new wxTerminal(GetPanelConsoleLog());
+    m_terminal->SetInteractive(true);
+    GetPanelConsoleLog()->GetSizer()->Insert(0, m_terminal, 1, wxEXPAND);
+    m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeJSDebuggerPane::OnEvaluateExpression, this);
 }
 
 NodeJSDebuggerPane::~NodeJSDebuggerPane()
 {
-    EventNotifier::Get()->Unbind(
-        wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated, this);
+    m_terminal->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeJSDebuggerPane::OnEvaluateExpression, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated,
+                                 this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeJSDebuggerPane::OnUpdateCallstack, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebuggerPane::OnFrameSelected, this);
-    EventNotifier::Get()->Unbind(
-        wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW,
+                                 &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &NodeJSDebuggerPane::OnSettingsChanged, this);
 
     ClearCallstack();
@@ -128,12 +131,8 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
         wxVector<wxVariant> cols;
         cols.push_back(wxString() << index);
         wxString file, func;
-        if(m_handles.count(funcRef)) {
-            func = m_handles.find(funcRef)->second.value;
-        }
-        if(m_handles.count(funcRef)) {
-            file = m_handles.find(fileRef)->second.value;
-        }
+        if(m_handles.count(funcRef)) { func = m_handles.find(funcRef)->second.value; }
+        if(m_handles.count(funcRef)) { file = m_handles.find(fileRef)->second.value; }
         cols.push_back(func);
         cols.push_back(file);
         cols.push_back(wxString() << line);
@@ -169,19 +168,14 @@ void NodeJSDebuggerPane::OnLostControl(clDebugEvent& event)
 void NodeJSDebuggerPane::OnConsoleLog(clDebugEvent& event)
 {
     event.Skip();
-    m_consoleLog->AppendText(event.GetString());
-    ::clRecalculateSTCHScrollBar(m_consoleLog);
-    m_consoleLog->ScrollToEnd();
+    m_terminal->AddTextRaw(event.GetString());
+    ::clRecalculateSTCHScrollBar(m_terminal->GetCtrl());
 }
 
 void NodeJSDebuggerPane::OnSessionStarted(clDebugEvent& event)
 {
     event.Skip();
-    m_consoleLog->ClearAll();
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
-        lexer->Apply(m_consoleLog);
-    }
+    m_terminal->Clear();
     // Clear all markers
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
@@ -247,9 +241,7 @@ void NodeJSDebuggerPane::BuildArguments(const JSONElement& json)
         AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
     }
 
-    if(m_dataviewLocalsModel->HasChildren(locals)) {
-        m_dataviewLocals->Expand(locals);
-    }
+    if(m_dataviewLocalsModel->HasChildren(locals)) { m_dataviewLocals->Expand(locals); }
 }
 
 void NodeJSDebuggerPane::BuildLocals(const JSONElement& json)
@@ -267,9 +259,7 @@ void NodeJSDebuggerPane::BuildLocals(const JSONElement& json)
         AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
     }
 
-    if(m_dataviewLocalsModel->HasChildren(locals)) {
-        m_dataviewLocals->Expand(locals);
-    }
+    if(m_dataviewLocalsModel->HasChildren(locals)) { m_dataviewLocals->Expand(locals); }
 }
 
 void NodeJSDebuggerPane::OnExceptionThrown(clDebugEvent& event)
@@ -283,7 +273,7 @@ void NodeJSDebuggerPane::OnExceptionThrown(clDebugEvent& event)
     wxFileName fn(event.GetFileName());
     IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath());
     if(editor) {
-        // Center the editor on the error line and add 
+        // Center the editor on the error line and add
         // - Error marker on the left margin
         // - Annotation text below the errornous line
         editor->CenterLine(event.GetLineNumber(), event.GetInt());
@@ -334,12 +324,8 @@ void NodeJSDebuggerPane::OnFrameSelected(clDebugEvent& event)
     wxVector<wxVariant> cols;
     cols.push_back(wxString() << index);
     wxString file, func;
-    if(m_handles.count(funcRef)) {
-        func = m_handles.find(funcRef)->second.value;
-    }
-    if(m_handles.count(funcRef)) {
-        file = m_handles.find(fileRef)->second.value;
-    }
+    if(m_handles.count(funcRef)) { func = m_handles.find(funcRef)->second.value; }
+    if(m_handles.count(funcRef)) { file = m_handles.find(fileRef)->second.value; }
     cols.push_back(func);
     cols.push_back(file);
     cols.push_back(wxString() << line);
@@ -378,33 +364,17 @@ void NodeJSDebuggerPane::DoOpenFile(const wxString& filename, int line)
 {
     clGetManager()->OpenFile(filename, "", line - 1);
 }
-void NodeJSDebuggerPane::OnEvaluateExpression(wxCommandEvent& event)
+void NodeJSDebuggerPane::OnEvaluateExpression(clCommandEvent& event)
 {
-    if(m_textCtrlExpression->IsEmpty()) return;
-
     clDebugEvent evalEvent(wxEVT_NODEJS_DEBUGGER_EVAL_EXPRESSION);
-    evalEvent.SetString(m_textCtrlExpression->GetValue());
+    evalEvent.SetString(event.GetString());
     EventNotifier::Get()->AddPendingEvent(evalEvent);
 }
 
 void NodeJSDebuggerPane::OnExpressionEvaluated(clDebugEvent& event)
 {
     event.Skip();
-    wxString message;
-    message << "eval(" << m_textCtrlExpression->GetValue() << "):\n" << event.GetString();
-
-    wxString currentText = m_consoleLog->GetValue();
-    if(!currentText.EndsWith("\n")) {
-        message.Prepend("\n");
-    }
-    if(!message.EndsWith("\n")) {
-        message << "\n";
-    }
-    m_consoleLog->AppendText(message);
-    m_consoleLog->ScrollToEnd();
-
-    // Restore the focus to the text control
-    m_textCtrlExpression->CallAfter(&wxTextCtrl::SetFocus);
+    m_terminal->AddTextWithEOL(event.GetString());
 }
 
 void NodeJSDebuggerPane::OnLocalExpanding(wxDataViewEvent& event)
@@ -444,13 +414,15 @@ void NodeJSDebuggerPane::OnLocalExpanding(wxDataViewEvent& event)
 
 void NodeJSDebuggerPane::DoDeleteLocalItemAfter(const wxDataViewItem& item) { m_dataviewLocalsModel->DeleteItem(item); }
 
-void NodeJSDebuggerPane::DoAddKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxDataViewItem& parent)
+void NodeJSDebuggerPane::DoAddKnownRefs(const std::vector<std::pair<int, wxString> >& refs,
+                                        const wxDataViewItem& parent)
 {
-    std::for_each(
-        refs.begin(), refs.end(), [&](const std::pair<int, wxString>& p) { AddLocal(parent, p.second, p.first); });
+    std::for_each(refs.begin(), refs.end(),
+                  [&](const std::pair<int, wxString>& p) { AddLocal(parent, p.second, p.first); });
 }
 
-void NodeJSDebuggerPane::DoAddUnKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxDataViewItem& parent)
+void NodeJSDebuggerPane::DoAddUnKnownRefs(const std::vector<std::pair<int, wxString> >& refs,
+                                          const wxDataViewItem& parent)
 {
     if(!NodeJSWorkspace::Get()->GetDebugger()) return;
 
@@ -494,9 +466,7 @@ void NodeJSDebuggerPane::OnLookup(clDebugEvent& event)
     wxDataViewItem parent;
     for(size_t i = 0; i < m_pendingLookupRefs.size(); ++i) {
         const PendingLookupDV& pl = m_pendingLookupRefs.at(i);
-        if(!parent.IsOk()) {
-            parent = pl.parent;
-        }
+        if(!parent.IsOk()) { parent = pl.parent; }
         wxString nameID;
         nameID << pl.refID;
 
@@ -521,9 +491,10 @@ void NodeJSDebuggerPane::OnLookup(clDebugEvent& event)
     m_pendingLookupRefs.clear();
 }
 
-void NodeJSDebuggerPane::OnSettingsChanged(wxCommandEvent& event) {
+void NodeJSDebuggerPane::OnSettingsChanged(wxCommandEvent& event)
+{
     event.Skip();
-    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         m_notebook->SetStyle((m_notebook->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_notebook->SetStyle((m_notebook->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);

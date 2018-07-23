@@ -26,12 +26,14 @@
 #ifndef NODEJSDEBUGGERPANE_H
 #define NODEJSDEBUGGERPANE_H
 
-#include "WebToolsBase.h"
 #include "NodeJSEvents.h"
-#include <map>
-#include "json_node.h"
 #include "NodeJSOuptutParser.h"
+#include "WebToolsBase.h"
+#include "cl_command_event.h"
+#include "json_node.h"
+#include <map>
 
+class wxTerminal;
 class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
 {
     struct FrameData {
@@ -49,10 +51,11 @@ class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
 public:
     std::map<int, NodeJSHandle> m_handles;
     std::vector<PendingLookupDV> m_pendingLookupRefs;
+    wxTerminal* m_terminal;
 
 protected:
     virtual void OnLocalExpanding(wxDataViewEvent& event);
-    virtual void OnEvaluateExpression(wxCommandEvent& event);
+    virtual void OnEvaluateExpression(clCommandEvent& event);
     virtual void OnBreakpointSelected(wxDataViewEvent& event);
     void ClearCallstack();
     void BuildLocals(const JSONElement& json);

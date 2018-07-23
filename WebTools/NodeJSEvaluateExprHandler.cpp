@@ -37,5 +37,9 @@ void NodeJSEvaluateExprHandler::Process(NodeJSDebugger* debugger, const wxString
             event.SetString(content);
             EventNotifier::Get()->ProcessEvent(event);
         }
+    } else if(json.hasNamedObject("success") && !json.namedObject("success").toBool()) {
+        clDebugEvent event(wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED);
+        event.SetString(json.namedObject("message").toString());
+        EventNotifier::Get()->ProcessEvent(event);
     }
 }

@@ -1,8 +1,8 @@
-#include "clMainFrameHelper.h"
-#include <wx/frame.h>
-#include "clDockingManager.h"
 #include "../LiteEditor/frame.h" // this is daengrous. Only access inline functions
+#include "clDockingManager.h"
+#include "clMainFrameHelper.h"
 #include "clStatusBar.h"
+#include <wx/frame.h>
 
 clMainFrameHelper::clMainFrameHelper(clMainFrame* frame, clDockingManager* dockMgr)
     : m_mainFrame(frame)
@@ -13,23 +13,7 @@ clMainFrameHelper::clMainFrameHelper(clMainFrame* frame, clDockingManager* dockM
 
 clMainFrameHelper::~clMainFrameHelper() {}
 
-bool clMainFrameHelper::IsToolbarShown() const
-{
-    if(m_mainFrame->GetMainToolBar()) {
-        return m_mainFrame->GetMainToolBar()->IsShown();
-    } else {
-
-        bool atLeastOneTBIsVisible = false;
-        wxAuiPaneInfoArray& panes = m_mgr->GetAllPanes();
-        for(size_t i = 0; i < panes.GetCount(); ++i) {
-            if(panes.Item(i).IsOk() && panes.Item(i).IsToolbar() && panes.Item(i).IsShown()) {
-                atLeastOneTBIsVisible = true;
-                break;
-            }
-        }
-        return atLeastOneTBIsVisible;
-    }
-}
+bool clMainFrameHelper::IsToolbarShown() const { return m_mainFrame->GetMainToolBar()->IsShown(); }
 
 bool clMainFrameHelper::IsCaptionsVisible() const
 {

@@ -1232,7 +1232,7 @@ void clMainFrame::DoShowToolbars(bool show, bool update)
     wxWindowUpdateLocker locker(this);
 #endif
 
-    GetMainToolBar()->Show(show);
+    m_toolbar->Show(show);
     Layout();
 }
 
@@ -5137,7 +5137,8 @@ void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(m_fram
 
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {
-    DoShowToolbars(event.IsChecked());
+    wxUnusedVar(event);
+    DoShowToolbars(!m_toolbar->IsShown());
     clConfig::Get().Write(kConfigShowToolBar, event.IsChecked());
 }
 

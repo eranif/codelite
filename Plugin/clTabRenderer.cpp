@@ -71,7 +71,7 @@ void clTabColours::InitLightColours()
 
     } else {
         // Make it lighter
-        activeTabBgColour = faceColour.ChangeLightness(150);
+        activeTabBgColour = faceColour;//.ChangeLightness(150);
         activeTabPenColour = faceColour.ChangeLightness(70);
     }
 
@@ -258,10 +258,8 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopLeft();
         pt2 = activeTab->GetRect().GetTopRight();
-#if 0
         pt1.x += 1;
         pt2.x -= 1;
-#endif
         DRAW_LINE(pt1, pt2);
 
     } else {
@@ -269,10 +267,8 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetBottomLeft();
         pt2 = activeTab->GetRect().GetBottomRight();
-#if 0
         pt1.x += 1;
         pt2.x -= 1;
-#endif
         DRAW_LINE(pt1, pt2);
         pt1.y += 1;
         pt2.y += 1;

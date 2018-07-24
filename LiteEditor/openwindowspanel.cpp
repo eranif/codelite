@@ -22,28 +22,28 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/xrc/xmlres.h>
-#include "globals.h"
-#include <wx/clntdata.h>
-#include "event_notifier.h"
-#include "openwindowspanel.h"
+#include "clToolBar.h"
+#include "clToolBarButtonBase.h"
 #include "cl_config.h"
+#include "event_notifier.h"
 #include "globals.h"
-#include "pluginmanager.h"
-#include <wx/wupdlock.h>
-#include "macros.h"
-#include <wx/filename.h>
-#include <algorithm>
-#include <wx/stc/stc.h>
 #include "imanager.h"
+#include "macros.h"
+#include "openwindowspanel.h"
+#include "pluginmanager.h"
+#include <algorithm>
+#include <wx/clntdata.h>
+#include <wx/filename.h>
+#include <wx/stc/stc.h>
+#include <wx/wupdlock.h>
+#include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(OpenWindowsPanel, OpenWindowsPanelBase)
 EVT_MENU(XRCID("wxID_CLOSE_SELECTED"), OpenWindowsPanel::OnCloseSelectedFiles)
 EVT_MENU(XRCID("wxID_SAVE_SELECTED"), OpenWindowsPanel::OnSaveSelectedFiles)
 END_EVENT_TABLE()
 
-struct TabSorter
-{
+struct TabSorter {
     bool operator()(const clTab& t1, const clTab& t2)
     {
         wxString file1, file2;
@@ -62,8 +62,7 @@ struct TabSorter
     }
 };
 
-struct TabClientData : public wxClientData
-{
+struct TabClientData : public wxClientData {
     clTab tab;
     bool isModified;
     TabClientData() {}
@@ -85,9 +84,17 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     , m_workspaceOpened(false)
 {
     m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
+    m_toolbar = new clToolBar(this);
+    m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), clGetManager()->GetStdIcons()->LoadBitmap("sort"), "",
+                       wxITEM_CHECK);
+    m_toolbar->Realize();
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
+
+    m_toolbar->Bind(wxEVT_TOOL, &OpenWindowsPanel::OnSortItems, this, wxID_SORT_ASCENDING);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &OpenWindowsPanel::OnSortItemsUpdateUI, this, wxID_SORT_ASCENDING);
 
     clConfig cfg;
-    m_auibar->ToggleTool(XRCID("TabsSortTool"), cfg.Read(kConfigTabsPaneSortAlphabetically, true));
+    m_toolbar->ToggleTool(XRCID("TabsSortTool"), cfg.Read(kConfigTabsPaneSortAlphabetically, true));
 
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(OpenWindowsPanel::OnInitDone), NULL, this);
     Bind(wxEVT_IDLE, &OpenWindowsPanel::OnIdle, this);
@@ -95,15 +102,18 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
 
 OpenWindowsPanel::~OpenWindowsPanel()
 {
+    m_toolbar->Unbind(wxEVT_TOOL, &OpenWindowsPanel::OnSortItems, this, wxID_SORT_ASCENDING);
+    m_toolbar->Unbind(wxEVT_UPDATE_UI, &OpenWindowsPanel::OnSortItemsUpdateUI, this, wxID_SORT_ASCENDING);
+
     // clear list now, or wxGTK seems to crash on exit
     Clear();
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(OpenWindowsPanel::OnInitDone), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_PAGE_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActivePageChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
+                                     wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CMD_PAGE_CHANGED,
+                                     wxCommandEventHandler(OpenWindowsPanel::OnActivePageChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED,
+                                     wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_MODIFIED, &OpenWindowsPanel::OnEditorModified, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &OpenWindowsPanel::OnEditorSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &OpenWindowsPanel::OnWorkspaceClosed, this);
@@ -129,9 +139,7 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
     CHECK_WORKSPACE_CLOSING();
 
     PopulateView();
-    if(m_mgr->GetActiveEditor()) {
-        DoSelectItem(m_mgr->GetActiveEditor());
-    }
+    if(m_mgr->GetActiveEditor()) { DoSelectItem(m_mgr->GetActiveEditor()); }
 }
 
 void OpenWindowsPanel::OnAllEditorsClosed(wxCommandEvent& e)
@@ -199,9 +207,7 @@ void OpenWindowsPanel::DoSaveItem(wxDataViewItem item)
     if(data) {
         if(data->IsFile()) {
             IEditor* editor = m_mgr->FindEditor(data->tab.filename.GetFullPath());
-            if(editor) {
-                editor->Save();
-            }
+            if(editor) { editor->Save(); }
         }
     }
 }
@@ -313,9 +319,7 @@ void OpenWindowsPanel::OnTabSelected(wxDataViewEvent& event)
         m_mgr->OpenFile(data->tab.filename.GetFullPath());
     } else {
         wxWindow* page = m_mgr->FindPage(data->tab.text);
-        if(page) {
-            m_mgr->SelectPage(page);
-        }
+        if(page) { m_mgr->SelectPage(page); }
     }
 }
 
@@ -330,9 +334,7 @@ void OpenWindowsPanel::AppendEditor(const clTab& tab)
     wxVector<wxVariant> cols;
     cols.push_back(value);
     m_dvListCtrl->AppendItem(cols, (wxUIntPtr)data);
-    if(tab.isFile) {
-        m_editors.insert(std::make_pair(tab.filename.GetFullPath(), m_dvListCtrl->RowToItem(itemIndex)));
-    }
+    if(tab.isFile) { m_editors.insert(std::make_pair(tab.filename.GetFullPath(), m_dvListCtrl->RowToItem(itemIndex))); }
 }
 
 wxString OpenWindowsPanel::GetEditorPath(wxDataViewItem item)
@@ -354,7 +356,7 @@ void OpenWindowsPanel::Clear()
 
 void OpenWindowsPanel::PopulateView()
 {
-    if(m_auibar->GetToolToggled(XRCID("TabsSortTool"))) {
+    if(m_toolbar->FindById(wxID_SORT_ASCENDING)->IsChecked()) {
         SortAlphabetically();
     } else {
         SortByEditorOrder();
@@ -403,12 +405,12 @@ void OpenWindowsPanel::OnInitDone(wxCommandEvent& event)
     m_initDone = true;
 
     // Connect the events only after the initialization has completed
-    EventNotifier::Get()->Connect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_PAGE_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,
+                                  wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_PAGE_CHANGED,
+                                  wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed),
+                                  NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_EDITOR_MODIFIED, &OpenWindowsPanel::OnEditorModified, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &OpenWindowsPanel::OnEditorSaved, this);
@@ -432,9 +434,7 @@ void OpenWindowsPanel::OnEditorModified(clCommandEvent& event)
     event.Skip();
     if(!m_initDone) return;
     IEditor* editor = m_mgr->FindEditor(event.GetFileName());
-    if(editor) {
-        DoMarkModify(event.GetFileName(), editor->IsModified());
-    }
+    if(editor) { DoMarkModify(event.GetFileName(), editor->IsModified()); }
 }
 
 void OpenWindowsPanel::OnEditorSaved(clCommandEvent& event)
@@ -465,9 +465,7 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
     if(tab.isFile) {
         title = tab.filename.GetFullName();
         IEditor* i_editor = clGetManager()->FindEditor(tab.filename.GetFullPath());
-        if(i_editor) {
-            editor = i_editor->GetCtrl();
-        }
+        if(i_editor) { editor = i_editor->GetCtrl(); }
     } else {
         title = tab.text;
     }
@@ -484,9 +482,7 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
         bmp = m_bitmaps.find(FileExtManager::TypeText)->second;
     }
 
-    if(editor && editor->GetModify()) {
-        title.Prepend("*");
-    }
+    if(editor && editor->GetModify()) { title.Prepend("*"); }
 
     wxVariant value = ::MakeIconText(title, bmp);
     return value;

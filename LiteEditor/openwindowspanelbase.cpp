@@ -26,19 +26,11 @@ OpenWindowsPanelBase::OpenWindowsPanelBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar->SetToolBitmapSize(wxSize(16,16));
-    
-    mainSizer->Add(m_auibar, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_auibar->AddTool(XRCID("TabsSortTool"), wxT(""), wxXmlResource::Get()->LoadBitmap(wxT("sort")), wxNullBitmap, wxITEM_CHECK, _("If checked, sort alphabetically. Otherwise display in the same order as the editors."), _("If checked, sort alphabetically. Otherwise display in the same order as the editors."), NULL);
-    m_auibar->Realize();
-    
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_HORIZ_RULES|wxDV_MULTIPLE|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
     
     mainSizer->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
+    m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     
     SetName(wxT("OpenWindowsPanelBase"));
     SetSize(500,300);
@@ -46,8 +38,6 @@ OpenWindowsPanelBase::OpenWindowsPanelBase(wxWindow* parent, wxWindowID id, cons
          GetSizer()->Fit(this);
     }
     // Connect events
-    this->Connect(XRCID("TabsSortTool"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(OpenWindowsPanelBase::OnSortItems), NULL, this);
-    this->Connect(XRCID("TabsSortTool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OpenWindowsPanelBase::OnSortItemsUpdateUI), NULL, this);
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(OpenWindowsPanelBase::OnTabSelected), NULL, this);
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(OpenWindowsPanelBase::OnTabActivated), NULL, this);
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(OpenWindowsPanelBase::OnMenu), NULL, this);
@@ -56,8 +46,6 @@ OpenWindowsPanelBase::OpenWindowsPanelBase(wxWindow* parent, wxWindowID id, cons
 
 OpenWindowsPanelBase::~OpenWindowsPanelBase()
 {
-    this->Disconnect(XRCID("TabsSortTool"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(OpenWindowsPanelBase::OnSortItems), NULL, this);
-    this->Disconnect(XRCID("TabsSortTool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OpenWindowsPanelBase::OnSortItemsUpdateUI), NULL, this);
     m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(OpenWindowsPanelBase::OnTabSelected), NULL, this);
     m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(OpenWindowsPanelBase::OnTabActivated), NULL, this);
     m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(OpenWindowsPanelBase::OnMenu), NULL, this);

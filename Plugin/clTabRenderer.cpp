@@ -267,8 +267,13 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetBottomLeft();
         pt2 = activeTab->GetRect().GetBottomRight();
+#ifndef __WXOSX__
         pt1.x += 1;
         pt2.x -= 1;
+#else
+        pt1.x += 2; // Skip the marker on the left side drawn in pen 3 pixel width
+//        pt2.x -= 1;
+#endif
         DRAW_LINE(pt1, pt2);
         pt1.y += 1;
         pt2.y += 1;

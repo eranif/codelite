@@ -14,6 +14,7 @@ csCodeCompletePhpHandler::~csCodeCompletePhpHandler() {}
 void csCodeCompletePhpHandler::DoProcessCommand(const JSONElement& options)
 {
     CHECK_STR_PARAM("path", m_path);
+    CHECK_STR_PARAM_OPTIONAL("unsaved-buffer-path", m_unsavedBufferPath);
     CHECK_INT_PARAM("position", m_position);
     CHECK_STR_PARAM("symbols-path", m_symbolsPath);
 
@@ -30,10 +31,12 @@ void csCodeCompletePhpHandler::DoProcessCommand(const JSONElement& options)
         return;
     }
 
-    PHPSourceFile sourceFile(wxFileName(m_path), &lookup);
+    PHPSourceFile sourceFile(wxFileName(m_unsavedBufferPath.IsEmpty() ? m_path : m_unsavedBufferPath), &lookup);
+    sourceFile.SetFilename(m_path); // update the file name to the real path
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
+    
     PHPExpression::Ptr_t expr(new PHPExpression(sourceFile.GetText().Mid(0, m_position)));
     PHPEntityBase::Ptr_t resolved = expr->Resolve(lookup, m_path);
     if(resolved) {

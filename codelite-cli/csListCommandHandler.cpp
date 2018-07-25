@@ -3,9 +3,10 @@
 #include <file_logger.h>
 #include <iostream>
 #include <wx/dir.h>
+#include "csManager.h"
 
-csListCommandHandler::csListCommandHandler(wxEvtHandler* sink)
-    : csCommandHandlerBase(sink)
+csListCommandHandler::csListCommandHandler(csManager* manager)
+    : csCommandHandlerBase(manager)
 {
 }
 
@@ -31,7 +32,7 @@ void csListCommandHandler::DoProcessCommand(const JSONElement& options)
         arr.arrayAppend(entry);
         cont = dir.GetNext(&filename);
     }
-    char* result = arr.FormatRawString(false);
+    char* result = arr.FormatRawString(m_manager->GetConfig().IsPrettyJSON());
     clDEBUG() << result;
     std::cout << result << std::endl;
     free(result);

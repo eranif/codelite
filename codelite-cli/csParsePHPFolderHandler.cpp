@@ -2,8 +2,8 @@
 #include "csParsePHPFolderHandler.h"
 #include <wx/filename.h>
 
-csParsePHPFolderHandler::csParsePHPFolderHandler(wxEvtHandler* sink)
-    : csCommandHandlerBase(sink)
+csParsePHPFolderHandler::csParsePHPFolderHandler(csManager* manager)
+    : csCommandHandlerBase(manager)
 {
 }
 

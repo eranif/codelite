@@ -1,19 +1,19 @@
-#include "main_app.h"
 #include "cl_standard_paths.h"
 #include "csConfig.h"
 #include "file_logger.h"
+#include "main_app.h"
 #include <SocketAPI/clSocketServer.h>
 #include <iostream>
 #include <wx/filename.h>
+#include <wx/crt.h>
 
 IMPLEMENT_APP_CONSOLE(MainApp)
 
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
     { wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "c", "command", "command to execute", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "o", "options", "the command optinos, in JSON format", wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_PARAM, "c", "command", "command", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_PARAM, "o", "options", "options", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_NONE }
 };
 
@@ -45,10 +45,7 @@ bool MainApp::OnInit()
     m_manager = new csManager();
 
     wxCmdLineParser parser(wxAppConsole::argc, wxAppConsole::argv);
-    if(!DoParseCommandLine(parser)) {
-        PrintUsage(parser);
-        return false;
-    }
+    DoParseCommandLine(parser);
 
     // Open the log file
     FileLogger::OpenLog("codelite-cli.log", FileLogger::Developer);
@@ -60,15 +57,32 @@ bool MainApp::OnInit()
 bool MainApp::DoParseCommandLine(wxCmdLineParser& parser)
 {
     parser.SetDesc(cmdLineDesc);
-    if(parser.Parse(false) != 0) { return false; }
-
-    parser.Found("c", &m_manager->GetCommand());
-    parser.Found("o", &m_manager->GetOptions());
+    if(parser.Parse(false) != 0) {
+        return false;
+    }
+    
+    m_manager->GetCommand() = parser.GetParam(0);
+    m_manager->GetOptions() = parser.GetParam(1);
+    
+    if(parser.Found("v")) {
+        // Print version and exit
+        std::cout << "codelite-cli v1.0" << std::endl;
+        m_manager->SetExitNow(true);
+        return true;
+    }
+    
+    if(parser.Found("h")) {
+        m_manager->SetExitNow(true);
+        PrintUsage(parser);
+        return true;
+    }
 
     if(m_manager->GetCommand().IsEmpty()) {
         // Try to fetch the options from the INI file
         m_manager->LoadCommandFromINI();
-        if(m_manager->GetCommand().IsEmpty()) { return false; }
+        if(m_manager->GetCommand().IsEmpty()) {
+            return false;
+        }
     }
     return true;
 }

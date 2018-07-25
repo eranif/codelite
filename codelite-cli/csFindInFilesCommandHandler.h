@@ -16,7 +16,7 @@ public:
     virtual void DoProcessCommand(const JSONElement& options);
 
 public:
-    csFindInFilesCommandHandler(wxEvtHandler* sink);
+    csFindInFilesCommandHandler(csManager* manager);
     virtual ~csFindInFilesCommandHandler();
 };
 

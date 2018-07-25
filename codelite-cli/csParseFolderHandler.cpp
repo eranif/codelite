@@ -2,10 +2,10 @@
 #include "csParsePHPFolderHandler.h"
 #include <file_logger.h>
 
-csParseFolderHandler::csParseFolderHandler(wxEvtHandler* sink)
-    : csCommandHandlerBase(sink)
+csParseFolderHandler::csParseFolderHandler(csManager* manager)
+    : csCommandHandlerBase(manager)
 {
-    m_parseHandlers.Register("parse-php-folder", csParsePHPFolderHandler::Ptr_t(new csParsePHPFolderHandler(sink)));
+    m_parseHandlers.Register("parse-php-folder", csParsePHPFolderHandler::Ptr_t(new csParsePHPFolderHandler(manager)));
 }
 
 csParseFolderHandler::~csParseFolderHandler() {}

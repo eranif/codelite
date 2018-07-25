@@ -1,10 +1,13 @@
-#include "csConfig.h"
 #include "clIniFile.h"
 #include "cl_standard_paths.h"
+#include "csConfig.h"
 #include "file_logger.h"
 #include <wx/filename.h>
 
-csConfig::csConfig() {}
+csConfig::csConfig()
+    : m_flags(0)
+{
+}
 
 csConfig::~csConfig() {}
 
@@ -16,4 +19,7 @@ void csConfig::Load()
     clDEBUG() << "command =" << m_command;
     ini.Read("options", &m_options, "");
     clDEBUG() << "options =" << m_options;
+    bool pretty_json = false;
+    ini.Read("pretty_json", &pretty_json);
+    EnableFlag(kPrettyJSON, pretty_json);
 }

@@ -15,7 +15,7 @@ public:
     virtual void DoProcessCommand(const JSONElement& options);
 
 public:
-    csParseFolderHandler(wxEvtHandler* sink);
+    csParseFolderHandler(csManager* manager);
     virtual ~csParseFolderHandler();
 };
 

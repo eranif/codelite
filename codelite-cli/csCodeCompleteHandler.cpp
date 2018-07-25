@@ -1,11 +1,11 @@
 #include "csCodeCompleteHandler.h"
 #include "csCodeCompletePhpHandler.h"
 
-csCodeCompleteHandler::csCodeCompleteHandler(wxEvtHandler* sink)
-    : csCommandHandlerBase(sink)
+csCodeCompleteHandler::csCodeCompleteHandler(csManager* manager)
+    : csCommandHandlerBase(manager)
 {
     m_codeCompleteHandlers.Register("code-complete-php",
-                                    csCommandHandlerBase::Ptr_t(new csCodeCompletePhpHandler(sink)));
+                                    csCommandHandlerBase::Ptr_t(new csCodeCompletePhpHandler(manager)));
 }
 
 csCodeCompleteHandler::~csCodeCompleteHandler() {}

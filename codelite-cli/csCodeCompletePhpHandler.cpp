@@ -2,9 +2,10 @@
 #include "PHPLookupTable.h"
 #include "PHPSourceFile.h"
 #include "csCodeCompletePhpHandler.h"
+#include "csManager.h"
 
-csCodeCompletePhpHandler::csCodeCompletePhpHandler(wxEvtHandler* sink)
-    : csCommandHandlerBase(sink)
+csCodeCompletePhpHandler::csCodeCompletePhpHandler(csManager* manager)
+    : csCommandHandlerBase(manager)
 {
 }
 
@@ -41,7 +42,7 @@ void csCodeCompletePhpHandler::DoProcessCommand(const JSONElement& options)
         JSONRoot root(cJSON_Array);
         JSONElement arr = root.toElement();
         std::for_each(matches.begin(), matches.end(), [&](PHPEntityBase::Ptr_t e) { arr.arrayAppend(e->ToJSON()); });
-        char* result = arr.FormatRawString(true);
+        char* result = arr.FormatRawString(m_manager->GetConfig().IsPrettyJSON());
         std::cout << result << std::endl;
         free(result);
 

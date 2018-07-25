@@ -1,8 +1,9 @@
 #include "csFindInFilesCommandHandler.h"
 #include "search_thread.h"
+#include "csManager.h"
 
-csFindInFilesCommandHandler::csFindInFilesCommandHandler(wxEvtHandler* sink)
-    : csCommandHandlerBase(sink)
+csFindInFilesCommandHandler::csFindInFilesCommandHandler(csManager* manager)
+    : csCommandHandlerBase(manager)
 {
 }
 

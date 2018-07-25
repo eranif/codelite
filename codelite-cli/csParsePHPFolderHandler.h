@@ -14,7 +14,7 @@ protected:
     virtual void DoProcessCommand(const JSONElement& options);
 
 public:
-    csParsePHPFolderHandler(wxEvtHandler* sink);
+    csParsePHPFolderHandler(csManager* manager);
     virtual ~csParsePHPFolderHandler();
 };
 

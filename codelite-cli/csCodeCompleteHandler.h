@@ -12,7 +12,7 @@ class csCodeCompleteHandler : public csCommandHandlerBase
 
 public:
     virtual void DoProcessCommand(const JSONElement& options);
-    csCodeCompleteHandler(wxEvtHandler* sink);
+    csCodeCompleteHandler(csManager* manager);
     virtual ~csCodeCompleteHandler();
 };
 

@@ -18,6 +18,7 @@ class csManager : public wxEvtHandler
     wxString m_options;
     bool m_startupCalled;
     wxSharedPtr<JSONRoot> m_findInFilesMatches;
+    bool m_exitNow;
 
 public:
     csManager();
@@ -30,8 +31,11 @@ public:
     const wxString& GetOptions() const { return m_options; }
     const csConfig& GetConfig() const { return m_config; }
     void LoadCommandFromINI();
-
+    void SetExitNow(bool b) { m_exitNow = b; }
+    
 protected:
+    void OnExit();
+    
     // The handler completed
     void OnCommandProcessedCompleted(clCommandEvent& event);
 

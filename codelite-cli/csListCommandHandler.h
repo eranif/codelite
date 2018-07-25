@@ -12,7 +12,7 @@ public:
     virtual void DoProcessCommand(const JSONElement& options);
 
 public:
-    csListCommandHandler(wxEvtHandler* sink);
+    csListCommandHandler(csManager* manager);
     virtual ~csListCommandHandler();
 };
 

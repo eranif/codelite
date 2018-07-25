@@ -8,6 +8,7 @@
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 
+class csManager;
 wxDECLARE_EVENT(wxEVT_COMMAND_PROCESSED, clCommandEvent);
 
 #define CHECK_STR_PARAM(str_option, sVal)                       \
@@ -57,7 +58,7 @@ wxDECLARE_EVENT(wxEVT_COMMAND_PROCESSED, clCommandEvent);
 class csCommandHandlerBase
 {
 protected:
-    wxEvtHandler* m_sink;
+    csManager* m_manager;
     bool m_notifyOnExit;
 
 public:
@@ -75,10 +76,10 @@ public:
     virtual void DoProcessCommand(const JSONElement& options) = 0;
 
 public:
-    csCommandHandlerBase(wxEvtHandler* sink);
+    csCommandHandlerBase(csManager* manager);
     virtual ~csCommandHandlerBase();
 
-    wxEvtHandler* GetSink() { return m_sink; }
+    csManager* GetSink() { return m_manager; }
 
     /**
      * @brief process a request from the command line and print the result to the stdout

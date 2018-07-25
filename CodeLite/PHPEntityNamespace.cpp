@@ -129,3 +129,14 @@ wxString PHPEntityNamespace::BuildNamespace(const wxString& part1, const wxStrin
     }
     return ns;
 }
+
+void PHPEntityNamespace::FromJSON(const JSONElement& json)
+{
+    BaseFromJSON(json);
+}
+
+JSONElement PHPEntityNamespace::ToJSON() const
+{
+    JSONElement json = BaseToJSON("n"); // n stands for namesapce
+    return json;
+}

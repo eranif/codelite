@@ -448,15 +448,6 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxSize& sz)
     return addProperty(name, szStr);
 }
 
-JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement& element)
-{
-    if(!_json) {
-        return *this;
-    }
-    cJSON_AddItemToObject(_json, name.mb_str(wxConvUTF8).data(), element._json);
-    return *this;
-}
-
 wxPoint JSONElement::toPoint() const
 {
     if(!_json) {
@@ -486,7 +477,6 @@ wxColour JSONElement::toColour(const wxColour& defaultColour) const
     if(_json->type != cJSON_String) {
         return defaultColour;
     }
-
     return wxColour(_json->valuestring);
 }
 
@@ -496,6 +486,15 @@ wxSize JSONElement::toSize() const
     return wxSize(pt.x, pt.y);
 }
 #endif
+
+JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement& element)
+{
+    if(!_json) {
+        return *this;
+    }
+    cJSON_AddItemToObject(_json, name.mb_str(wxConvUTF8).data(), element._json);
+    return *this;
+}
 
 void JSONElement::removeProperty(const wxString& name)
 {

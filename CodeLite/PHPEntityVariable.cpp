@@ -179,3 +179,20 @@ wxString PHPEntityVariable::ToTooltip() const
         return wxEmptyString;
     }
 }
+
+void PHPEntityVariable::FromJSON(const JSONElement& json)
+{
+    BaseFromJSON(json);
+    m_typeHint = json.namedObject("type-hint").toString();
+    m_expressionHint = json.namedObject("expr-hint").toString();
+    m_defaultValue = json.namedObject("defaultValue").toString();
+}
+
+JSONElement PHPEntityVariable::ToJSON() const
+{
+    JSONElement json = BaseToJSON("v"); // type variable
+    json.addProperty("type-hint", m_typeHint);
+    json.addProperty("expr-hint", m_expressionHint);
+    json.addProperty("defaultValue", m_defaultValue);
+    return json;
+}

@@ -6,6 +6,7 @@
 class csCodeCompletePhpHandler : public csCommandHandlerBase
 {
     wxString m_path;
+    wxString m_symbolsPath;
     int m_position;
 
 public:

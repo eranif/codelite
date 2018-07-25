@@ -1,3 +1,4 @@
+#include "csCodeCompleteHandler.h"
 #include "csFindInFilesCommandHandler.h"
 #include "csListCommandHandler.h"
 #include "csManager.h"
@@ -17,6 +18,7 @@ csManager::csManager()
     m_handlers.Register("list", csCommandHandlerBase::Ptr_t(new csListCommandHandler(this)));
     m_handlers.Register("find", csCommandHandlerBase::Ptr_t(new csFindInFilesCommandHandler(this)));
     m_handlers.Register("parse", csCommandHandlerBase::Ptr_t(new csParseFolderHandler(this)));
+    m_handlers.Register("code-complete", csCommandHandlerBase::Ptr_t(new csCodeCompleteHandler(this)));
 
     SearchThreadST::Get()->Start();
     SearchThreadST::Get()->SetNotifyWindow(this);

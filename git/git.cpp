@@ -511,7 +511,7 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
         conf.WriteItem(&data);
         conf.Save();
 
-        GIT_MESSAGE("Git repo path is now set to '%s'", m_repositoryDirectory);
+        GIT_MESSAGE1("Git repo path is now set to '%s'", m_repositoryDirectory);
 
         // Update the status bar icon to reflect that we are using "Git"
         clStatusBar* sb = m_mgr->GetStatusBar();

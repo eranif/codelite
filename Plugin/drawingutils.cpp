@@ -809,7 +809,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     dc.SetBrush(bgColour);
     dc.DrawRectangle(clientRect);
     
-    dc.SetBrush(bgColour.ChangeLightness(98));
+    dc.SetBrush(bgColour.ChangeLightness(96));
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.DrawRectangle(downRect);
     

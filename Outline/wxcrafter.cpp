@@ -45,14 +45,6 @@ OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panelCxx->SetSizer(boxSizer11);
     
-    m_auibar = new wxAuiToolBar(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar->SetToolBitmapSize(wxSize(16,16));
-    
-    boxSizer11->Add(m_auibar, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_auibar->AddTool(ID_TOOL_SORT_ALPHABETICALLY, _("Sort Alphabetically"), wxXmlResource::Get()->LoadBitmap(wxT("16-sort")), wxNullBitmap, wxITEM_CHECK, _("Sort Alphabetically"), _("Sort Alphabetically"), NULL);
-    m_auibar->Realize();
-    
     m_panelPhp = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_simpleBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_simpleBook->AddPage(m_panelPhp, _("Page"), false);
     
@@ -81,8 +73,6 @@ OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const 
     // Connect events
     m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutlineTabBaseClass::OnSearchEnter), NULL, this);
     m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutlineTabBaseClass::OnSearchSymbol), NULL, this);
-    this->Connect(ID_TOOL_SORT_ALPHABETICALLY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(OutlineTabBaseClass::OnSortAlpha), NULL, this);
-    this->Connect(ID_TOOL_SORT_ALPHABETICALLY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTabBaseClass::OnSortAlphaUI), NULL, this);
     m_treeCtrlPhp->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(OutlineTabBaseClass::OnPhpItemSelected), NULL, this);
     m_treeCtrlPhp->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(OutlineTabBaseClass::OnPhpItemActivated), NULL, this);
     
@@ -92,8 +82,6 @@ OutlineTabBaseClass::~OutlineTabBaseClass()
 {
     m_textCtrlSearch->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutlineTabBaseClass::OnSearchEnter), NULL, this);
     m_textCtrlSearch->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutlineTabBaseClass::OnSearchSymbol), NULL, this);
-    this->Disconnect(ID_TOOL_SORT_ALPHABETICALLY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(OutlineTabBaseClass::OnSortAlpha), NULL, this);
-    this->Disconnect(ID_TOOL_SORT_ALPHABETICALLY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTabBaseClass::OnSortAlphaUI), NULL, this);
     m_treeCtrlPhp->Disconnect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(OutlineTabBaseClass::OnPhpItemSelected), NULL, this);
     m_treeCtrlPhp->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(OutlineTabBaseClass::OnPhpItemActivated), NULL, this);
     

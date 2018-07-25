@@ -13,11 +13,6 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
-#include <wx/toolbar.h>
 #include <wx/dataview.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -39,18 +34,14 @@
 class OpenWindowsPanelBase : public wxPanel
 {
 protected:
-    wxAuiToolBar* m_auibar;
     wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
-    virtual void OnSortItems(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSortItemsUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnTabSelected(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnTabActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     OpenWindowsPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxWANTS_CHARS|wxTAB_TRAVERSAL);
     virtual ~OpenWindowsPanelBase();

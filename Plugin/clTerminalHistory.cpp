@@ -1,4 +1,5 @@
 #include "clTerminalHistory.h"
+#include <algorithm>
 
 static wxString sEmptyStr;
 

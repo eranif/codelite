@@ -123,7 +123,7 @@ void WorkspaceTab::CreateGUIControls()
                             "of the seleced item in the tree"),
                           bmps->LoadBitmap("cog"));
     m_toolbar580->AddSeparator();
-    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), bmps->LoadBitmap("link_editor"));
+    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), bmps->LoadBitmap("link_editor"), "", wxITEM_CHECK);
     m_toolbar580->Realize();
 }
 
@@ -186,7 +186,7 @@ void WorkspaceTab::ConnectEvents()
 
 void WorkspaceTab::OnLinkEditor(wxCommandEvent& e)
 {
-    m_isLinkedToEditor = !m_isLinkedToEditor;
+    m_isLinkedToEditor = e.IsChecked();
     EditorConfigST::Get()->SetInteger(wxT("LinkWorkspaceViewToEditor"), m_isLinkedToEditor ? 1 : 0);
     if(m_isLinkedToEditor) { OnActiveEditorChanged(e); }
 }

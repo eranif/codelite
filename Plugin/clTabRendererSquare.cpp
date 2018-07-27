@@ -58,9 +58,10 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
         }
         fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-            DrawingUtils::DrawButtonX(dc, parent, wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY,
-                                                         CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE),
-                                      colours.markerColour, eButtonState::kNormal);
+            DrawingUtils::DrawButtonX(
+                dc, parent,
+                wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE),
+                colours.markerColour, eButtonState::kNormal);
         }
 
         // Draw the separator line
@@ -87,9 +88,7 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
         memDC.SetFont(font);
         memDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
         memDC.DrawText(tabInfo.m_label, tabInfo.m_textY, tabInfo.m_textX);
-        if(tabInfo.GetBitmap().IsOk()) {
-            memDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX);
-        }
+        if(tabInfo.GetBitmap().IsOk()) { memDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX); }
 
         // Draw the separator line
         memDC.SetPen(separatorColour);
@@ -144,7 +143,7 @@ void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
     bool underlineTab = (style & kNotebook_UnderlineActiveTab);
 
     // Draw marker line if needed
-    wxRect confinedRect = parent->GetClientRect();
+    // wxRect confinedRect = parent->GetClientRect();
     if(underlineTab) {
         wxPoint p1, p2;
         if((style & kNotebook_LeftTabs) || (style & kNotebook_RightTabs)) {
@@ -158,14 +157,14 @@ void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
             dc.DrawLine(p1, p2);
         } else {
 
-            int xx = activeTab->GetRect().GetTopRight().x;
-            if((activeTab->GetRect().GetTopRight().x > confinedRect.GetTopRight().x) &&
-               (style & kNotebook_ShowFileListButton)) {
-                // The active tab is only partially drawn
-                // and we have the style "kNotebook_ShowFileListButton":
-                // Ensure that we don't draw our marker on top of the button
-                xx = confinedRect.GetTopRight().x - CHEVRON_SIZE;
-            }
+            // int xx = activeTab->GetRect().GetTopRight().x;
+            // if((activeTab->GetRect().GetTopRight().x > confinedRect.GetTopRight().x) &&
+            //    (style & kNotebook_ShowFileListButton)) {
+            //     // The active tab is only partially drawn
+            //     // and we have the style "kNotebook_ShowFileListButton":
+            //     // Ensure that we don't draw our marker on top of the button
+            //     xx = confinedRect.GetTopRight().x - CHEVRON_SIZE;
+            // }
             // Bottom tabs
             p1 = activeTab->GetRect().GetTopLeft();
             p2 = activeTab->GetRect().GetBottomLeft();

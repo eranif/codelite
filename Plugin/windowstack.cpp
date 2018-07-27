@@ -22,121 +22,64 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "drawingutils.h"
 #include "windowstack.h"
 #include <wx/dcbuffer.h>
-#include "drawingutils.h"
 
 WindowStack::WindowStack(wxWindow* parent, wxWindowID id)
-    : wxPanel(parent, id)
-    , m_selection(NULL)
+    : wxSimplebook(parent, id)
 {
-    m_windows.clear();
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
-    Bind(wxEVT_PAINT, &WindowStack::OnPaint, this);
-    Bind(wxEVT_ERASE_BACKGROUND, &WindowStack::OnEraseBG, this);
-    Bind(wxEVT_SIZE, &WindowStack::OnSize, this);
+    // Disable the events by capturing them and not calling 'Skip()'
+    Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [](wxBookCtrlEvent& event) { wxUnusedVar(event); });
+    Bind(wxEVT_NOTEBOOK_PAGE_CHANGING, [](wxBookCtrlEvent& event) { wxUnusedVar(event); });
 }
 
-WindowStack::~WindowStack()
-{
-    Clear();
-    Unbind(wxEVT_PAINT, &WindowStack::OnPaint, this);
-    Unbind(wxEVT_ERASE_BACKGROUND, &WindowStack::OnEraseBG, this);
-    Unbind(wxEVT_SIZE, &WindowStack::OnSize, this);
-}
-
-void WindowStack::DoSelect(wxWindow* win)
-{
-    Freeze();
-    if(m_selection) {
-        m_selection->Hide();
-    }
-    if(win) {
-        m_selection = win;
-        wxRect clientSize = GetClientRect();
-        m_selection->SetSize(0, 0, clientSize.GetWidth(), clientSize.GetHeight());
-        m_selection->Show();
-    } else {
-        m_selection = NULL;
-    }
-    Thaw();
-}
+WindowStack::~WindowStack() {}
 
 void WindowStack::Select(wxWindow* win)
 {
-    if(!Contains(win)) return;
-    DoSelect(win);
+    int index = FindPage(win);
+    if(index == wxNOT_FOUND) { return; }
+    ChangeSelection(index);
 }
 
-void WindowStack::SelectNone() { DoSelect(NULL); }
-
-void WindowStack::Clear()
-{
-    SelectNone();
-    m_selection = NULL;
-
-    std::set<wxWindow*>::iterator iter = m_windows.begin();
-    for(; iter != m_windows.end(); iter++) {
-        (*iter)->Destroy();
-    }
-    m_windows.clear();
-}
+void WindowStack::Clear() { DeleteAllPages(); }
 
 bool WindowStack::Remove(wxWindow* win)
 {
-    if(!Contains(win)) return false;
-    m_windows.erase(win);
-
-    if(win == m_selection) {
-        // GetParent()->Freeze();
-        // m_mainSizer->Detach(m_selection);
-        // m_mainSizer->Layout();
-        // m_selection = NULL;
-        // GetParent()->Thaw();
-        SelectNone();
-    }
-    return true;
+    int index = FindPage(win);
+    if(index == wxNOT_FOUND) { return false; }
+    return RemovePage(index);
 }
 
 bool WindowStack::Delete(wxWindow* win)
 {
-    if(!Remove(win)) return false;
-    win->Destroy();
-    return true;
+    int index = FindPage(win);
+    if(index == wxNOT_FOUND) { return false; }
+    return DeletePage(index);
 }
 
 bool WindowStack::Add(wxWindow* win, bool select)
 {
-    if(!win || Contains(win)) {
-        return false;
-    }
+    if(!win || Contains(win)) { return false; }
     win->Reparent(this);
-    m_windows.insert(win);
-    if(select) {
-        DoSelect(win);
-    } else {
-        win->Hide();
-    }
+    AddPage(win, "", select, wxNOT_FOUND);
     return true;
 }
 
-bool WindowStack::Contains(wxWindow* win) { return m_windows.count(win); }
+bool WindowStack::Contains(wxWindow* win) { return FindPage(win) != wxNOT_FOUND; }
 
-void WindowStack::OnPaint(wxPaintEvent& evt)
+int WindowStack::FindPage(wxWindow* page) const
 {
-    wxBufferedPaintDC dc(this);
-    dc.SetBrush(DrawingUtils::GetPanelBgColour());
-    dc.SetPen(DrawingUtils::GetPanelBgColour());
-    dc.DrawRectangle(GetClientRect());
+    for(size_t i = 0; i < GetPageCount(); ++i) {
+        if(GetPage(i) == page) { return static_cast<int>(i); }
+    }
+    return wxNOT_FOUND;
 }
 
-void WindowStack::OnEraseBG(wxEraseEvent& evt) { wxUnusedVar(evt); }
-
-void WindowStack::OnSize(wxSizeEvent& evt)
+wxWindow* WindowStack::GetSelected() const
 {
-    evt.Skip();
-    if(m_selection) {
-        wxRect clientSize = GetClientRect();
-        m_selection->SetSize(0, 0, clientSize.GetWidth(), clientSize.GetHeight());
-    }
+    int index = GetSelection();
+    if(index == wxNOT_FOUND) { return NULL; }
+    return GetPage(index);
 }

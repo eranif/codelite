@@ -188,13 +188,13 @@
       </Completion>
     </Configuration>
     <Configuration Name="Debug_Win" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall;$(shell wx-config --cflags --debug=yes)" C_Options="-g;-Wall;" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cflags )" C_Options="-g;-Wall;" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
         <Preprocessor Value="__DEBUG"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes"/>
+      <Linker Options="$(shell wx-config --libs )" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="eran" UseSeparateDebugArgs="yes" DebugArguments="eran" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>

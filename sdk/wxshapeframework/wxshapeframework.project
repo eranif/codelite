@@ -143,7 +143,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="DebugUnicode" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);" C_Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;$(shell wx-config --cxxflags  --unicode=yes);" C_Options="-g;$(shell wx-config --cxxflags  --unicode=yes);" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="src/scintilla/include"/>
@@ -236,7 +236,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="WinDebug_29" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes );-g" C_Options="$(shell wx-config --cxxflags --unicode=yes );-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="src/scintilla/include"/>
@@ -328,14 +328,14 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags --unicode=yes );-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --unicode=yes );-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="include"/>
         <IncludePath Value="src"/>
         <Preprocessor Value="WXMAKINGDLL_WXXS"/>
         <Preprocessor Value="WXMAKINGDLL_WXSF"/>
         <Preprocessor Value="WXUSINGDLL"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes --unicode=yes)" Required="yes"/>
+      <Linker Options="$(shell wx-config --libs  --unicode=yes)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../../lib/gcc_lib/libwxshapeframeworkud.dll" IntermediateDirectory="WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="WinDebugUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">

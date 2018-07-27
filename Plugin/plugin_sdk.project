@@ -725,14 +725,14 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_wxWidgets_29" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="$(shell wx-config --cxxflags  --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags  --unicode=yes);-g;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../Interfaces"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std,stc --debug=yes --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --libs std,stc  --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
@@ -776,7 +776,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags --debug=yes --unicode=yes);-Winvalid-pch" C_Options="-Wall;-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags  --unicode=yes);-Winvalid-pch" C_Options="-Wall;-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>
@@ -785,7 +785,7 @@
         <IncludePath Value="../sdk/libssh/include"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std,stc,ribbon,propgrid --debug=yes --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --libs std,stc,ribbon,propgrid  --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libCodeLiteud.dll"/>

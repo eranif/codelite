@@ -275,13 +275,14 @@ static wxLogNull NO_LOG;
 
 bool CodeLiteApp::OnInit()
 {
-#if defined(__WXMSW__) && !defined(NDEBUG)
+#if defined(__WXMSW__) && CL_DEBUG_BUILD
     SetAppName(wxT("codelite-dbg"));
 #elif defined(__WXOSX__)
     SetAppName(wxT("CodeLite"));
 #else
     SetAppName(wxT("codelite"));
 #endif
+
 #ifdef __WXGTK__
     // We need to set the installation prefix on GTK for some reason (mainly debug builds)
     wxString installationDir(INSTALL_DIR);

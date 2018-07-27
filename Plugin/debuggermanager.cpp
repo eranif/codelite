@@ -113,27 +113,13 @@ bool DebuggerMgr::LoadDebuggers()
     wxString debuggersPath(debuggersFolder.GetPath());
 #endif
 
-    CL_DEBUG("Loading debuggers from: %s", debuggersPath);
+    clDEBUG() << "Loading debuggers from:" << debuggersPath;
     wxDir::GetAllFiles(debuggersPath, &files, fileSpec, wxDIR_FILES);
 
     for(size_t i = 0; i < files.GetCount(); i++) {
         clDynamicLibrary* dl = new clDynamicLibrary();
         wxString fileName(files.Item(i));
-        CL_DEBUG("Attempting to load debugger: %s", fileName);
-#if defined(__WXMSW__) && !defined(NDEBUG)
-        // Under MSW loading a release plugin while in debug mode will cause a crash
-        if(!fileName.EndsWith("-dbg.dll")) {
-            wxDELETE(dl);
-            continue;
-        }
-#elif defined(__WXMSW__)
-
-        // filter debug plugins
-        if(fileName.EndsWith("-dbg.dll")) {
-            wxDELETE(dl);
-            continue;
-        }
-#endif
+        clDEBUG() << "Attempting to load debugger:" << fileName;
         if(!dl->Load(fileName)) {
             CL_WARNING("Failed to load debugger: %s", fileName);
             if(!dl->GetError().IsEmpty()) { CL_WARNING("%s", dl->GetError()); }

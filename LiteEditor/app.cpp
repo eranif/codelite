@@ -575,7 +575,7 @@ bool CodeLiteApp::OnInit()
         return false;
     }
 
-#if !defined(__WXMAC__) && CL_DEBUG_BUILD
+#if !defined(__WXMAC__) && !CL_DEBUG_BUILD
     // Now all image handlers have been added, show splash screen; but only when using Release builds of codelite
     // Also, if started as debugger interface, disable the splash screen
     if(!IsStartedInDebuggerMode()) {

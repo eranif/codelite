@@ -444,24 +444,9 @@ void SnipWiz::OnClassWizard(wxCommandEvent& e)
 {
     TemplateClassDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr);
 
-    wxString errMsg, projectPath, projectName;
-    TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-
-    projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
-    if(m_mgr->GetWorkspace()) {
-        if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
-            projectPath = item.m_fileName.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
-        } else {
-            ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
-            if(proj) projectPath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
-        }
-    }
-
     dlg.SetCurEol(GetEOLByOS());
     dlg.SetPluginPath(m_pluginPath);
-    dlg.SetProjectPath(projectPath);
     dlg.ShowModal();
-
     if(dlg.GetModified()) { m_modified = true; }
 }
 

@@ -33,7 +33,7 @@ class NewClassDlgData : public SerializedObject
     size_t m_flags;
 
 public:
-    enum {
+    enum eOptions {
         Singleton = (1 << 0),
         NonCopyable = (1 << 1),
         VirtualDtor = (1 << 2),
@@ -42,7 +42,8 @@ public:
         FileIniline = (1 << 5),
         UseUnderscores = (1 << 6),
         HppHeader = (1 << 7),
-        UsePragma = (1 << 8)
+        UsePragma = (1 << 8),
+        UseLowerCase = (1 << 9),
     };
 
 public:
@@ -55,6 +56,15 @@ public:
 
     void SetFlags(const size_t& flags) { this->m_flags = flags; }
     const size_t& GetFlags() const { return m_flags; }
+    void EnableFlag(NewClassDlgData::eOptions flag, bool b)
+    {
+        if(b) {
+            m_flags |= flag;
+        } else {
+            m_flags &= ~flag;
+        }
+    }
+    bool HasFlag(NewClassDlgData::eOptions flag) const { return m_flags & flag; }
 };
 
 #endif // NEWCLASSDLGDATA_H

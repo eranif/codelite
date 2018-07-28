@@ -954,6 +954,9 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
     if(deletePage) {
         // Destory the page
         tab->GetWindow()->Destroy();
+    } else  {
+        // Just hide it
+        tab->GetWindow()->Hide();
     }
 
     if(notify) {

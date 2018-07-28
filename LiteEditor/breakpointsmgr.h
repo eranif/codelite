@@ -52,9 +52,9 @@ class BreakptMgr
 
 protected:
     // Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
-    void DoRefreshFileBreakpoints(LEditor* editor);
+    void DoRefreshFileBreakpoints(clEditor* editor);
     void DoProvideBestBP_Type(
-        LEditor* editor,
+        clEditor* editor,
         const std::vector<BreakpointInfo>& li); // Tells the editor which is the most appropriate bp marker to show
 
     // Delete all line-type breakpoint markers in all editors
@@ -121,7 +121,7 @@ public:
      * @brief refresh the breakpoints marker for a given editor
      * @param editor
      */
-    void RefreshBreakpointsForEditor(LEditor* editor);
+    void RefreshBreakpointsForEditor(clEditor* editor);
 
     /**
      * Refresh all line-type breakpoint markers in all editors
@@ -297,7 +297,7 @@ public:
     /**
      * Starts 'drag'n'drop' for breakpoints
      */
-    void DragBreakpoint(LEditor* editor, int line, wxBitmap bitmap);
+    void DragBreakpoint(clEditor* editor, int line, wxBitmap bitmap);
 
     /**
      * The 'drop' bit of breakpoints 'drag'n'drop'
@@ -327,13 +327,13 @@ public:
 
 class myDragImage : public wxDragImage, public wxEvtHandler
 {
-    LEditor* editor;
+    clEditor* editor;
     BreakpointInfo m_bp;
     int m_startx; // The initial x position
     wxCursor oldcursor;
 
 public:
-    myDragImage(LEditor* ed, const wxBitmap& bitmap, const BreakpointInfo& bp);
+    myDragImage(clEditor* ed, const wxBitmap& bitmap, const BreakpointInfo& bp);
     bool StartDrag();
     void OnMotion(wxMouseEvent& event);
     void OnEndDrag(wxMouseEvent& event);

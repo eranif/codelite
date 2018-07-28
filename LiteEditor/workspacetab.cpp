@@ -246,7 +246,7 @@ void WorkspaceTab::OnProjectSettingsUI(wxUpdateUIEvent& e)
 
 void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 {
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(editor && !editor->GetProject().IsEmpty()) {
         m_fileView->ExpandToPath(editor->GetProject(), editor->GetFileName());
         ManagerST::Get()->ShowWorkspacePane(m_caption);
@@ -256,7 +256,7 @@ void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 
 void WorkspaceTab::OnShowFileUI(wxUpdateUIEvent& e)
 {
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     e.Enable(editor && !editor->GetProject().IsEmpty());
 }
 
@@ -265,7 +265,7 @@ void WorkspaceTab::OnActiveEditorChanged(wxCommandEvent& e)
     e.Skip();
     if(m_isLinkedToEditor) {
         MainBook* mainbook = clMainFrame::Get()->GetMainBook();
-        LEditor* editor = mainbook->GetActiveEditor();
+        clEditor* editor = mainbook->GetActiveEditor();
         if(editor && !editor->GetProject().IsEmpty()) {
             m_fileView->ExpandToPath(editor->GetProject(), editor->GetFileName());
         }
@@ -457,7 +457,7 @@ void WorkspaceTab::DoConfigChanged(const wxString& newConfigName)
     ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);
 
     // Set the focus to the active editor if any
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(editor) { editor->SetActive(); }
 
     ManagerST::Get()->UpdateParserPaths(true);

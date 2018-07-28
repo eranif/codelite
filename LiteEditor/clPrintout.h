@@ -30,10 +30,10 @@
 #include <wx/gdicmn.h>
 #include <wx/prntbase.h>
 
-class LEditor;
+class clEditor;
 class clPrintout : public wxPrintout
 {
-    LEditor* m_edit;
+    clEditor* m_edit;
     wxArrayInt m_pageEnds;
     wxRect m_pageRect;
     wxRect m_printRect;
@@ -45,7 +45,7 @@ protected:
 
 public:
     //! constructor
-    clPrintout(LEditor* edit, const wxString& title = wxT(""));
+    clPrintout(clEditor* edit, const wxString& title = wxT(""));
 
     //! event handlers
     bool OnPrintPage(int page);

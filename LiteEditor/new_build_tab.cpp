@@ -64,7 +64,7 @@
 #endif
 
 // Helper function to post an event to the frame
-void SetActive(LEditor* editor)
+void SetActive(clEditor* editor)
 {
     wxCHECK_RET(editor, wxT("Null editor parameter"));
 
@@ -164,7 +164,7 @@ void NewBuildTab::OnBuildEnded(clCommandEvent& e)
 
     DoProcessOutput(true, false);
 
-    std::vector<LEditor*> editors;
+    std::vector<clEditor*> editors;
     clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
     for(size_t i = 0; i < editors.size(); i++) {
         MarkEditor(editors.at(i));
@@ -383,7 +383,7 @@ void NewBuildTab::DoClear()
     m_view->SetEditable(false);
 
     // Clear all markers from open editors
-    std::vector<LEditor*> editors;
+    std::vector<clEditor*> editors;
     clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
     for(size_t i = 0; i < editors.size(); i++) {
         editors.at(i)->DelAllCompilerMarkers();
@@ -392,7 +392,7 @@ void NewBuildTab::DoClear()
     m_curError = m_errorsAndWarningsList.end();
 }
 
-void NewBuildTab::MarkEditor(LEditor* editor)
+void NewBuildTab::MarkEditor(clEditor* editor)
 {
     if(!editor) return;
 
@@ -717,7 +717,7 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
                 fn = wxFileName(selection);
                 // if we resolved it now, open the file there is no point in searching this file
                 // in m_buildInfoPerFile since the key on this map is kept as full name
-                LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
+                clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
                 if(!editor) {
                     editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxT(""),
                                                                          bli->GetLineNumber(), wxNOT_FOUND, OF_AddJump);
@@ -733,7 +733,7 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
         if(fn.IsAbsolute()) {
 
             // try to locate the editor first
-            LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
+            clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
             if(!editor) {
                 // Open it
                 editor = clMainFrame::Get()->GetMainBook()->OpenFile(bli->GetFilename(), wxT(""), bli->GetLineNumber(),
@@ -784,7 +784,7 @@ void NewBuildTab::OnMenu(wxContextMenuEvent& e)
 void NewBuildTab::OnOpenInEditor(wxCommandEvent& e)
 {
     wxString content = this->GetBuildContent();
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->NewEditor();
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->NewEditor();
     if(editor) { editor->SetText(content); }
 }
 
@@ -910,7 +910,7 @@ void NewBuildTab::OnThemeChanged(wxCommandEvent& event)
     InitView();
 }
 
-void NewBuildTab::DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor, bool centerLine)
+void NewBuildTab::DoCentreErrorLine(BuildLineInfo* bli, clEditor* editor, bool centerLine)
 {
     // We already got compiler markers set here, just goto the line
     clMainFrame::Get()->GetMainBook()->SelectPage(editor);

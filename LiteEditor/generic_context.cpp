@@ -29,7 +29,7 @@
 #include "clEditorColouriseLocker.h"
 #include "file_logger.h"
 
-ContextGeneric::ContextGeneric(LEditor* container, const wxString& name)
+ContextGeneric::ContextGeneric(clEditor* container, const wxString& name)
     : ContextBase(container)
 {
     SetName(name);
@@ -38,7 +38,7 @@ ContextGeneric::ContextGeneric(LEditor* container, const wxString& name)
 
 ContextGeneric::~ContextGeneric() {}
 
-ContextBase* ContextGeneric::NewInstance(LEditor* container) { return new ContextGeneric(container, GetName()); }
+ContextBase* ContextGeneric::NewInstance(clEditor* container) { return new ContextGeneric(container, GetName()); }
 
 void ContextGeneric::ApplySettings()
 {
@@ -46,7 +46,7 @@ void ContextGeneric::ApplySettings()
     if(EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     if(lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
         for(int i = 0; i <= 4; ++i) {
@@ -68,7 +68,7 @@ void ContextGeneric::ApplySettings()
 
 void ContextGeneric::ProcessIdleActions()
 {
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     if((ctrl.GetLexerId() == wxSTC_LEX_XML) || (ctrl.GetLexerId() == wxSTC_LEX_PHPSCRIPT) ||
        (ctrl.GetLexerId() == wxSTC_LEX_HTML)) {
         // XML lexer, highlight XML tags

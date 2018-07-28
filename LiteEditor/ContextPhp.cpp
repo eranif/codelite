@@ -28,7 +28,7 @@
 #include "editor_config.h"
 #include "cl_editor_tip_window.h"
 
-ContextPhp::ContextPhp(LEditor* editor)
+ContextPhp::ContextPhp(clEditor* editor)
     : ContextGeneric(editor, "php")
 {
     editor->SetWordChars(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$"));
@@ -54,7 +54,7 @@ void ContextPhp::ApplySettings()
     if(EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     if(lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
         for(int i = 0; i <= 4; ++i) {
@@ -71,7 +71,7 @@ void ContextPhp::ApplySettings()
 
 void ContextPhp::AutoIndent(const wxChar& nChar)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     int curpos = rCtrl.GetCurrentPos();
 
     if(rCtrl.GetDisableSmartIndent()) {
@@ -243,7 +243,7 @@ bool ContextPhp::IsCommentOrString(long pos)
 
 bool ContextPhp::IsDefaultContext() const { return false; }
 
-ContextBase* ContextPhp::NewInstance(LEditor* container) { return new ContextPhp(container); }
+ContextBase* ContextPhp::NewInstance(clEditor* container) { return new ContextPhp(container); }
 
 void ContextPhp::OnCallTipClick(wxStyledTextEvent& event) {}
 
@@ -265,7 +265,7 @@ void ContextPhp::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void ContextPhp::OnSciUpdateUI(wxStyledTextEvent& event)
 {
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     if(ctrl.GetFunctionTip()->IsActive()) {
         ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
     }
@@ -279,7 +279,7 @@ void ContextPhp::SemicolonShift()
 {
     int foundPos(wxNOT_FOUND);
     int semiColonPos(wxNOT_FOUND);
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     if(ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
 
         // test to see if we are inside a 'for' statement

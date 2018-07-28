@@ -58,5 +58,5 @@ NOTE 01: where to look to modify the editor:
 		   - class EditorFrame
 	     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	     good breakpoints:
-	       (gdb) p LEditor::LEditor(wxWindow*)
+	       (gdb) p clEditor::clEditor(wxWindow*)
            (gdb) p NavBar::NavBar(wxWindow* parent)  

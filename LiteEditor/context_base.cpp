@@ -49,7 +49,7 @@
 //#endif
 //}
 
-ContextBase::ContextBase(LEditor* container)
+ContextBase::ContextBase(clEditor* container)
     : m_container(container)
     , m_name(wxEmptyString)
 {
@@ -65,7 +65,7 @@ ContextBase::~ContextBase() {}
 // provide basic indentation
 void ContextBase::AutoIndent(const wxChar& ch)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     int prevpos(wxNOT_FOUND);
     int curpos = rCtrl.GetCurrentPos();
     int line = rCtrl.LineFromPosition(curpos);
@@ -99,7 +99,7 @@ void ContextBase::DoApplySettings(LexerConf::Ptr_t lexPtr) { lexPtr->Apply(&GetC
 
 int ContextBase::GetHyperlinkRange(int pos, int& start, int& end)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     if(!IsCommentOrString(rCtrl.GetCurrentPos())) {
         // get tag as hyperlink
         start = rCtrl.WordStartPos(pos, true);
@@ -151,7 +151,7 @@ void ContextBase::PrependMenuItemSeparator(wxMenu* menu)
 int ContextBase::DoGetCalltipParamterIndex()
 {
     int index(0);
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     int pos = ctrl.DoGetOpenBracePos();
     if(pos != wxNOT_FOUND) {
 
@@ -216,7 +216,7 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
 
 void ContextBase::AutoAddComment()
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     CommentConfigData data;
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);

@@ -326,7 +326,7 @@ void PluginManager::Load()
 IEditor* PluginManager::GetActiveEditor()
 {
     if(clMainFrame::Get() && clMainFrame::Get()->GetMainBook()) {
-        LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
+        clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
         if(!editor) { return nullptr; }
         return dynamic_cast<IEditor*>(editor);
     }
@@ -463,8 +463,8 @@ bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxS
 
 OptionsConfigPtr PluginManager::GetEditorSettings()
 {
-    // First try to use LEditor::GetOptions, as it takes account of local preferences
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    // First try to use clEditor::GetOptions, as it takes account of local preferences
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(editor) { return editor->GetOptions(); }
     // Failing that...
     return EditorConfigST::Get()->GetOptions();
@@ -472,7 +472,7 @@ OptionsConfigPtr PluginManager::GetEditorSettings()
 
 void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name, int pos)
 {
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(editor) {
         editor->FindAndSelectV(pattern, name, pos, NavMgr::Get());
         editor->SetActive();
@@ -481,7 +481,7 @@ void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name,
 
 TagEntryPtr PluginManager::GetTagAtCaret(bool scoped, bool impl)
 {
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(!editor) return NULL;
     return editor->GetContext()->GetTagAtCaret(scoped, impl);
 }
@@ -533,7 +533,7 @@ bool PluginManager::ClosePage(const wxString& title) { return clMainFrame::Get()
 bool PluginManager::ClosePage(const wxFileName& filename)
 {
     MainBook* book = clMainFrame::Get()->GetMainBook();
-    LEditor* editor = book->FindEditor(filename.GetFullPath());
+    clEditor* editor = book->FindEditor(filename.GetFullPath());
     return clMainFrame::Get()->GetMainBook()->ClosePage(editor);
 }
 
@@ -703,7 +703,7 @@ size_t PluginManager::GetPageCount() const { return clMainFrame::Get()->GetMainB
 
 size_t PluginManager::GetAllEditors(IEditor::List_t& editors, bool inOrder)
 {
-    LEditor::Vec_t tmpEditors;
+    clEditor::Vec_t tmpEditors;
     size_t flags = MainBook::kGetAll_IncludeDetached;
     if(inOrder) { flags |= MainBook::kGetAll_RetainOrder; }
 
@@ -741,7 +741,7 @@ void PluginManager::SavePerspective(const wxString& perspectiveName)
 
 void PluginManager::ProcessEditEvent(wxCommandEvent& e, IEditor* editor)
 {
-    LEditor* lEditor = dynamic_cast<LEditor*>(editor);
+    clEditor* lEditor = dynamic_cast<clEditor*>(editor);
     if(lEditor) { lEditor->OnMenuCommand(e); }
 }
 

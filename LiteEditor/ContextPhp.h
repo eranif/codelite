@@ -32,7 +32,7 @@ class ContextPhp : public ContextGeneric
 {
 public:
     ContextPhp();
-    ContextPhp(LEditor *Editor);
+    ContextPhp(clEditor *Editor);
     virtual ~ContextPhp();
     
 public:
@@ -54,7 +54,7 @@ public:
     virtual bool IsComment(long pos);
     virtual bool IsCommentOrString(long pos);
     virtual bool IsDefaultContext() const;
-    virtual ContextBase* NewInstance(LEditor* container);
+    virtual ContextBase* NewInstance(clEditor* container);
     virtual void OnCallTipClick(wxStyledTextEvent& event);
     virtual void OnCalltipCancel();
     virtual void OnDbgDwellEnd(wxStyledTextEvent& event);

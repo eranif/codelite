@@ -36,7 +36,7 @@
 void EditHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    LEditor* editor = (LEditor*)owner;
+    clEditor* editor = (clEditor*)owner;
 
     OptionsConfigPtr options = editor->GetOptions();
     if(event.GetId() == wxID_COPY) {
@@ -158,7 +158,7 @@ void EditHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 
 void EditHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
 
     if(event.GetId() == wxID_COPY || event.GetId() == XRCID("trim_trailing") || event.GetId() == XRCID("to_lower") ||
         event.GetId() == XRCID("to_upper")) {
@@ -192,7 +192,7 @@ void EditHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event)
 //------------------------------------
 void BraceMatchHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(!editor) {
         return;
     }
@@ -206,7 +206,7 @@ void BraceMatchHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& eve
 
 void BraceMatchHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     event.Enable(editor && editor->GetLength() > 0);
 }
 
@@ -215,7 +215,7 @@ void BraceMatchHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& e
 //------------------------------------
 void FindReplaceHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(editor) {
         if(event.GetId() == wxID_FIND) {
             clMainFrame::Get()->GetMainBook()->ShowQuickBar(editor->GetFirstSelection());
@@ -245,7 +245,7 @@ void FindReplaceHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& 
 void GotoHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(!editor) {
         return;
     }
@@ -300,7 +300,7 @@ void GotoHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event)
 //------------------------------------
 void BookmarkHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(!editor) {
         return;
     }
@@ -329,7 +329,7 @@ void BookmarkHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& eve
 //------------------------------------
 void GotoDefinitionHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(!editor) {
         return;
     }
@@ -340,7 +340,7 @@ void GotoDefinitionHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent&
 
 void GotoDefinitionHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(event.GetId() == XRCID("goto_previous_definition")) {
         event.Enable(editor && editor->CanGotoPreviousDefintion());
     } else {
@@ -354,7 +354,7 @@ void GotoDefinitionHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEven
 
 void WordWrapHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(!editor) {
         event.Enable(false);
         return;
@@ -366,7 +366,7 @@ void WordWrapHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& eve
 
 void WordWrapHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(!editor) {
         return;
     }
@@ -380,7 +380,7 @@ void WordWrapHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event
 void FoldHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(!editor) {
         return;
     }
@@ -398,7 +398,7 @@ void FoldHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 void FoldHandler::ProcessUpdateUIEvent(
     wxWindow* owner, wxUpdateUIEvent& event) // Used for ToggleAllFoldsInSelection() etc
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(!editor) {
         event.Enable(false);
         return;
@@ -415,7 +415,7 @@ void FoldHandler::ProcessUpdateUIEvent(
 
 void DebuggerMenuHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(owner);
+    clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(!editor) {
         return;
     }

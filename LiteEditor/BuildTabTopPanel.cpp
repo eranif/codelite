@@ -138,7 +138,7 @@ void BuildTabTopPanel::OnCopyBuildOutputUI(wxUpdateUIEvent& event)
 void BuildTabTopPanel::OnPaste(wxCommandEvent& event)
 {
     wxString content = m_buildTab->GetBuildContent();
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->NewEditor();
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->NewEditor();
     if(editor) { editor->SetText(content); }
 }
 

@@ -97,8 +97,8 @@ extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
 
 /**
  * \ingroup LiteEditor
- * LEditor CodeLite editing component based on Scintilla
- * LEditor provides most of the C++/C editing capablities including:
+ * clEditor CodeLite editing component based on Scintilla
+ * clEditor provides most of the C++/C editing capablities including:
  * -# Auto Completion
  * -# Find and replace
  * -# Bookmarks
@@ -114,7 +114,7 @@ extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
  * \author Eran
  *
  */
-class LEditor : public wxStyledTextCtrl, public IEditor
+class clEditor : public wxStyledTextCtrl, public IEditor
 {
 private:
     struct SelectionInfo {
@@ -266,7 +266,7 @@ public:
     static bool m_ccShowItemsComments;
     static bool m_ccInitialized;
 
-    typedef std::vector<LEditor*> Vec_t;
+    typedef std::vector<clEditor*> Vec_t;
 
     IManager* GetManager() { return m_mgr; }
 
@@ -301,11 +301,11 @@ public:
     CLCommandProcessor& GetCommandsProcessor() { return m_commandsProcessor; }
 
 public:
-    /// Construct a LEditor object
-    LEditor(wxWindow* parent);
+    /// Construct a clEditor object
+    clEditor(wxWindow* parent);
 
     /// Default destructor
-    virtual ~LEditor();
+    virtual ~clEditor();
 
     // Save the editor data into file
     virtual bool SaveFile();

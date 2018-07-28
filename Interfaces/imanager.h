@@ -154,7 +154,7 @@ public:
     // return the current editor
     /**
      * @brief return the active editor
-     * @return pointer to the current editor, or NULL incase the active editor is not of type LEditor or no active
+     * @return pointer to the current editor, or NULL incase the active editor is not of type clEditor or no active
      * editor open
      */
     virtual IEditor* GetActiveEditor() = 0;

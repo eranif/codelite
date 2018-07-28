@@ -160,7 +160,7 @@ void FindUsageTab::ShowUsage(const CppToken::Vec_t& matches, const wxString& sea
 void FindUsageTab::DoOpenResult(const CppToken& token)
 {
     if(!token.getFilename().empty()) {
-        LEditor* editor =
+        clEditor* editor =
             clMainFrame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, token.getLineNumber());
         if(editor) {
             editor->SetLineVisible(token.getLineNumber());

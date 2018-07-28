@@ -1280,7 +1280,7 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
 
                 replaceWith.Replace(strippedOldInc.GetFullName(), newFile.GetFullName());
 
-                LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(editorFileName, wxEmptyString, 0);
+                clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(editorFileName, wxEmptyString, 0);
                 if(editor && (editor->GetFileName().GetFullPath().CmpNoCase(editorFileName) == 0)) {
                     editor->ReplaceAllExactMatch(findWhat, replaceWith);
                 }
@@ -1585,7 +1585,7 @@ bool Manager::ShowOutputPane(wxString focusWin, bool commit)
 
     if(index != wxNOT_FOUND && index != pane->GetNotebook()->GetSelection()) {
         wxWindow* focus = wxWindow::FindFocus();
-        LEditor* editor = dynamic_cast<LEditor*>(focus);
+        clEditor* editor = dynamic_cast<clEditor*>(focus);
         pane->GetNotebook()->SetSelection((size_t)index);
         if(editor) { editor->SetFocus(); }
     }
@@ -2156,7 +2156,7 @@ void Manager::DbgStart(long attachPid)
     clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Initialize();
 
     // let the active editor get the focus
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(editor) { editor->SetActive(); }
 
     // mark that we are waiting for the first GotControl()
@@ -2273,7 +2273,7 @@ void Manager::DbgMarkDebuggerLine(const wxString& fileName, int lineno)
 
     // try to open the file
     wxFileName fn(fileName);
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
     if(editor && editor->GetFileName().GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 && lineno > 0) {
         editor->HighlightLine(lineno);
         editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno - 1), false);
@@ -3406,7 +3406,7 @@ void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
     matrix->GetProjectSelectedConf(workspaceConf, project);
 }
 
-void Manager::UpdatePreprocessorFile(LEditor* editor) { wxUnusedVar(editor); }
+void Manager::UpdatePreprocessorFile(clEditor* editor) { wxUnusedVar(editor); }
 
 BuildConfigPtr Manager::GetCurrentBuildConf()
 {
@@ -3567,7 +3567,7 @@ void Manager::OnParserThreadSuggestColourTokens(clCommandEvent& event)
 
     wxString originatingFile = event.GetFileName();
 
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(originatingFile);
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(originatingFile);
     if(editor) { editor->GetContext()->ColourContextTokens(classes, locals); }
 }
 

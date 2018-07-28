@@ -43,7 +43,7 @@ ContextManager::~ContextManager()
 {
 }
 
-ContextBasePtr ContextManager::NewContext(LEditor* parent, const wxString& lexerName)
+ContextBasePtr ContextManager::NewContext(clEditor* parent, const wxString& lexerName)
 {
     // this function is actually a big switch ....
     wxString lex_name = lexerName;
@@ -53,10 +53,10 @@ ContextBasePtr ContextManager::NewContext(LEditor* parent, const wxString& lexer
         return m_contextPool["text"]->NewInstance(parent);
     }
 
-    return iter->second->NewInstance((LEditor*)parent);
+    return iter->second->NewInstance((clEditor*)parent);
 }
 
-ContextBasePtr ContextManager::NewContextByFileName(LEditor* parent, const wxFileName& fileName)
+ContextBasePtr ContextManager::NewContextByFileName(clEditor* parent, const wxFileName& fileName)
 {
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(fileName.GetFullPath());
     if(!lexer) {

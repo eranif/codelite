@@ -33,7 +33,7 @@
 class MyMenuBar;
 wxDECLARE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 
-class LEditor;
+class clEditor;
 class QuickFindBar;
 class EditorFrame : public EditorFrameBase
 {
@@ -42,7 +42,7 @@ public:
 
 protected:
     virtual void OnCloseWindow(wxCloseEvent& event);
-    LEditor* m_editor;
+    clEditor* m_editor;
     QuickFindBar* m_findBar;
     MyMenuBar* m_myMenuBar;
 
@@ -56,8 +56,8 @@ protected:
     virtual void OnCloseUI(wxUpdateUIEvent& event);
 
 public:
-    EditorFrame(wxWindow* parent, LEditor* editor);
+    EditorFrame(wxWindow* parent, clEditor* editor);
     virtual ~EditorFrame();
-    LEditor* GetEditor() { return m_editor; }
+    clEditor* GetEditor() { return m_editor; }
 };
 #endif // EDITORFRAME_H

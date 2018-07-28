@@ -155,7 +155,7 @@ bool svSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool notif
         // Open the file and set the cursor to line number
         if(clMainFrame::Get()->GetMainBook()->OpenFile(filename, project, lineno-1)) {
                 // get the editor, and search for the pattern in the file
-                LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+                clEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
                 if (editor) {
                         FindAndSelect(editor, pattern, GetItemText(item));
                 }

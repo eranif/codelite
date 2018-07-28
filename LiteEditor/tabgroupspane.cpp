@@ -219,7 +219,7 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event)
             return;
         }
 
-        std::vector<LEditor*> editors;
+        std::vector<clEditor*> editors;
         clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached |
                                                                       MainBook::kGetAll_RetainOrder);
         if(editors.size() > 0) {

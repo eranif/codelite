@@ -34,7 +34,7 @@ ContextDiff::ContextDiff()
 {
 }
 
-ContextDiff::ContextDiff(LEditor *container)
+ContextDiff::ContextDiff(clEditor *container)
     : ContextBase(container)
 {
     SetName(wxT("diff"));
@@ -45,7 +45,7 @@ ContextDiff::~ContextDiff()
 {
 }
 
-ContextBase* ContextDiff::NewInstance(LEditor* container)
+ContextBase* ContextDiff::NewInstance(clEditor* container)
 {
     return new ContextDiff(container);
 }
@@ -62,7 +62,7 @@ void ContextDiff::ApplySettings()
 
 int ContextDiff::GetHyperlinkRange(int pos, int& start, int& end)
 {
-    LEditor &rCtrl = GetCtrl();
+    clEditor &rCtrl = GetCtrl();
     int lineNum = rCtrl.LineFromPosition(pos);
     wxString line = rCtrl.GetLine(lineNum);
     wxString fileName;
@@ -83,7 +83,7 @@ int ContextDiff::GetHyperlinkRange(int pos, int& start, int& end)
 
 void ContextDiff::GoHyperlink(int start, int end, int type, bool alt)
 {
-    LEditor &rCtrl = GetCtrl();
+    clEditor &rCtrl = GetCtrl();
 
     wxString text = rCtrl.GetTextRange(start, end);
     wxString fileName;

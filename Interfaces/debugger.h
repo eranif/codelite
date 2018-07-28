@@ -46,7 +46,7 @@ enum DebuggerCommands {
     DBG_NEXTI,
 };
 
-// Breakpoint types. If you add more, LEditor::FillBPtoMarkerArray will also need altering
+// Breakpoint types. If you add more, clEditor::FillBPtoMarkerArray will also need altering
 enum BreakpointType {
     /*Convenient return-codes*/
     BP_type_invalid = -1,

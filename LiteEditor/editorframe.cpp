@@ -36,7 +36,7 @@
 
 wxDEFINE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 
-EditorFrame::EditorFrame(wxWindow* parent, LEditor* editor)
+EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor)
     : EditorFrameBase(parent)
     , m_editor(editor)
 {

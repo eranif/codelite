@@ -98,7 +98,7 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool noti
     // Open the file and set the cursor to line number
     if(clMainFrame::Get()->GetMainBook()->OpenFile(filename, project, lineno - 1)) {
         // get the editor, and search for the pattern in the file
-        LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+        clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
         if(editor) {
             FindAndSelect(editor, pattern, GetItemText(item));
         }
@@ -115,7 +115,7 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool noti
 
 void CppSymbolTree::OnItemActivated(wxTreeEvent& event) { DoItemActivated(event.GetItem(), event, true); }
 
-void CppSymbolTree::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name)
+void CppSymbolTree::FindAndSelect(clEditor* editor, wxString& pattern, const wxString& name)
 {
     editor->FindAndSelectV(pattern, name);
 }

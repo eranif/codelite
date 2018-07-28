@@ -229,7 +229,7 @@ public:
      * @brief
      * @param editor
      */
-    void SetFrameTitle(LEditor* editor);
+    void SetFrameTitle(clEditor* editor);
 
     MainBook* GetMainBook() const { return m_mainBook; }
 

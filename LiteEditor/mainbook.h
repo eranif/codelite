@@ -95,7 +95,7 @@ private:
     void OnColoursAndFontsChanged(clCommandEvent& e);
     bool DoSelectPage(wxWindow* win);
     void DoPositionFindBar();
-    void DoHandleFrameMenu(LEditor* editor);
+    void DoHandleFrameMenu(clEditor* editor);
     void DoEraseDetachedEditor(IEditor* editor);
     void OnWorkspaceReloadStarted(clCommandEvent& e);
     void OnWorkspaceReloadEnded(clCommandEvent& e);
@@ -115,12 +115,12 @@ private:
      * @brief update the navigation bar (C++)
      * @param editor
      */
-    void UpdateNavBar(LEditor* editor);
+    void UpdateNavBar(clEditor* editor);
 
 public:
     MainBook(wxWindow* parent);
     ~MainBook();
-    
+
     /**
      * @brief move the active tab to another tab group (notebook). To the left
      */
@@ -129,11 +129,11 @@ public:
      * @brief move the active tab to another tab group (notebook). To the right
      */
     void MoveActiveTabToRIghtTabGroup();
-    
+
     bool CanMoveActiveTabToRIghtTabGroup() const;
     bool CanMoveActiveTabToLeftTabGroup() const;
-    
-    static bool AskUserToSave(LEditor* editor);
+
+    static bool AskUserToSave(clEditor* editor);
     /**
      * @brief show the navigation dialog
      */
@@ -168,13 +168,13 @@ public:
      */
     void CreateSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
 
-    LEditor* GetActiveEditor(bool includeDetachedEditors = false);
+    clEditor* GetActiveEditor(bool includeDetachedEditors = false);
     /**
-     * @brief return vector of all editors in the notebook. This function only returns instances of type LEditor
+     * @brief return vector of all editors in the notebook. This function only returns instances of type clEditor
      * @param editors [output]
      * @param flags kGetAll_*
      */
-    void GetAllEditors(LEditor::Vec_t& editors, size_t flags);
+    void GetAllEditors(clEditor::Vec_t& editors, size_t flags);
     /**
      * @brief return vector of all tabs in the notebook
      * @param tabs [output]
@@ -186,7 +186,7 @@ public:
      */
     void GetDetachedTabs(clTab::Vec_t& tabs);
 
-    LEditor* FindEditor(const wxString& fileName);
+    clEditor* FindEditor(const wxString& fileName);
     bool CloseEditor(const wxString& fileName) { return ClosePage(FindEditor(fileName)); }
 
     wxWindow* GetCurrentPage();
@@ -195,20 +195,20 @@ public:
     size_t GetPageCount() const;
     wxWindow* FindPage(const wxString& text);
 
-    LEditor* NewEditor();
+    clEditor* NewEditor();
 
-    LEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
-                      long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
-                      const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
+    clEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
+                       long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
+                       const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
     /**
      * @brief open file based on a browsing record
      */
-    LEditor* OpenFile(const BrowseRecord& rec);
+    clEditor* OpenFile(const BrowseRecord& rec);
 
     /**
      * @brief a simpler version: open a file with a given tooltip and bitmap
      */
-    LEditor* OpenFile(const wxString& file_name, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString)
+    clEditor* OpenFile(const wxString& file_name, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString)
     {
         return OpenFile(file_name, "", wxNOT_FOUND, wxNOT_FOUND, OF_AddJump, false, bmp, tooltip);
     }
@@ -250,7 +250,7 @@ public:
     void ShowWhitespace(int ws);
     void UpdateColours();
     void UpdateBreakpoints();
-    void MarkEditorReadOnly(LEditor* editor);
+    void MarkEditorReadOnly(clEditor* editor);
 
     void SetUseBuffereLimit(bool useBuffereLimit) { this->m_useBuffereLimit = useBuffereLimit; }
     bool GetUseBuffereLimit() const { return m_useBuffereLimit; }

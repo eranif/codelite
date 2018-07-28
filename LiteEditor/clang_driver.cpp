@@ -730,7 +730,7 @@ void ClangDriver::OnCacheCleared(wxCommandEvent& e) { e.Skip(); }
 void ClangDriver::DoGotoDefinition(ClangThreadReply* reply)
 {
     CHECK_CLANG_ENABLED();
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(reply->filename, wxEmptyString, reply->line);
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(reply->filename, wxEmptyString, reply->line);
     if(editor) {
         int pos = editor->PositionFromLine(reply->line - 1);
         editor->FindAndSelectV(reply->filterWord, reply->filterWord, pos, NULL);
@@ -754,7 +754,7 @@ ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* e
 {
     // Collect all modified buffers and pass them to clang as well
     ClangThreadRequest::List_t modifiedBuffers;
-    std::vector<LEditor*> editors;
+    std::vector<clEditor*> editors;
     clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for(size_t i = 0; i < editors.size(); i++) {
         if(editors.at(i) == excludeEditor || !editors.at(i)->IsModified()) { continue; }

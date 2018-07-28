@@ -237,10 +237,10 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     // We need to tell all editors that there's been a (new) search
     // This lets them clear any already-saved line-changes,
     // which a new save will have taken into account
-    LEditor::Vec_t editors;
+    clEditor::Vec_t editors;
     clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for(size_t n = 0; n < editors.size(); ++n) {
-        LEditor* editor = dynamic_cast<LEditor*>(*(editors.begin() + n));
+        clEditor* editor = dynamic_cast<clEditor*>(*(editors.begin() + n));
         if(editor) { editor->OnFindInFiles(); }
     }
 }
@@ -337,7 +337,7 @@ void FindResultsTab::PrevMatch()
 void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledTextCtrl* sci, int markerLine)
 {
     if(!result.GetFileName().IsEmpty()) {
-        LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(result.GetFileName());
+        clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(result.GetFileName());
         if(editor && result.GetLen() >= 0) {
             // Update the destination position if there have been subsequent changes in the editor
             int position = result.GetPosition();

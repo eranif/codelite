@@ -24,18 +24,18 @@
 #ifndef __contextdiff__
 #define __contextdiff__
 
-class LEditor;
+class clEditor;
 
 
 class ContextDiff : public ContextBase 
 {
 public:
 	ContextDiff();
-    ContextDiff(LEditor *container);
+    ContextDiff(clEditor *container);
 	~ContextDiff();
 
 	virtual void ApplySettings();
-	virtual ContextBase* NewInstance(LEditor *container);
+	virtual ContextBase* NewInstance(clEditor *container);
     
     // ctrl-click style navigation support
 	virtual int  GetHyperlinkRange(int pos, int &start, int &end);

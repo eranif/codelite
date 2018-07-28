@@ -43,7 +43,7 @@
 #include "cl_command_event.h"
 #include "clKeyboardManager.h"
 
-class LEditor;
+class clEditor;
 class IProcess;
 
 // ====================================================================
@@ -355,7 +355,7 @@ public:
      * \brief Launch the ParseThread to update the preprocessor vizualisation
      * \param filename
      */
-    void UpdatePreprocessorFile(LEditor* editor);
+    void UpdatePreprocessorFile(clEditor* editor);
 
 protected:
     wxFileName FindFile(const wxArrayString& files, const wxFileName& fn);

@@ -167,7 +167,7 @@ EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
 EVT_MENU(XRCID("open_include_file"), ContextCpp::OnContextOpenDocument)
 END_EVENT_TABLE()
 
-ContextCpp::ContextCpp(LEditor* container)
+ContextCpp::ContextCpp(clEditor* container)
     : ContextBase(container)
     , m_rclickMenu(NULL)
 {
@@ -194,11 +194,11 @@ ContextCpp::~ContextCpp()
     wxDELETE(m_rclickMenu);
 }
 
-ContextBase* ContextCpp::NewInstance(LEditor* container) { return new ContextCpp(container); }
+ContextBase* ContextCpp::NewInstance(clEditor* container) { return new ContextCpp(container); }
 
 void ContextCpp::OnDwellEnd(wxStyledTextEvent& event)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     rCtrl.DoCancelCalltip();
     event.Skip();
 }
@@ -207,7 +207,7 @@ void ContextCpp::OnDwellStart(wxStyledTextEvent& event)
 {
     CHECK_JS_RETURN_VOID();
 
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     VALIDATE_PROJECT(rCtrl);
 
@@ -317,7 +317,7 @@ wxString ContextCpp::GetImageString(const TagEntry& entry)
 
 void ContextCpp::AutoIndent(const wxChar& nChar)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     if(rCtrl.GetDisableSmartIndent()) {
         return;
@@ -496,7 +496,7 @@ void ContextCpp::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<Tag
 
 wxString ContextCpp::GetWordUnderCaret()
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     // Get the partial word that we have
     long pos = rCtrl.GetCurrentPos();
     long start = rCtrl.WordStartPosition(pos, true);
@@ -531,7 +531,7 @@ void ContextCpp::AddMenuDynamicContent(wxMenu* menu)
     // add an option in the menu to open it
     wxString fileName;
 
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     wxString menuItemText;
     wxString line = rCtrl.GetCurLine();
@@ -572,7 +572,7 @@ void ContextCpp::OnAddForwardDecl(wxCommandEvent& e)
 {
     CHECK_JS_RETURN_VOID();
     wxUnusedVar(e);
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     // get expression
     int pos = rCtrl.GetCurrentPos();
@@ -608,7 +608,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
 {
     CHECK_JS_RETURN_VOID();
     wxUnusedVar(e);
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     // get expression
     int pos = rCtrl.GetCurrentPos();
@@ -721,7 +721,7 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
 void ContextCpp::CompleteWord()
 {
     CHECK_JS_RETURN_VOID();
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     VALIDATE_WORKSPACE();
 
@@ -827,7 +827,7 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
     CHECK_JS_RETURN_NULL();
     if(!ManagerST::Get()->IsWorkspaceOpen()) return NULL;
 
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     //	Make sure we are not on a comment section
     if(IsCommentOrString(rCtrl.GetCurrentPos())) return NULL;
@@ -871,7 +871,7 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
                               : wxString()); // pass the modified text or none if the file is already saved
         if(token.getOffset() != wxString::npos) {
             // we got a match in the local scope, display it
-            LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(rCtrl.GetFileName().GetFullPath(),
+            clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(rCtrl.GetFileName().GetFullPath(),
                                                                           rCtrl.GetProject(), 0, token.getOffset());
             if(editor) {
                 editor->SetSelection(token.getOffset(), token.getOffset() + token.getName().length());
@@ -911,7 +911,7 @@ void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
 {
     CHECK_JS_RETURN_VOID();
     if(tag) {
-        LEditor* editor =
+        clEditor* editor =
             clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine() - 1);
         if(editor) {
             editor->FindAndSelectV(tag->GetPattern(), tag->GetName());
@@ -1110,7 +1110,7 @@ void ContextCpp::OnSwapFiles(wxCommandEvent& event)
 void ContextCpp::DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix)
 {
     CHECK_JS_RETURN_VOID();
-    LEditor& editor = GetCtrl();
+    clEditor& editor = GetCtrl();
     CommentConfigData data;
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
 
@@ -1142,7 +1142,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
 {
     CHECK_JS_RETURN_VOID();
     wxUnusedVar(event);
-    LEditor& editor = GetCtrl();
+    clEditor& editor = GetCtrl();
 
     VALIDATE_WORKSPACE();
 
@@ -1244,7 +1244,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
 {
     CHECK_JS_RETURN_VOID();
     wxUnusedVar(event);
-    LEditor& editor = GetCtrl();
+    clEditor& editor = GetCtrl();
 
     VALIDATE_WORKSPACE();
 
@@ -1307,7 +1307,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
 
 void ContextCpp::OnKeyDown(wxKeyEvent& event)
 {
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     if(ctrl.GetFunctionTip()->IsActive()) {
         switch(event.GetKeyCode()) {
         case WXK_UP:
@@ -1372,7 +1372,7 @@ void ContextCpp::SetActive()
 void ContextCpp::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     wxUnusedVar(event);
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
 
     static long lastPos(wxNOT_FOUND);
 
@@ -1413,7 +1413,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
     if(info.showTooltipsOnlyWithControlKeyIsDown && wxGetMouseState().ControlDown() == false) return;
 
     wxString word;
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     int pos = event.GetPosition();
     if(pos != wxNOT_FOUND) {
 
@@ -1468,7 +1468,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
 
 int ContextCpp::FindLineToAddInclude()
 {
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
 
     int maxLineToScan = ctrl.GetLineCount();
     if(maxLineToScan > 500) {
@@ -1516,7 +1516,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
     CHECK_JS_RETURN_VOID();
 
     wxUnusedVar(e);
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     VALIDATE_WORKSPACE();
 
     // get expression
@@ -1584,7 +1584,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
                 body = dlg.GetText();
 
                 // Place the implementation in its new home
-                LEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile);
+                clEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile);
                 if(implEditor) {
 
                     // Ensure that the file state is remained
@@ -1615,7 +1615,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
 bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& blockEndPos, wxString& content)
 {
     CHECK_JS_RETURN_FALSE();
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     blockStartPos = wxNOT_FOUND;
     blockEndPos = wxNOT_FOUND;
 
@@ -1686,7 +1686,7 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& block
 void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
 {
     CHECK_JS_RETURN_VOID();
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     VALIDATE_WORKSPACE();
 
     // Get the text from the file start point until the current position
@@ -1766,7 +1766,7 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
         rCtrl.GotoLine(rCtrl.GetLineCount() > oldLine ? oldLine : rCtrl.GetLineCount());
 
         // Open the implementation file and format it if needed
-        LEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(implFile);
+        clEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(implFile);
         if(implEditor) {
             int insertedLine = wxNOT_FOUND;
             wxString sourceContent = implEditor->GetText();
@@ -1785,7 +1785,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
     CHECK_JS_RETURN_VOID();
 
     wxUnusedVar(e);
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     VALIDATE_WORKSPACE();
 
     // get the text from the file start point until the current position
@@ -1828,7 +1828,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
         int insertedLine = wxNOT_FOUND;
 
         // Open the C++ file
-        LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile, wxEmptyString, 0);
+        clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile, wxEmptyString, 0);
         if(!editor) {
             return;
         }
@@ -1853,7 +1853,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
     CHECK_JS_RETURN_VOID();
 
     wxUnusedVar(e);
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     VALIDATE_WORKSPACE();
 
     // get expression
@@ -1936,7 +1936,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
             int insertedLine = wxNOT_FOUND;
 
             // Open the C++ file
-            LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile, wxEmptyString, 0);
+            clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile, wxEmptyString, 0);
             if(!editor) {
                 return;
             }
@@ -1957,7 +1957,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
     }
 }
 
-void ContextCpp::DoFormatEditor(LEditor* editor)
+void ContextCpp::DoFormatEditor(clEditor* editor)
 {
     clSourceFormatEvent formatEvent(wxEVT_FORMAT_STRING);
     formatEvent.SetInputString(editor->GetText());
@@ -2011,7 +2011,7 @@ void ContextCpp::ApplySettings()
     }
 
     // Update the control
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     rCtrl.SetLexer((int)lexPtr->GetLexerId());
 
     wxString keyWords = lexPtr->GetKeyWords(0);
@@ -2085,7 +2085,7 @@ void ContextCpp::Initialize()
 
 void ContextCpp::AutoAddComment()
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     CommentConfigData data;
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
@@ -2236,7 +2236,7 @@ void ContextCpp::OnRenameLocalSymbol(wxCommandEvent& e)
     CHECK_JS_RETURN_VOID();
     VALIDATE_WORKSPACE();
 
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     // get expression
     int pos = rCtrl.GetCurrentPos();
     int word_start = rCtrl.WordStartPosition(pos, true);
@@ -2268,7 +2268,7 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
     CHECK_JS_RETURN_VOID();
     VALIDATE_WORKSPACE();
 
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     // get expression
     int pos = rCtrl.GetCurrentPos();
     int word_start = rCtrl.WordStartPosition(pos, true);
@@ -2350,12 +2350,12 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
     // Try to maintain as far as possible the editor and line within it that the user started from.
     // Otherwise a different editor may be selected, and the original one will have scrolled to the last replacement
     int current_line = wxSTC_INVALID_POSITION;
-    LEditor* current = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* current = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(current) {
         current_line = current->GetCurrentLine();
     }
 
-    LEditor* previous = NULL;
+    clEditor* previous = NULL;
     for(CppToken::Vec_t::const_iterator iter = li.begin(); iter != li.end(); ++iter) {
         CppToken cppToken = *iter;
         wxString file_name(cppToken.getFilename());
@@ -2369,7 +2369,7 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
         }
 
         // Open the file only once
-        LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+        clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
         if(!editor || editor->GetFileName().GetFullPath() != file_name) {
             editor = clMainFrame::Get()->GetMainBook()->OpenFile(file_name, wxEmptyString, 0);
             // We've loaded a new editor, so start a new bulk undo action for it
@@ -2418,7 +2418,7 @@ void ContextCpp::OnRetagFile(wxCommandEvent& e)
     VALIDATE_WORKSPACE();
 
     wxUnusedVar(e);
-    LEditor& editor = GetCtrl();
+    clEditor& editor = GetCtrl();
     if(editor.GetModify()) {
         wxMessageBox(wxString::Format(_("Please save the file before retagging it")));
         return;
@@ -2433,7 +2433,7 @@ void ContextCpp::RetagFile()
     CHECK_JS_RETURN_VOID();
     if(ManagerST::Get()->GetRetagInProgress()) return;
 
-    LEditor& editor = GetCtrl();
+    clEditor& editor = GetCtrl();
     ManagerST::Get()->RetagFile(editor.GetFileName().GetFullPath());
 
     // incase this file is not cache this function does nothing
@@ -2516,7 +2516,7 @@ void ContextCpp::DoCodeComplete(long pos)
     long currentPosition = pos;
     bool showFuncProto = false;
     int pos1, pos2, end;
-    LEditor& editor = GetCtrl();
+    clEditor& editor = GetCtrl();
     wxChar ch = editor.PreviousChar(pos, pos1);
 
     //	Make sure we are not on a comment section
@@ -2634,7 +2634,7 @@ void ContextCpp::DoCodeComplete(long pos)
 
 int ContextCpp::GetHyperlinkRange(int pos, int& start, int& end)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     int lineNum = rCtrl.LineFromPosition(pos);
     wxString fileName;
     wxString line = rCtrl.GetLine(lineNum);
@@ -2794,7 +2794,7 @@ void ContextCpp::OnCalltipCancel() {}
 void ContextCpp::DoUpdateCalltipHighlight()
 {
     CHECK_JS_RETURN_VOID();
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     if(ctrl.GetFunctionTip()->IsActive()) {
         ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
     }
@@ -2804,7 +2804,7 @@ void ContextCpp::SemicolonShift()
 {
     int foundPos(wxNOT_FOUND);
     int semiColonPos(wxNOT_FOUND);
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     if(ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
 
         // test to see if we are inside a 'for' statement
@@ -2859,7 +2859,7 @@ wxString ContextCpp::GetCurrentScopeName()
     return wxEmptyString;
 }
 
-wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor* editor, bool forCC)
+wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bool forCC)
 {
     if(IsJavaScript()) {
         return wxEmptyString;
@@ -2868,7 +2868,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor* editor, boo
     bool cont(true);
     int depth(0);
 
-    LEditor* ctrl(NULL);
+    clEditor* ctrl(NULL);
     if(!editor) {
         ctrl = &GetCtrl();
     } else {
@@ -3015,7 +3015,7 @@ void ContextCpp::OnFindReferences(wxCommandEvent& e)
     CHECK_JS_RETURN_VOID();
     VALIDATE_WORKSPACE();
 
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     // get expression
     int pos = rCtrl.GetCurrentPos();
     int word_start = rCtrl.WordStartPosition(pos, true);
@@ -3055,7 +3055,7 @@ void ContextCpp::OnSyncSignatures(wxCommandEvent& e)
     CHECK_JS_RETURN_VOID();
     VALIDATE_WORKSPACE();
 
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     // get expression
     int pos = rCtrl.GetCurrentPos();
@@ -3078,7 +3078,7 @@ void ContextCpp::OnSyncSignatures(wxCommandEvent& e)
     if(!tag) return;
 
     // Locate the function start and end pos
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, 0);
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, 0);
     if(!editor) return;
 
     int end, start;
@@ -3088,7 +3088,7 @@ void ContextCpp::OnSyncSignatures(wxCommandEvent& e)
     }
 }
 
-bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, LEditor* ctrl)
+bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, clEditor* ctrl)
 {
     CHECK_JS_RETURN_FALSE();
     start = wxNOT_FOUND;
@@ -3169,7 +3169,7 @@ bool ContextCpp::IsAtLineComment() const
 
 void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(e.GetEditor());
+    clEditor* editor = dynamic_cast<clEditor*>(e.GetEditor());
     if(!editor || editor != &GetCtrl()) {
         e.Skip();
         return;
@@ -3183,7 +3183,7 @@ void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
 
 void ContextCpp::ColourContextTokens(const wxString& workspaceTokensStr, const wxString& localsTokensStr)
 {
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
 
     //------------------------------------------

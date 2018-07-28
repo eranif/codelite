@@ -906,7 +906,7 @@ void QuickFindBar::DoSelectAll(bool addMarkers)
 
 void QuickFindBar::DoHighlightMatches(bool checked)
 {
-    LEditor* editor = dynamic_cast<LEditor*>(m_sci);
+    clEditor* editor = dynamic_cast<clEditor*>(m_sci);
     if(checked && editor && !m_findWhat->GetValue().IsEmpty()) {
         int flags = DoGetSearchFlags();
         wxString findwhat = m_findWhat->GetValue();
@@ -991,7 +991,7 @@ void QuickFindBar::OnHighlightMatchesUI(wxUpdateUIEvent& event)
     event.Skip();
 
     if(!IsShown() || m_findWhat->GetValue().IsEmpty()) {
-        LEditor* editor = dynamic_cast<LEditor*>(m_sci);
+        clEditor* editor = dynamic_cast<clEditor*>(m_sci);
         if(editor) {
             // Check to see if there are any markers
             int nLine = editor->LineFromPosition(0);

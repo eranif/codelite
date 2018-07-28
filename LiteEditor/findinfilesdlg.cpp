@@ -288,14 +288,14 @@ SearchData FindInFilesDialog::DoGetSearchData()
             }
 
         } else if((rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE)) || (rootDir == SEARCH_IN_CURRENT_FILE)) {
-            LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+            clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
             if(editor) { files.Add(editor->GetFileName().GetFullPath()); }
         } else if((rootDir == wxGetTranslation(SEARCH_IN_OPEN_FILES)) || (rootDir == SEARCH_IN_OPEN_FILES)) {
-            std::vector<LEditor*> editors;
+            std::vector<clEditor*> editors;
             clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
 
             for(size_t n = 0; n < editors.size(); ++n) {
-                LEditor* editor = dynamic_cast<LEditor*>(*(editors.begin() + n));
+                clEditor* editor = dynamic_cast<clEditor*>(*(editors.begin() + n));
                 if(editor) { files.Add(editor->GetFileName().GetFullPath()); }
             }
         } else if(wxFileName::DirExists(searchWhere.Item(i))) {
@@ -380,7 +380,7 @@ int FindInFilesDialog::ShowDialog()
     DoSetFileMask();
     m_findString->SetValue(m_data.GetFindString());
 
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(editor) {
         // if we have an open editor, and a selected text, make this text the search string
         wxString selText = editor->GetSelectedText();

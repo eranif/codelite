@@ -272,7 +272,11 @@ static bool MSWRemoveROFileAttribute(const wxFileName& fileName)
 
 //=====================================================================
 clEditor::clEditor(wxWindow* parent)
+#ifdef __WXGTK3__
+    : wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxBORDER_DEFAULT)
+#else
     : wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxNO_BORDER)
+#endif
     , m_popupIsOn(false)
     , m_isDragging(false)
     , m_modifyTime(0)

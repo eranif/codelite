@@ -164,6 +164,10 @@ void clToolBarButtonBase::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
     endColour = endColour.ChangeLightness(90);
     dc.SetPen(endColour);
     dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+#elif defined(__WXGTK3__)
+    dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+    dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+    dc.DrawRectangle(rect);
 #else
     dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));

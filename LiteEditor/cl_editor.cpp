@@ -85,15 +85,6 @@
 #include "wx/paper.h"
 #endif // wxUSE_PRINTING_ARCHITECTURE
 
-// fix bug in wxscintilla.h
-#ifdef EVT_STC_CALLTIP_CLICK
-#undef EVT_STC_CALLTIP_CLICK
-#define EVT_STC_CALLTIP_CLICK(id, fn)          \
-    DECLARE_EVENT_TABLE_ENTRY(                 \
-        wxEVT_STC_CALLTIP_CLICK, id, wxID_ANY, \
-        (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxStyledTextEventFunction, &fn), (wxObject*)NULL),
-#endif
-
 #define NUMBER_MARGIN_ID 0
 #define EDIT_TRACKER_MARGIN_ID 1
 #define SYMBOLS_MARGIN_ID 2
@@ -113,41 +104,8 @@ extern const char* BreakptIgnore[];
 extern const char* ConditionalBreakpt[];
 extern const char* ConditionalBreakptDisabled[];
 
-const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR = XRCID("remove_match_indicator");
-const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT = ::wxNewEventType();
-
-BEGIN_EVENT_TABLE(clEditor, wxStyledTextCtrl)
-EVT_STC_CHARADDED(wxID_ANY, clEditor::OnCharAdded)
-EVT_STC_MARGINCLICK(wxID_ANY, clEditor::OnMarginClick)
-EVT_STC_CALLTIP_CLICK(wxID_ANY, clEditor::OnCallTipClick)
-EVT_STC_DWELLEND(wxID_ANY, clEditor::OnDwellEnd)
-EVT_STC_START_DRAG(wxID_ANY, clEditor::OnDragStart)
-EVT_STC_DO_DROP(wxID_ANY, clEditor::OnDragEnd)
-// EVT_STC_PAINTED(wxID_ANY, clEditor::OnScnPainted)
-EVT_STC_UPDATEUI(wxID_ANY, clEditor::OnSciUpdateUI)
-EVT_STC_SAVEPOINTREACHED(wxID_ANY, clEditor::OnSavePoint)
-EVT_STC_SAVEPOINTLEFT(wxID_ANY, clEditor::OnSavePoint)
-EVT_STC_MODIFIED(wxID_ANY, clEditor::OnChange)
-EVT_CONTEXT_MENU(clEditor::OnContextMenu)
-EVT_KEY_DOWN(clEditor::OnKeyDown)
-EVT_KEY_UP(clEditor::OnKeyUp)
-EVT_LEFT_DOWN(clEditor::OnLeftDown)
-EVT_RIGHT_DOWN(clEditor::OnRightDown)
-EVT_MOTION(clEditor::OnMotion)
-EVT_MOUSEWHEEL(clEditor::OnMouseWheel)
-EVT_LEFT_UP(clEditor::OnLeftUp)
-EVT_LEAVE_WINDOW(clEditor::OnLeaveWindow)
-EVT_KILL_FOCUS(clEditor::OnFocusLost)
-EVT_SET_FOCUS(clEditor::OnFocus)
-EVT_STC_DOUBLECLICK(wxID_ANY, clEditor::OnLeftDClick)
-EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, clEditor::OnFindDialog)
-EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACE, clEditor::OnFindDialog)
-EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACEALL, clEditor::OnFindDialog)
-EVT_COMMAND(wxID_ANY, wxEVT_FRD_BOOKMARKALL, clEditor::OnFindDialog)
-EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLOSE, clEditor::OnFindDialog)
-EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, clEditor::OnFindDialog)
-EVT_COMMAND(wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, clEditor::OnRemoveMatchInidicator)
-END_EVENT_TABLE()
+wxDEFINE_EVENT(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, wxCommandEvent);
+wxDEFINE_EVENT(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEvent);
 
 // Instantiate statics
 FindReplaceDialog* clEditor::m_findReplaceDlg = NULL;
@@ -340,6 +298,36 @@ clEditor::clEditor(wxWindow* parent)
     , m_hasCCAnnotation(false)
     , m_richTooltip(NULL)
 {
+    Bind(wxEVT_STC_CHARADDED, &clEditor::OnCharAdded, this);
+    Bind(wxEVT_STC_MARGINCLICK, &clEditor::OnMarginClick, this);
+    Bind(wxEVT_STC_CALLTIP_CLICK, &clEditor::OnCallTipClick, this);
+    Bind(wxEVT_STC_DWELLEND, &clEditor::OnDwellEnd, this);
+    Bind(wxEVT_STC_START_DRAG, &clEditor::OnDragStart, this);
+    Bind(wxEVT_STC_DO_DROP, &clEditor::OnDragEnd, this);
+    Bind(wxEVT_STC_UPDATEUI, &clEditor::OnSciUpdateUI, this);
+    Bind(wxEVT_STC_SAVEPOINTREACHED, &clEditor::OnSavePoint, this);
+    Bind(wxEVT_STC_SAVEPOINTLEFT, &clEditor::OnSavePoint, this);
+    Bind(wxEVT_STC_MODIFIED, &clEditor::OnChange, this);
+    Bind(wxEVT_CONTEXT_MENU, &clEditor::OnContextMenu, this);
+    Bind(wxEVT_KEY_DOWN, &clEditor::OnKeyDown, this);
+    Bind(wxEVT_KEY_UP, &clEditor::OnKeyUp, this);
+    Bind(wxEVT_LEFT_DOWN, &clEditor::OnLeftDown, this);
+    Bind(wxEVT_RIGHT_DOWN, &clEditor::OnRightDown, this);
+    Bind(wxEVT_MOTION, &clEditor::OnMotion, this);
+    Bind(wxEVT_MOUSEWHEEL, &clEditor::OnMouseWheel, this);
+    Bind(wxEVT_LEFT_UP, &clEditor::OnLeftUp, this);
+    Bind(wxEVT_LEAVE_WINDOW, &clEditor::OnLeaveWindow, this);
+    Bind(wxEVT_KILL_FOCUS, &clEditor::OnFocusLost, this);
+    Bind(wxEVT_SET_FOCUS, &clEditor::OnFocus, this);
+    Bind(wxEVT_STC_DOUBLECLICK, &clEditor::OnLeftDClick, this);
+    Bind(wxEVT_FRD_FIND_NEXT, &clEditor::OnFindDialog, this);
+    Bind(wxEVT_FRD_REPLACE, &clEditor::OnFindDialog, this);
+    Bind(wxEVT_FRD_REPLACEALL, &clEditor::OnFindDialog, this);
+    Bind(wxEVT_FRD_BOOKMARKALL, &clEditor::OnFindDialog, this);
+    Bind(wxEVT_FRD_CLOSE, &clEditor::OnFindDialog, this);
+    Bind(wxEVT_FRD_CLEARBOOKMARKS, &clEditor::OnFindDialog, this);
+    Bind(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, &clEditor::OnRemoveMatchInidicator, this);
+
     DoUpdateOptions();
     PreferencesChanged();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
@@ -2226,7 +2214,7 @@ bool clEditor::FindAndSelect(const wxString& _pattern, const wxString& name)
 }
 
 void clEditor::FindAndSelectV(const wxString& _pattern, const wxString& name, int pos /*=0*/,
-                             NavMgr* WXUNUSED(unused)) // Similar but returns void, so can be async
+                              NavMgr* WXUNUSED(unused)) // Similar but returns void, so can be async
 {
     // Use CallAfter() here. With wxGTK-3.1 (perhaps due to its scintilla update) if the file wasn't already loaded,
     // EnsureVisible() is called too early and fails
@@ -3368,8 +3356,8 @@ void clEditor::OnEditBreakpoint()
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
-void clEditor::AddBreakpoint(int lineno /*= -1*/, const wxString& conditions /*=wxT("")*/, const bool is_temp /*=false*/,
-                            const bool is_disabled /*=false*/)
+void clEditor::AddBreakpoint(int lineno /*= -1*/, const wxString& conditions /*=wxT("")*/,
+                             const bool is_temp /*=false*/, const bool is_disabled /*=false*/)
 {
     if(lineno == -1) { lineno = GetCurrentLine() + 1; }
 
@@ -3503,7 +3491,7 @@ void clEditor::DelAllCompilerMarkers()
 
 // Maybe one day we'll display multiple bps differently
 void clEditor::SetBreakpointMarker(int lineno, BreakpointType bptype, bool is_disabled,
-                                  const std::vector<BreakpointInfo>& bps)
+                                   const std::vector<BreakpointInfo>& bps)
 {
     BPtoMarker bpm = GetMarkerForBreakpt(bptype);
     sci_marker_types markertype = is_disabled ? bpm.marker_disabled : bpm.marker;

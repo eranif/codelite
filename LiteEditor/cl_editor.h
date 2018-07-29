@@ -92,8 +92,8 @@ typedef struct _BPtoMarker {
     marker_mask_type mask_disabled;
 } BPtoMarker;
 
-extern const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR;
-extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
+wxDECLARE_EVENT(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, wxCommandEvent);
+wxDECLARE_EVENT(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEvent);
 
 /**
  * \ingroup LiteEditor
@@ -991,7 +991,7 @@ private:
 
     wxMenu* DoCreateDebuggerWatchMenu(const wxString& word);
 
-    DECLARE_EVENT_TABLE()
+    // Event handlers
     void OpenURL(wxCommandEvent& event);
     void OnHighlightWordChecked(wxCommandEvent& e);
     void OnRemoveMatchInidicator(wxCommandEvent& e);

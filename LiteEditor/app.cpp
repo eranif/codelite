@@ -23,42 +23,41 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "precompiled_header.h"
+#include "ColoursAndFontsManager.h"
+#include "CompilerLocatorCygwin.h"
+#include "SocketAPI/clSocketClient.h"
+#include "app.h"
+#include "asyncprocess.h" // IProcess
 #include "autoversion.h"
+#include "clInitializeDialog.h"
+#include "clKeyboardManager.h"
+#include "cl_config.h"
 #include "cl_registry.h"
+#include "clsplashscreen.h"
+#include "conffilelocator.h"
+#include "dirsaver.h"
+#include "editor_config.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "evnvarlist.h"
+#include "exelocator.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
-#include "evnvarlist.h"
-#include "environmentconfig.h"
-#include "conffilelocator.h"
-#include "app.h"
-#include "dirsaver.h"
-#include "xmlutils.h"
-#include "editor_config.h"
-#include "wx_xml_compatibility.h"
-#include "manager.h"
-#include "exelocator.h"
-#include "macros.h"
-#include "stack_walker.h"
-#include "procutils.h"
-#include "globals.h"
 #include "frame.h"
-#include "asyncprocess.h" // IProcess
-#include "new_build_tab.h"
-#include "cl_config.h"
 #include "globals.h"
-#include <CompilerLocatorMinGW.h>
-#include <wx/regex.h>
-#include "CompilerLocatorCygwin.h"
-#include "ColoursAndFontsManager.h"
-#include "clKeyboardManager.h"
-#include "clInitializeDialog.h"
-#include "event_notifier.h"
-#include "clsplashscreen.h"
-#include <wx/persist.h>
+#include "macros.h"
+#include "manager.h"
+#include "new_build_tab.h"
+#include "precompiled_header.h"
+#include "procutils.h"
 #include "singleinstancethreadjob.h"
-#include "SocketAPI/clSocketClient.h"
+#include "stack_walker.h"
+#include "wx_xml_compatibility.h"
+#include "xmlutils.h"
+#include <CompilerLocatorMinGW.h>
 #include <wx/imagjpeg.h>
+#include <wx/persist.h>
+#include <wx/regex.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -68,8 +67,8 @@
 //////////////////////////////////////////////
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
-#include <sys/wait.h>
 #include <signal.h> // sigprocmask
+#include <sys/wait.h>
 #endif
 
 #ifdef __WXMSW__
@@ -251,15 +250,7 @@ CodeLiteApp::CodeLiteApp(void)
 CodeLiteApp::~CodeLiteApp(void)
 {
     wxImage::CleanUpHandlers();
-#ifdef __WXMSW__
-    if(m_handler) {
-        FreeLibrary(m_handler);
-        m_handler = NULL;
-    }
-#endif
-    if(m_singleInstance) {
-        delete m_singleInstance;
-    }
+    if(m_singleInstance) { delete m_singleInstance; }
     wxDELETE(m_persistencManager);
 }
 
@@ -300,10 +291,10 @@ bool CodeLiteApp::OnInit()
 
 #endif
     wxSocketBase::Initialize();
-    
+
     // Redirect all error messages to stderr
     wxLog::SetActiveTarget(new wxLogStderr());
-    
+
 #if wxUSE_ON_FATAL_EXCEPTION
     // trun on fatal exceptions handler
     wxHandleFatalExceptions(true);
@@ -314,9 +305,7 @@ bool CodeLiteApp::OnInit()
     HINSTANCE user32Dll = LoadLibrary(L"User32.dll");
     if(user32Dll) {
         SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(user32Dll, "SetProcessDPIAware");
-        if(pFunc) {
-            pFunc();
-        }
+        if(pFunc) { pFunc(); }
         FreeLibrary(user32Dll);
     }
 #endif
@@ -355,14 +344,10 @@ bool CodeLiteApp::OnInit()
         }
     }
 
-    if(parser.Found(wxT("d"), &newDataDir)) {
-        clStandardPaths::Get().SetUserDataDir(newDataDir);
-    }
+    if(parser.Found(wxT("d"), &newDataDir)) { clStandardPaths::Get().SetUserDataDir(newDataDir); }
 
     // check for single instance
-    if(!IsSingleInstance(parser)) {
-        return false;
-    }
+    if(!IsSingleInstance(parser)) { return false; }
 
     if(parser.Found(wxT("h"))) {
         // print usage
@@ -602,7 +587,7 @@ bool CodeLiteApp::OnInit()
     vars.InsertVariable(wxT("Default"), wxT("CodeLiteDir"), ManagerST::Get()->GetInstallDir());
     EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 
-//---------------------------------------------------------
+    //---------------------------------------------------------
 
 #ifdef __WXMSW__
 
@@ -621,9 +606,7 @@ bool CodeLiteApp::OnInit()
             const wxLanguageInfo* info = wxLocale::FindLanguageInfo(preferredLocalename);
             if(info) {
                 preferredLocale = info->Language;
-                if(preferredLocale == wxLANGUAGE_UNKNOWN) {
-                    preferredLocale = wxLANGUAGE_ENGLISH;
-                }
+                if(preferredLocale == wxLANGUAGE_UNKNOWN) { preferredLocale = wxLANGUAGE_ENGLISH; }
             }
         }
 
@@ -681,7 +664,7 @@ bool CodeLiteApp::OnInit()
 
     // Make sure that the colours and fonts manager is instantiated
     ColoursAndFontsManager::Get().Load();
-    
+
     // Merge the user settings with any new settings
     ColoursAndFontsManager::Get().ImportLexersFile(wxFileName(clStandardPaths::Get().GetLexersDir(), "lexers.json"),
                                                    false);
@@ -917,9 +900,7 @@ wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxS
             wxXmlDocument doc;
             if(doc.Load(menuFile.GetFullPath())) {
                 wxString version = doc.GetRoot()->GetPropVal(wxT("version"), wxT("1.0"));
-                if(version != requiredVersion) {
-                    return defaultMenuFile;
-                }
+                if(version != requiredVersion) { return defaultMenuFile; }
             }
         }
         return menuFile.GetFullPath();

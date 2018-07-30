@@ -61,11 +61,6 @@ private: // Methods
     wxString DoFindMenuFile(const wxString& installDirectory, const wxString& requiredVersion);
     void AdjustPathForCygwinIfNeeded();
     void AdjustPathForMSYSIfNeeded();
-
-#ifdef __WXMSW__
-    HINSTANCE m_handler;
-    HINSTANCE m_user32Dll;
-#endif
     void PrintUsage(const wxCmdLineParser& parser);
 
 public:

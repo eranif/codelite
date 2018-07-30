@@ -519,25 +519,49 @@ wxColour DrawingUtils::GetMenuBarBgColour()
 #elif defined(__WXOSX__)
     return wxColour("rgb(209, 209, 209)");
 #else
-    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+    return wxColour("rgb(245,246,247)");
 #endif
 }
 
-void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
+void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool themed)
 {
-#if defined(__WXOSX__) || defined(__WXMSW__)
+#if defined(__WXOSX__)
+    wxUnusedVar(themed);
     wxColour startColour("rgb(231, 229, 231)");
     wxColour endColour("rgb(180, 180, 180)");
     dc.GradientFillLinear(rect, startColour, endColour, wxSOUTH);
     endColour = endColour.ChangeLightness(90);
     dc.SetPen(endColour);
     dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+#elif defined(__WXMSW__)
+    if(themed) {
+        wxColour topColour(*wxWHITE);
+        wxColour brushColour(GetMenuBarBgColour());
+        wxColour bottomColour("rgb(232,233,234)");
+
+        dc.SetPen(brushColour);
+        dc.SetBrush(brushColour);
+        dc.DrawRectangle(rect);
+
+        dc.SetPen(topColour);
+        dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
+
+        dc.SetPen(bottomColour);
+        dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+
+    } else {
+        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
+        dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
+        dc.DrawRectangle(rect);
+    }
 #else
+    wxUnusedVar(themed);
     dc.SetPen(GetMenuBarBgColour());
     dc.SetBrush(GetMenuBarBgColour());
     dc.DrawRectangle(rect);
 #endif
 }
+
 wxColour DrawingUtils::GetMenuBarTextColour()
 {
 #if defined(__WXGTK__) && !defined(__WXGTK3__)
@@ -803,20 +827,20 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     wxRect downRect = rect;
     downRect.SetHeight(rect.GetHeight() / 2);
     downRect.SetY(rect.GetY() + (rect.GetHeight() / 2));
-    
+
     wxColour bgColour = baseColour.ChangeLightness(bgLightness);
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.SetBrush(bgColour);
     dc.DrawRectangle(clientRect);
-    
+
     dc.SetBrush(bgColour.ChangeLightness(96));
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.DrawRectangle(downRect);
-    
+
     dc.SetPen(penColour);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(clientRect);
-    
+
     clientRect.Deflate(1);
     wxRect textRect, arrowRect;
     textRect = clientRect;

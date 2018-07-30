@@ -1,4 +1,5 @@
 #include "clToolBarButtonBase.h"
+#include "drawingutils.h"
 #include <wx/settings.h>
 
 #ifdef __WXGTK20__
@@ -168,6 +169,8 @@ void clToolBarButtonBase::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
     dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
     dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
     dc.DrawRectangle(rect);
+#elif defined(__WXMSW__)
+    DrawingUtils::FillMenuBarBgColour(dc, rect);
 #else
     dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
@@ -199,7 +202,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         penColour = bgHighlightColour;
         if(IsHover() || IsChecked()) {
             bgColour = bgHighlightColour;
-        } else if(IsPressed()){
+        } else if(IsPressed()) {
             bgColour = bgHighlightColour.ChangeLightness(90);
             penColour = bgColour;
         } else {

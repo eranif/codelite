@@ -60,7 +60,12 @@ void clTabColours::InitDarkColours()
 
 void clTabColours::InitLightColours()
 {
-    wxColour faceColour = DrawingUtils::GetPanelBgColour();
+    wxColour faceColour;
+#ifdef __WXMSW__
+    faceColour = DrawingUtils::GetMenuBarBgColour();
+#else
+    faceColour = DrawingUtils::GetPanelBgColour();
+#endif
     wxColour textColour = DrawingUtils::GetPanelTextColour();
     activeTabTextColour = textColour;
     inactiveTabTextColour = textColour;
@@ -71,7 +76,7 @@ void clTabColours::InitLightColours()
 
     } else {
         // Make it lighter
-        activeTabBgColour = faceColour;//.ChangeLightness(150);
+        activeTabBgColour = faceColour;
         activeTabPenColour = faceColour.ChangeLightness(70);
     }
 
@@ -81,7 +86,11 @@ void clTabColours::InitLightColours()
     tabAreaColour = faceColour;
     markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#80ccff"));
 
+#ifdef __WXMSW__
+    inactiveTabBgColour = faceColour.ChangeLightness(90);
+#else
     inactiveTabBgColour = tabAreaColour.ChangeLightness(90);
+#endif
     inactiveTabPenColour = tabAreaColour.ChangeLightness(70);
     inactiveTabInnerPenColour = tabAreaColour;
 }

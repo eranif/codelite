@@ -68,7 +68,7 @@ public:
     static wxColour GetMenuTextColour();
     static wxColour GetMenuBarBgColour();
     static wxColour GetMenuBarTextColour();
-    static void FillMenuBarBgColour(wxDC& dc, const wxRect& rect);
+    static void FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool themed = true);
     static void TruncateText(const wxString& text, int maxWidth, wxDC& dc, wxString& fixedText);
     static void PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor,
                                          const wxColour& endColor, bool vertical);

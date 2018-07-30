@@ -1032,11 +1032,8 @@ void clMainFrame::CreateGUIControls()
     clCxxWorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStartupDirectory());
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
-#if defined(__WXMSW__) || defined(__WXGTK__)
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
-#else
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 2);
-#endif
+
     // Load the menubar from XRC and set this frame's menubar to it.
     wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
 
@@ -4632,10 +4629,7 @@ void clMainFrame::SetAUIManagerFlags()
     }
 
     auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
-#if defined(__WXMAC__) || defined(__WXMSW__)
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
-#endif
-
     m_mgr.SetFlags(auiMgrFlags);
 }
 

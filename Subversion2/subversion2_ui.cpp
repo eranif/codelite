@@ -48,9 +48,9 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer86 = new wxBoxSizer(wxVERTICAL);
     m_panel82->SetSizer(boxSizer86);
     
-    m_dvListCtrl = new wxDataViewListCtrl(m_panel82, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel82, wxSize(-1,-1)), wxDV_MULTIPLE);
+    m_dvListCtrl = new wxDataViewListCtrl(m_panel82, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel82, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE);
     
-    boxSizer86->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer86->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
     
     m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(32), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
@@ -60,9 +60,9 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
     m_panelUnversioned->SetSizer(boxSizer88);
     
-    m_dvListCtrlUnversioned = new wxDataViewListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelUnversioned, wxSize(-1,-1)), wxDV_MULTIPLE);
+    m_dvListCtrlUnversioned = new wxDataViewListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelUnversioned, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE);
     
-    boxSizer88->Add(m_dvListCtrlUnversioned, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer88->Add(m_dvListCtrlUnversioned, 1, wxEXPAND, WXC_FROM_DIP(2));
     
     m_dvListCtrlUnversioned->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);

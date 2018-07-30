@@ -2137,7 +2137,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_notebook672 = new wxNotebook(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1,-1)), wxBK_DEFAULT);
     m_notebook672->SetName(wxT("m_notebook672"));
     
-    boxSizer94->Add(m_notebook672, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer94->Add(m_notebook672, 1, wxEXPAND, WXC_FROM_DIP(2));
     
     m_panel674 = new wxPanel(m_notebook672, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook672, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_notebook672->AddPage(m_panel674, _("Changes"), true);
@@ -2145,9 +2145,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer678 = new wxBoxSizer(wxVERTICAL);
     m_panel674->SetSizer(boxSizer678);
     
-    m_dvListCtrl = new wxDataViewListCtrl(m_panel674, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel674, wxSize(-1,-1)), wxDV_MULTIPLE);
+    m_dvListCtrl = new wxDataViewListCtrl(m_panel674, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel674, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE);
     
-    boxSizer678->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer678->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
     
     m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(48), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
@@ -2157,9 +2157,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer680 = new wxBoxSizer(wxVERTICAL);
     m_panelUnversioned->SetSizer(boxSizer680);
     
-    m_dvListCtrlUnversioned = new wxDataViewListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelUnversioned, wxSize(-1,-1)), wxDV_MULTIPLE);
+    m_dvListCtrlUnversioned = new wxDataViewListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelUnversioned, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE);
     
-    boxSizer680->Add(m_dvListCtrlUnversioned, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer680->Add(m_dvListCtrlUnversioned, 1, wxEXPAND, WXC_FROM_DIP(2));
     
     m_dvListCtrlUnversioned->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);

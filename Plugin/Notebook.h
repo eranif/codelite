@@ -27,10 +27,8 @@
 #define NOTEBOOK_H
 
 #include "cl_defs.h"
+#include <wx/notebook.h>
 
-#if USE_AUI_NOTEBOOK
-#include "clAuiNotebook.h"
-#else
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
 #include "windowstack.h"
@@ -48,6 +46,49 @@ class Notebook;
 class wxMenu;
 class clTabCtrl;
 
+// On GTK, the main notebook uses wxNotebook
+#ifdef __WXGTK__
+#ifndef USE_WXNOTEBOOK
+#define USE_WXNOTEBOOK 1
+#endif
+#endif
+
+#if USE_WXNOTEBOOK
+#include <wx/imaglist.h>
+#include <wx/notebook.h>
+class WXDLLIMPEXP_SDK clNotebook : public wxNotebook
+{
+    wxImageList* m_images;
+    wxDateTime m_dragStartTime;
+    wxPoint m_dragStartPos;
+
+protected:
+    bool DoDeletePage(size_t page, bool notify, bool deleteIt);
+    void OnBeginDrag();
+
+public:
+    clNotebook(wxWindow* parent, wxWindowID winid, const wxPoint& position = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize, long style = wxNB_DEFAULT);
+    virtual ~clNotebook();
+
+    void AddPage(wxWindow* page, const wxString& label, bool selected = false, const wxBitmap& bmp = wxNullBitmap);
+    wxBitmap GetPageBitmap(int index) const;
+    void SetPageBitmap(int index, const wxBitmap& bmp);
+    bool RemovePage(size_t page, bool notify = false);
+    bool DeletePage(size_t page, bool notify = false);
+    bool InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected = false,
+                    const wxBitmap& bmp = wxNullBitmap);
+    bool SetPageToolTip(size_t page, const wxString& tooltip);
+    size_t GetAllTabs(clTabInfo::Vec_t& tabs);
+    int GetPageIndex(wxWindow* window) const;
+    int GetPageIndex(const wxString& label) const;
+    void SetStyle(long style);
+    int HitTest(const wxPoint& pt) const;
+};
+#else
+typedef Notebook clNotebook;
+#endif
+
 enum class eDirection {
     kInvalid = -1,
     kRight = 0,
@@ -60,9 +101,11 @@ enum class eDirection {
 class WXDLLIMPEXP_SDK clTabCtrlDropTarget : public wxTextDropTarget
 {
     clTabCtrl* m_tabCtrl;
+    clNotebook* m_notebook;
 
 public:
     clTabCtrlDropTarget(clTabCtrl* tabCtrl);
+    clTabCtrlDropTarget(clNotebook* notebook);
     virtual ~clTabCtrlDropTarget();
     virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data);
 };
@@ -88,7 +131,7 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     wxRect m_chevronRect;
     clTabHistory::Ptr_t m_history;
     clTabRenderer::Ptr_t m_art;
-    
+
     wxDateTime m_dragStartTime;
     wxPoint m_dragStartPos;
 
@@ -141,7 +184,7 @@ protected:
     void DoDeletePage(size_t page) { RemovePage(page, true, true); }
     void DoShowTabList();
     void DoUpdateXCoordFromPage(wxWindow* page, int diff);
-    
+
     void OnBeginDrag();
 
 public:
@@ -412,7 +455,7 @@ public:
      * @return
      */
     clTabHistory::Ptr_t GetHistory() const { return m_tabCtrl->GetHistory(); }
-    
+
     /**
      * @brief move the active page and place it in the new nexIndex
      */
@@ -427,5 +470,4 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
-#endif // USE_AUI_NOTEBOOK
 #endif // NOTEBOOK_H

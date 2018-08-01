@@ -1,9 +1,9 @@
 #include "Notebook.h"
-#if !USE_AUI_NOTEBOOK
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
 #include <algorithm>
+#include <wx/app.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
 #include <wx/dnd.h>
@@ -400,7 +400,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         m_visibleTabs.clear();
         return;
     }
-    
+
 #ifdef __WXGTK__
     wxDC& gcdc = dc;
 #else
@@ -954,7 +954,7 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
     if(deletePage) {
         // Destory the page
         tab->GetWindow()->Destroy();
-    } else  {
+    } else {
         // Just hide it
         tab->GetWindow()->Hide();
     }
@@ -964,10 +964,6 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
         event.SetEventObject(GetParent());
         event.SetSelection(GetSelection());
         GetParent()->GetEventHandler()->ProcessEvent(event);
-        if(!event.IsAllowed()) {
-            // Vetoed
-            return false;
-        }
     }
 
     // Choose the next page
@@ -1353,6 +1349,13 @@ void clTabCtrl::OnBeginDrag()
 
 clTabCtrlDropTarget::clTabCtrlDropTarget(clTabCtrl* tabCtrl)
     : m_tabCtrl(tabCtrl)
+    , m_notebook(NULL)
+{
+}
+
+clTabCtrlDropTarget::clTabCtrlDropTarget(clNotebook* notebook)
+    : m_tabCtrl(NULL)
+    , m_notebook(notebook)
 {
 }
 
@@ -1369,17 +1372,218 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
     tabIndex.ToCLong(&nTabIndex);
     // Sanity
     if(nTabIndex == wxNOT_FOUND) return false;
+    if(m_tabCtrl) {
+        // Test the drop tab index
+        int realPos, tabHit;
+        eDirection align;
+        m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit, align);
 
-    // Test the drop tab index
-    int realPos, tabHit;
-    eDirection align;
-    m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit, align);
+        // if the tab being dragged and the one we drop it on are the same
+        // return false
+        if(nTabIndex == realPos) return false;
+        m_tabCtrl->MoveActiveToIndex(realPos, align);
 
-    // if the tab being dragged and the one we drop it on are the same
-    // return false
-    if(nTabIndex == realPos) return false;
-    m_tabCtrl->MoveActiveToIndex(realPos, align);
+    } else if(m_notebook) {
+        wxWindowUpdateLocker locker(wxTheApp->GetTopWindow());
+        int where = m_notebook->HitTest(m_notebook->ScreenToClient(wxGetMousePosition()));
+        // If the drop tab and the source tab are the same, do nothing
+        if(where == nTabIndex) { return false; }
+        // Get the tab info before we remove it
+        wxWindow* movingPage = m_notebook->GetPage(nTabIndex);
+        wxWindow* dropPage = m_notebook->GetPage(where);
+        if(!movingPage || !dropPage) { return false; }
+        wxString label = m_notebook->GetPageText(nTabIndex);
+        wxBitmap bmp = m_notebook->GetPageBitmap(nTabIndex);
+
+        // Remove the page and insert it at the drop index
+        m_notebook->RemovePage(nTabIndex, false);
+        // Locate the drop index (since we removed a page, the drop index is no longer correct)
+        where = m_notebook->GetPageIndex(dropPage);
+        m_notebook->InsertPage(where, movingPage, label, true, bmp);
+    }
     return true;
 }
 
-#endif // USE_AUI_NOTEBOOK
+#if USE_WXNOTEBOOK
+clNotebook::clNotebook(wxWindow* parent, wxWindowID winid, const wxPoint& position, const wxSize& size, long style)
+    : wxNotebook(parent, winid, position, size, wxNB_DEFAULT)
+    , m_dragStartTime((time_t)-1)
+{
+    SetDropTarget(new clTabCtrlDropTarget(this));
+    Bind(wxEVT_BOOKCTRL_PAGE_CHANGED, [&](wxBookCtrlEvent& e) {
+        e.Skip();
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
+        event.SetEventObject(this);
+        event.SetSelection(GetSelection());
+        GetEventHandler()->ProcessEvent(event);
+    });
+
+    Bind(wxEVT_BOOKCTRL_PAGE_CHANGING, [&](wxBookCtrlEvent& e) {
+        e.Skip();
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGING);
+        event.SetEventObject(this);
+        event.SetSelection(GetSelection());
+        if(!GetEventHandler()->ProcessEvent(event)) {
+            e.Veto();
+            return;
+        }
+    });
+
+    Bind(wxEVT_CONTEXT_MENU, [&](wxContextMenuEvent& e) {
+        int where = HitTest(ScreenToClient(wxGetMousePosition()));
+        int selection = GetSelection();
+        if((where != wxNOT_FOUND) && (where == selection)) {
+            wxBookCtrlEvent menuEvent(wxEVT_BOOK_TAB_CONTEXT_MENU);
+            menuEvent.SetEventObject(this);
+            menuEvent.SetSelection(where);
+            GetEventHandler()->AddPendingEvent(menuEvent);
+        }
+    });
+
+    Bind(wxEVT_LEFT_UP, [&](wxMouseEvent& e) {
+        e.Skip();
+        m_dragStartTime.Set((time_t)-1); // Not considering D'n'D so reset any saved values
+        m_dragStartPos = wxPoint();
+    });
+
+    Bind(wxEVT_MIDDLE_UP, [&](wxMouseEvent& e) {
+        int where = HitTest(e.GetPosition());
+        if(where != wxNOT_FOUND) {
+            wxBookCtrlEvent menuEvent(wxEVT_BOOK_PAGE_CLOSE_BUTTON);
+            menuEvent.SetEventObject(this);
+            menuEvent.SetSelection(where);
+            GetEventHandler()->AddPendingEvent(menuEvent);
+        } else {
+            e.Skip();
+        }
+    });
+
+    Bind(wxEVT_MOTION, [&](wxMouseEvent& e) {
+        e.Skip();
+        int where = HitTest(e.GetPosition());
+        if(where != wxNOT_FOUND && m_dragStartTime.IsValid()) {
+            wxTimeSpan diff = wxDateTime::UNow() - m_dragStartTime;
+            if(diff.GetMilliseconds() > 100 && // We need to check both x and y distances as tabs may be vertical
+               ((abs(m_dragStartPos.x - e.GetX()) > 10) || (abs(m_dragStartPos.y - e.GetY()) > 10))) {
+                OnBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
+            }
+        }
+    });
+
+    Bind(wxEVT_LEFT_DOWN, [&](wxMouseEvent& e) {
+        e.Skip();
+        int where = HitTest(e.GetPosition());
+        if(where != wxNOT_FOUND) {
+            m_dragStartTime = wxDateTime::UNow();
+            m_dragStartPos = wxPoint(e.GetX(), e.GetY());
+        }
+    });
+}
+
+clNotebook::~clNotebook() {}
+
+void clNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
+{
+    wxUnusedVar(bmp);
+    page->Reparent(this);
+    wxNotebook::AddPage(page, label, selected, wxNOT_FOUND);
+}
+
+wxBitmap clNotebook::GetPageBitmap(int index) const { return wxNullBitmap; }
+
+bool clNotebook::RemovePage(size_t page, bool notify) { return DoDeletePage(page, notify, false); }
+bool clNotebook::DeletePage(size_t page, bool notify) { return DoDeletePage(page, notify, true); }
+
+bool clNotebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
+{
+    wxUnusedVar(bmp);
+    page->Reparent(this);
+    return wxNotebook::InsertPage(index, page, label, selected, wxNOT_FOUND);
+}
+
+bool clNotebook::SetPageToolTip(size_t page, const wxString& tooltip)
+{
+    wxUnusedVar(page);
+    wxUnusedVar(tooltip);
+    return true;
+}
+
+size_t clNotebook::GetAllTabs(clTabInfo::Vec_t& tabs)
+{
+    for(size_t i = 0; i < GetPageCount(); ++i) {
+        clTabInfo::Ptr_t t(new clTabInfo(nullptr, 0, wxNotebook::GetPage(i), wxNotebook::GetPageText(i), wxNullBitmap));
+        tabs.push_back(t);
+    }
+    return tabs.size();
+}
+
+bool clNotebook::DoDeletePage(size_t page, bool notify, bool deleteIt)
+{
+    if(notify) {
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSING);
+        event.SetEventObject(this);
+        event.SetSelection(page);
+        GetEventHandler()->ProcessEvent(event);
+        if(!event.IsAllowed()) {
+            // Vetoed
+            return false;
+        }
+    }
+    if(deleteIt) {
+        if(!wxNotebook::DeletePage(page)) { return false; }
+
+    } else {
+        if(!wxNotebook::RemovePage(page)) { return false; }
+    }
+    if(notify) {
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSED);
+        event.SetEventObject(this);
+        event.SetSelection(GetSelection());
+        GetEventHandler()->ProcessEvent(event);
+    }
+    return true;
+}
+
+void clNotebook::SetPageBitmap(int index, const wxBitmap& bmp) {}
+
+int clNotebook::GetPageIndex(wxWindow* window) const
+{
+    for(size_t i = 0; i < GetPageCount(); ++i) {
+        if(GetPage(i) == window) { return i; }
+    }
+    return wxNOT_FOUND;
+}
+
+int clNotebook::GetPageIndex(const wxString& label) const
+{
+    for(size_t i = 0; i < GetPageCount(); ++i) {
+        if(GetPageText(i) == label) { return i; }
+    }
+    return wxNOT_FOUND;
+}
+void clNotebook::SetStyle(long style) { wxUnusedVar(style); }
+
+int clNotebook::HitTest(const wxPoint& pt) const
+{
+    long flags = 0;
+    int where = wxNotebook::HitTest(pt, &flags);
+    if(where != wxNOT_FOUND && (flags & (wxBK_HITTEST_ONLABEL | wxBK_HITTEST_ONICON))) { return where; }
+    return wxNOT_FOUND;
+}
+
+void clNotebook::OnBeginDrag()
+{
+    m_dragStartTime.Set((time_t)-1); // Reset the saved values
+    m_dragStartPos = wxPoint();
+
+    // We simply drag the active tab index
+    wxString dragText;
+    dragText << "{Class:Notebook,TabIndex:" << GetSelection() << "}{}";
+    wxTextDataObject dragContent(dragText);
+    wxDropSource dragSource(this);
+    dragSource.SetData(dragContent);
+    wxDragResult result = dragSource.DoDragDrop(true);
+    wxUnusedVar(result);
+}
+
+#endif // USE_WXNOTEBOOK;

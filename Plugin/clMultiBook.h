@@ -1,33 +1,36 @@
 #ifndef CLMULTIBOOK_H
 #define CLMULTIBOOK_H
 
+#include "clTabHistory.h"
 #include <Notebook.h>
 #include <codelite_exports.h>
 #include <vector>
 #include <wx/bitmap.h>
-#include "clTabHistory.h"
 #include <wx/splitter.h>
 
 class WXDLLIMPEXP_SDK clMultiBook : public wxPanel
 {
-    Notebook* m_leftBook;
-    Notebook* m_rightBook;
+    clNotebook* m_leftBook;
+    clNotebook* m_rightBook;
+
     wxSplitterWindow* m_splitter;
     size_t m_style;
     int m_selection;
     clTabHistory::Ptr_t m_history;
 
 protected:
-    bool GetActiveBook(Notebook** book, size_t& bookIndex) const;
-    bool GetBookByPageIndex(size_t pageIndex, Notebook** book, size_t& bookIndex, size_t& modPageIndex) const;
-    bool GetActivePageBook(Notebook** book, size_t& bookIndex, size_t& modPageIndex) const;
-    void MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* destbook);
+    bool GetActiveBook(clNotebook** book, size_t& bookIndex) const;
+    bool GetBookByPageIndex(size_t pageIndex, clNotebook** book, size_t& bookIndex, size_t& modPageIndex) const;
+    bool GetActivePageBook(clNotebook** book, size_t& bookIndex, size_t& modPageIndex) const;
+    void MovePageToNotebook(clNotebook* srcbook, size_t index, clNotebook* destbook);
     void UpdateView();
     int BookIndexToGlobalIndex(size_t bookIndex, size_t pageIndex) const;
-    int BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const;
-    //Notebook* AddNotebook();
-    Notebook* CreateNotebook(wxWindow* parent);
-    bool IsOurNotebook(Notebook* book) const;
+    int BookIndexToGlobalIndex(clNotebook* book, size_t pageIndex) const;
+
+    // clNotebook* AddNotebook();
+    clNotebook* CreateNotebook(wxWindow* parent);
+
+    bool IsOurNotebook(clNotebook* book) const;
 
 protected:
     void OnEventProxy(wxBookCtrlEvent& event);
@@ -37,9 +40,9 @@ public:
     clMultiBook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
     virtual ~clMultiBook();
-    
+
     clTabHistory::Ptr_t GetHistory() { return m_history; }
-    
+
     /**
      * @brief move page one notebook right
      */
@@ -61,7 +64,7 @@ public:
     bool CanMoveToTabGroupRight() const;
 
     //----------------------------
-    // Notebook compatiblity API
+    // clNotebook compatiblity API
     //----------------------------
     /**
      * @brief append page to the notebook
@@ -127,10 +130,10 @@ public:
     /**
      * @brief return the page bitmap
      * @param page
-     * @return 
+     * @return
      */
     wxBitmap GetPageBitmap(size_t page) const;
-    
+
     /**
      * @brief Deletes all pages
      */

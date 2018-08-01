@@ -128,7 +128,12 @@ void clTabInfo::CalculateOffsets(size_t style)
     wxMemoryDC memoryDC(b);
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
-
+    
+    int Y_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->ySpacer : 5;
+    int X_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->xSpacer : 5;
+    int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
+    int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
+    
     wxDC& dc = memoryDC;
     wxFont font = clTabRenderer::GetTabFont();
     dc.SetFont(font);
@@ -136,18 +141,18 @@ void clTabInfo::CalculateOffsets(size_t style)
     wxSize sz = dc.GetTextExtent(m_label);
     wxSize fixedHeight = dc.GetTextExtent("Tp");
     if(IS_VERTICAL_TABS(style)) {
-        m_height = fixedHeight.GetHeight() + (5 * m_tabCtrl->GetArt()->ySpacer);
+        m_height = fixedHeight.GetHeight() + (5 * Y_spacer);
         m_height += 2;
     } else {
-        m_height = fixedHeight.GetHeight() + (4 * m_tabCtrl->GetArt()->ySpacer);
+        m_height = fixedHeight.GetHeight() + (4 * Y_spacer);
     }
 
     m_width = 0;
     if(!IS_VERTICAL_TABS(style) || true) {
-        m_width += m_tabCtrl->GetArt()->majorCurveWidth;
-        m_width += m_tabCtrl->GetArt()->smallCurveWidth;
+        m_width += M_spacer;
+        m_width += S_spacer;
     }
-    m_width += m_tabCtrl->GetArt()->xSpacer;
+    m_width += X_spacer;
 
     // bitmap
     m_bmpX = wxNOT_FOUND;
@@ -155,7 +160,7 @@ void clTabInfo::CalculateOffsets(size_t style)
 
     if(m_bitmap.IsOk()) {
         m_bmpX = m_width;
-        m_width += m_tabCtrl->GetArt()->xSpacer;
+        m_width += X_spacer;
         m_width += m_bitmap.GetScaledWidth();
         m_bmpY = ((m_height - m_bitmap.GetScaledHeight()) / 2);
     }
@@ -167,23 +172,23 @@ void clTabInfo::CalculateOffsets(size_t style)
 
     // x button
     if((style & kNotebook_CloseButtonOnActiveTab)) {
-        m_width += m_tabCtrl->GetArt()->xSpacer;
-        m_width += m_tabCtrl->GetArt()->xSpacer;
+        m_width += X_spacer;
+        m_width += X_spacer;
         m_bmpCloseX = m_width;
         m_bmpCloseY = ((m_height - 12) / 2) + 2;
         m_width += 12; // X button is 10 pixels in size
     }
-    m_width += m_tabCtrl->GetArt()->xSpacer;
+    m_width += X_spacer;
 
     if(!IS_VERTICAL_TABS(style) || true) {
-        m_width += m_tabCtrl->GetArt()->majorCurveWidth;
-        m_width += m_tabCtrl->GetArt()->smallCurveWidth;
+        m_width += M_spacer;
+        m_width += S_spacer;
     }
 
     // Update the rect width
     m_rect.SetWidth(m_width);
 
-    if((style & kNotebook_RightTabs) || (style & kNotebook_LeftTabs)) {
+    if(m_tabCtrl && ((style & kNotebook_RightTabs) || (style & kNotebook_LeftTabs))) {
 
         // swap the x and y coordinates
         wxSwap(m_height, m_width);

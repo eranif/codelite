@@ -1881,8 +1881,7 @@ PATH=.:/home/eran/devl/wxWidgets/build-release-gtk3:$PATH]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -2121,7 +2120,7 @@ resources.cpp: resources.xrc
         <Library Value="libclang64.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="yes" DebugArguments="--no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="yes" DebugArguments="--no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="Default" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=$WXWIN\lib\gcc_dll;../sdk/clang/lib;../sdk/libssh/lib;$(PATH)]]>
@@ -2149,7 +2148,8 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>

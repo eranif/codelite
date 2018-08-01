@@ -86,18 +86,8 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
 #ifndef __WXMSW__
 static wxColour GetMenuBarBgColour()
 {
-#if defined(__WXGTK__) && !defined(__WXGTK3__)
-    static bool intitialized(false);
-    // initialise default colour
-    static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
-
-    if(!intitialized) {
-        // try to get the background colour from a menu
-        GtkWidget* menuBar = gtk_menu_bar_new();
-        bgColour = GtkGetBgColourFromWidget(menuBar, bgColour);
-        intitialized = true;
-    }
-    return bgColour;
+#if defined(__WXGTK__)
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #elif defined(__WXOSX__)
     return wxColour("rgb(209, 209, 209)");
 #else
@@ -166,8 +156,8 @@ void clToolBarButtonBase::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
     dc.SetPen(endColour);
     dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 #elif defined(__WXGTK3__)
-    dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
-    dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+    dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     dc.DrawRectangle(rect);
 #elif defined(__WXMSW__)
     DrawingUtils::FillMenuBarBgColour(dc, rect);

@@ -486,17 +486,8 @@ wxColour DrawingUtils::GetTextCtrlTextColour()
 
 wxColour DrawingUtils::GetMenuTextColour()
 {
-#if defined(__WXGTK__) && !defined(__WXGTK3__)
-    static bool intitialized(false);
-    static wxColour textColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT));
-
-    if(!intitialized) {
-        // try to get the text colour from a menu
-        GtkWidget* menuBar = gtk_menu_new();
-        textColour = GtkGetTextColourFromWidget(menuBar, textColour);
-        intitialized = true;
-    }
-    return textColour;
+#if defined(__WXGTK__)
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 #else
     return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
 #endif
@@ -504,18 +495,8 @@ wxColour DrawingUtils::GetMenuTextColour()
 
 wxColour DrawingUtils::GetMenuBarBgColour()
 {
-#if defined(__WXGTK__) && !defined(__WXGTK3__)
-    static bool intitialized(false);
-    // initialise default colour
-    static wxColour bgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
-
-    if(!intitialized) {
-        // try to get the background colour from a menu
-        GtkWidget* menuBar = gtk_menu_bar_new();
-        bgColour = GtkGetBgColourFromWidget(menuBar, bgColour);
-        intitialized = true;
-    }
-    return bgColour;
+#if defined(__WXGTK__)
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #elif defined(__WXOSX__)
     return wxColour("rgb(209, 209, 209)");
 #else
@@ -703,7 +684,7 @@ wxColour DrawingUtils::GetCaptionColour()
 {
     wxColour defaultCaptionColour;
 #ifdef __WXGTK__
-    defaultCaptionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    defaultCaptionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
 #else
     defaultCaptionColour = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 #endif

@@ -25,6 +25,7 @@
 #include "drawingutils.h"
 #include "windowstack.h"
 #include <wx/dcbuffer.h>
+#include <wx/wupdlock.h>
 
 WindowStack::WindowStack(wxWindow* parent, wxWindowID id)
     : wxSimplebook(parent, id)
@@ -38,6 +39,7 @@ WindowStack::~WindowStack() {}
 
 void WindowStack::Select(wxWindow* win)
 {
+    wxWindowUpdateLocker locker(this);
     int index = FindPage(win);
     if(index == wxNOT_FOUND) { return; }
     ChangeSelection(index);
@@ -47,6 +49,7 @@ void WindowStack::Clear() { DeleteAllPages(); }
 
 bool WindowStack::Remove(wxWindow* win)
 {
+    wxWindowUpdateLocker locker(this);
     int index = FindPage(win);
     if(index == wxNOT_FOUND) { return false; }
     return RemovePage(index);
@@ -54,6 +57,7 @@ bool WindowStack::Remove(wxWindow* win)
 
 bool WindowStack::Delete(wxWindow* win)
 {
+    wxWindowUpdateLocker locker(this);
     int index = FindPage(win);
     if(index == wxNOT_FOUND) { return false; }
     return DeletePage(index);
@@ -61,6 +65,7 @@ bool WindowStack::Delete(wxWindow* win)
 
 bool WindowStack::Add(wxWindow* win, bool select)
 {
+    wxWindowUpdateLocker locker(this);
     if(!win || Contains(win)) { return false; }
     win->Reparent(this);
     AddPage(win, "", select, wxNOT_FOUND);

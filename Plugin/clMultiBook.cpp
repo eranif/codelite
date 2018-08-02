@@ -35,18 +35,18 @@ clMultiBook::~clMultiBook() { wxTheApp->Unbind(wxEVT_SET_FOCUS, &clMultiBook::On
 //-------------------------------------
 // Helper functions
 //-------------------------------------
-bool clMultiBook::GetActiveBook(clNotebook** book, size_t& bookIndex) const
+bool clMultiBook::GetActiveBook(Notebook** book, size_t& bookIndex) const
 {
     if(m_selection == wxNOT_FOUND) return false;
     size_t modPageIndex;
     return GetBookByPageIndex(m_selection, book, bookIndex, modPageIndex);
 }
 
-bool clMultiBook::GetBookByPageIndex(size_t pageIndex, clNotebook** book, size_t& bookIndex, size_t& modPageIndex) const
+bool clMultiBook::GetBookByPageIndex(size_t pageIndex, Notebook** book, size_t& bookIndex, size_t& modPageIndex) const
 {
-    std::vector<clNotebook*> books = { m_leftBook, m_rightBook };
+    std::vector<Notebook*> books = { m_leftBook, m_rightBook };
     for(size_t i = 0; i < books.size(); ++i) {
-        clNotebook* b = books[i];
+        Notebook* b = books[i];
         if(pageIndex < b->GetPageCount()) {
             *book = b;
             bookIndex = i;
@@ -58,12 +58,12 @@ bool clMultiBook::GetBookByPageIndex(size_t pageIndex, clNotebook** book, size_t
     return false;
 }
 
-bool clMultiBook::GetActivePageBook(clNotebook** book, size_t& bookIndex, size_t& modPageIndex) const
+bool clMultiBook::GetActivePageBook(Notebook** book, size_t& bookIndex, size_t& modPageIndex) const
 {
     return GetBookByPageIndex(m_selection, book, bookIndex, modPageIndex);
 }
 
-void clMultiBook::MovePageToNotebook(clNotebook* srcbook, size_t index, clNotebook* destbook)
+void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* destbook)
 {
     if(!srcbook || !destbook) return;
 
@@ -95,7 +95,7 @@ void clMultiBook::UpdateView()
 int clMultiBook::BookIndexToGlobalIndex(size_t bookIndex, size_t pageIndex) const
 {
     // Sanity
-    std::vector<clNotebook*> books = { m_leftBook, m_rightBook };
+    std::vector<Notebook*> books = { m_leftBook, m_rightBook };
     if(bookIndex >= books.size()) { return wxNOT_FOUND; }
 
     int globalIndex = pageIndex;
@@ -105,12 +105,12 @@ int clMultiBook::BookIndexToGlobalIndex(size_t bookIndex, size_t pageIndex) cons
     return globalIndex;
 }
 
-int clMultiBook::BookIndexToGlobalIndex(clNotebook* book, size_t pageIndex) const
+int clMultiBook::BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const
 {
     bool found = false;
     int globalIndex = pageIndex;
 
-    std::vector<clNotebook*> books = { m_leftBook, m_rightBook };
+    std::vector<Notebook*> books = { m_leftBook, m_rightBook };
     for(size_t i = 0; i < books.size(); ++i) {
         if(book == books[i]) {
             found = true;
@@ -130,7 +130,7 @@ int clMultiBook::BookIndexToGlobalIndex(clNotebook* book, size_t pageIndex) cons
 //-----------------------------------------
 bool clMultiBook::CanMoveToTabGroupLeft() const
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     size_t modPageIndex;
     if(!GetActivePageBook(&book, bookIndex, modPageIndex)) { return false; }
@@ -139,7 +139,7 @@ bool clMultiBook::CanMoveToTabGroupLeft() const
 
 bool clMultiBook::CanMoveToTabGroupRight() const
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     size_t modPageIndex;
     if(!GetActivePageBook(&book, bookIndex, modPageIndex)) { return false; };
@@ -166,7 +166,7 @@ void clMultiBook::AddPage(wxWindow* page, const wxString& label, bool selected, 
 
 bool clMultiBook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
 {
-    clNotebook* b;
+    Notebook* b;
     size_t modindex;
     size_t bookindex;
     if(GetBookByPageIndex(index, &b, bookindex, modindex)) {
@@ -181,7 +181,7 @@ bool clMultiBook::InsertPage(size_t index, wxWindow* page, const wxString& label
 
 wxWindow* clMultiBook::GetPage(size_t index) const
 {
-    clNotebook* book;
+    Notebook* book;
     size_t modIndex;
     size_t bookIndex;
     if(!GetBookByPageIndex(index, &book, bookIndex, modIndex)) { return nullptr; }
@@ -190,7 +190,7 @@ wxWindow* clMultiBook::GetPage(size_t index) const
 
 bool clMultiBook::DeletePage(size_t page, bool notify)
 {
-    clNotebook* book;
+    Notebook* book;
     size_t modIndex;
     size_t bookIndex;
     if(!GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return false; }
@@ -207,7 +207,7 @@ bool clMultiBook::DeletePage(size_t page, bool notify)
 
 wxWindow* clMultiBook::GetCurrentPage() const
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     if(GetActiveBook(&book, bookIndex)) { return book->GetCurrentPage(); }
     return nullptr;
@@ -221,8 +221,8 @@ size_t clMultiBook::GetAllTabs(clTabInfo::Vec_t& tabs)
 {
     tabs.clear();
     clTabInfo::Vec_t all_tabs;
-    std::vector<clNotebook*> books = { m_leftBook, m_rightBook };
-    std::for_each(books.begin(), books.end(), [&](clNotebook* b) {
+    std::vector<Notebook*> books = { m_leftBook, m_rightBook };
+    std::for_each(books.begin(), books.end(), [&](Notebook* b) {
         clTabInfo::Vec_t t;
         b->GetAllTabs(t);
         all_tabs.insert(all_tabs.end(), t.begin(), t.end());
@@ -233,7 +233,7 @@ size_t clMultiBook::GetAllTabs(clTabInfo::Vec_t& tabs)
 
 bool clMultiBook::SetPageToolTip(size_t page, const wxString& tooltip)
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     size_t modIndex;
     if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return book->SetPageToolTip(modIndex, tooltip); }
@@ -242,7 +242,7 @@ bool clMultiBook::SetPageToolTip(size_t page, const wxString& tooltip)
 
 int clMultiBook::SetSelection(size_t tabIdx)
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     size_t modIndex;
     if(GetBookByPageIndex(tabIdx, &book, bookIndex, modIndex)) {
@@ -260,7 +260,7 @@ int clMultiBook::SetSelection(size_t tabIdx)
             m_history->Push(focusedPage);
             return book->SetSelection(modIndex);
         } else {
-            // There is no point on calling clNotebook::SetSelection since it is already selected
+            // There is no point on calling Notebook::SetSelection since it is already selected
             // However, in the term of 'multi book' control, we might need to generate the events ourselves here
             // But only if we actually modified the selection
             if(pageChanged) {
@@ -291,7 +291,7 @@ int clMultiBook::SetSelection(size_t tabIdx)
 
 bool clMultiBook::SetPageText(size_t page, const wxString& text)
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     size_t modIndex;
     if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return book->SetPageText(modIndex, text); }
@@ -300,7 +300,7 @@ bool clMultiBook::SetPageText(size_t page, const wxString& text)
 
 wxString clMultiBook::GetPageText(size_t page) const
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     size_t modIndex;
     if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return book->GetPageText(modIndex); }
@@ -309,8 +309,8 @@ wxString clMultiBook::GetPageText(size_t page) const
 
 bool clMultiBook::DeleteAllPages()
 {
-    std::vector<clNotebook*> books = { m_leftBook, m_rightBook };
-    std::for_each(books.begin(), books.end(), [&](clNotebook* book) { book->DeleteAllPages(); });
+    std::vector<Notebook*> books = { m_leftBook, m_rightBook };
+    std::for_each(books.begin(), books.end(), [&](Notebook* book) { book->DeleteAllPages(); });
     // Update the history
     m_history->Clear();
     UpdateView();
@@ -320,15 +320,15 @@ bool clMultiBook::DeleteAllPages()
 void clMultiBook::SetStyle(size_t style)
 {
     m_style = style;
-    std::vector<clNotebook*> books = { m_leftBook, m_rightBook };
-    std::for_each(books.begin(), books.end(), [&](clNotebook* book) { book->SetStyle(m_style); });
+    std::vector<Notebook*> books = { m_leftBook, m_rightBook };
+    std::for_each(books.begin(), books.end(), [&](Notebook* book) { book->SetStyle(m_style); });
 }
 
 size_t clMultiBook::GetStyle() const { return m_style; }
 
 int clMultiBook::GetPageIndex(wxWindow* window) const
 {
-    std::vector<clNotebook*> books = { m_leftBook, m_rightBook };
+    std::vector<Notebook*> books = { m_leftBook, m_rightBook };
     for(size_t i = 0; i < books.size(); ++i) {
         int index = books[i]->GetPageIndex(window);
         if(index != wxNOT_FOUND) { return BookIndexToGlobalIndex(i, index); }
@@ -338,7 +338,7 @@ int clMultiBook::GetPageIndex(wxWindow* window) const
 
 int clMultiBook::GetPageIndex(const wxString& label) const
 {
-    std::vector<clNotebook*> books = { m_leftBook, m_rightBook };
+    std::vector<Notebook*> books = { m_leftBook, m_rightBook };
     for(size_t i = 0; i < books.size(); ++i) {
         int index = books[i]->GetPageIndex(label);
         if(index != wxNOT_FOUND) { return BookIndexToGlobalIndex(i, index); }
@@ -348,7 +348,7 @@ int clMultiBook::GetPageIndex(const wxString& label) const
 
 void clMultiBook::SetPageBitmap(size_t index, const wxBitmap& bmp)
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     size_t modIndex;
     if(GetBookByPageIndex(index, &book, bookIndex, modIndex)) { book->SetPageBitmap(modIndex, bmp); }
@@ -356,13 +356,13 @@ void clMultiBook::SetPageBitmap(size_t index, const wxBitmap& bmp)
 
 bool clMultiBook::RemovePage(size_t page, bool notify)
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     size_t modIndex;
     if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) {
         // Make sure that after we remove the page from its notebook
         // it has a valid parent (UpdateView() below might destory its parent
-        // clNotebook control)
+        // Notebook control)
         wxWindow* removedPage = book->GetPage(modIndex);
 
         // Update the history
@@ -382,9 +382,9 @@ bool clMultiBook::MoveActivePage(int newIndex)
     return false;
 }
 
-clNotebook* clMultiBook::CreateNotebook(wxWindow* parent)
+Notebook* clMultiBook::CreateNotebook(wxWindow* parent)
 {
-    clNotebook* book = new clNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_style);
+    Notebook* book = new Notebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_style);
     book->SetStyle(m_style);
     book->Bind(wxEVT_BOOK_PAGE_CLOSING, &clMultiBook::OnEventProxy, this);
     book->Bind(wxEVT_BOOK_PAGE_CLOSED, &clMultiBook::OnEventProxy, this);
@@ -397,10 +397,10 @@ clNotebook* clMultiBook::CreateNotebook(wxWindow* parent)
     return book;
 }
 
-// clNotebook* clMultiBook::AddNotebook()
+// Notebook* clMultiBook::AddNotebook()
 //{
 //    wxWindowUpdateLocker locker(this);
-//    clNotebook* book = CreateNotebook(this);
+//    Notebook* book = CreateNotebook(this);
 //    m_books.push_back(book);
 //    GetSizer()->Add(book, 1, wxEXPAND, 0);
 //    GetSizer()->Layout();
@@ -417,7 +417,7 @@ void clMultiBook::OnEventProxy(wxBookCtrlEvent& event)
     int selection = event.GetSelection();
     int oldSelection = event.GetOldSelection();
 
-    clNotebook* book = dynamic_cast<clNotebook*>(event.GetEventObject());
+    Notebook* book = dynamic_cast<Notebook*>(event.GetEventObject());
     if(!book) {
         clWARNING() << "clMultiBook::OnEventProxy no notebook event object!";
         return;
@@ -457,7 +457,7 @@ void clMultiBook::OnFocus(wxFocusEvent& e)
 
     wxWindow* parent = focusedWindow->GetParent();
     while(parent) {
-        clNotebook* book = dynamic_cast<clNotebook*>(parent);
+        Notebook* book = dynamic_cast<Notebook*>(parent);
         if(book && IsOurNotebook(book)) {
             // This book is one of ours...
             int index = book->GetSelection();
@@ -479,9 +479,9 @@ void clMultiBook::OnFocus(wxFocusEvent& e)
     }
 }
 
-bool clMultiBook::IsOurNotebook(clNotebook* book) const
+bool clMultiBook::IsOurNotebook(Notebook* book) const
 {
-    std::vector<clNotebook*> books = { m_leftBook, m_rightBook };
+    std::vector<Notebook*> books = { m_leftBook, m_rightBook };
     for(size_t i = 0; i < books.size(); ++i) {
         if(book == books[i]) { return true; }
     }
@@ -490,7 +490,7 @@ bool clMultiBook::IsOurNotebook(clNotebook* book) const
 
 wxBitmap clMultiBook::GetPageBitmap(size_t page) const
 {
-    clNotebook* book;
+    Notebook* book;
     size_t bookIndex;
     size_t modIndex;
     if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return book->GetPageBitmap(modIndex); }

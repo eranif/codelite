@@ -46,49 +46,6 @@ class Notebook;
 class wxMenu;
 class clTabCtrl;
 
-// On GTK, the main notebook uses wxNotebook
-#ifdef __WXGTK__
-#ifndef USE_WXNOTEBOOK
-#define USE_WXNOTEBOOK 1
-#endif
-#endif
-
-#if USE_WXNOTEBOOK
-#include <wx/imaglist.h>
-#include <wx/notebook.h>
-class WXDLLIMPEXP_SDK clNotebook : public wxNotebook
-{
-    wxImageList* m_images;
-    wxDateTime m_dragStartTime;
-    wxPoint m_dragStartPos;
-
-protected:
-    bool DoDeletePage(size_t page, bool notify, bool deleteIt);
-    void OnBeginDrag();
-
-public:
-    clNotebook(wxWindow* parent, wxWindowID winid, const wxPoint& position = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize, long style = wxNB_DEFAULT);
-    virtual ~clNotebook();
-
-    void AddPage(wxWindow* page, const wxString& label, bool selected = false, const wxBitmap& bmp = wxNullBitmap);
-    wxBitmap GetPageBitmap(int index) const;
-    void SetPageBitmap(int index, const wxBitmap& bmp);
-    bool RemovePage(size_t page, bool notify = false);
-    bool DeletePage(size_t page, bool notify = false);
-    bool InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected = false,
-                    const wxBitmap& bmp = wxNullBitmap);
-    bool SetPageToolTip(size_t page, const wxString& tooltip);
-    size_t GetAllTabs(clTabInfo::Vec_t& tabs);
-    int GetPageIndex(wxWindow* window) const;
-    int GetPageIndex(const wxString& label) const;
-    void SetStyle(long style);
-    int HitTest(const wxPoint& pt) const;
-};
-#else
-typedef Notebook clNotebook;
-#endif
-
 enum class eDirection {
     kInvalid = -1,
     kRight = 0,
@@ -101,11 +58,11 @@ enum class eDirection {
 class WXDLLIMPEXP_SDK clTabCtrlDropTarget : public wxTextDropTarget
 {
     clTabCtrl* m_tabCtrl;
-    clNotebook* m_notebook;
+    Notebook* m_notebook;
 
 public:
     clTabCtrlDropTarget(clTabCtrl* tabCtrl);
-    clTabCtrlDropTarget(clNotebook* notebook);
+    clTabCtrlDropTarget(Notebook* notebook);
     virtual ~clTabCtrlDropTarget();
     virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data);
 };
@@ -141,7 +98,6 @@ protected:
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
     void OnSize(wxSizeEvent& event);
-    void OnWindowKeyDown(wxKeyEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnRightUp(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);

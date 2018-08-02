@@ -1072,7 +1072,6 @@ void MainBook::MarkEditorReadOnly(clEditor* editor)
         return;
     }
 
-#if !CL_USE_NATIVEBOOK
     wxBitmap lockBmp = ::clGetManager()->GetStdIcons()->LoadBitmap("lock");
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         wxBitmap orig_bmp = editor->GetEditorBitmap();
@@ -1081,7 +1080,6 @@ void MainBook::MarkEditorReadOnly(clEditor* editor)
             break;
         }
     }
-#endif
 }
 
 long MainBook::GetBookStyle() { return 0; }
@@ -1107,12 +1105,6 @@ bool MainBook::DoSelectPage(wxWindow* win)
         SendCmdEvent(wxEVT_CMD_PAGE_CHANGED, win);
 
     } else {
-        // if(editor->GetContext()->GetName() == wxT("C++")) {
-        //     if(clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
-        //         clMainFrame::Get()->GetMenuBar()->Append(wxXmlResource::Get()->LoadMenu(wxT("editor_right_click")),
-        //                                                  wxT("C++"));
-        //     }
-        // }
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
         event.SetClientData((void*)dynamic_cast<IEditor*>(editor));
         EventNotifier::Get()->AddPendingEvent(event);

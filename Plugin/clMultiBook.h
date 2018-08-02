@@ -10,8 +10,8 @@
 
 class WXDLLIMPEXP_SDK clMultiBook : public wxPanel
 {
-    clNotebook* m_leftBook;
-    clNotebook* m_rightBook;
+    Notebook* m_leftBook;
+    Notebook* m_rightBook;
 
     wxSplitterWindow* m_splitter;
     size_t m_style;
@@ -19,18 +19,18 @@ class WXDLLIMPEXP_SDK clMultiBook : public wxPanel
     clTabHistory::Ptr_t m_history;
 
 protected:
-    bool GetActiveBook(clNotebook** book, size_t& bookIndex) const;
-    bool GetBookByPageIndex(size_t pageIndex, clNotebook** book, size_t& bookIndex, size_t& modPageIndex) const;
-    bool GetActivePageBook(clNotebook** book, size_t& bookIndex, size_t& modPageIndex) const;
-    void MovePageToNotebook(clNotebook* srcbook, size_t index, clNotebook* destbook);
+    bool GetActiveBook(Notebook** book, size_t& bookIndex) const;
+    bool GetBookByPageIndex(size_t pageIndex, Notebook** book, size_t& bookIndex, size_t& modPageIndex) const;
+    bool GetActivePageBook(Notebook** book, size_t& bookIndex, size_t& modPageIndex) const;
+    void MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* destbook);
     void UpdateView();
     int BookIndexToGlobalIndex(size_t bookIndex, size_t pageIndex) const;
-    int BookIndexToGlobalIndex(clNotebook* book, size_t pageIndex) const;
+    int BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const;
 
-    // clNotebook* AddNotebook();
-    clNotebook* CreateNotebook(wxWindow* parent);
+    // Notebook* AddNotebook();
+    Notebook* CreateNotebook(wxWindow* parent);
 
-    bool IsOurNotebook(clNotebook* book) const;
+    bool IsOurNotebook(Notebook* book) const;
 
 protected:
     void OnEventProxy(wxBookCtrlEvent& event);
@@ -64,7 +64,7 @@ public:
     bool CanMoveToTabGroupRight() const;
 
     //----------------------------
-    // clNotebook compatiblity API
+    // Notebook compatiblity API
     //----------------------------
     /**
      * @brief append page to the notebook

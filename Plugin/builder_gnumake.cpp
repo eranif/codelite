@@ -1683,11 +1683,17 @@ wxString BuilderGnuMake::GetBuildToolCommand(const wxString& project, const wxSt
         buildTool = wxT("\"$(MAKE)\"");
     }
 
-    if(isCommandlineCommand) {
-        return buildTool + " -e -f ";
+    if(buildTool.Lower().Contains("make")) {
+        if(isCommandlineCommand) {
+            return buildTool + " -e -f ";
+
+        } else {
+            return buildTool + " -f ";
+        }
 
     } else {
-        return buildTool + " -f ";
+        // Just return the build command as appears in the toolchain
+        return buildTool + " ";
     }
 }
 

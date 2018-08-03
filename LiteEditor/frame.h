@@ -559,8 +559,6 @@ protected:
     void OnDebuggerSettings(wxCommandEvent& e);
     void OnLinkClicked(wxHtmlLinkEvent& e);
     void OnLoadSession(wxCommandEvent& e);
-    void OnShowWelcomePage(wxCommandEvent& event);
-    void OnShowWelcomePageUI(wxUpdateUIEvent& event);
     void OnAppActivated(wxActivateEvent& event);
     void OnReloadExternallModified(wxCommandEvent& e);
     void OnReloadExternallModifiedNoPrompt(wxCommandEvent& e);

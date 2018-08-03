@@ -4099,13 +4099,13 @@ void clMainFrame::OnNextPrevTab_UI(wxUpdateUIEvent& e)
 void clMainFrame::OnIncrementalSearch(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    GetMainBook()->ShowQuickBar(true, false);
+    GetMainBook()->ShowQuickBar(true);
 }
 
 void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    GetMainBook()->ShowQuickBar(true, true);
+    GetMainBook()->ShowQuickBar(true);
 }
 
 void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)

@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 #include <vector>
 #include <wx/string.h>
+#include <wx/arrstr.h>
 
 class WXDLLIMPEXP_SDK clTerminalHistory
 {
@@ -20,6 +21,8 @@ public:
     void Add(const wxString& command);
     const wxString& ArrowUp();
     const wxString& ArrowDown();
+    wxArrayString GetItems() const;
+    void SetItems(const wxArrayString& items);
 };
 
 #endif // CLTERMINALHISTORY_H

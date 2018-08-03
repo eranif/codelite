@@ -5,6 +5,7 @@
 #include "clToolBarMenuButton.h"
 #include "clToolBarSeparator.h"
 #include "clToolBarToggleButton.h"
+#include "drawingutils.h"
 #include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
@@ -15,7 +16,11 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
                      const wxString& name)
     : wxPanel(parent, winid, pos, size, style, name)
     , m_popupShown(false)
+#if defined(__WXMSW__) || defined(__WXOSX__)
+    , m_flags(kThemedColour)
+#else
     , m_flags(0)
+#endif
 {
     Bind(wxEVT_PAINT, &clToolBar::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &clToolBar::OnEraseBackground, this);
@@ -51,9 +56,9 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     m_chevronRect = wxRect();
 
     wxRect clientRect = GetClientRect();
-    clToolBarButtonBase::FillMenuBarBgColour(dc, clientRect);
+    DrawingUtils::FillMenuBarBgColour(dc, clientRect, HasFlag(kThemedColour));
     clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
-    clToolBarButtonBase::FillMenuBarBgColour(dc, clientRect);
+    DrawingUtils::FillMenuBarBgColour(dc, clientRect, HasFlag(kThemedColour));
     int xx = 0;
     std::for_each(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* button) {
         wxSize buttonSize = button->CalculateSize(dc);
@@ -92,6 +97,8 @@ wxRect clToolBar::CalculateRect(wxDC& dc) const
         rect.width += buttonSize.GetWidth();
         rect.height = wxMax(rect.GetHeight(), buttonSize.GetHeight());
     });
+    // Always assume that we need the extra space for the chevron button
+    rect.width += CL_TOOL_BAR_CHEVRON_SIZE + 2;
     return rect;
 }
 

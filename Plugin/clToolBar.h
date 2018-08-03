@@ -21,6 +21,7 @@ class WXDLLIMPEXP_SDK clToolBar : public wxPanel
 public:
     enum eFlags {
         kShowLabels = (1 << 0),
+        kThemedColour = (1 << 1),
     };
 
 protected:
@@ -36,14 +37,6 @@ protected:
     virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) override;
     void DoIdleUpdate();
     wxRect CalculateRect(wxDC& dc) const;
-    void EnableFlag(eFlags f, bool b)
-    {
-        if(b) {
-            m_flags |= f;
-        } else {
-            m_flags &= ~f;
-        }
-    }
     void DoShowOverflowMenu();
 
 public:
@@ -52,6 +45,16 @@ public:
               const wxString& name = "clToolBar");
     virtual ~clToolBar();
 
+    void EnableFlag(eFlags f, bool b)
+    {
+        if(b) {
+            m_flags |= f;
+        } else {
+            m_flags &= ~f;
+        }
+    }
+    bool HasFlag(eFlags flag) const { return m_flags & flag; }
+    
     /**
      * @brief set a drop down menu for a button
      */
@@ -129,7 +132,7 @@ public:
     }
 
     void SetToolBitmapSize(const wxSize& size) { wxUnusedVar(size); }
-    
+
     void ToggleTool(wxWindowID buttonID, bool toggle);
 
     /**

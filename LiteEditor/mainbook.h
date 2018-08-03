@@ -156,9 +156,8 @@ public:
     void GetRecentlyOpenedFiles(wxArrayString& files);
     FileHistory& GetRecentlyOpenedFilesClass() { return m_recentFiles; }
     void ShowQuickBarForPlugins() { m_quickFindBar->ShowForPlugins(); }
-    void ShowQuickBar(bool s, bool replaceBar = false) { m_quickFindBar->Show(s, replaceBar); }
-    void ShowQuickBar(const wxString& findWhat, bool replaceBar = false) { m_quickFindBar->Show(findWhat, replaceBar); }
-    void ShowQuickReplaceBar(bool show) { m_quickFindBar->ShowReplacebar(show); }
+    void ShowQuickBar(bool s) { m_quickFindBar->Show(s); }
+    void ShowQuickBar(const wxString& findWhat) { m_quickFindBar->Show(findWhat); }
     void ShowMessage(const wxString& message, bool showHideButton = true, const wxBitmap& bmp = wxNullBitmap,
                      const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(),
                      const ButtonDetails& btn3 = ButtonDetails(), const CheckboxDetails& cb = CheckboxDetails());

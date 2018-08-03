@@ -38,3 +38,18 @@ const wxString& clTerminalHistory::ArrowDown()
     }
     return sEmptyStr;
 }
+
+wxArrayString clTerminalHistory::GetItems() const
+{
+    wxArrayString items;
+    std::for_each(m_history.begin(), m_history.end(), [&](const wxString& item) { items.Add(item); });
+    return items;
+}
+
+void clTerminalHistory::SetItems(const wxArrayString& items)
+{
+    m_history.clear();
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        Add(items.Item(i));
+    }
+}

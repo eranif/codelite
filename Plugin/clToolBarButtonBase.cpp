@@ -146,28 +146,6 @@ clToolBarButtonBase::clToolBarButtonBase(clToolBar* parent, wxWindowID id, const
 
 clToolBarButtonBase::~clToolBarButtonBase() {}
 
-void clToolBarButtonBase::FillMenuBarBgColour(wxDC& dc, const wxRect& rect)
-{
-#ifdef __WXOSX__
-    wxColour startColour("rgb(231, 229, 231)");
-    wxColour endColour("rgb(180, 180, 180)");
-    dc.GradientFillLinear(rect, startColour, endColour, wxSOUTH);
-    endColour = endColour.ChangeLightness(90);
-    dc.SetPen(endColour);
-    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
-#elif defined(__WXGTK3__)
-    dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.DrawRectangle(rect);
-#elif defined(__WXMSW__)
-    DrawingUtils::FillMenuBarBgColour(dc, rect);
-#else
-    dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.DrawRectangle(rect);
-#endif
-}
-
 void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
 {
     m_dropDownArrowRect = wxRect();
@@ -184,8 +162,6 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     wxColour bgHighlightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
     if(IsDark(bgHighlightColour)) { bgHighlightColour = bgHighlightColour.ChangeLightness(140); }
 #endif
-    // FillMenuBarBgColour(dc, rect);
-
     if(IsEnabled() && (IsHover() || IsPressed() || IsChecked())) {
         wxRect highlightRect = rect;
         highlightRect.Deflate(0, 1);

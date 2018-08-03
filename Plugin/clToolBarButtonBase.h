@@ -42,8 +42,8 @@ public:
     };
 
 public:
-    clToolBarButtonBase(
-        clToolBar* parent, wxWindowID id, const wxBitmap& bmp, const wxString& label = "", size_t flags = 0);
+    clToolBarButtonBase(clToolBar* parent, wxWindowID id, const wxBitmap& bmp, const wxString& label = "",
+                        size_t flags = 0);
     virtual ~clToolBarButtonBase();
 
 public:
@@ -79,8 +79,6 @@ protected:
     }
 
 public:
-    static void FillMenuBarBgColour(wxDC& dc, const wxRect& rect);
-
     void SetBmp(const wxBitmap& bmp) { this->m_bmp = bmp; }
     void SetLabel(const wxString& label) { this->m_label = label; }
     const wxBitmap& GetBmp() const { return m_bmp; }
@@ -118,11 +116,7 @@ public:
     bool IsEnabled() const { return !(m_flags & kDisabled); }
     bool IsControl() const { return m_flags & kControl; }
     void Enable(bool b) { EnableFlag(kDisabled, !b); }
-    template <typename T>
-    T* Cast()
-    {
-        return dynamic_cast<T*>(this);
-    }
+    template <typename T> T* Cast() { return dynamic_cast<T*>(this); }
 };
 
 #endif // CLTOOLBARBUTTONBASE_H

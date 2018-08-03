@@ -303,6 +303,28 @@ void clConfig::ClearAnnoyingDlgAnswers()
     Reload();
 }
 
+void clConfig::SetQuickFindSearchItems(const wxArrayString& items)
+{
+    ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
+    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    if(quickFindBar.hasNamedObject("SearchHistory")) {
+        quickFindBar.removeProperty("SearchHistory");
+    }
+    quickFindBar.addProperty("SearchHistory", items);
+    Save();
+}
+
+void clConfig::SetQuickFindReplaceItems(const wxArrayString& items)
+{
+    ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
+    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    if(quickFindBar.hasNamedObject("ReplaceHistory")) {
+        quickFindBar.removeProperty("ReplaceHistory");
+    }
+    quickFindBar.addProperty("ReplaceHistory", items);
+    Save();
+}
+
 void clConfig::AddQuickFindReplaceItem(const wxString& str)
 {
     ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
@@ -524,4 +546,5 @@ void clConfig::Write(const wxString& name, const wxColour& value)
     Write(name, strValue);
     Save();
 }
+
 #endif

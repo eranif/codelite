@@ -1,10 +1,10 @@
 #ifndef CLEDITOREDITEVENTSHANDLER_H
 #define CLEDITOREDITEVENTSHANDLER_H
 
-#include <wx/event.h>
 #include "codelite_exports.h"
-#include <wx/window.h>
 #include "smart_ptr.h"
+#include <wx/event.h>
+#include <wx/window.h>
 
 class wxComboBox;
 class wxStyledTextCtrl;
@@ -15,7 +15,8 @@ class WXDLLIMPEXP_SDK clEditEventsHandler : public wxEvtHandler
     wxStyledTextCtrl* m_stc;
     wxTextCtrl* m_textCtrl;
     wxComboBox* m_combo;
-    
+    bool m_noUnbind;
+
 private:
     void DoInitialize();
 
@@ -32,7 +33,7 @@ public:
     clEditEventsHandler(wxStyledTextCtrl* wnd);
     clEditEventsHandler(wxComboBox* wnd);
     virtual ~clEditEventsHandler();
-    
+    void NoUnbind() { m_noUnbind = true; }
     typedef SmartPtr<clEditEventsHandler> Ptr_t;
 };
 

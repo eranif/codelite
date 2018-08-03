@@ -259,14 +259,6 @@
                 <label>Full Screen...</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="view_welcome_page">
-                <label>Show &amp;Welcome Page</label>
-            </object>
-            <object class="wxMenuItem" name="view_welcome_page_at_startup">
-                <label>Load Welcome Page at &amp;Startup</label>
-                <checkable>1</checkable>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="output_pane">
                 <label>&amp;Output Pane</label>
                 <checkable>1</checkable>

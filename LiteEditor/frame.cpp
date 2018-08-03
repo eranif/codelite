@@ -315,7 +315,6 @@ EVT_MENU(XRCID("next_tab"), clMainFrame::OnNextTab)
 EVT_MENU(XRCID("prev_tab"), clMainFrame::OnPrevTab)
 EVT_MENU(XRCID("full_screen"), clMainFrame::OnShowFullScreen)
 EVT_MENU(XRCID("view_welcome_page"), clMainFrame::OnShowWelcomePage)
-EVT_MENU(XRCID("view_welcome_page_at_startup"), clMainFrame::OnLoadWelcomePage)
 EVT_MENU(XRCID("show_nav_toolbar"), clMainFrame::OnShowNavBar)
 EVT_MENU(XRCID("toogle_main_toolbars"), clMainFrame::OnToggleMainTBars)
 EVT_MENU(XRCID("toogle_plugin_toolbars"), clMainFrame::OnTogglePluginTBars)
@@ -343,7 +342,6 @@ EVT_UPDATE_UI(XRCID("whitepsace_always"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("whitespace_visiable_after_indent"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("whitespace_indent_only"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("view_welcome_page"), clMainFrame::OnShowWelcomePageUI)
-EVT_UPDATE_UI(XRCID("view_welcome_page_at_startup"), clMainFrame::OnLoadWelcomePageUI)
 EVT_UPDATE_UI(XRCID("show_nav_toolbar"), clMainFrame::OnShowNavBarUI)
 EVT_UPDATE_UI(viewAsSubMenuID, clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchUpdateUIEvent)
@@ -963,8 +961,8 @@ void clMainFrame::Initialize(bool loadLastSession)
     m_theFrame->m_loadLastSession = loadLastSession;
     m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME ? true : false);
 
-    // add the welcome page
-    if(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE) { m_theFrame->CreateWelcomePage(); }
+    // Create the default welcome page
+    m_theFrame->CreateWelcomePage();
 
     // plugins must be loaded before the file explorer
     m_theFrame->CompleteInitialization();
@@ -981,11 +979,6 @@ void clMainFrame::Initialize(bool loadLastSession)
 
     // Save the current layout as the "Default" layout (unless we already got one ...)
     ManagerST::Get()->GetPerspectiveManager().SavePerspectiveIfNotExists(NORMAL_LAYOUT);
-
-    // After all the plugins / panes have been loaded,
-    // its time to re-load the perspective
-    //    wxCommandEvent evt(wxEVT_LOAD_PERSPECTIVE);
-    //    m_theFrame->AddPendingEvent(evt);
 }
 
 clMainFrame* clMainFrame::Get() { return m_theFrame; }
@@ -1597,7 +1590,7 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
     // Prompt before exit, but not if we're coming from the Setup Wizard
-    if (!GetAndResetNoSavePerspectivePrompt()) {
+    if(!GetAndResetNoSavePerspectivePrompt()) {
         wxStandardID ans =
             PromptForYesNoCancelDialogWithCheckbox(_("Closing CodeLite\n\nSave perspective and exit?"), "SaveAndExit",
                                                    "Save and Exit", "Exit without saving", "Don't Exit");
@@ -1615,7 +1608,7 @@ void clMainFrame::OnClose(wxCloseEvent& event)
             }
         }
     }
-    
+
     SaveGeneralSettings();
 
     event.Skip();
@@ -1755,7 +1748,6 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
 
     // In any case, make sure that we dont have a workspace opened
     if(ManagerST::Get()->IsWorkspaceOpen()) { ManagerST::Get()->CloseWorkspace(); }
-    ShowWelcomePage();
 }
 
 void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
@@ -2805,12 +2797,7 @@ void clMainFrame::OnBackwardForwardUI(wxUpdateUIEvent& event)
 void clMainFrame::CreateWelcomePage()
 {
     WelcomePage* welcomePage = new WelcomePage(GetMainBook());
-    GetMainBook()->AddPage(welcomePage, _("Welcome!"), wxEmptyString, wxNullBitmap, true);
-    GetMainBook()->Layout();
-    // This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first
-    SendSizeEvent(wxSEND_EVENT_POST);
-    // Ditto the workspace pane auinotebook
-    GetWorkspacePane()->SendSizeEvent(wxSEND_EVENT_POST);
+    GetMainBook()->RegisterWelcomePage(welcomePage);
 }
 
 void clMainFrame::OnImportMSVS(wxCommandEvent& e)
@@ -3111,7 +3098,7 @@ void clMainFrame::OnStartPageEvent(wxCommandEvent& e)
     } else if(data->action == wxT("open-workspace")) {
         OnSwitchWorkspace(e);
     }
-    delete data;
+    wxDELETE(data);
 }
 
 void clMainFrame::SetFrameFlag(bool set, int flag)
@@ -3122,14 +3109,6 @@ void clMainFrame::SetFrameFlag(bool set, int flag)
         m_frameGeneralInfo.SetFlags(m_frameGeneralInfo.GetFlags() & ~(flag));
     }
 }
-
-void clMainFrame::OnShowWelcomePageUI(wxUpdateUIEvent& event)
-{
-    CHECK_SHUTDOWN();
-    event.Enable(GetMainBook()->FindPage(_("Welcome!")) == NULL);
-}
-
-void clMainFrame::OnShowWelcomePage(wxCommandEvent& event) { ShowWelcomePage(); }
 
 void clMainFrame::CompleteInitialization()
 {
@@ -3292,14 +3271,6 @@ void clMainFrame::OnCloseAllButThis(wxCommandEvent& e)
 WorkspaceTab* clMainFrame::GetWorkspaceTab() { return GetWorkspacePane()->GetWorkspaceTab(); }
 
 FileExplorer* clMainFrame::GetFileExplorer() { return GetWorkspacePane()->GetFileExplorer(); }
-
-void clMainFrame::OnLoadWelcomePage(wxCommandEvent& event) { SetFrameFlag(event.IsChecked(), CL_SHOW_WELCOME_PAGE); }
-
-void clMainFrame::OnLoadWelcomePageUI(wxUpdateUIEvent& event)
-{
-    CHECK_SHUTDOWN();
-    event.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE ? true : false);
-}
 
 void clMainFrame::OnFileCloseUI(wxUpdateUIEvent& event)
 {
@@ -3821,15 +3792,6 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
     FileUtils::OpenTerminal(filepath);
 }
 
-void clMainFrame::ShowWelcomePage()
-{
-    wxWindow* win = GetMainBook()->FindPage(_("Welcome!"));
-    if(win) {
-        GetMainBook()->SelectPage(win);
-    } else {
-        CreateWelcomePage();
-    }
-}
 
 void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
 {

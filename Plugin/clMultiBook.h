@@ -17,6 +17,7 @@ class WXDLLIMPEXP_SDK clMultiBook : public wxPanel
     size_t m_style;
     int m_selection;
     clTabHistory::Ptr_t m_history;
+    wxWindow* m_defaultPage;
 
 protected:
     bool GetActiveBook(Notebook** book, size_t& bookIndex) const;
@@ -31,6 +32,8 @@ protected:
     Notebook* CreateNotebook(wxWindow* parent);
 
     bool IsOurNotebook(Notebook* book) const;
+    void DoShowWindow(wxWindow* win, bool show);
+    void ShowNotebook();
 
 protected:
     void OnEventProxy(wxBookCtrlEvent& event);
@@ -40,7 +43,17 @@ public:
     clMultiBook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
     virtual ~clMultiBook();
-
+    
+    /**
+     * @brief display the welcome pahe
+     */
+    void ShowDefaultPage(bool show = true);
+    
+    /**
+     * @brief register a default page to be displayed when there are no
+     * more open tabs
+     */
+    void SetDefaultPage(wxWindow* page);
     clTabHistory::Ptr_t GetHistory() { return m_history; }
 
     /**

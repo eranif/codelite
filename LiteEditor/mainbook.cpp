@@ -248,6 +248,7 @@ void MainBook::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     e.Skip();
     CloseAll(false); // get ready for session to be restored by clearing out existing pages
+    m_book->ShowDefaultPage(false);
 }
 
 void MainBook::OnWorkspaceClosed(wxCommandEvent& e)
@@ -256,6 +257,7 @@ void MainBook::OnWorkspaceClosed(wxCommandEvent& e)
     CloseAll(false); // make sure no unsaved files
     clStatusBar* sb = clGetManager()->GetStatusBar();
     if(sb) { sb->SetSourceControlBitmap(wxNullBitmap, "", ""); }
+    m_book->ShowDefaultPage();
 }
 
 bool MainBook::AskUserToSave(clEditor* editor)
@@ -1233,7 +1235,11 @@ void MainBook::SetViewWordWrap(bool b)
     }
 }
 
-void MainBook::OnInitDone(wxCommandEvent& e) { e.Skip(); }
+void MainBook::OnInitDone(wxCommandEvent& e)
+{
+    e.Skip();
+    m_book->ShowDefaultPage();
+}
 
 wxWindow* MainBook::GetPage(size_t page) { return m_book->GetPage(page); }
 
@@ -1678,3 +1684,5 @@ void MainBook::DoShowTabLabelContextMenu()
     m_book->PopupMenu(contextMenu);
     wxDELETE(contextMenu);
 }
+
+void MainBook::RegisterWelcomePage(wxWindow* welcomePage) { m_book->SetDefaultPage(welcomePage); }

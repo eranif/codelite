@@ -120,7 +120,13 @@ private:
 public:
     MainBook(wxWindow* parent);
     ~MainBook();
-
+    
+    /**
+     * @brief register a welcome page. This page is displayed whenever there are no tabs open
+     * in CodeLite. If there is already a welcome page registered, this call destroys the previous one
+     */
+    void RegisterWelcomePage(wxWindow* welcomePage);
+    
     /**
      * @brief move the active tab to another tab group (notebook). To the left
      */

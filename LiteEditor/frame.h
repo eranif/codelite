@@ -292,11 +292,6 @@ public:
     void RebuildProject(const wxString& projectName);
 
     /**
-     * @brief display the welcome page
-     */
-    void ShowWelcomePage();
-
-    /**
      * @brief handle custom build targets events
      */
     void OnBuildCustomTarget(wxCommandEvent& event);
@@ -566,8 +561,6 @@ protected:
     void OnLoadSession(wxCommandEvent& e);
     void OnShowWelcomePage(wxCommandEvent& event);
     void OnShowWelcomePageUI(wxUpdateUIEvent& event);
-    void OnLoadWelcomePage(wxCommandEvent& event);
-    void OnLoadWelcomePageUI(wxUpdateUIEvent& event);
     void OnAppActivated(wxActivateEvent& event);
     void OnReloadExternallModified(wxCommandEvent& e);
     void OnReloadExternallModifiedNoPrompt(wxCommandEvent& e);

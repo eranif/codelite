@@ -75,11 +75,6 @@ void OutputPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
     SetMinClientSize(wxSize(-1, 250));
-#if USE_AUI_NOTEBOOK
-    long style = wxAUI_NB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_TAB_SPLIT;
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-    m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
-#else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
     if(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM) {
         style |= kNotebook_BottomTabs;
@@ -103,7 +98,7 @@ void OutputPane::CreateGUIControls()
     style |= kNotebook_UnderlineActiveTab;
     if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-#endif
+
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
     // Calculate the widest tab (the one with the 'Workspace' label) TODO: What happens with translations?
@@ -118,10 +113,14 @@ void OutputPane::CreateGUIControls()
 
     // Build tab
     m_buildWin = new NewBuildTab(m_book);
+#if PHP_BUILD
+    m_buildWin->Hide();
+#else
     m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, bmpLoader->LoadBitmap(wxT("build")));
     m_tabs.insert(std::make_pair(wxGetTranslation(BUILD_WIN),
                                  Tab(wxGetTranslation(BUILD_WIN), m_buildWin, bmpLoader->LoadBitmap(wxT("build")))));
     mgr->AddOutputTab(wxGetTranslation(BUILD_WIN));
+#endif
 
     // Find in files
     m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN));
@@ -141,11 +140,14 @@ void OutputPane::CreateGUIControls()
 
     // Show Usage ("References")
     m_showUsageTab = new FindUsageTab(m_book, wxGetTranslation(SHOW_USAGE));
+#if PHP_BUILD
+    m_showUsageTab->Hide();
+#else
     m_book->AddPage(m_showUsageTab, wxGetTranslation(SHOW_USAGE), false, bmpLoader->LoadBitmap(wxT("find")));
     m_tabs.insert(std::make_pair(wxGetTranslation(SHOW_USAGE), Tab(wxGetTranslation(SHOW_USAGE), m_showUsageTab,
                                                                    bmpLoader->LoadBitmap(wxT("find")))));
     mgr->AddOutputTab(wxGetTranslation(SHOW_USAGE));
-
+#endif
     // Output tab
     m_outputWind = new OutputTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
     m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("console")));
@@ -157,10 +159,14 @@ void OutputPane::CreateGUIControls()
     // Clang tab
     NewProjImgList images;
     m_clangOutputTab = new ClangOutputTab(m_book);
+#if PHP_BUILD
+    m_clangOutputTab->Hide();
+#else
     m_book->AddPage(m_clangOutputTab, wxGetTranslation(CLANG_TAB), false, bmpLoader->LoadBitmap("clang"));
     m_tabs.insert(std::make_pair(wxGetTranslation(CLANG_TAB),
                                  Tab(wxGetTranslation(CLANG_TAB), m_clangOutputTab, bmpLoader->LoadBitmap("clang"))));
     mgr->AddOutputTab(wxGetTranslation(CLANG_TAB));
+#endif
 #endif
 
     // Tasks panel

@@ -93,7 +93,7 @@ public:
     /**
      * @brief format list of files
      */
-    void BatchFormat(const std::vector<wxFileName>& files);
+    void BatchFormat(const std::vector<wxFileName>& files, bool silent = true);
     void OnContextMenu(clContextMenuEvent& event);
 
     CodeFormatter(IManager* manager);

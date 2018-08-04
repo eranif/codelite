@@ -631,7 +631,17 @@ wxString CodeFormatter::DoGetGlobalEOLString() const
     }
 }
 
-void CodeFormatter::OnFormatFile(clSourceFormatEvent& e) { wxUnusedVar(e); }
+void CodeFormatter::OnFormatFile(clSourceFormatEvent& e)
+{
+    wxFileName fn = e.GetFileName();
+    std::vector<wxFileName> filesToFormat;
+    FormatterEngine engine = FindFormatter(fn);
+    if(engine != kFormatEngineNone) {
+        // TODO skip files based on size, 4.5MB as the default
+        filesToFormat.push_back(fn);
+    }
+    BatchFormat(filesToFormat, true);
+}
 
 void CodeFormatter::OnFormatFiles(wxCommandEvent& event)
 {
@@ -677,29 +687,32 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
     BatchFormat(filesToFormat);
 }
 
-void CodeFormatter::BatchFormat(const std::vector<wxFileName>& files)
+void CodeFormatter::BatchFormat(const std::vector<wxFileName>& files, bool silent)
 {
     if(files.empty()) {
-        ::wxMessageBox(_("Project contains no supported files"));
+        if(!silent) { ::wxMessageBox(_("Project contains no supported files")); }
         return;
     }
 
-    wxString msg;
-    msg << _("You are about to beautify ") << files.size() << _(" files\nContinue?");
-    if(wxYES != ::wxMessageBox(msg, _("Source Code Formatter"), wxYES_NO | wxCANCEL | wxCENTER)) { return; }
+    wxProgressDialog* dlg = nullptr;
+    if(!silent) {
+        wxString msg;
+        msg << _("You are about to beautify ") << files.size() << _(" files\nContinue?");
+        if(wxYES != ::wxMessageBox(msg, _("Source Code Formatter"), wxYES_NO | wxCANCEL | wxCENTER)) { return; }
 
-    wxProgressDialog dlg(_("Source Code Formatter"), _("Formatting files..."), (int)files.size(),
-                         m_mgr->GetTheApp()->GetTopWindow());
-
+        dlg = new wxProgressDialog(_("Source Code Formatter"), _("Formatting files..."), (int)files.size(),
+                                   m_mgr->GetTheApp()->GetTopWindow());
+    }
     for(size_t i = 0; i < files.size(); ++i) {
         wxString msg;
         msg << "[ " << i << " / " << files.size() << " ] " << files.at(i).GetFullName();
-        dlg.Update(i, msg);
+        if(dlg) { dlg->Update(i, msg); }
 
         FormatterEngine engine = FindFormatter(files.at(i).GetFullPath());
         DoFormatFile(files.at(i).GetFullPath(), engine);
     }
 
+    if(dlg) { dlg->Destroy(); }
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 }
 

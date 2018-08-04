@@ -7,8 +7,13 @@ curdir=`pwd`
 os_name=`uname -s`
 upload_file="no"
 build_gtk3="no"
+build_php="no"
 if [ "$1" == "--with-gtk3" ] || [ "$2" == "--with-gtk3" ] ; then
     build_gtk3="yes"
+fi
+
+if [ "$1" == "--php-build" ] || [ "$2" == "--php-build" ] ; then
+    build_php="yes"
 fi
 
 if [ "$1" == "--upload" ] || [ "$2" == "--upload" ] ; then
@@ -31,6 +36,7 @@ echo "CPU count    : ${cpu_count}"
 echo "Build GTK2   : yes"
 echo "Build GTK3   : ${build_gtk3}"
 echo "Upload binary: ${upload_file}"
+echo "PHP Build    : ${build_php}"
 
 # Update our source tree
 cd $curdir
@@ -53,8 +59,11 @@ linux_build() {
     cd $curdir/$1 # cd to the build folder
     echo rm -fr *.deb
     rm -fr *.deb
-
-    PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+    CMAKE_EXTRA_PARAMS=""
+    if [ "${build_php}" == "yes" ]; then
+        CMAKE_EXTRA_PARAMS="-DPHP_BUILD=1"
+    fi
+    PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 .. ${CMAKE_EXTRA_PARAMS}
     make -j${cpu_count} && make package
     if [ "${upload_file}" == "yes" ]; then
         deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
@@ -82,6 +91,9 @@ else
     linux_build build-release
     if [ "${build_gtk3}" == "yes" ]; then
         linux_build build-release-gtk3
+    fi
+    if [ "${build_php}" == "yes" ]; then
+        linux_build build-release-php
     fi
 fi
 

@@ -1,16 +1,16 @@
-#include "clBootstrapWizard.h"
 #include "ColoursAndFontsManager.h"
-#include "globals.h"
 #include "CompilersDetectorManager.h"
 #include "build_settings_config.h"
-#include <wx/wupdlock.h>
-#include <wx/dcmemory.h>
+#include "clBootstrapWizard.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "macros.h"
 #include "plugindata.h"
 #include <algorithm>
 #include <vector>
-#include "macros.h"
+#include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
-#include "file_logger.h"
+#include <wx/wupdlock.h>
 
 static std::vector<wxString> GetCxxPlugins()
 {
@@ -67,8 +67,9 @@ public:
     wxString GetPluginSummary() const
     {
         wxString summary;
-        summary << pluginInfo.GetName() << " " << pluginInfo.GetVersion() << "\n" << _("By: ") << pluginInfo.GetAuthor()
-                << "\n\n" << pluginInfo.GetDescription();
+        summary << pluginInfo.GetName() << " " << pluginInfo.GetVersion() << "\n"
+                << _("By: ") << pluginInfo.GetAuthor() << "\n\n"
+                << pluginInfo.GetDescription();
         return summary;
     }
 };
@@ -100,9 +101,7 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
     m_choiceTheme->SetSelection(m_choiceTheme->FindString("One Dark Like"));
     m_stc24->SetText(sampleText);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", "One Dark Like");
-    if(lexer) {
-        lexer->Apply(m_stc24, true);
-    }
+    if(lexer) { lexer->Apply(m_stc24, true); }
     m_stc24->SetKeyWords(1, "Demo std string");
     m_stc24->SetKeyWords(3, "other number");
 
@@ -111,6 +110,11 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
 
     m_developmentProfile = clConfig::Get().Read("DevelopmentProfile", m_developmentProfile);
     m_radioBoxProfile->SetSelection(m_developmentProfile);
+    
+#if PHP_BUILD
+    m_radioBoxProfile->SetSelection(3); // PHP
+    m_radioBoxProfile->Enable(false);
+#endif
 }
 
 clBootstrapWizard::~clBootstrapWizard() { clConfig::Get().Write("DevelopmentProfile", m_developmentProfile); }
@@ -120,9 +124,7 @@ void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
     m_stc24->SetEditable(true);
     wxString selection = m_choiceTheme->GetStringSelection();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", selection);
-    if(lexer) {
-        lexer->Apply(m_stc24, true);
-    }
+    if(lexer) { lexer->Apply(m_stc24, true); }
     m_stc24->SetKeyWords(1, "Demo std string");
     m_stc24->SetKeyWords(3, "other");
     ::clRecalculateSTCHScrollBar(m_stc24);
@@ -152,9 +154,7 @@ void clBootstrapWizard::OnScanForCompilers(wxCommandEvent& event)
             m_dvListCtrlCompilers->AppendItem(cols);
         }
 
-        if(!detector.FoundMinGWCompiler()) {
-            CompilersDetectorManager::MSWSuggestToDownloadMinGW(true);
-        }
+        if(!detector.FoundMinGWCompiler()) { CompilersDetectorManager::MSWSuggestToDownloadMinGW(true); }
 
     } else {
         // nothing found on this machine, offer to download

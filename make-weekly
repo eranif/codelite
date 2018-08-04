@@ -6,12 +6,7 @@ curdir=`pwd`
 # Clear old installers
 os_name=`uname -s`
 upload_file="no"
-build_gtk3="no"
 build_php="no"
-if [ "$1" == "--with-gtk3" ] || [ "$2" == "--with-gtk3" ] ; then
-    build_gtk3="yes"
-fi
-
 if [ "$1" == "--php-build" ] || [ "$2" == "--php-build" ] ; then
     build_php="yes"
 fi
@@ -19,7 +14,6 @@ fi
 if [ "$1" == "--upload" ] || [ "$2" == "--upload" ] ; then
     upload_file="yes"
 fi
-
 
 # Clear old installers
 os_name=`uname -s`
@@ -33,8 +27,6 @@ fi
 
 echo "Platform     : ${os_name}"
 echo "CPU count    : ${cpu_count}"
-echo "Build GTK2   : yes"
-echo "Build GTK3   : ${build_gtk3}"
 echo "Upload binary: ${upload_file}"
 echo "PHP Build    : ${build_php}"
 
@@ -83,18 +75,8 @@ if [ ${os_name} == "Darwin" ]; then
         scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
 else
-    if [ "${build_gtk3}" == "yes" ]; then
-        echo "Building for GTK2 and GTK3"
-    else
-        echo "Building for GTK2 only"
-    fi
-    linux_build build-release
-    if [ "${build_gtk3}" == "yes" ]; then
-        linux_build build-release-gtk3
-    fi
+    linux_build build-release-gtk3
     if [ "${build_php}" == "yes" ]; then
         linux_build build-release-php
     fi
 fi
-
-

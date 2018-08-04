@@ -532,6 +532,7 @@ void clMultiBook::ShowNotebook()
 
 void clMultiBook::ShowDefaultPage(bool show)
 {
+    // Avoid unneeded flickers
     wxWindowUpdateLocker locker(this);
     DoShowWindow(m_splitter, !show);
     DoShowWindow(m_defaultPage, show);

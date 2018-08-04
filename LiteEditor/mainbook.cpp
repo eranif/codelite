@@ -1190,7 +1190,7 @@ void MainBook::OnClosePage(wxBookCtrlEvent& e)
 
 void MainBook::DoPositionFindBar()
 {
-    clWindowUpdateLocker locker(this);
+    //clWindowUpdateLocker locker(this);
     // the find bar is already placed on the MainBook, detach it
     GetSizer()->Detach(m_quickFindBar);
 

@@ -46,41 +46,41 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     mainSizer->Add(flexGridSizer107, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_textCtrlFind = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_RICH2|wxTE_PROCESS_ENTER);
+    m_textCtrlFind = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_RICH|wxTE_PROCESS_ENTER);
     m_textCtrlFind->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlFind->SetHint(wxT(""));
     #endif
     
-    flexGridSizer107->Add(m_textCtrlFind, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    flexGridSizer107->Add(m_textCtrlFind, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(1));
     
     m_buttonFind = new wxButton(this, wxID_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_buttonFind->SetDefault();
     
-    flexGridSizer107->Add(m_buttonFind, 0, wxALL, WXC_FROM_DIP(2));
+    flexGridSizer107->Add(m_buttonFind, 0, wxALL|wxEXPAND, WXC_FROM_DIP(1));
     
     m_buttonFindPrev = new wxButton(this, wxID_BACKWARD, _("Find Prev"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer107->Add(m_buttonFindPrev, 0, wxALL, WXC_FROM_DIP(2));
+    flexGridSizer107->Add(m_buttonFindPrev, 0, wxALL|wxEXPAND, WXC_FROM_DIP(1));
     
     m_buttonFindAll = new wxButton(this, wxID_FIND_ALL, _("Find All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer107->Add(m_buttonFindAll, 0, wxALL, WXC_FROM_DIP(2));
+    flexGridSizer107->Add(m_buttonFindAll, 0, wxALL|wxEXPAND, WXC_FROM_DIP(1));
     
-    m_textCtrlReplace = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_RICH2|wxTE_PROCESS_ENTER);
+    m_textCtrlReplace = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_RICH|wxTE_PROCESS_ENTER);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlReplace->SetHint(wxT(""));
     #endif
     
-    flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+    flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(1));
     
     m_buttonReplace = new wxButton(this, wxID_REPLACE, _("Replace"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer107->Add(m_buttonReplace, 0, wxALL, WXC_FROM_DIP(2));
+    flexGridSizer107->Add(m_buttonReplace, 0, wxALL|wxEXPAND, WXC_FROM_DIP(1));
     
     m_buttonReplaceAll = new wxButton(this, wxID_REPLACE_ALL, _("Replace All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL, WXC_FROM_DIP(2));
+    flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL|wxEXPAND, WXC_FROM_DIP(1));
     
     SetName(wxT("QuickFindBarBase"));
     SetSize(-1,-1);
@@ -93,17 +93,22 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_textCtrlFind->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);
     m_buttonFind->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnFind), NULL, this);
     m_buttonFind->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnFindUI), NULL, this);
+    m_buttonFind->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     m_buttonFindPrev->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnFindPrev), NULL, this);
     m_buttonFindPrev->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnFindPrevUI), NULL, this);
+    m_buttonFindPrev->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     m_buttonFindAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnFindAll), NULL, this);
     m_buttonFindAll->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnFindAllUI), NULL, this);
+    m_buttonFindAll->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     m_textCtrlReplace->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickFindBarBase::OnReplaceTextUpdated), NULL, this);
     m_textCtrlReplace->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnReplaceTextEnter), NULL, this);
     m_textCtrlReplace->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnReplaceKeyDown), NULL, this);
     m_buttonReplace->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     m_buttonReplace->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceUI), NULL, this);
+    m_buttonReplace->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     m_buttonReplaceAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplaceAll), NULL, this);
     m_buttonReplaceAll->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceAllUI), NULL, this);
+    m_buttonReplaceAll->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     
 }
 
@@ -114,17 +119,22 @@ QuickFindBarBase::~QuickFindBarBase()
     m_textCtrlFind->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);
     m_buttonFind->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnFind), NULL, this);
     m_buttonFind->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnFindUI), NULL, this);
+    m_buttonFind->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     m_buttonFindPrev->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnFindPrev), NULL, this);
     m_buttonFindPrev->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnFindPrevUI), NULL, this);
+    m_buttonFindPrev->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     m_buttonFindAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnFindAll), NULL, this);
     m_buttonFindAll->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnFindAllUI), NULL, this);
+    m_buttonFindAll->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     m_textCtrlReplace->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickFindBarBase::OnReplaceTextUpdated), NULL, this);
     m_textCtrlReplace->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnReplaceTextEnter), NULL, this);
     m_textCtrlReplace->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnReplaceKeyDown), NULL, this);
     m_buttonReplace->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     m_buttonReplace->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceUI), NULL, this);
+    m_buttonReplace->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     m_buttonReplaceAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplaceAll), NULL, this);
     m_buttonReplaceAll->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceAllUI), NULL, this);
+    m_buttonReplaceAll->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnButtonKeyDown), NULL, this);
     
 }
 

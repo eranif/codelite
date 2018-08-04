@@ -59,6 +59,7 @@ public:
     clTerminalHistory m_replaceHistory;
 
 protected:
+    virtual void OnButtonKeyDown(wxKeyEvent& event);
     virtual void OnReplaceAllUI(wxUpdateUIEvent& event);
     virtual void OnReplaceUI(wxUpdateUIEvent& event);
     virtual void OnFind(wxCommandEvent& event);

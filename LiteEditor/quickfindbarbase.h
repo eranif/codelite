@@ -64,6 +64,7 @@ protected:
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnButtonKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnFindPrev(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindPrevUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnFindAll(wxCommandEvent& event) { event.Skip(); }

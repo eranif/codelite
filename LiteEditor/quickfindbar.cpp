@@ -1,5 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2008 by Eran Ifrah
 // file name            : quickfindbar.cpp
@@ -85,7 +86,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_highlightMatches(false)
     , m_replaceInSelection(false)
 {
-    SetBackgroundColour(DrawingUtils::GetPanelBgColour());
     // Add the 'close' button
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
 
@@ -154,8 +154,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     //=======----------------------
     // Find what:
     //=======----------------------
-
-    Hide();
     GetSizer()->Fit(this);
     wxTheApp->Bind(wxEVT_MENU,
                    [&](wxCommandEvent& event) {
@@ -204,13 +202,14 @@ bool QuickFindBar::Show(bool show)
     return DoShow(show, wxEmptyString);
 }
 
-#define SHOW_STATUS_MESSAGES(searchFlags) (!(searchFlags & kDisableDisplayErrorMessages))
+#define SHOW_STATUS_MESSAGES(searchFlags) (true)
 
 bool QuickFindBar::DoSearch(size_t searchFlags)
 {
     if(!m_sci || m_sci->GetLength() == 0 || m_textCtrlFind->GetValue().IsEmpty()) return false;
     clGetManager()->SetStatusMessage(wxEmptyString);
-
+    m_matchesFound->SetLabel("");
+    
     // Clear all search markers if desired
     if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
         m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
@@ -276,11 +275,11 @@ bool QuickFindBar::DoSearch(size_t searchFlags)
     }
 
     if(pos == wxNOT_FOUND) {
-        m_matchesFound->SetLabel(_("No matches found"));
         // Restore the caret position
         m_sci->SetCurrentPos(curpos);
         m_sci->ClearSelections();
         DoHighlightMatches(false);
+        m_matchesFound->SetLabel(_("No matches found"));
         return false;
     }
 
@@ -1112,5 +1111,21 @@ void QuickFindBar::DoArrowUp(clTerminalHistory& history, wxTextCtrl* ctrl)
         ctrl->Replace(from, to, str);
         ctrl->SelectNone();
         ctrl->SetInsertionPoint(ctrl->GetLastPosition());
+    }
+}
+
+void QuickFindBar::OnButtonKeyDown(wxKeyEvent& event)
+{
+    switch(event.GetKeyCode()) {
+    case WXK_ESCAPE: {
+        wxCommandEvent dummy;
+        OnHide(dummy);
+        DoHighlightMatches(false);
+        break;
+    }
+    default: {
+        event.Skip();
+        break;
+    }
     }
 }

@@ -52,7 +52,7 @@
     }, {
      "type": "bool",
      "m_label": "Hidden",
-     "m_value": false
+     "m_value": true
     }, {
      "type": "bool",
      "m_label": "Disabled",
@@ -334,10 +334,10 @@
        "m_children": [{
          "m_type": 4406,
          "proportion": 0,
-         "border": 2,
+         "border": 1,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_ENTER"],
+         "m_styles": ["wxTE_RICH", "wxTE_PROCESS_ENTER"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
          "m_properties": [{
            "type": "winid",
@@ -442,11 +442,11 @@
         }, {
          "m_type": 4400,
          "proportion": 0,
-         "border": 2,
+         "border": 1,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -539,16 +539,23 @@
            "m_functionNameAndSignature": "OnFindUI(wxUpdateUIEvent& event)",
            "m_description": "Process a wxEVT_UPDATE_UI event",
            "m_noBody": false
+          }, {
+           "m_eventName": "wxEVT_KEY_DOWN",
+           "m_eventClass": "wxKeyEvent",
+           "m_eventHandler": "wxKeyEventHandler",
+           "m_functionNameAndSignature": "OnButtonKeyDown(wxKeyEvent& event)",
+           "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
+           "m_noBody": false
           }],
          "m_children": []
         }, {
          "m_type": 4400,
          "proportion": 0,
-         "border": 2,
+         "border": 1,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -641,16 +648,23 @@
            "m_functionNameAndSignature": "OnFindPrevUI(wxUpdateUIEvent& event)",
            "m_description": "Process a wxEVT_UPDATE_UI event",
            "m_noBody": false
+          }, {
+           "m_eventName": "wxEVT_KEY_DOWN",
+           "m_eventClass": "wxKeyEvent",
+           "m_eventHandler": "wxKeyEventHandler",
+           "m_functionNameAndSignature": "OnButtonKeyDown(wxKeyEvent& event)",
+           "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
+           "m_noBody": false
           }],
          "m_children": []
         }, {
          "m_type": 4400,
          "proportion": 0,
-         "border": 2,
+         "border": 1,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -743,15 +757,22 @@
            "m_functionNameAndSignature": "OnFindAllUI(wxUpdateUIEvent& event)",
            "m_description": "Process a wxEVT_UPDATE_UI event",
            "m_noBody": false
+          }, {
+           "m_eventName": "wxEVT_KEY_DOWN",
+           "m_eventClass": "wxKeyEvent",
+           "m_eventHandler": "wxKeyEventHandler",
+           "m_functionNameAndSignature": "OnButtonKeyDown(wxKeyEvent& event)",
+           "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
+           "m_noBody": false
           }],
          "m_children": []
         }, {
          "m_type": 4406,
          "proportion": 0,
-         "border": 2,
+         "border": 1,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_ENTER"],
+         "m_styles": ["wxTE_RICH", "wxTE_PROCESS_ENTER"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
          "m_properties": [{
            "type": "winid",
@@ -856,11 +877,11 @@
         }, {
          "m_type": 4400,
          "proportion": 0,
-         "border": 2,
+         "border": 1,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -953,16 +974,23 @@
            "m_functionNameAndSignature": "OnReplaceUI(wxUpdateUIEvent& event)",
            "m_description": "Process a wxEVT_UPDATE_UI event",
            "m_noBody": false
+          }, {
+           "m_eventName": "wxEVT_KEY_DOWN",
+           "m_eventClass": "wxKeyEvent",
+           "m_eventHandler": "wxKeyEventHandler",
+           "m_functionNameAndSignature": "OnButtonKeyDown(wxKeyEvent& event)",
+           "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
+           "m_noBody": false
           }],
          "m_children": []
         }, {
          "m_type": 4400,
          "proportion": 0,
-         "border": 2,
+         "border": 1,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -1054,6 +1082,13 @@
            "m_eventHandler": "wxUpdateUIEventHandler",
            "m_functionNameAndSignature": "OnReplaceAllUI(wxUpdateUIEvent& event)",
            "m_description": "Process a wxEVT_UPDATE_UI event",
+           "m_noBody": false
+          }, {
+           "m_eventName": "wxEVT_KEY_DOWN",
+           "m_eventClass": "wxKeyEvent",
+           "m_eventHandler": "wxKeyEventHandler",
+           "m_functionNameAndSignature": "OnButtonKeyDown(wxKeyEvent& event)",
+           "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
            "m_noBody": false
           }],
          "m_children": []

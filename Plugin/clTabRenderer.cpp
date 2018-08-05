@@ -126,7 +126,11 @@ void clTabInfo::CalculateOffsets(size_t style)
 {
     wxBitmap b(1, 1);
     wxMemoryDC memoryDC(b);
+#ifdef _WXGTK3__
+    wxDC &gcdc = memoryDC;
+#else
     wxGCDC gcdc(memoryDC);
+#endif
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
     

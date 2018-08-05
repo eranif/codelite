@@ -397,7 +397,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         return;
     }
 
-#if 0
+#ifdef __WXGTK3__
     wxDC& gcdc = dc;
 #else
     wxGCDC gcdc(dc);
@@ -418,7 +418,6 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
         if(tab->IsActive()) { activeTabInex = i; }
 
-#if CL_BUILD
         // send event per tab to get their colours
         clColourEvent colourEvent(wxEVT_COLOUR_TAB);
         colourEvent.SetPage(tab->GetWindow());
@@ -428,13 +427,10 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             user_colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
             pColours = &user_colours;
         }
-
-        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style);
+#ifdef __WXGTK3__
+        m_art->Draw(this, gcdc, dc, *tab.get(), (*pColours), m_style);
 #else
-        // Under GTK there is a problem with HiDPI screens and wxGCDC for drawing text
-        // the text is rendered too small. Use the wxPaintDC instead of the wxGCDC just for
-        // drawing text
-        m_art->Draw(this, gcdc, gcdc, *tab.get(), m_colours, m_style);
+        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style);
 #endif
     }
 

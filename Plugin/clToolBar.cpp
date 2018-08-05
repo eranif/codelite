@@ -54,7 +54,11 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     wxBufferedPaintDC dc(this);
     PrepareDC(dc);
 
+#ifdef __WXGTK3__
+    wxDC& gcdc = dc;
+#else
     wxGCDC gcdc(dc);
+#endif
 
     m_overflowButtons.clear();
     m_visibleButtons.clear();

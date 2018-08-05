@@ -51,11 +51,21 @@ linux_build() {
     cd $curdir/$1 # cd to the build folder
     echo rm -fr *.deb
     rm -fr *.deb
-    CMAKE_EXTRA_PARAMS=""
-    if [ "${build_php}" == "yes" ]; then
-        CMAKE_EXTRA_PARAMS="-DPHP_BUILD=1"
+    PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+    make -j${cpu_count} && make package
+    if [ "${upload_file}" == "yes" ]; then
+        deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
+        echo Uploading deb file ${deb_file}
+        scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
-    PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 .. ${CMAKE_EXTRA_PARAMS}
+    cd $curdir
+}
+
+linux_build_php() {
+    cd $curdir/$1 # cd to the build folder
+    echo rm -fr *.deb
+    rm -fr *.deb
+    PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 .. -DPHP_BUILD=1
     make -j${cpu_count} && make package
     if [ "${upload_file}" == "yes" ]; then
         deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
@@ -77,6 +87,6 @@ if [ ${os_name} == "Darwin" ]; then
 else
     linux_build build-release-gtk3
     if [ "${build_php}" == "yes" ]; then
-        linux_build build-release-php
+        linux_build_php build-release-php
     fi
 fi

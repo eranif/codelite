@@ -126,6 +126,7 @@ void clTabInfo::CalculateOffsets(size_t style)
 {
     wxBitmap b(1, 1);
     wxMemoryDC memoryDC(b);
+    wxGCDC gcdc(memoryDC);
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
     
@@ -134,7 +135,7 @@ void clTabInfo::CalculateOffsets(size_t style)
     int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
     int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
     
-    wxDC& dc = memoryDC;
+    wxDC& dc = gcdc;
     wxFont font = clTabRenderer::GetTabFont();
     dc.SetFont(font);
 

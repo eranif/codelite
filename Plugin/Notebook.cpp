@@ -232,11 +232,13 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
 void clTabCtrl::DoSetBestSize()
 {
     wxBitmap bmp(1, 1);
-    wxMemoryDC memDC(bmp);
+    wxMemoryDC memoryDC(bmp);
+    wxGCDC gcdc(memoryDC);
+    
     wxFont font = clTabRenderer::GetTabFont();
-    memDC.SetFont(font);
+    gcdc.SetFont(font);
 
-    wxSize sz = memDC.GetTextExtent("Tp");
+    wxSize sz = gcdc.GetTextExtent("Tp");
 
     m_height = sz.GetHeight() + (4 * GetArt()->ySpacer);
     m_vTabsWidth = sz.GetHeight() + (5 * GetArt()->ySpacer);
@@ -395,7 +397,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         return;
     }
 
-#ifdef __WXGTK__
+#if 0
     wxDC& gcdc = dc;
 #else
     wxGCDC gcdc(dc);

@@ -54,6 +54,7 @@ fi
 cd $curdir
 
 linux_build() {
+    mkdir -p $curdir/$1
     cd $curdir/$1 # cd to the build folder
     echo rm -fr *.deb
     rm -fr *.deb
@@ -68,6 +69,7 @@ linux_build() {
 }
 
 linux_build_php() {
+    mkdir -p $curdir/$1
     cd $curdir/$1 # cd to the build folder
     echo rm -fr *.deb
     rm -fr *.deb

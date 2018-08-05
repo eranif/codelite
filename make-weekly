@@ -93,7 +93,7 @@ if [ ${os_name} == "Darwin" ]; then
         scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
 else
-    linux_build build-release-gtk3
+    linux_build build-release
     if [ "${build_php}" == "yes" ]; then
         linux_build_php build-release-php
     fi

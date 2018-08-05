@@ -13,7 +13,6 @@ class WXDLLIMPEXP_SDK clToolBar : public wxPanel
     std::vector<clToolBarButtonBase*> m_buttons;
     std::vector<clToolBarButtonBase*> m_overflowButtons;
     std::vector<clToolBarButtonBase*> m_visibleButtons;
-    std::unordered_map<int, wxMenu*> m_menus;
     bool m_popupShown;
     size_t m_flags;
     wxRect m_chevronRect;
@@ -54,7 +53,7 @@ public:
         }
     }
     bool HasFlag(eFlags flag) const { return m_flags & flag; }
-    
+
     /**
      * @brief set a drop down menu for a button
      */

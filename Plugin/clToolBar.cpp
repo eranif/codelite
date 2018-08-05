@@ -6,6 +6,7 @@
 #include "clToolBarSeparator.h"
 #include "clToolBarToggleButton.h"
 #include "drawingutils.h"
+#include "macros.h"
 #include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
@@ -52,9 +53,9 @@ void clToolBar::OnPaint(wxPaintEvent& event)
 {
     wxBufferedPaintDC dc(this);
     PrepareDC(dc);
-    
+
     wxGCDC gcdc(dc);
-    
+
     m_overflowButtons.clear();
     m_visibleButtons.clear();
     m_chevronRect = wxRect();
@@ -137,7 +138,7 @@ void clToolBar::OnLeftUp(wxMouseEvent& event)
                     clicked.SetInt(btn->IsChecked() ? 1 : 0);
                     GetEventHandler()->AddPendingEvent(clicked);
                 } else if(btn->InsideMenuButton(pos)) {
-                    wxMenu* menu = FindMenuById(btn->GetId());
+                    wxMenu* menu = btn->GetMenu();
                     if(menu) {
                         // We got the menu, show it
                         ShowMenuForButton(btn->GetId(), menu);
@@ -291,17 +292,16 @@ clToolBarButtonBase* clToolBar::AddSeparator() { return Add(new clToolBarSeparat
 
 void clToolBar::SetDropdownMenu(wxWindowID buttonID, wxMenu* menu)
 {
-    if(m_menus.count(buttonID)) {
-        // we already have a menu here, delete it
-        delete m_menus[buttonID];
-    }
-    m_menus[buttonID] = menu;
+    clToolBarButtonBase* button = FindById(buttonID);
+    CHECK_PTR_RET(button);
+    button->SetMenu(menu);
 }
 
 wxMenu* clToolBar::FindMenuById(wxWindowID buttonID) const
 {
-    std::unordered_map<int, wxMenu*>::const_iterator iter = m_menus.find(buttonID);
-    return (iter == m_menus.end() ? NULL : (iter->second));
+    clToolBarButtonBase* button = FindById(buttonID);
+    CHECK_PTR_RET_NULL(button);
+    return button->GetMenu();
 }
 
 void clToolBar::ToggleTool(wxWindowID buttonID, bool toggle)

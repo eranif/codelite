@@ -12,10 +12,11 @@ clToolBarButtonBase::clToolBarButtonBase(clToolBar* parent, wxWindowID id, const
     , m_label(label)
     , m_flags(flags)
     , m_renderFlags(0)
+    , m_menu(nullptr)
 {
 }
 
-clToolBarButtonBase::~clToolBarButtonBase() {}
+clToolBarButtonBase::~clToolBarButtonBase() { wxDELETE(m_menu); }
 
 void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
 {
@@ -76,7 +77,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     }
 
     // Do we need to draw a drop down arrow?
-    if(HasMenu()) {
+    if(IsMenuButton()) {
         // draw a drop down menu
         m_dropDownArrowRect =
             wxRect(xx, rect.GetY(), (2 * CL_TOOL_BAR_X_MARGIN) + CL_TOOL_BAR_DROPDOWN_ARROW_SIZE, rect.GetHeight());
@@ -101,4 +102,10 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         xx += CL_TOOL_BAR_DROPDOWN_ARROW_SIZE;
         xx += CL_TOOL_BAR_X_MARGIN;
     }
+}
+
+void clToolBarButtonBase::SetMenu(wxMenu* menu)
+{
+    wxDELETE(m_menu);
+    m_menu = menu;
 }

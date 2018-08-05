@@ -1,6 +1,7 @@
 ::
 :: Usage (64 bit):
 ::
+:: make-weekly --upload --with-php
 :: make-weekly --upload
 :: make-weekly
 ::
@@ -8,10 +9,9 @@
 :: make-weekly --upload X86
 :: make-weekly --no-upload X86
 ::
-::
 @echo OFF
 IF "%2"=="32" GOTO MAKE_X86
-IF "%2"=="php" GOTO MAKE_AMD64_PHP
+IF "%2"=="--with-php" GOTO MAKE_AMD64_PHP
 GOTO MAKE_AMD64
 
 :MAKE_AMD64

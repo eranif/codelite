@@ -51,17 +51,21 @@ clToolBar::~clToolBar()
 void clToolBar::OnPaint(wxPaintEvent& event)
 {
     wxBufferedPaintDC dc(this);
+    PrepareDC(dc);
+    
+    wxGCDC gcdc(dc);
+    
     m_overflowButtons.clear();
     m_visibleButtons.clear();
     m_chevronRect = wxRect();
 
     wxRect clientRect = GetClientRect();
-    DrawingUtils::FillMenuBarBgColour(dc, clientRect, HasFlag(kThemedColour));
+    DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kThemedColour));
     clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
-    DrawingUtils::FillMenuBarBgColour(dc, clientRect, HasFlag(kThemedColour));
+    DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kThemedColour));
     int xx = 0;
     std::for_each(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* button) {
-        wxSize buttonSize = button->CalculateSize(dc);
+        wxSize buttonSize = button->CalculateSize(gcdc);
         if((xx + buttonSize.GetWidth()) >= clientRect.GetRight()) {
             if(button->IsControl()) {
                 clToolBarControl* control = button->Cast<clToolBarControl>();
@@ -70,7 +74,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
             m_overflowButtons.push_back(button);
         } else {
             wxRect r(xx, 0, buttonSize.GetWidth(), clientRect.GetHeight());
-            button->Render(dc, r);
+            button->Render(gcdc, r);
             m_visibleButtons.push_back(button);
         }
         xx += buttonSize.GetWidth();
@@ -82,7 +86,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
 
     // If we have overflow buttons, draw an arrow to the right
     if(!m_overflowButtons.empty()) {
-        wxRendererNative::Get().DrawDropArrow(this, dc, chevronRect, wxCONTROL_CURRENT);
+        wxRendererNative::Get().DrawDropArrow(this, gcdc, chevronRect, wxCONTROL_CURRENT);
         m_chevronRect = chevronRect;
     }
 }

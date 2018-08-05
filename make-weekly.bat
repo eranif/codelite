@@ -10,7 +10,8 @@
 ::
 ::
 @echo OFF
-IF "%2"=="X86" GOTO MAKE_X86
+IF "%2"=="32" GOTO MAKE_X86
+IF "%2"=="php" GOTO MAKE_AMD64_PHP
 GOTO MAKE_AMD64
 
 :MAKE_AMD64
@@ -22,6 +23,18 @@ set CL_CONFIG_NAME=Win_x64_Release
 set WXC_CONFIG_NAME=Win_x64_Release
 set UTILS_CONFIG_NAME=Win_x64_Release
 set ISCC_FILE=codelite64_mingw.iss
+set CYGWIN_BIN=D:\cygwin64\bin
+GOTO COMMON
+
+:MAKE_AMD64_PHP
+:: 64 bit version
+set PATH=C:\Program Files\CodeLite;D:\software\Inno Setup 5;%PATH%
+set WXCFG=gcc_dll/mswu
+set WXWIN=D:\src\wx-src
+set CL_CONFIG_NAME=Win_x64_Release_PHP
+set WXC_CONFIG_NAME=Win_x64_Release
+set UTILS_CONFIG_NAME=Win_x64_Release
+set ISCC_FILE=codelite64_php_mingw.iss
 set CYGWIN_BIN=D:\cygwin64\bin
 GOTO COMMON
 
@@ -51,8 +64,6 @@ codelite-make.exe  --workspace=codelite_utils.workspace --project=build_all --co
 
 echo "Packaging..."
 cd C:\src\codelite\InnoSetup
-del /Q output\*.exe
-del /Q output\*.7z
 iscc %ISCC_FILE%
 
 cd C:\src\codelite\InnoSetup\output

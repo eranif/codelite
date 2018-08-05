@@ -1517,7 +1517,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
                 bSaveSucceeded = true;
             }
         }
-
+#if HAS_LIBCLANG
         if(!bSaveSucceeded) {
             // Try clearing the clang cache and try again
             ClangCodeCompletion::Instance()->ClearCache();
@@ -1527,6 +1527,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
                 return false;
             }
         }
+#endif
     }
 #else
     if(!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {

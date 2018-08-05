@@ -739,10 +739,31 @@ clColourPalette DrawingUtils::GetColourPalette()
     return p;
 }
 
+#ifdef __WXOSX__
+double wxOSXGetMainScreenContentScaleFactor();
+#endif
+
+//#ifdef __WXGTK__
+//#include <gdk/gdk.h>
+//static double GTKGetDPI()
+//{
+//    GdkScreen* screen = gdk_screen_get_default();
+//    return gdk_screen_get_resolution(screen);
+//}
+//#endif
+
 wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 {
-#ifdef __WXOSW__
-    return bmp.ConvertToDisabled(255);
+#ifdef __WXOSX__
+    double scale = 1.0;
+    wxImage img = bmp.ConvertToImage();
+    img = img.ConvertToGreyscale();
+    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) { scale = 2.0; }
+    wxBitmap greyBmp(img, -1, scale);
+    return greyBmp;
+#elif defined(__WXGTK__)
+    bool bDarkBG = IsDark(GetPanelBgColour());
+    return bmp.ConvertToDisabled(bDarkBG ? 20 : 255);
 #else
     bool bDarkBG = IsDark(GetPanelBgColour());
     wxImage img = bmp.ConvertToImage();
@@ -755,24 +776,6 @@ wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
         return greyBmp.ConvertToDisabled(255);
     }
 #endif
-}
-
-#ifdef __WXOSX__
-double wxOSXGetMainScreenContentScaleFactor();
-#endif
-
-wxBitmap DrawingUtils::CreateGrayBitmap(const wxBitmap& bmp)
-{
-    wxImage img = bmp.ConvertToImage();
-    img = img.ConvertToGreyscale();
-#ifdef __WXOSX__
-    double scale = 1.0;
-    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) { scale = 2.0; }
-    wxBitmap greyBmp(img, -1, scale);
-#else
-    wxBitmap greyBmp(img);
-#endif
-    return greyBmp;
 }
 
 #define DROPDOWN_ARROW_SIZE 20

@@ -84,7 +84,6 @@ public:
     static wxFont GetDefaultFixedFont();
     static wxFont GetDefaultGuiFont();
     static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp);
-    static wxBitmap CreateGrayBitmap(const wxBitmap& bmp);
     static wxSize GetBestSize(const wxString& label, int xspacer = 5, int yspacer = 5);
 
     /**

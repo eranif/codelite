@@ -1,134 +1,5 @@
 #include "clToolBarButtonBase.h"
 #include "drawingutils.h"
-#include <wx/settings.h>
-
-#ifdef __WXGTK20__
-// We need this ugly hack to workaround a gtk2-wxGTK name-clash^M
-// See http://trac.wxwidgets.org/ticket/10883^M
-#define GSocket GlibGSocket
-#include <gtk/gtk.h>
-#undef GSocket
-#endif
-
-//----------------------------------------------------------
-// Helper methods
-//----------------------------------------------------------
-static void RGBtoHSB(int r, int g, int b, float* h, float* s, float* br)
-{
-    float hue, saturation, brightness;
-    int cmax = (r > g) ? r : g;
-    if(b > cmax) cmax = b;
-    int cmin = (r < g) ? r : g;
-    if(b < cmin) cmin = b;
-
-    brightness = ((float)cmax) / 255.0f;
-    if(cmax != 0)
-        saturation = ((float)(cmax - cmin)) / ((float)cmax);
-    else
-        saturation = 0;
-    if(saturation == 0)
-        hue = 0;
-    else {
-        float redc = ((float)(cmax - r)) / ((float)(cmax - cmin));
-        float greenc = ((float)(cmax - g)) / ((float)(cmax - cmin));
-        float bluec = ((float)(cmax - b)) / ((float)(cmax - cmin));
-        if(r == cmax)
-            hue = bluec - greenc;
-        else if(g == cmax)
-            hue = 2.0f + redc - bluec;
-        else
-            hue = 4.0f + greenc - redc;
-        hue = hue / 6.0f;
-        if(hue < 0) hue = hue + 1.0f;
-    }
-    (*h) = hue;
-    (*s) = saturation;
-    (*br) = brightness;
-}
-
-static bool IsDark(const wxColour& color)
-{
-    float h, s, b;
-    RGBtoHSB(color.Red(), color.Green(), color.Blue(), &h, &s, &b);
-    return (b < 0.5);
-}
-
-#ifdef __WXGTK__
-static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
-{
-    wxColour bgColour = defaultColour;
-    GtkStyle* def = gtk_rc_get_style(widget);
-    if(!def) { def = gtk_widget_get_default_style(); }
-
-    if(def) {
-        GdkColor col = def->bg[GTK_STATE_NORMAL];
-        bgColour = wxColour(col);
-    }
-    gtk_widget_destroy(widget);
-    return bgColour;
-}
-
-static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& defaultColour)
-{
-    wxColour textColour = defaultColour;
-    GtkStyle* def = gtk_rc_get_style(widget);
-    if(!def) { def = gtk_widget_get_default_style(); }
-
-    if(def) {
-        GdkColor col = def->fg[GTK_STATE_NORMAL];
-        textColour = wxColour(col);
-    }
-    gtk_widget_destroy(widget);
-    return textColour;
-}
-#endif
-
-#ifndef __WXMSW__
-static wxColour GetMenuBarBgColour()
-{
-#if defined(__WXGTK__)
-    return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-#elif defined(__WXOSX__)
-    return wxColour("rgb(209, 209, 209)");
-#else
-    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
-#endif
-}
-#endif
-
-#ifdef __WXOSX__
-double wxOSXGetMainScreenContentScaleFactor();
-#endif
-
-#ifdef __WXOSX__
-static wxBitmap CreateGrayBitmap(const wxBitmap& bmp)
-{
-    wxImage img = bmp.ConvertToImage();
-    img = img.ConvertToDisabled();
-    double scale = 1.0;
-    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) { scale = 2.0; }
-    wxBitmap greyBmp(img, -1, scale);
-    return greyBmp;
-}
-#endif
-
-static wxBitmap MakeDisabledBitmap(const wxBitmap& bmp)
-{
-#ifdef __WXOSX__
-    return CreateGrayBitmap(bmp);
-#else
-    bool bDarkBG = IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    wxImage img = bmp.ConvertToImage();
-    img = img.ConvertToGreyscale();
-    wxBitmap greyBmp(img);
-    if(bDarkBG) {
-        return greyBmp.ConvertToDisabled(20);
-
-    } else {
-        return greyBmp.ConvertToDisabled(255);
-    }
-#endif
-}
 
 // -----------------------------------------------
 // Button base
@@ -160,7 +31,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     penColour = bgHighlightColour;
 #else
     wxColour bgHighlightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    if(IsDark(bgHighlightColour)) { bgHighlightColour = bgHighlightColour.ChangeLightness(140); }
+    if(DrawingUtils::IsDark(bgHighlightColour)) { bgHighlightColour = bgHighlightColour.ChangeLightness(140); }
 #endif
     if(IsEnabled() && (IsHover() || IsPressed() || IsChecked())) {
         wxRect highlightRect = rect;
@@ -188,7 +59,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
 
     if(m_bmp.IsOk()) {
         wxBitmap bmp(m_bmp);
-        if(!IsEnabled()) { bmp = MakeDisabledBitmap(m_bmp); }
+        if(!IsEnabled()) { bmp = DrawingUtils::CreateDisabledBitmap(m_bmp); }
         yy = (rect.GetHeight() - bmp.GetScaledHeight()) / 2 + rect.GetY();
         dc.DrawBitmap(bmp, wxPoint(xx, yy));
         xx += bmp.GetScaledWidth();

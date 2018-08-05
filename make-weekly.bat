@@ -70,4 +70,4 @@ cd C:\src\codelite\InnoSetup\output
 %CYGWIN_BIN%\bash.exe --login /cygdrive/c/src/codelite/InnoSetup/output/finalize-upload.sh "%1"
 cd C:\src\codelite
 
-pause
+:: pause

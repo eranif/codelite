@@ -46,7 +46,6 @@ NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
     m_choiceId->Append(choices);
     m_choiceId->SetFocus();
     if(data) {
-        m_textCtrlArguments->ChangeValue(data->m_args);
         m_choiceId->SetStringSelection(data->m_id);
         m_textCtrlPath->ChangeValue(data->m_path);
         m_textCtrlWd->ChangeValue(data->m_workingDirectory);

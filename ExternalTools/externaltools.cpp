@@ -282,9 +282,7 @@ void ExternalToolsPlugin::OnFileSave(clCommandEvent& event)
             ToolInfo ti = tool;
             wxString filename = event.GetFileName();
             ::WrapWithQuotes(filename);
-            filename += " ";
-            ti.SetArguments(filename + ti.GetArguments());
-            ToolsTaskManager::Instance()->StartTool(ti);
+            ToolsTaskManager::Instance()->StartTool(ti, filename);
         }
     });
 }

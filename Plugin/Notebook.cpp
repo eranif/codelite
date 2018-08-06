@@ -237,13 +237,12 @@ void clTabCtrl::DoSetBestSize()
 
     wxFont font = clTabRenderer::GetTabFont();
     gcdc.SetFont(font);
-                                   
-    wxSize sz = gcdc.GetTextExtent("_WWWWqqqqq_");
+    wxSize sz = gcdc.GetTextExtent("_WORKSPACE_");
     int bmpHeight = clTabRenderer::GetDefaultBitmapHeight(GetArt()->ySpacer);
 
     m_nHeight = sz.GetHeight() + (4 * GetArt()->ySpacer);
     m_nHeight = wxMax(m_nHeight, bmpHeight);
-    m_nWidth = sz.GetWidth() + (2 * GetArt()->xSpacer);
+    m_nWidth = sz.GetWidth();
 
     if(IsVerticalTabs()) {
         SetSizeHints(wxSize(m_nWidth, -1));

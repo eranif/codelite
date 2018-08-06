@@ -597,6 +597,7 @@
     <File Name="manage_perspective_dlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
+    <File Name="../InnoSetup/codelite64_php_mingw.iss"/>
     <File Name="code_parser.rc"/>
     <File Name="../Runtime/rc/menu.xrc"/>
     <File Name="resources.xrc"/>

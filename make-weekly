@@ -8,20 +8,7 @@ os_name=`uname -s`
 upload_file="no"
 build_php="no"
 
-## parse the command line arguments
-for i in "$@"
-do
-    case $i in
-        "--with-php")
-            build_php="yes"
-            ;;
-        "--upload")
-            upload_file="yes"
-            ;;
-    esac
-done
 
-# Clear old installers
 os_name=`uname -s`
 if [ ${os_name} == "Darwin" ]; then
     echo rm -f $curdir/build-release/codelite.app.tar.gz
@@ -31,10 +18,30 @@ else
     cpu_count=`grep -c ^processor /proc/cpuinfo`
 fi
 
+## parse the command line arguments and over defaults
+for i in "$@"
+do
+    case $i in
+        "--with-php")
+            build_php="yes"
+	    shift
+            ;;
+        "--upload")
+            upload_file="yes"
+	    shift
+            ;;
+	--cpu-count=*)
+            cpu_count="${i#*=}"
+	    shift
+	    ;;
+    esac
+done
+
 echo "Platform     : ${os_name}"
 echo "CPU count    : ${cpu_count}"
 echo "Upload binary: ${upload_file}"
 echo "PHP Build    : ${build_php}"
+exit 0
 
 # Update our source tree
 cd $curdir

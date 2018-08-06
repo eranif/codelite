@@ -197,6 +197,7 @@ public:
     int m_width;
     int m_height;
     int m_vTabsWidth;
+    int m_textWidth;
 
 public:
     void CalculateOffsets(size_t style);
@@ -269,6 +270,8 @@ public:
      * @brief draw cheveron button
      */
     static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
+
+    static int GetDefaultBitmapHeight(int Y_spacer);
 };
 #endif
 #endif // CLTABRENDERER_H

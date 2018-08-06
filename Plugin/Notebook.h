@@ -74,8 +74,9 @@ public:
  */
 class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
 {
-    int m_height;
-    int m_vTabsWidth;
+    int m_nHeight;
+    int m_nWidth;
+    
     clTabInfo::Vec_t m_tabs;
     friend class Notebook;
     friend class clTabCtrlDropTarget;

@@ -187,7 +187,9 @@ static void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 
 wxColour DrawingUtils::LightColour(const wxColour& color, float percent)
 {
-    if(percent == 0) { return color; }
+    if(percent == 0) {
+        return color;
+    }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -231,7 +233,9 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
 
         fixedText = text1 + suffix + text2;
         dc.GetTextExtent(fixedText, &textW, &textH);
-        if(rectSize >= textW) { return; }
+        if(rectSize >= textW) {
+            return;
+        }
     }
 }
 
@@ -386,7 +390,9 @@ wxColour DrawingUtils::GetGradient()
 
 wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
 {
-    if(percent == 0) { return color; }
+    if(percent == 0) {
+        return color;
+    }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -406,7 +412,9 @@ static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defa
 {
     wxColour bgColour = defaultColour;
     GtkStyle* def = gtk_rc_get_style(widget);
-    if(!def) { def = gtk_widget_get_default_style(); }
+    if(!def) {
+        def = gtk_widget_get_default_style();
+    }
 
     if(def) {
         GdkColor col = def->bg[GTK_STATE_NORMAL];
@@ -420,7 +428,9 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
 {
     wxColour textColour = defaultColour;
     GtkStyle* def = gtk_rc_get_style(widget);
-    if(!def) { def = gtk_widget_get_default_style(); }
+    if(!def) {
+        def = gtk_widget_get_default_style();
+    }
 
     if(def) {
         GdkColor col = def->fg[GTK_STATE_NORMAL];
@@ -573,7 +583,9 @@ wxColour DrawingUtils::GetTextCtrlBgColour() { return wxSystemSettings::GetColou
 wxColour DrawingUtils::GetOutputPaneFgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    if(col.IsEmpty()) { return GetTextCtrlTextColour(); }
+    if(col.IsEmpty()) {
+        return GetTextCtrlTextColour();
+    }
 
     return wxColour(col);
 }
@@ -581,7 +593,9 @@ wxColour DrawingUtils::GetOutputPaneFgColour()
 wxColour DrawingUtils::GetOutputPaneBgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    if(col.IsEmpty()) { return GetTextCtrlBgColour(); }
+    if(col.IsEmpty()) {
+        return GetTextCtrlBgColour();
+    }
 
     return wxColour(col);
 }
@@ -696,7 +710,9 @@ wxColour DrawingUtils::GetCaptionColour()
 #endif
     wxColour captionColour = defaultCaptionColour;
     bool useCustomCaptionColour = clConfig::Get().Read("UseCustomCaptionsColour", false);
-    if(useCustomCaptionColour) { captionColour = clConfig::Get().Read("CustomCaptionColour", captionColour); }
+    if(useCustomCaptionColour) {
+        captionColour = clConfig::Get().Read("CustomCaptionColour", captionColour);
+    }
     return captionColour;
 }
 
@@ -745,7 +761,7 @@ double wxOSXGetMainScreenContentScaleFactor();
 
 //#ifdef __WXGTK__
 //#include <gdk/gdk.h>
-//static double GTKGetDPI()
+// static double GTKGetDPI()
 //{
 //    GdkScreen* screen = gdk_screen_get_default();
 //    return gdk_screen_get_resolution(screen);
@@ -758,7 +774,9 @@ wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
     double scale = 1.0;
     wxImage img = bmp.ConvertToImage();
     img = img.ConvertToGreyscale();
-    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) { scale = 2.0; }
+    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) {
+        scale = 2.0;
+    }
     wxBitmap greyBmp(img, -1, scale);
     return greyBmp;
 #elif defined(__WXGTK__)
@@ -952,6 +970,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     case eButtonState::kHover:
         colour = colour.ChangeLightness(120);
         break;
+        break;
     case eButtonState::kPressed:
         colour = colour.ChangeLightness(80);
         break;
@@ -967,8 +986,22 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
 
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
 {
-    wxUnusedVar(colour);
-    wxRendererNative::Get().DrawDropArrow(win, dc, rect, wxCONTROL_CURRENT);
+    int size = wxMin(rect.GetHeight(), rect.GetWidth());
+    size = wxMin(8, size);
+    wxRect arrowRect = wxRect(0, 0, size, size);
+    int xx = rect.GetX() + ((rect.GetWidth() - arrowRect.GetWidth()) / 2);
+    int yy = rect.GetY() + ((rect.GetHeight() - arrowRect.GetHeight()) / 2);
+    arrowRect = wxRect(wxPoint(xx, yy), arrowRect.GetSize());
+
+    wxPoint points[3];
+    points[0] = arrowRect.GetTopLeft();
+    points[1] = arrowRect.GetTopRight();
+    points[2].x = arrowRect.GetBottomLeft().x + (arrowRect.GetWidth() / 2);
+    points[2].y = arrowRect.GetBottomLeft().y;
+
+    dc.SetPen(colour);
+    dc.SetBrush(colour);
+    dc.DrawPolygon(3, points);
 }
 
 wxColour DrawingUtils::GetCaptionTextColour()

@@ -20,6 +20,7 @@ void clToolBarControl::Render(wxDC& dc, const wxRect& rect)
     wxPoint pt(rect.GetPosition());
     int yy = (height - m_control->GetSize().GetHeight()) / 2 + pt.y;
     pt.y = yy;
+    pt.y += CL_TOOL_BAR_Y_MARGIN;
     m_control->Move(pt);
     if(!m_control->IsShown()) { m_control->Show(); }
 }

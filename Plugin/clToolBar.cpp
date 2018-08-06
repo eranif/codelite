@@ -115,8 +115,9 @@ void clToolBar::Realize()
 {
     wxBitmap bmp(1, 1);
     wxMemoryDC dc(bmp);
-    dc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-    SetSizeHints(CalculateRect(dc).GetSize());
+    wxGCDC gcdc(dc);
+    gcdc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    SetSizeHints(CalculateRect(gcdc).GetSize());
     Refresh();
 }
 

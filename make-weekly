@@ -41,7 +41,6 @@ echo "Platform     : ${os_name}"
 echo "CPU count    : ${cpu_count}"
 echo "Upload binary: ${upload_file}"
 echo "PHP Build    : ${build_php}"
-exit 0
 
 # Update our source tree
 cd $curdir

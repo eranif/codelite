@@ -180,6 +180,9 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Update the search flags
     m_searchFlags = clConfig::Get().Read("FindBar/SearchFlags", 0);
     m_highlightMatches = clConfig::Get().Read("FindBar/HighlightOccurences", false);
+    
+    // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
+    m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
 }
 
 QuickFindBar::~QuickFindBar()

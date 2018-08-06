@@ -31,13 +31,13 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     m_matchesFound = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    boxSizer123->Add(m_matchesFound, 1, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    boxSizer123->Add(m_matchesFound, 1, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
 
     m_toolbar =
         new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
-    boxSizer123->Add(m_toolbar, 0, 0, WXC_FROM_DIP(5));
+    boxSizer123->Add(m_toolbar, 0, 0, WXC_FROM_DIP(2));
 
     wxFlexGridSizer* flexGridSizer107 = new wxFlexGridSizer(0, 4, 0, 0);
     flexGridSizer107->SetFlexibleDirection(wxBOTH);
@@ -53,22 +53,22 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_textCtrlFind->SetHint(wxT(""));
 #endif
 
-    flexGridSizer107->Add(m_textCtrlFind, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(1));
+    flexGridSizer107->Add(m_textCtrlFind, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
 
     m_buttonFind = new wxButton(this, wxID_FIND, _("Find"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonFind->SetDefault();
 
-    flexGridSizer107->Add(m_buttonFind, 0, wxALL | wxEXPAND, WXC_FROM_DIP(1));
+    flexGridSizer107->Add(m_buttonFind, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_buttonFindPrev =
         new wxButton(this, wxID_BACKWARD, _("Find Prev"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    flexGridSizer107->Add(m_buttonFindPrev, 0, wxALL | wxEXPAND, WXC_FROM_DIP(1));
+    flexGridSizer107->Add(m_buttonFindPrev, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_buttonFindAll =
         new wxButton(this, wxID_FIND_ALL, _("Find All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    flexGridSizer107->Add(m_buttonFindAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(1));
+    flexGridSizer107->Add(m_buttonFindAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_textCtrlReplace = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                        wxTE_RICH | wxTE_PROCESS_ENTER);
@@ -76,17 +76,17 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_textCtrlReplace->SetHint(wxT(""));
 #endif
 
-    flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(1));
+    flexGridSizer107->Add(m_textCtrlReplace, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
 
     m_buttonReplace =
         new wxButton(this, wxID_REPLACE, _("Replace"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    flexGridSizer107->Add(m_buttonReplace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(1));
+    flexGridSizer107->Add(m_buttonReplace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_buttonReplaceAll =
         new wxButton(this, wxID_REPLACE_ALL, _("Replace All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(1));
+    flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     SetName(wxT("QuickFindBarBase"));
     SetSize(-1, -1);

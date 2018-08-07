@@ -48,7 +48,7 @@ class MainBook : public wxPanel
 private:
     FileHistory m_recentFiles;
     clEditorBar* m_navBar;
-    clMultiBook* m_book;
+    Notebook* m_book;
     QuickFindBar* m_quickFindBar;
     MessagePane* m_messagePane;
     bool m_useBuffereLimit;
@@ -57,6 +57,7 @@ private:
     bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
     FilesModifiedDlg* m_filesModifiedDlg;
     std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
+    wxWindow* m_welcomePage;
 
 public:
     enum {
@@ -117,27 +118,21 @@ private:
      */
     void UpdateNavBar(clEditor* editor);
 
+    /**
+     * @brief display the welcome page
+     */
+    void ShowWelcomePage(bool show);
+    void DoShowWindow(wxWindow* win, bool show);
+
 public:
     MainBook(wxWindow* parent);
-    ~MainBook();
-    
+    virtual ~MainBook();
+
     /**
      * @brief register a welcome page. This page is displayed whenever there are no tabs open
      * in CodeLite. If there is already a welcome page registered, this call destroys the previous one
      */
     void RegisterWelcomePage(wxWindow* welcomePage);
-    
-    /**
-     * @brief move the active tab to another tab group (notebook). To the left
-     */
-    void MoveActiveTabToLeftTabGroup();
-    /**
-     * @brief move the active tab to another tab group (notebook). To the right
-     */
-    void MoveActiveTabToRIghtTabGroup();
-
-    bool CanMoveActiveTabToRIghtTabGroup() const;
-    bool CanMoveActiveTabToLeftTabGroup() const;
 
     static bool AskUserToSave(clEditor* editor);
     /**

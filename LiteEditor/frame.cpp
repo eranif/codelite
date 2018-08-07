@@ -617,10 +617,6 @@ EVT_MENU(XRCID("open_shell_from_filepath"), clMainFrame::OnOpenShellFromFilePath
 EVT_MENU(XRCID("open_file_explorer"), clMainFrame::OnOpenFileExplorerFromFilePath)
 EVT_MENU(XRCID("ID_DETACH_EDITOR"), clMainFrame::OnDetachEditor)
 EVT_MENU(XRCID("mark_readonly"), clMainFrame::OnMarkEditorReadonly)
-EVT_MENU(XRCID("ID_EDITOR_TO_LEFT_TAB_CTRL"), clMainFrame::OnMoveEditorToLeftGroup)
-EVT_MENU(XRCID("ID_EDITOR_TO_RIGHT_TAB_CTRL"), clMainFrame::OnMoveEditorToRightGroup)
-EVT_UPDATE_UI(XRCID("ID_EDITOR_TO_LEFT_TAB_CTRL"), clMainFrame::OnMoveEditorToGroupUI)
-EVT_UPDATE_UI(XRCID("ID_EDITOR_TO_RIGHT_TAB_CTRL"), clMainFrame::OnMoveEditorToGroupUI)
 
 EVT_UPDATE_UI(XRCID("mark_readonly"), clMainFrame::OnMarkEditorReadonlyUI)
 EVT_UPDATE_UI(XRCID("copy_file_relative_path_to_workspace"), clMainFrame::OnCopyFilePathRelativeToWorkspaceUI)
@@ -4589,9 +4585,7 @@ void clMainFrame::SetAUIManagerFlags()
     }
 
     auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
-#ifndef __WXGTK__
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
-#endif
     m_mgr.SetFlags(auiMgrFlags);
 }
 
@@ -5549,17 +5543,3 @@ void clMainFrame::OnMainBookMovePage(wxCommandEvent& e)
     GetMainBook()->MovePage(e.GetId() == XRCID("wxEVT_BOOK_MOVE_TAB_RIGHT"));
 }
 
-void clMainFrame::OnMoveEditorToLeftGroup(wxCommandEvent& e) { GetMainBook()->MoveActiveTabToLeftTabGroup(); }
-
-void clMainFrame::OnMoveEditorToRightGroup(wxCommandEvent& e) { GetMainBook()->MoveActiveTabToRIghtTabGroup(); }
-
-void clMainFrame::OnMoveEditorToGroupUI(wxUpdateUIEvent& e)
-{
-    if(e.GetId() == XRCID("ID_EDITOR_TO_RIGHT_TAB_CTRL")) {
-        // Only enabled when we have more than one tab opened
-        e.Enable(GetMainBook()->CanMoveActiveTabToRIghtTabGroup());
-
-    } else {
-        e.Enable(GetMainBook()->CanMoveActiveTabToLeftTabGroup());
-    }
-}

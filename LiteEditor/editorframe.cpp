@@ -23,28 +23,33 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editorframe.h"
-#include "cl_editor.h"
-#include "plugin.h"
-#include "event_notifier.h"
-#include "quickfindbar.h"
 #include "bookmark_manager.h"
-#include <wx/xrc/xmlres.h>
-#include "my_menu_bar.h"
-#include "manager.h"
+#include "cl_editor.h"
+#include "editorframe.h"
+#include "event_notifier.h"
 #include "mainbook.h"
+#include "manager.h"
+#include "my_menu_bar.h"
+#include "plugin.h"
+#include "quickfindbar.h"
+#include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 wxDEFINE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 
-EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor)
+EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyle)
     : EditorFrameBase(parent)
-    , m_editor(editor)
 {
-    m_editor->Reparent(m_mainPanel);
-    m_mainPanel->GetSizer()->Add(m_editor, 1, wxEXPAND | wxALL, 2);
+    m_book = new Notebook(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, notebookStyle);
+    m_book->Bind(wxEVT_BOOK_PAGE_CLOSED, &EditorFrame::OnPageClosed, this);
+    m_book->Bind(wxEVT_BOOK_PAGE_CLOSING, &EditorFrame::OnPageClosing, this);
+
+    m_mainPanel->GetSizer()->Add(m_book, 1, wxEXPAND);
+    editor->Reparent(m_book);
+    m_book->AddPage(editor, editor->GetFileName().GetFullName(), true);
     // Notebook::RemovePage hides the detached tab
-    if(!m_editor->IsShown()) {
-        m_editor->Show();
+    if(!editor->IsShown()) {
+        editor->Show();
     }
     // Load the menubar from XRC and set this frame's menubar to it.
     wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
@@ -56,13 +61,13 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor)
 
     // Set a find control for this editor
     m_findBar = new QuickFindBar(m_mainPanel);
-    m_findBar->SetEditor(m_editor);
+    m_findBar->SetEditor(editor);
     m_mainPanel->GetSizer()->Add(m_findBar, 0, wxEXPAND | wxALL, 2);
     m_findBar->Hide();
     m_toolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
 
     m_mainPanel->Layout();
-    SetTitle(m_editor->GetFileName().GetFullPath());
+    SetTitle(editor->GetFileName().GetFullPath());
 
     // Update the accelerator table for this frame
     ManagerST::Get()->UpdateMenuAccelerators(this);
@@ -79,17 +84,11 @@ EditorFrame::~EditorFrame()
     delete m_myMenuBar;
 #endif
 
-    clCommandEvent evntInternalClosed(wxEVT_DETACHED_EDITOR_CLOSED);
-    evntInternalClosed.SetClientData((IEditor*)m_editor);
-    evntInternalClosed.SetFileName(m_editor->GetFileName().GetFullPath());
-    EventNotifier::Get()->ProcessEvent(evntInternalClosed);
-
-    // Send the traditional plugin event notifying that this editor is about to be destroyed
-    wxCommandEvent eventClose(wxEVT_EDITOR_CLOSING);
-    eventClose.SetClientData((IEditor*)m_editor);
-    EventNotifier::Get()->ProcessEvent(eventClose);
-
-    m_editor = NULL;
+    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
+        if(!editor) continue;
+        DoCloseEditor(editor);
+    }
 }
 
 void EditorFrame::OnClose(wxCommandEvent& event)
@@ -112,4 +111,61 @@ void EditorFrame::OnFindUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 void EditorFrame::OnCloseWindow(wxCloseEvent& event) { event.Skip(); }
 
-bool EditorFrame::ConfirmClose() { return !(m_editor->IsModified() && !MainBook::AskUserToSave(m_editor)); }
+void EditorFrame::GetAllEditors(std::vector<clEditor*>& editors)
+{
+    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
+        if(!editor) continue;
+        editors.push_back(editor);
+    }
+}
+
+clEditor* EditorFrame::GetEditor() const { return GetEditor(m_book->GetSelection()); }
+
+void EditorFrame::OnPageClosed(wxBookCtrlEvent& event)
+{
+    event.Skip();
+    if(m_book->GetPageCount() == 0) {
+        Close();
+    }
+}
+
+void EditorFrame::OnPageClosing(wxBookCtrlEvent& event)
+{
+    // Are we closing a modified editor?
+    clEditor* editor = GetEditor(event.GetSelection());
+    if(!editor) return;
+
+    event.Skip();
+    if(editor->IsModified()) {
+        // Ask the user
+        if(::wxMessageBox(wxString() << editor->GetFileName().GetFullName() << " is modified, continue?", "CodeLite",
+                          wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, this) != wxYES) {
+            event.Skip(false);
+            event.Veto();
+            return;
+        }
+    }
+    
+    // Perform the cleanup needed before the page is destroyed
+    DoCloseEditor(editor);
+}
+
+clEditor* EditorFrame::GetEditor(size_t index) const
+{
+    if(index >= m_book->GetPageCount()) return nullptr;
+    return dynamic_cast<clEditor*>(m_book->GetPage(index));
+}
+
+void EditorFrame::DoCloseEditor(clEditor* editor)
+{
+    clCommandEvent evntInternalClosed(wxEVT_DETACHED_EDITOR_CLOSED);
+    evntInternalClosed.SetClientData((IEditor*)editor);
+    evntInternalClosed.SetFileName(editor->GetFileName().GetFullPath());
+    EventNotifier::Get()->ProcessEvent(evntInternalClosed);
+
+    // Send the traditional plugin event notifying that this editor is about to be destroyed
+    wxCommandEvent eventClose(wxEVT_EDITOR_CLOSING);
+    eventClose.SetClientData((IEditor*)editor);
+    EventNotifier::Get()->ProcessEvent(eventClose);
+}

@@ -72,9 +72,8 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
 
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
     if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-        DrawButton(dc,
-                   wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY + rr.GetY(), CLOSE_BUTTON_SIZE,
-                          CLOSE_BUTTON_SIZE),
+        DrawButton(dc, wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY + rr.GetY(), CLOSE_BUTTON_SIZE,
+                              CLOSE_BUTTON_SIZE),
                    colours, eButtonState::kNormal);
     }
 }
@@ -82,7 +81,7 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
 void clTabRendererGTK3::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                        const clTabColours& colours, size_t style)
 {
-    wxPen markerPen(colours.markerColour, clTabRenderer::GetMarkerWidth());
+    wxPen markerPen(colours.markerColour);
     bool underlineTab = (style & kNotebook_UnderlineActiveTab);
 
     // Draw marker line if needed
@@ -93,7 +92,7 @@ void clTabRendererGTK3::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t active
             p1 = activeTab->GetRect().GetTopRight();
             p2 = activeTab->GetRect().GetBottomRight();
             dc.SetPen(markerPen);
-            dc.DrawLine(p1, p2);
+            DrawMarker(p1, p2, dc, wxLEFT);
             dc.SetPen(colours.activeTabPenColour);
             dc.DrawLine(clientRect.GetRightTop(), clientRect.GetRightBottom());
         } else if(style & kNotebook_RightTabs) {
@@ -101,29 +100,58 @@ void clTabRendererGTK3::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t active
             p1 = activeTab->GetRect().GetTopLeft();
             p2 = activeTab->GetRect().GetBottomLeft();
             dc.SetPen(markerPen);
-            dc.DrawLine(p1, p2);
+            DrawMarker(p1, p2, dc, wxRIGHT);
             dc.SetPen(colours.activeTabPenColour);
             dc.DrawLine(clientRect.GetLeftTop(), clientRect.GetLeftBottom());
         } else if(style & kNotebook_BottomTabs) {
             // Bottom tabs
             p1 = activeTab->GetRect().GetTopLeft();
             p2 = activeTab->GetRect().GetTopRight();
-            p1.x += 5;
-            p2.x -= 5;
             dc.SetPen(markerPen);
-            dc.DrawLine(p1, p2);
+            DrawMarker(p1, p2, dc, wxDOWN);
             dc.SetPen(colours.activeTabPenColour);
             dc.DrawLine(clientRect.GetTopRight(), clientRect.GetTopLeft());
         } else {
             // Top tabs
             p1 = activeTab->GetRect().GetBottomLeft();
             p2 = activeTab->GetRect().GetBottomRight();
-            p1.x += 5;
-            p2.x -= 5;
             dc.SetPen(markerPen);
-            dc.DrawLine(p1, p2);
+            DrawMarker(p1, p2, dc, wxUP);
             dc.SetPen(colours.activeTabPenColour);
             dc.DrawLine(clientRect.GetBottomRight(), clientRect.GetBottomLeft());
         }
+    }
+}
+
+void clTabRendererGTK3::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+                                       size_t style)
+{
+    wxColour bgColour(colours.inactiveTabBgColour);
+    dc.SetPen(bgColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRectangle(rect);
+}
+
+void clTabRendererGTK3::DrawMarker(const wxPoint& pt1, const wxPoint& pt2, wxDC& dc, wxDirection direction)
+{
+    const int width = GetMarkerWidth();
+    wxPoint point1 = pt1;
+    wxPoint point2 = pt2;
+    for(int i = 0; i < width; ++i) {
+        if(direction == wxDOWN) {
+            point1.y++;
+            point2.y++;
+        } else if(direction == wxUP) {
+            point1.y--;
+            point2.y--;
+        } else if(direction == wxLEFT) {
+            point1.x--;
+            point2.x--;
+        } else {
+            // wxRIGHT
+            point1.x++;
+            point2.x++;
+        }
+        dc.DrawLine(point1, point2);
     }
 }

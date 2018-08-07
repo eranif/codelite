@@ -24,7 +24,7 @@ struct TabData {
     }
 };
 
-NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clMultiBook* book)
+NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     : NotebookNavigationDlgBase(parent)
     , m_book(book)
     , m_selection(wxNOT_FOUND)

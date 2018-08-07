@@ -437,9 +437,6 @@ protected:
     void OnPrint(wxCommandEvent& event);
     void OnPageSetup(wxCommandEvent& event);
     void OnRecentWorkspaceUI(wxUpdateUIEvent& e);
-    void OnMoveEditorToLeftGroup(wxCommandEvent& e);
-    void OnMoveEditorToRightGroup(wxCommandEvent& e);
-    void OnMoveEditorToGroupUI(wxUpdateUIEvent& e);
     void OnViewOptions(wxCommandEvent& event);
     void OnToggleMainTBars(wxCommandEvent& event);
     void OnTogglePluginTBars(wxCommandEvent& event);

@@ -27,15 +27,15 @@
 #define NOTEBOOKNAVIGATIONDLG_H
 #include "wxcrafter_plugin.h"
 #include "codelite_exports.h"
-#include "clMultiBook.h"
+#include "Notebook.h"
 
 class WXDLLIMPEXP_SDK NotebookNavigationDlg : public NotebookNavigationDlgBase
 {
-    clMultiBook* m_book;
+    Notebook* m_book;
     int m_selection;
 
 public:
-    NotebookNavigationDlg(wxWindow* parent, clMultiBook* book);
+    NotebookNavigationDlg(wxWindow* parent, Notebook* book);
     virtual ~NotebookNavigationDlg();
     void CloseDialog();
 

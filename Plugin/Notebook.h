@@ -76,7 +76,7 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
 {
     int m_nHeight;
     int m_nWidth;
-    
+
     clTabInfo::Vec_t m_tabs;
     friend class Notebook;
     friend class clTabCtrlDropTarget;
@@ -240,6 +240,8 @@ class WXDLLIMPEXP_SDK Notebook : public wxPanel
 protected:
     void DoChangeSelection(wxWindow* page);
     bool IsVerticalTabs() const { return m_tabCtrl->IsVerticalTabs(); }
+    void OnSize(wxSizeEvent& event);
+    void PositionControls();
 
 public:
     /**

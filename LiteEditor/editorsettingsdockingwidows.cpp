@@ -23,12 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_config.h"
 #include "cl_defs.h"
+#include "drawingutils.h"
 #include "editor_config.h"
 #include "editorsettingsdockingwidows.h"
 #include "frame.h"
-#include "cl_config.h"
-#include "drawingutils.h"
 
 EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     : EditorSettingsDockingWindowsBase(parent)
@@ -62,18 +62,10 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxNavBarSortDropdown->SetValue(options->IsSortNavBarDropdown());
     m_checkBoxCustomCaptionColour->SetValue(clConfig::Get().Read("UseCustomCaptionsColour", false));
     m_cpCaptionColour->SetColour(DrawingUtils::GetCaptionColour());
-    
-    // DEFAULT 0
-    // MINIMAL 1
-    // TRAPEZOID 2
-    if(options->GetOptions() & OptionsConfig::Opt_TabStyleTRAPEZOID) {
-        m_choiceTabStyle->SetSelection(2);
-    } else if(options->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
-        m_choiceTabStyle->SetSelection(1);
-    } else {
-        // default
-        m_choiceTabStyle->SetSelection(0);
-    }
+
+    m_choiceTabStyle->Append(clTabRenderer::GetRenderers());
+    wxString selection = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
+    m_choiceTabStyle->SetStringSelection(selection);
 
 #if !USE_AUI_NOTEBOOK
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
@@ -168,7 +160,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     clConfig::Get().Write("ActiveTabMarkerColour", m_colourPickerMarker->GetColour());
     clConfig::Get().Write("UseCustomCaptionsColour", m_checkBoxCustomCaptionColour->IsChecked());
     clConfig::Get().Write("CustomCaptionColour", m_cpCaptionColour->GetColour());
-    
+
     options->SetHideOutpuPaneOnUserClick(m_checkBoxHideOutputPaneOnClick->IsChecked());
     options->SetHideOutputPaneNotIfBuild(m_checkBoxHideOutputPaneNotIfBuild->IsChecked());
     options->SetHideOutputPaneNotIfSearch(m_checkBoxHideOutputPaneNotIfSearch->IsChecked());
@@ -221,18 +213,8 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
         ht = OptionsConfig::nbTabHt_Tall;
     }
     options->SetNotebookTabHeight(ht);
-    int tabStyleSelection = m_choiceTabStyle->GetSelection();
-    options->EnableOption(OptionsConfig::Opt_TabStyleMinimal, (tabStyleSelection == 1));
-    options->EnableOption(OptionsConfig::Opt_TabStyleTRAPEZOID, (tabStyleSelection == 2));
-
-    // Set the tab style:
-    // DEFAULT 0
-    // MINIMAL 1
-    // TRAPEZOID 2
-#if USE_AUI_NOTEBOOK
-    options->SetOutputTabsDirection(wxTOP);
-    options->SetWorkspaceTabsDirection(wxTOP);
-#else
+    wxString selection = m_choiceTabStyle->GetStringSelection();
+    clConfig::Get().Write("TabStyle", selection);
 
     switch(m_choiceOutputTabsOrientation->GetSelection()) {
     case 0:
@@ -274,7 +256,6 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     default:
         break;
     }
-#endif
 #endif
 }
 

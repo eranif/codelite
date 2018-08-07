@@ -13,6 +13,7 @@
     dc.DrawLine(__p1, __p2);
 
 clTabRendererClassic::clTabRendererClassic()
+    : clTabRenderer("DEFAULT")
 {
     bottomAreaHeight = 3;
     majorCurveWidth = 15;

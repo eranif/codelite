@@ -1,10 +1,14 @@
-#include "cl_defs.h"
 #include "cl_config.h"
+#include "cl_defs.h"
 #include "globals.h"
 
 #include "Notebook.h"
 #include "clTabRenderer.h"
+#include "clTabRendererClassic.h"
+#include "clTabRendererCurved.h"
+#include "clTabRendererGTK3.h"
 #include "clTabRendererSquare.h"
+#include "cl_config.h"
 #include "editor_config.h"
 #include <wx/dcmemory.h>
 #include <wx/renderer.h>
@@ -123,35 +127,28 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl)
     CalculateOffsets(0);
 }
 
-void clTabInfo::CalculateOffsets(size_t style)
+void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
 {
-    wxBitmap b(1, 1);
-    wxMemoryDC memoryDC(b);
-#ifdef _WXGTK3__
-    wxDC &gcdc = memoryDC;
-#else
-    wxGCDC gcdc(memoryDC);
-#endif
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
-    
+
     int Y_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->ySpacer : 5;
     int X_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->xSpacer : 5;
     int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
     int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
-    
-    wxDC& dc = gcdc;
+
     wxFont font = clTabRenderer::GetTabFont();
+    font.SetWeight(wxFONTWEIGHT_BOLD);
     dc.SetFont(font);
 
     wxSize sz = dc.GetTextExtent(m_label);
     wxSize fixedHeight = dc.GetTextExtent("Tp");
     m_height = fixedHeight.GetHeight() + (4 * Y_spacer);
-    
+
     // Make that the tab can contain at least the miimum bitmap height
     int bmpHeight = clTabRenderer::GetDefaultBitmapHeight(Y_spacer);
     m_height = wxMax(m_height, bmpHeight);
-    
+
     m_width = 0;
     m_width += M_spacer;
     m_width += S_spacer;
@@ -174,7 +171,7 @@ void clTabInfo::CalculateOffsets(size_t style)
     m_textY = ((m_height - sz.y) / 2);
     m_width += sz.x;
     m_textWidth = sz.x;
-    
+
     // x button
     if((style & kNotebook_CloseButtonOnActiveTab)) {
         m_width += X_spacer;
@@ -183,14 +180,26 @@ void clTabInfo::CalculateOffsets(size_t style)
         m_bmpCloseY = ((m_height - 12) / 2) + 2;
         m_width += 12; // X button is 10 pixels in size
     }
-    
+
     m_width += X_spacer;
     m_width += M_spacer;
     m_width += S_spacer;
-    
+    if((style & kNotebook_UnderlineActiveTab) && bVerticalTabs) { m_width += 8; }
     // Update the rect width
     m_rect.SetWidth(m_width);
     m_rect.SetHeight(m_height);
+}
+
+void clTabInfo::CalculateOffsets(size_t style)
+{
+    wxBitmap b(1, 1);
+    wxMemoryDC memoryDC(b);
+#ifdef _WXGTK3__
+    wxDC& gcdc = memoryDC;
+#else
+    wxGCDC gcdc(memoryDC);
+#endif
+    CalculateOffsets(style, gcdc);
 }
 
 void clTabInfo::SetBitmap(const wxBitmap& bitmap, size_t style)
@@ -211,13 +220,14 @@ void clTabInfo::SetActive(bool active, size_t style)
     CalculateOffsets(style);
 }
 
-clTabRenderer::clTabRenderer()
+clTabRenderer::clTabRenderer(const wxString& name)
     : bottomAreaHeight(0)
     , majorCurveWidth(0)
     , smallCurveWidth(0)
     , overlapWidth(0)
     , verticalOverlapWidth(0)
     , xSpacer(10)
+    , m_name(name)
 {
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }
@@ -273,7 +283,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
         pt2.x -= 1;
 #else
         pt1.x += 2; // Skip the marker on the left side drawn in pen 3 pixel width
-//        pt2.x -= 1;
+                    //        pt2.x -= 1;
 #endif
         DRAW_LINE(pt1, pt2);
         pt1.y += 1;
@@ -296,8 +306,52 @@ int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
 {
     int bmpHeight = 0;
     wxBitmap dummyBmp = clGetManager()->GetStdIcons()->LoadBitmap("cog");
-    if(dummyBmp.IsOk()) {
-        bmpHeight = dummyBmp.GetScaledHeight() + (2 * Y_spacer);
-    }
+    if(dummyBmp.IsOk()) { bmpHeight = dummyBmp.GetScaledHeight() + (2 * Y_spacer); }
     return bmpHeight;
+}
+
+clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(size_t tabStyle)
+{
+    wxString tab = clConfig::Get().Read("TabStyle", wxString("minimal"));
+    wxString name = tab.Lower();
+    if((tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs)) {
+        // Only these styles support vertical tabs
+        if(name == "minimal") {
+            return clTabRenderer::Ptr_t(new clTabRendererSquare());
+        } else {
+            return clTabRenderer::Ptr_t(new clTabRendererGTK3());
+        }
+    }
+    if(name == "minimal") {
+        return clTabRenderer::Ptr_t(new clTabRendererSquare());
+    } else if(name == "trapezoid") {
+        return clTabRenderer::Ptr_t(new clTabRendererCurved());
+    } else if(name == "gtk3") {
+        return clTabRenderer::Ptr_t(new clTabRendererGTK3());
+    } else {
+        return clTabRenderer::Ptr_t(new clTabRendererClassic());
+    }
+}
+
+wxArrayString clTabRenderer::GetRenderers()
+{
+    wxArrayString renderers;
+    renderers.Add("MINIMAL");
+    renderers.Add("TRAPEZOID");
+    renderers.Add("DEFAULT");
+    renderers.Add("GTK3");
+    return renderers;
+}
+
+int clTabRenderer::GetMarkerWidth() { return 8; }
+
+void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
+                                   size_t style)
+{
+    wxUnusedVar(parent);
+    wxUnusedVar(colours);
+    wxUnusedVar(style);
+    dc.SetPen(DrawingUtils::GetPanelBgColour());
+    dc.SetBrush(DrawingUtils::GetPanelBgColour());
+    dc.DrawRectangle(clientRect);
 }

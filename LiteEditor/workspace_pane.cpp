@@ -442,23 +442,4 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
     }
 }
 
-#if !USE_AUI_NOTEBOOK
-clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer()
-{
-    if(m_book->GetStyle() & kNotebook_RightTabs || m_book->GetStyle() & kNotebook_LeftTabs) {
-        // Vertical tabs, change the art provider to use the square shape
-        return clTabRenderer::Ptr_t(new clTabRendererSquare());
-    } else {
-        // Else, use the settings
-        size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
-        if(options & OptionsConfig::Opt_TabStyleMinimal) {
-            return clTabRenderer::Ptr_t(new clTabRendererSquare);
-        } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
-            return clTabRenderer::Ptr_t(new clTabRendererCurved());
-        } else {
-            // the default
-            return clTabRenderer::Ptr_t(new clTabRendererClassic);
-        }
-    }
-}
-#endif
+clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer() { return clTabRenderer::CreateRenderer(m_book->GetStyle()); }

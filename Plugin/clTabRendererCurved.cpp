@@ -11,6 +11,7 @@
     dc.DrawLine(__p1, __p2);
 
 clTabRendererCurved::clTabRendererCurved()
+    : clTabRenderer("TRAPEZOID")
 {
     bottomAreaHeight = 5;
     majorCurveWidth = 15;

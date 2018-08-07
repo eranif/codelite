@@ -17,9 +17,11 @@
 #define WXDLLIMPEXP_SDK
 #endif
 
+#include "clTabRenderer.h"
 #include "cl_defs.h"
 #include "drawingutils.h"
 #include <vector>
+#include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/colour.h>
 #include <wx/dc.h>
@@ -201,6 +203,7 @@ public:
 
 public:
     void CalculateOffsets(size_t style);
+    void CalculateOffsets(size_t style, wxDC& dc);
 
 public:
     typedef wxSharedPtr<clTabInfo> Ptr_t;
@@ -245,17 +248,21 @@ public:
     int verticalOverlapWidth; // V_OVERLAP_WIDTH = 3;
     int xSpacer;
     int ySpacer;
+    wxString m_name;
 
 protected:
     void ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours, size_t style);
 
 public:
-    clTabRenderer();
+    clTabRenderer(const wxString& name);
     virtual ~clTabRenderer() {}
     virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
                       size_t style) = 0;
     virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;
+
+    virtual void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
+                                size_t style);
     /**
      * @brief reutrn font suitable for drawing the tab label
      */
@@ -272,6 +279,23 @@ public:
     static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
 
     static int GetDefaultBitmapHeight(int Y_spacer);
+
+    /**
+     * @brief allocate new renderer based on CodeLite's settings
+     */
+    static clTabRenderer::Ptr_t CreateRenderer(size_t tabStyle);
+    /**
+     * @brief return list of availale renderers
+     */
+    static wxArrayString GetRenderers();
+
+    /**
+     * @brief return the marker pen width
+     * @return
+     */
+    static int GetMarkerWidth();
+    void SetName(const wxString& name) { this->m_name = name; }
+    const wxString& GetName() const { return m_name; }
 };
 #endif
 #endif // CLTABRENDERER_H

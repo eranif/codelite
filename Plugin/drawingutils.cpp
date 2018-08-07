@@ -526,8 +526,8 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool themed
         dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 
     } else {
-        dc.SetPen(GetMenuBarBgColour());
-        dc.SetBrush(GetMenuBarBgColour());
+        dc.SetPen(GetPanelBgColour());
+        dc.SetBrush(GetPanelBgColour());
         dc.DrawRectangle(rect);
     }
 #elif defined(__WXMSW__)
@@ -771,14 +771,7 @@ double wxOSXGetMainScreenContentScaleFactor();
 wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 {
 #ifdef __WXOSX__
-    double scale = 1.0;
-    wxImage img = bmp.ConvertToImage();
-    img = img.ConvertToGreyscale();
-    if(wxOSXGetMainScreenContentScaleFactor() > 1.9) {
-        scale = 2.0;
-    }
-    wxBitmap greyBmp(img, -1, scale);
-    return greyBmp;
+    return bmp.ConvertToDisabled(255);
 #elif defined(__WXGTK__)
     bool bDarkBG = IsDark(GetPanelBgColour());
     return bmp.ConvertToDisabled(bDarkBG ? 20 : 255);

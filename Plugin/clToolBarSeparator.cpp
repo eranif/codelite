@@ -17,7 +17,8 @@ void clToolBarSeparator::Render(wxDC& dc, const wxRect& rect)
     //FillMenuBarBgColour(dc, rect);
     wxCoord xx = rect.GetX();
     xx += CL_TOOL_BAR_X_MARGIN;
-
-    dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+    
+    wxColour c = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+    dc.SetPen(c.ChangeLightness(150));
     dc.DrawLine(xx, rect.GetY() + 2, xx, rect.GetY() + rect.GetHeight() - 2);
 }

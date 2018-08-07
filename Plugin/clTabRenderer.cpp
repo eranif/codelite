@@ -343,7 +343,14 @@ wxArrayString clTabRenderer::GetRenderers()
     return renderers;
 }
 
-int clTabRenderer::GetMarkerWidth() { return 4; }
+int clTabRenderer::GetMarkerWidth() 
+{
+#ifdef __WXOSX__
+    return 2;
+#else
+    return 4;
+#endif
+}
 
 void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
                                    size_t style)

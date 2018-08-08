@@ -39,6 +39,9 @@ WindowStack::~WindowStack() {}
 
 void WindowStack::Select(wxWindow* win)
 {
+#ifndef __WXOSX__
+    wxWindowUpdateLocker locker(this);
+#endif
     int index = FindPage(win);
     if(index == wxNOT_FOUND) { return; }
     ChangeSelection(index);
@@ -48,6 +51,10 @@ void WindowStack::Clear() { DeleteAllPages(); }
 
 bool WindowStack::Remove(wxWindow* win)
 {
+#ifndef __WXOSX__
+    wxWindowUpdateLocker locker(this);
+#endif
+
     int index = FindPage(win);
     if(index == wxNOT_FOUND) { return false; }
     return RemovePage(index);
@@ -55,6 +62,10 @@ bool WindowStack::Remove(wxWindow* win)
 
 bool WindowStack::Delete(wxWindow* win)
 {
+#ifndef __WXOSX__
+    wxWindowUpdateLocker locker(this);
+#endif
+
     int index = FindPage(win);
     if(index == wxNOT_FOUND) { return false; }
     return DeletePage(index);
@@ -62,6 +73,9 @@ bool WindowStack::Delete(wxWindow* win)
 
 bool WindowStack::Add(wxWindow* win, bool select)
 {
+#ifndef __WXOSX__
+    wxWindowUpdateLocker locker(this);
+#endif
     if(!win || Contains(win)) { return false; }
     win->Reparent(this);
     AddPage(win, "", select, wxNOT_FOUND);

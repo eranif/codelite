@@ -213,7 +213,7 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 
         // Vertical tabs
         // Draw bitmap
-        if(tabInfo.m_bitmap.IsOk()) { tmpDC.DrawBitmap(tabInfo.m_bitmap, tabInfo.m_bmpY, tabInfo.m_bmpX); }
+        if(tabInfo.GetBitmap().IsOk()) { tmpDC.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpY, tabInfo.m_bmpX); }
 
         tmpDC.DrawText(tabInfo.m_label, tabInfo.m_textY, tabInfo.m_textX);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
@@ -279,8 +279,8 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 
     if(!IS_VERTICAL_TABS(style)) {
         // Draw bitmap
-        if(tabInfo.m_bitmap.IsOk()) {
-            dc.DrawBitmap(tabInfo.m_bitmap, tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
+        if(tabInfo.GetBitmap().IsOk()) {
+            dc.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
         }
         fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
         if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {

@@ -102,14 +102,15 @@ void clTabColours::InitLightColours()
 bool clTabColours::IsDarkColours() const { return DrawingUtils::IsDark(activeTabBgColour); }
 
 clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp)
-    : m_tabCtrl(tabCtrl)
+    : m_bitmap(bmp)
+    , m_tabCtrl(tabCtrl)
     , m_label(text)
-    , m_bitmap(bmp)
     , m_window(page)
     , m_active(false)
     , m_textWidth(0)
 {
     CalculateOffsets(style);
+    if(m_bitmap.IsOk()) { m_disabledBitmp = DrawingUtils::CreateDisabledBitmap(m_bitmap); }
 }
 
 clTabInfo::clTabInfo(clTabCtrl* tabCtrl)
@@ -205,6 +206,7 @@ void clTabInfo::CalculateOffsets(size_t style)
 void clTabInfo::SetBitmap(const wxBitmap& bitmap, size_t style)
 {
     this->m_bitmap = bitmap;
+    if(m_bitmap.IsOk()) { m_disabledBitmp = DrawingUtils::CreateDisabledBitmap(m_bitmap); }
     CalculateOffsets(style);
 }
 
@@ -312,21 +314,21 @@ int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
 
 clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(size_t tabStyle)
 {
-    wxString tab = clConfig::Get().Read("TabStyle", wxString("minimal"));
-    wxString name = tab.Lower();
+    wxString tab = clConfig::Get().Read("TabStyle", wxString("GTK3"));
+    wxString name = tab.Upper();
     if((tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs)) {
         // Only these styles support vertical tabs
-        if(name == "minimal") {
+        if(name == "MINIMAL") {
             return clTabRenderer::Ptr_t(new clTabRendererSquare());
         } else {
             return clTabRenderer::Ptr_t(new clTabRendererGTK3());
         }
     }
-    if(name == "minimal") {
+    if(name == "MINIMAL") {
         return clTabRenderer::Ptr_t(new clTabRendererSquare());
-    } else if(name == "trapezoid") {
+    } else if(name == "TRAPEZOID") {
         return clTabRenderer::Ptr_t(new clTabRendererCurved());
-    } else if(name == "gtk3") {
+    } else if(name == "GTK3") {
         return clTabRenderer::Ptr_t(new clTabRendererGTK3());
     } else {
         return clTabRenderer::Ptr_t(new clTabRendererClassic());
@@ -336,14 +338,14 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(size_t tabStyle)
 wxArrayString clTabRenderer::GetRenderers()
 {
     wxArrayString renderers;
+    renderers.Add("GTK3");
     renderers.Add("MINIMAL");
     renderers.Add("TRAPEZOID");
     renderers.Add("DEFAULT");
-    renderers.Add("GTK3");
     return renderers;
 }
 
-int clTabRenderer::GetMarkerWidth() 
+int clTabRenderer::GetMarkerWidth()
 {
 #ifdef __WXOSX__
     return 2;
@@ -361,4 +363,14 @@ void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& cli
     dc.SetPen(DrawingUtils::GetPanelBgColour());
     dc.SetBrush(DrawingUtils::GetPanelBgColour());
     dc.DrawRectangle(clientRect);
+}
+
+void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
+                                       const clTabColours& colours, size_t style)
+{
+    wxUnusedVar(parent);
+    wxUnusedVar(colours);
+    wxUnusedVar(style);
+    wxUnusedVar(dc);
+    wxUnusedVar(clientRect);
 }

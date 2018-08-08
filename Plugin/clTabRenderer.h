@@ -182,10 +182,12 @@ public:
  */
 class WXDLLIMPEXP_SDK clTabInfo
 {
+    wxBitmap m_bitmap;
+    wxBitmap m_disabledBitmp;
+
 public:
     clTabCtrl* m_tabCtrl;
     wxString m_label;
-    wxBitmap m_bitmap;
     wxString m_tooltip;
     wxWindow* m_window;
     wxRect m_rect;
@@ -233,6 +235,7 @@ public:
     int GetWidth() const { return m_width; }
     void SetTooltip(const wxString& tooltip) { this->m_tooltip = tooltip; }
     const wxString& GetTooltip() const { return m_tooltip; }
+    const wxBitmap& GetDisabledBitmp() const { return m_disabledBitmp; }
 };
 
 class WXDLLIMPEXP_SDK clTabRenderer
@@ -263,6 +266,13 @@ public:
 
     virtual void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
                                 size_t style);
+
+    /**
+     * @brief finalise the background after all elements have been drawn on the tab area colour. Default is
+     * to do nothing
+     */
+    virtual void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
+                                    size_t style);
     /**
      * @brief reutrn font suitable for drawing the tab label
      */

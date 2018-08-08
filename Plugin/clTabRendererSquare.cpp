@@ -56,8 +56,11 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
     bool bVerticalTabs = IS_VERTICAL_TABS(style);
     // Draw bitmap
     if(tabInfo.GetBitmap().IsOk() && !bVerticalTabs) {
-        dc.DrawBitmap(tabInfo.GetBitmap(), tabInfo.m_bmpX + rr.GetX(), tabInfo.m_bmpY + rr.GetY());
+        const wxBitmap& bmp = (!tabInfo.IsActive() && tabInfo.GetDisabledBitmp().IsOk()) ? tabInfo.GetDisabledBitmp()
+                                                                                         : tabInfo.GetBitmap();
+        dc.DrawBitmap(bmp, tabInfo.m_bmpX + rr.GetX(), tabInfo.m_bmpY + rr.GetY());
     }
+    
     wxString label = tabInfo.m_label;
     if(bVerticalTabs) {
         // Check that the text can fit into the tab label

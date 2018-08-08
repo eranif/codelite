@@ -64,7 +64,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_cpCaptionColour->SetColour(DrawingUtils::GetCaptionColour());
 
     m_choiceTabStyle->Append(clTabRenderer::GetRenderers());
-    wxString selection = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
+    wxString selection = clConfig::Get().Read("TabStyle", wxString("GTK3"));
     m_choiceTabStyle->SetStringSelection(selection);
 
 #if !USE_AUI_NOTEBOOK

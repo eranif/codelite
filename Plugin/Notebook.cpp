@@ -45,7 +45,6 @@ extern void Notebook_Init_Bitmaps();
 
 void Notebook::PositionControls()
 {
-#ifdef __WXOSX__
     size_t style = GetStyle();
     wxRect rect = GetClientRect();
     wxPoint point(GetPosition());
@@ -83,18 +82,6 @@ void Notebook::PositionControls()
         m_windows->SetSize(rect.GetSize());
         m_windows->Move(m_tabCtrl->GetRect().GetBottomLeft());
     }
-#else
-    wxBoxSizer* sizer = new wxBoxSizer(IsVerticalTabs() ? wxHORIZONTAL : wxVERTICAL);
-    SetSizer(sizer);
-    if((GetStyle() & kNotebook_RightTabs) || (GetStyle() && kNotebook_BottomTabs)) {
-        sizer->Add(m_windows, 1, wxEXPAND);
-        sizer->Add(m_tabCtrl, 0, wxEXPAND);
-    } else {
-        sizer->Add(m_tabCtrl, 0, wxEXPAND);
-        sizer->Add(m_windows, 1, wxEXPAND);
-    }
-    Layout();
-#endif
 }
 
 Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
@@ -345,6 +332,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 {
     wxBufferedPaintDC dc(this);
     PrepareDC(dc);
+
 #ifdef __WXGTK3__
     wxDC& gcdc = dc;
 #else
@@ -400,6 +388,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 #ifdef __WXOSX__
     clientRect.Inflate(1, 1);
 #endif
+
     GetArt()->DrawBackground(this, gcdc, clientRect, m_colours, m_style);
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         m_tabs[i]->CalculateOffsets(GetStyle());
@@ -462,6 +451,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         gcdc.SetPen(m_colours.inactiveTabPenColour);
         m_art->DrawChevron(this, gcdc, m_chevronRect, m_colours);
     }
+    m_art->FinaliseBackground(this, gcdc, clientRect, m_colours, m_style);
 }
 
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)

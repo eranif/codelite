@@ -146,7 +146,7 @@ protected:
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
-    
+
     /**
      * @brief goto anything..
      */
@@ -370,7 +370,8 @@ private:
      * @brief see if the wizard changed developer profile
      * @return true if the 'Save Perspective' dialog should not be shown
      */
-    bool GetAndResetNoSavePerspectivePrompt() {
+    bool GetAndResetNoSavePerspectivePrompt()
+    {
         bool ans = m_noSavePerspectivePrompt;
         m_noSavePerspectivePrompt = false;
         return ans;
@@ -378,9 +379,7 @@ private:
     /**
      * @brief mark not to show the 'Save Perspective' dialog on next close
      */
-    void SetNoSavePerspectivePrompt(bool devProfileChanged) {
-        m_noSavePerspectivePrompt = devProfileChanged;
-    }
+    void SetNoSavePerspectivePrompt(bool devProfileChanged) { m_noSavePerspectivePrompt = devProfileChanged; }
 
     void DoShowCaptions(bool show);
 
@@ -637,6 +636,11 @@ protected:
     void OnEditMenuOpened(wxMenuEvent& e);
     void OnProjectRenamed(clCommandEvent& event);
 
+    // Search handlers
+    void OnFindSelection(wxCommandEvent& event);
+    void OnFindSelectionPrev(wxCommandEvent& event);
+    void OnFindWordAtCaret(wxCommandEvent& event);
+    void OnFindWordAtCaretPrev(wxCommandEvent& event);
     DECLARE_EVENT_TABLE()
 };
 

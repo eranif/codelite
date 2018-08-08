@@ -58,6 +58,7 @@
 #include "my_menu_bar.h"
 #include "open_resource_dialog.h" // New open resource
 #include "precompiled_header.h"
+#include "quickfindbar.h"
 #include "refactorengine.h"
 #include "refactoring_storage.h"
 #include "save_perspective_as_dlg.h"
@@ -72,7 +73,6 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
-#include "quickfindbar.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -382,7 +382,9 @@ EVT_UPDATE_UI(wxID_REPLACE, clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("select_previous"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("select_next"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("find_next"), clMainFrame::OnFileExistUpdateUI)
+EVT_MENU(XRCID("find_next"), clMainFrame::OnFindSelection)
 EVT_UPDATE_UI(XRCID("find_previous"), clMainFrame::OnFileExistUpdateUI)
+EVT_MENU(XRCID("find_previous"), clMainFrame::OnFindSelectionPrev)
 EVT_UPDATE_UI(XRCID("find_next_at_caret"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("find_previous_at_caret"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("incremental_search"), clMainFrame::OnIncrementalSearchUI)
@@ -1095,7 +1097,7 @@ void clMainFrame::CreateGUIControls()
                                       .Hide()
                                       .MaximizeButton());
     RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
-    
+
     // Wrap the mainbook with a wxPanel
     // We do this so we can place the find bar under the main book
     wxPanel* container = new wxPanel(m_mainPanel);
@@ -1107,7 +1109,7 @@ void clMainFrame::CreateGUIControls()
     container->GetSizer()->Add(findbar, 0, wxEXPAND);
     container->GetSizer()->Fit(container);
     m_mainBook->SetFindBar(findbar);
-    
+
     m_mgr.AddPane(container, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(false));
     CreateRecentlyOpenedFilesMenu();
 
@@ -3798,7 +3800,6 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
     FileUtils::OpenTerminal(filepath);
 }
 
-
 void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
 {
     SyntaxHighlightDlg dlg(this);
@@ -5557,3 +5558,72 @@ void clMainFrame::OnMainBookMovePage(wxCommandEvent& e)
     GetMainBook()->MovePage(e.GetId() == XRCID("wxEVT_BOOK_MOVE_TAB_RIGHT"));
 }
 
+void clMainFrame::OnFindSelection(wxCommandEvent& event)
+{
+    event.Skip();
+    clEditor* editor = GetMainBook()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    event.Skip(false);
+    if(GetMainBook()->GetFindBar()->IsShown()) {
+        QuickFindBar::Search(editor->GetCtrl(), editor->GetSelection(), QuickFindBar::kSearchForward,
+                             GetMainBook()->GetFindBar());
+    } else {
+        QuickFindBar::Search(editor->GetCtrl(), editor->GetSelection(), QuickFindBar::kSearchForward, NULL);
+    }
+}
+
+void clMainFrame::OnFindSelectionPrev(wxCommandEvent& event)
+{
+    event.Skip();
+    clEditor* editor = GetMainBook()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    event.Skip(false);
+    if(GetMainBook()->GetFindBar()->IsShown()) {
+        QuickFindBar::Search(editor->GetCtrl(), editor->GetSelection(), 0, GetMainBook()->GetFindBar());
+    } else {
+        QuickFindBar::Search(editor->GetCtrl(), editor->GetSelection(), 0, NULL);
+    }
+}
+
+void clMainFrame::OnFindWordAtCaret(wxCommandEvent& event)
+{
+    event.Skip();
+    clEditor* editor = GetMainBook()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    wxString selection;
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    if(ctrl->GetSelectedText().IsEmpty()) {
+        // Select the current word
+        long pos = ctrl->GetCurrentPos();
+        long start = ctrl->WordStartPosition(pos, true);
+        long end = ctrl->WordEndPosition(pos, true);
+
+        selection = ctrl->GetTextRange(start, end);
+        if(!selection.IsEmpty()) { ctrl->SetCurrentPos(start); }
+    }
+    if(selection.IsEmpty()) return;
+    OnFindSelection(event);
+}
+
+void clMainFrame::OnFindWordAtCaretPrev(wxCommandEvent& event)
+{
+    event.Skip();
+    clEditor* editor = GetMainBook()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    wxString selection;
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    if(ctrl->GetSelectedText().IsEmpty()) {
+        // Select the current word
+        long pos = ctrl->GetCurrentPos();
+        long start = ctrl->WordStartPosition(pos, true);
+        long end = ctrl->WordEndPosition(pos, true);
+
+        selection = ctrl->GetTextRange(start, end);
+        if(!selection.IsEmpty()) { ctrl->SetCurrentPos(start); }
+    }
+    if(selection.IsEmpty()) return;
+    OnFindSelectionPrev(event);
+}

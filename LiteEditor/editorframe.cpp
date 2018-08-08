@@ -39,8 +39,10 @@ wxDEFINE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 
 EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyle)
     : EditorFrameBase(parent)
+    , m_myMenuBar(NULL)
 {
-    m_book = new Notebook(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, notebookStyle);
+    m_book = new Notebook(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                          notebookStyle | kNotebook_AllowForeignDnD);
     m_book->Bind(wxEVT_BOOK_PAGE_CLOSED, &EditorFrame::OnPageClosed, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CLOSING, &EditorFrame::OnPageClosing, this);
 
@@ -48,17 +50,8 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     editor->Reparent(m_book);
     m_book->AddPage(editor, editor->GetFileName().GetFullName(), true);
     // Notebook::RemovePage hides the detached tab
-    if(!editor->IsShown()) {
-        editor->Show();
-    }
-    // Load the menubar from XRC and set this frame's menubar to it.
-    wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
-
-    // Under wxGTK < 2.9.4 we need this wrapper class to avoid warnings on ubuntu when codelite exits
-    m_myMenuBar = new MyMenuBar();
-    m_myMenuBar->Set(mb);
-    SetMenuBar(mb);
-
+    if(!editor->IsShown()) { editor->Show(); }
+    
     // Set a find control for this editor
     m_findBar = new QuickFindBar(m_mainPanel);
     m_findBar->SetEditor(editor);
@@ -70,7 +63,7 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     SetTitle(editor->GetFileName().GetFullPath());
 
     // Update the accelerator table for this frame
-    ManagerST::Get()->UpdateMenuAccelerators(this);
+    //ManagerST::Get()->UpdateMenuAccelerators(this);
     SetSize(600, 600);
     CentreOnScreen();
 }
@@ -81,7 +74,7 @@ EditorFrame::~EditorFrame()
 // see this wxWidgets bug report for more details:
 //  http://trac.wxwidgets.org/ticket/14292
 #if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
-    delete m_myMenuBar;
+    wxDELETE(m_myMenuBar);
 #endif
 
     for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
@@ -127,6 +120,14 @@ void EditorFrame::OnPageClosed(wxBookCtrlEvent& event)
     event.Skip();
     if(m_book->GetPageCount() == 0) {
         Close();
+        m_findBar->SetEditor(NULL);
+    } else {
+        clEditor* editor = reinterpret_cast<clEditor*>(m_book->GetCurrentPage());
+        if(editor) {
+            m_findBar->SetEditor(editor->GetCtrl());
+        } else {
+            m_findBar->SetEditor(NULL);
+        }
     }
 }
 
@@ -146,7 +147,7 @@ void EditorFrame::OnPageClosing(wxBookCtrlEvent& event)
             return;
         }
     }
-    
+
     // Perform the cleanup needed before the page is destroyed
     DoCloseEditor(editor);
 }

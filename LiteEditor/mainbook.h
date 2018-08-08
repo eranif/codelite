@@ -123,11 +123,15 @@ private:
     void ShowWelcomePage(bool show);
     void DoShowWindow(wxWindow* win, bool show);
 
+    void OnEditorChanged(wxCommandEvent& event);
+    void OnAllEditorClosed(wxCommandEvent& event);
+
 public:
     MainBook(wxWindow* parent);
     virtual ~MainBook();
-    
-    void SetFindBar(QuickFindBar* findBar) { m_findBar = findBar; }
+
+    void SetFindBar(QuickFindBar* findBar);
+    QuickFindBar* GetFindBar() const { return m_findBar; }
     
     /**
      * @brief register a welcome page. This page is displayed whenever there are no tabs open

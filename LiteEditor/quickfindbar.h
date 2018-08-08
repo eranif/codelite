@@ -26,10 +26,10 @@
 #define __quickfindbar__
 
 #include "clEditorEditEventsHandler.h"
+#include "clTerminalHistory.h"
 #include "quickfindbarbase.h"
 #include <wx/combobox.h>
 #include <wx/panel.h>
-#include "clTerminalHistory.h"
 
 class clToolBar;
 class wxStyledTextCtrl;
@@ -69,10 +69,10 @@ protected:
     virtual void OnFindUI(wxUpdateUIEvent& event);
     virtual void OnReplaceTextEnter(wxCommandEvent& event);
     virtual void OnReplaceTextUpdated(wxCommandEvent& event);
-    
+
     void DoArrowDown(clTerminalHistory& history, wxTextCtrl* ctrl);
     void DoArrowUp(clTerminalHistory& history, wxTextCtrl* ctrl);
-    
+
 public:
     enum {
         ID_TOOL_REPLACE = 1000,
@@ -148,6 +148,14 @@ public:
     bool Show(const wxString& findWhat);
     wxStyledTextCtrl* GetEditor() { return m_sci; }
     void SetEditor(wxStyledTextCtrl* sci);
+    
+    /**
+     * @brief search a stc control for 'findwhat'. Use kSearchForward to indicate searching forward, pass 0
+     * for backward.
+     * 'This' is used internally, so pass it NULL
+     */
+    static bool Search(wxStyledTextCtrl* ctrl, const wxString& findwhat, size_t search_flags,
+                       QuickFindBar* This = NULL);
 };
 
 #endif // __quickfindbar__

@@ -2,6 +2,7 @@
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
+#include "json_node.h"
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
@@ -1311,20 +1312,19 @@ void clTabCtrl::OnBeginDrag()
     m_dragStartPos = wxPoint();
 
     // We simply drag the active tab index
-    wxString dragText;
-    dragText << "{Class:Notebook,TabIndex:" << GetSelection() << "}{";
-#if CL_BUILD
+    JSONRoot root(cJSON_Object);
+    JSONElement dnd = root.toElement();
+
+    dnd.addProperty("TabCtrl", (size_t)((wxUIntPtr)this));
+    dnd.addProperty("Index", GetSelection());
     IEditor* activeEditor = clGetManager()->GetActiveEditor();
     wxWindow* activePage = NULL;
     if(GetSelection() != wxNOT_FOUND) { activePage = GetPage(GetSelection()); }
 
     if(activeEditor && ((void*)activeEditor->GetCtrl() == (void*)activePage)) {
-        // The current Notebook is the main editor
-        dragText << activeEditor->GetFileName().GetFullPath();
+        dnd.addProperty("File", activeEditor->GetFileName().GetFullPath());
     }
-    dragText << "}";
-#endif
-    wxTextDataObject dragContent(dragText);
+    wxTextDataObject dragContent(dnd.format(true));
     wxDropSource dragSource(this);
     dragSource.SetData(dragContent);
     wxDragResult result = dragSource.DoDragDrop(true);
@@ -1347,16 +1347,15 @@ clTabCtrlDropTarget::~clTabCtrlDropTarget() {}
 
 bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
 {
-    // Extract the content dragged using regular expression
-    static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}\\{.*?\\}", wxRE_ADVANCED);
-    if(!re.Matches(data)) return false;
+    JSONRoot root(data);
+    if(!root.isOk()) return false;
+    int nTabIndex = root.toElement().namedObject("Index").toInt(wxNOT_FOUND);
+    size_t nTabCtrl = root.toElement().namedObject("TabCtrl").toSize_t(0);
+    if((nTabCtrl == 0) || (nTabIndex == wxNOT_FOUND)) return false;
+    clTabCtrl* ctrl = reinterpret_cast<clTabCtrl*>((void*)nTabCtrl);
+    if(!ctrl) return false;
 
-    wxString tabIndex = re.GetMatch(data, 1);
-    long nTabIndex = wxNOT_FOUND;
-    tabIndex.ToCLong(&nTabIndex);
-    // Sanity
-    if(nTabIndex == wxNOT_FOUND) return false;
-    if(m_tabCtrl) {
+    if(m_tabCtrl == ctrl) {
         // Test the drop tab index
         int realPos, tabHit;
         eDirection align;
@@ -1366,7 +1365,29 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
         // return false
         if(nTabIndex == realPos) return false;
         m_tabCtrl->MoveActiveToIndex(realPos, align);
+    } else if(ctrl) {
+        int realPos, tabHit;
+        eDirection align;
+        m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit, align);
 
+        // DnD to another notebook control
+        clTabInfo::Ptr_t movingTab = ctrl->GetTabInfo(nTabIndex);
+        Notebook* sourceBook = dynamic_cast<Notebook*>(ctrl->GetParent());
+        Notebook* targetBook = dynamic_cast<Notebook*>(m_tabCtrl->GetParent());
+        if(!sourceBook || !targetBook) return false;
+        
+        // To allow moving tabs betwen notebooks, both must have the kNotebook_AllowForeignDnD style bit enabled
+        if(!(sourceBook->GetStyle() & kNotebook_AllowForeignDnD)) return false;
+        if(!(targetBook->GetStyle() & kNotebook_AllowForeignDnD)) return false;
+        
+        sourceBook->RemovePage(nTabIndex, false);
+        if(realPos == wxNOT_FOUND) {
+            targetBook->AddPage(movingTab->GetWindow(), movingTab->GetLabel(), true, movingTab->GetBitmap());
+        } else {
+            targetBook->InsertPage(realPos, movingTab->GetWindow(), movingTab->GetLabel(), true,
+                                   movingTab->GetBitmap());
+        }
+        return true;
     } else if(m_notebook) {
         wxWindowUpdateLocker locker(wxTheApp->GetTopWindow());
         int where = m_notebook->HitTest(m_notebook->ScreenToClient(wxGetMousePosition()));

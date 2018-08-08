@@ -72,6 +72,7 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
+#include "quickfindbar.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -1094,9 +1095,20 @@ void clMainFrame::CreateGUIControls()
                                       .Hide()
                                       .MaximizeButton());
     RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
-
-    m_mainBook = new MainBook(m_mainPanel);
-    m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(false));
+    
+    // Wrap the mainbook with a wxPanel
+    // We do this so we can place the find bar under the main book
+    wxPanel* container = new wxPanel(m_mainPanel);
+    container->SetSizer(new wxBoxSizer(wxVERTICAL));
+    m_mainBook = new MainBook(container);
+    container->GetSizer()->Add(m_mainBook, 1, wxEXPAND);
+    QuickFindBar* findbar = new QuickFindBar(container);
+    findbar->Hide();
+    container->GetSizer()->Add(findbar, 0, wxEXPAND);
+    container->GetSizer()->Fit(container);
+    m_mainBook->SetFindBar(findbar);
+    
+    m_mgr.AddPane(container, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(false));
     CreateRecentlyOpenedFilesMenu();
 
     m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));

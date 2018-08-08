@@ -20,7 +20,6 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
         wxCrafteryhjh4ZInitBitmapResources();
         bBitmapLoaded = true;
     }
-    this->Hide();
 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
@@ -90,7 +89,9 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     SetName(wxT("QuickFindBarBase"));
     SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_textCtrlFind->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnEnter), NULL, this);
     m_textCtrlFind->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickFindBarBase::OnText), NULL, this);
@@ -211,7 +212,9 @@ QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent, long 
 
     SetName(wxT("QuickFindBarOptionsMenuBase"));
     SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_checkBoxRegex->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                              wxCommandEventHandler(QuickFindBarOptionsMenuBase::OnCheckBoxRegex), NULL, this);

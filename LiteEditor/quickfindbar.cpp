@@ -27,6 +27,7 @@
 #include "bookmark_manager.h"
 #include "clBitmapOverlayCtrl.h"
 #include "cl_config.h"
+#include "codelite_events.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -154,7 +155,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     //=======----------------------
     // Find what:
     //=======----------------------
-    GetSizer()->Fit(this);
     wxTheApp->Bind(wxEVT_MENU,
                    [&](wxCommandEvent& event) {
                        CHECK_FOCUS_WIN(event);
@@ -180,9 +180,29 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Update the search flags
     m_searchFlags = clConfig::Get().Read("FindBar/SearchFlags", 0);
     m_highlightMatches = clConfig::Get().Read("FindBar/HighlightOccurences", false);
-    
+
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
+
+    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, [&](wxCommandEvent& event) {
+        event.Skip();
+        this->SetEditor(NULL);
+    });
+
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, [&](wxCommandEvent& event) {
+        event.Skip();
+        // See if we got a new editor
+        if(event.GetClientData()) {
+            IEditor* editor = reinterpret_cast<IEditor*>(event.GetClientData());
+            if(editor) {
+                this->SetEditor(editor->GetCtrl());
+                return;
+            }
+        }
+        SetEditor(NULL);
+    });
+    GetSizer()->Fit(this);
+    Layout();
 }
 
 QuickFindBar::~QuickFindBar()
@@ -201,7 +221,9 @@ QuickFindBar::~QuickFindBar()
 
 bool QuickFindBar::Show(bool show)
 {
-    if(!m_sci && show) { return false; }
+    if(!m_sci && show) {
+        return false;
+    }
     return DoShow(show, wxEmptyString);
 }
 
@@ -212,7 +234,7 @@ bool QuickFindBar::DoSearch(size_t searchFlags)
     if(!m_sci || m_sci->GetLength() == 0 || m_textCtrlFind->GetValue().IsEmpty()) return false;
     clGetManager()->SetStatusMessage(wxEmptyString);
     m_matchesFound->SetLabel("");
-    
+
     // Clear all search markers if desired
     if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
         m_sci->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
@@ -225,7 +247,9 @@ bool QuickFindBar::DoSearch(size_t searchFlags)
 
     // Since scintilla uses a non POSIX way of handling the paren
     // fix them
-    if(flags & wxSTC_FIND_REGEXP) { DoFixRegexParen(find); }
+    if(flags & wxSTC_FIND_REGEXP) {
+        DoFixRegexParen(find);
+    }
 
     int curpos = m_sci->GetCurrentPos();
     int start = wxNOT_FOUND;
@@ -341,7 +365,9 @@ void QuickFindBar::OnPrev(wxCommandEvent& e)
 void QuickFindBar::OnText(wxCommandEvent& e)
 {
     e.Skip();
-    if(!m_replaceInSelection && !m_disableTextUpdateEvent) { CallAfter(&QuickFindBar::DoSearchCB, kSearchForward); }
+    if(!m_replaceInSelection && !m_disableTextUpdateEvent) {
+        CallAfter(&QuickFindBar::DoSearchCB, kSearchForward);
+    }
 }
 
 void QuickFindBar::OnKeyDown(wxKeyEvent& e)
@@ -485,7 +511,9 @@ void QuickFindBar::DoReplace()
     if(searchFlags & wxSTC_FIND_REGEXP) {
 
         // Regular expresson search
-        if(!(searchFlags & wxSTC_FIND_MATCHCASE)) { re_flags |= wxRE_ICASE; }
+        if(!(searchFlags & wxSTC_FIND_MATCHCASE)) {
+            re_flags |= wxRE_ICASE;
+        }
 
         wxRegEx re(findwhat, re_flags);
         if(re.IsValid() && re.Matches(selectedText)) {
@@ -552,7 +580,9 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         }
     }
 
-    if(res) { GetParent()->GetSizer()->Layout(); }
+    if(res) {
+        GetParent()->GetSizer()->Layout();
+    }
     if(!m_sci) {
         // nothing to do
 
@@ -574,9 +604,12 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         PostCommandEvent(this, m_textCtrlFind);
 
     } else {
-        if(m_sci->GetSelections() > 1) {}
+        if(m_sci->GetSelections() > 1) {
+        }
         wxString findWhat = DoGetSelectedText().BeforeFirst(wxT('\n'));
-        if(!findWhat.IsEmpty()) { m_textCtrlFind->ChangeValue(findWhat); }
+        if(!findWhat.IsEmpty()) {
+            m_textCtrlFind->ChangeValue(findWhat);
+        }
 
         m_textCtrlFind->SelectAll();
         m_textCtrlFind->SetFocus();
@@ -647,7 +680,9 @@ void QuickFindBar::DoSelectAll(bool addMarkers)
 
     // Since scintilla uses a non POSIX way of handling the regex paren
     // fix them
-    if(flags & wxSTC_FIND_REGEXP) { DoFixRegexParen(find); }
+    if(flags & wxSTC_FIND_REGEXP) {
+        DoFixRegexParen(find);
+    }
 
     // Ensure that we have at least one match before we continue
     if(m_sci->FindText(0, m_sci->GetLastPosition(), find, flags) == wxNOT_FOUND) {
@@ -826,13 +861,17 @@ bool QuickFindBar::ShowForPlugins()
 
 wxString QuickFindBar::DoGetSelectedText()
 {
-    if(!m_sci) { return wxEmptyString; }
+    if(!m_sci) {
+        return wxEmptyString;
+    }
 
     if(m_sci->GetSelections() > 1) {
         for(int i = 0; i < m_sci->GetSelections(); ++i) {
             int selStart = m_sci->GetSelectionNStart(i);
             int selEnd = m_sci->GetSelectionNEnd(i);
-            if(selEnd > selStart) { return m_sci->GetTextRange(selStart, selEnd); }
+            if(selEnd > selStart) {
+                return m_sci->GetTextRange(selStart, selEnd);
+            }
         }
         return wxEmptyString;
 
@@ -857,13 +896,17 @@ void QuickFindBar::OnFindMouseWheel(wxMouseEvent& e)
 
 void QuickFindBar::DoEnsureLineIsVisible(int line)
 {
-    if(line == wxNOT_FOUND) { line = m_sci->LineFromPosition(m_sci->GetSelectionStart()); }
+    if(line == wxNOT_FOUND) {
+        line = m_sci->LineFromPosition(m_sci->GetSelectionStart());
+    }
     int linesOnScreen = m_sci->LinesOnScreen();
     if(!((line > m_sci->GetFirstVisibleLine()) && (line < (m_sci->GetFirstVisibleLine() + linesOnScreen)))) {
         // To place our line in the middle, the first visible line should be
         // the: line - (linesOnScreen / 2)
         int firstVisibleLine = line - (linesOnScreen / 2);
-        if(firstVisibleLine < 0) { firstVisibleLine = 0; }
+        if(firstVisibleLine < 0) {
+            firstVisibleLine = 0;
+        }
         m_sci->SetFirstVisibleLine(firstVisibleLine);
     }
     m_sci->EnsureVisible(line);
@@ -875,7 +918,9 @@ void QuickFindBar::DoEnsureLineIsVisible(int line)
         // EnsureCaretVisible scrolled the page
         // scroll it a bit more
         int scrollToPos = m_sci->GetSelectionStart();
-        if(scrollToPos != wxNOT_FOUND) { m_sci->ScrollToColumn(m_sci->GetColumn(scrollToPos)); }
+        if(scrollToPos != wxNOT_FOUND) {
+            m_sci->ScrollToColumn(m_sci->GetColumn(scrollToPos));
+        }
     }
 }
 
@@ -924,7 +969,9 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
 
         // Since scintilla uses a non POSIX way of handling the regex paren
         // fix them
-        if(searchFlags & wxSTC_FIND_REGEXP) { DoFixRegexParen(findwhat); }
+        if(searchFlags & wxSTC_FIND_REGEXP) {
+            DoFixRegexParen(findwhat);
+        }
 
         int from, to;
         if(selectionOnly && m_sci->GetSelectedText().IsEmpty()) return;
@@ -974,7 +1021,9 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
                 if(searchFlags & wxSTC_FIND_REGEXP) {
 
                     // Regular expresson search
-                    if(!(searchFlags & wxSTC_FIND_MATCHCASE)) { re_flags |= wxRE_ICASE; }
+                    if(!(searchFlags & wxSTC_FIND_MATCHCASE)) {
+                        re_flags |= wxRE_ICASE;
+                    }
 
                     wxRegEx re(findwhat, re_flags);
                     if(re.IsValid() && re.Matches(selectedText)) {

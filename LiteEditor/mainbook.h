@@ -49,7 +49,6 @@ private:
     FileHistory m_recentFiles;
     clEditorBar* m_navBar;
     Notebook* m_book;
-    QuickFindBar* m_quickFindBar;
     MessagePane* m_messagePane;
     bool m_useBuffereLimit;
     EditorFrame::List_t m_detachedEditors;
@@ -58,6 +57,7 @@ private:
     FilesModifiedDlg* m_filesModifiedDlg;
     std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
     wxWindow* m_welcomePage;
+    QuickFindBar* m_findBar;
 
 public:
     enum {
@@ -95,7 +95,6 @@ private:
     void OnThemeChanged(wxCommandEvent& e);
     void OnColoursAndFontsChanged(clCommandEvent& e);
     bool DoSelectPage(wxWindow* win);
-    void DoPositionFindBar();
     void DoHandleFrameMenu(clEditor* editor);
     void DoEraseDetachedEditor(IEditor* editor);
     void OnWorkspaceReloadStarted(clCommandEvent& e);
@@ -127,7 +126,9 @@ private:
 public:
     MainBook(wxWindow* parent);
     virtual ~MainBook();
-
+    
+    void SetFindBar(QuickFindBar* findBar) { m_findBar = findBar; }
+    
     /**
      * @brief register a welcome page. This page is displayed whenever there are no tabs open
      * in CodeLite. If there is already a welcome page registered, this call destroys the previous one
@@ -150,9 +151,9 @@ public:
     void ClearFileHistory();
     void GetRecentlyOpenedFiles(wxArrayString& files);
     FileHistory& GetRecentlyOpenedFilesClass() { return m_recentFiles; }
-    void ShowQuickBarForPlugins() { m_quickFindBar->ShowForPlugins(); }
-    void ShowQuickBar(bool s) { m_quickFindBar->Show(s); }
-    void ShowQuickBar(const wxString& findWhat) { m_quickFindBar->Show(findWhat); }
+    void ShowQuickBarForPlugins();
+    void ShowQuickBar(bool s);
+    void ShowQuickBar(const wxString& findWhat);
     void ShowMessage(const wxString& message, bool showHideButton = true, const wxBitmap& bmp = wxNullBitmap,
                      const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(),
                      const ButtonDetails& btn3 = ButtonDetails(), const CheckboxDetails& cb = CheckboxDetails());

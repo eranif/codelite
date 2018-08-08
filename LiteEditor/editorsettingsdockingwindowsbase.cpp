@@ -135,12 +135,6 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
 
     boxSizer56->Add(m_checkBoxEditorTabsFollowsTheme, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxUseDarkTabTheme = new wxCheckBox(m_panelTabs, wxID_ANY, _("Use dark notebook tab theme by default"),
-                                               wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1, -1)), 0);
-    m_checkBoxUseDarkTabTheme->SetValue(false);
-
-    boxSizer56->Add(m_checkBoxUseDarkTabTheme, 0, wxALL, WXC_FROM_DIP(5));
-
     m_checkBoxMouseScrollSwitchTabs = new wxCheckBox(m_panelTabs, wxID_ANY, _("Mouse scroll switches between tabs"),
                                                      wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1, -1)), 0);
     m_checkBoxMouseScrollSwitchTabs->SetValue(false);
@@ -252,12 +246,6 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
 
     wxBoxSizer* boxSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panel14->SetSizer(boxSizer20);
-
-    m_checkBoxFindBarAtBottom = new wxCheckBox(m_panel14, wxID_ANY, _("Place the Find bar at the bottom"),
-                                               wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1, -1)), 0);
-    m_checkBoxFindBarAtBottom->SetValue(true);
-
-    boxSizer20->Add(m_checkBoxFindBarAtBottom, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxDontFoldSearchResults = new wxCheckBox(m_panel14, wxID_ANY, _("Don't automatically fold Search results"),
                                                      wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1, -1)), 0);
@@ -430,7 +418,9 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
 
     SetName(wxT("EditorSettingsDockingWindowsBase"));
     SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_cpCaptionColour->Connect(wxEVT_UPDATE_UI,
                                wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUseCustomCaptionColourUI),

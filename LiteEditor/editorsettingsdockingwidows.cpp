@@ -50,7 +50,6 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxHideOutputPaneNotIfGit->SetValue(options->GetHideOutputPaneNotIfGit());
     m_checkBoxHideOutputPaneNotIfDebug->SetValue(options->GetHideOutputPaneNotIfDebug());
     m_checkBoxHideOutputPaneNotIfMemCheck->SetValue(options->GetHideOutputPaneNotIfMemCheck());
-    m_checkBoxFindBarAtBottom->SetValue(options->GetFindBarAtBottom());
     m_checkBoxDontFoldSearchResults->SetValue(options->GetDontAutoFoldResults());
     m_checkBoxDontOverrideSearchStringWithSelection->SetValue(options->GetDontOverrideSearchStringWithSelection());
     m_checkBoxShowDebugOnRun->SetValue(options->GetShowDebugOnRun());
@@ -67,21 +66,9 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     wxString selection = clConfig::Get().Read("TabStyle", wxString("GTK3"));
     m_choiceTabStyle->SetStringSelection(selection);
 
-#if !USE_AUI_NOTEBOOK
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
-    m_checkBoxUseDarkTabTheme->SetValue(options->IsTabColourDark());
     m_checkBoxMouseScrollSwitchTabs->SetValue(options->IsMouseScrollSwitchTabs());
     m_checkBoxSortTabsDropdownAlphabetically->SetValue(options->IsSortTabsDropdownAlphabetically());
-#else
-    m_checkBoxEditorTabsFollowsTheme->SetValue(true);
-    m_checkBoxEditorTabsFollowsTheme->Enable(false);
-    m_checkBoxUseDarkTabTheme->SetValue(false);
-    m_checkBoxUseDarkTabTheme->Enable(false);
-    m_checkBoxMouseScrollSwitchTabs->SetValue(false);
-    m_checkBoxMouseScrollSwitchTabs->Enable(false);
-    m_checkBoxSortTabsDropdownAlphabetically->SetValue(false);
-    m_checkBoxSortTabsDropdownAlphabetically->Enable(false);
-#endif
     m_checkBoxEnableTabSwitchingKey->SetValue(options->IsCtrlTabEnabled());
 
     int sel(0);
@@ -176,7 +163,6 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetHideOutputPaneNotIfGit(m_checkBoxHideOutputPaneNotIfGit->IsChecked());
     options->SetHideOutputPaneNotIfDebug(m_checkBoxHideOutputPaneNotIfDebug->IsChecked());
     options->SetHideOutputPaneNotIfMemCheck(m_checkBoxHideOutputPaneNotIfMemCheck->IsChecked());
-    options->SetFindBarAtBottom(m_checkBoxFindBarAtBottom->IsChecked());
     options->SetDontAutoFoldResults(m_checkBoxDontFoldSearchResults->IsChecked());
     options->SetDontOverrideSearchStringWithSelection(m_checkBoxDontOverrideSearchStringWithSelection->IsChecked());
     options->SetShowDebugOnRun(m_checkBoxShowDebugOnRun->IsChecked());
@@ -186,14 +172,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetNavBarTop(m_checkBoxNavBarTop->IsChecked());
     options->SetCtrlTabEnabled(m_checkBoxEnableTabSwitchingKey->IsChecked());
     options->SetSortNavBarDropdown(m_checkBoxNavBarSortDropdown->IsChecked());
-
-#if USE_AUI_NOTEBOOK
-    options->SetTabColourMatchesTheme(true);
-    options->SetTabColourDark(false);
-#else
     options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
-    options->SetTabColourDark(m_checkBoxUseDarkTabTheme->IsChecked());
-#endif
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
     options->SetMouseScrollSwitchTabs(m_checkBoxMouseScrollSwitchTabs->IsChecked());
     options->SetSortTabsDropdownAlphabetically(m_checkBoxSortTabsDropdownAlphabetically->IsChecked());
@@ -226,20 +205,6 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     default:
         break;
     }
-#ifdef __WXOSX__
-    switch(m_choiceWorkspaceTabsOrientation->GetSelection()) {
-    case 0:
-    case 2:
-        options->SetWorkspaceTabsDirection(wxTOP);
-        break;
-    case 1:
-    case 3:
-        options->SetWorkspaceTabsDirection(wxBOTTOM);
-        break;
-    default:
-        break;
-    }
-#else
     switch(m_choiceWorkspaceTabsOrientation->GetSelection()) {
     case 0:
         options->SetWorkspaceTabsDirection(wxLEFT);
@@ -256,7 +221,6 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     default:
         break;
     }
-#endif
 }
 
 void EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)

@@ -85,10 +85,11 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     sci->IndicatorSetForeground(1, lexer->IsDark() ? "CYAN" : "ORANGE");
     sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
 #else
-    sci->MarkerDefine(7, wxSTC_MARK_ARROW);
-    sci->MarkerSetBackground(7, lexer->IsDark() ? "#FFD700" : "#FF4500");
-    sci->MarkerSetForeground(7, lexer->IsDark() ? "#FFD700" : "#FF4500");
-
+    sci->MarkerDefine(7, wxSTC_MARK_BACKGROUND);
+    sci->MarkerSetBackground(7, lexer->IsDark() ? *wxWHITE : *wxGREEN);
+    sci->MarkerSetForeground(7, lexer->IsDark() ? *wxWHITE : *wxGREEN);
+    sci->MarkerSetAlpha(7, 40);
+    
     sci->IndicatorSetForeground(1, lexer->IsDark() ? "#FFD700" : "#FF4500");
     sci->IndicatorSetStyle(1, wxSTC_INDIC_TEXTFORE);
 #endif

@@ -604,7 +604,7 @@ void QuickFindBar::DoSelectAll(bool addMarkers)
         if(i == 0) {
             m_sci->SetSelection(matches.at(i).first, matches.at(i).second);
             m_sci->SetMainSelection(0);
-            DoEnsureLineIsVisible(m_sci->LineFromPosition(matches.at(0).first));
+            DoEnsureLineIsVisible(m_sci, m_sci->LineFromPosition(matches.at(0).first));
         } else {
             m_sci->AddSelection(matches.at(i).first, matches.at(i).second);
         }
@@ -767,27 +767,27 @@ void QuickFindBar::OnFindMouseWheel(wxMouseEvent& e)
     wxUnusedVar(e);
 }
 
-void QuickFindBar::DoEnsureLineIsVisible(int line)
+void QuickFindBar::DoEnsureLineIsVisible(wxStyledTextCtrl* sci, int line)
 {
-    if(line == wxNOT_FOUND) { line = m_sci->LineFromPosition(m_sci->GetSelectionStart()); }
-    int linesOnScreen = m_sci->LinesOnScreen();
-    if(!((line > m_sci->GetFirstVisibleLine()) && (line < (m_sci->GetFirstVisibleLine() + linesOnScreen)))) {
+    if(line == wxNOT_FOUND) { line = sci->LineFromPosition(sci->GetSelectionStart()); }
+    int linesOnScreen = sci->LinesOnScreen();
+    if(!((line > sci->GetFirstVisibleLine()) && (line < (sci->GetFirstVisibleLine() + linesOnScreen)))) {
         // To place our line in the middle, the first visible line should be
         // the: line - (linesOnScreen / 2)
         int firstVisibleLine = line - (linesOnScreen / 2);
         if(firstVisibleLine < 0) { firstVisibleLine = 0; }
-        m_sci->SetFirstVisibleLine(firstVisibleLine);
+        sci->SetFirstVisibleLine(firstVisibleLine);
     }
-    m_sci->EnsureVisible(line);
-    m_sci->ScrollToColumn(0);
-    int xScrollPosBefore = m_sci->GetScrollPos(wxHORIZONTAL);
-    m_sci->EnsureCaretVisible();
-    int xScrollPosAfter = m_sci->GetScrollPos(wxHORIZONTAL);
+    sci->EnsureVisible(line);
+    sci->ScrollToColumn(0);
+    int xScrollPosBefore = sci->GetScrollPos(wxHORIZONTAL);
+    sci->EnsureCaretVisible();
+    int xScrollPosAfter = sci->GetScrollPos(wxHORIZONTAL);
     if(xScrollPosBefore != xScrollPosAfter) {
         // EnsureCaretVisible scrolled the page
         // scroll it a bit more
-        int scrollToPos = m_sci->GetSelectionStart();
-        if(scrollToPos != wxNOT_FOUND) { m_sci->ScrollToColumn(m_sci->GetColumn(scrollToPos)); }
+        int scrollToPos = sci->GetSelectionStart();
+        if(scrollToPos != wxNOT_FOUND) { sci->ScrollToColumn(sci->GetColumn(scrollToPos)); }
     }
 }
 
@@ -948,7 +948,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
         m_sci->SetSelectionStart(curpos);
         m_sci->SetSelectionEnd(curpos);
         m_sci->SetCurrentPos(curpos);
-        DoEnsureLineIsVisible(m_sci->LineFromPosition(curpos));
+        DoEnsureLineIsVisible(m_sci, m_sci->LineFromPosition(curpos));
 
         wxString message;
         message << _("Found and replaced ") << matchesCount << _(" matches");
@@ -1128,7 +1128,7 @@ bool QuickFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& findwhat, size
         return false;
     }
 
-    if(This) { This->DoEnsureLineIsVisible(); }
+    DoEnsureLineIsVisible(ctrl);
 
     if(This && This->m_highlightMatches && !This->m_onNextPrev && (pos != wxNOT_FOUND)) {
         // Fix issue when regex is enabled hanging the editor if too few chars

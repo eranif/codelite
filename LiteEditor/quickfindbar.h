@@ -110,7 +110,7 @@ protected:
     void DoHighlightMatches(bool checked);
 
     // General events
-    void DoEnsureLineIsVisible(int line = wxNOT_FOUND);
+    static void DoEnsureLineIsVisible(wxStyledTextCtrl* sci, int line = wxNOT_FOUND);
 
     // Control events
     void OnHide(wxCommandEvent& e);

@@ -59,34 +59,112 @@ protected:
     wxButton* m_buttonReplaceAll;
 
 protected:
-    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnButtonKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnFindPrev(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindPrevUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnFindAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindAllUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnReplaceTextUpdated(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceTextEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnReplaceAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceAllUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnEnter(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnText(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnKeyDown(wxKeyEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFind(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnButtonKeyDown(wxKeyEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindPrev(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindPrevUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindAll(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindAllUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceTextUpdated(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceTextEnter(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceKeyDown(wxKeyEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplace(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceAll(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceAllUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxStaticText* GetMatchesFound() { return m_matchesFound; }
-    clToolBar* GetToolbar() { return m_toolbar; }
-    wxTextCtrl* GetTextCtrlFind() { return m_textCtrlFind; }
-    wxButton* GetButtonFind() { return m_buttonFind; }
-    wxButton* GetButtonFindPrev() { return m_buttonFindPrev; }
-    wxButton* GetButtonFindAll() { return m_buttonFindAll; }
-    wxTextCtrl* GetTextCtrlReplace() { return m_textCtrlReplace; }
-    wxButton* GetButtonReplace() { return m_buttonReplace; }
-    wxButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
+    wxStaticText* GetMatchesFound()
+    {
+        return m_matchesFound;
+    }
+    clToolBar* GetToolbar()
+    {
+        return m_toolbar;
+    }
+    wxTextCtrl* GetTextCtrlFind()
+    {
+        return m_textCtrlFind;
+    }
+    wxButton* GetButtonFind()
+    {
+        return m_buttonFind;
+    }
+    wxButton* GetButtonFindPrev()
+    {
+        return m_buttonFindPrev;
+    }
+    wxButton* GetButtonFindAll()
+    {
+        return m_buttonFindAll;
+    }
+    wxTextCtrl* GetTextCtrlReplace()
+    {
+        return m_textCtrlReplace;
+    }
+    wxButton* GetButtonReplace()
+    {
+        return m_buttonReplace;
+    }
+    wxButton* GetButtonReplaceAll()
+    {
+        return m_buttonReplaceAll;
+    }
     QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW|wxBORDER_THEME);
     virtual ~QuickFindBarBase();
 };
@@ -103,16 +181,40 @@ protected:
     wxCheckBox* m_checkBoxMultipleSelections;
 
 protected:
-    virtual void OnCheckBoxRegex(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCheckWild(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCheckBoxRegex(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnCheckWild(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxCheckBox* GetCheckBoxCase() { return m_checkBoxCase; }
-    wxCheckBox* GetCheckBoxRegex() { return m_checkBoxRegex; }
-    wxCheckBox* GetCheckBoxWord() { return m_checkBoxWord; }
-    wxCheckBox* GetCheckBoxWildcard() { return m_checkBoxWildcard; }
-    wxCheckBox* GetCheckBoxMultipleSelections() { return m_checkBoxMultipleSelections; }
-    wxPanel* GetPanel71() { return m_panel71; }
+    wxCheckBox* GetCheckBoxCase()
+    {
+        return m_checkBoxCase;
+    }
+    wxCheckBox* GetCheckBoxRegex()
+    {
+        return m_checkBoxRegex;
+    }
+    wxCheckBox* GetCheckBoxWord()
+    {
+        return m_checkBoxWord;
+    }
+    wxCheckBox* GetCheckBoxWildcard()
+    {
+        return m_checkBoxWildcard;
+    }
+    wxCheckBox* GetCheckBoxMultipleSelections()
+    {
+        return m_checkBoxMultipleSelections;
+    }
+    wxPanel* GetPanel71()
+    {
+        return m_panel71;
+    }
     QuickFindBarOptionsMenuBase(wxWindow* parent, long style = wxBORDER_NONE);
     virtual ~QuickFindBarOptionsMenuBase();
 };
@@ -133,13 +235,15 @@ protected:
 
 public:
     QuickFindBarImages();
-    const wxBitmap& Bitmap(const wxString &name) const {
+    const wxBitmap& Bitmap(const wxString &name) const
+    {
         if ( !m_bitmaps.count(name + m_resolution) )
             return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
 
-    void SetBitmapResolution(const wxString &res = wxEmptyString) {
+    void SetBitmapResolution(const wxString &res = wxEmptyString)
+    {
         m_resolution = res;
     }
 

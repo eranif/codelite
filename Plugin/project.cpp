@@ -1208,7 +1208,9 @@ void Project::SetReconciliationData(const wxString& toplevelDir, const wxString&
 
     for(size_t n = 0; n < excludePaths.GetCount(); ++n) {
         wxXmlNode* pathnode = new wxXmlNode(excludesnode, wxXML_ELEMENT_NODE, "Path");
-        XmlUtils::SetNodeContent(pathnode, excludePaths.Item(n));
+        wxFileName fn = wxFileName::DirName(excludePaths.Item(n));
+        fn.MakeRelativeTo(CLRealPath(toplevelDir));
+        XmlUtils::SetNodeContent(pathnode, fn.GetFullPath());
     }
 
     wxXmlNode* regexnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Regexes"));

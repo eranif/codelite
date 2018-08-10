@@ -38,7 +38,8 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
             wxString fullpath;
             fullpath << dir.GetNameWithSep() << filename;
             bool isDirectory = wxFileName::DirExists(fullpath);
-            if(isDirectory && (excludeFolders.count(fullpath) == 0)) {
+            // Use FileUtils::RealPath() here to cope with symlinks on Linux
+            if(isDirectory && (excludeFolders.count(FileUtils::RealPath(fullpath)) == 0)) {
                 // Traverse into this folder
                 Q.push(fullpath);
             } else if(!isDirectory && FileUtils::WildMatch(excludeSpecArr, filename)) {

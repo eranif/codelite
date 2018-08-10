@@ -208,5 +208,10 @@ public:
     static bool RemoveFile(const wxString& filename, const wxString& context = "");
     
     static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
+    
+    /**
+     * @brief (on Linux) makes-absolute filepath, and dereferences it and any symlinked dirs in the path
+     */
+    static wxString RealPath(const wxString& filepath);
 };
 #endif // FILEUTILS_H

@@ -656,7 +656,7 @@ void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& type
     toplevelDir = m_dirPickerToplevel->GetPath();
     types = m_textExtensions->GetValue();
     wxArrayString ignoreFilesArr = m_listIgnoreFiles->GetStrings();
-    excludePaths = m_listExclude->GetStrings();
+    wxArrayString rawExcludePaths = m_listExclude->GetStrings();
     regexes = GetRegexes();
 
     // Fix the types to fit a standard mask string
@@ -669,6 +669,20 @@ void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& type
 
     // Fix the the ignore files
     ignoreFiles = wxJoin(ignoreFilesArr, ';');
+    
+    // Fix the exclude paths. First make absolute
+    wxString tld(toplevelDir);
+    if (tld.Last() != wxFILE_SEP_PATH) {
+        tld << wxFILE_SEP_PATH;
+    }
+    for(size_t i = 0; i < rawExcludePaths.size(); ++i) {
+        wxString& path = rawExcludePaths.Item(i);
+        if(!path.StartsWith(wxFILE_SEP_PATH)) {
+            path.Prepend(tld);
+        }
+        // Now fix any symlinks in the path and add to the array
+        excludePaths.Add(CLRealPath(path));
+    }
 
     // While we're here, save the current data
     ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);

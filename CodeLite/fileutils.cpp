@@ -610,3 +610,20 @@ unsigned int FileUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
 #undef SURROGATE_TRAIL_LAST
     return len;
 }
+
+// This is readlink on steroids: it also makes-absolute, and dereferences any symlinked dirs in the path
+wxString FileUtils::RealPath(const wxString& filepath) 
+{
+#if defined(__WXGTK__)
+    if(!filepath.empty()) {
+        char* buf = realpath(filepath.mb_str(wxConvUTF8), NULL);
+        if(buf != NULL) {
+            wxString result(buf, wxConvUTF8);
+            free(buf);
+            return result;
+        }
+    }
+#endif
+
+    return filepath;
+}

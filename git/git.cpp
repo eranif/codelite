@@ -1521,10 +1521,6 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     }
 
     if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
-        wxString msg = _("There was a problem while performing a git action.\n"
-                         "Last command output:\n");
-        msg << m_commandOutput;
-        wxMessageBox(msg, _("git error"), wxICON_ERROR | wxOK, m_topWindow);
         // Last action failed, clear queue
         DoRecoverFromGitCommandError();
         return;
@@ -1591,8 +1587,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
               ga.action == gitResetRepo) {
         if(ga.action == gitPull) {
             if(m_commandOutput.Contains(wxT("Already"))) {
-                wxMessageBox(_("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_INFORMATION | wxOK,
-                             m_topWindow);
+                // do nothing
             } else {
 
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
@@ -1618,10 +1613,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
                         m_gitActionQueue.push_back(ga);
                     }
                 } else if(m_commandOutput.Contains(wxT("CONFLICT"))) {
-                    wxMessageBox(wxT("There was a conflict during merge.\n"
-                                     "Please resolve conflicts and commit by hand.\n"
-                                     "After resolving conflicts, be sure to reload the current project."),
-                                 _("Conflict found during merge"), wxOK, m_topWindow);
+                    // Do nothing, will be coloured in the console view
                 }
                 if(m_commandOutput.Contains(wxT("Updating"))) m_bActionRequiresTreUpdate = true;
 
@@ -1705,7 +1697,6 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
 
         } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
             m_process->Terminate();
-            ::wxMessageBox(output, "Git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
 
         } else if(tmpOutput.Contains("*** please tell me who you are")) {
             m_process->Terminate();
@@ -2400,9 +2391,6 @@ void GitPlugin::OnCommandOutput(clCommandEvent& event)
     if(processOutput.Contains("password for")) {
         wxString pass = ::wxGetPasswordFromUser(event.GetString(), "Git");
         if(!pass.IsEmpty()) { event.SetString(pass); }
-    } else if(processOutput.Contains("fatal:") || processOutput.Contains("not a git repository")) {
-        // prompt the user for the error
-        ::wxMessageBox(processOutput, "Git", wxICON_WARNING | wxCENTER | wxOK);
     }
 }
 
@@ -2471,7 +2459,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
                 commitArgs << selectedFiles.Item(i) << wxT(" ");
 
         } else {
-            wxMessageBox(_("No commit message given, aborting."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+            m_console->AddRawText(_("No commit message given, aborting"));
         }
     }
 }
@@ -2515,7 +2503,6 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& wo
     const wxString lcOutput = commandOutput.Lower();
     if(lcOutput.Contains("fatal:") || lcOutput.Contains("not a git repository")) {
         // prompt the user for the error
-        ::wxMessageBox(commandOutput, "Git", wxICON_WARNING | wxCENTER | wxOK);
         commandOutput.clear();
         return false;
     }

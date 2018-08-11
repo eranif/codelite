@@ -28,6 +28,7 @@
 #include "bitmap_loader.h"
 #include "gitui.h"
 #include <wx/dataview.h>
+#include "clGenericSTCStyler.h"
 
 class clToolBar;
 class GitPlugin;
@@ -43,6 +44,7 @@ class GitConsole : public GitConsoleBase
     wxBitmap m_newBmp;
     wxBitmap m_deleteBmp;
     clToolBar* m_toolbar;
+    clGenericSTCStyler::Ptr_t m_styler;
 
 public:
     GitConsole(wxWindow* parent, GitPlugin* git);

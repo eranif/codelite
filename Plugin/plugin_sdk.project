@@ -199,6 +199,8 @@
     <File Name="clStrings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
+    <File Name="clGenericSTCStyler.cpp"/>
+    <File Name="clGenericSTCStyler.h"/>
     <File Name="xmlutils.cpp"/>
     <File Name="sync_queue.cpp"/>
     <File Name="xmlutils.h"/>

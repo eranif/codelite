@@ -5564,11 +5564,13 @@ void clMainFrame::OnFindSelection(wxCommandEvent& event)
     clEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
     event.Skip(false);
+    wxString selection =
+        editor->GetSelection().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : editor->GetSelection();
+    GetMainBook()->GetFindBar()->SetFindWhat(selection);
     if(GetMainBook()->GetFindBar()->IsShown()) {
-        QuickFindBar::Search(editor->GetCtrl(), editor->GetSelection(), QuickFindBar::kSearchForward,
-                             GetMainBook()->GetFindBar());
+        QuickFindBar::Search(editor->GetCtrl(), selection, QuickFindBar::kSearchForward, GetMainBook()->GetFindBar());
     } else {
-        QuickFindBar::Search(editor->GetCtrl(), editor->GetSelection(), QuickFindBar::kSearchForward, NULL);
+        QuickFindBar::Search(editor->GetCtrl(), selection, QuickFindBar::kSearchForward, NULL);
     }
 }
 
@@ -5579,10 +5581,13 @@ void clMainFrame::OnFindSelectionPrev(wxCommandEvent& event)
     CHECK_PTR_RET(editor);
 
     event.Skip(false);
+    wxString selection =
+        editor->GetSelection().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : editor->GetSelection();
+    GetMainBook()->GetFindBar()->SetFindWhat(selection);
     if(GetMainBook()->GetFindBar()->IsShown()) {
-        QuickFindBar::Search(editor->GetCtrl(), editor->GetSelection(), 0, GetMainBook()->GetFindBar());
+        QuickFindBar::Search(editor->GetCtrl(), selection, 0, GetMainBook()->GetFindBar());
     } else {
-        QuickFindBar::Search(editor->GetCtrl(), editor->GetSelection(), 0, NULL);
+        QuickFindBar::Search(editor->GetCtrl(), selection, 0, NULL);
     }
 }
 
@@ -5591,7 +5596,7 @@ void clMainFrame::OnFindWordAtCaret(wxCommandEvent& event)
     event.Skip();
     clEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     wxString selection;
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
     if(ctrl->GetSelectedText().IsEmpty()) {
@@ -5612,7 +5617,7 @@ void clMainFrame::OnFindWordAtCaretPrev(wxCommandEvent& event)
     event.Skip();
     clEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     wxString selection;
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
     if(ctrl->GetSelectedText().IsEmpty()) {

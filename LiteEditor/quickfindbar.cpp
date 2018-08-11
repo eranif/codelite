@@ -1045,13 +1045,15 @@ void QuickFindBar::OnButtonKeyDown(wxKeyEvent& event)
     }
 }
 
-bool QuickFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& findwhat, size_t search_flags, QuickFindBar* This)
+bool QuickFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what, size_t search_flags, QuickFindBar* This)
 {
+    wxString findwhat = find_what;
+    if(findwhat.IsEmpty() && This) { findwhat = This->m_textCtrlFind->GetValue(); }
     if(!ctrl || ctrl->GetLength() == 0 || findwhat.IsEmpty()) return false;
     clGetManager()->SetStatusMessage(wxEmptyString);
     if(This) { This->m_matchesFound->SetLabel(""); }
     if(This && (This->m_textCtrlFind->GetValue() != findwhat)) { This->m_textCtrlFind->ChangeValue(findwhat); }
-    
+
     // Clear all search markers if desired
     if(EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
         ctrl->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);

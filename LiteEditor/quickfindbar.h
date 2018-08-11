@@ -148,7 +148,7 @@ public:
     bool Show(const wxString& findWhat);
     wxStyledTextCtrl* GetEditor() { return m_sci; }
     void SetEditor(wxStyledTextCtrl* sci);
-    
+
     /**
      * @brief search a stc control for 'findwhat'. Use kSearchForward to indicate searching forward, pass 0
      * for backward.
@@ -156,6 +156,9 @@ public:
      */
     static bool Search(wxStyledTextCtrl* ctrl, const wxString& findwhat, size_t search_flags,
                        QuickFindBar* This = NULL);
+
+    wxString GetFindWhat() const { return m_textCtrlFind->GetValue(); }
+    void SetFindWhat(const wxString& findwhat) { m_textCtrlFind->ChangeValue(findwhat); }
 };
 
 #endif // __quickfindbar__

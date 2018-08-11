@@ -70,15 +70,8 @@ void clGenericSTCStyler::ResetStyles()
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(!lexer) return;
-
-    const StyleProperty& defaultStyle = lexer->GetProperty(0);
-    wxFont defaultFont = lexer->GetFontForSyle(0);
-
-    for(size_t i = 0; i < wxSTC_STYLE_MAX; ++i) {
-        m_ctrl->StyleSetForeground(i, defaultStyle.GetFgColour());
-        m_ctrl->StyleSetBackground(i, defaultStyle.GetBgColour());
-        m_ctrl->StyleSetFont(i, defaultFont);
-    }
+    lexer->Apply(m_ctrl);
+    m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     InitDefaultStyles();
 }
 

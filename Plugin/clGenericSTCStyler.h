@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 #include <tuple>
 #include <vector>
+#include <algorithm>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/stc/stc.h>

@@ -37,6 +37,8 @@
 #include <wx/msgdlg.h>
 #include <wx/wfstream.h>
 #include <wx/xrc/xmlres.h>
+#include "DbExplorerFrame.h"
+#include "event_notifier.h"
 
 DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pManager)
     : _DbViewerPanel(parent)
@@ -362,14 +364,6 @@ void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
         if(pCon) {
             wxMessageDialog dlg(this, _("Close connection?"), _("Close"), wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT);
             if(dlg.ShowModal() == wxID_YES) {
-
-                // loop over the editor open pages and close all DbExplorer related
-                for(size_t i = 0; i < m_pagesAdded.Count(); i++) {
-                    m_mgr->ClosePage(m_pagesAdded.Item(i));
-                }
-
-                m_pagesAdded.Clear();
-
                 // m_pConnections->GetChildrenList().DeleteContents(true);
                 m_pConnections->GetChildrenList().DeleteObject(pCon);
                 m_treeDatabases->Delete(itemId);
@@ -829,8 +823,8 @@ bool DbViewerPanel::DoSelectPage(const wxString& page)
 void DbViewerPanel::AddEditorPage(wxWindow* page, const wxString& name)
 {
     m_SuppressUpdate = true;
-    m_mgr->AddEditorPage(page, name);
-    m_pagesAdded.Add(name);
+    DbExplorerFrame* frame = new DbExplorerFrame(EventNotifier::Get()->TopFrame(), page, name);
+    frame->Show();
 
     ErdPanel* erd = wxDynamicCast(page, ErdPanel);
     if(erd) {

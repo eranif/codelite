@@ -83,7 +83,6 @@ private:
     Database* m_pEditedDatabase;
     DbConnection* m_pEditedConnection;
     wxSFThumbnail* m_pThumbnail;
-    wxArrayString m_pagesAdded;
     wxWindow* m_pPrevPanel;
     bool m_SuppressUpdate;
     ThemeHandlerHelper* m_themeHelper;

@@ -276,7 +276,8 @@ void SQLCommandPanel::ExecuteSql()
                 m_labelStatus->SetLabel(wxString::Format(_("Result: %i rows"), rows));
                 m_gridTable->AutoSize();
                 Layout();
-                GetParent()->Layout();
+                GetParent()->SendSizeEvent(wxSEND_EVENT_POST);
+                
             } catch(DatabaseLayerException& e) {
                 // for some reason an exception is thrown even if the error code is 0...
                 if(e.GetErrorCode() != 0) {

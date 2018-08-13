@@ -12682,19 +12682,19 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-database.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/16-database@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
-     "m_path": ""
+     "m_path": "../bitmaps/24-database.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (128x128):",
-     "m_path": ""
+     "m_path": "../bitmaps/24-database@2x.png"
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (256x256):",

@@ -1,11 +1,17 @@
 #include "TailFrame.h"
-#include "tail.h"
 #include "TailPanel.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
+#include "tail.h"
 
 TailFrame::TailFrame(wxWindow* parent, Tail* plugin)
     : TailFrameBase(parent)
     , m_plugin(plugin)
 {
+    EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, [&](clCommandEvent& event) {
+        event.Skip();
+        Close();
+    });
 }
 
 TailFrame::~TailFrame() {}

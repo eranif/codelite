@@ -801,7 +801,7 @@ bool DbViewerPanel::DoSelectPage(const wxString& page)
 void DbViewerPanel::AddEditorPage(wxWindow* page, const wxString& name)
 {
     m_SuppressUpdate = true;
-    DbExplorerFrame* frame = new DbExplorerFrame(NULL, page, name, this);
+    DbExplorerFrame* frame = new DbExplorerFrame(EventNotifier::Get()->TopFrame(), page, name, this);
     frame->SetSize(500, 500);
     frame->Show();
     m_frames.insert(frame);

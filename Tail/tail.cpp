@@ -77,7 +77,7 @@ void Tail::UnPlug()
 void Tail::DetachTailWindow(const TailData& d)
 {
     // Create new frame
-    TailFrame* frame = new TailFrame(NULL, this);
+    TailFrame* frame = new TailFrame(EventNotifier::Get()->TopFrame(), this);
     InitTailWindow(frame, false, d, false);
     m_view->SetIsDetached(true); // set the window as detached
     m_view->SetFrame(frame);

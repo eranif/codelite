@@ -105,12 +105,7 @@ public:
     void OnPopupClick(wxCommandEvent& evt);
     void ExecuteSql();
     void SetDefaultSelect();
-
-    void OnGridCellRightClick(wxGridEvent& event);
     void OnCopyCellValue(wxCommandEvent& e);
-
-    virtual void OnGridLabelRightClick(wxGridEvent& event);
-
     DECLARE_EVENT_TABLE()
     void OnExecuteSQL(wxCommandEvent& e);
 };

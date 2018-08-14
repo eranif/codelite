@@ -226,38 +226,19 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* bSizer24 = new wxBoxSizer(wxVERTICAL);
     m_panel14->SetSizer(bSizer24);
 
-    m_gridTable =
-        new wxGrid(m_panel14, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1, 200)), wxBORDER_THEME);
-    m_gridTable->CreateGrid(0, 0);
-    m_gridTable->SetRowLabelAlignment(wxALIGN_RIGHT, wxALIGN_CENTRE);
-    m_gridTable->SetColLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
-#if wxVERSION_NUMBER >= 2904
-    m_gridTable->UseNativeColHeader(true);
-#endif
-    m_gridTable->EnableEditing(true);
+    m_table = new clTableWithPagination(m_panel14, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1, -1)),
+                                        wxTAB_TRAVERSAL);
 
-    bSizer24->Add(m_gridTable, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
-    m_labelStatus = new wxStaticText(m_panel14, wxID_ANY, _("Result:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panel14, wxSize(-1, -1)), 0);
-
-    bSizer24->Add(m_labelStatus, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(5));
+    bSizer24->Add(m_table, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("_SqlCommandPanel"));
     SetSize(-1, -1);
     if(GetSizer()) {
         GetSizer()->Fit(this);
     }
-    // Connect events
-    m_gridTable->Connect(wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler(_SqlCommandPanel::OnGridCellRightClick), NULL,
-                         this);
 }
 
-_SqlCommandPanel::~_SqlCommandPanel()
-{
-    m_gridTable->Disconnect(wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler(_SqlCommandPanel::OnGridCellRightClick),
-                            NULL, this);
-}
+_SqlCommandPanel::~_SqlCommandPanel() {}
 
 _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                      const wxSize& size, long style)

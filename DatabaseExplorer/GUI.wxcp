@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 193,
+  "m_objCounter": 195,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterwyt5ghInitBitmapResources",
   "m_bitmapsFile": "GUI_databaseexplorer_bitmaps.cpp",
@@ -1615,127 +1615,13 @@
             }],
            "m_events": [],
            "m_children": [{
-             "m_type": 4426,
+             "m_type": 4408,
              "proportion": 1,
-             "border": 2,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": ["wxBORDER_THEME"],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": "-1,200"
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_gridTable"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": ""
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Fit Content to Columns",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Use Native Header",
-               "m_value": true
-              }, {
-               "type": "integer",
-               "m_label": "Height:",
-               "m_value": -1
-              }, {
-               "type": "choice",
-               "m_label": "Col Label Horizontal Align",
-               "m_selection": 1,
-               "m_options": ["wxALIGN_LEFT", "wxALIGN_CENTRE", "wxALIGN_RIGHT"]
-              }, {
-               "type": "choice",
-               "m_label": "Col Label Vertical Align",
-               "m_selection": 1,
-               "m_options": ["wxALIGN_TOP", "wxALIGN_CENTRE", "wxALIGN_BOTTOM"]
-              }, {
-               "type": "integer",
-               "m_label": "Width:",
-               "m_value": -1
-              }, {
-               "type": "choice",
-               "m_label": "Row Label Horizontal Align",
-               "m_selection": 2,
-               "m_options": ["wxALIGN_LEFT", "wxALIGN_CENTRE", "wxALIGN_RIGHT"]
-              }, {
-               "type": "choice",
-               "m_label": "Row Label Vertical Align",
-               "m_selection": 1,
-               "m_options": ["wxALIGN_TOP", "wxALIGN_CENTRE", "wxALIGN_BOTTOM"]
-              }, {
-               "type": "bool",
-               "m_label": "Allow Cell Editing",
-               "m_value": true
-              }],
-             "m_events": [{
-               "m_eventName": "wxEVT_GRID_CELL_RIGHT_CLICK",
-               "m_eventClass": "wxGridEvent",
-               "m_eventHandler": "wxGridEventHandler",
-               "m_functionNameAndSignature": "OnGridCellRightClick(wxGridEvent& event)",
-               "m_description": "The user clicked a cell with the right mouse button. Processes a wxEVT_GRID_CELL_RIGHT_CLICK.",
-               "m_noBody": false
-              }],
-             "m_children": []
-            }, {
-             "m_type": 4405,
-             "proportion": 0,
              "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_LEFT"],
+             "gbSpan": "1,1",
+             "gbPosition": "0,0",
+             "m_styles": ["wxTAB_TRAVERSAL"],
+             "m_sizerFlags": ["wxEXPAND"],
              "m_properties": [{
                "type": "winid",
                "m_label": "ID:",
@@ -1743,15 +1629,15 @@
               }, {
                "type": "string",
                "m_label": "Size:",
-               "m_value": ""
+               "m_value": "-1,-1"
               }, {
                "type": "string",
                "m_label": "Minimum Size:",
-               "m_value": ""
+               "m_value": "-1,-1"
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "m_labelStatus"
+               "m_value": "m_table"
               }, {
                "type": "multi-string",
                "m_label": "Tooltip:",
@@ -1783,23 +1669,15 @@
               }, {
                "type": "string",
                "m_label": "Class Name:",
-               "m_value": ""
+               "m_value": "clTableWithPagination"
               }, {
                "type": "string",
                "m_label": "Include File:",
-               "m_value": ""
+               "m_value": "clTableWithPagination.h"
               }, {
                "type": "string",
                "m_label": "Style:",
                "m_value": ""
-              }, {
-               "type": "multi-string",
-               "m_label": "Label:",
-               "m_value": "Result:"
-              }, {
-               "type": "string",
-               "m_label": "Wrap:",
-               "m_value": "-1"
               }],
              "m_events": [],
              "m_children": []

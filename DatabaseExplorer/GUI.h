@@ -7,6 +7,7 @@
 #ifndef _CODELITE_DATABASEEXPLORER_GUI_BASE_CLASSES_H
 #define _CODELITE_DATABASEEXPLORER_GUI_BASE_CLASSES_H
 
+#include "clTableWithPagination.h"
 #include <map>
 #include <wx/arrstr.h>
 #include <wx/artprov.h>
@@ -19,7 +20,6 @@
 #include <wx/filepicker.h>
 #include <wx/frame.h>
 #include <wx/gbsizer.h>
-#include <wx/grid.h>
 #include <wx/iconbndl.h>
 #include <wx/imaglist.h>
 #include <wx/infobar.h>
@@ -108,17 +108,13 @@ protected:
     wxPanel* m_panel13;
     wxStyledTextCtrl* m_scintillaSQL;
     wxPanel* m_panel14;
-    wxGrid* m_gridTable;
-    wxStaticText* m_labelStatus;
+    clTableWithPagination* m_table;
 
 protected:
-    virtual void OnGridCellRightClick(wxGridEvent& event) { event.Skip(); }
-
 public:
     wxStyledTextCtrl* GetScintillaSQL() { return m_scintillaSQL; }
     wxPanel* GetPanel13() { return m_panel13; }
-    wxGrid* GetGridTable() { return m_gridTable; }
-    wxStaticText* GetLabelStatus() { return m_labelStatus; }
+    clTableWithPagination* GetTable() { return m_table; }
     wxPanel* GetPanel14() { return m_panel14; }
     wxSplitterWindow* GetSplitter1() { return m_splitter1; }
     _SqlCommandPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

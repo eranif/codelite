@@ -145,17 +145,7 @@ void SQLCommandPanel::ExecuteSql()
                 // run query
                 DatabaseResultSet* pResultSet = m_pDbLayer->RunQueryWithResults(sqlStmt);
 
-                // clear variables
-                if(m_gridTable->GetNumberCols()) {
-                    m_gridTable->DeleteCols(0, m_gridTable->GetNumberCols());
-                }
-
-                if(m_gridTable->GetNumberRows()) {
-                    m_gridTable->DeleteRows(0, m_gridTable->GetNumberRows());
-                }
-
-                m_gridValues.clear();
-
+                m_table->ClearAll();
                 if(!pResultSet) {
                     wxMessageBox(_("Unknown SQL error."), _("DB Error"), wxOK | wxICON_ERROR);
                     return;
@@ -166,18 +156,20 @@ void SQLCommandPanel::ExecuteSql()
                 m_colsMetaData.resize(cols);
 
                 // create table header
-                m_gridTable->AppendCols(cols);
+                wxArrayString columns;
                 for(int i = 1; i <= pResultSet->GetMetaData()->GetColumnCount(); i++) {
-                    m_gridTable->SetColLabelValue(i - 1, pResultSet->GetMetaData()->GetColumnName(i));
+                    columns.Add(pResultSet->GetMetaData()->GetColumnName(i));
                     m_colsMetaData.at(i - 1) = ColumnInfo(pResultSet->GetMetaData()->GetColumnType(i),
                                                           pResultSet->GetMetaData()->GetColumnName(i));
                 }
+                m_table->SetColumns(columns);
 
-                m_gridTable->BeginBatch();
                 // fill table data
+                std::vector<wxArrayString> data;
                 while(pResultSet->Next()) {
+                    data.push_back(wxArrayString());
+                    wxArrayString& row = data.back();
                     wxString value;
-                    m_gridTable->AppendRows();
                     for(int i = 1; i <= pResultSet->GetMetaData()->GetColumnCount(); i++) {
 
                         switch(pResultSet->GetMetaData()->GetColumnType(i)) {
@@ -251,8 +243,6 @@ void SQLCommandPanel::ExecuteSql()
                             break;
                         }
 
-                        m_gridValues[std::make_pair(rows, i - 1)] = value;
-
                         // truncate the string to a reasonable string
                         if(value.Length() > 100) {
                             value = value.Mid(0, 100);
@@ -263,21 +253,17 @@ void SQLCommandPanel::ExecuteSql()
                         value.Replace(wxT("\n"), wxT("\\n"));
                         value.Replace(wxT("\r"), wxT("\\r"));
                         value.Replace(wxT("\t"), wxT("\\t"));
-                        m_gridTable->SetCellValue(rows, i - 1, value);
+                        row.Add(value);
                     }
-                    rows++;
                 }
-
-                m_gridTable->EndBatch();
 
                 m_pDbLayer->CloseResultSet(pResultSet);
 
-                // show result status
-                m_labelStatus->SetLabel(wxString::Format(_("Result: %i rows"), rows));
-                m_gridTable->AutoSize();
+                // Popuplate the data
+                m_table->SetData(data);
+                GetSizer()->Layout();
                 Layout();
-                GetParent()->SendSizeEvent(wxSEND_EVENT_POST);
-                
+
             } catch(DatabaseLayerException& e) {
                 // for some reason an exception is thrown even if the error code is 0...
                 if(e.GetErrorCode() != 0) {
@@ -385,32 +371,12 @@ void SQLCommandPanel::OnExecuteSQL(wxCommandEvent& e)
     ExecuteSql();
 }
 
-void SQLCommandPanel::OnGridCellRightClick(wxGridEvent& event)
-{
-    event.Skip();
-
-    // Keep the current cell's value (taken from the map and NOT from the UI)
-    std::map<std::pair<int, int>, wxString>::const_iterator iter =
-        m_gridValues.find(std::make_pair<int, int>(event.GetRow(), event.GetCol()));
-    if(iter == m_gridValues.end()) return;
-
-    m_cellValue = iter->second;
-
-    wxMenu menu;
-    menu.Append(XRCID("db_copy_cell_value"), _("Copy value to clipboard"));
-    menu.Connect(XRCID("db_copy_cell_value"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(SQLCommandPanel::OnCopyCellValue), NULL, this);
-    m_gridTable->PopupMenu(&menu);
-}
-
 void SQLCommandPanel::OnCopyCellValue(wxCommandEvent& e)
 {
     if(m_cellValue.IsEmpty() == false) {
         CopyToClipboard(m_cellValue);
     }
 }
-
-void SQLCommandPanel::OnGridLabelRightClick(wxGridEvent& event) { event.Skip(); }
 
 bool SQLCommandPanel::IsBlobColumn(const wxString& str)
 {

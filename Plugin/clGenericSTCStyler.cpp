@@ -86,7 +86,7 @@ void clGenericSTCStyler::AddStyle(const wxArrayString& words, clGenericSTCStyler
 void clGenericSTCStyler::AddUserStyle(const wxArrayString& words, const wxColour& fgColour, const wxColour& bgColour)
 {
     if(words.IsEmpty()) { return; }
-    m_styleInfo.push_back({ m_nextAvailStyle, fgColour, bgColour });
+    m_styleInfo.push_back(std::make_tuple(m_nextAvailStyle, fgColour, bgColour));
     for(size_t i = 0; i < words.size(); ++i) {
         m_words.push_back({ words.Item(i).Lower(), m_nextAvailStyle });
     }

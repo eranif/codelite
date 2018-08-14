@@ -151,7 +151,6 @@ void SQLCommandPanel::ExecuteSql()
                     return;
                 }
 
-                int rows = 0;
                 int cols = pResultSet->GetMetaData()->GetColumnCount();
                 m_colsMetaData.resize(cols);
 

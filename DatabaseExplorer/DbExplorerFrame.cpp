@@ -13,6 +13,9 @@ DbExplorerFrame::DbExplorerFrame(wxWindow* parent, wxWindow* page, const wxStrin
     GetSizer()->Layout();
     SetLabel(label);
     Bind(wxEVT_CLOSE_WINDOW, &DbExplorerFrame::OnClose, this);
+
+    // If this instance does not exists, set the default size
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
 }
 
 DbExplorerFrame::~DbExplorerFrame() { Unbind(wxEVT_CLOSE_WINDOW, &DbExplorerFrame::OnClose, this); }

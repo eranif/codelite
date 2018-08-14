@@ -76,11 +76,9 @@ void clTableWithPagination::ShowPage(int nPage)
     if(m_data.empty()) return;
     int startIndex = (nPage * m_linesPerPage);
     int lastIndex = startIndex + m_linesPerPage - 1; // last index, including
-    if(lastIndex >= m_data.size()) {
-        lastIndex = (m_data.size() - 1);
-    }
+    if(lastIndex >= (int)m_data.size()) { lastIndex = (m_data.size() - 1); }
     m_currentPage = nPage;
-    for(size_t i = startIndex; i <= lastIndex; ++i) {
+    for(int i = startIndex; i <= lastIndex; ++i) {
         wxVector<wxVariant> cols;
         const wxArrayString& items = m_data[i];
         for(size_t j = 0; j < items.size(); ++j) {
@@ -96,7 +94,7 @@ void clTableWithPagination::ShowPage(int nPage)
 bool clTableWithPagination::CanNext() const
 {
     int startIndex = ((m_currentPage + 1) * m_linesPerPage);
-    return startIndex < m_data.size();
+    return startIndex < (int)m_data.size();
 }
 
 bool clTableWithPagination::CanPrev() const { return (((m_currentPage - 1) >= 0) && !m_data.empty()); }

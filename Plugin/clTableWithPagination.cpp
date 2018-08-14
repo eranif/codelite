@@ -1,4 +1,6 @@
+#include "clTableLineEditorDlg.h"
 #include "clTableWithPagination.h"
+#include "macros.h"
 #include <wx/dataview.h>
 #include <wx/sizer.h>
 
@@ -40,6 +42,7 @@ clTableWithPagination::clTableWithPagination(wxWindow* parent, wxWindowID winid,
     // And the 'update-ui' events
     m_btnNextPage->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& event) { event.Enable(CanNext()); });
     m_btnPrevPage->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& event) { event.Enable(CanPrev()); });
+    m_ctrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &clTableWithPagination::OnLineActivated, this);
     GetSizer()->Fit(this);
 }
 
@@ -118,4 +121,16 @@ wxString clTableWithPagination::MakeDisplayString(const wxString& str) const
     truncatedString.Replace(wxT("\r"), wxT("\\r"));
     truncatedString.Replace(wxT("\t"), wxT("\\t"));
     return truncatedString;
+}
+
+void clTableWithPagination::OnLineActivated(wxDataViewEvent& event)
+{
+    wxDataViewItem item = event.GetItem();
+    CHECK_ITEM_RET(item);
+
+    wxArrayString* data = reinterpret_cast<wxArrayString*>(m_ctrl->GetItemData(item));
+    CHECK_PTR_RET(data);
+
+    clTableLineEditorDlg* dlg = new clTableLineEditorDlg(::wxGetTopLevelParent(this), m_columns, *data);
+    dlg->Show();
 }

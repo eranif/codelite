@@ -5,6 +5,7 @@
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/button.h>
+#include <wx/dataview.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
 
@@ -26,6 +27,7 @@ protected:
 
     void ClearAllItems();
     wxString MakeDisplayString(const wxString& str) const;
+    void OnLineActivated(wxDataViewEvent& event);
 
 public:
     clTableWithPagination(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

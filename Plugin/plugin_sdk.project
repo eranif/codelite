@@ -322,6 +322,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="GUI">
     <VirtualDirectory Name="Controls">
+      <File Name="clTableLineEditorDlg.cpp"/>
+      <File Name="clTableLineEditorDlg.h"/>
       <File Name="clTableWithPagination.cpp"/>
       <File Name="clTableWithPagination.h"/>
       <File Name="filepicker.cpp"/>

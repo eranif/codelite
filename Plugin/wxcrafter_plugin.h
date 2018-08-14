@@ -7,31 +7,33 @@
 #ifndef _CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/dialog.h>
-#include <wx/iconbndl.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/stc/stc.h>
-#include <wx/button.h>
-#include <wx/panel.h>
-#include <wx/splitter.h>
-#include <wx/textctrl.h>
-#include <wx/stattext.h>
-#include <wx/treectrl.h>
 #include "clFileViwerTreeCtrl.h"
+#include <wx/artprov.h>
+#include <wx/button.h>
 #include <wx/dataview.h>
-#include <wx/srchctrl.h>
-#include <wx/scrolwin.h>
-#include <wx/statbmp.h>
+#include <wx/dialog.h>
+#include <wx/frame.h>
+#include <wx/iconbndl.h>
+#include <wx/listbox.h>
+#include <wx/panel.h>
 #include <wx/popupwin.h>
+#include <wx/scrolwin.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/splitter.h>
+#include <wx/srchctrl.h>
+#include <wx/statbmp.h>
+#include <wx/stattext.h>
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
 #include <wx/timer.h>
+#include <wx/treectrl.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -54,15 +56,15 @@ protected:
     wxButton* m_button8;
 
 protected:
-
 public:
     wxStyledTextCtrl* GetStc10() { return m_stc10; }
     wxButton* GetButton6() { return m_button6; }
     wxButton* GetButton8() { return m_button8; }
-    EditDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Text"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    EditDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Text"),
+                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300, 300),
+                long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~EditDlgBase();
 };
-
 
 class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxPanel
 {
@@ -108,10 +110,10 @@ public:
     wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
     wxPanel* GetPanelOverviewFull() { return m_panelOverviewFull; }
-    DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~DiffSideBySidePanelBase();
 };
-
 
 class WXDLLIMPEXP_SDK clGetTextFromUserBaseDialog : public wxDialog
 {
@@ -123,14 +125,14 @@ protected:
     wxButton* m_buttonOK;
 
 protected:
-
 public:
     wxStaticText* GetStaticTextCaption() { return m_staticTextCaption; }
     wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
-    clGetTextFromUserBaseDialog(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    clGetTextFromUserBaseDialog(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
+                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clGetTextFromUserBaseDialog();
 };
-
 
 class WXDLLIMPEXP_SDK clTreeCtrlPanelBase : public wxPanel
 {
@@ -144,10 +146,10 @@ protected:
 
 public:
     clFileViewerTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
-    clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~clTreeCtrlPanelBase();
 };
-
 
 class NotebookNavigationDlgBase : public wxDialog
 {
@@ -163,10 +165,11 @@ protected:
 public:
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel161() { return m_panel161; }
-    NotebookNavigationDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Tab"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,200), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NotebookNavigationDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Tab"),
+                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 200),
+                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NotebookNavigationDlgBase();
 };
-
 
 class clTreeCtrlPanelDefaultPageBase : public wxPanel
 {
@@ -180,10 +183,10 @@ protected:
 public:
     wxStaticText* GetStaticText177() { return m_staticText177; }
     wxPanel* GetPanel169() { return m_panel169; }
-    clTreeCtrlPanelDefaultPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    clTreeCtrlPanelDefaultPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                                   const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~clTreeCtrlPanelDefaultPageBase();
 };
-
 
 class clSingleChoiceDialogBase : public wxDialog
 {
@@ -202,10 +205,11 @@ protected:
 public:
     wxSearchCtrl* GetSearchCtrl() { return m_searchCtrl; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
+                             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 300),
+                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clSingleChoiceDialogBase();
 };
-
 
 class WXDLLIMPEXP_SDK clImageViewerBase : public wxPanel
 {
@@ -214,14 +218,13 @@ protected:
     wxStaticBitmap* m_staticBitmap;
 
 protected:
-
 public:
     wxStaticBitmap* GetStaticBitmap() { return m_staticBitmap; }
     wxScrolledWindow* GetScrollWin196() { return m_scrollWin196; }
-    clImageViewerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    clImageViewerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~clImageViewerBase();
 };
-
 
 class WXDLLIMPEXP_SDK clResizableTooltipBase : public wxPopupWindow
 {
@@ -252,11 +255,9 @@ public:
     virtual ~clResizableTooltipBase();
 };
 
-
 class WXDLLIMPEXP_SDK clEditorBarBase : public wxPanel
 {
 protected:
-
 protected:
     virtual void OnPaint(wxPaintEvent& event) { event.Skip(); }
     virtual void OnEraseBG(wxEraseEvent& event) { event.Skip(); }
@@ -264,8 +265,29 @@ protected:
     virtual void OnLeftDown(wxMouseEvent& event) { event.Skip(); }
 
 public:
-    clEditorBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    clEditorBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~clEditorBarBase();
+};
+
+class clTableLineEditorBaseDlg : public wxFrame
+{
+protected:
+    wxPanel* m_panel344;
+    wxListBox* m_listBoxColumns;
+    wxStyledTextCtrl* m_stc;
+
+protected:
+    virtual void OnColumnSelected(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    wxListBox* GetListBoxColumns() { return m_listBoxColumns; }
+    wxStyledTextCtrl* GetStc() { return m_stc; }
+    wxPanel* GetPanel344() { return m_panel344; }
+    clTableLineEditorBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Text Viewer"),
+                             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                             long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT);
+    virtual ~clTableLineEditorBaseDlg();
 };
 
 #endif

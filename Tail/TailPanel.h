@@ -10,6 +10,7 @@
 #include <vector>
 #include <wx/filename.h>
 
+class TailFrame;
 class clToolBar;
 class Tail;
 class TailPanel : public TailPanelBase
@@ -22,6 +23,7 @@ class TailPanel : public TailPanelBase
     Tail* m_plugin;
     bool m_isDetached;
     clToolBar* m_toolbar;
+    TailFrame* m_frame;
 
 protected:
     virtual void OnDetachWindow(wxCommandEvent& event);
@@ -33,6 +35,7 @@ protected:
     virtual void OnClose(wxCommandEvent& event);
     virtual void OnCloseUI(wxUpdateUIEvent& event);
     void OnOpenRecentItem(wxCommandEvent& event);
+
 private:
     void DoBuildToolbar();
     void DoClear();
@@ -49,6 +52,9 @@ public:
     void SetIsDetached(bool isDetached) { this->m_isDetached = isDetached; }
     bool IsDetached() const { return m_isDetached; }
 
+    void SetFrame(TailFrame* frame) { this->m_frame = frame; }
+    TailFrame* GetFrame() { return m_frame; }
+    
     /**
      * @brief duplicate the settings from src into this tail panel
      */

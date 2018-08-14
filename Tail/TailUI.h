@@ -7,20 +7,20 @@
 #ifndef _CODELITE_TAIL_TAILUI_BASE_CLASSES_H
 #define _CODELITE_TAIL_TAILUI_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/panel.h>
 #include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/stc/stc.h>
-#include <wx/stattext.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/stc/stc.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -33,7 +33,6 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class TailPanelBase : public wxPanel
 {
 protected:
@@ -41,24 +40,24 @@ protected:
     wxStaticText* m_staticTextFileName;
 
 protected:
-
 public:
     wxStyledTextCtrl* GetStc() { return m_stc; }
     wxStaticText* GetStaticTextFileName() { return m_staticTextFileName; }
-    TailPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    TailPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~TailPanelBase();
 };
-
 
 class TailFrameBase : public wxFrame
 {
 protected:
-
 protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
 
 public:
-    TailFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_FRAME_STYLE);
+    TailFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
+                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+                  long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT);
     virtual ~TailFrameBase();
 };
 

@@ -1,22 +1,23 @@
 #include "ColoursAndFontsManager.h"
 #include "TailPanel.h"
+#include "bitmap_loader.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "fileutils.h"
+#include "globals.h"
 #include "lexer_configuration.h"
 #include "tail.h"
+#include <imanager.h>
 #include <wx/ffile.h>
 #include <wx/filedlg.h>
-#include "globals.h"
-#include <imanager.h>
-#include "bitmap_loader.h"
 
 TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     : TailPanelBase(parent)
     , m_lastPos(0)
     , m_plugin(plugin)
     , m_isDetached(false)
+    , m_frame(NULL)
 {
     DoBuildToolbar();
     m_fileWatcher.reset(new clFileSystemWatcher());
@@ -68,10 +69,10 @@ void TailPanel::OnFileModified(clFileSystemEvent& event)
         if(cursize > m_lastPos) {
             size_t bufferSize = cursize - m_lastPos;
             char* buffer = new char[bufferSize + 1];
-            if(fp.Read(buffer, bufferSize) == bufferSize) { 
+            if(fp.Read(buffer, bufferSize) == bufferSize) {
                 buffer[bufferSize] = '\0';
                 wxString content((const char*)buffer, wxConvUTF8);
-                DoAppendText(content); 
+                DoAppendText(content);
             }
             wxDELETEA(buffer);
         } else {

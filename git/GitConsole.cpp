@@ -168,7 +168,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
         // Informative messages, will be coloured with green
         wxArrayString words;
         words.Add("up to date");
-        words.Add("Everything up-to-date");
+        words.Add("up-to-date");
         m_styler->AddStyle(words, clGenericSTCStyler::kInfo);
     }
     {

@@ -90,6 +90,11 @@ void clTableWithPagination::ShowPage(int nPage)
         }
         m_ctrl->AppendItem(cols, (wxUIntPtr)&items);
     }
+    
+    for(size_t i=0; i<m_columns.size(); ++i) {
+        m_ctrl->GetColumn(i)->SetWidth(-2); // Set the column width _after_ we set the data
+    }
+    
     m_staticText->SetLabel(wxString() << _("Showing entries from: ") << startIndex << _(":") << lastIndex
                                       << " Total of: " << m_data.size() << _(" entries"));
 }

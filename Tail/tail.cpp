@@ -81,6 +81,7 @@ void Tail::DetachTailWindow(const TailData& d)
     frame->GetSizer()->Fit(frame);
     m_view->SetFrameTitle();
     frame->Show();
+    frame->Raise();
 }
 
 void Tail::DockTailWindow(const TailData& d)

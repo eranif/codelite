@@ -61,13 +61,17 @@
 #include "ClassGenerateDialog.h"
 #include "LogDialog.h"
 #include "dbitem.h"
+#include <unordered_set>
 
+class DbExplorerFrame;
 WX_DECLARE_HASH_MAP(wxString, wxTreeItemId, wxStringHash, wxStringEqual, TableHashMap);
 
 class MainBook;
 /*! \brief Main application panel. It show database tree and can open special editors. */
 class DbViewerPanel : public _DbViewerPanel
 {
+    std::unordered_set<DbExplorerFrame*> m_frames;
+
 protected:
     virtual void OnContextMenu(wxTreeEvent& event);
 
@@ -119,6 +123,7 @@ public:
 
     void OnPopupClick(wxCommandEvent& evt);
     void RefreshDbView();
+    void RemoveFrame(DbExplorerFrame* frame);
     static void InitStyledTextCtrl(wxStyledTextCtrl* sci);
 
 protected:

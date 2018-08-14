@@ -35,6 +35,7 @@
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "lexer_configuration.h"
+#include <algorithm>
 #include <wx/imaglist.h>
 #include <wx/msgdlg.h>
 #include <wx/wfstream.h>
@@ -98,6 +99,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
 
 DbViewerPanel::~DbViewerPanel()
 {
+    std::for_each(m_frames.begin(), m_frames.end(), [&](DbExplorerFrame* frame) { wxDELETE(frame); });
     wxDELETE(m_themeHelper);
     m_mgr->GetEditorPaneNotebook()->Unbind(wxEVT_BOOK_PAGE_CHANGED, &DbViewerPanel::OnPageChanged, this);
     m_mgr->GetEditorPaneNotebook()->Unbind(wxEVT_BOOK_PAGE_CLOSING, &DbViewerPanel::OnPageClosing, this);
@@ -799,9 +801,10 @@ bool DbViewerPanel::DoSelectPage(const wxString& page)
 void DbViewerPanel::AddEditorPage(wxWindow* page, const wxString& name)
 {
     m_SuppressUpdate = true;
-    DbExplorerFrame* frame = new DbExplorerFrame(NULL, page, name);
+    DbExplorerFrame* frame = new DbExplorerFrame(NULL, page, name, this);
+    frame->SetSize(500, 500);
     frame->Show();
-    frame->Raise();
+    m_frames.insert(frame);
     ErdPanel* erd = wxDynamicCast(page, ErdPanel);
     if(erd) {
         m_pThumbnail->SetCanvas(erd->GetCanvas());
@@ -927,4 +930,9 @@ void DbViewerPanel::OnContextMenu(wxTreeEvent& event)
         menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&DbViewerPanel::OnPopupClick, NULL, this);
         PopupMenu(&menu);
     }
+}
+
+void DbViewerPanel::RemoveFrame(DbExplorerFrame* frame)
+{
+    if(m_frames.count(frame)) { m_frames.erase(frame); }
 }

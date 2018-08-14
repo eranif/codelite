@@ -127,7 +127,7 @@ void clGenericSTCStyler::InitDefaultStyles()
     bool isDark = lexer->IsDark();
     m_styleInfo.resize(kLastStyle);
     m_styleInfo[kDefault] = std::make_tuple(kDefault, defaultStyle.GetFgColour(), defaultStyle.GetBgColour());
-    m_styleInfo[kInfo] = std::make_tuple(kInfo, isDark ? wxColour("rgb(167, 226, 46)") : wxColour("rgb(0, 200, 100)"),
+    m_styleInfo[kInfo] = std::make_tuple(kInfo, isDark ? wxColour("rgb(167, 226, 46)") : wxColour("rgb(80, 161, 79)"),
                                          defaultStyle.GetBgColour());
     m_styleInfo[kWarning] = std::make_tuple(
         kWarning, isDark ? wxColour("rgb(150,155,73)") : wxColour("rgb(255,201,14)"), defaultStyle.GetBgColour());

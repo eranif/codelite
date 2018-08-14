@@ -24,6 +24,9 @@ protected:
     bool CanNext() const;
     bool CanPrev() const;
 
+    void ClearAllItems();
+    wxString MakeDisplayString(const wxString& str) const;
+
 public:
     clTableWithPagination(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                           const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,

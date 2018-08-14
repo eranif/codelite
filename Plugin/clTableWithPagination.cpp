@@ -80,16 +80,17 @@ void clTableWithPagination::ShowPage(int nPage)
         lastIndex = (m_data.size() - 1);
     }
     m_currentPage = nPage;
-    for(size_t i = startIndex; i < lastIndex; ++i) {
+    for(size_t i = startIndex; i <= lastIndex; ++i) {
         wxVector<wxVariant> cols;
         const wxArrayString& items = m_data[i];
         for(size_t j = 0; j < items.size(); ++j) {
-            cols.push_back(wxVariant(items.Item(j)));
+            const wxString& cellContent = items.Item(j);
+            cols.push_back(wxVariant(MakeDisplayString(cellContent)));
         }
-        m_ctrl->AppendItem(cols);
+        m_ctrl->AppendItem(cols, (wxUIntPtr)&items);
     }
-    m_staticText->SetLabel(wxString() << _("Showing reulsts from: ") << startIndex << _(":") << lastIndex
-                                      << ". Total of: " << m_data.size() << _(" lines"));
+    m_staticText->SetLabel(wxString() << _("Showing entries from: ") << startIndex << _(":") << lastIndex
+                                      << " Total of: " << m_data.size() << _(" entries"));
 }
 
 bool clTableWithPagination::CanNext() const
@@ -99,3 +100,24 @@ bool clTableWithPagination::CanNext() const
 }
 
 bool clTableWithPagination::CanPrev() const { return (((m_currentPage - 1) >= 0) && !m_data.empty()); }
+
+void clTableWithPagination::ClearAllItems()
+{
+    // truncate the string to a reasonable string
+    m_ctrl->DeleteAllItems();
+}
+
+wxString clTableWithPagination::MakeDisplayString(const wxString& str) const
+{
+    wxString truncatedString = str;
+    if(truncatedString.Length() > 100) {
+        truncatedString = truncatedString.Mid(0, 100);
+        truncatedString.Append(wxT("..."));
+    }
+
+    // Convert all whitespace chars into visible ones
+    truncatedString.Replace(wxT("\n"), wxT("\\n"));
+    truncatedString.Replace(wxT("\r"), wxT("\\r"));
+    truncatedString.Replace(wxT("\t"), wxT("\\t"));
+    return truncatedString;
+}

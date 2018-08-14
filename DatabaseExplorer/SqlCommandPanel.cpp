@@ -242,21 +242,9 @@ void SQLCommandPanel::ExecuteSql()
                             value = pResultSet->GetResultString(i);
                             break;
                         }
-
-                        // truncate the string to a reasonable string
-                        if(value.Length() > 100) {
-                            value = value.Mid(0, 100);
-                            value.Append(wxT("..."));
-                        }
-
-                        // Convert all whitespace chars into visible ones
-                        value.Replace(wxT("\n"), wxT("\\n"));
-                        value.Replace(wxT("\r"), wxT("\\r"));
-                        value.Replace(wxT("\t"), wxT("\\t"));
                         row.Add(value);
                     }
                 }
-
                 m_pDbLayer->CloseResultSet(pResultSet);
 
                 // Popuplate the data

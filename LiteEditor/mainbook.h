@@ -75,7 +75,6 @@ private:
     void DoUpdateNotebookTheme();
     void DoOpenImageViewer(const wxFileName& filename);
     void DoUpdateEditorsThemes();
-    void DoPlaceNavigationBar();
 
     void OnMouseDClick(wxBookCtrlEvent& e);
     void OnTabDClicked(wxBookCtrlEvent& e);
@@ -164,8 +163,10 @@ public:
 
     void ShowTabBar(bool b);
     void ShowNavBar(bool s = true);
-    bool IsNavBarShown() { return m_navBar->IsShown(); }
+    bool IsNavBarShown() { return m_navBar && m_navBar->IsShown(); }
     clEditorBar* GetEditorBar() { return m_navBar; }
+    void SetEditorBar(clEditorBar* bar) { m_navBar = bar; }
+    
     void SaveSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
     void RestoreSession(SessionEntry& session);
     /**

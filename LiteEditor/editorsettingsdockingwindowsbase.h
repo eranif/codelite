@@ -66,7 +66,6 @@ protected:
     wxColourPickerCtrl* m_cpCaptionColour;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
-    wxCheckBox* m_checkBoxNavBarTop;
     wxCheckBox* m_checkBoxNavBarSortDropdown;
     wxPanel* m_panel14;
     wxCheckBox* m_checkBoxDontFoldSearchResults;
@@ -117,7 +116,6 @@ public:
     wxColourPickerCtrl* GetCpCaptionColour() { return m_cpCaptionColour; }
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
-    wxCheckBox* GetCheckBoxNavBarTop() { return m_checkBoxNavBarTop; }
     wxCheckBox* GetCheckBoxNavBarSortDropdown() { return m_checkBoxNavBarSortDropdown; }
     wxPanel* GetPanel12() { return m_panel12; }
     wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }

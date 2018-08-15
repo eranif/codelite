@@ -91,8 +91,6 @@ void MainBook::CreateGuiControls()
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     sz->Add(m_book, 1, wxEXPAND);
-
-    DoPlaceNavigationBar();
     sz->Layout();
 }
 
@@ -297,7 +295,7 @@ void MainBook::GetRecentlyOpenedFiles(wxArrayString& files) { files = clConfig::
 void MainBook::UpdateNavBar(clEditor* editor)
 {
     TagEntryPtr tag = NULL;
-    if(m_navBar->IsShown()) {
+    if(m_navBar && m_navBar->IsShown()) {
         if(editor && !editor->GetProject().IsEmpty()) {
             TagEntryPtrVector_t tags;
             if(TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags,
@@ -335,15 +333,17 @@ void MainBook::UpdateNavBar(clEditor* editor)
 
 void MainBook::ShowNavBar(bool s)
 {
-    m_navBar->DoShow(s);
-    clEditor* editor = GetActiveEditor();
-    CHECK_PTR_RET(editor);
+    if(m_navBar) {
+        m_navBar->DoShow(s);
+        clEditor* editor = GetActiveEditor();
+        CHECK_PTR_RET(editor);
 
-    // Update the navigation bar
-    clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
-    evtUpdateNavBar.SetEditor(editor);
-    evtUpdateNavBar.SetLineNumber(editor->GetCtrl()->GetCurrentLine());
-    EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
+        // Update the navigation bar
+        clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
+        evtUpdateNavBar.SetEditor(editor);
+        evtUpdateNavBar.SetLineNumber(editor->GetCtrl()->GetCurrentLine());
+        EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
+    }
 }
 
 void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { CreateSession(session, excludeArr); }
@@ -965,9 +965,6 @@ void MainBook::ApplySettingsChanges()
 
     clMainFrame::Get()->UpdateAUI();
     clMainFrame::Get()->ShowOrHideCaptions();
-
-    // Last: reposition the findBar
-    DoPlaceNavigationBar();
 }
 
 void MainBook::UnHighlightAll()
@@ -1493,7 +1490,7 @@ void MainBook::OnNavigationBarMenuShowing(clContextMenuEvent& e)
     e.Skip();
     m_currentNavBarTags.clear();
     IEditor* editor = GetActiveEditor(true);
-    if(m_navBar->IsShown() && editor) {
+    if(m_navBar && m_navBar->IsShown() && editor) {
         TagEntryPtrVector_t tags;
         if(!TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags,
                                                        clCxxFileCacheSymbols::kFunctions) ||
@@ -1532,39 +1529,9 @@ void MainBook::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
     editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1), nullptr);
 }
 
-void MainBook::DoPlaceNavigationBar()
-{
-    clWindowUpdateLocker locker(this);
-    if(m_navBar) {
-        // the find bar is already placed on the MainBook, detach it
-        GetSizer()->Detach(m_navBar);
-    } else {
-        m_navBar = new clEditorBar(this);
-    }
-
-    bool placeAtBottom = !EditorConfigST::Get()->GetOptions()->IsNavBarTop();
-    size_t itemCount = GetSizer()->GetItemCount();
-    for(size_t i = 0; i < itemCount; ++i) {
-        wxSizerItem* sizerItem = GetSizer()->GetItem(i);
-        if(!sizerItem) { continue; }
-        if(sizerItem->GetWindow() == m_book) {
-            // we found the main book
-            if(placeAtBottom) {
-                GetSizer()->Insert(i + 1, m_navBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
-            } else {
-                GetSizer()->Insert(i, m_navBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
-            }
-            break;
-        }
-    }
-    GetSizer()->Layout();
-}
-
 void MainBook::OnSettingsChanged(wxCommandEvent& e)
 {
     e.Skip();
-    // Update the navigation bar position
-    DoPlaceNavigationBar();
 }
 
 clEditor* MainBook::OpenFile(const BrowseRecord& rec)

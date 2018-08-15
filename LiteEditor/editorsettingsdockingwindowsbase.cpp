@@ -227,13 +227,6 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
 
     bSizer2->Add(staticBoxSizer72, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_checkBoxNavBarTop = new wxCheckBox(m_panel12, wxID_ANY, _("Place above the editor"), wxDefaultPosition,
-                                         wxDLG_UNIT(m_panel12, wxSize(-1, -1)), 0);
-    m_checkBoxNavBarTop->SetValue(false);
-    m_checkBoxNavBarTop->SetToolTip(_("Place the navigation bar above the editor"));
-
-    staticBoxSizer72->Add(m_checkBoxNavBarTop, 0, wxALL, WXC_FROM_DIP(5));
-
     m_checkBoxNavBarSortDropdown = new wxCheckBox(m_panel12, wxID_ANY, _("Sort dropdown alphabetically"),
                                                   wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)), 0);
     m_checkBoxNavBarSortDropdown->SetValue(false);
@@ -418,9 +411,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
 
     SetName(wxT("EditorSettingsDockingWindowsBase"));
     SetSize(-1, -1);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_cpCaptionColour->Connect(wxEVT_UPDATE_UI,
                                wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUseCustomCaptionColourUI),

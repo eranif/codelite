@@ -33,6 +33,7 @@
 #include "bookmark_manager.h"
 #include "build_custom_targets_menu_manager.h"
 #include "clBootstrapWizard.h"
+#include "clEditorBar.h"
 #include "clGotoAnythingManager.h"
 #include "clMainFrameHelper.h"
 #include "clSingleChoiceDialog.h"
@@ -1102,13 +1103,19 @@ void clMainFrame::CreateGUIControls()
     // We do this so we can place the find bar under the main book
     wxPanel* container = new wxPanel(m_mainPanel);
     container->SetSizer(new wxBoxSizer(wxVERTICAL));
+    clEditorBar* navbar = new clEditorBar(container);
+    navbar->Hide();
+
+    container->GetSizer()->Add(navbar, 1, wxEXPAND | wxALL, 5);
     m_mainBook = new MainBook(container);
+
     container->GetSizer()->Add(m_mainBook, 1, wxEXPAND);
     QuickFindBar* findbar = new QuickFindBar(container);
     findbar->Hide();
     container->GetSizer()->Add(findbar, 0, wxEXPAND);
     container->GetSizer()->Fit(container);
     m_mainBook->SetFindBar(findbar);
+    m_mainBook->SetEditorBar(navbar);
 
     m_mgr.AddPane(container, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(false));
     CreateRecentlyOpenedFilesMenu();

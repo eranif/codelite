@@ -670,6 +670,7 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
 bool MainBook::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected,
                        int insert_at_index /*=wxNOT_FOUND*/)
 {
+    ShowWelcomePage(false);
     if(m_book->GetPageIndex(win) != wxNOT_FOUND) return false;
     if(insert_at_index == wxNOT_FOUND) {
         m_book->AddPage(win, text, selected, bmp);

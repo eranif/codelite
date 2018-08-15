@@ -35,11 +35,11 @@ clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()
 
 void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
 {
-    wxAutoBufferedPaintDC dc(this);
+    wxBufferedPaintDC dc(this);
     PrepareDC(dc);
 
-#ifdef __WXGTK__
-    wxDC &gcdc = dc;
+#ifdef __WXGTK3__
+    wxDC& gcdc = dc;
 #else
     wxGCDC gcdc(dc);
     PrepareDC(gcdc);

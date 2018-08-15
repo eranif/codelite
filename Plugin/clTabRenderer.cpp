@@ -301,7 +301,7 @@ void clTabRenderer::DrawButton(wxDC& dc, const wxRect& rect, const clTabColours&
 
 void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)
 {
-    DrawingUtils::DrawDropDownArrow(win, dc, rect, colours.activeTabPenColour);
+    DrawingUtils::DrawDropDownArrow(win, dc, rect, colours.tabAreaColour.ChangeLightness(50));
 }
 
 int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)

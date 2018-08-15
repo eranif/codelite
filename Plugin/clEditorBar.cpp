@@ -26,6 +26,7 @@
 #include <wx/renderer.h>
 #include <wx/settings.h>
 #include <algorithm>
+#include <wx/dcgraph.h>
 
 #define X_SPACER 10
 #define Y_SPACER 5
@@ -38,6 +39,13 @@ clEditorBar::clEditorBar(wxWindow* parent)
 {
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
+#ifdef __WXGTK3__
+    wxDC& gcdc = memDC;
+#else
+    wxGCDC gcdc(memDC);
+    PrepareDC(gcdc);
+#endif
+
     m_defaultColour = DrawingUtils::GetPanelTextColour();
     m_functionColour = DrawingUtils::GetPanelTextColour();
     m_classColour = DrawingUtils::GetPanelTextColour();
@@ -51,8 +59,8 @@ clEditorBar::clEditorBar(wxWindow* parent)
     m_functionBmp = clGetManager()->GetStdIcons()->LoadBitmap("function_public", 16);
     SetBackgroundStyle(wxBG_STYLE_PAINT);
 
-    memDC.SetFont(m_textFont);
-    wxSize sz = memDC.GetTextExtent("Tp");
+    gcdc.SetFont(m_textFont);
+    wxSize sz = gcdc.GetTextExtent("Tp");
     // wxCoord baseY = wxMax(sz.y, m_functionBmp.GetScaledHeight());
     wxCoord baseY = sz.y;
     baseY += (2 * Y_SPACER); // 2*3 pixels
@@ -86,7 +94,7 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC bdc(this);
     PrepareDC(bdc);
-#ifdef __WXGTK__
+#ifdef __WXGTK3__
     wxDC& gcdc = bdc;
 #else
     wxGCDC gcdc(bdc);

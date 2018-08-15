@@ -1106,7 +1106,7 @@ void clMainFrame::CreateGUIControls()
     clEditorBar* navbar = new clEditorBar(container);
     navbar->Hide();
 
-    container->GetSizer()->Add(navbar, 1, wxEXPAND | wxALL, 5);
+    container->GetSizer()->Add(navbar, 0, wxEXPAND | wxALL, 5);
     m_mainBook = new MainBook(container);
 
     container->GetSizer()->Add(m_mainBook, 1, wxEXPAND);

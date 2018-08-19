@@ -1,16 +1,15 @@
 #include "wxCodeCompletionBoxManager.h"
 
-#include <algorithm>
-#include <wx/app.h>
-#include "globals.h"
-#include "ieditor.h"
-#include <wx/stc/stc.h>
 #include "cl_command_event.h"
 #include "codelite_events.h"
-#include "imanager.h"
-#include "file_logger.h"
-#include <wx/app.h>
 #include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include <algorithm>
+#include <wx/app.h>
+#include <wx/stc/stc.h>
 
 static bool wxIsWhitespace(wxChar ch)
 {
@@ -55,17 +54,12 @@ wxCodeCompletionBoxManager::~wxCodeCompletionBoxManager()
 static wxCodeCompletionBoxManager* manager = NULL;
 wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 {
-    if(!manager) {
-        manager = new wxCodeCompletionBoxManager();
-    }
+    if(!manager) { manager = new wxCodeCompletionBoxManager(); }
     return *manager;
 }
 
-void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
-                                                   const TagEntryPtrVector_t& tags,
-                                                   size_t flags,
-                                                   int startPos,
-                                                   wxEvtHandler* eventObject)
+void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags,
+                                                   size_t flags, int startPos, wxEvtHandler* eventObject)
 {
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
@@ -79,10 +73,8 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 }
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
-                                                   const wxCodeCompletionBoxEntry::Vec_t& entries,
-                                                   size_t flags,
-                                                   int startPos,
-                                                   wxEvtHandler* eventObject)
+                                                   const wxCodeCompletionBoxEntry::Vec_t& entries, size_t flags,
+                                                   int startPos, wxEvtHandler* eventObject)
 {
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
@@ -98,9 +90,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 void wxCodeCompletionBoxManager::DestroyCCBox()
 {
     if(m_box) {
-        if(m_box->IsShown()) {
-            m_box->Hide();
-        }
+        if(m_box->IsShown()) { m_box->Hide(); }
         m_box->Destroy();
     }
     m_box = NULL;
@@ -109,14 +99,12 @@ void wxCodeCompletionBoxManager::DestroyCCBox()
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries,
-                                                   const wxCodeCompletionBox::BmpVec_t& bitmaps,
-                                                   size_t flags,
-                                                   int startPos,
-                                                   wxEvtHandler* eventObject)
+                                                   const wxCodeCompletionBox::BmpVec_t& bitmaps, size_t flags,
+                                                   int startPos, wxEvtHandler* eventObject)
 {
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
-    //CHECK_COND_RET(!entries.empty());
+    // CHECK_COND_RET(!entries.empty());
 
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetBitmaps(bitmaps);
@@ -155,7 +143,7 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
             end = ctrl->GetCurrentPos();
             ctrl->SetSelection(start, end);
             wxChar endChar = ctrl->GetCharAt(end);
-                if((ctrl->GetCharAt(end) != '(') && wxIsWhitespace(endChar)) {
+            if((ctrl->GetCharAt(end) != '(')) {
                 addParens = true;
                 moveCaretLeft = true;
             } else if(endChar == '(') {
@@ -177,9 +165,7 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
             clDEBUG() << "Signature is:" << funcSig;
 
             // Check if already have an open paren, don't add another
-            if(addParens) {
-                textToInsert << "()";
-            }
+            if(addParens) { textToInsert << "()"; }
 
             if(!ranges.empty()) {
                 // Multiple carets
@@ -210,7 +196,7 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
                     } else {
                         caretPos = start + textToInsert.length();
                     }
-                    
+
                     ctrl->SetCurrentPos(caretPos);
                     ctrl->SetSelection(caretPos, caretPos);
 
@@ -248,17 +234,13 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
 void wxCodeCompletionBoxManager::OnStcCharAdded(wxStyledTextEvent& event)
 {
     event.Skip();
-    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) {
-        m_box->StcCharAdded(event);
-    }
+    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) { m_box->StcCharAdded(event); }
 }
 
 void wxCodeCompletionBoxManager::OnStcModified(wxStyledTextEvent& event)
 {
     event.Skip();
-    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) {
-        m_box->StcModified(event);
-    }
+    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) { m_box->StcModified(event); }
 }
 
 void wxCodeCompletionBoxManager::DoShowCCBoxEntries(const wxCodeCompletionBoxEntry::Vec_t& entries)
@@ -322,9 +304,7 @@ void wxCodeCompletionBoxManager::DoConnectStcEventHandlers(wxStyledTextCtrl* ctr
         // Connect the event handlers only once. We ensure that we do that only once by attaching
         // a client data to the stc control with a single member "m_connected"
         wxCodeCompletionClientData* cd = dynamic_cast<wxCodeCompletionClientData*>(ctrl->GetClientObject());
-        if(cd && cd->m_connected) {
-            return;
-        }
+        if(cd && cd->m_connected) { return; }
         cd = new wxCodeCompletionClientData();
         cd->m_connected = true;
         ctrl->SetClientObject(cd);

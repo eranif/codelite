@@ -187,9 +187,7 @@ static void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 
 wxColour DrawingUtils::LightColour(const wxColour& color, float percent)
 {
-    if(percent == 0) {
-        return color;
-    }
+    if(percent == 0) { return color; }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -233,9 +231,7 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
 
         fixedText = text1 + suffix + text2;
         dc.GetTextExtent(fixedText, &textW, &textH);
-        if(rectSize >= textW) {
-            return;
-        }
+        if(rectSize >= textW) { return; }
     }
 }
 
@@ -390,9 +386,7 @@ wxColour DrawingUtils::GetGradient()
 
 wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
 {
-    if(percent == 0) {
-        return color;
-    }
+    if(percent == 0) { return color; }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
@@ -412,9 +406,7 @@ static wxColour GtkGetBgColourFromWidget(GtkWidget* widget, const wxColour& defa
 {
     wxColour bgColour = defaultColour;
     GtkStyle* def = gtk_rc_get_style(widget);
-    if(!def) {
-        def = gtk_widget_get_default_style();
-    }
+    if(!def) { def = gtk_widget_get_default_style(); }
 
     if(def) {
         GdkColor col = def->bg[GTK_STATE_NORMAL];
@@ -428,9 +420,7 @@ static wxColour GtkGetTextColourFromWidget(GtkWidget* widget, const wxColour& de
 {
     wxColour textColour = defaultColour;
     GtkStyle* def = gtk_rc_get_style(widget);
-    if(!def) {
-        def = gtk_widget_get_default_style();
-    }
+    if(!def) { def = gtk_widget_get_default_style(); }
 
     if(def) {
         GdkColor col = def->fg[GTK_STATE_NORMAL];
@@ -583,9 +573,7 @@ wxColour DrawingUtils::GetTextCtrlBgColour() { return wxSystemSettings::GetColou
 wxColour DrawingUtils::GetOutputPaneFgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    if(col.IsEmpty()) {
-        return GetTextCtrlTextColour();
-    }
+    if(col.IsEmpty()) { return GetTextCtrlTextColour(); }
 
     return wxColour(col);
 }
@@ -593,9 +581,7 @@ wxColour DrawingUtils::GetOutputPaneFgColour()
 wxColour DrawingUtils::GetOutputPaneBgColour()
 {
     wxString col = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    if(col.IsEmpty()) {
-        return GetTextCtrlBgColour();
-    }
+    if(col.IsEmpty()) { return GetTextCtrlBgColour(); }
 
     return wxColour(col);
 }
@@ -710,9 +696,7 @@ wxColour DrawingUtils::GetCaptionColour()
 #endif
     wxColour captionColour = defaultCaptionColour;
     bool useCustomCaptionColour = clConfig::Get().Read("UseCustomCaptionsColour", false);
-    if(useCustomCaptionColour) {
-        captionColour = clConfig::Get().Read("CustomCaptionColour", captionColour);
-    }
+    if(useCustomCaptionColour) { captionColour = clConfig::Get().Read("CustomCaptionColour", captionColour); }
     return captionColour;
 }
 
@@ -1005,4 +989,24 @@ wxColour DrawingUtils::GetCaptionTextColour()
     } else {
         return *wxBLACK;
     }
+}
+
+#define X_MARGIN 4
+void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
+                                    const wxBitmap& bmp, int align)
+{
+    wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
+    int xx = rect.GetX() + X_MARGIN;
+    wxRect textRect(rect);
+    textRect.SetWidth(textRect.GetWidth() - textRect.GetHeight() - X_MARGIN);
+    textRect.SetX(xx);
+    if(bmp.IsOk()) {
+        // Draw bitmap first
+        int bmpY = rect.GetY() + ((rect.GetHeight() - bmp.GetScaledHeight()) / 2);
+        dc.DrawBitmap(bmp, xx, bmpY);
+        xx += bmp.GetScaledWidth() + X_MARGIN;
+        textRect.SetWidth(textRect.GetWidth() - bmp.GetScaledWidth());
+        textRect.SetX(xx);
+    }
+    wxRendererNative::Get().DrawItemText(win, dc, label, textRect, align);
 }

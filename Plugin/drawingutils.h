@@ -100,14 +100,17 @@ public:
     /**
      * @brief draw a close button
      */
-    static void DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
-                            eButtonState state);
-    
+    static void DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour, eButtonState state);
+
     /**
      * @brief draw a drop down arrow
      */
     static void DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour);
-    
+
+    static void DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
+                                 const wxBitmap& bmp = wxNullBitmap,
+                                 int align = wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
+
     /// -------------------------------------------------------------
     /// New theme related API
     /// -------------------------------------------------------------
@@ -156,7 +159,7 @@ public:
      * @brief get the caption colour
      */
     static wxColour GetCaptionColour();
-    
+
     /**
      * @brief return the colour suitable for drawing on the caption
      */

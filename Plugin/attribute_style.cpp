@@ -59,10 +59,10 @@ JSONElement StyleProperty::ToJSON(bool portable) const
 {
     JSONElement json = JSONElement::createObject();
     json.addProperty("Id", GetId());
-    json.addProperty("Name", portable ? wxString() : GetName());
+    json.addProperty("Name", GetName());
     json.addProperty("Flags", m_flags);
     json.addProperty("Alpha", GetAlpha());
-    json.addProperty("Face", GetFaceName());
+    json.addProperty("Face", portable ? wxString() : GetFaceName());
     json.addProperty("Colour", GetFgColour());
     json.addProperty("BgColour", GetBgColour());
     json.addProperty("Size", GetFontSize());

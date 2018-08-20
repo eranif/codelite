@@ -133,7 +133,7 @@ public:
     /**
      * @brief save the lexers into their proper file name
      */
-    void Save();
+    void Save(bool forExport = false);
 
     /**
      * @brief set the active theme for a lexer by name

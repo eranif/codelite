@@ -1,20 +1,20 @@
-#include "EclipseScriptThemeImporter.h"
+#include "EclipseDockerfileThemeImporter.h"
 
-EclipseScriptThemeImporter::EclipseScriptThemeImporter()
+EclipseDockerfileThemeImporter::EclipseDockerfileThemeImporter()
 {
     SetKeywords0("echo cp rm ls chmod if then fi done touch for in do while switch else cd pwd  cat mkdir rmdir grep "
-                 "awk print printf xargs find mv gzip tar bzip zip gunzip");
-    SetFileExtensions("*.bash;*.sh;.tcsh;.bashrc;*.ksh;configure");
-    m_langName = "script";
+                 "awk print printf xargs find mv gzip tar bzip zip gunzip ADD ARG CMD COPY ENTRYPOINT ENV EXPOSE FROM "
+                 "LABEL MAINTAINER ONBUILD RUN  STOPSIGNAL USER VOLUME WORKDIR");
+    SetFileExtensions("dockerfile");
+    m_langName = "dockerfile";
 }
 
-EclipseScriptThemeImporter::~EclipseScriptThemeImporter() {}
+EclipseDockerfileThemeImporter::~EclipseDockerfileThemeImporter() {}
 
-LexerConf::Ptr_t EclipseScriptThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t EclipseDockerfileThemeImporter::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_BASH);
     AddProperty(lexer, wxSTC_SH_DEFAULT, "Default", m_foreground.colour, m_background.colour);
-
     wxString errorColour;
     if(lexer->IsDark()) {
         errorColour = "PINK";

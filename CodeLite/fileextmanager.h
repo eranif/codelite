@@ -79,6 +79,7 @@ public:
         TypeJava,
         TypeQMake,
         TypeCMake,
+        TypeDockerfile,
         TypeOther = wxNOT_FOUND
     };
 

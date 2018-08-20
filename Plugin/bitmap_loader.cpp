@@ -212,6 +212,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
     AddImage(imageList->Add(LoadBitmap(wxT("mime-as"))), FileExtManager::TypeAsm);
     AddImage(imageList->Add(LoadBitmap(wxT("cmake"))), FileExtManager::TypeCMake);
     AddImage(imageList->Add(LoadBitmap(wxT("qt"))), FileExtManager::TypeQMake);
+    AddImage(imageList->Add(LoadBitmap(wxT("docker"))), FileExtManager::TypeDockerfile);
 
     std::for_each(m_userBitmaps.begin(), m_userBitmaps.end(),
                   [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {

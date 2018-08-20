@@ -342,14 +342,18 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
 
     } else {
         const ColoursAndFontsManager::Vec_t& lexers = iter->second;
+        LexerConf::Ptr_t themeDefaultLexer = nullptr;
         for(size_t i = 0; i < lexers.size(); ++i) {
-            if(lexers.at(i)->GetThemeName() == theme) { return lexers.at(i); }
+            if(lexers[i]->GetThemeName() == "Default") { themeDefaultLexer = lexers[i]; }
+            if(lexers[i]->GetThemeName() == theme) { return lexers[i]; }
         }
-        return m_defaultLexer;
+        // We failed to find the requested theme for this language. If we have a "Default"
+        // lexer, return it, else use the minimal lexer ("m_defaultLexer")
+        return (themeDefaultLexer ? themeDefaultLexer : m_defaultLexer);
     }
 }
 
-void ColoursAndFontsManager::Save()
+void ColoursAndFontsManager::Save(bool forExport)
 {
     ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.begin();
     JSONRoot root(cJSON_Array);
@@ -357,7 +361,7 @@ void ColoursAndFontsManager::Save()
     for(; iter != m_lexersMap.end(); ++iter) {
         const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         for(size_t i = 0; i < lexers.size(); ++i) {
-            element.arrayAppend(lexers.at(i)->ToJSON());
+            element.arrayAppend(lexers.at(i)->ToJSON(forExport));
         }
     }
 

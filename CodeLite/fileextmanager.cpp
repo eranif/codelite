@@ -24,11 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "fileextmanager.h"
-#include <wx/filename.h>
 #include "fileutils.h"
+#include "json_node.h"
+#include <wx/filename.h>
 #include <wx/regex.h>
 #include <wx/xml/xml.h>
-#include "json_node.h"
 
 std::unordered_map<wxString, FileExtManager::FileType> FileExtManager::m_map;
 std::vector<FileExtManager::Matcher::Ptr_t> FileExtManager::m_matchers;
@@ -163,9 +163,7 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
     Init();
 
     wxFileName fn(filename);
-    if(fn.IsOk() == false) {
-        return defaultType;
-    }
+    if(fn.IsOk() == false) { return defaultType; }
 
     wxString e(fn.GetExt());
     e.MakeLower();
@@ -176,6 +174,8 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
         // try to see if the file is a makefile
         if(fn.GetFullName().CmpNoCase(wxT("makefile")) == 0) {
             return TypeMakefile;
+        } else if(fn.GetFullName().Lower() == "dockerfile") {
+            return TypeDockerfile;
         }
         return defaultType;
     } else if((iter->second == TypeText) && (fn.GetFullName().CmpNoCase("CMakeLists.txt") == 0)) {
@@ -209,9 +209,7 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
     FileType ft = GetType(filename);
     if(ft == TypeOther) {
         // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
-            return false;
-        }
+        if(!AutoDetectByContent(filename, ft)) { return false; }
     }
     return (ft == TypeSourceC) || (ft == TypeSourceCpp) || (ft == TypeHeader);
 }
@@ -222,9 +220,7 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
     if(!FileUtils::ReadFileContent(filename, fileContent)) return false;
 
     // Use only the first 4K bytes from the input file (tested with default STL headers)
-    if(fileContent.length() > 4096) {
-        fileContent.Truncate(4096);
-    }
+    if(fileContent.length() > 4096) { fileContent.Truncate(4096); }
 
     for(size_t i = 0; i < m_matchers.size(); ++i) {
         if(m_matchers.at(i)->Matches(fileContent)) {
@@ -240,9 +236,7 @@ bool FileExtManager::IsFileType(const wxString& filename, FileExtManager::FileTy
     FileType ft = GetType(filename);
     if(ft == TypeOther) {
         // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
-            return false;
-        }
+        if(!AutoDetectByContent(filename, ft)) { return false; }
     }
     return (ft == type);
 }

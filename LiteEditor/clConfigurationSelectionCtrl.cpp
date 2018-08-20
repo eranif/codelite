@@ -23,7 +23,7 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
         event.Skip();
         Refresh();
     });
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    //SetBackgroundStyle(wxBG_STYLE_PAINT);
     SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp"));
 }
 
@@ -36,20 +36,19 @@ clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()
 
 void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
 {
-    wxBufferedPaintDC dc(this);
-    PrepareDC(dc);
-
+    wxAutoBufferedPaintDC bdc(this);
+    PrepareDC(bdc);
 #ifdef __WXGTK3__
-    wxDC& gcdc = dc;
+    wxDC& gcdc = bdc;
 #else
-    wxGCDC gcdc(dc);
-    PrepareDC(gcdc);
+    wxGCDC gcdc(bdc);
 #endif
+    PrepareDC(gcdc);
 
     wxRect rect = GetClientRect();
-    dc.SetPen(DrawingUtils::GetPanelBgColour());
-    dc.SetBrush(DrawingUtils::GetPanelBgColour());
-    dc.DrawRectangle(rect);
+    gcdc.SetPen(DrawingUtils::GetPanelBgColour());
+    gcdc.SetBrush(DrawingUtils::GetPanelBgColour());
+    gcdc.DrawRectangle(rect);
 
     // Build the text to draw
     wxString label;

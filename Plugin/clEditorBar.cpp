@@ -34,15 +34,6 @@ clEditorBar::clEditorBar(wxWindow* parent)
     : clEditorBarBase(parent)
     , m_bookmarksButtonState(eButtonState::kNormal)
 {
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memDC(bmp);
-#ifdef __WXGTK3__
-    wxDC& gcdc = memDC;
-#else
-    wxGCDC gcdc(memDC);
-    PrepareDC(gcdc);
-#endif
-
     m_defaultColour = DrawingUtils::GetPanelTextColour();
     m_functionColour = DrawingUtils::GetPanelTextColour();
     m_classColour = DrawingUtils::GetPanelTextColour();
@@ -53,16 +44,9 @@ clEditorBar::clEditorBar(wxWindow* parent)
 
     m_functionBmp = clGetManager()->GetStdIcons()->LoadBitmap("function_public", 16);
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-
-    gcdc.SetFont(m_textFont);
-    wxSize sz = gcdc.GetTextExtent("Tp");
-    // wxCoord baseY = wxMax(sz.y, m_functionBmp.GetScaledHeight());
-    wxCoord baseY = sz.y;
-    baseY += (2 * Y_SPACER); // 2*3 pixels
-    SetSizeHints(wxSize(-1, baseY));
-
+    SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp"));
     CreateBookmarksBitmap();
-
+    
     Bind(wxEVT_LEFT_UP, &clEditorBar::OnLeftUp, this);
     Bind(wxEVT_IDLE, &clEditorBar::OnIdle, this);
 

@@ -552,7 +552,7 @@ void LexerConf::SetLineNumbersFgColour(const wxColour& colour)
     if(!style.IsNull()) { style.SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX)); }
 }
 
-JSONElement LexerConf::ToJSON() const
+JSONElement LexerConf::ToJSON(bool forExport) const
 {
     JSONElement json = JSONElement::createObject(GetName());
     json.addProperty("Name", GetName());
@@ -571,7 +571,7 @@ JSONElement LexerConf::ToJSON() const
 
     StyleProperty::Map_t::const_iterator iter = m_properties.begin();
     for(; iter != m_properties.end(); ++iter) {
-        properties.arrayAppend(iter->second.ToJSON());
+        properties.arrayAppend(iter->second.ToJSON(forExport));
     }
     return json;
 }

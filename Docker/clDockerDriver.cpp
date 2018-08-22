@@ -9,20 +9,20 @@
 #include "wxterminal.h"
 #include <wx/msgdlg.h>
 
-clDockerBuilder::clDockerBuilder(Docker* plugin)
+clDockerDriver::clDockerDriver(Docker* plugin)
     : m_plugin(plugin)
 {
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerBuilder::OnBuildOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerBuilder::OnBuildTerminated, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerDriver::OnBuildOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerDriver::OnBuildTerminated, this);
 }
 
-clDockerBuilder::~clDockerBuilder()
+clDockerDriver::~clDockerDriver()
 {
-    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerBuilder::OnBuildOutput, this);
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerBuilder::OnBuildTerminated, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerDriver::OnBuildOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerDriver::OnBuildTerminated, this);
 }
 
-void clDockerBuilder::BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
+void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
 {
     if(IsBuildInProgress()) return;
     clDockerfile info;
@@ -46,9 +46,7 @@ void clDockerBuilder::BuildDockerfile(const wxFileName& dockerfile, const clDock
 
     wxString buildOptions = info.GetBuildOptions();
     buildOptions.Trim().Trim(false);
-    if(!buildOptions.StartsWith("build")) {
-        buildOptions.Prepend("build ");
-    }
+    if(!buildOptions.StartsWith("build")) { buildOptions.Prepend("build "); }
 
     command << " " << buildOptions;
     ::WrapInShell(command);
@@ -57,20 +55,21 @@ void clDockerBuilder::BuildDockerfile(const wxFileName& dockerfile, const clDock
     m_buildProcess = ::CreateAsyncProcess(this, command, IProcessCreateDefault, dockerfile.GetPath());
 }
 
-void clDockerBuilder::ExecuteDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
+void clDockerDriver::ExecuteDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
 {
     if(IsBuildInProgress()) return;
     clDockerfile info;
     if(!settings.GetFileInfo(dockerfile, info)) return;
 }
 
-void clDockerBuilder::StopBuild()
+void clDockerDriver::StopBuild()
 {
-    if(IsBuildInProgress()) {
-        m_buildProcess->Terminate();
-    }
+    if(IsBuildInProgress()) { m_buildProcess->Terminate(); }
 }
 
-void clDockerBuilder::OnBuildOutput(clProcessEvent& event) { m_plugin->GetTerminal()->AddOutputTextRaw(event.GetOutput()); }
+void clDockerDriver::OnBuildOutput(clProcessEvent& event)
+{
+    m_plugin->GetTerminal()->AddOutputTextRaw(event.GetOutput());
+}
 
-void clDockerBuilder::OnBuildTerminated(clProcessEvent& event) { wxDELETE(m_buildProcess); }
+void clDockerDriver::OnBuildTerminated(clProcessEvent& event) { wxDELETE(m_buildProcess); }

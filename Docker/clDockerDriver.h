@@ -8,7 +8,7 @@
 
 class Docker;
 class IProcess;
-class clDockerBuilder : public wxEvtHandler
+class clDockerDriver : public wxEvtHandler
 {
     IProcess* m_buildProcess = nullptr;
     Docker* m_plugin;
@@ -18,8 +18,8 @@ protected:
     void OnBuildTerminated(clProcessEvent& event);
 
 public:
-    clDockerBuilder(Docker* plugin);
-    virtual ~clDockerBuilder();
+    clDockerDriver(Docker* plugin);
+    virtual ~clDockerDriver();
     void BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);
     void ExecuteDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);
 

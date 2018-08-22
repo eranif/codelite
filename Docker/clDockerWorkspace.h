@@ -2,7 +2,7 @@
 #define CLDOCKERWORKSPACE_H
 
 #include "IWorkspace.h"
-#include "clDockerBuilder.h"
+#include "clDockerDriver.h"
 #include "clDockerWorkspaceSettings.h"
 #include "cl_command_event.h"
 
@@ -15,7 +15,7 @@ class clDockerWorkspace : public IWorkspace
     bool m_isOpen = false;
     bool m_clangOldFlag = false;
     clDockerWorkspaceView* m_view = nullptr;
-    clDockerBuilder m_builder;
+    clDockerDriver m_builder;
     Docker* m_plugin = nullptr;
 
 public:

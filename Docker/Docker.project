@@ -26,10 +26,10 @@
     <File Name="NewDockerWorkspaceDlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="clDockerDriver.cpp"/>
+    <File Name="clDockerDriver.h"/>
     <File Name="clDockerSettings.cpp"/>
     <File Name="clDockerSettings.h"/>
-    <File Name="clDockerBuilder.cpp"/>
-    <File Name="clDockerBuilder.h"/>
     <File Name="clDockerWorkspaceView.cpp"/>
     <File Name="clDockerWorkspaceView.h"/>
     <File Name="clDockerWorkspaceSettings.cpp"/>

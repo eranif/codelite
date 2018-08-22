@@ -16,6 +16,7 @@ class clDockerWorkspace : public IWorkspace
     bool m_clangOldFlag = false;
     clDockerWorkspaceView* m_view = nullptr;
     clDockerBuilder m_builder;
+    Docker* m_plugin = nullptr;
 
 public:
     virtual wxString GetActiveProjectName() const;
@@ -51,7 +52,7 @@ protected:
     void RestoreSession();
 
 public:
-    clDockerWorkspace(bool bindEvents);
+    clDockerWorkspace(bool bindEvents, Docker* plugin);
     virtual ~clDockerWorkspace();
 
     clDockerWorkspaceView* GetView() { return m_view; }
@@ -60,6 +61,8 @@ public:
      * @brief return a pointer to the actual docker workspace
      */
     static clDockerWorkspace* Get();
+    static void Initialise(Docker* plugin);
+    static void Shutdown();
 
     /**
      * @brief open the workspace

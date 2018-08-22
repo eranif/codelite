@@ -35,7 +35,6 @@ public:
 
 class clDockerWorkspaceSettings : public clConfigItem
 {
-public:
 protected:
     wxFileName m_workspaceFile;
     clDockerfile::Map_t m_files;

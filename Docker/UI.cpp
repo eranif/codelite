@@ -69,8 +69,10 @@ NewDockerWorkspaceDlgBase::NewDockerWorkspaceDlgBase(wxWindow* parent, wxWindowI
     m_stdBtnSizer4->Realize();
 
     SetName(wxT("NewDockerWorkspaceDlgBase"));
-    SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -120,7 +122,7 @@ DockerSettingsBaseDlg::DockerSettingsBaseDlg(wxWindow* parent, wxWindowID id, co
 
     m_filePickerDocker =
         new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
-                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_SMALL);
+                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
     m_filePickerDocker->SetFocus();
 
     flexGridSizer30->Add(m_filePickerDocker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -132,7 +134,7 @@ DockerSettingsBaseDlg::DockerSettingsBaseDlg(wxWindow* parent, wxWindowID id, co
 
     m_filePickerDockerCompose =
         new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
-                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_SMALL);
+                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
 
     flexGridSizer30->Add(m_filePickerDockerCompose, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -149,8 +151,10 @@ DockerSettingsBaseDlg::DockerSettingsBaseDlg(wxWindow* parent, wxWindowID id, co
     m_stdBtnSizer24->Realize();
 
     SetName(wxT("DockerSettingsBaseDlg"));
-    SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -163,9 +167,15 @@ DockerSettingsBaseDlg::DockerSettingsBaseDlg(wxWindow* parent, wxWindowID id, co
         wxPersistenceManager::Get().Restore(this);
     }
 #endif
+    // Connect events
+    m_button26->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DockerSettingsBaseDlg::OnOK), NULL, this);
 }
 
-DockerSettingsBaseDlg::~DockerSettingsBaseDlg() {}
+DockerSettingsBaseDlg::~DockerSettingsBaseDlg()
+{
+    m_button26->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DockerSettingsBaseDlg::OnOK), NULL,
+                           this);
+}
 
 DockerfileSettingsDlgBase::DockerfileSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
                                                      const wxPoint& pos, const wxSize& size, long style)
@@ -228,8 +238,10 @@ DockerfileSettingsDlgBase::DockerfileSettingsDlgBase(wxWindow* parent, wxWindowI
     m_stdBtnSizer44->Realize();
 
     SetName(wxT("DockerfileSettingsDlgBase"));
-    SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

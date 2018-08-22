@@ -6,17 +6,19 @@
 #include <wx/event.h>
 #include <wx/filename.h>
 
+class Docker;
 class IProcess;
 class clDockerBuilder : public wxEvtHandler
 {
     IProcess* m_buildProcess = nullptr;
+    Docker* m_plugin;
 
 protected:
     void OnBuildOutput(clProcessEvent& event);
     void OnBuildTerminated(clProcessEvent& event);
 
 public:
-    clDockerBuilder();
+    clDockerBuilder(Docker* plugin);
     virtual ~clDockerBuilder();
     void BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);
     void ExecuteDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);

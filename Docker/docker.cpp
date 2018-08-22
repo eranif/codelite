@@ -1,8 +1,11 @@
 #include "DockerSettingsDlg.h"
+#include "bitmap_loader.h"
 #include "clDockerWorkspace.h"
 #include "clWorkspaceManager.h"
 #include "docker.h"
 #include "event_notifier.h"
+#include "wxterminal.h"
+#include <imanager.h>
 #include <wx/xrc/xmlres.h>
 
 static Docker* thePlugin = NULL;
@@ -10,7 +13,9 @@ static Docker* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) { thePlugin = new Docker(manager); }
+    if(thePlugin == NULL) {
+        thePlugin = new Docker(manager);
+    }
     return thePlugin;
 }
 
@@ -32,8 +37,16 @@ Docker::Docker(IManager* manager)
     m_longName = _("Docker for CodeLite");
     m_shortName = wxT("Docker");
 
-    clWorkspaceManager::Get().RegisterWorkspace(new clDockerWorkspace(false));
+    clWorkspaceManager::Get().RegisterWorkspace(new clDockerWorkspace(false, nullptr));
+    clDockerWorkspace::Initialise(this);
     clDockerWorkspace::Get(); // Make sure that the workspace instance is up and all events are hooked
+
+    Notebook* book = m_mgr->GetOutputPaneNotebook();
+    m_terminal = new wxTerminal(book);
+    book->AddPage(m_terminal, _("Docker"), false, m_mgr->GetStdIcons()->LoadBitmap("docker"));
+
+    m_tabToggler.reset(new clTabTogglerHelper(_("Docker"), m_terminal, "", NULL));
+    m_tabToggler->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("docker"));
 }
 
 Docker::~Docker() {}
@@ -52,9 +65,22 @@ void Docker::CreatePluginMenu(wxMenu* pluginsMenu)
     menu->Bind(wxEVT_MENU,
                [&](wxCommandEvent& event) {
                    DockerSettingsDlg dlg(EventNotifier::Get()->TopFrame());
-                   if(dlg.ShowModal() == wxID_OK) {}
+                   if(dlg.ShowModal() == wxID_OK) {
+                   }
                },
                XRCID("ID_DOCKER_SETTINGS"));
 }
 
-void Docker::UnPlug() {}
+void Docker::UnPlug()
+{
+    clDockerWorkspace::Shutdown();
+    
+    // before this plugin is un-plugged we must remove the tab we added
+    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
+        if(m_terminal == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
+            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+            m_terminal->Destroy();
+            break;
+        }
+    }
+}

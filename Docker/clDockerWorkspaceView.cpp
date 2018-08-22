@@ -1,4 +1,5 @@
 #include "DockerfileSettingsDlg.h"
+#include "clDockerSettings.h"
 #include "clDockerWorkspace.h"
 #include "clDockerWorkspaceSettings.h"
 #include "clDockerWorkspaceView.h"
@@ -9,7 +10,15 @@
 clDockerWorkspaceView::clDockerWorkspaceView(wxWindow* parent)
     : clTreeCtrlPanel(parent)
 {
-    SetOptions(0);
+    // Set the view options
+    clDockerSettings settings;
+    size_t options = 0;
+    settings.Load();
+    if(settings.IsLinkEditor()) {
+        options |= kLinkToEditor;
+    }
+    SetOptions(options);
+
     SetViewName("Docker");
     SetNewFileTemplate("Untitled", wxStrlen("Untitled"));
 
@@ -29,6 +38,12 @@ void clDockerWorkspaceView::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
     Clear();
+
+    // Store the view settings
+    clDockerSettings settings;
+    settings.Load();
+    settings.SetLinkEditor(m_options & kLinkToEditor);
+    settings.Save();
 }
 
 void clDockerWorkspaceView::OnWorkspaceOpened(wxCommandEvent& event)
@@ -43,11 +58,17 @@ void clDockerWorkspaceView::OnWorkspaceOpened(wxCommandEvent& event)
 void clDockerWorkspaceView::OnFileContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
-    if(event.GetEventObject() != this) { return; }
+    if(event.GetEventObject() != this) {
+        return;
+    }
     const wxArrayString& contextMenuFiles = event.GetStrings();
-    if(contextMenuFiles.size() != 1) { return; }
+    if(contextMenuFiles.size() != 1) {
+        return;
+    }
 
-    if(wxFileName(contextMenuFiles.Item(0)).GetFullName() != "Dockerfile") { return; }
+    if(wxFileName(contextMenuFiles.Item(0)).GetFullName() != "Dockerfile") {
+        return;
+    }
 
     event.GetMenu()->AppendSeparator();
     event.GetMenu()->Append(XRCID("ID_DOCKERFILE_SETTINGS"), _("Dockerfile Settings..."));
@@ -59,13 +80,19 @@ void clDockerWorkspaceView::OnFileContextMenu(clContextMenuEvent& event)
 
                               wxArrayString folders, files;
                               GetSelections(folders, files);
-                              if(files.size() != 1) { return; }
-                              if(wxFileName(files.Item(0)).GetFullName() != "Dockerfile") { return; }
+                              if(files.size() != 1) {
+                                  return;
+                              }
+                              if(wxFileName(files.Item(0)).GetFullName() != "Dockerfile") {
+                                  return;
+                              }
 
                               settings.GetFileInfo(files.Item(0), info);
                               info.SetPath(files.Item(0));
                               DockerfileSettingsDlg dlg(EventNotifier::Get()->TopFrame(), info);
-                              if(dlg.ShowModal() != wxID_OK) { return; }
+                              if(dlg.ShowModal() != wxID_OK) {
+                                  return;
+                              }
                               settings.SetFileInfo(files.Item(0), info);
                               settings.Save(clDockerWorkspace::Get()->GetFileName());
                           },

@@ -72,6 +72,8 @@ protected:
     wxButton* m_button28;
 
 protected:
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+
 public:
     wxStaticText* GetStaticText32() { return m_staticText32; }
     wxFilePickerCtrl* GetFilePickerDocker() { return m_filePickerDocker; }

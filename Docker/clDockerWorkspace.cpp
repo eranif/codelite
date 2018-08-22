@@ -11,13 +11,17 @@
 #include <imanager.h>
 #include <wx/msgdlg.h>
 
-#define CHECK_EVENT(e)        \
-    e.Skip();                 \
-    if(!IsOpen()) { return; } \
+#define CHECK_EVENT(e) \
+    e.Skip();          \
+    if(!IsOpen()) {    \
+        return;        \
+    }                  \
     e.Skip(false);
 
-clDockerWorkspace::clDockerWorkspace(bool bindEvents)
+clDockerWorkspace::clDockerWorkspace(bool bindEvents, Docker* plugin)
     : m_bindEvents(bindEvents)
+    , m_builder(plugin)
+    , m_plugin(plugin)
 {
     SetWorkspaceType("Docker");
     if(m_bindEvents) {
@@ -73,11 +77,18 @@ bool clDockerWorkspace::IsBuildSupported() const { return true; }
 
 bool clDockerWorkspace::IsProjectSupported() const { return false; }
 
-clDockerWorkspace* clDockerWorkspace::Get()
+static clDockerWorkspace* g_workspace = nullptr;
+
+clDockerWorkspace* clDockerWorkspace::Get() { return g_workspace; }
+
+void clDockerWorkspace::Initialise(Docker* plugin)
 {
-    static clDockerWorkspace workspace(true);
-    return &workspace;
+    if(!g_workspace) {
+        g_workspace = new clDockerWorkspace(true, plugin);
+    }
 }
+
+void clDockerWorkspace::Shutdown() { wxDELETE(g_workspace); }
 
 void clDockerWorkspace::OnOpenWorkspace(clCommandEvent& event)
 {
@@ -87,14 +98,18 @@ void clDockerWorkspace::OnOpenWorkspace(clCommandEvent& event)
     // Test that this is our workspace
     clDockerWorkspaceSettings conf;
     conf.Load(workspaceFile);
-    if(!conf.IsOk()) { return; }
+    if(!conf.IsOk()) {
+        return;
+    }
 
     // This is a Docker workspace, stop event processing by calling
     // event.Skip(false)
     event.Skip(false);
 
     // Check if this is a PHP workspace
-    if(IsOpen()) { Close(); }
+    if(IsOpen()) {
+        Close();
+    }
     Open(workspaceFile);
 }
 
@@ -206,13 +221,17 @@ void clDockerWorkspace::OnNewWorkspace(clCommandEvent& event)
 bool clDockerWorkspace::Create(const wxFileName& filename)
 {
     // Already exists
-    if(filename.FileExists()) { return false; }
+    if(filename.FileExists()) {
+        return false;
+    }
     return m_settings.Save(filename).Load(filename).IsOk();
 }
 
 void clDockerWorkspace::RestoreSession()
 {
-    if(IsOpen()) { clGetManager()->LoadWorkspaceSession(m_filename); }
+    if(IsOpen()) {
+        clGetManager()->LoadWorkspaceSession(m_filename);
+    }
 }
 
 void clDockerWorkspace::OnSaveSession(clCommandEvent& event)
@@ -236,12 +255,18 @@ void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
     if(editor->GetFileName().GetFullName() == "Dockerfile") {
-        m_builder.BuildDockerfile(editor->GetFileName(), m_settings);
+        if(event.GetKind() == "build") {
+            m_builder.BuildDockerfile(editor->GetFileName(), m_settings);
+        } else {
+            // clean
+        }
     }
 }
 
 void clDockerWorkspace::OnStopBuild(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_builder.IsBuildInProgress()) { m_builder.StopBuild(); }
+    if(m_builder.IsBuildInProgress()) {
+        m_builder.StopBuild();
+    }
 }

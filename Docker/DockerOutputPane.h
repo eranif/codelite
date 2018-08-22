@@ -8,12 +8,18 @@ class DockerOutputPane : public DockerOutputPaneBase
 {
     clGenericSTCStyler::Ptr_t m_styler;
 
+protected:
+    void OnKillContainer(wxCommandEvent& event);
+    void OnKillContainerUI(wxUpdateUIEvent& event);
+    void OnKillAllContainers(wxCommandEvent& event);
+    void OnKillAllContainersUI(wxUpdateUIEvent& event);
+
 public:
     DockerOutputPane(wxWindow* parent);
     virtual ~DockerOutputPane();
 
     void Clear();
-    void AddTextWithEOL(const wxString& msg);
-    void AddTextRaw(const wxString& msg);
+    void AddOutputTextWithEOL(const wxString& msg);
+    void AddOutputTextRaw(const wxString& msg);
 };
 #endif // DOCKEROUTPUTPANE_H

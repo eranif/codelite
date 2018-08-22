@@ -53,7 +53,7 @@ void clDockerBuilder::BuildDockerfile(const wxFileName& dockerfile, const clDock
     command << " " << buildOptions;
     ::WrapInShell(command);
     m_plugin->GetTerminal()->Clear();
-    m_plugin->GetTerminal()->AddTextWithEOL(command);
+    m_plugin->GetTerminal()->AddOutputTextWithEOL(command);
     m_buildProcess = ::CreateAsyncProcess(this, command, IProcessCreateDefault, dockerfile.GetPath());
 }
 
@@ -71,6 +71,6 @@ void clDockerBuilder::StopBuild()
     }
 }
 
-void clDockerBuilder::OnBuildOutput(clProcessEvent& event) { m_plugin->GetTerminal()->AddTextRaw(event.GetOutput()); }
+void clDockerBuilder::OnBuildOutput(clProcessEvent& event) { m_plugin->GetTerminal()->AddOutputTextRaw(event.GetOutput()); }
 
 void clDockerBuilder::OnBuildTerminated(clProcessEvent& event) { wxDELETE(m_buildProcess); }

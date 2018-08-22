@@ -7,11 +7,16 @@
 #ifndef _CODELITE_DOCKER_UI_BASE_CLASSES_H
 #define _CODELITE_DOCKER_UI_BASE_CLASSES_H
 
+#include "Notebook.h"
+#include "clToolBar.h"
 #include <wx/artprov.h>
 #include <wx/button.h>
+#include <wx/dataview.h>
 #include <wx/dialog.h>
 #include <wx/filepicker.h>
 #include <wx/iconbndl.h>
+#include <wx/imaglist.h>
+#include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
@@ -117,13 +122,23 @@ public:
 class DockerOutputPaneBase : public wxPanel
 {
 protected:
-    wxToolBar* m_toolbar;
+    Notebook* m_notebook;
+    wxPanel* m_outputPage;
+    clToolBar* m_toolbar;
     wxStyledTextCtrl* m_stc;
+    wxPanel* m_containersPage;
+    wxToolBar* m_toolbarContainers;
+    wxDataViewListCtrl* m_dvListCtrlContainers;
 
 protected:
 public:
-    wxToolBar* GetToolbar() { return m_toolbar; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
+    wxPanel* GetOutputPage() { return m_outputPage; }
+    wxToolBar* GetToolbarContainers() { return m_toolbarContainers; }
+    wxDataViewListCtrl* GetDvListCtrlContainers() { return m_dvListCtrlContainers; }
+    wxPanel* GetContainersPage() { return m_containersPage; }
+    Notebook* GetNotebook() { return m_notebook; }
     DockerOutputPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~DockerOutputPaneBase();

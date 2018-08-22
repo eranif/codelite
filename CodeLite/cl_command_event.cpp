@@ -163,6 +163,7 @@ clBuildEvent::clBuildEvent(wxEventType commandType, int winid)
     , m_projectOnly(false)
     , m_warningCount(0)
     , m_errorCount(0)
+    , m_isRunning(false)
 {
 }
 
@@ -178,6 +179,8 @@ clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
     m_projectOnly = src.m_projectOnly;
     m_errorCount = src.m_errorCount;
     m_warningCount = src.m_warningCount;
+    m_kind = src.m_kind;
+    m_isRunning = src.m_isRunning;
     return *this;
 }
 

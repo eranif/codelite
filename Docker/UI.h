@@ -60,4 +60,53 @@ public:
     virtual ~NewDockerWorkspaceDlgBase();
 };
 
+class DockerSettingsBaseDlg : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText32;
+    wxFilePickerCtrl* m_filePickerDocker;
+    wxStaticText* m_staticText36;
+    wxFilePickerCtrl* m_filePickerDockerCompose;
+    wxStdDialogButtonSizer* m_stdBtnSizer24;
+    wxButton* m_button26;
+    wxButton* m_button28;
+
+protected:
+public:
+    wxStaticText* GetStaticText32() { return m_staticText32; }
+    wxFilePickerCtrl* GetFilePickerDocker() { return m_filePickerDocker; }
+    wxStaticText* GetStaticText36() { return m_staticText36; }
+    wxFilePickerCtrl* GetFilePickerDockerCompose() { return m_filePickerDockerCompose; }
+    DockerSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Docker Settings"),
+                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~DockerSettingsBaseDlg();
+};
+
+class DockerfileSettingsDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText52;
+    wxTextCtrl* m_textCtrlBuildOptions;
+    wxStaticText* m_staticText56;
+    wxTextCtrl* m_textCtrlRunOptions;
+    wxStdDialogButtonSizer* m_stdBtnSizer44;
+    wxButton* m_button46;
+    wxButton* m_button48;
+
+protected:
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText52() { return m_staticText52; }
+    wxTextCtrl* GetTextCtrlBuildOptions() { return m_textCtrlBuildOptions; }
+    wxStaticText* GetStaticText56() { return m_staticText56; }
+    wxTextCtrl* GetTextCtrlRunOptions() { return m_textCtrlRunOptions; }
+    DockerfileSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                              const wxString& title = _("Dockerfile Settings"), const wxPoint& pos = wxDefaultPosition,
+                              const wxSize& size = wxSize(-1, -1),
+                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~DockerfileSettingsDlgBase();
+};
+
 #endif

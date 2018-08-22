@@ -382,9 +382,7 @@ void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
 void CppCheckPlugin::OnCppCheckTerminated(clProcessEvent& e)
 {
     m_filelist.Clear();
-
-    if(m_cppcheckProcess) delete m_cppcheckProcess;
-    m_cppcheckProcess = NULL;
+    wxDELETE(m_cppcheckProcess);
 
     m_view->PrintStatusMessage();
     m_view->GotoFirstError();

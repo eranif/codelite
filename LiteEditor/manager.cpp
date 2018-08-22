@@ -2641,10 +2641,18 @@ void Manager::UpdateRemoteTargetConnected(const wxString& line)
 
 //--------------------------- Build Management -----------------------------
 
-bool Manager::IsBuildInProgress() const { return m_shellProcess && m_shellProcess->IsBusy(); }
+bool Manager::IsBuildInProgress() const
+{
+    clBuildEvent buildEvent(wxEVT_GET_IS_BUILD_IN_PROGRESS);
+    EventNotifier::Get()->ProcessEvent(buildEvent);
+    return buildEvent.IsRunning() || (m_shellProcess && m_shellProcess->IsBusy());
+}
 
 void Manager::StopBuild()
 {
+    clBuildEvent stopEvent(wxEVT_STOP_BUILD);
+    if(EventNotifier::Get()->ProcessEvent(stopEvent)) { return; }
+    
     // Mark this build as 'interrupted'
     clMainFrame::Get()->GetOutputPane()->GetBuildTab()->SetBuildInterrupted(true);
 
@@ -2818,7 +2826,7 @@ void Manager::DoCustomBuild(const QueueCommand& buildInfo)
         DbgStop();
     }
 
-    if(m_shellProcess) { delete m_shellProcess; }
+    wxDELETE(m_shellProcess);
     m_shellProcess = new CustomBuildRequest(buildInfo, wxEmptyString);
     m_shellProcess->Process(PluginManager::Get());
 }
@@ -2888,10 +2896,9 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
     case DBG_UR_FILE_LINE:
         // in some cases we don't physically reposition the file+line position, such as during updates made by user
         // actions (like add watch)
-        // but since this app uses a debugger refresh to update newly added watch values, it automatically repositions
-        // the editor always.
-        // this isn't always desirable behavior, so we pass a parameter indicating for certain operations if an override
-        // was used
+        // but since this app uses a debugger refresh to update newly added watch values, it automatically
+        // repositions the editor always. this isn't always desirable behavior, so we pass a parameter indicating
+        // for certain operations if an override was used
         UpdateFileLine(event.m_file, event.m_line, true);
         // raise the flag for the next call, as this "override" is only used once per consumption
         ManagerST::Get()->SetRepositionEditor(true);

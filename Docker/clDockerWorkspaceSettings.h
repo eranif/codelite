@@ -4,42 +4,41 @@
 #include "cl_config.h"
 #include <vector>
 #include <wx/string.h>
+#include <wxStringHash.h>
+
+class clDockerfile
+{
+protected:
+    wxString m_path;
+    wxString m_buildOptions;
+    wxString m_runOptions;
+
+public:
+    clDockerfile(const wxString& path)
+        : m_path(path)
+    {
+    }
+    clDockerfile() {}
+    ~clDockerfile() {}
+
+    void SetBuildOptions(const wxString& buildOptions) { this->m_buildOptions = buildOptions; }
+    void SetPath(const wxString& path) { this->m_path = path; }
+    void SetRunOptions(const wxString& runOptions) { this->m_runOptions = runOptions; }
+    const wxString& GetBuildOptions() const { return m_buildOptions; }
+    const wxString& GetPath() const { return m_path; }
+    const wxString& GetRunOptions() const { return m_runOptions; }
+
+    void FromJSON(const JSONElement& json, const wxString& workspaceDir);
+    JSONElement ToJSON(const wxString& workspaceDir) const;
+    typedef std::unordered_map<wxString, clDockerfile> Map_t;
+};
 
 class clDockerWorkspaceSettings : public clConfigItem
 {
 public:
-    class File
-    {
-    public:
-        typedef std::vector<std::pair<wxString, wxString> > wxStringPairVec_t;
-
-    protected:
-        wxString m_path;
-        wxString m_buildOptions;
-        wxString m_runOptions;
-
-    public:
-        File(const wxString& path)
-            : m_path(path)
-        {
-        }
-        File() {}
-        ~File() {}
-
-        void SetBuildOptions(const wxString& buildOptions) { this->m_buildOptions = buildOptions; }
-        void SetPath(const wxString& path) { this->m_path = path; }
-        void SetRunOptions(const wxString& runOptions) { this->m_runOptions = runOptions; }
-        const wxString& GetBuildOptions() const { return m_buildOptions; }
-        const wxString& GetPath() const { return m_path; }
-        const wxString& GetRunOptions() const { return m_runOptions; }
-
-        void FromJSON(const JSONElement& json);
-        JSONElement ToJSON() const;
-        typedef std::vector<File> Vect_t;
-    };
-
 protected:
-    clDockerWorkspaceSettings::File::Vect_t m_files;
+    wxFileName m_workspaceFile;
+    clDockerfile::Map_t m_files;
     wxString m_version;
 
 public:
@@ -50,13 +49,17 @@ public:
     clDockerWorkspaceSettings();
     virtual ~clDockerWorkspaceSettings();
 
-    clDockerWorkspaceSettings::File::Vect_t& GetFiles() { return m_files; }
+    clDockerfile::Map_t& GetFiles() { return m_files; }
 
     clDockerWorkspaceSettings& Load(const wxFileName& filename);
     clDockerWorkspaceSettings& Save(const wxFileName& filename);
-    
+
     bool IsOk() const;
-    
+    /**
+     * @brief get file info for a given file
+     */
+    bool GetFileInfo(const wxFileName& file, clDockerfile& info) const;
+    void SetFileInfo(const wxFileName& file, const clDockerfile& info);
     void Clear();
 };
 

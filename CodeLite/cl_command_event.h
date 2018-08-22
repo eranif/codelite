@@ -67,9 +67,9 @@ public:
         // need to copy it explicitly.
         if(m_cmdString.empty()) m_cmdString = event.GetString();
     }
-    
+
     virtual ~wxCommandEvent() {}
-    
+
     // Set/Get client data from controls
     void SetClientData(void* clientData) { m_clientData = clientData; }
     void* GetClientData() const { return m_clientData; }
@@ -129,7 +129,6 @@ public:
 
 private:
     bool m_bAllow;
-
 };
 
 #endif // !wxUSE_GUI
@@ -316,6 +315,8 @@ class WXDLLIMPEXP_CL clBuildEvent : public clCommandEvent
     bool m_projectOnly;
     size_t m_warningCount;
     size_t m_errorCount;
+    wxString m_kind;
+    bool m_isRunning;
 
 public:
     clBuildEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -323,6 +324,12 @@ public:
     clBuildEvent& operator=(const clBuildEvent& src);
     virtual ~clBuildEvent();
     virtual wxEvent* Clone() const { return new clBuildEvent(*this); };
+
+    void SetIsRunning(bool isRunning) { this->m_isRunning = isRunning; }
+    bool IsRunning() const { return m_isRunning; }
+    
+    void SetKind(const wxString& kind) { this->m_kind = kind; }
+    const wxString& GetKind() const { return this->m_kind; }
 
     void SetProjectOnly(bool projectOnly) { this->m_projectOnly = projectOnly; }
     bool IsProjectOnly() const { return m_projectOnly; }

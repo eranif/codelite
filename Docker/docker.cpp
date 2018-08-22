@@ -1,6 +1,8 @@
+#include "DockerSettingsDlg.h"
 #include "clDockerWorkspace.h"
 #include "clWorkspaceManager.h"
 #include "docker.h"
+#include "event_notifier.h"
 #include <wx/xrc/xmlres.h>
 
 static Docker* thePlugin = NULL;
@@ -8,9 +10,7 @@ static Docker* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new Docker(manager);
-    }
+    if(thePlugin == NULL) { thePlugin = new Docker(manager); }
     return thePlugin;
 }
 
@@ -44,6 +44,17 @@ void Docker::CreateToolBar(clToolBar* toolbar)
     wxUnusedVar(toolbar);
 }
 
-void Docker::CreatePluginMenu(wxMenu* pluginsMenu) {}
+void Docker::CreatePluginMenu(wxMenu* pluginsMenu)
+{
+    wxMenu* menu = new wxMenu();
+    menu->Append(XRCID("ID_DOCKER_SETTINGS"), _("Settings"));
+    pluginsMenu->Append(wxID_ANY, _("Docker"), menu);
+    menu->Bind(wxEVT_MENU,
+               [&](wxCommandEvent& event) {
+                   DockerSettingsDlg dlg(EventNotifier::Get()->TopFrame());
+                   if(dlg.ShowModal() == wxID_OK) {}
+               },
+               XRCID("ID_DOCKER_SETTINGS"));
+}
 
 void Docker::UnPlug() {}

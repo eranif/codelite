@@ -2,6 +2,7 @@
 #define CLDOCKERWORKSPACE_H
 
 #include "IWorkspace.h"
+#include "clDockerBuilder.h"
 #include "clDockerWorkspaceSettings.h"
 #include "cl_command_event.h"
 
@@ -14,6 +15,7 @@ class clDockerWorkspace : public IWorkspace
     bool m_isOpen = false;
     bool m_clangOldFlag = false;
     clDockerWorkspaceView* m_view = nullptr;
+    clDockerBuilder m_builder;
 
 public:
     virtual wxString GetActiveProjectName() const;
@@ -27,18 +29,33 @@ public:
     virtual bool IsBuildSupported() const;
     virtual bool IsProjectSupported() const;
 
+    const clDockerWorkspaceSettings& GetSettings() const { return m_settings; }
+    clDockerWorkspaceSettings& GetSettings() { return m_settings; }
+
 protected:
     // Event handlers
     void OnOpenWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void OnNewWorkspace(clCommandEvent& event);
 
+    // Session management
+    void OnSaveSession(clCommandEvent& event);
+
+    // Build events
+    void OnIsBuildInProgress(clBuildEvent& event);
+    void OnBuildStarting(clBuildEvent& event);
+    void OnStopBuild(clBuildEvent& event);
+
+    //===-----
+    //===-----
+    void RestoreSession();
+
 public:
     clDockerWorkspace(bool bindEvents);
     virtual ~clDockerWorkspace();
-    
+
     clDockerWorkspaceView* GetView() { return m_view; }
-    
+
     /**
      * @brief return a pointer to the actual docker workspace
      */

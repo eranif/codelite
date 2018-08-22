@@ -26,8 +26,8 @@
 #ifndef __abbreviation__
 #define __abbreviation__
 
-#include "plugin.h"
 #include "cl_command_event.h"
+#include "plugin.h"
 
 class AbbreviationPlugin : public IPlugin
 {

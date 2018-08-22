@@ -11,6 +11,11 @@
 #include <imanager.h>
 #include <wx/msgdlg.h>
 
+#define CHECK_EVENT(e)        \
+    e.Skip();                 \
+    if(!IsOpen()) { return; } \
+    e.Skip(false);
+
 clDockerWorkspace::clDockerWorkspace(bool bindEvents)
     : m_bindEvents(bindEvents)
 {
@@ -19,7 +24,10 @@ clDockerWorkspace::clDockerWorkspace(bool bindEvents)
         EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_WORKSPACE, &clDockerWorkspace::OnOpenWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &clDockerWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &clDockerWorkspace::OnNewWorkspace, this);
-
+        EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &clDockerWorkspace::OnSaveSession, this);
+        EventNotifier::Get()->Bind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clDockerWorkspace::OnIsBuildInProgress, this);
+        EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &clDockerWorkspace::OnBuildStarting, this);
+        EventNotifier::Get()->Bind(wxEVT_STOP_BUILD, &clDockerWorkspace::OnStopBuild, this);
         m_view = new clDockerWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook());
         clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
     }
@@ -31,6 +39,10 @@ clDockerWorkspace::~clDockerWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_WORKSPACE, &clDockerWorkspace::OnOpenWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_CLOSE_WORKSPACE, &clDockerWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &clDockerWorkspace::OnNewWorkspace, this);
+        EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &clDockerWorkspace::OnSaveSession, this);
+        EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clDockerWorkspace::OnIsBuildInProgress, this);
+        EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &clDockerWorkspace::OnBuildStarting, this);
+        EventNotifier::Get()->Unbind(wxEVT_STOP_BUILD, &clDockerWorkspace::OnStopBuild, this);
     }
 }
 
@@ -75,18 +87,14 @@ void clDockerWorkspace::OnOpenWorkspace(clCommandEvent& event)
     // Test that this is our workspace
     clDockerWorkspaceSettings conf;
     conf.Load(workspaceFile);
-    if(!conf.IsOk()) {
-        return;
-    }
+    if(!conf.IsOk()) { return; }
 
     // This is a Docker workspace, stop event processing by calling
     // event.Skip(false)
     event.Skip(false);
 
     // Check if this is a PHP workspace
-    if(IsOpen()) {
-        Close();
-    }
+    if(IsOpen()) { Close(); }
     Open(workspaceFile);
 }
 
@@ -131,6 +139,9 @@ void clDockerWorkspace::Open(const wxFileName& path)
 
         // and finally, request codelite to keep this workspace in the recently opened workspace list
         clGetManager()->AddWorkspaceToRecentlyUsedList(m_filename);
+
+        // Load the workspace session (if any)
+        CallAfter(&clDockerWorkspace::RestoreSession);
     }
 }
 
@@ -195,8 +206,42 @@ void clDockerWorkspace::OnNewWorkspace(clCommandEvent& event)
 bool clDockerWorkspace::Create(const wxFileName& filename)
 {
     // Already exists
-    if(filename.FileExists()) {
-        return false;
-    }
+    if(filename.FileExists()) { return false; }
     return m_settings.Save(filename).Load(filename).IsOk();
+}
+
+void clDockerWorkspace::RestoreSession()
+{
+    if(IsOpen()) { clGetManager()->LoadWorkspaceSession(m_filename); }
+}
+
+void clDockerWorkspace::OnSaveSession(clCommandEvent& event)
+{
+    event.Skip();
+    if(IsOpen()) {
+        event.Skip(false);
+        clGetManager()->StoreWorkspaceSession(m_filename);
+    }
+}
+
+void clDockerWorkspace::OnIsBuildInProgress(clBuildEvent& event)
+{
+    CHECK_EVENT(event);
+    event.SetIsRunning(m_builder.IsBuildInProgress());
+}
+
+void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
+{
+    CHECK_EVENT(event);
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    if(editor->GetFileName().GetFullName() == "Dockerfile") {
+        m_builder.BuildDockerfile(editor->GetFileName(), m_settings);
+    }
+}
+
+void clDockerWorkspace::OnStopBuild(clBuildEvent& event)
+{
+    CHECK_EVENT(event);
+    if(m_builder.IsBuildInProgress()) { m_builder.StopBuild(); }
 }

@@ -23,19 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/msgdlg.h>
-#include <wx/textdlg.h>
+#include "abbreviationssettingsdlg.h"
 #include "abbreviationentry.h"
+#include "cl_config.h"
 #include "imanager.h"
 #include "windowattrmanager.h"
-#include "abbreviationssettingsdlg.h"
-#include "cl_config.h"
-#include <wx/filedlg.h>
-#include <wx/dirdlg.h>
 #include <macrosdlg.h>
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
+#include <wx/msgdlg.h>
+#include <wx/textdlg.h>
 
-AbbreviationsSettingsDlg::AbbreviationsSettingsDlg( wxWindow* parent, IManager *mgr )
-    : AbbreviationsSettingsBase( parent )
+AbbreviationsSettingsDlg::AbbreviationsSettingsDlg(wxWindow* parent, IManager* mgr)
+    : AbbreviationsSettingsBase(parent)
     , m_mgr(mgr)
     , m_data()
     , m_dirty(false)
@@ -44,40 +44,33 @@ AbbreviationsSettingsDlg::AbbreviationsSettingsDlg( wxWindow* parent, IManager *
 {
     SetName("AbbreviationsSettingsDlg");
     WindowAttrManager::Load(this);
-    if ( !m_config.ReadItem(&m_data) ) {
+    if(!m_config.ReadItem(&m_data)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
 
-        m_data.SetAutoInsert( data.GetAutoInsert() );
-        m_data.SetEntries( data.GetEntries() );
-        m_config.WriteItem( &m_data );
+        m_data.SetAutoInsert(data.GetAutoInsert());
+        m_data.SetEntries(data.GetEntries());
+        m_config.WriteItem(&m_data);
     }
     DoPopulateItems();
 }
 
-AbbreviationsSettingsDlg::~AbbreviationsSettingsDlg()
-{
-    
-}
+AbbreviationsSettingsDlg::~AbbreviationsSettingsDlg() {}
 
-void AbbreviationsSettingsDlg::OnItemSelected( wxCommandEvent& event )
+void AbbreviationsSettingsDlg::OnItemSelected(wxCommandEvent& event)
 {
-    if(m_dirty) {
-        DoSaveCurrent();
-    }
+    if(m_dirty) { DoSaveCurrent(); }
     DoSelectItem(event.GetSelection());
 }
 
 void AbbreviationsSettingsDlg::OnNew(wxCommandEvent& e)
 {
-    if(m_dirty) {
-        DoSaveCurrent();
-    }
+    if(m_dirty) { DoSaveCurrent(); }
 
     wxString name = wxGetTextFromUser(_("Abbreviation Name:"), _("New abbreviation..."), wxT(""), this);
     if(name.IsEmpty() == false) {
-        if( m_listBoxAbbreviations->FindString(name) != wxNOT_FOUND ) {
+        if(m_listBoxAbbreviations->FindString(name) != wxNOT_FOUND) {
             wxMessageBox(wxString::Format(_("An abbreviation with this name already exists!")));
             return;
         }
@@ -96,20 +89,18 @@ void AbbreviationsSettingsDlg::OnNew(wxCommandEvent& e)
 
 void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
 {
-    if(m_activeItemName.IsEmpty() || m_currSelection == wxNOT_FOUND) {
-        return;
-    }
+    if(m_activeItemName.IsEmpty() || m_currSelection == wxNOT_FOUND) { return; }
 
     if(wxMessageBox(wxString::Format(_("Are you sure you want to delete '%s'"), m_activeItemName.c_str()),
-                    _("CodeLite"), wxYES_NO|wxCANCEL|wxCENTER|wxICON_QUESTION, this) != wxYES) {
+                    _("CodeLite"), wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION, this) != wxYES) {
         return;
     }
 
     // delete the entry from the configuration file
     DoDeleteEntry(m_activeItemName);
-    
+
     // delete it
-    m_listBoxAbbreviations->Delete((unsigned int) m_currSelection);
+    m_listBoxAbbreviations->Delete((unsigned int)m_currSelection);
     m_stc->Clear();
     m_textCtrlName->Clear();
 
@@ -145,11 +136,9 @@ void AbbreviationsSettingsDlg::OnDeleteUI(wxUpdateUIEvent& event)
 void AbbreviationsSettingsDlg::OnSave(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_dirty) {
-        DoSaveCurrent();
-    }
+    if(m_dirty) { DoSaveCurrent(); }
     m_data.SetAutoInsert(m_checkBoxImmediateInsert->IsChecked());
-    m_config.WriteItem( &m_data );
+    m_config.WriteItem(&m_data);
 }
 
 void AbbreviationsSettingsDlg::DoPopulateItems()
@@ -169,7 +158,6 @@ void AbbreviationsSettingsDlg::DoPopulateItems()
 
     m_checkBoxImmediateInsert->SetValue(m_data.IsAutoInsert());
     m_dirty = false;
-
 }
 
 void AbbreviationsSettingsDlg::DoSelectItem(int item)
@@ -183,25 +171,19 @@ void AbbreviationsSettingsDlg::DoSelectItem(int item)
 
         wxStringMap_t entries = m_data.GetEntries();
         wxStringMap_t::iterator iter = entries.find(name);
-        if(iter != entries.end()) {
-            m_stc->SetText(iter->second);
-        }
+        if(iter != entries.end()) { m_stc->SetText(iter->second); }
         m_dirty = false;
     }
 }
 
 void AbbreviationsSettingsDlg::DoSaveCurrent()
 {
-    if(m_currSelection == wxNOT_FOUND) {
-        return;
-    }
+    if(m_currSelection == wxNOT_FOUND) { return; }
 
     // search for the old item
     wxStringMap_t entries = m_data.GetEntries();
     wxStringMap_t::iterator iter = entries.find(m_activeItemName);
-    if(iter != entries.end()) {
-        entries.erase( iter );
-    }
+    if(iter != entries.end()) { entries.erase(iter); }
 
     // insert the new item
     entries[m_textCtrlName->GetValue()] = m_stc->GetText();
@@ -210,78 +192,72 @@ void AbbreviationsSettingsDlg::DoSaveCurrent()
     m_activeItemName = m_textCtrlName->GetValue();
 
     // update the name in the list box
-    m_listBoxAbbreviations->SetString((unsigned int) m_currSelection, m_activeItemName);
+    m_listBoxAbbreviations->SetString((unsigned int)m_currSelection, m_activeItemName);
     m_dirty = false;
 
     m_textCtrlName->SetFocus();
 }
 
-void AbbreviationsSettingsDlg::DoDeleteEntry(const wxString &name)
+void AbbreviationsSettingsDlg::DoDeleteEntry(const wxString& name)
 {
     // search for the old item
     wxStringMap_t entries = m_data.GetEntries();
     wxStringMap_t::iterator iter = entries.find(name);
-    if(iter != entries.end()) {
-        entries.erase( iter );
-    }
+    if(iter != entries.end()) { entries.erase(iter); }
     m_data.SetEntries(entries);
 }
 
-void AbbreviationsSettingsDlg::OnSaveUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dirty);
-}
+void AbbreviationsSettingsDlg::OnSaveUI(wxUpdateUIEvent& event) { event.Enable(m_dirty); }
 
 void AbbreviationsSettingsDlg::OnMarkDirty(wxStyledTextEvent& event)
 {
     event.Skip();
-    if(m_activeItemName.IsEmpty() == false) {
-        m_dirty = true;
-    }
+    if(m_activeItemName.IsEmpty() == false) { m_dirty = true; }
 }
 
 void AbbreviationsSettingsDlg::OnExport(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector();
-    if ( path.IsEmpty() )
-        return;
-    
+    if(path.IsEmpty()) return;
+
     // Construct the output file name
     wxFileName fn(path, "abbreviations.conf");
-    if ( fn.FileExists() ) {
-        if ( ::wxMessageBox(_("This folder already contains a file named 'abbreviations.conf' - would you like to overrite it?"), "wxCrafter", wxYES_NO|wxCANCEL|wxCENTER|wxICON_QUESTION) != wxYES )
+    if(fn.FileExists()) {
+        if(::wxMessageBox(
+               _("This folder already contains a file named 'abbreviations.conf' - would you like to overrite it?"),
+               "wxCrafter", wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION) != wxYES)
             return;
     }
-    m_config.Save( fn );
-    ::wxMessageBox(_("Abbreviations were exported to '") + fn.GetFullPath() + _("'"), "wxCrafter", wxICON_INFORMATION|wxOK);
+    m_config.Save(fn);
+    ::wxMessageBox(_("Abbreviations were exported to '") + fn.GetFullPath() + _("'"), "wxCrafter",
+                   wxICON_INFORMATION | wxOK);
 }
 
 void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
 {
     wxString path = ::wxFileSelector();
-    if ( path.IsEmpty() )
-        return;
-    
+    if(path.IsEmpty()) return;
+
     // load the imported configuration
     clConfig cfg(path);
     AbbreviationJSONEntry data, curData;
-    if ( !cfg.ReadItem( &data ) ) {
-        ::wxMessageBox(_("The file does not seem to contain a valid abbreviations entries"), "wxCrafter", wxOK|wxICON_WARNING|wxCENTER);
+    if(!cfg.ReadItem(&data)) {
+        ::wxMessageBox(_("The file does not seem to contain a valid abbreviations entries"), "wxCrafter",
+                       wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
-    const wxStringMap_t &newEntries = data.GetEntries();
-    const wxStringMap_t &curEntries = m_data.GetEntries();
-    
+    const wxStringMap_t& newEntries = data.GetEntries();
+    const wxStringMap_t& curEntries = m_data.GetEntries();
+
     wxStringMap_t merged = m_config.MergeStringMaps(newEntries, curEntries);
-    m_data.SetEntries( merged );
-    m_config.WriteItem( &m_data );
+    m_data.SetEntries(merged);
+    m_config.WriteItem(&m_data);
     m_dirty = false;
-    
+
     // Repopulate the abbreviations
     DoPopulateItems();
-    
+
     ::wxMessageBox(_("Abbreviations imported successfully!"));
-    
 }
 void AbbreviationsSettingsDlg::OnHelp(wxCommandEvent& event)
 {
@@ -289,7 +265,4 @@ void AbbreviationsSettingsDlg::OnHelp(wxCommandEvent& event)
     dlg.ShowModal();
 }
 
-void AbbreviationsSettingsDlg::OnImmediateInsert(wxCommandEvent& event)
-{
-    m_dirty = true;
-}
+void AbbreviationsSettingsDlg::OnImmediateInsert(wxCommandEvent& event) { m_dirty = true; }

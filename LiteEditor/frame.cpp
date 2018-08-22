@@ -2293,6 +2293,12 @@ void clMainFrame::OnBuildEnded(clCommandEvent& event)
 void clMainFrame::OnBuildProject(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+
+    // Let the plugins handle this first
+    clBuildEvent buildEvent(wxEVT_BUILD_STARTING);
+    buildEvent.SetKind("build");
+    if(EventNotifier::Get()->ProcessEvent(buildEvent)) { return; }
+
     bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
     if(enable) {
 
@@ -2382,7 +2388,7 @@ void clMainFrame::OnBuildProjectUI(wxUpdateUIEvent& event)
     if(!clWorkspaceManager::Get().GetWorkspace() || !clWorkspaceManager::Get().GetWorkspace()->IsBuildSupported()) {
         event.Enable(false);
     } else {
-        bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
+        bool enable = !ManagerST::Get()->IsBuildInProgress();
         event.Enable(enable);
     }
 }
@@ -2433,6 +2439,11 @@ void clMainFrame::OnCleanProject(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
+    // Let the plugins handle this first
+    clBuildEvent buildEvent(wxEVT_BUILD_STARTING);
+    buildEvent.SetKind("clean");
+    if(EventNotifier::Get()->ProcessEvent(buildEvent)) { return; }
+
     wxString conf, projectName;
     projectName = ManagerST::Get()->GetActiveProjectName();
 
@@ -2448,7 +2459,7 @@ void clMainFrame::OnCleanProjectUI(wxUpdateUIEvent& event)
         event.Enable(false);
         return;
     }
-    bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
+    bool enable = !ManagerST::Get()->IsBuildInProgress();
     event.Enable(enable);
 }
 

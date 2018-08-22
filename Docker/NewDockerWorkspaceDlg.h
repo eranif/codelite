@@ -9,6 +9,7 @@ public:
     NewDockerWorkspaceDlg(wxWindow* parent);
     virtual ~NewDockerWorkspaceDlg();
     wxFileName GetWorkspaceFile() const;
+
 protected:
     virtual void OnOkUI(wxUpdateUIEvent& event);
 };

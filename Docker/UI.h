@@ -127,7 +127,7 @@ protected:
     clToolBar* m_toolbar;
     wxStyledTextCtrl* m_stc;
     wxPanel* m_containersPage;
-    wxToolBar* m_toolbarContainers;
+    clToolBar* m_toolbarContainers;
     wxDataViewListCtrl* m_dvListCtrlContainers;
 
 protected:
@@ -135,7 +135,7 @@ public:
     clToolBar* GetToolbar() { return m_toolbar; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
     wxPanel* GetOutputPage() { return m_outputPage; }
-    wxToolBar* GetToolbarContainers() { return m_toolbarContainers; }
+    clToolBar* GetToolbarContainers() { return m_toolbarContainers; }
     wxDataViewListCtrl* GetDvListCtrlContainers() { return m_dvListCtrlContainers; }
     wxPanel* GetContainersPage() { return m_containersPage; }
     Notebook* GetNotebook() { return m_notebook; }

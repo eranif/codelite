@@ -10,12 +10,32 @@ class Docker;
 class IProcess;
 class clDockerDriver : public wxEvtHandler
 {
-    IProcess* m_buildProcess = nullptr;
+protected:
+    enum eContext {
+        kNone = -1,
+        kBuild,
+        kRun,
+        kListContainers,
+        kKillContainers,
+    };
+
+protected:
+    IProcess* m_process = nullptr;
     Docker* m_plugin;
+    eContext m_context = kNone;
+    wxString m_output;
 
 protected:
     void OnBuildOutput(clProcessEvent& event);
     void OnBuildTerminated(clProcessEvent& event);
+    void OnListContainers(clCommandEvent& event);
+    void OnKillContainers(clCommandEvent& event);
+
+protected:
+    void StartProcess(const wxString& command, const wxString& wd, size_t flags, clDockerDriver::eContext context);
+    wxString GetDockerExe() const;
+    void ProcessListContainersCommand();
+    void DoListContainers();
 
 public:
     clDockerDriver(Docker* plugin);
@@ -23,7 +43,7 @@ public:
     void BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);
     void ExecuteDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);
 
-    bool IsBuildInProgress() const { return m_buildProcess != nullptr; }
+    bool IsRunning() const { return m_process != nullptr; }
     void StopBuild();
 };
 

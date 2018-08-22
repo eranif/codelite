@@ -1,0 +1,9 @@
+#ifndef CL_DOCKER_EVENTS_H
+#define CL_DOCKER_EVENTS_H
+
+#include "cl_command_event.h"
+
+wxDECLARE_EVENT(wxEVT_DOCKER_KILL_CONTAINER, clCommandEvent);
+wxDECLARE_EVENT(wxEVT_DOCKER_REFRESH_CONTAINERS_VIEW, clCommandEvent);
+
+#endif // CL_DOCKER_EVENTS_H

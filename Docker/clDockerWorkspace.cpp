@@ -246,7 +246,7 @@ void clDockerWorkspace::OnSaveSession(clCommandEvent& event)
 void clDockerWorkspace::OnIsBuildInProgress(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    event.SetIsRunning(m_builder.IsBuildInProgress());
+    event.SetIsRunning(m_builder.IsRunning());
 }
 
 void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
@@ -266,7 +266,7 @@ void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
 void clDockerWorkspace::OnStopBuild(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_builder.IsBuildInProgress()) {
+    if(m_builder.IsRunning()) {
         m_builder.StopBuild();
     }
 }

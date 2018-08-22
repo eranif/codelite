@@ -337,11 +337,11 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer78 = new wxBoxSizer(wxVERTICAL);
     m_containersPage->SetSizer(boxSizer78);
 
-    m_toolbarContainers = new wxToolBar(m_containersPage, wxID_ANY, wxDefaultPosition,
+    m_toolbarContainers = new clToolBar(m_containersPage, wxID_ANY, wxDefaultPosition,
                                         wxDLG_UNIT(m_containersPage, wxSize(-1, -1)), wxTB_FLAT);
     m_toolbarContainers->SetToolBitmapSize(wxSize(16, 16));
 
-    boxSizer78->Add(m_toolbarContainers, 0, 0, WXC_FROM_DIP(5));
+    boxSizer78->Add(m_toolbarContainers, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrlContainers = new wxDataViewListCtrl(m_containersPage, wxID_ANY, wxDefaultPosition,
                                                     wxDLG_UNIT(m_containersPage, wxSize(-1, -1)),
@@ -360,6 +360,8 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
     m_dvListCtrlContainers->AppendTextColumn(_("Status"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                              wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlContainers->AppendTextColumn(_("Ports"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                             wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlContainers->AppendTextColumn(_("Names"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                              wxDATAVIEW_COL_RESIZABLE);
 
     SetName(wxT("DockerOutputPaneBase"));

@@ -26,6 +26,11 @@
     <File Name="NewDockerWorkspaceDlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="clDockerContainer.cpp"/>
+    <File Name="clDockerContainer.h"/>
+    <File Name="clDockerEvents.cpp"/>
+    <File Name="clDockerEvents.h"/>
+    <File Name="docker.h"/>
     <File Name="clDockerDriver.cpp"/>
     <File Name="clDockerDriver.h"/>
     <File Name="clDockerSettings.cpp"/>
@@ -37,9 +42,6 @@
     <File Name="clDockerWorkspace.cpp"/>
     <File Name="clDockerWorkspace.h"/>
     <File Name="docker.cpp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="include">
-    <File Name="docker.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CMake">
     <File Name="CMakeLists.txt"/>

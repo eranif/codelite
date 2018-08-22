@@ -995,7 +995,9 @@ wxColour DrawingUtils::GetCaptionTextColour()
 void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                     const wxBitmap& bmp, int align)
 {
-    wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
+    #if wxCHECK_VERSION(3, 1, 1)
+        wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
+    #endif
     int xx = rect.GetX() + X_MARGIN;
     wxRect textRect(rect);
     textRect.SetWidth(textRect.GetWidth() - textRect.GetHeight() - X_MARGIN);

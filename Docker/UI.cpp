@@ -264,3 +264,69 @@ DockerfileSettingsDlgBase::~DockerfileSettingsDlgBase()
     m_button46->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DockerfileSettingsDlgBase::OnOK), NULL,
                            this);
 }
+
+DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                           long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterOTgKroInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer64 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer64);
+
+    m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer64->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginSensitive(4, true);
+    m_stc->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stc->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginWidth(2, 0);
+    m_stc->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stc->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stc->SetMarginMask(3, 0);
+    m_stc->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stc->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stc->StyleClearAll();
+    m_stc->SetWrapMode(1);
+    m_stc->SetIndentationGuides(0);
+    m_stc->SetKeyWords(0, wxT(""));
+    m_stc->SetKeyWords(1, wxT(""));
+    m_stc->SetKeyWords(2, wxT(""));
+    m_stc->SetKeyWords(3, wxT(""));
+    m_stc->SetKeyWords(4, wxT(""));
+
+    boxSizer64->Add(m_stc, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    SetName(wxT("DockerOutputPaneBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+}
+
+DockerOutputPaneBase::~DockerOutputPaneBase() {}

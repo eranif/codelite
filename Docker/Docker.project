@@ -16,6 +16,8 @@
     <File Name="UI.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
+    <File Name="DockerOutputPane.cpp"/>
+    <File Name="DockerOutputPane.h"/>
     <File Name="DockerfileSettingsDlg.cpp"/>
     <File Name="DockerfileSettingsDlg.h"/>
     <File Name="DockerSettingsDlg.cpp"/>

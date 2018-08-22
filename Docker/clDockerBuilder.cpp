@@ -1,3 +1,4 @@
+#include "DockerOutputPane.h"
 #include "asyncprocess.h"
 #include "clDockerBuilder.h"
 #include "clDockerSettings.h"
@@ -36,9 +37,9 @@ void clDockerBuilder::BuildDockerfile(const wxFileName& dockerfile, const clDock
                        wxICON_WARNING | wxOK | wxOK_DEFAULT);
         return;
     }
-    
+
     clGetManager()->ShowOutputPane(_("Docker"));
-    
+
     wxString command;
     command << dockerCommand.GetFullPath();
     ::WrapWithQuotes(command);

@@ -4,10 +4,10 @@
 #include "clTabTogglerHelper.h"
 #include "plugin.h"
 
-class wxTerminal;
+class DockerOutputPane;
 class Docker : public IPlugin
 {
-    wxTerminal* m_terminal;
+    DockerOutputPane* m_outputView;
     clTabTogglerHelper::Ptr_t m_tabToggler;
 
 public:
@@ -28,7 +28,7 @@ public:
      */
     virtual void UnPlug();
     
-    wxTerminal* GetTerminal() { return m_terminal; }
+    DockerOutputPane* GetTerminal() { return m_outputView; }
     
 };
 

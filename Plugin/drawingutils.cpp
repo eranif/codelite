@@ -1008,5 +1008,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
         textRect.SetWidth(textRect.GetWidth() - bmp.GetScaledWidth());
         textRect.SetX(xx);
     }
-    wxRendererNative::Get().DrawItemText(win, dc, label, textRect, align);
+    #if wxCHECK_VERSION(3, 1, 1)
+        wxRendererNative::Get().DrawItemText(win, dc, label, textRect, align);
+    #endif
 }

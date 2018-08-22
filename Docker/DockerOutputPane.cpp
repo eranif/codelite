@@ -54,6 +54,12 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent)
     m_toolbarContainers->Bind(wxEVT_TOOL, &DockerOutputPane::OnKillAllContainers, this, wxID_CLOSE_ALL);
     m_toolbarContainers->Bind(wxEVT_UPDATE_UI, &DockerOutputPane::OnKillAllContainersUI, this, wxID_CLOSE_ALL);
     m_toolbarContainers->Bind(wxEVT_TOOL, &DockerOutputPane::OnRefreshContainersView, this, wxID_REFRESH);
+    m_notebook->Bind(wxEVT_BOOK_PAGE_CHANGED, [&](wxBookCtrlEvent& event) {
+        if(m_notebook->GetPageText(m_notebook->GetSelection()) == _("Containers")) {
+            clCommandEvent evt(wxEVT_DOCKER_REFRESH_CONTAINERS_VIEW);
+            EventNotifier::Get()->AddPendingEvent(evt);
+        }
+    });
 }
 
 DockerOutputPane::~DockerOutputPane() {}
@@ -152,3 +158,5 @@ void DockerOutputPane::SetContainers(const clDockerContainer::Vect_t& containers
     m_dvListCtrlContainers->GetColumn(5)->SetWidth(-2);
     m_dvListCtrlContainers->GetColumn(6)->SetWidth(-2);
 }
+
+void DockerOutputPane::SelectTab(const wxString& label) { m_notebook->SetSelection(m_notebook->GetPageIndex(label)); }

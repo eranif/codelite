@@ -22,6 +22,7 @@ public:
     virtual ~DockerOutputPane();
 
     void Clear();
+    void SelectTab(const wxString& label);
     void AddOutputTextWithEOL(const wxString& msg);
     void AddOutputTextRaw(const wxString& msg);
     void SetContainers(const clDockerContainer::Vect_t& containers);

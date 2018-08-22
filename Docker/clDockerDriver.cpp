@@ -46,6 +46,7 @@ void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDocke
     command << " " << buildOptions;
     ::WrapInShell(command);
     m_plugin->GetTerminal()->Clear();
+    m_plugin->GetTerminal()->SelectTab("Output");
     m_plugin->GetTerminal()->AddOutputTextWithEOL(command);
     StartProcess(command, dockerfile.GetPath(), IProcessCreateDefault, kBuild);
 }

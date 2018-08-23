@@ -34,6 +34,7 @@ protected:
     void OnListImages(clCommandEvent& event);
     void OnKillContainers(clCommandEvent& event);
     void OnClearUnusedImages(clCommandEvent& event);
+    void OnAttachTerminal(clCommandEvent& event);
 
 protected:
     void StartProcess(const wxString& command, const wxString& wd, size_t flags, clDockerDriver::eContext context);

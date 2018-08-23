@@ -16,7 +16,9 @@ protected:
     void OnKillContainer(wxCommandEvent& event);
     void OnKillContainerUI(wxUpdateUIEvent& event);
     void OnKillAllContainers(wxCommandEvent& event);
+    void OnAttachTerminal(wxCommandEvent& event);
     void OnKillAllContainersUI(wxUpdateUIEvent& event);
+    void OnAttachTerminalUI(wxUpdateUIEvent& event);
     void OnRefreshContainersView(wxCommandEvent& event);
     void OnRefreshImagesView(wxCommandEvent& event);
     void OnClearUnusedImages(wxCommandEvent& event);

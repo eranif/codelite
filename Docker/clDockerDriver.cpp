@@ -3,6 +3,7 @@
 #include "clDockerDriver.h"
 #include "clDockerEvents.h"
 #include "clDockerSettings.h"
+#include "clDockerWorkspace.h"
 #include "docker.h"
 #include "event_notifier.h"
 #include "fileutils.h"
@@ -21,6 +22,7 @@ clDockerDriver::clDockerDriver(Docker* plugin)
     EventNotifier::Get()->Bind(wxEVT_DOCKER_LIST_CONTAINERS, &clDockerDriver::OnListContainers, this);
     EventNotifier::Get()->Bind(wxEVT_DOCKER_LIST_IMAGES, &clDockerDriver::OnListImages, this);
     EventNotifier::Get()->Bind(wxEVT_DOCKER_CLEAR_UNUSED_IMAGES, &clDockerDriver::OnClearUnusedImages, this);
+    EventNotifier::Get()->Bind(wxEVT_DOCKER_ATTACH_TERMINAL, &clDockerDriver::OnAttachTerminal, this);
 }
 
 clDockerDriver::~clDockerDriver()
@@ -31,6 +33,7 @@ clDockerDriver::~clDockerDriver()
     EventNotifier::Get()->Unbind(wxEVT_DOCKER_LIST_CONTAINERS, &clDockerDriver::OnListContainers, this);
     EventNotifier::Get()->Unbind(wxEVT_DOCKER_LIST_IMAGES, &clDockerDriver::OnListImages, this);
     EventNotifier::Get()->Unbind(wxEVT_DOCKER_CLEAR_UNUSED_IMAGES, &clDockerDriver::OnClearUnusedImages, this);
+    EventNotifier::Get()->Unbind(wxEVT_DOCKER_ATTACH_TERMINAL, &clDockerDriver::OnAttachTerminal, this);
 }
 
 void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
@@ -51,9 +54,7 @@ void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDocke
 
     wxString buildOptions = info.GetBuildOptions();
     buildOptions.Trim().Trim(false);
-    if(!buildOptions.StartsWith("build")) {
-        buildOptions.Prepend("build ");
-    }
+    if(!buildOptions.StartsWith("build")) { buildOptions.Prepend("build "); }
 
     command << " " << buildOptions;
     ::WrapInShell(command);
@@ -74,24 +75,18 @@ void clDockerDriver::ExecuteDockerfile(const wxFileName& dockerfile, const clDoc
     }
 
     wxString command = GetDockerExe();
-    if(command.IsEmpty()) {
-        return;
-    }
-    
+    if(command.IsEmpty()) { return; }
+
     wxString runOptions = info.GetBuildOptions();
     runOptions.Trim().Trim(false);
-    if(!runOptions.StartsWith("run")) {
-        command << " run ";
-    }
+    if(!runOptions.StartsWith("run")) { command << " run "; }
     command << info.GetRunOptions();
     FileUtils::OpenTerminal(dockerfile.GetPath(), command);
 }
 
 void clDockerDriver::Stop()
 {
-    if(IsRunning()) {
-        m_process->Terminate();
-    }
+    if(IsRunning()) { m_process->Terminate(); }
 }
 
 void clDockerDriver::OnBuildOutput(clProcessEvent& event)
@@ -194,9 +189,7 @@ void clDockerDriver::ProcessListContainersCommand()
     clDockerContainer::Vect_t L;
     for(size_t i = 0; i < lines.size(); ++i) {
         clDockerContainer container;
-        if(container.Parse(lines.Item(i))) {
-            L.push_back(container);
-        }
+        if(container.Parse(lines.Item(i))) { L.push_back(container); }
     }
     m_plugin->GetTerminal()->SetContainers(L);
 }
@@ -207,9 +200,7 @@ void clDockerDriver::ProcessListImagesCommand()
     clDockerImage::Vect_t L;
     for(size_t i = 0; i < lines.size(); ++i) {
         clDockerImage image;
-        if(image.Parse(lines.Item(i))) {
-            L.push_back(image);
-        }
+        if(image.Parse(lines.Item(i))) { L.push_back(image); }
     }
     m_plugin->GetTerminal()->SetImages(L);
 }
@@ -259,9 +250,24 @@ void clDockerDriver::OnClearUnusedImages(clCommandEvent& event)
     command << " image prune --force";
     clDockerSettings s;
     s.Load();
-    if(s.IsRemoveAllImages()) {
-        command << " --all";
-    }
+    if(s.IsRemoveAllImages()) { command << " --all"; }
     ::WrapInShell(command);
     StartProcess(command, "", IProcessCreateDefault, kDeleteUnusedImages);
+}
+
+void clDockerDriver::OnAttachTerminal(clCommandEvent& event)
+{
+    // Sanity
+    if(IsRunning()) return;
+    if(event.GetStrings().IsEmpty()) return;
+
+    wxString command = GetDockerExe();
+    if(command.IsEmpty()) return;
+
+    const wxArrayString& names = event.GetStrings();
+    for(size_t i = 0; i < names.size(); ++i) {
+        wxString message;
+        command << " exec -i " << names.Item(i) << " /bin/bash -i";
+        FileUtils::OpenTerminal(clDockerWorkspace::Get()->GetFileName().GetPath(), command);
+    }
 }

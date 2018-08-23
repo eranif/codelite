@@ -6,96 +6,109 @@
 
 #include "subversion2_ui.h"
 
-
 // Declare the bitmap loading function
 extern void wxC95F2InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                       long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
-    
-    m_splitter17 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+
+    m_splitter17 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                        wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_splitter17->SetSashGravity(0.5);
     m_splitter17->SetMinimumPaneSize(10);
-    
+
     mainSizer->Add(m_splitter17, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_splitterPageLeft = new wxPanel(m_splitter17, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter17, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    
+
+    m_splitterPageLeft = new wxPanel(m_splitter17, wxID_ANY, wxDefaultPosition,
+                                     wxDLG_UNIT(m_splitter17, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
     wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageLeft->SetSizer(boxSizer27);
-    
-    m_notebook80 = new wxNotebook(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(-1,-1)), wxBK_DEFAULT);
+
+    m_notebook80 = new Notebook(m_splitterPageLeft, wxID_ANY, wxDefaultPosition,
+                                wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook80->SetName(wxT("m_notebook80"));
-    
+
     boxSizer27->Add(m_notebook80, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel82 = new wxPanel(m_notebook80, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook80, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    m_panel82 = new wxPanel(m_notebook80, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook80, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
     m_notebook80->AddPage(m_panel82, _("Changes"), false);
-    
+
     wxBoxSizer* boxSizer86 = new wxBoxSizer(wxVERTICAL);
     m_panel82->SetSizer(boxSizer86);
-    
-    m_dvListCtrl = new wxDataViewListCtrl(m_panel82, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel82, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE);
-    
+
+    m_dvListCtrl = new wxDataViewListCtrl(m_panel82, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel82, wxSize(-1, -1)),
+                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+
     boxSizer86->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(32), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_panelUnversioned = new wxPanel(m_notebook80, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook80, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(32), wxALIGN_CENTER,
+                                   wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                       wxDATAVIEW_COL_RESIZABLE);
+    m_panelUnversioned = new wxPanel(m_notebook80, wxID_ANY, wxDefaultPosition,
+                                     wxDLG_UNIT(m_notebook80, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook80->AddPage(m_panelUnversioned, _("Unversioned Files"), false);
-    
+
     wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
     m_panelUnversioned->SetSizer(boxSizer88);
-    
-    m_dvListCtrlUnversioned = new wxDataViewListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelUnversioned, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE);
-    
+
+    m_dvListCtrlUnversioned = new wxDataViewListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition,
+                                                     wxDLG_UNIT(m_panelUnversioned, wxSize(-1, -1)),
+                                                     wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+
     boxSizer88->Add(m_dvListCtrlUnversioned, 1, wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_dvListCtrlUnversioned->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_splitterPageRight = new wxPanel(m_splitter17, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter17, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    m_dvListCtrlUnversioned->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT,
+                                                  wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE);
+    m_splitterPageRight = new wxPanel(m_splitter17, wxID_ANY, wxDefaultPosition,
+                                      wxDLG_UNIT(m_splitter17, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter17->SplitVertically(m_splitterPageLeft, m_splitterPageRight, 0);
-    
+
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer30);
-    
-    m_sci = new wxStyledTextCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(-1,-1)), 0);
+
+    m_sci = new wxStyledTextCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition,
+                                 wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), 0);
     // Configure the fold margin
-    m_sci->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_sci->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_sci->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_sci->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_sci->SetMarginSensitive(4, true);
-    m_sci->SetMarginWidth    (4, 0);
-    
+    m_sci->SetMarginWidth(4, 0);
+
     // Configure the tracker margin
     m_sci->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_sci->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_sci->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_sci->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_sci->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_sci->SetMarginWidth(2, 0);
     m_sci->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_sci->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_sci->SetMarginWidth(0,0);
-    
+    m_sci->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_sci->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_sci->SetMarginMask(3, 0);
-    m_sci->SetMarginWidth(3,0);
+    m_sci->SetMarginWidth(3, 0);
     // Select the lexer
     m_sci->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -107,120 +120,134 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     m_sci->SetKeyWords(2, wxT(""));
     m_sci->SetKeyWords(3, wxT(""));
     m_sci->SetKeyWords(4, wxT(""));
-    
-    boxSizer30->Add(m_sci, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
+
+    boxSizer30->Add(m_sci, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
     SetName(wxT("SubversionPageBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnContextMenu), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                          wxDataViewEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                          wxDataViewEventHandler(SubversionPageBase::OnContextMenu), NULL, this);
     m_dvListCtrl->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SubversionPageBase::OnViewUpdateUI), NULL, this);
-    m_dvListCtrlUnversioned->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemActivated), NULL, this);
-    m_dvListCtrlUnversioned->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemsContextMenu), NULL, this);
+    m_dvListCtrlUnversioned->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                     wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemActivated), NULL,
+                                     this);
+    m_dvListCtrlUnversioned->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                     wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemsContextMenu), NULL,
+                                     this);
     m_sci->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(SubversionPageBase::OnUpdateUI), NULL, this);
     m_sci->Connect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(SubversionPageBase::OnCharAdded), NULL, this);
     m_sci->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SubversionPageBase::OnKeyDown), NULL, this);
     m_sci->Connect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(SubversionPageBase::OnSciStcChange), NULL, this);
-    
 }
 
 SubversionPageBase::~SubversionPageBase()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnContextMenu), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                             wxDataViewEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                             wxDataViewEventHandler(SubversionPageBase::OnContextMenu), NULL, this);
     m_dvListCtrl->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SubversionPageBase::OnViewUpdateUI), NULL, this);
-    m_dvListCtrlUnversioned->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemActivated), NULL, this);
-    m_dvListCtrlUnversioned->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemsContextMenu), NULL, this);
+    m_dvListCtrlUnversioned->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                        wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemActivated), NULL,
+                                        this);
+    m_dvListCtrlUnversioned->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                        wxDataViewEventHandler(SubversionPageBase::OnUnversionedItemsContextMenu), NULL,
+                                        this);
     m_sci->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(SubversionPageBase::OnUpdateUI), NULL, this);
     m_sci->Disconnect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(SubversionPageBase::OnCharAdded), NULL, this);
     m_sci->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(SubversionPageBase::OnKeyDown), NULL, this);
     m_sci->Disconnect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(SubversionPageBase::OnSciStcChange), NULL, this);
-    
 }
 
-SvnCopyDialogBase::SvnCopyDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnCopyDialogBase::SvnCopyDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                     const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer7);
-    
+
     wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(2, 2, 0, 0);
-    fgSizer1->SetFlexibleDirection( wxBOTH );
-    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer1->SetFlexibleDirection(wxBOTH);
+    fgSizer1->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer1->AddGrowableCol(1);
-    
+
     bSizer7->Add(fgSizer1, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Source URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlSourceURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    m_staticText3 =
+        new wxStaticText(this, wxID_ANY, _("Source URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer1->Add(m_staticText3, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlSourceURL =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textCtrlSourceURL->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlSourceURL->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_textCtrlSourceURL, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Target URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer1->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlTargetURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+#endif
+
+    fgSizer1->Add(m_textCtrlSourceURL, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText4 =
+        new wxStaticText(this, wxID_ANY, _("Target URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer1->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlTargetURL =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlTargetURL->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_textCtrlTargetURL, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Comment:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    bSizer7->Add(m_staticText5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlComment = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+#endif
+
+    fgSizer1->Add(m_textCtrlTargetURL, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText5 =
+        new wxStaticText(this, wxID_ANY, _("Comment:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer7->Add(m_staticText5, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_textCtrlComment = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                       wxTE_RICH2 | wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER | wxTE_MULTILINE);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlCommentFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlCommentFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlCommentFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlCommentFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrlComment->SetFont(m_textCtrlCommentFont);
-    
-    bSizer7->Add(m_textCtrlComment, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    bSizer7->Add(m_textCtrlComment, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer8 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer7->Add(bSizer8, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer7->Add(bSizer8, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button4 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button4->SetDefault();
-    
+
     bSizer8->Add(m_button4, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button5 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer8->Add(m_button5, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     SetName(wxT("SvnCopyDialogBase"));
-    SetMinClientSize(wxSize(400,250));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetMinClientSize(wxSize(400, 250));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -235,72 +262,73 @@ SvnCopyDialogBase::SvnCopyDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 #endif
 }
 
-SvnCopyDialogBase::~SvnCopyDialogBase()
-{
-}
+SvnCopyDialogBase::~SvnCopyDialogBase() {}
 
-SvnLoginDialogBase::SvnLoginDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnLoginDialogBase::SvnLoginDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                       const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer10);
-    
+
     wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(2, 2, 0, 0);
-    fgSizer2->SetFlexibleDirection( wxBOTH );
-    fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer2->SetFlexibleDirection(wxBOTH);
+    fgSizer2->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer2->AddGrowableCol(1);
-    
+
     bSizer10->Add(fgSizer2, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText6 = new wxStaticText(this, wxID_ANY, _("Username:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer2->Add(m_staticText6, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlUsername = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    m_staticText6 =
+        new wxStaticText(this, wxID_ANY, _("Username:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer2->Add(m_staticText6, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlUsername =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textCtrlUsername->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlUsername->SetHint(wxT(""));
-    #endif
-    
-    fgSizer2->Add(m_textCtrlUsername, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    m_textCtrlUsername->SetMinSize(wxSize(300,-1));
-    
-    m_staticText7 = new wxStaticText(this, wxID_ANY, _("Password:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer2->Add(m_staticText7, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlPassword = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PASSWORD);
-    #if wxVERSION_NUMBER >= 3000
+#endif
+
+    fgSizer2->Add(m_textCtrlUsername, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    m_textCtrlUsername->SetMinSize(wxSize(300, -1));
+
+    m_staticText7 =
+        new wxStaticText(this, wxID_ANY, _("Password:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer2->Add(m_staticText7, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlPassword =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PASSWORD);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlPassword->SetHint(wxT(""));
-    #endif
-    
-    fgSizer2->Add(m_textCtrlPassword, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer2->Add(m_textCtrlPassword, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer10->Add(bSizer11, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer10->Add(bSizer11, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button6 = new wxButton(this, wxID_OK, _("&Login"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button6->SetDefault();
-    
+
     bSizer11->Add(m_button6, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button7 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer11->Add(m_button7, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     SetName(wxT("SvnLoginDialogBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -315,244 +343,279 @@ SvnLoginDialogBase::SvnLoginDialogBase(wxWindow* parent, wxWindowID id, const wx
 #endif
 }
 
-SvnLoginDialogBase::~SvnLoginDialogBase()
-{
-}
+SvnLoginDialogBase::~SvnLoginDialogBase() {}
 
-SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                   const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer12);
-    
-    m_treebook1 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
+
+    m_treebook1 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_treebook1->SetName(wxT("m_treebook1"));
     wxImageList* m_treebook1_il = new wxImageList(16, 16);
     m_treebook1->AssignImageList(m_treebook1_il);
-    
-    bSizer12->Add(m_treebook1, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel3 = new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    bSizer12->Add(m_treebook1, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel3 =
+        new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     int m_panel3ImgIndex;
     m_panel3ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-cog")));
     m_treebook1->AddPage(m_panel3, _("General"), true, m_panel3ImgIndex);
-    
+
     wxBoxSizer* bSizer15 = new wxBoxSizer(wxVERTICAL);
     m_panel3->SetSizer(bSizer15);
-    
+
     wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(2, 3, 0, 0);
-    fgSizer3->SetFlexibleDirection( wxBOTH );
-    fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer3->SetFlexibleDirection(wxBOTH);
+    fgSizer3->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer3->AddGrowableCol(1);
-    
-    bSizer15->Add(fgSizer3, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticTextExe = new wxStaticText(m_panel3, wxID_ANY, _("Executable:"), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
-    
-    fgSizer3->Add(m_staticTextExe, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlSvnExecutable = new wxTextCtrl(m_panel3, wxID_ANY, wxT("svn"), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
+
+    bSizer15->Add(fgSizer3, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticTextExe = new wxStaticText(m_panel3, wxID_ANY, _("Executable:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticTextExe, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlSvnExecutable =
+        new wxTextCtrl(m_panel3, wxID_ANY, wxT("svn"), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
     m_textCtrlSvnExecutable->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlSvnExecutable->SetHint(wxT(""));
-    #endif
-    
-    fgSizer3->Add(m_textCtrlSvnExecutable, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_buttonBrowse = new wxButton(m_panel3, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), wxBU_EXACTFIT);
-    
-    fgSizer3->Add(m_buttonBrowse, 0, wxRIGHT|wxTOP|wxBOTTOM, WXC_FROM_DIP(5));
-    
-    m_staticText9 = new wxStaticText(m_panel3, wxID_ANY, _("Ignore the following file patterns:"), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
-    
+#endif
+
+    fgSizer3->Add(m_textCtrlSvnExecutable, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_buttonBrowse = new wxButton(m_panel3, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)),
+                                  wxBU_EXACTFIT);
+
+    fgSizer3->Add(m_buttonBrowse, 0, wxRIGHT | wxTOP | wxBOTTOM, WXC_FROM_DIP(5));
+
+    m_staticText9 = new wxStaticText(m_panel3, wxID_ANY, _("Ignore the following file patterns:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
+
     bSizer15->Add(m_staticText9, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_textCtrlIgnorePattern = new wxTextCtrl(m_panel3, wxID_ANY, wxT("*.o *.obj *.exe *.lib *.so *.dll *.a *.dynlib *.exp *.ilk *.pdb *.d *.tags *.suo *.ncb *.bak *.orig *.dll *.mine *.o.d *.session Debug Release DebugUnicode ReleaseUnicode"), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), wxTE_RICH2|wxTE_MULTILINE);
-    
-    bSizer15->Add(m_textCtrlIgnorePattern, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(m_panel3, wxID_ANY, wxT("")), wxVERTICAL);
-    
-    bSizer15->Add(sbSizer1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_checkBoxAddToSvn = new wxCheckBox(m_panel3, wxID_ANY, _("When adding file(s) to project, add it to svn as well"), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
+
+    m_textCtrlIgnorePattern =
+        new wxTextCtrl(m_panel3, wxID_ANY,
+                       wxT("*.o *.obj *.exe *.lib *.so *.dll *.a *.dynlib *.exp *.ilk *.pdb *.d *.tags *.suo *.ncb "
+                           "*.bak *.orig *.dll *.mine *.o.d *.session Debug Release DebugUnicode ReleaseUnicode"),
+                       wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), wxTE_RICH2 | wxTE_MULTILINE);
+
+    bSizer15->Add(m_textCtrlIgnorePattern, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer(new wxStaticBox(m_panel3, wxID_ANY, wxT("")), wxVERTICAL);
+
+    bSizer15->Add(sbSizer1, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxAddToSvn = new wxCheckBox(m_panel3, wxID_ANY, _("When adding file(s) to project, add it to svn as well"),
+                                        wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
     m_checkBoxAddToSvn->SetValue(false);
-    
-    sbSizer1->Add(m_checkBoxAddToSvn, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_checkBoxRetag = new wxCheckBox(m_panel3, wxID_ANY, _("Retag workspace after svn update, revert or applying patch"), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
+
+    sbSizer1->Add(m_checkBoxAddToSvn, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxRetag =
+        new wxCheckBox(m_panel3, wxID_ANY, _("Retag workspace after svn update, revert or applying patch"),
+                       wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
     m_checkBoxRetag->SetValue(false);
-    
-    sbSizer1->Add(m_checkBoxRetag, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_checkBoxRenameFile = new wxCheckBox(m_panel3, wxID_ANY, _("When renaming a file in the project, rename it in the repository as well"), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
+
+    sbSizer1->Add(m_checkBoxRetag, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxRenameFile = new wxCheckBox(m_panel3, wxID_ANY,
+                                          _("When renaming a file in the project, rename it in the repository as well"),
+                                          wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
     m_checkBoxRenameFile->SetValue(false);
-    
-    sbSizer1->Add(m_checkBoxRenameFile, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_checkBoxUsePosixLocale = new wxCheckBox(m_panel3, wxID_ANY, _("Use POSIX Locale"), wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
+
+    sbSizer1->Add(m_checkBoxRenameFile, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxUsePosixLocale = new wxCheckBox(m_panel3, wxID_ANY, _("Use POSIX Locale"), wxDefaultPosition,
+                                              wxDLG_UNIT(m_panel3, wxSize(-1, -1)), 0);
     m_checkBoxUsePosixLocale->SetValue(true);
-    m_checkBoxUsePosixLocale->SetToolTip(_("When checked, CodeLite will use the default \"C\" locale instead of the current locale. This will ensure that svn command line output is parsed properly."));
-    
-    sbSizer1->Add(m_checkBoxUsePosixLocale, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel4 = new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_checkBoxUsePosixLocale->SetToolTip(
+        _("When checked, CodeLite will use the default \"C\" locale instead of the current locale. This will ensure "
+          "that svn command line output is parsed properly."));
+
+    sbSizer1->Add(m_checkBoxUsePosixLocale, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel4 =
+        new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     int m_panel4ImgIndex;
     m_panel4ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-diff")));
     m_treebook1->AddPage(m_panel4, _("External Diff"), false, m_panel4ImgIndex);
-    
+
     wxBoxSizer* bSizer16 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer16);
-    
-    m_checkBoxUseExternalDiff = new wxCheckBox(m_panel4, wxID_ANY, _("Use external diff tool"), wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
+
+    m_checkBoxUseExternalDiff = new wxCheckBox(m_panel4, wxID_ANY, _("Use external diff tool"), wxDefaultPosition,
+                                               wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
     m_checkBoxUseExternalDiff->SetValue(false);
-    
+
     bSizer16->Add(m_checkBoxUseExternalDiff, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer(1, 3, 0, 0);
-    fgSizer5->SetFlexibleDirection( wxBOTH );
-    fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer5->SetFlexibleDirection(wxBOTH);
+    fgSizer5->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer5->AddGrowableCol(1);
-    
-    bSizer16->Add(fgSizer5, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText10 = new wxStaticText(m_panel4, wxID_ANY, _("External Diff Viewer:"), wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
-    
-    fgSizer5->Add(m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlDiffViewer = new wxTextCtrl(m_panel4, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
+
+    bSizer16->Add(fgSizer5, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText10 = new wxStaticText(m_panel4, wxID_ANY, _("External Diff Viewer:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
+
+    fgSizer5->Add(m_staticText10, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlDiffViewer =
+        new wxTextCtrl(m_panel4, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
     m_textCtrlDiffViewer->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlDiffViewer->SetHint(wxT(""));
-    #endif
-    
-    fgSizer5->Add(m_textCtrlDiffViewer, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_buttonBrowseExtDiff = new wxButton(m_panel4, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxBU_EXACTFIT);
-    
+#endif
+
+    fgSizer5->Add(m_textCtrlDiffViewer, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_buttonBrowseExtDiff = new wxButton(m_panel4, wxID_ANY, _("..."), wxDefaultPosition,
+                                         wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxBU_EXACTFIT);
+
     fgSizer5->Add(m_buttonBrowseExtDiff, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_panel5 = new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    m_panel5 =
+        new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     int m_panel5ImgIndex;
     m_panel5ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-lock")));
     m_treebook1->AddPage(m_panel5, _("SSH Client"), false, m_panel5ImgIndex);
-    
+
     wxBoxSizer* bSizer161 = new wxBoxSizer(wxVERTICAL);
     m_panel5->SetSizer(bSizer161);
-    
+
     wxFlexGridSizer* fgSizer6 = new wxFlexGridSizer(2, 3, 0, 0);
-    fgSizer6->SetFlexibleDirection( wxBOTH );
-    fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer6->SetFlexibleDirection(wxBOTH);
+    fgSizer6->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer6->AddGrowableCol(1);
-    
-    bSizer161->Add(fgSizer6, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText20 = new wxStaticText(m_panel5, wxID_ANY, _("SSH Client:"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
-    
-    fgSizer6->Add(m_staticText20, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlSSHClient = new wxTextCtrl(m_panel5, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
+
+    bSizer161->Add(fgSizer6, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText20 = new wxStaticText(m_panel5, wxID_ANY, _("SSH Client:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
+
+    fgSizer6->Add(m_staticText20, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlSSHClient =
+        new wxTextCtrl(m_panel5, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
     m_textCtrlSSHClient->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlSSHClient->SetHint(wxT(""));
-    #endif
-    
-    fgSizer6->Add(m_textCtrlSSHClient, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_button12 = new wxButton(m_panel5, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), wxBU_EXACTFIT);
-    
+#endif
+
+    fgSizer6->Add(m_textCtrlSSHClient, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button12 = new wxButton(m_panel5, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)),
+                              wxBU_EXACTFIT);
+
     fgSizer6->Add(m_button12, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_staticText21 = new wxStaticText(m_panel5, wxID_ANY, _("SSH Client arguments:"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
-    
-    fgSizer6->Add(m_staticText21, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlSshClientArgs = new wxTextCtrl(m_panel5, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    m_staticText21 = new wxStaticText(m_panel5, wxID_ANY, _("SSH Client arguments:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
+
+    fgSizer6->Add(m_staticText21, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlSshClientArgs =
+        new wxTextCtrl(m_panel5, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlSshClientArgs->SetHint(wxT(""));
-    #endif
-    
-    fgSizer6->Add(m_textCtrlSshClientArgs, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_panel5, wxID_ANY, wxT("")), wxVERTICAL);
-    
-    bSizer161->Add(sbSizer2, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText22 = new wxStaticText(m_panel5, wxID_ANY, _("The SSH client field should contain the command to be\nused by the SVN command line client for establishing a secured channel.\n\nFor example, on Windows it should contain something like:\n/path/to/plink.exe -l <user name> -pw <svn password>\n\nIf you don't need SSH channel, leave this field empty"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
-    
-    sbSizer2->Add(m_staticText22, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel6 = new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+#endif
+
+    fgSizer6->Add(m_textCtrlSshClientArgs, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer(new wxStaticBox(m_panel5, wxID_ANY, wxT("")), wxVERTICAL);
+
+    bSizer161->Add(sbSizer2, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText22 = new wxStaticText(
+        m_panel5, wxID_ANY,
+        _("The SSH client field should contain the command to be\nused by the SVN command line client for establishing "
+          "a secured channel.\n\nFor example, on Windows it should contain something like:\n/path/to/plink.exe -l "
+          "<user name> -pw <svn password>\n\nIf you don't need SSH channel, leave this field empty"),
+        wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
+
+    sbSizer2->Add(m_staticText22, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel6 =
+        new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     int m_panel6ImgIndex;
     m_panel6ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-connected")));
     m_treebook1->AddPage(m_panel6, _("Integration"), false, m_panel6ImgIndex);
-    
+
     wxBoxSizer* bSizer23 = new wxBoxSizer(wxVERTICAL);
     m_panel6->SetSizer(bSizer23);
-    
-    wxStaticBoxSizer* sbSizer5 = new wxStaticBoxSizer( new wxStaticBox(m_panel6, wxID_ANY, _("Auto Revision:")), wxVERTICAL);
-    
-    bSizer23->Add(sbSizer5, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_checkBoxExposeRevisionMacro = new wxCheckBox(m_panel6, wxID_ANY, _("Add revision number as preprocessor definition in the compilation line"), wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
+
+    wxStaticBoxSizer* sbSizer5 =
+        new wxStaticBoxSizer(new wxStaticBox(m_panel6, wxID_ANY, _("Auto Revision:")), wxVERTICAL);
+
+    bSizer23->Add(sbSizer5, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxExposeRevisionMacro =
+        new wxCheckBox(m_panel6, wxID_ANY, _("Add revision number as preprocessor definition in the compilation line"),
+                       wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
     m_checkBoxExposeRevisionMacro->SetValue(false);
-    
-    sbSizer5->Add(m_checkBoxExposeRevisionMacro, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    sbSizer5->Add(m_checkBoxExposeRevisionMacro, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer24 = new wxBoxSizer(wxHORIZONTAL);
-    
-    sbSizer5->Add(bSizer24, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText29 = new wxStaticText(m_panel6, wxID_ANY, _("Preprocessor name:"), wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
-    
-    bSizer24->Add(m_staticText29, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlMacroName = new wxTextCtrl(m_panel6, wxID_ANY, wxT("SVN_REVISION"), wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    sbSizer5->Add(bSizer24, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText29 = new wxStaticText(m_panel6, wxID_ANY, _("Preprocessor name:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
+
+    bSizer24->Add(m_staticText29, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlMacroName = new wxTextCtrl(m_panel6, wxID_ANY, wxT("SVN_REVISION"), wxDefaultPosition,
+                                         wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlMacroName->SetHint(wxT(""));
-    #endif
-    
-    bSizer24->Add(m_textCtrlMacroName, 1, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+#endif
+
+    bSizer24->Add(m_textCtrlMacroName, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer12->Add(bSizer13, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer12->Add(bSizer13, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button8 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button8->SetDefault();
-    
+
     bSizer13->Add(m_button8, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button9 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer13->Add(m_button9, 0, wxALL, WXC_FROM_DIP(5));
-    
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_treebook1)){
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treebook1)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_treebook1);
     } else {
         wxPersistenceManager::Get().Restore(m_treebook1);
     }
-    #endif
-    m_treebook1->ExpandNode( 0, true );
-    m_treebook1->ExpandNode( 1, true );
-    m_treebook1->ExpandNode( 2, true );
-    m_treebook1->ExpandNode( 3, true );
-    
+#endif
+    m_treebook1->ExpandNode(0, true);
+    m_treebook1->ExpandNode(1, true);
+    m_treebook1->ExpandNode(2, true);
+    m_treebook1->ExpandNode(3, true);
+
     SetName(wxT("SvnPreferencesDialogBase"));
-    SetMinClientSize(wxSize(400,250));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetMinClientSize(wxSize(400, 250));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -566,140 +629,165 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
-    m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseSvnExe), NULL, this);
-    m_staticText10->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
-    m_textCtrlDiffViewer->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
-    m_buttonBrowseExtDiff->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseDiffViewer), NULL, this);
-    m_buttonBrowseExtDiff->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
-    m_button12->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseSSHClient), NULL, this);
-    m_staticText29->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnAddRevisionMacroUI), NULL, this);
-    m_textCtrlMacroName->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnAddRevisionMacroUI), NULL, this);
-    m_button8->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnButtonOK), NULL, this);
-    
+    m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseSvnExe), NULL, this);
+    m_staticText10->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI),
+                            NULL, this);
+    m_textCtrlDiffViewer->Connect(wxEVT_UPDATE_UI,
+                                  wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
+    m_buttonBrowseExtDiff->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                   wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseDiffViewer), NULL, this);
+    m_buttonBrowseExtDiff->Connect(wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
+    m_button12->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                        wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseSSHClient), NULL, this);
+    m_staticText29->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnAddRevisionMacroUI),
+                            NULL, this);
+    m_textCtrlMacroName->Connect(wxEVT_UPDATE_UI,
+                                 wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnAddRevisionMacroUI), NULL, this);
+    m_button8->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnButtonOK), NULL,
+                       this);
 }
 
 SvnPreferencesDialogBase::~SvnPreferencesDialogBase()
 {
-    m_buttonBrowse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseSvnExe), NULL, this);
-    m_staticText10->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
-    m_textCtrlDiffViewer->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
-    m_buttonBrowseExtDiff->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseDiffViewer), NULL, this);
-    m_buttonBrowseExtDiff->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
-    m_button12->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseSSHClient), NULL, this);
-    m_staticText29->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnAddRevisionMacroUI), NULL, this);
-    m_textCtrlMacroName->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnAddRevisionMacroUI), NULL, this);
-    m_button8->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnButtonOK), NULL, this);
-    
+    m_buttonBrowse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                               wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseSvnExe), NULL, this);
+    m_staticText10->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI),
+                               NULL, this);
+    m_textCtrlDiffViewer->Disconnect(wxEVT_UPDATE_UI,
+                                     wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
+    m_buttonBrowseExtDiff->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                      wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseDiffViewer), NULL, this);
+    m_buttonBrowseExtDiff->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
+    m_button12->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseSSHClient), NULL, this);
+    m_staticText29->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnAddRevisionMacroUI),
+                               NULL, this);
+    m_textCtrlMacroName->Disconnect(wxEVT_UPDATE_UI,
+                                    wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnAddRevisionMacroUI), NULL, this);
+    m_button8->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnButtonOK),
+                          NULL, this);
 }
 
-SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                     const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
-    
+
     wxBoxSizer* boxSizer52 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer17->Add(boxSizer52, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    bSizer17->Add(boxSizer52, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* fgSizer7 = new wxFlexGridSizer(5, 2, 0, 0);
-    fgSizer7->SetFlexibleDirection( wxBOTH );
-    fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer7->SetFlexibleDirection(wxBOTH);
+    fgSizer7->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer7->AddGrowableCol(1);
-    
-    boxSizer52->Add(fgSizer7, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText19 = new wxStaticText(this, wxID_ANY, _("Root URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer52->Add(fgSizer7, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText19 =
+        new wxStaticText(this, wxID_ANY, _("Root URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     wxFont m_staticText19Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText19Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText19->SetFont(m_staticText19Font);
-    
-    fgSizer7->Add(m_staticText19, 0, wxALL|wxALIGN_RIGHT, WXC_FROM_DIP(5));
-    
-    m_textCtrlRootURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(500,-1)), wxTE_READONLY);
-    #if wxVERSION_NUMBER >= 3000
+
+    fgSizer7->Add(m_staticText19, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_textCtrlRootURL =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, -1)), wxTE_READONLY);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlRootURL->SetHint(wxT(""));
-    #endif
-    
-    fgSizer7->Add(m_textCtrlRootURL, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText21 = new wxStaticText(this, wxID_ANY, _("URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#endif
+
+    fgSizer7->Add(m_textCtrlRootURL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText21 =
+        new wxStaticText(this, wxID_ANY, _("URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     wxFont m_staticText21Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText21Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText21->SetFont(m_staticText21Font);
-    
-    fgSizer7->Add(m_staticText21, 0, wxALL|wxALIGN_RIGHT, WXC_FROM_DIP(5));
-    
-    m_textCtrlURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
-    #if wxVERSION_NUMBER >= 3000
+
+    fgSizer7->Add(m_staticText21, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_textCtrlURL =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlURL->SetHint(wxT(""));
-    #endif
-    
-    fgSizer7->Add(m_textCtrlURL, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText23 = new wxStaticText(this, wxID_ANY, _("Revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#endif
+
+    fgSizer7->Add(m_textCtrlURL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText23 =
+        new wxStaticText(this, wxID_ANY, _("Revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     wxFont m_staticText23Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText23Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText23->SetFont(m_staticText23Font);
-    
-    fgSizer7->Add(m_staticText23, 0, wxALL|wxALIGN_RIGHT, WXC_FROM_DIP(5));
-    
-    m_textCtrlRevision = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
-    #if wxVERSION_NUMBER >= 3000
+
+    fgSizer7->Add(m_staticText23, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_textCtrlRevision =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlRevision->SetHint(wxT(""));
-    #endif
-    
-    fgSizer7->Add(m_textCtrlRevision, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText25 = new wxStaticText(this, wxID_ANY, _("Author:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#endif
+
+    fgSizer7->Add(m_textCtrlRevision, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText25 =
+        new wxStaticText(this, wxID_ANY, _("Author:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     wxFont m_staticText25Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText25Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText25->SetFont(m_staticText25Font);
-    
-    fgSizer7->Add(m_staticText25, 0, wxALL|wxALIGN_RIGHT, WXC_FROM_DIP(5));
-    
-    m_textCtrlAuthor = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
-    #if wxVERSION_NUMBER >= 3000
+
+    fgSizer7->Add(m_staticText25, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_textCtrlAuthor =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlAuthor->SetHint(wxT(""));
-    #endif
-    
-    fgSizer7->Add(m_textCtrlAuthor, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Date:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#endif
+
+    fgSizer7->Add(m_textCtrlAuthor, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText27 =
+        new wxStaticText(this, wxID_ANY, _("Date:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     wxFont m_staticText27Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText27Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText27->SetFont(m_staticText27Font);
-    
-    fgSizer7->Add(m_staticText27, 0, wxALL|wxALIGN_RIGHT, WXC_FROM_DIP(5));
-    
-    m_textCtrlDate = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
-    #if wxVERSION_NUMBER >= 3000
+
+    fgSizer7->Add(m_staticText27, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_textCtrlDate =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlDate->SetHint(wxT(""));
-    #endif
-    
-    fgSizer7->Add(m_textCtrlDate, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer7->Add(m_textCtrlDate, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer54 = new wxStdDialogButtonSizer();
-    
-    bSizer17->Add(m_stdBtnSizer54, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer17->Add(m_stdBtnSizer54, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button56 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button56->SetDefault();
     m_stdBtnSizer54->AddButton(m_button56);
     m_stdBtnSizer54->Realize();
-    
+
     SetName(wxT("SvnInfoDialogBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -714,83 +802,84 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 #endif
 }
 
-SvnInfoDialogBase::~SvnInfoDialogBase()
-{
-}
+SvnInfoDialogBase::~SvnInfoDialogBase() {}
 
-SvnCheckoutDialogBase::SvnCheckoutDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnCheckoutDialogBase::SvnCheckoutDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                             const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer19);
-    
-    wxStaticBoxSizer* sbSizer4 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
-    
-    bSizer19->Add(sbSizer4, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    wxStaticBoxSizer* sbSizer4 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
+
+    bSizer19->Add(sbSizer4, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* fgSizer8 = new wxFlexGridSizer(2, 3, 0, 0);
-    fgSizer8->SetFlexibleDirection( wxBOTH );
-    fgSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer8->SetFlexibleDirection(wxBOTH);
+    fgSizer8->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer8->AddGrowableCol(1);
-    
-    sbSizer4->Add(fgSizer8, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText24 = new wxStaticText(this, wxID_ANY, _("URL of repository:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer8->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    sbSizer4->Add(fgSizer8, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText24 = new wxStaticText(this, wxID_ANY, _("URL of repository:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer8->Add(m_staticText24, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxArrayString m_comboBoxRepoURLArr;
-    m_comboBoxRepoURL = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_comboBoxRepoURLArr, 0);
-    #if wxVERSION_NUMBER >= 3000
+    m_comboBoxRepoURL = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                       m_comboBoxRepoURLArr, 0);
+#if wxVERSION_NUMBER >= 3000
     m_comboBoxRepoURL->SetHint(wxT(""));
-    #endif
-    
-    fgSizer8->Add(m_comboBoxRepoURL, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer8->Add(m_comboBoxRepoURL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     fgSizer8->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText25 = new wxStaticText(this, wxID_ANY, _("Checkout directory:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer8->Add(m_staticText25, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    m_staticText25 = new wxStaticText(this, wxID_ANY, _("Checkout directory:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer8->Add(m_staticText25, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_textCtrl20 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrl20->SetHint(wxT(""));
-    #endif
-    
-    fgSizer8->Add(m_textCtrl20, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_buttonBrowseDir = new wxButton(this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+#endif
+
+    fgSizer8->Add(m_textCtrl20, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonBrowseDir =
+        new wxButton(this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
     fgSizer8->Add(m_buttonBrowseDir, 0, wxALL, WXC_FROM_DIP(5));
-    
-    bSizer19->Add(0, 0, 1, wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    bSizer19->Add(0, 0, 1, wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer20 = new wxBoxSizer(wxHORIZONTAL);
-    
+
     bSizer19->Add(bSizer20, 0, wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
     m_button14 = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button14->SetDefault();
-    
+
     bSizer20->Add(m_button14, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button15 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer20->Add(m_button15, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     SetName(wxT("SvnCheckoutDialogBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -804,87 +893,92 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase(wxWindow* parent, wxWindowID id, co
     }
 #endif
     // Connect events
-    m_comboBoxRepoURL->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SvnCheckoutDialogBase::OnCheckoutDirectoryText), NULL, this);
-    m_buttonBrowseDir->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnCheckoutDialogBase::OnBrowseDirectory), NULL, this);
+    m_comboBoxRepoURL->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                               wxCommandEventHandler(SvnCheckoutDialogBase::OnCheckoutDirectoryText), NULL, this);
+    m_buttonBrowseDir->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                               wxCommandEventHandler(SvnCheckoutDialogBase::OnBrowseDirectory), NULL, this);
     m_button14->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnCheckoutDialogBase::OnOK), NULL, this);
     m_button14->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnCheckoutDialogBase::OnOkUI), NULL, this);
-    
 }
 
 SvnCheckoutDialogBase::~SvnCheckoutDialogBase()
 {
-    m_comboBoxRepoURL->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SvnCheckoutDialogBase::OnCheckoutDirectoryText), NULL, this);
-    m_buttonBrowseDir->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnCheckoutDialogBase::OnBrowseDirectory), NULL, this);
-    m_button14->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnCheckoutDialogBase::OnOK), NULL, this);
+    m_comboBoxRepoURL->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                  wxCommandEventHandler(SvnCheckoutDialogBase::OnCheckoutDirectoryText), NULL, this);
+    m_buttonBrowseDir->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                  wxCommandEventHandler(SvnCheckoutDialogBase::OnBrowseDirectory), NULL, this);
+    m_button14->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnCheckoutDialogBase::OnOK), NULL,
+                           this);
     m_button14->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnCheckoutDialogBase::OnOkUI), NULL, this);
-    
 }
 
-SvnLogDialogBase::SvnLogDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnLogDialogBase::SvnLogDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                   const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer21 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer21);
-    
+
     wxFlexGridSizer* fgSizer9 = new wxFlexGridSizer(2, 2, 0, 0);
-    fgSizer9->SetFlexibleDirection( wxBOTH );
-    fgSizer9->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer9->SetFlexibleDirection(wxBOTH);
+    fgSizer9->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer9->AddGrowableCol(1);
-    
-    bSizer21->Add(fgSizer9, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText28 = new wxStaticText(this, wxID_ANY, _("From revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer9->Add(m_staticText28, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_from = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(200,-1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    bSizer21->Add(fgSizer9, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText28 =
+        new wxStaticText(this, wxID_ANY, _("From revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer9->Add(m_staticText28, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_from = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(200, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_from->SetHint(wxT(""));
-    #endif
-    
-    fgSizer9->Add(m_from, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText29 = new wxStaticText(this, wxID_ANY, _("To revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer9->Add(m_staticText29, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer9->Add(m_from, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText29 =
+        new wxStaticText(this, wxID_ANY, _("To revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer9->Add(m_staticText29, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_to = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_to->SetHint(wxT(""));
-    #endif
-    
-    fgSizer9->Add(m_to, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_compact = new wxCheckBox(this, wxID_ANY, _("Create compact log"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#endif
+
+    fgSizer9->Add(m_to, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_compact =
+        new wxCheckBox(this, wxID_ANY, _("Create compact log"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_compact->SetValue(false);
-    
-    bSizer21->Add(m_compact, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    bSizer21->Add(m_compact, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer22 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer21->Add(bSizer22, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer21->Add(bSizer22, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button17 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button17->SetDefault();
-    
+
     bSizer22->Add(m_button17, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button18 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer22->Add(m_button18, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     SetName(wxT("SvnLogDialogBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -899,78 +993,79 @@ SvnLogDialogBase::SvnLogDialogBase(wxWindow* parent, wxWindowID id, const wxStri
 #endif
 }
 
-SvnLogDialogBase::~SvnLogDialogBase()
-{
-}
+SvnLogDialogBase::~SvnLogDialogBase() {}
 
-DiffDialogBase::DiffDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+DiffDialogBase::DiffDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                               const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer25 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer25);
-    
+
     wxFlexGridSizer* fgSizer9 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer9->SetFlexibleDirection( wxBOTH );
-    fgSizer9->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer9->SetFlexibleDirection(wxBOTH);
+    fgSizer9->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer9->AddGrowableCol(1);
-    
-    bSizer25->Add(fgSizer9, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText25 = new wxStaticText(this, wxID_ANY, _("From Revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer9->Add(m_staticText25, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlFromRev = new wxTextCtrl(this, wxID_ANY, wxT("BASE"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer25->Add(fgSizer9, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText25 =
+        new wxStaticText(this, wxID_ANY, _("From Revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer9->Add(m_staticText25, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlFromRev =
+        new wxTextCtrl(this, wxID_ANY, wxT("BASE"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textCtrlFromRev->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlFromRev->SetHint(wxT(""));
-    #endif
-    
-    fgSizer9->Add(m_textCtrlFromRev, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText26 = new wxStaticText(this, wxID_ANY, _("To Revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer9->Add(m_staticText26, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer9->Add(m_textCtrlFromRev, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText26 =
+        new wxStaticText(this, wxID_ANY, _("To Revision:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer9->Add(m_staticText26, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_textCtrlToRev = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlToRev->SetHint(wxT(""));
-    #endif
-    
-    fgSizer9->Add(m_textCtrlToRev, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    bSizer25->Add(0, 0, 1, wxTOP|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_checkBoxIgnoreWhitespace = new wxCheckBox(this, wxID_ANY, _("Ignore whitespaces"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+#endif
+
+    fgSizer9->Add(m_textCtrlToRev, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    bSizer25->Add(0, 0, 1, wxTOP | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxIgnoreWhitespace =
+        new wxCheckBox(this, wxID_ANY, _("Ignore whitespaces"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxIgnoreWhitespace->SetValue(true);
-    
+
     bSizer25->Add(m_checkBoxIgnoreWhitespace, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     wxBoxSizer* bSizer26 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer25->Add(bSizer26, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer25->Add(bSizer26, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button20 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button20->SetDefault();
-    
+
     bSizer26->Add(m_button20, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button19 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer26->Add(m_button19, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     SetName(wxT("DiffDialogBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -985,147 +1080,155 @@ DiffDialogBase::DiffDialogBase(wxWindow* parent, wxWindowID id, const wxString& 
 #endif
 }
 
-DiffDialogBase::~DiffDialogBase()
-{
-}
+DiffDialogBase::~DiffDialogBase() {}
 
-ChangeLogPageBase::ChangeLogPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+ChangeLogPageBase::ChangeLogPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                     long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer27 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer27);
-    
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_DONTWRAP|wxTE_AUTO_URL);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                wxTE_RICH2 | wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER | wxTE_MULTILINE | wxTE_DONTWRAP |
+                                    wxTE_AUTO_URL);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrl->SetFont(m_textCtrlFont);
-    
-    bSizer27->Add(m_textCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    bSizer27->Add(m_textCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("ChangeLogPageBase"));
-    SetSize(500,300);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_textCtrl->Connect(wxEVT_COMMAND_TEXT_URL, wxCommandEventHandler(ChangeLogPageBase::OnURL), NULL, this);
-    
 }
 
 ChangeLogPageBase::~ChangeLogPageBase()
 {
     m_textCtrl->Disconnect(wxEVT_COMMAND_TEXT_URL, wxCommandEventHandler(ChangeLogPageBase::OnURL), NULL, this);
-    
 }
 
-SvnPropsBaseDlg::SvnPropsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnPropsBaseDlg::SvnPropsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                 const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer28 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer28);
-    
-    m_staticTextURL = new wxStaticText(this, wxID_ANY, _("Title"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    m_staticTextURL =
+        new wxStaticText(this, wxID_ANY, _("Title"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     wxFont m_staticTextURLFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextURLFont.SetStyle(wxFONTSTYLE_ITALIC);
     m_staticTextURLFont.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticTextURL->SetFont(m_staticTextURLFont);
-    
-    bSizer28->Add(m_staticTextURL, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
-    
+
+    bSizer28->Add(m_staticTextURL, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* fgSizer10 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer10->SetFlexibleDirection( wxBOTH );
-    fgSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer10->SetFlexibleDirection(wxBOTH);
+    fgSizer10->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer10->AddGrowableCol(1);
-    
-    bSizer28->Add(fgSizer10, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Bug URL Pattern:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer10->Add(m_staticText27, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    bSizer28->Add(fgSizer10, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText27 =
+        new wxStaticText(this, wxID_ANY, _("Bug URL Pattern:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer10->Add(m_staticText27, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_textCtrlBugURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlBugURL->SetToolTip(_("Enter here the URL for the bug details.\nFor example: http://mytracker.com?bug_id=$(BUGID)"));
-    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlBugURL->SetToolTip(
+        _("Enter here the URL for the bug details.\nFor example: http://mytracker.com?bug_id=$(BUGID)"));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlBugURL->SetHint(wxT(""));
-    #endif
-    
-    fgSizer10->Add(m_textCtrlBugURL, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText33 = new wxStaticText(this, wxID_ANY, _("Bug Message Pattern:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer10->Add(m_staticText33, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer10->Add(m_textCtrlBugURL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText33 = new wxStaticText(this, wxID_ANY, _("Bug Message Pattern:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer10->Add(m_staticText33, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_textCtrlBugMsg = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlBugMsg->SetToolTip(_("Enter here the message to add to the commit log. You may use the $(BUG_URL) and $(BUGID) macros.\nAn example: \"Fixed: BUG#$(BUGID), See $(BUG_URL) for more details\""));
-    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlBugMsg->SetToolTip(
+        _("Enter here the message to add to the commit log. You may use the $(BUG_URL) and $(BUGID) macros.\nAn "
+          "example: \"Fixed: BUG#$(BUGID), See $(BUG_URL) for more details\""));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlBugMsg->SetHint(wxT(""));
-    #endif
-    
-    fgSizer10->Add(m_textCtrlBugMsg, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText31 = new wxStaticText(this, wxID_ANY, _("Feature URL Pattern:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer10->Add(m_staticText31, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer10->Add(m_textCtrlBugMsg, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText31 = new wxStaticText(this, wxID_ANY, _("Feature URL Pattern:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer10->Add(m_staticText31, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_textCtrlFrURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlFrURL->SetToolTip(_("Enter here the URL for the feature request details.\nFor example: http://mytracker.com?fr_id=$(FRID)"));
-    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlFrURL->SetToolTip(
+        _("Enter here the URL for the feature request details.\nFor example: http://mytracker.com?fr_id=$(FRID)"));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlFrURL->SetHint(wxT(""));
-    #endif
-    
-    fgSizer10->Add(m_textCtrlFrURL, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText34 = new wxStaticText(this, wxID_ANY, _("Feature Message Pattern:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer10->Add(m_staticText34, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer10->Add(m_textCtrlFrURL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText34 = new wxStaticText(this, wxID_ANY, _("Feature Message Pattern:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer10->Add(m_staticText34, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_textCtrlFrMsg = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlFrMsg->SetToolTip(_("Enter here the message to add to the commit log. You may use the $(FR_URL) and $(FRID) macros.\nAn example: \"Implements FR#$(FRID), See $(FR_URL) for more details\""));
-    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlFrMsg->SetToolTip(
+        _("Enter here the message to add to the commit log. You may use the $(FR_URL) and $(FRID) macros.\nAn example: "
+          "\"Implements FR#$(FRID), See $(FR_URL) for more details\""));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlFrMsg->SetHint(wxT(""));
-    #endif
-    
-    fgSizer10->Add(m_textCtrlFrMsg, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer10->Add(m_textCtrlFrMsg, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     bSizer28->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
+
     m_stdBtnSizer47 = new wxStdDialogButtonSizer();
-    
-    bSizer28->Add(m_stdBtnSizer47, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
-    
+
+    bSizer28->Add(m_stdBtnSizer47, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
     m_button49 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button49->SetDefault();
     m_stdBtnSizer47->AddButton(m_button49);
-    
+
     m_button51 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer47->AddButton(m_button51);
     m_stdBtnSizer47->Realize();
-    
+
     SetName(wxT("SvnPropsBaseDlg"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1140,61 +1243,63 @@ SvnPropsBaseDlg::SvnPropsBaseDlg(wxWindow* parent, wxWindowID id, const wxString
 #endif
 }
 
-SvnPropsBaseDlg::~SvnPropsBaseDlg()
-{
-}
+SvnPropsBaseDlg::~SvnPropsBaseDlg() {}
 
-PatchDlgBase::PatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+PatchDlgBase::PatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                           const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer31 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer31);
-    
+
     wxFlexGridSizer* fgSizer11 = new wxFlexGridSizer(0, 1, 0, 0);
-    fgSizer11->SetFlexibleDirection( wxBOTH );
-    fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer11->SetFlexibleDirection(wxBOTH);
+    fgSizer11->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer11->AddGrowableCol(0);
-    
-    bSizer31->Add(fgSizer11, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_filePicker = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|All Files (*)|*"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+
+    bSizer31->Add(fgSizer11, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_filePicker =
+        new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"),
+                             wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|All Files (*)|*"), wxDefaultPosition,
+                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
     m_filePicker->SetFocus();
-    
-    fgSizer11->Add(m_filePicker, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    fgSizer11->Add(m_filePicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_radioBoxEOLPolicyArr;
     m_radioBoxEOLPolicyArr.Add(_("Do not change EOL, apply patch as it is"));
     m_radioBoxEOLPolicyArr.Add(_("Change to Windows style (CRLF)"));
     m_radioBoxEOLPolicyArr.Add(_("Change to UNIX style (LF)"));
-    m_radioBoxEOLPolicy = new wxRadioBox(this, wxID_ANY, _("Change patch line endings (EOL):"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_radioBoxEOLPolicyArr, 1, wxRA_SPECIFY_COLS);
+    m_radioBoxEOLPolicy =
+        new wxRadioBox(this, wxID_ANY, _("Change patch line endings (EOL):"), wxDefaultPosition,
+                       wxDLG_UNIT(this, wxSize(-1, -1)), m_radioBoxEOLPolicyArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxEOLPolicy->SetSelection(0);
-    
-    fgSizer11->Add(m_radioBoxEOLPolicy, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    fgSizer11->Add(m_radioBoxEOLPolicy, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer33 = new wxStdDialogButtonSizer();
-    
-    bSizer31->Add(m_stdBtnSizer33, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer31->Add(m_stdBtnSizer33, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button35 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer33->AddButton(m_button35);
-    
+
     m_button37 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button37->SetDefault();
     m_stdBtnSizer33->AddButton(m_button37);
     m_stdBtnSizer33->Realize();
-    
+
     SetName(wxT("PatchDlgBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1209,64 +1314,65 @@ PatchDlgBase::PatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
 #endif
 }
 
-PatchDlgBase::~PatchDlgBase()
-{
-}
+PatchDlgBase::~PatchDlgBase() {}
 
-SvnSelectLocalRepoBase::SvnSelectLocalRepoBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnSelectLocalRepoBase::SvnSelectLocalRepoBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                               const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer33 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer33);
-    
+
     wxFlexGridSizer* fgSizer13 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer13->SetFlexibleDirection( wxBOTH );
-    fgSizer13->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer13->SetFlexibleDirection(wxBOTH);
+    fgSizer13->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer13->AddGrowableCol(1);
-    
-    bSizer33->Add(fgSizer13, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
-    m_staticText37 = new wxStaticText(this, wxID_ANY, _("Select path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer13->Add(m_staticText37, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_dirPicker1 = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxDIRP_DEFAULT_STYLE);
-    
-    fgSizer13->Add(m_dirPicker1, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticText36 = new wxStaticText(this, wxID_ANY, _("Recently used paths:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
+    bSizer33->Add(fgSizer13, 0, wxEXPAND | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_staticText37 =
+        new wxStaticText(this, wxID_ANY, _("Select path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer13->Add(m_staticText37, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_dirPicker1 = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition,
+                                       wxDLG_UNIT(this, wxSize(-1, -1)), wxDIRP_DEFAULT_STYLE);
+
+    fgSizer13->Add(m_dirPicker1, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText36 = new wxStaticText(this, wxID_ANY, _("Recently used paths:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
     bSizer33->Add(m_staticText36, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     wxArrayString m_listBoxPathsArr;
-    m_listBoxPaths = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_listBoxPathsArr, wxLB_EXTENDED);
-    
-    bSizer33->Add(m_listBoxPaths, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+    m_listBoxPaths = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                   m_listBoxPathsArr, wxLB_EXTENDED);
+
+    bSizer33->Add(m_listBoxPaths, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer39 = new wxStdDialogButtonSizer();
-    
-    bSizer33->Add(m_stdBtnSizer39, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer33->Add(m_stdBtnSizer39, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button41 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer39->AddButton(m_button41);
-    
+
     m_button43 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button43->SetDefault();
     m_stdBtnSizer39->AddButton(m_button43);
     m_stdBtnSizer39->Realize();
-    
+
     SetName(wxT("SvnSelectLocalRepoBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1280,73 +1386,76 @@ SvnSelectLocalRepoBase::SvnSelectLocalRepoBase(wxWindow* parent, wxWindowID id, 
     }
 #endif
     // Connect events
-    m_listBoxPaths->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathSelected), NULL, this);
-    m_listBoxPaths->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathActivated), NULL, this);
+    m_listBoxPaths->Connect(wxEVT_COMMAND_LISTBOX_SELECTED,
+                            wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathSelected), NULL, this);
+    m_listBoxPaths->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,
+                            wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathActivated), NULL, this);
     m_listBoxPaths->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(SvnSelectLocalRepoBase::OnMenu), NULL, this);
-    
 }
 
 SvnSelectLocalRepoBase::~SvnSelectLocalRepoBase()
 {
-    m_listBoxPaths->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathSelected), NULL, this);
-    m_listBoxPaths->Disconnect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathActivated), NULL, this);
+    m_listBoxPaths->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED,
+                               wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathSelected), NULL, this);
+    m_listBoxPaths->Disconnect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,
+                               wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathActivated), NULL, this);
     m_listBoxPaths->Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(SvnSelectLocalRepoBase::OnMenu), NULL, this);
-    
 }
 
-SvnBlameFrameBase::SvnBlameFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnBlameFrameBase::SvnBlameFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                     const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer9 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer9);
-    
-    m_panel11 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    
+
+    m_panel11 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
     boxSizer9->Add(m_panel11, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
+
     wxBoxSizer* boxSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel11->SetSizer(boxSizer13);
-    
-    m_stc = new SvnBlameEditor(m_panel11, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1,-1)), 0);
+
+    m_stc = new SvnBlameEditor(m_panel11, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
     // Configure the fold margin
-    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_stc->SetMarginSensitive(4, true);
-    m_stc->SetMarginWidth    (4, 16);
-    
-    m_stc->SetProperty(wxT("fold"),wxT("1"));
-    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN,    wxSTC_MARK_ARROWDOWN);
-    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDER,        wxSTC_MARK_ARROW);
-    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB,     wxSTC_MARK_BACKGROUND);
-    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL,    wxSTC_MARK_BACKGROUND);
-    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDEREND,     wxSTC_MARK_ARROW);
+    m_stc->SetMarginWidth(4, 16);
+
+    m_stc->SetProperty(wxT("fold"), wxT("1"));
+    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN);
+    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW);
+    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);
+    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
+    m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW);
     m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
     m_stc->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
     // Configure the tracker margin
     m_stc->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_stc->SetMarginWidth(2, 0);
     m_stc->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
-    int m_stc_PixelWidth = 4 + 5 *m_stc->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
+    int m_stc_PixelWidth = 4 + 5 * m_stc->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
     m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stc->SetMarginWidth(0,m_stc_PixelWidth);
-    
+    m_stc->SetMarginWidth(0, m_stc_PixelWidth);
+
     // Configure the line symbol margin
     m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stc->SetMarginMask(3, 0);
-    m_stc->SetMarginWidth(3,0);
+    m_stc->SetMarginWidth(3, 0);
     // Select the lexer
     m_stc->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -1358,14 +1467,12 @@ SvnBlameFrameBase::SvnBlameFrameBase(wxWindow* parent, wxWindowID id, const wxSt
     m_stc->SetKeyWords(2, wxT(""));
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
-    
-    boxSizer13->Add(m_stc, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer13->Add(m_stc, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("SvnBlameFrameBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1380,28 +1487,26 @@ SvnBlameFrameBase::SvnBlameFrameBase(wxWindow* parent, wxWindowID id, const wxSt
 #endif
 }
 
-SvnBlameFrameBase::~SvnBlameFrameBase()
-{
-}
+SvnBlameFrameBase::~SvnBlameFrameBase() {}
 
 SubversionImages::SubversionImages()
     : wxImageList(16, 16, true)
     , m_imagesWidth(16)
     , m_imagesHeight(16)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSvn"));
         if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -1413,82 +1518,82 @@ SubversionImages::SubversionImages()
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSvn@2x"));
         if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
             m_bitmaps.insert(std::make_pair(wxT("m_bmpSvn@2x"), bmp));
         }
     }
-    
 }
 
-SubversionImages::~SubversionImages()
-{
-}
+SubversionImages::~SubversionImages() {}
 
-SvnShowRecentChangesBaseDlg::SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SvnShowRecentChangesBaseDlg::SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                         const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC95F2InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer60 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer60);
-    
+
     wxBoxSizer* boxSizer66 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer60->Add(boxSizer66, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer60->Add(boxSizer66, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_listBoxRevisionsArr;
-    m_listBoxRevisions = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(100,-1)), m_listBoxRevisionsArr, wxLB_SINGLE);
-    
-    boxSizer66->Add(m_listBoxRevisions, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+    m_listBoxRevisions = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(100, -1)),
+                                       m_listBoxRevisionsArr, wxLB_SINGLE);
+
+    boxSizer66->Add(m_listBoxRevisions, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer70 = new wxBoxSizer(wxVERTICAL);
-    
+
     boxSizer66->Add(boxSizer70, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticTextDesc = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    
-    boxSizer70->Add(m_staticTextDesc, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_stcDiff = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+
+    m_staticTextDesc =
+        new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer70->Add(m_staticTextDesc, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stcDiff = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     // Configure the fold margin
-    m_stcDiff->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stcDiff->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcDiff->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcDiff->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_stcDiff->SetMarginSensitive(4, true);
-    m_stcDiff->SetMarginWidth    (4, 16);
-    
-    m_stcDiff->SetProperty(wxT("fold"),wxT("1"));
-    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN,    wxSTC_MARK_ARROWDOWN);
-    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDER,        wxSTC_MARK_ARROW);
-    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB,     wxSTC_MARK_BACKGROUND);
-    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL,    wxSTC_MARK_BACKGROUND);
-    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDEREND,     wxSTC_MARK_ARROW);
+    m_stcDiff->SetMarginWidth(4, 16);
+
+    m_stcDiff->SetProperty(wxT("fold"), wxT("1"));
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
+    m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW);
     m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
     m_stcDiff->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
     // Configure the tracker margin
     m_stcDiff->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_stcDiff->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stcDiff->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcDiff->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcDiff->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_stcDiff->SetMarginWidth(2, 0);
     m_stcDiff->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_stcDiff->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcDiff->SetMarginWidth(0,0);
-    
+    m_stcDiff->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_stcDiff->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stcDiff->SetMarginMask(3, 0);
-    m_stcDiff->SetMarginWidth(3,0);
+    m_stcDiff->SetMarginWidth(3, 0);
     // Select the lexer
     m_stcDiff->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -1500,33 +1605,33 @@ SvnShowRecentChangesBaseDlg::SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWin
     m_stcDiff->SetKeyWords(2, wxT(""));
     m_stcDiff->SetKeyWords(3, wxT(""));
     m_stcDiff->SetKeyWords(4, wxT(""));
-    
-    boxSizer70->Add(m_stcDiff, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_stcComment = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+
+    boxSizer70->Add(m_stcDiff, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stcComment = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     // Configure the fold margin
-    m_stcComment->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stcComment->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcComment->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcComment->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_stcComment->SetMarginSensitive(4, true);
-    m_stcComment->SetMarginWidth    (4, 0);
-    
+    m_stcComment->SetMarginWidth(4, 0);
+
     // Configure the tracker margin
     m_stcComment->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_stcComment->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stcComment->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcComment->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcComment->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_stcComment->SetMarginWidth(2, 0);
     m_stcComment->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_stcComment->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcComment->SetMarginWidth(0,0);
-    
+    m_stcComment->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_stcComment->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stcComment->SetMarginMask(3, 0);
-    m_stcComment->SetMarginWidth(3,0);
+    m_stcComment->SetMarginWidth(3, 0);
     // Select the lexer
     m_stcComment->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -1538,23 +1643,21 @@ SvnShowRecentChangesBaseDlg::SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWin
     m_stcComment->SetKeyWords(2, wxT(""));
     m_stcComment->SetKeyWords(3, wxT(""));
     m_stcComment->SetKeyWords(4, wxT(""));
-    
-    boxSizer70->Add(m_stcComment, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer70->Add(m_stcComment, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer62 = new wxStdDialogButtonSizer();
-    
-    boxSizer60->Add(m_stdBtnSizer62, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    boxSizer60->Add(m_stdBtnSizer62, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button64 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button64->SetDefault();
     m_stdBtnSizer62->AddButton(m_button64);
     m_stdBtnSizer62->Realize();
-    
+
     SetName(wxT("SvnShowRecentChangesBaseDlg"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1568,12 +1671,12 @@ SvnShowRecentChangesBaseDlg::SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWin
     }
 #endif
     // Connect events
-    m_listBoxRevisions->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnShowRecentChangesBaseDlg::OnRevisionSelected), NULL, this);
-    
+    m_listBoxRevisions->Connect(wxEVT_COMMAND_LISTBOX_SELECTED,
+                                wxCommandEventHandler(SvnShowRecentChangesBaseDlg::OnRevisionSelected), NULL, this);
 }
 
 SvnShowRecentChangesBaseDlg::~SvnShowRecentChangesBaseDlg()
 {
-    m_listBoxRevisions->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnShowRecentChangesBaseDlg::OnRevisionSelected), NULL, this);
-    
+    m_listBoxRevisions->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED,
+                                   wxCommandEventHandler(SvnShowRecentChangesBaseDlg::OnRevisionSelected), NULL, this);
 }

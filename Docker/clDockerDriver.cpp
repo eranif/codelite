@@ -37,7 +37,7 @@ void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDocke
 {
     if(IsRunning()) return;
     clDockerfile info;
-    if(!settings.GetFileInfo(dockerfile, info) || info.GetRunOptions().IsEmpty()) {
+    if(!settings.GetFileInfo(dockerfile, info) || info.GetBuildOptions().IsEmpty()) {
         wxMessageBox(wxString() << _("Don't know how to build '") << dockerfile.GetFullPath() << "'\n"
                                 << _("Please set the 'Build' options for this file"),
                      "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);

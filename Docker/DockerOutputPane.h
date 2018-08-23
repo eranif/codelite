@@ -3,12 +3,14 @@
 
 #include "UI.h"
 #include "clDockerContainer.h"
+#include "clDockerImage.h"
 #include "clGenericSTCStyler.h"
 
 class DockerOutputPane : public DockerOutputPaneBase
 {
     clGenericSTCStyler::Ptr_t m_styler;
     clDockerContainer::Vect_t m_containers;
+    clDockerImage::Vect_t m_images;
 
 protected:
     void OnKillContainer(wxCommandEvent& event);
@@ -16,6 +18,10 @@ protected:
     void OnKillAllContainers(wxCommandEvent& event);
     void OnKillAllContainersUI(wxUpdateUIEvent& event);
     void OnRefreshContainersView(wxCommandEvent& event);
+    void OnRefreshImagesView(wxCommandEvent& event);
+    void OnClearUnusedImages(wxCommandEvent& event);
+    void OnClearUnusedImagesUI(wxUpdateUIEvent& event);
+    void OnClearUnusedImagesMenu(wxCommandEvent& event);
 
 public:
     DockerOutputPane(wxWindow* parent);
@@ -26,5 +32,6 @@ public:
     void AddOutputTextWithEOL(const wxString& msg);
     void AddOutputTextRaw(const wxString& msg);
     void SetContainers(const clDockerContainer::Vect_t& containers);
+    void SetImages(const clDockerImage::Vect_t& images);
 };
 #endif // DOCKEROUTPUTPANE_H

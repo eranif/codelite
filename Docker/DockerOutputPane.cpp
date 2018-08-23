@@ -7,6 +7,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
+#include "clDockerSettings.h"
 
 DockerOutputPane::DockerOutputPane(wxWindow* parent)
     : DockerOutputPaneBase(parent)
@@ -47,22 +48,40 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent)
                     wxID_CLEAR);
     m_toolbar->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Enable(!m_stc->IsEmpty()); }, wxID_CLEAR);
 
-    m_toolbarContainers->AddTool(wxID_CLEAR, _("Kill Container"),
-                                 clGetManager()->GetStdIcons()->LoadBitmap("execute_stop"));
+    m_toolbarContainers->AddTool(wxID_CLEAR, _("Kill Container"), clGetManager()->GetStdIcons()->LoadBitmap("minus"));
     m_toolbarContainers->AddTool(wxID_CLOSE_ALL, _("Kill All"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
     m_toolbarContainers->AddSeparator();
     m_toolbarContainers->AddTool(wxID_REFRESH, _("Refresh"),
                                  clGetManager()->GetStdIcons()->LoadBitmap("debugger_restart"));
 
     m_toolbarContainers->Realize();
+
+    m_toolbarImages->AddTool(XRCID("refresh_images"), _("Refresh"),
+                             clGetManager()->GetStdIcons()->LoadBitmap("debugger_restart"));
+    m_toolbarImages->AddTool(XRCID("remove_unused_images"), _("Remove unused images"),
+                             clGetManager()->GetStdIcons()->LoadBitmap("clean"), "", wxITEM_DROPDOWN);
+    m_toolbarImages->Realize();
+
+    m_toolbarImages->Bind(wxEVT_TOOL, &DockerOutputPane::OnRefreshImagesView, this, XRCID("refresh_images"));
+    m_toolbarImages->Bind(wxEVT_TOOL, &DockerOutputPane::OnClearUnusedImages, this, XRCID("remove_unused_images"));
+    m_toolbarImages->Bind(wxEVT_UPDATE_UI, &DockerOutputPane::OnClearUnusedImagesUI, this,
+                          XRCID("remove_unused_images"));
+
+    m_toolbarImages->Bind(wxEVT_TOOL_DROPDOWN, &DockerOutputPane::OnClearUnusedImagesMenu, this,
+                          XRCID("remove_unused_images"));
+
     m_toolbarContainers->Bind(wxEVT_TOOL, &DockerOutputPane::OnKillContainer, this, wxID_CLEAR);
     m_toolbarContainers->Bind(wxEVT_UPDATE_UI, &DockerOutputPane::OnKillContainerUI, this, wxID_CLEAR);
     m_toolbarContainers->Bind(wxEVT_TOOL, &DockerOutputPane::OnKillAllContainers, this, wxID_CLOSE_ALL);
     m_toolbarContainers->Bind(wxEVT_UPDATE_UI, &DockerOutputPane::OnKillAllContainersUI, this, wxID_CLOSE_ALL);
     m_toolbarContainers->Bind(wxEVT_TOOL, &DockerOutputPane::OnRefreshContainersView, this, wxID_REFRESH);
     m_notebook->Bind(wxEVT_BOOK_PAGE_CHANGED, [&](wxBookCtrlEvent& event) {
-        if(m_notebook->GetPageText(m_notebook->GetSelection()) == _("Containers")) {
-            clCommandEvent evt(wxEVT_DOCKER_REFRESH_CONTAINERS_VIEW);
+        wxString selectedPage = m_notebook->GetPageText(m_notebook->GetSelection());
+        if(selectedPage == _("Containers")) {
+            clCommandEvent evt(wxEVT_DOCKER_LIST_CONTAINERS);
+            EventNotifier::Get()->AddPendingEvent(evt);
+        } else if(selectedPage == _("Images")) {
+            clCommandEvent evt(wxEVT_DOCKER_LIST_IMAGES);
             EventNotifier::Get()->AddPendingEvent(evt);
         }
     });
@@ -80,7 +99,9 @@ void DockerOutputPane::Clear()
 void DockerOutputPane::AddOutputTextWithEOL(const wxString& msg)
 {
     wxString message = msg;
-    if(!message.EndsWith("\n")) { message << "\n"; }
+    if(!message.EndsWith("\n")) {
+        message << "\n";
+    }
     AddOutputTextRaw(message);
 }
 
@@ -136,7 +157,7 @@ void DockerOutputPane::OnKillAllContainersUI(wxUpdateUIEvent& event)
 
 void DockerOutputPane::OnRefreshContainersView(wxCommandEvent& event)
 {
-    clCommandEvent evt(wxEVT_DOCKER_REFRESH_CONTAINERS_VIEW);
+    clCommandEvent evt(wxEVT_DOCKER_LIST_CONTAINERS);
     EventNotifier::Get()->AddPendingEvent(evt);
 }
 
@@ -165,4 +186,58 @@ void DockerOutputPane::SetContainers(const clDockerContainer::Vect_t& containers
     m_dvListCtrlContainers->GetColumn(6)->SetWidth(-2);
 }
 
+void DockerOutputPane::SetImages(const clDockerImage::Vect_t& images)
+{
+    m_images = images;
+    m_dvListCtrlImages->DeleteAllItems();
+    for(size_t i = 0; i < m_images.size(); ++i) {
+        clDockerImage& image = m_images[i];
+        wxVector<wxVariant> cols;
+        cols.push_back(image.GetId());
+        cols.push_back(image.GetRepository());
+        cols.push_back(image.GetTag());
+        cols.push_back(image.GetCreated());
+        cols.push_back(image.GetSize());
+        m_dvListCtrlImages->AppendItem(cols, (wxUIntPtr)&image);
+    }
+    m_dvListCtrlImages->GetColumn(0)->SetWidth(-2);
+    m_dvListCtrlImages->GetColumn(1)->SetWidth(-2);
+    m_dvListCtrlImages->GetColumn(2)->SetWidth(-2);
+    m_dvListCtrlImages->GetColumn(3)->SetWidth(-2);
+    m_dvListCtrlImages->GetColumn(4)->SetWidth(-2);
+}
+
 void DockerOutputPane::SelectTab(const wxString& label) { m_notebook->SetSelection(m_notebook->GetPageIndex(label)); }
+
+void DockerOutputPane::OnRefreshImagesView(wxCommandEvent& event)
+{
+    clCommandEvent evt(wxEVT_DOCKER_LIST_IMAGES);
+    EventNotifier::Get()->AddPendingEvent(evt);
+}
+
+void DockerOutputPane::OnClearUnusedImages(wxCommandEvent& event)
+{
+    clCommandEvent evt(wxEVT_DOCKER_CLEAR_UNUSED_IMAGES);
+    EventNotifier::Get()->AddPendingEvent(evt);
+}
+
+void DockerOutputPane::OnClearUnusedImagesUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dvListCtrlImages->GetItemCount());
+}
+
+void DockerOutputPane::OnClearUnusedImagesMenu(wxCommandEvent& event)
+{
+    wxMenu menu;
+    menu.Append(XRCID("remove_all_images"), _("Remove all unused images, not just dangling ones"), "", wxITEM_CHECK);
+    clDockerSettings s;
+    s.Load();
+    menu.Check(XRCID("remove_all_images"), s.IsRemoveAllImages());
+    menu.Bind(wxEVT_MENU,
+              [&](wxCommandEvent& e) {
+                  s.SetRemoveAllImages(e.IsChecked());
+                  s.Save();
+              },
+              XRCID("remove_all_images"));
+    m_toolbarImages->ShowMenuForButton(event.GetId(), &menu);
+}

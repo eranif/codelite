@@ -78,32 +78,32 @@ static wxString GTKGetTerminal(const wxString& command, TerminalCookie& cookie)
     if(Terminals.empty()) {
         // Try to locate gnome-terminal
         if(wxFileName::FileExists("/usr/bin/lxterminal")) {
-            wxString cmd = "lxterminal";
-            wxString titlePattern = "-e \"$COMMAND\"";
+            wxString cmd = "/usr/bin/lxterminal";
+            wxString titlePattern = " -l -e '$COMMAND'";
             Terminals.push_back({ cmd, titlePattern });
         }
 
         if(wxFileName::FileExists("/usr/bin/konsole")) {
-            wxString cmd = "konsole -p font=\"Monospace,12\"";
+            wxString cmd = "/usr/bin/konsole -p font=\"Monospace,12\"";
             wxString titlePattern = "-e $COMMAND";
             Terminals.push_back({ cmd, titlePattern });
         }
 
         if(wxFileName::FileExists("/usr/bin/gnome-terminal")) {
             wxString cmd = "/usr/bin/gnome-terminal";
-            wxString titlePattern = "-e \"$COMMAND\"";
+            wxString titlePattern = "-e '$COMMAND'";
             Terminals.push_back({ cmd, titlePattern });
         }
 
         if(wxFileName::FileExists("/usr/bin/xterm")) {
-            wxString cmd = "xterm";
-            wxString titlePattern = "-e \"$COMMAND\"";
+            wxString cmd = "/usr/bin/xterm";
+            wxString titlePattern = "-e '$COMMAND'";
             Terminals.push_back({ cmd, titlePattern });
         }
 
         if(wxFileName::FileExists("/usr/bin/uxterm")) {
-            wxString cmd = "uxterm";
-            wxString titlePattern = "-e \"$COMMAND\"";
+            wxString cmd = "/usr/bin/uxterm";
+            wxString titlePattern = "-e '$COMMAND'";
             Terminals.push_back({ cmd, titlePattern });
         }
     }
@@ -148,7 +148,7 @@ static void GTKOpenTerminal(const wxString& command, const wxString& path)
 
 #endif
 
-void FileUtils::OpenTerminal(const wxString& path)
+void FileUtils::OpenTerminal(const wxString& path, const wxString& user_command)
 {
     wxString strPath = path;
     if(strPath.Contains(" ")) { strPath.Prepend("\"").Append("\""); }
@@ -158,17 +158,29 @@ void FileUtils::OpenTerminal(const wxString& path)
     cmd << "cmd";
     DirSaver ds;
     ::wxSetWorkingDirectory(path);
-
+    if(!user_command.IsEmpty()) {
+        cmd << " /C ";
+        if(user_command.StartsWith("\"") && !user_command.EndsWith("\"")) {
+            cmd << "\"" << user_command << "\"";
+        } else {
+            cmd << user_command;
+        }
+    }
+    
 #elif defined(__WXGTK__)
-    GTKOpenTerminal("", path);
+    GTKOpenTerminal(user_command, path);
     return;
 
 #elif defined(__WXMAC__)
     strPath = path;
     if(strPath.Contains(" ")) { strPath.Prepend("\\\"").Append("\\\""); }
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
-    cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath << "\"'";
-    CL_DEBUG(cmd);
+    cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath;
+    if(!user_command.IsEmpty()) {
+        cmd << " && " << user_command;
+    }
+    cmd << "\"'";
+    clDEBUG() << cmd;
     ::system(cmd.mb_str(wxConvUTF8).data());
     return;
 #endif

@@ -781,16 +781,11 @@ void WrapInShell(wxString& cmd)
     wxChar* shell = wxGetenv(wxT("COMSPEC"));
     if(!shell) shell = (wxChar*)wxT("CMD.EXE");
     command << shell << wxT(" /C ");
-#if 0
-    command << "\"" << cmd << "\"";
-#else
     if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
         command << "\"" << cmd << "\"";
     } else {
         command << cmd;
     }
-#endif
-
     cmd = command;
 #else
     command << wxT("/bin/sh -c '");

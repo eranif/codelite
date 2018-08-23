@@ -70,7 +70,9 @@ NewDockerWorkspaceDlgBase::NewDockerWorkspaceDlgBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("NewDockerWorkspaceDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -150,7 +152,9 @@ DockerSettingsBaseDlg::DockerSettingsBaseDlg(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("DockerSettingsBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -235,7 +239,9 @@ DockerfileSettingsDlgBase::DockerfileSettingsDlgBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("DockerfileSettingsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -280,7 +286,7 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
 
     m_outputPage =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_outputPage, _("Output"), false);
+    m_notebook->AddPage(m_outputPage, _("Output"), true);
 
     wxBoxSizer* boxSizer76 = new wxBoxSizer(wxVERTICAL);
     m_outputPage->SetSizer(boxSizer76);
@@ -363,10 +369,40 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
                                              wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlContainers->AppendTextColumn(_("Names"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                              wxDATAVIEW_COL_RESIZABLE);
+    m_imagesPage =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_imagesPage, _("Images"), false);
+
+    wxBoxSizer* boxSizer90 = new wxBoxSizer(wxVERTICAL);
+    m_imagesPage->SetSizer(boxSizer90);
+
+    m_toolbarImages =
+        new clToolBar(m_imagesPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_imagesPage, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbarImages->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer90->Add(m_toolbarImages, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlImages = new wxDataViewListCtrl(m_imagesPage, wxID_ANY, wxDefaultPosition,
+                                                wxDLG_UNIT(m_imagesPage, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer90->Add(m_dvListCtrlImages, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlImages->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlImages->AppendTextColumn(_("Repository"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlImages->AppendTextColumn(_("Tag"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlImages->AppendTextColumn(_("CreatedAt"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlImages->AppendTextColumn(_("Size"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
 
     SetName(wxT("DockerOutputPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
 }
 
 DockerOutputPaneBase::~DockerOutputPaneBase() {}

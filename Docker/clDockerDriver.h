@@ -17,6 +17,8 @@ protected:
         kRun,
         kListContainers,
         kKillContainers,
+        kListImages,
+        kDeleteUnusedImages,
     };
 
 protected:
@@ -29,13 +31,17 @@ protected:
     void OnBuildOutput(clProcessEvent& event);
     void OnBuildTerminated(clProcessEvent& event);
     void OnListContainers(clCommandEvent& event);
+    void OnListImages(clCommandEvent& event);
     void OnKillContainers(clCommandEvent& event);
+    void OnClearUnusedImages(clCommandEvent& event);
 
 protected:
     void StartProcess(const wxString& command, const wxString& wd, size_t flags, clDockerDriver::eContext context);
     wxString GetDockerExe() const;
     void ProcessListContainersCommand();
+    void ProcessListImagesCommand();
     void DoListContainers();
+    void DoListImages();
 
 public:
     clDockerDriver(Docker* plugin);
@@ -44,7 +50,7 @@ public:
     void ExecuteDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);
 
     bool IsRunning() const { return m_process != nullptr; }
-    void StopBuild();
+    void Stop();
 };
 
 #endif // CLDOCKERBUILDER_H

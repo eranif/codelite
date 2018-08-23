@@ -129,6 +129,9 @@ protected:
     wxPanel* m_containersPage;
     clToolBar* m_toolbarContainers;
     wxDataViewListCtrl* m_dvListCtrlContainers;
+    wxPanel* m_imagesPage;
+    clToolBar* m_toolbarImages;
+    wxDataViewListCtrl* m_dvListCtrlImages;
 
 protected:
 public:
@@ -138,6 +141,9 @@ public:
     clToolBar* GetToolbarContainers() { return m_toolbarContainers; }
     wxDataViewListCtrl* GetDvListCtrlContainers() { return m_dvListCtrlContainers; }
     wxPanel* GetContainersPage() { return m_containersPage; }
+    clToolBar* GetToolbarImages() { return m_toolbarImages; }
+    wxDataViewListCtrl* GetDvListCtrlImages() { return m_dvListCtrlImages; }
+    wxPanel* GetImagesPage() { return m_imagesPage; }
     Notebook* GetNotebook() { return m_notebook; }
     DockerOutputPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);

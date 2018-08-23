@@ -20,7 +20,7 @@
 
 clDockerWorkspace::clDockerWorkspace(bool bindEvents, Docker* plugin)
     : m_bindEvents(bindEvents)
-    , m_builder(plugin)
+    , m_driver(plugin)
     , m_plugin(plugin)
 {
     SetWorkspaceType("Docker");
@@ -32,6 +32,8 @@ clDockerWorkspace::clDockerWorkspace(bool bindEvents, Docker* plugin)
         EventNotifier::Get()->Bind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clDockerWorkspace::OnIsBuildInProgress, this);
         EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &clDockerWorkspace::OnBuildStarting, this);
         EventNotifier::Get()->Bind(wxEVT_STOP_BUILD, &clDockerWorkspace::OnStopBuild, this);
+        EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clDockerWorkspace::OnRun, this);
+        EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &clDockerWorkspace::OnStop, this);
         m_view = new clDockerWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook());
         clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
     }
@@ -47,6 +49,8 @@ clDockerWorkspace::~clDockerWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clDockerWorkspace::OnIsBuildInProgress, this);
         EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &clDockerWorkspace::OnBuildStarting, this);
         EventNotifier::Get()->Unbind(wxEVT_STOP_BUILD, &clDockerWorkspace::OnStopBuild, this);
+        EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clDockerWorkspace::OnRun, this);
+        EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &clDockerWorkspace::OnStop, this);
     }
 }
 
@@ -246,7 +250,7 @@ void clDockerWorkspace::OnSaveSession(clCommandEvent& event)
 void clDockerWorkspace::OnIsBuildInProgress(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    event.SetIsRunning(m_builder.IsRunning());
+    event.SetIsRunning(m_driver.IsRunning());
 }
 
 void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
@@ -256,7 +260,7 @@ void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
     CHECK_PTR_RET(editor);
     if(editor->GetFileName().GetFullName() == "Dockerfile") {
         if(event.GetKind() == "build") {
-            m_builder.BuildDockerfile(editor->GetFileName(), m_settings);
+            m_driver.BuildDockerfile(editor->GetFileName(), m_settings);
         } else {
             // clean
         }
@@ -266,7 +270,25 @@ void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
 void clDockerWorkspace::OnStopBuild(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_builder.IsRunning()) {
-        m_builder.StopBuild();
+    if(m_driver.IsRunning()) {
+        m_driver.Stop();
+    }
+}
+
+void clDockerWorkspace::OnRun(clExecuteEvent& event)
+{
+    CHECK_EVENT(event);
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    if(editor->GetFileName().GetFullName() == "Dockerfile") {
+        m_driver.ExecuteDockerfile(editor->GetFileName(), m_settings);
+    }
+}
+
+void clDockerWorkspace::OnStop(clExecuteEvent& event)
+{
+    CHECK_EVENT(event);
+    if(m_driver.IsRunning()) {
+        m_driver.Stop();
     }
 }

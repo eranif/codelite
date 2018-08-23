@@ -15,7 +15,7 @@ class clDockerWorkspace : public IWorkspace
     bool m_isOpen = false;
     bool m_clangOldFlag = false;
     clDockerWorkspaceView* m_view = nullptr;
-    clDockerDriver m_builder;
+    clDockerDriver m_driver;
     Docker* m_plugin = nullptr;
 
 public:
@@ -46,7 +46,11 @@ protected:
     void OnIsBuildInProgress(clBuildEvent& event);
     void OnBuildStarting(clBuildEvent& event);
     void OnStopBuild(clBuildEvent& event);
-
+    
+    // Run events
+    void OnRun(clExecuteEvent& event);
+    void OnStop(clExecuteEvent& event);
+    
     //===-----
     //===-----
     void RestoreSession();

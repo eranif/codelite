@@ -13,6 +13,7 @@ class clDockerSettings : public clConfigItem
 public:
     enum {
         kLinkEditor = (1 << 0),
+        kRemoveAllImages = (1 << 1),
     };
 
     void EnableFlag(int flag, bool b)
@@ -20,7 +21,7 @@ public:
         if(b) {
             m_flags |= flag;
         } else {
-            m_flags &= flag;
+            m_flags &= ~flag;
         }
     }
 
@@ -42,5 +43,7 @@ public:
     const wxFileName& GetDockerCompose() const { return m_dockerCompose; }
     void SetLinkEditor(bool b) { EnableFlag(kLinkEditor, b); }
     bool IsLinkEditor() const { return HasFlag(kLinkEditor); }
+    bool IsRemoveAllImages() const { return HasFlag(kRemoveAllImages); }
+    void SetRemoveAllImages(bool b) { EnableFlag(kRemoveAllImages, b); }
 };
 #endif // CLDOCKERSETTINGS_H

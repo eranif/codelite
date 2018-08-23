@@ -26,6 +26,8 @@
     <File Name="NewDockerWorkspaceDlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="clDockerImage.cpp"/>
+    <File Name="clDockerImage.h"/>
     <File Name="clDockerContainer.cpp"/>
     <File Name="clDockerContainer.h"/>
     <File Name="clDockerEvents.cpp"/>

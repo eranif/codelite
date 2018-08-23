@@ -31,6 +31,12 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent)
         words.Add("Error response from daemon");
         m_styler->AddStyle(words, clGenericSTCStyler::kError);
     }
+    {
+        wxArrayString words;
+        words.Add("SECURITY WARNING");
+        m_styler->AddStyle(words, clGenericSTCStyler::kWarning);
+    }
+
     m_toolbar->AddTool(wxID_CLEAR, _("Clear"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL,

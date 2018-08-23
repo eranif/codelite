@@ -110,9 +110,15 @@ void clDockerDriver::OnKillContainers(clCommandEvent& event)
     wxString command = GetDockerExe();
     if(command.IsEmpty()) return;
 
-    command << " rm --force ";
-
     const wxArrayString& ids = event.GetStrings();
+
+    wxString message;
+    message << _("Choosing 'Yes' will remove ") << ids.size() << _(" container(s)\nContinue?");
+    if(::wxMessageBox(message, "CodeLite", wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
+                      EventNotifier::Get()->TopFrame()) != wxYES) {
+        return;
+    }
+    command << " rm --force ";
     for(size_t i = 0; i < ids.size(); ++i) {
         command << " " << ids[i];
     }
@@ -135,8 +141,8 @@ wxString clDockerDriver::GetDockerExe() const
 
     const wxFileName& dockerCommand = dockerSettings.GetDocker();
     if(!dockerCommand.FileExists()) {
-        ::wxMessageBox(_("Can't find docker executable\nPlease install docker and let me know where it is"), "CodeLite",
-                       wxICON_WARNING | wxOK | wxOK_DEFAULT);
+        clGetManager()->SetStatusMessage(
+            _("Can't find docker executable\nPlease install docker and let me know where it is"), 3);
         return "";
     }
     wxString exepath = dockerCommand.GetFullPath();

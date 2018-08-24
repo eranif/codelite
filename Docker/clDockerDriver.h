@@ -35,9 +35,11 @@ protected:
     void OnKillContainers(clCommandEvent& event);
     void OnClearUnusedImages(clCommandEvent& event);
     void OnAttachTerminal(clCommandEvent& event);
+    void OnContainerCommand(clCommandEvent& event);
 
 protected:
-    void StartProcess(const wxString& command, const wxString& wd, size_t flags, clDockerDriver::eContext context);
+    void StartProcessAsync(const wxString& command, const wxString& wd, size_t flags, clDockerDriver::eContext context);
+    wxString StartProcessSync(const wxString& command, const wxString& wd, size_t flags);
     wxString GetDockerExe() const;
     void ProcessListContainersCommand();
     void ProcessListImagesCommand();

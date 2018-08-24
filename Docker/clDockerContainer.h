@@ -1,12 +1,17 @@
 #ifndef CLDOCKERCONTAINER_H
 #define CLDOCKERCONTAINER_H
 
+#include "wxStringHash.h"
 #include <vector>
 #include <wx/clntdata.h>
 #include <wx/string.h>
 
 class clDockerContainer : public wxClientData
 {
+public:
+    enum { kStateUnknown, kStateRunning, kStatePaused, kStateExited };
+
+protected:
     wxString m_id;
     wxString m_image;
     wxString m_command;
@@ -14,6 +19,7 @@ class clDockerContainer : public wxClientData
     wxString m_status;
     wxString m_ports;
     wxString m_name;
+    int m_state = kStateUnknown;
 
 public:
     clDockerContainer();
@@ -34,8 +40,13 @@ public:
 
     void SetName(const wxString& name) { this->m_name = name; }
     const wxString& GetName() const { return m_name; }
+
+    void SetState(int state) { this->m_state = state; }
+    int GetState() const { return m_state; }
+    
     bool Parse(const wxString& line);
     typedef std::vector<clDockerContainer> Vect_t;
+    typedef std::unordered_map<wxString, clDockerContainer> Map_t;
 };
 
 #endif // CLDOCKERCONTAINER_H

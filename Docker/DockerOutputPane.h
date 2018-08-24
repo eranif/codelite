@@ -24,7 +24,14 @@ protected:
     void OnClearUnusedImages(wxCommandEvent& event);
     void OnClearUnusedImagesUI(wxUpdateUIEvent& event);
     void OnClearUnusedImagesMenu(wxCommandEvent& event);
+    void OnRestartContainer(wxCommandEvent& event);
+    void OnStopContainer(wxCommandEvent& event);
+    void OnPauseContainer(wxCommandEvent& event);
 
+protected:
+    size_t GetSelectedContainers(clDockerContainer::Vect_t& containers);
+    void DoContainerCommand(const wxString& command);
+    
 public:
     DockerOutputPane(wxWindow* parent);
     virtual ~DockerOutputPane();

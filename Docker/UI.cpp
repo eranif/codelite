@@ -70,9 +70,7 @@ NewDockerWorkspaceDlgBase::NewDockerWorkspaceDlgBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("NewDockerWorkspaceDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -152,9 +150,7 @@ DockerSettingsBaseDlg::DockerSettingsBaseDlg(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("DockerSettingsBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -239,9 +235,7 @@ DockerfileSettingsDlgBase::DockerfileSettingsDlgBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("DockerfileSettingsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -382,8 +376,9 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer90->Add(m_toolbarImages, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlImages = new wxDataViewListCtrl(m_imagesPage, wxID_ANY, wxDefaultPosition,
-                                                wxDLG_UNIT(m_imagesPage, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrlImages =
+        new wxDataViewListCtrl(m_imagesPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_imagesPage, wxSize(-1, -1)),
+                               wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
 
     boxSizer90->Add(m_dvListCtrlImages, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -400,9 +395,7 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("DockerOutputPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
 DockerOutputPaneBase::~DockerOutputPaneBase() {}

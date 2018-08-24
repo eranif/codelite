@@ -25,5 +25,12 @@ bool clDockerContainer::Parse(const wxString& line)
     m_status = cells[4];
     m_ports = CHOP_STRING(cells[5]);
     m_name = cells[6];
+    if(m_status.Contains("(Paused)")) {
+        m_state = kStatePaused;
+    } else if(m_status.Contains("Exited")) {
+        m_state = kStateExited;
+    } else if(m_status.StartsWith("Up ")) {
+        m_state = kStateRunning;
+    }
     return true;
 }

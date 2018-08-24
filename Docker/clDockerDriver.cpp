@@ -23,6 +23,7 @@ clDockerDriver::clDockerDriver(Docker* plugin)
     EventNotifier::Get()->Bind(wxEVT_DOCKER_LIST_IMAGES, &clDockerDriver::OnListImages, this);
     EventNotifier::Get()->Bind(wxEVT_DOCKER_CLEAR_UNUSED_IMAGES, &clDockerDriver::OnClearUnusedImages, this);
     EventNotifier::Get()->Bind(wxEVT_DOCKER_ATTACH_TERMINAL, &clDockerDriver::OnAttachTerminal, this);
+    EventNotifier::Get()->Bind(wxEVT_DOCKER_CONTAINER_CMD, &clDockerDriver::OnContainerCommand, this);
 }
 
 clDockerDriver::~clDockerDriver()
@@ -34,6 +35,7 @@ clDockerDriver::~clDockerDriver()
     EventNotifier::Get()->Unbind(wxEVT_DOCKER_LIST_IMAGES, &clDockerDriver::OnListImages, this);
     EventNotifier::Get()->Unbind(wxEVT_DOCKER_CLEAR_UNUSED_IMAGES, &clDockerDriver::OnClearUnusedImages, this);
     EventNotifier::Get()->Unbind(wxEVT_DOCKER_ATTACH_TERMINAL, &clDockerDriver::OnAttachTerminal, this);
+    EventNotifier::Get()->Unbind(wxEVT_DOCKER_CONTAINER_CMD, &clDockerDriver::OnContainerCommand, this);
 }
 
 void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
@@ -61,7 +63,7 @@ void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDocke
     m_plugin->GetTerminal()->Clear();
     m_plugin->GetTerminal()->SelectTab("Output");
     m_plugin->GetTerminal()->AddOutputTextWithEOL(command);
-    StartProcess(command, dockerfile.GetPath(), IProcessCreateDefault, kBuild);
+    StartProcessAsync(command, dockerfile.GetPath(), IProcessCreateDefault, kBuild);
 }
 
 void clDockerDriver::ExecuteDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
@@ -156,11 +158,11 @@ void clDockerDriver::OnKillContainers(clCommandEvent& event)
         command << " " << ids[i];
     }
     ::WrapInShell(command);
-    StartProcess(command, "", IProcessCreateDefault, kKillContainers);
+    StartProcessAsync(command, "", IProcessCreateDefault, kKillContainers);
 }
 
-void clDockerDriver::StartProcess(const wxString& command, const wxString& wd, size_t flags,
-                                  clDockerDriver::eContext context)
+void clDockerDriver::StartProcessAsync(const wxString& command, const wxString& wd, size_t flags,
+                                       clDockerDriver::eContext context)
 {
     m_output.Clear();
     m_context = context;
@@ -185,8 +187,8 @@ wxString clDockerDriver::GetDockerExe() const
 
 void clDockerDriver::ProcessListContainersCommand()
 {
-    wxArrayString lines = ::wxStringTokenize(m_output, "\n", wxTOKEN_STRTOK);
     clDockerContainer::Vect_t L;
+    wxArrayString lines = ::wxStringTokenize(m_output, "\n", wxTOKEN_STRTOK);
     for(size_t i = 0; i < lines.size(); ++i) {
         clDockerContainer container;
         if(container.Parse(lines.Item(i))) { L.push_back(container); }
@@ -216,7 +218,9 @@ void clDockerDriver::DoListContainers()
     command << " ps "
                "--format=\"{{.ID}}|{{.Image}}|{{.Command}}|{{.CreatedAt}}|{{.Status}}|{{.Ports}}|{{.Names}}\" -a";
     ::WrapInShell(command);
-    StartProcess(command, "", IProcessCreateDefault, kListContainers);
+
+    // Get list of all containers
+    StartProcessAsync(command, "", IProcessCreateDefault, kListContainers);
 }
 
 void clDockerDriver::OnListImages(clCommandEvent& event)
@@ -236,7 +240,7 @@ void clDockerDriver::DoListImages()
     command << " image ls "
                "--format=\"{{.ID}}|{{.Repository}}|{{.Tag}}|{{.CreatedAt}}|{{.Size}}\" -a";
     ::WrapInShell(command);
-    StartProcess(command, "", IProcessCreateDefault, kListImages);
+    StartProcessAsync(command, "", IProcessCreateDefault, kListImages);
 }
 
 void clDockerDriver::OnClearUnusedImages(clCommandEvent& event)
@@ -252,7 +256,7 @@ void clDockerDriver::OnClearUnusedImages(clCommandEvent& event)
     s.Load();
     if(s.IsRemoveAllImages()) { command << " --all"; }
     ::WrapInShell(command);
-    StartProcess(command, "", IProcessCreateDefault, kDeleteUnusedImages);
+    StartProcessAsync(command, "", IProcessCreateDefault, kDeleteUnusedImages);
 }
 
 void clDockerDriver::OnAttachTerminal(clCommandEvent& event)
@@ -270,4 +274,27 @@ void clDockerDriver::OnAttachTerminal(clCommandEvent& event)
         command << " exec -i " << names.Item(i) << " /bin/bash -i";
         FileUtils::OpenTerminal(clDockerWorkspace::Get()->GetFileName().GetPath(), command);
     }
+}
+
+wxString clDockerDriver::StartProcessSync(const wxString& command, const wxString& wd, size_t flags)
+{
+    wxString outputString;
+    IProcess::Ptr_t proc(::CreateSyncProcess(command, flags, wd));
+    if(proc) { proc->WaitForTerminate(outputString); }
+    return outputString;
+}
+
+void clDockerDriver::OnContainerCommand(clCommandEvent& event)
+{
+    const wxArrayString& arr = event.GetStrings();
+    if(arr.size() != 2) return;
+    const wxString& containerName = arr.Item(0);
+    const wxString& containerCommand = arr.Item(1);
+
+    wxString command = GetDockerExe();
+    if(command.IsEmpty()) return;
+
+    command << " " << containerCommand << " " << containerName;
+    ::WrapInShell(command);
+    StartProcessSync(command, "", IProcessCreateDefault);
 }

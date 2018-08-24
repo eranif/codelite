@@ -20,7 +20,7 @@ Building CodeLite on Linux
 
 To build CodeLite on your computer you will need these packages:
 
- - wxWidgets 3.0 or later
+ - wxWidgets 3.1 or later
  - The GTK development package: often called libgtk2.0-dev or wxGTK-devel, or similar
  - pkg-config (which usually comes with the GTK dev package)
  - The build-essential package (or the relevant bit of it: G++, Make etc)
@@ -54,7 +54,7 @@ Building CodeLite on macOS
 
 Prerequisites:
 
- - wxWidgets 3.0 or later
+ - wxWidgets 3.1 or later
  - CMake
  - Git
  - Xcode
@@ -111,7 +111,7 @@ Git clone the sources:
     git clone https://github.com/eranif/codelite.git
 
  - Download CodeLite installer for Windows from our [Download Page][8]
- - Download wxWidgets 3.0 installer. Also from our [Download Page][7]
+ - Download wxWidgets 3.1 installer. Also from our [Download Page][7]
  - Open the workspace **LiteEditor.workspace** (located in the CodeLite's folder)
  - Make sure that the project **CodeLiteIDE** is selected (the active project uses **bold** font)
  - Select the **Win_x64_Release** or **Win_x86_Release** (depending if you want to build a 32 or 64 bit version of CodeLite) and hit **F7**

@@ -180,7 +180,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
         m_styler->AddStyle(words, clGenericSTCStyler::kWarning);
     }
     m_styler->ApplyStyles();
-    
+
     GitImages m_images;
     m_images.SetBitmapResolution(clBitmap::ShouldLoadHiResImages() ? "@2x" : "");
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
@@ -379,7 +379,11 @@ void GitConsole::UpdateTreeView(const wxString& output)
             m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
         }
     }
-    m_dvListCtrl->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE); // adjust the width to the text
+
+    m_dvListCtrl->GetColumn(0)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    m_dvListCtrl->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    m_dvListCtrlUnversioned->GetColumn(0)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    m_dvListCtrlUnversioned->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
     m_notebook672->SetPageText(1, wxString()
                                       << _("Unversioned files (") << m_dvListCtrlUnversioned->GetItemCount() << ")");
 }

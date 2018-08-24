@@ -3,6 +3,7 @@
 
 #include "cl_config.h"
 #include <vector>
+#include <algorithm>
 #include <wx/string.h>
 #include <wxStringHash.h>
 

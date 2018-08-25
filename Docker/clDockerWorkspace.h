@@ -46,11 +46,11 @@ protected:
     void OnIsBuildInProgress(clBuildEvent& event);
     void OnBuildStarting(clBuildEvent& event);
     void OnStopBuild(clBuildEvent& event);
-    
+
     // Run events
     void OnRun(clExecuteEvent& event);
     void OnStop(clExecuteEvent& event);
-    
+
     //===-----
     //===-----
     void RestoreSession();
@@ -86,6 +86,9 @@ public:
      * @brief create a workspace
      */
     bool Create(const wxFileName& filename);
+
+    void BuildDockerfile(const wxFileName& dockerfile);
+    void RunDockerfile(const wxFileName& dockerfile);
 };
 
 #endif // CLDOCKERWORKSPACE_H

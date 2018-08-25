@@ -187,39 +187,123 @@ DockerfileSettingsDlgBase::DockerfileSettingsDlgBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer42);
 
-    wxFlexGridSizer* flexGridSizer60 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer60->SetFlexibleDirection(wxBOTH);
-    flexGridSizer60->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer60->AddGrowableCol(1);
+    m_panel114 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 200)), wxTAB_TRAVERSAL);
 
-    boxSizer42->Add(flexGridSizer60, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer42->Add(m_panel114, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText52 =
-        new wxStaticText(this, wxID_ANY, _("Build Options"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    wxBoxSizer* boxSizer116 = new wxBoxSizer(wxVERTICAL);
+    m_panel114->SetSizer(boxSizer116);
 
-    flexGridSizer60->Add(m_staticText52, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    m_notebook96 =
+        new Notebook(m_panel114, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel114, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook96->SetName(wxT("m_notebook96"));
 
-    m_textCtrlBuildOptions =
-        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlBuildOptions->SetHint(wxT(""));
-#endif
+    boxSizer116->Add(m_notebook96, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    flexGridSizer60->Add(m_textCtrlBuildOptions, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    m_panel98 = new wxPanel(m_notebook96, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook96, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
+    m_notebook96->AddPage(m_panel98, _("Build"), true);
 
-    m_staticText56 =
-        new wxStaticText(this, wxID_ANY, _("Run Options:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    wxBoxSizer* boxSizer102 = new wxBoxSizer(wxVERTICAL);
+    m_panel98->SetSizer(boxSizer102);
 
-    flexGridSizer60->Add(m_staticText56, 0, wxALL | wxEXPAND | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
-                         WXC_FROM_DIP(5));
+    m_staticText106 = new wxStaticText(m_panel98, wxID_ANY, _("Build options:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel98, wxSize(-1, -1)), 0);
 
-    m_textCtrlRunOptions =
-        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlRunOptions->SetHint(wxT(""));
-#endif
+    boxSizer102->Add(m_staticText106, 0, wxALL, WXC_FROM_DIP(5));
 
-    flexGridSizer60->Add(m_textCtrlRunOptions, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    m_stcBuild = new wxStyledTextCtrl(m_panel98, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel98, wxSize(-1, -1)), 0);
+    m_stcBuild->SetToolTip(
+        _("Set here the build options to pass to the\n'docker build' command.\nFor example:\n'-t my_container .'"));
+    m_stcBuild->SetFocus();
+    // Configure the fold margin
+    m_stcBuild->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcBuild->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcBuild->SetMarginSensitive(4, true);
+    m_stcBuild->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcBuild->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcBuild->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcBuild->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcBuild->SetMarginWidth(2, 0);
+    m_stcBuild->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcBuild->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcBuild->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcBuild->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcBuild->SetMarginMask(3, 0);
+    m_stcBuild->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcBuild->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcBuild->StyleClearAll();
+    m_stcBuild->SetWrapMode(1);
+    m_stcBuild->SetIndentationGuides(0);
+    m_stcBuild->SetKeyWords(0, wxT(""));
+    m_stcBuild->SetKeyWords(1, wxT(""));
+    m_stcBuild->SetKeyWords(2, wxT(""));
+    m_stcBuild->SetKeyWords(3, wxT(""));
+    m_stcBuild->SetKeyWords(4, wxT(""));
+
+    boxSizer102->Add(m_stcBuild, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel100 = new wxPanel(m_notebook96, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook96, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
+    m_notebook96->AddPage(m_panel100, _("Run"), false);
+
+    wxBoxSizer* boxSizer104 = new wxBoxSizer(wxVERTICAL);
+    m_panel100->SetSizer(boxSizer104);
+
+    m_staticText110 = new wxStaticText(m_panel100, wxID_ANY, _("Run options:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel100, wxSize(-1, -1)), 0);
+
+    boxSizer104->Add(m_staticText110, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_stcRun = new wxStyledTextCtrl(m_panel100, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel100, wxSize(-1, -1)), 0);
+    m_stcRun->SetToolTip(
+        _("Set here the build options to pass to the\n'docker run' command.\nFor example:\n'-i my_container .'"));
+    // Configure the fold margin
+    m_stcRun->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcRun->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcRun->SetMarginSensitive(4, true);
+    m_stcRun->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcRun->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcRun->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcRun->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcRun->SetMarginWidth(2, 0);
+    m_stcRun->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcRun->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcRun->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcRun->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcRun->SetMarginMask(3, 0);
+    m_stcRun->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcRun->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcRun->StyleClearAll();
+    m_stcRun->SetWrapMode(1);
+    m_stcRun->SetIndentationGuides(0);
+    m_stcRun->SetKeyWords(0, wxT(""));
+    m_stcRun->SetKeyWords(1, wxT(""));
+    m_stcRun->SetKeyWords(2, wxT(""));
+    m_stcRun->SetKeyWords(3, wxT(""));
+    m_stcRun->SetKeyWords(4, wxT(""));
+
+    boxSizer104->Add(m_stcRun, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_stdBtnSizer44 = new wxStdDialogButtonSizer();
 
@@ -241,13 +325,6 @@ DockerfileSettingsDlgBase::DockerfileSettingsDlgBase(wxWindow* parent, wxWindowI
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_button46->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DockerfileSettingsDlgBase::OnOK), NULL,
                         this);

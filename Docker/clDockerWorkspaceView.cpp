@@ -62,10 +62,13 @@ void clDockerWorkspaceView::OnFileContextMenu(clContextMenuEvent& event)
 
     if(wxFileName(contextMenuFiles.Item(0)).GetFullName() != "Dockerfile") { return; }
 
+    event.GetMenu()->PrependSeparator();
+    event.GetMenu()->Prepend(XRCID("run_dockerfile"), _("Run..."));
+    event.GetMenu()->Prepend(XRCID("build_dockerfile"), _("Build..."));
     event.GetMenu()->AppendSeparator();
-    event.GetMenu()->Append(XRCID("ID_DOCKERFILE_SETTINGS"), _("Dockerfile Settings..."));
+    event.GetMenu()->Append(XRCID("ID_DOCKERFILE_SETTINGS"), _("Settings..."));
     event.GetMenu()->Bind(wxEVT_MENU,
-                          [&](wxCommandEvent& event) {
+                          [&](wxCommandEvent& evt) {
                               // Context menu requested for a "Dockerfile"
                               clDockerfile info;
                               clDockerWorkspaceSettings& settings = clDockerWorkspace::Get()->GetSettings();
@@ -83,4 +86,10 @@ void clDockerWorkspaceView::OnFileContextMenu(clContextMenuEvent& event)
                               settings.Save(clDockerWorkspace::Get()->GetFileName());
                           },
                           XRCID("ID_DOCKERFILE_SETTINGS"));
+    event.GetMenu()->Bind(
+        wxEVT_MENU, [&](wxCommandEvent& evt) { clDockerWorkspace::Get()->BuildDockerfile(contextMenuFiles.Item(0)); },
+        XRCID("build_dockerfile"));
+    event.GetMenu()->Bind(
+        wxEVT_MENU, [&](wxCommandEvent& evt) { clDockerWorkspace::Get()->RunDockerfile(contextMenuFiles.Item(0)); },
+        XRCID("run_dockerfile"));
 }

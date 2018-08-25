@@ -96,10 +96,14 @@ public:
 class DockerfileSettingsDlgBase : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText52;
-    wxTextCtrl* m_textCtrlBuildOptions;
-    wxStaticText* m_staticText56;
-    wxTextCtrl* m_textCtrlRunOptions;
+    wxPanel* m_panel114;
+    Notebook* m_notebook96;
+    wxPanel* m_panel98;
+    wxStaticText* m_staticText106;
+    wxStyledTextCtrl* m_stcBuild;
+    wxPanel* m_panel100;
+    wxStaticText* m_staticText110;
+    wxStyledTextCtrl* m_stcRun;
     wxStdDialogButtonSizer* m_stdBtnSizer44;
     wxButton* m_button46;
     wxButton* m_button48;
@@ -108,14 +112,17 @@ protected:
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText52() { return m_staticText52; }
-    wxTextCtrl* GetTextCtrlBuildOptions() { return m_textCtrlBuildOptions; }
-    wxStaticText* GetStaticText56() { return m_staticText56; }
-    wxTextCtrl* GetTextCtrlRunOptions() { return m_textCtrlRunOptions; }
+    wxStaticText* GetStaticText106() { return m_staticText106; }
+    wxStyledTextCtrl* GetStcBuild() { return m_stcBuild; }
+    wxPanel* GetPanel98() { return m_panel98; }
+    wxStaticText* GetStaticText110() { return m_staticText110; }
+    wxStyledTextCtrl* GetStcRun() { return m_stcRun; }
+    wxPanel* GetPanel100() { return m_panel100; }
+    Notebook* GetNotebook96() { return m_notebook96; }
+    wxPanel* GetPanel114() { return m_panel114; }
     DockerfileSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                               const wxString& title = _("Dockerfile Settings"), const wxPoint& pos = wxDefaultPosition,
-                              const wxSize& size = wxSize(-1, -1),
-                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+                              const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~DockerfileSettingsDlgBase();
 };
 

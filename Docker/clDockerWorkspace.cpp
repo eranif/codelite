@@ -248,11 +248,7 @@ void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
     if(editor->GetFileName().GetFullName() == "Dockerfile") {
-        if(event.GetKind() == "build") {
-            m_driver->BuildDockerfile(editor->GetFileName(), m_settings);
-        } else {
-            // clean
-        }
+        if(event.GetKind() == "build") { BuildDockerfile(editor->GetFileName()); }
     }
 }
 
@@ -267,13 +263,21 @@ void clDockerWorkspace::OnRun(clExecuteEvent& event)
     CHECK_EVENT(event);
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    if(editor->GetFileName().GetFullName() == "Dockerfile") {
-        m_driver->ExecuteDockerfile(editor->GetFileName(), m_settings);
-    }
+    if(editor->GetFileName().GetFullName() == "Dockerfile") { RunDockerfile(editor->GetFileName()); }
 }
 
 void clDockerWorkspace::OnStop(clExecuteEvent& event)
 {
     CHECK_EVENT(event);
     if(m_driver->IsRunning()) { m_driver->Stop(); }
+}
+
+void clDockerWorkspace::BuildDockerfile(const wxFileName& dockerfile)
+{
+    m_driver->BuildDockerfile(dockerfile, m_settings);
+}
+
+void clDockerWorkspace::RunDockerfile(const wxFileName& dockerfile)
+{
+    m_driver->ExecuteDockerfile(dockerfile, m_settings);
 }
